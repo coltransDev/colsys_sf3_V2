@@ -3,9 +3,10 @@
 * Pantalla de bienvenida para el modulo de reportes
 * @author Andres Botero, Mauricio Quinche
 */
-?>
 
-<?
+$grupoReportes = $sf_data->getRaw("grupoReportes");
+$grupoReportesRechazadas = $sf_data->getRaw("grupoReportesRechazadas");
+
 if($opcion!="otmmin")
 {
 ?>
@@ -205,7 +206,172 @@ if($opcion=="otmmin")
 
 <?
 }
+
+if(count($grupoReportes)>0)
+{
+?>
+<div align="center">
+    <table width="800px" border="1" class="tableList alignLeft">
+        <tr>
+            <th colspan="7">Pendientes x Aprobar</th>
+        </tr>
+        <tr>
+            <th width="" scope="col">Consecutivo</th>
+            <th width="" scope="col">Trayecto</th>
+            <th width="" scope="col">Cliente</th>
+            <th width="" scope="col">Fecha Envio</th>
+            <th width="" scope="col">Usuario Envio</th>
+            <th width="" scope="col" colspan='2'>Opciones</th>
+        </tr>
+<?
+    foreach($grupoReportes as $r)
+    {
+?>
+        <tr>
+            <td width="" scope="col"><a href="/reportesNeg/verReporte?id=<?=$r["Reporte"]["ca_idreporte"]?>"><?=$r["Reporte"]["ca_consecutivo"]?></a></td>
+            <td width="" scope="col"><?=$r["ori_ca_ciudad"]?> - <?=$r["des_ca_ciudad"]?></td>
+            <td width="" scope="col"><?=$r["Reporte"]["Contacto"]["Cliente"]["ca_compania"]?></td>
+            <td width="" scope="col"><?=$r["ca_fchcreado"]?></td>
+            <td width="" scope="col"><?=$r["ca_usucreado"]?></td>
+            <td width="" scope="col"><a href="javascript:desbloquear('<?=$r["ca_idantecedente"]?>')">Desbloquear</a></td>
+            <td width="" scope="col"><a href="javascript:rechazar('<?=$r["ca_idantecedente"]?>')">Rechazar</a></td>
+        </tr>
+<?
+    }
+?>
+    </table>
+    
+<?
+}
+if(count($grupoReportesRechazadas)>0)
+{
+?>
+    <br><br>
+<div align="center">
+    <table width="800px" border="1" class="tableList alignLeft">
+        <tr>
+            <th colspan="5">Rechazadas</th>
+        </tr>
+        <tr>
+            <th width="" scope="col">Consecutivo</th>
+            <th width="" scope="col">Trayecto</th>
+            <th width="" scope="col">Cliente</th>
+            <th width="" scope="col">Motivo Rechazo</th>
+            <th width="" scope="col">Fecha Envio</th>
+            <th width="" scope="col">Usuario Envio</th>
+        </tr>
+<?
+    foreach($grupoReportesRechazadas as $r)
+    {
+?>
+        <tr>
+            <td width="" scope="col"><a href="/reportesNeg/verReporte?id=<?=$r["Reporte"]["ca_idreporte"]?>"><?=$r["Reporte"]["ca_consecutivo"]?></a></td>
+            <td width="" scope="col"><?=$r["ori_ca_ciudad"]?> - <?=$r["des_ca_ciudad"]?></td>
+            <td width="" scope="col"><?=$r["Reporte"]["Contacto"]["Cliente"]["ca_compania"]?></td>
+            <td width="" scope="col"><?=$r["ca_propiedades"]?></td>
+            <td width="" scope="col"><?=$r["ca_fchcreado"]?></td>
+            <td width="" scope="col"><?=$r["ca_usucreado"]?></td>            
+        </tr>
+<?
+    }
+?>
+    </table>
+    
+<?
+}
 ?>
 
+<script>
+     var idreportetmp='';
+    function desbloquear(id)
+    {
+        idreportetmp=id;
+        if(window.confirm("Realmente desea desbloquear el reporte?"))
+        {
+            Ext.MessageBox.wait('Guardando, Espere por favor', '---');
+            Ext.Ajax.request(
+            {
+                waitMsg: 'Guardando cambios...',
+                url: '<?= url_for("reportesNeg/desbloquearReporte") ?>',
+                params :	{
+                    idantecedente:idreportetmp
+                },
+                failure:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if(res.err)
+                        Ext.MessageBox.alert("Mensaje",'Se presento un error guardando por favor informe al Depto. de Sistemas<br>'+res.err);
+                    else
+                        Ext.MessageBox.alert("Mensaje",'Se produjo un error, vuelva a intentar o informe al Depto. de Sistema<br>'+res.texto);
+                },
+                success:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    Ext.MessageBox.alert("Mensaje",'Se guardo correctamente el reporte y fue desbloqueado');
+                    if(window.confirm('Desea enviar status inmediatamente?'))
+                    {
+                        if(res.transporte=='<?=Constantes::AEREO?>')
+                            location.href="/traficos/listaStatus/modo/aereo/reporte/"+res.consecutivo;
+                        else
+                            location.href="/traficos/listaStatus/modo/maritimo/reporte/"+res.consecutivo;
+                    }
+                    else
+                    {
+                        location.href=location.href;
+                    }
+                }
+            });
+        }
+    }
+   
+    function rechazar(id){
+        idreportetmp=id;
+        Ext.MessageBox.show({
+           title: 'Rechazar Entrega de Reporte',
+           msg: 'por favor coloque el motivo por el que rechaza el Reporte de Negocios:',
+           width:300,
+           buttons:{
+              ok     : "Enviar",
+              cancel : "Cancelar"
+           },
+           multiline: true,
+           fn: rechaza,
+           animEl: 'anular-reporte',
+           modal: true
+        });
+        Ext.MessageBox.buttonText.yes = "Version";
+        Ext.MessageBox.buttonText.no = "Todas las versiones";
+    }
 
-
+    var rechaza = function(btn, text){
+        if( btn == "ok"){
+            if( text.trim()==""){
+                alert("Debe colocar un motivo");
+            }else{
+                if(btn=="ok")
+                    href='/reportesNeg/rechazarReporte?idantecedente='+idreportetmp;
+                Ext.MessageBox.wait('enviando Notificacion de rechazo', '');
+                Ext.Ajax.request(
+                {
+                    waitMsg: 'Enviando...',
+                    url: href,
+                    params :	{
+                        mensaje: text.trim()
+                    },
+                    failure:function(response,options){
+                        alert( response.responseText );
+                        Ext.Msg.hide();
+                        success = false;
+                        alert("Surgio un problema al tratar de rechzar el reporte")
+                    },
+                    success:function(response,options){
+                        var res = Ext.util.JSON.decode( response.responseText );
+                        if( res.success ){
+                            alert("Se envio aviso al depto de traficos")
+                            location.href=location.href;
+                        }
+                    }
+                 }
+            );
+            }
+        }
+    };    
+</script>

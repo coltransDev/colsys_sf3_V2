@@ -36,14 +36,14 @@ $txt = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
 //$txt=sprintf ("%14s",$reporte->getContacto()->getCaIdcontacto());
 //$txt=sprintf ("%14s",$reporte->getContacto());
 //$y=20;
-$y=46;
+$y=45;
 $x=8;
 $txt="2012";
 $pdf->setFontSpacing(1.9);
-$pdf->MultiCell(55, 10, $txt, 0, 'L', 0, 1, $x+1, $y-8);
+$pdf->MultiCell(55, 10, $txt, 0, 'L', 0, 1, $x-3, $y-10);
 
 
-$x=4;
+$x=1;
 /*$y=$y+16;
 //casillas 5 - 6
 $txt=$cliente->getCaIdalterno();//sprintf ("%s %13s ",$cliente->getCaIdalterno(),$cliente->getCaDigito());
@@ -62,7 +62,7 @@ $pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x, $y);
 
 
 //$y=$y+8;
-$y=$y+29;
+$y=$y+27;
 
 $txt=$cliente->getCaIdalterno();//sprintf ("%s %13s ",$cliente->getCaIdalterno(),$cliente->getCaDigito());
 $pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x, $y);
@@ -153,36 +153,36 @@ $pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+193, $y);
 
 //garantia
 $pdf->setFontSpacing(0);
-$y=$y+4;
+$y=$y+6;
 
 $txt="1";//sprintf ("%s %13s ",$cliente->getCaIdalterno(),$cliente->getCaDigito());
-$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+23, $y);
+$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+20, $y);
 
 $txt="2";
-$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+50, $y);
+$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+46, $y);
 
 $txt="31 DL 011 420";
-$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+80, $y);
+$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+76, $y);
 
 //casilla 42
 $txt=  number_format("1133400000");
-$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+130, $y);
+$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+125, $y);
 
 //casilla 48
 $txt=  "2013";
-$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+180, $y);
+$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+175, $y);
 
 $txt=  "05";
-$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+190, $y);
+$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+185, $y);
 
 $txt=  "22";
-$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+200, $y);
+$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+195, $y);
 
 $y=$y+9;
 //datos de la operacion
 //casilla 44
 $txt="X";
-$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+20, $y);
+$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+15, $y);
 //casilla 46
 $txt="X";
 $pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+50, $y);
@@ -225,7 +225,7 @@ $pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+54, $y);
 $fechaArribo = explode("-",$repotm->getCaFcharribo());
 $txt=$fechaArribo[0]." ".$fechaArribo[1]." ".$fechaArribo[2];
 $txt=sprintf ("%4s %5s %6s",$fechaArribo[0],$fechaArribo[1],$fechaArribo[2]);
-$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+102, $y);
+$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+95, $y);
 
 //casilla 54
 $txt=$repotm->getCaHbls();
@@ -235,7 +235,7 @@ $pdf->SetFont('helvetica', '', 10);
 //casilla 55
 $fechaArribo = explode("-",$repotm->getCaFchdoctransporte());
 $txt=sprintf ("%4s %5s %6s",$fechaArribo[0],$fechaArribo[1],$fechaArribo[2]);
-$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+180, $y);
+$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+175, $y);
 
 
 //casilla 55
@@ -260,11 +260,11 @@ else
     $txt="";
 */
 $txt=$reporte->getBodega()->getCaCodDian();
-$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+130, $y);
+$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+120, $y);
 
 //casilla 58
 $txt=$repotm->getCaValorfob();
-$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+150, $y);
+$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+145, $y);
 
 
 
@@ -298,14 +298,13 @@ else
 $pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x, $y);
 
 $txt="S";
-$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+54, $y);
+$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+48, $y);
 
 
 $txt=$repotm->getCaPeso();
 $pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+150, $y);
 
-
-$y=$y+11;
+$y=$y+10;
 
 if($reporte->getCaModalidad()=="LCL")
     $txt1="LCL/LCL";
