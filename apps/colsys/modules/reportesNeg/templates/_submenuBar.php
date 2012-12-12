@@ -21,6 +21,15 @@ if ($this->getRequestParameter("id") || $this->getRequestParameter("consecutivo"
     {            
         $reporte = ReporteTable::retrieveByConsecutivo($this->getRequestParameter("consecutivo"));           
     }
+    $reporte->getRepAntecedentes();
+    $mostrarAnt=false;
+    if($repAntecedentes)
+    {
+        $estAnt=$repAntecedentes->getCaEstado();
+        if($estAnt=="E")
+            $mostrarAnt=true;
+    }
+    
     $editable = $reporte->getEditable($permiso, $user);
     $cerrado = $reporte->getCerrado();
     $anulado = $reporte->getAnulado();
@@ -187,7 +196,7 @@ switch ($action) {
         $button[$i]["onClick"] = "copiaRep()";
         $i++;
 
-        if($reporte->getCaTiporep()=="2" && ( $user->getIddepartamento()==14 || $user->getIddepartamento()==13 ) )
+        if($reporte->getCaTiporep()=="2" && ( $user->getIddepartamento()==14 || $user->getIddepartamento()==13 || $user->getIdsucursal()=="PER" ) )
         {
             $button[$i]["name"] = "Copiar Ag";
             $button[$i]["tooltip"] = "Copiar este Reporte Ag  ";
@@ -242,6 +251,21 @@ switch ($action) {
             $i++;
         }
 
+        if($this->getRequestParameter("idantecedente")!="" && $mostrarAnt)
+        {
+            $button[$i]["name"] = "Desbloquear ";
+            $button[$i]["tooltip"] = "Desbloquea un reporte y confirma la aceptacion";
+            $button[$i]["image"] = "22x22/unlock.gif";
+            $button[$i]["onClick"] = "desbloquear1()";
+            $i++;
+
+            $button[$i]["id"] = "rechazar";
+            $button[$i]["name"] = "Rechazar ";
+            $button[$i]["tooltip"] = "Rechaza la reporte por algun inconveniente";
+            $button[$i]["image"] = "22x22/cancel.gif";
+            $button[$i]["onClick"] = "rechazar1()";
+            $i++;
+        }
         break;
     case "unificarReporte":
         $button[$i]["name"] = "Volver ";
@@ -250,8 +274,6 @@ switch ($action) {
         $button[$i]["link"] = "/reportesNeg/consultaReporte/id/" . $this->getRequestParameter("id") . "/impoexpo/" . $impoexpo . "/modo/" . $modo;
         $i++;
         break;
-
-    
     case "formReporte":
     case "formReporte1":
     case "formReporteOtmmin":
@@ -346,7 +368,7 @@ switch ($action) {
                 $button[$i]["name"] = "Instrucciones";
                 $button[$i]["tooltip"] = "Enviar Instrucciones";
                 $button[$i]["image"] = "22x22/email.gif";
-                $button[$i]["link"] = "/reportesNeg/emailInstruccionesOtm/idreporte/" . $this->getRequestParameter("id") . "/impoexpo/" . $reporte->getCaImpoexpo() . "/modo/" . $reporte->getCaTransporte();
+                $button[$i]["link"] = "/reportesNeg/emailInstruccionesOtm/idreporte/".$this->getRequestParameter("id")."/impoexpo/".$reporte->getCaImpoexpo()."/modo/".$reporte->getCaTransporte();
                 $i++;
             }
         }
@@ -354,6 +376,58 @@ switch ($action) {
 }
 ?>
 <script>
+    function rechazarReporte(){
+        Ext.MessageBox.show({
+           title: 'Rechazar Referecia',
+           msg: 'por favor coloque el motivo por el que rechaza el reporte:',
+           width:300,
+           buttons:{
+              ok     : "Enviar",
+              cancel : "Cancelar"
+           },
+           multiline: true,
+           fn: rechaza,
+           animEl: 'anular-reporte',
+           modal: true
+        });
+        Ext.MessageBox.buttonText.yes = "Version";
+        Ext.MessageBox.buttonText.no = "Todas las versiones";
+    }
+    
+    var rechaza = function(btn, text){
+        if( btn == "ok"){
+            if( text.trim()==""){
+                alert("Debe colocar un motivo");
+            }else{
+                if(btn=="ok")
+                    href='<?=url_for("antecedentes/rechazarReporte?id=".$this->getRequestParameter("id"))?>';
+                Ext.MessageBox.wait('enviando Notificacion de rechazo', '');
+                Ext.Ajax.request(
+                {
+                    waitMsg: 'Enviando...',
+                    url: href,
+                    params :	{
+                        mensaje: text.trim()
+                    },
+                    failure:function(response,options){
+                        alert( response.responseText );
+                        Ext.Msg.hide();
+                        success = false;
+                        alert("Surgio un problema al tratar de rechzar el reporte")
+                    },
+                    success:function(response,options){
+                        var res = Ext.util.JSON.decode( response.responseText );
+                        if( res.success ){
+                            alert("Se envio aviso ")
+                            location.href="/reportesNeg/index";
+                        }
+                    }
+                 }
+            );
+            }
+        }
+    };
+    
     function cerrarAbrir(id,tipo)
     {
         if(window.confirm("Esta seguro de cambiar el estado del reporte?"))
@@ -587,4 +661,101 @@ switch ($action) {
         });
         win.show();
     }
+    
+    
+    function desbloquear1(id)
+    {
+        idreportetmp=id;
+        if(window.confirm("Realmente desea desbloquear el reporte?"))
+        {
+            Ext.MessageBox.wait('Guardando, Espere por favor', '---');
+            Ext.Ajax.request(
+            {
+                waitMsg: 'Guardando cambios...',
+                url: '<?= url_for("reportesNeg/desbloquearReporte") ?>',
+                params :	{
+                    idantecedente:'<?=$this->getRequestParameter("idantecedente")?>'
+                },
+                failure:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if(res.err)
+                        Ext.MessageBox.alert("Mensaje",'Se presento un error guardando por favor informe al Depto. de Sistemas<br>'+res.err);
+                    else
+                        Ext.MessageBox.alert("Mensaje",'Se produjo un error, vuelva a intentar o informe al Depto. de Sistema<br>'+res.texto);
+                },
+                success:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    Ext.MessageBox.alert("Mensaje",'Se guardo correctamente el reporte y fue desbloqueado');
+                    alert('Se guardo correctamente el reporte');
+                        if(window.confirm('Desea enviar status inmediatamente?'))
+                        {
+                            if(res.transporte=='<?=Constantes::AEREO?>')
+                                location.href="/traficos/listaStatus/modo/aereo/reporte/"+res.consecutivo;
+                            else
+                                location.href="/traficos/listaStatus/modo/maritimo/reporte/"+res.consecutivo;
+                        }
+                        else
+                        {
+                            location.href=location.href;
+                        }
+                        
+                }
+            });
+        }
+    }
+    
+    
+    function rechazar1(id){
+        idreportetmp=id;
+        Ext.MessageBox.show({
+           title: 'Rechazar Entrega de Reporte',
+           msg: 'por favor coloque el motivo por el que rechaza el Reporte de Negocios:',
+           width:300,
+           buttons:{
+              ok     : "Enviar",
+              cancel : "Cancelar"
+           },
+           multiline: true,
+           fn: rechaza1,
+           animEl: 'anular-reporte',
+           modal: true
+        });
+        Ext.MessageBox.buttonText.yes = "Version";
+        Ext.MessageBox.buttonText.no = "Todas las versiones";
+    }
+
+    var rechaza1 = function(btn, text){
+        if( btn == "ok"){
+            if( text.trim()==""){
+                alert("Debe colocar un motivo");
+            }else{
+                if(btn=="ok")
+                    href='/reportesNeg/rechazarReporte?idantecedente=<?=$this->getRequestParameter("idantecedente")?>';
+                Ext.MessageBox.wait('enviando Notificacion de rechazo', '');
+                Ext.Ajax.request(
+                {
+                    waitMsg: 'Enviando...',
+                    url: href,
+                    params :	{
+                        mensaje: text.trim()
+                    },
+                    failure:function(response,options){
+                        alert( response.responseText );
+                        Ext.Msg.hide();
+                        success = false;
+                        alert("Surgio un problema al tratar de rechzar el reporte")
+                    },
+                    success:function(response,options){
+                        var res = Ext.util.JSON.decode( response.responseText );
+                        if( res.success ){
+                            alert("Se envio aviso al depto de traficos")
+                            location.href=location.href;
+                        }
+                    }
+                 }
+            );
+            }
+        }
+    };
+    
 </script>
