@@ -8,7 +8,8 @@
 
 <table width="50%" border="0" class="tableList">
 <tr>
-    <th width="3%" scope="col">&nbsp;</th>
+    <th width="3%" scope="col"><b>P</b></th>
+    <th width="3%" scope="col"><b>E</b></th>
 	<th width="11%" scope="col"><b>Grupo</b></th>
 	<th width="25%" scope="col"><b>Acci&oacute;n</b></th>
 	<th width="31%" scope="col"><b>Usuario</b></th>
@@ -16,13 +17,17 @@
     <th width="30%" scope="col"><b>Sucursal</b></th>
 </tr>
 <?
+
 foreach( $grupos as $grupo=>$logins ){		
 	foreach( $logins as $login ){
 		$usuario = Doctrine::getTable("Usuario")->find( $login );
-
+        //echo $login;
+        if(!$usuario)
+            continue;
         
 	?>		
 	<tr>
+        <td><input type="radio" id="principal" name="principal" value="<?=$login?>" ></td>
         <td><input type="checkbox" name="notificar[]" value="<?=$login?>" ></td>
 		<td><?=ucfirst($grupo)?></td>
 		<td>
@@ -49,7 +54,22 @@ foreach( $grupos as $grupo=>$logins ){
 }
 ?>
     <tr>
-        <td colspan="5">
+        <td colspan="5" style="vertical-align:top"><b>Notificar respuestas a:</b><br><input type="text" name="destinatario" id="destinatario" size="100"   /></td>
+        <td colspan="2">
+            <select multiple size="8" onDblclick="seleccionarContacto()" name="contactos" id="contactos"   >
+                <?
+                foreach($contactos as $c)
+                {
+                ?>
+                <option value="<?=$c?>"><?=$c?></option>
+                <?
+                }
+                ?>
+            </select>
+            </td>
+    </tr>
+    <tr>
+        <td colspan="7">
             <div align="center">
                  <input type="submit" value="Enviar" class="button"> &nbsp;
                  <input type="button" value="Cancelar" class="button" onclick="document.location='<?=url_for("/reportesNeg/verReporte?id=".$reporte->getCaIdreporte())?>'">
@@ -60,3 +80,20 @@ foreach( $grupos as $grupo=>$logins ){
 </table>
 </form>
 </div>
+<script>
+    var seleccionarContacto = function(){	
+	var contactos = document.getElementById("contactos");	
+	var selected = contactos.options[contactos.selectedIndex].value;
+	var target = document.getElementById('destinatario');	
+	
+	if( target.value.indexOf(selected)==-1 ){	
+		if(target.value){
+			target.value+=",";	
+		}			
+		target.value+=selected;	
+	}
+	
+	
+	 
+}
+</script>
