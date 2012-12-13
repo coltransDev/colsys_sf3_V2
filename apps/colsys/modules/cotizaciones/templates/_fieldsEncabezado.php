@@ -132,12 +132,12 @@ include_component("widgets", "widgetComerciales");
                 {
                     xtype:          'combo',
                     mode:           'local',
-                    value:          '<?=Constantes::COLTRANS?>',
+                    value:          '<?=($sucursal=="PER")?Constantes::TPLOGISTICS:Constantes::COLTRANS?>',
                     triggerAction:  'all',
                     forceSelection: true,
                     editable:       true,
                     fieldLabel:     'Empresa',
-                    name:           'empresa',                    
+                    name:           'empresa',
                     displayField:   'name',
                     valueField:     'name',
                     disabled:       this.idcotizacion, 
@@ -145,8 +145,15 @@ include_component("widgets", "widgetComerciales");
                     store:          new Ext.data.JsonStore({
                         fields : ['name'],
                         data   : [
+                            <? if($sucursal=="PER"){?>
+                              {name : '<?=Constantes::TPLOGISTICS?>'}
+                            <?}
+                            else{?>
                             {name : '<?=Constantes::COLTRANS?>'},
                             {name : '<?=Constantes::COLMAS?>'}
+                            <?
+                            }?>                            
+                            
                         ]
                     })
                 }
