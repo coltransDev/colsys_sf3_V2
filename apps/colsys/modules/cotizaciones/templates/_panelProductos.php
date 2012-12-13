@@ -1102,7 +1102,7 @@ Ext.extend(PanelProductos, Ext.grid.EditorGridPanel, {
         storeProductos = this.store;
         //crea una ventana
 
-        if(this.empresa=='<?=Constantes::COLTRANS?>')
+        if(this.empresa=='<?=Constantes::COLTRANS?>' || this.empresa=='<?=Constantes::TPLOGISTICS?>')
         {
            this.win = new PanelTrayectoWindow({tipo:this.tipo});
         }

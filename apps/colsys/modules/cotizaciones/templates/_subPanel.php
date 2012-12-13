@@ -4,7 +4,7 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){
+if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS || $cotizacion->getCaEmpresa() == Constantes::TPLOGISTICS ){
     include_component("cotizaciones","panelProductos",array("cotizacion"=>$cotizacion));
     include_component("cotizaciones","panelRecargosCotizacion",array("cotizacion"=>$cotizacion));
 //    include_component("cotizaciones","panelContViajes",array("cotizacion"=>$cotizacion));
@@ -28,7 +28,7 @@ if( $cotizacion->getCaIdcotizacion() ){
 SubPanel = function(){
     
     <?
-    if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS  ){
+    if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS || $cotizacion->getCaEmpresa() == Constantes::TPLOGISTICS  ){
         ?>
         this.gridProductos = new PanelProductos({tipo:'Trayecto',empresa:'<?=$cotizacion->getCaEmpresa()?>',id:'grid_productos',title:'Tarifas de trayectos'});
         this.gridRecargos = new PanelRecargosCotizacion();
@@ -62,7 +62,7 @@ SubPanel = function(){
             items:[
                 
                 <?
-                if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS  ){
+                if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS || $cotizacion->getCaEmpresa() == Constantes::TPLOGISTICS  ){
                 ?>                      
                    this.gridProductos,                     
                    this.gridRecargos,
@@ -75,16 +75,12 @@ SubPanel = function(){
                 this.panelArchivos
             ]
         }]
-
     });
-
-
 };
-//alert( panelArchivos );
 Ext.extend(SubPanel, Ext.FormPanel, {
     guardarDatosPaneles: function(){
         <?
-        if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){
+        if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS || $cotizacion->getCaEmpresa() == Constantes::TPLOGISTICS ){
         ?>
             this.gridProductos.guardarItems();
             this.gridRecargos.guardarItems();
@@ -100,7 +96,6 @@ Ext.extend(SubPanel, Ext.FormPanel, {
         }
         ?>
     }
-
 });
 
 
