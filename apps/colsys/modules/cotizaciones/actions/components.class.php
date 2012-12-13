@@ -185,6 +185,7 @@ class cotizacionesComponents extends sfComponents {
         //echo $this->getRequestParameter("id");
         $this->nivel = $this->getUser()->getNivelAcceso(cotizacionesActions::RUTINA);
         $this->sucursal=$this->getUser()->getIdsucursal();
+        //echo $this->sucursal;
     }
 
     public function executeChart() {
