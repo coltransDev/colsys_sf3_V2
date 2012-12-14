@@ -5301,7 +5301,6 @@ class reportesNegActions extends sfActions
             $user = $this->getUser();
 
             $this->idantecedente=$request->getParameter("idantecedente");
-            $mensaje=$this->getRequestParameter("mensaje");
             $email = new Email();
 
             $email->setCaUsuenvio($user->getUserId());
@@ -5330,7 +5329,7 @@ class reportesNegActions extends sfActions
             $email->addCc($user->getEmail());
 
             $email->setCaSubject("Envío de reportes ".$reporte->getCaConsecutivo());
-            $email->setCaBody($mensaje);
+            $email->setCaBody($this->getRequestParameter("mensaje"));
             
             $proveedor="";
             if( $reporte->getCaIdproveedor() ){
