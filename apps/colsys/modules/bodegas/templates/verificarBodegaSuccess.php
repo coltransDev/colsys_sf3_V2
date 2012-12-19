@@ -8,7 +8,7 @@
         echo '<div class="rojo">Si ha encontrado alguna coincidencia haga click sobre ella</div><br />';
         foreach ($datos as $row) {
 
-            echo link_to($row["ca_nombre"], "bodegas/show?ca_idbodega=" . $row["ca_idbodega"]) . "<br />";
+            echo link_to($row["ca_nombre"]." ".$row["ca_direccion"], "bodegas/show?ca_idbodega=" . $row["ca_idbodega"]) . "<br />";
         }
     }
     ?>

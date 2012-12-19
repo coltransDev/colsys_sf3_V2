@@ -23,6 +23,9 @@
             <td><b>Nombre:</b> <?=$bodega->getCaNombre()?></td>
         </tr>
         <tr>
+            <td><b>Dirección:</b> <?=$bodega->getCaDireccion()?></td>
+        </tr>
+        <tr>
             <td><b>Tipo:</b> <?=$bodega->getCaTipo()?></td>
         </tr>
         <tr>
