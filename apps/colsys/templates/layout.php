@@ -17,28 +17,9 @@
     <?php include_javascripts() ?>
 
     <script type="text/javascript" src="/js/loginWindow.js"></script>
-
-
-
-<!--    <link type="text/css" href="/css/jx/jx.bar.css" rel="stylesheet" />
-    
-    <script type="text/javascript" src="/js/jquery.jixedbar.js"></script>-->
-    <script type="text/javascript">
-        /*$(document).ready(function() {
-            document.getElementById("demo-bar").style.display = "";
-            $("#demo-bar").jixedbar({
-                roundedCorners: true
-            });
-
-            
-        });*/
-        
-    </script>
-
-
 </head>
 <body >
-<!--    <div class="top"></div>-->
+
 	<div align="center">
 		<div class="header" align="center" >
 			<div class="headerleft" ><?=image_tag("branding/".sfConfig::get("app_branding_template")."/header/head_left.gif")?></div>
@@ -79,55 +60,11 @@ include_component("menu", "submenubar");
 
 
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
 
     $('.qtip').tooltip({track: true});
-
     $('.help').tooltip({track: true, fade: 250, opacity: 1, top: -15, extraClass: "pretty fancy" });
-
-	/*$$("a").each( function(input) {
-		if(input.title){
-			new Tooltip(input, {backgroundColor: "#FC9", borderColor: "#C96", textColor: "#000", textShadowColor: "#FFF"});
-		}	
-	});
-	$$("form input").each( function(input) {
-		if(input.title){
-			new Tooltip(input, {backgroundColor: "#FC9", borderColor: "#C96", textColor: "#000", textShadowColor: "#FFF"});
-		}
-	});
-	
-	$$("form select").each( function(input) {
-		if(input.title){
-			new Tooltip(input, {backgroundColor: "#FC9", borderColor: "#C96", textColor: "#000", textShadowColor: "#FFF"});
-		}
-	});
-	
-	$$("img").each( function(input) {
-		if(input.title){
-			new Tooltip(input, {backgroundColor: "#FC9", borderColor: "#C96", textColor: "#000", textShadowColor: "#FFF"});
-		}
-	});*/
 </script>
-
-<!---
-
-----------------------------------------------------------------------------------------------------
--->
-
-
-
-
-
-
-	
-<!---
-
-----------------------------------------------------------------------------------------------------
--->
-
-
-
-
 
 
 </body>
