@@ -33,15 +33,16 @@ class RepStatus extends BaseRepStatus
 	}
 
 
+    
 	/*
 	* Aplica la plantilla al status
 	*/
-	private function applyTemplate( $template ){
+	public function applyTemplate( $template ){
 
 		$result = "";
 
 		$tpl = explode(" ", $template );
-
+        
 		foreach( $tpl as $t ){
 			if( $result ){
 				$result.=" ";
@@ -98,10 +99,7 @@ class RepStatus extends BaseRepStatus
                     if( $reporte->getCaContinuacion()=="CABOTAJE" ){
                         $template = "Nos permitimos informar que la carga en referencia llegó a {reporte_destinoCont_caCiudad} el {caFchcontinuacion}";
                     }
-
                 }
-
-
 				$txt = $this->applyTemplate( $template )."\n\n";
 			}
 		}        
@@ -306,14 +304,26 @@ class RepStatus extends BaseRepStatus
                     }
                     else
                     {
-                        $suc="";
+                        $suc=array();
                         switch($reporte->getCaContinuacionConf())
                         {
                             case "BOG":
-                                $suc="'OBO','BOG'";
+                                $suc[]='OBO';
+                                $suc[]='BOG';
                             break;
+                            case "OBO":
+                                $suc[]='OBO';
+                                $suc[]='BOG';
+
+                            break;
+
                             case "MDE":
-                                $suc="'OMD','MDE'";
+                                $suc[]='OMD';
+                                $suc[]='MDE';                    
+                            break; 
+                            case "OMD":
+                                $suc[]='OMD';
+                                $suc[]='MDE';                    
                             break; 
                         }
                             
@@ -322,7 +332,7 @@ class RepStatus extends BaseRepStatus
                            ->select("u.ca_login,u.ca_nombre,u.ca_email")
                            ->innerJoin("u.UsuarioPerfil up")
                            ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','cordinador-de-otm'))
-                           ->addWhere("u.ca_idsucursal in (?)",array($suc))
+                           ->andWhereIn("u.ca_idsucursal",$suc)               
                            ->addOrderBy("u.ca_idsucursal")
                            ->addOrderBy("u.ca_nombre")
                            ->execute();
