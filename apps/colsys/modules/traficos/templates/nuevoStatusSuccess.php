@@ -349,11 +349,11 @@ echo $form['transporte']->render();
 			 	if( $reporte->getCaImpoexpo()==Constantes::EXPO ){                   
 				 	$form->setDefault('idetapa', "EEETD" );
 				}else{
-               if ($user->getIdSucursal() == "PER"){
-                  $form->setDefault('idetapa', "IMCEM" );
-               }else{
+               //if ($user->getIdSucursal() == "PER"){
+               //   $form->setDefault('idetapa', "IMCEM" );
+               //}else{
                   $form->setDefault('idetapa', "IMETA" );
-               }
+               //}
 				}
 			 }else{
 			 	if( $ultStatus ){
@@ -387,9 +387,6 @@ echo $form['transporte']->render();
 		$consignatario = $reporte->getConsignatario();
 		$asunto .= $consignatario." / ".$cliente." [".$origen." -> ".$destino."] ";	
 	}
-	
-	
-	
 	?>
 	<tr>
 		<td colspan="2"><div align="left"><b>Asunto:</b><br />

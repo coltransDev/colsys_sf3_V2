@@ -3,6 +3,8 @@ $user = $sf_data->getRaw("user");
 $status = $sf_data->getRaw("status");
 $etapa = $sf_data->getRaw("etapa");
 $firmaotm= $sf_data->getRaw("firmaotm");
+$company= $sf_data->getRaw("company");
+
 ?>
 
 <div class="htmlContent">
@@ -25,13 +27,21 @@ $cliente = $reporte->getCliente();
 	<?=$status->getCaIntroduccion()?>
 </td>
 <?
-if($user->getSucursal()->getEmpresa()->getCaNombre()=="Coltrans S.A.S." && $reporte->getCaTransporte()==Constantes::MARITIMO && ($status->getCaIdetapa()=="IMETA" || $status->getCaIdetapa()=="IMCPD") )
+if(1==2 && $user->getSucursal()->getEmpresa()->getCaNombre()=="Coltrans S.A.S." && $reporte->getCaTransporte()==Constantes::MARITIMO && ($status->getCaIdetapa()=="IMETA" || $status->getCaIdetapa()=="IMCPD") )
 {
 ?>
 <td width="320">
-<div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/argentina120412.jpg"/></div>
+<div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/brasil12092012.jpg"/></div>
 </td>
 <?
+}
+else if( 1==2 && $user->getSucursal()->getEmpresa()->getCaNombre()=="Coltrans S.A.S." && $reporte->getCaTransporte()==Constantes::AEREO && ($status->getCaIdetapa()=="IACCR" || $status->getCaIdetapa()=="IACAD") )
+{
+?>
+<td width="320">
+<div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/brasil12092012.jpg"/></div>
+</td>
+<?  
 }
 ?>
 </table>
@@ -375,10 +385,11 @@ Cordial Saludo.<br />
 <br />
 <?
 if($firmaotm==true)
-    echo $user->getFirmaOtmHTML($repotm->getCaLiberacion());
+{    
+    echo $user->getFirmaOtmHTML( $company );
+}
 else
     echo $user->getFirmaHTML();
 ?>
-
 </div>
 </div>

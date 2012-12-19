@@ -270,7 +270,7 @@ foreach ($reportes as $reporte) {
     if($inoClientesSea){
         $inoMaestraSea = $inoClientesSea->getInoMaestraSea();
         $objPHPExcel->getActiveSheet()->setCellValue('T' . $i, $inoMaestraSea->getCaBandera());
-        $objPHPExcel->getActiveSheet()->setCellValue('U' . $i, $inoMaestraSea->getCaRegistroadu());
+        $objPHPExcel->getActiveSheet()->setCellValue('U' . $i, $inoMaestraSea->getCaRegistroadu()." ");
         $objPHPExcel->getActiveSheet()->setCellValue('V' . $i, $inoMaestraSea->getCaFchregistroadu());
     }
     

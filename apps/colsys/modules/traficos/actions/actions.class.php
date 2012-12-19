@@ -607,7 +607,6 @@ class traficosActions extends sfActions
                     
                     $repotm->save( $conn );
                 }
-                
             }
 
             //borra los equipos viejos
@@ -846,9 +845,7 @@ class traficosActions extends sfActions
             $tarea->setCaUsuterminada( $this->getUser()->getUserId() );
             $tarea->save();
         }
-
         $this->redirect("traficos/listaStatus?modo=".$this->modo."&reporte=".$reporte->getCaConsecutivo());
-
 	}
 
 	
@@ -1355,7 +1352,6 @@ class traficosActions extends sfActions
         if ($request->isXmlHttpRequest()){
             $this->responseArray = array("success"=>true);
             $this->setTemplate("responseTemplate");
-
         }else{
             $this->redirect( "traficos/listaStatus?modo=".$this->modo."&reporte=".$reporte->getCaConsecutivo() );
         }

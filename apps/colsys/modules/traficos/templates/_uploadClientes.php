@@ -63,10 +63,10 @@ include_component("gestDocumental", "widgetUploadImages");
 				echo '<div style="width:'.$dimVisual.'px;height:'.$dimVisual.'px;float: left;margin: 5px;" id="file_'.$j.'">
                         <div style="position:relative ">
                             <div style="position:absolute;" >
-                                <img style=" vertical-align: middle;" src="/gestDocumental/verArchivo?idarchivo='.base64_encode($folder."/".$filename) . '" width="'.$dimVisual.'" height="'.$dimVisual.'" />
+                                <a href="/gestDocumental/verArchivo?idarchivo='.base64_encode($folder."/".$filename) . '" target="_blank"><img style=" vertical-align: middle;" src="/gestDocumental/verArchivo?idarchivo='.base64_encode($folder."/".$filename) . '" width="'.$dimVisual.'" height="'.$dimVisual.'" /></a>
                             </div>
-                            <div style="position:absolute;top:0px;right:0px" >
-                                <img src="/images/16x16/button_cancel.gif" style="cursor: pointer" onclick="deleteFile(&quot;'.$id_base.'&quot;,&quot;file_'.$j++.'&quot;)" />
+                            <div style="position:absolute;top:0px;right:0px" >                              
+                                <img src="/images/16x16/button_cancel.gif" style="cursor: pointer" onclick="deleteFile(&quot;'.$id_base.'&quot;,&quot;file_'.$j++.'&quot;)" />                                    
                             </div>
                             <div style="position:absolute;top:20px;right:0px;display:none" >
                                 <input type="checkbox" value="'.$folder.'"/"'.$filename.'" name="files[]" />
