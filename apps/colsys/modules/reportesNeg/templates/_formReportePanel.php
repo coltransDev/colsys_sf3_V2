@@ -443,7 +443,13 @@ var idreporte='<?=$idreporte?>';
                             Ext.getCmp("tipoexpo").setValue(res.data.idtipoexpo);
                             $("#tipoexpo").attr("value",res.data.tipoexpo);
                         }
+                        
+                        if(res.data.ca_declaracionant==true)
+                        {
+                            Ext.getCmp("ca_subarancelaria").show();
+                        }
                         Ext.getCmp('panel-conceptos-fletes').store.reload();
+                        
                     }
                 });
             }

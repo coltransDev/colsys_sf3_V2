@@ -32,21 +32,35 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
                             id:"ca_mcia_peligrosa",
 							name:"ca_mcia_peligrosa",
                             tabIndex:this.tabIndex++
-                        }                        
-                        <?
-                        
-                        /*if($impoexpo==Constantes::IMPO )*/
+                        },
                         {
-                        ?>
-                        ,{
                             xtype:"checkbox",
                             fieldLabel:"Declaración Anticipada",
                             id:"ca_declaracionant",
 							name:"ca_declaracionant",
-                            tabIndex:this.tabIndex++
+                            tabIndex:this.tabIndex++,
+                            listeners:{
+                                "check": function(inCheckbox, inChecked){
+                                    var subarancelaria = Ext.getCmp("ca_subarancelaria");                                    
+                                    if(inChecked){
+                                        subarancelaria.show();
+                                    }else{
+                                        subarancelaria.hide();
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            xtype:"textfield",
+                            fieldLabel:"Subpartida Arancelaria",
+                            name:"ca_subarancelaria",
+                            id:"ca_subarancelaria",
+                            width:120,
+                            hidden: true,
+                            minLength:10
                         }
 						<?
-                        }
+                        
 						if($impoexpo==Constantes::EXPO || $tipo=="4")
 						{
 						?>

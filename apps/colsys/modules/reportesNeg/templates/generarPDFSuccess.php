@@ -80,6 +80,13 @@ $pdf->SetWidths(array(200));
 $pdf->SetStyles(array(""));
 $pdf->Row(array('Descripción de la Mercancia:'."\n".$reporte->getCaMercanciaDesc().' «'.(($reporte->getCaMciaPeligrosa())?"SÍ":"NO")." es Mercancía Peligrosa»"));
     
+if($reporte->getProperty("subarancel")){
+    $pdf->SetWidths(array(43,7,35,115));
+    $pdf->SetAligns(array("L","L","L","L","L","L"));
+    $pdf->SetFills(array(0,0,0,0,0,0));
+    $pdf->SetStyles(array("B","","B","","B",""));
+    $pdf->Row(array('Declaraci?n Anticipada:',$reporte->getCaDeclaracionant()?"SI":"NO",'Sub. Arancelaria:', $reporte->getProperty("subarancel")));
+}  
 //$pdf->Ln(3);
 
 if ($reporte->getCaImpoexpo () == Constantes::EXPO && $reporte->getCaTiporep()!="3" ) {

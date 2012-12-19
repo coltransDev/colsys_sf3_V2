@@ -1365,9 +1365,16 @@ class reportesNegActions extends sfActions
                 $reporte->setCaMciaPeligrosa(false);
             }
             
-            if($request->getParameter("ca_declaracionant") && $request->getParameter("ca_declaracionant")=="on"  )
-            {
+            if($request->getParameter("ca_declaracionant") && $request->getParameter("ca_declaracionant")=="on"  ){
                 $reporte->setCaDeclaracionant(true);
+                if($request->getParameter("ca_subarancelaria")){
+                    $reporte->setProperty("subarancel", $request->getParameter("ca_subarancelaria"));
+                }else{
+                    $errors["ca_subarancelaria"]="Debe diligenciar la partida arancelaria";
+                    $texto.="Partida Arancelaria <br>";
+                    
+                }
+                
             }
             else
             {
@@ -3128,7 +3135,8 @@ class reportesNegActions extends sfActions
 
             $data["ca_mercancia_desc"]=utf8_encode($reporte->getCaMercanciaDesc());
             $data["ca_mcia_peligrosa"]=$reporte->getCaMciaPeligrosa();
-            $data["ca_declaracionant"]=$reporte->getCaDeclaracionant();            
+            $data["ca_declaracionant"]=$reporte->getCaDeclaracionant();
+            $data["ca_subarancelaria"]=$reporte->getProperty("subarancel");
             
             $data["instrucciones"]=utf8_encode($reporte->getCaInstrucciones());
 

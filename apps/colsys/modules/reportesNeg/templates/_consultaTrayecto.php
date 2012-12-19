@@ -40,6 +40,14 @@
         <td colspan="6" ><b>Descripci&oacute;n de la Mercanc&iacute;a:</b><br />
             <?=Utils::replace($reporte->getCaMercanciaDesc())?>			</td>
     </tr>
+    <tr>
+        <td><b>Declaraci&oacute;n Anticipada:</b><br />
+            <?=($reporte->getCaDeclaracionant())=="true"?"SI":"NO"?></td>
+        <?if($reporte->getCaDeclaracionant()=="true"){?>
+        <td><b>Subpartida Arancelaria:</b><br />
+            <?=$reporte->getProperty("subarancel")?></td>
+        <?}?>
+    </tr>
     <?
     if( $reporte->getCaImpoexpo()==Constantes::EXPO  ){
         
