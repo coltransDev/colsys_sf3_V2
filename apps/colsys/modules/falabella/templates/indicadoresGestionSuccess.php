@@ -40,20 +40,22 @@ if($transporte=="Aéreo"){
 <?
 if($opcion=='buscar'){
 ?>
-<table border="1" class="tableList" align="center" style="font-size: 10" width="70%">
+<table border="1" class="tableList" align="center" style="font-size: 10" width="90%">
     <tr>
-        <th <?if($transporte=="Aéreo"){echo "colspan='15'";}elseif($transporte=="Marítimo"){echo "colspan='19'";}?> style="text-align: center"><b><?echo "ESTADISTICAS DE CARGA ".strtoupper($pais_origen).'<br />'.'Periodo: '.$fechainicial." a ".$fechafinal;
+        <th <?if($transporte=="Aéreo"){echo "colspan='17'";}elseif($transporte=="Marítimo"){echo "colspan='20'";}?> style="text-align: center"><b><?echo "ESTADISTICAS DE CARGA ".strtoupper($pais_origen).'<br />'.'Periodo: '.$fechainicial." a ".$fechafinal;
         ?></b></th>
     </tr>
     <?if($transporte=="Aéreo"){?>
     <tr>
-        <th scope="col" style=" text-align: center"><b>A&nacute;o</b></th>
+        <th scope="col" style=" text-align: center"><b>A&ntilde;o</b></th>
         <th scope="col" style=" text-align: center"><b>Mes</b></th>
         <th scope="col" style=" text-align: center"><b>Origen</b></th>
-        <th scope="col" style=" text-align: center"><b>Destino</b></th>
+        <th scope="col" style=" text-align: center;width: 80px"><b>Destino</b></th>
+        <th scope="col" style=" text-align: center;width: 200px"><b>Proveedor</b></th>
         <th scope="col" style=" text-align: center"><b>Transporte</b></th>
-        <th scope="col" style=" text-align: center"><b>Modalidad</b></th>
+        <th scope="col" style=" text-align: center;width: 100px"><b>Modalidad</b></th>
         <th scope="col" style=" text-align: center"><b>Reporte de Negocio</b></th>
+        <th scope="col" style=" text-align: center"><b>Piezas</b></th>
         <th scope="col" style=" text-align: center"><b>Peso</b></th>
         <th scope="col" style=" text-align: center"><b>Volumen</b></th>
         <th scope="col" style=" text-align: center"><b>Fch. Salida</b></th>
@@ -65,14 +67,15 @@ if($opcion=='buscar'){
     </tr>
     <?}elseif($transporte="Marítimo"){?>
     <tr>
-        <th scope="col" style=" text-align: center"><b>A&nacute;o</b></th>
+        <th scope="col" style=" text-align: center"><b>A&ntilde;o</b></th>
         <th scope="col" style=" text-align: center"><b>Mes</b></th>
         <th scope="col" style=" text-align: center"><b>Origen</b></th>
         <th scope="col" style=" text-align: center"><b>Destino</b></th>
+        <th scope="col" style=" text-align: center;width: 200px"><b>Proveedor</b></th>
         <th scope="col" style=" text-align: center"><b>Transporte</b></th>
         <th scope="col" style=" text-align: center"><b>Modalidad</b></th>
         <th scope="col" style=" text-align: center"><b>Reporte de Negocio</b></th>
-        <th scope="col" style=" text-align: center"><b>Tipo Contenedor</b></th>
+        <th scope="col" style=" text-align: center;width: 220px"><b>Tipo Contenedor</b></th>
         <th scope="col" style=" text-align: center"><b># Conten.</b></th>
         <th scope="col" style=" text-align: center"><b>Teus</b></th>
         <th scope="col" style=" text-align: center"><b>Piezas</b></th>
@@ -87,6 +90,9 @@ if($opcion=='buscar'){
     </tr>
 <?
     }
+    $total_peso = 0;
+    $total_piezas = 0;
+    $total_volumen = 0;
     foreach( $resul as  $r){
         
         $idreporte = $r["ca_idreporte"];
@@ -119,9 +125,11 @@ if($opcion=='buscar'){
                 <td><?=$r["ca_mes"]?></td>
                 <td><?=$r["ca_traorigen"]?></td>
                 <td><?=$r["ca_ciudestino"]?></td>
+                <td><?=$r["ca_nombre"]?></td>
                 <td><?=$r["ca_transporte"]?></td>
                 <td><?=$r["ca_modalidad"]?></td>
                 <td><?=$r["ca_consecutivo"]?></td>
+                <td><?=$r["ca_piezas"]?></td>
                 <td><?=$r["ca_peso"]?></td>
                 <td><?=$r["ca_volumen"]?></td>
                 <td><?=$r["ca_fchsalida"]?></td>
@@ -132,6 +140,7 @@ if($opcion=='buscar'){
                 <td style=" text-align: center;"><?=$fchingresoasn?></td>
             </tr>
 <?
+
         }elseif($transporte=="Marítimo"){
 ?>
             <tr>
@@ -139,15 +148,16 @@ if($opcion=='buscar'){
                     <td><?=$r["ca_mes1"]?></td>
                     <td><?=$r["ca_traorigen"]?></td>
                     <td><?=$r["ca_ciudestino"]?></td>
+                    <td><?=$r["proveedor"]?></td>
                     <td><?=$r["ca_transporte"]?></td>
                     <td><?=$r["ca_modalidad"]?></td>
                     <td><?=$r["ca_consecutivo_sub"]?></td>
                     <td><?=$r["ca_concepto"]?></td>
                     <td><?=$r["ncontenedores"]?></td>
                     <td><?=$r["teus"]?></td>
-                    <td><?=$r["piezas"]?></td>
+                    <td><?=$r["ca_piezas"]?></td>
                     <td><?=$r["ca_peso"]?></td>
-                    <td><?=$r["volumen"]?></td>
+                    <td><?=$r["ca_volumen"]?></td>
                     <td><?=$r["ca_fchsalida"]?></td>
                     <td><?=$r["ca_fchllegada"]?></td>
                     <td style=" text-align: center;"><?=$r["ca_diferencia"]?></td>
@@ -155,10 +165,25 @@ if($opcion=='buscar'){
                     <td style=" text-align: center;"><?=$fchentregamcia?></td>
                     <td style=" text-align: center;"><?=$fchingresoasn?></td>
             </tr>
-<?           
+            
+<?          
         }
-    }       
-?>        
+        $total_piezas+=$r["ca_piezas"];
+        $total_peso+=$r["ca_peso"];
+        $total_volumen+=$r["ca_volumen"];
+    }    
+?>
+<br />
+<table border="1" class="tableList" align="center" style="font-size: 22" width="35%">
+    <tr>
+        <th>TOTALES</th>
+        <th>Peso = <?=$total_peso?></th>
+        <th>Piezas = <?=$total_piezas?></th>
+        <th>Volumen = <?=$total_volumen?></th>
+    </tr>
+</table>
+            
+            
 </table><br /><br /><br />       
         
 <table class="tableList" width="700px" border="1" id="mainTable" align="center">
@@ -259,7 +284,7 @@ $serieX=array();
     foreach($entcarga[$ano_ini] as $mes=> $g){
         if(!in_array($mes, $serieX)){
             $serieX[]=Utils::mesLargo ($mes);
-            $data1[$mes]=($g["diff_fchdocorig"]/$g["conta_fchdocorig"])?($g["diff_fchdocorig"]/$g["conta_fchdocorig"]):0;
+            $data1[$mes]=($g["diff_fchentregamcia"]/$g["conta_fchentregamcia"])?($g["diff_fchentregamcia"]/$g["conta_fchentregamcia"]):0;            
         }
     }
     //echo "<pre>";print_r($data1);echo "</pre>";
@@ -312,7 +337,7 @@ $serieX=array();
     foreach($entcarga[$ano_ini] as $mes=> $g){
         if(!in_array($mes, $serieX)){
             $serieX[]=Utils::mesLargo ($mes);
-            $data2[$mes]=($g["diff_fchentregamcia"]/$g["conta_fchentregamcia"])?($g["diff_fchentregamcia"]/$g["conta_fchentregamcia"]):0;
+            $data2[$mes]=($g["diff_fchdocorig"]/$g["conta_fchdocorig"])?($g["diff_fchdocorig"]/$g["conta_fchdocorig"]):0;
         }
     }
     //echo "<pre>";print_r($data1);echo "</pre>";

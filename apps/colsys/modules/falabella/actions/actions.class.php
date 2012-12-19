@@ -604,11 +604,11 @@ class falabellaActions extends sfActions {
                         FROM vi_repindicadores 
                                 LEFT OUTER JOIN (
                                     SELECT rp.ca_consecutivo as ca_consecutivo_sub, rs.ca_fchsalida, rs.ca_fchllegada, CASE WHEN rs.ca_fchllegada-rs.ca_fchsalida <1 THEN '1'  else rs.ca_fchllegada-rs.ca_fchsalida  END AS ca_diferencia, 
-                                        rs.ca_peso as ca_peso, rs.ca_volumen as ca_volumen, extract(YEAR from rs.ca_fchsalida) as ca_ano1 ,extract(MONTH from rs.ca_fchsalida) as ca_mes1
+                                        rs.ca_piezas as ca_piezas, rs.ca_peso as ca_peso, rs.ca_volumen as ca_volumen, extract(YEAR from rs.ca_fchsalida) as ca_ano1 ,extract(MONTH from rs.ca_fchsalida) as ca_mes1
                                     FROM tb_repstatus rs 
                                         INNER JOIN tb_reportes rp ON rp.ca_idreporte = rs.ca_idreporte
                                     WHERE rs.ca_idetapa in ('IACAD','IMCPD') 
-                                    GROUP BY ca_consecutivo, ca_fchsalida, ca_fchllegada, ca_diferencia,ca_peso,ca_volumen,extract(YEAR from rs.ca_fchsalida) ,extract(MONTH from rs.ca_fchsalida)) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) 
+                                    GROUP BY ca_consecutivo, ca_fchsalida, ca_fchllegada, ca_diferencia,ca_piezas,ca_peso,ca_volumen,extract(YEAR from rs.ca_fchsalida) ,extract(MONTH from rs.ca_fchsalida)) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) 
                         WHERE ca_impoexpo = '" . Constantes::IMPO . "' and ca_transporte = '".$this->transporte."' and upper(ca_compania) like upper('%falabella%')  
                               and ca_traorigen= '".$this->pais_origen."' and ca_fchsalida BETWEEN '".$this->fechainicial."' and '".$this->fechafinal."'
                         ORDER BY ca_fchsalida";
@@ -619,12 +619,12 @@ class falabellaActions extends sfActions {
                 //echo $sql;
                 $this->resul = $st->fetchAll();
             }elseif($this->transporte=="Marítimo"){
-                $sql = "SELECT DISTINCT v.ca_idreporte, sq.ca_consecutivo_sub, sq.ca_fchsalida, sq.ca_fchllegada, sq.ca_diferencia, sq.ca_peso, sq.ca_ano1, sq.ca_mes1, v.ca_propiedades, v.ca_traorigen, v.ca_ciudestino, v.ca_transporte, v.ca_modalidad, tt.ca_concepto,
+                $sql = "SELECT DISTINCT v.ca_idreporte, sq.ca_consecutivo_sub, sq.ca_fchsalida, sq.ca_fchllegada, sq.ca_diferencia, sq.ca_peso, sq.ca_ano1, sq.ca_mes1, v.ca_propiedades, v.ca_traorigen, v.ca_ciudestino, v.ca_transporte, v.ca_modalidad, tt.ca_concepto, v.ca_nombre as proveedor,
                             ((SELECT sum(t.ca_liminferior) AS sum FROM tb_inoequipos_sea eq JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto WHERE eq.ca_referencia = m.ca_referencia AND eq.ca_idconcepto = tt.ca_idconcepto)) / 20 AS teus, 
                             (SELECT count(*) AS count FROM tb_inoequipos_sea eq WHERE eq.ca_referencia::text = m.ca_referencia::text AND eq.ca_idconcepto = tt.ca_idconcepto) AS ncontenedores, 
                             (SELECT sum(ca_peso) AS count FROM tb_inoclientes_sea ics WHERE ics.ca_referencia::text = m.ca_referencia::text ) AS ca_peso, 
-                            (SELECT sum(ca_numpiezas) AS count FROM tb_inoclientes_sea ics WHERE ics.ca_referencia::text = m.ca_referencia::text ) AS piezas, 
-                            (SELECT sum(ca_volumen) AS count FROM tb_inoclientes_sea ics WHERE ics.ca_referencia::text = m.ca_referencia::text ) AS volumen 
+                            (SELECT sum(ca_numpiezas) AS count FROM tb_inoclientes_sea ics WHERE ics.ca_referencia::text = m.ca_referencia::text ) AS ca_piezas, 
+                            (SELECT sum(ca_volumen) AS count FROM tb_inoclientes_sea ics WHERE ics.ca_referencia::text = m.ca_referencia::text ) AS ca_volumen 
                         FROM vi_repindicadores v
                                 LEFT OUTER JOIN (
                                     SELECT rp.ca_idreporte, rp.ca_consecutivo as ca_consecutivo_sub, rs.ca_fchsalida, rs.ca_fchllegada, CASE WHEN rs.ca_fchllegada-rs.ca_fchsalida <1 THEN '1'  else rs.ca_fchllegada-rs.ca_fchsalida  END AS ca_diferencia, 
@@ -637,7 +637,7 @@ class falabellaActions extends sfActions {
                                 JOIN tb_inomaestra_sea m ON m.ca_referencia = ics.ca_referencia
                                 JOIN tb_inoequipos_sea e ON e.ca_referencia = ics.ca_referencia
                                 JOIN tb_conceptos tt ON e.ca_idconcepto = tt.ca_idconcepto
-                        WHERE v.ca_impoexpo = '" . Constantes::IMPO . "' and v.ca_transporte = '".$this->transporte."' and upper(ca_compania) like upper('%falabella%')  
+                        WHERE v.ca_impoexpo IN ('" . Constantes::IMPO . "','" . Constantes::OTMDTA . "') and v.ca_transporte IN ('".$this->transporte."','Terrestre') and upper(ca_compania) like upper('%falabella%')  
                               and ca_traorigen= '".$this->pais_origen."' and ca_fchsalida BETWEEN '".$this->fechainicial."' and '".$this->fechafinal."'
                         ORDER BY ca_fchsalida";
                 //exit;
@@ -730,3 +730,4 @@ class falabellaActions extends sfActions {
     }
 }
 ?>
+
