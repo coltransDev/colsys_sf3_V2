@@ -528,7 +528,7 @@ class Reporte extends BaseReporte {
     }
     
     public function getEsOtm() {
-        if($this->getCaContinuacion()=="OTM" || $this->getCaContOrigen()!="" || $this->getCaImpoexpo()==Constantes::OTMDTA1 || $this->getCaImpoexpo()==Constantes::OTMDTA)
+        if($this->getCaContinuacion()=="OTM" ||  $this->getCaContOrigen()!="" || $this->getCaImpoexpo()==Constantes::OTMDTA1 || $this->getCaImpoexpo()==Constantes::OTMDTA)
         {
             //echo $this->getCaImpoexpo();
             return true;
