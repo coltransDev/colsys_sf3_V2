@@ -181,6 +181,14 @@ foreach( $departamentos as $departamento ){
                         actionTicket: 'Abierto',
                         idgroup: '<?=$grupo->getCaIdgroup()?>',
                         group: '<?=$grupo->getCaName()?>'
+                    },
+                    {
+                        text:'Todos los tickets del área',
+                        leaf:true,
+                        action: 'tickets',
+                        actionTicket: 'Todos',
+                        idgroup: '<?=$grupo->getCaIdgroup()?>',
+                        group: '<?=$grupo->getCaName()?>'
                     }
                 ]
 			}

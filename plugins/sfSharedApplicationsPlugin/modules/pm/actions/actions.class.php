@@ -97,7 +97,7 @@ class pmActions extends sfActions {
         if ($request->getParameter("actionTicket")) {
             if( $request->getParameter("actionTicket")=="Cerrado" ){
                 $q->addWhere("h.ca_closedat IS NOT NULL");
-            }else{
+            }elseif($request->getParameter("actionTicket")=="Abierto"){
                 $q->addWhere("h.ca_closedat IS NULL");
             }
         }
