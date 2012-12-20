@@ -304,41 +304,47 @@ class RepStatus extends BaseRepStatus
                     }
                     else
                     {
-                        $suc=array();
-                        switch($reporte->getCaContinuacionConf())
+                        
+                        $ps=$etapa->getPerfilxTipo('OTM');
+                        
+                        if(in_array('cordinador-de-otm', $etapa->getPerfilxTipo('OTM')))
                         {
-                            case "BOG":
-                                $suc[]='OBO';
-                                $suc[]='BOG';
-                            break;
-                            case "OBO":
-                                $suc[]='OBO';
-                                $suc[]='BOG';
+                            $suc=array();
+                            switch($reporte->getCaContinuacionConf())
+                            {
+                                case "BOG":
+                                    $suc[]='OBO';
+                                    $suc[]='BOG';
+                                break;
+                                case "OBO":
+                                    $suc[]='OBO';
+                                    $suc[]='BOG';
 
-                            break;
+                                break;
 
-                            case "MDE":
-                                $suc[]='OMD';
-                                $suc[]='MDE';                    
-                            break; 
-                            case "OMD":
-                                $suc[]='OMD';
-                                $suc[]='MDE';                    
-                            break; 
-                        }
-                            
-                        $coordinadores = Doctrine::getTable("Usuario")
-                           ->createQuery("u")
-                           ->select("u.ca_login,u.ca_nombre,u.ca_email")
-                           ->innerJoin("u.UsuarioPerfil up")
-                           ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','cordinador-de-otm'))
-                           ->andWhereIn("u.ca_idsucursal",$suc)               
-                           ->addOrderBy("u.ca_idsucursal")
-                           ->addOrderBy("u.ca_nombre")
-                           ->execute();
-                        foreach($coordinadores as $coordinador)
-                        {
-                            $email->addCc( $coordinador->getCaEmail() );
+                                case "MDE":
+                                    $suc[]='OMD';
+                                    $suc[]='MDE';                    
+                                break; 
+                                case "OMD":
+                                    $suc[]='OMD';
+                                    $suc[]='MDE';                    
+                                break; 
+                            }
+
+                            $coordinadores = Doctrine::getTable("Usuario")
+                               ->createQuery("u")
+                               ->select("u.ca_login,u.ca_nombre,u.ca_email")
+                               ->innerJoin("u.UsuarioPerfil up")
+                               ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','cordinador-de-otm'))
+                               ->andWhereIn("u.ca_idsucursal",$suc)               
+                               ->addOrderBy("u.ca_idsucursal")
+                               ->addOrderBy("u.ca_nombre")
+                               ->execute();
+                            foreach($coordinadores as $coordinador)
+                            {
+                                $email->addCc( $coordinador->getCaEmail() );
+                            }
                         }
                     }
                 }
