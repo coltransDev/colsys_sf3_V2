@@ -314,6 +314,8 @@ class traficosActions extends sfActions
         
         if($this->modo!="otm")
             $q->addWhere("t.ca_departamento = ? OR t.ca_departamento IS NULL","Tráficos");
+        
+        $q->addWhere("t.ca_usueliminado is NULL");
 		$q->addOrderBy("t.ca_orden");
 		$this->form->setQueryIdEtapa( $q );
 		$this->etapas = $q->execute();

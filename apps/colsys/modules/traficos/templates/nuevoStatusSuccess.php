@@ -324,6 +324,19 @@ echo $form['transporte']->render();
 				}else{
 					echo "- No se ha definido coordinador de aduana en Maestra de Clientes<br />";
 				}
+                
+                if( ($reporte->getCaTransporte()==constantes::MARITIMO && $reporte->getCaImpoexpo()==constantes::IMPO) && $reporte->getCaContinuacion()!="OTM")
+                    {                    
+                        $cargo="Jefe de Aduanas Puerto";
+                    }
+                    else if(($reporte->getCaTransporte()==constantes::AEREO && $reporte->getCaImpoexpo()==constantes::IMPO) || $reporte->getCaContinuacion()=="OTM")
+                    {
+                        $cargo="Jefe Dpto. Aduana";
+                    }
+                    $cargo1='Coordinador Control Riesgo Aduana';
+                    echo " &nbsp;&nbsp;&nbsp;".$cargo."<br />";
+                    echo " &nbsp;&nbsp;&nbsp;".$cargo1."<br />";
+                
 			}			
 			?>
             </div>
