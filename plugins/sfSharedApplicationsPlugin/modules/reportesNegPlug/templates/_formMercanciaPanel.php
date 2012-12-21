@@ -57,7 +57,7 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
                             id:"ca_subarancelaria",
                             width:120,
                             hidden: true,
-                            minLength:10
+                            minLength:4
                         }
 						<?
                         
