@@ -171,7 +171,6 @@ class confirmacionesActions extends sfActions {
                  ->execute();
       }
 
-
       $q = Doctrine::getTable("InoClientesSea")
               ->createQuery("c")
               ->select("c.*")
@@ -181,6 +180,7 @@ class confirmacionesActions extends sfActions {
       if ($this->modo == "otm") {
          $q->addWhere("c.ca_continuacion != ?", 'N/A');
       }
+//      echo $q->getSqlQuery();
       $this->inoClientes = $q->execute();
    }
 
@@ -383,7 +383,6 @@ class confirmacionesActions extends sfActions {
             $status->setCaIdreporte($reporte->getCaIdreporte());
             $status->setCaFchstatus(date("Y-m-d H:i:s"));
 
-
             $status->setCaComentarios($this->getRequestParameter("notas"));
             $status->setCaFchenvio(date("Y-m-d H:i:s"));
             $status->setCaUsuenvio($this->getUser()->getUserId());
@@ -461,11 +460,10 @@ class confirmacionesActions extends sfActions {
             if ($tipo_msg == "Conf" || $tipo_msg == "Puerto") {
                $status->setCaIntroduccion($this->getRequestParameter("intro_body"));
                $status->setStatus($this->getRequestParameter("mensaje_" . $oid));
-            } else if ($tipo_msg == "Conf" || $tipo_msg == "Cont") {
-               $options["subject"]="Departamento de Contenedores";
+            } else if ($tipo_msg == "Cont") {
+               $options["subject"]="División de Contenedores";
                $status->setCaIntroduccion($this->getRequestParameter("status_intro_cont"));
-               $status->setStatus($this->getRequestParameter("mensaje_" . $oid));
-               $mensaje = $this->getRequestParameter("status_body_cont");
+               $mensaje = $this->getRequestParameter("status_body_cont") . "\n";
                if ($this->getRequestParameter("mensaje_" . $oid)) {
                   $mensaje .= "\n" . $this->getRequestParameter("mensaje_" . $oid);
                }

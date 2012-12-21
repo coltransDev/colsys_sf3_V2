@@ -406,12 +406,13 @@ function cambiarTipoMsg( value ){
 						</tr>
 						<?
                   $agente_aduana = "";
-                  /*
-                  $inoClientes = $referencia->getInoClientesSea();
-                  foreach($inoClientes as $inoCliente){
-                     $agente_aduana = $inoClienteSea; //;->getCaNombre()
+                  
+                  $infoAduanas = $referencia->getInoClientesSea();
+                  foreach($infoAduanas as $infoAduana){
+                     $agAduana = $infoAduana->getAduana();
+                     $agente_aduana = $agAduana->getCaNombre();
                   }
-                  */
+                  
                   $intro_body_desc = "\n\n";
 						foreach( $inoEquipos as $inoEquipo ){						
 							$inoContrato = $inoEquipo->getInoContratosSea();
@@ -461,7 +462,7 @@ function cambiarTipoMsg( value ){
 				<td class="partir">&nbsp;</td>
 				<td class="partir">Status OTM:&nbsp;</td>
 				<td class="mostrar" colspan="4"><b>Introducción al Mensaje:</b><br />
-					<textarea name='intro_body' wrap="virtual" rows="3" cols="93"><?=$textos['mensajeConfOTM']?></textarea>
+					<textarea name='intro_body_otm' wrap="virtual" rows="3" cols="93"><?=$textos['mensajeConfOTM']?></textarea>
                 </td>				
 			</tr>
 			<?
