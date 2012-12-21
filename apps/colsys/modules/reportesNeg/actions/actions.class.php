@@ -1050,7 +1050,7 @@ class reportesNegActions extends sfActions
                 }
             }
             
-            if($request->getParameter("aduanas-checkbox")== "on"  )
+            /*if($request->getParameter("aduanas-checkbox")== "on"  )
             {
                 if($reporte->getCaImpoexpo()==constantes::IMPO)
                 {
@@ -1098,7 +1098,7 @@ class reportesNegActions extends sfActions
                     }
                 }
                 //echo $ca_confirmar_clie;
-            }
+            }*/
             
             if($ca_confirmar_clie!="" )
             {
