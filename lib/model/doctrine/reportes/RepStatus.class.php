@@ -303,10 +303,7 @@ class RepStatus extends BaseRepStatus
                         $email->addCc( $coordinador->getCaEmail() );
                     }
                     else
-                    {
-                        
-                        $ps=$etapa->getPerfilxTipo('OTM');
-                        
+                    {                        
                         if(in_array('cordinador-de-otm', $etapa->getPerfilxTipo('OTM')))
                         {
                             $suc=array();
@@ -359,6 +356,52 @@ class RepStatus extends BaseRepStatus
 				if( $coordinador ){
 					$email->addCc( $coordinador->getCaEmail() );
 				}
+                $perfiles=array();
+                
+                
+                if( ($reporte->getCaTransporte()==constantes::MARITIMO && $reporte->getCaImpoexpo()==constantes::IMPO) && $reporte->getCaContinuacion()!="OTM")
+                {
+                    if ( $reporte->getCaDeclaracionant() == "true" || $reporte->getCaDeclaracionant() == "TRUE" || $reporte->getCaDeclaracionant() == "1" || $reporte->getCaDeclaracionant() == 1  )
+                        $perfiles=array("Jefe de Aduanas Puerto","Coordinador Control Riesgo Aduana");                    
+                    else
+                        $perfiles=$etapa->getPerfilxTipo('ADUANA-PUERTO');
+                }
+                else if(($reporte->getCaTransporte()==constantes::AEREO && $reporte->getCaImpoexpo()==constantes::IMPO) || $reporte->getCaContinuacion()=="OTM")
+                {
+                    if ( $reporte->getCaDeclaracionant() == "true" || $reporte->getCaDeclaracionant() == "TRUE" || $reporte->getCaDeclaracionant() == "1" || $reporte->getCaDeclaracionant() == 1  )
+                        $perfiles=array("Jefe Dpto. Aduana","Coordinador Control Riesgo Aduana");
+                    else
+                        $perfiles= $etapa->getPerfilxTipo('ADUANA-AEREO');
+                }
+                if(count($perfiles)>0)
+                {
+                    $suc=$user->getSucursal();
+                    if($suc=="ABG" || $suc=="BGA" || $suc=="PEI"  )
+                    {
+                        if($suc=="BGA")
+                            $cargo1='Sin cargo';
+                        $suc="BOG";
+                    }
+                    $sucursal=Doctrine::getTable("Sucursal")->find( $suc );                
+                    if(!$sucursal)
+                        $sucursal=new Sucursal();                    
+
+                    //echo $cargo.'--Coordinador Control Riesgo Aduana---'.$sucursal->getCaNombre();
+
+                    {    
+                        $q = Doctrine::getTable("Usuario")
+                                        ->createQuery("c")
+                                        ->select("c.ca_email")
+                                        ->innerJoin("c.Sucursal s")                                
+                                        ->where("s.ca_nombre = ?", array($sucursal->getCaNombre()))
+                                        ->andWhereIn("c.ca_cargo",$perfiles);
+                        $jef_adu=$q->execute();
+                        foreach($jef_adu as $j)
+                        {
+                            $email->addCc( $j->getCaEmail() );                            
+                        }
+                    }
+                }
 			}
 		}        
         if ( $reporte->getCaDeclaracionant() == "true" || $reporte->getCaDeclaracionant() == "TRUE" || $reporte->getCaDeclaracionant() == "1" || $reporte->getCaDeclaracionant() == 1  ){

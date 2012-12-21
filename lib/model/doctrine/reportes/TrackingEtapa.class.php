@@ -31,15 +31,17 @@ class TrackingEtapa extends BaseTrackingEtapa
     public function getPerfilxTipo($tipo)
     {
         $r_perfiles = array();
-        $perfiles = Doctrine::getTable("TrackingPerfil")
+        $q = Doctrine::getTable("TrackingPerfil")
                             ->createQuery("t")
                             ->select("t.ca_perfil")
-                            ->where("t.ca_idetapa = ? AND t.ca_tipo = ?  ", array($this->getCaIdetapa(), $tipo))
-                            ->execute();
+                            ->where("t.ca_idetapa = ? AND t.ca_tipo = ?  ", array($this->getCaIdetapa(), $tipo));
+        $perfiles=$q->execute();
         foreach($perfiles as $p)
         {
             $r_perfiles[]=$p->getCaPerfil();
         }
+//        echo "Tipo:".$tipo."<BR>ETAPA:".$this->getCaIdetapa()."<br>";
+//        echo $q->getSqlQuery()."<br>";
         return $r_perfiles;        
     }
 }
