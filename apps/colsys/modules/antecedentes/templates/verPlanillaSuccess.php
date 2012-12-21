@@ -31,8 +31,15 @@ if( $format!="email" ){
         <form name="form1" id="form1" method="post" action="<?=url_for("antecedentes/enviarAntecedentes?ref=".str_replace(".","|",$ref->getCaReferencia()))?>" >
             <input type="hidden" name="checkObservaciones" id="checkObservaciones" value="" />
         <?
-
-        $asunto  = "Envio de Antecedentes ".$ref->getCaReferencia();
+        
+        foreach( $hijas as $hija ){
+            if($hija->getReporte()->getCaDeclaracionant()==true){
+                $da = " (***Declaración Anticipada***)";
+                break;
+            }
+        }
+        
+        $asunto  = "Envio de Antecedentes ".$ref->getCaReferencia().$da;
         $mensaje = "Adjunto encontrará los antecedentes de la referencia ".$ref->getCaReferencia();
         include_component("email", "formEmail", array("subject"=>$asunto,"message"=>$mensaje, "contacts"=>$contactos));
         
@@ -84,7 +91,13 @@ if( $format!="email" ){
             <td>
                 <b>Destino:</b> <?=$ref->getDestino()->getTrafico()->getCaNombre()." - ".$ref->getDestino()->getCaCiudad()?>
             </td>
-            <td>&nbsp;</td>
+            <td>
+            <?if($ref->getCaTipo()){?>
+                <b>Tipo:</b> <?=$ref->getCaTipo()?>
+            <?}else{?>
+                &nbsp;
+            <?}?>
+            </td>
         </tr>
         <tr>
             <td>
@@ -170,11 +183,11 @@ if( $format!="email" ){
         foreach( $hijas as $hija ){
             if($fechaAnt=="")
                 $fechaAnt=$hija->getCaFchantecedentes();
-            $tpeso+=$hija->getCaPeso();
-            $tvolumen+=$hija->getCaVolumen();
-            $tpiezas+=$hija->getCaNumpiezas();
+                $tpeso+=$hija->getCaPeso();
+                $tvolumen+=$hija->getCaVolumen();
+                $tpiezas+=$hija->getCaNumpiezas();
         ?>
-        <tr>
+        <tr style="background-color: <?echo ($hija->getReporte()->getCaDeclaracionant()==true)?"#f94949":"white"?>">
             <td>
                 <?=$hija->getCliente()->getCaCompania()?>
             </td>

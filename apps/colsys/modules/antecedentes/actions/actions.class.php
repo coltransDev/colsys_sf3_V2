@@ -223,6 +223,8 @@ class antecedentesActions extends sfActions {
             $this->forward404Unless($mbls);
             $viaje = $request->getParameter("viaje");
             $fchmaster = $request->getParameter("fchmaster");
+            $observaciones = $request->getParameter("observaciones");
+            $tipo = $request->getParameter("tipo");
 
             $idlinea = ($request->getParameter("idlinea")?$request->getParameter("idlinea"):"0");
 
@@ -259,6 +261,8 @@ class antecedentesActions extends sfActions {
             $master->setCaMbls($mbls);
             $master->setCaFchmbls($fchmaster);
             $master->setCa_ciclo($viaje);
+            $master->setCaObservaciones($observaciones);
+            $master->setCaTipo($tipo);
             $master->setCaProvisional(true);
             if($this->user->getIdSucursal()=="BOG")
                 $master->setCaCarpeta(true);
@@ -654,12 +658,14 @@ class antecedentesActions extends sfActions {
         $data["fchllegada"] =   $ref->getCaFcharribo();
         $data["idlinea"]    =   $ref->getCaIdlinea();
 
-//        $ref->getCaMbls();
+        //$ref->getCaMbls();
         $data["mbls"] = $ref->getCaMbls();
         //if($arrMbls[1])
-            $data["fchmaster"] = $ref->getCaFchmbls();
+        $data["fchmaster"] = $ref->getCaFchmbls();
 
         $data["viaje"] = $ref->getCaCiclo();
+        $data["observaciones"] = $ref->getCaObservaciones();
+        $data["tipo"] = $ref->getCaTipo();
 
         $data["linea"] = $ref->getIdsProveedor()->getIds()->getCaNombre();
 

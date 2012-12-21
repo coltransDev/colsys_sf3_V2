@@ -9,6 +9,7 @@ include_component("widgets", "widgetTransporte");
 include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetLinea");
 include_component("widgets", "widgetCiudad");
+include_component("widgets", "widgetParametros",array("caso_uso"=>"CU049,CU119"));
 ?>
 
 <script type="text/javascript">
@@ -101,6 +102,15 @@ include_component("widgets", "widgetCiudad");
                                 fieldLabel: "No viaje",
                                 type: 'textfield',
                                 allowBlank: false
+                            },
+                            {
+                                name: "observaciones",
+                                id: 'observaciones',
+                                fieldLabel: "Observaciones",
+                                type: 'textfield',
+                                width:330,
+                                height:50
+                                //allowBlank: false
                             }
                         ]
                     },
@@ -111,7 +121,7 @@ include_component("widgets", "widgetCiudad");
                         xtype: 'fieldset',
                         defaultType: 'textfield',
                         items: [  
-                            {xtype: "label",fieldLabel: ' '},
+                            {xtype: "label",fieldLabel: ' '},                            
                             new WidgetLinea({fieldLabel: 'Linea',
                                 linkTransporte: "transporte",
                                 name: 'linea',
@@ -142,9 +152,17 @@ include_component("widgets", "widgetCiudad");
                                 fieldLabel: "Fecha de Master",
                                 format: "Y-m-d",
                                 allowBlank: false
+                            }),
+                            new WidgetParametros({
+                                id:'tipo',
+                                name:'tipo',
+                                fieldLabel: "Tipo",
+                                caso_uso:"CU119",
+                                width:150,
+                                idvalor:"valor"
                             })
                         ]
-                    }
+                    }                    
                 ]
             }];        
         this.tbar = [
