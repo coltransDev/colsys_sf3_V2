@@ -36,7 +36,8 @@ OTM_LCL: |
   •  Formulario  DIAN para  continuación  de  viaje.
   •  Elaboración  OTM para continuación  de  viaje.
   •  Coordinación  logística.
-  •  Tres  días libres  de bodegajes a  partir del  arribo del buque  a puerto.
+  •  Póliza DIAN-Decreto 2685/99 para Continuación de Viaje.
+  •  Tres  (3) días libres  de bodegajes en puerto a  partir del  arribo del buque  a puerto Colombiano.
   •  Cargue al camión en  el  terminal  marítimo.
   •  Transporte  terrestre  Puerto Colombiano  -  destino.
   •  Entrega de documentos sellados por la DIAN en destino en las  oficinas  de  Coltrans S.A.  Bogotá.
@@ -44,18 +45,21 @@ OTM_LCL: |
   Las anteriores tarifas no incluyen:
   
   • Uso de instalaciones portuarias.
-  • Bodegaje en puerto a partir del cuarto día  de arribo  del buque a  puerto $12,000,oo ton/m3 min $20,000,oo.
-  • Servicio documental por administración de  inventario de  SPRC  USD 29,00.
-  • Inspección Aduanera $4,000,oo min $20,000,oo.
-  • Movimiento Policía Fiscal.
-  • Seguros  a  la mercancía en el trayecto terrestre nacional.
-  • El amparo del exceso de la Poliza del Transportista cuyo monto supere $300,000,000,oo.
-  • Servicio de Acompañamiento Vehicular o Escolta.
-  • Descargue de la mercancía en la bodega de destino.
-  • Almacenaje en bodega de destino.
-  • Trámite de cesión de derechos y transporte  a zona de  destino en caso de requerir otro usuario en Zona Franca.
+  • Bodegaje en puerto a  partir del cuarto (4) día  de arribo  del buque a  puerto  $12,000,oo ton/m3 Min $20,000,oo
+  • Servicio documental  por administración de  inventario de  SPRC  $58.000,oo
+  • Inspección Aduanera  $4,000,oo min $20,000,oo CTG
+  • Inspección Aduanera Puerto Buenaventura $108.000,oo
+  • Alquiler de Estibas COP811,oo , Servicio por dia o fracción
+  • Movimiento Policía Fiscal al costo
+  • Seguros  a  la mercancía en el trayecto terrestre nacional
+  • El amparo del exceso de la Poliza del Transportista cuyo monto supere $300,000,000,oo
+  • Servicio de Acompañamiento Vehicular o Escolta
+  • Descargue de la mercancía en la bodega de destino
+  • Almacenaje en bodega de destino
+  • Trámite de cesión de derechos y transporte  a Zona de  destino en caso de requerir otro usuario en Zona Franca.
   • Costos adicionales que se puedan generar para el  manejo  de  mercancías  peligrosas $150,000,oo
   • Tramite certificación INVIMA
+  • Stand By de vehículos
   
   Nota Importante: Es responsabilidad del importador, los perjuicios a que haya lugar como consecuencia de errores en la documentación                                                                                                                                                                                                              
   suministrada, así como de las sanciones como consecuencia de requerimientos aduaneros por faltantes o sobrantes no justificados.                                                                                                                                                                                                              
@@ -77,45 +81,52 @@ OTM_LCL: |
   
   REQUISITOS PARA EL TRAMITE  DEL OTM  
   
-  -COPIA DE LA FACTURA COMERCIAL CON TÉRMINOS DE COMPRA, PIEZAS Y PESO 
-  -COPIA POLIZA DE SEGUROS DE LA MERCANCIA INCLUYENDO  LOS TRIBUTOS ADUANEROS 
-  -COPIA DE LA LISTA DE EMPAQUE 
-  -ORIGINAL DEL HBL
+  -Copia de la factura Comercial acorde a los artículos 187 y 188 de la Resolución 4240/00 Con término de Negociación, piezas, pesos, puerto de embarque.
+  -COPIA POLIZA DE SEGUROS DE LA MERCANCIA INCLUYENDO LOS TRIBUTOS ADUANEROS
+  -Copia de la Lista de Empaque
+  -Original del HBL
+  -Descripción en español de la mercancía
 
 OTM_FCLTitulo:  NOTAS INCLUYE Y NO INCLUYE EN CONTINUACIÓN DE VIAJE (OTM/DTA) - CARGA FCL
 OTM_FCL: |  
   Las anteriores tarifas incluyen
   
-  • Uso  de instalaciones  portuarias 
-  • Tres  días libres  de  bodegajes a  partir del arribo  de  la  carga a  puerto
+  • Tres  (3) días libres  de  bodegajes en puerto a  partir del arribo  de  la  carga a  puerto Colombiano.
   • Transporte  terrestre Puerto Colombiano - Destino
   • Formulario  DIAN  para  continuación de  viaje
+  • Póliza DIAN-Decreto 2685/99 para Continuación de Viaje
   • Elaboración  y  coordinación  OTM  para  continuación  de  viaje
-  • Sellos para  el contendor
+  • Precintos para  el contendor
   • Coordinación Logística
   • Entrega de documentos sellados por la DIAN en destino en las oficinas de Coltrans S.A.S.    
   
   
   Las anteriores  tarifas NO  incluyen : 
   
-  • Servicio documental, administración de inventario de SPRC  USD29,oo
+  • Servicio documental, administración de inventario de SPRC  $58.000,oo
   • Seguros  a  la  mercancía en el trayecto terrestre Nacional
   • El amparo del exceso de poliza del Transportista cuyo monto supere $300,000,000,oo
-  • Servicio  de  escolta  o acompañamiento vehicular
-  • Vaciado de contenedor para inspecciòn fìsica 
-  • Movilización  contenedores  para  inspección  física 
+  • Servicio  de  escolta  o acompañamiento vehicular en el trayecto terrestre.
+  • Inspección física a la carga solicitada por las autoridades aduaneras	
+  • Fiscalización de precintos
+  • Uso de Instalaciones Portuarias
+  • Vaciado de contenedor para inspección fìsica
+  • Movilización  contenedores  para  inspección  física
   • Bodegajes  en  puerto a  partir  del  cuarto  dìa  de  arribo  de  la  mercancía  a  puerto    
   • Repeso USD85,oo
   • Firma de contrato de comodato 
   • Stand by   del vehículo por  demoras  ajenas  en  el  descargue
   • Almacenajes   en bodega de destino 
-  • Devolución de Contenedores ( drop off ) Depende de cada naviera
+  • Devolución de Contenedores ( 7 dias para devolver a puerto - en Compensación).
+  • (Drop off ) Depende de cada naviera
   • Demoras de  contenedor
   • Tramite Ica, Dasalud, Invima 
   • Descargue, vaciado del contenedor en Bodega de destino
   • Limpieza del contenedor
   • Recargo IMO $150,000,oo 
   • Costos adicionales que se puedan generar para el manejo de mercancías peligrosas
+  • Gastos portuarios generados adicional a los no especificados.
+  • Recargo Contenedor RF $300.000,oo
   
   Nota Importante: Es responsabilidad del importador, los perjuicios a que haya lugar como consecuencia de errores en la documentación suministrada, así como de las sanciones como consecuencia de requerimientos aduaneros por faltantes o sobrantes no justificados.  
   
@@ -128,17 +139,18 @@ OTM_FCL: |
   • Cigarrillos
   • Electrodomésticos
   • Adornos navideños
-  • Productos rperecederos
+  • Productos perecederos
   • Armas y explosivos
   • Teléfonos celulares / llantas 
   Y todas aquellas mercancías con restricciones aduaneras legales vigentes
   
   REQUISITOS PARA EL TRAMITE  DEL OTM
   
-  -COPIA DE LA FACTURA COMERCIAL CON TÉRMINOS DE COMPRA, PIEZAS Y PESO    
-  -COPIA POLIZA DE SEGUROS DE LA MERCANCIA INCLUYENDO  LOS TRIBUTOS ADUANEROS    
-  -COPIA DE LA LISTA DE EMPAQUE 
-  -ORIGINAL DEL HBL
+  -Copia de la factura Comercial acorde a los artículos 187 y 188 de la Resolución 4240/00 Con término de Negociación, piezas, pesos, puerto de embarque.
+  -COPIA POLIZA DE SEGUROS DE LA MERCANCIA INCLUYENDO  LOS TRIBUTOS ADUANEROS
+  -Copia de la Lista de Empaque
+  -Original del HBL
+  -Descripción en español de la mercancía.
 
 
 seguroTitulo: NOTAS DE SEGURO DE TRANSPORTE Y ADMINISTRACION DE RIESGO  
@@ -157,7 +169,7 @@ seguro: |
   4. AMPAROS
       • Cobertura completa: amparo básico, falta de entrega, avería particular (se excluye para maquinaria o mercancía usada), saqueo (se
         excluye para maquinaria o mercancía usada), huelga (trayectos interiores). Incluye la cobertura de terrorismo y guerra.
-      • Amparos adicionales: Lucro cesante y gastos adicionales (hasta un 10 %)
+      • Amparos adicionales: Lucro cesante y gastos adicionales (hasta un 20 %) y seguro al contenedor deben ser solicitados expresamente por el cliente.
     NO ESTA AMPARADO:
       • Toma de muestras por autoridad competente, comiso, embargo, secuestro, retención,aprehensión o en general, cualquier acto
         de autoridad sobre los bienes asegurados o sobre su medio de transporte.
@@ -170,8 +182,9 @@ seguro: |
       • Demoras en la entrega y pérdidas de mercado.
       • Mal empaque de las mercancías cuando el asegurado tiene el control sobre el mismo.
 
-  5. DEDUCIBLES: No se amparan reclamaciones inferiores a 2 SMMLV.
-  
+  5. DEDUCIBLES: No se amparan reclamaciones inferiores a 2 SMMLV. A partir de esta cifra los deducibles son:
+      a) Mercancía de alto riesgo en despachos mayores a $100.000.000, 10 % sobre el valor de la pérdida mínimo 3 SMMLV.
+      b) Otro tipo de despachos: Sin deducible.
   6. MERCANCÍAS DE ALTO RIESGO: Llantas y neumáticos, algodón en pacas, productos biomédicos, teléfonos celulares o equivalentes, juegos de video, instrumentos musicales, software de videos, pieles, cigarrillos, licores, cervezas, vinos, productos farmacéuticos y veterinarios, vehículos de cualquier clase, incluyendo botes o aviones, incluyendo los movilizados por sus propios medios, repuestos automotores, Material CKD, Zinc, cobre o aluminio, perfumes, colonias y productos similares (incluyendo productos de aseo personal), Electrodomésticos, sus partes, accesorios o repuestos para los mismos, libros e impresos y textos escolares, pinturas, alimentos enlatados, leche en polvo, polipropileno, polietileno y látex en bruto o a granel, equipos de computo y/o componentes o accesorios, calzado, textiles, confecciones y cueros en productos terminados, juguetería, café y sus derivados, papel y/o productos elaborados con pulpa de papel tales como: papel higiénico, servilletas, toallas para cocina, toallas sanitarias y pañales desechables.
 
   7. EXCLUSIONES: Se considerarán excluidos los despachos que no cumplan las siguientes condiciones:
@@ -180,6 +193,12 @@ seguro: |
          $150.000.000 deberán llevar acompañamiento vehicular.
       b) Mercancía de bajo riesgo; despachos con un valor asegurable superior a
          $300.000.000 deberán llevar acompañamiento vehicular.
+      
+      Definición de Escolta: se entiende por escolta vehicular, el vehículo particular o público con personal de empresas especializadas 
+      en vigilancia de mercancías en todas sus modalidades, que cumplan con todas las normas técnicas, administrativas y legales para 
+      funcionar según su naturaleza, con su respectivo conductor, el cual tiene como obligación acompañar al vehículo que transporta
+      las mercancías durante todo el trayecto, es decir, desde el sitio del despacho hasta su destino final, en orden a cumplir a cabalidad 
+      la función de custodia, control y cuidado que su labor profesional les exige.
 
       La firma que se utilice para el acompañamiento deberá cumplir con los siguientes requisitos:
       • No ser personal armado.
