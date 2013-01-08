@@ -446,7 +446,7 @@ var idreporte='<?=$idreporte?>';
                         
                         if(res.data.ca_declaracionant==true)
                         {
-                            Ext.getCmp("ca_subarancelaria").show();
+                            Ext.getCmp("ca_subarancelaria").show();                            
                         }
                         Ext.getCmp('panel-conceptos-fletes').store.reload();
                         
