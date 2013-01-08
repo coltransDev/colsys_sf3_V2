@@ -186,6 +186,7 @@ class widgetsActions extends sfActions {
             $this->modalidades[] = $row;
         }
 
+        
         $this->responseArray = array("root" => $this->modalidades, "total" => count($this->modalidades), "success" => true);
         $this->setTemplate("responseTemplate");
     }
@@ -264,7 +265,7 @@ class widgetsActions extends sfActions {
         $q = Doctrine_Query::create()
                 ->select("r.ca_consecutivo, r.ca_idreporte, r.ca_version")
                 ->from("Reporte r")
-                ->where("r.ca_consecutivo LIKE ?", $criterio . "%")
+                ->where("UPPER(r.ca_consecutivo) LIKE ?", $criterio . "%")
                 ->addWhere("r.ca_usuanulado IS NULL $wheretmp")
                 ->addWhere("r.ca_version = (SELECT MAX(r2.ca_version) FROM Reporte r2 WHERE r2.ca_consecutivo = r.ca_consecutivo AND ca_usuanulado IS NULL $wheretmp ) ")
                 ->addOrderBy("r.ca_fchcreado DESC")
