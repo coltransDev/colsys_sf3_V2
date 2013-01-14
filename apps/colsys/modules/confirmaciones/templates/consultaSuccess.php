@@ -35,7 +35,7 @@ function validarFormConfirmacion(){
     ?>
 
     var oids = <?=json_encode($oids);?>;
-				
+    		
     for( i in oids ){        
         if(  typeof(oids[i])=="number" ){
             var checkbox = document.getElementById("checkbox_"+oids[i]);            
@@ -65,13 +65,38 @@ function validarFormConfirmacion(){
     }
 	if( $modo=="otm"){
 		?>		
-		for( i in oids ){
+		for( i in oids ){            
             if(  typeof(oids[i])=="number" ){
                 var checkbox = document.getElementById("checkbox_"+oids[i]);
+                var fchrecibo = document.getElementById("fchrecibido_"+oids[i]);
+                var horarecibo = document.getElementById("horarecibido_"+oids[i]);
+                var now = new Date();
+                var currentDate = formatDate(now);
+                var currentHours = formatHours(now);
+                
                 if( checkbox.checked ){
                     if( document.getElementById("divmessage_"+oids[i]).innerHTML=="" && document.getElementById("mensaje_"+oids[i]).value=="" ){
                         alert("Por favor coloque un mensaje para el status");
                         document.getElementById("mensaje_"+oids[i]).focus();
+                        return false;
+                    }
+                    if( fchrecibo.value=="" ){
+                        alert("Por favor coloque la FECHA de recibo del Status");
+                        fchrecibo.focus();
+                        return false;
+                    }
+                    if( horarecibo.value=="" ){
+                        alert("Por favor coloque la HORA de recibo del Status");
+                        horarecibo.focus();
+                        return false;
+                    }
+                    if(fchrecibo.value > currentDate){
+                        alert("La fecha recibo status es mayor a la fecha actual");
+                        fchrecibo.focus();
+                        return false;
+                    }else if(horarecibo.value > currentHours){
+                        alert("La hora de recibo status es mayor a la hora actual");
+                        horarecibo.focus();
                         return false;
                     }
                 }
@@ -317,6 +342,24 @@ function cambiarTipoMsg( value ){
         cambiarTextosOTM( value );
 }
 
+function formatDate(date){
+    
+        var fullDate = date;
+        var twoDigitMonth = fullDate.getMonth()+1+'';if(twoDigitMonth.length==1)  twoDigitMonth='0' +twoDigitMonth;
+        var twoDigitDate = fullDate.getDate()+'';if(twoDigitDate.length==1) twoDigitDate='0' +twoDigitDate;
+        var currentDate = fullDate.getFullYear()+'-'+twoDigitMonth+ '-' +twoDigitDate;
+    
+    return currentDate;
+}
+function formatHours(date){
+    
+        var fullDate = date;
+        var twoDigitHours = fullDate.getHours(); if (twoDigitHours.length==1) twoDigitHours="0"+ twoDigitHours;
+        var twoDigitMinutes = fullDate.getMinutes(); if (twoDigitMinutes.length==1) twoDigitMinutes="0"+ twoDigitMinutes;
+        var currentHour = twoDigitHours+":"+twoDigitMinutes;
+        
+    return currentHour;
+}
 
 
 </script>

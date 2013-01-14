@@ -386,6 +386,11 @@ class confirmacionesActions extends sfActions {
             $status->setCaComentarios($this->getRequestParameter("notas"));
             $status->setCaFchenvio(date("Y-m-d H:i:s"));
             $status->setCaUsuenvio($this->getUser()->getUserId());
+            
+            if( $request->getParameter("fchrecibido_".$oid) ){
+                $horaRecibo =  $request->getParameter("horarecibido_".$oid);
+                $status->setCaFchrecibo( Utils::parseDate($request->getParameter("fchrecibido_".$oid), "Y-m-d")." ".$horaRecibo );
+            }
 
             if ($ultimostatus) {
                $status->setCaPiezas($ultimostatus->getCaPiezas());

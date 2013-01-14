@@ -118,33 +118,29 @@ $j=0;
         <td class="listar" colspan="4"><b>Proveedor:</b><br />
                 <?=$inoCliente->getCaProveedor()?></td>        
     </tr>
-    <?
-            if( $modo=="otm" ){
-            ?>
+<?
+    if( $modo=="otm" ){
+?>
     <tr>
-        <td class="listar"><?
+        <td class="listar">
+<?
             //if( $reporte->getCaIdetapa()!='99999' ){
-                $i = 0;
-                foreach( $etapas as $etapa ){
-
-                ?>
-                    <input name='tipo_<?=$inoCliente->getOid()?>' id='tipo_<?=$inoCliente->getOid()?>' type='radio' value = '<?=$etapa->getCaIdetapa()?>' <?=($i++==0)?'checked="checked"':''?> onclick="mostrar('<?=$inoCliente->getOid()?>');" />
-                    <?=Utils::replace($etapa->getCaEtapa())?>
-                    <br />
-                    <?
-                }
-            ?>
+            $i = 0;
+            foreach( $etapas as $etapa ){
+?>
+                <input name='tipo_<?=$inoCliente->getOid()?>' id='tipo_<?=$inoCliente->getOid()?>' type='radio' value = '<?=$etapa->getCaIdetapa()?>' <?=($i++==0)?'checked="checked"':''?> onclick="mostrar('<?=$inoCliente->getOid()?>');" />
+                <?=Utils::replace($etapa->getCaEtapa())?>
+                <br />
+                <?
+            }
+?>
             <input name='tipo_<?=$inoCliente->getOid()?>'  id='tipo_<?=$inoCliente->getOid()?>' type='radio'  value = '00000' onclick="mostrar('<?=$inoCliente->getOid()?>');" />
             Orden anulado<br />
             <input name='tipo_<?=$inoCliente->getOid()?>'  id='tipo_<?=$inoCliente->getOid()?>' type='radio'  value = '99999' onclick="mostrar('<?=$inoCliente->getOid()?>');" />
             Cierre<br />
-        <?
-        //}
-        ?>
-                <input name='tipo_<?=$inoCliente->getOid()?>' id='tipo_<?=$inoCliente->getOid()?>' type='radio' value = '88888' checked="checked" onclick="mostrar('<?=$inoCliente->getOid()?>');" />
-
-
-            Status						 </td>
+            <input name='tipo_<?=$inoCliente->getOid()?>' id='tipo_<?=$inoCliente->getOid()?>' type='radio' value = '88888' checked="checked" onclick="mostrar('<?=$inoCliente->getOid()?>');" />
+            Status
+        </td>
         <td class="listar" style='vertical-align:bottom;'><b>Destino OTM:</b><br />
                 <?=$inoCliente->getDestinoCont()?$inoCliente->getDestinoCont()->getcaCiudad():""?></td>
         <td class="listar" style='vertical-align:bottom;' colspan="3">
@@ -166,7 +162,7 @@ $j=0;
                         echo extDatePicker('fchplanilla_'.$inoCliente->getOid(), date("Y-m-d"));
                         ?>
             </div>
-            </td>
+        </td>
     </tr>
     <tr>
         <td class="listar" colspan="5" style='vertical-align:bottom;'><div id="divbodega_<?=$inoCliente->getOid()?>"> <b>Bodega:</b><br />
@@ -184,25 +180,42 @@ $j=0;
             </div>
               </td>
     </tr>
-    <?
-                }
-                if( $modo=="otm" ){
-                    $mensaje = "";
-                }else{
+    <tr>
+        <td><h1>Indicadores de Gesti&oacute;n:</h1></td>
+        <td>
+            <div id="divfchrecibo_<?=$inoCliente->getOid()?>"> <b>Fecha Recibido Status:</b><br />
+<?
+                echo extDatePicker('fchrecibido_'.$inoCliente->getOid(), "");
+?>
+            </div>
+        </td>
+        <td>
+            <div id="divhorarecibo_<?=$inoCliente->getOid()?>"> <b>Hora:</b><br />
+<?
+                echo extTimePicker('horarecibido_'.$inoCliente->getOid(), "");
+?>
+            </div>
+        </td>        
+    </tr>
+<?
+    }
+    if( $modo=="otm" ){
+        $mensaje = "";
+    }else{
 
-                    if( isset($coordinadores[$inoCliente->getCaContinuacionDest()]) && $coordinadores[$inoCliente->getCaContinuacionDest()] ){
-                        $coord = $coordinadores[$inoCliente->getCaContinuacionDest()];
-                    }else{
-                        $coord = $coordinadores["COL-0000"];
-                    }
+        if( isset($coordinadores[$inoCliente->getCaContinuacionDest()]) && $coordinadores[$inoCliente->getCaContinuacionDest()] ){
+            $coord = $coordinadores[$inoCliente->getCaContinuacionDest()];
+        }else{
+            $coord = $coordinadores["COL-0000"];
+        }
 
-                    if( $inoCliente->getCaContinuacion()!='N/A' ){
-                        $mensaje = chr(13).chr(13).$textos['mensajeConfOTMCliente'].$coord;
-                    }else{
-                        $mensaje = "";
-                    }
-                }
-            ?>
+        if( $inoCliente->getCaContinuacion()!='N/A' ){
+            $mensaje = chr(13).chr(13).$textos['mensajeConfOTMCliente'].$coord;
+        }else{
+            $mensaje = "";
+        }
+    }
+?>
     <tr>
         <td class="listar" colspan="5"><b>Ingrese mensaje exclusivo para este cliente:</b><br />
                 <div id="divmessage_<?=$inoCliente->getOid()?>"></div>
@@ -218,36 +231,36 @@ $j=0;
     </tr>
     
     <tr height="<?=$alto+20?>">
-                <td colspan="9" style="vertical-align: top" >
-                    <div id="thumbnails_<?=$i?>">
-		<?php
-			// Read the files from the saved images folder
-            
-            //echo $archivos
-			foreach ($archivos as $file) {
-                //echo $file."<br>";
-				$archivo =explode("/", $file );
-                $filename = $archivo[count($archivo)-1];
-                $id_base=base64_encode($folder.$filename);
-                //echo $folder."/".$filename."<br>";
-				echo '<div style="width:'.$dimension.'px;height:'.$dimension.'px;float: left;margin: 5px;" id="file_'.$j.'">
-                        <div style="position:relative ">
-                            <div style="position:absolute;" >
-                                <img style=" vertical-align: middle;" src="/gestDocumental/verArchivo?idarchivo='.$id_base . '" width="'.$dimension.'" height="'.$dimension.'" />
-                            </div>
-                            <div style="position:absolute;top:0px;right:0px" >
-                                <img src="/images/16x16/button_cancel.gif" style="cursor: pointer" onclick="deleteFile(&quot;'.$id_base.'&quot;,&quot;file_'.$j++.'&quot;)" />
-                            </div>
-                            <div style="position:absolute;top:20px;right:0px" >
-                                <input type="checkbox" value="'.$folder.$filename.'" name="files_'.$inoCliente->getOid().'[]" />
-                            </div>
-                        </div>                        
-                      </div>';
-			}
-		?>
-	</div>
-                </td>
-            </tr>
+        <td colspan="9" style="vertical-align: top" >
+            <div id="thumbnails_<?=$i?>">
+                <?php
+                // Read the files from the saved images folder
+
+                //echo $archivos
+                foreach ($archivos as $file) {
+                    //echo $file."<br>";
+                    $archivo =explode("/", $file );
+                    $filename = $archivo[count($archivo)-1];
+                    $id_base=base64_encode($folder.$filename);
+                    //echo $folder."/".$filename."<br>";
+                    echo '<div style="width:'.$dimension.'px;height:'.$dimension.'px;float: left;margin: 5px;" id="file_'.$j.'">
+                            <div style="position:relative ">
+                                <div style="position:absolute;" >
+                                    <img style=" vertical-align: middle;" src="/gestDocumental/verArchivo?idarchivo='.$id_base . '" width="'.$dimension.'" height="'.$dimension.'" />
+                                </div>
+                                <div style="position:absolute;top:0px;right:0px" >
+                                    <img src="/images/16x16/button_cancel.gif" style="cursor: pointer" onclick="deleteFile(&quot;'.$id_base.'&quot;,&quot;file_'.$j++.'&quot;)" />
+                                </div>
+                                <div style="position:absolute;top:20px;right:0px" >
+                                    <input type="checkbox" value="'.$folder.$filename.'" name="files_'.$inoCliente->getOid().'[]" />
+                                </div>
+                            </div>                        
+                          </div>';
+                }
+?>
+            </div>
+        </td>
+    </tr>
 </table>
 <script>
     
