@@ -31,6 +31,8 @@
     }
     
     foreach( $grupos as $id ){
+        if(!$id)
+            continue;
     ?>
     <tr   >
         <td width="20%">
