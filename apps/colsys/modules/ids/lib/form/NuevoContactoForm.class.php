@@ -27,7 +27,7 @@ class NuevoContactoForm extends BaseForm{
 		  'fax'         => new sfWidgetFormInputText(array(), array("maxlength"=>"30" ,"size"=>"60")),
           'celular'   => new sfWidgetFormInputText(array(), array("maxlength"=>"30" ,"size"=>"60") ),  
           'skype'   => new sfWidgetFormInputText(array(), array("maxlength"=>"30" ,"size"=>"60") ),  
-		  'email'       => new sfWidgetFormInputText( array(), array("maxlength"=>"40" ,"size"=>"60")),
+		  'email'       => new sfWidgetFormInputText( array(), array("maxlength"=>"50" ,"size"=>"60")),
 		  'impoexpo'     => new sfWidgetFormChoice(array(
   								'choices' => array( Constantes::IMPO=>Constantes::IMPO,
 													Constantes::EXPO=>Constantes::EXPO), 
