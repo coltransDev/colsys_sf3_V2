@@ -11,7 +11,7 @@ class NuevoIdsForm extends BaseForm{
 
         $q = Doctrine_Query::create()
                              ->from("IdsTipoIdentificacion c")
-                             ->innerJoin("c.Trafico t")
+                             ->leftJoin("c.Trafico t")
                              ->addOrderBy("c.ca_tipoidentificacion");
         $widgets['tipo_identificacion'] = new sfWidgetFormDoctrineChoice(array('model' => 'IdsTipoIdentificacion',                                                                               
                                                                                'add_empty' => false,
