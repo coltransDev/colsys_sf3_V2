@@ -23,7 +23,7 @@ include_component("widgets", "widgetCiudad");
                                               name: "consecutivo",
                                               hiddenName: "idreporte",
                                               hiddenId: "idreporte",
-                                              allowBlank: false,
+                                              allowBlank: true,
                                               tipo:1,
                                               impoexpo: this.impoexpo,
                                               transporte: this.transporte

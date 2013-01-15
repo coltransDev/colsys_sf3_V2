@@ -342,19 +342,17 @@ Ext.extend(GridFacturacionPanel, Ext.grid.GridPanel, {
     },
 
     crearFactura: function( idhouse , gridId){         
-        if( this.facturacion ){        
-            document.location = "<?=url_for("inocomprobantes/formComprobante?tipo=F")?>?modo="+this.modo+"&idmaster="+this.idmaster;
-        }else{
-            this.win = new GridFacturacionWindow( {
-                gridId:gridId, 
-                modo:this.modo, 
-                idhouse:idhouse, 
-                transporte: this.transporte, 
-                modalidad: this.modalidad,
-                impoexpo: this.impoexpo
-            } );
-            this.win.show();
-        }
+                
+        //document.location = "<?=url_for("inocomprobantes/formComprobante?tipo=F")?>?modo="+this.modo;
+        this.win = new GridFacturacionWindow( {
+            gridId:gridId, 
+            modo:this.modo, 
+            idhouse:idhouse, 
+            transporte: this.transporte, 
+            modalidad: this.modalidad,
+            impoexpo: this.impoexpo
+        } );
+        this.win.show();
     },
 
     editarFactura: function( idhouse, idcomprobante, gridId ){

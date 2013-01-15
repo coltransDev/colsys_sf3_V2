@@ -193,9 +193,11 @@ $data = $sf_data->getRaw("data");
                     success:function(response,options){                        
                         this.res = Ext.util.JSON.decode( options.response.responseText );
                         
-                        form.findField("concepto").setRawValue(this.res.data.concepto);
-                        form.findField("concepto").hiddenField.value = this.res.data.idconcepto;
-                       
+                        if(Ext.getCmp("concepto"))
+                        {
+                            form.findField("concepto").setRawValue(this.res.data.concepto);
+                            form.findField("concepto").hiddenField.value = this.res.data.idconcepto;
+                        }
                     }
                 });
             }

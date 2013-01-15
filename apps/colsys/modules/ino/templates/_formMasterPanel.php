@@ -10,12 +10,10 @@ include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetLinea");
 include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetAgente");
-
 include_component("widgets", "widgetReporte");
 ?>
 
 <script type="text/javascript">
-    
     Ext.apply(Ext.form.VTypes, {
         daterange : function(val, field) {
             var date = field.parseDate(val);
@@ -64,15 +62,8 @@ include_component("widgets", "widgetReporte");
                 }
             }
             return true;
-        },
-        
+        },        
         validarMasterText : 'este campo debe tener el formato XXX-XXXXXXXX'
-
-        
-
-            
-            
-        
     });
 
     
@@ -258,11 +249,8 @@ include_component("widgets", "widgetReporte");
                                     name: 'modalidad',
                                     linkTransporte: "transporte",
                                     impoexpo: this.impoexpo,
-                                    allowBlank: false,
-                                    tabIndex:4
-                                    //disabled: !!this.idmaster
+                                    allowBlank: false                                    
                                 }),
-                                
                                 new WidgetCiudad({fieldLabel: 'Ciudad Destino',
                                     name: 'destino',
                                     id: 'destino',
@@ -278,8 +266,7 @@ include_component("widgets", "widgetReporte");
                                     linkDestino: "destino",
                                     linkListarTodos: "listar_todos",
                                     name:"agente",
-                                    hiddenName: 'idagente',
-                                    /*allowBlank: false,*/
+                                    hiddenName: 'idagente',                                    
                                     tabIndex:8
                                 }),
                                 {
@@ -288,7 +275,6 @@ include_component("widgets", "widgetReporte");
                                     id: "listar_todos",
                                     tabIndex:10
                                 }
-                                
                             ]
                         }
                     ]

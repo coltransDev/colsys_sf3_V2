@@ -23,7 +23,7 @@ $readOnly = $referencia->getReadOnly();
 </div>
 
 
-<div id="general" class="x-hide-display">
+<div id="general" class="x-display">
 
     <table class="tableList" width="100%">
         
@@ -78,6 +78,7 @@ $readOnly = $referencia->getReadOnly();
                 &nbsp;
             </td>
         </tr>  
+        
         <?
         if( $referencia->getCaObservaciones() ){
         ?>
@@ -214,7 +215,6 @@ $readOnly = $referencia->getReadOnly();
 <div id="balance" class="x-hide-display">
 <?
 include_component("ino", "balanceReferencia", array("referencia"=>$referencia, "modo"=>$modo->getCaIdmodo()));
-
 ?>
 </div>
 
@@ -230,8 +230,7 @@ include_component("ino", "balanceReferencia", array("referencia"=>$referencia, "
         impoexpo: '<?=$modo->getCaImpoexpo()?>',
         transporte: '<?=$modo->getCaTransporte()?>',
         modalidad: '<?=$referencia->getCaModalidad()?>',
-        readOnly: <?=$readOnly?"true":"false"?>,
-        facturacion: <?=$modo->getProperty("facturacion")?"true":"false"?>
+        readOnly: <?=$readOnly?"true":"false"?>
     });
 
 

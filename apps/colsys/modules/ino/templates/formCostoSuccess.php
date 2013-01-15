@@ -49,7 +49,7 @@ include_component("widgets", "widgetIds");
             tcambio.disabled = false;
         }
         
-        netousd.value =Math.round(eval(neto.value / tcambio_usd.value*100))/100;
+        netousd.value =Math.round(eval(neto.value / tcambio_usd.value*10000000))/10000000;
         netopesos.value =Math.round(eval(neto.value * tcambio.value / tcambio_usd.value));
         calc_tasausd_inv();
         calc_utilidad();

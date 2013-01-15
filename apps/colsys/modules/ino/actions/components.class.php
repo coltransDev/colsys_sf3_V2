@@ -66,6 +66,9 @@ class inoComponents extends sfComponents {
      * Ventana para editar encabezado factura
      */
     public function executeGridFacturacionFormPanel() {
+
+        $this->modo = $this->getRequestParameter("modo");
+        
         $q = Doctrine::getTable("InoTipoComprobante")
                         ->createQuery("t")
                         ->select("t.ca_idtipo, t.ca_tipo, t.ca_comprobante, t.ca_titulo, e.ca_sigla")
@@ -93,9 +96,6 @@ class inoComponents extends sfComponents {
         }
 
         $this->tipos = array("root" => $tiposArray, "total" => count($tiposArray));
-
-
-        
         
     }
 

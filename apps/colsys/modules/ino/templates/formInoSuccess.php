@@ -4,11 +4,7 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
-
-
 include_component("ino", "formMasterPanel");
-
 ?>
 <div class="content">
     <div id="panel"></div>
@@ -16,8 +12,6 @@ include_component("ino", "formMasterPanel");
 
 <script type="text/javascript">
 Ext.onReady(function(){
-
-
     Ext.QuickTips.init();
     // invalid markers to sides
     Ext.form.Field.prototype.msgTarget = 'side';
@@ -29,8 +23,6 @@ Ext.onReady(function(){
         impoexpo: "<?=$impoexpo?>",
         transporte: "<?=$transporte?>"
     });
-
     formPanel.render("panel");
-
 });
 </script>

@@ -18,10 +18,15 @@ class CostosINOForm extends BaseForm{
                         ->innerJoin("cm.Modalidad m") 
                         ->addWhere("c.ca_costo = ? ", true)
                         ->addWhere("m.ca_impoexpo = ? ", $impoexpo)
-                        ->addWhere("m.ca_transporte = ? ", $transporte)                        
+                        ->addWhere("m.ca_transporte = ? ", $transporte)
                         ->addOrderBy("c.ca_concepto");
         if( $this->referencia ){
-            $queryCosto->addWhere("m.ca_modalidad = ? ", $this->referencia->getCaModalidad());
+            if($this->referencia->getCaModalidad()=="DIRECTO" && $this->referencia->getCaTransporte()==Constantes::TERRESTRE)
+            {   
+                $queryCosto->addWhere("m.ca_modalidad = ? ", "FCL");
+            }
+            else
+                $queryCosto->addWhere("m.ca_modalidad = ? ", $this->referencia->getCaModalidad());
         }
        
         $widgets["referencia"] = new sfWidgetFormInputHidden();

@@ -8,8 +8,6 @@
 $tipos = $sf_data->getRaw("tipos");
 $modo = $sf_data->getRaw("modo");
 
-
-
 ?>
 <script type="text/javascript">
     GridFacturacionFormPanel = function( config ) {
@@ -207,25 +205,7 @@ $modo = $sf_data->getRaw("modo");
                                         decimalPrecision : 2,
                                         width: 80,
                                         tabIndex: 4
-                                    }<?
-                                    if($modo=="5")
-                                    {
-                                    ?>
-                                    ,
-                                    {
-                                        xtype:'numberfield',
-                                        fieldLabel: 'Valor Venta',
-                                        name: 'venta',
-                                        value: '',
-                                        allowBlank:false,
-                                        allowNegative:true,
-                                        decimalPrecision : 2,
-                                        width: 80,
-                                        tabIndex: 4
                                     }
-                                    <?
-                                    }
-                                    ?>
                                 ]
                             }
                             
@@ -242,7 +222,7 @@ $modo = $sf_data->getRaw("modo");
                     modo: this.modo,
                     impoexpo: this.impoexpo,
                     transporte: this.transporte,
-                    modalidad: this.modalidad 
+                    modalidad: this.modalidad
                 }
             )
             ]
@@ -299,7 +279,6 @@ $modo = $sf_data->getRaw("modo");
                         result.push( str );
                     }
                 }
-                
                 form.findField("deducciones").setValue(result.join("|"));
                 
                 var gridOpener = this.gridOpener;
@@ -309,6 +288,11 @@ $modo = $sf_data->getRaw("modo");
                     waitMsg:'Guardando...',
                     waitTitle:'Por favor espere...',
                     success:function(form,action){
+                        var res = Ext.util.JSON.decode( action.response.responseText );
+                        if(res.info)
+                        {
+                            alert(res.info)
+                        }
                         var win = Ext.getCmp("edit-factura-win");
                         if( win ){
                             win.close();

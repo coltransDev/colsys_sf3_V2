@@ -12,8 +12,24 @@ if( $action!="index" ){
 	$button[$i]["name"]="Inicio ";
 	$button[$i]["tooltip"]="Pagina inicial del módulo";
 	$button[$i]["image"]="22x22/gohome.gif"; 			
-	$button[$i]["link"]= "ino/index?modo=".$this->getRequestParameter("modo");
+	$button[$i]["link"]= "ino/index?modo=".$this->getRequestParameter("idmaster");
 	$i++;
+    if($this->getRequestParameter("modo")==5 && $this->getRequestParameter("idmaster")>0)
+    {
+        $button[$i]["name"]="Instrucciones Puerto";
+        $button[$i]["tooltip"]="Instrucciones Puerto";
+        $button[$i]["image"]="22x22/email.gif"; 			
+        $button[$i]["link"]= "ino/instruccionesOtm?modo=".$this->getRequestParameter("modo")."&idmaster=".$this->getRequestParameter("idmaster");
+        //$button[$i]["link"]= "ino/instruccionesOtm?id=".$this->getRequestParameter("idmaster");
+        $i++;
+    }
+
+    $button[$i]["id"] = "observacion";
+    $button[$i]["name"] = "Observaciones";
+    $button[$i]["tooltip"] = "Ingresar observaciones a la referencia";
+    $button[$i]["image"] = "22x22/txt.gif";
+    $button[$i]["onClick"] = "observa()";
+    $i++;
 }
 
 switch($action){
@@ -53,7 +69,6 @@ switch($action){
 		$button[$i]["link"]= "ino/verReferencia?modo=".$this->getRequestParameter("modo")."&id=".$this->getRequestParameter("idmaestra");
 		$i++;
 		break;
-
 				
 }
 
@@ -89,4 +104,61 @@ switch($action){
             });
         }
     }
+    
+    
+    
+    function observa(id){        
+        Ext.MessageBox.show({
+           title: 'Observaciones',
+           msg: 'Ingrese las observaciones para la referencia:',
+           width:500,
+           buttons:{
+              ok     : "Enviar",
+              cancel : "Cancelar"
+           },
+           multiline: true,
+           fn: mensaje,
+           animEl: 'anular-reporte',
+           modal: true
+        });
+        Ext.MessageBox.buttonText.yes = "Version";
+        Ext.MessageBox.buttonText.no = "Todas las versiones";
+    }
+
+    var mensaje = function(btn, text){
+        if( btn == "ok"){
+            if( text.trim()==""){
+                alert("Debe colocar una observacion");
+            }else{
+                if(btn=="ok")
+                    href='/ino/guardarMaster';
+                Ext.MessageBox.wait('Guardando Observaciones', '');
+                Ext.Ajax.request(
+                {
+                    waitMsg: 'Enviando...',
+                    url: href,
+                    params :	{
+                        ca_observaciones: text.trim(),
+                        idmaster:'<?=$this->getRequestParameter("idmaster")?>',
+                        tipo:"obs"
+                    },
+                    failure:function(response,options){
+                        alert( response.responseText );
+                        Ext.Msg.hide();
+                        success = false;
+                        alert("Surgio un problema al tratar de rechzar el reporte")
+                    },
+                    success:function(response,options){
+                        var res = Ext.util.JSON.decode( response.responseText );
+                        if( res.success ){
+                            //alert("Se envio aviso al depto de traficos")
+                            location.href=location.href;
+                        }
+                    }
+                 }
+            );
+            }
+        }
+    };    
+    
 </script>

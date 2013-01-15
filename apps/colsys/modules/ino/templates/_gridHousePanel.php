@@ -138,6 +138,7 @@ GridHousePanel = function( config ){
             rowdblclick : this.onRowDblclick
        }
     });
+    this.getView().getRowClass = this.getRowClass;
 };
 
 Ext.extend(GridHousePanel, Ext.grid.GridPanel, {
@@ -293,28 +294,14 @@ Ext.extend(GridHousePanel, Ext.grid.GridPanel, {
 	},
     getRowClass : function(record, rowIndex, p, ds){
         p.cols = p.cols-1;
-        var color;
-        if( record.data.action=="Cerrado" ){
-            color = "blue";
+        
+        if( record.data.doctransporte=="TOTALES" ){
+            //alert( record.data.comprobante );
+            var color = "row_pink";
         }else{
-            if( record.data.tipo=="Defecto" ){
-                color = "pink";
-            }else{
-                switch( record.data.priority ){
-                    case "Media":
-                        color = "yellow";
-                        break;
-                    case "Alta":
-                        color = "pink";
-                        break;
-                    default:
-                        color = "";
-                        break;
-                }
-            }
-        }
-        color = "row_"+color;
-        return this.state[record.id] ? 'x-grid3-row-expanded '+color : 'x-grid3-row-collapsed '+color;
+            var color = "";
+        }        
+        return color;
     }
 });
 </script>

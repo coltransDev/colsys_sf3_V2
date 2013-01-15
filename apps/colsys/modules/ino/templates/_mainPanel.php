@@ -60,8 +60,7 @@ MainPanel = function( config ){
         transporte: this.transporte, 
         modalidad: this.modalidad,
         idmaster: <?=$referencia->getCaIdmaster()?>,
-        readOnly: this.readOnly,
-        facturacion: this.modo
+        readOnly: this.readOnly
     });
     this.items.push( this.gridFacturacion );
     

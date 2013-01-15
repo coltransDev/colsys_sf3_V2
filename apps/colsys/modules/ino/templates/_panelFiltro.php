@@ -82,6 +82,28 @@ include_component("widgets", "widgetCiudad");
 		<td width="337" >&nbsp;
 		  <div id="visible" ><b>Que contenga la cadena:</b><br />
 			<div id="div_cadena"></div>
+            <table>
+                <tr>
+                    <td>
+                        <div><b>Cerrados</b> <br>
+                            <select id="cerrados" name="cerrados">
+                                <option value="">Todos</option>
+                                <option value="Si">Si</option>
+                                <option value="No">No</option>
+                            </select>                            
+                        </div>
+                    </td>
+                    <td>
+                        <div><b>Liquidados</b> <br>                            
+                            <select id="liquidados" name="liquidados">
+                                <option value="">Todos</option>
+                                <option value="Si">Si</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+            </table>
 	  </div></td>
 	  <td width="64"  ><input  type='submit' name='buscar' value=' Buscar' /></td>
 	</tr>

@@ -4,36 +4,41 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
+include_component("widgets", "widgetConcepto");
 ?>
 <script type="text/javascript">
 GridEquiposPanel = function( config ){
     Ext.apply(this, config);    
     this.columns = [      
-      {
+    {
         header: "Contenedor",
         dataIndex: 'concepto',
         width: 100,
         sortable: true,
-        renderer: this.formatItem
-      },      
-      {
+        renderer: this.formatItem,
+        editor: new WidgetConcepto({linkModalidad: "<?=Constantes::FCL?>",linkTransporte: "<?=Constantes::MARITIMO?>"})
+    },      
+    {
         header: "Serial",
         dataIndex: 'serial',
         sortable: true,
-        width: 80
+        width: 80,
+        editor: new Ext.form.TextField()
       },
       {
         header: "Precinto",
         dataIndex: 'numprecinto',
         hideable: false,
         sortable: true,
-        width: 280
+        width: 280,
+        editor: new Ext.form.TextField()
       },
       {
         header: "Observaciones",
         dataIndex: 'observaciones',
         sortable: true,
-        width: 80
+        width: 80,
+        editor: new Ext.form.TextField()
       }
      ];
 
@@ -83,14 +88,20 @@ GridEquiposPanel = function( config ){
     }
 
     GridEquiposPanel.superclass.constructor.call(this, {
+        clicksToEdit: 1,
+        stripeRows: true,
        loadMask: {msg:'Cargando...'},       
        tbar: this.tbar,
        autoHeight: true,
        id: 'grid-equipo-panel',
        view: new Ext.grid.GridView({
+            emptyText: "No hay datos",
             forceFit:true,
+            enableRowBody:true,
+            hideGroupedColumn: true
+            /*forceFit:true,
             enableRowBody:false,
-            emptyText: 'No hay datos'            
+            emptyText: 'No hay datos'            */
        }),
        listeners:{
             rowcontextmenu: this.onRowcontextMenu,
@@ -99,7 +110,7 @@ GridEquiposPanel = function( config ){
     });
 };
 
-Ext.extend(GridEquiposPanel, Ext.grid.GridPanel, {
+Ext.extend(GridEquiposPanel, Ext.grid.EditorGridPanel, {
     newCont: function(){
         if( !this.readOnly ){
             var win = Ext.getCmp("edit-equipo-win");
@@ -145,7 +156,6 @@ Ext.extend(GridEquiposPanel, Ext.grid.GridPanel, {
             this.win.show();
        }
     },
-
     deleteCont: function(idequipo){
        var modo = this.modo;
        if( !this.readOnly ){
@@ -245,31 +255,7 @@ Ext.extend(GridEquiposPanel, Ext.grid.GridPanel, {
             record =  this.store.getAt( rowIndex );
             this.editCont( record.data.idequipo );
         }
-	},
-    getRowClass : function(record, rowIndex, p, ds){
-        p.cols = p.cols-1;
-        var color;
-        if( record.data.action=="Cerrado" ){
-            color = "blue";
-        }else{
-            if( record.data.tipo=="Defecto" ){
-                color = "pink";
-            }else{
-                switch( record.data.priority ){
-                    case "Media":
-                        color = "yellow";
-                        break;
-                    case "Alta":
-                        color = "pink";
-                        break;
-                    default:
-                        color = "";
-                        break;
-                }
-            }
-        }
-        color = "row_"+color;
-        return this.state[record.id] ? 'x-grid3-row-expanded '+color : 'x-grid3-row-collapsed '+color;
-    }
+	}
+
 });
 </script>
