@@ -24,12 +24,15 @@ if( $action!="index" ){
         $i++;
     }
 
-    $button[$i]["id"] = "observacion";
-    $button[$i]["name"] = "Observaciones";
-    $button[$i]["tooltip"] = "Ingresar observaciones a la referencia";
-    $button[$i]["image"] = "22x22/txt.gif";
-    $button[$i]["onClick"] = "observa()";
-    $i++;
+    if($this->getRequestParameter("idmaster")>0)
+    {
+        $button[$i]["id"] = "observacion";
+        $button[$i]["name"] = "Observaciones";
+        $button[$i]["tooltip"] = "Ingresar observaciones a la referencia";
+        $button[$i]["image"] = "22x22/txt.gif";
+        $button[$i]["onClick"] = "observa()";
+        $i++;
+    }
 }
 
 switch($action){
@@ -58,7 +61,7 @@ switch($action){
         $button[$i]["name"]="Anular";
 		$button[$i]["tooltip"]="Anula esta referencia";
 		$button[$i]["image"]="22x22/cancel.gif";
-		$button[$i]["onClick"] = "anularReporte()";
+		$button[$i]["onClick"] = "anularReferencia()";
 		$i++;
 		
 		break;
@@ -76,7 +79,7 @@ switch($action){
 ?>
 
 <script>
-    function anularReporte()
+/*    function anularReferencia()
     {
         if(window.confirm("Realmente desea eliminar la referencia?"))
         {
@@ -104,6 +107,64 @@ switch($action){
             });
         }
     }
+  */  
+    
+    function anularReferencia(id){        
+        Ext.MessageBox.show({
+           title: 'Anulacion de Referencia',
+           msg: 'Ingrese el motivo de anulacion de la referencia:',
+           width:500,
+           buttons:{
+              ok     : "Enviar",
+              cancel : "Cancelar"
+           },
+           multiline: true,
+           fn: anulacion,
+           animEl: 'anular-ref',
+           modal: true
+        });        
+    }
+
+    var anulacion = function(btn, text){
+        if( btn == "ok"){
+            if( text.trim()==""){
+                alert("Debe colocar una observacion");
+            }else{
+                if(btn=="ok")
+                    href='/ino/anularReferencia';
+                Ext.MessageBox.wait('Anulando referencia', '');
+                Ext.Ajax.request(
+                {
+                    waitMsg: 'Enviando...',
+                    url: href,
+                    params :	{
+                        observaciones: text.trim(),
+                        idmaster:'<?=$this->getRequestParameter("idmaster")?>'
+                    },
+                    failure:function(response,options){
+                        alert( response.toSource()  );
+                        Ext.Msg.hide();
+                        success = false;
+                        alert("Surgio un problema al tratar de anular la referencia");
+                    },
+                    success:function(response,options){
+                        var res = Ext.util.JSON.decode( response.responseText );                        
+                        if( res.success ){
+                            //alert("Se envio aviso al depto de traficos")
+                            location.href=location.href;
+                        }
+                        else
+                        {
+                            Ext.MessageBox.alert("Mensaje de Error", res.errorInfo);
+                        }
+                    }
+                 }
+            );
+            }
+        }
+    };
+    
+    
     
     
     
@@ -146,7 +207,7 @@ switch($action){
                         alert( response.responseText );
                         Ext.Msg.hide();
                         success = false;
-                        alert("Surgio un problema al tratar de rechzar el reporte")
+                        alert("Surgio un problema al tratar de colocar observaciones")
                     },
                     success:function(response,options){
                         var res = Ext.util.JSON.decode( response.responseText );
@@ -159,6 +220,6 @@ switch($action){
             );
             }
         }
-    };    
+    };
     
 </script>

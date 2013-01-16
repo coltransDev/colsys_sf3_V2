@@ -57,11 +57,20 @@ $readOnly = $referencia->getReadOnly();
          <tr>
              <td><b>Linea</b></td>
             <td>
-               <?=$referencia->getIdsProveedor()->getIds()->getCaNombre()?>
+               <?=$referencia->getIdsProveedor()->getIds()->getCaNombre()?>                
+                <a href="/ids/formEventos/modo/prov/id/<?=$referencia->getCaIdlinea()?>">Eventos</a>                
             </td>
             <td><b>Agente</b></td>
-            <td>
-                <? //=$trayecto->getCaModalidad()?>
+            <td>                
+                <?
+                if($referencia->getCaIdagente()!="" && $referencia->getCaIdagente()>0)
+                {
+                ?>
+                <?=$referencia->getIdsAgente()->getIds()->getCaNombre()?>
+                <a href="/ids/formEventosNew/referencia/<?=$referencia->getCaIdmaster()?>">Eventos</a>
+                <? 
+                }
+                ?>
             </td>
 
         </tr>

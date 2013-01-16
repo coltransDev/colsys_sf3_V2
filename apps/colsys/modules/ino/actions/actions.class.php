@@ -249,7 +249,7 @@ class inoActions extends sfActions {
     public function executeGuardarMaster(sfWebRequest $request) {
         $errors = array();
 
-        try {
+        //try {
             $idmaster=$request->getParameter("idmaster");
             $tipo=($request->getParameter("tipo")=="")?"full":$request->getParameter("tipo");            
             
@@ -322,9 +322,9 @@ class inoActions extends sfActions {
             }
             $this->responseArray = array("success" => true, "idmaster" => $ino->getCaIdmaster());
             
-        } catch (Exception $e) {
+        /*} catch (Exception $e) {
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
-        }
+        }*/
         $this->setTemplate("responseTemplate");
     }
     /**
@@ -1637,14 +1637,39 @@ class inoActions extends sfActions {
     }
     
     public function executeAnularReferencia(sfWebRequest $request) {
-        $master = Doctrine::getTable("InoMaster")->find( $this->getRequestParameter("idmaster") );        
+        $idmaster=$this->getRequestParameter("idmaster");
+        $observaciones=$this->getRequestParameter("observaciones");
         
-        if( !$master->getCaFchanulado() ){        
-            $master->setCaFchanulado(date('Y-m-d H:i:s'));
-            $master->setCaUsuanulado($this->getUser()->getUserId());
-            $master->save();
+        $errorInfo="";
+        
+        $facturas = Doctrine::getTable("InoHouse")
+                        ->createQuery("c")
+                        ->select("c.*")      
+                        ->innerJoin("c.Cliente cl")
+                        ->innerJoin("c.InoComprobante comp")
+                        ->innerJoin("comp.Ids fact")
+                        ->where("c.ca_idmaster = ?", $idmaster)                        
+                        ->execute();
+        if(count($facturas)>0)
+            $errorInfo="La referencia no se puede eliminar porque ya posee ".count($facturas)." factura(s) creada(s)";
+        else
+        {
+            $master = Doctrine::getTable("InoMaster")->find($idmaster);
+            if( !$master->getCaFchanulado() ){        
+                $master->setCaFchanulado(date('Y-m-d H:i:s'));
+                $master->setCaMotivoanulado($observaciones);
+                $master->setCaUsuanulado($this->getUser()->getUserId());
+                $master->save();
+            }
+            else
+                $errorInfo="La Referencia ya se encuentra anulada";
         }
-        $this->responseArray = array("success" => true);
+        if($errorInfo=="")
+        {
+            $this->responseArray = array("success" => true);
+        }    
+        else                
+            $this->responseArray = array("success" => false,"errorInfo"=>$errorInfo);
         $this->setTemplate("responseTemplate");
     }
     
