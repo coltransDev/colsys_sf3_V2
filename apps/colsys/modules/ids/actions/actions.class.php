@@ -1260,40 +1260,68 @@ class idsActions extends sfActions {
                 $q->addWhere("c.ca_tipocriterio = ?", "desempeno");
                 $q->addWhere("c.ca_tipo = ?", "AGE");
             } else {// Esta ingresando desde la referencia
-                $numreferencia = str_replace("_", ".", $request->getParameter("referencia"));
+                $numreferencia = str_replace("_", ".", $request->getParameter("referencia"));                
                 $this->forward404Unless($numreferencia);
+                
+                if(!is_numeric($numreferencia))
+                {                
+                    if (substr($numreferencia, 0, 1) == "4" || substr($numreferencia, 0, 1) == "5") {
+                        $referencia = Doctrine::getTable("InoMaestraSea")->find($numreferencia);
+                        $linea = $referencia->getCaIdlinea();
+
+                        $this->url = "/colsys_php/inosea.php?boton=Consultar&id=" . $numreferencia;
+
+                        $q->addWhere("c.ca_tipocriterio = ?", "desempeno");
+                        $q->addWhere("c.ca_impoexpo = ?", Constantes::IMPO);
+                        $q->addWhere("c.ca_transporte = ?", Constantes::MARITIMO);
+                    }
+                    else if (substr($numreferencia, 0, 1) == "1") 
+                    {                    
+                        $referencia = Doctrine::getTable("InoMaestraAir")->find($numreferencia);
+
+                        $linea = $referencia->getCaIdlinea();
+
+                        $this->url = "/Coltrans/InoAir/ConsultaReferenciaAction.do?referencia=" . $numreferencia;
+
+                        $q->addWhere("c.ca_tipocriterio = ?", "desempeno");
+                        $q->addWhere("c.ca_impoexpo = ?", Constantes::IMPO);
+                        $q->addWhere("c.ca_transporte = ?", Constantes::AEREO);
+                    }
+
+                    $q->addWhere("c.ca_tipo = ? or c.ca_tipo IS NULL", "TRI");
+
+                    $this->form->setIdproveedor($linea);
 
 
+                    $this->numreferencia = $numreferencia;
+                }
+                else
+                {
+                    
+                    
+                    $referencia = Doctrine::getTable("InoMaster")->find($numreferencia);
+                    
+                    $modoRef = Doctrine::getTable("Modo")
+                                  ->createQuery("m")
+                                  ->addWhere("m.ca_impoexpo = ?", $referencia->getCaImpoexpo())
+                                  ->addWhere("m.ca_transporte = ?", $referencia->getCaTransporte())
+                                  ->fetchOne();
+                
+                    $idmodo = $modoRef->getCaIdmodo();
+                    
+                    $linea = $referencia->getCaIdagente();
 
-                if (substr($numreferencia, 0, 1) == "4" || substr($numreferencia, 0, 1) == "5") {
-                    $referencia = Doctrine::getTable("InoMaestraSea")->find($numreferencia);
-                    $linea = $referencia->getCaIdlinea();
-
-                    $this->url = "/colsys_php/inosea.php?boton=Consultar&id=" . $numreferencia;
+                    $this->url = "/ino/verReferencia?modo=".$idmodo."&idmaster=". $numreferencia;
 
                     $q->addWhere("c.ca_tipocriterio = ?", "desempeno");
-                    $q->addWhere("c.ca_impoexpo = ?", Constantes::IMPO);
-                    $q->addWhere("c.ca_transporte = ?", Constantes::MARITIMO);
+                    $q->addWhere("c.ca_impoexpo = ?", $referencia->getCaImpoexpo());
+                    $q->addWhere("c.ca_transporte = ?", $referencia->getCaTransporte());
+                    
+                    $this->form->setIdproveedor($linea);
+
+
+                    $this->numreferencia = $numreferencia;
                 }
-
-                if (substr($numreferencia, 0, 1) == "1") {
-                    $referencia = Doctrine::getTable("InoMaestraAir")->find($numreferencia);
-
-                    $linea = $referencia->getCaIdlinea();
-
-                    $this->url = "/Coltrans/InoAir/ConsultaReferenciaAction.do?referencia=" . $numreferencia;
-
-                    $q->addWhere("c.ca_tipocriterio = ?", "desempeno");
-                    $q->addWhere("c.ca_impoexpo = ?", Constantes::IMPO);
-                    $q->addWhere("c.ca_transporte = ?", Constantes::AEREO);
-                }
-
-                $q->addWhere("c.ca_tipo = ? or c.ca_tipo IS NULL", "TRI");
-
-                $this->form->setIdproveedor($linea);
-
-
-                $this->numreferencia = $numreferencia;
             }
 
             $this->eventos = Doctrine::getTable("IdsEvento")
