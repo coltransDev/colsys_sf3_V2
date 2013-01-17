@@ -429,6 +429,22 @@ class inoActions extends sfActions {
         //print_r( $_POST );
 
         try {
+            $idmaster=$request->getParameter("idmaster");
+            $master = Doctrine::getTable("InoMaster")->find($idmaster);
+            
+            $q = Doctrine::getTable("InoMaster")
+               ->createQuery("m")
+               ->select("m.ca_referencia")
+               ->innerJoin("m.InoHouse h")               
+               ->addWhere("m.ca_idmaster != ?", $idmaster)
+               ->addWhere("m.ca_transporte != ?", $master->getCaTransporte())
+               ->addWhere("h.ca_doctransporte = ?", $request->getParameter("doctransporte"));
+
+            $m = $q->fetchOne();
+            if( $m ){               
+                throw new Exception("El numero de Documento de transporte ya se existe ".$m->getCaReferencia());
+            }
+            
             if ($request->getParameter("idhouse")) {
                 $house = Doctrine::getTable("InoHouse")->find($request->getParameter("idhouse"));
                 $this->forward404Unless($house);
