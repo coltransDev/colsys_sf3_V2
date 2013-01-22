@@ -7,9 +7,18 @@ class ReporteTable extends Doctrine_Table
 	* Retorna el siguiente consecutivo para los reportes
 	* @author: Andres Botero
 	*/
-	public static function siguienteConsecutivo( $yy ){
+	public static function siguienteConsecutivo( $yy,$tmp_impoexpo,$tmp_transporte ){
+        
 		if( $yy ){
-			$sql =  "SELECT fun_reportecon('".$yy."') as next";
+            $empresa=sfConfig::get('app_branding_name');
+            if($empresa!='TPLogistics')
+            {
+                $sql =  "SELECT fun_reportecon('".$yy."') as next";
+            }
+            else
+            {
+                $sql =  "SELECT fun_reportecontp('".$yy."','".$tmp_impoexpo."','".$tmp_transporte."') as next";
+            }            
 			$q = Doctrine_Manager::getInstance()->connection();
             $stmt = $q->execute($sql);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -179,8 +188,6 @@ class ReporteTable extends Doctrine_Table
 
 
 	public static function retrieveByConsecutivo( $consecutivo,$where='') {
-
-        //$tiporep
         
         $q = Doctrine::getTable("Reporte")
                             ->createQuery("r")
