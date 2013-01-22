@@ -53,8 +53,7 @@ class Reporte extends BaseReporte {
         }
         else
         {
-           
-            if($tipo!='1')//contacto No fijo
+            if($tipo!='1' && $tipo!='3')//contacto No fijo
                 return Doctrine::getTable("Contacto")->find($this->getCaIdconcliente());
             else if($tipo=='1')//CONTACTO FIJO
             {
@@ -66,29 +65,19 @@ class Reporte extends BaseReporte {
                                        ->addWhere("ca_cargo != ?", 'Extrabajador')
                                        ->addWhere("ca_fijo = ?", true)
                                        ->execute();
-            }
-           
-            /*if($tipo!='1' && $tipo!='2')//contacto No fijo
-                return Doctrine::getTable("Contacto")->find($this->getCaIdconcliente());
-            else if($tipo=='1')//CONTACTO FIJO
+            }else if($tipo=='3')//CONTACTO Internos coltrans
             {
-                if(!$this->cliente)
-                     $this->getCliente();   
-                return  Doctrine::getTable("Contacto")
-                                       ->createQuery("c")
-                                       ->addWhere("c.ca_idcliente = ?", $this->cliente->getCaIdcliente() )
-                                       ->addWhere("ca_cargo != ?", 'Extrabajador')
-                                       ->addWhere("ca_fijo = ?", true)
-                                       ->execute();
-            }else if($tipo=='2')//CONTACTO Internos coltrans
-            {
-                return Doctrine::getTable("Usuario")
-                       ->createQuery("c")
-                       ->select("c.ca_email")
-                       ->whereIn("c.ca_login",array("maquinche","alramirez","catalero","abotero"))
-                       ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
-                       ->execute();
-            }*/
+                $contac=array();
+                $contacts=explode(",",$this->getCaConfirmarClie());
+                foreach($contacts as $c)
+                {
+                    if (stripos(strtolower($c), '@coltrans.com.co') !== false || stripos(strtolower($c), '@colmas.com.co') !== false || stripos(strtolower($c), '@colotm.com') !== false)
+                    {
+                        $contac[]["ca_email"]=$c;
+                    }
+                }
+                return $contac;
+            }            
         }
     }    
     /*
@@ -984,10 +973,18 @@ class Reporte extends BaseReporte {
             if ($global) {
                 $q->addWhere("p.ca_perfil = ?", "cuentas-globales");
             } else {
-                if ($this->getCaTransporte() == Constantes::MARITIMO) {
-                    $q->addWhere("p.ca_perfil = ?", "operativo-traficos");
-                } else {
-                    $q->addWhere("p.ca_perfil = ?", "operativo-aereo");
+                $consolidar = $this->getCliente()->getProperty("consolidar_comunicaciones");
+                if($consolidar)
+                {
+                    $q->addWhere("p.ca_perfil = ? or p.ca_perfil = ?", array("operativo-traficos","operativo-aereo"));
+                }
+                else
+                {
+                    if ($this->getCaTransporte() == Constantes::MARITIMO) {
+                        $q->addWhere("p.ca_perfil = ?", "operativo-traficos");
+                    } else {
+                        $q->addWhere("p.ca_perfil = ?", "operativo-aereo");
+                    }
                 }
             }
             $q->addWhere("u.ca_idsucursal = ?", $usuario->getCaIdsucursal());
@@ -1067,8 +1064,9 @@ class Reporte extends BaseReporte {
             $reporte->setCaFchactualizado(null);
             $reporte->setCaUsuactualizado(null);
             $reporte->setCaFchcerrado(null);
-            $reporte->setCaUsucerrado(null);
-            $reporte->setCaPropiedades(null);            
+            $reporte->setCaUsucerrado(null);            
+            $reporte->setCaPropiedades(null);
+            $reporte->setProperty("subarancel",$this->getProperty("subarancel"));
             $reporte->save($conn);
 
             //Copia los conceptos

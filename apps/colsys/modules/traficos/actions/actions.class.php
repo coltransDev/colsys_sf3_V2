@@ -277,20 +277,21 @@ class traficosActions extends sfActions
 			$this->destinatarios = $this->getRequestParameter("destinatarios");
 		}
 
-
 		/*
 		* Configuracion de la forma
 		*/		
 		$this->form = new NuevoStatusForm();
 		if( $reporte->getCaConfirmarClie() ){
             $this->form->setDestinatarios( explode(",",$reporte->getCaConfirmarClie()) );
-		}        
-
+		}
         $cliente = $reporte->getCLiente();
         $fijos = $reporte->getContacto('1');
         
+        $contactos_reporte = $reporte->getContacto('3');        
+        
+        $this->form->setContactos( $contactos_reporte );
         $this->form->setDestinatariosFijos( $fijos );
-		//Etapas			
+		//Etapas
 
         $q = Doctrine::getTable("TrackingEtapa")->createQuery("t");
         if($this->modo=="otm")
@@ -313,8 +314,7 @@ class traficosActions extends sfActions
 		}        
         
         if($this->modo!="otm")
-            $q->addWhere("t.ca_departamento = ? OR t.ca_departamento IS NULL","Tráficos");
-        
+            $q->addWhere("t.ca_departamento = ? OR t.ca_departamento IS NULL","Tráficos");        
         $q->addWhere("t.ca_usueliminado is NULL");
 		$q->addOrderBy("t.ca_orden");
 		$this->form->setQueryIdEtapa( $q );
@@ -340,8 +340,6 @@ class traficosActions extends sfActions
         $q = Doctrine_Query::create()->from("Concepto c")->where("c.ca_modalidad = ? ", "FCL");
 
 		$this->form->setQueryConceptos( $q );
-		
-		
 				
 		//Busca los parametros definidos en CU059 
 		//Campos personalizados por cliente			
@@ -354,17 +352,9 @@ class traficosActions extends sfActions
 		* Fin de la configuración
 		*/
 
-        /*$this->count = Doctrine::getTable("RepStatus")
-                                 ->createQuery("r")
-                                 ->select("count(*)")
-                                 ->where("r.ca_idetapa = ? AND r.ca_idreporte = ?", array("IMCEM", $reporte->getCaIdreporte()))
-                                 ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
-                                 ->execute();*/
-		
-		if ($request->isMethod('post')){		
-		
-			$bindValues = array();
-						
+		$bindValues = array();
+        
+		if ($request->isMethod('post')){						
 			$destinatarios = $this->form->getDestinatarios();
 			for( $i=0; $i< count($destinatarios) ; $i++ ){	
 				if( $request->getParameter("destinatarios_".$i) ){	
@@ -451,16 +441,43 @@ class traficosActions extends sfActions
 				$bindValues["fchseguimiento"] = $request->getParameter("fchseguimiento");
 				$bindValues["txtseguimiento"] = $request->getParameter("txtseguimiento");
 			}
+
+            $bindValues["rep_incompleto"] = $request->getParameter("rep_incompleto");
+			if( $request->getParameter("rep_incompleto") ){
+                for( $i=0; $i< count($contactos_reporte) ; $i++ ){
+                    if( $request->getParameter("contactos_".$i) ){
+                        $bindValues["contactos_".$i] = trim($request->getParameter("contactos_".$i));
+                    }
+                }				
+			}
+            
 			$this->form->bind( $bindValues );
 			if( $this->form->isValid() ){
 				$this->executeGuardarStatus( $request );
 			}
-                }
+            
+            $contactos = $this->form->getContactos();
+			/*for( $i=0; $i< count($contactos) ; $i++ ){
+				
+			}*/
+        }
+        else {
+            $conceptos = $reporte->getRepTarifa();
+            $gastos = $reporte->getRecargos();
+            $this->reporte_incompleto="";
+            if(count($conceptos)==0)
+            {                
+                $this->reporte_incompleto.="Faltan tarifas<br>";
+            }
+            if(count($gastos)==0)
+            {
+                $this->reporte_incompleto.="Faltan recargos<br>";
+            }            
+        }
 		
 		$this->ultStatus = $reporte->getUltimoStatus();	
 
 		$this->reporte = $reporte;
-
 		
 		/*
 		Archivos del reporte
@@ -471,22 +488,19 @@ class traficosActions extends sfActions
 		$this->att = array();
 		if( $attachments ){
 			foreach( $attachments as $key=>$attachment){	                
-				$this->att[]=$attachment;
-				
+				$this->att[]=$attachment;				
 			}
 		}
         
         //$att[]=$reporte->getDirectorioBase().base64_decode( $attachment );
 		
 		//Busca los archivos del reporte
-		$this->files=$this->reporte->getFiles();
-		
+		$this->files=$this->reporte->getFiles();		
 		
 		$this->usuario = Doctrine::getTable("Usuario")->find( $this->getuser()->getUserId() );
 		
 		$config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."traficos".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."textos.yml";
-		$this->textos = sfYaml::load($config);
-			
+		$this->textos = sfYaml::load($config);			
 	}
 	
 	
@@ -668,7 +682,8 @@ class traficosActions extends sfActions
             $status->save( $conn );
 
 
-            $address = array();
+            $address = $addressRnincompleto= array();
+            
             foreach( $_POST as $key=>$val ){
                 if( substr($key,0,14 )=="destinatarios_" ){
                     if( $request->getParameter($key) ){
@@ -681,9 +696,13 @@ class traficosActions extends sfActions
                         $address[] = trim($request->getParameter($key));
                     }
                 }
+                
+                if( substr($key,0,10 )=="contactos_" ){
+                    if( $request->getParameter($key) ){
+                        $addressRnincompleto[] = trim($request->getParameter($key));
+                    }
+                }
             }
-
-
 
             $cc = array();
             for( $i=0; $i<NuevoStatusForm::NUM_CC ; $i++ ){
@@ -808,6 +827,68 @@ class traficosActions extends sfActions
                 $reporte->stopBlaming();
                 $reporte->save( $conn );
             }
+            
+            
+            /*
+             * NOTIFICACION DE RN INCOMPLETO
+             */
+            if( count($addressRnincompleto)>0 ){
+                    $email = new Email();
+                    $email->setCaUsuenvio($user->getUserId());
+                    $email->setCaTipo("RNIncompleto"); //Envío de Avisos
+                    $email->setCaIdcaso(null);
+
+                    
+                    $from = $request->getParameter("remitente");                    
+                    if ($from) {
+                        $email->setCaFrom($from);
+                    } else {
+                        $email->setCaFrom($user->getEmail());
+                    }
+                    
+                    $email->setCaFromname($user->getNombre());                    
+
+                    $email->setCaReplyto($user->getEmail());
+
+                    foreach ($addressRnincompleto as $recip) {
+                        $recip = str_replace(" ", "", $recip);
+                        if ($recip) {
+                            $email->addTo($recip);
+                        }
+                    }
+
+                    $recips = explode(",", $request->getParameter("cci"));
+                    foreach ($recips as $recip) {
+                        $recip = str_replace(" ", "", $recip);
+                        if ($recip) {
+                            $email->addCc($recip);
+                        }
+                    }
+                    
+                    $email->addCc($this->getUser()->getEmail());
+
+                    $subjectRN = "Reporte Incompleto RN".$reporte->getCaConsecutivo()." [".$reporte->getCaModalidad()." ".$reporte->getOrigen()->getCaCiudad()."->".$reporte->getDestino()->getCaCiudad()."]";
+                    $email->setCaSubject($subjectRN);
+                    $email->setCaBody("Reporte Incompleto");
+
+                    $conceptos = $reporte->getRepTarifa();
+                    $gastos = $reporte->getRecargos();                    
+                    
+                    $html ="<div>
+                        <table class='tableList alignLeft'>                        
+                        <tr><td >El reporte de negocios No: ".$reporte->getCaConsecutivo()." presento datos incompletos al momento de enviar el status </td></tr>
+                        <tr><td >Por favor verifique : ".((count($conceptos)==0)?"<br>1) Tarifas":"").((count($gastos)==0)?"<br> 2) Recargos":"")."  </td></tr>";
+                    $html."</table></div>";
+
+                    $this->getRequest()->setParameter('tipo',"INSTRUCCIONES");
+                    $this->getRequest()->setParameter('mensaje',"");
+                    $this->getRequest()->setParameter('html',$html);
+                    $request->setParameter("format", "email");
+
+                    $mensaje = sfContext::getInstance()->getController()->getPresentationFor( 'reportesNeg', 'emailReporte');
+                    $email->setCaBodyhtml($mensaje);
+                    $email->save($conn);                    
+                }
             $conn->commit();
 
         } catch (Exception $e) {
@@ -1254,21 +1335,16 @@ class traficosActions extends sfActions
             
 
         }else{
-            $tarea = new NotTarea();
-            
+            $tarea = new NotTarea();            
         }
 		
 		if ($request->isMethod('post')){
-
-
             //En caso que ya se haya creado una notificación se crea una nueva
             //tarea de lo contrario no se notifica
             $notificacion = $tarea->getNotificacion();
             if( $this->getRequestParameter( "idtarea" ) && count($notificacion)>0){
                 $tarea = new NotTarea();                
             }
-            
-
 			$bindValues = array();			
 			$bindValues["fchseguimiento"] = $request->getParameter("fchseguimiento");
 			$bindValues["txtseguimiento"] = $request->getParameter("txtseguimiento");

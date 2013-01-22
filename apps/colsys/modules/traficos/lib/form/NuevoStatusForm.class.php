@@ -1,7 +1,5 @@
 <?
-
 class NuevoStatusForm extends BaseForm {
-
     const NUM_CC = 7;
     const NUM_EQUIPOS = 5;
 
@@ -12,6 +10,7 @@ class NuevoStatusForm extends BaseForm {
     private $queryVolumen = null;
     private $queryConcepto = null;
     private $destinatarios = array();
+    private $contactos = array();
     private $destinatariosFijos = array();
     private $widgetsClientes = array();
 
@@ -30,6 +29,11 @@ class NuevoStatusForm extends BaseForm {
         for ($i = 0; $i < count($destinatarios); $i++) {
             $widgets["destinatarios_" . $i] = new sfWidgetFormInputCheckbox(array(), array("size" => 60, "style" => "margin-bottom:3px", "value" => trim($destinatarios[$i])));
         }
+        
+        $contactos = $this->getContactos();
+        for ($i = 0; $i < count($contactos); $i++) {
+            $widgets["contactos_" . $i] = new sfWidgetFormInputCheckbox(array(), array("size" => 60, "style" => "margin-bottom:3px", "value" => trim($contactos[$i]["ca_email"])));
+        }
 
         for ($i = 0; $i < count($destinatariosFijos); $i++) {
 
@@ -38,6 +42,10 @@ class NuevoStatusForm extends BaseForm {
 
         for ($i = 0; $i < self::NUM_CC; $i++) {
             $widgets["cc_" . $i] = new sfWidgetFormInputText(array(), array("size" => 60, "style" => "margin-bottom:3px"));
+        }
+        
+        for ($i = 0; $i < self::NUM_CC; $i++) {
+            $widgets["cci_" . $i] = new sfWidgetFormInputText(array(), array("size" => 60, "style" => "margin-bottom:3px"));
         }
 
         $widgets['idetapa'] = new sfWidgetFormDoctrineChoice(array(
@@ -133,13 +141,14 @@ class NuevoStatusForm extends BaseForm {
             }
         }
 
-
         $widgets['observaciones_idg'] = new sfWidgetFormInputText(array(), array("size" => 120));
 
         //Seguimientos		
         $widgets["prog_seguimiento"] = new sfWidgetFormInputCheckbox(array(), array("onClick" => "crearSeguimiento()"));
         $widgets["fchseguimiento"] = new sfWidgetFormExtDate();
         $widgets['txtseguimiento'] = new sfWidgetFormTextarea(array(), array("rows" => 3, "cols" => 140));
+        
+        $widgets["rep_incompleto"] = new sfWidgetFormInputCheckbox(array(), array("onClick" => "reporteIncompleto()"));
 
         $widgets['emailusuario'] = new sfWidgetFormDoctrineChoice(array(
                     'model' => 'Usuario',
@@ -149,7 +158,6 @@ class NuevoStatusForm extends BaseForm {
                     'multiple' => 'true', 'expanded' => true
                         )
         );
-
 
         $widgets['inspeccion_fisica'] = new sfWidgetFormInputCheckbox();
 
@@ -172,11 +180,14 @@ class NuevoStatusForm extends BaseForm {
                             array('invalid' => 'La dirección es invalida'));
             $this->widgetSchema->setLabel("destinatarios_" . $i, $destinatarios[$i]);
         }
-
+        
+        for ($i = 0; $i < count($contactos); $i++) {
+            $validator["contactos_" . $i] = new sfValidatorEmail(array('required' => false),
+                            array('invalid' => 'La dirección es invalida'));
+            $this->widgetSchema->setLabel("contactos_" . $i, $contactos[$i]);
+        }
 
         for ($i = 0; $i < count($destinatariosFijos); $i++) {
-
-
             $validator["destinatariosfijos_" . $i] = new sfValidatorEmail(array('required' => false),
                             array('invalid' => 'La dirección es invalida'));
             if ($destinatariosFijos[$i]->getCaEmail()) {
@@ -188,6 +199,11 @@ class NuevoStatusForm extends BaseForm {
 
         for ($i = 0; $i < self::NUM_CC; $i++) {
             $validator["cc_" . $i] = new sfValidatorEmail(array('required' => false),
+                            array('invalid' => 'La dirección es invalida'));
+        }
+        
+        for ($i = 0; $i < self::NUM_CC; $i++) {
+            $validator["cci_" . $i] = new sfValidatorEmail(array('required' => false),
                             array('invalid' => 'La dirección es invalida'));
         }
 
@@ -259,6 +275,8 @@ class NuevoStatusForm extends BaseForm {
 
         $validator['prog_seguimiento'] = new sfValidatorString(array('required' => false));
 
+        $validator['rep_incompleto'] = new sfValidatorString(array('required' => false));
+        
         $validator['fchseguimiento'] = new sfValidatorDate(array('required' => false),
                         array('required' => 'Por favor coloque en una fecha valida'));
         $validator['txtseguimiento'] = new sfValidatorString(array('required' => false),
@@ -319,7 +337,10 @@ class NuevoStatusForm extends BaseForm {
             $this->validatorSchema['fchseguimiento']->setOption('required', true);
             $this->validatorSchema['txtseguimiento']->setOption('required', true);
         }
-
+        
+        if ($taintedValues["rep_incompleto"]) {
+            //$this->validatorSchema['contactos_0']->setOption('required', true);            
+        }
 
         $horaRecibo = $taintedValues["horarecibo"];
 
@@ -351,8 +372,6 @@ class NuevoStatusForm extends BaseForm {
             }
         }
 
-
-
         $taintedValues["fchhorarecibo"] = $fch;
         $taintedValues["fchactual"] = date("Y-m-d H:i:s");
         $destinatariosFijos = $this->getDestinatariosFijos();
@@ -383,6 +402,10 @@ class NuevoStatusForm extends BaseForm {
     public function setDestinatarios($c) {
         $this->destinatarios = $c;
     }
+    
+    public function setContactos($c) {
+        $this->contactos = $c;
+    }
 
     public function setDestinatariosFijos($c) {
         $this->destinatariosFijos = $c;
@@ -398,6 +421,10 @@ class NuevoStatusForm extends BaseForm {
 
     public function getDestinatarios() {
         return $this->destinatarios;
+    }
+    
+    public function getContactos() {
+        return $this->contactos;
     }
 
     public function getDestinatariosFijos() {
@@ -415,7 +442,5 @@ class NuevoStatusForm extends BaseForm {
             $this->widgetsClientes[$name] = array("type" => $type, "label" => $parametro->getCaValor2());
         }
     }
-
 }
-
 ?>

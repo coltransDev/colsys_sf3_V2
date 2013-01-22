@@ -4,6 +4,8 @@ use_helper("MimeType");
 $reporte = $sf_data->getRaw("reporte");
 $files = $sf_data->getRaw("files");
 $att = $sf_data->getRaw("att");
+$reporte_incompleto = $sf_data->getRaw("reporte_incompleto");
+
 
 if($reporte->getCaImpoexpo()==Constantes::OTMDTA)
 {        
@@ -24,17 +26,8 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
     $saludoAviso = str_replace("'", "\\'", $saludoAviso);
 }
 
-/*$saludo = $textos['saludo'];	
-if( date("G")<12 ){
-	$saludo .= "buenos días:"; 
-}elseif( date("G")<18 ){
-	$saludo .= "buenas tardes:"; 
-}else{
-	$saludo .= "buenas noches:"; 
-}*/
-
-
 $destinatariosFijos = $form->getDestinatariosFijos();
+$contactos_reporte = $form->getContactos();
 ?>
 <script language="javascript" type="text/javascript">
 
@@ -194,8 +187,23 @@ var crearSeguimiento=function(){
 	}
 }
 
-
-
+var reporteIncompleto=function(){
+    <?
+    if($reporte_incompleto!="")
+    {
+    ?>
+        $("#rep_incompleto").attr("checked",true);
+    <?
+    }
+    ?>
+    
+	if(document.getElementById("rep_incompleto").checked)
+    {
+		$("#row_incompleto").show();
+	}else{
+		$("#row_incompleto").hide();
+	}
+}
 </script>
 
 
@@ -237,16 +245,16 @@ echo $form['transporte']->render();
 	}
 	?>	
 	<tr>
-		<td width="50%" >				
+		<td width="50%">				
 			<div align="left"><b>Cliente:</b><br /><?=$reporte->getCliente()->getCaCompania()?></div>		</td>	
-		<td width="50%" >				
-			 <div align="left"><b>Reporte:</b><br /><?=$reporte->getCaConsecutivo()." V".$reporte->getCaVersion()?></div>		</td>	
+		<td width="50%">
+            <div align="left"><b>Reporte:</b><br /><?=$reporte->getCaConsecutivo()." V".$reporte->getCaVersion()?> <a href="/reportesNeg/verReporte/id/<?=$reporte->getCaIdreporte()?>/impoexpo/<?=$reporte->getCaImpoexpo()?>/modo/<?=$reporte->getCaTransporte()?>"><img  src="/images/16x16/pdf.gif"></a></div>
+        </td>
 	</tr>
-	
 	<tr>
 		<td valign="top"><div align="left"><b>Remitente:</b>
 			<?
-			if($user->getEmail()=="traficos1@coltrans.com.co" || $user->getEmail()=="traficos2@coltrans.com.co" ){			
+			if($user->getEmail()=="traficos1@coltrans.com.co" || $user->getEmail()=="traficos2@coltrans.com.co" ){
 				echo $form['remitente']->renderError(); 	
 				$form->setDefault('remitente', $user->getEmail() ); 			
 				echo $form['remitente']->render();					
@@ -257,7 +265,6 @@ echo $form['transporte']->render();
 		</div></td>
 		<td valign="top"><div align="left">&nbsp;</div></td>
 	</tr>
-	
 	<tr>
 		<td valign="top">
 			<div align="left">
@@ -266,19 +273,16 @@ echo $form['transporte']->render();
             ?>
                 <div class="qtip box1" title="Debe seleccionar al menos un contacto fijo" >
                     <b>Destinatarios Fijos:</b><br />
-               <?
+            <?
                for( $i=0; $i< count($destinatariosFijos) ; $i++ ){
                      echo $form['destinatariosfijos_'.$i]->renderError();
-                     
                      $form->setDefault('destinatariosfijos_'.$i, (stripos($reporte->getCaConfirmarClie(),trim($destinatariosFijos[$i]->getCaEmail()))!==false) );
                      echo $form['destinatariosfijos_'.$i]->render().$form['destinatariosfijos_'.$i]->renderLabel()."<br />";
                 }
-               ?>
-
+            ?>
                 </div>
-                <br />
-              
-                <?
+                <br/>
+            <?
             }
             ?>
             <div class="qtip box1" title="Selecciones los destinatarios a los que les llegara el correo" >
@@ -290,25 +294,22 @@ echo $form['transporte']->render();
 				 $form->setDefault('destinatarios_'.$i, 1 ); 	
 				 echo $form['destinatarios_'.$i]->render().$form['destinatarios_'.$i]->renderLabel()."<br />";
 			}
-						
 			if ( ($reporte->getCaContinuacion()!="N/A" && $reporte->getCaContinuacion()!="TRANSBORDO") && $reporte->getCaTransporte()==Constantes::MARITIMO && $reporte->getCaImpoexpo()!=Constantes::EXPO) {
 				echo " &nbsp;&nbsp;&nbsp;Coordinador OTM/DTA<br />";		
 			}
-			
 			if ( $reporte->getCaSeguro()=="Sí" ) {
 				$repseguro = $reporte->getRepSeguro();
 				if( $repseguro ){
-					
 					$usuario = Doctrine::getTable("Usuario")->find( $repseguro->getCaSeguroConf() );
 					if( $usuario ){
 						echo " &nbsp;&nbsp;&nbsp;Seguros: ".$usuario->getCaEmail()."<br />";
 						if( $usuario->getCaEmail()!="seguros@coltrans.com.co" ){
-							echo " &nbsp;&nbsp;&nbsp;Seguros: seguros@coltrans.com.co<br />";	
-						}		
+							echo " &nbsp;&nbsp;&nbsp;Seguros: seguros@coltrans.com.co<br />";
+						}
 					}else{
-						echo " &nbsp;&nbsp;&nbsp;Seguros: seguros@coltrans.com.co<br />";								
-					}						
-				}				
+						echo " &nbsp;&nbsp;&nbsp;Seguros: seguros@coltrans.com.co<br />";
+					}
+				}
 			}
 			
 			if ( $reporte->getCaColmas()=="Sí" ) {
@@ -362,11 +363,7 @@ echo $form['transporte']->render();
 			 	if( $reporte->getCaImpoexpo()==Constantes::EXPO ){                   
 				 	$form->setDefault('idetapa', "EEETD" );
 				}else{
-               //if ($user->getIdSucursal() == "PER"){
-               //   $form->setDefault('idetapa', "IMCEM" );
-               //}else{
                   $form->setDefault('idetapa', "IMETA" );
-               //}
 				}
 			 }else{
 			 	if( $ultStatus ){
@@ -461,9 +458,7 @@ echo $form['transporte']->render();
 					 	$form->setDefault('fchllegada', $ultStatus->getCaFchllegada() ); 
 					 }
 					echo $form['fchllegada']->render();
-					?>
-					
-					
+					?>					
 				</div></td>
 				<td>&nbsp;					</td>
 			</tr>
@@ -531,8 +526,7 @@ echo $form['transporte']->render();
                          if( $ultStatus && $ultStatus->getCaPeso() ){	
                             $pesoArr = explode("|",$ultStatus->getCaPeso());
                             $peso = $pesoArr[0];
-                            $pesoTipo = isset($pesoArr[1])?$pesoArr[1]:"";								
-                            
+                            $pesoTipo = isset($pesoArr[1])?$pesoArr[1]:"";                            
                          }
                      }
                      $form->setDefault('peso', $peso); 
@@ -543,8 +537,7 @@ echo $form['transporte']->render();
 				</div></td>
 				<td><div align="left"><b>Volumen</b>:<br />
 						<?
-					 echo $form['volumen']->renderError();
-                     
+					 echo $form['volumen']->renderError();                     
                      $vol=""; 
                      $volTipo=""; 
                      if($reporte->getCaTiporep()=="4")
@@ -585,8 +578,7 @@ echo $form['transporte']->render();
 					 echo $form['doctransporte']->render();
 					 ?>				
 				</div></td>
-				<td><div align="left"><b><?=($reporte->getCaTiporep()!="4")?(($reporte->getCaTransporte()==Constantes::MARITIMO)?"Motonave:":"Vuelo:"):"Vehiculo"?></b><br />
-					
+				<td><div align="left"><b><?=($reporte->getCaTiporep()!="4")?(($reporte->getCaTransporte()==Constantes::MARITIMO)?"Motonave:":"Vuelo:"):"Vehiculo"?></b><br />					
 						<?
 					 echo $form['idnave']->renderError(); 
 					 if( $ultStatus ){	
@@ -597,8 +589,6 @@ echo $form['transporte']->render();
 				</div></td>
 				<td><div align="left"></div></td>
 			</tr>
-			
-			
 			<?
             if($reporte->getCaTiporep()!=4)
             {        
@@ -608,7 +598,6 @@ echo $form['transporte']->render();
                 ?>
                         <tr>
                             <td colspan="3">
-
                                 <div align="left">
                                     <?
                                  echo "<b>".$val["label"].":</b><br />"; 
@@ -623,8 +612,7 @@ echo $form['transporte']->render();
                 <?
                     }
                 }
-            }
-			
+            }			
 			if( $reporte->getCaModalidad()=="FCL" ){
 			?>
 			<tr>
@@ -655,7 +643,6 @@ echo $form['transporte']->render();
 						<?
 						$repequipos = $reporte->getRepEquipos();
                         
-                        
 						for( $i=0; $i<NuevoStatusForm::NUM_EQUIPOS; $i++){
                             if( count($repequipos )>0 && isset($repequipos[$i])){
                                 $repequipo = $repequipos[$i];
@@ -666,7 +653,6 @@ echo $form['transporte']->render();
 							<tr>
 								<td>
 								<?
-
 								 echo $form['equipos_tipo_'.$i]->renderError(); 
 								 if( $repequipo ){                                     
 									$form->setDefault('equipos_tipo_'.$i, $repequipo->getCaIdconcepto() );
@@ -697,15 +683,14 @@ echo $form['transporte']->render();
 								?>								</td>											
 							</tr>
 							<?
-						}
-					
+						}					
 					?>
 						</tbody>
-					</table>				</td>				
+					</table>				
+                </td>
 			</tr>
             <?
-            }
-            if( $reporte->getCaTiporep()==4 ){
+            }if( $reporte->getCaTiporep()==4 ){
             ?>
             <tr>
                 <td valign="top" colspan="3"><b>Manifiesto:</b><br>
@@ -734,12 +719,12 @@ echo $form['transporte']->render();
 			}
 			?>		
 		</table></td>
-	</tr>
-	
+	</tr>	
 	<?
 			if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
 				$repexpo = $reporte->getRepExpo();	
-				//if( $repexpo->getCaEmisionbl()=="Destino" ){												?>
+				//if( $repexpo->getCaEmisionbl()=="Destino" ){												
+?>
 				<tr>
 					<td colspan="2"><div align="left"><b>Datos en destino para reclamar el BL:</b><br />
 							<?
@@ -768,14 +753,12 @@ echo $form['transporte']->render();
 				}
 			}
 			?>
-	
 	<tr>
 		<td colspan="2"><div align="left"><b>Introducci&oacute;n al mensaje:</b><br />
 			<?
 			echo $form['introduccion']->renderError(); 
 			$form->setDefault('introduccion', $textos['saludo'] ); 
-			echo $form['introduccion']->render();
-			
+			echo $form['introduccion']->render();			
 			?>		
 		</div></td>
 	</tr>
@@ -804,13 +787,9 @@ echo $form['transporte']->render();
 	?>
 	<tr>
 		<td colspan="2">
-			<div align="left"><b>Adjuntar documento:</b><br />
-				
-					<?		
-                   
-                    
-			foreach( $files as $file ){
-				
+			<div align="left"><b>Adjuntar documento:</b><br />				
+<?                    
+			foreach( $files as $file ){				
 				if(  array_search( base64_encode(basename($file)), $att )!==false ){
 					$option = 'checked="checked"';					
 				}else{
@@ -851,9 +830,6 @@ echo $form['transporte']->render();
 		</div></td>
 
 	</tr>
-	<?
-	
-	?>
 	<tr>
 		<td colspan="2"><div align="left"><b>Programar recordatorio:</b>
 			<?
@@ -886,20 +862,57 @@ echo $form['transporte']->render();
              </div>
 			</div></td>
 		</tr>
+    <tr>
+		<td colspan="2"><div align="left"><b>Reporte incompleto:</b>
+                <br>
+			<?
+            //echo $reporte_incompleto;
+			 echo $form['rep_incompleto']->renderError();
+			 echo $form['rep_incompleto']->render();
+			 ?>
+			 </div>
+        </td>
+	</tr>
+<tr id="row_incompleto">
+		<td valign="top" >
+			<div align="left">
+            <?
+            
+            ?>
+            <div class="qtip box1" title="Seleccione los destinatarios a los que les llegara el correo" >
+                <b>Destinatarios:</b><br />
+            <?
+			for( $i=0; $i< count($contactos_reporte) ; $i++ ){
+				 echo $form['contactos_'.$i]->renderError(); 
+				 $form->setDefault('contactos_'.$i, 1 );
+				 echo $form['contactos_'.$i]->render().$contactos_reporte[$i]["ca_email"]."<br />";
+			}
+			?>
+            </div>
+			</div></td>
+		<td valign="top">
+			<div align="left"><b>Copiar a: </b>
+					<br />
+            <?
+			for( $i=0; $i<NuevoStatusForm::NUM_CC; $i++ ){
+				 echo $form['cci_'.$i]->renderError();
+				 echo $form['cci_'.$i]->render()."<br />";
+			}
+			?>
+			</div>
+        </td>
+	</tr>
 	<tr>
 		<td colspan="2"><div align="center">
-                <input type="button" value="Enviar" class="button" onclick="enviarFormulario()" />&nbsp;
-			
+            <input type="button" value="Enviar" class="button" onclick="enviarFormulario()" />&nbsp;			
 			<input type="button" value="Cancelar" class="button" onClick="document.location='<?=url_for("traficos/listaStatus?modo=".$modo."&reporte=".$reporte->getCaConsecutivo())?>'" />
 		</div></td>
 		</tr>
 </table>
-
-
-
 </form>
 </div>
 <script language="javascript" type="text/javascript">
 	mostrar();
 	crearSeguimiento();
+    reporteIncompleto();
 </script>
