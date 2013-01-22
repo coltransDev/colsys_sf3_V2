@@ -6,7 +6,6 @@ $files = $sf_data->getRaw("files");
 $att = $sf_data->getRaw("att");
 $reporte_incompleto = $sf_data->getRaw("reporte_incompleto");
 
-
 if($reporte->getCaImpoexpo()==Constantes::OTMDTA)
 {        
     if($reporte->getCaTransporte()==Constantes::TERRESTRE)
@@ -31,10 +30,7 @@ $contactos_reporte = $form->getContactos();
 ?>
 <script language="javascript" type="text/javascript">
 
-var enviarFormulario=function(){
-   // alert( document.form1 );
-   // var checkFld = document.form1.fijos;
-    
+var enviarFormulario=function(){   
     var numChecked = 0;
     for(var i=0; i<<?=count($destinatariosFijos)?>; i++ ){
        var checkFld = document.getElementById("destinatariosfijos_"+i);
@@ -188,14 +184,7 @@ var crearSeguimiento=function(){
 }
 
 var reporteIncompleto=function(){
-    <?
-    if($reporte_incompleto!="")
-    {
-    ?>
-        $("#rep_incompleto").attr("checked",true);
-    <?
-    }
-    ?>
+    
     
 	if(document.getElementById("rep_incompleto").checked)
     {
@@ -866,7 +855,7 @@ echo $form['transporte']->render();
 		<td colspan="2"><div align="left"><b>Reporte incompleto:</b>
                 <br>
 			<?
-            //echo $reporte_incompleto;
+            echo $reporte_incompleto;
 			 echo $form['rep_incompleto']->renderError();
 			 echo $form['rep_incompleto']->render();
 			 ?>
@@ -884,7 +873,7 @@ echo $form['transporte']->render();
             <?
 			for( $i=0; $i< count($contactos_reporte) ; $i++ ){
 				 echo $form['contactos_'.$i]->renderError(); 
-				 $form->setDefault('contactos_'.$i, 1 );
+				 //$form->setDefault('contactos_'.$i, 0 );
 				 echo $form['contactos_'.$i]->render().$contactos_reporte[$i]["ca_email"]."<br />";
 			}
 			?>
@@ -914,5 +903,13 @@ echo $form['transporte']->render();
 <script language="javascript" type="text/javascript">
 	mostrar();
 	crearSeguimiento();
-    reporteIncompleto();
+    <?
+    if($reporte_incompleto!="")
+    {
+        $c++;
+    ?>
+        $("#rep_incompleto").attr("checked",true);
+    <?
+    }
+    ?>
 </script>

@@ -832,7 +832,9 @@ class traficosActions extends sfActions
             /*
              * NOTIFICACION DE RN INCOMPLETO
              */
-            if( count($addressRnincompleto)>0 ){
+            
+            
+            if($request->getParameter("rep_incompleto") &&  count($addressRnincompleto)>0 ){
                     $email = new Email();
                     $email->setCaUsuenvio($user->getUserId());
                     $email->setCaTipo("RNIncompleto"); //Envío de Avisos
@@ -889,8 +891,8 @@ class traficosActions extends sfActions
                     $email->setCaBodyhtml($mensaje);
                     $email->save($conn);                    
                 }
+                
             $conn->commit();
-
         } catch (Exception $e) {
             $conn->rollBack();
             throw $e;
