@@ -779,8 +779,8 @@ class reportesNegActions extends sfActions
             case 0:
                 if( !$reporte->getCaIdreporte() ){
                     $reporte->setCaFchreporte( date("Y-m-d") );
-                    $reporte->setCaConsecutivo( ReporteTable::siguienteConsecutivo(date("Y")) );
-                    $reporte->setCaVersion( 1 );                    
+                    $reporte->setCaConsecutivo( ReporteTable::siguienteConsecutivo(date("Y"), utf8_decode($request->getParameter("impoexpo")) , utf8_decode($request->getParameter("transporte")) ));
+                    $reporte->setCaVersion( 1 );
                 }
                 break;
             case 1:
@@ -1725,7 +1725,8 @@ class reportesNegActions extends sfActions
         $email_send=$request->getParameter("email_send");
 
         $reporte->setCaFchreporte( date("Y-m-d") );
-        $reporte->setCaConsecutivo( ReporteTable::siguienteConsecutivo(date("Y")) );
+        $reporte->setCaConsecutivo( ReporteTable::siguienteConsecutivo(date("Y"), ($request->getParameter("impoexpo")) , ($request->getParameter("transporte")) ) );
+        
         $reporte->setCaVersion( 1 );
         $reporte->setCaTiporep( 2 );
 
@@ -2161,7 +2162,7 @@ class reportesNegActions extends sfActions
             case 0:
                 if( !$reporte->getCaIdreporte() ){
                     $reporte->setCaFchreporte( date("Y-m-d") );
-                    $reporte->setCaConsecutivo( ReporteTable::siguienteConsecutivo(date("Y")) );
+                    $reporte->setCaConsecutivo( ReporteTable::siguienteConsecutivo(date("Y"), utf8_decode($request->getParameter("impoexpo")) , utf8_decode($request->getParameter("transporte")) ) );
                     $reporte->setCaVersion( 1 );                    
                 }
                 break;
@@ -2757,7 +2758,7 @@ class reportesNegActions extends sfActions
                 case 0:
                     if( !$reporte->getCaIdreporte() ){
                         $reporte->setCaFchreporte( date("Y-m-d") );
-                        $reporte->setCaConsecutivo( ReporteTable::siguienteConsecutivo(date("Y")) );
+                        $reporte->setCaConsecutivo( ReporteTable::siguienteConsecutivo(date("Y"), utf8_decode($request->getParameter("impoexpo")) , utf8_decode($request->getParameter("transporte")) ) );
                         $reporte->setCaVersion( 1 );
                     }
                     break;
