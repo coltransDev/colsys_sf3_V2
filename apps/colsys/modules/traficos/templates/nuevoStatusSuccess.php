@@ -237,7 +237,7 @@ echo $form['transporte']->render();
 		<td width="50%">				
 			<div align="left"><b>Cliente:</b><br /><?=$reporte->getCliente()->getCaCompania()?></div>		</td>	
 		<td width="50%">
-            <div align="left"><b>Reporte:</b><br /><?=$reporte->getCaConsecutivo()." V".$reporte->getCaVersion()?> <a href="/reportesNeg/verReporte/id/<?=$reporte->getCaIdreporte()?>/impoexpo/<?=$reporte->getCaImpoexpo()?>/modo/<?=$reporte->getCaTransporte()?>"><img  src="/images/16x16/pdf.gif"></a></div>
+            <div align="left"><b>Reporte:</b><br /><?=$reporte->getCaConsecutivo()." V".$reporte->getCaVersion()?> <a href="/reportesNeg/verReporte/id/<?=$reporte->getCaIdreporte()?>/impoexpo/<?=$reporte->getCaImpoexpo()?>/modo/<?=$reporte->getCaTransporte()?>" target="_blank"><img  src="/images/16x16/pdf.gif"></a></div>
         </td>
 	</tr>
 	<tr>
