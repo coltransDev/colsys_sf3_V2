@@ -13,7 +13,7 @@
   /*================-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*\
  */
 
-$titulo = 'Generador de Informes Módulo Aéreo<br /><b>Versión en Prueba, sujeta a modificaciones y ajustes<b>';
+$titulo = 'Generador de Informes Módulo Aéreo';
 $meses = array("%" => "Todos los Meses", "01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre");
 $criterios = array("ca_ano" => "Año", "ca_mes" => "Mes", "ca_sucursal" => "Sucursal", "ca_traorigen" => "Tráfico", "ca_vendedor" => "Vendedor", "ca_compania" => "Clientes", "ca_estado" => "Estado", "ca_ultdestino" => "Destino Final", "ca_nomlinea" => "Aerolinea");
 $modalidades = array("CONSOLIDADO");                     // Arreglo con los tipos de Modalidades de Carga
@@ -63,9 +63,6 @@ if (!isset($boton) and !isset($agrupamiento)) {
     echo "}";
     echo "</script>";
     echo "<script language='javascript' src='javascripts/popcalendar.js'></script>";
-    ?>
-    <meta content="IE=edge" http-equiv="X-UA-Compatible">
-    <?php
     echo "</HEAD>";
     echo "<BODY>";
     require_once("menu.php");
