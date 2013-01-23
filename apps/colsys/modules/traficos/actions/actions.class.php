@@ -304,14 +304,17 @@ class traficosActions extends sfActions
 		}else{
             $q->addWhere("t.ca_impoexpo = ? OR t.ca_impoexpo IS NULL", $reporte->getCaImpoexpo());
 		}	
-				
-		if( ($reporte->getCaImpoexpo()==Constantes::IMPO || $reporte->getCaImpoexpo()==Constantes::TRIANGULACION) && $this->modo!="otm"   ){            
+
+		if( ($reporte->getCaImpoexpo()==Constantes::IMPO || $reporte->getCaImpoexpo()==Constantes::TRIANGULACION) && $this->modo!="otm"){
             if($reporte->getCaTransporte()==Constantes::TERRESTRE)
             {
                 $reporte->setCaTransporte(Constantes::MARITIMO);
             }
-            $q->addWhere("t.ca_transporte = ? OR t.ca_transporte IS NULL", $reporte->getCaTransporte());            
-		}        
+            $q->addWhere("t.ca_transporte = ? OR t.ca_transporte IS NULL", $reporte->getCaTransporte());
+		}
+        else if( $reporte->getCaImpoexpo()==Constantes::EXPO    ){
+            $q->addWhere("t.ca_transporte = ? OR t.ca_transporte IS NULL", $reporte->getCaTransporte());
+        }
         
         if($this->modo!="otm")
             $q->addWhere("t.ca_departamento = ? OR t.ca_departamento IS NULL","Tráficos");        
