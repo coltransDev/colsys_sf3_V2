@@ -24,8 +24,8 @@
                         <td>
                             <a class="" href="<?php echo url_for('formulario/show?ca_id=' . $formulario->getCaId()) ?>"><img title="Ver Detalle" alt="Ver Detalle" src="/images/formularios/detalle.png"></a>
                             <a class="" href="<?php echo url_for('formulario/edit?ca_id=' . $formulario->getCaId()) ?>"><img title="Editar" alt="Editar" src="/images/formularios/edit.gif"></a>
-                            <a class="" target="_blank" href="<?php echo url_for('formulario/vistaPrevia?ca_id=' . base64_encode($formulario->getCaId())) ?>"><img title="Previsualizar" title="Previsualizar" src="/images/formularios/verx16.png"></a>
-                            <a class="" target="_blank" href="<?php echo url_for('formulario/estadistica?ca_id=' . base64_encode($formulario->getCaId())) ?>"><img title="Previsualizar" title="Previsualizar" src="/images/formularios/stats.png"></a>
+                            <a class="" target="_blank" href="<?php echo url_for('formulario/vistaPrevia?ca_id=' . base64_encode($formulario->getCaId())) ?>"><img title="Previsualizar" alt="Previsualizar" src="/images/formularios/verx16.png"></a>
+                            <a class="" target="_blank" href="<?php echo url_for('formulario/estadistica?ca_id=' . base64_encode($formulario->getCaId())) ?>"><img title="Ver Estadísticas" alt="Ver Estadísticas" src="/images/formularios/stats.png"></a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
