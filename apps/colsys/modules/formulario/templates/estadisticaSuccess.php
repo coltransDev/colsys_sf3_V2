@@ -5,7 +5,7 @@
 <?php endif; ?>
     <div class="resultado-estadistica">
         <h1>Listado de Contactos que respondieron el formulario "<?php echo $formulario->ca_titulo ?>"</h1>
-    <?php if ($contactos == 0) {
+    <?php if (sizeof($contactos) == 0) {
     ?>
         <p class="resultado_vacio"> 0 campos encontrados</p>
     <?php } else {
