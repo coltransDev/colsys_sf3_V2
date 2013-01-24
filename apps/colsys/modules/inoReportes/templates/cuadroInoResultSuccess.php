@@ -7,6 +7,7 @@
 $refs = $sf_data->getRaw("refs");
 ?>
 <div class="content" align="center" >
+   <?//php echo "el query es: ".$sqlQ; ?>
     <table width="90%" class="tableList"  >
         <tr>
            <th>Referencia</th>
@@ -30,6 +31,7 @@ $refs = $sf_data->getRaw("refs");
          
          <?
          $totales = array();
+
          $totales["numrefs"] = 0;
          if( count($refs)>0 ){
              foreach( $refs as $r ){    

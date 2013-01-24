@@ -11,6 +11,7 @@ include_component("widgets", "widgetLinea");
 include_component("widgets", "widgetPais");
 include_component("widgets", "widgetAgente");
 
+include_component("widgets", "widgetCiudad");
 
 include_component("widgets", "widgetComerciales");
 include_component("widgets", "widgetCliente");
@@ -81,16 +82,17 @@ include_component("widgets", "widgetCliente");
                                     allowBlank: true,                                                                                                                    
                                     tabIndex:5,
                                     pais:"todos"
-                                })/*,
+                                }),
                                 new WidgetCiudad({fieldLabel: 'Origen',
                                     id: 'origen',
+                                    name: 'origen',
                                     idciudad:"origen",
                                     hiddenName:"idorigen",
                                     tipo:"",
                                     impoexpo: "<?= Constantes::TRIANGULACION ?>",
-                                    value:"<?= $origen ?>",
-                                    hiddenValue:"<?= $idorigen ?>"
-                                })*/
+                                    value:"",
+                                    hiddenValue:""
+                                })
                             ]
                         },
                         /*
@@ -128,15 +130,16 @@ include_component("widgets", "widgetCliente");
                                     allowBlank: true,
                                     tabIndex:8
                                 }),
-                               /* new WidgetCiudad({fieldLabel: 'Destino',
+                                new WidgetCiudad({fieldLabel: 'Destino',
                                     id: 'destino',
+                                    name: 'destino',
                                     idciudad:"destino",
                                     hiddenName:"iddestino",
                                     tipo:"",
                                     impoexpo: "<?= Constantes::TRIANGULACION ?>",
-                                    value:"<?= $destino ?>",
-                                    hiddenValue:"<?= $iddestino ?>"
-                                }),*/
+                                    value:"",
+                                    hiddenValue:""
+                                }),
                                 {
                                     xtype: "checkbox",
                                     fieldLabel: "Listar todos",
