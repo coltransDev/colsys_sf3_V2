@@ -81,15 +81,16 @@ include_component("widgets", "widgetCliente");
                                     allowBlank: true,                                                                                                                    
                                     tabIndex:5,
                                     pais:"todos"
-                                }),
-                                {
-                                    xtype: "checkbox",
-                                    fieldLabel: "Ver detalle de clientes",
-                                    name: 'detalle_clientes',
-                                    checked: true,
-                                    tabIndex:7
-                                }
-                                
+                                })/*,
+                                new WidgetCiudad({fieldLabel: 'Origen',
+                                    id: 'origen',
+                                    idciudad:"origen",
+                                    hiddenName:"idorigen",
+                                    tipo:"",
+                                    impoexpo: "<?= Constantes::TRIANGULACION ?>",
+                                    value:"<?= $origen ?>",
+                                    hiddenValue:"<?= $idorigen ?>"
+                                })*/
                             ]
                         },
                         /*
@@ -127,6 +128,15 @@ include_component("widgets", "widgetCliente");
                                     allowBlank: true,
                                     tabIndex:8
                                 }),
+                               /* new WidgetCiudad({fieldLabel: 'Destino',
+                                    id: 'destino',
+                                    idciudad:"destino",
+                                    hiddenName:"iddestino",
+                                    tipo:"",
+                                    impoexpo: "<?= Constantes::TRIANGULACION ?>",
+                                    value:"<?= $destino ?>",
+                                    hiddenValue:"<?= $iddestino ?>"
+                                }),*/
                                 {
                                     xtype: "checkbox",
                                     fieldLabel: "Listar todos",

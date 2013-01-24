@@ -14,13 +14,11 @@
             <td class="mostrar"><?=link_to("Listado de comprobantes", "inoReportes/listadoComprobantes") ?></td>
             <td class="mostrar">Lista los comprobantes de una referencia para efectos de auditoria</td>
         </tr>
-        
+        <!--
         <tr>  
-            <td class="mostrar"><?=link_to("Generador de Informes", "inoReportes/generadorInformes") ?></td>
+            <td class="mostrar"><a href="repgenerator.php"  class="mudacor">Generador de Informes</a></td>
             <td class="mostrar">Módulo Contructor de Informes multimples opciones</td>
         </tr>
-        
-        <!--
         <tr>  
             <td class="mostrar"><a href="repcomisiones.php"  class="mudacor">Comisiones</a></td>
             <td class="mostrar">Informe de Comisiones para Vendedores</td>

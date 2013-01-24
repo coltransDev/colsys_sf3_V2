@@ -297,16 +297,11 @@ class inoReportesActions extends sfActions {
         if( $aa ){
             $q->addWhere("SUBSTR(m.ca_referencia,15,1) = ? ", $aa%10);
         }
+        
+        
+        
         $this->refs = $q->setHydrationMode(Doctrine::HYDRATE_ARRAY)->execute();
-    }
-    
-    
-        /**
-     *
-     *
-     * @param sfRequest $request A request object
-     */
-    public function executeReporteComisiones(sfWebRequest $request) {
+        
         
     }
     
