@@ -19,10 +19,11 @@ $statusList = $sf_data->getRaw("statusList");
 	<?
 	$i=0;		
 	foreach( $statusList as $lstatus ){ 
+        $style=($i==0)?"background-color: #FFFFCC":"";
 	?>
 	<tr>
-		<td valign="top"><?=$i==0?"<b>":""?><?=$lstatus->getCaFchenvio()?><?=$i==0?"</b>":""?></td>
-		<td valign="top"><?=$i==0?"<b>":""?><?=html_entity_decode(Utils::replace($lstatus->getStatus()))?><?=$i==0?"</b>":""?></td>
+		<td valign="top" style="<?=$style?>"><?=$i==0?"<b>":""?><?=$lstatus->getCaFchenvio()?><?=$i==0?"</b>":""?></td>
+		<td valign="top" style="<?=$style?>"><?=$i==0?"<b>":""?><?=html_entity_decode(Utils::replace($lstatus->getStatus()))?><?=$i==0?"</b>":""?></td>
 		<?
 		if( $linkEmail   ){
 		?>
