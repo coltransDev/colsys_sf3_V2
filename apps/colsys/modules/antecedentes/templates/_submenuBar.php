@@ -7,7 +7,7 @@ $button[0]["link"]= "/index.html";
 */
 
 $i=0;
-
+echo $this->getRequestParameter("format");
 
 if($this->getRequestParameter("ref"))
 {
@@ -24,7 +24,12 @@ else
 
 
 if( $action!="index" ){
-    if( $this->getRequestParameter("format")!="maritimo" ){
+    if ($action == "entregaOportuna" or $action == "editarEntregaOportuna" or $action == "editarBorrarOportuna"){
+        $button[$i]["name"]="Inicio ";
+        $button[$i]["tooltip"]="Pagina inicial del módulo";
+        $button[$i]["image"]="22x22/home.gif";
+        $button[$i]["link"]= "antecedentes/entregaOportuna";
+    }else if( $this->getRequestParameter("format")!="maritimo" ){
         $button[$i]["name"]="Inicio ";
         $button[$i]["tooltip"]="Pagina inicial del módulo";
         $button[$i]["image"]="22x22/home.gif";
