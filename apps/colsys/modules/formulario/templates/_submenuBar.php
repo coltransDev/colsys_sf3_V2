@@ -289,8 +289,8 @@ switch ($action) {
         $button[$i]["name"] = "Consolidado de Resultados";
         $button[$i]["tooltip"] = "Consolidado de Resultados";
         $button[$i]["image"] = "formularios/pie_chart.png";
-        $button[$i]["link"] = "formulario/consolidado";
-        //$button[$i]["link"] = "formulario/consolidado&ca_id=" . $this->getRequestParameter('ca_id');
+       // $button[$i]["link"] = "formulario/consolidado";
+        $button[$i]["link"] = "formulario/consolidado?ca_id=" . $this->getRequestParameter('ca_id');
         $i++;
        /* $button[$i]["name"] = "Enviar Email";
         $button[$i]["tooltip"] = "Enviar Email";
@@ -327,8 +327,8 @@ switch ($action) {
         $button[$i]["name"] = "Excel";
         $button[$i]["tooltip"] = "Exportar la información a Excel";
         $button[$i]["image"] = "formularios/to_excel.gif";
-        $button[$i]["link"] = "formulario/consolidado";
-        //$button[$i]["link"] = "formulario/consolidado&ca_id=" . $this->getRequestParameter('ca_id');
+       // $button[$i]["link"] = "formulario/consolidado";
+        $button[$i]["link"] = "formulario/consolidado?ca_id=" . $this->getRequestParameter('ca_id');
         $i++;
        /* $button[$i]["name"] = "Enviar Email";
         $button[$i]["tooltip"] = "Enviar Email";

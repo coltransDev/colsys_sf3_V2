@@ -121,11 +121,11 @@ class formularioActions extends sfActions {
         $idDecode = base64_decode($id);
         $idControl = intval($idDecode);
 
-        $this->formulario = Doctrine_Core::getTable('formulario')->find(1);
+        $this->formulario = Doctrine_Core::getTable('formulario')->find($idControl);
         $this->control = new ControlEncuesta();
   
         //calcula el numero de formularios diligenciados
-        $this->encuestas_diligenciadas = $this->control->contarEncuestas(1);
+        $this->encuestas_diligenciadas = $this->control->contarEncuestas($idControl);
         //calcula el numero de formularios enviados via mail.
        
     
@@ -136,7 +136,10 @@ class formularioActions extends sfActions {
            WHERE ca_tipo = 'Encuesta'
            AND ca_usuenvio = 'Administrador'
            AND ca_address != 'gmartinez@coltrans.com.co'
+           
         ";
+        
+        // AND ca_idcaso =  $idControl;
         $temp1 = $con->execute($sql1);
         $this->encuestas_enviadas = $temp1->fetch();
         $this->encuestas_enviadas = 3215;
@@ -165,7 +168,7 @@ class formularioActions extends sfActions {
             inner join encuestas.tb_resultado_encuesta re on cf.ca_id=re.ca_idcontrolencuesta
             inner join encuestas.tb_pregunta p on re.ca_idpregunta = p.ca_id
             inner join control.tb_config_values cfv on cfv.ca_idconfig=211 and re.ca_servicio=cfv.ca_ident
-            where (cf.ca_idformulario = 1 and (cf.ca_tipo_contestador=1)and(c.ca_coltrans_std = 'Activo'  or c.ca_colmas_std = 'Activo' ))
+            where (cf.ca_idformulario = ".$idControl." and (cf.ca_tipo_contestador=1)and(c.ca_coltrans_std = 'Activo'  or c.ca_colmas_std = 'Activo' ))
             order by csuc.ca_nombre, cf.ca_id
         ";
         $temp3 = $con3->execute($sql3);
@@ -198,6 +201,7 @@ class formularioActions extends sfActions {
         $this->formulario = Doctrine_Core::getTable('formulario')->find($idFormulario);
         //$this->contacto = $request->getParameter('co');
         //retorna el listado de contactos que diligenciaron la encuesta.
+        
         $con = Doctrine_Manager::getInstance()->connection();
         $sql = "
             select cf.ca_id,cf.ca_id_contestador,c.ca_compania, con.ca_email,con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, cl.ca_vendedor, cu.ca_nombre, csuc.ca_nombre, cf.ca_fchcreado
@@ -207,7 +211,7 @@ class formularioActions extends sfActions {
             inner join control.tb_sucursales csuc on cu.ca_idsucursal=csuc.ca_idsucursal
             inner join tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
             inner join encuestas.tb_control_encuesta cf on ca_idcontacto=ca_id_contestador
-            where (cf.ca_idformulario = 1 and (cf.ca_tipo_contestador=1)and(c.ca_coltrans_std = 'Activo'  or c.ca_colmas_std = 'Activo' )) 
+            where (cf.ca_idformulario = ".$idFormulario.") and (cf.ca_tipo_contestador=1)
             ";
         $st = $con->execute($sql);
         $this->contactos = $st->fetchAll();
