@@ -143,11 +143,13 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
     $ano = "im.ca_ano::text ".((count($ano)==1)?"like '$ano[0]'":"in ('".implode("','",$ano)."')");
     $mes = "im.ca_mes::text ".((count($mes)==1)?"like '$mes[0]'":"in ('".implode("','",$mes)."')");
     
-    $query = "select distinct im.ca_ano, im.ca_mes, im.ca_referencia, im.ca_traorigen, im.ca_ciuorigen, im.ca_tradestino, im.ca_ciudestino, im.ca_modalidad, im.ca_estado, ";
-    $query.= "ic.ca_idcliente, ic.ca_compania, ic.ca_consecutivo, ic.ca_hbls, ic.ca_sucursal, im.ca_fchembarque, ic.ca_fchantecedentes, pr.ca_valor2::int as ca_numdias, pc.ca_valor2::int as ca_numdias2 ";
-    $query.= "from vi_inoclientes_sea ic inner join vi_inomaestra_sea im on ic.ca_referencia = im.ca_referencia inner join tb_ciudades cd on im.ca_origen = cd.ca_idciudad left join tb_parametros pr on pr.ca_casouso = 'CU086' and pr.ca_valor::text = cd.ca_idtrafico::text left join tb_parametros pc on pc.ca_casouso = 'CU086' and pc.ca_valor::text = im.ca_origen::text ";
-    $query.= "where im.ca_impoexpo = 'Importación' and $ano and $mes and ca_trafico like '%$trafico%' and ca_traorigen like '%$traorigen%' and ca_ciudestino like '%$ciudestino%' and ".str_replace("\\","", str_replace("\"","'",$casos))." and ca_sucursal like '%$sucursal%'";
-
+    $query = "select distinct im.ca_ano, im.ca_mes, im.ca_referencia, im.ca_traorigen, im.ca_ciuorigen, im.ca_tradestino, im.ca_ciudestino, im.ca_modalidad, im.ca_estado, (SELECT ca_fchenvio::date FROM tb_emails where ca_tipo='Antecedentes' and ca_subject like '%'||im.ca_referencia||'%' order by ca_idemail DESC limit 1) as ca_envantecedentes, ";
+    $query.= "ic.ca_idcliente, ic.ca_compania, ic.ca_consecutivo, ic.ca_hbls, ic.ca_sucursal, im.ca_fchembarque, ic.ca_fchantecedentes, ea1.ca_dias::int as ca_numdias, ea2.ca_dias::int as ca_numdias2, ea3.ca_dias::int as ca_numdias3 ";
+    $query.= "from vi_inoclientes_sea ic inner join vi_inomaestra_sea im on ic.ca_referencia = im.ca_referencia inner join tb_ciudades cd on im.ca_origen = cd.ca_idciudad ";
+    $query.= "left join tb_entrega_antecedentes ea1 on ea1.ca_idtrafico::text = cd.ca_idtrafico::text and ea1.ca_idciudad::text = '999-9999'  and ea1.ca_modalidad = '' ";
+    $query.= "left join tb_entrega_antecedentes ea2 on ea2.ca_idtrafico::text = cd.ca_idtrafico::text and ea2.ca_idciudad::text = im.ca_origen::text ";
+    $query.= "left join tb_entrega_antecedentes ea3 on ea3.ca_idtrafico::text = cd.ca_idtrafico::text and ea3.ca_modalidad::text = im.ca_modalidad::text ";
+    $query.= "where im.ca_impoexpo = 'Importación' and $ano and $mes and ca_trafico like '%$trafico%' and ca_traorigen like '%$traorigen%' and ca_ciudestino like '%$ciudestino%' and ".str_replace("\\","", str_replace("\"","'",$casos))." and ca_sucursal like '%$sucursal%' ";
     $query.= "order by im.ca_ano, im.ca_mes, im.ca_referencia";
     
     if (!$rs->Open($query)) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
@@ -181,7 +183,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
 
     echo "<TH WIDTH=70>Fch.Embarque</TH>";
     echo "<TH WIDTH=75>Ent.Oportuna</TH>";
-    echo "<TH WIDTH=70>Ent.Efectiva</TH>";
+    echo "<TH WIDTH=70>Env.Efectivo</TH>";
     echo "<TH WIDTH=50>Diferencia</TH>";
 
     $tit_mem = false;
@@ -234,7 +236,10 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
 
         list($ano, $mes, $dia) = sscanf($rs->Value('ca_fchembarque'), "%d-%d-%d");
 
-        if ($rs->Value('ca_numdias2') != null){
+        if ($rs->Value('ca_numdias3') != null){
+            $ent_opo = date("Y-m-d", mktime(0, 0, 0, $mes, $dia+$rs->Value('ca_numdias3'), $ano));
+            $num_dia = "&nbsp;/&nbsp;".$rs->Value('ca_numdias3')."D";
+        }else if ($rs->Value('ca_numdias2') != null){
             $ent_opo = date("Y-m-d", mktime(0, 0, 0, $mes, $dia+$rs->Value('ca_numdias2'), $ano));
             $num_dia = "&nbsp;/&nbsp;".$rs->Value('ca_numdias2')."D";
         }else if ($rs->Value('ca_numdias') != null){
@@ -245,8 +250,8 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
             $num_dia = null;
         }
         
-        $dif_mem = dateDiff($ent_opo,$rs->Value('ca_fchantecedentes'));
-        if ($dif_mem > $rs->Value('ca_numdias')){
+        $dif_mem = dateDiff($ent_opo,$rs->Value('ca_envantecedentes'));
+        if ($dif_mem > 0){ //$rs->Value('ca_numdias')
            $back_col = " background: #FF0000";
            $sub_tot["No Cumplíó"]+= 1;
         }else if (!$dif_mem){
@@ -270,7 +275,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
         echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_sucursal')."</TD>";
         echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_fchembarque')."</TD>";
         echo "  <TD Class=valores style='font-size: 9px;$back_col'>".$ent_opo.$num_dia."</TD>";
-        echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_fchantecedentes')."</TD>";
+        echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_envantecedentes')."</TD>";
         echo "  <TD Class=valores style='font-size: 9px;$back_col'>".$dif_mem."</TD>";
         echo "</TR>";
         $rs->MoveNext();
