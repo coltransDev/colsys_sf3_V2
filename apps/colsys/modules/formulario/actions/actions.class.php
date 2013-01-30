@@ -168,7 +168,7 @@ class formularioActions extends sfActions {
             inner join encuestas.tb_resultado_encuesta re on cf.ca_id=re.ca_idcontrolencuesta
             inner join encuestas.tb_pregunta p on re.ca_idpregunta = p.ca_id
             inner join control.tb_config_values cfv on cfv.ca_idconfig=211 and re.ca_servicio=cfv.ca_ident
-            where (cf.ca_idformulario = ".$idControl." and (cf.ca_tipo_contestador=1)and(c.ca_coltrans_std = 'Activo'  or c.ca_colmas_std = 'Activo' ))
+            where (cf.ca_idformulario = ".$idControl." and (cf.ca_tipo_contestador=1))
             order by csuc.ca_nombre, cf.ca_id
         ";
         $temp3 = $con3->execute($sql3);
@@ -207,10 +207,10 @@ class formularioActions extends sfActions {
             select cf.ca_id,cf.ca_id_contestador,c.ca_compania, con.ca_email,con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, cl.ca_vendedor, cu.ca_nombre, csuc.ca_nombre, cf.ca_fchcreado
             from vi_clientes c
             inner join tb_clientes cl on c.ca_idcliente=cl.ca_idcliente
-            inner join control.tb_usuarios cu on cl.ca_vendedor=cu.ca_login
-            inner join control.tb_sucursales csuc on cu.ca_idsucursal=csuc.ca_idsucursal
             inner join tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
-            inner join encuestas.tb_control_encuesta cf on ca_idcontacto=ca_id_contestador
+            right join encuestas.tb_control_encuesta cf on ca_idcontacto=ca_id_contestador            
+            left join control.tb_usuarios cu on cl.ca_vendedor=cu.ca_login
+            left join control.tb_sucursales csuc on cu.ca_idsucursal=csuc.ca_idsucursal
             where (cf.ca_idformulario = ".$idFormulario.") and (cf.ca_tipo_contestador=1)
             ";
         $st = $con->execute($sql);
