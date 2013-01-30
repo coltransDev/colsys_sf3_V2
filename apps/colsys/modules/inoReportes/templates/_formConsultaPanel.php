@@ -15,6 +15,11 @@ include_component("widgets", "widgetCiudad");
 
 include_component("widgets", "widgetComerciales");
 include_component("widgets", "widgetCliente");
+include_component("widgets","widgetMultiDatos");
+
+$nmes = $sf_data->getRaw("nmes");
+$meses = $sf_data->getRaw("meses");
+
 ?>
 
 <script type="text/javascript">
@@ -23,8 +28,6 @@ include_component("widgets", "widgetCliente");
     
     FormConsultaPanel = function( config ){
         Ext.apply(this, config);       
-        
-        
         
         FormConsultaPanel.superclass.constructor.call(this, {
             deferredRender:false,
@@ -226,32 +229,28 @@ include_component("widgets", "widgetCliente");
                                     name: 'vendedor',
                                     hiddenName: 'login'
                                 }),*/
-                                {
-                                    xtype:          'combo',
-                                    mode:           'local',
-                                    value:          '',
-                                    triggerAction:  'all',
-                                    forceSelection: true,
-                                    editable:       true,
-                                    fieldLabel:     'Mes',
-                                    name:           'mm',
-                                    hiddenName:     'mm',
-                                    displayField:   'name',
-                                    valueField:     'value',
-                                    allowBlank:     true,
-                                    store:          new Ext.data.JsonStore({
-                                        fields : ['name', 'value'],
-                                        data   : [
-                                            <?
-
-                                            for( $i=1; $i<=12; $i++ ){
-                                                echo ($i>1)?",":"";
-                                                echo "{name : '".Utils::mesLargo($i)."',   value: '".$i."'}";
+                                new WidgetMultiDatos({
+                                    title: 'Mes',fieldLabel: 'Mes',id: 'mes',name: 'mes[]',hiddenName: "nmes[]",
+                                        value:'<?= implode(",", $nmes) ?>',
+                                        listeners:{
+                                            render:function()
+                                            {
+                                                if(this.store.data.length==0)
+                                                {
+                                                    data=<?=json_encode(array("root"=>$meses, "total"=>count($meses), "success"=>true) )?>;
+                                                    this.store.loadData(data);
+                                                }
+                                            },
+                                            focus:function()
+                                            {
+                                                if(this.store.data.length==0)
+                                                {
+                                                    data=<?=json_encode(array("root"=>$meses, "total"=>count($meses), "success"=>true) )?>;
+                                                    this.store.loadData(data);
+                                                }
                                             }
-                                            ?>
-                                        ]
-                                    })
-                                }
+                                        }
+                                        })
                             ]
                             
                             

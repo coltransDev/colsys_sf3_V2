@@ -24,7 +24,7 @@ class inoReportesActions extends sfActions {
      *
      * @param sfRequest $request A request object
      */
-    public function executeCuadroIno(sfWebRequest $request) {
+    public function executeCuadroIno(sfWebRequest $request) {        
         
     }
 
@@ -66,18 +66,16 @@ class inoReportesActions extends sfActions {
         $origen = $request->getParameter("origen");
         $destino = $request->getParameter("destino");
 
-        ///$this->origen=$origen;//
-
-        
-        
-        
-        //
-        //$origen = "Buenaventura";
-        //$destino = "Buenaventura";
-        //
-
         $aa = $request->getParameter("aa");
-        $mm = $request->getParameter("mm");
+        
+        $nmm=$request->getParameter("nmes");
+        
+        foreach($nmm as $m)
+        {
+            $mm[]=str_pad($m, 2, "0", STR_PAD_LEFT);
+         //   $mm = $request->getParameter("mm");
+        }
+        
 
         $q->addWhere("m.ca_fchanulado IS NULL ");
 
@@ -118,8 +116,8 @@ class inoReportesActions extends sfActions {
             $q->addWhere("m.ca_idagente = ? ", $idagente);
         }
 
-        if ($mm) {
-            $q->addWhere("SUBSTR(m.ca_referencia,8,2) = ? ", str_pad($mm, 2, "0", STR_PAD_LEFT));
+        if (count($mm)>0) {
+            $q->andWhereIn("SUBSTR(m.ca_referencia,8,2)",$mm);
         }
 
         if ($aa) {

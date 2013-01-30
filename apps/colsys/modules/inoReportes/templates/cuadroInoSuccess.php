@@ -5,8 +5,6 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
-
-
 include_component("inoReportes", "formConsultaPanel");
 
 ?>
