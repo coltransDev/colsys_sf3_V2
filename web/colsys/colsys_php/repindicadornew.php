@@ -495,7 +495,6 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
         $campos.= ", $source.ca_referencia, bke.ca_valor2";
     } else if ($indicador == "Oportunidad en la Facturación" and $departamento == "Aduanas_") {
         $tipo = "D";
-        $format_avg = "H:i:s";
         $source = "vi_repindicador_brk";
         $transporte = "ca_transporte = 'Aduana'";
         $subque = " INNER JOIN ( select bke.*, prm.ca_valor, prm.ca_valor2 from tb_brk_evento bke INNER JOIN (select * from tb_parametros where ca_casouso = 'CU037' and ca_identificacion in (15, 17) order by ca_valor2) prm ON (prm.ca_identificacion = bke.ca_idevento) order by ca_referencia ) bke ON ($source.ca_referencia = bke.ca_referencia) ";
@@ -558,7 +557,7 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
         $subque.= "INNER JOIN tb_parametros pre ON (pre.ca_casouso = prm.ca_valor2 and pre.ca_identificacion = ext.ca_idevento and pre.ca_valor = '$evento') ";
         $subque.= "order by ca_referencia_exm) exe ON (vi_repindicador_exp.ca_referencia = exe.ca_referencia_exm) ";
 
-       	$subque.= "LEFT OUTER JOIN (select DISTINCT subf.ca_referencia_sub,  subf.ca_fchfactura, fact.ca_observaciones from tb_expo_ingresos fact INNER JOIN (select ca_referencia as ca_referencia_sub, min(ca_fchfactura) as ca_fchfactura from tb_expo_ingresos group by ca_referencia) subf ON fact.ca_referencia = subf.ca_referencia_sub and fact.ca_fchfactura = subf.ca_fchfactura) rf ON (rf.ca_referencia_sub = vi_repindicador_exp.ca_referencia) ";
+        $subque.= "LEFT OUTER JOIN (select DISTINCT subf.ca_referencia_sub,  subf.ca_fchfactura, fact.ca_observaciones from tb_expo_ingresos fact INNER JOIN (select ca_referencia as ca_referencia_sub, min(ca_fchfactura) as ca_fchfactura from tb_expo_ingresos group by ca_referencia) subf ON fact.ca_referencia = subf.ca_referencia_sub and fact.ca_fchfactura = subf.ca_fchfactura) rf ON (rf.ca_referencia_sub = vi_repindicador_exp.ca_referencia) ";
 
         if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
             echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
@@ -577,7 +576,7 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
     
     $queries = "select * from $source $subque where ".($impoexpo?$impoexpo." and ":"")."  $sucursal $cliente and ".($ciudestino?$ciudestino." and":"")."   ".($transporte?$transporte." and":"")." $ano and $mes";
     $queries.= " order by $campos";
-    // die($queries);
+    //die($queries);
     //echo $queries;
     if (!$rs->Open("$queries")) {                       							// Selecciona todos lo registros de la vista vi_repgerencia_sea
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      		// Muestra el mensaje de error
@@ -1161,7 +1160,7 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
                 $referencia = $rs->Value('ca_referencia');
                 while ($referencia == $rs->Value('ca_referencia') and !$rs->Eof() and !$rs->IsEmpty()) {
                     $fchEventoArry = date_parse($rs->Value('ca_fchevento'));
-                    $fchEvento = date("Y-m-d H:i:s",mktime($fchEventoArry["hour"],$fchEventoArry["minute"],$fchEventoArry["second"],$fchEventoArry["month"],$fchEventoArry["day"],$fchEventoArry["year"]));
+                    $fchEvento = date("Y-m-d",mktime($fchEventoArry["hour"],$fchEventoArry["minute"],$fchEventoArry["second"],$fchEventoArry["month"],$fchEventoArry["day"],$fchEventoArry["year"]));
                     echo "<TR>";
                     echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_valor')."</TD>";
                     echo "  <TD Class=mostrar style='font-size: 9px;'>".$fchEvento."</TD>";
@@ -1191,23 +1190,8 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
                         }
                         echo "<TD>$clave <br /> $val</TD>";
                     }
-                    list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($ini_event, "%s-%s-%s %s:%s:%s");
-                    $dia=str_pad($dia, 2, "0", STR_PAD_LEFT);
-                    $mes=str_pad($mes, 2, "0", STR_PAD_LEFT);
-                    $f1="$ano-$mes-$dia";
-                    
-                    $tstamp_inicial = mktime(0, 0, 0, $mes, $dia, $ano);
-                    //$tstamp_inicial = mktime($hor, $min, $seg, $mes, $dia, $ano);
-                    list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($fin_event, "%s-%s-%s %s:%s:%s");
-                    $dia=str_pad($dia, 2, "0", STR_PAD_LEFT);
-                    $mes=str_pad($mes, 2, "0", STR_PAD_LEFT);
-                    $f2="$ano-$mes-$dia";
-                    //$tstamp_final   = mktime($hor, $min, $seg, $mes, $dia, $ano);
-                    $tstamp_final   = mktime(0, 0, 0, $mes, $dia, $ano);
-                    //$dif_mem = calc_dif($festi, $tstamp_inicial, $tstamp_final, $entrada, $salida);
-                    $dif_mem = workDiff($festi,$f1,$f2);
-                    
-                    echo $dif_mem;        
+                    $dif_mem = workDiff($festi, $ini_event, $fin_event);
+                    // echo $dif_mem;        
                     echo "</TR>";
                 }
                 echo "  </TABLE></TD>";
