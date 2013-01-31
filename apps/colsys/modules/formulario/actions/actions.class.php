@@ -63,9 +63,9 @@ class formularioActions extends sfActions {
 
         function getExisteControl($num_contacto) {
             $q = Doctrine_Query::create()
-                            ->from('controlEncuesta')
-                            ->where('ca_id_contestador = ?', $num_contacto)
-                            ->andWhere('ca_idformulario = ?', 1);
+                    ->from('controlEncuesta')
+                    ->where('ca_id_contestador = ?', $num_contacto)
+                    ->andWhere('ca_idformulario = ?', 1);
             return $q->fetchOne();
         }
 
@@ -112,7 +112,8 @@ class formularioActions extends sfActions {
      * Carga el consolidado de las encuestas.
      * @param sfWebRequest $request
      */
-     /**
+
+    /**
      * Carga el consolidado de las encuestas.
      * @param sfWebRequest $request
      */
@@ -123,65 +124,52 @@ class formularioActions extends sfActions {
 
         $this->formulario = Doctrine_Core::getTable('formulario')->find($idControl);
         $this->control = new ControlEncuesta();
-  
+
         //calcula el numero de formularios diligenciados
         $this->encuestas_diligenciadas = $this->control->contarEncuestas($idControl);
+        
         //calcula el numero de formularios enviados via mail.
-       
-    
         $con = Doctrine_Manager::getInstance()->connection();
         $sql1 = "
-           SELECT count (*)
+           SELECT count (*) as enviados
            FROM public.tb_emails
            WHERE ca_tipo = 'Encuesta'
            AND ca_usuenvio = 'Administrador'
            AND ca_address != 'gmartinez@coltrans.com.co'
-           
-        ";
-        
-        // AND ca_idcaso =  $idControl;
+           AND ca_idcaso = ".$idControl;
         $temp1 = $con->execute($sql1);
-        $this->encuestas_enviadas = $temp1->fetch();
-        $this->encuestas_enviadas = 3215;
-
-
+        $this->encuestas_enviadas = $temp1->fetchAll();
+        
+        //calcula el numero de formularios  unicos enviados via mail.
         $con2 = Doctrine_Manager::getInstance()->connection();
         $sql2 = "
-        SELECT count(distinct ca_address)
+        SELECT count(distinct ca_address) as unicas
         FROM public.tb_emails
         WHERE ca_tipo = 'Encuesta'
         AND ca_usuenvio = 'Administrador'
-        ";
+        AND ca_address != 'gmartinez@coltrans.com.co'
+        AND ca_idcaso = ".$idControl.";";
         $temp2 = $con2->execute($sql2);
-        $this->encuestas_unicas_enviadas = $temp2->fetch();
-        $this->encuestas_unicas_enviadas = 2816;
-
+        $this->encuestas_unicas_enviadas = $temp2->fetchAll();
+  
+        //calcula el consolidado.
         $con3 = Doctrine_Manager::getInstance()->connection();
         $sql3 = "
-            select cf.ca_id, c.ca_compania, con.ca_email,con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, cl.ca_vendedor, cu.ca_nombre as ca_nombreVendedor, csuc.ca_nombre as ca_ciudad, cf.ca_fchcreado, p.ca_texto, re.ca_resultado, cfv.ca_value as ca_servicio
-            from vi_clientes c
-            inner join tb_clientes cl on c.ca_idcliente=cl.ca_idcliente
-            inner join control.tb_usuarios cu on cl.ca_vendedor=cu.ca_login
-            inner join control.tb_sucursales csuc on cu.ca_idsucursal=csuc.ca_idsucursal
-            inner join tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
-            right join encuestas.tb_control_encuesta cf on ca_idcontacto=ca_id_contestador
+            select cf.ca_id, i.ca_nombre as ca_compania, con.ca_email,con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, cl.ca_vendedor, cu.ca_nombre as ca_nombreVendedor, csuc.ca_nombre as ca_ciudad, cf.ca_fchcreado, p.ca_texto, re.ca_resultado, cfv.ca_value as ca_servicio
+            from ids.tb_ids i
+            inner join tb_clientes cl on cl.ca_idcliente=i.ca_id
+            inner join tb_concliente con on con.ca_idcliente=cl.ca_idcliente
+            right join encuestas.tb_control_encuesta cf on ca_idcontacto=ca_id_contestador            
+            left join control.tb_usuarios cu on cl.ca_vendedor=cu.ca_login
+            left join control.tb_sucursales csuc on cu.ca_idsucursal=csuc.ca_idsucursal
             inner join encuestas.tb_resultado_encuesta re on cf.ca_id=re.ca_idcontrolencuesta
             inner join encuestas.tb_pregunta p on re.ca_idpregunta = p.ca_id
             inner join control.tb_config_values cfv on cfv.ca_idconfig=211 and re.ca_servicio=cfv.ca_ident
-            where (cf.ca_idformulario = ".$idControl." and (cf.ca_tipo_contestador=1))
-            order by csuc.ca_nombre, cf.ca_id
+            where (cf.ca_idformulario = " . $idControl . " and (cf.ca_tipo_contestador=1))
+            order by csuc.ca_nombre, cf.ca_id                    
         ";
         $temp3 = $con3->execute($sql3);
         $this->c_encuestas = $temp3->fetchAll();
-        
-        /* $q = Doctrine_Query::create()
-          ->from('Email')
-          ->where('ca_tipo = ?', 'Encuesta');
-          return $q->count(); */
-        // $this->formatos_enviados = $q;
-        //$this->control = Doctrine_Core::getTable('control_encuesta')->find($idFormulario);
-
-        //$con = Doctrine_Manager::getInstance()->connection();
 
         $detect = new Mobile_Detect();
         $dispositivo = ($detect->isMobile() ? ($detect->isTablet() ? 'tablet' : 'mobile') : 'desktop');
@@ -201,17 +189,18 @@ class formularioActions extends sfActions {
         $this->formulario = Doctrine_Core::getTable('formulario')->find($idFormulario);
         //$this->contacto = $request->getParameter('co');
         //retorna el listado de contactos que diligenciaron la encuesta.
-        
+
         $con = Doctrine_Manager::getInstance()->connection();
         $sql = "
-            select cf.ca_id,cf.ca_id_contestador,c.ca_compania, con.ca_email,con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, cl.ca_vendedor, cu.ca_nombre, csuc.ca_nombre, cf.ca_fchcreado
-            from vi_clientes c
-            inner join tb_clientes cl on c.ca_idcliente=cl.ca_idcliente
-            inner join tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
+            select cf.ca_id,cf.ca_id_contestador,i.ca_nombre, con.ca_email,con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, cl.ca_vendedor, cu.ca_nombre as representante, csuc.ca_nombre as sucursal, cf.ca_fchcreado
+            from ids.tb_ids i
+            inner join tb_clientes cl on cl.ca_idcliente=i.ca_id
+            inner join tb_concliente con on con.ca_idcliente=cl.ca_idcliente
             right join encuestas.tb_control_encuesta cf on ca_idcontacto=ca_id_contestador            
             left join control.tb_usuarios cu on cl.ca_vendedor=cu.ca_login
             left join control.tb_sucursales csuc on cu.ca_idsucursal=csuc.ca_idsucursal
-            where (cf.ca_idformulario = ".$idFormulario.") and (cf.ca_tipo_contestador=1)
+            where (cf.ca_idformulario = " . $idFormulario . ") and (cf.ca_tipo_contestador=1)
+            order by sucursal    
             ";
         $st = $con->execute($sql);
         $this->contactos = $st->fetchAll();
@@ -356,27 +345,80 @@ class formularioActions extends sfActions {
     }
 
     public function executeEnvioEmailsPrueba() {
-        error_reporting(E_ALL);
-        $contacto = 99;
+        $filecontrol = $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "formulario" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "control.txt";
 
-        $html = $this->getPartial('formulario/emailHtml', array('contacto' => $contacto));
+        if (file_exists($filecontrol)) {
+            $inicio = file_get_contents($filecontrol);
+        }
+        if (!$inicio)
+            $inicio = 0;
+        $con = Doctrine_Manager::getInstance()->connection();
+
+        $nreg = 10;
+
+        $sql = "
+            select c.ca_idcliente,c.ca_compania, con.ca_email,ca_coltrans_std,ca_colmas_std,con.ca_idcontacto
+            from vi_clientes c
+            inner join tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
+            where (c.ca_coltrans_std = 'Activo'  or c.ca_colmas_std = 'Activo' )
+            order by 2,3 limit $nreg offset $inicio";
+
+        $st = $con->execute($sql);
+        $clientes = $st->fetchAll();
+        //plantilla evalucion servicio
+        $conteo = 0;
+        $emails_Control = "";
         $asunto = "Dos minutos de su tiempo nos ayuda a prestarle un mejor servicio";
         $emailFrom = "gmartinez@coltrans.com.co";
-        $this->html = $html;
+        foreach ($clientes as $cliente) {
+            $conteo++;
+            if ($cliente["ca_coltrans_std"] != "Activo")
+                continue;
+            try {
+                $contacto = $cliente["ca_idcontacto"];
+                $html = $this->getPartial('formulario/emailHtml', array('contacto' => $contacto));
+                $email = new Email();
+                $email->setCaUsuenvio("Administrador");
+                $email->setCaFrom("no-reply@coltrans.com.co");
+                $email->setCaFromname("COLTRANS S.A.S");
+                $email->setCaSubject($asunto);
+                //$email->setCaAddress($cliente["ca_email"]);
+                $email->setCaAddress("gmartinez@coltrans.com.co");
+                $email->setCaBodyhtml($html);
+                $email->setCaTipo("Encuesta");
+                $email->save();
+                $emails_Control.=$cliente["ca_compania"] . "->" . $cliente["ca_email"] . "<br>";
+            } catch (Exception $e) {
+                $emails_Control.="No se pudo enviar " . $cliente["ca_email"] . ": porque : " . $e->getMessage() . "<br>";
+            }
+            $this->html = $html;
+            echo $cliente["ca_email"] . "<br>";
+        }
+
+        file_put_contents($filecontrol, $inicio + $conteo);
         $email = new Email();
-        $email->setCaUsuenvio("alramirez");
+        $email->setCaUsuenvio("gmartinez");
         $email->setCaFrom($emailFrom);
-        $email->setCaFromname("COLSYS COLTRANS LTDA");
-        $email->setCaSubject($asunto/* . ". Emails enviados" */);
+        $email->setCaFromname("COLTRANS LTDA");
+        $email->setCaSubject($asunto . ". Emails enviados");
         $email->setCaAddress("gmartinez@coltrans.com.co");
-        // $email->setCaCc("gmartinez@coltrans.com.co");
-        $email->setCaBodyhtml($html . "Emails enviados:<br>" /* . $emails_Control */);
-        $email->setCaTipo("Comunicado");
+        //$email->setCaCc("gmartinez@coltrans.com.co");
+        $email->setCaBodyhtml($html . "Emails enviados:<br>" . $emails_Control);
+        $email->setCaTipo("Encuesta");
         $email->send();
-        $this->email = $email;
+        $email->save();
+        echo "enviados";
+        exit;
+        //echo $html;
+        //}
+        $this->setTemplate('envioEmailsPrueba');
     }
 
-    public function executeEnvioEmails() {
+    /**
+     * Metodo para enviar la encuesta
+     * @param type $idCaso Es el id del formulario que se esta enviando
+     */
+    public function executeEnvioEmails($idCaso) {
 
         $filecontrol = $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "formulario" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "control.txt";
 
@@ -419,6 +461,7 @@ class formularioActions extends sfActions {
                 $email->setCaAddress("gmartinez@coltrans.com.co");
                 $email->setCaBodyhtml($html);
                 $email->setCaTipo("Encuesta");
+                $email->setCaIdcaso($idCaso);
                 $email->save();
                 $emails_Control.=$cliente["ca_compania"] . "->" . $cliente["ca_email"] . "<br>";
             } catch (Exception $e) {
