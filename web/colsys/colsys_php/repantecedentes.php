@@ -143,7 +143,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
     $ano = "im.ca_ano::text ".((count($ano)==1)?"like '$ano[0]'":"in ('".implode("','",$ano)."')");
     $mes = "im.ca_mes::text ".((count($mes)==1)?"like '$mes[0]'":"in ('".implode("','",$mes)."')");
     
-    $query = "select distinct im.ca_ano, im.ca_mes, im.ca_referencia, im.ca_traorigen, im.ca_ciuorigen, im.ca_tradestino, im.ca_ciudestino, im.ca_modalidad, im.ca_estado, (SELECT ca_fchenvio::date FROM tb_emails where ca_tipo='Antecedentes' and ca_subject like '%'||im.ca_referencia||'%' order by ca_idemail DESC limit 1) as ca_envantecedentes, ";
+    $query = "select distinct im.ca_ano, im.ca_mes, im.ca_referencia, im.ca_traorigen, im.ca_ciuorigen, im.ca_tradestino, im.ca_ciudestino, im.ca_modalidad, im.ca_estado, im.ca_tipo, (SELECT ca_fchenvio::date FROM tb_emails where ca_tipo='Antecedentes' and ca_subject like '%'||im.ca_referencia||'%' order by ca_idemail DESC limit 1) as ca_envantecedentes, ";
     $query.= "ic.ca_idcliente, ic.ca_compania, ic.ca_consecutivo, ic.ca_hbls, ic.ca_sucursal, im.ca_fchembarque, ic.ca_fchantecedentes, ea1.ca_dias::int as ca_numdias, ea2.ca_dias::int as ca_numdias2, ea3.ca_dias::int as ca_numdias3 ";
     $query.= "from vi_inoclientes_sea ic inner join vi_inomaestra_sea im on ic.ca_referencia = im.ca_referencia inner join tb_ciudades cd on im.ca_origen = cd.ca_idciudad ";
     $query.= "left join tb_entrega_antecedentes ea1 on ea1.ca_idtrafico::text = cd.ca_idtrafico::text and ea1.ca_idciudad::text = '999-9999'  and ea1.ca_modalidad = '' ";
@@ -169,7 +169,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
     echo "<FORM METHOD=post NAME='informe' ACTION='repantecedentes.php'>";       // Hace una llamado nuevamente a este script pero con
     echo "<TABLE CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=13>".COLTRANS."<BR>$titulo<BR>$subtitulo</TH>";
+    echo "  <TH Class=titulo COLSPAN=14>".COLTRANS."<BR>$titulo<BR>$subtitulo</TH>";
     echo "</TR>";
     echo "<TH WIDTH=80>Referencia</TH>";
     echo "<TH WIDTH=80>Pto.Origen</TH>";
@@ -180,6 +180,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
     echo "<TH WIDTH=60>Reporte</TH>";
     echo "<TH WIDTH=80>Hbl</TH>";
     echo "<TH WIDTH=70>Sucursal</TH>";
+    echo "<TH WIDTH=50>Tipo</TH>";
 
     echo "<TH WIDTH=70>Fch.Embarque</TH>";
     echo "<TH WIDTH=75>Ent.Oportuna</TH>";
@@ -204,7 +205,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
         if ($nom_tra != $rs->Value('ca_traorigen')) {
             if($imp_sub){
                echo "<TR>";
-               echo "  <TD Class=invertir style='font-weight:bold; text-align: right;' COLSPAN=9>Sub Totales: </TD>";
+               echo "  <TD Class=invertir style='font-weight:bold; text-align: right;' COLSPAN=10>Sub Totales: </TD>";
                foreach($sub_tot as $key => $val){
                   echo "  <TD Class=invertir style='font-weight:bold;'>$key : $val</TD>";
                }
@@ -217,19 +218,19 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
             }
             if ($tit_mem){
                   echo "<TR>";
-                  echo "  <TH Class=invertir style='font-weight:bold;' COLSPAN=13>".strtoupper("$ano_mem - ".$meses[$mes_mem])."</TH>";
+                  echo "  <TH Class=invertir style='font-weight:bold;' COLSPAN=14>".strtoupper("$ano_mem - ".$meses[$mes_mem])."</TH>";
                   echo "</TR>";
                   $tit_mem = false;
             }
             echo "<TR>";
-            echo "  <TD Class=invertir style='font-weight:bold;' COLSPAN=13>TRAFICO: ".$rs->Value('ca_traorigen')."</TD>";
+            echo "  <TD Class=invertir style='font-weight:bold;' COLSPAN=14>TRAFICO: ".$rs->Value('ca_traorigen')."</TD>";
             echo "</TR>";
             $nom_tra = $rs->Value('ca_traorigen');
             $imp_sub = true;
         }
         if ($sub_ref != substr($rs->Value('ca_referencia'),0,3)) {
             echo "<TR HEIGHT=5>";
-            echo "  <TD Class=titulo COLSPAN=13></TD>";
+            echo "  <TD Class=titulo COLSPAN=14></TD>";
             echo "</TR>";
             $sub_ref = substr($rs->Value('ca_referencia'),0,3);
         }
@@ -251,6 +252,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
         }
         
         $dif_mem = dateDiff($ent_opo,$rs->Value('ca_envantecedentes'));
+        $dif_mem = ($rs->Value('ca_tipo')=='Free Hand Cargo')?NULL:$dif_mem;
         if ($dif_mem > 0){ //$rs->Value('ca_numdias')
            $back_col = " background: #FF0000";
            $sub_tot["No Cumplíó"]+= 1;
@@ -273,6 +275,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
         echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_consecutivo')."</TD>";
         echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_hbls')."</TD>";
         echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_sucursal')."</TD>";
+        echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_tipo')."</TD>";
         echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_fchembarque')."</TD>";
         echo "  <TD Class=valores style='font-size: 9px;$back_col'>".$ent_opo.$num_dia."</TD>";
         echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_envantecedentes')."</TD>";
@@ -284,7 +287,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
     $gra_tot["No se Midió"]+= $sub_tot["No se Midió"];
     $gra_tot["Cumplíó"]+= $sub_tot["Cumplíó"];
     echo "<TR>";
-    echo "  <TD Class=invertir style='font-weight:bold; text-align: right;' COLSPAN=9>Sub Totales: </TD>";
+    echo "  <TD Class=invertir style='font-weight:bold; text-align: right;' COLSPAN=10>Sub Totales: </TD>";
     foreach($sub_tot as $key => $val){
       echo "  <TD Class=invertir style='font-weight:bold;'>$key : $val</TD>";
     }
