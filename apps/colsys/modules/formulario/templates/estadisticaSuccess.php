@@ -7,7 +7,10 @@
         <h1>Listado de Contactos que respondieron el formulario "<?php echo $formulario->ca_titulo ?>"</h1>
     <?php if (sizeof($contactos) == 0) {
     ?>
-        <p class="resultado_vacio"> 0 campos encontrados</p>
+        <br>
+        <p class="resultado_vacio"> En el momento no hay ninguna respuesta para este formulario.</p>
+        <p class="resultado_vacio"> Para ver el status de envio de las encuestas, ingrese a la vista de consolidado.</p>
+        
     <?php } else {
  ?>
         <table border="1" class="listado">
@@ -31,11 +34,11 @@
                 <tr>
                     <td><?php echo $i ?></td>
                     <td><?php echo $control['ca_id'] ?></td>
-                    <td><?php echo $control['ca_compania'] ?></td>
+                    <td><?php echo $control['ca_nombre'] ?></td>
                     <td><?php echo $control['ca_nombres'] . ' ' . $control['ca_papellido'] . ' ' . $control['ca_sapellido'] ?></td>
                     <td><?php echo $control['ca_email'] ?></td>
-                    <td><?php echo $control['ca_nombre'] ?></td>
-                    <td><?php echo $control['ca_vendedor'] ?></td>
+                    <td><?php echo $control['sucursal'] ?></td>
+                    <td><?php echo $control['representante'] ?></td>
                     <td><?php echo $control['ca_fchcreado'] ?></td>
        
                     <td>
