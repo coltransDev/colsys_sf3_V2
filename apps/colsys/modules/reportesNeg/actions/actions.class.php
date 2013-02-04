@@ -416,6 +416,7 @@ class reportesNegActions extends sfActions
         if( $reporte->getCaIdgrupo()){
             $this->editable = false;
         }
+        $this->reporte_old=null;
 	}
 
 	/*
@@ -1704,7 +1705,7 @@ class reportesNegActions extends sfActions
     }
 
     public function executeGuardarReporteAg( sfWebRequest $request )
-    {
+    {        
     try
     {
         $idreporte=($request->getParameter("idreporte")!="")?$request->getParameter("idreporte"):"0";        
@@ -1720,12 +1721,15 @@ class reportesNegActions extends sfActions
         if( $opcion =="1" ){            
             $reporte = $reporte->copiar(1);
         }
+        else
+            $reporte->setCaConsecutivo( ReporteTable::siguienteConsecutivo(date("Y"), $this->getRequestParameter("impoexpo") , $this->getRequestParameter("transporte") ) );
 
         $errors =  array();
         $email_send=$request->getParameter("email_send");
 
         $reporte->setCaFchreporte( date("Y-m-d") );
-        $reporte->setCaConsecutivo( ReporteTable::siguienteConsecutivo(date("Y"), ($request->getParameter("impoexpo")) , ($request->getParameter("transporte")) ) );
+        
+        
         
         $reporte->setCaVersion( 1 );
         $reporte->setCaTiporep( 2 );
@@ -3324,99 +3328,81 @@ class reportesNegActions extends sfActions
     * @param sfRequest $request A request object
     */
     public function executePanelConceptosData(sfWebRequest $request){
-        $reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
+        $id=$request->getParameter("id");
+        $comparar=$request->getParameter("comparar");
+        /*$reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
         $this->forward404Unless( $reporte );
+        $comparar=$request->getParameter("comparar");
+        if($comparar)
+        {*/
+            $q = Doctrine::getTable("Reporte")
+                        ->createQuery("t")
+                        ->where("t.ca_idreporte = ? ", $id);
+        //}
+            
+        if($comparar)
+        {
+            $consecutivo=$request->getParameter("consecutivo");
+            $version=$request->getParameter("version");
+            $q->orWhere("t.ca_consecutivo = ? and t.ca_version= ?",array($consecutivo,($version-1)));
+            $q->orderBy("t.ca_version DESC");
+        }
+        
+        $reportes=$q->execute();
+        
+        /*echo $q->getSqlQuery();
+        echo "::::::::::::".count($reportes)."--------------";
+        exit();*/
+                
+        
         $tipo=($request->getParameter("tipo")!="")?$request->getParameter("tipo"):"1";
 
-        $conceptos = array();
+        $conceptos = array();  
 
-        $baseRow = array('idreporte'=>$reporte->getCaIdreporte());
-
-        $tarifas = Doctrine::getTable("RepTarifa")
-                             ->createQuery("t")
-                             ->where("t.ca_idreporte = ? and t.ca_idconcepto!=9999 and t.ca_tipo=? ", array($reporte->getCaIdreporte(),$tipo))
-                             ->orderBy("t.ca_fchcreado ASC")
-                             ->execute();
-
-        foreach( $tarifas as $tarifa ){
-            $row = $baseRow;
-            $row["iditem"] = $tarifa->getCaIdconcepto();
-            $row["idreg"] = $tarifa->getCaIdreptarifa();
-            $row["item"] = utf8_encode($tarifa->getConcepto()->getCaConcepto());
-            $row["cantidad"] = $tarifa->getCaCantidad();
-            $row["neta_tar"] = $tarifa->getCaNetaTar();
-            $row["neta_min"] = $tarifa->getCaNetaMin();
-            $row["neta_idm"] = $tarifa->getCaNetaIdm();
-            $row["reportar_tar"] = $tarifa->getCaReportarTar();
-            $row["reportar_min"] = $tarifa->getCaReportarMin();
-            $row["reportar_idm"] = $tarifa->getCaReportarIdm();
-            $row["cobrar_tar"] = $tarifa->getCaCobrarTar();
-            $row["cobrar_min"] = $tarifa->getCaCobrarMin();
-            $row["cobrar_idm"] = $tarifa->getCaCobrarIdm();
-            $row["observaciones"] = utf8_encode($tarifa->getCaObservaciones());
-            $row['tipo']="concepto";
-            $row['orden']= $tarifa->getCaIdconcepto();
-            $row['idequipo'] = $tarifa->getCaIdequipo();
-            $row['equipo'] = $tarifa->getEquipo()->getCaConcepto();
-            $conceptos[] = $row;
-
-            $recargos = Doctrine::getTable("RepGasto")
-                             ->createQuery("t")
-                             ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())
-                             ->addWhere("t.ca_idconcepto = ?", $tarifa->getCaIdconcepto() )
-                             ->addWhere("t.ca_recargoorigen = true")
-                             ->orderBy("t.ca_fchcreado ASC")
-                             ->execute();
-            foreach( $recargos as $recargo ){
-                $row = $baseRow;
-                $row["iditem"] = $recargo->getCaIdrecargo();
-                $row["idreg"] = $recargo->getCaIdrepgasto();
-                $row["idconcepto"] = $tarifa->getCaIdconcepto();
-                $row["item"] = utf8_encode($recargo->getTipoRecargo()->getCaRecargo());
-                $row["tipo_app"] = $recargo->getCaTipo();
-                $row["aplicacion"] = $recargo->getCaAplicacion();
-                $row["neta_tar"] = $recargo->getCaNetaTar();
-                $row["neta_min"] = $recargo->getCaNetaMin();
-                $row["reportar_tar"] = $recargo->getCaReportarTar();
-                $row["reportar_min"] = $recargo->getCaReportarMin();
-                $row["cobrar_tar"] = $recargo->getCaCobrarTar();
-                $row["cobrar_min"] = $recargo->getCaCobrarMin();
-                $row["cobrar_idm"] = $recargo->getCaIdmoneda();
-                $row["observaciones"] = utf8_encode($recargo->getCaDetalles());
-                $row['tipo']="recargo";
-                $row['orden']= $tarifa->getCaIdconcepto()."-".utf8_encode($recargo->getTipoRecargo()->getCaRecargo());
-                $row['idequipo'] = $recargo->getCaIdequipo();
-                $row['equipo'] = $recargo->getEquipo()->getCaConcepto();
-                $conceptos[] = $row;
-            }
-        }
-
-        $recargos = Doctrine::getTable("RepGasto")
-                            ->createQuery("t")
-                            ->innerJoin("t.TipoRecargo tr")
-                            ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())                                                                                 
-                            ->addWhere("(t.ca_tiporecargo = ? or t.ca_tiporecargo is null ) and t.ca_idreporte = ? and t.ca_idconcepto = ? and t.ca_recargoorigen='true'", array($tipo, $reporte->getCaIdreporte() , 9999) )
-                            ->orderBy("t.ca_fchcreado ASC")
-                            ->execute();
-        //echo count($recargos);
-        //exit;
-        //if($tipo=="1")        
+        foreach($reportes as $reporte)
         {
-            if( count($recargos)>0){
+            $baseRow = array('idreporte'=>$reporte->getCaIdreporte());
 
+            $tarifas = Doctrine::getTable("RepTarifa")
+                                 ->createQuery("t")
+                                 ->where("t.ca_idreporte = ? and t.ca_idconcepto!=9999 and t.ca_tipo=? ", array($reporte->getCaIdreporte(),$tipo))
+                                 ->orderBy("t.ca_fchcreado ASC")
+                                 ->execute();
+
+            foreach( $tarifas as $tarifa ){
                 $row = $baseRow;
-                $row["iditem"] = 9999;
-
-                $row["item"] = "Recargo general del trayecto";
+                $row["iditem"] = $tarifa->getCaIdconcepto();
+                $row["idreg"] = $tarifa->getCaIdreptarifa();
+                $row["item"] = utf8_encode($tarifa->getConcepto()->getCaConcepto());
+                $row["cantidad"] = $tarifa->getCaCantidad();
+                $row["neta_tar"] = $tarifa->getCaNetaTar();
+                $row["neta_min"] = $tarifa->getCaNetaMin();
+                $row["neta_idm"] = $tarifa->getCaNetaIdm();
+                $row["reportar_tar"] = $tarifa->getCaReportarTar();
+                $row["reportar_min"] = $tarifa->getCaReportarMin();
+                $row["reportar_idm"] = $tarifa->getCaReportarIdm();
+                $row["cobrar_tar"] = $tarifa->getCaCobrarTar();
+                $row["cobrar_min"] = $tarifa->getCaCobrarMin();
+                $row["cobrar_idm"] = $tarifa->getCaCobrarIdm();
+                $row["observaciones"] = utf8_encode($tarifa->getCaObservaciones());
                 $row['tipo']="concepto";
-                $row['orden']="Y";
+                $row['orden']= $tarifa->getCaIdconcepto();
+                $row['idequipo'] = $tarifa->getCaIdequipo();
+                $row['equipo'] = $tarifa->getEquipo()->getCaConcepto();
                 $conceptos[] = $row;
 
+                $recargos = Doctrine::getTable("RepGasto")
+                                 ->createQuery("t")
+                                 ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())
+                                 ->addWhere("t.ca_idconcepto = ?", $tarifa->getCaIdconcepto() )
+                                 ->addWhere("t.ca_recargoorigen = true")
+                                 ->orderBy("t.ca_fchcreado ASC")
+                                 ->execute();
                 foreach( $recargos as $recargo ){
                     $row = $baseRow;
                     $row["iditem"] = $recargo->getCaIdrecargo();
                     $row["idreg"] = $recargo->getCaIdrepgasto();
-                    $row["idconcepto"] = 9999;
+                    $row["idconcepto"] = $tarifa->getCaIdconcepto();
                     $row["item"] = utf8_encode($recargo->getTipoRecargo()->getCaRecargo());
                     $row["tipo_app"] = $recargo->getCaTipo();
                     $row["aplicacion"] = $recargo->getCaAplicacion();
@@ -3429,14 +3415,147 @@ class reportesNegActions extends sfActions
                     $row["cobrar_idm"] = $recargo->getCaIdmoneda();
                     $row["observaciones"] = utf8_encode($recargo->getCaDetalles());
                     $row['tipo']="recargo";
-                    $row['orden']="Y-".utf8_encode($recargo->getTipoRecargo()->getCaRecargo());
+                    $row['orden']= $tarifa->getCaIdconcepto()."-".utf8_encode($recargo->getTipoRecargo()->getCaRecargo());
                     $row['idequipo'] = $recargo->getCaIdequipo();
                     $row['equipo'] = $recargo->getEquipo()->getCaConcepto();
                     $conceptos[] = $row;
                 }
             }
-        }
 
+            $recargos = Doctrine::getTable("RepGasto")
+                                ->createQuery("t")
+                                ->innerJoin("t.TipoRecargo tr")
+                                ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())
+                                ->addWhere("(t.ca_tiporecargo = ? or t.ca_tiporecargo is null ) and t.ca_idreporte = ? and t.ca_idconcepto = ? and t.ca_recargoorigen='true'", array($tipo, $reporte->getCaIdreporte() , 9999) )
+                                ->orderBy("t.ca_fchcreado ASC")
+                                ->execute();
+            //echo count($recargos);
+            //exit;
+            //if($tipo=="1")        
+            {
+                if( count($recargos)>0){
+
+                    $row = $baseRow;
+                    $row["iditem"] = 9999;
+
+                    $row["item"] = "Recargo general del trayecto";
+                    $row['tipo']="concepto";
+                    $row['orden']="Y";
+                    $conceptos[] = $row;
+
+                    foreach( $recargos as $recargo ){
+                        $row = $baseRow;
+                        $row["iditem"] = $recargo->getCaIdrecargo();
+                        $row["idreg"] = $recargo->getCaIdrepgasto();
+                        $row["idconcepto"] = 9999;
+                        $row["item"] = utf8_encode($recargo->getTipoRecargo()->getCaRecargo());
+                        $row["tipo_app"] = $recargo->getCaTipo();
+                        $row["aplicacion"] = $recargo->getCaAplicacion();
+                        $row["neta_tar"] = $recargo->getCaNetaTar();
+                        $row["neta_min"] = $recargo->getCaNetaMin();
+                        $row["reportar_tar"] = $recargo->getCaReportarTar();
+                        $row["reportar_min"] = $recargo->getCaReportarMin();
+                        $row["cobrar_tar"] = $recargo->getCaCobrarTar();
+                        $row["cobrar_min"] = $recargo->getCaCobrarMin();
+                        $row["cobrar_idm"] = $recargo->getCaIdmoneda();
+                        $row["observaciones"] = utf8_encode($recargo->getCaDetalles());
+                        $row['tipo']="recargo";
+                        $row['orden']="Y-".utf8_encode($recargo->getTipoRecargo()->getCaRecargo());
+                        $row['idequipo'] = $recargo->getCaIdequipo();
+                        $row['equipo'] = $recargo->getEquipo()->getCaConcepto();
+                        $conceptos[] = $row;
+                    }
+                }
+            }
+        }
+        
+        if($comparar)
+        {
+            $data1=$data2=array();
+            
+            foreach($conceptos as $c)
+            {
+                if($c["idreporte"]==$id)
+                {
+                    $data1[]=$c;
+                }
+                else
+                {
+                    $data2[]=$c;
+                }
+            }
+            
+            foreach($data1 as $key1=>$d1)
+            {
+                foreach($data2 as $key2=>$d2)
+                {
+                    if($d1["tipo"]=="concepto" && $d1["iditem"] == $d2["iditem"])
+                    {
+                        if( $d1["cantidad"] != $d2["cantidad"]          ||  $d1["neta_tar"] != $d2["neta_tar"]  || 
+                            $d1["neta_min"] != $d2["neta_min"]          ||  $d1["neta_idm"] != $d2["neta_idm"]  || 
+                            $d1["reportar_tar"] != $d2["reportar_tar"]  ||  $d1["reportar_min"] != $d2["reportar_min"] || 
+                            $d1["reportar_idm"] != $d2["reportar_idm"]  ||  $d1["cobrar_tar"] != $d2["cobrar_tar"] || 
+                            $d1["cobrar_min"] != $d2["cobrar_min"]      ||  $d1["cobrar_idm"] != $d2["cobrar_idm"] || 
+                            $d1["observaciones"] != $d2["observaciones"]||  $d1['idequipo'] != $d2['idequipo'])
+                        {
+                            $data1[$key1]["cambio"]="3";
+                            $data2[$key2]["cambio"]="3";
+                            break;
+                        }
+                        else
+                        {
+                            $data1[$key1]["cambio"]="0";
+                            $data2[$key2]["cambio"]="0";
+                        }
+                    }
+                    else if($d1["tipo"]=="recargo" && $d1["idconcepto"] == $d2["idconcepto"] && $d1["iditem"] == $d2["iditem"])
+                    {
+                        if( $d1["tipo_app"]     != $d2["tipo_app"]      ||  $d1["aplicacion"]   != $d2["aplicacion"]    ||
+                            $d1["neta_tar"]     != $d2["neta_tar"]      ||  $d1["neta_min"]     != $d2["neta_min"]      ||
+                            $d1["reportar_tar"] != $d2["reportar_tar"]  ||  $d1["reportar_min"] != $d2["reportar_min"]  ||
+                            $d1["cobrar_tar"]   != $d2["cobrar_tar"]    ||  $d1["cobrar_min"]   != $d2["cobrar_min"]    ||
+                            $d1["cobrar_idm"]   != $d2["cobrar_idm"]    ||  $d1["observaciones"]!= $d2["observaciones"] ||
+                            $d1['idequipo']     != $d2['idequipo'] )
+                        {
+                            $data1[$key1]["cambio"]="3";
+                            $data2[$key2]["cambio"]="3";
+                            break;
+                        }
+                        else
+                        {
+                            $data1[$key1]["cambio"]="0";
+                            $data2[$key2]["cambio"]="0";
+                        }                        
+                    }
+                }
+            }
+            foreach($data1 as $key=>$d1)
+            {
+                if(!isset($d1["cambio"]))
+                {                    
+                    $data1[$key]["cambio"]="2";
+                }
+            }
+            
+            foreach($data2 as $d2)
+            {
+                if(!isset($d2["cambio"]))
+                {
+                    $d2["cambio"]="1";
+                    $data1[]=$d2;
+                }
+            }
+
+            $conceptos=$data1;
+/*            echo "<table width='100%'><td width='50%' style='vertical-align:top'><pre>";
+            print_r($data1);
+            echo "</pre></td><td style='vertical-align:top'><pre>";
+            print_r($data2);
+            echo "</pre></td></table>";
+            exit;
+ * 
+ */
+        }
         $row = $baseRow;
         $row['iditem']="";
         $row['item']="+";
@@ -4011,67 +4130,157 @@ class reportesNegActions extends sfActions
     * @param sfRequest $request A request object
     */
     public function executePanelRecargosData(sfWebRequest $request){
-        $reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
-        $this->forward404Unless( $reporte );
-
-        $conceptos = array();
-
-        $baseRow = array('idreporte'=>$reporte->getCaIdreporte());
-
-        if($this->getRequestParameter("tipo")=="2")
+        //$reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
+        //$this->forward404Unless( $reporte );
+                $id=$request->getParameter("id");
+        $comparar=$request->getParameter("comparar");
+        
+        $q = Doctrine::getTable("Reporte")
+            ->createQuery("t")
+            ->where("t.ca_idreporte = ? ", $id);
+        
+        if($comparar)
         {
-            $recargos = $reporte->getRecargos ( constantes::OTMDTA );
-
-            foreach( $recargos as $recargo ){
-                $row = $baseRow;
-                $row["iditem"] = $recargo->getCaIdrecargo();
-                $row["idreg"] = $recargo->getCaIdrepgasto();
-                $row["idconcepto"] = $recargo->getCaIdconcepto();
-                $row["item"] = ($recargo->getConcepto())?utf8_encode($recargo->getConcepto()->getCaConcepto()):"";
-                $row["idequipo"] = $recargo->getCaIdequipo();
-                $row["equipo"] = ($recargo->getEquipo())?utf8_encode($recargo->getEquipo()->getCaConcepto()):"";
-                $row["tipo_app"] = $recargo->getCaTipo();
-                $row["aplicacion"] = $recargo->getCaAplicacion();
-                $row["neta_tar"] = $recargo->getCaNetaTar();
-                $row["neta_min"] = $recargo->getCaNetaMin();
-                $row["reportar_tar"] = $recargo->getCaReportarTar();
-                $row["reportar_min"] = $recargo->getCaReportarMin();
-                $row["cobrar_tar"] = $recargo->getCaCobrarTar();
-                $row["cobrar_min"] = $recargo->getCaCobrarMin();
-                $row["cobrar_idm"] = $recargo->getCaIdmoneda();
-                $row["observaciones"] = utf8_encode($recargo->getCaDetalles());
-                $row['tipo']="recargo";
-                $row['orden']="Y-".utf8_encode($recargo->getTipoRecargo()->getCaRecargo());
-                $conceptos[] = $row;
-            }
+            $consecutivo=$request->getParameter("consecutivo");
+            $version=$request->getParameter("version");
+            $q->orWhere("t.ca_consecutivo = ? and t.ca_version= ?",array($consecutivo,($version-1)));
+            $q->orderBy("t.ca_version DESC");
         }
-        else
+        
+        $reportes=$q->execute();
+        
+
+        $conceptos = array(); 
+
+        foreach($reportes as $reporte)
         {
-            $recargos = $reporte->getRecargos ( "local" );
+            $baseRow = array('idreporte'=>$reporte->getCaIdreporte());
 
-            foreach( $recargos as $recargo ){
-                $row = $baseRow;
-                $row["iditem"] = $recargo->getCaIdrecargo();
-                $row["idreg"] = $recargo->getCaIdrepgasto();
-                $row["idconcepto"] = $recargo->getCaIdconcepto();
-                $row["idequipo"] = $recargo->getCaIdequipo();
-                $row["equipo"] = utf8_encode($recargo->getEquipo()->getCaConcepto());
-                $row["item"] = utf8_encode($recargo->getTipoRecargo()->getCaRecargo());
-                $row["tipo_app"] = $recargo->getCaTipo();
-                $row["aplicacion"] = $recargo->getCaAplicacion();
-                $row["neta_tar"] = $recargo->getCaNetaTar();
-                $row["neta_min"] = $recargo->getCaNetaMin();
-                $row["reportar_tar"] = $recargo->getCaReportarTar();
-                $row["reportar_min"] = $recargo->getCaReportarMin();
-                $row["cobrar_tar"] = $recargo->getCaCobrarTar();
-                $row["cobrar_min"] = $recargo->getCaCobrarMin();
-                $row["cobrar_idm"] = $recargo->getCaIdmoneda();
-                $row["observaciones"] = $recargo->getCaDetalles();
-                $row['tipo']="recargo";                
-                $row['orden']="Y-".$recargo->getTipoRecargo()->getCaRecargo();
-                $conceptos[] = $row;
+            if($this->getRequestParameter("tipo")=="2")
+            {
+                $recargos = $reporte->getRecargos ( constantes::OTMDTA );
+
+                foreach( $recargos as $recargo ){
+                    $row = $baseRow;
+                    $row["iditem"] = $recargo->getCaIdrecargo();
+                    $row["idreg"] = $recargo->getCaIdrepgasto();
+                    $row["idconcepto"] = $recargo->getCaIdconcepto();
+                    $row["item"] = ($recargo->getConcepto())?utf8_encode($recargo->getConcepto()->getCaConcepto()):"";
+                    $row["idequipo"] = $recargo->getCaIdequipo();
+                    $row["equipo"] = ($recargo->getEquipo())?utf8_encode($recargo->getEquipo()->getCaConcepto()):"";
+                    $row["tipo_app"] = $recargo->getCaTipo();
+                    $row["aplicacion"] = $recargo->getCaAplicacion();
+                    $row["neta_tar"] = $recargo->getCaNetaTar();
+                    $row["neta_min"] = $recargo->getCaNetaMin();
+                    $row["reportar_tar"] = $recargo->getCaReportarTar();
+                    $row["reportar_min"] = $recargo->getCaReportarMin();
+                    $row["cobrar_tar"] = $recargo->getCaCobrarTar();
+                    $row["cobrar_min"] = $recargo->getCaCobrarMin();
+                    $row["cobrar_idm"] = $recargo->getCaIdmoneda();
+                    $row["observaciones"] = utf8_encode($recargo->getCaDetalles());
+                    $row['tipo']="recargo";
+                    $row['orden']="Y-".utf8_encode($recargo->getTipoRecargo()->getCaRecargo());
+                    $conceptos[] = $row;
+                }
             }
+            else
+            {
+                $recargos = $reporte->getRecargos ( "local" );
+
+                foreach( $recargos as $recargo ){
+                    $row = $baseRow;
+                    $row["iditem"] = $recargo->getCaIdrecargo();
+                    $row["idreg"] = $recargo->getCaIdrepgasto();
+                    $row["idconcepto"] = $recargo->getCaIdconcepto();
+                    $row["idequipo"] = $recargo->getCaIdequipo();
+                    $row["equipo"] = utf8_encode($recargo->getEquipo()->getCaConcepto());
+                    $row["item"] = utf8_encode($recargo->getTipoRecargo()->getCaRecargo());
+                    $row["tipo_app"] = $recargo->getCaTipo();
+                    $row["aplicacion"] = $recargo->getCaAplicacion();
+                    $row["neta_tar"] = $recargo->getCaNetaTar();
+                    $row["neta_min"] = $recargo->getCaNetaMin();
+                    $row["reportar_tar"] = $recargo->getCaReportarTar();
+                    $row["reportar_min"] = $recargo->getCaReportarMin();
+                    $row["cobrar_tar"] = $recargo->getCaCobrarTar();
+                    $row["cobrar_min"] = $recargo->getCaCobrarMin();
+                    $row["cobrar_idm"] = $recargo->getCaIdmoneda();
+                    $row["observaciones"] = $recargo->getCaDetalles();
+                    $row['tipo']="recargo";                
+                    $row['orden']="Y-".$recargo->getTipoRecargo()->getCaRecargo();
+                    $conceptos[] = $row;
+                }
+            }            
         }
+        
+        if($comparar)   
+        {
+            $data1=$data2=array();
+            
+            foreach($conceptos as $c)
+            {
+                if($c["idreporte"]==$id)
+                {
+                    $data1[]=$c;
+                }
+                else
+                {
+                    $data2[]=$c;
+                }
+            }
+            
+            foreach($data1 as $key1=>$d1)
+            {
+                foreach($data2 as $key2=>$d2)
+                {   
+                    if($d1["tipo"]=="recargo" && $d1["idequipo"] == $d2["idequipo"] && $d1["iditem"] == $d2["iditem"])
+                    {
+                        if( $d1["tipo_app"]     != $d2["tipo_app"]      ||  $d1["aplicacion"]   != $d2["aplicacion"]    ||
+                            $d1["neta_tar"]     != $d2["neta_tar"]      ||  $d1["neta_min"]     != $d2["neta_min"]      ||
+                            $d1["reportar_tar"] != $d2["reportar_tar"]  ||  $d1["reportar_min"] != $d2["reportar_min"]  ||
+                            $d1["cobrar_tar"]   != $d2["cobrar_tar"]    ||  $d1["cobrar_min"]   != $d2["cobrar_min"]    ||
+                            $d1["cobrar_idm"]   != $d2["cobrar_idm"]    ||  $d1["observaciones"]!= $d2["observaciones"] )
+                        {
+                            $data1[$key1]["cambio"]="3";
+                            $data2[$key2]["cambio"]="3";
+                            break;
+                        }
+                        else
+                        {
+                            $data1[$key1]["cambio"]="0";
+                            $data2[$key2]["cambio"]="0";
+                        }                        
+                    }
+                }
+            }
+            foreach($data1 as $key=>$d1)
+            {
+                if(!isset($d1["cambio"]))
+                {                    
+                    $data1[$key]["cambio"]="2";
+                }
+            }
+            
+            foreach($data2 as $d2)
+            {
+                if(!isset($d2["cambio"]))
+                {
+                    $d2["cambio"]="1";
+                    $data1[]=$d2;
+                }
+            }
+
+            $conceptos=$data1;
+/*            echo "<table width='100%'><td width='50%' style='vertical-align:top'><pre>";
+            print_r($data1);
+            echo "</pre></td><td style='vertical-align:top'><pre>";
+            print_r($data2);
+            echo "</pre></td></table>";
+            exit;
+*/
+        }
+        
+        
+        
 
         $row = $baseRow;
         $row['iditem']="";
@@ -4091,39 +4300,116 @@ class reportesNegActions extends sfActions
     */
     public function executePanelRecargosAduanaData(sfWebRequest $request){
 
-        $reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
-	    $this->forward404Unless( $reporte );
+        //$reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
+	    //$this->forward404Unless( $reporte );
+        
+        $id=$request->getParameter("id");
+        $comparar=$request->getParameter("comparar");
+        
+        $q = Doctrine::getTable("Reporte")
+            ->createQuery("t")
+            ->where("t.ca_idreporte = ? ", $id);
+        
+        if($comparar)
+        {
+            $consecutivo=$request->getParameter("consecutivo");
+            $version=$request->getParameter("version");
+            $q->orWhere("t.ca_consecutivo = ? and t.ca_version= ?",array($consecutivo,($version-1)));
+            $q->orderBy("t.ca_version DESC");
+        }
+        
+        $reportes=$q->execute();
 
         $conceptos = array();
 
-        $baseRow = array('idreporte'=>$reporte->getCaIdreporte());
+       foreach($reportes as $reporte)
+        {
+            $baseRow = array('idreporte'=>$reporte->getCaIdreporte());
 
-        $recargos = Doctrine::getTable("RepCosto")
-                             ->createQuery("t")
-                             //->innerJoin("t.Costo c")
-                             ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())
-                             //->addWhere("t.ca_idconcepto = ?", 9999 )
-                             //->addWhere("tr.ca_tipo = ?", Constantes::RECARGO_LOCAL )
-                             ->orderBy("t.ca_fchcreado ASC")
-                             ->execute();
+            $recargos = Doctrine::getTable("RepCosto")
+                                 ->createQuery("t")
+                                 //->innerJoin("t.Costo c")
+                                 ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())
+                                 //->addWhere("t.ca_idconcepto = ?", 9999 )
+                                 //->addWhere("tr.ca_tipo = ?", Constantes::RECARGO_LOCAL )
+                                 ->orderBy("t.ca_fchcreado ASC")
+                                 ->execute();
 
-        foreach( $recargos as $recargo ){
-            $row = $baseRow;
-            $row["iditem"] = $recargo->getCaIdcosto();
-            $row["item"] = utf8_encode($recargo->getCosto()->getCaCosto());
-            $row["tipo_app"] = $recargo->getCaTipo();
-            $row["vlrcosto"] = $recargo->getCaVlrcosto();
-            $row["mincosto"] = $recargo->getCaMincosto();
-            $row["netcosto"] = $recargo->getCaNetcosto();
-            $row["idmoneda"] = $recargo->getCaIdmoneda();
-            $row["aplicacion"] = $recargo->getCaAplicacion();
-            $row["aplicacionminimo"] = $recargo->getCaAplicacionminimo();
-            $row["observaciones"] = $recargo->getCaDetalles();
-            $row['tipo']="costo";
-            $row['orden']="Y-".$recargo->getCosto()->getCaCosto();
-            $conceptos[] = $row;
+            foreach( $recargos as $recargo ){
+                $row = $baseRow;
+                $row["iditem"] = $recargo->getCaIdcosto();
+                $row["item"] = utf8_encode($recargo->getCosto()->getCaCosto());
+                $row["tipo_app"] = $recargo->getCaTipo();
+                $row["vlrcosto"] = $recargo->getCaVlrcosto();
+                $row["mincosto"] = $recargo->getCaMincosto();
+                $row["netcosto"] = $recargo->getCaNetcosto();
+                $row["idmoneda"] = $recargo->getCaIdmoneda();
+                $row["aplicacion"] = $recargo->getCaAplicacion();
+                $row["aplicacionminimo"] = $recargo->getCaAplicacionminimo();
+                $row["observaciones"] = $recargo->getCaDetalles();
+                $row['tipo']="costo";
+                $row['orden']="Y-".$recargo->getCosto()->getCaCosto();
+                $conceptos[] = $row;
+            }
         }
-
+        if($comparar)   
+        {
+            $data1=$data2=array();
+            
+            foreach($conceptos as $c)
+            {
+                if($c["idreporte"]==$id)
+                {
+                    $data1[]=$c;
+                }
+                else
+                {
+                    $data2[]=$c;
+                }
+            }
+            
+            foreach($data1 as $key1=>$d1)
+            {
+                foreach($data2 as $key2=>$d2)
+                {
+                    if($d1["iditem"] == $d2["iditem"])
+                    {
+                        if( $d1["tipo_app"]         != $d2["tipo_app"]          ||  $d1["vlrcosto"]     != $d2["vlrcosto"]  ||
+                            $d1["mincosto"]         != $d2["mincosto"]          ||  $d1["netcosto"]     != $d2["netcosto"]  ||
+                            $d1["idmoneda"]         != $d2["idmoneda"]          ||  $d1["aplicacion"]   != $d2["aplicacion"]||
+                            $d1["aplicacionminimo"] != $d2["aplicacionminimo"]  ||  $d1["observaciones"]!= $d2["observaciones"] )
+                        {
+                            $data1[$key1]["cambio"]="3";
+                            $data2[$key2]["cambio"]="3";
+                            break;
+                        }
+                        else
+                        {
+                            $data1[$key1]["cambio"]="0";
+                            $data2[$key2]["cambio"]="0";
+                        }                        
+                    }
+                }
+            }
+            foreach($data1 as $key=>$d1)
+            {
+                if(!isset($d1["cambio"]))
+                {                    
+                    $data1[$key]["cambio"]="2";
+                }
+            }
+            
+            foreach($data2 as $d2)
+            {
+                if(!isset($d2["cambio"]))
+                {
+                    $d2["cambio"]="1";
+                    $data1[]=$d2;
+                }
+            }
+            $conceptos=$data1;
+        }
+        
         $row = $baseRow;
         $row['iditem']="";
         $row['item']="+";
@@ -4506,6 +4792,7 @@ class reportesNegActions extends sfActions
             $notificar=$request->getParameter("notificar");
             $principal=$request->getParameter("principal");
             $contactos=$request->getParameter("contactos");
+            $destinatario=$request->getParameter("destinatario");
             
             $antecedente = Doctrine::getTable("RepAntecedentes")->findOneBy("ca_idreporte",$idreporte  );
             
@@ -4515,7 +4802,7 @@ class reportesNegActions extends sfActions
                 $antecedente->setCaIdreporte($idreporte);
                 $antecedente->setCaLogin($principal);
                 $antecedente->setCaEstado('E');
-                $antecedente->setCaResponder ($contactos);
+                $antecedente->setCaResponder ($destinatario);
                 $antecedente->save($con);
             }
             foreach($notificar as $n)
@@ -4564,7 +4851,7 @@ class reportesNegActions extends sfActions
             $subject="";
             if($reporte->getCaImpoexpo()==Constantes::IMPO || $reporte->getCaImpoexpo()==Constantes::TRIANGULACION || $reporte->getCaImpoexpo()==Constantes::OTMDTA)
             {
-                $subject=$reporte->getCaConsecutivo()."/".$reporte->getOrigen()->getcaCiudad()."/".$reporte->getCliente()->getCaCompania();
+                $subject=$reporte->getCaConsecutivo()."/".$reporte->getOrigen()->getcaCiudad()."/".$reporte->getCliente()->getCaCompania()."/".$reporte->getProveedoresStr();
             }
             else
             {
@@ -4582,7 +4869,8 @@ class reportesNegActions extends sfActions
                 <tr><th colspan='2'>Se Creo el Reporte de Negocios No: <a href='https://www.coltrans.com.co/reportesNeg/verReporte/id/".$reporte->getCaIdreporte()."/idantecedente/".$antecedente->getCaIdantecedente()."'>".$reporte->getCaConsecutivo()."</a></th></tr>
                 <tr><th>Cliente</th><td>".($reporte->getCliente()->getCaCompania())."</td></tr>
                 <tr><th>Transporte</th><td>".($reporte->getCaTransporte())."</td></tr>
-                <tr><th>Trayecto</th><td>".($reporte->getOrigen()->getCaCiudad())."-".($reporte->getDestino()->getCaCiudad())."</td></tr>";
+                <tr><th>Trayecto</th><td>".($reporte->getOrigen()->getCaCiudad())."-".($reporte->getDestino()->getCaCiudad())."</td></tr>
+                <tr><th>Proveedor</th><td>".$reporte->getProveedoresStr()."</td></tr>";
             
             $html."</table></td></tr></table></div>";
 
@@ -4606,9 +4894,7 @@ class reportesNegActions extends sfActions
         {
             $c1[]=$c->getCaEmail();
         }
-
         $contactos=null;
-
         $contactos = UsuarioTable::getUsuariosxPerfil('servicio-al-cliente',$this->getUser()->getIdSucursal());
         foreach($contactos as $c)
         {
@@ -4618,6 +4904,8 @@ class reportesNegActions extends sfActions
         $this->contactos=$c1;
         $this->grupos = $grupos;
         $this->reporte = $reporte;
+        $this->principal=$usuario;
+        $this->destinatario=$destinatario;
     }
 
 	/**
@@ -5375,7 +5663,7 @@ class reportesNegActions extends sfActions
             $email->save();
             $email->send();
             
-            $this->responseArray = array("success" => true,"transporte"=>utf8_encode($reporte->getCaTransporte()),"impoexpo"=>utf8_encode($reporte->getCaImpoexpo()));
+            $this->responseArray = array("success" => true,"consecutivo"=>$reporte->getCaConsecutivo(),"transporte"=>utf8_encode($reporte->getCaTransporte()),"impoexpo"=>utf8_encode($reporte->getCaImpoexpo()));
         }
         catch(Exception $e)
         {
@@ -5383,6 +5671,35 @@ class reportesNegActions extends sfActions
             $this->responseArray = array("success" => false);
         }
         $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeListaVersiones(sfWebRequest $request) {
+  
+        $consecutivo=$request->getParameter("consecutivo");
+        
+        $this->forward404Unless( $consecutivo );
+        
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql="select * from vi_reportes2 r where ca_consecutivo='{$consecutivo}'";
+        $st = $con->execute($sql);
+        $this->reportes = $st->fetchAll();
+    }
+    
+    
+    
+    public function executeCompReporte( sfWebRequest $request ){
+        
+        $this->reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
+        
+        $this->reporte_old=ReporteTable::retrieveByConsecutivo($this->reporte->getCaConsecutivo()," and ca_version='".($this->reporte->getCaVersion()-1)."'");
+
+        //$reporte->getCaIdreporte()."-".$reporte_old->getCaIdreporte();
+        
+        $response = sfContext::getInstance()->getResponse();
+		$response->addJavaScript("extExtras/RowExpander",'last');
+		$response->addJavaScript("extExtras/CheckColumn",'last');
+        $this->comparar=true;
+        $this->setTemplate("consultaReporte");
     }
 }
 ?>

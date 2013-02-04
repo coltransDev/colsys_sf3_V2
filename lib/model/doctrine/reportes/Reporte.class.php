@@ -22,6 +22,7 @@ class Reporte extends BaseReporte {
     private $cerrado = null;
     private $cliente = null;
     private $esUltimaVersion = null;
+    private $repAnterior = null;
 
     const IDLISTASEG = 3;
     const IDLISTACONS = 6;
@@ -1045,7 +1046,7 @@ class Reporte extends BaseReporte {
             $conn->beginTransaction();
 
             if ($opcion == 1) {
-                $reporte->setCaConsecutivo(ReporteTable::siguienteConsecutivo(date("Y")));
+                $reporte->setCaConsecutivo(ReporteTable::siguienteConsecutivo(date("Y"),$this->getCaImpoexpo(), $this->getCaTransporte()          ));
                 $reporte->setCaVersion(1);
                 $reporte->setCaIdetapa(null);
                 $reporte->setCaFchultstatus(null);
@@ -1452,4 +1453,19 @@ class Reporte extends BaseReporte {
                         ->execute();
         return $emails;
     }
+    
+    
+    /*
+     * Compara un dato de la version anterior
+     */
+    public function compDato($dato)
+    {
+        if(!$this->repAnterior)
+            $this->repAnterior=ReporteTable::retrieveByConsecutivo($this->getCaConsecutivo()," and ca_version='".($this->getCaVersion()-1)."'");
+        
+        eval( " \$str1 = \$this->get".$dato."();" );
+        eval( " \$str2 = \$this->repAnterior->get".$dato."();" );
+        return strcmp($str1, $str2);
+    }
+    
 }
