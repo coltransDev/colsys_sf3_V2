@@ -31,7 +31,7 @@ class Formulario extends BaseFormulario {
     public function getQueryFormulario() {
         $q = Doctrine_Query::create()
                         ->from('formulario')
-                        ->orderBy('ca_titulo, ca_id ASC');
+                        ->orderBy('ca_id DESC');
         return $q;
     }
 
