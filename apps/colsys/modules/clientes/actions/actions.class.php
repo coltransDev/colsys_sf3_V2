@@ -946,6 +946,12 @@ class clientesActions extends sfActions {
                 while (list ($clave, $val) = each($ccEmails)) {
                     $email->addCc($val);
                 }
+                $jefe_inmediato = $comercial->getManager();
+                if ($jefe_inmediato and $jefe_inmediato->getCaCargo()!='Presidente' and $jefe_inmediato->getCaCargo()!='Gerente General'){
+                   if(stristr($email->getCaCc(), $jefe_inmediato->getCaEmail()) === false){
+                      $email->addCc($jefe_inmediato->getCaEmail());    // Copia al Jefe Inmediato
+                   }
+                }
                 // $email->addCc("clopez@coltrans.com.co");    // Pruebas de envio controlado
 
                 $inicio = $this->getRequestParameter("fchStart");
