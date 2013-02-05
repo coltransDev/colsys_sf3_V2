@@ -47,7 +47,7 @@ class Bloque extends BaseBloque {
         $q = Doctrine_Query::create()
                 ->from('pregunta')
                 ->where('ca_idbloque = ?', $id_bloque)
-                ->orderBy('ca_orden ASC, ca_activo DESC');
+                ->orderBy('ca_activo DESC, ca_orden ASC');
         return $q->execute();
     }
 
