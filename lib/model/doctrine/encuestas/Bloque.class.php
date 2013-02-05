@@ -42,6 +42,14 @@ class Bloque extends BaseBloque {
                 ->orderBy('ca_orden ASC');
         return $q->execute();
     }
+    
+        public function getTodasPreguntasOrdenadas($id_bloque) {
+        $q = Doctrine_Query::create()
+                ->from('pregunta')
+                ->where('ca_idbloque = ?', $id_bloque)
+                ->orderBy('ca_orden ASC, ca_activo DESC');
+        return $q->execute();
+    }
 
     public static function getTextoBooleano($bool) {
         /*$textoOpciones_tipo = array("<span class=no>no</span>", '<span class=si>si</span>');
