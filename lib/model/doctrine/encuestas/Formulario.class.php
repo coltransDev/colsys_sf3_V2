@@ -71,7 +71,7 @@ class Formulario extends BaseFormulario {
                         ->where('ca_idformulario = ?', $id_formulario)
                         ->andWhere('ca_activo = ?', 1)
                         ->andWhere('ca_tipo = ?', 0)
-                        ->orderBy('ca_tipo DESC', 'ca_orden ASC');
+                        ->orderBy('ca_orden ASC');
         return $q->execute();
     }
 
