@@ -20,7 +20,7 @@ class Pregunta extends BasePregunta {
     public function getQueryPregunta() {
         $q = Doctrine_Query::create()
                 ->from('pregunta')
-                ->orderBy('ca_idbloque');
+                ->orderBy('ca_idbloque DESC');
         return $q;
     }
 
