@@ -1,4 +1,4 @@
-'<html>
+<html>
     <head>
         <title></title>
         <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -75,11 +75,12 @@
                                 <td style="padding:20px"  >
                                     <div style="text-align: justify;font-size: 12px">
                                         <!--<span class="l11">' . date("d") . ' de ' . Utils::mesLargo(date("m")) . ' de ' . date("Y") . '</span><br>-->
-                                        <p>Para Coltrans es importante conocer lo que más le gusta de nuestro servicio.</p>  <p>Queremos que nos brinde la oportunidad de trabajar en esos  aspectos que podemos mejorar.</p>
-                                        <p>Por lo tanto lo invitamos a seguir el siguiente enlace:</p>
+                                        <p>Para Coltrans es importante conocer lo que más le gusta de nuestro servicio, queremos que nos brinde la oportunidad de trabajar en esos  aspectos que podemos mejorar.</p>
+                                         <p><b>Los elogios nos incentivan, la critica nos asegura nuestro futuro!</b></p>
+                                        <p>Lo invitamos a seguir el siguiente enlace:</p>
                                         <br>
                                         <div style="text-align:center">
-                                            <a href="https://www.coltrans.com.co/formulario/servicios/id/1/co/'.$contacto.'">Encuesta de servicio<a>
+                                            <a href="https://www.coltrans.com.co/formulario/servicios/id/<?php echo base64_encode(1) ?>/co/<?php echo base64_encode($contacto) ?>">Encuesta de servicio<a>
                                                     </div>
                                                     <br>
                                                     <br>
@@ -96,6 +97,6 @@
                                                                 </tr>
                                                                 </table>
                                                                 </body>
-                                                                </html>'
+                                                                </html>
 
 

@@ -67,7 +67,7 @@
                 <td>
                     <div style="float:left">
                         <a  style="margin-left: 5px;" href="http://www.coltrans.com.co/es/">
-                            <img  border="0" alt="Coltrans" src="http://www.coltrans.com.co/images/logos/coltrans/coltrans-web.png">
+                            <img  border="0" alt="Colmas" src="http://www.coltrans.com.co/images/logos/colmas/logo_colmas.png">
                             </div>
                             </td>
                             </tr>
@@ -75,8 +75,9 @@
                                 <td style="padding:20px"  >
                                     <div style="text-align: justify;font-size: 12px">
                                         <!--<span class="l11">' . date("d") . ' de ' . Utils::mesLargo(date("m")) . ' de ' . date("Y") . '</span><br>-->
-                                        <p>Para Coltrans es importante conocer lo que más le gusta de nuestro servicio, queremos que nos brinde la oportunidad de trabajar en esos  aspectos que podemos mejorar.</p>
-                                        <p>Por lo tanto lo invitamos a seguir el siguiente enlace:</p>
+                                        <p>Para Colmas es importante conocer lo que más le gusta de nuestro servicio, queremos que nos brinde la oportunidad de trabajar en esos  aspectos que podemos mejorar.</p>
+                                        <p><b>Los elogios nos incentivan, la critica nos asegura nuestro futuro!</b></p>
+                                        <p>Lo invitamos a seguir el siguiente enlace:</p>
                                         <br>
                                         <div style="text-align:center">
                                             <a href="https://www.coltrans.com.co/formulario/servicios/id/<?php echo base64_encode(1) ?>/co/<?php echo base64_encode($contacto) ?>">Encuesta de servicio<a>
@@ -85,11 +86,11 @@
                                                     <br>
                                                     <br>
                                                     <hr>
-                                                    <p><span style="color:#333333; font-size:9px">La información contenida en este correo electrónico y en todos sus archivos anexos, es confidencial y/o privilegiada y sólo puede ser utilizada por la(s) persona(s) a la(s) cual(es) está dirigida. Si usted no es el destinatario autorizado, cualquier modificación, retención, difusión, distribución o copia total o parcial de este mensaje y/o de la información contenida en el mismo y/o en sus archivos anexos está prohibida y son sancionadas por la ley. Si por error recibe este mensaje, de anteano le ofrecemos disculpas, y le solicitamos  borrarlo de inmediato, notificarle de su error a la persona que lo envió y abstenerse de divulgar su contenido y anexos</span></p>
+                                                    <p><span style="color:#333333; font-size:9px">La información contenida en este correo electrónico y en todos sus archivos anexos, es confidencial y/o privilegiada y sólo puede ser utilizada por la(s) persona(s) a la(s) cual(es) está dirigida. Si usted no es el destinatario autorizado, cualquier modificación, retención, difusión, distribución o copia total o parcial de este mensaje y/o de la información contenida en el mismo y/o en sus archivos anexos está prohibida y son sancionadas por la ley. Si por error recibe este mensaje, de antemano le ofrecemos disculpas, y le solicitamos  borrarlo de inmediato, notificarle de su error a la persona que lo envió y abstenerse de divulgar su contenido y anexos</span></p>
                                                     <hr>
                                                     <br>
-                                                    <div style="text-align: center;">COLTRANS S.A.S<br>
-                                                        <a href="http://www.coltrans.com.co/" target="_BLANK">www.coltrans.com.co<a>
+                                                    <div style="text-align: center;">COLMAS S.A.S<br>
+                                                        <a href="http://www.colmas.com.co/" target="_BLANK">www.colmas.com.co<a>
                                                                 </div>
                                                                 </div>
                                                                 </td>

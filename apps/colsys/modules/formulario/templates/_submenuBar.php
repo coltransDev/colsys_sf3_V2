@@ -45,6 +45,11 @@ switch ($action) {
         $button[$i]["image"] = "formularios/add.gif";
         $button[$i]["link"] = "formulario/new";
         $i++;
+        $button[$i]["name"] = "Duplicar Formulario";
+        $button[$i]["tooltip"] = "Duplicar Formulario";
+        $button[$i]["image"] = "formularios/add.gif";
+        $button[$i]["link"] = "formulario/clone";
+        $i++;
        /* $button[$i]["name"] = "Enviar Email";
         $button[$i]["tooltip"] = "Enviar Email";
         $button[$i]["image"] = "formularios/add.gif";
