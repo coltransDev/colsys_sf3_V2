@@ -19,7 +19,7 @@ class Bloque extends BaseBloque {
     public function getQueryBloque() {
         $q = Doctrine_Query::create()
                 ->from('bloque')
-                ->orderBy('ca_idformulario, ca_id ASC');
+                ->orderBy('ca_idformulario, ca_id DESC');
         return $q;
     }
 
