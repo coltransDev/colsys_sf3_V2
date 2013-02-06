@@ -529,6 +529,7 @@ class pricingActions extends sfActions {
             $i++;
         }
 
+        $this->getUser()->log( "Consulta Tarifario", TRUE );
         $this->responseArray = array(
             'success' => true,
             'total' => count($data),
@@ -958,6 +959,7 @@ class pricingActions extends sfActions {
             $this->data[] = $row;
         }
 
+        $this->getUser()->log( "Consulta Tarifario", TRUE );
         $this->responseArray = array(
             'success' => true,
             'total' => count($this->data),
@@ -1279,6 +1281,8 @@ class pricingActions extends sfActions {
             );
             $this->data[] = $row;
         }
+        
+        $this->getUser()->log( "Consulta Tarifario", TRUE );
         $this->responseArray = array(
             'success' => true,
             'total' => count($this->data),
@@ -1616,6 +1620,7 @@ class pricingActions extends sfActions {
 			);
 			$data[]= $row;
 		}		
+          $this->getUser()->log( "Consulta Tarifario", TRUE );
 		$this->responseArray = array("total"=>count($data), "data"=>$data ,"success"=>true);	
 		$this->setTemplate("responseTemplate");
 	}	
@@ -1776,6 +1781,7 @@ class pricingActions extends sfActions {
             );
             $data[] = $row;
         }
+        $this->getUser()->log( "Consulta Tarifario", TRUE );
         $this->responseArray = array("total" => count($data), "data" => $data, "success" => true);
         $this->setTemplate("responseTemplate");
     }
@@ -1862,7 +1868,7 @@ class pricingActions extends sfActions {
         if ($this->nivel == 0) {
             $this->opcion = "consulta";
         }
-
+        
         $transporte = utf8_decode($this->getRequestParameter("transporte"));
         $idtrafico = $this->getRequestParameter("idtrafico");
         $modalidad = $this->getRequestParameter("modalidad");
@@ -1910,6 +1916,7 @@ class pricingActions extends sfActions {
             );
             $data[] = $row;
         }
+        $this->getUser()->log( "Consulta Tarifario", TRUE );
         $this->responseArray = array("total" => count($data), "data" => $data, "success" => true);
         $this->setTemplate("responseTemplate");
     }
@@ -2370,6 +2377,7 @@ class pricingActions extends sfActions {
             }
             $k++;
         }
+        $this->getUser()->log( "Consulta Tarifario", TRUE );
         $this->responseArray = array("root" => $datos, "total", count($datos));
         $this->setTemplate("responseTemplate");
     }
@@ -2526,6 +2534,7 @@ class pricingActions extends sfActions {
         if ($readOnly == "false") {
             $conceptos[] = array("ca_idconcepto" => "", "ca_concepto" => "", "orden" => "Z");
         }
+        $this->getUser()->log( "Consulta Tarifario", TRUE );
         $this->responseArray = array("totalCount" => count($conceptos), "root" => $conceptos);
 
         $this->setTemplate("responseTemplate");

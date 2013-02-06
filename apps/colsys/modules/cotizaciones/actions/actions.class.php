@@ -529,6 +529,8 @@ class cotizacionesActions extends sfActions {
         //$this->redirect( "cotizaciones/consultaCotizacion?id=".$this->getRequestParameter("id") );
         $this->cotizacion = Doctrine::getTable("Cotizacion")->find($this->getRequestParameter("id"));
         $this->forward404Unless($this->cotizacion);
+        
+        $this->getUser()->log( "Consulta Cotizacion" );
 
         $this->emails = Doctrine::getTable("Email")
                         ->createQuery("e")
