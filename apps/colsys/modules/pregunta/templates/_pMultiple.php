@@ -16,8 +16,7 @@
     function verificar_pmultiple_servicios(){
         var inputs = document.getElementById("f_<? echo $pregunta->getBloque()->getFormulario()->getCaId() ?>").elements;
         var i=0, j=0;
-
-        if($pregunta->getBloque()){
+        if( <? echo $pregunta->getBloque()->getCaTipo() ?> ==1){
             for(i;i<inputs.length;i++){
                 if(inputs[i].type == 'checkbox')
                 {
@@ -27,16 +26,17 @@
                     }
                 }
             }
-            alert("numero de checkboxes: "+j);
             if(j==<? echo sizeof($pregunta->getTbOpciones()) ?>){
+                document.getElementById('error_32').innerHTML="<p>Debe seleccionar por lo menos un servicio para continuar!!!</p>";
+               
                 alert("Debe seleccionar almenos un servicio");
                 return false;
             }
             else {
-                alert("Ok");
                 return true;
             }
-        }
+        } 
         return true;
     }
+
 </script>
