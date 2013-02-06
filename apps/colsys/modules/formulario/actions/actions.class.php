@@ -45,8 +45,8 @@ class formularioActions extends sfActions {
                     $new_opcion->save();
                 }
             }
-        }
-
+        }  
+        
         $formulario = new Formulario();
         $this->filtroFormulario = new FormularioFormFilter();
         $this->pager = new sfDoctrinePager('formulario', 30);
@@ -56,23 +56,7 @@ class formularioActions extends sfActions {
         $this->setTemplate('index');
         $this->setLayout('layout_home');
 
-        /* $bloques = $form->getTbBloques();
-          foreach ($bloques as $bloque) {
-          $new_bloque = $bloque->copy();
-          $new_bloque->save();
-
-          $preguntas = $bloque->getTbPreguntas();
-          foreach ($preguntas as $pregunta) {
-          $new_pregunta = $pregunta->copy();
-          $new_pregunta->save();
-
-          $opciones = $pregunta->getTbOpciones();
-          foreach ($opciones as $opcion) {
-          $new_opcion = $opcion->copy();
-          $new_opcion->save();
-          }
-          }
-          } */
+        
     }
 
     /**
