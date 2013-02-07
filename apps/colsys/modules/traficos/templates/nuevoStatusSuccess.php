@@ -7,7 +7,7 @@ $att = $sf_data->getRaw("att");
 $reporte_incompleto = $sf_data->getRaw("reporte_incompleto");
 
 if($reporte->getCaImpoexpo()==Constantes::OTMDTA)
-{        
+{
     if($reporte->getCaTransporte()==Constantes::TERRESTRE)
         $reporte->setCaTransporte(Constantes::MARITIMO);
     $reporte->setCaImpoexpo(Constantes::IMPO);
@@ -379,10 +379,16 @@ echo $form['transporte']->render();
         else            
             $asunto .= $cliente." [".$origen." -> ".$destino."] ".$reporte->getCaOrdenClie()."-".$reporte->getRepOtm()->getCaHbls();
     }
-	else if( $reporte->getCaImpoexpo()=="Importación" || $reporte->getCaImpoexpo()=="Triangulación" ){
+	else if( $reporte->getCaImpoexpo()==Constantes::IMPO || $reporte->getCaImpoexpo()==Constantes::TRIANGULACION ){
 		$proveedor = substr($reporte->getProveedoresStr(),0,130);					
 		$asunto .= $proveedor." / ".$cliente." [".$origen." -> ".$destino."] ".$reporte->getCaOrdenClie();
-	}else{
+	}
+    /*else if($reporte->getCaImpoexpo()==Constantes::EXPO )
+    {
+        if($ultStatus)            
+            $asunto=" Id.: ".$reporte->getCaConsecutivo()." ".$ultStatus->getEmail()->getCaSubject();        
+    }*/
+    else{
 		$consignatario = $reporte->getConsignatario();
 		$asunto .= $consignatario." / ".$cliente." [".$origen." -> ".$destino."] ";	
 	}
@@ -864,6 +870,13 @@ echo $form['transporte']->render();
 	</tr>
 <tr id="row_incompleto">
 		<td valign="top" >
+            <div >
+                Observaciones<br>
+             <?
+			 echo $form['txtincompleto']->renderError(); 			 
+			 echo $form['txtincompleto']->render();
+             ?>
+            </div>
 			<div align="left">
             <?
             

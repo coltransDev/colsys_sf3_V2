@@ -881,9 +881,14 @@ class traficosActions extends sfActions
                     
                     $html ="<div>
                         <table class='tableList alignLeft'>                        
-                        <tr><td >El reporte de negocios No: ".$reporte->getCaConsecutivo()." presento datos incompletos al momento de enviar el status </td></tr>
-                        <tr><td >Por favor verifique : ".((count($conceptos)==0)?"<br>1) Tarifas":"").((count($gastos)==0)?"<br> 2) Recargos":"")."  </td></tr>";
-                    $html."</table></div>";
+                        <tr><td colspan=2 >El reporte de negocios No: ".$reporte->getCaConsecutivo()." presento datos incompletos al momento de enviar el status </td></tr>
+                        <tr><td colspan=2 >Por favor verifique : ".((count($conceptos)==0)?"<br>1) Tarifas":"").((count($gastos)==0)?"<br> 2) Recargos":"")."  </td></tr>
+                        <tr><th>Cliente</th><td>".($reporte->getCliente()->getCaCompania())."</td></tr>
+                        <tr><th>Transporte</th><td>".($reporte->getCaTransporte())."</td></tr>
+                        <tr><th>Trayecto</th><td>".($reporte->getOrigen()->getCaCiudad())."-".($reporte->getDestino()->getCaCiudad())."</td></tr>
+                        <tr><th>Proveedor</th><td>".$reporte->getProveedoresStr()."</td></tr>
+                        <tr><td>".$request->getParameter("txtincompleto")."</td></tr>
+                        </table></div>";
 
                     $this->getRequest()->setParameter('tipo',"INSTRUCCIONES");
                     $this->getRequest()->setParameter('mensaje',"");
