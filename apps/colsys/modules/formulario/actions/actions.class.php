@@ -100,25 +100,25 @@ class formularioActions extends sfActions {
         $idFormularioEncode = $id;
         $idDecode = base64_decode($id);
         $idFormulario = intval($idDecode);
-
+        $this->formulario = Doctrine_Core::getTable('formulario')->find($idFormulario);
         $contacto = $request->getParameter('co');
         $idContacto = $contacto;
         $contactoDecode = base64_decode($idContacto);
+        $num_contacto = intval($contactoDecode);
 
-        //$num_contacto = intval($contactoDecode);
 
-
-        function getExisteControl($num_contacto) {
+        function getExisteControl($num_contacto, $idFormulario) {
             $q = Doctrine_Query::create()
                     ->from('controlEncuesta')
                     ->where('ca_id_contestador = ?', $num_contacto)
-                    ->andWhere('ca_idformulario = ?', 1);
+                    ->andWhere('ca_idformulario = ?', $idFormulario);
             return $q->fetchOne();
         }
-
-        $existe_contacto = getExisteControl($contactoDecode);
+         
+        $existe_contacto = getExisteControl($num_contacto,$idFormulario);
 
         if ($existe_contacto) {
+            
             $this->setTemplate('guardado');
             $detect = new Mobile_Detect();
             $dispositivo = ($detect->isMobile() ? ($detect->isTablet() ? 'tablet' : 'mobile') : 'desktop');
@@ -134,7 +134,6 @@ class formularioActions extends sfActions {
                 $this->setTemplate('selServicios');
             }
         } else {
-            $this->formulario = Doctrine_Core::getTable('formulario')->find($idFormulario);
             $bloque = $this->formulario->getBloqueServicio($idFormulario);
             $this->bloque = $bloque;
             $this->idContacto = $idContacto;
@@ -155,10 +154,6 @@ class formularioActions extends sfActions {
         }
     }
 
-    /**
-     * Carga el consolidado de las encuestas.
-     * @param sfWebRequest $request
-     */
 
     /**
      * Carga el consolidado de las encuestas.
@@ -561,7 +556,7 @@ class formularioActions extends sfActions {
                 //$email->setCaAddress($cliente["ca_email"]);
                 //$email->setCaAddress("gmartinez@coltrans.com.co");
                 // $email->setCaAddress($emailCa[$conteo-1],$emailCa[0]);
-                $email->setCaAddress($emailCa[0]);
+                $email->setCaAddress($emailCa[0], 'Juan Montoya');
                 $email->setCaBodyhtml($html);
                 $email->setCaTipo("Encuesta");
                 $email->setCaIdcaso(0);
@@ -706,6 +701,24 @@ class formularioActions extends sfActions {
         }
     }
 
+        /**
+     * Realiza la vista previa de un formulario
+     * @param sfWebRequest $request
+     */
+    public function executeVistaPreviaEmail(sfWebRequest $request) {
+        $id = $request->getParameter('ca_id');
+
+        $idDecode = base64_decode($id);
+        $idFormulario = intval($idDecode);
+
+        $idContacto = $request->getParameter('co');
+        $this->formulario = Doctrine_Core::getTable('formulario')->find($idFormulario);
+        $this->contacto = $idContacto;
+
+
+    }
+    
+    
     /**
      * Realiza la vista previa de un formulario
      * @param sfWebRequest $request
