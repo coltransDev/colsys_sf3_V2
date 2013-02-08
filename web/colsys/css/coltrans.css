@@ -780,10 +780,16 @@ div.storybox .body {
 
 }
 
-
 hr {
   border: 1px;
   width: 95%;
+  background-color:#333333;
+  height:1px;
+}
+
+.hr {
+  border: 1px;
+  width: 100% !important;
   background-color:#333333;
   height:1px;
 }
