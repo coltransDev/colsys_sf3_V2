@@ -170,6 +170,10 @@ class formularioActions extends sfActions {
         $id = $request->getParameter('ca_id');
         $idDecode = base64_decode($id);
         $idControl = intval($idDecode);
+        
+        $empresa = $request->getParameter('e');
+        $empresaDecode = base64_decode($empresa);
+        $empresa_value = intval($empresaDecode);
 
         $this->formulario = Doctrine_Core::getTable('formulario')->find($idControl);
         $this->control = new ControlEncuesta();
@@ -439,7 +443,7 @@ class formularioActions extends sfActions {
      * Metodo para enviar la encuesta
      * @param type $idCaso Es el id del formulario que se esta enviando
      */
-    public function executeEnvioEmailsColtrans($idCaso) {
+    public function executeEnvioEmailsColtrans() {
 
         $filecontrol = $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "formulario" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "control.txt";
 
@@ -476,7 +480,7 @@ class formularioActions extends sfActions {
                 $email = new Email();
                 $email->setCaUsuenvio("Administrador");
                 $email->setCaFrom("no-reply@coltrans.com.co");
-                $email->setCaFromname("COLTRANS S.A.S");
+                $email->setCaFromname("COLMAS LTDA.");
                 $email->setCaSubject($asunto);
                 //$email->setCaAddress($cliente["ca_email"]);
                 $email->setCaAddress("gmartinez@coltrans.com.co");
@@ -510,12 +514,13 @@ class formularioActions extends sfActions {
         //}
         $this->setTemplate('envioEmailsPrueba');
     }
+    
 
     /**
      * Metodo para enviar la encuesta
      * @param type $idCaso Es el id del formulario que se esta enviando
      */
-    public function executeEnvioEmailsColmas($idCaso) {
+    public function executeEnvioEmailsColmas() {
 
         $filecontrol = $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "formulario" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "control.txt";
 
@@ -526,7 +531,7 @@ class formularioActions extends sfActions {
             $inicio = 0;
         $con = Doctrine_Manager::getInstance()->connection();
 
-        $nreg = 10;
+        $nreg = 6;
 
         $sql = "
             select c.ca_idcliente,c.ca_compania, con.ca_email,ca_coltrans_std,ca_colmas_std,con.ca_idcontacto
@@ -542,23 +547,27 @@ class formularioActions extends sfActions {
         $emails_Control = "";
         $asunto = "Dos minutos de su tiempo nos ayuda a prestarle un mejor servicio";
         $emailFrom = "gmartinez@coltrans.com.co";
+        //para destinatarios de prueba
+        $emailCa =array("gmartinez@coltrans.com.co","cazambrano@coltrans.com.co","mpulido@coltrans.com.co","pizquierdo@coltrans.com.co","falopez@coltrans.com.co","gmartinez@coltrans.co");
         foreach ($clientes as $cliente) {
             $conteo++;
             if ($cliente["ca_colmas_std"] != "Activo")
                 continue;
             try {
                 $contacto = $cliente["ca_idcontacto"];
-                $html = $this->getPartial('formulario/emailHtml', array('contacto' => $contacto));
+                $html = $this->getPartial('formulario/emailHtmlColmas', array('contacto' => $contacto));
                 $email = new Email();
                 $email->setCaUsuenvio("Administrador");
                 $email->setCaFrom("no-reply@coltrans.com.co");
-                $email->setCaFromname("COLTRANS S.A.S");
+                $email->setCaFromname("COLMAS LTDA.");
                 $email->setCaSubject($asunto);
                 //$email->setCaAddress($cliente["ca_email"]);
-                $email->setCaAddress("gmartinez@coltrans.com.co");
+                //$email->setCaAddress("gmartinez@coltrans.com.co");
+               // $email->setCaAddress($emailCa[$conteo-1],$emailCa[0]);
+                $email->setCaAddress($emailCa[0]);
                 $email->setCaBodyhtml($html);
                 $email->setCaTipo("Encuesta");
-                $email->setCaIdcaso($idCaso);
+                $email->setCaIdcaso(0);
                 $email->save();
                 $emails_Control.=$cliente["ca_compania"] . "->" . $cliente["ca_email"] . "<br>";
             } catch (Exception $e) {
@@ -572,7 +581,7 @@ class formularioActions extends sfActions {
         $email = new Email();
         $email->setCaUsuenvio("gmartinez");
         $email->setCaFrom($emailFrom);
-        $email->setCaFromname("COLTRANS LTDA");
+        $email->setCaFromname("COLMAS LTDA");
         $email->setCaSubject($asunto . ". Emails enviados");
         $email->setCaAddress("gmartinez@coltrans.com.co");
         //$email->setCaCc("gmartinez@coltrans.com.co");
