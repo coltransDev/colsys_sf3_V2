@@ -67,7 +67,7 @@
                 <td>
                     <div style="float:left">
                         <a  style="margin-left: 5px;" href="http://www.colmas.com.co">
-                            <img  border="0" src="/images/logos/colmas.png" alt="Colmas LTDA." />   
+                            <img  border="0" src="https://www.coltrans.com.co/images/logos/colmas.png" alt="Colmas LTDA." />   
                             </div>
                             </td>
                             </tr>
@@ -75,7 +75,7 @@
                                 <td style="padding:20px"  >
                                     <div style="text-align: justify;font-size: 12px">
                                         <!--<span class="l11">' . date("d") . ' de ' . Utils::mesLargo(date("m")) . ' de ' . date("Y") . '</span><br>-->
-                                        <p>Para Coltrans es importante conocer lo que más le gusta de nuestro servicio, queremos que nos brinde la oportunidad de trabajar en esos  aspectos que podemos mejorar.</p>
+                                        <p>Para Colmas es importante conocer lo que más le gusta de nuestro servicio, queremos que nos brinde la oportunidad de trabajar en esos  aspectos que podemos mejorar.</p>
                                         <p><b>Los elogios nos incentivan, la critica nos asegura nuestro futuro!</b></p>
                                         <p>Lo invitamos a seguir el siguiente enlace:</p>
                                         <br>
