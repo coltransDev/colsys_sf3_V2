@@ -1,0 +1,332 @@
+Formulario:
+  options:
+    form: true
+    filter: true
+  generatePath: encuestas
+  tableName: encuestas.tb_formulario
+  columns:
+    ca_id:
+      type: integer(4)
+      primary: true
+      notnull: true
+      autoincrement: true
+    ca_titulo:
+      type: string(255)
+      notnull: true
+    ca_alias:
+      type: string(255)
+    ca_introduccion:
+      type: string(10000)
+    ca_activo:
+      type: boolean
+      default: true
+    ca_vigencia_inicial:
+      type: timestamp
+    ca_vigencia_final:
+      type: timestamp
+    ca_token:
+      type: string(255)
+    ca_nombre_formato:
+      type: string(255)
+    ca_color:
+      type: string(8)
+    ca_bold:
+      type: string(8)
+    ca_strong:
+      type: string(8)
+    ca_fchcreado:
+      type: timestamp
+    ca_usucreado:
+      type: string(20)
+    ca_fchactualizado:
+      type: timestamp
+    ca_usuactualizado:
+      type: string(20)
+
+
+
+Bloque:
+  options:
+    form: true
+    filter: true
+  generatePath: encuestas
+  tableName: encuestas.tb_bloque
+  columns:
+    ca_id:
+      type: integer(4)
+      primary: true
+      notnull: true
+      autoincrement: true
+    ca_idformulario:
+      type: integer(4)
+      notnull: true
+    ca_titulo:
+      type: string(250)
+      notnull: true
+    ca_introduccion:
+      type: string(10000)
+    ca_orden:
+      type: integer(4)
+    ca_activo:
+      type: boolean
+      default: true
+    ca_color:
+      type: string(45)
+    ca_tipo:
+      type: string(45)
+      default:
+    ca_fchcreado:
+      type: timestamp
+    ca_usucreado:
+      type: string(20)
+    ca_fchactualizado:
+      type: timestamp
+    ca_usuactualizado:
+      type: string(20)
+  relations:
+    Formulario:
+      class: Formulario
+      local: ca_idformulario
+      foreign: ca_id
+      foreignAlias: tb_bloques
+  indexes:
+    fki_tb_formulario_tb_bloque:
+      fields: [ca_idformulario]
+  
+Pregunta:
+  options:
+    form: true
+    filter: true
+  generatePath: encuestas
+  tableName: encuestas.tb_pregunta
+  columns:
+    ca_id:
+      type: integer(4)
+      primary: true
+      notnull: true
+      autoincrement: true
+    ca_idbloque:
+      type: integer(4)
+      notnull: true
+    ca_texto:
+      type: string(10000)
+      notnull: true
+    ca_error:
+      type: string(200)
+    ca_ayuda:
+      type: string(45)
+    ca_obligatoria:
+      type: boolean
+    ca_tipo:
+      type: integer(4)
+    ca_orden:
+      type: integer(4)
+    ca_activo:
+      type: boolean
+      default: true
+    ca_numeracion:
+      type: boolean
+    ca_intervalo_inicial:
+      type: integer(4)
+    ca_intervalo_final:
+      type: integer(4)
+    ca_etiqueta_intervalo_inicial:
+      type: string(45)
+    ca_etiqueta_intervalo_final:
+      type: string(45)
+    ca_etiquetas_columnas:
+      type: string(10000)
+    ca_etiquetas_filas:
+      type: string(10000
+    ca_fchcreado:
+      type: timestamp
+    ca_usucreado:
+      type: string(20)
+    ca_fchactualizado:
+      type: timestamp
+    ca_usuactualizado:
+      type: string(20)
+  relations:
+    Bloque:
+      class: Bloque
+      local: ca_idbloque
+      foreign: ca_id
+      foreignAlias: tb_preguntas
+    ConfigValues:
+      class: ConfigValues
+      local: ca_tipo
+      foreign: ca_id
+      foreignAlias: tb_preguntas
+  indexes:
+    fki_tb_formulario_tb_bloque_tb_pregunta:
+      fields: [ca_idbloque]
+
+Opcion:
+  options:
+    form: true
+    filter: true
+  generatePath: encuestas
+  tableName: encuestas.tb_opcion
+  columns:
+    ca_id:
+      type: integer(4)
+      primary: true
+      notnull: true
+      autoincrement: true
+    ca_idpregunta:
+      type: integer(4)
+      notnull: true
+    ca_texto:
+      type: string(55)
+      notnull: true
+    ca_orden:
+      type: integer(4)
+    ca_default:
+      type: boolean
+      default:
+    ca_fchcreado:
+      type: timestamp
+    ca_usucreado:
+      type: string(20)
+    ca_fchactualizado:
+      type: timestamp
+    ca_usuactualizado:
+      type: string(20)
+  relations:
+    Pregunta:
+      class: Pregunta
+      local: ca_idpregunta
+      foreign: ca_id
+      foreignAlias: tb_opciones
+      onDelete: CASCADE
+  indexes:
+    fki_tb_formulario_tb_bloque_tb_pregunta_tb_opcion:
+      fields: [ca_idpregunta]
+
+ResultadoEncuesta:
+  options:
+    form: false
+    filter: false
+  generatePath: encuestas
+  tableName: encuestas.tb_resultado_encuesta
+  columns:
+    ca_id:
+      type: integer(4)
+      primary: true
+      notnull: true
+      autoincrement: true
+    ca_idpregunta:
+      type: integer(4)
+      notnull: true
+    ca_resultado:
+      type: string(1000)
+    ca_idcontrolencuesta:
+      type: integer(4)
+      notnull: true
+  relations:
+    Pregunta:
+      class: Pregunta
+      local: ca_idpregunta
+      foreign: ca_id
+      foreignAlias: tb_resultado_encuestas
+    Controlencuesta:
+      class: ControlEncuesta
+      local: ca_idcontrolencuesta
+      foreign: ca_id
+      foreignAlias: tb_resultado_encuestas
+  indexes:
+    fki_tb_resultado_encuesta_tb_pregunta:
+      fields: [ca_idpregunta]
+    fki_tb_resultado_encuesta_tb_control_encuesta:
+      fields: [ca_idcontrolencuesta]
+
+ControlEncuesta:
+  options:
+    form: false
+    filter: false
+  generatePath: encuestas
+  tableName: encuestas.tb_control_encuesta
+  columns:
+    ca_id:
+      type: integer(4)
+      primary: true
+      notnull: true
+      autoincrement: true
+    ca_idformulario:
+      type: integer(4)
+      notnull: true
+    ca_idempresa:
+      type: integer(4)
+      notnull: true
+    ca_tipo_contestador:
+      type: integer(1)
+    ca_id_contestador:
+      type: integer(4)
+    ca_servicio:
+      type: integer(1)
+    ca_fchcreado:
+      type: timestamp
+    ca_usucreado:
+      type: string(20)
+    ca_fchactualizado:
+      type: timestamp
+    ca_usuactualizado:
+      type: string(20)
+  relations:
+    Formulario:
+      class: Formulario
+      local: ca_idformulario
+      foreign: ca_id
+      foreignAlias: tb_control_encuestas
+    Empresa:
+      class: Empresa
+      local: ca_idempresa
+      foreign: ca_idempresa
+      foreignAlias: tb_empresa
+  indexes:
+    fki_tb_control_encuesta_tb_formulario:
+      fields: [ca_idformulario]
+    fki_tb_control_encuesta_tb_empresa:
+      fields: [tb_idempresa]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
