@@ -639,8 +639,8 @@ class formularioActions extends sfActions {
         $this->formulario = Doctrine_Core::getTable('formulario')->find($idFormulario);
         
         $contacto = $request->getParameter('co');
-        $idContacto = base64_decode($contacto);
-        $idContacto = intval($idContacto);
+        $idContact = base64_decode($contacto);
+        $idContacto = intval($idContact);
         /* if(!$idContacto){
           } */
         $idEmpresa = 2;
@@ -692,7 +692,7 @@ class formularioActions extends sfActions {
         /*
           print_r($request->getPostParameters());
          */
-        $this->
+
         $this->setTemplate('exito');
         $detect = new Mobile_Detect();
         $dispositivo = ($detect->isMobile() ? ($detect->isTablet() ? 'tablet' : 'mobile') : 'desktop');
