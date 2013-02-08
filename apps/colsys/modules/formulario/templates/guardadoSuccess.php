@@ -13,8 +13,14 @@
     <p class="align-center">Sus datos fueron diligenciados previamente. Por lo tanto este enlace ya no es válido.</p>
     <br>
     <br>
-    <br>
     <p class="align-center"><b>Muchas Gracias!!!</b></p>
+    <br>
+    <br>
+    <? if ($formulario->ca_color == 1) { ?>
+        <p class="align-center">Puede continuar visitando nuestro sitio web  <a href="http://www.colmas.com.co/" target="_BLANK">COLMAS LTDA.</a></p>    
+    <? } else { ?>
+        <p class="align-center">Puede continuar visitando nuestro sitio web  <a href="http://www.coltrans.com.co/" target="_BLANK">COLTRANS S.A.S</a></p>
+    <? } ?>   
     <? if ($sf_user->hasFlash('notice')): ?>
         <div class="flash_notice">
             <? echo $sf_user->getFlash('notice') ?> 

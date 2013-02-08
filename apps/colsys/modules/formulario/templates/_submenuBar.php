@@ -44,7 +44,14 @@ switch ($action) {
         $button[$i]["tooltip"] = "Nuevo Formulario";
         $button[$i]["image"] = "formularios/add.gif";
         $button[$i]["link"] = "formulario/new";
+        /** dejar mas adelante junto a cada formulario la vista previa a su email
         $i++;
+        $button[$i]["name"] = "Vista Previa email colmas";
+        $button[$i]["tooltip"] = "Vista Previa email colmas";
+        $button[$i]["image"] = "formularios/add.gif";
+        $button[$i]["link"] = "formulario/vistaPreviaEmail?ca_id=" . base64_encode(5);
+        $i++;
+         */
        /* $button[$i]["name"] = "Enviar Email";
         $button[$i]["tooltip"] = "Enviar Email";
         $button[$i]["image"] = "formularios/add.gif";

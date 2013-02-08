@@ -62,7 +62,7 @@
     <body bgcolor="#EAEAEA">
 
         <br>
-        <table class="tableMap measure_converter" width="90%" align="center">
+        <table class="tableMap measure_converter" width="90%" align="center" max-width="80em">
 
             <tr>
                 <td>
@@ -79,7 +79,7 @@
                         <!--<span class="l11">' . date("d") . ' de ' . Utils::mesLargo(date("m")) . ' de ' . date("Y") . '</span><br>-->
                         <p>Para Colmas es importante conocer lo que más le gusta de nuestro servicio, queremos que nos brinde la oportunidad de trabajar en esos  aspectos que podemos mejorar.</p>
                         <p><b>Los elogios nos incentivan, la critica nos asegura nuestro futuro!</b></p>
-                        <p>Lo invitamos a seguir el siguiente enlace:</p>
+                        <p>Lo invitamos a ingresar al siguiente enlace:</p>
                         <br>
                         <div style="text-align:center">
                             <a href="https://www.coltrans.com.co/formulario/servicios/id/<?php echo base64_encode(5) ?>/co/<?php echo base64_encode($contacto) ?>">Encuesta de servicio</a>

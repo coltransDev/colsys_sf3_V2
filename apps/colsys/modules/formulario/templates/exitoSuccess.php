@@ -14,13 +14,11 @@
     <br>
     <br>
     <br>
-        <? if ($formulario->ca_color == 1) { ?>
-            <p class="align-center">Puede continuar visitando nuestro sitio web  <a href="http://www.colmas.com.co/" target="_BLANK">COLMAS LTDA.<a></p>    
-        <? } else { ?>
-            <p class="align-center">Puede continuar visitando nuestro sitio web  <a href="http://www.coltrans.com.co/" target="_BLANK">COLTRANS S.A.S<a></p>
-        <? } ?>    
-    
-    
+    <? if ($formulario->ca_color == 1) { ?>
+        <p class="align-center">Puede continuar visitando nuestro sitio web  <a href="http://www.colmas.com.co/" target="_BLANK">COLMAS LTDA.</a></p>    
+    <? } else { ?>
+        <p class="align-center">Puede continuar visitando nuestro sitio web  <a href="http://www.coltrans.com.co/" target="_BLANK">COLTRANS S.A.S</a></p>
+    <? } ?>    
 </div>
 
 
