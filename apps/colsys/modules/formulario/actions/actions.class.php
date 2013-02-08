@@ -45,8 +45,8 @@ class formularioActions extends sfActions {
                     $new_opcion->save();
                 }
             }
-        }  
-        
+        }
+
         $formulario = new Formulario();
         $this->filtroFormulario = new FormularioFormFilter();
         $this->pager = new sfDoctrinePager('formulario', 30);
@@ -55,8 +55,6 @@ class formularioActions extends sfActions {
         $this->pager->init();
         $this->setTemplate('index');
         $this->setLayout('layout_home');
-
-        
     }
 
     /**
@@ -170,7 +168,7 @@ class formularioActions extends sfActions {
         $id = $request->getParameter('ca_id');
         $idDecode = base64_decode($id);
         $idControl = intval($idDecode);
-        
+
         $empresa = $request->getParameter('e');
         $empresaDecode = base64_decode($empresa);
         $empresa_value = intval($empresaDecode);
@@ -514,7 +512,6 @@ class formularioActions extends sfActions {
         //}
         $this->setTemplate('envioEmailsPrueba');
     }
-    
 
     /**
      * Metodo para enviar la encuesta
@@ -548,7 +545,7 @@ class formularioActions extends sfActions {
         $asunto = "Dos minutos de su tiempo nos ayuda a prestarle un mejor servicio";
         $emailFrom = "gmartinez@coltrans.com.co";
         //para destinatarios de prueba
-        $emailCa =array("gmartinez@coltrans.com.co","cazambrano@coltrans.com.co","mpulido@coltrans.com.co","pizquierdo@coltrans.com.co","falopez@coltrans.com.co","gmartinez@coltrans.co");
+        $emailCa = array("gmartinez@coltrans.com.co", "cazambrano@coltrans.com.co", "mpulido@coltrans.com.co", "pizquierdo@coltrans.com.co", "falopez@coltrans.com.co", "gmartinez@coltrans.co");
         foreach ($clientes as $cliente) {
             $conteo++;
             if ($cliente["ca_colmas_std"] != "Activo")
@@ -563,7 +560,7 @@ class formularioActions extends sfActions {
                 $email->setCaSubject($asunto);
                 //$email->setCaAddress($cliente["ca_email"]);
                 //$email->setCaAddress("gmartinez@coltrans.com.co");
-               // $email->setCaAddress($emailCa[$conteo-1],$emailCa[0]);
+                // $email->setCaAddress($emailCa[$conteo-1],$emailCa[0]);
                 $email->setCaAddress($emailCa[0]);
                 $email->setCaBodyhtml($html);
                 $email->setCaTipo("Encuesta");
@@ -621,6 +618,12 @@ class formularioActions extends sfActions {
                     break;
                 case 4:
                     return "Exportaciones marítimo";
+                case 5:
+                    return "Proceso de Nacionalización en embarques aéreos";
+                case 6:
+                    return "Proceso de Nacionalización en embarques marítimos";
+                case 7:
+                    return "Proceso de Nacionalización en embarques con OTM / DTA";
                     break;
                 default:
                     return 99;
@@ -633,6 +636,8 @@ class formularioActions extends sfActions {
         $idDecode = base64_decode($id);
         $idFormulario = intval($idDecode);
 
+        $this->formulario = Doctrine_Core::getTable('formulario')->find($idFormulario);
+        
         $contacto = $request->getParameter('co');
         $idContacto = base64_decode($contacto);
         $idContacto = intval($idContacto);
@@ -687,7 +692,7 @@ class formularioActions extends sfActions {
         /*
           print_r($request->getPostParameters());
          */
-
+        $this->
         $this->setTemplate('exito');
         $detect = new Mobile_Detect();
         $dispositivo = ($detect->isMobile() ? ($detect->isTablet() ? 'tablet' : 'mobile') : 'desktop');
