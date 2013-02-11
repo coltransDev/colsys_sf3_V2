@@ -47,26 +47,6 @@ class antecedentesActions extends sfActions {
          $cadena = trim($this->getRequestParameter("cadena"));
       }
 
-      switch ($criterio) {
-         case "reporte":
-            $q->innerJoin('ic.Reporte r');
-            $q->addWhere("r.ca_consecutivo like ?", "%" . $cadena . "%");
-            break;
-         case "referencia":
-            $q->addWhere("m.ca_referencia like ?", $cadena . "%");
-            break;
-         case "hbl":
-            $q->addWhere("ic.ca_hbls like ?", $cadena . "%");
-            break;
-         case "cliente":
-            $q->innerJoin("ic.Cliente cl");
-            $q->addWhere("lower(cl.ca_compania) like ?", "%" . strtolower($cadena) . "%");
-            break;
-         case "motonave":
-            $q->addWhere("m.ca_motonave like ?", $cadena . "%");
-            break;
-      }
-
 
       $currentPage = $this->getRequestParameter('page', 1);
       $resultsPerPage = 30;
@@ -88,31 +68,23 @@ class antecedentesActions extends sfActions {
       $this->cadena = $cadena;
    }
 
-   /**
-    *
-    *
-    * @param sfRequest $request A request object
-    */
-   public function executeListadoReferencias(sfWebRequest $request) {
-      //error_reporting(E_ALL);        
-      $this->user = $this->getUser();
-      $this->nivel = $this->user->getNivelAcceso(antecedentesActions::RUTINA);
-      //echo $this->nivel;
-      $this->format = $this->getRequestParameter("format");
-
-      $where = "";
-      if ($this->format == "") {
-         $where = " and (m.ca_provisional = true and ((m.ca_modalidad='" . constantes::FCL . "' and u.ca_idsucursal='" . $this->user->getIdSucursal() . "') or m.ca_modalidad<>'" . constantes::FCL . "') )  
-                and COALESCE(strpos((SELECT ca_subject FROM tb_emails where ca_tipo='Antecedentes' and ca_subject like '%'||m.ca_referencia||'%' order by ca_idemail DESC limit 1), 'Envio de Antecedentes'),-1)<=0";
-      } else {
-         $where = " and ( (m.ca_provisional = true and ((m.ca_modalidad='" . constantes::FCL . "' and u.ca_idsucursal='" . $this->user->getIdSucursal() . "') or m.ca_modalidad<>'" . constantes::FCL . "') 
+        $where="";
+        if($this->format=="")
+        {
+            $where = " and (m.ca_provisional = true and ((m.ca_modalidad='".constantes::FCL."' and u.ca_idsucursal='".$this->user->getIdSucursal()."') or m.ca_modalidad<>'".constantes::FCL."') )  
+                and (m.ca_estado='A' or m.ca_estado is null) 
+                ";
+        }
+        else
+        {
+            $where =" and ( (m.ca_provisional = true and ((m.ca_modalidad='".constantes::FCL."' and u.ca_idsucursal='".$this->user->getIdSucursal()."') or m.ca_modalidad<>'".constantes::FCL."') 
                 and strpos((SELECT ca_subject FROM tb_emails where ca_tipo='Antecedentes' and ca_subject like '%'||m.ca_referencia||'%' order by ca_idemail DESC limit 1), 'Envio de Antecedentes')>0
-                ) OR (m.ca_provisional = false AND m.ca_fchmuisca IS NULL and SUBSTR(ca_referencia,1,3) NOT IN ('700','710','720','800','810','820') and ca_impoexpo <> '" . Constantes::TRIANGULACION . "' ))";
-         $whereEmail = "";
-      }
-
-      $sql = "select m.ca_referencia,m.ca_fchreferencia,m.ca_provisional,m.ca_modalidad,m.ca_motonave,m.ca_fchembarque,m.ca_fcharribo,m.ca_usucreado,ori.ca_ciudad as ca_ciu_origen,des.ca_ciudad as ca_ciu_destino,u.ca_idsucursal,m.ca_fchmuisca
-                ,COALESCE(strpos((SELECT ca_subject FROM tb_emails where ca_tipo='Antecedentes' and ca_subject like '%'||m.ca_referencia||'%' order by ca_idemail DESC limit 1), 'Envio de Antecedentes'),-1) as refbloqueada, m.ca_impoexpo
+                ) OR (m.ca_provisional = false AND m.ca_fchmuisca IS NULL and SUBSTR(ca_referencia,1,3) NOT IN ('700','710','720','800','810','820') and ca_impoexpo <> '".Constantes::TRIANGULACION."' ))";
+            $whereEmail="" ;
+        }
+        
+        $sql="select m.ca_referencia,m.ca_fchreferencia,m.ca_provisional,m.ca_modalidad,m.ca_motonave,m.ca_fchembarque,m.ca_fcharribo,m.ca_usucreado,ori.ca_ciudad as ca_ciu_origen,des.ca_ciudad as ca_ciu_destino,u.ca_idsucursal,m.ca_fchmuisca                
+                ,m.ca_estado,m.ca_impoexpo
                 from tb_inomaestra_sea m
                 JOIN tb_ciudades ori ON ori.ca_idciudad = m.ca_origen
                 JOIN tb_ciudades des ON des.ca_idciudad = m.ca_destino
@@ -126,8 +98,26 @@ class antecedentesActions extends sfActions {
         }
         else
         {
-        $con = Doctrine_Manager::connection(new PDO('pgsql:dbname=Coltrans;host=10.192.1.65', 'Administrador', 'lmD125aC-c'));
-        $st = $con->execute(utf8_encode($sql));
+            if( trim($ref["ca_provisional"])=="1" )
+            {
+                if($this->format=="maritimo" )
+                {
+                    $this->refBloqueadas[]=$ref;
+                }
+                else
+                {
+                    //if( $ref["refbloqueada"]<0 )
+                    if( $ref["estado"]!="R" )
+                        $this->refBloqueadas[]=$ref;
+                    else 
+                        $this->refRechazadas[]=$ref;
+                }
+            }
+            else
+            {
+                if($ref["ca_impoexpo"]!=Constantes::TRIANGULACION)
+                    $this->refSinMuisca[]=$ref;
+            }
         }
        * 
        */
@@ -948,19 +938,33 @@ class antecedentesActions extends sfActions {
 
 
 
-      $usuarios = Doctrine::getTable("Usuario")
-              ->createQuery("u")
-              ->addWhere("u.ca_departamento = ? and u.ca_activo=true or (u.ca_login =? or u.ca_login =? or u.ca_login =? ) ", array("Marítimo", "nmrey", "mflecompte", "mjortiz"))
-              ->addOrderBy("u.ca_email")
-              ->execute();
-      $contactos = array();
-      foreach ($usuarios as $usuario) {
-         if ($usuario->getCaEmail() != "-") {
-            $contactos[] = $usuario->getCaEmail();
-         }
-      }
+        $usuarios = Doctrine::getTable("Usuario")
+                        ->createQuery("u")
+                        ->addWhere("u.ca_departamento = ?  and u.ca_activo=true or (u.ca_login =? or u.ca_login =? or u.ca_login =? ) ", array("Marítimo","nmrey","mflecompte","mjortiz"))
+                        ->addOrderBy("u.ca_email")
+                        ->execute();
+        $contactos = array();
+        foreach ($usuarios as $usuario) {
+            if ($usuario->getCaEmail() != "-") {
+                $contactos[] = $usuario->getCaEmail();
+            }
+        }
+        
+        $contactos1 = array();
+        $usuarios1 = Doctrine::getTable("Usuario")
+                ->createQuery("u")
+                ->addWhere("u.ca_departamento = ?  and u.ca_activo=true ", array("Aduanas"))
+                ->addOrderBy("u.ca_email")
+                ->execute();
+        
+        foreach ($usuarios1 as $usuario) {
+            if ($usuario->getCaEmail() != "-") {
+                $contactos1[] = $usuario->getCaEmail();
+            }
+        }
 
       $this->contactos = implode(",", $contactos);
+        $this->contactos1 = implode(",", $contactos1);
 
       $folder = "Referencias" . DIRECTORY_SEPARATOR . $this->ref->getCaReferencia();
       $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;

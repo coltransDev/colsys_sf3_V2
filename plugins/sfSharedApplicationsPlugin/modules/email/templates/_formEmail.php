@@ -15,10 +15,20 @@ var seleccionarContacto = function(){
 			target.value+=",";	
 		}			
 		target.value+=selected;	
-	}
+	}	 
+}
+
+var seleccionarContacto1 = function(){
+	var contactos = document.getElementById("contactos1");
+	var selected = contactos.options[contactos.selectedIndex].value;
+	var target = document.getElementById(textFocus);	
 	
-	
-	 
+	if( target.value.indexOf(selected)==-1 ){	
+		if(target.value){
+			target.value+=",";	
+		}			
+		target.value+=selected;	
+	}	 
 }
 </script> 
 <?
@@ -57,7 +67,7 @@ var seleccionarContacto = function(){
 			?>
 		</div></td>
 		
-	    <td width="246">Contactos</td>
+        <td width="246"><b>Contactos</b></td>
 	</tr>
 	<tr>
 		<td><div align="left"><b>Destinatario:</b> (Por favor separe varios destinatarios con comas)<br>		
@@ -103,9 +113,32 @@ var seleccionarContacto = function(){
 		</div></td>
     </tr>
 	<tr>
-		<td colspan="2">
+		<td colspan="<?=(($contacts1!="")?"1":"2" )?>">
 			<div align="left"><b>Mensaje</b><br>
-				<textarea name="mensaje" cols="140" rows="10" ><?=isset($message)?$message:""?></textarea>			
+                <textarea name="mensaje" style="width: 100%" rows="10" ><?=isset($message)?$message:""?></textarea>			
 		</div></td>
+        <?
+        if( $contacts1!="" ){
+        ?>
+        <td valign="top">
+            <b><?=$nameContacts1?></b><br>
+		<?
+		
+			$contactos1 = explode(",", $contacts1);
+			$contactos1 = array_unique($contactos1);
+			?>
+			<select name="contactos1" id="contactos1" size="8" onDblclick="seleccionarContacto1()" >
+			<?
+			foreach($contactos1 as $contacto){
+			?>
+				<option value="<?=$contacto?>"><?=$contacto?></option> 
+			<?
+			}
+			?>
+			</select>			
+		</td>
+        <?
+		}
+		?>
     </tr>
 </table>

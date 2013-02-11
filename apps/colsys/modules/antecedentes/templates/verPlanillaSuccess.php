@@ -41,7 +41,7 @@ if( $format!="email" ){
         
         $asunto  = "Envio de Antecedentes ".$ref->getCaReferencia().$da;
         $mensaje = "Adjunto encontrará los antecedentes de la referencia ".$ref->getCaReferencia();
-        include_component("email", "formEmail", array("subject"=>$asunto,"message"=>$mensaje, "contacts"=>$contactos));
+        include_component("email", "formEmail", array("subject"=>$asunto,"message"=>$mensaje, "contacts"=>$contactos,"contacts1"=>$contactos1,"nameContacts1"=>"Contactos Aduana"));
         
         ?>
         <br />
