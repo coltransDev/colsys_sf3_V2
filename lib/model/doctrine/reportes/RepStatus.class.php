@@ -100,7 +100,7 @@ class RepStatus extends BaseRepStatus
                         $template = "Nos permitimos informar que la carga en referencia llegó a {reporte_destinoCont_caCiudad} el {caFchcontinuacion}";
                     }
                 }
-				$txt = $this->applyTemplate( $template )."\n\n";
+				$txt = $this->applyTemplate($template)."\n\n";
 			}
 		}        
 		return $txt;
@@ -352,12 +352,16 @@ class RepStatus extends BaseRepStatus
 			$repaduana = $reporte->getRepAduana();
 			$coordinador = null;
 			if( $repaduana ){
-				$coordinador = Doctrine::getTable("Usuario")->find($repaduana->getCaCoordinador());
-				if( $coordinador ){
-					$email->addCc( $coordinador->getCaEmail() );
-				}
-                $perfiles=array();
                 
+                if(in_array('coordinador-de-servicio-al-cliente-aduana', $etapa->getPerfilxTipo('ADUANA-COORDINADOR')))
+                {
+                    $coordinador = Doctrine::getTable("Usuario")->find($repaduana->getCaCoordinador());
+                    if( $coordinador ){
+                        $email->addCc( $coordinador->getCaEmail() );
+                    }
+                }
+                
+                $perfiles=array();
                 
                 if( ($reporte->getCaTransporte()==constantes::MARITIMO && $reporte->getCaImpoexpo()==constantes::IMPO) && $reporte->getCaContinuacion()!="OTM")
                 {
@@ -409,6 +413,23 @@ class RepStatus extends BaseRepStatus
             $email->setCaPriority(1);                
         }
         $email->setCaSubject( substr($asunto, 0, 250) );
+        
+        if($this->getCaTipo()=="1")
+        {
+            
+            $contac=array($email->getCaAddress(),$email->getCaReplyto(),$email->getCaCc());
+            foreach($contac as $cont)
+            {
+                $contacts=explode(",",$cont);
+                foreach($contacts as $c)
+                {
+                    if (stripos(strtolower($c), '@coltrans.com.co') !== false || stripos(strtolower($c), '@colmas.com.co') !== false || stripos(strtolower($c), '@colotm.com') !== false)
+                    {
+                        $contac[]["ca_email"]=$c;
+                    }
+                }
+            }
+        }
 
 		sfContext::getInstance()->getRequest()->setParameter("idstatus", $this->getCaIdstatus());
 		$email->setCaBodyhtml(  sfContext::getInstance()->getController()->getPresentationFor( 'traficos', 'verStatus') );

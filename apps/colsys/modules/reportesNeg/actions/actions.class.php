@@ -197,7 +197,6 @@ class reportesNegActions extends sfActions
                     ->addWhere("ca_estado='R' and a.ca_usucreado =?", $user->getUserId() )
                     ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                     ->execute();
-             //echo "<pre>";print_r($this->grupoReportes);echo "</pre>";
             }
         }
 	}
@@ -236,7 +235,6 @@ class reportesNegActions extends sfActions
             $this->page=1;
             $sql.="limit ".$nregs." offset 0";
         }
-
 		$st = $con->execute($sql);
 		$this->reportesAg = $st->fetchAll();
 	}
@@ -473,7 +471,6 @@ class reportesNegActions extends sfActions
     * @param sfRequest $request A request object
     */
     public function executeFormReporte(sfWebRequest $request){
-
         
         $this->nivel = $this->getNivel();
         $this->impoexpo = $this->getRequestParameter("impoexpo");
@@ -549,7 +546,6 @@ class reportesNegActions extends sfActions
         $this->impoexpo = Constantes::IMPO;
         $this->load_category();
 		$reporte = new Reporte();
-        //$this->user = $this->getUser();
 
         $this->reporte=$reporte;
 
@@ -571,7 +567,6 @@ class reportesNegActions extends sfActions
         $this->impoexpo = Constantes::IMPO;
         $this->load_category();
 		$reporte = new Reporte();
-        //$this->user = $this->getUser();
 
         $this->reporte=$reporte;
 
@@ -608,8 +603,6 @@ class reportesNegActions extends sfActions
         $this->impoexpo = $this->getRequestParameter("impoexpo");
         $this->load_category();
         $user = $this->getUser();
-        
-        //echo $this->impoexpo;
         
         if($this->modo==Constantes::AEREO)
             $this->nomLinea="Aerolinea";
@@ -704,7 +697,6 @@ class reportesNegActions extends sfActions
             $this->modo="";
             $this->impoexpo="";
         }
-
    }
 
    /*
@@ -747,8 +739,6 @@ class reportesNegActions extends sfActions
     {
     try
     {
-     //   echo $request->getParameter("opcion");
-     //   exit;
         $this->permiso = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA );
         $idreporte=($request->getParameter("idreporte")!="")?$request->getParameter("idreporte"):"0";
         $tipo=$request->getParameter("tipo");
@@ -797,25 +787,13 @@ class reportesNegActions extends sfActions
         {
             $reporte->setCaTiporep( 4 );
         }
-//        echo $opcion;
-/*        if( $opcion!=0 ) //Al copiar el reporte ya se coloco el usuario y la fecha
-        {
-            $reporte->stopBlaming();
-        }*/
-        //else
+
         if($tipo!="full")
         {
             if($request->getParameter("idcotizacion") )
             {
                 $reporte->setCaIdcotizacion($request->getParameter("idcotizacion"));
             }
-/*            else if($this->permiso<2)
-            {
-                $errors["cotizacion"]="Debe asignar un cotizacion";
-                $texto.="Cotizacion<br>";
-            }
-
-*/
             else 
             {
                 $reporte->setCaIdcotizacion(0);
@@ -871,10 +849,7 @@ class reportesNegActions extends sfActions
             }else
             {
                 $reporte->setCaFchdespacho(date("Y-m-d"));
-                //$errors["fchdespacho"]="Debe seleccionar una fecha de despacho";
-                //$texto.="Fecha de despacho<br>";
             }
-
 
             if($request->getParameter("idconcliente") )
             {
@@ -1035,7 +1010,7 @@ class reportesNegActions extends sfActions
                 }
             }
             
-            if($request->getParameter("ca_coordinador")!="")
+            /*if($request->getParameter("ca_coordinador")!="")
             {                
                 $coor=Doctrine::getTable("Usuario")->find( $request->getParameter("ca_coordinador") );
                 if($coor)
@@ -1049,56 +1024,6 @@ class reportesNegActions extends sfActions
                     else
                         $ca_confirmar_clie=$coor->getCaEmail();
                 }
-            }
-            
-            /*if($request->getParameter("aduanas-checkbox")== "on"  )
-            {
-                if($reporte->getCaImpoexpo()==constantes::IMPO)
-                {
-                    if( ($reporte->getCaTransporte()==constantes::MARITIMO && $reporte->getCaImpoexpo()==constantes::IMPO) && $reporte->getCaContinuacion()!="OTM")
-                    {                    
-                        $cargo="Jefe de Aduanas Puerto";
-                    }
-                    else if(($reporte->getCaTransporte()==constantes::AEREO && $reporte->getCaImpoexpo()==constantes::IMPO) || $reporte->getCaContinuacion()=="OTM")
-                    {
-                        $cargo="Jefe Dpto. Aduana";
-                    }
-                    $cargo1='Coordinador Control Riesgo Aduana';
-                    $suc=$this->getUser()->getIdSucursal();
-                    if($suc=="ABG" || $suc=="BGA" || $suc=="PEI"  )
-                    {
-                        if($suc=="BGA")
-                            $cargo1='Sin cargo';
-                        $suc="BOG";
-                    }
-                    $sucursal=Doctrine::getTable("Sucursal")->find( $suc );                
-                    if(!$sucursal)
-                        $sucursal=new Sucursal();                    
-
-                    //echo $cargo.'--Coordinador Control Riesgo Aduana---'.$sucursal->getCaNombre();
-
-                    {    
-                        $q = Doctrine::getTable("Usuario")
-                                        ->createQuery("c")
-                                        ->select("c.ca_email")
-                                        ->innerJoin("c.Sucursal s")
-                                        ->where(" (c.ca_cargo= ? or c.ca_cargo=?) and s.ca_nombre = ?", array($cargo,$cargo1,$sucursal->getCaNombre()));
-                        //echo $q->getSqlQuery();
-                        $jef_adu=$q->execute();
-                        foreach($jef_adu as $j)
-                        {
-                            //echo $jef_adu->getCaEmail();
-                            if($ca_confirmar_clie!="")
-                            {
-                                if (stripos(strtolower($ca_confirmar_clie), $j->getCaEmail()) === false)
-                                    $ca_confirmar_clie.=",".$j->getCaEmail();
-                            }
-                            else
-                                $ca_confirmar_clie=$j->getCaEmail();
-                        }
-                    }
-                }
-                //echo $ca_confirmar_clie;
             }*/
             
             if($ca_confirmar_clie!="" )
@@ -1149,7 +1074,6 @@ class reportesNegActions extends sfActions
             }
             else
                 $reporte->setCaIdconsignatario(null);
-    //ca_informar_cons:
             if($request->getParameter("idnotify") )
             {
                 $reporte->setCaIdnotify($request->getParameter("idnotify"));
@@ -1160,7 +1084,6 @@ class reportesNegActions extends sfActions
                 $reporte->setCaIdnotify(null);
                 $reporte->setCaNotify("0");
             }
-    //ca_informar_noti:
             if($request->getParameter("consigmaster") )
             {
                 $reporte->setCaIdconsignarmaster($request->getParameter("consigmaster"));
@@ -1169,16 +1092,13 @@ class reportesNegActions extends sfActions
             {
                 $reporte->setCaIdconsignarmaster(null);
             }
-    //ca_informar_mast:
 			if($request->getParameter("ca_informar_mast") )
             {
                 $reporte->setCaInformarMast($request->getParameter("ca_informar_mast"));
             }
-    //ca_notify:
             if($request->getParameter("transporte") )
             {
                 $reporte->setCaTransporte(utf8_decode($request->getParameter("transporte")));
-                //$reporte->setCaTransporte($request->getParameter("transporte"));
             }
             else
             {
@@ -1243,9 +1163,7 @@ class reportesNegActions extends sfActions
             }
             else
             {
-                //if($reporte->getCaIdlinea()=="")
                     $reporte->setCaIdlinea(0);
-//                $errors["linea"]="Debe seleccionar un linea";
             }
 
             if($request->getParameter("consignar") )
@@ -1268,7 +1186,6 @@ class reportesNegActions extends sfActions
                 else
                     $reporte->setCaIdbodega(1);
             }
-    //ca_mastersame:
             if($request->getParameter("continuacion")   )
             {
                 $reporte->setCaContinuacion($request->getParameter("continuacion"));
@@ -1373,9 +1290,7 @@ class reportesNegActions extends sfActions
                 }else{
                     $errors["ca_subarancelaria"]="Debe diligenciar la partida arancelaria";
                     $texto.="Partida Arancelaria <br>";
-                    
                 }
-                
             }
             else
             {
@@ -1705,7 +1620,7 @@ class reportesNegActions extends sfActions
     }
 
     public function executeGuardarReporteAg( sfWebRequest $request )
-    {        
+    {
     try
     {
         $idreporte=($request->getParameter("idreporte")!="")?$request->getParameter("idreporte"):"0";        
@@ -1728,8 +1643,6 @@ class reportesNegActions extends sfActions
         $email_send=$request->getParameter("email_send");
 
         $reporte->setCaFchreporte( date("Y-m-d") );
-        
-        
         
         $reporte->setCaVersion( 1 );
         $reporte->setCaTiporep( 2 );
@@ -1764,8 +1677,6 @@ class reportesNegActions extends sfActions
         }else
         {
             $reporte->setCaFchdespacho(date("Y-m-d"));
-            //$errors["fchdespacho"]="Debe seleccionar una fecha de despacho";
-            //$texto.="Fecha de Despacho <br>";
         }
 
         if($request->getParameter("idorigen") && $request->getParameter("idorigen")!="")
@@ -1851,13 +1762,6 @@ class reportesNegActions extends sfActions
             $texto.="Modalidad <br>";
         }
 
-/*        if($request->getParameter("incoterms") )
-        {
-            $reporte->setCaIncoterms($request->getParameter("incoterms"));
-
-        }
- *
- */
         if($request->getParameter("ca_mercancia_desc")  )
         {
             $reporte->setCaMercanciaDesc($request->getParameter("ca_mercancia_desc"));
@@ -1867,13 +1771,6 @@ class reportesNegActions extends sfActions
             $texto.="Desripcion de Mercacia <br>";
         }
 
-
-    //ca_orden_prov:  No aplica
-/*            if($request->getParameter("idconcliente") )
-        {
-            $reporte->setCaIdconcliente($request->getParameter("idconcliente"));
-        }
-*/
         if($request->getParameter("orden_clie") )
         {
             $reporte->setCaOrdenClie(utf8_decode($request->getParameter("orden_clie")));
@@ -1883,16 +1780,6 @@ class reportesNegActions extends sfActions
             $errors["orden_clie"]="Debe colocar un un numero de orden del cliente";
             $texto.="Orden de cliente <br>";
         }
-
-/*        if($request->getParameter("prov") )
-        {
-            $reporte->setCaIdproveedor($request->getParameter("prov"));
-        }else
-        {
-            $errors["proveedor"]="Debe seleecionar un proveedor";
-
-        }
-*/
 
         $prov="";
         $incoterms="";
@@ -1997,7 +1884,6 @@ class reportesNegActions extends sfActions
 
         if($request->getParameter("transporte") )
         {
-            //echo utf8_decode($request->getParameter("transporte"));
             if($request->getParameter("transporte")=="A&eacute;reo")
                 $reporte->setCaTransporte(constantes::AEREO);
             else if($request->getParameter("transporte")=="Mar&iacute;timo")
@@ -2030,7 +1916,6 @@ class reportesNegActions extends sfActions
         }
         else
         {
-            //revisar
             $reporte->setCaIdconsignar(1);
         }
 
@@ -2129,10 +2014,8 @@ class reportesNegActions extends sfActions
     catch(Exception $e)
     {
         $this->responseArray=array("success"=>false,"err"=>utf8_encode($e->getMessage()));
-    }
-        
+    }        
         $this->setTemplate("responseTemplate");
-        //cuando se seleccion una cotizacion se debe marcar el campo aprobado, etapa='APR';
     }
     
     
@@ -2254,7 +2137,6 @@ class reportesNegActions extends sfActions
                 }
             }
 
-
             if($request->getParameter("idagente") && $request->getParameter("idagente")!="")
             {
                 $reporte->setCaIdagente($request->getParameter("idagente"));                
@@ -2262,8 +2144,6 @@ class reportesNegActions extends sfActions
             else 
             {
                 $reporte->setCaIdagente("800024075");
-                //$errors["idagente"]="Debe seleccionar un agente";
-                //$texto.="Agente<br>";
             }
 
             if($request->getParameter("idmodalidad") )
@@ -2275,18 +2155,14 @@ class reportesNegActions extends sfActions
                 $errors["modalidad"]="Debe seleccionar una modalidad";
                 $texto.="Modalidad <br>";
             }
-            
-            
-            
+
             if(($request->getParameter("idlinea") && $request->getParameter("idlinea")!="") || $request->getParameter("idlinea")=="0" )
             {                
                 $reporte->setCaIdlinea($request->getParameter("idlinea"));
             }
             else
             {
-                //if($reporte->getCaIdlinea()=="")
-                    $reporte->setCaIdlinea(0);
-//                $errors["linea"]="Debe seleccionar un linea";
+                $reporte->setCaIdlinea(0);
             }
 
             if($request->getParameter("ca_mercancia_desc")  )
@@ -2413,8 +2289,6 @@ class reportesNegActions extends sfActions
             {
                 $reporte->setCaIdconsignar(1);
             }
-
-            //$reporte->setCaLogin("consolcargo");        
 
             if($request->getParameter("ca_mcia_peligrosa") && $request->getParameter("ca_mcia_peligrosa")=="on"  )
             {
@@ -2660,10 +2534,7 @@ class reportesNegActions extends sfActions
                     $errors["contenedor"]="Debe especificar el campo de contenedor";
                     $texto.="Contenedor <br>";
                 }
-                
             }
-            
-            
             
             if($reporte->getCaVersion()=="1")
             {
@@ -2676,7 +2547,6 @@ class reportesNegActions extends sfActions
                     $repOtm->setProperty("hbl", 0);
                 }
                 
-                
                 if($request->getParameter("cb_factura")=="on")
                 {
                     $repOtm->setProperty("factura", 1);
@@ -2685,7 +2555,6 @@ class reportesNegActions extends sfActions
                 {
                     $repOtm->setProperty("factura", 0);
                 }
-                
                 
                 if($request->getParameter("cb_empaque")=="on")
                 {
@@ -2696,7 +2565,6 @@ class reportesNegActions extends sfActions
                     $repOtm->setProperty("empaque", 0);
                 }
                 
-                
                 if($request->getParameter("cb_seguro")=="on")
                 {
                     $repOtm->setProperty("seguro", 1);
@@ -2706,7 +2574,6 @@ class reportesNegActions extends sfActions
                     $repOtm->setProperty("seguro", 0);
                 }
                 
-                
                 if($request->getParameter("cb_invima")=="on")
                 {
                     $repOtm->setProperty("invima", 1);
@@ -2715,11 +2582,7 @@ class reportesNegActions extends sfActions
                 {
                     $repOtm->setProperty("invima", 0);
                 }
-                
-                
             }
-            
-            
             
             $repOtm->save();            
             
@@ -2732,9 +2595,8 @@ class reportesNegActions extends sfActions
     }
 
     $this->setTemplate("responseTemplate");
-        //cuando se seleccion una cotizacion se debe marcar el campo aprobado, etapa='APR';
+        
     }
-
 
     public function executeGuardarReporteOs( sfWebRequest $request )
     {
@@ -2782,7 +2644,6 @@ class reportesNegActions extends sfActions
             }else
             {
                 $reporte->setCaFchdespacho(date("Y-m-d"));
-                //$errors["fchdespacho"]="Debe seleccionar una fecha de despacho";
             }
 
             if($request->getParameter("impoexpo"))
@@ -2802,7 +2663,6 @@ class reportesNegActions extends sfActions
             {
                 $errors["idconcliente"]="Debe seleccionar un cliente";
             }
-
 
             if($request->getParameter("ca_mercancia_desc")  )
             {
@@ -2972,7 +2832,6 @@ class reportesNegActions extends sfActions
             $this->responseArray=array("success"=>false);
 
         $this->setTemplate("responseTemplate");
-
     }
 
     public function executeDatosReporte(sfWebRequest $request)
@@ -2997,8 +2856,6 @@ class reportesNegActions extends sfActions
             $data["cont-origen"]=$reporte->getCaContOrigen();
             $data["cont-destino"]=$reporte->getCaContDestino();
 
-            //$reporte->setCaContinuacionConf
-
             $data["idlinea"]=$reporte->getCaIdlinea();
             $data["linea"]=utf8_encode($reporte->getIdsProveedor()->getIds()->getCaNombre());
 
@@ -3020,7 +2877,6 @@ class reportesNegActions extends sfActions
             $idsSucursal=$reporte->getIdsSucursal();
             $data["idsucursalagente"]=$idsSucursal->getCaIdsucursal();
             $data["sucursalagente"]=utf8_encode($idsSucursal->getCiudad()->getCaCiudad());
-
 
             $data["idcliente"]=$reporte->getCliente()->getCaIdcliente();
             $data["cliente"]=utf8_encode($reporte->getCliente()->getCaCompania());
@@ -3102,7 +2958,6 @@ class reportesNegActions extends sfActions
                 }
             }
 
-            
             if( $reporte->getCaConfirmarClie() ){
                 $values = explode(",", $reporte->getCaConfirmarClie() );
                 $f=0;
@@ -3171,7 +3026,6 @@ class reportesNegActions extends sfActions
             $data["ca_primaventa"]=Utils::formatNumber($repseguro->getCaPrimaventa(), 3);
             $data["ca_minimaventa"]=Utils::formatNumber($repseguro->getCaMinimaventa(), 3);
             $data["ca_idmoneda_vta"]=$repseguro->getCaIdmonedaVta();
-
 
             $data["idconsignarmaster"]=$reporte->getCaIdconsignarmaster();
             $data["consignarmaster"]=utf8_encode($reporte->getConsignarmaster());
@@ -3261,8 +3115,6 @@ class reportesNegActions extends sfActions
                     $data["emisionbl"]=$repExpo->getCaEmisionbl();
                     $data["ca_numbl"]=$repExpo->getCaNumbl();
                     $data["ca_anticipo"]=($repExpo->getCaAnticipo()=="Sí")?"on":"";
-
-    //                $data[""]=$repExpo->getCa();
                 }
             }
             
@@ -3309,16 +3161,11 @@ class reportesNegActions extends sfActions
                     if($repOtm->getCaLiberacion()=="coltrans.com.co")
                     {
                          $data["idcliente"]="";
-                    }                    
-                    
-                    //$data["idlinea"]=$repOtm->getCaIdtransportador();
-                    //$data["linea"]=utf8_encode($repOtm->getIdsProveedor()->getIds()->getCaNombre());
+                    }
                 }
             if($reporte->getCaTiporep()=="2")
                 $data["asunto"]="Nuevo Reporte AG ".$data["proveedor0"]." / ".$data["cliente"];
-            
         }
-
         $this->responseArray=array("success"=>true,"data"=>$data);
         $this->setTemplate("responseTemplate");
     }
@@ -3349,11 +3196,6 @@ class reportesNegActions extends sfActions
         }
         
         $reportes=$q->execute();
-        
-        /*echo $q->getSqlQuery();
-        echo "::::::::::::".count($reportes)."--------------";
-        exit();*/
-                
         
         $tipo=($request->getParameter("tipo")!="")?$request->getParameter("tipo"):"1";
 
@@ -3429,8 +3271,6 @@ class reportesNegActions extends sfActions
                                 ->addWhere("(t.ca_tiporecargo = ? or t.ca_tiporecargo is null ) and t.ca_idreporte = ? and t.ca_idconcepto = ? and t.ca_recargoorigen='true'", array($tipo, $reporte->getCaIdreporte() , 9999) )
                                 ->orderBy("t.ca_fchcreado ASC")
                                 ->execute();
-            //echo count($recargos);
-            //exit;
             //if($tipo=="1")        
             {
                 if( count($recargos)>0){
@@ -3545,16 +3385,7 @@ class reportesNegActions extends sfActions
                     $data1[]=$d2;
                 }
             }
-
             $conceptos=$data1;
-/*            echo "<table width='100%'><td width='50%' style='vertical-align:top'><pre>";
-            print_r($data1);
-            echo "</pre></td><td style='vertical-align:top'><pre>";
-            print_r($data2);
-            echo "</pre></td></table>";
-            exit;
- * 
- */
         }
         $row = $baseRow;
         $row['iditem']="";
@@ -3601,8 +3432,7 @@ class reportesNegActions extends sfActions
 
                 if( $idconcepto!==null ){                    
                     $tarifa->setCaIdconcepto( $idconcepto );
-                }                
-
+                }
 
                 if( $request->getParameter("cantidad")!==null ){
                     $tarifa->setCaCantidad( $request->getParameter("cantidad") );
@@ -3664,12 +3494,8 @@ class reportesNegActions extends sfActions
             if( !$tarifa ){
                 $tarifa = new RepGasto();
                 $tarifa->setCaIdreporte( $idreporte );
-                //if($idconcepto==0 || $idconcepto=="0" || $idconcepto!="")
-//                    $idconcepto="9999";
-
                 $tarifa->setCaIdconcepto( $idconcepto );
                 $tarifa->setCaIdrecargo( $idrecargo );
-                
             }
             $tarifa->setCaIdequipo( $idequipo );
 
@@ -3692,7 +3518,6 @@ class reportesNegActions extends sfActions
             }else{
                 $tarifa->setCaNetaMin( 0 );
             }
-
 
             if( $request->getParameter("reportar_tar")!==null ){
                 $tarifa->setCaReportarTar( $request->getParameter("reportar_tar") );
@@ -3718,11 +3543,9 @@ class reportesNegActions extends sfActions
                 $tarifa->setCaReportarMin( 0 );
             }
 
-
             if( $request->getParameter("reportar_idm")!==null ){
                 $tarifa->setCaIdmoneda( $request->getParameter("reportar_idm") );
             }
-
 
             if( $request->getParameter("cobrar_tar")!==null ){
                 $tarifa->setCaCobrarTar( $request->getParameter("cobrar_tar") );
@@ -3742,20 +3565,13 @@ class reportesNegActions extends sfActions
                 $tarifa->setCaIdmoneda( $request->getParameter("cobrar_idm") );
             }
 
-            if( $request->getParameter("observaciones")!==null ){
-                //if( $request->getParameter("observaciones") ){
-                    $tarifa->setCaDetalles( utf8_decode($request->getParameter("observaciones")) );
-                //}else{
-                //    $tarifa->setCaDetalles( null );
-                //}
+            if( $request->getParameter("observaciones")!==null ){                
+                    $tarifa->setCaDetalles( utf8_decode($request->getParameter("observaciones")) );                
             }
-
           
             if( $request->getParameter("ca_recargoorigen")!==null ){
                 $tarifa->setCaRecargoorigen( $request->getParameter("ca_recargoorigen") );
             }
-
-            
 
             $tarifa->save();
 
@@ -3925,7 +3741,6 @@ class reportesNegActions extends sfActions
                         $tarifa->setCaNetaMin( 0 );
                     }
 
-
                     if( $t->reportar_tar ){
                         $tarifa->setCaReportarTar( $t->reportar_tar );
                     }else{
@@ -4014,8 +3829,6 @@ class reportesNegActions extends sfActions
         $this->responseArray=array("errorInfo"=>$errorInfo,"id"=>  implode(",", $ids),"idreg"=>  implode(",", $ids_reg),  "success"=>true);
         $this->setTemplate("responseTemplate");
     }
-
-
     /*
     * Datos para el panel de conceptos
     * @param sfRequest $request A request object
@@ -4052,21 +3865,10 @@ class reportesNegActions extends sfActions
                    ->where("g.ca_idreporte = ? and (ca_tiporecargo=? $where) and ca_recargoorigen=false ", array($idreporte,$tiporecargo))
                    ->execute();
         }
-        /*else if($tipo=="All-recargos-otm")
-        {
-            Doctrine_Query::create()
-                   ->delete()
-                   ->from("RepGasto g")
-                   ->where("g.ca_idreporte = ? and ca_recargoorigen=false and ca_idrecargo=61 ", array($idreporte))
-                   ->execute();
-
-        }*/
         else
         {
             $idconcepto = $request->getParameter("idconcepto");
-
             if( $tipo=="concepto" ){
-//                $tarifa = Doctrine::getTable("RepTarifa")->find(array($idreporte, $idconcepto));
                 if($idconcepto!="9999")
                 {
                     $tarifa = Doctrine::getTable("RepTarifa")
@@ -4075,8 +3877,7 @@ class reportesNegActions extends sfActions
                              ->fetchOne();
                 }                
                 else
-                    $tarifa=new RepTarifa();                
-
+                    $tarifa=new RepTarifa();
                 
                 $gastos = Doctrine_Query::create()
                                     ->select("g.*")
@@ -4093,7 +3894,6 @@ class reportesNegActions extends sfActions
                 if( $tarifa ){
                     $tarifa->delete();
                     $success=true;
-    //                $tarifa->execute();
                 }else
                     $success=false;
             }
@@ -4118,7 +3918,6 @@ class reportesNegActions extends sfActions
         $reporte->setCaFchactualizado(date('Y-m-d H:i:s'));
         $reporte->save();
 
-
         $this->setTemplate("responseTemplate");
         $id = $request->getParameter("id");
         $this->responseArray=array("id"=>$id,  "success"=>$success);
@@ -4130,9 +3929,7 @@ class reportesNegActions extends sfActions
     * @param sfRequest $request A request object
     */
     public function executePanelRecargosData(sfWebRequest $request){
-        //$reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
-        //$this->forward404Unless( $reporte );
-                $id=$request->getParameter("id");
+        $id=$request->getParameter("id");
         $comparar=$request->getParameter("comparar");
         
         $q = Doctrine::getTable("Reporte")
@@ -4145,12 +3942,9 @@ class reportesNegActions extends sfActions
             $version=$request->getParameter("version");
             $q->orWhere("t.ca_consecutivo = ? and t.ca_version= ?",array($consecutivo,($version-1)));
             $q->orderBy("t.ca_version DESC");
-        }
-        
+        }        
         $reportes=$q->execute();
-        
-
-        $conceptos = array(); 
+        $conceptos = array();
 
         foreach($reportes as $reporte)
         {
@@ -4215,7 +4009,6 @@ class reportesNegActions extends sfActions
         if($comparar)   
         {
             $data1=$data2=array();
-            
             foreach($conceptos as $c)
             {
                 if($c["idreporte"]==$id)
@@ -4248,7 +4041,7 @@ class reportesNegActions extends sfActions
                         {
                             $data1[$key1]["cambio"]="0";
                             $data2[$key2]["cambio"]="0";
-                        }                        
+                        }
                     }
                 }
             }
@@ -4268,19 +4061,8 @@ class reportesNegActions extends sfActions
                     $data1[]=$d2;
                 }
             }
-
             $conceptos=$data1;
-/*            echo "<table width='100%'><td width='50%' style='vertical-align:top'><pre>";
-            print_r($data1);
-            echo "</pre></td><td style='vertical-align:top'><pre>";
-            print_r($data2);
-            echo "</pre></td></table>";
-            exit;
-*/
         }
-        
-        
-        
 
         $row = $baseRow;
         $row['iditem']="";
@@ -4299,9 +4081,6 @@ class reportesNegActions extends sfActions
     * @param sfRequest $request A request object
     */
     public function executePanelRecargosAduanaData(sfWebRequest $request){
-
-        //$reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
-	    //$this->forward404Unless( $reporte );
         
         $id=$request->getParameter("id");
         $comparar=$request->getParameter("comparar");
@@ -4328,10 +4107,7 @@ class reportesNegActions extends sfActions
 
             $recargos = Doctrine::getTable("RepCosto")
                                  ->createQuery("t")
-                                 //->innerJoin("t.Costo c")
                                  ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())
-                                 //->addWhere("t.ca_idconcepto = ?", 9999 )
-                                 //->addWhere("tr.ca_tipo = ?", Constantes::RECARGO_LOCAL )
                                  ->orderBy("t.ca_fchcreado ASC")
                                  ->execute();
 
@@ -4419,9 +4195,6 @@ class reportesNegActions extends sfActions
         $this->responseArray=array("items"=>$conceptos, "total"=>count($conceptos), "success"=>true);
         $this->setTemplate("responseTemplate");
     }
-
-
-
     /*
     * Guarda para el panel de recargos de aduana
      *
@@ -4459,8 +4232,6 @@ class reportesNegActions extends sfActions
                 $tarifa->setCaNetcosto( $request->getParameter("netcosto") );
             }
 
-
-
             if( $request->getParameter("idmoneda")!==null ){
                 $tarifa->setCaIdmoneda( $request->getParameter("idmoneda") );
             }
@@ -4487,7 +4258,6 @@ class reportesNegActions extends sfActions
             if( $request->getParameter("aplicacionminimo")!==null ){
                 $tarifa->setCaAplicacionminimo( $request->getParameter("aplicacionminimo") );
             }
-
 
             $tarifa->save();
             $this->responseArray["success"]=true;
@@ -4530,7 +4300,6 @@ class reportesNegActions extends sfActions
 
         $id = $request->getParameter("id");
         $this->responseArray=array("id"=>$id,  "success"=>true);
-
     }
 
 
@@ -4560,8 +4329,6 @@ class reportesNegActions extends sfActions
                   ->createQuery("t")
                   ->innerJoin("t.RepAsignacion a")
                   ->innerJoin("a.Reporte r");
-                  
-
         if($id)
         {
             $reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
@@ -4572,8 +4339,7 @@ class reportesNegActions extends sfActions
             $reporte->setCaFchanulado( date("Y-m-d H:i:s") );
             $reporte->setCaDetanulado( trim($request->getParameter("motivo")));
             $reporte->save();
-            $q->addWhere("r.ca_idreporte = ?", $request->getParameter("id") );
-            
+            $q->addWhere("r.ca_idreporte = ?", $request->getParameter("id") );            
         }
         else if($consecutivo)
         {
@@ -4586,7 +4352,6 @@ class reportesNegActions extends sfActions
                   ->where("r.ca_consecutivo =?", $consecutivo)
                   ->execute();
             $q->addWhere("r.ca_consecutivo = ?", $consecutivo );
-            
         }
 
         $tareas = $q->execute();
@@ -4596,7 +4361,6 @@ class reportesNegActions extends sfActions
             $tarea->save();
         }
         
-        
         Doctrine::getTable("NotTarea")
                   ->createQuery("t")
                   ->update()
@@ -4604,10 +4368,6 @@ class reportesNegActions extends sfActions
                   ->set("t.ca_usuterminada","'". $this->getUser()->getUserId()."'")
                   ->where("t.ca_titulo like ?", "%Seguimiento RN".$consecutivo."%")
                   ->execute();
-        
-        
-
-
         $this->responseArray = array("success"=>true);
         $this->setTemplate("responseTemplate");
 	}
@@ -4630,8 +4390,6 @@ class reportesNegActions extends sfActions
         $this->setTemplate("responseTemplate");
 	}
 
-
-
 	/*
 	* Envia un reporte por correo
 	*/
@@ -4645,7 +4403,6 @@ class reportesNegActions extends sfActions
 		$this->getRequest()->setParameter('filename',$fileName);
 		sfContext::getInstance()->getController()->getPresentationFor( 'reportesNeg', 'generarPDF') ;
 		$this->setLayout("ajax");
-
 
 		$user = $this->getUser();
 
@@ -4695,8 +4452,6 @@ class reportesNegActions extends sfActions
 		}
 		@unlink( $fileName );
 	}
-
-
     /**
 	* Envia una notificacion a los usuarios relacionados en el reporte
 	* @author Mauricio Quinche
@@ -4781,12 +4536,10 @@ class reportesNegActions extends sfActions
             {
                 $grupos["otm"][] = $coordinador->getCaLogin();
             }
-            //print_r($grupos["otm"]);
 		}
 
         //Crea la tarea para los usuarios seleccionados
-        if ($request->isMethod('post')){
-            
+        if ($request->isMethod('post')){            
             $con = Doctrine_Manager::getInstance()->connection();
             $con->beginTransaction();
             $notificar=$request->getParameter("notificar");
@@ -4799,12 +4552,13 @@ class reportesNegActions extends sfActions
             if(!$antecedente)
             {
                 $antecedente= new RepAntecedentes();
-                $antecedente->setCaIdreporte($idreporte);
-                $antecedente->setCaLogin($principal);
-                $antecedente->setCaEstado('E');
-                $antecedente->setCaResponder ($destinatario);
-                $antecedente->save($con);
             }
+            $antecedente->setCaIdreporte($idreporte);
+            $antecedente->setCaLogin($principal);
+            $antecedente->setCaEstado('E');
+            $antecedente->setCaResponder ($destinatario);
+            $antecedente->save($con);
+
             foreach($notificar as $n)
             {
                 $antUsu = Doctrine::getTable("RepAntUsuario")->find(array($antecedente->getCaIdantecedente(),$n));
@@ -4815,16 +4569,14 @@ class reportesNegActions extends sfActions
                     $antUsu->setCaLogin($n);
                     $antUsu->save($con);
                 }
-            }            
+            }
 
             $usuario = Doctrine::getTable("Usuario")->find($principal);
-            
-            $email = new Email();
 
+            $email = new Email();
             $email->setCaUsuenvio($user->getUserId());
             $email->setCaTipo("EnvioRNPrincipal");
             $email->setCaIdcaso(null);
-
             $from = $request->getParameter("from");
             if ($from) {
                 $email->setCaFrom($from);
@@ -4859,7 +4611,6 @@ class reportesNegActions extends sfActions
             }
             $email->setCaSubject("Notificacion de Reporte de negocios ".$subject);
             $email->setCaBody("Notificacion de Reporte de negocios");
-            
 
             $mensaje = Utils::replace($request->getParameter("mensaje")) . "<br />";
 
@@ -4870,9 +4621,8 @@ class reportesNegActions extends sfActions
                 <tr><th>Cliente</th><td>".($reporte->getCliente()->getCaCompania())."</td></tr>
                 <tr><th>Transporte</th><td>".($reporte->getCaTransporte())."</td></tr>
                 <tr><th>Trayecto</th><td>".($reporte->getOrigen()->getCaCiudad())."-".($reporte->getDestino()->getCaCiudad())."</td></tr>
-                <tr><th>Proveedor</th><td>".$reporte->getProveedoresStr()."</td></tr>";
-            
-            $html."</table></td></tr></table></div>";
+                <tr><th>Proveedor</th><td>".$reporte->getProveedoresStr()."</td></tr>            
+            </table></td></tr></table></div>";
 
             $this->getRequest()->setParameter('tipo',"INSTRUCCIONES");
             $this->getRequest()->setParameter('mensaje',$request->getParameter("mensaje"));
@@ -5074,10 +4824,8 @@ class reportesNegActions extends sfActions
                 'message' => 'Raw data number ' . $i
             );
         }
-
         $this->responseArray=array("success"=>true,"data"=>$data);
         $this->setTemplate("responseTemplate");
-
     }
 
     public function executeCerrarReporte( $request ){
@@ -5127,7 +4875,6 @@ class reportesNegActions extends sfActions
         $this->setTemplate("responseTemplate");
     }
 
-
     public function executeCierreAutomatico($request)
     {  
 
@@ -5145,7 +4892,6 @@ class reportesNegActions extends sfActions
         
         $nreg=2000;
         $pages=ceil($count[0]/$nreg);
-        //echo "Pages:".$pages."<br><br>";
         for($i=0;$i<$pages;$i++)
         {
             $html="";
@@ -5163,16 +4909,13 @@ class reportesNegActions extends sfActions
             $sql.=" limit ".$nreg;
             $sql1.=" limit ".$nreg;
 
-            //echo $sql."<br><br>";
             $st = $con->execute($sql);
             $reportes = $st->fetchAll();
 
-            //$html="Se hizo el cierre de los siguientes reportes:";
             foreach($reportes as $rep)
             {
                 $html.=$rep["ca_consecutivo"]."|";
             }
-
             $email = new Email();
             $email->setCaUsuenvio("Administrador");
             $email->setCaTipo("Reporte de Negocios"); //Envío de Avisos
@@ -5201,8 +4944,6 @@ class reportesNegActions extends sfActions
             $st = $con->execute($sql2);
         }
         
-        
-        
         //para aereo
         
         $sql="select count(ca_consecutivo) as count from tb_reportes r
@@ -5214,7 +4955,6 @@ class reportesNegActions extends sfActions
         
         $nreg=2000;
         $pages=ceil($count[0]/$nreg);
-        //echo "Pages:".$pages."<br><br>";
         for($i=0;$i<$pages;$i++)
         {
             $html="";
@@ -5232,7 +4972,6 @@ class reportesNegActions extends sfActions
             $sql.=" limit ".$nreg;
             $sql1.=" limit ".$nreg;
 
-            //echo $sql."<br><br>";
             $st = $con->execute($sql);
             $reportes = $st->fetchAll();
 
@@ -5249,7 +4988,6 @@ class reportesNegActions extends sfActions
 
             $email->setCaFrom("no-reply@coltrans.com.co");
             $email->setCaFromname("Administrador");
-            //$email->setCaAddress("traficos1@coltrans.com.co");
             $email->addTo("icastiblanco@coltrans.com.co");
             $email->addTo("maquinche@coltrans.com.co");
 
@@ -5265,17 +5003,12 @@ class reportesNegActions extends sfActions
             //$email->save();
             $email->send($con);
 
-             $sql2="update tb_reportes set ca_usucerrado='Administrador' , ca_fchcerrado=now()
+            $sql2="update tb_reportes set ca_usucerrado='Administrador' , ca_fchcerrado=now()
              where ca_consecutivo in ($sql1)";
-
             $st = $con->execute($sql2);
-
         }
-        
-        
-        
-        //para expo
-        
+
+        //para expo        
         $sql="select count(ca_consecutivo) as count from tb_reportes r
             inner join tb_repstatus s on  s.ca_idreporte=r.ca_idreporte and s.ca_idetapa in ('EEETD')
             where s.ca_fchenvio<=(CURRENT_TIMESTAMP - CAST('30 days' AS INTERVAL))
@@ -5285,7 +5018,6 @@ class reportesNegActions extends sfActions
         
         $nreg=2000;
         $pages=ceil($count[0]/$nreg);
-        //echo "Pages:".$pages."<br><br>";
         for($i=0;$i<$pages;$i++)
         {
             $html="";
@@ -5310,7 +5042,6 @@ class reportesNegActions extends sfActions
             {
                 $html.=$rep["ca_consecutivo"]."|";
             }
-
             $email = new Email();
             $email->setCaUsuenvio("Administrador");
             $email->setCaTipo("Reporte de Negocios"); //Envío de Avisos
@@ -5505,8 +5236,7 @@ class reportesNegActions extends sfActions
         $email->setCaBody($this->getRequestParameter("mensaje"));
 
         $mensaje = Utils::replace($this->getRequestParameter("mensaje")) . "<br />";
-        
-        //$html = Utils::replace($this->getRequestParameter("html")) . "<br />";
+
         $html ="<table class='tableList alignLeft' width='40%'><tr><th colspan='2'>".$this->getRequestParameter("cliente")."</th></tr>";
         $html .="<tr><td style='width: 30%'>HBL No. :</td><td>".$this->getRequestParameter("hbls")."</td></tr>";
         $html .="<tr><td>ETA: </td><td>".$this->getRequestParameter("eta")."</td></tr>";
@@ -5618,6 +5348,20 @@ class reportesNegActions extends sfActions
             {            
                 $email->addTo( $ra->getUsuario()->getCaEmail() );
             }
+            
+            /**************/
+            $idusu=$repAntecedentes->getCaUsucreado();            
+            
+            $usuariotmp=Doctrine::getTable("Usuario")->find($idusu);
+            $email->addTo($usuariotmp->getCaEmail());
+            
+            $usu_resp=  explode(",", $repAntecedentes->getCaResponder());
+            foreach($usu_resp as $ur)
+            {
+                if($ur!="")
+                    $email->addTo($ur);
+            }
+            /**************/            
 
             $repAntecedentes->setCaEstado('A');
             $repAntecedentes->setCaUsuaceptado($user->getUserId());
@@ -5625,7 +5369,7 @@ class reportesNegActions extends sfActions
 
             $email->addCc($user->getEmail());
 
-            $email->setCaSubject("Envío de reportes ".$reporte->getCaConsecutivo());
+            $email->setCaSubject("Desbloqueo de nuevo Reporte de Negocios : ".$reporte->getCaConsecutivo());
             $email->setCaBody($this->getRequestParameter("mensaje"));
             
             $proveedor="";
@@ -5683,17 +5427,13 @@ class reportesNegActions extends sfActions
         $sql="select * from vi_reportes2 r where ca_consecutivo='{$consecutivo}'";
         $st = $con->execute($sql);
         $this->reportes = $st->fetchAll();
-    }
-    
-    
+    }    
     
     public function executeCompReporte( sfWebRequest $request ){
         
         $this->reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
         
         $this->reporte_old=ReporteTable::retrieveByConsecutivo($this->reporte->getCaConsecutivo()," and ca_version='".($this->reporte->getCaVersion()-1)."'");
-
-        //$reporte->getCaIdreporte()."-".$reporte_old->getCaIdreporte();
         
         $response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/RowExpander",'last');
