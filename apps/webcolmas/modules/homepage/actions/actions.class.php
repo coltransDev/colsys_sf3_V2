@@ -1,3 +1,4 @@
+
 <?php
 
 /**
@@ -16,39 +17,33 @@ class homepageActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeIndex(sfWebRequest $request) {
-        
+
         $q = Doctrine::getTable("Usuario")
-                        ->createQuery("u")                        
-                        ->addWhere("u.ca_activo = ? ", true )                        
-                        ->addWhere("u.ca_cargoweb IS NOT NULL")
-                        ->addOrderBy("u.ca_cargoweb")
-                        ->addOrderBy("u.ca_nombre");
-        
-                
-        $this->users =  $q->execute();
+                ->createQuery("u")
+                ->addWhere("u.ca_activo = ? ", true)
+                ->addWhere("u.ca_cargoweb IS NOT NULL")
+                ->addOrderBy("u.ca_cargoweb, u.ca_nombre");
+
+        $this->users = $q->execute();
+        $this->setLayout('home');
     }
-    
-    
+
     /**
      * Executes index action
      *
      * @param sfRequest $request A request object
      */
     public function executeViewUser(sfWebRequest $request) {
-        
+
         $q = Doctrine::getTable("Usuario")
-                        ->createQuery("u")                        
-                        ->addWhere("u.ca_activo = ? ", true )  
-                        ->addWhere("u.ca_cargoweb IS NOT NULL")
-                        ->addWhere("MD5(u.ca_login) = ?",$request->getParameter("l"));
-                        
-        
-                
-        $this->user =  $q->fetchOne();
+                ->createQuery("u")
+                ->addWhere("u.ca_activo = ? ", true)
+                ->addWhere("u.ca_cargoweb IS NOT NULL")
+                ->addWhere("MD5(u.ca_login) = ?", $request->getParameter("l"));
+
+        $this->user = $q->fetchOne();
+        $this->setLayout('home');       
     }
-    
-    
-    
-    
 
 }
+
