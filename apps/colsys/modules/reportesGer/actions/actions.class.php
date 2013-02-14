@@ -379,9 +379,7 @@ md.ca_idmodo,m.ca_idmaster
     }
     
     public function executeEstadisticasMaritimo(sfWebRequest $request) {
-
-        $response = sfContext::getInstance()->getResponse();
-        $response->addJavaScript("extExtras/SuperBoxSelect", 'last');
+        
 
         $this->opcion = $request->getParameter("opcion");
         $this->year = ($request->getParameter("year")!="")?$request->getParameter("year"):date("Y");
@@ -415,6 +413,7 @@ md.ca_idmodo,m.ca_idmaster
             
             if (count($this->nmes)>0)
             {
+               $this->nmes = array_diff($this->nmes, array(""));
                 if( $this->nmes[0]!="" )                    
                     $where.=" and ca_mes::integer in (".(implode (",", $this->nmes)).")";
             }
@@ -503,9 +502,11 @@ md.ca_idmodo,m.ca_idmaster
 
     public function executeEstadisticasTraficos(sfWebRequest $request) {
         $this->opcion = $request->getParameter("opcion");
-        list($nom_mes, $ano) = explode("-", $request->getParameter("fechaFinal"));
+        //list($nom_mes, $ano) = explode("-", $request->getParameter("fechaFinal"));
+        //list(,$this->mes, $ano) = explode("-", $request->getParameter("fechaFinal"));
+        list($ano,$this->mes, $dia) = explode("-", $request->getParameter("fechaFinal"));
 
-        $this->mes = Utils::nmes($nom_mes);
+        //$this->mes = Utils::nmes($nom_mes);
         $this->idsucursal = $request->getParameter("idsucursal");
         $this->departamento = $request->getParameter("departamento");
         $this->iddepartamento = $request->getParameter("iddepartamento");
@@ -532,7 +533,7 @@ md.ca_idmodo,m.ca_idmaster
             }
             if($this->departamento=="Cuentas Globales")
                 $where .= " and ca_idcliente in (select ca_idcliente from vi_clientes_reduc where ca_propiedades like '%cuentaglobal=true%') ";
-            else if($this->departamento=="Tráficos")
+            else if($this->departamento=="Tráficos")                
                 $where .= " and ca_idcliente not in (select ca_idcliente from vi_clientes_reduc where ca_propiedades like '%cuentaglobal=true%') ";
             else if($this->departamento=="Aéreo")
                 $where .= " and ca_idcliente not in (select ca_idcliente from vi_clientes_reduc where ca_propiedades like '%cuentaglobal=true%') ";
