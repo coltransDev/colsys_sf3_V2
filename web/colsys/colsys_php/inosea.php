@@ -734,6 +734,17 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             
                             $hay_cot = false;
                             $tm = & DlRecordset::NewRecordset($conn);
+                            if($cl->Value('ca_consecutivo') != ""){
+                              if (!$tm->Open("select ca_idcotizacion, ca_consecutivo from tb_cotizaciones where ca_consecutivo in (select ca_idcotizacion from tb_reportes rp inner join (select ca_consecutivo, max(ca_version) as ca_version from tb_reportes where ca_consecutivo = '".$cl->Value('ca_consecutivo')."' group by ca_consecutivo) vr on rp.ca_consecutivo = vr.ca_consecutivo and rp.ca_version = vr.ca_version)")) {
+                                 echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+                                 echo "<script>document.location.href = 'entrada.php';</script>";
+                                 exit;
+                              }
+                              if ($tm->Value('ca_idcotizacion') != ""){
+                                 $hay_cot = true;
+                              }
+                            }
+                            /*
                             if($cl->Value('ca_idproducto') != ""){
                               $hay_cot = true;
                               if (!$tm->Open("select ca_idcotizacion from tb_cotproductos where ca_idproducto = ".$cl->Value('ca_idproducto'))) {
@@ -749,10 +760,11 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                                  exit;
                               }
                             }
+                            */
                             $pdf_coti = $hay_cot ? "<BR /><IMG style='cursor:pointer'src='./graficos/pdf.gif' alt='Genera archivo PFD de la Cotización' border=0 onclick='javascript:ver_cot(\"" . $tm->Value('ca_idcotizacion') . "\")'>" : "";
                             echo "<TR>";
                             echo "  <TD Class=listar><B>Reporte Neg.:</B><BR>" . $cl->Value('ca_consecutivo') . " $pdf_icon</TD>";
-                            echo "  <TD Class=listar><B>Cotizacion :</B><BR>" . $cl->Value('ca_cotizacion') . " $pdf_coti</TD>";
+                            echo "  <TD Class=listar><B>Cotizacion :</B><BR>" . $tm->Value('ca_consecutivo') . " $pdf_coti</TD>";
                             echo "  <TD Class=listar COLSPAN=2><B>Proveedor:</B><BR>" . $cl->Value('ca_proveedor') . "</TD>";
                             echo "  <TD Class=listar><B>Utilidad x Cliente:</B><BR>" . number_format($utl_cbm * $cl->Value('ca_volumen')) . "</TD>";
                             echo "  <TD Class=listar><B>Hbl Final: <IMG style='cursor:pointer;$level0' src='./graficos/fileopen.png' alt='Agregar Copia de Hbl Definitivo' border=0 onclick='javascript:subir_hbl(\"" . $cl->Value('ca_referencia') . "\",\"" . $cl->Value('ca_hbls') . "\")'>";
