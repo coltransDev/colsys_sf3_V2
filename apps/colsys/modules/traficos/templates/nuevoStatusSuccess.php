@@ -63,16 +63,16 @@ var mostrar=function( oid ){
 	var tipo = document.form1.idetapa;
 	var value='';	
 	for (i=0;i<tipo.length;i++){		
-		  if ( tipo[i].selected ){
-				 value = tipo[i].value;
-				 break;
-		  }
-	} 
+        if ( tipo[i].selected ){
+               value = tipo[i].value;
+               break;
+        }
+	}
 	
 	var divmensaje = document.getElementById('divmensaje');
 	var mensaje = document.form1.mensaje;
 	var mensaje_mask = document.form1.mensaje_mask;
-	
+
 	switch( value ){        
 		<?
 		foreach( $etapas as $etapa ){           
@@ -93,14 +93,14 @@ var mostrar=function( oid ){
 			mensaje_mask.value = '';
 			break;
 	}
-	
+
 	switch( value ){
 		<?
 		foreach( $etapas as $etapa ){
 			if( $etapa->getIntroAsunto() ){
 			?>
-			case '<?=$etapa->getCaIdetapa()?>':						
-				document.getElementById("asuntoIntro").innerHTML = "<?=$etapa->getIntroAsunto()?>";								
+			case '<?=$etapa->getCaIdetapa()?>':
+				document.getElementById("asuntoIntro").innerHTML = "<?=$etapa->getIntroAsunto()?>";
 				break;
 			<?
 			}
@@ -383,26 +383,30 @@ echo $form['transporte']->render();
 		$proveedor = substr($reporte->getProveedoresStr(),0,130);					
 		$asunto .= $proveedor." / ".$cliente." [".$origen." -> ".$destino."] ".$reporte->getCaOrdenClie();
 	}
-    /*else if($reporte->getCaImpoexpo()==Constantes::EXPO )
+    else if($reporte->getCaImpoexpo()==Constantes::EXPO )
     {
-        if($ultStatus)            
-            $asunto=" Id.: ".$reporte->getCaConsecutivo()." ".$ultStatus->getEmail()->getCaSubject();        
-    }*/
+        if(!$ultStatus)
+            $asunto .= "Status Id.: ".$reporte->getCaConsecutivo()." ".$consignatario." / ".$cliente." [".$origen." -> ".$destino."] ";
+         else
+            $asunto=$ultStatus->getEmail()->getCaSubject();        
+    }
     else{
 		$consignatario = $reporte->getConsignatario();
-		$asunto .= $consignatario." / ".$cliente." [".$origen." -> ".$destino."] ";	
+		$asunto .= $consignatario." / ".$cliente." [".$origen." -> ".$destino."] ";
 	}
 	?>
 	<tr>
 		<td colspan="2"><div align="left"><b>Asunto:</b><br />
-			<div id="asuntoIntro"></div> 
+			<div id="asuntoIntro"></div>
 			<?
-			 echo " Id.: ".$reporte->getCaConsecutivo()." ";
+            if($reporte->getCaImpoexpo()!=Constantes::EXPO )
+                echo " Id.: ".$reporte->getCaConsecutivo()." ";
 			 echo $form['asunto']->renderError();
 			 $form->setDefault('asunto', $asunto);
 			 echo $form['asunto']->render();
 			?>
 		</div></td>
+        
 	</tr>
 	<tr>
 		<td><div align="left"><b>Informaci&oacute;n de la carga</b></div></td>

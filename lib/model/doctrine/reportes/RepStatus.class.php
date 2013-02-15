@@ -279,7 +279,8 @@ class RepStatus extends BaseRepStatus
 			$email->addCc( $user->getEmail() );
             $email->setCaReplyto( $user->getEmail() );
 		}
-		$asunto = $this->getIntroAsunto();
+        if($reporte->getCaImpoexpo()!=Constantes::EXPO)
+            $asunto = $this->getIntroAsunto();
 		if(isset($options["subject"]) && $options["subject"] ){
             if($options["subject"]=="Notificación de Desconsolidación id: ".$reporte->getCaConsecutivo())
             {
