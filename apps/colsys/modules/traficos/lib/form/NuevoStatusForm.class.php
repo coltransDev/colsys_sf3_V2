@@ -149,7 +149,7 @@ class NuevoStatusForm extends BaseForm {
         $widgets['txtseguimiento'] = new sfWidgetFormTextarea(array(), array("rows" => 3, "cols" => 80));
         
         
-        $widgets['txtincompleto'] = new sfWidgetFormTextarea(array(), array("rows" => 3, "cols" => 140));
+        $widgets['txtincompleto'] = new sfWidgetFormTextarea(array(), array("rows" => 3, "style" => 'width:100%'));
         $widgets["rep_incompleto"] = new sfWidgetFormInputCheckbox(array(), array("onClick" => "reporteIncompleto()"));
 
         $widgets['emailusuario'] = new sfWidgetFormDoctrineChoice(array(
