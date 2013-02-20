@@ -370,7 +370,7 @@ echo $form['transporte']->render();
 	$origen = $reporte->getOrigen()->getCaCiudad();
 	$destino = $reporte->getDestino()->getCaCiudad();
 	$cliente = $reporte->getCliente();			
-	
+	$consignatario = $reporte->getConsignatario();
     if($reporte->getCaTiporep()=="4")
     {
         $importador=$reporte->getRepOtm()->getImportador()->getCaNombre();
@@ -390,8 +390,7 @@ echo $form['transporte']->render();
          else
             $asunto=$ultStatus->getEmail()->getCaSubject();        
     }
-    else{
-		$consignatario = $reporte->getConsignatario();
+    else{		
 		$asunto .= $consignatario." / ".$cliente." [".$origen." -> ".$destino."] ";
 	}
 	?>
