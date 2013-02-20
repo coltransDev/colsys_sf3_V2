@@ -85,7 +85,7 @@ class Usuario extends BaseUsuario {
         if($company=="coltrans.com.co")
         {
             $idsucursal="BOG";
-            $ext="260-460-260";
+            $ext="201-460-260";
         }
         else if($company=="consolcargo.com")
         {
