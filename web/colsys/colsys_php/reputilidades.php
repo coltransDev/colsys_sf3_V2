@@ -133,6 +133,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
     }
     $tm->MoveFirst();
     echo "  </SELECT><SELECT ID=con_deduccion NAME='concepto[xdeducciones]' style='display:none'>";
+    echo " <OPTION VALUE='%'>Todas las deducciones</OPTION>";
     while (!$tm->Eof()) {
         echo " <OPTION VALUE='" . $tm->Value('ca_deduccion') . "'>" . $tm->Value('ca_deduccion') . "</OPTION>";
         $tm->MoveNext();
@@ -182,8 +183,16 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
     } elseif ($reportar == 'xdeducciones') {
         $col_one = "Deducible";
         $col_two = "Vlr.Recaudo";
-        $condicion = "iu.*, isv.ca_recaudo_deduccion from vi_inoutilidades_sea iu ";
-        $condicion.= "INNER JOIN (select ca_referencia, ca_deduccion, sum(ca_valor) as ca_recaudo_deduccion from tb_inodeduccion_sea id INNER JOIN tb_deducciones dd ON (id.ca_iddeduccion = dd.ca_iddeduccion and dd.ca_deduccion = '$concepto[$reportar]') ";
+        $condicion = "iu.*, ca_deduccion, isv.ca_recaudo_deduccion from vi_inoutilidades_sea iu ";
+        //$condicion.= "INNER JOIN (select ca_referencia, ca_deduccion, sum(ca_valor) as ca_recaudo_deduccion from tb_inodeduccion_sea id INNER JOIN tb_deducciones dd ON (id.ca_iddeduccion = dd.ca_iddeduccion and dd.ca_deduccion = '$concepto[$reportar]') ";
+        if($concepto[$reportar]=='%'){
+            $condicion.= "INNER JOIN (select ca_referencia, ca_deduccion, sum(ca_valor) as ca_recaudo_deduccion from tb_inodeduccion_sea id INNER JOIN tb_deducciones dd ON (id.ca_iddeduccion = dd.ca_iddeduccion) ";
+        }
+        else
+        {
+            //hay que imprimir el concepto en el resultado
+            $condicion.= "INNER JOIN (select ca_referencia, ca_deduccion, sum(ca_valor) as ca_recaudo_deduccion from tb_inodeduccion_sea id INNER JOIN tb_deducciones dd ON (id.ca_iddeduccion = dd.ca_iddeduccion and dd.ca_deduccion = '$concepto[$reportar]') ";
+        }
         $condicion.= "group by ca_referencia, ca_deduccion) isv ON (iu.ca_referencia = isv.ca_referencia) where ";
     }
     $condicion.= " ca_mes::text like '$mes' and ca_ano::text = '$ano' and iu.ca_traorigen like '%$traorigen%' and iu.ca_modalidad like '%$modalidad%' and " . str_replace("\"", "'", $casos);
@@ -237,6 +246,8 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
         $mes_mem = '';
         $nom_tra = '';
         $mod_mem = $rs->Value('ca_modalidad');
+        print_r($r);
+        echo $rs->Value('ca_deduccion');
         while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
             $utl_cbm = $rs->Value('ca_utilcons');
             $back_col = ($rs->Value('ca_estado') == 'Provisional') ? " background: #CCCC99" : (($rs->Value('ca_estado') == 'Abierto') ? " background: #CCCCCC" : " background: #F0F0F0");
@@ -287,7 +298,8 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
                 echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . number_format($rs->Value('ca_util_costo')) . "</TD>";
                 $sub_tot+= $rs->Value('ca_util_costo');
             } elseif ($reportar == 'xdeducciones') {
-                echo "  <TD Class=valores style='font-size: 9px;$back_col'>$concepto[$reportar]</TD>";
+                //aqui no se debe imprimir $concepto[$reportar] sino el valor del deducible en el query
+                echo "  <TD Class=valores style='font-size: 9px;$back_col'>".$rs->Value('ca_deduccion')."</TD>";
                 echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . number_format($rs->Value('ca_recaudo_deduccion')) . "</TD>";
                 $sub_tot+= $rs->Value('ca_recaudo_deduccion');
             }
