@@ -572,6 +572,26 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
         $add_cols = 6;
         $cot_ant  = null;
         $campos.= ", $source.ca_referencia";
+    } else if ($indicador == "Oportunidad en Facturación Contenedores") {
+       
+        $source = "vi_repindicador_cnt";
+       
+        $subque.= " LEFT OUTER JOIN (select ca_referencia as ca_referencia_fac, ca_idcliente as ca_idcliente_fac, ca_hbls as ca_hbls_fac, ca_factura, ca_fchfactura, ca_observaciones from tb_inoingresos_sea where tb_inoingresos_sea.oid in (select min(oid) from tb_inoingresos_sea where ca_observaciones = 'Contenedores' group by ca_referencia, ca_idcliente, ca_hbls) order by ca_referencia, ca_idcliente, ca_hbls, ca_fchfactura) ii ON ($source.ca_referencia = ii.ca_referencia_fac and $source.ca_idcliente = ii.ca_idcliente_fac and $source.ca_hbls = ii.ca_hbls_fac) ";
+
+        $campos.= ", ca_referencia, ca_idcliente_fac, ca_hbls, ca_fchfactura";
+
+        if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
+            echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+            echo "<script>document.location.href = 'entrada.php';</script>";
+            exit; }
+        $festi = array();
+        while (!$tm->Eof() and !$tm->IsEmpty()) {
+            $festi[] = $tm->Value('ca_fchfestivo');
+            $tm->MoveNext();
+        }
+
+        $ind_mem  = 16;
+        $add_cols = 8;
     }
     
     $queries = "select * from $source $subque where ".($impoexpo?$impoexpo." and ":"")."  $sucursal $cliente and ".($ciudestino?$ciudestino." and":"")."   ".($transporte?$transporte." and":"")." $ano and $mes";
@@ -698,6 +718,16 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
             echo "	<TH>Ag.Aduana</TH>";
             echo "	<TH>Observaciones</TH>";
             echo "	<TH>Calculos</TH>";
+            echo "	<TH>Dif.</TH>";
+            break;
+        case 16:
+            echo "	<TH>Referencia</TH>";
+            echo "	<TH>Cliente</TH>";
+            echo "	<TH>Costo</TH>";
+            echo "	<TH>Fact.Proveedor</TH>";
+            echo "	<TH>Fecha Factura</TH>";
+            echo "	<TH>Fact.Cliente</TH>";
+            echo "	<TH>Fecha Factura</TH>";
             echo "	<TH>Dif.</TH>";
             break;
     }
@@ -1352,6 +1382,19 @@ elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
                 $color = analizar_dif($tipo, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
                 echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
                 continue;
+                break;
+            case 16:
+                echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_referencia')."</TD>";
+                echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_compania')."</TD>";
+                echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_costo')."</TD>";
+                echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_factura_prov')."</TD>";
+                echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchfactura_prov')."</TD>";
+                echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_factura')."</TD>";
+                echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchfactura')."</TD>";
+                $dif_mem = workDiff($festi, $rs->Value('ca_fchfactura_prov'), $rs->Value('ca_fchfactura'));
+                $lcs_var = ($lcs_array[$rs->Value('ca_sucursal')])?$lcs_array[$rs->Value('ca_sucursal')]:$lcs_array['Todas'];
+                $color = analizar_dif($tipo, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
+                echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
                 break;
         }
         $rs->MoveNext();
