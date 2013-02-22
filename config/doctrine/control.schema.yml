@@ -21,7 +21,8 @@ Usuario:
     ca_passwd: string(40)
     ca_salt: string(40)
     ca_activo: boolean
-    ca_forcechange: boolean    
+    ca_forcechange: boolean
+    ca_sucursal: string(40)
     ca_cumpleanos: date
     ca_fchingreso: date
     ca_manager: string(15)
@@ -35,20 +36,7 @@ Usuario:
     ca_direccion: string(80)
     ca_tiposangre: string(15)
     ca_parentesco: string(10)
-    ca_fchcreado: timestamp
-    ca_usucreado: string
-    ca_fchactualizado: timestamp
-    ca_usuactualizado: string
-    ca_docidentidad: integer
-    ca_nivestudios: string(20)
-    ca_estrato: smallint    
-    ca_donante: boolean
-    ca_enfermedad: string(50)
-    ca_alergico: string(50)
-    ca_cargoweb: string   
-    ca_profesion: string
-    ca_experiencia: string
-    ca_hoja_vida: string
+    ca_keypass: string(40)
     ca_propiedades: string
     ca_fchvencimiento: date
     ca_keypass: string(40)
@@ -88,10 +76,6 @@ Usuario:
       local: ca_cargo
       foreign: ca_cargo
       type: one
-    Hijos:
-      local: ca_login
-      foreign: ca_login
-      type: many
 
 
       
@@ -318,13 +302,7 @@ Empresa:
       primary: true
     ca_nombre: string(15)
     ca_activo: boolean
-    ca_idtrafico : string
-    ca_url : string
-  relations:
-    Trafico:
-      local: ca_idtrafico
-      foreign: ca_idtrafico
-      type: one
+    ca_idtrafico: string
 
 Sucursal:
   options:
@@ -348,20 +326,7 @@ Sucursal:
       local: ca_idempresa
       foreign: ca_idempresa
       type: one
-      
-Hijos:
-  options:
-    symfony:
-      form: false
-      filter: false
-  generatePath: control
-  tableName: control.tb_hijos
-  columns:
-    ca_login:
-      type: string(15)
-      primary: true
-    ca_nombres: string(250)
-    ca_fchnacimiento: date
+
 
 RutinaNivel:
   options:
