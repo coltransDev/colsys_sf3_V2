@@ -70,31 +70,30 @@ $tbodegaJ = $sf_data->getRaw("tbodegas");
             autoHeight:true,
             id:"form_bodegas",
             bodyStyle:"padding:5px",
-            <?
-			 if(!$noeditable ||  $noeditable=="false" )
-             {
-            ?>
-            buttons: [
-            {
-                text: 'Verificar Bodega',
-                tooltip: 'Verifica que la bodega ya este creada.',
-                iconCls: 'disk',  // reference to our css
-                handler: this.verificar,
-				id     : 'verificarbtn',
-				disabled:<?=$noeditable?>
-			},
-			{
-                text: 'Guardar Cambios',
-                tooltip: 'He verificado que la bodega NO EXISTE y no existe alguna parecida.',
-                iconCls: 'disk',  // reference to our css
-                handler: this.submit,
-				disabled: true,
-                id     : 'guardarbtn'
-            }			
-            ],
-            <?
+<?
+			if(!$noeditable ||  $noeditable=="false" ){
+?>
+                buttons: [
+                    {
+                        text: 'Verificar Bodega',
+                        tooltip: 'Verifica que la bodega ya este creada.',
+                        iconCls: 'disk',  // reference to our css
+                        handler: this.verificar,
+                        id     : 'verificarbtn',
+                        disabled:<?=$noeditable?>
+                    },
+                    {
+                        text: 'Guardar Cambios',
+                        tooltip: 'He verificado que la bodega NO EXISTE y no existe alguna parecida.',
+                        iconCls: 'disk',  // reference to our css
+                        handler: this.submit,
+                        disabled: true,
+                        id     : 'guardarbtn'
+                    }			
+                ],
+<?
             }
-            ?>
+?>
             items:
             {
 
@@ -111,14 +110,12 @@ $tbodegaJ = $sf_data->getRaw("tbodegas");
                         id: "direccion",
                         maxLength: 100,
                         width: 540
-                    }
-                    ,
+                    },
                     {
                         xtype: "hidden",
                         name: "idbodega",
                         id: "idbodega"
-                    },
-                   
+                    },                   
                     {
                         xtype: "combo",
                         disabled:<?=$noeditable?>,
@@ -147,8 +144,7 @@ $tbodegaJ = $sf_data->getRaw("tbodegas");
                             proxy: new Ext.data.MemoryProxy
                             (<?=json_encode(array("root" => $tbodegaJ, "total" => count($tbodegas), "success" => true))?> )
                         })
-                    },
-					
+                    },					
                     {
                         xtype: "combo",
                         fieldLabel: "Transporte",
@@ -177,6 +173,14 @@ $tbodegaJ = $sf_data->getRaw("tbodegas");
                             proxy: new Ext.data.MemoryProxy
                             (<?=json_encode(array("root" => $transportesJ, "total" => count($transportes), "success" => true))?> )
                         })
+                    },
+                    {
+                        xtype: "textfield",
+                        fieldLabel: "Cod. Dian",
+                        name: "cod_dian",
+                        id: "cod_dian",
+                        maxLength: 10,
+                        width: 100
                     }
                 ]
             }

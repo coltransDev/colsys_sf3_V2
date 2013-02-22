@@ -235,7 +235,8 @@ class bodegasActions extends sfActions {
                 $form_bodega->setCaNombre(utf8_decode($this->getRequestParameter("nombre")));
                 $form_bodega->setCaTipo(utf8_decode($this->getRequestParameter("tipo")));
                 $form_bodega->setCaTransporte(utf8_decode($this->getRequestParameter("transporte")));
-                $form_bodega->setCaDireccion(utf8_decode($this->getRequestParameter("direccion")));                
+                $form_bodega->setCaDireccion(utf8_decode($this->getRequestParameter("direccion"))); 
+                $form_bodega->setCaCodDian(utf8_decode($this->getRequestParameter("cod_dian"))); 
                 
 
                 $form_bodega->save();
@@ -258,9 +259,11 @@ class bodegasActions extends sfActions {
         $data = array();
         if ($bodega) {
             $data["nombre"] = utf8_encode($bodega->getCaNombre());
+            $data["direccion"] = utf8_encode($bodega->getCaDireccion());
             $data["tipo"] = utf8_encode($bodega->getCaTipo());
             $data["transporte"] = utf8_encode($bodega->getCaTransporte());
             $data["idbodega"] = utf8_encode($bodega->getCaIdbodega());
+            $data["cod_dian"] = utf8_encode($bodega->getCaCodDian());
         }
         $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");

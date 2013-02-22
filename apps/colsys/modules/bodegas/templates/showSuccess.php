@@ -20,6 +20,9 @@
         }
         ?>
         <tr>
+            <td><b>Cód. Dian:</b> <?=$bodega->getCaCodDian()?></td>
+        </tr>
+        <tr>
             <td><b>Nombre:</b> <?=$bodega->getCaNombre()?></td>
         </tr>
         <tr>
