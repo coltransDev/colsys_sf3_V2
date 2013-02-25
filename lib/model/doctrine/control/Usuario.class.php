@@ -325,5 +325,72 @@ class Usuario extends BaseUsuario {
             return $suc->getCaNombre();
         }
     }
+    
+    function getEncrypt($string, $key) {
+        $result = '';
+        for($i=0; $i<strlen($string); $i++) {
+           $char = substr($string, $i, 1);
+           $keychar = substr($key, ($i % strlen($key))-1, 1);
+           $char = chr(ord($char)+ord($keychar));
+           $result.=$char;
+        }
+        return base64_encode($result);
+    }
+    
+    function getDecrypt($string, $key) {
+        $result = '';
+        $string = base64_decode($string);
+        for($i=0; $i<strlen($string); $i++) {
+           $char = substr($string, $i, 1);
+           $keychar = substr($key, ($i % strlen($key))-1, 1);
+           $char = chr(ord($char)-ord($keychar));
+           $result.=$char;
+        }
+        return $result;
+    }   
+    
+    public function emailInactivo($login){
+        
+        $usuario = Doctrine::getTable("Usuario")->find($login);
+        
+        $auditores = Doctrine::getTable("Usuario")
+                    ->createQuery("u")               
+                    ->innerJoin("u.UsuarioPerfil up")
+                    ->addWhere("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','auditor'))
+                    ->addOrderBy("u.ca_idsucursal")
+                    ->addOrderBy("u.ca_nombre")
+                    ->execute();
+                
+        $email = new Email();
+        $email->setCaFrom("no-reply@coltrans.com.co");
+        $email->setCaFromname("Colsys Notificaciones");
+        $email->setCaTipo("Desvinculacion");
+        $email->setCaIdcaso(null); 
+        
+                        
+        $email->setCaSubject('DESVINCULACION COLABORADOR '.$usuario->getSucursal()->getEmpresa()->getCaNombre()." ".$usuario->getSucursal()->getCaNombre());
+        
+        $request = sfContext::getInstance()->getRequest();
+        $request->setParameter('login', $login);
+        /*$this->setParameter("format", "email" );	
+        $this->setParameter("asunto", "desvinculacion");
+        $this->getRequest()->setParameter('empresa', $empresa);*/
+        $texto= sfContext::getInstance()->getController()->getPresentationFor( 'adminUsers', 'emailIntranet');
+        $email->setCaBodyhtml($texto);
+        
+        foreach( $auditores as $auditor ){
+            $logins[]=$usuario->getCaLogin();
+        }
+        
+        foreach( $logins as $login ){
+            $auditor = Doctrine::getTable("Usuario")->find( $login );
+            $email->addCc( $auditor->getCaEmail() );
+        }
+        
+
+        
+        $email->save($conn);
+        $email->send();
+    }
 
 }
