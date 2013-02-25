@@ -132,6 +132,7 @@ InoClientesSea:
     ca_fchhbls : date
     ca_fchantecedentes: date
     ca_imprimirorigen : boolean
+    ca_idaduana: integer
   relations:
      Reporte:
        local: ca_idreporte
@@ -164,7 +165,16 @@ InoClientesSea:
       foreign: ca_login
       type: one
       class: Usuario
-
+     Ids:
+      local: ca_idagente
+      foreign: ca_id
+      type: one
+      class: Ids
+     Aduana:
+      local: ca_idaduana
+      foreign: ca_id
+      type: one
+      class: Ids
 
 InoEquiposSea:
   options:
@@ -193,6 +203,12 @@ InoEquiposSea:
        local: ca_referencia
        foreign: ca_referencia
        type: one
+     InoContratosSea:
+       local: ca_referencia
+       local: ca_idequipo
+       foreign: ca_referencia
+       foreign: ca_idequipo
+       type: one
      Concepto:
        local: ca_idconcepto
        foreign: ca_idconcepto
@@ -213,8 +229,8 @@ InoContratosSea:
     ca_idequipo:
       type: integer
       primary: true
-    ca_idcontrato: string
-    ca_fchcontrato: date
+    ca_entrega_comodato: date
+    ca_idpatio: integer
     ca_inspeccion_nta: string
     ca_inspeccion_fch: date
     ca_observaciones: string
@@ -227,6 +243,11 @@ InoContratosSea:
        local: ca_referencia
        foreign: ca_referencia
        type: one
+     PricPatio:
+       local: ca_idpatio
+       foreign: ca_idpatio
+       type: one
+       
 
     
 InoIngresosSea:
@@ -635,20 +656,6 @@ InoMaestraExpo:
        type: one
 
       
-InoMaestraExpoSea:
-  options:
-    symfony:
-      form: false
-      filter: false
-  generatePath: inoAnterior
-  tableName: tb_expo_maritimo
-  columns:
-    ca_referencia:
-      type: string
-      primary: true    
-    ca_idexpo: integer
-    ca_idnaviera: string
-    
 InoMaestraExpoAir:
   options:
     symfony:
@@ -677,8 +684,10 @@ InoMaestraExpoSea:
       primary: true    
     ca_idexpo: integer
     ca_idnaviera: integer
+    ca_modalidad: string
     ca_hija: string
 
+    
 InoMaestraExpoTer:
   options:
     symfony:
@@ -758,6 +767,13 @@ InoIngresosExpo:
     ca_usucreado: string
     ca_fchactualizado: timestamp
     ca_usuactualizado: string
+    ca_fchinformado: timestamp
+    ca_usuinformado: string
+  relations:
+    InoMaestraExpo:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: one
     
 
     
