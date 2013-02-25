@@ -351,7 +351,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
         if( $regional=="PE-051" ){
             $columnas = array("RUC"=>"ca_idalterno","Cliente"=>"ca_compania","Dirección"=>array("ca_direccion","ca_oficina","ca_torre","ca_bloque","ca_interior","ca_localidad","ca_complemento"),"Teléfonos"=>"ca_telefonos","Fax"=>"ca_fax","Ciudad"=>"ca_ciudad","Vendedor"=>"ca_vendedor","Sucursal"=>"ca_sucursal","Circular 170"=>array("ca_fchcircular","ca_stdcircular"),"Carta Grtia."=>array("ca_fchvencimiento","ca_stdcarta_gtia"),"Encuesta/Visita"=>"ca_fchvisita","Nivel/Riesgo"=>"ca_nvlriesgo","Coord.Colmas"=>"ca_nombre_coor","Lista Clinton"=>"ca_listaclinton","Ley/Insolvencia"=>"ca_leyinsolvencia","Estado/TPLogistics"=>array("ca_coltrans_std","ca_coltrans_fch"),"Días/Crédito"=>"ca_diascredito","Cupo/Crédito"=>"ca_cupo","Observaciones"=>"ca_observaciones");
         }else{
-            $columnas = array("N.i.t."=>"ca_idcliente","DV"=>"ca_digito","Cliente"=>"ca_compania","Dirección"=>array("ca_direccion","ca_oficina","ca_torre","ca_bloque","ca_interior","ca_localidad","ca_complemento"),"Teléfonos"=>"ca_telefonos","Fax"=>"ca_fax","Ciudad"=>"ca_ciudad","Vendedor"=>"ca_vendedor","Sucursal"=>"ca_sucursal","Circular 170"=>array("ca_fchcircular","ca_stdcircular"),"Carta Grtia."=>array("ca_fchvencimiento","ca_stdcarta_gtia"),"Encuesta/Visita"=>"ca_fchvisita","Nivel/Riesgo"=>"ca_nvlriesgo","Coord.Colmas"=>"ca_nombre_coor","Lista Clinton"=>"ca_listaclinton","Ley/Insolvencia"=>"ca_leyinsolvencia","Estado/Coltrans"=>array("ca_coltrans_std","ca_coltrans_fch"),"Estado/Colmas"=>array("ca_colmas_std","ca_colmas_fch"),"Días/Crédito"=>"ca_diascredito","Cupo/Crédito"=>"ca_cupo","Observaciones"=>"ca_observaciones");
+            $columnas = array("Id"=>"ca_idcliente","N.i.t."=>"ca_idalterno","DV"=>"ca_digito","Cliente"=>"ca_compania","Dirección"=>array("ca_direccion","ca_oficina","ca_torre","ca_bloque","ca_interior","ca_localidad","ca_complemento"),"Teléfonos"=>"ca_telefonos","Fax"=>"ca_fax","Ciudad"=>"ca_ciudad","Vendedor"=>"ca_vendedor","Sucursal"=>"ca_sucursal","Circular 170"=>array("ca_fchcircular","ca_stdcircular"),"Carta Grtia."=>array("ca_fchvencimiento","ca_stdcarta_gtia"),"Encuesta/Visita"=>"ca_fchvisita","Nivel/Riesgo"=>"ca_nvlriesgo","Coord.Colmas"=>"ca_nombre_coor","Lista Clinton"=>"ca_listaclinton","Ley/Insolvencia"=>"ca_leyinsolvencia","Estado/Coltrans"=>array("ca_coltrans_std","ca_coltrans_fch"),"Estado/Colmas"=>array("ca_colmas_std","ca_colmas_fch"),"Días/Crédito"=>"ca_diascredito","Cupo/Crédito"=>"ca_cupo","Observaciones"=>"ca_observaciones");
             
         }
 		echo "</HEAD>";
@@ -366,6 +366,9 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 		echo "</TR>";
 		echo "<TR>";
 		foreach(array_keys($columnas) as $col_tit) {
+               if($col_tit=="Id"){
+                  continue;
+               }
 			echo "<TH Class=titulo>$col_tit</TH>";
 		}
 		echo "</TR>";
@@ -375,6 +378,12 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
                     echo "<TR>";
                     foreach($columnas as $campos ){
                         $img="";
+                        if($campos=="ca_idcliente"){
+                           continue;
+                        }
+                        if($campos=="ca_vendedor"){
+                           $img="<a href='clientes.php?boton=Evento&id=".$rs->Value("ca_idcliente")."' target='_blank'>Hacer&nbsp;Seguimiento</a>";
+                        }
                         if($campos=="ca_compania")
                         {
                             if($rs->Value('ca_propiedades')!="")
@@ -823,7 +832,7 @@ elseif (isset($boton)) {                                                       /
              $modulo = "00100100";                                             // Identificación del módulo para la ayuda en línea
 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
              $tm =& DlRecordset::NewRecordset($conn);
-             if (!$tm->Open("select ca_idevento, ca_asunto from tb_evecliente where ca_idcliente = $id and ca_idantecedente=0 order by ca_idevento desc")) {       // Selecciona todos lo registros de la tabla Eventos Clientes
+             if (!$tm->Open("select c.ca_compania, e.ca_idevento, e.ca_asunto from tb_evecliente e inner join vi_clientes c on e.ca_idcliente = c.ca_idcliente where e.ca_idcliente = $id and e.ca_idantecedente=0 order by e.ca_idevento desc")) {       // Selecciona todos lo registros de la tabla Eventos Clientes
                  echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";          // Muestra el mensaje de error
                  //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit; }
@@ -850,11 +859,10 @@ elseif (isset($boton)) {                                                       /
 require_once("menu.php");
              echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";             // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
              echo "<CENTER>";
-             echo "<H3>$titulo</H3>";
              echo "<FORM METHOD=post NAME='adicionar' ACTION='clientes.php' ONSUBMIT='return validar();'>";// Crea una forma con datos vacios
              echo "<INPUT TYPE='HIDDEN' NAME='id' VALUE=".$id.">";              // Hereda el Id del registro que se esta modificando
              echo "<TABLE CELLSPACING=1>";
-             echo "<TH Class=titulo COLSPAN=2>Datos del Evento</TH>";
+             echo "<TH Class=titulo COLSPAN=2><b>".$tm->value("ca_compania")."</b><br/>Datos del Evento</TH>";
              echo "<TR>";
              echo "  <TD Class=captura>Tipo de Evento :</TD>";
              echo "  <TD Class=mostrar><SELECT NAME='tipo'>";
