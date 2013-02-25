@@ -527,26 +527,24 @@ class pmActions extends sfActions {
             if ($request->getParameter("idticket")) {
                 $ticket = Doctrine::getTable("HdeskTicket")->find($request->getParameter("idticket"));
                 $update = true;
-
+                $changeDepto=false;
                 if ($request->getParameter("area") != $ticket->getCaIdgroup()) { //Cuando cambia el area notifica.
                     $tarea = $ticket->getNotTarea();
                     /*if ($tarea) {
                         $tarea->delete(); //Antes se eliminaba, ahora no para que conserve los datos del IDG.
                     }*/
 
-
-
                     //Crea un nuevo status para saber que se cambio de área
                     $area1 = Doctrine::getTable("HdeskGroup")->find($ticket->getCaIdgroup() );
                     $area2 = Doctrine::getTable("HdeskGroup")->find($request->getParameter("area") );
-                    $txt = "Se cambio de ".$area1->getCaName()." a ".$area2->getCaName();
+                    $txt = "Se cambio de ".$area1->getCaName()." a ".$area2->getCaName();                    
                     $respuesta = new HdeskResponse();
                     $respuesta->setCaIdticket($request->getParameter("idticket"));
                     $respuesta->setCaText($txt);
                     $respuesta->setCaLogin($user->getUserId());
                     $respuesta->setCaCreatedat(date("Y-m-d H:i:s"));
-                    $respuesta->save( $conn );
-
+                    $respuesta->save( $conn );                    
+                    $changeDepto=true;
                     //$update = false;
                 }
             } else {
@@ -573,7 +571,6 @@ class pmActions extends sfActions {
                 $ticket->setCaClosedat(null);
                 $ticket->setCaClosedby(null);
             }
-
 
             if ($request->getParameter("type")) {
                 $ticket->setCaType($request->getParameter("type"));
@@ -671,6 +668,33 @@ class pmActions extends sfActions {
 
             if (!$update &&  $request->getParameter("actionTicket") != "Cerrado") {
                 $tarea->notificar( $conn );
+            }
+            if($changeDepto==true)
+            {                    
+                $email = new Email();
+                $email->setCaUsuenvio($this->getUser()->getUserId());
+                $email->setCaTipo("Notificación");
+                $email->setCaIdcaso($ticket->getCaIdticket());
+                $email->setCaFrom("no-reply@coltrans.com.co");
+                $email->setCaFromname("Colsys Notificaciones");
+                $email->setCaSubject($txt." el Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]");
+                $texto = $txt."";
+                $request->setParameter("id", $ticket->getCaIdticket());
+                $request->setParameter("format", "email");
+                $texto.= sfContext::getInstance()->getController()->getPresentationFor('pm', 'verTicket');
+
+                $email->setCaBodyhtml($texto);
+
+                $usuarios = $ticket->getLoginsGroup();
+
+                //echo count($usuarios);
+                foreach ($usuarios as $usuario) {
+                    if ($this->getUser()->getUserId() != $usuario) {
+                        $usuariotmp = Doctrine::getTable("Usuario")->find($usuario);
+                        $email->addTo($usuariotmp->getCaEmail());
+                    }
+                }                    
+                $email->save();
             }
 
             $conn->commit();
