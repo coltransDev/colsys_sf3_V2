@@ -421,6 +421,7 @@ TipoRecargo:
     ca_fcheliminado: timestamp
     ca_usueliminado: string
 #    ca_impoexpo: string
+#    ca_impoexpo: string
   relations:
     InoConceptoModalidad:
       local: ca_idrecargo
@@ -447,6 +448,23 @@ Costo:
     ca_comisionable: string
     ca_parametros: string
     ca_activo: boolean
+
+Deduccion:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: public
+  tableName: tb_deducciones
+  columns:
+    ca_iddeduccion:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_deduccion: string    
+    ca_transporte: string
+    ca_modalidad: string
+    ca_habilitado: boolean
 
 ColNovedad:
   options:
