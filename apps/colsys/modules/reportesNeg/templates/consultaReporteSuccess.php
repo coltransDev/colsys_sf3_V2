@@ -18,10 +18,10 @@
                             <?=$reporte->getCaVersion()."/".$reporte->numVersiones()?>
             </div></td>
             <td width="85" >
-                  <div align="left">
+                  <div align="left" <?=($comparar)? (($reporte->compDato("CaIdcotizacion")!=0)?"class='rojo'":"") :""?>>
                       <b>Cotizaci&oacute;n</b>
                       <br />
-                        <?=$reporte->getCaIdcotizacion()?>
+                      <?=$reporte->getCaIdcotizacion()?>
                    </div>
             </td>
             <td width="173" >&nbsp;</td>
@@ -87,36 +87,23 @@
 
 <?
 
-include_component("reportesNeg","infoReporte", array("reporte"=>$reporte, "grupoReportes"=>$grupoReportes));
+include_component("reportesNeg","infoReporte", array("reporte"=>$reporte, "grupoReportes"=>$grupoReportes, "comparar"=>$comparar));
 
 include_component("reportesNeg","mainPanel");
-/*if( !$reporte->esSoloAduana() ){
-    include_component("reportesNeg","panelConceptosFletes", array("reporte"=>$reporte));
-    $panelConceptosFletes = true;
-    if( $reporte->getCaImpoexpo()!=Constantes::EXPO ){
-        include_component("reportesNeg","panelRecargos", array("reporte"=>$reporte));
-        $panelRecargos = true;
-    }else{
-        $panelRecargos = false;
-    }
-}else{
-   $panelConceptosFletes = false;
-   $panelRecargos = false;
-}
-*/
-include_component("reportesNeg","panelConceptosFletes", array("reporte"=>$reporte));
+
+include_component("reportesNeg","panelConceptosFletes", array("reporte"=>$reporte, "comparar"=>$comparar));
 $panelConceptosFletes = true;
 
 if($reporte->getEsOtm())
 {
-    include_component("reportesNeg","panelConceptosOtm", array("reporte"=>$reporte));
+    include_component("reportesNeg","panelConceptosOtm", array("reporte"=>$reporte, "comparar"=>$comparar));
     $panelConceptosOtm = true;
 }
 else
     $panelConceptosOtm = false;
 
 if( $reporte->getCaImpoexpo()!=Constantes::EXPO || $reporte->getCaTiporep()=="3" ){
-    include_component("reportesNeg","panelRecargos", array("reporte"=>$reporte));
+    include_component("reportesNeg","panelRecargos", array("reporte"=>$reporte, "comparar"=>$comparar));
     $panelRecargos = true;
 }else{
     $panelRecargos = false;
@@ -124,7 +111,7 @@ if( $reporte->getCaImpoexpo()!=Constantes::EXPO || $reporte->getCaTiporep()=="3"
 
 
 if( ($reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRIANGULACION /*|| substr($reporte->getCaModalidad(),0,6) == "ADUANA"*/ ) || $reporte->getCaTiporep()=="3"){
-   include_component("reportesNeg","panelRecargosAduana", array("reporte"=>$reporte));
+   include_component("reportesNeg","panelRecargosAduana", array("reporte"=>$reporte, "comparar"=>$comparar));
    $panelAduana = true;
 }else{
    $panelAduana = false;
@@ -132,20 +119,10 @@ if( ($reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRI
 ?>
 <script language="javascript">
    Ext.onReady(function(){
-/*      window.alert = function(texto,titulo)
-     {
-        titulo=(titulo!="undefined")?titulo:'Alerta';
-        Ext.MessageBox.alert(titulo, texto );
-     }
-*/
+
    });
 
     var anularReporte = function(btn, text){
-/*        ok     : "Solo Version",
-              cancel : "cancelar",
-              yes    : "Todas Las versiones"
-*/
-
 
         if( btn == "ok" || btn == "yes"){
 
@@ -228,11 +205,6 @@ if( ($reporte->getCaColmas()=="Sí" && $reporte->getCaImpoexpo()!=Constantes::TRI
     var importarRecargosLocales = function(){
         panelRecargosLocales.importarCotizacion();
     }
-
-/*    var importarRecargosAduanas = function(){
-        panelRecargosAduana.importarCotizacion();
-    }
-*/
 
     <?
     if( $panelConceptosFletes ){

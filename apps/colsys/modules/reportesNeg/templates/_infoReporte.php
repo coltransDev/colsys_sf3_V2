@@ -6,9 +6,9 @@
  */
 
 ?>
-<div id="trayecto" class="x-hide-display">
-    <?
-    include_component("reportesNeg", "consultaTrayecto", array("reporte"=>$reporte));
+<div id="trayecto" class="x-hide-display"> 
+    <? 
+    include_component("reportesNeg", "consultaTrayecto", array("reporte"=>$reporte, "comparar"=>$comparar));
     ?>
     <?
     if( count($grupoReportes)>0 ){
@@ -43,7 +43,7 @@
         </tr>
        
         <tr>
-            <td>
+            <td <?=($comparar)? (($reporte->compDato("CaIdgrupo")!=0)?"class='rojo'":"") :""?>>
             <?=link_to($reporteUnificado->getCaConsecutivo()." ".$reporteUnificado->getCaVersion(), "reportesNeg/consultaReporte?id=".$reporteUnificado->getCaIdreporte())."<br />";?>
             </td>
         </tr>
@@ -72,7 +72,7 @@
                 <table cellspacing="1" width="100%" border="0">
                     <tbody>
                         <tr>
-                            <td width="33%" ><b>Nombre:</b> <?=Utils::replace($cliente->getCaCompania())?>
+                            <td width="33%" <?=($comparar)? (($reporte->compDato("CaIdconcliente")!=0)?"class='rojo'":"") :""?> ><b>Nombre:</b> <?=Utils::replace($cliente->getCaCompania())?>
                                 &nbsp;&nbsp;
                             <?
                                 if($cliente->getProperty("cuentaglobal")=="true")
@@ -83,8 +83,8 @@
                                 }
                              ?>
                             </td>
-                            <td width="33%" ><b>Contacto:</b> <?=Utils::replace($contacto->getCaNombres())?></td>
-                            <td width="33%" ><b>Orden:</b><?=$reporte->getCaOrdenClie()?></td>
+                            <td width="33%" <?=($comparar)? (($reporte->compDato("CaIdconcliente")!=0)?"class='rojo'":"") :""?> ><b>Contacto:</b> <?=Utils::replace($contacto->getCaNombres())?></td>
+                            <td width="33%" <?=($comparar)? (($reporte->compDato("CaOrdenClie")!=0)?"class='rojo'":"") :""?> ><b>Orden:</b><?=$reporte->getCaOrdenClie()?></td>
                         </tr>
                         <tr>
                             <td><b>Direcci&oacute;n:</b> <?=Utils::replace($cliente->getDireccion())?></td>
@@ -98,13 +98,13 @@
                         </tr>
 
                         <tr >
-                            <td><b>Lib. Autom&aacute;tica:</b>
+                            <td <?=($comparar)? (($reporte->compDato("CaLiberacion")!=0)?"class='rojo'":"") :""?>><b>Lib. Autom&aacute;tica:</b>
                                 <?=$reporte->getCaLiberacion()?>
                             </td>
                         <?
                         if( $reporte->getCaImpoexpo()!=Constantes::EXPO && $reporte->getCaTransporte()==Constantes::MARITIMO && $reporte->getCaComodato()!="" ){
                         ?>
-                            <td><b>Firma Contrato de Comodato:</b>
+                            <td <?=($comparar)? (($reporte->compDato("CaComodato")!=0)?"class='rojo'":"") :""?>><b>Firma Contrato de Comodato:</b>
                                 <?=$reporte->getCaComodato()?>
                             </td>
                         <?
@@ -114,7 +114,7 @@
                         </tr>
 
                         <tr>
-                            <td><b>Tiempo de Cr&eacute;dito:</b>
+                            <td <?=($comparar)? (($reporte->compDato("CaTiempocredito")!=0)?"class='rojo'":"") :""?>><b>Tiempo de Cr&eacute;dito:</b>
                                 <?=$reporte->getCaTiempocredito()?>
                             </td>
                             <td>&nbsp;</td>
@@ -131,9 +131,9 @@
 
             $values = explode("|", $reporte->getCaIdproveedor() );
 
-            foreach( $values as $value ){
+            foreach( $values as $k=>$value ){
             ?>
-            <tr class="row0">
+            <tr <?=($comparar)? (($reporte->compDato("CaIdproveedor")!=0)?"class='rojo'":"") :""?> class="row0">
                 <td  colspan="6"><b>Proveedor</b></td>
             </tr>
             <tr>
@@ -158,7 +158,7 @@
             <th colspan="6"><b>Facturaci&oacute;n</b></th>
         </tr>
         <tr>
-            <td  colspan="6">
+            <td  colspan="6" <?=($comparar)? (($reporte->compDato("CaIdclientefac")!=0)?"class='rojo'":"") :""?>>
                 <b>Cliente:</b><br />
                 <?=Utils::replace($reporte->getClienteFac()->getCaCompania())?>
                 </td>
@@ -168,13 +168,13 @@
         {
         ?>
         <tr>
-            <td  colspan="6">
+            <td  colspan="6" <?=($comparar)? (($reporte->compDato("CaIdclienteag")!=0)?"class='rojo'":"") :""?>>
                 <b>Agente:</b><br />
                 <?=Utils::replace($reporte->getClienteAg()->getCaCompania())?>
                 </td>
         </tr>
         <tr>
-            <td  colspan="6">
+            <td  colspan="6" <?=($comparar)? (($reporte->compDato("CaIdclienteotro")!=0)?"class='rojo'":"") :""?>>
                 <b>Otro:</b><br />
                 <?=Utils::replace($reporte->getClienteOtro()->getCaCompania())?>
                 </td>
@@ -196,7 +196,7 @@
         </tr>
         <tr>
 
-            <td  colspan="6">
+            <td  colspan="6" <?=($comparar)? (($reporte->compDato("CaPreferenciasClie")!=0)?"class='rojo'":"") :""?>>
                 <b>Preferencias del Cliente:</b><br />
 
                     <?=Utils::replace($reporte->getCaPreferenciasClie())?>
@@ -204,14 +204,14 @@
                 </td>
         </tr>
         <tr>
-            <td  colspan="6">
+            <td  colspan="6" <?=($comparar)? (($reporte->compDato("CaInstrucciones")!=0)?"class='rojo'":"") :""?>>
                 <b>Instrucciones Especiales para el Agente:</b>
 
                 <br />
                 <?=Utils::replace($reporte->getCaInstrucciones())?></td>
         </tr>
         <tr>
-            <td colspan="6" >
+            <td colspan="6" <?=($comparar)? (($reporte->compDato("CaConfirmarClie")!=0)?"class='rojo'":"") :""?> >
                 <b>Copiar comunicaciones a:</b><br />
 
                     <?=str_replace(",", ", ", $reporte->getCaConfirmarClie()) ?>
@@ -223,7 +223,7 @@
 
 <div id="guias" class="x-hide-display">
     <?
-    include_component("reportesNeg", "consultaCorteGuias", array("reporte"=>$reporte));
+    include_component("reportesNeg", "consultaCorteGuias", array("reporte"=>$reporte, "comparar"=>$comparar));
     ?>
     
 </div>
@@ -234,7 +234,7 @@ if($reporte->getCaColmas()=="Sí"){
  <div id="aduana" class="x-hide-display">
     
     <?
-    include_component("reportesNeg", "consultaAduana", array("reporte"=>$reporte));
+    include_component("reportesNeg", "consultaAduana", array("reporte"=>$reporte, "comparar"=>$comparar));
     ?>
 </div>
 <?
@@ -244,7 +244,7 @@ if($reporte->getCaSeguro()=="Sí"){
  <div id="seguros" class="x-hide-display">
     
     <?
-    include_component("reportesNeg", "consultaSeguros", array("reporte"=>$reporte));
+    include_component("reportesNeg", "consultaSeguros", array("reporte"=>$reporte, "comparar"=>$comparar));
     ?>
 
 </div>
@@ -255,15 +255,8 @@ if($reporte->getCaImpoexpo()==Constantes::EXPO){
  <div id="exportaciones" class="x-hide-display">
     
     <?
-    include_component("reportesNeg", "consultaExportaciones", array("reporte"=>$reporte));
+    include_component("reportesNeg", "consultaExportaciones", array("reporte"=>$reporte, "comparar"=>$comparar));
     ?>
 </div>
 <?
 }
-
-
-
-
-
-
-                             

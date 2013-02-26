@@ -12,39 +12,39 @@
     </tr>
     <tr>
         <td ><b>Clase:</b></td>
-        <td ><?=Utils::replace($reporte->getCaImpoexpo())?></td>
+        <td <?=($comparar)? (($reporte->compDato("CaImpoexpo")!=0)?"class='rojo'":"") :""?> ><?=Utils::replace($reporte->getCaImpoexpo())?></td>
         <td ><b>Fecha Despacho:</b></td>
-        <td ><?=Utils::fechaMes($reporte->getCaFchdespacho())?></td>
+        <td <?=($comparar)? (($reporte->compDato("CaFchdespacho")!=0)?"class='rojo'":"") :""?> ><?=Utils::fechaMes($reporte->getCaFchdespacho())?></td>
         <td ><b>Linea</b></td>
-        <td ><?=$reporte->getIdsProveedor()->getIds()->getCaNombre();
+        <td <?=($comparar)? (($reporte->compDato("CaIdlinea")!=0)?"class='rojo'":"") :""?> ><?=$reporte->getIdsProveedor()->getIds()->getCaNombre();
         ?></td>
     </tr>
 
     <tr>
         <td ><b>Transporte:</b></td>
-        <td ><?=Utils::replace($reporte->getCaTransporte())?></td>
+        <td <?=($comparar)? (($reporte->compDato("CaTransporte")!=0)?"class='rojo'":"") :""?> ><?=Utils::replace($reporte->getCaTransporte())?></td>
         <td ><b>Origen:</b></td>
-        <td ><?=$reporte->getOrigen()?></td>
+        <td <?=($comparar)? (($reporte->compDato("CaOrigen")!=0)?"class='rojo'":"") :""?> ><?=$reporte->getOrigen()?></td>
         <td ><b>Destino</b></td>
-        <td ><?=$reporte->getDestino()?></td>
+        <td <?=($comparar)? (($reporte->compDato("CaDestino")!=0)?"class='rojo'":"") :""?> ><?=$reporte->getDestino()?></td>
     </tr>
     <tr>
         <td ><b>Tipo Envio</b></td>
-        <td ><?=$reporte->getCaModalidad()?></td>
+        <td <?=($comparar)? (($reporte->compDato("CaModalidad")!=0)?"class='rojo'":"") :""?> ><?=$reporte->getCaModalidad()?></td>
         <td ><b>Agente: </b><a href="/ids/formEventosNew?idreporte=<?=$reporte->getCaIdreporte()?>">Eventos</a></td>
-        <td ><?=$reporte->getIdsAgente()?$reporte->getIdsAgente()->getIds()->getCaNombre():"Directo"?></td>
+        <td <?=($comparar)? (($reporte->compDato("CaIdagente")!=0)?"class='rojo'":"") :""?> ><?=$reporte->getIdsAgente()?$reporte->getIdsAgente()->getIds()->getCaNombre():"Directo"?></td>
         <td ><b>Incoterms</b></td>
-        <td ><?=$reporte->getCaIncoterms()?></td>
+        <td <?=($comparar)? (($reporte->compDato("CaIncoterms")!=0)?"class='rojo'":"") :""?> ><?=$reporte->getCaIncoterms()?></td>
     </tr>
     <tr>
-        <td colspan="6" ><b>Descripci&oacute;n de la Mercanc&iacute;a:</b><br />
+        <td colspan="6" <?=($comparar)? (($reporte->compDato("CaMercanciaDesc")!=0)?"class='rojo'":"") :""?> ><b>Descripci&oacute;n de la Mercanc&iacute;a:</b><br />
             <?=Utils::replace($reporte->getCaMercanciaDesc())?>			</td>
     </tr>
     <tr>
-        <td><b>Declaraci&oacute;n Anticipada:</b><br />
+        <td <?=($comparar)? (($reporte->compDato("CaDeclaracionant")!=0)?"class='rojo'":"") :""?>><b>Declaraci&oacute;n Anticipada:</b><br />
             <?=($reporte->getCaDeclaracionant())=="true"?"SI":"NO"?></td>
         <?if($reporte->getCaDeclaracionant()=="true"){?>
-        <td><b>Subpartida Arancelaria:</b><br />
+        <td <?=($comparar)? (($reporte->compDato("Property('subarancel')")!=0)?"class='rojo'":"") :""?>><b>Subpartida Arancelaria:</b><br />
             <?=$reporte->getProperty("subarancel")?></td>
         <?}?>
     </tr>
@@ -139,12 +139,12 @@ if( $reporte->getcaContinuacion()!="N/A" && $reporte->getcaContinuacion()!="" ){
          <th colspan="4" ><b>Continuaci&oacute;n de viaje</b></th>
      </tr>
      <tr>
-         <td colspan="4">
+         <td colspan="4" <?=($comparar)? (($reporte->compDato("CaContinuacion")!=0)?"class='rojo'":"") :""?>>
            <?=$reporte->getCaContinuacion()?>
         </td>
     </tr>
     <tr id="continuacion-row0">
-        <td width="33%" valign="top" ><b>Destino Final:</b><br />
+        <td width="33%" valign="top" <?=($comparar)? (($reporte->compDato("CaContinuacionDest")!=0)?"class='rojo'":"") :""?> ><b>Destino Final:</b><br />
                 <?=$reporte->getDestinoCont()?>
 
 				</td>
@@ -152,9 +152,8 @@ if( $reporte->getcaContinuacion()!="N/A" && $reporte->getcaContinuacion()!="" ){
                 <?
                 if( $reporte->getCaTransporte()==Constantes::MARITIMO){
                 ?>
-                <b>Notificar a:</b><br />
+                <span <?=($comparar)? (($reporte->compDato("CaContinuacionConf")!=0)?"class='rojo'":"") :""?>><b>Notificar a:</b><br />
                 <?
-                
                     if( $reporte->getCaContinuacionConf() ){
 
                         $q = Doctrine::getTable("Usuario")
@@ -183,6 +182,9 @@ if( $reporte->getcaContinuacion()!="N/A" && $reporte->getcaContinuacion()!="" ){
                             echo $usuario->getCaEmail()."<br>";
                         }
                     }
+                    ?>
+                </span>
+                    <?
                 }
                 ?>
         </td>

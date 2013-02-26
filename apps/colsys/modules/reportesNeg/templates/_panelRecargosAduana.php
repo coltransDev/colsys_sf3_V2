@@ -10,7 +10,10 @@
 $recargos = $sf_data->getRaw("recargos");
 
 include_component("reportesNeg","cotizacionRecargosAduanasWindow", array("reporte"=>$reporte));
-
+if($comparar)
+{
+    $url_comp="&comparar=".$comparar."&consecutivo=".$reporte->getCaConsecutivo()."&version=".$reporte->getCaVersion();
+}
 ?>
 <script type="text/javascript">
 
@@ -230,13 +233,14 @@ PanelRecargosAduana = function( config ){
             {name: 'netcosto', type: 'float'},
             {name: 'mincosto', type: 'float'},            
             {name: 'observaciones', type: 'string'},
-            {name: 'orden', type: 'string'}
+            {name: 'orden', type: 'string'},
+            {name: 'cambio', type: 'int'}
         ]);
 
     this.store = new Ext.data.Store({
 
         autoLoad : true,
-        url: '<?=url_for("reportesNeg/panelRecargosAduanaData?id=".$reporte->getCaIdreporte())?>',
+        url: '<?=url_for("reportesNeg/panelRecargosAduanaData?id=".$reporte->getCaIdreporte().$url_comp)?>',
         reader: new Ext.data.JsonReader(
             {
 
@@ -274,7 +278,10 @@ PanelRecargosAduana = function( config ){
         },
         boxMinHeight: 400,
         tbar:[
-            
+            <?
+            if($editable)
+            {
+            ?>
             {
 				text:'Guardar',
 				iconCls:'disk',
@@ -289,6 +296,9 @@ PanelRecargosAduana = function( config ){
 					Ext.getCmp('idPanelRecargosAduana').store.reload();
 				}
             }
+            <?
+            }
+            ?>
             ]
     });
 
@@ -372,10 +382,17 @@ Ext.extend(PanelRecargosAduana, Ext.grid.EditorGridPanel, {
     ,
     formatItem: function(value, p, record) {
         
-        return String.format(
-            '<b>{0}</b>',
-            value
-        );
+        if( record.data.cambio == "1" ){
+                return String.format('<div class="rojo"><b>{0}</b></div>',value);                
+            }
+            else if( record.data.cambio == "2" ){
+                return String.format('<div class="verde"><b>{0}</b></div>',value);                
+            }
+            else if( record.data.cambio == "3" ){
+                return String.format('<div class="azul"><b>{0}</b></div>',value);                
+            }
+            else
+                return String.format('<b>{0}</b>',value);
     },
 
     

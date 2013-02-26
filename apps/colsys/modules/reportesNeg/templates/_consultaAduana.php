@@ -12,7 +12,7 @@
          <th colspan="3" ><b>Aduana</b></th>
      </tr>
      <tr>
-         <td colspan="3">
+         <td colspan="3" <?=($comparar)? (($reporte->compDato("CaColmas")!=0)?"class='rojo'":"") :""?>>
             <?=$reporte->getCaColmas()?>
         </td>
     </tr>
@@ -32,7 +32,7 @@
                 ?>
             </div>
         </td>
-		<td  rowspan="3" valign="top"><b>Instrucciones Especiales</b><br />
+		<td  rowspan="3" valign="top" <?=($comparar)? (($reporte->compDato("RepAduana()->getCaInstrucciones")!=0)?"class='rojo'":"") :""?>><b>Instrucciones Especiales</b><br />
 			<?=$repaduana->getCaInstrucciones()?>
 		</td>
 	</tr>
@@ -40,7 +40,7 @@
     if( $reporte->getCaImpoexpo()==Constantes::IMPO){
     ?>
 	<tr id="aduana-row1">
-		<td >
+		<td <?=($comparar)? (($reporte->compDato("RepAduana()->getCaTransnacarga")!=0)?"class='rojo'":"") :""?> >
             <b>Con Coltrans:</b>
             <?=$repaduana->getCaTransnacarga()?>
         </td>
@@ -49,11 +49,8 @@
     }
     ?>
 	<tr id="aduana-row2">
-		<td ><b>Tipo:</b>
+		<td <?=($comparar)? (($reporte->compDato("RepAduana()->getCaTransnatipo")!=0)?"class='rojo'":"") :""?> ><b>Tipo:</b>
             <?=$repaduana->getCaTransnatipo()?>
 			</td>
 	</tr>
-
-
-
 </table>

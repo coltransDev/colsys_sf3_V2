@@ -21,7 +21,7 @@ if ($this->getRequestParameter("id") || $this->getRequestParameter("consecutivo"
     {            
         $reporte = ReporteTable::retrieveByConsecutivo($this->getRequestParameter("consecutivo"));           
     }
-    $reporte->getRepAntecedentes();
+    $repAntecedentes=$reporte->getRepAntecedentes();
     $mostrarAnt=false;
     if($repAntecedentes)
     {
@@ -137,7 +137,6 @@ switch ($action) {
             $button[$i]["image"] = "22x22/arrow_branch.png";
             $button[$i]["onClick"] = "changeTrans()";
             $i++;
-
         }
         $button[$i]["name"] = "Generar ";
         $button[$i]["tooltip"] = "Genera un archivo PDF con el reporte";
@@ -226,6 +225,16 @@ switch ($action) {
             $button[$i]["link"] = "/reportesNeg/emailInstruccionesOtm/idreporte/" . $this->getRequestParameter("id") . "/impoexpo/" . $reporte->getCaImpoexpo() . "/modo/" . $reporte->getCaTransporte();
             $i++;
         }
+        
+        if($reporte->getCaVersion()>1)
+        {
+            $button[$i]["name"] = "Cambios ";
+            $button[$i]["tooltip"] = "Muestra los cambios que se efectuaron contra la version anterior";
+            $button[$i]["image"] = "22x22/kspread_ksp.gif";
+            $button[$i]["link"] = "/reportesNeg/compReporte/id/" . $this->getRequestParameter("id") . "/impoexpo/" . $impoexpo . "/modo/" . $modo;
+            $i++;
+        }
+        
         break;
     case "verReporte":
         $button[$i]["name"] = "Volver ";
@@ -266,6 +275,14 @@ switch ($action) {
             $button[$i]["onClick"] = "rechazar1()";
             $i++;
         }
+        
+        
+        $button[$i]["name"] = "Historico";
+        $button[$i]["tooltip"] = "Lista de todas las versiones del reporte de negocios";
+        $button[$i]["image"] = "22x22/5days.gif";
+        $button[$i]["link"] = "/reportesNeg/listaVersiones/consecutivo/" . $reporte->getCaConsecutivo();
+        $i++;
+        
         break;
     case "unificarReporte":
         $button[$i]["name"] = "Volver ";
@@ -277,6 +294,7 @@ switch ($action) {
     case "formReporte":
     case "formReporte1":
     case "formReporteOtmmin":
+    case "compReporte":
         if($action=="formReporteOtmmin")
         {
             $button[$i]["name"] = "Nuevo";
@@ -371,6 +389,12 @@ switch ($action) {
                 $button[$i]["link"] = "/reportesNeg/emailInstruccionesOtm/idreporte/".$this->getRequestParameter("id")."/impoexpo/".$reporte->getCaImpoexpo()."/modo/".$reporte->getCaTransporte();
                 $i++;
             }
+            
+            $button[$i]["name"] = "Historico";
+            $button[$i]["tooltip"] = "Lista de todas las versiones del reporte de negocios";
+            $button[$i]["image"] = "22x22/5days.gif";
+            $button[$i]["link"] = "/reportesNeg/listaVersiones/consecutivo/" . $reporte->getCaConsecutivo();
+            $i++;
         }
         break;
 }
@@ -740,7 +764,7 @@ switch ($action) {
                         mensaje: text.trim()
                     },
                     failure:function(response,options){
-                        alert( response.responseText );
+                        alert( response.toSource() );
                         Ext.Msg.hide();
                         success = false;
                         alert("Surgio un problema al tratar de rechzar el reporte")

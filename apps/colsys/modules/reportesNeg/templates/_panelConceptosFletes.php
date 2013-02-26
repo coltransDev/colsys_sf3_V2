@@ -12,6 +12,10 @@ foreach( $aplicaciones1 as $aplicacion ){
     $aplicaciones[]=$aplicacion->getCaValor();
 }
 
+if($comparar)
+{
+    $url_comp="&comparar=".$comparar."&consecutivo=".$reporte->getCaConsecutivo()."&version=".$reporte->getCaVersion();
+}
 include_component("reportesNeg","cotizacionWindow", array("reporte"=>$reporte));
 ?>
 <script type="text/javascript">
@@ -262,13 +266,14 @@ PanelConceptosFletes = function( config ){
             {name: 'cobrar_idm', type: 'string'},
             {name: 'observaciones', type: 'string'},
             {name: 'tipo', type: 'string'},
-            {name: 'orden', type: 'string'}
+            {name: 'orden', type: 'string'},
+            {name: 'cambio', type: 'int'}
         ]);
 
     this.store = new Ext.data.Store({
         autoLoad : true,
         pruneModifiedRecords:true,
-        url: '<?=url_for("reportesNeg/panelConceptosData?id=".$reporte->getCaIdreporte())?>',
+        url: '<?=url_for("reportesNeg/panelConceptosData?id=".$reporte->getCaIdreporte().$url_comp)?>',
         reader: new Ext.data.JsonReader(
             {
                 root: 'items',
@@ -313,10 +318,7 @@ PanelConceptosFletes = function( config ){
 				text:'Borrar Todo',
 				iconCls:'delete',
 				handler: this.borrarTodos
-			},
-            <?
-            }
-            ?>
+			},            
             {
                 text: 'Recargar',
                 tooltip: 'Recarga los datos de la base de datos',
@@ -327,7 +329,8 @@ PanelConceptosFletes = function( config ){
 					Ext.getCmp('panel-conceptos-fletes').store.reload();
 				}
             }
-            <?            
+            <?
+            
             if($reporte->getCaIdproducto())
             {            
             ?>
@@ -339,6 +342,7 @@ PanelConceptosFletes = function( config ){
 			}
 
             <?
+            }
             }
             ?>
             ]
@@ -472,17 +476,31 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
     }
     ,
     formatItem: function(value, p, record) {
-
-        if( record.data.tipo == "recargo" ){
-            return String.format(
-                '<div class="recargo">{0}</div>',
-                value
-            );
+        
+        if( record.data.tipo == "recargo" ){            
+            if( record.data.cambio == "1" ){
+                return String.format('<div class="recargo rojo">{0}</div>',value);
+            }
+            else if( record.data.cambio == "2" ){
+                return String.format('<div class="recargo verde">{0}</div>',value);
+            }
+            else if( record.data.cambio == "3" ){
+                return String.format('<div class="recargo azul">{0}</div>',value);
+            }
+            else
+                return String.format('<div class="recargo">{0}</div>',value);
         }else{
-            return String.format(
-                '<b>{0}</b>',
-                value
-            );
+            if( record.data.cambio == "1" ){
+                return String.format('<div class="rojo"><b>{0}</b></div>',value);                
+            }
+            else if( record.data.cambio == "2" ){
+                return String.format('<div class="verde"><b>{0}</b></div>',value);                
+            }
+            else if( record.data.cambio == "3" ){
+                return String.format('<div class="azul"><b>{0}</b></div>',value);                
+            }
+            else
+                return String.format('<b>{0}</b>',value);
         }
     },
 

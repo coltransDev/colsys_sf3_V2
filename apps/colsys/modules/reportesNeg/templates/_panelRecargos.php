@@ -12,6 +12,11 @@ foreach( $aplicaciones1 as $aplicacion ){
 }
 $hidden=($impoexpo==constantes::TRIANGULACION)?"false":"true";
 include_component("reportesNeg","cotizacionRecargosWindow", array("reporte"=>$reporte));
+
+if($comparar)
+{
+    $url_comp="&comparar=".$comparar."&consecutivo=".$reporte->getCaConsecutivo()."&version=".$reporte->getCaVersion();
+}
 ?>
 <script type="text/javascript">
 
@@ -284,14 +289,15 @@ PanelRecargos = function( config ){
             {name: 'cobrar_idm', type: 'string'},
             {name: 'observaciones', type: 'string'},
             {name: 'tipo', type: 'string'},
-            {name: 'orden', type: 'string'}
+            {name: 'orden', type: 'string'},
+            {name: 'cambio', type: 'int'}
         ]);
 
     this.store = new Ext.data.Store({
 
         autoLoad : true,
         pruneModifiedRecords:true,
-        url: '<?=url_for("reportesNeg/panelRecargosData?id=".$reporte->getCaIdreporte())?>',
+        url: '<?=url_for("reportesNeg/panelRecargosData?id=".$reporte->getCaIdreporte().$url_comp)?>',
         reader: new Ext.data.JsonReader(
             {
                 root: 'items',
@@ -338,9 +344,7 @@ PanelRecargos = function( config ){
 				iconCls:'delete',
 				handler: this.borrarTodos
 			},
-            <?
-            }
-            ?>
+            
             {
                 text: 'Recargar',
                 tooltip: 'Recarga los datos de la base de datos',
@@ -361,6 +365,7 @@ PanelRecargos = function( config ){
 				handler: this.importarCotizacion
 			}
             <?
+            }
             }
             ?>
             ]
@@ -491,10 +496,17 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
     ,
     formatItem: function(value, p, record) {
         
-        return String.format(
-            '<b>{0}</b>',
-            value
-        );
+        if( record.data.cambio == "1" ){
+                return String.format('<div class="rojo"><b>{0}</b></div>',value);                
+            }
+            else if( record.data.cambio == "2" ){
+                return String.format('<div class="verde"><b>{0}</b></div>',value);                
+            }
+            else if( record.data.cambio == "3" ){
+                return String.format('<div class="azul"><b>{0}</b></div>',value);                
+            }
+            else
+                return String.format('<b>{0}</b>',value);
         
     },
 

@@ -15,7 +15,7 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO){
          <td width="33%">
              <b>Consignar Master (<?=$nomGuiasM?>) a:</b>
          </td>
-         <td width="67%">
+         <td width="67%" <?=($comparar)? (($reporte->compDato("Consignarmaster")!=0)?"class='rojo'":"") :""?>>
             <?=$reporte->getConsignarmaster()?>
         </td>
     </tr>
@@ -23,7 +23,7 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO){
          <td>
              <b>Consignar <?=$nomGuiasH?> a :</b>
          </td>
-         <td>
+         <td <?=($comparar)? (($reporte->compDato("Consignar")!=0)?"class='rojo'":"") :""?>>
             <? $reporte->getConsignar()?>
         </td>
     </tr>
@@ -39,7 +39,7 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO){
         <td width="33%">
              <b>Consignar <?=$nomGuiasH?> a:</b>
          </td>
-         <td width="67%">
+         <td width="67%" <?=($comparar)? (($reporte->compDato("CaIdconsignatario")!=0)?"class='rojo'":"") :""?>>
             <?
             if($reporte->getCaIdconsignatario())
             {
@@ -58,7 +58,7 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO){
         </td>
     </tr>
     <tr>
-        <td width="33%">
+        <td width="33%" <?=($comparar)? (($reporte->compDato("CaIdbodega")!=0)?"class='rojo'":"") :""?>>
              <b>Transladar a:</b>
          </td>
          <td width="67%">
@@ -75,7 +75,7 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO){
          <td>
              <b>Igualar Master/Hijo:</b>
          </td>
-         <td >
+         <td <?=($comparar)? (($reporte->compDato("CaMastersame")!=0)?"class='rojo'":"") :""?> >
             <?
             echo $reporte->getCaMastersame();
             ?>
@@ -106,7 +106,7 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO){
             <td  colspan="6"><b>Consignatario:</b></td>
         </tr>
         <tr>
-            <td colspan="6" >
+            <td colspan="6" <?=($comparar)? (($reporte->compDato("CaIdconsignatario")!=0)?"class='rojo'":"") :""?> >
                 <?
                 include_component("reportesNeg", "previewTercero", array("idtercero"=>$reporte->getCaIdconsignatario(), "reporte"=>$reporte));
                 ?>
@@ -121,7 +121,7 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO){
             <td  colspan="6"><b>Notify</b></td>
         </tr>
         <tr>
-            <td colspan="6" >
+            <td colspan="6" <?=($comparar)? (($reporte->compDato("CaIdbotify")!=0)?"class='rojo'":"") :""?> >
                 <?
                 include_component("reportesNeg", "previewTercero", array("idtercero"=>$reporte->getCaIdnotify(), "reporte"=>$reporte));
                 ?>
@@ -136,7 +136,7 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO){
             <td  colspan="6"><b>Representante</b></td>
         </tr>
         <tr>
-            <td colspan="6" >
+            <td colspan="6" <?=($comparar)? (($reporte->compDato("CaIdrepresentante")!=0)?"class='rojo'":"") :""?> >
                 <?
                 include_component("reportesNeg", "previewTercero", array("idtercero"=>$reporte->getCaIdrepresentante(), "reporte"=>$reporte));
                 ?>
@@ -151,7 +151,7 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO){
             <td  colspan="6"><b>Consigna. Master:</b></td>
         </tr>
         <tr>
-            <td colspan="6" >
+            <td colspan="6" <?=($comparar)? (($reporte->compDato("CaIdmaster")!=0)?"class='rojo'":"") :""?> >
                 <?
                 include_component("reportesNeg", "previewTercero", array("idtercero"=>$reporte->getCaIdmaster(), "reporte"=>$reporte));
                 ?>
@@ -160,5 +160,4 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO){
         <?
         }
         ?>
-
     </table>
