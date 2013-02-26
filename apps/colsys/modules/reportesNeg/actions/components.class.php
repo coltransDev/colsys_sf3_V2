@@ -159,7 +159,7 @@ class reportesNegComponents extends sfComponents
              $reporte=$this->reporte;
              $user = $this->getUser();
              $this->permiso = $user->getNivelAcceso( "87" );
-             if( $reporte->getEditable($this->permiso,$user)  ){
+             if( $reporte->getEditable($this->permiso,$user) && !$this->comparar  ){
                     $this->editable = true;
                 }else{
                     $this->editable = false;
@@ -183,49 +183,7 @@ class reportesNegComponents extends sfComponents
 
     public function executePanelConceptosOtm()
     {
-		/*$this->conceptos = Doctrine::getTable("Concepto")
-                                     ->createQuery("c")
-                                     ->select("ca_idconcepto, ca_concepto")
-                                     ->where("c.ca_transporte = 'Terrestre'" )
-                                     ->addWhere("c.ca_modalidad = 'OTM-DTA'" )
-                                     ->addWhere("c.ca_fcheliminado is null " )
-                                     ->addOrderBy("c.ca_liminferior")
-                                     ->addOrderBy("c.ca_concepto")
-                                     ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
-                                     ->execute();
-
-        foreach( $this->conceptos as $key=>$val){
-            $this->conceptos[$key]['ca_concepto'] = utf8_encode($this->conceptos[$key]['ca_concepto']);
-        }
-
-        array_push( $this->conceptos , array("ca_idconcepto"=>"9999", "ca_concepto"=>"Recargo general del trayecto"));
-
-        $impoexpo = $this->reporte->getCaImpoexpo();
-        if( $impoexpo==Constantes::TRIANGULACION ){
-            $impoexpo=Constantes::IMPO;
-        }
-
-        $this->recargos = Doctrine::getTable("TipoRecargo")
-                                     ->createQuery("c")
-                                     ->select("ca_idrecargo as ca_idconcepto, ca_recargo as ca_concepto")
-                                     ->addWhere("c.ca_tipo like ? ", "%".Constantes::RECARGO_EN_ORIGEN."%" )          
-                                     ->addOrderBy("c.ca_recargo")
-                                     ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
-                                     ->execute();
-
-         foreach( $this->recargos as $key=>$val){
-             $this->recargos[$key]['ca_concepto'] = utf8_encode($this->recargos[$key]['ca_concepto']);
-
-         }
-         $reporte=$this->reporte;
-         $user = $this->getUser();
-         $this->permiso = $user->getNivelAcceso( "87" );
-         if( $reporte->getEditable($this->permiso,$user)  ){
-                $this->editable = true;
-            }else{
-                $this->editable = false;
-            }
-*/
+		
         if($this->reporte)
         {
             //$transporte=($this->reporte->getCaTransporte()==constantes::TERRESTRE ) ?constantes::MARITIMO:$this->reporte->getCaTransporte();
@@ -267,24 +225,13 @@ class reportesNegComponents extends sfComponents
              foreach( $this->recargos as $key=>$val){
                  $this->recargos[$key]['ca_concepto'] = utf8_encode($this->recargos[$key]['ca_concepto']);
 
-             }
-             
-           /* $this->recargos = Doctrine::getTable("TipoRecargo")
-                                     ->createQuery("c")
-                                     ->select("ca_idrecargo as ca_idconcepto, ca_recargo as ca_concepto")
-                                     ->addWhere("c.ca_tipo like ? ", "%".Constantes::RECARGO_EN_ORIGEN."%" )          
-                                     ->addOrderBy("c.ca_recargo")
-                                     ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
-                                     ->execute();
+             }             
 
-             foreach( $this->recargos as $key=>$val){
-                 $this->recargos[$key]['ca_concepto'] = utf8_encode($this->recargos[$key]['ca_concepto']);
-
-             }*/
              $reporte=$this->reporte;
              $user = $this->getUser();
              $this->permiso = $user->getNivelAcceso( "87" );
-             if( $reporte->getEditable($this->permiso,$user)  ){
+             
+             if( $reporte->getEditable($this->permiso,$user) && !$this->comparar  ){
                     $this->editable = true;
                 }else{
                     $this->editable = false;
@@ -296,7 +243,6 @@ class reportesNegComponents extends sfComponents
                 $this->aplicaciones1 = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO );
             else
                 $this->aplicaciones1 = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO );
-
         }
         else
         {
@@ -333,7 +279,7 @@ class reportesNegComponents extends sfComponents
          $user = $this->getUser();
          $this->permiso = $user->getNivelAcceso( "87" );
          //echo $reporte->getCaUsucreado() || $user->getUserId()!=$reporte->getCaLogin()
-         if( $reporte->getEditable($this->permiso,$user) ){
+         if( $reporte->getEditable($this->permiso,$user) && !$this->comparar ){
                 $this->editable = true;
             }else{
                 $this->editable = false;
@@ -355,29 +301,27 @@ class reportesNegComponents extends sfComponents
 	*/
 	public function executePanelRecargosAduana()
 	{
+        $reporte=$this->reporte;
+        $user = $this->getUser();
+        $this->permiso = $user->getNivelAcceso( "87" );
+        
         $this->recargos = Doctrine::getTable("Costo")
                                      ->createQuery("c")                                     
                                      ->select("DISTINCT (ca_costo) as ca_concepto ,ca_idcosto as ca_idconcepto ")
-                                     //->addWhere("c.ca_tipo = ? ", Constantes::RECARGO_LOCAL )
                                      ->addWhere("c.ca_impoexpo = ? ", "Aduanas")
-                                     /*->addWhere("c.ca_transporte LIKE ? ", $this->reporte->getCaTransporte() )*/
                                      ->addOrderBy("c.ca_costo")
                                      ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                                      ->execute();
 
          foreach( $this->recargos as $key=>$val){
              $this->recargos[$key]['ca_concepto'] = utf8_encode($this->recargos[$key]['ca_concepto']);
-             /*if($tmp!=utf8_encode($this->recargos[$key]['ca_concepto']))
-             {
-                $this->recargos[$key]['ca_concepto'] = utf8_encode($this->recargos[$key]['ca_concepto']);
-                $tmp=$this->recargos[$key]['ca_concepto'];
-             }
-             else
-             {
-                 $tmp=$this->recargos[$key]['ca_concepto'];
-                 unset($this->recargos[$key]);
-             }*/
          }
+         
+         if( $reporte->getEditable($this->permiso,$user) && !$this->comparar ){
+                $this->editable = true;
+            }else{
+                $this->editable = false;
+            }
 	}
 
     /*
@@ -398,7 +342,6 @@ class reportesNegComponents extends sfComponents
 	public function executeFormReportePanel()
 	{
         $this->cache=$this->getRequestParameter("cache");
-        //echo "cache:".$this->cache."<br>";
         $this->user=$this->getUser();
         $this->permiso = $this->user->getNivelAcceso( "87" );
         $this->load_category();
@@ -889,7 +832,7 @@ class reportesNegComponents extends sfComponents
 	* @author: Andres Botero
 	*/
 	public function executeConsultaSeguros()
-	{
+	{        
         $this->repseguro = Doctrine::getTable("RepSeguro")->find( $this->reporte->getCaIdreporte());
         if( !$this->repseguro ){
             $this->repseguro = new RepSeguro();

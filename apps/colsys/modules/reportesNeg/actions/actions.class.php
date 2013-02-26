@@ -4487,8 +4487,30 @@ class reportesNegActions extends sfActions
         if( $reporte->getCaColmas()=="Sí" ){
 			$repAduana = $reporte->getRepAduana();
 			if( $repAduana && $repAduana->getCaCoordinador() ){
-				$grupos["colmas"] = array($repAduana->getCaCoordinador());
+				$grupos["colmas"][] = $repAduana->getCaCoordinador();
 			}
+            
+                $suc=$user->getSucursal();
+                if($suc=="ABG" || $suc=="BGA" || $suc=="PEI"  )
+                {
+                    if($suc=="BGA")
+                        $cargo1='Sin cargo';
+                    $suc="BOG";
+                }
+                $sucursal=Doctrine::getTable("Sucursal")->find( $suc );                
+                if(!$sucursal)
+                    $sucursal=new Sucursal();                    
+
+                $q = Doctrine::getTable("Usuario")
+                                ->createQuery("c")
+                                ->select("c.ca_email,c.ca_login")
+                                ->innerJoin("c.Sucursal s")                                
+                                ->where("s.ca_nombre = ? and c.ca_cargo=?", array($sucursal->getCaNombre(),'Coordinador Control Riesgo Aduana'));
+                $jef_adu=$q->execute();
+                foreach($jef_adu as $j)
+                {                    
+                    $grupos["colmas"][] = $j->getCaLogin();
+                }
 		}
 
 		if( $reporte->getCaSeguro()=="Sí" ){
