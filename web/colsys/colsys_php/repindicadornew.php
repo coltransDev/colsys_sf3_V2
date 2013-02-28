@@ -587,10 +587,10 @@ if (!isset($boton) and !isset($buscar)) {
       $campos.= ", $source.ca_referencia";
    } else if ($indicador == "Oportunidad en Revision de Documentos") {
       $format_avg = "H:i:s";
-      $source = "vi_repindicadores";
+      $source = "vi_repindicadores_otm";
       $transporte = "ca_transporte = 'Terrestre'";
-      $subque = "LEFT OUTER JOIN (select fs.ca_idstatus, rp.ca_consecutivo as ca_consecutivo_sub, ca_fchenvio as ca_fchrecibo from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) RIGHT OUTER JOIN (select ca_consecutivo, min(ca_idstatus) as ca_idstatus from tb_repstatus rps INNER JOIN tb_reportes rpt ON (rps.ca_idreporte = rpt.ca_idreporte and rps.ca_etapa = 'OTRDO') group by ca_consecutivo) fs ON (fs.ca_idstatus = rs.ca_idstatus) order by rp.ca_consecutivo, ca_fchrecibo) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
-      $subque.= "LEFT OUTER JOIN (select fs.ca_idstatus, rp.ca_consecutivo as ca_consecutivo_sub, ca_fchenvio as ca_fchrevision from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) RIGHT OUTER JOIN (select ca_consecutivo, min(ca_idstatus) as ca_idstatus from tb_repstatus rps INNER JOIN tb_reportes rpt ON (rps.ca_idreporte = rpt.ca_idreporte and rps.ca_etapa = 'OTRVD') group by ca_consecutivo) fs ON (fs.ca_idstatus = rs.ca_idstatus) order by rp.ca_consecutivo, ca_fchrecibo) sf ON (vi_repindicadores.ca_consecutivo = sf.ca_consecutivo_sub) ";
+      $subque = "LEFT OUTER JOIN (select fs.ca_idstatus, rp.ca_consecutivo as ca_consecutivo_sub, ca_fchenvio as ca_fchrecibo from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) RIGHT OUTER JOIN (select ca_consecutivo, min(ca_idstatus) as ca_idstatus from tb_repstatus rps INNER JOIN tb_reportes rpt ON (rps.ca_idreporte = rpt.ca_idreporte and rps.ca_etapa = 'OTRDO') group by ca_consecutivo) fs ON (fs.ca_idstatus = rs.ca_idstatus) order by rp.ca_consecutivo, ca_fchrecibo) sq ON ($source.ca_consecutivo = sq.ca_consecutivo_sub) ";
+      $subque.= "LEFT OUTER JOIN (select fs.ca_idstatus, rp.ca_consecutivo as ca_consecutivo_sub, ca_fchenvio as ca_fchrevision from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) RIGHT OUTER JOIN (select ca_consecutivo, min(ca_idstatus) as ca_idstatus from tb_repstatus rps INNER JOIN tb_reportes rpt ON (rps.ca_idreporte = rpt.ca_idreporte and rps.ca_etapa = 'OTRVD') group by ca_consecutivo) fs ON (fs.ca_idstatus = rs.ca_idstatus) order by rp.ca_consecutivo, ca_fchrecibo) sf ON ($source.ca_consecutivo = sf.ca_consecutivo_sub) ";
       if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
          echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
          echo "<script>document.location.href = 'entrada.php';</script>";
@@ -606,7 +606,7 @@ if (!isset($boton) and !isset($buscar)) {
       $add_cols = 3;
    } else if ($indicador == "Oportunidad en Finalización") {
       $tipo = "D";
-      $source = "vi_repindicadores";
+      $source = "vi_repindicadores_otm";
       $transporte = "ca_transporte = 'Terrestre'";
       $subque = "LEFT OUTER JOIN (select ca_idreporte, ca_fechafinalizacion, ca_fchpresentacion from tb_repotm) ro ON ($source.ca_idreporte = ro.ca_idreporte) ";
 
@@ -625,7 +625,7 @@ if (!isset($boton) and !isset($buscar)) {
       $add_cols = 3;
    } else if ($indicador == "Oportunidad en Aceptacion") {
       $tipo = "D";
-      $source = "vi_repindicadores";
+      $source = "vi_repindicadores_otm";
       $transporte = "ca_transporte = 'Terrestre'";
       $subque = "LEFT OUTER JOIN (select fs.ca_idstatus, rp.ca_consecutivo as ca_consecutivo_sub, ca_fchenvio as ca_fchaceptacion from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) RIGHT OUTER JOIN (select ca_consecutivo, min(ca_idstatus) as ca_idstatus from tb_repstatus rps INNER JOIN tb_reportes rpt ON (rps.ca_idreporte = rpt.ca_idreporte and rps.ca_etapa = 'OTACP') group by ca_consecutivo) fs ON (fs.ca_idstatus = rs.ca_idstatus) order by rp.ca_consecutivo, ca_fchrecibo) sq ON ($source.ca_consecutivo = sq.ca_consecutivo_sub) ";
       $subque.= "LEFT OUTER JOIN (select fs.ca_idstatus, rp.ca_consecutivo as ca_consecutivo_sub, ca_fchenvio as ca_fchcargue from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) RIGHT OUTER JOIN (select ca_consecutivo, min(ca_idstatus) as ca_idstatus from tb_repstatus rps INNER JOIN tb_reportes rpt ON (rps.ca_idreporte = rpt.ca_idreporte and rps.ca_etapa = 'OTPRC') group by ca_consecutivo) fs ON (fs.ca_idstatus = rs.ca_idstatus) order by rp.ca_consecutivo, ca_fchrecibo) sd ON ($source.ca_consecutivo = sd.ca_consecutivo_sub) ";
@@ -645,7 +645,7 @@ if (!isset($boton) and !isset($buscar)) {
       $add_cols = 3;
    } else if ($indicador == "Oportunidad en Despacho") {
       $tipo = "D";
-      $source = "vi_repindicadores";
+      $source = "vi_repindicadores_otm";
       $transporte = "ca_transporte = 'Terrestre'";
       $subque = "LEFT OUTER JOIN (select ca_idreporte, ca_fechafinalizacion from tb_repotm)  ro ON $source.ca_idreporte = ro.ca_idreporte ";
       $subque.= "LEFT OUTER JOIN (select fs.ca_idstatus, rp.ca_consecutivo as ca_consecutivo_sub, ca_fchenvio as ca_fchdespacho from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) RIGHT OUTER JOIN (select ca_consecutivo, min(ca_idstatus) as ca_idstatus from tb_repstatus rps INNER JOIN tb_reportes rpt ON (rps.ca_idreporte = rpt.ca_idreporte and rps.ca_etapa = 'OTDES') group by ca_consecutivo) fs ON (fs.ca_idstatus = rs.ca_idstatus) order by rp.ca_consecutivo, ca_fchrecibo) sq ON ($source.ca_consecutivo = sq.ca_consecutivo_sub) ";
@@ -665,7 +665,7 @@ if (!isset($boton) and !isset($buscar)) {
       $add_cols = 3;
    } else if ($indicador == "Oportunidad en Facturacion") {
       $tipo = "D";
-      $source = "vi_repindicadores";
+      $source = "vi_repindicadores_otm";
       $transporte = "ca_transporte = 'Terrestre'";
       $subque = " LEFT OUTER JOIN (select ii.ca_referencia, ii.ca_idcliente, ii.ca_hbls, rp.ca_consecutivo as ca_consecutivo_ref, ii.ca_fchfactura, ii.ca_observaciones from tb_inoingresos_sea ii inner join tb_inomaestra_sea im on ii.ca_referencia = im.ca_referencia inner join tb_inoclientes_sea ic on ii.ca_referencia = ic.ca_referencia and ii.ca_idcliente = ic.ca_idcliente and ii.ca_hbls = ic.ca_hbls inner join tb_reportes rp on ic.ca_idreporte = rp.ca_idreporte where im.ca_impoexpo = 'OTM/DTA' and substr(ii.ca_observaciones,1,7) = 'OTM/DTA') rs2 ON ($source.ca_consecutivo = rs2.ca_consecutivo_ref) ";
       $subque.= " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_cont, (string_to_array(rs.ca_propiedades, '='::text))[2] as ca_fchplanilla, min(rs.ca_fchenvio) as ca_fchconf_plan from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = '99999') group by rp.ca_consecutivo, rs.ca_propiedades order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_cont) ";
