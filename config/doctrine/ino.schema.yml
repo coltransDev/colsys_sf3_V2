@@ -52,6 +52,7 @@ InoMaster:
     ca_fchllegada : date
     ca_fchmaster : date
     ca_idnave : string
+    ca_motivoanulado: string
   relations:
     InoHouse:
       local: ca_idmaster
@@ -70,6 +71,10 @@ InoMaster:
     IdsProveedor:
       local: ca_idlinea
       foreign: ca_idproveedor
+      type: one
+    IdsAgente:
+      local: ca_idagente
+      foreign: ca_idagente
       type: one
     UsuCreado:
       local: ca_usucreado
@@ -176,8 +181,8 @@ InoHouse:
     ca_usucreado: string
     ca_fchactualizado: timestamp
     ca_usuactualizado: string
-    ca_mpiezas:
-      type: string
+    ca_mpiezas: string
+    ca_referencia: string
   relations:
     Cliente:
       local: ca_idcliente
@@ -683,7 +688,7 @@ Modo:
     ca_modulo: string
     ca_impoexpo: string
     ca_transporte : string
-    ca_rutina : integer
+    ca_rutina : integer    
     
 InoDeduccion:
   generatePath: ino
