@@ -30,19 +30,19 @@ class InoMaster extends BaseInoMaster
         }
         return $this->vlrFacturado;
     }
-    
-    
+
     public function getVlrDeducciones(){
         if( $this->vlrDeducciones===null ){
-            $this->vlrDeducciones = Doctrine::getTable("InoDeduccion")
+             $q= Doctrine::getTable("InoDeduccion")
                        ->createQuery("d")
                        ->innerJoin("d.InoComprobante c")
                        ->innerJoin("c.InoHouse h")
                        ->innerJoin("h.InoMaster m")
                        ->select("SUM(d.ca_neto*d.ca_tcambio)")
                        ->addWhere("m.ca_idmaster = ?", $this->getCaIdmaster())
-                       ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)        
-                       ->execute();
+                       ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR);
+            $this->vlrDeducciones=$q->execute();
+            
         }
         return $this->vlrDeducciones;
     }
