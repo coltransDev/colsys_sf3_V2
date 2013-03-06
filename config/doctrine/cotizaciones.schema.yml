@@ -20,7 +20,7 @@ Cotizacion:
     ca_anexos: string
     ca_usuario: string
     ca_empresa: string
-    ca_fuente: string    
+    ca_fuente: string
     ca_idg_envio_oportuno: integer
     ca_etapa: string
     ca_idtarea: integer
@@ -32,7 +32,7 @@ Cotizacion:
     ca_usuactualizado: string(20)
     ca_fchactualizado: timestamp
     ca_usuanulado: string(20)
-    ca_fchanulado: timestamp    
+    ca_fchanulado: timestamp
   relations:
     Usuario:
       local: ca_usuario
@@ -65,7 +65,7 @@ Cotizacion:
     NotTarea:
       local: ca_idtarea
       foreign: ca_idtarea
-      type: one    
+      type: one
     CotSeguimiento:
       local: ca_idcotizacion
       foreign: ca_idcotizacion
@@ -144,9 +144,10 @@ CotProducto:
       local: ca_idproducto
       foreign: ca_idproducto
       type: many
-      
-          
+      orderBy: ca_fchseguimiento DESC
     
+    
+
 
 CotOpcion:
   options:
