@@ -10,7 +10,11 @@ class loginValidationFilter extends sfFilter
 		if( ($module=="users" && $action=="login") || ($module=="users" && $action=="checkLogin") ||  ($module=="users" && $action=="validateLogin") || sfContext::getInstance()->getConfiguration()->getEnvironment()=="cli" ){            
 			$filterChain->execute();
             
-		}else{
+		}
+        elseif( ($module=="formulario" && $action=="servicios"  || $module=="formulario" && $action=="encuesta"  ||  $module=="formulario" && $action=="guardado" || $module=="formulario" && $action=="exito" || $module=="formulario" && $action=="proceso") /*|| sfContext::getInstance()->getConfiguration()->getEnvironment()=="cli"*/ ){
+			$filterChain->execute();
+		}
+        else{
             if($module=="gestDocumental" && $action=="verArchivo"){
                
                 $folders = explode(",",sfConfig::get('app_gestDocumental_noAuth'));
