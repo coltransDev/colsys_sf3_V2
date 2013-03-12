@@ -26,6 +26,9 @@ class loginValidationFilter extends sfFilter
                     $filterChain->execute();
                 }
             }
+            if($module=="gestDocumental" && $action=="verArchivoLibreClave"){
+                   $filterChain->execute();
+            }
 
             
             $cache = myCache::getInstance();
