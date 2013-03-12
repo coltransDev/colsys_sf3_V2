@@ -49,8 +49,8 @@ include_component("email", "formEmail", array("subject"=>$subject, "message"=>$m
 		<td>
 			<div align="left"><b>
 
-				<input type="checkbox" name="adjuntar_excel" value="1" checked="checked" />
-				Adjuntar documento de excel con contenido <br />
+				<!--<input type="checkbox" name="adjuntar_excel" value="1" checked="checked" />-->
+				<b>Este email adjunta documento en excel con contenido<br /></b>
 				 
 				<?
 				//Formato del documento en excel:<br>
