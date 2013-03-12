@@ -14,6 +14,7 @@
               href="/css/formulario.css" />
               <?php include_javascripts() ?>
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta content="IE=edge" http-equiv="X-UA-Compatible">
     </head>     
     <body id="body">
         <div id="wrapper">
