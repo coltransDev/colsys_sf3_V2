@@ -11,14 +11,15 @@ class ReporteTable extends Doctrine_Table
         
 		if( $yy ){
             $empresa=sfConfig::get('app_branding_name');
-            if($empresa!='TPLogistics')
+            $sql =  "SELECT fun_reportecon('".$yy."') as next";
+            /*if($empresa!='TPLogistics')
             {
                 $sql =  "SELECT fun_reportecon('".$yy."') as next";
             }
             else
             {
                 $sql =  "SELECT fun_reportecontp('".$yy."','".$tmp_impoexpo."','".$tmp_transporte."') as next";
-            }            
+            }  */          
 			$q = Doctrine_Manager::getInstance()->connection();
             $stmt = $q->execute($sql);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -155,7 +156,7 @@ class ReporteTable extends Doctrine_Table
                     for( $j=0; $j<$k-1; $j++){
                        $prov1 = $results[$j]->getETS();
                        $prov2 = $results[$j+1]->getETS();
-                       if( $prov1<$prov2 ){
+                       if( $prov1>$prov2 ){
                            $tmp = $results[$j];
                            $results[$j] = $results[$j+1];
                            $results[$j+1] = $tmp;
@@ -165,8 +166,8 @@ class ReporteTable extends Doctrine_Table
                 
                 for( $i=1; $i<$k; $i++){
                     for( $j=0; $j<$k-1; $j++){                       
-                       $prov1 = $results[$j]->getCaOrdenClie();
-                       $prov2 = $results[$j+1]->getCaOrdenClie();
+                       $prov1 = $results[$j]->getProveedoresStr();
+                       $prov2 = $results[$j+1]->getProveedoresStr();
                        if( $prov1>$prov2 ){
                            $tmp = $results[$j];
                            $results[$j] = $results[$j+1];
