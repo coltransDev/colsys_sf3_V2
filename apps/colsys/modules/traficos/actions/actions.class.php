@@ -1059,7 +1059,7 @@ class traficosActions extends sfActions
 		$this->consecutivo = $this->getRequestParameter("reporte");
 
 		$cliente = Doctrine::getTable("Cliente")->find( $idCliente );
-		$adjuntar_excel = $this->getRequestParameter("adjuntar_excel");
+		//$adjuntar_excel = $this->getRequestParameter("adjuntar_excel");
 
 		$this->forward404unless( $this->modo );
 		$this->forward404unless( $this->idCliente );
@@ -1118,7 +1118,7 @@ class traficosActions extends sfActions
 		$email->setCaBodyhtml( Utils::replace($this->getRequestParameter("mensaje"))) ;
 		$email->save();
 
-        if( $adjuntar_excel ){
+        //if( $adjuntar_excel ){
             $this->getRequest()->setParameter("save", "true");
             $directory = $email->getDirectorio();
 
@@ -1133,7 +1133,7 @@ class traficosActions extends sfActions
 			$this->getRequest()->setParameter('filename',$email->getDirectorio().$fileName);
 			sfContext::getInstance()->getController()->getPresentationFor( 'traficos', 'informeTraficosFormato1');
 			$email->AddAttachment( $email->getDirectorioBase().$fileName );
-		}
+		//}
 
 		$attachments = $this->getRequestParameter( "attachments" );
 		if( $attachments ){
