@@ -301,15 +301,31 @@ class inoActions extends sfActions {
                     $ino->setCaIdagente($request->getParameter("idagente")); 
                 }
 
-                $ino->setCaMaster($request->getParameter("ca_master"));
+                if($this->idmodo==6)
+                {
+                    $ino->setCaMaster($numRef);
+                }
+                else
+                    $ino->setCaMaster($request->getParameter("ca_master"));
 
                 $ino->setCaFchsalida($request->getParameter("ca_fchsalida"));
                 $ino->setCaFchllegada($request->getParameter("ca_fchllegada"));
                 $ino->setCaMotonave(utf8_decode($request->getParameter("ca_motonave")));
 
-                $ino->setCaPiezas($request->getParameter("ca_piezas"));
-                $ino->setCaPeso($request->getParameter("ca_peso"));
-                $ino->setCaVolumen($request->getParameter("ca_volumen"));
+                if($request->getParameter("ca_piezas")!="")
+                    $ino->setCaPiezas($request->getParameter("ca_piezas"));
+                else
+                    $ino->setCaPiezas(0);
+                
+                if($request->getParameter("ca_peso")!="")
+                    $ino->setCaPeso($request->getParameter("ca_peso"));
+                else
+                    $ino->setCaPeso(0);
+                
+                if($request->getParameter("ca_volumen")!="")
+                    $ino->setCaVolumen($request->getParameter("ca_volumen"));
+                else
+                    $ino->setCaVolumen(0);
                 $ino->setCaObservaciones(utf8_decode($request->getParameter("ca_observaciones")));
                 $ino->save();
             }
@@ -462,8 +478,13 @@ class inoActions extends sfActions {
             $house->setCaMpiezas(utf8_decode($request->getParameter("mpiezas")));
             $house->setCaPeso($request->getParameter("peso"));
             $house->setCaVolumen($request->getParameter("volumen"));
-            $house->setCaDoctransporte($request->getParameter("doctransporte"));
+            
             $house->setCaFchdoctransporte($request->getParameter("fchdoctransporte"));
+            
+            if($request->getParameter("modo")=="6")
+                $house->setCaDoctransporte($request->getParameter("consecutivo"));
+            else
+                $house->setCaDoctransporte($request->getParameter("doctransporte"));
             $house->save();
             $this->responseArray = array("success" => true);
         } catch (Exception $e) {
@@ -776,7 +797,7 @@ class inoActions extends sfActions {
             $comprobante->setCaObservaciones($request->getParameter("observaciones"));
             $comprobante->save($conn);
 
-            if($this->getUser()->getIdsucursal()=="OBO" || $this->getUser()->getUserId()=="maquinche")
+            if( $comprobante->getCaId()=="800024075" && ($this->getUser()->getIdsucursal()=="OBO" || $this->getUser()->getIdsucursal()=="OMD" || $this->getUser()->getUserId()=="maquinche")  )
             {
                 $resultadoCosto=InoCostosSea::setCosto($comprobante,$conn);
                 if($resultadoCosto<0)
@@ -1204,14 +1225,11 @@ class inoActions extends sfActions {
                     throw $e;
                 }
             }
-        }
-                
+        }                
         $this->referencia = $referencia;
         $this->inoCosto = $inoCosto;
         $this->monedaLocal = $monedaLocal;
     }
-    
-    
     
     /**
      *
