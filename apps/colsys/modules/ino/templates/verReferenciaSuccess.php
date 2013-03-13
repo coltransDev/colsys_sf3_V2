@@ -6,12 +6,9 @@
  */
 
 
-include_component("ino", "mainPanel", array("referencia"=>$referencia));
-
-
+include_component("ino", "mainPanel", array("referencia"=>$referencia,"modo"=>$idmodo));
 include_component("widgets", "widgetMoneda");
 include_component("widgets", "widgetIds");
-
 
 $readOnly = $referencia->getReadOnly();
 ?>
