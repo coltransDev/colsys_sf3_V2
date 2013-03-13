@@ -4,21 +4,27 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
-include_component("widgets", "widgetReporte");
+if($modo!=6)
+    include_component("widgets", "widgetReporte");
+else
+    include_component("widgets", "widgetReferencia");
 include_component("widgets", "widgetCliente");
 include_component("widgets", "widgetUsuario");
 include_component("widgets", "widgetTercero");
 include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
 include_component("widgets", "widgetCiudad");
 
-
-
 ?>
 <script type="text/javascript">
     Ext.form.Field.prototype.msgTarget = 'side';
     FormHousePanel = function( config ){
         Ext.apply(this, config);
-        this.widgetReporte = new WidgetReporte({
+        
+        <?
+        if($modo!=6)
+        {
+        ?>
+        this.widgetRef = new WidgetReporte({
                                               fieldLabel: "Reporte",
                                               name: "consecutivo",
                                               hiddenName: "idreporte",
@@ -28,7 +34,22 @@ include_component("widgets", "widgetCiudad");
                                               impoexpo: this.impoexpo,
                                               transporte: this.transporte
                                               });
-        this.widgetReporte.addListener("select", this.onSelectReporte, this );
+        this.widgetRef.addListener("select", this.onSelectReporte, this );
+        <?
+        }
+        else
+        {
+        ?>
+        this.widgetRef = new WidgetReferencia({
+                                              fieldLabel: "Referencia",
+                                              name: "consecutivo",
+                                              allowBlank: true
+                                              });
+        this.widgetRef.addListener("select", this.onSelectRef, this );
+        <?
+        }
+        ?>
+        
 
         this.widgetCliente = new WidgetCliente({
                                               fieldLabel: "Cliente",
@@ -91,9 +112,17 @@ include_component("widgets", "widgetCiudad");
                                         xtype: "hidden",
                                         name: "idhouse"
                                     },
-                                    this.widgetReporte,
-                                    this.widgetVendedor,
+                                    this.widgetRef,
+                                    this.widgetVendedor
+                                    <?
+                                    if($modo!=6)
+                                    {
+                                    ?>
+                                    ,
                                     this.widgetTercero
+                                    <?
+                                    }
+                                    ?>
                                 ]
                             },
                             /*
@@ -141,12 +170,19 @@ include_component("widgets", "widgetCiudad");
                             border:false,
                             defaultType: 'textfield',
                             items: [
+                                <?
+                                if($modo!=6)
+                                {
+                                ?>
                                 {
                                     xtype: "textfield",
                                     fieldLabel: "Doc. Transporte",
                                     name:  "doctransporte",
                                     allowBlank: false
                                 },
+                                <?
+                                }
+                                ?>
                                 {
                                     xtype: 'compositefield',
                                     width:158,
@@ -190,6 +226,10 @@ include_component("widgets", "widgetCiudad");
                             border:false,
                             defaultType: 'textfield',
                             items: [
+                                <?
+                                if($modo!=6)
+                                {
+                                ?>
                                 {
                                     xtype: "datefield",
                                     fieldLabel: "Fch Doc. Transporte",
@@ -197,6 +237,9 @@ include_component("widgets", "widgetCiudad");
                                     format: "Y-m-d",
                                     allowBlank: false
                                 },
+                                <?
+                                }
+                                ?>
                                 {
                                     xtype: "numberfield",
                                     fieldLabel: "Peso",
@@ -293,6 +336,20 @@ include_component("widgets", "widgetCiudad");
                     }
                 });
             }
+        },
+        onSelectRef: function( combo, record, idx ){
+
+            var form = this.getForm();
+            form.findField("nombreVendedor").setRawValue(record.data.ca_vendedor);
+            form.findField("nombreVendedor").hiddenField.value = record.data.ca_vendedor;            
+            form.findField("compania").setValue(record.data.compania);
+            form.findField("compania").hiddenField.value = record.data.idcliente;
+
+            form.findField("numpiezas").setValue( record.data.ca_piezas);
+            form.findField("peso").setValue( record.data.ca_peso);
+            form.findField("volumen").setValue( record.data.ca_volumen);
+            
+            //form.findField("numorden").setValue(record.data.orden_clie);
         },
         onSelectReporte: function( combo, record, idx ){
             var form = this.getForm();

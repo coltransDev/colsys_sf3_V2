@@ -216,7 +216,7 @@ include_component("widgets", "widgetReporte");
                                     impoexpo:"impoexpo_fld",                                                  
                                     tabIndex:5
                                 }),
-                                new WidgetLinea({fieldLabel: 'Linea',
+                                new WidgetLinea({fieldLabel: '<?=($modo==6)?"Proveedor":"Linea"?>', 
                                     linkTransporte: "transporte",
                                     name: 'linea',
                                     id: 'linea',
@@ -267,7 +267,9 @@ include_component("widgets", "widgetReporte");
                                     linkListarTodos: "listar_todos",
                                     name:"agente",
                                     hiddenName: 'idagente',                                    
-                                    tabIndex:8
+                                    tabIndex:8,
+                                    value:"<?=($modo==6)?"COLTRANS S.A.S.":""?>",
+                                    hiddenValue:"<?=($modo==6)?"800024075":""?>"
                                 }),
                                 {
                                     xtype: "checkbox",
@@ -303,6 +305,10 @@ include_component("widgets", "widgetReporte");
                             border:false,
                             defaultType: 'textfield',
                             items: [
+                                <? 
+                                if($modo!=6)
+                                {
+                                ?>
                                 {
                                     fieldLabel: 'Master',
                                     name: 'ca_master',
@@ -311,6 +317,9 @@ include_component("widgets", "widgetReporte");
                                     vtype: 'validarMaster',
                                     allowBlank: false
                                 },
+                                <?
+                                }
+                                ?>
                                 {
                                     fieldLabel: 'Peso',
                                     name: 'ca_peso',
@@ -327,15 +336,13 @@ include_component("widgets", "widgetReporte");
                                     name: 'ca_fchsalida',
                                     id: 'fchsalida',
                                     format:'Y-m-d',
+                                    value:"<?=($modo==6)?date("Y-m-d"):""?>",
                                     //vtype: 'daterange',
                                     //endDateField: 'fchllegada', // id of the end date field
                                     width: 120,
                                     allowBlank: false,
                                     tabIndex:19
                                 }
-                                
-                                
-                                
                             ]
                         },
                         /*
@@ -353,7 +360,7 @@ include_component("widgets", "widgetReporte");
                                     name: 'ca_piezas',
                                     xtype: 'numberfield',
                                     width: 120,
-                                    allowBlank: false,
+                                    allowBlank: <?=($modo==6)?"true":"false"?>,
                                     tabIndex:16,
                                     allowNegative: false,
                                     allowDecimals: false
@@ -363,7 +370,7 @@ include_component("widgets", "widgetReporte");
                                     name: 'ca_volumen',
                                     xtype: 'numberfield',
                                     width: 120,
-                                    allowBlank: false,
+                                    allowBlank: <?=($modo==6)?"true":"false"?>,
                                     tabIndex:18,
                                     allowNegative: false,
                                     decimalPrecision: 3                                    
@@ -375,6 +382,7 @@ include_component("widgets", "widgetReporte");
                                     id: 'fchllegada',
                                     format:'Y-m-d',
                                     width: 120,
+                                    value:"<?=($modo==6)?date("Y-m-d"):""?>",
                                     //vtype: 'daterange',                                    
                                     //startDateField: 'fchsalida', // id of the start date field
                                     allowBlank: false,
