@@ -11,8 +11,8 @@ include_component("widgets", "widgetDeduccion");
 <script type="text/javascript">
 GridDeduccionesPanel = function( config ){
     Ext.apply(this, config);  
-    
-    this.columns = [      
+
+    this.columns = [
       {
         header: "Concepto",
         dataIndex: 'deduccion',
@@ -31,15 +31,14 @@ GridDeduccionesPanel = function( config ){
         sortable: false,
         width: 100,
         editor: new Ext.form.NumberField({
-            decimalPrecition: 2,
-            allowNegative: false
+            decimalPrecition: 2            
         })
       },
       {
         header: "Valor",
         dataIndex: 'valor',
         hideable: false,
-        sortable: false,        
+        sortable: false, 
         width: 100
       }
      ];
