@@ -4,7 +4,7 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-include_component("ino", "formMasterPanel");
+include_component("ino", "formMasterPanel",array("modo"=>$modo->getCaIdmodo()));
 ?>
 <div class="content">
     <div id="panel"></div>
