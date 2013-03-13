@@ -5,7 +5,7 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
-include_component("ino", "formHousePanel");
+include_component("ino", "formHousePanel",array("modo"=>$modo));
 include_component("ino", "gridHousePanel");
 
 include_component("ino", "gridFacturacionPanel" );
@@ -18,8 +18,6 @@ if($referencia->getCaModalidad()==Constantes::FCL ){
     include_component("ino", "formEquiposPanel");
     include_component("ino", "gridEquiposPanel");
 }
-
-
 ?>
 <script type="text/javascript">
 
