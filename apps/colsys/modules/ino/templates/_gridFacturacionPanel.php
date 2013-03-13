@@ -291,6 +291,20 @@ Ext.extend(GridFacturacionPanel, Ext.grid.GridPanel, {
                                     }
                                 }
                             }
+                        },
+                        {
+                            text: 'Ver Factura',
+                            iconCls: 'page_white_edit',
+                            scope:this,
+                            handler: function(){
+                                if( this.ctxRecord.data.idhouse  ){
+                                    if( this.ctxRecord.data.idcomprobante ){
+                                        window.open("/inocomprobantes/generarComprobantePDF/id/"+this.ctxRecord.data.idcomprobante ,"factura" );
+                                    }else{
+                                        alert("Este item no se ha facturado");
+                                    }
+                                }
+                            }
                         }
                        ]
                 });
