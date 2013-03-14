@@ -166,8 +166,8 @@ class ReporteTable extends Doctrine_Table
                 
                 for( $i=1; $i<$k; $i++){
                     for( $j=0; $j<$k-1; $j++){                       
-                       $prov1 = $results[$j]->getProveedoresStr();
-                       $prov2 = $results[$j+1]->getProveedoresStr();
+                       $prov1 = $results[$j]->getCaOrdenClie();
+                       $prov2 = $results[$j+1]->getCaOrdenClie();
                        if( $prov1>$prov2 ){
                            $tmp = $results[$j];
                            $results[$j] = $results[$j+1];
