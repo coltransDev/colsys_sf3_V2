@@ -3,7 +3,7 @@
 anexoImpoTitulo: NOTAS IMPORTANTES QUE DEBEN TENER EN CUENTA EN SUS IMPORTACIONES
 anexoImpo: |
   • Los fletes ofertados están basados en tarifas actuales sujetas a posibles revisiones determinadas por las compañías marítimas, aéreas o terrestres.
-  • Los fletes para las importaciones aéreas se liquidaran  a  la TRM  de la fecha de emisión de la factura.
+  • Los fletes para las importaciones aéreas se liquidaran  a  la Tasa Representativa del Mercado.
   • Los fletes para las importaciones marítimas se liquidarán a la TRM de la fecha de pago + 30 pesos colombianos, siempre y cuando esta no sea inferior a la TRM de referencia de la fecha de emisión de la factura. COLTRANS S.A.S., se reserva el derecho de solicitar un ajuste en caso de que la fluctuación de la moneda supere tasas impredecibles.
   • Los costos adicionales que se generen durante el manejo de la operación y que no hayan sido cotizados serán asumidos por el importador.
   • Debido a las fluctuaciones en los precios del petróleo estamos sujetos a las variaciones en el  recargo por  combustible  que determinen las aerolíneas,  las navieras  y  los  transportadores terrestres.
@@ -18,7 +18,7 @@ anexoImpo: |
 anexoExpoTitulo: NOTAS IMPORTANTES QUE DEBEN TENER EN CUENTA EN SUS EXPORTACIONES  
 anexoExpo: |
   • Los fletes ofertados están basados  en tarifas actuales sujetas  a posibles revisiones  determinadas  por las compañías marítimas,  aéreas o terrestres.
-  • Los fletes para las exportaciones aéreas se liquidaran al tipo de cambio  ALAICO.
+  • Los fletes para las exportaciones aéreas se liquidaran a la TRM diaria suministrada por la Superintendencia Financiera de Colombia.  La TRM del fin de semana y los lunes festivos, será la del viernes anterior.
   • Los fletes para las exportaciones  marítimas se liquidaran a la  TRM de la  fecha  de  pago +  30  pesos colombianos,  siempre  y cuando esta  no sea inferior  a la  TRM de  referencia de la  fecha  de  emisión de la  factura.  COLTRANS  S.A.S.,  se  reserva  el  derecho  de  solicitar  un  ajuste  en  caso  de  que  la  fluctuación  de  la  moneda  supere  tasas  impredecibles.
   • Las tarifas de fletes ofrecidas se deben  entender libres  de  cargue  y  descargue de las  mercancías.
   • Los  costos adicionales  que  se  generen  durante  el  manejo  de la operación y  que  no hayan sido  cotizados  serán  asumidos por el  exportador.
@@ -157,15 +157,10 @@ seguroTitulo: NOTAS DE SEGURO DE TRANSPORTE Y ADMINISTRACION DE RIESGO
 seguro: | 
   Se asegura la carga de importación, exportación, despachos nacionales o urbanos, frente a los riesgos propios del transporte de mercancías.
   1. EL VALOR ASEGURADO: deberá corresponder al valor real de la carga, es decir, su componente de costos: factura comercial, fletes internacionales, fletes nacionales, tributos aduaneros (el IVA sólo se incluye en el componente de costos cuando éste no es descontable).
-
   Los factores de costos diferentes a los anteriores no se deben considerar como valor asegurado, pero se pueden amparar bajo el rubro de GASTOS ADICIONALES
-
   2. TRAYECTO ASEGURADO: Se asegura " bodega-bodega" , es decir, desde el momento que el asegurado recibe la carga y asume la responsabilidad sobre ella, hasta su destino final en bodegas. El verdadero alcance de ese trayecto será definido por los términos de negociación INCOTERMS 2010 y el INTERÉS ASEGURABLE existente sobre la carga. Se incluyen las operaciones de cargue y descargue.
-
   Se excluyen destinos finales o puertos de origen de los siguientes países: Burma (Myanmar), Cuba, Irán, Irak, Liberia, Corea del Norte, Sudan, Siria, Zimbabwe, y países que eventualmente puedan ser excluidos por las leyes de los EE.UU.
-
   3. BIENES EXCLUIDOS: documentos o títulos valores, efectos personales o menaje doméstico, avería particular para maquinaria usada, obras de arte, semovientes, animales en general, graneles, azúcar, joyas, dinero en efectivo, monedas, valores y títulos valores, bonos cédulas hipotecarias, estampillas de timbre o correo, cartas, mapas o planos, perecederos que no cumplan con la cláusula de bienes transportados en condiciones especiales de refrigeración, congelación o calefacción.
-
   4. AMPAROS
       • Cobertura completa: amparo básico, falta de entrega, avería particular (se excluye para maquinaria o mercancía usada), saqueo (se
         excluye para maquinaria o mercancía usada), huelga (trayectos interiores). Incluye la cobertura de terrorismo y guerra.
@@ -181,11 +176,8 @@ seguro: |
       • Errores o faltas en el despacho, o pérdidas y/o daños por envío de bienes en mal estado.
       • Demoras en la entrega y pérdidas de mercado.
       • Mal empaque de las mercancías cuando el asegurado tiene el control sobre el mismo.
-
   5. DEDUCIBLES: No se aceptan reclamaciones menores a 2,5 SMMLV (Salario mínimo mensual legal vigente).
-      
   6. MERCANCÍAS DE ALTO RIESGO: Llantas y neumáticos, algodón en pacas, productos biomédicos, teléfonos celulares o equivalentes, juegos de video, instrumentos musicales, software de videos, pieles, cigarrillos, licores, cervezas, vinos, productos farmacéuticos y veterinarios, vehículos de cualquier clase, incluyendo botes o aviones, incluyendo los movilizados por sus propios medios, repuestos automotores, Material CKD, Zinc, cobre o aluminio, perfumes, colonias y productos similares (incluyendo productos de aseo personal), Electrodomésticos, sus partes, accesorios o repuestos para los mismos, libros e impresos y textos escolares, pinturas, alimentos enlatados, leche en polvo, polipropileno, polietileno y látex en bruto o a granel, equipos de computo y/o componentes o accesorios, calzado, textiles, confecciones y cueros en productos terminados, juguetería, café y sus derivados, papel y/o productos elaborados con pulpa de papel tales como: papel higiénico, servilletas, toallas para cocina, toallas sanitarias y pañales desechables.
-
   7. EXCLUSIONES: Se considerarán excluidos los despachos que no cumplan las siguientes condiciones:
     A. Exclusiones por falta de acompañamiento vehicular: será obligatorio el uso de acompañantes vehiculares para los siguientes despachos dentro del territorio nacional:
       a) Mercancía de alto riesgo; despachos con un valor asegurable superior a
@@ -198,7 +190,6 @@ seguro: |
       funcionar según su naturaleza, con su respectivo conductor, el cual tiene como obligación acompañar al vehículo que transporta
       las mercancías durante todo el trayecto, es decir, desde el sitio del despacho hasta su destino final, en orden a cumplir a cabalidad 
       la función de custodia, control y cuidado que su labor profesional les exige.
-
       La firma que se utilice para el acompañamiento deberá cumplir con los siguientes requisitos:
       • No ser personal armado.
       • Viajar en un vehículo diferente
@@ -213,16 +204,14 @@ seguro: |
        • Copia de la póliza de transporte.
     C. Subrogación: estarán excluidos los despachos donde EL ASEGURADO renuncie a cualquier forma de subrogación sobre los responsables
         de un siniestro.
-
     Si se realizan despachos sin el cumplimiento de los anteriores requisitos, se considerará como un riesgo excluido y la Aseguradora no
     tendrá responsabilidad alguna en caso de siniestro.
-
   8. CLAUSULAS ADICIONALES:
       • La carga debe viajar con su valor declarado al 100% al transportista
       • Dejar en el documento de transporte constancia de la cantidad, estado y condición de los bienes a su recibo
       • No pernoctar en carreteras ni en despoblado
       • El embalaje de la mercancía debe cumplir con las normas internacionales
-  
   9. SINIESTRO: debe ser reportado a seguros@coltrans.com.co a más tardar 36 Horas después de la ocurrencia del mismo.
+  10. DERECHOS SOBRE SALVAMENTO: Cuando el Asegurado sea indemnizado, los bienes salvados o recuperados quedarán de propiedad de la Compañía de seguros. El Asegurado podrá participar y tendrá la primera opción sobre la venta del salvamento
 
   Para asegurar las mercancías es necesaria la instrucción por escrito.
