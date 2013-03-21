@@ -51,6 +51,10 @@ Ids:
       local: ca_id
       foreign: ca_id
       type: many
+    IdsSeguimiento:
+      local: ca_id
+      foreign: ca_id
+      type: many
     IdsTipoIdentificacion:
       local: ca_tipoidentificacion
       foreign: ca_tipoidentificacion
@@ -642,3 +646,38 @@ IdsCliente:
       local: ca_idcliente
       foreign: ca_idcliente
       type: one
+
+
+IdsSeguimiento:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: ids
+  tableName: ids.tb_seguimientos
+  columns:
+    ca_idseguimiento:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_id: integer
+    ca_fchseguimiento: timestamp
+    ca_tipo: string
+    ca_asunto: string
+    ca_detalle: string
+    ca_compromisos: string
+    ca_fchcompromiso: timestamp
+    ca_idantecedente: integer
+    ca_usuario: string
+    ca_usucreado: string
+    ca_fchcreado: timestamp
+  relations:
+    Ids:
+      local: ca_id
+      foreign: ca_id
+      type: one
+    Usuario:
+      local: ca_usuario
+      foreign: ca_login
+      type: one
+
