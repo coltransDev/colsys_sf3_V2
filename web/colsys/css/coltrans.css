@@ -1054,3 +1054,102 @@ body.ext-ie6 .x-superboxselect-item {margin: 2px 1px 2px 1px; line-height: 1.2em
 	background: url('../images/24x24/ico-transp.jpg') no-repeat 0px 0px !important;
 }
 
+
+.nivel2-notahijo {
+    background: url("../images/auditoria/notahija.png") no-repeat scroll 0 0 transparent !important;
+    padding-left: 29px;
+}
+.nivel3-notahijo {
+    background: url("../images/auditoria/notahija.png") no-repeat scroll 15px 0 transparent !important;
+    padding-left: 44px;
+}
+.nivel4-notahijo {
+    background: url("../images/auditoria/notahija.png") no-repeat scroll 30px 0 transparent !important;
+    padding-left: 59px;
+}
+.nivel5-notahijo {
+    background: url("../images/auditoria/notahija.png") no-repeat scroll 45px 0 transparent !important;
+    padding-left: 74px;
+}
+.nivel6-notahijo {
+    background: url("../images/auditoria/notahija.png") no-repeat scroll 60px 0 transparent !important;
+    padding-left: 89px;
+}
+.nivel7-notahijo {
+    background: url("../images/auditoria/notahija.png") no-repeat scroll 75px 0 transparent !important;
+    padding-left: 104px;
+}
+.nivel8-notahijo {
+    background: url("../images/auditoria/notahija.png") no-repeat scroll 90px 0 transparent !important;
+    padding-left: 119px;
+}
+.nivel9-notahijo {
+    background: url("../images/auditoria/notahija.png") no-repeat scroll 105px 0 transparent !important;
+    padding-left: 134px;
+}
+.nivel10-notahijo {
+    background: url("../images/auditoria/notahija.png") no-repeat scroll 120px 0 transparent !important;
+    padding-left: 149px;
+}
+.nivel2-tareahijo {
+    background: url("../images/auditoria/tareahija.png") no-repeat scroll 0 0 transparent !important;
+    padding-left: 29px;
+}
+.nivel3-tareahijo {
+    background: url("../images/auditoria/tareahija.png") no-repeat scroll 15px 0 transparent !important;
+    padding-left: 44px;
+}
+.nivel4-tareahijo {
+    background: url("../images/auditoria/tareahija.png") no-repeat scroll 30px 0 transparent !important;
+    padding-left: 59px;
+}
+.nivel5-tareahijo {
+    background: url("../images/auditoria/tareahija.png") no-repeat scroll 45px 0 transparent !important;
+    padding-left: 74px;
+}
+.nivel6-tareahijo {
+    background: url("../images/auditoria/tareahija.png") no-repeat scroll 60px 0 transparent !important;
+    padding-left: 89px;
+}
+.nivel7-tareahijo {
+    background: url("../images/auditoria/tareahija.png") no-repeat scroll 75px 0 transparent !important;
+    padding-left: 104px;
+}
+.nivel8-tareahijo {
+    background: url("../images/auditoria/tareahija.png") no-repeat scroll 90px 0 transparent !important;
+    padding-left: 119px;
+}
+.nivel9-tareahijo {
+    background: url("../images/auditoria/tareahija.png") no-repeat scroll 105px 0 transparent !important;
+    padding-left: 134px;
+}
+.nivel10-tareahijo {
+    background: url("../images/auditoria/tareahija.png") no-repeat scroll 120px 0 transparent !important;
+    padding-left: 149px;
+}
+
+.report-add {
+    background: url("../images/fam/report_add.png") no-repeat scroll 0 0 transparent !important;
+}
+.event-add {
+    background: url("../images/fam/calendar_add.png") no-repeat scroll 0 0 transparent !important;
+}
+.event-edit {
+    background: url("../images/fam/calendar_edit.png") no-repeat scroll 0 0 transparent !important;
+}
+.event-close {
+    background: url("../images/fam/calendar_link.png") no-repeat scroll 0 0 transparent !important;
+}
+.report-close {
+    background: url("../images/fam/report_link.png") no-repeat scroll 0 0 transparent !important;
+}
+.report-edit {
+    background: url("../images/fam/report_edit.png") no-repeat scroll 0 0 transparent !important;
+}
+.note-add {
+    background: url("../images/fam/note_add.png") no-repeat scroll 0 0 transparent !important;
+}
+.note-edit {
+    background: url("../images/fam/note_edit.png") no-repeat scroll 0 0 transparent !important;
+}
+
