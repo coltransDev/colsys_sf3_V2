@@ -669,8 +669,11 @@ IdsSeguimiento:
     ca_fchcompromiso: timestamp
     ca_idantecedente: integer
     ca_usuario: string
+    ca_fchpublicado: timestamp
     ca_usucreado: string
     ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
   relations:
     Ids:
       local: ca_id
