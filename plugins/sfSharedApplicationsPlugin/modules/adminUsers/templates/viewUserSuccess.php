@@ -48,7 +48,7 @@
                 <td align="left">Empresa:</td><td align="left"><b><?=($user->getSucursal()->getEmpresa()->getCaNombre())?></b></td>
             </tr>
             <tr>
-                <td align="left">Tel. Oficina:</td><td align="left"><b><?=($user->getCaTeloficina().' '.$user->getCaExtension())?></b></td>
+                <td align="left">Tel. Oficina:</td><td align="left"><b><?=($user->getSucursal()->getCaTelefono().' Ext. '.$user->getCaExtension())?></b></td>
             </tr>
             <tr>
                 <td align="left">Departamento:</td><td align="left"><b><?=$user->getCaDepartamento()?></b></td>

@@ -5,8 +5,10 @@ $sucursales = $sf_data->getRaw("sucursales");
 $departamentos = $sf_data->getRaw("departamentos");
 $cargos = $sf_data->getRaw("cargos");
 $jefes = $sf_data->getRaw("jefes");
-$teloficinas = $sf_data->getRaw("teloficinas");
+//$teloficinas = $sf_data->getRaw("teloficinas");
 //$hijos = $sf_data->getRaw("hijos");
+
+//echo $nivel;
 
 ?>
 <script language="javascript" type="text/javascript">
@@ -217,31 +219,40 @@ $teloficinas = $sf_data->getRaw("teloficinas");
                     <div class="tab-page">
                         <h2 class="tab">Laboral</h2>
 						<table width="100%" cellspacing="0"  class="tableList alignLeft">
+                            <tr class="row2" >
+								<td colspan="3">
+									<div align="left">  
+										<b>Informaci&oacute;n Laboral</b>
+									</div>
+								</td>
+                            </tr>
 							<tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
 										<b>Login</b>
 									</div>
 								</td>
 								<td>
 									<div align="left">
-										<?
+<?
 										if( $usuario->getCaLogin() ){
-											 ?>
+?>
 											<input type="hidden" name="login" value="<?=$usuario->getCaLogin()?>" />
-											<?
+<?
 											echo $usuario->getCaLogin();
 										}else{
-										?>
+?>
 											<input type="text" name="login" value="<?=$usuario->getCaLogin()?>" />
-										<?
+<?
 										}
-										?>
+?>
 									</div>
 								</td>
 							</tr>
 							<tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
 										<b>Nombres</b>
 									</div>
@@ -253,7 +264,8 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
 							</tr>
 							<tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
 										<b>Apellidos</b>
 									</div>
@@ -265,7 +277,8 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
 							</tr>
                             <tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
 										<b>Nombre para mostrar</b>
 									</div>
@@ -277,7 +290,8 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
 							</tr>
 							<tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
 										<b>Empresa</b>
 									</div>
@@ -285,24 +299,22 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								<td>
 									<div align="left">
 										<select name="empresa" id="empresa" <?if($nivel==0){?>disabled="disabled"<?}?> onChange="cambiarValores('<?=$usuario->getCaIdsucursal()?>','<?=$usuario->getCaDepartamento()?>','<?=$usuario->getCaCargo()?>','<?=$usuario->getCaManager()?>')">
-											<?
+<?
 											foreach( $empresas as $empresa ){
-                                               
-                                            
-											?>
-											<option value="<?=$empresa->getCaIdempresa()?>" <?=$usuario->getSucursal()->getEmpresa()->getCaNombre()==$empresa->getCaNombre()?'selected="selected"':''?> >
-                                                    <?=$empresa->getCaNombre()?>
-                                            </option>
-											<?
+?>
+                                                <option value="<?=$empresa->getCaIdempresa()?>" <?=$usuario->getSucursal()->getEmpresa()->getCaNombre()==$empresa->getCaNombre()?'selected="selected"':''?> >
+                                                        <?=$empresa->getCaNombre()?>
+                                                </option>
+<?
 											}
-											?>
+?>
 										</select>
-										<!--<input type="text" name="empresa" value="<?//=$usuario->getCaEmpresa()?>"/>-->
 									</div>
 								</td>
 							</tr>
 							<tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
 										<b>Sucursal</b>
 									</div>
@@ -315,7 +327,8 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
 							</tr>
 							<tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
 										<b>Departamento</b>
 									</div>
@@ -323,13 +336,13 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								<td>
 									<div align="left">
 										<select name="departamento" id="departamento" <?if($nivel==0){?>disabled="disabled"<?}?> onChange="cambiarValoresManager('<?=$usuario->getCaManager()?>')">
-												
 										</select>
 									</div>
 								</td>
 							</tr>
 							<tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
 										<b>Cargo</b>
 									</div>
@@ -342,7 +355,8 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
 							</tr>
 							<tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
 										<b>Jefe Directo</b>
 									</div>
@@ -355,19 +369,8 @@ $teloficinas = $sf_data->getRaw("teloficinas");
                                 </td>
 							</tr>
 							<tr class="row0">
-								<td>
-									<div align="left">
-										<b>Correo Electr&oacute;nico</b>
-									</div>
-								</td>
-								<td>
-									<div align="left">
-										<input <?if($nivel==0){?>disabled="disabled"<?}?> type="text" name="email" value="<?=$usuario->getCaEmail()?>" size="40" />
-									</div>
-								</td>
-							</tr>
-							<tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
 										<b>Fecha de Ingreso</b>
 									</div>
@@ -377,27 +380,28 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
 							</tr>
 							<tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
 										<b>Tel. Oficina</b>
 									</div>
 								</td>
 								<td>
 									<div align="left">
-										<select name="teloficina"                    >
 											<?
-											foreach( $teloficinas as $teloficina ){
+											//foreach( $teloficinas as $teloficina ){
 											?>
-											<option value="<?=$teloficina['u_ca_teloficina']?>"<?=$usuario->getCaTeloficina()==$teloficina['u_ca_teloficina']?'selected="selected"':''?> > <?=($teloficina['u_ca_teloficina'])?></option>
+                                                <!--<option value="<?//=$teloficina['u_ca_teloficina']?>"<?//=$usuario->getCaTeloficina()==$teloficina['u_ca_teloficina']?'selected="selected"':''?> > <?//=($teloficina['u_ca_teloficina'])?></option>-->
 											<?
-											}
+											//}                                            
 											?>
-										</select>
+                                        <input type="text" name="teloficina" disabled="disabled" value="<?=$usuario->getSucursal()->getCaTelefono()?>"/>
 									</div>
 								</td>
 							</tr>
                             <tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
 										<b>Extensi&oacute;n:</b>
 									</div>
@@ -412,7 +416,8 @@ $teloficinas = $sf_data->getRaw("teloficinas");
                             if(!$nivel==0){
                             ?>
 							<tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
 										<b>Foto</b>
 									</div>
@@ -432,16 +437,17 @@ $teloficinas = $sf_data->getRaw("teloficinas");
                         <h2 class="tab">Personal</h2>
 						<table width="100%" cellspacing="0"  class="tableList alignLeft">
                             <tr class="row2" >
-								<td colspan="2">
+								<td colspan="3">
 									<div align="left">  
 										<b>Datos Personales</b>
 									</div>
 								</td>
                             </tr>
 							<tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
-                                        <b>&nbsp;&nbsp;&nbsp;Documento de Identidad</b>
+                                        <b>Documento de Identidad</b>
 									</div>
 								</td>
 								<td>
@@ -450,22 +456,11 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 									</div>
 								</td>
 							</tr>
-                            <tr class="row0">
-								<td>
-									<div align="left">  
-										<b>&nbsp;&nbsp;&nbsp;M&oacute;vil</b>
-									</div>
-								</td>
-								<td>
-									<div align="left">
-										<input type="text" name="movil" value="<?=$usuario->getCaMovil()?>" />
-									</div>
-								</td>
-							</tr>
 							<tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
-										<b>&nbsp;&nbsp;&nbsp;Fecha de Nacimiento</b>
+										<b>Fecha de Nacimiento</b>
 									</div>
 								</td>
 								<td>
@@ -473,9 +468,10 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
 							</tr>
 							<tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
-										<b>&nbsp;&nbsp;&nbsp;Direcci&oacute;n Particular</b>
+										<b>Direcci&oacute;n Particular</b>
 									</div>
 								</td>
 								<td>
@@ -485,9 +481,10 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
 							</tr>
 							<tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
-											<b>&nbsp;&nbsp;&nbsp;Tel. Particular:</b>
+											<b>Tel. Particular:</b>
 									</div>
 								</td>
 								<td>
@@ -497,9 +494,23 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
 							</tr>
                             <tr class="row0">
+                                <td>&nbsp;</td>
+								<td width="40%">
+									<div align="left">  
+										<b>M&oacute;vil</b>
+									</div>
+								</td>
 								<td>
 									<div align="left">
-											<b>&nbsp;&nbsp;&nbsp;Estrato:</b>
+										<input type="text" name="movil" value="<?=$usuario->getCaMovil()?>" />
+									</div>
+								</td>
+							</tr>
+                            <tr class="row0">
+                                <td>&nbsp;</td>
+								<td width="40%">
+									<div align="left">
+											<b>Estrato:</b>
 									</div>
 								</td>
 								<td>
@@ -508,7 +519,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 											<?
 											for( $i=1; $i<7;$i++){
 											?>
-											<option value="<?=$i?>"<?=$usuario->getCaEstrato()==$i?'selected':''?> >    <?=($i)?></option>
+                                                <option value="<?=$i?>"<?=$usuario->getCaEstrato()==$i?'selected':''?> >    <?=($i)?></option>
 											<?
 											}
 											?>
@@ -516,17 +527,35 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 									</div>
 								</td>
 							</tr>
+                            <tr class="row0">
+                                <td>&nbsp;</td>
+								<td width="40%">
+									<div align="left">  
+										<b>Sexo</b>
+									</div>
+								</td>
+								 <td>
+									<div align="left">
+										<select name="sexo" id="sexo">
+                                            <option value="" <?=$usuario->getCaSexo()==""?'selected="selected"':''?>></option>
+											<option value="F" <?=$usuario->getCaSexo()=="F"?'selected="selected"':''?>>Femenino</option>
+                                            <option value="M" <?=$usuario->getCaSexo()=="M"?'selected="selected"':''?>>Masculino</option>
+                                        </select>
+									</div>
+								</td>
+							</tr>
 							<tr class="row2" >
-								<td colspan="2">
+                                <td colspan="3">
 									<div align="left">  
 										<b>Escolaridad</b>
 									</div>
 								</td>
                             </tr>
                             <tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
-											<b>&nbsp;&nbsp;&nbsp;Nivel de Estudios:</b>
+											<b>Nivel de Estudios:</b>
 									</div>
 								</td>
                                 <td>
@@ -536,7 +565,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 											<?
 											foreach( $nivestudios as $nivestudio ){
 											?>
-											<option value="<?=$nivestudio->getCaValor()?>"<?=$usuario->getCaNivestudios()==$nivestudio->getCaValor()?'selected="selected"':''?> > <?=($nivestudio->getCaValor())?></option>
+                                                <option value="<?=$nivestudio->getCaValor()?>"<?=$usuario->getCaNivestudios()==$nivestudio->getCaValor()?'selected="selected"':''?> > <?=($nivestudio->getCaValor())?></option>
 											<?
 											}
 											?>
@@ -545,16 +574,17 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
                             </tr>
                             <tr class="row2" >
-								<td colspan="2">
+								<td colspan="3">
 									<div align="left">  
 										<b>Brigada de Emergencia</b>
 									</div>
 								</td>
                             </tr>
                             <tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
-										<b>&nbsp;&nbsp;&nbsp;Tipo de Sangre</b>
+										<b>Tipo de Sangre</b>
 									</div>
 								</td>
 								<td>
@@ -563,7 +593,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 											<?
 											foreach( $tiposangre as $sangre ){
 											?>
-											<option value="<?=$sangre['ca_tiposangre']?>"<?=$usuario->getCaTiposangre()==$sangre['ca_tiposangre']?'selected="selected"':''?> > <?=($sangre['ca_tiposangre'])?></option>
+                                                <option value="<?=$sangre['ca_tiposangre']?>"<?=$usuario->getCaTiposangre()==$sangre['ca_tiposangre']?'selected="selected"':''?> > <?=($sangre['ca_tiposangre'])?></option>
 											<?
 											}
 											?>
@@ -572,9 +602,10 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
 							</tr>
                             <tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
-											<b>&nbsp;&nbsp;&nbsp;Donante de Sangre</b>
+											<b>Donante de Sangre</b>
 									</div>
 								</td>
 								<td>
@@ -584,9 +615,10 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
                             </tr>
                             <tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
-											<b>&nbsp;&nbsp;&nbsp;Padece alguna Enfermedad</b>
+											<b>Padece alguna Enfermedad</b>
 									</div>
 								</td>
 								<td>
@@ -596,22 +628,23 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
                             </tr>
                             <tr class="row0">
-                                <td>
+                                <td>&nbsp;</td>
+                                <td width="40%">
 									<div align="left">
-											<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Especifique</b>
+											<b>Especifique</b>
 									</div>
 								</td>
 								<td>
 									<div align="left">
-                                        <input type="text" name="enfermedad" id="enfermedad" value="<?=$usuario->getCaEnfermedad()?>" size="55" />
+                                        <input type="text" name="enfermedad" id="enfermedad" value="<?$usuario->getCaEnfermedad()?>" size="40" />
 									</div>
 								</td>
-                            
                             </tr>
                             <tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
-											<b>&nbsp;&nbsp;&nbsp;Alérgico algún medicamento</b>
+											<b>Alérgico algún medicamento</b>
 									</div>
 								</td>
 								<td>
@@ -621,17 +654,17 @@ $teloficinas = $sf_data->getRaw("teloficinas");
                                 </td>
                             </tr>
                             <tr class="row0">
-                                <td>
+                                <td>&nbsp;</td>
+                                <td width="40%">
 									<div align="left">
-											<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Especifique</b>
+											<b>Especifique</b>
 									</div>
 								</td>
 								<td>
 									<div align="left">
-										<input type="text" name="alergico" id="alergico" disabled="disabled" value="<?=$usuario->getCaAlergico()?>" size="55"/>
+										<input type="text" name="alergico" id="alergico" disabled="disabled" value="<?=$usuario->getCaAlergico()?>" size="40"/>
 									</div>
 								</td>
-                            
                             </tr>
 					   </table>
                     </div>
@@ -655,7 +688,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
                                 
                                 <td>
 									<div align="left">
-                                        &nbsp;&nbsp;&nbsp;<b><?=$hijo['h_ca_nombres'];?></b>
+                                        <b><?=$hijo['h_ca_nombres'];?></b>
                                     </div>
                                 </td>
                                 <td>
@@ -667,7 +700,7 @@ $teloficinas = $sf_data->getRaw("teloficinas");
                                         $edad_meses = $edad_dias/30;
                                         $edad_años = $edad_meses/12;
                                         ?>
-                                        &nbsp;&nbsp;&nbsp;<?=$edad_meses<12?round($edad_meses)." meses":floor($edad_años)." años";?>
+                                        <?=$edad_meses<12?round($edad_meses)." meses":floor($edad_años)." años";?>
                                     </div>
                                 </td>
                             </tr>
@@ -675,16 +708,17 @@ $teloficinas = $sf_data->getRaw("teloficinas");
                             }*/
                             ?>                             
                             <tr class="row2" >
-								<td colspan="2">
+								<td colspan="3">
 									<div align="left">  
 										<b>Contacto</b>
 									</div>
 								</td>
                             </tr>
                             <tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
-											<b>&nbsp;&nbsp;&nbsp;Familiar de Contacto:</b>
+											<b>Familiar de Contacto:</b>
 									</div>
 								</td>
 								<td>
@@ -694,9 +728,10 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
 							</tr>
 							<tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
-											<b>&nbsp;&nbsp;&nbsp;Tel. Familiar:</b>
+											<b>Tel. Familiar:</b>
 									</div>
 								</td>
 								<td>
@@ -706,9 +741,10 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
 							</tr>
                             <tr class="row0">
-								<td>
+                                <td>&nbsp;</td>
+								<td width="40%">
 									<div align="left">
-											<b>&nbsp;&nbsp;&nbsp;Parentesco:</b>
+											<b>Parentesco:</b>
 									</div>
 								</td>
 								<td>
@@ -725,7 +761,6 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 									</div>
 								</td>
 							</tr>
-                            
                          </table>
                     </div>                    
                     <?
@@ -734,8 +769,16 @@ $teloficinas = $sf_data->getRaw("teloficinas");
                     <div class="tab-page">
 						<h2 class="tab">Sistemas</h2>
 						<table width="100%" cellspacing="0"  class="tableList alignLeft">
+                            <tr class="row2" >
+								<td colspan="3">
+									<div align="left">  
+										<b>COLSYS</b>
+									</div>
+								</td>
+                            </tr>
 							<tr class="row0">
-								<td>
+								<td>&nbsp;</td>
+                                <td width="40%">
 									<div align="left">
 										<b>Metodo de autenticaci&oacute;n:</b>
 									</div>
@@ -750,7 +793,8 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
 							</tr>
 							<tr class="row0">
-								<td>
+								<td>&nbsp;</td>
+                                <td width="40%">
 									<div align="left">
 											<b>Contrase&ntilde;a (Dejar en blanco para mantener actual)</b>
 									</div>
@@ -762,7 +806,8 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
 							</tr>
 							<tr class="row0">
-								<td>
+								<td>&nbsp;</td>
+                                <td width="40%">
 									<div align="left">
 											<b>Confirmaci&oacute;n Contrase&ntilde;a</b>
 									</div>
@@ -774,7 +819,8 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
 							</tr>
 							<tr class="row0">
-								<td>
+								<td>&nbsp;</td>
+                                <td width="40%">
 									<div align="left">
 											<b>Forzar cambio en el proximo inicio de sesión</b>
 									</div>
@@ -786,7 +832,8 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								</td>
 							</tr>
 							<tr class="row0">
-								<td>
+								<td>&nbsp;</td>
+                                <td width="40%">
 									<div align="left">
 											<b>Activo</b>
 									</div>
@@ -796,8 +843,36 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 										<input type="checkbox" name="activo" id="activo"  <?=($usuario->getCaActivo()||!$usuario->getCaLogin())?'checked="checked"':''?> <?if(!($nivel==3)){?>disabled="disabled"<?}?>/>
 									</div>
 								</td>
+                            </tr>
                             <tr class="row0">
+								<td>&nbsp;</td>
+                                <td width="40%">
+									<div align="left">
+											<b>Fecha y Usuario de creaci&oacute;n</b>
+									</div>
+								</td>
 								<td>
+                                    <div align="left">
+										<?=$usuario->getCaFchcreado()?>&nbsp;&nbsp;<?=$usuario->getCaUsucreado()?>
+									</div>
+								</td>
+                            </tr>
+                            <tr class="row0">
+								<td>&nbsp;</td>
+                                <td width="40%">
+									<div align="left">
+											<b>Fecha y Usuario de Actualizaci&oacute;n</b>
+									</div>
+								</td>
+								<td>
+                                    <div align="left">
+										<?=$usuario->getCaFchactualizado()?>&nbsp;&nbsp;<?=$usuario->getCaUsuactualizado()?>
+									</div>
+								</td>
+                            </tr>
+                            <tr class="row0">
+								<td>&nbsp;</td>
+                                <td width="40%">
 									<div align="left">
 											<b>Ultimo Cambio de Contrase&ntilde;a</b>
 									</div>
@@ -809,8 +884,10 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 									</div>
                                     <?}?>
 								</td>
-                                <tr class="row0">
-								<td>
+                            </tr>
+                            <tr class="row0">
+								<td>&nbsp;</td>
+                                <td width="40%">
 									<div align="left">
 											<b>Pr&oacute;ximo Cambio de Contrase&ntilde;a</b>
 									</div>
@@ -818,6 +895,39 @@ $teloficinas = $sf_data->getRaw("teloficinas");
 								<td>
                                     <div align="left">
 										<?=$usuario->getCaFchvencimiento()?>
+									</div>
+								</td>
+							</tr>
+                            <tr class="row2" >
+								<td colspan="3">
+									<div align="left">  
+										<b>GOOGLE APPS</b>
+									</div>
+								</td>
+                            </tr>
+                            <tr class="row0">
+								<td>&nbsp;</td>
+                                <td width="40%">
+									<div align="left">
+										<b>Correo Electr&oacute;nico</b>
+									</div>
+								</td>
+								<td>
+									<div align="left">
+										<input <?if($nivel==0){?>disabled="disabled"<?}?> type="text" name="email" value="<?=$usuario->getCaEmail()?>" size="40" />
+									</div>
+								</td>
+							</tr>
+                            <tr class="row0">
+								<td>&nbsp;</td>
+                                <td width="40%">
+									<div align="left">
+										<b>Clave Email</b>
+									</div>
+								</td>
+								<td>
+									<div align="left">
+										<input type="password" name="clave_email" id="clave_email" Autocomplete="off" <?if(!($nivel==3)||!($usuario->getCaEmail())||$usuario->getCaMailpasw()){?>disabled="disabled"<?}?> />
 									</div>
 								</td>
 							</tr>
@@ -846,4 +956,3 @@ $teloficinas = $sf_data->getRaw("teloficinas");
     showFieldsAle(document.getElementById('chk_alergico'));
     cambiarValores('<?=$usuario->getCaIdsucursal()?>','<?=$usuario->getCaDepartamento()?>','<?=$usuario->getCaCargo()?>','<?=$usuario->getCaManager()?>');
 </script>
-
