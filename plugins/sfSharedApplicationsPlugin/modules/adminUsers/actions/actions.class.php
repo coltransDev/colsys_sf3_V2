@@ -195,47 +195,23 @@ class adminUsersActions extends sfActions {
                         ->execute();
 
         $m = Doctrine::getTable('Usuario')
-                        ->createQuery('u')
-                        ->addWhere('u.ca_activo = ?', true);
-
+            ->createQuery('u')
+            ->addWhere('u.ca_activo = ?', true);
         $this->users = $m->execute();
 
         $p = Doctrine_Manager::getInstance()->connection();
         $query = "SELECT DISTINCT ca_tiposangre";
         $query.= "	from control.tb_usuarios";
         $query.= "  order by ca_tiposangre ASC";
-
         $this->tiposangre = $p->execute($query);
 
-
-
-
         $this->parentescos = ParametroTable::retrieveByCaso('CU093');
-
-        
-                
-        $this->teloficinas = Doctrine::getTable("Usuario")
-                    ->createQuery("u")
-                    ->distinct()
-                    ->select("ca_teloficina")
-                    ->addOrderBy("ca_teloficina ASC")
-                    ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                    ->execute();
-        
         $this->nivestudios = ParametroTable::retrieveByCaso('CU105');
-
-        
-        //$this->manager=Doctrine::getTable('Usuario')->find($request->getParameter('login'));
-        //$this->manager = $this->manager->getManager();
-        //$this->usuarios = $this->manager->getSubordinado();
-        //$this->manager = $this->manager->getManager();
-       
-       
+        $this->sexo = array("F","M");
         
         $response = sfContext::getInstance()->getResponse();
         $response->addJavaScript("tabpane/tabpane", 'last');
         $response->addStylesheet("tabpane/luna/tab", 'last');
-        
         
     }
     
@@ -405,7 +381,15 @@ class adminUsersActions extends sfActions {
         if ($request->getParameter("email")) {
             $usuario->setCaEmail($request->getParameter("email"));
         }
-
+        
+        if ($request->getParameter("clave_email")) {
+            $pasw = $request->getParameter("clave_email");
+            $key = hash("md5", uniqid(rand(), true));            
+            $usuario->setCaKeypass($key);
+            $clave = $usuario->getEncrypt($pasw, $key);
+            $usuario->setCaMailpasw($clave);
+        }
+        
         if ($request->getParameter("extension")) {
             $usuario->setCaExtension($request->getParameter("extension"));
         }
@@ -420,12 +404,12 @@ class adminUsersActions extends sfActions {
         }
         
         
-        
         if( $this->nivel>=3 ){
             if ($request->getParameter("activo")) {
                 $usuario->setCaActivo(true);
-            } else {
+            }else{
                 $usuario->setCaActivo(false);
+                $usuario->emailInactivo($request->getParameter("login"), $conn);
             }
 
             if ($request->getParameter("forcechange")) {
@@ -503,11 +487,11 @@ class adminUsersActions extends sfActions {
                 $usuario->setCaApellidos( null );
             }
 
-            if ($request->getParameter("teloficina")) {
+            /*if ($request->getParameter("teloficina")) {
                 $usuario->setCaTeloficina($request->getParameter("teloficina"));
             }else{
                 $usuario->setCaTeloficina( null );
-            }
+            }*/
             
             
         }
@@ -618,73 +602,71 @@ class adminUsersActions extends sfActions {
         $conn->beginTransaction();
         
         $this->usuario = $usuario;
+        $login = $usuario->getCaLogin();
+        $idempresa = $usuario->getSucursal()->getEmpresa()->getCaIdempresa();
+        
         //Reporta al Jefe Administrativo el cambio de dirección de un empleado
         //Reporta al Administrador SGCSC el ingreso de un nuevo trabajador a la intranet
         if ($nuevo == 0) {
             if ($direccion != $usuario->getCaDireccion()) {
                 $user = Doctrine::getTable('Usuario')->find($this->getUser()->getUserId());
+                
+                $logo = $user->getLogoHtml($idempresa);
 
                 $email = new Email();
                 $email->setCaUsuenvio($this->getUser()->getUserId());
-                $email->setCaTipo("Cambio de Direccion"); //Envío de Avisos
+                $email->setCaTipo("Cambio de Direccion");
                 $email->setCaIdcaso(null);
-
                 $email->setCaFrom($user->getCaEmail());
-
                 $email->setCaFromname($user->getCaNombre());
-
                 $email->setCaReplyto($user->getCaEmail());
+                $email->setCaSubject("CAMBIO DE DIRECCION"."->".$user->getCaNombres()." ".$user->getCaApellidos());
 
                 foreach ($recips as $recip) {
                     if ($recip->getCaEmail()) {
                         $email->addTo(str_replace(" ", "", $recip->getCaEmail()));
                     }
                 }
-
-                $texto = 'El usuario ' . $usuario->getCaNombre() . ' cambió de dirección. Direccion Antigua: ' . $direccion . '   Direccion nueva: ' . $usuario->getCaDireccion();
-                $email->setCaSubject('Cambio de Direccion');
-                $email->setCaBody($texto);
-                $email->setCaBodyhtml(Utils::replace($texto));
-                $email->save( $conn );
-
-                $cambiodireccion = $cambiodireccion + 1;
                 
+                //$texto = 'El usuario ' . $usuario->getCaNombre() . ' cambió de dirección. Direccion Antigua: ' . $direccion . '   Direccion nueva: ' . $usuario->getCaDireccion();
+                $request->setParameter('direccion', $direccion);
+                $request->setParameter('login', $login);
+                $request->setParameter("format", "email" );	
+                $request->setParameter("asunto", "address");
+                $request->setParameter('logo', $logo);
+                $texto= sfContext::getInstance()->getController()->getPresentationFor( 'adminUsers', 'emailIntranet');
+                
+                $email->setCaBodyhtml($texto);
+                $email->save( $conn );
+                $email->send();
+
+                $cambiodireccion = $cambiodireccion + 1;                
             }
         }else{
-            
-                $filename = "Usuarios" . DIRECTORY_SEPARATOR . $usuario->getCaLogin() . DIRECTORY_SEPARATOR . "foto120x150.jpg";
-                
-                //echo $filename . "<br />";
-            
-                $email = new Email();
-                $email->setCaUsuenvio($this->getUser()->getUserId());
-                $email->setCaTipo("Nuevo Empleado");
-                $email->setCaIdcaso(null);
-                $email->setCaFrom('alramirez@coltrans.com.co');
-                $email->setCaFromname('ANDREA RAMIREZ');                
-                $email->setCaAddress("alramirez@coltrans.com.co");
-                $email->setCaAttachment($filename);
-                $texto = "Se ha registrado un nuevo ingreso \n\n<br /><br />" ;
-                
-                /*$html ="<div>
-                <table class='tableList alignLeft'><tr><td>
-                <table class='tableList alignLeft' width='1000' >
-                <tr><th colspan='8'>Se ha registrado un nuevo ingreso</th></tr>";
-                $html."</table></td></tr></table></div>";*/
-                $login = $usuario->getCaLogin();
-    
-                $request->setParameter('login', $login);
-                //$request->setParameter('html', $html);
-                $request->setParameter("format", "email" );	
-                $request->setParameter("asunto", "ingreso");                
-                $texto.= sfContext::getInstance()->getController()->getPresentationFor( 'adminUsers', 'emailIntranet');                
-                
-                
-                $email->setCaSubject('Ingreso Nuevo Empleado '.$usuario->getSucursal()->getEmpresa()->getCaNombre()." ".$usuario->getSucursal()->getCaNombre());
-                $email->setCaBody($texto);
-                $email->setCaBodyhtml(Utils::replace($texto));
-                $email->save($conn);
-                $email->send();
+                if($idempresa == 1 || $idempresa == 2 || $idempresa == 8){
+                    $logo = $usuario->getLogoHtml($idempresa);
+                    
+                    $email = new Email();
+                    $email->setCaUsuenvio($this->getUser()->getUserId());
+                    $email->setCaTipo("Nuevo Colaborador");
+                    $email->setCaIdcaso(null);
+                    $email->setCaFrom('talentohumano@coltrans.com.co');
+                    $email->setCaFromname('TALENTO HUMANO');                
+                    $email->setCaAddress("empleados-nal@coltrans.com.co");
+                    $email->addTo("colmasnal@colmas.com.co");
+                    $email->addTo("colotmnal@colotm.com");                    
+                    $email->setCaSubject('Ingreso Nuevo Colaborador '.strtoupper($usuario->getSucursal()->getEmpresa()->getCaNombre())." ".$usuario->getSucursal()->getCaNombre());
+
+                    $request->setParameter('login', $login);
+                    $request->setParameter("format", "email" );	
+                    $request->setParameter("asunto", "ingreso");
+                    $request->setParameter('logo', $logo);
+                    $texto= sfContext::getInstance()->getController()->getPresentationFor( 'adminUsers', 'emailIntranet');                
+
+                    $email->setCaBodyhtml($texto);
+                    $email->save($conn);
+                    $email->send();
+                }
             
         }
         $conn->commit();
@@ -697,11 +679,13 @@ class adminUsersActions extends sfActions {
         
         $usuario = Doctrine::getTable("Usuario")->find($request->getParameter("login"));
         
-        $this->setLayout("email");
+        $this->setLayout("none");
+        
+        $this->asunto = $request->getParameter("asunto");
+        $this->direccion = $request->getParameter("direccion");
+        $this->logo = $request->getParameter("logo");
         
         $this->usuario = $usuario;
-         
-        
     }
 
     /*
