@@ -241,10 +241,10 @@ $pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+175, $y);
 //casilla 55
 $txt1=utf8_encode($reporte->getBodega()->getCaNombre()."/".$reporte->getBodega()->getCaTipo());
 $tam=  strlen($txt1);
-if($tam>75)
+if($tam>74)
 {
     $y=$y+5;
-    $txt=  substr($txt1, 0,75)."\n".substr($txt1, 75,$tam-75);
+    $txt=  substr($txt1, 0,74)."\n".substr($txt1, 74,$tam-74);
     $pdf->SetFont('helvetica', '', 8);
 }else
 {
