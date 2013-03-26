@@ -121,7 +121,7 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO){
             <td  colspan="6"><b>Notify</b></td>
         </tr>
         <tr>
-            <td colspan="6" <?=($comparar)? (($reporte->compDato("CaIdbotify")!=0)?"class='rojo'":"") :""?> >
+            <td colspan="6" <?=($comparar)? (($reporte->compDato("CaIdnotify")!=0)?"class='rojo'":"") :""?> >
                 <?
                 include_component("reportesNeg", "previewTercero", array("idtercero"=>$reporte->getCaIdnotify(), "reporte"=>$reporte));
                 ?>
