@@ -80,6 +80,46 @@
                     </div>
                 </td>
             </tr>
+            <?
+            if($reporte->getRepAntecedentes())
+            {
+            ?>
+            <tr class="row0">
+                <td width="20%">
+                    <div align="left">
+                        <b>Enviado por:</b><br />                        
+                        <?=$reporte->getRepAntecedentes()->getCaUsucreado()?> <?=$reporte->getRepAntecedentes()->getCaFchcreado() ?>
+                    </div>
+                </td>
+                <td colspan="<?=($reporte->getRepAntecedentes()->getCaEstado()!="A")?"4":"1"?>" width="20%" >
+                    <div align="left">
+                        <b>Enviado a:</b><br />
+                        <?=$reporte->getRepAntecedentes()->getCaLogin()?> <?=$reporte->getRepAntecedentes()->getCaFchactualizado()?>
+                    </div>
+                </td>
+                <?
+                if($reporte->getRepAntecedentes()->getCaEstado()=="A")
+                {
+                    $repAntUsuario=$reporte->getRepAntecedentes()->getRepAntUsuario();
+                    $email="";
+                    foreach($repAntUsuario as $ra)
+                    {
+                        $email.=",". $ra->getUsuario()->getCaEmail();
+                    }
+                ?>
+                <td  colspan="3">
+                    <div align="left" >
+                        <b>Notificado a:</b><br />
+                        <?=$reporte->getRepAntecedentes()->getCaResponder().$email?> 
+                    </div>
+                </td>
+                <?
+                }
+                ?>
+            </tr>
+            <?
+            }
+            ?>
             </tbody>
         </table>
 
