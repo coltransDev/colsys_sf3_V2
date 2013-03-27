@@ -788,12 +788,16 @@ InoViComprobante:
       type: integer
       primary: true
     ca_referencia: string
-    ca_valor: float
-    ca_idtipo: integer
+    ca_valor: float    
+    ca_idtipo: integer    
   relations:
     InoMaster:
       local: ca_idmaster
       foreign: ca_idmaster
+      type: one
+    InoHouse:
+      local: ca_idhouse
+      foreign: ca_idhouse
       type: one
 
 InoViDeduccion:
