@@ -109,6 +109,10 @@ InoMaster:
       local: ca_idmaster
       foreign: ca_idmaster
       type: one
+    InoViComprobante:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one
     InoViDeduccion:
       local: ca_idmaster
       foreign: ca_idmaster
@@ -775,8 +779,23 @@ InoViIngreso:
       local: ca_idmaster
       foreign: ca_idmaster
       type: one
-      
-      
+     
+InoViComprobante:
+  generatePath: ino
+  tableName: ino.vi_comprobantes
+  columns:
+    ca_idmaster:
+      type: integer
+      primary: true
+    ca_referencia: string
+    ca_valor: float
+    ca_idtipo: integer
+  relations:
+    InoMaster:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one
+
 InoViDeduccion:
   generatePath: ino
   tableName: ino.vi_deducciones
