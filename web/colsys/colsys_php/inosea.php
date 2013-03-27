@@ -1457,7 +1457,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "      alert('Ingrese el Código de la Nota de Inspección');";
                 echo "  else if (document.contrato.inspeccion_fch.value == '' && document.contrato.inspeccion_nta.value != '')";
                 echo "      alert('Ingrese la fecha de la Nota de Inspección');";
-                echo "  else if (document.contrato.sitiodevolucion.value == '')";
+                echo "  else if (document.contrato.idpatio.value == '')";
                 echo "      alert('Ingrese el nombre del Sitio para hacer la Devolución');";
                 echo "  else";
                 echo "  	 return (true);";
@@ -1496,6 +1496,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "<TR>";
                 echo "  <TD Class=mostrar>Sitio de Devolución:</TD>";
                 echo "  <TD Class=mostrar COLSPAN=3><SELECT NAME='idpatio'>";  // Llena el cuadro de lista con los valores de la tabla Conceptos
+                echo "  <OPTION VALUE=''></OPTION>";
                 $tm->MoveFirst();
                 $ciu_mem = null;
                 while (!$tm->Eof()) {
