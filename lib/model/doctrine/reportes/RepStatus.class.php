@@ -398,7 +398,7 @@ class RepStatus extends BaseRepStatus
                                         ->createQuery("c")
                                         ->select("c.ca_email")
                                         ->innerJoin("c.Sucursal s")                                
-                                        ->where("s.ca_nombre = ?", array($sucursal->getCaNombre()))
+                                        ->where("c.ca_activo = ? and s.ca_nombre = ?", array('TRUE',$sucursal->getCaNombre()))
                                         ->andWhereIn("c.ca_cargo",$perfiles);
                         $jef_adu=$q->execute();
                         foreach($jef_adu as $j)
