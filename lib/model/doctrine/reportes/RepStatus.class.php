@@ -367,7 +367,7 @@ class RepStatus extends BaseRepStatus
                 if( ($reporte->getCaTransporte()==constantes::MARITIMO && $reporte->getCaImpoexpo()==constantes::IMPO) && $reporte->getCaContinuacion()!="OTM")
                 {
                     if ( $reporte->getCaDeclaracionant() == "true" || $reporte->getCaDeclaracionant() == "TRUE" || $reporte->getCaDeclaracionant() == "1" || $reporte->getCaDeclaracionant() == 1  )
-                        $perfiles=array("Jefe de Aduanas Puerto","Coordinador Control Riesgo Aduana");                    
+                        $perfiles=array("Jefe de Aduanas Puerto","Coordinador Control Riesgo Aduana");
                     else
                         $perfiles=$etapa->getPerfilxTipo('ADUANA-PUERTO');
                 }
