@@ -24,7 +24,7 @@ class InoMaster extends BaseInoMaster
                        ->innerJoin("c.InoHouse h")
                        ->innerJoin("h.InoMaster m")
                        ->select("SUM(c.ca_valor*c.ca_tcambio)")
-                       ->addWhere("m.ca_idmaster = ?", $this->getCaIdmaster())
+                       ->addWhere("m.ca_idmaster = ? and c.ca_idtipo not in(11,12)", $this->getCaIdmaster())
                        ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)        
                        ->execute();
         }
