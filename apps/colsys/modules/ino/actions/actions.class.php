@@ -303,7 +303,8 @@ class inoActions extends sfActions {
 
                 if($this->idmodo==6)
                 {
-                    $ino->setCaMaster($numRef);
+                    if($numRef!="")
+                        $ino->setCaMaster($numRef);
                 }
                 else
                     $ino->setCaMaster($request->getParameter("ca_master"));
@@ -687,17 +688,17 @@ class inoActions extends sfActions {
     public function executeDatosGridFacturacionPanel(sfWebRequest $request) {
         $idmaster = $request->getParameter("idmaster");
         $this->forward404Unless($idmaster);
-        $inoHouses = Doctrine::getTable("InoHouse")
+        $q = Doctrine::getTable("InoHouse")
                         ->createQuery("c")
                         ->select("c.*, cl.*")                        
                         ->innerJoin("c.Cliente cl")
                         ->leftJoin("c.InoComprobante comp")
                         ->leftJoin("comp.Ids fact")
                         ->leftJoin("comp.InoTipoComprobante tcomp")
-                        ->where("c.ca_idmaster = ?", $idmaster)
-                        ->addOrderBy("cl.ca_compania")
-                        ->execute();
+                        ->where("c.ca_idmaster = ? ", $idmaster)
+                        ->addOrderBy("cl.ca_compania");
 
+        $inoHouses=$q->execute();
         $data = array();
 
         foreach ($inoHouses as $inoHouse) {
@@ -706,6 +707,8 @@ class inoActions extends sfActions {
             $k = 0;
             if (count($comprobantes) > 0) {
                 foreach ($comprobantes as $comprobante) {
+                    if($comprobante->getCaIdtipo()=="11" || $comprobante->getCaIdtipo()=="12")
+                        continue;
                     $tipo = $comprobante->getInoTipoComprobante();
 
                     $row = array();
@@ -741,7 +744,7 @@ class inoActions extends sfActions {
                 $data[] = $row;
             }
         }
-        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data),"debug"=>$q->getSqlQuery());
         $this->setTemplate("responseTemplate");
     }
 
@@ -1682,7 +1685,7 @@ class inoActions extends sfActions {
                         ->innerJoin("c.Cliente cl")
                         ->innerJoin("c.InoComprobante comp")
                         ->innerJoin("comp.Ids fact")
-                        ->where("c.ca_idmaster = ?", $idmaster)                        
+                        ->where("c.ca_idmaster = ? ", $idmaster)
                         ->execute();
         if(count($facturas)>0)
             $errorInfo="La referencia no se puede eliminar porque ya posee ".count($facturas)." factura(s) creada(s)";
