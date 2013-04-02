@@ -62,7 +62,7 @@ class NuevoStatusForm extends BaseForm {
                     'choices' => array('traficos1@coltrans.com.co' => 'traficos1@coltrans.com.co', 'traficos2@coltrans.com.co' => 'traficos2@coltrans.com.co'),
                 ));
 
-        $widgets['asunto'] = new sfWidgetFormInputText(array(), array("size" => 120));
+        $widgets['asunto'] = new sfWidgetFormInputText(array(), array("size" => 120,"onChange" => "mostrar()"));
         $widgets['introduccion'] = new sfWidgetFormTextarea(array(), array("rows" => 3, "cols" => 140));
         $widgets['mensaje'] = new sfWidgetFormTextarea(array(), array("rows" => 5, "cols" => 140, "onChange" => "validarMensaje()"));
         $widgets['notas'] = new sfWidgetFormTextarea(array(), array("rows" => 3, "cols" => 140));
