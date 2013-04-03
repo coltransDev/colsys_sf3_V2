@@ -20,6 +20,10 @@ class InoComprobante extends BaseInoComprobante
     const IDTIPO_F_INO = 1;
     const IDTIPO_P_INO = 2;
     
+    const IDTIPO_V_INO = 11;
+    const IDTIPO_R_INO = 12;
+    
+    
     const ID_FACTURACION = 663;
     const ID_DEUDORES = 664;
     const ID_PORPAGAR = 665;
