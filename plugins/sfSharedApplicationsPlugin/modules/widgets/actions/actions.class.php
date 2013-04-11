@@ -265,7 +265,7 @@ class widgetsActions extends sfActions {
         $q = Doctrine_Query::create()
                 ->select("r.ca_consecutivo, r.ca_idreporte, r.ca_version")
                 ->from("Reporte r")
-                ->where("UPPER(r.ca_consecutivo) LIKE ?", $criterio . "%")
+                ->where("UPPER(r.ca_consecutivo) LIKE ?", strtoupper($criterio) . "%")
                 ->addWhere("r.ca_usuanulado IS NULL $wheretmp")
                 ->addWhere("r.ca_version = (SELECT MAX(r2.ca_version) FROM Reporte r2 WHERE r2.ca_consecutivo = r.ca_consecutivo AND ca_usuanulado IS NULL $wheretmp ) ")
                 ->addOrderBy("r.ca_fchcreado DESC")
@@ -363,17 +363,23 @@ class widgetsActions extends sfActions {
 
     public function executeDatosComboUsuario() {
         $criterio = $this->getRequestParameter("query");
+        $ciudad = $this->getRequestParameter("ciudad");
 
-        if ($criterio) {
+        if ($criterio || $ciudad) {
 
             $q = Doctrine::getTable("Usuario")
                     ->createQuery("u")
                     //->where("(u.ca_cargo='Gerente Sucursal' OR u.ca_cargo like '%Ventas%' OR u.ca_departamento='Comercial')")
                     ->addWhere("u.ca_activo = true")
                     ->addOrderBy("u.ca_nombre");
-
             if ($criterio) {
                 $q->addWhere("LOWER(u.ca_nombre) LIKE ?", "%" . strtolower($criterio) . "%");
+            }
+            
+            if($ciudad)
+            {
+                $q->innerJoin("u.Sucursal s");
+                $q->addWhere("LOWER(s.ca_nombre) LIKE ?", "%" . strtolower($ciudad) . "%");
             }
 
             $usuarios = $q->execute();
@@ -905,11 +911,9 @@ class widgetsActions extends sfActions {
                     $q->addWhere("r.ca_impoexpo = ?", $impoexpo);
                 }
             }
-            
             if( $openedOnly ){
                 $q->addWhere("r.ca_idetapa != ?", "99999");
-            }
-            
+            }            
 
             $q->addOrderBy("to_number(SUBSTR(r.ca_consecutivo , 1 , (POSITION('-' in r.ca_consecutivo)-1) ),'999999')  desc");
             $q->addOrderBy("r.ca_version  desc");
@@ -986,6 +990,33 @@ class widgetsActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
+     public function executeListaReferencias($request) {
+        
+         $numRef = $request->getParameter("query");
+         
+         $q = Doctrine::getTable("InoMaestraAdu")
+                    ->createQuery("m")
+                    ->select("m.*,o.*,d.*,cl.*")
+                    ->leftJoin("m.Origen o")
+                    ->leftJoin("m.Destino d")                    
+                    ->leftJoin("m.Cliente cl")                    
+                    ->addWhere("m.ca_referencia LIKE ?", $numRef . "%");
+         
+         $referencias = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->limit(50)->execute();
+
+/*        foreach (referencias as $ref) {
+            $sucursal[] = array(
+                "idsucursal" => $suc["s_ca_idsucursal"],
+                "ciudad" => utf8_encode($suc["c_ca_ciudad"]),
+                "direccion" => utf8_encode($suc["s_ca_direccion"])
+            );
+        }
+ * 
+ */
+        $this->responseArray = array("root" => $referencias, "total" => count($referencias), "success" => true);
+        $this->setTemplate("responseTemplate");
+    }
+    
     
 
 }
