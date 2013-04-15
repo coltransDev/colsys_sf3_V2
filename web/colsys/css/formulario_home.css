@@ -389,6 +389,11 @@ table h1{
     padding: 0;
 }
 
+.listado{
+    max-width: 850px;
+}
+
+
 .listado td{
     border: 1px solid black !important;
     border-bottom: 1px solid #E5E5E5 !important;
@@ -690,6 +695,10 @@ table h1{
     color: white;
 }
 
+.button-reportes:hover {
+    color: black;
+}
+
 .si{
 }
 
@@ -752,6 +761,11 @@ table h1{
     width: 100%;
 }
 
+.resultado_encuesta {
+    text-align: center;
+    width: 100%;
+}
+
 .flash_notice
 {
     background-color: #CCFFCC;
@@ -781,7 +795,6 @@ table h1{
 }
 div#indicator
 {
-
     width: 100px;
     height: 40px;
     left: 10px;
@@ -793,3 +806,4 @@ div#indicator
 .align-center {
     text-align: center;
 }
+
