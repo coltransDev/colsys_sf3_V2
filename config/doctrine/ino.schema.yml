@@ -655,16 +655,22 @@ InoAuditor:
       autoincrement: true
       primary: true
     ca_idmaster: integer
+    ca_idempresa: string
     ca_tipo : string
     ca_asunto: string
     ca_detalle : string
-    ca_compromisos: string
-    ca_respuesta: string
-    ca_fchcompromiso : date
+    ca_valor: decimal
+    ca_moneda: decimal
+    ca_tcambio: decimal
     ca_idantecedente: integer           
     ca_estado: char
+    ca_camino: string
     ca_fchcreado: timestamp
     ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+    ca_fchcompromiso: timestamp
+    ca_usucompromiso: string
   relations:
     InoMaster:
       local: ca_idmaster
