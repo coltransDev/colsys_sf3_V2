@@ -21,7 +21,7 @@ Ids:
     ca_usucreado: string(20)
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
-    ca_fchactualizado: timestamp
+    ca_fchactualizado: timestamp    
   relations:
     IdsSucursal:
       local: ca_id
@@ -178,6 +178,7 @@ IdsAgente:
     ca_tipo: string
     ca_activo: boolean
     ca_tplogistics: boolean
+    ca_infosec: string
   relations:
     Ids:
       local: ca_idagente
