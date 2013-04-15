@@ -224,6 +224,8 @@ FalaHeaderAdu:
     ca_manufacturer_contact: string
     ca_manufacturer_phone: string
     ca_manufacturer_fax: string
+    ca_fcharchivado: timestamp
+    ca_usuarchivado: string
     ca_fchanulado: timestamp
     ca_usuanulado: string
   relations:
