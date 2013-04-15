@@ -76,7 +76,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
         $columnas = array("Nombre del Cliente"=>"ca_compania", "Vendedor"=>"ca_vendedor", "Ciudad"=>"ca_ciudad", "Observaciones"=>"ca_observaciones");
         $condicion.= "where lower($columnas[$modalidad]) like lower('%".addslashes($criterio)."%')";
        }
-    $sql = "select cl.ca_idcliente, cl.ca_compania, cl.ca_vendedor, us.ca_sucursal, lc.ca_cupo, lc.ca_diascredito, lc.ca_usucreado, lc.ca_fchcreado, lc.ca_usuactualizado, lc.ca_fchactualizado, lc.ca_observaciones, CASE WHEN cl.ca_tipo IS NOT NULL OR length(cl.ca_tipo::text) <> 0 THEN 'Vigente'::text ELSE CASE WHEN cl.ca_fchcircular IS NULL THEN 'Sin'::text ELSE CASE WHEN (cl.ca_fchcircular + 365) < now() THEN 'Vencido'::text ELSE 'Vigente'::text END END END AS ca_stdcircular, ";
+    $sql = "select cl.ca_idcliente, cl.ca_idalterno, cl.ca_compania, cl.ca_vendedor, us.ca_sucursal, lc.ca_cupo, lc.ca_diascredito, lc.ca_usucreado, lc.ca_fchcreado, lc.ca_usuactualizado, lc.ca_fchactualizado, lc.ca_observaciones, CASE WHEN cl.ca_tipo IS NOT NULL OR length(cl.ca_tipo::text) <> 0 THEN 'Vigente'::text ELSE CASE WHEN cl.ca_fchcircular IS NULL THEN 'Sin'::text ELSE CASE WHEN (cl.ca_fchcircular + 365) < now() THEN 'Vencido'::text ELSE 'Vigente'::text END END END AS ca_stdcircular, ";
     $sql.= "    st.ca_fchestado, st.ca_libestado, st.ca_libestobservaciones, st.ca_fchcreado_le, st.ca_usucreado_le from tb_libcliente lc ";
     $sql.= "    INNER JOIN vi_clientes_reduc cl ON lc.ca_idcliente = cl.ca_idcliente ";
     $sql.= "    LEFT JOIN ( SELECT les.ca_idcliente, les.ca_fchestado, les.ca_libestado, les.ca_observaciones as ca_libestobservaciones, les.ca_fchcreado as ca_fchcreado_le, les.ca_usucreado as ca_usucreado_le FROM tb_libestados les RIGHT OUTER JOIN (select ca_idcliente, max(ca_idlibestado) as ca_idlibestado from tb_libestados group by ca_idcliente) ule ON (les.ca_idcliente = ule.ca_idcliente and les.ca_idlibestado = ule.ca_idlibestado) ) st ON st.ca_idcliente = lc.ca_idcliente ";
@@ -126,7 +126,7 @@ require_once("menu.php");
        $beneficios = ($rs->Value('ca_libestado')=="Congelada")?'background-color:#9999CC;':$beneficios;
        $observaciones = $rs->Value('ca_observaciones')." ".$rs->Value('ca_libestobservaciones');
        echo "<TR>";
-       echo "  <TD Class=listar style='$beneficios'>".$rs->Value('ca_idcliente')."</TD>";
+       echo "  <TD Class=listar style='$beneficios'>".$rs->Value('ca_idalterno')."</TD>";
        echo "  <TD Class=listar style='$beneficios' WIDTH=260>".$rs->Value('ca_compania').((strlen($observaciones) != 0)?"<br />".$observaciones:"")."</TD>";
        echo "  <TD Class=listar style='text-align:center;$beneficios'>".$rs->Value('ca_vendedor')."</TD>";
        echo "  <TD Class=listar style='text-align:center;$beneficios'>".$rs->Value('ca_diascredito')."</TD>";
