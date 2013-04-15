@@ -9,6 +9,117 @@ InoMaestraAdu:
     ca_referencia:
       type: string(16)
       primary: true
-      autoincrement: true
-    
+      autoincrement: true    
+    ca_fchreferencia: date
+    ca_origen: string
+    ca_destino: string
+    ca_idcliente: integer
+    ca_vendedor: string
+    ca_coordinador: string
+    ca_proveedor: string
+    ca_pedido: string
+    ca_piezas: numeric
+    ca_peso: numeric
+    ca_mercancia: string
+    ca_deposito: string
+    ca_fcharribo: date
+    ca_modalidad: integer
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+    ca_fchliquidado: timestamp
+    ca_usuliquidado: string
+    ca_fchcerrado: timestamp
+    ca_usucerrado: string
+    ca_nombrecontacto: string
+    ca_email: string
+    ca_analista: string
+    ca_trackingcode: string
+    ca_aplicaidg: boolean
+  relations:
+    Origen:
+      local: ca_origen
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    Destino:
+      local: ca_destino
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad        
+    Cliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: one
+    Usucreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+    Usuactualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
 
+      
+
+TransporteAdu:  
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: public
+  tableName: tb_brk_transporte
+  columns:
+    ca_id:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_semana: integer
+    ca_referencia: string
+    ca_idcliente: integer
+    ca_volumen: numeric
+    ca_piezas: numeric
+    ca_peso: numeric
+    ca_mercancia: string
+    ca_origen: string
+    ca_destino: string
+    ca_modalidad: string
+    ca_observaciones: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string      
+    ca_fchsalida: date
+    ca_doctransporte: string
+    ca_escolta: boolean
+    ca_vlrventa: numeric
+    ca_vlrneta: numeric
+    ca_idtransportista: integer
+  relations:
+    Origen:
+      local: ca_origen
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    Destino:
+      local: ca_destino
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    Cliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: one
+    Usucreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+    Usuactualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+    IdsProveedor:
+      local: ca_idtransportista
+      foreign: ca_idproveedor
+      type: one
