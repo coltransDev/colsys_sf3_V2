@@ -28,12 +28,8 @@ Formulario:
       type: string(255)
     ca_nombre_formato:
       type: string(255)
-    ca_color:
-      type: string(8)
-    ca_bold:
-      type: string(8)
-    ca_strong:
-      type: string(8)
+    ca_empresa:
+      type: string(2)
     ca_fchcreado:
       type: timestamp
     ca_usucreado:
@@ -42,7 +38,6 @@ Formulario:
       type: timestamp
     ca_usuactualizado:
       type: string(20)
-
 
 
 Bloque:
@@ -70,8 +65,6 @@ Bloque:
     ca_activo:
       type: boolean
       default: true
-    ca_color:
-      type: string(45)
     ca_tipo:
       type: string(45)
       default:
@@ -109,7 +102,7 @@ Pregunta:
       type: integer(4)
       notnull: true
     ca_texto:
-      type: string(10000)
+      type: string
       notnull: true
     ca_error:
       type: string(200)
@@ -117,6 +110,8 @@ Pregunta:
       type: string(45)
     ca_obligatoria:
       type: boolean
+    ca_comentarios:
+      type: boolean  
     ca_tipo:
       type: integer(4)
     ca_orden:
@@ -137,7 +132,7 @@ Pregunta:
     ca_etiquetas_columnas:
       type: string(10000)
     ca_etiquetas_filas:
-      type: string(10000
+      type: string(10000)
     ca_fchcreado:
       type: timestamp
     ca_usucreado:
@@ -218,11 +213,21 @@ ResultadoEncuesta:
     ca_idpregunta:
       type: integer(4)
       notnull: true
+    ca_servicio:
+      type: integer(1)  
     ca_resultado:
       type: string(1000)
     ca_idcontrolencuesta:
       type: integer(4)
       notnull: true
+    ca_fchcreado:
+      type: timestamp
+    ca_usucreado:
+      type: string(20)
+    ca_fchactualizado:
+      type: timestamp
+    ca_usuactualizado:
+      type: string(20)  
   relations:
     Pregunta:
       class: Pregunta
@@ -239,6 +244,7 @@ ResultadoEncuesta:
       fields: [ca_idpregunta]
     fki_tb_resultado_encuesta_tb_control_encuesta:
       fields: [ca_idcontrolencuesta]
+      
 
 ControlEncuesta:
   options:
@@ -262,8 +268,6 @@ ControlEncuesta:
       type: integer(1)
     ca_id_contestador:
       type: integer(4)
-    ca_servicio:
-      type: integer(1)
     ca_fchcreado:
       type: timestamp
     ca_usucreado:
