@@ -213,6 +213,18 @@ Reporte:
       local: ca_idreporte
       foreign: ca_idreporte
       type: one
+    RepAntecedentes:
+      local: ca_idreporte
+      foreign: ca_idreporte
+      type: one
+    RepSeguro:
+      local: ca_idreporte
+      foreign: ca_idreporte
+      type: one
+    RepAduana:    
+      local: ca_idreporte
+      foreign: ca_idreporte
+      type: one
 
 RepStatus:
   options:
@@ -250,6 +262,7 @@ RepStatus:
     ca_idetapa: string
     ca_propiedades: string
     ca_observaciones_idg: string
+    ca_tipo: integer
   relations:
     Reporte:
       local: ca_idreporte
@@ -321,7 +334,9 @@ TrackingEtapa:
     ca_message_default: string
     ca_intro: string
     ca_title: string
-    ca_preasunto: string
+    ca_preasunto: string 
+    ca_fcheliminado: timestamp
+    ca_usueliminado: string
 
 Tercero:
   options:
@@ -443,6 +458,11 @@ RepTarifa:
       local: ca_idconcepto
       foreign: ca_idconcepto
       type: one
+    Equipo:
+      local: ca_idequipo
+      foreign: ca_idconcepto
+      type: one
+      class: Concepto
 
 RepGasto:
   options:
@@ -562,7 +582,6 @@ RepAduana:
       local: ca_coordinador
       foreign: ca_login
       type: one
-
 
 RepExpo:
   options:
@@ -718,6 +737,10 @@ RepOtm:
     ca_contenedor: string
     ca_iddtm: integer
     ca_consecutivo: string
+    ca_fechafinalizacion: date
+    ca_fechavencimiento: date
+    ca_fchpresentacion: date
+    ca_usupresentacion: date
   relations:
     Reporte:
       local: ca_idreporte
@@ -776,6 +799,7 @@ RepAntecedentes:
     ca_fchaceptado: timestamp
     ca_usuaceptado: string   
     ca_responder: string
+    ca_propiedades: string
   relations:
     Reporte:
       local: ca_idreporte
@@ -842,5 +866,3 @@ RepAntUsuario:
       local: ca_usurevisado
       foreign: ca_login
       type: one
-      
-      
