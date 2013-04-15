@@ -111,7 +111,8 @@ Pregunta:
     ca_obligatoria:
       type: boolean
     ca_comentarios:
-      type: boolean  
+      type: boolean
+      default: true
     ca_tipo:
       type: integer(4)
     ca_orden:
