@@ -40,7 +40,8 @@ Usuario:
     ca_propiedades: string
     ca_fchvencimiento: date
     ca_keypass: string(40)
-    ca_mailpasw: string(40)    
+    ca_mailpasw: string(40)
+    ca_sexo: string(1)
   relations:
     AccesoUsuario:
       local: ca_login
