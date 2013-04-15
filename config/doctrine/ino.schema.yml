@@ -621,6 +621,7 @@ InoTipoComprobante:
     ca_idsucursal: integer
     ca_idcta_cierre: integer
     ca_idcta_iva: integer
+    ca_numeracion_actual: integer
   relations:
     IdsSucursal:
       local: ca_idsucursal
@@ -788,8 +789,15 @@ InoViComprobante:
       type: integer
       primary: true
     ca_referencia: string
-    ca_valor: float    
-    ca_idtipo: integer    
+    ca_idhouse: string
+    ca_valor: float
+    ca_idtipo: 
+      type: integer
+      primary: true
+    ca_consecutivo: string
+    ca_idcomprobante: 
+      type: integer
+      primary: true
   relations:
     InoMaster:
       local: ca_idmaster
@@ -799,6 +807,10 @@ InoViComprobante:
       local: ca_idhouse
       foreign: ca_idhouse
       type: one
+    InoDetalle:
+      local: ca_idcomprobante
+      foreign: ca_idcomprobante
+      type: many
 
 InoViDeduccion:
   generatePath: ino
