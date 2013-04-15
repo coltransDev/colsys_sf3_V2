@@ -13,6 +13,7 @@ class NuevoStatusForm extends BaseForm {
     private $contactos = array();
     private $destinatariosFijos = array();
     private $widgetsClientes = array();
+    private $idsucursal = null;
 
     public function configure() {
 
@@ -314,7 +315,6 @@ class NuevoStatusForm extends BaseForm {
           if ($request->hasParameter(self::$CSRFFieldName)){
           $taintedValues[self::$CSRFFieldName] = $request->getParameter(self::$CSRFFieldName);
           } */
-
         if ($taintedValues["mensaje_mask"]) {
             $this->validatorSchema['mensaje']->setOption('required', false);
         }
@@ -359,21 +359,21 @@ class NuevoStatusForm extends BaseForm {
         $fest = TimeUtils::getFestivos();
         $dif = TimeUtils::calcDiff($fest, strtotime($fch), time());
 
-
         if ($taintedValues["impoexpo"] == Constantes::IMPO && ($taintedValues["transporte"] == Constantes::MARITIMO || $taintedValues["transporte"] == Constantes::AEREO || $taintedValues["transporte"] == Constantes::TERRESTRE)) {
             $maxTime = 0;
             if ($taintedValues["transporte"] == Constantes::MARITIMO || $taintedValues["transporte"] == Constantes::TERRESTRE) {
-                $maxTime = RepStatus::IDG_MARITIMO;
+                $idgMax = IdgTable::getUnIndicador(RepStatus::IDG_MARITIMO, $taintedValues["fchrecibo"], $this->idsucursal);
+                $maxTime = $idgMax?$idgMax->getCaLim1()*3600:0;
             }
             if ($taintedValues["transporte"] == Constantes::AEREO) {
-                $maxTime = RepStatus::IDG_AEREO;
+                $idgMax = IdgTable::getUnIndicador(RepStatus::IDG_AEREO, $taintedValues["fchrecibo"], $this->idsucursal);
+                $maxTime = $idgMax?$idgMax->getCaLim1()*3600:0;
             }
 
             if (!$taintedValues["observaciones_idg"] && $dif > $maxTime) {
                 $this->validatorSchema['observaciones_idg']->setOption('required', true);
             }
         }
-
         $taintedValues["fchhorarecibo"] = $fch;
         $taintedValues["fchactual"] = date("Y-m-d H:i:s");
         $destinatariosFijos = $this->getDestinatariosFijos();
@@ -408,6 +408,10 @@ class NuevoStatusForm extends BaseForm {
     public function setContactos($c) {
         $this->contactos = $c;
     }
+    
+    public function setIdsucursal($c) {
+        $this->idsucursal = $c;
+    }
 
     public function setDestinatariosFijos($c) {
         $this->destinatariosFijos = $c;
@@ -427,6 +431,10 @@ class NuevoStatusForm extends BaseForm {
     
     public function getContactos() {
         return $this->contactos;
+    }
+    
+    public function getIdsucursal() {
+        return $this->idsucursal;
     }
 
     public function getDestinatariosFijos() {

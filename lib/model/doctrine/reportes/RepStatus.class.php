@@ -14,8 +14,8 @@ class RepStatus extends BaseRepStatus
 {
     var $bodega = null;
 
-    const IDG_MARITIMO = 21000; // 5h 50m
-    const IDG_AEREO = 16200; // 4h 30
+    const IDG_MARITIMO = 5; // 21000 5h 50m
+    const IDG_AEREO = 4; // 16200 4h 30
 
 	/*
 	* Retorna la etapa del status
@@ -398,7 +398,7 @@ class RepStatus extends BaseRepStatus
                                         ->createQuery("c")
                                         ->select("c.ca_email")
                                         ->innerJoin("c.Sucursal s")                                
-                                        ->where("c.ca_activo = ? and s.ca_nombre = ?", array('TRUE',$sucursal->getCaNombre()))
+                                        ->where("s.ca_nombre = ?", array($sucursal->getCaNombre()))
                                         ->andWhereIn("c.ca_cargo",$perfiles);
                         $jef_adu=$q->execute();
                         foreach($jef_adu as $j)
