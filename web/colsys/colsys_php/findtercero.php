@@ -31,15 +31,15 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)){
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
     echo "<HTML>";
     echo "<HEAD>";
-    ?>
-    <meta content="IE=edge" http-equiv="X-UA-Compatible">
-    <?php
     echo "<TITLE>$titulo</TITLE>";
     echo "<script language='JavaScript' type='text/JavaScript'>";              // Código en JavaScript para validar las opciones de mantenimiento
     echo "function elegir(opcion, id){";
     echo "    location.href = 'findtercero.php?boton='+opcion+'\&id='+id+'\&suf=$suf';";
     echo "}";
     echo "</script>";
+    ?>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <?php
     echo "</HEAD>";
     echo "<BODY style='margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; text-align: right; font-size: 11px; font-weight:bold;'>";
     echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";             // Carga una hoja de estilo que estandariza las pantallas den sistema graficador

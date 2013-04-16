@@ -41,6 +41,9 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {                 
           }
     echo "<HTML>";
     echo "<HEAD>";
+    ?>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <?php
     echo "<script language='JavaScript' type='text/JavaScript'>";     // Código en JavaScript para validar las opciones de mantenimiento
     echo "function validar(){";
     echo "  if (document.cabecera.idciudad.value == '')";
@@ -69,9 +72,6 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {                 
     echo "     }";
     echo "}";
     echo "</script>";
-    ?>
-    <meta content="IE=edge" http-equiv="X-UA-Compatible">
-    <?php
     echo "</HEAD>";
     echo "<BODY>";
 require_once("menu.php");
