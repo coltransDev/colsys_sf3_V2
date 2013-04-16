@@ -30,9 +30,6 @@ if (!isset($boton) and !isset($accion)){
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
     echo "<HTML>";
-    ?>
-    <meta content="IE=edge" http-equiv="X-UA-Compatible">
-    <?php
     echo "<HEAD>";
     echo "<TITLE>$titulo</TITLE>";
     echo "<script language='JavaScript' type='text/JavaScript'>";              // Código en JavaScript para validar las opciones de mantenimiento
@@ -40,6 +37,9 @@ if (!isset($boton) and !isset($accion)){
 	echo "    document.location.href = 'conceptos.php?boton='+opcion+'\&id='+id;";
     echo "}";
     echo "</script>";
+    ?>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <?php
     echo "</HEAD>";
     echo "<BODY>";
 require_once("menu.php");
