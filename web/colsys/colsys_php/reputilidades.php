@@ -19,7 +19,6 @@ $meses = array("%" => "Todos los Meses", "01" => "Enero", "02" => "Febrero", "03
 $estados = array("Casos Cerrados" => "ca_estado <> \"Abierto\"", "Casos Abiertos" => "ca_estado = \"Abierto\"", "Todos los Casos" => "true");
 $modalidades = array("%" => "Listar Todas", "FCL" => "FCL", "LCL" => "LCL", "COLOADING" => "COLOADING", "PROYECTOS" => "PROYECTOS");
 $reportes = array("utilidad" => "Utilidad de la Referencia", "xsobreventa" => "Utilidad en Sobreventa", "xdeducciones" => "Recaudo en Deducciones");
-$sucursales = '';
 
 include_once 'include/datalib.php';                                            // Incorpora la libreria de funciones, para accesar leer bases de datos
 require_once("checklogin.php");                                                                 // Captura las variables de la sessión abierta
@@ -73,19 +72,6 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
         echo ">$val</OPTION>";
     }
     echo "  </SELECT></TD>";
-    //
-      echo "  <TD Class=listar>Sucursal:<BR><SELECT NAME='sucursal'>";
-      echo " <OPTION VALUE=%>Todas las Sucursales</OPTION>";
-    while (list ($clave, $val) = each($meses)) {
-        echo " <OPTION VALUE=$clave";
-        if (date('m') == $clave) {
-            echo" SELECTED";
-        }
-        echo ">$val</OPTION>";
-    }
-    echo "  </SELECT></TD>";
-    
-    //
     $tm = & DlRecordset::NewRecordset($conn);
     if (!$tm->Open("select ca_idtrafico, ca_nombre from vi_traficos order by ca_nombre")) {       // Selecciona todos lo registros de la tabla Traficos
         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
@@ -119,7 +105,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
 
     echo "<TR>";
     echo "  <TD Class=listar COLSPAN=2>Con Utilidad x CBM:<BR>&nbsp&nbsp<SELECT NAME='signo'><OPTION VALUE='<='><=<OPTION VALUE='>='>>=</SELECT>&nbsp&nbsp<INPUT TYPE='text' NAME='comparable' size='15'></TD>";
-    echo "  <TD Class=listar COLSPAN=4>Nombre del Cliente:<BR><INPUT TYPE='text' NAME='compania' size='90'></TD>";
+    echo "  <TD Class=listar COLSPAN=3>Nombre del Cliente:<BR><INPUT TYPE='text' NAME='compania' size='60'></TD>";
     echo "</TR>";
 
     echo "<TR>";
@@ -135,7 +121,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
         exit;
     }
     $tm->MoveFirst();
-    echo "  <TD Class=listar COLSPAN=4>Seleccione el Concepto:<BR><SELECT ID=con_costo NAME='concepto[xsobreventa]' style='display:none'>";
+    echo "  <TD Class=listar COLSPAN=3>Seleccione el Concepto:<BR><SELECT ID=con_costo NAME='concepto[xsobreventa]' style='display:none'>";
     while (!$tm->Eof()) {
         echo " <OPTION VALUE='" . $tm->Value('ca_costo') . "'>" . $tm->Value('ca_costo') . "</OPTION>";
         $tm->MoveNext();
