@@ -34,7 +34,7 @@ class Ciudad extends BaseCiudad
 	}
 
      public function getCodigoarea(){
-        return substr( $this->getCaIdciudad(), 4, 4);
+        return intval(substr( $this->getCaIdciudad(), 4, 4));
     }
 
 }

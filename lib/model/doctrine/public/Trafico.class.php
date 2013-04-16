@@ -17,7 +17,7 @@ class Trafico extends BaseTrafico
 	}
     
     public function getCodigoarea(){
-        return substr( $this->getCaIdtrafico(), 3, 4);
+        return intval(substr( $this->getCaIdtrafico(), 3, 4));
     }
 
 }

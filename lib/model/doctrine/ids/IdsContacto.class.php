@@ -20,7 +20,7 @@ class IdsContacto extends BaseIdsContacto
     public function getCodigoarea(){
         $codigo = $this->getCaCodigoarea();
         if( $codigo ){
-            return $codigo;
+            return intval($codigo);
         }else{
             return $this->getIdsSucursal()->getCiudad()->getCodigoarea();
         }
