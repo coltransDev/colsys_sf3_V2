@@ -44,10 +44,10 @@ if (!isset($login) and !isset($boton) and !isset($accion)){
     echo "}";
     echo "</script>";
     echo "<script language='javascript' src='javascripts/popcalendar.js'></script>";
+    echo "</HEAD>";
     ?>
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <?php
-    echo "</HEAD>";
     echo "<BODY>";
 require_once("menu.php");
     echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";             // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
