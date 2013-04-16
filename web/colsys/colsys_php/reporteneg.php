@@ -34,7 +34,7 @@ $patron = '/(\d+)-(20\d\d)/';
 //if (preg_match($patron, $id)) {
 if (strpos($id, '-') === false){
     $condition = "ca_idreporte = $id";
-    $sql="select count(ca_tiporep) as ca_contador from tb_reportes where $condition and ca_tiporep in (1,2,3)";
+    $sql="select count(ca_tiporep) as ca_contador from tb_reportes where $condition and ca_tiporep > 0";
     //echo $sql;
     //exit;
     if ($rs->Open($sql)) { // Verfica si se trata de un reporte de negocios con el nuevo módulo
