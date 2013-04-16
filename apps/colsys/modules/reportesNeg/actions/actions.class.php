@@ -1295,6 +1295,7 @@ class reportesNegActions extends sfActions
             else
             {
                 $reporte->setCaDeclaracionant(false);
+                $reporte->setProperty("subarancel", NULL);
             }
         }
         if(count($errors)>0)
