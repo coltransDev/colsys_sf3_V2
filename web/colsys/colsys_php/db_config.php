@@ -69,7 +69,6 @@ $password = $databaseConfig['all']['doctrine']['param']['password'];
 
 $dsn = $databaseConfig['prod']['doctrine']['param']['dsn'];
 
-
 //$dsn =  substr( $dsn,  strpos( $dsn, "dbname")+7 );
 $principal = substr( $dsn, 0,  strpos( $dsn, ";") );
 $servidor = substr( $dsn,  strlen( $principal )+6 );
