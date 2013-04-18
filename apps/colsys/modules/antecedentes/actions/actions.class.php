@@ -109,7 +109,7 @@ class antecedentesActions extends sfActions {
         else
         {
             $where =" and ( (m.ca_provisional = true and ((m.ca_modalidad='".constantes::FCL."' and u.ca_idsucursal='".$this->user->getIdSucursal()."') or m.ca_modalidad<>'".constantes::FCL."') 
-                and strpos((SELECT ca_subject FROM tb_emails where ca_tipo='Antecedentes' and ca_subject like '%'||m.ca_referencia||'%' order by ca_idemail DESC limit 1), 'Envio de Antecedentes')>0
+                and m.ca_estado='E'
                 ) OR (m.ca_provisional = false AND m.ca_fchmuisca IS NULL and SUBSTR(ca_referencia,1,3) NOT IN ('700','710','720','800','810','820') and ca_impoexpo <> '".Constantes::TRIANGULACION."' ))";
             $whereEmail="" ;
         }
@@ -134,11 +134,14 @@ class antecedentesActions extends sfActions {
             }
  * 
  */
+        $databaseConf = sfYaml::load(sfConfig::get('sf_config_dir') . '/databases.yml');
+        $dsn      = explode("=",$databaseConf ['all']['doctrine']['param']['dsn']);        
+        $host = $dsn[count($dsn)-1];
+        $con = Doctrine_Manager::connection(new PDO("pgsql:dbname=Coltrans;host={$host}", 'Administrador', 'lmD125aC-c'));
         
-            $con = Doctrine_Manager::connection(new PDO('pgsql:dbname=Coltrans;host=10.192.1.65', 'Administrador', 'lmD125aC-c'));
-            $st = $con->execute(utf8_encode($sql));
+        $st = $con->execute(utf8_encode($sql));
             
-            $referencias = $st->fetchAll();
+        $referencias = $st->fetchAll();
 
         $this->refBloqueadas=array();
         $this->refRechazadas=array();
@@ -187,8 +190,8 @@ class antecedentesActions extends sfActions {
         $this->sufijos = ParametroTable::retrieveByCaso("CU010");
         if($this->user->getUserId()=="maquinche" /*|| $this->user->getUserId()=="sandrade"*/ )
         {
-           echo "<br><br><br><pre>"; print_r($refRechazadas);echo "</pre>";
-         //   echo $sql;
+           //echo "<br><br><br><pre>"; print_r($refRechazadas);echo "</pre>";
+            //echo $sql;
         }
         
         
@@ -1642,6 +1645,36 @@ class antecedentesActions extends sfActions {
             $filenames[]["file"] = $file[count($file)-1];
         }
         $this->filenames = $filenames;
+    }
+    
+    
+    public function executeEmailNotification(sfWebRequest $request) {
+
+        $numref = str_replace("|", ".", $request->getParameter("ref"));
+        $this->forward404Unless($numref);
+
+        $ref = Doctrine::getTable("InoMaestraSea")->find($numref);
+        $this->forward404Unless($ref);
+        
+        //$master=new InoMaestraSea();
+        $this->house=$ref->getInoClientesSea();
+        
+        $ref = Doctrine::getTable("InoMaestraSea")->find($numref);
+
+        $this->setLayout($format);
+        $this->ref = $ref;
+        $this->user = $this->getUser();
+        $this->format = $format;
+
+
+/*        $this->conta = ParametroTable::retrieveByCaso("CU098", $this->ref->getCaIdlinea());
+        if($this->conta[0])
+        {        
+            $this->contactos = $this->conta[0]->getCaValor2();
+        }
+*/
+        
+        
     }
     
     public function executeEnviarEmailColoader(sfWebRequest $request) {
