@@ -81,11 +81,11 @@ class Usuario extends BaseUsuario {
         return $resultado;
     }
     
-    public function getFirmaOtmHTML($company) {        
+public function getFirmaOtmHTML($company) {        
         if($company=="coltrans.com.co")
         {
             $idsucursal="BOG";
-            $ext="201-460-260";
+            $ext="201-460-260-161";
         }
         else if($company=="consolcargo.com")
         {
@@ -95,8 +95,10 @@ class Usuario extends BaseUsuario {
         else if($company=="colotm.com")
         {
             $idsucursal="OBO";
-            $ext="460-260";
+            $ext="201-460-260-161";
         }
+        if($this->getCaLogin()=="yaurrea")
+            $idsucursal="OBO";
         $sucursal = Doctrine::getTable("Sucursal")->find($idsucursal); 
         
         $empresa = $sucursal->getEmpresa();
