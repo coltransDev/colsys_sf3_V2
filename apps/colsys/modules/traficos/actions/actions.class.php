@@ -231,7 +231,7 @@ class traficosActions extends sfActions {
     */
 
    public function executeNuevoStatus($request) {
-      //exit("EN Mantenimiento");
+      //exit("EN Mantenimiento");      
       $this->modo = $request->getParameter("modo");
       $this->forward404unless($this->modo);
       if ($this->modo == "maritimo") {
@@ -1151,12 +1151,12 @@ class traficosActions extends sfActions {
       $this->firmaotm = false;
       $this->company = "";
       if ($this->repotm) {
-         if ($this->getUser()->getSucursal() == "OBO") {
+         if ($this->getUser()->getSucursal() == "OBO" || $this->getUser()->getSucursal() == "OMD") {
             $this->firmaotm = true;
             $this->company = ($this->repotm->getCaLiberacion() != "") ? $this->repotm->getCaLiberacion() : (($this->reporte->getCaTiporep() != "4") ? "coltrans.com.co" : "consolcargo.com");
          }
       } else {
-         if ($this->getUser()->getSucursal() == "OBO")
+         if ($this->getUser()->getSucursal() == "OBO" || $this->getUser()->getSucursal() == "OMD")
             $this->company = "coltrans.com.co";
       }
 
