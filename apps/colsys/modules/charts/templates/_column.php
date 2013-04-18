@@ -51,7 +51,7 @@ ChartsColumn = function( config ){
                         ,plotLines:((config.plotLines)? config.plotLines :[])
 					})                    
                     , 
-           legend:((config.legend)?config.legend:{
+           /*legend:((config.legend)?config.legend:{
 						align: 'center',
                         verticalAlign:'bottom',
 						floating: true,
@@ -59,7 +59,7 @@ ChartsColumn = function( config ){
 						borderColor: '#CCC',
 						borderWidth: 1,
 						shadow: false
-					}), 
+					}), */
            tooltip:((config.tooltip)?config.tooltip:{
 						formatter: function() {
 							return '<b>'+ this.x +'</b><br/>'+

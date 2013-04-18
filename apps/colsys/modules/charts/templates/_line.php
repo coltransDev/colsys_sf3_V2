@@ -52,7 +52,7 @@ ChartsLine = function( config ){
 					})                    
                     , 
            legend:((config.legend)?config.legend:{
-						align: 'center',
+						align: 'left',
                         verticalAlign:'bottom',
 						floating: true,
 						backgroundColor: '#FFFFFF',
