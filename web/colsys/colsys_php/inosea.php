@@ -6057,7 +6057,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 break;
             }
         case 'Eliminar Costo': {                                                      // El Botón Guardar fue pulsado
-                if (!$rs->Open("delete from tb_inoutilidad_sea where ca_factura = (select ca_factura from tb_inocostos_sea where oid = $oid)")) {
+                if (!$rs->Open("delete from tb_inoutilidad_sea where oid = (select iu.oid from tb_inoutilidad_sea iu inner join tb_inocostos_sea ic on iu.ca_referencia = ic.ca_referencia and iu.ca_idcosto = ic.ca_idcosto and iu.ca_factura = ic.ca_factura and ic.oid = $oid)")) {
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
