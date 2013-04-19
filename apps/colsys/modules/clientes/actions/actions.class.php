@@ -651,7 +651,7 @@ class clientesActions extends sfActions {
                      </tr>
                      <tr>
                         <td style=\"text-align: justify\">
-                           Es necesario para COLTRANS S.A.S. y/o AGENCIA DE ADUANAS COLMAS LTDA NIVEL 1 dar cumplimiento a la  Circular  0170 expedida  por la  DIAN el 10 de  octubre de 2002, siendo  nuestra  obligación  como  Agentes  de  Carga   Internacional / Agentes de Aduana, crear un  banco de datos de  nuestros clientes  cuyo  objetivo  es  la  ?Prevención  y  Control de  lavado de Activos?.<br /><br />
+                           Es necesario para COLTRANS S.A.S. y/o AGENCIA DE ADUANAS COLMAS LTDA NIVEL 1 dar cumplimiento a la  Circular  0170 expedida  por la  DIAN el 10 de  octubre de 2002, siendo  nuestra  obligación  como  Agentes  de  Carga   Internacional / Agentes de Aduana, crear un  banco de datos de  nuestros clientes  cuyo  objetivo  es  la  'Prevención  y  Control de  lavado de Activos'.<br /><br />
                            Por  lo anterior,   nuestro  Representante  Comercial  estará  retirando  de sus  instalaciones  los  siguientes  documentos:<br /><br />
                         </td>
                      </tr>
@@ -902,119 +902,6 @@ class clientesActions extends sfActions {
 
             $email->setCaSubject("¡Error en Informe sobre vencimiento Carta de Garantía!");
             $email->setCaBodyhtml("Caught exception: " . $e->getMessage() . "\n\n" . $e->getTraceAsString() . "\n\n Se ha presentado un error en el proceso que envía correo con el reporte Cartas de Garantía por vencer en Maestra de Clientes Activos de COLSYS. Agradecemos confirmar que el Departamento de Sistemas esté enterado de esta falla. Gracias!");
-            $email->save(); //guarda el cuerpo del mensaje
-        }
-    }
-
-    public function executeReporteClientesEmail() {
-        try {               //  Controla cualquier error el la ejecución de la rutina
-            $parametro = Doctrine::getTable("Parametro")->find(array("CU112", 1, "defaultEmails"));
-            if ($parametro) {
-                if (stripos($parametro->getCaValor2(), ',') !== false) {
-                    $defaultEmail = explode(",", $parametro->getCaValor2());
-                } else {
-                    $defaultEmail = array($parametro->getCaValor2());
-                }
-            }
-            $parametro = Doctrine::getTable("Parametro")->find(array("CU112", 2, "ccEmails"));
-            if ($parametro) {
-                if (stripos($parametro->getCaValor2(), ',') !== false) {
-                    $ccEmails = explode(",", $parametro->getCaValor2());
-                } else {
-                    $ccEmails = array($parametro->getCaValor2());
-                }
-            }
-
-            $comerciales = UsuarioTable::getComerciales();
-            foreach ($comerciales as $comercial) {
-
-                $email = new Email();
-                $email->setCaUsuenvio("Administrador");
-                $email->setCaIdcaso("1");
-                $email->setCaFrom("admin@coltrans.com.co");
-                $email->setCaFromname("Administrador Sistema Colsys");
-                $email->setCaReplyto("admin@coltrans.com.co");
-
-                // $email->setCaFchenvio(date("Y-m-d H:i:s"));  // Hay que quitar cuando salga de seguimiento la rutina
-
-                $email->addTo($comercial->getCaEmail());
-                reset($defaultEmail);
-                while (list ($clave, $val) = each($defaultEmail)) {
-                    $email->addCc($val);
-                }
-                reset($ccEmails);
-                while (list ($clave, $val) = each($ccEmails)) {
-                    $email->addCc($val);
-                }
-                // $email->addCc("clopez@coltrans.com.co");    // Pruebas de envio controlado
-
-                $inicio = $this->getRequestParameter("fchStart");
-                $final = $this->getRequestParameter("fchEnd");
-                $reporte = $this->getRequestParameter("reporte");
-                $sucursal = $comercial->getCaSucursal();
-                $vendedor = $comercial->getCaLogin();
-
-                $this->getRequest()->setParameter("fchStart", $inicio);
-                $this->getRequest()->setParameter("fchEnd", $final);
-                $this->getRequest()->setParameter("sucursal", $sucursal);
-                $this->getRequest()->setParameter("vendedor", $vendedor);
-                $this->getRequest()->setParameter("reporte", $reporte);
-
-                $this->getRequest()->setParameter("layout", "email");
-                if ($this->getRequestParameter("reporte")=="Potenciales"){
-                    $email->setCaTipo("SeguiCliPotenciales");
-                    $email->setCaSubject("Seguimientos a Clientes Potenciales, periodo: $inicio - $final / $vendedor");
-                    $bodyHtml = sfContext::getInstance()->getController()->getPresentationFor('clientes', 'reporteSeguimiento');
-                }elseif ($this->getRequestParameter("reporte")=="Activos"){
-                    $email->setCaTipo("ComportaCliActivos");
-                    $email->setCaSubject("Comportamiento de Clientes Activos, periodo: $inicio - $final / $vendedor");
-                    $bodyHtml = sfContext::getInstance()->getController()->getPresentationFor('clientes', 'reporteSeguimiento');
-                }
-                
-                if (strpos($bodyHtml, 'Reporte sin Registros') === false){
-                    $email->setCaBodyhtml($bodyHtml);
-                    $email->save();
-                }
-            }
-        } catch (Exception $e) {
-            echo $e->getMessage() . "\n\n" . $e->getTraceAsString();
-            $usuarios = Doctrine::getTable("Usuario")
-                    ->createQuery("u")
-                    ->innerJoin("u.UsuarioPerfil p")
-                    ->where("p.ca_perfil = ? ", "sistemas")
-                    ->execute();
-            /* $parametro = Doctrine::getTable("Parametro")->find(array("CU065",3,"ccEmails"));
-              if (stripos($parametro->getCaValor2(), ',') !== false) {
-              $ccEmails = explode(",", $parametro->getCaValor2());
-              }else {
-              $ccEmails = array($parametro->getCaValor2());
-              } */
-
-            //Crea el correo electronico
-            $email = new Email();
-            $email->setCaUsuenvio("Administrador");
-            $email->setCaIdcaso("1");
-            $email->setCaFrom("admin@coltrans.com.co");
-            $email->setCaFromname("Administrador Sistema Colsys");
-            $email->setCaReplyto("admin@coltrans.com.co");
-
-            if ($this->getRequestParameter("reporte")=="Potenciales"){
-                $email->setCaTipo("SeguimientoClientesPotenciales");
-                $email->setCaSubject("¡Error en Informe sobre Seguimiento en Clientes Potenciales!");
-            }elseif ($this->getRequestParameter("reporte")=="Activos"){
-                $email->setCaTipo("ComportamientoClientesActivos");
-                $email->setCaSubject("¡Error en Informe sobre Comportamiento de Clientes Activos!");
-            }
-            
-            foreach ($usuarios as $usuario) {
-                $email->addTo($usuario->getCaEmail());
-            }
-            /* reset($ccEmails);
-              while (list ($clave, $val) = each ($ccEmails)) {
-              $email->addTo( $val );
-              } */
-
-            $email->setCaBodyhtml("Caught exception: " . $e->getMessage() . "\n\n" . $e->getTraceAsString() . "\n\n Se ha presentado un error en el proceso que envía correo con el reporte Seguimiento en Clientes Potenciales de COLSYS. Agradecemos confirmar que el Departamento de Sistemas esté enterado de esta falla. Gracias!");
             $email->save(); //guarda el cuerpo del mensaje
         }
     }
