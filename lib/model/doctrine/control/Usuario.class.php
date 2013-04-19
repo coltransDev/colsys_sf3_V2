@@ -85,7 +85,7 @@ public function getFirmaOtmHTML($company) {
         if($company=="coltrans.com.co")
         {
             $idsucursal="BOG";
-            $ext="201-460-260-161";
+            $ext="161-201-260-460";
         }
         else if($company=="consolcargo.com")
         {
@@ -95,7 +95,7 @@ public function getFirmaOtmHTML($company) {
         else if($company=="colotm.com")
         {
             $idsucursal="OBO";
-            $ext="201-460-260-161";
+            $ext="161-201-260-460";
         }
         if($this->getCaLogin()=="yaurrea")
             $idsucursal="OBO";
@@ -107,7 +107,7 @@ public function getFirmaOtmHTML($company) {
 
         if ($sucursal) {
             $resultado .= $sucursal->getCaDireccion() . "<br />";
-            $resultado .= "Tel.: " . $sucursal->getCaTelefono() . " " . (($ext!="")?$ext:$this->getCaExtension()) . "<br />";
+            $resultado .= "Tel.: " . $sucursal->getCaTelefono() . " " . (($ext!="")?"Ext: ".$ext:"Ext: ".$this->getCaExtension()) . "<br />";
             $resultado .= "Fax.: " . $sucursal->getCaFax() . "<br />";
         }
         $resultado .= $sucursal->getCaNombre() . " - " . $empresa->getTrafico()->getCaNombre(). "<br />";
