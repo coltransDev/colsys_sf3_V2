@@ -15,7 +15,7 @@
 
 $titulo = 'Informe de Reportes de Negocio por Vendedores';
 $meses  = array( "%" => "Todos los Meses", "01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre" );
-$transportes = array("%" => "Todos", "Aéreo" => "Aéreo", "Marítimo" => "Marítimo");
+$transportes = array("%" => "Todos", "Aéreo" => "Aéreo", "Marítimo" => "Marítimo", "Terrestre" => "Terrestre");
 
 include_once 'include/datalib.php';                                            // Incorpora la libreria de funciones, para accesar leer bases de datos
 require_once("checklogin.php");                                                               // Captura las variables de la sessión abierta
@@ -156,6 +156,16 @@ elseif (!isset($boton) and !isset($accion) and isset($login)){
         echo "<script>alert(\"".addslashes($rse->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
+        
+    $condicion = str_replace("ca_impoexpo = 'Exportación'","ca_impoexpo = 'OTM-DTA'",$condicion);
+    $rso =& DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
+    if (!$rso->Open("select * from vi_repreportes $condicion")) {               // Selecciona todos lo registros de la vista Vi_Reportes Importación
+        echo "<script>alert(\"".addslashes($rse->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+        echo "<script>document.location.href = 'entrada.php';</script>";
+        exit; }  
+        
+    //echo $condicion;
+   // exit();
 
     echo "<HTML>";
     echo "<HEAD>";
@@ -249,6 +259,49 @@ elseif (!isset($boton) and !isset($accion) and isset($login)){
        echo "  <TD Class=listar style='font-size: 9px;'>".$rse->Value('ca_sucursal')."</TD>";
        echo "</TR>";
        $rse->MoveNext();
+    }
+    echo "<TR HEIGHT=5>";
+    echo "  <TD Class=imprimir COLSPAN=12></TD>";
+    echo "</TR>";
+    echo "</TABLE><BR>";
+    
+    //inicio OTM
+        echo "<TABLE WIDTH=900 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
+    echo "<TR>";
+    echo "  <TD Class=partir COLSPAN=12 style='font-weight:bold'>OTM - DTA</TD>";
+    echo "</TR>";
+    echo "<TR>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Reporte</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Ver.</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Fch.Reporte</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Nit</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Cliente</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Tráfico</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Origen</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Destino</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Transporte</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>T.Incoterms</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Vendedor..</TD>";
+    echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Sucursal</TD>";
+    echo "</TR>";
+    while (!$rso->Eof() and !$rso->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
+       $incoterms = array_unique(explode("|",$rsi->Value('ca_incoterms')));
+       $incoterms = implode("<br />", $incoterms);
+       echo "<TR>";
+       echo "  <TD Class=listar style='font-weight:bold; font-size: 9px;'>".$rso->Value('ca_consecutivo')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rso->Value('ca_version')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rso->Value('ca_fchreporte')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rso->Value('ca_idcliente')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rso->Value('ca_nombre_cli')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rso->Value('ca_traorigen')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rso->Value('ca_ciuorigen')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rso->Value('ca_ciudestino')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rso->Value('ca_transporte')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$incoterms."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rso->Value('ca_login')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;'>".$rso->Value('ca_sucursal')."</TD>";
+       echo "</TR>";
+       $rso->MoveNext();
     }
     echo "<TR HEIGHT=5>";
     echo "  <TD Class=imprimir COLSPAN=12></TD>";
