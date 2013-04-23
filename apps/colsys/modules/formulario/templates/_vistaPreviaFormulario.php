@@ -1,6 +1,6 @@
 <form class="formulario" id="f_<? echo $formulario->ca_id ?>" action="<? echo url_for('formulario/proceso?id=' . base64_encode($formulario->getCaId()) . '&co=' . $contacto) ?>" method="post">
     <div class="formulario-cabecera">
-        <? if ($formulario->ca_color == 1) { ?>
+        <? if ($formulario->ca_empresa == 1) { ?>
             <img class="logo-topmenu" src="/images/logos/colmas.png" alt="Colmas SA" />    
         <? } else { ?>
             <img class="logo-topmenu" src="/images/logos/coltrans.png" alt="Coltrans SA" />

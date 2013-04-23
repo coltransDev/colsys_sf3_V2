@@ -28,7 +28,7 @@ $url = "formulario/edit?ca_id=" . $formulario->getCaId();
         </tr>
                 <tr>
             <th>Empresa</th>
-            <td><? echo html_entity_decode($formulario->getCaColor()) ?></td>
+            <td><? echo html_entity_decode($formulario->getCaEmpresa()) ?></td>
         </tr>
       <!--  <tr>
             <th>Vigencia Inical</th>
@@ -68,7 +68,9 @@ $url = "formulario/edit?ca_id=" . $formulario->getCaId();
                 <td><? echo $bloque->getCaOrden() ?></td>
                 <td>
                     <a class="" href="<? echo url_for('bloque/show?ca_id=' . $bloque->getCaId()) ?>"><img title="Ver Detalle" alt="Ver Detalle" src="/images/formularios/detalle.png"></a>
+                    <? if ($nivel<=1){ ?>
                     <a class="" href="<? echo url_for('bloque/edit?ca_id=' . $bloque->getCaId()) ?>"><img title="Editar" alt="Editar" src="/images/formularios/edit.gif"></a>
+                    <? } ?>
                     <a class="" target="_blank" href="<? echo url_for('bloque/vistaPrevia?ca_id=' . $bloque->getCaId()) ?>"><img title="Previsualizar" title="Previsualizar" src="/images/formularios/verx16.png"></a>
                     <!--<a class="" target="_blank" href="<? //echo url_for('bloque/borrarCascada?ca_id=' . $bloque->getCaId()) ?>"><img title="Borrar en cascada" title="Borrar en cascada" src="/images/formularios/verx16.png"></a>-->
                 </td>

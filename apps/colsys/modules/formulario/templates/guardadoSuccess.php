@@ -1,5 +1,5 @@
 <div class="formulario-cabecera">
-    <? if ($formulario->ca_color == 1) { ?>
+    <? if ($formulario->ca_empresa == 1) { ?>
         <img class="logo-topmenu" src="/images/logos/colmas.png" alt="Colmas SA" />    
     <? } else { ?>
         <img class="logo-topmenu" src="/images/logos/coltrans.png" alt="Coltrans SA" />
@@ -16,7 +16,7 @@
     <p class="align-center"><b>Muchas Gracias!!!</b></p>
     <br>
     <br>
-    <? if ($formulario->ca_color == 1) { ?>
+    <? if ($formulario->ca_empresa == 1) { ?>
         <p class="align-center">Puede continuar visitando nuestro sitio web  <a href="http://www.colmas.com.co/" target="_BLANK">COLMAS LTDA.</a></p>    
     <? } else { ?>
         <p class="align-center">Puede continuar visitando nuestro sitio web  <a href="http://www.coltrans.com.co/" target="_BLANK">COLTRANS S.A.S</a></p>

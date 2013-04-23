@@ -4,12 +4,10 @@
     </div>
 <?php endif; ?>
 <div class="resultado-estadistica">
-    <h1>Reporte personalizado del formulario "<? echo $formulario->ca_titulo ?>"</h1>
+    <h1>Reporte personalizado del formulario formulario "<? echo $formulario->ca_titulo ?>"</h1>
     <br>
     <div class="clear-both">
     </div>
-    <br>
-    <p align="center" class="no">La consulta puede tardar unos minutos</p>
     <div class="contenido">
         <div class="contenedor-formulario">
             <form class="formulario" id="f_7" action="<? echo url_for('formulario/reporteDetallado?id=' . base64_encode($formulario->getCaId())) ?>" method="post">
