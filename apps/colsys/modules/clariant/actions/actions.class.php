@@ -59,7 +59,7 @@ class clariantActions extends sfActions {
               ->addOrderBy("e.ca_referencia desc, e.ca_documento desc")
               //->getSqlQuery();
               ->execute();
-      
+
       $novedades = array();
       foreach ($clariant_facturas as $clariant_factura) {
          $novedad = array();
@@ -77,8 +77,8 @@ class clariantActions extends sfActions {
                $this->reporte = $reporte;
             }
          }
-         
-         if(!$this->reporte){
+
+         if (!$this->reporte) {
             continue;
          }
 
@@ -97,19 +97,18 @@ class clariantActions extends sfActions {
          $novedad[] = $reporte->getProperty("clienteclariant");
          $novedad[] = $InoMaestraExpo->getCaVia();
          $modalidad = null;
-         
-         if ($InoMaestraExpo->getCaVia() == "Maritimo"){
+
+         if ($InoMaestraExpo->getCaVia() == "Maritimo") {
             $InoMaestraExpoSea = Doctrine::getTable("InoMaestraExpoSea")->find($InoMaestraExpo->getCaReferencia());
-            if ($InoMaestraExpoSea){
+            if ($InoMaestraExpoSea) {
                $modalidad = $InoMaestraExpoSea->getCaModalidad();
             }
          }
          $novedad[] = $modalidad;
          $novedad[] = "Trámite Aduanero";
          $novedades[] = $novedad;
-        
       }
-      $this->titulos = array("Código Proveedor","Centro de Costos","Cantidad","Und","Valor","Moneda","Factura","Cuenta Mayor","Centro","Articulo","FACTURA","PESO KG","CLIENTE","MODO TRANS","TIPO CARGA","FACTURA POR");
+      $this->titulos = array("Código Proveedor", "Centro de Costos", "Cantidad", "Und", "Valor", "Moneda", "Factura", "Cuenta Mayor", "Centro", "Articulo", "FACTURA", "PESO KG", "CLIENTE", "MODO TRANS", "TIPO CARGA", "FACTURA POR");
       $this->novedades = $novedades;
    }
 
@@ -120,7 +119,7 @@ class clariantActions extends sfActions {
    public function executeExcelNovedadesFacturacion() {
       $this->executeNovedadesFacturacion();
    }
-   
+
    /*
     * Carga en la Tabla Clariant, con la información de ordenes de compra
     */
@@ -681,14 +680,15 @@ class clariantActions extends sfActions {
          }
       }
       $this->salida = $salida;
+      if (trim($salida) != "") {
+         $directory = sfConfig::get('app_clariant_output');
+         $filename = $directory . DIRECTORY_SEPARATOR . 'COL' . date('YmdHis') . '.txt';
+         $handle = fopen($filename, 'w');
 
-      $directory = sfConfig::get('app_clariant_output');
-      $filename = $directory . DIRECTORY_SEPARATOR . 'COL' . date('YmdHis') . '.txt';
-      $handle = fopen($filename, 'w');
-
-      if (fwrite($handle, $salida) === FALSE) {
-         echo "No se puede escribir al archivo {filename}";
-         exit;
+         if (fwrite($handle, $salida) === FALSE) {
+            echo "No se puede escribir al archivo {filename}";
+            exit;
+         }
       }
       $this->redirect("clariant/list");
    }
