@@ -181,8 +181,9 @@
     </tr>    
     <tr>        
     
-        <td> <div align="left"><b>TP Logistics</b></div></td>
-        <td >
+        <td valign="top"> 
+            <div align="left"><b>TP Logistics</b></div></td>
+        <td valign="top">
             <?
             echo $form['tplogistics']->renderError();
             if( $agente ){
@@ -193,8 +194,20 @@
             echo $form['tplogistics']->render();
             ?>
         </td>
-        <td colspan="5">&nbsp;</td>
+        <td width="16%" valign="top">
+            <div align="left"><b>Informaci&oacute;n de Seguridad:</b></div>
+        </td>
+        <td width="26%">
+            <div align="left">
+            <?
+            echo $form['infosec']->renderError();
+            $form->setDefault('infosec', $agente->getCaInfosec() );
+            echo $form['infosec']->render();
+            ?>
+             </div>
+        </td>
 	</tr>
+    
     <?
 
     }    

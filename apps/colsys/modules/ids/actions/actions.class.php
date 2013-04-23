@@ -247,6 +247,7 @@ class idsActions extends sfActions {
                 $bindValues["tipo"] = $request->getParameter("tipo");
                 $bindValues["activo"] = $request->getParameter("activo");
                 $bindValues["tplogistics"] = $request->getParameter("tplogistics");
+                $bindValues["infosec"] = $request->getParameter("infosec");
             }
 
             $this->form->bind($bindValues);
@@ -386,6 +387,9 @@ class idsActions extends sfActions {
                         $agente->setCaTplogistics(true);
                     } else {
                         $agente->setCaTplogistics(false);
+                    }
+                    if ($bindValues["infosec"]) {
+                        $agente->setCaInfosec($bindValues["infosec"]);
                     }
 
 

@@ -115,12 +115,18 @@ var eliminarAgente = function(){
                </td>
             </tr>
             <tr>
-                <td>
+                <td valign="top">
                     <div align="left"><b>TPLogistics</b></div>
                </td>
-               <td colspan="5">                   
+               <td valign="top">                   
                    <div align="left"><?=$agente->getCaTplogistics()?"<span class='rojo'>S&iacute;</span>":"No"?></div>
-               </td>               
+               </td>
+               <td valign="top">
+                    <div align="left"><b>Información de Seguridad</b></div>
+               </td>
+               <td valign="top">                   
+                   <div align="left"><?=$agente->getCaInfosec()?></div>
+               </td>   
                
             </tr>
             <?

@@ -1,6 +1,6 @@
 <?
 class NuevoIdsForm extends BaseForm{
-	
+
 		
 	public function configure(){
 		
@@ -24,8 +24,8 @@ class NuevoIdsForm extends BaseForm{
         $widgets['dv'] = new sfWidgetFormInputText(array(), array("size"=>3, "readOnly"=>"true" ));
         $widgets['nombre'] = new sfWidgetFormInputText(array(), array("size"=>80 ));
         $widgets['website'] = new sfWidgetFormInputText(array(), array("size"=>80 ));
-		
-		
+        
+        
 		$this->setWidgets( $widgets );
 
 
@@ -35,7 +35,6 @@ class NuevoIdsForm extends BaseForm{
         $validator["id"] =new sfValidatorInteger( array('required' => false ) );
         $validator["idalterno"] =new sfValidatorInteger( array('required' => true ),
 														array('required' => 'La identificación es requerida'));
-        
 
         $validator["dv"] =new sfValidatorInteger( array('required' => false ),
 														array('required' => 'El DV es requerido'));
@@ -46,7 +45,9 @@ class NuevoIdsForm extends BaseForm{
         $validator["website"] =new sfValidatorString( array('required' => false, "max_length"=>60 ));
 
         $validator["idgrupo"] =new sfValidatorInteger( array('required' => false ));
-
+        
+        
+        
         $this->setValidators( $validator );
 		
 				
@@ -62,8 +63,8 @@ class NuevoIdsForm extends BaseForm{
         if( $taintedValues["tipo_identificacion"]==3 ){
             $this->validatorSchema['idalterno']->setOption('required', false);
         }
-		
-		
+	
+        
 		parent::bind($taintedValues,  $taintedFiles);
 	}
 	
