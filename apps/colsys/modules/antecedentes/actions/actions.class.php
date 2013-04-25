@@ -228,8 +228,9 @@ class antecedentesActions extends sfActions {
             $this->forward404Unless($mbls);
             $viaje = $request->getParameter("viaje");
             $fchmaster = $request->getParameter("fchmaster");
-         $observaciones = $request->getParameter("observaciones");
-         $tipo = $request->getParameter("tipo");
+            $observaciones = $request->getParameter("observaciones");
+            $tipo = $request->getParameter("tipo");
+            $emisionbl = utf8_decode($request->getParameter("emisionbl"));
 
             $idlinea = ($request->getParameter("idlinea")?$request->getParameter("idlinea"):"0");
 
@@ -266,8 +267,9 @@ class antecedentesActions extends sfActions {
             $master->setCaMbls($mbls);
             $master->setCaFchmbls($fchmaster);
             $master->setCa_ciclo($viaje);
-         $master->setCaObservaciones($observaciones);
-         $master->setCaTipo($tipo);
+            $master->setCaObservaciones($observaciones);
+            $master->setCaTipo($tipo);
+            $master->setCaEmisionbl($emisionbl);
             $master->setCaProvisional(true);
             if($this->user->getIdSucursal()=="BOG")
                 $master->setCaCarpeta(true);
@@ -730,11 +732,12 @@ class antecedentesActions extends sfActions {
 //        $ref->getCaMbls();
         $data["mbls"] = $ref->getCaMbls();
         //if($arrMbls[1])
-            $data["fchmaster"] = $ref->getCaFchmbls();
+        $data["fchmaster"] = $ref->getCaFchmbls();
 
         $data["viaje"] = $ref->getCaCiclo();
-      $data["observaciones"] = $ref->getCaObservaciones();
-      $data["tipo"] = $ref->getCaTipo();
+        $data["observaciones"] = $ref->getCaObservaciones();
+        $data["tipo"] = $ref->getCaTipo();
+        $data["emisionbl"] = utf8_encode($ref->getCaEmisionbl());
 
         $data["linea"] = $ref->getIdsProveedor()->getIds()->getCaNombre();
 
@@ -967,7 +970,6 @@ class antecedentesActions extends sfActions {
         $this->format = $format;
 
         $this->emails = $ref->getEmails();
-
 
 
         $usuarios = Doctrine::getTable("Usuario")

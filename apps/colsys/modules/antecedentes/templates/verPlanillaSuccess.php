@@ -106,7 +106,7 @@ if( $format!="email" ){
             <td>
                 <b>ETA</b> <?=$ref->getCaFcharribo()?>
             </td>
-            <td>&nbsp;</td>
+            <td><b>Emisión BL Master:</b> <?=$ref->getCaEmisionbl()?></td>
         </tr>        
         <tr>
             <td colspan="2">

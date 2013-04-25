@@ -9,7 +9,7 @@ include_component("widgets", "widgetTransporte");
 include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetLinea");
 include_component("widgets", "widgetCiudad");
-include_component("widgets", "widgetParametros",array("caso_uso"=>"CU049,CU119"));
+include_component("widgets", "widgetParametros",array("caso_uso"=>"CU049,CU119,CU223"));
 ?>
 
 <script type="text/javascript">
@@ -121,7 +121,7 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU049,CU119")
                         xtype: 'fieldset',
                         defaultType: 'textfield',
                         items: [  
-                            {xtype: "label",fieldLabel: ' '},                            
+                                                    
                             new WidgetLinea({fieldLabel: 'Linea',
                                 linkTransporte: "transporte",
                                 name: 'linea',
@@ -158,6 +158,14 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU049,CU119")
                                 name:'tipo',
                                 fieldLabel: "Tipo",
                                 caso_uso:"CU119",
+                                width:200,
+                                idvalor:"valor"
+                            }),
+                            new WidgetParametros({
+                                id:'emisionbl',
+                                name:'emisionbl',
+                                fieldLabel: "Emisión BL Master",
+                                caso_uso:"CU223",
                                 width:150,
                                 idvalor:"valor"
                             })
