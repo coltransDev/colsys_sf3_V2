@@ -320,9 +320,10 @@ class traficosActions extends sfActions {
       // Tipos de piezas			
       $this->form->setQueryPiezas(ParametroTable::retrieveQueryByCaso("CU047"));
       $this->form->setQueryPeso(ParametroTable::retrieveQueryByCaso("CU049"));
+      $this->form->setQueryJornadas(ParametroTable::retrieveQueryByCaso("CU224"));
 
       if ($reporte->getCaTransporte() == Constantes::AEREO) {
-         $this->form->setQueryVolumen(ParametroTable::retrieveQueryByCaso("CU058"));
+         $this->form->setQueryVolumen(ParametroTable::retrieveQueryByCaso("CU058"));         
       } else {
          $this->form->setQueryVolumen(ParametroTable::retrieveQueryByCaso("CU050"));
       }
@@ -386,6 +387,7 @@ class traficosActions extends sfActions {
          $bindValues["fchsalida"] = $request->getParameter("fchsalida");
          $bindValues["horasalida"] = $request->getParameter("horasalida");
          $bindValues["fchllegada"] = $request->getParameter("fchllegada");
+         $bindValues["jornada"] = $request->getParameter("jornada");
          $bindValues["fchcontinuacion"] = $request->getParameter("fchcontinuacion");
          $bindValues["piezas"] = $request->getParameter("piezas");
          $bindValues["un_piezas"] = $request->getParameter("un_piezas");
@@ -571,7 +573,10 @@ class traficosActions extends sfActions {
          if ($request->getParameter("fchllegada")) {
             $status->setCaFchllegada(Utils::parseDate($request->getParameter("fchllegada")));
          }
-
+         if ($request->getParameter("jornada")) {
+            $status->setProperty("jornada", $request->getParameter("jornada"));
+         }
+         
 
          $horaRecibo = $request->getParameter("horasalida");
          if ($horaRecibo['hour']) {

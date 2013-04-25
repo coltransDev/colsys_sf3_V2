@@ -451,15 +451,24 @@ echo $form['transporte']->render();
 				</div></td>
 				<td><div align="left"><b>Fecha de llegada:</b><br />
 					<?			
-					echo $form['fchllegada']->renderError(); 
-					if( $ultStatus ){	
-					 	$form->setDefault('fchllegada', $ultStatus->getCaFchllegada() ); 
-					 }
-					echo $form['fchllegada']->render();
-					?>					
-				</div></td>
-				<td>&nbsp;					</td>
-			</tr>
+                        echo $form['fchllegada']->renderError(); 
+                        if( $ultStatus ){	
+                            $form->setDefault('fchllegada', $ultStatus->getCaFchllegada() ); 
+                         }
+                        echo $form['fchllegada']->render();
+                        if($reporte->getCaTransporte()==Constantes::AEREO){
+                            echo $form['jornada']->renderError(); 
+                            $jornadaAereo="";
+                            if( $ultStatus ){	
+                                $form->setDefault('jornada', $ultStatus->getProperty("jornada") );
+                             }else{
+                                 $form->setDefault('jornada', $jornadaAereo); 
+                             }                             
+                            echo $form['jornada']->render();
+                        }
+                    ?>                        
+				</div></td>                			
+            </tr>
 			<?				
 			if( $reporte->getCaImpoexpo()!=Constantes::EXPO && ($reporte->getCaContinuacion()!="N/A" && $reporte->getCaContinuacion()!="TRANSBORDO") ){
 			?>

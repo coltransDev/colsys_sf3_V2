@@ -86,8 +86,10 @@ else if( 1==2 && $user->getSucursal()->getEmpresa()->getCaNombre()=="Coltrans S.
 		<td><b>Destino:</b></td>
 		<td><?=$reporte->getDestino()->getCaCiudad()?></td>
 		<td><b><?=$etapa->getCaDepartamento()=="Tráficos"?"Fch. Estimada de Llegada:":"Fch. Estimada de Llegada:" //ticket #4032?></b></td>
-		<td><?=$status->getCaFchllegada()?$status->getCaFchllegada():"&nbsp;"?></td>		
-		<td>&nbsp;</td>		
+		<td colspan="2"><?=$status->getCaFchllegada()?$status->getCaFchllegada():"&nbsp;"?>
+        <?if( $reporte->getCaTransporte()==Constantes::AEREO && $status->getCaFchllegada()){?>
+         en la <?=$status->getProperty("jornada")?$status->getProperty("jornada"):"&nbsp;"?>
+        <?}?></td>			
 		<td>&nbsp;</td>
 	</tr>
 	<?				
