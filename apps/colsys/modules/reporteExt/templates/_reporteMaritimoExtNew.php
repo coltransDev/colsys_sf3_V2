@@ -260,6 +260,13 @@ else
 				<td style="vertical-align:bottom" width="70%"><table border="1" cellspacing="0" width="100%">
 						<tr>
 							<?
+                        if ($gasto->getCaAplicacion()){
+                        ?>
+							<td><b>Application :</b><br />
+								<?=utf8_decode($gasto->getCaAplicacion())?>
+                            </td>
+                        <?
+                        }
 						if ($gasto->getCaNetaTar() != 0){
 						?>
 							<td><b>Buying Rate :</b><br />

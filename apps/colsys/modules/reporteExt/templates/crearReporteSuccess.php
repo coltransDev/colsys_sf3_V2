@@ -120,7 +120,7 @@ var crearSeguimiento=function(){
 			$proveedor = substr($reporte->getProveedoresStr(),0,130);					
 			$asunto = $proveedor." / ".$cliente." [".$origen." -> ".$destino."] ";					
 
-			 $asunto .= " Id.: ".$reporte->getCaConsecutivo()." ";
+			 $asunto = " Id.: ".$reporte->getCaConsecutivo()." ".$asunto;
 			 echo $form['asunto']->renderError();
 			 $form->setDefault('asunto', $asunto); 
 			 echo $form['asunto']->render();
@@ -178,8 +178,13 @@ var crearSeguimiento=function(){
 		<td colspan="2" valign="top">
 			<div align="left"><b>Comentarios Adicionales:</b><br />	
 			 <?			
-			 
-			 $notas = "Thks+Rgds,\n\n";
+			 $notas="";             
+			 $notas.= "Thks+Rgds,\n\n";
+             
+             if(  ($reporte->getCaImpoexpo()==Constantes::IMPO || $reporte->getCaImpoexpo()==Constantes::TRIANGULACION) && ($reporte->getCaTransporte()==Constantes::MARITIMO)  )
+             {
+                 $notas.="Sales Representative : ".$reporte->getUsuario()->getCaNombre()."\n\n";
+             }
 			 
 			 $notas .= $usuario->getFirma();
 			 echo $form['notas']->renderError(); 

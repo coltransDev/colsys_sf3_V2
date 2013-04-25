@@ -290,6 +290,16 @@ class reporteExtActions extends sfActions
 		$this->reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("idreporte") );
 		$this->forward404Unless( $this->reporte );
 
+        if($this->reporte->getCaImpoexpo()==Constantes::OTMDTA)
+        {
+            $this->reporte = Doctrine::getTable("Reporte")
+                                     ->createQuery("r")                                     
+                                     ->whereIn("r.ca_tiporep", array('1','2','3'))
+                                     ->addWhere("r.ca_consecutivo = ? ", $this->reporte->getCaConsecutivo()  )                                     
+                                     ->addOrderBy("r.ca_consecutivo DESC")                                     
+                                     ->fetchOne();
+            $this->forward404Unless( $this->reporte );
+        }
 		$this->forward404Unless( $this->reporte->getCaImpoexpo()==Constantes::IMPO||$this->reporte->getCaImpoexpo()==Constantes::TRIANGULACION );
 
 		if( $this->getRequestParameter("layout") ){

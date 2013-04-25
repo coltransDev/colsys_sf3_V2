@@ -119,14 +119,14 @@ class reporteExtComponents extends sfComponents
                 }
             }
         }
-
+        
         $bodega1 = $reporte->getBodegaConsignar();
         $bodega2 = Doctrine::getTable("Bodega")->find( $reporte->getCaIdbodega() );
 
         if( $reporte->getCaIdconsignar()==1 ){
             $hijo = $consignatario_final;
         }else{
-            $hijo = $bodega1->getCaNombre();
+            $hijo = $bodega1->getCaNombre()." ".$bodega1->getCaDireccion();
         }
         
         if( $bodega2 && ($bodega2->getCaTipo()!= "Coordinador Logistico" && $bodega2->getCaTipo()!="Coordinador Logístico" && $bodega2->getCaTipo()!="Cliente/Consignatario" && $bodega2->getCaTipo()!="-")  )
@@ -134,9 +134,9 @@ class reporteExtComponents extends sfComponents
             if($bodega2->getCaTipo()==$bodega2->getCaNombre() || $bodega2->getCaTipo()=="Entrega Urgente")
                 $hijo .=" / ".$bodega2->getCaTipo();
             else if($reporte->getCaContinuacion()!="N/A")
-                $hijo .=" / ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"")." ".$bodega2->getCaTipo().(($reporte->getCaContinuacion()!="N/A")? " / ".$reporte->getDestinoCont()->getCaCiudad()." - ".$reporte->getDestinoCont()->getTrafico()->getCaNombre():"");
+                $hijo .=" / ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre()." ".$bodega2->getCaDireccion():"")." ".$bodega2->getCaTipo().(($reporte->getCaContinuacion()!="N/A")? " / ".$reporte->getDestinoCont()->getCaCiudad()." - ".$reporte->getDestinoCont()->getTrafico()->getCaNombre():"");
             else
-                $hijo .=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"");
+                $hijo .=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre()." ".$bodega2->getCaDireccion():"");
         }
         
         /*
@@ -292,23 +292,21 @@ class reporteExtComponents extends sfComponents
         if( $reporte->getCaIdconsignar()==1 ){
             $hijo = $consignatario_final;
         }else{
-            $hijo = $bodegaConsignar->getCaNombre();
+            $hijo = $bodegaConsignar->getCaNombre()." ".$bodegaConsignar->getCaDireccion();
         }
         
         if($bodega2 && $reporte->getCaImpoexpo()!=Constantes::TRIANGULACION && $bodega2->getCaIdbodega()!="1")
         {
             if($bodega2->getCaTipo()==$bodega2->getCaNombre())
-                $hijo.=" / ".$bodega2->getCaNombre();
+                $hijo.=" / ".$bodega2->getCaNombre()." ".$bodega2->getCaDireccion();
             else
             {
-                $hijo.=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"");
+                $hijo.=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre()." ".$bodega2->getCaDireccion():"");
                 if( $reporte->getCaContinuacion()== 'N/A' ){
                     $hijo.="<br />".$reporte->getDestino()->getCaCiudad();
                 }
                 $hijo.="<br />".$reporte->getDestino()->getTrafico()->getCaNombre();
             }
-
-            
         }
         //.(($rs->Value('ca_continuacion') == 'N/A')?"<br />".$rs->Value('ca_ciudestino'):"")."<br />".$tm->Value('ca_pais');
 
