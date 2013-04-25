@@ -8,6 +8,7 @@ class NuevoStatusForm extends BaseForm {
     private $queryPiezas = null;
     private $queryPeso = null;
     private $queryVolumen = null;
+    private $queryJornadas = null;
     private $queryConcepto = null;
     private $destinatarios = array();
     private $contactos = array();
@@ -80,6 +81,14 @@ class NuevoStatusForm extends BaseForm {
         $widgets['fchsalida'] = new sfWidgetFormExtDate();
         $widgets['horasalida'] = new sfWidgetFormTime();
         $widgets['fchllegada'] = new sfWidgetFormExtDate();
+        $widgets['jornada'] = new sfWidgetFormDoctrineChoice(array(
+                    'model' => 'Parametro',
+                    'add_empty' => false,
+                    'method' => "getCaValor",
+                    'key_method' => "getCaValor",
+                    'query' => $this->queryJornadas
+                ));
+                
         $widgets['fchcontinuacion'] = new sfWidgetFormExtDate();
 
 
@@ -250,6 +259,8 @@ class NuevoStatusForm extends BaseForm {
                         array('required' => 'Por favor coloque la fecha de salida'));
         $validator['fchllegada'] = new sfValidatorDate(array('required' => false),
                         array('required' => 'Por favor coloque la fecha de llegada'));
+        $validator['jornada'] = new sfValidatorString(array('required' => false),
+                        array('required' => 'Por favor coloque la jornada en la que llega la carga'));
 
         $validator['fchcontinuacion'] = new sfValidatorDate(array('required' => false),
                         array('required' => 'Por favor coloque la fecha de continuación'));
@@ -399,6 +410,10 @@ class NuevoStatusForm extends BaseForm {
 
     public function setQueryVolumen($c) {
         $this->queryVolumen = $c;
+    }
+    
+    public function setQueryJornadas($c) {
+        $this->queryJornadas = $c;
     }
 
     public function setDestinatarios($c) {
