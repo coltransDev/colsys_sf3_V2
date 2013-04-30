@@ -734,17 +734,6 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             
                             $hay_cot = false;
                             $tm = & DlRecordset::NewRecordset($conn);
-                            if($cl->Value('ca_consecutivo') != ""){
-                              if (!$tm->Open("select ca_idcotizacion, ca_consecutivo from tb_cotizaciones where ca_consecutivo in (select ca_idcotizacion from tb_reportes rp inner join (select ca_consecutivo, max(ca_version) as ca_version from tb_reportes where ca_consecutivo = '".$cl->Value('ca_consecutivo')."' group by ca_consecutivo) vr on rp.ca_consecutivo = vr.ca_consecutivo and rp.ca_version = vr.ca_version)")) {
-                                 echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                                 echo "<script>document.location.href = 'entrada.php';</script>";
-                                 exit;
-                              }
-                              if ($tm->Value('ca_idcotizacion') != ""){
-                                 $hay_cot = true;
-                              }
-                            }
-                            /*
                             if($cl->Value('ca_idproducto') != ""){
                               $hay_cot = true;
                               if (!$tm->Open("select ca_idcotizacion from tb_cotproductos where ca_idproducto = ".$cl->Value('ca_idproducto'))) {
@@ -760,11 +749,10 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                                  exit;
                               }
                             }
-                            */
                             $pdf_coti = $hay_cot ? "<BR /><IMG style='cursor:pointer'src='./graficos/pdf.gif' alt='Genera archivo PFD de la Cotización' border=0 onclick='javascript:ver_cot(\"" . $tm->Value('ca_idcotizacion') . "\")'>" : "";
                             echo "<TR>";
                             echo "  <TD Class=listar><B>Reporte Neg.:</B><BR>" . $cl->Value('ca_consecutivo') . " $pdf_icon</TD>";
-                            echo "  <TD Class=listar><B>Cotizacion :</B><BR>" . $tm->Value('ca_consecutivo') . " $pdf_coti</TD>";
+                            echo "  <TD Class=listar><B>Cotizacion :</B><BR>" . $cl->Value('ca_cotizacion') . " $pdf_coti</TD>";
                             echo "  <TD Class=listar COLSPAN=2><B>Proveedor:</B><BR>" . $cl->Value('ca_proveedor') . "</TD>";
                             echo "  <TD Class=listar><B>Utilidad x Cliente:</B><BR>" . number_format($utl_cbm * $cl->Value('ca_volumen')) . "</TD>";
                             echo "  <TD Class=listar><B>Hbl Final: <IMG style='cursor:pointer;$level0' src='./graficos/fileopen.png' alt='Agregar Copia de Hbl Definitivo' border=0 onclick='javascript:subir_hbl(\"" . $cl->Value('ca_referencia') . "\",\"" . $cl->Value('ca_hbls') . "\")'>";
@@ -1457,7 +1445,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "      alert('Ingrese el Código de la Nota de Inspección');";
                 echo "  else if (document.contrato.inspeccion_fch.value == '' && document.contrato.inspeccion_nta.value != '')";
                 echo "      alert('Ingrese la fecha de la Nota de Inspección');";
-                echo "  else if (document.contrato.idpatio.value == '')";
+                echo "  else if (document.contrato.sitiodevolucion.value == '')";
                 echo "      alert('Ingrese el nombre del Sitio para hacer la Devolución');";
                 echo "  else";
                 echo "  	 return (true);";
@@ -1496,7 +1484,6 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "<TR>";
                 echo "  <TD Class=mostrar>Sitio de Devolución:</TD>";
                 echo "  <TD Class=mostrar COLSPAN=3><SELECT NAME='idpatio'>";  // Llena el cuadro de lista con los valores de la tabla Conceptos
-                echo "  <OPTION VALUE=''></OPTION>";
                 $tm->MoveFirst();
                 $ciu_mem = null;
                 while (!$tm->Eof()) {
@@ -5316,12 +5303,12 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             exit;
                         }
                     }
-                }/*
+                }
                 if (!$rs->Open("update tb_inomaestra_sea set ca_sitiodevolucion = '$sitiodevolucion' where ca_referencia = '$referencia'")) {
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
-                }*/
+                }
                 break;
             }
         case 'Registrar': {                                                      // El Botón Guardar fue pulsado
@@ -5613,9 +5600,8 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     where up.ca_perfil ='cordinador-de-otm' and sc.ca_nombre in (
                         select distinct(s.ca_nombre)
                             from tb_inoclientes_sea  c
-                            inner join tb_reportes r on r.ca_idreporte=c.ca_idreporte
-                            inner join control.tb_usuarios u on r.ca_usucreado=u.ca_login
-                            inner join control.tb_sucursales s on s.ca_idsucursal=u.ca_idsucursal
+                            inner join tb_reportes r on r.ca_idreporte=c.ca_idreporte                            
+                            inner join control.tb_sucursales s on s.ca_idsucursal=r.ca_continuacion_conf
                             where
                             c.ca_referencia='" . $id . "' and c.ca_continuacion <>'N/A'
                             )";
