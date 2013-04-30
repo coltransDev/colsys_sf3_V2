@@ -772,7 +772,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             foreach ($docTrans as $docTran) {
                                 echo "<br /><a href='/gestDocumental/verArchivo?folder=" . base64_encode("Referencias/" . $cl->Value('ca_referencia') . "/docTrans/" . $cl->Value('ca_hbls')) . "&idarchivo=" . base64_encode($docTran['basename']) . "'><IMG src='./graficos/image.gif' alt='" . $docTran['filename'] . "' border=0> Doc. " . $i++ . "</img></a>";
                             }
-                            echo "  <br />Rec/Antec.:&nbsp;&nbsp;&nbsp;</B><BR>" . $cl->Value('ca_fchantecedentes') . "</TD>";
+                            echo "  <br />Desbloqueo:</B><BR>" . $rs->Value('ca_fchrecibido') . "</TD>";
                             echo "</TR>";
                             if ($cl->value('ca_usulibero') != "") {
                                 echo "<TR>";
