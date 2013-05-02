@@ -662,9 +662,12 @@ InoAuditor:
     ca_valor: decimal
     ca_moneda: decimal
     ca_tcambio: decimal
-    ca_idantecedente: integer           
+    ca_idantecedente: integer
+    ca_idtarea: integer 
     ca_estado: char
     ca_camino: string
+    ca_sucursal: string(50)
+    ca_cc: string
     ca_fchcreado: timestamp
     ca_usucreado: string(15)
     ca_fchactualizado: timestamp
@@ -685,6 +688,11 @@ InoAuditor:
       local: ca_idevento
       foreign: ca_idantecedente
       type: many
+    NotiTarea:
+      local: ca_idtarea
+      foreign: ca_idtarea
+      type: one
+      class: NotTarea  
 
 
 
