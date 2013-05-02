@@ -415,7 +415,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
                 echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . $rs->Value('ca_sucursal') . "</TD>";
                 $ref_mem = $rs->Value('ca_referencia');
             } else {
-                echo "  <TD Class=mostrar style='font-size: 9px;$back_col' COLSPAN=5></TD>";
+                echo "  <TD Class=mostrar style='font-size: 9px;$back_col' COLSPAN=4></TD>";
             }
             echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . $rs->Value('ca_hbls') . "</TD>";
             echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . $rs->Value('ca_volumen') . "</TD>";
