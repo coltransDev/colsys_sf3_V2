@@ -12,6 +12,25 @@
  */
 class InoAuditor extends BaseInoAuditor {
 
+    
+     /**
+     * Retorna el id del evento (nodo padre) dado el id de un nodo cualquiera del arbol.
+     * @param type $idnodo id del evento 
+     * @return type
+     */
+    public function getEmpresaById($idempresa) {
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "       
+            select i.ca_nombre
+            from ids.tb_ids i
+            where (i.ca_id = " . $idempresa . ")   
+            ";
+        $st = $con->execute($sql);
+        $data = $st->fetchAll();
+        $id = $data[0]["ca_nombre"];
+        return $id;
+    }
+    
     /**
      * Retorna el id del evento (nodo padre) dado el id de un nodo cualquiera del arbol.
      * @param type $idnodo id del evento 
