@@ -16,7 +16,8 @@ $roScripts = array("repgerencia.php",
                    "repreferencia.php",
                    "repauditoria.php",
                    "repindicadores.php",
-                   "repgeneratorair.php"
+                   "repgeneratorair.php",
+                   "repantecedentes.php"
                   );
 
 if( in_array($script, $roScripts ) ){

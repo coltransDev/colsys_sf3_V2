@@ -12,7 +12,7 @@
 // Copyright:     Coltrans S.A. - 2004                                        \\
 /*================-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*\
 */
-$programa = 53;
+
 $titulo = 'Entrega Oportuna de Antecedentes';
 $meses  = array( "01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre" );
 $estados = array("Casos Cerrados" => "ca_estado <> \"Abierto\"","Cierre Provisional" => "ca_estado = \"Provisional\"","Casos Abiertos" => "ca_estado = \"Abierto\"","Todos los Casos" => "true");
@@ -256,7 +256,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
         $dif_mem = dateDiff($ent_opo,$ent_efe);
         $dif_mem = ($rs->Value('ca_tipo')=='Free Hand Cargo')?NULL:$dif_mem;
         if (!$ent_opo){
-           $back_col = " background: #FFFFC0";
+           $back_col = " background: #9999CC";
            $sub_tot["No se Midió"]+= 1;
         }else if ($dif_mem > 0 and $ent_opo<>$ent_efe){ //$rs->Value('ca_numdias')
            $back_col = " background: #FF0000";
