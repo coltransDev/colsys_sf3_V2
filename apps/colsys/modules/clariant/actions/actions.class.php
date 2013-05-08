@@ -90,7 +90,7 @@ class clariantActions extends sfActions {
          $novedad[] = "USD";
          $novedad[] = $clariant_factura->getCaFactura();
          $novedad[] = "313901";
-         $novedad[] = $reporte->getProperty("centro");
+         $novedad[] = $reporte->getProperty("centroclariant");
          $novedad[] = "6011";
          $novedad[] = ""; //$reporte->getProperty("facturaclariant");
          $novedad[] = $InoMaestraExpo->getCaPeso();
