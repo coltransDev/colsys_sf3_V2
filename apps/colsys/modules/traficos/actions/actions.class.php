@@ -279,8 +279,7 @@ class traficosActions extends sfActions {
       $fijos = $reporte->getContacto('1');
 
       $contactos_reporte = $reporte->getContacto('3');
-
-      $this->form->setIdsucursal($reporte->getUsuario()->getCaIdsucursal());
+      $this->form->setIdsucursal($this->getUser()->getIdsucursal());
       $this->form->setContactos($contactos_reporte);
       $this->form->setDestinatariosFijos($fijos);
       //Etapas
