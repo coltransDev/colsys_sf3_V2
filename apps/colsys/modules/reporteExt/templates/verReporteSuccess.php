@@ -2,7 +2,9 @@
 echo nl2br($introduccion);
 ?>
 <br />
+<br /><b>Shipping Instructions :</b><br />
 
+<?=nl2br($instrucciones)?>
 <?
 //echo $reporte->getCaTransporte();
 //echo $reporte->getCaTiporep();
@@ -17,8 +19,6 @@ if( $reporte->getCaTransporte()==Constantes::AEREO ){
 
 ?>
 
-<br /><b>Shipping Instructions :</b><br />
-<?=nl2br($instrucciones)?>
 <br />
 <b>Notes :</b><br />
 

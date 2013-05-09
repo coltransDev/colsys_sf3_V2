@@ -139,6 +139,17 @@ var crearSeguimiento=function(){
 	</tr>
 	<tr>
 		<td colspan="2" valign="top">
+			
+			<div align="left" id="inst_agente"><b>Instrucciones Especiales para el Agente: <a href="#inst_agente" onclick="verInstruccionesAgente()"><?=image_tag("cerrado.gif")?></a></b>
+			<?		
+			 echo $form['instrucciones']->renderError();
+             $form->setDefault('instrucciones', $reporte->getCaInstrucciones());
+			 echo $form['instrucciones']->render();
+			 ?>
+			 </div>		</td>
+	</tr>
+	<tr>
+		<td colspan="2" valign="top">
 			<div align="left">
 				<?
                 
@@ -154,17 +165,6 @@ var crearSeguimiento=function(){
 				?>
 			</div>
         </td>
-	</tr>
-	<tr>
-		<td colspan="2" valign="top">
-			
-			<div align="left" id="inst_agente"><b>Instrucciones Especiales para el Agente: <a href="#inst_agente" onclick="verInstruccionesAgente()"><?=image_tag("cerrado.gif")?></a></b>
-			<?		
-			 echo $form['instrucciones']->renderError();
-             $form->setDefault('instrucciones', $reporte->getCaInstrucciones());
-			 echo $form['instrucciones']->render();
-			 ?>
-			 </div>		</td>
 	</tr>
 	<tr>
 		<td colspan="2" valign="top"><div align="left"><b>Adjuntar Documento: </b>		
