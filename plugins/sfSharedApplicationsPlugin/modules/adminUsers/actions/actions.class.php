@@ -409,7 +409,7 @@ class adminUsersActions extends sfActions {
                 $usuario->setCaActivo(true);
             }else{
                 $usuario->setCaActivo(false);
-                $usuario->emailInactivo($request->getParameter("login"), $conn);
+                $usuario->emailInactivo($request->getParameter("login"));
             }
 
             if ($request->getParameter("forcechange")) {
@@ -619,8 +619,9 @@ class adminUsersActions extends sfActions {
                 $email->setCaIdcaso(null);
                 $email->setCaFrom($user->getCaEmail());
                 $email->setCaFromname($user->getCaNombre());
+                $email->setCaCc($usuario->getCaEmail());
                 $email->setCaReplyto($user->getCaEmail());
-                $email->setCaSubject("CAMBIO DE DIRECCION"."->".$user->getCaNombres()." ".$user->getCaApellidos());
+                $email->setCaSubject('Cambio de dirección Colaborador '.strtoupper($usuario->getSucursal()->getEmpresa()->getCaNombre())." ".$usuario->getSucursal()->getCaNombre());
 
                 foreach ($recips as $recip) {
                     if ($recip->getCaEmail()) {
@@ -684,6 +685,7 @@ class adminUsersActions extends sfActions {
         $this->asunto = $request->getParameter("asunto");
         $this->direccion = $request->getParameter("direccion");
         $this->logo = $request->getParameter("logo");
+        $this->tiempo = $request->getParameter("tiempo");
         
         $this->usuario = $usuario;
     }
