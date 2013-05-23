@@ -219,7 +219,6 @@ if( count($emails)>0 ){
 ?>
 <br />
 <br />
-
 <table class="tableList">
 	<tr >
 		<th>Fecha Envio</th>			
