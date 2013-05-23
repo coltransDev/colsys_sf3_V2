@@ -303,7 +303,7 @@ for ($k = 0; $k < count($transportes); $k++):
             $titu_mem = array('Concepto', 'Tarifa');
             if ($imprimirObservaciones) {
                array_push($titu_mem, 'Observaciones');
-               $width_mem = array(55, 53, 62);
+               $width_mem = array(50, 60, 60);
             } else {
                $width_mem = array(80, 90);
             }
@@ -319,7 +319,8 @@ for ($k = 0; $k < count($transportes); $k++):
             $pdf->SetFills(array_fill(0, count($width_mem), 0));
 
             foreach ($recargosGen as $recargo) {
-               $row = array($recargo->getTipoRecargo()->getCaRecargo(), $recargo->getTextoTarifa());
+               $equipo = ($recargo->getEquipo())?$recargo->getEquipo()->getCaConcepto():"";
+               $row = array($recargo->getTipoRecargo()->getCaRecargo(), $recargo->getTextoTarifa()." ".$equipo);
                if ($imprimirObservaciones) {
                   array_push($row, $recargo->getCaObservaciones());
                }
