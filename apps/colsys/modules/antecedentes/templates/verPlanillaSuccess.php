@@ -92,11 +92,15 @@ if( $format!="email" ){
                 <b>Destino:</b> <?=$ref->getDestino()->getTrafico()->getCaNombre()." - ".$ref->getDestino()->getCaCiudad()?>
             </td>
             <td>
-            <?if($ref->getCaTipo()){?>
-                <b>Tipo:</b> <?=$ref->getCaTipo()?>
-            <?}else{?>
+            <?if($ref->getCaTipo()){
+                $parametros = ParametroTable::retrieveByCaso("CU119", null, null, $ref->getCaTipo());
+                foreach($parametros as $parametro){
+            ?>  
+                <b>Tipo:</b> <?=$parametro->getCaValor()?>
+            <?  }
+             }else{?>
                 &nbsp;
-            <?}?>
+           <?}?>
             </td>
         </tr>
         <tr>
@@ -106,7 +110,16 @@ if( $format!="email" ){
             <td>
                 <b>ETA</b> <?=$ref->getCaFcharribo()?>
             </td>
-            <td><b>Emisión BL Master:</b> <?=$ref->getCaEmisionbl()?></td>
+            <?
+            if($ref->getCaEmisionbl()){
+                $parametros = ParametroTable::retrieveByCaso("CU223", null, null, $ref->getCaEmisionbl());
+                foreach($parametros as $parametro){
+            ?>
+                    <td><b>Emisión BL Master:</b> <?=$parametro->getCaValor()?></td>
+            <?
+                }
+            }
+            ?>
         </tr>        
         <tr>
             <td colspan="2">

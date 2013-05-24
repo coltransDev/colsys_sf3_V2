@@ -156,18 +156,20 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU049,CU119,C
                             new WidgetParametros({
                                 id:'tipo',
                                 name:'tipo',
+                                hiddenName:'ntipo',
                                 fieldLabel: "Tipo",
                                 caso_uso:"CU119",
                                 width:200,
-                                idvalor:"valor"
+                                idvalor:"id"
                             }),
                             new WidgetParametros({
                                 id:'emisionbl',
                                 name:'emisionbl',
+                                hiddenName: 'idemisionbl',
                                 fieldLabel: "Emisión BL Master",
                                 caso_uso:"CU223",
                                 width:150,
-                                idvalor:"valor"
+                                idvalor:"id"
                             })
                         ]
                     }                    

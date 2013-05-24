@@ -137,7 +137,7 @@ class antecedentesActions extends sfActions {
         $databaseConf = sfYaml::load(sfConfig::get('sf_config_dir') . '/databases.yml');
         $dsn      = explode("=",$databaseConf ['all']['doctrine']['param']['dsn']);        
         $host = $dsn[count($dsn)-1];
-        $con = Doctrine_Manager::connection(new PDO("pgsql:dbname=Coltrans;host={$host}", 'Administrador', 'lmD125aC-c'));
+        $con = Doctrine_Manager::connection(new PDO("pgsql:dbname=Coltrans;host={$host}", 'Administrador', 'V9p0%rRc9$'));
         
         $st = $con->execute(utf8_encode($sql));
             
@@ -229,8 +229,8 @@ class antecedentesActions extends sfActions {
             $viaje = $request->getParameter("viaje");
             $fchmaster = $request->getParameter("fchmaster");
             $observaciones = $request->getParameter("observaciones");
-            $tipo = $request->getParameter("tipo");
-            $emisionbl = utf8_decode($request->getParameter("emisionbl"));
+            $ntipo = $request->getParameter("ntipo");
+            $idemisionbl = utf8_decode($request->getParameter("idemisionbl"));
 
             $idlinea = ($request->getParameter("idlinea")?$request->getParameter("idlinea"):"0");
 
@@ -268,8 +268,8 @@ class antecedentesActions extends sfActions {
             $master->setCaFchmbls($fchmaster);
             $master->setCa_ciclo($viaje);
             $master->setCaObservaciones($observaciones);
-            $master->setCaTipo($tipo);
-            $master->setCaEmisionbl($emisionbl);
+            $master->setCaTipo($ntipo);
+            $master->setCaEmisionbl($idemisionbl);
             $master->setCaProvisional(true);
             if($this->user->getIdSucursal()=="BOG")
                 $master->setCaCarpeta(true);
@@ -713,6 +713,15 @@ class antecedentesActions extends sfActions {
         $numRef = $request->getParameter("numRef");
         $ref = Doctrine::getTable("InoMaestraSea")->find($numRef);
         $this->forward404Unless($ref);
+        
+        $parametrosTipo = ParametroTable::retrieveByCaso("CU119", null, null, $ref->getCaTipo());
+        foreach($parametrosTipo as $parametroTipo){
+            $ntipo = $parametroTipo->getCaValor();
+        }
+        $parametrosEmision = ParametroTable::retrieveByCaso("CU223", null, null, $ref->getCaEmisionbl());
+        foreach($parametrosEmision as $parametroEmision){
+            $emisionbl = $parametroEmision->getCaValor();
+        }
 
         $data = array();
 
@@ -736,8 +745,8 @@ class antecedentesActions extends sfActions {
 
         $data["viaje"] = $ref->getCaCiclo();
         $data["observaciones"] = $ref->getCaObservaciones();
-        $data["tipo"] = $ref->getCaTipo();
-        $data["emisionbl"] = utf8_encode($ref->getCaEmisionbl());
+        $data["tipo"] = $ntipo;
+        $data["emisionbl"] = utf8_encode($emisionbl);
 
         $data["linea"] = $ref->getIdsProveedor()->getIds()->getCaNombre();
 
