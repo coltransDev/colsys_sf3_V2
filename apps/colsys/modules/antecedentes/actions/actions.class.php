@@ -268,8 +268,8 @@ class antecedentesActions extends sfActions {
             $master->setCaFchmbls($fchmaster);
             $master->setCa_ciclo($viaje);
             $master->setCaObservaciones($observaciones);
-            $master->setCaTipo($ntipo);
-            $master->setCaEmisionbl($idemisionbl);
+            $master->setCaTipo(($ntipo!="")?$ntipo:null);
+            $master->setCaEmisionbl(($idemisionbl!="")?$idemisionbl:null);
             $master->setCaProvisional(true);
             if($this->user->getIdSucursal()=="BOG")
                 $master->setCaCarpeta(true);
