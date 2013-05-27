@@ -319,8 +319,8 @@ for ($k = 0; $k < count($transportes); $k++):
             $pdf->SetFills(array_fill(0, count($width_mem), 0));
 
             foreach ($recargosGen as $recargo) {
-               $equipo = ($recargo->getEquipo())?$recargo->getEquipo()->getCaConcepto():"";
-               $row = array($recargo->getTipoRecargo()->getCaRecargo(), $recargo->getTextoTarifa()." ".$equipo);
+               $equipo = ($recargo->getEquipo()) ? $recargo->getEquipo()->getCaConcepto() : "";
+               $row = array($recargo->getTipoRecargo()->getCaRecargo(), $recargo->getTextoTarifa() . " " . $equipo);
                if ($imprimirObservaciones) {
                   array_push($row, $recargo->getCaObservaciones());
                }
@@ -409,8 +409,8 @@ for ($k = 0; $k < count($transportes); $k++):
          }
          if ($producto->getCaObservaciones()) {
             $i++;
-            $observaciones[$i] = $producto->getCaObservaciones();
-            $tabla[$producto->getOrigen()->getCaCiudad()][$producto->getDestino()->getCaCiudad()][$num_mem]["vigencia"].= " (Ver Nota $i)";
+            $observaciones["Puerto"][$i] = $producto->getCaObservaciones();
+            $tabla[$producto->getOrigen()->getCaCiudad()][$producto->getDestino()->getCaCiudad()][$num_mem]["vigencia"].= " (Nota $i)";
          }
 
          if ($producto->getCaObservaciones()) {
@@ -430,7 +430,7 @@ for ($k = 0; $k < count($transportes); $k++):
       if ($t++ != 0) {
          $pdf->Ln(4);
          $pdf->beginGroup();
-      }else{
+      } else {
          $pdf->Ln(1);
       }
       $pdf->SetFont($font, '', 9);
@@ -511,7 +511,7 @@ for ($k = 0; $k < count($transportes); $k++):
       }
       $pdf->flushGroup();
 
-      if (count($observaciones) != 0) {
+      if (count($observaciones["Puerto"]) != 0) {
          $pdf->beginGroup();
          $pdf->SetFont($font, '', 7);
          $titu_mem = array('Observaciones');
@@ -529,7 +529,7 @@ for ($k = 0; $k < count($transportes); $k++):
          $pdf->SetAligns(array_fill(0, count($width_mem), "L"));
          $pdf->SetStyles(array_fill(0, count($width_mem), ""));
          $pdf->SetFills(array_fill(0, count($width_mem), 0));
-         foreach ($observaciones as $key => $observacion) {
+         foreach ($observaciones["Puerto"] as $key => $observacion) {
             $row = array("Nota $key", $observacion);
             $pdf->Row($row);
          }
@@ -591,7 +591,6 @@ for ($k = 0; $k < count($transportes); $k++):
    $recargosGenConcepto = array();
    $recargosGenTrayecto = array();
 
-   $i = 0;
    $observaciones = array();
    foreach ($productos as $producto):
       if ($producto->getCaTransporte() != $transporte) {
@@ -603,9 +602,9 @@ for ($k = 0; $k < count($transportes); $k++):
       if ($producto->getCaImprimir() == 'Concepto' or $producto->getCaImprimir() == 'Trayecto'):
          $opciones = $producto->getCotOpciones();
          $trayecto = $producto->getOrigen()->getCaCiudad() . "\n" . $producto->getDestino()->getCaCiudad();
-         if ($producto->getCaObservaciones()) {
-            $i++;
-            $observaciones[$i] = $producto->getCaObservaciones();
+         if (($producto->getCaImprimir() == 'Concepto' and $producto->getCaObservaciones()) or ($producto->getCaImprimir() == 'Trayecto' and ($producto->getCaObservaciones() or $producto->getCaIncoterms() or $producto->getCaFrecuencia() or $producto->getCaTiempotransito() or $producto->getCaVigencia()))) {
+            $i = isset($observaciones[$producto->getCaImprimir()])?count($observaciones[$producto->getCaImprimir()])+1:1;
+            $observaciones[$producto->getCaImprimir()][$i] = $producto->getCaObservaciones();
             $trayecto.= (($producto->getCaImprimir() == 'Concepto') ? "\n" : " ") . "(Nota $i)";
          }
          if ($producto->getCaImprimir() == 'Concepto') {
@@ -621,6 +620,7 @@ for ($k = 0; $k < count($transportes); $k++):
             }
             $trayectos2[] = $trayecto;
          }
+         $add_det = "";
          foreach ($opciones as $opcion) {
             $concepto = $opcion->getConcepto();
             if ($producto->getCaImprimir() == 'Concepto') {
@@ -644,11 +644,6 @@ for ($k = 0; $k < count($transportes); $k++):
                   $tablaTrayectos[$concepto->getCaIdconcepto()][$trayecto] = "";
                }
             }
-            /*
-              if ($producto->getCaIncoterms()) {
-              $contenido.= substr($producto->getCaIncoterms(), 0, 3) . "\n";
-              }
-             */
             $contenido.="Flete: " . $opcion->getTextoFlete() . "\n";
             if ($opcion->getCaObservaciones()) {
                $contenido.=$opcion->getCaObservaciones() . "\n";
@@ -687,16 +682,25 @@ for ($k = 0; $k < count($transportes); $k++):
                   }
                   $tablaConceptos[$trayecto]["observaciones"] .= "Valida Hasta: " . Utils::fechaMes($producto->getCaVigencia());
                }
-               /*
-                 if ($producto->getCaObservaciones()) {
-                 if ($tablaConceptos[$trayecto]["observaciones"] != "") {
-                 $tablaConceptos[$trayecto]["observaciones"] .= "\n";
-                 }
-                 $tablaConceptos[$trayecto]["observaciones"] .= $producto->getCaObservaciones();
-                 }
-                */
             } else {
                $tablaTrayectos[$concepto->getCaIdconcepto()][$trayecto] .= $contenido;
+               if ($add_det == "") {
+                  if ($producto->getCaIncoterms()) {
+                     $add_det.= ((strlen($add_det) != 0) ? " " : "") . "Término :" . $producto->getCaIncoterms();
+                  }
+                  if ($producto->getCaFrecuencia()) {
+                     $add_det.= ((strlen($add_det) != 0) ? " " : "") . "Frec.: " . $producto->getCaFrecuencia();
+                  }
+                  if ($producto->getCaTiempotransito()) {
+                     $add_det.= ((strlen($add_det) != 0) ? " " : "") . "T.T.: " . $producto->getCaTiempotransito();
+                  }
+                  if ($producto->getCaVigencia()) {
+                     $add_det.= ((strlen($add_det) != 0) ? " " : "") . "Valida Hasta: " . Utils::fechaMes($producto->getCaVigencia());
+                  }
+                  if (strlen($add_det) != 0) {
+                     $observaciones[$producto->getCaImprimir()][$i] = $add_det . "\n" . trim($observaciones[$producto->getCaImprimir()][$i]);
+                  }
+               }
             }
          }
       endif;
@@ -712,7 +716,7 @@ for ($k = 0; $k < count($transportes); $k++):
       if ($t++ != 0) {
          $pdf->Ln(4);
          $pdf->beginGroup();
-      }else{
+      } else {
          $pdf->Ln(1);
       }
       $conceptos = Doctrine::getTable("Concepto")
@@ -801,13 +805,37 @@ for ($k = 0; $k < count($transportes); $k++):
          $pdf->Ln(2);
          $pdf->flushGroup();
       }
+      if (isset($observaciones["Concepto"])) {
+         $pdf->beginGroup();
+         $pdf->SetFont($font, '', 7);
+         $titu_mem = array('Observaciones');
+         $width_mem = array(170);
+
+         $pdf->SetWidths($width_mem);
+         $pdf->SetAligns(array_fill(0, count($width_mem), "C"));
+         $pdf->SetStyles(array_fill(0, count($width_mem), "B"));
+         $pdf->SetFills(array_fill(0, count($width_mem), 1));
+         $pdf->Row($titu_mem);
+
+         $width_mem = array(11, 159);
+
+         $pdf->SetWidths($width_mem);
+         $pdf->SetAligns(array_fill(0, count($width_mem), "L"));
+         $pdf->SetStyles(array_fill(0, count($width_mem), ""));
+         $pdf->SetFills(array_fill(0, count($width_mem), 0));
+         foreach ($observaciones["Concepto"] as $key => $observacion) {
+            $row = array("Nota $key", $observacion);
+            $pdf->Row($row);
+         }
+         $pdf->flushGroup();
+      }
    }
 
    if (count($tablaTrayectos) > 0) {
       if ($i++ != 0) {
          $pdf->Ln(4);
          $pdf->beginGroup();
-      }else{
+      } else {
          $pdf->Ln(1);
       }
       $conceptos = Doctrine::getTable("Concepto")
@@ -890,31 +918,30 @@ for ($k = 0; $k < count($transportes); $k++):
          $pdf->Ln(2);
          $pdf->flushGroup();
       }
-   }
+      if (isset($observaciones["Trayecto"])) {
+         $pdf->beginGroup();
+         $pdf->SetFont($font, '', 7);
+         $titu_mem = array('Observaciones');
+         $width_mem = array(170);
 
-   if (count($observaciones) != 0) {
-      $pdf->beginGroup();
-      $pdf->SetFont($font, '', 7);
-      $titu_mem = array('Observaciones');
-      $width_mem = array(170);
+         $pdf->SetWidths($width_mem);
+         $pdf->SetAligns(array_fill(0, count($width_mem), "C"));
+         $pdf->SetStyles(array_fill(0, count($width_mem), "B"));
+         $pdf->SetFills(array_fill(0, count($width_mem), 1));
+         $pdf->Row($titu_mem);
 
-      $pdf->SetWidths($width_mem);
-      $pdf->SetAligns(array_fill(0, count($width_mem), "C"));
-      $pdf->SetStyles(array_fill(0, count($width_mem), "B"));
-      $pdf->SetFills(array_fill(0, count($width_mem), 1));
-      $pdf->Row($titu_mem);
+         $width_mem = array(11, 159);
 
-      $width_mem = array(11, 159);
-
-      $pdf->SetWidths($width_mem);
-      $pdf->SetAligns(array_fill(0, count($width_mem), "L"));
-      $pdf->SetStyles(array_fill(0, count($width_mem), ""));
-      $pdf->SetFills(array_fill(0, count($width_mem), 0));
-      foreach ($observaciones as $key => $observacion) {
-         $row = array("Nota $key", $observacion);
-         $pdf->Row($row);
+         $pdf->SetWidths($width_mem);
+         $pdf->SetAligns(array_fill(0, count($width_mem), "L"));
+         $pdf->SetStyles(array_fill(0, count($width_mem), ""));
+         $pdf->SetFills(array_fill(0, count($width_mem), 0));
+         foreach ($observaciones["Trayecto"] as $key => $observacion) {
+            $row = array("Nota $key", $observacion);
+            $pdf->Row($row);
+         }
+         $pdf->flushGroup();
       }
-      $pdf->flushGroup();
    }
 
    $grupos = array();
