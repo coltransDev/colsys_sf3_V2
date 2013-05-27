@@ -356,8 +356,11 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
                 echo "{";
                 echo "  cadena = campo.getAttribute('ID');";
                 echo "  indice = cadena.substring(cadena.indexOf('_')+1);";
-                echo "  elemento = document.getElementById('VLR_'+indice);";
-                echo "  if (elemento.value < 0)";
+                echo "  venta = document.getElementById('VLR_'+indice).value;";
+                echo "  if (venta < 0)";
+                echo "      campo.checked = true;";
+                echo "  sbrvt = document.getElementById('SBR_'+indice).value;";
+                echo "  if (sbrvt < 0)";
                 echo "      campo.checked = true;";
                 echo "  return;";
                 echo "}";
