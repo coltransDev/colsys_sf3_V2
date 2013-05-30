@@ -113,7 +113,8 @@ class HdeskTicket extends BaseHdeskTicket {
                             ->addOrderBy("ug.ca_login")
                             ->execute();
             foreach ($usuarios as $usuario) {
-                $loginsAsignaciones[] = $usuario->getCaLogin();
+                if($usuario->getUsuario()->getCaActivo()==true || $usuario->getUsuario()->getCaActivo()=="true" || $usuario->getUsuario()->getCaActivo()=="1")
+                    $loginsAsignaciones[] = $usuario->getCaLogin();
             }
         }
         return array_unique($loginsAsignaciones);
