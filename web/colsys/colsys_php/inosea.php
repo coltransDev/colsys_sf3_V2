@@ -500,14 +500,13 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         echo "  <TD WIDTH=30 Class=listar>" . formatNumber($co->Value('ca_cantidad'), 3) . "</TD>";
                         echo "  <TD WIDTH=100 Class=listar>" . $co->Value('ca_idequipo') . " " . ((strlen($co->Value('ca_observaciones'))) ? "<IMG src='graficos/admira.gif' alt='" . $co->Value('ca_observaciones') . "'>" : "") . "</TD>";
                         echo "  <TD WIDTH=85 Class=listar>" . $co->Value('ca_numprecinto') . "</TD>";
-                        echo "  <TD WIDTH=90 Class=listar>Entrega:&nbsp;" . $co->Value('ca_entrega_comodato') . " " . ((strlen($co->Value('ca_observaciones_con'))) ? "<IMG src='graficos/admira.gif' alt='" . $co->Value('ca_observaciones_con') . "'>" : "") . "<BR />Devolución:&nbsp;" . $co->Value('ca_inspeccion_fch') . "</TD>";
+                        echo "  <TD WIDTH=90 Class=listar>Entrega:&nbsp;" . $co->Value('ca_entrega_comodato') . " " . ((strlen($co->Value('ca_observaciones_con'))) ? "<IMG src='graficos/admira.gif' alt='" . $co->Value('ca_observaciones_con') . "'>" : "") . "<BR />Devolución:&nbsp;" . $co->Value('ca_inspeccion_fch') . (($co->Value('ca_dias_libres')!="")?"<BR />Días Libres:&nbsp;".$co->Value('ca_dias_libres'):"") ."</TD>";
                         echo "  <TD WIDTH=85 Class=listar>Devolución:&nbsp;" . $co->Value('ca_sitiodevolucion') . "<BR />Nota:&nbsp;" . $co->Value('ca_inspeccion_nta') . "</TD>";
                         if ($ver == 'block' and $nivel > 0) {
                             echo "  <TD WIDTH=25 Class=listar onclick='elegir(\"Contrato\", \"" . $co->Value('ca_referencia') . "\", \"" . $co->Value('ca_idequipo') . "\");'><IMG src='graficos/contrato.gif' alt='Contrato de Comodato'></TD>";
                         } else {
                             echo "  <TD WIDTH=25 Class=listar></TD>";
                         }
-
                         echo "</TR>";
                         if (!array_key_exists($co->Value('ca_concepto'), $arr_equ))
                             array_merge($arr_equ, array($co->Value('ca_concepto') => 0));
@@ -1491,7 +1490,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "  <TD Class=mostrar>Fch. Entrega Comodato:<BR><INPUT TYPE='TEXT' NAME='entrega_comodato' VALUE='$entrega_comodato' SIZE=12 ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
                 echo "  <TD Class=mostrar>Nota Inspección:<BR><INPUT TYPE='TEXT' NAME='inspeccion_nta' VALUE='" . $rs->Value('ca_inspeccion_nta') . "' SIZE=12 MAXLENGTH=10></TD>";
                 echo "  <TD Class=mostrar>Fch. Devolución:<BR><INPUT TYPE='TEXT' NAME='inspeccion_fch' VALUE='" . $rs->Value('ca_inspeccion_fch') . "' SIZE=12 VALUE='" . date("Y-m-d") . "' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
-                echo "  <TD Class=mostrar></TD>";
+                echo "  <TD Class=mostrar>Días Libres:<BR><INPUT TYPE='TEXT' NAME='dias_libres' VALUE='" . $rs->Value('ca_dias_libres') . "' SIZE=10 MAXLENGTH=8></TD>";
                 echo "</TR>";
                 echo "<TR>";
                 echo "  <TD Class=mostrar>Sitio de Devolución:</TD>";
@@ -5290,13 +5289,13 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 }
                 if (strlen($inspeccion_fch) != 0) {
                     if (!$rs->Eof()) {
-                        if (!$rs->Open("update tb_inocontratos_sea set ca_entrega_comodato = '$entrega_comodato', ca_idpatio = '$idpatio', ca_inspeccion_nta = '$inspeccion_nta', ca_inspeccion_fch = '$inspeccion_fch', ca_observaciones = '$observaciones', ca_fchactualizado = to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_referencia = '$referencia' and ca_idequipo = '$idequipo'")) {
+                        if (!$rs->Open("update tb_inocontratos_sea set ca_entrega_comodato = '$entrega_comodato', ca_idpatio = '$idpatio', ca_inspeccion_nta = '$inspeccion_nta', ca_inspeccion_fch = '$inspeccion_fch', ca_dias_libres = '$dias_libres', ca_observaciones = '$observaciones', ca_fchactualizado = to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_referencia = '$referencia' and ca_idequipo = '$idequipo'")) {
                             echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'clientes.php';</script>";
                             exit;
                         }
                     } else {
-                        if (!$rs->Open("insert into tb_inocontratos_sea (ca_referencia, ca_idequipo, ca_entrega_comodato, ca_idpatio, ca_inspeccion_nta, ca_inspeccion_fch, ca_observaciones, ca_fchcreado, ca_usucreado) values('$referencia', '$idequipo', '$entrega_comodato', '$idpatio', '$inspeccion_nta', '$inspeccion_fch', '$observaciones', to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
+                        if (!$rs->Open("insert into tb_inocontratos_sea (ca_referencia, ca_idequipo, ca_entrega_comodato, ca_idpatio, ca_inspeccion_nta, ca_inspeccion_fch, ca_dias_libres, ca_observaciones, ca_fchcreado, ca_usucreado) values('$referencia', '$idequipo', '$entrega_comodato', '$idpatio', '$inspeccion_nta', '$inspeccion_fch', '$dias_libres','$observaciones', to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                             echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
                             echo "<script>document.location.href = 'clientes.php';</script>";
                             exit;
