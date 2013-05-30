@@ -418,7 +418,9 @@ for ($k = 0; $k < count($transportes); $k++):
          }
          $recgen = $producto->getRecargosGenerales();
          if ($recgen && count($recgen) > 0) {
-            @$recargosGenPuerto = array_merge($recargosGenPuerto, $recgen);
+            foreach ($recgen as $rec) {
+               $recargosGenPuerto[] = $rec;
+            }
          }
       endif;
    endforeach;
@@ -603,7 +605,7 @@ for ($k = 0; $k < count($transportes); $k++):
          $opciones = $producto->getCotOpciones();
          $trayecto = $producto->getOrigen()->getCaCiudad() . "\n" . $producto->getDestino()->getCaCiudad();
          if (($producto->getCaImprimir() == 'Concepto' and $producto->getCaObservaciones()) or ($producto->getCaImprimir() == 'Trayecto' and ($producto->getCaObservaciones() or $producto->getCaIncoterms() or $producto->getCaFrecuencia() or $producto->getCaTiempotransito() or $producto->getCaVigencia()))) {
-            $i = isset($observaciones[$producto->getCaImprimir()])?count($observaciones[$producto->getCaImprimir()])+1:1;
+            $i = isset($observaciones[$producto->getCaImprimir()]) ? count($observaciones[$producto->getCaImprimir()]) + 1 : 1;
             $observaciones[$producto->getCaImprimir()][$i] = $producto->getCaObservaciones();
             $trayecto.= (($producto->getCaImprimir() == 'Concepto') ? "\n" : " ") . "(Nota $i)";
          }
@@ -611,12 +613,16 @@ for ($k = 0; $k < count($transportes); $k++):
             $trayectos1[] = $trayecto;
             $recgen = $producto->getRecargosGenerales();
             if ($recgen && count($recgen) > 0) {
-               @$recargosGenConcepto = array_merge($recargosGenConcepto, $recgen);
+               foreach ($recgen as $rec) {
+                  $recargosGenConcepto[] = $rec;
+               }
             }
          } else {
             $recgen = $producto->getRecargosGenerales();
             if ($recgen && count($recgen) > 0) {
-               @$recargosGenTrayecto = array_merge($recargosGenTrayecto, $recgen);
+               foreach ($recgen as $rec) {
+                  $recargosGenTrayecto[] = $rec;
+               }
             }
             $trayectos2[] = $trayecto;
          }
