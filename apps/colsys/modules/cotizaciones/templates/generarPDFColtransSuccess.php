@@ -1022,7 +1022,7 @@ for ($k = 0; $k < count($transportes); $k++):
                   }
                   $row = array($txt, $recargo->getTextoTarifa());
                   if ($imprimirObservaciones) {
-                     array_push($row, $recargo->getCaObservaciones());
+                     array_push($row, html_entity_decode($recargo->getCaObservaciones()));
                   }
                   $pdf->Row($row);
                }
