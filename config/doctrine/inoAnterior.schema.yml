@@ -56,6 +56,9 @@ InoMaestraSea:
     ca_estado: string
     ca_fchenvio: timestamp
     ca_fchrecibido: timestamp
+    ca_tipo: integer
+    ca_emisionbl: integer
+    ca_propiedades: text
   relations:
     InoClientesSea:
       local: ca_referencia
@@ -87,6 +90,26 @@ InoMaestraSea:
     InoDianDepositos:
       local: ca_muelle
       foreign: ca_codigo
+    InoContratosSea:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: many
+    InoIngresosSea:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: many
+    InoCostosSea:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: many
+    InoUtilidadSea:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: many
+    InoDeduccionesSea:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: many
 
 InoClientesSea:
   options:
