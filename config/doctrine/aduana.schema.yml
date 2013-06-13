@@ -52,6 +52,10 @@ InoMaestraAdu:
       local: ca_idcliente
       foreign: ca_idcliente
       type: one
+    InoIngresosAdu:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: many
     Usucreado:
       local: ca_usucreado
       foreign: ca_login
@@ -61,6 +65,38 @@ InoMaestraAdu:
       foreign: ca_login
       type: one
 
+
+InoIngresosAdu:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_brk_ingresos
+  columns:
+    ca_referencia:
+      type: string
+      primary: true
+    ca_factura:
+      type: string
+      primary: true
+    ca_fchfactura: date
+    ca_declaracion: string
+    ca_valor: float
+    ca_reccaja: string
+    ca_moneda: string
+    ca_tasacambio: float
+    ca_fchpago: date
+    ca_observaciones: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    InoMaestraAdu:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: one
       
 
 TransporteAdu:  

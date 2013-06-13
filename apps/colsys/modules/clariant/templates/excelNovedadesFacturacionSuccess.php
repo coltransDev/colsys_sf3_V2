@@ -23,8 +23,8 @@ $objPHPExcel->getActiveSheet()->getStyle('C1')->getFont()->setBold(true);
 $objPHPExcel->getActiveSheet()->setCellValue('C1', utf8_encode('REPORTE DE FACTURACIÓN PERIODO ' . $fchInicial . ' - ' . $fchFinal));
 $objPHPExcel->getActiveSheet()->duplicateStyleArray(
         array('alignment' => array(
-         'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
-         ),
+        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+    ),
         ), 'C1');
 
 // Add a drawing to the worksheet
@@ -43,6 +43,9 @@ $objPHPExcel->getActiveSheet()->getRowDimension('1')->setRowHeight(38);
 
 $i = 2;     // Zona de Titulos
 foreach ($titulos as $key => $titulo) {
+   if ($titulo == "Referencias") {
+      continue;
+   }
    $objPHPExcel->getActiveSheet()->setCellValue($cols[$key] . $i, utf8_encode($titulo));
    $objPHPExcel->getActiveSheet()->duplicateStyleArray(
            array(
@@ -63,6 +66,9 @@ foreach ($titulos as $key => $titulo) {
 $i = 3;     // Zona de Contenido
 foreach ($novedades as $novedad) {
    foreach ($novedad as $key => $pos) {
+      if ($key == 16) {
+         continue;
+      }
       $objPHPExcel->getActiveSheet()->getStyle($cols[$key] . $i)->getFont()->setName('Candara');
       $objPHPExcel->getActiveSheet()->getStyle($cols[$key] . $i)->getFont()->setSize(10);
       $objPHPExcel->getActiveSheet()->getStyle($cols[$key] . $i)->getFont()->setBold(false);

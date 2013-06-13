@@ -39,7 +39,6 @@ class clariantActions extends sfActions {
       
    }
 
-
    /*
     * Lista las Facturas de Exportación de clariant
     */
@@ -59,20 +58,18 @@ class clariantActions extends sfActions {
       $this->fchFinal = $request->getParameter("fchFinal");
    }
 
-   
    /*
     * Generador de archivo en Excel
     */
 
    public function executeNovedadesFacturacion(sfWebRequest $request) {
 
-      $clariant_facturas = Doctrine::getTable("InoIngresosExpo")
+      $clariant_facturas = Doctrine::getTable("InoIngresosExpo")     // Carga las Facturas de Exportaciones por Coltrans
               ->createQuery("e")
               ->where("e.ca_idcliente = ?", "830011337")
-              ->andwhere("e.ca_usuinformado IS NULL")
-              ->andWhere("e.ca_usuinformado IS NULL")
               ->addWhere("e.ca_fchfactura >= ?", $request->getParameter("fchInicial"))
               ->addWhere("e.ca_fchfactura <= ?", $request->getParameter("fchFinal"))
+              ->andwhere("e.ca_observaciones <> ?", "Factura al Agente")
               ->addOrderBy("e.ca_referencia desc, e.ca_documento desc")
               //->getSqlQuery();
               ->execute();
@@ -123,9 +120,82 @@ class clariantActions extends sfActions {
          }
          $novedad[] = $modalidad;
          $novedad[] = "Trámite Aduanero";
+         $novedad[] = $InoMaestraExpo->getCaReferencia();
          $novedades[] = $novedad;
       }
-      $this->titulos = array("Código Proveedor", "Centro de Costos", "Cantidad", "Und", "Valor", "Moneda", "Factura", "Cuenta Mayor", "Centro", "Articulo", "FACTURA", "PESO KG", "CLIENTE", "MODO TRANS", "TIPO CARGA", "FACTURA POR");
+
+      $clariant_referencias = Doctrine::getTable("InoMaestraAdu")     // Carga las Facturas de Aduana Exportaciones por Colmas
+              ->createQuery("m")
+              ->innerJoin("m.InoIngresosAdu i")
+              ->where("m.ca_idcliente = ?", "830011337")
+              ->addWhere("i.ca_fchfactura >= ?", $request->getParameter("fchInicial"))
+              ->addWhere("i.ca_fchfactura <= ?", $request->getParameter("fchFinal"))
+              ->addOrderBy("m.ca_referencia desc, i.ca_declaracion desc")
+              //->getSqlQuery();
+              ->execute();
+
+      foreach ($clariant_referencias as $clariant_referencia) {
+         $novedad = array();
+         $ref_exp = $clariant_referencia->getCaPedido();       // Exportaciones Registra el num de la ref de exportaciones en el campo pedido de la ref de aduana
+         $trans = array(" " => "", "-" => ".", "," => ".");    // Remplaza algunos posibles caracteres mal usados en el num de la referencia
+         $ref_exp = strtr($ref_exp, $trans);
+
+         $InoMaestraExpo = Doctrine::getTable("InoMaestraExpo")->find($ref_exp);
+         
+         if (!$InoMaestraExpo) {
+            continue;
+         }
+
+         $reportes = Doctrine::getTable("Reporte")    // Localizar el reporte de Negocios asociado a la Referencia
+                 ->createQuery("r")
+                 ->addWhere("r.ca_consecutivo = ?", $InoMaestraExpo->getCaConsecutivo())
+                 //->getSqlQuery();
+                 ->execute();
+
+         $this->reporte = null;
+         foreach ($reportes as $reporte) {             // Localiza la última versión del reporte de negocios
+            if ($reporte->getCaVersion() == $reporte->getUltVersion()) {
+               $this->reporte = $reporte;
+            }
+         }
+
+         if (!$this->reporte) {
+            continue;
+         }
+
+         $clariant_facturas = $clariant_referencia->getInoIngresosAdu();
+         
+         foreach ($clariant_facturas as $clariant_factura) {
+            $novedad[] = "711565";
+            $novedad[] = $reporte->getProperty("centrocostos");
+            $novedad[] = "1";
+            $novedad[] = "PZ";
+            $novedad[] = $clariant_factura->getCaValor();
+            $novedad[] = "USD";
+            $novedad[] = $clariant_factura->getCaFactura();
+            $novedad[] = "313901";
+            $novedad[] = $reporte->getProperty("centroclariant");
+            $novedad[] = "6011";
+            $novedad[] = $reporte->getProperty("facturaclariant");
+            $novedad[] = $InoMaestraExpo->getCaPeso();
+            $novedad[] = $reporte->getProperty("clienteclariant");
+            $novedad[] = $InoMaestraExpo->getCaVia();
+            $modalidad = null;
+
+            if ($InoMaestraExpo->getCaVia() == "Maritimo") {
+               $InoMaestraExpoSea = Doctrine::getTable("InoMaestraExpoSea")->find($InoMaestraExpo->getCaReferencia());
+               if ($InoMaestraExpoSea) {
+                  $modalidad = $InoMaestraExpoSea->getCaModalidad();
+               }
+            }
+            $novedad[] = $modalidad;
+            $novedad[] = "Trámite Aduanero";
+            $novedad[] = $InoMaestraExpo->getCaReferencia()."=>".$clariant_factura->getCaReferencia();
+            $novedades[] = $novedad;
+         }
+      }
+
+      $this->titulos = array("Código Proveedor", "Centro de Costos", "Cantidad", "Und", "Valor", "Moneda", "Factura", "Cuenta Mayor", "Centro", "Articulo", "Factura Clariant", "Peso KG", "Cliente Clariant", "Modo Trans", "Tipo Carga", "Factura Por", "Referencias");
       $this->novedades = $novedades;
       $this->fchInicial = $request->getParameter("fchInicial");
       $this->fchFinal = $request->getParameter("fchFinal");
