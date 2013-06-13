@@ -49,12 +49,12 @@ switch($action){
 		$button[0]["name"]="Inicio";
 		$button[0]["tooltip"]="Pagina principal";
 		$button[0]["image"]="22x22/home.gif";
-		$button[0]["link"]= "clariant/expoFacturas";
+		$button[0]["link"]= "clariant/listadoFacturas";
 
 		$button[1]["name"]="Generar Excel";
 		$button[1]["tooltip"]="Genera Archivo en Excel de Novedades en Facturacion";
 		$button[1]["image"]="22x22/kchart_chrt.gif";
-		$button[1]["link"]= "clariant/excelNovedadesFacturacion";
+		$button[1]["link"]= "clariant/excelNovedadesFacturacion?fchInicial=".$this->getRequestParameter("fchInicial")."&fchFinal=".$this->getRequestParameter("fchFinal");
 		$button[1]["confirm"]= "¿Está seguro que desea generar el archivo de noveades?";
           break;
 

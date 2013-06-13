@@ -35,27 +35,44 @@ class clariantActions extends sfActions {
     * Lista las Facturas de Exportación de clariant
     */
 
-   public function executeExpoFacturas() {
-      $this->clariant_facturas = Doctrine::getTable("InoIngresosExpo")
-              ->createQuery("e")
-              ->where("e.ca_idcliente = ?", "830011337")
-              ->andwhere("e.ca_usuinformado IS NULL")
-              ->andWhere("e.ca_usuinformado IS NULL")
-              ->addOrderBy("e.ca_referencia desc, e.ca_documento desc")
-              //->getSqlQuery();
-              ->execute();
+   public function executeListadoFacturas() {
+      
    }
+
 
    /*
     * Lista las Facturas de Exportación de clariant
     */
 
-   public function executeNovedadesFacturacion() {
+   public function executeExpoFacturas(sfWebRequest $request) {
+      $this->clariant_facturas = Doctrine::getTable("InoIngresosExpo")
+              ->createQuery("e")
+              ->where("e.ca_idcliente = ?", "830011337")
+              ->andwhere("e.ca_usuinformado IS NULL")
+              ->andWhere("e.ca_usuinformado IS NULL")
+              ->addWhere("e.ca_fchfactura >= ?", $request->getParameter("fchInicial"))
+              ->addWhere("e.ca_fchfactura <= ?", $request->getParameter("fchFinal"))
+              ->addOrderBy("e.ca_referencia desc, e.ca_documento desc")
+              //->getSqlQuery();
+              ->execute();
+      $this->fchInicial = $request->getParameter("fchInicial");
+      $this->fchFinal = $request->getParameter("fchFinal");
+   }
+
+   
+   /*
+    * Generador de archivo en Excel
+    */
+
+   public function executeNovedadesFacturacion(sfWebRequest $request) {
+
       $clariant_facturas = Doctrine::getTable("InoIngresosExpo")
               ->createQuery("e")
               ->where("e.ca_idcliente = ?", "830011337")
               ->andwhere("e.ca_usuinformado IS NULL")
               ->andWhere("e.ca_usuinformado IS NULL")
+              ->addWhere("e.ca_fchfactura >= ?", $request->getParameter("fchInicial"))
+              ->addWhere("e.ca_fchfactura <= ?", $request->getParameter("fchFinal"))
               ->addOrderBy("e.ca_referencia desc, e.ca_documento desc")
               //->getSqlQuery();
               ->execute();
@@ -110,14 +127,16 @@ class clariantActions extends sfActions {
       }
       $this->titulos = array("Código Proveedor", "Centro de Costos", "Cantidad", "Und", "Valor", "Moneda", "Factura", "Cuenta Mayor", "Centro", "Articulo", "FACTURA", "PESO KG", "CLIENTE", "MODO TRANS", "TIPO CARGA", "FACTURA POR");
       $this->novedades = $novedades;
+      $this->fchInicial = $request->getParameter("fchInicial");
+      $this->fchFinal = $request->getParameter("fchFinal");
    }
 
    /*
     * Lista las Facturas de Exportación de clariant
     */
 
-   public function executeExcelNovedadesFacturacion() {
-      $this->executeNovedadesFacturacion();
+   public function executeExcelNovedadesFacturacion(sfWebRequest $request) {
+      $this->executeNovedadesFacturacion($request);
    }
 
    /*

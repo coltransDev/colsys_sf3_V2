@@ -1,4 +1,5 @@
 <?
+
 $cols = array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P");
 
 error_reporting(E_ERROR);
@@ -15,6 +16,16 @@ $objPHPExcel->getProperties()->setKeywords("Cuadro de Novedades en Facturación")
 $objPHPExcel->getProperties()->setCategory(" ");
 
 $objPHPExcel->setActiveSheetIndex(0);
+$objPHPExcel->getActiveSheet()->mergeCells('C1:P1');
+$objPHPExcel->getActiveSheet()->getStyle('C1')->getFont()->setName('Candara');
+$objPHPExcel->getActiveSheet()->getStyle('C1')->getFont()->setSize(20);
+$objPHPExcel->getActiveSheet()->getStyle('C1')->getFont()->setBold(true);
+$objPHPExcel->getActiveSheet()->setCellValue('C1', utf8_encode('REPORTE DE FACTURACIÓN PERIODO ' . $fchInicial . ' - ' . $fchFinal));
+$objPHPExcel->getActiveSheet()->duplicateStyleArray(
+        array('alignment' => array(
+         'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+         ),
+        ), 'C1');
 
 // Add a drawing to the worksheet
 $objDrawing = new PHPExcel_Worksheet_Drawing();
@@ -50,8 +61,8 @@ foreach ($titulos as $key => $titulo) {
 }
 
 $i = 3;     // Zona de Contenido
-foreach ($novedades as $novedad){
-   foreach ($novedad as $key => $pos){
+foreach ($novedades as $novedad) {
+   foreach ($novedad as $key => $pos) {
       $objPHPExcel->getActiveSheet()->getStyle($cols[$key] . $i)->getFont()->setName('Candara');
       $objPHPExcel->getActiveSheet()->getStyle($cols[$key] . $i)->getFont()->setSize(10);
       $objPHPExcel->getActiveSheet()->getStyle($cols[$key] . $i)->getFont()->setBold(false);
@@ -63,7 +74,7 @@ foreach ($novedades as $novedad){
 }
 
 
-foreach ($cols as $col){
+foreach ($cols as $col) {
    $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
 }
 
