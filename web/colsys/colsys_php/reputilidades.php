@@ -246,8 +246,6 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
         $mes_mem = '';
         $nom_tra = '';
         $mod_mem = $rs->Value('ca_modalidad');
-        print_r($r);
-        echo $rs->Value('ca_deduccion');
         while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
             $utl_cbm = $rs->Value('ca_utilcons');
             $back_col = ($rs->Value('ca_estado') == 'Provisional') ? " background: #CCCC99" : (($rs->Value('ca_estado') == 'Abierto') ? " background: #CCCCCC" : " background: #F0F0F0");
@@ -349,6 +347,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
                 $mod_mem = $rs->Value('ca_modalidad');
             }
         }
+        $gra_tot+= $sub_tot;
         echo "<TR>";
         echo "  <TD Class=resaltar style='font-size: 9px; font-weight:bold;text-align:right' COLSPAN=5>SubTotal $nom_tra:</TD>";
         echo "  <TD Class=resaltar style='font-size: 10px;font-weight:bold;text-align:right'>" . number_format($sub_tot) . "</TD>";
