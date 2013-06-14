@@ -579,6 +579,7 @@ class clientesActions extends sfActions {
         $this->clientesCircular = array();
         $this->clientesVenCircular = array();
         $this->clientesSinCircular = array();
+        $this->clientesVenVisita = array();
         $this->clientesSinVisita = array();
         // $this->clientesSinBeneficio = array();
         list($year, $month, $day) = sscanf($final, "%d-%d-%d");
@@ -714,8 +715,14 @@ class clientesActions extends sfActions {
             $this->clientesSinCircular[] = $row;
         }
 
+        // Lista los Clientes con Encuesta de Visita vencida
+        $stmt = ClienteTable::clientesEncVisita($final, $sucursal, $vendedor, "Ven");
+        while ($row = $stmt->fetch()) {
+            $this->clientesVenVisita[] = $row;
+        }
+
         // Lista los Clientes no tienen Encuesta de Visita
-        $stmt = ClienteTable::clientesSinVisita($final, $sucursal, $vendedor);
+        $stmt = ClienteTable::clientesEncVisita($final, $sucursal, $vendedor, "Sin");
         while ($row = $stmt->fetch()) {
             $this->clientesSinVisita[] = $row;
         }

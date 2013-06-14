@@ -152,6 +152,55 @@
 <br />
 <br />
 
+<h3>Clientes con Encuesta de Visita Vencida</h3>
+
+<table class="tableList" border="1">
+<thead>
+<tr>
+  <th>Id Cliente</th>
+  <th>D&iacute;gito</th>
+  <th>Cliente</th>
+  <th>Direcci&oacute;n</th>
+  <th>Tel&eacute;fono</th>
+  <th>Fax</th>
+  <th>Ciudad</th>
+  <th>Ult.Enc.Visita</th>
+  <th>Vendedor</th>
+  <th>Sucursal</th>
+</tr>
+</thead>
+<tbody>
+
+<?php foreach ($clientesVenVisita as $visita): ?>
+<tr >
+      <td><?php echo $visita["ca_idalterno"] ?></td>
+      <td><?php echo $visita["ca_digito"] ?></td>
+      <td><?php echo $visita["ca_compania"] ?></td>
+      <td><?php echo $visita["ca_direccion"]." ".$visita["ca_oficina"]." ".$visita["ca_torre"]." ".$visita["ca_bloque"]." ".$visita["ca_interior"]." ".$visita["ca_complemento"] ?></td>
+      <td><?php echo $visita["ca_telefonos"] ?></td>
+      <td><?php echo $visita["ca_fax"] ?></td>
+      <td><?php echo $visita["ca_ciudad"] ?></td>
+      <td><?php echo $visita["ca_fchvisita"] ?></td>
+      <td><?php echo $visita["ca_vendedor"] ?></td>
+      <td><?php echo $visita["ca_sucursal"] ?></td>
+</tr>
+<?php
+      endforeach;
+
+	if( count($clientesVenVisita)==0 ){
+?>
+    <tr>
+	    <td colspan="11"><div align="center">Reporte sin Registros</div></td>
+    </tr>
+<?
+	}
+?>
+
+</tbody>
+</table>
+<br />
+<br />
+
 <h3>Clientes SIN Encuesta de Visita</h3>
 
 <table class="tableList" border="1">

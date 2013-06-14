@@ -23,7 +23,7 @@ class ClienteTable extends Doctrine_Table {
         $query.= "  CASE WHEN cl.ca_tipo IS NOT NULL OR length(cl.ca_tipo::text) <> 0 THEN 'Vigente'::text ELSE CASE WHEN cl.ca_fchcircular IS NULL THEN 'Sin'::text ELSE CASE WHEN (cl.ca_fchcircular + 365) < now() THEN 'Vencido'::text ELSE 'Vigente'::text END END END AS ca_stdcircular ";
         $query.= "FROM tb_stdcliente std0 INNER JOIN vi_clientes_reduc cl ON (std0.ca_idcliente = cl.ca_idcliente) ";
         $query.= "LEFT JOIN vi_usuarios u ON (cl.ca_vendedor = u.ca_login) ";
-        $query.= "LEFT JOIN (select ca_idcliente, max(ca_fchvisita) as ca_fchvisita from tb_enccliente where ca_fchvisita between '$fch_ini' and '$fch_fin' group by ca_idcliente order by ca_idcliente) vs ON (cl.ca_idcliente = vs.ca_idcliente) ";
+        $query.= "LEFT JOIN (select ca_idcliente, max(ca_fchvisita) as ca_fchvisita from tb_enccliente where ca_fchvisita <= '$fch_fin' group by ca_idcliente order by ca_idcliente) vs ON (cl.ca_idcliente = vs.ca_idcliente) ";
         $query.= "INNER JOIN (select ca_idcliente, max(ca_fchestado) as ca_fchestado, ca_empresa from tb_stdcliente where ca_fchestado between '$fch_ini' and '$fch_fin' group by ca_idcliente, ca_empresa order by ca_idcliente) std1 ON (std0.ca_idcliente = std1.ca_idcliente) ";
         $query.= "where std0.ca_fchestado = std1.ca_fchestado and std0.ca_empresa = std1.ca_empresa and std0.ca_empresa = '$empresa' and cl.ca_tipo IS NULL ";
         if ($idcliente != null) {
@@ -290,7 +290,7 @@ class ClienteTable extends Doctrine_Table {
      * @author Carlos G. López M.
      */
 
-    public static function clientesSinVisita($fch_fin, $sucursal, $vendedor) {
+    public static function clientesEncVisita($fch_fin, $sucursal, $vendedor, $tipo = "Sin") {
         if ($fch_fin == null) {
             $fch_fin = date('Y-m-d', mktime(0, 0, 0, date('m') + 2, 0, date('Y')));
         }
@@ -302,7 +302,13 @@ class ClienteTable extends Doctrine_Table {
         $query.= "LEFT OUTER JOIN (select ca_idcliente, max(ca_fchvisita) as ca_fchvisita from tb_enccliente group by ca_idcliente) e ON (e.ca_idcliente = c.ca_idcliente) ";
         $query.= "LEFT OUTER JOIN (select colt.ca_idcliente as ca_idcliente_colt, colt.ca_estado as ca_coltrans_std, colt.ca_fchestado as ca_coltrans_fch from tb_stdcliente colt INNER JOIN (select ca_idcliente, max(ca_fchestado) as ca_fchestado from tb_stdcliente where ca_empresa = 'Coltrans' and ca_fchestado <= '$fch_fin' group by ca_idcliente order by ca_idcliente) sub ON (colt.ca_idcliente = sub.ca_idcliente and colt.ca_fchestado = sub.ca_fchestado and colt.ca_empresa = 'Coltrans')) ct ON (ct.ca_idcliente_colt = c.ca_idcliente) ";
         $query.= "LEFT OUTER JOIN (select colm.ca_idcliente as ca_idcliente_colm, colm.ca_estado as ca_colmas_std, colm.ca_fchestado as ca_colmas_fch from tb_stdcliente colm INNER JOIN (select ca_idcliente, max(ca_fchestado) as ca_fchestado from tb_stdcliente where ca_empresa = 'Colmas' and ca_fchestado <= '$fch_fin' group by ca_idcliente order by ca_idcliente) sub ON (colm.ca_idcliente = sub.ca_idcliente and colm.ca_fchestado = sub.ca_fchestado and colm.ca_empresa = 'Colmas')) cm ON (cm.ca_idcliente_colm = c.ca_idcliente) ";
-        $query.= "where ca_fchvisita IS NULL and (ct.ca_coltrans_std = 'Activo' or cm.ca_colmas_std = 'Activo') ";
+        if ($tipo=="Sin"){
+           $query.= "where ca_fchvisita IS NULL and (ct.ca_coltrans_std = 'Activo' or cm.ca_colmas_std = 'Activo') ";
+        }else if ($tipo=="Ven"){
+           list($ano, $mes, $dia) = sscanf($fch_fin, "%d-%d-%d");       // Calcula Fecha de corte un año atrás para sacar visitas vencidas
+           $fch_fin = date("Y-m-d", mktime(0, 0, 0, $mes, $dia, $ano-1));
+           $query.= "where ca_fchvisita <= '$fch_fin' and (ct.ca_coltrans_std = 'Activo' or cm.ca_colmas_std = 'Activo') ";
+        }
 
         if ($sucursal != null) {
             $query.= "and u.ca_sucursal = '$sucursal' ";
