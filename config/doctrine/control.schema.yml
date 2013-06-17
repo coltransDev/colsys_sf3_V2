@@ -91,6 +91,46 @@ Usuario:
       type: one
 
 
+
+UsuParametros:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: control
+  tableName: control.tb_usu_parametros
+  columns:    
+    ca_idusuparametros:
+      type: integer
+      autoincrement: true
+      primary: true
+    ca_idusuario: string      
+    ca_impoexpo: string
+    ca_transporte: string    
+    ca_modalidad: string
+    ca_trafico: string    
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string    
+  relations:
+    Usuario:
+      local: ca_idusuario
+      foreign: ca_login
+      type: one
+    Trafico:
+      local: ca_trafico
+      foreign: ca_idtrafico
+      type: one      
+    UsuActualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+    UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one    
+
       
 AccesoPerfil:
   options:
