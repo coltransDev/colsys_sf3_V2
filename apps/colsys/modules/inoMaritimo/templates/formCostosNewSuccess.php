@@ -55,7 +55,9 @@
     }
     
     function calcular(){
-        var to = document.getElementById("utilidad_sobreventa");
+        
+        var to = document.getElementById("utilidad_sobreventa");  
+        
         to.value=0;
         var utils = document.getElementById("utils");
         var elems = utils.getElementsByTagName("input");
@@ -63,20 +65,9 @@
             var el = elems[i];
             if ( el.name.substr(0,4) == "util" ){
                 to.value = el.value*1 + to.value*1;
+                
             }
         }
-        
-        var to = document.getElementById("costo_liquidado");
-        to.value=0;
-        var costos = document.getElementById("costos");
-        var elems = costos.getElementsByTagName("input");
-        for (i=0; i<elems.length; i++) {
-            var el = elems[i];
-            if ( el.name.substr(0,5) == "costo" ){
-                to.value = el.value*1 + to.value*1;
-            }
-        }
-        
     }
 </script>
 <div class="content" align="center">
@@ -174,7 +165,7 @@
                     echo $form['idmoneda']->render();
                     ?>
                 </td>
-                <td rowspan="4" valign="top">
+                <td colspan="2" rowspan="4" valign="top">
                     <b>Distribuci&oacute;n INO x Sobreventa:</b><br />
                     <div id="utils">
                         <table border="0">
@@ -201,44 +192,15 @@
                             <tr>
                                 <td><b>Total<b/></td>
                                 <td>  
-                                <input type="text" id="utilidad_sobreventa" size="13" maxlength="15" readOnly="true" />                       
+                                <input type="text" id="utilidad_sobreventa" maxlength="15" size="15" readOnly="true" />                       
                                 </td>
                             </tr> 
+
+
                         </table>          
                     </div>
                 </td>
                
-                <td rowspan="4" valign="top">
-                    <div id="costos" style="display: <?=$liquidable?>;">
-                        <b>Distribuci&oacute;n Costo x Hbl:</b><br />
-                        <table border="0">
-                        <?                    
-                        foreach( $inoClientes as $ic ){
-                        ?>
-                            <tr>
-                                <td>  
-                                <?                                
-                                echo $form['costo_'.$ic->getCaIdinocliente()]->renderError();  
-                                if( isset( $liqcostos[ $ic->getCaHbls() ] )  ){
-                                    $form->setDefault('costo_'.$ic->getCaIdinocliente(),  $liqcostos[ $ic->getCaHbls() ]  );
-                                }else{
-                                    $form->setDefault('costo_'.$ic->getCaIdinocliente(), 0 );
-                                }
-                                echo $form['costo_'.$ic->getCaIdinocliente()]->render();
-                                ?>                                
-                                </td>
-                            </tr>    
-                        <?                        
-                        }
-                        ?>
-                            <tr>
-                                <td>  
-                                <input type="text" id="costo_liquidado" size="13" maxlength="15" readOnly="true" />                       
-                                </td>
-                            </tr> 
-                        </table>          
-                    </div>
-                </td>
             </tr>   
             <tr>
                 <td>
