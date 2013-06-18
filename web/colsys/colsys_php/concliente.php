@@ -167,7 +167,7 @@ require_once("menu.php");
              echo "</TR>";
              echo "<TH Class=titulo COLSPAN=3>Datos para el nuevo Contacto</TH>";
              echo "<TR>";
-             echo "  <TD Class=captura style='vertical-align: top;' ROWSPAN=11>Datos del Contacto :</TD>";
+             echo "  <TD Class=captura style='vertical-align: top;' ROWSPAN=12>Datos del Contacto. :</TD>";
              echo "  <TD Class=mostrar>Saludo:</TD>";
              echo "  <TD Class=mostrar><SELECT NAME='saludo'>";
              while (list ($clave, $val) = each ($saludos)) {
@@ -218,6 +218,9 @@ require_once("menu.php");
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=mostrar COLSPAN='2'>Contacto Fijo en Comunicaciones :&nbsp;&nbsp;<INPUT TYPE='CHECKBOX' NAME='fijo'></TD>";
+             echo "</TR>";
+             echo "<TR>";
+             echo "  <TD Class=mostrar>Tipo :</td><td Class=mostrar><select  id='tipo' name='tipo'><option value='0'></option><option value='1'>Agente de aduana</option></select></TD>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura style='vertical-align: top;'>Observaciones:</TD>";
@@ -288,7 +291,7 @@ require_once("menu.php");
              echo "</TR>";
              echo "<TH Class=titulo COLSPAN=3>Datos para el nuevo Contacto</TH>";
              echo "<TR>";
-             echo "  <TD Class=captura style='vertical-align: top;' ROWSPAN=11>Datos del Contacto :</TD>";
+             echo "  <TD Class=captura style='vertical-align: top;' ROWSPAN=12>Datos del Contacto :</TD>";
              echo "  <TD Class=mostrar>Saludo:</TD>";
              echo "  <TD Class=mostrar><SELECT NAME='saludo'>";
              while (list ($clave, $val) = each ($saludos)) {
@@ -346,6 +349,9 @@ require_once("menu.php");
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=mostrar COLSPAN='2'>Contacto Fijo en Comunicaciones :&nbsp;&nbsp;<INPUT TYPE='CHECKBOX' NAME='fijo' ".(($rs->Value('ca_fijo')=="t")?"CHECKED":"")."></TD>";
+             echo "</TR>";
+             echo "<TR>";
+             echo "  <TD Class=mostrar >Tipo </td><td Class=mostrar><select  id='tipo' name='tipo'><option value='0'></option><option value='1' ".(($rs->Value('ca_tipo')=="1")?"selected":"")." >Agente de aduana</option></select></TD>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura style='vertical-align: top;'>Observaciones:</TD>";
@@ -408,7 +414,7 @@ require_once("menu.php");
              echo "</TR>";
              echo "<TH Class=titulo COLSPAN=3>Datos para el nuevo Contacto</TH>";
              echo "<TR>";
-             echo "  <TD Class=captura style='vertical-align: top;' ROWSPAN=10>Datos del Contacto :</TD>";
+             echo "  <TD Class=captura style='vertical-align: top;' ROWSPAN=12>Datos del Contacto :</TD>";
              echo "  <TD Class=mostrar>Saludo:</TD>";
              echo "  <TD Class=mostrar>".$rs->Value('ca_saludo')."</TD>";
              echo "</TR>";
@@ -471,7 +477,7 @@ elseif (isset($accion)) {                                                      /
     switch(trim($accion)) {                                                    // Switch que evalua cual botòn de comando fue pulsado por el usuario
         case 'Guardar': {                                                      // El Botón Guardar fue pulsado
              $cumpleanos = isset($cumpleanos)?implode("-",$cumpleanos):"";
-             if (!$rs->Open("insert into tb_concliente (ca_idcliente, ca_papellido, ca_sapellido, ca_nombres, ca_saludo, ca_cargo, ca_departamento, ca_telefonos, ca_fax, ca_cumpleanos, ca_email, ca_fijo, ca_observaciones, ca_fchcreado, ca_usucreado) values($id, '$papellido', '$sapellido', '$nombres', '$saludo', '$cargo', '$departamento', '$telefonos', '$fax', '$cumpleanos', lower('$email'), '$fijo','$observaciones', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
+             if (!$rs->Open("insert into tb_concliente (ca_idcliente, ca_papellido, ca_sapellido, ca_nombres, ca_saludo, ca_cargo, ca_departamento, ca_telefonos, ca_fax, ca_cumpleanos, ca_email, ca_fijo, ca_tipo, ca_observaciones, ca_fchcreado, ca_usucreado) values($id, '$papellido', '$sapellido', '$nombres', '$saludo', '$cargo', '$departamento', '$telefonos', '$fax', '$cumpleanos', lower('$email'), '$fijo', '$tipo','$observaciones', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'concliente.php?id=$id';</script>";
                  exit;
@@ -480,7 +486,8 @@ elseif (isset($accion)) {                                                      /
              }
         case 'Actualizar': {                                                   // El Botón Actualizar fue pulsado
              $cumpleanos = isset($cumpleanos)?implode("-",$cumpleanos):"";
-             if (!$rs->Open("update tb_concliente set ca_papellido = '$papellido', ca_sapellido = '$sapellido', ca_nombres = '$nombres', ca_saludo = '$saludo', ca_cargo = '$cargo', ca_departamento = '$departamento', ca_telefonos = '$telefonos', ca_fax = '$fax', ca_cumpleanos = '$cumpleanos', ca_email = lower('$email'), ca_fijo = '$fijo', ca_observaciones = '$observaciones', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id and ca_idcontacto = $co")) {
+             $sql_update="update tb_concliente set ca_papellido = '$papellido', ca_sapellido = '$sapellido', ca_nombres = '$nombres', ca_saludo = '$saludo', ca_cargo = '$cargo', ca_departamento = '$departamento', ca_telefonos = '$telefonos', ca_fax = '$fax', ca_cumpleanos = '$cumpleanos', ca_email = lower('$email'), ca_fijo = '$fijo', ca_tipo = '$tipo', ca_observaciones = '$observaciones', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id and ca_idcontacto = $co";
+             if (!$rs->Open($sql_update)) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'concliente.php?id=$id';</script>";
                  exit;
