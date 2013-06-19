@@ -867,8 +867,11 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
 
                     echo "<TR>";
                     echo "<TH Class=titulo COLSPAN=6>Cuadro de Costos de la Referencia</TH>";
-                    echo "<TH style='width: 50px;'><IMG style='visibility: $visible;$level0;cursor:pointer' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"AdicionarCs\",  \"" . $rs->Value('ca_referencia') . "\", 0);'>";  // Botón para la creación de un Registro Nuevo
-                    echo "<IMG style='cursor:pointer;$level0' src='./graficos/post.gif' onClick=\"document.location='/ids/formEventos?referencia=" . $rs->Value('ca_referencia') . "'\" title='Eventos Proveedores' ></TH>";
+                    echo "<TH style='width: 50px;'>";
+                    echo " <IMG style='visibility: $visible;$level0;cursor:pointer' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"AdicionarCs\",  \"" . $rs->Value('ca_referencia') . "\", 0);'>";  // Botón para la creación de un Registro Nuevo
+                    echo " <IMG style='cursor:pointer;$level0' src='./graficos/details.gif' onClick=\"document.location='/ids/formEventos?referencia=" . $rs->Value('ca_referencia') . "'\" title='Eventos Proveedores' >";
+                    echo " <IMG style='cursor:pointer;$level0' src='./graficos/fileopen.png' onClick=\"document.location='/inoMaritimo/formUtilidadesNew?referencia=" . $rs->Value('ca_referencia') . "'\" title='Liquidación Utilidad' >";
+                    echo "</TH>";
                     while (!$cs->Eof() and !$cs->IsEmpty()) {                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
                         echo "<TR HEIGHT=5>";
                         echo "  <TD Class=invertir COLSPAN=7></TD>";

@@ -340,13 +340,13 @@ InoCostosSea:
       class: Usuario
 
 
-InoLiqcostosSea:
+InoUtilidadliqSea:
   options:
     symfony:
       form: false
       filter: false
   generatePath: sea
-  tableName: tb_inoliqcostos_sea
+  tableName: tb_inoutilidadliq_sea
   columns:    
     ca_referencia:
       type: string 
@@ -357,22 +357,12 @@ InoLiqcostosSea:
     ca_hbls:
       type: string   
       primary: true
-    ca_idcosto:
-      type: integer      
-      primary: true
-    ca_factura:
-      type: string      
-      primary: true
     ca_valor: decimal    
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
     ca_usuactualizado: string    
   relations:
-     Costo:
-       local: ca_idcosto
-       foreign: ca_idcosto
-       type: one
      InoMaestraSea:
        local: ca_referencia
        foreign: ca_referencia
