@@ -375,6 +375,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     }
                     $visible = ($rs->Value('ca_usucerrado') == '') ? 'visible' : 'hidden';
                     $abrible = ($rs->Value('ca_usucerrado') != '' and $nivel >= 3) ? 'visible' : 'hidden';
+                    $liquida = ($nivel >= 3) ? 'visible' : 'hidden';
                     echo "<TR>";
                     echo "  <TD Class=partir>Referencia:</TD>";
                     echo "  <TD Class=listar style='font-size: 11px; font-weight:bold;' COLSPAN=2>" . $rs->Value('ca_referencia') . "</TD>";
@@ -870,7 +871,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     echo "<TH style='width: 50px;'>";
                     echo " <IMG style='visibility: $visible;$level0;cursor:pointer' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"AdicionarCs\",  \"" . $rs->Value('ca_referencia') . "\", 0);'>";  // Botón para la creación de un Registro Nuevo
                     echo " <IMG style='cursor:pointer;$level0' src='./graficos/details.gif' onClick=\"document.location='/ids/formEventos?referencia=" . $rs->Value('ca_referencia') . "'\" title='Eventos Proveedores' >";
-                    echo " <IMG style='cursor:pointer;$level0' src='./graficos/fileopen.png' onClick=\"document.location='/inoMaritimo/formUtilidadesNew?referencia=" . $rs->Value('ca_referencia') . "'\" title='Liquidación Utilidad' >";
+                    echo " <IMG style='visibility: $liquida;$level0;cursor:pointer' src='./graficos/fileopen.png' onClick=\"document.location='/inoMaritimo/formUtilidadesNew?referencia=" . $rs->Value('ca_referencia') . "'\" title='Liquidación Utilidad' >";
                     echo "</TH>";
                     while (!$cs->Eof() and !$cs->IsEmpty()) {                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
                         echo "<TR HEIGHT=5>";
