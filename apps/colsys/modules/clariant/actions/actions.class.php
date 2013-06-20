@@ -119,7 +119,7 @@ class clariantActions extends sfActions {
             }
          }
          $novedad[] = $modalidad;
-         $novedad[] = "Trámite Aduanero";
+         $novedad[] = "Transporte Internacional";
          $novedad[] = $InoMaestraExpo->getCaReferencia();
          $novedades[] = $novedad;
       }
