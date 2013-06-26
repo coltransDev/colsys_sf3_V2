@@ -899,6 +899,14 @@ class traficosActions extends sfActions {
       $this->reporte = Doctrine::getTable("Reporte")->find($this->getRequestParameter("idreporte"));
       $this->forward404Unless($this->reporte);
    }
+   
+   public function executeUploadFile($request) {
+      $this->forward404Unless($this->getRequestParameter("idreporte"));
+      $this->reporte = Doctrine::getTable("Reporte")->find($this->getRequestParameter("idreporte"));
+      $this->forward404Unless($this->reporte);
+      $this->setLayout("email");
+   }
+   
 
    /*
     * Muestra un resumen de los status enviados al cliente
@@ -1198,7 +1206,6 @@ class traficosActions extends sfActions {
 
       //toma el valor del id del reporte, la referencia u otro objeto que se desee guardar
       // y determina el directorio
-
 
       $idreporte = $this->getRequestParameter("idreporte");
       if ($idreporte) {
