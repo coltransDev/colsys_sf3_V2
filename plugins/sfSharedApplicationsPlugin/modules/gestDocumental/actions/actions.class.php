@@ -110,10 +110,11 @@ class gestDocumentalActions extends sfActions
                     $fileName = preg_replace('/\s\s+/', ' ', $fileName);
                     
                     //echo $directory.$fileName;
+                    error_reporting(E_ALL);
                     if(move_uploaded_file($uploadedFile['tmp_name'],$directory.$fileName )){
                         $this->responseArray = array("id"=>base64_encode($fileName), "filename"=>$fileName, "folder"=>$folder, "success"=>true);
                     }else{
-                        $this->responseArray = array("error"=>"No se pudo mover el archivo", "success"=>false);
+                        $this->responseArray = array("error"=>"No se pudo mover el archivo","filename"=>$fileName, "folder"=>$folder, "success"=>false);
                     }
                 }
             }else{
@@ -133,7 +134,7 @@ class gestDocumentalActions extends sfActions
 	* @author: Andres Botero
 	*/
 	public function executeVerArchivo(){
-
+        
         $archivo = base64_decode( $this->getRequestParameter("idarchivo") );
 
         $this->forward404Unless( $archivo );
@@ -143,11 +144,10 @@ class gestDocumentalActions extends sfActions
 
         $this->archivo = $directory.$archivo;
 
-
-        if(!file_exists($this->archivo) && !file_exists($this->archivo.".gz")){
+        if(!file_exists($this->archivo) && !file_exists($this->archivo.".gz") ){
             $this->forward404("No se encuentra el archivo especificado");
         }
-        
+
         if( file_exists($this->archivo.".gz") ){
             $this->archivo.=".gz";
         }

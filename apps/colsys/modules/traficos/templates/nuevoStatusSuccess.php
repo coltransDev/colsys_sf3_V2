@@ -1,4 +1,5 @@
 <?
+include_component("gestDocumental", "widgetUploadButton");
 use_helper("MimeType");
 
 $reporte = $sf_data->getRaw("reporte");
@@ -27,8 +28,60 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
 
 $destinatariosFijos = $form->getDestinatariosFijos();
 $contactos_reporte = $form->getContactos();
+$folder=$reporte->getDirectorioBase();
 ?>
 <script language="javascript" type="text/javascript">
+   
+    
+
+button=0;
+Ext.onReady(function(){
+        var uploadButton = new WidgetUploadButton({
+            text: "Agregar Archivo",
+            iconCls: 'arrow_up',
+            folder: "<?=base64_encode($folder)?>",
+            filePrefix: "",
+            confirm: true,
+            callback:"actualizar"
+        });
+        uploadButton.render("button1");  
+});
+    function actualizar(file)
+    {
+        
+        $("#archivos").append("<input type='checkbox' name='attachments[]' value='"+Base64.encode("<?=$folder?>/"+file)+"' />");
+        $("#archivos").append('<img src="/images/22x22/mimetypes/binary.gif">');
+        $("#archivos").append("<a href='<?=url_for("gestDocumental/verArchivo?idarchivo=")?>"+Base64.encode("<?=$folder?>/"+file)+"'>"+file+"</a><br>");        
+    }
+
+    function eliminar(file,idtr)
+    {
+        if(window.confirm("Realmente desea eliminar este archivo?"))
+        {
+            Ext.MessageBox.wait('Guardando, Espere por favor', '---');
+            Ext.Ajax.request(
+            {
+                waitMsg: 'Guardando cambios...',
+                url: '<?= url_for("gestDocumental/borrarArchivo") ?>',
+                params :	{
+                    idarchivo:file
+                },
+                failure:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if(res.err)
+                        Ext.MessageBox.alert("Mensaje",'Se presento un error guardando por favor informe al Depto. de Sistemas<br>'+res.err);
+                    else
+                        Ext.MessageBox.alert("Mensaje",'Se produjo un error, vuelva a intentar o informe al Depto. de Sistema<br>'+res.texto);
+                },
+                success:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    $("#"+idtr).remove();
+                    Ext.MessageBox.hide();
+                }
+            });
+        }
+    }
+
 
 var enviarFormulario=function(){   
     var numChecked = 0;
@@ -790,29 +843,31 @@ echo $form['transporte']->render();
 	</tr>
 	*/
 	
-	if( count($files)>0 ){
+	
 	?>
 	<tr>
 		<td colspan="2">
-			<div align="left"><b>Adjuntar documento:</b><br />				
+			<div align="left" id="archivos"><b>Adjuntar documento:</b><br />
 <?                    
-			foreach( $files as $file ){				
-				if(  array_search( base64_encode(basename($file)), $att )!==false ){
-					$option = 'checked="checked"';					
-				}else{
-					$option = '';
-				}
-				?>
-				<input type="checkbox" name="attachments[]" value="<?=base64_encode(basename($file))?>"  <?=$option?> />
-				<?
-				echo mime_type_icon( basename($file) )." ".link_to(basename( $file ), url_for("traficos/fileViewer?idreporte=".$reporte->getCaIdreporte()."&file=".base64_encode(basename($file)) ), array("target"=>"blank") )."<br />";
-			}
+            if( count($files)>0 ){
+                foreach( $files as $file ){				
+                    if(  array_search( base64_encode(basename($file)), $att )!==false ){
+                        $option = 'checked="checked"';					
+                    }else{
+                        $option = '';
+                    }
+                    ?>
+                    <input type="checkbox" name="attachments[]" value="<?=base64_encode(basename($file))?>"  <?=$option?> />
+                    <?
+                    echo mime_type_icon( basename($file) )." ".link_to(basename( $file ), url_for("traficos/fileViewer?idreporte=".$reporte->getCaIdreporte()."&file=".base64_encode(basename($file)) ), array("target"=>"blank") )."<br />";
+                }
+            }
 			?>
-				</div></td>
+				</div>
+            <div id="button1" name="button1" ></div>
+        </td>
 	</tr>
-	<?
-	}
-	?>
+
 	<tr>
 		<td><div align="left"><b>Fecha Recibido Status:</b><br />
 			<?			            
