@@ -34,6 +34,10 @@ class reportesNegActions extends sfActions
             $this->modo=Constantes::MARITIMO;
 			$this->nivel = $this->getUser()->getNivelAcceso( reportesNegActions::RUTINA_MARITIMO );
 		}
+        
+        if( $this->modo==Constantes::TERRESTRE || utf8_decode($this->modo)==Constantes::TERRESTRE  ){
+            $this->modo=Constantes::TERRESTRE;			
+		}
 		
         if( $this->modo==Constantes::EXPO || utf8_decode($this->modo)==Constantes::EXPO ){
             $this->modo=Constantes::EXPO;
@@ -432,8 +436,10 @@ class reportesNegActions extends sfActions
         else if($this->getRequestParameter("consecutivo")!="")
         {            
             $reporte = ReporteTable::retrieveByConsecutivo($this->getRequestParameter("consecutivo"));           
-        }
+        }        
 		$this->forward404Unless( $reporte );
+        
+        $this->idantecedente=$this->getRequestParameter("idantecedente");
         $this->user = $this->getUser();
 
         /* Marca como finalizada una tarea */
@@ -475,12 +481,13 @@ class reportesNegActions extends sfActions
         $this->nivel = $this->getNivel();
         $this->impoexpo = $this->getRequestParameter("impoexpo");
         $this->load_category();
-        $user = $this->getUser();
-        
+        $user = $this->getUser();        
         if($this->modo==Constantes::AEREO)
             $this->nomLinea="Aerolinea";
         else if($this->modo==Constantes::MARITIMO)
             $this->nomLinea="Naviera";
+        else if($this->modo==Constantes::TERRESTRE)
+            $this->nomLinea="Transportador";
         else
             $this->nomLinea="Linea";
 
@@ -4314,6 +4321,13 @@ class reportesNegActions extends sfActions
         $this->reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
 		$this->forward404Unless($this->reporte);
 		$this->filename = $this->getrequestparameter("filename");
+        if($request->getParameter("idantecedente"))
+        {
+            $this->comparar = true;
+        }
+        else
+            $this->comparar = false;
+        
 	}
 
 	/*
@@ -4468,6 +4482,7 @@ class reportesNegActions extends sfActions
 		$this->forward404Unless( $reporte );
 
         $grupos = array( );
+        $gruposObligatorios = array( );
 
         $usuarios  = $reporte->getUsuariosOperativos();
 
@@ -4482,13 +4497,12 @@ class reportesNegActions extends sfActions
 				$grupos["exportaciones"][] = $usuario->getCaLogin();
 			}
         }
-
-        $grupos["vendedor"] = array( $reporte->getCaLogin() );
+        $grupos["vendedor"] = array($reporte->getCaLogin());
 
         if( $reporte->getCaColmas()=="Sí" ){
 			$repAduana = $reporte->getRepAduana();
 			if( $repAduana && $repAduana->getCaCoordinador() ){
-				$grupos["colmas"][] = $repAduana->getCaCoordinador();
+				$gruposObligatorios["colmas"][] = $repAduana->getCaCoordinador();
 			}
             
                 $suc=$user->getSucursal();
@@ -4510,18 +4524,18 @@ class reportesNegActions extends sfActions
                 $jef_adu=$q->execute();
                 foreach($jef_adu as $j)
                 {                    
-                    $grupos["colmas"][] = $j->getCaLogin();
+                    $gruposObligatorios["colmas"][] = $j->getCaLogin();
                 }
 		}
 
 		if( $reporte->getCaSeguro()=="Sí" ){
 			$repSeguro = $reporte->getRepSeguro();
 			if( $repSeguro && $repSeguro->getCaSeguroConf() ){
-				$grupos["seguros"] = array($repSeguro->getCaSeguroConf());
+				$gruposObligatorios["seguros"] = array($repSeguro->getCaSeguroConf());
 			}
 		}
         
-		if( $reporte->getCaContinuacion()=="OTM" ){    
+		/*if( $reporte->getCaContinuacion()=="OTM" ){    
             $suc=array();
             switch($reporte->getCaContinuacionConf())
             {
@@ -4558,8 +4572,10 @@ class reportesNegActions extends sfActions
             foreach($coordinadores as $coordinador)
             {
                 $grupos["otm"][] = $coordinador->getCaLogin();
-            }
+            }         
 		}
+         * 
+         */
 
         //Crea la tarea para los usuarios seleccionados
         if ($request->isMethod('post')){            
@@ -4616,7 +4632,26 @@ class reportesNegActions extends sfActions
         
             $email->setCaReplyto($user->getEmail());
             
-            $email->addTo($usuario->getCaEmail());        
+            $email->addTo($usuario->getCaEmail());
+            
+            
+            /*
+            if( is_array($recips) ){
+                foreach( $recips as $recip ){
+                    $recip = str_replace(" ", "", $recip );
+                    if( $recip ){
+                        $email->addTo( $recip );
+                    }
+                }
+            */
+            $repAntUsuario=$antecedente->getRepAntUsuario();
+            
+            foreach($repAntUsuario as $ra)
+            {
+                $email->addTo( $ra->getUsuario()->getCaEmail() );
+                //echo $ra->getUsuario()->getCaEmail();
+            }
+            
 
             if ($from) {
                 $email->addCc($from);
@@ -4636,11 +4671,12 @@ class reportesNegActions extends sfActions
             $email->setCaBody("Notificacion de Reporte de negocios");
 
             $mensaje = Utils::replace($request->getParameter("mensaje")) . "<br />";
-
+            $txt=($reporte->getCaConsecutivo()==1)?"Se Creo el ":"Se modifico el";
+            
             $html ="<div>
                 <table class='tableList alignLeft'><tr><td>
                 <table class='tableList alignLeft' width='100%' >
-                <tr><th colspan='2'>Se Creo el Reporte de Negocios No: <a href='https://www.coltrans.com.co/reportesNeg/verReporte/id/".$reporte->getCaIdreporte()."/idantecedente/".$antecedente->getCaIdantecedente()."'>".$reporte->getCaConsecutivo()."</a></th></tr>
+                <tr><th colspan='2'>".$txt." Reporte de Negocios No: <a href='https://www.coltrans.com.co/reportesNeg/verReporte/id/".$reporte->getCaIdreporte()."/idantecedente/".$antecedente->getCaIdantecedente()."'>".$reporte->getCaConsecutivo()."</a></th></tr>
                 <tr><th>Cliente</th><td>".($reporte->getCliente()->getCaCompania())."</td></tr>
                 <tr><th>Transporte</th><td>".($reporte->getCaTransporte())."</td></tr>
                 <tr><th>Trayecto</th><td>".($reporte->getOrigen()->getCaCiudad())."-".($reporte->getDestino()->getCaCiudad())."</td></tr>
@@ -4673,9 +4709,20 @@ class reportesNegActions extends sfActions
         {
             $c1[]=$c->getCaEmail();
         }
+        
+        $contactos=null;
+        $contactos = UsuarioTable::getUsuariosxPerfil('asistente-gerencia-comercial',$this->getUser()->getIdSucursal());
+        
+        foreach($contactos as $c)
+        {
+            $c1[]=$c->getCaEmail();
+        }
 
+        
+        //echo count($gruposObligatorios);
         $this->contactos=$c1;
         $this->grupos = $grupos;
+        $this->gruposObligatorios=$gruposObligatorios;
         $this->reporte = $reporte;
         $this->principal=$usuario;
         $this->destinatario=$destinatario;
@@ -4821,7 +4868,6 @@ class reportesNegActions extends sfActions
                     continue;
                 }
             }
-            
             $reporte->save();            
             $this->redirect($this->generateUrl('default',
                     array('module' => 'reportesNeg','action' => 'consultaReporte','id' => $reporte->getCaIdreporte(),'modo' => urlencode($reporte->getCaTransporte()), 'impoexpo'=>  urlencode($reporte->getCaImpoexpo()) )));
@@ -5347,10 +5393,16 @@ class reportesNegActions extends sfActions
     }
 
     public function executeDesbloquearReporte(sfWebRequest $request) {
-        try{
+        try
+        {
             $user = $this->getUser();
 
             $this->idantecedente=$request->getParameter("idantecedente");
+            
+            $this->mensaje=$request->getParameter("mensaje");
+            
+//            exit;
+            $mensaje=$request->getParameter("mensaje");
             $email = new Email();
 
             $email->setCaUsuenvio($user->getUserId());
@@ -5392,8 +5444,8 @@ class reportesNegActions extends sfActions
 
             $email->addCc($user->getEmail());
 
-            $email->setCaSubject("Desbloqueo de nuevo Reporte de Negocios : ".$reporte->getCaConsecutivo());
-            $email->setCaBody($this->getRequestParameter("mensaje"));
+            $email->setCaSubject("Desbloqueo de Reporte de Negocios : ".$reporte->getCaConsecutivo()."-".$reporte->getCaVersion());            
+            $email->setCaBody($mensaje);
             
             $proveedor="";
             if( $reporte->getCaIdproveedor() ){
@@ -5411,15 +5463,19 @@ class reportesNegActions extends sfActions
                 }
             }
 
+            $txt=($reporte->getCaConsecutivo()==1)?"Se Creo el ":"Se modifico el";
             $html ="<div>
                 <table class='tableList alignLeft'><tr><td>
                 <table class='tableList alignLeft' width='100%' >
-                <tr><th colspan='2'>Se Creo el Reporte de Negocios No: <a href='https://www.coltrans.com.co/reportesNeg/verReporte?id=".$reporte->getCaIdreporte()."'>".$reporte->getCaConsecutivo()."</a></th></tr>
+                <tr><th colspan='2'>".$txt." Reporte de Negocios No: <a href='https://www.coltrans.com.co/reportesNeg/verReporte?id=".$reporte->getCaIdreporte()."'>".$reporte->getCaConsecutivo()."</a></th></tr>                    
                 <tr><th>Cliente</th><td>".($reporte->getCliente()->getCaCompania())."</td></tr>
                 <tr><th>Transporte</th><td>".($reporte->getCaTransporte())."</td></tr>
                 <tr><th>Trayecto</th><td>".($reporte->getOrigen()->getCaCiudad())."-".($reporte->getDestino()->getCaCiudad())."</td></tr>
-                <tr><th>Proveedor</th><td>".($proveedor)."</td></tr>";
-            $html."</table></td></tr></table></div>";
+                <tr><th>Proveedor</th><td>".($proveedor)."</td></tr>
+                    <tr><th class='alignLeft' colspan='2'><br>".$this->mensaje."</th></tr>";
+            
+            $html."</table></td></tr>
+                </table></div>";
             $this->getRequest()->setParameter('tipo',"INSTRUCCIONES");
             $this->getRequest()->setParameter('mensaje',$request->getParameter("mensaje"));
             $this->getRequest()->setParameter('html',$html);
@@ -5427,6 +5483,8 @@ class reportesNegActions extends sfActions
             $mensaje = sfContext::getInstance()->getController()->getPresentationFor( 'reportesNeg', 'emailReporte');
 
             $email->setCaBodyhtml($mensaje);
+            //echo $html;
+            //exit;
             $email->save();
             $email->send();
             
