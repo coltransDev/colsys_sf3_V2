@@ -31,10 +31,7 @@ $contactos_reporte = $form->getContactos();
 $folder=$reporte->getDirectorioBase();
 ?>
 <script language="javascript" type="text/javascript">
-   
-    
 
-button=0;
 Ext.onReady(function(){
         var uploadButton = new WidgetUploadButton({
             text: "Agregar Archivo",
@@ -42,13 +39,12 @@ Ext.onReady(function(){
             folder: "<?=base64_encode($folder)?>",
             filePrefix: "",
             confirm: true,
-            callback:"actualizar"
+            callback:"actualizar",
+            renderTo:"button11"
         });
-        uploadButton.render("button1");  
 });
     function actualizar(file)
-    {
-        
+    {        
         $("#archivos").append("<input type='checkbox' name='attachments[]' value='"+Base64.encode("<?=$folder?>/"+file)+"' />");
         $("#archivos").append('<img src="/images/22x22/mimetypes/binary.gif">');
         $("#archivos").append("<a href='<?=url_for("gestDocumental/verArchivo?idarchivo=")?>"+Base64.encode("<?=$folder?>/"+file)+"'>"+file+"</a><br>");        
@@ -250,7 +246,7 @@ var reporteIncompleto=function(){
 
 
 <div class="content" align="center">
-
+<div id="button11" name="button11" ></div>
 <form name="form1" id="form1" action="<?=url_for("traficos/nuevoStatus?modo=".$modo."&idreporte=".$reporte->getCaIdreporte() )?>" method="post" name="form1" >
 <?
 echo $form['mensaje_dirty']->render();
@@ -828,7 +824,7 @@ echo $form['transporte']->render();
 			<?
 			 echo $form['mensaje']->renderError(); 
 			 echo $form['mensaje']->render();
-			 ?>		
+			 ?>
 		</div></td>
 		</tr>
 	<?
@@ -836,9 +832,9 @@ echo $form['transporte']->render();
 	<tr>
 		<td colspan="2"><div align="left"><b>Notas</b><br />
 				<?
-			// echo $form['notas']->renderError(); 
+			// echo $form['notas']->renderError();
 			// echo $form['notas']->render();
-			 ?>		
+			 ?>
 		</div></td>
 	</tr>
 	*/
@@ -864,9 +860,11 @@ echo $form['transporte']->render();
             }
 			?>
 				</div>
-            <div id="button1" name="button1" ></div>
         </td>
 	</tr>
+    <tr>
+        <td colspan="2" id="button1"></td>
+    </tr>
 
 	<tr>
 		<td><div align="left"><b>Fecha Recibido Status:</b><br />
@@ -935,7 +933,7 @@ echo $form['transporte']->render();
 			 </div>
         </td>
 	</tr>
-<tr id="row_incompleto">
+    <tr id="row_incompleto">
 		<td valign="top" >
             <div >
                 Observaciones<br>
