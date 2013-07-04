@@ -5522,5 +5522,47 @@ class reportesNegActions extends sfActions
         $this->comparar=true;
         $this->setTemplate("consultaReporte");
     }
+    
+    public function executeDatosContenedores( sfWebRequest $request ){
+        
+        $idreporte = $this->getRequestParameter("idreporte");
+        $idconcepto = $this->getRequestParameter("idconcepto");
+        
+        $equipos = Doctrine::getTable("RepContenedor")
+                    ->createQuery("c")
+                    ->addWhere("c.ca_idreporte = ? and c.ca_idconcepto = ?", array($idreporte, $idconcepto))
+                    ->orderBy("c.ca_idrepcontenedor ASC")
+                    ->execute();
+        $i=1;
+        $data = array();
+        
+        foreach($equipos as $equipo){
+            $data['container'.$i] = $equipo['ca_contenedor'];
+            $data['idrepcontenedor'.$i] = $equipo['ca_idrepcontenedor'];
+            $i++;
+        }
+        
+        $this->responseArray=array("success"=>true,"data"=>$data);
+        $this->setTemplate("responseTemplate");        
+    }
+    
+    public function executeGuardarContenedores( sfWebRequest $request ){
+        
+        $cantidad = $request->getParameter("cantidad");
+        $idreporte = $this->getRequestParameter("idreporte");
+        $idconcepto = $this->getRequestParameter("idconcepto");
+        
+        for($i=1;$i<=$cantidad;$i++) {
+            if($request->getParameter("idrepcontenedor".$i)){
+                $repContenedor = Doctrine::getTable("RepContenedor")->find($request->getParameter("idrepcontenedor".$i));
+            }else{    
+                $repContenedor = new RepContenedor();
+                $repContenedor->setCaIdreporte($idreporte);
+                $repContenedor->setCaIdconcepto($idconcepto);                
+            }    
+            $repContenedor->setCaContenedor($request->getParameter("container".$i));
+            $repContenedor->save();
+        }                 
+    }
 }
 ?>
