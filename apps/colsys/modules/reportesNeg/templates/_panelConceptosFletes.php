@@ -90,7 +90,7 @@ PanelConceptosFletes = function( config ){
                     }
                     ?>
                 ]
-    });
+                });
 
     this.expander = new Ext.grid.RowExpander({
         lazyRender : false,
@@ -267,7 +267,8 @@ PanelConceptosFletes = function( config ){
             {name: 'observaciones', type: 'string'},
             {name: 'tipo', type: 'string'},
             {name: 'orden', type: 'string'},
-            {name: 'cambio', type: 'int'}
+            {name: 'cambio', type: 'int'},
+            {name: 'contenedor', type: 'string'}
         ]);
 
     this.store = new Ext.data.Store({
@@ -634,13 +635,13 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
     },
     onRowcontextMenu: function(grid, index, e){
         rec = this.store.getAt(index);
-
+                
         if(!this.menu){
             this.menu = new Ext.menu.Menu({
             id:'grid_productos-ctx',
             enableScrolling : false,
             items: [
-
+                
                     {
                         text: 'Nuevo recargo',
                         iconCls: 'textfield_add',
@@ -663,8 +664,20 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
                                 this.ventanaObservaciones( this.ctxRecord );
                             }
                         }
-                    }
+                    },
+                    {
+                        text: '# Contenedor',
+                        iconCls: 'page_white_edit',
+                        scope:this,
+                        handler: function(){
+                            if( this.ctxRecord.data.iditem ){
+                                activeRow = this.ctxRecord;                                
+                                this.infoContenedor( this.ctxRecord );
+                            }
+                        }
+                    }                    
                     ]
+                    
             });
             this.menu.on('hide', this.onContextHide , this);
         }
@@ -778,6 +791,109 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
             newRec.set("cobrar_idm", "");
             newRec.set("aplicacion", "");
          }
+    },
+    infoContenedor: function (record) {
+    
+        rec = this.ctxRecord;
+        var container = new Array();
+        
+        for(var i=0; i<rec.data.cantidad; i++){
+            j=i+1;
+            
+            obj1=new Object();
+            obj1.xtype='textfield';
+            obj1.fieldLabel='Contenedor #'+j;
+            obj1.autoHeight=true;
+            obj1.id='container'+j;
+            obj1.name='container'+j;                
+            container.push(obj1);
+            
+            obj1=new Object();
+            obj1.xtype='hidden';
+            obj1.id='idrepcontenedor'+j;
+            obj1.name='idrepcontenedor'+j;                
+            container.push(obj1);
+        }
+        
+        var win = new Ext.Window({
+            width:300
+            ,id:'autoload-win'
+            ,height:200
+            ,autoScroll:true
+            ,title:'Información de Contenedores'
+            ,items:
+                    new Ext.FormPanel({
+                        autoWidth       : true,                
+                        id: 'contenedores',
+                        bbar:[
+                                {
+                                    text:'Guardar',
+                                    iconCls:'disk',
+                                    handler: function(){
+                                        var redire ="true";
+                                        var panel = Ext.getCmp("contenedores");
+                                        var form = panel.getForm();
+                                        if(form.isValid()){
+                                            form.submit({
+                                                url:"<?=url_for("reportesNeg/guardarContenedores")?>",
+                                                waitMsg:'Guardando...',
+                                                waitTitle:'Por favor espere...',
+                                                params:{
+                                                    cantidad:rec.data.cantidad,
+                                                    redirect:redire,
+                                                    idreporte:<?=$reporte->getCaIdreporte()?>,
+                                                    idconcepto:rec.data.iditem
+                                                },
+                                                success:function(response,options) {
+                                                    win.close();
+                                                    Ext.MessageBox.alert("Mensaje",'Se guardo correctamente la información de contenedores');
+                                                }
+                                                ,
+                                                failure:function(form,action){
+                                                    var res = Ext.util.JSON.decode( action.response.responseText );
+                                                    if(res.err)
+                                                        Ext.MessageBox.alert("Mensaje",'Se presento un error guardando por favor informe al Depto. de Sistemas<br>'+res.err);
+                                                    else
+                                                        Ext.MessageBox.alert("Mensaje",'No es posible crear un reporte ya que posee errores en la digitacion, verifique los siguientes campos<br>'+res.texto);
+                                                }
+                                            });
+                                        }else{
+                                            Ext.MessageBox.alert('Error Message', "Por favor complete todos los datos");
+                                        }
+                                    }
+                                },
+                                {
+                                   text:'Cancelar',
+                                   iconCls:'delete',
+                                   handler: function(){
+                                        win.close();
+                                   }
+                                }
+                            ],
+                            items: [
+                                 container
+                            ],
+                            listeners:{
+                                render:function() {
+                                    this.getForm().waitMsgTarget = this.getEl();                    
+                                    this.load({
+                                        url:'<?=url_for("reportesNeg/datosContenedores")?>',
+                                        waitMsg:'cargando...',
+                                        params:{idreporte:<?=$reporte->getCaIdreporte()?>,idconcepto:rec.data.iditem},
+
+                                        failure:function(response,options){
+                                           alert( response.responseText );
+                                           success = false;
+                                        },
+                                        success:function(response,options){
+                                            Ext.getCmp('contenedores').show();
+                                        }
+                                    })
+                                }
+                            }
+                    })
+                });
+                win.show();
     },
     onContextHide: function(){
         if(this.ctxRow){
