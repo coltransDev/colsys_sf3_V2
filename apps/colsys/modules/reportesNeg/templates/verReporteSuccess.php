@@ -1,5 +1,5 @@
 <?
-
+$html = $sf_data->getRaw("html");
 ?>
 <script language="javascript">
 	function showEmailForm(){
@@ -47,10 +47,11 @@
         <?
     }
     ?>
-    <iframe src="<?=url_for("reportesNeg/generarPDF?id=".$reporte->getCaIdreporte()."&token=".md5(time()))?>" width="830px" height="650px"></iframe>
-    
+    <iframe src="<?=url_for("reportesNeg/generarPDF?id=".$reporte->getCaIdreporte().(($idantecedente!="" && $idantecedente>0 )?"&idantecedente=$idantecedente":"")."&token=".md5(time()) )?>" width="830px" height="650px"></iframe>
+        
     <?
-	
+    if($idantecedente!="" && $idantecedente>0 )
+        echo $html;
 	if( $asignaciones || $reporte->getCaIdtareaRext()){
 	?>
     <br />

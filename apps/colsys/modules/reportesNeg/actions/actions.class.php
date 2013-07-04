@@ -469,6 +469,12 @@ class reportesNegActions extends sfActions
 
 		$this->asignaciones = $reporte->getRepAsignacion();
 		$this->reporte = $reporte;
+        
+        $this->getRequest()->setParameter('id', $this->getRequestParameter( "id" ));
+        $this->getRequest()->setParameter('consulta', "true");
+        $this->html=sfContext::getInstance()->getController()->getPresentationFor( 'reportesNeg', 'compReporte');
+        //echo $this->html;
+        
 	}
 
 	/*
@@ -5512,6 +5518,7 @@ class reportesNegActions extends sfActions
     
     public function executeCompReporte( sfWebRequest $request ){
         
+        $consulta=$this->getRequestParameter("consulta");
         $this->reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
         
         $this->reporte_old=ReporteTable::retrieveByConsecutivo($this->reporte->getCaConsecutivo()," and ca_version='".($this->reporte->getCaVersion()-1)."'");
@@ -5521,6 +5528,50 @@ class reportesNegActions extends sfActions
 		$response->addJavaScript("extExtras/CheckColumn",'last');
         $this->comparar=true;
         $this->setTemplate("consultaReporte");
+        if($consulta==true || $consulta=="true")
+            $this->setLayout("none");
+    }
+    
+    public function executeDatosContenedores( sfWebRequest $request ){
+        
+        $idreporte = $this->getRequestParameter("idreporte");
+        $idconcepto = $this->getRequestParameter("idconcepto");
+        
+        $equipos = Doctrine::getTable("RepContenedor")
+                    ->createQuery("c")
+                    ->addWhere("c.ca_idreporte = ? and c.ca_idconcepto = ?", array($idreporte, $idconcepto))
+                    ->orderBy("c.ca_idrepcontenedor ASC")
+                    ->execute();
+        $i=1;
+        $data = array();
+        
+        foreach($equipos as $equipo){
+            $data['container'.$i] = $equipo['ca_contenedor'];
+            $data['idrepcontenedor'.$i] = $equipo['ca_idrepcontenedor'];
+            $i++;
+        }
+        
+        $this->responseArray=array("success"=>true,"data"=>$data);
+        $this->setTemplate("responseTemplate");        
+    }
+    
+    public function executeGuardarContenedores( sfWebRequest $request ){
+        
+        $cantidad = $request->getParameter("cantidad");
+        $idreporte = $this->getRequestParameter("idreporte");
+        $idconcepto = $this->getRequestParameter("idconcepto");
+        
+        for($i=1;$i<=$cantidad;$i++) {
+            if($request->getParameter("idrepcontenedor".$i)){
+                $repContenedor = Doctrine::getTable("RepContenedor")->find($request->getParameter("idrepcontenedor".$i));
+            }else{    
+                $repContenedor = new RepContenedor();
+                $repContenedor->setCaIdreporte($idreporte);
+                $repContenedor->setCaIdconcepto($idconcepto);                
+            }    
+            $repContenedor->setCaContenedor($request->getParameter("container".$i));
+            $repContenedor->save();
+        }                 
     }
     
     public function executeDatosContenedores( sfWebRequest $request ){
