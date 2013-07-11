@@ -188,7 +188,7 @@ switch($repotm->getIdsProveedor()->getIds()->getCaIdalterno())
     case "860016819"://PROVEEDOR Y SERCARGA S.A
         $txt="051";
         break;
-    case "86006258"://UNION ANDINA DE TRANSPORTES S.A. <- Cochinadas a Nombre de Maquinche
+    case "860062581"://UNION ANDINA DE TRANSPORTES S.A. <- Cochinadas a Nombre de Maquinche
         $txt="403";
         break;
     default:
