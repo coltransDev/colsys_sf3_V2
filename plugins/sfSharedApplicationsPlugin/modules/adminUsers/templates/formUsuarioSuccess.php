@@ -412,6 +412,28 @@ $jefes = $sf_data->getRaw("jefes");
 									</div>
 								</td>
 							</tr>
+                            <tr class="row0">
+                                <td>&nbsp;</td>
+								<td width="40%">
+									<div align="left">
+										<b>Fondo de Cesantias:</b>
+									</div>
+								</td>
+								<td>
+									<div align="left">
+										<select name="fcesantias">
+                                            <option value="">Por favor seleccione una opci&oacute;n</option>
+											<?
+											foreach( $fcesantias as $fcesantia ){
+											?>
+                                                <option value="<?=$fcesantia->getCaIdentificacion()?>" <?=$usuario->getCaFcesantias()==$fcesantia->getCaIdentificacion()?'selected="selected"':''?>> <?=$fcesantia->getCaValor()?></option>
+											<?
+											}
+											?>
+										</select>
+									</div>
+								</td>
+							</tr>
                             <?
                             if(!$nivel==0){
                             ?>
@@ -762,7 +784,24 @@ $jefes = $sf_data->getRaw("jefes");
 								</td>
 							</tr>
                          </table>
-                    </div>                    
+                    </div>
+                    <div class="tab-page">
+                        <h2 class="tab">T.Humano</h2>
+                        <table width="100%" cellspacing="0"  class="tableList alignLeft">
+                            <tr class="row2" >
+                                <td colspan="3">
+                                    <div align="left">  
+                                        <b>Desvinculación de Usuario</b>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a title="Email a nivel Nacional Coltrans, Colmas y ColOtm" href="<?=url_for('adminUsers/emailDesvinculacion?login='.$usuario->getCaLogin())?>">Enviar notificaci&oacute;n de desvinculaci&oacute;n del Usuario <b><?=$usuario->getCaNombre();?></b></a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
                     <?
                     if($nivel>=2 ){
                     ?>
@@ -933,7 +972,7 @@ $jefes = $sf_data->getRaw("jefes");
 							</tr>
 						</table>
 					</div>
-				</div>
+                </div>
                 <?
                     }
                 ?>

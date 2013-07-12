@@ -207,6 +207,7 @@ class adminUsersActions extends sfActions {
 
         $this->parentescos = ParametroTable::retrieveByCaso('CU093');
         $this->nivestudios = ParametroTable::retrieveByCaso('CU105');
+        $this->fcesantias = ParametroTable::retrieveByCaso('CU225');
         $this->sexo = array("F","M");
         
         $response = sfContext::getInstance()->getResponse();
@@ -312,12 +313,12 @@ class adminUsersActions extends sfActions {
         
         $config = sfConfig::get("app_soap_adminUsers");
        
-        
         $usuario = Doctrine::getTable("Usuario")->find($request->getParameter("login"));
         $new = $request->getParameter("key");
         $this->nivel = $this->getNivel();
-        $cambiodireccion = 0;
+       
         $nuevo = 0;
+        $cambiodireccion = 0;
 
         if ($usuario) {
             
@@ -326,30 +327,9 @@ class adminUsersActions extends sfActions {
             }
             
             $direccion = $usuario->getCaDireccion();
-
-            $suc = $usuario->getSucursal()->getCaNombre();
-
-            $this->direccion = $direccion;
-            $this->suc = $suc;
             
-            
-            if( $suc != "Bogotá D.C." ){
-                $cargo = 'Jefe Dpto. Administrativo';
-            }else{            
-                $cargo = 'Jefe Dpto. Talento Humano';
-            }
-            
-            $recips = Doctrine::getTable("Usuario")
-                            ->createQuery('r')
-                            ->innerJoin('r.Sucursal s')
-                            ->addWhere('s.ca_nombre = ?', $suc)
-                            ->addWhere('r.ca_activo=?', true)
-                            ->addWhere('r.ca_cargo=?', $cargo)
-                            ->execute();
-
-            $this->recips = $recips;
-            $this->cargo = $cargo;
         }
+        
         if (!($this->nivel == 0 and $request->getParameter("login") == $this->getUser()->getUserId())) {
             if (!($this->nivel > 1)) {
                 $this->forward("users", "noAccess");
@@ -375,7 +355,6 @@ class adminUsersActions extends sfActions {
 
         if ($request->getParameter("idsucursal")) {
             $usuario->setCaIdsucursal($request->getParameter("idsucursal"));
-            
         }
 
         if ($request->getParameter("email")) {
@@ -403,15 +382,13 @@ class adminUsersActions extends sfActions {
             $usuario->setCaFchvencimiento(Utils::calcularVencimientoClave());
         }
         
-        
         if( $this->nivel>=3 ){
             if ($request->getParameter("activo")) {
                 $usuario->setCaActivo(true);
             }else{
-                $usuario->setCaActivo(false);
-                $usuario->emailInactivo($request->getParameter("login"));
+                $usuario->setCaActivo(false);           
             }
-
+            
             if ($request->getParameter("forcechange")) {
                 $usuario->setCaForcechange(true);
             } else {
@@ -459,15 +436,11 @@ class adminUsersActions extends sfActions {
                 }
             }
         }
-        
-        
-        
     
         if($this->nivel>0){
             if ($request->getParameter("cumpleanos")) {
                 $usuario->setCaCumpleanos($request->getParameter("cumpleanos"));
             }else{
-
                 $usuario->setCaCumpleanos( null );
             }
 
@@ -486,16 +459,7 @@ class adminUsersActions extends sfActions {
             }else{
                 $usuario->setCaApellidos( null );
             }
-
-            /*if ($request->getParameter("teloficina")) {
-                $usuario->setCaTeloficina($request->getParameter("teloficina"));
-            }else{
-                $usuario->setCaTeloficina( null );
-            }*/
-            
-            
         }
-        
         
         if ($request->getParameter("tiposangre")) {
             $usuario->setCaTiposangre($request->getParameter("tiposangre"));
@@ -511,6 +475,11 @@ class adminUsersActions extends sfActions {
             $usuario->setCaEstrato($request->getParameter("estrato"));
         }else{
             $usuario->setCaEstrato( null );
+        }
+        if ($request->getParameter("sexo")) {
+            $usuario->setCaSexo($request->getParameter("sexo"));
+        }else{
+            $usuario->setCaSexo( null );
         }
         if ($request->getParameter("nivestudio")) {
             $usuario->setCaNivestudios($request->getParameter("nivestudio"));
@@ -540,8 +509,6 @@ class adminUsersActions extends sfActions {
         }else{
             $usuario->setCaAlergico(null);
         }
-        
-        
 
         if ($request->getParameter("telparticular")) {
             $usuario->setCaTelparticular($request->getParameter("telparticular"));
@@ -571,19 +538,24 @@ class adminUsersActions extends sfActions {
             $usuario->setCaManager($request->getParameter("manager"));
         }
 
-        $this->direccion = $request->getParameter("direccion");
         if ($request->getParameter("direccion")) {
             $usuario->setCaDireccion($request->getParameter("direccion"));
         }else{
             $usuario->setCaDireccion( null );
         }
-
         
         if ($request->getParameter("parentesco")) {
             $usuario->setCaParentesco($request->getParameter("parentesco"));
         }else{
             $usuario->setCaParentesco( null );
         }
+        
+        if ($request->getParameter("fcesantias")) {
+            $usuario->setCaFcesantias($request->getParameter("fcesantias"));
+        }else{
+            $usuario->setCaFcesantias( null );
+        }
+        
         $usuario->save( $conn );
         $conn->commit();
         
@@ -598,98 +570,25 @@ class adminUsersActions extends sfActions {
             }
         }
         
-        $conn = Doctrine::getTable("Email")->getConnection();
-        $conn->beginTransaction();
-        
-        $this->usuario = $usuario;
         $login = $usuario->getCaLogin();
-        $idempresa = $usuario->getSucursal()->getEmpresa()->getCaIdempresa();
+        $usuario = Doctrine::getTable("Usuario")->find($login);
         
         //Reporta al Jefe Administrativo el cambio de dirección de un empleado
-        //Reporta al Administrador SGCSC el ingreso de un nuevo trabajador a la intranet
         if ($nuevo == 0) {
             if ($direccion != $usuario->getCaDireccion()) {
-                $user = Doctrine::getTable('Usuario')->find($this->getUser()->getUserId());
-                
-                $logo = $user->getLogoHtml($idempresa);
-
-                $email = new Email();
-                $email->setCaUsuenvio($this->getUser()->getUserId());
-                $email->setCaTipo("Cambio de Direccion");
-                $email->setCaIdcaso(null);
-                $email->setCaFrom($user->getCaEmail());
-                $email->setCaFromname($user->getCaNombre());
-                $email->setCaCc($usuario->getCaEmail());
-                $email->setCaReplyto($user->getCaEmail());
-                $email->setCaSubject('Cambio de dirección Colaborador '.strtoupper($usuario->getSucursal()->getEmpresa()->getCaNombre())." ".$usuario->getSucursal()->getCaNombre());
-
-                foreach ($recips as $recip) {
-                    if ($recip->getCaEmail()) {
-                        $email->addTo(str_replace(" ", "", $recip->getCaEmail()));
-                    }
-                }
-                
-                //$texto = 'El usuario ' . $usuario->getCaNombre() . ' cambió de dirección. Direccion Antigua: ' . $direccion . '   Direccion nueva: ' . $usuario->getCaDireccion();
-                $request->setParameter('direccion', $direccion);
-                $request->setParameter('login', $login);
-                $request->setParameter("format", "email" );	
-                $request->setParameter("asunto", "address");
-                $request->setParameter('logo', $logo);
-                $texto= sfContext::getInstance()->getController()->getPresentationFor( 'adminUsers', 'emailIntranet');
-                
-                $email->setCaBodyhtml($texto);
-                $email->save( $conn );
-                $email->send();
-
-                $cambiodireccion = $cambiodireccion + 1;                
+                $asunto = "address";
+                $usuario->emailUsuario($login,$asunto,$direccion,null,null);
+                $this->cambiodireccion = $cambiodireccion + 1;
             }
-        }else{
-                if($idempresa == 1 || $idempresa == 2 || $idempresa == 8){
-                    $logo = $usuario->getLogoHtml($idempresa);
-                    
-                    $email = new Email();
-                    $email->setCaUsuenvio($this->getUser()->getUserId());
-                    $email->setCaTipo("Nuevo Colaborador");
-                    $email->setCaIdcaso(null);
-                    $email->setCaFrom('talentohumano@coltrans.com.co');
-                    $email->setCaFromname('TALENTO HUMANO');                
-                    $email->setCaAddress("empleados-nal@coltrans.com.co");
-                    $email->addTo("colmasnal@colmas.com.co");
-                    $email->addTo("colotmnal@colotm.com");                    
-                    $email->setCaSubject('Ingreso Nuevo Colaborador '.strtoupper($usuario->getSucursal()->getEmpresa()->getCaNombre())." ".$usuario->getSucursal()->getCaNombre());
-
-                    $request->setParameter('login', $login);
-                    $request->setParameter("format", "email" );	
-                    $request->setParameter("asunto", "ingreso");
-                    $request->setParameter('logo', $logo);
-                    $texto= sfContext::getInstance()->getController()->getPresentationFor( 'adminUsers', 'emailIntranet');                
-
-                    $email->setCaBodyhtml($texto);
-                    $email->save($conn);
-                    $email->send();
-                }
-            
+        //Envia correo a nivel nacional sobre ingreso de un colaborador a la compañía    
+        }else{         
+            $asunto = "ingreso";
+            $usuario->emailUsuario($login,$asunto,null,null,null);
         }
-        $conn->commit();
-        
-        $this->cambiodireccion = $cambiodireccion;  
-        $this->setTemplate("guardarUsuario");
-    }
-    
-    public function executeEmailIntranet($request) {
-        
-        $usuario = Doctrine::getTable("Usuario")->find($request->getParameter("login"));
-        
-        $this->setLayout("none");
-        
-        $this->asunto = $request->getParameter("asunto");
-        $this->direccion = $request->getParameter("direccion");
-        $this->logo = $request->getParameter("logo");
-        $this->tiempo = $request->getParameter("tiempo");
         
         $this->usuario = $usuario;
+        $this->setTemplate("guardarUsuario");
     }
-
     /*
      * Permite cambiar el password de un usuario que se autentica por BD
      */
@@ -1173,6 +1072,7 @@ class adminUsersActions extends sfActions {
         if ($empresa) {
             $q->addWhere('s.ca_idempresa = ?', $empresa);
         }
+        $q->addOrderBy("u.ca_login ASC");       
         $q->distinct();
         $this->usuarios = $q->execute();
     }
@@ -1193,6 +1093,97 @@ class adminUsersActions extends sfActions {
             $usuario->save();
         }
     }
-}
+    
+    public function executeEmailIntranet($request) {
+        
+        $this->usuario = Doctrine::getTable("Usuario")->find($request->getParameter("login"));        
+        $this->setLayout("none");
+        
+        $this->asunto = $request->getParameter("asunto");
+        $this->direccion = $request->getParameter("direccion");
+        $this->logo = $request->getParameter("logo");
+        $this->tiempo = $request->getParameter("tiempo");
+        $this->fchingreso = $request->getParameter("fchingreso");  
+        
+        if($this->asunto=="cumpleanos"){
+            $inicial = date('m-d',time());
+            $final = $inicial;
+            if(date("N")>=5)
+                $final = date('m-d',time()+86400 * 2);
+            
+            $this->users = Doctrine::getTable('Usuario')
+                    ->createQuery('u')
+                    ->innerJoin('u.Sucursal s')
+                    ->innerJoin('s.Empresa e')
+                    ->where('substring(ca_cumpleanos::text, 6,5) BETWEEN ? AND ?', array($inicial,$final))
+                    ->addWhere('e.ca_idempresa IN (?,?,?)',array('1','2','8'))
+                    ->addWhere('ca_activo = ?', true)
+                    ->addOrderBy('substring(ca_cumpleanos::text, 6,5)  ASC')
+                    ->execute();            
+        }
+    }
+    
+    public function executeTiempoColaborador(sfWebRequest $request){
+        
+        $anoActual = date('Y');
 
+        $usuarios = Doctrine::getTable('Usuario')
+                ->createQuery ('u')
+                ->innerJoin('u.Sucursal s')
+                ->innerJoin('s.Empresa e')
+                ->where('u.ca_activo = ?', true)
+                ->addWhere('e.ca_idempresa != 4')
+                ->addWhere("CASE WHEN (date_part('".month."', c.ca_fchingreso) = date_part('".month."', now()) and (date_part('".day."', c.ca_fchingreso)-date_part('".day."', now()))::int=4) THEN(CASE WHEN ((date_part('".year."', now()) - date_part('".year."', c.ca_fchingreso))::int)!=5 THEN ((date_part('".year."', now()) - date_part('".year."', c.ca_fchingreso))::int)%5=0 ELSE false END ) ELSE false END")
+                ->orderby('u.ca_fchingreso DESC')
+                ->execute();
+        
+        foreach ($usuarios as $usuario){
+            
+            list($ano,$mes,$dia) = explode("-",$usuario->getCaFchingreso());
+            
+            $tiempoCumplido = date("Y") - $ano;
+            $login = $usuario->getCaLogin();
+            $fchingreso = $usuario->getCaFchingreso();
+            
+            $usuario = Doctrine::getTable("Usuario")->find($login);
+            $asunto = "reconocimiento";
+           
+            $usuario->emailUsuario($login,$asunto,null,$tiempoCumplido,$fchingreso);
+            
+        }
+    }
+    
+    public function executeBirthdayEmail(sfWebRequest $request) {
+
+        $dia = date('N');
+        $inicial = date('m-d',time());
+        
+        $users = Doctrine::getTable('Usuario')
+                    ->createQuery('u')
+                    ->innerJoin('u.Sucursal s')
+                    ->innerJoin('s.Empresa e')
+                    ->where('substring(ca_cumpleanos::text, 6,5) = ?', $inicial)
+                    ->addWhere('e.ca_idempresa IN (?,?,?)',array('1','2','8'))
+                    ->addWhere('ca_activo = ?', true)
+                    ->addOrderBy('substring(ca_cumpleanos::text, 6,5)  ASC')
+                    ->execute();
+        
+        if(count($users)>0){
+            if($dia != 6 && $dia != 7){            
+                $asunto = "cumpleanos";            
+                $usuario = new Usuario();
+                $usuario->emailUsuario('Administrador',$asunto,null,null,null);
+            }
+        }
+    }
+    
+    public function executeEmailDesvinculacion(sfWebRequest $request){
+        
+        $login = $request->getParameter("login");
+        $usuario = Doctrine::getTable("Usuario")->find($login);        
+        $asunto = "desvinculacion";
+        
+        $usuario->emailUsuario($login,$asunto,null,null,null);
+    }
+}
 ?>
