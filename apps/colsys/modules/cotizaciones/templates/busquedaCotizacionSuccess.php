@@ -111,6 +111,7 @@ $pagerLayout->display();
                                 <option value="Cot. solicitada para efectos de presupuesto del cliente" title="Cot. solicitada para efectos de presupuesto del cliente">Cot. solicitada para efectos de presupuesto del cliente</option>
                                 <option value="Embarque asignado y anulado por el cliente" title="Embarque asignado y anulado por el cliente">Embarque asignado y anulado por el cliente</option>
                                 <option value="Cambio de Modalidad" title="Cambio de Modalidad">Cambio de Modalidad</option>
+                                <option value="Cambio de tarifas en el trafico cotizado" title="Cambio de tarifas en el trafico cotizado">Cambio de tarifas en el trafico cotizado</option>
                             </select>
                         </div>
                         <div id="SEG_<?=$producto->getCaIdproducto()?>" style="display:none">
@@ -202,6 +203,7 @@ $pagerLayout->display();
                                 <option value="Cot. solicitada para efectos de presupuesto del cliente" title="Cot. solicitada para efectos de presupuesto del cliente">Cot. solicitada para efectos de presupuesto del cliente</option>
                                 <option value="Embarque asignado y anulado por el cliente" title="Embarque asignado y anulado por el cliente">Embarque asignado y anulado por el cliente</option>
                                 <option value="Cambio de Modalidad" title="Cambio de Modalidad">Cambio de Modalidad</option>
+                                <option value="Cambio de tarifas en el trafico cotizado" title="Cambio de tarifas en el trafico cotizado">Cambio de tarifas en el trafico cotizado</option>
                             </select>
                         </div>
                         <div id="SEGCOT_<?=$cotizacion->getCaIdcotizacion()?>" style="display:none">
