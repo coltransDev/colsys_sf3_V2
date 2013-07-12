@@ -43,15 +43,41 @@ var tabs = new Ext.FormPanel({
                             id: 'sucursal',
                             name: 'sucursal',
                             hiddenName: "idsucursal",                                                        
-                            //value:"<?//=$sucursal?>",
-                            //hiddenValue:"<?//=$idsucursal?>"
+                            value:"<?=$sucursal?>",
+                            hiddenValue:"<?//=$idsucursal?>"
                 }),
+                {
+                    xtype:          'combo',
+                    mode:           'local',
+                    value:          '<?=date("Y")?>',
+                    triggerAction:  'all',
+                    forceSelection: true,
+                    editable:       true,
+                    fieldLabel:     'Año',
+                    name:           'aa',
+                    hiddenName:     'aa',
+                    displayField:   'name',
+                    valueField:     'value',
+                    allowBlank:     false,
+                    store:          new Ext.data.JsonStore({
+                        fields : ['name', 'value'],
+                        data   : [
+                            <?
+                            echo "{name : 'Todos los años',   value: 'todos'},";
+                            for( $i=2006; $i<=date("Y"); $i++ ){
+                                echo ($i>2006)?",":"";
+                                echo "{name : '".$i."',   value: '".$i."'}";
+                            }
+                            ?>
+                        ]
+                    })
+                },
                 new WidgetMultiDatos({title: 'Mes',
                     fieldLabel: 'Mes',
                         id: 'mes',
                         name: 'mes[]',
                         hiddenName: "nmes[]",
-                        //value:'<?//= implode(",", $nmes) ?>',
+                        value:'<?= implode(",", $nmes) ?>',
                         listeners:{
                             render:function()
                             {

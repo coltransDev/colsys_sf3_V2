@@ -1421,15 +1421,20 @@ class inventoryActions extends sfActions {
         
         if($this->opcion){
         
-            $this->mantenimientos = Doctrine::getTable("InvMantenimiento")
+            $q= Doctrine::getTable("InvMantenimiento")
                         ->createQuery("m")
                         ->innerJoin("m.InvActivo a")
                         ->addWhere("a.ca_idsucursal = ?", $this->idsucursal)
-                        ->andWhereIn("EXTRACT(MONTH FROM m.ca_fchmantenimiento)", $this->nmes)
-                        ->orderBy("m.ca_fchmantenimiento ASC")
-                        ->execute();
+                        ->andWhereIn("EXTRACT(MONTH FROM m.ca_fchmantenimiento)", $this->nmes);
+            
+            if($request->getParameter("aa")){
+                if($request->getParameter("aa") != "todos")
+                $q->andWhereIn("EXTRACT(YEAR FROM m.ca_fchmantenimiento)", $request->getParameter("aa"));
+            }
+            
+            $q->orderBy("m.ca_fchmantenimiento ASC");
+            $this->mantenimientos = $q->execute();
             $result = array();
-         
         }
     }
     
