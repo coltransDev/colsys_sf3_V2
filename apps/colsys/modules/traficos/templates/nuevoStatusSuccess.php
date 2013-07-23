@@ -45,7 +45,7 @@ Ext.onReady(function(){
 });
     function actualizar(file)
     {        
-        $("#archivos").append("<input type='checkbox' name='attachments[]' value='"+Base64.encode("<?=$folder?>/"+file)+"' />");
+        $("#archivos").append("<input type='checkbox' name='attachments[]' value='"+Base64.encode(file)+"' />");
         $("#archivos").append('<img src="/images/22x22/mimetypes/binary.gif">');
         $("#archivos").append("<a href='<?=url_for("gestDocumental/verArchivo?idarchivo=")?>"+Base64.encode("<?=$folder?>/"+file)+"'>"+file+"</a><br>");        
     }
@@ -688,7 +688,7 @@ echo $form['transporte']->render();
 							<tr>
 								<th width="34%">Tipo</th>
 								<?
-								if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
+								if( $reporte->getCaImpoexpo()==Constantes::EXPO or $reporte->getCaImpoexpo()==Constantes::IMPO ){
 								?>
 								<th width="21%">Serial</th>
 								<?
@@ -716,7 +716,7 @@ echo $form['transporte']->render();
 								 echo $form['equipos_tipo_'.$i]->render();
 								?>								</td>
 								<?
-								if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
+								if( $reporte->getCaImpoexpo()==Constantes::EXPO or $reporte->getCaImpoexpo()==Constantes::IMPO ){
 								?>
 									<td>
 									<?

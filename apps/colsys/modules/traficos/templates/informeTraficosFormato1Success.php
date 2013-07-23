@@ -241,6 +241,9 @@ foreach ($reportes as $reporte) {
             $repequipos = $reporte->getRepEquipos();
             foreach ($repequipos as $equipo) {
                 $equiposStr.=$equipo->getCaCantidad() . "x" . $equipo->getConcepto()->getCaConcepto() . " ";
+                if ($equipo->getCaIdequipo()) {
+                    $equiposStr.= "#".$equipo->getCaIdequipo() . " ";
+                }
             }
             $objPHPExcel->getActiveSheet()->setCellValue('N' . $i, utf8_encode($equiposStr));
         }

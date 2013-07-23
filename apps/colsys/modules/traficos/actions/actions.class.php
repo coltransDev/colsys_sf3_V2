@@ -626,7 +626,7 @@ class traficosActions extends sfActions {
                $repequipo->setCaIdreporte($reporte->getCaIdreporte());
                $repequipo->setCaIdconcepto($request->getParameter("equipos_tipo_" . $i));
                $repequipo->setCaCantidad($request->getParameter("equipos_cant_" . $i));
-               if ($reporte->getCaImpoexpo() == Constantes::EXPO) {
+               if ($reporte->getCaImpoexpo() == Constantes::EXPO or $reporte->getCaImpoexpo() == Constantes::IMPO) {
                   $repequipo->setCaIdequipo($request->getParameter("equipos_serial_" . $i));
                }
                $repequipo->save($conn);

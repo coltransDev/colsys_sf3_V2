@@ -213,8 +213,17 @@ if ( $status->getCaIdetapa() == "IMCPD" ) { //confirmación de llegada
 <?=$inoCliente->getCaMensaje()?>
 <br />
 <?=$inoMaestra->getCaMensaje()?>
+<?
+$cartaStd = $reporte->getCliente()->cartaGarantiaStd();
+if( $inoMaestra->getCaModalidad()=="FCL" and ($reporte->getIdsProveedor()->getCaContratoComodato() or $cartaStd['ca_stdcarta_gtia']  == 'Vigente'  ) ) {
+?>
 <br />
 <br />
+ <div style="color:blue;"><b>NOTA DE INSPECCION: Señor importador, favor una vez se realice la entrega fisica de la unidad REQUERIMOS nos envien INMEDIATAMENTE este documento para poderle dar cierre a su Contrato de Comodato.</b></div>
+<br />
+<?
+}
+?>
 Nota: Estimado Cliente, 
 - le recordamos que el tiempo de permanencia de mercancìa en los depositos es de un (1) mes, contados desde la fecha de llegada de la mercancìa, y pueden solicitar una posible prorroga por un (1) mes adicional acorde al Decreto 2557 del 06 de Julio 2007 art. 10<br />
 <?
@@ -226,17 +235,6 @@ if( substr($inoMaestra->getcaReferencia(),0,1)=="4" ){
 - El tiempo libre para la devolución de los contenedores vacíos es estimado en 9 días calendario a partir de la fecha de arribo del buque para las unidades estándar. Y  los contenedores  especiales como refrigeradas tienen  3 días  siguientes a la llegada del buque, y sin excepcion la devolucion es en el  Puerto  ( este tiempo  esta sujeto a cambios o variaciones del mercado)<br />
 <?
 }
-
-$cartaStd = $reporte->getCliente()->cartaGarantiaStd();
-if( $inoMaestra->getCaModalidad()=="FCL" and ($reporte->getIdsProveedor()->getCaContratoComodato() or $cartaStd['ca_stdcarta_gtia']  == 'Vigente'  ) ) {
-?>
-<br />
-<br />
-NOTA DE INSPECCION: Señor importador, favor una vez se realice la entrega fisica de la unidad REQUERIMOS nos envien INMEDIATAMENTE este documento para poderle dar cierre a su Contrato de Comodato.
-<br />
-<?
-}
-
 if( $status->getCaIdetapa()=="IMCPD" ) {
 ?>
 <br />
@@ -245,13 +243,7 @@ IMPORTANTE: Favor tener en cuenta la entrada en vigencia de la Resolución No. 74
 <br />
 <?
 }
-
 ?>
-
-
-
-
-
 <br />
 Cualquier informaci&oacute;n adicional que ustedes requieran, con gusto le ser&aacute;   suministrada..<br />
 <br />
@@ -264,5 +256,4 @@ if($firmaotm==true)
 else
     echo $user->getFirmaHTML();
 ?>
-
 </div>
