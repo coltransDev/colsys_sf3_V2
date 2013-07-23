@@ -381,12 +381,11 @@ RepEquipo:
   generatePath: reportes
   tableName: tb_repequipos
   columns:
-    ca_idreporte:
+    ca_idrepequipo:
       type: integer
       primary: true
-    ca_idconcepto:
-      type: integer
-      primary: true
+    ca_idreporte: integer
+    ca_idconcepto: integer
     ca_cantidad: decimal
     ca_idequipo: string
     ca_observaciones: string
