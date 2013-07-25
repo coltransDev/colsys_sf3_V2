@@ -168,7 +168,7 @@ class ReporteTable extends Doctrine_Table
                     for( $j=0; $j<$k-1; $j++){
                        $prov1 = $results[$j]->getETS();
                        $prov2 = $results[$j+1]->getETS();
-                       if( $prov1>$prov2 ){
+                       if( $prov1<$prov2 ){
                            $tmp = $results[$j];
                            $results[$j] = $results[$j+1];
                            $results[$j+1] = $tmp;
@@ -201,6 +201,8 @@ class ReporteTable extends Doctrine_Table
 
 
 	public static function retrieveByConsecutivo( $consecutivo,$where='') {
+        
+        //$tiporep
         
                 $q = Doctrine::getTable("Reporte")
                             ->createQuery("r")
