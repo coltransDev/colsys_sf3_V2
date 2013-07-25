@@ -27,7 +27,6 @@ class ReporteTable extends Doctrine_Table
 		}
 	}
 
-	
 	/*
 	* Retorna los reportes con estado distinto a carga entregada de acuerdo aun modo (impo, expo)
 	* @author: Andres Botero
@@ -46,19 +45,31 @@ class ReporteTable extends Doctrine_Table
 
         if( $impoexpo==Constantes::IMPO ){
             $q->addWhere("r.ca_impoexpo = ? OR r.ca_impoexpo = ? OR r.ca_impoexpo = ?", array(Constantes::IMPO, Constantes::TRIANGULACION, Constantes::OTMDTA));
-        }else{
+        }else if( $impoexpo==Constantes::EXPO)
+        {
+            //(date_part( 'DAYS', now() - t.ca_fchcerrado )<75 or t.ca_fchcerrado is null)
+            $q->addWhere("r.ca_impoexpo = ? AND (date_part( 'DAYS', now() - r.ca_fchcerrado )<75 or r.ca_fchcerrado is null) ", $impoexpo );
+        }
+        else
+        {
             $q->addWhere("r.ca_impoexpo = ? ", $impoexpo );
         }
 
         if( $transporte  ){
-            if($transporte==Constantes::MARITIMO)
+            
+            if( $transporte==Constantes::MARITIMO || $transporte=="maritimo"   )
             {
                 $tmp="maritimo";
                 $q->addWhere("r.ca_tiporep IN (1,2,3)");
-                $q->addWhere(" r.ca_transporte = ? or r.ca_transporte = ? ",array(Constantes::MARITIMO,Constantes::TERRESTRE));
+                if($impoexpo!=Constantes::EXPO)
+                    $q->addWhere(" r.ca_transporte = ? or r.ca_transporte = ? ",array(Constantes::MARITIMO,Constantes::TERRESTRE));
+                else
+                    $q->addWhere(" r.ca_transporte = ? ",array(Constantes::MARITIMO));
             }
-            else
-                $q->addWhere("r.ca_transporte = ? ", $transporte );
+            else if($transporte==Constantes::AEREO || $transporte=="aereo")
+                $q->addWhere("r.ca_transporte = ? ", Constantes::AEREO );
+            else if($transporte==Constantes::TERRESTRE || $transporte=="terrestre")
+                $q->addWhere("r.ca_transporte = ? ", Constantes::TERRESTRE);
         }
 		
         $cliente = Doctrine::getTable("Cliente")->find( $idCliente );
@@ -76,8 +87,8 @@ class ReporteTable extends Doctrine_Table
                 $numDays = $dias_cierre_status;  
             }else{
                 $numDays = 5;  
-            }            
-                       
+            }
+
             $today = date( "N" );
 
 			if( $today==1 ){
@@ -94,7 +105,6 @@ class ReporteTable extends Doctrine_Table
         if( $historial ){
             $fecha = date("Y-m-d", time()-86400*365);
         }
-
         $q->addWhere("r.ca_fchultstatus>=? OR (r.ca_idetapa!= ? AND r.ca_idetapa!= ?) OR r.ca_idetapa IS NULL", array($fecha, "99999", "00000"));
         
 		$orderByETS =false;
@@ -122,8 +132,10 @@ class ReporteTable extends Doctrine_Table
 		if( $query ){
 			return $q;
 		}else{
+            //echo $idCliente."-".$impoexpo."-".$transporte."-".$fecha."<br>";
             //echo $q->getSqlQuery();
             $reps = $q->execute();
+            
             
             $k=count($reps);
             $results = array();
@@ -179,7 +191,7 @@ class ReporteTable extends Doctrine_Table
                 //Yo y mi bocota
             }
             
-                        
+            //echo count($results);
 			return $results;
 		}
 	}
@@ -190,7 +202,7 @@ class ReporteTable extends Doctrine_Table
 
 	public static function retrieveByConsecutivo( $consecutivo,$where='') {
         
-        $q = Doctrine::getTable("Reporte")
+                $q = Doctrine::getTable("Reporte")
                             ->createQuery("r")
                             ->where("1=1 AND r.ca_consecutivo = ? $where", $consecutivo )
                             ->addWhere("r.ca_fchanulado IS NULL")
@@ -200,7 +212,7 @@ class ReporteTable extends Doctrine_Table
             $q->whereIn("ca_tiporep" , $tiporep );
 		$reporte=$q->fetchOne();
         
-		return $reporte;
+        return $reporte;
 	}
 	
 }
