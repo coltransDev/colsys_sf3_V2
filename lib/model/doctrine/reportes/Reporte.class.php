@@ -965,12 +965,12 @@ class Reporte extends BaseReporte {
         $usuario = Doctrine::getTable("Usuario")->find($this->getCaUsucreado());
         $q = Doctrine::getTable("Usuario")
                         ->createQuery("u")
-                        ->select("u.*")
+                        ->select("u.*,p.ca_perfil")
                         ->innerJoin("u.UsuarioPerfil p")
                         ->where("u.ca_activo = ?", true);
 
-        if ($this->getCaImpoexpo() == Constantes::IMPO) {
-            $global = $this->getCliente()->getProperty("cuentaglobal");
+        $global = $this->getCliente()->getProperty("cuentaglobal");
+        if ($this->getCaImpoexpo() == Constantes::IMPO || $this->getCaImpoexpo() == Constantes::OTMDTA1 ) {
             if ($global) {
                 $q->addWhere("p.ca_perfil = ?", "cuentas-globales");
             } else {
@@ -989,8 +989,29 @@ class Reporte extends BaseReporte {
                 }
             }
             $q->addWhere("u.ca_idsucursal = ?", $usuario->getCaIdsucursal());
-        } else {
+        } 
+        else if ($this->getCaImpoexpo() == Constantes::EXPO ) {
             $q->addWhere("p.ca_perfil = ?", "operativo-expo");
+        }
+        else if ($this->getCaImpoexpo() == Constantes::TRIANGULACION) {
+            if ($global) {                
+                $q->addWhere("(p.ca_perfil = ? and u.ca_idsucursal = ?) or p.ca_perfil=?", array("cuentas-globales",$usuario->getCaIdsucursal(),"operativo-expo"));
+            } else {
+                $consolidar = $this->getCliente()->getProperty("consolidar_comunicaciones");
+                if($consolidar)
+                {                    
+                    $q->addWhere("((p.ca_perfil = ? or p.ca_perfil = ?) and u.ca_idsucursal = ?) or p.ca_perfil=?", array("operativo-traficos","operativo-aereo",$usuario->getCaIdsucursal(),"operativo-expo"));
+                }
+                else
+                {
+                    if ($this->getCaTransporte() == Constantes::MARITIMO) {
+                        $q->addWhere("(p.ca_perfil = ? and u.ca_idsucursal = ?) or p.ca_perfil=?", array("operativo-traficos",$usuario->getCaIdsucursal(),"operativo-expo"));
+                    } else {
+                        $q->addWhere("(p.ca_perfil = ? and u.ca_idsucursal = ?) or p.ca_perfil=?", array("operativo-aereo",$usuario->getCaIdsucursal(),"operativo-expo"));
+                    }
+                }
+            }
+            //$q->addWhere("u.ca_idsucursal = ?", $usuario->getCaIdsucursal());
         }
         return $q->execute();
     }
@@ -1460,12 +1481,12 @@ class Reporte extends BaseReporte {
      */
     public function compDato($dato)
     {
-        if(!$this->repAnterior)
-            $this->repAnterior=ReporteTable::retrieveByConsecutivo($this->getCaConsecutivo()," and ca_version='".($this->getCaVersion()-1)."'");
+        if(!$this->repAnterior){
+            $this->repAnterior=ReporteTable::retrieveByConsecutivo($this->getCaConsecutivo()," and ca_version<='".($this->getCaVersion()-1)."'");
+        }       
         
         eval( " \$str1 = \$this->get".$dato."();" );
         eval( " \$str2 = \$this->repAnterior->get".$dato."();" );
         return strcmp($str1, $str2);
-    }
-    
+    }    
 }
