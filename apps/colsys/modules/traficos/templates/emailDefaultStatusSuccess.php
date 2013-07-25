@@ -70,9 +70,9 @@ else if( 1==2 && $user->getSucursal()->getEmpresa()->getCaNombre()=="Coltrans S.
 	</tr>
 	<tr>
 		<td><b>Proveedor:</b></td>
-		<td colspan="3"><?=$reporte->getProveedoresStr()?></td>
+		<td colspan="3"><?=$reporte->getProveedoresStr(false, "<br>")?></td>
 		<td width="20%"><b><?=$reporte->getCaOrdenProv()?"Orden Proveedor":"&nbsp;"?></b></td>
-		<td width="22%"><?=$reporte->getCaOrdenProv()?$reporte->getCaOrdenProv():"&nbsp;"?></td>
+            <td width="22%"><?=$reporte->getCaOrdenProv()?str_replace("|","<br>",$reporte->getCaOrdenProv()):"&nbsp;"?></td>
 	</tr>
 	<tr>
 		<td><b>Origen:</b></td>

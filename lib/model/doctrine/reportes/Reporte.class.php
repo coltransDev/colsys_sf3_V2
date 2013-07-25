@@ -197,7 +197,7 @@ class Reporte extends BaseReporte {
      * Author: Andres Botero
      */
 
-    public function getProveedoresStr($dir=false) {
+    public function getProveedoresStr($dir=false, $separador=" - ") {
 
         if ($this->proveedoresStr == null) {
             $proveedoresStr = "";
@@ -205,7 +205,7 @@ class Reporte extends BaseReporte {
             if ($proveedores) {
                 foreach ($proveedores as $proveedor) {
                     if ($proveedoresStr) {
-                        $proveedoresStr.=" - ";
+                        $proveedoresStr.=$separador;
                     }
                     $proveedoresStr.= $proveedor->getCaNombre().(($dir!=false)?"<br>".htmlentities($proveedor->getCaDireccion()):"");
                 }
