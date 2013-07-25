@@ -688,9 +688,13 @@ echo $form['transporte']->render();
 							<tr>
 								<th width="34%">Tipo</th>
 								<?
-								if( $reporte->getCaImpoexpo()==Constantes::EXPO or $reporte->getCaImpoexpo()==Constantes::IMPO ){
+								if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
 								?>
 								<th width="21%">Serial</th>
+								<?
+								}else if( $reporte->getCaImpoexpo()==Constantes::IMPO ){
+								?>
+								<th width="21%">No.Contenedor</th>
 								<?
 								}
 								?>
