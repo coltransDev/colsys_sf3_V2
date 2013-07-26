@@ -13,9 +13,8 @@
   // Copyright:     Coltrans S.A. - 2004                                        \\
   /*================-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*\
  */
-$programa = 45;
-
 $titulo = 'Informe de Contenedores';
+$meses  = array( "%" => "Todos los Meses", "01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre" );
 
 include_once 'include/datalib.php';                                            // Incorpora la libreria de funciones, para accesar leer bases de datos
 include_once 'include/functions.php';                                          // Incorpora la libreria de funciones varias
@@ -39,11 +38,38 @@ if (!isset($buscar) and !isset($accion)) {
    echo "<TH COLSPAN=8 style='font-size: 12px; font-weight:bold;'><B>Ingrese los parámetros para el Reporte</TH>";
 
    echo "<TR>";
-   echo "  <TD Class=captura ROWSPAN=2></TD>";
-   echo "  <TD Class=listar><B>E.T.A.:</B><BR><INPUT TYPE='TEXT' NAME='fchconfirmacion' SIZE=12 VALUE='" . date(date("Y") . "-" . date("m") . "-" . date("d")) . "' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
-   echo "  <TD Class=listar><B>Devolución:</B><BR><INPUT TYPE='TEXT' NAME='fchdevolucion' SIZE=12 VALUE='" . date("Y-m-d", mktime(0, 0, 0, date("m"), date("d") + 10, date("Y"))) . "' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
-   echo "  <TD Class=listar><B>Nombre del Cliente:</B><BR><INPUT TYPE='text' NAME='compania' VALUE='' size='30' maxlength='60'></TD>";
-   echo "  <TD Class=listar><B>No.Contenedor:</B><BR><INPUT TYPE='text' NAME='idequipo' VALUE='' size='12' maxlength='12'></TD>";
+   echo "  <TD Class=captura ROWSPAN=3></TD>";
+   echo "  <TD Class=listar>Año:<BR><SELECT NAME='ano'>";
+   for ( $i=5; $i>=0; $i-- ){
+      echo " <OPTION VALUE=".(date('Y')-$i)." SELECTED>".(date('Y')-$i)."</OPTION>";
+   }
+   echo "  </SELECT></TD>";
+   echo "  <TD Class=listar>Mes:<BR><SELECT NAME='mes'>";
+   while (list ($clave, $val) = each ($meses)) {
+      echo " <OPTION VALUE=$clave";
+      if (date('m')==$clave) {
+         echo" SELECTED"; }
+      echo ">$val</OPTION>";
+   }
+   echo "  </SELECT></TD>";
+   if (!$tm->Open("select ca_idtrafico, ca_nombre from vi_traficos order by ca_nombre")) {       // Selecciona todos lo registros de la tabla Traficos
+      echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+      echo "<script>document.location.href = 'reptraficos.php';</script>";
+      exit;
+   }
+   $tm->MoveFirst();
+   echo " <TD Class=mostrar>Tráfico :<BR><SELECT NAME='traorigen'>";
+   echo " <OPTION VALUE=%>Todos los Tráficos</OPTION>";
+   while (!$tm->Eof()) {
+      echo " <OPTION VALUE=" . $tm->Value('ca_nombre') . ">" . $tm->Value('ca_nombre') . "</OPTION>";
+      $tm->MoveNext();
+   }
+   echo "  </TD>";
+   echo "  <TD Class=listar><B>No.Contenedor:</B><BR><INPUT TYPE='text' NAME='idequipo' VALUE='' size='15' maxlength='12'></TD>";
+   echo "  <TH style='vertical-align:bottom;' rowspan='2'><INPUT Class=submit TYPE='SUBMIT' NAME='buscar' VALUE='  Buscar  ' ONCLIK='menuform.submit();'></TH>";
+   echo "</TR>";
+   echo "<TR>";
+   echo "  <TD Class=listar colspan='2'><B>Nombre del Cliente:</B><BR><INPUT TYPE='text' NAME='compania' VALUE='' size='40' maxlength='60'></TD>";
    
    if (!$tm->Open("select ca_idlinea, ca_nombre from vi_transporlineas where ca_transporte = 'Marítimo' and ca_activo_impo=true order by ca_nombre")) {       // Selecciona todos los prefijos de la InoMaestra
       echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
@@ -51,7 +77,7 @@ if (!isset($buscar) and !isset($accion)) {
       exit;
    }
    $tm->MoveFirst();
-   echo "  <TD Class=listar><B>Línea Naviera:</B><BR><SELECT NAME='linea'>";
+   echo "  <TD Class=listar colspan='2'><B>Línea Naviera:</B><BR><SELECT NAME='linea'>";
     echo "    <OPTION VALUE=%>Todas las Líneas</OPTION>";
     while (!$tm->Eof()) {
         echo "    <OPTION VALUE='" . $tm->Value('ca_idlinea') . "'>" . $tm->Value('ca_nombre') . "</OPTION>";
@@ -59,20 +85,6 @@ if (!isset($buscar) and !isset($accion)) {
     }
     echo "    </SELECT>";
    
-   if (!$tm->Open("SELECT distinct substr(ca_referencia,1,3) as ca_modal FROM tb_inomaestra_sea order by 1")) {       // Selecciona todos los prefijos de la InoMaestra
-      echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-      echo "<script>document.location.href = 'repreferencia.php';</script>";
-      exit;
-   }
-   $tm->MoveFirst();
-   echo "  <TD Class=listar>Prefijo:<BR><SELECT NAME='modal'>";
-   echo "  <OPTION VALUE=%>Todos</OPTION>";
-   while (!$tm->Eof()) {
-      echo " <OPTION VALUE=" . $tm->Value('ca_modal') . ">" . $tm->Value('ca_modal') . "</OPTION>";
-      $tm->MoveNext();
-   }
-   echo "  </TD>";
-   echo "  <TH style='vertical-align:bottom;'><INPUT Class=submit TYPE='SUBMIT' NAME='buscar' VALUE='  Buscar  ' ONCLIK='menuform.submit();'></TH>";
    echo "</TR>";
 
    echo "<TR HEIGHT=5>";
@@ -94,24 +106,34 @@ if (!isset($buscar) and !isset($accion)) {
    $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
 
-   $condicion = "where ca_fchconfirmacion = '$fchconfirmacion' and ca_fchdevolucion >= '$fchdevolucion' and ca_compania like '%$compania%'";
-   $condicion.= (strlen($idequipo) != 0) ? " and ca_referencia in (select ca_referencia from tb_inoequipos_sea where ca_idequipo like '%$idequipo%')" : "";
-   $condicion.= ($modal != "%")?" and ca_modal = '$modal'":"";
+   $ano_mem = substr($ano, -1);
+   $mes_mem = $mes."-".$ano_mem;
+   $condicion = "where";
+   $condicion.= ($ano_mem != "%")?" ca_ano = '$ano_mem'":"";
+   $condicion.= ($mes_mem != "%")?" and ca_mes = '$mes_mem'":"";
+   $condicion.= ($traorigen != "%")?" and ca_traorigen = '$traorigen'":"";
+   $condicion.= ($compania != "")?" and ca_compania = '$compania'":"";
    $condicion.= ($linea != "%")?" and ca_idlinea = '$linea'":"";
+   if (strlen($idequipo) != 0){
+      $condicion.= " and ca_referencia in (select ca_referencia from tb_inoequipos_sea where ca_idequipo like '%$idequipo%')";
+   }else{
+      $condicion.= " and ca_referencia in (select ca_referencia from tb_inoequipos_sea where ca_idequipo != '*-*')";
+   }
+   
    if (!$rs->Open("select * from vi_inoctrlcontenedores_sea $condicion order by ca_fchconfirmacion, ca_fchdevolucion, ca_referencia")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
       echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
       echo "<script>document.location.href = 'entrada.php';</script>";
       exit;
    }
-   $ref_mem = "";
+   $ref_mem = array();
    while (!$rs->Eof() and !$rs->IsEmpty()) {
-      $ref_mem.= "'" . $rs->Value('ca_referencia') . "',";
+      $ref_mem[] = "'".$rs->Value('ca_referencia')."'";
       $rs->MoveNext();
    }
    $rs->MoveFirst();
-   $ref_mem = (strlen($ref_mem) != 0) ? substr($ref_mem, 0, strlen($ref_mem) - 1) : "''";
+   
    $eq = & DlRecordset::NewRecordset($conn);
-   if (!$eq->Open("select ca_referencia, ca_concepto, ca_idequipo, ca_inspeccion_nta, ca_inspeccion_fch from vi_inoequipos_sea where ca_referencia in (" . $ref_mem . ") order by ca_referencia, ca_concepto")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
+   if (!$eq->Open("select ca_referencia, ca_concepto, ca_idequipo, ca_inspeccion_nta, ca_inspeccion_fch from vi_inoequipos_sea where ca_referencia in (". implode( ",", $ref_mem) .") order by ca_referencia, ca_concepto")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
       echo "<script>alert(\"" . addslashes($eq->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
       echo "<script>document.location.href = 'entrada.php';</script>";
       exit;
@@ -145,6 +167,7 @@ if (!isset($buscar) and !isset($accion)) {
          $oid_mem = $rs->Value('ca_oid');
          $cas_cer = TRUE;
          
+         $id_array = array();
          $tabla_equipos = "";
          $tabla_equipos.= "<TABLE WIDTH=100% CELLSPACING=1>";
          $tabla_equipos.= "<TH>Equipo</TH>";
@@ -162,6 +185,7 @@ if (!isset($buscar) and !isset($accion)) {
             $tabla_equipos.= "  <TD Class=listar style='font-size: 9px;'>" . $eq->Value('ca_concepto') . "</TD>";
             $tabla_equipos.= "  <TD Class=listar style='font-size: 9px;'>" . $eq->Value('ca_idequipo') . "</TD>";
             $tabla_equipos.= "</TR>";
+            $id_array[] = $eq->Value('ca_concepto');
             $eq->MoveNext();
          }
          $tabla_equipos.= "</TABLE>";

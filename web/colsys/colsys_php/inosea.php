@@ -255,6 +255,18 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     echo "<script>document.location.href = 'entrada.php';</script>";
                     exit;
                 }
+                $dc = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
+                if (!$dc->Open("select * from tb_dianclientes where ca_referencia = '" . $rs->Value('ca_referencia') . "'")) {                      // Selecciona el registros del log de envio a la Dian en clientes
+                    echo "<script>alert(\"" . addslashes($dm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    exit;
+                }
+                $dianClientes = array();
+                while (!$dc->Eof() and !$dc->IsEmpty()) {
+                   $dianClientes[$dc->Value('ca_house')] = $dc->Value('ca_iddocactual');
+                   $dc->MoveNext();
+                }
+                unset($dc);
                 echo "<HTML>";
                 echo "<HEAD>";
                 echo "<TITLE>$titulo</TITLE>";
@@ -300,6 +312,10 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     
                     function emailComodato(id){
                         document.location.href = '/antecedentes/emailComodato?ref='+id;
+                    }
+                    
+                    function emailAutorizacion(id){
+                        document.location.href = '/antecedentes/emailAutorizacion?ref='+id;
                     }
                     
                     function verEntregaAntecedentes(id){
@@ -430,7 +446,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             }
                         }
                     }
-                    echo "    <IMG style='cursor:pointer; $level0' src='./graficos/muisca.gif' alt='Informacion Muisca' border=0 onclick='elegir(\"Muisca\", \"" . $rs->Value('ca_referencia') . "\", 0, 0);'><BR>";
+                    echo "    <IMG style='cursor:pointer; $level0' src='./graficos/muisca.gif' alt='Informacion Muisca' border=0 onclick='elegir(\"Muisca\", \"" . $rs->Value('ca_referencia') . "\", 0, 0);'>".(($dm->value("ca_iddocactual"))?"<br />".$dm->value("ca_iddocactual"):"")."<BR>";
                     echo "    <BR><IMG style='cursor:pointer' src='./graficos/fileopen.png' alt='Archivos adjuntos a la referencia' border=0 onclick='archivos( \"" . $rs->Value('ca_referencia') . "\", 0, 0);'><BR>";
                     echo "    <BR><IMG style='cursor:pointer; $level0' src='./graficos/mail_forward.gif' alt='Email a coloader' border=0 onclick='emailColoader( \"" . $rs->Value('ca_referencia') . "\", 0, 0);'><BR>";
                     if ($nivel > 2) {
@@ -501,7 +517,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         echo "  <TD WIDTH=30 Class=listar>" . formatNumber($co->Value('ca_cantidad'), 3) . "</TD>";
                         echo "  <TD WIDTH=100 Class=listar>" . $co->Value('ca_idequipo') . " " . ((strlen($co->Value('ca_observaciones'))) ? "<IMG src='graficos/admira.gif' alt='" . $co->Value('ca_observaciones') . "'>" : "") . "</TD>";
                         echo "  <TD WIDTH=85 Class=listar>" . $co->Value('ca_numprecinto') . "</TD>";
-                        echo "  <TD WIDTH=90 Class=listar>Entrega:&nbsp;" . $co->Value('ca_entrega_comodato') . " " . ((strlen($co->Value('ca_observaciones_con'))) ? "<IMG src='graficos/admira.gif' alt='" . $co->Value('ca_observaciones_con') . "'>" : "") . "<BR />Devolución:&nbsp;" . $co->Value('ca_inspeccion_fch') . (($co->Value('ca_dias_libres')!="")?"<BR />Días Libres:&nbsp;".$co->Value('ca_dias_libres'):"") ."</TD>";
+                        echo "  <TD WIDTH=90 Class=listar>Entrega:&nbsp;" . $co->Value('ca_entrega_comodato') . " " . ((strlen($co->Value('ca_observaciones_con'))) ? "<IMG src='graficos/admira.gif' alt='" . $co->Value('ca_observaciones_con') . "'>" : "") . (($co->Value('ca_dias_libres')!="")?"<BR />Días Libres:&nbsp;".$co->Value('ca_dias_libres'):"") . "<BR />Devolución:&nbsp;" . $co->Value('ca_inspeccion_fch') ."</TD>";
                         echo "  <TD WIDTH=85 Class=listar>Devolución:&nbsp;" . $co->Value('ca_sitiodevolucion') . "<BR />Nota:&nbsp;" . $co->Value('ca_inspeccion_nta') . "</TD>";
                         if ($ver == 'block' and $nivel > 0) {
                             echo "  <TD WIDTH=25 Class=listar onclick='elegir(\"Contrato\", \"" . $co->Value('ca_referencia') . "\", \"" . $co->Value('ca_idequipo') . "\");'><IMG src='graficos/contrato.gif' alt='Contrato de Comodato'></TD>";
@@ -533,7 +549,8 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     }
                     echo "  <TR>";
                     echo "    <TD Class=listar>Sitio de Devolución:</TD>";
-                    echo "    <TD Class=listar COLSPAN=6>" . $co->Value('ca_sitiodevolucion') . "</TD>";
+                    echo "    <TD Class=listar COLSPAN=5>" . $co->Value('ca_sitiodevolucion') . "</TD>";
+                    echo "    <TD Class=listar style='font-weight:bold;'><IMG style='$level0' src='graficos/mail_forward.gif' alt='Solicitar Autorización' onclick='emailAutorizacion( \"" . $rs->Value('ca_referencia') . "\", 0, 0);'></TD>";
                     echo "  </TR>";
                     echo "  </TABLE>";
                     echo "  </TD>";
@@ -715,7 +732,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             echo "  <TD ROWSPAN=2 WIDTH=80 Class=listar style='text-align: center;'>";                                              // Botones para hacer Mantenimiento a la Tabla
                             echo "    <IMG style='visibility: $visible;$level0;cursor:pointer' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"ModificarCl\", \"" . $rs->Value('ca_referencia') . "\", \"" . $cl->Value('ca_idcliente') . "\", \"" . urlencode($cl->Value('ca_hbls')) . "\");'>";
                             echo "    <IMG style='visibility: $visible;$level0;cursor:pointer' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"EliminarCl\", \"" . $rs->Value('ca_referencia') . "\", \"" . $cl->Value('ca_idcliente') . "\", \"" . urlencode($cl->Value('ca_hbls')) . "\");'><BR><BR>";
-                            echo "    <IMG style='visibility: $digitable;$level0;cursor:pointer' src='./graficos/muisca.gif'  alt='Informacion Muisca' border=0 onclick='elegir(\"MuiscaCl\", \"" . $rs->Value('ca_referencia') . "\", \"" . $cl->Value('ca_idcliente') . "\", \"" . urlencode($cl->Value('ca_hbls')) . "\");'><BR><BR>";
+                            echo "    <IMG style='visibility: $digitable;$level0;cursor:pointer' src='./graficos/muisca.gif'  alt='Informacion Muisca' border=0 onclick='elegir(\"MuiscaCl\", \"" . $rs->Value('ca_referencia') . "\", \"" . $cl->Value('ca_idcliente') . "\", \"" . urlencode($cl->Value('ca_hbls')) . "\");'>".(($dianClientes[$cl->Value('ca_hbls')])?"<BR>".$dianClientes[$cl->Value('ca_hbls')]:"")."<BR><BR>";
                             if ($cl->value('ca_usulibero') == "") {
                                 echo "    <IMG style='visibility: $digitable;$level0;cursor:pointer' src='./graficos/liberado.gif'  alt='Carga Liberada al Cliente' border=0 onclick='elegir(\"LiberadoCl\", \"" . $rs->Value('ca_referencia') . "\", \"" . $cl->Value('ca_idcliente') . "\", \"" . urlencode($cl->Value('ca_hbls')) . "\");'><BR>";
                             } else {
@@ -1438,7 +1455,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
         case 'Contrato': {                                                    // Opcion para Adicionar Registros a la tabla
                 $modulo = "00100100";                                             // Identificación del módulo para la ayuda en línea
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
-                if (!$rs->Open("select * from vi_inoequipos_sea where ca_referencia = '" . $id . "' and ca_idequipo = '" . $cl . "'")) {    // Mueve el apuntador al registro que se desea modificar
+                if (!$rs->Open("select ie.*, im.ca_fchconfirmacion from vi_inoequipos_sea ie inner join tb_inomaestra_sea im on ie.ca_referencia = im.ca_referencia where ie.ca_referencia = '" . $id . "' and ca_idequipo = '" . $cl . "'")) {    // Mueve el apuntador al registro que se desea modificar
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
@@ -1466,6 +1483,16 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "  	 return (true);";
                 echo "  return (false);";
                 echo "}";
+                echo "function addDias(days){";
+                echo "  date = document.getElementById('fchconfirmacion').value;";
+                echo "  day = date.substr(8,2);";
+                echo "  month = date.substr(5,2) - 1;";
+                echo "  year = date.substr(0,4);";
+                echo "  var theDate = new Date(year, month, day);";
+                echo "  theDate.setDate(theDate.getDate() + parseInt(days.value) - 1);";
+                echo "  element = document.getElementById('inspeccion_fch');";
+                echo "  element.value = theDate.getFullYear()+'-'+String(theDate.getMonth()+101).substr(1,2)+'-'+String(theDate.getDate()+100).substr(1,2);";
+                echo "}";
                 echo "</script>";
                 echo "<script language='javascript' src='javascripts/popcalendar.js'></script>";
                 echo "</HEAD>";
@@ -1479,22 +1506,23 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "<TABLE WIDTH=500 CELLSPACING=1>";
                 echo "<INPUT TYPE='HIDDEN' NAME='referencia' id='referencia' VALUE=\"" . $id . "\">";        // Hereda el Id de la Referencia que se esta modificando
                 echo "<INPUT TYPE='HIDDEN' NAME='idequipo' id='idequipo' VALUE=\"" . $cl . "\">";              // Hereda el Id de la Referencia que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='fchconfirmacion' id='fchconfirmacion' VALUE=\"" . $rs->Value('ca_fchconfirmacion') . "\">"; // Guarda fch de llegada para calculo de día de revolución
                 echo "<TH Class=titulo COLSPAN=4 style='font-size: 11px; vertical-align:bottom'>$id<BR>Información del Contrato de Comodato</TH>";
 
                 echo "<TR>";
                 echo "  <TD Class=mostrar COLSPAN=2><B>Concepto:</B><BR>" . $rs->Value('ca_concepto') . "</TD>";
-                echo "  <TD Class=mostrar><B>Cantidad:</B><BR>" . formatNumber($rs->Value('ca_cantidad'), 3) . "</TD>";
                 echo "  <TD Class=mostrar><B>Id Equipo:</B><BR>" . $rs->Value('ca_idequipo') . "</TD>";
+                echo "  <TD Class=mostrar><B>Conf.Llegada:</B><BR>" . $rs->Value('ca_fchconfirmacion') . "</TD>";
                 echo "</TR>";
                 echo "<TR HEIGHT=5>";
                 echo "  <TD Class=invertir COLSPAN=4></TD>";
                 echo "</TR>";
                 $entrega_comodato = ($rs->Value('ca_entrega_comodato') == "") ? date("Y-m-d") : $rs->Value('ca_entrega_comodato');
                 echo "<TR>";
-                echo "  <TD Class=mostrar>Fch. Entrega Comodato:<BR><INPUT TYPE='TEXT' NAME='entrega_comodato' VALUE='$entrega_comodato' SIZE=12 ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
-                echo "  <TD Class=mostrar>Nota Inspección:<BR><INPUT TYPE='TEXT' NAME='inspeccion_nta' VALUE='" . $rs->Value('ca_inspeccion_nta') . "' SIZE=12 MAXLENGTH=10></TD>";
-                echo "  <TD Class=mostrar>Fch. Devolución:<BR><INPUT TYPE='TEXT' NAME='inspeccion_fch' VALUE='" . $rs->Value('ca_inspeccion_fch') . "' SIZE=12 VALUE='" . date("Y-m-d") . "' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
-                echo "  <TD Class=mostrar>Días Libres:<BR><INPUT TYPE='TEXT' NAME='dias_libres' VALUE='" . $rs->Value('ca_dias_libres') . "' SIZE=10 MAXLENGTH=8></TD>";
+                echo "  <TD Class=mostrar>Fch. Entrega Comodato:<BR><INPUT TYPE='TEXT' NAME='entrega_comodato' ID='entrega_comodato' VALUE='$entrega_comodato' SIZE=12 ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+                echo "  <TD Class=mostrar>Nota Inspección:<BR><INPUT TYPE='TEXT' NAME='inspeccion_nta' ID='inspeccion_nta' VALUE='" . $rs->Value('ca_inspeccion_nta') . "' SIZE=12 MAXLENGTH=10></TD>";
+                echo "  <TD Class=mostrar>Días Libres:<BR><INPUT TYPE='TEXT' NAME='dias_libres' ID='dias_libres' VALUE='" . $rs->Value('ca_dias_libres') . "' SIZE=10 MAXLENGTH=8 ONCHANGE='addDias(this)'></TD>";
+                echo "  <TD Class=mostrar>Fch. Devolución:<BR><INPUT TYPE='TEXT' NAME='inspeccion_fch' ID='inspeccion_fch' VALUE='" . $rs->Value('ca_inspeccion_fch') . "' SIZE=12 VALUE='" . date("Y-m-d") . "' READONLY></TD>";
                 echo "</TR>";
                 echo "<TR>";
                 echo "  <TD Class=mostrar>Sitio de Devolución:</TD>";
