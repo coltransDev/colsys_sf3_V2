@@ -115,8 +115,16 @@ $j=0;
     <tr>
         <td class="listar"><b>ID Proveedor:</b><br />
                 <?=$inoCliente->getCaIdproveedor()?></td>
-        <td class="listar" colspan="4"><b>Proveedor:</b><br />
-                <?=$inoCliente->getCaProveedor()?></td>        
+        <td class="listar" colspan="3"><b>Proveedor:</b><br />
+                <?=$inoCliente->getCaProveedor()?></td>
+<?
+        if($inoCliente->getCaPlanilla()){
+?>
+        <td class="listar"><b>Planilla de Envío:</b><br />
+            <div id="divplanilla_<?=$inoCliente->getOid()?>"><?=$inoCliente->getCaPlanilla()?></div></td>
+<?
+        }
+?>
     </tr>
 <?
     if( $modo=="otm" ){
@@ -202,7 +210,6 @@ $j=0;
     if( $modo=="otm" ){
         $mensaje = "";
     }else{
-
         if( isset($coordinadores[$inoCliente->getCaContinuacionDest()]) && $coordinadores[$inoCliente->getCaContinuacionDest()] ){
             $coord = $coordinadores[$inoCliente->getCaContinuacionDest()];
         }else{
@@ -218,12 +225,10 @@ $j=0;
 ?>
     <tr>
         <td class="listar" colspan="5"><b>Ingrese mensaje exclusivo para este cliente:</b><br />
-                <div id="divmessage_<?=$inoCliente->getOid()?>"></div>
+            <div id="divmessage_<?=$inoCliente->getOid()?>"></div>
             <textarea name='mensaje_<?=$inoCliente->getOid()?>' id='mensaje_<?=$inoCliente->getOid()?>' wrap="virtual" rows="5" cols="65"></textarea>
-            
-
-            <input type="hidden" id='mensajeOTM_<?=$inoCliente->getOid()?>' value="<?=$inoCliente->getCaMensaje().$mensaje?>" />
-    </td>
+            <input type="hidden" id='mensajeOTM_<?=$inoCliente->getOid()?>' value="<?=$inoCliente->getCaMensaje().$mensaje?>" />        
+        </td>
     </tr>
     <tr>
         <td class="mostrar">Adjunto para Cliente : </td>

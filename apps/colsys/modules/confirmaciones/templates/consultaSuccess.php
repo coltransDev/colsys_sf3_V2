@@ -23,7 +23,7 @@ $textos=$sf_data->getRaw("textos");
 ?>
 <script language="javascript" type="text/javascript">
 var modo='<?=$modo?>'
-function validarFormConfirmacion(){	
+function validarFormConfirmacion(tipomsg){	
 
     
     <?
@@ -56,6 +56,18 @@ function validarFormConfirmacion(){
                     alert("Debe seleccionar al menos un contacto fijo para el cliente: "+document.getElementById("nombre_cliente_"+oids[i]).value);
                     document.location.href = "#oid_"+oids[i];
                     return false;
+                }
+                
+                valor=$(".tipostatus:checked").val();
+                
+                if(valor=="not_planilla"){
+                    var divplanilla =document.getElementById("divplanilla_"+oids[i]);
+                    
+                    if(!divplanilla){
+                        alert("El cliente "+document.getElementById("nombre_cliente_"+oids[i]).value+" no tiene planilla reportada");
+                        document.location.href = "#oid_"+oids[i];
+                        return false;
+                    }
                 }
             }
         }
@@ -294,7 +306,12 @@ function cambiarTextosOTM( value ){
         var msg = "<?=str_replace("\n", "<br />",$textos['mensajeDesc'])?>";
         
             $("#status_body").val(msg.split("<br />").join("\n")) ;
-    }else{
+    }else if( value=="not_planilla" ){
+        var msg = "<?=str_replace("\n", "<br />",$textos['mensajePlanilla'])?>";
+        
+            $("#status_body").val(msg.split("<br />").join("\n")) ;
+    }
+    else{
         var msg = "<?=str_replace("\n", "<br />",$textos['mensajeStatus'])?>";
         
             $("#status_body").val(msg.split("<br />").join("\n"));
@@ -317,27 +334,37 @@ function cambiarTextosOTM( value ){
     ?>
 }
 
-function cambiarTipoMsg( value ){    
-    
-    
+function cambiarTipoMsg( value ){
     
     if( value=="Conf" || value=="Puerto" ){
-        //document.getElementById('confirmacion_tbl').style.display='block';
-        //document.getElementById('status_tbl').style.display='none';
         $("#status_tbl").hide();
         $("#status_cnt").hide();
+        $("#planilla_tbl").hide();
         $("#confirmacion_tbl").show();
+        $("#upload_tbl").show();
+        $("#planilla_form").hide();
     }else if( value=="Cont" ){
         $("#status_cnt").show();
         $("#status_tbl").hide();
+        $("#planilla_tbl").hide();
         $("#confirmacion_tbl").hide();
+        $("#upload_tbl").show();
+        $("#planilla_form").hide();
+    }else if( value=="Planilla" ){
+        $("#status_cnt").hide();
+        $("#status_tbl").hide();
+        $("#planilla_tbl").show();
+        $("#confirmacion_tbl").hide();
+        $("#upload_tbl").hide();
+        $("#planilla_form").show();
     }else{
         $("#status_tbl").show();
         $("#status_cnt").hide();
+        $("#planilla_tbl").hide();
         $("#confirmacion_tbl").hide();
-        //document.getElementById('status_tbl').style.display='block';
-        //document.getElementById('confirmacion_tbl').style.display='none';        
-    }
+        $("#upload_tbl").show();
+        $("#planilla_form").hide();  
+    }   
     if(modo!="puerto")
         cambiarTextosOTM( value );
 }
@@ -381,9 +408,9 @@ function formatHours(date){
 		<table cellspacing="1" class="tableList" width="90%" >
 			<tr>
 				<td class="partir" colspan="6"><div align="center">COLTRANS S.A.<br />
-						<?
+<?
 					echo $titulo;
-					?>
+?>
 					</div></td>
 			</tr>
 			<tr>
@@ -394,9 +421,7 @@ function formatHours(date){
 				<td width="24%" class="listar" style='font-size: 11px; text-align: center;'><span class="listar" style="font-size: 11px; font-weight:bold;">
 					<?=$referencia->getCaFchreferencia()?>
 					</span></td>
-				
 			</tr>
-            
 			<tr>
 				<td class="partir">&nbsp;</td>
 				<td class="partir">&nbsp;</td>
@@ -407,13 +432,13 @@ function formatHours(date){
 				<td class="partir" style='text-align: center; vertical-align:top;'>&nbsp;</td>
 				<td class="partir" style='text-align: center; vertical-align:top;'>Importación<br />
 					&nbsp;<br />
-					&nbsp;</td>
+					&nbsp;
+                </td>
 				<td width="14%" class="listar" style='font-size: 11px; text-align: center; font-weight:bold;'><?=$origen->getCaCiudad()?></td>
 				<td width="7%" class="listar" style='font-size: 11px; text-align: center; font-weight:bold;'><?=$origen->getTrafico()?></td>
 				<td class="listar" style='font-size: 11px; text-align: center; font-weight:bold;'><?=$destino->getCaCiudad()?></td>
 				<td class="listar" style='font-size: 11px; text-align: center; font-weight:bold;'><?=$destino->getTrafico()?></td>
-			</tr>
-           
+			</tr>           
 			<tr>
 				<td class="partir">&nbsp;</td>
 				<td class="partir">Transportista:</td>
@@ -432,59 +457,59 @@ function formatHours(date){
 					<?=$referencia->getCaMbls()."|".$referencia->getCaFchmbls()?></td>
 				<td class="listar" colspan="2"><b>Observaciones:</b><br />
 					<?=Utils::replace($referencia->getCaObservaciones())?></td>
-			</tr>
-            
+			</tr>            
 			<tr>
-				<td colspan="4" class="listar"><?
-					$inoEquipos = $referencia->getInoEquiposSea();
-					
-					if( count($inoEquipos)>0 ){
-					?>
-					<table cellspacing="0" style='letter-spacing:-1px;' width="100%">
-						<tr>
-							<th>Concepto</th>
-							<th>Cantidad</th>
-							<th>Id Equipo</th>
-							<th colspan="3">Entrega de Comodato</th>
-						</tr>
-						<?
-                  $agente_aduana = "";
+				<td colspan="4" class="listar">
+<?
+                    $inoEquipos = $referencia->getInoEquiposSea();
+
+                    if( count($inoEquipos)>0 ){
+?>
+                        <table cellspacing="0" style='letter-spacing:-1px;' width="100%">
+                            <tr>
+                                <th>Concepto</th>
+                                <th>Cantidad</th>
+                                <th>Id Equipo</th>
+                                <th colspan="3">Entrega de Comodato</th>
+                            </tr>
+<?
+                            $agente_aduana = "";
+
+                            $infoAduanas = $referencia->getInoClientesSea();
+                            foreach($infoAduanas as $infoAduana){
+                               $agAduana = $infoAduana->getAduana();
+                               $agente_aduana = $agAduana->getCaNombre();
+                            }
                   
-                  $infoAduanas = $referencia->getInoClientesSea();
-                  foreach($infoAduanas as $infoAduana){
-                     $agAduana = $infoAduana->getAduana();
-                     $agente_aduana = $agAduana->getCaNombre();
-                  }
-                  
-                  $intro_body_desc = "\n\n";
-						foreach( $inoEquipos as $inoEquipo ){						
-							$inoContrato = $inoEquipo->getInoContratosSea();
-                     $intro_body_desc.= "Equipo : ".$inoEquipo->getConcepto()->getCaConcepto()."\n";
-                     $intro_body_desc.= "Id Equipo : ".$inoEquipo->getCaIdequipo()."\n";
-                     $intro_body_desc.= "Entrega Comodato : ".($inoContrato?$inoContrato->getCaEntregaComodato():"")."\n";
-                     $intro_body_desc.= "Patio de Entrega : ".($inoContrato?$inoContrato->getPricPatio()->getCaNombre():"")."\n";
-                     $intro_body_desc.= "Agente Aduana : ".$agente_aduana."\n";
-                     $intro_body_desc.= "Observaciones : ".($inoContrato?$inoContrato->getCaObservaciones():"")."\n\n\n";
-						?>
-						<tr>
-							<td  class="listar"><?=$inoEquipo->getConcepto()->getCaConcepto()?></td>
-							<td  class="listar"><?=$inoEquipo->getCaCantidad()?></td>
-							<td  class="listar"><?=$inoEquipo->getCaIdequipo()?></td>
-							<td  class="listar"><?=$inoContrato?$inoContrato->getCaEntregaComodato():"&nbsp;"?></td>
-							<td  class="listar"><?=$inoContrato?$inoContrato->getPricPatio()->getCaNombre():"&nbsp;"?></td>
-							<td  class="listar"><?=$inoContrato?$inoContrato->getCaObservaciones():"&nbsp;"?></td>
-						</tr>
-						<?
-						}
-						?>
+                            $intro_body_desc = "\n\n";
+                            foreach( $inoEquipos as $inoEquipo ){						
+                                $inoContrato = $inoEquipo->getInoContratosSea();
+                                $intro_body_desc.= "Equipo : ".$inoEquipo->getConcepto()->getCaConcepto()."\n";
+                                $intro_body_desc.= "Id Equipo : ".$inoEquipo->getCaIdequipo()."\n";
+                                $intro_body_desc.= "Entrega Comodato : ".($inoContrato?$inoContrato->getCaEntregaComodato():"")."\n";
+                                $intro_body_desc.= "Patio de Entrega : ".($inoContrato?$inoContrato->getPricPatio()->getCaNombre():"")."\n";
+                                $intro_body_desc.= "Agente Aduana : ".$agente_aduana."\n";
+                                $intro_body_desc.= "Observaciones : ".($inoContrato?$inoContrato->getCaObservaciones():"")."\n\n\n";
+?>
+                            <tr>
+                                <td  class="listar"><?=$inoEquipo->getConcepto()->getCaConcepto()?></td>
+                                <td  class="listar"><?=$inoEquipo->getCaCantidad()?></td>
+                                <td  class="listar"><?=$inoEquipo->getCaIdequipo()?></td>
+                                <td  class="listar"><?=$inoContrato?$inoContrato->getCaEntregaComodato():"&nbsp;"?></td>
+                                <td  class="listar"><?=$inoContrato?$inoContrato->getPricPatio()->getCaNombre():"&nbsp;"?></td>
+                                <td  class="listar"><?=$inoContrato?$inoContrato->getCaObservaciones():"&nbsp;"?></td>
+                            </tr>
+<?
+                            }
+?>
 					</table>
-					<?
+<?
 					}else{
 						echo "&nbsp;";
 					}
-					?>				</td>
+?>
+                </td>
 			</tr>
-           
 			<tr>
 				<td class="partir">&nbsp;</td>
 				<td class="partir">Tránsito:&nbsp;</td>
@@ -493,14 +518,12 @@ function formatHours(date){
 				<td class="listar" style='font-weight:bold;'>Fecha Estim.Arribo:</td>
 				<td class="listar"><?=$referencia->getCaFcharribo()?></td>
 			</tr>
-            
 			<tr height="5">
 				<td class="invertir" colspan="6">&nbsp;</td>
 			</tr>
-            
-			<?
+<?
 			if( $modo=="otm" ){
-			?>
+?>
 			<tr>
 				<td class="partir">&nbsp;</td>
 				<td class="partir">Status OTM:&nbsp;</td>
@@ -508,15 +531,13 @@ function formatHours(date){
 					<textarea name='intro_body_otm' wrap="virtual" rows="3" cols="93"><?=$textos['mensajeConfOTM']?></textarea>
                 </td>				
 			</tr>
-			<?
-			}else if($modo=="puerto")
-            {
-            ?>
+<?
+			}else if($modo=="puerto"){
+?>
 			<tr>
 				<td class="partir">&nbsp;</td>
 				<td class="partir">
-                        <input name="tipo_msg" id="tipo_msg" value="Puerto" checked="checked" onclick="cambiarTipoMsg(this.value)" type="radio">
-                        Llegada:
+                    <input name="tipo_msg" class="tipostatus" id="tipo_msg" value="Puerto" checked="checked" onclick="cambiarTipoMsg(this.value)" type="radio">Llegada:
                 </td>
 				<td class="mostrar" colspan="4" rowspan="2">
                     <table id="confirmacion_tbl" style="display: block;" cellspacing="1" width="100%">
@@ -527,10 +548,9 @@ function formatHours(date){
 									echo extDatePicker('fchconfirmacion', $referencia->getCaFchconfirmacion("Y-m-d"));
 									?>
 										
-								</td>								
-							
+								</td>
 								<td class="mostrar">Hora en Formato 24h:<br>									
-                                    <? echo extTimePicker("horaconfirmacion",$referencia->getCaHoraconfirmacion() );?>
+                                    <? echo extTimePicker("horaconfirmacion",$referencia->getCaHoraconfirmacion());?>
                                 </td>
 								<td class="mostrar">Registro Aduanero:<br>
 									<input name="registroadu" value="<?=$referencia->getCaRegistroadu()?>" size="22" maxlength="20" type="text"></td>
@@ -538,35 +558,36 @@ function formatHours(date){
 									<?
 									echo extDatePicker('fchregistroadu', $referencia->getCaFchregistroadu("Y-m-d"));
 									?>									
-									</td>
+                                </td>
 							</tr>
 							<tr>
 								<td class="mostrar">Reg. Capitania:<br>
-									<input name="registrocap" value="<?=$referencia->getCaRegistrocap()?>" size="20" maxlength="20" type="text"></td>
+									<input name="registrocap" value="<?=$referencia->getCaRegistrocap()?>" size="20" maxlength="20" type="text">
+                                </td>
 								<td class="mostrar">Bandera:<br>
-									<input name="bandera" value="<?=$referencia->getCaBandera()?>" size="20" maxlength="20" type="text"></td>
-								
+									<input name="bandera" value="<?=$referencia->getCaBandera()?>" size="20" maxlength="20" type="text">
+                                </td>								
 								<td class="mostrar">Motonave Llegada:<br>
 									<input name="mnllegada" value="<?=$referencia->getCaMnllegada()?>" size="20" maxlength="50" type="text">
                                 </td>
-                                <td class="mostrar">Muelle:<br>
-                                    
+                                <td class="mostrar">Muelle:<br>                                    
                                     <input type='text' id='muelle' name='muelle' />
                                     <script>
-                                    var mu=new WidgetMuelles({
-                                        id: 'muelle',
-                                        name: 'muelle',
-                                        hiddenName: "idmuelle",
-                                        value:"<?=$referencia->getInoDianDepositos()->getCaNombre()?>",
-                                        hiddenValue:"<?=$referencia->getCaMuelle()?>",
-                                        applyTo: "muelle"
-                                    })
+                                        var mu=new WidgetMuelles({
+                                            id: 'muelle',
+                                            name: 'muelle',
+                                            hiddenName: "idmuelle",
+                                            value:"<?=$referencia->getInoDianDepositos()->getCaNombre()?>",
+                                            hiddenValue:"<?=$referencia->getCaMuelle()?>",
+                                            applyTo: "muelle"
+                                        })
                                     </script>                                    
                                 </td>                                
 							</tr>
 							<tr>
 								<td class="mostrar" colspan="4"><b>Introducción al Mensaje de Confirmación:</b><br>
-									<textarea name="intro_body" wrap="virtual" rows="3" cols="93">Se Notifica que la carga arribo con la siguiente informacion.</textarea></td>
+									<textarea name="intro_body" wrap="virtual" rows="3" cols="93">Se Notifica que la carga arribo con la siguiente informacion.</textarea>
+                                </td>
 							</tr>
 						</tbody>
 					</table>
@@ -574,76 +595,85 @@ function formatHours(date){
 						<tbody>
 							<tr>
 								<td class="mostrar" colspan="4"><b>Introducción al Mensaje de Confirmación:</b><br>
-									<textarea name="intro_body_desc" wrap="virtual" rows="3" cols="93">Se desconsolido la carga con la siguiente informacion:</textarea></td>
+									<textarea name="intro_body_desc" wrap="virtual" rows="3" cols="93">Se desconsolido la carga con la siguiente informacion:</textarea>
+                                </td>
 							</tr>
                             <tr>
 								<td class="mostrar" colspan="4"><b>Fecha de arribo</b><br>
                                     Modificar Fch. Arribo: <input type="checkbox" name="mod_fcharribo" id="mod_fcharribo" onClick="modFcharribo()" />
                                     <div id="mod_fcharribo_id">
-                                    <?
+<?
                                     echo extDatePicker('fcharribo', $referencia->getCaFcharribo());
-                                    ?>
+?>
                                     </div>
+                                </td>
 							</tr>                            
                             <tr>                                
 								<td class="mostrar" width="25%">Fecha Vaciado:<br>
-									<?
+<?
 									echo extDatePicker('ca_fchvaciado', $referencia->getCaFchvaciado("Y-m-d"));
-									?>
+?>
 								</td>
-							
-								<td class="mostrar" width="25%">Hora Vaciado::<br>
-                                    <? echo extTimePicker("ca_horavaciado",$referencia->getCaHoravaciado("Y-m-d") );?>
+								<td class="mostrar" width="25%">Hora Vaciado:<br>
+<? 
+                                    echo extTimePicker("ca_horavaciado",$referencia->getCaHoravaciado("Y-m-d") );
+?>
                                 </td>
                                 <td class="mostrar" width="25%">Fecha finalizaci&oacute;n MUISCA:<br>
-									<?
+<?
 									echo extDatePicker('fchsyga', "");
-									?>
+?>
 								</td>
                             </tr>
 						</tbody>
 					</table>
-
+                    <table id="planilla_tbl" style="display: none;" cellspacing="1" width="100%">
+						<tbody>
+							<tr>
+								<td class="mostrar" colspan="4"><b>Introducción al Mensaje Planilla de Envio DIAN:</b><br>
+									<textarea name="intro_body_planilla" wrap="virtual" rows="3" cols="93">Notificaci&oacute;n de los números de planilla de envio asignados por la DIAN</textarea><br />
+                                </td>
+							</tr>
+						</tbody>
+					</table>
                 </td>
-				
 			</tr>
-             <tr>
+            <tr>
 				<td class="partir">&nbsp;</td>
-				<td class="partir"><input name="tipo_msg" id="tipo_msg" value="Desc" onclick="cambiarTipoMsg(this.value)" type="radio">
-					Desconsolidaci&oacute;n:</td>
+				<td class="partir"><input name="tipo_msg" class="tipostatus" id="tipo_msg" value="Desc" onclick="cambiarTipoMsg(this.value)" type="radio">Desconsolidaci&oacute;n:</td>
 			</tr>
-			<?  
-            }
-            else{
-			?>
+            <tr>
+				<td class="partir">&nbsp;</td>
+				<td class="partir"><input name="tipo_msg" class="tipostatus" id="tipo_msg" value="Planilla" onclick="cambiarTipoMsg(this.value)" type="radio">Planilla de Envío:</td>
+			</tr>
+<?  
+            }else{
+?>
 			<tr>
 				<td class="partir">&nbsp;</td>
 				<td class="partir">
-                        <input name="tipo_msg" id="tipo_msg" value="<?=($modo=="puerto")?"Puerto":"Conf"?>" checked="checked" onclick="cambiarTipoMsg(this.value)" type="radio">
+                        <input name="tipo_msg" class="tipostatus" id="tipo_msg" value="<?=($modo=="puerto")?"Puerto":"Conf"?>" checked="checked" onclick="cambiarTipoMsg(this.value)" type="radio">
                         <?=($modo=="puerto")?"Llegada":"Confirmaci&oacute;n"?>:
                 </td>
 				<td class="mostrar" colspan="4" rowspan="5">
-
                     <table id="confirmacion_tbl" style="display: block;" cellspacing="1" width="100%">
 						<tbody>
 							<tr>
 								<td class="mostrar">Fecha Confirmación:<br>
-									<?
+<?
 									echo extDatePicker('fchconfirmacion', $referencia->getCaFchconfirmacion("Y-m-d"));
-									?>
-										
+?>										
 								</td>								
-							
 								<td class="mostrar">Hora en Formato 24h:<br>
 									<input name="horaconfirmacion" value="<?=$referencia->getCaHoraconfirmacion()?>" onblur="CheckTime(this)" size="9" maxlength="8" type="text">
 									00-23hrs</td>
 								<td class="mostrar">Registro Aduanero:<br>
 									<input name="registroadu" value="<?=$referencia->getCaRegistroadu()?>" size="22" maxlength="20" type="text"></td>
 								<td class="mostrar">Fecha Registro:<br>									
-									<?
+<?
 									echo extDatePicker('fchregistroadu', $referencia->getCaFchregistroadu("Y-m-d"));
-									?>									
-									</td>
+?>									
+                                </td>
 							</tr>
 							<tr>
 								<td class="mostrar">Reg. Capitania:<br>
@@ -668,9 +698,9 @@ function formatHours(date){
                                     </script>                                    
                                 </td> 
                                 <td class="mostrar" style="display: none">Fecha Desconsolidación:<br>								
-									<?
+<?
 									echo extDatePicker('fchdesconsolidacion', $referencia->getCaFchdesconsolidacion("Y-m-d"));
-									?>	
+?>	
 								</td>
 							</tr>
 							<tr>
@@ -700,61 +730,64 @@ function formatHours(date){
 							</tr>
 						</tbody>
 					</table>
-               <table id="status_cnt" style="display: none;" cellspacing="1" width="100%">
-						<tbody>
-							<tr>
-								<td class="mostrar" colspan="4"><b>Introducci&oacute;n al Mensaje de Contenedores:</b><br>
-									<textarea name="status_intro_cont" wrap="virtual" rows="2" cols="93"><?=$textos['mensajeStatusIntro']?></textarea></td>
-							</tr>
-							<tr>
-								<td class="mostrar" colspan="4"><b>Mensaje de Contenedores:</b><br>
-									<textarea name="status_body_cont" wrap="virtual" rows="7" cols="93">La siguiente es la informaci&oacute;n relacionada con la devoluci&oacute;n de contenedor(es)<?=$intro_body_desc?></textarea></td>
-							</tr>
-						</tbody>
-					</table>
-               </td>
+                    <table id="status_cnt" style="display: none;" cellspacing="1" width="100%">
+                        <tbody>
+                            <tr>
+                                <td class="mostrar" colspan="4"><b>Introducci&oacute;n al Mensaje de Contenedores:</b><br>
+                                    <textarea name="status_intro_cont" wrap="virtual" rows="2" cols="93"><?=$textos['mensajeStatusIntro']?></textarea></td>
+                            </tr>
+                            <tr>
+                                <td class="mostrar" colspan="4"><b>Mensaje de Contenedores:</b><br>
+                                    <textarea name="status_body_cont" wrap="virtual" rows="7" cols="93">La siguiente es la informaci&oacute;n relacionada con la devoluci&oacute;n de contenedor(es)<?=$intro_body_desc?></textarea></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
 			</tr>
 			<tr>
 				<td class="partir">&nbsp;</td>
 				<td class="partir">
-                    <? 
-                    if($modo!="puerto")
-                    {
-                    ?>
-                    <input name="tipo_msg" id="tipo_msg" value="Status" onclick="cambiarTipoMsg(this.value)" type="radio">
+<? 
+                    if($modo!="puerto"){
+?>
+                    <input name="tipo_msg" class="tipostatus" id="tipo_msg" value="Status" onclick="cambiarTipoMsg(this.value)" type="radio">
 					Status:
-                    <?
+<?
                     }
-                    ?>
+?>
                 </td>
 			</tr>
             <tr>
 				<td class="partir">&nbsp;</td>
 				<td class="partir">
-                    <? 
-                    if($modo!="puerto")
-                    {
-                    ?>
-                    <input name="tipo_msg" id="tipo_msg" value="Fact" onclick="cambiarTipoMsg(this.value)" type="radio">
+<? 
+                    if($modo!="puerto"){
+?>
+                    <input name="tipo_msg" class="tipostatus" id="tipo_msg" value="Fact" onclick="cambiarTipoMsg(this.value)" type="radio">
 					Factura Fletes:
-                    <?
+<?
                     }
-                    ?>
+?>
                 </td>
 			</tr>
             <tr>
 				<td class="partir">&nbsp;</td>
-				<td class="partir"><input name="tipo_msg" id="tipo_msg" value="Desc" onclick="cambiarTipoMsg(this.value)" type="radio">
+				<td class="partir"><input name="tipo_msg" class="tipostatus" id="tipo_msg" value="Desc" onclick="cambiarTipoMsg(this.value)" type="radio">
 					Desconsolidaci&oacute;n:</td>
 			</tr>
             <tr>
 				<td class="partir">&nbsp;</td>
-				<td class="partir"><input name="tipo_msg" id="tipo_msg" value="Cont" onclick="cambiarTipoMsg(this.value)" type="radio">
+				<td class="partir"><input name="tipo_msg" class="tipostatus" id="tipo_msg" value="not_planilla" onclick="cambiarTipoMsg(this.value)" type="radio">
+					Notificaci&oacute;n Planilla:</td>
+			</tr>
+            <tr>
+				<td class="partir">&nbsp;</td>
+				<td class="partir"><input name="tipo_msg" class="tipostatus" id="tipo_msg" value="Cont" onclick="cambiarTipoMsg(this.value)" type="radio">
 					Contenedores:</td>
 			</tr>
-			<?
+<?
 			}
-			?>
+?>
 			<tr>
 				<td class="partir">&nbsp;</td>
 				<td class="partir">Adjuntar archivo:</td>
@@ -763,9 +796,9 @@ function formatHours(date){
 			<tr>
 				<td class="listar" colspan="6">&nbsp;</td>
 			</tr>
-			<?
+<?
 			if( isset($confirmaciones) && $confirmaciones ){
-			?>
+?>
 			<tr>
 				<td class="listar" colspan="6">
 					<b>Otras Comunicaciones</b>
@@ -776,94 +809,91 @@ function formatHours(date){
 							<th width="22%" >Ver email</th>
 							
 						</tr>
-						<?
+<?
 						foreach( $confirmaciones as $confirmacion ){
-						?>
+?>
 						<tr>
 							<td><?=Utils::fechaMes($confirmacion->getCaFchenvio())?></td>
 							<td><?=$confirmacion->getCaSubject()?></td>
 							<td>
-							<?
-							if( $confirmacion->getCaIdemail() ){
-								echo "<a href='#' onClick=window.open('".url_for("email/verEmail?id=".$confirmacion->getCaIdemail())."')>".image_tag("22x22/email.gif")."</a>";
-							}else{	
-								echo "&nbsp;";
-							}
-							?></td>
-							
+<?
+                                if( $confirmacion->getCaIdemail() ){
+                                    echo "<a href='#' onClick=window.open('".url_for("email/verEmail?id=".$confirmacion->getCaIdemail())."')>".image_tag("22x22/email.gif")."</a>";
+                                }else{	
+                                    echo "&nbsp;";
+                                }
+?>
+                            </td>							
 						</tr>
-						<?
+<?
 						}
-						?>
+?>
 					</table>
-
 				</td>
 			</tr>
-			<?
-			}
-
+<?
+            }
             if($modo!="puerto")
                 include_component("confirmaciones", "notClientes",array("inoClientes"=>$inoClientes,"modo"=>$modo,"etapas"=>$etapas,"coordinadores"=>$coordinadores, "textos"=>$textos, $bodegas="bodegas"));
-            ?>
-			
+?>
 			<tr height="5">
 				<td class="invertir" colspan="6">&nbsp;</td>
 			</tr>
 			<tr>
 				<td class="mostrar" colspan="6"><b>Ingrese mensaje adicional para el correo:</b><br />
-					<textarea name='email_body' wrap="virtual" rows="3" cols="113"><?=($modo=="puerto")?"La información ha sido registrada en el sistema, favor proceder a informar a los clientes.":""?></textarea></td>
+				<textarea name='email_body' wrap="virtual" rows="3" cols="113"></textarea></td>
 			</tr>
 			<tr height="5">
 				<td class="invertir" colspan="6"></td>
 			</tr>
 		</table>
-
-       
-
+        <table width="850" border="0" class="tableList" id="planilla_form" style="display: none;">
+<?
+            if($modo=="puerto")
+                include_component("confirmaciones", "notPlanilla",array("inoClientes"=>$inoClientes,"modo"=>$modo,"tipo_msg"=>"Planilla"));            
+?>
+        </table>
 		<br />
 		<table cellspacing="10">
 			<tr>
-				<th><input class="submit" type='button' name='accion' value='Enviar Correo' onClick="javascript:validarFormConfirmacion()" /></th>
+				<th><input class="submit" type='button' name='accion' value='Enviar Correo' onClick="javascript:validarFormConfirmacion(this.planillachecked)" /></th>
 				<th><input class="button" type='button' name='boton' value=' Regresar ' onclick="javascript:document.location.href = '<?=url_for("confirmaciones/index?modo=".$modo)?>'" /></th>
 			</tr>
 		</table>        
 	</form>
-        <table width="850" border="0" class="tableList">
-              <?
-            if($modo=="puerto" || $modo=="otm")
-                include_component("confirmaciones", "uploadClientes",array("inoClientes"=>$inoClientes,"modo"=>$modo));
-            ?>
-        </table>
+    <table width="850" border="0" class="tableList" id="upload_tbl">
+<?
+        if($modo=="puerto" || $modo=="otm")
+            include_component("confirmaciones", "uploadClientes",array("inoClientes"=>$inoClientes,"modo"=>$modo));            
+?>
+    </table><br />
 </div>
+
 <script language="javascript" type="text/javascript">
-	<?
+<?
 	foreach( $inoClientes as $inoCliente ){
 		if( $modo=="otm" ){
-	?>	
+?>	
 			mostrar( '<?=$inoCliente->getOid()?>' );
-	<?
+<?
+    	}
+        if( $modo!="puerto" ){
+?>
+            habilitar( '<?=$inoCliente->getOid()?>' );	
+<?
+        }
 	}
-    if( $modo!="puerto" ){
-	?>
-	habilitar( '<?=$inoCliente->getOid()?>' );	
-	<?
-    }
-	}
-
     if( $modo!="otm" and $modo!="puerto" ){
-	?>
-    
+?>
         radioObj = document.form1.tipo_msg;
         for(var i = 0; i < radioObj.length; i++) {
             if(radioObj[i].checked) {
                 cambiarTipoMsg( radioObj[i].value )
             }
         }
-    <?
+<?
     }
-    ?>
+?>
     modFcharribo();
-    //;
 
 </script>
-

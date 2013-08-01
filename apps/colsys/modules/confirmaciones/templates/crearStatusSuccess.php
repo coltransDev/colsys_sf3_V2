@@ -1,10 +1,12 @@
 <?
 if($modo=="puerto")
 {
+$referencia = str_replace(".", "-", $ca_referencia);
 ?>
 <script>
     alert("El mensaje se ha enviado correctamente");
-    location.href="/confirmaciones/index/modo/puerto";
+    //location.href="/confirmaciones/index/modo/puerto";
+    location.href="/confirmaciones/consulta/referencia/<?=$referencia?>/modo/puerto"
 </script>
 <?
 }

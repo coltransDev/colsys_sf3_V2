@@ -19,6 +19,11 @@ $email_body = $sf_data->getRaw("email_body");
             <?=(($fchsyga)?"Fecha finalizaci&oacute;n MUISCA : ".$fchsyga:"")?>
         </td>
     </tr>
+       <tr>
+        <td colspan="3">
+            &nbsp;
+        </td>
+    </tr>
     <tr>
         <td width="33%"><b>Origen :</b><?=$referencia->getOrigen()->getCaCiudad()?></td>
         <td width="33%"><b>Nombre del Buque :</b><?=$referencia->getCaMnllegada()?></td>
@@ -41,13 +46,18 @@ $email_body = $sf_data->getRaw("email_body");
     </tr>
     <tr>
         <td colspan="3">
-            La información ha sido registrada en el sistema, favor proceder a informar a los clientes.<br/>
-            Cordial Saludo.
+            &nbsp;
         </td>
     </tr>
     <tr>
         <td colspan="3">
             <?=$email_body?>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3">
+            La información ha sido registrada en el sistema, favor proceder a informar a los clientes.<br/>
+            Cordial Saludo.
         </td>
     </tr>
     <tr>
