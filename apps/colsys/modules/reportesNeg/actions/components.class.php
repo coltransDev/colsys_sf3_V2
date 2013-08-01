@@ -641,6 +641,10 @@ class reportesNegComponents extends sfComponents
             $this->origen="Puerto Origen";
             $this->destino="Puerto Destino";
         }
+        else if($this->modo==constantes::TERRESTRE)
+        {
+            $this->nomLinea="Transportador";            
+        }
         else
             $this->nomLinea="Linea";
 
