@@ -104,11 +104,12 @@ UsuParametros:
       type: integer
       autoincrement: true
       primary: true
-    ca_idusuario: string      
+    ca_idusuario: string
     ca_impoexpo: string
     ca_transporte: string    
     ca_modalidad: string
-    ca_trafico: string    
+    ca_trafico: string
+    ca_idcliente: integer,
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
@@ -129,7 +130,15 @@ UsuParametros:
     UsuCreado:
       local: ca_usucreado
       foreign: ca_login
-      type: one    
+      type: one
+    Cliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: one
+    Trafico:
+      local: ca_idtrafico
+      foreign: ca_idtrafico
+      type: one
 
       
 AccesoPerfil:
