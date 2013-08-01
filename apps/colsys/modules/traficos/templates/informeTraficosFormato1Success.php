@@ -129,8 +129,7 @@ $objPHPExcel->getActiveSheet()->setCellValue($col . $i, 'Trafico');
 $i++;
 
 
-
-
+$idEquipo = false;
 foreach ($reportes as $reporte) {
     if (!$reporte->esUltimaVersion()) {
         continue;
@@ -240,10 +239,12 @@ foreach ($reportes as $reporte) {
             $equiposStr = "";
             $repequipos = $reporte->getRepEquipos();
             foreach ($repequipos as $equipo) {
-                $equiposStr.=$equipo->getCaCantidad() . "x" . $equipo->getConcepto()->getCaConcepto() . " ";
+                $equiposStr.= number_format($equipo->getCaCantidad(),0) . "x" . $equipo->getConcepto()->getCaConcepto();
                 if ($equipo->getCaIdequipo()) {
-                    $equiposStr.= "#".$equipo->getCaIdequipo() . " ";
+                    $idEquipo = true;
+                    $equiposStr.= " #".$equipo->getCaIdequipo();
                 }
+                $equiposStr.= "\n";
             }
             $objPHPExcel->getActiveSheet()->setCellValue('N' . $i, utf8_encode($equiposStr));
         }
@@ -254,7 +255,6 @@ foreach ($reportes as $reporte) {
         }
     }
 
-
     $objPHPExcel->getActiveSheet()->setCellValue('O' . $i, utf8_encode(" " . $reporte->getDocTransporte()));
 
     $objPHPExcel->getActiveSheet()->setCellValue('P' . $i, utf8_encode($reporte->getConsignedTo()));
@@ -263,7 +263,6 @@ foreach ($reportes as $reporte) {
     $objPHPExcel->getActiveSheet()->setCellValue('Q' . $i, utf8_encode($txtStatus));
 
     $ref = $reporte->getNumReferencia() ? " " . $reporte->getNumReferencia() : "";
-
 
     $objPHPExcel->getActiveSheet()->setCellValue('R' . $i, Utils::parseDate($reporte->getFchUltimoStatus(), "d/m/y") . $ref);
     $objPHPExcel->getActiveSheet()->setCellValue('S' . $i, $reporte->getCaConsecutivo() . $ref);
@@ -278,8 +277,6 @@ foreach ($reportes as $reporte) {
     }
     
     if ($parametros) {
-
-
         $idx = 1;
         foreach ($parametros as $parametro) {
 
@@ -428,7 +425,11 @@ if ($modo == "maritimo") {
 }
 
 $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(25);
-$objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(20);
+if ($idEquipo){
+    $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(40);
+}else{
+    $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(20);
+}
 $objPHPExcel->getActiveSheet()->getColumnDimension('O')->setAutoSize(true);
 
 $objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(21);
