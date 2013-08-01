@@ -109,27 +109,17 @@ class confirmacionesActions extends sfActions {
     */
    public function executeConsulta(sfWebRequest $request) {
 
-      //$response = sfContext::getInstance()->getResponse();
-      //$response->addJavaScript("popcalendar",'last');
-//        $response = sfContext::getInstance()->getResponse();
-//        $response->addJavaScript("ckeditor/ckeditor.js",'last');
-
       $referenciaParam = str_replace("-", ".", $request->getParameter("referencia"));
       $this->referencia = Doctrine::getTable("InoMaestraSea")->find($referenciaParam);
       $this->forward404Unless($this->referencia);
 
-      /* $response = sfContext::getInstance()->getResponse();
-        $response->addJavaScript("popcalendar",'last');
-       */
       $this->origen = $this->referencia->getOrigen();
       $this->destino = $this->referencia->getDestino();
       $this->linea = $this->referencia->getIdsProveedor();
-      //$this->transportista = $this->linea->getTransportista();
-
-
       $this->modo = $request->getParameter("modo");
 
       $this->coordinadores = array();
+      
       $parametros = ParametroTable::retrieveByCaso("CU046");
       foreach ($parametros as $parametro) {
          $valor = explode("|", $parametro->getCaValor());
@@ -139,9 +129,7 @@ class confirmacionesActions extends sfActions {
       $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "confirmaciones" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "textos.yml";
       $this->textos = sfYaml::load($config);
 
-
-
-      /*
+       /*
        * Etapas 
        */
 
@@ -166,7 +154,7 @@ class confirmacionesActions extends sfActions {
                  ->createQuery("e")
                  ->select("e.*")
                  ->where("e.ca_subject like ?", '%' . $this->referencia->getCaReferencia() . '%')
-                 ->addWhere("e.ca_tipo = ? OR e.ca_tipo = ?", array('Not.Llegada', 'Not.Desconsolidación'))
+                 ->addWhere("e.ca_tipo = ? OR e.ca_tipo = ? OR e.ca_tipo = ?" , array('Not.Llegada', 'Not.Desconsolidación', 'Not.Planilla'))
                  ->addOrderBy("e.ca_fchenvio DESC")
                  ->execute();
       }
@@ -237,8 +225,24 @@ class confirmacionesActions extends sfActions {
             }
             $referencia->save();
          }
-      }
+      } else if ($modo == "puerto" && $tipo_msg == "Planilla") {
+            $email_body_planilla = "Se reportan los siguientes números de planilla así:<br>";
+            $email_body_planilla.="<table border='1'><tr><th>Cliente</th><th>HBL</th><th>Planilla Envio</th></tr>";
+            foreach ($oids as $oid) {
+                
+                $idcliente = $this->getRequestParameter("idcliente_" . $oid);
+                $hbls = $this->getRequestParameter("hbls_" . $oid);
 
+                $inoCliente = Doctrine::getTable("InoClientesSea")->find(array($referencia->getCaReferencia(), $idcliente, $hbls));
+                $cliente = $inoCliente->getCliente();
+                
+                $inoCliente->setCaPlanilla($this->getRequestParameter("idplanilla_" . $oid));
+                $inoCliente->save();
+                
+                $email_body_planilla.= "<tr><td>".$cliente->getCaCompania()."</td><td>".$hbls."</td><td>Planilla # ".$inoCliente->getCaPlanilla()."</td></tr>";
+            }
+            $email_body_planilla.= "</table>";
+      }
       /*
        * attachments 
        */
@@ -249,25 +253,18 @@ class confirmacionesActions extends sfActions {
       }
 
       if ($modo == "puerto") {
-         /*            $sql = "SELECT ca_nombre, ca_email FROM control.tb_usuarios WHERE ca_login in (SELECT DISTINCT ca_usucreado as ca_usuario FROM tb_inoclientes_sea where ca_referencia = '".$ca_referencia."' 
-           UNION SELECT DISTINCT ca_usuactualizado as ca_usuario FROM tb_inoclientes_sea WHERE ca_referencia = '".$ca_referencia."'
-           UNION SELECT DISTINCT ca_usumuisca as ca_usuario FROM tb_inomaestra_sea WHERE ca_referencia = '".$ca_referencia."'
-           UNION SELECT DISTINCT ca_usucreado as ca_usuario FROM tb_dianclientes WHERE ca_referencia = '".$ca_referencia."'
-           UNION SELECT DISTINCT ca_usuactualizado as ca_usuario FROM tb_dianclientes WHERE ca_referencia = '".$ca_referencia."'
-           UNION SELECT DISTINCT ca_usucreado as ca_usuario FROM tb_inomaestra_sea WHERE ca_referencia = '".$ca_referencia."'
-           )";
-          */
          $sql = "SELECT distinct(ca_email) ca_email FROM control.tb_usuarios WHERE ca_login in (SELECT DISTINCT ca_usucreado as ca_usuario FROM tb_inoclientes_sea where ca_referencia = '" . $ca_referencia . "' 
                     UNION SELECT DISTINCT ca_usuactualizado as ca_usuario FROM tb_inoclientes_sea WHERE ca_referencia = '" . $ca_referencia . "'
-                              UNION SELECT DISTINCT ca_usumuisca as ca_usuario FROM tb_inomaestra_sea WHERE ca_referencia = '" . $ca_referencia . "' 
-                              UNION SELECT DISTINCT ca_usucreado as ca_usuario FROM tb_dianclientes WHERE ca_referencia = '" . $ca_referencia . "'
-                              UNION SELECT DISTINCT ca_usuactualizado as ca_usuario FROM tb_dianclientes WHERE ca_referencia = '" . $ca_referencia . "'
-                              UNION SELECT DISTINCT ca_usucreado as ca_usuario FROM tb_inomaestra_sea WHERE ca_referencia = '" . $ca_referencia . "'
-                              UNION (Select distinct(ca_login) from control.tb_usuarios where ca_idsucursal in (
-                                select ca_idsucursal from control.tb_usuarios where ca_login in (
-                                select ca_vendedor from vi_clientes_reduc where ca_idcliente in (select ca_idcliente from tb_inoclientes_sea where ca_referencia='" . $ca_referencia . "' ) and ca_propiedades like 'cuentaglobal=true%')
-                                ) and ca_departamento = 'Cuentas Globales'))";
-
+                    UNION SELECT DISTINCT ca_usumuisca as ca_usuario FROM tb_inomaestra_sea WHERE ca_referencia = '" . $ca_referencia . "' 
+                    UNION SELECT DISTINCT ca_usucreado as ca_usuario FROM tb_dianclientes WHERE ca_referencia = '" . $ca_referencia . "'
+                    UNION SELECT DISTINCT ca_usuactualizado as ca_usuario FROM tb_dianclientes WHERE ca_referencia = '" . $ca_referencia . "'
+                    UNION SELECT DISTINCT ca_usucreado as ca_usuario FROM tb_inomaestra_sea WHERE ca_referencia = '" . $ca_referencia . "'
+                    UNION (Select distinct(ca_login) from control.tb_usuarios where ca_idsucursal in (
+                            select ca_idsucursal from control.tb_usuarios where ca_login in (
+                                select ca_vendedor from vi_clientes_reduc where ca_idcliente in (
+                                    select ca_idcliente from tb_inoclientes_sea where ca_referencia='" . $ca_referencia . "' ) and ca_propiedades like 'cuentaglobal=true%')) 
+                                        and ca_departamento = 'Cuentas Globales'))";
+         
 
          $con = Doctrine_Manager::getInstance()->connection();
          $st = $con->execute($sql);
@@ -294,11 +291,32 @@ class confirmacionesActions extends sfActions {
             copy($attachment['tmp_name'], $file);
             $attachments[] = $subdirectory . $attachment['name'];
          }
+         
+         switch ($tipo_msg){
+             case ("Puerto"):
+                 $tipo = "Llegada";
+                 $intro = "<b>CONFIRMACION DE LLEGADA</b><br /><br />";
+                 $intro.= $request->getParameter("intro_body");
+                 $body = $request->getParameter("email_body");
+                 break;
+             case ("Planilla"):
+                 $tipo = "Planilla";
+                 $intro = "<b>INFORMACION DE PLANILLA</b><br /><br />";
+                 $intro.= $request->getParameter("intro_body_planilla");
+                 $body = $email_body_planilla;
+                 break;
+             case ("Desc"):
+                 $tipo = "Desconsolidación";
+                 $intro = "<b>INFORMACION DE DESCONSOLIDACION</b><br /><br />";
+                 $intro.= $request->getParameter("intro_body_desc");
+                 $body = $request->getParameter("email_body");
+                 break;
+         }
 
          $user = sfContext::getInstance()->getUser();
          $email = new Email();
          $email->setCaUsuenvio($user->getUserId());
-         $email->setCaTipo("Not." . (($tipo_msg == "Puerto") ? "Llegada" : "Desconsolidación"));
+         $email->setCaTipo("Not." . $tipo);
          $email->setCaIdcaso(null);
          $email->setCaFrom($user->getEmail());
          $email->setCaFromname($user->getNombre());
@@ -315,7 +333,7 @@ class confirmacionesActions extends sfActions {
          if ($tipo_msg != "Puerto")
             $email->addCC("parteaga@coltrans.com.co");
 
-         $asunto = "Notificación de " . (($tipo_msg == "Puerto") ? "Llegada" : "Desconsolidación") . " desde el Puerto de " . $referencia->getDestino()->getCaCiudad() . " Ref.: " . $referencia->getCaReferencia();
+         $asunto = "Notificación de " .$tipo. " desde el Puerto de " . $referencia->getDestino()->getCaCiudad() . " Ref.: " . $referencia->getCaReferencia();
 
          $email->setCaSubject(substr($asunto, 0, 250));
 
@@ -323,10 +341,10 @@ class confirmacionesActions extends sfActions {
             $email->setCaAttachment(implode("|", $attachments));
          }
 
-         sfContext::getInstance()->getRequest()->setParameter("referencia", $referencia->getCaReferencia());
+         sfContext::getInstance()->getRequest()->setParameter("referencia", $referencia->getCaReferencia(9));
          sfContext::getInstance()->getRequest()->setParameter("tipo", $tipo_msg);
-         sfContext::getInstance()->getRequest()->setParameter("intro_body", (($tipo_msg == "Puerto") ? $request->getParameter("intro_body") : $request->getParameter("intro_body_desc")));
-         sfContext::getInstance()->getRequest()->setParameter("email_body", $request->getParameter("email_body"));
+         sfContext::getInstance()->getRequest()->setParameter("intro_body", $intro);
+         sfContext::getInstance()->getRequest()->setParameter("email_body", $body);
 
          if ($tipo_msg == "Desc") {
             sfContext::getInstance()->getRequest()->setParameter("fchsyga", $request->getParameter("fchsyga"));
@@ -335,6 +353,7 @@ class confirmacionesActions extends sfActions {
          $email->setCaBodyhtml(sfContext::getInstance()->getController()->getPresentationFor('confirmaciones', 'emailConfirmacion'));
          $email->save($conn);
          $this->modo = $modo;
+         $this->ca_referencia = $ca_referencia;
       } else {
          foreach ($oids as $oid) {
             $options = array();
@@ -476,6 +495,8 @@ class confirmacionesActions extends sfActions {
             } else {
                $status->setCaIntroduccion($this->getRequestParameter("status_body_intro"));
                $mensaje = $this->getRequestParameter("status_body");
+               if($tipo_msg=="not_planilla")
+                   $mensaje.= "<br />Planilla No: <b>".$inoCliente->getCaPlanilla()."</b>";
                if ($this->getRequestParameter("mensaje_" . $oid)) {
                   $mensaje .= "\n" . $this->getRequestParameter("mensaje_" . $oid);
                }
@@ -510,6 +531,7 @@ class confirmacionesActions extends sfActions {
 
       $this->tipo = $request->getParameter("tipo");
       $this->intro_body = $request->getParameter("intro_body");
+      $this->email_body = $request->getParameter("email_body");
       $this->fchsyga = $request->getParameter("fchsyga");
       //echo $this->usuario->getCaLogin();
       $this->setLayout("email");

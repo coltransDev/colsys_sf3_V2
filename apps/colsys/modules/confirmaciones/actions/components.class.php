@@ -71,6 +71,11 @@ class confirmacionesComponents extends sfComponents
         
     }
     
+    public function executeNotPlanilla()
+	{
+        
+    }
+    
     public function executeUploadClientes()
 	{
         $response = sfContext::getInstance()->getResponse();
