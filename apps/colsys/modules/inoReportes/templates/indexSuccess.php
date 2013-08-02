@@ -11,9 +11,14 @@
             <td class="mostrar">Informe para Gerencia Cuadro INO</td>
         </tr>
         <tr>  
+            <td class="mostrar"><?=link_to("Reporte de Comisiones", "inoReportes/reporteComisiones") ?></td>
+            <td class="mostrar">Reporte de Comisiones por vendedor</td>
+        </tr>
+        <tr>  
             <td class="mostrar"><?=link_to("Listado de comprobantes", "inoReportes/listadoComprobantes") ?></td>
             <td class="mostrar">Lista los comprobantes de una referencia para efectos de auditoria</td>
         </tr>
+        <!--
         <!--
         <tr>  
             <td class="mostrar"><a href="repgenerator.php"  class="mudacor">Generador de Informes</a></td>

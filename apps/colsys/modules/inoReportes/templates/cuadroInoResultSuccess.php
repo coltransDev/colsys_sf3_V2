@@ -14,6 +14,7 @@ $refs = $sf_data->getRaw("refs");
            <th>Origen</th>
            <th>Destino</th>
            <th >Linea</th>
+           <th >Agente</th>
            <th>TEUS</th>
            <th># hijas</th>
            <th>Piezas</th>           
@@ -27,8 +28,7 @@ $refs = $sf_data->getRaw("refs");
            <th>INO Total: </th>
            <th>Estado: </th>
            <th>Observaciones: </th>
-         </tr>
-         
+         </tr>         
          <?
          $totales = array();
 
@@ -42,6 +42,7 @@ $refs = $sf_data->getRaw("refs");
                <td><?=$r["Origen"]["ca_ciudad"]?></td>
                <td><?=$r["Destino"]["ca_ciudad"]?></td>
                <td><?=$r["IdsProveedor"]["Ids"]["ca_nombre"]?></td>
+               <td><?=$r["IdsAgente"]["Ids"]["ca_nombre"]?></td>
                <td><div align="right"><?=Utils::formatNumber($r["InoViTeus"]["ca_valor"])?></div></td>
                <td><div align="right"><?=Utils::formatNumber($r["InoViUnidadesMaster"]["ca_numhijas"])?></div></td>
                <td><div align="right"><?=Utils::formatNumber($r["InoViUnidadesMaster"]["ca_numpiezas"])?></div></td>
@@ -125,7 +126,7 @@ $refs = $sf_data->getRaw("refs");
              }
              ?>
              <tr class="row0">
-               <td colspan="3"><div align="left"><b>Total</b></div></td>
+               <td colspan="4"><div align="left"><b>Total</b></div></td>
                
                <td><div align="right"><b>Total Casos <?=Utils::formatNumber($totales["numrefs"])?></b></div></td>
                <td><div align="right"><b><?=Utils::formatNumber($totales["teus"])?></b></div></td>

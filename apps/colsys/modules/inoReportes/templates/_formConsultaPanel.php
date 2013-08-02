@@ -19,7 +19,7 @@ include_component("widgets","widgetMultiDatos");
 
 $nmes = $sf_data->getRaw("nmes");
 $meses = $sf_data->getRaw("meses");
-
+//echo $meses;
 ?>
 
 <script type="text/javascript">
@@ -95,9 +95,16 @@ $meses = $sf_data->getRaw("meses");
                                     impoexpo: "<?= Constantes::TRIANGULACION ?>",
                                     value:"",
                                     hiddenValue:""
+                                }),
+                                new WidgetComerciales({fieldLabel: 'Vendedor',
+                                    id: 'vendedor',
+                                    name: 'vendedor',                                    
+                                    hiddenName:"login",                                    
+                                    value:"",
+                                    hiddenValue:""
                                 })
                             ]
-                        },
+                        },//WidgetComerciales
                         /*
                          * =========================Column 2 =========================
                          **/
@@ -252,8 +259,6 @@ $meses = $sf_data->getRaw("meses");
                                         }
                                         })
                             ]
-                            
-                            
                         }
                        
                     ]
