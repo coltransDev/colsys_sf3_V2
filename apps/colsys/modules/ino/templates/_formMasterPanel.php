@@ -204,7 +204,6 @@ include_component("widgets", "widgetReporte");
                                         proxy: new Ext.data.MemoryProxy({})
                                     })
                                     
-                                    
                                 },                                
                                 
                                 new WidgetCiudad({fieldLabel: 'Ciudad Origen',
@@ -213,6 +212,7 @@ include_component("widgets", "widgetReporte");
                                     id: 'origen',
                                     allowBlank: false,
                                     tipo:"1",
+                                    trafico:"CO-057",
                                     impoexpo:"impoexpo_fld",                                                  
                                     tabIndex:5
                                 }),
@@ -257,9 +257,24 @@ include_component("widgets", "widgetReporte");
                                     hiddenName: 'iddestino',
                                     allowBlank: false,
                                     tipo:"2",
-                                    impoexpo:"impoexpo_fld",                                                  
+                                    impoexpo:"impoexpo_fld",
+                                    trafico:"CO-057",
                                     tabIndex:6
                                 }),
+                                <?
+                                if($modo==6)
+                                {
+                                ?>
+                                {
+                                    xtype:"hidden",
+                                    id: 'idmaster',
+                                    name: 'idmaster',
+                                    value: this.idmaster
+                                }
+                                <?
+                                }else
+                                {
+                                ?>
                                 new WidgetAgente({fieldLabel: 'Agente',
                                     linkImpoExpo: "impoexpo_fld",
                                     linkOrigen: "origen",
@@ -270,7 +285,11 @@ include_component("widgets", "widgetReporte");
                                     tabIndex:8,
                                     value:"<?=($modo==6)?"COLTRANS S.A.S.":""?>",
                                     hiddenValue:"<?=($modo==6)?"800024075":""?>"
-                                }),
+                                })
+                                <?
+                                }
+                                ?>
+                                ,
                                 {
                                     xtype: "checkbox",
                                     fieldLabel: "Listar todos",

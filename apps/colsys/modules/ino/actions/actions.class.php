@@ -36,7 +36,7 @@ class inoActions extends sfActions {
         
         if (!$this->idmodo || !$this->modo) {                
             $action = $this->getContext()->getActionName ();            
-            if( $action!="seleccionModo" && $action!="importFac" && $action!="procesarImportFac" ){
+            if( $action!="seleccionModo" && $action!="importFac" && $action!="procesarImportFac" && $action!="importRCColmas"  ){
                 $this->redirect("ino/seleccionModo");
             }
         }
@@ -262,6 +262,12 @@ class inoActions extends sfActions {
                 $iddestino = $request->getParameter("iddestino");
                 $fchreferencia = $request->getParameter("fchreferencia");
                 $fchreferenciaTm = strtotime($fchreferencia);
+                
+                
+                $fchllegada = $request->getParameter("ca_fchllegada");
+                $fchllegadaTm = strtotime($fchllegada);
+                
+                
 
                 /*
                  * Validaciones
@@ -277,7 +283,6 @@ class inoActions extends sfActions {
                 if( $m ){               
                     throw new Exception("El numero de master ya se incluyo en la referencia ".$m->getCaReferencia());
                 }
-
                 /*
                  * Guarda los datos
                  */
@@ -286,19 +291,27 @@ class inoActions extends sfActions {
                     $this->forward404Unless( $ino );                
                 }else{
                     $ino = new InoMaster();
-                    $numRef = InoMasterTable::getNumReferencia($impoexpo, $transporte, $modalidad, $idorigen, $iddestino, date("m", $fchreferenciaTm), date("Y", $fchreferenciaTm));
+                    $mmRef = Utils::parseDate($fchllegada, "m");
+                    $aaRef = Utils::parseDate($fchllegada, "Y");
+                    if (Utils::parseDate($fchllegada, "d") >= "26") {
+                       $mmRef = $mmRef + 1;
+                       if ($mmRef >= 13) {
+                          $mmRef = "01";
+                          $aaRef = $aaRef + 1;
+                       }
+                    }
+                    $numRef = InoMasterTable::getNumReferencia($impoexpo, $transporte, $modalidad, $idorigen, $iddestino, $mmRef , $aaRef);
                     $ino->setCaReferencia($numRef);
                     $ino->setCaImpoexpo($this->modo->getCaImpoexpo());
                     $ino->setCaTransporte($this->modo->getCaTransporte());
                 }
-
                 $ino->setCaModalidad($modalidad);
                 $ino->setCaFchreferencia($fchreferencia);
                 $ino->setCaOrigen($idorigen);
                 $ino->setCaDestino($iddestino);
                 $ino->setCaIdlinea($request->getParameter("idlinea"));
                 if( $request->getParameter("idagente") ){
-                    $ino->setCaIdagente($request->getParameter("idagente")); 
+                    $ino->setCaIdagente($request->getParameter("idagente"));
                 }
 
                 if($this->idmodo==6)
@@ -800,7 +813,7 @@ class inoActions extends sfActions {
             $comprobante->setCaObservaciones($request->getParameter("observaciones"));
             $comprobante->save($conn);
 
-            if( $comprobante->getCaId()=="800024075" && ($this->getUser()->getIdsucursal()=="OBO" || $this->getUser()->getIdsucursal()=="OMD" || $this->getUser()->getUserId()=="maquinche")  )
+            if( $comprobante->getCaId()=="800024075" && ($this->getUser()->getIdsucursal()=="OBO" || $this->getUser()->getIdsucursal()=="OMD" || $this->getUser()->getUserId()=="maquinche11")  )
             {
                 $resultadoCosto=InoCostosSea::setCosto($comprobante,$conn);
                 if($resultadoCosto<0)
@@ -1025,7 +1038,7 @@ class inoActions extends sfActions {
                         ->createQuery("c")
                         ->select("c.ca_idinocosto, c.ca_idmaster, c.ca_neto, c.ca_venta, c.ca_factura, 
                                   c.ca_tcambio, c.ca_tcambio_usd, c.ca_idcosto, p.ca_sigla, i.ca_nombre, 
-                                  c.ca_idmoneda, cs.ca_concepto")                        
+                                  c.ca_idmoneda, cs.ca_concepto,c.ca_fchfactura,c.ca_idproveedor ")
                         ->innerJoin("c.InoConcepto cs")
                         ->innerJoin("c.Ids i")                        
                         ->where("c.ca_idmaster = ?", $idmaster)                        
@@ -1035,7 +1048,9 @@ class inoActions extends sfActions {
         foreach( $costos as $key=>$val ){
             $costos[$key]["i_ca_nombre"] = utf8_encode($costos[$key]["i_ca_nombre"]);
             $costos[$key]["cs_ca_concepto"] = utf8_encode($costos[$key]["cs_ca_concepto"]);
-        } 
+        }
+        
+        $costos[]["cs_ca_concepto"]="+";
 
         $this->responseArray = array("success" => true, "root" => $costos, "total" => count($costos));
         $this->setTemplate("responseTemplate");
@@ -1530,7 +1545,7 @@ class inoActions extends sfActions {
     }
     
     public function executeFormEquipoGuardar(sfWebRequest $request) {
-        try {            
+        try {
             $idmaster = $request->getParameter("idmaster");
             $this->forward404Unless( $idmaster );
             $idequipo = $request->getParameter("idequipo");
@@ -1988,6 +2003,49 @@ class inoActions extends sfActions {
         }
         $this->setTemplate("responseTemplate");
     }
+    
+ 
+    public function executeImportRCColmas(sfWebRequest $request) {
+        
+        $con = Doctrine_Manager::getInstance()->connection();
+        
+        $sql="select m.ca_idmaster,h.ca_idhouse,h.ca_idcliente,h.ca_idcliente,ia.ca_valor,ia.ca_reccaja,ia.ca_tasacambio,ia.ca_fchpago,ia.ca_moneda
+            from ino.tb_master m
+            inner join ino.tb_house h on m.ca_idmaster=h.ca_idmaster
+            left join tb_brk_ingresos ia on  h.ca_doctransporte=ia.ca_referencia
+            where ca_impoexpo='INTERNO' 
+            and ia.ca_reccaja!='' and h. ca_idhouse not in(select ca_idhouse from ino.vi_comprobantes where m.ca_idmaster=ca_idmaster and h.ca_idhouse = ca_idhouse and ca_idtipo=12)";
+        $st = $con->execute($sql);
+        $this->refs = $st->fetchAll();
+        echo count($this->refs);
+        
+        foreach($this->refs as $r)
+        {
+            try
+            {
+                $comprobante = new InoComprobante();
+                $comprobante->setCaIdtipo( InoComprobante::IDTIPO_R_INO );
+                $comprobante->setCaConsecutivo($r["ca_reccaja"]);                
+                $comprobante->setCaFchcomprobante($r["ca_fchpago"]);
+                $comprobante->setCaId($r["ca_idcliente"]);
+                $comprobante->setCaIdhouse($r["ca_idhouse"]);
+                //$comprobante->setCaIdmaster($r["ca_idmaster"]);
+                $comprobante->setCaValor( $r["ca_valor"] );
+                $comprobante->setCaIdmoneda($r["ca_moneda"]);
+                $comprobante->setCaTcambio($r["ca_tasacambio"]);            
+                $comprobante->setCaObservaciones("Generado Automaticamente - ".date("Y-m-d"));
+                $comprobante->save();
+                echo $comprobante->getCaIdcomprobante()."<br>";
+            }
+            catch(Exception $e)
+            {
+                echo "error: ".$e->getMessage()."<br>";
+            }
+        }
+        exit;
+        
+    }
+    
     
     
 }

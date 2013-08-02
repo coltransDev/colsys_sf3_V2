@@ -9,7 +9,7 @@ include_component("ino", "formHousePanel",array("modo"=>$modo));
 include_component("ino", "gridHousePanel");
 
 include_component("ino", "gridFacturacionPanel" );
-include_component("ino", "gridCostosPanel");
+include_component("ino", "gridCostosPanel_1",array("referencia"=>$referencia));
 include_component("ino", "gridCostosDiscriminadosPanel");
 //include_component("ino", "gridAuditoriaPanel");
 

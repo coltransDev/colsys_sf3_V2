@@ -106,6 +106,10 @@ class inoComponents extends sfComponents {
     public function executeGridCostosPanel() {
         $this->monedaLocal = $this->getUser()->getIdmoneda();
     }
+    
+    public function executeGridCostosPanel_1() {
+        $this->monedaLocal = $this->getUser()->getIdmoneda();
+    }
 
     /*
      * Grid que muestra las facturas de compra de la referencia

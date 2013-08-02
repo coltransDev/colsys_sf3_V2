@@ -14,19 +14,16 @@ include_component("widgets", "widgetIds");
         var neto = document.getElementById("neto");
         var tcambio = document.getElementById("tcambio");
         var tcambio_usd = document.getElementById("tcambio_usd");
-       
         to.value = Math.round(venta.value - Math.round(neto.value * tcambio.value / tcambio_usd.value));
     }
-    
+
     function calc_neto(){
-        var netopesos= document.getElementById("netopesos");   
-        var netousd= document.getElementById("netousd");     
+        var netopesos= document.getElementById("netopesos");
+        var netousd= document.getElementById("netousd");
         var neto = document.getElementById("neto");
         var tcambio = document.getElementById("tcambio");
         var tcambio_usd = document.getElementById("tcambio_usd");
-        
-        
-        
+
         var idmoneda = document.getElementById("idmoneda");
         
         if( idmoneda.value=="USD" || idmoneda.value=="<?=$monedaLocal?>" ){
@@ -122,8 +119,7 @@ include_component("widgets", "widgetIds");
                         <?=$referencia->getCaReferencia()?>
                     </div>
                 </th>
-            </tr>    
-            
+            </tr>
             <?
             if( $form->renderGlobalErrors() ){
             ?>
@@ -183,14 +179,27 @@ include_component("widgets", "widgetIds");
                     ?>
                 </td>
                 <td colspan="2" rowspan="4" valign="top">
-                    <b>Distribuci&oacute;n INO x Sobreventa:</b><br />
+                    <br />
                     <div id="utils">
                         <table border="0">
+                            <tr><th rowspan="2">Doc.Trans</th><th colspan="2">Distribuci&oacute;n</th></tr>
+                            <tr><th colspan=""><b>Costos</b></th><th><b>INO x Sobreventa:</b></th></tr>
                         <?                    
                         foreach( $inoHouses as $ic ){
                         ?>
                             <tr>
                                 <td><div title="<?=$ic->getCliente()->getCaCompania()?>" ><?=$ic->getCaDoctransporte()?></div></td>
+                                <td>  
+                                <?                                   
+                                echo $form['costo_'.$ic->getCaIdhouse()]->renderError();  
+                                if( isset( $utilidades[ $ic->getCaIdhouse() ] )  ){
+                                    $form->setDefault('costo_'.$ic->getCaIdhouse(),  $utilidades[ $ic->getCaIdhouse() ]  );
+                                }else{
+                                    $form->setDefault('costo_'.$ic->getCaIdhouse(), 0 );
+                                }
+                                echo $form['costo_'.$ic->getCaIdhouse()]->render();
+                                ?>                 
+                                </td>
                                 <td>  
                                 <?                                   
                                 echo $form['util_'.$ic->getCaIdhouse()]->renderError();  
@@ -209,7 +218,10 @@ include_component("widgets", "widgetIds");
                             <tr>
                                 <td><b>Total<b/></td>
                                 <td>  
-                                <input type="text" id="utilidad_sobreventa" maxlength="15" size="15" readOnly="true" />                       
+                                    <input type="text" id="costo_sobreventa" maxlength="15" size="15" readOnly="true" />                       
+                                </td>
+                                <td>
+                                    <input type="text" id="utilidad_sobreventa" maxlength="15" size="15" readOnly="true" />                       
                                 </td>
                             </tr>
                         </table>
@@ -276,9 +288,7 @@ include_component("widgets", "widgetIds");
                <td>
                     <b>Neto <?=$monedaLocal?>:</b><br />
                     <input type="text" id="netopesos" maxlength="15" size="14" readOnly="true" />
-                    
                 </td>
-                
                <td>
                     <b>Venta <?=$monedaLocal?>:</b><br />
                     <?
