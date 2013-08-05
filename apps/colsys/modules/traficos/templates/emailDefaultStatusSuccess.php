@@ -283,7 +283,11 @@ else if( 1==2 && $user->getSucursal()->getEmpresa()->getCaNombre()=="Coltrans S.
 							?>
 							<th>Serial</th>
 							<?
-							}
+                                          }else if( $reporte->getCaImpoexpo()==Constantes::IMPO ){
+                                          ?>
+                                          <th>No.Contenedor</th>
+                                          <?
+                                          }
 							?>
 							<th>Observaciones</th>
 						</tr>
@@ -294,7 +298,7 @@ else if( 1==2 && $user->getSucursal()->getEmpresa()->getCaNombre()=="Coltrans S.
 							<td><?=$equipo->getConcepto()->getCaConcepto()?></td>
 							<td><?=$equipo->getCaCantidad()?></td>
 							<?
-							if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
+							if( $reporte->getCaImpoexpo()==Constantes::EXPO or $reporte->getCaImpoexpo()==Constantes::IMPO ){
 							?>
 							<td><?=$equipo->getCaIdequipo()?></td>
 							<?
