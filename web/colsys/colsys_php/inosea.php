@@ -5990,6 +5990,11 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         echo "<script>document.location.href = 'inosea.php';</script>";
                         exit;
                     }
+                    if (!$rs->Open("update tb_dianclientes set ca_house = '$hbls' where ca_referencia = '$referencia' and ca_idcliente = '$idcliente' and ca_house = '$hbl'")) {
+                        echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
+                        echo "<script>document.location.href = 'inosea.php';</script>";
+                        exit;
+                    }
                     if (!$rs->Open("delete from tb_inoclientes_sea where oid = '$oid'")) {
                         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'inosea.php';</script>";
