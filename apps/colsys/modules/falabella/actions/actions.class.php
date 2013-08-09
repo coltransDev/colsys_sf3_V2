@@ -318,12 +318,13 @@ class falabellaActions extends sfActions {
 
 		$status = $reporte->getUltimoStatus();
 		$salida = '';
+                $correlativo = rand(0, 9999);
 		foreach( $details as $detail ){
 			$salida.= substr($fala_header->getCaIddoc(),0,15)."|"; // 1
 			$salida.= $fala_header->getCaArchivoOrigen()."|"; // Archivo de Origen 2
 			$salida.= "ASN|"; // 3
 			$salida.= "COL|"; // 4
-			$salida.= "|"; // Correlativo Coltrans 5
+			$salida.= $correlativo.str_pad($detail->getOid(), 5, "0", STR_PAD_LEFT)."|"; // Correlativo Coltrans 5
 			$salida.= (($reporte->getcaTransporte() != 'Aéreo')?"MB":"AW")."|"; // 6
 			$salida.= $reporte->getDoctransporte()."|"; // 7
 			$salida.= "|"; // Contact 8  /blanco
