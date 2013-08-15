@@ -22,7 +22,7 @@
        
         WidgetUploadButton.superclass.constructor.call(this, {
             listeners: {
-                'afterrender' : function(button){
+                afterrender : function(button){
                     button.wrap = button.el.wrap();
                     button.wrap.setStyle({position:'relative',overflow:'hidden'});
                     var width = button.wrap.getWidth();

@@ -159,6 +159,33 @@ class gestDocumentalActions extends sfActions
 	* Permite visualizar un archivo del panel
 	* @author: Andres Botero
 	*/
+    public function executeVerArchivoLibreClave(){
+
+        $archivo = base64_decode( $this->getRequestParameter("idarchivo") );
+
+        $this->forward404Unless( $archivo );
+
+        $folder = base64_decode($this->getRequestParameter("folder"));
+        $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR;
+
+        $this->archivo = $directory.$archivo;
+
+
+        if(!file_exists($this->archivo) && !file_exists($this->archivo.".gz")){
+            $this->forward404("No se encuentra el archivo especificado");
+        }
+        
+        if( file_exists($this->archivo.".gz") ){
+            $this->archivo.=".gz";
+        }
+
+    	//session_cache_limiter('public');
+	}
+    
+    /*
+	* Permite visualizar las 
+	* @author: Andres Botero
+	*/
 	public function executeVerImagen(){
 //         echo "hgfhgf";
 //        exit;
