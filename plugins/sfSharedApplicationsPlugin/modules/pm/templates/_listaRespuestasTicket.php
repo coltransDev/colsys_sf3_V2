@@ -1,17 +1,17 @@
-<div class="commentlist">
+<div style="margin:20px;">
 <?
 
 $responses = $sf_data->getRaw("responses");
 $i=0;
 foreach( $responses as $response ){
     if( $idLastResponse==$response->getCaIdresponse() ){
-        $class = "yellow";
+        $class = "style='background-color:#FFFFCC;border-color:#CCCCCC;border-style:dotted;border-width:1px;margin:12px 0 0;padding:12px 12px 24px;'";
     }else{
-        $class = $i%2==0?"even":"odd";
+        $class = $i%2==0?"style='background-color:#F6F6F6;border-color:#CCCCCC;border-style:dotted;border-width:1px;margin:12px 0 0;padding:12px 12px 24px;'":"style='background-color:#FFFFFF;border-color:#CCCCCC;border-style:dotted;border-width:1px;margin:12px 0 0;padding:12px 12px 24px;'";
     }
     ?>     
-        <div class="entry-<?=$class?>">
-        <div class="entry-date"><?=Utils::fechaMes($response->getCaCreatedat())?></div>
+        <div <?=$class?> >
+        <div style="float: right;color: #0464BB;"><?=Utils::fechaMes($response->getCaCreatedat())?></div>
         <b><?=($response->getUsuario()?$response->getUsuario()->getCaNombre():$response->getCaLogin())?></b>
 
 

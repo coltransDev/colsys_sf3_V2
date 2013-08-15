@@ -1,82 +1,9 @@
 <?
 
-//use_helper("MimeType");
-
-$ticket = $sf_data->getRaw("ticket");
-
-
 $ticket = $sf_data->getRaw("ticket");
 ?>
 <html>
     <body>
-    <style type="text/css" >
-
-        img.img{
-            border: 0px;
-        }
-
-
-
-        a.link:link {
-           text-decoration:none;
-           color:#0000FF;
-        }
-        a.link:active {
-           text-decoration:none;
-           color:#0000FF;
-        }
-        a.link:visited {
-           text-decoration: none;
-           color: #062A7D;
-        }
-
-        .entry {
-            border-bottom: 1px solid #DDDDDD;
-            clear:both;
-            padding: 0 0 10px;
-        }
-
-
-        .entry-even {
-            background-color:#F6F6F6;
-            border-color:#CCCCCC;
-            border-style:dotted;
-            border-width:1px ;
-            margin:12px 0 0;
-            padding:12px 12px 24px;
-            font-size: 12px;
-            font-family: arial, helvetica, sans-serif;
-
-        }
-
-        .entry-odd {
-            background-color:#FFFFFF;
-            border-color:#CCCCCC;
-            border-style:dotted;
-            border-width:1px ;
-            margin:12px 0 0;
-            padding:12px 12px 24px;
-            font-size: 12px;
-            font-family: arial, helvetica, sans-serif;
-
-        }
-
-        .entry-yellow {
-            background-color:#FFFFCC;
-            border-color:#CCCCCC;
-            border-style:dotted;
-            border-width:1px ;
-            margin:12px 0 0;
-            padding:12px 12px 24px;
-            font-size: 12px;
-            font-family: arial, helvetica, sans-serif;
-
-        }
-        .entry-date{
-            float: right;
-            color: #0464BB;
-        }
-    </style>
         <!-- GREY BORDER -->
         <table width="100%" border="0" cellspacing="15" cellpadding="0" bgcolor="#E1E1E1"><tr><td>
                     <!-- WHITE BACKGROUND -->
@@ -102,7 +29,7 @@ $ticket = $sf_data->getRaw("ticket");
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Prioridad:</b> <?=$ticket->getCaPriority()?></font><br />
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Porcentaje:</b> <?=$ticket->getCaPercentage()?>%</font><br />
 
-                                            <div class="entry-even">
+                                            <div style="background-color:#F6F6F6;border-color:#CCCCCC;border-style:dotted;border-width:1px;margin:12px 0 0;padding:12px 12px 24px;font-size: 12px;font-family: arial, helvetica, sans-serif;">
                                             <?=$ticket->getCaText()?>
                                             </div>
                                         </td><td width="50"><img src="https://www.coltrans.com.co/images/spacer.gif" width="75" height="1" alt=""></td></tr>
@@ -129,7 +56,7 @@ $ticket = $sf_data->getRaw("ticket");
                                             <img src="https://www.coltrans.com.co/images/spacer.gif" width="1" height="1" alt="">
                                             <p><font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Usuarios</b></font><br>
 
-                                            <div class="entry-even">
+                                            <div style="background-color:#F6F6F6;border-color:#CCCCCC;border-style:dotted;border-width:1px;margin:12px 0 0;padding:12px 12px 24px;font-size: 12px;font-family: arial, helvetica, sans-serif;">
 
                                                     <ul style="margin-top: 0;">
                                                     <?
@@ -140,8 +67,6 @@ $ticket = $sf_data->getRaw("ticket");
                                                         ?>
                                                            <li><?=$usuario->getCaNombre()?></li>
                                                         <?
-
-
                                                     }
                                                     ?>
                                                     </ul>
@@ -159,24 +84,20 @@ $ticket = $sf_data->getRaw("ticket");
                                             <img src="https://www.coltrans.com.co/images/spacer.gif" width="1" height="1" alt="">
                                             <p><font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Archivos</b></font><br>
 
-                                            <div class="entry-even">
+                                            <div style="background-color:#F6F6F6;border-color:#CCCCCC;border-style:dotted;border-width:1px;margin:12px 0 0;padding:12px 12px 24px;font-size: 12px;font-family: arial, helvetica, sans-serif;">
 
                                                     <ul style="margin-top: 0;">
                                                     <?
-
-
                                                     foreach( $files as $file ){
                                                         ?>
                                                            <li>
 
-                                                           <a class="link" href="https://www.coltrans.com.co<?=url_for("gestDocumental/verArchivo?folder=".base64_encode($ticket->getDirectorioBase())."&idarchivo=".base64_encode(basename($file)))?>">
+                                                           <a style="text-decoration:none;color:#0000FF;" href="https://www.coltrans.com.co<?=url_for("gestDocumental/verArchivo?folder=".base64_encode($ticket->getDirectorioBase())."&idarchivo=".base64_encode(basename($file)))?>">
                                                                 <b><?=basename($file)?></b>
                                                             </a>
 
                                                            </li>
                                                         <?
-
-
                                                     }
                                                     ?>
                                                     </ul>
@@ -187,9 +108,6 @@ $ticket = $sf_data->getRaw("ticket");
                                     }
                                     ?>
                                     <tr><td>&nbsp;</td><td colspan="2"><hr noshade size="1"></td></tr>
-
-
-
 
                                     <tr><td>&nbsp;</td><td>
                                             <font size="1" face="arial, helvetica, sans-serif" color="#000000"> Si los links no estan funcionando, copie y pegue esta dirección en el navegador:<br>https://www.coltrans.com.co<?=url_for("/pm/verTicket?id=".$ticket->getCaIdticket())?> <br><br> Gracias por utilizar el sistema de tickets!<br><br>Coltrans S.A. - Colmas Ltda. Agencia de Aduanas Nivel 1<br>
