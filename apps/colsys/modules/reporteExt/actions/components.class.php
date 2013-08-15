@@ -22,7 +22,6 @@ class reporteExtComponents extends sfComponents
         
 
         $idtrafico = $this->getUser()->getIdtrafico();
-        echo $idtrafico;
         
 
 		$this->tarifas = Doctrine::getTable("RepTarifa")
