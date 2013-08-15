@@ -1095,7 +1095,7 @@ class antecedentesActions extends sfActions {
       $this->forward404Unless($ref);
 
       $usrRef = array();
-      $usrRef[] = $ref->getCaUsucreado();    // Busca los usuarios involucrados con la referencia
+      $usrRef[] = $ref->getCaUsuconfirmado();    // Busca el usuario que haya hecho la confirmación
 
       $q = Doctrine_Query::create()
               ->select("ie.ca_referencia, ie.ca_idequipo, cp.ca_concepto, pt.ca_nombre, ic.ca_entrega_comodato, ic.ca_inspeccion_nta, ic.ca_inspeccion_fch, ic.ca_observaciones")
@@ -1166,13 +1166,101 @@ class antecedentesActions extends sfActions {
                  //->getSqlQuery();
                  ->execute();
          foreach ($usuarios as $usuario) {
-            if(filter_var($usuario->getCaEmail(), FILTER_VALIDATE_EMAIL)) {
+            if (filter_var($usuario->getCaEmail(), FILTER_VALIDATE_EMAIL)) {
                $contactos[] = $usuario->getCaEmail();
             }
          }
       }
 
       $this->contactos = implode(",", $contactos);
+   }
+
+   /**
+    *
+    *
+    * @param sfRequest $request A request object
+    */
+   public function executeEmailAutorizacion(sfWebRequest $request) {
+
+      $numRef = str_replace("|", ".", $request->getParameter("ref"));
+      $format = $request->getParameter("format");
+
+      $this->forward404Unless($numRef);
+
+      $ref = Doctrine::getTable("InoMaestraSea")->find($numRef);
+      $this->forward404Unless($ref);
+
+      $usrRef = array();
+      $usrRef[] = $ref->getCaUsucreado();    // Busca los usuarios involucrados con la referencia
+
+      $q = Doctrine_Query::create()
+              ->select("ie.ca_referencia, ie.ca_idequipo, cp.ca_concepto, pt.ca_nombre, ic.ca_entrega_comodato, ic.ca_inspeccion_nta, ic.ca_inspeccion_fch, ic.ca_observaciones")
+              ->from('InoEquiposSea ie')
+              ->leftJoin('ie.InoContratosSea ic')
+              ->leftJoin('ie.Concepto cp')
+              ->leftJoin('ic.PricPatio pt')
+              ->addWhere('ie.ca_referencia = ? ', $numRef)
+              ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+
+      $this->equipos = $q->execute();
+
+      $idsProveedor = $ref->getIdsProveedor();
+      $ids = $idsProveedor->getIds();
+      $sucursales = $ids->getIdsSucursal();
+
+      $contactos = array();
+
+      foreach ($sucursales as $sucursal) {
+         $IdsContactos = Doctrine::getTable("IdsContacto")
+                 ->createQuery("c")
+                 ->where("c.ca_idsucursal = ?", $sucursal->getCaIdsucursal())
+                 ->execute();
+         foreach ($IdsContactos as $contacto) {
+            if ($contacto) {
+               $contactos[] = $contacto->getCaEmail();
+            }
+         }
+      }
+
+      $this->hijas = Doctrine::getTable("InoClientesSea")
+              ->createQuery("c")
+              ->where("c.ca_referencia = ?", $numRef)
+              ->execute();
+
+      $sucRef = array();
+      $hijas = $this->hijas;
+      foreach ($hijas as $hija) {                 // Busca los usuarios involucrados con la referencia
+         if ($hija->getVendedor()->getCaSucursal()) {
+            if (!in_array($hija->getVendedor()->getCaSucursal(), $sucRef)) {
+               $sucRef[] = $hija->getVendedor()->getCaSucursal();
+            }
+         }
+         if (!in_array($hija->getCaUsucreado(), $usrRef)) {
+            $usrRef[] = $hija->getCaUsucreado();
+         }
+      }
+
+      if ($format == "email") {
+         $this->setLayout($format);
+      }
+
+      $this->ref = $ref;
+      $this->user = $this->getUser();
+      $this->format = $format;
+
+      $this->emails = $ref->getEmails();
+
+      $this->contactos = implode(",", $contactos);
+
+      $ciudades = Doctrine::getTable("Ciudad")
+              ->createQuery("c")
+              ->where("c.ca_idtrafico = ?", "CO-057")
+              ->orderBy("c.ca_ciudad")
+              ->execute();
+      $this->destinos = array();
+      foreach ($ciudades as $ciudad){
+         $this->destinos[] = $ciudad->getCaCiudad();
+      }
    }
 
    /**
