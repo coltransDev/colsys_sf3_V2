@@ -48,23 +48,27 @@ class homepageComponents extends sfComponents {
 
         $this->usuarios = Doctrine::getTable('Usuario')
                         ->createQuery('u')
-                        ->where('substring(ca_cumpleanos::text, 6,5) BETWEEN ? and ?', array($inicial, $final))
+                        ->innerJoin('u.Sucursal s')
+                        ->innerJoin('s.Empresa e')
+                        ->where('substring(ca_cumpleanos::text, 6,5) BETWEEN ? AND ?', array($inicial,$final))
+                        ->addWhere('e.ca_idempresa IN (?,?,?)',array('1','2','8'))
                         ->addWhere('ca_activo = ?', true)
                         ->addOrderBy('substring(ca_cumpleanos::text, 6,5)  ASC')
-                        ->execute();
-    }
+                        ->execute();    
+    }    
+    
+    public function executeTiempoColaborador() {
 
-    public function executeBirthdayEmail() {
-
-        $inicial = date('m-d',time()+86400);
-
-        $this->usuarios = Doctrine::getTable('Usuario')
-                        ->createQuery('u')
-                        ->where('substring(ca_cumpleanos::text, 6,5)=?', $inicial)
-                        ->addWhere('ca_activo = ?', true)
-                        ->addOrderBy('substring(ca_cumpleanos::text, 6,5)  ASC')
-                        ->execute();
-    }
+         $this->usuarios = Doctrine::getTable('Usuario')
+                ->createQuery ('u')
+                ->innerJoin('u.Sucursal s')
+                ->innerJoin('s.Empresa e')                 
+                ->where('u.ca_activo = ?', true)
+                ->addWhere('e.ca_idempresa != 4')
+                ->addWhere("CASE WHEN (date_part('".month."', c.ca_fchingreso) = date_part('".month."', now()) and (date_part('".day."', c.ca_fchingreso)-date_part('".day."', now()))::int=4) THEN(CASE WHEN ((date_part('".year."', now()) - date_part('".year."', c.ca_fchingreso))::int)!=5 THEN ((date_part('".year."', now()) - date_part('".year."', c.ca_fchingreso))::int)%5=0 ELSE false END ) ELSE false END")
+                ->orderby('u.ca_fchingreso DESC')
+                ->execute();             
+        }
 
     public function executeMainMenu() {
         

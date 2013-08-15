@@ -19,43 +19,40 @@ if (count($usuarios)>0){
     $posterior=0;
     foreach ($usuarios as $usuario) {
         if (Utils::parseDate($usuario->getCaCumpleanos(), 'm-d')==date('m-d')) {
-            $day='HOY';
             if($hoy==0){
-    ?>
+?>
             <b>Hoy</b><br/>
-    <?
+<?
             $hoy=$hoy+1;
             }
         }elseif(Utils::parseDate($usuario->getCaCumpleanos(), 'm-d')==date('m-d',time()+86400)) {
-            $day='MA&Ntilde;ANA';
             if($manana==0){
-    ?>
+?>
             <b>Ma&ntilde;ana</b><br/>
-    <?
+<?
             $manana=$manana+1;
             }
         }elseif(Utils::parseDate($usuario->getCaCumpleanos(), 'm-d')==date('m-d',time()+86400*2)) {
-            $day='PASADO MA&Ntilde;ANA';
             if($pasado==0){
-    ?>
+?>
             <b>Pasado ma&ntilde;ana</b><br/>
-    <?
+<?
             $pasado=$pasado+1;
             }
         }else {
             $day=Utils::parseDate($usuario->getCaCumpleanos(), 'M-d');
             if($posterior==0){
-    ?>
+?>
             <br /><b><?echo $day;?></b><br/>
-    <?
+<?
             $posterior=$posterior+1;
         	}
         }
-    ?>
+?>
        <a href="<?=url_for('adminUsers/viewUser?login='.$usuario->getCaLogin()) ?>"><?=$usuario->getCaNombre()?></a> <small><?=$usuario->getSucursal()->getEmpresa()->getCaNombre()?> - <?=$usuario->getSucursal()->getCaNombre()?></small><br />
-    <?
+<?
     }
-    ?>
+?>
     </div>
 </div>
 <?
