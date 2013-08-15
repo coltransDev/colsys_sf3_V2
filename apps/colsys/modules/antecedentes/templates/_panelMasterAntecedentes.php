@@ -201,13 +201,16 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU049,CU119,C
                     waitMsg:'Cargando...',
                     params:{numRef:this.numRef},
                     success:function(response,options){
-                        this.res = Ext.util.JSON.decode( options.response.responseText );
-                        Ext.getCmp("linea").setRawValue(this.res.data.linea);
-                        Ext.getCmp("linea").hiddenField.value = this.res.data.idlinea;
+                        res = Ext.util.JSON.decode( options.response.responseText );
+                        Ext.getCmp("linea").setRawValue(res.data.linea);
+                        Ext.getCmp("linea").hiddenField.value = res.data.idlinea;
                         Ext.getCmp("origen").setReadOnly(true);
                         Ext.getCmp("destino").setReadOnly(true);
                         Ext.getCmp("modalidad").setReadOnly(true);
-
+                        Ext.getCmp("tipo").setValue(res.data.ntipo);
+                        $("#tipo").attr("value",res.data.tipo);
+                        Ext.getCmp("emisionbl").setValue(res.data.idemisionbl);
+                        $("#emisionbl").attr("value",res.data.emisionbl);
                     }
                 });
             }
