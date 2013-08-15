@@ -28,12 +28,12 @@ switch ($action) {
             $button[$i]["image"] = "22x22/new.gif";
             $button[$i]["link"] = "ids/formIds?modo=" . $this->getRequestParameter("modo");
             $i++;
-        }
-        
-        
+        }      
 
+        
+        
         break;
-
+        
     case "verIds":
         @$nivel = idsActions::getNivel();
         if ($nivel >= 3) {
@@ -123,4 +123,31 @@ if ($this->getRequestParameter("modo") == "prov" && $action != "listadoProveedor
         $i++;
     }
 }
+if ($this->getRequestParameter("modo") == "agentes" && $action != "verIds") {
+            
+    $button[$i]["name"] = "Agentes Activos Oficiales";
+    $button[$i]["tooltip"] = "Listado de Agentes activos oficiales";
+    $button[$i]["image"] = "22x22/gohome.gif";
+    $button[$i]["link"] = "ids/listadoAgentes?estado=actoficial&modo=".$this->getRequestParameter("modo");
+    $i++;
+    
+    $button[$i]["name"] = "Agentes Inactivos";
+    $button[$i]["tooltip"] = "Listado de Agentes inactivos";
+    $button[$i]["image"] = "22x22/gohome.gif";
+    $button[$i]["link"] = "ids/listadoAgentes?estado=inactivo&modo=".$this->getRequestParameter("modo");
+    $i++;
+    
+    $button[$i]["name"] = "Agentes Activos NO Oficiales";
+    $button[$i]["tooltip"] = "Listado de Agentes Activos NO Oficiales";
+    $button[$i]["image"] = "22x22/gohome.gif";
+    $button[$i]["link"] = "ids/listadoAgentes?estado=actnoficial&modo=".$this->getRequestParameter("modo");
+    $i++;
+    
+    $button[$i]["name"] = "Agentes TP Logistics";
+    $button[$i]["tooltip"] = "Listado de Agentes TP Logistics";
+    $button[$i]["image"] = "22x22/gohome.gif";
+    $button[$i]["link"] = "ids/listadoAgentes?estado=tplogistics&modo=".$this->getRequestParameter("modo");
+    $i++;
+}
+
 ?>

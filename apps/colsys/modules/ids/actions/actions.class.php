@@ -2115,7 +2115,38 @@ class idsActions extends sfActions {
         
     }
     
-
+    public function executeListadoAgentes(sfWebRequest $request) {
+        
+        $estado = $request->getParameter("estado");
+         
+        $q= Doctrine::getTable("Ids")
+                ->createQuery("i")
+                ->innerJoin("i.IdsAgente ag")
+                ->innerJoin("i.IdsSucursal sc")
+                ->innerJoin("sc.Ciudad c")
+                ->innerJoin("c.Trafico t");
+        
+        if($estado=="actoficial" || $estado == "actnoficial"){
+            $q->addWhere("ag.ca_activo = ?",true);
+        }else if($estado=="inactivo"){
+            $q->addWhere("ag.ca_activo = ?",false);
+        }
+        
+        if($estado=="actoficial"){
+            $q->addWhere("ag.ca_tipo = ?","Oficial");
+        }else if($estado=="actnoficial"){
+            $q->addWhere("ag.ca_tipo = ?","No Oficial");
+        }
+                
+        if($estado=="tplogistics"){
+            $q->addWhere("ag.ca_tplogistics = ?",true);
+        }        
+        
+        $q->addOrderBy("t.ca_nombre ASC");
+        $q->addOrderBy("i.ca_nombre ASC");
+                
+        $this->agentes = $q->execute();
+        $this->estado = $estado;
+    }
 }
-
 ?>
