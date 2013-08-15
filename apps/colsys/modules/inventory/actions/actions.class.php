@@ -565,6 +565,7 @@ class inventoryActions extends sfActions {
         }
         $texto.= sfContext::getInstance()->getController()->getPresentationFor( 'inventory', 'emailMantenimiento');
         $email->setCaBodyhtml( $texto );
+        $email->addTo($mantenimiento->getInvActivo()->getUsuario()->getCaEmail());
         $email->addTo($mantenimiento->getUsuario()->getManager()->getCaEmail());
         $email->addCc($mantenimiento->getUsuario()->getCaEmail());
 
