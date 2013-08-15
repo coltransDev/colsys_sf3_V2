@@ -110,16 +110,21 @@ if( $format!="email" ){
             <td>
                 <b>ETA</b> <?=$ref->getCaFcharribo()?>
             </td>
+            <td>
             <?
             if($ref->getCaEmisionbl()){
                 $parametros = ParametroTable::retrieveByCaso("CU223", null, null, $ref->getCaEmisionbl());
                 foreach($parametros as $parametro){
             ?>
-                    <td><b>Emisión BL Master:</b> <?=$parametro->getCaValor()?></td>
+                    <b>Emisión BL Master:</b> <?=$parametro->getCaValor()?>
             <?
                 }
+            }else{?>
+                &nbsp;
+            <?
             }
             ?>
+            </td>
         </tr>        
         <tr>
             <td colspan="2">
