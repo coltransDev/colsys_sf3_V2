@@ -380,9 +380,9 @@ md.ca_idmodo,m.ca_idmaster
             $this->resul = $st->fetchAll();
         }
         
-    if (count($this->incoterms)<= 0) {
-        $this->incoterms=array();
-    }
+        if (count($this->incoterms)<= 0) {
+            $this->incoterms=array();
+        }
     }
     
     public function executeEstadisticasMaritimo(sfWebRequest $request) {
@@ -835,70 +835,81 @@ md.ca_idmodo,m.ca_idmaster
         $this->idpais_origen=$this->getRequestParameter("idpais_origen");
         $this->pais_origen=$this->getRequestParameter("pais_origen");
         $this->idcliente=$this->getRequestParameter("idcliente");
-        $this->fechafinal = $request->getParameter("fechaFinal");        
+        $this->cliente=$this->getRequestParameter("Cliente");
+        $this->fechainicial = $request->getParameter("fechaInicial");
+        $this->fechafinal = $request->getParameter("fechaFinal");   
+        $this->metalcl = $request->getParameter("meta_lcl");   
+        $this->metafcl = $request->getParameter("meta_fcl");
+        $this->typeidg = $request->getParameter("type_idg");
+        if($this->fechainicial){
+            list($ano_ini, $mes_ini) = explode("-", $this->fechainicial);
+            $this->mesinicial = $mes_ini;
+            $this->ano_ini = $ano_ini;
+        }
         if($this->fechafinal){
-            list($nom_mes, $ano) = explode("-", $this->fechafinal);
-            $this->nom_mes=$nom_mes;
-            $this->ano=$ano;
-            $this->mes = Utils::nmes($nom_mes);
-            $this->mesp = $this->mes;
+            list($ano_fin, $mes_fin) = explode("-", $this->fechafinal);
+            $this->mesfinal = $mes_fin;
         }
 
         $this->indi_LCL=array();
         $this->indi_FCL=array();
 
-        $this->indi_LCL["Estados Unidos"] = 4;
-        $this->indi_FCL["Estados Unidos"] = 8;
-
-        $this->indi_LCL["Mexico"] = 5;
-        $this->indi_FCL["Mexico"] = 5;
-        
-        $this->indi_LCL["Chile"] = 10;
-        $this->indi_FCL["Chile"] = 10;
-        
-        $this->indi_LCL["Holanda"] = 22;
-        $this->indi_FCL["Holanda"] = 22;
+        $this->indi_LCL[$this->pais_origen] = $this->metalcl;
+        $this->indi_FCL[$this->pais_origen] = $this->metafcl;
         
         $this->grid = array();
         $this->indicador = array();
+        $this->peso = array();
         
         if ($this->opcion) {
-            $sql = "select * 
-                from vi_repindicadores 
-                LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_sub, rs.ca_fchsalida, rs.ca_fchllegada, max(to_date((rs.ca_fchenvio::timestamp)::text,'yyyy-mm-dd')) as ca_fchenvio, rs.ca_fchllegada-rs.ca_fchsalida as ca_diferencia , rs.ca_peso as ca_peso,extract(YEAR from rs.ca_fchsalida) as ca_ano1 ,extract(MONTH from rs.ca_fchsalida) as ca_mes1 from tb_repstatus rs INNER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) where rs.ca_idetapa in ('IACAD','IMCPD') group by ca_consecutivo, ca_fchsalida, ca_fchllegada, ca_diferencia,ca_peso,extract(YEAR from rs.ca_fchsalida) ,extract(MONTH from rs.ca_fchsalida)) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) 
-                where ca_impoexpo = '" . Constantes::IMPO . "' and ca_transporte = '" . constantes::MARITIMO . "'
-                and ca_idcliente = ".$this->idcliente."   
-                and ca_ano::numeric = " . $ano . " and ca_mes::numeric <= " . $this->mes . " and ca_traorigen='".$this->pais_origen."'
-                order by ca_ano,ca_mes";
+            $sql = "SELECT *, date(vi_repindicadores.ca_fchcreado), sq.ca_fchllegada-date(vi_repindicadores.ca_fchcreado) as ca_difembarque
+                    FROM vi_repindicadores
+                        LEFT OUTER JOIN (SELECT rp.ca_consecutivo as ca_consecutivo_sub, rs.ca_fchsalida, rs.ca_fchllegada, max(to_date((rs.ca_fchenvio::timestamp)::text,'yyyy-mm-dd')) as ca_fchenvio, rs.ca_fchllegada-rs.ca_fchsalida as ca_diferencia , rs.ca_peso as ca_peso,extract(YEAR from rs.ca_fchsalida) as ca_ano1 ,extract(MONTH FROM rs.ca_fchsalida) as ca_mes1 
+                              FROM tb_repstatus rs 
+                                INNER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) 
+                              WHERE rs.ca_idetapa in ('IACAD','IMCPD') 
+                              GROUP BY ca_consecutivo, ca_fchsalida, ca_fchllegada, ca_diferencia, ca_peso,extract(YEAR from rs.ca_fchsalida) ,extract(MONTH from rs.ca_fchsalida)) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) 
+                    WHERE ca_impoexpo = '".Constantes::IMPO."' 
+                    AND ca_transporte = '".Constantes::MARITIMO."'
+                    AND ca_idcliente = ".$this->idcliente."  
+                    AND ca_ano1::numeric = ".$this->ano_ini."
+                    AND ca_mes1::numeric BETWEEN ".$this->mesinicial." and ".$this->mesfinal." 
+                    AND ca_traorigen='".$this->pais_origen."' 
+                    ORDER BY ca_ano1,ca_mes1";
             
-            //exit;
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
+            
+            if($this->typeidg==1){
+                $idg = "ca_difembarque";
+            }else if($this->typeidg==2){
+                $idg = "ca_diferencia";
+            }
+            
             foreach ($this->resul as $r) {
-                if (!$r["ca_diferencia"])
+                if (!$r["ca_diferencia"] || !$r["ca_difembarque"])
                     continue;
                 if ($r["ca_modalidad"] == Constantes::FCL) {
-                    if ($r["ca_diferencia"] > $this->indi_FCL[$this->pais_origen]) {
+                    if ($r[$idg] > $this->indi_FCL[$this->pais_origen]) {
                         $this->indicador[(int) ($r["ca_mes1"])]["incumplimiento"]++;
                     } else {
                         $this->indicador[(int) ($r["ca_mes1"])]["cumplimiento"]++;
                     }
                 } else if ($r["ca_modalidad"] == Constantes::LCL) {
-                    if ($r["ca_diferencia"] > $this->indi_LCL[$this->pais_origen]) {
+                    if ($r[$idg] > $this->indi_LCL[$this->pais_origen]) {
                         $this->indicador[(int) ($r["ca_mes1"])]["incumplimiento"]++;
                     } else {
                         $this->indicador[(int) ($r["ca_mes1"])]["cumplimiento"]++;
                     }
                 }
                 $this->grid[$r["ca_ano1"]][$r["ca_modalidad"]][(int) ($r["ca_mes1"])]["conta"] = (isset($this->grid[$r["ca_ano1"]][$r["ca_modalidad"]][(int) ($r["ca_mes1"])]["conta"])) ? ($this->grid[$r["ca_ano1"]][$r["ca_modalidad"]][(int) ($r["ca_mes1"])]["conta"] + 1) : "1";
-                $this->grid[$r["ca_ano1"]][$r["ca_modalidad"]][(int) ($r["ca_mes1"])]["diferencia"]+=$r["ca_diferencia"];
+                $this->grid[$r["ca_ano1"]][$r["ca_modalidad"]][(int) ($r["ca_mes1"])]["diferencia"]+=$r[$idg];
                 list($peso, $medida) = explode("|", $r["ca_peso"]);
                 $this->grid[$r["ca_ano1"]][$r["ca_modalidad"]][(int) ($r["ca_mes1"])]["peso"]+=$peso;
-//                        []=array("diferencia"=>$r["ca_diferencia"],"peso"=>$r["ca_peso"]);
+            //      []=array("diferencia"=>$r["ca_diferencia"],"peso"=>$r["ca_peso"]);
             }
-            
-            //echo "<pre>";print_r($this->resul);echo "</pre>";
+            //      echo "<pre>";print_r($this->resul);echo "</pre>";
         }
     }
 
@@ -1082,7 +1093,7 @@ md.ca_idmodo,m.ca_idmaster
             $this->fechainicial = $request->getParameter("fechaInicial");
             $this->fechafinal = $request->getParameter("fechaFinal");
             $this->vendedor = $request->getParameter("login");
-            $this->idsucursal = $request->getParameter("idsucursal");
+            $this->sucursal = $request->getParameter("sucursal");
             $this->tipo = $request->getParameter("tipo");
 
             $tipos=array("tb_inoclientes_sea","tb_inoclientes_air","tb_expo_maestra","tb_brk_maestra");
@@ -1104,8 +1115,8 @@ md.ca_idmodo,m.ca_idmaster
                     $join="INNER JOIN tb_brk_ingresos ic on t.ca_referencia = ic.ca_referencia";
                 }
 
-                if($this->idsucursal){
-                    $where.= " s.ca_idsucursal ='".$this->idsucursal."' and ";
+                if($this->sucursal){
+                    $where.= "s.ca_nombre ='".$this->sucursal."' and ";
                 }
                 if($this->vendedor){
                     $where.= " u.ca_login ='".$this->vendedor."' and ";
@@ -1212,6 +1223,176 @@ md.ca_idmodo,m.ca_idmaster
         
     }
     
-}
+    public function executeEstadisticasExportaciones(sfWebRequest $request){
+        
+        $aa = $request->getParameter("aa");
+        $nmm= $request->getParameter("nmes");
+        foreach($nmm as $m)
+        {
+            if($m!="")
+                $mm[]=str_pad($m, 2, "0", STR_PAD_LEFT);
+        }
+        
+        $this->idtransporte = $this->getRequestParameter("idtransporte");
+        $this->transporte = $this->getRequestParameter("transporte");
+        $this->idmodalidad = $request->getParameter("idmodalidad");
+        
+        $this->idpais_origen = $request->getParameter("idpais_origen");
+        //$this->origen = $request->getParameter("origen");
+        //$this->idorigen = $request->getParameter("idorigen");
+        $this->idpais_destino = $request->getParameter("idpais_destino");
+        //$this->destino = $request->getParameter("destino");
+        //$this->iddestino = $request->getParameter("iddestino");
+        $this->pais_origen = "CO-057";
+                
+        $this->idagente = $request->getParameter("idagente");
+        $this->agente = $request->getParameter("agente");
+        $this->idsucursalagente = $request->getParameter("idsucursalagente");
+        $this->sucursalagente = $request->getParameter("sucursalagente");
+        
+        $this->idlinea = $request->getParameter("idlinea");
+        $this->linea = $request->getParameter("linea");
+        
+        $this->idsucursal = $request->getParameter("idsucursal");
+        $this->idcliente = $request->getParameter("idcliente");
+        $this->cliente = $request->getParameter("cliente");
+        
+        $this->opcion = $request->getParameter("opcion");
+        
+        if ($this->opcion) {
+            
+            if($aa){
+                $where.= "and SUBSTR(a.ca_referencia,15,1) IN ('".($aa%10)."')";
+            }
+            
+            if($mm){
+                if (count($mm)>0) {
+                   $mes = "";
+                   for($i=0; $i<count($mm);$i++){
+                       $mes.= "'".$mm[$i]."',";
+                   }
+                   $where.= " and SUBSTR(a.ca_referencia,8,2) IN (".substr($mes, 0, -1).")";
+                }
+            }
+            
+            if($this->transporte)
+                $where .= " and a.ca_via ='".$this->transporte."'";
+            
+            if ($this->idmodalidad)
+                $where.=" and a.ca_modalidad='" . $this->idmodalidad . "'";
 
+            /*if ($this->fechainicial && $this->fechafinal)
+                $where.=" and (m.ca_fchreferencia between '" . $this->fechainicial . "' and '" . $this->fechafinal . "')";
+            if ($this->fechaembinicial && $this->fechaembfinal)
+                $where.=" and (m.ca_fchembarque between '" . $this->fechaembinicial . "' and '" . $this->fechaembfinal . "')";
+            if ($this->fechaarrinicial && $this->fechaarrfinal)
+                $where.=" and (m.ca_fcharribo between '" . $this->fechaarrinicial . "' and '" . $this->fechaarrfinal . "')";
+
+            if ($this->idpais_origen)
+                $where.=" and ori.ca_idtrafico='" . $this->idpais_origen . "'";
+            else if ($this->nivel == "1") {
+                $paises = "";
+                $pais_origen = explode(",", $this->pais_origen);
+                foreach ($pais_origen as $pais) {
+                    $paises.= ( $paises != "") ? "," . "'" . $pais . "'" : "'" . $pais . "'";
+                }
+                $where.=" and ori.ca_idtrafico in (" . $paises . ")";
+            }
+            if ($this->idorigen)
+                $where.=" and m.ca_origen='" . $this->idorigen . "'";
+            if ($this->idpais_destino)
+                $where.=" and des.ca_idtrafico='" . $this->idpais_destino . "'";
+            if ($this->iddestino)
+                $where.=" and m.ca_destino='" . $this->iddestino . "'";
+            if ($this->idlinea)
+                $where.=" and m.ca_idlinea='" . $this->idlinea . "'";
+            if (!$this->proyectos)
+                $where.=" and m.ca_modalidad NOT IN ('PROYECTOS','PARTICULARES') and m.ca_impoexpo <> 'OTM/DTA'";
+            else
+                $where.=" and m.ca_modalidad NOT IN ('PARTICULARES') and m.ca_impoexpo <> 'OTM/DTA'";
+            
+            $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
+            $joinclientes = "";
+            if ($this->incoterms && count($this->incoterms) > 0) {
+                $where.=" and (";
+                foreach ($this->incoterms as $key => $inco) {
+                    if ($key > 0)
+                        $where.=" or ";
+                    $where.=" r.ca_incoterms like '" . $inco . "%'";
+                }
+                $where.=" )";
+                $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
+            }
+
+            if ($this->idagente) {
+                $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
+                $where.=" and r.ca_idagente = '" . $this->idagente . "'";
+            }
+
+
+            if ($this->idsucursalagente) {
+                $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
+                $where.=" and r.ca_idsucursalagente = '" . $this->idsucursalagente . "'";
+            }
+
+            if ($this->idcliente) {
+                $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
+                $joinclientes = "JOIN tb_concliente cc ON cc.ca_idcontacto=r.ca_idconcliente";
+                $where.=" and cc.ca_idcliente = '" . $this->idcliente . "'";
+            }*/
+
+            $sql = "SELECT DISTINCT '201'||SUBSTR(a.ca_referencia,15,1) as AÑO, 
+                    SUBSTR(a.ca_referencia,8,2) as MES, 
+                    a.ca_referencia AS REFERENCIA, 
+                    a.ca_idcliente AS NIT, 
+                    i.ca_nombre as CLIENTE, 
+                    a.ca_producto AS PRODUCTO, 
+                    ori.ca_ciudad AS ORIGEN, 
+                    tra_des.ca_nombre AS DESTINO, 
+                    a.ca_valorcarga AS VALOR_CARGA, 
+                    a.ca_via AS VIA,
+                    a.ca_peso AS PESO, 
+                    a.ca_pesovolumen AS PESO_VOLUMEN, 
+                    a.ca_consecutivo AS RN, 
+                    a.ca_nombrecons AS CONSIGNATARIO, 
+                    u.ca_nombre AS COMERCIAL,
+                    $mm
+                    em.ca_modalidad AS MODALIDAD, 
+                    cp.ca_concepto AS CONCEPTO, 
+                    (( SELECT sum(t.ca_liminferior) AS sum
+                        FROM tb_expo_equipos eq
+                        JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto
+                        WHERE eq.ca_referencia = a.ca_referencia AND eq.ca_idconcepto = cp.ca_idconcepto)) / 20 AS TEUS, 
+                    ids.ca_nombre as NAVIERA                    
+                    FROM tb_expo_maestra as a 
+                        LEFT OUTER JOIN tb_reportes rp ON rp.ca_idreporte = (SELECT ca_idreporte FROM tb_reportes WHERE ca_consecutivo = a.ca_consecutivo ORDER BY ca_version DESC limit 1)
+                        LEFT OUTER JOIN tb_expo_maritimo em ON a.ca_referencia = em.ca_referencia
+                        LEFT OUTER JOIN ids.tb_ids i ON a.ca_idcliente = i.ca_id
+                        LEFT OUTER JOIN tb_expo_equipos ep ON a.ca_referencia = ep.ca_referencia
+                        LEFT OUTER JOIN tb_conceptos cp ON ep.ca_idconcepto = cp.ca_idconcepto
+                        LEFT OUTER JOIN control.tb_usuarios u ON u.ca_login = rp.ca_login
+                        LEFT OUTER JOIN CONTROL.tb_sucursales s ON u.ca_idsucursal = s.ca_idsucursal
+                        JOIN tb_ciudades ori ON ori.ca_idciudad = a.ca_origen
+                        JOIN tb_traficos tra_ori ON tra_ori.ca_idtrafico = ori.ca_idtrafico
+                        JOIN tb_ciudades des ON des.ca_idciudad = a.ca_destino
+                        JOIN tb_traficos tra_des ON tra_des.ca_idtrafico = des.ca_idtrafico
+                        LEFT OUTER JOIN ids.tb_proveedores p ON p.ca_idproveedor = em.ca_idnaviera
+                        LEFT OUTER JOIN ids.tb_ids ids ON p.ca_idproveedor = ids.ca_id,
+                        tb_clientes as b
+                    WHERE ca_via != 'Terrestre' and a.ca_idcliente=b.ca_idcliente and a.ca_origen=ori.ca_idciudad and a.ca_destino=des.ca_idciudad ".$where."
+                    GROUP BY AÑO, MES, a.ca_referencia, a.ca_idcliente, CLIENTE, ca_producto, origen, destino, ca_valorcarga, ca_via, em.ca_modalidad, cp.ca_concepto, ca_peso, ca_pesovolumen, a.ca_consecutivo, a.ca_nombrecons, u.ca_nombre, s.ca_nombre,
+                         (( SELECT sum(t.ca_liminferior) AS sum
+                            FROM tb_expo_equipos eq
+                                  JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto
+                            WHERE eq.ca_referencia = a.ca_referencia AND eq.ca_idconcepto = cp.ca_idconcepto)) / 20, NAVIERA
+                    ORDER BY AÑO, MES, a.ca_referencia
+                    ";
+
+            $con = Doctrine_Manager::getInstance()->connection();
+            // echo $sql;
+            $st = $con->execute($sql);
+            $this->resul = $st->fetchAll();
+        }
+    }
+}
 ?>

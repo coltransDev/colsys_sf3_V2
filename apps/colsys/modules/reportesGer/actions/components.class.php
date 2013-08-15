@@ -64,11 +64,23 @@ class reportesGerComponents extends sfComponents
     
     public function executeFiltrosEstadisticasIndicadoresTT()
     {
+        $response = sfContext::getInstance()->getResponse();
+        $response->addJavaScript("extExtras/Spinner.js", 'last');
+        $response->addJavaScript("extExtras/SpinnerField.js", 'last');
+        $response->addJavaScript("extExtras/NumberFieldMin.js", 'last');
+        
+        $response->addStyleSheet("extExtras/Spinner.css",'last');
+        
         $this->opcion=$this->getRequestParameter("opcion");        
-        $this->fechafinal=$this->getRequestParameter("fechaFinal");        
+        $this->idcliente=$this->getRequestParameter("idcliente");
+        $this->cliente=$this->getRequestParameter("Cliente");
+        $this->fechainicial = $this->getRequestParameter("fechaInicial");
+        $this->fechafinal = $this->getRequestParameter("fechaFinal");   
+        $this->metalcl = $this->getRequestParameter("meta_lcl");   
+        $this->metafcl = $this->getRequestParameter("meta_fcl");      
         $this->idpais_origen=$this->getRequestParameter("idpais_origen");
         $this->pais_origen=$this->getRequestParameter("pais_origen");
-        
+        $this->typeidg = $this->getRequestParameter("type_idg");        
     }
 
     public function executeFiltrosReporteDesconsolidacion()
@@ -83,6 +95,10 @@ class reportesGerComponents extends sfComponents
         $this->fechafinal=$this->getRequestParameter("fechaFinal");        
         $this->tipo=$this->getRequestParameter("tipo");
         $this->ntipo=$this->getRequestParameter("ntipo");
+        $this->idsucursal = $this->getRequestParameter("idsucursal");
+        $this->sucursal = $this->getRequestParameter("sucursal");
+        $this->login = $this->getRequestParameter("login");
+        $this->vendedor = $this->getRequestParameter("vendedor");
         
         //echo $this->tipo." ".$this->ntipo;
     }

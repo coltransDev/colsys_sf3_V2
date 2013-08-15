@@ -1,282 +1,211 @@
 <?
-//echo $nmeses;
 include_component("charts","column");
 include_component("charts","pie");
 include_component("charts","line");
-include_component("widgets", "widgetPais");
-$dataJSON=array();
 $grid = $sf_data->getRaw("grid");
 $indicador = $sf_data->getRaw("indicador");
 //echo "<pre>";print_r($grid);echo "</pre>";
 ?>
 <div align="center" class="esconder" >
-<br />
-<h3> Estadisticas Indicadores de Gesti&oacute;n </h3>
-<br />
-<br />
+    <br />
+    <h3>INDICADORES DE GESTION CLIENTES COLTRANS S.A.S.</h3>
+    <br /><br />
 </div>
 <div align="center" class="esconder" ><img src="/images/22x22/printmgr.png" onclick="imprimir()" style="cursor: pointer"/></div>
 <div align="center"  class="mostrar" style="display: none">
-    <div style="height: 1500px;">
-        <div style="font-size: 50px;height: 250px"><b>INDICADORES DE GESTION</b></div>
-        <div style="height: 600px"><img src="/images/clientes/henkel_logo.jpg" /></div>
-        <div style="font-size: 32px;height: 300px">Enero-<?=$nom_mes?> de <?=$ano?></div><br><br><br>
-        <div style="height: 250px"><img src="/images/logos/logoCOLTRANS.png" /></div>
-        </div>
-        
-        
-    </div>
+    <div style="height: 50px; text-align: left;"><img src="/images/logos/logoCOLTRANS.png" /></div>
 </div>
+
 <div align="center" id="container" class="esconder"></div>
 <div align="center" id="container1"></div>
 <?
-include_component("reportesGer","filtrosEstadisticasIndicadoresTT");
+    include_component("reportesGer","filtrosEstadisticasIndicadoresTT");
+    if($opcion){
 ?>
-
-
+    
+    <div align="center"><br />
+        <div style="text-align: center; text-decoration-color: #0000FF; font-size: 18px;"><b><?echo "INDICADORES DE GESTION <br />"?></div>
+        <div style="font-size: 18px; color:  #0000FF;"><b><?=$cliente?></b></div>
+        <div style="font-size: 15px;"><?=$fechainicial?> a <?=$fechafinal?>
+    </div><br />
 <?
-if($opcion)
-{
-?>
-<div  >
-<div align="center">
-<br>
-<h3>Estadisticas de cargas  <br>
-<?
-if( $fechainicial && $fechafinal ){
-    echo " fechas de : ".$fechainicial." - ".$fechafinal;
-}
-?>
+    $data=array();
+    $data_peso=array();
+    $serieX = array();
 
-<div align="center">
-<h3>Resumen Comparativo de Negocios Manejados</h3>  <br>
-</div>
-<div>
-    <table class="tableList" width="900px" border="1" id="mainTable" align="center">
-
-        <?
-        //print_r($serieX);
-        
- 
-        
-       
-        $data=array();
-        $data_peso=array();
-            
-        foreach($grid["2011"] as $modalidad=> $gridMod)
-        {
-            foreach($gridMod as $mes =>$g)
-            {
-                if(!in_array($mes, $serieX))
-                    $serieX[]=Utils::mesLargo ($mes);
-                $data[$modalidad][]=($g["diferencia"]/$g["conta"])?($g["diferencia"]/$g["conta"]):0;
-                $data_peso[$mes]+=$g["peso"];
-            }
-            
+    foreach($grid[$ano_ini] as $modalidad=> $gridMod){
+        foreach($gridMod as $mes =>$g){
+            if(!in_array($mes, $serieX))
+                $serieX[$mes]=Utils::mesLargo ($mes);
+            $data[$modalidad][]=($g["diferencia"]/$g["conta"])?(round($g["diferencia"]/$g["conta"])):0;
+            $data_peso[$mes]+=$g["peso"];
         }
-        $serieM=$serieX;
-        $dataJSON[]=array("name"=>"FCL","data"=>$data["FCL"]);
-        $dataJSON[]=array("name"=>"LCL","data"=>$data["LCL"]);
-        
-        
-        
-        ?>
-
-</table>
-    <br>
-<br>
-<br>
-<br>
-<div align="center">
-<h3>Resumen Comparativo de Negocios Manejados</h3>  <br>
-La meta para este indicador está dada por el tiempo transcurrido desde la <br>
-fecha de zarpe del buque hasta el arribo al mismo al puerto Colombiano.<br>
-
-Las metas según la ruta y el servicio son las siguientes:<br>
-<?=$pais_origen?> LCL <?=$indi_LCL[$pais_origen]?> días <span style="width: 120px" >&nbsp;</span><?=$pais_origen?> FCL <?=$indi_FCL[$pais_origen]?> días
-</div>
-    <table align="center" width="90%">
-    <tr>
-        <td style=" margin: 0 auto" >
-            
-<div align="center" id="grafica1" ></div>
-        </td>
-    </tr>
-</table>
-<script type="text/javascript">
-    var chart1;
-        chart1=new ChartsColumn({
-					renderTo: 'grafica1',
-                    height: 600,
-                    title:"Movimientos de Traficos",
-                    titleY:"Dias",
-                    plotBands: [
-                        {
-                            color: 'red',
-                            width: 2,
-                            value: <?=($indi_LCL[$pais_origen])?$indi_LCL[$pais_origen]:0?>,
-                            label: {
-                                text: 'Limite LCL',
-                                style: {
-                                    color: 'red',
-                                    fontWeight: 'bold'
-                                }
-                            } 
-                        }
-                        ,
-                        {
-                            color: 'blue',
-                            width: 2,
-                            value: <?=($indi_FCL[$pais_origen])?$indi_FCL[$pais_origen]:0?>,
-                            label: {
-                                text: 'Limite FCL',
-                                style: {
-                                    color: 'blue',
-                                    fontWeight: 'bold'
-                                }
-                            } 
-                        }
-                    ],                    
-					serieX: <?=json_encode($serieX)?>,					
-				    series: <?=json_encode($dataJSON)?>
-				});	
-</script>
-
-
-
-<br>
-<br>
-<div align="center">
-<h3>Grafica por peso embarcado</h3>  <br>
-</div>
-    <table align="center" width="90%">
-    <tr>
-        <td style=" margin: 0 auto" >
-            
-<div align="center" id="grafica2" ></div>
-        </td>
-    </tr>
-</table>
-
-<?
-$serieX=array();
-$serieX[]=$pais_origen;
-$dataJSON=array();
-foreach($data_peso as $mes => $d)
-{    
-    $dataJSON[]=array("name"=>Utils::mesLargo ($mes),"data"=>$d);
-}
-
-?>
-<script type="text/javascript">
-    new ChartsColumn({
-					renderTo: 'grafica2',
-                    height: 600,
-                    title:"Movimientos de Traficos",
-                    titleY:"Kg",
-					serieX: <?=json_encode($serieX)?>,
-				    series: <?=json_encode($dataJSON)?>
-				});
-</script>
-<br>
-<br>
-<div align="center">
-<h3>Cumplimiento</h3>  <br>
-</div>
-    <table align="center" width="90%">
-    <tr>
-        <td style=" margin: 0 auto" >
-            
-<div align="center" id="grafica3" ></div>
-        </td>
-    </tr>
-</table>
-
-<?
-/*$serieX=array();
-$serieX[]="Estados Unidos";
-$dataJSON=array();
-foreach($data_peso as $mes => $d)
-{
-    $dataJSON[]=array("name"=>Utils::mesLargo ($mes),"data"=>$d);
-}
-*/
-$dataJSON=array();
-$mes=$mesp;
-$total=$indicador[$mes]["incumplimiento"]+$indicador[$mes]["cumplimiento"];
-//echo $total;
-$dataJSON[]=array("Cumplimiento",(($indicador[$mes]["cumplimiento"]/$total)*100));
-$dataJSON[]=array("Incumplimiento",(($indicador[$mes]["incumplimiento"]/$total)*100));
-?>
-<script type="text/javascript">
-    new ChartsPie({
-					renderTo: 'grafica3',
-                    height: 400,
-                    title:"Movimientos de Traficos",
-                    titleY:"",
-				    series: <?=json_encode($dataJSON)?>
-				});	
-</script>
-
-
-<br>
-<br>
-<div align="center">
-<h3>Tendencia del cumplimiento</h3>  <br>
-</div>
-    <table align="center" width="90%">
-    <tr>
-        <td style=" margin: 0 auto" >
-            
-<div align="center" id="grafica4" ></div>
-        </td>
-    </tr>
-</table>
-
-<?
-//$serieX=array();
-$serieX=$serieM;
-
-$dataJSON=array();
-//print_r($indicador);
-foreach($indicador as $mes => $d)
-{
-    $total=$d["cumplimiento"]+$d["incumplimiento"];
-    $porcentajeMes[]=(($d["cumplimiento"]/$total)*100);
-}
-
-    $total=$d["cumplimiento"]+$d["incumplimiento"];
-    $dataJSON[]=array("name"=>"Cumplimiento","data"=>$porcentajeMes);
-
-?>
-<script type="text/javascript">
-    new ChartsLine({
-					renderTo: 'grafica4',
-                    height: 400,
-                    title:"Movimientos de Traficos",
-                    titleY:"Porcentaje",                                       
-					serieX: <?=json_encode($serieX)?>,					
-				    series: <?=json_encode($dataJSON)?>
-				});	
-</script>
-
-
-<script>
-    function imprimir()
-    {
-        $(".esconder").hide();
-        $(".mostrar").show();
-        Ext.getCmp("tab-panel").hidden=true;
-        //alert("")
-        window.print();
-        //$(".esconder").show();
     }
-</script>
+    ksort($serieX); // Organiza los datos por el key
+    
+    foreach($serieX as $s){
+        $serieM[]=$s; // Corre el arreglo empezando por la pocisión 0
+    }
+    $serieX=$serieM;
+    
+    $dataJSON[]=array("name"=>"FCL","data"=>$data["FCL"]);
+    $dataJSON[]=array("name"=>"LCL","data"=>$data["LCL"]);
+?>
+    <table align="center" width="70%" border="3" class="box">
+        <tr>
+            <td colspan="2">
+                <div align="center" id="grafica1" ></div><br />
+<?
+                    if($typeidg==1){
+                        $title = $ano_ini."- Coordinación de Embarque - ".$pais_origen;
+?>
+                        La meta para este indicador está dada por el tiempo transcurrido desde la fecha de la primera instrucción del embarque hasta el arribo al mismo al puerto Colombiano.<br/>
+                        Las metas según la ruta y el servicio son las siguientes:<b><?=$pais_origen?> LCL <?=$indi_LCL[$pais_origen]?> días </b><span style="width: 120px" >&nbsp;</span><?=$pais_origen?> FCL <?=$indi_FCL[$pais_origen]?> días
+<?
+                    }else if ($typeidg==2){
+                        $title = $ano_ini."- Tiempo de Tránsito - ".$pais_origen;
+?>
+                        La meta para este indicador está dada por el tiempo transcurrido desde la fecha de zarpe del buque hasta el arribo al mismo al puerto Colombiano.<br/>
+                        Las metas según la ruta y el servicio son las siguientes:<b><?=$pais_origen?> LCL <?=$indi_LCL[$pais_origen]?> días </b><span style="width: 120px" >&nbsp;</span><?=$pais_origen?> FCL <?=$indi_FCL[$pais_origen]?> días
+                    <?}?>
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 50%">
+                <div align="center" id="grafica2" ></div>
+            </td>
+            <td style="width: 50%">
+                <div align="center" id="grafica3" ></div>
+            </td>
+        </tr> 
+    </table>
+    
+    <script type="text/javascript">
+        new ChartsColumn({
+            renderTo: 'grafica1',
+            height: 600,
+            title:'<?=$title?>',
+            titleY:"Dias",
+            plotBands: [
+                {
+                    color: 'red',
+                    width: 2,
+                    value: <?=($indi_LCL[$pais_origen])?$indi_LCL[$pais_origen]:0?>,
+                    label: {
+                        text: 'Limite LCL',
+                        style: {
+                            color: 'red',
+                            fontWeight: 'bold'
+                        }
+                    } 
+                }
+                ,
+                {
+                    color: 'blue',
+                    width: 2,
+                    value: <?=($indi_FCL[$pais_origen])?$indi_FCL[$pais_origen]:0?>,
+                    label: {
+                        text: 'Limite FCL',
+                        style: {
+                            color: 'blue',
+                            fontWeight: 'bold'
+                        }
+                    } 
+                }
+            ],                    
+            serieX: <?=json_encode($serieX)?>,					
+            series: <?=json_encode($dataJSON)?>
+        });	
+    </script>
 
+<?
+    $dataJSON=array();
+
+    foreach($indicador as $mes => $d)
+    {
+        $total+=$d["incumplimiento"]+$d["cumplimiento"];
+        $incumplimiento+=$d["incumplimiento"];
+        $cumplimiento+=$d["cumplimiento"];
+    }
+
+    $dataJSON[]=array("Cumplimiento",round((($cumplimiento/$total)*100),0));
+    $dataJSON[]=array("Incumplimiento",round((($incumplimiento/$total)*100),0));
+?>
+    <script type="text/javascript">
+        new ChartsPie({
+            renderTo: 'grafica2',
+            height: 400,
+            title:"Porcentaje de Cumplimiento",
+            titleY:"",
+            series: <?=json_encode($dataJSON)?>
+        })  
+    </script>
+
+<?
+    $serieX = array();
+    $dataJSON=array();
+    
+    
+    foreach($indicador as $mes => $d){
+        $total=$d["cumplimiento"]+$d["incumplimiento"];
+        $porcentajeMes[]=round((($d["cumplimiento"]/$total)*100),0);
+        $serieX[$mes] = Utils::mesLargo ($mes);
+    }
+    ksort($serieX); // Organiza los datos por el key
+    
+    foreach($serieX as $s){
+        $serieM[]=$s; // Corre el arreglo empezando por la pocisión 0
+    }
+    $serieX=$serieM;
+
+    $dataJSON[]=array("name"=>"Cumplimiento","data"=>$porcentajeMes);
+?>
+    <script type="text/javascript">
+        new ChartsLine({
+            renderTo: 'grafica3',
+            height: 400,
+            title:"Tendencia de Cumplimiento",
+            titleY:"Porcentaje (%)",                                       
+            serieX: <?=json_encode($serieX)?>,					
+            series: <?=json_encode($dataJSON)?>
+        });	
+    </script>
+    <br /><br />
+    <table align="center" width="70%" border="3" class="box">
+        <tr>
+            <td 
+                <div align="center" id="grafica4" ></div>
+            </td>
+        </tr>
+<?
+        $serieX=array();
+        $dataJSON=array();
+        
+        ksort($data_peso);
+        foreach($data_peso as $mes => $d){    
+            $dataJSON[]=array("name"=>Utils::mesLargo ($mes),"data"=>array($d));
+        }
+?>
+        <script type="text/javascript">
+            new ChartsColumn({
+                renderTo: 'grafica4',
+                height: 600,
+                title:"<?=$ano_ini?>"+" - Peso Embarcado - "+ "<?=$pais_origen?>",
+                titleY:"Kg",
+                serieX: <?=json_encode($serieX)?>,
+                series: <?=json_encode($dataJSON)?>
+            });
+        </script>
+    </table><br/><br/>
+
+    <script>
+        function imprimir(){
+            $(".esconder").hide();
+            $(".mostrar").show();
+            Ext.getCmp("tab-panel").hidden=true;
+            window.print();
+        }
+    </script>
 <?
 }
 ?>
-
-
-
-
