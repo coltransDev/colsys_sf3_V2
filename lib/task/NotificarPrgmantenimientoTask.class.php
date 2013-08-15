@@ -1,6 +1,6 @@
 <?php
 
-class NotificacionesPrgmantenimientoTask extends sfDoctrineBaseTask {
+class NotificarPrgmantenimientoTask extends sfDoctrineBaseTask {
 
     protected function configure() {
         $this->namespace = 'colsys';
@@ -19,7 +19,7 @@ EOF;
     }
 
     protected function execute($arguments = array(), $options = array()) {
-        $this->configuration = ProjectConfiguration::getApplicationConfiguration('colsys', 'dev', true);
+        $this->configuration = ProjectConfiguration::getApplicationConfiguration('colsys', 'cli', true);
 
         // Borra las dos líneas siguientes si no utilizas una base de datos
         $databaseManager = new sfDatabaseManager($this->configuration);
