@@ -363,9 +363,10 @@ class widgetsActions extends sfActions {
 
     public function executeDatosComboUsuario() {
         $criterio = $this->getRequestParameter("query");
-        $ciudad = $this->getRequestParameter("ciudad");
+        $ciudad = utf8_decode($this->getRequestParameter("ciudad"));
+        $perfil = utf8_decode($this->getRequestParameter("perfil"));
 
-        if ($criterio || $ciudad) {
+        if ($criterio || $ciudad || $perfil) {
 
             $q = Doctrine::getTable("Usuario")
                     ->createQuery("u")
@@ -378,9 +379,18 @@ class widgetsActions extends sfActions {
             
             if($ciudad)
             {
+                //echo $ciudad;
                 $q->innerJoin("u.Sucursal s");
                 $q->addWhere("LOWER(s.ca_nombre) LIKE ?", "%" . strtolower($ciudad) . "%");
             }
+            if($perfil)
+            {
+                //echo $perfil;
+                $q->innerJoin("u.UsuarioPerfil up")
+                ->addWhere("up.ca_perfil = ?", $perfil);
+            }
+            
+            $sql=$q->getSqlQuery();
 
             $usuarios = $q->execute();
             $data = array();
@@ -393,10 +403,9 @@ class widgetsActions extends sfActions {
                 $row["icon"] = $row["icon"] = $usuario->getImagenUrl("60x80");
                 $data[] = $row;
             }
-
-            $this->responseArray = array("total" => count($data), "root" => $data, "success" => true);
+            $this->responseArray = array("total" => count($data), "root" => $data, "success" => true,"debug"=>$sql);
         } else {
-            $this->responseArray = array("total" => 0, "root" => array(), "success" => true);
+            $this->responseArray = array("total" => 0, "root" => array(), "success" => true,"debug"=>$sql);
         }
         $this->setTemplate("responseTemplate");
     }

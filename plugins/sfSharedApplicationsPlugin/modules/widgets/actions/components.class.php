@@ -79,6 +79,8 @@ class widgetsComponents extends sfComponents {
     }
     
     public function executeWidgetMultiDatos() {
+        $response = sfContext::getInstance()->getResponse();
+        $response->addJavaScript("extExtras/SuperBoxSelect", 'last');
         //$incoterms = ParametroTable::retrieveByCaso("CU062");
         //$this->incoterms = array();
         /*$this->incoterms = "[";
@@ -308,6 +310,7 @@ class widgetsComponents extends sfComponents {
         $this->data[] = array("valor" => utf8_encode(Constantes::TRIANGULACION));
         $this->data[] = array("valor" => utf8_encode(Constantes::EXPO));
         $this->data[] = array("valor"=>utf8_encode(Constantes::OTMDTA ));
+        $this->data[] = array("valor"=>utf8_encode(Constantes::INTERNO ));
     }
 
     public function executeWidgetTransporte() {
@@ -365,7 +368,8 @@ class widgetsComponents extends sfComponents {
             $this->data[] = array("id" => "2366", "valor" => "Soc.Port.Regional B/Tura S.A.");
             $this->data[] = array("id" => "2918", "valor" => "SOCIEDAD PORTUARIA TERMINAL DE CONTENEDORES DE BUENAVENTURA S.A. T.C.BUENA S.A.");
         } else if ($this->ciudad == "BAQ-0005") {
-            $this->data[] = array("id" => "2031", "valor" => "Soc.Port.Regionalde B/Quillas.A.Deposito");
+            $this->data[] = array("id" => "2031", "valor" => "Puerto de Barranquilla");
+            $this->data[] = array("id" => "2424", "valor" => "Palermo Sociedad Portuaria S.A");
         } else if ($this->ciudad == "STA-0005") {
             $this->data[] = array("id" => "2435", "valor" => "SOCIEDAD PORTUARIA REGIONAL DE SANTA MARTA S.A");
         } else {
@@ -447,7 +451,7 @@ class widgetsComponents extends sfComponents {
         //$q->addWhere("p.ca_activo = ?", true );
 
         $q->fetchArray();
-
+//        echo $sql;
         $lineas = $q->execute();
 
         $this->data = array();
@@ -841,6 +845,10 @@ class widgetsComponents extends sfComponents {
     }
     
     public function executeMultiWidget( ){
+        
+    }    
+    
+    public function executeWidgetReferencia( ){
         
     }    
 
