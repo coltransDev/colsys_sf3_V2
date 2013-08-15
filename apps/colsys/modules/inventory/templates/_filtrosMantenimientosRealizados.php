@@ -44,7 +44,7 @@ var tabs = new Ext.FormPanel({
                             name: 'sucursal',
                             hiddenName: "idsucursal",                                                        
                             value:"<?=$sucursal?>",
-                            hiddenValue:"<?//=$idsucursal?>"
+                            hiddenValue:"<?=$idsucursal?>"
                 }),
                 {
                     xtype:          'combo',
