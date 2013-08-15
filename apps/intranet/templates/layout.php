@@ -65,9 +65,11 @@
                         <br />      
                         <? include_component('subastas', 'listaSubastas'); ?>                    
                         
-                        <? include_component('homepage', 'birthday'); ?>                    
-                        
+                        <? include_component('homepage', 'birthday'); ?>
+                                                
                         <? include_component('homepage', 'nuevosColaboradores'); ?>
+                        
+                        <? include_component('homepage', 'tiempoColaborador'); ?>  
                         <br />
                         <a href="https://www.coltrans.com.co/"><?=image_tag("colsys.png", array("border"=>"none"))?></a>
                         <br />
