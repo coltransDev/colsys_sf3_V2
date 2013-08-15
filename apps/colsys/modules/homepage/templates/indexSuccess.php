@@ -34,9 +34,9 @@ var crearTicket = function(){
                 <div class="left-column">
                     <?
 
-                    include_component("homepage", "novedades", array( "nivelNoticias"=>$nivelNoticias )) ;
-
                     include_component("notificaciones","tareasPendientes");
+                    
+                    include_component("homepage", "novedades", array( "nivelNoticias"=>$nivelNoticias )) ;
 
                     include_component("survey","listaEvaluaciones");
 
@@ -50,7 +50,7 @@ var crearTicket = function(){
                                 <li><a href="#" onClick="crearTicket()">Nuevo ticket</a></li>
                                 <li><a href="http://www.coltrans.com.co/intranet" target="blank">Intranet</a></li>
                                 <li><a href="https://www.coltrans.com.co/tracking/login/novell" target="blank">Tracking</a></li>
-                                <li><a href="http://www.coltrans.com.co/mail" target="blank">Webmail</a></li>
+                                <li><a href="http://correoapp.coltrans.com.co" target="blank">Google Apps</a></li>
                             </ul>
 
                         </div>
@@ -61,13 +61,13 @@ var crearTicket = function(){
                             <h5>Plantillas</h5>
                             <h4>Coltrans S.A.S.</h4>
                             <ul class="features">
-                                <li><a href="./plantillas/coltrans/plantillaColtransBarranquilla2011.doc" target="blank">Barranquilla</a></li>
-                                <li><a href="./plantillas/coltrans/plantillaColtransBogota2011.doc" target="blank">Bogot&aacute; D.C.</a></li>
+                                <li><a href="./plantillas/coltrans/plantillaColtransBarranquilla2013.doc" target="blank">Barranquilla</a></li>
+                                <li><a href="./plantillas/coltrans/plantillaColtransBogota2013.doc" target="blank">Bogot&aacute; D.C.</a></li>
                                 <li><a href="./plantillas/coltrans/plantillaColtransBucaramaga2011.doc" target="blank">Bucaramaga</a></li>
                                 <li><a href="./plantillas/coltrans/plantillaColtransBuenaventura2011.doc" target="blank">Buenaventura</a></li>
-                                <li><a href="./plantillas/coltrans/plantillaColtransCali2011.doc" target="blank">Cali</a></li>
+                                <li><a href="./plantillas/coltrans/plantillaColtransCali2013.doc" target="blank">Cali</a></li>
                                 <li><a href="./plantillas/coltrans/plantillaColtransCartagena2011.doc" target="blank">Cartagena</a></li>
-                                <li><a href="./plantillas/coltrans/plantillaColtransMedellin2011.doc" target="blank">Medell&iacute;n</a></li>
+                                <li><a href="./plantillas/coltrans/plantillaColtransMedellin2013.doc" target="blank">Medell&iacute;n</a></li>
                                 <li><a href="./plantillas/coltrans/plantillaColtransPereira2011.doc" target="blank">Pereira</a></li>
                             </ul>
 
