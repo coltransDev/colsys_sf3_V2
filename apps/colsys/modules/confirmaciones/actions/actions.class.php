@@ -180,10 +180,14 @@ class confirmacionesActions extends sfActions {
    public function executeCrearStatus(sfWebRequest $request) {
       $referencia = Doctrine::getTable("InoMaestraSea")->find($request->getParameter("referencia"));
       $this->forward404Unless($referencia);
+      $user = sfContext::getInstance()->getUser();
       $ca_referencia = $referencia->getCaReferencia();
       $modo = $request->getParameter("modo");
       $tipo_msg = $request->getParameter("tipo_msg");
       $oids = $request->getParameter("oid");
+      
+      $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "confirmaciones" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "textos.yml";
+      $text = sfYaml::load($config);
 
       $inoClientes = array();
 
@@ -230,18 +234,96 @@ class confirmacionesActions extends sfActions {
             $email_body_planilla.="<table border='1'><tr><th>Cliente</th><th>HBL</th><th>Planilla Envio</th></tr>";
             foreach ($oids as $oid) {
                 
+                $destinatarios_planilla = array();
+                
                 $idcliente = $this->getRequestParameter("idcliente_" . $oid);
                 $hbls = $this->getRequestParameter("hbls_" . $oid);
 
                 $inoCliente = Doctrine::getTable("InoClientesSea")->find(array($referencia->getCaReferencia(), $idcliente, $hbls));
-                $cliente = $inoCliente->getCliente();
+                //$inoCliente=new InoClientesSea();
+                if($inoCliente->getCaContinuacion()!="N/A")
+                {
+                    continue;
+                }
                 
+                $cliente = $inoCliente->getCliente();
+                $reporte = $inoCliente->getReporte();
+                
+                $fijos = Doctrine::getTable("Contacto")
+                        ->createQuery("c")
+                        ->addWhere("c.ca_idcliente = ?", $cliente->getCaIdcliente() )
+                        ->addWhere("ca_fijo = ?", true)
+                        ->addWhere("ca_cargo != ?", 'Extrabajador')
+                        ->execute();
+                
+                foreach($fijos as $fijo){
+                    $destinatarios_planilla[]= $fijo->getCaEmail();
+                }
+
                 $inoCliente->setCaPlanilla($this->getRequestParameter("idplanilla_" . $oid));
                 $inoCliente->save();
                 
+                $ultimostatus = $reporte->getUltimoStatus();
+
+                $status = new RepStatus();
+
+                $status->setCaIdreporte($reporte->getCaIdreporte());
+                $status->setCaFchstatus(date("Y-m-d H:i:s"));
+
+                $status->setCaComentarios($this->getRequestParameter("notas"));
+                $status->setCaFchenvio(date("Y-m-d H:i:s"));
+                $status->setCaUsuenvio($this->getUser()->getUserId());
+            
+                if( $request->getParameter("fchrecibido_".$oid) ){
+                    $horaRecibo =  $request->getParameter("horarecibido_".$oid);
+                    $status->setCaFchrecibo( Utils::parseDate($request->getParameter("fchrecibido_".$oid), "Y-m-d")." ".$horaRecibo );
+                }
+
+                if ($ultimostatus) {
+                   $status->setCaPiezas($ultimostatus->getCaPiezas());
+                   $status->setCaPeso($ultimostatus->getCaPeso());
+                   $status->setCaVolumen($ultimostatus->getCaVolumen());
+                   $status->setCaIdnave($ultimostatus->getCaIdnave());
+                   $status->setCaFchsalida($ultimostatus->getCaFchsalida());
+                   $status->setCaFchllegada($ultimostatus->getCaFchllegada());
+                   $status->setCaFchcontinuacion($ultimostatus->getCaFchcontinuacion());
+                   $status->setCaDoctransporte($ultimostatus->getCaDoctransporte());
+                }
+
+                if (substr($referencia->getCaReferencia(), 0, 1) == "7") {
+                   $status->setCaPiezas($inoCliente->getCaNumpiezas());
+                   $status->setCaPeso($inoCliente->getCaPeso());
+                   $status->setCaVolumen($inoCliente->getCaVolumen());
+                   $status->setCaFchsalida($referencia->getCaFchembarque());
+                   $status->setCaFchllegada($referencia->getCaFcharribo());
+                   $status->setCaIdnave($referencia->getCaMotonave());
+                   $status->setCaDoctransporte($inoCliente->getCaHbls());
+                }
+                $status->setCaIdetapa("88888");
+                
+                if ($referencia->getCaMnllegada()) {
+                   $status->setCaIdnave($referencia->getCaMnllegada());
+                } else {
+                   $status->setCaIdnave($referencia->getCaMotonave());
+                }
+                if ($request->getParameter("mod_fcharribo")) {
+                   $referencia->setCaFcharribo($request->getParameter("fcharribo"));
+                   $referencia->save();
+                   $status->setCaFchllegada($request->getParameter("fcharribo"));
+                }
+                
+                $status->setCaIntroduccion("Estimado cliente, <br/>");
+                $mensaje = $text['mensajePlanilla'];
+                $mensaje.= "<br />Planilla No: <b>".$inoCliente->getCaPlanilla()."</b>";
+                
+                $status->setStatus($mensaje);
+
+                $status->save();                
+                $status->send($destinatarios_planilla, array(), array(), null);
+                
                 $email_body_planilla.= "<tr><td>".$cliente->getCaCompania()."</td><td>".$hbls."</td><td>Planilla # ".$inoCliente->getCaPlanilla()."</td></tr>";
             }
-            $email_body_planilla.= "</table>";
+            $email_body_planilla.= "</table>";                        
       }
       /*
        * attachments 
@@ -269,7 +351,7 @@ class confirmacionesActions extends sfActions {
          $con = Doctrine_Manager::getInstance()->connection();
          $st = $con->execute($sql);
          $this->resul = $st->fetchAll();
-         $destinatarios = array();
+         $destinatarios = array();         
          foreach ($this->resul as $r) {
             $destinatarios[] = $r["ca_email"];
          }
@@ -312,8 +394,7 @@ class confirmacionesActions extends sfActions {
                  $body = $request->getParameter("email_body");
                  break;
          }
-
-         $user = sfContext::getInstance()->getUser();
+         
          $email = new Email();
          $email->setCaUsuenvio($user->getUserId());
          $email->setCaTipo("Not." . $tipo);
@@ -321,7 +402,7 @@ class confirmacionesActions extends sfActions {
          $email->setCaFrom($user->getEmail());
          $email->setCaFromname($user->getNombre());
          $email->setCaReplyto($user->getEmail());
-
+         
          foreach ($destinatarios as $recip) {
             $recip = str_replace(" ", "", $recip);
             if ($recip) {
@@ -351,7 +432,7 @@ class confirmacionesActions extends sfActions {
          }
          $modo = $request->getParameter("modo");
          $email->setCaBodyhtml(sfContext::getInstance()->getController()->getPresentationFor('confirmaciones', 'emailConfirmacion'));
-         $email->save($conn);
+         $email->save();
          $this->modo = $modo;
          $this->ca_referencia = $ca_referencia;
       } else {
@@ -496,7 +577,7 @@ class confirmacionesActions extends sfActions {
                $status->setCaIntroduccion($this->getRequestParameter("status_body_intro"));
                $mensaje = $this->getRequestParameter("status_body");
                if($tipo_msg=="not_planilla")
-                   $mensaje.= "<br />Planilla No: <b>".$inoCliente->getCaPlanilla()."</b>";
+               $mensaje.= "<br />Planilla No: <b>".$inoCliente->getCaPlanilla()."</b>";
                if ($this->getRequestParameter("mensaje_" . $oid)) {
                   $mensaje .= "\n" . $this->getRequestParameter("mensaje_" . $oid);
                }
