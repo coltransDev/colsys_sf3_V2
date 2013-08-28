@@ -108,6 +108,7 @@ class gestDocumentalActions extends sfActions
                         $fileName  = $uploadedFile['name'] ;
                     }
                     $fileName = preg_replace('/\s\s+/', ' ', $fileName);
+                    $fileName=urlencode($fileName);
                     
                     //echo $directory.$fileName;
                     error_reporting(E_ALL);
