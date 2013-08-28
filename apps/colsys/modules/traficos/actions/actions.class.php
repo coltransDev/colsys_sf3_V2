@@ -1222,7 +1222,7 @@ class traficosActions extends sfActions {
             mkdir($directory, 0777);
          }
 
-         $destPath = $directory . DIRECTORY_SEPARATOR . $_FILES['file']['name'];
+         $destPath = $directory . DIRECTORY_SEPARATOR . urlencode($_FILES['file']['name']);
          //mueve el archivo
          move_uploaded_file($_FILES['file']['tmp_name'], $destPath);
 
