@@ -2,10 +2,11 @@
 class PDF extends FPDF {
     //Variables para manejo de Tablas
     var $widths;
-	var $height;
+    var $height;
     var $aligns;
+    var $borders;
     var $sucursal;
-	var $linerepeat;
+    var $linerepeat;
     
     //Cabecera de página
     function Header() {
@@ -52,6 +53,11 @@ class PDF extends FPDF {
     $this->aligns=$a;
     }
 
+    function SetBorders($b) {
+    //Set the array of column borders
+    $this->borders=$b;
+    }
+
     function SetFills($f) {
     //Set the array of column fills
     $this->fills=$f;
@@ -90,6 +96,7 @@ class PDF extends FPDF {
         $w=$this->widths[$i];
         $a=isset($this->aligns[$i]) ? $this->aligns[$i] : 'L';
         $f=isset($this->fills[$i]) ? $this->fills[$i] : 0;
+        $b=isset($this->borders[$i]) ? $this->borders[$i] : 0;
         $s=isset($this->styles[$i]) ? $this->styles[$i] : '';
         $this->SetFont($family,$s,$size);
         //Save the current position
@@ -98,7 +105,7 @@ class PDF extends FPDF {
         //Draw the border
         $this->Rect($x,$y,$w,$h);
         //Print the text
-        $this->MultiCell($w,$this->height,$data[$i],$f,$a,$f);
+        $this->MultiCell($w,$this->height,$data[$i],$b,$a,$f);
         //Put the position to the right of the cell
         $this->SetXY($x+$w,$y);
         }
