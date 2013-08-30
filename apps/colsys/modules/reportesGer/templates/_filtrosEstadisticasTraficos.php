@@ -81,7 +81,7 @@ var tabs = new Ext.FormPanel({
                                             xtype:'datefield',
                                             fieldLabel: 'Fecha final',
                                             name : 'fechaFinal',
-                                            format: "F-Y",
+                                            format: "Y-m-d",
                                             value: '<?=$fechafinal?>'
                                         },
                                         new WidgetTransporte({fieldLabel: 'Transporte',

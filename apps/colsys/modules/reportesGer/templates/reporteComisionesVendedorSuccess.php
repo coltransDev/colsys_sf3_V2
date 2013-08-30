@@ -61,15 +61,17 @@
        			</select>          	</td>
           <td class="listar">Año: <br />
             <select name="anio" id="anio">
-                <option value="3">2013</option>
-                <option value="2">2012</option>
-                <option value="1">2011</option>
-                <option value="0">2010</option>
-            	<option value="9">2009</option>
-              <option value="8">2008</option>
-
-              <option value="7">2007</option>
-              <option value="6">2006</option></select>          </td>
+                <option value="<?=(date("Y")%10)?>" selected><?=date("Y")?></option>
+                <?
+                for($i=(date("Y")-1);$i>=(date("Y")-5);$i--)
+                {
+                ?>
+                <option value="<?=($i%10)?>"><?=$i?></option>
+                <?
+                }
+                ?>
+            </select>          
+          </td>
           <td class="listar">Mes: <br />
             <select name="mes" id="mes">
             	<option value="%">Todos los Meses</option>

@@ -868,7 +868,7 @@ md.ca_idmodo,m.ca_idmaster
                               FROM tb_repstatus rs 
                                 INNER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) 
                               WHERE rs.ca_idetapa in ('IACAD','IMCPD') 
-                              GROUP BY ca_consecutivo, ca_fchsalida, ca_fchllegada, ca_diferencia, ca_peso,extract(YEAR from rs.ca_fchsalida) ,extract(MONTH from rs.ca_fchsalida)) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) 
+                              GROUP BY ca_consecutivo, rs.ca_fchsalida, rs.ca_fchllegada, ca_diferencia, ca_peso,extract(YEAR from rs.ca_fchsalida) ,extract(MONTH from rs.ca_fchsalida)) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) 
                     WHERE ca_impoexpo = '".Constantes::IMPO."' 
                     AND ca_transporte = '".Constantes::MARITIMO."'
                     AND ca_idcliente = ".$this->idcliente."  
@@ -909,7 +909,7 @@ md.ca_idmodo,m.ca_idmaster
                 $this->grid[$r["ca_ano1"]][$r["ca_modalidad"]][(int) ($r["ca_mes1"])]["peso"]+=$peso;
             //      []=array("diferencia"=>$r["ca_diferencia"],"peso"=>$r["ca_peso"]);
             }
-            //      echo "<pre>";print_r($this->resul);echo "</pre>";
+            //    echo "<pre>";print_r($this->resul);echo "</pre>";
         }
     }
 

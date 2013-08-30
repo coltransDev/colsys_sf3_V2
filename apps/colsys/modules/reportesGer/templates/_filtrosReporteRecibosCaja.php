@@ -6,9 +6,18 @@
  */
 
 include_component("widgets", "widgetParametros",array("caso_uso"=>"CU100"));
+include_component("widgets","widgetSucursales");
+include_component("widgets", "widgetComerciales");
 
 $tipo=$sf_data->getRaw("tipo");
 $ntipo=$sf_data->getRaw("ntipo");
+$idsucursal= $sf_data->getRaw("idsucursal");
+$sucursal= $sf_data->getRaw("sucursal");
+
+$login= $sf_data->getRaw("login");
+$nombre= $sf_data->getRaw("nombre");
+
+
 ?>
 <script language="javascript">
 var tabs = new Ext.FormPanel({
@@ -16,7 +25,7 @@ var tabs = new Ext.FormPanel({
 	border:true,
 	frame:true,
     deferredRender:false,
-	width: 900,
+	width: 1000,
 	standardSubmit: true,
         id: 'formPanel',
 	items: {
@@ -75,10 +84,26 @@ var tabs = new Ext.FormPanel({
                                                 name:'ntipo',
                                                 hiddenName:'tipo',
                                                 caso_uso:"CU100",
-                                                width:105,
+                                            width:150,
                                                 value:'<?=$ntipo?>',
                                                 hiddenValue:'<?=$tipo?>',
                                                 idvalor:"id"
+                                        }),
+                                        new WidgetSucursales({fieldLabel: 'Sucursal',
+                                            id: 'sucursal',
+                                            name: 'sucursal',
+                                            hiddenName: "idsucursal",                                                        
+                                            width:150,
+                                            value:"<?=$sucursal?>",
+                                            hiddenValue:"<?=$idsucursal?>"
+                                        }),
+                                        new WidgetComerciales({fieldLabel: 'Vendedor',
+                                            id: 'vendedor',
+                                            name: 'vendedor',                                  
+                                            hiddenName:"login",
+                                            width:150,
+                                            value:"<?=$vendedor?>",
+                                            hiddenValue:"<?=$login?>"
                                                 })
                                  ]
                              }

@@ -81,27 +81,27 @@ $resul = $sf_data->getRaw("resul");
                                     border:false,
                                     items:
                                         [
-                                        {
+                                        /*{
                                             xtype:'datefield',
                                             fieldLabel: 'Fecha Emb Ini',
                                             name : 'fechaEmbInicial',
                                             format: 'Y-m-d',
                                             value: '<?= $fechaembinicial ?>'
-                                        },
+                                        },*/
                                         {
                                             xtype:'datefield',
                                             fieldLabel: 'Fecha Arribo Ini',
                                             name : 'fechaArrInicial',
                                             format: 'Y-m-d',
                                             value: '<?= $fechaarrinicial ?>'
-                                        },
+                                        }/*,
                                         {
                                             xtype:'datefield',
                                             fieldLabel: 'Fecha Ini',
                                             name : 'fechaInicial',
                                             format: 'Y-m-d',
                                             value: '<?= $fechainicial ?>'
-                                        }
+                                        }*/
                                         ,
                                         new WidgetModalidad({fieldLabel: 'Modalidad',
                                             id: 'modalidad',
@@ -140,13 +140,13 @@ $resul = $sf_data->getRaw("resul");
                                     border:false,
                                     items:
                                         [
-                                        {
+                                        /*{
                                             xtype:'datefield',
                                             fieldLabel: 'Fecha Emb fin',
                                             name : 'fechaEmbFinal',
                                             format: 'Y-m-d',
                                             value: '<?= $fechaembfinal ?>'
-                                        },
+                                        },*/
                                         {
                                             xtype:'datefield',
                                             fieldLabel: 'Fecha Arribo fin',
@@ -154,13 +154,13 @@ $resul = $sf_data->getRaw("resul");
                                             format: 'Y-m-d',
                                             value: '<?= $fechaarrfinal ?>'
                                         },
-                                        {
+                                        /*{
                                             xtype:'datefield',
                                             fieldLabel: 'Fecha final',
                                             name : 'fechaFinal',
                                             format: 'Y-m-d',
                                             value: '<?= $fechafinal ?>'
-                                        },
+                                        },*/
                                         new WidgetLinea({fieldLabel: 'Naviera',
                                             linkTransporte: "transporte",
                                             name:"linea",
@@ -169,7 +169,6 @@ $resul = $sf_data->getRaw("resul");
                                             value:"<?= $idlinea ?>",
                                             width:300
                                         }),
-
                                         new WidgetCiudad({fieldLabel: 'destino',
                                             id: 'destino',
                                             idciudad:"destino",
@@ -184,7 +183,6 @@ $resul = $sf_data->getRaw("resul");
                                             width:120,
                                             value:"<?= $sucursal ?>",
                                             hiddenValue:"<?= $sucursal ?>"
-
                                         })
                                     ]
                                 }
@@ -201,22 +199,18 @@ $resul = $sf_data->getRaw("resul");
                     var owner=Ext.getCmp("formPanel");
                     if( tp.getActiveTab().getId()=="estadisticas"){
                         owner.getForm().getEl().dom.action='<?= url_for("reportesGer/reporteCargaEnContinuacion") ?>';
-                    }                    
-                    //alert(Ext.getCmp("incoterms").getValue());
+                    }
                     owner.getForm().submit();
                 }
             }],
         listeners:{afterrender:function(){
-
                 linea_sel='<?= $linea ?>';
                 idlinea_sel='<?= $idlinea ?>';
                 if(linea_sel!="")
                 {
                     Ext.getCmp("linea").setValue(idlinea_sel);
                     $("#linea").val(linea_sel);
-
                 }
-
                 agente_sel='<?= $agente ?>';
                 idagente_sel='<?= $idagente ?>';
                 if(agente_sel!="")
@@ -224,7 +218,6 @@ $resul = $sf_data->getRaw("resul");
                     Ext.getCmp("agente").setValue(idagente_sel);
                     $("#agente").val(agente_sel);
                 }
-
                 suc_agente_sel='<?= $sucursalagente ?>';
                 idsucagente_sel='<?= $idsucursalagente ?>';
                 if(suc_agente_sel!="")
@@ -232,14 +225,11 @@ $resul = $sf_data->getRaw("resul");
                     Ext.getCmp("sucursalagente").setValue(idsucagente_sel);
                     $("#sucursalagente").val(suc_agente_sel);
                 }
-        
             }
-
         }
     });
     tabs.render("container");
 </script>
-
 <?
     if ($opcion) {
 ?>
@@ -248,12 +238,12 @@ $resul = $sf_data->getRaw("resul");
             <br>
             <h3>Estadisticas de cargas  <br>
 <?
-        if ($fechainicial && $fechafinal) {
+        /*if ($fechainicial && $fechafinal) {
             echo " fechas de Creacion referencia: " . $fechainicial . " - " . $fechafinal;
         }
         if ($fechaembinicial && $fechaembfinal) {
             echo " fechas de Embarque: " . $fechaembinicial . " - " . $fechaembfinal;
-        }
+        }*/
         if ($fechaarrinicial && $fechaarrfinal) {
             echo " fechas de Arribo: " . $fechaarrinicial . " - " . $fechaarrfinal;
         }
@@ -283,8 +273,10 @@ $resul = $sf_data->getRaw("resul");
         <td>Referencia</td>
         <td>Origen</td>
         <td>Destino</td>
+        <td>Destino Final</td>
         <td>Cliente</td>
         <td>Doc.Transporte</td>
+        <td>No. DTM</td>
         <td>Piezas</td>
         <td>Peso</td>
         <td>Volumen</td>
@@ -307,8 +299,6 @@ $resul = $sf_data->getRaw("resul");
         $nitem = 1;
         $totales = array();
         foreach ($resul as $r) {
-            //print_r($r);
-
             $teus+=$r["teus"];
             $totales["modalidad"][$r["ca_modalidad"]]["origen"][$r["ori_ca_nombre"]]+=$r["teus"];
             $totales["modalidad"][$r["ca_modalidad"]]["destino"][$r["des_ca_ciudad"]]+=$r["teus"];
@@ -341,6 +331,43 @@ $resul = $sf_data->getRaw("resul");
                 <td><a href="/colsys_php/inosea.php?boton=Consultar&id=<?= $r["ca_referencia"] ?>" target="_blank"><?= $r["ca_referencia"] ?></td>
                 <td><?= $r["ori_ca_ciudad"] ?></td>
                 <td><?= $r["des_ca_ciudad"] ?></td>
+                <td><?= $r["desfin_ca_ciudad"] ?></td>                
+                <td><?= $r["ca_compania"] ?></td>
+                <td><?= $r["ca_hbls"] ?></td>
+                <td><?= $r["nodtm"] ?></td>
+                <td align="right"><?= $piezas ?></td>
+                <td align="right"><?= $peso ?></td>
+                <td align="right"><?= $volumen ?></td>
+                <td><?= $r["ca_consecutivo"] ?></td>
+                <td><?= $r["ca_bodega"] ?></td>
+                <td><?= $r["ca_operador"] ?></td>
+                <td><?= $r["ca_seguro"] ?></td>
+                <td><?= $r["ca_colmas"] ?></td>
+                <td><?= $r["ca_sucursal"] ?></td>
+            </tr>
+<?
+            $ref = $r["ca_referencia"];
+        }
+?>
+            <tr><td><br><br><br></td></tr>
+<?
+        foreach ($resul2 as $r) {
+            $tvolumen+=$r["ca_volumen"];
+            $volumen = number_format($r["ca_volumen"], 2);
+            $tpiezas+=$r["ca_numpiezas"];
+            $piezas = number_format($r["ca_numpiezas"], 0);
+            $tpeso+=$r["ca_peso"];
+            $peso = number_format($r["ca_peso"], 2);
+?>
+            <tr>
+                <td><?= $nitem++ ?></td>
+                <td><?= $r["ca_fchembarque"] ?></td>
+                <td><?= $r["ca_fcharribo"] ?></td>
+                <td><?= $r["ca_fchreferencia"] ?></td>
+                <td><a href="/colsys_php/inosea.php?boton=Consultar&id=<?= $r["ca_referencia"] ?>" target="_blank"><?= $r["ca_referencia"] ?></td>
+                <td><?= $r["ca_ciuorigen"] ?></td>
+                <td><?= $r["ca_ciudestino"] ?></td>
+                <td><?= $r["desfin_ca_ciudad"] ?></td>                
                 <td><?= $r["ca_compania"] ?></td>
                 <td><?= $r["ca_hbls"] ?></td>
                 <td align="right"><?= $piezas ?></td>
@@ -354,7 +381,7 @@ $resul = $sf_data->getRaw("resul");
                 <td><?= $r["ca_sucursal"] ?></td>
             </tr>
 <?
-            $ref = $r["ca_referencia"];
+            
         }
 ?>
         <tr><td colspan="10"><b>Totales</b></td>

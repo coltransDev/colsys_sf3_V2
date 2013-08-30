@@ -26,13 +26,13 @@ if( $fechainicial && $fechafinal ){
 <br />
 <br />
 </div>
-<table class="tableList" width="900px" border="1" id="mainTable" align="center" id="panel1">
-    <tr><th>Fecha</th><th>Referencia</th><th>Fecha Factura</th><th>Factura</th><th>Valor</th><th>Cliente</th></tr>
+<table class="tableList" width="1000px" border="1" id="mainTable" align="center" id="panel1">
+    <tr><th>Fecha</th><th>Referencia</th><th>Fecha Factura</th><th>Factura</th><th>Valor</th><th>Cliente</th><th>Sucursal</th><th>Vendedor</th></tr>
         <?        
         foreach($ref as $key=> $r)
         {
         ?>
-    <tr><td><?=$r["ca_fchcreado"]?></td><td><?=$r["ca_referencia"]?></td><td><?=$r["ca_fchfactura"]?></td><td><?=$r["ca_factura"]?></td><td align="right"><?=  Utils::formatNumber($r["ca_valor"],0)?></td><td><?=$r["ca_compania"]?></td></tr>
+    <tr><td><?=Utils::parseDate($r["ca_fchcreado"], 'Y-m-d')?></td><td><?=$r["ca_referencia"]?></td><td><?=$r["ca_fchfactura"]?></td><td><?=$r["ca_factura"]?></td><td align="right"><?=  Utils::formatNumber($r["ca_valor"],0)?></td><td><?=$r["ca_compania"]?></td><td><?=$r["ca_sucursal"]?></td><td><?=$r["ca_vendedor"]?></td></tr>
         <?
         }
         ?>

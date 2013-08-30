@@ -30,6 +30,7 @@ $indicador = $sf_data->getRaw("indicador");
     </div><br />
 <?
     $data=array();
+    $dataEnd=array();
     $data_peso=array();
     $serieX = array();
 
@@ -37,10 +38,20 @@ $indicador = $sf_data->getRaw("indicador");
         foreach($gridMod as $mes =>$g){
             if(!in_array($mes, $serieX))
                 $serieX[$mes]=Utils::mesLargo ($mes);
-            $data[$modalidad][]=($g["diferencia"]/$g["conta"])?(round($g["diferencia"]/$g["conta"])):0;
+            $data["FCL"][$mes]= (isset($data["FCL"][$mes]))?$data["FCL"][$mes]:null;
+            $data["LCL"][$mes]= (isset($data["LCL"][$mes]))?$data["LCL"][$mes]:null;
+            $data[$modalidad][$mes]=($g["diferencia"]/$g["conta"])?(round($g["diferencia"]/$g["conta"])):0;
             $data_peso[$mes]+=$g["peso"];
         }
     }
+    
+    //echo "<pre>";print_r($data);echo "</pre>";
+    foreach($data as $mod => $mes){
+        foreach($mes as $km => $vm){
+                $dataEnd[$mod][] = $vm;
+        }
+    }
+    //echo "<pre>";print_r($dataEnd);echo "</pre>";
     ksort($serieX); // Organiza los datos por el key
     
     foreach($serieX as $s){
@@ -48,8 +59,10 @@ $indicador = $sf_data->getRaw("indicador");
     }
     $serieX=$serieM;
     
-    $dataJSON[]=array("name"=>"FCL","data"=>$data["FCL"]);
-    $dataJSON[]=array("name"=>"LCL","data"=>$data["LCL"]);
+    $dataJSON[]=array("name"=>"FCL","data"=>$dataEnd["FCL"]);
+    $dataJSON[]=array("name"=>"LCL","data"=>$dataEnd["LCL"]);
+    
+    //echo json_encode($dataJSON);
 ?>
     <table align="center" width="70%" border="3" class="box">
         <tr>
@@ -144,7 +157,6 @@ $indicador = $sf_data->getRaw("indicador");
 <?
     $serieX = array();
     $dataJSON=array();
-    
     
     foreach($indicador as $mes => $d){
         $total=$d["cumplimiento"]+$d["incumplimiento"];

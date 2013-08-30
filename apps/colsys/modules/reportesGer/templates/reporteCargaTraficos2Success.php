@@ -3,11 +3,12 @@ include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetPais");
 include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetLinea");
-
 include_component("widgets", "widgetMultiIncoterms");
 include_component("widgets", "widgetAgente");
 include_component("widgets", "widgetCliente");
 include_component("widgets", "widgetSucursalAgente");
+include_component("widgets", "widgetImpoexpo");
+
 $agente = $sf_data->getRaw("agente");
 $linea = $sf_data->getRaw("linea");
 $sucursalagente = $sf_data->getRaw("sucursalagente");
@@ -62,13 +63,7 @@ $resul = $sf_data->getRaw("resul");
                                     xtype:'hidden',
                                     name:"opcion",
                                     value:"buscar"
-                                },
-                                {
-                                    xtype:"hidden",
-                                    id: 'impoexpo',
-                                    name: 'impoexpo',
-                                    value:'<?= Constantes::IMPO ?>'
-                                },
+                                },                                
                                 {
                                     xtype:"hidden",
                                     id: 'transporte',
@@ -100,7 +95,12 @@ $resul = $sf_data->getRaw("resul");
                                             name : 'fechaInicial',
                                             format: 'Y-m-d',
                                             value: '<?= $fechainicial ?>'
-                                        }
+                                        },
+                                        new WidgetImpoexpo({fieldLabel: 'Impoexpo',
+                                                id: 'impoexpo',
+                                                name:'impoexpo',                                                
+                                                value:'<?=$impoexpo?>'
+                                               })
                                         ,
                                         new WidgetModalidad({fieldLabel: 'Tipo Envio',
                                             id: 'modalidad',
@@ -117,7 +117,7 @@ $resul = $sf_data->getRaw("resul");
                                             hiddenName: "idpais_origen",
                                             pais:"<?= $pais_origen ?>",
                                             value:"<?= $idpais_origen ?>"
-                                        }),                                    
+                                        }),
                                         new WidgetPais({title: 'Pais destino',
                                             fieldLabel: 'Pais destino',
                                             id: 'pais_destino',
@@ -134,9 +134,7 @@ $resul = $sf_data->getRaw("resul");
                                             width:350,
                                             value:"<?= $agente ?>",
                                             hiddenValue:"<?= $idagente ?>"
-                                                      
                                         }),
-
                                         new WidgetMultiIncoterms({title: 'Terminos',
                                             fieldLabel:"Incoterms",
                                             id: 'incoterms',
@@ -235,7 +233,7 @@ $resul = $sf_data->getRaw("resul");
                     var tp = Ext.getCmp("tab-panel");                    
                     var owner=Ext.getCmp("formPanel");
                     if( tp.getActiveTab().getId()=="estadisticas"){
-                        owner.getForm().getEl().dom.action='<?= url_for("reportesGer/reporteCargaTraficos") ?>';
+                        owner.getForm().getEl().dom.action='<?= url_for("reportesGer/reporteCargaTraficos2") ?>';
                     }
                     owner.getForm().submit();
                 }
@@ -318,10 +316,9 @@ if ($opcion) {
         <br />
     </div>
     <table class="tableList" width="900px" border="1" id="mainTable" align="center">
-        <tr><td>No</td><td>Fecha<br>Embarque</td><td>Fecha<br>Arribo</td><td>Fecha<br>Referencia</td><td>Referencia</td><td>Origen</td><td>Destino</td><td>Linea</td><td>Agente</td><td>Contenedores</td><td>Teus</td><td>Piezas</td><td>Peso</td><td>Volumen</td><td>Incoterms</td></tr>
+        <tr><td>No</td><td>Fecha<br>Embarque</td><td>Fecha<br>Arribo</td><td>Fecha<br>Referencia</td><td>Referencia</td><td>Origen</td><td>Destino</td><td>Linea</td><td>Contenedores</td><td>Teus</td><td>Piezas</td><td>Peso</td><td>Volumen</td></tr>
         <?
-        $ref = $inco=$agen="";
-        $idcon="";
+        $ref = "";
         $tvolumen = 0;
         $tpiezas = 0;
         $tpeso = 0;
@@ -334,30 +331,18 @@ if ($opcion) {
         foreach ($resul as $r) {
             //print_r($r);
 
-            if ($r["ca_referencia"] == $ref && $idcon == $r["ca_idconcepto"])
-            {
-                $r["teus"]="";
-            }
             $teus+=$r["teus"];
             $totales["modalidad"][$r["ca_modalidad"]]["origen"][$r["ori_ca_nombre"]]["teus"]+=$r["teus"];
 
             $totales["modalidad"][$r["ca_modalidad"]]["origen"][$r["ori_ca_nombre"]][$r["ca_liminferior"]]+=$r["ncontenedores"];
             $totales["modalidad"][$r["ca_modalidad"]]["destino"][$r["des_ca_ciudad"]][$r["ca_liminferior"]]+=$r["ncontenedores"];
             //$totales["modalidad"][$r["ca_modalidad"]]["destino"][$r["des_ca_ciudad"]]["peso"]+=$r["peso"];
-            if ($r["ca_referencia"] == $ref && $r["ca_incoterms"]==$inco && $r["ca_idagente"]==$agen  ) {
+            if ($r["ca_referencia"] == $ref) {
                 $volumen = "";
                 $piezas = "";
                 $peso = "";
-                $teus="";
-                $incoterms="";
-                continue;
-                /*$tvolumen+=$r["volumen"];
-                $volumen = number_format($r["volumen"], 2);
-                $tpiezas+=$r["piezas"];
-                $piezas = number_format($r["piezas"], 0);
-                $tpeso+=$r["peso"];
-                $peso = number_format($r["peso"], 2);*/
             } else {
+
                 $tvolumen+=$r["volumen"];
                 $volumen = number_format($r["volumen"], 2);
                 $tpiezas+=$r["piezas"];
@@ -367,8 +352,6 @@ if ($opcion) {
                 $nreferencias++;
                 $arrtmp = explode("-", $r["ca_fchreferencia"]);
                 $arrtmp1 = explode(".", $r["ca_referencia"]);
-                $teus=$r["teus"];
-                $incoterms=$r["ca_incoterms"];
 
 
                 if ($arrtmp1[2] == 1)
@@ -380,38 +363,26 @@ if ($opcion) {
             $nhbls+=$r["nhbls"];
             //if($volumen)
             $totales["años"][$arrtmp[0]][$arrtmp1[2]]["volumen"]+=$volumen;
-            if ($r["ca_referencia"] != $ref)
-            {
-                $totales["años"][$arrtmp[0]][$arrtmp1[2]]["teus"]+=$r["teus"];
-                $bgcolor="";
-            }
-            else
-                $bgcolor="#EAEAEA";
-           
-            
+            $totales["años"][$arrtmp[0]][$arrtmp1[2]]["teus"]+=$r["teus"];
             ?>
-        <tr style="background-color: <?=$bgcolor?>">
+            <tr>
                 <td><?= $nitem++ ?></td>
-                <td><?= $r["ca_fchembarque"] ?></td>
-                <td><?= $r["ca_fcharribo"] ?></td>
+                <td><?= $r["ca_fchsalida"] ?></td>
+                <td><?= $r["ca_fchllegada"] ?></td>
                 <td><?= $r["ca_fchreferencia"] ?></td>
-                <td><a href="/colsys_php/inosea.php?boton=Consultar&id=<?= $r["ca_referencia"] ?>" target="_blank"><?= $r["ca_referencia"] ?></td>
+                
+                <td><a href="/ino/verReferencia/modo/<?= $r["ca_idmodo"]?>/idmaster/<?= $r["ca_idmaster"] ?>" target="_blank"><?= $r["ca_referencia"] ?></td>
                 <td><?= $r["ori_ca_ciudad"] ?></td>
                 <td><?= $r["des_ca_ciudad"] ?></td>
                 <td><?= $r["ca_nombre"] ?></td>
-                <td><?= $r["agente"] ?></td>
                 <td><?= $r["ncontenedores"] ?>- <?= $r["ca_concepto"] ?></td>
-                <td align="right"><?= $teus ?>
+                <td align="right"><?= $r["teus"] ?>
                 </td><td align="right"><?= $piezas ?></td>
                 <td align="right"><?= $peso ?></td>
                 <td align="right"><?= $volumen ?></td>
-                <td><?= $incoterms ?></td>
             </tr>
             <?
             $ref = $r["ca_referencia"];
-            $idcon=$r["ca_idconcepto"];
-            $inco=$r["ca_incoterms"];
-            $agen=$r["ca_idagente"];
         }
         ?>
         <tr><td colspan="9">Totales</td>
@@ -441,14 +412,12 @@ if ($opcion) {
                         }
                         ?>
                     </table>
-
                 </div>
                 <div style="float: left;width: 60%">
                     <table width="98%" align="right" class="tableList">
                         <tr><th colspan="2">Resumen x Modalidad </th></tr>
                         <tr><td>No. Hbls</td><td><?= $nhbls ?></td></tr>
                         <tr><td>No. Master</td><td><?= $nreferencias ?></td></tr>
-
                         <?
                         $totales1 = $totales["modalidad"];
                         //print_r($totales1);
