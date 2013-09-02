@@ -18,6 +18,8 @@ class inoReportesActions extends sfActions {
      */
     public function executeIndex(sfWebRequest $request) {
         
+        $this->empresa=sfConfig::get('app_branding_name');
+        
     }
 
     /**
@@ -728,7 +730,7 @@ where ca_impoexpo='INTERNO' and ia.ca_reccaja!=''
                 
                 if(intval($r["comision_cobrada"])!=  intval($r["comision_ino"]))
                     $this->datosIno[$r["ca_vendedor"]][]=$r;
-            }            
+            }
         }
         
         $sql="Select * from ino.tb_comprobantes where ca_idtipo=11 ";
