@@ -70,6 +70,7 @@ class inoReportesActions extends sfActions {
         $login = $request->getParameter("login");
 
         $aa = $request->getParameter("aa");
+        $estado = $request->getParameter("estado");
         
         $nmm=$request->getParameter("nmes");
         
@@ -120,6 +121,120 @@ class inoReportesActions extends sfActions {
 
         if (count($mm)>0) {
             $q->andWhereIn("SUBSTR(m.ca_referencia,8,2)",$mm);
+        }
+        
+        if ($login) {
+            $q->addWhere("h.ca_vendedor = ? ", $login);
+        }
+
+        if ($estado) {
+            if($estado=="Abierto"){
+                $q->addWhere("m.ca_fchcerrado IS NULL");
+            }else{
+                $q->addWhere("m.ca_fchcerrado IS NOT NULL");
+            }
+        }
+
+        /*if ($aa) {
+            $q->addWhere("SUBSTR(m.ca_referencia,15,1) = ? ", $aa % 10);
+        }*/
+        //echo $q->getSqlQuery();
+        $this->refs = $q->setHydrationMode(Doctrine::HYDRATE_ARRAY)->execute();
+    }
+
+    public function executeCuadroInoComplemento(sfWebRequest $request) {        
+        
+    }
+
+    /**
+     *
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeCuadroInoComplementoResult(sfWebRequest $request) {
+
+        $aa = $request->getParameter("aa");
+        $q = Doctrine::getTable("InoMaster")
+                ->createQuery("m")
+                ->innerJoin("m.InoHouse h")
+                ->innerJoin("m.Origen o")
+                ->innerJoin("m.Destino d")
+                ->innerJoin("m.IdsProveedor p")
+                ->innerJoin("p.Ids i")
+                ->leftJoin("m.IdsAgente a")
+                ->leftJoin("a.Ids ia")
+                ->leftJoin("m.InoViCosto cost")
+                ->leftJoin("m.InoViIngreso ing")
+                ->leftJoin("m.InoViDeduccion ded")
+                ->leftJoin("m.InoViUtilidad uti")
+                ->leftJoin("m.InoViUnidadesMaster uni")
+                ->leftJoin("m.InoViTeus te")
+                ->select("m.ca_idmaster, m.ca_referencia, uni.ca_numhijas, uni.ca_numpiezas, uni.ca_peso, uni.ca_volumen, 
+                            o.ca_ciudad, d.ca_ciudad, p.ca_idproveedor, i.ca_nombre,a.ca_idagente,ia.ca_nombre, te.ca_valor,
+                            cost.ca_valor, cost.ca_venta, ing.ca_valor, ded.ca_valor, uti.ca_valor, m.ca_fchcerrado, m.ca_fchliquidado, m.ca_observaciones")
+                ->addWhere("SUBSTR(m.ca_referencia,10,2) = ? ", $aa%100);
+
+        $impoexpo = $request->getParameter("impoexpo");
+        $transporte = $request->getParameter("transporte");
+        $idlinea = $request->getParameter("idlinea");
+        $idtrafico = $request->getParameter("idtrafico");
+        $modalidad = $request->getParameter("modalidad");
+        $idagente = $request->getParameter("idagente");
+        $origen = $request->getParameter("origen");
+        $destino = $request->getParameter("destino");
+        $login = $request->getParameter("login");
+
+        $aa = $request->getParameter("aa");
+        
+        $nmm=$request->getParameter("nmes");
+        
+        foreach($nmm as $m)
+        {
+            if($m!="")
+                $mm[]=str_pad($m, 2, "0", STR_PAD_LEFT);
+        }
+
+        $q->addWhere("m.ca_fchanulado IS NULL ");
+
+
+        if ($impoexpo) {
+            $q->addWhere("m.ca_impoexpo = ? ", $impoexpo);
+        }
+
+        if ($transporte) {
+            $q->addWhere("m.ca_transporte = ? ", $transporte);
+        }
+
+        if ($modalidad) {
+            $q->addWhere("m.ca_modalidad = ? ", $modalidad);
+        }
+
+        if ($origen) {
+            $q->addWhere("o.ca_ciudad = ? ", $origen);
+        }
+
+        if ($destino) {
+            $q->addWhere("d.ca_ciudad = ? ", $destino);
+        }
+
+        if ($idtrafico) {
+            if ($impoexpo == Constantes::EXPO) {
+                $q->addWhere("m.ca_destino = ? ", $idtrafico);
+            } else {
+                $q->addWhere("m.ca_origen = ? ", $idtrafico);
+            }
+        }
+
+        if ($idlinea) {
+            $q->addWhere("m.ca_idlinea = ? ", $idlinea);
+        }
+
+        if ($idagente) {
+            $q->addWhere("m.ca_idagente = ? ", $idagente);
+        }
+
+        if (count($mm)>0) {
+            $q->andWhereIn("SUBSTR(m.ca_referencia,7,2)",$mm);
         }
         
         if ($login) {
