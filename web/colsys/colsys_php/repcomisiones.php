@@ -242,7 +242,8 @@ require_once("menu.php");
        $ref_mem = $rs->Value('ca_referencia');
        $nom_cli = $rs->Value('ca_compania');
        $hbl_cli = $rs->Value('ca_hbls');
-       $utl_cas = round($rs->Value('ca_volumen') * $utl_cbm * $rs->Value('ca_porcentaje') / 100, 0);
+       $utl_net = ($rs->Value('ca_vlrutilidad_liq') != 0) ? $rs->Value('ca_vlrutilidad_liq') : $rs->Value('ca_volumen') * $utl_cbm;
+       $utl_cas = round($utl_net * $rs->Value('ca_porcentaje') / 100, 0);
        $utl_con+= $utl_cas;
        $utl_par = round(($rs->Value('ca_facturacion_r')-$rs->Value('ca_deduccion_r')-$rs->Value('ca_utilidad_r'))/$rs->Value('ca_volumen_r')*$rs->Value('ca_volumen'),0);
        $utl_ven+= $utl_par;
@@ -257,7 +258,7 @@ require_once("menu.php");
        echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($rs->Value('ca_valor'))."</TD>";
        echo "  <TD Class=listar  style='font-size: 9px;$back_col'>".$rs->Value('ca_estado')."</TD>";
        echo "  <TD Class=valores style='font-size: 9px;$back_col'>".$rs->Value('ca_volumen')."</TD>";
-       echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($utl_par)."</TD>";
+       echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($utl_par).(($rs->Value('ca_vlrutilidad_liq') != 0)?"<BR />".number_format($rs->Value('ca_vlrutilidad_liq')):"")."</TD>";
        echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($utl_cas)."</TD>";
        $mul_lin = false;
        $arr_fac = array();
@@ -484,7 +485,8 @@ require_once("menu.php");
             $tot_sbr = 0;
             while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
                 $utl_cbm = ($rs->Value('ca_facturacion_r') - $rs->Value('ca_deduccion_r') - $rs->Value('ca_utilidad_r')) / $rs->Value('ca_volumen_r');
-                $com_cas = round($rs->Value('ca_volumen') * $utl_cbm * $rs->Value('ca_porcentaje') / 100,0);
+                $utl_net = ($rs->Value('ca_vlrutilidad_liq') != 0) ? $rs->Value('ca_vlrutilidad_liq') : $rs->Value('ca_volumen') * $utl_cbm;
+                $com_cas = round($utl_net * $rs->Value('ca_porcentaje') / 100, 0);
                 $com_sbr = round($rs->Value('ca_sbrcomision') * $rs->Value('ca_porcentaje') / 100,0);
                 if ($com_cas-$rs->Value('ca_vlrcomisiones') == 0 and $com_sbr-$rs->Value('ca_sbrcomisiones') == 0) {
                     $rs->MoveNext();

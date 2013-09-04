@@ -163,6 +163,7 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
     $con_tot = 0;
     while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
         $utl_cbm = ($rs->Value('ca_facturacion_r') - $rs->Value('ca_deduccion_r') - $rs->Value('ca_utilidad_r')) / $rs->Value('ca_volumen_r');
+        $utl_mem = ($rs->Value('ca_vlrutilidad_liq') != 0)?$rs->Value('ca_vlrutilidad_liq'):$rs->Value('ca_volumen') * $utl_cbm;
         if ($log_ven != $rs->Value('ca_login')) {
             if (!$us->Open("select ca_nombre from control.tb_usuarios where ca_login = '" . $rs->Value('ca_login') . "'")) {
                 echo "<script>alert(\"" . addslashes($us->mErrMsg) . "\");</script>";
@@ -186,11 +187,11 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
         echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . number_format($rs->Value('ca_valor')) . "</TD>";
         echo "  <TD Class=listar  style='font-size: 9px;$back_col'>" . $rs->Value('ca_estado') . "</TD>";
         echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . $rs->Value('ca_volumen') . "</TD>";
-        echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . number_format($rs->Value('ca_volumen') * $utl_cbm) . "</TD>";
+        echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . number_format($utl_mem) . "</TD>";
         $ref_mem = $rs->Value('ca_referencia');
         $nom_cli = $rs->Value('ca_compania');
         $hbl_cli = $rs->Value('ca_hbls');
-        $utl_con+= $rs->Value('ca_volumen') * $utl_cbm;
+        $utl_con+= $utl_mem;
         $mul_lin = false;
         $arr_fac = array();
         while ($ref_mem == $rs->Value('ca_referencia') and $nom_cli == $rs->Value('ca_compania') and $hbl_cli == $rs->Value('ca_hbls') and !$rs->Eof()) {
@@ -398,7 +399,8 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
                 $nom_cli = '';
                 while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
                     $utl_cbm = ($rs->Value('ca_facturacion_r') - $rs->Value('ca_deduccion_r') - $rs->Value('ca_utilidad_r')) / $rs->Value('ca_volumen_r');
-                    $com_cas = round($rs->Value('ca_volumen') * $utl_cbm * $rs->Value('ca_porcentaje') / 100, 0);
+                    $utl_net = ($rs->Value('ca_vlrutilidad_liq') != 0) ? $rs->Value('ca_vlrutilidad_liq') : $rs->Value('ca_volumen') * $utl_cbm;
+                    $com_cas = round($utl_net * $rs->Value('ca_porcentaje') / 100, 0);
                     $com_sbr = round($rs->Value('ca_sbrcomision') * $rs->Value('ca_porcentaje') / 100, 0);
                     if ($com_cas - $rs->Value('ca_vlrcomisiones') == 0 and $com_sbr - $rs->Value('ca_sbrcomisiones') == 0) {
                         $rs->MoveNext();

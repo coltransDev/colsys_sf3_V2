@@ -783,7 +783,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             echo "  <TD Class=listar><B>Reporte Neg.:</B><BR>" . $cl->Value('ca_consecutivo') . " $pdf_icon</TD>";
                             echo "  <TD Class=listar><B>Cotizacion :</B><BR>" . $tm->Value('ca_consecutivo') . " $pdf_coti</TD>";
                             echo "  <TD Class=listar COLSPAN=2><B>Proveedor:</B><BR>" . $cl->Value('ca_proveedor') . "</TD>";
-                            echo "  <TD Class=listar><B>Utilidad x Cliente:</B><BR>" . number_format($utl_cbm * $cl->Value('ca_volumen')) . "</TD>";
+                            echo "  <TD Class=listar><B>Utilidad x Cliente:</B><BR>" . number_format($utl_cbm * $cl->Value('ca_volumen')) . (($cl->Value('ca_vlrutilidad_liq')!=0)?"<BR><B>Utilidad Liquidada:</B><BR />" . number_format($cl->Value('ca_vlrutilidad_liq')):"") ."</TD>";
                             echo "  <TD Class=listar><B>Hbl Final: <IMG style='cursor:pointer;$level0' src='./graficos/fileopen.png' alt='Agregar Copia de Hbl Definitivo' border=0 onclick='javascript:subir_hbl(\"" . $cl->Value('ca_referencia') . "\",\"" . $cl->Value('ca_hbls') . "\")'>";
                             $i = 1;
                             foreach ($docTrans as $docTran) {
