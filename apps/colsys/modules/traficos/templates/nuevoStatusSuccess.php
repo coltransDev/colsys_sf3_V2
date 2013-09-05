@@ -188,12 +188,11 @@ var mostrar=function( oid ){
 			?>
 			case '<?=$etapa->getCaIdetapa()?>':
 				var val = '<?=str_replace("\n", "<br />", $etapa->getCaIntro())?>';
-				document.form1.introduccion.value = val.split("<br />").join("\n");
-				
+				document.form1.introduccion.value = val.split("<br />").join("\n");				
 				break;
-			<?
+		<?
 			}
-		}
+		}        
 		if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
 		?>
 		case 'EECEM':
@@ -212,8 +211,15 @@ var mostrar=function( oid ){
 			document.form1.introduccion.value = val.split("<br />").join("\n");				
 			break;
 	}
-	
-	
+	<?
+    if($_REQUEST["introduccion"]!="")
+        {
+    ?>
+            var val = '<?=str_replace("\n", "<br />", $_REQUEST["introduccion"])?>';
+            document.form1.introduccion.value = val.split("<br />").join("\n");
+    <?
+        }
+	?>
 	if(value=="IMETA"){
         document.getElementById("prog_seguimiento").checked = false;
         crearSeguimiento();
