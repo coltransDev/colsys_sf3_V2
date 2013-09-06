@@ -282,9 +282,10 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
 
                 $ano = base64_decode($var);
                 $annos_mem = '';
-                for ($i = 9; $i <= $ano - 2000; $i++) {
+                for ($i = 2; $i <= substr($ano, -1); $i++) {
                     $annos_mem.="'" . substr($i, -1) . "',";
                 }
+                
                 $annos_mem = substr($annos_mem, 0, strlen($annos_mem) - 1);
                 $condicion = "substr(ca_referencia,15)::text in ($annos_mem) and ca_login like '$usuario' and ca_estado <> 'Abierto' ";
                 $condicion.= "and (CASE WHEN ca_observaciones = 'Contenedores' and ca_fchpago is not null or ca_observaciones != 'Contenedores' THEN true ELSE false END)";
