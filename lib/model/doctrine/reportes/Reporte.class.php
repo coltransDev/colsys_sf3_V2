@@ -197,7 +197,7 @@ class Reporte extends BaseReporte {
      * Author: Andres Botero
      */
 
-    public function getProveedoresStr($dir=false, $separador=" - ") {
+    public function getProveedoresStr($dir=false) {
 
         if ($this->proveedoresStr == null) {
             $proveedoresStr = "";
@@ -205,7 +205,7 @@ class Reporte extends BaseReporte {
             if ($proveedores) {
                 foreach ($proveedores as $proveedor) {
                     if ($proveedoresStr) {
-                        $proveedoresStr.=$separador;
+                        $proveedoresStr.=" - ";
                     }
                     $proveedoresStr.= $proveedor->getCaNombre().(($dir!=false)?"<br>".htmlentities($proveedor->getCaDireccion()):"");
                 }
@@ -531,6 +531,32 @@ class Reporte extends BaseReporte {
                         ->addWhere("g.ca_tipo = ? and ca_idreporte=?", array("2",$this->getCaIdreporte()))
                         ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
                         ->execute();
+            if($nreg>0)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    
+     /*
+     * Retorna un boolean true o false para indicar si posee seguro
+     * @author Mauricio Quinche
+     */
+    public function getEsSeguro() {
+        if ($this->getCaSeguro() == "Sí") {        
+            return true;
+        }
+        else
+        {
+            $nreg = Doctrine::getTable("RepGasto")
+                            ->createQuery("r")
+                            ->select("count(*) as nreg")
+                            ->addWhere("r.ca_idreporte = ? ", $this->getCaIdreporte())
+                            ->addWhere("r.ca_idrecargo=652")
+                            ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                            ->execute();            
             if($nreg>0)
             {
                 return true;
@@ -961,12 +987,14 @@ class Reporte extends BaseReporte {
      */
 
     public function getUsuariosOperativos() {
-
+        $usuario=new Usuario();
+        
         $usuario = Doctrine::getTable("Usuario")->find($this->getCaUsucreado());
         $q = Doctrine::getTable("Usuario")
                         ->createQuery("u")
                         ->select("u.*,p.ca_perfil")
                         ->innerJoin("u.UsuarioPerfil p")
+                        ->innerJoin("u.Sucursal s")
                         ->where("u.ca_activo = ?", true);
 
         $global = $this->getCliente()->getProperty("cuentaglobal");
@@ -988,31 +1016,37 @@ class Reporte extends BaseReporte {
                     }
                 }
             }
-            $q->addWhere("u.ca_idsucursal = ?", $usuario->getCaIdsucursal());
+        //    $q->addWhere("u.ca_idsucursal = ?", $usuario->getCaIdsucursal());
+            $q->addWhere("s.ca_nombre = ?", $usuario->getSucursal()->getCaNombre());
+            
         } 
         else if ($this->getCaImpoexpo() == Constantes::EXPO ) {
             $q->addWhere("p.ca_perfil = ?", "operativo-expo");
         }
         else if ($this->getCaImpoexpo() == Constantes::TRIANGULACION) {
             if ($global) {                
-                $q->addWhere("(p.ca_perfil = ? and u.ca_idsucursal = ?) or p.ca_perfil=?", array("cuentas-globales",$usuario->getCaIdsucursal(),"operativo-expo"));
+                $q->addWhere("(p.ca_perfil = ? and s.ca_nombre = ?) or p.ca_perfil=?", array("cuentas-globales",$usuario->getSucursal()->getCaNombre(),"operativo-expo"));
             } else {
                 $consolidar = $this->getCliente()->getProperty("consolidar_comunicaciones");
                 if($consolidar)
                 {                    
-                    $q->addWhere("((p.ca_perfil = ? or p.ca_perfil = ?) and u.ca_idsucursal = ?) or p.ca_perfil=?", array("operativo-traficos","operativo-aereo",$usuario->getCaIdsucursal(),"operativo-expo"));
+                    $q->addWhere("((p.ca_perfil = ? or p.ca_perfil = ?) and s.ca_nombre = ?) or p.ca_perfil=?", array("operativo-traficos","operativo-aereo",$usuario->getSucursal()->getCaNombre(),"operativo-expo"));
                 }
                 else
                 {
                     if ($this->getCaTransporte() == Constantes::MARITIMO) {
-                        $q->addWhere("(p.ca_perfil = ? and u.ca_idsucursal = ?) or p.ca_perfil=?", array("operativo-traficos",$usuario->getCaIdsucursal(),"operativo-expo"));
+                        //$q->addWhere("(p.ca_perfil = ? and u.ca_idsucursal = ?) or p.ca_perfil=?", array("operativo-traficos",$usuario->getCaIdsucursal(),"operativo-expo"));
+                        $q->addWhere("(p.ca_perfil = ? and s.ca_nombre = ?) or p.ca_perfil=?", array("operativo-traficos",$usuario->getSucursal()->getCaNombre(),"operativo-expo"));
                     } else {
-                        $q->addWhere("(p.ca_perfil = ? and u.ca_idsucursal = ?) or p.ca_perfil=?", array("operativo-aereo",$usuario->getCaIdsucursal(),"operativo-expo"));
+                        //$q->addWhere("(p.ca_perfil = ? and u.ca_idsucursal = ?) or p.ca_perfil=?", array("operativo-aereo",$usuario->getCaIdsucursal(),"operativo-expo"));
+                        $q->addWhere("(p.ca_perfil = ? and s.ca_nombre = ?) or p.ca_perfil=?", array("operativo-aereo",$usuario->getSucursal()->getCaNombre(),"operativo-expo"));
+                        
                     }
                 }
             }
             //$q->addWhere("u.ca_idsucursal = ?", $usuario->getCaIdsucursal());
         }
+        //echo $q->getSqlQuery();
         return $q->execute();
     }
 

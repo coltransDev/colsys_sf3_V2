@@ -257,9 +257,8 @@ class RepStatus extends BaseRepStatus
 			}
 		}
 
-		//$reporte = $this->getUltReporte();
-
-		if ( $reporte->getCaSeguro()=="Sí" ) {
+		//$reporte = $this->getUltReporte();        
+		if ( $reporte->getEsSeguro() ) {
 			$email->addCc( "seguros@coltrans.com.co" );
 
 			$repseguro = $reporte->getRepSeguro();
