@@ -36,6 +36,7 @@ class inventoryActions extends sfActions {
 
         
         $this->user = $this->getUser();
+        $this->suc = Doctrine::getTable("Sucursal")->find( $this->user->getIdsucursal() );
 
         $this->sucursales = $q->execute();
     }
@@ -1354,6 +1355,7 @@ class inventoryActions extends sfActions {
                             ->addWhere("EXTRACT(MONTH FROM a.ca_prgmantenimiento) = ?", $mesprg)
                             ->addWhere("EXTRACT(YEAR FROM a.ca_prgmantenimiento) = ?", $anoprg)
                             ->addWhere("a.ca_idsucursal = ?", $s)
+                            ->addWhere("a.ca_fchbaja IS NULL")
                             ->orderBy("a.ca_prgmantenimiento ASC")
                             ->execute();
 
@@ -1372,6 +1374,7 @@ class inventoryActions extends sfActions {
                 $usuario = Doctrine::getTable("Usuario")->find( $login );
                 $email->addCc( $usuario->getCaEmail() );
             }
+            $email->addCc("falopez@coltrans.com.co");
             $a = "-Programación  de Mantenimiento: ".$mesLargo." de ".$anoprg;
             $email->setCaSubject($s.$a);
             $request->setParameter("idsucursal", $s );
@@ -1399,6 +1402,7 @@ class inventoryActions extends sfActions {
                         ->addWhere("EXTRACT(MONTH FROM a.ca_prgmantenimiento) = ?", $mesprg)
                         ->addWhere("EXTRACT(YEAR FROM a.ca_prgmantenimiento) = ?", $this->anoprg)
                         ->addWhere("a.ca_idsucursal = ?", $this->idsuc)
+                        ->addWhere("a.ca_fchbaja IS NULL")
                         ->orderBy("a.ca_prgmantenimiento ASC")
                         ->execute();
         

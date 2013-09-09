@@ -22,6 +22,10 @@ include_component("inventory", "widgetEquipo");
 include_component("inventory", "widgetProducto");
 
 include_component("inventory", "nuevaAnotacionWindow");
+
+
+$suc = $sf_data->getRaw( "suc" );
+
 ?>
 <script type="text/javascript">
 
@@ -70,7 +74,7 @@ Ext.onReady(function(){
                     
                     $readOnly = true;
                     
-                    if( $nivel==1 && $sucursal->getCaIdsucursal()==$user->getIdsucursal() ){
+                    if( $nivel==1 && $sucursal->getCaNombre()==$suc->getCaNombre() ){
                         $readOnly = false;
                     }
                     
@@ -277,6 +281,16 @@ function mostrarAnotacion(idman,idact,autoriza,activ)
                                             });
         */
 
+        /*newComponent = new PanelProductos({
+                                             id: 'asdad',
+                                             closable: true,
+                                             idcategory: 21,
+                                             idsucursal: 'BAQ',
+                                             parameter: 'Software',
+                                             title: 'Panel prueba',
+                                             editable: true
+                                            });            
+                    
         /*newComponent = new PanelProductos({
                                              id: 'asdad',
                                              closable: true,
