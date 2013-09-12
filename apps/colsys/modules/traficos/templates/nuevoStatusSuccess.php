@@ -212,10 +212,15 @@ var mostrar=function( oid ){
 			break;
 	}
 	<?
-    if($_REQUEST["introduccion"]!="")
+    if($_REQUEST["introduccion"]!="" )
         {
+        $intro = htmlentities($_REQUEST["introduccion"]); //make remaining items html entries.
+        $intro = nl2br($intro); //add html line returns
+        $intro = str_replace(chr(10), "", $intro); //remove carriage returns
+        $intro = str_replace(chr(13), "", $intro); //remove carriage returns
+
     ?>
-            var val = '<?=str_replace("\n", "<br />", $_REQUEST["introduccion"])?>';
+            var val = '<?=str_replace("\n", "<br />", $intro)?>';
             document.form1.introduccion.value = val.split("<br />").join("\n");
     <?
         }
