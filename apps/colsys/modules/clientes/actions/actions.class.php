@@ -854,7 +854,7 @@ class clientesActions extends sfActions {
                 while (list ($clave, $val) = each($ccEmails)) {
                     $email->addCc($val);
                 }
-                // $email->addCc("clopez@coltrans.com.co");    // Pruebas de envio controlado
+                //$email->setCaAddress("alramirez@coltrans.com.co");    // Pruebas de envio controlado
 
                 $inicio = $this->getRequestParameter("fchStart");
                 $final = $this->getRequestParameter("fchEnd");
