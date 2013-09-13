@@ -67,8 +67,7 @@ Reporte:
     ca_continuacion_conf: string
     ca_etapa_actual: string
     ca_login: string
-    ca_colmas: string
-    ca_propiedades: string
+    ca_colmas: string    
     ca_idetapa: string
     ca_fchultstatus: timestamp
     ca_idtarea_rext: integer
@@ -93,6 +92,7 @@ Reporte:
     ca_idproductootm: integer
     ca_tiporep: integer
     ca_declaracionant: boolean
+    ca_propiedades: string
   relations:
     RepStatus:
       local: ca_idreporte
@@ -366,6 +366,7 @@ Tercero:
     ca_fchcreado: timestamp
     ca_usuactualizado: string
     ca_fchactualizado: timestamp
+    ca_tipopersona: char
   relations:
     Ciudad:
       local: ca_idciudad
@@ -806,7 +807,7 @@ RepAntecedentes:
     ca_usuactualizado: string
     ca_fchaceptado: timestamp
     ca_usuaceptado: string   
-    ca_responder: string
+    ca_responder: string    
     ca_propiedades: string
   relations:
     Reporte:
