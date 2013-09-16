@@ -81,23 +81,41 @@ class Usuario extends BaseUsuario {
         return $resultado;
     }
     
-    public function getFirmaOtmHTML($company) {        
-        if($company=="coltrans.com.co")
-        {
-            $idsucursal="BOG";
-            $ext="201-460-260";
-        }
-        else if($company=="consolcargo.com")
-        {
-            $idsucursal="CBO";
-            $ext="129-132";
-        }
-        else if($company=="colotm.com")
-        {
-            $idsucursal="OBO";
-            $ext="460-260";
-        }
-        $sucursal = Doctrine::getTable("Sucursal")->find($idsucursal); 
+public function getFirmaOtmHTML($company) {
+        $sucursaltmp = $this->getSucursal();
+        
+            if($company=="coltrans.com.co")
+            {
+                if($sucursaltmp->getCaNombre()==Constantes::BOGOTA )
+                {
+                    $idsucursal="BOG";
+                    $ext="161-201-260-460";
+                }
+                else if($sucursaltmp->getCaNombre()==Constantes::MEDELLIN )
+                    $idsucursal="MDE";
+                else
+                {
+                    $idsucursal="BOG";
+                    $ext="161-201-260-460";
+                }
+                
+            }
+            else if($company=="consolcargo.com")
+            {
+                $idsucursal="CBO";
+                $ext="129-132";
+            }
+            else if($company=="colotm.com")
+            {
+                $idsucursal="OBO";
+                $ext="161-201-260-460";
+            }
+            if($this->getCaLogin()=="yaurrea")
+                $idsucursal="OBO";
+            
+            
+            $sucursal = Doctrine::getTable("Sucursal")->find($idsucursal); 
+        
         
         $empresa = $sucursal->getEmpresa();
         $resultado = "<strong>" . Utils::replace(strtoupper($this->getCaNombre())) . "</strong><br />";

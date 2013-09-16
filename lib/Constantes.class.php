@@ -21,8 +21,7 @@ class Constantes{
     const OTMDTA = "OTM-DTA";
     const OTMDTA1 = "OTM/DTA";
     const NACIONALIZACION = "Nacionalización";
-    const INTERNO = "Interno";
-    
+    const INTERNO = "INTERNO";
 	
 	const AEREO = "Aéreo";
 	const MARITIMO = "Marítimo";
@@ -41,6 +40,9 @@ class Constantes{
 	const RECARGO_EN_ORIGEN = "Recargo en Origen";
 	const RECARGO_OTM_DTA = "Recargo OTM-DTA";
     const COSTO = "Costo";
-	
+    
+    const BOGOTA = "Bogotá D.C.";
+    const MEDELLIN = "Medellín";
+    
 }
 ?>
