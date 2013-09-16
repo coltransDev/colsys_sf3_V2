@@ -8,6 +8,7 @@ include_component("widgets","widgetSucursales");
 include_component("widgets","widgetDeptos");
 include_component("widgets","widgetTransporte");
 $idsucursal= $sf_data->getRaw("idsucursal");
+$action= $sf_data->getRaw("action");
 ?>
 
 
@@ -56,10 +57,25 @@ var tabs = new Ext.FormPanel({
                                 border:false,
                                 items:
                                 [
+                                    <?
+                                    if($informe==2)
+                                    {
+                                    ?>
+                                    {
+                                        xtype:'datefield',
+                                        fieldLabel: 'Fecha inicial',
+                                        name : 'fechaInicial',
+                                        format: "Y-m-d",
+                                        value: '<?=$fechainicial?>'
+                                    },
+                                    <?
+                                    }else
+                                    {
+                                    ?>
                                     new WidgetSucursales({fieldLabel: 'Sucursal',
                                                         id: 'sucursal',
                                                         name: 'sucursal',
-                                                        hiddenName: "idsucursal",                                                        
+                                                        hiddenName: "idsucursal",
                                                         value:"<?=$sucursal?>",
                                                         hiddenValue:"<?=$idsucursal?>"
                                                         }),
@@ -70,6 +86,9 @@ var tabs = new Ext.FormPanel({
                                                             value:"<?=$departamento?>",
                                                             hiddenValue:"<?=$iddepartamento?>"
                                                         })
+                                  <?
+                                    }
+                                  ?>
                                   ]
                              },
                              {
@@ -83,7 +102,12 @@ var tabs = new Ext.FormPanel({
                                             name : 'fechaFinal',
                                             format: "Y-m-d",
                                             value: '<?=$fechafinal?>'
-                                        },
+                                        }
+                                    <?
+                                    if($informe!=2)
+                                    {
+                                    ?>
+                                        ,                                        
                                         new WidgetTransporte({fieldLabel: 'Transporte',
                                                             id: 'transporte',
                                                             name: 'transporte',
@@ -91,6 +115,9 @@ var tabs = new Ext.FormPanel({
                                                             value:"<?=$transporte?>",
                                                             hiddenValue:"<?=$idtransporte?>"
                                                         })
+                                   <?
+                                    }
+                                  ?>
                                  ]
                              }
                      ]
@@ -105,7 +132,7 @@ var tabs = new Ext.FormPanel({
                     var tp = Ext.getCmp("tab-panel");                    
                     var owner=Ext.getCmp("formPanel");
                     if( tp.getActiveTab().getId()=="estadisticas"){
-                        owner.getForm().getEl().dom.action='<?=url_for("reportesGer/estadisticasTraficos")?>';
+                        owner.getForm().getEl().dom.action='<?=url_for("reportesGer/".$action)?>';
                     }
                     owner.getForm().submit();
             }

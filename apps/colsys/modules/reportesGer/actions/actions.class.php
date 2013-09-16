@@ -11,6 +11,7 @@
 class reportesGerActions extends sfActions {
     const RUTINA = 105;
     const ESTADISTICAS = 129;
+    const ENTREGAREPORTES = 146;
     
     /**
      * Muestra un menu donde el usuario puede seleccionar las comisiones que desa sacar
@@ -508,28 +509,22 @@ md.ca_idmodo,m.ca_idmaster
     }
     
     
-    public function executeEstadisticasEntregaReportesSuccess(sfWebRequest $request) {
+    public function executeEstadisticasEntregaReportes(sfWebRequest $request) {
+        
+        $this->permiso = $this->getUser()->getNivelAcceso( reportesGerActions::ENTREGAREPORTES );
+        if($this->permiso==-1)
+            $this->forward404();
         
         $this->opcion = $request->getParameter("opcion");
-        //list($nom_mes, $ano) = explode("-", $request->getParameter("fechaFinal"));
-        //list(,$this->mes, $ano) = explode("-", $request->getParameter("fechaFinal"));
-        list($ano,$this->mes, $dia) = explode("-", $request->getParameter("fechaFinal"));
 
-        //$this->mes = Utils::nmes($nom_mes);
         $this->idsucursal = $request->getParameter("idsucursal");
         $this->departamento = $request->getParameter("departamento");
         $this->iddepartamento = $request->getParameter("iddepartamento");
         $this->idtransporte = $this->getRequestParameter("idtransporte");
         $this->transporte = $this->getRequestParameter("transporte");
-        $this->fechafinal = Utils::addDate(Utils::addDate($ano . "-" . $this->mes . "-01", 0, 1, 0, "Y-m-01"), -1);
 
-        $this->fechainicial = Utils::addDate(Utils::addDate($this->fechafinal, 1, 0, 0, "Y-m-01"), 0, -3, 0, "Y-m-d");
-
-        $this->fechainicial1 = Utils::addDate($request->getParameter("fechaInicial"), 0, 0, -1);
-        $this->fechafinal1 = Utils::addDate($this->fechafinal, 0, 0, -1);
-
-        $this->fechainicial2 = Utils::addDate($request->getParameter("fechaInicial"), 0, 0, -2);
-        $this->fechafinal2 = Utils::addDate($this->fechafinal, 0, 0, -2);
+        $this->fechainicial = $request->getParameter("fechaInicial");
+        $this->fechafinal = $request->getParameter("fechaFinal");
 
         if ($this->opcion) {
 
@@ -549,22 +544,37 @@ md.ca_idmodo,m.ca_idmaster
             if($this->transporte)
                 $where .= " and ca_transporte ='".$this->transporte."'";
             
+            if($this->fechainicial)
+                $where .= " and a.ca_fchcreado>='$this->fechainicial'";
+            
+            if($this->fechafinal)
+                $where .= " and a.ca_fchcreado<='$this->fechafinal' ";
 
             $con = Doctrine_Manager::getInstance()->connection();
 
-            $sql = "select *, 
+            /*$sql = "select *, 
                 (select ca_fchcreado from tb_emails
                 where ca_tipo in( 'EnvioRNPrincipal','Envío de reportes' ) and ca_subject = 'Rechazo de Envío de reportes '||r.ca_consecutivo
-                and ca_fchcreado >='2013-05-01' and ca_fchcreado <'2013-08-01' order by 1 limit 1) 
+                and ca_fchcreado >='2013-07-01' and ca_fchcreado <'2013-08-01' order by 1 limit 1) 
                 from tb_reportes r
                 inner join tb_repantecedentes a on a.ca_idreporte=r.ca_idreporte and a.ca_estado!='R'
                 where 
                 a.ca_fchcreado >='2013-07-01' and a.ca_fchcreado <'2013-08-01'
                 order by ca_consecutivo , ca_version";
-            
+            */
+            $sql = "select a.ca_fchcreado,(r.ca_consecutivo||' V'||r.ca_version) reporte,a.ca_usucreado,a.ca_fchrechazo,
+                    a.ca_usurechazo,a.ca_motrechazo,a.ca_propiedades
+                from tb_reportes r 
+                inner join tb_repantecedentes a on a.ca_idreporte=r.ca_idreporte 
+                where 1=1 $where
+                order by 1";
+//            echo $sql;
+//            exit;
             $st = $con->execute($sql);
-            $this->clientes = $st->fetchAll();
-
+            $this->reportes = $st->fetchAll();
+            
+            //echo "<pre>";print_r($this->reportes);echo "</pre>";
+            //exit;
            
 //            echo $this->fechainicial. "  " . $this->fechainicial2. "   ". $this->fechafinal;
             //exit;
