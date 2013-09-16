@@ -359,7 +359,30 @@ class confirmacionesActions extends sfActions {
          foreach ($this->resul as $r) {
             $destinatarios[] = $r["ca_email"];
          }
-
+         
+         if ($tipo_msg == "Desc")
+         {         
+            $sql = "select us.ca_email
+                    from control.tb_usuarios_perfil up
+                    inner join control.tb_usuarios us on us.ca_login = up.ca_login
+                    inner join control.tb_sucursales sc on sc.ca_idsucursal=us.ca_idsucursal
+                    where up.ca_perfil ='cordinador-de-otm' and sc.ca_nombre in (
+                        select distinct(s.ca_nombre)
+                            from tb_inoclientes_sea  c
+                            inner join tb_reportes r on r.ca_idreporte=c.ca_idreporte
+                            inner join control.tb_usuarios u on r.ca_usucreado=u.ca_login
+                            inner join control.tb_sucursales s on s.ca_idsucursal=u.ca_idsucursal
+                            where
+                            c.ca_referencia='" . $ca_referencia . "' and c.ca_continuacion <>'N/A'
+                            )";
+            $con = Doctrine_Manager::getInstance()->connection();
+            $st = $con->execute($sql);
+            $this->resul = $st->fetchAll();
+            
+            foreach ($this->resul as $r) {
+                $destinatarios[] = $r["ca_email"];
+            }
+         }
 
          if (is_uploaded_file($_FILES['attachment']['tmp_name'])) {
             $attachment = $_FILES['attachment'];
