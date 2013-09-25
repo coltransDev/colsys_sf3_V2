@@ -362,6 +362,11 @@ class traficosActions extends sfActions {
          for ($i = 0; $i < NuevoStatusForm::NUM_CC; $i++) {
             $bindValues["cc_" . $i] = trim($request->getParameter("cc_" . $i));
          }
+         
+         for ($i = 0; $i < NuevoStatusForm::NUM_CC; $i++) {
+            $bindValues["cci_" . $i] = trim($request->getParameter("cci_" . $i));
+         }
+         
 
          if ($request->getParameter("empresa_remitente") > 0) {
             switch ($request->getParameter("empresa_remitente")) {
@@ -440,6 +445,7 @@ class traficosActions extends sfActions {
                }
             }
          }
+         $bindValues["txtincompleto"] = $request->getParameter("txtincompleto");
 
          $this->form->bind($bindValues);
          if ($this->form->isValid()) {
