@@ -1228,8 +1228,11 @@ class traficosActions extends sfActions {
          if (!is_dir($directory)) {
             mkdir($directory, 0777);
          }
-
-         $destPath = $directory . DIRECTORY_SEPARATOR . urlencode($_FILES['file']['name']);
+         $namefile=$_FILES['file']['name'];
+         //$namefile=$namefile.replace('/+/g', ' ');
+         //$string = str_replace("%C2%91", "%27", $string);
+         $destPath = $directory . DIRECTORY_SEPARATOR . urlencode($namefile);
+         $destPath = str_replace("+", " ", $destPath);
          //mueve el archivo
          move_uploaded_file($_FILES['file']['tmp_name'], $destPath);
 

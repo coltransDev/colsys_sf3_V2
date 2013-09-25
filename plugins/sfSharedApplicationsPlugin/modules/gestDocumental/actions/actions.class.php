@@ -109,6 +109,7 @@ class gestDocumentalActions extends sfActions
                     }
                     $fileName = preg_replace('/\s\s+/', ' ', $fileName);
                     $fileName=urlencode($fileName);
+                    $fileName = str_replace("+", " ", $fileName);
                     
                     //echo $directory.$fileName;
                     error_reporting(E_ALL);
