@@ -232,6 +232,22 @@ var mostrar=function( oid ){
     }else{
         document.getElementById("prog_seguimiento").disabled=false;
     }
+    
+    <?
+    if($_REQUEST["txtincompleto"]!="" )
+        {
+        $txtincompleto = htmlentities($_REQUEST["txtincompleto"]); //make remaining items html entries.
+        $txtincompleto = nl2br($txtincompleto); //add html line returns
+        $txtincompleto = str_replace(chr(10), "", $txtincompleto); //remove carriage returns
+        $txtincompleto = str_replace(chr(13), "", $txtincompleto); //remove carriage returns
+    ?>
+            var val = '<?=str_replace("\n", "<br />", $txtincompleto)?>';
+            document.form1.txtincompleto.value = val.split("<br />").join("\n");
+    <?
+        }
+	?>
+    
+
 	
 }
 
@@ -952,8 +968,8 @@ echo $form['transporte']->render();
 		<td valign="top" >
             <div >
                 Observaciones<br>
-             <?
-			 echo $form['txtincompleto']->renderError(); 			 
+             <?             
+			 echo $form['txtincompleto']->renderError();             
 			 echo $form['txtincompleto']->render();
              ?>
             </div>

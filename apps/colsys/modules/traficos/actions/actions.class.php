@@ -445,7 +445,7 @@ class traficosActions extends sfActions {
                }
             }
          }
-         $bindValues["txtincompleto"] = $request->getParameter("txtincompleto");
+         //$bindValues["txtincompleto"] = $request->getParameter("txtincompleto");
 
          $this->form->bind($bindValues);
          if ($this->form->isValid()) {
