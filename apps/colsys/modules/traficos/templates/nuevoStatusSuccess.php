@@ -92,6 +92,12 @@ var enviarFormulario=function(){
            return 0;
        }
     }
+    if($("#fchrecibo_ext_control").val()=="" || $("#horarecibo_hour").val()==""|| $("#horarecibo_minute").val()=="")
+    {
+        alert("Por Favor ingrese la fecha y hora de recibido el status");
+        return 0;
+    }
+    
 
     if( numChecked>0 || <?=$reporte->getCliente()->getProperty("consolidar_comunicaciones")?"true":"false"?>  ){
         document.getElementById("form1").submit();
@@ -101,6 +107,8 @@ var enviarFormulario=function(){
         else
             alert("debe seleccionar al menos un contacto fijo.");
     }
+    
+    
 }
 
 var validarMensaje=function(){	
