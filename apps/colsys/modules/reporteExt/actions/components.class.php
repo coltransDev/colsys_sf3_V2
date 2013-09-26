@@ -83,7 +83,7 @@ class reporteExtComponents extends sfComponents
                 }
             }
         }
-        
+        //echo $reporte->getCaIdconsignatario();
         if( $reporte->getCaIdconsignatario()){
 
             $consignatario = Doctrine::getTable("Tercero")->find( $reporte->getCaIdconsignatario() );
@@ -93,8 +93,15 @@ class reporteExtComponents extends sfComponents
                 if( $reporte->getCaMciaPeligrosa() || $reporte->getCaImpoexpo()==constantes::TRIANGULACION ){
                     $consignatario_final .= "<br />Contacto: ".$consignatario->getCaContacto();
                 }
+                
                 if(strlen ( $consignatario->getCaDireccion() )>5 )
-                $consignatario_final .= "<br />Dirección: ".$consignatario->getCaDireccion();
+                {
+                    $city="";
+                    if($bodega1->getCiudad()!="999-9999")
+                        $city=$consignatario->getCiudad()->getCaCiudad()." ".$consignatario->getCiudad()->getTrafico()->getCaNombre();
+ 
+                    $consignatario_final .= "<br />Dirección: ".$consignatario->getCaDireccion()." ".$city;
+                }
                 if( $reporte->getCaMciaPeligrosa() || $reporte->getCaImpoexpo()==constantes::TRIANGULACION  ){
                     $consignatario_final .= "<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />Email: ".$consignatario->getCaEmail();
                 }
@@ -121,10 +128,13 @@ class reporteExtComponents extends sfComponents
         
         $bodega1 = $reporte->getBodegaConsignar();
         $bodega2 = Doctrine::getTable("Bodega")->find( $reporte->getCaIdbodega() );
-
+        
         if( $reporte->getCaIdconsignar()==1 ){
             $hijo = $consignatario_final;
         }else{
+
+
+
             $hijo = $bodega1->getCaNombre()." ".$bodega1->getCaDireccion();
         }
         
