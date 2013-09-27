@@ -104,6 +104,8 @@ class Reporte extends BaseReporte {
                     $this->cliente->setCaTelefonos($tercero->getCaTelefonos());
                     $this->cliente->setCaFax($tercero->getCaFax());
                     $this->cliente->setCaIdciudad($tercero->getCaIdciudad());
+                    $this->cliente->setCaPropiedades($tercero->getCaPropiedades());
+                    $this->cliente->setProperty("tipopersona",$tercero->getgetCaTipopersona());
                 }
             }
             else
