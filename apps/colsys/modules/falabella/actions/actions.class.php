@@ -318,13 +318,12 @@ class falabellaActions extends sfActions {
 
 		$status = $reporte->getUltimoStatus();
 		$salida = '';
-                $correlativo = rand(0, 9999);
 		foreach( $details as $detail ){
 			$salida.= substr($fala_header->getCaIddoc(),0,15)."|"; // 1
 			$salida.= $fala_header->getCaArchivoOrigen()."|"; // Archivo de Origen 2
 			$salida.= "ASN|"; // 3
 			$salida.= "COL|"; // 4
-			$salida.= $correlativo.str_pad($detail->getOid(), 5, "0", STR_PAD_LEFT)."|"; // Correlativo Coltrans 5
+			$salida.= "|"; // Correlativo Coltrans 5
 			$salida.= (($reporte->getcaTransporte() != 'Aéreo')?"MB":"AW")."|"; // 6
 			$salida.= $reporte->getDoctransporte()."|"; // 7
 			$salida.= "|"; // Contact 8  /blanco
@@ -609,10 +608,10 @@ class falabellaActions extends sfActions {
                                     FROM tb_repstatus rs 
                                         INNER JOIN tb_reportes rp ON rp.ca_idreporte = rs.ca_idreporte
                                     WHERE rs.ca_idetapa in ('IACAD','IMCPD') 
-                                    GROUP BY ca_consecutivo, ca_fchsalida, ca_fchllegada, ca_diferencia,ca_piezas,ca_peso,ca_volumen,extract(YEAR from rs.ca_fchsalida) ,extract(MONTH from rs.ca_fchsalida)) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) 
-                        WHERE ca_impoexpo = '" . Constantes::IMPO . "' and ca_transporte = '".$this->transporte."' and upper(ca_compania) like upper('%falabella%')  
-                              and ca_traorigen= '".$this->pais_origen."' and ca_fchsalida BETWEEN '".$this->fechainicial."' and '".$this->fechafinal."'
-                        ORDER BY ca_fchsalida";
+                                    GROUP BY rp.ca_consecutivo, rs.ca_fchsalida, rs.ca_fchllegada, ca_diferencia,rs.ca_piezas,rs.ca_peso,rs.ca_volumen,extract(YEAR from rs.ca_fchsalida) ,extract(MONTH from rs.ca_fchsalida)) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) 
+                        WHERE vi_repindicadores.ca_impoexpo = '" . Constantes::IMPO . "' and vi_repindicadores.ca_transporte = '".$this->transporte."' and upper(vi_repindicadores.ca_compania) like upper('%falabella%')  
+                              and vi_repindicadores.ca_traorigen= '".$this->pais_origen."' and sq.ca_fchsalida BETWEEN '".$this->fechainicial."' and '".$this->fechafinal."'
+                        ORDER BY sq.ca_fchsalida";
 
                 //exit;
                 $con = Doctrine_Manager::getInstance()->connection();
@@ -633,14 +632,14 @@ class falabellaActions extends sfActions {
                                     FROM tb_repstatus rs 
                                         INNER JOIN tb_reportes rp ON rp.ca_idreporte = rs.ca_idreporte
                                     WHERE rs.ca_idetapa in ('IACAD','IMCPD') 
-                                    GROUP BY rp.ca_idreporte, ca_consecutivo, ca_fchsalida, ca_fchllegada, ca_diferencia,ca_peso,extract(YEAR from rs.ca_fchsalida) ,extract(MONTH from rs.ca_fchsalida)) sq ON (v.ca_consecutivo = sq.ca_consecutivo_sub) 
+                                    GROUP BY rp.ca_idreporte, rp.ca_consecutivo, rs.ca_fchsalida, rs.ca_fchllegada, ca_diferencia, rs.ca_peso,extract(YEAR from rs.ca_fchsalida) ,extract(MONTH from rs.ca_fchsalida)) sq ON (v.ca_consecutivo = sq.ca_consecutivo_sub) 
                                 JOIN tb_inoclientes_sea ics ON ics.ca_idreporte = sq.ca_idreporte
                                 JOIN tb_inomaestra_sea m ON m.ca_referencia = ics.ca_referencia
                                 JOIN tb_inoequipos_sea e ON e.ca_referencia = ics.ca_referencia
                                 JOIN tb_conceptos tt ON e.ca_idconcepto = tt.ca_idconcepto
-                        WHERE v.ca_impoexpo IN ('" . Constantes::IMPO . "','" . Constantes::OTMDTA . "') and v.ca_transporte IN ('".$this->transporte."','Terrestre') and upper(ca_compania) like upper('%falabella%')  
-                              and ca_traorigen= '".$this->pais_origen."' and ca_fchsalida BETWEEN '".$this->fechainicial."' and '".$this->fechafinal."'
-                        ORDER BY ca_fchsalida";
+                        WHERE v.ca_impoexpo IN ('" . Constantes::IMPO . "','" . Constantes::OTMDTA . "') and v.ca_transporte IN ('".$this->transporte."','Terrestre') and upper(v.ca_compania) like upper('%falabella%')  
+                              and v.ca_traorigen= '".$this->pais_origen."' and sq.ca_fchsalida BETWEEN '".$this->fechainicial."' and '".$this->fechafinal."'
+                        ORDER BY sq.ca_fchsalida";
                 //exit;
                 //echo $sql;
                 $con = Doctrine_Manager::getInstance()->connection();
