@@ -77,7 +77,7 @@ var tabs = new Ext.FormPanel({
                         id: 'mes',
                         name: 'mes[]',
                         hiddenName: "nmes[]",
-                        value:'<?= implode(",", $nmes) ?>',
+                        //value:'<?//= implode(",", $nmes) ?>',
                         listeners:{
                             render:function()
                             {
