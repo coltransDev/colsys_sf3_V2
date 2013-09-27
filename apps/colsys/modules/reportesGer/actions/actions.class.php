@@ -859,7 +859,11 @@ md.ca_idmodo,m.ca_idmaster
                 $where1.=" and u.ca_sucursal = '" . $this->sucursal . "'";
             }
 
-            $sql = "SELECT m.ca_referencia, cl.ca_compania, u.ca_sucursal, c.ca_hbls, r.ca_consecutivo, r.ca_seguro, r.ca_colmas, b1.ca_nombre as ca_bodega, t.ca_nombre as ca_operador, m.ca_fchembarque, m.ca_fcharribo, m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad AS ori_ca_ciudad, m.ca_destino, des.ca_ciudad AS des_ca_ciudad, tra_ori.ca_idtrafico AS ori_ca_idtrafico, tra_ori.ca_nombre AS ori_ca_nombre, tra_des.ca_idtrafico AS des_ca_idtrafico, tra_des.ca_nombre AS des_ca_nombre, m.ca_modalidad, desfin.ca_ciudad AS desfin_ca_ciudad,
+            $sql = "SELECT m.ca_referencia, cl.ca_compania, u.ca_sucursal, c.ca_hbls, r.ca_consecutivo, r.ca_seguro, 
+                r.ca_colmas, b1.ca_nombre as ca_bodega, t.ca_nombre as ca_operador, m.ca_fchembarque, m.ca_fcharribo, 
+                m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad AS ori_ca_ciudad, m.ca_destino, des.ca_ciudad AS des_ca_ciudad, 
+                tra_ori.ca_idtrafico AS ori_ca_idtrafico, tra_ori.ca_nombre AS ori_ca_nombre, 
+                tra_des.ca_idtrafico AS des_ca_idtrafico, tra_des.ca_nombre AS des_ca_nombre, m.ca_modalidad, desfin.ca_ciudad AS desfin_ca_ciudad,
                 count(DISTINCT c.ca_hbls) AS nhbls,
                 (c.ca_numpiezas) piezas,
                     (c.ca_peso) peso,
@@ -872,7 +876,7 @@ md.ca_idmodo,m.ca_idmaster
                 JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte
                 LEFT join tb_repotm o on r.ca_idreporte=o.ca_idreporte 
                 JOIN tb_bodegas b1 ON r.ca_idbodega = b1.ca_idbodega
-                JOIN tb_terceros t ON r.ca_idconsignatario = t.ca_idtercero
+                JOIN tb_terceros t ON r.ca_idconsignatario = t.ca_idtercero and trim(t.ca_nombre)=trim('COL OTM S.A.S.') 
                 JOIN tb_ciudades ori ON ori.ca_idciudad = m.ca_origen
                 JOIN tb_traficos tra_ori ON tra_ori.ca_idtrafico = ori.ca_idtrafico
                 JOIN tb_ciudades des ON des.ca_idciudad = m.ca_destino
