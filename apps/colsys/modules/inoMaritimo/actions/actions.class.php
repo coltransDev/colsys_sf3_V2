@@ -281,6 +281,7 @@ class inoMaritimoActions extends sfActions {
             }
         }
         unlink($file);
+        $this->forward("homepage", "index");
     }
 
 }
