@@ -182,9 +182,9 @@ class pricingActions extends sfActions {
                 $trayectoStr.=" [" . $trayecto["ai_ca_nombre"]." ] ";
             }
             if ($trayecto["t_ca_ncontrato"]) {
-                $contrato.=" [Contrato No " . $trayecto["t_ca_ncontrato"]." ] ";
+                $trayectoStr.=" [Contrato No " . $trayecto["t_ca_ncontrato"]." ] ";
             }
-            $trayectoStr.=" (TT " . $trayecto["t_ca_tiempotransito"] . " Freq. " . $trayecto["t_ca_frecuencia"] . ") " .$contrato.$trayecto["t_ca_idtrayecto"];
+            $trayectoStr.=" (TT " . $trayecto["t_ca_tiempotransito"] . " Freq. " . $trayecto["t_ca_frecuencia"] . ") " .$trayecto["t_ca_idtrayecto"];
             $trayectoStr = utf8_encode($trayectoStr);
             $trayectoStr = str_replace("&", "AND", $trayectoStr);
 
@@ -2864,6 +2864,7 @@ class pricingActions extends sfActions {
             $data["agente"] = utf8_encode(/* $ids->getIdsSucursal()->getCiudad()->getCaCiudad() ." ". */$ids->getCaNombre());
             $data["observaciones"] = utf8_encode($trayecto->getCaObservaciones());
             $data["frecuencia"] = utf8_encode($trayecto->getCaFrecuencia());
+            $data["ncontrato"] = utf8_encode($trayecto->getCaNcontrato());
             $data["ttransito"] = utf8_encode($trayecto->getCaTiempotransito());
 
             $this->responseArray = array("data" => $data, "success" => true);
