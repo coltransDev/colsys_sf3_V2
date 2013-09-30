@@ -233,7 +233,7 @@ class traficosActions extends sfActions {
    public function executeNuevoStatus($request) {
       //exit("EN Mantenimiento");      
       $this->modo = $request->getParameter("modo");
-      $this->forward404unless($this->modo);
+      $this->forward404unless($this->modo);      
       if ($this->modo == "maritimo") {
          $this->nivel = $this->getUser()->getNivelAcceso(traficosActions::RUTINA_MARITIMO);
       }
@@ -493,6 +493,9 @@ class traficosActions extends sfActions {
 
       $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "traficos" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "textos.yml";
       $this->textos = sfYaml::load($config);
+      
+      $this->dep=$this->getUser()->getIddepartamento();
+      
    }
 
    /*
@@ -875,7 +878,7 @@ class traficosActions extends sfActions {
                         <tr><th>Transporte</th><td>" . ($reporte->getCaTransporte()) . "</td></tr>
                         <tr><th>Trayecto</th><td>" . ($reporte->getOrigen()->getCaCiudad()) . "-" . ($reporte->getDestino()->getCaCiudad()) . "</td></tr>
                         <tr><th>Proveedor</th><td>" . $reporte->getProveedoresStr() . "</td></tr>
-                        <tr><td>" . $request->getParameter("txtincompleto") . "</td></tr>
+                        <tr><td colspan='2'>" . $request->getParameter("txtincompleto") . "</td></tr>
                         </table></div>";
 
             $this->getRequest()->setParameter('tipo', "INSTRUCCIONES");
