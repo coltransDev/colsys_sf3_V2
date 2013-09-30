@@ -146,7 +146,7 @@ PanelTrayectoWindow = function( config ) {
                         allowBlank:true
                     },{
                         xtype: 'textfield',
-                        width: 100,
+                        width: 150,
                         fieldLabel: 'No. Contrato',
                         name: 'ncontrato',
                         id: 'ncontrato',
@@ -190,6 +190,7 @@ Ext.extend(PanelTrayectoWindow, Ext.Window, {
 
             ttransito = fp.getForm().findField("ttransito").getValue();
             frecuencia = fp.getForm().findField("frecuencia").getValue();
+            ncontrato = fp.getForm().findField("ncontrato").getValue();
             impoexpo = fp.getForm().findField("impoexpo").getValue();
             transporte = fp.getForm().findField("transporte").getValue();
 
