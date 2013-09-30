@@ -97,7 +97,6 @@ var enviarFormulario=function(){
         alert("Por Favor ingrese la fecha y hora de recibido el status");
         return 0;
     }
-    
 
     if( numChecked>0 || <?=$reporte->getCliente()->getProperty("consolidar_comunicaciones")?"true":"false"?>  ){
         document.getElementById("form1").submit();
@@ -107,19 +106,17 @@ var enviarFormulario=function(){
         else
             alert("debe seleccionar al menos un contacto fijo.");
     }
-    
-    
 }
 
 var validarMensaje=function(){	
     document.getElementById("mensaje_dirty").value = "1";
 }
 
-var mostrar=function( oid ){
+var mostrar=function( type ){
 		
 	var tipo = document.form1.idetapa;
-	var value='';	
-	for (i=0;i<tipo.length;i++){		
+	var value='';
+	for (i=0;i<tipo.length;i++){
         if ( tipo[i].selected ){
                value = tipo[i].value;
                break;
@@ -187,38 +184,85 @@ var mostrar=function( oid ){
 		}	
 	}
 	
-	
-	
-	switch( value ){
-		<?
-		foreach( $etapas as $etapa ){
-			if( $etapa->getCaIntro() ){
-			?>
-			case '<?=$etapa->getCaIdetapa()?>':
-				var val = '<?=str_replace("\n", "<br />", $etapa->getCaIntro())?>';
-				document.form1.introduccion.value = val.split("<br />").join("\n");				
-				break;
-		<?
-			}
-		}        
-		if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
-		?>
-		case 'EECEM':
-				var val = '<?=str_replace("\n", "<br />", $saludoAviso)?>';
-				document.form1.introduccion.value = val.split("<br />").join("\n");			
-				break;
-		case 'EEETD':
-				var val = '<?=str_replace("\n", "<br />", $saludoAviso)?>';
-				document.form1.introduccion.value = val.split("<br />").join("\n");				
-				break;
-		<?
-		}
-		?>
-		default:
-			var val = '<?=str_replace("\n", "<br />", $textos['saludo']	)?>';
-			document.form1.introduccion.value = val.split("<br />").join("\n");				
-			break;
-	}
+	<?
+    if($dep=="18")
+    {
+    ?>
+	if($.trim(document.form1.introduccion.value)=="")
+    {
+        switch( value ){
+            <?
+            foreach( $etapas as $etapa ){
+                if( $etapa->getCaIntro() ){
+                ?>
+                case '<?=$etapa->getCaIdetapa()?>':
+                    var val = '<?=str_replace("\n", "<br />", $etapa->getCaIntro())?>';
+                    document.form1.introduccion.value = val.split("<br />").join("\n");				
+                    break;
+            <?
+                }
+            }  
+            
+            if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
+            ?>
+            case 'EECEM':
+                    var val = '<?=str_replace("\n", "<br />", $saludoAviso)?>';
+                    document.form1.introduccion.value = val.split("<br />").join("\n");			
+                    break;
+            case 'EEETD':
+                    var val = '<?=str_replace("\n", "<br />", $saludoAviso)?>';
+                    document.form1.introduccion.value = val.split("<br />").join("\n");				
+                    break;
+            <?
+            }
+            ?>
+            default:
+                var val = '<?=str_replace("\n", "<br />", $textos['saludo']	)?>';
+                document.form1.introduccion.value = val.split("<br />").join("\n");				
+                break;
+        }
+    }
+<?
+    }
+    else
+    {
+?>
+           switch( value ){
+            <?
+            foreach( $etapas as $etapa ){
+                if( $etapa->getCaIntro() ){
+                ?>
+                case '<?=$etapa->getCaIdetapa()?>':
+                    var val = '<?=str_replace("\n", "<br />", $etapa->getCaIntro())?>';
+                    document.form1.introduccion.value = val.split("<br />").join("\n");				
+                    break;
+            <?
+                }
+            }  
+            
+            if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
+            ?>
+            case 'EECEM':
+                    var val = '<?=str_replace("\n", "<br />", $saludoAviso)?>';
+                    document.form1.introduccion.value = val.split("<br />").join("\n");			
+                    break;
+            case 'EEETD':
+                    var val = '<?=str_replace("\n", "<br />", $saludoAviso)?>';
+                    document.form1.introduccion.value = val.split("<br />").join("\n");				
+                    break;
+            <?
+            }
+            ?>
+            default:
+                var val = '<?=str_replace("\n", "<br />", $textos['saludo']	)?>';
+                document.form1.introduccion.value = val.split("<br />").join("\n");				
+                break;
+        }
+<?
+    }
+?>
+    if(type=="1")
+    {
 	<?
     if($_REQUEST["introduccion"]!="" )
         {
@@ -233,6 +277,7 @@ var mostrar=function( oid ){
     <?
         }
 	?>
+    }
 	if(value=="IMETA"){
         document.getElementById("prog_seguimiento").checked = false;
         crearSeguimiento();
@@ -453,7 +498,7 @@ echo $form['transporte']->render();
 				
 	$origen = $reporte->getOrigen()->getCaCiudad();
 	$destino = $reporte->getDestino()->getCaCiudad();
-	$cliente = $reporte->getCliente();			
+	$cliente = $reporte->getCliente()->getCaCompania();
 	$consignatario = $reporte->getConsignatario();
     if($reporte->getCaTiporep()=="4")
     {
@@ -1018,7 +1063,7 @@ echo $form['transporte']->render();
 </form>
 </div>
 <script language="javascript" type="text/javascript">
-	mostrar();
+	mostrar(1);
 	crearSeguimiento();
     <?
     if($reporte_incompleto!="")
