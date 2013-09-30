@@ -26,7 +26,8 @@ PanelTrayecto = function( config ){
         {name: 'ttransito', type: 'string'},
         {name: 'frecuencia', type: 'string'},
         {name: 'activo', type: 'bool'},
-        {name: 'netnet', type: 'bool'}
+        {name: 'netnet', type: 'bool'},
+        {name: 'ncontrato', type: 'string'}
     ]);
 
     this.store = new Ext.data.GroupingStore({
@@ -115,7 +116,16 @@ PanelTrayecto = function( config ){
 			groupable: false,
 			dataIndex: 'frecuencia'	,
 			editor: new Ext.form.TextField()
-		},        
+		},
+        {
+			id: 'ncontrato',
+			header: "Contrato",
+			width: 80,
+			sortable: true,
+			groupable: false,
+			dataIndex: 'ncontrato'	,
+			editor: new Ext.form.TextField()
+		},         
 		this.checkColumnActivo
 
 	];
