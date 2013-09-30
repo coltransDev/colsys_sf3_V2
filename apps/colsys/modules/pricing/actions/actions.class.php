@@ -108,7 +108,7 @@ class pricingActions extends sfActions {
                         ->select("t.ca_idtrayecto, p.ca_sigla, p.ca_contrato_comodato, id.ca_nombre, t.ca_origen,
                               t.ca_destino, t.ca_idlinea, o.ca_ciudad, d.ca_ciudad,
                               ai.ca_nombre, a.ca_idagente, t.ca_transporte, t.ca_modalidad,
-                              t.ca_impoexpo, t.ca_observaciones, t.ca_tiempotransito, t.ca_frecuencia, t.ca_netnet")
+                              t.ca_impoexpo, t.ca_observaciones, t.ca_tiempotransito, t.ca_frecuencia, t.ca_netnet, t.ca_ncontrato")
                         ->from("Trayecto t");
         $q->innerJoin("t.Origen o");
         $q->innerJoin("t.Destino d");
@@ -181,7 +181,10 @@ class pricingActions extends sfActions {
             if ($trayecto["ai_ca_nombre"]) {
                 $trayectoStr.=" [" . $trayecto["ai_ca_nombre"]." ] ";
             }
-            $trayectoStr.=" (TT " . $trayecto["t_ca_tiempotransito"] . " Freq. " . $trayecto["t_ca_frecuencia"] . ") " . $trayecto["t_ca_idtrayecto"];
+            if ($trayecto["t_ca_ncontrato"]) {
+                $contrato.=" [Contrato No " . $trayecto["t_ca_ncontrato"]." ] ";
+            }
+            $trayectoStr.=" (TT " . $trayecto["t_ca_tiempotransito"] . " Freq. " . $trayecto["t_ca_frecuencia"] . ") " .$contrato.$trayecto["t_ca_idtrayecto"];
             $trayectoStr = utf8_encode($trayectoStr);
             $trayectoStr = str_replace("&", "AND", $trayectoStr);
 
@@ -762,7 +765,7 @@ class pricingActions extends sfActions {
         $conn->beginTransaction();
         try {
             if ($this->nivel <= 0) {
-                $this->forward404();
+                $this->forward404("No Tiene los suficientes permisos para realizar esta operacion");
             }
 
             $idtrayecto = $this->getRequestParameter("idtrayecto");
@@ -802,11 +805,10 @@ class pricingActions extends sfActions {
                 }else{
                     $this->responseArray = array("success" => false, "errorInfo" => "No se ha encontrado el recargo o ya se ha eliminado");
                 }
-
             }
 
             if ($tipo == "recargo") {
-                $this->forward404unless($idconcepto);
+                $this->forward404unless("Este recargo es general no es posible eliminarlo desde esta opcion ".$idconcepto);
                 //$pricRecargo = Doctrine::getTable("PricRecargoxConcepto")->find(array($idtrayecto , $idconcepto , $idrecargo));
                 $q = Doctrine::getTable("PricRecargoxConcepto")->createQuery()
                                 ->addWhere("ca_idtrayecto = ?", $idtrayecto)
@@ -1911,6 +1913,7 @@ class pricingActions extends sfActions {
                 'idlinea' => $trayecto["t_ca_idlinea"],
                 'ttransito' => utf8_encode($trayecto["t_ca_tiempotransito"]),
                 'frecuencia' => $trayecto["t_ca_frecuencia"],
+                'ncontrato' => $trayecto["t_ca_ncontrato"],
                 'activo' => $trayecto["t_ca_activo"],
                 'netnet' => $trayecto["t_ca_netnet"]
             );
@@ -1942,6 +1945,10 @@ class pricingActions extends sfActions {
 
         if ($this->getRequestParameter("frecuencia")) {
             $trayecto->setCaFrecuencia(utf8_decode($this->getRequestParameter("frecuencia")));
+        }
+        
+        if ($this->getRequestParameter("ncontrato")) {
+            $trayecto->setCaNcontrato(utf8_decode($this->getRequestParameter("ncontrato")));
         }
 
         if ($this->getRequestParameter("activo") !== null) {
@@ -2454,6 +2461,7 @@ class pricingActions extends sfActions {
         $frecuencia = utf8_decode($this->getRequestParameter("frecuencia"));
         $ttransito = utf8_decode($this->getRequestParameter("ttransito"));
         $activo = utf8_decode($this->getRequestParameter("activo"));
+        $ncontrato = utf8_decode($this->getRequestParameter("ncontrato"));
 
         $trayecto->setCaImpoexpo($impoexpo);
         $trayecto->setCaTransporte($transporte);
@@ -2478,6 +2486,9 @@ class pricingActions extends sfActions {
         }
         if ($frecuencia) {
             $trayecto->setCaFrecuencia($frecuencia);
+        }
+        if ($ncontrato) {
+            $trayecto->setCaNcontrato($ncontrato);
         }
         $trayecto->setCaActivo($activo == "on");
         $trayecto->save();
