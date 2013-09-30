@@ -1,5 +1,7 @@
 <?
-$data = $sf_data->getRaw('data')
+$data = $sf_data->getRaw('data');
+include_component("pm", "editarTicketWindow", array("nivel"=>$nivelTickets));
+
 ?>
 <script type="text/javascript">
 /**
@@ -81,21 +83,30 @@ PanelNoticias = function( config ){
         closable: true,
         id: 'panel-noticias',
         height: 400,
+        
+        tbar: [
         <?
         if( $opcion!="consulta"){
         ?>
-        tbar: [
-        {
-            text: 'Agregar',
-            tooltip: 'Crea un nueva notificación',
-            iconCls:'add',  // reference to our css
-            scope: this,
-            handler: this.agregarNoticia
-        }
-        ],
+            {
+                text: 'Agregar',
+                tooltip: 'Crea un nueva notificación',
+                iconCls:'add',  // reference to our css
+                scope: this,
+                handler: this.agregarNoticia
+            },
         <?
         }
         ?>
+            {
+                text: 'Solicitar Tarifa',
+                tooltip: 'Enviar ticket a Pricing',
+                iconCls:'application_form',  // reference to our css
+                scope: this,
+                handler: this.crearTicket
+            }            
+        ],
+        
         viewConfig: {
             forceFit:true,
             enableRowBody:true,
@@ -245,6 +256,11 @@ Ext.extend(PanelNoticias, Ext.grid.GridPanel, {
                 }
             );
         }
+    },
+
+    crearTicket: function(){
+        var win = new EditarTicketWindow();
+        win.show();
     },
 
     ventanaEdicion: function( record ){
