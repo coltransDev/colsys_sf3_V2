@@ -568,7 +568,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     echo"            </tr>
                             </table>
                         <TD Class=listar style='text-align: center;'>
-                            <IMG style='visibility: $visible;cursor:pointer; $level0' src='./graficos/xml.gif'  alt='nerar Información para el Prevalidador' border=0 onclick='elegir(\"Prevalidador\", \"" . $rs->Value('ca_referencia') . "\", 0, 0);'><BR>
+                            <IMG style='visibility: $visible;cursor:pointer; $level0' src='./graficos/xml.gif'  alt='Generar Información para el Prevalidador' border=0 onclick='elegir(\"Prevalidador\", \"" . $rs->Value('ca_referencia') . "\", 0, 0);'><BR>
                         </TD>
                     </TR>";
                     echo "<TR HEIGHT=5>";
@@ -664,22 +664,28 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     echo "  <TD Class=invertir COLSPAN=6></TD>";
                     echo "</TR>";
                     echo "<TR>";
-                    echo "  <TD Class=partir>Auditoría:</TD>";
+                    echo "  <TD Class=partir rowspan='2'>Auditoría:</TD>";
                     echo "  <TD Class=listar><B>Creación:</B>&nbsp;" . $rs->Value('ca_usucreado') . "<BR>" . $rs->Value('ca_fchcreado') . "</TD>";
                     echo "  <TD Class=listar><B>Actualización:</B>&nbsp;" . $rs->Value('ca_usuactualizado') . "<BR>" . $rs->Value('ca_fchactualizado') . "</TD>";
                     if ($rs->Value('ca_usuliquidado') == '') {
-                        echo "  <TD Class=invertir style='text-align: center; vertical-align: middle;'><INPUT style='$level0' Class=submit onMouseOver=\"this.style.cursor='hand'\" onMouseOut=\"this.style.cursor='default'\" TYPE='SUBMIT' NAME='accion' VALUE='Firmar Liquidación'></TD>";
+                        echo "  <TD Class=invertir rowspan='2' style='text-align: center; vertical-align: middle;'><INPUT style='$level0' Class=submit onMouseOver=\"this.style.cursor='hand'\" onMouseOut=\"this.style.cursor='default'\" TYPE='SUBMIT' NAME='accion' VALUE='Firmar Liquidación'></TD>";
                     } else {
-                        echo "  <TD Class=listar><B>Liquidación:</B>&nbsp;" . $rs->Value('ca_usuliquidado') . "<BR>" . $rs->Value('ca_fchliquidado') . "</TD>";
+                        echo "  <TD Class=listar rowspan='2'><B>Liquidación:</B>&nbsp;" . $rs->Value('ca_usuliquidado') . "<BR>" . $rs->Value('ca_fchliquidado') . "</TD>";
                     }
                     if ($rs->Value('ca_usucerrado') == '') {
-                        echo "  <TD Class=invertir style='text-align: center; vertical-align: middle;'><INPUT style='$level0' Class=submit onMouseOver=\"this.style.cursor='hand'\" onMouseOut=\"this.style.cursor='default'\" TYPE='SUBMIT' NAME='accion' VALUE='Cerrar Caso'></TD>";
-                        echo "  <TD Class=invertir style='text-align: center; vertical-align: middle;'><div style='$level0 display:none'>Provisional:<BR><INPUT TYPE=CHECKBOX NAME='provisional'></div></TD>";
+                        echo "  <TD Class=invertir rowspan='2' style='text-align: center; vertical-align: middle;'><INPUT style='$level0' Class=submit onMouseOver=\"this.style.cursor='hand'\" onMouseOut=\"this.style.cursor='default'\" TYPE='SUBMIT' NAME='accion' VALUE='Cerrar Caso'></TD>";
+                        echo "  <TD Class=invertir rowspan='2' style='text-align: center; vertical-align: middle;'><div style='$level0 display:none'>Provisional:<BR><INPUT TYPE=CHECKBOX NAME='provisional'></div></TD>";
                     } else {
-                        echo "  <TD Class=listar><B>Cierre:</B>&nbsp;" . $rs->Value('ca_usucerrado') . "<BR>" . $rs->Value('ca_fchcerrado') . "</TD>";
-                        echo "  <TD Class=listar style='font-weight:bold; text-align: center; vertical-align: middle;'><B>" . (($rs->Value('ca_provisional') == "t") ? "Cierre<br>Provisional" : "") . "</TD>";
+                        echo "  <TD Class=listar rowspan='2'><B>Cierre:</B>&nbsp;" . $rs->Value('ca_usucerrado') . "<BR>" . $rs->Value('ca_fchcerrado') . "</TD>";
+                        echo "  <TD Class=listar rowspan='2' style='font-weight:bold; text-align: center; vertical-align: middle;'><B>" . (($rs->Value('ca_provisional') == "t") ? "Cierre<br>Provisional" : "") . "</TD>";
                     }
                     echo "</TR>";
+                    
+                    echo "<TR>";
+                    echo "  <TD Class=listar><B>Envio:</B>&nbsp;"  . $rs->Value('ca_fchenvio') . "</TD>";
+                    echo "  <TD Class=listar><B>Desbloqueo:</B>&nbsp;" . $rs->Value('ca_fchrecibido') . "</TD>";
+                    echo "</TR>";
+                    
                     echo "<TR HEIGHT=5>";
                     echo "  <TD Class=invertir COLSPAN=6></TD>";
                     echo "</TR>";
@@ -5393,7 +5399,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     exit;
                 }
                 $referencia = $rs->Value('fun_referencia');
-                if (!$rs->Open("insert into tb_inomaestra_sea (ca_fchreferencia, ca_referencia, ca_impoexpo, ca_origen, ca_destino, ca_fchembarque, ca_fcharribo, ca_modalidad, ca_idlinea, ca_motonave, ca_ciclo, ca_mbls, ca_fchmbls, ca_observaciones, ca_fchcreado, ca_usucreado, ca_provisional, ca_emisionbl) values('$fchreferencia', '$referencia', '$impoexpo', '$idciuorigen', '$idciudestino', '$fchembarque', '$fcharribo', '$modalidad', $idlinea, '$motonave', '$ciclo', '" . $mbls[0] . "','" . $mbls[1] . "', '" . addslashes($observaciones) . "', to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario', 'FALSE', '$emisionbl')")) {
+                if (!$rs->Open("insert into tb_inomaestra_sea (ca_fchreferencia, ca_referencia, ca_impoexpo, ca_origen, ca_destino, ca_fchembarque, ca_fcharribo, ca_modalidad, ca_idlinea, ca_motonave, ca_ciclo, ca_mbls, ca_fchmbls, ca_observaciones, ca_fchcreado, ca_usucreado, ca_provisional, ca_emisionbl) values('$fchreferencia', '$referencia', '$impoexpo', '$idciuorigen', '$idciudestino', '$fchembarque', '$fcharribo', '$modalidad', $idlinea, '$motonave', '$ciclo', '" . $mbls[0] . "','" . $mbls[1] . "', '" . addslashes($observaciones) . "', to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario', 'FALSE', ".(($emisionbl!="")?$emisionbl:"null").")")) {
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
