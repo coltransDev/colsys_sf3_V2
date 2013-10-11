@@ -18,6 +18,9 @@
             <th>
                 <b>Cliente</b>
             </th>
+            <th>
+                <b>Sucursal</b>
+            </th>
             <?
             }
             ?>
@@ -46,7 +49,7 @@
             <?
             if( $detalle ){
             ?>
-            <td>
+            <td colspan="2">
                 &nbsp;
             </td>
             <?
@@ -84,6 +87,9 @@
                     </td>
                     <td>
                         <div align="left"><?=$hija->getCliente()->getCaCompania()?></div>
+                    </td>
+                    <td>
+                        <div align="left"><?=$hija->getVendedor()->getSucursal()->getCaNombre()?></div>
                     </td>
                     <td>
                         <div align="right"><?=$hija->getCaHawb()?></div>

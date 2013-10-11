@@ -13,7 +13,7 @@ use_helper("ExtCalendar");
     <form action="<?=url_for("reportesGer/listadoFacturas")?>" method="post" >
         <table class="tableList"  width="600px"  >
             <tr>
-                <th colspan="6"> 
+                <th colspan="7"> 
                     Ingrese los par&aacute;metros para el Reporte
                 </th>
             </tr>
@@ -55,6 +55,11 @@ use_helper("ExtCalendar");
                 <td>
                     Proveedor:<br />
                     <input type="text" name="proveedor" />
+
+                </td>
+                <td>
+                    N&uacute;mero Factura:<br />
+                    <input type="text" name="factura" />
 
                 </td>
                 <td>

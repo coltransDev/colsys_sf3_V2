@@ -1086,10 +1086,26 @@ md.ca_idmodo,m.ca_idmaster
         $anio = $request->getParameter("anio");
         $mes = $request->getParameter("mes");
         $idtrafico = $request->getParameter("idtrafico");
+        $sucursal = $request->getParameter("sucursal");
 
         $this->detalle = $request->getParameter("detalle");
 
         if ($request->isMethod("post")) {
+            
+            $array_refs = array();
+            if ($sucursal != "%") {
+                    $array_refs = Doctrine::getTable("InoClientesAir")
+                            ->createQuery("c")
+                            ->select("DISTINCT c.ca_referencia")
+                            ->innerJoin("c.Vendedor v")
+                            ->innerJoin("v.Sucursal s")
+                            ->addWhere("SUBSTR(c.ca_referencia, 8,2) LIKE ?", $mes)
+                            ->addWhere("SUBSTR(c.ca_referencia, 15,1) LIKE ?", $anio)
+                            ->addWhere("s.ca_nombre = ?", $sucursal)
+                            ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                            //->getSqlQuery();
+                            ->execute();
+            }
 
             $q = Doctrine::getTable("InoMaestraAir")
                             ->createQuery("m")
@@ -1101,6 +1117,10 @@ md.ca_idmodo,m.ca_idmaster
             if ($this->detalle) {
                 $q->innerJoin("m.InoClientesAir c");
                 $q->innerJoin("c.Cliente cl");
+                
+                if (count($array_refs) > 0) {
+                    $q->whereIn("c.ca_referencia", $array_refs);
+                }
             }
 
             $this->refs = $q->execute();
@@ -1111,6 +1131,14 @@ md.ca_idmodo,m.ca_idmaster
                             ->createQuery("t")
                             ->addOrderBy("t.ca_nombre")
                             ->execute();
+            
+            $this->sucursales = Doctrine::getTable("Sucursal")
+                    ->createQuery("s")
+                    ->select("DISTINCT s.ca_nombre")
+                    ->addWhere("s.ca_idsucursal <> ?", "999")
+                    ->addOrderBy("s.ca_nombre")
+                    ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                    ->execute();
         }
     }
     

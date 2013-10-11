@@ -56,6 +56,20 @@
                             ?>
                         </select>
                     </td>
+
+                    <td class="mostrar" >Sucursal :</b> <br />
+                        <select name="sucursal"><option value="%">Todas las Sucursales</option>
+                            <?
+                            foreach ($sucursales as $sucursal) {
+                                ?>
+                                <option value="<?= $sucursal['s_ca_nombre'] ?>"><?= $sucursal['s_ca_nombre'] ?></option>
+                                <?
+                            }
+                            ?>
+
+                        </select>
+                    </td>
+
                     <td class="mostrar" >Listar detalle de hijas: <br />
                         <input type="checkbox" name="detalle" checked="checked" />
                     </td>
