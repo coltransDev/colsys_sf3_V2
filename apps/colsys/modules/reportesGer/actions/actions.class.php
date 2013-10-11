@@ -1094,17 +1094,18 @@ md.ca_idmodo,m.ca_idmaster
             
             $array_refs = array();
             if ($sucursal != "%") {
-                    $array_refs = Doctrine::getTable("InoClientesAir")
+                    $referencias = Doctrine::getTable("InoClientesAir")
                             ->createQuery("c")
                             ->select("DISTINCT c.ca_referencia")
                             ->innerJoin("c.Vendedor v")
                             ->innerJoin("v.Sucursal s")
                             ->addWhere("SUBSTR(c.ca_referencia, 8,2) LIKE ?", $mes)
                             ->addWhere("SUBSTR(c.ca_referencia, 15,1) LIKE ?", $anio)
-                            ->addWhere("s.ca_nombre = ?", $sucursal)
-                            ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
-                            //->getSqlQuery();
+                            ->addWhere("s.ca_nombre LIKE ?", $sucursal)
                             ->execute();
+                    foreach($referencias as $referencia){
+                        $array_refs[] = $referencia->getCaReferencia();
+                    }
             }
 
             $q = Doctrine::getTable("InoMaestraAir")
@@ -1118,7 +1119,7 @@ md.ca_idmodo,m.ca_idmaster
                 $q->innerJoin("m.InoClientesAir c");
                 $q->innerJoin("c.Cliente cl");
                 
-                if (count($array_refs) > 0) {
+                if (count($array_refs) != 0) {
                     $q->whereIn("c.ca_referencia", $array_refs);
                 }
             }
