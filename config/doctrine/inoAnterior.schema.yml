@@ -287,6 +287,10 @@ InoIngresosSea:
        local: ca_referencia
        foreign: ca_referencia
        type: one        
+     Cliente:
+       local: ca_idcliente
+       foreign: ca_idcliente
+       type: one
     
 
 InoCostosSea:
