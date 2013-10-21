@@ -174,7 +174,6 @@ class cotizacionesActions extends sfActions {
 
             $this->cotizacion = $cotizacion;
         } else {
-            
             $user = $this->getUser()->getUserId();
             $this->cotizacion = new Cotizacion();       
             $this->tarea = $this->cotizacion->getTareaIDGEnvioOportuno();
@@ -537,8 +536,6 @@ class cotizacionesActions extends sfActions {
                         ->where("e.ca_tipo = ? AND e.ca_idcaso = ?", array("Envío de cotización", $this->cotizacion->getCaIdcotizacion()))
                         ->addOrderBy("e.ca_fchenvio")
                         ->execute();
-
-        
         
         $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "cotizaciones" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "textos.yml";
         $textos = sfYaml::load($config);
@@ -553,7 +550,6 @@ class cotizacionesActions extends sfActions {
         $this->notas = sfYaml::load(sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "cotizaciones" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "notas.yml");
     }
 
-    
 
     public function executeGenerarPDFColtrans() {
         $this->cotizacion = Doctrine::getTable("Cotizacion")->find($this->getRequestParameter("id"));
@@ -579,6 +575,17 @@ class cotizacionesActions extends sfActions {
         $this->setTemplate("generarPDF" . $this->cotizacion->getCaEmpresa());
 
         $this->grupos = $grupos;
+    }
+    
+
+    public function executeGenerarPDFColmas() {
+        $this->cotizacion = Doctrine::getTable("Cotizacion")->find($this->getRequestParameter("id"));
+        $this->forward404Unless($this->cotizacion);
+
+        $this->filename = $this->getRequestParameter("filename");
+        $this->notas = sfYaml::load(sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "cotizaciones" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "notas.yml");
+
+        $this->setTemplate("generarPDF" . $this->cotizacion->getCaEmpresa());
     }
     
     public function executeGenerarPDFTPLogistics() {
@@ -1512,6 +1519,7 @@ class cotizacionesActions extends sfActions {
                             ->select("p.ca_transporte, p.ca_modalidad")
                             ->from("CotProducto p")
                             ->where("p.ca_idcotizacion = ? ", $idcotizacion)
+                            ->addwhere("p.ca_transporte <> ?", "OTM-DTA")
                             ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                             ->execute();
 
@@ -1974,6 +1982,151 @@ class cotizacionesActions extends sfActions {
         }
     }
 
+    /*     * ***********************************************************************
+     * GRILLA ADUANAS
+     *
+     * ************************************************************************ */
+
+    /*
+     * Guarda los cambios realizados en la Plantilla Aduanas
+     * @author Carlos G. López M.
+     */
+
+    public function executeObserveAduanasManagement() {
+
+        $conn = Doctrine::getTable("CotAduana")->getConnection();
+        $conn->beginTransaction();
+        try {
+            $user_id = $this->getUser()->getUserId();
+            $id = $this->getRequestParameter("id");
+            if ($this->getRequestParameter("oid")) {
+
+                $aduana = Doctrine::getTable("CotAduana")->find($this->getRequestParameter("oid"));
+                $this->forward404Unless($aduana);
+            } else {
+                $aduana = new CotAduana();
+                $aduana->setCaIdcotizacion($this->getRequestParameter("cotizacionId"));
+            }
+
+            if ($this->getRequestParameter("concepto")) {
+                $aduana->setCaIdconcepto($this->getRequestParameter("concepto"));
+            }
+
+            if ($this->getRequestParameter("valor")) {
+                $aduana->setCaValor($this->getRequestParameter("valor"));
+            }
+
+            if ($this->getRequestParameter("valorminimo")) {
+                $aduana->setCaValorminimo($this->getRequestParameter("valorminimo"));
+            }
+
+            if ($this->getRequestParameter("aplicacion")) {
+                $aduana->setCaAplicacion($this->getRequestParameter("aplicacion"));
+            }
+
+            if ($this->getRequestParameter("aplicacionminimo")) {
+                $aduana->setCaAplicacionminimo($this->getRequestParameter("aplicacionminimo"));
+            }
+
+            if ($this->getRequestParameter("parametro")) {
+                $aduana->setCaParametro($this->getRequestParameter("parametro"));
+            }
+
+            if ($this->getRequestParameter("fchini")) {
+                $aduana->setCaFchini($this->getRequestParameter("fchini"));
+            }
+
+            if ($this->getRequestParameter("fchfin")) {
+                $aduana->setCaFchfin($this->getRequestParameter("fchfin"));
+            }
+
+            if ($this->getRequestParameter("observaciones")) {
+                $aduana->setCaObservaciones($this->getRequestParameter("observaciones"));
+            }else{
+                $aduana->setCaObservaciones(null);
+            }
+
+            if (!$this->getRequestParameter("oid")) {
+                $aduana->setCaFchcreado(date("Y-m-d H:i:s"));
+                $aduana->setCaUsucreado($user_id);
+            } else {
+                $aduana->setCaFchactualizado(date("Y-m-d H:i:s"));
+                $aduana->setCaUsuactualizado($user_id);
+            }
+
+            $aduana->save( $conn );
+            $this->responseArray = array("success"=>true,"id" => $id, "oid"=>$aduana->getCaIdaduana() );
+            $conn->commit();
+        } catch (Exception $e) {
+            $conn->rollBack();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+        $this->setTemplate("responseTemplate");
+
+    }
+
+    public function executeEliminarGrillaAduanas() {
+        $user_id = $this->getUser()->getUserId();
+        $id = $this->getRequestParameter("id");
+        if ($this->getRequestParameter("oid")) {
+            $aduana = Doctrine::getTable("CotAduana")->find($this->getRequestParameter("oid"));
+            if ($aduana) {
+                $aduana->delete();
+                $this->responseArray = array("id" => $id);
+            }
+        }
+
+        $this->setTemplate("responseTemplate");
+    }
+
+    /*
+     * Muestra las tarifas de aduanas de acuerdo a los productos cotizados
+     */
+
+    public function executeTarifarioAduanas() {
+
+        $idcotizacion = $this->getRequestParameter("idcotizacion");
+        $this->idcomponent = "aduanas_" . $idcotizacion;
+        
+        $cotizacion = Doctrine::getTable("Cotizacion")->find($idcotizacion);
+        $cotAduanas = $cotizacion->getCotAduana();
+        
+        $idConceptos = array();
+        foreach ($cotAduanas as $cotAduana) {
+            $idConceptos[] = $cotAduana->getCaIdconcepto();
+        }
+
+        $aduconceptos = Doctrine::getTable("ConceptoAduana")
+                        ->createQuery("ca")
+                        ->where("c.ca_impoexpo = ?", "Aduanas")
+                        ->whereNotIn("ca_idconcepto", $idConceptos)
+                        ->innerJoin("ca.Costo c")
+                        ->addOrderBy("c.ca_costo")
+                        ->execute();
+       
+        $this->data = array();
+        foreach ($aduconceptos as $aduconcepto) {
+            if ($aduconcepto->getCosto()->getCaTransporte() == Constantes::MARITIMO) {
+                $row['nacionalizacion'] = utf8_encode("Nacionalización en Puerto");
+            } else if ($aduconcepto->getCosto()->getCaTransporte() == Constantes::AEREO) {
+                $row['nacionalizacion'] = utf8_encode("Nacionalización Aéreo/OTM");
+            }
+            $row['idcotizacion'] = $idcotizacion;
+            $row['idconcepto'] = $aduconcepto->getCaIdconcepto();
+            $row['concepto'] = utf8_encode($aduconcepto->getCosto()->getCaCosto());
+            $row['parametro'] = $aduconcepto->getCaParametro();
+            $row['valor'] = $aduconcepto->getCaValor();
+            $row['aplicacion'] = $aduconcepto->getCaAplicacion();
+            $row['valorminimo'] = $aduconcepto->getCaValorminimo();
+            $row['aplicacionminimo'] = $aduconcepto->getCaAplicacionminimo();
+            $row['fchini'] = $aduconcepto->getCaFchini();
+            $row['fchfin'] = $aduconcepto->getCaFchfin();
+            $row['observaciones'] = $aduconcepto->getCaObservaciones();
+            $row['orden'] = "Z";
+            $this->data[] = $row;
+        }
+    }
+    
     /*     * ***********************************************************************
      * OTROS
      *

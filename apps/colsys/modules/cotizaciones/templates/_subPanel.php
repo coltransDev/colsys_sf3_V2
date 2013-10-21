@@ -10,8 +10,9 @@ if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS || $cotizacion->getCaEmp
 //    include_component("cotizaciones","panelContViajes",array("cotizacion"=>$cotizacion));
     include_component("cotizaciones","panelSeguros",array("cotizacion"=>$cotizacion));
     include_component("cotizaciones","panelAgentes",array("cotizacion"=>$cotizacion));
+}else if($cotizacion->getCaEmpresa() == Constantes::COLMAS){
+    include_component("cotizaciones","panelAduanas",array("cotizacion"=>$cotizacion));
 }
-
 
 /*
 */
@@ -37,6 +38,10 @@ SubPanel = function(){
         this.gridSeguros = new PanelSeguros();
         this.gridAgentes = new PanelAgentes();
 
+        <?
+    }else if($cotizacion->getCaEmpresa() == Constantes::COLMAS){
+        ?>
+        this.gridAduanas = new PanelAduanas();
         <?
     }
     ?>
@@ -70,6 +75,10 @@ SubPanel = function(){
                    this.gridSeguros,
                    this.gridAgentes,
                 <?
+                }else if($cotizacion->getCaEmpresa() == Constantes::COLMAS){
+                ?>
+                   this.gridAduanas,
+                <?
                 }
                 ?>
                 this.panelArchivos
@@ -91,13 +100,10 @@ Ext.extend(SubPanel, Ext.FormPanel, {
         }else if($cotizacion->getCaEmpresa() == Constantes::COLMAS)
         {
         ?>
-            this.gridProductos.guardarItems();
+            this.gridAduanas.guardarItems();
         <?
         }
         ?>
     }
 });
-
-
-
 </script>

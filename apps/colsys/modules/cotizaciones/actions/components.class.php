@@ -149,6 +149,39 @@ class cotizacionesComponents extends sfComponents {
         }
     }
 
+    public function executePanelAduanas() {
+        $id = $this->cotizacion->getCaIdcotizacion();
+
+        $aduanas = Doctrine::getTable("CotAduana")
+                        ->createQuery("s")
+                        ->where("s.ca_idcotizacion = ? ", $id)
+                        ->execute();
+
+        $this->aplicaciones = ParametroTable::retrieveByCaso("CU228");
+        $this->aduanas = array();
+
+        foreach ($aduanas as $aduana) {
+            $this->aduanas[] = array('oid' => $aduana->getCaIdaduana(),
+                'idcotizacion' => $aduana->getCaIdcotizacion(),
+                'idconcepto' => $aduana->getCaIdconcepto(),
+                'nacionalizacion' => utf8_encode(($aduana->getCosto()->getCaTransporte()==Constantes::MARITIMO)?"Nacionalización en Puerto":(($aduana->getCosto()->getCaTransporte()==Constantes::AEREO)?"Nacionalización Aéreo/OTM":"")),
+                'concepto' => utf8_encode($aduana->getCosto()->getCaCosto()),
+                'valor' => $aduana->getCaValor(),
+                'valorminimo' => $aduana->getCaValorminimo(),
+                'aplicacion' => $aduana->getCaAplicacion(),
+                'aplicacionminimo' => $aduana->getCaAplicacionminimo(),
+                'parametro' => $aduana->getCaParametro(),
+                'fchini' => $aduana->getCaFchini(),
+                'fchfin' => $aduana->getCaFchfin(),
+                'observaciones' => utf8_encode($aduana->getCaObservaciones()),
+            );
+        }
+        
+        if (!isset($this->modo)) {
+            $this->modo = "";
+        }
+    }
+    
     /*
      *
      */
@@ -158,12 +191,6 @@ class cotizacionesComponents extends sfComponents {
         $response->addJavaScript("extExtras/CheckColumn", 'last');
     }
 
-    
-
-    
-    
-
-   
 
     public function executeFormCotizacionPanel() {
         
