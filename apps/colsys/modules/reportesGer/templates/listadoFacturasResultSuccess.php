@@ -8,7 +8,7 @@
 $costos = $sf_data->getRaw("costos");
 ?>
 <div class="content" align="center">
-    <h2>Informe de Facturación Mar&iacute;timo</h2>
+    <h2>Informe de Facturación Proveedores Mar&iacute;timo</h2>
     <br />
     <table width="90%" CELLSPACING="1" class="tableList alignLeft">
      <tr>
@@ -41,6 +41,8 @@ $costos = $sf_data->getRaw("costos");
          <th>Usuario de Creaci&oacute;n</th>
        </tr>
        <?
+       $tot_net = 0;
+       $tot_vta = 0;
        foreach( $costos as $c ){
        ?>
          <tr>
@@ -59,7 +61,15 @@ $costos = $sf_data->getRaw("costos");
          </tr>
        </logic:iterate>
     <?
+        $tot_net+= round($c->getCaNeto()*$c->getCaTcambio()/$c->getCaTcambioUsd());
+        $tot_vta+= $c->getCaVenta();
        }
+       ?>
+        <td class="valores" style='font-weight: bold; font-size: 9px; background: #F0F0F0' colspan="8"><div align="right">TOTALES :</div></td>
+        <td class="valores" style='font-weight: bold; font-size: 9px; background: #F0F0F0'><div align="right"><?=Utils::formatNumber($tot_net)?></div></td>
+        <td class="valores" style='font-weight: bold; font-size: 9px; background: #F0F0F0'><div align="right"><?=Utils::formatNumber($tot_vta)?></div></td>
+        <td class="valores" style='font-weight: bold; font-size: 9px; background: #F0F0F0' colspan="2"><div align="right"></div></td>
+       <?
      }
     ?>
     </table>

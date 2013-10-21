@@ -8,9 +8,9 @@
 use_helper("ExtCalendar");
 ?>
 <div class="content" align="center">
-    <h2>Informe de Facturación Proveedores Mar&iacute;timo</h2>
+    <h2>Informe de Facturación Clientes Mar&iacute;timo</h2>
     <br />
-    <form action="<?=url_for("reportesGer/listadoFacturas")?>" method="post" >
+    <form action="<?=url_for("reportesGer/listadoFacturasClie")?>" method="post" >
         <table class="tableList"  width="600px"  >
             <tr>
                 <th colspan="7"> 
@@ -53,8 +53,8 @@ use_helper("ExtCalendar");
                     ?>
                 </td>
                 <td>
-                    Proveedor:<br />
-                    <input type="text" name="proveedor" />
+                    Cliente:<br />
+                    <input type="text" name="cliente" />
 
                 </td>
                 <td>

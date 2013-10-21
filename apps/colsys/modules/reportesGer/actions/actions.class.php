@@ -1364,6 +1364,37 @@ md.ca_idmodo,m.ca_idmaster
                                     ->execute();
         }
     }
+    public function executeListadoFacturasClie(sfWebRequest $request) {   
+        
+        if( $request->isMethod("post") ){           
+            
+            $q = Doctrine::getTable("InoIngresosSea")
+                            ->createQuery("ii")
+                            ->addWhere("substr(ii.ca_referencia,5,2) like ?", $request->getParameter("sufijo") )
+                            ->addWhere("ii.ca_fchfactura >= ?", $request->getParameter("fchInicial"))
+                            ->addWhere("ii.ca_fchfactura <= ?", $request->getParameter("fchFinal"))
+                            ->addWhere("ii.ca_usucreado like ?", $request->getParameter("login"));
+            
+            if( $request->getParameter("cliente") ){
+                $q->innerJoin("ii.Cliente cl");
+                $q->innerJoin("cl.Ids id");
+                $q->addWhere("UPPER(id.ca_nombre) like ?", strtoupper($request->getParameter("cliente"))."%");
+            }
+            if( $request->getParameter("factura") ){
+               $q->addWhere("UPPER(ca_factura) like ?", strtoupper($request->getParameter("factura"))."%");
+            }
+            $this->ingresos = $q->execute();
+            
+            $this->setTemplate("listadoFacturasClieResult");
+            //$sql = "select ca_referencia, ca_factura, ca_fchfactura, ca_proveedor, ca_idmoneda, ca_tcambio, ca_tcambio_usd, ca_neto, ca_venta, ca_fchcreado, ca_usucreado from tb_inocostos_sea where order by substr(ca_referencia,5,2)";
+        }else{
+            $this->usuarios = Doctrine::getTable("Usuario")
+                                    ->createQuery("u")
+                                    ->addWhere("u.ca_activo = ? ", true)
+                                    ->addOrderBy("u.ca_nombre")
+                                    ->execute();
+        }
+    }
     
     public function executeImpresionbl(sfWebRequest $request) {
         
