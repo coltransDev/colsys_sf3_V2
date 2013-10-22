@@ -52,6 +52,19 @@ if (!isset($buscar) and !isset($accion)) {
       echo ">$val</OPTION>";
    }
    echo "  </SELECT></TD>";
+   if (!$tm->Open("SELECT distinct substr(ca_referencia,1,3) as ca_modal FROM tb_inomaestra_sea order by 1")) {       // Selecciona todos los prefijos de la InoMaestra
+      echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+      echo "<script>document.location.href = 'repreferencia.php';</script>";
+      exit;
+   }
+   $tm->MoveFirst();
+   echo "  <TD Class=listar>Prefijo:<BR><SELECT NAME='modal'>";
+   echo "  <OPTION VALUE=%>Todos</OPTION>";
+   while (!$tm->Eof()) {
+      echo " <OPTION VALUE=" . $tm->Value('ca_modal') . ">" . $tm->Value('ca_modal') . "</OPTION>";
+      $tm->MoveNext();
+   }
+   echo "  </TD>";
    if (!$tm->Open("select ca_idtrafico, ca_nombre from vi_traficos order by ca_nombre")) {       // Selecciona todos lo registros de la tabla Traficos
       echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
       echo "<script>document.location.href = 'reptraficos.php';</script>";
@@ -69,7 +82,7 @@ if (!isset($buscar) and !isset($accion)) {
    echo "  <TH style='vertical-align:bottom;' rowspan='2'><INPUT Class=submit TYPE='SUBMIT' NAME='buscar' VALUE='  Buscar  ' ONCLIK='menuform.submit();'></TH>";
    echo "</TR>";
    echo "<TR>";
-   echo "  <TD Class=listar colspan='2'><B>Nombre del Cliente:</B><BR><INPUT TYPE='text' NAME='compania' VALUE='' size='40' maxlength='60'></TD>";
+   echo "  <TD Class=listar colspan='3'><B>Nombre del Cliente:</B><BR><INPUT TYPE='text' NAME='compania' VALUE='' size='40' maxlength='60'></TD>";
    
    if (!$tm->Open("select ca_idlinea, ca_nombre from vi_transporlineas where ca_transporte = 'Marítimo' and ca_activo_impo=true order by ca_nombre")) {       // Selecciona todos los prefijos de la InoMaestra
       echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
@@ -112,7 +125,8 @@ if (!isset($buscar) and !isset($accion)) {
    $condicion.= ($ano_mem != "%")?" ca_ano = '$ano_mem'":"";
    $condicion.= ($mes_mem != "%")?" and ca_mes = '$mes_mem'":"";
    $condicion.= ($traorigen != "%")?" and ca_traorigen = '$traorigen'":"";
-   $condicion.= ($compania != "")?" and ca_compania = '$compania'":"";
+   $condicion.= ($compania != "")?" and ca_compania like '%".strtoupper($compania)."%'":"";
+   $condicion.= ($modal != "%")?" and ca_modal = '$modal'":"";
    $condicion.= ($linea != "%")?" and ca_idlinea = '$linea'":"";
    if (strlen($idequipo) != 0){
       $condicion.= " and ca_referencia in (select ca_referencia from tb_inoequipos_sea where ca_idequipo like '%$idequipo%')";
