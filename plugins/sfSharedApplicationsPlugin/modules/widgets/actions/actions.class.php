@@ -674,6 +674,11 @@ class widgetsActions extends sfActions {
             $tercero->setCaIdentificacion(strtoupper($this->getRequestParameter("identificacion")));
             $tercero->setCaVendedor(strtoupper($this->getRequestParameter("vendedor")));
             $tercero->setCaTipo($this->tipo);
+            $tercero->setCaTipopersona($this->getRequestParameter("tipopersona"));
+            $tercero->setProperty("nombre1",$this->getRequestParameter("nombre1"));
+            $tercero->setProperty("nombre2",$this->getRequestParameter("nombre2"));
+            $tercero->setProperty("apellido1",$this->getRequestParameter("apellido1"));
+            $tercero->setProperty("apellido2",$this->getRequestParameter("apellido2"));
             $tercero->save();
         }
 
@@ -690,7 +695,7 @@ class widgetsActions extends sfActions {
         $idtercero = intval($this->getRequestParameter("idtercero"));
         $tercero = Doctrine::getTable("Tercero")->find( $idtercero );
         $this->forward404Unless($tercero);
-
+        //echo "::".$tercero->getCaTipopersona()."::<br>";
         $this->responseArray = array("success" => true,
             "nombre" => utf8_encode($tercero->getCaNombre()),
             "idtercero" => $tercero->getCaIdtercero(),
@@ -704,7 +709,12 @@ class widgetsActions extends sfActions {
             "idciudad" => $tercero->getCaIdciudad(),
             "ciudad" => utf8_encode($tercero->getCiudad()->getCaCiudad()),
             "idtrafico" => $tercero->getCiudad()->getCaIdtrafico(),
-            "trafico" => utf8_encode($tercero->getCiudad()->getTrafico()->getCaNombre())
+            "trafico" => utf8_encode($tercero->getCiudad()->getTrafico()->getCaNombre()),
+            "tipopersona" => $tercero->getCaTipopersona(),
+            "nombre1" => utf8_encode($tercero->getProperty("nombre1")),
+            "nombre2" => utf8_encode($tercero->getProperty("nombre2")),
+            "apellido1" => utf8_encode($tercero->getProperty("apellido1")),
+            "apellido2" => utf8_encode($tercero->getProperty("apellido2"))
         );
         $this->setTemplate("responseTemplate");
     }

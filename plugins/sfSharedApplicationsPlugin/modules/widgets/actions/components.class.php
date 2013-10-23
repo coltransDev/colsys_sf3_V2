@@ -713,14 +713,15 @@ class widgetsComponents extends sfComponents {
 
     public function executeWidgetParametros() {
         $this->data = array();
-        //echo $this->getRequestParameter("caso_uso");
+        
         $casos = explode(",", $this->caso_uso);
+        
         foreach ($casos as $caso) {
             $datos = ParametroTable::retrieveByCaso($caso);
             foreach ($datos as $dato) {
                 $this->data[] = array("id" => utf8_encode($dato->getCaIdentificacion()), "name" => utf8_encode($dato->getCaValor()), "caso_uso" => $dato->getCaCasouso());
             }
-        }
+        }        
     }
 
     public function executeWidgetReporte() {
@@ -763,6 +764,36 @@ class widgetsComponents extends sfComponents {
         $conceptos = $q->execute();
 
         $this->data = array();
+        foreach ($conceptos as $concepto) {
+            $this->data[] = array("idconcepto" => $concepto['ca_idconcepto'],
+                "concepto" => $concepto['ca_concepto'],
+                "transporte" => utf8_encode($concepto['ca_transporte']),
+                "modalidad" => utf8_encode($concepto['ca_modalidad'])
+            );
+        }
+    }
+    
+    public function executeWidgetCostos() {
+        $this->data = array();
+
+        $q = Doctrine::getTable("InoConcepto")
+                        ->createQuery("c")
+                        ->innerJoin("c.InoConceptoModalidad cm")
+                        ->innerJoin("cm.Modalidad m") 
+                        ->addWhere("c.ca_costo = ? ", true)
+                        ->addWhere("m.ca_impoexpo = ? ", $this->impoexpo)
+                        ->addWhere("m.ca_transporte = ? ", $this->transporte)
+                        ->addWhere("m.ca_modalidad = ? ", $this->modalidad)
+                        ->addOrderBy("c.ca_concepto");
+        //echo $this->impoexpo."--".$this->transporte."<br>";
+        //echo $q->getSqlQuery();
+
+        $q->fetchArray();
+
+        $conceptos = $q->execute();
+
+        $this->data = array();
+        //print_r($conceptos[0]);
         foreach ($conceptos as $concepto) {
             $this->data[] = array("idconcepto" => $concepto['ca_idconcepto'],
                 "concepto" => $concepto['ca_concepto'],
@@ -849,6 +880,11 @@ class widgetsComponents extends sfComponents {
     }    
     
     public function executeWidgetReferencia( ){
+        
+    }    
+    
+    public function executeWgSerires( ){
+        
         
     }    
 
