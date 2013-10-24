@@ -27,7 +27,8 @@ class Constantes{
 	const MARITIMO = "Marítimo";
 	const TERRESTRE = "Terrestre";
     const ADUANA = "Aduana";
-
+    const ADUANAS = "Aduanas";
+    
     const FCL = "FCL";
     const LCL = "LCL";
     const COLOADING = "COLOADING";    
