@@ -38,7 +38,7 @@ include_component("conceptos","AKAGrid");
 
 
 //Tarifario Colmas
-//include_component("pricing","panelTarifarioAduana");
+include_component("pricing","panelTarifarioAduana");
 //include_component("pricing","panelTarifarioAduanaCliente");
 ?>
 <script type="text/javascript">
@@ -118,16 +118,19 @@ Ext.onReady(function(){
                         "transporte": "<?=(Constantes::OTMDTA)?>",
                         "readOnly": <?=$opcion=="consulta"?"true":"false"?>
                     }),
-
-                     /*new PanelConsultaCiudades({
-                        title: "Aduana",
-                        "impoexpo": "<?=(Constantes::IMPO)?>",
-
-                        "transporte": '<?=Constantes::TERRESTRE?>',
-                        "modalidad": '<?=Constantes::ADUANA?>',
+                    new PanelConsultaCiudades({
+                        title: "Aduana Importación",
+                        "impoexpo": "<?=(Constantes::ADUANAS)?>",
+                        "modalidad": "<?=(Constantes::ADUANA)?>",
                         "readOnly": <?=$opcion=="consulta"?"true":"false"?>
-                    }),*/
-
+                    }),
+                    new PanelConsultaCiudades({
+                        title: "Aduana Exportación",
+                        "impoexpo": "<?=(Constantes::EXPO)?>",
+                        "modalidad": "<?=(Constantes::ADUANA)?>",
+                        "readOnly": <?=$opcion=="consulta"?"true":"false"?>
+                    }),
+                
                 <?
                 include_partial("formSeguros", array("opcion"=>$opcion));
                 ?>
@@ -175,24 +178,24 @@ Ext.onReady(function(){
 </script>
 
 <!-- use class="x-hide-display" to prevent a brief flicker of the content -->
-<div id="west" class="x-hide-display">
+<div id="west" class="x-hide-display">   
 </div>
 
 <div id="center1" class="x-hide-display">
-    <br />
+    <br />	 	
 	<h3>&nbsp;&nbsp;&nbsp;Bienvenido al sistema de administracion del tarifario. </h3><br />
 	<hr />
 	&nbsp;&nbsp;&nbsp;Para comenzar a trabajar por favor seleccione una ciudad del panel de traficos.
 	<br />
 	&nbsp;&nbsp;&nbsp;Por favor tenga en cuenta las observaciones.
-
+	
 	<br />
 	&nbsp;&nbsp;&nbsp;<a id="hideit" href="#">Ocultar panel lateral</a>
     <br />
 	<div id="panel-noticias-wrap" >
 		<div id="panel-noticias" ></div>
 	</div>
-
+    
 
 </div>
 <div id="props-panel" class="x-hide-display" style="width:200px;height:200px;overflow:hidden;">
@@ -221,7 +224,7 @@ Ext.onReady(function(){
                                                                   title: "Recargos locales NAV",
                                                                   closable: true,
                                                                   readOnly: true });
-
+                                                              
         */
 
         /*var newComponent = new PanelFletesPorTrayecto({
@@ -233,7 +236,7 @@ Ext.onReady(function(){
                                                              modalidad: "FCL",
                                                              idtrafico: "CO-057"
                                                          });
-        Ext.getCmp('tab-panel').add(newComponent);
+        Ext.getCmp('tab-panel').add(newComponent);    
         Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
 
         /*var newComponent = new PanelParametros({

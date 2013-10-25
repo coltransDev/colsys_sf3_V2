@@ -1,4 +1,4 @@
-<?php
+p<?php
 
 /**
  * pricing components.
@@ -155,7 +155,6 @@ class pricingComponents extends sfComponents
     *
     ***************************************************************************/
 
-
     /*
 	* Tarifario de aduana x cliente
 	* @author: Andres Botero
@@ -218,11 +217,12 @@ class pricingComponents extends sfComponents
 
     public function executePanelTarifarioAduana()
     {
-        $this->aplicaciones = ParametroTable::retrieveByCaso("CU082");
+        $this->aplicaciones = ParametroTable::retrieveByCaso("CU228");
     }
+    
     public function executePanelTarifarioAduanaCliente()
     {
-        $this->aplicaciones = ParametroTable::retrieveByCaso("CU082");
+        $this->aplicaciones = ParametroTable::retrieveByCaso("CU228");
     }
 
 }

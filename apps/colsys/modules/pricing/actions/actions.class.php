@@ -182,9 +182,9 @@ class pricingActions extends sfActions {
                 $trayectoStr.=" [" . $trayecto["ai_ca_nombre"]." ] ";
             }
             if ($trayecto["t_ca_ncontrato"]) {
-                $trayectoStr.=" [Contrato No " . $trayecto["t_ca_ncontrato"]." ] ";
+                $contrato.=" [Contrato No " . $trayecto["t_ca_ncontrato"]." ] ";
             }
-            $trayectoStr.=" (TT " . $trayecto["t_ca_tiempotransito"] . " Freq. " . $trayecto["t_ca_frecuencia"] . ") " .$trayecto["t_ca_idtrayecto"];
+            $trayectoStr.=" (TT " . $trayecto["t_ca_tiempotransito"] . " Freq. " . $trayecto["t_ca_frecuencia"] . ") " .$contrato.$trayecto["t_ca_idtrayecto"];
             $trayectoStr = utf8_encode($trayectoStr);
             $trayectoStr = str_replace("&", "AND", $trayectoStr);
 
@@ -2096,9 +2096,12 @@ class pricingActions extends sfActions {
 
         if (substr($node, 0, 4) != "traf") {
             $modalidad = utf8_decode($this->getRequestParameter("modalidad"));
-            if ($modalidad == Constantes::ADUANA) {
-                $this->setTemplate("datosAduana");
-            } else {
+
+            if ( $impoexpo == Constantes::ADUANAS && $modalidad == Constantes::ADUANA) {
+                $this->setTemplate("datosAduanaImpo");
+            } else if ($impoexpo == Constantes::EXPO && $modalidad == Constantes::ADUANA) {
+                $this->setTemplate("datosAduanaExpo");
+            }else {
                 $q = Doctrine_Query::create()
                                 ->select("t.ca_modalidad, tg.ca_descripcion, tr.ca_nombre, tr.ca_idtrafico")
                                 ->distinct()
@@ -2319,6 +2322,77 @@ class pricingActions extends sfActions {
      * Tarifario Aduana
      */
 
+    public function executeDatosPanelTarifarioAduana() {
+
+        $this->nivel = $this->getNivel();
+
+        $this->opcion = "";
+        if ($this->nivel == -1) {
+            $this->forward404();
+        }
+
+        if ($this->nivel == 0) {
+            $this->opcion = "consulta";
+        }
+
+        $this->impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
+        $this->transporte = utf8_decode($this->getRequestParameter("transporte"));
+        $this->modalidad = utf8_decode($this->getRequestParameter("modalidad"));
+        //$this->forward404Unless($this->transporte);
+
+        if($this->impoexpo == Constantes::ADUANAS and $this->transporte == Constantes::MARITIMO){
+            $this->idcomponent = "adusea_";
+            $departamento = "Aduanas";
+            $transporte = $this->transporte;
+        }else if($this->impoexpo == Constantes::ADUANAS and $this->transporte == Constantes::AEREO){
+            $this->idcomponent = "aduair_";
+            $departamento = "Aduanas";
+            $transporte = $this->transporte;
+        }else if ($this->impoexpo == Constantes::EXPO and $this->transporte == strtr(Constantes::MARITIMO, "αινσϊ", "aeiou")){
+            $this->idcomponent = "aexsea_";
+        }else if ($this->impoexpo == Constantes::EXPO and $this->transporte == strtr(Constantes::AEREO, "αινσϊ", "aeiou")){
+            $this->idcomponent = "aexair_";
+        }else if ($this->impoexpo == Constantes::EXPO and $this->transporte == strtr(Constantes::TERRESTRE, "αινσϊ", "aeiou")){
+            $this->idcomponent = "aexter_";
+        }
+        $this->idcomponent.= $this->impoexpo . "_" . $this->transporte . "_" . $this->modalidad;
+
+        $aduconceptos = Doctrine::getTable("ConceptoAduana")
+                        ->createQuery("ca")
+                        ->where("c.ca_transporte = ? AND c.ca_impoexpo = ?", array($this->transporte, $this->impoexpo))
+                        ->innerJoin("ca.Costo c")
+                        ->addOrderBy("c.ca_costo")
+                        ->execute();
+
+        $this->data = array();
+        foreach ($aduconceptos as $aduconcepto) {
+            $row['consecutivo'] = $aduconcepto->getCaConsecutivo();
+            $row['idconcepto'] = $aduconcepto->getCaIdconcepto();
+            $row['concepto'] = utf8_encode($aduconcepto->getCosto()->getCaCosto());
+            $row['parametro'] = $aduconcepto->getCaParametro();
+            $row['valor'] = $aduconcepto->getCaValor();
+            $row['aplicacion'] = $aduconcepto->getCaAplicacion();
+            $row['valorminimo'] = $aduconcepto->getCaValorminimo();
+            $row['aplicacionminimo'] = $aduconcepto->getCaAplicacionminimo();
+            $row['fchini'] = $aduconcepto->getCaFchini();
+            $row['fchfin'] = $aduconcepto->getCaFchfin();
+            $row['observaciones'] = $aduconcepto->getCaObservaciones();
+            $row['orden'] = "Z";
+            $this->data[] = $row;
+        }
+        $this->data[] = array("concepto" => "+", "orden" => "Z");
+         //print_r($this->data);
+        $this->getUser()->log( "Consulta Tarifario Aduana ".$this->impoexpo, TRUE );
+        $this->responseArray = array(
+            'success' => true,
+            'total' => count($this->data),
+            'root' => $this->data
+        );
+        
+        $this->setTemplate("responseTemplate");
+    }
+
+    
     /*
      * Datos para el tarifario de Aduana que se cargan en el panel
      * @author: Andres Botero
@@ -2864,7 +2938,6 @@ class pricingActions extends sfActions {
             $data["agente"] = utf8_encode(/* $ids->getIdsSucursal()->getCiudad()->getCaCiudad() ." ". */$ids->getCaNombre());
             $data["observaciones"] = utf8_encode($trayecto->getCaObservaciones());
             $data["frecuencia"] = utf8_encode($trayecto->getCaFrecuencia());
-            $data["ncontrato"] = utf8_encode($trayecto->getCaNcontrato());
             $data["ttransito"] = utf8_encode($trayecto->getCaTiempotransito());
 
             $this->responseArray = array("data" => $data, "success" => true);

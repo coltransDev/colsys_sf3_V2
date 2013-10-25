@@ -130,6 +130,71 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
                                                               readOnly: this.readOnly
                                                              });
                         break;
+                    case "adusea":
+                        /*
+                        * Se muestran la administracion de tarifario aduana en puerto
+                        */
+                        var newComponent = new PanelTarifarioAduana({id:idcomponent,
+                                                              impoexpo: impoexpo,
+                                                              transporte:transporte,
+                                                              modalidad: modalidad,
+                                                              title:"Aduana "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad,
+                                                              closable: true,
+                                                              readOnly: this.readOnly
+                                                             });
+                        break;
+                    case "aduair":
+                        /*
+                        * Se muestran la administracion de tarifario aduana aéreo y OTM
+                        */
+                        var newComponent = new PanelTarifarioAduana({id:idcomponent,
+                                                              impoexpo: impoexpo,
+                                                              transporte:transporte,
+                                                              modalidad: modalidad,
+                                                              title:"Aduana "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad,
+                                                              closable: true,
+                                                              readOnly: this.readOnly
+                                                             });
+                        break;
+                    case "aexsea":
+                        /*
+                        * Se muestran la administracion de tarifario aduana exportación marítima
+                        */
+                        var newComponent = new PanelTarifarioAduana({id:idcomponent,
+                                                              impoexpo: impoexpo,
+                                                              transporte:transporte,
+                                                              modalidad: modalidad,
+                                                              title:"Aduana "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad,
+                                                              closable: true,
+                                                              readOnly: this.readOnly
+                                                             });
+                        break;
+                    case "aexair":
+                        /*
+                        * Se muestran la administracion de tarifario aduana exportación aérea
+                        */
+                        var newComponent = new PanelTarifarioAduana({id:idcomponent,
+                                                              impoexpo: impoexpo,
+                                                              transporte:transporte,
+                                                              modalidad: modalidad,
+                                                              title:"Aduana "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad,
+                                                              closable: true,
+                                                              readOnly: this.readOnly
+                                                             });
+                        break;
+                    case "aexter":
+                        /*
+                        * Se muestran la administracion de tarifario aduana exportación terrestre
+                        */
+                        var newComponent = new PanelTarifarioAduana({id:idcomponent,
+                                                              impoexpo: impoexpo,
+                                                              transporte:transporte,
+                                                              modalidad: modalidad,
+                                                              title:"Aduana "+impoexpo.substring(0, 4)+"»"+transporte+"»"+modalidad,
+                                                              closable: true,
+                                                              readOnly: this.readOnly
+                                                             });
+                        break;
                     case "recgen":
                         /*
                         * Se muestran la administracion de trayectos para el pais seleccionado

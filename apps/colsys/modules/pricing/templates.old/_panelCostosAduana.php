@@ -21,7 +21,7 @@ PanelCostosAduana = function( config ){
         <?
         foreach( $recargos as $recargo ){
         ?>
-          {header: '<?=$recargo->getCaConcepto()?>', colspan: <?=$recargo->getCaCol2()?2:1?>, align: 'center'},
+          {header: '<?=$recargo->getCaConcepto()?>', align: 'center'},
         <?
         }
         ?>
@@ -49,7 +49,7 @@ PanelCostosAduana = function( config ){
         ?>
 		{
 			id: 'recargo_<?=$recargo->getCaIdconcepto()?>_col1',
-			header: "<?=$recargo->getCaCol1()?$recargo->getCaCol1():"Valor"?>",
+			header: "Valor"?>",
 			width: 80,
 			dataIndex: 'recargo_<?=$recargo->getCaIdconcepto()?>_col1',
             hidden: true,
@@ -60,23 +60,6 @@ PanelCostosAduana = function( config ){
 			})
 		},
         <?
-            if( $recargo->getCaCol2() ){
-        ?>
-		{
-			id: 'recargo_<?=$recargo->getCaIdconcepto()?>_col2',
-			header: "<?=$recargo->getCaCol2()?>",
-			width: 80,
-            hidden: true,
-			hideable: true,
-			dataIndex: 'recargo_<?=$recargo->getCaIdconcepto()?>_col2',
-            editor: new Ext.form.NumberField({
-	                    allowBlank:true,
-                        allowNegative:false
-			})
-			
-		},
-        <?
-            }
         }
         ?>        
 		{			
@@ -121,11 +104,6 @@ PanelCostosAduana = function( config ){
         {name: 'recargo_<?=$recargo->getCaIdconcepto()?>_col1', type: 'string'},
 
         <?
-            if( $recargo->getCaCol2() ){
-        ?>
-            {name: 'recargo_<?=$recargo->getCaIdconcepto()?>_col2', type: 'string'},
-        <?
-            }
         }
         ?>
         {name: 'vendedor', type: 'string'}
