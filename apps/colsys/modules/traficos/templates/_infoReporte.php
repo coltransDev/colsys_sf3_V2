@@ -196,7 +196,12 @@ if( $reporte->getCaUsuanulado() ){
                         &nbsp;&nbsp;<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />
                     <?
                     }					
-					
+					if($cliente->getProperty("consolidar_comunicaciones"))
+                    {
+                    ?>
+                        &nbsp;&nbsp;<img src="/images/consolidate.png" title="Cliente de Cuadro" />
+                    <?
+                    }
 									
 				}	
 				?>
