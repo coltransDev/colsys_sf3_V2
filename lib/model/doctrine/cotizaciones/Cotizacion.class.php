@@ -10,230 +10,230 @@
  * @author     ##NAME## <##EMAIL##>
  * @version    SVN: $Id: Builder.php 5845 2009-06-09 07:36:57Z jwage $
  */
-class Cotizacion extends BaseCotizacion
-{
+class Cotizacion extends BaseCotizacion {
+
     const EN_SEGUIMIENTO = "SEG";
-	const TIEMPO_IDG_ENTREGA_OPORTUNA = 32400; //9:00 Ticket 6237
+    const TIEMPO_IDG_ENTREGA_OPORTUNA = 32400; //9:00 Ticket 6237
     const FOLDER = "Cotizaciones";
-	public function getId(){
-		return $this->getCaIdcotizacion();
-	}
 
-    
-    public function getTareaIDGEnvioOportuno(){
+    public function getId() {
+        return $this->getCaIdcotizacion();
+    }
 
-		$tarea=null;
-		if( $this->getCaIdgEnvioOportuno() ){
-			$tarea = Doctrine::getTable("NotTarea")->find( $this->getCaIdgEnvioOportuno() );
+    public function getTareaIDGEnvioOportuno() {
+
+        $tarea = null;
+        if ($this->getCaIdgEnvioOportuno()) {
+            $tarea = Doctrine::getTable("NotTarea")->find($this->getCaIdgEnvioOportuno());
             //echo $tarea->getCaIdtarea()." ".$this->getCaIdgEnvioOportuno()."<br />" ;
-		}
-		return $tarea;
-	}
-
-	/*
-	*  Crea una nueva tarea IDG Envio Oportuno para la cotizacion
-	*/
-	public function crearTareaIDGEnvioOportuno( $fchCreado ){
-
-		$tarea = $this->getTareaIDGEnvioOportuno();
-		if( !$tarea ){
-
-			$titulo = "Cotización ".$this->getCaConsecutivo()." ".$this->getCliente()->getCaCompania();
-			$texto = "Debe enviar esta cotizacion por email o colocar la fecha de presentación para cumplir esta tarea.";
-
-			$tarea = new NotTarea();
-			$tarea->setCaIdlistatarea( 2 );
-			$tarea->setCaUrl( "/cotizaciones/consultaCotizacion?id=".$this->getCaIdcotizacion() );
-
-			$tarea->setCaUsucreado( $this->getCaUsucreado() );
-			$tarea->setCaTitulo( $titulo );
-			$tarea->setCaTexto( $texto );
-			$tarea->setCaFchcreado(  $fchCreado );
-			$tarea->setCaFchvisible( date("Y-m-d H:i:s", time()+3600) );
-			$tarea->setTiempo( TimeUtils::getFestivos(), Cotizacion::TIEMPO_IDG_ENTREGA_OPORTUNA );
-			$tarea->save();
-
-			$this->setCaIdgEnvioOportuno( $tarea->getCaIdtarea() );
-			$this->save();
-		}
-
-
-		$tarea->setCaFchcreado(  $fchCreado );
-		$tarea->setTiempo( TimeUtils::getFestivos(), Cotizacion::TIEMPO_IDG_ENTREGA_OPORTUNA );
-		$tarea->save();
-
-		if( $tarea ){
-			$loginsAsignaciones = array( $this->getCaUsucreado(), $this->getCaUsuario() );
-			if( $this->getCaUsuactualizado() ){
-				$loginsAsignaciones[]=$this->getCaUsuactualizado();
-			}
-			$tarea->setAsignaciones( $loginsAsignaciones );
-		}
-		return $tarea;
-	}
-
+        }
+        return $tarea;
+    }
 
     /*
-	*
-	*/
+     *  Crea una nueva tarea IDG Envio Oportuno para la cotizacion
+     */
 
-	public function setFchPresentacion( $fchEnvio ){       
-		$tarea = $this->getTareaIDGEnvioOportuno();
-		$tarea->setCaFchterminada( $fchEnvio );
-		$tarea->save();        
-	}
+    public function crearTareaIDGEnvioOportuno($fchCreado) {
 
+        $tarea = $this->getTareaIDGEnvioOportuno();
+        if (!$tarea) {
 
-	public function getFchpresentacion( $format=null ){
-		$tarea = $this->getTareaIDGEnvioOportuno();        
-		if( $tarea ){
-			return $tarea->getCaFchterminada( $format );
-		}else{
-			return null;
-		}
-	}
+            $titulo = "Cotización " . $this->getCaConsecutivo() . " " . $this->getCliente()->getCaCompania();
+            $texto = "Debe enviar esta cotizacion por email o colocar la fecha de presentación para cumplir esta tarea.";
 
+            $tarea = new NotTarea();
+            $tarea->setCaIdlistatarea(2);
+            $tarea->setCaUrl("/cotizaciones/consultaCotizacion?id=" . $this->getCaIdcotizacion());
 
-	/*
-	* Retorna el objeto cliente asociado al contacto de la cotizacion
-	* @author Andres Botero
-	*/    
-	public function getCliente(){		
-		return Doctrine::getTable("Cliente")
-               ->createQuery("c")
-               ->innerJoin("c.Contacto con")
-               ->where("con.ca_idcontacto = ? ",$this->getCaIdcontacto() )
-               ->distinct()
-               ->fetchOne();
-	}
+            $tarea->setCaUsucreado($this->getCaUsucreado());
+            $tarea->setCaTitulo($titulo);
+            $tarea->setCaTexto($texto);
+            $tarea->setCaFchcreado($fchCreado);
+            $tarea->setCaFchvisible(date("Y-m-d H:i:s", time() + 3600));
+            $tarea->setTiempo(TimeUtils::getFestivos(), Cotizacion::TIEMPO_IDG_ENTREGA_OPORTUNA);
+            $tarea->save();
+
+            $this->setCaIdgEnvioOportuno($tarea->getCaIdtarea());
+            $this->save();
+        }
 
 
-    public function getCotProductos(){
+        $tarea->setCaFchcreado($fchCreado);
+        $tarea->setTiempo(TimeUtils::getFestivos(), Cotizacion::TIEMPO_IDG_ENTREGA_OPORTUNA);
+        $tarea->save();
+
+        if ($tarea) {
+            $loginsAsignaciones = array($this->getCaUsucreado(), $this->getCaUsuario());
+            if ($this->getCaUsuactualizado()) {
+                $loginsAsignaciones[] = $this->getCaUsuactualizado();
+            }
+            $tarea->setAsignaciones($loginsAsignaciones);
+        }
+        return $tarea;
+    }
+
+    /*
+     *
+     */
+
+    public function setFchPresentacion($fchEnvio) {
+        $tarea = $this->getTareaIDGEnvioOportuno();
+        $tarea->setCaFchterminada($fchEnvio);
+        $tarea->save();
+    }
+
+    public function getFchpresentacion($format = null) {
+        $tarea = $this->getTareaIDGEnvioOportuno();
+        if ($tarea) {
+            return $tarea->getCaFchterminada($format);
+        } else {
+            return null;
+        }
+    }
+
+    /*
+     * Retorna el objeto cliente asociado al contacto de la cotizacion
+     * @author Andres Botero
+     */
+
+    public function getCliente() {
+        return Doctrine::getTable("Cliente")
+                        ->createQuery("c")
+                        ->innerJoin("c.Contacto con")
+                        ->where("con.ca_idcontacto = ? ", $this->getCaIdcontacto())
+                        ->distinct()
+                        ->fetchOne();
+    }
+
+    public function getCotProductos() {
         return Doctrine::getTable("CotProducto")
-                        ->createQuery("p")                                                
-                        ->where("p.ca_idcotizacion = ?", $this->getcaIdcotizacion() )
+                        ->createQuery("p")
+                        ->where("p.ca_idcotizacion = ?", $this->getcaIdcotizacion())
                         ->addOrderBy("p.ca_transporte ASC")
                         ->addOrderBy("p.ca_modalidad ASC")
                         ->addOrderBy("p.ca_idproducto")
                         ->execute();
     }
 
+    /*
+     * Retorna los recargos locales de la cotización
+     * @author Andres Botero
+     */
 
-	/*
-	* Retorna los recargos locales de la cotización
-	* @author Andres Botero
-	*/
-	public function getRecargosLocales( $transporte=null, $modalidad=null ){
-		//$tipo = Constantes::RECARGO_LOCAL;		
+    public function getRecargosLocales($transporte = null, $modalidad = null) {
+        //$tipo = Constantes::RECARGO_LOCAL;		
         $q = Doctrine_Query::create()
-                        ->from("CotRecargo r")
-                        ->innerJoin("r.TipoRecargo tr")
-                        ->where("r.ca_idcotizacion = ?", $this->getCaIdcotizacion() )
-                        //->addWhere("r.ca_tipo like ? ", "%".$tipo."%")
-                        ->addWhere("tr.ca_tipo like ? OR tr.ca_tipo like ? ", array("%".Constantes::RECARGO_LOCAL."%","%". Constantes::RECARGO_OTM_DTA."%") )
-                        ->addOrderBy("r.ca_modalidad ASC");
-                        
-        if( $transporte ){
-            if($transporte==constantes::OTMDTA || $transporte=="OTM" || $transporte=="DTA")
-                $transporte=constantes::TERRESTRE;
-            $q->addWhere("tr.ca_transporte = ? and r.ca_consecutivo is null and r.ca_tipo='O' ", $transporte );
-            
-		}
-		if( $modalidad ){
-            $q->addWhere("r.ca_modalidad = ? ", $modalidad );
-		}
-        //echo $q->getSqlQuery();
-		return $q->execute();
-	}
+                ->from("CotRecargo r")
+                ->innerJoin("r.TipoRecargo tr")
+                ->where("r.ca_idcotizacion = ?", $this->getCaIdcotizacion())
+                //->addWhere("r.ca_tipo like ? ", "%".$tipo."%")
+                ->addWhere("tr.ca_tipo like ? OR tr.ca_tipo like ? ", array("%" . Constantes::RECARGO_LOCAL . "%", "%" . Constantes::RECARGO_OTM_DTA . "%"))
+                ->addOrderBy("r.ca_modalidad ASC");
 
-
-    /*
-	* Retorna los objetos CotContinuacion asociados
-	* @author Andres Botero
-	*/
-	public function getCotContinuacions( ){
-
-        
-
-
-          return  Doctrine::getTable("CotContinuacion")
-                 ->createQuery("cont")
-                 ->select("cont.*")
-                 ->innerJoin("cont.Concepto conc")
-                 ->leftJoin("cont.Equipo e")
-                 ->where("cont.ca_idcotizacion=?", $this->getCaIdcotizacion())
-                 ->addOrderBy("cont.ca_tipo ASC")
-                 ->addOrderBy("cont.ca_modalidad ASC")
-                 ->addOrderBy("cont.ca_origen ASC")
-                 ->addOrderBy("cont.ca_destino ASC")
-                 ->addOrderBy("e.ca_liminferior ASC")
-                 ->addOrderBy("conc.ca_liminferior ASC")
-                 ->addOrderBy("cont.ca_valor_tar ASC")
-                 ->execute();
+        if ($transporte) {
+            if ($transporte == constantes::OTMDTA || $transporte == "OTM" || $transporte == "DTA")
+                $transporte = constantes::TERRESTRE;
+            $q->addWhere("tr.ca_transporte = ? and r.ca_consecutivo is null  ", $transporte);
+        }
+        else {
+            //$q->addWhere("r.ca_tipo is null ");
+        }
+        if ($modalidad) {
+            $q->addWhere("r.ca_modalidad = ? ", $modalidad);
+        }
+        return $q->execute();
     }
-    
+
     /*
-	* Retorna los objetos CotSeguros asociados 
-	* @author Andres Botero
-	*/
-	public function getCotSeguros( ){
+     * Retorna los objetos CotContinuacion asociados
+     * @author Andres Botero
+     */
+
+    public function getCotContinuacions() {
+
+
+
+
+        return Doctrine::getTable("CotContinuacion")
+                        ->createQuery("cont")
+                        ->select("cont.*")
+                        ->innerJoin("cont.Concepto conc")
+                        ->leftJoin("cont.Equipo e")
+                        ->where("cont.ca_idcotizacion=?", $this->getCaIdcotizacion())
+                        ->addOrderBy("cont.ca_tipo ASC")
+                        ->addOrderBy("cont.ca_modalidad ASC")
+                        ->addOrderBy("cont.ca_origen ASC")
+                        ->addOrderBy("cont.ca_destino ASC")
+                        ->addOrderBy("e.ca_liminferior ASC")
+                        ->addOrderBy("conc.ca_liminferior ASC")
+                        ->addOrderBy("cont.ca_valor_tar ASC")
+                        ->execute();
+    }
+
+    /*
+     * Retorna los objetos CotSeguros asociados 
+     * @author Andres Botero
+     */
+
+    public function getCotSeguros() {
 
         return Doctrine::getTable("CotSeguro")
-                 ->createQuery("c")
-                 ->where("c.ca_idcotizacion = ? ", $this->getCaIdcotizacion())
-                 ->addOrderBy("c.ca_transporte ASC")                
-                 ->execute();
+                        ->createQuery("c")
+                        ->where("c.ca_idcotizacion = ? ", $this->getCaIdcotizacion())
+                        ->addOrderBy("c.ca_transporte ASC")
+                        ->execute();
     }
 
+    /*
+     * Retorna verdadero si la cotización tiene no conceptos.
+     * @author Andres Botero
+     */
 
-
+    public function enBlanco() {
+        $count = 0;
+        $productos = $this->getCotProductos();
+        $count+=count($productos);
+        $continuacion = $this->getCotContinuacion();
+        $count+=count($continuacion);
+        $seguros = $this->getCotSeguro();
+        $count+=count($seguros);
+        $aduanas = $this->getCotAduana();
+        $count+=count($aduanas);
+        return $count == 0;
+    }
 
     /*
-	* Retorna verdadero si la cotización tiene no conceptos.
-	* @author Andres Botero
-	*/
-	public function enBlanco(){
-		$count = 0;
-		$productos = $this->getCotProductos();
-		$count+=count($productos);
-		$continuacion = $this->getCotContinuacion();
-		$count+=count($continuacion);
-		$seguros = $this->getCotSeguro();
-		$count+=count($seguros);
-		return $count==0;
-	}
+     * Retorna los recargos locales de la cotización
+     * @author Andres Botero
+     */
 
-	/*
-	* Retorna los recargos locales de la cotización
-	* @author Andres Botero
-	*/
-	public function getRecargosOTMDTA( $modalidad=null ){
-		$tipo = Constantes::RECARGO_OTM_DTA;
-		
+    public function getRecargosOTMDTA($modalidad = null) {
+        $tipo = Constantes::RECARGO_OTM_DTA;
+
         $q = Doctrine_Query::create()
-                        ->from("CotRecargo r")
-                        ->innerJoin("r.TipoRecargo tr")
-                        ->where("r.ca_idcotizacion = ?", $this->getCaIdcotizacion() )
-                        ->addWhere("tr.ca_tipo = ? ", $tipo)
-                        ->addWhere("tr.ca_transporte = ? ",  Constantes::TERRESTRE)
-                        ->addOrderBy("r.ca_modalidad ASC");
+                ->from("CotRecargo r")
+                ->innerJoin("r.TipoRecargo tr")
+                ->where("r.ca_idcotizacion = ?", $this->getCaIdcotizacion())
+                ->addWhere("tr.ca_tipo = ? ", $tipo)
+                ->addWhere("tr.ca_transporte = ? ", Constantes::TERRESTRE)
+                ->addOrderBy("r.ca_modalidad ASC");
 
-        
-		if( $modalidad ){
-            $q->addWhere("r.ca_modalidad = ? ", $modalidad );
-		}
 
-		return $q->execute();
+        if ($modalidad) {
+            $q->addWhere("r.ca_modalidad = ? ", $modalidad);
+        }
 
-	}
-
+        return $q->execute();
+    }
 
     /*
-	* Retorna los objetos idsContacto asociados
-	* @author Andres Botero
-	*/
-	public function getContactosAgente( $modalidad=null ){
-		
+     * Retorna los objetos idsContacto asociados
+     * @author Andres Botero
+     */
+
+    public function getContactosAgente($modalidad = null) {
+
         return Doctrine_Query::create()
                         ->from("IdsContacto c")
                         ->innerJoin("c.CotContactoAg ct")
@@ -241,55 +241,47 @@ class Cotizacion extends BaseCotizacion
                         ->innerJoin("s.Ids i")
                         ->innerJoin("s.Ciudad ci")
                         ->innerJoin("ci.Trafico t")
-                        ->where("ct.ca_idcotizacion = ?", $this->getCaIdcotizacion() )                        
+                        ->where("ct.ca_idcotizacion = ?", $this->getCaIdcotizacion())
                         ->addOrderBy("t.ca_nombre ASC")
                         ->addOrderBy("i.ca_nombre ASC")
                         ->addOrderBy("c.ca_nombres ASC")
                         ->execute();
-	}
-
-
-    /*
-	* Retorna los seguimientos de la cotización, solo aplica cuando no hay trayectos
-	*/
-	public function getSeguimientos(){
-		return  Doctrine::getTable("CotSeguimiento")
-                          ->createQuery("s")
-                          ->where("s.ca_idcotizacion = ?", array($this->getCaIdcotizacion()))
-                          ->addOrderBy("s.ca_fchseguimiento DESC")
-                          ->execute();
-	}
-
-    /*
-	* Retorna los seguimientos de la cotización
-	*/
-	public function getUltSeguimiento(){
-
-        return  Doctrine::getTable("CotSeguimiento")
-                          ->createQuery("s")
-                          ->where("s.ca_idcotizacion = ?", array( $this->getCaIdcotizacion()))
-                          ->addOrderBy("s.ca_fchseguimiento DESC")
-                          ->limit(1)
-                          ->fetchOne();
-	}
-
-    public function getDirectorio(){
-        $folder = Cotizacion::FOLDER;
-        return $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$this->getDirectorioBase();
-
     }
 
-    public function getDirectorioBase(){
-        $folder = Cotizacion::FOLDER;
-        return $directory = $folder.DIRECTORY_SEPARATOR.$this->getCaEmpresa().DIRECTORY_SEPARATOR.$this->getCaConsecutivo();
+    /*
+     * Retorna los seguimientos de la cotización, solo aplica cuando no hay trayectos
+     */
 
+    public function getSeguimientos() {
+        return Doctrine::getTable("CotSeguimiento")
+                        ->createQuery("s")
+                        ->where("s.ca_idcotizacion = ?", array($this->getCaIdcotizacion()))
+                        ->addOrderBy("s.ca_fchseguimiento DESC")
+                        ->execute();
     }
 
+    /*
+     * Retorna los seguimientos de la cotización
+     */
 
-	
+    public function getUltSeguimiento() {
 
+        return Doctrine::getTable("CotSeguimiento")
+                        ->createQuery("s")
+                        ->where("s.ca_idcotizacion = ?", array($this->getCaIdcotizacion()))
+                        ->addOrderBy("s.ca_fchseguimiento DESC")
+                        ->limit(1)
+                        ->fetchOne();
+    }
 
+    public function getDirectorio() {
+        $folder = Cotizacion::FOLDER;
+        return $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $this->getDirectorioBase();
+    }
 
-	
-	
+    public function getDirectorioBase() {
+        $folder = Cotizacion::FOLDER;
+        return $directory = $folder . DIRECTORY_SEPARATOR . $this->getCaEmpresa() . DIRECTORY_SEPARATOR . $this->getCaConsecutivo();
+    }
+
 }
