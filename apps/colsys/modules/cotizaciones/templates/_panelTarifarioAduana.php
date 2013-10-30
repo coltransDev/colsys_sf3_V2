@@ -152,7 +152,7 @@ PanelTarifarioAduana = function( config ){
         editor: this.editorRecargos
       },
       {
-        header: "Parametro",
+        header: "Parámetro",
         dataIndex: 'parametro',
         hideable: false,
         width: 170,
@@ -166,13 +166,16 @@ PanelTarifarioAduana = function( config ){
         hideable: false,
         width: 170,
         sortable: this.readOnly,
+        renderer: this.renderNumber,
         editor: new Ext.form.NumberField({
-                    allowBlank: false ,
-                    style: 'text-align:left'
-                })
+            allowBlank: false ,
+            allowNegative: false,
+            style: 'text-align:left',
+            decimalPrecision :0
+        })
       },
       {
-        header: "Aplicacion",
+        header: "Aplicación",
         dataIndex: 'aplicacion',
         hideable: false,
         width: 170,
@@ -180,30 +183,28 @@ PanelTarifarioAduana = function( config ){
         editor: <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>
       },
       {
-        header: "Valor Minimo",
+        header: "Valor Mínimo",
         dataIndex: 'valorminimo',
         hideable: false,
         width: 170,
         sortable: this.readOnly,
+        renderer: this.renderNumber,
         editor: new Ext.form.NumberField({
-                    allowBlank: false ,
-                    style: 'text-align:left'
-                })
+            allowBlank: false ,
+            allowNegative: false,
+            style: 'text-align:left',
+            decimalPrecision :0
+        })
       },
       {
-        header: "Aplicacion Min",
+        header: "Aplicación Min",
         dataIndex: 'aplicacionminimo',
         hideable: false,
         width: 170,
         sortable: this.readOnly,
         editor: <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>
       }
-      
-      
-
      ];
-
-
 
     this.record = Ext.data.Record.create([
             {name: 'sel', type: 'bool'},
@@ -211,9 +212,9 @@ PanelTarifarioAduana = function( config ){
             {name: 'idconcepto', type: 'int'},
             {name: 'concepto', type: 'string'},
             {name: 'parametro', type: 'string'},
-            {name: 'valor', type: 'string'},
+            {name: 'valor', type: 'float'},
             {name: 'aplicacion', type: 'string'},
-            {name: 'valorminimo', type: 'string'},
+            {name: 'valorminimo', type: 'float'},
             {name: 'aplicacionminimo', type: 'string'},
             {name: 'observaciones', type: 'string'},
             {name: 'idcotizacion', type: 'int'},
@@ -307,7 +308,6 @@ PanelTarifarioAduana = function( config ){
         }else{
             var record = storePanelTarifarioAduana.getAt(rowIndex);
             var field = this.getDataIndex(colIndex);
-
 
             if( !record.data.idconcepto && field!="concepto" ){
                 return false;

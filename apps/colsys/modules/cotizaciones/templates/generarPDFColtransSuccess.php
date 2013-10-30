@@ -1,5 +1,4 @@
 <?
-
 $cotizacion = $sf_data->getRaw("cotizacion");
 $notas = $sf_data->getRaw("notas");
 $usuario = $cotizacion->getUsuario();
@@ -410,7 +409,7 @@ for ($k = 0; $k < count($transportes); $k++):
                 $num_mem = count($tabla[$producto->getOrigen()->getCaCiudad()][$producto->getDestino()->getCaCiudad()]);
             }
             $txt_mem = null;
-            $det_mem = "Detalles";
+            $det_mem = "Detalles\n";
             $rec_mem = "Recargos".str_repeat("\n", $lin_rec);
             $txt_ant = false;
             if (strlen($producto->getCaFrecuencia()) <> 0) {
@@ -1014,12 +1013,12 @@ for ($k = 0; $k < count($transportes); $k++):
         // ======================== Recargos Locales ======================== //
 
         foreach ($grupos as $key => $grupo) {
-            //echo $key." - ".$transporte;
+            // echo $key." - ".$transporte." <br/>";
             if ($transporte == "DTA" || $transporte == "OTM") {
                 $transporte = constantes::OTMDTA;
             }
             if ($key != $transporte) {
-//                if($key!=constantes::OTMDTA && $transporte!="OTM" )
+            // if($key!=constantes::OTMDTA && $transporte!="OTM" )
                 continue;
             }
 
@@ -1053,11 +1052,12 @@ for ($k = 0; $k < count($transportes); $k++):
                     $pdf->SetFills(array_fill(0, count($width_mem), 1));
                     $pdf->Row($titu_mem);
 
-                    $pdf->SetAligns(array_fill(0, count($width_mem), "L"));
-                    $pdf->SetStyles(array_fill(0, count($width_mem), ""));
-                    $pdf->SetFills(array_fill(0, count($width_mem), 0));
-
                     foreach ($recargosLoc as $recargo) {
+                        $pdf->beginGroup();
+                        $pdf->SetAligns(array_fill(0, count($width_mem), "L"));
+                        $pdf->SetStyles(array_fill(0, count($width_mem), ""));
+                        $pdf->SetFills(array_fill(0, count($width_mem), 0));
+                        
                         $txt = $recargo->getTipoRecargo()->getCaRecargo();
                         if ($recargo->getCaIdconcepto() && $recargo->getCaIdconcepto() != 9999) {
                             $txt.=" " . $recargo->getConcepto()->getCaConcepto();
@@ -1067,6 +1067,7 @@ for ($k = 0; $k < count($transportes); $k++):
                             array_push($row, str_replace(array("<br/>", "<BR/>", "<br />", "<BR />"), "", $recargo->getCaObservaciones()));
                         }
                         $pdf->Row($row);
+                        $pdf->flushGroup();
                     }
                     $pdf->flushGroup();
                 }

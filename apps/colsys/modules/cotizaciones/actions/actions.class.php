@@ -1727,7 +1727,6 @@ class cotizacionesActions extends sfActions {
             }
         }
 
-
         $continuacion->save();
 
         $this->responseArray = array("id" => $this->getRequestParameter("id"), "idcontinuacion" => $continuacion->getCaIdcontinuacion());
@@ -1763,10 +1762,6 @@ class cotizacionesActions extends sfActions {
                         ->where("cont.ca_idcotizacion=?", $id)
                         ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                         ->execute();
-
-
-
-
 
         $this->contviajes = array();
         $i = 0;
@@ -1967,9 +1962,6 @@ class cotizacionesActions extends sfActions {
                     'trayecto' => utf8_encode($origen->getCaCiudad() . "»" . $destino->getCaCiudad()),
                     'producto' => utf8_encode($producto->getCaProducto())
                 );
-
-
-
                 $row['vlrprima'] = $seguro->getCaVlrprima();
                 $row['vlrminima'] = $seguro->getCaVlrminima();
                 $row['vlrobtencionpoliza'] = $seguro->getCaVlrobtencionpoliza();
@@ -2008,8 +2000,8 @@ class cotizacionesActions extends sfActions {
                 $aduana->setCaIdcotizacion($this->getRequestParameter("cotizacionId"));
             }
 
-            if ($this->getRequestParameter("concepto")) {
-                $aduana->setCaIdconcepto($this->getRequestParameter("concepto"));
+            if ($this->getRequestParameter("idconcepto")) {
+                $aduana->setCaIdconcepto($this->getRequestParameter("idconcepto"));
             }
 
             if ($this->getRequestParameter("valor")) {
@@ -2021,11 +2013,11 @@ class cotizacionesActions extends sfActions {
             }
 
             if ($this->getRequestParameter("aplicacion")) {
-                $aduana->setCaAplicacion($this->getRequestParameter("aplicacion"));
+                $aduana->setCaAplicacion(utf8_decode($this->getRequestParameter("aplicacion")));
             }
 
             if ($this->getRequestParameter("aplicacionminimo")) {
-                $aduana->setCaAplicacionminimo($this->getRequestParameter("aplicacionminimo"));
+                $aduana->setCaAplicacionminimo(utf8_decode($this->getRequestParameter("aplicacionminimo")));
             }
 
             if ($this->getRequestParameter("parametro")) {
@@ -2041,7 +2033,7 @@ class cotizacionesActions extends sfActions {
             }
 
             if ($this->getRequestParameter("observaciones")) {
-                $aduana->setCaObservaciones($this->getRequestParameter("observaciones"));
+                $aduana->setCaObservaciones(utf8_decode($this->getRequestParameter("observaciones")));
             }else{
                 $aduana->setCaObservaciones(null);
             }
@@ -2101,7 +2093,7 @@ class cotizacionesActions extends sfActions {
                         ->where("c.ca_impoexpo = ?", "Aduanas")
                         ->whereNotIn("ca_idconcepto", $idConceptos)
                         ->innerJoin("ca.Costo c")
-                        ->addOrderBy("c.ca_costo")
+                        ->addOrderBy("c.ca_transporte, c.ca_costo")
                         ->execute();
        
         $this->data = array();
@@ -2116,13 +2108,13 @@ class cotizacionesActions extends sfActions {
             $row['concepto'] = utf8_encode($aduconcepto->getCosto()->getCaCosto());
             $row['parametro'] = $aduconcepto->getCaParametro();
             $row['valor'] = $aduconcepto->getCaValor();
-            $row['aplicacion'] = $aduconcepto->getCaAplicacion();
+            $row['aplicacion'] = utf8_encode($aduconcepto->getCaAplicacion());
             $row['valorminimo'] = $aduconcepto->getCaValorminimo();
-            $row['aplicacionminimo'] = $aduconcepto->getCaAplicacionminimo();
+            $row['aplicacionminimo'] = utf8_encode($aduconcepto->getCaAplicacionminimo());
             $row['fchini'] = $aduconcepto->getCaFchini();
             $row['fchfin'] = $aduconcepto->getCaFchfin();
-            $row['observaciones'] = $aduconcepto->getCaObservaciones();
-            $row['orden'] = "Z";
+            $row['observaciones'] = utf8_encode($aduconcepto->getCaObservaciones());
+            $row['orden'] = $aduconcepto->getCosto()->getCaTransporte();
             $this->data[] = $row;
         }
     }
@@ -2153,10 +2145,6 @@ class cotizacionesActions extends sfActions {
             $this->modalidades[] = $row;
         }
     }
-
-    
-
-    
 
     public function executeDatosParametros(sfWebRequest $request) {
         $data = array();
@@ -2339,9 +2327,13 @@ class cotizacionesActions extends sfActions {
                 $data["asunto"] = utf8_encode($textos['asunto']);
                 $data["saludo"] = utf8_encode($textos['saludo']);
                 $data["entrada"] = utf8_encode($textos['entrada']);
+		$data["entradaColtrans"] = utf8_encode($textos['entrada']);
+                $data["entradaColmas"] = utf8_encode($textos['entradaColmas']);
 
                 $data["despedida"] = utf8_encode($textos['despedida']);
                 $data["anexos"] = utf8_encode($textos['anexos']);
+                $data["anexosColtrans"] = utf8_encode($textos['anexos']);
+		$data["anexosColmas"] = utf8_encode($textos['anexosColmas']);
                 $data["fuente_id"] = "Tahoma";
             }else{
                 $cotizacion = Doctrine::getTable("Cotizacion")->find($idcotizacion);

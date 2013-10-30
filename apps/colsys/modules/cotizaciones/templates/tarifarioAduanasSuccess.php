@@ -12,9 +12,9 @@ var recordAduanas = Ext.data.Record.create([
         {name: 'nacionalizacion', type: 'string'},
         {name: 'concepto', type: 'string'},
         {name: 'parametro', type: 'string'},
-        {name: 'valor', type: 'string'},            
+        {name: 'valor', type: 'float'},
         {name: 'aplicacion', type: 'string'},
-        {name: 'valorminimo', type: 'string'},            
+        {name: 'valorminimo', type: 'float'},
         {name: 'aplicacionminimo', type: 'string'},
         {name: 'fchini', type: 'date'},
         {name: 'fchfin', type: 'date'},
@@ -68,7 +68,7 @@ var colModelAduanas = new Ext.grid.ColumnModel({
 			sortable: false,
 			hideable: false,
 			dataIndex: 'valor',
-                        renderer: this.formatNumber,
+                        renderer: this.formatNumber
 		},
 		{
 			header: "Aplicacion",

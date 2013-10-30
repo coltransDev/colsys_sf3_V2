@@ -1,5 +1,4 @@
 <?
-
 $cotizacion = $sf_data->getRaw("cotizacion");
 $notas = $sf_data->getRaw("notas");
 $usuario = $cotizacion->getUsuario();
@@ -98,24 +97,20 @@ $aduanas = Doctrine::getTable("CotAduana")
         ->createQuery("ca")
         ->where("ca.ca_idcotizacion = ?", $cotizacion->getCaIdcotizacion())
         ->innerJoin("ca.Costo c")
-        ->addOrderBy("c.ca_impoexpo, c.ca_costo")
+        ->addOrderBy("c.ca_transporte, c.ca_costo")
         ->execute();
-
 
 $imprimirObservaciones = false;
 
 foreach ($aduanas as $aduana) {
-    if ($aduana->getCaObservaciones()) {
+    if (trim($aduana->getCaObservaciones()) != "") {
         $imprimirObservaciones[$aduana->getCosto()->getCaTransporte()] = true;
-        break;
     }
 }
 
 if (count($aduanas) > 0) {
 
-    $imprimirNotas[] = "aduana";
-    //Control impresión
-    $pdf->beginGroup();
+    $imprimirNotas[] = "aduanaImpo";
 
     $pdf->Ln(4);
     $pdf->SetFont($font, 'B', 9);
@@ -123,9 +118,21 @@ if (count($aduanas) > 0) {
     $pdf->SetFont($font, '', 9);
     $i = 1;
     $linea = "";
+    $vigencia = array();
 
     foreach ($aduanas as $aduana) {
         if ($linea != $aduana->getCosto()->getCaTransporte()){
+            //Control impresión
+            $pdf->beginGroup();
+            if (count($vigencia) != 0){
+                foreach($vigencia as $key => $val){
+                    $pdf->Ln(1);
+                    $pdf->SetFont($font, '', 7);
+                    $pdf->Cell(0, 4, str_repeat("*", $key + 1)." Vigencia: ".$val."\n", 0, 1, 'L', 0);
+                }
+                $vigencia = array();
+                $pdf->flushGroup();
+            }
             if ($aduana->getCosto()->getCaTransporte() == Constantes::MARITIMO) {
                 $nacionalizacion = "Nacionalización en Puerto";
             } else if ($aduana->getCosto()->getCaTransporte() == Constantes::AEREO) {
@@ -137,12 +144,12 @@ if (count($aduanas) > 0) {
             $pdf->Ln(2);
             $pdf->SetFont($font, '', 7);
 
-            $titu_mem = array('Concepto', 'Valor', 'Mínima', 'Vigencia');
+            $titu_mem = array('Concepto', 'Valor');
             if ($imprimirObservaciones[$aduana->getCosto()->getCaTransporte()]) {
                 array_push($titu_mem, 'Observaciones');
-                $width_mem = array(30, 35, 35, 35, 35); // = 170
+                $width_mem = array(35, 65, 70); // = 170
             } else {
-                $width_mem = array(50, 40, 40, 40);  // = 170
+                $width_mem = array(40, 130);  // = 170
             }
             $pdf->SetWidths($width_mem);
             $pdf->SetAligns(array_fill(0, count($width_mem), "C"));
@@ -154,19 +161,64 @@ if (count($aduanas) > 0) {
         $pdf->SetAligns(array_fill(0, count($width_mem), "L"));
         $pdf->SetStyles(array_fill(0, count($width_mem), ""));
         $pdf->SetFills(array_fill(0, count($width_mem), 0));
+		
+        $valor = "";
+        if ($aduana->getCaValor() > 0 and $aduana->getCaValor() < 1) {
+                $valor.= Utils::formatNumber($aduana->getCaValor()*100)." %";
+        }else if ($aduana->getCaValor() >= 1) {
+                $valor.= "$ ".Utils::formatNumber($aduana->getCaValor());
+        }
+        if ($aduana->getCaAplicacion()){
+                $valor.= " " . $aduana->getCaAplicacion();
+        }
+        if ($aduana->getCaValorminimo()){
+            $valor.= " Mínimo :";
+            if ($aduana->getCaValorminimo() > 0 and $aduana->getCaValorminimo() < 1) {
+                    $valor.= Utils::formatNumber($aduana->getCaValorminimo()*100)." %";
+            }else if ($aduana->getCaValorminimo() >= 1) {
+                    $valor.= "$ ".Utils::formatNumber($aduana->getCaValorminimo());
+            }
+            if ($aduana->getCaAplicacionminimo()){
+                    $valor.= " " . $aduana->getCaAplicacionminimo();
+            }
+        }
+		
+        $num_vigencia = "";
+        if ($aduana->getCaFchini() != "" || $aduana->getCaFchfin() != "") {
+            $vig_tmp = $aduana->getCaFchini() . " Hasta " . $aduana->getCaFchfin();
+            if (array_search($vig_tmp, $vigencia) === FALSE){
+                $vigencia[] = $vig_tmp;
+            }
+            $num_vigencia = " ".str_repeat("*", array_search($vig_tmp, $vigencia) + 1);
+        }
         $row = array(
-            $aduana->getCosto()->getCaCosto(),
-            ($aduana->getCaValor() != 0) ? ($aduana->getCaValor() . (($aduana->getCaAplicacion()) ? "\n" . $aduana->getCaAplicacion() : "")) : "",
-            ($aduana->getCaValorminimo() != 0) ? ($aduana->getCaValorminimo() . (($aduana->getCaAplicacionminimo()) ? "\n" . $aduana->getCaAplicacionminimo() : "")) : "",
-            ($aduana->getCaFchini() != "" || $aduana->getCaFchfin() != "") ? $aduana->getCaFchini() . " Hasta " . $aduana->getCaFchfin() : ""
+            $aduana->getCosto()->getCaCosto().$num_vigencia,
+            $valor
         );
         if ($imprimirObservaciones) {
             array_push($row, $aduana->getCaObservaciones());
         }
         $pdf->Row($row);
     }
+}
+if (count($vigencia) != 0){
+    foreach($vigencia as $key => $val){
+        $pdf->Ln(1);
+        $pdf->SetFont($font, '', 7);
+        $pdf->Cell(0, 4, str_repeat("*", $key + 1)." Vigencia: ".$val."\n", 0, 1, 'L', 0);
+    }
+    $vigencia = array();
     $pdf->flushGroup();
 }
+
+// ========================== Notas Importantes ========================== //
+$pdf->beginGroup();
+$pdf->SetFont($font, 'B', 8);
+$pdf->Ln(3);
+$pdf->MultiCell(0, 4, "Nota Importante: Favor  entregar  póliza  de  seguro de  transporte   indicando  tasa  (porcentaje  liquidado)  por  exigencia  de  la  DIAN.", 0, 'J', 0);
+$pdf->Ln(2);
+$pdf->flushGroup();
+
 
 $pdf->SetFont($font, '', 10);
 //Hace que el titulo tenga por lo menos 2 renglones
@@ -201,6 +253,34 @@ if ($cotizacion->getCaAnexos() != '' && $empresa->getCaIdempresa() == 1) {
     $pdf->MultiCell(0, 4, "Anexo: " . $cotizacion->getCaAnexos(), 0, 1);
 }
 $pdf->flushGroup();
+
+// ======================== Notas ======================== //
+//if( $empresa->getCaIdempresa()==2 ){
+//if( $empresa->getCaIdempresa() )
+//if( $empresa->getCaIdempresa()==2 || $empresa->getCaIdempresa()==1 ) {
+$imprimirNotas = array_unique($imprimirNotas);
+
+$nuevaPagina = false;
+
+foreach ($imprimirNotas as $val) {
+    if (!$nuevaPagina) {
+        $pdf->AddPage();
+        $nuevaPagina = true;
+    }
+
+    //Hace que el titulo tenga por lo menos 2 renglones
+    if ($pdf->GetY() > $pdf->PageBreakTrigger - 15) {
+        $pdf->AddPage();
+    } else {
+        $pdf->Ln(2);
+    }
+
+    $pdf->SetFont($font, 'B', 9);
+    $pdf->MultiCell(0, 4, $notas[$val . "Titulo"], 0, 'C', 0);
+    $pdf->Ln(1);
+    $pdf->SetFont($font, '', 8);
+    $pdf->MultiCell(0, 4, $notas[$val], 0, 'J', 0);
+}
 
 $pdf->Output($filename);
 

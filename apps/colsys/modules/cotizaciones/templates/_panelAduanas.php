@@ -17,9 +17,9 @@ PanelAduanas = function( config ){
         {name: 'idconcepto', type: 'int'},
         {name: 'concepto', type: 'string'},
         {name: 'parametro', type: 'string'},
-        {name: 'valor', type: 'string'},
+        {name: 'valor', type: 'float'},
         {name: 'aplicacion', type: 'string'},
-        {name: 'valorminimo', type: 'string'},
+        {name: 'valorminimo', type: 'float'},
         {name: 'aplicacionminimo', type: 'string'},
         {name: 'observaciones', type: 'string'},
         {name: 'fchini', type: 'date'},
@@ -41,6 +41,7 @@ PanelAduanas = function( config ){
             },
             this.record
         ),
+        sortInfo:{field: 'nacionalizacion', direction: "ASC"},
         proxy: new Ext.data.MemoryProxy(this.data)
     });
 
@@ -134,9 +135,7 @@ PanelAduanas = function( config ){
                 hideable: false,
                 width: 170,       
                 sortable: this.readOnly,
-                decimalPrecision  :2,
                 renderer: this.formatNumber,
-
                 editor: new Ext.form.NumberField({
                             allowBlank: false ,
                             style: 'text-align:left',
@@ -156,7 +155,6 @@ PanelAduanas = function( config ){
                 hideable: false,
                 width: 170,
                 sortable: this.readOnly,
-                decimalPrecision  :2,
                 renderer: this.formatNumber,
                 editor: new Ext.form.NumberField({
                             allowBlank: false ,
@@ -226,7 +224,7 @@ PanelAduanas = function( config ){
         clicksToEdit: 1,
         stripeRows: true,
         autoExpandColumn: 'aduana',
-        title: 'Tarifas para Aduana ',
+        title: this.title,
         closable: false,
         id: 'grid_aduanas',
 
@@ -419,11 +417,6 @@ Ext.extend(PanelAduanas, Ext.grid.EditorGridPanel, {
                 return 0;
             }
 
-            if( !r.data.valor ){
-                Ext.Msg.alert( "","Por favor coloque el valor del concepto" );
-                return 0;
-            }
-
             if( !r.data.fchini ){
                 Ext.Msg.alert( "","Por favor ingrese el inicio de la vigencia" );
                 return 0;
@@ -485,14 +478,18 @@ Ext.extend(PanelAduanas, Ext.grid.EditorGridPanel, {
         var storeAduanasCot = this.store;
 
         var rec = new recordGrilla({idcotizacion:'<?=$cotizacion->getCaIdcotizacion()?>',
-                              prima_tip:'',
-                              prima_vlr:0,
-                              prima_min:0,
-                              obtencion: 0 ,
-                              idmoneda:'',
-                              idmonedaobtencion:'',
+                              nacionalizacion:'',
+                              idconcepto:0,
+                              concepto:'',
+                              parametro:'',
+                              valor:0,
+                              aplicacion:'',
+                              valorminimo:0,
+                              aplicacionminimo:'',
+                              fchini:'',
+                              fchfin:'',
                               observaciones:'',
-                              transporte:''
+                              orden:'Z'
 
                             });
         records = [];

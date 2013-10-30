@@ -7,7 +7,8 @@
 if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS || $cotizacion->getCaEmpresa() == Constantes::TPLOGISTICS ){
     include_component("cotizaciones","panelProductos",array("cotizacion"=>$cotizacion));
     include_component("cotizaciones","panelRecargosCotizacion",array("cotizacion"=>$cotizacion));
-//    include_component("cotizaciones","panelContViajes",array("cotizacion"=>$cotizacion));
+//  include_component("cotizaciones","panelContViajes",array("cotizacion"=>$cotizacion));
+    include_component("cotizaciones","panelAduanas",array("cotizacion"=>$cotizacion));
     include_component("cotizaciones","panelSeguros",array("cotizacion"=>$cotizacion));
     include_component("cotizaciones","panelAgentes",array("cotizacion"=>$cotizacion));
 }else if($cotizacion->getCaEmpresa() == Constantes::COLMAS){
@@ -34,14 +35,14 @@ SubPanel = function(){
         this.gridProductos = new PanelProductos({tipo:'Trayecto',empresa:'<?=$cotizacion->getCaEmpresa()?>',id:'grid_productos',title:'Tarifas de trayectos'});
         this.gridRecargos = new PanelRecargosCotizacion();
         this.gridContviajes = new PanelProductos({tipo:'OTM/DTA',empresa:'<?=$cotizacion->getCaEmpresa()?>',id:'grid_productos1',title:'Tarifas para OTM/DTA'});
-
+	this.gridAduanas = new PanelAduanas({empresa:'<?=$cotizacion->getCaEmpresa()?>',title:'Aduana Exportaciones en Pruebas'});
         this.gridSeguros = new PanelSeguros();
         this.gridAgentes = new PanelAgentes();
 
         <?
     }else if($cotizacion->getCaEmpresa() == Constantes::COLMAS){
         ?>
-        this.gridAduanas = new PanelAduanas();
+        this.gridAduanas = new PanelAduanas({empresa:'<?=$cotizacion->getCaEmpresa()?>',title:'Aduana Importaciones'});
         <?
     }
     ?>
@@ -72,6 +73,7 @@ SubPanel = function(){
                    this.gridProductos,                     
                    this.gridRecargos,
                    this.gridContviajes,
+                   this.gridAduanas,
                    this.gridSeguros,
                    this.gridAgentes,
                 <?
@@ -94,6 +96,7 @@ Ext.extend(SubPanel, Ext.FormPanel, {
             this.gridProductos.guardarItems();
             this.gridRecargos.guardarItems();
             this.gridContviajes.guardarItems();
+            this.gridAduanas.guardarItems();
             this.gridSeguros.guardarItems();
             this.gridAgentes.guardarItems();
         <?

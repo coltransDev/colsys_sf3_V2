@@ -39,6 +39,7 @@ include_component("widgets", "widgetComerciales");
             labelAlign: 'top',
             buttonAlign: 'left',
             bodyStyle:'padding:10px',
+            id:'encabezados-form',
             
             items:[
                 {
@@ -141,7 +142,14 @@ include_component("widgets", "widgetComerciales");
                     displayField:   'name',
                     valueField:     'name',
                     disabled:       this.idcotizacion, 
-                    allowBlank:     true,
+                    allowBlank:     true,                    
+                    listeners:{
+                        select : function ( combo, record, index)
+                        {
+                            Ext.getCmp("entrada").setValue(Ext.getCmp("entrada"+record.data.name).getValue());
+                            Ext.getCmp("anexos").setValue(Ext.getCmp("anexos"+record.data.name).getValue());
+                        }
+                    },
                     store:          new Ext.data.JsonStore({
                         fields : ['name'],
                         data   : [
@@ -165,6 +173,9 @@ include_component("widgets", "widgetComerciales");
 
     Ext.extend(TabGeneralPanel, Ext.Panel, {
 
+        onSelectEmpresa: function( combo, record, index){
+            alert(record.toSource())
+        },
         onSelectContactoCliente: function( combo, record, index){
             //alert(record.toSource())
             store=combo.store;
@@ -215,6 +226,16 @@ include_component("widgets", "widgetComerciales");
                             id: 'entrada',
                             value: '',
                             allowBlank:false
+                        },
+                        {
+                            xtype: 'hidden',                            
+                            name: 'entradaColmas',
+                            id: 'entradaColmas'                            
+                        },
+                        {
+                            xtype: 'hidden',                            
+                            name: 'entradaColtrans',
+                            id: 'entradaColtrans'                            
                         }
                     ]
                 }
@@ -256,6 +277,16 @@ include_component("widgets", "widgetComerciales");
                             id: 'anexos',
                             value: '',
                             allowBlank:false
+                        },
+                        {
+                            xtype: 'hidden',                            
+                            name: 'anexosColmas',
+                            id: 'anexosColmas'                            
+                        },
+                        {
+                            xtype: 'hidden',                            
+                            name: 'anexosColtrans',
+                            id: 'anexosColtrans'                            
                         }
                     ]
                 }
@@ -311,7 +342,6 @@ include_component("widgets", "widgetComerciales");
                             value: '',
                             allowBlank:true
                         }
-                        
                     ]
                 }
             ]
