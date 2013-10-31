@@ -37,11 +37,16 @@
 					<?
 					if( $reporte ){ 
                       
-                        if($cliente->getProperty("cuentaglobal")=="true")
-                        {
-					?>	
+                        if($cliente->getProperty("cuentaglobal")=="true"){
+                    ?>	
                         <img src="/images/CG30.png" title="Cliente de Cuentas Globales" />
-                     <?
+                    <?
+                        }
+                      
+                        if($cliente->getProperty("consolidar_comunicaciones")=="true"){
+					?>	
+                        <img src="/images/consolidate.png" title="Cliente de Cuadro" />
+                    <?
                         }
                      ?>
 						<input type="checkbox" name='oid[]' onclick="habilitar('<?=$inoCliente->getOid()?>');" id="checkbox_<?=$inoCliente->getOid()?>"  value="<?=$inoCliente->getOid()?>" />
