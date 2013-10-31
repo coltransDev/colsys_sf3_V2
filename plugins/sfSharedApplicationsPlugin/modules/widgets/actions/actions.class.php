@@ -1036,6 +1036,29 @@ class widgetsActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
     
+    public function executeDatosDocumentos($request ){
+        
+        $this->idsserie=$request->getParameter("idsserie");
+        //$this->idsserie = ($this->getRequestParameter("serie")!="")?$this->getRequestParameter("serie"):"0";
+        $q = Doctrine::getTable("TipoDocumental")
+                    ->createQuery("t")
+                    ->select("*")                            
+                    ->where("ca_idsserie = ?", $this->idsserie )
+                    ->setHydrationMode(Doctrine::HYDRATE_ARRAY);
+        
+                    //echo $q->getSqlQuery();
+                    $tipoDocs=$q->execute();
+        $this->tipoDocs=array();
+        foreach($tipoDocs as $t)
+        {
+            $this->tipoDocs[]=array("id"=>$t["ca_iddocumental"],"name"=>$t["ca_documento"]);                    
+        }
+        
+        $this->responseArray = array("root" => $this->tipoDocs, "total" => count($this->tipoDocs), "success" => true);
+        $this->setTemplate("responseTemplate");
+
+    }    
+    
     
 
 }

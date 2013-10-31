@@ -883,9 +883,26 @@ class widgetsComponents extends sfComponents {
         
     }    
     
-    public function executeWgSerires( ){
+    public function executeWgDocumentos( ){
         
+        //$this->idsserie = ($this->getRequestParameter("serie")!="")?$this->getRequestParameter("serie"):"0";
+        /*
+        $q = Doctrine::getTable("TipoDocumental")
+                    ->createQuery("t")
+                    ->select("*")                            
+                    ->where("ca_idsserie = ?", $this->idsserie )
+                    ->setHydrationMode(Doctrine::HYDRATE_ARRAY);
         
+                    //echo $q->getSqlQuery();
+                    $tipoDocs=$q->execute();
+        $this->tipoDocs=array();
+        foreach($tipoDocs as $t)
+        {
+            $this->tipoDocs[]=array("id"=>$t["ca_iddocumental"],"name"=>$t["ca_documento"]);                    
+        }
+        //print_r($this->tipoDocs);
+         * 
+         */
     }    
 
 }
