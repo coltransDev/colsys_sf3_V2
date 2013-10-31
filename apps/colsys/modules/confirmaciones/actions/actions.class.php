@@ -232,99 +232,25 @@ class confirmacionesActions extends sfActions {
       } else if ($modo == "puerto" && $tipo_msg == "Planilla") {
             $email_body_planilla = "Se reportan los siguientes números de planilla así:<br>";
             $email_body_planilla.="<table border='1'><tr><th>Cliente</th><th>HBL</th><th>Planilla Envio</th></tr>";
-
             foreach ($oids as $oid) {
                 
-                
-                $destinatarios_planilla = array();
-
                 $idcliente = $this->getRequestParameter("idcliente_" . $oid);
                 $hbls = $this->getRequestParameter("hbls_" . $oid);
 
                 $inoCliente = Doctrine::getTable("InoClientesSea")->find(array($referencia->getCaReferencia(), $idcliente, $hbls));
                 
-                $cliente = $inoCliente->getCliente();
-                $reporte = $inoCliente->getReporte();
-
-                $fijos = Doctrine::getTable("Contacto")
-                        ->createQuery("c")
-                        ->addWhere("c.ca_idcliente = ?", $cliente->getCaIdcliente() )
-                        ->addWhere("ca_fijo = ?", true)
-                        ->addWhere("ca_cargo != ?", 'Extrabajador')
-                        ->execute();
-                
-                foreach($fijos as $fijo){
-                    $destinatarios_planilla[]= $fijo->getCaEmail();
+                if($inoCliente->getCaContinuacion()!="N/A"){
+                    continue;
                 }
+                
+                $cliente = $inoCliente->getCliente();
 
                 $inoCliente->setCaPlanilla($this->getRequestParameter("idplanilla_" . $oid));
                 $inoCliente->save();
                 
-                if(trim($inoCliente->getCaContinuacion())!="N/A"  ){
-                    continue;
-                }
-
-                if( !$inoCliente->getCliente()->getProperty("cuentaglobal") ){
-                    
-                    $ultimostatus = $reporte->getUltimoStatus();
-
-                    $status = new RepStatus();
-
-                    $status->setCaIdreporte($reporte->getCaIdreporte());
-                    $status->setCaFchstatus(date("Y-m-d H:i:s"));
-
-                    $status->setCaComentarios($this->getRequestParameter("notas"));
-                    $status->setCaFchenvio(date("Y-m-d H:i:s"));
-                    $status->setCaUsuenvio($this->getUser()->getUserId());
-
-                    if( $request->getParameter("fchrecibido_".$oid) ){
-                        $horaRecibo =  $request->getParameter("horarecibido_".$oid);
-                        $status->setCaFchrecibo( Utils::parseDate($request->getParameter("fchrecibido_".$oid), "Y-m-d")." ".$horaRecibo );
-                    }
-
-                    if ($ultimostatus) {
-                       $status->setCaPiezas($ultimostatus->getCaPiezas());
-                       $status->setCaPeso($ultimostatus->getCaPeso());
-                       $status->setCaVolumen($ultimostatus->getCaVolumen());
-                       $status->setCaIdnave($ultimostatus->getCaIdnave());
-                       $status->setCaFchsalida($ultimostatus->getCaFchsalida());
-                       $status->setCaFchllegada($ultimostatus->getCaFchllegada());
-                       $status->setCaFchcontinuacion($ultimostatus->getCaFchcontinuacion());
-                       $status->setCaDoctransporte($ultimostatus->getCaDoctransporte());
-                    }
-
-                    if (substr($referencia->getCaReferencia(), 0, 1) == "7") {
-                       $status->setCaPiezas($inoCliente->getCaNumpiezas());
-                       $status->setCaPeso($inoCliente->getCaPeso());
-                       $status->setCaVolumen($inoCliente->getCaVolumen());
-                       $status->setCaFchsalida($referencia->getCaFchembarque());
-                       $status->setCaFchllegada($referencia->getCaFcharribo());
-                       $status->setCaIdnave($referencia->getCaMotonave());
-                       $status->setCaDoctransporte($inoCliente->getCaHbls());
-                    }
-                    $status->setCaIdetapa("88888");
-
-                    if ($referencia->getCaMnllegada()) {
-                       $status->setCaIdnave($referencia->getCaMnllegada());
-                    } else {
-                       $status->setCaIdnave($referencia->getCaMotonave());
-                    }
-                    if ($request->getParameter("mod_fcharribo")) {
-                       $referencia->setCaFcharribo($request->getParameter("fcharribo"));
-                       $referencia->save();
-                       $status->setCaFchllegada($request->getParameter("fcharribo"));
-                    }
-
-                    $status->setCaIntroduccion("Estimado cliente, <br/>");
-                    $mensaje = $text['mensajePlanilla'];
-                    $mensaje.= "<br />Planilla No: <b>".$inoCliente->getCaPlanilla()."</b>";
-
-                    $status->setStatus($mensaje);
-                    $status->save();
-                    
-                    if(!$inoCliente->getCliente()->getProperty("consolidar_comunicaciones"))
-                        $status->send($destinatarios_planilla, array(), array(), null);
-                }
+               
+                
+                
                 $email_body_planilla.= "<tr><td>".$cliente->getCaCompania()."</td><td>".$hbls."</td><td>Planilla # ".$inoCliente->getCaPlanilla()."</td></tr>";
             }
             $email_body_planilla.= "</table>";
@@ -504,6 +430,10 @@ class confirmacionesActions extends sfActions {
             }
 
             $ultimostatus = $reporte->getUltimoStatus();
+            
+            if($tipo_msg == "not_planilla" && trim($inoCliente->getCaContinuacion())!="N/A"){
+                continue;
+            }
 
             $status = new RepStatus();
 
@@ -624,7 +554,7 @@ class confirmacionesActions extends sfActions {
             //if()
             //$options["subject"]="Notificacion de Desconsolidacion";
             $status->send($destinatarios, array(), $attachments, $options);
-
+            
             $this->status = $status;
             $this->modo = $modo;
             $this->referencia = $referencia;
