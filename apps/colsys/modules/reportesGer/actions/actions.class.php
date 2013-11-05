@@ -1341,6 +1341,7 @@ md.ca_idmodo,m.ca_idmaster
             
             $q = Doctrine::getTable("InoCostosSea")
                             ->createQuery("c")
+                            ->innerJoin("c.Costo cs")
                             ->addWhere("substr(ca_referencia,5,2) like ?", $request->getParameter("sufijo") )
                             ->addWhere("ca_fchfactura >= ?", $request->getParameter("fchInicial"))
                             ->addWhere("ca_fchfactura <= ?", $request->getParameter("fchFinal"))
@@ -1352,6 +1353,10 @@ md.ca_idmodo,m.ca_idmaster
             if( $request->getParameter("factura") ){
                $q->addWhere("UPPER(ca_factura) like ?", strtoupper($request->getParameter("factura"))."%");
             }
+            
+            /*echo $q->getSqlQuery();
+            exit;*/
+                   
             $this->costos = $q->execute();
             
             $this->setTemplate("listadoFacturasResult");

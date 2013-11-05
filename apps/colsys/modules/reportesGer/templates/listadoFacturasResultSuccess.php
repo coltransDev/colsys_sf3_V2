@@ -12,7 +12,7 @@ $costos = $sf_data->getRaw("costos");
     <br />
     <table width="90%" CELLSPACING="1" class="tableList alignLeft">
      <tr>
-       <th class="titulo" COLSPAN="12">
+       <th class="titulo" COLSPAN="13">
         <BR/>Informe de Facturaci&oacute;n Mar&iacute;tima
         <BR/>Fecha de Liquidaci&oacute;n desde <?=$fchInicial?> hasta <?=$fchFinal?>
        </th>
@@ -31,6 +31,7 @@ $costos = $sf_data->getRaw("costos");
          <th>Factura</th>
          <th>Fecha de Factura</th>
          <th>Proveedor</th>
+         <th>Costo</th>
          <th>Moneda</th>
          <th>Tasa de Cambio</th>
          <th>Tasa de Cambio USD</th>
@@ -50,6 +51,7 @@ $costos = $sf_data->getRaw("costos");
            <td class="valores" style='font-size: 9px; background: #F0F0F0'><?=$c->getCaFactura()?></td>
            <td class="valores" style='font-size: 9px; background: #F0F0F0'><?=$c->getCaFchfactura()?></td>
            <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="left"><?=$c->getCaProveedor()?></div></td>
+           <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="left"><?=$c->getCosto()->getCaCosto()?></div></td>
            <td class="valores" style='font-size: 9px; background: #F0F0F0'><?=$c->getCaIdmoneda()?></td>
            <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="right"><?=$c->getCaTcambio()?></td>
            <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="right"><?=Utils::formatNumber($c->getCaTcambioUsd())?></div></td>
@@ -65,7 +67,7 @@ $costos = $sf_data->getRaw("costos");
         $tot_vta+= $c->getCaVenta();
        }
        ?>
-        <td class="valores" style='font-weight: bold; font-size: 9px; background: #F0F0F0' colspan="8"><div align="right">TOTALES :</div></td>
+        <td class="valores" style='font-weight: bold; font-size: 9px; background: #F0F0F0' colspan="9"><div align="right">TOTALES :</div></td>
         <td class="valores" style='font-weight: bold; font-size: 9px; background: #F0F0F0'><div align="right"><?=Utils::formatNumber($tot_net)?></div></td>
         <td class="valores" style='font-weight: bold; font-size: 9px; background: #F0F0F0'><div align="right"><?=Utils::formatNumber($tot_vta)?></div></td>
         <td class="valores" style='font-weight: bold; font-size: 9px; background: #F0F0F0' colspan="2"><div align="right"></div></td>
