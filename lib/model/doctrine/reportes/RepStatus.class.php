@@ -172,8 +172,21 @@ class RepStatus extends BaseRepStatus
 		if( $reporte->getCaImpoexpo()=="Importación" || $reporte->getCaImpoexpo()=="Triangulación" ){
 			$proveedor = substr($reporte->getProveedoresStr(),0,130);
 			$asunto .= $proveedor." / ".$cliente." [".$origen." -> ".$destino."] ".$reporte->getCaOrdenClie();
-		}else{
+		}else{            
 			$consignatario = $reporte->getConsignatario();
+            $user = sfContext::getInstance()->getUser();
+            if($user->getUserId()=="maquinche")
+            {     
+                echo "180";
+                try{
+                echo $consignatario." / ".$cliente." [".$origen." -> ".$destino."] ";
+                }
+                catch(Exception $e)
+                {
+                    print_r($e);
+                }
+                echo "180";
+            }
 			$asunto .= $consignatario." / ".$cliente." [".$origen." -> ".$destino."] ";
 		}
 		return $asunto;
@@ -229,6 +242,7 @@ class RepStatus extends BaseRepStatus
                 $options["from"]=$user1->getProperty("alias")."@".$repotm->getCaLiberacion();
             }            
         }
+        
 		if(isset($options["from"]) && $options["from"] ){
 			$email->setCaFrom( $options["from"] );
 		}else{            
@@ -236,6 +250,7 @@ class RepStatus extends BaseRepStatus
 		}
 		$email->setCaFromname( $user->getNombre() );
 
+        
 		if( isset( $options['readreceipt'] ) && $options['readreceipt'] ){
 			$email->setCaReadReceipt( true );
 		}
@@ -255,7 +270,7 @@ class RepStatus extends BaseRepStatus
 			if( $recip ){
 				$email->addCc( $recip );
 			}
-		}
+		}        
 
 		//$reporte = $this->getUltReporte();        
 		if ( $reporte->getEsSeguro() ) {
@@ -278,22 +293,31 @@ class RepStatus extends BaseRepStatus
 			$email->addCc( $user->getEmail() );
             $email->setCaReplyto( $user->getEmail() );
 		}
+
         if($reporte->getCaImpoexpo()!=Constantes::EXPO)
-            $asunto = $this->getIntroAsunto();
-		if(isset($options["subject"]) && $options["subject"] ){
-            if($options["subject"]=="Notificación de Desconsolidación id: ".$reporte->getCaConsecutivo())
-            {
+            $asunto = $this->getIntroAsunto();        
+		
+        if(isset($options["subject"]) && $options["subject"] ){
+            if($options["subject"]=="Notificación de Desconsolidación id: ".$reporte->getCaConsecutivo()){
                 $asunto="";
             }
+            
 			$asunto.=  $options["subject"];
+            
+            if($options["subject"]=="Factura de Fletes Id.: ".$reporte->getCaConsecutivo()){
+                $asunto = "";
+                $asunto.= $options["subject"]." ".$this->getAsunto();
+            }
 		}else{
 			$asunto.= $this->getAsunto();
 		}
-
-		if( $attachments ){
+        
+        if( $attachments ){
 			$email->setCaAttachment( implode( "|", $attachments ) );
 		}
+        
 		$etapa = $this->getTrackingEtapa();
+
 		if ( $reporte->getCaContinuacion() != 'N/A' ){
 			if( ($etapa && $etapa->getCaDepartamento()!="OTM/DTA") || !$etapa ){
                 if($reporte->getCaContinuacionConf()!="")
