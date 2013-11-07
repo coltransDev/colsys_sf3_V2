@@ -404,10 +404,11 @@ class confirmacionesActions extends sfActions {
 
             $reporte = $inoCliente->getReporte();
             $directory = $reporte->getDirectorio();
-
-            if (!file_exists($directory)) {
-               @mkdir($directory);
+            
+            if (!is_dir($directory)) {
+               mkdir($directory, 0777, true);
             }
+            chmod ( $directory , 0777 );            
 
             $attachments = array();
 
@@ -421,6 +422,57 @@ class confirmacionesActions extends sfActions {
                $file = $directory . DIRECTORY_SEPARATOR . $attachment2['name'];
                copy($attachment2['tmp_name'], $file);
                $attachments[] = $reporte->getDirectorioBase() . $attachment2['name'];
+               
+               if($tipo_msg == "Fact"){
+                   
+                    $iddocumental = 7;
+                    $nombre = $attachment2['name'];
+                    $ref1 = $ca_referencia;
+                    $ref2 = $hbls;
+
+                    $tipDoc = Doctrine::getTable("TipoDocumental")->find($iddocumental);
+                    $this->forward404Unless($tipDoc);
+                    $folder = $tipDoc->getCaDirectorio();
+            
+                    $path="";
+                    if($ref1)
+                        $path.=$ref1.DIRECTORY_SEPARATOR;
+                    if($ref2)
+                        $path.=$ref2.DIRECTORY_SEPARATOR;
+            
+                    $directorio = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.date("Y").DIRECTORY_SEPARATOR.$folder.$path;
+            
+                    if(!is_dir($directorio)){
+                        mkdir($directorio, 0777, true);
+                    }
+                    chmod ( $directorio , 0777 );
+                    
+                    try{
+                        $mime = $attachment2['type'];
+                        $size = $attachment2['size'];
+                        $fileName = preg_replace('/\s\s+/', ' ', $attachment2['name']);
+                        $fileName=urlencode($fileName);
+                        $fileName = str_replace("+", " ", $fileName);                    
+                        $nombre = $fileName;
+                        if(move_uploaded_file($attachment2['tmp_name'],$directorio.$fileName )){
+                            $archivo = new Archivos();                        
+                            $archivo->setCaIddocumental($iddocumental);
+                            $archivo->setCaNombre($nombre);
+                            $archivo->setCaMime($mime);
+                            $archivo->setCaSize($size);
+                            $archivo->setCaPath($directorio.DIRECTORY_SEPARATOR.$fileName);
+                            $archivo->setCaRef1($ref1);
+                            $archivo->setCaRef2($ref2);
+                            $archivo->setCaRef3($ref3);
+                            $archivo->save(); 
+                        }else{
+                            $this->responseArray = array("error"=>"No se pudo mover el archivo","filename"=>$fileName, "folder"=>$folder, "success"=>false);
+                        }
+                    }catch(Exception $e){
+                        die($e->getMessage());
+                        $this->responseArray = array("error"=>$e->getMessage(), "success"=>false);
+                    }
+               }
             }
 
             $files = $this->getRequestParameter("files_" . $oid);
@@ -530,14 +582,16 @@ class confirmacionesActions extends sfActions {
                   $mensaje .= "\n" . $this->getRequestParameter("mensaje_" . $oid);
                }
                $status->setStatus($mensaje);
-            } else {
+            }else {
                $status->setCaIntroduccion($this->getRequestParameter("status_body_intro"));
                $mensaje = $this->getRequestParameter("status_body");
                if($tipo_msg=="not_planilla")
-               $mensaje.= "<br />Planilla No: <b>".$inoCliente->getCaPlanilla()."</b>";
+                  $mensaje.= "<br />Planilla No: <b>".$inoCliente->getCaPlanilla()."</b>";
                if ($this->getRequestParameter("mensaje_" . $oid)) {
                   $mensaje .= "\n" . $this->getRequestParameter("mensaje_" . $oid);
                }
+               if($tipo_msg=="Fact")
+                  $options["subject"]="Factura de Fletes Id.: ".$reporte->getCaConsecutivo();
                $status->setStatus($mensaje);
             }
 
