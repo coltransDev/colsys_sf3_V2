@@ -69,6 +69,16 @@ function validarFormConfirmacion(tipomsg){
                         return false;
                     }
                 }
+                
+                if(valor=="Fact"){
+                    var td_adjunto =document.getElementById("attachment_"+oids[i]);
+                    
+                    if(td_adjunto.value == ""){
+                        alert("Debe adjuntar la factura para el cliente "+document.getElementById("nombre_cliente_"+oids[i]).value);
+                        document.location.href = "#oid_"+oids[i];
+                        return false;
+                    }
+                }
             }
         }
     }
@@ -646,7 +656,7 @@ function formatHours(date){
 				<td class="partir">&nbsp;</td>
 				<td class="partir"><input name="tipo_msg" class="tipostatus" id="tipo_msg" value="Planilla" onclick="cambiarTipoMsg(this.value)" type="radio">Planilla de Envío:</td>
 			</tr>
-<?  
+<?          
             }else{
 ?>
 			<tr>

@@ -232,7 +232,7 @@ $j=0;
     </tr>
     <tr>
         <td class="mostrar">Adjunto para Cliente : </td>
-        <td class="mostrar" colspan="4"><input type='file' name='attachment_<?=$inoCliente->getOid()?>' size="75" /></td>
+        <td class="mostrar" colspan="4"><input type='file' name='attachment_<?=$inoCliente->getOid()?>' id='attachment_<?=$inoCliente->getOid()?>' size="75" /></td>
     </tr>
     
     <tr height="<?=$alto+20?>">
