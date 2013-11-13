@@ -772,6 +772,7 @@ class traficosActions extends sfActions {
                foreach ($tareas as $tarea) {
                   $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
                   $tarea->setCaUsuterminada($this->getUser()->getUserId());
+                  $tarea->setCaObservaciones( $tarea->getCaObservaciones()." terminada:GuardarStatus" );
                   $tarea->save($conn);
                }
             }
@@ -937,6 +938,7 @@ class traficosActions extends sfActions {
       foreach ($tareas as $tarea) {
          $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
          $tarea->setCaUsuterminada($this->getUser()->getUserId());
+         $tarea->setCaObservaciones( $tarea->getCaObservaciones()." terminada:CerrarCaso" );
          $tarea->save();
       }
       $this->redirect("traficos/listaStatus?modo=" . $this->modo . "&reporte=" . $reporte->getCaConsecutivo());
@@ -1434,6 +1436,7 @@ class traficosActions extends sfActions {
 
       $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
       $tarea->setCaUsuterminada($this->getUser()->getUserId());
+      $tarea->setCaObservaciones( $tarea->getCaObservaciones()." terminada:TerminarSeguimiento" );
       $tarea->save();
       if ($request->isXmlHttpRequest()) {
          $this->responseArray = array("success" => true);
