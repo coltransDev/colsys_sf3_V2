@@ -30,7 +30,8 @@ class reporteExtActions extends sfActions
         if( $rep->getCaIdreporte()!=$this->reporte->getCaIdreporte() ){
             $this->redirect("reporteExt/crearReporte?idreporte=".$rep->getCaIdreporte());
         }
-		
+		//echo $this->reporte->getCaImpoexpo()."-".Constantes::IMPO;
+        //exit;
 		$this->forward404Unless( $this->reporte->getCaImpoexpo()==Constantes::IMPO || $this->reporte->getCaImpoexpo()==Constantes::TRIANGULACION );
 		
 		if( $this->reporte->getCaTransporte()==Constantes::MARITIMO ){
@@ -255,9 +256,10 @@ class reporteExtActions extends sfActions
 				$email->send();
 				
 				if( $this->reporte->getCaIdtareaRext() ){
-					$tarea = Doctrine::getTable("NotTarea")->find( $this->reporte->getCaIdtareaRext() );
+					$tarea = Doctrine::getTable("NotTarea")->find( $this->reporte->getCaIdtareaRext() );                    
 					if( $tarea ){
 						$tarea->setCaFchterminada( date("Y-m-d H:i:s") );
+                        $tarea->setCaObservaciones( $tarea->getCaObservaciones()." terminada:Crear Reporte al exterior" );
 						$tarea->save();
 					}
 				}
