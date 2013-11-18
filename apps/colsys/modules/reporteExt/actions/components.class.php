@@ -97,7 +97,7 @@ class reporteExtComponents extends sfComponents
                 if(strlen ( $consignatario->getCaDireccion() )>5 )
                 {
                     $city="";
-                    if($bodega1->getCiudad()!="999-9999")
+                    if($consignatario->getCiudad()!="999-9999")
                         $city=$consignatario->getCiudad()->getCaCiudad()." ".$consignatario->getCiudad()->getTrafico()->getCaNombre();
  
                     $consignatario_final .= "<br />Dirección: ".$consignatario->getCaDireccion()." ".$city;
