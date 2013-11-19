@@ -97,7 +97,8 @@ $aduanas = Doctrine::getTable("CotAduana")
         ->createQuery("ca")
         ->where("ca.ca_idcotizacion = ?", $cotizacion->getCaIdcotizacion())
         ->innerJoin("ca.Costo c")
-        ->addOrderBy("c.ca_transporte, c.ca_costo")
+        ->innerJoin("c.ConceptoAduana a ON c.ca_idcosto = a.ca_idconcepto")
+        ->addOrderBy("c.ca_transporte, a.ca_consecutivo")
         ->execute();
 
 $imprimirObservaciones = false;
@@ -164,7 +165,7 @@ if (count($aduanas) > 0) {
 		
         $valor = "";
         if ($aduana->getCaValor() > 0 and $aduana->getCaValor() < 1) {
-                $valor.= Utils::formatNumber($aduana->getCaValor()*100)." %";
+                $valor.= Utils::formatNumber($aduana->getCaValor())." %";
         }else if ($aduana->getCaValor() >= 1) {
                 $valor.= "$ ".Utils::formatNumber($aduana->getCaValor());
         }
@@ -174,7 +175,7 @@ if (count($aduanas) > 0) {
         if ($aduana->getCaValorminimo()){
             $valor.= " Mínimo :";
             if ($aduana->getCaValorminimo() > 0 and $aduana->getCaValorminimo() < 1) {
-                    $valor.= Utils::formatNumber($aduana->getCaValorminimo()*100)." %";
+                    $valor.= Utils::formatNumber($aduana->getCaValorminimo())." %";
             }else if ($aduana->getCaValorminimo() >= 1) {
                     $valor.= "$ ".Utils::formatNumber($aduana->getCaValorminimo());
             }
