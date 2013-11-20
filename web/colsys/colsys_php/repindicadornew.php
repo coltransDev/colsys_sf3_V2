@@ -207,7 +207,7 @@ if (!isset($boton) and !isset($buscar)) {
    echo "</BODY>";
    echo "</HTML>";
 } elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
-   set_time_limit(0);
+   set_time_limit(1000000000000);
    $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
    include_once 'include/functions.php';                                      // Módulo de Funciones Varias
    //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
@@ -1410,6 +1410,7 @@ if (!isset($boton) and !isset($buscar)) {
             if (!$rs->Eof()) {           // Retrocede un registro para quedar en la última Referencia
                $rs->MovePrevious();
             }
+            $data[] = array($rs->Value('ca_usucreado')=>array($rs->Value('ca_mes')=>$dif_mem));
             continue;
             break;
          case 14:
@@ -1558,7 +1559,7 @@ if (!isset($boton) and !isset($buscar)) {
                echo "</TR>";
             }
             echo "  </TABLE></TD>";
-            $dif_mem = ($rs->Value("ca_observaciones") == 'Cierre contable' or $rs->Value("ca_observaciones") == 'Error de Factura' or $rs->Value("ca_observaciones") == 'Faltantes Soportes Agente') ? null : $dif_mem;
+            $dif_mem = ($rs->Value("ca_observaciones") == 'Cierre contable' or $rs->Value("ca_observaciones") == 'Error de Factura' or $rs->Value("ca_observaciones") == 'Faltantes Soportes Agente' or $rs->Value("ca_observaciones") == 'Faltante Facturas Proveedores') ? null : $dif_mem;
             $dif_mem = ($apl_idg == 'f') ? null : $dif_mem;
             $lcs_var = ($lcs_array[$rs->Value('ca_sucursal')]) ? $lcs_array[$rs->Value('ca_sucursal')] : $lcs_array['Todas'];
             $color = analizar_dif($tipo, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
@@ -1636,8 +1637,6 @@ if (!isset($boton) and !isset($buscar)) {
 if($data){
     $dataJson = array();
     $datos = array();
-    $tickInterval = 3600 * 1000;
-    $dateFormat = '%H:%M:%S';
     
     foreach($data as $key=>$gridUsuario){
         foreach ($gridUsuario as $usuario=>$gridMes){
@@ -1659,10 +1658,6 @@ if($data){
             foreach ($serieX as $mes){
                 if($ind_mem==5||$ind_mem==6||$ind_mem==8||$ind_mem==9){
                     $datos[$usuario][$mes]["prom"] = round($datos[$usuario][$mes]["valor"]/$datos[$usuario][$mes]["total"],0)*1000;
-                    if($datos[$usuario][$mes]["prom"]>86400000){ // Identifica si el valor del indicador es mayor a un dia;
-                        $tickInterval = 43200 * 1000;
-                        $dateFormat = '%d días %H:%M:%S';
-                    }
                 }else{
                     $datos[$usuario][$mes]["prom"] =round($datos[$usuario][$mes]["valor"]/$datos[$usuario][$mes]["total"],2);
                 }
@@ -1673,16 +1668,21 @@ if($data){
     
     foreach($datos as $usuario=>$gridMes){
         foreach ($gridMes as $key=>$gridItems){
-            if($usuario)
-            $dataJson[$usuario][]=$gridItems["prom"]?$gridItems["prom"]:null;            
+            if($usuario){
+                $dataJson[$usuario][]=$gridItems["prom"]?$gridItems["prom"]:null;            
+                $dataCarga[$usuario][]=$gridItems["total"]?$gridItems["total"]:null;            
+            }
         }
     }
     
     foreach($dataJson as $usuario=>$grid){
-        $dat[] = array("name"=>$usuario, "data"=>$grid);
+        $dataIdg[] = array("name"=>$usuario, "data"=>$grid, "type"=>"column", "yAxis"=>1);
     }
     
-    //echo "<pre>";print_r($datos);echo "</pre>";
+    foreach($dataCarga as $usuario=>$grid){
+        $dataIdg[] = array("name"=>$usuario, "data"=>$grid, "type"=>"spline", "yAxis"=>2);        
+    }
+    
 ?>  
    
 <script type="text/javascript"> 
@@ -1691,76 +1691,71 @@ if($data){
         chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'container',
-                defaultSeriesType: 'column'
             },
             title: {
-                text:'<?=$indicador?>'
+                text: '<?=$indicador?>'
             },
             subtitle: {
                 text: '<?=$mes_tit."-".$ano_tit?>'
             },
-            xAxis: {
+            xAxis: [{
                 categories: <?=json_encode($serieX)?>
-            },
-            yAxis: {
-                <?if($ind_mem==5||$ind_mem==6||$ind_mem==8||$ind_mem==9){?>
-                type: 'datetime',
-                tickInterval: <?=$tickInterval?>,
-                title: {
-                    text: 'Tiempo (Horas)'
-                }
-                <?}else{?>
-                //min: <?//=($ind_mem==4 && $departamento == 'Marítimo')?':0?>,
-                title: {
-                    text: 'Tiempo (Días)'
-                }
-                <?}?>
-            },
-            /*legend: {
-                layout: 'vertical',
-                backgroundColor: '#FFFFFF',
-                align: 'left',
-                verticalAlign: 'top',
-                x: 100,
-                y: 70,
-                floating: true,
-                shadow: true
-            },*/
-            tooltip: {
-                <?if($ind_mem==5||$ind_mem==6||$ind_mem==8||$ind_mem==9){?>
-                formatter: function() {
-                    return ''+ this.series.name + ': ' +
-                        Highcharts.dateFormat('<?=$dateFormat?>', this.y) + ' horas';
-                },
-                <?}else{?>
-                headerFormat: '<span style="font-size:8px">{point.key}</span><table>',
-                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                    '<td style="padding:0"><b>{point.y}</b></td></tr>',
-                footerFormat: '</table>',
-                shared: true,
-                useHTML: true
-                <?}?>
-            },
-            plotOptions: {
-                column: {
-                    pointPadding: 0.2,
-                    borderWidth: 0,
-                    dataLabels: {
-                        enabled: true,
-                        formatter: function() {
-                            return ''+this.series.name;
-                                //this.x +': '+ this.y +' días';
-                        },
-                        rotation: 270,
-                        color: 'white',
-                        verticalAlign: 'top',
-                        inside: true
+            }],
+            yAxis: [
+                { // Primary yAxis
+                    gridLineWidth: 0,
+                    title: {
+                        text: '# Casos',
+                        style: {
+                            color: '#4572A7'
+                        }
                     }
-                }
+                },{ //  Secondary yAxis
+                 
+                    <?if($ind_mem==5||$ind_mem==6||$ind_mem==8||$ind_mem==9){?>
+                        type: 'datetime',
+                        title: {
+                            text: 'Tiempo (Horas)'
+                        },
+                    <?}else{?>
+                        title: {
+                            text: 'Tiempo (Días)'
+                        },
+                    <?}?>
+                    opposite: true
+                },{ // Tertiary yAxis
+                    gridLineWidth: 0,
+            }],
+            tooltip: {
+                formatter: function() {
+                    var str="";
+                    if(this.series.type=="column"){
+                        <?if($ind_mem==5||$ind_mem==6||$ind_mem==8||$ind_mem==9){?>
+                            str = '<u>' + this.series.name + ': ' + dateFormat1(this.y) + ' horas</u><br/>';
+                        <?}else{?>
+                            str = '<u>' + this.series.name + ': '+ this.y +' días</u><br/>';
+                        <?}?>    
+                    }else
+                        str = '<u>' + this.series.name + ': '+ this.y +' casos</u><br/>';
+                    return str;
+                }                
             },
-                series: <?=json_encode($dat)?>
+            series: <?= json_encode($dataIdg)?>
         });
     });
+    
+    function dateFormat1(tim){
+        
+        horas=Math.floor(((tim/1000)/60)/60);
+        min=Math.floor(((tim-(horas*60*60*1000))/1000)/60);
+        sec=Math.round((tim -((horas*60*60*1000) + (min*60*1000)))/1000);
+        
+        horas = horas<9?"0"+horas:horas;
+        min = min<9?"0"+min:min;
+        sec = sec<9?"0"+sec:sec;
+        
+        return horas + ":" + min + ":" + sec;
+    }
 </script>
 <?
 }
@@ -1820,7 +1815,7 @@ if($data){
    echo "</TABLE>";
 
    echo "<TABLE width='100%' CELLSPACING=10> ";
-   echo '<TH><div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div></TH>';  // Cancela la operación
+   echo '<TH><div id="container" style="min-width: 310px; height: 600px; margin: 0 auto"></div></TH>';  // Cancela la operación
    echo "</TABLE>";
    
    echo "<TABLE CELLSPACING=10>";
