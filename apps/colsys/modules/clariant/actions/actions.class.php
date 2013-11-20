@@ -232,46 +232,46 @@ class clariantActions extends sfActions {
          $docCompra = null;
 
          foreach ($records as $record) {       // Hace una primera lectura para verificar la estructura del archivo
-            if (strpos(strtolower($record), 'pais') === FALSE) {
+            if (strpos(strtolower($record), 'ps.') === FALSE) {
                $fields = explode($separador, $record); // Divide el archivo en campos por el separador
 
                if (strlen($record) == 0) {
                   break;
-               } else if (count($fields) != 10) {
+               } else if (count($fields) != 11) {
                   echo "¡El archivo tiene errores en su estructura, por tanto no se puede importar! ";
                   exit;
                }
 
-               if ($fields[2] != $docCompra) {
-                  list($dia, $mes, $ano) = sscanf($fields[9], "%d.%d.%d");
+               if ($fields[4] != $docCompra) {
+                  list($dia, $mes, $ano) = sscanf($fields[3], "%d.%d.%d");
                   $documentoFch = date("Y-m-d", mktime(0, 0, 0, $mes, $dia, $ano));
 
                   $clariant = new Clariant();
                   $clariant->setCaPais($fields[0]);
-                  $clariant->setCaProveedor($fields[1]);
-                  $clariant->setCaOrden($fields[2]);
+                  $clariant->setCaProveedor($fields[2]);
+                  $clariant->setCaOrden($fields[4]);
                   $clariant->setCaDocumentoFch($documentoFch);
-                  $clariant->setCaIncoterm($fields[8]);
+                  $clariant->setCaIncoterm($fields[10]);
                   $clariant->save();
 
                   $idclariant = $clariant->getCaIdclariant();
-                  $docCompra = $fields[2];
+                  $docCompra = $fields[4];
                }
 
-               if (strrchr($fields[6], ".") > strrchr($fields[6], ",")) {
-                  $cantidad = str_replace(",", "", $fields[6]);
+               if (strrchr($fields[8], ".") > strrchr($fields[8], ",")) {
+                  $cantidad = str_replace(",", "", $fields[8]);
                } else {
-                  $cantidad = str_replace(",", ".", str_replace(".", "", $fields[6]));
+                  $cantidad = str_replace(",", ".", str_replace(".", "", $fields[8]));
                }
 
                $clarDetail = new ClarDetail();
                $clarDetail->setCaIdclariant($idclariant);
-               $clarDetail->setCaPosicion($fields[3]);
-               $clarDetail->setCaMaterial($fields[4]);
-               $clarDetail->setCaDescripcion($fields[5]);
+               $clarDetail->setCaPosicion($fields[5]);
+               $clarDetail->setCaMaterial($fields[6]);
+               $clarDetail->setCaDescripcion($fields[7]);
                $clarDetail->setCaCantidad($cantidad);
                $clarDetail->setCaDespacho(0);
-               $clarDetail->setCaUnidad($fields[7]);
+               $clarDetail->setCaUnidad($fields[9]);
                $clarDetail->save();
             }
          }
