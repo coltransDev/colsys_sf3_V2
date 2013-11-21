@@ -73,7 +73,7 @@ SubPanel = function(){
                    this.gridProductos,                     
                    this.gridRecargos,
                    this.gridContviajes,
-                   this.gridAduanas,
+				   this.gridAduanas,
                    this.gridSeguros,
                    this.gridAgentes,
                 <?
@@ -96,7 +96,7 @@ Ext.extend(SubPanel, Ext.FormPanel, {
             this.gridProductos.guardarItems();
             this.gridRecargos.guardarItems();
             this.gridContviajes.guardarItems();
-            this.gridAduanas.guardarItems();
+			this.gridAduanas.guardarItems();
             this.gridSeguros.guardarItems();
             this.gridAgentes.guardarItems();
         <?

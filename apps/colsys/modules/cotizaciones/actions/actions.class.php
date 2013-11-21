@@ -635,7 +635,8 @@ class cotizacionesActions extends sfActions {
             $grupos[$row["ca_transporte"]][] = $row["ca_modalidad"];
             $grupos[$row["ca_transporte"]] = array_unique($grupos[$row["ca_transporte"]]);
         }
-        $this->setTemplate("generarPDFColtrans" );
+        //$this->setTemplate("generarPDFColtrans" );
+        $this->setTemplate("generarPDF" . $this->cotizacion->getCaEmpresa());
         $this->grupos = $grupos;
     }
 
@@ -1727,6 +1728,7 @@ class cotizacionesActions extends sfActions {
             }
         }
 
+
         $continuacion->save();
 
         $this->responseArray = array("id" => $this->getRequestParameter("id"), "idcontinuacion" => $continuacion->getCaIdcontinuacion());
@@ -1762,6 +1764,10 @@ class cotizacionesActions extends sfActions {
                         ->where("cont.ca_idcotizacion=?", $id)
                         ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                         ->execute();
+
+
+
+
 
         $this->contviajes = array();
         $i = 0;
@@ -2145,6 +2151,10 @@ class cotizacionesActions extends sfActions {
             $this->modalidades[] = $row;
         }
     }
+
+    
+
+    
 
     public function executeDatosParametros(sfWebRequest $request) {
         $data = array();

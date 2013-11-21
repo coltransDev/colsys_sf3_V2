@@ -204,7 +204,12 @@ PanelTarifarioAduana = function( config ){
         sortable: this.readOnly,
         editor: <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>
       }
+      
+      
+
      ];
+
+
 
     this.record = Ext.data.Record.create([
             {name: 'sel', type: 'bool'},
@@ -308,6 +313,7 @@ PanelTarifarioAduana = function( config ){
         }else{
             var record = storePanelTarifarioAduana.getAt(rowIndex);
             var field = this.getDataIndex(colIndex);
+
 
             if( !record.data.idconcepto && field!="concepto" ){
                 return false;
