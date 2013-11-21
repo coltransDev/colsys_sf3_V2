@@ -69,7 +69,7 @@ $agente=null;
     $pdf->SetAligns(array("L","L","L","L","L","L"));
     $pdf->SetFills(array(0,0,0,0,0,0));
     $pdf->SetStyles(array("B","","B","","B",""));
-    if ($reporte->getCaImpoexpo () == Constantes::IMPO ) {
+    if ($reporte->getCaImpoexpo () == Constantes::IMPO || $reporte->getCaImpoexpo () == Constantes::TRIANGULACION) {
         $pdf->Row(array('Fch.Despacho:',$reporte->getCaFchdespacho () ,'Agente:', $agente->getIds()->getCaNombre(). "-".$sucursalag->getCiudad()->getCaCiudad()." ".$sucursalag->getCaDireccion()  ));
     }else{
         $pdf->Row ( array ('Fch.Despacho:', $reporte->getCaFchdespacho (), 'Incoterms:', $reporte->getCaIncoterms () ) );
@@ -980,9 +980,10 @@ if( !$soloAduana  ){
                     $pdf->SetAligns ( array ("","L", "L", "R", "R", "R", "R", "R", "R" ) );
 
                     $des_rec = $gasto->getTipoRecargo ()->getCaRecargo ();
-                    if ($gasto->getCaIdconcepto () != '9999') {
-    //                    $des_rec .= " -> " . $gasto->getConcepto ()->getCaConcepto ();
-                    }
+                    /*if ($gasto->getCaIdconcepto () == '9999') 
+                    {
+                        $des_rec .= " -> " . $gasto->getConcepto ()->getCaConcepto ();
+                    }*/
 
                     if ($gasto->getCaTipo () == "$") {
                         $pdf->Row ( array ("",$des_rec, utf8_decode($gasto->getCaAplicacion ()), Utils::formatNumber ( $gasto->getCaNetaTar (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaNetaMin (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaReportarTar (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaReportarMin (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaCobrarTar (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ($gasto->getCaCobrarMin (), 3 ) . " " . $gasto->getCaIdmoneda () ) );
@@ -1034,6 +1035,9 @@ if( !$soloAduana  ){
                     $pdf->SetStyles ( array ("","B", "", "", "", "", "", "", "", "" ) );
                     $pdf->SetAligns ( array ("","L", "L", "R", "R", "R", "R", "R", "R" ) );
                     $des_rec = $gasto->getTipoRecargo ()->getCaRecargo ();
+                   if($gasto->getEquipo ()->getCaConcepto ()!="")
+                        $des_rec.="->".$gasto->getEquipo ()->getCaConcepto ();
+                    
                     if ($gasto->getCaTipo () == "$") {
                         $pdf->Row ( array ("",$des_rec, utf8_decode($gasto->getCaAplicacion ()), Utils::formatNumber ( $gasto->getCaNetaTar (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaNetaMin (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaReportarTar (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaReportarMin (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ( $gasto->getCaCobrarTar (), 3 ) . " " . $gasto->getCaIdmoneda (), Utils::formatNumber ($gasto->getCaCobrarMin (), 3 ) . " " . $gasto->getCaIdmoneda () ) );
                     } else {
