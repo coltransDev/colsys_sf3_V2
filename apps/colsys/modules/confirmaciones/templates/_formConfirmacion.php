@@ -234,7 +234,13 @@ $j=0;
         <td class="mostrar">Adjunto para Cliente : </td>
         <td class="mostrar" colspan="4"><input type='file' name='attachment_<?=$inoCliente->getOid()?>' id='attachment_<?=$inoCliente->getOid()?>' size="75" /></td>
     </tr>
-    
+    <tr>
+        <td colspan="9">
+            <?
+            include_component("gestDocumental", "returnFiles",array("idsserie"=>"2","view"=>"email","ref1"=>$numRef,"ref2"=>$inoCliente->getCaHbls(),"ref3"=>"","format"=>"confirmaciones","nameInput"=>'files_'.$inoCliente->getOid().'[]'));
+            ?>
+        </td>
+    </tr>
     <tr height="<?=$alto+20?>">
         <td colspan="9" style="vertical-align: top" >
             <div id="thumbnails_<?=$i?>">

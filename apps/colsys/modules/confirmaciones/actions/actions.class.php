@@ -287,7 +287,7 @@ class confirmacionesActions extends sfActions {
          }
          
          if ($tipo_msg == "Desc")
-         {         
+         {
             $sql = "select us.ca_email
                     from control.tb_usuarios_perfil up
                     inner join control.tb_usuarios us on us.ca_login = up.ca_login

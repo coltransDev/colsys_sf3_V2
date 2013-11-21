@@ -1,4 +1,4 @@
-<?
+for<?
 use_helper("ExtCalendar");
 
 include_component("widgets", "widgetMuelles",array("ciudad"=>$referencia->getCaDestino() ));
@@ -73,10 +73,14 @@ function validarFormConfirmacion(tipomsg){
                 if(valor=="Fact"){
                     var td_adjunto =document.getElementById("attachment_"+oids[i]);
                     
-                    if(td_adjunto.value == ""){
-                        alert("Debe adjuntar la factura para el cliente "+document.getElementById("nombre_cliente_"+oids[i]).value);
-                        document.location.href = "#oid_"+oids[i];
-                        return false;
+                    obj=$("input:checkbox[name='files_"+oids[i]+"[]']:checked");
+                    if(obj.length==0)
+                    {
+                        if(td_adjunto.value == ""){
+                            alert("Debe adjuntar la factura para el cliente "+document.getElementById("nombre_cliente_"+oids[i]).value);
+                            document.location.href = "#oid_"+oids[i];
+                            return false;
+                        }
                     }
                 }
             }
@@ -624,7 +628,7 @@ function formatHours(date){
 									echo extDatePicker('ca_fchvaciado', $referencia->getCaFchvaciado("Y-m-d"));
 ?>
 								</td>
-								<td class="mostrar" width="25%">Hora Vaciado:<br>
+								<td class="mostrar" width="25%">Hora Vaciado::<br>
 <? 
                                     echo extTimePicker("ca_horavaciado",$referencia->getCaHoravaciado("Y-m-d") );
 ?>
@@ -844,7 +848,7 @@ function formatHours(date){
 <?
             }
             if($modo!="puerto")
-                include_component("confirmaciones", "notClientes",array("inoClientes"=>$inoClientes,"modo"=>$modo,"etapas"=>$etapas,"coordinadores"=>$coordinadores, "textos"=>$textos, $bodegas="bodegas"));
+                include_component("confirmaciones", "notClientes",array("numRef"=>$referencia->getCaReferencia(),"inoClientes"=>$inoClientes,"modo"=>$modo,"etapas"=>$etapas,"coordinadores"=>$coordinadores, "textos"=>$textos, $bodegas="bodegas"));
 ?>
 			<tr height="5">
 				<td class="invertir" colspan="6">&nbsp;</td>
