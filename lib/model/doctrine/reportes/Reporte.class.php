@@ -35,6 +35,18 @@ class Reporte extends BaseReporte {
         {
             if($tipo=='4')//contacto No fijo
                 return Doctrine::getTable("Contacto")->find($this->getCaIdconcliente());
+            if($tipo=='5'){
+                $contac=array();
+                $usuarios = Doctrine::getTable("Usuario")
+                        ->createQuery("u")
+                        ->addWhere("u.ca_departamento = 'OTM' and u.ca_activo=true ")
+                        ->addOrderBy("u.ca_email")
+                        ->execute();
+                foreach ($usuarios as $usuario) {
+                    $contac[] = array("ca_login" => $usuario->getCaLogin(),"ca_nombre" => $usuario->getCaNombre());
+                }
+                return $contac;
+            }
             if(!$this->cliente)
                 $this->getCliente();
             if(!$this->cliente)
@@ -54,10 +66,9 @@ class Reporte extends BaseReporte {
         }
         else
         {
-            if($tipo!='1' && $tipo!='3')//contacto No fijo
+            if($tipo!='1' && $tipo!='3' && $tipo!='5')//contacto No fijo
                 return Doctrine::getTable("Contacto")->find($this->getCaIdconcliente());
-            else if($tipo=='1')//CONTACTO FIJO
-            {
+            else if($tipo=='1'){//CONTACTO FIJO
                 if(!$this->cliente)
                      $this->getCliente();   
                 return  Doctrine::getTable("Contacto")
@@ -66,8 +77,7 @@ class Reporte extends BaseReporte {
                                        ->addWhere("ca_cargo != ?", 'Extrabajador')
                                        ->addWhere("ca_fijo = ?", true)
                                        ->execute();
-            }else if($tipo=='3')//CONTACTO Internos coltrans
-            {
+            }else if($tipo=='3'){//CONTACTO Internos coltrans
                 $contac=array();
                 $contacts=explode(",",$this->getCaConfirmarClie());
                 foreach($contacts as $c)
@@ -76,6 +86,17 @@ class Reporte extends BaseReporte {
                     {
                         $contac[]["ca_email"]=$c;
                     }
+                }
+                return $contac;
+            }else if($tipo=='5'){//CONTACTO Operativos coltrans de la sucursal
+                $contac=array();
+                $usuarios = Doctrine::getTable("Usuario")
+                        ->createQuery("u")
+                        ->addWhere("u.ca_departamento = ? and u.ca_idsucursal = ? and u.ca_activo=true ", array($this->getCaTransporte(), $this->getUsuario()->getSucursal()->getCaIdsucursal()))
+                        ->addOrderBy("u.ca_email")
+                        ->execute();
+                foreach ($usuarios as $usuario) {
+                    $contac[] = array("ca_login" => $usuario->getCaLogin(),"ca_nombre" => $usuario->getCaNombre());
                 }
                 return $contac;
             }            
@@ -105,7 +126,7 @@ class Reporte extends BaseReporte {
                     $this->cliente->setCaFax($tercero->getCaFax());
                     $this->cliente->setCaIdciudad($tercero->getCaIdciudad());
                     $this->cliente->setCaPropiedades($tercero->getCaPropiedades());
-                    $this->cliente->setProperty("tipopersona",$tercero->getgetCaTipopersona());
+                    $this->cliente->setProperty("tipopersona",$tercero->getCaTipopersona());
                 }
             }
             else
@@ -1125,6 +1146,7 @@ class Reporte extends BaseReporte {
             $reporte->setCaUsucerrado(null);            
             $reporte->setCaPropiedades(null);
             $reporte->setProperty("subarancel",$this->getProperty("subarancel"));
+            $reporte->setProperty("muelle",$this->getProperty("muelle"));
             $reporte->save($conn);
 
             //Copia los conceptos

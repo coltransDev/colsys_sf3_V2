@@ -28,6 +28,7 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
 
 $destinatariosFijos = $form->getDestinatariosFijos();
 $contactos_reporte = $form->getContactos();
+$operativos_reporte = $form->getOperativos();
 $folder=$reporte->getDirectorioBase();
 ?>
 <script language="javascript" type="text/javascript">
@@ -255,9 +256,7 @@ var mostrar=function( type ){
     <?
         }
 	?>
-    
-
-	
+   
 }
 
 var crearSeguimiento=function(){
@@ -276,6 +275,17 @@ var reporteIncompleto=function(){
 		$("#row_incompleto").show();
 	}else{
 		$("#row_incompleto").hide();
+	}
+}
+
+var reporteOperativo=function(){
+    
+    
+	if(document.getElementById("rep_operativo").checked)
+    {
+		$("#row_operativo").show();
+	}else{
+		$("#row_operativo").hide();
 	}
 }
 </script>
@@ -973,7 +983,7 @@ echo $form['transporte']->render();
 			 </div>
         </td>
 	</tr>
-    <tr id="row_incompleto">
+    <tr id="row_incompleto" style="display: none;">
 		<td valign="top" >
             <div >
                 Observaciones<br>
@@ -1009,6 +1019,41 @@ echo $form['transporte']->render();
 			</div>
         </td>
 	</tr>
+        
+    <tr>
+		<td colspan="2"><div align="left"><b>Incluir Datos de Operativos:</b>
+                <br>
+			<?
+            echo $reporte_operativo;
+			 echo $form['rep_operativo']->renderError();
+			 echo $form['rep_operativo']->render();
+			 ?>
+			 </div> Esta opción permite incluir en el cuerpo del mensaje, los datos de contacto de las personas de operativo señaladas.
+        </td>
+	</tr>
+        
+    <tr id="row_operativo" style="display: none;">
+		<td valign="top" >
+			<div align="left">
+            <?
+            
+            ?>
+            <div class="qtip box1" title="Seleccione los operativos, cuyos datos serán incuidos en el correo" >
+                <b>Operativos:</b><br />
+            <?
+			for( $i=0; $i< count($operativos_reporte) ; $i++ ){
+				 echo $form['operativos_'.$i]->renderError(); 
+				 //$form->setDefault('contactos_'.$i, 0 );
+				 echo $form['operativos_'.$i]->render().$operativos_reporte[$i]["ca_nombre"]."<br />";
+			}
+			?>
+            </div>
+			</div></td>
+	</tr>        
+        
+        
+        
+        
 	<tr>
 		<td colspan="2"><div align="center">
             <input type="button" value="Enviar" class="button" onclick="enviarFormulario()" />&nbsp;			

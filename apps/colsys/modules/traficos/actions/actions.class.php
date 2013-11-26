@@ -279,8 +279,10 @@ class traficosActions extends sfActions {
       $fijos = $reporte->getContacto('1');
 
       $contactos_reporte = $reporte->getContacto('3');
+      $operativos_reporte = $reporte->getContacto('5');
       $this->form->setIdsucursal($this->getUser()->getIdsucursal());
       $this->form->setContactos($contactos_reporte);
+      $this->form->setOperativos($operativos_reporte);
       $this->form->setDestinatariosFijos($fijos);
       //Etapas
 
@@ -309,7 +311,6 @@ class traficosActions extends sfActions {
       $q->addOrderBy("t.ca_orden");
       $this->form->setQueryIdEtapa($q);
       $this->etapas = $q->execute();
-
 
       $u = Doctrine::getTable("Usuario")->createQuery("u");
       $u->where("ca_idsucursal = ? and ca_activo=true", $this->getUser()->getSucursal());
@@ -366,7 +367,6 @@ class traficosActions extends sfActions {
          for ($i = 0; $i < NuevoStatusForm::NUM_CC; $i++) {
             $bindValues["cci_" . $i] = trim($request->getParameter("cci_" . $i));
          }
-         
 
          if ($request->getParameter("empresa_remitente") > 0) {
             switch ($request->getParameter("empresa_remitente")) {
@@ -446,6 +446,15 @@ class traficosActions extends sfActions {
             }
          }
          //$bindValues["txtincompleto"] = $request->getParameter("txtincompleto");
+
+         $bindValues["rep_operativo"] = $request->getParameter("rep_operativo");
+         if ($request->getParameter("rep_operativo")) {
+            for ($i = 0; $i < count($operativos_reporte); $i++) {
+               if ($request->getParameter("operativo_" . $i)) {
+                  $bindValues["operativo_" . $i] = trim($request->getParameter("operativo_" . $i));
+               }
+            }
+         }
 
          $this->form->bind($bindValues);
          if ($this->form->isValid()) {
@@ -675,12 +684,7 @@ class traficosActions extends sfActions {
             $repExpo->save($conn);
          }
 
-         $status->setStatus($request->getParameter("mensaje"));
-
-         $status->save($conn);
-
-
-         $address = $addressRnincompleto = array();
+         $address = $addressRnincompleto = $loginOperativos = array();
 
          foreach ($_POST as $key => $val) {
             if (substr($key, 0, 14) == "destinatarios_") {
@@ -700,7 +704,25 @@ class traficosActions extends sfActions {
                   $addressRnincompleto[] = trim($request->getParameter($key));
                }
             }
+            
+            if (substr($key, 0, 11) == "operativos_") {
+               if ($request->getParameter($key)) {
+                  $loginOperativos[] = trim($request->getParameter($key));
+               }
+            }
          }
+         
+         // $status->setStatus($request->getParameter("mensaje"));
+         $mensaje = $request->getParameter("mensaje");
+         
+         foreach ($loginOperativos as $loginOperativo){
+             $user = Doctrine::getTable("Usuario")->find($loginOperativo);
+             $mensaje.= "\n".$user->getCaNombre()." Tel.: ".$user->getSucursal()->getCaTelefono()." Ext.: ".$user->getCaExtension()." correo: ".$user->getCaEmail();
+         }
+         
+         $status->setStatus($mensaje);
+
+         $status->save($conn);
 
          $cc = array();
          for ($i = 0; $i < NuevoStatusForm::NUM_CC; $i++) {
