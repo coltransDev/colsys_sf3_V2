@@ -128,15 +128,21 @@ class Cotizacion extends BaseCotizacion {
                 ->innerJoin("r.TipoRecargo tr")
                 ->where("r.ca_idcotizacion = ?", $this->getCaIdcotizacion())
                 //->addWhere("r.ca_tipo like ? ", "%".$tipo."%")
-                ->addWhere("tr.ca_tipo like ? OR tr.ca_tipo like ? ", array("%" . Constantes::RECARGO_LOCAL . "%", "%" . Constantes::RECARGO_OTM_DTA . "%"))
+                
                 ->addOrderBy("r.ca_modalidad ASC");
 
         if ($transporte) {
-            if ($transporte == constantes::OTMDTA || $transporte == "OTM" || $transporte == "DTA")
+            if ($transporte == constantes::OTMDTA || $transporte == "OTM" || $transporte == "DTA") {
                 $transporte = constantes::TERRESTRE;
-            $q->addWhere("tr.ca_transporte = ? and r.ca_consecutivo is null  ", $transporte);
+                $tipo = Constantes::RECARGO_OTM_DTA;
+            } else {
+                $tipo = Constantes::RECARGO_LOCAL;
+            }
+            $q->addWhere("tr.ca_transporte = ? and r.ca_consecutivo is null ", $transporte);
+            $q->addWhere("tr.ca_tipo like ? ", "%" . $tipo . "%");
         }
         else {
+            $q->addWhere("tr.ca_tipo like ? OR tr.ca_tipo like ? ", array("%" . Constantes::RECARGO_LOCAL . "%", "%" . Constantes::RECARGO_OTM_DTA . "%"));
             //$q->addWhere("r.ca_tipo is null ");
         }
         if ($modalidad) {
