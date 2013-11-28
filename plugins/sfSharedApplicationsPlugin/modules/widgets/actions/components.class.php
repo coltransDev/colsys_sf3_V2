@@ -903,8 +903,36 @@ class widgetsComponents extends sfComponents {
         //print_r($this->tipoDocs);
          * 
          */
-    }    
+    }  
+    
+    public function executeWgCliente( ){
+        
+    }
+    
+    public function executeWgLinea( ){
+        
+    }
 
+    public function executeWgModalidad( ){
+        
+    }
+    
+    public function executeWgTransporte( ){
+        
+        $this->data = array();
+        $this->data[] = array("valor" => utf8_encode(Constantes::AEREO));
+        $this->data[] = array("valor" => utf8_encode(Constantes::MARITIMO));
+        $this->data[] = array("valor" => utf8_encode(Constantes::TERRESTRE));
+    }
+
+    public function executeWgImpoexpo( ){
+        $this->data = array();
+        $this->data[] = array("valor" => utf8_encode(Constantes::IMPO));
+        $this->data[] = array("valor" => utf8_encode(Constantes::TRIANGULACION));
+        $this->data[] = array("valor" => utf8_encode(Constantes::EXPO));
+        $this->data[] = array("valor"=>utf8_encode(Constantes::OTMDTA ));
+        $this->data[] = array("valor"=>utf8_encode(Constantes::INTERNO ));
+    }
 }
 
 ?>
