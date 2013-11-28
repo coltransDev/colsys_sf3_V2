@@ -664,7 +664,6 @@ class clientesActions extends sfActions {
                               <li>Copia  del  RUT</li>
                               <li>Balance General, Estado de Resultados y las respectivas notas  a los  Estados  Financieros  (certificado y dictaminado por  Revisor Fiscal o Contador Público)  con fecha  de corte a 31 de  diciembre del año inmediatamente  anterior o balance inicial  si la  compañía  se  encuentra  recientemente  constituida.  En caso de personas naturales Declaración de Renta.</li>
                               <li>Fotocopia del documento de identidad de la persona que  firma  la    Circular 0170  (Representante Legal o persona  facultada  según Cámara  de  Comercio)</li>
-                              <li>Resolución de la  DIAN que autoriza a  la  compañía  para  actuar  como  Comercializadoras Internacionales y/o  realizar  actividades como  importación de licores,  calzados,  textiles  y/o  confecciones. Si aplica.</li>
                            </ol>
                         </td>
                      </tr>
