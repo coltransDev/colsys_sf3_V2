@@ -164,7 +164,7 @@ if($opcion){
     <br/><br/>
     <?}?>    
     <form action="#" method="post" name='form1' id="form1" >
-        <table border="1" class="tableList" align="center" style="font-size: 10" width="60%">
+        <table border="1" class="tableList" align="center" style="font-size: 10" width="300px">
             <th style="text-align: center" colspan="15"><b><?echo "ESTADISTICAS DE CARGA ".strtoupper($pais_origen).'<br />'.'Periodo: '.$fechainicial." a ".$fechafinal;?></b></th>
             <tr>
                 <th scope="col" style=" text-align: center"><b>A&ntilde;o</b></th>
@@ -233,7 +233,7 @@ if($opcion){
                 <td><?=$r[$dataFchEnd]?></td>
                 <td style=" text-align: center; border-right-color:black; color:<?=$color?>"><?=$r[$dataIdg]?><?//=$r[$dataIdg]==0?1:$r[$dataIdg]?></td>
                 <?if($Obs=="true"){?>
-                <td><textarea  name='<?=$nameObs?><?=$idreporte?>' value="<?=$observacionesIdg?>" style="width:350px" rows="3" spellcheck="false"><?=$observacionesIdg?></textarea></td>
+                <td><textarea  name='<?=$nameObs?><?=$idreporte?>' value="<?=$observacionesIdg?>" style="width:320px" rows="3" spellcheck="false"><?=$observacionesIdg?></textarea></td>
                 <?}?>
                  <input type="hidden" name='oid[]' value="<?=$idreporte?>"/>
             </tr>

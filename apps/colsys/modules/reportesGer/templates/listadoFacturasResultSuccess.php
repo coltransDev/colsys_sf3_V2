@@ -47,24 +47,24 @@ $costos = $sf_data->getRaw("costos");
        foreach( $costos as $c ){
        ?>
          <tr>
-           <td class="invertir" style='font-weight:bold; background: #F0F0F0'><?=$c->getCaReferencia()?></td>
-           <td class="valores" style='font-size: 9px; background: #F0F0F0'><?=$c->getCaFactura()?></td>
-           <td class="valores" style='font-size: 9px; background: #F0F0F0'><?=$c->getCaFchfactura()?></td>
-           <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="left"><?=$c->getCaProveedor()?></div></td>
-           <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="left"><?=$c->getCosto()->getCaCosto()?></div></td>
-           <td class="valores" style='font-size: 9px; background: #F0F0F0'><?=$c->getCaIdmoneda()?></td>
-           <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="right"><?=$c->getCaTcambio()?></td>
-           <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="right"><?=Utils::formatNumber($c->getCaTcambioUsd())?></div></td>
-           <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="right"><?=Utils::formatNumber($c->getCaNeto())?></div></td>
-           <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="right"><?=Utils::formatNumber(round($c->getCaNeto()*$c->getCaTcambio()/$c->getCaTcambioUsd()))?></div></td>
-           <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="right"><?=Utils::formatNumber($c->getCaVenta())?></div></td>
-           <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="right"><?=Utils::fechaMes($c->getCaFchcreado())?></div></td>
-           <td class="valores" style='font-size: 9px; background: #F0F0F0'><?=$c->getCaUsucreado()?></td>
+           <td class="invertir" style='font-weight:bold; background: #F0F0F0'><?=$c['ca_referencia']?></td>
+           <td class="valores" style='font-size: 9px; background: #F0F0F0'><?=$c['ca_factura']?></td>
+           <td class="valores" style='font-size: 9px; background: #F0F0F0'><?=$c['ca_fchfactura']?></td>
+           <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="left"><?=$c['ca_proveedor']?></div></td>
+           <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="left"><?=$c['Costo']['ca_costo']?></div></td>
+           <td class="valores" style='font-size: 9px; background: #F0F0F0'><?=$c['ca_idmoneda']?></td>
+           <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="right"><?=$c['ca_tcambio']?></td>
+           <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="right"><?=Utils::formatNumber($c['ca_tcambio_usd'])?></div></td>
+           <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="right"><?=Utils::formatNumber($c['ca_neto'])?></div></td>
+           <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="right"><?=Utils::formatNumber(round($c['ca_neto']*$c['ca_tcambio']/$c['ca_tcambio_usd']))?></div></td>
+           <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="right"><?=Utils::formatNumber($c['ca_venta'])?></div></td>
+           <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="right"><?=Utils::fechaMes($c['ca_fchcreado'])?></div></td>
+           <td class="valores" style='font-size: 9px; background: #F0F0F0'><?=$c['ca_usucreado']?></td>
          </tr>
        </logic:iterate>
     <?
-        $tot_net+= round($c->getCaNeto()*$c->getCaTcambio()/$c->getCaTcambioUsd());
-        $tot_vta+= $c->getCaVenta();
+        $tot_net+= round($c['ca_neto']*$c['ca_tcambio']/$c['ca_tcambio_usd']);
+        $tot_vta+= $c['ca_venta'];
        }
        ?>
         <td class="valores" style='font-weight: bold; font-size: 9px; background: #F0F0F0' colspan="9"><div align="right">TOTALES :</div></td>
