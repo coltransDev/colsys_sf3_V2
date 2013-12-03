@@ -302,7 +302,10 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     };";
 
                 echo "
-                    function archivos(id){
+                    function archivos(id){                        
+                        document.location.href = '/gestDocumental/formUploadExt4/ref1/'+id+'/idsserie/2';
+                    }
+                    function archivos_old(id){
                         document.location.href = '/antecedentes/verArchivos?ref='+id;
                     }
                     
@@ -357,9 +360,13 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "function ver_cot(id){";
                 echo "    window.open(\"/cotizaciones/verCotizacion/id/\"+id);"; //toolbar=no, location=no, directories=no, menubar=no
                 echo "}";
-                echo "function subir_hbl(id, hb){";
-                echo "    document.location.href = 'inosea.php?boton=subirHbl\&id='+id+'\&hb='+hb;";
-                echo "}";
+                echo "function subir_hbl(id, hb){
+                    document.location.href = '/gestDocumental/formUploadExt4/ref1/'+id+'/ref2/'+hb+'/idsserie/2';
+                }
+                function subir_hbl_old(id, hb){
+                    document.location.href = 'inosea.php?boton=subirHbl\&id='+id+'\&hb='+hb;
+                }
+                ";
                 echo "</script>";
                 echo "</HEAD>";
                 echo "<BODY>";
@@ -447,7 +454,8 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         }
                     }
                     echo "    <IMG style='cursor:pointer; $level0' src='./graficos/muisca.gif' alt='Informacion Muisca' border=0 onclick='elegir(\"Muisca\", \"" . $rs->Value('ca_referencia') . "\", 0, 0);'>".(($dm->value("ca_iddocactual"))?"<br />".$dm->value("ca_iddocactual"):"")."<BR>";
-                    echo "    <BR><IMG style='cursor:pointer' src='./graficos/fileopen.png' alt='Archivos adjuntos a la referencia' border=0 onclick='archivos( \"" . $rs->Value('ca_referencia') . "\", 0, 0);'><BR>";
+                    echo "    <BR><IMG style='cursor:pointer' src='./graficos/fileopen.png' alt='Archivos adjuntos a la referencia' border=0 onclick='archivos( \"" . str_replace(".","|",$rs->Value('ca_referencia')) . "\", 0, 0);'> <img src='./graficos/nuevo.gif'/><BR>";
+                    echo "    <BR><IMG style='cursor:pointer' src='./graficos/edit.gif' alt='Archivos adjuntos a la referencia Anterior' border=0 onclick='archivos_old( \"" . str_replace(".","|",$rs->Value('ca_referencia')) . "\", 0, 0);'><BR>";
                     echo "    <BR><IMG style='cursor:pointer; $level0' src='./graficos/mail_forward.gif' alt='Email a coloader' border=0 onclick='emailColoader( \"" . $rs->Value('ca_referencia') . "\", 0, 0);'><BR>";
                     if ($nivel > 2) {
                        echo "    <BR><IMG style='cursor:pointer; $level0' src='./graficos/mail.gif' alt='Ver Entrega de Antecedentes' border=0 onclick='verEntregaAntecedentes( \"" . $rs->Value('ca_referencia') . "\", 0, 0);'><BR>";
@@ -790,7 +798,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             echo "  <TD Class=listar><B>Cotizacion :</B><BR>" . $tm->Value('ca_consecutivo') . " $pdf_coti</TD>";
                             echo "  <TD Class=listar COLSPAN=2><B>Proveedor:</B><BR>" . $cl->Value('ca_proveedor') . "</TD>";
                             echo "  <TD Class=listar><B>Utilidad x Cliente:</B><BR>" . number_format($utl_cbm * $cl->Value('ca_volumen')) . (($cl->Value('ca_vlrutilidad_liq')!=0)?"<BR><B>Utilidad Liquidada:</B><BR />" . number_format($cl->Value('ca_vlrutilidad_liq')):"") ."</TD>";
-                            echo "  <TD Class=listar><B>Hbl Final: <IMG style='cursor:pointer;$level0' src='./graficos/fileopen.png' alt='Agregar Copia de Hbl Definitivo' border=0 onclick='javascript:subir_hbl(\"" . $cl->Value('ca_referencia') . "\",\"" . $cl->Value('ca_hbls') . "\")'>";
+                            echo "  <TD Class=listar><B>Docs. Cliente: <IMG style='cursor:pointer;$level0' src='./graficos/fileopen.png' alt='Agregar Copia de Hbl Definitivo' border=0 onclick='javascript:subir_hbl(\"" . str_replace(".","|",$cl->Value('ca_referencia')) . "\",\"" . $cl->Value('ca_hbls') . "\")'>";
                             $i = 1;
                             foreach ($docTrans as $docTran) {
                                 echo "<br /><a href='/gestDocumental/verArchivo?folder=" . base64_encode("Referencias/" . $cl->Value('ca_referencia') . "/docTrans/" . $cl->Value('ca_hbls')) . "&idarchivo=" . base64_encode($docTran['basename']) . "'><IMG src='./graficos/image.gif' alt='" . $docTran['filename'] . "' border=0> Doc. " . $i++ . "</img></a>";
@@ -890,11 +898,13 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     echo "  <TABLE WIDTH=100% CELLSPACING=1>";
 
                     echo "<TR>";
-                    echo "<TH Class=titulo COLSPAN=6>Cuadro de Costos de la Referencia</TH>";
+                    echo "<TH Class=titulo COLSPAN=6>Cuadro de Costos de la Referencia</TH>";                    
                     echo "<TH style='width: 50px;'>";
+                    
                     echo " <IMG style='visibility: $visible;$level0;cursor:pointer' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"AdicionarCs\",  \"" . $rs->Value('ca_referencia') . "\", 0);'>";  // Botón para la creación de un Registro Nuevo
                     echo " <IMG style='cursor:pointer;$level0' src='./graficos/details.gif' onClick=\"document.location='/ids/formEventos?referencia=" . $rs->Value('ca_referencia') . "'\" title='Eventos Proveedores' >";
                     echo " <IMG style='visibility: $liquida;$level0;cursor:pointer' src='./graficos/fileopen.png' onClick=\"document.location='/inoMaritimo/formUtilidadesNew?referencia=" . $rs->Value('ca_referencia') . "'\" title='Liquidación Utilidad' >";
+                    echo " <IMG style='cursor:pointer;$level0' src='./graficos/fileopen.png' alt='Agregar Copia Archivos de costos' border=0 onclick='javascript:subir_hbl(\"" . str_replace(".","|",$cl->Value('ca_referencia')) . "\",\"costos\")'>";
                     echo "</TH>";
                     while (!$cs->Eof() and !$cs->IsEmpty()) {                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
                         echo "<TR HEIGHT=5>";
@@ -903,30 +913,37 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         // <div title=' '></div>
                         echo "  <TD Class=invertir style='font-size: 12px;' ROWSPAN=2 COLSPAN=3><B>" . $cs->Value('ca_costo') . "</B></TD>";
 
-                        if ($cs->Value('ca_factura') == "P" or $cs->Value('ca_factura') == "CE") {
-                            echo "   <TD Class=listar>";
-                            echo "      <TABLE style='width: 100%' border=0>";
-                            echo "         <TR style='display:block;cursor:pointer; width: 100%' id='edi" . $cs->Value('ca_oid') . "' name='edi" . $cs->Value('ca_oid') . "'>";
-                            echo "            <TD Class=listar >";
-                            echo "               <B>Factura:</B><BR>" . $cs->Value('ca_factura');
-                            echo "            </TD>";
-                            echo "            <TD Class=listar >";
-                            echo "               <IMG style='cursor:pointer;$level0' src='./graficos/edit.gif' alt='Cambiar número de factura' onclick='edifact(\"" . $cs->Value('ca_oid') . "\",\"Editar\");' hspace='0' vspace='0'></IMG>";
-                            echo "            </TD>";
-                            echo "         </TR>";
-                            echo "         <TR style='display:none;cursor:pointer; width: 100%' id='act" . $cs->Value('ca_oid') . "' name='act" . $cs->Value('ca_oid') . "'>";
-                            echo "            <TD Class=listar >";
-                            echo "               <B>Factura:</B><BR><INPUT TYPE='TEXT' ID='fac" . $cs->Value('ca_oid') . "' NAME='fac" . $cs->Value('ca_oid') . "' VALUE='" . $cs->Value('ca_factura') . "' SIZE=10 MAXLENGTH=50>";
-                            echo "            </TD>";
-                            echo "            <TD Class=listar >";
-                            echo "               <IMG style='cursor:pointer;$level0' src='./graficos/si.gif' alt='Guardar el Cambio' onclick='edifact(\"" . $cs->Value('ca_oid') . "\",\"Guardar\");' hspace='0' vspace='0'></IMG>";
-                            echo "               <IMG style='cursor:pointer;$level0' src='./graficos/no.gif' alt='Cancelar el Cambio' onclick='edifact(\"" . $cs->Value('ca_oid') . "\",\"Cancelar\");' hspace='0' vspace='0'></IMG>";
-                            echo "            </TD>";
-                            echo "         </TR>";
-                            echo "      </TABLE>";
-                            echo "   </TD>";
+                        if (!$tm->Open("select count(*) as conta from control.tb_usuarios_perfil where ca_perfil in ('asistente-de-contenedores','coordinador-de-contenedores') and ca_login='$usuario'")) {
+                            echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
+                            //echo "<script>document.location.href = 'inosea.php';</script>";
+
+                            exit;
                         } else {
-                            echo "  <TD Class=listar><B>Factura:</B><BR>" . $cs->Value('ca_factura') . "</TD>";
+                            if ($tm->Value('conta') > 0 and ($cs->Value('ca_factura') == "P" or $cs->Value('ca_factura') == "CE")) {
+                                echo "   <TD Class=listar>";
+                                echo "      <TABLE style='width: 100%' border=0>";
+                                echo "         <TR style='display:block;cursor:pointer; width: 100%' id='edi" . $cs->Value('ca_oid') . "' name='edi" . $cs->Value('ca_oid') . "'>";
+                                echo "            <TD Class=listar >";
+                                echo "               <B>Factura:</B><BR>" . $cs->Value('ca_factura');
+                                echo "            </TD>";
+                                echo "            <TD Class=listar >";
+                                echo "               <IMG style='cursor:pointer;$level0' src='./graficos/edit.gif' alt='Cambiar número de factura' onclick='edifact(\"" . $cs->Value('ca_oid') . "\",\"Editar\");' hspace='0' vspace='0'></IMG>";
+                                echo "            </TD>";
+                                echo "         </TR>";
+                                echo "         <TR style='display:none;cursor:pointer; width: 100%' id='act" . $cs->Value('ca_oid') . "' name='act" . $cs->Value('ca_oid') . "'>";
+                                echo "            <TD Class=listar >";
+                                echo "               <B>Factura:</B><BR><INPUT TYPE='TEXT' ID='fac" . $cs->Value('ca_oid') . "' NAME='fac" . $cs->Value('ca_oid') . "' VALUE='" . $cs->Value('ca_factura') . "' SIZE=10 MAXLENGTH=50>";
+                                echo "            </TD>";
+                                echo "            <TD Class=listar >";
+                                echo "               <IMG style='cursor:pointer;$level0' src='./graficos/si.gif' alt='Guardar el Cambio' onclick='edifact(\"" . $cs->Value('ca_oid') . "\",\"Guardar\");' hspace='0' vspace='0'></IMG>";
+                                echo "               <IMG style='cursor:pointer;$level0' src='./graficos/no.gif' alt='Cancelar el Cambio' onclick='edifact(\"" . $cs->Value('ca_oid') . "\",\"Cancelar\");' hspace='0' vspace='0'></IMG>";
+                                echo "            </TD>";
+                                echo "         </TR>";
+                                echo "      </TABLE>";
+                                echo "   </TD>";
+                            } else {
+                                echo "  <TD Class=listar><B>Factura:</B><BR>" . $cs->Value('ca_factura') . "</TD>";
+                            }
                         }
 
                         echo "  <TD Class=listar COLSPAN=2><B>Proveedor:</B><BR>" . $cs->Value('ca_proveedor') . "</TD>";
