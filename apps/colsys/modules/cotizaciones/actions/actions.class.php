@@ -879,6 +879,13 @@ class cotizacionesActions extends sfActions {
                 $newSeguro->save($conn);
             }
 
+            $aduanas = $cotizacion->getCotAduana();
+            foreach ($aduanas as $aduana) {
+                $newAduana = $aduana->copy(false);
+                $newAduana->setCaIdcotizacion($newCotizacion->getCaIdcotizacion());
+                $newAduana->save($conn);
+            }
+
             $continuaciones = $cotizacion->getCotContinuacion();
             foreach ($continuaciones as $continuacion) {
                 $newContinuacion = $continuacion->copy(false);
