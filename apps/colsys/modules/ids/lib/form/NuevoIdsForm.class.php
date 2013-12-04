@@ -23,7 +23,7 @@ class NuevoIdsForm extends BaseForm{
         $widgets['idalterno'] = new sfWidgetFormInputText(array(), array("size"=>30, "onChange"=>"getDV(true)" ));
         $widgets['dv'] = new sfWidgetFormInputText(array(), array("size"=>3, "readOnly"=>"true" ));
         $widgets['nombre'] = new sfWidgetFormInputText(array(), array("size"=>80 ));
-        $widgets['website'] = new sfWidgetFormInputText(array(), array("size"=>80 ));
+        $widgets['website'] = new sfWidgetFormInputText(array(), array("size"=>60 ));
         
         
 		$this->setWidgets( $widgets );
@@ -42,7 +42,7 @@ class NuevoIdsForm extends BaseForm{
         $validator["nombre"] =new sfValidatorString( array('required' => true ),
 														array('required' => 'El nombre es requerido', "max_length"=>255));
 
-        $validator["website"] =new sfValidatorString( array('required' => false, "max_length"=>60 ));
+        $validator["website"] =new sfValidatorString( array('required' => false, "max_length"=>200 ));
 
         $validator["idgrupo"] =new sfValidatorInteger( array('required' => false ));
         

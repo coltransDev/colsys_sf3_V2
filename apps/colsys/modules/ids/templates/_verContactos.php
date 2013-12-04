@@ -5,8 +5,8 @@
         <td width="10%"><b>Tel&eacute;fono</b></td>
         <td width="10%"><b>Fax</b></td>
         <td width="20%"><b>e-mail</b></td>
-        <td width="10%"><b>Cargo</b></td>
-        <td width="10%"><b>Impo/Expo</b></td>
+        <td width="12%"><b>Cargo</b></td>
+        <td width="8%"><b>Impo/Expo</b></td>
         <td width="10%"><b>Transporte</b></td>
         <td width="5%">
               <div align="center">
@@ -39,18 +39,23 @@
           $class = "";
       }elseif( $contacto->getCaSugerido() ){
           $class = "yellow";
+      }elseif($contacto->getCaIdentificacion()){
+         $class = "greentwo";
       }else{
          $class = "";
       }
       
-      $text = $contacto->getCaObservaciones()?"<br />".$contacto->getCaObservaciones():"";
+      $text = $contacto->getCaObservaciones()?"<br />".$contacto->getCaObservaciones()." ":"";
       
       
+      if( $contacto->getCaIdentificacion() ){
+          $text.="Identificacion:".$contacto->getCaIdentificacion()." ";
+      }
       if( $contacto->getCaCelular() ){
-          $text.="<br /><b>Celular:</b>".$contacto->getCaCelular();
+          $text.="Celular:".$contacto->getCaCelular()." ";
       }
       if( $contacto->getCaSkype() ){
-          $text.="<br /><b>Skype:</b>".$contacto->getCaSkype();
+          $text.="Skype:".$contacto->getCaSkype();
       }
       ?>
       <tr class="<?=$class?>">

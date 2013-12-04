@@ -262,6 +262,24 @@
 
         </td>
     </tr>
+    <tr >
+        <td colspan="2">&nbsp;</td>
+        <td> <div align="left"><b>Vetado:</b></div></td>
+		<td colspan="3">
+                <div align="left">
+           <?
+            echo $form['vetado']->renderError();
+            if( $proveedor ){
+                $form->setDefault('vetado', $proveedor->getCaVetado() );
+            }else{
+                $form->setDefault('vetado', false );
+            }
+            echo $form['vetado']->render();
+            ?>
+            </div>
+
+        </td>
+    </tr>
     <?
     if( $idtrafico=="CO-057" ){
     ?>
@@ -374,6 +392,45 @@
 
         </td>
 	</tr>
+    <tr>
+		<th colspan="6"><div align="left"><b>Informaci&oacute;n de Seguridad:</b></div></th>
+    </tr>
+    <tr>
+        <td> <div align="left"><b>Antecedentes Legales:</b></td>
+        <td><div align="left">
+            <?
+
+            echo $form['ant_legales']->renderError();
+            if( $proveedor ){
+                $form->setDefault('ant_legales', $proveedor->getCaAntlegales() );
+            }
+            echo $form['ant_legales']->render();
+            ?>
+            </div></td>
+        <td> <div align="left"><b>Antecedentes Penales:</b></td>
+        <td><div align="left">
+        <?
+
+        echo $form['ant_penales']->renderError();
+        if( $proveedor ){
+            $form->setDefault('ant_penales', $proveedor->getCaAntlegales() );
+        }
+        echo $form['ant_penales']->render();
+        ?>
+            </div></td>
+         <td> <div align="left"><b>Antecedentes Financieros:</b></td>
+        <td><div align="left">
+        <?
+
+        echo $form['ant_financieros']->renderError();
+        if( $proveedor ){
+            $form->setDefault('ant_financieros', $proveedor->getCaAntlegales() );
+        }
+        echo $form['ant_financieros']->render();
+        ?>
+            </div></td>
+    </tr>
+	
 
 
     <?

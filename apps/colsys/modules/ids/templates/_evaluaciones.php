@@ -50,7 +50,11 @@ $numYears = $actualYear - $initialYear + 1;
             <td><div align="left"><?= $evaluacion ? $evaluacion : "&nbsp;" ?></div></td>
             <?
          } else {
-            $evaluacion = $val[2];
+             if($val[2]){
+                $evaluacion = $val[2];
+             }else{
+                $evaluacion = $val[1]; 
+             }
             ?>
             <td><div align="left"><?= $val[1] ? $val[1] : "&nbsp;" ?></div></td>
             <td><div align="left"><?= $val[2] ? $val[2] : "&nbsp;" ?></div></td>

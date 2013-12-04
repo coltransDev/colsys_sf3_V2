@@ -228,7 +228,37 @@ var eliminarAgente = function(){
                        <div align="left">&nbsp;</div>
                    </td>
                 </tr>
+                <?if($proveedor->getCaVetado()==on){?>
+                    <tr>
+                        <td>
+                            <div align="left"><b>Vetado</b></div>
+                       </td>
+                       <td>
+                           <div align="left"><?=$proveedor->getCaVetado()?"<span class='rojo'>S&iacute;</span>":"No"?></div>
+                       </td>
+                       <td>
+                           <div align="left">&nbsp;</div>
+                       </td>
+                       <td>
+                           <div align="left">&nbsp;</div>
+                       </td>
+                    </tr>
                 <?
+                }
+                if($proveedor->getCaAntlegales() || $proveedor->getCaAntpenales() || $proveedor->getCaAntfinancieros()){
+                ?>
+                    <tr><th colspan="4">Informaci&oacute;n de Seguridad</th></tr>
+                    <tr><td>Antecedente Legales:</td>
+                        <td><div align="left"><?=$proveedor->getCaAntlegales()?></td>
+                        <td>Antecedente Penales:</td>
+                        <td><div align="left"><?=$proveedor->getCaAntpenales()?></td>
+                    </tr>
+                    <tr><td>Antecedente Financieros:</td>
+                        <td><div align="left"><?=$proveedor->getCaAntfinancieros()?></td><td>&nbsp;</td>
+                    </tr>
+                        
+                <?
+                }
                 }else{
                 ?>
                 <tr>

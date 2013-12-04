@@ -235,6 +235,9 @@ class idsActions extends sfActions {
                 $bindValues["activo_expo"] = $request->getParameter("activo_expo");
                 $bindValues["contrato_comodato"] = $request->getParameter("contrato_comodato");
                 $bindValues["empresa"] = $request->getParameter("empresa");
+                $bindValues["ant_legales"] = $request->getParameter("ant_legales");
+                $bindValues["ant_penales"] = $request->getParameter("ant_penales");
+                $bindValues["ant_financieros"] = $request->getParameter("ant_financieros");
 
 
                 if ($bindValues["tipo_proveedor"] == "TRI" || $bindValues["tipo_proveedor"] == "TRN") {
@@ -303,6 +306,12 @@ class idsActions extends sfActions {
                         $proveedor->setCaActivoExpo(false);
                     }
                     
+                    if ($bindValues["vetado"]) {
+                        $proveedor->setCaVetado(true);
+                    } else {
+                        $proveedor->setCaVetado(false);
+                    }
+                    
                     if ($bindValues["contrato_comodato"]) {
                         $proveedor->setCaContratoComodato(true);
                     } else {
@@ -313,6 +322,24 @@ class idsActions extends sfActions {
                         $proveedor->setCaEmpresa($bindValues["empresa"]);
                     } else {
                         $proveedor->setCaEmpresa(null);
+                    }
+                    
+                    if ($bindValues["ant_legales"]) {
+                        $proveedor->setCaAntlegales($bindValues["ant_legales"]);
+                    } else {
+                        $proveedor->setCaAntlegales(null);
+                    }
+                    
+                    if ($bindValues["ant_penales"]) {
+                        $proveedor->setCaAntpenales($bindValues["ant_penales"]);
+                    } else {
+                        $proveedor->setCaAntpenales(null);
+                    }
+                    
+                    if ($bindValues["ant_financieros"]) {
+                        $proveedor->setCaAntfinancieros($bindValues["ant_financieros"]);
+                    } else {
+                        $proveedor->setCaAntfinancieros(null);
                     }
 
                     if ($bindValues["tipo_proveedor"] == "TRI" || $bindValues["tipo_proveedor"] == "TRN") {
@@ -470,6 +497,7 @@ class idsActions extends sfActions {
             $bindValues = array();
 
             $bindValues["idcontacto"] = $request->getParameter("idcontacto");
+            $bindValues["identificacion"] = $request->getParameter("identificacion");
             $bindValues["idsucursal"] = $request->getParameter("idsucursal");
             $bindValues["nombre"] = trim($request->getParameter("nombre"));
             $bindValues["apellido"] = trim($request->getParameter("apellido"));
@@ -498,6 +526,10 @@ class idsActions extends sfActions {
                 } else {
                     $contacto = new IdsContacto();
                     $contacto->setCaIdsucursal($this->sucursal->getCaIdsucursal());
+                }
+                
+                if($bindValues["identificacion"]){
+                    $contacto->setCaIdentificacion($bindValues["identificacion"]);
                 }
 
                 $contacto->setCaNombres(ucwords(strtolower(trim($bindValues["nombre"]))));
@@ -743,11 +775,13 @@ class idsActions extends sfActions {
                     if (!is_dir($directorio)) {
                         mkdir($directorio, 0777, true);
                     }
-                   
-                    move_uploaded_file($bindFiles["archivo"]["tmp_name"], $directorio . DIRECTORY_SEPARATOR . $bindFiles["archivo"]["name"]);
-                    $documento->setCaUbicacion($bindFiles["archivo"]["name"]);
-                    $documento->save();
+
+                    if(move_uploaded_file($bindFiles["archivo"]["tmp_name"], $directorio . DIRECTORY_SEPARATOR . $bindFiles["archivo"]["name"])){;
+                        $documento->setCaUbicacion($bindFiles["archivo"]["name"]);
+                        $documento->save();
+                    }
                 }
+                
 
 
                 $this->redirect("ids/verIds?modo=" . $this->modo . "&id=" . $ids->getCaId());
@@ -1398,6 +1432,7 @@ class idsActions extends sfActions {
              $q->addWhere("p.ca_controladoporsig = false");
          }elseif( $this->type=="criticos" ){
              $q->addWhere("p.ca_critico = true");
+             $q->addWhere("p.ca_activo_impo = ? OR p.ca_activo_expo = ?", array("true","true"));
          }else{
              $q->addWhere("p.ca_fchaprobado IS NOT NULL");
              $q->addWhere("p.ca_controladoporsig = true");
@@ -1482,6 +1517,7 @@ class idsActions extends sfActions {
         if ($this->modo == "prov") {
             $q->innerJoin("i.IdsProveedor p");
             $q->addWhere("p.ca_controladoporsig = ?", true);
+            $q->addWhere("p.ca_activo_impo = ? OR p.ca_activo_expo = ?", array("true","true"));
             $this->titulo = "Documentos de proveedores controlados por SIG";
         }
 

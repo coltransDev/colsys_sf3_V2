@@ -1,7 +1,10 @@
 <?
 class NuevoContactoForm extends BaseForm{
+    
+    
 	
-	private $cargos = array('Jefe de Oficina'=>'Jefe de Oficina',
+	private $cargos = 
+            array('Jefe de Oficina'=>'Jefe de Oficina',
 													'Jefe Importación'=>'Jefe Importación',
 													'Jefe Exportación'=>'Jefe Exportación',
 													'Contacto Operativo'=>'Contacto Operativo',
@@ -14,11 +17,17 @@ class NuevoContactoForm extends BaseForm{
 		
 		sfValidatorBase::setCharset('ISO-8859-1');
 		
-		
-				
+        $request = sfContext::getInstance()->getRequest();
+        
+        if($request->getParameter("modo")=="prov"){
+            $this->cargos["Representante Legal"] = "Representante Legal";
+            $this->cargos["Socio"] = "Socio";
+        }
+        
 		$this->setWidgets(array(
 		  'idsucursal'    => new sfWidgetFormInputHidden(),
 		  'idcontacto'    => new sfWidgetFormInputHidden(),
+          'identificacion' => new sfWidgetFormInputText(array(), array("maxlength"=>"30" ,"size"=>"30")),  
 		  'nombre'      => new sfWidgetFormInputText(array(), array("maxlength"=>"60" ,"size"=>"60")),
 		  'apellido'      => new sfWidgetFormInputText(array(), array("maxlength"=>"60" ,"size"=>"60")),
 		  //'direccion'   => new sfWidgetFormInputText(array(), array("maxlength"=>"100" ,"size"=>"60")),
@@ -57,7 +66,8 @@ class NuevoContactoForm extends BaseForm{
 		$this->setValidators(array(
 		  'idcontacto'    => new sfValidatorDoctrineChoice(array('model' => 'IdsContacto', 'column' => 'ca_idcontacto', 'required' => false)),
 		  'idsucursal'    => new sfValidatorDoctrineChoice(array('model' => 'IdsSucursal', 'column' => 'ca_idsucursal', 'required' => false)),
-		  'nombre'      => new sfValidatorString(array('required' => true, "max_length"=>"60")),
+          'identificacion'      => new sfValidatorInteger(array('required' => false)),
+          'nombre'      => new sfValidatorString(array('required' => true, "max_length"=>"60")),
 		  'apellido'      => new sfValidatorString(array('required' => true, "max_length"=>"60")),
 		  //'direccion'   => new sfValidatorString(array('required' => true)),
           'codigoarea'   => new sfValidatorString(array('required' => false)),

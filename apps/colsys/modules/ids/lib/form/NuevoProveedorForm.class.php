@@ -32,6 +32,7 @@ class NuevoProveedorForm extends BaseForm{
         $widgets['aprobado'] = new sfWidgetFormExtDate();
         $widgets['activo_impo'] = new sfWidgetFormInputCheckbox();
         $widgets['activo_expo'] = new sfWidgetFormInputCheckbox();
+        $widgets['vetado'] = new sfWidgetFormInputCheckbox();
         $widgets['sigla'] = new sfWidgetFormInputText();
         $widgets['transporte'] = new sfWidgetFormChoice(array('choices' => array( ""=>"",
                                                                                   Constantes::AEREO=>Constantes::AEREO,
@@ -40,12 +41,16 @@ class NuevoProveedorForm extends BaseForm{
                                                                                  "Agencia"=>"Agencia"
                                                                                 )));
 
-        $widgets['empresa'] = new sfWidgetFormChoice(array('choices' => array( ""=>"Todas",
+        $widgets['empresa'] = new sfWidgetFormChoice(array('choices' => array( "Todas"=>"Todas",
                                                                                  Constantes::COLTRANS=>Constantes::COLTRANS,
                                                                                  Constantes::COLMAS=>Constantes::COLMAS,
                                                                                  Constantes::COLOTM=>Constantes::COLOTM
                                                                                 )));
         $widgets['contrato_comodato'] = new sfWidgetFormInputCheckbox();
+        
+        $widgets['ant_legales'] = new sfWidgetFormTextarea(array(), array("size"=>80, "style"=>"width: 300px; height: 50px;"));
+        $widgets['ant_penales'] = new sfWidgetFormTextarea(array(), array("size"=>80, "style"=>"width: 300px; height: 50px;"));
+        $widgets['ant_financieros'] = new sfWidgetFormTextarea(array(), array("size"=>80, "style"=>"width: 300px; height: 50px;"));
         
 		$this->setWidgets( $widgets );
 
@@ -77,6 +82,10 @@ class NuevoProveedorForm extends BaseForm{
         $validator["empresa"] =new sfValidatorString( array('required' => false ) );
         
         $validator["contrato_comodato"] =new sfValidatorBoolean( array('required' => false ) );
+        $validator["ant_legales"] =new sfValidatorString( array('required' => false ) );
+        $validator["ant_penales"] =new sfValidatorString( array('required' => false ) );
+        $validator["ant_financieros"] =new sfValidatorString( array('required' => false ) );
+        
         $this->setValidators( $validator );
     }
 }

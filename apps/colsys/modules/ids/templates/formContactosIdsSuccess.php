@@ -10,7 +10,7 @@ var verificarCargo = function(){
 }
 </script>
 <div class="content" align="center">
-	<h3>Maestra de Proveedores - Contactos</h3>
+    <h3>Maestra de <?=$modo?></h3>
 	<br />
 	<form action="<?=url_for("ids/formContactosIds?modo=".$modo."&idsucursal=".$sucursal->getCaIdsucursal())?>" method="post">
 	<?
@@ -48,7 +48,7 @@ var verificarCargo = function(){
 			if( $contacto ){
 			?>
 			<tr>
-				<td><b>Identificaci&oacute;n:</b></td>
+				<td><b>Id:</b></td>
 				<td colspan="3">
 					<?
 					echo $contacto->getCaIdcontacto();
@@ -61,8 +61,20 @@ var verificarCargo = function(){
 					?>				</td>
 			</tr>
 			<?
-			}
+			}if ($modo=="proveedores"){
 			?>
+            <tr>
+				<td><b>Identificaci&oacute;n:</b></td>
+				<td colspan="3">
+					<?
+					echo $form['identificacion']->renderError();
+					 if( $contacto ){
+						$form->setDefault('identificacion', $contacto->getCaIdentificacion() );
+					 }
+					 echo $form['identificacion']->render()." Aplica sólo para Representantes legales y socios";
+					?>				</td>
+			</tr>
+            <?}?>
 			<tr>
 				<td><b>Nombre:</b></td>
 				<td colspan="3">

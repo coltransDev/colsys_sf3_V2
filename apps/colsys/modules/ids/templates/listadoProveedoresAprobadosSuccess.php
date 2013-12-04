@@ -29,6 +29,7 @@ $counts = array();
             <th rowspan="2">Fch. Aprobaci&oacute;n</th>
             <th rowspan="2">Estado Impo</th>
             <th rowspan="2">Estado Expo</th>
+            <th rowspan="2">Empresa</th>
             <th rowspan="2">Vencimiento <br />Polizas</th>
             <th rowspan="2">Vencimiento <br />BASC</th>
             <th rowspan="2">Ciudad</th>
@@ -88,6 +89,7 @@ $counts = array();
             <td><div align="left"><?=Utils::fechaMes($proveedor->getCaFchaprobado())?></div></td>
             <td><div align="left"><?=$proveedor->getCaActivoImpo()?"Activo":"<span class='rojo'>Inactivo</span>"?></div></td>
             <td><div align="left"><?=$proveedor->getCaActivoExpo()?"Activo":"<span class='rojo'>Inactivo</span>"?></div></td>
+            <td><div align="left"><?=$proveedor->getCaEmpresa()?></div></td>
             <td>
                 <div align="left">
                     <?
@@ -170,15 +172,15 @@ $counts = array();
                             $counts[$year."_2"]++;
                         }
                         
-                        if( $evaluacion1 && $evaluacion2 ){
+                        //if( $evaluacion1 && $evaluacion2 ){
                             if( $evaluacion2 ){
                                 $evaluacionAnt = $evaluacion1;
                                 $evaluacionAct = $evaluacion2;
-                            }else{
+                            }else if($evaluacion1){
                                 $evaluacionAnt = $lastEval2;
                                 $evaluacionAct = $evaluacion1;                                
                             }
-                        }
+                        //}
                                                 
                         $lastEval2 =$evaluacion2;
                             
@@ -193,8 +195,11 @@ $counts = array();
                         $counts[$year]++;
                         $totals[$year]+= $evaluacion;
                     }                    
+                }else{
+                    $evaluacionAnt = $evaluaciones[$year-1][2];
+                    $evaluacionAct = null;
                 }
-
+                
                 if( !$evaluacion && $year!=$actualYear ){
                    $evaluacion = "N/A";
                 }
@@ -218,11 +223,12 @@ $counts = array();
                 <td><div align="left"><?=$evaluacion?$evaluacion:"&nbsp;"?></div></td>
                 <?
                 }
-            }
+            }            
             ?>
-            <td><div align="center"><?=$evaluacionAct&&$evaluacionAnt<$evaluacionAct?"X":"&nbsp;"?></div></td>
-            <td><div align="center"><?=$evaluacionAct&&$evaluacionAnt==$evaluacionAct?"X":"&nbsp;"?></div></td>
-            <td><div align="center"><?=$evaluacionAct&&$evaluacionAnt>$evaluacionAct?"X":"&nbsp;"?></div></td>
+            
+            <td><div align="center"><?=$evaluacionAct&&$evaluacionAnt < $evaluacionAct?"X":"&nbsp;"?></div></td>
+            <td><div align="center"><?=$evaluacionAct&&$evaluacionAnt == $evaluacionAct?"X":"&nbsp;"?></div></td>
+            <td><div align="center"><?=$evaluacionAct&&$evaluacionAnt > $evaluacionAct?"X":"&nbsp;"?></div></td>
         </tr>
         <?
         }
@@ -230,7 +236,7 @@ $counts = array();
 
         <tr class="row0" >
 
-            <td colspan="8"><b>Promedio</b></td>
+            <td colspan="9"><b>Promedio</b></td>
             <?
             for( $year=$initialYear;$year<=$actualYear; $year++ ){
                 if( $year<2011){
