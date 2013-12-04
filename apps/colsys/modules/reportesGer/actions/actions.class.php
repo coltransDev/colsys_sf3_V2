@@ -1341,7 +1341,7 @@ md.ca_idmodo,m.ca_idmaster
             $q = Doctrine::getTable("InoCostosSea")
                     ->createQuery("c")
                     ->innerJoin("c.Costo cs")
-                    ->addWhere("substr(ca_referencia,5,2) like ?", str_pad($request->getParameter("sufijo"), 2, "0", STR_PAD_LEFT))
+                    ->addWhere("substr(ca_referencia,5,2) like ?", ($request->getParameter("sufijo")!="%"?str_pad($request->getParameter("sufijo"), 2, "0", STR_PAD_LEFT):$request->getParameter("sufijo")))
                     ->addWhere("ca_fchfactura >= ?", $request->getParameter("fchInicial"))
                     ->addWhere("ca_fchfactura <= ?", $request->getParameter("fchFinal"))
                     ->addWhere("ca_usucreado like ?", $request->getParameter("login"))
