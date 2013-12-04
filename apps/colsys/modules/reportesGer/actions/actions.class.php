@@ -919,11 +919,9 @@ md.ca_idmodo,m.ca_idmaster
         $this->indi_LCL = array();
         $this->indi_FCL = array();
         $this->indi_AIR = array();
-        $this->indi_AIR=array();
 
         $this->indi_LCL[$this->pais_origen] = $this->metalcl;
-        $this->indi_FCL[$this->pais_origen] = $this->metafcl;        
-        $this->indi_AIR[$this->pais_origen] = $this->meta_air;
+        $this->indi_FCL[$this->pais_origen] = $this->metafcl;
         $this->indi_AIR[$this->pais_origen] = $this->meta_air;
 
         $this->grid = array();
@@ -935,21 +933,21 @@ md.ca_idmodo,m.ca_idmaster
                 case 1:
                     $select1 = ",(ca_fchllegada-date(v.ca_fchcreado)) as ca_diferencia";
                     $where1 = "WHERE rs.ca_idetapa in ('IMCPD','IACAD')";
-                    $where2 = "WHERE rs.ca_idetapa in ('IMETA','IACCR')";
+                    $where2 = "WHERE rs.ca_idetapa in ('IMETA','IMETT','IACCR')";
                     $joinPpal = $this->transporte == "Marítimo" ? "JOIN tb_inoclientes_sea ic ON ic.ca_idreporte = sqa.ca_idreporte" : "JOIN tb_inoclientes_air ic ON ic.ca_idreporte = sqa.ca_consecutivo";
                     break;
                 case 2:
                     $select1 = ",ca_fchsalida_cd, (CASE WHEN sqa.ca_fchllegada-ca_fchsalida_cd = 0 THEN 1 ELSE sqa.ca_fchllegada-ca_fchsalida_cd END) as ca_diferencia";
                     $select2 = ",ca_fchsalida as ca_fchsalida_cd";
                     $where1 = "WHERE rs.ca_idetapa in ('IMCPD','IACAD')";
-                    $where2 = "WHERE rs.ca_idetapa in ('IMETA','IACCR')";
+                    $where2 = "WHERE rs.ca_idetapa in ('IMETA','IMETT','IACCR')";
                     $joinPpal = $this->transporte == "Marítimo" ? "JOIN tb_inoclientes_sea ic ON ic.ca_idreporte = sqa.ca_idreporte" : "JOIN tb_inoclientes_air ic ON ic.ca_idreporte = sqa.ca_consecutivo";
                     break;
                 case 3:
                     $select1 = ",ca_fchsalida_eta, ca_fchsalida_ccr, (ca_fchsalida_ccr-ca_fchsalida_eta) as ca_diferencia";
                     $select2 = ",ca_fchsalida as ca_fchsalida_eta";
                     $select3 = ",ca_fchsalida as ca_fchsalida_ccr";
-                    $where1 = "WHERE rs.ca_idetapa in ('IMETA','IACAD')";
+                    $where1 = "WHERE rs.ca_idetapa in ('IMETA','IMETT','IACAD')";
                     $where2 = "WHERE rs.ca_idetapa in ('IMCCR','IACCR') ";
                     $joinPpal = $this->transporte == "Marítimo" ? "JOIN tb_inoclientes_sea ic ON ic.ca_idreporte = sqa.ca_idreporte" : "JOIN tb_inoclientes_air ic ON ic.ca_idreporte = sqa.ca_consecutivo";
                     break;
@@ -957,13 +955,13 @@ md.ca_idmodo,m.ca_idmaster
                     $select1 = ",ca_fchllegada_eta, ca_fchllegada_cd, (ca_fchllegada_cd-ca_fchllegada_eta) as ca_diferencia";
                     $select2 = ",ca_fchllegada as ca_fchllegada_eta";
                     $select3 = ",ca_fchllegada as ca_fchllegada_cd";
-                    $where1 = "WHERE rs.ca_idetapa in ('IMETA','IACCR')";
+                    $where1 = "WHERE rs.ca_idetapa in ('IMETA','IMETT','IACCR')";
                     $where2 = "WHERE rs.ca_idetapa in ('IMCPD','IACAD') ";
                     $joinPpal = $this->transporte == "Marítimo" ? "JOIN tb_inoclientes_sea ic ON ic.ca_idreporte = sqa.ca_idreporte" : "JOIN tb_inoclientes_air ic ON ic.ca_idreporte = sqa.ca_consecutivo";
                     break;
                 case 5:
                     $select1 = ", ig,ca_fchfactura, (ig.ca_fchfactura-sqa.ca_fchllegada) as ca_diferencia";
-                    $where1 = "WHERE rs.ca_idetapa in ('IMCPD','IACAD')";
+                    $where1 = "WHERE rs.ca_idetapa in ('IMCPD','IMETT','IACAD')";
                     $where2 = "WHERE rs.ca_idetapa in ('IMETA','IACCR')";
                     $joinPpal = $this->transporte == "Marítimo" ? "JOIN tb_inoclientes_sea ic ON ic.ca_idreporte = sqa.ca_idreporte" : "JOIN tb_inoclientes_air ic ON ic.ca_idreporte = sqa.ca_consecutivo";
                     $joinSec = $this->transporte == "Marítimo" ? "JOIN tb_inoingresos_sea ig ON ic.ca_referencia = ig.ca_referencia and ic.ca_idcliente = ig.ca_idcliente and ic.ca_hbls = ig.ca_hbls" : "JOIN tb_inoingresos_air ig ON ic.ca_referencia = ig.ca_referencia and ic.ca_idcliente = ig.ca_idcliente and ic.ca_hawb = ig.ca_hawb";
@@ -1054,34 +1052,12 @@ md.ca_idmodo,m.ca_idmaster
 
             if ($reporte) {
                 if ($this->getRequestParameter("obsIdg" . $typeIdg . "_" . $oid))
-                    $reporte->setProperty($idg, $this->getRequestParameter("obsIdg" . $typeIdg . "_" . $oid));
+                    $reporte->setProperty($idg, utf8_decode($this->getRequestParameter("obsIdg" . $typeIdg . "_" . $oid)));
                 $reporte->save();
             }
         }
         $this->responseArray = array("success" => true);
         $this->setTemplate("responseTemplate");
-    }
-        
-    
-    public function executeGuardarObservaciones(sfWebRequest $request) {
-        
-        $oids = $request->getParameter("oid");
-        
-        foreach($oids as $oid){
-            
-            $idreporte = $oid;
-            $reporte = Doctrine::getTable("Reporte")->find($idreporte);
-            $typeIdg = $this->getRequestParameter("typeIdg");
-            $idg = "idg".$typeIdg;
-            
-            if($reporte){
-                if($this->getRequestParameter("obsIdg".$typeIdg."_".$oid))
-                    $reporte->setProperty($idg, $this->getRequestParameter("obsIdg".$typeIdg."_".$oid));
-                $reporte->save();
-            }
-        }
-        $this->responseArray = array("success"=>true);
-        $this->setTemplate("responseTemplate");        
     }
 
     public function executeLibroReferenciasAereo(sfWebRequest $request) {
@@ -1093,21 +1069,21 @@ md.ca_idmodo,m.ca_idmaster
         $this->detalle = $request->getParameter("detalle");
 
         if ($request->isMethod("post")) {
-            
+
             $array_refs = array();
             if ($sucursal != "%") {
-                    $referencias = Doctrine::getTable("InoClientesAir")
-                            ->createQuery("c")
-                            ->select("DISTINCT c.ca_referencia")
-                            ->innerJoin("c.Vendedor v")
-                            ->innerJoin("v.Sucursal s")
-                            ->addWhere("SUBSTR(c.ca_referencia, 8,2) LIKE ?", $mes)
-                            ->addWhere("SUBSTR(c.ca_referencia, 15,1) LIKE ?", $anio)
-                            ->addWhere("s.ca_nombre LIKE ?", $sucursal)
-                            ->execute();
-                    foreach($referencias as $referencia){
-                        $array_refs[] = $referencia->getCaReferencia();
-                    }
+                $referencias = Doctrine::getTable("InoClientesAir")
+                        ->createQuery("c")
+                        ->select("DISTINCT c.ca_referencia")
+                        ->innerJoin("c.Vendedor v")
+                        ->innerJoin("v.Sucursal s")
+                        ->addWhere("SUBSTR(c.ca_referencia, 8,2) LIKE ?", $mes)
+                        ->addWhere("SUBSTR(c.ca_referencia, 15,1) LIKE ?", $anio)
+                        ->addWhere("s.ca_nombre LIKE ?", $sucursal)
+                        ->execute();
+                foreach ($referencias as $referencia) {
+                    $array_refs[] = $referencia->getCaReferencia();
+                }
             }
 
             $array_refs = array();
@@ -1365,7 +1341,7 @@ md.ca_idmodo,m.ca_idmaster
             $q = Doctrine::getTable("InoCostosSea")
                     ->createQuery("c")
                     ->innerJoin("c.Costo cs")
-                    ->addWhere("substr(ca_referencia,5,2) like ?", $request->getParameter("sufijo"))
+                    ->addWhere("substr(ca_referencia,5,2) like ?", str_pad($request->getParameter("sufijo"), 2, "0", STR_PAD_LEFT))
                     ->addWhere("ca_fchfactura >= ?", $request->getParameter("fchInicial"))
                     ->addWhere("ca_fchfactura <= ?", $request->getParameter("fchFinal"))
                     ->addWhere("ca_usucreado like ?", $request->getParameter("login"))
