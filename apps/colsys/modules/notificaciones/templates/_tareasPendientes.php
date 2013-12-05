@@ -29,8 +29,10 @@ if( count($listaTareas)>0 ){
 		
 		foreach( $tareas as $tarea ){
 		?>
-		<tr>
-			<td width="75%"><div class="qtip" title="<?=$tarea->getCaTexto()?>"><?=link_to( $tarea->getCaTitulo(), "notificaciones/realizarTarea?id=".$tarea->getCaIdtarea() )?></div></td>
+		<tr id="<?=$tarea->getCaIdtarea()?>">
+			<td width="75%"><div class="qtip" title="<?=$tarea->getCaTexto()?>"><?=link_to( $tarea->getCaTitulo(), "notificaciones/realizarTarea?id=".$tarea->getCaIdtarea() )?>
+                <a href="#" onclick="eliminar('<?=$tarea->getCaIdtarea()?>','<?=$tarea->getCaIdtarea()?>')"><?=image_tag( "16x16/delete.gif" ,'size=18x18 border=0' )?></a></div>
+                </td>
 			
 			<td width="25%"><?=Utils::fechaMes($tarea->getCaFchvencimiento())?></td>
 		</tr>
@@ -46,6 +48,36 @@ if( count($listaTareas)>0 ){
 	<br />
 	</div>
  </div>
+<script language="javascript" type="text/javascript">
+
+    function eliminar(tarea, idtr)
+    {
+        if(window.confirm("Realmente desea eliminar ésta tarea?"))
+        {
+            //Ext.MessageBox.wait('Guardando, Espere por favor', '---');
+            Ext.Ajax.request(
+            {
+                waitMsg: 'Guardando cambios...',
+                url: '<?= url_for("notificaciones/borrarTarea") ?>',
+                params :	{
+                    idtarea:tarea
+                },
+                failure:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if(res.err)
+                        Ext.MessageBox.alert("Mensaje",'Se presento un error guardando por favor informe al Depto. de Sistemas<br>'+res.err);
+                    else
+                        Ext.MessageBox.alert("Mensaje",'Se produjo un error, vuelva a intentar o informe al Depto. de Sistema<br>'+res.texto);
+                },
+                success:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    $("#"+idtr).remove();
+                    Ext.MessageBox.hide();
+                }
+            });
+        }
+    }
+</script>
 <?
 }
 ?>

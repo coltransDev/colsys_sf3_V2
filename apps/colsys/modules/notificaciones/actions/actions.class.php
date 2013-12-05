@@ -45,17 +45,32 @@ class notificacionesActions extends sfActions
         $response->addJavaScript("calendar/calendar-all.js", 'last');
         $response->addStylesheet("calendar/css/calendar.css", 'last');
     }
-
-
+    
+    
     public function executeDatosCalendario(sfWebRequest $request){
-        
-      
+    
+    
     }
-
-
-	
-	
-	
+    
+    public function executeBorrarTarea(sfWebRequest $request){
+		$idtarea = $request->getParameter("idtarea");
+		$this->forward404Unless( $idtarea );
+        
+        $this->user = $this->getUser();
+		
+		$tarea = Doctrine::getTable("NotTarea")->find( $idtarea );
+		$this->forward404Unless( $tarea );
+				
+		if( !$tarea->getCaFchterminada() ){
+			$tarea->setCaFchterminada(date("Y-m-d H:i:s"));
+            $tarea->setCaUsuterminada($this->user);
+            $tarea->setCaObservaciones("Tarea finalizada por usuario en panel principal");
+            $tarea->save();
+		}
+        $this->responseArray = array("success"=>true);
+        $this->setTemplate("responseTemplate");
+	}
+    
 	
 }
 ?>
