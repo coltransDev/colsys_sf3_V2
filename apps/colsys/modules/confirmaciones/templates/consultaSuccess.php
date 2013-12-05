@@ -1,4 +1,4 @@
-for<?
+<?
 use_helper("ExtCalendar");
 
 include_component("widgets", "widgetMuelles",array("ciudad"=>$referencia->getCaDestino() ));
