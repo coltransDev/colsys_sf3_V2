@@ -788,6 +788,7 @@ class traficosActions extends sfActions {
             $asignacion->save($conn);
          } else {
             //Se lee de la base de datos ya que la etapa es actualizada por los triggers
+            /* //cambios para PH 2013-12-06
             $reporte = Doctrine::getTable("Reporte")->find($reporte->getCaIdreporte());
             if ($reporte->getCaIdetapa() == "IMETA" || $reporte->getCaIdetapa() == "99999") {//Quita todas las tareas
                $tareas = $reporte->getTareas(Reporte::IDLISTASEG);
@@ -797,7 +798,7 @@ class traficosActions extends sfActions {
                   $tarea->setCaObservaciones( $tarea->getCaObservaciones()." terminada:GuardarStatus" );
                   $tarea->save($conn);
                }
-            }
+            }*/
          }
          //Tarea de envio de antecedentes
          //$valido=Utils::compararFechas(date("Y-m-d") , "2011-02-28");
@@ -956,13 +957,13 @@ class traficosActions extends sfActions {
       $reporte->setCaIdetapa("99999");
       $reporte->save();
 
-      $tareas = $reporte->getTareas(Reporte::IDLISTASEG);
+      /*$tareas = $reporte->getTareas(Reporte::IDLISTASEG);
       foreach ($tareas as $tarea) {
          $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
          $tarea->setCaUsuterminada($this->getUser()->getUserId());
          $tarea->setCaObservaciones( $tarea->getCaObservaciones()." terminada:CerrarCaso" );
          $tarea->save();
-      }
+      }*/
       $this->redirect("traficos/listaStatus?modo=" . $this->modo . "&reporte=" . $reporte->getCaConsecutivo());
    }
 
