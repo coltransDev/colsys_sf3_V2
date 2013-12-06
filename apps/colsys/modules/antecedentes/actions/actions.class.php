@@ -937,7 +937,7 @@ class antecedentesActions extends sfActions {
     * @param sfRequest $request A request object
     */
    public function executeVerPlanilla(sfWebRequest $request) {
-
+      
       $numref = str_replace("|", ".", $request->getParameter("ref"));
       $format = $request->getParameter("format");
 
@@ -962,7 +962,7 @@ class antecedentesActions extends sfActions {
       $this->user = $this->getUser();
       $this->format = $format;
 
-      $this->emails = $ref->getEmails();
+      //$this->emails = $ref->getEmails();
 
 
       $usuarios = Doctrine::getTable("Usuario")
@@ -1443,6 +1443,7 @@ class antecedentesActions extends sfActions {
                if ($tarea) {
                   $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
                   $tarea->setCaUsuterminada($this->getUser()->getuserId());
+                  $tarea->setCaObservaciones( $tarea->getCaObservaciones()." terminada:executeAceptarReferencia" );
                   $tarea->save();
                }
             }
