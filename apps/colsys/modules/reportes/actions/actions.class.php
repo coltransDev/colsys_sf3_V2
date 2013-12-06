@@ -25,23 +25,19 @@ class reportesActions extends sfActions
 	* @author Andres Botero
 	*/
 	public function executeVerReporte( $request )
-	{	
+	{
 		if( $request->getParameter( "id" ) ){
 			$reporte = Doctrine::getTable("Reporte")->find($request->getParameter( "id" ));
 		}
-
 						
-		$this->forward404Unless( $reporte );		
-						
+		$this->forward404Unless( $reporte );
 		$this->getUser()->log( "Consulta Reporte" );
-				
+
 		$this->logs = Doctrine::getTable("UsuarioLog")
                                 ->createQuery("l")
                                 ->where("l.ca_url like ? or l.ca_url like ?", array("/reportes/verReporte/id/".$reporte->getCaIdreporte()."%", "/reportes/verReporte?id=".$reporte->getCaIdreporte()."%" ))
                                 ->addOrderBy("l.ca_fchevento")
                                 ->execute();
-
-		
 		
 		/* Marca como finalizada una tarea */
 						
@@ -57,7 +53,8 @@ class reportesActions extends sfActions
 		foreach( $tareas as $tarea ){
 			if( $tarea && !$tarea->getCaFchterminada() ){
 				$tarea->setCaFchterminada( date("Y-m-d H:i:s") );
-				$tarea->setCaUsuterminada( $this->getUser()->getUserId() );				
+				$tarea->setCaUsuterminada( $this->getUser()->getUserId() );
+                $tarea->setCaObservaciones( $tarea->getCaObservaciones()." terminada:executeVerReporte" );
 				$tarea->save();
 			}
 		}
