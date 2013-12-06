@@ -190,17 +190,13 @@ class reportesNegActions extends sfActions
                     ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                     ->execute();
              
-                 $this->grupoReportesRechazadas = Doctrine::getTable("RepAntecedentes")
-                    ->createQuery("a")
-                    ->select("a.*,r.*,o.ca_ciudad ori_ca_ciudad,d.ca_ciudad des_ca_ciudad,cc.*,c.*")
-                    ->innerJoin("a.Reporte r")
-                    ->innerJoin("r.Contacto cc")
-                    ->innerJoin("cc.Cliente c")
-                    ->innerJoin("r.Destino d")
-                    ->innerJoin("r.Origen o")
-                    ->addWhere("ca_estado='R' and a.ca_usucreado =?", $user->getUserId() )
-                    ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
-                    ->execute();
+                 $series = Doctrine::getTable("Series")
+                            ->createQuery("s")
+                            ->select("s.*")                            
+                            ->where("s.ca_idpadre = ? ", array(null) )                            
+                            ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                            ->execute();
+                 //print_r($series);
             }
         }
 	}
@@ -457,6 +453,7 @@ class reportesNegActions extends sfActions
 			if( $tarea && !$tarea->getCaFchterminada() ){
 				$tarea->setCaFchterminada( date("Y-m-d H:i:s") );
 				$tarea->setCaUsuterminada( $this->getUser()->getUserId() );
+                $tarea->setCaObservaciones( $tarea->getCaObservaciones()." terminada:executeVerReporte" );
 				$tarea->save();
 			}
 		}
@@ -470,9 +467,12 @@ class reportesNegActions extends sfActions
 		$this->asignaciones = $reporte->getRepAsignacion();
 		$this->reporte = $reporte;
         
-        $this->getRequest()->setParameter('id', $this->getRequestParameter( "id" ));
-        $this->getRequest()->setParameter('consulta', "true");
-        $this->html=sfContext::getInstance()->getController()->getPresentationFor( 'reportesNeg', 'compReporte');
+        if($this->reporte->getCaVersion()>1)
+        {
+            $this->getRequest()->setParameter('id', $this->reporte->getCaIdreporte());
+            $this->getRequest()->setParameter('consulta', "true");
+            $this->html=sfContext::getInstance()->getController()->getPresentationFor( 'reportesNeg', 'compReporte');
+        }
         //echo $this->html;
         
 	}
@@ -1199,6 +1199,18 @@ class reportesNegActions extends sfActions
                 else
                     $reporte->setCaIdbodega(1);
             }
+            if($request->getParameter("transporte")==constantes::AEREO || utf8_decode($request->getParameter("transporte"))==Constantes::AEREO)
+            {
+                if($request->getParameter("entrega_lugar_arribo")=="on" )
+                {
+                    $reporte->setProperty("entrega_lugar_arribo", "true");
+                }
+                else
+                {
+                    $reporte->setProperty("entrega_lugar_arribo", "false");
+                }
+            }
+            
             if($request->getParameter("continuacion")   )
             {
                 $reporte->setCaContinuacion($request->getParameter("continuacion"));
@@ -1962,20 +1974,23 @@ class reportesNegActions extends sfActions
 
             $mail = new Email();
             $asunto=$request->getParameter("asunto")." - ".$reporte->getCaConsecutivo();
-            if( isset( $_FILES["archivo"] ) ){
+            if( isset($_FILES) ){
                 $archivo = $_FILES["archivo"];
 
-                if($archivo["name"])
-                {
-                    $directorio = $mail->getDirectorio();
-
+                if($archivo["name"]){
+                    /*$directorio = $mail->getDirectorio();*/
+                    $directorio = $reporte->getDirectorio();
+                    
                     if( !is_dir($directorio) ){
                         mkdir($directorio, 0777, true);
                     }
-                    $adjunto=$directorio.DIRECTORY_SEPARATOR."Rep".$reporte->getCaIdreporte()."-".$archivo["name"];
+                    chmod(0777, $directorio);
+                    
+                    $adjunto=$directorio.$archivo["name"];
                     move_uploaded_file( $archivo["tmp_name"], $adjunto);
-
-                    $mail->setCaAttachment("Attachements/Rep".$reporte->getCaIdreporte()."-".$archivo["name"]);
+                    
+                    $mail->setCaAttachment($reporte->getDirectorioBase().$archivo["name"]);
+                    
                 }
             }
 
@@ -3090,6 +3105,8 @@ class reportesNegActions extends sfActions
             $data["idrepresentante"]=$reporte->getCaIdrepresentante();
             $data["representante"]=($reporte->getRepresentante())?$reporte->getRepresentante()->getCaNombre():"";
             $data["ca_informar_repr"]=$reporte->getCaInformarRepr();
+            
+            $data["entrega_lugar_arribo"]=$reporte->getProperty("entrega_lugar_arribo");
 
             if($reporte->getCaImpoexpo()==constantes::EXPO)
             {
@@ -4012,9 +4029,9 @@ class reportesNegActions extends sfActions
                     $row["cobrar_tar"] = $recargo->getCaCobrarTar();
                     $row["cobrar_min"] = $recargo->getCaCobrarMin();
                     $row["cobrar_idm"] = $recargo->getCaIdmoneda();
-                    $row["observaciones"] = $recargo->getCaDetalles();
+                    $row["observaciones"] = utf8_encode($recargo->getCaDetalles());
                     $row['tipo']="recargo";                
-                    $row['orden']="Y-".$recargo->getTipoRecargo()->getCaRecargo();
+                    $row['orden']="Y-".utf8_encode($recargo->getTipoRecargo()->getCaRecargo());
                     $conceptos[] = $row;
                 }
             }            
@@ -4486,6 +4503,17 @@ class reportesNegActions extends sfActions
 		}
 
 		$this->forward404Unless( $reporte );
+        
+        $this->selec=array();
+        //if($user->getUserId()=="maquinche" || $user->getUserId()=="ndiaz")
+        {
+            $this->selec=  UsuParametrosTable::getUserxParams($reporte);
+            //echo "<pre>";print_r($this->selec);echo "</pre>";
+            //echo count($this->selec);
+            //if(count($this->selec)>0)                
+              //  $this->selec=$this->selec[0];            
+            
+        }
 
         $grupos = array( );
         $gruposObligatorios = array( );
@@ -4667,26 +4695,29 @@ class reportesNegActions extends sfActions
             $subject="";
             if($reporte->getCaImpoexpo()==Constantes::IMPO || $reporte->getCaImpoexpo()==Constantes::TRIANGULACION || $reporte->getCaImpoexpo()==Constantes::OTMDTA)
             {
-                $subject=$reporte->getCaConsecutivo()."/".$reporte->getOrigen()->getcaCiudad()."/".$reporte->getCliente()->getCaCompania()."/".$reporte->getProveedoresStr();
+                $subject=$reporte->getCaConsecutivo()."-V".$reporte->getCaVersion()."/".$reporte->getOrigen()->getcaCiudad()."/".$reporte->getCliente()->getCaCompania()."/".$reporte->getProveedoresStr();
             }
             else
             {
-                $subject=$reporte->getCaConsecutivo()."/".$reporte->getCliente()->getCaCompania()."/".$reporte->getCaTransporte();
+                $subject=$reporte->getCaConsecutivo()."-V".$reporte->getCaVersion()."/".$reporte->getCliente()->getCaCompania()."/".$reporte->getCaTransporte();
             }
-            $email->setCaSubject("Notificacion de Reporte de negocios ".$subject);
+            
+            $txt=($reporte->getCaVersion()==1)?"nuevo ":"modificado";
+            $email->setCaSubject("Notificacion de Reporte de negocios ".$txt." ".$subject);
             $email->setCaBody("Notificacion de Reporte de negocios");
 
             $mensaje = Utils::replace($request->getParameter("mensaje")) . "<br />";
-            $txt=($reporte->getCaConsecutivo()==1)?"Se Creo el ":"Se modifico el";
-            
+            $txt=($reporte->getCaVersion()==1)?"Se Creo el ":"Se modifico el";
+
             $html ="<div>
                 <table class='tableList alignLeft'><tr><td>
                 <table class='tableList alignLeft' width='100%' >
                 <tr><th colspan='2'>".$txt." Reporte de Negocios No: <a href='https://www.coltrans.com.co/reportesNeg/verReporte/id/".$reporte->getCaIdreporte()."/idantecedente/".$antecedente->getCaIdantecedente()."'>".$reporte->getCaConsecutivo()."</a></th></tr>
                 <tr><th>Cliente</th><td>".($reporte->getCliente()->getCaCompania())."</td></tr>
                 <tr><th>Transporte</th><td>".($reporte->getCaTransporte())."</td></tr>
+                <tr><th>Modalidad</th><td>".($reporte->getCaModalidad())."</td></tr>
                 <tr><th>Trayecto</th><td>".($reporte->getOrigen()->getCaCiudad())."-".($reporte->getDestino()->getCaCiudad())."</td></tr>
-                <tr><th>Proveedor</th><td>".$reporte->getProveedoresStr()."</td></tr>            
+                <tr><th>Proveedor</th><td>".$reporte->getProveedoresStr()."</td></tr>
             </table></td></tr></table></div>";
 
             $this->getRequest()->setParameter('tipo',"INSTRUCCIONES");
@@ -5310,7 +5341,8 @@ class reportesNegActions extends sfActions
         $email->setCaSubject($this->getRequestParameter("asunto"));
         $email->setCaBody($this->getRequestParameter("mensaje"));
 
-        $mensaje = Utils::replace($this->getRequestParameter("mensaje")) . "<br />";
+        //$mensaje = Utils::replace($this->getRequestParameter("mensaje")) . "<br />";
+        $mensaje = $this->getRequestParameter("mensaje");
 
         $html ="<table class='tableList alignLeft' width='40%'><tr><th colspan='2'>".$this->getRequestParameter("cliente")."</th></tr>";
         $html .="<tr><td style='width: 30%'>HBL No. :</td><td>".$this->getRequestParameter("hbls")."</td></tr>";
@@ -5369,12 +5401,16 @@ class reportesNegActions extends sfActions
                     $email->addTo($ur);
             }
             $repAntecedentes->setCaEstado('R');
-            $repAntecedentes->setProperty("motivoRechazo",$request->getParameter("mensaje"));
+            $repAntecedentes->setCaUsurechazo($user->getUserId());
+            $repAntecedentes->setCaFchrechazo(date("Y-m-d H:i:s"));
+            $repAntecedentes->setCaMotrechazo(utf8_decode($request->getParameter("mensaje")));
+            
+            //$repAntecedentes->setProperty("motivoRechazo",$request->getParameter("mensaje"));
             $repAntecedentes->save();
 
             $email->addCc($user->getEmail());
 
-            $email->setCaSubject("Rechazo de Envío de reportes ".$reporte->getCaConsecutivo());
+            $email->setCaSubject("Rechazo de Envío de reportes ".$reporte->getCaConsecutivo()." V".$reporte->getCaVersion());
             $email->setCaBody($request->getParameter("mensaje"));
             $mensaje = Utils::replace($this->getRequestParameter("mensaje")) . "<br />";
             $this->getRequest()->setParameter('tipo',"INSTRUCCIONES");
@@ -5420,39 +5456,39 @@ class reportesNegActions extends sfActions
 
             $repAntecedentes = Doctrine::getTable("RepAntecedentes")->find($this->idantecedente);
             $this->forward404Unless( $repAntecedentes );
-            
+
             $reporte=$repAntecedentes->getReporte();
 
             $repAntUsuario=$repAntecedentes->getRepAntUsuario();
-            
+
             foreach($repAntUsuario as $ra)
-            {            
+            {
                 $email->addTo( $ra->getUsuario()->getCaEmail() );
             }
-            
+
             /**************/
-            $idusu=$repAntecedentes->getCaUsucreado();            
-            
+            $idusu=$repAntecedentes->getCaUsucreado();
+
             $usuariotmp=Doctrine::getTable("Usuario")->find($idusu);
             $email->addTo($usuariotmp->getCaEmail());
-            
+
             $usu_resp=  explode(",", $repAntecedentes->getCaResponder());
             foreach($usu_resp as $ur)
             {
                 if($ur!="")
                     $email->addTo($ur);
             }
-            /**************/            
-
+            /**************/
             $repAntecedentes->setCaEstado('A');
             $repAntecedentes->setCaUsuaceptado($user->getUserId());
+            $repAntecedentes->setCaFchaceptado(date("Y-m-d H:i:s"));
             $repAntecedentes->save();
 
             $email->addCc($user->getEmail());
 
-            $email->setCaSubject("Desbloqueo de Reporte de Negocios : ".$reporte->getCaConsecutivo()."-".$reporte->getCaVersion());            
+            $email->setCaSubject("Desbloqueo de Reporte de Negocios : ".$reporte->getCaConsecutivo()."-".$reporte->getCaVersion());
             $email->setCaBody($mensaje);
-            
+
             $proveedor="";
             if( $reporte->getCaIdproveedor() ){
                 $values = explode("|", $reporte->getCaIdproveedor());
@@ -5479,7 +5515,7 @@ class reportesNegActions extends sfActions
                 <tr><th>Trayecto</th><td>".($reporte->getOrigen()->getCaCiudad())."-".($reporte->getDestino()->getCaCiudad())."</td></tr>
                 <tr><th>Proveedor</th><td>".($proveedor)."</td></tr>
                     <tr><th class='alignLeft' colspan='2'><br>".$this->mensaje."</th></tr>";
-            
+
             $html."</table></td></tr>
                 </table></div>";
             $this->getRequest()->setParameter('tipo',"INSTRUCCIONES");
@@ -5526,17 +5562,24 @@ class reportesNegActions extends sfActions
         $response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/RowExpander",'last');
 		$response->addJavaScript("extExtras/CheckColumn",'last');
-        $this->comparar=true;
+        if($this->reporte_old)
+        {
+            if($this->reporte_old->getCaVersion()>1)
+                $this->comparar=true;
+        }
+        else
+            $this->comparar=false;
+        
         $this->setTemplate("consultaReporte");
         if($consulta==true || $consulta=="true")
             $this->setLayout("none");
     }
     
     public function executeDatosContenedores( sfWebRequest $request ){
-        
+
         $idreporte = $this->getRequestParameter("idreporte");
         $idconcepto = $this->getRequestParameter("idconcepto");
-        
+
         $equipos = Doctrine::getTable("RepContenedor")
                     ->createQuery("c")
                     ->addWhere("c.ca_idreporte = ? and c.ca_idconcepto = ?", array($idreporte, $idconcepto))
@@ -5544,7 +5587,7 @@ class reportesNegActions extends sfActions
                     ->execute();
         $i=1;
         $data = array();
-        
+
         foreach($equipos as $equipo){
             $data['container'.$i] = $equipo['ca_contenedor'];
             $data['idrepcontenedor'.$i] = $equipo['ca_idrepcontenedor'];
