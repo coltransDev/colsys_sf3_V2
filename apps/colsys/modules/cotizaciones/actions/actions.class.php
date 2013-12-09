@@ -2345,7 +2345,13 @@ class cotizacionesActions extends sfActions {
                 $data["saludo"] = utf8_encode($textos['saludo']);
                 $data["entrada"] = utf8_encode($textos['entrada']);
 		$data["entradaColtrans"] = utf8_encode($textos['entrada']);
-                $data["entradaColmas"] = utf8_encode($textos['entradaColmas']);
+
+                $entradaColmas = $textos['entradaColmas'];
+                $anno = (int) date("Y");
+                $next = (date("Y-m-d") > date("Y-m-d", mktime(0, 0, 0, 12, 0, $anno)))?1:0;
+                $entradaColmas = str_replace("{inicio}", "01 de Enero de " . ($anno + $next), $entradaColmas);
+                $entradaColmas = str_replace("{final}", "31 de Diciembre de " . ($anno + $next), $entradaColmas);
+                $data["entradaColmas"] = utf8_encode($entradaColmas);
 
                 $data["despedida"] = utf8_encode($textos['despedida']);
                 $data["anexos"] = utf8_encode($textos['anexos']);

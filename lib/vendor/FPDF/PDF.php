@@ -95,7 +95,7 @@ class PDF extends FPDF {
             $this->Cell(0, 14, 'Página ' . $this->PageNo() . '/{nb}', 0, 0, 'C');
             $file = "pie_pagina_colmas.jpg";
             
-            $this->Image(sfConfig::get('sf_web_dir') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'pdf' . DIRECTORY_SEPARATOR . $file, 18, 265, 40, 23, 'JPG');
+            $this->Image(sfConfig::get('sf_web_dir') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'pdf' . DIRECTORY_SEPARATOR . $file, 18, 270, 40, 23, 'JPG');
             if (!strlen(trim($this->sucursal)) == 0) {
                 $this->Image(sfConfig::get('sf_web_dir') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'pdf' . DIRECTORY_SEPARATOR . 'Dir' . $this->sucursal . '_colmas.jpg', 160, 270, 40, 18, 'JPG');
             }

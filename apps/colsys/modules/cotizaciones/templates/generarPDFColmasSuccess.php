@@ -122,18 +122,9 @@ if (count($aduanas) > 0) {
     $vigencia = array();
 
     foreach ($aduanas as $aduana) {
+        $pdf->beginGroup();
         if ($linea != $aduana->getCosto()->getCaTransporte()){
             //Control impresión
-            $pdf->beginGroup();
-            if (count($vigencia) != 0){
-                foreach($vigencia as $key => $val){
-                    $pdf->Ln(1);
-                    $pdf->SetFont($font, '', 7);
-                    $pdf->Cell(0, 4, str_repeat("*", $key + 1)." Vigencia: ".$val."\n", 0, 1, 'L', 0);
-                }
-                $vigencia = array();
-                $pdf->flushGroup();
-            }
             if ($aduana->getCosto()->getCaTransporte() == Constantes::MARITIMO) {
                 $nacionalizacion = "Nacionalización en Puerto";
             } else if ($aduana->getCosto()->getCaTransporte() == Constantes::AEREO) {
@@ -184,32 +175,16 @@ if (count($aduanas) > 0) {
             }
         }
 		
-        $num_vigencia = "";
-        if ($aduana->getCaFchini() != "" || $aduana->getCaFchfin() != "") {
-            $vig_tmp = $aduana->getCaFchini() . " Hasta " . $aduana->getCaFchfin();
-            if (array_search($vig_tmp, $vigencia) === FALSE){
-                $vigencia[] = $vig_tmp;
-            }
-            $num_vigencia = " ".str_repeat("*", array_search($vig_tmp, $vigencia) + 1);
-        }
         $row = array(
-            $aduana->getCosto()->getCaCosto().$num_vigencia,
+            $aduana->getCosto()->getCaCosto(),
             $valor
         );
         if ($imprimirObservaciones) {
             array_push($row, $aduana->getCaObservaciones());
         }
         $pdf->Row($row);
+        $pdf->flushGroup();
     }
-}
-if (count($vigencia) != 0){
-    foreach($vigencia as $key => $val){
-        $pdf->Ln(1);
-        $pdf->SetFont($font, '', 7);
-        $pdf->Cell(0, 4, str_repeat("*", $key + 1)." Vigencia: ".$val."\n", 0, 1, 'L', 0);
-    }
-    $vigencia = array();
-    $pdf->flushGroup();
 }
 
 // ========================== Notas Importantes ========================== //
