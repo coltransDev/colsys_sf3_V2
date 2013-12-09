@@ -63,6 +63,12 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO){
          </td>
          <td width="67%">
             <?
+            
+            if($reporte->getProperty("entrega_lugar_arribo")=="true" || $reporte->getProperty("entrega_lugar_arribo")=="1")
+            {
+                echo "  Entrega en Lugar de Arribo /";
+            }
+            
             if( $reporte->getCaIdbodega() ){
                 $bodega = $reporte->getBodega();
                 echo $bodega->getCaTipo()." - ".$bodega->getCaNombre()." ".$bodega->getCaDireccion();
