@@ -172,8 +172,6 @@ foreach( $idproveedores as $key=>$idprov ){
     $pdf->Ln(1);
 }
 
-
-
 $contacto = $reporte->getContacto();
 if($contacto)
 {
@@ -194,7 +192,6 @@ if($contacto)
     $pdf->Row ( array ('', 'Teléfono:', $cliente->getCaTelefonos (), 'Fax:', $cliente->getCaFax (), 'E-mail:', $contacto->getCaEmail () ) );
 }
 
-
 if($reporte->getCaIdclienteag()>0)
 {
     $pdf->Ln(2);
@@ -210,7 +207,6 @@ if($reporte->getCaIdclienteag()>0)
     $pdf->SetStyles ( array ("B", "B", "", "B", "", "B", "" ) );
     $pdf->Row ( array ('', 'Teléfono:', $cliente->getCaTelefonos (), 'Fax:', $cliente->getCaFax (), 'E-mail:', $contacto->getCaEmail () ) );
 }
-
 
 if($reporte->getCaIdclientefac()>0)
 {
@@ -384,9 +380,9 @@ if( ($reporte->getCaContinuacion() != "N/A" &&  $reporte->getCaContinuacion() !=
     $pdf->SetAligns(array("C"));
     $pdf->SetStyles(array("B"));
     $pdf->Row(array('CONTINUACIÓN DE VIAJE'));
-    $pdf->SetWidths(array(40,30,130));
-    $pdf->SetAligns(array("L","L","L"));
-    $pdf->SetStyles(array("B","B","B"));
+    $pdf->SetWidths(array(25,25,25,125));
+    $pdf->SetAligns(array("L","L","L","L"));
+    $pdf->SetStyles(array("B","B","B","B"));
     $pdf->SetFills(array(0,0,0));
     $not_cont="";
     if($reporte->getCaContinuacionConf())
@@ -408,9 +404,9 @@ if( ($reporte->getCaContinuacion() != "N/A" &&  $reporte->getCaContinuacion() !=
         }
     }
 
-    $pdf->Row(array('Continuación/Viaje','Destino final','Notificar C/Viaje al email'));
+    $pdf->Row(array('Continuación/Viaje','Destino final','Cotización','Notificar C/Viaje al email'));
     $pdf->SetStyles(array("","",""));
-    $pdf->Row(array($reporte->getCaContinuacion(),$reporte->getDestinoCont()->getCaCiudad(),$not_cont));
+    $pdf->Row(array($reporte->getCaContinuacion(),$reporte->getDestinoCont()->getCaCiudad(),$reporte->getCaIdcotizacionotm(),$not_cont));
 }
 else if ( $reporte->getCaImpoexpo () == Constantes::EXPO  && $reporte->getCaContOrigen()!="" && $reporte->getCaContDestino()!="" ) {
     $pdf->Ln(2);
@@ -435,7 +431,7 @@ else if ( $reporte->getCaImpoexpo () == Constantes::EXPO  && $reporte->getCaCont
 if($reporte->getCaTiporep()!="3")
 {
     if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
-        $pdf->SetWidths ( array (45, 50, 55, 50 ) );        
+        $pdf->SetWidths ( array (45, 50, 55, 50 ) );
         if($reporte->getConsignar())
         {
             //$data["idconsignatario"]=$reporte->getConsignar();
@@ -486,7 +482,6 @@ if($reporte->getCaTiporep()!="3")
 if ($reporte->getCaSeguro () == "Sí") {
 
     $pdf->Ln ( 3 );
-
     $repseguro = $reporte->getRepSeguro ();
     if($repseguro)
     {
