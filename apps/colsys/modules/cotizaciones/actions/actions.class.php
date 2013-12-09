@@ -2104,9 +2104,9 @@ class cotizacionesActions extends sfActions {
         $aduconceptos = Doctrine::getTable("ConceptoAduana")
                         ->createQuery("ca")
                         ->where("c.ca_impoexpo = ?", "Aduanas")
-                        ->whereNotIn("ca_idconcepto", $idConceptos)
+                        ->whereNotIn("ca.ca_idconcepto", $idConceptos)
                         ->innerJoin("ca.Costo c")
-                        ->addOrderBy("c.ca_transporte, c.ca_costo")
+                        ->addOrderBy("c.ca_transporte, ca.ca_idconcepto")
                         ->execute();
        
         $this->data = array();
