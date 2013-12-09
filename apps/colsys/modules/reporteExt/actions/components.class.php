@@ -306,6 +306,10 @@ class reporteExtComponents extends sfComponents
         
         if($bodega2 && $reporte->getCaImpoexpo()!=Constantes::TRIANGULACION && $bodega2->getCaIdbodega()!="1")
         {
+            if($reporte->getProperty("entrega_lugar_arribo")=="true" || $reporte->getProperty("entrega_lugar_arribo")=="1")
+            {
+                $hijo.=" / Entrega en Lugar de Arribo ";
+            }
             if($bodega2->getCaTipo()==$bodega2->getCaNombre())
                 $hijo.=" / ".$bodega2->getCaNombre()." ".$bodega2->getCaDireccion();
             else
