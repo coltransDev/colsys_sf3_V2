@@ -55,9 +55,25 @@ include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$imp
             camposHija.push(this.wgTercero);
             <?
             if($impoexpo!=Constantes::TRIANGULACION)
+            {
             ?>
             camposHija.push(this.wgBodega);
         <?
+            }
+            if($modo==Constantes::AEREO)
+            {
+        ?>
+                camposHija.push(
+                        {
+                            xtype:'checkbox',
+                            fieldLabel:'Entrega en lugar de Arribo',
+                            id:'entrega_lugar_arribo',
+                            name:'entrega_lugar_arribo'
+                        }
+            );
+        <?
+            }
+                
         }
         ?>
 
