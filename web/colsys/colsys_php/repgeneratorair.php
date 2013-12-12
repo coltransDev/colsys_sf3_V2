@@ -320,7 +320,7 @@ if (!isset($boton) and !isset($agrupamiento)) {
     echo "<TH># Refs</TH>";
     echo "<TH># Hawbs</TH>";
     echo "<TH>Facturación</TH>";
-    echo "<TH>Utilidad</TH>";
+    echo "<TH>INO Coltrans</TH>";
     echo "<TH>Piezas</TH>";
     echo "<TH>Peso</TH>";
     echo "<TH>Volumen</TH>";

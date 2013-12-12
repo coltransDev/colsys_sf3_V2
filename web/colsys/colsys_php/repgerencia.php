@@ -16,7 +16,7 @@ $programa = 58;
 
 $titulo = 'Informe para Gerencia Cuadro INO';
 $meses  = array( "%" => "Todos los Meses", "01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre" );
-$estados = array("Casos Cerrados" => "ca_estado <> \"Abierto\"","Cierre Provisional" => "ca_estado = \"Provisional\"","Casos Abiertos" => "ca_estado = \"Abierto\"","Todos los Casos" => "true");
+$estados = array("Casos Cerrados" => "ca_estado <> \"Abierto\"","Cierre Provisional" => "ca_estado = \"Provisional\"","Casos Abiertos" => "ca_estado = \"Abierto\"","Casos con Perdida" => "ca_volumen > 0 and ((ca_facturacion - ca_deduccion - ca_utilidad) / ca_volumen) < 0","Todos los Casos" => "true");
 
 include_once 'include/datalib.php';                                            // Incorpora la libreria de funciones, para accesar leer bases de datos
 require_once("checklogin.php");                                                                 // Captura las variables de la sessión abierta
@@ -38,7 +38,7 @@ require_once("menu.php");
     echo "<H3>$titulo</H3>";
     echo "<FORM METHOD=post NAME='menuform' ACTION='repgerencia.php'>";
     echo "<TABLE WIDTH=580 BORDER=0 CELLSPACING=1 CELLPADDING=5>";
-    echo "<TH COLSPAN=7 style='font-size: 12px; font-weight:bold;'><B>Ingrese los parámetros para el Reporte</TH>";
+    echo "<TH COLSPAN=8 style='font-size: 12px; font-weight:bold;'><B>Ingrese los parámetros para el Reporte</TH>";
 
     echo "<TR>";
     echo "  <TD Class=captura ROWSPAN=2></TD>";
@@ -56,6 +56,19 @@ require_once("menu.php");
         }
     echo "  </SELECT></TD>";
     $tm =& DlRecordset::NewRecordset($conn);
+    if (!$tm->Open("select DISTINCT ca_identificacion as ca_trafico from tb_parametros p, tb_traficos t where ca_casouso = 'CU010' and p.ca_valor = t.ca_idtrafico order by ca_identificacion")) {       // Selecciona todos lo registros de la tabla Traficos
+        echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+        echo "<script>document.location.href = 'repreferencia.php';</script>";
+        exit;
+    }
+    $tm->MoveFirst();
+    echo "  <TD Class=mostrar>Sufijo :<BR><SELECT NAME='trafico'>";
+    echo " <OPTION VALUE=%>Sufijos (Todos)</OPTION>";
+    while (!$tm->Eof()) {
+        echo " <OPTION VALUE=" . $tm->Value('ca_trafico') . ">" . $tm->Value('ca_trafico') . "</OPTION>";
+        $tm->MoveNext();
+    }
+    echo "  </TD>";
     if (!$tm->Open("select ca_idtrafico, ca_nombre from vi_traficos order by ca_nombre")) {       // Selecciona todos lo registros de la tabla Traficos
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'repgerencia.php';</script>";
@@ -96,7 +109,7 @@ require_once("menu.php");
     echo "</TR>";
 
     echo "<TR HEIGHT=5>";
-    echo "  <TD Class=captura COLSPAN=6></TD>";
+    echo "  <TD Class=captura COLSPAN=7></TD>";
     echo "</TR>";
 
     echo "</TABLE><BR>";
@@ -117,7 +130,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)){
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
 
-    $condicion= "where ca_mes::text like '$mes' and ca_ano::text = '$ano' and ca_traorigen like '%$traorigen%' and ". str_replace("\"","'",$casos)." and ca_referencia in (select DISTINCT ca_referencia from vi_inoclientes_sea where ca_sucursal like '$sucursal') order by ca_traorigen, ca_referencia";
+    $condicion= "where ca_mes::text like '$mes' and ca_ano::text = '$ano' and ca_trafico like '%$trafico%' and ca_traorigen like '%$traorigen%' and ". str_replace("\"","'",$casos)." and ca_referencia in (select DISTINCT ca_referencia from vi_inoclientes_sea where ca_sucursal like '$sucursal') order by ca_traorigen, ca_referencia";
     if (!$rs->Open("select * from vi_inomaestra_sea $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
