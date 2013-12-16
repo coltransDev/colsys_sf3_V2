@@ -97,7 +97,7 @@ $aduanas = Doctrine::getTable("CotAduana")
         ->createQuery("ca")
         ->where("ca.ca_idcotizacion = ?", $cotizacion->getCaIdcotizacion())
         ->innerJoin("ca.Costo c")
-        ->innerJoin("c.ConceptoAduana a ON c.ca_idcosto = a.ca_idconcepto")
+        ->leftJoin("c.ConceptoAduana a ON c.ca_idcosto = a.ca_idconcepto")
         ->addOrderBy("c.ca_transporte, a.ca_consecutivo")
         ->execute();
 
