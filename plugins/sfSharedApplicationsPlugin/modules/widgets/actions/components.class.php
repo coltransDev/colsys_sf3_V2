@@ -933,6 +933,45 @@ class widgetsComponents extends sfComponents {
         $this->data[] = array("valor"=>utf8_encode(Constantes::OTMDTA ));
         $this->data[] = array("valor"=>utf8_encode(Constantes::INTERNO ));
     }
+    
+     public function executeWgCcostos( ){
+         
+        $centros = Doctrine::getTable("InoCentroCosto")
+                              ->createQuery("c")
+                              ->select("c.*")
+                              ->where("c.ca_subcentro IS NULL")
+                              ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                              ->execute();
+        $centrosArray = array();
+        foreach( $centros as $centro ){
+            $centrosArray[ $centro["c_ca_centro"] ] = $centro["c_ca_nombre"];
+        }
+
+
+        $this->data = array();
+
+
+        //TODO Crear widgets independientas para estos dos items
+        $centros = Doctrine::getTable("InoCentroCosto")
+                             ->createQuery("c")
+                             ->where("c.ca_subcentro IS NOT NULL")
+                             ->orderBy("c.ca_centro ASC")
+                             ->addOrderBy("c.ca_subcentro ASC")
+                             ->execute();
+
+        foreach( $centros as $centro ){
+            $centroStr = utf8_encode(str_pad($centro->getCaCentro(), 2, "0", STR_PAD_LEFT) ."-".str_pad($centro->getCaSubcentro(), 2, "0", STR_PAD_LEFT)." ".$centrosArray[$centro->getCaCentro()]." » ".$centro->getCaNombre());
+            $this->data[] = array("id"=>$centro->getCaIdccosto(),
+                                    "name"=> $centroStr
+            );
+        }
+    }
+
+    public function executeWgConceptos( ){
+        
+    }
+    
+    
 }
 
 ?>

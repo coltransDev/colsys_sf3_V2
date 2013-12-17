@@ -137,7 +137,6 @@ class widgetsActions extends sfActions {
             );
         }
 
-
         $this->responseArray = array("root" => $this->lineas, "total" => count($this->lineas), "success" => true);
         $this->setTemplate("responseTemplate");
     }
@@ -149,14 +148,6 @@ class widgetsActions extends sfActions {
     public function executeDatosModalidades() {
         $transport_parameter = utf8_decode($this->getRequestParameter("transporte"));
         $impoexpo_parameter = utf8_decode($this->getRequestParameter("impoexpo"));
-        /*
-          if ( $transport_parameter == Constantes::MARITIMO)	{
-          $transportes = ParametroTable::retrieveByCaso( "CU051",null, $impoexpo_parameter);
-          }else if ( $transport_parameter == Constantes::AEREO )	{
-          $transportes = ParametroTable::retrieveByCaso( "CU052",null, $impoexpo_parameter);
-          }else if ( $transport_parameter ==  Constantes::TERRESTRE )	{
-          $transportes = ParametroTable::retrieveByCaso( "CU053",null, $impoexpo_parameter);
-          } */
 
         $q = Doctrine::getTable("Modalidad")
                 ->createQuery("m");
@@ -851,16 +842,22 @@ class widgetsActions extends sfActions {
         $transport_parameter = utf8_decode($this->getRequestParameter("transporte"));
         $modalidad_parameter = utf8_decode($this->getRequestParameter("modalidad"));
 
-
-
-
-        $results = Doctrine::getTable("Concepto")
+        $q = Doctrine::getTable("Concepto")
                 ->createQuery("c")
-                ->select("c.ca_idconcepto,c.ca_concepto")
-                ->where("c.ca_transporte = ? AND c.ca_modalidad = ? ", array($transport_parameter, $modalidad_parameter))
+                ->select("c.ca_idconcepto,c.ca_concepto")                
                 ->addOrderBy("c.ca_concepto")
-                ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
-                ->execute();
+                ->setHydrationMode(Doctrine::HYDRATE_ARRAY);
+        
+        //->where("c.ca_transporte = ? AND c.ca_modalidad = ? ", array($transport_parameter, $modalidad_parameter))
+        if($transport_parameter!="")
+        {
+            $q->addWhere("c.ca_transporte", $transport_parameter);
+        }
+        if($modalidad_parameter!="")
+        {
+            $q->addWhere("c.ca_transporte", $modalidad_parameter);
+        }
+        $results=$q->execute();
 
         $this->conceptos = array();
 
@@ -1051,13 +1048,54 @@ class widgetsActions extends sfActions {
         $this->tipoDocs=array();
         foreach($tipoDocs as $t)
         {
-            $this->tipoDocs[]=array("id"=>$t["ca_iddocumental"],"name"=>$t["ca_documento"]);                    
+            $this->tipoDocs[]=array("id"=>$t["ca_iddocumental"],"name"=>  utf8_encode($t["ca_documento"]));
         }
         
         $this->responseArray = array("root" => $this->tipoDocs, "total" => count($this->tipoDocs), "success" => true);
         $this->setTemplate("responseTemplate");
+    }
+    
+    
+    public function executeDatosCostos() {
+        $this->data = array();
 
-    }    
+        $q = Doctrine::getTable("InoConcepto")
+                        ->createQuery("c")
+                        ->innerJoin("c.InoConceptoModalidad cm")
+                        ->innerJoin("cm.Modalidad m") 
+                        //->addWhere("c.ca_costo = ? ", true)
+                        ->addOrderBy("c.ca_concepto");
+        
+        if($this->impoexpo!="")
+            $q->addWhere("m.ca_impoexpo = ? ", $this->impoexpo);
+        
+        if($this->transporte!="")
+            $q->addWhere("m.ca_transporte = ? ", $this->transporte);
+        
+        if($this->modalidad!="")
+            $q->addWhere("m.ca_modalidad = ? ", $this->modalidad);
+
+        
+
+        $q->fetchArray();
+
+        $conceptos = $q->execute();
+
+        $this->data = array();
+        //print_r($conceptos[0]);
+        foreach ($conceptos as $concepto) {
+            $this->data[] = array("idconcepto" => $concepto['ca_idconcepto'],
+                "concepto" => $concepto['ca_concepto'],
+                "transporte" => utf8_encode($concepto['ca_transporte']),
+                "modalidad" => utf8_encode($concepto['ca_modalidad'])
+            );
+        }
+        
+        
+        $this->responseArray = array("root" => $this->data, "total" => count($this->data), "success" => true);
+        $this->setTemplate("responseTemplate");
+    }
+    
     
     
 
