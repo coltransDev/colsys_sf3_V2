@@ -1056,13 +1056,19 @@ class widgetsActions extends sfActions {
     }
     
     
-    public function executeDatosCostos() {
+    public function executeDatosCostos(sfWebRequest $request) {
         $this->data = array();
+        
+        $idccosto=$request->getParameter("idccosto");
+        $ccosto = Doctrine::getTable("InoCentroCosto")->find($idccosto);        
+        $this->forward404unless($ccosto);
+        $this->impoexpo =  $ccosto->getCaImpoexpo();
+        $this->transporte = $ccosto->getCaTransporte();
 
         $q = Doctrine::getTable("InoConcepto")
                         ->createQuery("c")
                         ->innerJoin("c.InoConceptoModalidad cm")
-                        ->innerJoin("cm.Modalidad m") 
+                        ->innerJoin("cm.Modalidad m")
                         //->addWhere("c.ca_costo = ? ", true)
                         ->addOrderBy("c.ca_concepto");
         
