@@ -131,7 +131,12 @@ else if( 1==2 && $user->getSucursal()->getEmpresa()->getCaNombre()=="Coltrans S.
     ?>
     <tr>
 		<td><b>Trasladar a:</b></td>
-		<td colspan="5"><?=$bodega2->getCaTipo()!=$bodega2->getCaNombre()?$bodega2->getCaTipo()." ".$bodega2->getCaNombre():$bodega2->getCaTipo()?></td>
+		<td colspan="5"><?
+        if($reporte->getProperty("entrega_lugar_arribo")=="true" || $reporte->getProperty("entrega_lugar_arribo")=="1")
+            {
+                echo " Entrega en Lugar de Arribo / ";
+            }
+        echo $bodega2->getCaTipo()!=$bodega2->getCaNombre()?$bodega2->getCaTipo()." ".$bodega2->getCaNombre():$bodega2->getCaTipo()?></td>
 	</tr>
     <?
     }
