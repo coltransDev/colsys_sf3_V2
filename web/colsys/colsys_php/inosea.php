@@ -900,23 +900,23 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     echo "<TR>";
                     echo "<TH Class=titulo COLSPAN=6>Cuadro de Costos de la Referencia</TH>";                    
                     echo "<TH style='width: 50px;'>";
-                    
+                    echo "ll";
                     echo " <IMG style='visibility: $visible;$level0;cursor:pointer' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"AdicionarCs\",  \"" . $rs->Value('ca_referencia') . "\", 0);'>";  // Botón para la creación de un Registro Nuevo
                     echo " <IMG style='cursor:pointer;$level0' src='./graficos/details.gif' onClick=\"document.location='/ids/formEventos?referencia=" . $rs->Value('ca_referencia') . "'\" title='Eventos Proveedores' >";
                     echo " <IMG style='visibility: $liquida;$level0;cursor:pointer' src='./graficos/fileopen.png' onClick=\"document.location='/inoMaritimo/formUtilidadesNew?referencia=" . $rs->Value('ca_referencia') . "'\" title='Liquidación Utilidad' >";
-                    echo " <IMG style='cursor:pointer;$level0' src='./graficos/fileopen.png' alt='Agregar Copia Archivos de costos' border=0 onclick='javascript:subir_hbl(\"" . str_replace(".","|",$cl->Value('ca_referencia')) . "\",\"costos\")'>";
+                    echo " <IMG style='cursor:pointer;$level0' src='./graficos/fileopen.png' alt='Agregar Copia Archivos de costos' border=0 onclick='javascript:subir_hbl(\"" . str_replace(".","|",$rs->Value('ca_referencia')) . "\",\"costos\")'>";
                     echo "</TH>";
                     while (!$cs->Eof() and !$cs->IsEmpty()) {                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
                         echo "<TR HEIGHT=5>";
                         echo "  <TD Class=invertir COLSPAN=7></TD>";
                         echo "</TR>";
                         // <div title=' '></div>
+                        
+                        $tm = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
                         echo "  <TD Class=invertir style='font-size: 12px;' ROWSPAN=2 COLSPAN=3><B>" . $cs->Value('ca_costo') . "</B></TD>";
-
                         if (!$tm->Open("select count(*) as conta from control.tb_usuarios_perfil where ca_perfil in ('asistente-de-contenedores','coordinador-de-contenedores') and ca_login='$usuario'")) {
                             echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                            //echo "<script>document.location.href = 'inosea.php';</script>";
-
+                            echo "<script>document.location.href = 'inosea.php';</script>";
                             exit;
                         } else {
                             if ($tm->Value('conta') > 0 and ($cs->Value('ca_factura') == "P" or $cs->Value('ca_factura') == "CE")) {
