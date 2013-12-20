@@ -439,7 +439,7 @@ class reportesNegActions extends sfActions
         $this->user = $this->getUser();
 
         /* Marca como finalizada una tarea */
-
+/*
 		$tareas = Doctrine::getTable("NotTarea")
                             ->createQuery("t")
                             ->innerJoin("t.NotTareaAsignacion a")
@@ -457,7 +457,7 @@ class reportesNegActions extends sfActions
 				$tarea->save();
 			}
 		}
-
+*/
 		if( $reporte->getCaIdtareaRext() ){
 			$this->tarea = Doctrine::getTable("NotTarea")->find( $reporte->getCaIdtareaRext() );
 		}else{
