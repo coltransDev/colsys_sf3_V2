@@ -233,7 +233,7 @@ if($opcion){
                 <td><?=$r[$dataFchEnd]?></td>
                 <td style=" text-align: center; border-right-color:black; color:<?=$color?>"><?=$r[$dataIdg]?><?//=$r[$dataIdg]==0?1:$r[$dataIdg]?></td>
                 <?if($Obs=="true"){?>
-                <td><textarea  name='<?=$nameObs?><?=$idreporte?>' value="<?=$observacionesIdg?>" style="width:320px" rows="3" spellcheck="false"><?=$observacionesIdg?></textarea></td>
+                <td><textarea  name='<?=$nameObs?><?=$idreporte?>' value="<?=  utf8_encode($observacionesIdg)?>" style="width:320px" rows="3" spellcheck="false"><?=$observacionesIdg?></textarea></td>
                 <?}?>
                  <input type="hidden" name='oid[]' value="<?=$idreporte?>"/>
             </tr>

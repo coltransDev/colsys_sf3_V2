@@ -960,11 +960,10 @@ md.ca_idmodo,m.ca_idmaster
                     $joinPpal = $this->transporte == "Marítimo" ? "JOIN tb_inoclientes_sea ic ON ic.ca_idreporte = sqa.ca_idreporte" : "JOIN tb_inoclientes_air ic ON ic.ca_idreporte = sqa.ca_consecutivo";
                     break;
                 case 5:
-                    $select1 = ", ig,ca_fchfactura, (ig.ca_fchfactura-sqa.ca_fchllegada) as ca_diferencia";
+                    $select1 = $this->transporte == "Marítimo" ? ",(select ca_factura FROM tb_inoingresos_sea ii WHERE ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hbls= ii.ca_hbls limit 1) as ca_factura, (select ca_fchfactura FROM tb_inoingresos_sea ii WHERE ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hbls= ii.ca_hbls limit 1) as ca_fchfactura, ((select ca_fchfactura FROM tb_inoingresos_sea ii WHERE ic.ca_referencia = ii.ca_referencia  and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hbls= ii.ca_hbls limit 1)-sqa.ca_fchllegada) as ca_diferencia":",(select ca_factura FROM tb_inoingresos_air ii WHERE ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hawb= ii.ca_hawb limit 1) as ca_factura, (select ca_fchfactura FROM tb_inoingresos_air ii WHERE ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hawb= ii.ca_hawb limit 1) as ca_fchfactura, ((select ca_fchfactura FROM tb_inoingresos_air ii WHERE ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hawb= ii.ca_hawb limit 1)-sqa.ca_fchllegada) as ca_diferencia";
                     $where1 = "WHERE rs.ca_idetapa in ('IMCPD','IMETT','IACAD')";
                     $where2 = "WHERE rs.ca_idetapa in ('IMETA','IACCR')";
                     $joinPpal = $this->transporte == "Marítimo" ? "JOIN tb_inoclientes_sea ic ON ic.ca_idreporte = sqa.ca_idreporte" : "JOIN tb_inoclientes_air ic ON ic.ca_idreporte = sqa.ca_consecutivo";
-                    $joinSec = $this->transporte == "Marítimo" ? "JOIN tb_inoingresos_sea ig ON ic.ca_referencia = ig.ca_referencia and ic.ca_idcliente = ig.ca_idcliente and ic.ca_hbls = ig.ca_hbls" : "JOIN tb_inoingresos_air ig ON ic.ca_referencia = ig.ca_referencia and ic.ca_idcliente = ig.ca_idcliente and ic.ca_hawb = ig.ca_hawb";
                     break;
             }
 
@@ -1002,19 +1001,16 @@ md.ca_idmodo,m.ca_idmaster
             $this->resul = $st->fetchAll();
 
             $this->dataIdg = "ca_diferencia";
-
+            
             foreach ($this->resul as $r) {
 
-                if (!$r[$this->dataIdg])
-                    continue;
-
-                if ($this->transporte == "Aéreo") {
+                if ($this->transporte == Constantes::AEREO) {
                     if ($r[$this->dataIdg] > $this->indi_AIR[$this->pais_origen]) {
                         $this->indicador[(int) ($r["ca_mes1"])]["incumplimiento"]++;
                     } else {
                         $this->indicador[(int) ($r["ca_mes1"])]["cumplimiento"]++;
                     }
-                } else if ($this->transporte == "Marítimo") {
+                } else if ($this->transporte == Constantes::MARITIMO) {
                     if ($r["nva_modalidad"] == Constantes::FCL) {
                         if ($r[$this->dataIdg] > $this->indi_FCL[$this->pais_origen]) {
                             $this->indicador[(int) ($r["ca_mes1"])]["incumplimiento"]++;
@@ -1031,11 +1027,17 @@ md.ca_idmodo,m.ca_idmaster
                 }
 
                 $this->grid[$r["ca_ano1"]][$r["nva_modalidad"]][(int) ($r["ca_mes1"])]["conta"] = (isset($this->grid[$r["ca_ano1"]][$r["nva_modalidad"]][(int) ($r["ca_mes1"])]["conta"])) ? ($this->grid[$r["ca_ano1"]][$r["nva_modalidad"]][(int) ($r["ca_mes1"])]["conta"] + 1) : "1";
+                if(count($this->resul)==1){
+                    if(!$r[$this->dataIdg]){
+                        $this->grid[$r["ca_ano1"]][$r["nva_modalidad"]][(int) ($r["ca_mes1"])]["diferencia"]=1;
+                    }
+                }
                 $this->grid[$r["ca_ano1"]][$r["nva_modalidad"]][(int) ($r["ca_mes1"])]["diferencia"]+=$r[$this->dataIdg];
+                
                 list($peso, $medida) = explode("|", $r["ca_peso"]);
                 $this->grid[$r["ca_ano1"]][$r["nva_modalidad"]][(int) ($r["ca_mes1"])]["peso"]+=$peso;
             }
-            //echo "<pre>";print_r($this->resul);echo "</pre>";
+            //echo "<pre>";print_r($this->grid);echo "</pre>";
         }
     }
 
@@ -1603,7 +1605,7 @@ md.ca_idmodo,m.ca_idmaster
                     ";
 
             $con = Doctrine_Manager::getInstance()->connection();
-            // echo $sql;
+           
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
 
@@ -1619,7 +1621,6 @@ md.ca_idmodo,m.ca_idmaster
                 $this->origen[$r["ano"]][($r["ciuorigen"])][(int) ($r["mes"])]["total_negocios"]++;
                 $this->origen[$r["ano"]][($r["ciuorigen"])][(int) ($r["mes"])]["peso"]+=$r["peso"];
             }
-
             //echo "<pre>";print_r($this->resul);echo "</pre>";
         }
     }
