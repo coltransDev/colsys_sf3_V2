@@ -370,6 +370,7 @@ class widgetsComponents extends sfComponents {
         } else if ($this->ciudad == "BAQ-0005") {
             $this->data[] = array("id" => "2031", "valor" => "Puerto de Barranquilla");
             $this->data[] = array("id" => "2424", "valor" => "Palermo Sociedad Portuaria S.A");
+             $this->data[] = array("id" => "3625", "valor" => "BARRANQUILLA INTERNATIONAL TERMINAL COMP");
         } else if ($this->ciudad == "STA-0005") {
             $this->data[] = array("id" => "2435", "valor" => "SOCIEDAD PORTUARIA REGIONAL DE SANTA MARTA S.A");
         } else {
