@@ -15,6 +15,7 @@ class InoCostosSea extends BaseInoCostosSea
     static public function setCosto($comprobante,$conn ) {
         try {
             $idproveedor="2533";//colotm
+            $idcostos=array(4,15,47,246);
             $inoCliente = Doctrine::getTable("InoClientesSea")->findOneBy("ca_hbls", $comprobante->getInoHouse()->getCaDoctransporte());
             if(!$inoCliente)
                 return "-1";
@@ -31,17 +32,36 @@ class InoCostosSea extends BaseInoCostosSea
             if(count($costos)>0)
                 return "-3";
             
+            
+            $costos = Doctrine::getTable("InoCostosSea")
+                   ->createQuery("c")
+                   ->addWhere("c.ca_referencia = ? and ca_factura = ?", array($inoMaestraSea->getCaReferencia() , $comprobante->getCaConsecutivo()) )
+                   ->andWhereIn("ca_idcosto", $idcostos)
+                   ->execute();
+
+            if(count($costos)>0)
+                return "-3";
+            
+            
             $iddeducciones=array(109,110,111,112,113);
+            $deduccion=new InoDeduccionesSea();
+            
             $deduccion = Doctrine::getTable("InoDeduccionesSea")
                                ->createQuery("c")
                                ->addWhere("c.ca_referencia = ? and ca_idcliente = ? and ca_hbls = ? ", array($inoMaestraSea->getCaReferencia() , $inoCliente->getCaIdcliente() , $comprobante->getInoHouse()->getCaDoctransporte() ) )
                                ->andWhereIn("ca_iddeduccion",$iddeducciones)
                                ->fetchOne();
+            
 
-            if(count($deduccion)<1)
-                return "-4";
-
-            $valor2=$deduccion->getCaValor();
+            if(count($deduccion)<1 || !$deduccion)
+            {
+                $valor2=$comprobante->getCaValor();
+            }
+            else
+            {
+                $valor2=$deduccion->getCaValor();
+                $deduccion->delete($conn);
+            }
             
             $inoCostosSea = new InoCostosSea();            
             $costo = Doctrine::getTable("Costo")
@@ -60,17 +80,15 @@ class InoCostosSea extends BaseInoCostosSea
             $inoCostosSea->setCaReferencia($inoMaestraSea->getCaReferencia());
             $inoCostosSea->setCaTcambio($comprobante->getCaTcambio());
             $inoCostosSea->setCaTcambioUsd($comprobante->getCaTcambioUsd());
-            $inoCostosSea->setCaVenta($comprobante->getCaValor2());
+            $inoCostosSea->setCaVenta($valor2);
             $inoCostosSea->save($conn);
+            
+            $idinocosto=$inoCostosSea->getCaIdinocostosSea();
             
             if($valor2>$comprobante->getCaValor())
             {
                 $inoutilidadSea = new InoutilidadSea();
-                $inoutilidadSea->setCaReferencia($inoMaestraSea->getCaReferencia());
-                $inoutilidadSea->setCaIdcliente($comprobante->getInoHouse()->getCaIdcliente());
-                $inoutilidadSea->setCaHbls($comprobante->getInoHouse()->getCaDoctransporte());
-                $inoutilidadSea->setCaIdcosto($costo->getCaIdcosto());
-                $inoutilidadSea->setCaFactura($comprobante->getCaConsecutivo());
+                $inoutilidadSea->setCaIdinocosto($idinocosto);
                 $inoutilidadSea->setCaValor($valor2-$comprobante->getCaValor());
                 $inoutilidadSea->save($conn);
             }
