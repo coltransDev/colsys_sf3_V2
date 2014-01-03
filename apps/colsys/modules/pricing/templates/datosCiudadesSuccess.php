@@ -1,5 +1,13 @@
 [
 <?
+if($website){
+?>
+    <div class="center">
+        <b>LO SENTIMOS, ESTA NAVIERA NO TIENE PAGINA WEB DOCUMENTADA PARA REVISAR LOS ITINERARIOS</b><br/>
+        Por favor comun&iacute;quese con el administrador de la Maestra de Proveedores.
+    </div>
+<?
+}
 $i=0;
 foreach( $results as $modalidad=>$grupos ){
 	if( $i++!=0){
@@ -29,7 +37,7 @@ foreach( $results as $modalidad=>$grupos ){
 			},
 			<?
             }            
-			if( $transporte==Constantes::MARITIMO && $impoexpo=="impo"  ){                
+			if( $transporte==Constantes::MARITIMO/* && $impoexpo=="impo"  */){                
 					if($modalidad=="LCL"){
 						$linea = "coloaders";
                     }else{

@@ -453,17 +453,17 @@
          */
         actualizarEditores: function(){
             if( !this.readOnly ){
+                this.storeRecargos.setBaseParam('modo', 'recargos');
                 if( this.idtrafico=="99-999" ){
-                    this.storeRecargos.setBaseParam('modo', 'recargos');
                     this.storeRecargos.setBaseParam('tipo', '<?= Constantes::RECARGO_LOCAL ?>');
-                
                     this.storeConceptos.load();
                 }else{
-                    this.storeRecargos.setBaseParam('modo', 'recargos');
-                    this.storeRecargos.setBaseParam('tipo', '<?= Constantes::RECARGO_EN_ORIGEN ?>');
-                
+                    if( this.impoexpo=="<?= Constantes::IMPO ?>" && this.transporte=="<?= Constantes::MARITIMO ?>" ){
+                        this.storeRecargos.setBaseParam('tipo', '<?= Constantes::RECARGO_LOCAL ?>');
+                    }else{
+                        this.storeRecargos.setBaseParam('tipo', '<?= Constantes::RECARGO_EN_ORIGEN ?>');
+                    }
                 }
-
                 this.storeRecargos.load();
             }
         },

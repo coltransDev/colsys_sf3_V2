@@ -105,7 +105,7 @@ class pricingActions extends sfActions {
         }
 
         $q = Doctrine_Query::create()
-                        ->select("t.ca_idtrayecto, p.ca_sigla, p.ca_contrato_comodato, id.ca_nombre, t.ca_origen,
+                        ->select("t.ca_idtrayecto, p.ca_sigla, p.ca_contrato_comodato, id.ca_nombre, id.ca_website, t.ca_origen,
                               t.ca_destino, t.ca_idlinea, o.ca_ciudad, d.ca_ciudad,
                               ai.ca_nombre, a.ca_idagente, t.ca_transporte, t.ca_modalidad,
                               t.ca_impoexpo, t.ca_observaciones, t.ca_tiempotransito, t.ca_frecuencia, t.ca_netnet, t.ca_ncontrato")
@@ -157,8 +157,8 @@ class pricingActions extends sfActions {
             $q->offset($start);
         }
         $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-
-        $trayectos = $q->execute();
+        
+	$trayectos = $q->execute();
 
         $data = array();
         $transportador_id = null;
@@ -167,12 +167,18 @@ class pricingActions extends sfActions {
 
         $ultCiudad = null;
         $ultLinea = null;
+	$folder = "Tarifario/Traslados";
+        $filename = "TARIFAS_TRASLADOS_2013.xls";
         //echo count( $trayectos );
         foreach ($trayectos as $trayecto) {
             //Por este campo se agrupan los conceptos
             $trayectoStr = strtoupper($trayecto["o_ca_ciudad"]) . "»" . strtoupper($trayecto["d_ca_ciudad"]) . " - ";
 
-            $trayectoStr.=$trayecto["p_ca_sigla"] ? $trayecto["p_ca_sigla"] : $trayecto["id_ca_nombre"];
+            if(!$trayecto["id_ca_website"]){
+                    $trayecto["id_ca_website"] = "datosCiudades?website=true";
+            }
+            
+            $trayectoStr.=$trayecto["p_ca_sigla"] ? "<a href=".$trayecto["id_ca_website"]." TARGET=\"_blanc\">".$trayecto["p_ca_sigla"]."</a>" : "<a href=".$trayecto["id_ca_website"]." TARGET=\"_blanc\">".$trayecto["id_ca_nombre"]."</a>";
             
             if( $trayecto["p_ca_contrato_comodato"] && $trayecto["t_ca_impoexpo"]==Constantes::IMPO ){
                 $trayectoStr.=" <span class='rojo'>(Requiere firma Comodato)</span>";
@@ -182,11 +188,13 @@ class pricingActions extends sfActions {
                 $trayectoStr.=" [" . $trayecto["ai_ca_nombre"]." ] ";
             }
             if ($trayecto["t_ca_ncontrato"]) {
-                $contrato.=" [Contrato No " . $trayecto["t_ca_ncontrato"]." ] ";
+                $contrato =" [Contrato No " . $trayecto["t_ca_ncontrato"]." ] ";
             }
             $trayectoStr.=" (TT " . $trayecto["t_ca_tiempotransito"] . " Freq. " . $trayecto["t_ca_frecuencia"] . ") " .$contrato.$trayecto["t_ca_idtrayecto"];
-            $trayectoStr = utf8_encode($trayectoStr);
-            $trayectoStr = str_replace("&", "AND", $trayectoStr);
+            if($transporte=="Marítimo"){
+                $trayectoStr.= "<a href=\"../gestDocumental/verArchivo?idarchivo=".base64_encode($folder.'/'.$filename).'" target="_blank"> Traslados</a>';
+            }
+	    $trayectoStr = utf8_encode($trayectoStr);
 
             $baseRow = array(
                 'idtrayecto' => $trayecto["t_ca_idtrayecto"],
@@ -536,7 +544,9 @@ class pricingActions extends sfActions {
         $this->responseArray = array(
             'success' => true,
             'total' => count($data),
-            'data' => $data
+            'data' => $data,
+            'sql' => $sql
+                
         );
         $this->setTemplate("responseTemplate");
     }
@@ -2089,6 +2099,7 @@ class pricingActions extends sfActions {
 
         $transporte = utf8_decode($this->getRequestParameter("transporte"));
         $impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
+	$this->website = $request->getParameter("website");
 
         $node = $this->getRequestParameter("node");
 
