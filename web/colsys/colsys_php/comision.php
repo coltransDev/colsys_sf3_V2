@@ -63,9 +63,9 @@ if (true){
     $pdf->Row(array('Comprobante de Pago de Comisiones por Vendedor'."\n".$us->Value('ca_nombre')));
     $pdf->Row(array('Número :'.$id.' de Fecha :'.$rs->Value('ca_fchliquidacion')));
     $pdf->Ln(1);
-    $pdf->SetWidths(array(22,50,25,19,11,15,18,18,15,10,18,18,18)); // 169
+    $pdf->SetWidths(array(22,45,20,29,11,15,18,18,15,10,18,18,18)); // 169
     $pdf->SetAligns(array("C","C","C","C","C","C","C","C","C","C","C","C","C"));
-    $pdf->Row(array('Referencia','Cliente','Hbl','Utilidad x CBM','CBM','Factura','Fch.Factura','Valor','Rec.Caja','%','Comisión','C.Sobreventa','Fch.Liquidac'));
+    $pdf->Row(array('Referencia','Cliente','Hbl','Termino Neg.','CBM','Factura','Fch.Factura','Valor','Rec.Caja','%','Comisión','C.Sobreventa','Fch.Liquidac'));
 
     $pdf->SetAligns(array("L","L","L","R","R","L","C","R","L","C","R","R","C"));
     $sum_vlr = 0;
@@ -77,7 +77,7 @@ if (true){
         $utl_cbm = round(($rs->Value('ca_facturacion_r') - $rs->Value('ca_deduccion_r') - $rs->Value('ca_utilidad_r')) / $rs->Value('ca_volumen_r'),0);
         $sum_vlr+= $rs->Value('ca_vlrcomision_cob');
         $sum_sbr+= $rs->Value('ca_sbrcomision_cob');
-        $pdf->Row(array($ref_mem,$com_mem,$hbl_mem,number_format($utl_cbm,0),number_format($rs->Value('ca_volumen'),2),$rs->Value('ca_factura'),$rs->Value('ca_fchfactura'),number_format($rs->Value('ca_valor'),0),$rs->Value('ca_reccaja'),$rs->Value('ca_porcentaje'),number_format($rs->Value('ca_vlrcomision_cob'),0),number_format($rs->Value('ca_sbrcomision_cob'),0),$rs->Value('ca_fchliquidacion')));
+        $pdf->Row(array($ref_mem,$com_mem,$hbl_mem,$rs->Value('ca_incoterms'),number_format($rs->Value('ca_volumen'),2),$rs->Value('ca_factura'),$rs->Value('ca_fchfactura'),number_format($rs->Value('ca_valor'),0),$rs->Value('ca_reccaja'),$rs->Value('ca_porcentaje'),number_format($rs->Value('ca_vlrcomision_cob'),0),number_format($rs->Value('ca_sbrcomision_cob'),0),$rs->Value('ca_fchliquidacion')));
         do {
             $rs->MoveNext();
             if (($ref_mem != $rs->Value('ca_referencia') or $com_mem != $rs->Value('ca_compania') or $hbl_mem != $rs->Value('ca_hbls') or $rs->Eof())) {

@@ -115,7 +115,8 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
     $casos = (strlen($casos) != 0) ? "and " . str_replace("\"", "'", $casos) : "";
     $comision = (strlen($comision) != 0) ? "and " . $comision : "";
     $condicion = "ca_mes like '$mes' and ca_ano = $ano $compania and ca_login like '$usuario' $casos $comision";
-
+    //echo "select * from vi_inocomisiones_sea where $condicion";
+//        exit;
     if (!$rs->Open("select * from vi_inocomisiones_sea where $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
@@ -144,11 +145,12 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
     echo "<FORM METHOD=post NAME='informe' ACTION='comisiones.php'>";          // Hace una llamado nuevamente a este script pero con
     echo "<TABLE CELLSPACING=1>";                                              // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=9>" . COLTRANS . "<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
+    echo "  <TH Class=titulo COLSPAN=10>" . COLTRANS . "<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
     echo "</TR>";
     echo "<TH>Referencia</TH>";
     echo "<TH>Cliente</TH>";
     echo "<TH>Hbl</TH>";
+    echo "<TH>Termino Neg.</TH>";
     echo "<TH>Vlr Facturado</TH>";
     echo "<TH>Estado</TH>";
     echo "<TH>Volumen CMB</TH>";
@@ -184,6 +186,7 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
         echo "  <TD Class=listar  style='font-weight:bold; font-size: 9px;$back_col' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'" . substr($back_col, 14, 6) . "');\" onclick='javascript:window.open(\"inosea.php?boton=Consultar\&id=" . $rs->Value('ca_referencia') . "\");'>" . $rs->Value('ca_referencia') . "</TD>";
         echo "  <TD Class=listar  style='font-size: 9px;$back_col'>" . substr(ucwords(strtolower($rs->Value('ca_compania'))), 0, 30) . "</TD>";
         echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . $rs->Value('ca_hbls') . "</TD>";
+        echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . $rs->Value('ca_incoterms') . "</TD>";
         echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . number_format($rs->Value('ca_valor')) . "</TD>";
         echo "  <TD Class=listar  style='font-size: 9px;$back_col'>" . $rs->Value('ca_estado') . "</TD>";
         echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . $rs->Value('ca_volumen') . "</TD>";
@@ -199,7 +202,7 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
             if ($imp_mem and $mul_lin) {
                 echo "</TR>";
                 echo "<TR>";
-                echo "  <TD Class=listar COLSPAN=7>&nbsp;</TD>";
+                echo "  <TD Class=listar COLSPAN=8>&nbsp;</TD>";
             }
             if ($imp_mem and $rs->Value('ca_valor_ded') != 0) {
                 echo "  <TD Class=listar style='font-size: 9px;'>" . str_replace(" ", "&nbsp;", "&nbsp;" . $rs->Value('ca_costo_ded')) . "</TD>";
@@ -217,7 +220,7 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
         echo "</TR>";
         if ($log_ven != $rs->Value('ca_login') or $rs->Eof()) {
             echo "<TR HEIGHT=5>";
-            echo "  <TD Class=invertir COLSPAN=9></TD>";
+            echo "  <TD Class=invertir COLSPAN=10></TD>";
             echo "</TR>";
             echo "<TR>";
             echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=6>Totales por Vendedor :</TD>";
@@ -226,7 +229,7 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
             echo "  <TD Class=valores style='font-weight:bold;'>&nbsp;&nbsp;" . number_format($sob_ven) . "</TD>";
             echo "</TR>";
             echo "<TR HEIGHT=5>";
-            echo "  <TD Class=invertir COLSPAN=9></TD>";
+            echo "  <TD Class=invertir COLSPAN=10></TD>";
             echo "</TR>";
             echo "<TR>";
             echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=6>Comisión en Ventas :</TD>";
@@ -239,26 +242,26 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
             echo "  <TD Class=valores style='font-weight:bold;'>" . number_format(($utl_con * $rs->Value('ca_porcentaje') / 100) + ($sob_ven * $rs->Value('ca_porcentaje') / 100)) . "</TD>";
             echo "</TR>";
             echo "<TR HEIGHT=5>";
-            echo "  <TD Class=titulo COLSPAN=9></TD>";
+            echo "  <TD Class=titulo COLSPAN=10></TD>";
             echo "</TR>";
             $utl_tot+= $utl_con;
             $sob_tot+= $sob_ven;
         }
     }
     echo "<TR HEIGHT=5>";
-    echo "  <TD Class=imprimir COLSPAN=9></TD>";
+    echo "  <TD Class=imprimir COLSPAN=10></TD>";
     echo "</TR>";
     echo "<TR HEIGHT=5>";
-    echo "  <TD Class=titulo COLSPAN=9></TD>";
+    echo "  <TD Class=titulo COLSPAN=10></TD>";
     echo "</TR>";
     echo "<TR>";
-    echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=6>Totales del Informe:</TD>";
+    echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=7>Totales del Informe:</TD>";
     echo "  <TD Class=valores style='font-weight:bold;'>" . number_format($utl_tot) . "</TD>";
     echo "  <TD Class=valores style='font-weight:bold;'>&nbsp;Total Sobreventa:</TD>";
     echo "  <TD Class=valores style='font-weight:bold;'>" . number_format($sob_tot) . "</TD>";
     echo "</TR>";
     echo "<TR HEIGHT=5>";
-    echo "  <TD Class=titulo COLSPAN=9></TD>";
+    echo "  <TD Class=titulo COLSPAN=10></TD>";
     echo "</TR>";
     echo "</TABLE><BR>";
 
