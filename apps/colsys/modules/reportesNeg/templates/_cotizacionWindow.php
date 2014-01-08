@@ -134,10 +134,10 @@ if( $cotizacion ){
 
                             if( lastConcepto==9999){
                                 newRec.set("orden", "Y"+"-"+r.data.item);
-                                newRec.set("neta_tar", r.data.neta);
+                                newRec.set("neta_tar", 0);
                                 newRec.set("neta_min", 0);
                             }else{
-                                newRec.set("neta_tar", r.data.neta);
+                                newRec.set("neta_tar", 0);
                                 newRec.set("neta_min", 0);
                                 newRec.set("orden", lastConceptoTxt+"-"+r.data.item);
                             }
@@ -150,7 +150,7 @@ if( $cotizacion ){
                             }else{
                                 newRec.set("orden", r.data.item);
                                 newRec.set("cantidad", 0);
-                                newRec.set("neta_tar", r.data.neta);
+                                newRec.set("neta_tar", 0);
                                 newRec.set("neta_min", 0);
                             }
                         }

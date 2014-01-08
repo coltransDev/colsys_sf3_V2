@@ -1,4 +1,5 @@
 <?
+error_reporting(E_ALL);
 $reporte = $sf_data->getRaw("reporte");
 
 $cliente=$reporte->getCliente("continuacion");
@@ -243,16 +244,18 @@ $txt1=utf8_encode($reporte->getBodega()->getCaNombre()."/".$reporte->getBodega()
 $tam=  strlen($txt1);
 if($tam>74)
 {
-    $y=$y+5;
+    $y=$y+9;
     $txt=  substr($txt1, 0,74)."\n".substr($txt1, 74,$tam-74);
-    $pdf->SetFont('helvetica', '', 8);
+    $pdf->SetFont('helvetica', '', 7);
+    $y1=$y-5;
 }else
 {
     $y=$y+9;
+    $y1=$y;
     $txt=$txt1;
 }
 
-$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x, $y);
+$pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x, $y1);
 $pdf->SetFont('helvetica', '', 10);
 /*if($reporte->getBodega()->getCaTipo()=="Zona Franca Bogota SA")
     $txt="13907";
@@ -300,7 +303,6 @@ $pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x, $y);
 $txt="S";
 $pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+48, $y);
 
-
 $txt=$repotm->getCaPeso();
 $pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x+150, $y);
 
@@ -314,16 +316,10 @@ else
 $txt=  utf8_encode($txt1."\nDice Contener:\n".utf8_encode($reporte->getCaMercanciaDesc())." \nDTM:".$repotm->getConsecutivoDtm());
 $pdf->MultiCell(500, 10, $txt, 0, 'L', 0, 1, $x, $y);
 
-
-
-
-
-
 // reset pointer to the last page
 $pdf->lastPage();
 
 //Close and output PDF document
 $pdf->Output('example.pdf', 'I');
-
-       exit;
+exit;
 ?>

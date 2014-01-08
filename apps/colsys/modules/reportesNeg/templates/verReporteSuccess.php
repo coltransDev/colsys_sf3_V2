@@ -50,8 +50,11 @@ $html = $sf_data->getRaw("html");
     <iframe src="<?=url_for("reportesNeg/generarPDF?id=".$reporte->getCaIdreporte().(($idantecedente!="" && $idantecedente>0 )?"&idantecedente=$idantecedente":"")."&token=".md5(time()) )?>" width="830px" height="650px"></iframe>
         
     <?
-    if($idantecedente!="" && $idantecedente>0 )
+    if( ($idantecedente!="" && $idantecedente>0) && $reporte->getCaVersion()>1  )
+    {
+        echo '<div class="x-panel-header x-unselectable" id="ext-gen7" style="-moz-user-select: none;"><span class="x-panel-header-text" id="ext-gen9">Control de Cambios</span></div>';
         echo $html;
+    }
 	if( $asignaciones || $reporte->getCaIdtareaRext()){
 	?>
     <br />

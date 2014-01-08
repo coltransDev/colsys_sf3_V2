@@ -1,3 +1,5 @@
+<? //print_r($selec);
+?>
 <div align="center" class="content">
 <br />
     <h1>Se enviar&aacute; una notificaci&oacute;n a los siguientes destinatarios:</h1>
@@ -24,10 +26,17 @@ foreach( $grupos as $grupo=>$logins ){
         //echo $login;
         if(!$usuario)
             continue;
+        $style="";
+        $checked="";
         
+        if($login == $selec["ca_idusuario"])
+        {
+            $style="style='background-color: #4293FF'";
+            $checked="checked";
+        }
 	?>		
-	<tr>
-        <td><input type="radio" id="principal" name="principal" value="<?=$login?>" ></td>
+    <tr <?=$style?> >
+        <td><input type="radio" id="principal" name="principal" value="<?=$login?>" <?=$checked?> ></td>
         <td><input type="checkbox" name="notificar[]" value="<?=$login?>" ></td>
 		<td><?=ucfirst($grupo)?></td>
 		<td>
@@ -52,7 +61,43 @@ foreach( $grupos as $grupo=>$logins ){
 	<?
 	}	
 }
+
+foreach( $gruposObligatorios as $grupo=>$logins ){		
+	foreach( $logins as $login ){
+		$usuario = Doctrine::getTable("Usuario")->find( $login );
+        //echo $login;
+        if(!$usuario)
+            continue;
+        
+	?>		
+	<tr>
+        <td></td>
+        <td><input type="checkbox" name="notificar[]" value="<?=$login?>" checked ></td>
+		<td><?=ucfirst($grupo)?></td>
+		<td>
+            <?
+            if( $grupo=="operativo" ){
+                echo " Crear reporte al exterior";
+            }else{
+                echo "Ver reporte";
+            }
+            ?>
+        </td>
+		<td><?
+				echo $usuario->getCaNombre();				
+			?></td>
+		<td><?
+				echo $usuario->getCaEmail();				
+			?></td>
+        <td><?
+				echo $usuario->getSucursal()->getcaNombre();
+			?></td>
+	</tr>
+	<?
+	}	
+}
 ?>
+    
     <tr>
         <td colspan="5" style="vertical-align:top"><b>Notificar respuestas a:</b><br><input type="text" name="destinatario" id="destinatario" size="100"   /></td>
         <td colspan="2">

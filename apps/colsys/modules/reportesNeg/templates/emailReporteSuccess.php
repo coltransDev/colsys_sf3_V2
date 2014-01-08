@@ -48,7 +48,7 @@ $user = $sf_data->getRaw("user");
             }
             else if($tipo=="INSTRUCCIONES")
             {
-                $mensaje = $sf_data->getRaw("mensaje");
+                $mensaje = $sf_data->getRaw("mensaje");                
                 $html = html_entity_decode($sf_data->getRaw("html"));
 ?>
                 <div ><font size="2" face="arial, helvetica, sans-serif" color="#000000"><?=$mensaje?></font></div>

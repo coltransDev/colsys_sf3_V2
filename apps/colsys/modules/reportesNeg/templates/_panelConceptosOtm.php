@@ -433,7 +433,7 @@ PanelConceptosOtm = function( config ){
             return false;
         }
         
-        if( record.data.tipo=="recargo" && (field=="cantidad" || field=="neta_idm" || field=="reportar_idm" || field=="equipo") ){
+        if( record.data.tipo=="recargo" && (field=="cantidad" || field=="neta_idm" || field=="reportar_idm" /*|| field=="equipo"*/ ) ){
             return false;
         }
         return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);

@@ -82,7 +82,7 @@ if( $cotizacionotm ){
                             }
                         }
                         if( r.data.tipo=="recargo" ){
-                            if( recordsConceptos[j].data.iditem==r.data.iditem&& recordsConceptos[j].data.idconcepto==r.data.idconcepto){
+                            if( recordsConceptos[j].data.iditem==r.data.iditem && recordsConceptos[j].data.idequipo==r.data.idequipo  && recordsConceptos[j].data.idconcepto==r.data.idconcepto){
                                 existe=true;
                             }
                         }
@@ -124,6 +124,8 @@ if( $cotizacionotm ){
                         newRec.set("cobrar_min", r.data.valor_min);
                         newRec.set("cobrar_idm", r.data.idmoneda);
                         newRec.set("observaciones", r.data.detalles);
+                        newRec.set("idequipo", r.data.idequipo );
+                        newRec.set("equipo", r.data.equipo );
 
                         if( r.data.tipo=="recargo" ){
                             newRec.set("aplicacion", r.data.aplica_tar);

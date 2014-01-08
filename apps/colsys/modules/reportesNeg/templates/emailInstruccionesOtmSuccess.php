@@ -28,7 +28,7 @@
          * 
          */
         //strip_tags($html, "<table><tr><td>");
-        $mensaje="Señores:\n\n".(($reporte->getConsignatario())?$reporte->getConsignatario()->getCaNombre():"")."\nEsta carga será entregada a ustedes para el manejo del OTM.\nNota importante: favor revisar la documentación y dejarnos saber hoy mismo si tiene algún inconveniente. ";
+        $mensaje="Señores:<br><br>".(($reporte->getConsignatario())?$reporte->getConsignatario()->getCaNombre():"")."<br>Esta carga será entregada a ustedes para el manejo del OTM.<br>Nota importante: favor revisar la documentación y dejarnos saber hoy mismo si tiene algún inconveniente. ";
         $html ="<table class='tableList alignLeft' width='40%'><tr><th colspan='2'> <input style='width: 100%' id='cliente' name='cliente' value='".$cli_txt."'></th></tr>";
         $html .="<tr><td style='width: 30%'>HBL No. :</td><td><input style='width: 100%'  id='hbls' name='hbls' value='".$repotm->getCaHbls()."'></td></tr>";
         $html .="<tr><td>ETA: </td><td><input style='width: 100%' id='eta' name='eta' value='".$repotm->getCaFcharribo()."'></td></tr>";
@@ -41,7 +41,7 @@
         $html .="<tr><td>Datos de liberación: </td><td>".(($user->getIdempresa()=="4")?"CONSOLCARGO":"COLTRANS")."</td></tr>";
         $html .="<tr><td>DATOS DEL ACI:</td><td>".(($user->getIdempresa()=="4")?"CONSOLCARGO":"COLTRANS")."</td></tr></table>";
 
-        include_component("email", "formEmail", array("subject"=>$asunto,"message"=>$mensaje, "contacts"=>$contactos));
+        include_component("email", "formEmail", array("subject"=>$asunto,"messageHtml"=>$mensaje, "contacts"=>$contactos));
         ?>
             <div>
                 <? include_component("reportesNeg", "fileManager", array("reporte"=>$reporte));?>

@@ -463,6 +463,11 @@ if($reporte->getCaTiporep()!="3")
             else
                 $cadena = $consignar->getCaNombre();
         }
+        
+        if($reporte->getProperty("entrega_lugar_arribo")=="true" || $reporte->getProperty("entrega_lugar_arribo")=="1")
+        {
+            $cadena.=" /  Entrega en Lugar de Arribo ";
+        }
 
          if( $reporte->getCaIdbodega() && $reporte->getCaIdbodega()!= 111 && $reporte->getCaIdbodega()!=1 ){ //Coltrans
             $bodega = Doctrine::getTable("Bodega")->find( $reporte->getCaIdbodega() );
