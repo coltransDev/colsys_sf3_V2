@@ -411,7 +411,7 @@ class reportesNegActions extends sfActions {
         } else {
             $this->tarea = null;
         }
-*/
+
         $this->asignaciones = $reporte->getRepAsignacion();
         $this->reporte = $reporte;
 
