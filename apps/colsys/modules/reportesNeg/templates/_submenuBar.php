@@ -10,9 +10,19 @@ ini_set('default_charset', 'UTF8');
 $buttonHelp = array();
 $i = 0;
 
-//if($user->getUserId()=="maquinche")
-//    echo $action;
+
 $permiso = $user->getNivelAcceso("87");
+
+//Verifica si el usuario pertenece a servicio al cliente
+$usersPerfil = UsuarioTable::getUsuariosxPerfil("servicio-al-cliente");
+$scliente = false;
+foreach ($usersPerfil as $userPerfil){
+     if($user->getUserId()==$userPerfil->getCaLogin())
+         $scliente = true;
+     else
+         continue;
+}
+
 $tipo="1";
 if ($this->getRequestParameter("id") || $this->getRequestParameter("consecutivo") ) {
     if( $this->getRequestParameter("id")!="" ){
@@ -217,6 +227,14 @@ switch ($action) {
             $i++;
         }
         
+        if ($permiso == 2 && $scliente==true) {
+            $button[$i]["name"] = "Novedades";
+            $button[$i]["tooltip"] = "Anotaciones de Servicio al Cliente";
+            $button[$i]["image"] = "22x22/note.png";
+            $button[$i]["onClick"] = "ventanaNotas()";
+            $i++;
+        }
+        
         if($tipo=="4" || $reporte->getEsOtm())
         {
             $button[$i]["name"] = "Instrucciones";
@@ -265,7 +283,7 @@ switch ($action) {
             $button[$i]["name"] = "Desbloquear ";
             $button[$i]["tooltip"] = "Desbloquea un reporte y confirma la aceptacion";
             $button[$i]["image"] = "22x22/unlock.gif";
-            $button[$i]["onClick"] = "desbloquear1()";
+            $button[$i]["onClick"] = "desbloquear1('".$this->getRequestParameter("idantecedente")."')";
             $i++;
 
             $button[$i]["id"] = "rechazar";
@@ -282,6 +300,15 @@ switch ($action) {
         $button[$i]["image"] = "22x22/5days.gif";
         $button[$i]["link"] = "/reportesNeg/listaVersiones/consecutivo/" . $reporte->getCaConsecutivo();
         $i++;
+        
+        if($reporte->getCaVersion()>1)
+        {
+            $button[$i]["name"] = "Cambios ";
+            $button[$i]["tooltip"] = "Muestra los cambios que se efectuaron contra la version anterior";
+            $button[$i]["image"] = "22x22/kspread_ksp.gif";
+            $button[$i]["link"] = "/reportesNeg/compReporte/id/" . $this->getRequestParameter("id") . "/impoexpo/" . $impoexpo . "/modo/" . $modo;
+            $i++;
+        }
         
         break;
     case "unificarReporte":
@@ -395,11 +422,22 @@ switch ($action) {
             $button[$i]["image"] = "22x22/5days.gif";
             $button[$i]["link"] = "/reportesNeg/listaVersiones/consecutivo/" . $reporte->getCaConsecutivo();
             $i++;
+            
+            if($reporte->getCaVersion()>1)
+            {
+                $button[$i]["name"] = "Cambios ";
+                $button[$i]["tooltip"] = "Muestra los cambios que se efectuaron contra la version anterior";
+                $button[$i]["image"] = "22x22/kspread_ksp.gif";
+                $button[$i]["link"] = "/reportesNeg/compReporte/id/" . $this->getRequestParameter("id") . "/impoexpo/" . $impoexpo . "/modo/" . $modo;
+                $i++;
+            }
+            
         }
         break;
 }
 ?>
 <script>
+    var idreportetmp;
     function rechazarReporte(){
         Ext.MessageBox.show({
            title: 'Rechazar Referecia',
@@ -687,7 +725,7 @@ switch ($action) {
     }
     
     
-    function desbloquear1(id)
+    /*function desbloquear1(id)
     {
         idreportetmp=id;
         if(window.confirm("Realmente desea desbloquear el reporte?"))
@@ -726,7 +764,73 @@ switch ($action) {
                 }
             });
         }
+    }*/
+    
+    
+    
+    function desbloquear1(id){
+        idreportetmp=id;        
+        Ext.MessageBox.show({
+           title: 'Desbloquear Entrega de Reporte',
+           msg: 'por favor coloque el motivo a notificar el Reporte de Negocios:',
+           width:300,
+           buttons:{
+              ok     : "Enviar",
+              cancel : "Cancelar"
+           },
+           multiline: true,
+           fn: desbloqueoAntecedentes,
+           animEl: 'desbloqueo-reporte',
+           modal: true
+        });        
+        Ext.MessageBox.getDialog().getEl().setStyle('z-index','80000');
     }
+
+    var desbloqueoAntecedentes = function(btn, text){        
+        if( btn == "ok"){
+            /*if( text.trim()==""){
+                alert("Debe colocar un motivo");
+            }else*/{
+                if(btn=="ok")
+                    href='/reportesNeg/desbloquearReporte';
+                Ext.MessageBox.wait('enviando Notificacion de desbloqueo', '');
+                Ext.Ajax.request(
+                {
+                    waitMsg: 'Enviando...',
+                    url: href,
+                    params :	{
+                        mensaje: text.trim(),
+                        idantecedente:idreportetmp
+                    },
+                    failure:function(response,options){
+                        alert( response.toSource() );
+                        Ext.Msg.hide();
+                        success = false;
+                        alert("Surgio un problema al tratar de rechzar el reporte")
+                    },
+                    success:function(response,options){
+                        var res = Ext.util.JSON.decode( response.responseText );
+                        if( res.success ){
+                            Ext.MessageBox.alert("Mensaje",'Se guardo correctamente el reporte y fue desbloqueado');
+                            alert('Se guardo correctamente el reporte');
+                            if(window.confirm('Desea enviar status inmediatamente?'))
+                            {
+                                if(res.transporte=='<?=Constantes::AEREO?>')
+                                    location.href="/traficos/listaStatus/modo/aereo/reporte/"+res.consecutivo;
+                                else
+                                    location.href="/traficos/listaStatus/modo/maritimo/reporte/"+res.consecutivo;
+                            }
+                            else
+                            {
+                                location.href=location.href;
+                            }
+                        }
+                    }
+                 }
+            );
+            }
+        }
+    };
     
     
     function rechazar1(id){
@@ -746,6 +850,7 @@ switch ($action) {
         });
         Ext.MessageBox.buttonText.yes = "Version";
         Ext.MessageBox.buttonText.no = "Todas las versiones";
+        Ext.MessageBox.getDialog().getEl().setStyle('z-index', '50000');
     }
 
     var rechaza1 = function(btn, text){
