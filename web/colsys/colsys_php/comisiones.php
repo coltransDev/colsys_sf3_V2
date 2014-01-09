@@ -173,7 +173,7 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
                 exit;
             }
             echo "<TR>";
-            echo "  <TD Class=listar COLSPAN=9 style='font-weight:bold; font-size: 10px;'>" . strtoupper($us->Value('ca_nombre')) . "</TD>";
+            echo "  <TD Class=listar COLSPAN=10 style='font-weight:bold; font-size: 10px;'>" . strtoupper($us->Value('ca_nombre')) . "</TD>";
             echo "</TR>";
             $utl_con = 0;
             $sob_ven = 0;
@@ -223,7 +223,7 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
             echo "  <TD Class=invertir COLSPAN=10></TD>";
             echo "</TR>";
             echo "<TR>";
-            echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=6>Totales por Vendedor :</TD>";
+            echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=7>Totales por Vendedor :</TD>";
             echo "  <TD Class=valores style='font-weight:bold;'>" . number_format($utl_con) . "</TD>";
             echo "  <TD Class=listar style='font-weight:bold;'>&nbsp;Sobreventa :</TD>";
             echo "  <TD Class=valores style='font-weight:bold;'>&nbsp;&nbsp;" . number_format($sob_ven) . "</TD>";
@@ -232,13 +232,13 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
             echo "  <TD Class=invertir COLSPAN=10></TD>";
             echo "</TR>";
             echo "<TR>";
-            echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=6>Comisión en Ventas :</TD>";
+            echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=7>Comisión en Ventas :</TD>";
             echo "  <TD Class=valores style='font-weight:bold;'>" . number_format($utl_con * $rs->Value('ca_porcentaje') / 100) . "</TD>";
             echo "  <TD Class=listar style='font-weight:bold;'>&nbsp;Com. Sobreventa :</TD>";
             echo "  <TD Class=valores style='font-weight:bold;'>&nbsp;&nbsp;" . number_format($sob_ven * $rs->Value('ca_porcentaje') / 100) . "</TD>";
             echo "</TR>";
             echo "<TR>";
-            echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=8>Gran Total para " . ucwords(strtolower($nom_ven)) . " :</TD>";
+            echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=9>Gran Total para " . ucwords(strtolower($nom_ven)) . " :</TD>";
             echo "  <TD Class=valores style='font-weight:bold;'>" . number_format(($utl_con * $rs->Value('ca_porcentaje') / 100) + ($sob_ven * $rs->Value('ca_porcentaje') / 100)) . "</TD>";
             echo "</TR>";
             echo "<TR HEIGHT=5>";
