@@ -13,8 +13,10 @@
 class Cotizacion extends BaseCotizacion {
 
     const EN_SEGUIMIENTO = "SEG";
-    const TIEMPO_IDG_ENTREGA_OPORTUNA = 32400; //9:00 Ticket 6237
     const FOLDER = "Cotizaciones";
+    const IDG_COLTRANS = 6; // Id del indicador de Oportunidad en la Entrega de Cotizaciones - Coltrans
+    const IDG_COLMAS   = 21; // Id del indicador de Oportunidad en la Entrega de Cotizaciones - Colmas
+    // const TIEMPO_IDG_ENTREGA_OPORTUNA = 32400; //9:00 Ticket 6237
 
     public function getId() {
         return $this->getCaIdcotizacion();
@@ -51,7 +53,7 @@ class Cotizacion extends BaseCotizacion {
             $tarea->setCaTexto($texto);
             $tarea->setCaFchcreado($fchCreado);
             $tarea->setCaFchvisible(date("Y-m-d H:i:s", time() + 3600));
-            $tarea->setTiempo(TimeUtils::getFestivos(), Cotizacion::TIEMPO_IDG_ENTREGA_OPORTUNA);
+            $tarea->setTiempo(TimeUtils::getFestivos(), $this->getTiempoIdg($fchCreado));
             $tarea->save();
 
             $this->setCaIdgEnvioOportuno($tarea->getCaIdtarea());
@@ -60,7 +62,7 @@ class Cotizacion extends BaseCotizacion {
 
 
         $tarea->setCaFchcreado($fchCreado);
-        $tarea->setTiempo(TimeUtils::getFestivos(), Cotizacion::TIEMPO_IDG_ENTREGA_OPORTUNA);
+        $tarea->setTiempo(TimeUtils::getFestivos(), $this->getTiempoIdg($fchCreado));
         $tarea->save();
 
         if ($tarea) {
@@ -73,6 +75,21 @@ class Cotizacion extends BaseCotizacion {
         return $tarea;
     }
 
+    /*
+     *
+     */
+
+    public function getTiempoIdg($fchTarea) {
+        if ($this->getCaEmpresa() == Constantes::COLTRANS) {
+            $idgMax = IdgTable::getUnIndicador(Cotizacion::IDG_COLTRANS, $fchTarea, $this->getUsuario()->getCaIdsucursal());
+        }else if ($this->getCaEmpresa() == Constantes::COLMAS) {
+            $idgMax = IdgTable::getUnIndicador(Cotizacion::IDG_COLMAS, $fchTarea, $this->getUsuario()->getCaIdsucursal());
+        }
+        
+        $tiempoIdg = $idgMax ? $idgMax->getCaLim1() * 3600 : 0;
+        return $tiempoIdg;
+    }
+    
     /*
      *
      */
