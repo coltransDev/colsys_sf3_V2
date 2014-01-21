@@ -664,6 +664,7 @@ class clientesActions extends sfActions {
                               <li>Copia  del  RUT</li>
                               <li>Balance General, Estado de Resultados y las respectivas notas  a los  Estados  Financieros  (certificado y dictaminado por  Revisor Fiscal o Contador Público)  con fecha  de corte a 31 de  diciembre del año inmediatamente  anterior o balance inicial  si la  compañía  se  encuentra  recientemente  constituida.  En caso de personas naturales Declaración de Renta.</li>
                               <li>Fotocopia del documento de identidad de la persona que  firma  la    Circular 0170  (Representante Legal o persona  facultada  según Cámara  de  Comercio)</li>
+                              <li>Resolución de la  DIAN que autoriza a  la  compañía  para  actuar  como  Comercializadoras Internacionales y/o  realizar  actividades como  importación de licores,  calzados,  textiles  y/o  confecciones. Si aplica.</li>
                            </ol>
                         </td>
                      </tr>
@@ -1531,10 +1532,10 @@ class clientesActions extends sfActions {
 
 
         $q = Doctrine_Manager::getInstance()->connection();
-        $query = "select ic.ca_referencia, ic.ca_idcliente, cl.ca_idalterno, cl.ca_compania, ic.ca_fchliberacion, ic.ca_notaliberacion, ic.ca_fchliberado, ii.ca_factura, ii.ca_hbls, u.ca_nombre, u.ca_sucursal";
+        $query = "select ic.ca_referencia, ic.ca_idcliente, cl.ca_idalterno, cl.ca_compania, ic.ca_fchliberacion, ic.ca_notaliberacion, ic.ca_fchliberado, ii.ca_factura, ic.ca_hbls, u.ca_nombre, u.ca_sucursal";
         $query.= "		from tb_inoclientes_sea ic";
         $query.= "		INNER JOIN vi_clientes_reduc cl ON ic.ca_idcliente = cl.ca_idcliente";
-        $query.= "		INNER JOIN tb_inoingresos_sea ii ON ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hbls=ii.ca_hbls";
+        $query.= "		INNER JOIN tb_inoingresos_sea ii ON ic.ca_idinocliente = ii.ca_idinocliente ";        
         $query.= "		INNER JOIN vi_usuarios u ON u.ca_login = ic.ca_usuliberado";
         $query.= "		where ic.ca_fchliberacion IS NOT NULL and ic.ca_fchliberacion BETWEEN '$fchinicial' and '$fchfinal'";
         $query.= "		and cl.ca_compania='$cliente'";
@@ -1556,14 +1557,13 @@ class clientesActions extends sfActions {
             $estadisticas = array();
             $folder = "Rc";
             $file = sfConfig::get('app_digitalFile_root') . $folder . DIRECTORY_SEPARATOR . $request->getParameter("archivo");
-
+            
             chmod($file, 0777);
             $lines = file($file);
-
             $resultado = array();
             $resultado1 = array();
             $tipos = array("tb_inoingresos_sea", "tb_inoingresos_air", "tb_expo_ingresos", "tb_brk_ingresos");
-            $pk = array("tb_inoingresos_sea" => explode(",", "ca_referencia,ca_idcliente,ca_hbls,ca_factura"),
+            $pk = array("tb_inoingresos_sea" => explode(",", "ca_idinoingreso"),
                 "tb_inoingresos_air" => explode(",", "ca_referencia,ca_idcliente,ca_hawb,ca_factura"),
                 "tb_expo_ingresos" => explode(",", "ca_referencia,ca_idcliente,ca_documento,ca_factura"),
                 "tb_brk_ingresos" => explode(",", "ca_referencia,ca_factura"));
@@ -1640,13 +1640,13 @@ class clientesActions extends sfActions {
 
                 foreach ($tipos as $tabla) {
                     //$sql="select t.*,u.ca_idsucursal from ".$tabla." t,control.tb_usuarios u where (ca_factura ='".$nfact."' or ca_factura ='F".$suc_factura."-".$nfact."' ) and t.ca_usucreado=u.ca_login and u.ca_idsucursal in ($sucursal) ";
-                    $sql = "select t.*,u.ca_idsucursal from " . $tabla . " t,control.tb_usuarios u where (ca_factura ='" . $nfact . "' or ca_factura ='F" . $suc_factura . "-" . $nfact . "' ) and t.ca_usucreado=u.ca_login and u.ca_idsucursal in ($sucursal) ";
+                    $sql = "select t.*,u.ca_idsucursal 
+                        from " . $tabla . " t,control.tb_usuarios u where (ca_factura ='" . $nfact . "' or ca_factura ='F" . $suc_factura . "-" . $nfact . "' ) and t.ca_usucreado=u.ca_login and u.ca_idsucursal in ($sucursal) ";
                     //echo  $sql."<br>";
                     $st = $con->execute($sql);
-                    $ref = $st->fetch();
+                    $ref = $st->fetch();                    
 
                     if ($ref) {
-                        //echo "$i<br>";
                         $set = "";
                         $sql_update = "update " . $tabla . " set ";
                         $where = "";
