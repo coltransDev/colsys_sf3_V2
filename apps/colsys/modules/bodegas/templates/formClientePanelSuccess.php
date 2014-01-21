@@ -110,7 +110,8 @@ $tbodegaJ = $sf_data->getRaw("tbodegas");
                         id: "direccion",
                         maxLength: 100,
                         width: 540
-                    },
+                    }
+                    ,
                     {
                         xtype: "hidden",
                         name: "idbodega",
