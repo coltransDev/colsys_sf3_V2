@@ -223,7 +223,7 @@ class antecedentesActions extends sfActions {
          $idlinea = ($request->getParameter("idlinea") ? $request->getParameter("idlinea") : "0");
 
          $mmRef = Utils::parseDate($fchllegada, "m");
-         $aaRef = substr(Utils::parseDate($fchllegada, "Y"), -1, 1);
+         $aaRef = substr(Utils::parseDate($fchllegada, "Y"), -2, 2);
          if (Utils::parseDate($fchllegada, "d") >= "26") {
             $mmRef = $mmRef + 1;
             if ($mmRef >= 13) {
@@ -233,7 +233,7 @@ class antecedentesActions extends sfActions {
          }
 
          $numref = str_replace("|", ".", $request->getParameter("referencia"));
-
+         
          if ($numref) {
             $master = Doctrine::getTable("InoMaestraSea")->find($numref);
             $this->forward404Unless($master);
@@ -263,7 +263,7 @@ class antecedentesActions extends sfActions {
             $master->setCaCarpeta(true);
 
          $master->save($conn);
-
+         
          $q = $conn->createQuery()
                  ->delete("ic.*")
                  ->from('InoClientesSea ic')
@@ -286,7 +286,8 @@ class antecedentesActions extends sfActions {
                foreach ($proveedores as $proveedor) {
                   $status = $reporte->getUltimoStatus();
                   if ($status && $status->getCaDoctransporte()) {
-                     $inoCliente = Doctrine::getTable("InoClientesSea")->find(array($numref, $reporte->getCliente()->getCaIdcliente(), $status->getCaDoctransporte()));
+                     $inoCliente = Doctrine::getTable("InoClientesSea")->find(array($status->getCaDoctransporte()));
+
                      if (!$inoCliente)
                         $inoCliente = new InoClientesSea();
 
@@ -320,7 +321,7 @@ class antecedentesActions extends sfActions {
                   }
                }
             }
-         }
+         }         
          //$conn->rollBack();
          $conn->commit();
          $this->responseArray = array("success" => true, "numref" => $numref);
@@ -425,7 +426,7 @@ class antecedentesActions extends sfActions {
       $idlinea = ($request->getParameter("idlinea") ? $request->getParameter("idlinea") : "0");
 
       $mmRef = Utils::parseDate($fchllegada, "m");
-      $aaRef = substr(Utils::parseDate($fchllegada, "Y"), -1, 1);
+      $aaRef = substr(Utils::parseDate($fchllegada, "Y"), -2, 2);
       if (Utils::parseDate($fchllegada, "d") >= "26") {
          $mmRef = $mmRef + 1;
          if ($mmRef >= 13) {
@@ -962,7 +963,7 @@ class antecedentesActions extends sfActions {
       $this->user = $this->getUser();
       $this->format = $format;
 
-      //$this->emails = $ref->getEmails();
+      $this->emails = $ref->getEmails();
 
 
       $usuarios = Doctrine::getTable("Usuario")
@@ -996,12 +997,15 @@ class antecedentesActions extends sfActions {
       $folder = "Referencias" . DIRECTORY_SEPARATOR . $this->ref->getCaReferencia();
       $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
       $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
-
-      foreach ($archivos as $archivo) {
-         $file = explode("/", $archivo);
-         $filenames[]["file"] = $file[count($file) - 1];
+      
+      if($archivos){
+        $filename = array();
+        foreach ($archivos as $archivo) {
+           $file = explode("/", $archivo);
+           $filenames[]["file"] = $file[count($file) - 1];
+        }
+        $this->filenames = $filenames;
       }
-      $this->filenames = $filenames;
    }
 
    /**

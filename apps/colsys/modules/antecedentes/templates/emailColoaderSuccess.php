@@ -22,7 +22,8 @@
          </tr>
          <tr><td>
 <?
-    include_component("antecedentes", "fileManager", array("ref"=>$ref,"format"=>"coloader"));
+    //include_component("antecedentes", "fileManager", array("ref"=>$ref,"format"=>"coloader"));
+        include_component("gestDocumental", "returnFiles",array("idsserie"=>"2","view"=>"email","ref1"=>$ref->getCaReferencia(),"ref2"=>"","ref3"=>"","format"=>"coloader"));
 /*        foreach($filenames as $file)
         {
             echo $file["file"]."<br>";

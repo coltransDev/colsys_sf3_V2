@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 
+
+
 include_component("gestDocumental", "widgetUploadButton");
 $i=1;
 ?>
@@ -15,7 +17,7 @@ button=0;
      if($format!="coloader")
      {
      ?>
-        var uploadButton = new WidgetUploadButton({
+        /*var uploadButton = new WidgetUploadButton({
             text: "Agregar Archivo",
             iconCls: 'arrow_up',
             folder: "<?=base64_encode("Referencias/".$ref->getCaReferencia())?>",
@@ -23,7 +25,7 @@ button=0;
             confirm: true,
             callback:"actualizar"
         });
-        uploadButton.render("button1");  
+        uploadButton.render("button1");  */
      <?
      }
      ?>
@@ -62,7 +64,10 @@ button=0;
     }
 </script>
 
-
+<?
+if(count($filenames)>0)
+{
+?>
 <table class="tableList alignLeft" width="100%" id="archivos">
     <tr>
        <th colspan="2">
@@ -116,6 +121,9 @@ button=0;
         }
     ?>
 </table>
+<?
+}
+?>
 <script>
 button=<?=$i?>;
 </script>

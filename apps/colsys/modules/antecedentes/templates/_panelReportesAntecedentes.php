@@ -55,7 +55,7 @@ include_component("gestDocumental", "widgetUploadButton");
 
 
         this.record = Ext.data.Record.create([
-            {name: 'sel', type: 'bool'},
+            {name: 'sel', type: 'bool'},            
             {name: 'idreporte', type: 'integer', mapping: 'r_ca_idreporte'},
             {name: 'consecutivo', type: 'string', mapping: 'r_ca_consecutivo'},
             {name: 'hbl', type: 'string', mapping: 'ic_ca_hbls'},
@@ -371,7 +371,7 @@ include_component("gestDocumental", "widgetUploadButton");
                                 idreporte: res.reportes[i].ca_idreporte,
                                 consecutivo: res.reportes[i].ca_consecutivo,
                                 hbl: res.reportes[i].doctransporte,
-                                cliente: res.reportes[i].compania
+                                cliente: res.reportes[i].compania                                
                             });
                             storeReportes.addSorted(newRec);
                             storeReportes.sort("orden", "ASC");

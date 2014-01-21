@@ -139,25 +139,12 @@ if( $format!="email" ){
     
     if( $format!="email" )
     {
-        include_component("antecedentes", "fileManager", array("ref"=>$ref));
+        //include_component("antecedentes", "fileManager", array("ref"=>$ref));
     }
     else
     {
-?>
-         <table class="tableList alignLeft" width="100%">         
-         <tr>
-            <th>Archivos Adjuntados</th>
-         </tr>
-         <tr><td>
-<?
-        foreach($filenames as $file)
-        {
-            echo $file["file"]."<br>";
-        }
-?>
-        </td></tr>
-        </table>
-<?
+        
+        //include_component("pruebas", "returnFiles",array("serie"=>"4","subserie"=>"2","ref1"=>$ref->getCaReferencia(),"ref2"=>"","ref3"=>""));
     }
     ?>
 
@@ -261,8 +248,11 @@ if( $format!="email" ){
             </td>
         </tr>
         
-    </table>
+    </table>    
+    <a href="/gestDocumental/formUploadExt4/ref1/<?=str_replace(".","|",$ref->getCaReferencia())?>/idsserie/2"><img src="/images/48x48/edit_add.png" title="Agregar Archivo"></a>
     <?
+    
+    include_component("gestDocumental", "returnFiles",array("idsserie"=>"2","view"=>"email","ref1"=>$ref->getCaReferencia(),"ref2"=>"","ref3"=>""));
     if( count($emails)>0 && $format!="email" ){
     ?>
     <br />
