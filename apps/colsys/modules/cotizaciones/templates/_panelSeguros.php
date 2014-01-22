@@ -446,7 +446,7 @@ Ext.extend(PanelSeguros, Ext.grid.EditorGridPanel, {
 
             },
             success: function(xhr) {
-                //alert( xhr.responseText );
+                alert( xhr.responseText );
                 var newComponent = eval(xhr.responseText);
 
                 //Se crea la ventana

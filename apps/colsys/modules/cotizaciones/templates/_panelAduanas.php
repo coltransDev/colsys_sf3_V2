@@ -1,5 +1,6 @@
 <?
 $aduanas = $sf_data->getRaw("aduanas");
+
 ?>
 <script type="text/javascript">
 PanelAduanas = function( config ){
@@ -11,7 +12,6 @@ PanelAduanas = function( config ){
     */
     this.record = Ext.data.Record.create([
         {name: 'idcotizacion', type: 'string'},
-        {name: 'transporte', type: 'string'},
         {name: 'nacionalizacion', type: 'string'},
         {name: 'consecutivo', type: 'int'},
         {name: 'idconcepto', type: 'int'},
@@ -41,7 +41,7 @@ PanelAduanas = function( config ){
             },
             this.record
         ),
-        sortInfo:{field: 'transporte', direction: "ASC"},
+        sortInfo:{field: 'nacionalizacion', direction: "ASC"},
         proxy: new Ext.data.MemoryProxy(this.data)
     });
 
@@ -83,13 +83,7 @@ PanelAduanas = function( config ){
         lazyRender:true,
         listClass: 'x-combo-list-small',
         store : this.storeRecargos/*,
-        listeners:{
-            select:function(combo, record, index)
-            {
-                Ext.getCmp("editor-recargos").store.setBaseParam("transporte",record.data.field1);
-                Ext.getCmp("editor-recargos").store.reload();
-            }
-        }*/
+        listeners: {focus: function (a,b,c){alert(this.)}}*/
     });
 
     this.editorNacionalizaciones = new Ext.form.ComboBox({
@@ -101,6 +95,13 @@ PanelAduanas = function( config ){
         lazyRender:true,
         listClass: 'x-combo-list-small',
         store: [['Marítimo', 'Nacionalización en Puerto'],['Aéreo', 'Nacionalización Aéreo/OTM']],
+        listeners:{
+            select:function(combo, record, index)
+            {
+                Ext.getCmp("editor-recargos").store.setBaseParam("transporte",record.data.field1);
+                Ext.getCmp("editor-recargos").store.reload();
+            }
+    }
     });
 
     this.columns = [
@@ -267,7 +268,6 @@ PanelAduanas = function( config ){
 
         listeners:{
             beforeedit: this.onBeforeEdit,
-            validateedit: this.onValidateEdit,
             rowcontextmenu:this.onRowcontextMenu,
             cellclick:this.onRowcellclick
         }
@@ -367,6 +367,7 @@ Ext.extend(PanelAduanas, Ext.grid.EditorGridPanel, {
     },
     
     onBeforeEdit: function(e){
+
         if( e.field=="aplicacion" || e.field=="aplicacionminimo" ){
             var data = [
                 <?
@@ -385,53 +386,11 @@ Ext.extend(PanelAduanas, Ext.grid.EditorGridPanel, {
             var ed = this.colModel.getCellEditor(e.column, e.row);            
             ed.field.store.loadData( data );            
         }
-        else if( e.field == "concepto" ){
-            this.storeRecargos.removeAll();
-            this.storeRecargos.setBaseParam("transporte",e.record.data.transporte);
-            this.storeRecargos.load();
-        }
         else if( e.field == "parametro" ){
             this.storeParametros.removeAll();
             this.storeParametros.setBaseParam("idconcepto",e.record.data.idconcepto);
             this.storeParametros.load();
         }
-    },
-
-    onValidateEdit : function(e){
-    
-        var rec = e.record;
-        var ed = this.colModel.getCellEditor(e.column, e.row);
-        var store = ed.field.store;
-        var recordConcepto = this.record;
-        var storeGrid = this.store;
-        recordsConceptos = storeGrid.getRange();
-        if( e.field == "concepto"){
-            for( var j=0; j< recordsConceptos.length; j++){
-                if( recordsConceptos[j].data.tipo=="concepto" ){
-                    if(recordsConceptos[j].data.idconcepto==e.value)
-                    {
-                        alert(r.data.idconcepto);
-                    }
-                }
-            }
-        
-            store.each( function( r ){            
-                if( r.data.idconcepto==e.value ){
-                    rec.set("idconcepto", r.data.idconcepto );
-                    e.value = r.data.concepto;
-                    return true;
-                }
-            });
-         }else if( e.field == "nacionalizacion"){
-             store.each( function( r ){
-                 if( r.data.field1==e.value ){
-                    rec.set("transporte", r.data.field1 );
-                    e.value = r.data.field2;
-                    return true;
-                 }
-             }
-             )
-         }
     },
 
     /*
@@ -537,6 +496,11 @@ Ext.extend(PanelAduanas, Ext.grid.EditorGridPanel, {
         records.push( rec );
         storeAduanasCot.insert( 0, records );
         rec = storeAduanasCot.getAt(0);
+        rec.set("prima_tip", "%");
+        rec.set("idmoneda", "USD");
+        rec.set("idmonedaobtencion", "USD");
+
+
     },
 
     /*
@@ -580,7 +544,6 @@ Ext.extend(PanelAduanas, Ext.grid.EditorGridPanel, {
                                 if( r.data.sel==true ){
 
                                     var rec = new recordGrilla({idcotizacion:'<?=$cotizacion->getCaIdcotizacion()?>',
-                                                          transporte:'',
                                                           nacionalizacion:'',
                                                           idconcepto:0,
                                                           concepto:'',
@@ -599,7 +562,6 @@ Ext.extend(PanelAduanas, Ext.grid.EditorGridPanel, {
                                     //storeAduanasCot.insert( index, records );
                                     storeAduanasCot.insert( 0, records );
                                     rec = storeAduanasCot.getAt(0);
-                                    rec.set("transporte", r.data.transporte );
                                     rec.set("nacionalizacion", r.data.nacionalizacion );
                                     rec.set("idconcepto", r.data.idconcepto );
                                     rec.set("concepto", r.data.concepto );
