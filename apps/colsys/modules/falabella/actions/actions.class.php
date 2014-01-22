@@ -609,7 +609,7 @@ class falabellaActions extends sfActions {
                                         INNER JOIN tb_reportes rp ON rp.ca_idreporte = rs.ca_idreporte
                                     WHERE rs.ca_idetapa in ('IACAD','IMCPD') 
                                     GROUP BY rp.ca_consecutivo, rs.ca_fchsalida, rs.ca_fchllegada, ca_diferencia,rs.ca_piezas,rs.ca_peso,rs.ca_volumen,extract(YEAR from rs.ca_fchsalida) ,extract(MONTH from rs.ca_fchsalida)) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) 
-                        WHERE vi_repindicadores.ca_impoexpo = '" . Constantes::IMPO . "' and vi_repindicadores.ca_transporte = '".$this->transporte."' and upper(vi_repindicadores.ca_compania) like upper('%falabella%')  
+                        WHERE vi_repindicadores.ca_impoexpo = '" . Constantes::IMPO . "' and vi_repindicadores.ca_transporte = '".$this->transporte."' and upper(vi_repindicadores.ca_compania) like upper('%falabella de colombia%')  
                               and vi_repindicadores.ca_traorigen= '".$this->pais_origen."' and sq.ca_fchsalida BETWEEN '".$this->fechainicial."' and '".$this->fechafinal."'
                         ORDER BY sq.ca_fchsalida";
 
@@ -637,7 +637,7 @@ class falabellaActions extends sfActions {
                                 JOIN tb_inomaestra_sea m ON m.ca_referencia = ics.ca_referencia
                                 JOIN tb_inoequipos_sea e ON e.ca_referencia = ics.ca_referencia
                                 JOIN tb_conceptos tt ON e.ca_idconcepto = tt.ca_idconcepto
-                        WHERE v.ca_impoexpo IN ('" . Constantes::IMPO . "','" . Constantes::OTMDTA . "') and v.ca_transporte IN ('".$this->transporte."','Terrestre') and upper(v.ca_compania) like upper('%falabella%')  
+                        WHERE v.ca_impoexpo IN ('" . Constantes::IMPO . "','" . Constantes::OTMDTA . "') and v.ca_transporte IN ('".$this->transporte."','Terrestre') and upper(v.ca_compania) like upper('%falabella de colombia%')  
                               and v.ca_traorigen= '".$this->pais_origen."' and sq.ca_fchsalida BETWEEN '".$this->fechainicial."' and '".$this->fechafinal."'
                         ORDER BY sq.ca_fchsalida";
                 //exit;
