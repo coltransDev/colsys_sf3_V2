@@ -97,7 +97,8 @@ $aduanas = Doctrine::getTable("CotAduana")
         ->createQuery("ca")
         ->where("ca.ca_idcotizacion = ?", $cotizacion->getCaIdcotizacion())
         ->innerJoin("ca.Costo c")
-        ->addOrderBy("c.ca_transporte, c.ca_costo")
+        ->leftJoin("c.ConceptoAduana a ON c.ca_idcosto = a.ca_idconcepto")
+        ->addOrderBy("c.ca_transporte, a.ca_consecutivo")
         ->execute();
 
 $imprimirObservaciones = false;
@@ -121,18 +122,9 @@ if (count($aduanas) > 0) {
     $vigencia = array();
 
     foreach ($aduanas as $aduana) {
+        $pdf->beginGroup();
         if ($linea != $aduana->getCosto()->getCaTransporte()){
             //Control impresión
-            $pdf->beginGroup();
-            if (count($vigencia) != 0){
-                foreach($vigencia as $key => $val){
-                    $pdf->Ln(1);
-                    $pdf->SetFont($font, '', 7);
-                    $pdf->Cell(0, 4, str_repeat("*", $key + 1)." Vigencia: ".$val."\n", 0, 1, 'L', 0);
-                }
-                $vigencia = array();
-                $pdf->flushGroup();
-            }
             if ($aduana->getCosto()->getCaTransporte() == Constantes::MARITIMO) {
                 $nacionalizacion = "Nacionalización en Puerto";
             } else if ($aduana->getCosto()->getCaTransporte() == Constantes::AEREO) {
@@ -164,7 +156,7 @@ if (count($aduanas) > 0) {
 		
         $valor = "";
         if ($aduana->getCaValor() > 0 and $aduana->getCaValor() < 1) {
-                $valor.= Utils::formatNumber($aduana->getCaValor()*100)." %";
+                $valor.= Utils::formatNumber($aduana->getCaValor())." %";
         }else if ($aduana->getCaValor() >= 1) {
                 $valor.= "$ ".Utils::formatNumber($aduana->getCaValor());
         }
@@ -174,7 +166,7 @@ if (count($aduanas) > 0) {
         if ($aduana->getCaValorminimo()){
             $valor.= " Mínimo :";
             if ($aduana->getCaValorminimo() > 0 and $aduana->getCaValorminimo() < 1) {
-                    $valor.= Utils::formatNumber($aduana->getCaValorminimo()*100)." %";
+                    $valor.= Utils::formatNumber($aduana->getCaValorminimo())." %";
             }else if ($aduana->getCaValorminimo() >= 1) {
                     $valor.= "$ ".Utils::formatNumber($aduana->getCaValorminimo());
             }
@@ -183,32 +175,16 @@ if (count($aduanas) > 0) {
             }
         }
 		
-        $num_vigencia = "";
-        if ($aduana->getCaFchini() != "" || $aduana->getCaFchfin() != "") {
-            $vig_tmp = $aduana->getCaFchini() . " Hasta " . $aduana->getCaFchfin();
-            if (array_search($vig_tmp, $vigencia) === FALSE){
-                $vigencia[] = $vig_tmp;
-            }
-            $num_vigencia = " ".str_repeat("*", array_search($vig_tmp, $vigencia) + 1);
-        }
         $row = array(
-            $aduana->getCosto()->getCaCosto().$num_vigencia,
+            $aduana->getCosto()->getCaCosto(),
             $valor
         );
         if ($imprimirObservaciones) {
             array_push($row, $aduana->getCaObservaciones());
         }
         $pdf->Row($row);
+        $pdf->flushGroup();
     }
-}
-if (count($vigencia) != 0){
-    foreach($vigencia as $key => $val){
-        $pdf->Ln(1);
-        $pdf->SetFont($font, '', 7);
-        $pdf->Cell(0, 4, str_repeat("*", $key + 1)." Vigencia: ".$val."\n", 0, 1, 'L', 0);
-    }
-    $vigencia = array();
-    $pdf->flushGroup();
 }
 
 // ========================== Notas Importantes ========================== //

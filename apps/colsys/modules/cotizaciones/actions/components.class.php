@@ -164,6 +164,7 @@ class cotizacionesComponents extends sfComponents {
             $this->aduanas[] = array('oid' => $aduana->getCaIdaduana(),
                 'idcotizacion' => $aduana->getCaIdcotizacion(),
                 'idconcepto' => $aduana->getCaIdconcepto(),
+                'transporte' => utf8_encode($aduana->getCosto()->getCaTransporte()),
                 'nacionalizacion' => utf8_encode(($aduana->getCosto()->getCaTransporte()==Constantes::MARITIMO)?"Nacionalización en Puerto":(($aduana->getCosto()->getCaTransporte()==Constantes::AEREO)?"Nacionalización Aéreo/OTM":"")),
                 'concepto' => utf8_encode($aduana->getCosto()->getCaCosto()),
                 'valor' => $aduana->getCaValor(),

@@ -177,7 +177,20 @@ class crmActions extends sfActions {
             }else{
                 $cliente->setCaComentario( null );
             }
-
+            
+            if($request->getParameter("global")=="on"){
+                $cliente->setProperty('cuentaglobal', "|true" );
+            }else{
+                $cliente->setProperty('cuentaglobal', "" );
+            }
+            
+            if($request->getParameter("consolidar")=="on"){
+                $cliente->setProperty('consolidar_comunicaciones', "|true" );
+            }else{
+                $cliente->setProperty('consolidar_comunicaciones', "" );
+            }
+            $cliente->setCaPropiedades( str_replace("|","",$cliente->getCaPropiedades( ))  );
+            
             $ids->save( $conn );
             $cliente->setCaIdgrupo( $ids->getCaId() );
             $cliente->setCaIdcliente( $ids->getCaId() );
@@ -200,11 +213,9 @@ class crmActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeDatosClienteFormPanel(sfWebRequest $request) {
-        $this->forward404Unless( $request->getParameter("idcliente") );
-        
+        $this->forward404Unless( $request->getParameter("idcliente") );        
         $ids = Doctrine::getTable("Ids")->find( $request->getParameter("idcliente") );
-        $this->forward404Unless( $ids );
-        
+        $this->forward404Unless( $ids );        
         
         
         $data = array();        
@@ -217,7 +228,6 @@ class crmActions extends sfActions {
         $data["idtrafico"] = $ids->getIdsTipoIdentificacion()->getCaIdtrafico();
         $data["dv"] = $ids->getCaDv();
         $data["website"] = $ids->getCaWebsite();
-        
         
         $cliente = Doctrine::getTable("Cliente")->find( $request->getParameter("idcliente") );
         if( $cliente ){
@@ -272,6 +282,8 @@ class crmActions extends sfActions {
             $data["fax"] = $cliente->getCaFax();
 
             $data["preferencias"] = utf8_encode($cliente->getCaPreferencias());
+            $data["global"] = $cliente->getProperty("cuentaglobal");
+            $data["consolidar"] = $cliente->getProperty("consolidar_comunicaciones");
         }
         $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");

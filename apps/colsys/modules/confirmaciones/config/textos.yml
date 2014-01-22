@@ -27,9 +27,15 @@ mensajeConfOTMCliente: |
   
   Cualquier información adicional respecto al OTM favor contactar a  
 
-mensajeFact: |
+mensajeFacFletes: |
   Adjunto enviamos la Factura  de la importacion maritima  en referencia, la cual es soporte de certificacion de fletes ante la DIAN.
   Cualquier información adicional con gusto  será suministrada.
+  
+mensajeFacOtm: |
+  Adjunto enviamos la Factura de trámite OTM.
+
+mensajeFacCont: |
+  Adjunto enviamos la Factura de Contenedores.
   
 mensajePlanilla: |
   Nos permitimos informar el número de planilla de envío asignado por la DIAN - Muisca,  con el fin de que prosiga su proceso de nacionalización.
@@ -39,8 +45,5 @@ mensajeDesc: |
   
   
 mensajeConfPuerto: |
-  Buenos días:
-    
+  Buenos días:    
   Puerto notifica la llegada a puerto de la(s) carga(s) con el siguiente registro:
-    
-    

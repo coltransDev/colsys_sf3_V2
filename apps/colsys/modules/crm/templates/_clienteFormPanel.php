@@ -624,7 +624,7 @@ include_component("widgets", "widgetCoordinadoresAduana");
                                         value: '',
                                         allowBlank:true,
                                         width: 200,
-                                        maxLength: 50
+                                        maxLength: 255
                                         
                                     },
                                     {
@@ -913,6 +913,31 @@ include_component("widgets", "widgetCoordinadoresAduana");
                                     }
 
                                 ]
+                            },
+                            {
+                                xtype: 'fieldset',
+                                border: true,
+                                title: 'Tipo de Cliente',
+                                defaultType: 'checkbox',
+                                defaults: {
+                                    // applied to each contained panel
+                                    bodyStyle:'padding-right:20px',
+                                    border: false
+                                },
+                                items: [
+                                    {
+                                        fieldLabel: 'Tipo de Cliente',
+                                        boxLabel: 'Cuentas Globales',
+                                        name: 'global',
+                                        id: 'global'
+                                    }, {
+                                        fieldLabel: '',
+                                        labelSeparator: '',
+                                        boxLabel: 'Cliente de Cuadro',
+                                        name: 'consolidar',
+                                        id: 'consolidar'
+                                    }
+                                ]
                             }
                         ]
                     },{
@@ -1071,7 +1096,6 @@ include_component("widgets", "widgetCoordinadoresAduana");
                     Ext.getCmp("dv_id").disable();
                     Ext.getCmp("tipo_identificacion_id").disable();                      
                 }
-                
                 
             }else{
                 var tipo = Ext.getCmp("tipo_identificacion_id");  

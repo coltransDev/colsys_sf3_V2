@@ -274,12 +274,14 @@ class cotseguimientosActions extends sfActions
                 $tarea  =  Doctrine::gettable("NotTarea")->find( $producto->getCaIdtarea() );
                 $tarea->setCaFchterminada( date("Y-m-d H:i:s") );
                 $tarea->save();
+                $texto = "Borra Seguimiento Id:".$tarea->getCaIdtarea();
             }
         }else{
              if( $cotizacion->getCaIdtarea() ){
                 $tarea  =  Doctrine::gettable("NotTarea")->find( $cotizacion->getCaIdtarea() );
                 $tarea->setCaFchterminada( date("Y-m-d H:i:s") );
                 $tarea->save();
+                $texto = "Borra Seguimiento Id:".$tarea->getCaIdtarea();
             }
         }
 
@@ -295,10 +297,10 @@ class cotseguimientosActions extends sfActions
         }
         $seguimiento->setCaLogin( $this->getUser()->getUserId() );
         $seguimiento->setCaFchseguimiento( date("Y-m-d H:i:s") );
-        $seguimiento->setCaSeguimiento( $request->getParameter("seguimiento") );
+        $seguimiento->setCaSeguimiento( $request->getParameter("seguimiento").". ".$texto);
         $seguimiento->setCaEtapa( $request->getParameter("etapa") );
         $seguimiento->save();
-
+        
         if( $request->getParameter("prog_seguimiento") ){
             $titulo = "Seguimiento Cotización ".$cotizacion->getCaConsecutivo()." ".$cotizacion->getCliente()->getCaCompania()."";
             $texto = "Ha programado un seguimiento para una cotización, por favor haga click en el link para realizar esta tarea";
