@@ -26,8 +26,9 @@ class inoMaritimoActions extends sfActions {
     */
    public function executeFormCostos(sfWebRequest $request) {
 
-      $user = $this->getUser();
+      $user = $this->getUser();      
       $this->forward("inoMaritimo", "formCostosNew");
+      
    }
 
    /**
@@ -47,7 +48,7 @@ class inoMaritimoActions extends sfActions {
               ->execute();
 
       foreach ($utilidades as $ut) {
-         $this->utilidades[$ut->getCaHbls()] = $ut->getCaValor();
+         $this->utilidades[$ut->getCaIdinocliente()] = $ut->getCaValor();
       }
 
       $this->inoClientes = Doctrine::getTable("InoClientesSea")
@@ -56,6 +57,15 @@ class inoMaritimoActions extends sfActions {
               ->addWhere("u.ca_referencia = ?", $referencia->getCaReferencia())
               ->addOrderBy("u.ca_hbls")
               ->execute();
+      $this->referencia = $referencia;
+   }
+
+   /**
+    * Executes index action
+    *
+    * @param sfRequest $request A request object
+    */
+   public function executeFormCostosNew(sfWebRequest $request) {
 
       $this->form = new UtilidadesNewForm();
       $this->form->setReferencia($referencia);
@@ -118,34 +128,35 @@ class inoMaritimoActions extends sfActions {
     *
     * @param sfRequest $request A request object
     */
-   public function executeFormCostosNew(sfWebRequest $request) {
+   public function executeFormCostosNew1(sfWebRequest $request) {
 
       $this->forward404Unless($request->getParameter("referencia"));
-      $referencia = Doctrine::getTable("InoMaestraSea")->find($request->getParameter("referencia"));
-      $this->forward404Unless($referencia);
-
+      $referencia = Doctrine::getTable("InoMaestraSea")->find($request->getParameter("referencia"));      
+      $this->forward404Unless($referencia);      
       $this->utilidades = array();
 
       $monedaLocal = $this->getUser()->getIdmoneda();
 
-      $oid = $request->getParameter("cl");
-      if ($oid) {
-         $inoCosto = Doctrine::getTable("InoCostosSea")->find($oid);
+      $this->idinocosto = $request->getParameter("idinocosto");
+      
+      //echo $this->idinocosto;
+      if ($this->idinocosto) {
+         $inoCosto = Doctrine::getTable("InoCostosSea")->find($this->idinocosto);
+         //echo $inoCosto->getCaFactura();
          $this->forward404Unless($inoCosto);
 
          $utilidades = Doctrine::getTable("InoUtilidadSea")
                  ->createQuery("u")
-                 ->addWhere("u.ca_referencia = ?", $referencia->getCaReferencia())
-                 ->addWhere("u.ca_idcosto = ?", $inoCosto->getCaIdcosto())
-                 ->addWhere("u.ca_factura = ?", $inoCosto->getCaFactura())
+                 ->addWhere("u.ca_idinocosto = ?", $this->idinocosto)                 
                  ->execute();
+         
          foreach ($utilidades as $ut) {
-            $this->utilidades[$ut->getCaHbls()] = $ut->getCaValor();
+            $this->utilidades[$ut->getCaIdinocliente()] = $ut->getCaValor();
          }
       } else {
          $inoCosto = new InoCostosSea();
       }
-
+      
       $this->inoClientes = Doctrine::getTable("InoClientesSea")
               ->createQuery("u")
               ->innerJoin("u.Cliente cl")
@@ -182,23 +193,20 @@ class inoMaritimoActions extends sfActions {
          if ($bindValues["idmoneda"] == $monedaLocal) {
             $bindValues["tcambio"] = 1;
          }
-
+        
          foreach ($this->inoClientes as $ic) {
             $bindValues["util_" . $ic->getCaIdinocliente()] = $request->getParameter("util_" . $ic->getCaIdinocliente());
          }
-
+         
          $this->form->bind($bindValues);
          if ($this->form->isValid()) {
             $conn = Doctrine::getTable("Reporte")->getConnection();
             $conn->beginTransaction();
             try {
-
                if ($bindValues["factura_ant"]) {
                   $utils = Doctrine::getTable("InoUtilidadSea")
                           ->createQuery("u")
-                          ->addWhere("u.ca_referencia = ?", $bindValues["referencia"])
-                          ->addWhere("u.ca_idcosto = ?", $bindValues["idcosto_ant"])
-                          ->addWhere("u.ca_factura = ?", $bindValues["factura_ant"])
+                          ->addWhere("u.ca_idinocosto = ?", $this->idinocosto)                          
                           ->execute();
                   foreach ($utils as $u) {
                      $u->delete($conn);
@@ -215,7 +223,11 @@ class inoMaritimoActions extends sfActions {
                $inoCosto->setCaTcambioUsd($bindValues["tcambio_usd"]);
                $inoCosto->setCaProveedor($bindValues["proveedor"]);
                $inoCosto->save($conn);
-
+               
+               if(!$this->idinocosto)
+                $this->idinocosto=$inoCosto->getCaIdinocostosSea();
+               
+               
                foreach ($bindValues as $key => $val) {
                   if (substr($key, 0, 4) == "util") {
                      if ($val) {
@@ -226,12 +238,14 @@ class inoMaritimoActions extends sfActions {
                                 ->fetchOne();
 
                         $ut = new InoUtilidadSea();
-                        $ut->setCaReferencia($bindValues["referencia"]);
-                        $ut->setCaIdcliente($ic->getCaIdcliente());
-                        $ut->setCaHbls($ic->getCaHbls());
-                        $ut->setCaIdcosto($bindValues["idcosto"]);
-                        $ut->setCaFactura($bindValues["factura"]);
+                        //$ut->setCaReferencia($bindValues["referencia"]);
+                        //$ut->setCaIdcliente($ic->getCaIdcliente());
+                        //$ut->setCaHbls($ic->getCaHbls());
+                        //$ut->setCaIdcosto($bindValues["idcosto"]);
+                        //$ut->setCaFactura($bindValues["factura"]);
                         $ut->setCaValor($val);
+                        $ut->setCaIdinocosto($this->idinocosto);
+                        $ut->setCaIdinocliente($ic->getCaIdinocliente());
                         $ut->save($conn);
                      }
                   }

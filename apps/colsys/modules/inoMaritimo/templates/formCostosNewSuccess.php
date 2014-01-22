@@ -74,6 +74,7 @@
     
     <form action="<?=url_for("inoMaritimo/formCostos")?>" method="post">
         <input type="hidden" name="cl" value="<?=$oid?>" />
+        <input type="hidden" name="idinocosto" value="<?=$idinocosto?>" />
         <?
         echo $form['referencia']->renderError();                                  
         $form->setDefault('referencia', $referencia->getCaReferencia() );        
@@ -177,8 +178,8 @@
                                 <td>  
                                 <?                                
                                 echo $form['util_'.$ic->getCaIdinocliente()]->renderError();  
-                                if( isset( $utilidades[ $ic->getCaHbls() ] )  ){
-                                    $form->setDefault('util_'.$ic->getCaIdinocliente(),  $utilidades[ $ic->getCaHbls() ]  );
+                                if( isset( $utilidades[ $ic->getCaIdinocliente() ] )  ){
+                                    $form->setDefault('util_'.$ic->getCaIdinocliente(),  $utilidades[ $ic->getCaIdinocliente() ]  );
                                 }else{
                                     $form->setDefault('util_'.$ic->getCaIdinocliente(), 0 );
                                 }
