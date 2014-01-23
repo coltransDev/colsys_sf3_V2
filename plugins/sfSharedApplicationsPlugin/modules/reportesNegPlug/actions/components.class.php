@@ -29,7 +29,7 @@ class reportesNegPlugComponents extends sfComponents
             }
             else if($this->modo==constantes::TERRESTRE)
             {
-                $this->nave="Motonave";
+                $this->nave="Transportador";
             }
         }        
 	}

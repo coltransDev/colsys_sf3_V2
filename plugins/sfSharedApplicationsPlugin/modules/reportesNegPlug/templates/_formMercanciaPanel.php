@@ -4,7 +4,7 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
-include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,CU050,CU058,CU011,CU089,CU092"));
+include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,CU050,CU058,CU011,CU089,CU092,CU227"));
 ?>
 <script type="text/javascript">
     FormMercanciaPanel = function( config ){
@@ -32,7 +32,11 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
                             id:"ca_mcia_peligrosa",
 							name:"ca_mcia_peligrosa",
                             tabIndex:this.tabIndex++
-                        },
+                        }<?
+                        
+						if($impoexpo!=Constantes::EXPO )
+						{
+						?>,
                         {
                             xtype:"checkbox",
                             fieldLabel:"Declaración Anticipada",
@@ -82,8 +86,7 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
                                         name:"npiezas",
                                         id:"npiezas",
                                         width:60
-                                    }
-                                    ,
+                                    },
                                     new WidgetParametros({
                                                 id:'mpiezas',
                                                 name:'mpiezas',
