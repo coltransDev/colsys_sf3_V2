@@ -103,7 +103,7 @@
     <body>
     
         <!-- GREY BORDER -->
-        <table width="100%" border="0" cellspacing="15" cellpadding="0" bgcolor="#E1E1E1"><tr><td>
+        <table width="100%" border="0" cellspacing="15" cellpadding="0" bgcolor="#E1E1E1" style="border-radius: 10px;"><tr><td>
                     <!-- WHITE BACKGROUND -->
                     <table width="100%" border="0" cellspacing="15" cellpadding="0" bgcolor="#FFFFFF"><tr><td>
                                 <!-- MAIN CONTENT TABLE -->
