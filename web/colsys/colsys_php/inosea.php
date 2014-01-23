@@ -155,7 +155,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
 
     if (!$rs->Open("select DISTINCT ca_ano, ca_mes, ca_trafico, ca_modal, ca_referencia, ca_sigla, ca_nombre, ca_ciuorigen, ca_traorigen, ca_ciudestino, ca_tradestino, ca_fchembarque, ca_fcharribo, ca_motonave from vi_inoconsulta_sea $condicion order by ca_ano DESC, ca_mes, ca_trafico, ca_modal, ca_referencia")) {           // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-        echo "<script>document.location.href = 'entrada.php';</script>";
+        echo "<script>document.location.href = 'entrada.php?id=158';</script>";
         exit;
     }
 
@@ -246,19 +246,21 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
         case 'Consultar': {                                                    // Opcion para Consultar un solo registro
                 if (!$rs->Open("select * from vi_inomaestra_sea where ca_referencia = '$id'")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=249';</script>";
                     exit;
                 }
                 $dm = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$dm->Open("select * from tb_dianmaestra where ca_referencia = '" . $rs->Value('ca_referencia') . "' order by ca_fchactualizado DESC limit 5")) {                      // Selecciona el registros del log de envio a la Dian
                     echo "<script>alert(\"" . addslashes($dm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=255';</script>";
                     exit;
                 }
                 $dc = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
-                if (!$dc->Open("select * from tb_dianclientes where ca_referencia = '" . $rs->Value('ca_referencia') . "'")) {                      // Selecciona el registros del log de envio a la Dian en clientes
-                    echo "<script>alert(\"" . addslashes($dm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                if (!$dc->Open("select d.* from tb_dianclientes d 
+                    inner join tb_inoclientes_sea c  on c.ca_idinocliente=d.ca_idinocliente
+                    where c.ca_referencia = '" . $rs->Value('ca_referencia') . "'")) {                      // Selecciona el registros del log de envio a la Dian en clientes
+                    echo "<script>alert('262');</script>";      // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'entrada.php?id=263';</script>";
                     exit;
                 }
                 $dianClientes = array();
@@ -271,13 +273,29 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "<HEAD>";
                 echo "<TITLE>$titulo</TITLE>";
                 echo "<script language='JavaScript' type='text/JavaScript'>";              // Código en JavaScript para validar las opciones de mantenimiento                
-                echo "function elegir(opcion, id, cl, hb){";
-                echo "    if(opcion=='AdicionarCs' || opcion=='ModificarCs'){";
-                echo "      document.location.href = '/inoMaritimo/formCostos?referencia='+id+'\&cl='+cl+'\&hb='+hb;";
-                echo "    }else{";
-                echo "      document.location.href = 'inosea.php?boton='+opcion+'\&id='+id+'\&cl='+cl+'\&hb='+hb;";
-                echo "    }";
-                echo "}";
+                echo "function elegir(opcion, id, cl, hb){
+                    
+                    if(opcion=='AdicionarCs' || opcion=='ModificarCs'){
+                      document.location.href = '/inoMaritimo/formCostos?referencia='+id+'\&idinocosto='+cl+'\&hb='+hb;
+                    }
+                    else if(opcion=='EliminarCl')
+                    {
+                        document.location.href = 'inosea.php?boton='+opcion+'\&id='+id+'\&idinocliente='+cl;
+                    }
+                    else if(opcion=='EliminarCs' ){
+                        document.location.href = 'inosea.php?boton='+opcion+'\&id='+id+'\&idinocosto='+cl+'\&hb='+hb;
+                    }
+                    else if(opcion=='MuiscaCl' ){
+                        document.location.href = 'inosea.php?boton='+opcion+'&id='+id+'\&idinocliente='+cl;
+                    }
+                    else if(opcion=='ModificarCl' )
+                    {
+                        document.location.href = 'inosea.php?boton='+opcion+'&id='+id+'\&idinocliente='+cl;
+                    }
+                    else{
+                      document.location.href = 'inosea.php?boton='+opcion+'\&id='+id+'\&cl='+cl+'\&hb='+hb;
+                    }
+                }";
                 echo "function apertura(opcion, id){";
                 echo "    if (confirm(\"¿Esta seguro que desea abrir la Referencia?\")) {";
                 echo "        document.location.href = 'inosea.php?accion='+opcion+'\&id='+id;";
@@ -415,7 +433,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         $tm = & DlRecordset::NewRecordset($conn);
                         if (!$tm->Open("select count(*) as conta from control.tb_usuarios_perfil where ca_perfil = 'radicación-muisca-colsys' and ca_login='$usuario'")) {
                             echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'entrada.php';</script>";
+                            echo "<script>document.location.href = 'entrada.php?id=427';</script>";
                             exit;
                         } else {
                             if ($tm->Value('conta') > 0) {
@@ -427,12 +445,16 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         $cl = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
                         $sql = "select m.ca_referencia, m.ca_modalidad, e.ca_equipos, c.ca_clientes from tb_inomaestra_sea m";
                         $sql.= " left join (select ca_referencia, count(ca_idequipo) as ca_equipos from tb_inoequipos_sea group by ca_referencia) e on m.ca_referencia = e.ca_referencia";
-                        $sql.= " left join (select ca_referencia, count(distinct ca_idequipo) as ca_clientes from tb_inoequiposxcliente group by ca_referencia) c on m.ca_referencia = c.ca_referencia";
+                        $sql.= " left join (select c.ca_referencia, count(distinct ca_idequipo) as ca_clientes 
+                            from tb_inoequiposxcliente e
+                            inner join tb_inoclientes_sea c on c.ca_idinocliente=e.ca_idinocliente
+                            group by c.ca_referencia) c on m.ca_referencia = c.ca_referencia";
                         $sql.= " where m.ca_referencia = '" . $rs->Value('ca_referencia') . "'";
                         
-                        if (!$cl->Open("$sql")) {
-                            echo "<script>alert(\"" . addslashes($cl->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'entrada.php';</script>";
+                        if (!$cl->Open($sql)) {
+                            echo "Error 448: $sql";
+                            //echo "<script>alert(\"" . addslashes($cl->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+                            //echo "<script>document.location.href = 'entrada.php?id=444';</script>";
                             exit;
                         }
                         $equiposOk = 1;
@@ -442,7 +464,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         echo "<INPUT TYPE='HIDDEN' NAME='equiposOk' id='equiposOk'  VALUE=\"$equiposOk\">";
                         if (!$cl->Open("select count(*) as conta from tb_inoclientes_sea where ca_referencia = '" . $rs->Value('ca_referencia') . "' and (ca_usuactualizado is null or ca_usuactualizado='' )")) {
                             echo "<script>alert(\"" . addslashes($cl->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'entrada.php';</script>";
+                            echo "<script>document.location.href = 'entrada.php?id=454';</script>";
                             exit;
                         }
                         if ($nivel > 0) {
@@ -494,20 +516,20 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     $co = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
                     if (!$co->Open("select * from vi_inoequipos_sea where ca_referencia = '" . $rs->Value('ca_referencia') . "'")) {        // Selecciona todos lo registros de la tabla Clientes de una referencia Ino-Marítimo
                         echo "<script>alert(\"" . addslashes($co->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'entrada.php';</script>";
+                        echo "<script>document.location.href = 'entrada.php?id=506';</script>";
                         exit;
                     }
 
                     $cl = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
                     if (!$cl->Open("select * from vi_inoclientes_sea where ca_referencia = '" . $rs->Value('ca_referencia') . "'")) {                      // Selecciona todos lo registros de la tabla Clientes de una referencia Ino-Marítimo
                         echo "<script>alert(\"" . addslashes($cl->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'entrada.php';</script>";
+                        echo "<script>document.location.href = 'entrada.php?id=513';</script>";
                         exit;
                     }
                     $lg = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
                     if (!$lg->Open("select * from tb_inomaestralog_sea where ca_referencia = '" . $rs->Value('ca_referencia') . "' order by ca_fchactualizado DESC limit 5")) {                      // Selecciona todos lo registros del log de apertura y cierres de una referencia Ino-Marítimo
                         echo "<script>alert(\"" . addslashes($lg->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'entrada.php';</script>";
+                        echo "<script>document.location.href = 'entrada.php?id=519';</script>";
                         exit;
                     }
                     echo "  <TABLE WIDTH=100% CELLSPACING=1 style='letter-spacing:-1px;'>";
@@ -744,9 +766,9 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             }
 
                             echo "  <TD ROWSPAN=2 WIDTH=80 Class=listar style='text-align: center;'>";                                              // Botones para hacer Mantenimiento a la Tabla
-                            echo "    <IMG style='visibility: $visible;$level0;cursor:pointer' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"ModificarCl\", \"" . $rs->Value('ca_referencia') . "\", \"" . $cl->Value('ca_idcliente') . "\", \"" . urlencode($cl->Value('ca_hbls')) . "\");'>";
-                            echo "    <IMG style='visibility: $visible;$level0;cursor:pointer' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"EliminarCl\", \"" . $rs->Value('ca_referencia') . "\", \"" . $cl->Value('ca_idcliente') . "\", \"" . urlencode($cl->Value('ca_hbls')) . "\");'><BR><BR>";
-                            echo "    <IMG style='visibility: $digitable;$level0;cursor:pointer' src='./graficos/muisca.gif'  alt='Informacion Muisca' border=0 onclick='elegir(\"MuiscaCl\", \"" . $rs->Value('ca_referencia') . "\", \"" . $cl->Value('ca_idcliente') . "\", \"" . urlencode($cl->Value('ca_hbls')) . "\");'>".(($dianClientes[$cl->Value('ca_hbls')])?"<BR>".$dianClientes[$cl->Value('ca_hbls')]:"")."<BR><BR>";
+                            echo "    <IMG style='visibility: $visible;$level0;cursor:pointer' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"ModificarCl\", \"" . $rs->Value('ca_referencia') . "\", \"" . $cl->Value('ca_idinocliente') . "\");'>";
+                            echo "    <IMG style='visibility: $visible;$level0;cursor:pointer' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"EliminarCl\", \"" . $rs->Value('ca_referencia') . "\", \"" . $cl->Value('ca_idinocliente') . "\");'><BR><BR>";
+                            echo "    <IMG style='visibility: $digitable;$level0;cursor:pointer' src='./graficos/muisca.gif'  alt='Informacion Muisca' border=0 onclick='elegir(\"MuiscaCl\", \"" . $rs->Value('ca_referencia') . "\",\"" . $cl->Value('ca_idinocliente') . "\");'>".(($dianClientes[$cl->Value('ca_hbls')])?"<BR>".$dianClientes[$cl->Value('ca_hbls')]:"")."<BR><BR>";
                             if ($cl->value('ca_usulibero') == "") {
                                 echo "    <IMG style='visibility: $digitable;$level0;cursor:pointer' src='./graficos/liberado.gif'  alt='Carga Liberada al Cliente' border=0 onclick='elegir(\"LiberadoCl\", \"" . $rs->Value('ca_referencia') . "\", \"" . $cl->Value('ca_idcliente') . "\", \"" . urlencode($cl->Value('ca_hbls')) . "\");'><BR>";
                             } else {
@@ -768,7 +790,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             if($cl->Value('ca_consecutivo') != ""){
                               if (!$tm->Open("select ca_idcotizacion, ca_consecutivo from tb_cotizaciones where ca_consecutivo in (select ca_idcotizacion from tb_reportes rp inner join (select ca_consecutivo, max(ca_version) as ca_version from tb_reportes where ca_consecutivo = '".$cl->Value('ca_consecutivo')."' group by ca_consecutivo) vr on rp.ca_consecutivo = vr.ca_consecutivo and rp.ca_version = vr.ca_version)")) {
                                  echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                                 echo "<script>document.location.href = 'entrada.php';</script>";
+                                 echo "<script>document.location.href = 'entrada.php?id=780';</script>";
                                  exit;
                               }
                               if ($tm->Value('ca_idcotizacion') != ""){
@@ -847,15 +869,18 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         echo "        </tr>";
                         echo "      </table>";
                         echo "  </TD>";
-
-
                         echo "  <TD Class=invertir COLSPAN=2 ROWSPAN=2>";
                         echo "  <B>Deducciones:</B><BR>" . number_format($cl->Value('ca_deduccion'), 2) . "<IMG SRC='./graficos/nuevo.gif' border=0 ALT='Nuevo Detalle'>";
                         if ($cl->Value('ca_deduccion') != 0) {
                             $tm = & DlRecordset::NewRecordset($conn);
-                            if (!$tm->Open("select idd.ca_iddeduccion, ddc.ca_deduccion, idd.ca_valor from tb_inodeduccion_sea idd inner join tb_deducciones ddc on idd.ca_iddeduccion = ddc.ca_iddeduccion where ca_referencia = '" . $cl->Value('ca_referencia') . "' and ca_idcliente = '" . $cl->Value('ca_idcliente') . "' and ca_hbls = '" . $cl->Value('ca_hbls') . "' and ca_factura = '" . $cl->Value('ca_factura') . "'")) {
-                                echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                                echo "<script>document.location.href = 'entrada.php';</script>";
+                            $sql=" select idd.ca_iddeduccion, ddc.ca_deduccion, idd.ca_valor 
+                                    from tb_inodeduccion_sea idd 
+                                    inner join tb_inoingresos_sea i on i.ca_idinoingreso = idd.ca_idinoingreso 
+                                    inner join tb_deducciones ddc on idd.ca_iddeduccion = ddc.ca_iddeduccion 
+                                    where i.ca_factura = '".$cl->Value('ca_factura')."' and i.ca_idinocliente = '" . $cl->Value('ca_idinocliente') . "' ";
+                            
+                            if (!$tm->Open($sql)) {
+                                echo "Se presento un error 871: ".$sql;                                
                                 exit;
                             }
                             $tm->MoveFirst();
@@ -883,7 +908,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     $cs = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
                     if (!$cs->Open("select * from vi_inocostos_sea  where ca_referencia = '" . $rs->Value('ca_referencia') . "'")) {                        // Selecciona todos lo registros de la tabla de Costos de una referencia
                         echo "<script>alert(\"" . addslashes($cs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'entrada.php';</script>";
+                        echo "<script>document.location.href = 'entrada.php?id=895';</script>";
                         exit;
                     }
 
@@ -916,7 +941,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         echo "  <TD Class=invertir style='font-size: 12px;' ROWSPAN=2 COLSPAN=3><B>" . $cs->Value('ca_costo') . "</B></TD>";
                         if (!$tm->Open("select count(*) as conta from control.tb_usuarios_perfil where ca_perfil in ('asistente-de-contenedores','coordinador-de-contenedores') and ca_login='$usuario'")) {
                             echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'inosea.php';</script>";
+                            echo "<script>document.location.href = 'entrada.php?id=932';</script>";
                             exit;
                         } else {
                             if ($tm->Value('conta') > 0 and ($cs->Value('ca_factura') == "P" or $cs->Value('ca_factura') == "CE")) {
@@ -948,8 +973,8 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
 
                         echo "  <TD Class=listar COLSPAN=2><B>Proveedor:</B><BR>" . $cs->Value('ca_proveedor') . "</TD>";
                         echo "  <TD ROWSPAN=3 Class=listar style='text-align: center'>";                                              // Botones para hacer Mantenimiento a la Tabla
-                        echo "    <IMG style='visibility: $visible;$level0;cursor:pointer' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"ModificarCs\", \"" . $cs->Value('ca_referencia') . "\", \"" . $cs->Value('ca_oid') . "\");'>";
-                        echo "    <IMG style='visibility: $visible;$level0;cursor:pointer' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"EliminarCs\", \"" . $cs->Value('ca_referencia') . "\", \"" . $cs->Value('ca_oid') . "\");'>";
+                        echo "    <IMG style='visibility: $visible;$level0;cursor:pointer' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"ModificarCs\", \"" . $cs->Value('ca_referencia') . "\"   ,\"" . $cs->Value('ca_idinocostos_sea') . "\");'>";
+                        echo "    <IMG style='visibility: $visible;$level0;cursor:pointer' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"EliminarCs\", \"" . $cs->Value('ca_referencia') . "\"  ,\"" . $cs->Value('ca_idinocostos_sea') . "\");'>";
                         echo "  </TD>";
                         echo "</TR>";
                         echo "<TR>";
@@ -980,8 +1005,8 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "</TABLE><BR><BR>";
                 $tm = & DlRecordset::NewRecordset($conn);
                 if (!$tm->Open("select * from vi_inoauditor_sea where ca_referencia = '" . $rs->Value('ca_referencia') . "'")) { // Selecciona todos lo registros de la tabla Ciudades
-                    echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'entrada.php?id=997';</script>";
                     exit;
                 }
                 echo "<TABLE WIDTH=620 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
@@ -1040,7 +1065,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $tm = & DlRecordset::NewRecordset($conn);
                 if (!$tm->Open("select ca_idevento, ca_asunto from vi_inoauditor_sea where ca_referencia = '$id' and ca_idantecedente=0 order by ca_idevento desc")) {       // Selecciona todos lo registros de la tabla Eventos Clientes
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";          // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=1056';</script>";
                     exit;
                 }
                 echo "<HEAD>";
@@ -1122,13 +1147,13 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
                 if (!$rs->Open("select * from vi_inoauditor_sea where ca_oid = $id")) {       // Selecciona todos lo registros de la tabla Ino-Marítimo
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=1134';</script>";
                     exit;
                 }
                 $tm = & DlRecordset::NewRecordset($conn);
                 if (!$tm->Open("select ca_idevento, ca_asunto from vi_inoauditor_sea where ca_referencia = '" . $rs->Value('ca_referencia') . "' and ca_idantecedente=0 order by ca_idevento desc")) {       // Selecciona todos lo registros de la tabla Eventos Clientes
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";          // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=1144';</script>";
                     exit;
                 }
                 echo "<HEAD>";
@@ -1221,13 +1246,13 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
                 if (!$rs->Open("select * from vi_inoauditor_sea where ca_oid = $id")) {       // Selecciona todos lo registros de la tabla Ino-Marítimo
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=1233';</script>";
                     exit;
                 }
                 $tm = & DlRecordset::NewRecordset($conn);
                 if (!$tm->Open("select ca_idevento, ca_asunto from vi_inoauditor_sea where ca_referencia = '" . $rs->Value('ca_referencia') . "' and ca_idantecedente=0 order by ca_idevento desc")) {       // Selecciona todos lo registros de la tabla Eventos Clientes
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";          // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=1243';</script>";
                     exit;
                 }
                 echo "<HEAD>";
@@ -1294,21 +1319,21 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $in = & DlRecordset::NewRecordset($conn);
                 if (!$in->Open("select ca_idcliente, ca_hbls from vi_inoclientes_sea where ca_referencia = '$id' group by ca_idcliente, ca_hbls order by ca_hbls")) {       // Selecciona todos lo registros de la tabla Traficos
                     echo "<script>alert(\"" . addslashes($in->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=1310';</script>";
                     exit;
                 }
 
                 $cs = & DlRecordset::NewRecordset($conn);
                 if (!$cs->Open("select c.ca_idcosto, c.ca_costo, c.ca_modalidad from tb_costos c, tb_inomaestra_sea i where c.ca_modalidad = i.ca_modalidad and c.ca_transporte = 'Marítimo' and c.ca_impoexpo = 'Importación' and i.ca_referencia = '$id' order by c.ca_costo")) {       // Selecciona todos lo registros de la tabla Traficos
                     echo "<script>alert(\"" . addslashes($cs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=1317';</script>";
                     exit;
                 }
 
                 $mn = & DlRecordset::NewRecordset($conn);
                 if (!$mn->Open("select ca_idmoneda, ca_nombre from tb_monedas where ca_idmoneda in ('COP','USD') order by ca_nombre")) {       // Selecciona todos lo registros de la tabla Monedas
                     echo "<script>alert(\"" . addslashes($mn->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=1324';</script>";
                     exit;
                 }
 
@@ -1421,9 +1446,9 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
         case 'EliminarCs': {                                                    // Opcion para Adicionar Registros a la tabla
                 $modulo = "00100100";                                             // Identificación del módulo para la ayuda en línea
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
-                if (!$rs->Open("select * from vi_inocostos_sea where ca_oid = " . $cl)) {    // Mueve el apuntador al registro que se desea modificar
+                if (!$rs->Open("select * from vi_inocostos_sea where ca_idinocostos_sea = " . $idinocosto)) {    // Mueve el apuntador al registro que se desea modificar
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=1439';</script>";
                     exit;
                 }
 
@@ -1440,7 +1465,8 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "<FORM METHOD=post NAME='eliminar' ACTION='inosea.php'>"; // Crea una forma con datos vacios
                 echo "<TABLE WIDTH=600 CELLSPACING=1>";
                 echo "<INPUT TYPE='HIDDEN' NAME='referencia' id='referencia' VALUE=\"" . $id . "\">";        // Hereda el Id de la Referencia que se esta modificando
-                echo "<INPUT TYPE='HIDDEN' NAME='oid' id='oid' VALUE=\"" . $cl . "\">";              // Hereda el Id de la Referencia que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='idinocosto' id='idinocosto' VALUE=\"" . $idinocosto . "\">";              // Hereda el Id de la Referencia que se esta modificando
+//                echo "<INPUT TYPE='HIDDEN' NAME='oid' id='oid' VALUE=\"" . $cl . "\">";              // Hereda el Id de la Referencia que se esta modificando
                 echo "<TH Class=titulo COLSPAN=5 style='font-size: 11px; vertical-align:bottom'>$id<BR>Información de la Factura</TH>";
 
                 $util_mem = number_format($rs->Value('ca_venta') - ($rs->Value('ca_neto') * $rs->Value('ca_tcambio')));
@@ -1480,13 +1506,13 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
                 if (!$rs->Open("select ie.*, im.ca_fchconfirmacion from vi_inoequipos_sea ie inner join tb_inomaestra_sea im on ie.ca_referencia = im.ca_referencia where ie.ca_referencia = '" . $id . "' and ca_idequipo = '" . $cl . "'")) {    // Mueve el apuntador al registro que se desea modificar
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=1497';</script>";
                     exit;
                 }
                 $tm = & DlRecordset::NewRecordset($conn);
                 if (!$tm->Open("select pt.*, cd.ca_ciudad from pric.tb_patios pt inner join tb_ciudades cd on pt.ca_idciudad = cd.ca_idciudad order by cd.ca_ciudad")) {       // Selecciona todos lo registros de la tabla Eventos Clientes
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";          // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=1503';</script>";
                     exit;
                 }
 
@@ -1591,7 +1617,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $us = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$us->Open("select ca_impoexpo, ca_modalidad, ca_mbls, ca_fchmbls from tb_inomaestra_sea where ca_referencia = '$id'")) {
                     echo "<script>alert(\"" . addslashes($us->mErrMsg) . "\");</script>";
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=1607';</script>";
                     exit;
                 }
                 $impoexpo = $us->Value('ca_impoexpo');
@@ -1600,7 +1626,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $mbls[] = $us->Value('ca_fchmbls');
                 if (!$us->Open("select ca_valor from tb_parametros where ca_casouso = 'CU041'")) {
                     echo "<script>alert(\"" . addslashes($us->mErrMsg) . "\");</script>";
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=1617';</script>";
                     exit;
                 }
                 $observaciones = array();
@@ -1612,7 +1638,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $de = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$de->Open("select d.ca_iddeduccion, d.ca_deduccion from tb_deducciones d, tb_inomaestra_sea i where d.ca_habilitado = 't' and d.ca_transporte = 'Marítimo' and d.ca_impoexpo = 'Importación' and d.ca_modalidad = i.ca_modalidad and i.ca_referencia = '$id'")) {
                     echo "<script>alert(\"" . addslashes($de->mErrMsg) . "\");</script>";
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=1629';</script>";
                     exit;
                 }
                 $mn = & DlRecordset::NewRecordset($conn);
@@ -1846,7 +1872,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "  <OPTION VALUE=''></OPTION>";
                 if (!$us->Open("select ca_login, ca_nombre from control.tb_usuarios where ca_login != 'Administrador' and (ca_cargo = 'Gerente Regional' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
                     echo "<script>alert(\"" . addslashes($us->mErrMsg) . "\");</script>";
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=1863';</script>";
                     exit;
                 }
                 $us->MoveFirst();
@@ -1895,7 +1921,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
 
                 if (!$us->Open("select ca_nombre, ca_idciudad, ca_ciudad from vi_ciudades where ca_puerto not in ('Ninguno') order by ca_nombre")) {
                     echo "<script>alert(\"" . addslashes($us->mErrMsg) . "\");</script>";
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=1912';</script>";
                     exit;
                 }
                 $us->MoveFirst();
@@ -1915,7 +1941,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "  <TR>";
                 if (!$us->Open("select ca_idbodega, ca_nombre from tb_bodegas where ca_transporte = 'Marítimo' and ca_tipo = 'Operador Multimodal'")) {
                     echo "<script>alert(\"" . addslashes($us->mErrMsg) . "\");</script>";
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=1932';</script>";
                     exit;
                 }
                 $us->MoveFirst();
@@ -1937,7 +1963,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $co = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$co->Open("select * from vi_inoequipos_sea where ca_referencia = '$id' and ca_idconcepto != 9")) {       // Selecciona todos lo registros de la tabla Equiposde una referencia Ino-Marítimo
                     echo "<script>alert(\"" . addslashes($co->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=1950';</script>";
                     exit;
                 }
                 echo "  <TABLE WIDTH=100% CELLSPACING=1 style='letter-spacing:-1px;'>";
@@ -1972,6 +1998,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 for ($i = 0; $i < 3; $i++) {
                     echo "<TR>";
                     echo "  <INPUT ID=oid_fc_$i TYPE='HIDDEN' NAME='facturacion[$i][oid_fc]' VALUE=''>";
+                    
                     echo "  <TD Class=mostrar>Factura:<BR><INPUT ID=factura_$i TYPE='TEXT' NAME='facturacion[$i][factura]' SIZE=10 MAXLENGTH=15 ONCHANGE='llenar_select()'></TD>";
                     echo "  <TD Class=mostrar>Fch.Factura:<BR><INPUT ID=fchfactura_$i TYPE='TEXT' NAME='facturacion[$i][fchfactura]' SIZE=12 VALUE='" . date("Y-m-d") . "' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
 
@@ -2032,18 +2059,25 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "</BODY>";
                 break;
             }
+       case 'ModificarCl': {
+            include("modificarCl.php");
+            break;
+       }
         case 'ModificarCl': {                                                    // Opcion para Adicionar Registros a la tabla
                 $modulo = "00100100";                                             // Identificación del módulo para la ayuda en línea
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
-                if (!$rs->Open("select * from vi_inoclientes_sea where ca_referencia = '" . $id . "' and ca_idcliente = " . $cl . " and ca_hbls = '" . $hb . "'")) {    // Mueve el apuntador al registro que se desea modificar
+                $sql= "select * from vi_inoclientes_sea where ca_idinocliente = '" . $idinocliente . "' ";
+                //echo $sql;
+                if (!$rs->Open($sql)) {    // Mueve el apuntador al registro que se desea modificar
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=2054';</script>";
                     exit;
                 }
+                $id=$rs->Value('ca_referencia');
                 $us = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-                if (!$us->Open("select ca_impoexpo, ca_modalidad, ca_mbls,ca_fchmbls from tb_inomaestra_sea where ca_referencia = '$id'")) {
+                if (!$us->Open("select ca_impoexpo, ca_modalidad, ca_mbls,ca_fchmbls from tb_inomaestra_sea where ca_referencia = '".$id."'")) {
                     echo "<script>alert(\"" . addslashes($us->mErrMsg) . "\");</script>";
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=2060';</script>";
                     exit;
                 }
                 $impoexpo = $us->Value('ca_impoexpo');
@@ -2052,7 +2086,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $mbls[] = $us->Value('ca_fchmbls');
                 if (!$us->Open("select ca_valor from tb_parametros where ca_casouso = 'CU041'")) {
                     echo "<script>alert(\"" . addslashes($us->mErrMsg) . "\");</script>";
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=2069';</script>";
                     exit;
                 }
                 $observaciones = array();
@@ -2064,7 +2098,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $de = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$de->Open("select d.ca_iddeduccion, d.ca_deduccion from tb_deducciones d, tb_inomaestra_sea i where d.ca_habilitado = 't' and d.ca_transporte = 'Marítimo' and d.ca_impoexpo = 'Importación' and d.ca_modalidad = i.ca_modalidad and i.ca_referencia = '$id'")) {
                     echo "<script>alert(\"" . addslashes($de->mErrMsg) . "\");</script>";
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=2081';</script>";
                     exit;
                 }
                 $mn = & DlRecordset::NewRecordset($conn);
@@ -2074,9 +2108,13 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     exit;
                 }
                 $dd = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-                if (!$dd->Open("select oid as ca_oid, ca_factura, ca_iddeduccion, ca_neto, ca_valor from tb_inodeduccion_sea where ca_referencia = '" . $id . "' and ca_idcliente = " . $cl . " and ca_hbls = '" . $hb . "'")) {
-                    echo "<script>alert(\"" . addslashes($dd->mErrMsg) . "\");</script>";
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                $sql="select idd.oid as ca_oid, i.ca_factura, ca_iddeduccion, idd.ca_neto, idd.ca_valor 
+                    from tb_inodeduccion_sea idd
+                    inner join tb_inoingresos_sea i on i.ca_idinoingreso = idd.ca_idinoingreso 
+                    where i.ca_idinocliente  = '" . $rs->Value('ca_idinocliente') . "' ";
+                if (!$dd->Open($sql)) {
+                    echo $sql;
+                    //echo "<script>document.location.href = 'entrada.php?id=2093';</script>";
                     exit;
                 }
 
@@ -2281,6 +2319,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "<FORM METHOD=post NAME='modificar' ACTION='inosea.php' ONSUBMIT='return validar();'>"; // Crea una forma con los datos del registro
                 echo "<TABLE WIDTH=550 CELLSPACING=1>";
                 echo "<INPUT TYPE='HIDDEN' NAME='oid' id='oid' VALUE=\"" . $rs->Value('ca_oid') . "\">";             // Hereda el Id de la Referencia que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='idinocliente' id='idinocliente' VALUE=\"" . $rs->Value('ca_idinocliente') . "\">";             // Hereda el Id de la Referencia que se esta modificando
                 echo "<INPUT TYPE='HIDDEN' NAME='referencia' id='referencia' VALUE=\"" . $id . "\">";             // Hereda el Id de la Referencia que se esta modificando
                 echo "<INPUT TYPE='HIDDEN' NAME='impoexpo' id='impoexpo' VALUE=\"" . $impoexpo . "\">";
                 echo "<INPUT TYPE='HIDDEN' NAME='vigencia' id='vigencia' VALUE=\"" . ((mktime(0, 0, 0, $mes, 1, $ano) >= mktime(0, 0, 0, 4, 1, 2008)) ? 'true' : 'false') . "\">"; // Verifica si la Referencia es después de 1 abril/2008
@@ -2298,7 +2337,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo"<OPTION VALUE=''></OPTION>";
                 if (!$us->Open("select ca_login, ca_nombre from control.tb_usuarios where ca_login != 'Administrador' and (ca_cargo = 'Gerente Regional' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
                     echo "<script>alert(\"" . addslashes($us->mErrMsg) . "\");</script>";
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=2315';</script>";
                     exit;
                 }
                 $us->MoveFirst();
@@ -2373,7 +2412,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
 
                 if (!$us->Open("select ca_nombre, ca_idciudad, ca_ciudad from vi_ciudades where ca_puerto not in ('Ninguno') order by ca_nombre")) {
                     echo "<script>alert(\"" . addslashes($us->mErrMsg) . "\");</script>";
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=2390';</script>";
                     exit;
                 }
                 $us->MoveFirst();
@@ -2397,7 +2436,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "  <TR>";
                 if (!$us->Open("select ca_idbodega, ca_nombre from tb_bodegas where ca_transporte = 'Marítimo' and ca_tipo = 'Operador Multimodal'")) {
                     echo "<script>alert(\"" . addslashes($us->mErrMsg) . "\");</script>";
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=2414';</script>";
                     exit;
                 }
                 $us->MoveFirst();
@@ -2423,7 +2462,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $co = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$co->Open("select * from vi_inoequipos_sea where ca_referencia = '$id' and ca_idconcepto != 9")) {       // Selecciona todos lo registros de la tabla Equiposde una referencia Ino-Marítimo
                     echo "<script>alert(\"" . addslashes($co->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=2436';</script>";
                     exit;
                 }
                 echo "  <TABLE WIDTH=100% CELLSPACING=1 style='letter-spacing:-1px;'>";
@@ -2468,6 +2507,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 do {
                     echo "<TR>";
                     echo "  <INPUT ID=oid_fc_$i TYPE='HIDDEN' NAME='facturacion[$i][oid_fc]' VALUE=" . $rs->Value('ca_oid_fc') . ">";
+                    echo "  <INPUT ID=idinoingreso_$i TYPE='HIDDEN' NAME='facturacion[$i][idinoingreso]' VALUE=" . $rs->Value('ca_idinoingreso') . ">";
                     echo "  <TD Class=mostrar>Factura:<BR><INPUT ID=factura_$i TYPE='TEXT' NAME='facturacion[$i][factura]' VALUE='" . $rs->Value('ca_factura') . "' SIZE=10 MAXLENGTH=15 ONCHANGE='llenar_select();'></TD>";
                     echo "  <TD Class=mostrar>Fch.Factura:<BR><INPUT ID=fchfactura_$i TYPE='TEXT' NAME='facturacion[$i][fchfactura]' VALUE='" . (($rs->Value('ca_fchfactura') != '') ? $rs->Value('ca_fchfactura') : date("Y-m-d")) . "' SIZE=12 VALUE='" . date("Y-m-d") . "' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
                     echo "  <TD Class=mostrar>Valor:<BR><INPUT ID=neto_$i TYPE='TEXT' NAME='facturacion[$i][neto]' onchange='pesosCalc(this);' VALUE='" . $rs->Value('ca_neto') . "' SIZE=8 MAXLENGTH=15></TD>";
@@ -2606,15 +2646,19 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
         case 'EliminarCl': {                                                    // Opcion para Adicionar Registros a la tabla
                 $modulo = "00100100";                                             // Identificación del módulo para la ayuda en línea
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
-                if (!$rs->Open("select * from vi_inoclientes_sea where ca_referencia = '" . $id . "' and ca_idcliente = " . $cl . " and ca_hbls = '" . $hb . "'")) {    // Mueve el apuntador al registro que se desea modificar
-                    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                //$sql="select * from vi_inoclientes_sea where ca_referencia = '" . $id . "' and ca_idcliente = " . $cl . " and ca_hbls = '" . $hb . "'";
+                $sql="select * from vi_inoclientes_sea where ca_idinocliente = '" . $idinocliente . "' ";
+                //if (!$rs->Open("select * from vi_inoclientes_sea where ca_referencia = '" . $id . "' and ca_idcliente = " . $cl . " and ca_hbls = '" . $hb . "'")) {    // Mueve el apuntador al registro que se desea modificar
+                if (!$rs->Open($sql)) {    // Mueve el apuntador al registro que se desea modificar                
+                    echo "Error: 2650 : $sql";
+//                    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
+//                    echo "<script>document.location.href = 'entrada.php?id=2625';</script>";
                     exit;
                 }
                 $us = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$us->Open("select ca_login from control.tb_usuarios where ca_login != 'Administrador' order by ca_login")) {
                     echo "<script>alert(\"" . addslashes($us->mErrMsg) . "\");</script>";
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=2631';</script>";
                     exit;
                 }
                 $us->MoveFirst();
@@ -2635,6 +2679,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "<H3>$titulo</H3>";
                 echo "<FORM METHOD=post NAME='eliminar' ACTION='inosea.php' ONSUBMIT='return validar();'>"; // Crea una forma con los datos del registro
                 echo "<TABLE WIDTH=600 CELLSPACING=1>";
+                echo "<INPUT TYPE='HIDDEN' NAME='idinocliente' id='idinocliente' VALUE=\"" . $idinocliente . "\">";             // Hereda el Id de la Referencia que se esta modificando
                 echo "<INPUT TYPE='HIDDEN' NAME='referencia' id='referencia' VALUE=\"" . $id . "\">";             // Hereda el Id de la Referencia que se esta modificando
                 echo "<INPUT TYPE='HIDDEN' NAME='idcliente' id='idcliente' VALUE=\"" . $cl . "\">";              // Hereda el Id del Cliente que se esta modificando
                 echo "<INPUT TYPE='HIDDEN' NAME='hbl' id='hbl' VALUE=\"" . $hb . "\">";                    // Hereda el Id del Cliente que se esta modificando
@@ -2691,7 +2736,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $co = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$co->Open("select * from vi_inoequipos_sea where ca_referencia = '$id' and ca_idconcepto != 9")) {       // Selecciona todos lo registros de la tabla Equiposde una referencia Ino-Marítimo
                     echo "<script>alert(\"" . addslashes($co->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=2704';</script>";
                     exit;
                 }
                 echo "  <TABLE WIDTH=100% CELLSPACING=1 style='letter-spacing:-1px;'>";
@@ -2749,7 +2794,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $tm = & DlRecordset::NewRecordset($conn);
                 if (!$tm->Open("select ca_idtrafico, ca_nombre from vi_traficos order by ca_nombre")) {       // Selecciona todos lo registros de la tabla Traficos
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=2766';</script>";
                     exit;
                 }
                 $tm->MoveFirst();
@@ -2760,7 +2805,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 }
                 if (!$tm->Open("select ca_idciudad, ca_ciudad, ca_idtrafico from vi_puertos where ca_puerto not in ('Aéreo','Terrestre') order by ca_ciudad")) { // Selecciona todos lo registros de la tabla Ciudades
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=2777';</script>";
                     exit;
                 }
                 $tm->MoveFirst();
@@ -2772,7 +2817,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 }
                 if (!$tm->Open("select ca_idciudad, ca_ciudad from vi_puertos where ca_idtrafico = '$regional' order by ca_ciudad")) { // Selecciona todos lo registros de la tabla Ciudades Colombianas
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=2789';</script>";
                     exit;
                 }
                 $tm->MoveFirst();
@@ -2783,7 +2828,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 }
                 if (!$tm->Open("select ca_idlinea, ca_nombre, ca_transporte from vi_transporlineas where ca_transporte = 'Marítimo' and ca_activo_impo=true order by ca_nombre")) { // Selecciona todos lo registros de la tabla Ciudades
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=2800';</script>";
                     exit;
                 }
                 $tm->MoveFirst();
@@ -2795,13 +2840,13 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 }
                 if (!$tm->Open("select ca_idconcepto, ca_concepto from vi_conceptos where ca_transporte = 'Marítimo' and (ca_modalidad = 'FCL' or ca_idconcepto = 9) order by ca_modalidad DESC, ca_concepto")) { // Selecciona todos lo registros de la tabla Ciudades
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=2812';</script>";
                     exit;
                 }
                 $cu = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$cu->Open("select ca_identificacion, ca_valor from tb_parametros where ca_casouso = 'CU223' order by ca_identificacion")) {          // Selecciona los correos de la tabla Parametros
                     echo "<script>alert(\"" . addslashes($cu->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=2818';</script>";
                     exit;
                 }
                 echo "<HEAD>";
@@ -3101,7 +3146,8 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "  <TD Class=titulo COLSPAN=5><TABLE WIDTH=100% CELLSPACING=1>";
                 for ($i = 0; $i < 5; $i++) {
                     echo "  <TR>";
-                    echo "    <TD Class=mostrar COLSPAN=2>Concepto:<BR><SELECT ID=idconcepto_$i NAME='inoequipos_sea[$i][idconcepto]' ONCHANGE='habilitar(this);'>";  // Llena el cuadro de lista con los valores de la tabla Conceptos
+                    echo "    <TD Class=mostrar COLSPAN=2>Concepto:<BR>
+                        <SELECT ID=idconcepto_$i NAME='inoequipos_sea[$i][idconcepto]' ONCHANGE='habilitar(this);'>";  // Llena el cuadro de lista con los valores de la tabla Conceptos
                     $tm->MoveFirst();
                     echo "<OPTION VALUE=NULL></OPTION>";
                     while (!$tm->Eof()) {
@@ -3139,13 +3185,13 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
                 if (!$rs->Open("select * from vi_inomaestra_sea where ca_referencia = '" . $id . "'")) {    // Mueve el apuntador al registro que se desea modificar
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=3156';</script>";
                     exit;
                 }
                 $tm = & DlRecordset::NewRecordset($conn);
                 if (!$tm->Open("select ca_idtrafico, ca_nombre from vi_traficos order by ca_nombre")) {       // Selecciona todos lo registros de la tabla Traficos
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=3162';</script>";
                     exit;
                 }
                 $tm->MoveFirst();
@@ -3156,7 +3202,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 }
                 if (!$tm->Open("select ca_idciudad, ca_ciudad, ca_idtrafico from vi_puertos where ca_puerto not in ('Aéreo','Terrestre') order by ca_ciudad")) { // Selecciona todos lo registros de la tabla Ciudades
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=3173';</script>";
                     exit;
                 }
                 $tm->MoveFirst();
@@ -3168,7 +3214,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 }
                 if (!$tm->Open("select ca_idciudad, ca_ciudad from vi_puertos where ca_idtrafico = '$regional' order by ca_ciudad")) { // Selecciona todos lo registros de la tabla Ciudades Colombianas
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=3185';</script>";
                     exit;
                 }
                 $tm->MoveFirst();
@@ -3179,25 +3225,25 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 }
                 if (!$tm->Open("select ca_idconcepto, ca_concepto from vi_conceptos where ca_transporte = 'Marítimo' and (ca_modalidad = 'FCL' or ca_idconcepto = 9) order by ca_modalidad DESC, ca_concepto")) { // Selecciona todos lo registros de la tabla Ciudades
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=3196';</script>";
                     exit;
                 }
                 $co = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$co->Open("select * from vi_inoequipos_sea where ca_referencia = '" . $rs->Value('ca_referencia') . "'")) {       // Selecciona todos lo registros de la tabla Clientes de una referencia Ino-Marítimo
                     echo "<script>alert(\"" . addslashes($co->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=3198';</script>";
                     exit;
                 }
                 $li = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$li->Open("select ca_idlinea, ca_nombre, ca_transporte from vi_transporlineas where ca_transporte = 'Marítimo' and ca_activo_impo=true order by ca_nombre")) { // Selecciona todos lo registros de la tabla Ciudades
                     echo "<script>alert(\"" . addslashes($li->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=3208';</script>";
                     exit;
                 }
                 $cu = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$cu->Open("select ca_identificacion, ca_valor from tb_parametros where ca_casouso = 'CU223' order by ca_identificacion")) {          // Selecciona los correos de la tabla Parametros
                     echo "<script>alert(\"" . addslashes($cu->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=3214';</script>";
                     exit;
                 }
                 echo "<HEAD>";
@@ -3477,6 +3523,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     echo "<INPUT TYPE='HIDDEN' NAME='inoequipos_sea[$i][oid]' VALUE=" . $co->Value('ca_oid') . ">";
                     echo "<TR>";
                     echo "    <TD Class=mostrar COLSPAN=2>Concepto:<BR><SELECT ID=idconcepto_$i NAME='inoequipos_sea[$i][idconcepto]' ONCHANGE='habilitar(this);'>";
+                    echo "<OPTION VALUE=NULL></OPTION>";
                     $tm->MoveFirst();
                     while (!$tm->Eof()) {
                         echo"<OPTION VALUE=" . $tm->Value('ca_idconcepto');
@@ -3543,7 +3590,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
                 if (!$rs->Open("select * from vi_inomaestra_sea where ca_referencia = '" . $id . "'")) {    // Mueve el apuntador al registro que se desea eliminar
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=3560';</script>";
                     exit;
                 }
                 echo "<HEAD>";
@@ -3592,7 +3639,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $co = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$co->Open("select * from vi_inoequipos_sea where ca_referencia = '" . $rs->Value('ca_referencia') . "'")) {       // Selecciona todos lo registros de la tabla Clientes de una referencia Ino-Marítimo
                     echo "<script>alert(\"" . addslashes($co->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=3605';</script>";
                     exit;
                 }
                 echo "  <TABLE WIDTH=100% CELLSPACING=1 style='letter-spacing:-1px;'>";
@@ -3647,19 +3694,19 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
                 if (!$rs->Open("select * from vi_inomaestra_sea where ca_referencia = '" . $id . "'")) {    // Mueve el apuntador al registro que se desea eliminar
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=3664';</script>";
                     exit;
                 }
                 $tm = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$tm->Open("select DISTINCT dm.* from tb_inomaestra_sea im	LEFT OUTER JOIN (select * from tb_dianmaestra where ca_referencia = '" . $id . "') dm ON (im.ca_referencia = dm.ca_referencia AND true) order by ca_idinfodian DESC")) {    // Trae de la Tabla de la Dian por lo menos un registr vacio de la referencia.
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=3670';</script>";
                     exit;
                 }
                 $cu = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$cu->Open("select ca_identificacion, ca_valor, ca_valor2 from tb_parametros where ca_casouso = 'CU073' order by ca_identificacion, ca_valor2")) {          // Selecciona los correos de la tabla Parametros
                     echo "<script>alert(\"" . addslashes($cu->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=3676';</script>";
                     exit;
                 }
 
@@ -3731,7 +3778,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $co = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$co->Open("select * from vi_inoequipos_sea where ca_referencia = '" . $rs->Value('ca_referencia') . "'")) {       // Selecciona todos lo registros de la tabla Clientes de una referencia Ino-Marítimo
                     echo "<script>alert(\"" . addslashes($co->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=3744';</script>";
                     exit;
                 }
                 echo "  <TABLE WIDTH=100% CELLSPACING=1 style='letter-spacing:-1px;'>";
@@ -3863,7 +3910,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
 
                 if (!$cu->Open("select ca_idtransportista, ca_nombre from vi_transportistas where ca_idtransportista in (select ca_valor::text from tb_parametros where ca_casouso = 'CU073' and ca_identificacion = 10  and  ca_valor2 like '%" . $rs->Value("ca_destino") . "%'" . ") order by ca_nombre")) {
                     echo "<script>alert(\"" . addslashes($cu->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=3880';</script>";
                     exit;
                 }
                 $cu->MoveFirst();
@@ -3918,30 +3965,36 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
             }
         case 'MuiscaCl': {
                 $modulo = "00100300";                                             // Identificación del módulo para la ayuda en línea
+                
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
-                if (!$rs->Open("select * from vi_inomaestra_sea where ca_referencia = '" . $id . "'")) {    // Mueve el apuntador al registro que se desea eliminar
-                    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
-                    exit;
-                }
+                
                 $tm = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-                $query = "select DISTINCT ic.ca_idreporte, ic.ca_login, ic.ca_idproveedor, ic.ca_proveedor, ic.ca_idcliente, cl.ca_idalterno, cl.ca_compania, ic.ca_numorden, ic.ca_hbls, ic.ca_fchhbls, ic.ca_numpiezas, ic.ca_peso, ic.ca_volumen, ic.ca_continuacion, ic.ca_continuacion_dest, bg.ca_nombre as ca_bodega, dc.*, dd.ca_nombre as ca_nomdeposito from tb_inoclientes_sea ic";
+                $query = "select DISTINCT ic.ca_idreporte, ic.ca_referencia,ic.ca_login, ic.ca_idproveedor, ic.ca_proveedor, ic.ca_idcliente, cl.ca_idalterno, cl.ca_compania, ic.ca_numorden, ic.ca_hbls, ic.ca_fchhbls, ic.ca_numpiezas, ic.ca_peso, ic.ca_volumen, ic.ca_continuacion, ic.ca_continuacion_dest, bg.ca_nombre as ca_bodega, dc.*, dd.ca_nombre as ca_nomdeposito 
+                    from tb_inoclientes_sea ic";
                 $query.= " LEFT OUTER JOIN vi_clientes_reduc cl ON (ic.ca_idcliente = cl.ca_idcliente) LEFT OUTER JOIN tb_bodegas bg ON (ic.ca_idbodega = bg.ca_idbodega)";
-                $query.= " LEFT OUTER JOIN tb_dianclientes dc ON (ic.ca_referencia = dc.ca_referencia AND ic.ca_idcliente = dc.ca_idcliente AND ic.ca_hbls = dc.ca_house)";
+                $query.= " LEFT OUTER JOIN tb_dianclientes dc ON (ic.ca_idinocliente = dc.ca_idinocliente)";
                 $query.= " LEFT OUTER JOIN tb_diandepositos dd ON (dc.ca_coddeposito = dd.ca_codigo::text)";
-                $query.= " where ic.ca_referencia = '$id' and ic.ca_idcliente = '$cl' and ic.ca_hbls = '$hb' order by ca_idinfodian DESC";
+                $query.= " where ic.ca_idinocliente = '$idinocliente' order by ca_idinfodian DESC";
                 if (!$tm->Open("$query")) {    // Trae de la Tabla de la Dian por lo menos un registr vacio de la referencia.
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=3947';</script>";
                     exit;
                 }
+                
+                if (!$rs->Open("select * from vi_inomaestra_sea where ca_referencia = '" . $tm->Value('ca_referencia') . "'")) {    // Mueve el apuntador al registro que se desea eliminar
+                    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'entrada.php?id=3953';</script>";
+                    exit;
+                }
+                
+                
                 $rp = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 $query = "select uv.ca_idconsignatario, cl.ca_idcliente, cl.ca_idalterno, cl.ca_digito, cl.ca_compania as ca_nombre_cli, tr.ca_identificacion as ca_identificacion_con, tr.ca_nombre as ca_nombre_con, uv.ca_mercancia_desc, uv.ca_idconsignar, b1.ca_nombre as ca_consignar, b2.ca_tipo as ca_tipobodega, b2.ca_nombre as ca_bodega, uv.ca_continuacion from tb_reportes uv ";
                 $query.= " INNER JOIN tb_concliente cc ON (cc.ca_idcontacto = uv.ca_idconcliente) INNER JOIN vi_clientes_reduc cl ON (cl.ca_idcliente = cc.ca_idcliente) LEFT OUTER JOIN tb_terceros tr ON (tr.ca_idtercero = uv.ca_idconsignatario) LEFT OUTER JOIN tb_bodegas b1 ON (b1.ca_idbodega = uv.ca_idconsignar) LEFT OUTER JOIN tb_bodegas b2 ON (b2.ca_idbodega = uv.ca_idbodega) ";
                 $query.= " INNER JOIN (select ca_consecutivo, max(ca_version) as ca_version from tb_reportes where ca_consecutivo = (select ca_consecutivo from tb_reportes where ca_idreporte = " . $tm->Value("ca_idreporte") . ") group by ca_consecutivo) sr ON (sr.ca_consecutivo = uv.ca_consecutivo and sr.ca_version = uv.ca_version)";
                 if (!$rp->Open("$query")) {    // Trae de la Tabla de Reportes la Ultima Versión del Reporte.
                     echo "<script>alert(\"" . addslashes($rp->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=3964';</script>";
                     exit;
                 }
 
@@ -3954,7 +4007,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $cu = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$cu->Open("select ca_identificacion, ca_valor, ca_valor2 from tb_parametros where ca_casouso = 'CU073' order by ca_identificacion, ca_valor2")) {          // Selecciona los correos de la tabla Parametros
                     echo "<script>alert(\"" . addslashes($cu->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=3977';</script>";
                     exit;
                 }
 
@@ -4046,7 +4099,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $co = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$co->Open("select * from vi_inoequipos_sea where ca_referencia = '$id' and ca_idconcepto != 9")) {       // Selecciona todos lo registros de la tabla Equiposde una referencia Ino-Marítimo
                     echo "<script>alert(\"" . addslashes($co->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=4065';</script>";
                     exit;
                 }
                 echo "  <TABLE WIDTH=100% CELLSPACING=1 style='letter-spacing:-1px;'>";
@@ -4076,6 +4129,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "<TR>";
                 echo "  <TD Class=listar COLSPAN=5><TABLE WIDTH=100% CELLSPACING=1>";
                 echo "<INPUT TYPE='HIDDEN' NAME='idinfodian' id='idinfodian' VALUE=" . $tm->Value('ca_idinfodian') . ">";
+                echo "<INPUT TYPE='HIDDEN' NAME='idinocliente' id='idinocliente' VALUE=" . $idinocliente . ">";
 
                 echo "<TR>";
                 echo "  <TD Class=mostrar COLSPAN=2>Disposición/Carga:<BR><SELECT NAME='dispocarga'>";  // Llena el cuadro de lista con los valores de la tabla Parametros
@@ -4215,13 +4269,13 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
                 if (!$rs->Open("select * from vi_inoclientes_sea where ca_referencia = '" . $id . "' and ca_idcliente = " . $cl . " and ca_hbls = '" . $hb . "'")) {    // Mueve el apuntador al registro que se desea modificar
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=4239';</script>";
                     exit;
                 }
                 $us = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$us->Open("select ca_login from control.tb_usuarios where ca_login != 'Administrador' order by ca_login")) {
                     echo "<script>alert(\"" . addslashes($us->mErrMsg) . "\");</script>";
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=4245';</script>";
                     exit;
                 }
                 $us->MoveFirst();
@@ -4293,7 +4347,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $co = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$co->Open("select * from vi_inoequipos_sea where ca_referencia = '$id' and ca_idconcepto != 9")) {       // Selecciona todos lo registros de la tabla Equiposde una referencia Ino-Marítimo
                     echo "<script>alert(\"" . addslashes($co->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=4313';</script>";
                     exit;
                 }
                 echo "  <TABLE WIDTH=100% CELLSPACING=1 style='letter-spacing:-1px;'>";
@@ -4331,7 +4385,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $ad = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$ad->Open("SELECT p.ca_idproveedor, i.ca_nombre, p.ca_tipo, p.ca_activo FROM ids.tb_proveedores p JOIN ids.tb_ids i ON p.ca_idproveedor = i.ca_id and p.ca_tipo = 'ADU' ORDER BY i.ca_nombre")) {       // Selecciona todos lo registros de la tabla IDS que corresponden a Agentes de Aduana
                     echo "<script>alert(\"" . addslashes($ad->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=4351';</script>";
                     exit;
                 }
                 echo "<TR>";
@@ -4368,7 +4422,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
                 if (!$rs->Open("select * from vi_inomaestra_sea where ca_referencia = '" . $id . "'")) {    // Mueve el apuntador al registro que se desea eliminar
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=4392';</script>";
                     exit;
                 }
                 echo "<HEAD>";
@@ -4428,7 +4482,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $co = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$co->Open("select * from vi_inoequipos_sea where ca_referencia = '" . $rs->Value('ca_referencia') . "'")) {       // Selecciona todos lo registros de la tabla Clientes de una referencia Ino-Marítimo
                     echo "<script>alert(\"" . addslashes($co->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=4448';</script>";
                     exit;
                 }
                 echo "  <TABLE WIDTH=100% CELLSPACING=1 style='letter-spacing:-1px;'>";
@@ -4525,37 +4579,42 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
                 if (!$rs->Open("select * from vi_inomaestra_sea where ca_referencia = '" . $id . "'")) {    // Mueve el apuntador al registro que se desea eliminar
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=4549';</script>";
                     exit;
                 }
                 if ($rs->GetRowCount() == 0) {
                     echo "<script>alert(\"No ha sido creada la información del Documento Consolidador para Muisca\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=4554';</script>";
                     exit;
                 }
-                $ic = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-                if (!$ic->Open("select DISTINCT ic.ca_referencia, ic.ca_idcliente, ic.ca_hbls, ic.ca_fchhbls, ic.ca_continuacion, ic.ca_continuacion_dest, 
+                $ic = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos                
+                $sql="select DISTINCT ic.ca_referencia, ic.ca_idcliente, ic.ca_hbls, ic.ca_fchhbls, ic.ca_continuacion, ic.ca_continuacion_dest, 
                         array_to_string(array(select (ca_idequipo||';'||ca_piezas||';'||ca_peso||';'||ca_volumen) 
                             from tb_inoequiposxcliente tt 
-                            where tt.ca_referencia = ic.ca_referencia and tt.ca_idcliente = ic.ca_idcliente and tt.ca_hbls = ic.ca_hbls),'|') as ca_contenedores, 
-                    ic.ca_numpiezas, ic.ca_peso, rp.ca_consecutivo from tb_inoclientes_sea ic INNER JOIN tb_reportes rp ON (ic.ca_idreporte = rp.ca_idreporte) where ic.ca_referencia = '" . $id . "' order by ic.ca_idcliente")) {    // Trae de la Tabla de la Dian el último registro.
-                    echo "<script>alert(\"" . addslashes($dc->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                            where tt.ca_idinocliente = ic.ca_idinocliente),'|') as ca_contenedores, 
+                    ic.ca_numpiezas, ic.ca_peso, rp.ca_consecutivo, ic.ca_idinocliente 
+                    from tb_inoclientes_sea ic INNER JOIN tb_reportes rp ON (ic.ca_idreporte = rp.ca_idreporte) where ic.ca_referencia = '" . $id . "' order by ic.ca_idcliente";
+                if (!$ic->Open($sql)) {    // Trae de la Tabla de la Dian el último registro.
+                    echo "Error 4588: <br>$sql";
+                    //echo "<script>alert(\"aa" . addslashes($dc->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
+                    //echo "<script>document.location.href = 'entrada.php?id=4565';</script>";
                     exit;
                 }
+                
                 $dm = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$dm->Open("select * from tb_dianmaestra where ca_referencia = '" . $id . "' order by ca_idinfodian DESC limit 1")) {    // Trae de la Tabla de la Dian el último registro.
                     echo "<script>alert(\"" . addslashes($dm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=4572';</script>";
                     exit;
                 }
+                
                 $cu = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$cu->Open("select ca_identificacion, ca_valor, ca_valor2 from tb_parametros where ca_casouso = 'CU073' order by ca_identificacion, ca_valor2")) {          // Selecciona los correos de la tabla Parametros
                     echo "<script>alert(\"" . addslashes($cu->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=4579';</script>";
                     exit;
                 }
-
+                
                 $tm = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 // Set the content type to be XML, so that the browser will   recognise it as XML.
                 header("content-type: application/xml; charset=ISO-8859-1");
@@ -4582,24 +4641,24 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $xml_NumEnvio = $xml->createElement("NumEnvio", $NumEnvio);
                 if (!$tm->Open("update tb_dianmaestra set ca_numenvio = $NumEnvio, ca_fchenvio = '" . date("d M Y H:i:s", $FecEnvio) . "', ca_usuenvio = '$usuario' where ca_idinfodian = " . $dm->Value("ca_idinfodian"))) {    // Actualizar la Fecha y Hora de Envio
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=4609';</script>";
                     exit;
                 }
                 if (!$tm->Open("select ca_numenvio from tb_dianreservados where ca_numero_resv = '" . $dm->Value("ca_iddocactual") . "'")) {    // Toma el siguiente número disponible de la tabla de Reservados.
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=4614';</script>";
                     exit;
                 }
 
                 if ($dm->Value("ca_iddocactual") == '' or $tm->Value("ca_numenvio") != $NumEnvio) {
-                    if (!$tm->Open("select fun_numreserva($NumEnvio, " . substr($dm->Value("ca_fchtrans"), 0, 4) . ", '$usuario') as ca_numero_resv")) {    // Toma el siguiente número disponible de la tabla de Reservados.
+                    if (!$tm->Open("select fun_numreserva($NumEnvio, " . substr($dm->Value("ca_fchtrans"), 0, 4) . ", '$usuario') as ca_numero_resv")) {    
                         echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'inosea.php';</script>";
+                        echo "<script>document.location.href = 'entrada.php?id=4621';</script>";
                         exit;
                     }
                     if ($tm->Value("ca_numero_resv") == "") {    // Verifica las Disponibilidad de Números de Documentos
                         echo "<script>alert(\"No hay Números de Documento Disponibles para este Envío. Solicite un nuevo grupo en la Página de la Dian\");</script>";     // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'inosea.php';</script>";
+                        echo "<script>document.location.href = 'entrada.php?id=4626';</script>";
                         exit;
                     }
                     $iddocactual = $tm->Value("ca_numero_resv");
@@ -4623,7 +4682,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $xml_pal66->setAttribute("cres", 3);
                 $xml_pal66->setAttribute("cadm", $dm->Value("ca_codadministracion"));
                 $xml_pal66->setAttribute("dica", $dm->Value("ca_dispocarga"));
-
+                
                 $arribo_array = array();
                 $cu->MoveFirst();
                 while (!$cu->Eof()) {
@@ -4667,7 +4726,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $tm = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$tm->Open("select ca_idtransportista, ca_digito from vi_transportistas where ca_idtransportista::text = '" . $dm->Value("ca_idtransportista") . "'")) {    // Trae la Información del Agente Genera de Carga / Transportista
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=4694';</script>";
                     exit;
                 }
                 $xml_pal66->setAttribute("doc1", 31);
@@ -4677,12 +4736,12 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 // =========================== Remitente = Agente en el Exterior ===========================
                 if (!$tm->Open("select ca_idagente, count(ca_idagente) from tb_reportes where ca_fchanulado is null and ca_idreporte in (select ca_idreporte from tb_inoclientes_sea where ca_referencia = '" . $rs->Value("ca_referencia") . "') group by ca_idagente")) {    // Calcula a partir de los reportes de Negocio quien es el Agente
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=4704';</script>";
                     exit;
                 }
                 if (!$tm->Open("select * from vi_agentes where ca_idagente = " . $tm->Value("ca_idagente"))) {    // Calcula a partir de los reportes de Negocio quien es el Agente
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=4709';</script>";
                     exit;
                 }
                 $xml_pal66->setAttribute("doc2", 43);
@@ -4707,7 +4766,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $tm = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$tm->Open("select count(ca_idequipo) as ca_numcontenedores from tb_inoequipos_sea where ca_idconcepto != 9 and ca_referencia = '" . $rs->Value("ca_referencia") . "'")) {    // Calcula en Número de Contenedores
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=4734';</script>";
                     exit;
                 }
                 $xml_pal66->setAttribute("ntc", $tm->Value("ca_numcontenedores"));
@@ -4716,7 +4775,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $ie = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$ie->Open("select * from vi_inoequipos_sea where ca_referencia = '" . $id . "'")) {    // Selecciona los Registros de la Tabala Equipos
                     echo "<script>alert(\"" . addslashes($ie->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=4743';</script>";
                     exit;
                 }
 
@@ -4732,36 +4791,37 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     // Se Crear el elemento hijo
                     $xml_hijo = $xml->createElement("hijo");
 
-                    if (!$dc->Open("select * from tb_dianclientes where ca_idinfodian = " . $dm->Value("ca_idinfodian") . " and ca_referencia = '" . $ic->Value("ca_referencia") . "' and ca_idcliente = '" . $ic->Value("ca_idcliente") . "' and ca_house = '" . $ic->Value("ca_hbls") . "'")) {    // Trae de la Tabla de la Dian Clientes.
+                    if (!$dc->Open("select * from tb_dianclientes  where ca_idinfodian = " . $dm->Value("ca_idinfodian") . " and ca_idinocliente='" . $ic->Value("ca_idinocliente") . "' ")) {    // Trae de la Tabla de la Dian Clientes.
                         echo "<script>alert(\"" . addslashes($dm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'inosea.php';</script>";
+                        echo "<script>document.location.href = 'entrada.php?id=4761';</script>";
                         exit;
                     }
+                    
                     if (!$rp->Open("select * from vi_reportes where ca_consecutivo = '" . $ic->Value("ca_consecutivo") . "' and ca_version = (select max(ca_version) as ca_version from tb_reportes where ca_fchanulado is null and ca_consecutivo = '" . $ic->Value("ca_consecutivo") . "' and ca_tiporep != 4)")) {    // Trae de la Tabla de la Reportes de Negocio última version.
                         echo "<script>alert(\"" . addslashes($dm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'inosea.php';</script>";
+                        echo "<script>document.location.href = 'entrada.php?id=4767';</script>";
                         exit;
                     }
                     if (!$tm->Open("select ca_numenvio from tb_dianreservados where ca_numero_resv = '" . $dc->Value("ca_iddocactual") . "'")) {    // Toma el siguiente número disponible de la tabla de Reservados.
                         echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'inosea.php';</script>";
+                        echo "<script>document.location.href = 'entrada.php?id=4772';</script>";
                         exit;
-                    }
+                    }                    
                     if ($dc->Value("ca_iddocactual") == '' or $tm->Value('ca_numenvio') != $NumEnvio) {
                         if (!$tm->Open("select fun_numreserva($NumEnvio, " . substr($dm->Value("ca_fchtrans"), 0, 4) . ", '$usuario') as ca_numero_resv")) {    // Toma el siguiente número disponible de la tabla de Reservados.
                             echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'inosea.php';</script>";
+                            echo "<script>document.location.href = 'entrada.php?id=4778';</script>";
                             exit;
                         }
                         if ($tm->Value("ca_numero_resv") == "") {    // Verifica las Disponibilidad de Números de Documentos
                             echo "<script>alert(\"No hay Números de Documento Disponibles para este Envío. Solicite un nuevo grupo en la Página de la Dian\");</script>";     // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'inosea.php';</script>";
+                            echo "<script>document.location.href = 'entrada.php?id=4783';</script>";
                             exit;
                         }
                         $iddocactual_clie = $tm->Value("ca_numero_resv");
-                        if (!$tm->Open("update tb_dianclientes set ca_iddocactual = '$iddocactual_clie' where ca_idinfodian = " . $dm->Value("ca_idinfodian") . " and ca_referencia = '" . $ic->Value("ca_referencia") . "' and ca_idcliente = '" . $ic->Value("ca_idcliente") . "' and ca_house = '" . $ic->Value("ca_hbls") . "'")) {    // Actualiza el Número de Reserva en DianClientes
+                        if (!$tm->Open("update tb_dianclientes set ca_iddocactual = '$iddocactual_clie' where ca_idinfodian = " . $dm->Value("ca_idinfodian") . " and ca_idinocliente='" . $ic->Value("ca_idinocliente") . "'")) {    // Actualiza el Número de Reserva en DianClientes
                             echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'inosea.php';</script>";
+                            echo "<script>document.location.href = 'entrada.php?id=4789';</script>";
                             exit;
                         }
                     } else {
@@ -4796,7 +4856,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     } else {
                         if (!$tm->Open("select * from vi_ciudades where ca_idciudad::text = '" . $ic->Value("ca_continuacion_dest") . "'")) {    // Trae la información del Operador Multimodal de la Tabla Transportistas.
                             echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'inosea.php';</script>";
+                            echo "<script>document.location.href = 'entrada.php?id=4824';</script>";
                             exit;
                         }
                         $xml_hijo->setAttribute("hpa", substr($tm->Value('ca_idtrafico'), 0, 2));
@@ -4827,7 +4887,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
 
                         if (!$tm->Open("select * from vi_transportistas where ca_idtransportista::text = '" . trim($nit) . "'")) {    // Trae la información del Operador Multimodal de la Tabla Transportistas.
                             echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'inosea.php';</script>";
+                            echo "<script>document.location.href = 'entrada.php?id=4855';</script>";
                             exit;
                         }
                         if ($dc->Value("ca_sinidentificacion") == 'f') {
@@ -4874,7 +4934,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     } else if ($rp->Value("ca_idconsignatario") != 0) {
                         if (!$tm->Open("select * from tb_terceros where ca_idtercero = " . $rp->Value("ca_idconsignatario"))) {    //
                             echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'inosea.php';</script>";
+                            echo "<script>document.location.href = 'entrada.php?id=4902';</script>";
                             exit;
                         }
                         if ($dc->Value("ca_sinidentificacion") == 'f') {
@@ -4995,7 +5055,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     $tm = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                     if (!$tm->Open("select ca_idtrafico, ca_idciudad from vi_ciudades where ca_idciudad = '" . $rp->Value("ca_origen") . "'")) {    // Trae información de la Ciudad y Tráfico de Origen
                         echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'inosea.php';</script>";
+                        echo "<script>document.location.href = 'entrada.php?id=5023';</script>";
                         exit;
                     }
                     $xml_hijo->setAttribute("hcpe", substr($tm->Value("ca_idtrafico"), 0, 2));
@@ -5056,7 +5116,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
 
                                 if (!$rp->Open("$string")) {    // Trae de la Tabla de la Reportes de Negocio última version.
                                     echo "<script>alert(\"" . addslashes($rp->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                                    echo "<script>document.location.href = 'inosea.php';</script>";
+                                    echo "<script>document.location.href = 'entrada.php?id=5084';</script>";
                                     exit;
                                 }
                                 $xml_item = $xml->createElement("item");
@@ -5101,7 +5161,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         $string.= "	where rp.ca_consecutivo = '" . $ic->Value("ca_consecutivo") . "' and ca_idemail is not null order by ca_idemail DESC limit 1";
                         if (!$rp->Open("$string")) {    // Trae de la Tabla de la Reportes de Negocio última version.
                             echo "<script>alert(\"" . addslashes($rp->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'inosea.php';</script>";
+                            echo "<script>document.location.href = 'entrada.php?id=5129';</script>";
                             exit;
                         }
                         $xml_item = $xml->createElement("item");
@@ -5132,7 +5192,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     // Se Crear los elementos h167
                     if (!$ie->Open("select * from vi_inoequipos_sea where ca_referencia = '" . $id . "'")) {    // Selecciona los Registros de la Tabala Equipos
                         echo "<script>alert(\"" . addslashes($ie->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'inosea.php';</script>";
+                        echo "<script>document.location.href = 'entrada.php?id=5160';</script>";
                         exit;
                     }
                     $ie->MoveFirst();
@@ -5160,9 +5220,9 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         // Se Crear el elemento h267
                         $ic->MoveFirst();
                         while (!$ic->Eof() and !$ic->IsEmpty()) {
-                            if (!$dc->Open("select * from tb_dianclientes where ca_idinfodian = " . $dm->Value("ca_idinfodian") . " and ca_referencia = '" . $ic->Value("ca_referencia") . "' and ca_idcliente = '" . $ic->Value("ca_idcliente") . "' and ca_house = '" . $ic->Value("ca_hbls") . "'")) {    // Trae de la Tabla de la Dian Clientes.
+                            if (!$dc->Open("select * from tb_dianclientes where ca_idinfodian = " . $dm->Value("ca_idinfodian") . " and ca_idinocliente = '" . $ic->Value("ca_idinocliente") . "'")) {    // Trae de la Tabla de la Dian Clientes.
                                 echo "<script>alert(\"" . addslashes($dm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                                echo "<script>document.location.href = 'inosea.php';</script>";
+                                echo "<script>document.location.href = 'entrada.php?id=5190';</script>";
                                 exit;
                             }
                             $contenedores = explode("|", $ic->Value("ca_contenedores"));
@@ -5185,7 +5245,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                                     $string.= "	where rp.ca_consecutivo = '" . $ic->Value("ca_consecutivo") . "' and ca_idemail is not null order by ca_idemail DESC limit 1";
                                     if (!$rp->Open("$string")) {    // Trae de la Tabla de la Reportes de Negocio última version.
                                         echo "<script>alert(\"" . addslashes($rp->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                                        echo "<script>document.location.href = 'inosea.php';</script>";
+                                        echo "<script>document.location.href = 'entrada.php?id=5213';</script>";
                                         exit;
                                     }
                                     $xml_item = $xml->createElement("item");
@@ -5221,9 +5281,9 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     $sub_cn = 0;
                     while (!$ic->Eof() and !$ic->IsEmpty()) {
                         $grp++;
-                        if (!$dc->Open("select * from tb_dianclientes where ca_idinfodian = " . $dm->Value("ca_idinfodian") . " and ca_referencia = '" . $ic->Value("ca_referencia") . "' and ca_idcliente = '" . $ic->Value("ca_idcliente") . "' and ca_house = '" . $ic->Value("ca_hbls") . "'")) {    // Trae de la Tabla de la Dian Clientes.
+                        if (!$dc->Open("select * from tb_dianclientes where ca_idinfodian = " . $dm->Value("ca_idinfodian") . " and ca_idinocliente = '" . $ic->Value("ca_idinocliente") . "'")) {    // Trae de la Tabla de la Dian Clientes.
                             echo "<script>alert(\"" . addslashes($dm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'inosea.php';</script>";
+                            echo "<script>document.location.href = 'entrada.php?id=5251';</script>";
                             exit;
                         }
                         // Se Crear el elemento h267
@@ -5242,7 +5302,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         $string.= "	where rp.ca_consecutivo = '" . $ic->Value("ca_consecutivo") . "' and ca_idemail is not null order by ca_idemail DESC limit 1";
                         if (!$rp->Open("$string")) {    // Trae de la Tabla de la Reportes de Negocio última version.
                             echo "<script>alert(\"" . addslashes($rp->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'inosea.php';</script>";
+                            echo "<script>document.location.href = 'entrada.php?id=5270';</script>";
                             exit;
                         }
                         $xml_item = $xml->createElement("item");
@@ -5275,7 +5335,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $tm = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$tm->Open("select ca_idtrafico, ca_idciudad from vi_ciudades where ca_idciudad = '" . $rs->Value("ca_origen") . "'")) {    // Trae información de la Ciudad y Tráfico de Origen
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=5303';</script>";
                     exit;
                 }
                 $xml_pal66->setAttribute("pemb", substr($tm->Value("ca_idtrafico"), 0, 2));
@@ -5284,7 +5344,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
 
                 if (!$tm->Open("update tb_dianmaestra set ca_iddocactual = '$iddocactual', ca_vlrtotal = $ValorTotal, ca_cantreg = $CantReg where ca_idinfodian = " . $dm->Value("ca_idinfodian"))) {    // Actualizar la Fecha y Hora de Envio
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=5312';</script>";
                     exit;
                 }
 
@@ -5404,7 +5464,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
             }
         case 'Guardar': {                                                      // El Botón Guardar fue pulsado
                 $referencia = isset($referencia) ? implode(".", $referencia) : "";
-                $mes = $mes . '-' . substr($ano, 3, 1);
+                $mes = $mes . '-' . substr($ano, 2, 2);
                 $departamento = ($impoexpo == 'OTM/DTA') ? 'Terrestre' : (($impoexpo == 'Contenedores') ? 'Contenedores' : 'Marítimo');
                 $origen = ($impoexpo != 'OTM/DTA') ? $idtraorigen : $idciuorigen;
                 $idlinea = ($impoexpo != 'OTM/DTA') ? $idlinea : 0;
@@ -5418,7 +5478,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $referencia = $rs->Value('fun_referencia');
                 if (!$rs->Open("insert into tb_inomaestra_sea (ca_fchreferencia, ca_referencia, ca_impoexpo, ca_origen, ca_destino, ca_fchembarque, ca_fcharribo, ca_modalidad, ca_idlinea, ca_motonave, ca_ciclo, ca_mbls, ca_fchmbls, ca_observaciones, ca_fchcreado, ca_usucreado, ca_provisional, ca_emisionbl) values('$fchreferencia', '$referencia', '$impoexpo', '$idciuorigen', '$idciudestino', '$fchembarque', '$fcharribo', '$modalidad', $idlinea, '$motonave', '$ciclo', '" . $mbls[0] . "','" . $mbls[1] . "', '" . addslashes($observaciones) . "', to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario', 'FALSE', ".(($emisionbl!="")?$emisionbl:"null").")")) {
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=5446';</script>";
                     exit;
                 }
                 for ($i = 0; $i < count($inoequipos_sea); $i++) {
@@ -5430,7 +5490,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         $idequipo = strtoupper($inoequipos_sea[$i]['idequipo_1'] . "-" . $inoequipos_sea[$i]['idequipo_2']);
                         if (!$rs->Open("insert into tb_inoequipos_sea (ca_referencia, ca_idconcepto, ca_cantidad, ca_idequipo, ca_numprecinto, ca_observaciones, ca_fchcreado, ca_usucreado) values('$referencia', " . $inoequipos_sea[$i]['idconcepto'] . ", " . $inoequipos_sea[$i]['cantidad'] . ", '$idequipo', '" . $inoequipos_sea[$i]['numprecinto'] . "', '" . $inoequipos_sea[$i]['observaciones'] . "', to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                             echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'inosea.php?id=$id';</script>";
+                            echo "<script>document.location.href = 'entrada.php?id=5458';</script>";
                             exit;
                         }
                     }
@@ -5439,9 +5499,11 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
             }
         case 'Actualizar': {                                                   // El Botón Actualizar fue pulsado
                 $ciclo = strtoupper($ciclo[0] . "-" . $ciclo[1]);
-                if (!$rs->Open("update tb_inomaestra_sea set ca_fchreferencia = '$fchreferencia', ca_impoexpo = '$impoexpo', ca_origen = '$idciuorigen', ca_destino = '$idciudestino', ca_fchembarque = '$fchembarque', ca_fcharribo = '$fcharribo', ca_modalidad = '$modalidad', ca_idlinea = $idlinea, ca_motonave = '$motonave', ca_ciclo = '$ciclo', ca_mbls = '" . $mbls[0] . "',ca_fchmbls = '" . $mbls[1] . "', ca_observaciones = '" . addslashes($observaciones) . "', ca_emisionbl = " . (($emisionbl!="")?$emisionbl:"null") . ", ca_fchactualizado = to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_referencia = '$id'")) {
-                    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+               $sql="update tb_inomaestra_sea set ca_fchreferencia = '$fchreferencia', ca_impoexpo = '$impoexpo', ca_origen = '$idciuorigen', ca_destino = '$idciudestino', ca_fchembarque = '$fchembarque', ca_fcharribo = '$fcharribo', ca_modalidad = '$modalidad', ca_idlinea = $idlinea, ca_motonave = '$motonave', ca_ciclo = '$ciclo', ca_mbls = '" . $mbls[0] . "',ca_fchmbls = '" . $mbls[1] . "', ca_observaciones = '" . addslashes($observaciones) . "', ca_emisionbl = " . (($emisionbl!="")?$emisionbl:"null") . ", ca_fchactualizado = to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_referencia = '$id'";
+                if (!$rs->Open($sql)) {
+                    echo "Error 5503: $sql";
+                    //echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
+                    //echo "<script>document.location.href = 'entrada.php?id=5469';</script>";
                     exit;
                 }
                 for ($i = 0; $i < count($inoequipos_sea); $i++) {
@@ -5450,49 +5512,63 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     $inoequipos_sea[$i]['idequipo_2'] = (strlen($inoequipos_sea[$i]['idequipo_2']) == 0) ? '*' : strtoupper($inoequipos_sea[$i]['idequipo_2']);
                     $inoequipos_sea[$i]['numprecinto'] = strtoupper($inoequipos_sea[$i]['numprecinto']);
                     if ($inoequipos_sea[$i]['idconcepto'] == 'NULL') {
+                        if($inoequipos_sea[$i]['oid'] > 0)
+                        {
+                            if (!$rs->Open("delete from tb_inocontratos_sea where oid in (select c.oid from tb_inocontratos_sea c, tb_inoequipos_sea e where c.ca_referencia = e.ca_referencia and c.ca_idequipo = e.ca_idequipo and e.oid = " . $inoequipos_sea[$i]['oid'] . ")")) {
+                                echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
+                                echo "<script>document.location.href = 'entrada.php?id=5489';</script>";
+                                exit;
+                            }
+
+                            if (!$rs->Open("delete from tb_inoequipos_sea where oid = " . $inoequipos_sea[$i]['oid'])) {
+                                echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
+                                echo "<script>document.location.href = 'entrada.php?id=5494';</script>";
+                                exit;
+                            }
+                        }
                         continue;
                     } elseif ($inoequipos_sea[$i]['oid'] != 0 and $inoequipos_sea[$i]['cantidad'] != 0) {
                         $idequipo = strtoupper($inoequipos_sea[$i]['idequipo_1'] . "-" . $inoequipos_sea[$i]['idequipo_2']);
                         if (!$rs->Open("update tb_inoequipos_sea set ca_idconcepto = " . $inoequipos_sea[$i]['idconcepto'] . ", ca_cantidad = " . $inoequipos_sea[$i]['cantidad'] . ", ca_idequipo = '$idequipo', ca_numprecinto = '" . $inoequipos_sea[$i]['numprecinto'] . "', ca_observaciones = '" . $inoequipos_sea[$i]['observaciones'] . "', ca_fchactualizado = to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where oid = " . $inoequipos_sea[$i]['oid'])) {
                             echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'inosea.php?id=$id';</script>";
+                            echo "<script>document.location.href = 'entrada.php?id=5483';</script>";
                             exit;
                         }
-                    } elseif ($inoequipos_sea[$i]['oid'] != 0 and $inoequipos_sea[$i]['cantidad'] == 0) {
+                    } elseif (($inoequipos_sea[$i]['oid'] != 0 and $inoequipos_sea[$i]['cantidad'] == 0)  ) {
                         if (!$rs->Open("delete from tb_inocontratos_sea where oid in (select c.oid from tb_inocontratos_sea c, tb_inoequipos_sea e where c.ca_referencia = e.ca_referencia and c.ca_idequipo = e.ca_idequipo and e.oid = " . $inoequipos_sea[$i]['oid'] . ")")) {
                             echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'inosea.php?id=$id';</script>";
+                            echo "<script>document.location.href = 'entrada.php?id=5489';</script>";
                             exit;
                         }
                         if (!$rs->Open("delete from tb_inoequipos_sea where oid = " . $inoequipos_sea[$i]['oid'])) {
                             echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'inosea.php?id=$id';</script>";
+                            echo "<script>document.location.href = 'entrada.php?id=5494';</script>";
                             exit;
                         }
                     } elseif ($inoequipos_sea[$i]['oid'] == 0 and $inoequipos_sea[$i]['cantidad'] != 0) {
                         $idequipo = strtoupper($inoequipos_sea[$i]['idequipo_1'] . "-" . $inoequipos_sea[$i]['idequipo_2']);
                         if (!$rs->Open("insert into tb_inoequipos_sea (ca_referencia, ca_idconcepto, ca_cantidad, ca_idequipo, ca_numprecinto, ca_observaciones, ca_fchcreado, ca_usucreado) values('$id', " . $inoequipos_sea[$i]['idconcepto'] . ", " . $inoequipos_sea[$i]['cantidad'] . ", '$idequipo', '" . $inoequipos_sea[$i]['numprecinto'] . "', '" . $inoequipos_sea[$i]['observaciones'] . "', to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                             echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'inosea.php?id=$id';</script>";
+                            echo "<script>document.location.href = 'entrada.php?id=5501';</script>";
                             exit;
                         }
                     }
                 }
                 break;
-            }
+            }            
         case 'Grabar Encabezado': {                                                      // El Botón Grabar Encabezado fue pulsado
                 $idtransportista = ($idtransportista == '') ? 'NULL' : $idtransportista;
                 if ($idinfodian == '') {
                     $iddocactual = '';
                     if (!$rs->Open("insert into tb_dianmaestra (ca_referencia, ca_codconcepto, ca_fchtrans, ca_iddocactual, ca_iddocanterior, ca_tipodocviaje, ca_codadministracion, ca_dispocarga, ca_coddeposito, ca_idtransportista, ca_fchinicial, ca_fchfinal, ca_iddoctrasbordo, ca_idcondiciones, ca_responsabilidad, ca_tiponegociacion, ca_tipocarga, ca_precursores, ca_fchcreado, ca_usucreado) values ('$id', '$codconcepto', to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$iddocactual', '$iddocanterior', '$tipodocviaje', '$codadministracion', '$dispocarga', '$coddeposito', $idtransportista, '$fchinicial', '$fchfinal', '$iddoctrasbordo', '$idcondiciones', '" . substr($responsabilidad, 0, 1) . "', '$tiponegociacion', '$tipocarga', '" . substr($precursores, 0, 1) . "', to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'inosea.php?id=$id';</script>";
+                        echo "<script>document.location.href = 'entrada.php?id=5514';</script>";
                         exit;
                     }
                 } else {
                     if (!$rs->Open("update tb_dianmaestra set ca_codconcepto = '$codconcepto', ca_fchtrans = to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), ca_iddocanterior = '$iddocanterior', ca_tipodocviaje = '$tipodocviaje', ca_codadministracion = '$codadministracion', ca_dispocarga = '$dispocarga', ca_coddeposito = '$coddeposito', ca_idtransportista = $idtransportista, ca_fchinicial = '$fchinicial', ca_fchfinal = '$fchfinal', ca_iddoctrasbordo = '$iddoctrasbordo', ca_idcondiciones = '$idcondiciones', ca_responsabilidad = '" . substr($responsabilidad, 0, 1) . "', ca_tiponegociacion = '$tiponegociacion', ca_tipocarga = '$tipocarga', ca_precursores = '" . substr($precursores, 0, 1) . "', ca_fchactualizado = to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idinfodian = '$idinfodian'")) {
                         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'inosea.php?id=$id';</script>";
+                        echo "<script>document.location.href = 'entrada.php?id=5520';</script>";
                         exit;
                     }
                 }
@@ -5500,11 +5576,11 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
             }
         case 'Grabar Cliente': {                                                      // El Botón Grabar Encabezado fue pulsado
                 $iddestino = ($iddestino == '') ? 'null' : "'$iddestino'";
-                $sinidentificacion = ($sinidentificacion == 'on') ? 'true' : 'false';
-                if ($idinfodian == '') {
+                $sinidentificacion = ($sinidentificacion == 'on') ? 'true' : 'false';                 
+                if ($idinfodian == '') {                    
                     if (!$rs->Open("select max(ca_idinfodian) as ca_idinfodian from tb_dianmaestra where ca_referencia = '$referencia'")) {
                         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'inosea.php?id=$referencia';</script>";
+                        echo "<script>document.location.href = 'entrada.php?id=5532';</script>";
                         exit;
                     }
                     $idinfodian = $rs->Value("ca_idinfodian");
@@ -5512,15 +5588,24 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         echo "<script>alert(\"¡No se encuentran datos de cabecera, de información para la Dian!\");</script>";  // Muestra el mensaje de error
                         exit;
                     }
-                    if (!$rs->Open("insert into tb_dianclientes (ca_idinfodian, ca_referencia, ca_idcliente, ca_house, ca_dispocarga, ca_coddeposito, ca_tipodocviaje, ca_idcondiciones, ca_responsabilidad, ca_tiponegociacion, ca_tipocarga, ca_precursores, ca_vlrfob, ca_vlrflete, ca_mercancia_desc, ca_iddestino, ca_sinidentificacion, ca_fchcreado, ca_usucreado) values ('$idinfodian', '$referencia', '$idcliente', '$house', '$dispocarga', '$coddeposito', '$tipodocviaje', '$idcondiciones', '" . substr($responsabilidad, 0, 1) . "', '$tiponegociacion', '$tipocarga', '" . substr($precursores, 0, 1) . "', '$vlrfob', '$vlrflete', '$mercancia_desc', $iddestino, $sinidentificacion, to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
-                        echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'inosea.php?id=$referencia';</script>";
+                    //echo "5527:: $referencia";
+                //exit;
+                    if (!$rs->Open("insert into tb_dianclientes (ca_idinfodian, ca_dispocarga, ca_coddeposito, ca_tipodocviaje, ca_idcondiciones, ca_responsabilidad, ca_tiponegociacion, ca_tipocarga, ca_precursores, ca_vlrfob, ca_vlrflete, ca_mercancia_desc, ca_iddestino, ca_sinidentificacion, ca_fchcreado, ca_usucreado, ca_idinocliente) values ('$idinfodian', '$dispocarga', '$coddeposito', '$tipodocviaje', '$idcondiciones', '" . substr($responsabilidad, 0, 1) . "', '$tiponegociacion', '$tipocarga', '" . substr($precursores, 0, 1) . "', '$vlrfob', '$vlrflete', '$mercancia_desc', $iddestino, $sinidentificacion, to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario', $idinocliente)")) {
+                        echo "<pre>";print_r($_REQUEST);echo "</pre>";
+                        echo "insert into tb_dianclientes (ca_idinfodian, ca_referencia, ca_idcliente, ca_house, ca_dispocarga, ca_coddeposito, ca_tipodocviaje, ca_idcondiciones, ca_responsabilidad, ca_tiponegociacion, ca_tipocarga, ca_precursores, ca_vlrfob, ca_vlrflete, ca_mercancia_desc, ca_iddestino, ca_sinidentificacion, ca_fchcreado, ca_usucreado, ca_idinocliente) values ('$idinfodian', '$referencia', '$idcliente', '$house', '$dispocarga', '$coddeposito', '$tipodocviaje', '$idcondiciones', '" . substr($responsabilidad, 0, 1) . "', '$tiponegociacion', '$tipocarga', '" . substr($precursores, 0, 1) . "', '$vlrfob', '$vlrflete', '$mercancia_desc', $iddestino, $sinidentificacion, to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario', $idinocliente)";
+                        //echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
+                        //echo "<script>document.location.href = 'inosea.php?id=$referencia';</script>";
                         exit;
                     }
                 } else {
-                    if (!$rs->Open("update tb_dianclientes set ca_idinfodian = '$idinfodian', ca_referencia = '$referencia', ca_idcliente = '$idcliente', ca_house = '$house', ca_dispocarga = '$dispocarga', ca_coddeposito = '$coddeposito', ca_tipodocviaje = '$tipodocviaje', ca_idcondiciones = '$idcondiciones', ca_responsabilidad = '" . substr($responsabilidad, 0, 1) . "', ca_tiponegociacion = '$tiponegociacion', ca_tipocarga = '$tipocarga', ca_precursores = '" . substr($precursores, 0, 1) . "', ca_vlrfob = '$vlrfob', ca_vlrflete = '$vlrflete', ca_mercancia_desc = '$mercancia_desc', ca_iddestino = $iddestino, ca_sinidentificacion = $sinidentificacion, ca_fchactualizado = to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idinfodian = '$idinfodian' and ca_referencia = '$referencia' and ca_idcliente = '$idcliente' and ca_house = '$house'")) {
-                        echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'inosea.php?id=$referencia';</script>";
+                    
+                    //echo "<pre>";print_r($_REQUEST);echo "</pre>";
+                    //echo "update tb_dianclientes set ca_idinfodian = '$idinfodian', ca_referencia = '$referencia', ca_idcliente = '$idcliente', ca_house = '$house', ca_dispocarga = '$dispocarga', ca_coddeposito = '$coddeposito', ca_tipodocviaje = '$tipodocviaje', ca_idcondiciones = '$idcondiciones', ca_responsabilidad = '" . substr($responsabilidad, 0, 1) . "', ca_tiponegociacion = '$tiponegociacion', ca_tipocarga = '$tipocarga', ca_precursores = '" . substr($precursores, 0, 1) . "', ca_vlrfob = '$vlrfob', ca_vlrflete = '$vlrflete', ca_mercancia_desc = '$mercancia_desc', ca_iddestino = $iddestino, ca_sinidentificacion = $sinidentificacion, ca_fchactualizado = to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idinfodian = '$idinfodian' and ca_idinocliente = $idinocliente";
+                    //exit;
+                    if (!$rs->Open("update tb_dianclientes set ca_idinfodian = '$idinfodian',  ca_dispocarga = '$dispocarga', ca_coddeposito = '$coddeposito', ca_tipodocviaje = '$tipodocviaje', ca_idcondiciones = '$idcondiciones', ca_responsabilidad = '" . substr($responsabilidad, 0, 1) . "', ca_tiponegociacion = '$tiponegociacion', ca_tipocarga = '$tipocarga', ca_precursores = '" . substr($precursores, 0, 1) . "', ca_vlrfob = '$vlrfob', ca_vlrflete = '$vlrflete', ca_mercancia_desc = '$mercancia_desc', ca_iddestino = $iddestino, ca_sinidentificacion = $sinidentificacion, ca_fchactualizado = to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idinfodian = '$idinfodian' and ca_idinocliente = $idinocliente")) {
+                        echo $rs->mErrMsg;
+                    //    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
+//                        echo "<script>document.location.href = 'inosea.php?id=$referencia';</script>";
                         exit;
                     }
                 }
@@ -5580,7 +5665,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $address = substr($address, 0, strlen($address) - 1);
                 if (!$rs->Open("insert into tb_emails (ca_usuenvio, ca_tipo, ca_from, ca_fromname, ca_cc, ca_replyto, ca_address, ca_subject, ca_bodyhtml) values ('$usuario','Ok Digitación Muisca','$from', '$fromName', '$from', '$from', '$address','$subject','$bodyhtml')")) {
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=5617';</script>";
                     exit;
                 }
 
@@ -5634,7 +5719,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
 
                 if (!$rs->Open("select ca_ciudestino from vi_inomaestra_sea where ca_referencia = '$id'")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=5667';</script>";
                     exit;
                 }
 
@@ -5646,7 +5731,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
 
                 $query = "select up.ca_login, us.ca_email, us.ca_sucursal from control.tb_usuarios_perfil up";
                 $query.= "  inner join vi_usuarios us on us.ca_login = up.ca_login";
-                $query.= "  where us.ca_sucursal = '$ciudad' and up.ca_perfil like '%asistente-marítimo-puerto%'";
+                $query.= "  where us.ca_sucursal = '$ciudad' and up.ca_perfil like '%asistente-marítimo-puerto%' and us.ca_activo = true";
 
                 if (!$us->Open("$query")) {
                     echo "<script>alert(\"" . addslashes($us->mErrMsg) . "\");</script>";
@@ -5686,7 +5771,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $address = substr($address, 0, strlen($address) - 1);
                 if (!$rs->Open("insert into tb_emails (ca_usuenvio, ca_tipo, ca_from, ca_fromname, ca_cc, ca_replyto, ca_address, ca_subject, ca_bodyhtml) values ('$usuario','Ok Digitación Muisca','$from', '$fromName', '$from', '$from', '$address','$subject','$bodyhtml')")) {
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=5723';</script>";
                     exit;
                 }
 
@@ -5701,46 +5786,48 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $provisional = (isset($provisional)) ? "true" : "false";
                 if (!$rs->Open("select i.ca_usuliquidado from vi_inomaestra_sea i where i.ca_referencia = '$referencia'")) {
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=5738';</script>";
                     exit;
                 } else if ($rs->Value('ca_usuliquidado') == '') {
                     echo "<script>alert(\"No puede Cerrar el caso si no ha sido firmado como liquidado\");</script>";  // Muestra el mensaje de error
                 } else if (!$rs->Open("update tb_inomaestra_sea set ca_fchcerrado = to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), ca_usucerrado = '$usuario', ca_usuoperacion = '$usuario' where ca_referencia = '$referencia'")) {
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=5744';</script>";
                     exit;
                 }
                 break;
             }
         case 'Eliminar': {                                                     // El Botón Eliminar fue pulsado
-                if (!$rs->Open("delete from tb_inocostos_sea where ca_referencia = '$id'")) {
+                /*if (!$rs->Open("delete from tb_inocostos_sea where ca_referencia = '$id'")) {
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=5752';</script>";
                     exit;
                 }
                 if (!$rs->Open("delete from tb_inoingresos_sea where ca_referencia = '$id'")) {
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=5757';</script>";
                     exit;
                 }
                 if (!$rs->Open("delete from tb_inoclientes_sea where ca_referencia = '$id'")) {
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=5792';</script>";
                     exit;
                 }
                 if (!$rs->Open("delete from tb_inoequipos_sea where ca_referencia = '$id'")) {
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=5767';</script>";
                     exit;
-                }
-                if (!$rs->Open("delete from tb_inoequiposxcliente where ca_referencia = '$id'")) {
+                }*/
+                /*if (!$rs->Open("delete from tb_inoequiposxcliente where ca_referencia = '$id'")) {
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=5772';</script>";
                     exit;
-                }
-                if (!$rs->Open("delete from tb_inomaestra_sea where ca_referencia = '$id'")) {
-                    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                }*/
+            $sql="delete from tb_inomaestra_sea where ca_referencia = '$id'";
+                if (!$rs->Open($sql)) {
+                    echo "Error:5827 {$rs->mErrMsg}<br>: $sql";
+                    //echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
+                    //echo "<script>document.location.href = 'entrada.php?id=5777';</script>";
                     exit;
                 }
                 break;
@@ -5761,27 +5848,38 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                   $contenedores = substr($cadena,0,strlen($cadena)-1);
                  * 
                  */
-
-                if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_imprimirorigen, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones,  ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', '$imprimirorigen', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', $fchantecedentes, to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
-                    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                $sql="insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_imprimirorigen, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones,  ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', '$imprimirorigen', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', $fchantecedentes, to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario')";
+                if (!$rs->Open($sql)) {
+                    echo "Error : 5853 $sql";
+                //    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
+                //    echo "<script>document.location.href = 'entrada.php?id=5801';</script>";
                     exit;
                 } else {
                     $tmp = & DlRecordset::NewRecordset($conn);
                     finalizarTarea($tmp, $idreporte, $usuario);
                 }
+                
+                //ifif(!$ca_idinocliente)
+                $sql="select ca_idinocliente from tb_inoclientes_sea where ca_hbls=$hbls ";
+                $tm = & DlRecordset::NewRecordset($conn);
+                if (!$tm->Open($sql)) {
+                    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";
+                    echo "<script>document.location.href = 'repcomisiones.php';</script>";
+                    exit;
+                }
+                $idinocliente=$tm->Value('ca_idinocliente');
 
                 $values = "";
                 foreach ($contenedores as $contenedor) {
                     if ($contenedor["id"]) {
                         if ($values)
                             $values.=",";
-                        $values.="('$referencia', $idcliente, '" . $contenedor["id"] . "', " . ($contenedor["ps"] ? $contenedor["ps"] : "0") . " , " . ($contenedor["pz"] ? $contenedor["pz"] : "0") . "," . ($contenedor["vo"] ? $contenedor["vo"] : "0") . " ,  '$hbls' )";
+                        $values.="('$idinocliente', '" . $contenedor["id"] . "', " . ($contenedor["ps"] ? $contenedor["ps"] : "0") . " , " . ($contenedor["pz"] ? $contenedor["pz"] : "0") . "," . ($contenedor["vo"] ? $contenedor["vo"] : "0") . "  )";
                     }
                 }
 
                 if ($values) {
-                    $sql = "insert into tb_inoequiposxcliente (ca_referencia, ca_idcliente, ca_idequipo, ca_peso , ca_piezas , ca_volumen ,  ca_hbls ) values " . $values;
+                    $sql = "insert into tb_inoequiposxcliente (ca_idinocliente, ca_idequipo, ca_peso , ca_piezas , ca_volumen ) values " . $values;
                     if (!$rs->Open($sql)) {
 
                         echo $rs->mErrMsg;
@@ -5793,7 +5891,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     if ($val[valor] != 0) {
                         if (!$rs->Open("insert into tb_inoingresos_sea (ca_referencia, ca_idcliente, ca_hbls, ca_factura, ca_fchfactura, ca_idmoneda, ca_neto, ca_valor, ca_reccaja, ca_observaciones, ca_tcambio, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, '$hbls', '$val[factura]', '$val[fchfactura]', '$val[moneda]', '$val[neto]', '$val[valor]', '', '$val[observacion]', '$val[tcambio]', to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                             echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'inosea.php';</script>";
+                            echo "<script>document.location.href = 'entrada.php?id=5830';</script>";
                             exit;
                         }
                     }
@@ -5802,7 +5900,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     if (strlen($val[deduccion]) != 0) {
                         if (!$rs->Open("insert into tb_inodeduccion_sea (ca_referencia, ca_idcliente, ca_hbls, ca_factura, ca_iddeduccion, ca_neto, ca_valor, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, '$hbls', '$val[dedfactura]', '$val[iddeduccion]', $val[dedneto], $val[deduccion], to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                             echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'inosea.php';</script>";
+                            echo "<script>document.location.href = 'entrada.php?id=5839';</script>";
                             exit;
                         }
                     }
@@ -5811,35 +5909,35 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $tm = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$tm->Open("select ca_fchreferencia from tb_inomaestra_sea where ca_referencia = '$referencia'")) {        // Selecciona todos lo registros de la tabla Festivos
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=5844';</script>";
                     exit;
                 }
                 $fchreferencia = $tm->Value('ca_fchreferencia');
 
                 if (!$tm->Open("select ca_consecutivo from tb_reportes where ca_idreporte = $idreporte")) {        // Selecciona todos lo registros de la tabla Festivos
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=5851';</script>";
                     exit;
                 }
                 $consecutivo = $tm->Value('ca_consecutivo');
 
                 if (!$tm->Open("select substring(rs.ca_fchllegada::text,1,4) as ca_ano_new, substring(rs.ca_fchllegada::text,6,2) as ca_mes_new, rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa in ('IMCPD')) where ca_consecutivo = '$consecutivo' group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo")) {        // Selecciona todos lo registros de la tabla Festivos
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=5858';</script>";
                     exit;
                 }
                 $fch_llegada = $tm->Value('ca_fchllegada');
 
                 if (!$tm->Open("select cfg.* from idg.tb_idg idg inner join idg.tb_config cfg on idg.ca_idg = cfg.ca_idg inner join control.tb_departamentos dep on idg.ca_iddepartamento = dep.ca_iddepartamento where idg.ca_nombre = 'Oportunidad en la Facturación' and dep.ca_nombre = 'Marítimo' and '$fchreferencia' between cfg.ca_fchini and cfg.ca_fchfin")) {
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=5865';</script>";
                     exit;
                 }
                 $num_dias = $tm->Value('ca_lim1');
 
                 if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=5872';</script>";
                     exit;
                 }
                 $festi = array();
@@ -5875,7 +5973,9 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                   $contenedores = substr($cadena,0,strlen($cadena)-1);
                  * 
                  */
-                if ($hbl != $hbls) {
+                
+                /*if ($hbl != $hbls) {
+                    //echo "ddd";
                     if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_imprimirorigen, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones,  ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', '$imprimirorigen', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', $fchantecedentes, to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                         //echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         //echo "<script>document.location.href = 'inosea.php';</script>";
@@ -5886,7 +5986,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         $tmp = & DlRecordset::NewRecordset($conn);
                         finalizarTarea($tmp, $idreporte, $usuario);
                     }
-                    if (!$rs->Open("delete from tb_inoequiposxcliente where ca_referencia='$referencia' and ca_idcliente=$idcliente and ca_hbls='$hbls' ")) {
+                    if (!$rs->Open("delete from tb_inoequiposxcliente where ca_idinocliente='$idinocliente'  ")) {
                         echo $rs->mErrMsg;
                         exit;
                     }
@@ -5896,24 +5996,24 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         if ($contenedor["id"]) {
                             if ($values)
                                 $values.=",";
-                            $values.="('$referencia', $idcliente, '" . $contenedor["id"] . "', " . ($contenedor["ps"] ? $contenedor["ps"] : "0") . " , " . ($contenedor["pz"] ? $contenedor["pz"] : "0") . "," . ($contenedor["vo"] ? $contenedor["vo"] : "0") . " ,  '$hbls' )";
+                            $values.="('$idinocliente', '" . $contenedor["id"] . "', " . ($contenedor["ps"] ? $contenedor["ps"] : "0") . " , " . ($contenedor["pz"] ? $contenedor["pz"] : "0") . "," . ($contenedor["vo"] ? $contenedor["vo"] : "0") . "  )";
                         }
                     }
 
                     if ($values) {
-                        $sql = "insert into tb_inoequiposxcliente (ca_referencia, ca_idcliente, ca_idequipo, ca_peso , ca_piezas , ca_volumen ,  ca_hbls ) values " . $values;
+                        $sql = "insert into tb_inoequiposxcliente (ca_idinocliente, ca_idequipo, ca_peso , ca_piezas , ca_volumen  ) values " . $values;
                         if (!$rs->Open($sql)) {
 
                             echo $rs->mErrMsg;
                             exit;
                         }
                     }
-                } else {
+                } else*/ {
 
                     //echo "select count(*) as conta from tb_inoclientes_sea where  oid = '$oid' and (ca_usuactualizado is null or ca_usuactualizado='' )";
                     if (!$rs->Open("select count(*) as conta from tb_inoclientes_sea where  oid = '$oid' and (ca_usuactualizado is not null )")) {
                         echo "<script>alert(\"" . addslashes($cl->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'entrada.php';</script>";
+                        echo "<script>document.location.href = 'entrada.php?id=5946';</script>";
                         exit;
                     }
                     if ($rs->Value('conta') > 0) {
@@ -5935,7 +6035,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         $tmp = & DlRecordset::NewRecordset($conn);
                         finalizarTarea($tmp, $idreporte, $usuario);
                     }
-                    $sql = "delete from tb_inoequiposxcliente where ca_referencia='$referencia' and ca_idcliente=$idcliente and ca_hbls='$hbls' ";
+                    $sql = "delete from tb_inoequiposxcliente where ca_idinocliente='$idinocliente'  ";
                     if (!$rs->Open($sql)) {
                         echo $rs->mErrMsg;
                         exit;
@@ -5946,12 +6046,12 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         if ($contenedor["id"]) {
                             if ($values)
                                 $values.=",";
-                            $values.="('$referencia', $idcliente, '" . $contenedor["id"] . "', " . ($contenedor["ps"] ? $contenedor["ps"] : "0") . " , " . ($contenedor["pz"] ? $contenedor["pz"] : "0") . "," . ($contenedor["vo"] ? $contenedor["vo"] : "0") . " ,  '$hbls' )";
+                            $values.="('$idinocliente', '" . $contenedor["id"] . "', " . ($contenedor["ps"] ? $contenedor["ps"] : "0") . " , " . ($contenedor["pz"] ? $contenedor["pz"] : "0") . "," . ($contenedor["vo"] ? $contenedor["vo"] : "0") . "  )";
                         }
                     }
 
                     if ($values) {
-                        $sql = "insert into tb_inoequiposxcliente (ca_referencia, ca_idcliente, ca_idequipo, ca_peso , ca_piezas , ca_volumen ,  ca_hbls ) values " . $values;
+                        $sql = "insert into tb_inoequiposxcliente (ca_idinocliente, ca_idequipo, ca_peso , ca_piezas , ca_volumen  ) values " . $values;
                         if (!$rs->Open($sql)) {
                             echo $rs->mErrMsg;
                             exit;
@@ -5959,104 +6059,126 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     }
                 }
 
-                while (list ($clave, $val) = each($facturacion)) {
-                    if ($val[oid_fc] == '' and $val[valor] != 0) {
-                        if (!$rs->Open("insert into tb_inoingresos_sea (ca_referencia, ca_idcliente, ca_hbls, ca_factura, ca_fchfactura, ca_idmoneda, ca_neto, ca_valor, ca_reccaja, ca_observaciones, ca_tcambio, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, '$hbls', '$val[factura]', '$val[fchfactura]', '$val[moneda]', '$val[neto]', '$val[valor]', '', '$val[observacion]', '$val[tcambio]', to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
-                            echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'inosea.php';</script>";
+                while (list ($clave, $val) = each($facturacion)) {                    
+                    if ($val["idinoingreso"] == '' and $val["valor"] != 0) {
+                        $sql="insert into tb_inoingresos_sea (ca_idinocliente, ca_factura, ca_fchfactura, ca_idmoneda, ca_neto, ca_valor, ca_reccaja, ca_observaciones, ca_tcambio, ca_fchcreado, ca_usucreado) values('$idinocliente', '$val[factura]', '$val[fchfactura]', '$val[moneda]', '$val[neto]', '$val[valor]', '', '$val[observacion]', '$val[tcambio]', to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario')";
+                        
+                        if (!$rs->Open($sql)) {
+                            echo "Se presento un error 6008:<br>$sql";                            
                             exit;
                         }
-                    } else if ($val[oid_fc] != '' and $val[valor] != 0) {
-                        if (!$rs->Open("update tb_inoingresos_sea set ca_hbls = '$hbls', ca_factura = '$val[factura]', ca_fchfactura = '$val[fchfactura]', ca_idmoneda = '$val[moneda]', ca_neto = '$val[neto]', ca_valor = '$val[valor]', ca_observaciones = '$val[observacion]', ca_tcambio = '$val[tcambio]', ca_fchactualizado = to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where oid = " . $val[oid_fc])) {
-                            echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'inosea.php';</script>";
+                    } else if ($val["idinoingreso"] != '' and $val["valor"] != 0) {
+                        $sql="update tb_inoingresos_sea set ca_factura = '$val[factura]', ca_fchfactura = '$val[fchfactura]', ca_idmoneda = '$val[moneda]', ca_neto = '$val[neto]', ca_valor = '$val[valor]', ca_observaciones = '$val[observacion]', ca_tcambio = '$val[tcambio]', ca_fchactualizado = to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idinoingreso = " . $val["idinoingreso"];
+
+                        if (!$rs->Open($sql)) {
+                            echo "Se presento un error 6017:<br>$sql";                            
                             exit;
                         }
-                    } else if ($val[oid_fc] != '' and $val[valor] == 0) {
-                        if (!$rs->Open("delete from tb_inoingresos_sea where oid = " . $val[oid_fc])) {
+                    } else if ($val["idinoingreso"] != '' and $val[valor] == 0) {
+                        if (!$rs->Open("delete from tb_inoingresos_sea where ca_idinoingreso = " . $val["idinoingreso"])) {
                             echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'inosea.php';</script>";
+                            echo "<script>document.location.href = 'entrada.php?id=6012';</script>";
                             exit;
                         }
+                    }                    
+                }                
+                while (list ($clave, $val) = each($deducibles)) {                 
+                    if(!isset($val["dedidingreso"]))
+                    {
+                        $sql="select ca_idinoingreso from tb_inoingresos_sea where ca_idinocliente=$idinocliente and ca_factura='".$val[dedfactura]."'";
+                        $tm = & DlRecordset::NewRecordset($conn);
+                        if (!$tm->Open($sql)) {
+                            echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";
+                            echo "<script>document.location.href = 'repcomisiones.php';</script>";
+                            exit;
+                        }
+                        $ca_idinoingreso=$tm->Value('ca_idinoingreso');
                     }
-                }
-                while (list ($clave, $val) = each($deducibles)) {
+                    else
+                    {
+                        $ca_idinoingreso=$val["dedidingreso"];
+                    }
+                    
+                                        
                     if ($val[oid] == '' and $val[deduccion] != 0) {
-                        if (!$rs->Open("insert into tb_inodeduccion_sea (ca_referencia, ca_idcliente, ca_hbls, ca_factura, ca_iddeduccion, ca_neto, ca_valor, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, '$hbls', '$val[dedfactura]', '$val[iddeduccion]', $val[dedneto], $val[deduccion], to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
-                            echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'inosea.php';</script>";
+                        $sql="insert into tb_inodeduccion_sea (ca_idinoingreso, ca_iddeduccion, ca_neto, ca_valor, ca_fchcreado, ca_usucreado) values('$ca_idinoingreso', '$val[iddeduccion]', $val[dedneto], $val[deduccion], to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario')";
+                        if (!$rs->Open($sql)) {
+                            echo "Error 6066: $sql";                            
                             exit;
                         }
                     } else if ($val[oid] != '' and $val[deduccion] != 0) {
-                        if (!$rs->Open("update tb_inodeduccion_sea set ca_hbls = '$hbls', ca_factura = '$val[dedfactura]', ca_iddeduccion = '$val[iddeduccion]', ca_neto = $val[dedneto], ca_valor = '$val[deduccion]', ca_fchactualizado = to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where oid = " . $val[oid])) {
-                            echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'inosea.php';</script>";
+                        $sql="update tb_inodeduccion_sea set  ca_idinoingreso='$ca_idinoingreso', ca_iddeduccion = '$val[iddeduccion]', ca_neto = $val[dedneto], ca_valor = '$val[deduccion]', ca_fchactualizado = to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where oid = " . $val[oid];                        
+                        if (!$rs->Open($sql)) {
+                            echo "Error 6077:$sql";
                             exit;
                         }
                     } else if ($val[oid] != '' and $val[deduccion] == 0) {
                         if (!$rs->Open("delete from tb_inodeduccion_sea where oid = " . $val[oid])) {
                             echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'inosea.php';</script>";
+                            echo "<script>document.location.href = 'entrada.php?id=6033';</script>";
                             exit;
                         }
                     }
                 }
 
                 if ($hbl != $hbls) {
-                    if (!$rs->Open("update tb_inoutilidad_sea set ca_hbls = '$hbls' where ca_referencia = '$referencia' and ca_idcliente = '$idcliente' and ca_hbls = '$hbl'")) {
+                    
+                    //SE RELACIONA AHORA POR MEDIO DE IDINOCLIENTE 2013-12-26
+                    /*if (!$rs->Open("update tb_inoutilidad_sea set ca_hbls = '$hbls' where ca_referencia = '$referencia' and ca_idcliente = '$idcliente' and ca_hbls = '$hbl'")) {
                         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'inosea.php';</script>";
                         exit;
-                    }
-                    if (!$rs->Open("update tb_inocomisiones_sea set ca_hbls = '$hbls' where ca_referencia = '$referencia' and ca_idcliente = '$idcliente' and ca_hbls = '$hbl'")) {
+                    }*/
+                    
+                    /*if (!$rs->Open("update tb_inocomisiones_sea set ca_hbls = '$hbls' where ca_referencia = '$referencia' and ca_idcliente = '$idcliente' and ca_hbls = '$hbl'")) {
+                        echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
+                        echo "<script>document.location.href = 'entrada.php?id=6049';</script>";
+                        exit;
+                    }*/
+                    /*if (!$rs->Open("update tb_dianclientes set ca_house = '$hbls' where ca_referencia = '$referencia' and ca_idcliente = '$idcliente' and ca_house = '$hbl'")) {
                         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'inosea.php';</script>";
                         exit;
-                    }
-                    if (!$rs->Open("update tb_dianclientes set ca_house = '$hbls' where ca_referencia = '$referencia' and ca_idcliente = '$idcliente' and ca_house = '$hbl'")) {
+                    }*/ //MAQR CAMBIO 17 DIGITOS
+                    /*if (!$rs->Open("delete from tb_inoclientes_sea where oid = '$oid'")) {
                         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'inosea.php';</script>";
+                        echo "<script>document.location.href = 'entrada.php?id=6060';</script>";
                         exit;
-                    }
-                    if (!$rs->Open("delete from tb_inoclientes_sea where oid = '$oid'")) {
-                        echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'inosea.php';</script>";
-                        exit;
-                    }
+                    }*/
                 }
 
                 $tm = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$tm->Open("select ca_fchreferencia from tb_inomaestra_sea where ca_referencia = '$referencia'")) {        // Selecciona todos lo registros de la tabla Festivos
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=6064';</script>";
                     exit;
                 }
                 $fchreferencia = $tm->Value('ca_fchreferencia');
 
                 if (!$tm->Open("select ca_consecutivo from tb_reportes where ca_idreporte = $idreporte")) {        // Selecciona todos lo registros de la tabla Festivos
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=6070';</script>";
                     exit;
                 }
                 $consecutivo = $tm->Value('ca_consecutivo');
 
                 if (!$tm->Open("select substring(rs.ca_fchllegada::text,1,4) as ca_ano_new, substring(rs.ca_fchllegada::text,6,2) as ca_mes_new, rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa in ('IMCPD')) where ca_consecutivo = '$consecutivo' group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo")) {        // Selecciona todos lo registros de la tabla Festivos
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=6078';</script>";
                     exit;
                 }
                 $fch_llegada = $tm->Value('ca_fchllegada');
 
                 if (!$tm->Open("select cfg.* from idg.tb_idg idg inner join idg.tb_config cfg on idg.ca_idg = cfg.ca_idg inner join control.tb_departamentos dep on idg.ca_iddepartamento = dep.ca_iddepartamento where idg.ca_nombre = 'Oportunidad en la Facturación' and dep.ca_nombre = 'Marítimo' and '$fchreferencia' between cfg.ca_fchini and cfg.ca_fchfin")) {
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=6085';</script>";
                     exit;
                 }
                 $num_dias = $tm->Value('ca_lim1');
 
                 if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=6092';</script>";
                     exit;
                 }
                 $festi = array();
@@ -6078,35 +6200,41 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 break;
             }
         case 'Eliminar Cliente': {                                                      // El Botón Guardar fue pulsado
-                if (!$rs->Open("delete from tb_inoingresos_sea where ca_referencia = '$referencia' and ca_idcliente = $idcliente and ca_hbls = '$hbl'")) {
-                    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                /*$sql="delete from tb_inoingresos_sea where ca_referencia = '$referencia' and ca_idcliente = $idcliente and ca_hbls = '$hbl'";
+                if (!$rs->Open($sql)) {
+                    echo $sql;
+                    //echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
+                    //echo "<script>document.location.href = 'entrada.php?id=6012';</script>";
                     exit;
                 }
                 if (!$rs->Open("delete from tb_inodeduccion_sea where ca_referencia = '$referencia' and ca_idcliente = $idcliente and ca_hbls = '$hbl'")) {
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = '6125';</script>";
                     exit;
-                }
-                if (!$rs->Open("delete from tb_inoutilidad_sea where ca_referencia = '$referencia' and ca_idcliente = $idcliente and ca_hbls = '$hbl'")) {
+                }*/
+                
+                //LO HACE EN CASCADA AHORA 2013-12-26
+                /*if (!$rs->Open("delete from tb_inoutilidad_sea where ca_referencia = '$referencia' and ca_idcliente = $idcliente and ca_hbls = '$hbl'")) {
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
-                }
-                if (!$rs->Open("delete from tb_inoequiposxcliente where ca_referencia = '$referencia' and ca_idcliente = $idcliente and ca_hbls = '$hbl'")) {
+                }*/
+                /*if (!$rs->Open("delete from tb_inoequiposxcliente where ca_idinocliente = '$idinocliente'")) {
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=6137';</script>";
                     exit;
-                }
-
-                if (!$rs->Open("delete from tb_inoclientes_sea where ca_referencia = '$referencia' and ca_idcliente = $idcliente and ca_hbls = '$hbl'")) {
-                    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                }*/
+                $sql="delete from tb_inoclientes_sea where ca_idinocliente = '$idinocliente' ";
+                if (!$rs->Open($sql)) {
+                    echo "Error 6215 : $sql";
+                    //echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
+                    //echo "<script>document.location.href = 'entrada.php?id=6143';</script>";
                     exit;
                 }
                 break;
             }
-        case 'Guardar Costo': {                                                      // El Botón Guardar fue pulsado
+        //YA NO SE USA, EL MANEJO DE COSTOS SE HACE CON SYMFONY
+        /*case 'Guardar Costo': {                                                      // El Botón Guardar fue pulsado
                 settype($neto, "double");
                 settype($venta, "double");
                 if (!$rs->Open("insert into tb_inocostos_sea (ca_referencia, ca_idcosto, ca_factura, ca_fchfactura, ca_proveedor, ca_idmoneda, ca_tcambio, ca_neto, ca_venta, ca_login, ca_fchcreado, ca_usucreado) values('$referencia', $idcosto, '$factura', '$fchfactura', '$proveedor', '$idmoneda', $tcambio, $neto, $venta, '', to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
@@ -6125,10 +6253,12 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 }
                 break;
             }
+         * 
+         */
         case 'Firmar Liquidación': {                                                // El Botón Firmar Liquidación fue pulsado
                 if (!$rs->Open("select i.ca_costoneto, i.ca_facturacion, i.ca_deduccion, i.ca_utilidad, i.ca_peso, i.ca_peso_cap, i.ca_volumen, i.ca_volumen_cap, e.ca_concepto from vi_inomaestra_sea i LEFT OUTER JOIN vi_inoequipos_sea e ON (i.ca_referencia = e.ca_referencia) where i.ca_referencia = '$referencia'")) {
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=6173';</script>";
                     exit;
                 }
                 // if ($rs->Value('ca_costoneto') == 0) {
@@ -6143,20 +6273,22 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     echo "<script>alert(\"No puede firmar el caso ya que el volumen o peso registrado en los HBL's, supera la capacidad de carga de la guia Master\");</script>";  // Muestra el mensaje de error
                 } else if (!$rs->Open("update tb_inomaestra_sea set ca_fchliquidado = to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), ca_usuliquidado = '$usuario' where ca_referencia = '$referencia'")) {
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=6188';</script>";
                     exit;
                 }
                 break;
             }
         case 'Eliminar Costo': {                                                      // El Botón Guardar fue pulsado
-                if (!$rs->Open("delete from tb_inoutilidad_sea where oid = (select iu.oid from tb_inoutilidad_sea iu inner join tb_inocostos_sea ic on iu.ca_referencia = ic.ca_referencia and iu.ca_idcosto = ic.ca_idcosto and iu.ca_factura = ic.ca_factura and ic.oid = $oid)")) {
+                //if (!$rs->Open("delete from tb_inoutilidad_sea where oid = (select iu.oid from tb_inoutilidad_sea iu inner join tb_inocostos_sea ic on iu.ca_referencia = ic.ca_referencia and iu.ca_idcosto = ic.ca_idcosto and iu.ca_factura = ic.ca_factura and ic.oid = $oid)")) {
+                if (!$rs->Open("delete from tb_inoutilidad_sea where ca_idinocosto = $idinocosto")) 
+                {
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=6198';</script>";
                     exit;
                 }
-                if (!$rs->Open("delete from tb_inocostos_sea where oid = $oid")) {
+                if (!$rs->Open("delete from tb_inocostos_sea where ca_idinocostos_sea = $idinocosto")) {
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    echo "<script>document.location.href = 'entrada.php?id=6203';</script>";
                     exit;
                 }
                 break;

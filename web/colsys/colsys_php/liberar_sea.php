@@ -89,9 +89,11 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
             $condicion.= "and ca_referencia in (select ca_referencia from vi_inocostos_sea where lower(".substr($opcion,0,10).") like lower('%".$criterio."%') order by ca_referencia)"; }
        }
     // die("select * from vi_inomaestra_sea $condicion");
-    if (!$rs->Open("select * from vi_inomaestra_sea $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
-        echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-        echo "<script>document.location.href = 'entrada.php';</script>";
+       $sql="select * from vi_inomaestra_sea $condicion";
+    if (!$rs->Open($sql)) {
+        echo "Error 94: $sql";
+//        echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+//        echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
 
     echo "<HTML>";
@@ -174,10 +176,12 @@ echo "</BODY>";
     }
 elseif (isset($boton)) {                                                       // Switch que evalua cual botòn de comando fue pulsado por el usuario
     switch(trim($boton)) {
-        case 'Consultar': {                                                    // Opcion para Consultar un solo registro
-             if (!$rs->Open("select * from vi_inomaestra_sea where ca_referencia = '$id'")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
-                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'entrada.php';</script>";
+        case 'Consultar': { 
+            $sql="select * from vi_inomaestra_sea where ca_referencia = '$id'";
+             if (!$rs->Open($sql)) {
+                 echo "Error 181: $sql";
+                 //echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                 //echo "<script>document.location.href = 'entrada.php';</script>";
                  exit; }
              echo "<HTML>";
              echo "<HEAD>";
@@ -247,15 +251,19 @@ elseif (isset($boton)) {                                                       /
                 echo "<TR>";
                 echo "  <TD COLSPAN=4 Class=invertir>";
                 $co =& DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
-                if (!$co->Open("select * from vi_inoequipos_sea where ca_referencia = '".$rs->Value('ca_referencia')."'")) {        // Selecciona todos lo registros de la tabla Clientes de una referencia Ino-Marítimo
-                    echo "<script>alert(\"".addslashes($co->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                $sql="select * from vi_inoequipos_sea where ca_referencia = '".$rs->Value('ca_referencia')."'";
+                if (!$co->Open($sql)) {
+                    echo "Error 256: $sql";
+                    //echo "<script>alert(\"".addslashes($co->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    //echo "<script>document.location.href = 'entrada.php';</script>";
                     exit; }
 
                 $cl =& DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
-                if (!$cl->Open("select * from vi_inoclientes_sea where ca_referencia = '".$rs->Value('ca_referencia')."'")) {                      // Selecciona todos lo registros de la tabla Clientes de una referencia Ino-Marítimo
-                    echo "<script>alert(\"".addslashes($cl->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                $sql="select * from vi_inoclientes_sea where ca_referencia = '".$rs->Value('ca_referencia')."'";
+                if (!$cl->Open($sql)) {
+                    echo "Error 264: $sql";
+                //    echo "<script>alert(\"".addslashes($cl->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                //    echo "<script>document.location.href = 'entrada.php';</script>";
                     exit; }
                 echo "  <TABLE CELLSPACING=1 style='letter-spacing:-1px;'>";
                 echo "  <TH>Concepto</TH>";
@@ -397,9 +405,11 @@ elseif (isset($boton)) {                                                       /
                }
              echo "</TABLE><BR><BR>";
              $tm =& DlRecordset::NewRecordset($conn);
-             if (!$tm->Open("select * from vi_inoauditor_sea where ca_referencia = '".$rs->Value('ca_referencia')."'")) { // Selecciona todos lo registros de la tabla Ciudades
-                echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-                echo "<script>document.location.href = 'inosea.php';</script>";
+             $sql="select * from vi_inoauditor_sea where ca_referencia = '".$rs->Value('ca_referencia')."'";
+             if (!$tm->Open($sql)) {
+                 echo "Error 410: $sql";
+                //echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                //echo "<script>document.location.href = 'inosea.php';</script>";
                 exit; }
              echo "<TABLE WIDTH=620 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
              echo "<TR>";
@@ -456,16 +466,33 @@ echo "</BODY>";
 elseif (isset($accion)) {                                                      // Rutina que registra los cambios en la tabla de la base de datos
     switch(trim($accion)) {                                                    // Switch que evalua cual botòn de comando fue pulsado por el usuario
         case 'Liberar': {                                                      // El Botón Liberar fue pulsado
-             if (!$rs->Open("update tb_inoclientes_sea set ca_fchliberacion = '$fchliberacion', ca_notaliberacion = '$notaliberacion', ca_fchliberado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuliberado = '$usuario' where oid = '$oid'")) {
-                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-                 echo "<script>document.location.href = 'grupos.php';</script>";
+            $sql="update tb_inoclientes_sea set ca_fchliberacion = '$fchliberacion', ca_notaliberacion = '$notaliberacion', ca_fchliberado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuliberado = '$usuario' where oid = '$oid'";
+             if (!$rs->Open($sql)) {
+                 echo "Error 471: $sql";
+                 //echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                 //echo "<script>document.location.href = 'grupos.php';</script>";
                  exit;
              }
+             
+            $sql="select ca_idinocliente from tb_inoclientes_sea where oid = '$oid'";
+            $tm = & DlRecordset::NewRecordset($conn);
+            if (!$tm->Open($sql)) {
+                echo "Error 480: $sql";
+                //echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";
+                //echo "<script>document.location.href = 'repcomisiones.php';</script>";
+                exit;
+            }
+            //echo "$sql.<br>";
+            $ca_idinocliente=$tm->Value('ca_idinocliente');
+             
              while (list ($clave, $val) = each ($liberacion)) {
                 if (strlen($val[reccaja]) != 0){
-                    if (!$rs->Open("update tb_inoingresos_sea set ca_reccaja = '".$val[reccaja]."', ca_fchpago = '".$val[fchpago]."' where ca_referencia = '$referencia' and ca_factura = '".$clave."'")) {
-                        echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-                        echo "<script>document.location.href = 'grupos.php';</script>";
+                    $sql="update tb_inoingresos_sea set ca_reccaja = '".$val[reccaja]."', ca_fchpago = '".$val[fchpago]."' 
+                        where ca_idinocliente = '$ca_idinocliente' and ca_factura = '".$clave."'";
+                    if (!$rs->Open($sql)) {
+                        echo "Error 493: $sql";
+                        //echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                        //echo "<script>document.location.href = 'grupos.php';</script>";
                         exit;
                     }
                 }
