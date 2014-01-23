@@ -64,6 +64,7 @@ a.link:visited {
 <?
     $seguimientos = $sf_data->getRaw("seguimientos");
     $mantenimientos = $sf_data->getRaw("mantenimientos");
+    $anotaciones = $sf_data->getRaw("anotaciones");
     $i=0;
     foreach( $seguimientos as $seguimiento ){
         if($seguimiento&&$i==0){

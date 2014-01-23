@@ -291,16 +291,6 @@ function mostrarAnotacion(idman,idact,autoriza,activ)
                                              editable: true
                                             });            
                     
-        /*newComponent = new PanelProductos({
-                                             id: 'asdad',
-                                             closable: true,
-                                             idcategory: 21,
-                                             idsucursal: 'BAQ',
-                                             parameter: 'Software',
-                                             title: 'Panel prueba',
-                                             editable: true
-                                            });            
-                    
         Ext.getCmp('tab-panel').add(newComponent);
         Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
 

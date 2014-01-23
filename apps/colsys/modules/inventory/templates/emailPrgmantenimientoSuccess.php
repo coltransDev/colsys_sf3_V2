@@ -12,6 +12,7 @@
     <tr><td width="25"><img src="https://www.coltrans.com.co/images/spacer.gif" width="25" height="1" alt=""></td><td colspan="2"><hr noshade size="1"></td></tr>
     <tr>
         <td>&nbsp;</td><td>
+            
             <table width="100%" border="1" style="border-collapse:collapse;" class="tableList" align="center">
                 <tr>
                     <th>Fecha Programación</th>

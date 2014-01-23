@@ -37,6 +37,10 @@ class inventoryActions extends sfActions {
         
         $this->user = $this->getUser();
         $this->suc = Doctrine::getTable("Sucursal")->find( $this->user->getIdsucursal() );
+        
+        if($this->nivel == 1){
+            $q->addWhere("s.ca_idsucursal = ?", $this->user->getIdsucursal());
+        }
 
         $this->sucursales = $q->execute();
     }
