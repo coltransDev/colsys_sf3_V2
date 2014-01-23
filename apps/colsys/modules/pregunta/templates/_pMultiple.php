@@ -27,7 +27,7 @@
                 }
             }
             if(j==<? echo sizeof($pregunta->getTbOpciones()) ?>){
-                document.getElementById('error_32').innerHTML="<p>Debe seleccionar por lo menos un servicio para continuar!!!</p>";        
+                alert("Debe seleccionar por lo menos un servicio para continuar!!!");
                 return false;
             }
             else {
