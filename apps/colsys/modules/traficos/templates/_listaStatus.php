@@ -1,13 +1,13 @@
 <?
 $statusList = $sf_data->getRaw("statusList");
 ?>
-<table width="100%" cellspacing="0" border="1" class="tableList">
+<table style="border:gainsboro; border-collapse: collapse;" width="100%" cellspacing="0" border="1" class="tableList">
 	<tr>
-		<th colspan="<?=$linkEmail?3:2?>">Status del Embarque</th>
+		<th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="<?=$linkEmail?3:2?>">Status del Embarque</th>
 	</tr>
 	<tr>
-		<th width="14%">Fecha</th>
-		<th width="86%">Status</th>
+		<th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" width="14%">Fecha</th>
+		<th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"width="86%">Status</th>
 		<?
 		if( $linkEmail   ){
 		?>
@@ -19,11 +19,11 @@ $statusList = $sf_data->getRaw("statusList");
 	<?
 	$i=0;		
 	foreach( $statusList as $lstatus ){ 
-        $style=($i==0)?"background-color: #FFFFCC":"";
+        $style=($i==0)?"background-color: #FFFFE7; font-size: 13px;":"font-size: 11px;";
 	?>
 	<tr>
-		<td valign="top" style="<?=$style?>"><?=$i==0?"<b>":""?><?=$lstatus->getCaFchenvio()?><?=$i==0?"</b>":""?></td>
-		<td valign="top" style="<?=$style?>"><?=$i==0?"<b>":""?><?=html_entity_decode(Utils::replace($lstatus->getStatus()))?><?=$i==0?"</b>":""?></td>
+		<td valign="top" style="padding: 2px; font-family: Arial,Helvetica,sans-serif; <?=$style?>"><?=$i==0?"<b>":""?><?=$lstatus->getCaFchenvio()?><?=$i==0?"</b>":""?></td>
+		<td valign="top" style="padding: 2px; font-family: Arial,Helvetica,sans-serif; <?=$style?>"><?=$i==0?"<b>":""?><?=html_entity_decode(Utils::replace($lstatus->getStatus()))?><?=$i==0?"</b>":""?></td>
 		<?
 		if( $linkEmail   ){
 		?>
