@@ -12,10 +12,10 @@ include_component("widgets", "widgetCiudad");
 <div align="center" id="container" class="noprint"></div>
 <div align="center" id="container1"></div>
 <?
-include_component("otm","filtrosListados",array("url"=>"otm/listaPuerto"));
+include_component("otm","filtrosListados",array("url"=>"otm/listaTranspColmas"));
 if($opcion)
 {
-    $colspan=11;
+    $colspan=10;
 ?>
 <form id="formDatos" name="formDatos" method="post" action="#" >
     <table class="tableList" width="600px" border="1" id="mainTable" align="center" >

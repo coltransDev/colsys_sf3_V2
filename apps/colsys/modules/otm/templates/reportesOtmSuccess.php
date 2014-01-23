@@ -3,86 +3,44 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+//print_r($reportes);
 $etapas = $sf_data->getRaw("etapas");
+$reportes = $sf_data->getRaw("reportes");
+
 include_component("widgets", "widgetCiudad");
 ?>
+
 <style>
     caption{font-weight: bold;font-size: 16px;text-align: center; padding: 5px }
 </style>
+
 <div align="center" id="container" class="noprint"></div>
 <div align="center" id="container1"></div>
 <?
-include_component("otm","filtrosListados",array("url"=>"otm/listaPuerto"));
+include_component("otm","filtrosListados",array("url"=>"otm/reportesOtm"));
 if($opcion)
 {
-    $colspan=11;
 ?>
 <form id="formDatos" name="formDatos" method="post" action="#" >
-    <table class="tableList" width="600px" border="1" id="mainTable" align="center" >
-        <caption>OPERACIONES OTM EN PROCESO</caption>
-        <tr><td colspan="<?=$colspan?>"></td><td><input value="Enviar" type="button" id="bguardar" onclick="enviar_lista()" /></td></tr>
-        <tr style ="text-align:center"><th>No</th><th >Reporte</th><th >Hbl</th><th>Importador</th><th>Modalidad</th><th  >Origen</th><th  >Destino</th><th>Dias</th> <th>CV</th> <th>DTM</th><th>Carta Porte</th><th>Opciones</th><th>Presentar</th><th>Chance</th></tr>
+<table class="tableList" width="600px" border="1" id="mainTable" align="center">
+        <caption>OPERACIONES OTM PRESENTADAS</caption>        
+        <tr style ="text-align:center"><th>No</th><th >Reporte</th><th>Fecha Presentacion</th><th >Hbl</th><th>Importador</th><th>Modalidad</th><th  >Origen</th><th  >Destino</th> </tr>
         <?
         $pos=1;
-        $color="";
         foreach($reportes as $r)
         {
-            $color="";
-            if($r["dia"]!="")
-            {
-                if($r["dia"]>=3)
-                    $color="green";
-                else if($r["dia"]>=2)
-                    $color="yellow";
-                else 
-                    $color="red";
-            }
         ?>
-        <tr style="background-color: <?=$color?>" >
-            <td ><?=$pos++?></td>
-            <td ><?=$r["ca_consecutivo"]?></td><td><?=$r["ca_hbls"]?></td><td><?=$r["ca_compania"]?></td><td><?=$r["ca_modalidad"]?></td><td><?=$r["ca_origen"]?></td><td><?=$r["ca_destino"]?></td><td><?=$r["dia"]?></td>
-            <td><a href="/otm/generarPdf/id/<?=$r["ca_consecutivo"]?>/tipo/OTM" target="_blank">Ver</a></td>
-            <td>
-<?
-                if($r["ca_iddtm"]=="")
-                {
-?>
-                <a href="/otm/generarPdf/id/<?=$r["ca_consecutivo"]?>/tipo/DTM" target="_blank" style="display: none" id="a_iddtm_<?=$r["ca_idreporte"]?>">Ver</a>
-                <div id="div_iddtm_<?=$r["ca_idreporte"]?>"><input type="text" id="no_iddtm_<?=$r["ca_idreporte"]?>" value="" style="width: 35px" > <a href="javascript:asigna('<?=$r["ca_idreporte"]?>')">Asignar</a></div>
-<?
-                }
-                else
-                {
-?>
-                <a href="/otm/generarPdf/id/<?=$r["ca_consecutivo"]?>/tipo/DTM" target="_blank" >Ver</a>
-<?
-                }
-                ?>
-            </td>
-            <td><a href="/otm/generarPdf/id/<?=$r["ca_consecutivo"]?>/tipo/CP" target="_blank">Ver</a></td>
-            <td>
-                <select id="rep-<?=$r["ca_consecutivo"]?>" name="reportes[]" class="reportes" >
-                    <option value="">...</option>
-                    <option value="Aprobar|<?=$r["ca_idreporte"]?>">Aprobar</option>
-                    <option value="NoAprobar|<?=$r["ca_idreporte"]?>">No Aprobar</option>
-                </select>
-            </td>           
-            <td>
-                <input type="checkbox" id="idp-<?=$r["ca_idreporte"]?>" name="idp[]"  value="<?=$r["ca_idreporte"]?>">
-            </td>
-            <td>
-                <input type="checkbox" id="idc-<?=$r["ca_idreporte"]?>" name="idc[]"  value="<?=$r["ca_idreporte"]?>">
-            </td>
+        <tr >
+            <td><?=$pos++?></td>
+            <td ><?=$r["ca_consecutivo"]?></td><td><?=$r["ca_fchpresentacion"]?></td><td><?=$r["ca_hbls"]?></td><td><?=$r["ca_compania"]?></td><td><?=$r["ca_modalidad"]?></td><td><?=$r["ca_origen"]?></td><td><?=$r["ca_destino"]?></td>
+            
         </tr>
         <?
         }
         ?>
-        <tr><td colspan="<?=$colspan?>"></td><td><input value="Enviar" type="button" id="bguardar" onclick="enviar_lista()" /></td>
-
-            <td><input type="button"  value="Enviar" onclick="enviarPresentarDian()"></td>
-            <td><input type="button"  value="Enviar" onclick="enviarChance()"></td>
         </tr>
 </table>
+
 </form>
 <?
 }
@@ -100,8 +58,9 @@ if($opcion)
             form: 'formDatos',
             success: function(a,b){
                 if(a.responseText.search(/error/i)==-1)
-                {
+                {                    
                     alert("Se Actualizo Correctamente");
+                    //location.href='<?=url_for("$url")?>';
                     $("#bguardar").attr("disabled",true);
                 }
                 else
@@ -142,6 +101,7 @@ if($opcion)
     {   
         if(window.confirm("Esta seguro de marcar para enviar chance estos reportes?"))
         {
+        
             Ext.Ajax.request(
             {
                 waitMsg: 'Guardando cambios...',
@@ -190,15 +150,17 @@ if($opcion)
                 success:function(response,options){
                     var res = Ext.util.JSON.decode( response.responseText );
                     if( res.success ){
+                        //$("#"+id).html("");                        
                         $("#div_iddtm_"+id).hide();
-                        $("#a_iddtm_"+id).show();                        
+                        $("#a_iddtm_"+id).show();
+                        //$("#"+id).remove();
                         Ext.MessageBox.hide();
                     }
                 }
             });
-        }
+        }        
     }
-
+    
     function activacion(obj)
     {
         id=$("#"+obj.id).attr("t")
@@ -217,4 +179,6 @@ if($opcion)
         
         $("#idt-"+id).attr("disabled",check);
     }
+    
+    
 </script>

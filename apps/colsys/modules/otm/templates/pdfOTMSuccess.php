@@ -93,6 +93,8 @@ $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x, $y);
 */
 
 //$y=$y+8;
+
+//casilla 5-10
 $y=$y+28;
 
 $txt=$cliente->getCaIdalterno();//sprintf ("%s %13s ",$cliente->getCaIdalterno(),$cliente->getCaDigito());
@@ -104,16 +106,41 @@ $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+52, $y);
 $pdf->setFontSpacing($fontspacing);
 //$txt=sprintf ("%30s %30s %30s %30s","Yepes","","Sandra", "Pepita" );
 $txt="";
-$pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+42, $y);
+//$pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+42, $y);
 
+if($cliente->getProperty("tipopersona")=="1")
+{
+    $pdf->setFontSpacing($fontspacing);
+    //$txt=sprintf ("%30s %30s %30s %30s",$representante["apellido1"],$representante["apellido2"],$representante["nombre1"],$representante["nombre2"] );
+    $txt=$cliente->getProperty("apellido1");
+    $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+60, $y);
+
+    $txt=$cliente->getProperty("apellido2");
+    $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+94, $y);
+
+    $txt=$cliente->getProperty("nombre1");
+    $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+130, $y);
+
+    $txt=$cliente->getProperty("nombre2");
+    $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+172, $y);
+}
+
+
+//casilla 11
 $y=$y+8;
-$txt=utf8_encode($cliente->getCaCompania());
+if($cliente->getProperty("tipopersona")=="2")
+    $txt=utf8_encode($cliente->getCaCompania());
+else
+    $txt="";
+
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x-1, $y);
 
 $pdf->setFontSpacing($spacing);
 
 $y=$y+10;
 
+
+//casilla 24-26
 $txt="900451936";//sprintf ("%s %13s ",$cliente->getCaIdalterno(),$cliente->getCaDigito());
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x-1, $y);
 
@@ -200,6 +227,15 @@ switch($repotm->getIdsProveedor()->getIds()->getCaIdalterno())
         break;
     case "860062581"://UNION ANDINA DE TRANSPORTES S.A. <- Cochinadas a Nombre de Maquinche
         $txt="403";
+        break;
+    case "805000977"://TRANSCARGA RG SAS. <- Cochinadas a Nombre de Maquinche
+        $txt="371";
+        break;
+    case "800149351"://TRANSPORTES INVERSIONES MARTINEZ R E HIJOS SAS <- Cochinadas a Nombre de Maquinche
+        $txt="637";
+        break;
+    case "800104891"://TRANSPORTES VAN DE LEUR TRADING SAS. <- Cochinadas a Nombre de Maquinche
+        $txt="567";
         break;
     default:
         $txt="146";
@@ -310,9 +346,10 @@ $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+194, $y);
 
 
 //casilla 56
+$adudestino = $repotm->getProperty("adudestino")?"/".$repotm->getProperty("adudestino"):"";
 $pdf->setFontSpacing($fontspacing1);
 $pdf->SetFont($fontname, '', $fontsize-1);
-$txt1=trim(utf8_encode($reporte->getBodega()->getCaNombre()."/".$reporte->getBodega()->getCaTipo()));
+$txt1=trim(utf8_encode($reporte->getBodega()->getCaNombre()."/".$reporte->getBodega()->getCaTipo().$adudestino));
 $tam=  strlen($txt1);
 //$txt1=$tam.$txt1;
 if($tam>56)
@@ -332,7 +369,7 @@ if($tam>56)
     }
  * */
     
-    $txt1=trim(utf8_encode($reporte->getBodega()->getCaNombre()."/".$reporte->getBodega()->getCaTipo()));
+    $txt1=trim(utf8_encode($reporte->getBodega()->getCaNombre()."/".$reporte->getBodega()->getCaTipo().$adudestino));
     $arrtxt=  explode(" ", $txt1);
     //$txt=(count($arrtxt)/2)." ";
     $txt="";

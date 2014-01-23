@@ -1,8 +1,11 @@
 <?
 $tipo= $sf_data->getRaw("tipo");
 $datos= $sf_data->getRaw("datos");
+$adudestino= $sf_data->getRaw("adudestino");
 $idreporte=$sf_data->getRaw("idreporte");
-//print_r($datos);
+
+include_component("widgets", "widgetCiudad");
+
 //echo $tipo;
 //echo $url;
 //echo "::".$valido;
@@ -16,7 +19,7 @@ $idreporte=$sf_data->getRaw("idreporte");
         <tr><td><input value="Aprobar" type="button" onclick="aprobar()"></td></tr>
         <?
         }
-        if($tipo=="CP")
+        if($tipo=="CP" || $tipo=="OTM")
         {
         ?>
         <tr>
@@ -39,13 +42,13 @@ $idreporte=$sf_data->getRaw("idreporte");
 Ext.onReady(function(){
 
     var tabs = new Ext.FormPanel({
-        labelWidth: 75,
+        labelWidth: 90,
         border:false,
         frame:true,
         deferredRender:false,
         width: 900,
         standardSubmit: true,
-            id: 'formPanel',
+        id: 'formPanel',
         items: 
                     {
                         xtype:'fieldset',
@@ -71,6 +74,10 @@ Ext.onReady(function(){
                                 border:false,
                                 items:
                                 [
+                                <?
+                                if($tipo=="OTM")
+                                {
+                                ?>
                                     {
                                         xtype:'datefield',
                                         fieldLabel: 'Fecha finalizacion',
@@ -78,20 +85,54 @@ Ext.onReady(function(){
                                         format: "Y-m-d",
                                         value: '<?=$datos["fechafinalizacion"]?>'
                                     },
-                            /*        {
-                                        xtype:'textfield',
-                                        fieldLabel: 'Direccion Deposito',
-                                        name : 'direccion',
-                                        id : 'direccion',
-                                        value: '<?=$direccion?>'
-                                    },*/
+                                    {
+                                        xtype:'datefield',
+                                        fieldLabel: 'Fecha de Arribo',
+                                        name : 'fcharribo',
+                                        format: "Y-m-d",
+                                        value: '<?=$datos["fcharribo"]?>'
+                                    },
+                                    new WidgetCiudad({fieldLabel: 'Administración Aduanera Destino',
+                                        id: 'adudestino',
+                                        idciudad:"adudestino",
+                                        hiddenName:"ciu_destino",
+                                        tipo:"1",
+                                        impoexpo:"<?=constantes::EXPO?>",
+                                        allowBlank:true,
+                                        value:"<?= $adudestino ?>",
+                                        hiddenValue:"<?= $ciu_destino ?>",
+                                        width:219
+                                    })
+                                <?
+                                }
+                                else
+                                {
+                                ?>
                                     {
                                         xtype:'textfield',
                                         fieldLabel: 'No Continuacion',
                                         name : 'continuacion',
                                         id : 'continuacion',
                                         value: '<?=$datos["nocontinuacion"]?>'
+                                    },
+                                    {
+                                        xtype:'textfield',
+                                        fieldLabel: 'No Factura',
+                                        name : 'nofactura',
+                                        id : 'nofactura',
+                                        value: '<?=$datos["nofactura"]?>'
+                                    },
+                                    {
+                                        xtype:'textfield',
+                                        fieldLabel: 'Conse Dest Final',
+                                        name : 'nodestinofinal',
+                                        id : 'nodestinofinal',
+                                        value: '<?=$datos["nodestinofinal"]?>'
                                     }
+                                <?
+                                }
+                                ?>
+                                    
                                 ]
                             },
                             {
@@ -99,6 +140,10 @@ Ext.onReady(function(){
                                 border:false,
                                 items:
                                 [
+                                <?
+                                if($tipo=="OTM")
+                                {
+                                ?>
                                     {
                                         xtype:'datefield',
                                         fieldLabel: 'Fecha vencimiento',
@@ -108,11 +153,33 @@ Ext.onReady(function(){
                                     },
                                     {
                                         xtype:'textfield',
+                                        fieldLabel: 'Manifiesto No',
+                                        name : 'manifiesto',
+                                        id : 'manifiesto',
+                                        value: '<?=$datos["manifiesto"]?>'
+                                    }
+                                <?
+                                }
+                                else
+                                {
+                                ?>
+                                    {
+                                        xtype:'textfield',
                                         fieldLabel: 'Observaciones',
                                         name : 'observaciones',
                                         id : 'Observaciones',
                                         value: '<?=$datos["observaciones"]?>'
+                                    },
+                                    {
+                                        xtype:'textfield',
+                                        fieldLabel: 'No Comodato',
+                                        name : 'nocomodato',
+                                        id : 'nocomodato',
+                                        value: '<?=$datos["nocomodato"]?>'
                                     }
+                                <?
+                                }
+                                ?>
                                 ]
                             }
                         ]

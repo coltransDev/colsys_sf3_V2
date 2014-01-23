@@ -7,6 +7,7 @@
 //print_r($reportes);
 
 $etapas = $sf_data->getRaw("etapas");
+//print_r($etapas);
 //$etapas=implode(",", $e["etapas"]);
 $reportes = $sf_data->getRaw("reportes");
 //echo count($reportes);
@@ -20,14 +21,15 @@ $reportes = $sf_data->getRaw("reportes");
 <?
 include_component("otm","filtrosListados",array("url"=>"otm/etapasCarga"));
 
-//if($opcion)
+if($opcion)
 {
 ?>
 <form id="formdata" name="formdata" method="post" action="/otm/generarStatus">
 <table class="tableList" width="600px" border="1" id="mainTable" align="center">
         <caption>ETAPAS DE CARGAS</caption>        
-        <tr style ="text-align:center"><th >Reporte</th><th>Referencia</th><th>Fecha de Llegada</th><th>Nit</th><th  >Cliente</th><th>Importador</th><th>Modalidad</th><th>Origen</th><th  >Destino</th><th>Muelle</th> <th>Continuacion</th> <th>DTM</th>
+        <tr style ="text-align:center"><th>No</th><th >Reporte</th><th style="display:none">Referencia</th><th>Fecha de Llegada</th><th>Nit</th><th  >Cliente</th><th>Modalidad</th><th>Origen</th><th  >Destino</th><th>Muelle</th> <th>Continuacion</th> <th>DTM</th>
             <?
+            $i=1;
                 foreach($etapas as $e)
                 {
             ?>
@@ -41,7 +43,7 @@ include_component("otm","filtrosListados",array("url"=>"otm/etapasCarga"));
         foreach($reportes as $r)
         {
         ?>
-        <tr ><td ><a href="/reportesNeg/consultaReporte/id/<?=$r["ca_idreporte"]?>/modo/Terrestre/impoexpo/OTM-DTA/opcion/otmmin"><?=$r["ca_consecutivo"]?></a></td><td><?=$r["ca_referencia"]?></td><td><?=$r["ca_fcharribo"]?></td><td><?=$r["ca_idalterno"]?></td><td><?=$r["ca_compania"]?></td><td><?=$r["ca_importador"]?></td><td><?=$r["ca_modalidad"]?></td><td><?=$r["ca_origen"]?></td><td><?=$r["ca_destino"]?></td><td><?=$r["ca_bodega"]?></td>
+        <tr ><td><?=$i++?></td><td ><a href="/reportesNeg/consultaReporte/id/<?=$r["ca_idreporte"]?>/modo/Terrestre/impoexpo/OTM-DTA/opcion/otmmin"><?=$r["ca_consecutivo"]?></a></td><td style="display:none"><?=$r["ca_referencia"]?></td><td><?=$r["ca_fcharribo"]?></td><td><?=$r["ca_idalterno"]?></td><td><?=$r["ca_compania"]?></td><td><?=$r["ca_modalidad"]?></td><td><?=$r["ca_origen"]?></td><td><?=$r["ca_destino"]?></td><td><?=$r["ca_bodega"]?></td>
             <td><a href="/otm/generarPdf/id/<?=$r["ca_consecutivo"]?>/tipo/OTM" target="_blank">Ver</a></td><td><a href="/otm/generarPdf/id/<?=$r["ca_consecutivo"]?>/tipo/DTM" target="_blank">Ver</a></td>
             <?
             foreach($etapas as $e)

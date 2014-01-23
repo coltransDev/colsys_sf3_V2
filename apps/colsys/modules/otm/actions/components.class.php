@@ -14,6 +14,7 @@ class otmComponents  extends sfComponents
 	* Muestra las novedades de colsys
 	*	
 	*/
+    const RUTINACARGASADUANA = 139;
 	public function executeFiltrosListados()
     {
         $this->modalidad = $this->getRequestParameter("modalidad");
@@ -31,9 +32,49 @@ class otmComponents  extends sfComponents
         $this->fechaInicial = $this->getRequestParameter("fechaInicial");
         $this->fechaFinal = $this->getRequestParameter("fechaFinal");
         
-        if($this->url=="")
-        $this->url="otm/listaAprobacion";
+        $this->semanaIni = $this->getRequestParameter("semanaIni");
+        $this->semanaFin = $this->getRequestParameter("semanaFin");
         
+        if($this->url=="")
+            $this->url="otm/listaAprobacion";        
+        
+        $this->semanas=array();
+        for($i=1;$i<53;$i++)
+        {
+            $this->semanas[]=array("id"=>$i,"valor"=>$i) ;
+        }
     }
+    
+    public function executeGridProgramacionCarga()
+    {
+        $this->nivel = $this->getUser()->getNivelAcceso( self::RUTINACARGASADUANA );
+        $this->campos=array();
+        if($this->nivel==1)
+        {
+            $this->campos=array("semana","referencia","cliente","mercancia","modalidad","origen","destino","piezas","peso","volumen","observaciones","fchsalida","doctransporte","venta");
+        }
+        else if($this->nivel==2) {
+            $this->campos=array("neta","transportador");
+        }
+        else if($this->nivel==3) {
+            $this->campos=array("semana","referencia","cliente","mercancia","modalidad","origen","destino","piezas","peso","volumen","observaciones","fchsalida","doctransporte","neta","venta","transportador");
+        }
+        
+        $this->semanas=array();
+        for($i=date("W");$i<53;$i++)
+        {
+            $this->semanas[]=array("id"=>$i,"valor"=>$i) ;
+        }
+    }
+    
+    public function executeFiltrosProgCargas()
+    {
+        $this->semanas=array();
+        for($i=1;$i<53;$i++)
+        {
+            $this->semanas[]=array("id"=>$i,"valor"=>$i) ;
+        }
+    }
+    
 }
 ?>

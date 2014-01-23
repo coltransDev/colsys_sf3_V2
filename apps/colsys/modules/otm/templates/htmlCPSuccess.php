@@ -75,16 +75,13 @@ $firmaautorizada=($datos["origen"]=="Cartagena")?"Carlos A. Bola&ntilde;o M.<br>
                 </tr>
                 <tr>
                     <td >Referencia</td><td colspan="3"><?=$referencia?></td>
-                </tr>
-                
+                </tr>                
                 <tr>
                     <td colspan="4">&nbsp;</td>
-                </tr>
-                
+                </tr>                
                 <tr>
                     <th colspan="4" align="center"><b>DOCUMENTOS ENTREGADOS AL TRANSPORTADOR</b></th>
-                </tr>
-                
+                </tr>                
                 <tr>
                     <th><b>DOCUMENTOS</b></th>
                     <th><b>NUMERO</b></th>
@@ -97,7 +94,7 @@ $firmaautorizada=($datos["origen"]=="Cartagena")?"Carlos A. Bola&ntilde;o M.<br>
                 </tr>
                 
                 <tr>
-                    <td >Documento de transporte Hijo</td><td ><?=$repotm->getCaFchdoctransporte()?></td><td >1</td><td >1</td>
+                    <td >Documento de transporte Hijo</td><td ><?=$repotm->getCaHbls()?></td><td >1</td><td >1</td>
                 </tr>
                 
                 <tr>
