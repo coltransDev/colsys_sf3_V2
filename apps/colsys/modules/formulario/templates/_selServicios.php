@@ -1,7 +1,5 @@
-<form class="formulario" id="f_<? echo $formulario->ca_id ?>" onsubmit="return verificar_pmultiple_servicios()" action="<?php echo url_for('formulario/encuesta?id=' . base64_encode($formulario->getCaId()).'&co='.$contacto) ?>" method="post">
+<form class="formulario" id="f_<?=$formulario->ca_id ?>" onsubmit="return verificar_pmultiple_servicios()" action="<?=url_for('formulario/encuesta?id=' . base64_encode($formulario->getCaId()).'&co='.$contacto) ?>" method="post">
 
-    <!--<p class="nombre-formato"><? //php echo $formulario->ca_nombre_formato                  ?></p>
-    <p class="fecha-formato"><? //php echo $formulario->ca_nombre_formato                  ?></p>-->
     <div class="formulario-cabecera">
         <? if ($formulario->ca_empresa == 1) { ?>
             <img class="logo-topmenu" src="/images/logos/colmas.png" alt="Colmas SA" />    
@@ -29,14 +27,3 @@
     </div>
 
 </form>
-
-
-
-
-
-
-
-
-
-
-

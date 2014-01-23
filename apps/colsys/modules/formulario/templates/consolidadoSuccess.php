@@ -46,24 +46,17 @@
         <table border="1" class="listado">
             <thead>
                 <tr>
-                    <th>No</th>
-                    <th>Id Respuesta</th>
-                    <th>Id Contacto</th>
-                    <th>Compañía</th>
+                    <th></th>
+                    <th>Pregunta</th>
                     <th>Nombre Contacto </th>
                     <th>Email</th>
-                    <th>Usuario R. ventas</th>
-                    <th>Nombre R. ventas</th>
-                    <th>Ciudad</th>
                     <th>Fecha Respuesta</th>
-                    <th>Pregunta</th>
                     <th>Respuesta</th>
-                    <th>Servicio</th>
                 </tr>
             </thead>
             <tbody>
                 <? $i = 0 ?>
-                <? foreach ($c_encuestas as $encuesta): ?>
+                <?/* foreach ($c_encuestas as $encuesta): ?>
                     <? $i++; ?>
                     <? if ($encuesta['ca_resultado'] != "") { ?>
                         <tr>
@@ -82,7 +75,52 @@
                             <td><? echo $encuesta['ca_servicio'] ?></td>
                         </tr>
                     <? } ?>
-                <? endforeach; ?>
+                <? endforeach; */?>
+                <?
+                $lastComercial = "";
+                $lastCompania = "";
+                $lastServicio = "";
+                    foreach ($c_encuestas as $encuesta){
+                    if( $lastComercial!=$encuesta['ca_nombrevendedor'] ){
+                        $lastComercial=$encuesta['ca_nombrevendedor'];
+                    ?>
+                        <tr>
+                            <td style="text-align: left; color: blue; font-size:20px;"  colspan="6">
+                                <?=$lastComercial?>
+                            </td>
+                        </tr>
+                    <?
+                    }
+                    if($lastCompania != $encuesta['ca_compania']){
+                        $lastCompania = $encuesta['ca_compania'];
+                    ?>
+                        <tr>
+                            <td colspan="6" style="color: #062A7D; font-size:18px;" >
+                                &nbsp;<?=$lastCompania?>
+                            </td>
+                        </tr>
+                    <?
+                    }
+                    if($lastServicio != $encuesta['ca_servicio']){
+                        $lastServicio = $encuesta['ca_servicio'];
+                    ?>
+                        <tr>
+                            <td colspan="6" style="color: #062A7D; font-size:12px;" >
+                                &nbsp;&nbsp;<?="Servicio: ".$lastServicio?>
+                            </td>
+                        </tr>
+                    <?
+                    }
+                    ?>
+                    <tr>
+                        <td>&nbsp;&nbsp;&nbsp;</td>
+                        <td><?=html_entity_decode($encuesta['ca_texto'])?></td>
+                        <td><?=$encuesta['ca_nombres'] . ' ' . $encuesta['ca_papellido']?></td>
+                        <td><?=$encuesta['ca_email'] ?></td>
+                        <td><?=$encuesta['ca_fchcreado'] ?></td>
+                        <td><?=$encuesta['ca_resultado'] ?></td>
+                    </tr>
+            <?}?>
             </tbody>
         </table>
 
