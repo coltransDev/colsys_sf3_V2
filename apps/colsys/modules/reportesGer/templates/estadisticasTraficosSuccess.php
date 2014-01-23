@@ -267,7 +267,7 @@ if( $fechainicial && $fechafinal ){
         ?>
         <td class="number"><?=$r[$i]?></td>
         <?
-        $var=($r[$i]/$r[$i-1]);
+        $var=$r[$i-1]?($r[$i]/$r[$i-1]):0;
         ?>
         <td class="number"><?=($var>0)?Utils::formatNumber($var-1,2)*100:"0"?>%</td>
         <?
@@ -368,7 +368,7 @@ if( $fechainicial && $fechafinal ){
         ?>
         <td class="number"><?=$r[$i]?></td>
         <?
-        $var=($r[$i]/$r[$i-1]);
+        $var=$r[$i-1]?($r[$i]/$r[$i-1]):0;
         ?>
         <td class="number"><?=($var>0)?Utils::formatNumber($var-1,2)*100:"0"?>%</td>
         <?

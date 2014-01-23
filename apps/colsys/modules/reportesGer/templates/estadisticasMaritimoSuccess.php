@@ -80,7 +80,7 @@ $meses = $sf_data->getRaw("meses");
                                                         id: 'mes',
                                                         name: 'mes[]',
                                                         hiddenName: "nmes[]",
-                                                        value:'<?= implode(",", $nmes) ?>',
+                                                        value:'<?=$nmes?implode(",", $nmes):"" ?>',
                                                         listeners:{
                                                             render:function()
                                                             {

@@ -1,4 +1,8 @@
-<? $notas = $sf_data->getRaw('notas'); ?>
+<? 
+error_reporting(0);
+$notas = $sf_data->getRaw('notas'); 
+    
+?>
 
 <div class="content" >
     <div id="panel"></div>

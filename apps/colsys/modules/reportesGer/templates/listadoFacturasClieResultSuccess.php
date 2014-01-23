@@ -45,11 +45,11 @@ $ingresos = $sf_data->getRaw("ingresos");
        foreach( $ingresos as $i ){
        ?>
          <tr>
-           <td class="invertir" style='font-weight:bold; background: #F0F0F0'><?=$i->getCaReferencia()?></td>
-           <td class="valores" style='font-size: 9px; background: #F0F0F0'><?=$i->getCaHbls()?></td>
+           <td class="invertir" style='font-weight:bold; background: #F0F0F0'><?=$i->getInoClientesSea()->getCaReferencia()?></td>
+           <td class="valores" style='font-size: 9px; background: #F0F0F0'><?=$i->getInoClientesSea()->getCaHbls()?></td>
            <td class="valores" style='font-size: 9px; background: #F0F0F0'><?=$i->getCaFactura()?></td>
            <td class="valores" style='font-size: 9px; background: #F0F0F0'><?=$i->getCaFchfactura()?></td>
-           <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="left"><?=$i->getCliente()?></div></td>
+           <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="left"><?=$i->getInoClientesSea()->getCliente()->getCaCompania()?></div></td>
            <td class="valores" style='font-size: 9px; background: #F0F0F0'><?=$i->getCaIdmoneda()?></td>
            <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="right"><?=$i->getCaTcambio()?></td>
            <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="right"><?=Utils::formatNumber($i->getCaNeto())?></div></td>

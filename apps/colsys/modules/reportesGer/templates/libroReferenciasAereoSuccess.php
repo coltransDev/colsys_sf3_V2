@@ -21,7 +21,7 @@
                             <?
                             for ($i = date("Y"); $i >= 2006; $i--) {
                                 ?>  
-                                <option value="<?= substr($i, -1, 1) ?>"><?= $i ?></option>
+                                <option value="<?= substr($i, -2, 2) ?>"><?= $i ?></option>
                                 <?
                             }
                             ?>

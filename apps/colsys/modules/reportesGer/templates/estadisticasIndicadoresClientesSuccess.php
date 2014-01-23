@@ -4,7 +4,7 @@ include_component("charts","pie");
 include_component("charts","line");
 $grid = $sf_data->getRaw("grid");
 $indicador = $sf_data->getRaw("indicador");
-//echo "<pre>";print_r($resul);echo "</pre>";
+//echo "<pre>";print_r($grid);echo "</pre>";
 ?>
 <div align="center" class="esconder" >
     <br />
@@ -34,7 +34,15 @@ if($opcion){
     $dataEnd=array();
     $data_peso=array();
     $serieX = array();
-
+    
+    if(!$grid){
+?>  
+    <div align="center"><br />
+        <div style="text-align: center; text-decoration-color: #0000FF; font-size: 18px;"><b><?echo "NO EXISTEN DATOS QUE CUMPLAN CON ESTOS CRITERIOS"?></div>
+    </div><br />
+<?
+    }else{
+    
     foreach($grid[$ano_ini] as $modalidad=> $gridMod){
         foreach($gridMod as $mes =>$g){
             if(!in_array($mes, $serieX))
@@ -231,7 +239,7 @@ if($opcion){
                 <td><?=$r["ca_volumen"]?></td>
                 <td><?=$r[$dataFchIni]?></td>
                 <td><?=$r[$dataFchEnd]?></td>
-                <td style=" text-align: center; border-right-color:black; color:<?=$color?>"><?=$r[$dataIdg]?><?//=$r[$dataIdg]==0?1:$r[$dataIdg]?></td>
+                <td style=" text-align: center; border-right-color:black; color:<?=$color?>"><?=$r[$dataIdg]==0?1:$r[$dataIdg]?></td>
                 <?if($Obs=="true"){?>
                 <td><textarea  name='<?=$nameObs?><?=$idreporte?>' value="<?=  utf8_encode($observacionesIdg)?>" style="width:320px" rows="3" spellcheck="false"><?=$observacionesIdg?></textarea></td>
                 <?}?>
@@ -462,5 +470,6 @@ if($opcion){
         }
     </script>
 <?
+    }
 }
 ?>

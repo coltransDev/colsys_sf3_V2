@@ -64,8 +64,6 @@ class reportesGerActions extends sfActions {
             $this->pais_origen = "todos";
         }
 
-
-
         $this->fechainicial = $request->getParameter("fechaInicial");
         $this->fechafinal = $request->getParameter("fechaFinal");
         $this->fechaembinicial = $request->getParameter("fechaEmbInicial");
@@ -160,51 +158,44 @@ class reportesGerActions extends sfActions {
             }
 
             $sql = "SELECT tt.ca_liminferior,m.ca_referencia, tt.ca_concepto,tt.ca_idconcepto, m.ca_fchembarque, m.ca_fcharribo, m.ca_fchreferencia, 
-                m.ca_origen, ori.ca_ciudad AS ori_ca_ciudad, m.ca_destino, des.ca_ciudad AS des_ca_ciudad, tra_ori.ca_idtrafico AS ori_ca_idtrafico, 
-                tra_ori.ca_nombre AS ori_ca_nombre, tra_des.ca_idtrafico AS des_ca_idtrafico, tra_des.ca_nombre AS des_ca_nombre, 
-                m.ca_modalidad, m.ca_idlinea, ids.ca_nombre,ids1.ca_nombre as agente,r.ca_idreporte,r.ca_incoterms,r.ca_idagente,
-    (( SELECT sum(t.ca_liminferior) AS sum
-           FROM tb_inoequipos_sea eq
-      JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto
-        WHERE eq.ca_referencia = m.ca_referencia AND eq.ca_idconcepto = tt.ca_idconcepto)) / 20 AS teus, 
-     
-     ( SELECT count(*) AS count
-           FROM tb_inoequipos_sea eq
-          WHERE eq.ca_referencia::text = m.ca_referencia::text AND eq.ca_idconcepto = tt.ca_idconcepto) AS ncontenedores, 
-    count(DISTINCT c.ca_hbls) AS nhbls,
-    ( SELECT sum(ca_peso) AS count FROM tb_inoclientes_sea ics WHERE ics.ca_referencia::text = m.ca_referencia::text and ics.ca_idreporte in (select tr.ca_idreporte from tb_inoclientes_sea tics,tb_reportes tr where tics.ca_idreporte=tr.ca_idreporte and ca_referencia=m.ca_referencia and tr.ca_incoterms=r.ca_incoterms and r.ca_idagente=tr.ca_idagente ) ) AS peso, 
-( SELECT sum(ca_numpiezas) AS count FROM tb_inoclientes_sea ics WHERE ics.ca_referencia::text = m.ca_referencia::text and ics.ca_idreporte in (select tr.ca_idreporte from tb_inoclientes_sea tics,tb_reportes tr where tics.ca_idreporte=tr.ca_idreporte and ca_referencia=m.ca_referencia and tr.ca_incoterms=r.ca_incoterms and r.ca_idagente=tr.ca_idagente ) ) AS piezas, 
-( SELECT sum(ca_volumen) AS count FROM tb_inoclientes_sea ics WHERE ics.ca_referencia::text = m.ca_referencia::text and ics.ca_idreporte in (select tr.ca_idreporte from tb_inoclientes_sea tics,tb_reportes tr where tics.ca_idreporte=tr.ca_idreporte and ca_referencia=m.ca_referencia and tr.ca_incoterms=r.ca_incoterms and r.ca_idagente=tr.ca_idagente ) ) AS volumen
+                        m.ca_origen, ori.ca_ciudad AS ori_ca_ciudad, m.ca_destino, des.ca_ciudad AS des_ca_ciudad, tra_ori.ca_idtrafico AS ori_ca_idtrafico, 
+                        tra_ori.ca_nombre AS ori_ca_nombre, tra_des.ca_idtrafico AS des_ca_idtrafico, tra_des.ca_nombre AS des_ca_nombre, 
+                        m.ca_modalidad, m.ca_idlinea, ids.ca_nombre,ids1.ca_nombre as agente,r.ca_idreporte,r.ca_incoterms,r.ca_idagente,
+                        (( SELECT sum(t.ca_liminferior) AS sum
+                            FROM tb_inoequipos_sea eq
+                                JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto
+                            WHERE eq.ca_referencia = m.ca_referencia AND eq.ca_idconcepto = tt.ca_idconcepto)) / 20 AS teus, 
+                        ( SELECT count(*) AS count
+                            FROM tb_inoequipos_sea eq
+                            WHERE eq.ca_referencia::text = m.ca_referencia::text AND eq.ca_idconcepto = tt.ca_idconcepto) AS ncontenedores, 
+                        count(DISTINCT c.ca_hbls) AS nhbls,
+                        ( SELECT sum(ca_peso) AS count FROM tb_inoclientes_sea ics WHERE ics.ca_referencia::text = m.ca_referencia::text and ics.ca_idreporte in (select tr.ca_idreporte from tb_inoclientes_sea tics,tb_reportes tr where tics.ca_idreporte=tr.ca_idreporte and ca_referencia=m.ca_referencia and tr.ca_incoterms=r.ca_incoterms and r.ca_idagente=tr.ca_idagente ) ) AS peso, 
+                        ( SELECT sum(ca_numpiezas) AS count FROM tb_inoclientes_sea ics WHERE ics.ca_referencia::text = m.ca_referencia::text and ics.ca_idreporte in (select tr.ca_idreporte from tb_inoclientes_sea tics,tb_reportes tr where tics.ca_idreporte=tr.ca_idreporte and ca_referencia=m.ca_referencia and tr.ca_incoterms=r.ca_incoterms and r.ca_idagente=tr.ca_idagente ) ) AS piezas, 
+                        ( SELECT sum(ca_volumen) AS count FROM tb_inoclientes_sea ics WHERE ics.ca_referencia::text = m.ca_referencia::text and ics.ca_idreporte in (select tr.ca_idreporte from tb_inoclientes_sea tics,tb_reportes tr where tics.ca_idreporte=tr.ca_idreporte and ca_referencia=m.ca_referencia and tr.ca_incoterms=r.ca_incoterms and r.ca_idagente=tr.ca_idagente ) ) AS volumen
+                    FROM tb_inomaestra_sea m
+                        JOIN tb_inoclientes_sea c ON c.ca_referencia = m.ca_referencia
+                        $joinreportes
+                        $joinclientes
+                        JOIN tb_inoequipos_sea e ON e.ca_referencia = m.ca_referencia
+                        JOIN tb_conceptos tt ON e.ca_idconcepto = tt.ca_idconcepto   
+                        JOIN ids.tb_proveedores p ON p.ca_idproveedor = m.ca_idlinea
+                        JOIN ids.tb_ids ids ON p.ca_idproveedor = ids.ca_id
 
-    FROM tb_inomaestra_sea m
-    JOIN tb_inoclientes_sea c ON c.ca_referencia = m.ca_referencia
-    $joinreportes
-    $joinclientes
-    JOIN tb_inoequipos_sea e ON e.ca_referencia = m.ca_referencia
-    JOIN tb_conceptos tt ON e.ca_idconcepto = tt.ca_idconcepto   
-    JOIN ids.tb_proveedores p ON p.ca_idproveedor = m.ca_idlinea
-    JOIN ids.tb_ids ids ON p.ca_idproveedor = ids.ca_id
-    
-    JOIN ids.tb_agentes ag ON ag.ca_idagente = r.ca_idagente
-    JOIN ids.tb_ids ids1 ON ag.ca_idagente = ids1.ca_id
-    
-    JOIN tb_ciudades ori ON ori.ca_idciudad = m.ca_origen
-    JOIN tb_traficos tra_ori ON tra_ori.ca_idtrafico = ori.ca_idtrafico
-    JOIN tb_ciudades des ON des.ca_idciudad = m.ca_destino
-    JOIN tb_traficos tra_des ON tra_des.ca_idtrafico = des.ca_idtrafico
-   
-    WHERE date_part('year', m.ca_fchreferencia) > (date_part('year', m.ca_fchreferencia) - 2)  
-    $where
-    group by tt.ca_liminferior,m.ca_referencia, tt.ca_concepto, tt.ca_idconcepto ,m.ca_fchembarque, m.ca_fcharribo, m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad , m.ca_destino, des.ca_ciudad , tra_ori.ca_idtrafico , tra_ori.ca_nombre , tra_des.ca_idtrafico , tra_des.ca_nombre , m.ca_modalidad, m.ca_idlinea, ids.ca_nombre,ids1.ca_nombre,r.ca_idreporte,r.ca_incoterms,r.ca_idagente,
-    (( SELECT sum(t.ca_liminferior) AS sum
-           FROM tb_inoequipos_sea eq
-      JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto
-     WHERE eq.ca_referencia = m.ca_referencia AND eq.ca_idconcepto = tt.ca_idconcepto)) / 20 , 
-     
-    ( SELECT count(*) AS count
-           FROM tb_inoequipos_sea eq
-          WHERE eq.ca_referencia = m.ca_referencia AND eq.ca_idconcepto = tt.ca_idconcepto)
-    ORDER BY m.ca_fchreferencia, r.ca_incoterms ,r.ca_idagente";
+                        JOIN ids.tb_agentes ag ON ag.ca_idagente = r.ca_idagente
+                        JOIN ids.tb_ids ids1 ON ag.ca_idagente = ids1.ca_id
+
+                        JOIN tb_ciudades ori ON ori.ca_idciudad = m.ca_origen
+                        JOIN tb_traficos tra_ori ON tra_ori.ca_idtrafico = ori.ca_idtrafico
+                        JOIN tb_ciudades des ON des.ca_idciudad = m.ca_destino
+                        JOIN tb_traficos tra_des ON tra_des.ca_idtrafico = des.ca_idtrafico
+                    WHERE date_part('year', m.ca_fchreferencia) > (date_part('year', m.ca_fchreferencia) - 2)  
+                        $where
+                    GROUP BY tt.ca_liminferior,m.ca_referencia, tt.ca_concepto, tt.ca_idconcepto ,m.ca_fchembarque, m.ca_fcharribo, m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad , m.ca_destino, des.ca_ciudad , tra_ori.ca_idtrafico , tra_ori.ca_nombre , tra_des.ca_idtrafico , tra_des.ca_nombre , m.ca_modalidad, m.ca_idlinea, ids.ca_nombre,ids1.ca_nombre,r.ca_idreporte,r.ca_incoterms,r.ca_idagente,
+                            (( SELECT sum(t.ca_liminferior) AS sum FROM tb_inoequipos_sea eq JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto
+                                WHERE eq.ca_referencia = m.ca_referencia AND eq.ca_idconcepto = tt.ca_idconcepto)) / 20 , 
+                            ( SELECT count(*) AS count FROM tb_inoequipos_sea eq
+                                WHERE eq.ca_referencia = m.ca_referencia AND eq.ca_idconcepto = tt.ca_idconcepto)
+                    ORDER BY m.ca_fchreferencia, r.ca_incoterms ,r.ca_idagente";
             $con = Doctrine_Manager::getInstance()->connection();
             //echo $sql;
             $st = $con->execute($sql);
@@ -222,31 +213,6 @@ class reportesGerActions extends sfActions {
         $response->addJavaScript("extExtras/SuperBoxSelect", 'last');
 
         $this->nivel = $this->getUser()->getNivelAcceso(reportesGerActions::RUTINA);
-        //echo $this->nivel;
-        /* if ($this->nivel == -1) {
-          $this->forward404();
-          }
-          if ($this->nivel == "1") {
-
-          $origenes = Doctrine::getTable("TraficoUsers")
-          ->createQuery("tu")
-          ->select("tu.*")
-          ->where("tu.ca_login=? and tu.ca_impo=true", array($this->getUser()->getUserId()))
-          ->execute();
-          $this->pais_origen = "";
-          if ($origenes) {
-          foreach ($origenes as $origen) {
-          $this->pais_origen.= ( $this->pais_origen != "") ? "," . $origen->getCaIdtrafico() : $origen->getCaIdtrafico();
-          }
-          }
-          if ($this->pais_origen == "") {
-          //$this->pais_origen = "CO-057";
-          $this->pais_origen = $this->getUser()->getIdtrafico();
-          }
-          }
-          if ($this->nivel == "2") {
-          $this->pais_origen = "todos";
-          } */
         $this->pais_origen = "todos";
 
         $this->fechainicial = $request->getParameter("fechaInicial");
@@ -343,39 +309,35 @@ class reportesGerActions extends sfActions {
             }
 
             $sql = "SELECT tt.ca_liminferior,m.ca_referencia, tt.ca_concepto,tt.ca_idconcepto, m.ca_fchsalida, m.ca_fchllegada, 
-	m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad AS ori_ca_ciudad, m.ca_destino, des.ca_ciudad AS des_ca_ciudad, 	
-	tra_ori.ca_idtrafico AS ori_ca_idtrafico, tra_ori.ca_nombre AS ori_ca_nombre, tra_des.ca_idtrafico AS des_ca_idtrafico, 
-	tra_des.ca_nombre AS des_ca_nombre, m.ca_modalidad, m.ca_idlinea, ids.ca_nombre,
-    (( SELECT sum(t.ca_liminferior) AS sum FROM ino.tb_equipos eq JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto WHERE eq.ca_idmaster = m.ca_idmaster AND eq.ca_idconcepto = tt.ca_idconcepto)) / 20 AS teus, 
-	( SELECT count(*) AS count FROM ino.tb_equipos eq WHERE eq.ca_idmaster = m.ca_idmaster AND eq.ca_idconcepto = tt.ca_idconcepto) AS ncontenedores, 
-	count(DISTINCT c.ca_doctransporte) AS nhbls, 
-	( SELECT sum(ca_peso) AS count FROM ino.tb_house ics WHERE ics.ca_idmaster = m.ca_idmaster ) AS peso, 
-	( SELECT sum(ca_numpiezas) AS count FROM ino.tb_house ics WHERE ics.ca_idmaster = m.ca_idmaster ) AS piezas, 
-	( SELECT sum(ca_volumen) AS count FROM ino.tb_house ics WHERE ics.ca_idmaster = m.ca_idmaster ) AS volumen, 
-md.ca_idmodo,m.ca_idmaster
-
-    FROM ino.tb_master m
-    JOIN ino.tb_house c ON c.ca_idmaster = m.ca_idmaster
-    JOIN tb_modos md ON m.ca_impoexpo=md.ca_impoexpo and m.ca_transporte=md.ca_transporte
-    $joinreportes
-    $joinclientes
-    JOIN ino.tb_equipos e ON e.ca_idmaster = m.ca_idmaster
-    JOIN tb_conceptos tt ON e.ca_idconcepto = tt.ca_idconcepto   
-    JOIN ids.tb_proveedores p ON p.ca_idproveedor = m.ca_idlinea
-    JOIN ids.tb_ids ids ON p.ca_idproveedor = ids.ca_id
-    JOIN tb_ciudades ori ON ori.ca_idciudad = m.ca_origen
-    JOIN tb_traficos tra_ori ON tra_ori.ca_idtrafico = ori.ca_idtrafico
-    JOIN tb_ciudades des ON des.ca_idciudad = m.ca_destino
-    JOIN tb_traficos tra_des ON tra_des.ca_idtrafico = des.ca_idtrafico
-   
-    WHERE date_part('year', m.ca_fchreferencia) > (date_part('year', m.ca_fchreferencia) - 2)  
-    $where
-
-    group by tt.ca_liminferior,m.ca_referencia, tt.ca_concepto, tt.ca_idconcepto ,m.ca_fchsalida, m.ca_fchllegada, m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad , m.ca_destino, des.ca_ciudad , tra_ori.ca_idtrafico , tra_ori.ca_nombre , tra_des.ca_idtrafico , tra_des.ca_nombre , m.ca_modalidad, m.ca_idlinea, ids.ca_nombre,
-    (( SELECT sum(t.ca_liminferior) AS sum FROM ino.tb_equipos eq JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto WHERE eq.ca_idmaster = m.ca_idmaster AND eq.ca_idconcepto = tt.ca_idconcepto)) / 20 , 
-	( SELECT count(*) AS count FROM ino.tb_equipos eq WHERE eq.ca_idmaster = m.ca_idmaster AND eq.ca_idconcepto = tt.ca_idconcepto) , 
-    md.ca_idmodo,m.ca_idmaster
-    ORDER BY m.ca_fchreferencia";
+                        m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad AS ori_ca_ciudad, m.ca_destino, des.ca_ciudad AS des_ca_ciudad, 	
+                        tra_ori.ca_idtrafico AS ori_ca_idtrafico, tra_ori.ca_nombre AS ori_ca_nombre, tra_des.ca_idtrafico AS des_ca_idtrafico, 
+                        tra_des.ca_nombre AS des_ca_nombre, m.ca_modalidad, m.ca_idlinea, ids.ca_nombre,
+                        (( SELECT sum(t.ca_liminferior) AS sum FROM ino.tb_equipos eq JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto WHERE eq.ca_idmaster = m.ca_idmaster AND eq.ca_idconcepto = tt.ca_idconcepto)) / 20 AS teus, 
+                        ( SELECT count(*) AS count FROM ino.tb_equipos eq WHERE eq.ca_idmaster = m.ca_idmaster AND eq.ca_idconcepto = tt.ca_idconcepto) AS ncontenedores, 
+                        count(DISTINCT c.ca_doctransporte) AS nhbls, 
+                        ( SELECT sum(ca_peso) AS count FROM ino.tb_house ics WHERE ics.ca_idmaster = m.ca_idmaster ) AS peso, 
+                        ( SELECT sum(ca_numpiezas) AS count FROM ino.tb_house ics WHERE ics.ca_idmaster = m.ca_idmaster ) AS piezas, 
+                        ( SELECT sum(ca_volumen) AS count FROM ino.tb_house ics WHERE ics.ca_idmaster = m.ca_idmaster ) AS volumen, md.ca_idmodo,m.ca_idmaster
+                    FROM ino.tb_master m
+                        JOIN ino.tb_house c ON c.ca_idmaster = m.ca_idmaster
+                        JOIN tb_modos md ON m.ca_impoexpo=md.ca_impoexpo and m.ca_transporte=md.ca_transporte
+                        $joinreportes
+                        $joinclientes
+                        JOIN ino.tb_equipos e ON e.ca_idmaster = m.ca_idmaster
+                        JOIN tb_conceptos tt ON e.ca_idconcepto = tt.ca_idconcepto   
+                        JOIN ids.tb_proveedores p ON p.ca_idproveedor = m.ca_idlinea
+                        JOIN ids.tb_ids ids ON p.ca_idproveedor = ids.ca_id
+                        JOIN tb_ciudades ori ON ori.ca_idciudad = m.ca_origen
+                        JOIN tb_traficos tra_ori ON tra_ori.ca_idtrafico = ori.ca_idtrafico
+                        JOIN tb_ciudades des ON des.ca_idciudad = m.ca_destino
+                        JOIN tb_traficos tra_des ON tra_des.ca_idtrafico = des.ca_idtrafico
+                    WHERE date_part('year', m.ca_fchreferencia) > (date_part('year', m.ca_fchreferencia) - 2)  
+                    $where
+                    GROUP BY tt.ca_liminferior,m.ca_referencia, tt.ca_concepto, tt.ca_idconcepto ,m.ca_fchsalida, m.ca_fchllegada, m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad , m.ca_destino, des.ca_ciudad , tra_ori.ca_idtrafico , tra_ori.ca_nombre , tra_des.ca_idtrafico , tra_des.ca_nombre , m.ca_modalidad, m.ca_idlinea, ids.ca_nombre,
+                        (( SELECT sum(t.ca_liminferior) AS sum FROM ino.tb_equipos eq JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto WHERE eq.ca_idmaster = m.ca_idmaster AND eq.ca_idconcepto = tt.ca_idconcepto)) / 20 , 
+                        ( SELECT count(*) AS count FROM ino.tb_equipos eq WHERE eq.ca_idmaster = m.ca_idmaster AND eq.ca_idconcepto = tt.ca_idconcepto) , 
+                        md.ca_idmodo,m.ca_idmaster
+                    ORDER BY m.ca_fchreferencia";
             $con = Doctrine_Manager::getInstance()->connection();
             //echo $sql;
             $st = $con->execute($sql);
@@ -409,43 +371,34 @@ md.ca_idmodo,m.ca_idmaster
         $this->meses[] = array("valor" => "k-Noviembre", "id" => 11);
         $this->meses[] = array("valor" => "l-Diciembre", "id" => 12);
 
-        foreach ($traficos_rs as $trafico) {
-            $row = array("id" => $trafico->getCaIdTrafico(), "valor" => $trafico->getCaNombre());
-            $this->traficos[] = $row;
+        if ($traficos_rs) {
+            foreach ($traficos_rs as $trafico) {
+                $row = array("id" => $trafico->getCaIdTrafico(), "valor" => $trafico->getCaNombre());
+                $this->traficos[] = $row;
+            }
         }
-
 
         if ($this->opcion) {
 
             if ($this->year != "")
-                $where.=" and ca_ano in (" . ($this->year) . "," . ($this->year - 1) . ")";
+                $where.=" and ca_ano in ('" . ($this->year) . "','" . ($this->year - 1) . "')";
 
             if (count($this->nmes) > 0) {
                 $this->nmes = array_diff($this->nmes, array(""));
                 if ($this->nmes[0] != "")
                     $where.=" and ca_mes::integer in (" . (implode(",", $this->nmes)) . ")";
             }
-            //$where.=" and ca_ano in (" . $this->year. ",".($this->year-1).")";
-
-            /*            $sql = "select ca_ano, ca_trafico, ca_traorigen, ca_ciudestino, sum(ca_20pies) as ca_20pies, sum(ca_40pies) as ca_40pies, 
-              sum(ca_teus) as ca_teus from vi_inotrafico_lcl where 1=1 and ca_impoexpo='".constantes::IMPO."' and ca_trafico='05' $where group by ca_ano, ca_trafico, ca_traorigen, ca_ciudestino order by ca_ano, ca_traorigen, ca_ciudestino"; */
             $sql = "select ca_ano, ca_trafico, ca_traorigen, ca_ciudestino, sum(ca_volumen) as ca_volumen, sum(ca_20pies) as ca_20pies, sum(ca_40pies) as ca_40pies, 
                 sum(ca_teus) as ca_teus from vi_inotrafico_lcl where 1=1  $where group by ca_ano, ca_trafico, ca_traorigen, ca_ciudestino order by ca_ano, ca_traorigen, ca_ciudestino";
-            //echo $sql;
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
             $this->lcl = $st->fetchAll();
-            //echo "<pre>";print_r($this->lcl);echo "</pre>";
-            /* $sql = "select ca_ano, ca_trafico, ca_traorigen, ca_ciudestino, sum(ca_20pies) as ca_20pies, sum(ca_40pies) as ca_40pies, 
-              sum(ca_teus) as ca_teus from vi_inotrafico_fcl where 1=1 and ca_impoexpo='".constantes::IMPO."' and ca_trafico='05' $where group by ca_ano, ca_trafico, ca_traorigen, ca_ciudestino order by ca_ano, ca_traorigen, ca_ciudestino";
-             * 
-             */
+
             $sql = "select ca_ano, ca_trafico, ca_traorigen, ca_ciudestino, sum(ca_20pies) as ca_20pies, sum(ca_40pies) as ca_40pies, 
                 sum(ca_teus) as ca_teus from vi_inotrafico_fcl where 1=1  $where group by ca_ano, ca_trafico, ca_traorigen, ca_ciudestino order by ca_ano, ca_traorigen, ca_ciudestino";
-
             $st = $con->execute($sql);
             $this->fcl = $st->fetchAll();
-            //echo "<pre>";print_r($this->fcl);echo "</pre>";
+
             $this->grid = array();
             $this->puertos = array("Barranquilla", "Buenaventura", "Cartagena", "Santa Marta", "Otros");
             $this->grid["destino"]["Barranquilla"] = array();
@@ -546,51 +499,29 @@ md.ca_idmodo,m.ca_idmaster
 
             $con = Doctrine_Manager::getInstance()->connection();
 
-            /* $sql = "select *, 
-              (select ca_fchcreado from tb_emails
-              where ca_tipo in( 'EnvioRNPrincipal','Envío de reportes' ) and ca_subject = 'Rechazo de Envío de reportes '||r.ca_consecutivo
-              and ca_fchcreado >='2013-07-01' and ca_fchcreado <'2013-08-01' order by 1 limit 1)
-              from tb_reportes r
-              inner join tb_repantecedentes a on a.ca_idreporte=r.ca_idreporte and a.ca_estado!='R'
-              where
-              a.ca_fchcreado >='2013-07-01' and a.ca_fchcreado <'2013-08-01'
-              order by ca_consecutivo , ca_version";
-             */
             $sql = "select a.ca_fchcreado,(r.ca_consecutivo||' V'||r.ca_version) reporte,a.ca_usucreado,a.ca_fchrechazo,
-                    a.ca_usurechazo,a.ca_motrechazo,a.ca_propiedades
-                from tb_reportes r 
-                inner join tb_repantecedentes a on a.ca_idreporte=r.ca_idreporte 
-                where 1=1 $where
-                order by 1";
-//            echo $sql;
-//            exit;
+                        a.ca_usurechazo,a.ca_motrechazo,a.ca_propiedades
+                    from tb_reportes r 
+                        inner join tb_repantecedentes a on a.ca_idreporte=r.ca_idreporte 
+                    where 1=1 $where
+                    order by 1";
             $st = $con->execute($sql);
             $this->reportes = $st->fetchAll();
-
             //echo "<pre>";print_r($this->reportes);echo "</pre>";
-            //exit;
-//            echo $this->fechainicial. "  " . $this->fechainicial2. "   ". $this->fechafinal;
-            //exit;
-//            echo "<pre>";print_r($this->gridClientes);echo "</pre>";
-//            echo "<pre>";print_r($this->compara);echo "</pre>";
-//            exit;
         }
     }
 
     public function executeEstadisticasTraficos(sfWebRequest $request) {
+
         $this->opcion = $request->getParameter("opcion");
-        //list($nom_mes, $ano) = explode("-", $request->getParameter("fechaFinal"));
-        //list(,$this->mes, $ano) = explode("-", $request->getParameter("fechaFinal"));
         list($ano, $this->mes, $dia) = explode("-", $request->getParameter("fechaFinal"));
 
-        //$this->mes = Utils::nmes($nom_mes);
         $this->idsucursal = $request->getParameter("idsucursal");
         $this->departamento = $request->getParameter("departamento");
         $this->iddepartamento = $request->getParameter("iddepartamento");
         $this->idtransporte = $this->getRequestParameter("idtransporte");
         $this->transporte = $this->getRequestParameter("transporte");
         $this->fechafinal = Utils::addDate(Utils::addDate($ano . "-" . $this->mes . "-01", 0, 1, 0, "Y-m-01"), -1);
-
         $this->fechainicial = Utils::addDate(Utils::addDate($this->fechafinal, 1, 0, 0, "Y-m-01"), 0, -3, 0, "Y-m-d");
 
         $this->fechainicial1 = Utils::addDate($request->getParameter("fechaInicial"), 0, 0, -1);
@@ -619,13 +550,14 @@ md.ca_idmodo,m.ca_idmaster
             $this->nmeses = 3;
             $tra_principal = "'Alemania','Argentina','Belgica','Brasil','Chile','China','España','Estados Unidos','Inglaterra', 'Italia', 'Mexico','Taiwan'";
 
-            $sql = "select count(*) as valor,ca_year,ca_mes,ca_traorigen as origen from vi_reportes_estadisticas where ca_fchreporte between '" . $this->fechainicial . "' and '" . $this->fechafinal . "'  $where and ca_traorigen in ($tra_principal) and ca_ciuorigen!='Shanghai'
-                group by ca_year,ca_mes,ca_traorigen
-                order by 4,2,3";
-
+            $sql = "select count(*) as valor,ca_year,ca_mes,ca_traorigen as origen
+                    from vi_reportes_estadisticas where ca_fchreporte between '" . $this->fechainicial . "' and '" . $this->fechafinal . "'  $where and ca_traorigen in ($tra_principal) and ca_ciuorigen!='Shanghai'
+                    group by ca_year,ca_mes,ca_traorigen
+                    order by 4,2,3";
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
+
             $origen = "";
             $this->grid = array();
             $this->totales = array();
@@ -634,22 +566,26 @@ md.ca_idmodo,m.ca_idmaster
                 $this->totales[$r["ca_year"] . "-" . $r["ca_mes"]]+=$r["valor"];
             }
 
-            $sql = "select count(*) as valor,ca_year,ca_mes,ca_ciuorigen as origen from vi_reportes_estadisticas where ca_fchreporte between '" . $this->fechainicial . "' and '" . $this->fechafinal . "'  $where and ca_ciuorigen='Shanghai'
-                group by ca_year,ca_mes,ca_ciuorigen
-                order by 4,2,3";
+            $sql = "select count(*) as valor,ca_year,ca_mes,ca_ciuorigen as origen
+                    from vi_reportes_estadisticas where ca_fchreporte between '" . $this->fechainicial . "' and '" . $this->fechafinal . "'  $where and ca_ciuorigen='Shanghai'
+                    group by ca_year,ca_mes,ca_ciuorigen
+                    order by 4,2,3";
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
+
             $origen = "";
             foreach ($this->resul as $r) {
                 $this->grid[$r["origen"]][$r["ca_year"] . "-" . $r["ca_mes"]] = $r["valor"];
                 $this->totales[$r["ca_year"] . "-" . $r["ca_mes"]]+=$r["valor"];
             }
 
-            $sql = "select count(*) as valor,ca_year,ca_mes,ca_traorigen as origen from vi_reportes_estadisticas where ca_fchreporte between '" . $this->fechainicial . "' and '" . $this->fechafinal . "'  $where and ca_traorigen not in ($tra_principal)
-                group by ca_year,ca_mes,ca_traorigen
-                order by 4,2,3";
+            $sql = "select count(*) as valor,ca_year,ca_mes,ca_traorigen as origen
+                    from vi_reportes_estadisticas where ca_fchreporte between '" . $this->fechainicial . "' and '" . $this->fechafinal . "'  $where and ca_traorigen not in ($tra_principal)
+                    group by ca_year,ca_mes,ca_traorigen
+                    order by 4,2,3";
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
+
             $origen = "";
             $this->grid_s = array();
             $this->totales = array();
@@ -658,23 +594,25 @@ md.ca_idmodo,m.ca_idmaster
                 $this->totales_s[$r["ca_year"] . "-" . $r["ca_mes"]]+=$r["valor"];
             }
 
-            $sql = "select count(*) as valor,ca_traorigen as origen,ca_year from vi_reportes_estadisticas
-            where (ca_fchreporte between '" . (Utils::parseDate($this->fechafinal, "Y") . '-01-01') . "' and '" . $this->fechafinal . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal1, "Y") . '-01-01') . "' and '" . $this->fechafinal1 . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal2, "Y") . '-01-01') . "' and '" . $this->fechafinal2 . "') $where and ca_traorigen in ($tra_principal) and ca_ciuorigen!='Shanghai'
-            group by ca_traorigen,ca_year order by 2,3,1";
-            //echo "<br>".$sql;
+            $sql = "select count(*) as valor,ca_traorigen as origen,ca_year 
+                    from vi_reportes_estadisticas
+                    where (ca_fchreporte between '" . (Utils::parseDate($this->fechafinal, "Y") . '-01-01') . "' and '" . $this->fechafinal . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal1, "Y") . '-01-01') . "' and '" . $this->fechafinal1 . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal2, "Y") . '-01-01') . "' and '" . $this->fechafinal2 . "') $where and ca_traorigen in ($tra_principal) and ca_ciuorigen!='Shanghai'
+                    group by ca_traorigen,ca_year order by 2,3,1";
             $st = $con->execute($sql);
             $this->compara = $st->fetchAll();
 
             $this->gridCompara = array();
             $this->totalesCompara = array();
+
             foreach ($this->compara as $r) {
                 $this->gridCompara[$r["origen"]][$r["ca_year"]] = $r["valor"];
                 $this->totalesCompara[$r["ca_year"]]+=$r["valor"];
             }
 
-            $sql = "select count(*) as valor,ca_ciuorigen as origen,ca_year from vi_reportes_estadisticas
-            where (ca_fchreporte between '" . (Utils::parseDate($this->fechafinal, "Y") . '-01-01') . "' and '" . $this->fechafinal . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal1, "Y") . '-01-01') . "' and '" . $this->fechafinal1 . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal2, "Y") . '-01-01') . "' and '" . $this->fechafinal2 . "') $where and ca_ciuorigen='Shanghai'
-            group by ca_ciuorigen,ca_year order by 2,3,1";
+            $sql = "select count(*) as valor,ca_ciuorigen as origen,ca_year 
+                    from vi_reportes_estadisticas
+                    where (ca_fchreporte between '" . (Utils::parseDate($this->fechafinal, "Y") . '-01-01') . "' and '" . $this->fechafinal . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal1, "Y") . '-01-01') . "' and '" . $this->fechafinal1 . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal2, "Y") . '-01-01') . "' and '" . $this->fechafinal2 . "') $where and ca_ciuorigen='Shanghai'
+                    group by ca_ciuorigen,ca_year order by 2,3,1";
             $st = $con->execute($sql);
             $this->compara = $st->fetchAll();
 
@@ -683,9 +621,10 @@ md.ca_idmodo,m.ca_idmaster
                 $this->totalesCompara[$r["ca_year"]]+=$r["valor"];
             }
 
-            $sql = "select count(*) as valor,ca_traorigen as origen,ca_year from vi_reportes_estadisticas
-            where (ca_fchreporte between '" . (Utils::parseDate($this->fechafinal, "Y") . '-01-01') . "' and '" . $this->fechafinal . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal1, "Y") . '-01-01') . "' and '" . $this->fechafinal1 . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal2, "Y") . '-01-01') . "' and '" . $this->fechafinal2 . "') $where and ca_traorigen not in ($tra_principal) 
-            group by ca_traorigen,ca_year order by 2,3,1";
+            $sql = "select count(*) as valor,ca_traorigen as origen,ca_year 
+                    from vi_reportes_estadisticas
+                    where (ca_fchreporte between '" . (Utils::parseDate($this->fechafinal, "Y") . '-01-01') . "' and '" . $this->fechafinal . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal1, "Y") . '-01-01') . "' and '" . $this->fechafinal1 . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal2, "Y") . '-01-01') . "' and '" . $this->fechafinal2 . "') $where and ca_traorigen not in ($tra_principal) 
+                    group by ca_traorigen,ca_year order by 2,3,1";
             $st = $con->execute($sql);
             $this->compara = $st->fetchAll();
 
@@ -697,10 +636,10 @@ md.ca_idmodo,m.ca_idmaster
             }
 
             $sql = "select count(*) as valor,ca_traorigen as origen,ca_nombre_cli as cliente
-                from vi_reportes_estadisticas 
-                where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "{$ano}-01-01") . "' and '" . $this->fechafinal . "' $where
-                group by ca_traorigen,ca_nombre_cli
-                order by 2 ,1 desc";
+                    from vi_reportes_estadisticas 
+                    where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "{$ano}-01-01") . "' and '" . $this->fechafinal . "' $where
+                    group by ca_traorigen,ca_nombre_cli
+                    order by 2 ,1 desc";
             $st = $con->execute($sql);
             $this->clientes = $st->fetchAll();
 
@@ -713,11 +652,11 @@ md.ca_idmodo,m.ca_idmaster
             }
 
             $sql = "select count(*) as valor,ca_year,ca_mes,ca_traorigen as origen ,ca_nombre_cli as cliente
-                from vi_reportes_estadisticas 
-                where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "{$ano}-01-01") . "' and '" . $this->fechafinal . "' $where
-                group by ca_year,ca_mes,ca_traorigen,ca_nombre_cli
-                order by 4,2,3,5";
-            //echo "<br>".$sql;
+                    from vi_reportes_estadisticas 
+                    where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "{$ano}-01-01") . "' and '" . $this->fechafinal . "' $where
+                    group by ca_year,ca_mes,ca_traorigen,ca_nombre_cli
+                    order by 4,2,3,5";
+
             $st = $con->execute($sql);
             $this->clientes = $st->fetchAll();
 
@@ -728,11 +667,11 @@ md.ca_idmodo,m.ca_idmaster
             }
 
             $sql = "select count(*) as valor,ca_year,ca_mes,ca_login as vendedor
-                from vi_reportes_estadisticas 
-                where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "{$ano}-01-01") . "' and '" . $this->fechafinal . "' $where
-                group by ca_year,ca_mes,ca_login
-                order by 4";
-            //echo "<br>".$sql;
+                    from vi_reportes_estadisticas 
+                    where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "{$ano}-01-01") . "' and '" . $this->fechafinal . "' $where
+                    group by ca_year,ca_mes,ca_login
+                    order by 4";
+
             $st = $con->execute($sql);
 
             $this->clientes = $st->fetchAll();
@@ -747,11 +686,6 @@ md.ca_idmodo,m.ca_idmaster
             }
 
             $this->fechainicial2 = (Utils::parseDate($this->fechafinal, "Y") . '-01-01');
-//            echo $this->fechainicial. "  " . $this->fechainicial2. "   ". $this->fechafinal;
-            //exit;
-//            echo "<pre>";print_r($this->gridClientes);echo "</pre>";
-//            echo "<pre>";print_r($this->compara);echo "</pre>";
-//            exit;
         }
     }
 
@@ -840,31 +774,31 @@ md.ca_idmodo,m.ca_idmaster
             }
 
             $sql = "SELECT m.ca_referencia, cl.ca_compania, u.ca_sucursal, c.ca_hbls, r.ca_consecutivo, r.ca_seguro, 
-                r.ca_colmas, b1.ca_nombre as ca_bodega, t.ca_nombre as ca_operador, m.ca_fchembarque, m.ca_fcharribo, 
-                m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad AS ori_ca_ciudad, m.ca_destino, des.ca_ciudad AS des_ca_ciudad, 
-                tra_ori.ca_idtrafico AS ori_ca_idtrafico, tra_ori.ca_nombre AS ori_ca_nombre, 
-                tra_des.ca_idtrafico AS des_ca_idtrafico, tra_des.ca_nombre AS des_ca_nombre, m.ca_modalidad, desfin.ca_ciudad AS desfin_ca_ciudad,
-                count(DISTINCT c.ca_hbls) AS nhbls,
-                (c.ca_numpiezas) piezas,
-                    (c.ca_peso) peso,
-                    (c.ca_volumen) volumen,
-                    (select o.ca_consecutivo from tb_repotm o where ca_idreporte in (select ca_idreporte from tb_reportes rr where rr.ca_consecutivo=r.ca_consecutivo ) and o.ca_consecutivo is not null limit 1 ) as nodtm
-                FROM tb_inomaestra_sea m
-                JOIN tb_inoclientes_sea c ON c.ca_referencia = m.ca_referencia
-                JOIN vi_clientes_reduc cl ON c.ca_idcliente = cl.ca_idcliente
-                JOIN vi_usuarios u ON c.ca_login = u.ca_login
-                JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte
-                LEFT join tb_repotm o on r.ca_idreporte=o.ca_idreporte 
-                JOIN tb_bodegas b1 ON r.ca_idbodega = b1.ca_idbodega
-                JOIN tb_terceros t ON r.ca_idconsignatario = t.ca_idtercero and trim(t.ca_nombre)=trim('COL OTM S.A.S.') 
-                JOIN tb_ciudades ori ON ori.ca_idciudad = m.ca_origen
-                JOIN tb_traficos tra_ori ON tra_ori.ca_idtrafico = ori.ca_idtrafico
-                JOIN tb_ciudades des ON des.ca_idciudad = m.ca_destino
-                JOIN tb_ciudades desfin ON desfin.ca_idciudad = r.ca_continuacion_dest
-                JOIN tb_traficos tra_des ON tra_des.ca_idtrafico = des.ca_idtrafico
-                WHERE date_part('year', m.ca_fchreferencia) > (date_part('year', m.ca_fchreferencia) - 2) and r.ca_continuacion = 'OTM'
-                $where
-                group by m.ca_referencia, cl.ca_compania, u.ca_sucursal, c.ca_hbls, r.ca_consecutivo, r.ca_seguro, r.ca_colmas, b1.ca_nombre, t.ca_nombre, m.ca_fchembarque, m.ca_fcharribo, m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad , m.ca_destino, des.ca_ciudad, tra_ori.ca_idtrafico, tra_ori.ca_nombre, tra_des.ca_idtrafico, tra_des.ca_nombre, m.ca_modalidad,desfin.ca_ciudad,c.ca_numpiezas,c.ca_peso,c.ca_volumen,nodtm";
+                        r.ca_colmas, b1.ca_nombre as ca_bodega, t.ca_nombre as ca_operador, m.ca_fchembarque, m.ca_fcharribo, 
+                        m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad AS ori_ca_ciudad, m.ca_destino, des.ca_ciudad AS des_ca_ciudad, 
+                        tra_ori.ca_idtrafico AS ori_ca_idtrafico, tra_ori.ca_nombre AS ori_ca_nombre, 
+                        tra_des.ca_idtrafico AS des_ca_idtrafico, tra_des.ca_nombre AS des_ca_nombre, m.ca_modalidad, desfin.ca_ciudad AS desfin_ca_ciudad,
+                        count(DISTINCT c.ca_hbls) AS nhbls,
+                        (c.ca_numpiezas) piezas,
+                        (c.ca_peso) peso,
+                        (c.ca_volumen) volumen,
+                        (select o.ca_consecutivo from tb_repotm o where ca_idreporte in (select ca_idreporte from tb_reportes rr where rr.ca_consecutivo=r.ca_consecutivo ) and o.ca_consecutivo is not null limit 1 ) as nodtm
+                    FROM tb_inomaestra_sea m
+                    JOIN tb_inoclientes_sea c ON c.ca_referencia = m.ca_referencia
+                    JOIN vi_clientes_reduc cl ON c.ca_idcliente = cl.ca_idcliente
+                    JOIN vi_usuarios u ON c.ca_login = u.ca_login
+                    JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte
+                    LEFT join tb_repotm o on r.ca_idreporte=o.ca_idreporte 
+                    JOIN tb_bodegas b1 ON r.ca_idbodega = b1.ca_idbodega
+                    JOIN tb_terceros t ON r.ca_idconsignatario = t.ca_idtercero and trim(t.ca_nombre)=trim('COL OTM S.A.S.') 
+                    JOIN tb_ciudades ori ON ori.ca_idciudad = m.ca_origen
+                    JOIN tb_traficos tra_ori ON tra_ori.ca_idtrafico = ori.ca_idtrafico
+                    JOIN tb_ciudades des ON des.ca_idciudad = m.ca_destino
+                    JOIN tb_ciudades desfin ON desfin.ca_idciudad = r.ca_continuacion_dest
+                    JOIN tb_traficos tra_des ON tra_des.ca_idtrafico = des.ca_idtrafico
+                    WHERE date_part('year', m.ca_fchreferencia) > (date_part('year', m.ca_fchreferencia) - 2) and r.ca_continuacion = 'OTM'
+                    $where
+                    GROUP BY m.ca_referencia, cl.ca_compania, u.ca_sucursal, c.ca_hbls, r.ca_consecutivo, r.ca_seguro, r.ca_colmas, b1.ca_nombre, t.ca_nombre, m.ca_fchembarque, m.ca_fcharribo, m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad , m.ca_destino, des.ca_ciudad, tra_ori.ca_idtrafico, tra_ori.ca_nombre, tra_des.ca_idtrafico, tra_des.ca_nombre, m.ca_modalidad,desfin.ca_ciudad,c.ca_numpiezas,c.ca_peso,c.ca_volumen,nodtm";
 
             $con = Doctrine_Manager::getInstance()->connection();
             //echo $sql;
@@ -872,18 +806,17 @@ md.ca_idmodo,m.ca_idmaster
             $this->resul = $st->fetchAll();
 
             $sql = "select r.ca_idreporte,r.ca_origen,r.ca_destino,r.ca_consecutivo,r.ca_modalidad,COALESCE(t.ca_nombre,cl.ca_compania) as ca_compania, COALESCE(t.ca_identificacion,cl.ca_idalterno) as ca_idalterno,o.ca_hbls,o.ca_fcharribo,
-            ori.ca_ciudad ca_ciuorigen,des.ca_ciudad ca_ciudestino,o.ca_volumen,o.ca_numpiezas,o.ca_peso,u.ca_sucursal,o.ca_consecutivo as nodtm
-            from tb_reportes r
-                inner join tb_repotm o on r.ca_idreporte=o.ca_idreporte 
-                left join tb_terceros t on o.ca_idimportador=t.ca_idtercero
-                inner join tb_concliente ct on r.ca_idconcliente=ct.ca_idcontacto
-                inner join vi_clientes_reduc cl on cl.ca_idcliente::text=ct.ca_idcliente::text
-                inner join tb_ciudades ori on r.ca_origen=ori.ca_idciudad
-                inner join tb_ciudades des on r.ca_destino=des.ca_idciudad
-                JOIN vi_usuarios u ON r.ca_login = u.ca_login
-                where r.ca_tiporep=4
-                and  r.ca_fchcreado >='2012-04-01' and r.ca_login='consolcargo'
-                $where1 order by o.ca_fcharribo";
+                        ori.ca_ciudad ca_ciuorigen,des.ca_ciudad ca_ciudestino,o.ca_volumen,o.ca_numpiezas,o.ca_peso,u.ca_sucursal,o.ca_consecutivo as nodtm
+                    from tb_reportes r
+                        inner join tb_repotm o on r.ca_idreporte=o.ca_idreporte 
+                        left join tb_terceros t on o.ca_idimportador=t.ca_idtercero
+                        inner join tb_concliente ct on r.ca_idconcliente=ct.ca_idcontacto
+                        inner join vi_clientes_reduc cl on cl.ca_idcliente::text=ct.ca_idcliente::text
+                        inner join tb_ciudades ori on r.ca_origen=ori.ca_idciudad
+                        inner join tb_ciudades des on r.ca_destino=des.ca_idciudad
+                        JOIN vi_usuarios u ON r.ca_login = u.ca_login
+                    where r.ca_tiporep=4 and  r.ca_fchcreado >='2012-04-01' and r.ca_login='consolcargo'$where1
+                    order by o.ca_fcharribo";
 
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
@@ -960,7 +893,7 @@ md.ca_idmodo,m.ca_idmaster
                     $joinPpal = $this->transporte == "Marítimo" ? "JOIN tb_inoclientes_sea ic ON ic.ca_idreporte = sqa.ca_idreporte" : "JOIN tb_inoclientes_air ic ON ic.ca_idreporte = sqa.ca_consecutivo";
                     break;
                 case 5:
-                    $select1 = $this->transporte == "Marítimo" ? ",(select ca_factura FROM tb_inoingresos_sea ii WHERE ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hbls= ii.ca_hbls limit 1) as ca_factura, (select ca_fchfactura FROM tb_inoingresos_sea ii WHERE ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hbls= ii.ca_hbls limit 1) as ca_fchfactura, ((select ca_fchfactura FROM tb_inoingresos_sea ii WHERE ic.ca_referencia = ii.ca_referencia  and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hbls= ii.ca_hbls limit 1)-sqa.ca_fchllegada) as ca_diferencia":",(select ca_factura FROM tb_inoingresos_air ii WHERE ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hawb= ii.ca_hawb limit 1) as ca_factura, (select ca_fchfactura FROM tb_inoingresos_air ii WHERE ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hawb= ii.ca_hawb limit 1) as ca_fchfactura, ((select ca_fchfactura FROM tb_inoingresos_air ii WHERE ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hawb= ii.ca_hawb limit 1)-sqa.ca_fchllegada) as ca_diferencia";
+                    $select1 = $this->transporte == "Marítimo" ? ",(select ca_factura FROM tb_inoingresos_sea ii WHERE ic.ca_idinocliente = ii.ca_idinocliente limit 1) as ca_factura, (select ca_fchfactura FROM tb_inoingresos_sea ii WHERE ic.ca_idinocliente = ii.ca_idinocliente limit 1) as ca_fchfactura, ((select ca_fchfactura FROM tb_inoingresos_sea ii WHERE ic.ca_idinocliente = ii.ca_idinocliente limit 1)-sqa.ca_fchllegada) as ca_diferencia" : ",(select ca_factura FROM tb_inoingresos_air ii WHERE ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hawb= ii.ca_hawb limit 1) as ca_factura, (select ca_fchfactura FROM tb_inoingresos_air ii WHERE ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hawb= ii.ca_hawb limit 1) as ca_fchfactura, ((select ca_fchfactura FROM tb_inoingresos_air ii WHERE ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hawb= ii.ca_hawb limit 1)-sqa.ca_fchllegada) as ca_diferencia";
                     $where1 = "WHERE rs.ca_idetapa in ('IMCPD','IMETT','IACAD')";
                     $where2 = "WHERE rs.ca_idetapa in ('IMETA','IACCR')";
                     $joinPpal = $this->transporte == "Marítimo" ? "JOIN tb_inoclientes_sea ic ON ic.ca_idreporte = sqa.ca_idreporte" : "JOIN tb_inoclientes_air ic ON ic.ca_idreporte = sqa.ca_consecutivo";
@@ -1004,36 +937,39 @@ md.ca_idmodo,m.ca_idmaster
             
             foreach ($this->resul as $r) {
 
+                /* if (!$r[$this->dataIdg])
+                  continue; */
+
                 if ($this->transporte == Constantes::AEREO) {
                     if ($r[$this->dataIdg] > $this->indi_AIR[$this->pais_origen]) {
-                        $this->indicador[(int) ($r["ca_mes1"])]["incumplimiento"]++;
+                        $this->indicador[(int) ($r["ca_mes1"])]["incumplimiento"] ++;
                     } else {
-                        $this->indicador[(int) ($r["ca_mes1"])]["cumplimiento"]++;
+                        $this->indicador[(int) ($r["ca_mes1"])]["cumplimiento"] ++;
                     }
                 } else if ($this->transporte == Constantes::MARITIMO) {
                     if ($r["nva_modalidad"] == Constantes::FCL) {
                         if ($r[$this->dataIdg] > $this->indi_FCL[$this->pais_origen]) {
-                            $this->indicador[(int) ($r["ca_mes1"])]["incumplimiento"]++;
+                            $this->indicador[(int) ($r["ca_mes1"])]["incumplimiento"] ++;
                         } else {
-                            $this->indicador[(int) ($r["ca_mes1"])]["cumplimiento"]++;
+                            $this->indicador[(int) ($r["ca_mes1"])]["cumplimiento"] ++;
                         }
                     } else if ($r["nva_modalidad"] == Constantes::LCL) {
                         if ($r[$this->dataIdg] > $this->indi_LCL[$this->pais_origen]) {
-                            $this->indicador[(int) ($r["ca_mes1"])]["incumplimiento"]++;
+                            $this->indicador[(int) ($r["ca_mes1"])]["incumplimiento"] ++;
                         } else {
-                            $this->indicador[(int) ($r["ca_mes1"])]["cumplimiento"]++;
+                            $this->indicador[(int) ($r["ca_mes1"])]["cumplimiento"] ++;
                         }
                     }
                 }
 
                 $this->grid[$r["ca_ano1"]][$r["nva_modalidad"]][(int) ($r["ca_mes1"])]["conta"] = (isset($this->grid[$r["ca_ano1"]][$r["nva_modalidad"]][(int) ($r["ca_mes1"])]["conta"])) ? ($this->grid[$r["ca_ano1"]][$r["nva_modalidad"]][(int) ($r["ca_mes1"])]["conta"] + 1) : "1";
-                if(count($this->resul)==1){
-                    if(!$r[$this->dataIdg]){
-                        $this->grid[$r["ca_ano1"]][$r["nva_modalidad"]][(int) ($r["ca_mes1"])]["diferencia"]=1;
+                if (count($this->resul) == 1) {
+                    if (!$r[$this->dataIdg]) {
+                        $this->grid[$r["ca_ano1"]][$r["nva_modalidad"]][(int) ($r["ca_mes1"])]["diferencia"] = 1;
                     }
                 }
                 $this->grid[$r["ca_ano1"]][$r["nva_modalidad"]][(int) ($r["ca_mes1"])]["diferencia"]+=$r[$this->dataIdg];
-                
+
                 list($peso, $medida) = explode("|", $r["ca_peso"]);
                 $this->grid[$r["ca_ano1"]][$r["nva_modalidad"]][(int) ($r["ca_mes1"])]["peso"]+=$peso;
             }
@@ -1080,7 +1016,7 @@ md.ca_idmodo,m.ca_idmaster
                         ->innerJoin("c.Vendedor v")
                         ->innerJoin("v.Sucursal s")
                         ->addWhere("SUBSTR(c.ca_referencia, 8,2) LIKE ?", $mes)
-                        ->addWhere("SUBSTR(c.ca_referencia, 15,1) LIKE ?", $anio)
+                        ->addWhere("SUBSTR(c.ca_referencia, 16,2) LIKE ?", $anio)
                         ->addWhere("s.ca_nombre LIKE ?", $sucursal)
                         ->execute();
                 foreach ($referencias as $referencia) {
@@ -1096,7 +1032,7 @@ md.ca_idmodo,m.ca_idmaster
                         ->innerJoin("c.Vendedor v")
                         ->innerJoin("v.Sucursal s")
                         ->addWhere("SUBSTR(c.ca_referencia, 8,2) LIKE ?", $mes)
-                        ->addWhere("SUBSTR(c.ca_referencia, 15,1) LIKE ?", $anio)
+                        ->addWhere("SUBSTR(c.ca_referencia, 16,2) LIKE ?", $anio)
                         ->addWhere("s.ca_nombre LIKE ?", $sucursal)
                         ->execute();
                 foreach ($referencias as $referencia) {
@@ -1108,7 +1044,7 @@ md.ca_idmodo,m.ca_idmaster
                     ->createQuery("m")
                     ->innerJoin("m.Origen o")
                     ->addWhere("SUBSTR(m.ca_referencia, 8,2) LIKE ?", $mes)
-                    ->addWhere("SUBSTR(m.ca_referencia, 15,1) LIKE ?", $anio)
+                    ->addWhere("SUBSTR(m.ca_referencia, 16,2) LIKE ?", $anio)
                     ->addWhere("o.ca_idtrafico LIKE ?", $idtrafico);
 
             if ($this->detalle) {
@@ -1136,7 +1072,7 @@ md.ca_idmodo,m.ca_idmaster
                     ->addOrderBy("s.ca_nombre")
                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                     ->execute();
-            
+
             $this->sucursales = Doctrine::getTable("Sucursal")
                     ->createQuery("s")
                     ->select("DISTINCT s.ca_nombre")
@@ -1174,6 +1110,7 @@ md.ca_idmodo,m.ca_idmaster
         $this->idDepartamento = $request->getParameter("idDepartamento");
         $this->nomoperativo = $request->getParameter("nomoperativo");
         $this->tipoInforme = $request->getParameter("tipoInforme");
+        $where = "";
 
         if ($this->opcion) {
             if ($this->idmodalidad)
@@ -1233,19 +1170,18 @@ md.ca_idmodo,m.ca_idmaster
                 $where.=" and op.ca_departamento = '" . $this->idDepartamento . "'";
 
             $sql = "SELECT
-                rf.ca_ano, rf.ca_mes, rp.ca_idreporte, rp.ca_fchreporte, rp.ca_consecutivo, rx.ca_version, sc.ca_nombre as ca_sucursal,
-                tro.ca_idtrafico, tro.ca_nombre as ca_traorigen, rp.ca_origen, cio.ca_ciudad as ca_ciuorigen, trd.ca_idtrafico, trd.ca_nombre as ca_tradestino, cid.ca_ciudad as ca_ciudestino, rp.ca_transporte,
-                rp.ca_modalidad, rp.ca_impoexpo, ccl.ca_idcliente, ccl.ca_compania, lin.ca_idlinea, lin.ca_nomtransportista, agt.ca_idagente, agt.ca_nombre as ca_nomagente, nn.ca_referencia, nn.ca_cant_negocios,
-                rf.ca_cant_emails, rf.ca_usuenvio, op.ca_nombre as ca_nomoperativo, op.ca_departamento
+                        rf.ca_ano, rf.ca_mes, rp.ca_idreporte, rp.ca_fchreporte, rp.ca_consecutivo, rx.ca_version, sc.ca_nombre as ca_sucursal,
+                        tro.ca_idtrafico, tro.ca_nombre as ca_traorigen, rp.ca_origen, cio.ca_ciudad as ca_ciuorigen, trd.ca_idtrafico, trd.ca_nombre as ca_tradestino, cid.ca_ciudad as ca_ciudestino, rp.ca_transporte,
+                        rp.ca_modalidad, rp.ca_impoexpo, ccl.ca_idcliente, ccl.ca_compania, lin.ca_idlinea, lin.ca_nomtransportista, agt.ca_idagente, agt.ca_nombre as ca_nomagente, nn.ca_referencia, nn.ca_cant_negocios,
+                        rf.ca_cant_emails, rf.ca_usuenvio, op.ca_nombre as ca_nomoperativo, op.ca_departamento
 
-                from tb_reportes rp
-                -- La última versión del reporte
+                    from tb_reportes rp
+                        -- La última versión del reporte
                         INNER JOIN (select ca_consecutivo, ca_fchreporte, max(ca_version) as ca_version, min(ca_fchcreado) as ca_fchcreado from tb_reportes where ca_usuanulado IS NULL group by ca_consecutivo, ca_fchreporte order by ca_consecutivo) rx ON (rp.ca_consecutivo = rx.ca_consecutivo and rp.ca_version = rx.ca_version)
-                -- Dependiendo el tipo de Informe, toma los registros
+                        -- Dependiendo el tipo de Informe, toma los registros
                         $filtroTipoInforme
-                -- Calcula el numero de negocios
+                       -- Calcula el numero de negocios
                         LEFT OUTER JOIN (select ca_referencia, ca_consecutivo, count(ca_doctransporte) as ca_cant_negocios from (select ca_referencia, ca_hbls as ca_doctransporte, ca_consecutivo::text from tb_inoclientes_sea ics INNER JOIN tb_reportes rpt ON rpt.ca_idreporte = ics.ca_idreporte union  select ca_referencia, ca_hawb as ca_doctransporte, ca_idreporte::text as ca_consecutivo from tb_inoclientes_air) as cn where ca_consecutivo IS NOT NULL group by ca_referencia, ca_consecutivo order by ca_consecutivo) nn ON (rp.ca_consecutivo = nn.ca_consecutivo)
-
                         INNER JOIN vi_usuarios us ON (rp.ca_login = us.ca_login)
                         INNER JOIN vi_usuarios op ON (rf.ca_usuenvio = op.ca_login)
                         INNER JOIN control.tb_sucursales sc ON (us.ca_idsucursal = sc.ca_idsucursal)
@@ -1257,12 +1193,14 @@ md.ca_idmodo,m.ca_idmaster
                         INNER JOIN tb_concliente ccn ON (rp.ca_idconcliente = ccn.ca_idcontacto)
                         INNER JOIN vi_transporlineas lin ON (rp.ca_idlinea = lin.ca_idlinea)
                         INNER JOIN vi_clientes_reduc ccl ON (ccn.ca_idcliente = ccl.ca_idcliente)
-                $where
-                order by ca_ano, ca_mes, ca_compania, ca_traorigen, to_number(substr(rp.ca_consecutivo,0,position('-' in rp.ca_consecutivo)),'99999999')";
+                    $where
+                    order by ca_ano, ca_mes, ca_compania, ca_traorigen, to_number(substr(rp.ca_consecutivo,0,position('-' in rp.ca_consecutivo)),'99999999')";
 
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
+
+            //echo "<pre>";print_r($this->resul);echo "</pre>";
         }
     }
 
@@ -1272,17 +1210,16 @@ md.ca_idmodo,m.ca_idmaster
         if ($this->opcion) {
             $this->fechainicial = $request->getParameter("fechaInicial");
             $this->fechafinal = $request->getParameter("fechaFinal");
-            //ca_fchvaciado-ca_fcharribo
+            
             $sql = "select (ca_fchvaciado-ca_fchconfirmacion) as diferencia , ca_referencia, ca_fchcreado,ca_fchvaciado,ca_fchconfirmacion,des.ca_ciudad
                 from tb_inomaestra_sea m
                 inner join tb_ciudades des on m.ca_destino=des.ca_idciudad
                 where m.ca_fcharribo between '" . $this->fechainicial . "' and '" . $this->fechafinal . "' and m.ca_modalidad='LCL' and m.ca_fchconfirmacion is not null            
                 order by m.ca_fchconfirmacion desc, 3 desc";
-            //echo "<br>".$sql;
+            
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
             $this->ref = $st->fetchAll();
-            //print_r($this->ref);
         }
     }
 
@@ -1305,7 +1242,7 @@ md.ca_idmodo,m.ca_idmaster
                                   INNER JOIN control.tb_sucursales s ON s.ca_idsucursal = u.ca_idsucursal";
                 $join = "";
                 if ($this->tipo == 0) {
-                    $join = "INNER JOIN tb_inoingresos_sea ic ON t.ca_referencia = ic.ca_referencia ";
+                    $join = "INNER JOIN tb_inoingresos_sea ic ON t.ca_idinocliente = ic.ca_idinocliente ";
                 } elseif ($this->tipo == 1) {
                     $join = "INNER JOIN tb_inoingresos_air ic ON t.ca_referencia = ic.ca_referencia ";
                 } elseif ($this->tipo == 2) {
@@ -1320,15 +1257,13 @@ md.ca_idmodo,m.ca_idmaster
                 if ($this->vendedor) {
                     $where.= " u.ca_login ='" . $this->vendedor . "' and ";
                 }
-                $sql = "SELECT ic.*,c.ca_compania, u.ca_nombre as ca_vendedor, s.ca_nombre as ca_sucursal
+                $sql = "SELECT ic.*,t.ca_referencia, c.ca_compania, u.ca_nombre as ca_vendedor, s.ca_nombre as ca_sucursal
                       FROM " . $tipos[$this->tipo] . " t
                         $join
                         $innerJoin
                       WHERE $where (ic.ca_reccaja='' or ic.ca_reccaja IS NULL)
                       ORDER BY ic.ca_fchfactura";
 
-//                echo $sql;
-//                exit;
                 $con = Doctrine_Manager::getInstance()->connection();
                 $st = $con->execute($sql);
                 $this->ref = $st->fetchAll();
@@ -1359,7 +1294,7 @@ md.ca_idmodo,m.ca_idmaster
             $this->costos = $q->execute();
 
             $this->setTemplate("listadoFacturasResult");
-            //$sql = "select ca_referencia, ca_factura, ca_fchfactura, ca_proveedor, ca_idmoneda, ca_tcambio, ca_tcambio_usd, ca_neto, ca_venta, ca_fchcreado, ca_usucreado from tb_inocostos_sea where order by substr(ca_referencia,5,2)";
+            
         } else {
             $this->usuarios = Doctrine::getTable("Usuario")
                     ->createQuery("u")
@@ -1375,7 +1310,8 @@ md.ca_idmodo,m.ca_idmaster
 
             $q = Doctrine::getTable("InoIngresosSea")
                     ->createQuery("ii")
-                    ->addWhere("substr(ii.ca_referencia,5,2) like ?", $request->getParameter("sufijo"))
+                    ->innerJoin("ii.InoClientesSea ics")
+                    ->addWhere("substr(ics.ca_referencia,5,2) like ?", $request->getParameter("sufijo"))
                     ->addWhere("ii.ca_fchfactura >= ?", $request->getParameter("fchInicial"))
                     ->addWhere("ii.ca_fchfactura <= ?", $request->getParameter("fchFinal"))
                     ->addWhere("ii.ca_usucreado like ?", $request->getParameter("login"));
@@ -1391,7 +1327,6 @@ md.ca_idmodo,m.ca_idmaster
             $this->ingresos = $q->execute();
 
             $this->setTemplate("listadoFacturasClieResult");
-            //$sql = "select ca_referencia, ca_factura, ca_fchfactura, ca_proveedor, ca_idmoneda, ca_tcambio, ca_tcambio_usd, ca_neto, ca_venta, ca_fchcreado, ca_usucreado from tb_inocostos_sea where order by substr(ca_referencia,5,2)";
         } else {
             $this->usuarios = Doctrine::getTable("Usuario")
                     ->createQuery("u")
@@ -1464,9 +1399,11 @@ md.ca_idmodo,m.ca_idmaster
         $this->aa = $request->getParameter("aa");
         $this->nmm = $request->getParameter("nmes");
 
-        foreach ($this->nmm as $m) {
-            if ($m != "")
-                $mm[] = str_pad($m, 2, "0", STR_PAD_LEFT);
+        if ($this->nmm) {
+            foreach ($this->nmm as $m) {
+                if ($m != "")
+                    $mm[] = str_pad($m, 2, "0", STR_PAD_LEFT);
+            }
         }
 
         $this->idtransporte = $this->getRequestParameter("idtransporte");
@@ -1502,7 +1439,7 @@ md.ca_idmodo,m.ca_idmaster
             }
 
             if ($this->aa) {
-                $where.= "and SUBSTR(a.ca_referencia,15,1) IN ('" . ($this->aa % 10) . "')";
+                $where.= "and SUBSTR(a.ca_referencia,16,2) IN ('" . ($this->aa % 100) . "')";
             }
 
             if ($mm) {
@@ -1545,7 +1482,7 @@ md.ca_idmodo,m.ca_idmaster
             if ($this->idcliente)
                 $where.=" and a.ca_idcliente='" . $this->idcliente . "'";
 
-            $sql = "SELECT DISTINCT '201'||SUBSTR(a.ca_referencia,15,1) as ANO, 
+            $sql = "SELECT DISTINCT '201'||SUBSTR(a.ca_referencia,17,1) as ANO, 
                     SUBSTR(a.ca_referencia,8,2) as MES, 
                     a.ca_referencia AS REFERENCIA, 
                     a.ca_idcliente AS NIT, 
@@ -1559,13 +1496,13 @@ md.ca_idmodo,m.ca_idmaster
                     max(round(ca_ino,0)) as ca_ino, 
                     a.ca_valorcarga AS VALOR_CARGA, 
                     em.ca_modalidad AS MODALIDAD,
-                    cp.ca_concepto AS CONCEPTO, 
+                    (select ca_concepto from tb_conceptos c join tb_expo_equipos e on c.ca_idconcepto = e.ca_idconcepto where c.ca_idconcepto = e.ca_idconcepto limit 1) AS CONCEPTO,
                     a.ca_peso AS PESO, 
                     a.ca_pesovolumen AS PESO_VOLUMEN, 
                     rp.ca_idreporte AS IDREPORTE,
                     a.ca_consecutivo AS RN, 
                     a.ca_nombrecons AS CONSIGNATARIO, 
-                    u.ca_nombre AS COMERCIAL,
+                    u.ca_nombre as COMERCIAL,
                     s.ca_nombre AS SUCURSAL,
                     a.ca_via AS VIA,
                     ida.ca_nombre as AEROLINEA,
@@ -1574,7 +1511,7 @@ md.ca_idmodo,m.ca_idmaster
                     (( SELECT sum(t.ca_liminferior) AS sum
                         FROM tb_expo_equipos eq
                         JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto
-                        WHERE eq.ca_referencia = a.ca_referencia AND eq.ca_idconcepto = cp.ca_idconcepto)) / 20 AS TEUS
+                        WHERE eq.ca_referencia = a.ca_referencia AND eq.ca_idconcepto = t.ca_idconcepto limit 1)/ 20) AS TEUS
                     FROM tb_expo_maestra as a 
                         LEFT OUTER JOIN tb_reportes rp ON rp.ca_idreporte = (SELECT ca_idreporte FROM tb_reportes WHERE ca_consecutivo = a.ca_consecutivo ORDER BY ca_version DESC limit 1)
                         LEFT OUTER JOIN tb_expo_maritimo em ON a.ca_referencia = em.ca_referencia
@@ -1585,9 +1522,10 @@ md.ca_idmodo,m.ca_idmaster
                         LEFT OUTER JOIN ids.tb_ids id ON id.ca_id = ag.ca_idagente 	
                         LEFT OUTER JOIN tb_expo_equipos ep ON a.ca_referencia = ep.ca_referencia
                         LEFT OUTER JOIN tb_conceptos cp ON ep.ca_idconcepto = cp.ca_idconcepto
-                        LEFT OUTER JOIN control.tb_usuarios u ON u.ca_login = rp.ca_login
+                        LEFT OUTER JOIN tb_expo_ingresos ei ON ei.ca_referencia = a.ca_referencia
+                        LEFT OUTER JOIN control.tb_usuarios u ON u.ca_login = ei.ca_loginvendedor
                         LEFT OUTER JOIN CONTROL.tb_sucursales s ON u.ca_idsucursal = s.ca_idsucursal
-                        LEFT OUTER JOIN (select e.ca_referencia, sum((case when e.ca_moneda = 'COP' then 1 else f.ca_tasacambio end) * e.ca_venta - (case when e.ca_moneda = 'COP' then 1 else f.ca_tasacambio end) * e.ca_neta) as CA_INO from tb_expo_costos e left outer join tb_expo_ingresos f on e.ca_referencia = f.ca_referencia and f.ca_factura = e.ca_facturaing group by e.ca_referencia, e.ca_facturaing, f.ca_valor, f.ca_tasacambio) ut ON ut.ca_referencia = a.ca_referencia
+                        LEFT OUTER JOIN (select e.ca_referencia, sum((case when e.ca_moneda = 'COP' then 1 else f.ca_tasacambio end) * e.ca_venta - (case when e.ca_moneda = 'COP' then 1 else f.ca_tasacambio end) * e.ca_neta) as CA_INO from tb_expo_costos e left outer join tb_expo_ingresos f on e.ca_referencia = f.ca_referencia and f.ca_factura = e.ca_facturaing group by e.ca_referencia) ut ON ut.ca_referencia = a.ca_referencia
                         JOIN tb_ciudades ori ON ori.ca_idciudad = a.ca_origen
                         JOIN tb_traficos tra_ori ON tra_ori.ca_idtrafico = ori.ca_idtrafico
                         JOIN tb_ciudades des ON des.ca_idciudad = a.ca_destino
@@ -1600,7 +1538,7 @@ md.ca_idmodo,m.ca_idmaster
                          (( SELECT sum(t.ca_liminferior) AS sum
                             FROM tb_expo_equipos eq
                                   JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto
-                            WHERE eq.ca_referencia = a.ca_referencia AND eq.ca_idconcepto = cp.ca_idconcepto)) / 20, NAVIERA
+                            WHERE eq.ca_referencia = a.ca_referencia AND eq.ca_idconcepto = t.ca_idconcepto limit 1) / 20), NAVIERA
                     ORDER BY ANO, MES, a.ca_referencia
                     ";
 
@@ -1616,15 +1554,14 @@ md.ca_idmodo,m.ca_idmaster
             foreach ($this->resul as $r) {
 
 
-                $this->tipo[($r["via"])][($r["sucursal"])][($r["mes"])]++;
-                $this->grid[($r["total_negocios"])][($r["sucursal"])][($r["mes"])]++;
-                $this->origen[$r["ano"]][($r["ciuorigen"])][(int) ($r["mes"])]["total_negocios"]++;
+                $this->tipo[($r["via"])][($r["sucursal"])][($r["mes"])] ++;
+                $this->grid[($r["total_negocios"])][($r["sucursal"])][($r["mes"])] ++;
+                $this->origen[$r["ano"]][($r["ciuorigen"])][(int) ($r["mes"])]["total_negocios"] ++;
                 $this->origen[$r["ano"]][($r["ciuorigen"])][(int) ($r["mes"])]["peso"]+=$r["peso"];
             }
-            //echo "<pre>";print_r($this->resul);echo "</pre>";
+            ksort($this->tipo);
+            //echo "<pre>";print_r($this->tipo);echo "</pre>";
         }
     }
-
 }
-
 ?>

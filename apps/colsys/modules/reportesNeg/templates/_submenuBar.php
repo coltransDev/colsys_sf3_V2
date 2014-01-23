@@ -17,10 +17,10 @@ $permiso = $user->getNivelAcceso("87");
 $usersPerfil = UsuarioTable::getUsuariosxPerfil("servicio-al-cliente");
 $scliente = false;
 foreach ($usersPerfil as $userPerfil){
-     if($user->getUserId()==$userPerfil->getCaLogin())
-         $scliente = true;
-     else
-         continue;
+    if($user->getUserId()==$userPerfil->getCaLogin())
+        $scliente = true;
+    else
+        continue;
 }
 
 $tipo="1";
@@ -227,7 +227,7 @@ switch ($action) {
             $i++;
         }
         
-        if ($permiso == 2 && $scliente==true) {
+        if ($scliente==true) {
             $button[$i]["name"] = "Novedades";
             $button[$i]["tooltip"] = "Anotaciones de Servicio al Cliente";
             $button[$i]["image"] = "22x22/note.png";

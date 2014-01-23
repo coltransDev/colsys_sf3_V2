@@ -16,6 +16,8 @@ include_component("widgets", "widgetMultiDatos");
 
 $nmes = $sf_data->getRaw("nmes");
 $meses = $sf_data->getRaw("meses");     
+$idtransporte = $sf_data->getRaw("idtransporte");
+$idlinea = $sf_data->getRaw("idlinea");
 
 ?>
 <script type="text/javascript">
@@ -114,7 +116,7 @@ $meses = $sf_data->getRaw("meses");
                                                         new WidgetMultiDatos({
                                                             emptyText: 'Todos los meses',
                                                             title: 'Mes',fieldLabel: 'Mes',id: 'mes',name: 'mes[]',hiddenName: "nmes[]",
-                                                            value:'<?= implode(",", $nmes) ?>',
+                                                            value:'<?=$nmes?implode(",", $nmes):"" ?>',
                                                             listeners:{
                                                                 render:function()
                                                                 {

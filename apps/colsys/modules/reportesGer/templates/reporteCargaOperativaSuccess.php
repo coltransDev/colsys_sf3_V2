@@ -4,7 +4,7 @@ include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetPais");
 include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetLinea");
-//include_component("widgets", "widgetIncoterms");
+include_component("widgets", "widgetIncoterms");
 include_component("widgets", "widgetMultiIncoterms");
 include_component("widgets", "widgetCliente");
 include_component("widgets", "widgetAgente");
@@ -17,6 +17,8 @@ include_component("charts","column");
 // Variables
 $cliente = $sf_data->getRaw("cliente");
 $agente = $sf_data->getRaw("agente");
+$idagente = $sf_data->getRaw("idagente");
+$idsucursalagente = $sf_data->getRaw("idsucursalagente");
 $linea = $sf_data->getRaw("linea");
 $sucursalagente = $sf_data->getRaw("sucursalagente");
 $sucursal = $sf_data->getRaw("sucursal");
@@ -25,6 +27,15 @@ $idUsuenvio = $sf_data->getRaw("idUsuenvio");
 $incoterms = $sf_data->getRaw("incoterms");
 $tipoInforme = $sf_data->getRaw("tipoInforme");
 $resul = $sf_data->getRaw("resul");
+
+$serieX = array();
+$dataJSON = array();
+$clieJSON = array();
+$ejeX = array();
+$cliente_tot = array();
+
+$tit_mem="";
+$tit_cli="";
 ?>
 
 <div align="center" >
@@ -146,7 +157,7 @@ $resul = $sf_data->getRaw("resul");
                                             id: 'incoterms',
                                             name: 'incoterms[]',
                                             width:230,
-                                            value:'<?= implode(",", $incoterms) ?>'
+                                            value:'<?=$incoterms?implode(",", $incoterms):"" ?>'
                                         })
                                     ]
                                 },

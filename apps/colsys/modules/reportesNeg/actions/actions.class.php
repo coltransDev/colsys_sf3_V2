@@ -816,6 +816,7 @@ class reportesNegActions extends sfActions {
                     $errors["ca_mercancia_desc"] = "Debe colocar un texto de descripcion de la mercacia";
                     $texto.="Descripcion de Mercancia<br>";
                 }
+                }
 
                 $prov = "";
                 $incoterms = "";
@@ -3689,13 +3690,25 @@ class reportesNegActions extends sfActions {
         $id = $request->getParameter("id");
         $this->forward404Unless(trim($request->getParameter("notas")));
         
+        $user = $this->getUser();
+        $login = $user->getUserId();
+        $iniNotas = "<ul>";
+        $datosAdicionales = "<b>&nbsp;".date('Y-m-d H:i:s')." ".$login."</b>&nbsp;</li>";
+        $notas = "<li>".$request->getParameter("notas").$datosAdicionales;
+        $endNotas = "</ul>";
+        
         $reporte = Doctrine::getTable("Reporte")
                 ->createQuery("r")
                 ->addWhere("r.ca_idreporte = ?",$id)
                 ->fetchOne();
                 
         if($reporte){
-            $reporte->setProperty("notas", $request->getParameter("notas"));
+            if($reporte->getProperty("notas")){
+                $notasIni = str_replace("</li></ul>","",$request->getParameter("notas"));
+                $reporte->setProperty("notas", $notasIni.$datosAdicionales.$endNotas);
+            }else{
+                $reporte->setProperty("notas", $iniNotas.$notas.$endNotas);
+            }
             $reporte->save();
         }
         $this->responseArray = array("success" => true);
