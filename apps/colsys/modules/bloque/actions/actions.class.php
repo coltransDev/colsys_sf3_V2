@@ -10,7 +10,10 @@
  */
 class bloqueActions extends sfActions {
 
+    const RUTINA = 136;
     public function executeIndex(sfWebRequest $request) {
+        $this->user = $this->getUser();
+        $this->nivel = $this->user->getNivelAcceso(bloqueActions::RUTINA);
         $bloque = new Bloque();
         $this->filtroBloque = new BloqueFormFilter();
         $this->pager = new sfDoctrinePager('bloque', 30);
@@ -41,6 +44,8 @@ class bloqueActions extends sfActions {
     }
 
     public function executeShow(sfWebRequest $request) {
+        $this->user = $this->getUser();
+        $this->nivel = $this->user->getNivelAcceso(bloqueActions::RUTINA);
         $this->bloque = Doctrine_Core::getTable('bloque')->find(array($request->getParameter('ca_id')));
         $this->forward404Unless($this->bloque);
         $this->setLayout('layout_home');

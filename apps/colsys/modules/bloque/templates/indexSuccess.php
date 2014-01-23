@@ -35,7 +35,9 @@
                         <td><?php echo$bloque->getTextoBooleano($bloque->getCaActivo()) ?></td>
                         <td>
                             <a class="" href="<?php echo url_for('bloque/show?ca_id=' . $bloque->getCaId()) ?>"><img title="Ver Detalle" alt="Ver Detalle" src="/images/formularios/detalle.png"></a>
+                            <? if($nivel<=1){?>
                             <a class="" href="<?php echo url_for('bloque/edit?ca_id=' . $bloque->getCaId()) ?>"><img title="Editar" alt="Editar" src="/images/formularios/edit.gif"></a>
+                            <?}?>
                             <a class="" target="_blank" href="<?php echo url_for('bloque/vistaPrevia?ca_id=' . $bloque->getCaId()) ?>"><img title="Previsualizar" title="Previsualizar" src="/images/formularios/verx16.png"></a>
                         </td>
                     </tr>

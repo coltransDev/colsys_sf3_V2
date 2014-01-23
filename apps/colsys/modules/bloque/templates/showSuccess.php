@@ -57,7 +57,9 @@
                 <td><? echo $pregunta->getCaOrden() ?></td>
                 <td>
                     <a class="" href="<? echo url_for('pregunta/show?ca_id=' . $pregunta->getCaId()) ?>"><img title="Ver Detalle" alt="Ver Detalle" src="/images/formularios/detalle.png"></a>
+                    <? if($nivel<=1) {?>
                     <a class="" href="<? echo url_for('pregunta/edit?ca_id=' . $pregunta->getCaId()) ?>"><img title="Editar" alt="Editar" src="/images/formularios/edit.gif"></a>
+                    <? } ?>
                     <a class="" target="_blank" href="<? echo url_for('pregunta/vistaPrevia?ca_id=' . $pregunta->getCaId()) ?>"><img title="Previsualizar" title="Previsualizar" src="/images/formularios/verx16.png"></a>
                 </td>
             </tr>
