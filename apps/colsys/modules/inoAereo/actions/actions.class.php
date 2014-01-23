@@ -113,13 +113,15 @@ class inoAereoActions extends sfActions
             $ino->setCaPesovolumen( $request->getParameter("ca_volumen") );
             $ino->setCaObservaciones( utf8_decode($request->getParameter("ca_observaciones")) );
             
+            
+            
             $ino->save();
             
            
             $this->responseArray = array("success" => true, "referencia" => $ino->getCaReferencia()  );
             
         } catch (Exception $e) {
-            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage().$numRef.$iddestino);
         }
         $this->setTemplate("responseTemplate");
     }
