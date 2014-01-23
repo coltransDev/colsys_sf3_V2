@@ -149,7 +149,7 @@ $meses = $sf_data->getRaw("meses");
                                     impoexpo: "<?= Constantes::TRIANGULACION ?>",
                                     value:"",
                                     hiddenValue:""
-                                }),
+                                }),                                
                                 {
                                     xtype: "checkbox",
                                     fieldLabel: "Listar todos",
@@ -238,7 +238,7 @@ $meses = $sf_data->getRaw("meses");
                                 }),*/
                                 new WidgetMultiDatos({
                                     title: 'Mes',fieldLabel: 'Mes',id: 'mes',name: 'mes[]',hiddenName: "nmes[]",
-                                        value:'<?= implode(",", $nmes) ?>',
+                                        value:'<?=$nmes?implode(",", $nmes):"" ?>',
                                         listeners:{
                                             render:function()
                                             {
@@ -257,7 +257,19 @@ $meses = $sf_data->getRaw("meses");
                                                 }
                                             }
                                         }
-                                        })
+                                        }),
+                                new Ext.form.ComboBox({
+                                    fieldLabel: 'Estado',
+                                    name:'estado',
+                                    hiddenName:'estado',
+                                    store: ['Abierto', 'Cerrado'], 
+                                    valueField:'estado',
+                                    typeAhead: true,
+                                    triggerAction: 'all',
+                                    emptyText:'Seleccione un Estado.',
+                                    selectOnFocus:true,
+                                    width:190
+                                }),
                             ]
                         }
                        

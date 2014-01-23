@@ -10,6 +10,7 @@
  */
 class inoActions extends sfActions {    
 
+    const RUTINA_TERRESTRE = "137";
     public function preExecute(){
         
         $this->idmodo = $this->getRequestParameter("modo");
@@ -43,6 +44,38 @@ class inoActions extends sfActions {
         
         if( $this->modo ){
             $this->nivel = $this->getUser()->getNivelAcceso( $this->modo->getCaRutina() );
+            //echo $this->nivel;
+            
+            $this->permisos=array("crear"=>true,"cerrar"=>true,"liquidar"=>true,"reabrir"=>true,"restringido"=>false);
+            switch ($this->nivel)
+            {
+                case "1":
+                    $this->permisos["reabrir"]=false;
+                break;
+                case "2":
+                    $this->permisos["reabrir"]=false;
+                    $this->permisos["liquidar"]=false;
+                break;
+                case "3":
+                    $this->permisos["reabrir"]=false;
+                    $this->permisos["liquidar"]=false;
+                    $this->permisos["cerrar"]=false;
+                break;
+                case "4":
+                    $this->permisos["reabrir"]=false;
+                    $this->permisos["liquidar"]=false;
+                    $this->permisos["cerrar"]=false;
+                    $this->permisos["crear"]=false;
+                break;
+                case "5":
+                    $this->permisos["reabrir"]=false;
+                    $this->permisos["liquidar"]=false;
+                    $this->permisos["cerrar"]=false;
+                    $this->permisos["crear"]=false;
+                    $this->permisos["restringido"]=true;
+                break;
+            }
+            //print_r($this->permisos);
         }
         parent::preExecute();
     }
@@ -249,7 +282,8 @@ class inoActions extends sfActions {
     public function executeGuardarMaster(sfWebRequest $request) {
         $errors = array();
 
-        //try {
+        //try 
+        {
             $idmaster=$request->getParameter("idmaster");
             $tipo=($request->getParameter("tipo")=="")?"full":$request->getParameter("tipo");            
             
@@ -261,13 +295,10 @@ class inoActions extends sfActions {
                 $idorigen = $request->getParameter("idorigen");
                 $iddestino = $request->getParameter("iddestino");
                 $fchreferencia = $request->getParameter("fchreferencia");
-                $fchreferenciaTm = strtotime($fchreferencia);
-                
+                $fchreferenciaTm = strtotime($fchreferencia);                
                 
                 $fchllegada = $request->getParameter("ca_fchllegada");
-                $fchllegadaTm = strtotime($fchllegada);
-                
-                
+                $fchllegadaTm = strtotime($fchllegada);                
 
                 /*
                  * Validaciones
@@ -292,7 +323,7 @@ class inoActions extends sfActions {
                 }else{
                     $ino = new InoMaster();
                     $mmRef = Utils::parseDate($fchllegada, "m");
-                    $aaRef = Utils::parseDate($fchllegada, "Y");
+                    $aaRef = substr(Utils::parseDate($fchllegada, "Y"), -2, 2);
                     if (Utils::parseDate($fchllegada, "d") >= "26") {
                        $mmRef = $mmRef + 1;
                        if ($mmRef >= 13) {
@@ -342,6 +373,43 @@ class inoActions extends sfActions {
                     $ino->setCaVolumen(0);
                 $ino->setCaObservaciones(utf8_decode($request->getParameter("ca_observaciones")));
                 $ino->save();
+                
+                if( !$idmaster && $request->getParameter("idreporte")!="" /*&& $impoexpo==Constantes::EXPO*/ ){
+                    
+                    $reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("idreporte") );
+                    
+                    //if($reporte->getCaIdconsignarmaster()=="1")
+                    {
+                        $house = new InoHouse();
+                        $house->setCaIdmaster($ino->getCaIdmaster());
+                        $house->setCaIdreporte($request->getParameter("idreporte"));
+
+                        $house->setCaIdcliente($reporte->getCliente()->getCaIdcliente());
+                        $house->setCaVendedor($reporte->getCaLogin());
+                        //$house->setCaIdtercero($request->getParameter("idtercero"));
+                        $house->setCaNumorden($reporte->getCaOrdenClie());
+                        $status = $reporte->getUltimoStatus();
+
+                        if($status)
+                        {
+                            $piezas = explode("|", $status->getCaPiezas());
+                            $house->setCaNumpiezas( ($request->getParameter("ca_piezas")!="")?$request->getParameter("ca_piezas"):  ($piezas[0] ? $piezas[0] : 0));
+                            $house->setCaMpiezas($piezas[1] ? $piezas[1] : "");
+
+                            $peso = explode("|", $status->getCaPeso());
+                            $house->setCaPeso( ($request->getParameter("ca_peso")!="")?$request->getParameter("ca_peso"):  ((isset($peso[0])) ? $peso[0] : 0));
+
+                            $volumen = explode("|", $status->getCaVolumen());
+                            $house->setCaVolumen(($request->getParameter("ca_volumen")!="")?$request->getParameter("ca_volumen"):  ((isset($volumen[0])) ? $volumen[0] : 0));
+                            $house->setCaFchdoctransporte(null);
+                            $house->setCaDoctransporte($status->getCaDoctransporte());
+                        }
+
+                        $house->save();
+                    }
+                    //consigmaster=1
+                    //setCaIdconsignarmaster
+                }
             }
             else if($tipo=="obs")
             {
@@ -351,8 +419,7 @@ class inoActions extends sfActions {
                 $ino->save();
             }
             $this->responseArray = array("success" => true, "idmaster" => $ino->getCaIdmaster());
-            
-        /*} catch (Exception $e) {
+        }/* catch (Exception $e) {
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }*/
         $this->setTemplate("responseTemplate");
@@ -362,13 +429,13 @@ class inoActions extends sfActions {
      *
      * @param sfRequest $request A request object
      */
-    public function executeDatosMaster(sfWebRequest $request) {        
+    public function executeDatosMaster(sfWebRequest $request) {
         $idmaster = $request->getParameter("idmaster");
         $this->forward404Unless($idmaster);
 
         $ino = Doctrine::getTable("InoMaster")->find($idmaster);
         $this->forward404Unless($ino);
-     
+
         try {
             $data["impoexpo"]=utf8_encode($ino->getCaImpoexpo());
             $data["transporte"]=utf8_encode($ino->getCaTransporte());
@@ -379,20 +446,16 @@ class inoActions extends sfActions {
 
             $data["idlinea"]=$ino->getCaIdlinea();
             $data["linea"]=utf8_encode($ino->getIdsProveedor()->getIds()->getCaNombre());
-
             $data["idagente"]=$ino->getCaIdagente();
-
-            $data["ca_master"]=$ino->getCaMaster();           
-
+            $data["ca_master"]=$ino->getCaMaster();
             $data["ca_motonave"]=utf8_encode($ino->getCaMotonave());
             $data["ca_fchsalida"]=$ino->getCaFchsalida();
             $data["ca_fchllegada"]=$ino->getCaFchllegada();
-            
             $data["ca_piezas"]=$ino->getCaPiezas();
             $data["ca_peso"]=$ino->getCaPeso();
             $data["ca_volumen"]=$ino->getCaVolumen();
             $data["ca_observaciones"]=utf8_encode($ino->getCaObservaciones());
-            
+
             $this->responseArray = array("success" => true,"data"=>$data);
         } catch (Exception $e) {
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
@@ -407,7 +470,29 @@ class inoActions extends sfActions {
      */
     public function executeVerReferencia(sfWebRequest $request) {
         
-        // $this->nivel = $this->getNivel();
+        $this->nivel = $this->getNivel();
+        /*$this->permisos=array("crear"=>true,"cerrar"=>true,"liquidar"=>true,"reabrir"=>true);
+        switch ($this->nivel)
+        {
+            case "1":
+                $this->permisos["reabrir"]=false;
+            break;
+            case "2":
+                $this->permisos["reabrir"]=false;
+                $this->permisos["liquidar"]=false;
+            break;
+            case "3":
+                $this->permisos["reabrir"]=false;
+                $this->permisos["liquidar"]=false;
+                $this->permisos["cerrar"]=false;
+            break;
+            case "4":
+                $this->permisos["reabrir"]=false;
+                $this->permisos["liquidar"]=false;
+                $this->permisos["cerrar"]=false;
+                $this->permisos["crear"]=false;
+            break;
+        }*/
 
         $this->forward404Unless($request->getParameter("idmaster"));
         $this->referencia = Doctrine::getTable("InoMaster")->find($request->getParameter("idmaster"));
@@ -816,6 +901,7 @@ class inoActions extends sfActions {
             if( $comprobante->getCaId()=="800024075" && ($this->getUser()->getIdsucursal()=="OBO" || $this->getUser()->getIdsucursal()=="OMD" || $this->getUser()->getUserId()=="maquinche11")  )
             {
                 $resultadoCosto=InoCostosSea::setCosto($comprobante,$conn);
+                //echo $resultadoCosto;
                 if($resultadoCosto<0)
                 {
                     switch ($resultadoCosto)
@@ -882,8 +968,11 @@ class inoActions extends sfActions {
                     }
                 }
             }
-            if( $totalDed>$valor ){
-                throw new Exception("El total de las deducciones excede el valor total de la factura.");
+            if($comprobante->getCaIdtipo()!="13")
+            {
+                if(  $totalDed>$valor ){
+                    throw new Exception("El total de las deducciones excede el valor total de la factura.");
+                }
             }
             $vlrIngreso = $valor-$totalDed;
             //Cuenta ingreso
@@ -1036,21 +1125,23 @@ class inoActions extends sfActions {
         
         $costos = Doctrine::getTable("InoCosto")
                         ->createQuery("c")
-                        ->select("c.ca_idinocosto, c.ca_idmaster, c.ca_neto, c.ca_venta, c.ca_factura, 
-                                  c.ca_tcambio, c.ca_tcambio_usd, c.ca_idcosto, p.ca_sigla, i.ca_nombre, 
+                        ->select("c.ca_idinocosto, c.ca_idmaster, c.ca_neto, c.ca_venta, c.ca_factura,
+                                  c.ca_tcambio, c.ca_tcambio_usd, c.ca_idcosto, p.ca_sigla, i.ca_nombre,
                                   c.ca_idmoneda, cs.ca_concepto,c.ca_fchfactura,c.ca_idproveedor ")
                         ->innerJoin("c.InoConcepto cs")
-                        ->innerJoin("c.Ids i")                        
-                        ->where("c.ca_idmaster = ?", $idmaster)                        
+                        ->innerJoin("c.Ids i")
+                        ->where("c.ca_idmaster = ?", $idmaster)
                         ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                         ->execute();
-        
+
         foreach( $costos as $key=>$val ){
             $costos[$key]["i_ca_nombre"] = utf8_encode($costos[$key]["i_ca_nombre"]);
             $costos[$key]["cs_ca_concepto"] = utf8_encode($costos[$key]["cs_ca_concepto"]);
+            $costos[$key]["orden"] = utf8_encode($costos[$key]["ca_idinocosto"]);            
         }
         
         $costos[]["cs_ca_concepto"]="+";
+        $costos[]["orden"]="z";
 
         $this->responseArray = array("success" => true, "root" => $costos, "total" => count($costos));
         $this->setTemplate("responseTemplate");

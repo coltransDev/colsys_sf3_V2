@@ -21,21 +21,21 @@ class inocomprobantesComponents extends sfComponents
 
 
     public function executeFormComprobantePanel(){
-        
+        if( !$this->comprobante->getCaIdcomprobante() ){
 
             $q = Doctrine::getTable("InoTipoComprobante")
                                          ->createQuery("t")
                                          ->select("t.ca_idtipo, t.ca_tipo, t.ca_comprobante, t.ca_titulo, e.ca_sigla")
-                                         /*->innerJoin("t.IdsSucursal s")
+                                         ->innerJoin("t.IdsSucursal s")
                                          ->innerJoin("s.Ids i")
-                                         ->innerJoin("i.IdsEmpresa e")*/
+                                         ->innerJoin("i.IdsEmpresa e")
 
                                          ->addWhere("t.ca_tipo = ?", $this->tipo)
                                          ->addOrderBy("t.ca_tipo, t.ca_comprobante");
 
-            /*if( isset($this->empresa) ){
+            if( isset($this->empresa) ){
                 $q->addWhere("e.ca_sigla = ?", $this->empresa );                
-            }*/
+            }
                                          
 
             $tipos = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
@@ -43,14 +43,20 @@ class inocomprobantesComponents extends sfComponents
             foreach( $tipos as $tipo ){
                 $tipoStr = "";
                 if( !isset($this->empresa) ){
-                   // $tipoStr .= $tipo["e_ca_sigla"]." » ";
+                    $tipoStr .= $tipo["e_ca_sigla"]." » ";
                 }
                 $tipoStr .= $tipo["t_ca_tipo"]."-".str_pad($tipo["t_ca_comprobante"], 2, "0", STR_PAD_LEFT)." ".$tipo["t_ca_titulo"];
                 $tiposArray[] = array("idtipo"=>$tipo["t_ca_idtipo"], "tipo"=>utf8_encode($tipoStr));
             }
 
             $this->tipos = array("root"=>$tiposArray, "total"=>count($tiposArray));
-           
+            
+            if( isset($this->inocliente) && $this->inocliente ){
+                $this->comprobante->setCaId( $this->inocliente->getCaIdcliente() );                
+            }
+        }
+
+        $this->ids = Doctrine::getTable("Ids")->find($this->comprobante->getCaId());
 
     }
 
@@ -96,6 +102,10 @@ class inocomprobantesComponents extends sfComponents
     public function executeFormComprobanteSubpanelP(){
 
     }
+    
+    public function executeFormComprobanteSubpanelR(){
+
+    }
 
     public function executeFormComprobanteSubpanelPConceptos(){
         /*$impoexpo = $this->reporte->getCaImpoexpo();
@@ -134,8 +144,6 @@ class inocomprobantesComponents extends sfComponents
              $this->recargos[$key]['centro'] = str_pad($this->recargos[$key]['cc_ca_centro'], 2, "0", STR_PAD_LEFT)."-".str_pad($this->recargos[$key]['cc_ca_subcentro'], 2, "0", STR_PAD_LEFT);
              $this->recargos[$key]['codigo'] = str_pad($this->recargos[$key]['cc_ca_centro'], 2, "0", STR_PAD_LEFT).str_pad($this->recargos[$key]['cc_ca_subcentro'], 2, "0", STR_PAD_LEFT).str_pad($this->recargos[$key]["c_ca_idconcepto"], 4, "0", STR_PAD_LEFT);
          }
-
-         
     }
 
     public function executeFormComprobanteSubpanelPDeducciones(){

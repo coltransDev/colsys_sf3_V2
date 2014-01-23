@@ -219,11 +219,8 @@ foreach( $transacciones as $transaccion ){
     //538 ? 538 CLASE RETENCION: Solo para Ecuador. Indica si es una Retención AIR o es un tipo de Retención IVA
     $row.=" ";
     //echo "\n".strlen($row)."\n";
-
     $file.=$row."\n";
-
 }
-
 echo $file;
 exit();
 ?>

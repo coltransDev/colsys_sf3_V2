@@ -9,8 +9,8 @@ $comprobante = $sf_data->getRaw("comprobante");
 $tipo = $comprobante->getInoTipoComprobante();
 $idsSucursal = $tipo->getIdsSucursal();
 $ids = $idsSucursal->getIds();
-$inoHouse = $comprobante->getInoHouse();
-$inoMaestra = $inoHouse->getInoMaster();
+$inoCliente = $comprobante->getInoHouse();
+$inoMaestra = $inoCliente->getInoMaster();
 
 $cuentaCierre = Doctrine::getTable("InoCuenta")->find($tipo->getCaIdctaCierre());
 $cuentaIva = Doctrine::getTable("InoCuenta")->find($tipo->getCaIdctaIva());
@@ -46,9 +46,6 @@ if( $comprobante->getcaEstado()==0){
 $font = 'Courier';
 
 $pdf->SetFont($font,'',6);
-
-
-
 
 
 $pdf->SetX( $x );
@@ -185,20 +182,20 @@ $pdf->Cell(0, 4, "DETALLE  : ".$comprobante->getCaObservaciones()  ,0,1, "L");
 
 $y+=$space;
 $pdf->SetXY($x+10,$y);
-$pdf->Cell(0, 4, "BL Hijo  : ".$inoHouse->getCaDoctransporte()  ,0,1, "L");
+$pdf->Cell(0, 4, "BL Hijo  : ".$inoCliente->getCaDoctransporte()  ,0,1, "L");
 
 $y+=$space;
 $pdf->SetXY($x+10,$y);
-$pdf->Cell(0, 4, "Nave  : "  ,0,1, "L"); //.$inoHouse->getCaIdnave()
+$pdf->Cell(0, 4, "Nave  : "  ,0,1, "L"); //.$inoCliente->getCaIdnave()
 
 $pdf->SetXY($x+60,$y);
-$pdf->Cell(0, 4, "Piezas  : ".$inoHouse->getCaNumpiezas()  ,0,1, "L");
+$pdf->Cell(0, 4, "Piezas  : ".$inoCliente->getCaNumpiezas()  ,0,1, "L");
 
 $pdf->SetXY($x+90,$y);
-$pdf->Cell(0, 4, "Peso  : ".$inoHouse->getCaPeso()  ,0,1, "L");
+$pdf->Cell(0, 4, "Peso  : ".$inoCliente->getCaPeso()  ,0,1, "L");
 
 $pdf->SetXY($x+120,$y);
-$pdf->Cell(0, 4, "CMB  : ".$inoHouse->getCaVolumen()  ,0,1, "L");
+$pdf->Cell(0, 4, "CMB  : ".$inoCliente->getCaVolumen()  ,0,1, "L");
 
 $y+=$space;
 $pdf->SetXY($x+10,$y);
@@ -258,21 +255,24 @@ $k = 5;
 foreach( $transacciones as $transaccion ){
     $centro = $transaccion->getInoCentroCosto();
     $concepto = $transaccion->getInoConcepto();
-    $parametro = $transaccion->getInoParametroFacturacion();  
-    if( $lastIngresoPropio===null || $lastIngresoPropio!=$parametro->getCaIngresoPropio() ){
-        $lastIngresoPropio=$parametro->getCaIngresoPropio();
-        $pdf->SetXY($x+30,$y+$k+$space);
-        if( $lastIngresoPropio ){
-            $propios = "propios";
-            $pdf->Cell(0, 4, "INGRESOS  PROPIOS" ,0,1, "L");
-        }else{
-            $propios = "terceros";
-            $pdf->Cell(0, 4, "INGRESOS PARA TERCEROS" ,0,1, "L");
+    $parametro = (($transaccion->getInoParametroFacturacion()))?$transaccion->getInoParametroFacturacion():null; 
+    if($parametro)
+    {
+        if( $lastIngresoPropio===null || $lastIngresoPropio!=$parametro->getCaIngresoPropio()   ){
+            $lastIngresoPropio=($parametro!=null)?$parametro->getCaIngresoPropio():null;
+
+            $pdf->SetXY($x+30,$y+$k+$space);
+            if( $lastIngresoPropio ){
+                $propios = "propios";
+                $pdf->Cell(0, 4, "INGRESOS  PROPIOS" ,0,1, "L");
+            }else{
+                $propios = "terceros";
+                $pdf->Cell(0, 4, "INGRESOS PARA TERCEROS" ,0,1, "L");
+            }
+
+            $k+=$space+$space;
         }
-
-        $k+=$space+$space;
     }
-
     
     $codigo = str_pad($centro->getCaCentro(), 2, "0", STR_PAD_LEFT).str_pad($centro->getCaSubcentro(), 2, "0", STR_PAD_LEFT).str_pad($concepto->getCaIdconcepto(), 4, "0", STR_PAD_LEFT);
     
@@ -285,13 +285,13 @@ foreach( $transacciones as $transaccion ){
     //$pdf->Cell(0, 4, $transaccion->getCaCr() ,0,1, "L");
 
     $pdf->SetXY($x,$y+$k);
-    $pdf->Cell(172, 4, number_format($transaccion->getCaCr(), 2, ",", ".")  ,0,1, "R");
+    $pdf->Cell(172, 4, number_format(($transaccion->getCaValor()!=null?$transaccion->getCaValor():"0"), 2, ",", ".")  ,0,1, "R");
     $k+=$space;
 
     if( !isset($totales[$propios]) ){
         $totales[$propios] = 0;
     }
-    $totales[$propios] += $transaccion->getCaCr();
+    $totales[$propios] += $transaccion->getCaValor();
     
     $imp = $transaccion->getImpuestos();
 

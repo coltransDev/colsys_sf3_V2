@@ -23,10 +23,24 @@ if($buscar)
     {
         $("#tr_"+id).toggle();
     }
+    
+    function validate()
+    {
+        var n = $( "input:checked" ).length;
+        if(n<1)
+        {
+            alert("Debe seleccionar almenos un caso para comisionar");
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
 </script>
-<form id="formDatos" name="formDatos" method="post" action="/inoReportes/comisionarCasos" >
+<form id="formDatos" name="formDatos" method="post" action="/inoReportes/comisionarCasos" onsubmit=" return validate()">
 <table class="tableList" width="600px" border="1" id="mainTable" align="center" >
-    <tr><th>Referencia</th><th>Estado</th><th>Cliente</th><th>doc transporte</th><!--<th>Agente</th>--> <th>Proveedor</th><th>Modalidad</th><th >Factura</th><th>Vlr.Facturado</th><th >RC</th><th  >Vol.CMB</th><th  >Utilidad</th> <th>Comisiones</th> <th>Comis/Sobreventa</th><th>Comis/Cobradas</th><th>Comprobantes</th><th></th></tr>
+    <tr><th>Referencia</th><th>Estado</th><th>Cliente</th><th>Ref Transporte <? /*doc transporte*/?></th><!--<th>Agente</th>--> <th>Proveedor</th><th>Modalidad</th><th >Factura</th><th>Vlr.Facturado</th><th >RC</th><th  >Vol.CMB</th><th  >Utilidad</th> <th>Comisiones</th> <th>Comis/Sobreventa</th><th>Comis/Cobradas</th><th>Comprobantes</th><th></th></tr>
         <?
         $pos=1;
         $vendedorant="";        
@@ -49,7 +63,7 @@ if($buscar)
                 for($i=0;$i<count($dat);$i++)
                 {
                     $d=$dat[$i];
-                    if($d["comision_ino"]==0)
+                    if(intval($d["comision_ino"])==0)
                         continue;
                     $url="/ino/verReferencia/modo/".$d["tipo"]."/idmaster/".$d["ca_idmaster"];
             ?>
@@ -62,19 +76,19 @@ if($buscar)
                 <td><?=$d["p_nombre"]?></td>
                 <td><?=$d["ca_modalidad"]?></td>
                 <td><?=$d["facturas"]?></td>
-                <td><?=Utils::formatNumber($d["ing_valor"], 2)?></td>
+                <td><?=Utils::formatNumber($d["ing_valor"], 0)?></td>
                 <td><?=$d["rcaja"]?></td>
                 <td  ><?=$d["ca_volumen"]?></td>
-                <td><?=Utils::formatNumber($d["ino"], 2)?></td>
-                <td><?=Utils::formatNumber(($d["comision_ino"]), 2)?></td>
-                <td><?=Utils::formatNumber($d["uti_valor"], 2)?></td>
-                <td><?=Utils::formatNumber($d["comision_cobrada"], 2)?></td>
+                <td><?=Utils::formatNumber($d["ino"], 0)?></td>
+                <td><?=Utils::formatNumber(($d["comision_ino"]), 0)?></td>
+                <td><?=Utils::formatNumber($d["uti_valor"], 0)?></td>
+                <td><?=Utils::formatNumber($d["comision_cobrada"], 0)?></td>
                 <td><?=$d["comision_comprobante"]?></td>
                 <td>
                 <?
                 $diascircular= TimeUtils::dateDiff($d["ca_fchcircular"],date("Y-m-d"))-366;
                 //$d["comision_ino"]=-1;
-                if($d["ca_usucerrado"]!="" && $d["rcaja"]!=""   )
+                if($d["ca_usucerrado"]!="" && $d["rcaja"]!="" )
                 {
                     if($diascircular>0)
                     {

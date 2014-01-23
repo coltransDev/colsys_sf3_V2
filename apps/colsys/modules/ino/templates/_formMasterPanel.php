@@ -261,20 +261,6 @@ include_component("widgets", "widgetReporte");
                                     trafico:"CO-057",
                                     tabIndex:6
                                 }),
-                                <?
-                                if($modo==6)
-                                {
-                                ?>
-                                {
-                                    xtype:"hidden",
-                                    id: 'idmaster',
-                                    name: 'idmaster',
-                                    value: this.idmaster
-                                }
-                                <?
-                                }else
-                                {
-                                ?>
                                 new WidgetAgente({fieldLabel: 'Agente',
                                     linkImpoExpo: "impoexpo_fld",
                                     linkOrigen: "origen",
@@ -285,11 +271,7 @@ include_component("widgets", "widgetReporte");
                                     tabIndex:8,
                                     value:"<?=($modo==6)?"COLTRANS S.A.S.":""?>",
                                     hiddenValue:"<?=($modo==6)?"800024075":""?>"
-                                })
-                                <?
-                                }
-                                ?>
-                                ,
+                                }),
                                 {
                                     xtype: "checkbox",
                                     fieldLabel: "Listar todos",

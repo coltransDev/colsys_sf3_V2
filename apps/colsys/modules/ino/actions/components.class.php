@@ -19,7 +19,7 @@ class inoComponents extends sfComponents {
      * Este panel contiene todos los tabs de la aplicación.
      */
 
-    public function executeMainPanel() {
+    public function executeMainPanel() {        
         $this->monedaLocal = $this->getUser()->getIdmoneda();
     }
 
@@ -36,7 +36,7 @@ class inoComponents extends sfComponents {
      */
 
     public function executeFormHousePanel() {
-
+        
     }
 
     /*
@@ -58,33 +58,36 @@ class inoComponents extends sfComponents {
     /*
      * Ventana para editar encabezado factura
      */
-    public function executeGridFacturacionWindow() {
 
+    public function executeGridFacturacionWindow() {
+        
     }
 
     /*
      * Ventana para editar encabezado factura
      */
+
     public function executeGridFacturacionFormPanel() {
 
         $this->modo = $this->getRequestParameter("modo");
-        
-        $q = Doctrine::getTable("InoTipoComprobante")
-                        ->createQuery("t")
-                        ->select("t.ca_idtipo, t.ca_tipo, t.ca_comprobante, t.ca_titulo, e.ca_sigla")
-                        //->innerJoin("t.IdsSucursal s")
-                        //->innerJoin("s.Ids i")
-                        //->innerJoin("s.Empresa e")
-                        ->addWhere("t.ca_tipo = ?", "F")
-                        ->addOrderBy("t.ca_tipo, t.ca_comprobante");
-        
 
-        if (isset($this->empresa) && $this->empresa ) {
+        $q = Doctrine::getTable("InoTipoComprobante")
+                ->createQuery("t")
+                ->select("t.ca_idtipo, t.ca_tipo, t.ca_comprobante, t.ca_titulo, e.ca_sigla")
+                //->innerJoin("t.IdsSucursal s")
+                //->innerJoin("s.Ids i")
+                //->innerJoin("s.Empresa e")
+                //->addWhere("t.ca_tipo = ?", "F")
+                ->whereIn("t.ca_tipo", array("F","C"))
+                ->addOrderBy("t.ca_tipo, t.ca_comprobante");
+
+
+        if (isset($this->empresa) && $this->empresa) {
             //$q->addWhere("e.ca_sigla = ?", $this->empresa);
         }
-                
+
         $tipos = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
-        
+
         $tiposArray = array();
         foreach ($tipos as $tipo) {
             $tipoStr = "";
@@ -96,7 +99,6 @@ class inoComponents extends sfComponents {
         }
 
         $this->tipos = array("root" => $tiposArray, "total" => count($tiposArray));
-        
     }
 
     /*
@@ -106,60 +108,81 @@ class inoComponents extends sfComponents {
     public function executeGridCostosPanel() {
         $this->monedaLocal = $this->getUser()->getIdmoneda();
     }
-    
-    public function executeGridCostosPanel_1() {
-        $this->monedaLocal = $this->getUser()->getIdmoneda();
+
+    /*
+     * Grid que muestra las facturas de compra de la referencia
+     */
+
+    public function executeEditCostosWindow() {
+        $this->conceptos = Doctrine::getTable("InoConcepto")
+                ->createQuery("c")
+                ->select("ca_idconcepto,ca_concepto, cc.ca_idccosto, cc.ca_centro, cc.ca_subcentro, cc.ca_nombre")
+                ->innerJoin("c.InoParametroFacturacion p")
+                ->innerJoin("p.InoCentroCosto cc")
+                //->innerJoin("cc.CentroCosto cp")
+                ->innerJoin("c.InoConceptoModalidad cm")
+                ->innerJoin("cm.Modalidad m")
+                //->addWhere("c.ca_tipo = ? ", Constantes::RECARGO_LOCAL )
+                ->addWhere("p.ca_idcuenta IS NOT NULL")
+                //->addWhere("m.ca_impoexpo LIKE ? ", $impoexpo )
+                //->addWhere("m.ca_transporte LIKE ? ", $this->reporte->getCaTransporte() )
+                ->addOrderBy("c.ca_concepto")
+                ->distinct()
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->execute();
+    }
+
+    public function gridAuditoriaWindow() {
+        
     }
 
     /*
      * Grid que muestra las facturas de compra de la referencia
      */
-    
 
-    public function executeEditCostosWindow() {
-        $this->conceptos = Doctrine::getTable("InoConcepto")
-                        ->createQuery("c")
-                        ->select("ca_idconcepto,ca_concepto, cc.ca_idccosto, cc.ca_centro, cc.ca_subcentro, cc.ca_nombre")
-                        ->innerJoin("c.InoParametroFacturacion p")
-                        ->innerJoin("p.InoCentroCosto cc")
-                        //->innerJoin("cc.CentroCosto cp")
-                        ->innerJoin("c.InoConceptoModalidad cm")
-                        ->innerJoin("cm.Modalidad m")
-                        //->addWhere("c.ca_tipo = ? ", Constantes::RECARGO_LOCAL )
-                        ->addWhere("p.ca_idcuenta IS NOT NULL")
-                        //->addWhere("m.ca_impoexpo LIKE ? ", $impoexpo )
-                        //->addWhere("m.ca_transporte LIKE ? ", $this->reporte->getCaTransporte() )
-                        ->addOrderBy("c.ca_concepto")
-                        ->distinct()
-                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                        ->execute();
+    public function executeEditAuditoriaWindow() {
+        $this->conceptos = Doctrine::getTable("InoAuditor")
+                ->createQuery("t1")
+                ->select("t1.ca_idevento, t1.ca_idmaster, t1.ca_tipo, t1.ca_asunto, t1.ca_detalle, t1.ca_compromisos, t1.ca_fchcompromiso, t1.ca_respuesta,t1.ca_idantecedente, t1.ca_estado,t1.ca_usucreado,  t1.ca_fchcreado, t2.ca_idevento, t2.ca_idmaster, t2.ca_tipo, t2.ca_asunto, t2.ca_detalle, t2.ca_compromisos, t2.ca_fchcompromiso, t2.ca_respuesta,t2.ca_idantecedente, t2.ca_estado,t2.ca_usucreado,  t2.ca_fchcreado, t3.ca_idevento, t3.ca_idmaster, t3.ca_tipo, t3.ca_asunto, t3.ca_detalle, t3.ca_compromisos, t3.ca_fchcompromiso, t3.ca_respuesta,t3.ca_idantecedente, t3.ca_estado,t3.ca_usucreado,  t3.ca_fchcreado")
+                ->leftJoin("InoAuditor t2 ON t1.ca_idevento = t2.ca_idantecedente")
+                ->leftJoin("InoAuditor t3 ON t2.ca_idevento = t3.ca_idantecedente")
+                ->addWhere("t1.ca_idantecedente = ?", 0)
+                ->addOrderBy(" t1.ca_fchcreado DESC,t1.ca_idevento ASC, t3.ca_idevento DESC")
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->execute();
     }
-    
-    
-    
+
     /*
      * Cuadro de eventos de auditoria
      */
+
     public function executeGridDeduccionesPanel() {
-
+        
     }
-    
-           
 
-    public function executePanelFiltro(sfWebRequest $request)
-	{
+    public function executeGridAuditoriaPanel() {
+        $this->monedaLocal = $this->getUser()->getIdmoneda();
+    }
+
+    /* $this->conceptos = Doctrine::getTable("InoAuditor")
+      ->createQuery("t1")
+      ->select("t1.ca_idevento, t1.ca_idmaster, t1.ca_tipo, t1.ca_asunto, t1.ca_detalle, t1.ca_compromisos, t1.ca_fchcompromiso, t1.ca_respuesta,t1.ca_idantecedente, t1.ca_estado,t1.ca_usucreado,  t1.ca_fchcreado, t1.ca_idtarea, t1.ca_tipoauditoria")
+      ->addWhere("t1.ca_idantecedente = ?", 0)
+      ->addOrderBy(" t1.ca_fchcreado DESC,t1.ca_idevento ASC")
+      ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+      ->execute();
+     */
+
+    public function executePanelFiltro(sfWebRequest $request) {
         $this->criterio = $request->getParameter("criterio");
         $this->cadena = $request->getParameter("cadena");
         $this->field = $request->getParameter("field");
-
     }
-    
-    public function executeBalanceReferencia(sfWebRequest $request){
+
+    public function executeBalanceReferencia(sfWebRequest $request) {
         $this->monedaLocal = $this->getUser()->getIdmoneda();
-
     }
-    
-    
+
     /*
      * Formulario para ingresar los datos del house
      */
@@ -167,10 +190,10 @@ class inoComponents extends sfComponents {
     public function executeFormEquiposPanel() {
         $q = Doctrine_Query::create()
                 ->select("c.ca_idconcepto, c.ca_concepto, c.ca_transporte, c.ca_modalidad, c.ca_liminferior")
-                ->from("Concepto c")                
-                ->addWhere( "c.ca_transporte=?", Constantes::MARITIMO )
-                ->addWhere( "c.ca_modalidad=?", Constantes::FCL )
-                ->addOrderBy("c.ca_liminferior")        
+                ->from("Concepto c")
+                ->addWhere("c.ca_transporte=?", Constantes::MARITIMO)
+                ->addWhere("c.ca_modalidad=?", Constantes::FCL)
+                ->addOrderBy("c.ca_liminferior")
                 ->addOrderBy("c.ca_concepto");
 
         $q->fetchArray();
@@ -184,7 +207,7 @@ class inoComponents extends sfComponents {
                 "transporte" => utf8_encode($concepto['ca_transporte']),
                 "modalidad" => utf8_encode($concepto['ca_modalidad'])
             );
-        }   
+        }
     }
 
     /*
@@ -192,47 +215,45 @@ class inoComponents extends sfComponents {
      */
 
     public function executeGridEquiposPanel() {
-             
         
     }
-    
-    
+
     /*
      * Grid que muestra los house de la referencia
      */
 
-    public function executeFormCostosDiscriminadosPanel() {        
-       $costos = Doctrine::getTable("Costo")
-                        ->createQuery("c")
-                        ->select("c.ca_idcosto, c.ca_costo")
-                        ->addWhere("c.ca_impoexpo = ? ", $this->modo->getCaImpoexpo())
-                        ->addWhere("c.ca_transporte = ? ", $this->modo->getCaTransporte())
-                        //->addWhere("c.ca_modalidad = ? ", $this->referencia?$this->referencia->getCaModalidad():"")
-                        ->addOrderBy("c.ca_costo")
-                        ->execute();
-        $this->data=array();
-        foreach( $costos as $c ){
+    public function executeFormCostosDiscriminadosPanel() {
+        $costos = Doctrine::getTable("Costo")
+                ->createQuery("c")
+                ->select("c.ca_idcosto, c.ca_costo")
+                ->addWhere("c.ca_impoexpo = ? ", $this->modo->getCaImpoexpo())
+                ->addWhere("c.ca_transporte = ? ", $this->modo->getCaTransporte())
+                //->addWhere("c.ca_modalidad = ? ", $this->referencia?$this->referencia->getCaModalidad():"")
+                ->addOrderBy("c.ca_costo")
+                ->execute();
+        $this->data = array();
+        foreach ($costos as $c) {
             $this->data[] = array(
-                "idconcepto"=>$c->getCaIdcosto(),
-                "concepto"=>utf8_encode($c->getCaCosto()),
-                "transporte"=>utf8_encode($c->getCaTransporte()),
-                "impoexpo"=>utf8_encode($c->getCaImpoexpo())
+                "idconcepto" => $c->getCaIdcosto(),
+                "concepto" => utf8_encode($c->getCaCosto()),
+                "transporte" => utf8_encode($c->getCaTransporte()),
+                "impoexpo" => utf8_encode($c->getCaImpoexpo())
             );
         }
-        
+
         $this->monedaLocal = $this->getUser()->getIdmoneda();
-        
+
         $q = Doctrine::getTable("InoTipoComprobante")
-                        ->createQuery("t")
-                        ->select("t.ca_idtipo, t.ca_tipo, t.ca_comprobante, t.ca_titulo, e.ca_sigla")
-                        //->innerJoin("t.IdsSucursal s")
-                        //->innerJoin("s.Ids i")
-                        //->innerJoin("s.Empresa e")
-                        ->addWhere("t.ca_tipo = ?", "P")
-                        ->addOrderBy("t.ca_tipo, t.ca_comprobante");
-        
+                ->createQuery("t")
+                ->select("t.ca_idtipo, t.ca_tipo, t.ca_comprobante, t.ca_titulo, e.ca_sigla")
+                //->innerJoin("t.IdsSucursal s")
+                //->innerJoin("s.Ids i")
+                //->innerJoin("s.Empresa e")
+                ->addWhere("t.ca_tipo = ?", "P")
+                ->addOrderBy("t.ca_tipo, t.ca_comprobante");
+
         $tipos = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
-        
+
         $tiposArray = array();
         foreach ($tipos as $tipo) {
             $tipoStr = "";
@@ -243,22 +264,18 @@ class inoComponents extends sfComponents {
             $tiposArray[] = array("idtipo" => $tipo["t_ca_idtipo"], "tipo" => utf8_encode($tipoStr));
         }
 
-        $this->tipos = array("root" => $tiposArray, "total" => count($tiposArray));    
-        
-        
+        $this->tipos = array("root" => $tiposArray, "total" => count($tiposArray));
     }
-    
-    
+
     /*
      * Grid que muestra los house de la referencia
      */
 
-    public function executeFormCostosDiscriminadosGridPanel() {               
-        
+    public function executeFormCostosDiscriminadosGridPanel() {
+
         $this->monedaLocal = $this->getUser()->getIdmoneda();
-        
     }
-    
+
     /*
      * Grid que muestra las facturas de compra de la referencia
      */
@@ -266,5 +283,6 @@ class inoComponents extends sfComponents {
     public function executeGridCostosDiscriminadosPanel() {
         
     }
+
 }
 

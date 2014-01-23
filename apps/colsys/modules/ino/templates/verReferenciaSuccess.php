@@ -4,9 +4,10 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
+$permisos = $sf_data->getRaw("permisos");
+//print_r($permisos);
 
-
-include_component("ino", "mainPanel", array("referencia"=>$referencia,"modo"=>$idmodo));
+include_component("ino", "mainPanel", array("referencia"=>$referencia,"modo"=>$idmodo,"permisos"=>$permisos));
 include_component("widgets", "widgetMoneda");
 include_component("widgets", "widgetIds");
 
@@ -169,12 +170,16 @@ $readOnly = $referencia->getReadOnly();
                                 <input type="button" class="button" value="Cancelar liquidación" onclick="document.location='<?=url_for("ino/cancelarLiquidarCaso?modo=".$modo->getCaIdmodo()."&idmaster=".$referencia->getCaIdmaster())?>'" />
                                 <?
                                 }
-
                             }else{
                             ?>
                             El caso no se ha liquidado.
-                            <input type="button" class="button" value="Firmar liquidación" onclick="document.location='<?=url_for("ino/liquidarCaso?modo=".$modo->getCaIdmodo()."&idmaster=".$referencia->getCaIdmaster())?>'" />
-                            <?    
+                            <?
+                                if($permisos["liquidar"])
+                                {
+                                ?>
+                                <input type="button" class="button" value="Firmar liquidación" onclick="document.location='<?=url_for("ino/liquidarCaso?modo=".$modo->getCaIdmodo()."&idmaster=".$referencia->getCaIdmaster())?>'" />
+                                <?    
+                                }
                             }
                         
                         }
@@ -188,7 +193,7 @@ $readOnly = $referencia->getReadOnly();
                             ?>
                             <b>Cerrado por:</b><br />
                            <?
-                            if($referencia->getCaFchcerrado()){
+                            if($referencia->getCaFchcerrado() && $permisos["reabrir"]){
                             ?>
                             <?=$referencia->getCaUsucerrado()?>/<?=Utils::fechaMes($referencia->getCaFchcerrado())?>
 
@@ -198,7 +203,7 @@ $readOnly = $referencia->getReadOnly();
                             ?>
                             El caso se encuentra abierto.
                             <?
-                                if($referencia->getCaFchliquidado()){
+                                if($referencia->getCaFchliquidado() && $permisos["cerrar"]){
                                 ?>
                                 <input type="button" class="button" value="Cerrar" onclick="document.location='<?=url_for("ino/cerrarCaso?modo=".$modo->getCaIdmodo()."&idmaster=".$referencia->getCaIdmaster())?>'" />
                                 <?    

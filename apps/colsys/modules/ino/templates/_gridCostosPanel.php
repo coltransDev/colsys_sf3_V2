@@ -133,6 +133,7 @@ GridCostosPanel = function( config ){
 
 
     this.store = new Ext.data.GroupingStore({
+
         autoLoad : true,
         url: '<?=url_for("ino/datosGridCostosPanel")?>',
         baseParams : {
@@ -147,6 +148,8 @@ GridCostosPanel = function( config ){
             this.record
         ),
         sortInfo:{field: 'proveedor', direction: "ASC"}
+        //groupField: 'proveedor'
+
     });
 
     this.tbar = [];
@@ -167,6 +170,9 @@ GridCostosPanel = function( config ){
         }
     );
 
+    
+
+    
     GridCostosPanel.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},
        //boxMinHeight: 300,
@@ -183,7 +189,9 @@ GridCostosPanel = function( config ){
             rowcontextmenu: this.onRowcontextMenu,
             validateedit: this.onValidateEdit,
             rowdblclick : this.onRowDblclick
+
        }
+
     });
     this.getView().getRowClass = this.getRowClass;
 

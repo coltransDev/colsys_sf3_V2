@@ -14,16 +14,17 @@ include_component("widgets", "widgetIds");
         var neto = document.getElementById("neto");
         var tcambio = document.getElementById("tcambio");
         var tcambio_usd = document.getElementById("tcambio_usd");
+       
         to.value = Math.round(venta.value - Math.round(neto.value * tcambio.value / tcambio_usd.value));
     }
-
+    
     function calc_neto(){
-        var netopesos= document.getElementById("netopesos");
-        var netousd= document.getElementById("netousd");
+        var netopesos= document.getElementById("netopesos");   
+        var netousd= document.getElementById("netousd");     
         var neto = document.getElementById("neto");
         var tcambio = document.getElementById("tcambio");
         var tcambio_usd = document.getElementById("tcambio_usd");
-
+        
         var idmoneda = document.getElementById("idmoneda");
         
         if( idmoneda.value=="USD" || idmoneda.value=="<?=$monedaLocal?>" ){
@@ -39,42 +40,24 @@ include_component("widgets", "widgetIds");
         if( idmoneda.value=="<?=$monedaLocal?>" ){
             tcambio.value=1;
             tcambio.disabled = true;
-            var tcambio_usd_inv = document.getElementById("tcambio_usd_inv");
-            tcambio_usd_inv.innerHTML = "[1]";
-            
         }else{
             tcambio.disabled = false;
         }
         
-        netousd.value =Math.round(eval(neto.value / tcambio_usd.value*10000000))/10000000;
+        netousd.value =Math.round(eval(neto.value / tcambio_usd.value*100))/100;
         netopesos.value =Math.round(eval(neto.value * tcambio.value / tcambio_usd.value));
-        calc_tasausd_inv();
+        
         calc_utilidad();
     }
     
     function calc_tasausd(){
         var neto = document.getElementById("neto");
-        var netousd= document.getElementById("netousd");     
-              
+        var netousd= document.getElementById("netousd");             
         var tcambio_usd = document.getElementById("tcambio_usd");
                     
         tcambio_usd.value = Math.round(eval(neto.value/netousd.value*100000))/100000;        
         
-        
-        calc_tasausd_inv();        
-        
         calc_neto();
-    }
-    
-    function calc_tasausd_inv(){
-        var neto = document.getElementById("neto");
-        var netousd= document.getElementById("netousd");     
-        
-        var tcambio_usd_inv = document.getElementById("tcambio_usd_inv");  
-        
-        var tcambio_usd_val = Math.round(eval(netousd.value/neto.value*100000))/100000;  
-        //alert( tcambio_usd_val );
-        tcambio_usd_inv.innerHTML = "["+tcambio_usd_val+"]";
     }
     
     function calcular(){
@@ -119,7 +102,8 @@ include_component("widgets", "widgetIds");
                         <?=$referencia->getCaReferencia()?>
                     </div>
                 </th>
-            </tr>
+            </tr>    
+            
             <?
             if( $form->renderGlobalErrors() ){
             ?>
@@ -179,27 +163,14 @@ include_component("widgets", "widgetIds");
                     ?>
                 </td>
                 <td colspan="2" rowspan="4" valign="top">
-                    <br />
+                    <b>Distribuci&oacute;n INO x Sobreventa:</b><br />
                     <div id="utils">
                         <table border="0">
-                            <tr><th rowspan="2">Doc.Trans</th><th colspan="2">Distribuci&oacute;n</th></tr>
-                            <tr><th colspan=""><b>Costos</b></th><th><b>INO x Sobreventa:</b></th></tr>
                         <?                    
                         foreach( $inoHouses as $ic ){
                         ?>
                             <tr>
                                 <td><div title="<?=$ic->getCliente()->getCaCompania()?>" ><?=$ic->getCaDoctransporte()?></div></td>
-                                <td>  
-                                <?                                   
-                                echo $form['costo_'.$ic->getCaIdhouse()]->renderError();  
-                                if( isset( $utilidades[ $ic->getCaIdhouse() ] )  ){
-                                    $form->setDefault('costo_'.$ic->getCaIdhouse(),  $utilidades[ $ic->getCaIdhouse() ]  );
-                                }else{
-                                    $form->setDefault('costo_'.$ic->getCaIdhouse(), 0 );
-                                }
-                                echo $form['costo_'.$ic->getCaIdhouse()]->render();
-                                ?>                 
-                                </td>
                                 <td>  
                                 <?                                   
                                 echo $form['util_'.$ic->getCaIdhouse()]->renderError();  
@@ -218,10 +189,7 @@ include_component("widgets", "widgetIds");
                             <tr>
                                 <td><b>Total<b/></td>
                                 <td>  
-                                    <input type="text" id="costo_sobreventa" maxlength="15" size="15" readOnly="true" />                       
-                                </td>
-                                <td>
-                                    <input type="text" id="utilidad_sobreventa" maxlength="15" size="15" readOnly="true" />                       
+                                <input type="text" id="utilidad_sobreventa" maxlength="15" size="15" readOnly="true" />                       
                                 </td>
                             </tr>
                         </table>
@@ -240,30 +208,17 @@ include_component("widgets", "widgetIds");
                     ?>
                 </td>
                 <td>
-                    <table border="0">
-                        <tr>
-                            <td>
-                                <b>Tasa de Cambio USD:</b><br />
-                                <?
-                                echo $form['tcambio_usd']->renderError(); 
-                                if( $inoCosto && $inoCosto->getCaTcambio() ){                                     
-                                    $form->setDefault('tcambio_usd', $inoCosto->getCaTcambioUsd() );
-                                }else{
-                                    $form->setDefault('tcambio_usd', 1 );                        
-                                }
-
-                                echo $form['tcambio_usd']->render();
-                                ?>
-                            </td>
-                            <td>
-                                <b>Tasa de Cambio Directa:</b><br />
-                                <div id="tcambio_usd_inv"></div>
-                            </td>    
-                        </tr>
-                    </table>
+                    <b>Tasa de Cambio a USD:</b><br />
+                    <?
+                    echo $form['tcambio_usd']->renderError(); 
+                    if( $inoCosto && $inoCosto->getCaTcambio() ){                                     
+                        $form->setDefault('tcambio_usd', $inoCosto->getCaTcambioUsd() );
+                    }else{
+                        $form->setDefault('tcambio_usd', 1 );                        
+                    }
                     
-                    
-                    
+                    echo $form['tcambio_usd']->render();
+                    ?>
                 </td>
                 <td>                    
                    <b>Neto en USD:</b><br />
@@ -288,7 +243,9 @@ include_component("widgets", "widgetIds");
                <td>
                     <b>Neto <?=$monedaLocal?>:</b><br />
                     <input type="text" id="netopesos" maxlength="15" size="14" readOnly="true" />
+                    
                 </td>
+                
                <td>
                     <b>Venta <?=$monedaLocal?>:</b><br />
                     <?
@@ -350,6 +307,6 @@ include_component("widgets", "widgetIds");
 <script type="text/javascript" >
     calc_neto();
     calcular();    
-    calc_tasausd_inv();
+    
 </script>
 

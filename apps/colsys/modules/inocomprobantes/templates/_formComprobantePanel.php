@@ -4,30 +4,41 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
-include_component("widgets", "widgetIds");
-
-
-$tipos = $sf_data->getRaw("tipos");   
+if( !$comprobante->getCaConsecutivo() ){
+    $tipos = $sf_data->getRaw("tipos");   
+}
 
 
-
-$saveUrl = "inocomprobantes/saveFormComprobantePanel";
+$saveUrl = "inocomprobantes/observeFormComprobantePanel";
 $saveUrlOkRedirect = "inocomprobantes/formComprobante";
 
-if( isset($idhouse) && $idhouse ){
-
-    $saveUrl.="?idhouse=".$idhouse;
-    $saveUrlOkRedirect .= "?idhouse=".$idhouse;
+if( isset($inocliente) ){
+    $saveUrl.="?idinocliente=".$inocliente->getCaIdinocliente();
+    $saveUrlOkRedirect .= "?idinocliente=".$inocliente->getCaIdinocliente();
 }
 
 
 ?>
 <script type="text/javascript">
 
+var ds = new Ext.data.Store({
+        proxy: new Ext.data.HttpProxy({
+            url: '<?=url_for('widgets/listaIdsJSON')?>'
+        }),
+        reader: new Ext.data.JsonReader({
+            root: 'root',
+            totalProperty: 'totalCount'
+        }, [
+            {name: 'id', mapping: 'ca_id'},
+            {name: 'nombre', mapping: 'ca_nombre'}
+        ])
+    });
 
 
 
+var resultTpl = new Ext.XTemplate(
+        '<tpl for="."><div class="search-item"><b>{nombre}</b></div></tpl>'
+);
 /*
 var storeTipos = new Ext.data.Store({
     autoload: true,
@@ -47,211 +58,263 @@ var storeTiposTpl = new Ext.XTemplate(
         '<tpl for="."><div class="search-item"><b>{tipo}</b></div></tpl>'
 );
 
-FormComprobantePanel = function( config ){
+FormComprobantePanel = function(){
+    this.preview = new Ext.Panel({
+        id: 'preview',
 
 
-    Ext.apply(this, config);
 
 
-    this.ids = new WidgetIds({				        
-                        hiddenName: "ids",
-                        name: 'ids_name',
-                        forceSelection:true,
-                        width: 400,
-                        allowBlank:false
-					});
-                   
-    this.tbar = [
-        {
+        items: [{
+            xtype:'tabpanel',
+            buttonAlign: 'left',
+            activeTab: 0,
+            defaults:{autoHeight:true, bodyStyle:'padding:10px'},
+            deferredRender:false,
+            tbar: [{
                 id:'guardar-encabezado-btn',
-                text: 'Guardar',
+                text: 'Guardar Encabezado',
                 iconCls: 'disk',
-                handler : this.guardar,
+                handler : this.guardarEncabezadoForm,
                 scope: this
             }
-    ];
-    
-    if( this.idcomprobante ){
-        this.tbar.push(
-            {
-                text: 'Prefactura',
-                iconCls: 'page_white_acrobat',
+            <?
+            if( $comprobante->getCaIdcomprobante() ){
+            ?>
+            
+            ,{
+                text: 'Previsualizar',
+                iconCls: 'page_white_magnify',
                 handler : this.previsualizar,
                 scope: this
-            }            
-        );
-        /*this.tbar.push(  
-            {
+            }
+            ,{
                 text: 'Generar',
                 iconCls: 'page_white_acrobat',
                 handler : this.generar,
                 scope: this
             }
-        );*/            
-    }   
-    
-    this.preview = new Ext.TabPanel({
-        id: 'preview',
-        xtype:'tabpanel',
-        buttonAlign: 'left',
-        activeTab: 0,
-        defaults:{autoHeight:true, bodyStyle:'padding:10px'},
-        deferredRender:false,
-
-        items:[{
-            title:'Información General',
-            layout:'form',
-
-
-            items: [{
-                layout:'table',
-                border: false,
-                defaults: {
-                    // applied to each contained panel
-                    bodyStyle:'padding-right:20px',
-                    border: false
-                },
+            <?
+            }
+            ?>
+            ],
+            items:[{
+                title:'Información General',
+                layout:'form',
+               
 
                 items: [{
-                            layout: 'form',
-                            items: [                                   
-                                new Ext.form.ComboBox({
-                                    fieldLabel: 'Tipo',
-                                    valueField:'idtipo',
-                                    displayField:'tipo',
-                                    typeAhead: true,
-                                    width: 300,
-                                    emptyText:'',
-                                    value: '',
-                                    forceSelection:true,
-                                    selectOnFocus:true,
-                                    allowBlank:false,
-                                    id:'tipo_id',
-                                    name:'tipo',
-                                    hiddenName: 'idtipo',
-                                    mode:'local',
-                                    triggerAction: 'all',
-                                    disabled: this.idcomprobante,
-                                    store: new Ext.data.Store({
-                                        autoLoad : true,
-                                        reader: new Ext.data.JsonReader(
-                                            {
-                                                root: 'root',
-                                                totalProperty: 'total'
-                                            },
-                                            Ext.data.Record.create([
-                                                {name: 'idtipo', type: 'string'},
-                                                {name: 'tipo', type: 'string'}
-                                            ])
-                                        ),
-                                        proxy: new Ext.data.MemoryProxy(<?=json_encode($tipos)?>)
-                                    }),
+				    layout:'table',
+				    border: false,
+				    defaults: {
+				        // applied to each contained panel
+				        bodyStyle:'padding-right:20px',
+				        border: false
+				    },
+				    
+				    items: [{
+                                layout: 'form',
+                                items: [
+                                    <?
+                                    
+                                    if( !$comprobante->getCaConsecutivo() ){
+                                    ?>
+                                    new Ext.form.ComboBox({
+                                        fieldLabel: 'Tipo',
+                                        valueField:'idtipo',
+                                        displayField:'tipo',
+                                        typeAhead: true,
+                                        width: 300,
+                                        emptyText:'',
+                                        value: '',
+                                        forceSelection:true,
+                                        selectOnFocus:true,
+                                        allowBlank:false,
+                                        name:'tipo',
+                                        mode:'local',
+                                        triggerAction: 'all',
+                                        store: new Ext.data.Store({
+                                            autoLoad : true,
+                                            reader: new Ext.data.JsonReader(
+                                                {
+                                                    root: 'root',
+                                                    totalProperty: 'total'
+                                                },
+                                                Ext.data.Record.create([
+                                                    {name: 'idtipo', type: 'string'},
+                                                    {name: 'tipo', type: 'string'}
+                                                ])
+                                            ),
+                                            proxy: new Ext.data.MemoryProxy(<?=json_encode($tipos)?>)
+                                        }),
 
-                                    onSelect: function(record, index){ // override default onSelect to do redirect
-                                        if(this.fireEvent('beforeselect', this, record, index) !== false){
-                                            this.setValue(record.data[this.valueField || this.displayField]);
-                                            this.collapse();
-                                            this.fireEvent('select', this, record, index);
+                                        onSelect: function(record, index){ // override default onSelect to do redirect
+                                            if(this.fireEvent('beforeselect', this, record, index) !== false){
+                                                this.setValue(record.data[this.valueField || this.displayField]);
+                                                this.collapse();
+                                                this.fireEvent('select', this, record, index);
+                                            }
+                                            Ext.getCmp("idtipo").setValue(record.get("idtipo"));
                                         }
-                                        Ext.getCmp("idtipo").setValue(record.get("idtipo"));
+                                    }),
+                                    <?
                                     }
-                                }),                                   
-                                {
-                                    xtype:'textfield',
-                                    fieldLabel: 'Consecutivo',
-                                    name: 'consecutivo',
-                                    value: '',                                        
-                                    allowBlank:true,
-                                    readOnly: true,                                        
-                                    width: 120
-                                },                                    
-                                {
-                                    xtype:'hidden',
-                                    id: 'idcomprobante'
-                                },
-                                
-                                {
-                                    xtype:'hidden',
-                                    id: 'idcomprobante'
-                                },
-                                {
-                                    xtype:'hidden',
-                                    id: 'detalles'
-                                }
-                                
-                            ]
+                                    
+                                    if( $comprobante->getCaConsecutivo()|| $tipo=="P" ){
+                                    ?>
+                                    {
+                                        xtype:'textfield',
+                                        fieldLabel: 'Consecutivo',
+                                        name: 'consecutivo',
+                                        value: '<?=$comprobante->getCaConsecutivo()?>',
+                                        <?
+                                        if( $tipo=="P" ){
+                                        ?>
+                                        allowBlank:false,
+                                        <?
+                                        }else{
+                                        ?>
+                                        allowBlank:true,
+                                        readOnly: true,
+                                        <?
+                                        }
+                                        ?>
+                                        width: 120
+                                    },
+                                    <?
+                                    }                                 
+                                    ?>
+                                    {
+                                        xtype:'hidden',
+                                        id: 'id',
+                                        value: '<?=$comprobante->getCaId()?>'
 
-                        },
-                        {
-                            layout: 'form',
-                            items: [
+                                    },
+                                    {
+                                        xtype:'hidden',
+                                        id: 'idtipo',
+                                        value: '<?=$comprobante->getCaIdtipo()?>'
+
+                                    },
+                                    {
+                                        xtype:'hidden',
+                                        id: 'idcomprobante',
+                                        value: '<?=$comprobante->getCaIdcomprobante()?>'
+
+                                    }
+                                ]
+
+                            },
                             {
-                                xtype:'datefield',
-                                fieldLabel: 'Fecha',
-                                format: 'Y-m-d',
-                                name: 'fchcomprobante',                                    
-                                allowBlank:false,
-                                width: 120
-                            }]
-                        },
-                        {
-                            layout: 'form',
-                            items: [
+                                layout: 'form',
+                                items: [
+                                {
+                                    xtype:'datefield',
+                                    fieldLabel: 'Fecha',
+                                    format: 'Y-m-d',
+                                    name: 'fechacomprobante',
+                                    value: '<?=Utils::parseDate($comprobante->getCaFchcomprobante(), "Y-m-d")?>',
+                                    allowBlank:false,
+                                    width: 120
+                                }]
+                            },
                             {
-                                xtype:'numberfield',
-                                fieldLabel: 'Plazo',
-                                name: 'plazo',                                    
-                                allowBlank:false,
-                                allowNegative:false,
-                                decimalPrecision : 0,
-                                width: 80
-                            }
-                            ]
-                        },
-                        {
-                            layout: 'form',
-                            items: [
+                                layout: 'form',
+                                items: [
+                                {
+                                    xtype:'numberfield',
+                                    fieldLabel: 'Plazo',
+                                    name: 'plazo',
+                                    value: '<?=$comprobante->getCaPlazo()?>',
+                                    allowBlank:false,
+                                    allowNegative:false,
+                                    decimalPrecision : 0,
+                                    width: 80
+                                }
+                                ]
+                            },
+                            {
+                                layout: 'form',
+                                items: [
                                 {
                                     xtype:'numberfield',
                                     fieldLabel: 'Tasa de Cambio',
-                                    name: 'tcambio',                                    
-                                    allowBlank:false,
-                                    allowNegative:false,
-                                    decimalPrecision : 2,                                    
-                                    width: 80
-                                },
-                                {
-                                    xtype:'numberfield',
-                                    fieldLabel: 'Tasa de Cambio USD',
-                                    name: 'tcambio_usd',                 
+                                    name: 'tasacambio',
+                                    value: '<?=$comprobante->getCaTcambio()?>',
                                     allowBlank:false,
                                     allowNegative:false,
                                     decimalPrecision : 2,                                    
                                     width: 80
                                 }
-                            ]
+                                ]
+                            }
+                        ]
+                },
+					new Ext.form.ComboBox({
+				        store: ds,
+				        fieldLabel: 'Tercero',
+				        displayField:'nombre',
+				        typeAhead: false,
+                        width: 420,
+				        loadingText: 'Buscando...',
+				        valueNotFoundText: 'No encontrado' ,
+						minChars: 1,
+				        tpl: resultTpl,
+				        itemSelector: 'div.search-item',
+					    emptyText:'Escriba el nombre del cliente...',
+					    value: '<?=$comprobante->getIds()?$comprobante->getIds()->getCaNombre():""?>',
+					    forceSelection:true,
+						selectOnFocus:true,
+						allowBlank:false,
+                        <?
+                        if( $tipo=="F" ){
+                        ?>
+                        readOnly:true,
+                        <?
                         }
-                    ]
-            },
+                        ?>
+						onSelect: function(record, index){ // override default onSelect to do redirect
+							if(this.fireEvent('beforeselect', this, record, index) !== false){
+								this.setValue(record.data[this.valueField || this.displayField]);
+								this.collapse();
+								this.fireEvent('select', this, record, index);
+							}
+							
+							Ext.getCmp("id").setValue(record.get("id"));
+							//Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );
+						}
+					})
+				
 
-            this.ids
+				]
+            },{
+                title:'Notas',
+                layout:'form',
+                defaults: {width: 230},
+                defaultType: 'textfield',
 
+                items: [{
+					xtype:'textfield',
+					width: 500,
+					fieldLabel: 'Asunto',
+					name: 'asunto',
+					value: '',
+                    allowBlank:true
+                }, {
+					xtype: 'textarea',
+					width: 500,
+					fieldLabel: 'Notas',
+					name: 'entrada',
+					value: '',
+                    allowBlank:true
+                }]
+            }
+			
 
-            ]
-        },{
-            title:'Notas',
-            layout:'form',
-            defaults: {width: 230},
-            defaultType: 'textfield',
+			
 
-            items: [ {
-                xtype: 'textarea',
-                width: 500,
-                fieldLabel: 'Observaciones',
-                name: 'observaciones',
-                value: '',
-                allowBlank:true
-            }]            
+			]
+
         }]
 
     });
@@ -263,7 +326,7 @@ FormComprobantePanel = function( config ){
         labelAlign: 'top',
         title: 'Generación de Comprobantes',
         bodyStyle:'padding:1px',
-		//fileUpload: true,        
+		//fileUpload: true,
         items: [
             this.preview
         ]
@@ -274,95 +337,26 @@ FormComprobantePanel = function( config ){
 };
 
 Ext.extend(FormComprobantePanel, Ext.FormPanel, {
-    /**
-     * Form onRender override
-     */
-    onRender:function() {
-
-        // call parent
-        FormComprobantePanel.superclass.onRender.apply(this, arguments);
-
-        // set wait message target
-
-        if( this.idcomprobante ){
-            this.getForm().waitMsgTarget = this.getEl();
-            form  = this.getForm();
-
-
-            this.load({
-                url:'<?= url_for("inocomprobantes/datosComprobanteFormComprobantePanel") ?>',
-                waitMsg:'Cargando...',
-                params:{idcomprobante:this.idcomprobante},
-
-                success:function(response,options){
-                    this.res = Ext.util.JSON.decode( options.response.responseText );
-                    form.findField("tipo_id").setRawValue(this.res.data.tipo);
-                    form.findField("tipo_id").hiddenField.value = this.res.data.idtipo;
-                    /*
-                    var idtrafico = this.res.data.idtrafico;                       
-                    Ext.getCmp("ciudad_id").setIdtrafico( idtrafico );
-                    Ext.getCmp("ciudad_id").setValue( this.res.data.idciudad );
-                    if( idtrafico=="CO-057" ){
-                        Ext.getCmp("dir_col").setVisible(true);
-                        Ext.getCmp("dir_other").setVisible(false);
-                    }else{
-                        Ext.getCmp("dir_col").setVisible(false);
-                        Ext.getCmp("dir_other").setVisible(true);
-                    }
-
-                    if( tipo.getValue()!="1" ){                
-                        Ext.getCmp("dv_id").disable();
-                    }else{                
-                        Ext.getCmp("dv_id").enable();                
-                    }*/
-                }
-            });          
-
-        }
-
+    guardarEncabezadoForm: function(){
         
-       
-    },
-    guardar: function(){
-        
-        var idcomprobante = this.idcomprobante;
-        var modo = this.modo;
-        var idmaster = this.idmaster;
-        var form = this.getForm();
-        if( form.isValid() ){
-            
-            var grid = Ext.getCmp("form-comprobante-subpanel");
-            var records = grid.store.getRange();
-            var result = [];            
-            for( var i=0; i<records.length; i++){
-                rec = records[i];
-                if( rec.get("idconcepto") ){
-                    var str = "idconcepto="+rec.get("idconcepto");
-                    str += " valor="+rec.get("valor");
-                    str += " idccosto="+rec.get("idccosto");
-                    result.push( str );
-                }
 
-            }
-            form.findField("detalles").setValue(result.join("|"));
+        if( this.getForm().isValid() ){
 
-            form.submit({url:'<?=url_for( $saveUrl )?>',
+            this.getForm().submit({url:'<?=url_for( $saveUrl )?>',
                                     waitMsg:'Salvando Datos básicos...',
                                     success:function(response,options){
-                                        
-                                        if( !idcomprobante ){                                                
-                                            document.location='<?=url_for($saveUrlOkRedirect)."?idcomprobante="?>'+options.result.idcomprobante+"&idmaster="+idmaster+"&modo="+modo;
-                                        }else{
-                                            for( var i=0; i<records.length; i++){
-                                                rec = records[i];
-                                                rec.commit();                                                
-                                            }
-                                        }                                        
-                                       
+                                        <?
+                                        if( !$comprobante->getCaIdcomprobante()  ){
+                                        ?>
+                                            document.location='<?=url_for($saveUrlOkRedirect)."?idcomprobante="?>'+options.result.idcomprobante;
+                                        <?
+                                        }
+                                        ?>
+                                       //Ext.Msg.alert( "Msg "+response.responseText );
                                     },
                                     // standardSubmit: false,
-                                    failure:function(form,action){
-                                        Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(action.result?": "+action.result.errorInfo:"")+" "+(action.response?"\n Codigo HTTP "+action.response.status:""));                                    
+                                    failure:function(response,options){
+                                        Ext.Msg.alert( "Error "+response.responseText );
                                     }//end failure block
                                 });
         }else{
@@ -371,13 +365,13 @@ Ext.extend(FormComprobantePanel, Ext.FormPanel, {
     }
     ,
     previsualizar: function(){
-        window.open("<?=url_for("inocomprobantes/generarComprobantePDF")?>/idcomprobante/"+this.idcomprobante);
+        window.open("<?=url_for("inocomprobantes/generarComprobantePDF?id=".$comprobante->getCaIdcomprobante())?>");
 
     },
 
     generar: function(){
         if( confirm("Se generara la factura y se transferira a SIIGO, sera necesario anularla para hacer modificaciones, ¿desea continuar?") ){
-            document.location = "<?=url_for("inocomprobantes/generarComprobante")?>/idcomprobante/"+this.idcomprobante;            
+            document.location = "<?=url_for("inocomprobantes/generarComprobante?id=".$comprobante->getCaIdcomprobante())?>";
         }
 
     }

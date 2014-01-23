@@ -14,11 +14,11 @@ $recargos = $sf_data->getRaw( "recargos" );
 FormComprobanteSubpanelConceptos = function(){
 
     
-    this.dataConceptos = <?=json_encode(array("root"=>$recargos))?>;
+    this.dataRecargos = <?=json_encode(array("root"=>$recargos))?>;
 
     this.storeConceptos = new Ext.data.Store({
         autoLoad : true,
-        proxy: new Ext.data.MemoryProxy( this.dataConceptos ),
+        proxy: new Ext.data.MemoryProxy( this.dataRecargos ),
         reader: new Ext.data.JsonReader(
             {
                 id: 'idconcepto',
@@ -60,7 +60,7 @@ FormComprobanteSubpanelConceptos = function(){
                 successProperty: 'success'
             },
             Ext.data.Record.create([
-                {name: 'idmaster', mapping:'ca_idmaster'},
+                {name: 'idmaestra', mapping:'ca_idmaestra'},
                 {name: 'referencia', mapping:'ca_referencia'}
                 
             ])
@@ -74,7 +74,7 @@ FormComprobanteSubpanelConceptos = function(){
         selectOnFocus: true,
         minChars: 9,
         displayField: 'referencia',
-        valueField: 'idmaster',
+        valueField: 'idmaestra',
         lazyRender:true,        
         store : this.storeReferencias
     });
@@ -127,17 +127,15 @@ FormComprobanteSubpanelConceptos = function(){
         editor: new Ext.form.NumberField({
 				allowBlank: false ,
 				allowNegative: false,
-				style: 'text-align:right',
+				style: 'text-align:left',
 				decimalPrecision :3
-			}),
-        align: 'right',
-        renderer: Ext.util.Format.numberRenderer('0,0.00')
+			})
       }
     ];
 
     
     this.record = Ext.data.Record.create([            
-            {name: 'idmaster', type: 'int'},
+            {name: 'idmaestra', type: 'int'},
             {name: 'referencia', type: 'string'},
             {name: 'idcomprobante', type: 'int'},
             {name: 'idtransaccion', type: 'int'},
@@ -244,7 +242,7 @@ Ext.extend(FormComprobanteSubpanelConceptos, Ext.grid.EditorGridPanel, {
                         if( !rec.data.idconcepto ){
                             var newRec = new recordConcepto({
 
-                               idmaster: '<? //=$comprobante->getCaIdmaestra()?>',
+                               idmaestra: '<? //=$comprobante->getCaIdmaestra()?>',
                                idcomprobante: '<?=$comprobante->getCaIdcomprobante()?>',
                                concepto: '+',
                                idconcepto: '',
@@ -336,9 +334,9 @@ Ext.extend(FormComprobanteSubpanelConceptos, Ext.grid.EditorGridPanel, {
             var store = ed.field.store;
             
             store.each( function( r ){
-                if( r.data.idmaster==e.value ){
+                if( r.data.idmaestra==e.value ){
 
-                    rec.set("idmaster", r.data.idmaster);
+                    rec.set("idmaestra", r.data.idmaestra);
                     e.value = r.data.referencia;
                     return true;
                 }
@@ -379,15 +377,13 @@ Ext.extend(FormComprobanteSubpanelConceptos, Ext.grid.EditorGridPanel, {
             changes['valor']=r.data.valor;
             changes['idtransaccion']=r.data.idtransaccion;
             changes['idccosto']=r.data.idccosto ;
-            changes['db']=r.data.db ;
-
 
             if( r.data.idconcepto ){
                 //envia los datos al servidor
                 Ext.Ajax.request(
                     {
                         waitMsg: 'Guardando cambios...',
-                        url: '<?=url_for("inocomprobantes/observeFormComprobanteSubpanel?idcomprobante=".$comprobante->getCaIdcomprobante())?>',
+                        url: '<?=url_for("inocomprobantes/observeFormComprobanteSubpanelConceptos?idcomprobante=".$comprobante->getCaIdcomprobante())?>',
 						//method: 'POST',
                         //Solamente se envian los cambios
                         params :	changes,

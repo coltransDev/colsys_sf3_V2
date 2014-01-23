@@ -25,103 +25,78 @@ if($buscar)
     }
 </script>
 <form id="formDatos" name="formDatos" method="post" action="#" >
-<table class="tableList" width="600px" border="1" id="mainTable" align="center">
-        <tr>
-            <th></th>
-            <th>Referencia</th>
-            <th>Agente</th> 
-            <th>Linea</th>
-            <th>Modalidad</th>
-            <th >Factura</th>
-            <th>Vlr.Facturado</th>
-            <th>Estado</th>
-            <th  >Vol.CMB</th>
-            <th  >Utilidad</th> 
-            <th>Comisiones</th> 
-            <th>Comis/Sobreventa</th>
-            <th>Comis/Cobradas</th>
-            <th>Comprobantes</th></tr>
+<table class="tableList" width="600px" border="1" id="mainTable" align="center" >
+    <tr><th>Referencia</th><th>Estado</th><th>Cliente</th><th>Ref Transporte <? /*doc transporte*/?></th><!--<th>Agente</th>--> <th>Proveedor</th><th>Modalidad</th><th >Factura</th><th>Vlr.Facturado</th><th >RC</th><th  >Vol.CMB</th><th  >Utilidad</th> <th>Comisiones</th> <th>Comis/Sobreventa</th><th>Comis/Cobradas</th><th>Comprobantes</th></tr>
         <?
         $pos=1;
         $vendedorant="";        
-        //echo "<pre>";print_r($totales["linea"]);echo "</pre>";
+        //echo "<pre>";print_r($datos["amartinez"][0]);echo "</pre>";
         $pp=1;
-        foreach($datos as $vendedor=>$dat)
+        if(count($datos)==0)
         {
-            $totales1=array();
-?>
-        <tr>
-            <th colspan="14">Vendedor:<?=$vendedor?></th>
-        </tr>
-<?            
-            //for($i=0;$i<count($dat)-1;$i++)
-            for($i=0;$i<count($dat);$i++)
+            echo "<tr><td colspan='17'>No existen registros</td></tr>";
+        }
+        else
+        {
+            foreach($datos as $vendedor=>$dat)
             {
-                $d=$dat[$i];
-                $url="/ino/verReferencia/modo/".$d["tipo"]."/idmaster/".$d["ca_idmaster"];
-        ?>
-        <tr><td><a href="javascript:ver('<?=$pp.$d["ca_idmaster"]?>')">+</a></td>
-            <td><a href="<?=$url?>" target="_blank"><?=$d["ca_referencia"]?></a></td>
-            <td><?=$d["IdsAgente"]["Ids"]["ca_nombre"]?></td>
-            <td><?=$d["IdsProveedor"]["Ids"]["ca_nombre"]?></td>
-            <td><?=$d["ca_modalidad"]?></td>
-            <td></td>
-            <td><?=Utils::formatNumber($d["InoViIngreso"]["ca_valor"], 2)?></td>
-            <td><?=($d["ca_usucerrado"]=="")?"Abierto":"Cerrado"?></td>
-            <td  ><?=$d["InoViUnidadesMaster"]["ca_volumen"]?></td>
-            <td><?=Utils::formatNumber($d["ino"], 2)?></td> 
-            <td><?=Utils::formatNumber(($d["ino"]*0.10), 2)?></td> 
-            <td><?=Utils::formatNumber($d["InoViUtilidad"], 2)?></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr style="display: none" id="tr_<?=$pp.$d["ca_idmaster"]?>">
-            <td colspan="14" style="background-color: #EAEAEA">
-                <table>
-                    <tr>
-                        <th>Cliente</th>
-                        <th>Doc. Transporte</th>
-                        <th>Piezas</th>
-                        <th>Peso</th>
-                        <th>Volumen</th>
-                    </tr>
-                    <?
-                    foreach($d["InoHouse"] as $house)
-                    {
-                    ?>
-                    <tr>
-                        <td><?=$house["ca_idcliente"]?>-<?=$house["Cliente"]["ca_compania"]?></td>
-                        <td><?=$house["ca_doctransporte"]?></td>
-                        <td><?=$house["ca_numpiezas"]?></td>
-                        <td><?=$house["ca_peso"]?></td>
-                        <td><?=$house["ca_volumen"]?></td>
-                    </tr>
-                    <?
-                    }
-                    ?>
-                </table>
-            </td>
-        </tr>
-<?
-                $totales["ing"]+=$d["ing_valor"];
-                $totales["ino"]+=$d["ino"];
-                $totales["comision_ino"]+=$d["comision_ino"];
-                $totales["uti"]+=$d["uti_valor"];
-                $totales["comision_cobrada"]+=$d["comision_cobrada"];
+                $totales1=array();
+    ?>
+            <tr>
+                <th colspan="17">Vendedor:<?=$vendedor?></th>
+            </tr>
+    <?            
+                for($i=0;$i<count($dat);$i++)
+                {
+                    $d=$dat[$i];                    
+                    $url="/ino/verReferencia/modo/".$d["tipo"]."/idmaster/".$d["ca_idmaster"];
+            ?>
+            <tr>
+                <td><a href="<?=$url?>" target="_blank"><?=$d["ca_referencia"]?></a></td>
+                <td><?=($d["ca_usucerrado"]=="")?"Abierto":"Cerrado"?></td>
+                <td><?=$d["ca_compania"]?></td>
+                <td><?=$d["ca_doctransporte"]?></td>
+                <!--<td><?=$d["a_nombre"]?></td>-->
+                <td><?=$d["p_nombre"]?></td>
+                <td><?=$d["ca_modalidad"]?></td>
+                <td><?=$d["facturas"]?></td>
+                <td><?=Utils::formatNumber($d["ing_valor"], 0)?></td>
+                <td><?=$d["rcaja"]?></td>
+                <td  ><?=$d["ca_volumen"]?></td>
+                <td><?=Utils::formatNumber($d["ino"], 0)?></td>
+                <td><?=Utils::formatNumber(($d["comision_ino"]), 0)?></td>
+                <td><?=Utils::formatNumber($d["uti_valor"], 0)?></td>
+                <td><?=Utils::formatNumber($d["comision_cobrada"], 0)?></td>
+                <td><?=$d["comision_comprobante"]?></td>
+                
+                <?                
+                //TODO ::circular 170
+                ?>
+            </tr>            
+    <?
+                $totales1["ing"]+=$d["ing_valor"];
+                $totales1["ino"]+=$d["ino"];
+                $totales1["comision_ino"]+=$d["comision_ino"];
+                $totales1["uti"]+=$d["uti_valor"];
+                $totales1["comision_cobrada"]+=$d["comision_cobrada"];
+                }
+    ?>
+            <tr><th colspan="7">Totales</th>
+                <th><?=Utils::formatNumber($totales1["ing"], 2)?></th>
+                <th></th>
+                <th></th>
+                <th><?=Utils::formatNumber($totales1["ino"], 2)?></th>
+                <th><?=Utils::formatNumber($totales1["comision_ino"], 2)?></th> 
+                <th><?=Utils::formatNumber($totales1["uti"], 2)?></th>
+                <th><?=Utils::formatNumber($totales1["comision_cobrada"], 2)?></th><th></th><th></th></tr>
+            <?
+                echo '<tr><td colspan="17"><hr></td></tr>';
+                $vendedorant=$vendedor;
+                $pp++;
             }
-?>
-        <tr><th colspan="6">Totales</th>
-            <th><?=Utils::formatNumber($totales["vendedor"][$vendedor]["InoViIngreso"]["valor"], 2)?></th>
-            <th></th>
-            <th><?=Utils::formatNumber($totales["vendedor"][$vendedor]["volumen"]["valor"],2)?></th>
-            <th><?=Utils::formatNumber($totales["vendedor"][$vendedor]["ino"]["valor"], 2)?></th> 
-            <th><?=Utils::formatNumber(($totales["vendedor"][$vendedor]["ino"]["valor"]*0.10), 2)?></th> 
-            <th><?=Utils::formatNumber($totales["vendedor"][$nvendedor]["InoViUtilidad"]["valor"], 2)?></th>
-            <th></th><th></th></tr>
-        <?
-            echo '<tr><td colspan="14"><hr></td></tr>';
-            $vendedorant=$vendedor;
-            $pp++;
+            ?>
+
+            <?
         }
         ?>
 </table>

@@ -29,14 +29,18 @@ class CostosINOForm extends BaseForm{
                 $queryCosto->addWhere("m.ca_modalidad = ? ", $this->referencia->getCaModalidad());
         }
        
-        $widgets["referencia"] = new sfWidgetFormInputHidden();        
+        $widgets["referencia"] = new sfWidgetFormInputHidden();
+        
 		$widgets['idcosto'] = new sfWidgetFormDoctrineChoice(array(
 															  'model' => 'InoConcepto',
 															  'add_empty' => false,
 															  'method' => "getCaConcepto",
 															  'query' => $queryCosto
 															) );
-
+        
+        
+        
+        
 		$widgets['idmoneda'] = new sfWidgetFormDoctrineChoice(array(
 															  'model' => 'Moneda',
 															  'add_empty' => false,
@@ -61,10 +65,6 @@ class CostosINOForm extends BaseForm{
         foreach( $this->inoHouses as $ic ){
             $widgets["util_".$ic->getCaIdhouse()] = new sfWidgetFormInputText(array(), array("size"=>15, "maxlength"=>15, "onchange"=>"calcular()" ));
             $validator["util_".$ic->getCaIdhouse()] = new sfValidatorNumber(array('required' => true ), 
-														array('required' => 'Requerido',
-																'invalid' => 'No valido'));
-            $widgets["costo_".$ic->getCaIdhouse()] = new sfWidgetFormInputText(array(), array("size"=>15, "maxlength"=>15, "onchange"=>"calcularcosto()" ));
-            $validator["costo_".$ic->getCaIdhouse()] = new sfValidatorNumber(array('required' => true ), 
 														array('required' => 'Requerido',
 																'invalid' => 'No valido'));
         }
