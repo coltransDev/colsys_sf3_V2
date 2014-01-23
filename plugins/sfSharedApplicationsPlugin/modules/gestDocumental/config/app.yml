@@ -1,0 +1,72 @@
+# default values
+all:
+  digitalFile:
+    root:  /home/maquinche/Desarrollo/digitalFile/
+    aduana: /home/maquinche/G/ADUANA/FOTOS-RECONOCIMIENTOS/
+
+#    root:  C:\Desarrollo\digitalFile\
+
+  branding:
+    template: coltrans
+    url: www.coltrans.com.co
+    name: TPLogistics
+    name1: Coltrans S.A.S.
+    name2: Colmas Ltda
+    from: serclientebog@coltrans.com.co
+    idempresa: 800024075
+  smtp:
+#    Groupwise
+    host: 10.194.1.120
+#
+#    TELMEX	
+#    host: smtp.colmas.com.co
+    user: maquinche
+    passwd:  80166236
+
+#
+#    ETB
+#    host: correo.etb.net.co
+#    user: coltrans_sea
+#    passwd:  nvaetb
+    port: 25
+#    debugAddress: maquinche@coltrans.com.co
+#    debugAddress: colsys@coltrans.com.co
+#    debugAddress: maquincher@hotmail.com
+#    public_ip: 200.14.235.62
+
+  ldap:
+    host: novell.coltrans.com.co
+    auth_enabled: true
+#    user: colsys
+#    passwd: $tlco5903Am
+
+  memcache:
+    host: 10.192.1.62
+    port: 11211
+    prefix: colsess
+
+  session:
+    maxinactive: 84000
+  ip:
+    trusted: 127.0.0.1 10.192.1 10.192.2
+
+ #archivos de falabella
+  falabella:
+    input:  /home/falabella/OUT
+    input_processed:  /home/falabella/OUT/processed
+    output:  /home/falabella/IN    
+
+    input_adu:  /home/falafact/OUT
+    input_processed_adu:  /home/falafact/OUT/processed
+    output_adu:  /home/falafact/IN
+
+ #archivos de clariant
+  clariant:
+    input:  /home/clariant/OUT
+    input_processed:  /home/clariant/OUT/processed
+    output:  /home/clariant/IN
+
+
+  gestDocumental:
+    noAuth: KBaseWeb, KBase
+ 
