@@ -175,7 +175,7 @@ Ext.extend(WidgetCiudad, Ext.form.ComboBox, {
                                     }
                                         return true;
                                 }
-                                else if( nomimpoexpo=="<?=constantes::TRIANGULACION?>")
+                                else if( nomimpoexpo=="<?=constantes::TRIANGULACION?>" || nomimpoexpo=="<?=constantes::INTERNO?>")
                                 {
                                     var str=record.get("ciudad_trafico");
                                     var txt=new RegExp(q,"ig");

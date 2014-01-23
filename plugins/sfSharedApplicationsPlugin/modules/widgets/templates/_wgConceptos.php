@@ -33,7 +33,7 @@ Ext.define('Ext.colsys.wgConceptos', {
     trigger2Class: 'x-form-clear-trigger',
         onRender: function(ct, position){
             
-            if(!this.transporte)
+/*            if(!this.transporte)
             {
                 this.transporte=(Ext.getCmp(this.transporte))?Ext.getCmp(this.transporte).getValue():this.transporte;
             }
@@ -43,13 +43,15 @@ Ext.define('Ext.colsys.wgConceptos', {
                 this.modalidad=(Ext.getCmp(this.modalidad))?Ext.getCmp(this.modalidad).getValue():this.modalidad;
             }
             
+            
+            
             this.store.load({
                 params : {
                     transporte: this.transporte,
                     modalidad : this.modalidad
                 }
             });
-
+*/
             Ext.colsys.wgConceptos.superclass.onRender.call(this, ct, position);
             var id = this.getId();
             this.triggerConfig = {

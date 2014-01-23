@@ -1,5 +1,5 @@
 <script type="text/javascript">
-WidgetMultiDatos = function( config ){
+MultiWidget = function( config ){
     Ext.apply(this, config);
 
     this.store = new Ext.data.Store({
@@ -17,8 +17,8 @@ WidgetMultiDatos = function( config ){
                 sortInfo: {field: 'id', direction: 'ASC'}
 			});
 
-    WidgetMultiDatos.superclass.constructor.call(this, {
-            valueField: 'id', 
+    MultiWidget.superclass.constructor.call(this, {
+        valueField: 'id', 
 		displayField: 'valor', 
 		forceSelection: true, 
 		triggerAction: 'all', 
@@ -26,10 +26,10 @@ WidgetMultiDatos = function( config ){
 		selectOnFocus: true, 
 		lazyRender:true, 
 		mode: 'local', listClass: 'x-combo-list-small',
-            submitValue: true
+        submitValue: true
     });
 };
 
-Ext.extend(WidgetMultiDatos, Ext.form.ComboBox, {
+Ext.extend(MultiWidget, Ext.form.ComboBox, {
 });	
 </script>

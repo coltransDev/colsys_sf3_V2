@@ -4,13 +4,9 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
-
+//include_component("widgets", "widgetParametros",array("caso_uso"=>"CU227"));
 ?>
-
 <script language="javascript">
-
-
 
 WidgetTerceroWindow = function( config ){
     Ext.apply(this, config);
@@ -18,14 +14,12 @@ WidgetTerceroWindow = function( config ){
     WidgetTerceroWindow.superclass.constructor.call(this, {
         autoDestroy :false,
         id: 'tercero-window',
-        width       : 500,			
+        width       : 500,
 			plain       : true,
             closable :false,
 			items       : new Ext.FormPanel({
                 id: 'tercero-form',
-                
                 defaultType: 'textfield',
-
                 items: [
                         {
                         name: 'idtercero',
@@ -33,6 +27,53 @@ WidgetTerceroWindow = function( config ){
                         allowBlank:false,
                         width       : 300
                         },
+                        {
+                            xtype: 'radiogroup',
+                            fieldLabel: 'Tipo',
+                            itemCls: 'x-check-group-alt',
+                            id:"tipoper",
+
+                            items: [
+                                {boxLabel: 'Empresa', name: 'tipopersona', inputValue: 2, checked: true},
+                                {boxLabel: 'Persona natural', name: 'tipopersona', inputValue: 1},
+                            ],
+                            listeners:{
+                                change:function( radio, checked )
+                                {
+                                    
+                                    if(checked.inputValue=="2")
+                                    {
+                                        Ext.getCmp("nombre").show();
+                                        Ext.getCmp("nombre1").hide();
+                                        Ext.getCmp("nombre2").hide();
+                                        Ext.getCmp("apellido1").hide();
+                                        Ext.getCmp("apellido2").hide();
+                                        Ext.getCmp("nombre1").allowBlank=true;
+                                        Ext.getCmp("nombre2").allowBlank=true;
+                                        Ext.getCmp("apellido1").allowBlank=true;
+                                        Ext.getCmp("apellido2").allowBlank=true;
+                                    }
+                                    else if(checked.inputValue=="1")
+                                    {
+                                        Ext.getCmp("nombre").allowBlank=true;
+                                        Ext.getCmp("nombre").hide();
+                                        Ext.getCmp("nombre1").show();
+                                        Ext.getCmp("nombre2").show();
+                                        Ext.getCmp("apellido1").show();
+                                        Ext.getCmp("apellido2").show();
+                                    }
+                                }
+                            }
+                        },
+                        /*new WidgetParametros({
+                            fieldLabel: 'Tipo Persona',
+                            id:'tpersona',
+                            name:'tpersona',
+                            caso_uso:"CU227",
+                            width:120,
+                            idvalor: "valor",
+                            ididentificador:"identificador"
+                        }),*/
                         new Ext.form.TextField({
                             fieldLabel: 'Nombre',
                             name: 'nombre',
@@ -40,8 +81,39 @@ WidgetTerceroWindow = function( config ){
                             allowBlank:false,
                             width:300,
                             maxLength: 80
-                        })
-                        ,
+                        }),
+                        new Ext.form.TextField({
+                            fieldLabel: 'Nombre 1',
+                            name: 'nombre1',
+                            id: 'nombre1',                            
+                            width:300,
+                            maxLength: 30,
+                            hidden:true
+                        }),
+                        new Ext.form.TextField({
+                            fieldLabel: 'Nombre 2',
+                            name: 'nombre2',
+                            id: 'nombre2',                            
+                            width:300,
+                            maxLength: 30,
+                            hidden:true
+                        }),
+                        new Ext.form.TextField({
+                            fieldLabel: 'Apellido 1',
+                            name: 'apellido1',
+                            id: 'apellido1',                            
+                            width:300,
+                            maxLength: 30,
+                            hidden:true
+                        }),
+                        new Ext.form.TextField({
+                            fieldLabel: 'Apellido 2',
+                            name: 'apellido2',
+                            id: 'apellido2',                            
+                            width:300,
+                            maxLength: 30,
+                            hidden:true
+                        }),
                         {
                         fieldLabel: 'Identificación',
                         name: 'identificacion',
@@ -118,37 +190,24 @@ Ext.extend(WidgetTerceroWindow, Ext.Window, {
     guardar: function(){
 
         var fp = Ext.getCmp("tercero-form");
-
+        
+        
         if(fp.getForm().isValid()){
-            var idtercero = fp.getForm().findField("idtercero").getValue();
-            var nombre = fp.getForm().findField("nombre").getValue();
-            var identificacion = fp.getForm().findField("identificacion").getValue();
-            var direccion = fp.getForm().findField("direccion").getValue();
-            var telefono = fp.getForm().findField("telefono").getValue();
-            var fax = fp.getForm().findField("fax").getValue();
-            var email = fp.getForm().findField("email").getValue();
-            var contacto = fp.getForm().findField("contacto").getValue();
-            var fldCiudad = fp.getForm().findField("ciudad");
-            var idciudad = fldCiudad.hiddenField?fldCiudad.hiddenField.value:fldCiudad.getValue();
+            
+            datos=fp.getForm().getValues();
+            if(datos.tipopersona=="1")
+            {
+                datos.nombre=datos.nombre1+" "+datos.nombre2+" "+datos.apellido1+" "+datos.apellido2;                
+            }
+            datos.idcomponent=this.idcomponent;
+            datos.tipo=this.tipo;            
+            
             WidgetTerceroWindow = this;
             Ext.Ajax.request(
             {
                 waitMsg: 'Guardando cambios...',
                 url: '<?=url_for("widgets/guardarTercero")?>',
-                params : {
-                    idtercero: idtercero,
-                    nombre: nombre,
-                    identificacion: identificacion,
-                    direccion: direccion,
-                    telefono: telefono,
-                    fax: fax,
-                    email: email,
-                    contacto: contacto,
-                    idciudad: idciudad,
-                    idcomponent: this.idcomponent,
-                    tipo: this.tipo
-                }
-                ,               
+                params : datos,
                 callback :function(options, success, response){
                     var res = Ext.util.JSON.decode( response.responseText );
                     if( res.success ){
@@ -180,16 +239,42 @@ Ext.extend(WidgetTerceroWindow, Ext.Window, {
             {
                 waitMsg: 'Cargando datos...',
                 url: '<?=url_for("widgets/datosTercero")?>',
-
                 params : {
                         idtercero: idtercero
-                }
-                ,
-    		callback :function(options, success, response){
+                },
+                callback :function(options, success, response){
                     var res = Ext.util.JSON.decode( response.responseText );
                     var fp = Ext.getCmp("tercero-form");
+                    
+                    if(res.tipopersona=="2")                    
+                    {
+                        Ext.getCmp("nombre").show();
+                        Ext.getCmp("nombre1").hide();
+                        Ext.getCmp("nombre2").hide();
+                        Ext.getCmp("apellido1").hide();
+                        Ext.getCmp("apellido2").hide();
+                        Ext.getCmp("nombre1").allowBlank=true;
+                        Ext.getCmp("nombre2").allowBlank=true;
+                        Ext.getCmp("apellido1").allowBlank=true;
+                        Ext.getCmp("apellido2").allowBlank=true;
+                    }
+                    else if(checked.inputValue=="1")
+                    {
+                        Ext.getCmp("nombre").allowBlank=true;
+                        Ext.getCmp("nombre").hide();
+                        Ext.getCmp("nombre1").show();
+                        Ext.getCmp("nombre2").show();
+                        Ext.getCmp("apellido1").show();
+                        Ext.getCmp("apellido2").show();
+                    }
+                    fp.getForm().findField("tipoper").setValue(res.tipopersona);
+                    
                     fp.getForm().findField("idtercero").setValue(res.idtercero);
                     fp.getForm().findField("nombre").setValue(res.nombre);
+                    fp.getForm().findField("nombre1").setValue(res.nombre1);
+                    fp.getForm().findField("nombre2").setValue(res.nombre2);
+                    fp.getForm().findField("apellido1").setValue(res.apellido1);
+                    fp.getForm().findField("apellido2").setValue(res.apellido2);
                     fp.getForm().findField("identificacion").setValue(res.identificacion);
                     fp.getForm().findField("direccion").setValue(res.direccion);
                     fp.getForm().findField("telefono").setValue(res.telefonos);
@@ -207,6 +292,9 @@ Ext.extend(WidgetTerceroWindow, Ext.Window, {
             var fp = Ext.getCmp("tercero-form");
             fp.getForm().findField("idtercero").setValue("");
             fp.getForm().findField("nombre").setValue("");
+            fp.getForm().findField("nombre2").setValue("");
+            fp.getForm().findField("apellido1").setValue("");
+            fp.getForm().findField("apellido2").setValue("");
             fp.getForm().findField("identificacion").setValue("");
             fp.getForm().findField("direccion").setValue("");
             fp.getForm().findField("telefono").setValue("");
