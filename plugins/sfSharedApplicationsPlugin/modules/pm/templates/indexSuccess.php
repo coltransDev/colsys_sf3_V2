@@ -137,9 +137,9 @@ Ext.onReady(function(){
                 new PanelConsulta({
                         title: "Tickets"
                     }),
-                new PanelCategorias({
+                /*new PanelCategorias({
                         title: "Base Conocimiento"
-                    })
+                    })*/
 
             ]
         },
@@ -348,7 +348,7 @@ Ext.onReady(function(){
        ?>
 
 
-       var panel = new PanelTicketsActivos({
+       /*var panel = new PanelTicketsActivos({
            title: "Tickets Abiertos",
            width: 650,
            height: 300,
@@ -356,7 +356,7 @@ Ext.onReady(function(){
        });
        panel.render("panel-activos");
        panel.store.setBaseParam("option", "misTickets");
-       panel.recargar();
+       panel.recargar();*/
        
        
 

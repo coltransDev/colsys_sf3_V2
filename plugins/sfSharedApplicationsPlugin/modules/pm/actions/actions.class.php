@@ -1293,12 +1293,17 @@ class pmActions extends sfActions {
      */
 
     public function executeDatosPanelConsulta() {
+        $this->user = $this->getUser();
         $this->departamentos = Doctrine::getTable("Departamento")
                         ->createQuery("d")
+                        ->innerJoin("d.Usuario u")
                         ->where("d.ca_inhelpdesk = ?", true)
+                        ->addWhere("u.ca_login = ?", $this->user)
                         ->addOrderBy("d.ca_nombre ASC")
                         ->execute();
-        $this->user = $this->getUser();
+               
+        
+        
     }
 
     /*
