@@ -117,8 +117,6 @@ class inoparametrosActions extends sfActions
 		$this->setTemplate("responseTemplate");
     }
 
-
-
     /*
     * guarda el panel de conceptos
     * @param sfRequest $request A request object
@@ -137,7 +135,6 @@ class inoparametrosActions extends sfActions
 
         $concepto = Doctrine::getTable("InoConcepto")->find($idconcepto);
         $this->forward404Unless($concepto);
-                
 
         if( $modo=="fv" ){
             //ca_idparametro
@@ -175,8 +172,11 @@ class inoparametrosActions extends sfActions
             if( $request->getParameter("valor")!==null ){
                 $parametro->setCaValor( $request->getParameter("valor") );
             }
+            
+           if( $request->getParameter("autoretencion")!==null ){
+                $parametro->setCaAutoretencion($request->getParameter("valor"));
+            }
             $parametro->save();
-
         }
 
         if( $modo=="fc" ){
@@ -215,16 +215,15 @@ class inoparametrosActions extends sfActions
             if( $request->getParameter("valor")!==null ){
                 $parametro->setCaValor( $request->getParameter("valor") );
             }
+            
+            if( $request->getParameter("autoretencion")!==null ){
+                $parametro->setCaAutoretencion($request->getParameter("valor"));
+            }
             $parametro->save();
-
         }
 
-
         $this->responseArray["success"]=true;
-
         $this->responseArray["idconcepto"]=$concepto->getCaIdconcepto();
-
-
         $this->setTemplate("responseTemplate");
     }
 
@@ -463,11 +462,114 @@ class inoparametrosActions extends sfActions
     *   PARAMETRIZACION DE CENTROS DE COSTOS
     *
     *****************************************************************************/
-   
+    public function executeHomologacionFormExt4( sfWebRequest $request ){
+        
+        
+    }
 
+    public function executeDatosConceptosSiigo( sfWebRequest $request ){
+        
+        $idconcepto = $request->getParameter("idconcepto");
+        $idccosto = $request->getParameter("idccosto");
+        
+        
+        $ccosto = Doctrine::getTable("InoCentroCosto")->find($idccosto);
+        
+
+        $conceptosSiigo = Doctrine::getTable("InoConSiigo")
+                         ->createQuery("s")
+                         ->select("*")
+                         ->where("ca_cc = ?  and ca_scc = ? ", array($ccosto->getCaCentro() , $ccosto->getCaSubcentro()))
+                         ->addOrderBy( "s.ca_idconceptosiigo" )
+                         ->execute();
+        $data=$seleccionados=array();
+        foreach ($conceptosSiigo as $s)
+        {
+            $data[]=array("id"=>$s->getCaIdconceptosiigo(),"name"=>$s->getCaCod()."-".$s->getCaDescripcion());
+        }
+        
+        
+        if($idconcepto!="")
+        {
+            $conceptosHomo = Doctrine::getTable("InoConHomologacion")
+                         ->createQuery("ch")
+                         ->select("ca_idconceptosiigo")
+                         ->where("ca_idconcepto = ?  and ca_idccosto = ? ", array($idconcepto , $idccosto ))                         
+                        ->execute();
+//        print_r($conceptosHomo);
+            foreach ($conceptosHomo as $s)
+            {
+                $seleccionados[]=$s->getCaIdconceptosiigo();
+            }            
+        }
+        //print_r($seleccionados);
+        //exit;
+
+        $this->responseArray = array("root"=>$data,"seleccionados"=>$seleccionados, "success"=>true );
+        $this->setTemplate("responseTemplate");
+    }
     
+    public function executeDatosConceptosHomo( sfWebRequest $request ){
+       
+        $idconcepto = $request->getParameter("idconcepto");
+        $idccosto = $request->getParameter("idccosto");
+        $seleccionados=array();
+        if($idconcepto!="" && $idccosto!="")
+        {
+            $conceptosHomo = Doctrine::getTable("InoConHomologacion")
+                             ->createQuery("ch")
+                             ->select("ca_idconceptosiigo")
+                             ->where("ca_idconcepto = ?  and ca_idccosto = ? ", array($idconcepto , $idccosto ))
+                            ->execute();
 
+            foreach ($conceptosHomo as $s)
+            {
+                $seleccionados[]=$s->getCaIdconceptosiigo();
+            }
+        }
 
+        $this->responseArray = array("seleccionados"=>$seleccionados, "success"=>true );
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeGuardarConceptosHomo( sfWebRequest $request ){
+
+        $idconcepto = $request->getParameter("idconcepto");
+        $idccosto = $request->getParameter("idccosto");
+        $seleccionados=  explode(",", $request->getParameter("seleccionados"));
+        //print_r($seleccionados);
+        
+        //$conn = Doctrine::getTable("InoConHomologacion")->getConnection();
+        //$conn->beginTransaction();
+        
+        $conceptosHomo = Doctrine::getTable("InoConHomologacion")
+                            ->createQuery("ch")
+                            ->delete()
+                            ->where("ca_idconcepto = ?  and ca_idccosto = ? ", array($idconcepto , $idccosto ))
+                            ->execute();
+        
+        try {    
+            foreach($seleccionados as $s) 
+            {
+                $conHomo = new InoConHomologacion();
+                $conHomo->setCaIdccosto($idccosto);
+                $conHomo->setCaIdconceptosiigo($s);
+                $conHomo->setCaIdconcepto($idconcepto);
+                $conHomo->save();
+            }
+
+            //$conn->commit();
+            $success=true;
+        }
+        catch(Exception $e)
+        {
+            $success=false;
+            $error=$e->getMessage();
+        }
+        $this->responseArray = array( "success"=>$success, "error"=>$error );
+        $this->setTemplate("responseTemplate");
+        
+    }
     
 
 }

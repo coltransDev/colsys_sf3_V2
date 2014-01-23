@@ -24,7 +24,6 @@ PanelParametrosCuentas = function( config ){
         selectOnFocus: true        
     });
 
-
     this.combo = new Ext.form.ComboBox({
         typeAhead: true,
         id: 'combo',
@@ -40,7 +39,6 @@ PanelParametrosCuentas = function( config ){
             proxy: new Ext.data.MemoryProxy( <?=json_encode($centros)?> ),
             reader: new Ext.data.JsonReader(
                 {
-
                     successProperty: 'success'
                 },
                 Ext.data.Record.create([
@@ -73,21 +71,15 @@ PanelParametrosCuentas = function( config ){
                 grid.store.reload();
             }
         }
-
     });
 
 
     this.checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:25});
     this.ingresoPropioCheckColumn = new Ext.grid.CheckColumn({header:'Ing. Propio', dataIndex:'ingreso_propio', width:25});
+    this.conveniosCheckColumn = new Ext.grid.CheckColumn({header:'Convenios', dataIndex:'convenios', width:25});
 
-    //this.fleteCheckColumn = new Ext.grid.CheckColumn({header:'Flete', dataIndex:'flete', width:25});
-    this.recLocalCheckColumn = new Ext.grid.CheckColumn({header:'Rec. Local', dataIndex:'recargolocal', width:25});
-    this.recOrigenCheckColumn = new Ext.grid.CheckColumn({header:'Rec. Origen', dataIndex:'recargoorigen', width:25});
-    //this.costoCheckColumn = new Ext.grid.CheckColumn({header:'Costo', dataIndex:'costo', width:25});
 
     this.columns = [
-
-
        {
         header: "Código",
         dataIndex: 'idconcepto',
@@ -95,7 +87,6 @@ PanelParametrosCuentas = function( config ){
         sortable:false,
         width: 30,
         renderer: this.formatItem
-
       },
       {
         header: "Concepto",
@@ -103,10 +94,8 @@ PanelParametrosCuentas = function( config ){
         hideable: false,
         width: 170,
         renderer: this.formatItem,
-        sortable: this.readOnly
-        
-      },
-      
+        sortable: this.readOnly        
+      },      
       this.ingresoPropioCheckColumn
       ,
       {
@@ -116,10 +105,7 @@ PanelParametrosCuentas = function( config ){
         hideable: false,
         sortable:true,
         editor: this.editorCuentas
-
-
       },
-
       {
         header: "% IVA",
         dataIndex: 'iva',
@@ -154,7 +140,7 @@ PanelParametrosCuentas = function( config ){
         sortable:true,
         editor: this.editorCuentas
       }
-      /*,
+      ,
       {
         header: "Valor",
         dataIndex: 'valor',
@@ -167,25 +153,22 @@ PanelParametrosCuentas = function( config ){
 				style: 'text-align:left',
 				decimalPrecision :3
 			})
-      }*/
-
-      /*,
-
-      {
-        header: "Convenios",
-        dataIndex: 'cobrar_idm',
-        width: 50,
-        hideable: false,
-        sortable:false,
-        editor: <?=include_component("widgets", "monedas" ,array("id"=>""))?>
-      },
+      }
+      ,
+      this.conveniosCheckColumn
+      ,
       {
         header: "Autoretención",
-        dataIndex: 'orden',
-        width: 50
-      }*/
+        dataIndex: 'autoretencion',
+        width: 50,
+        editor: new Ext.form.NumberField({
+				allowBlank: false ,
+				allowNegative: false,
+				style: 'text-align:left',
+				decimalPrecision :3
+			})
+      }
      ];
-
 
     this.record = Ext.data.Record.create([
             {name: 'sel', type: 'bool'},
@@ -198,14 +181,11 @@ PanelParametrosCuentas = function( config ){
             {name: 'cuenta', type: 'string', mapping: 'cu_ca_cuenta'},
             {name: 'ingreso_propio', type: 'bool', mapping: 'p_ca_ingreso_propio'},
             {name: 'iva', type: 'string', mapping: 'p_ca_iva'},
+            {name: 'autoretencion', type: 'string', mapping: 'p_ca_autoretencion'},
             {name: 'baseretencion', type: 'string', mapping: 'p_ca_baseretencion'},
             {name: 'cuentaretencion', type: 'string', mapping: 'cr_ca_cuentaretencion'},
             {name: 'idcuentaretencion', type: 'string', mapping: 'p_ca_idcuentaretencion'},
-            {name: 'valor', type: 'float', mapping: 'p_ca_valor'},
-            {name: 'recargolocal', type: 'bool', mapping: 'c_ca_recargolocal'},
-            {name: 'recargoorigen', type: 'bool', mapping: 'c_ca_recargoorigen'},
-            {name: 'flete', type: 'bool', mapping: 'c_ca_flete'},
-            {name: 'costo', type: 'bool', mapping: 'c_ca_costo'}
+            {name: 'valor', type: 'float', mapping: 'p_ca_valor'}
     ]);
 
     this.store = new Ext.data.Store({
@@ -242,12 +222,10 @@ PanelParametrosCuentas = function( config ){
        clicksToEdit: 2,
        id: 'panel-parametros',
        plugins: [
-                    this.recLocalCheckColumn,
-                    this.recOrigenCheckColumn,
-                    this.ingresoPropioCheckColumn
+                    this.ingresoPropioCheckColumn,
+                    this.conveniosCheckColumn
                 ],
        view: new Ext.grid.GridView({
-
             forceFit:true,
             enableRowBody:true,
             showPreview:true//,
@@ -255,14 +233,11 @@ PanelParametrosCuentas = function( config ){
        }),
        listeners:{
             validateedit: this.onValidateEdit,
-           
             dblclick:this.onDblClickHandler,
             celldblclick: this.onCelldblclick,
             validateedit: this.onValidateEdit
-
-       },
-       tbar: this.tbar
-
+       }
+       //,tbar: this.tbar
     });
 
     var storePanelParametrosCuentas = this.store;
