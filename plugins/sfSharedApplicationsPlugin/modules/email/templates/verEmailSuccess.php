@@ -66,11 +66,11 @@ $email = $sf_data->getRaw("email");
 							foreach( $attachments as $attachment ){
                                 
                                 
-                                if( substr($attachment, -3,3)==".gz"){
-                                    $nombreArchivo = substr($attachment,0, strlen($attachment)-3);
-                                }else{
-                                    $nombreArchivo = $attachment;
-                                }
+                            if( substr($attachment, -3,3)==".gz"){
+                                $nombreArchivo = substr($attachment,0, strlen($attachment)-3);
+                            }else{
+                                $nombreArchivo = $attachment;
+                            }
 								echo link_to(mime_type_icon(basename($nombreArchivo))." ".basename($nombreArchivo), "email/verAttachment?id=".base64_encode($nombreArchivo))."<br />";
 							}
 							?>

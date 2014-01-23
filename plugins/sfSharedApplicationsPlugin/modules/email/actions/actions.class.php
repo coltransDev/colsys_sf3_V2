@@ -9,7 +9,9 @@
  * @version    SVN: $Id: actions.class.php 12479 2008-10-31 10:54:40Z fabien $
  */
 class emailActions extends sfActions
-{
+{ 
+
+
     /*
 	* Permite ver un email
     * @param sfRequest $request A request object
@@ -62,6 +64,7 @@ class emailActions extends sfActions
                 }
             }
         }
+
         if( file_exists($this->archivo.".gz")){
             $this->archivo.=".gz";
         }

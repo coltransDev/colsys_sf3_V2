@@ -1,5 +1,6 @@
 <?
 $message=$sf_data->getRaw("message");
+$messageHtml=$sf_data->getRaw("messageHtml");
 ?>
 
 <script language="javascript">
@@ -109,14 +110,39 @@ var seleccionarContacto1 = function(){
     </tr>
 	<tr>
 		<td><div align="left"><b>Solicitar Acuse de recibo:</b> <br />
-			<input type="checkbox" name="readreceipt" value="true" checked="checked" />	
+			<input type="checkbox" name="readreceipt" value="false" />	
 		</div></td>
     </tr>
 	<tr>
 		<td colspan="<?=(($contacts1!="")?"1":"2" )?>">
 			<div align="left"><b>Mensaje</b><br>
+<?
+            if(isset($message))
+            {
+?>
                 <textarea name="mensaje" style="width: 100%" rows="10" ><?=isset($message)?$message:""?></textarea>			
-		</div></td>
+<?
+            }
+            else if(isset($messageHtml))
+            {
+?>
+                <div id="ta"> </div>
+                <script>
+                    new Ext.form.HtmlEditor({
+                    renderTo: 'ta',
+                    width: 800,
+                    height: 300,
+                    value:'<?=isset($messageHtml)?$messageHtml:""?>',
+                    name:"mensaje",
+                    id:"mensaje"
+                });
+                </script>
+<?
+            }
+?>
+		</div>
+            
+        </td>
         <?
         if( $contacts1!="" ){
         ?>
