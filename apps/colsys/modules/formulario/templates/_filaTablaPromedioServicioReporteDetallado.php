@@ -36,5 +36,5 @@
     <td><p class="resultado_encuesta"><? echo sizeof($formulario->getListaContactosRespuesta($sucursal)) ?></p></td>
     <td><p class="resultado_encuesta"><? echo $encuesta['count'] ?></p></td>
     <td><p class="resultado_vacio"><?= ($encuesta['avg'] == "") ? "0" : round($encuesta['avg'], 2) ?></p></td>
-    <td><a class="" target="_blank" href="<? echo url_for('formulario/consolidado?ca_id=' . base64_encode($formulario->getCaId()).'&sid=' . $formulario->encodeSucursal($sucursal).'&pid=' . $p_pregunta.'&seid=' . $p_servicio) ?>"><img title="Consolidado de respuestas" title="Consolidado de respuestas" src="/images/formularios/consolidado.png"></a></td> 
+    <td style="text-align: center"><a class="" target="_blank" href="<? echo url_for('formulario/consolidado?ca_id=' . base64_encode($formulario->getCaId()).'&sid=' . $formulario->encodeSucursal($sucursal).'&pid=' . $p_pregunta.'&seid=' . $p_servicio) ?>"><img title="Consolidado de respuestas" title="Consolidado de respuestas" src="/images/formularios/consolidado.png"></a></td> 
 </tr>
