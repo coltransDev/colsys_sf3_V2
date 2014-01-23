@@ -73,7 +73,7 @@ echo "  <TD Class=mostrar><A HREF='/reportesGer/reporteCargaTraficos'; class='mu
 echo "</TR>";
 echo "</TABLE><BR><BR>";
 
-echo "<TABLE WIDTH=510 BORDER=0 CELLSPACING=1 CELLPADDING=5>";
+/*echo "<TABLE WIDTH=510 BORDER=0 CELLSPACING=1 CELLPADDING=5>";
 echo "<TR>";
 echo "  <TH COLSPAN=2>Gráficas Estadisticas</TH>";
 echo "</TR>";
@@ -95,10 +95,13 @@ echo "<TR>";
 echo "  <TD Class=mostrar><A HREF='grasucursallcl.php'; class='mudacor'>Carga LCL por Sucursales</A></TD><TD Class=mostrar>Estadistica del movimiento de Carga LCL por Sucursales</TD>";
 echo "</TR>";
 echo "</TABLE><BR>";
+ 
 echo "<BR/>\n<BR/>\n";
 echo "<TABLE CELLSPACING=10>";
 echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Terminar' ONCLICK='javascript:document.location.href = \"/\"'></TH>";  // Cancela la operación
 echo "</TABLE>";
+ * 
+ */
 echo "</CENTER>";
 require_once("footer.php");
 echo "</BODY>";

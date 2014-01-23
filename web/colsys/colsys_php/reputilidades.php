@@ -198,10 +198,12 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
     $condicion.= " ca_mes::text like '$mes' and ca_ano::text = '$ano' and iu.ca_traorigen like '%$traorigen%' and iu.ca_modalidad like '%$modalidad%' and " . str_replace("\"", "'", $casos);
 
     // die($condicion);
+    $sql="select $condicion";
     $co = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
-    if (!$rs->Open("select $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
-        echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-        echo "<script>document.location.href = 'entrada.php';</script>";
+    if (!$rs->Open($sql)) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
+        echo "Error 204: $sql";
+        //echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+        //echo "<script>document.location.href = 'entrada.php?id=204';</script>";
         exit;
     }
 
@@ -304,7 +306,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
 
             if (!$eq->Open("select ca_referencia, ca_concepto, sum(ca_cantidad) as ca_cantidad from vi_inoequipos_sea where ca_referencia = '" . $rs->Value('ca_referencia') . "' group by ca_referencia, ca_concepto")) {       // Selecciona todos lo registros de la tabla Clientes de una referencia Ino-Marítimo
                 echo "<script>alert(\"" . addslashes($eq->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                echo "<script>document.location.href = 'entrada.php';</script>";
+                echo "<script>document.location.href = 'entrada.php?id=307';</script>";
                 exit;
             }
 
@@ -322,7 +324,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
 
             if (!$cl->Open("select ca_compania from vi_inoclientes_sea where ca_referencia = '" . $rs->Value('ca_referencia') . "' group by ca_referencia, ca_compania")) {      // Selecciona todos lo registros de la tabla Clientes de una referencia Ino-Marítimo
                 echo "<script>alert(\"" . addslashes($cl->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                echo "<script>document.location.href = 'entrada.php';</script>";
+                echo "<script>document.location.href = 'entrada.php?id=325';</script>";
                 exit;
             }
 

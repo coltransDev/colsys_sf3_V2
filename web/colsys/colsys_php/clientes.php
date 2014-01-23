@@ -392,6 +392,10 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
                                 {
                                     $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
                                 }
+                                if(strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false)
+                                {
+                                    $img.='<img src="/images/consolidate.png" title="Cliente de Cuadro" width="20" height="20" />';
+                                }
                             }
                         }
                         if (is_array($campos)){
@@ -468,6 +472,10 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
                 if(strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false)
                 {
                     $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
+                }
+                if(strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false)
+                {
+                    $img.='<img src="/images/consolidate.png" title="Cliente de Cuadro" width="20" height="20" />';
                 }
             }
 		   echo "<TD Class=titulo COLSPAN=4 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')." $img</TD>";
@@ -951,6 +959,11 @@ require_once("menu.php");
                 {
                     $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
                 }
+                if(strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false)
+                {
+                    $img.='<img src="/images/consolidate.png" title="Cliente de Cuadro" width="20" height="20" />';
+                }
+                
             }
              echo "  <TD WIDTH=500 Class=mostrar COLSPAN=3 style='font-size: 11px; text-align:left;'><B>".( $regional=="PE-051" ?"RUC":"N.i.t.").": </B>".number_format($rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."<BR><B>".$rs->Value('ca_compania')."$img <BR>Dirección: </B>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento. "&nbsp;&nbsp;<B>Localidad: </B>" . $rs->Value('ca_localidad')."<BR><B>Teléfonos: </B>".$rs->Value('ca_telefonos')."&nbsp;&nbsp;&nbsp;&nbsp;<B>Fax: </B>".$rs->Value('ca_fax')."</TD>";
              echo "</TR>";
@@ -1104,6 +1117,10 @@ require_once("menu.php");
                 {
                     $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
                 }
+                if(strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false)
+                {
+                    $img.='<img src="/images/consolidate.png" title="Cliente de Cuadro" width="20" height="20" />';
+                }
             }
              echo "  <TD Class=mostrar COLSPAN=3 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')." $img </TD>";
              echo "</TR>";
@@ -1199,6 +1216,10 @@ require_once("menu.php");
                 if(strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false)
                 {
                     $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
+                }
+                if(strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false)
+                {
+                    $img.='<img src="/images/consolidate.png" title="Cliente de Cuadro" width="20" height="20" />';
                 }
             }
              echo "  <TD Class=mostrar COLSPAN=3 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')." $img </TD>";
@@ -1305,6 +1326,10 @@ require_once("menu.php");
                 if(strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false)
                 {
                     $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
+                }
+                if(strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false)
+                {
+                    $img.='<img src="/images/consolidate.png" title="Cliente de Cuadro" width="20" height="20" />';
                 }
             }
              echo "  <TD Class=mostrar COLSPAN=5 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')." $img </TD>";
@@ -1422,6 +1447,10 @@ require_once("menu.php");
                 {
                     $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
                 }
+                if(strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false)
+                {
+                    $img.='<img src="/images/consolidate.png" title="Cliente de Cuadro" width="20" height="20" />';
+                }
             }
              echo "  <TD Class=mostrar COLSPAN=4 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')." $img</TD>";
              echo "</TR>";
@@ -1524,6 +1553,10 @@ require_once("menu.php");
                 {
                     $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
                 }
+                if(strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false)
+                {
+                    $img.='<img src="/images/consolidate.png" title="Cliente de Cuadro" width="20" height="20" />';
+                }
             }
 
              echo "  <TD Class=mostrar COLSPAN=4 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')." $img</TD>";
@@ -1612,6 +1645,10 @@ require_once("menu.php");
                 if(strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false)
                 {
                     $img='<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
+                }
+                if(strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false)
+                {
+                    $img.='<img src="/images/consolidate.png" title="Cliente de Cuadro" width="20" height="20" />';
                 }
             }
              echo "  <TD Class=mostrar>".$rs->Value('ca_compania')." $img</TD>";

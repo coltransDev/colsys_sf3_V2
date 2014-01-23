@@ -130,8 +130,11 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)){
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
 
-    $condicion= "where ca_mes::text like '$mes' and ca_ano::text = '$ano' and ca_trafico like '%$trafico%' and ca_traorigen like '%$traorigen%' and ". str_replace("\"","'",$casos)." and ca_referencia in (select DISTINCT ca_referencia from vi_inoclientes_sea where ca_sucursal like '$sucursal') order by ca_traorigen, ca_referencia";
-    if (!$rs->Open("select * from vi_inomaestra_sea $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
+    $condicion= "where ca_mes::text like '$mes' and ca_ano::text = '$ano' and ca_trafico like '%$trafico%' and ca_traorigen like '%$traorigen%' and ". str_replace("\"","'",$casos)." and ca_referencia in (select DISTINCT ca_referencia from vi_inoclientes_sea c where m.ca_referencia=c.ca_referencia and ca_sucursal like '$sucursal') order by ca_traorigen, ca_referencia";
+    $sql="select * from vi_inomaestra_sea m $condicion";
+//    echo $sql;
+//    exit;
+    if (!$rs->Open($sql)) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
@@ -170,9 +173,11 @@ require_once("menu.php");
     $nom_tra = '';
     $tot_hbl = 0;
     while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
-       if (!$eq->Open("select ca_referencia, ca_concepto, sum(ca_cantidad) as ca_cantidad from vi_inoequipos_sea where ca_referencia = '".$rs->Value('ca_referencia')."' group by ca_referencia, ca_concepto")) {       // Selecciona todos lo registros de la tabla Traficos
-           echo "<script>alert(\"".addslashes($cl->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-           echo "<script>document.location.href = 'reporteventas.php';</script>";
+        $sql="select ca_referencia, ca_concepto, sum(ca_cantidad) as ca_cantidad from vi_inoequipos_sea where ca_referencia = '".$rs->Value('ca_referencia')."' group by ca_referencia, ca_concepto";
+       if (!$eq->Open($sql)) {       // Selecciona todos lo registros de la tabla Traficos
+            echo $sql;
+           //echo "<script>alert(\"".addslashes($cl->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+           //echo "<script>document.location.href = 'repgerencia.php?id=178';</script>";
            exit; }
        $eq->MoveFirst();
 
@@ -207,10 +212,14 @@ require_once("menu.php");
              }
        echo "  </TABLE></TR></TD>";
        echo "</TR>";
-
-       if (!$cl->Open("select ic.*, iu.ca_sbrventa from vi_inoclientes_sea ic LEFT OUTER JOIN (select ca_referencia, ca_idcliente, ca_hbls, sum(ca_valor) as ca_sbrventa from tb_inoutilidad_sea group by ca_referencia, ca_idcliente, ca_hbls) iu ON (ic.ca_referencia = iu.ca_referencia and ic.ca_idcliente = iu.ca_idcliente and ic.ca_hbls = iu.ca_hbls) where ic.ca_referencia = '".$rs->Value('ca_referencia')."' and ic.ca_sucursal like '$sucursal'")) {       // Selecciona todos lo registros de la tabla Traficos
-           echo "<script>alert(\"".addslashes($cl->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-           echo "<script>document.location.href = 'reporteventas.php';</script>";
+       $sql="select ic.*, iu.ca_sbrventa from vi_inoclientes_sea ic 
+           LEFT OUTER JOIN 
+                (select ca_idinocliente, sum(ca_valor) as ca_sbrventa 
+                    from tb_inoutilidad_sea group by ca_idinocliente) iu ON (ic.ca_idinocliente = iu.ca_idinocliente) where ic.ca_referencia = '".$rs->Value('ca_referencia')."' and ic.ca_sucursal like '$sucursal'";
+       if (!$cl->Open($sql)) {       // Selecciona todos lo registros de la tabla Traficos
+           echo $sql;
+           //echo "<script>alert(\"".addslashes($cl->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+           //echo "<script>document.location.href = 'repgerencia.php?id=218';</script>";
            exit; }
        $cl->MoveFirst();
        $imp_tit = true;

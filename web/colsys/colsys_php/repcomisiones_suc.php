@@ -16,7 +16,7 @@
 $programa = 25;
 
 $titulo = 'Informe de Comisiones para Vendedores';
-$meses  = array( "%" => "Todos los Meses", "01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre" );
+$meses  = array( "" => "Todos los Meses", "01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre" );
 $estados = array("Casos Cerrados" => "ca_estado <> \"Abierto\"","Cierre Provisional" => "ca_estado = \"Provisional\"","Casos Abiertos" => "ca_estado = \"Abierto\"","Todos los Casos" => "true");
 
 include_once 'include/datalib.php';                                            // Incorpora la libreria de funciones, para accesar leer bases de datos
@@ -35,7 +35,7 @@ if (!isset($login) and !isset($boton) and !isset($accion)){
     echo "  elemento.length = 0;";
     echo "  elemento.options[elemento.length] = new Option();";
     echo "  elemento.length = 0;";
-    echo "  elemento[elemento.length] = new Option('Vendedores (Todos)','%',false,true);";
+    echo "  elemento[elemento.length] = new Option('Vendedores (Todos)','',false,true);";
     echo "     for (cont=0; cont<document.menuform.usu_login.length; cont++) {";
     echo "          if (source.value == document.menuform.usu_sucursal[cont].value){";
     echo "              elemento[elemento.length] = new Option(document.menuform.usu_nombre[cont].value,document.menuform.usu_login[cont].value,false,false);";
@@ -97,7 +97,7 @@ require_once("menu.php");
         exit; }
     $tm->MoveFirst();
     echo "  <TD Class=mostrar>Sucursal:<BR><SELECT NAME='sucursal' ONCHANGE='llenar_vendedores();'>";
-    echo "  <OPTION VALUE=%>Sucursales (Todas)</OPTION>";
+    echo "  <OPTION VALUE=''>Sucursales (Todas)</OPTION>";
     $tm->MoveFirst();
     while (!$tm->Eof()) {
 		   echo "<OPTION VALUE='".$tm->Value('ca_sucursal')."'>".$tm->Value('ca_sucursal')."</OPTION>";
@@ -106,7 +106,7 @@ require_once("menu.php");
 	
     echo "  </SELECT></TD>";
     echo "  <TD Class=mostrar>Vendedor:<BR><SELECT NAME='login'>";                 // Llena el cuadro de lista con los valores de la tabla Vendedores
-    echo "  <OPTION VALUE=%>Vendedores (Todos)</OPTION>";
+    echo "  <OPTION VALUE=''>Vendedores (Todos)</OPTION>";
     echo "  </SELECT></TD>";
     echo "  <TD Class=listar ROWSPAN=2>Estado:<BR><SELECT NAME='casos'>";
     while (list ($clave, $val) = each ($estados)) {
@@ -135,10 +135,29 @@ echo "</BODY>";
 elseif (!isset($boton) and !isset($accion) and isset($login)){
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
-	$condicion = "where ca_mes::text like '$mes' and ca_ano::text = '$ano' and ca_sucursal like '%$sucursal%' and ca_login like '$login' and ".str_replace("\"","'",$casos);
-    if (!$rs->Open("select * from vi_inocomisiones_sea $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
-        echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-        echo "<script>document.location.href = 'entrada.php';</script>";
+    
+    $condicion="where 1=1 ";
+    if($mes)
+        $condicion.=" and ca_mes::text = '$mes' ";
+    if($ano)
+        $condicion.=" and ca_ano::text = '$ano' ";
+    if($sucursal)
+        $condicion.=" and ca_sucursal = '$sucursal' ";
+    if($login)
+        $condicion.=" and ca_login = '$login' ";
+    
+    $condicion .= "   and ".str_replace("\"","'",$casos);
+    
+    $sql="select * 
+        ,(array_to_string(ARRAY( select ca_factura from vi_inoingresos_sea i where i.ca_idinocliente=c.ca_idinocliente),'<br>')) as ca_facturas
+        from vi_inocomisiones_sea c $condicion ";
+
+    //$condicion = "where ca_mes::text like '$mes' and ca_ano::text = '$ano' and ca_sucursal like '%$sucursal%' and ca_login like '$login' and ".str_replace("\"","'",$casos);
+    //echo $sql;
+    if (!$rs->Open($sql)) {
+        echo "Error 137: $sql";
+        //echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+        //echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
     $us =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
     $fc =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
@@ -200,7 +219,8 @@ require_once("menu.php");
            $nom_ven = $us->Value('ca_nombre'); }
        $back_col= ($rs->Value('ca_estado')=='Provisional')?" background: #CCCC99":(($rs->Value('ca_estado')=='Abierto')?" background: #CCCCCC":" ");
        $back_col= ($utl_cbm<=0)?" background: #FF6666":$back_col;
-       if (!$fc->Open("select ca_factura from vi_inoingresos_sea where ca_referencia = '".$rs->Value('ca_referencia')."' and ca_idcliente = ".$rs->Value('ca_idcliente')." and ca_hbls = '".$rs->Value('ca_hbls')."'")) {
+       
+       /*if (!$fc->Open("select ca_factura from vi_inoingresos_sea where ca_idinocliente = '".$rs->Value('ca_idinocliente')."' ")) {
            echo "<script>alert(\"".addslashes($fc->mErrMsg)."\");</script>";
            echo "<script>document.location.href = 'repcomisiones_suc.php';</script>";
            exit; }
@@ -211,12 +231,13 @@ require_once("menu.php");
           $fc->MoveNext();
        }
        $fac_mem = substr($fac_mem,0,strlen($fac_mem)-4);
+        * 
+        */
        $utl_net = ($rs->Value('ca_vlrutilidad_liq') != 0) ? $rs->Value('ca_vlrutilidad_liq') : $rs->Value('ca_volumen') * $utl_cbm;
        echo "<TR>";
        echo "  <TD Class=listar  style='font-weight:bold; font-size: 9px;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:window.open(\"inosea.php?boton=Consultar\&id=".$rs->Value('ca_referencia')."\");'>".$rs->Value('ca_referencia')."</TD>";
        echo "  <TD Class=listar  style='font-size: 9px;$back_col'>".substr(ucwords(strtolower($rs->Value('ca_compania'))),0,30)."</TD>";
-       echo "  <TD Class=listar  style='font-size: 9px;$back_col'>".$rs->Value('ca_incoterms')."</TD>";
-       echo "  <TD Class=listar  style='font-size: 9px;$back_col'>$fac_mem</TD>";
+       echo "  <TD Class=listar  style='font-size: 9px;$back_col'>".$rs->Value('ca_facturas')."</TD>";
        echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($rs->Value('ca_valor'))."</TD>";
        echo "  <TD Class=listar  style='font-size: 9px;$back_col'>".$rs->Value('ca_estado')."</TD>";
        echo "  <TD Class=valores style='font-size: 9px;$back_col'>".$rs->Value('ca_volumen')."</TD>";
@@ -265,13 +286,13 @@ require_once("menu.php");
             echo "  <TD Class=invertir COLSPAN=10></TD>";
             echo "</TR>";
             echo "<TR>";
-            echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=7>Comisión en Ventas :</TD>";
+            echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=6>Comisión en Ventas :</TD>";
             echo "  <TD Class=valores style='font-weight:bold;'>".number_format($utl_con*$rs->Value('ca_porcentaje'))."</TD>";
             echo "  <TD Class=listar style='font-weight:bold;'>&nbsp;Com. Sobreventa :</TD>";
             echo "  <TD Class=valores style='font-weight:bold;'>&nbsp;&nbsp;".number_format($sob_ven*$rs->Value('ca_porcentaje'))."</TD>";
             echo "</TR>";
             echo "<TR>";
-            echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=9>Gran Total para ".ucwords(strtolower($nom_ven))." :</TD>";
+            echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=8>Gran Total para ".ucwords(strtolower($nom_ven))." :</TD>";
             echo "  <TD Class=valores style='font-weight:bold;'>".number_format($utl_con*$rs->Value('ca_porcentaje')+$sob_ven*$rs->Value('ca_porcentaje'))."</TD>";
             echo "</TR>";
             echo "<TR HEIGHT=5>";

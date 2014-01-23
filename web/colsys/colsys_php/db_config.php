@@ -16,6 +16,7 @@ $roScripts = array("repgerencia.php",
                    "repreferencia.php",
                    "repauditoria.php",
                    "repindicadores.php",
+                   "repindicadornew.php",
                    "repgeneratorair.php",
                    "repantecedentes.php"
                   );
@@ -69,12 +70,11 @@ $password = $databaseConfig['all']['doctrine']['param']['password'];
 */
 
 $dsn = $databaseConfig['prod']['doctrine']['param']['dsn'];
-
+//	echo "<pre>";print_r($databaseConfig);echo "</pre>";
 //$dsn =  substr( $dsn,  strpos( $dsn, "dbname")+7 );
 $principal = substr( $dsn, 0,  strpos( $dsn, ";") );
 $servidor = substr( $dsn,  strlen( $principal )+6 );
 $database = substr( $principal, strpos( $principal, "dbname")+7 );
 $usuarioDb = $databaseConfig['prod']['doctrine']['param']['username'];
 $password = $databaseConfig['prod']['doctrine']['param']['password'];
-
 ?>

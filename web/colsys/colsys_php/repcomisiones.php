@@ -14,13 +14,13 @@
 */
 
 $titulo = 'Informe de Comisiones para Vendedores';
-$meses  = array( "%" => "Todos los Meses", "01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre" );
+$meses  = array( "" => "Todos los Meses", "01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre" );
 $estados = array("Casos Cerrados" => "ca_estado <> \"Abierto\"","Cierre Provisional" => "ca_estado = \"Provisional\"","Casos Abiertos" => "ca_estado = \"Abierto\"","Todos los Casos" => "true");
 
 include_once 'include/datalib.php';                                            // Incorpora la libreria de funciones, para accesar leer bases de datos
 require_once("checklogin.php");                                                               // Captura las variables de la sessión abierta
 if (!isset($usuario)) {                                                        // Verifica si el usuario ya inicio su sessión
-    echo "<script>document.location.href = 'entrada.php';</script>";
+    echo "<script>document.location.href = 'entrada.php?id=23';</script>";
    }
 
 
@@ -37,7 +37,7 @@ if (!isset($login) and !isset($boton) and !isset($accion)){
     echo "  elemento.length = 0;";
     echo "  elemento.options[elemento.length] = new Option();";
     echo "  elemento.length = 0;";
-    echo "  elemento[elemento.length] = new Option('Vendedores (Todos)','%',false,true);";
+    echo "  elemento[elemento.length] = new Option('Vendedores (Todos)','',false,true);";
     echo "     for (cont=0; cont<document.menuform.usu_login.length; cont++) {";
     echo "          if (source.value == document.menuform.usu_sucursal[cont].value){";
     echo "              elemento[elemento.length] = new Option(document.menuform.usu_nombre[cont].value,document.menuform.usu_login[cont].value,false,false);";
@@ -61,12 +61,12 @@ require_once("menu.php");
     $tm =& DlRecordset::NewRecordset($conn);
 	if (!$tm->Open("select distinct ca_nombre as ca_sucursal from control.tb_sucursales order by ca_sucursal")) {       // Selecciona todos lo registros de la tabla Sucursales
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-        echo "<script>document.location.href = 'repcomisiones.php';</script>";
+        echo "<script>document.location.href = 'repcomisiones.php?id=64';</script>";
         exit; }
     $us =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
     if (!$us->Open("select ca_login, ca_nombre, ca_sucursal from vi_usuarios where ca_login != 'Administrador' and (ca_cargo = 'Gerente Regional' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_login")) {
         echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
-        echo "<script>document.location.href = 'repcomisiones.php';</script>";
+        echo "<script>document.location.href = 'repcomisiones.php?id=69';</script>";
         exit;
        }
     $us->MoveFirst();
@@ -93,7 +93,7 @@ require_once("menu.php");
         }
     echo "  </SELECT></TD>";
     echo "  <TD Class=mostrar>Sucursal:<BR><SELECT ID='sucursal' NAME='sucursal' ONCHANGE='llenar_vendedores();'>";
-    echo "  <OPTION VALUE=%>Sucursales (Todas)</OPTION>";
+    echo "  <OPTION VALUE=''>Sucursales (Todas)</OPTION>";
     $tm->MoveFirst();
     while (!$tm->Eof()) {
 		   echo "<OPTION VALUE='".$tm->Value('ca_sucursal')."'>".$tm->Value('ca_sucursal')."</OPTION>";
@@ -102,7 +102,7 @@ require_once("menu.php");
 	
     echo "  </SELECT></TD>";
     echo "  <TD Class=mostrar>Vendedor:<BR><SELECT ID='login' NAME='login'>";                 // Llena el cuadro de lista con los valores de la tabla Vendedores
-    echo "  <OPTION VALUE=%>Vendedores (Todos)</OPTION>";
+    echo "  <OPTION VALUE=''>Vendedores (Todos)</OPTION>";
     echo "  </SELECT></TD>";
     echo "  <TD Class=listar ROWSPAN=2>Estado:<BR><SELECT NAME='casos'>";
     while (list ($clave, $val) = each ($estados)) {
@@ -131,10 +131,27 @@ echo "</BODY>";
 elseif (!isset($boton) and !isset($accion) and isset($login)){
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
-    $condicion = "where ca_mes::text like '$mes' and ca_ano::text = '$ano' and ca_sucursal like '%$sucursal%' and ca_login like '$login' and ".str_replace("\"","'",$casos);
-    if (!$rs->Open("select * from vi_inocomisiones_sea $condicion order by ca_mes, ca_login, ca_compania, ca_referencia, ca_hbls")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
-        echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-        echo "<script>document.location.href = 'entrada.php';</script>";
+    $condicion="where 1=1 ";
+    if($mes)
+        $condicion.=" and ca_mes::text = '$mes' ";
+    if($ano)
+        $condicion.=" and ca_ano::text = '$ano' ";
+    if($sucursal)
+        $condicion.=" and ca_sucursal = '$sucursal' ";
+    if($login)
+        $condicion.=" and ca_login = '$login' ";
+    
+    $condicion .= "   and ".str_replace("\"","'",$casos);
+    
+    $sql="select * 
+        ,(array_to_string(ARRAY( select ca_factura from vi_inoingresos_sea i where i.ca_idinocliente=c.ca_idinocliente),'<br>')) as ca_facturas 
+        ,(array_to_string(ARRAY(select DISTINCT ca_comprobante from tb_inocomisiones_sea i where i.ca_idinocliente=c.ca_idinocliente),'|')) as ca_comprobante
+        from vi_inocomisiones_sea c $condicion order by ca_mes, ca_login, ca_compania, ca_referencia, ca_hbls";
+//    echo $sql;
+    if (!$rs->Open($sql)) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
+        echo "Error 137: $sql";
+        //echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+        //echo "<script>document.location.href = 'entrada.php?id=137';</script>";
         exit; }
     $us =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
     $fc =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
@@ -179,7 +196,7 @@ require_once("menu.php");
        if ($log_ven != $rs->Value('ca_login')) {
            if (!$us->Open("select ca_nombre from control.tb_usuarios where ca_login = '".$rs->Value('ca_login')."'")) {
                echo "<script>alert(\"".addslashes($us->mErrMsg)."\");</script>";
-               echo "<script>document.location.href = 'repcomisiones.php';</script>";
+               echo "<script>document.location.href = 'repcomisiones.php?id=184';</script>";
                exit; }
            echo "<TR>";
            echo "  <TD Class=titulo COLSPAN=14 style='text-align:left; font-weight:bold; font-size: 10px;'>".strtoupper($us->Value('ca_nombre'))." «Comisiones por Cobrar <IMG style='visibility: $visible;' src='./graficos/details.gif' alt='Ver Comisiones Pendientes por Cobrar' border=0 onclick='elegir(\"ComisionesXC\",\"".$rs->Value('ca_login')."\",\"$mes|$ano|$sucursal|$login|".str_replace(chr(34),"¬",$casos)."\");'>»</TD>";
@@ -187,7 +204,7 @@ require_once("menu.php");
            echo "<TR>";
            echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Cliente</TD>";
            echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Referencia</TD>";
-           echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Termino Neg.</TD>";
+           echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Termino Neg.</TD>";           
            echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Facturas</TD>";
            echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Vlr.Facturado</TD>";
            echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 9px;'>Estado</TD>";
@@ -208,9 +225,12 @@ require_once("menu.php");
            $nom_ven = $us->Value('ca_nombre'); }
        $back_col= ($rs->Value('ca_estado')=='Provisional')?" background: #CCCC99":(($rs->Value('ca_estado')=='Abierto')?" background: #CCCCCC":" ");
        $back_col= ($utl_cbm<=0)?" background: #FF6666":$back_col;
-       if (!$fc->Open("select ca_factura from vi_inoingresos_sea where ca_referencia = '".$rs->Value('ca_referencia')."' and ca_idcliente = ".$rs->Value('ca_idcliente')." and ca_hbls = '".$rs->Value('ca_hbls')."'")) {
-           echo "<script>alert(\"".addslashes($fc->mErrMsg)."\");</script>";
-           echo "<script>document.location.href = 'repcomisiones.php';</script>";
+       
+       /*$sql="select ca_factura from vi_inoingresos_sea where ca_idinocliente = ".$rs->Value('ca_idinocliente')." ";
+       if (!$fc->Open($sql)) {
+           echo "Error 214: $sql";
+           //echo "<script>alert(\"".addslashes($fc->mErrMsg)."\");</script>";
+           //echo "<script>document.location.href = 'repcomisiones.php?id=214';</script>";
            exit; }
        $fc->MoveFirst();
        $fac_mem = '';
@@ -219,17 +239,20 @@ require_once("menu.php");
           $fc->MoveNext();
        }
        $fac_mem = substr($fac_mem,0,strlen($fac_mem)-4);
-       
-       if (!$fc->Open("select DISTINCT ca_comprobante from tb_inocomisiones_sea where ca_referencia = '".$rs->Value('ca_referencia')."' and ca_idcliente = ".$rs->Value('ca_idcliente')." and ca_hbls = '".$rs->Value('ca_hbls')."'")) {
+       */
+       /*if (!$fc->Open("select DISTINCT ca_comprobante from tb_inocomisiones_sea where ca_idinocliente = '".$rs->Value('ca_idinocliente')."' ")) 
+                {
            echo "<script>alert(\"".addslashes($fc->mErrMsg)."\");</script>";
-           echo "<script>document.location.href = 'repcomisiones.php';</script>";
+           echo "<script>document.location.href = 'repcomisiones.php?id=226';</script>";
            exit; }
-       $fc->MoveFirst();
+       $fc->MoveFirst();*/
        $arr_com = array();
-       while (!$fc->Eof() and !$fc->IsEmpty()) {
-          array_push($arr_com,$fc->Value('ca_comprobante'));
-          $fc->MoveNext();
-       }
+       $arr_com= explode('|', $rs->Value('ca_comprobante'));
+       
+    //   while (!$fc->Eof() and !$fc->IsEmpty()) {
+    /*foreach ($arrComprobantes as $comp){
+          array_push($arr_com,$comp);          
+       }*/
 
        if ($cia_mem != $rs->Value('ca_compania')) {
            echo "<TR HEIGHT=5>";
@@ -255,9 +278,9 @@ require_once("menu.php");
 
        echo "<TR>";
        echo "  <TD Class=listar></TD>";
-       echo "  <TD Class=listar  style='font-weight:bold; font-size: 9px;$back_col' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'".substr($back_col,14,6)."');\" onclick='javascript:window.open(\"inosea.php?boton=Consultar\&id=".$rs->Value('ca_referencia')."\");'>".$rs->Value('ca_referencia')."</TD>";
-       echo "  <TD Class=listar  style='font-size: 9px;$back_col'>".$rs->Value('ca_incoterms')."</TD>";
-       echo "  <TD Class=listar  style='font-size: 9px;$back_col'>$fac_mem</TD>";
+       echo "  <TD Class=listar  style='font-weight:bold; font-size: 9px;$back_col' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'".substr($back_col,14,6)."');\" onclick='javascript:window.open(\"inosea.php?boton=Consultar\&id=".$rs->Value('ca_referencia')."\");'>".$rs->Value('ca_referencia')."</TD>";       
+       echo "  <TD Class=listar  style='font-size: 9px;$back_col'>".$rs->Value('ca_incoterms')."</TD>";       
+       echo "  <TD Class=listar  style='font-size: 9px;$back_col'>".$rs->Value('ca_facturas')."</TD>";
        echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($rs->Value('ca_valor'))."</TD>";
        echo "  <TD Class=listar  style='font-size: 9px;$back_col'>".$rs->Value('ca_estado')."</TD>";
        echo "  <TD Class=valores style='font-size: 9px;$back_col'>".$rs->Value('ca_volumen')."</TD>";
@@ -390,7 +413,7 @@ elseif (isset($boton)) {                                                      //
             $condicion = "ca_ano::text in ($nanos) and ca_mes::text in ($nmeses) and ca_login like '$id' and ca_estado <> 'Abierto'";
             if (!$rs->Open("select * from vi_inoingresos_sea where $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-                echo "<script>document.location.href = 'entrada.php';</script>";
+                echo "<script>document.location.href = 'entrada.php?id=390';</script>";
                 exit; }
 
             echo "<HTML>";
@@ -473,7 +496,7 @@ require_once("menu.php");
             echo "<INPUT TYPE='HIDDEN' NAME='id'>";
             echo "<TABLE CELLSPACING=1>";                                              // un boton de comando definido para hacer mantemientos
             echo "<TR>";
-            echo "  <TH Class=titulo COLSPAN=8>".COLTRANS."<BR>$titulo<BR>".$meses[substr(100+$mes,1,2)]."/".$ano."</TH>";
+            echo "  <TH Class=titulo COLSPAN=9>".COLTRANS."<BR>$titulo<BR>".$meses[substr(100+$mes,1,2)]."/".$ano."</TH>";
             echo "</TR>";
             echo "<TH>Referencia</TH>";
             echo "<TH>Hbls</TH>";
@@ -556,7 +579,7 @@ require_once("menu.php");
                 $j++;
                 }
             echo "<TR HEIGHT=5>";
-            echo "  <TD Class=invertir COLSPAN=8></TD>";
+            echo "  <TD Class=invertir COLSPAN=9></TD>";
             echo "</TR>";
 			echo "";
             echo "<TR>";

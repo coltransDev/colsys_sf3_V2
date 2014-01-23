@@ -119,7 +119,7 @@ if (!isset($buscar) and !isset($accion)) {
    $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
 
-   $ano_mem = substr($ano, -1);
+   $ano_mem = substr($ano, -2);
    $mes_mem = $mes."-".$ano_mem;
    $condicion = "where";
    $condicion.= ($ano_mem != "%")?" ca_ano = '$ano_mem'":"";
@@ -133,10 +133,12 @@ if (!isset($buscar) and !isset($accion)) {
    }else{
       $condicion.= " and ca_referencia in (select ca_referencia from tb_inoequipos_sea where ca_idequipo != '*-*')";
    }
-   
-   if (!$rs->Open("select * from vi_inoctrlcontenedores_sea $condicion order by ca_fchconfirmacion, ca_fchdevolucion, ca_referencia")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
-      echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-      echo "<script>document.location.href = 'entrada.php';</script>";
+   $sql="select * from vi_inoctrlcontenedores_sea $condicion order by ca_fchconfirmacion, ca_fchdevolucion, ca_referencia";
+   //echo $sql."<br>";
+   if (!$rs->Open($sql)) {
+       echo "Error 138: $sql";
+      //echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+      //echo "<script>document.location.href = 'entrada.php';</script>";
       exit;
    }
    $ref_mem = array();
@@ -147,9 +149,11 @@ if (!isset($buscar) and !isset($accion)) {
    $rs->MoveFirst();
    
    $eq = & DlRecordset::NewRecordset($conn);
-   if (!$eq->Open("select ca_referencia, ca_concepto, ca_idequipo, ca_inspeccion_nta, ca_inspeccion_fch from vi_inoequipos_sea where ca_referencia in (". implode( ",", $ref_mem) .") order by ca_referencia, ca_concepto")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
-      echo "<script>alert(\"" . addslashes($eq->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-      echo "<script>document.location.href = 'entrada.php';</script>";
+   $sql="select ca_referencia, ca_concepto, ca_idequipo, ca_inspeccion_nta, ca_inspeccion_fch from vi_inoequipos_sea where ca_referencia in (". implode( ",", $ref_mem) .") order by ca_referencia, ca_concepto";
+   if (!$eq->Open($sql)) { 
+       echo "Error 153: $sql";
+      //echo "<script>alert(\"" . addslashes($eq->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+      //echo "<script>document.location.href = 'entrada.php';</script>";
       exit;
    }
    echo "<HTML>";

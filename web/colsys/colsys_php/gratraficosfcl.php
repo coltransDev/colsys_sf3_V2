@@ -113,9 +113,11 @@ elseif (!isset($boton) and isset($accion) and isset($traorigen)){
 	$condicion= "where ca_mes like '".$mes."-".substr($ano, -1)."' and ca_traorigen like '$traorigen'";
 
     $fc =& DlRecordset::NewRecordset($conn);
-    if (!$fc->Open("select substr(ca_mes,4,1) as ca_ano, ca_traorigen, ca_capacidad, sum(ca_cantidad) as ca_cantidad from vi_inocarga_fcl $condicion group by ca_ano, ca_traorigen, ca_capacidad order by ca_traorigen, ca_capacidad")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
-        echo "<script>alert(\"".addslashes($fc->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-        echo "<script>document.location.href = 'entrada.php';</script>";
+    $sql="select substr(ca_mes,4,1) as ca_ano, ca_traorigen, ca_capacidad, sum(ca_cantidad) as ca_cantidad from vi_inocarga_fcl $condicion group by ca_ano, ca_traorigen, ca_capacidad order by ca_traorigen, ca_capacidad";
+    if (!$fc->Open($sql)) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
+     echo "error:$sql";
+//        echo "<script>alert(\"".addslashes($fc->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+//        echo "<script>document.location.href = 'entrada.php?id=118';</script>";
         exit; }
 	$traficos = array();
 	$cont_20  = array();

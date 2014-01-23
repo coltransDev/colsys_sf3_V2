@@ -42,9 +42,11 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
     echo "<FORM METHOD=post NAME='menuform' ACTION='comisiones.php'>";
     echo "<TABLE WIDTH=550 BORDER=0 CELLSPACING=1 CELLPADDING=5>";
     echo "<TH COLSPAN=7 style='font-size: 12px; font-weight:bold;'><B>Ingrese los parámetros para el Reporte</TH>";
-    if (!$rs->Open("select DISTINCT c.ca_comprobante, c.ca_fchliquidacion from tb_inocomisiones_sea c, tb_inoclientes_sea i where c.ca_referencia = i.ca_referencia and c.ca_idcliente = i.ca_idcliente and c.ca_hbls = i.ca_hbls and i.ca_login = '$usuario' order by c.ca_comprobante DESC")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
-        echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-        echo "<script>document.location.href = 'entrada.php';</script>";
+    $sql="select DISTINCT c.ca_comprobante, c.ca_fchliquidacion from tb_inocomisiones_sea c, tb_inoclientes_sea i where c.ca_idinocliente = i.ca_idinocliente and i.ca_login = '$usuario' order by c.ca_comprobante DESC";
+    if (!$rs->Open($sql)) {
+        echo "Error 47: $sql";
+        //echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+        //echo "<script>document.location.href = 'entrada.php';</script>";
         exit;
     }
 
@@ -114,12 +116,14 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
     $compania = (strlen($compania) != 0) ? "and lower(ca_compania) like lower('%$compania%')" : "";
     $casos = (strlen($casos) != 0) ? "and " . str_replace("\"", "'", $casos) : "";
     $comision = (strlen($comision) != 0) ? "and " . $comision : "";
-    $condicion = "ca_mes like '$mes' and ca_ano = $ano $compania and ca_login like '$usuario' $casos $comision";
+    $condicion = "ca_mes like '$mes' and ca_ano = '$ano'  $compania and ca_login like '$usuario' $casos $comision";
     //echo "select * from vi_inocomisiones_sea where $condicion";
 //        exit;
-    if (!$rs->Open("select * from vi_inocomisiones_sea where $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
-        echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-        echo "<script>document.location.href = 'entrada.php';</script>";
+    $sql="select * from vi_inocomisiones_sea where $condicion";
+    if (!$rs->Open($sql)) {
+        echo "Error 123: $sql";
+        //echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+        //echo "<script>document.location.href = 'entrada.php';</script>";
         exit;
     }
     $us = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
@@ -291,11 +295,14 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
                 
                 $annos_mem = substr($annos_mem, 0, strlen($annos_mem) - 1);
                 $condicion = "substr(ca_referencia,15)::text in ($annos_mem) and ca_login like '$usuario' and ca_estado <> 'Abierto' ";
+                //$condicion = "(string_to_array('ca_referencia','.'))[5]::text in ($annos_mem) and ca_login like '$usuario' and ca_estado <> 'Abierto' ";
+                
                 $condicion.= "and (CASE WHEN ca_observaciones = 'Contenedores' and ca_fchpago is not null or ca_observaciones != 'Contenedores' THEN true ELSE false END)";
-
-                if (!$rs->Open("select * from vi_inoingresos_sea where $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
-                    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php';</script>";
+                $sql="select * from vi_inoingresos_sea where $condicion";
+                if (!$rs->Open($sql)) {
+                    echo "Error 301: $sql";
+                    //echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+                    //echo "<script>document.location.href = 'entrada.php';</script>";
                     exit;
                 }
                 echo "<HTML>";
@@ -534,7 +541,7 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
                                 echo "<script>document.location.href = 'comisiones.php';</script>";
                                 exit;
                             }
-                            if (!$cm->Open("insert into tb_inocomisiones_sea (ca_referencia, ca_idcliente, ca_hbls, ca_comprobante, ca_fchliquidacion, ca_vlrcomision, ca_sbrcomision, ca_fchcreado, ca_usucreado) values ('" . $rs->Value('ca_referencia') . "', " . $rs->Value('ca_idcliente') . ", '" . $rs->Value('ca_hbls') . "', $comprobante, '" . date("Y-m-d") . "', " . (strlen($val[comision]) > 0 ? $val[comision] : 0) . ", " . (strlen($val[sobrevta]) > 0 ? $val[sobrevta] : 0) . ", to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
+                            if (!$cm->Open("insert into tb_inocomisiones_sea (ca_idinocliente, ca_comprobante, ca_fchliquidacion, ca_vlrcomision, ca_sbrcomision, ca_fchcreado, ca_usucreado) values ('" . $rs->Value('ca_idinocliente') . "',  $comprobante, '" . date("Y-m-d") . "', " . (strlen($val[comision]) > 0 ? $val[comision] : 0) . ", " . (strlen($val[sobrevta]) > 0 ? $val[sobrevta] : 0) . ", to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                                 echo "<script>alert(\"" . addslashes($cm->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
                                 echo "<script>document.location.href = 'comisiones.php';</script>";
                                 exit;
