@@ -18,6 +18,12 @@ class adminPerfilesActions extends sfActions
 	public function executeIndex(sfWebRequest $request)
 	{
         $app =  sfContext::getInstance()->getConfiguration()->getApplication();
+        switch( $app ){
+            case "intranet":
+                $this->setLayout("layout2col");
+                break;
+        }
+
 		$this->perfiles = Doctrine::getTable("Perfil")
                           ->createQuery("p")
                           ->addWhere("p.ca_aplicacion = ?", $app)
