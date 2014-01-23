@@ -99,7 +99,7 @@
     }
     if ($idsucursal == 'PEI') {
         ?>
-        <div align='left'>Para llamar desde <b>Pereira</b> a <br>
+        <div align='left'>Para llamar desde <b>Cartagena</b> a <br>
             <ul>
                 <li><b>Bogotá: </b>86+ 11 + Ext. + Ext.</li>
                 <li><b>Barranquilla: </b>86+ 55 + Ext.</li>

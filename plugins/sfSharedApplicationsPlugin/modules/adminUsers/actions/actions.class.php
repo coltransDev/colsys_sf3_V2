@@ -321,13 +321,10 @@ class adminUsersActions extends sfActions {
         $cambiodireccion = 0;
 
         if ($usuario) {
-            
             if($new == "new"){
                 $this->redirect("adminUsers/noAccess?key=".$new);
             }
-            
             $direccion = $usuario->getCaDireccion();
-            
         }
         
         if (!($this->nivel == 0 and $request->getParameter("login") == $this->getUser()->getUserId())) {
@@ -338,7 +335,11 @@ class adminUsersActions extends sfActions {
         if (!$usuario) {
             $nuevo = 1;
             $usuario = new Usuario();
-            $usuario->setCaLogin($request->getParameter("login"));
+            if(!$request->getParameter("login")){
+                $this->redirect("adminUsers/noAccess?login=null");
+            }else{
+                $usuario->setCaLogin(strtolower($request->getParameter("login")));
+            }
         }
 
         if ($request->getParameter("nombre")) {
@@ -1133,7 +1134,7 @@ class adminUsersActions extends sfActions {
                 ->innerJoin('s.Empresa e')
                 ->where('u.ca_activo = ?', true)
                 ->addWhere('e.ca_idempresa != 4')
-                ->addWhere("CASE WHEN (date_part('".month."', c.ca_fchingreso) = date_part('".month."', now()) and (date_part('".day."', c.ca_fchingreso)-date_part('".day."', now()))::int=4) THEN(CASE WHEN ((date_part('".year."', now()) - date_part('".year."', c.ca_fchingreso))::int)!=5 THEN ((date_part('".year."', now()) - date_part('".year."', c.ca_fchingreso))::int)%5=0 ELSE false END ) ELSE false END")
+                ->addWhere("CASE WHEN substr((c.ca_fchingreso - 4)::text,6,5) = substr(now()::text,6,5) THEN(CASE WHEN ((date_part('".year."', now()) - date_part('".year."', c.ca_fchingreso))::int) NOT IN (5,0) THEN ((date_part('".year."', now()) - date_part('".year."', c.ca_fchingreso))::int)%5=0 ELSE false END ) ELSE false END")
                 ->orderby('u.ca_fchingreso DESC')
                 ->execute();
         
@@ -1157,12 +1158,15 @@ class adminUsersActions extends sfActions {
 
         $dia = date('N');
         $inicial = date('m-d',time());
-        
+        $final = $inicial;
+        if($dia>=5)
+            $final = date('m-d',time()+86400 * 2);
+
         $users = Doctrine::getTable('Usuario')
                     ->createQuery('u')
                     ->innerJoin('u.Sucursal s')
                     ->innerJoin('s.Empresa e')
-                    ->where('substring(ca_cumpleanos::text, 6,5) = ?', $inicial)
+                    ->where('substring(ca_cumpleanos::text, 6,5) BETWEEN ? AND ?', array($inicial,$final))
                     ->addWhere('e.ca_idempresa IN (?,?,?)',array('1','2','8'))
                     ->addWhere('ca_activo = ?', true)
                     ->addOrderBy('substring(ca_cumpleanos::text, 6,5)  ASC')

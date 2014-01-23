@@ -12,6 +12,7 @@
         <tr>
             <th >Usuario</th>
             <th >Cargo</th>
+            <th >Email</th>
             <th >Tel&eacute;fono</th>
             <th >Extensi&oacute;n</th>
         </tr>
@@ -25,7 +26,7 @@
                 $lastEmpresa=$usuario->getSucursal()->getEmpresa()->getCaNombre();
                 ?>
                 <tr class="row0">
-                    <td colspan="4" style="text-align: left"><font size="4"><b><?=$lastEmpresa?></b></font></td>
+                    <td colspan="5" style="text-align: left"><font size="4"><b><?=$lastEmpresa?></b></font></td>
                 </tr>
             <?
             }
@@ -33,7 +34,7 @@
                 $lastSucursal=$usuario->getCaSucursal();
                 ?>
                 <tr class="row0">
-                    <td colspan="4" style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;<font size="3"><b><?=$lastSucursal?></b></font></td>
+                    <td colspan="5" style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;<font size="3"><b><?=$lastSucursal?></b></font></td>
                 </tr>
             <?
             }
@@ -41,15 +42,16 @@
                 $lastDepartamento=$usuario->getCaDepartamento();
                 ?>
                 <tr class="row0">
-                    <td colspan="4" style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><?=$lastDepartamento?></b></td>
+                    <td colspan="5" style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><?=$lastDepartamento?></b></td>
                 </tr>
             <?
             }
             ?>
              <tr>
-                <td style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?=$usuario->getCaNombre()?></td>
+                <td style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?echo link_to($usuario->getCaNombre(), "adminUsers/viewUser?login=".$usuario->getCaLogin());?></td>
                 <td style="text-align: left"><?=$usuario->getCaCargo()?></td>
-                <td style="text-align: left"><?=$usuario->getCaTeloficina()?></td>
+                <td style="text-align: left"><?=$usuario->getCaEmail()?></td>
+                <td style="text-align: left"><?=$usuario->getSucursal()->getCaTelefono()?></td>
                 <td style="text-align: left"><?=$usuario->getCaExtension()?></td>
             </tr>
             <?
@@ -66,6 +68,7 @@
         <tr>
             <th >Usuario</th>
             <th >Cargo</th>
+            <th >Email</th>
             <th >Tel&eacute;fono</th>
             <th >Extensi&oacute;n</th>
         </tr>
@@ -79,7 +82,7 @@
                 $lastEmpresa=$usuario->getSucursal()->getEmpresa()->getCaNombre();
                 ?>
                 <tr class="row0">
-                    <td colspan="4" style="text-align: left"><font size="4"><b><?=$lastEmpresa?></b></font></td>
+                    <td colspan="5" style="text-align: left"><font size="4"><b><?=$lastEmpresa?></b></font></td>
                 </tr>
             <?
             }
@@ -87,7 +90,7 @@
                 $lastSucursal=$usuario->getCaSucursal();
                 ?>
                 <tr class="row0">
-                    <td colspan="4" style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;<font size="3"><b><?=$lastSucursal?></b></font></td>
+                    <td colspan="5" style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;<font size="3"><b><?=$lastSucursal?></b></font></td>
                 </tr>
             <?
             }
@@ -95,14 +98,15 @@
                 $lastDepartamento=$usuario->getCaDepartamento();
                 ?>
                 <tr class="row0">
-                    <td colspan="4" style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><?=$lastDepartamento?></b></td>
+                    <td colspan="5" style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><?=$lastDepartamento?></b></td>
                 </tr>
             <?
             }
             ?>
              <tr>
-                <td style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?=$usuario->getCaNombre()?></td>
+                <td style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?echo link_to($usuario->getCaNombre(), "adminUsers/viewUser?login=".$usuario->getCaLogin());?></td>
                 <td style="text-align: left"><?=$usuario->getCaCargo()?></td>
+                <td style="text-align: left"><?=$usuario->getCaEmail()?></td>
                 <td style="text-align: left"><?=$usuario->getCaTeloficina()?></td>
                 <td style="text-align: left"><?=$usuario->getCaExtension()?></td>
             </tr>
@@ -121,6 +125,7 @@
         <tr>
             <th >Usuario</th>
             <th >Cargo</th>
+            <th >Email</th>
             <th >Tel&eacute;fono</th>
             <th >Extensi&oacute;n</th>
         </tr>
@@ -133,7 +138,7 @@
                 $lastEmpresa=$usuario->getSucursal()->getEmpresa()->getCaNombre();
                 ?>
                 <tr class="row0">
-                    <td colspan="4" style="text-align: left"><font size="4"><b><?=$lastEmpresa?></b></font></td>
+                    <td colspan="5" style="text-align: left"><font size="4"><b><?=$lastEmpresa?></b></font></td>
                 </tr>
             <?
             }
@@ -155,8 +160,9 @@
             }
             ?>
              <tr>
-                <td style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?=$usuario->getCaNombre()?></td>
+                <td style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?echo link_to($usuario->getCaNombre(), "adminUsers/viewUser?login=".$usuario->getCaLogin());?></td>
                 <td style="text-align: left"><?=$usuario->getCaCargo()?></td>
+                <td style="text-align: left"><?=$usuario->getCaEmail()?></td>
                 <td style="text-align: left"><?=$usuario->getCaTeloficina()?></td>
                 <td style="text-align: left"><?=$usuario->getCaExtension()?></td>
             </tr>
@@ -175,6 +181,7 @@
         <tr>
             <th >Usuario</th>
             <th >Cargo</th>
+            <th >Email</th>
             <th >Tel&eacute;fono</th>
             <th >Extensi&oacute;n</th>
         </tr>
@@ -187,7 +194,7 @@
                 $lastEmpresa=$usuario->getSucursal()->getEmpresa()->getCaNombre();
                 ?>
                 <tr class="row0">
-                    <td colspan="4" style="text-align: left"><font size="4"><b><?=$lastEmpresa?></b></font></td>
+                    <td colspan="5" style="text-align: left"><font size="4"><b><?=$lastEmpresa?></b></font></td>
                 </tr>
             <?
             }
@@ -195,7 +202,7 @@
                 $lastDepartamento=$usuario->getCaDepartamento();
                 ?>
                 <tr class="row0">
-                    <td colspan="4" style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;<font size="3"><b><?=$lastDepartamento?></b></font></td>
+                    <td colspan="5" style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;<font size="3"><b><?=$lastDepartamento?></b></font></td>
                 </tr>
             <?
             }
@@ -203,14 +210,15 @@
                 $lastSucursal=$usuario->getCaSucursal();
                 ?>
                 <tr class="row0">
-                    <td colspan="4" style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="2"><b><?=$lastSucursal?></b></font></td>
+                    <td colspan="5" style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="2"><b><?=$lastSucursal?></b></font></td>
                 </tr>
             <?
             }
             ?>
              <tr>
-                <td style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?=$usuario->getCaNombre()?></td>
+                <td style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?echo link_to($usuario->getCaNombre(), "adminUsers/viewUser?login=".$usuario->getCaLogin());?></td>
                 <td style="text-align: left"><?=$usuario->getCaCargo()?></td>
+                <td style="text-align: left"><?=$usuario->getCaEmail()?></td>
                 <td style="text-align: left"><?=$usuario->getCaTeloficina()?></td>
                 <td style="text-align: left"><?=$usuario->getCaExtension()?></td>
             </tr>
