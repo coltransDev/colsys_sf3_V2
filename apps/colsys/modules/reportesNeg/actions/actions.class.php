@@ -816,7 +816,6 @@ class reportesNegActions extends sfActions {
                     $errors["ca_mercancia_desc"] = "Debe colocar un texto de descripcion de la mercacia";
                     $texto.="Descripcion de Mercancia<br>";
                 }
-                }
 
                 $prov = "";
                 $incoterms = "";
