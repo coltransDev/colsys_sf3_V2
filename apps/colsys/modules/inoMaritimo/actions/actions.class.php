@@ -44,12 +44,15 @@ class inoMaritimoActions extends sfActions {
       $this->utilidades = array();
       $utilidades = Doctrine::getTable("InoUtilidadliqSea")
               ->createQuery("u")
-              ->addWhere("u.ca_referencia = ?", $referencia->getCaReferencia())
+              ->innerJoin("u.InoClientesSea c")
+              ->addWhere("c.ca_referencia = ?", $referencia->getCaReferencia())
               ->execute();
 
       foreach ($utilidades as $ut) {
          $this->utilidades[$ut->getCaIdinocliente()] = $ut->getCaValor();
       }
+      
+      //print_r($this->utilidades);
 
       $this->inoClientes = Doctrine::getTable("InoClientesSea")
               ->createQuery("u")
@@ -57,15 +60,6 @@ class inoMaritimoActions extends sfActions {
               ->addWhere("u.ca_referencia = ?", $referencia->getCaReferencia())
               ->addOrderBy("u.ca_hbls")
               ->execute();
-      $this->referencia = $referencia;
-   }
-
-   /**
-    * Executes index action
-    *
-    * @param sfRequest $request A request object
-    */
-   public function executeFormCostosNew(sfWebRequest $request) {
 
       $this->form = new UtilidadesNewForm();
       $this->form->setReferencia($referencia);
@@ -88,7 +82,8 @@ class inoMaritimoActions extends sfActions {
             try {
                $utils = Doctrine::getTable("InoUtilidadliqSea")
                        ->createQuery("u")
-                       ->addWhere("u.ca_referencia = ?", $bindValues["referencia"])
+                       ->innerJoin("u.InoClientesSea c")
+                       ->addWhere("c.ca_referencia = ?", $bindValues["referencia"])
                        ->execute();
                foreach ($utils as $u) {
                   $u->delete($conn);
@@ -98,15 +93,16 @@ class inoMaritimoActions extends sfActions {
                   if (substr($key, 0, 4) == "util") {
                      if ($val) {
                         $oid = substr($key, 5);
-                        $ic = Doctrine::getTable("InoClientesSea")
+                        /*$ic = Doctrine::getTable("InoClientesSea")
                                 ->createQuery("ic")
                                 ->addWhere("ic.ca_idinocliente = ? ", $oid)
                                 ->fetchOne();
-
+                        */
                         $ut = new InoUtilidadliqSea();
-                        $ut->setCaReferencia($bindValues["referencia"]);
-                        $ut->setCaIdcliente($ic->getCaIdcliente());
-                        $ut->setCaHbls($ic->getCaHbls());
+                        //$ut->setCaReferencia($bindValues["referencia"]);
+                        //$ut->setCaIdcliente($ic->getCaIdcliente());
+                        //$ut->setCaHbls($ic->getCaHbls());
+                        $ut->setCaIdinocliente($oid);
                         $ut->setCaValor($val);
                         $ut->save($conn);
                      }
@@ -128,7 +124,7 @@ class inoMaritimoActions extends sfActions {
     *
     * @param sfRequest $request A request object
     */
-   public function executeFormCostosNew1(sfWebRequest $request) {
+   public function executeFormCostosNew(sfWebRequest $request) {
 
       $this->forward404Unless($request->getParameter("referencia"));
       $referencia = Doctrine::getTable("InoMaestraSea")->find($request->getParameter("referencia"));      

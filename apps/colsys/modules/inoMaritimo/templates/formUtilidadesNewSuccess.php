@@ -1,6 +1,3 @@
-<?
-
-?>
 <script type="text/javascript">
     function calcular(){
         
@@ -62,8 +59,8 @@
                                 <td>  
                                 <?                                
                                 echo $form['util_'.$ic->getCaIdinocliente()]->renderError();  
-                                if( isset( $utilidades[ $ic->getCaHbls() ] )  ){
-                                    $form->setDefault('util_'.$ic->getCaIdinocliente(),  $utilidades[ $ic->getCaHbls() ]  );
+                                if( isset( $utilidades[ $ic->getCaIdinocliente() ] )  ){
+                                    $form->setDefault('util_'.$ic->getCaIdinocliente(),  $utilidades[ $ic->getCaIdinocliente() ]  );
                                 }else{
                                     $form->setDefault('util_'.$ic->getCaIdinocliente(), 0 );
                                 }
@@ -84,8 +81,7 @@
 
                         </table>          
                     </div>
-                </td>
-               
+                </td>               
             </tr>   
             <tr>
                 <td>
