@@ -1,5 +1,6 @@
 <?php
-/* 
+
+/*
  *  This file is part of the Colsys Project.
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
@@ -10,83 +11,108 @@
  *
  * @author abotero
  */
-class NuevoProveedorForm extends BaseForm{
+class NuevoProveedorForm extends BaseForm {
 
-
-	public function configure(){
+    public function configure() {
         sfValidatorBase::setCharset('ISO-8859-1');
 
-		$widgets = array();
-		$validator = array();
+        $widgets = array();
+        $validator = array();
 
-        
+
         $q = Doctrine_Query::create()
-                             ->from("IdsTipo t")
-                             ->where("t.ca_aplicacion = ? ", "Proveedores")
-                             ->addOrderBy("t.ca_nombre");
-        $widgets['tipo_proveedor'] = new sfWidgetFormDoctrineChoice(array('model' => 'IdsTipo', 'add_empty' => false, 'query' => $q), array("onChange"=>"changeTipo()"));
+                ->from("IdsTipo t")
+                ->where("t.ca_aplicacion = ? ", "Proveedores")
+                ->addOrderBy("t.ca_nombre");
+        $widgets['tipo_proveedor'] = new sfWidgetFormDoctrineChoice(array('model' => 'IdsTipo', 'add_empty' => false, 'query' => $q), array("onChange" => "changeTipo()"));
 
         $widgets['critico'] = new sfWidgetFormInputCheckbox();
-        //$widgets['esporadico'] = new sfWidgetFormInputCheckbox();
-        $widgets['controladoporsig'] = new sfWidgetFormInputCheckbox();
+        
+        $q = Doctrine_Query::create()->select("p.ca_valor")->from("Parametro p")->where("p.ca_casouso=?", "CU229")
+                ->addOrderBy("p.ca_identificacion");
+        $widgets['controladoporsig'] = new sfWidgetFormDoctrineChoice(array("model" => "Parametro",
+            'add_empty' => false,
+            'query' => $q,
+            'method' => "getCaValor",
+            'key_method' => "getCaIdentificacion"));
         $widgets['aprobado'] = new sfWidgetFormExtDate();
+        $widgets['fchvencimiento'] = new sfWidgetFormExtDate();
         $widgets['activo_impo'] = new sfWidgetFormInputCheckbox();
         $widgets['activo_expo'] = new sfWidgetFormInputCheckbox();
         $widgets['vetado'] = new sfWidgetFormInputCheckbox();
         $widgets['sigla'] = new sfWidgetFormInputText();
-        $widgets['transporte'] = new sfWidgetFormChoice(array('choices' => array( ""=>"",
-                                                                                  Constantes::AEREO=>Constantes::AEREO,
-                                                                                 Constantes::MARITIMO=>Constantes::MARITIMO,
-                                                                                 Constantes::TERRESTRE=>Constantes::TERRESTRE,
-                                                                                 "Agencia"=>"Agencia"
-                                                                                )));
+        $widgets['transporte'] = new sfWidgetFormChoice(array('choices' => array("" => "",
+                Constantes::AEREO => Constantes::AEREO,
+                Constantes::MARITIMO => Constantes::MARITIMO,
+                Constantes::TERRESTRE => Constantes::TERRESTRE,
+                "Agencia" => "Agencia"
+        )));
 
-        $widgets['empresa'] = new sfWidgetFormChoice(array('choices' => array( "Todas"=>"Todas",
-                                                                                 Constantes::COLTRANS=>Constantes::COLTRANS,
-                                                                                 Constantes::COLMAS=>Constantes::COLMAS,
-                                                                                 Constantes::COLOTM=>Constantes::COLOTM
-                                                                                )));
+        $widgets['empresa'] = new sfWidgetFormChoice(array('choices' => array("Todas" => "Todas",
+                Constantes::COLTRANS => Constantes::COLTRANS,
+                Constantes::COLMAS => Constantes::COLMAS,
+                Constantes::COLOTM => Constantes::COLOTM
+        )));
         $widgets['contrato_comodato'] = new sfWidgetFormInputCheckbox();
+
+        $widgets['ant_legales'] = new sfWidgetFormTextarea(array(), array("size" => 80, "style" => "width: 300px; height: 50px;"));
+        $widgets['ant_penales'] = new sfWidgetFormTextarea(array(), array("size" => 80, "style" => "width: 300px; height: 50px;"));
+        $widgets['ant_financieros'] = new sfWidgetFormTextarea(array(), array("size" => 80, "style" => "width: 300px; height: 50px;"));
         
-        $widgets['ant_legales'] = new sfWidgetFormTextarea(array(), array("size"=>80, "style"=>"width: 300px; height: 50px;"));
-        $widgets['ant_penales'] = new sfWidgetFormTextarea(array(), array("size"=>80, "style"=>"width: 300px; height: 50px;"));
-        $widgets['ant_financieros'] = new sfWidgetFormTextarea(array(), array("size"=>80, "style"=>"width: 300px; height: 50px;"));
         
-		$this->setWidgets( $widgets );
+        $q = Doctrine::getTable("Usuario")
+                        ->createQuery("u")
+                        ->select('u.ca_login, j.ca_nombre, j.ca_cargo, c.ca_idempresa')
+                        ->innerJoin('u.Cargo c')
+                        ->innerJoin('c.Empresa e')
+                        ->addWhere('u.ca_activo = ?', true)
+                        ->addWhere('c.ca_manager= ?', true)
+                        ->addWhere('e.ca_idempresa IN (?,?,?)', array(1,2,8))
+                        ->addOrderBy("u.ca_nombre");
+                                    
+        $widgets['jefecuenta'] = new sfWidgetFormDoctrineChoice(array('model' => 'Usuario', 
+            'add_empty' => false, 
+            'query' => $q,
+            'method' => "getCaNombre",
+            'key_method' => "getCaLogin",
+            'add_empty'=> true));
+      
+
+        $this->setWidgets($widgets);
 
 
-        $validator["tipo_proveedor"] =new sfValidatorString( array('required' => true ),
-														array('required' => 'El tipo de proveedor es requerido'));
+        $validator["tipo_proveedor"] = new sfValidatorString(array('required' => true), array('required' => 'El tipo de proveedor es requerido'));
 
-        $validator["critico"] =new sfValidatorBoolean( array('required' => false ),
-														array('required' => 'Este campo es requerido'));
+        $validator["critico"] = new sfValidatorBoolean(array('required' => false), array('required' => 'Este campo es requerido'));
 
-        /*$validator["esporadico"] =new sfValidatorBoolean( array('required' => false ),
-														array('required' => 'Este campo es requerido'));*/
+        /* $validator["esporadico"] =new sfValidatorBoolean( array('required' => false ),
+          array('required' => 'Este campo es requerido')); */
 
 
-        $validator["controladoporsig"] =new sfValidatorBoolean( array('required' => false ),
-														array('required' => 'Este campo es requerido'));
+        $validator["controladoporsig"] = new sfValidatorInteger(array('required' => false), array('required' => 'Este campo es requerido'));
 
-        $validator["aprobado"] =new sfValidatorDate( array('required' => false ),
-														array('required' => 'Este campo es requerido'));
+        $validator["aprobado"] = new sfValidatorDate(array('required' => false), array('required' => 'Este campo es requerido'));
+        $validator["fchvencimiento"] = new sfValidatorDate(array('required' => false));
 
-       
-        $validator["activo_impo"] =new sfValidatorBoolean( array('required' => false ) );
-        $validator["activo_expo"] =new sfValidatorBoolean( array('required' => false ) );
 
-        $validator["transporte"] =new sfValidatorString( array('required' => false ),
-														array('required' => 'El transporte es requerido'));
-        $validator["sigla"] =new sfValidatorString( array('required' => false ) );
+        $validator["activo_impo"] = new sfValidatorBoolean(array('required' => false));
+        $validator["activo_expo"] = new sfValidatorBoolean(array('required' => false));
+        $validator["vetado"] = new sfValidatorBoolean(array('required' => false));
 
-        $validator["empresa"] =new sfValidatorString( array('required' => false ) );
-        
-        $validator["contrato_comodato"] =new sfValidatorBoolean( array('required' => false ) );
-        $validator["ant_legales"] =new sfValidatorString( array('required' => false ) );
-        $validator["ant_penales"] =new sfValidatorString( array('required' => false ) );
-        $validator["ant_financieros"] =new sfValidatorString( array('required' => false ) );
-        
-        $this->setValidators( $validator );
+        $validator["transporte"] = new sfValidatorString(array('required' => false), array('required' => 'El transporte es requerido'));
+        $validator["sigla"] = new sfValidatorString(array('required' => false));
+
+        $validator["empresa"] = new sfValidatorString(array('required' => false));
+        $validator["jefecuenta"] = new sfValidatorString(array('required' => false));
+
+        $validator["contrato_comodato"] = new sfValidatorBoolean(array('required' => false));
+        $validator["ant_legales"] = new sfValidatorString(array('required' => false));
+        $validator["ant_penales"] = new sfValidatorString(array('required' => false));
+        $validator["ant_financieros"] = new sfValidatorString(array('required' => false));
+
+        $this->setValidators($validator);
     }
+
 }
+
 ?>

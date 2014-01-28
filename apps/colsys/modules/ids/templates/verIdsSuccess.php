@@ -136,129 +136,155 @@ var eliminarAgente = function(){
                 $proveedor = $ids->getIdsProveedor();                               
                 if( $proveedor && $proveedor->getCaIdproveedor() ){
                 ?>
-                <tr>
-                    <td>
-                        <div align="left"><b>Tipo</b></div>
-                   </td>
-                   <td>
-                       <div align="left"><?=$proveedor->getIdsTipo()?></div>
-                   </td>
-                   <td>
-                       <div align="left"><b>Fecha de aprobaci&oacute;n</b></div>
-                   </td>
-                   <td>
-                       <div align="left"><?=$proveedor->getCaFchaprobado()?Utils::fechaMes($proveedor->getCaFchaprobado())." por ".$proveedor->getCaUsuaprobado():"No Aprobado"?></div>
-                   </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div align="left"><b>Empresa</b></div>
-                   </td>
-                   <td>
-                       <div align="left"><?=$proveedor->getCaEmpresa()?$proveedor->getCaEmpresa():"Ambas"?></div>
-                   </td>
-                   <td>
-                       <div align="left">&nbsp;</div>
-                   </td>
-                   <td>
-                       <div align="left">&nbsp;</div>
-                   </td>
-                </tr>
-
-                    <?
-                    if( $proveedor->getCaTipo()=="TRI" || $proveedor->getCaTipo()=="TRN" ){
-                    ?>
                     <tr>
                         <td>
-                            <div align="left"><b>Sigla</b></div>
+                            <div align="left"><b>Tipo</b></div>
                        </td>
                        <td>
-                           <div align="left"><?=$proveedor->getCaSigla()?></div>
+                           <div align="left"><?=$proveedor->getIdsTipo()?></div>
                        </td>
                        <td>
-                           <div align="left"><b>Transporte</b></div>
+                           <div align="left"><b>Fecha de aprobaci&oacute;n</b></div>
                        </td>
                        <td>
-                           <div align="left"><?=$proveedor->getCaTransporte()?></div>
+                           <div align="left"><?=$proveedor->getCaFchaprobado()?Utils::fechaMes($proveedor->getCaFchaprobado())." por ".$proveedor->getCaUsuaprobado():"No Aprobado"?></div>
                        </td>
                     </tr>
+                    <tr>
+                        <td>
+                            <div align="left"><b>Empresa</b></div>
+                       </td>
+                       <td>
+                           <div align="left"><?=$proveedor->getCaEmpresa()?$proveedor->getCaEmpresa():"Ambas"?></div>
+                       </td>
+                       <td>
+                           <div align="left">&nbsp;</div>
+                       </td>
+                       <td>
+                           <div align="left">&nbsp;</div>
+                       </td>
+                    </tr>
+
+                        <?
+                        if( $proveedor->getCaTipo()=="TRI" || $proveedor->getCaTipo()=="TRN" ){
+                        ?>
+                        <tr>
+                            <td>
+                                <div align="left"><b>Sigla</b></div>
+                           </td>
+                           <td>
+                               <div align="left"><?=$proveedor->getCaSigla()?></div>
+                           </td>
+                           <td>
+                               <div align="left"><b>Transporte</b></div>
+                           </td>
+                           <td>
+                               <div align="left"><?=$proveedor->getCaTransporte()?></div>
+                           </td>
+                        </tr>
+                        <?
+                        }
+                        ?>
+
+                    <tr>
+                        <td>
+                            <div align="left"><b>Controlado por SIG</b></div>
+                       </td>
+                       <td>
+                           <?
+                           $parametros = ParametroTable::retrieveByCaso("CU229", null, null, $proveedor->getCaControladoporsig() );
+
+                            foreach($parametros as $parametro){
+                                $valor = explode(":", $parametro->getCaValor());
+                                $name = $valor[0];
+                                $type = $valor[1];
+                            }
+                           ?>
+                           <div align="left"><?=$name?></div>
+                       </td>
+                       <td>
+                           <div align="left"><b>Critico</b></div>
+                       </td>
+                       <td>
+                           <div align="left"><?=$proveedor->getCaCritico()?"S&iacute;":"No"?></div>
+                       </td>
+                    </tr>
+                     <tr>
+                        <td>
+                            <div align="left"><b>Activo Impo</b></div>
+                       </td>
+                       <td>
+                           <div align="left"><?=$proveedor->getCaActivoImpo()?"S&iacute;":"<span class='rojo'>No</span>"?></div>
+                       </td>
+                       <td>
+                           <div align="left"><b>Obliga Firma Contrato Comodato:</b></div>
+                       </td>
+                       <td>
+                           <div align="left"><?=$proveedor->getCaContratoComodato()?"<span class='rojo'>S&iacute;</span>":"No"?></div>
+                       </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div align="left"><b>Activo Expo</b></div>
+                       </td>
+                       <td>
+                           <div align="left"><?=$proveedor->getCaActivoExpo()?"S&iacute;":"<span class='rojo'>No</span>"?></div>
+                       </td>
+                       <?if(!$proveedor->getCaFchvencimiento() == NULL){
+                        ?>
+                        <td>
+                            <div align="left"><b>Fch. Vencimiento</b></div>
+                        </td>
+                        <td>
+                            <div align="left"><?=$proveedor->getCaFchvencimiento()<date('Y-m-d')?"<span class='rojo'>".$proveedor->getCaFchvencimiento()."</span>":$proveedor->getCaFchvencimiento()?></div>
+                        </td>
+                        <?
+                        }else{
+                        ?>
+                        <td>
+                            <div align="left">&nbsp;</div>
+                        </td>
+                        <td>
+                            <div align="left">&nbsp;</div>
+                        </td>
+                        <?}?>
+                    </tr>
+                    <?if($proveedor->getCaVetado()==on){?>
+                        <tr>
+                            <td>
+                                <div align="left"><b>Vetado</b></div>
+                           </td>
+                           <td>
+                               <div align="left"><?=$proveedor->getCaVetado()?"<span class='rojo'>S&iacute;</span>":"No"?></div>
+                           </td>
+                           <?
+                    }else{?>
+                           <td>&nbsp;</td>
+                           <td>&nbsp;</td>
+                    <?}?>
+                           <td>
+                               <div align="left">Jefe Encargado:</div>
+                           </td>
+                           <td>
+                               <div align="left"><?=$proveedor->getUsuario()->getCaNombre()?></div>
+                           </td>
+                        </tr>
+                    
+                    <?
+                    if($proveedor->getCaAntlegales() || $proveedor->getCaAntpenales() || $proveedor->getCaAntfinancieros()){
+                    ?>
+                        <tr><th colspan="4">Informaci&oacute;n de Seguridad</th></tr>
+                        <tr><td>Antecedente Legales:</td>
+                            <td><div align="left"><?=$proveedor->getCaAntlegales()?></td>
+                            <td>Antecedente Penales:</td>
+                            <td><div align="left"><?=$proveedor->getCaAntpenales()?></td>
+                        </tr>
+                        <tr><td>Antecedente Financieros:</td>
+                            <td><div align="left"><?=$proveedor->getCaAntfinancieros()?></td><td>&nbsp;</td>
+                        </tr>
+
                     <?
                     }
-                    ?>
-
-                <tr>
-                    <td>
-                        <div align="left"><b>Controlado por SIG</b></div>
-                   </td>
-                   <td>
-                       <div align="left"><?=$proveedor->getCaControladoporsig()?"S&iacute;":"No"?></div>
-                   </td>
-                   <td>
-                       <div align="left"><b>Critico</b></div>
-                   </td>
-                   <td>
-                       <div align="left"><?=$proveedor->getCaCritico()?"S&iacute;":"No"?></div>
-                   </td>
-                </tr>
-                 <tr>
-                    <td>
-                        <div align="left"><b>Activo Impo</b></div>
-                   </td>
-                   <td>
-                       <div align="left"><?=$proveedor->getCaActivoImpo()?"S&iacute;":"<span class='rojo'>No</span>"?></div>
-                   </td>
-                   <td>
-                       <div align="left"><b>Obliga Firma Contrato Comodato:</b></div>
-                   </td>
-                   <td>
-                       <div align="left"><?=$proveedor->getCaContratoComodato()?"<span class='rojo'>S&iacute;</span>":"No"?></div>
-                   </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div align="left"><b>Activo Expo</b></div>
-                   </td>
-                   <td>
-                       <div align="left"><?=$proveedor->getCaActivoExpo()?"S&iacute;":"<span class='rojo'>No</span>"?></div>
-                   </td>
-                   <td>
-                       <div align="left">&nbsp;</div>
-                   </td>
-                   <td>
-                       <div align="left">&nbsp;</div>
-                   </td>
-                </tr>
-                <?if($proveedor->getCaVetado()==on){?>
-                    <tr>
-                        <td>
-                            <div align="left"><b>Vetado</b></div>
-                       </td>
-                       <td>
-                           <div align="left"><?=$proveedor->getCaVetado()?"<span class='rojo'>S&iacute;</span>":"No"?></div>
-                       </td>
-                       <td>
-                           <div align="left">&nbsp;</div>
-                       </td>
-                       <td>
-                           <div align="left">&nbsp;</div>
-                       </td>
-                    </tr>
-                <?
-                }
-                if($proveedor->getCaAntlegales() || $proveedor->getCaAntpenales() || $proveedor->getCaAntfinancieros()){
-                ?>
-                    <tr><th colspan="4">Informaci&oacute;n de Seguridad</th></tr>
-                    <tr><td>Antecedente Legales:</td>
-                        <td><div align="left"><?=$proveedor->getCaAntlegales()?></td>
-                        <td>Antecedente Penales:</td>
-                        <td><div align="left"><?=$proveedor->getCaAntpenales()?></td>
-                    </tr>
-                    <tr><td>Antecedente Financieros:</td>
-                        <td><div align="left"><?=$proveedor->getCaAntfinancieros()?></td><td>&nbsp;</td>
-                    </tr>
-                        
-                <?
-                }
                 }else{
                 ?>
                 <tr>

@@ -229,16 +229,17 @@ class idsActions extends sfActions {
                 $bindValues["tipo_proveedor"] = $request->getParameter("tipo_proveedor");
                 $bindValues["controladoporsig"] = $request->getParameter("controladoporsig");
                 $bindValues["critico"] = $request->getParameter("critico");
-                //$bindValues["esporadico"] = $request->getParameter("esporadico");
                 $bindValues["aprobado"] = $request->getParameter("aprobado");
+                $bindValues["fchvencimiento"] = $request->getParameter("fchvencimiento");
                 $bindValues["activo_impo"] = $request->getParameter("activo_impo");
                 $bindValues["activo_expo"] = $request->getParameter("activo_expo");
+                $bindValues["vetado"] = $request->getParameter("vetado");
                 $bindValues["contrato_comodato"] = $request->getParameter("contrato_comodato");
                 $bindValues["empresa"] = $request->getParameter("empresa");
                 $bindValues["ant_legales"] = $request->getParameter("ant_legales");
                 $bindValues["ant_penales"] = $request->getParameter("ant_penales");
                 $bindValues["ant_financieros"] = $request->getParameter("ant_financieros");
-
+                $bindValues["jefecuenta"] = $request->getParameter("jefecuenta");
 
                 if ($bindValues["tipo_proveedor"] == "TRI" || $bindValues["tipo_proveedor"] == "TRN") {
                     $bindValues["sigla"] = $request->getParameter("sigla");
@@ -341,6 +342,12 @@ class idsActions extends sfActions {
                     } else {
                         $proveedor->setCaAntfinancieros(null);
                     }
+                    
+                    if ($bindValues["jefecuenta"]) {
+                        $proveedor->setCaJefecuenta($bindValues["jefecuenta"]);
+                    }else {
+                        $proveedor->setCaJefecuenta(null);
+                    }
 
                     if ($bindValues["tipo_proveedor"] == "TRI" || $bindValues["tipo_proveedor"] == "TRN") {
                         $proveedor->setCaSigla($bindValues["sigla"]);
@@ -353,9 +360,19 @@ class idsActions extends sfActions {
 
                     if ($this->nivel >= 5) {
                         if ($bindValues["controladoporsig"]) {
-                            $proveedor->setCaControladoporsig(true);
+                            $proveedor->setCaControladoporsig($bindValues["controladoporsig"]);
                         } else {
-                            $proveedor->setCaControladoporsig(false);
+                            $proveedor->setCaControladoporsig(0);
+                        }
+                        
+                        if ($bindValues["fchvencimiento"]) {
+                            $proveedor->setCaFchvencimiento($bindValues["fchvencimiento"]);
+                            if($bindValues["fchvencimiento"]<date('Y-m-d')){
+                                $proveedor->setCaActivoImpo(false);
+                                $proveedor->setCaActivoExpo(false);
+                            }
+                        } else {
+                            $proveedor->setCaFchvencimiento(null);
                         }
 
                         if ($bindValues["critico"]) {
@@ -733,6 +750,7 @@ class idsActions extends sfActions {
 
             $bindValues["id"] = $request->getParameter("id");
             $bindValues["idtipo"] = $request->getParameter("idtipo");
+            $bindValues["observaciones"] = $request->getParameter("observaciones");
             if ($request->getParameter("inicio")) {
                 $bindValues["inicio"] = Utils::parseDate($request->getParameter("inicio"));
             }
@@ -758,7 +776,11 @@ class idsActions extends sfActions {
                 if ($request->getParameter("inicio")) {
                     $documento->setCaFchinicio(Utils::parseDate($request->getParameter("inicio")));
                 }
-
+                
+                if ($request->getParameter("observaciones")) {
+                    $documento->setCaObservaciones($request->getParameter("observaciones"));
+                }
+                
                 if ($request->getParameter("vencimiento") !== null) {
                     if ($request->getParameter("vencimiento")) {
                         $documento->setCaFchvencimiento(Utils::parseDate($request->getParameter("vencimiento")));
@@ -1425,12 +1447,13 @@ class idsActions extends sfActions {
                 ->addOrderBy("p.ca_transporte ASC")
                 ->addOrderBy("i.ca_nombre ASC");
          
+         $this->critico= $request->getParameter("critico");
          $this->type= $request->getParameter("type");
          
-         if( $this->type=="nocontrol" ){
+         if( $this->type){
              //$q->addWhere("p.ca_fchaprobado IS NULL");
-             $q->addWhere("p.ca_controladoporsig = false");
-         }elseif( $this->type=="criticos" ){
+             $q->addWhere("p.ca_controladoporsig = ?",$this->type);
+         }elseif( $this->critico){
              $q->addWhere("p.ca_critico = true");
              $q->addWhere("p.ca_activo_impo = ? OR p.ca_activo_expo = ?", array("true","true"));
          }else{
@@ -1529,7 +1552,7 @@ class idsActions extends sfActions {
 
         $this->documentos = $q->execute();
     }
-
+    
     public function executeAlertasDocumentosEmail(sfWebRequest $request) {
 
 
@@ -1560,6 +1583,31 @@ class idsActions extends sfActions {
         $email->send();
 
         return sfView::NONE;
+    }
+    
+    public function executeInactivarProveedores(sfWebRequest $request) {
+        
+        $this->modo = $request->getParameter("modo");
+        $this->fecha = date("Y-m-d");
+        //echo$this->fecha ;
+        $q = Doctrine::getTable("IdsProveedor")
+                ->createQuery("p")
+                ->where("p.ca_fchvencimiento<?", $this->fecha)
+                ->addOrderBy("p.ca_fchvencimiento ASC");
+        
+        $vencidos = $q->execute();
+        
+        if($vencidos){
+            foreach($vencidos as $vencido){
+                $vencido->setCaActivoImpo(false);
+                $vencido->setCaActivoExpo(false);
+                $vencido->save();
+            }
+        }
+        
+        if ($request->getParameter("layout")) {
+            $this->setLayout($request->getParameter("layout"));
+        }
     }
 
     public function executeVerificarListaClinton(sfWebRequest $request) {
@@ -1842,7 +1890,7 @@ class idsActions extends sfActions {
         
         $q->innerJoin("i.IdsProveedor p");
         $q->select("d.*, i.*, p.*");
-        $q->addWhere("p.ca_controladoporsig = ?", true);
+        $q->addWhere("p.ca_controladoporsig = ?", 5);
         $this->titulo = "Documentos de proveedores controlados por SIG";
                 
         if ($request->getParameter("layout")) {
@@ -1852,19 +1900,29 @@ class idsActions extends sfActions {
         $documentos = $q->execute();
 
         $resultados = array();
-
+        $resultadosVisita = array();
 
         //Se agrupan los documentos por ID
         foreach ($documentos as $documento) {
 
+            if($documento->getCaIdtipo() != 9){ // Documento Visita de Proveedores
+                if (!isset($resultados[$documento->getCaId()])) {
+                    $resultados[$documento->getCaId()] = array();
+                    $resultados[$documento->getCaId()]["ids"] = $documento->getIds();
+                    $resultados[$documento->getCaId()]["docs"] = array();
+                }
 
-            if (!isset($resultados[$documento->getCaId()])) {
-                $resultados[$documento->getCaId()] = array();
-                $resultados[$documento->getCaId()]["ids"] = $documento->getIds();
-                $resultados[$documento->getCaId()]["docs"] = array();
+                $resultados[$documento->getCaId()]["docs"][] = $documento;
+            }else{
+                if (!isset($resultadosVisita[$documento->getCaId()])) {
+                    $resultadosVisita[$documento->getCaId()] = array();
+                    $resultadosVisita[$documento->getCaId()]["ids"] = $documento->getIds();
+                    $resultadosVisita[$documento->getCaId()]["docs"] = array();
+                    $resultadosVisita[$documento->getCaId()]["jefe"] = $documento->getIds()->getIdsProveedor()->getCaJefecuenta();
+                }
+
+                $resultadosVisita[$documento->getCaId()]["docs"][] = $documento;
             }
-
-            $resultados[$documento->getCaId()]["docs"][] = $documento;
         }
 
         //Se genera el correo y luego se despacha a cada contacto.
@@ -1909,15 +1967,63 @@ class idsActions extends sfActions {
             $msg = sprintf($textos['mensajeEmail'], $txt);
 
             $email->setCaUsuenvio("Administrador");
-            $email->setCaTipo("Sol. documentos");
+            $email->setCaTipo("Visita");
             $email->setCaIdcaso($documento->getCaId());
             $email->setCaFrom("pricing@coltrans.com.co");
             $email->setCaFromname("Pricing & Procurement Coltrans S.A.");
             $email->setCaSubject($textos['asuntoEmail']);
             $email->setCaReplyto("pricing@coltrans.com.co");
 
-            //$mensaje = utf8_decode($this->getRequestParameter("mensaje")."\n\n");
+            $email->setCaBody($msg);
+            $email->setCaBodyhtml(Utils::replace($msg));
 
+            $email->save(); //guarda el cuerpo del mensaje
+            
+        }
+        
+        foreach ($resultadosVisita as $resultadoVisita) {
+
+            $idJefe = $resultadoVisita["jefe"];
+            
+            if (!$idJefe) {
+                continue;
+            }
+            
+            $q = Doctrine::getTable("Usuario")
+                    ->createQuery("u")
+                    ->addWhere("u.ca_login = ?", $idJefe)
+                    ->addWhere("u.ca_activo IS TRUE");
+            
+            $emailJefe = $q->fetchOne();
+
+            $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "ids" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "textos.yml";
+            $textos = sfYaml::load($config);
+
+            $txt = "";
+
+            $documentos = $resultadoVisita["docs"];
+            foreach ($documentos as $documento) {
+                if ($documento->getCaFchvencimiento() <= date("Y-m-d")) {
+                    $venc = "Venció";
+                } else {
+                    $venc = "Vence";
+                }
+                $txt.=" - " . $documento->getIdsTipoDocumento()->getCaTipo() . " " . $venc . " " . Utils::fechaMes($documento->getCaFchvencimiento()) . "\n";
+            }
+
+
+            $msg = sprintf($textos['mensajeEmail'], $txt);
+            
+            $email = new Email();
+            $email->setCaUsuenvio("Administrador");
+            $email->setCaTipo("Sol. DocInternos");
+            $email->setCaIdcaso($documento->getCaId());
+            $email->setCaFrom("pricing@coltrans.com.co");
+            $email->setCaFromname("Pricing & Procurement Coltrans S.A.");
+            $email->setCaSubject($textos['asuntoEmail']);
+            $email->setCaReplyto("pricing@coltrans.com.co");
+            
+            $email->addTo($emailJefe->getCaEmail());
             $email->setCaBody($msg);
             $email->setCaBodyhtml(Utils::replace($msg));
 

@@ -25,6 +25,9 @@ $documentos = $sf_data->getRaw( "documentos" );
            <b>Imagen</b>
         </td>
         <td>
+           <b>Observaciones</b>
+        </td>
+        <td>
            <?
            if( $nivel>=3 ){
                echo link_to(image_tag("16x16/edit_add.gif"), "ids/formDocumentos?modo=".$modo."&id=".$ids->getCaId(),array("title"=>"Nuevo documento"));
@@ -48,7 +51,7 @@ $documentos = $sf_data->getRaw( "documentos" );
         if( $i++==0 ){
         ?>
         <tr class="row0"> 
-            <td colspan="5">Documentos requeridos</td>
+            <td colspan="6">Documentos requeridos</td>
         </tr>    
         <?    
         }
@@ -84,6 +87,9 @@ $documentos = $sf_data->getRaw( "documentos" );
            <?=($documento->getCaUbicacion()&&file_exists($documento->getArchivo())?mime_type_icon($documento->getCaUbicacion())." ".link_to($documento->getCaUbicacion(),"ids/verDocumento?iddocumento=".$documento->getCaIddocumento()):"&nbsp;")?>
         </td> 
         <td>
+           <?=$documento->getCaObservaciones()?>
+        </td> 
+        <td>
             <?            
             if( $nivel>=3 ){
                 echo link_to(image_tag("16x16/edit.gif"), "ids/formDocumentos?modo=".$modo."&iddocumento=".$documento->getCaIddocumento(),array("title"=>"Editar documento"));
@@ -96,7 +102,7 @@ $documentos = $sf_data->getRaw( "documentos" );
             
         }else{
         ?>
-        <td colspan="3">
+        <td colspan="4">
            <?
            if( $docRequired->getCaSoloSiAplica() ){
            ?>
@@ -160,7 +166,10 @@ $documentos = $sf_data->getRaw( "documentos" );
         </td>
         <td>
            <?=($documento->getCaUbicacion()&&file_exists($documento->getArchivo())?mime_type_icon($documento->getCaUbicacion())." ".link_to($documento->getCaUbicacion(),"ids/verDocumento?iddocumento=".$documento->getCaIddocumento()):"&nbsp;")?>
-        </td> 
+        </td>
+         <td>
+           <?=$documento->getCaObservaciones()?>
+        </td>
         <td>
             <?            
             if( $nivel>=3 ){

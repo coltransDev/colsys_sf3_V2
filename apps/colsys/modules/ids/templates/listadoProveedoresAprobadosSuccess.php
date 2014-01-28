@@ -20,8 +20,16 @@ for( $year=$initialYear;$year<=$actualYear; $year++ ){
 $totals = array();
 $counts = array();
 
+$parametros = ParametroTable::retrieveByCaso("CU229", null, null, $type );
+
+foreach($parametros as $parametro){
+    $valor = explode(":", $parametro->getCaValor());
+    $name = $valor[0];
+    $type = $valor[1];
+}
 ?>
 <div class="content" align="center">
+    <h2>LISTADO DE PROVEEDORES <?=strtoupper($name)?></h2><br/>
     <table border="1" class="tableList" width="90%">
     <thead>
         <tr>

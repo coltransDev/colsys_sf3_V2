@@ -97,6 +97,20 @@
 		<td><div align="left">&nbsp;</div></td>
 		<td><div align="left">&nbsp;</div></td>
 	</tr>
+        <tr>
+            <td>Observaciones</td>
+            <td colspan="3"><div align="left">
+                <?
+                echo $form['observaciones']->renderError();
+                if( $documento ){
+                    $form->setDefault('observaciones', $documento->getCaObservaciones() );
+                }
+                echo $form['observaciones']->render();
+                ?>
+            </div></td>
+            <td><div align="left">&nbsp;</div></td>
+		<td><div align="left">&nbsp;</div></td>
+        </tr>
 	
 
      <tr>

@@ -67,7 +67,7 @@ switch ($action) {
     case "formContactosIds":
 
 
-        $button[$i]["name"] = "Transladar";
+        $button[$i]["name"] = "Trasladar";
         $button[$i]["tooltip"] = "Mueve el contacto a otra sucursal";
         $button[$i]["image"] = "22x22/edit.gif";
         $button[$i]["link"] = "ids/formTransladarContacto?idcontacto=" . $this->getRequestParameter("idcontacto") . "&modo=" . $this->getRequestParameter("modo");
@@ -79,19 +79,37 @@ if ($this->getRequestParameter("modo") == "prov" && $action != "listadoProveedor
     $button[$i]["name"] = "Prov.Aprobados ";
     $button[$i]["tooltip"] = "Listado de proveedores aprobados";
     $button[$i]["image"] = "22x22/gohome.gif";
-    $button[$i]["link"] = "ids/listadoProveedoresAprobados?modo=" . $this->getRequestParameter("modo");
+    $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=5&modo=" . $this->getRequestParameter("modo");
+    $i++;
+    
+    $button[$i]["name"] = "Prov. NO controlados COLOTM";
+    $button[$i]["tooltip"] = "Listado de proveedores no controlados COLOTM";
+    $button[$i]["image"] = "22x22/gohome.gif";
+    $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=2&modo=" . $this->getRequestParameter("modo");
+    $i++;
+    
+    $button[$i]["name"] = "Prov. NO controlados esporádicos";
+    $button[$i]["tooltip"] = "Listado de proveedores no controlados esporádicos";
+    $button[$i]["image"] = "22x22/gohome.gif";
+    $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=3&modo=" . $this->getRequestParameter("modo");
+    $i++;
+    
+    $button[$i]["name"] = "Prov. NO controlados de terceros";
+    $button[$i]["tooltip"] = "Listado de proveedores no controlados de terceros";
+    $button[$i]["image"] = "22x22/gohome.gif";
+    $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=4&modo=" . $this->getRequestParameter("modo");
     $i++;
     
     $button[$i]["name"] = "Prov. NO Controlados SIG ";
     $button[$i]["tooltip"] = "Listado de proveedores NO Controlados por el SIG";
     $button[$i]["image"] = "22x22/gohome.gif";
-    $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=nocontrol&modo=" . $this->getRequestParameter("modo");
+    $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=1&modo=" . $this->getRequestParameter("modo");
     $i++;
     
     $button[$i]["name"] = "Prov. Criticos ";
     $button[$i]["tooltip"] = "Listado de proveedores NO Controlados por el SIG";
     $button[$i]["image"] = "22x22/gohome.gif";
-    $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=criticos&modo=" . $this->getRequestParameter("modo");
+    $button[$i]["link"] = "ids/listadoProveedoresAprobados?critico=true&modo=" . $this->getRequestParameter("modo");
     $i++;
 
     $button[$i]["name"] = "Prov. Inactivos ";

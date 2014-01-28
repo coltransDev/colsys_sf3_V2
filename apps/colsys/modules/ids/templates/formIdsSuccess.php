@@ -277,7 +277,6 @@
             echo $form['vetado']->render();
             ?>
             </div>
-
         </td>
     </tr>
     <?
@@ -365,9 +364,7 @@
 
      <tr>
         <td> <div align="left"><b>Aprobado:</b></div></td>
-		<td >
-
-
+            <td >
              <div align="left">
             <?
             echo $form['aprobado']->renderError();
@@ -377,7 +374,7 @@
             echo $form['aprobado']->render();
             ?>
             </div>
-        </td>
+            </td>
         <td> <div align="left"><b>Obliga Firma Contrato Comodato:</b></td>
 		<td colspan="3">
              <div align="left">
@@ -389,11 +386,42 @@
             echo $form['contrato_comodato']->render();
             ?>
             </div>
-
         </td>
-	</tr>
+    </tr>
     <tr>
-		<th colspan="6"><div align="left"><b>Informaci&oacute;n de Seguridad:</b></div></th>
+    <?if( $proveedor->getCaControladoporsig()==3 || $proveedor->getCaControladoporsig()==4){?>
+        <td> <div align="left"><b>Fch. Vencimiento:</b></div></td>
+        <td><div align="left">
+            <?
+            echo $form['fchvencimiento']->renderError();
+            if( $proveedor ){
+                $form->setDefault('fchvencimiento', $proveedor->getCaFchvencimiento() );
+            }
+            echo $form['fchvencimiento']->render();
+            ?>
+            </div>
+        </td>
+    <?}else{
+        ?>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <?
+        }
+    ?>
+        <td> <div align="left"><b>Jefe Encargado:</b></div></td>
+        <td><div align="left">
+            <?
+            echo $form['jefecuenta']->renderError();
+            if( $proveedor ){
+                $form->setDefault('jefecuenta', $proveedor->getCaJefecuenta() );
+            }
+            echo $form['jefecuenta']->render();
+            ?>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <th colspan="6"><div align="left"><b>Informaci&oacute;n de Seguridad:</b></div></th>
     </tr>
     <tr>
         <td> <div align="left"><b>Antecedentes Legales:</b></td>
