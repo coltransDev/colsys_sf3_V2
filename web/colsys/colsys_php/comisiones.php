@@ -289,12 +289,12 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
 
                 $ano = base64_decode($var);
                 $annos_mem = '';
-                for ($i = 2; $i <= substr($ano, -1); $i++) {
-                    $annos_mem.="'" . substr($i, -1) . "',";
+                for ($i = $ano; $i >= $ano - 2; $i--) {
+                    $annos_mem.="'" . substr($i, -2) . "',";
                 }
                 
                 $annos_mem = substr($annos_mem, 0, strlen($annos_mem) - 1);
-                $condicion = "substr(ca_referencia,15)::text in ($annos_mem) and ca_login like '$usuario' and ca_estado <> 'Abierto' ";
+                $condicion = "substr(ca_referencia,16,2)::text in ($annos_mem) and ca_login like '$usuario' and ca_estado <> 'Abierto' ";
                 //$condicion = "(string_to_array('ca_referencia','.'))[5]::text in ($annos_mem) and ca_login like '$usuario' and ca_estado <> 'Abierto' ";
                 
                 $condicion.= "and (CASE WHEN ca_observaciones = 'Contenedores' and ca_fchpago is not null or ca_observaciones != 'Contenedores' THEN true ELSE false END)";
@@ -397,10 +397,11 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
                 echo "<INPUT TYPE='HIDDEN' NAME='accion' VALUE='" . base64_encode('Registrar') . "'>";
                 echo "<TABLE CELLSPACING=1>";                                              // un boton de comando definido para hacer mantemientos
                 echo "<TR>";
-                echo "  <TH Class=titulo COLSPAN=8>" . COLTRANS . "<BR>$titulo<BR>$ano</TH>";
+                echo "  <TH Class=titulo COLSPAN=9>" . COLTRANS . "<BR>$titulo<BR>$ano</TH>";
                 echo "</TR>";
                 echo "<TH>Referencia</TH>";
                 echo "<TH>Hbls</TH>";
+                echo "<TH>Termino Neg.</TH>";
                 echo "<TH>Factura</TH>";
                 echo "<TH>Fch.Factura</TH>";
                 echo "<TH>Vlr.Facturado</TH>";
@@ -421,7 +422,7 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
                     $back_col = ($utl_cbm <= 0) ? " background: #FF6666" : $back_col;
                     if ($rs->Value('ca_compania') != $nom_cli) {
                         echo "<TR>";
-                        echo "  <TD Class=invertir style='font-weight:bold; font-size: 9px;' COLSPAN=7>" . $rs->Value('ca_compania') . "</TD>";
+                        echo "  <TD Class=invertir style='font-weight:bold; font-size: 9px;' COLSPAN=8>" . $rs->Value('ca_compania') . "</TD>";
                         echo "  <TD Class=invertir WIDTH=140>";
                         echo "    <TABLE CELLSPACING=1>";
                         echo "    <TR>";
@@ -452,6 +453,7 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
                     } else {
                         echo "  <TD Class=listar></TD>";
                     }
+                    echo "  <TD Class=listar  WIDTH=50 style='font-size: 9px;$back_col'>" . $rs->Value('ca_incoterms') . "</TD>";
                     echo "  <TD Class=listar  WIDTH=50 style='font-size: 9px;$back_col'>" . $rs->Value('ca_factura') . "</TD>";
                     echo "  <TD Class=listar  WIDTH=70 style='font-size: 9px;$back_col'>" . $rs->Value('ca_fchfactura') . "</TD>";
                     echo "  <TD Class=valores WIDTH=75 style='font-size: 9px;$back_col'>" . number_format($rs->Value('ca_valor')) . "</TD>";
@@ -480,11 +482,11 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
                     $j++;
                 }
                 echo "<TR HEIGHT=5>";
-                echo "  <TD Class=invertir COLSPAN=8></TD>";
+                echo "  <TD Class=invertir COLSPAN=9></TD>";
                 echo "</TR>";
 
                 echo "<TR>";
-                echo "  <TD Class=mostrar COLSPAN=5 ROWSPAN=3></TD>";
+                echo "  <TD Class=mostrar COLSPAN=6 ROWSPAN=3></TD>";
                 echo "  <TD Class=mostrar COLSPAN=2>Comisión x Venta :</TD>";
                 echo "  <TD Class=mostrar><INPUT ID=TOT_vlr READONLY TYPE='TEXT' NAME='tot_vlrcomisiones' SIZE=20 MAXLENGTH=15></TD>";
                 echo "</TR>";
@@ -498,7 +500,7 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
                 echo "</TR>";
 
                 echo "<TR HEIGHT=5>";
-                echo "  <TD Class=titulo COLSPAN=8></TD>";
+                echo "  <TD Class=titulo COLSPAN=9></TD>";
                 echo "</TR>";
                 echo "</TABLE><BR>";
                 echo "<script language='javascript'>sumarizar(document.informe);</script>";

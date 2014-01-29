@@ -264,7 +264,6 @@ require_once("menu.php");
            $cia_mem = $rs->Value('ca_compania');
        }
        $ref_mem = $rs->Value('ca_referencia');
-       $ter_neg = $rs->Value('ca_incoterms');
        $nom_cli = $rs->Value('ca_compania');
        $hbl_cli = $rs->Value('ca_hbls');
        $utl_net = ($rs->Value('ca_vlrutilidad_liq') != 0) ? $rs->Value('ca_vlrutilidad_liq') : $rs->Value('ca_volumen') * $utl_cbm;
@@ -496,10 +495,11 @@ require_once("menu.php");
             echo "<INPUT TYPE='HIDDEN' NAME='id'>";
             echo "<TABLE CELLSPACING=1>";                                              // un boton de comando definido para hacer mantemientos
             echo "<TR>";
-            echo "  <TH Class=titulo COLSPAN=9>".COLTRANS."<BR>$titulo<BR>".$meses[substr(100+$mes,1,2)]."/".$ano."</TH>";
+            echo "  <TH Class=titulo COLSPAN=10>".COLTRANS."<BR>$titulo<BR>".$meses[substr(100+$mes,1,2)]."/".$ano."</TH>";
             echo "</TR>";
             echo "<TH>Referencia</TH>";
             echo "<TH>Hbls</TH>";
+            echo "<TH>Termino Neg.</TH>";
             echo "<TH>Factura</TH>";
             echo "<TH>Fch.Factura</TH>";
             echo "<TH>Vlr.Facturado</TH>";
@@ -522,7 +522,7 @@ require_once("menu.php");
                 $back_col= ($utl_cbm<=0)?" background: #FF6666":$back_col;
                 if ($rs->Value('ca_compania') != $nom_cli) {
                     echo "<TR>";
-                    echo "  <TD Class=invertir style='font-weight:bold; font-size: 9px;' COLSPAN=7>".$rs->Value('ca_compania')."</TD>";
+                    echo "  <TD Class=invertir style='font-weight:bold; font-size: 9px;' COLSPAN=8>".$rs->Value('ca_compania')."</TD>";
                     echo "  <TD Class=invertir>";
                     echo "    <TABLE CELLSPACING=1>";
                     echo "    <TR>";
@@ -552,6 +552,7 @@ require_once("menu.php");
                 }else{
                     echo "  <TD Class=listar></TD>";
                 }
+                echo "  <TD Class=listar  WIDTH=50 style='font-size: 9px;$back_col'>".$rs->Value('ca_incoterms')."</TD>";
                 echo "  <TD Class=listar  WIDTH=50 style='font-size: 9px;$back_col'>".$rs->Value('ca_factura')."</TD>";
                 echo "  <TD Class=listar  WIDTH=70 style='font-size: 9px;$back_col'>".$rs->Value('ca_fchfactura')."</TD>";
                 echo "  <TD Class=valores WIDTH=75 style='font-size: 9px;$back_col'>".number_format($rs->Value('ca_valor'))."</TD>";
@@ -579,11 +580,11 @@ require_once("menu.php");
                 $j++;
                 }
             echo "<TR HEIGHT=5>";
-            echo "  <TD Class=invertir COLSPAN=9></TD>";
+            echo "  <TD Class=invertir COLSPAN=10></TD>";
             echo "</TR>";
 			echo "";
             echo "<TR>";
-			echo "  <TD COLSPAN=7 Class=invertir style='text-align:right'><B>TOTALES :</B>";
+			echo "  <TD COLSPAN=8 Class=invertir style='text-align:right'><B>TOTALES :</B>";
 			echo "  </TD>";
 			echo "  <TD Class=invertir>";
 			echo "    <TABLE CELLSPACING=1>";

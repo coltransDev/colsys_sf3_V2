@@ -67,7 +67,7 @@ if (true){
     $pdf->SetAligns(array("C","C","C","C","C","C","C","C","C","C","C","C","C"));
     $pdf->Row(array('Referencia','Cliente','Hbl','Termino Neg.','CBM','Factura','Fch.Factura','Valor','Rec.Caja','%','Comisión','C.Sobreventa','Fch.Liquidac'));
 
-    $pdf->SetAligns(array("L","L","L","R","R","L","C","R","L","C","R","R","C"));
+    $pdf->SetAligns(array("L","L","L","L","R","L","C","R","L","C","R","R","C"));
     $sum_vlr = 0;
     $sum_sbr = 0;
     while (!$rs->Eof()) {
