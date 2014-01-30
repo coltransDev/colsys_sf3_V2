@@ -115,7 +115,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
     }
     echo "  </SELECT></TD>";
 
-    if (!$tm->Open("select DISTINCT ca_costo from tb_costos order by ca_costo")) {       // Selecciona todos lo registros de la tabla Costos
+    if (!$tm->Open("select DISTINCT ca_costo from tb_costos where ca_transporte = 'Marítimo' and ca_impoexpo = 'Importación' order by ca_costo")) {       // Selecciona todos lo registros de la tabla Costos
         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'reputilidades.php';</script>";
         exit;
@@ -186,13 +186,15 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
         $condicion = "iu.*, ca_deduccion, isv.ca_recaudo_deduccion from vi_inoutilidades_sea iu ";
         //$condicion.= "INNER JOIN (select ca_referencia, ca_deduccion, sum(ca_valor) as ca_recaudo_deduccion from tb_inodeduccion_sea id INNER JOIN tb_deducciones dd ON (id.ca_iddeduccion = dd.ca_iddeduccion and dd.ca_deduccion = '$concepto[$reportar]') ";
         if($concepto[$reportar]=='%'){
-            $condicion.= "INNER JOIN (select ca_referencia, ca_deduccion, sum(ca_valor) as ca_recaudo_deduccion from tb_inodeduccion_sea id INNER JOIN tb_deducciones dd ON (id.ca_iddeduccion = dd.ca_iddeduccion) ";
+            $condicion.= "INNER JOIN (select ca_referencia, ca_deduccion, sum(id.ca_valor) as ca_recaudo_deduccion from tb_inodeduccion_sea id INNER JOIN tb_deducciones dd ON (id.ca_iddeduccion = dd.ca_iddeduccion) ";
         }
         else
         {
             //hay que imprimir el concepto en el resultado
-            $condicion.= "INNER JOIN (select ca_referencia, ca_deduccion, sum(ca_valor) as ca_recaudo_deduccion from tb_inodeduccion_sea id INNER JOIN tb_deducciones dd ON (id.ca_iddeduccion = dd.ca_iddeduccion and dd.ca_deduccion = '$concepto[$reportar]') ";
+            $condicion.= "INNER JOIN (select ca_referencia, ca_deduccion, sum(id.ca_valor) as ca_recaudo_deduccion from tb_inodeduccion_sea id INNER JOIN tb_deducciones dd ON (id.ca_iddeduccion = dd.ca_iddeduccion and dd.ca_deduccion = '$concepto[$reportar]') ";
         }
+        $condicion.= "INNER JOIN tb_inoingresos_sea ii on ii.ca_idinoingreso = id.ca_idinoingreso ";
+        $condicion.= "INNER JOIN tb_inoclientes_sea ic on ii.ca_idinocliente = ic.ca_idinocliente ";
         $condicion.= "group by ca_referencia, ca_deduccion) isv ON (iu.ca_referencia = isv.ca_referencia) where ";
     }
     $condicion.= " ca_mes::text like '$mes' and ca_ano::text = '$ano' and iu.ca_traorigen like '%$traorigen%' and iu.ca_modalidad like '%$modalidad%' and " . str_replace("\"", "'", $casos);
