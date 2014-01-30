@@ -20,7 +20,7 @@ button=0;
         /*var uploadButton = new WidgetUploadButton({
             text: "Agregar Archivo",
             iconCls: 'arrow_up',
-            folder: "<?=base64_encode("Referencias/".$ref->getCaReferencia())?>",
+            folder: "<?=base64_encode("Referencias/".ArchivosTable::getReferenciaAntigua($ref->getCaReferencia()))?>",
             filePrefix: "",
             confirm: true,
             callback:"actualizar"
