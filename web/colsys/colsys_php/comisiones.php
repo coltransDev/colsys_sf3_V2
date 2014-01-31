@@ -538,7 +538,7 @@ if (!isset($boton) and !isset($accion) and !isset($buscar)) {
                     }
                     while (list ($clave, $val) = each($hbls)) {
                         if (isset($val[oid])) {
-                            if (!$rs->Open("select ca_referencia, ca_idcliente, ca_hbls from tb_inoingresos_sea where oid = " . $val[oid] . " limit 1")) {
+                            if (!$rs->Open("select ca_idinocliente from tb_inoingresos_sea where oid = " . $val[oid] . " limit 1")) {
                                 echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
                                 echo "<script>document.location.href = 'comisiones.php';</script>";
                                 exit;
