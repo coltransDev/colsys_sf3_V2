@@ -34,7 +34,7 @@ class NuevoProveedorForm extends BaseForm {
             'add_empty' => false,
             'query' => $q,
             'method' => "getCaValor",
-            'key_method' => "getCaIdentificacion"));
+            'key_method' => "getCaIdentificacion"),array("onChange" => "habilitar()"));
         $widgets['aprobado'] = new sfWidgetFormExtDate();
         $widgets['fchvencimiento'] = new sfWidgetFormExtDate();
         $widgets['activo_impo'] = new sfWidgetFormInputCheckbox();

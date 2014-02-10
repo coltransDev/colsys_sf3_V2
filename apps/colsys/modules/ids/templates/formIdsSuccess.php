@@ -37,6 +37,16 @@
             document.getElementById("dv").value = "";
         }
     }
+    
+    var habilitar = function(){
+        if( document.getElementById("controladoporsig").value=="1" || document.getElementById("controladoporsig").value=="2" || document.getElementById("controladoporsig").value=="5"){
+            document.getElementById("fchvencimiento").style.display = "none";
+            document.getElementById("nfchvencimiento").style.display = "none";
+        }else{
+            document.getElementById("fchvencimiento").style.display = "";
+            document.getElementById("nfchvencimiento").style.display = "";
+        }
+    }
 
     var changeTipo = function(){
 
@@ -389,9 +399,8 @@
         </td>
     </tr>
     <tr>
-    <?if( $proveedor->getCaControladoporsig()==3 || $proveedor->getCaControladoporsig()==4){?>
-        <td> <div align="left"><b>Fch. Vencimiento:</b></div></td>
-        <td><div align="left">
+        <td> <div align="left" id="nfchvencimiento"><b>Fch. Vencimiento:</b></div></td>
+        <td><div align="left" id="fchvencimiento">
             <?
             echo $form['fchvencimiento']->renderError();
             if( $proveedor ){
@@ -401,13 +410,6 @@
             ?>
             </div>
         </td>
-    <?}else{
-        ?>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <?
-        }
-    ?>
         <td> <div align="left"><b>Jefe Encargado:</b></div></td>
         <td><div align="left">
             <?
@@ -549,6 +551,7 @@
     
     getDV( false );
     changeTipo();
+    habilitar();
 </script>
 
 

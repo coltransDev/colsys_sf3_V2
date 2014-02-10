@@ -1539,7 +1539,7 @@ class idsActions extends sfActions {
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
         if ($this->modo == "prov") {
             $q->innerJoin("i.IdsProveedor p");
-            $q->addWhere("p.ca_controladoporsig = ?", true);
+            $q->addWhere("p.ca_controladoporsig = ?", 5);
             $q->addWhere("p.ca_activo_impo = ? OR p.ca_activo_expo = ?", array("true","true"));
             $this->titulo = "Documentos de proveedores controlados por SIG";
         }

@@ -76,69 +76,72 @@ switch ($action) {
 }
 
 if ($this->getRequestParameter("modo") == "prov" && $action != "listadoProveedoresAprobados") {
-    $button[$i]["name"] = "Prov.Aprobados ";
-    $button[$i]["tooltip"] = "Listado de proveedores aprobados";
-    $button[$i]["image"] = "22x22/gohome.gif";
-    $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=5&modo=" . $this->getRequestParameter("modo");
-    $i++;
     
-    $button[$i]["name"] = "Prov. NO controlados COLOTM";
-    $button[$i]["tooltip"] = "Listado de proveedores no controlados COLOTM";
-    $button[$i]["image"] = "22x22/gohome.gif";
-    $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=2&modo=" . $this->getRequestParameter("modo");
-    $i++;
-    
-    $button[$i]["name"] = "Prov. NO controlados esporádicos";
-    $button[$i]["tooltip"] = "Listado de proveedores no controlados esporádicos";
-    $button[$i]["image"] = "22x22/gohome.gif";
-    $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=3&modo=" . $this->getRequestParameter("modo");
-    $i++;
-    
-    $button[$i]["name"] = "Prov. NO controlados de terceros";
-    $button[$i]["tooltip"] = "Listado de proveedores no controlados de terceros";
-    $button[$i]["image"] = "22x22/gohome.gif";
-    $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=4&modo=" . $this->getRequestParameter("modo");
-    $i++;
-    
-    $button[$i]["name"] = "Prov. NO Controlados SIG ";
-    $button[$i]["tooltip"] = "Listado de proveedores NO Controlados por el SIG";
-    $button[$i]["image"] = "22x22/gohome.gif";
-    $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=1&modo=" . $this->getRequestParameter("modo");
-    $i++;
-    
-    $button[$i]["name"] = "Prov. Criticos ";
-    $button[$i]["tooltip"] = "Listado de proveedores NO Controlados por el SIG";
-    $button[$i]["image"] = "22x22/gohome.gif";
-    $button[$i]["link"] = "ids/listadoProveedoresAprobados?critico=true&modo=" . $this->getRequestParameter("modo");
-    $i++;
-
-    $button[$i]["name"] = "Prov. Inactivos ";
-    $button[$i]["tooltip"] = "Listado de proveedores inactivos";
-    $button[$i]["image"] = "22x22/gohome.gif";
-    $button[$i]["link"] = "ids/listadoProveedoresInactivos?modo=" . $this->getRequestParameter("modo");
-    $i++;
-    
-    $button[$i]["name"] = "Docs. Por Proveedor";
-    $button[$i]["tooltip"] = "Documentos por cada tipo de proveedor";
-    $button[$i]["image"] = "22x22/package_editors.png";
-    $button[$i]["link"] = "ids/documentosPorTipo?modo=" . $this->getRequestParameter("modo");
-    $i++;
-
-    @$nivel = idsActions::getNivel();
-    if ($nivel >= 2) {
-        $button[$i]["name"] = "Vencimientos Docs.";
-        $button[$i]["tooltip"] = "Listado de documentos proximos a vencerse";
-        $button[$i]["image"] = "22x22/todo.gif";
-        $button[$i]["link"] = "ids/alertasDocumentos?modo=" . $this->getRequestParameter("modo");
+    if($action == "index"){
+        $button[$i]["name"] = "Prov.Aprobados ";
+        $button[$i]["tooltip"] = "Listado de proveedores aprobados";
+        $button[$i]["image"] = "22x22/gohome.gif";
+        $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=5&modo=" . $this->getRequestParameter("modo");
         $i++;
 
-        
-        
-        $button[$i]["name"] = "Listado de Criterios";
-        $button[$i]["tooltip"] = "";
-        $button[$i]["image"] = "22x22/kfind.gif";
-        $button[$i]["link"] = "ids/listadoCriteriosEval?modo=" . $this->getRequestParameter("modo");
+        $button[$i]["name"] = "Prov. NO controlados COLOTM";
+        $button[$i]["tooltip"] = "Listado de proveedores no controlados COLOTM";
+        $button[$i]["image"] = "22x22/gohome.gif";
+        $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=2&modo=" . $this->getRequestParameter("modo");
         $i++;
+
+        $button[$i]["name"] = "Prov. NO controlados esporádicos";
+        $button[$i]["tooltip"] = "Listado de proveedores no controlados esporádicos";
+        $button[$i]["image"] = "22x22/gohome.gif";
+        $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=3&modo=" . $this->getRequestParameter("modo");
+        $i++;
+
+        $button[$i]["name"] = "Prov. NO controlados de terceros";
+        $button[$i]["tooltip"] = "Listado de proveedores no controlados de terceros";
+        $button[$i]["image"] = "22x22/gohome.gif";
+        $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=4&modo=" . $this->getRequestParameter("modo");
+        $i++;
+
+        $button[$i]["name"] = "Prov. NO Controlados SIG ";
+        $button[$i]["tooltip"] = "Listado de proveedores NO Controlados por el SIG";
+        $button[$i]["image"] = "22x22/gohome.gif";
+        $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=1&modo=" . $this->getRequestParameter("modo");
+        $i++;
+
+        $button[$i]["name"] = "Prov. Criticos ";
+        $button[$i]["tooltip"] = "Listado de proveedores NO Controlados por el SIG";
+        $button[$i]["image"] = "22x22/gohome.gif";
+        $button[$i]["link"] = "ids/listadoProveedoresAprobados?critico=true&modo=" . $this->getRequestParameter("modo");
+        $i++;
+
+        $button[$i]["name"] = "Prov. Inactivos ";
+        $button[$i]["tooltip"] = "Listado de proveedores inactivos";
+        $button[$i]["image"] = "22x22/gohome.gif";
+        $button[$i]["link"] = "ids/listadoProveedoresInactivos?modo=" . $this->getRequestParameter("modo");
+        $i++;
+    
+        $button[$i]["name"] = "Docs. Por Proveedor";
+        $button[$i]["tooltip"] = "Documentos por cada tipo de proveedor";
+        $button[$i]["image"] = "22x22/package_editors.png";
+        $button[$i]["link"] = "ids/documentosPorTipo?modo=" . $this->getRequestParameter("modo");
+        $i++;
+
+        @$nivel = idsActions::getNivel();
+        if ($nivel >= 2) {
+            $button[$i]["name"] = "Vencimientos Docs.";
+            $button[$i]["tooltip"] = "Listado de documentos proximos a vencerse";
+            $button[$i]["image"] = "22x22/todo.gif";
+            $button[$i]["link"] = "ids/alertasDocumentos?modo=" . $this->getRequestParameter("modo");
+            $i++;
+
+
+
+            $button[$i]["name"] = "Listado de Criterios";
+            $button[$i]["tooltip"] = "";
+            $button[$i]["image"] = "22x22/kfind.gif";
+            $button[$i]["link"] = "ids/listadoCriteriosEval?modo=" . $this->getRequestParameter("modo");
+            $i++;
+        }
     }
 }
 if ($this->getRequestParameter("modo") == "agentes" && $action != "verIds") {
