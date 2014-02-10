@@ -5848,28 +5848,28 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                   $contenedores = substr($cadena,0,strlen($cadena)-1);
                  * 
                  */
-                $sql="insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_imprimirorigen, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones,  ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', '$imprimirorigen', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', $fchantecedentes, to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario')";
-                if (!$rs->Open($sql)) {
-                    echo "Error : 5853 $sql";
-                //    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
-                //    echo "<script>document.location.href = 'entrada.php?id=5801';</script>";
+
+                if (!$rs->Open("insert into tb_inoclientes_sea (ca_referencia, ca_idcliente, ca_idreporte, ca_hbls, ca_fchhbls, ca_imprimirorigen, ca_idproveedor, ca_proveedor, ca_numpiezas, ca_peso, ca_volumen, ca_numorden, ca_login, ca_continuacion, ca_continuacion_dest, ca_idbodega, ca_observaciones,  ca_fchantecedentes, ca_fchcreado, ca_usucreado) values('$referencia', $idcliente, $idreporte, '$hbls', '$fchhbls', '$imprimirorigen', $idproveedor, '$proveedor', $numpiezas, $peso, $volumen, '$numorden', '$login', '$continuacion', '$continuacion_dest', '$idbodega', '', $fchantecedentes, to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
+                    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'entrada.php?id=5801';</script>";
                     exit;
                 } else {
                     $tmp = & DlRecordset::NewRecordset($conn);
                     finalizarTarea($tmp, $idreporte, $usuario);
                 }
-                
-                //ifif(!$ca_idinocliente)
-                $sql="select ca_idinocliente from tb_inoclientes_sea where ca_hbls=$hbls ";
-                $tm = & DlRecordset::NewRecordset($conn);
-                if (!$tm->Open($sql)) {
-                    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";
-                    echo "<script>document.location.href = 'repcomisiones.php';</script>";
-                    exit;
-                }
-                $idinocliente=$tm->Value('ca_idinocliente');
 
                 $values = "";
+                if($idinocliente=="")
+                {
+                    $sql="select ca_idinocliente from tb_inoclientes_sea where ca_hbls='$hbls'";
+                        $tm = & DlRecordset::NewRecordset($conn);
+                        if (!$tm->Open($sql)) {
+                            echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";
+                            echo "<script>document.location.href = 'repcomisiones.php';</script>";
+                            exit;
+                        }
+                        $idinocliente=$tm->Value('ca_idinocliente');
+                }
                 foreach ($contenedores as $contenedor) {
                     if ($contenedor["id"]) {
                         if ($values)
@@ -5881,7 +5881,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 if ($values) {
                     $sql = "insert into tb_inoequiposxcliente (ca_idinocliente, ca_idequipo, ca_peso , ca_piezas , ca_volumen ) values " . $values;
                     if (!$rs->Open($sql)) {
-
+                        echo "Error 5884: $sql <br>";
                         echo $rs->mErrMsg;
                         exit;
                     }
