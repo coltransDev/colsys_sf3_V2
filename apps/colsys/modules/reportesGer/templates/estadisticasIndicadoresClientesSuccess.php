@@ -213,7 +213,7 @@ if($opcion){
                 $oids[] = $idreporte;
                 
                 if($transporte == "Marítimo"){
-                    if($r[$dataIdg] > $indi_LCL[$pais_origen] || $r[$dataIdg] > $indi_FCL[$pais_origen] ){
+                    if(($r["nva_modalidad"]=="LCL" && $r[$dataIdg] > $indi_LCL[$pais_origen]) || $r["nva_modalidad"]=="FCL" && $r[$dataIdg] > $indi_FCL[$pais_origen]){
                         $color = "red";
                         $Obs = "true";
                     }

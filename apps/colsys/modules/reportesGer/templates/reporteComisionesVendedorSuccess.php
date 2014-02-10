@@ -61,12 +61,12 @@
        			</select>          	</td>
           <td class="listar">Año: <br />
             <select name="anio" id="anio">
-                <option value="<?=(date("Y")%10)?>" selected><?=date("Y")?></option>
+                <option value="<?=(date("Y"))?>" selected><?=date("Y")?></option>
                 <?
                 for($i=(date("Y")-1);$i>=(date("Y")-5);$i--)
                 {
                 ?>
-                <option value="<?=($i%10)?>"><?=$i?></option>
+                <option value="<?=($i)?>"><?=$i?></option>
                 <?
                 }
                 ?>

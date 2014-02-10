@@ -203,7 +203,7 @@ $idlinea = $sf_data->getRaw("idlinea");
                                     fieldLabel: 'Naviera',
                                     linkTransporte: "transporte",
                                     name:"linea",
-                                    id:"linea",
+                                    id:"idlinea",
                                     hiddenName: "idlinea",
                                     value:"<?= $linea ?>",
                                     hiddenValue:"<?=$idlinea ?>",

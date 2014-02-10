@@ -934,7 +934,7 @@ class reportesGerActions extends sfActions {
             $this->resul = $st->fetchAll();
 
             $this->dataIdg = "ca_diferencia";
-            
+
             foreach ($this->resul as $r) {
 
                 /* if (!$r[$this->dataIdg])
@@ -1278,7 +1278,7 @@ class reportesGerActions extends sfActions {
             $q = Doctrine::getTable("InoCostosSea")
                     ->createQuery("c")
                     ->innerJoin("c.Costo cs")
-                    ->addWhere("substr(ca_referencia,5,2) like ?", ($request->getParameter("sufijo")!="%"?str_pad($request->getParameter("sufijo"), 2, "0", STR_PAD_LEFT):$request->getParameter("sufijo")))
+                    ->addWhere("substr(ca_referencia,5,2) like ?", $request->getParameter("sufijo"))
                     ->addWhere("ca_fchfactura >= ?", $request->getParameter("fchInicial"))
                     ->addWhere("ca_fchfactura <= ?", $request->getParameter("fchFinal"))
                     ->addWhere("ca_usucreado like ?", $request->getParameter("login"))
@@ -1468,11 +1468,11 @@ class reportesGerActions extends sfActions {
             if ($this->idagente)
                 $where.=" and a.ca_idagente='" . $this->idagente . "'";
 
-            if ($this->linea) {
-                if ($transporte == "Maritimo") {
+            if ($this->idlinea) {
+                if ($this->transporte == "Maritimo") {
                     $where.=" and em.ca_idnaviera='" . $this->idlinea . "'";
-                } elseif ($transporte == "Aereo") {
-                    $where.=" and em.ca_idnaviera='" . $this->idlinea . "'";
+                } else if ($this->transporte == "Aereo") {
+                    $where.=" and ea.ca_idaerolinea='" . $this->idlinea . "'";
                 }
             }
 
@@ -1543,7 +1543,7 @@ class reportesGerActions extends sfActions {
                     ";
 
             $con = Doctrine_Manager::getInstance()->connection();
-           
+            // echo $sql;
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
 

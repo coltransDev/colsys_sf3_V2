@@ -153,6 +153,7 @@ class reportesGerComponents extends sfComponents
         $this->idagente = $this->getRequestParameter("idagente");
         $this->agente = $this->getRequestParameter("agente");
         $this->linea = $this->getRequestParameter("linea");
+        $this->idlinea = $this->getRequestParameter("idlinea");
         $this->sucursal = $this->getRequestParameter("sucursal");
         $this->idSucursal = $this->getRequestParameter("idSucursal");
         $this->idcliente = $this->getRequestParameter("idcliente");
