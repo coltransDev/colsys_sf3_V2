@@ -178,7 +178,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
         $col_one = "Concepto";
         $col_two = "Util.x Sobreventa";
         $condicion = "iu.*, isv.ca_util_costo from vi_inoutilidades_sea iu ";
-        $condicion.= "INNER JOIN (select ca_referencia, ca_costo, sum(round(ca_venta::numeric-(ca_tcambio::numeric*ca_neto::numeric),2)) as ca_util_costo from tb_inocostos_sea ic INNER JOIN tb_costos ct ON (ic.ca_idcosto = ct.ca_idcosto and ct.ca_costo = '$concepto[$reportar]') ";
+        $condicion.= "INNER JOIN (select ca_referencia, ca_costo, sum(round(ca_venta::numeric-((ca_tcambio::numeric/ca_tcambio_usd::numeric)*ca_neto::numeric),2)) as ca_util_costo from tb_inocostos_sea ic INNER JOIN tb_costos ct ON (ic.ca_idcosto = ct.ca_idcosto and ct.ca_costo = '$concepto[$reportar]') ";
         $condicion.= "group by ca_referencia, ca_costo) isv ON (iu.ca_referencia = isv.ca_referencia) where ";
     } elseif ($reportar == 'xdeducciones') {
         $col_one = "Deducible";
