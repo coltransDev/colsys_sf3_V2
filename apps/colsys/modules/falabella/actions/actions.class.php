@@ -594,7 +594,7 @@ class falabellaActions extends sfActions {
                 $salida.= str_pad(substr($row["ca_iddoc"], 0, 15), 20, " "); // 16
 
                 $salida.= str_pad(floatval($row["ca_cod_carrier"]), 2, "0", STR_PAD_LEFT); // 17 Embarque
-                $salida.= str_pad(round(floatval($invoice->getCaAfectoVlr() * $row["ca_percent"]), 0), 10, "0", STR_PAD_LEFT); // 18 Valor del Embarque
+                $salida.= str_pad(round(floatval($vlr_total * $row["ca_percent"]), 0), 10, "0", STR_PAD_LEFT); // 18 Valor del Embarque
 
                 $spaces = array(8, 30, 30, 4, 20, 20, 10); // Campos del 19 al 27
                 foreach ($spaces as $space) {
