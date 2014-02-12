@@ -6,12 +6,46 @@ switch($action){
 		$button[0]["tooltip"]="Importar la informaci&oacute;n desde la carpeta OUT";
 		$button[0]["image"]="22x22/kexi_kexi.gif"; 			
 		$button[0]["link"]= "dataImport/importFile?fileHeader=1&proceso=Coltrans&token=".md5(time());
+
+		$button[1]["name"]="Facturaci&oacute;n";
+		$button[1]["tooltip"]="Registro de Facturas por Agenciamiento de Carga";
+		$button[1]["image"]="22x22/todo.gif"; 			
+		$button[1]["link"]= "falabella/datosFacturacion";
+                
+		$button[2]["name"]="Indicadores";
+		$button[2]["tooltip"]="Genera los indicadores trimestrales";
+		$button[2]["image"]="22x22/statistics.png"; 			
+		$button[2]["link"]= "falabella/indicadoresGestion";
         
-        $button[1]["name"]="Indicadores";
-		$button[1]["tooltip"]="Genera los indicadores trimestrales";
-		$button[1]["image"]="22x22/statistics.png"; 			
-		$button[1]["link"]= "falabella/indicadoresGestion";
-        
+		break;	
+	case "datosFacturacion":		
+		$button[0]["name"]="Inicio";
+		$button[0]["tooltip"]="Pagina principal";
+		$button[0]["image"]="22x22/home.gif";
+		$button[0]["link"]= "falabella/list";
+		
+		$button[1]["name"]="Nueva Factura";
+		$button[1]["tooltip"]="Pagina principal";
+		$button[1]["image"]="22x22/edit_add.gif";
+		$button[1]["link"]= "falabella/datosFactura";
+
+		$button[2]["name"]="Reporta Archivo";
+		$button[2]["tooltip"]="Exportar informaci&oacute;n de Facturaci&oacute;n en la carpeta IN";
+		$button[2]["image"]="22x22/kexi_kexi.gif"; 			
+		$button[2]["link"]= "falabella/generarFactura";
+		
+		break;	
+	case "datosFactura":		
+		$button[0]["name"]="Inicio";
+		$button[0]["tooltip"]="Pagina principal";
+		$button[0]["image"]="22x22/home.gif";
+		$button[0]["link"]= "falabella/list";
+		
+		$button[1]["name"]="Facturaci&oacute;n";
+		$button[1]["tooltip"]="Registro de Facturas por Agenciamiento de Carga";
+		$button[1]["image"]="22x22/todo.gif"; 			
+		$button[1]["link"]= "falabella/datosFacturacion";
+		
 		break;	
 	case "details":		
 		$button[0]["name"]="Inicio";
@@ -24,7 +58,7 @@ switch($action){
 		$button[1]["image"]="22x22/kexi_kexi.gif";
                 $button[1]["onClick"]="export_file()";
 
-		$button[2]["name"]="Facturaci&oacute;n";
+		$button[2]["name"]="Reportar Factura";
 		$button[2]["tooltip"]="Exportar informaci&oacute;n de Facturaci&oacute;n en la carpeta IN";
 		$button[2]["image"]="22x22/kexi_kexi.gif"; 			
 		$button[2]["link"]= "falabella/generarFactura?iddoc=".$this->getRequestParameter("iddoc");

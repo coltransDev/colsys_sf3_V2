@@ -7,6 +7,7 @@
 
 $header = $sf_data->getRaw( "header" );
 $container = $sf_data->getRaw( "container" );
+$invoices = $sf_data->getRaw( "invoices" );
 
 include_component("widgets", "widgetReporte");
 ?>
@@ -38,6 +39,27 @@ include_component("widgets", "widgetReporte");
 
         this.editorReporte = new WidgetReporte();
 
+        this.editorFactura = new Ext.form.ComboBox({
+            typeAhead: true,
+            forceSelection: true,
+            triggerAction: 'all',
+            selectOnFocus: true,
+            mode: 'local',
+            lazyRender:true,
+            store :
+                [
+                <?
+                    $i=0;
+                    foreach($invoices as $invoice){
+                        if($i++!=0){
+                            echo ",";
+                        }
+                        echo "[\"".$invoice["d_ca_numdocumento"]."\",\"".$invoice["d_ca_numdocumento"]."\"]";
+                    }
+                ?>
+                ]
+        });
+        
         this.editorContainerMode = new Ext.form.ComboBox({
             typeAhead: true,
             forceSelection: true,
@@ -78,15 +100,6 @@ include_component("widgets", "widgetReporte");
                             })
           },
           {
-            header: "Código Estandard Transportista",
-            dataIndex: 'cod_carrier',
-            sortable:false,
-            width: 170,
-            editor: new Ext.form.TextField({
-                                    allowBlank: false
-                            })
-          },
-          {
             header: "Container Mode",
             dataIndex: 'container_mode',
             sortable:false,
@@ -94,19 +107,26 @@ include_component("widgets", "widgetReporte");
             editor: this.editorContainerMode
           },
           {
-            header: "Numero de Factura",
-            dataIndex: 'numero_invoice',
+            header: "Número del Embarque",
+            dataIndex: 'cod_carrier',
             sortable:false,
-            width: 150,
+            width: 120,
             editor: new Ext.form.TextField({
                                     allowBlank: false
                             })
           },
           {
-            header: "Monto de Factura",
+            header: "Fac.Agenciamiento Carga",
+            dataIndex: 'numero_invoice',
+            sortable:false,
+            width: 150,
+            editor: this.editorFactura
+          },
+          {
+            header: "Valor FOB del Embarque",
             dataIndex: 'monto_invoice_miles',
             sortable:false,
-            width: 180,
+            width: 150,
             align: 'right',
             renderer: 'usMoney',
             editor: new Ext.form.NumberField({
@@ -122,8 +142,8 @@ include_component("widgets", "widgetReporte");
                 {name: 'iddoc', type: 'string', mapping: 'd_ca_iddoc'},
                 {name: 'reporte', type: 'string', mapping: 'd_ca_reporte'},
                 {name: 'num_viaje', type: 'string', mapping: 'd_ca_num_viaje'},
-                {name: 'cod_carrier', type: 'string', mapping: 'd_ca_cod_carrier'},
                 {name: 'container_mode', type: 'string', mapping: 'd_ca_container_mode'},
+                {name: 'cod_carrier', type: 'string', mapping: 'd_ca_cod_carrier'},
                 {name: 'numero_invoice', type: 'string', mapping: 'd_ca_numero_invoice'},
                 {name: 'monto_invoice_miles', type: 'string', mapping: 'd_ca_monto_invoice_miles'}
         ]);
