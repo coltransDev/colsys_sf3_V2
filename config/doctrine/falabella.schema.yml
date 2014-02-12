@@ -178,6 +178,34 @@ FalaInstruction:
       type: one
 
 
+FalaFacturacion:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: falabella
+  tableName: tb_falafacturacion
+  columns:
+    ca_numdocumento:
+      type: string
+      primary: true
+    ca_emision_fch: date
+    ca_vencimiento_fch: date
+    ca_moneda: string
+    ca_tipo_cambio: decimal
+    ca_afecto_vlr: decimal
+    ca_iva_vlr: decimal
+    ca_exento_vlr: decimal
+    ca_usuprocesado: string(20)
+    ca_fchprocesado: timestamp
+    ca_usuarchivado: string(20)
+    ca_fcharchivado: timestamp
+    ca_usuanulado: string(20)
+    ca_fchanulado: timestamp
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
 
 
 FalaHeaderAdu:
