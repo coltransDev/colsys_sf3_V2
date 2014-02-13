@@ -89,7 +89,7 @@ PanelFacturacion = function(){
 			})
       },
       {
-        header: "vlr. Exento",
+        header: "Vlr. Exento",
         dataIndex: 'exento_vlr',
         sortable:false,
         width: 75,
