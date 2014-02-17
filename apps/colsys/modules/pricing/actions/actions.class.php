@@ -123,13 +123,13 @@ class pricingActions extends sfActions {
         //$q->addWhere("p.ca_activo = ? ", true );
         $q->addWhere("(a.ca_activo = ? OR a.ca_activo IS NULL)", true);
 
-        if ($impoexpo == Constantes::IMPO) {
+        if ($impoexpo == Constantes::IMPO || $impoexpo == Constantes::INTERNO) {
             $q->addWhere("o.ca_idtrafico = ? ", $this->trafico->getCaIdtrafico());
         } else {
             $q->addWhere("d.ca_idtrafico = ? ", $this->trafico->getCaIdtrafico());
         }
 
-        if ($impoexpo == Constantes::IMPO || $this->getRequestParameter("fechacambio")) { // La fecha de cambio permite que salga el historico de exportaciones
+        if ($impoexpo == Constantes::IMPO || $impoexpo == Constantes::INTERNO || $this->getRequestParameter("fechacambio")) { // La fecha de cambio permite que salga el historico de exportaciones
             if ($idciudad) {
                 $q->addWhere("t.ca_origen = ? ", $idciudad);
             }
@@ -159,7 +159,7 @@ class pricingActions extends sfActions {
         $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
         
 	$trayectos = $q->execute();
-
+        
         $data = array();
         $transportador_id = null;
 
@@ -2181,7 +2181,7 @@ class pricingActions extends sfActions {
             $q = Doctrine_Query::create()
                             ->distinct()
                             ->from("Trayecto t");
-            if ($impoexpo == Constantes::IMPO) {
+            if ($impoexpo == Constantes::IMPO or $impoexpo == Constantes::INTERNO) {
                 $q->select("c.ca_idciudad, c.ca_ciudad, t.ca_origen, d.ca_idciudad, d.ca_ciudad");
                 $q->innerJoin("t.Origen c");
                 $q->innerJoin("t.Destino d");
@@ -2215,7 +2215,7 @@ class pricingActions extends sfActions {
                             ->distinct()
                             ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, t.ca_modalidad, d.ca_idciudad, d.ca_ciudad")
                             ->from("Trayecto t");
-            if ($impoexpo == Constantes::IMPO) {
+            if ($impoexpo == Constantes::IMPO or $impoexpo == Constantes::INTERNO) {
                 $q->innerJoin("t.Origen c");
                 $q->innerJoin("t.Destino d");
             } else {

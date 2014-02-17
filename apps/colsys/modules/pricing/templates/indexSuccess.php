@@ -119,6 +119,12 @@ Ext.onReady(function(){
                         "readOnly": <?=$opcion=="consulta"?"true":"false"?>
                     }),
                     new PanelConsultaCiudades({
+                        title: "Transporte Terrestre",
+                        "impoexpo": "<?=(Constantes::INTERNO)?>",
+                        "transporte": "<?=(Constantes::TERRESTRE)?>",
+                        "readOnly": <?=$opcion=="consulta"?"true":"false"?>
+                    }),
+                    new PanelConsultaCiudades({
                         title: "Aduana Importación",
                         "impoexpo": "<?=(Constantes::ADUANAS)?>",
                         "modalidad": "<?=(Constantes::ADUANA)?>",

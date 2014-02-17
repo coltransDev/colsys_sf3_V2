@@ -76,8 +76,6 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
                 idciudad = null;
             }
             
-            
-
             if( typeof(n.attributes.idlinea)!="undefined" ){
                 var idciudad = "";
                 var idlinea = n.attributes.idlinea;
@@ -99,6 +97,10 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
 
             if( impoexpo=="expo" ){
                 impoexpo = "<?=Constantes::EXPO?>";
+            }
+            
+            if( impoexpo=="inte" ){
+                impoexpo = "<?=Constantes::INTERNO?>";
             }
             
             /*
