@@ -227,7 +227,7 @@ class conceptosActions extends sfActions {
             //echo $tipo;
             //$c->setLimit(3);
 
-            if ($transporte == Constantes::OTMDTA) { //FIX-ME [Actualizar los registros de la tabla para que coincidan y arreglar las cotizaciones]
+            if ($transporte == Constantes::OTMDTA || $transporte == Constantes::TERRESTRE) { //FIX-ME [Actualizar los registros de la tabla para que coincidan y arreglar las cotizaciones]
                 $transporte = Constantes::TERRESTRE;
                 $modalidad = Constantes::OTMDTA;
             }
@@ -288,7 +288,7 @@ class conceptosActions extends sfActions {
         } else {
             $this->forward404Unless($transporte);
             $this->forward404Unless($modalidad);
-            if ($transporte == Constantes::OTMDTA) { //FIX-ME [Actualizar los registros de la tabla para que coincidan y arreglar las cotizaciones]
+            if ($transporte == Constantes::OTMDTA || $transporte == Constantes::TERRESTRE) { //FIX-ME [Actualizar los registros de la tabla para que coincidan y arreglar las cotizaciones]
                 $transporte = Constantes::TERRESTRE;
                 $modalidad = Constantes::OTMDTA;
             }
