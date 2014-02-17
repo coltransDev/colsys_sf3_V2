@@ -415,10 +415,13 @@ class reportesNegActions extends sfActions {
         $this->asignaciones = $reporte->getRepAsignacion();
         $this->reporte = $reporte;
 
-        if ($this->reporte->getCaVersion() > 1) {
-            $this->getRequest()->setParameter('id', $this->reporte->getCaIdreporte());
-            $this->getRequest()->setParameter('consulta', "true");
-            $this->html = sfContext::getInstance()->getController()->getPresentationFor('reportesNeg', 'compReporte');
+        if ($this->reporte->getCaVersion() > 1 && $this->reporte->getCaUsuanulado()!="") {
+            $this->reporte_old = ReporteTable::retrieveByConsecutivo($this->reporte->getCaConsecutivo(), " and ca_version='" . ($this->reporte->getCaVersion() - 1) . "'");
+            if($this->reporte_old){            
+                $this->getRequest()->setParameter('id', $this->reporte->getCaIdreporte());
+                $this->getRequest()->setParameter('consulta', "true");
+                $this->html = sfContext::getInstance()->getController()->getPresentationFor('reportesNeg', 'compReporte');
+            }
         }
         //echo $this->html;
     }
@@ -675,14 +678,15 @@ class reportesNegActions extends sfActions {
     }
 
     public function executeGuardarReporte(sfWebRequest $request) {
-        try {
+        //try 
+        {
             $this->permiso = $this->getUser()->getNivelAcceso(reportesNegActions::RUTINA);
             $idreporte = ($request->getParameter("idreporte") != "") ? $request->getParameter("idreporte") : "0";
             $tipo = $request->getParameter("tipo");
             $reporte = Doctrine::getTable("Reporte")->find($idreporte);
             $nuevo = true;
             if (!$reporte)
-                $reporte = new Reporte();
+                $reporte = new Reporte();                
             else {
                 $reporte->setCaUsuactualizado($this->getUser()->getUserId());
                 $reporte->setCaFchactualizado(date('Y-m-d H:i:s'));
@@ -1341,10 +1345,10 @@ class reportesNegActions extends sfActions {
                 }
                 $this->responseArray = array("success" => true, "idreporte" => $reporte->getCaIdreporte(), "redirect" => $redirect, "consecutivo" => $reporte->getCaConsecutivo());
             }
-        } catch (Exception $e) {
+        } /*catch (Exception $e) {
             //print_r($e);
             $this->responseArray = array("success" => false, "err" => $e->getMessage());
-        }
+        }*/
 
         $this->setTemplate("responseTemplate");
         //cuando se seleccion una cotizacion se debe marcar el campo aprobado, etapa='APR';
@@ -3654,6 +3658,20 @@ class reportesNegActions extends sfActions {
             $reporte->setCaDetanulado(trim($request->getParameter("motivo")));
             $reporte->save();
             $q->addWhere("r.ca_idreporte = ?", $request->getParameter("id"));
+            
+            /*Doctrine::getTable("NotTarea")
+                ->createQuery("t")
+                ->update()
+                ->set("t.ca_fchterminada", "'" . date('Y-m-d H:i:s') . "'")
+                ->set("t.ca_usuterminada", "'" . $this->getUser()->getUserId() . "'")
+                ->where("t.ca_titulo like ?", "%Seguimiento RN" . $consecutivo . "%")
+                ->execute();
+                */
+            $tarea = $reporte->getTareaIDGEnvioOportuno();
+            if ($tarea) {
+                $tarea->delete();
+            }
+            
         } else if ($consecutivo) {
             Doctrine::getTable("Reporte")
                     ->createQuery("r")
@@ -3673,13 +3691,7 @@ class reportesNegActions extends sfActions {
             $tarea->save();
         }
 
-        Doctrine::getTable("NotTarea")
-                ->createQuery("t")
-                ->update()
-                ->set("t.ca_fchterminada", "'" . date('Y-m-d H:i:s') . "'")
-                ->set("t.ca_usuterminada", "'" . $this->getUser()->getUserId() . "'")
-                ->where("t.ca_titulo like ?", "%Seguimiento RN" . $consecutivo . "%")
-                ->execute();
+        
         $this->responseArray = array("success" => true);
         $this->setTemplate("responseTemplate");
     }
@@ -3979,16 +3991,6 @@ class reportesNegActions extends sfActions {
 
             $email->addTo($usuario->getCaEmail());
 
-
-            /*
-              if( is_array($recips) ){
-              foreach( $recips as $recip ){
-              $recip = str_replace(" ", "", $recip );
-              if( $recip ){
-              $email->addTo( $recip );
-              }
-              }
-             */
             $repAntUsuario = $antecedente->getRepAntUsuario();
 
             foreach ($repAntUsuario as $ra) {
@@ -4038,6 +4040,17 @@ class reportesNegActions extends sfActions {
             $email->save($conn);
             $con->commit();
             $this->asignaciones = $notificar;
+            
+            $tarea = $reporte->getTareaIDGEnvioOportuno();
+            if($tarea)
+            {
+                if (!$tarea->getCaFchterminada()) {
+                    $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
+                }
+                $tarea->save();
+            }
+            
+            
             $this->setTemplate("enviarNotificacionResult");
         }
 
@@ -4785,6 +4798,7 @@ class reportesNegActions extends sfActions {
             //exit;
             $email->save();
             $email->send();
+            
 
             $this->responseArray = array("success" => true, "consecutivo" => $reporte->getCaConsecutivo(), "transporte" => utf8_encode($reporte->getCaTransporte()), "impoexpo" => utf8_encode($reporte->getCaImpoexpo()));
         } catch (Exception $e) {
@@ -4816,12 +4830,13 @@ class reportesNegActions extends sfActions {
         $response = sfContext::getInstance()->getResponse();
         $response->addJavaScript("extExtras/RowExpander", 'last');
         $response->addJavaScript("extExtras/CheckColumn", 'last');
-        if ($this->reporte_old) {
-            if ($this->reporte_old->getCaVersion() > 1)
+        if ($this->reporte) {
+            if ($this->reporte->getCaVersion() > 1)
                 $this->comparar = true;
         } else
             $this->comparar = false;
 
+        //echo ($this->comparar)?"1":"0";
         $this->setTemplate("consultaReporte");
         if ($consulta == true || $consulta == "true")
             $this->setLayout("none");
