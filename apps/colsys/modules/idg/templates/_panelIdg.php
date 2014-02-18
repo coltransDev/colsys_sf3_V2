@@ -73,7 +73,7 @@ PanelIdg = function( config ){
          ];
 
         PanelIdg.superclass.constructor.call(this, {
-            clicksToEdit: 1,
+            clicksToEdit: 2,
             stripeRows: true,
             autoHeight:true,
             loadMask: {msg:'Cargando...'},            
@@ -361,7 +361,7 @@ PanelConfig = function( config ){
          ];
 
         PanelConfig.superclass.constructor.call(this, {
-            clicksToEdit: 1,
+            clicksToEdit: 2,
             stripeRows: true,
             autoHeight:true,
             loadMask: {msg:'Cargando...'},            
