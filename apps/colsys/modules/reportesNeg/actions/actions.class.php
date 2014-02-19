@@ -4012,7 +4012,13 @@ class reportesNegActions extends sfActions {
             }
 
             $txt = ($reporte->getCaVersion() == 1) ? "nuevo " : "modificado";
-            $email->setCaSubject("Notificacion de Reporte de negocios " . $txt . " " . $subject);
+            
+            $asunto="Notificacion de Reporte de negocios " . $txt . " " . substr($subject,0,200);
+            if ($reporte->getCaDeclaracionant() == "true" || $reporte->getCaDeclaracionant() == "TRUE" || $reporte->getCaDeclaracionant() == "1" || $reporte->getCaDeclaracionant() == 1) {
+                $asunto = "*ANT*" . $asunto;
+                $email->setCaPriority(1);
+            }
+            $email->setCaSubject($asunto);
             $email->setCaBody("Notificacion de Reporte de negocios");
 
             $mensaje = Utils::replace($request->getParameter("mensaje")) . "<br />";
@@ -4035,8 +4041,7 @@ class reportesNegActions extends sfActions {
             $request->setParameter("format", "email");
 
             $mensaje = sfContext::getInstance()->getController()->getPresentationFor('reportesNeg', 'emailReporte');
-            $email->setCaBodyhtml($mensaje);
-
+            $email->setCaBodyhtml($mensaje);            
             $email->save($conn);
             $con->commit();
             $this->asignaciones = $notificar;
