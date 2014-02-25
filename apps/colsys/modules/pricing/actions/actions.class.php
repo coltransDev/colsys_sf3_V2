@@ -2957,6 +2957,131 @@ class pricingActions extends sfActions {
         }
         $this->setTemplate("responseTemplate");
     }
+    
+    public function executeInformeLogs(sfWebRequest $request) {
+        
+        $this->opcion = $request->getParameter("opcion");
+        $this->idorigen = $this->getRequestParameter("idorigen");
+        $this->origen = $this->getRequestParameter("origen");
+        $this->iddestino = $this->getRequestParameter("iddestino");
+        $this->destino = $this->getRequestParameter("origen");
+        $this->impoexpo = $this->getRequestParameter("impoexpo");
+        $this->idpais_origen = $this->getRequestParameter("idpais_origen");
+        $this->pais_origen = $this->getRequestParameter("pais_origen");
+        $this->idcorigen = $this->getRequestParameter("idcorigen");
+        $this->corigen = $this->getRequestParameter("corigen");
+        $this->transporte = $this->getRequestParameter("transporte");
+        $this->modalidad = $this->getRequestParameter("modalidad");
+        $this->idconcepto = $this->getRequestParameter("idconcepto");
+        $this->concepto = $this->getRequestParameter("idConcepto");
+        $this->idlinea = $this->getRequestParameter("idlinea");
+        $this->linea = $this->getRequestParameter("linea");
+        $this->idusuario = $this->getRequestParameter("idusuario");
+        $this->usuario = $this->getRequestParameter("usuario");
+        $this->idtransporte = $this->getRequestParameter("idtransporte");
+        $this->transporte = $this->getRequestParameter("transporte");
+        $this->fechaInicial = $request->getParameter("fechaInicial");
+        $this->fechaFinal = $request->getParameter("fechaFinal");
+        $this->typelog = $request->getParameter("typelog");
+        
+        $where = "";
+        if($this->origen)
+            $where.= "AND tr.ca_origen = '".$this->idorigen."'";
+        
+        if($this->destino)
+            $where.= "AND tr.ca_destino = '".$this->iddestino."'";
+        
+        if($this->idusuario)
+            $where.= "AND r.ca_usucreado = '".$this->idusuario."'";
+        
+        if($this->idconcepto)
+            $where.= "AND r.ca_idconcepto = '".$this->idconcepto."'";
+        
+        if($this->idpais_origen)
+            $where.= "AND r.ca_idtrafico = '".$this->idpais_origen."'";
+        
+        if($this->idcorigen)
+            $where.= "AND r.ca_idciudad = '".$this->idcorigen."'";
+        
+        if($this->opcion){
+            switch($this->typelog){
+                case 1:
+                    $select = "tr.ca_impoexpo, tr.ca_transporte, tr.ca_modalidad, ori.ca_ciudad as origen, r.ca_idconcepto, c.ca_concepto, i.ca_nombre as linea, des.ca_ciudad as destino, r.ca_vlrneto, r.ca_vlrsugerido, r.ca_aplicacion,r.ca_idmoneda, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_fcheliminado,   ";
+                    $from = "pric.log_fletes r";
+                    $join = "JOIN pric.tb_trayectos tr ON r.ca_idtrayecto = tr.ca_idtrayecto
+                             JOIN tb_conceptos c ON c.ca_idconcepto = r.ca_idconcepto
+                             JOIN ids.tb_proveedores p ON p.ca_idproveedor = tr.ca_idlinea
+                             JOIN ids.tb_ids i ON p.ca_idproveedor = i.ca_id
+                             JOIN tb_ciudades ori ON ori.ca_idciudad = tr.ca_origen
+                             JOIN tb_ciudades des ON des.ca_idciudad = tr.ca_destino";
+                    $where.= $this->impoexpo?"AND tr.ca_impoexpo = '".$this->impoexpo."'":"";
+                    $where.= $this->transporte?"AND tr.ca_transporte = '".$this->transporte."'":"";
+                    $where.= $this->modalidad?"AND tr.ca_modalidad = '".$this->modalidad."'":"";
+                    $where.= $this->idlinea?"AND tr.ca_idlinea = '".$this->idlinea."'":"";
+                    break;
+                case 2:
+                    $select = "r.ca_impoexpo, r.ca_transporte, r.ca_modalidad, t.ca_nombre as trafico, ori.ca_ciudad as ciudad, cp.ca_idconcepto, cp.ca_concepto,  r.ca_vlrrecargo, r.ca_aplicacion, r.ca_vlrminimo, r.ca_aplicacion_min, r.ca_observaciones,r.ca_idmoneda, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_fcheliminado,";
+                    $from = "pric.log_recargosxciudad r";
+                    $join = "JOIN tb_traficos t ON t.ca_idtrafico = r.ca_idtrafico
+                             JOIN tb_ciudades ori ON ori.ca_idciudad = r.ca_idciudad
+                             JOIN ino.tb_conceptos cp ON cp.ca_idconcepto = r.ca_idrecargo";
+                    $where.= $this->impoexpo?"AND r.ca_impoexpo = '".$this->impoexpo."'":"";
+                    $where.= $this->transporte?"AND r.ca_transporte = '".$this->transporte."'":"";
+                    $where.= $this->modalidad?"AND r.ca_impoexpo = '".$this->impoexpo."'":"";
+                    break;
+                case 3:
+                    $select = "tr.ca_impoexpo, tr.ca_transporte, tr.ca_modalidad, ori.ca_ciudad as origen, des.ca_ciudad as destino, c.ca_concepto as concepto, cp.ca_concepto as recargo, r.ca_vlrrecargo, r.ca_aplicacion, r.ca_vlrminimo, r.ca_aplicacion_min, r.ca_observaciones,r.ca_idmoneda, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_fcheliminado, ";
+                    $from = "pric.log_recargosxconcepto r";
+                    $join = "JOIN pric.tb_trayectos tr ON r.ca_idtrayecto = tr.ca_idtrayecto
+                             JOIN tb_conceptos c ON c.ca_idconcepto = r.ca_idconcepto
+                             JOIN ino.tb_conceptos cp ON cp.ca_idconcepto = r.ca_idrecargo
+                             JOIN tb_ciudades ori ON ori.ca_idciudad = tr.ca_origen
+                             JOIN tb_ciudades des ON des.ca_idciudad = tr.ca_destino";
+                    $where.= $this->impoexpo?"AND tr.ca_impoexpo = '".$this->impoexpo."'":"";
+                    $where.= $this->transporte?"AND tr.ca_transporte = '".$this->transporte."'":"";
+                    $where.= $this->modalidad?"AND tr.ca_modalidad = '".$this->modalidad."'":"";
+                    break;
+                case 4:
+                    $select = "r.ca_impoexpo, r.ca_transporte, r.ca_modalidad, t.ca_nombre as trafico,  i.ca_id, i.ca_nombre as linea, c.ca_idconcepto, c.ca_concepto as concepto, cp.ca_idconcepto, cp.ca_concepto as recargo, r.ca_vlrrecargo, r.ca_aplicacion, r.ca_vlrminimo, r.ca_aplicacion_min, r.ca_observaciones,r.ca_idmoneda, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_fcheliminado,";
+                    $from = "pric.log_recargosxlinea r";
+                    $join = "JOIN tb_traficos t ON t.ca_idtrafico = r.ca_idtrafico
+                             JOIN ids.tb_proveedores p ON p.ca_idproveedor = r.ca_idlinea
+                             JOIN ids.tb_ids i ON p.ca_idproveedor = i.ca_id
+                             JOIN tb_conceptos c ON c.ca_idconcepto = r.ca_idconcepto
+                             JOIN ino.tb_conceptos cp ON cp.ca_idconcepto = r.ca_idrecargo";
+                    $where.= $this->impoexpo?"AND r.ca_impoexpo = '".$this->impoexpo."'":"";
+                    $where.= $this->transporte?"AND r.ca_transporte = '".$this->transporte."'":"";
+                    $where.= $this->modalidad?"AND r.ca_impoexpo = '".$this->impoexpo."'":"";
+                    $where.= $this->idlinea?"AND r.ca_idlinea = '".$this->idlinea."'":"";
+                    break;
+                case 5:
+                    $select = "tr.ca_impoexpo, tr.ca_transporte, tr.ca_modalidad, ori.ca_ciudad as origen, des.ca_ciudad as destino, i.ca_nombre as linea, tr.ca_frecuencia, tr.ca_tiempotransito, tr.ca_observaciones as obs1, (CASE WHEN tr.ca_activo=TRUE THEN 'SI' WHEN tr.ca_activo=FALSE THEN 'NO'END ) AS ca_activo, tr.ca_ncontrato, r.ca_observaciones as obs2,";
+                    $from = "pric.log_trayectos r";
+                    $join = "JOIN pric.tb_trayectos tr ON r.ca_idtrayecto = tr.ca_idtrayecto
+                             JOIN ids.tb_proveedores p ON p.ca_idproveedor = tr.ca_idlinea
+                             JOIN ids.tb_ids i ON p.ca_idproveedor = i.ca_id
+                             JOIN tb_ciudades ori ON ori.ca_idciudad = tr.ca_origen
+                             JOIN tb_ciudades des ON des.ca_idciudad = tr.ca_destino";
+                    $where.= $this->impoexpo?"AND tr.ca_impoexpo = '".$this->impoexpo."'":"";
+                    $where.= $this->transporte?"AND tr.ca_transporte = '".$this->transporte."'":"";
+                    $where.= $this->modalidad?"AND tr.ca_impoexpo = '".$this->impoexpo."'":"";
+                    $where.= $this->idlinea?"AND tr.ca_idlinea = '".$this->idlinea."'":"";
+                    break;
+            }
+            
+            $sql = "SELECT DISTINCT $select to_char(r.ca_fchcreado,'YYYY-MM-DD HH24:MI') as fchcreado, r.ca_usucreado
+                    FROM $from 
+                        $join
+                    WHERE to_char(r.ca_fchcreado, 'YYYY-MM-DD') BETWEEN '".$this->fechaInicial."' and '".$this->fechaFinal."'
+                        $where
+                    ORDER BY fchcreado";
+            
+            $con = Doctrine_Manager::getInstance()->connection();
+            $st = $con->execute($sql);
+            $this->resul = $st->fetchAll();
+        }
+        //echo "<pre>";print_r($this->resul);echo "</pre>";
+    }
 
 }
 

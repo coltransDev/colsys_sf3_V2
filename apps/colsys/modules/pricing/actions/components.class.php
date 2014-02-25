@@ -222,6 +222,34 @@ class pricingComponents extends sfComponents
     {
         $this->aplicaciones = ParametroTable::retrieveByCaso("CU228");
     }
-
+    
+    public function executeFiltrosInformeLogs()
+    {
+        $response = sfContext::getInstance()->getResponse();
+        
+        $this->opcion = $this->getRequestParameter("opcion");
+        $this->idorigen = $this->getRequestParameter("idorigen");
+        $this->origen = $this->getRequestParameter("origen");
+        $this->iddestino = $this->getRequestParameter("iddestino");
+        $this->destino = $this->getRequestParameter("destino");
+        $this->idpais_origen = $this->getRequestParameter("idpais_origen");
+        $this->pais_origen = $this->getRequestParameter("pais_origen");
+        $this->idcorigen = $this->getRequestParameter("idcorigen");
+        $this->corigen = $this->getRequestParameter("corigen");
+        $this->impoexpo = $this->getRequestParameter("impoexpo");
+        $this->transporte = $this->getRequestParameter("transporte");
+        $this->modalidad = $this->getRequestParameter("modalidad");
+        $this->idconcepto = $this->getRequestParameter("idconcepto");
+        $this->concepto = $this->getRequestParameter("idConcepto");
+        $this->idlinea = $this->getRequestParameter("idlinea");
+        $this->linea = $this->getRequestParameter("linea");
+        $this->idusuario = $this->getRequestParameter("idusuario");
+        $this->usuario = $this->getRequestParameter("usuario");
+        $this->idtransporte = $this->getRequestParameter("idtransporte");
+        $this->transporte = $this->getRequestParameter("transporte");
+        $this->fechaInicial = $this->getRequestParameter("fechaInicial");
+        $this->fechaFinal = $this->getRequestParameter("fechaFinal");
+        $this->typelog = $this->getRequestParameter("typelog");
+    }
 }
 ?>
