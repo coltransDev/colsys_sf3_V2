@@ -20,16 +20,18 @@ for( $year=$initialYear;$year<=$actualYear; $year++ ){
 $totals = array();
 $counts = array();
 
-$parametros = ParametroTable::retrieveByCaso("CU229", null, null, $type );
-
-foreach($parametros as $parametro){
-    $valor = explode(":", $parametro->getCaValor());
-    $name = $valor[0];
-    $type = $valor[1];
+if($type){
+    $parametros = ParametroTable::retrieveByCaso("CU229", null, null, $type );
+    
+    foreach($parametros as $parametro){
+        $valor = explode(":", $parametro->getCaValor());
+        $name = $valor[0];
+        $type = $valor[1];
+    }
 }
 ?>
 <div class="content" align="center">
-    <h2>LISTADO DE PROVEEDORES <?=strtoupper($name)?></h2><br/>
+    <h2>LISTADO DE PROVEEDORES <?=$name?strtoupper($name):($critico?"CRITICOS":"PENDIENTES X APROBAR")?></h2><br/>
     <table border="1" class="tableList" width="90%">
     <thead>
         <tr>
@@ -94,7 +96,7 @@ foreach($parametros as $parametro){
         ?>
         <tr>
             <td><div align="left"><?=link_to($ids->getCaNombre(), "ids/verIds?modo=prov&id=".$ids->getCaId())?></div></td>
-            <td><div align="left"><?=Utils::fechaMes($proveedor->getCaFchaprobado())?></div></td>
+            <td><div align="left"><?=$proveedor->getCaFchaprobado()?Utils::fechaMes($proveedor->getCaFchaprobado()):"<span class='rojo'><b>No Aprobado</b></span>"?></div></td>
             <td><div align="left"><?=$proveedor->getCaActivoImpo()?"Activo":"<span class='rojo'>Inactivo</span>"?></div></td>
             <td><div align="left"><?=$proveedor->getCaActivoExpo()?"Activo":"<span class='rojo'>Inactivo</span>"?></div></td>
             <td><div align="left"><?=$proveedor->getCaEmpresa()?></div></td>

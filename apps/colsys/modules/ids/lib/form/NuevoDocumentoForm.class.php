@@ -24,8 +24,11 @@ class NuevoDocumentoForm extends BaseForm {
         $widgets['inicio'] = new sfWidgetFormExtDate(array());
         $widgets['vencimiento'] = new sfWidgetFormExtDate(array());
         $widgets['archivo'] = new sfWidgetFormInputFile(array(), array("size" => 40));
-
-        $widgets['idtipo'] = new sfWidgetFormDoctrineChoice(array('model' => 'IdsTipoDocumento', 'add_empty' => false));
+        
+        $q = Doctrine_Query::create()
+                ->from("IdsTipoDocumento t")
+                ->addOrderBy("t.ca_tipo");
+        $widgets['idtipo'] = new sfWidgetFormDoctrineChoice(array('model' => 'IdsTipoDocumento', 'add_empty' => false, 'query'=>$q));
 
         $widgets['observaciones'] = new sfWidgetFormTextarea(array(), array("rows" => 1, "cols" => 30));
         

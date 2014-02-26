@@ -54,12 +54,21 @@ switch ($action) {
             $button[$i]["image"] = "22x22/kfind.gif";
             $button[$i]["link"] = "ids/verificarListaClinton?id=" . $this->getRequestParameter("id") . "&modo=" . $this->getRequestParameter("modo");
             $i++;
-
+            
             if ($this->getRequestParameter("modo") == "agentes") {
                 $button[$i]["name"] = "Eliminar";
                 $button[$i]["tooltip"] = "";
                 $button[$i]["image"] = "16x16/delete.gif";
                 $button[$i]["onClick"] = "eliminarAgente()";
+                $i++;
+            }
+        }
+        if($nivel==2){ 
+            if ($this->getRequestParameter("modo") == "prov"){
+                $button[$i]["name"] = "Aprobar";
+                $button[$i]["tooltip"] = "";
+                $button[$i]["image"] = "22x22/approve.gif";
+                $button[$i]["link"] = "ids/aprobarProveedor?id=" . $this->getRequestParameter("id") . "&modo=" . $this->getRequestParameter("modo");
                 $i++;
             }
         }
@@ -118,6 +127,12 @@ if ($this->getRequestParameter("modo") == "prov" && $action != "listadoProveedor
         $button[$i]["tooltip"] = "Listado de proveedores inactivos";
         $button[$i]["image"] = "22x22/gohome.gif";
         $button[$i]["link"] = "ids/listadoProveedoresInactivos?modo=" . $this->getRequestParameter("modo");
+        $i++;
+        
+        $button[$i]["name"] = "Prov. Pdtes por aprobar";
+        $button[$i]["tooltip"] = "Listado de proveedores pendientes por Aprobar";
+        $button[$i]["image"] = "22x22/gohome.gif";
+        $button[$i]["link"] = "ids/listadoProveedoresAprobados?modo=" . $this->getRequestParameter("modo");
         $i++;
     
         $button[$i]["name"] = "Docs. Por Proveedor";

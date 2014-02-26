@@ -388,7 +388,7 @@ class idsActions extends sfActions {
                           } */
 
 
-                        if ($bindValues["aprobado"]) {
+                        /*if ($bindValues["aprobado"]) {
                             if ($bindValues["aprobado"] != $proveedor->getCaFchaprobado()) {
                                 $proveedor->setCaFchaprobado($bindValues["aprobado"]);
                                 $proveedor->setCaUsuaprobado($this->getUser()->getUserId());
@@ -396,7 +396,7 @@ class idsActions extends sfActions {
                         } else {
                             $proveedor->setCaFchaprobado(null);
                             $proveedor->setCaUsuaprobado(null);
-                        }
+                        }*/
                     }
 
                     $proveedor->save();
@@ -1451,14 +1451,14 @@ class idsActions extends sfActions {
          $this->type= $request->getParameter("type");
          
          if( $this->type){
-             //$q->addWhere("p.ca_fchaprobado IS NULL");
+             $q->addWhere("p.ca_fchaprobado IS NOT NULL");
              $q->addWhere("p.ca_controladoporsig = ?",$this->type);
          }elseif( $this->critico){
              $q->addWhere("p.ca_critico = true");
              $q->addWhere("p.ca_activo_impo = ? OR p.ca_activo_expo = ?", array("true","true"));
          }else{
-             $q->addWhere("p.ca_fchaprobado IS NOT NULL");
-             $q->addWhere("p.ca_controladoporsig = true");
+             $q->addWhere("p.ca_fchaprobado IS NULL");
+             $q->addWhere("p.ca_activo_impo = ? OR p.ca_activo_expo = ?", array("true","true"));
          }
          $this->proveedores = $q->execute();
     }
@@ -2289,6 +2289,29 @@ class idsActions extends sfActions {
                 
         $this->agentes = $q->execute();
         $this->estado = $estado;
+    }
+    
+    public function executeAprobarProveedor(sfWebRequest $request) {
+        
+        $id = $request->getParameter("id");
+
+        if ($id) {
+            $this->proveedor = Doctrine::getTable("IdsProveedor")->find($id);
+            $this->forward404Unless($this->proveedor);
+        }
+        
+        $jefeCta = $this->proveedor->getCaJefecuenta();
+        $user = $this->getUser()->getUserId();
+        $this->usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
+        
+        if($jefeCta == $user){
+            $this->proveedor->setCaFchaprobado(date('Y-m-d'));
+            $this->proveedor->setCaUsuaprobado($this->getUser()->getUserId());
+            $this->proveedor->save();
+            $this->respuesta = "Aprobado";
+        }else{
+            $this->respuesta = "Denegado";
+        }
     }
 }
 ?>

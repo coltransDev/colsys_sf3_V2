@@ -144,10 +144,10 @@ var eliminarAgente = function(){
                            <div align="left"><?=$proveedor->getIdsTipo()?></div>
                        </td>
                        <td>
-                           <div align="left"><b>Fecha de aprobaci&oacute;n</b></div>
+                           <div align="left"><b>Fecha de creaci&oacute;n</b></div>
                        </td>
                        <td>
-                           <div align="left"><?=$proveedor->getCaFchaprobado()?Utils::fechaMes($proveedor->getCaFchaprobado())." por ".$proveedor->getCaUsuaprobado():"No Aprobado"?></div>
+                           <div align="left"><?=$ids->getCaFchcreado()?Utils::fechaMes($ids->getCaFchcreado())." por ".$ids->getCaUsucreado():"Sin registro"?></div>
                        </td>
                     </tr>
                     <tr>
@@ -158,10 +158,10 @@ var eliminarAgente = function(){
                            <div align="left"><?=$proveedor->getCaEmpresa()?$proveedor->getCaEmpresa():"Ambas"?></div>
                        </td>
                        <td>
-                           <div align="left">&nbsp;</div>
+                           <div align="left"><b>Fecha de aprobaci&oacute;n</b></div>
                        </td>
                        <td>
-                           <div align="left">&nbsp;</div>
+                           <div align="left"><?=$proveedor->getCaFchaprobado()?Utils::fechaMes($proveedor->getCaFchaprobado())." por ".$proveedor->getCaUsuaprobado():"<span class='rojo'><b>No Aprobado</b></span>"?></div>
                        </td>
                     </tr>
 
