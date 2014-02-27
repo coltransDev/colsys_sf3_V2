@@ -590,7 +590,8 @@ class falabellaActions extends sfActions {
                 $salida.= str_pad($vlr_afecto, 10, "0", STR_PAD_LEFT); // 13
                 $salida.= str_pad($vlr_iva, 10, "0", STR_PAD_LEFT); // 14
 
-                $salida.= str_pad("21", 5, " "); // 15 Concepto
+                $concepto = ($vlr_afecto!=0 and $vlr_exento==0)?"12":"21";
+                $salida.= str_pad($concepto, 5, " "); // 15 Concepto
                 $salida.= str_pad(substr($row["ca_iddoc"], 0, 15), 20, " "); // 16
 
                 $dec_pre = ($invoice->getCaMoneda()!="COP")?2:0;
