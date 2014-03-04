@@ -70,8 +70,34 @@ var tabs = new Ext.FormPanel({
                             ?>                            
                         ]
                     })
+                },
+                {
+                    xtype:          'combo',
+                    mode:           'local',
+                    value:          '<?=($sucursal=="PER")?Constantes::TPLOGISTICS:Constantes::COLTRANS?>',
+                    triggerAction:  'all',
+                    forceSelection: true,
+                    editable:       true,
+                    fieldLabel:     'Empresa',
+                    name:           'empresa',
+                    displayField:   'name',
+                    valueField:     'name',
+                    allowBlank:     true,                    
+                    store:          new Ext.data.JsonStore({
+                        fields : ['name'],
+                        data   : [
+                            <? if($sucursal=="PER"){?>
+                              {name : '<?=Constantes::TPLOGISTICS?>'}
+                            <?}
+                            else{?>
+                            {name : '<?=Constantes::COLTRANS?>'},
+                            {name : '<?=Constantes::COLMAS?>'}
+                            <?
+                            }?>                            
+                            
+                        ]
+                    })
                 }
-				
                 <? 
                 if($nivel=="0")
                 {
@@ -202,4 +228,3 @@ tabs.render("container");
 
 
 </script>
-
