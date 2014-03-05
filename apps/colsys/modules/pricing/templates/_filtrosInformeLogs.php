@@ -32,7 +32,8 @@ include_component("widgets", "widgetUsuario");
         Ext.getCmp('modalidad').show();
         Ext.getCmp('idConcepto').show();
         Ext.getCmp('idlinea').show();
-        Ext.getCmp('pais_origen').setValue(null);
+        Ext.getCmp('pais_origen').show();
+        Ext.getCmp('corigen').hide();
         Ext.getCmp('corigen').setValue(null);
         Ext.getCmp('usuario').show();
     }

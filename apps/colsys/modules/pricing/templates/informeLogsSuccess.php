@@ -110,8 +110,8 @@ include_component("pricing", "filtrosInformeLogs");
                         <td><?= $r["destino"] ?></td>
                         <td><?= $r["ca_concepto"] ?></td>
                         <td><?= $r["linea"] ?></td>
-                        <td style=" text-align: right;"><?= round($r["ca_vlrneto"]) ?></td>
-                        <td style=" text-align: right;"><?= round($r["ca_vlrsugerido"]) ?></td>
+                        <td style=" text-align: right;"><?= $r["ca_vlrneto"] ?></td>
+                        <td style=" text-align: right;"><?= $r["ca_vlrsugerido"] ?></td>
                         <td><?= $r["ca_aplicacion"] ?></td>
                         <?
                         break;
@@ -121,9 +121,9 @@ include_component("pricing", "filtrosInformeLogs");
                         <td><?= $r["ciudad"] ?></td>
                         <td><?= $r["ca_concepto"] ?></td>
                         <td style="width: 30px"><?= $r["ca_observaciones"] ?></td>
-                        <td style=" text-align: right;"><?= round($r["ca_vlrrecago"]) ?></td>
+                        <td style=" text-align: right;"><?= $r["ca_vlrrecago"]?></td>
                         <td><?= $r["ca_aplicacion"] ?></td>
-                        <td style=" text-align: right;"><?= round($r["ca_vlrminimo"]) ?></td>
+                        <td style=" text-align: right;"><?= $r["ca_vlrminimo"]?></td>
                         <td><?= $r["ca_aplicacion_min"] ?></td>
                         <?
                         break;

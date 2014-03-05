@@ -2997,9 +2997,6 @@ class pricingActions extends sfActions {
         if($this->idconcepto)
             $where.= "AND r.ca_idconcepto = '".$this->idconcepto."'";
         
-        if($this->idpais_origen)
-            $where.= "AND r.ca_idtrafico = '".$this->idpais_origen."'";
-        
         if($this->idcorigen)
             $where.= "AND r.ca_idciudad = '".$this->idcorigen."'";
         
@@ -3013,11 +3010,14 @@ class pricingActions extends sfActions {
                              JOIN ids.tb_proveedores p ON p.ca_idproveedor = tr.ca_idlinea
                              JOIN ids.tb_ids i ON p.ca_idproveedor = i.ca_id
                              JOIN tb_ciudades ori ON ori.ca_idciudad = tr.ca_origen
-                             JOIN tb_ciudades des ON des.ca_idciudad = tr.ca_destino";
+                             JOIN tb_traficos tor ON tor.ca_idtrafico = ori.ca_idtrafico
+                             JOIN tb_ciudades des ON des.ca_idciudad = tr.ca_destino
+                             JOIN tb_traficos td ON td.ca_idtrafico = des.ca_idtrafico";
                     $where.= $this->impoexpo?"AND tr.ca_impoexpo = '".$this->impoexpo."'":"";
                     $where.= $this->transporte?"AND tr.ca_transporte = '".$this->transporte."'":"";
                     $where.= $this->modalidad?"AND tr.ca_modalidad = '".$this->modalidad."'":"";
                     $where.= $this->idlinea?"AND tr.ca_idlinea = '".$this->idlinea."'":"";
+                    $where.= $this->idpais_origen?"AND tor.ca_idtrafico = '".$this->idpais_origen."'":"";
                     break;
                 case 2:
                     $select = "r.ca_impoexpo, r.ca_transporte, r.ca_modalidad, t.ca_nombre as trafico, ori.ca_ciudad as ciudad, cp.ca_idconcepto, cp.ca_concepto,  r.ca_vlrrecargo, r.ca_aplicacion, r.ca_vlrminimo, r.ca_aplicacion_min, r.ca_observaciones,r.ca_idmoneda, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_fcheliminado,";
@@ -3028,6 +3028,7 @@ class pricingActions extends sfActions {
                     $where.= $this->impoexpo?"AND r.ca_impoexpo = '".$this->impoexpo."'":"";
                     $where.= $this->transporte?"AND r.ca_transporte = '".$this->transporte."'":"";
                     $where.= $this->modalidad?"AND r.ca_impoexpo = '".$this->impoexpo."'":"";
+                    $where.= $this->idpais_origen?"AND r.ca_idtrafico = '".$this->idpais_origen."'":"";
                     break;
                 case 3:
                     $select = "tr.ca_impoexpo, tr.ca_transporte, tr.ca_modalidad, ori.ca_ciudad as origen, des.ca_ciudad as destino, c.ca_concepto as concepto, cp.ca_concepto as recargo, r.ca_vlrrecargo, r.ca_aplicacion, r.ca_vlrminimo, r.ca_aplicacion_min, r.ca_observaciones,r.ca_idmoneda, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_fcheliminado, ";
@@ -3053,6 +3054,7 @@ class pricingActions extends sfActions {
                     $where.= $this->transporte?"AND r.ca_transporte = '".$this->transporte."'":"";
                     $where.= $this->modalidad?"AND r.ca_impoexpo = '".$this->impoexpo."'":"";
                     $where.= $this->idlinea?"AND r.ca_idlinea = '".$this->idlinea."'":"";
+                    $where.= $this->idpais_origen?"AND r.ca_idtrafico = '".$this->idpais_origen."'":"";
                     break;
                 case 5:
                     $select = "tr.ca_impoexpo, tr.ca_transporte, tr.ca_modalidad, ori.ca_ciudad as origen, des.ca_ciudad as destino, i.ca_nombre as linea, tr.ca_frecuencia, tr.ca_tiempotransito, tr.ca_observaciones as obs1, (CASE WHEN tr.ca_activo=TRUE THEN 'SI' WHEN tr.ca_activo=FALSE THEN 'NO'END ) AS ca_activo, tr.ca_ncontrato, r.ca_observaciones as obs2,";
