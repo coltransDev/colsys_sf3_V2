@@ -250,7 +250,9 @@ class reportesNegActions extends sfActions {
             $condicion.=" and ca_tiporep <> 4";
 
         if ($criterio) {
-            if ($opcion == 'ca_consecutivo' or $opcion == 'ca_nombre_cli' or $opcion == 'ca_nombre_con' or $opcion == 'ca_nombre_pro' or $opcion == 'ca_orden_prov' or $opcion == 'ca_orden_clie' or $opcion == 'ca_idcotizacion' or $opcion == 'ca_login' or $opcion == 'ca_mercancia_desc' or $opcion == 'ca_traorigen' or $opcion == 'ca_ciuorigen') {
+            if ($opcion == 'ca_consecutivo') {
+                $condicion.= " and r.$opcion like '" . $criterio . "%'";
+            } else if ($opcion == 'ca_nombre_cli' or $opcion == 'ca_nombre_con' or $opcion == 'ca_nombre_pro' or $opcion == 'ca_orden_prov' or $opcion == 'ca_orden_clie' or $opcion == 'ca_idcotizacion' or $opcion == 'ca_login' or $opcion == 'ca_mercancia_desc' or $opcion == 'ca_traorigen' or $opcion == 'ca_ciuorigen') {
                 $condicion.= " and lower(r.$opcion) like lower('%" . $criterio . "%')";
             } else if ($opcion == "ca_nombre_cli_otm") {
                 $condicion.=" and o.ca_idcliente in (select ca_idtercero from tb_terceros where lower(ca_nombre) like lower('%" . $criterio . "%') )";
