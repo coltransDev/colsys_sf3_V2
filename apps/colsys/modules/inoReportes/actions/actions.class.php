@@ -37,6 +37,8 @@ class inoReportesActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeCuadroInoResult(sfWebRequest $request) {
+        
+        $empresa=sfConfig::get('app_branding_name');
 
         $aa = $request->getParameter("aa");
         $q = Doctrine::getTable("InoMaster")
@@ -45,6 +47,7 @@ class inoReportesActions extends sfActions {
                 ->innerJoin("m.Origen o")
                 ->innerJoin("m.Destino d")
                 ->innerJoin("m.IdsProveedor p")
+                ->leftJoin("h.Reporte r")
                 ->innerJoin("p.Ids i")
                 ->leftJoin("m.IdsAgente a")
                 ->leftJoin("a.Ids ia")
@@ -55,10 +58,9 @@ class inoReportesActions extends sfActions {
                 ->leftJoin("m.InoViUnidadesMaster uni")
                 ->leftJoin("m.InoViTeus te")
                 ->select("m.ca_idmaster, m.ca_referencia, uni.ca_numhijas, uni.ca_numpiezas, uni.ca_peso, uni.ca_volumen, 
-                            o.ca_ciudad, d.ca_ciudad, p.ca_idproveedor, i.ca_nombre,a.ca_idagente,ia.ca_nombre, te.ca_valor,
-                            cost.ca_valor, cost.ca_venta, ing.ca_valor, ded.ca_valor, uti.ca_valor, m.ca_fchcerrado, m.ca_fchliquidado, m.ca_observaciones")
-                ->addWhere("substr(m.ca_referencia,16,2) = ?", $aa % 100);
-
+                            o.ca_ciudad, d.ca_ciudad, h.ca_idhouse, r.ca_incoterms, p.ca_idproveedor, i.ca_nombre,a.ca_idagente,ia.ca_nombre, te.ca_valor,
+                            cost.ca_valor, cost.ca_venta, ing.ca_valor, ded.ca_valor, uti.ca_valor, m.ca_fchcerrado, m.ca_fchliquidado, m.ca_observaciones");
+                
         $impoexpo = $request->getParameter("impoexpo");
         $transporte = $request->getParameter("transporte");
         $idlinea = $request->getParameter("idlinea");
@@ -118,9 +120,17 @@ class inoReportesActions extends sfActions {
         if ($idagente) {
             $q->addWhere("m.ca_idagente = ? ", $idagente);
         }
-
+        
         if (count($mm)>0) {
-            $q->andWhereIn("SUBSTR(m.ca_referencia,8,2)",$mm);
+            if($empresa!='TPLogistics'){
+                $q->andWhereIn("SUBSTR(m.ca_referencia,8,2)",$mm);
+            }else{
+                if($aa<='2012' || ($aa=='2013' && (in_array('1', $mm) || in_array('2', $mm)))){
+                    $q->andWhereIn("SUBSTR(m.ca_referencia,8,2)",$mm);
+                }else{
+                    $q->andWhereIn("SUBSTR(m.ca_referencia,7,2)",$mm);
+                }
+            }
         }
         
         if ($login) {
@@ -132,12 +142,21 @@ class inoReportesActions extends sfActions {
                 $q->addWhere("m.ca_fchcerrado IS NULL");
             }else{
                 $q->addWhere("m.ca_fchcerrado IS NOT NULL");
+                
             }
         }
 
-        /*if ($aa) {
-            $q->addWhere("SUBSTR(m.ca_referencia,15,1) = ? ", $aa % 10);
-        }*/
+        if ($aa) {
+            if($empresa!='TPLogistics'){
+                $q->addWhere("substr(m.ca_referencia,16,2) = ?", $aa % 100);
+            }else{
+                if($aa<='2012' || ($aa=='2013' && (in_array('1', $mm) || in_array('2', $mm)))){
+                    $q->addWhere("substr(m.ca_referencia,15,1) = ?", $aa % 10);
+                }else{
+                    $q->addWhere("SUBSTR(m.ca_referencia,10,2) = ? ", $aa%100);
+                }
+            }
+        }
         //echo $q->getSqlQuery();
         $this->refs = $q->setHydrationMode(Doctrine::HYDRATE_ARRAY)->execute();
     }
@@ -160,6 +179,7 @@ class inoReportesActions extends sfActions {
                 ->innerJoin("m.Origen o")
                 ->innerJoin("m.Destino d")
                 ->innerJoin("m.IdsProveedor p")
+                ->leftJoin("h.Reporte r")
                 ->innerJoin("p.Ids i")
                 ->leftJoin("m.IdsAgente a")
                 ->leftJoin("a.Ids ia")
@@ -170,7 +190,7 @@ class inoReportesActions extends sfActions {
                 ->leftJoin("m.InoViUnidadesMaster uni")
                 ->leftJoin("m.InoViTeus te")
                 ->select("m.ca_idmaster, m.ca_referencia, uni.ca_numhijas, uni.ca_numpiezas, uni.ca_peso, uni.ca_volumen, 
-                            o.ca_ciudad, d.ca_ciudad, p.ca_idproveedor, i.ca_nombre,a.ca_idagente,ia.ca_nombre, te.ca_valor,
+                            o.ca_ciudad, d.ca_ciudad, h.ca_idhouse, r.ca_incoterms, p.ca_idproveedor, i.ca_nombre,a.ca_idagente,ia.ca_nombre, te.ca_valor,
                             cost.ca_valor, cost.ca_venta, ing.ca_valor, ded.ca_valor, uti.ca_valor, m.ca_fchcerrado, m.ca_fchliquidado, m.ca_observaciones")
                 ->addWhere("SUBSTR(m.ca_referencia,10,2) = ? ", $aa%100);
 
@@ -184,8 +204,6 @@ class inoReportesActions extends sfActions {
         $destino = $request->getParameter("destino");
         $login = $request->getParameter("login");
 
-        $aa = $request->getParameter("aa");
-        
         $nmm=$request->getParameter("nmes");
         
         foreach($nmm as $m)
@@ -241,9 +259,9 @@ class inoReportesActions extends sfActions {
             $q->addWhere("h.ca_vendedor = ? ", $login);
         }
 
-        /*if ($aa) {
+        if ($aa) {
             $q->addWhere("SUBSTR(m.ca_referencia,15,1) = ? ", $aa % 10);
-        }*/
+        }
         //echo $q->getSqlQuery();
         $this->refs = $q->setHydrationMode(Doctrine::HYDRATE_ARRAY)->execute();
     }
@@ -666,8 +684,8 @@ class inoReportesActions extends sfActions {
 
         //$this->permiso = $this->getUser()->getNivelAcceso( inoReportesActions::RUTINA_COMISIONES );
         $con = Doctrine_Manager::getInstance()->connection();
-        $empresa=sfConfig::get('app_branding_name');
-        if($empresa!=Constantes::TPLOGISTICS)
+        $this->empresa=sfConfig::get('app_branding_name');
+        if($this->empresa!=Constantes::TPLOGISTICS)
             $this->permiso = $this->getUser()->getNivelAcceso( inoReportesActions::RUTINA_COMISIONES );
         else
             $this->permiso=2;
@@ -694,7 +712,7 @@ class inoReportesActions extends sfActions {
                         ,rc.ca_consecutivo as rcaja, rc.ca_valor rcvalor
                         ,array_to_string(ARRAY( SELECT ca_consecutivo FROM ino.vi_comprobantes  WHERE ca_idmaster=m.ca_idmaster AND ca_idhouse=h.ca_idhouse AND ca_idtipo NOT IN(11,12)),',' ) as facturas
                        ,(SELECT (com.ca_consecutivo||'|'||det.ca_cr) FROM ino.tb_comprobantes com,ino.tb_detalles det WHERE com.ca_idcomprobante=det.ca_idcomprobante and det.ca_idmaster=m.ca_idmaster AND det.ca_idhouse=h.ca_idhouse AND com.ca_idtipo IN(11) and det.ca_cr >0 limit 1) comision
-                       ,( SELECT fun_getcomision(h.ca_idcliente::numeric, m.ca_referencia::text, '".$empresa."'::text) AS fun_getcomision) AS ca_porcentaje,
+                       /*,( SELECT fun_getcomision(h.ca_idcliente::numeric, m.ca_referencia::text, '".$this->empresa."'::text) AS fun_getcomision) AS ca_porcentaje*/,
                        m.ca_fchcerrado,m.ca_usucerrado,cl.ca_fchcircular
                        
                     FROM ino.tb_master m
@@ -776,24 +794,29 @@ class inoReportesActions extends sfActions {
             }
 
             if ($aa!="") {
-                if($empresa!='TPLogistics')
+                /*if($this->empresa!='TPLogistics')
                 {
                     $sql.=" and SUBSTR(m.ca_referencia,16,2) ='".($aa%100)."'";                    
                 }
                 else
                 {
                     $sql.=" and SUBSTR(m.ca_referencia,10,2) ='".($aa%100)."'";                    
+                }*/
+                if($this->empresa=='TPLogistics'){
+                    $sql.=" and SUBSTR(m.ca_referencia,15,1) ='".($aa%10)."'";                    
+                }else{
+                    $sql.=" and SUBSTR(m.ca_referencia,16,2) ='".($aa%100)."'";                    
                 }
             }
             if ($mm!="") {
-                if($empresa!='TPLogistics')
-                {
+                /*if($this->empresa!='TPLogistics')
+                {*/
                     $sql.=" and SUBSTR(m.ca_referencia,8,2) ='".str_pad($mm, 2, "0", STR_PAD_LEFT)."'";
-                }
+                /*}
                 else
                 {
                     $sql.=" and SUBSTR(m.ca_referencia,7,2) ='".str_pad($mm, 2, "0", STR_PAD_LEFT)."'";
-                }
+                }*/
             }
 
             if ($casos!="") {
@@ -993,7 +1016,7 @@ where ca_impoexpo='INTERNO' and ia.ca_reccaja!=''
                         ,array_to_string(ARRAY( SELECT ca_consecutivo FROM ino.vi_comprobantes  WHERE ca_idmaster=m.ca_idmaster AND ca_idhouse=h.ca_idhouse AND ca_idtipo NOT IN(11,12)),',' ) as facturas
                        ,(SELECT (com.ca_consecutivo||'|'||det.ca_cr) FROM ino.tb_comprobantes com,ino.tb_detalles det WHERE com.ca_idcomprobante=det.ca_idcomprobante and det.ca_idmaster=m.ca_idmaster AND det.ca_idhouse=h.ca_idhouse AND com.ca_idtipo IN(11) and det.ca_cr >0 limit 1) comision
                        ,( SELECT fun_getcomision(h.ca_idcliente::numeric, m.ca_referencia::text, 'Coltrans'::text) AS fun_getcomision) AS ca_porcentaje,
-                       m.ca_fchcerrado,m.ca_usucerrado,cl.ca_fchcircular
+                       m.ca_fchcerrado,m.ca_usucerrado,cl.ca_fchcircular,cl.ca_stdcircular
                        
                     FROM ino.tb_master m
                     INNER JOIN ino.tb_house h ON m.ca_idmaster = h.ca_idmaster 

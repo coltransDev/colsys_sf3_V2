@@ -63,7 +63,7 @@ $idsucursal = $sf_data->getRaw("idsucursal");
             <select name="anio" id="anio">
                 <option value="<?=(date("Y"))?>" selected><?=date("Y")?></option>
                 <?
-                for($i=(date("Y")-1);$i>=(date("Y")-1);$i--)
+                for($i=(date("Y")-1);$i>=(date("Y")-2);$i--)
                 {
                 ?>
                 <option value="<?=($i)?>"><?=$i?></option>

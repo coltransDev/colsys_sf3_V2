@@ -26,7 +26,7 @@ if($buscar)
 </script>
 <form id="formDatos" name="formDatos" method="post" action="#" >
 <table class="tableList" width="600px" border="1" id="mainTable" align="center" >
-    <tr><th>Referencia</th><th>Estado</th><th>Cliente</th><th>Ref Transporte <? /*doc transporte*/?></th><!--<th>Agente</th>--> <th>Proveedor</th><th>Modalidad</th><th >Factura</th><th>Vlr.Facturado</th><th >RC</th><th  >Vol.CMB</th><th  >Utilidad</th> <th>Comisiones</th> <th>Comis/Sobreventa</th><th>Comis/Cobradas</th><th>Comprobantes</th></tr>
+    <tr><th>Referencia</th><th>Estado</th><th>Cliente</th><th>Ref Transporte <? /*doc transporte*/?></th><? if($empresa=='TPLogistics'){?><th>Agente</th><?}?><th>Proveedor</th><th>Modalidad</th><th >Factura</th><th>Vlr.Facturado</th><th >RC</th><th  >Vol.CMB</th><th  >Utilidad</th> <th>Comisiones</th> <th>Comis/Sobreventa</th><th>Comis/Cobradas</th><th>Comprobantes</th></tr>
         <?
         $pos=1;
         $vendedorant="";        
@@ -56,7 +56,7 @@ if($buscar)
                 <td><?=($d["ca_usucerrado"]=="")?"Abierto":"Cerrado"?></td>
                 <td><?=$d["ca_compania"]?></td>
                 <td><?=$d["ca_doctransporte"]?></td>
-                <!--<td><?=$d["a_nombre"]?></td>-->
+                <? if($empresa=='TPLogistics'){?><td><?=$d["a_nombre"]?></td><?}?>
                 <td><?=$d["p_nombre"]?></td>
                 <td><?=$d["ca_modalidad"]?></td>
                 <td><?=$d["facturas"]?></td>

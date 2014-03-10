@@ -21,7 +21,7 @@ use_helper("ExtCalendar");
                     <td class="listar" colspan="2">Tipo de Comprobante: 
                         <br />
                         <select name="tipo">
-                            <option value="F">Factura de cliente</option>
+                            <option value="F">Factura a cliente</option>
                             <option value="P">Factura de proveedor</option>
                         </select>
                     </td>

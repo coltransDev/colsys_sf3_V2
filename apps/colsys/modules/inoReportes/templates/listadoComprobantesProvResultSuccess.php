@@ -15,7 +15,7 @@ $comps = $sf_data->getRaw("comps");
            <th>Modalidad</th>
            <th>Comprobante</th>
            <th>Fch. Comprobante</th>           
-           <th>Emitido a</th>   
+           <th>Emitido Por</th>   
            <th>Doc. Transporte</th>
            <th>Valor </th>
             <th>Cambio </th>

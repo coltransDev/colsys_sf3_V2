@@ -86,11 +86,13 @@ if($buscar)
                 <td><?=$d["comision_comprobante"]?></td>
                 <td>
                 <?
-                $diascircular= TimeUtils::dateDiff($d["ca_fchcircular"],date("Y-m-d"))-366;
+                $stdcircular = $d["ca_stdcircular"];    // Se basa en el dato calculado por la vista de clientes
+                //$diascircular= TimeUtils::dateDiff($d["ca_fchcircular"],date("Y-m-d"))-366;
                 //$d["comision_ino"]=-1;
                 if($d["ca_usucerrado"]!="" && $d["rcaja"]!="" )
                 {
-                    if($diascircular>0)
+                    //if($diascircular>0)
+                    if($stdcircular == "Vencido")
                     {
                         echo "Circular 170 Vencida";
                     }else{

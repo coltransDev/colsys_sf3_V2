@@ -13,6 +13,7 @@ $refs = $sf_data->getRaw("refs");
            <th>Referencia</th>
            <th>Origen</th>
            <th>Destino</th>
+           <th>Incoterms</th>
            <th >Linea</th>
            <th >Agente</th>
            <th>TEUS</th>
@@ -41,6 +42,7 @@ $refs = $sf_data->getRaw("refs");
                <td><?=link_to($r["ca_referencia"], "ino/verReferencia?idmaster=".$r["ca_idmaster"], array("target"=>"_blank"))?></td>
                <td><?=$r["Origen"]["ca_ciudad"]?></td>
                <td><?=$r["Destino"]["ca_ciudad"]?></td>
+               <td><?=$r["InoHouse"]["0"]["Reporte"]["ca_incoterms"]?></td>
                <td><?=$r["IdsProveedor"]["Ids"]["ca_nombre"]?></td>
                <td><?=$r["IdsAgente"]["Ids"]["ca_nombre"]?></td>
                <td><div align="right"><?=Utils::formatNumber($r["InoViTeus"]["ca_valor"])?></div></td>
