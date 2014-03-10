@@ -58,8 +58,8 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO){
         </td>
     </tr>
     <tr>
-        <td width="33%" <?=($comparar)? (($reporte->compDato("CaIdbodega")!=0)?"class='rojo'":"") :""?>>
-             <b>Transladar a:</b>
+        <td width="33%" <?=($comparar)? (($reporte->compDato("CaIdbodega")!=0 || $reporte->compDato('Property',"entrega_lugar_arribo" )!=0 ) ?"class='rojo'":"") :""?>>
+             <b>Trasladar a:</b>
          </td>
          <td width="67%">
             <?

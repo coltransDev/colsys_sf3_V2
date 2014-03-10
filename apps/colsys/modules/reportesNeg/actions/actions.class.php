@@ -4579,7 +4579,7 @@ class reportesNegActions extends sfActions {
         $this->idreporte = $request->getParameter("idreporte");
         $email = new Email();
         $email->setCaUsuenvio($user->getUserId());
-        $email->setCaTipo("InstraccionesOtm"); //Envío de Avisos
+        $email->setCaTipo("InstruccionesOtm"); //Envío de Avisos
         $email->setCaIdcaso(null);
         $from = $this->getRequestParameter("from");
         if ($from) {

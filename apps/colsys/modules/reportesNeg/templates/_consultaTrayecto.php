@@ -11,7 +11,7 @@
         <th colspan="6"><b>Informaci&oacute;n del trayecto</b></th>
     </tr>
     <tr>
-        <td ><b>Clase:</b></td>
+        <td ><b>Clase: </b></td>
         <td <?=($comparar)? (($reporte->compDato("CaImpoexpo")!=0)?"class='rojo'":"") :""?> ><?=Utils::replace($reporte->getCaImpoexpo())?></td>
         <td ><b>Fecha Despacho:</b></td>
         <td <?=($comparar)? (($reporte->compDato("CaFchdespacho")!=0)?"class='rojo'":"") :""?> ><?=Utils::fechaMes($reporte->getCaFchdespacho())?></td>
