@@ -8,6 +8,7 @@ class NuevoStatusForm extends BaseForm {
     private $queryPiezas = null;
     private $queryPeso = null;
     private $queryVolumen = null;
+    private $queryMuelles = null;
     private $queryJornadas = null;
     private $queryConcepto = null;
     private $destinatarios = array();
@@ -16,14 +17,14 @@ class NuevoStatusForm extends BaseForm {
     private $destinatariosFijos = array();
     private $widgetsClientes = array();
     private $idsucursal = null;
-
+    
     public function configure() {
 
         sfValidatorBase::setCharset('ISO-8859-1');
 
         $widgets = array();
         $validator = array();
-
+        
         $widgets['impoexpo'] = new sfWidgetFormInputHidden();
         $widgets['transporte'] = new sfWidgetFormInputHidden();
 
@@ -103,7 +104,7 @@ class NuevoStatusForm extends BaseForm {
         $widgets['doctransporte'] = new sfWidgetFormInputText(array(), array("size" => 40, "maxlength" => 50));
         $widgets['docmaster'] = new sfWidgetFormInputText(array(), array("size" => 40, "maxlength" => 100));
         $widgets['idnave'] = new sfWidgetFormInputText(array(), array("size" => 40, "maxlength" => 50));
-
+        
         $widgets['un_piezas'] = new sfWidgetFormDoctrineChoice(array(
                     'model' => 'Parametro',
                     'add_empty' => false,
@@ -125,7 +126,16 @@ class NuevoStatusForm extends BaseForm {
                     'key_method' => "getCaValor",
                     'query' => $this->queryVolumen
                 ));
+        
+        $widgets['idmuelle'] = new sfWidgetFormDoctrineChoice(array(
+                    'model' => 'InoDianDepositos',
+                    'add_empty' => true,
+                    'method' => "getCaNombre",
+                    'key_method' => "getCaCodigo",
+                    'query' => $this->queryMuelles
+                ));
 
+        $widgets['fch_cargadisponible'] = new sfWidgetFormExtDate();
         $widgets['fchrecibo'] = new sfWidgetFormExtDate();
         $widgets['horarecibo'] = new sfWidgetFormTime();
 
@@ -267,6 +277,8 @@ class NuevoStatusForm extends BaseForm {
                         array('required' => 'Por favor coloque el HBL/HAWB'));
         $validator['idnave'] = new sfValidatorString(array('required' => false),
                         array('required' => 'Por favor coloque la motonave o el vuelo'));
+        $validator['idmuelle'] = new sfValidatorString(array('required' => false),
+                        array('required' => 'Por favor coloque el muelle'));
         $validator['docmaster'] = new sfValidatorString(array('required' => false),
                         array('required' => 'Por favor coloque el BL'));
         $validator['fchsalida'] = new sfValidatorDate(array('required' => false),
@@ -278,7 +290,8 @@ class NuevoStatusForm extends BaseForm {
 
         $validator['fchcontinuacion'] = new sfValidatorDate(array('required' => false),
                         array('required' => 'Por favor coloque la fecha de continuación'));
-
+        $validator['fch_cargadisponible'] = new sfValidatorDate(array('required' => false),
+                        array('required' => 'Por favor coloque en la fecha en que la carga estará o estuvo disponible'));
         $validator['fchrecibo'] = new sfValidatorDate(array('required' => true),
                         array('required' => 'Por favor coloque en la fecha en que usted recibió este status'));
         $validator['horarecibo'] = new sfValidatorTime(array('required' => true),
@@ -425,6 +438,10 @@ class NuevoStatusForm extends BaseForm {
 
     public function setQueryVolumen($c) {
         $this->queryVolumen = $c;
+    }
+    
+    public function setQueryMuelles($c) {
+        $this->queryMuelles = $c;
     }
     
     public function setQueryJornadas($c) {

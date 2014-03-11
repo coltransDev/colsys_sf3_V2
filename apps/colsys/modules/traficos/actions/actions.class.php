@@ -277,7 +277,7 @@ class traficosActions extends sfActions {
       }
       $cliente = $reporte->getCliente();
       $fijos = $reporte->getContacto('1');
-
+      
       $contactos_reporte = $reporte->getContacto('3');
       $operativos_reporte = $reporte->getContacto('5');
       $this->form->setIdsucursal($this->getUser()->getIdsucursal());
@@ -327,9 +327,16 @@ class traficosActions extends sfActions {
       } else {
          $this->form->setQueryVolumen(ParametroTable::retrieveQueryByCaso("CU050"));
       }
-
+      
+      $muelles = Doctrine_Query::create()
+        ->select('*')
+        ->from('InoDianDepositos id')
+        ->where("id.ca_codigo IN (SELECT p.ca_identificacion FROM Parametro p where ca_casouso = 'CU230' and ca_valor = '". $reporte->getCaDestino()."')");
+      
+      $this->form->setQueryMuelles($muelles);  
+      
       $q = Doctrine_Query::create()->from("Concepto c")->where("c.ca_modalidad = ? ", "FCL");
-
+      
       $this->form->setQueryConceptos($q);
 
       //Busca los parametros definidos en CU059 
@@ -592,6 +599,12 @@ class traficosActions extends sfActions {
          }
          if ($request->getParameter("jornada")) {
             $status->setProperty("jornada", $request->getParameter("jornada"));
+         }
+         if ($request->getParameter("idmuelle")) {
+            $status->setProperty("muelle", $request->getParameter("idmuelle"));
+         }
+         if ($request->getParameter("fch_cargadisponible")) {
+            $status->setProperty("cargaDisponible", $request->getParameter("fch_cargadisponible"));
          }
          
 

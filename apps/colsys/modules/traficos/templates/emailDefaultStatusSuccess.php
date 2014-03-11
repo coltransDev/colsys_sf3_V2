@@ -131,6 +131,12 @@ $company = $sf_data->getRaw("company");
                 <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="5"><?= $reporte->getCaMercanciaDesc() ?> <?= ($reporte->getCaMciaPeligrosa()) ? "<br><b>Mercacia Peligrosa</b>" : "" ?></td>
             </tr>
             <?
+            
+            if($status->getProperty("muelle")!=""){
+                $depositos = Doctrine::getTable("InoDianDepositos")->find($status->getProperty("muelle"));
+                $muelle = $depositos->getCaNombre();
+            }
+            
             $inoCliente = $reporte->getInoClientesSea();
             if ($inoCliente) {
                 $fchfinmuisca = $inoCliente->getInoMaestraSea()->getCaFchfinmuisca();
@@ -138,7 +144,8 @@ $company = $sf_data->getRaw("company");
                 if ($inoCliente->getInoMaestraSea()->getCaMuelle() != "")
                     $muelle = $inoCliente->getInoMaestraSea()->getCaMuelle() . "-" . $inoCliente->getInoMaestraSea()->getInoDianDepositos()->getCaNombre();
                 else
-                    $muelle = "";
+                    $muelle = $status->getProperty("muelle")?$status->getProperty("muelle"):"";
+                
                 ?>
                 <tr>
                     <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Referencia</b></td>
@@ -151,15 +158,16 @@ $company = $sf_data->getRaw("company");
                     <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $fchfinvaciado ?></td>        
                 </tr>
                 <?
-                if ($muelle != "") {
-                    ?>
-                    <tr>
-                        <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Muelle</b></td>
-                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="5"><?= $muelle ?></td>        
-                    </tr>
-                    <?
-                }
             }
+            if ($muelle != "") {
+                ?>
+                <tr>
+                    <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Muelle</b></td>
+                    <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="5"><?= $muelle ?></td>        
+                </tr>
+                <?
+            }
+            
             if ($reporte->getCaImpoexpo() == Constantes::EXPO) {
                 $repexpo = $reporte->getRepexpo();
                 if ($repexpo->getCaInspeccionFisica() !== null) {
@@ -329,7 +337,10 @@ $company = $sf_data->getRaw("company");
 //Ticket # 1853
         if ($reporte->getCaTransporte() == Constantes::AEREO && ($status->getCaIdetapa() == "IACCR" || $status->getCaIdetapa() == "IACAD" || $status->getCaIdetapa() == "IACDE"))
             echo "La fecha de llegada de la mercancía es un estimado ya que puede variar por decisión de la aerolínea.<br/>"; 
-            
+//Ticket # 14000
+        if($status->getProperty("muelle") && ($status->getCaIdetapa() == "IMETA" || $status->getCaIdetapa() == "IMETT")){
+            echo "<br />Por favor tener en cuenta que el muelle informado en esta notificación es el informado por la naviera en su programación de itinerarios, sin embargo este muelle podría ser cambiado por la naviera en cualquier momento sin previa notificación por la naviera debido a cambios en su operación y / o negociaciones con los puertos.<br />";
+        }
         echo $status->getCaComentarios() ? "<strong>NOTA</strong><br />" . Utils::replace($status->getCaComentarios()) : "";
 
         if ($status->getCaIdetapa() == "EEETD")
