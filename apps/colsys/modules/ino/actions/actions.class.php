@@ -37,7 +37,7 @@ class inoActions extends sfActions {
         
         if (!$this->idmodo || !$this->modo) {                
             $action = $this->getContext()->getActionName ();            
-            if( $action!="seleccionModo" && $action!="importFac" && $action!="procesarImportFac" && $action!="importRCColmas"  ){
+            if( $action!="seleccionModo" && $action!="importFac" && $action!="procesarImportFac" && $action!="importRCColmas" && $action!="datosFacturas" && $action!="guardarFactura" && $action!="guardarGridFacturacion"  ){
                 $this->redirect("ino/seleccionModo");
             }
         }
@@ -46,7 +46,7 @@ class inoActions extends sfActions {
             $this->nivel = $this->getUser()->getNivelAcceso( $this->modo->getCaRutina() );
             //echo $this->nivel;
             
-            $this->permisos=array("crear"=>true,"cerrar"=>true,"liquidar"=>true,"reabrir"=>true,"restringido"=>false);
+            $this->permisos=array("crear"=>true,"cerrar"=>true,"liquidar"=>true,"reabrir"=>true,"restringido"=>false,"comercial"=>false);
             switch ($this->nivel)
             {
                 case "1":
@@ -73,6 +73,13 @@ class inoActions extends sfActions {
                     $this->permisos["cerrar"]=false;
                     $this->permisos["crear"]=false;
                     $this->permisos["restringido"]=true;
+                case "6":
+                    $this->permisos["reabrir"]=false;
+                    $this->permisos["liquidar"]=false;
+                    $this->permisos["cerrar"]=false;
+                    $this->permisos["crear"]=false;
+                    $this->permisos["restringido"]=true;
+                    $this->permisos["comercial"]=true;
                 break;
             }
             //print_r($this->permisos);
@@ -471,6 +478,7 @@ class inoActions extends sfActions {
     public function executeVerReferencia(sfWebRequest $request) {
         
         $this->nivel = $this->getNivel();
+        //echo "nivel:".$this->nivel;
         /*$this->permisos=array("crear"=>true,"cerrar"=>true,"liquidar"=>true,"reabrir"=>true);
         switch ($this->nivel)
         {
@@ -496,6 +504,39 @@ class inoActions extends sfActions {
 
         $this->forward404Unless($request->getParameter("idmaster"));
         $this->referencia = Doctrine::getTable("InoMaster")->find($request->getParameter("idmaster"));
+        
+        $this->forward404Unless($this->referencia);
+    }
+    
+    public function executeVerReferenciaExt4(sfWebRequest $request) {
+        
+        $this->nivel = $this->getNivel();
+        /*$this->permisos=array("crear"=>true,"cerrar"=>true,"liquidar"=>true,"reabrir"=>true);
+        switch ($this->nivel)
+        {
+            case "1":
+                $this->permisos["reabrir"]=false;
+            break;
+            case "2":
+                $this->permisos["reabrir"]=false;
+                $this->permisos["liquidar"]=false;
+            break;
+            case "3":
+                $this->permisos["reabrir"]=false;
+                $this->permisos["liquidar"]=false;
+                $this->permisos["cerrar"]=false;
+            break;
+            case "4":
+                $this->permisos["reabrir"]=false;
+                $this->permisos["liquidar"]=false;
+                $this->permisos["cerrar"]=false;
+                $this->permisos["crear"]=false;
+            break;
+        }*/
+
+        $this->forward404Unless($request->getParameter("idmaster"));
+        $this->referencia = Doctrine::getTable("InoMaster")->find($request->getParameter("idmaster"));
+        $this->idmaster=$request->getParameter("idmaster");
 
         $this->forward404Unless($this->referencia);
     }
@@ -522,7 +563,7 @@ class inoActions extends sfActions {
             $comprobantes = $hija->getInoComprobante();
             $totales["factCliente"] = 0;
             foreach( $comprobantes as $comp ){
-                print_r( $comp->getValor() );
+                //print_r( $comp->getValor() );
                 $totales["factCliente"]+=$comp->getValor();
             }
         }
@@ -846,6 +887,137 @@ class inoActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
+    public function executeGuardarGridFacturacion(sfWebRequest $request) {
+        $datos = $request->getParameter("datos");
+        
+        $datos_det = json_decode($datos);
+        print_r($datos_det);
+        exit;
+        $errorInfo = "";
+        $ids = array();
+
+        $inoDetalle = new InoDetalle();        
+        $conn = $inoDetalle->getTable()->getConnection();
+        $conn->beginTransaction();
+
+        $house=null;
+        $total=0;
+        $impuestos=array();
+        $idcomprobante=0;
+        foreach ($datos_det as $t) {
+            if(!$house)
+            {
+                $house = Doctrine::getTable("InoHouse")->find($t->doctransporte);
+                $idcomprobante=$t->idcomprobante;
+            }
+            $inoDetalle = new InoDetalle();            
+            $inoDetalle->setCaIdcomprobante( $t->idcomprobante );
+            $inoDetalle->setCaCr( $t->valor );
+            $inoDetalle->setCaIdconcepto( $t->idconcepto );
+            //$inoDetalle->setCaIdhouse( $t->idhouse );
+            //$inoDetalle->setCaIdmaster( $house->getCaIdmaster() );
+            $inoDetalle->setCaId( $house->getCliente()->getCaIdCliente() );
+            $inoDetalle->save( $conn );
+            
+            $conSiigo = Doctrine::getTable("InoConSiigo")->find($t->idconcepto);
+            if($conSiigo)
+            {
+                if($conSiigo->getCaIva()=="S")
+
+                    $q = ParametroTable::retrieveQueryByCaso("CU230", 8);
+                    $cuentaImp=$q->fetchOne();
+                    $impuestos[$q->getCaValor2()]+=$t->valor * ($conSiigo->getCaPorciva()/100);
+            }            
+            $total=$t->valor;
+        }
+
+        /*foreach($impuestos as $cuenta=>$s)
+        {
+            $inoDetalle = new InoDetalle();
+            $inoDetalle->setCaIdcomprobante( $idcomprobante );
+            $inoDetalle->setCaCr( $s );
+            $inoDetalle->setCaIdcuenta( $cuenta );
+            $inoDetalle->setCaId( $house->getCliente()->getCaIdCliente() );
+            $inoDetalle->save( $conn );
+            $total=$s;
+        }*/
+        //cuenta cruce
+        /*$inoDetalle = new InoDetalle();
+        $inoDetalle->setCaIdcomprobante( $idcomprobante );
+        $inoDetalle->setCaDb( $total );
+        $inoDetalle->setCaIdcuenta( $house->getCliente()->getCaIdCliente()->getProperty("cuenta_forma_pago") );            
+        $inoDetalle->setCaId( $house->getCliente()->getCaIdCliente() );
+        $inoDetalle->save( $conn );*/
+        
+        $conn->commit();
+            
+    }
+    
+    
+    public function executeGenerarFactura(sfWebRequest $request) {
+        
+        
+        $idcomprobante = $request->getParameter("idcomprobante");
+        
+        $movs = Doctrine::getTable("InoDetalle")->find($idcomprobante);
+        
+        $errorInfo = "";
+        $ids = array();
+
+        $inoDetalle = new InoDetalle();        
+        $conn = $inoDetalle->getTable()->getConnection();
+        $conn->beginTransaction();
+
+        $house=null;
+        $total=0;
+        $impuestos=array();
+        //$idcomprobante=0;
+        $movs = Doctrine::getTable("InoDetalle")
+            ->createQuery("det")
+            ->select("det.*,s.*")
+            ->innerJoin('det.InoConSiigo s ')                                         
+            ->addWhere("det.ca_idconcepto IS NOT NULL")
+            ->addWhere("det.ca_idcomprobante = ? ",$idcomprobante  )
+            ->addOrderBy("s.ca_pt DESC")
+            ->execute();
+        
+        
+        foreach ($movs as $m) {          
+            
+            $conSiigo = $m->getInoConSiigo();
+            if($conSiigo)
+            {
+                if($conSiigo->getCaIva()=="S")
+
+                    $q = ParametroTable::retrieveQueryByCaso("CU230", 8);
+                    $cuentaImp=$q->fetchOne();
+                    $impuestos[$$cuentaImp->getCaValor2()]+=$t->valor * ($conSiigo->getCaPorciva()/100);
+            }            
+            $total=$t->valor;
+        }
+
+        foreach($impuestos as $cuenta=>$s)
+        {
+            $inoDetalle = new InoDetalle();
+            $inoDetalle->setCaIdcomprobante( $idcomprobante );
+            $inoDetalle->setCaCr( $s );
+            $inoDetalle->setCaIdcuenta( $cuenta );
+            $inoDetalle->setCaId( $house->getCliente()->getCaIdCliente() );
+            $inoDetalle->save( $conn );
+            $total=$s;
+        }
+        //cuenta cruce
+        $inoDetalle = new InoDetalle();
+        $inoDetalle->setCaIdcomprobante( $idcomprobante );
+        $inoDetalle->setCaDb( $total );
+        $inoDetalle->setCaIdcuenta( $house->getCliente()->getCaIdCliente()->getProperty("cuenta_forma_pago") );            
+        $inoDetalle->setCaId( $house->getCliente()->getCaIdCliente() );
+        $inoDetalle->save( $conn );        
+        $conn->commit();
+        
+    }
+    
+    
     /**
      *
      *
@@ -1092,6 +1264,53 @@ class inoActions extends sfActions {
         $data["idmoneda"] = $comprobante->getCaIdmoneda();        
 
         $this->responseArray = array("success" => true, "data" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+    
+    
+    public function executeDatosFacturas(sfWebRequest $request) {
+        $idmaster = $request->getParameter("idmaster");
+        $this->forward404Unless($idmaster);
+        $q = Doctrine::getTable("InoHouse")
+                        ->createQuery("c")
+                        ->select("c.ca_idhouse,  c.ca_idcliente ,c.ca_doctransporte,   c.ca_idcliente , 
+                        cl.ca_compania , cl.ca_idalterno ,  cl.ca_digito, comp.ca_idcomprobante, comp.ca_consecutivo,comp.ca_fchcomprobante,
+                        comp.ca_idmoneda,m.ca_nombre,s.ca_descripcion,det.ca_iddetalle
+                        ,det.*")
+                        ->innerJoin("c.Cliente cl")
+                        ->innerJoin("c.InoComprobante comp")
+                        ->leftJoin("comp.InoDetalle det WITH det.ca_idconcepto is not null AND ca_cr>0")                        
+                        ->leftJoin("comp.Ids fact")
+                        //->leftJoin("comp.InoTipoComprobante tcomp")
+                        ->leftJoin("comp.Moneda m")
+                        ->leftJoin('det.InoConSiigo s ')
+                        ->where("c.ca_idmaster = $idmaster  ")
+                        ->addOrderBy("cl.ca_compania")
+                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+
+        //echo $this->idmaster."<br>";
+        //echo $q->getSqlQuery();
+        $datos=$q->execute();
+        $this->data = array();
+       //echo(count($datos));
+       //exit;
+        //echo "<pre>";print_r($datos);echo "</pre>";
+        //    exit;
+        foreach ($datos as $d) {
+            //print_r($d);
+            //exit;
+            $this->data[]=array(
+                "idhouse"=>$d["c_ca_idhouse"]      ,   "idcomprobante"=>$d["comp_ca_idcomprobante"],
+                "comprobante"=>$d["comp_ca_consecutivo"]      ,   "fchcomprobante"=>$d["comp_ca_fchcomprobante"],
+                "cliente"=>$d["cl_ca_compania"]      ,   "doctransporte"=>$d["c_ca_doctransporte"],
+                "idmoneda"=>$d["m_ca_idmoneda"]      ,   "moneda"=>$d["m_ca_nombre"],
+                "valor"=>$d["det_ca_cr"]      ,   "idconcepto"=>$d["det_ca_idconcepto"],
+                "concepto"=>  utf8_encode($d["det_ca_idconcepto"]."-".$d["s_ca_descripcion"]),
+                "iddetalle"=>$d["det_ca_iddetalle"]
+                );            
+            
+        }
+        $this->responseArray = array("success" => true, "root" => $this->data, "total" => count($this->data),"debug"=>$q->getSqlQuery());
         $this->setTemplate("responseTemplate");
     }
 
@@ -2136,6 +2355,68 @@ class inoActions extends sfActions {
         exit;
         
     }
+    
+    public function executeGuardarFactura(sfWebRequest $request) {
+ 
+        try {            
+            $idcomprobante = $request->getParameter("idcomprobante");
+            /*
+             * Validaciones
+             */
+            $q = Doctrine::getTable("InoComprobante")
+                           ->createQuery("c")
+                           ->addWhere("c.ca_consecutivo = ?", $request->getParameter("consecutivo") );
+
+            if( $idcomprobante ){
+                $q->addWhere("c.ca_idcomprobante != ?", $idcomprobante);
+            }
+            $m = $q->fetchOne();
+            if( $m ){
+                throw new Exception("El comprobante ".$request->getParameter("consecutivo")." ya se encuentra incluido" );
+            }
+            
+            if ($idcomprobante) {
+                $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
+                $this->forward404Unless($comprobante);
+            } else {
+                $comprobante = new InoComprobante();
+                $comprobante->setCaIdtipo( InoComprobante::IDTIPO_F_INO );
+                
+            }
+            
+            $conn = $comprobante->getTable()->getConnection();            
+            $conn->beginTransaction();
+            
+            
+            $tipoComprobante = Doctrine::getTable("InoTipoComprobante")->find(InoComprobante::IDTIPO_F_INO_COLOTM_E);
+            $consecutivo=  intval($tipoComprobante->getCaNumeracionActual())+1;
+            $tipoComprobante->setCaNumeracionActual($consecutivo);
+            $tipoComprobante->save($conn);
+
+            $idhouse = $request->getParameter("idhouse");
+            $house = Doctrine::getTable("InoHouse")->find( $idhouse );
+            $comprobante->setCaConsecutivo($consecutivo);            
+            $comprobante->setCaFchcomprobante(date("Y-m-d"));
+            $comprobante->setCaId($house->getCliente()->getCaIdcliente());
+            $comprobante->setCaIdhouse($idhouse );
+            //$comprobante->setCaValor( $valor );
+            $comprobante->setCaIdmoneda($request->getParameter("idmoneda"));            
+            $comprobante->setCaTcambio($request->getParameter("tcambio"));
+            
+            //$comprobante->setCaPlazo($request->getParameter("plazo"));
+            $comprobante->setCaObservaciones($request->getParameter("observaciones"));            
+            //$comprobante->save();
+            $comprobante->save($conn);
+            $conn->commit();
+            
+            $this->responseArray = array("success" => "true" );
+        } catch (Exception $e) {
+            $conn->rollback();
+            $this->responseArray = array("success" => "false", "errorInfo" => $e->getMessage());
+        }
+        $this->setTemplate("responseTemplate");
+    }
+    
     
     
     

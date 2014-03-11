@@ -21,6 +21,7 @@ class inoComponents extends sfComponents {
 
     public function executeMainPanel() {        
         $this->monedaLocal = $this->getUser()->getIdmoneda();
+        $this->user = $this->getUser()->getUserId();
     }
 
     /*

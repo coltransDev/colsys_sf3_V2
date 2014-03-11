@@ -4,14 +4,19 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-//print_r($permisos);
+$hijas = $referencia->getInoHouse();
+$vendedor = array();
+
+foreach( $hijas as $hija ){  
+    $vendedor[] = $hija->getCaVendedor();
+}
+
 include_component("ino", "formHousePanel", array("modo" => $modo));
 include_component("ino", "gridHousePanel");
 
 include_component("ino", "gridFacturacionPanel");
 include_component("widgets", "widgetIds");
-if($permisos["restringido"]!=true)
-{
+if($permisos["restringido"]!=true || ($permisos["comercial"]==true && in_array($user, $vendedor))){
     include_component("widgets", "widgetCostos",array("impoexpo"=>$referencia->getCaImpoexpo(),"transporte"=>$referencia->getCaTransporte(),"modalidad"=>$referencia->getCaModalidad()));
     include_component("ino", "gridCostosPanel");
     include_component("ino", "gridCostosDiscriminadosPanel");
@@ -76,7 +81,7 @@ if ($referencia->getCaModalidad() == Constantes::FCL) {
         readOnly: this.readOnly
     });*/
             <?
-            if($permisos["restringido"]!=true)
+            if($permisos["restringido"]!=true || ($permisos["comercial"]==true && in_array($user, $vendedor)))
             {
             ?>
             this.gridCostos = new GridCostosPanel({

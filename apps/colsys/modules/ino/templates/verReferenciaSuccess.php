@@ -193,12 +193,11 @@ $readOnly = $referencia->getReadOnly();
                             ?>
                             <b>Cerrado por:</b><br />
                            <?
-                            if($referencia->getCaFchcerrado() && $permisos["reabrir"]){
-                            ?>
-                            <?=$referencia->getCaUsucerrado()?>/<?=Utils::fechaMes($referencia->getCaFchcerrado())?>
-
-                            <input type="button" class="button" value="Abrir" onclick="document.location='<?=url_for("ino/abrirCaso?modo=".$modo->getCaIdmodo()."&idmaster=".$referencia->getCaIdmaster())?>'" />
-                            <?
+                            if($referencia->getCaFchcerrado()){?>
+                                <?=$referencia->getCaUsucerrado()?>/<?=Utils::fechaMes($referencia->getCaFchcerrado())?>
+                                <?if($permisos["reabrir"]){?>
+                                    <input type="button" class="button" value="Abrir" onclick="document.location='<?=url_for("ino/abrirCaso?modo=".$modo->getCaIdmodo()."&idmaster=".$referencia->getCaIdmaster())?>'" />
+                                <?}
                             }else{
                             ?>
                             El caso se encuentra abierto.
