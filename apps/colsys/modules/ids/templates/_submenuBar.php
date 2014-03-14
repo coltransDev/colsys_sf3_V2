@@ -63,7 +63,7 @@ switch ($action) {
                 $i++;
             }
         }
-        if($nivel==2){ 
+        if($nivel>=2){ 
             if ($this->getRequestParameter("modo") == "prov"){
                 $button[$i]["name"] = "Aprobar";
                 $button[$i]["tooltip"] = "";

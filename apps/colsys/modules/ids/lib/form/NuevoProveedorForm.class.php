@@ -66,8 +66,9 @@ class NuevoProveedorForm extends BaseForm {
                         ->innerJoin('u.Cargo c')
                         ->innerJoin('c.Empresa e')
                         ->addWhere('u.ca_activo = ?', true)
-                        ->addWhere('c.ca_manager= ?', true)
                         ->addWhere('e.ca_idempresa IN (?,?,?)', array(1,2,8))
+                        ->addWhere('c.ca_manager= ?', true)
+                        ->orWhere('u.ca_departamento = ?', 'Pricing')
                         ->addOrderBy("u.ca_nombre");
                                     
         $widgets['jefecuenta'] = new sfWidgetFormDoctrineChoice(array('model' => 'Usuario', 

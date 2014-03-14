@@ -1917,6 +1917,7 @@ class idsActions extends sfActions {
                 if (!isset($resultadosVisita[$documento->getCaId()])) {
                     $resultadosVisita[$documento->getCaId()] = array();
                     $resultadosVisita[$documento->getCaId()]["ids"] = $documento->getIds();
+                    $resultadosVisita[$documento->getCaId()]["nombre"] = $documento->getIds()->getCaNombre();
                     $resultadosVisita[$documento->getCaId()]["docs"] = array();
                     $resultadosVisita[$documento->getCaId()]["jefe"] = $documento->getIds()->getIdsProveedor()->getCaJefecuenta();
                 }
@@ -1951,7 +1952,7 @@ class idsActions extends sfActions {
             $textos = sfYaml::load($config);
 
             $txt = "";
-
+            
             $documentos = $resultado["docs"];
             foreach ($documentos as $documento) {
                 //echo $documento->getCaId()." ".$documento->getIds()->getCaNombre()." ".$documento->getIdsTipoDocumento()->getCaTipo()."<br />";
@@ -2010,7 +2011,7 @@ class idsActions extends sfActions {
                 }
                 $txt.=" - " . $documento->getIdsTipoDocumento()->getCaTipo() . " " . $venc . " " . Utils::fechaMes($documento->getCaFchvencimiento()) . "\n";
             }
-
+            
 
             $msg = sprintf($textos['mensajeEmail'], $txt);
             
@@ -2020,7 +2021,7 @@ class idsActions extends sfActions {
             $email->setCaIdcaso($documento->getCaId());
             $email->setCaFrom("pricing@coltrans.com.co");
             $email->setCaFromname("Pricing & Procurement Coltrans S.A.");
-            $email->setCaSubject($textos['asuntoEmail']);
+            $email->setCaSubject($textos['asuntoEmail']."-".$resultadoVisita["nombre"]);
             $email->setCaReplyto("pricing@coltrans.com.co");
             
             $email->addTo($emailJefe->getCaEmail());
