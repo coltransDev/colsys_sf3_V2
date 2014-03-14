@@ -1,3 +1,11 @@
+<?
+$num_cotizaciones = array();
+foreach($cotizaciones as $cotizacion){
+    if (!in_array($cotizacion["ca_consecutivo"],$num_cotizaciones)){
+        $num_cotizaciones[] = $cotizacion["ca_consecutivo"];
+    }
+}
+?>
 <div align="center">
     <br>
     <h3>Estadisticas de cotizaciones <?= $fechaInicial ? Utils::fechaMes($fechaInicial) : "" ?> <?= $fechaFinal ? Utils::fechaMes($fechaFinal) : "" ?> <br>
@@ -18,7 +26,7 @@
         }
         ?>
     </h3>
-    Datos basados en <?= count($cotizaciones) ?> cotizaciones 
+    Datos basados en <?= count($num_cotizaciones) ?> cotizaciones 
     <br />
     Empresa <?= $empresa ?>
     <br />
@@ -57,10 +65,13 @@
                 $etapaSeg = null;
             }
             if ($cot["ca_consecutivo"] != $con_sec){
+                $cliente = trim($cot["ca_compania"]);
+                $contacto = trim($cot["ca_nombres"]." ".$cot["ca_papellido"]." ".$cot["ca_sapellido"]);
+                $cliente.= ( $cliente != $contacto)? "<br />".$contacto:"";
                 ?>
-                <tr class="row0">
+                <tr class="row0" style="vertical-align: top;">
                     <td><?= link_to($cot["ca_consecutivo"] . "-V" . $cot["ca_version"], "cotseguimientos/verSeguimiento?idcotizacion=" . $cot["ca_cotizacion_id"], array("target" => "_blank")) ?></td>
-                    <td><?= $cot["ca_compania"] ?></td>
+                    <td><?= $cliente ?></td>
                     <td><?= Utils::fechaMes($cot["ca_fchcreado"]) ?></td>
                     <td><?= $cot["ca_usuario"] ?></td>
                     <td><?= $cot["ca_sucursal"] ?></td>

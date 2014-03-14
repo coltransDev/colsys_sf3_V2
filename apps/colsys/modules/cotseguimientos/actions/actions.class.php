@@ -455,12 +455,13 @@ class cotseguimientosActions extends sfActions {
 
         $checkboxSucursal = $request->getParameter("checkboxSucursal");
         $idsucursal = $request->getParameter("sucursal_est");
+        $cliente = $request->getParameter("cliente");
 
         if ($checkboxSucursal && $idsucursal) {
             $this->sucursal = Doctrine::getTable("Sucursal")->find($idsucursal)->getCaNombre();
         }
 
-        $sql = "select c.ca_idcotizacion as ca_cotizacion_id, c.ca_consecutivo, c.ca_version, ids.ca_nombre as ca_compania, c.ca_fchcreado, c.ca_etapa, c.ca_empresa, p.ca_idproducto, p.ca_etapa, o.ca_ciudad as ca_origen, d.ca_ciudad as ca_destino, u.ca_nombre as ca_usuario, s.ca_nombre as ca_sucursal, seg.*, seg2.* ";
+        $sql = "select c.ca_idcotizacion as ca_cotizacion_id, c.ca_consecutivo, c.ca_version, ids.ca_nombre as ca_compania, cc.ca_nombres, cc.ca_papellido, cc.ca_sapellido, c.ca_fchcreado, c.ca_etapa, c.ca_empresa, p.ca_idproducto, p.ca_etapa, o.ca_ciudad as ca_origen, d.ca_ciudad as ca_destino, u.ca_nombre as ca_usuario, s.ca_nombre as ca_sucursal, seg.*, seg2.* ";
         $sql.= " from tb_cotizaciones c ";
         $sql.= "    LEFT JOIN tb_cotproductos p ON c.ca_idcotizacion = p.ca_idcotizacion";
         $sql.= "    LEFT JOIN tb_ciudades o ON p.ca_origen = o.ca_idciudad ";
@@ -478,6 +479,10 @@ class cotseguimientosActions extends sfActions {
             $sql.= " and u.ca_idsucursal = '" . $idsucursal . "'";
         }
 
+        if ($cliente) {
+            $sql.= " and lower(ids.ca_nombre) like '%".strtolower($cliente)."%'";
+        }
+        
         $login = $request->getParameter("login");
         if ($login) {
             $this->usuario = Doctrine::getTable("Usuario")->find($login);

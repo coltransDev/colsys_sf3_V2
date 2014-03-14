@@ -97,6 +97,14 @@ var tabs = new Ext.FormPanel({
                             
                         ]
                     })
+                },
+                {
+                    xtype:'textfield',
+                    width: 300,
+                    fieldLabel: 'Cliente',
+                    name: 'cliente',
+                    value: '',
+                    allowBlank:true
                 }
                 <? 
                 if($nivel=="0")
