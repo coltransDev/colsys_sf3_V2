@@ -2983,28 +2983,17 @@ class pricingActions extends sfActions {
         $this->fechaInicial = $request->getParameter("fechaInicial");
         $this->fechaFinal = $request->getParameter("fechaFinal");
         $this->typelog = $request->getParameter("typelog");
+        $this->typetar = $request->getParameter("typetar");
         
         $where = "";
-        if($this->origen)
-            $where.= "AND tr.ca_origen = '".$this->idorigen."'";
-        
-        if($this->destino)
-            $where.= "AND tr.ca_destino = '".$this->iddestino."'";
-        
-        if($this->idusuario)
-            $where.= "AND r.ca_usucreado = '".$this->idusuario."'";
-        
-        if($this->idconcepto)
-            $where.= "AND r.ca_idconcepto = '".$this->idconcepto."'";
-        
-        if($this->idcorigen)
-            $where.= "AND r.ca_idciudad = '".$this->idcorigen."'";
+        $pre = $this->typetar==1?"tb":"log";
         
         if($this->opcion){
             switch($this->typelog){
                 case 1:
-                    $select = "tr.ca_impoexpo, tr.ca_transporte, tr.ca_modalidad, ori.ca_ciudad as origen, r.ca_idconcepto, c.ca_concepto, i.ca_nombre as linea, des.ca_ciudad as destino, r.ca_vlrneto, r.ca_vlrsugerido, r.ca_aplicacion,r.ca_idmoneda, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_fcheliminado,   ";
-                    $from = "pric.log_fletes r";
+                    
+                    $select = "tr.ca_idlinea, i.ca_nombre as linea, ori.ca_ciudad as origen, des.ca_ciudad as destino, r.ca_idconcepto, c.ca_concepto as concepto,  r.ca_vlrneto, r.ca_vlrsugerido, r.ca_aplicacion,r.ca_idmoneda, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_fcheliminado,   ";
+                    $from = "pric.".$pre."_fletes r";
                     $join = "JOIN pric.tb_trayectos tr ON r.ca_idtrayecto = tr.ca_idtrayecto
                              JOIN tb_conceptos c ON c.ca_idconcepto = r.ca_idconcepto
                              JOIN ids.tb_proveedores p ON p.ca_idproveedor = tr.ca_idlinea
@@ -3013,78 +3002,158 @@ class pricingActions extends sfActions {
                              JOIN tb_traficos tor ON tor.ca_idtrafico = ori.ca_idtrafico
                              JOIN tb_ciudades des ON des.ca_idciudad = tr.ca_destino
                              JOIN tb_traficos td ON td.ca_idtrafico = des.ca_idtrafico";
-                    $where.= $this->impoexpo?"AND tr.ca_impoexpo = '".$this->impoexpo."'":"";
-                    $where.= $this->transporte?"AND tr.ca_transporte = '".$this->transporte."'":"";
-                    $where.= $this->modalidad?"AND tr.ca_modalidad = '".$this->modalidad."'":"";
-                    $where.= $this->idlinea?"AND tr.ca_idlinea = '".$this->idlinea."'":"";
-                    $where.= $this->idpais_origen?"AND tor.ca_idtrafico = '".$this->idpais_origen."'":"";
+                    
+                    $whereAdd.= $this->idlinea?" AND tr.ca_idlinea = '".$this->idlinea."'":"";
+                    $whereAdd.= $this->idpais_origen?" AND tor.ca_idtrafico = '".$this->idpais_origen."'":"";
+                    $whereAdd.= $this->idconcepto?" AND r.ca_idconcepto = '".$this->idconcepto."'":"";
+                    $sufijo = "tr";
                     break;
                 case 2:
-                    $select = "r.ca_impoexpo, r.ca_transporte, r.ca_modalidad, t.ca_nombre as trafico, ori.ca_ciudad as ciudad, cp.ca_idconcepto, cp.ca_concepto,  r.ca_vlrrecargo, r.ca_aplicacion, r.ca_vlrminimo, r.ca_aplicacion_min, r.ca_observaciones,r.ca_idmoneda, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_fcheliminado,";
-                    $from = "pric.log_recargosxciudad r";
+                    $select = "t.ca_nombre as trafico, ori.ca_ciudad as ciudad, cp.ca_idconcepto, cp.ca_concepto as concepto,  r.ca_vlrrecargo, r.ca_aplicacion, r.ca_vlrminimo, r.ca_aplicacion_min, r.ca_observaciones,r.ca_idmoneda, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_fcheliminado,";
+                    $from = "pric.".$pre."_recargosxciudad r";
                     $join = "JOIN tb_traficos t ON t.ca_idtrafico = r.ca_idtrafico
                              JOIN tb_ciudades ori ON ori.ca_idciudad = r.ca_idciudad
                              JOIN ino.tb_conceptos cp ON cp.ca_idconcepto = r.ca_idrecargo";
-                    $where.= $this->impoexpo?"AND r.ca_impoexpo = '".$this->impoexpo."'":"";
-                    $where.= $this->transporte?"AND r.ca_transporte = '".$this->transporte."'":"";
-                    $where.= $this->modalidad?"AND r.ca_impoexpo = '".$this->impoexpo."'":"";
-                    $where.= $this->idpais_origen?"AND r.ca_idtrafico = '".$this->idpais_origen."'":"";
+                    $whereAdd.= $this->idpais_origen?" AND r.ca_idtrafico = '".$this->idpais_origen."'":"";
+                    $sufijo = "r";
                     break;
                 case 3:
-                    $select = "tr.ca_impoexpo, tr.ca_transporte, tr.ca_modalidad, ori.ca_ciudad as origen, des.ca_ciudad as destino, c.ca_concepto as concepto, cp.ca_concepto as recargo, r.ca_vlrrecargo, r.ca_aplicacion, r.ca_vlrminimo, r.ca_aplicacion_min, r.ca_observaciones,r.ca_idmoneda, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_fcheliminado, ";
-                    $from = "pric.log_recargosxconcepto r";
+                    $select = "ori.ca_ciudad as origen, des.ca_ciudad as destino, c.ca_concepto as concepto, cp.ca_concepto as recargo, r.ca_vlrrecargo, r.ca_aplicacion, r.ca_vlrminimo, r.ca_aplicacion_min, r.ca_observaciones,r.ca_idmoneda, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_fcheliminado, ";
+                    $from = "pric.".$pre."_recargosxconcepto r";
                     $join = "JOIN pric.tb_trayectos tr ON r.ca_idtrayecto = tr.ca_idtrayecto
                              JOIN tb_conceptos c ON c.ca_idconcepto = r.ca_idconcepto
                              JOIN ino.tb_conceptos cp ON cp.ca_idconcepto = r.ca_idrecargo
                              JOIN tb_ciudades ori ON ori.ca_idciudad = tr.ca_origen
                              JOIN tb_ciudades des ON des.ca_idciudad = tr.ca_destino";
-                    $where.= $this->impoexpo?"AND tr.ca_impoexpo = '".$this->impoexpo."'":"";
-                    $where.= $this->transporte?"AND tr.ca_transporte = '".$this->transporte."'":"";
-                    $where.= $this->modalidad?"AND tr.ca_modalidad = '".$this->modalidad."'":"";
+                    $whereAdd.= $this->idlinea?" AND tr.ca_idlinea = '".$this->idlinea."'":"";
+                    $sufijo = "tr";
                     break;
                 case 4:
-                    $select = "r.ca_impoexpo, r.ca_transporte, r.ca_modalidad, t.ca_nombre as trafico,  i.ca_id, i.ca_nombre as linea, c.ca_idconcepto, c.ca_concepto as concepto, cp.ca_idconcepto, cp.ca_concepto as recargo, r.ca_vlrrecargo, r.ca_aplicacion, r.ca_vlrminimo, r.ca_aplicacion_min, r.ca_observaciones,r.ca_idmoneda, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_fcheliminado,";
-                    $from = "pric.log_recargosxlinea r";
+                    $select = "r.ca_idlinea, i.ca_nombre as linea, t.ca_nombre as trafico, c.ca_idconcepto, c.ca_concepto as concepto, cp.ca_idconcepto, cp.ca_concepto as recargo, r.ca_vlrrecargo, r.ca_aplicacion, r.ca_vlrminimo, r.ca_aplicacion_min, r.ca_observaciones,r.ca_idmoneda, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_fcheliminado,";
+                    $from = "pric.".$pre."_recargosxlinea r";
                     $join = "JOIN tb_traficos t ON t.ca_idtrafico = r.ca_idtrafico
                              JOIN ids.tb_proveedores p ON p.ca_idproveedor = r.ca_idlinea
                              JOIN ids.tb_ids i ON p.ca_idproveedor = i.ca_id
                              JOIN tb_conceptos c ON c.ca_idconcepto = r.ca_idconcepto
                              JOIN ino.tb_conceptos cp ON cp.ca_idconcepto = r.ca_idrecargo";
-                    $where.= $this->impoexpo?"AND r.ca_impoexpo = '".$this->impoexpo."'":"";
-                    $where.= $this->transporte?"AND r.ca_transporte = '".$this->transporte."'":"";
-                    $where.= $this->modalidad?"AND r.ca_impoexpo = '".$this->impoexpo."'":"";
-                    $where.= $this->idlinea?"AND r.ca_idlinea = '".$this->idlinea."'":"";
-                    $where.= $this->idpais_origen?"AND r.ca_idtrafico = '".$this->idpais_origen."'":"";
+                    $whereAdd.= $this->idlinea?" AND r.ca_idlinea = '".$this->idlinea."'":"";
+                    $whereAdd.= $this->idpais_origen?" AND r.ca_idtrafico = '".$this->idpais_origen."'":"";
+                    $sufijo = "r";
                     break;
                 case 5:
-                    $select = "tr.ca_impoexpo, tr.ca_transporte, tr.ca_modalidad, ori.ca_ciudad as origen, des.ca_ciudad as destino, i.ca_nombre as linea, tr.ca_frecuencia, tr.ca_tiempotransito, tr.ca_observaciones as obs1, (CASE WHEN tr.ca_activo=TRUE THEN 'SI' WHEN tr.ca_activo=FALSE THEN 'NO'END ) AS ca_activo, tr.ca_ncontrato, r.ca_observaciones as obs2,";
-                    $from = "pric.log_trayectos r";
+                    $select = "tr.ca_idlinea, i.ca_nombre as linea, ori.ca_ciudad as origen, des.ca_ciudad as destino, tr.ca_frecuencia, tr.ca_tiempotransito, tr.ca_observaciones as obs1, (CASE WHEN tr.ca_activo=TRUE THEN 'SI' WHEN tr.ca_activo=FALSE THEN 'NO'END ) AS ca_activo, tr.ca_ncontrato, r.ca_observaciones as obs2,";
+                    $from = "pric.".$pre."_trayectos r";
                     $join = "JOIN pric.tb_trayectos tr ON r.ca_idtrayecto = tr.ca_idtrayecto
                              JOIN ids.tb_proveedores p ON p.ca_idproveedor = tr.ca_idlinea
                              JOIN ids.tb_ids i ON p.ca_idproveedor = i.ca_id
                              JOIN tb_ciudades ori ON ori.ca_idciudad = tr.ca_origen
                              JOIN tb_ciudades des ON des.ca_idciudad = tr.ca_destino";
-                    $where.= $this->impoexpo?"AND tr.ca_impoexpo = '".$this->impoexpo."'":"";
-                    $where.= $this->transporte?"AND tr.ca_transporte = '".$this->transporte."'":"";
-                    $where.= $this->modalidad?"AND tr.ca_impoexpo = '".$this->impoexpo."'":"";
-                    $where.= $this->idlinea?"AND tr.ca_idlinea = '".$this->idlinea."'":"";
+                    $whereAdd.= $this->idlinea?" AND tr.ca_idlinea = '".$this->idlinea."'":"";
+                    $sufijo = "tr";
                     break;
             }
             
-            $sql = "SELECT DISTINCT $select to_char(r.ca_fchcreado,'YYYY-MM-DD HH24:MI') as fchcreado, r.ca_usucreado
+            $where.= $this->fechaInicial?"r.ca_fchcreado BETWEEN '".$this->fechaInicial."' and '".$this->fechaFinal."'":"r.ca_fchcreado is not null";
+            $where.= $this->impoexpo?" AND $sufijo.ca_impoexpo = '".$this->impoexpo."'":"";
+            $where.= $this->transporte?" AND $sufijo.ca_transporte = '".$this->transporte."'":"";
+            $where.= $this->modalidad?" AND $sufijo.ca_modalidad = '".$this->modalidad."'":"";
+            
+            if($this->origen)
+                $where.= "AND tr.ca_origen = '".$this->idorigen."'";
+
+            if($this->destino)
+                $where.= "AND tr.ca_destino = '".$this->iddestino."'";
+
+            if($this->idusuario)
+                $where.= "AND r.ca_usucreado = '".$this->idusuario."'";
+
+            if($this->idconcepto)
+                $where.= "AND r.ca_idconcepto = '".$this->idconcepto."'";
+
+            if($this->idcorigen)
+                $where.= "AND r.ca_idciudad = '".$this->idcorigen."'";
+        
+            
+            $where = $where.$whereAdd;
+            
+            $order.= strpos($select, 'ca_idlinea')!=''?"$sufijo.ca_idlinea,":"";
+            $order.= strpos($select, 'origen')!=''?"origen,":"";    
+            $order.= strpos($select, 'destino')!=''?"destino,":"";
+            $order.= strpos($select, 'concepto')!=''?"concepto,":"";
+            $order.= strpos($select, ' recargo')!=''?"recargo,":"";
+            
+            $sql = "SELECT DISTINCT $select $sufijo.ca_impoexpo, $sufijo.ca_transporte, $sufijo.ca_modalidad, to_char(r.ca_fchcreado,'YYYY-MM-DD HH24:MI') as fchcreado, r.ca_usucreado
                     FROM $from 
                         $join
-                    WHERE to_char(r.ca_fchcreado, 'YYYY-MM-DD') BETWEEN '".$this->fechaInicial."' and '".$this->fechaFinal."'
-                        $where
-                    ORDER BY fchcreado";
+                    WHERE $where
+                    ORDER BY $sufijo.ca_impoexpo, $sufijo.ca_transporte, $sufijo.ca_modalidad, $order fchcreado";
             
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
+            
+            $this->grid = array();
+            foreach($this->resul as $r){
+                
+                switch ($this->typelog){
+                    case 1:
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["fchcreado"]]["ca_vlrneto"] = number_format($r["ca_vlrneto"], 2, '.', '');
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["fchcreado"]]["ca_vlrsugerido"] = number_format($r["ca_vlrsugerido"], 2, '.', '');
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["fchcreado"]]["ca_aplicacion"] = $r["ca_aplicacion"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["fchcreado"]]["ca_idmoneda"] = $r["ca_idmoneda"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["fchcreado"]]["ca_fchinicio"] = $r["ca_fchinicio"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["fchcreado"]]["ca_fchvencimiento"] = $r["ca_fchvencimiento"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["fchcreado"]]["ca_usucreado"] = $r["ca_usucreado"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["fchcreado"]]["ca_usueliminado"] = $r["ca_usueliminado"];
+                        break;
+                    case 2:
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["trafico"]][$r["ciudad"]][$r["concepto"]][$r["fchcreado"]]["ca_vlrrecargo"] = number_format($r["ca_vlrrecargo"], 2, '.', '');
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["trafico"]][$r["ciudad"]][$r["concepto"]][$r["fchcreado"]]["ca_aplicacion"] = $r["ca_aplicacion"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["trafico"]][$r["ciudad"]][$r["concepto"]][$r["fchcreado"]]["ca_vlrminimo"] = number_format($r["ca_vlrminimo"], 2, '.', '');
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["trafico"]][$r["ciudad"]][$r["concepto"]][$r["fchcreado"]]["ca_aplicacion_min"] = $r["ca_aplicacion_min"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["trafico"]][$r["ciudad"]][$r["concepto"]][$r["fchcreado"]]["ca_observaciones"] = $r["ca_observaciones"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["trafico"]][$r["ciudad"]][$r["concepto"]][$r["fchcreado"]]["ca_idmoneda"] = $r["ca_idmoneda"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["trafico"]][$r["ciudad"]][$r["concepto"]][$r["fchcreado"]]["ca_fchinicio"] = $r["ca_fchinicio"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["trafico"]][$r["ciudad"]][$r["concepto"]][$r["fchcreado"]]["ca_fchvencimiento"] = $r["ca_fchvencimiento"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["trafico"]][$r["ciudad"]][$r["concepto"]][$r["fchcreado"]]["ca_usucreado"] = $r["ca_usucreado"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["trafico"]][$r["ciudad"]][$r["concepto"]][$r["fchcreado"]]["ca_usueliminado"] = $r["ca_usueliminado"];
+                        break;
+                    case 3:
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_vlrrecargo"] = number_format($r["ca_vlrrecargo"], 2, '.', '');
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_aplicacion"] = $r["ca_aplicacion"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_vlrminimo"] = number_format($r["ca_vlrminimo"], 2, '.', '');
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_aplicacion_min"] = $r["ca_aplicacion_min"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_observaciones"] = $r["ca_observaciones"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_idmoneda"] = $r["ca_idmoneda"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_fchinicio"] = $r["ca_fchinicio"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_fchvencimiento"] = $r["ca_fchvencimiento"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_usucreado"] = $r["ca_usucreado"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_usueliminado"] = $r["ca_usueliminado"];
+                        break;
+                    case 4:
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["trafico"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_vlrrecargo"] = number_format($r["ca_vlrrecargo"], 2, '.', '');
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["trafico"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_aplicacion"] = $r["ca_aplicacion"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["trafico"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_vlrminimo"] = number_format($r["ca_vlrminimo"], 2, '.', '');
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["trafico"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_aplicacion_min"] = $r["ca_aplicacion_min"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["trafico"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_observaciones"] = $r["ca_observaciones"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["trafico"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_idmoneda"] = $r["ca_idmoneda"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["trafico"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_fchinicio"] = $r["ca_fchinicio"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["trafico"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_fchvencimiento"] = $r["ca_fchvencimiento"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["trafico"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_usucreado"] = $r["ca_usucreado"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["trafico"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_usueliminado"] = $r["ca_usueliminado"];
+                        break;
+                    case 5:
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["fchcreado"]]["ca_frecuencia"] = $r["ca_frecuencia"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["fchcreado"]]["ca_tiempotransito"] = $r["ca_tiempotransito"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["fchcreado"]]["obs1"] = $r["obs1"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["fchcreado"]]["ca_activo"] = $r["ca_activo"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["fchcreado"]]["ca_ncontrato"] = $r["ca_ncontrato"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["fchcreado"]]["obs2"] = $r["obs2"];
+                        break;
+                }
+            }
         }
-        //echo "<pre>";print_r($this->resul);echo "</pre>";
+        //echo "<pre>";print_r($this->grid);echo "</pre>";
     }
-
 }
-
 ?>

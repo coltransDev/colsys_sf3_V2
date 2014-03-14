@@ -250,6 +250,7 @@ class pricingComponents extends sfComponents
         $this->fechaInicial = $this->getRequestParameter("fechaInicial");
         $this->fechaFinal = $this->getRequestParameter("fechaFinal");
         $this->typelog = $this->getRequestParameter("typelog");
+        $this->typetar = $this->getRequestParameter("typetar");
     }
 }
 ?>
