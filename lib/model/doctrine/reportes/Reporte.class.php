@@ -1147,6 +1147,7 @@ class Reporte extends BaseReporte {
             $reporte->setCaPropiedades(null);
             $reporte->setProperty("subarancel",$this->getProperty("subarancel"));
             $reporte->setProperty("muelle",$this->getProperty("muelle"));
+            $reporte->setProperty("entrega_lugar_arribo",$this->getProperty("entrega_lugar_arribo"));
             $reporte->save($conn);
 
             //Copia los conceptos
@@ -1537,14 +1538,91 @@ class Reporte extends BaseReporte {
     /*
      * Compara un dato de la version anterior
      */
-    public function compDato($dato)
+    public function compDato($dato,$dato1)
     {
         if(!$this->repAnterior){
             $this->repAnterior=ReporteTable::retrieveByConsecutivo($this->getCaConsecutivo()," and ca_version<='".($this->getCaVersion()-1)."'");
         }       
-        
-        eval( " \$str1 = \$this->get".$dato."();" );
-        eval( " \$str2 = \$this->repAnterior->get".$dato."();" );
+        if($dato=="Property")
+        {
+            //echo $dato1;
+            eval( " \$str1 = \$this->get".$dato."(".$dato1.");" );
+            eval( " \$str2 = \$this->repAnterior->get".$dato."(".$dato1.");" );
+            //echo "MAQR".$str1;            
+        }
+        else
+        {
+            eval( " \$str1 = \$this->get".$dato."();" );
+            eval( " \$str2 = \$this->repAnterior->get".$dato."();" );
+        }
         return strcmp($str1, $str2);
-    }    
+    }
+    
+    
+    public function getTareaIDGEnvioOportuno() {
+
+        $tarea = null;
+        if ($this->getProperty("IdgEnvioOportuno")>0) {
+            $tarea = Doctrine::getTable("NotTarea")->find($this->getProperty("IdgEnvioOportuno"));
+        }
+        return $tarea;
+    }
+    
+    public function crearTareaIDGEnvioOportuno($fchCreado) {
+
+        $tarea = $this->getTareaIDGEnvioOportuno();        
+        if (!$tarea) {
+
+            $titulo = "Reporte Negocio " . $this->getCaConsecutivo() . " " . $this->getCliente()->getCaCompania();
+            $texto = "Debe entregar este Reporte de negocios por email ";
+
+            $tarea = new NotTarea();
+            $tarea->setCaIdlistatarea(11);
+            $tarea->setCaUrl("/reportesNeg/verReporte/id/" . $this->getCaIdreporte()  );
+            $tarea->setCaUsucreado($this->getCaUsucreado());
+            $tarea->setCaTitulo($titulo);
+            $tarea->setCaTexto($texto);
+            $tarea->setCaFchcreado($fchCreado);
+            $tarea->setCaFchvisible(date("Y-m-d H:i:s", time() ));
+            $tarea->setTiempo(TimeUtils::getFestivos(), $this->getTiempoIdg($fchCreado));
+            $tarea->save();
+
+            $this->setProperty("IdgEnvioOportuno", $tarea->getCaIdtarea());
+            $this->save();
+        }
+
+
+        $tarea->setCaFchcreado($fchCreado);
+        $tarea->setTiempo(TimeUtils::getFestivos(), $this->getTiempoIdg($fchCreado));
+        $tarea->save();
+
+        if ($tarea) {
+            $loginsAsignaciones = array($this->getCaUsucreado());
+            if ($this->getCaUsuactualizado()) {
+                $loginsAsignaciones[] = $this->getCaUsuactualizado();
+            }
+            $tarea->setAsignaciones($loginsAsignaciones);
+        }
+        return $tarea;
+    }
+    
+    public function getTiempoIdg($fchTarea) {        
+        $tiempoIdg = 1 * 3600;
+        return $tiempoIdg;
+    }
+    
+    public function postInsert($event) {
+        parent::postInsert($event);
+        if($this->getUsucreado()->getSucursal()->getCaNombre()==Constantes::BOGOTA && ( $this->getUsucreado()->getCaDepartamento()=='Comercial' || $this->getUsucreado()->getCaDepartamento()=="Servicio al Cliente"))
+        {
+            $this->crearTareaIDGEnvioOportuno(date("Y-m-d H:i:s"));
+        }
+        
+    } 
+    /*public function save(Doctrine_Connection $con = null) {
+        if($this->preInsert($event))
+        parent::save($con);        
+    }*/
+    
+    
 }
