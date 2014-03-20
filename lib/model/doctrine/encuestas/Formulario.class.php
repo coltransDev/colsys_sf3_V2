@@ -30,79 +30,125 @@ class Formulario extends BaseFormulario {
      */
     public function getQueryFormulario() {
         $q = Doctrine_Query::create()
-                        ->from('formulario')
-                        ->orderBy('ca_id DESC');
+                ->from('formulario')
+                ->addWhere('ca_activo = ?',true)
+                ->orderBy('ca_id DESC');
+        return $q;
+    }
+
+    /**
+     *
+     * @return <type> 
+     */
+    public function getQueryFormularioBySede($id) {
+        $q = Doctrine_Query::create()
+                ->from('formulario')
+                ->addWhere('ca_empresa = ?', $id)
+                ->orderBy('ca_id DESC');
         return $q;
     }
 
     public function getTieneServicio($id_formulario) {
         $q = Doctrine_Query::create()
-                        ->from('bloque')
-                        ->where('ca_idformulario = ?', $id_formulario)
-                        ->andWhere('ca_activo = ?', 1)
-                        ->andWhere('ca_tipo = ?', 0)
-                        ->orderBy('ca_orden ASC');
+                ->from('bloque')
+                ->where('ca_idformulario = ?', $id_formulario)
+                ->andWhere('ca_activo = ?', 1)
+                ->andWhere('ca_tipo = ?', 0)
+                ->orderBy('ca_orden ASC');
         return $q->fetchOne();
     }
 
     public function getBloqueServicio($id_formulario) {
         $q = Doctrine_Query::create()
-                        ->from('bloque')
-                        ->where('ca_idformulario = ?', $id_formulario)
-                        ->andWhere('ca_activo = ?', 1)
-                        ->andWhere('ca_tipo = ?', 1)
-                        ->orderBy('ca_orden ASC');
+                ->from('bloque')
+                ->where('ca_idformulario = ?', $id_formulario)
+                ->andWhere('ca_activo = ?', 1)
+                ->andWhere('ca_tipo = ?', 1)
+                ->orderBy('ca_orden ASC');
         return $q->fetchOne();
+    }
+
+    public function getListaServicios() {
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "
+            select o.ca_id,o.ca_texto 
+            from encuestas.tb_opcion o
+            left join encuestas.tb_pregunta p on  o.ca_idpregunta = p.ca_id 
+            left join encuestas.tb_bloque b on  p.ca_idbloque = b.ca_id
+            left join encuestas.tb_formulario f on  b.ca_idformulario=f.ca_id
+            where f.ca_id = " . $this->getCaId() . "and p.ca_activo = '1' and b.ca_tipo != '0'
+            order by p.ca_texto;    
+        ";
+        $temp = $con->execute($sql);
+        return $temp->fetchAll();
+    }
+
+    public function getListaPreguntas() {
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "
+            select p.ca_id,p.ca_texto 
+            from encuestas.tb_pregunta p
+            left join encuestas.tb_bloque b on  p.ca_idbloque = b.ca_id
+            left join encuestas.tb_formulario f on  b.ca_idformulario=f.ca_id
+            where f.ca_id = " . $this->getCaId() . "and p.ca_activo = '1' and b.ca_tipo != '1'
+            order by p.ca_texto              
+        ";
+        $temp = $con->execute($sql);
+        return $temp->fetchAll();
     }
 
     public function getBloques($id_formulario) {
         $q = Doctrine_Query::create()
-                        ->from('bloque')
-                        ->where('ca_idformulario = ?', $id_formulario)
-                        ->andWhere('ca_activo = ?', 1)
-                        ->andWhere('ca_tipo = ?', 0)
-                        ->orderBy('ca_orden ASC');
+                ->from('bloque')
+                ->where('ca_idformulario = ?', $id_formulario)
+                ->andWhere('ca_activo = ?', 1)
+                ->andWhere('ca_tipo = ?', 0)
+                ->orderBy('ca_orden ASC');
         return $q->execute();
     }
 
     public function getBloquesOrdenados($id_formulario) {
         $q = Doctrine_Query::create()
-                        ->from('bloque')
-                        ->where('ca_idformulario = ?', $id_formulario)
-                        ->andWhere('ca_activo = ?', 1)
-                        ->andWhere('ca_tipo = ?', 0)
-                        ->orderBy('ca_orden ASC');
+                ->from('bloque')
+                ->where('ca_idformulario = ?', $id_formulario)
+                ->andWhere('ca_activo = ?', 1)
+                ->andWhere('ca_tipo = ?', 0)
+                ->orderBy('ca_orden ASC');
         return $q->execute();
     }
 
     public function getTodosBloquesOrdenados($id_formulario) {
         $q = Doctrine_Query::create()
-                        ->from('bloque')
-                        ->where('ca_idformulario = ?', $id_formulario)
-                        ->andWhere('ca_activo = ?', 1)
-                        ->orderBy('ca_tipo DESC', 'ca_orden ASC');
+                ->from('bloque')
+                ->where('ca_idformulario = ?', $id_formulario)
+                ->andWhere('ca_activo = ?', 1)
+                ->orderBy('ca_tipo DESC', 'ca_orden ASC');
         return $q->execute();
     }
 
+    //deprecated
     public static function getContarFormularios() {
         $q = Doctrine_Query::create()
-                        ->from('Formulario j');
+                ->from('Formulario j');
         return Doctrine_Core::getTable('Formulario')->contarFormularios($q);
     }
 
+    //deprecated
     public static function contarEncuestas(Doctrine_Query $q = null) {
         $q = Doctrine_Query::create()
-                        ->from('controlEncuesta')
-                        ->where('ca_idformulario = ?', 1)
-                        ->andWhere('ca_tipo_contestador = ?', 1);
+                ->from('controlEncuesta')
+                ->where('ca_idformulario = ?', $this->getCaId())
+                ->andWhere('ca_tipo_contestador = ?', 1);
         return $q->count();
     }
 
     public static function getResultados($id_control) {
         $q = Doctrine_Query::create()
-                        ->from('resultadoEncuesta')
-                        ->andWhere('ca_idcontrolencuesta= ?', $id_control)                  
-                        ->orderBy('ca_servicio ASC');
+                ->from('resultadoEncuesta r')
+                ->leftJoin('r.Pregunta p')
+                ->andWhere('r.ca_idcontrolencuesta= ?', $id_control)
+                ->andWhere('p.ca_texto != ?', "")
+                ->orderBy('r.ca_idcontrolencuesta, p.ca_texto ASC');
         return $q->execute();
     }
 
@@ -121,6 +167,15 @@ class Formulario extends BaseFormulario {
             case 4:
                 return "Exportaciones marítimo";
                 break;
+            case 5:
+                return "Proceso de Nacionalización en embarques aéreos";
+                break;
+            case 6:
+                return "Proceso de Nacionalización en embarques marítimos";
+                break;
+            case 7:
+                return "Proceso de Nacionalización en embarques con OTM / DTA";
+                break;
             default:
                 return "no definido / todos los servicio";
         }
@@ -128,9 +183,546 @@ class Formulario extends BaseFormulario {
 
     public function getPregunta($idPregunta) {
         $q = Doctrine_Query::create()
-                        ->from('pregunta')
-                        ->where('ca_id = ?', $idPregunta);
+                ->from('pregunta')
+                ->where('ca_id = ?', $idPregunta);
         return $q->fetchOne();
+    }
+
+    /**
+     * Calcula el número de formularios enviados vía mail
+     * @return type
+     */
+    public function getNumEncuestasEnviadas() {
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "
+           SELECT count (*) as enviados
+           FROM public.tb_emails
+           WHERE ca_tipo = 'Encuesta'
+           AND ca_usuenvio = 'Administrador'
+           AND ca_address != 'gmartinez@coltrans.com.co'
+           AND ca_fchenvio BETWEEN '".$this->getCaVigenciaInicial()."' and '".$this->getCaVigenciaFinal()."' 
+           AND ca_idcaso = " . $this->getCaId();
+        $st = $con->execute($sql);
+        return $st->fetchAll();
+    }
+
+    /**
+     * Calcula el número de clientes a los que se les envió la encuesta enviados vía mail
+     * num de contactos unicos
+     * @return type
+     */
+    public function getNumEncuestasUnicasEnviadas() {
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "
+           SELECT count(distinct ca_address) as unicas
+           FROM public.tb_emails
+           WHERE ca_tipo = 'Encuesta'
+           AND ca_usuenvio = 'Administrador'
+           AND ca_address != 'gmartinez@coltrans.com.co'
+           AND ca_idcaso = '. $this->getCaId().';";
+        $st = $con->execute($sql);
+        return $st->fetchAll();
+    }
+
+    /**
+     * Devuelve un entero con el numero de clientes que respondieron la encuesta
+     * @return type
+     */
+    //public function getnumEncuestasDiligenciadas($sucursal, $pregunta, $servicio, $idrespuesta) {
+    public function getnumEmpresasRespuesta($sucursal) {
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "
+            select i.ca_nombre as ca_compania, csuc.ca_nombre as ca_sucursal
+            from ids.tb_ids i 
+            inner join tb_clientes cl on cl.ca_idcliente=i.ca_id 
+            inner join tb_concliente con on con.ca_idcliente=cl.ca_idcliente 
+            right join encuestas.tb_control_encuesta cf on con.ca_idcontacto=cf.ca_id_contestador 
+            left join control.tb_usuarios cu on cl.ca_vendedor=cu.ca_login 
+            left join control.tb_sucursales csuc on cu.ca_idsucursal=csuc.ca_idsucursal 
+            inner join encuestas.tb_resultado_encuesta re on cf.ca_id=re.ca_idcontrolencuesta 
+            inner join encuestas.tb_pregunta p on re.ca_idpregunta = p.ca_id 
+            inner join control.tb_config_values cfv on cfv.ca_idconfig=211 and re.ca_servicio=cfv.ca_ident 
+            where cf.ca_idformulario =" . $this->getCaId() . " and cf.ca_tipo_contestador=1 
+            ";
+        if ($sucursal != '0') {
+            $sql = $sql.=" AND csuc.ca_nombre= '" . $sucursal . "';";
+            $order = "AND csuc.ca_nombre";
+        }
+            $sql.="ORDER BY ca_compania".$order;
+            
+        $st = $con->execute($sql);
+        $valores = $st->fetchAll();
+        //foreach ($valores as $valor):
+        //endforeach;
+        return sizeof($valores);
+    }
+
+    /**
+     * Devuelve el listado de contactos que respondieron la encuesta
+     * @param type $sucursal
+     * @return type
+     */
+    public function getListaEmailsRespuesta($sucursal) {
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "
+            select DISTINCT con.ca_email
+            from ids.tb_ids i 
+            inner join tb_clientes cl on cl.ca_idcliente=i.ca_id 
+            inner join tb_concliente con on con.ca_idcliente=cl.ca_idcliente 
+            right join encuestas.tb_control_encuesta cf on con.ca_idcontacto=cf.ca_id_contestador 
+            left join control.tb_usuarios cu on cl.ca_vendedor=cu.ca_login 
+            left join control.tb_sucursales csuc on cu.ca_idsucursal=csuc.ca_idsucursal 
+            inner join encuestas.tb_resultado_encuesta re on cf.ca_id=re.ca_idcontrolencuesta 
+            inner join encuestas.tb_pregunta p on re.ca_idpregunta = p.ca_id 
+            inner join control.tb_config_values cfv on cfv.ca_idconfig=211 and re.ca_servicio=cfv.ca_ident 
+            where cf.ca_idformulario =" . $this->getCaId() . " and cf.ca_tipo_contestador=1 
+            ";
+        if ($sucursal != '0') {
+            $sql = $sql.=" AND csuc.ca_nombre= '" . $sucursal . "';";
+        }
+        $st = $con->execute($sql);
+        return $st->fetchAll();
+    }
+
+    /**
+     * Devuelve el listado de contactos a los que se les envio la encuesta
+     * @param type $sucursal
+     * @return type
+     */
+    public function getListaEmailsEnviados($sucursal) {
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "
+            select DISTINCT con.ca_email
+            from ids.tb_ids i 
+            inner join tb_clientes cl on cl.ca_idcliente=i.ca_id 
+            inner join tb_concliente con on con.ca_idcliente=cl.ca_idcliente 
+            right join encuestas.tb_control_encuesta cf on con.ca_idcontacto=cf.ca_id_contestador 
+            left join control.tb_usuarios cu on cl.ca_vendedor=cu.ca_login 
+            left join control.tb_sucursales csuc on cu.ca_idsucursal=csuc.ca_idsucursal 
+            inner join encuestas.tb_resultado_encuesta re on cf.ca_id=re.ca_idcontrolencuesta 
+            inner join encuestas.tb_pregunta p on re.ca_idpregunta = p.ca_id 
+            inner join control.tb_config_values cfv on cfv.ca_idconfig=211 and re.ca_servicio=cfv.ca_ident 
+            where cf.ca_idformulario =" . $this->getCaId() . " and cf.ca_tipo_contestador=1 
+            ";
+        if ($sucursal != '0') {
+            $sql = $sql.=" AND csuc.ca_nombre= '" . $sucursal . "';";
+        }
+        $st = $con->execute($sql);
+        return $st->fetchAll();
+    }
+
+    /**
+     * Devuelve un entero con el numero de encuestas diligenciadas
+     * @return type
+     */
+    //public function getnumEncuestasDiligenciadas($sucursal, $pregunta, $servicio, $idrespuesta) {
+    public function getnumEncuestasDiligenciadas($sucursal, $pregunta, $servicio, $id) {
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "
+           SELECT  count(*)
+           FROM encuestas.tb_control_encuesta e ";
+
+        if ($sucursal != '0') {
+            $sql = $sql.="
+            LEFT JOIN public.tb_concliente con on e.ca_id_contestador = con.ca_idcontacto
+            LEFT JOIN public.tb_clientes cl on con.ca_idcliente=cl.ca_idcliente
+            LEFT JOIN control.tb_usuarios cu on cl.ca_vendedor=cu.ca_login
+            LEFT JOIN control.tb_sucursales csuc on cu.ca_idsucursal=csuc.ca_idsucursal";
+        }
+        $sql = $sql.=" WHERE e.ca_idformulario = $id AND e.ca_tipo_contestador = 1";
+        //$sql2 = $sql2.=" WHERE e.ca_idformulario = 5 AND e.ca_tipo_contestador = 1";
+        if ($sucursal != '0') {
+            //$sq2 = $sql.=";";
+            if ($sucursal == 'NA') {
+                $sql = $sql.=" AND csuc.ca_nombre is NULL";
+            } else {
+                $sql = $sql.=" AND csuc.ca_nombre= '" . $sucursal . "';";
+            }
+        }
+        if ($sucursal != '0') {
+            //$st2 = $con->execute($sq2);
+            // $valores=$st2->fetchAll();
+            /* foreach ($valores as $valor):
+              endforeach;
+              $total = $valor['count']; */
+        }
+
+
+        $st = $con->execute($sql);
+        $valores = $st->fetchAll();
+        foreach ($valores as $valor):
+        endforeach;
+        return $valor['count'];
+
+
+        /*
+          $q = Doctrine_Query::create()
+          ->from('controlEncuesta')
+          ->where('ca_idformulario = ?', $this->getCaId())
+          ->andWhere('ca_tipo_contestador = ?', 1)
+          ; */
+    }
+
+    public function getnumTotalEncuestasDiligenciadas() {
+        $q = Doctrine_Query::create()
+                ->from('controlEncuesta')
+                ->where('ca_idformulario = ?', $this->getCaId())
+                ->andWhere('ca_tipo_contestador = ?', 1)
+                ->andWhere('ca_nombre = ?', null)
+        ;
+        if ($sucursal != '0') {
+            if ($sucursal == 'NA') {
+                //$q->andWhere('ca_nombre = ?', null);
+                //$sql = $sql.="and (csuc.ca_nombre is null)";
+            } else {
+                // $q->andWhere('csuc.ca_nombre = ?', $sucursal);
+                //$sql = $sql.="and (csuc.ca_nombre ='" . $sucursal . "')";
+            }
+        }
+        /* if ($pregunta != '0') {
+          // $sql = $sql.="and (re.ca_idpregunta ='" . $pregunta . "')";
+          }
+          if ($servicio != '0' && $servicio != null) {
+          //$sql = $sql.="and (cfv.ca_value ='" . $servicio->ca_texto . "')";
+          } */
+
+        return $q->count();
+    }
+
+    /**
+     * Calcula la calificación promedio de una encuesta
+     * @param type $sucursal '0' para todas, 'NA' para no asignada
+     * @param type $pregunta id de la pregunta. '0' para todas
+     * @param type $servicio Objeto de la clase Opcion creado a partir del parametro de servicio recibido. '0' para todas
+     * @param type $idrespuesta id de la tabla control respuesta. si se recibe este parametro se puede calcular el promedio de esa respuesta.
+     * @return type un array con las siguientes posiciones ['count']['sum']['avg'] con valores: total de preguntas, suma del puntaje de todas las preguntas y un promedio de todas las preguntas 
+     */
+    public function getPromedio($sucursal, $pregunta, $servicio, $idrespuesta) {
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "
+            select count(cast(re.ca_resultado as int)),sum(cast(re.ca_resultado as int)), avg (cast(re.ca_resultado as int))
+            from ids.tb_ids i
+            inner join tb_clientes cl on cl.ca_idcliente=i.ca_id
+            inner join tb_concliente con on con.ca_idcliente=cl.ca_idcliente
+            right join encuestas.tb_control_encuesta cf on con.ca_idcontacto=cf.ca_id_contestador            
+            left join control.tb_usuarios cu on cl.ca_vendedor=cu.ca_login
+            left join control.tb_sucursales csuc on cu.ca_idsucursal=csuc.ca_idsucursal
+            inner join encuestas.tb_resultado_encuesta re on cf.ca_id=re.ca_idcontrolencuesta
+            inner join encuestas.tb_pregunta p on re.ca_idpregunta = p.ca_id
+            inner join control.tb_config_values cfv on cfv.ca_idconfig=211 and re.ca_servicio=cfv.ca_ident
+            where (cf.ca_tipo_contestador=1)  and (re.ca_resultado = '0' or re.ca_resultado = '1' or re.ca_resultado = '2' or re.ca_resultado = '3' or re.ca_resultado = '4' or re.ca_resultado = '5')
+        ";
+        if ($idrespuesta) {
+            $sql = $sql.="
+            and (cf.ca_id = " . $idrespuesta . ")                
+        ";
+        } else {
+            $sql = $sql.="
+            and (cf.ca_idformulario = " . $this->getCaId() . ")                
+        ";
+        }
+
+        if ($sucursal != '0') {
+            if ($sucursal == 'NA') {
+                $sql = $sql.="and (csuc.ca_nombre is null)";
+            } else {
+                $sql = $sql.="and (csuc.ca_nombre ='" . $sucursal . "')";
+            }
+        }
+        if ($pregunta != '0') {
+            $sql = $sql.="and (re.ca_idpregunta ='" . $pregunta . "')";
+        }
+        if ($servicio != '0' && $servicio != null) {
+            $sql = $sql.="and (cfv.ca_value ='" . $servicio->ca_texto . "')";
+        }
+        $sql = $sql.=";";
+
+        /* $sql4 = $sql4.="
+          order by csuc.ca_nombre, cf.ca_id
+          "; */
+        $temp = $con->execute($sql);
+
+        return $temp->fetchAll();
+    }
+
+    /**
+     * Calcula el consolidado de datos corespondiente a las respuestas de una encuesta
+     * @param type $sucursal '0' para todas, 'NA' para no asignada
+     * @param type $pregunta id de la pregunta. '0' para todas
+     * @param type $servicio Objeto de la clase Opcion creado a partir del parametro de servicio recibido. '0' para todas
+     * @return type un array con las siguientes posiciones ['count']['sum']['avg'] con valores: total de preguntas, suma del puntaje de todas las preguntas y un promedio de todas las preguntas 
+     */
+    public function getConsolidado($sucursal, $pregunta, $servicio, $opcion) {
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "
+            select cf.ca_id, i.ca_nombre as ca_compania, con.ca_email,con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, cl.ca_vendedor, cu.ca_nombre as ca_nombreVendedor, csuc.ca_nombre as ca_ciudad, cf.ca_fchcreado, p.ca_texto, re.ca_resultado, cfv.ca_value as ca_servicio
+            from ids.tb_ids i
+            inner join tb_clientes cl on cl.ca_idcliente=i.ca_id
+            inner join tb_concliente con on con.ca_idcliente=cl.ca_idcliente
+            right join encuestas.tb_control_encuesta cf on con.ca_idcontacto=cf.ca_id_contestador            
+            left join control.tb_usuarios cu on cl.ca_vendedor=cu.ca_login
+            left join control.tb_sucursales csuc on cu.ca_idsucursal=csuc.ca_idsucursal
+            inner join encuestas.tb_resultado_encuesta re on cf.ca_id=re.ca_idcontrolencuesta
+            inner join encuestas.tb_pregunta p on re.ca_idpregunta = p.ca_id
+            inner join control.tb_config_values cfv on cfv.ca_idconfig=211 and re.ca_servicio=cfv.ca_ident";
+        $sql = $sql.=" 
+            where (cf.ca_idformulario = " . $this->getCaId() . " and (cf.ca_tipo_contestador=1) and (re.ca_resultado != ''))                  
+        ";
+        if ($sucursal != '0') {
+            if ($sucursal == 'NA') {
+                $sql = $sql.=" and (csuc.ca_nombre is null)";
+            } else {
+                $sql = $sql.=" and (csuc.ca_nombre ='" . $sucursal . "')";
+            }
+        }
+        if ($pregunta != '0') {
+            $sql = $sql.=" and (re.ca_idpregunta ='" . $pregunta . "')";
+        }
+        if ($servicio != '0' && $servicio != null) {
+            $sql = $sql.=" and (cfv.ca_value ='" . $opcion->getCaTexto() . "')";
+        }
+
+        $sql = $sql.="
+          order by cl.ca_vendedor, ca_compania, ca_servicio, ca_texto
+          ";
+        $temp = $con->execute($sql);
+        return $temp->fetchAll();
+    }
+
+    /**
+     * Calcula el numero de encuestas enviadas a cada sucursal
+     * @param type $sucursal
+     * @param type $empresa a la que se le realizo el envio. 2 para Coltrans, 1 para Colmas
+     * @return type
+     */
+    public function getNumEncuestasEnviadasPorSucursal($lista, $sucursal) {
+        $cont = 0;
+        foreach ($lista as $valor){
+            if ($sucursal != '0') {
+                if ($sucursal == 'NA') {
+                    if ($valor['ca_sucursal'] == '') {
+                        $cont++;
+                    }
+                } else {
+                    if ($valor['ca_sucursal'] == $sucursal) {
+                        $cont++;
+                    }
+                }
+            } else {
+                $cont++;
+            }
+        };
+        return $cont;
+    }
+
+    /**
+     * Retorna la lista de envios por sucursal
+     * @param type $sucursal
+     * @param type $empresa a la que se le realizo el envio. 2 para Coltrans, 1 para Colmas
+     * @return type
+     */
+    public function getListaEncuestasEnviadasPorSucursal($idFormulario,$vigenciaIni,$vigenciaEnd) {
+        $con = Doctrine_Manager::getInstance()->connection();
+        
+        $sql = "
+            SELECT cl.ca_compania, cl.ca_sucursal
+            FROM tb_emails e
+                INNER JOIN tb_concliente cn ON cn.ca_idcontacto::text = e.ca_body
+                INNER JOIN vi_clientes cl ON cl.ca_idcliente = cn.ca_idcliente
+            WHERE e.ca_tipo = 'Encuesta' and ca_idcaso = $idFormulario and ca_subject != 'Emails enviados' and ca_usuenvio = 'Administrador' 
+                and ca_fchenvio BETWEEN '$vigenciaIni' and '$vigenciaEnd'";
+        
+        $temp = $con->execute($sql);
+        return $temp->fetchAll();
+    }
+
+    /**
+     * Retorna la lista de envios por sucursal
+     * @param type $sucursal
+     * @param type $empresa a la que se le realizo el envio. 2 para Coltrans, 1 para Colmas
+     * @return type
+     */
+    public function getListaEmpresasEnviadasPorSucursal($idFormulario, $sucursal) {
+        $con = Doctrine_Manager::getInstance()->connection();
+        
+        $where = "";
+        
+        if(isset($sucursal)){
+            if ($sucursal == '0')
+                $where.="";
+            elseif ($sucursal == 'NA')
+                $where.= " AND cl.ca_sucursal IS NULL";
+            else
+                $where.= " AND cl.ca_sucursal = '$sucursal' ";       
+        }
+        
+        $sql = "SELECT DISTINCT cl.ca_compania, cl.ca_sucursal
+                    FROM tb_emails e
+                INNER JOIN tb_concliente cn ON cn.ca_idcontacto::text = e.ca_body
+                INNER JOIN vi_clientes cl ON cl.ca_idcliente = cn.ca_idcliente
+                    WHERE e.ca_tipo = 'Encuesta' and ca_idcaso = $idFormulario and ca_subject != 'Emails enviados' and ca_usuenvio = 'Administrador' $where
+                ORDER BY ca_compania";
+        
+        $temp = $con->execute($sql);
+        return $temp->fetchAll();
+    }
+
+    /**
+     * Calcula el numero de empresas a las que se les envio encuesta por sucursal
+     * @param type $sucursal
+     * @param type $empresa a la que se le realizo el envio. 2 para Coltrans, 1 para Colmas
+     * @return type
+     */
+    public function getNumEmpresasEnviadasPorSucursal($lista, $sucursal) {
+        $cont = 0;
+        foreach ($lista as $valor){
+            if ($sucursal != '0') {
+                if ($sucursal == 'NA') {
+                    if ($valor['ca_sucursal'] == '') {
+                        $cont++;
+                    }
+                } else {
+                    if ($valor['ca_sucursal'] == $sucursal) {
+                        $cont++;
+                    }
+                }
+            } else {
+                $cont++;
+            }
+        };
+        return $cont;
+    }
+
+    /**
+     * Calcula los comentarios asociados a una encuesta
+     * @param type $sucursal '0' para todas, 'NA' para no asignada
+     * @param type $pregunta id de la pregunta. '0' para todas
+     * @param type $servicio Objeto de la clase Opcion creado a partir del parametro de servicio recibido. '0' para todas
+     * @return type un array con las siguientes posiciones ['count']['sum']['avg'] con valores: total de preguntas, suma del puntaje de todas las preguntas y un promedio de todas las preguntas 
+     */
+    public function getComentarios($sucursal, $pregunta, $servicio, $opcion) {
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "
+            select cf.ca_id, i.ca_nombre as ca_compania, con.ca_email,con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, cl.ca_vendedor, cu.ca_nombre as ca_nombreVendedor, csuc.ca_nombre as ca_ciudad, cf.ca_fchcreado, p.ca_texto, re.ca_resultado, cfv.ca_value as ca_servicio
+            from ids.tb_ids i
+            inner join tb_clientes cl on cl.ca_idcliente=i.ca_id
+            inner join tb_concliente con on con.ca_idcliente=cl.ca_idcliente
+            right join encuestas.tb_control_encuesta cf on con.ca_idcontacto=cf.ca_id_contestador            
+            left join control.tb_usuarios cu on cl.ca_vendedor=cu.ca_login
+            left join control.tb_sucursales csuc on cu.ca_idsucursal=csuc.ca_idsucursal
+            inner join encuestas.tb_resultado_encuesta re on cf.ca_id=re.ca_idcontrolencuesta
+            inner join encuestas.tb_pregunta p on re.ca_idpregunta = p.ca_id
+            inner join control.tb_config_values cfv on cfv.ca_idconfig=211 and re.ca_servicio=cfv.ca_ident
+            where cf.ca_idformulario = " . $this->getCaId() . " and cf.ca_tipo_contestador=1 and re.ca_resultado NOT IN ('','1','2','3','4','5') and cf.ca_tipo_contestador=1   
+            ORDER BY ca_ciudad, ca_compania, ca_texto";
+        $temp = $con->execute($sql);
+        return $temp->fetchAll();
+    }
+
+    /**
+     * Permite obtener el nombre de todas las sucursales, sin diferenciar por sede. 
+     * Este listado se usa para todas las sucursales.
+     * @return type
+     */
+    public function getListaSucursales() {
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql_con = "
+         SELECT DISTINCT s.ca_nombre
+            FROM control.tb_sucursales s
+            WHERE ca_idsucursal != '999'
+            ORDER BY s.ca_nombre;
+            ";
+        $st = $con->execute($sql_con);
+        return $st->fetchAll();
+    }
+
+    /**
+     * Retorna una cadena con el texto a mostrar adecuado dada una sucursal
+     * @return type
+     */
+    public function displaySucursal($sucursal) {
+        if ($sucursal == '0')
+            return "Todas";
+        elseif ($sucursal == 'NA')
+            return "No Asignada";
+        else
+            return $sucursal;
+    }
+
+    /**
+     * Permite guardar en un codigo la sucursal. retorna el id de la sucursal
+     * @param type $sucursal Sucursal a codificar
+     * @return type
+     */
+    public function encodeSucursal($sucursal) {
+        if ($sucursal == '0') {
+            $sucursal = 'Todas Las sucursales';
+        }
+        if ($sucursal== 'NA') {
+            return 'NA';
+        }
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql_con = "
+        SELECT suc.ca_idsucursal 
+        FROM control.tb_sucursales suc
+        where suc.ca_nombre ='" . $sucursal . "' limit 1;";
+        $st = $con->execute($sql_con);
+        foreach ($st->fetchAll() as $valor):
+        endforeach;
+        return $valor['ca_idsucursal'];
+        ;
+    }
+
+    /**
+     * Permite recuperar el nombre de la sucursal, dado su id.
+     * @param type $sucursal Sucursal a codificar
+     * @return type
+     */
+    public function decodeSucursal($idsucursal) {
+        if ($idsucursal == '999') {
+            return '0';
+        } else if($idsucursal == 'NA'){
+            return 'NA';
+        }else {
+            $con = Doctrine_Manager::getInstance()->connection();
+            $sql_con = "
+                SELECT suc.ca_nombre 
+                FROM control.tb_sucursales suc
+                where suc.ca_idsucursal ='" . $idsucursal . "' limit 1;";
+            $st = $con->execute($sql_con);
+            foreach ($st->fetchAll() as $valor):
+            endforeach;
+            return $valor['ca_nombre'];
+        }
+    }
+
+    /**
+     * Obtiene la lista de contactos que respondieron la actual encuesta para la sucursal dada.
+     * @param type $sucursal el el nombre en texto de la sucursal
+     * @return type
+     */
+    public function getListaContactosRespuesta($sucursal) {
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "
+            select cf.ca_id,cf.ca_id_contestador,i.ca_nombre, con.ca_email,con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, cl.ca_vendedor, cu.ca_nombre as representante, csuc.ca_nombre as sucursal, cf.ca_fchcreado, cu.ca_idsucursal
+            from ids.tb_ids i
+            inner join tb_clientes cl on cl.ca_idcliente=i.ca_id
+            inner join tb_concliente con on con.ca_idcliente=cl.ca_idcliente
+            right join encuestas.tb_control_encuesta cf on ca_idcontacto=ca_id_contestador            
+            left join control.tb_usuarios cu on cl.ca_vendedor=cu.ca_login
+            left join control.tb_sucursales csuc on cu.ca_idsucursal=csuc.ca_idsucursal
+            where (cf.ca_idformulario = " . $this->getCaId() . ") and (cf.ca_tipo_contestador=1)";
+        //filtrar por pregunta o servicio?
+        if ($sucursal != '0') {
+            if ($sucursal == 'NA') {
+                $sql = $sql.="and (csuc.ca_nombre is null)";
+            } else {
+                $sql = $sql.="and (csuc.ca_nombre ='" . $sucursal . "')";
+            }
+        }
+        $sql = $sql.=" order by sucursal, i.ca_nombre ASC;";
+        $st = $con->execute($sql);
+        return $st->fetchAll();
     }
 
 }
