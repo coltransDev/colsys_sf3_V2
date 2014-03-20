@@ -84,7 +84,13 @@ class reportesGerComponents extends sfComponents
         $this->meta_air = $this->getRequestParameter("meta_air"); 
         $this->idpais_origen=$this->getRequestParameter("idpais_origen");
         $this->pais_origen=$this->getRequestParameter("pais_origen");
-        $this->typeidg = $this->getRequestParameter("type_idg");        
+        $this->corigen = $this->getRequestParameter("corigen");
+        $this->cdestino = $this->getRequestParameter("cdestino");
+        $this->idorigen = $this->getRequestParameter("idorigen");
+        $this->iddestino = $this->getRequestParameter("iddestino");
+        $this->typeidg = $this->getRequestParameter("type_idg");
+        $this->checkOrigen = $this->getRequestParameter("checkOrigen");
+        $this->checkDestino = $this->getRequestParameter("checkDestino");
     }
 
     public function executeFiltrosReporteDesconsolidacion()

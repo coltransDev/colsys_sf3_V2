@@ -64,12 +64,16 @@ if($opcion){
     }
     
     foreach($data as $mod => $mes){
+        ksort($data[$mod]); // Organiza el arreglo por el Key (mes)
+    }
+    
+    foreach($data as $mod => $mes){
         foreach($mes as $km => $vm){
-                $dataEnd[$mod][] = $vm;
+            $dataEnd[$mod][] = $vm;
         }
     }
     
-    ksort($serieX); // Organiza los datos por el key
+    ksort($serieX); // Organiza los meses por el key
     
     foreach($serieX as $s){
         $serieM[]=$s; // Corre el arreglo empezando por la pocisión 0
@@ -77,8 +81,11 @@ if($opcion){
     $serieX=$serieM;
     
     if($transporte=="Marítimo"){
-        $dataJSON[]=array("name"=>"FCL","data"=>$dataEnd["FCL"]);
+        if($typeidg!=6)
+            $dataJSON[]=array("name"=>"FCL","data"=>$dataEnd["FCL"]);
+        
         $dataJSON[]=array("name"=>"LCL","data"=>$dataEnd["LCL"]);
+        
         $meta = "<b>Meta LCL".$indi_LCL[$pais_origen]." días - FCL->".$indi_FCL[$pais_origen]." días.</b>";
         $plotLCL = $indi_LCL[$pais_origen];
         $plotFCL = $indi_FCL[$pais_origen];
@@ -96,8 +103,8 @@ if($opcion){
     switch($typeidg){
         case 1:
             $title = $ano_ini."- Coordinación de Embarque - ".$pais_origen." - "."$transporte";
-            $leyendaIndicador = "La meta para este indicador está dada por el tiempo transcurrido desde la fecha de la primera instrucción hasta el arribo a puerto Colombiano.<br/>";
-            $encFchIni = "Fch. 1er.Instrucci&oacute;n";
+            $leyendaIndicador = $transporte=="Marítimo"?"La meta para este indicador está dada por el tiempo transcurrido desde la fecha de la primera instrucción hasta el arribo a Puerto Colombiano.<br/>":"La meta para este indicador está dada por el tiempo transcurrido desde la fecha de la primera instrucción hasta el arribo al Aeropuerto Colombiano.<br/>";
+            $encFchIni = "Fch. 1er.Instrucci&oacute;n o Carga Disponible";
             $encFchEnd = "Fch. de Llegada";
             $encIdg = "Coord. Embarque";
             $dataFchIni = "ca_fchcreado";
@@ -105,7 +112,9 @@ if($opcion){
             break;
         case 2:
             $title = $ano_ini."- Tiempo de Tránsito - ".$pais_origen." - "."$transporte";
-            $leyendaIndicador = "La meta para este indicador está dada por el tiempo transcurrido desde la fecha de zarpe y/o despegue hasta el arribo a puerto Colombiano.<br/>";
+            $title.= $corigen?"<br /> $corigen":"";
+            $title.= $cdestino?"- $cdestino":"";
+            $leyendaIndicador = $transporte=="Marítimo"?"La meta para este indicador está dada por el tiempo transcurrido desde la fecha de zarpe hasta el arribo a Puerto Colombiano.<br/>":"La meta para este indicador está dada por el tiempo transcurrido desde la fecha de salida hasta el arribo al Aeropuerto Colombiano.<br/>";
             $encFchIni = "Fch. Salida";
             $encFchEnd = "Fch. de Llegada";
             $encIdg = "Tiempo de Trán.";
@@ -114,12 +123,12 @@ if($opcion){
             break;
         case 3:
             $title = $ano_ini." - ";
-            $title.= $transporte=="Marítimo"?"Oportunidad en el Zarpe":"Oportunidad en el Despegue";
+            $title.= $transporte=="Marítimo"?"Oportunidad en el Zarpe":"Oportunidad en la Fecha de Salida";
             $title.= " - ".$pais_origen." - ".$transporte;
-            $leyendaIndicador = "La meta para este indicador está dada por el tiempo transcurrido desde el primer status de Carga Embarcada, hasta la fecha de zarpe del buque o despegue del avión.<br/>";
+            $leyendaIndicador = $transporte=="Marítimo"?"La meta para este indicador está dada por el tiempo transcurrido desde el primer status de Carga Embarcada, hasta la fecha de zarpe del buque<br/>":"La meta para este indicador está dada por el tiempo transcurrido desde el primer status de Carga Embarcada, hasta la fecha de salida del avión<br/>";
             $encFchIni = "Fch. Carga con Reserva";
             $encFchEnd = "Fch. de Salida";
-            $encIdg = "Oport. Zarpe/Despegue";
+            $encIdg = "Oport. Zarpe/Fch. Salida";
             $dataFchIni = "ca_fchsalida_eta";
             $dataFchEnd = "ca_fchsalida_ccr";
             break;
@@ -141,6 +150,15 @@ if($opcion){
             $dataFchIni = "ca_fchllegada";
             $dataFchEnd = "ca_fchfactura";
             break;
+        case 6:
+            $title = $ano_ini."- Oportunidad en la Desconsolidación ".$pais_origen." - "."$transporte";
+            $leyendaIndicador = "La meta para este indicador está dada por la diferencia entre la fecha de llegada y la fecha de desconsolidación.<br/>";
+            $encFchIni = "Fch. Llegada";
+            $encFchEnd = "Fch. Desconsolidación";
+            $encIdg = "Oport. Desconsolidación";
+            $dataFchIni = "ca_fchconfirmacion";
+            $dataFchEnd = "ca_fchvaciado";
+            break;
     }
 
 ?>
@@ -160,7 +178,7 @@ if($opcion){
                 <div align="center" id="grafica3" ></div>
             </td>
         </tr> 
-    </table><br/>
+    </table><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 <?  if($typeidg==2){?>
     <table align="center" width="900" border="3" class="box">
         <tr>
@@ -169,17 +187,18 @@ if($opcion){
             </td>
         </tr>
     </table>
-    <br/><br/>
+    <br/><br/>    
     <?}?>    
     <form action="#" method="post" name='form1' id="form1" >
         <table border="1" class="tableList" align="center" style="font-size: 10" width="300px">
-            <th style="text-align: center" colspan="15"><b><?echo "ESTADISTICAS DE CARGA ".strtoupper($pais_origen).'<br />'.'Periodo: '.$fechainicial." a ".$fechafinal;?></b></th>
+            <th style="text-align: center" colspan="16"><b><?echo "ESTADISTICAS DE CARGA ".strtoupper($pais_origen).'<br />'.'Periodo: '.$fechainicial." a ".$fechafinal;?></b></th>
             <tr>
                 <th scope="col" style=" text-align: center"><b>A&ntilde;o</b></th>
                 <th scope="col" style=" text-align: center"><b>Mes</b></th>
                 <th scope="col" style=" text-align: center"><b>R.Negocio</b></th>
                 <th scope="col" style=" text-align: center; width: 80px"><b>Orden No.</b></th>
-                <th scope="col" style=" text-align: center"><b>Origen</b></th>
+                <th scope="col" style=" text-align: center"><b> Tra. Origen</b></th>
+                <?if($corigen){?><th scope="col" style=" text-align: center"><b> Ciu. Origen</b></th><?}?>
                 <th scope="col" style=" text-align: center"><b>Destino</b></th>
                 <th scope="col" style=" text-align: center;width: 200px"><b>Proveedor</b></th>
                 <th scope="col" style=" text-align: center"><b>Modalidad</b></th>
@@ -187,7 +206,7 @@ if($opcion){
                 <th scope="col" style=" text-align: center"><b>Peso</b></th>
                 <th scope="col" style=" text-align: center"><b>Volumen</b></th>
                 <th scope="col" style=" text-align: center; width: 50px"><b><?=$encFchIni?></b></th>
-                <th scope="col" style=" text-align: center; width: 50px"><b><?=$encFchEnd?></b></th>
+                <th scope="col" style=" text-align: center; width: 100px"><b><?=$encFchEnd?></b></th>
                 <th scope="col" style=" text-align: center;width: 50px"><b><?=$encIdg?></b></th>
                 <th scope="col" style=" text-align: center;width: 50px"><b>Observaciones</b></th>
             </tr>
@@ -198,7 +217,15 @@ if($opcion){
             $nameObs = "obsIdg".$typeidg."_";
             
             foreach( $resul as  $r){
-
+                
+                if($typeidg==6 ){
+                    if($r["nva_modalidad"]=="FCL")
+                    continue;
+                }
+                list($peso, $medida) = explode("|", $r["ca_peso"]);
+                list($piezas, $medida) = explode("|", $r["ca_piezas"]);
+                list($volumen, $medida) = explode("|", $r["ca_volumen"]);
+                
                 $idreporte = $r["ca_idreporte"];
                 $reporte = Doctrine::getTable("Reporte")->find($idreporte);            
                 $observacionesIdg = $reporte->getProperty("idg".$typeidg);
@@ -231,12 +258,13 @@ if($opcion){
                 <td><a href="../traficos/listaStatus/modo/<?=$linkTransporte?>?reporte=<?=$r['ca_consecutivo']?>" target='_blank'><?=$r['ca_consecutivo']?></a></td>
                 <td><?=$r["ca_orden"]?></td>
                 <td><?=$r["ca_traorigen"]?></td>
+                <?if($corigen){?><td><?=$r["ca_ciuorigen"]?></td><?}?>
                 <td><?=$r["ca_ciudestino"]?></td>
                 <td><?=$r["proveedor"]?></td>
                 <td><?=$r["nva_modalidad"]?></td>
-                <td><?=$r["ca_piezas"]?></td>
-                <td><?=$r["ca_peso"]?></td>
-                <td><?=$r["ca_volumen"]?></td>
+                <td><?=$peso?></td>
+                <td><?=$piezas?></td>
+                <td><?=$volumen?></td>
                 <td><?=$r[$dataFchIni]?></td>
                 <td><?=$r[$dataFchEnd]?></td>
                 <td style=" text-align: center; border-right-color:black; color:<?=$color?>"><?=$r[$dataIdg]==0?1:$r[$dataIdg]?></td>
@@ -267,7 +295,7 @@ if($opcion){
 
 <script type="text/javascript">
         Highcharts.setOptions({
-            colors: ['#B7E84D', '#62B1FF']
+            colors: ['#62B1FF','#B7E84D']
         });
         new ChartsColumn({
             renderTo: 'grafica1',
@@ -290,6 +318,7 @@ if($opcion){
                         }
                     } 
                 }
+                <?if($typeidg!=6){?>
                 ,
                 {
                     color: '#B7E84D',
@@ -303,13 +332,14 @@ if($opcion){
                         }
                     } 
                 }
+                <?}?>
             <?}else if(($transporte=="Aéreo")){?>
                 {
                     color: '#62B1FF',
                     width: 2,
                     value: <?=$plotAIR?$plotAIR:0?>,
                     label: {
-                        text: 'Limite LCL',
+                        text: 'Limite Aéreo',
                         style: {
                             color: '#62B1FF',
                             fontWeight: 'bold'
@@ -411,6 +441,19 @@ if($opcion){
             legend: {
                 enabled: false
             },
+            plotOptions: {
+                line: {
+                    dataLabels: {
+                        formatter: function () {
+                            /*return Math.round(this.percentage * 100) / 100 + ' %';*/
+                            return '<b>'+ this.y +' %';
+                        },
+                        enabled: true,
+                        distance: -50,
+                        color: 'black'
+                    }
+                }
+            },
             serieX: <?=json_encode($serieX)?>,					
             series: <?=json_encode($dataJSON)?>
         });	
@@ -441,7 +484,10 @@ if($opcion){
         function imprimir(){
             $(".esconder").hide();
             $(".mostrar").show();
+            Ext.getCmp("formPanel").hidden=true;
+            //alert("")
             window.print();
+            //$(".esconder").show();
         }
 
         function validar(){

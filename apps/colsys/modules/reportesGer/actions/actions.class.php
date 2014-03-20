@@ -829,6 +829,10 @@ class reportesGerActions extends sfActions {
         $this->opcion = $request->getParameter("opcion");
         $this->idpais_origen = $this->getRequestParameter("idpais_origen");
         $this->pais_origen = $this->getRequestParameter("pais_origen");
+        $this->corigen = $this->getRequestParameter("corigen");
+        $this->cdestino = $this->getRequestParameter("cdestino");
+        $this->idcorigen = $this->getRequestParameter("idorigen");
+        $this->idcdestino = $this->getRequestParameter("iddestino");
         $this->idtransporte = $this->getRequestParameter("idtransporte");
         $this->transporte = $this->getRequestParameter("transporte");
         $this->idcliente = $this->getRequestParameter("idcliente");
@@ -839,6 +843,9 @@ class reportesGerActions extends sfActions {
         $this->metafcl = $request->getParameter("meta_fcl");
         $this->meta_air = $request->getParameter("meta_air");
         $this->typeidg = $request->getParameter("type_idg");
+        $this->checkOrigen = $request->getParameter("checkOrigen");
+        $this->checkDestino = $request->getParameter("checkDestino");
+        
         if ($this->fechainicial) {
             list($ano_ini, $mes_ini) = explode("-", $this->fechainicial);
             $this->mesinicial = $mes_ini;
@@ -860,29 +867,31 @@ class reportesGerActions extends sfActions {
         $this->grid = array();
         $this->indicador = array();
         $this->peso = array();
+        $wherePpal = "";
 
         if ($this->opcion) {
             switch ($this->typeidg) {
                 case 1:
-                    $select1 = ",(ca_fchllegada-date(v.ca_fchcreado)) as ca_diferencia";
-                    $where1 = "WHERE rs.ca_idetapa in ('IMCPD','IACAD')";
-                    $where2 = "WHERE rs.ca_idetapa in ('IMETA','IMETT','IACCR')";
-                    $joinPpal = $this->transporte == "Marítimo" ? "JOIN tb_inoclientes_sea ic ON ic.ca_idreporte = sqa.ca_idreporte" : "JOIN tb_inoclientes_air ic ON ic.ca_idreporte = sqa.ca_consecutivo";
+                    $select1 = ",(ca_fchllegada- (CASE WHEN sq.ca_carga_disponible != '' THEN date(sq.ca_carga_disponible) ELSE date(v.ca_fchcreado) END)) as ca_diferencia";
+                    $where1 = "WHERE rs.ca_idetapa in ('IMCPD','IACAD','IMETA','IMETT','IACCR')";
+                    $where2 = "WHERE rs.ca_idetapa in ('IMETA','IMETT','IACCR','IMCEM')";
+                    $select3 = ", ca_carga_disponible";
+                    $select4 = ",substr(pro.ca_propiedades, strpos(pro.ca_propiedades, 'cargaDisponible=')+16,10) as ca_carga_disponible";
+                    $join2 = "LEFT JOIN (select max(ca_idreporte) as ca_idreporte, est.ca_propiedades FROM tb_repstatus est WHERE strpos(est.ca_propiedades, 'cargaDisponible=')>0 GROUP BY est.ca_propiedades) pro ON pro.ca_idreporte = rs.ca_idreporte";
+                    $group2 = ", pro.ca_propiedades ORDER BY rp.ca_consecutivo";
                     break;
                 case 2:
                     $select1 = ",ca_fchsalida_cd, (CASE WHEN sqa.ca_fchllegada-ca_fchsalida_cd = 0 THEN 1 ELSE sqa.ca_fchllegada-ca_fchsalida_cd END) as ca_diferencia";
                     $select2 = ",ca_fchsalida as ca_fchsalida_cd";
                     $where1 = "WHERE rs.ca_idetapa in ('IMCPD','IACAD')";
-                    $where2 = "WHERE rs.ca_idetapa in ('IMETA','IMETT','IACCR')";
-                    $joinPpal = $this->transporte == "Marítimo" ? "JOIN tb_inoclientes_sea ic ON ic.ca_idreporte = sqa.ca_idreporte" : "JOIN tb_inoclientes_air ic ON ic.ca_idreporte = sqa.ca_consecutivo";
+                    $where2 = "WHERE rs.ca_idetapa in ('IMETA','IMETT','IACCR','IMCEM')";
                     break;
                 case 3:
                     $select1 = ",ca_fchsalida_eta, ca_fchsalida_ccr, (ca_fchsalida_ccr-ca_fchsalida_eta) as ca_diferencia";
                     $select2 = ",ca_fchsalida as ca_fchsalida_eta";
                     $select3 = ",ca_fchsalida as ca_fchsalida_ccr";
-                    $where1 = "WHERE rs.ca_idetapa in ('IMETA','IMETT','IACAD')";
+                    $where1 = "WHERE rs.ca_idetapa in ('IMETA','IMETT','IACAD','IMCEM')";
                     $where2 = "WHERE rs.ca_idetapa in ('IMCCR','IACCR') ";
-                    $joinPpal = $this->transporte == "Marítimo" ? "JOIN tb_inoclientes_sea ic ON ic.ca_idreporte = sqa.ca_idreporte" : "JOIN tb_inoclientes_air ic ON ic.ca_idreporte = sqa.ca_consecutivo";
                     break;
                 case 4:
                     $select1 = ",ca_fchllegada_eta, ca_fchllegada_cd, (ca_fchllegada_cd-ca_fchllegada_eta) as ca_diferencia";
@@ -890,35 +899,45 @@ class reportesGerActions extends sfActions {
                     $select3 = ",ca_fchllegada as ca_fchllegada_cd";
                     $where1 = "WHERE rs.ca_idetapa in ('IMETA','IMETT','IACCR')";
                     $where2 = "WHERE rs.ca_idetapa in ('IMCPD','IACAD') ";
-                    $joinPpal = $this->transporte == "Marítimo" ? "JOIN tb_inoclientes_sea ic ON ic.ca_idreporte = sqa.ca_idreporte" : "JOIN tb_inoclientes_air ic ON ic.ca_idreporte = sqa.ca_consecutivo";
                     break;
                 case 5:
                     $select1 = $this->transporte == "Marítimo" ? ",(select ca_factura FROM tb_inoingresos_sea ii WHERE ic.ca_idinocliente = ii.ca_idinocliente limit 1) as ca_factura, (select ca_fchfactura FROM tb_inoingresos_sea ii WHERE ic.ca_idinocliente = ii.ca_idinocliente limit 1) as ca_fchfactura, ((select ca_fchfactura FROM tb_inoingresos_sea ii WHERE ic.ca_idinocliente = ii.ca_idinocliente limit 1)-sqa.ca_fchllegada) as ca_diferencia" : ",(select ca_factura FROM tb_inoingresos_air ii WHERE ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hawb= ii.ca_hawb limit 1) as ca_factura, (select ca_fchfactura FROM tb_inoingresos_air ii WHERE ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hawb= ii.ca_hawb limit 1) as ca_fchfactura, ((select ca_fchfactura FROM tb_inoingresos_air ii WHERE ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hawb= ii.ca_hawb limit 1)-sqa.ca_fchllegada) as ca_diferencia";
                     $where1 = "WHERE rs.ca_idetapa in ('IMCPD','IMETT','IACAD')";
-                    $where2 = "WHERE rs.ca_idetapa in ('IMETA','IACCR')";
+                    $where2 = " WHERE rs.ca_idetapa in ('IMETA','IACCR','IMCEM')";
                     $joinPpal = $this->transporte == "Marítimo" ? "JOIN tb_inoclientes_sea ic ON ic.ca_idreporte = sqa.ca_idreporte" : "JOIN tb_inoclientes_air ic ON ic.ca_idreporte = sqa.ca_consecutivo";
                     break;
+                case 6:
+                    $select1 = ",im.ca_fchvaciado, im.ca_fchconfirmacion,(im.ca_fchvaciado-im.ca_fchconfirmacion) as ca_diferencia";
+                    $where1 = "WHERE rs.ca_idetapa in ('IMCPD','IACAD')";
+                    $where2 = "WHERE rs.ca_idetapa in ('IMETA','IMETT','IACCR','IMCEM')";
+                    $joinPpal = "JOIN tb_inoclientes_sea ic ON ic.ca_idreporte = sqa.ca_idreporte";
+                    $joinSec = "JOIN tb_inomaestra_sea im ON ic.ca_referencia = im.ca_referencia";
+                    break;
             }
+            
+            $wherePpal.= $this->corigen?"AND v.ca_ciuorigen = '".$this->corigen."'":"";
+            $wherePpal.= $this->cdestino?"AND v.ca_ciudestino = '".$this->cdestino."'":"";
 
-            $sql = "SELECT DISTINCT sqa.ca_ano1, sqa.ca_mes1, v.ca_consecutivo, v.ca_orden_clie as ca_orden, date(v.ca_fchcreado) as ca_fchcreado, v.ca_idreporte, v.ca_traorigen, v.ca_ciudestino,v.ca_modalidad,v.ca_transporte, v.ca_nombre as proveedor, v.ca_propiedades, 
-                            (CASE WHEN v.ca_modalidad = 'COLOADING' THEN 'LCL' ELSE v.ca_modalidad END) as nva_modalidad,  sqa.ca_fchllegada, ic.ca_peso, ic.ca_numpiezas as ca_piezas, ic.ca_volumen
+            $sql = "SELECT DISTINCT sqa.ca_ano1, sqa.ca_mes1, v.ca_consecutivo, v.ca_orden_clie as ca_orden, date(v.ca_fchcreado) as ca_fchcreado, v.ca_idreporte, v.ca_traorigen, v.ca_ciuorigen, v.ca_ciudestino,v.ca_modalidad,v.ca_transporte, v.ca_nombre as proveedor, v.ca_propiedades, 
+                            (CASE WHEN v.ca_modalidad = 'COLOADING' THEN 'LCL' ELSE v.ca_modalidad END) as nva_modalidad,  sqa.ca_fchllegada, sqa.ca_peso, sqa.ca_piezas as ca_piezas, sqa.ca_volumen
                             $select1
                     FROM vi_repindicadores v
-                        RIGHT OUTER JOIN ( SELECT extract(YEAR from rs.ca_fchllegada) as ca_ano1 ,extract(MONTH from rs.ca_fchllegada) as ca_mes1, ca_idreporte, ca_consecutivo, ca_fchllegada
-                                        $select2
-                                    FROM tb_repstatus rs 
-                                        RIGHT JOIN ( SELECT rp.ca_consecutivo, min(rs.ca_idstatus) as ca_idstatus 
-                                                FROM tb_repstatus rs 
-                                                    INNER JOIN tb_reportes rp on rp.ca_idreporte = rs.ca_idreporte 
-                                                $where1 
-                                                GROUP BY rp.ca_consecutivo) sf on rs.ca_idstatus = sf.ca_idstatus)  sqa ON v.ca_consecutivo = sqa.ca_consecutivo
-                        RIGHT OUTER JOIN (SELECT ca_consecutivo $select3 
-                                    FROM tb_repstatus rs 
-                                        RIGHT JOIN (SELECT rp.ca_consecutivo, min(rs.ca_idstatus) as ca_idstatus 
+                        RIGHT OUTER JOIN ( SELECT extract(YEAR from rs.ca_fchllegada) as ca_ano1 ,extract(MONTH from rs.ca_fchllegada) as ca_mes1, ca_idreporte, ca_consecutivo, ca_fchllegada, ca_piezas, ca_peso, ca_volumen
+                                            $select2
                                             FROM tb_repstatus rs 
-                                                INNER JOIN tb_reportes rp on rp.ca_idreporte = rs.ca_idreporte 
-                                            $where2 
-                                            GROUP BY rp.ca_consecutivo) sf on rs.ca_idstatus = sf.ca_idstatus)  sq ON v.ca_consecutivo = sq.ca_consecutivo
+                                                RIGHT JOIN ( SELECT rp.ca_consecutivo, min(rs.ca_idstatus) as ca_idstatus 
+                                                        FROM tb_repstatus rs 
+                                                            INNER JOIN tb_reportes rp on rp.ca_idreporte = rs.ca_idreporte 
+                                                        $where1 
+                                                        GROUP BY rp.ca_consecutivo) sf on rs.ca_idstatus = sf.ca_idstatus)  sqa ON v.ca_consecutivo = sqa.ca_consecutivo
+                        RIGHT OUTER JOIN (SELECT ca_consecutivo $select3 
+                                            FROM tb_repstatus rs 
+                                        RIGHT JOIN (SELECT rp.ca_consecutivo, min(rs.ca_idstatus) as ca_idstatus $select4
+                                                    FROM tb_repstatus rs 
+                                                        INNER JOIN tb_reportes rp on rp.ca_idreporte = rs.ca_idreporte
+                                                        $join2
+                                                    $where2 
+                                            GROUP BY rp.ca_consecutivo $group2) sf on rs.ca_idstatus = sf.ca_idstatus)  sq ON v.ca_consecutivo = sq.ca_consecutivo
                         $joinPpal
                         $joinSec
                      WHERE v.ca_impoexpo IN ('" . Constantes::IMPO . "','" . Constantes::OTMDTA1 . "') 
@@ -926,7 +945,7 @@ class reportesGerActions extends sfActions {
                            AND v.ca_idcliente = " . $this->idcliente . "
                            AND v.ca_traorigen= '" . $this->pais_origen . "'
                            AND ca_ano1::numeric = " . $this->ano_ini . "
-                           AND ca_mes1::numeric BETWEEN " . $this->mesinicial . " and " . $this->mesfinal . " 
+                           AND ca_mes1::numeric BETWEEN " . $this->mesinicial . " and " . $this->mesfinal . " $wherePpal 
                     ORDER BY sqa.ca_fchllegada";
 
             $con = Doctrine_Manager::getInstance()->connection();
@@ -948,10 +967,12 @@ class reportesGerActions extends sfActions {
                     }
                 } else if ($this->transporte == Constantes::MARITIMO) {
                     if ($r["nva_modalidad"] == Constantes::FCL) {
-                        if ($r[$this->dataIdg] > $this->indi_FCL[$this->pais_origen]) {
-                            $this->indicador[(int) ($r["ca_mes1"])]["incumplimiento"] ++;
-                        } else {
-                            $this->indicador[(int) ($r["ca_mes1"])]["cumplimiento"] ++;
+                        if($this->typeidg!=6){
+                            if ($r[$this->dataIdg] > $this->indi_FCL[$this->pais_origen]) {
+                                $this->indicador[(int) ($r["ca_mes1"])]["incumplimiento"] ++;
+                            } else {
+                                $this->indicador[(int) ($r["ca_mes1"])]["cumplimiento"] ++;
+                            }
                         }
                     } else if ($r["nva_modalidad"] == Constantes::LCL) {
                         if ($r[$this->dataIdg] > $this->indi_LCL[$this->pais_origen]) {
