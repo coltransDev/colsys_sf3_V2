@@ -3,9 +3,7 @@
         <? echo $formulario->displaySucursal($sucursal) ?> 
     </td>    
     <td style="text-align: center">
-        <?   
-            echo $formulario->getNumEmpresasEnviadasPorSucursal($lista_empresas, $sucursal);
-        ?>
+        <a class="" target="_blank" href="<? echo url_for('formulario/listaEmpresasEnviadas?ca_id=' . base64_encode($formulario->getCaId()) . '&sid=' . $formulario->encodeSucursal($sucursal))?>"><?echo $formulario->getNumEmpresasEnviadasPorSucursal($lista_empresas, $sucursal);?></a>
     </td>
     <td style="text-align: center">
         <? 

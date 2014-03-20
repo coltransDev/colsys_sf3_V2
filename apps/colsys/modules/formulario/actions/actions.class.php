@@ -10,10 +10,8 @@
  */
 class formularioActions extends sfActions {
 
-    const RUTINA = 136;
-    const RUTINACOLTRANS = 144;
-    const RUTINACOLMAS = 145;
-
+    const RUTINA = 144;
+    
     /**
      * Realiza un duplicado del objeto con todas sus relaciones.
      * @param sfWebRequest $request
@@ -69,13 +67,8 @@ class formularioActions extends sfActions {
 
         $id = $request->getParameter('id');
         $this->user = $this->getUser();
-        if ($id == 2) {
-            $this->nivel = $this->user->getNivelAcceso(formularioActions::RUTINACOLTRANS);
-        } else if ($id == 1) {
-            $this->nivel = $this->user->getNivelAcceso(formularioActions::RUTINACOLMAS);
-        } else {
-            $this->nivel = $this->user->getNivelAcceso(formularioActions::RUTINA);
-        }
+        $this->nivel = $this->user->getNivelAcceso(formularioActions::RUTINA);
+        
         $this->id=$id;
         //$formularios = Doctrine_Core::getTable('formulario')->createQuery('a');
         $formulario = new Formulario();
@@ -241,7 +234,7 @@ class formularioActions extends sfActions {
 
         $this->encuestas_enviadas = $this->formulario->getNumEncuestasEnviadas($idFormulario,$vigenciaIni,$vigenciaEnd);
         $this->lista_encuestas_enviadas = $this->formulario->getListaEncuestasEnviadasPorSucursal($idFormulario,$vigenciaIni,$vigenciaEnd);
-        $this->lista_empresas_enviadas = $this->formulario->getListaEmpresasEnviadasPorSucursal($idFormulario);
+        $this->lista_empresas_enviadas = $this->formulario->getListaEmpresasEnviadasPorSucursal($idFormulario,null);
 
        //calcula el numero de contactos  únicos enviados via mail.
         $con2 = Doctrine_Manager::getInstance()->connection();
@@ -354,6 +347,23 @@ class formularioActions extends sfActions {
         $this->device = $dispositivo;
         $this->setLayout('layout_home');
     }
+    
+    public function executeListaEmpresasEnviadas(sfWebRequest $request) {
+        $id = $request->getParameter('ca_id');
+        $idDecode = base64_decode($id);
+        $idFormulario = intval($idDecode);
+        $this->sucursal = $request->getParameter('sid');
+        
+        
+        $this->formulario = Doctrine_Core::getTable('formulario')->find($idFormulario);
+        $this->sucursal = $this->formulario->decodeSucursal($this->sucursal);
+        $this->empresas = $this->formulario->getListaEmpresasEnviadasPorSucursal($idFormulario, $this->sucursal);
+        
+        $detect = new Mobile_Detect();
+        $dispositivo = ($detect->isMobile() ? ($detect->isTablet() ? 'tablet' : 'mobile') : 'desktop');
+        $this->device = $dispositivo;
+        $this->setLayout('layout_home');
+    }
 
     /**
      * Carga la encuesta de servicio, luego de recibir como parÃ¡metro el listado de servicios previamente seleccionados por el usuario.
@@ -381,9 +391,9 @@ class formularioActions extends sfActions {
         $this->formulario = Doctrine_Core::getTable('formulario')->find($idFormulario);
         $idEmpresa = $this->formulario->getCaEmpresa();
         if ($idEmpresa == 2) {
-            $this->nivel = $this->user->getNivelAcceso(formularioActions::RUTINACOLTRANS);
+            $this->nivel = $this->user->getNivelAcceso(formularioActions::RUTINA);
         } else if ($idEmpresa == 1) {
-            $this->nivel = $this->user->getNivelAcceso(formularioActions::RUTINACOLMAS);
+            $this->nivel = $this->user->getNivelAcceso(formularioActions::RUTINA);
         } else {
             $this->nivel = $this->user->getNivelAcceso(formularioActions::RUTINA);
         }

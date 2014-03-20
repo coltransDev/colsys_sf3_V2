@@ -8,13 +8,8 @@
  */
 $id = $this->getRequestParameter("id");
 $this->user = $this->getUser();
-if ($id == 2) {
-    $permiso = $user->getNivelAcceso("144");
-} else if ($id == 1) {
-    $permiso = $user->getNivelAcceso("145");
-} else {
-    $permiso = $user->getNivelAcceso("136");
-}
+$permiso = $user->getNivelAcceso("144");
+
 
 
 $i = 0;
