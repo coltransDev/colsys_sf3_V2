@@ -466,11 +466,7 @@ class reportesGerActions extends sfActions {
         $this->opcion = $request->getParameter("opcion");
 
         $this->idsucursal = $request->getParameter("idsucursal");
-        $this->departamento = $request->getParameter("departamento");
-        $this->iddepartamento = $request->getParameter("iddepartamento");
-        $this->idtransporte = $this->getRequestParameter("idtransporte");
-        $this->transporte = $this->getRequestParameter("transporte");
-
+       
         $this->fechainicial = $request->getParameter("fechaInicial");
         $this->fechafinal = $request->getParameter("fechaFinal");
 
@@ -478,19 +474,11 @@ class reportesGerActions extends sfActions {
 
             if ($this->idsucursal) {
                 if ($this->idsucursal == "BOG")
-                    $where .= " and ca_idsucursal in('" . $this->idsucursal . "','ABO')";
+                    $where .= " and u.ca_idsucursal in('" . $this->idsucursal . "','ABO')";
                 else
-                    $where .= " and ca_idsucursal='" . $this->idsucursal . "'";
+                    $where .= " and u.ca_idsucursal='" . $this->idsucursal . "'";
             }
-            if ($this->departamento == "Cuentas Globales")
-                $where .= " and ca_idcliente in (select ca_idcliente from vi_clientes_reduc where ca_propiedades like '%cuentaglobal=true%') ";
-            else if ($this->departamento == "Tráficos")
-                $where .= " and ca_idcliente not in (select ca_idcliente from vi_clientes_reduc where ca_propiedades like '%cuentaglobal=true%') ";
-            else if ($this->departamento == "Aéreo")
-                $where .= " and ca_idcliente not in (select ca_idcliente from vi_clientes_reduc where ca_propiedades like '%cuentaglobal=true%') ";
-            if ($this->transporte)
-                $where .= " and ca_transporte ='" . $this->transporte . "'";
-
+            
             if ($this->fechainicial)
                 $where .= " and a.ca_fchcreado>='$this->fechainicial'";
 
@@ -499,12 +487,14 @@ class reportesGerActions extends sfActions {
 
             $con = Doctrine_Manager::getInstance()->connection();
 
-            $sql = "select a.ca_fchcreado,(r.ca_consecutivo||' V'||r.ca_version) reporte,a.ca_usucreado,a.ca_fchrechazo,
-                        a.ca_usurechazo,a.ca_motrechazo,a.ca_propiedades
+            $sql = "select s.ca_nombre as sucursal, a.ca_usucreado, a.ca_fchcreado,(r.ca_consecutivo||' V'||r.ca_version) reporte,a.ca_fchrechazo,
+                        a.ca_usurechazo,a.ca_motrechazo,a.ca_propiedades, u.ca_nombre
                     from tb_reportes r 
-                        inner join tb_repantecedentes a on a.ca_idreporte=r.ca_idreporte 
+                        inner join tb_repantecedentes a on a.ca_idreporte=r.ca_idreporte
+                        inner join control.tb_usuarios u on u.ca_login = a.ca_usucreado
+                        inner join control.tb_sucursales s on s.ca_idsucursal = u.ca_idsucursal
                     where 1=1 $where
-                    order by 1";
+                    order by s.ca_nombre, a.ca_usucreado, a.ca_fchcreado";
             $st = $con->execute($sql);
             $this->reportes = $st->fetchAll();
             //echo "<pre>";print_r($this->reportes);echo "</pre>";

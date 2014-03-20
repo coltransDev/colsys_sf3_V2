@@ -68,9 +68,8 @@ var tabs = new Ext.FormPanel({
                                         format: "Y-m-d",
                                         value: '<?=$fechainicial?>'
                                     },
-                                    <?
-                                    }else
-                                    {
+                                     <?
+                                        }
                                     ?>
                                     new WidgetSucursales({fieldLabel: 'Sucursal',
                                                         id: 'sucursal',
@@ -79,6 +78,10 @@ var tabs = new Ext.FormPanel({
                                                         value:"<?=$sucursal?>",
                                                         hiddenValue:"<?=$idsucursal?>"
                                                         }),
+                                                        <?
+                                    if($informe!=2)
+                                    {
+                                    ?>
                                                         new WidgetDeptos({fieldLabel: 'Departamento',
                                                             id: 'departamento',
                                                             name: 'departamento',
@@ -86,9 +89,8 @@ var tabs = new Ext.FormPanel({
                                                             value:"<?=$departamento?>",
                                                             hiddenValue:"<?=$iddepartamento?>"
                                                         })
-                                  <?
-                                    }
-                                  ?>
+                                    <?}?>
+                                 
                                   ]
                              },
                              {

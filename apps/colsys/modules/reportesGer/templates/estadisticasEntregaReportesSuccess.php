@@ -5,7 +5,7 @@ $reportes = $sf_data->getRaw("reportes");
 ?>
 <div align="center" >
 <br />
-<h3> Estadisticas Entrega Reportes </h3>
+<h3> Estadísticas Entrega Reportes </h3>
 <br />
 <br />
 </div>
@@ -34,25 +34,35 @@ if( $fechainicial && $fechafinal ){
     
 <table class="tableList" width="900px" border="1" id="mainTable" align="center" id="panel1">
     <tr>
-        <th>No</th>
         <th>Fecha</th>
         <th>No. Reporte</th>
-        <th>Usuario Envia</th>
-        
-        <th>Razon rechazo</th>
+        <th style="width: 150px;">Razon rechazo</th>
         <th>Usuario rechazo</th>
         <th>Fecha rechazo</th>
    </tr>
         <?
         $c=1;
+        $lastSucursal="";
+        $lastUsuario="";
         foreach($reportes as $key=> $r)
-        {                    
-        ?>
+        {   
+            if($lastSucursal!=$r["sucursal"]){ 
+                $lastSucursal=$r["sucursal"];
+                ?>
+                <tr class="box"><td colspan="5" style="font-weight:bold; font-size: 14px; color:  #0000ff"><b><?=$r["sucursal"]?></b></td></tr>
+                <?
+            }
+            if($lastUsuario!=$r["ca_nombre"]){
+                $lastUsuario=$r["ca_nombre"];
+                ?>
+                <tr><td colspan="5" style="font-weight:bold; font-size: 11px;"><b><?=$r["ca_nombre"]?></b></td></tr>
+                <?
+            }
+        ?>  
             <tr>
-                <td><?=$c++?></td>
+                
                 <td><?=$r["ca_fchcreado"]?></td>
                 <td><?=$r["reporte"]?></td>
-                <td><?=$r["ca_usucreado"]?></td>
                 <td><?=$r["ca_motrechazo"]?></td>
                 <td><?=$r["ca_usurechazo"]?></td>
                 <td><?=$r["ca_fchrechazo"]?></td>
