@@ -286,11 +286,14 @@ class idsActions extends sfActions {
 
 
                 // Guarda el proveedor
+                $nuevo = 0;
+                
                 if (isset($this->formProveedor)) {
                     $proveedor = $ids->getIdsProveedor();
                     if (!$proveedor) {
                         $proveedor = new IdsProveedor();
                         $proveedor->setCaIdproveedor($ids->getCaId());
+                        $nuevo = 1;
                     }
 
                     $proveedor->setCaTipo($bindValues["tipo_proveedor"]);
@@ -400,6 +403,26 @@ class idsActions extends sfActions {
                     }
 
                     $proveedor->save();
+                    $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
+                    
+                    if($nuevo>0){
+                        if($proveedor->getCaJefecuenta()){
+                            $email = new Email();
+                            $email->setCaUsuenvio($this->getUser()->getUserId());
+                            $email->setCaTipo("Not. Aprobación");
+                            $email->setCaFrom($usuario->getCaEmail());
+                            $email->setCaReplyto($usuario->getCaEmail());
+                            $email->setCaFromname($usuario->getCaNombre());
+                            $email->setCaAddress($proveedor->getUsuario()->getCaEmail());
+                            $email->addCC($usuario->getCaEmail());
+                            $email->setCaSubject("Aprobacion Proveedor - ".$proveedor->getIds()->getCaNombre());
+                            sfContext::getInstance()->getRequest()->setParameter("nombre", $proveedor->getIds()->getCaNombre());
+                            sfContext::getInstance()->getRequest()->setParameter("id", $proveedor->getIds()->getCaId());
+                            
+                            $email->setCaBodyhtml(sfContext::getInstance()->getController()->getPresentationFor('ids', 'emailAprobacion'));
+                            $email->save();
+                        }
+                    }
                 }
 
 
@@ -2313,6 +2336,17 @@ class idsActions extends sfActions {
         }else{
             $this->respuesta = "Denegado";
         }
+    }
+    
+    public function executeEmailAprobacion(sfWebRequest $request){
+        
+        //$this->usuario = Doctrine::getTable("Usuario")->find($request->getParameter("login"));        
+        $this->setLayout("none");
+        
+        $this->nombre = $request->getParameter("nombre");
+        $this->id = $request->getParameter("id");
+        
+        
     }
 }
 ?>
