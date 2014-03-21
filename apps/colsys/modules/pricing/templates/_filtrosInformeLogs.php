@@ -61,8 +61,7 @@ include_component("widgets", "widgetUsuario");
         Ext.getCmp('idConcepto').hide();
         Ext.getCmp('idConcepto').setValue(null);
         Ext.getCmp('idlinea').show();
-        Ext.getCmp('pais_origen').hide();
-        Ext.getCmp('pais_origen').setValue(null);
+        Ext.getCmp('pais_origen').show();        
         Ext.getCmp('corigen').hide();
         Ext.getCmp('corigen').setValue(null);
         Ext.getCmp('usuario').show();
@@ -92,8 +91,7 @@ include_component("widgets", "widgetUsuario");
         Ext.getCmp('idConcepto').hide();
         Ext.getCmp('idConcepto').setValue(null);
         Ext.getCmp('idlinea').show();
-        Ext.getCmp('pais_origen').hide();
-        Ext.getCmp('pais_origen').setValue(null);
+        Ext.getCmp('pais_origen').show();
         Ext.getCmp('corigen').hide();
         Ext.getCmp('corigen').setValue(null);
         Ext.getCmp('usuario').show();
@@ -279,41 +277,11 @@ include_component("widgets", "widgetUsuario");
                     collapsed: false,
                     layout:"form",
                     items: [
-                        {
-                            xtype:'fieldset',
-                            title: 'Trayecto',
-                            id: 'trayecto',
-                            autoHeight:true,
-                            width: 300,
-                            defaultType: 'textfield',
-                            items:[
-                                new WidgetCiudad({
-                                fieldLabel: 'Origen',
-                                        name: 'origen',
-                                        hiddenName: 'idorigen',
-                                        id: 'origen',
-                                        width:100,
-                                        //renderTo:'orig',
-                                        value:'<?= $origen ?>',
-                                        hiddenValue:'<?= $idorigen ?>'
-                                }),
-                                new WidgetCiudad({
-                                fieldLabel: 'Destino',
-                                        name: 'destino',
-                                        hiddenName: 'iddestino',
-                                        id: 'destino',
-                                        width:100,
-                                        //renderTo:'dest', 
-                                        value:'<?= $destino ?>',
-                                        hiddenValue:'<?= $iddestino ?>'
-                                })
-                            ]
-                        },
                         new WidgetImpoexpo({fieldLabel: 'Impo/Expo',
                                 id: 'impoexpo',
                                 hiddenName: "impoexpo",
                                 value:"<?= $impoexpo ?>",
-                                width:200
+                                width:235
                         }),
                         new WidgetTransporte({fieldLabel: 'Transporte',
                                 id: 'transporte',
@@ -321,7 +289,7 @@ include_component("widgets", "widgetUsuario");
                                 linkTransporte: "transporte",
                                 linkImpoexpo: "impoexpo",
                                 value:"<?= $transporte ?>",
-                                width:200
+                                width:235
                         }),
                         new WidgetModalidad({fieldLabel: 'Modalidad',
                                 id: 'modalidad',
@@ -329,25 +297,25 @@ include_component("widgets", "widgetUsuario");
                                 linkTransporte: "transporte",
                                 linkImpoexpo: "impoexpo",
                                 value:"<?= $modalidad ?>",
-                                width:200
+                                width:235
                         }),
-                        new WidgetConcepto({fieldLabel: 'Concepto',
-                                id: 'idConcepto',
-                                idconcepto:"concepto",
-                                hiddenName: "idconcepto",
+                        new WidgetLinea({
+                                fieldLabel: 'Línea',
                                 linkTransporte: "transporte",
-                                linkModalidad: "modalidad",
-                                value:"<?= utf8_encode($concepto) ?>",
-                                hiddenValue:"<?= $idconcepto ?>",
-                                width:200
-                        }),
+                                name:"linea",
+                                id:"idlinea",
+                                hiddenName: "idlinea",
+                                value:"<?= $linea ?>",
+                                hiddenValue:"<?=$idlinea ?>",
+                                width:235
+                        }),                        
                         new WidgetPais({title: 'País',
                                 fieldLabel: 'Pais origen',
                                 id: 'pais_origen',
                                 name: 'pais_origen',
                                 hiddenName: "idpais_origen",
                                 pais:"todos",
-                                width:200,
+                                width:235,
                                 value:"<?= $idpais_origen ?>"
                         }),
                         new WidgetCiudad({fieldLabel: 'Ciudad',
@@ -358,23 +326,53 @@ include_component("widgets", "widgetUsuario");
                                 traficoParent:"pais_origen",
                                 impoexpo: "impoexpo",
                                 value:"<?= $corigen ?>",
-                                width:200,
+                                width:235,
                                 hiddenValue:"<?= $idcorigen ?>"
                         }),
-                        new WidgetLinea({
-                                fieldLabel: 'Línea',
+                        {
+                            xtype:'fieldset',
+                            title: 'Trayecto',
+                            id: 'trayecto',
+                            autoHeight:true,
+                            width: 320,
+                            defaultType: 'textfield',
+                            items:[
+                                new WidgetCiudad({
+                                fieldLabel: 'Origen',
+                                        name: 'origen',
+                                        hiddenName: 'idorigen',
+                                        id: 'origen',
+                                        width:110,
+                                        //renderTo:'orig',
+                                        value:'<?= $origen ?>',
+                                        hiddenValue:'<?= $idorigen ?>'
+                                }),
+                                new WidgetCiudad({
+                                fieldLabel: 'Destino',
+                                        name: 'destino',
+                                        hiddenName: 'iddestino',
+                                        id: 'destino',
+                                        width:110,
+                                        //renderTo:'dest', 
+                                        value:'<?= $destino ?>',
+                                        hiddenValue:'<?= $iddestino ?>'
+                                })
+                            ]
+                        },
+                        new WidgetConcepto({fieldLabel: 'Concepto',
+                                id: 'idConcepto',
+                                idconcepto:"concepto",
+                                hiddenName: "idconcepto",
                                 linkTransporte: "transporte",
-                                name:"linea",
-                                id:"idlinea",
-                                hiddenName: "idlinea",
-                                value:"<?= $linea ?>",
-                                hiddenValue:"<?=$idlinea ?>",
-                                width:200
+                                linkModalidad: "modalidad",
+                                value:"<?= utf8_encode($concepto) ?>",
+                                hiddenValue:"<?= $idconcepto ?>",
+                                width:235
                         }),
                         new WidgetUsuario({fieldLabel: 'Usuario',
                                 id:"usuario",
                                 hiddenName:"idusuario",
-                                width:200,
+                                width:235,
                                 value:"<?= $usuario ?>",
                                 hiddenValue:"<?= $idusuario ?>"
                         })

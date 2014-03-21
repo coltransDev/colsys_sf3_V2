@@ -2990,9 +2990,8 @@ class pricingActions extends sfActions {
         
         if($this->opcion){
             switch($this->typelog){
-                case 1:
-                    
-                    $select = "tr.ca_idlinea, i.ca_nombre as linea, ori.ca_ciudad as origen, des.ca_ciudad as destino, r.ca_idconcepto, c.ca_concepto as concepto,  r.ca_vlrneto, r.ca_vlrsugerido, r.ca_aplicacion,r.ca_idmoneda, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_fcheliminado,   ";
+                case 1: // Fletes
+                    $select = "tr.ca_idlinea, i.ca_nombre as linea, ori.ca_ciudad as origen, des.ca_ciudad as destino, r.ca_idconcepto, c.ca_concepto as concepto, c.ca_liminferior as concorder, r.ca_vlrneto, r.ca_vlrsugerido, r.ca_aplicacion,r.ca_idmoneda, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_fcheliminado,";
                     $from = "pric.".$pre."_fletes r";
                     $join = "JOIN pric.tb_trayectos tr ON r.ca_idtrayecto = tr.ca_idtrayecto
                              JOIN tb_conceptos c ON c.ca_idconcepto = r.ca_idconcepto
@@ -3007,8 +3006,9 @@ class pricingActions extends sfActions {
                     $whereAdd.= $this->idpais_origen?" AND tor.ca_idtrafico = '".$this->idpais_origen."'":"";
                     $whereAdd.= $this->idconcepto?" AND r.ca_idconcepto = '".$this->idconcepto."'":"";
                     $sufijo = "tr";
+                    $sufijo2="c";
                     break;
-                case 2:
+                case 2: // Recargos x Ciudad
                     $select = "t.ca_nombre as trafico, ori.ca_ciudad as ciudad, cp.ca_idconcepto, cp.ca_concepto as concepto,  r.ca_vlrrecargo, r.ca_aplicacion, r.ca_vlrminimo, r.ca_aplicacion_min, r.ca_observaciones,r.ca_idmoneda, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_fcheliminado,";
                     $from = "pric.".$pre."_recargosxciudad r";
                     $join = "JOIN tb_traficos t ON t.ca_idtrafico = r.ca_idtrafico
@@ -3017,19 +3017,24 @@ class pricingActions extends sfActions {
                     $whereAdd.= $this->idpais_origen?" AND r.ca_idtrafico = '".$this->idpais_origen."'":"";
                     $sufijo = "r";
                     break;
-                case 3:
-                    $select = "ori.ca_ciudad as origen, des.ca_ciudad as destino, c.ca_concepto as concepto, cp.ca_concepto as recargo, r.ca_vlrrecargo, r.ca_aplicacion, r.ca_vlrminimo, r.ca_aplicacion_min, r.ca_observaciones,r.ca_idmoneda, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_fcheliminado, ";
+                case 3: // Recargos x Concepto
+                    $select = "ori.ca_ciudad as origen, des.ca_ciudad as destino, c.ca_concepto as concepto, c.ca_liminferior as concorder, cp.ca_concepto as recargo, r.ca_vlrrecargo, r.ca_aplicacion, r.ca_vlrminimo, r.ca_aplicacion_min, r.ca_observaciones,r.ca_idmoneda, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_fcheliminado, ";
                     $from = "pric.".$pre."_recargosxconcepto r";
                     $join = "JOIN pric.tb_trayectos tr ON r.ca_idtrayecto = tr.ca_idtrayecto
                              JOIN tb_conceptos c ON c.ca_idconcepto = r.ca_idconcepto
                              JOIN ino.tb_conceptos cp ON cp.ca_idconcepto = r.ca_idrecargo
                              JOIN tb_ciudades ori ON ori.ca_idciudad = tr.ca_origen
-                             JOIN tb_ciudades des ON des.ca_idciudad = tr.ca_destino";
+                             JOIN tb_traficos traori ON traori.ca_idtrafico = ori.ca_idtrafico 
+                             JOIN tb_ciudades des ON des.ca_idciudad = tr.ca_destino
+                             JOIN tb_traficos trades ON trades.ca_idtrafico = ori.ca_idtrafico";
                     $whereAdd.= $this->idlinea?" AND tr.ca_idlinea = '".$this->idlinea."'":"";
+                    $whereAdd.= $this->idpais_origen?" AND traori.ca_idtrafico = '".$this->idpais_origen."'":"";
                     $sufijo = "tr";
+                    $sufijo2= "c";
+                    $sufijo3= "c";
                     break;
-                case 4:
-                    $select = "r.ca_idlinea, i.ca_nombre as linea, t.ca_nombre as trafico, c.ca_idconcepto, c.ca_concepto as concepto, cp.ca_idconcepto, cp.ca_concepto as recargo, r.ca_vlrrecargo, r.ca_aplicacion, r.ca_vlrminimo, r.ca_aplicacion_min, r.ca_observaciones,r.ca_idmoneda, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_fcheliminado,";
+                case 4: // Recargos x Línea
+                    $select = "r.ca_idlinea, i.ca_nombre as linea, t.ca_nombre as trafico, c.ca_idconcepto, c.ca_concepto as concepto, c.ca_liminferior as concorder, cp.ca_idconcepto, cp.ca_concepto as recargo, r.ca_vlrrecargo, r.ca_aplicacion, r.ca_vlrminimo, r.ca_aplicacion_min, r.ca_observaciones,r.ca_idmoneda, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_fcheliminado,";
                     $from = "pric.".$pre."_recargosxlinea r";
                     $join = "JOIN tb_traficos t ON t.ca_idtrafico = r.ca_idtrafico
                              JOIN ids.tb_proveedores p ON p.ca_idproveedor = r.ca_idlinea
@@ -3040,15 +3045,18 @@ class pricingActions extends sfActions {
                     $whereAdd.= $this->idpais_origen?" AND r.ca_idtrafico = '".$this->idpais_origen."'":"";
                     $sufijo = "r";
                     break;
-                case 5:
+                case 5: // Trayectos
                     $select = "tr.ca_idlinea, i.ca_nombre as linea, ori.ca_ciudad as origen, des.ca_ciudad as destino, tr.ca_frecuencia, tr.ca_tiempotransito, tr.ca_observaciones as obs1, (CASE WHEN tr.ca_activo=TRUE THEN 'SI' WHEN tr.ca_activo=FALSE THEN 'NO'END ) AS ca_activo, tr.ca_ncontrato, r.ca_observaciones as obs2,";
                     $from = "pric.".$pre."_trayectos r";
                     $join = "JOIN pric.tb_trayectos tr ON r.ca_idtrayecto = tr.ca_idtrayecto
                              JOIN ids.tb_proveedores p ON p.ca_idproveedor = tr.ca_idlinea
                              JOIN ids.tb_ids i ON p.ca_idproveedor = i.ca_id
                              JOIN tb_ciudades ori ON ori.ca_idciudad = tr.ca_origen
-                             JOIN tb_ciudades des ON des.ca_idciudad = tr.ca_destino";
+                             JOIN tb_traficos traori ON traori.ca_idtrafico = ori.ca_idtrafico 
+                             JOIN tb_ciudades des ON des.ca_idciudad = tr.ca_destino
+                             JOIN tb_traficos trades ON trades.ca_idtrafico = ori.ca_idtrafico";
                     $whereAdd.= $this->idlinea?" AND tr.ca_idlinea = '".$this->idlinea."'":"";
+                    $whereAdd.= $this->idpais_origen?" AND traori.ca_idtrafico = '".$this->idpais_origen."'":"";
                     $sufijo = "tr";
                     break;
             }
@@ -3079,8 +3087,8 @@ class pricingActions extends sfActions {
             $order.= strpos($select, 'ca_idlinea')!=''?"$sufijo.ca_idlinea,":"";
             $order.= strpos($select, 'origen')!=''?"origen,":"";    
             $order.= strpos($select, 'destino')!=''?"destino,":"";
-            $order.= strpos($select, 'concepto')!=''?"concepto,":"";
-            $order.= strpos($select, ' recargo')!=''?"recargo,":"";
+            $order.= strpos($select, 'concorder')!=''?"concorder ASC,":"";
+            $order.= strpos($select, ' recargo')!=''?"recargo ASC,":"";
             
             $sql = "SELECT DISTINCT $select $sufijo.ca_impoexpo, $sufijo.ca_transporte, $sufijo.ca_modalidad, to_char(r.ca_fchcreado,'YYYY-MM-DD HH24:MI') as fchcreado, r.ca_usucreado
                     FROM $from 
