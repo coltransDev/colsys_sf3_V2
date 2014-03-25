@@ -576,7 +576,7 @@ class falabellaActions extends sfActions {
                 $emision = date("Ymd", mktime(0, 0, 0, $mes, $dia, $anno));
                 $salida.= $emision; // 8
                 list($anno, $mes, $dia) = sscanf($invoice->getCaVencimientoFch(), "%d-%d-%d");
-                $vencimiento = date("Ymd", mktime(0, 0, 0, $mes + 1, $dia, $anno));
+                $vencimiento = date("Ymd", mktime(0, 0, 0, $mes, $dia, $anno));
                 $salida.= $vencimiento; // 9
                 $salida.= str_pad($invoice->getCaMoneda(), 3, " "); // 10  Siempre en Pesos Colombianos
                 $salida.= str_pad(floatval($invoice->getCaTipoCambio()), 10, "0", STR_PAD_LEFT); // 11
