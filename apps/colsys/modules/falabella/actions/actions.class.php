@@ -607,7 +607,7 @@ class falabellaActions extends sfActions {
                 $salida.= str_pad("", 30, " "); // 29
                 $salida.= "\r\n";
             }
-
+            /*  No se reporta por ser autoretenedores.
             $salida.= "12"; // 1
             $salida.= "800024075"; // 2
             $salida.= "900017447 "; // 3
@@ -615,7 +615,7 @@ class falabellaActions extends sfActions {
             $salida.= str_pad("003", 50, " "); // 5 Concepto de Retención en la Fuente
             $salida.= str_pad(floatval($invoice->getCaAfectoVlr()), 10, "0", STR_PAD_LEFT); // 6
             $salida.= "\r\n";
-
+            */
             $salida.= "13"; // 1
             $salida.= "800024075"; // 2
             $salida.= "900017447 "; // 3
