@@ -121,8 +121,34 @@ $textos = $sf_data->getRaw("textos");
 <?
         } else {
 ?>
-            if (document.getElementById('confirmacion_tbl').style.display == 'block'){
-
+            var theDate=document.form1.fchconfirmacion.value;
+            theDate=theDate.split("-");
+            
+            var theTime=document.form1.horaconfirmacion.value;
+            theTime=theTime.split(":");
+            
+            var llegada = Date.UTC(theDate[0], theDate[1]-1, theDate[2], theTime[0], theTime[1], theTime[2], 0);
+            var limite  = Date.UTC(1970, 0, 1, <?=$horas?>, <?=$minutos?>, 0, 0);
+            var actual  = new Date();
+            var confirm = Date.UTC(actual.getFullYear(), actual.getMonth(), actual.getDate(), actual.getHours(), actual.getMinutes(), actual.getSeconds(), 0);
+            
+            if (document.getElementById('confirmacion_tbl').style.display != 'none'){
+                if (modo != "puerto") {
+                    element = document.getElementById('observaciones_idg');
+                    if ((confirm - llegada)/1000 > limite/1000 && element.value.length == 0){
+                        element.focus()
+                        element = document.getElementById('justify_tbl');
+                        element.style.display = "inline";
+                        alert("De acuerdo al IDG está fuera del tiempo de oportunidad, favor dilgenciar la casilla de justificación que se ha habilitado.");
+                        return false;
+                    } else if ((confirm - llegada)/1000 <= limite/1000){
+                        element = document.getElementById('observaciones_idg');
+                        element = '';
+                        element = document.getElementById('justify_tbl');
+                        element.style.display = "none";
+                    }
+                }
+                
                 if (document.form1.fchconfirmacion.value == ''){
                     alert('Debe Especificar la Fecha de llegada de la Carga');
                     return false;
@@ -645,7 +671,7 @@ $textos = $sf_data->getRaw("textos");
                         <input name="tipo_msg" class="tipostatus" id="tipo_msg" value="<?= ($modo == "puerto") ? "Puerto" : "Conf" ?>" checked="checked" onclick="cambiarTipoMsg(this.value)" type="radio">
                         <?= ($modo == "puerto") ? "Llegada" : "Confirmaci&oacute;n" ?>:
                     </td>
-                    <td class="mostrar" colspan="4" rowspan="5">
+                    <td class="mostrar" colspan="4" rowspan="6">
                         <table id="confirmacion_tbl" style="display: block;" cellspacing="1" width="100%">
                             <tbody>
                                 <tr>
@@ -677,6 +703,15 @@ $textos = $sf_data->getRaw("textos");
                                 <tr>
                                     <td class="mostrar" colspan="4"><b>Introducción al Mensaje de Confirmación:</b><br>
                                         <textarea name="intro_body" wrap="virtual" rows="3" cols="93"><?= ($modo == "puerto") ? $textos['mensajeConfPuerto'] : $textos['mensajeConf'] ?></textarea></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table id="justify_tbl" style="display: none;" cellspacing="1" width="100%">
+                            <tbody>
+                                <tr>
+                                    <td class="mostrar" colspan="4"><b>Justificaci&oacute;n Fuera de Tiempo IDG:</b><br>
+                                        <textarea id="observaciones_idg" name="observaciones_idg" wrap="virtual" rows="3" cols="93"></textarea>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>

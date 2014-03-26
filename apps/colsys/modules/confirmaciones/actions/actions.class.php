@@ -115,7 +115,12 @@ class confirmacionesActions extends sfActions {
         $this->destino = $this->referencia->getDestino();
         $this->linea = $this->referencia->getIdsProveedor();
         $this->modo = $request->getParameter("modo");
-
+        
+        $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
+        $idgMax = IdgTable::getUnIndicador(RepStatus::IDG_CONF_LLEGADA, date("Y-m-d"), $usuario->getCaIdsucursal());
+        $this->horas = intval($idgMax->getCaLim1());
+        $this->minutos = 60 * ($idgMax->getCaLim1()-intval($idgMax->getCaLim1()));
+        
         $this->coordinadores = array();
 
         $parametros = ParametroTable::retrieveByCaso("CU046");
@@ -192,7 +197,13 @@ class confirmacionesActions extends sfActions {
 
         if (( $modo == "conf" && $tipo_msg == "Conf") || ($modo == "puerto" && $tipo_msg == "Puerto")) {
             if ($request->getParameter("fchconfirmacion")) {
-                $referencia->setCaFchconfirmacion(Utils::parseDate($request->getParameter("fchconfirmacion")));
+                $fchconfirmacion = Utils::parseDate($request->getParameter("fchconfirmacion"));
+                $referencia->setCaFchconfirmacion($fchconfirmacion);
+                if ($referencia->getCaFcharribo() != $fchconfirmacion){
+                    $observaciones = $referencia->getCaObservaciones().chr(13).date("m/d/Y")." Se actualizó la Fecha de Arribo de ".$referencia->getCaFcharribo()." por $fchconfirmacion según confirmación de llegada.";
+                    $referencia->setCaFcharribo($fchconfirmacion);
+                    $referencia->setCaObservaciones($observaciones);
+                }
             }
             $referencia->setCaHoraconfirmacion($request->getParameter("horaconfirmacion"));
             $referencia->setCaRegistroadu($request->getParameter("registroadu"));
@@ -414,7 +425,6 @@ class confirmacionesActions extends sfActions {
             $this->ca_referencia = $ca_referencia;
         } else {
             foreach ($oids as $oid) {
-
                 $idcliente = $this->getRequestParameter("idcliente_" . $oid);
                 $idinocliente = $this->getRequestParameter("idinocliente_".$oid);
                 $hbls = $this->getRequestParameter("hbls_" . $oid);
@@ -493,6 +503,10 @@ class confirmacionesActions extends sfActions {
                 $status->setCaFchenvio(date("Y-m-d H:i:s"));
                 $status->setCaUsuenvio($this->getUser()->getUserId());
 
+                if ($request->getParameter("observaciones_idg")) {
+                   $status->setCaObservacionesIdg($request->getParameter("observaciones_idg"));
+                }
+                
                 if ($request->getParameter("fchrecibido_" . $oid)) {
                     $horaRecibo = $request->getParameter("horarecibido_" . $oid);
                     $status->setCaFchrecibo(Utils::parseDate($request->getParameter("fchrecibido_" . $oid), "Y-m-d") . " " . $horaRecibo);
