@@ -565,7 +565,8 @@ class falabellaActions extends sfActions {
 
             $salida = "";
             while ($row = $stmt->fetch()) {
-                $salida.= "88"; // 1
+                $documento = ($vlr_afecto!=0 and $vlr_exento==0)?"87":"88";
+                $salida.= $documento; // 1
                 $salida.= "800024075 "; // 2
                 $salida.= "8"; // 3
                 $salida.= "900017447 "; // 4
