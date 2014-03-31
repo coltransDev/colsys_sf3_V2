@@ -53,6 +53,7 @@ $periodo = $fechaInicial?"Periodo: $fechaInicial a $fechaFinal":"FASFDASD";
                     break;
                 case 3:
                     ?>
+                    <th scope="col" style=" text-align: center"><b>Línea</b></th>
                     <th scope="col" style=" text-align: center"><b>Origen</b></th>
                     <th scope="col" style=" text-align: center"><b>Destino</b></th>
                     <th scope="col" style=" text-align: center"><b>Concepto</b></th>
@@ -64,7 +65,7 @@ $periodo = $fechaInicial?"Periodo: $fechaInicial a $fechaFinal":"FASFDASD";
                     <th scope="col" style=" text-align: center; width: 70px;"><b>Aplicación Min</b></th>
                     <th scope="col" style=" text-align: center; width: 150px;"><b>Observaciones</b></th>
                     <?
-                    $numcolumnas = 17;
+                    $numcolumnas = 18;
                     break;
                 case 4:
                     ?>
@@ -147,7 +148,7 @@ $periodo = $fechaInicial?"Periodo: $fechaInicial a $fechaFinal":"FASFDASD";
                                     echo "<td></td>";
                                 }
                                 echo "</tr>";
-                                if($typelog==1 || $typelog==3 || $typelog==4){
+                                if($typelog==1 || $typelog==4){
                                     foreach($gridConcepto as $fchcreado=>$gridFecha){
                                         echo "<tr><td></td><td></td><td></td><td></td><td></td><td></td><td style='width: 150px;'>" . $fchcreado. "</td>";
                                         for($i=0;$i<($numcolumnas-6);$i++){
@@ -160,6 +161,29 @@ $periodo = $fechaInicial?"Periodo: $fechaInicial a $fechaFinal":"FASFDASD";
                                                 echo "<td>" . $val. "</td>";
                                             }
                                             echo "</tr>";
+                                        }
+                                    }
+                                }
+                                if($typelog==3){
+                                    foreach($gridConcepto as $fchcreado=>$gridFecha){
+                                        echo "<tr><td></td><td></td><td></td><td></td><td></td><td></td><td style='width: 150px;'>" . $fchcreado. "</td>";
+                                        for($i=0;$i<($numcolumnas-6);$i++){
+                                            echo "<td></td>";
+                                        }
+                                        echo "</tr>";
+                                        foreach($gridFecha as $concepto=>$gridRecargo){
+                                            echo "<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td style='width: 150px;'>" . $concepto. "</td>";
+                                            for($i=0;$i<($numcolumnas-7);$i++){
+                                                echo "<td></td>";
+                                            }
+                                            echo "</tr>";
+                                            foreach($gridRecargo as $recargo=>$gridDatos){
+                                                echo "<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>" . $recargo. "</td>";
+                                                foreach($gridDatos as $key=>$val){
+                                                    echo "<td>" . $val. "</td>";
+                                                }
+                                                echo "</tr>";
+                                            }
                                         }
                                     }
                                 }
@@ -189,4 +213,3 @@ function imprimir(){
             window.print();
         }
 </script>
-

@@ -3018,11 +3018,13 @@ class pricingActions extends sfActions {
                     $sufijo = "r";
                     break;
                 case 3: // Recargos x Concepto
-                    $select = "ori.ca_ciudad as origen, des.ca_ciudad as destino, c.ca_concepto as concepto, c.ca_liminferior as concorder, cp.ca_concepto as recargo, r.ca_vlrrecargo, r.ca_aplicacion, r.ca_vlrminimo, r.ca_aplicacion_min, r.ca_observaciones,r.ca_idmoneda, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_fcheliminado, ";
+                    $select = "tr.ca_idlinea, i.ca_nombre as linea, ori.ca_ciudad as origen, des.ca_ciudad as destino, c.ca_concepto as concepto, c.ca_liminferior as concorder, cp.ca_concepto as recargo, r.ca_vlrrecargo, r.ca_aplicacion, r.ca_vlrminimo, r.ca_aplicacion_min, r.ca_observaciones,r.ca_idmoneda, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_fcheliminado, ";
                     $from = "pric.".$pre."_recargosxconcepto r";
                     $join = "JOIN pric.tb_trayectos tr ON r.ca_idtrayecto = tr.ca_idtrayecto
                              JOIN tb_conceptos c ON c.ca_idconcepto = r.ca_idconcepto
                              JOIN ino.tb_conceptos cp ON cp.ca_idconcepto = r.ca_idrecargo
+                             JOIN ids.tb_proveedores p ON p.ca_idproveedor = tr.ca_idlinea
+                             JOIN ids.tb_ids i ON p.ca_idproveedor = i.ca_id
                              JOIN tb_ciudades ori ON ori.ca_idciudad = tr.ca_origen
                              JOIN tb_traficos traori ON traori.ca_idtrafico = ori.ca_idtrafico 
                              JOIN tb_ciudades des ON des.ca_idciudad = tr.ca_destino
@@ -3104,7 +3106,7 @@ class pricingActions extends sfActions {
             foreach($this->resul as $r){
                 
                 switch ($this->typelog){
-                    case 1:
+                    case 1: // Fletes
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["fchcreado"]]["ca_vlrneto"] = number_format($r["ca_vlrneto"], 2, '.', '');
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["fchcreado"]]["ca_vlrsugerido"] = number_format($r["ca_vlrsugerido"], 2, '.', '');
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["fchcreado"]]["ca_aplicacion"] = $r["ca_aplicacion"];
@@ -3114,7 +3116,7 @@ class pricingActions extends sfActions {
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["fchcreado"]]["ca_usucreado"] = $r["ca_usucreado"];
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["fchcreado"]]["ca_usueliminado"] = $r["ca_usueliminado"];
                         break;
-                    case 2:
+                    case 2: // Recargos x Ciudad
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["trafico"]][$r["ciudad"]][$r["concepto"]][$r["fchcreado"]]["ca_vlrrecargo"] = number_format($r["ca_vlrrecargo"], 2, '.', '');
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["trafico"]][$r["ciudad"]][$r["concepto"]][$r["fchcreado"]]["ca_aplicacion"] = $r["ca_aplicacion"];
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["trafico"]][$r["ciudad"]][$r["concepto"]][$r["fchcreado"]]["ca_vlrminimo"] = number_format($r["ca_vlrminimo"], 2, '.', '');
@@ -3126,19 +3128,19 @@ class pricingActions extends sfActions {
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["trafico"]][$r["ciudad"]][$r["concepto"]][$r["fchcreado"]]["ca_usucreado"] = $r["ca_usucreado"];
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["trafico"]][$r["ciudad"]][$r["concepto"]][$r["fchcreado"]]["ca_usueliminado"] = $r["ca_usueliminado"];
                         break;
-                    case 3:
-                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_vlrrecargo"] = number_format($r["ca_vlrrecargo"], 2, '.', '');
-                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_aplicacion"] = $r["ca_aplicacion"];
-                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_vlrminimo"] = number_format($r["ca_vlrminimo"], 2, '.', '');
-                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_aplicacion_min"] = $r["ca_aplicacion_min"];
-                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_observaciones"] = $r["ca_observaciones"];
-                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_idmoneda"] = $r["ca_idmoneda"];
-                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_fchinicio"] = $r["ca_fchinicio"];
-                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_fchvencimiento"] = $r["ca_fchvencimiento"];
-                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_usucreado"] = $r["ca_usucreado"];
-                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_usueliminado"] = $r["ca_usueliminado"];
+                    case 3: // Recargos x Concepto
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_vlrrecargo"] = number_format($r["ca_vlrrecargo"], 2, '.', '');
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_aplicacion"] = $r["ca_aplicacion"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_vlrminimo"] = number_format($r["ca_vlrminimo"], 2, '.', '');
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_aplicacion_min"] = $r["ca_aplicacion_min"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_observaciones"] = $r["ca_observaciones"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_idmoneda"] = $r["ca_idmoneda"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_fchinicio"] = $r["ca_fchinicio"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_fchvencimiento"] = $r["ca_fchvencimiento"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_usucreado"] = $r["ca_usucreado"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_usueliminado"] = $r["ca_usueliminado"];
                         break;
-                    case 4:
+                    case 4: // Recargos x Línea
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["trafico"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_vlrrecargo"] = number_format($r["ca_vlrrecargo"], 2, '.', '');
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["trafico"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_aplicacion"] = $r["ca_aplicacion"];
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["trafico"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_vlrminimo"] = number_format($r["ca_vlrminimo"], 2, '.', '');
@@ -3150,7 +3152,7 @@ class pricingActions extends sfActions {
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["trafico"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_usucreado"] = $r["ca_usucreado"];
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["trafico"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_usueliminado"] = $r["ca_usueliminado"];
                         break;
-                    case 5:
+                    case 5: // Trayectos
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["fchcreado"]]["ca_frecuencia"] = $r["ca_frecuencia"];
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["fchcreado"]]["ca_tiempotransito"] = $r["ca_tiempotransito"];
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["fchcreado"]]["obs1"] = $r["obs1"];
