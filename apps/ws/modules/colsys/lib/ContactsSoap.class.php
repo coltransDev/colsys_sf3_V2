@@ -36,30 +36,32 @@ class ContactsSoap {
                 WHERE t.ca_idtrafico = 'DE-049' and im.ca_destino = 'CTG-0005' ) offset 264";*/
             //order by 2,3 limit $nreg offset $inicio";
             //        echo $sql;
-        $sql="select distinct con.ca_email, c.ca_coltrans_std  , c.ca_colmas_std
+        $sql="select distinct con.ca_email, con.ca_idcontacto, con.ca_idcliente
 	from vi_clientes c
         inner join tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
-        where (c.ca_coltrans_std = 'Activo'  or c.ca_colmas_std = 'Activo' ) offset 1493";
+        where (c.ca_coltrans_std = 'Activo'  or c.ca_colmas_std = 'Activo' ) ";
+        
         $con = Doctrine_Manager::getInstance()->connection();
         $st = $con->execute($sql);
         $clientes = $st->fetchAll();
         
         $data=array();
-        foreach ($clientes as $c)
-        {
+        foreach ($clientes as $c){
             /*if($c["ca_coltrans_std"]!="Activo")
                 continue;*/
-            $data[]=$c["ca_email"];
+            
+            /**Obligatoriamente se deben enviar estos 3 datos para la información de Unsuscribe que tiene el correo*/
+            $data["email"][]=$c["ca_email"];
+            $data["idcontacto"][]=$c["ca_idcontacto"];
+            $data["idcliente"][]=$c["ca_idcliente"];
         }
         
-            try{                 
-                //return implode(",", $clientes);
-                return $data;
-            }catch(Exception $e){
-                $conn->rollback();
-                Utils::sendEmail($e->getMessage());
-                return "Remote: ".$e->getMessage()." server:".$_SERVER["SERVER_ADDR"];
-            }
-    }
-     
+        try{
+            return $data;
+        }catch(Exception $e){
+            $conn->rollback();
+            Utils::sendEmail($e->getMessage());
+            return "Remote: ".$e->getMessage()." server:".$_SERVER["SERVER_ADDR"];
+        }
+    }     
 }
