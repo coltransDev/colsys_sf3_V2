@@ -5651,7 +5651,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $query = "select up.ca_login, us.ca_email, us.ca_sucursal from control.tb_usuarios_perfil up";
                 $query.= "  inner join vi_usuarios us on us.ca_login = up.ca_login";
                 $query.= "  inner join vi_inomaestra_sea im on im.ca_ciudestino = us.ca_sucursal";
-                $query.= "  where im.ca_referencia = '$id' and up.ca_perfil like '%asistente-marítimo-puerto%' order by us.ca_sucursal";
+                $query.= "  where im.ca_referencia = '$id' and up.ca_perfil like '%asistente-marítimo-puerto%' and us.ca_activo = true order by us.ca_sucursal";
                 if (!$us->Open("$query")) {
                     echo "<script>alert(\"" . addslashes($us->mErrMsg) . "\");</script>";
                     echo "<script>document.location.href = 'cotizaciones.php';</script>";
