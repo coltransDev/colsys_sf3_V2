@@ -115,12 +115,6 @@ class confirmacionesActions extends sfActions {
         $this->destino = $this->referencia->getDestino();
         $this->linea = $this->referencia->getIdsProveedor();
         $this->modo = $request->getParameter("modo");
-        
-        $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
-        $idgMax = IdgTable::getUnIndicador(RepStatus::IDG_CONF_LLEGADA, date("Y-m-d"), $usuario->getCaIdsucursal());
-        $this->horas = intval($idgMax->getCaLim1());
-        $this->minutos = 60 * ($idgMax->getCaLim1()-intval($idgMax->getCaLim1()));
-        
         $this->coordinadores = array();
 
         $parametros = ParametroTable::retrieveByCaso("CU046");
@@ -162,6 +156,22 @@ class confirmacionesActions extends sfActions {
                     ->execute();
         }
 
+        if ($this->modo == "conf") {
+            session_start();
+            $festivos = array();            // Prepara el arreglo para cargar los festivos
+            $sql = "select ca_fchfestivo from tb_festivos where date_part('Y',ca_fchfestivo) = date_part('Y',now())";
+            $con = Doctrine_Manager::getInstance()->connection();
+            $st = $con->execute($sql);
+            $resul = $st->fetchAll();
+            foreach ($resul as $r) {
+                $festivos[] = $r["ca_fchfestivo"];
+            }
+            if(!isset($_SESSION['festivos'])){
+                $_SESSION['festivos'] = $festivos;
+            }
+            
+        }
+        
         $q = Doctrine::getTable("InoClientesSea")
                 ->createQuery("c")
                 ->select("c.*")
@@ -650,6 +660,34 @@ class confirmacionesActions extends sfActions {
         $this->fchsyga = $request->getParameter("fchsyga");
         //echo $this->usuario->getCaLogin();
         $this->setLayout("email");
+    }
+
+    public function executeIdgConfirmacion($request) {
+        $fecha = $request->getParameter("fecha");
+        $hora = $request->getParameter("hora");
+        $justifica = $request->getParameter("justifica");
+        list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($fecha." ".$hora, "%d-%d-%d %d:%d:%d");
+        $inicio = mktime($hor, $min, $seg, $mes, $dia, $ano);
+        list($ano, $mes, $dia, $hor, $min, $seg) = sscanf(date("Y-m-d H:i:s"), "%d-%d-%d %d:%d:%d");
+        $final = mktime($hor, $min, $seg, $mes, $dia, $ano);
+
+        $festivos = $_SESSION['festivos'];
+        $diff = TimeUtils::calcDiff($festivos, $inicio, $final); // Retorna la diferencia en segundos entre dos fechas, horas hábiles excluyendo fines de semana y festivos
+        
+        $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
+        $idgMax = IdgTable::getUnIndicador(RepStatus::IDG_CONF_LLEGADA, date("Y-m-d"), $usuario->getCaIdsucursal());
+        $horas = intval($idgMax->getCaLim1());
+        $minutos = 60 * ($idgMax->getCaLim1()-intval($idgMax->getCaLim1()));
+        $idgMax = ($horas * 60 * 60) + ($minutos * 60);
+        
+        if ($diff > $idgMax and strlen($justifica)==0){
+            $this->responseArray = array("success" => true, "cumplio" => "No");
+        }else if ($diff > $idgMax and strlen($justifica)!=0){
+            $this->responseArray = array("success" => true, "cumplio" => "Justifico");
+        }else{
+            $this->responseArray = array("success" => true, "cumplio" => "Si");
+        }
+        $this->setTemplate("responseTemplate");
     }
 
 }

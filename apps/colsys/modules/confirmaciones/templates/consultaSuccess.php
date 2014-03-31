@@ -117,37 +117,10 @@ $textos = $sf_data->getRaw("textos");
                     }
                 }
             }
-
 <?
         } else {
 ?>
-            var theDate=document.form1.fchconfirmacion.value;
-            theDate=theDate.split("-");
-            
-            var theTime=document.form1.horaconfirmacion.value;
-            theTime=theTime.split(":");
-            
-            var llegada = Date.UTC(theDate[0], theDate[1]-1, theDate[2], theTime[0], theTime[1], theTime[2], 0);
-            var limite  = Date.UTC(1970, 0, 1, <?=$horas?>, <?=$minutos?>, 0, 0);
-            var actual  = new Date();
-            var confirm = Date.UTC(actual.getFullYear(), actual.getMonth(), actual.getDate(), actual.getHours(), actual.getMinutes(), actual.getSeconds(), 0);
-            
             if (document.getElementById('confirmacion_tbl').style.display != 'none'){
-                if (modo != "puerto") {
-                    element = document.getElementById('observaciones_idg');
-                    if ((confirm - llegada)/1000 > limite/1000 && element.value.length == 0){
-                        element.focus()
-                        element = document.getElementById('justify_tbl');
-                        element.style.display = "inline";
-                        alert("De acuerdo al IDG está fuera del tiempo de oportunidad, favor dilgenciar la casilla de justificación que se ha habilitado.");
-                        return false;
-                    } else if ((confirm - llegada)/1000 <= limite/1000){
-                        element = document.getElementById('observaciones_idg');
-                        element = '';
-                        element = document.getElementById('justify_tbl');
-                        element.style.display = "none";
-                    }
-                }
                 
                 if (document.form1.fchconfirmacion.value == ''){
                     alert('Debe Especificar la Fecha de llegada de la Carga');
@@ -173,6 +146,8 @@ $textos = $sf_data->getRaw("textos");
                     alert('Ingrese el nombre de la Motonoave de Llegada');
                     return false;
                 }
+                this.validarIdg();      // Valida si se cumple el indicado de Oportunida en el envio de Confirmaciones
+                return false;
             } else{
 <?
                 if ($modo != "puerto") {
@@ -206,6 +181,51 @@ $textos = $sf_data->getRaw("textos");
         document.getElementById("form1").submit();
     }
 
+    function validarIdg(){
+        var theDate=document.form1.fchconfirmacion.value;
+        var theTime=document.form1.horaconfirmacion.value;
+        var theJust=document.form1.observaciones_idg.value;
+
+        if (document.getElementById('confirmacion_tbl').style.display != 'none'){
+            if (modo != "puerto") {
+
+                Ext.Ajax.request(
+                {
+                    waitMsg: 'Enviando...',
+                    url: '/confirmaciones/idgConfirmacion',
+                    params :	{
+                        fecha: theDate,
+                        hora: theTime,
+                        justifica: theJust
+                    },
+                    failure:function(response,options){
+                        alert( response.responseText );
+                        Ext.Msg.hide();
+                        alert("Surgio un problema al tratar de calcular el tiempo de oportunidad.")
+                    },
+                    success:function(response,options){
+                        var res = Ext.util.JSON.decode( response.responseText );
+                        element = document.getElementById('observaciones_idg');
+                        if( res.cumplio=="No" ){
+                            element.focus();
+                            element = document.getElementById('justify_tbl');
+                            element.style.display = "inline";
+                            alert("De acuerdo al IDG está fuera del tiempo de oportunidad, favor dilgenciar la casilla de justificación que se ha habilitado.");
+                        }else{ 
+                            if( res.cumplio=="Si" ){
+                                element = document.getElementById('observaciones_idg');
+                                element.value = '';
+                                element = document.getElementById('justify_tbl');
+                                element.style.display = "none";
+                            }
+                            document.getElementById("form1").submit();
+                        }
+                    }
+                });
+            }
+	}
+    }
+    
     function modFcharribo(){
         campo = $('#mod_fcharribo');
         objeto = $('#mod_fcharribo_id');
