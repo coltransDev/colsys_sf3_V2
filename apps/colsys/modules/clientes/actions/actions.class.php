@@ -1716,7 +1716,61 @@ class clientesActions extends sfActions {
         }
         $this->setTemplate("responseTemplate");
     }
+    
+    public function executeCancelarSuscripcion(sfWebRequest $request){
+        
+        $idcontacto = $this->getRequestParameter("idcontacto");
+        $idcliente = $this->getRequestParameter("idcliente");
+        $this->aceptacion = $this->getRequestParameter("aceptacion");
+        $comentarios = $this->getRequestParameter("comentarios");
+        $masiva = $this->getRequestParameter("masiva");
+        
+        $this->contacto = Doctrine::getTable("Contacto")->find($idcontacto);
+        
+        if($idcliente==$this->contacto->getCaIdcliente()){
+            $this->cliente = Doctrine::getTable("Cliente")->find($this->contacto->getCaIdcliente());
+            if($this->aceptacion){
+                if($this->contacto){
+                    $email = new Email();
+                    $email->setCaUsuenvio("Administrador");
+                    $email->setCaTipo("Not. Masivas");
+                    $email->setCaFrom($this->contacto->getCaEmail());
+                    $email->setCaReplyto($this->contacto->getCaEmail());
+                    $email->setCaFromname($this->contacto->getCaNombres()." ".$this->contacto->getCaPapellido()." ".$this->contacto->getCaSapellido());
+                    //$email->addTo($cliente->getCaVendedor());
+                    $email->addTo('alramirez@coltrans.com.co');
+                    //$email->addCc($contacto->getCaEmail());
+                    $email->setCaSubject("Solicitud Desactivación Comunicaciones Masivas");
+                    sfContext::getInstance()->getRequest()->setParameter("idcontacto", $idcontacto);
+                    sfContext::getInstance()->getRequest()->setParameter("idcliente", $this->contacto->getCaIdcliente());
+                    sfContext::getInstance()->getRequest()->setParameter("comentarios", $comentarios);
+                    sfContext::getInstance()->getRequest()->setParameter("masiva", $masiva);
 
+                    $email->setCaBodyhtml(sfContext::getInstance()->getController()->getPresentationFor('clientes', 'emailCancelarSuscripcion'));
+                    $email->save();
+
+                    if($masiva){
+                        $this->contacto->setProperty("masivas", $email->getCaIdemail());
+                        $this->contacto->save();
+                    }
+                }
+            }
+        }
+        
+        $this->setLayout('formulario');
+    }
+    
+    public function executeEmailCancelarSuscripcion(sfWebRequest $request){
+        
+        $idcontacto = $request->getParameter("idcontacto");
+        $idcliente = $request->getParameter("idcliente");
+        $this->comentarios = $this->getRequestParameter("comentarios");
+        $this->masiva = $this->getRequestParameter("masiva");
+        
+        $this->contacto = Doctrine::getTable("Contacto")->find($idcontacto);
+        $this->cliente = Doctrine::getTable("Cliente")->find($idcliente);
+        
+        $this->setLayout("none");
+    }
 }
-
 ?>
