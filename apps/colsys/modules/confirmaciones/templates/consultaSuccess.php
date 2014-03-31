@@ -182,12 +182,11 @@ $textos = $sf_data->getRaw("textos");
     }
 
     function validarIdg(){
-        var theDate=document.form1.fchconfirmacion.value;
-        var theTime=document.form1.horaconfirmacion.value;
-        var theJust=document.form1.observaciones_idg.value;
-
         if (document.getElementById('confirmacion_tbl').style.display != 'none'){
             if (modo != "puerto") {
+                var theDate=document.form1.fchconfirmacion.value;
+                var theTime=document.form1.horaconfirmacion.value;
+                var theJust=document.form1.observaciones_idg.value;
 
                 Ext.Ajax.request(
                 {
@@ -222,6 +221,8 @@ $textos = $sf_data->getRaw("textos");
                         }
                     }
                 });
+            }else{
+                document.getElementById("form1").submit();
             }
 	}
     }
