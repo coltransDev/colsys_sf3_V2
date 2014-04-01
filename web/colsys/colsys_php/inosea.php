@@ -244,6 +244,18 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
 } elseif (isset($boton)) {                                                       // Switch que evalua cual botòn de comando fue pulsado por el usuario
     switch (trim($boton)) {
         case 'Consultar': {                                                    // Opcion para Consultar un solo registro
+                if (!$rs->Open("select ca_ident, ca_value from control.tb_config_values cv inner join control.tb_config cn on cn.ca_idconfig = cv.ca_idconfig and cn.ca_param = 'CU119' order by ca_ident")) {       // Selecciona todos lo registros de la tabla Traficos
+                    echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'repantecedentes.php';</script>";
+                    exit;
+                }
+                $antecedentes = array();
+                $rs->MoveFirst();
+                while ( !$rs->Eof() ) {
+                    $antecedentes[$rs->Value('ca_ident')] = $rs->Value('ca_value');
+                    $rs->MoveNext();
+                }
+            
                 if (!$rs->Open("select * from vi_inomaestra_sea where ca_referencia = '$id'")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'entrada.php?id=249';</script>";
@@ -508,7 +520,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     echo "<TR>";
                     echo "  <TD Class=partir ROWSPAN=2>Modalidad:<BR><CENTER>" . $rs->Value('ca_modalidad') . "</CENTER></TD>";
                     echo "  <TD Class=listar><B>Motonave:</B><BR>" . $rs->Value('ca_motonave') . "</TD>";
-                    echo "  <TD Class=listar><B>MBL's:</B><BR>" . $rs->Value('ca_mbls') . "<br>" . $rs->Value('ca_fchmbls') . ((trim($rs->Value('ca_emisionbl')!=""))?"<br>Emisión BL Master:<br>" . $rs->Value('ca_emisionbl_det'):"") . "</TD>";
+                    echo "  <TD Class=listar><B>MBL's:</B><BR>" . $rs->Value('ca_mbls') . "<br>" . $rs->Value('ca_fchmbls') . ((trim($rs->Value('ca_emisionbl')!=""))?"<br><b>Emisión BL Master:</b><br>" . $rs->Value('ca_emisionbl_det'):"")  . ((trim($rs->Value('ca_tipo')!=""))?"<br><b>Antecedentes:</b><br>" . $antecedentes[$rs->Value('ca_tipo')]:"") . "</TD>";
                     echo "  <TD Class=listar COLSPAN=2><B>Observaciones:</B><BR>" . nl2br($rs->Value('ca_observaciones')) . "</TD>";
                     echo "</TR>";
                     echo "<TR>";

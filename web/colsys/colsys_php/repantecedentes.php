@@ -142,7 +142,18 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
     $subtitulo = "Año(s): ".implode(", ",$ano)." / Mes(es): ".implode(", ",$mes);
     $ano = "im.ca_ano::text ".((count($ano)==1)?"like '$ano[0]'":"in ('".implode("','",$ano)."')");
     $mes = "im.ca_mes::text ".((count($mes)==1)?"like '$mes[0]'":"in ('".implode("','",$mes)."')");
-    
+
+    if (!$rs->Open("select ca_ident, ca_value from control.tb_config_values cv inner join control.tb_config cn on cn.ca_idconfig = cv.ca_idconfig and cn.ca_param = 'CU119' order by ca_ident")) {       // Selecciona todos lo registros de la tabla Traficos
+        echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+        echo "<script>document.location.href = 'repantecedentes.php';</script>";
+        exit;
+    }
+    $tipos = array();
+    $rs->MoveFirst();
+    while ( !$rs->Eof() ) {
+        $tipos[$rs->Value('ca_ident')] = $rs->Value('ca_value');
+        $rs->MoveNext();
+    }
     $query = "select distinct im.ca_ano, im.ca_mes, im.ca_referencia, im.ca_traorigen, im.ca_ciuorigen, im.ca_tradestino, im.ca_ciudestino, im.ca_modalidad, im.ca_estado, im.ca_tipo, im.ca_fchrecibido, (SELECT ca_fchenvio FROM tb_emails where ca_tipo='Antecedentes' and ca_subject like '%'||im.ca_referencia||'%' order by ca_idemail DESC limit 1) as ca_envantecedentes, ";
     $query.= "ic.ca_idcliente, ic.ca_compania, ic.ca_consecutivo, ic.ca_hbls, ic.ca_sucursal, im.ca_fchembarque, ic.ca_fchantecedentes, ea1.ca_dias::int as ca_numdias, ea2.ca_dias::int as ca_numdias2, ea3.ca_dias::int as ca_numdias3 ";
     $query.= "from vi_inoclientes_sea ic inner join vi_inomaestra_sea im on ic.ca_referencia = im.ca_referencia inner join tb_ciudades cd on im.ca_origen = cd.ca_idciudad ";
@@ -254,7 +265,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
         list($ano, $mes, $dia) = sscanf($rs->Value('ca_envantecedentes'), "%d-%d-%d %s:%s:%s");
         $ent_efe = date("Y-m-d", mktime(0, 0, 0, $mes, $dia, $ano));
         $dif_mem = dateDiff($ent_opo,$ent_efe);
-        $dif_mem = ($rs->Value('ca_tipo')=='Free Hand Cargo')?NULL:$dif_mem;
+        $dif_mem = ($rs->Value('ca_tipo')==1 or $rs->Value('ca_tipo')==2)?NULL:$dif_mem;
         if (!$ent_opo){
            $back_col = " background: #9999CC";
            $sub_tot["No se Midió"]+= 1;
@@ -280,14 +291,28 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
         echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_consecutivo')."</TD>";
         echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_hbls')."</TD>";
         echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_sucursal')."</TD>";
-        echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_tipo')."</TD>";
+        echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$tipos[$rs->Value('ca_tipo')]."</TD>";
         echo "  <TD Class=listar style='font-size: 9px;$back_col;font-weight:bold'>".$rs->Value('ca_fchembarque')."</TD>";
         echo "  <TD Class=valores style='font-size: 9px;$back_col;font-weight:bold;'>".$rs->Value('ca_envantecedentes')."</TD>";
         echo "  <TD Class=valores style='font-size: 9px;$back_col'>".$ent_opo.$num_dia."</TD>";
         echo "  <TD Class=valores style='font-size: 9px;$back_col'>".$rs->Value('ca_fchrecibido')."</TD>";
         echo "  <TD Class=valores style='font-size: 9px;$back_col;font-weight:bold;'>".$dif_mem."</TD>";
         echo "</TR>";
+        $ref_mem = $rs->Value('ca_referencia');
         $rs->MoveNext();
+        while ($ref_mem == $rs->Value('ca_referencia') and !$rs->Eof()){
+            echo "<TR>";
+            echo "  <TD Class=listar style='font-size: 9px;$back_col' colspan='4'> </TD>";
+            echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_idcliente')."</TD>";
+            echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_compania')."</TD>";
+            echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_consecutivo')."</TD>";
+            echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_hbls')."</TD>";
+            echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_sucursal')."</TD>";
+            echo "  <TD Class=listar style='font-size: 9px;$back_col' colspan='6'></TD>";
+            echo "</TR>";
+            $rs->MoveNext();
+        }
+        
     }
     $gra_tot["No Cumplíó"]+= $sub_tot["No Cumplíó"];
     $gra_tot["No se Midió"]+= $sub_tot["No se Midió"];
