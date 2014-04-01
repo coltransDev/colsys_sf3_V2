@@ -156,22 +156,6 @@ class confirmacionesActions extends sfActions {
                     ->execute();
         }
 
-        if ($this->modo == "conf") {
-            session_start();
-            $festivos = array();            // Prepara el arreglo para cargar los festivos
-            $sql = "select ca_fchfestivo from tb_festivos where date_part('Y',ca_fchfestivo) = date_part('Y',now())";
-            $con = Doctrine_Manager::getInstance()->connection();
-            $st = $con->execute($sql);
-            $resul = $st->fetchAll();
-            foreach ($resul as $r) {
-                $festivos[] = $r["ca_fchfestivo"];
-            }
-            if(!isset($_SESSION['festivos'])){
-                $_SESSION['festivos'] = $festivos;
-            }
-            
-        }
-        
         $q = Doctrine::getTable("InoClientesSea")
                 ->createQuery("c")
                 ->select("c.*")
@@ -666,12 +650,13 @@ class confirmacionesActions extends sfActions {
         $fecha = $request->getParameter("fecha");
         $hora = $request->getParameter("hora");
         $justifica = $request->getParameter("justifica");
+
         list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($fecha." ".$hora, "%d-%d-%d %d:%d:%d");
         $inicio = mktime($hor, $min, $seg, $mes, $dia, $ano);
         list($ano, $mes, $dia, $hor, $min, $seg) = sscanf(date("Y-m-d H:i:s"), "%d-%d-%d %d:%d:%d");
         $final = mktime($hor, $min, $seg, $mes, $dia, $ano);
 
-        $festivos = $_SESSION['festivos'];
+        $festivos = TimeUtils::getFestivos(date("Y"));
         $diff = TimeUtils::calcDiff($festivos, $inicio, $final); // Retorna la diferencia en segundos entre dos fechas, horas hábiles excluyendo fines de semana y festivos
         
         $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
