@@ -143,7 +143,7 @@ class pmActions extends sfActions {
                 $q->addWhere("(h.ca_login = ? OR uggg.ca_login = ?)", array($this->getUser()->getUserid(), $this->getUser()->getUserid()));
                 break;
         }
-
+        
         if ($nivel == 2 || $nivel == 3) {
             $q->addWhere("(h.ca_login = ? OR g.ca_iddepartament = ?)", array($this->getUser()->getUserid(), $this->getUser()->getIddepartamento()));            
         }
@@ -1294,16 +1294,18 @@ class pmActions extends sfActions {
 
     public function executeDatosPanelConsulta() {
         $this->user = $this->getUser();
+        
+        $usuario = Doctrine::getTable("Usuario")->find($this->user);        
+        $depAdic = $usuario->getProperty("helpDesk");
+        
         $this->departamentos = Doctrine::getTable("Departamento")
                         ->createQuery("d")
                         ->innerJoin("d.Usuario u")
                         ->where("d.ca_inhelpdesk = ?", true)
                         ->addWhere("u.ca_login = ?", $this->user)
+                        ->orWhere("d.ca_nombre = ?", $depAdic)
                         ->addOrderBy("d.ca_nombre ASC")
                         ->execute();
-               
-        
-        
     }
 
     /*
