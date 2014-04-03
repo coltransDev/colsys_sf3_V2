@@ -13,6 +13,16 @@ if( $format!="email" ){
 			document.getElementById('emailForm').style.display="none";
 		}
 	}
+        
+        function validarForm(){
+            if( isNaN(document.getElementById('justificacion_idg')) ){
+                if (document.getElementById('justificacion_idg').value.length == 0){
+                    alert("Debe llenar el campo justificación, antes de enviar los antecedentes.");
+                    return false;
+                }
+            }
+            return true;
+        }
 </script>
 <?
 }
@@ -28,7 +38,7 @@ if( $format!="email" ){
     ?>
     <div id="emailForm"  style="display:none" align="center">
 
-        <form name="form1" id="form1" method="post" action="<?=url_for("antecedentes/enviarAntecedentes?ref=".str_replace(".","|",$ref->getCaReferencia()))?>" >
+        <form name="form1" id="form1" method="post" action="<?=url_for("antecedentes/enviarAntecedentes?ref=".str_replace(".","|",$ref->getCaReferencia()))?>" onsubmit="return validarForm();">
             <input type="hidden" name="checkObservaciones" id="checkObservaciones" value="" />
         <?
         
@@ -43,6 +53,23 @@ if( $format!="email" ){
         $mensaje = "Adjunto encontrará los antecedentes de la referencia ".$ref->getCaReferencia();
         include_component("email", "formEmail", array("subject"=>$asunto,"message"=>$mensaje, "contacts"=>$contactos,"contacts1"=>$contactos1,"nameContacts1"=>"Contactos Aduana"));
         
+        if ($antecedente_justifica){
+            ?>
+            <br /><br />
+            <table class="tableList alignLeft">
+                <tr>
+                    <td>La entrega oportuna de Antecedentes era hasta: <?=$ent_opo?>, por tanto debe justificar la NO oportunidad en el envío.</td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Justificaci&oacute;n: </b><br />
+                        <input type="text" name="justificacion_idg" id="justificacion_idg" size="120" />
+                    </td>
+                </tr>
+            </table>
+                
+            <?
+        }
         ?>
         <br />
         <input type="submit" value="Enviar" class="button" />

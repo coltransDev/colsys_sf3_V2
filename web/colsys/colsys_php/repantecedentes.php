@@ -154,7 +154,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
         $tipos[$rs->Value('ca_ident')] = $rs->Value('ca_value');
         $rs->MoveNext();
     }
-    $query = "select distinct im.ca_ano, im.ca_mes, im.ca_referencia, im.ca_traorigen, im.ca_ciuorigen, im.ca_tradestino, im.ca_ciudestino, im.ca_modalidad, im.ca_estado, im.ca_tipo, im.ca_fchrecibido, (SELECT ca_fchenvio FROM tb_emails where ca_tipo='Antecedentes' and ca_subject like '%'||im.ca_referencia||'%' order by ca_idemail DESC limit 1) as ca_envantecedentes, ";
+    $query = "select distinct im.ca_ano, im.ca_mes, im.ca_referencia, im.ca_traorigen, im.ca_ciuorigen, im.ca_tradestino, im.ca_ciudestino, im.ca_modalidad, im.ca_estado, im.ca_tipo, im.ca_fchrecibido, im.ca_propiedades, (SELECT ca_fchenvio FROM tb_emails where ca_tipo='Antecedentes' and ca_subject like '%'||im.ca_referencia||'%' order by ca_idemail DESC limit 1) as ca_envantecedentes, ";
     $query.= "ic.ca_idcliente, ic.ca_compania, ic.ca_consecutivo, ic.ca_hbls, ic.ca_sucursal, im.ca_fchembarque, ic.ca_fchantecedentes, ea1.ca_dias::int as ca_numdias, ea2.ca_dias::int as ca_numdias2, ea3.ca_dias::int as ca_numdias3 ";
     $query.= "from vi_inoclientes_sea ic inner join vi_inomaestra_sea im on ic.ca_referencia = im.ca_referencia inner join tb_ciudades cd on im.ca_origen = cd.ca_idciudad ";
     $query.= "left join tb_entrega_antecedentes ea1 on ea1.ca_idtrafico::text = cd.ca_idtrafico::text and ea1.ca_idciudad::text = '999-9999'  and ea1.ca_modalidad = '' ";
@@ -180,7 +180,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
     echo "<FORM METHOD=post NAME='informe' ACTION='repantecedentes.php'>";       // Hace una llamado nuevamente a este script pero con
     echo "<TABLE CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=15>".COLTRANS."<BR>$titulo<BR>$subtitulo</TH>";
+    echo "  <TH Class=titulo COLSPAN=16>".COLTRANS."<BR>$titulo<BR>$subtitulo</TH>";
     echo "</TR>";
     echo "<TH WIDTH=80>Referencia</TH>";
     echo "<TH WIDTH=80>Pto.Origen</TH>";
@@ -198,6 +198,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
     echo "<TH WIDTH=75>Ent.Oportuna</TH>";
     echo "<TH WIDTH=75>Desbloqueo</TH>";
     echo "<TH WIDTH=10>Dif.</TH>";
+    echo "<TH WIDTH=50>Justificaci&oacute;n</TH>";
 
     $tit_mem = false;
     $ano_mem = '';
@@ -220,7 +221,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
                foreach($sub_tot as $key => $val){
                   echo "  <TD Class=invertir style='font-weight:bold;'>$key : $val</TD>";
                }
-               echo "  <TD Class=invertir style='font-weight:bold;'></TD>";
+               echo "  <TD Class=invertir style='font-weight:bold;' COLSPAN=2></TD>";
                echo "</TR>";
                $gra_tot["No Cumplíó"]+= $sub_tot["No Cumplíó"];
                $gra_tot["No se Midió"]+= $sub_tot["No se Midió"];
@@ -229,19 +230,19 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
             }
             if ($tit_mem){
                   echo "<TR>";
-                  echo "  <TH Class=invertir style='font-weight:bold;' COLSPAN=15>".strtoupper("$ano_mem - ".$meses[$mes_mem])."</TH>";
+                  echo "  <TH Class=invertir style='font-weight:bold;' COLSPAN=16>".strtoupper("$ano_mem - ".$meses[$mes_mem])."</TH>";
                   echo "</TR>";
                   $tit_mem = false;
             }
             echo "<TR>";
-            echo "  <TD Class=invertir style='font-weight:bold;' COLSPAN=15>TRAFICO: ".$rs->Value('ca_traorigen')."</TD>";
+            echo "  <TD Class=invertir style='font-weight:bold;' COLSPAN=16>TRAFICO: ".$rs->Value('ca_traorigen')."</TD>";
             echo "</TR>";
             $nom_tra = $rs->Value('ca_traorigen');
             $imp_sub = true;
         }
         if ($sub_ref != substr($rs->Value('ca_referencia'),0,3)) {
             echo "<TR HEIGHT=5>";
-            echo "  <TD Class=titulo COLSPAN=15></TD>";
+            echo "  <TD Class=titulo COLSPAN=17></TD>";
             echo "</TR>";
             $sub_ref = substr($rs->Value('ca_referencia'),0,3);
         }
@@ -281,6 +282,18 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
         }
         // $back_col= (($dif_mem > $rs->Value('ca_numdias'))?" background: #FF0000":((!$dif_mem)?" background: #9999CC":" background: #F0F0F0"));
         
+        $justifica = "";
+        if(strlen($rs->Value('ca_propiedades'))!=0){
+            $propiedades = $rs->Value('ca_propiedades');
+            $propiedades = explode(";", $propiedades);
+            foreach ($propiedades as $propiedad){
+                $propiedad = explode("=", $propiedad);
+                if ($propiedad[0] == "idg"){
+                    $justifica = $propiedad[1];
+                }
+            }
+        }
+        
         echo "<TR>";
         echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_referencia')." </TD>";
         echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_ciuorigen')."</TD>";
@@ -297,6 +310,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
         echo "  <TD Class=valores style='font-size: 9px;$back_col'>".$ent_opo.$num_dia."</TD>";
         echo "  <TD Class=valores style='font-size: 9px;$back_col'>".$rs->Value('ca_fchrecibido')."</TD>";
         echo "  <TD Class=valores style='font-size: 9px;$back_col;font-weight:bold;'>".$dif_mem."</TD>";
+        echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$justifica."</TD>";
         echo "</TR>";
         $ref_mem = $rs->Value('ca_referencia');
         $rs->MoveNext();
@@ -308,7 +322,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
             echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_consecutivo')."</TD>";
             echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_hbls')."</TD>";
             echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_sucursal')."</TD>";
-            echo "  <TD Class=listar style='font-size: 9px;$back_col' colspan='6'></TD>";
+            echo "  <TD Class=listar style='font-size: 9px;$back_col' colspan='8'></TD>";
             echo "</TR>";
             $rs->MoveNext();
         }
@@ -322,7 +336,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
     foreach($sub_tot as $key => $val){
       echo "  <TD Class=invertir style='font-weight:bold;'>$key : $val</TD>";
     }
-    echo "  <TD Class=invertir style='font-weight:bold;'></TD>";
+    echo "  <TD Class=invertir style='font-weight:bold;' COLSPAN=2></TD>";
     echo "</TR>";
     echo "</TABLE><BR>";
 

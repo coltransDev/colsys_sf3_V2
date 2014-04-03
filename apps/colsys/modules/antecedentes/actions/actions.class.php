@@ -956,8 +956,38 @@ class antecedentesActions extends sfActions {
               ->execute();
 
       if ($format == "email") {
-
          $this->setLayout($format);
+      }else{
+         $sql = "select im.ca_referencia, im.ca_fchembarque, im.ca_tipo, ea1.ca_dias::int as ca_numdias, ea2.ca_dias::int as ca_numdias2, ea3.ca_dias::int as ca_numdias3 from tb_inomaestra_sea im inner join tb_ciudades cd on im.ca_origen = cd.ca_idciudad
+                left join tb_entrega_antecedentes ea1 on ea1.ca_idtrafico::text = cd.ca_idtrafico::text and ea1.ca_idciudad::text = '999-9999' and ea1.ca_modalidad = ''
+                left join tb_entrega_antecedentes ea2 on ea2.ca_idtrafico::text = cd.ca_idtrafico::text and ea2.ca_idciudad::text = im.ca_origen::text
+                left join tb_entrega_antecedentes ea3 on ea3.ca_idtrafico::text = cd.ca_idtrafico::text and ea3.ca_modalidad::text = im.ca_modalidad::text
+                where im.ca_referencia = '$numref'";
+
+         $con = Doctrine_Manager::getInstance()->connection();
+         $st = $con->execute($sql);
+         $antecedentes = $st->fetchAll();
+
+         list($ano, $mes, $dia) = sscanf($antecedentes[0]['ca_fchembarque'], "%d-%d-%d");
+
+         if ($antecedentes[0]['ca_numdias3'] != null){
+             $this->ent_opo = date("Y-m-d", mktime(0, 0, 0, $mes, $dia+$antecedentes[0]['ca_numdias3'], $ano));
+         }else if ($antecedentes[0]['ca_numdias2'] != null){
+             $this->ent_opo = date("Y-m-d", mktime(0, 0, 0, $mes, $dia+$antecedentes[0]['ca_numdias2'], $ano));
+         }else if ($antecedentes[0]['ca_numdias'] != null){
+             $this->ent_opo = date("Y-m-d", mktime(0, 0, 0, $mes, $dia+$antecedentes[0]['ca_numdias'], $ano));
+         }else{
+             $this->ent_opo = null;
+         }
+   
+         $this->ent_efe = date("Y-m-d");
+         $dif_mem = Utils::compararFechas($this->ent_efe,$this->ent_opo);
+         $dif_mem = ($antecedentes[0]['ca_tipo']==1 or $antecedentes[0]['ca_tipo']==2)?0:$dif_mem;
+         if ($dif_mem > 0){
+             $this->antecedente_justifica = true;
+         }else{
+             $this->antecedente_justifica = false;
+         }
       }
       $this->ref = $ref;
       $this->user = $this->getUser();
@@ -1017,6 +1047,7 @@ class antecedentesActions extends sfActions {
       $user = $this->getUser();
 
       $this->numRef = str_replace("|", ".", $request->getParameter("ref"));
+      $this->justificacion_idg = str_replace("|", ".", $request->getParameter("justificacion_idg"));
 
       $email = new Email();
 
@@ -1072,14 +1103,22 @@ class antecedentesActions extends sfActions {
       $mensaje .= sfContext::getInstance()->getController()->getPresentationFor('antecedentes', 'verPlanilla');
       $email->setCaBodyhtml($mensaje);
       $email->save();
-
-//        $email->save();
       $email->send();
 
       $ref = Doctrine::getTable("InoMaestraSea")->find($this->numRef);
       $this->forward404Unless($ref);
       $ref->setCaEstado("E"); //Enviado
       $ref->setCaFchenvio(date("Y-m-d H:i:s"));
+      if (isset($this->justificacion_idg)){
+          if (strlen(trim($ref->getCaPropiedades()))!=0){
+            $propiedades = trim($ref->getCaPropiedades());
+            $propiedades = explode(";", $propiedades);
+          }else{
+            $propiedades = array();
+          }
+          $propiedades[] = "idg=".$this->justificacion_idg;
+          $ref->setCaPropiedades(implode(";",$propiedades));
+      }
       $ref->save();
    }
 
