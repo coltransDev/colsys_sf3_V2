@@ -632,7 +632,7 @@ class clientesActions extends sfActions {
                   }
                  */
 
-                $email->setCaSubject("Vencimiento de Circular 0170 Coltrans S.A.S.");
+                $email->setCaSubject("Vencimiento de Circular 0170 Coltrans S.A.S. ".$cliente->getCaCompania());
 
                 $mes_esp = array("01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre");
                 $siguiente_mes = mktime(0, 0, 0, $month + 1, 5, $year);
