@@ -1737,9 +1737,9 @@ class clientesActions extends sfActions {
                     $email->setCaFrom($this->contacto->getCaEmail());
                     $email->setCaReplyto($this->contacto->getCaEmail());
                     $email->setCaFromname($this->contacto->getCaNombres()." ".$this->contacto->getCaPapellido()." ".$this->contacto->getCaSapellido());
-                    //$email->addTo($cliente->getCaVendedor());
-                    $email->addTo('alramirez@coltrans.com.co');
-                    //$email->addCc($contacto->getCaEmail());
+                    $email->addTo($this->cliente->getCaVendedor());
+                    //$email->addTo('alramirez@coltrans.com.co');
+                    $email->addCc('alramirez@coltrans.com.co');
                     $email->setCaSubject("Solicitud Desactivación Comunicaciones Masivas");
                     sfContext::getInstance()->getRequest()->setParameter("idcontacto", $idcontacto);
                     sfContext::getInstance()->getRequest()->setParameter("idcliente", $this->contacto->getCaIdcliente());

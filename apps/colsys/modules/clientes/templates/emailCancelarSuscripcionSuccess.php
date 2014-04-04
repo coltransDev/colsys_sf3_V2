@@ -22,9 +22,9 @@
                                                 <?=$comentarios?>                                                
                                             </div><br />
                                             <?if($masiva){?>
-                                            Así mismo, ha solicitado excluirse de éste tipo de comunicaciones.<br />
+                                                Así mismo, ha solicitado excluirse de éste tipo de comunicaciones.<br />
+                                                El sistema automáticamente lo excluirá de las comunicaciones masivas y así se podrá evidenciar en la maestra de clientes. <br />
                                             <?}?>
-                                            El sistema automáticamente lo excluirá de las comunicaciones masivas y así se podrá evidenciar en la maestra de clientes. <br />
                                             Por favor tomar atenta nota de los comentarios del cliente y proceder al respecto si así se requiere.<br /><br />
                                             Cualquier duda o información adicional por favor comunicarse con el Departamento de Sistemas.
                                         </td><td width="50"><img src="https://www.coltrans.com.co/images/spacer.gif" width="75" height="1" alt=""></td></tr>
