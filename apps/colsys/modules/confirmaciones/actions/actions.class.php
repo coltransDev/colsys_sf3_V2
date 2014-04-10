@@ -592,8 +592,10 @@ class confirmacionesActions extends sfActions {
                 } else {
                     $status->setCaIntroduccion($this->getRequestParameter("status_body_intro"));
                     $mensaje = $this->getRequestParameter("status_body");
-                    if ($tipo_msg == "not_planilla")
+                    if ($tipo_msg == "not_planilla"){
                         $mensaje.= "<br />Planilla No: <b>" . $inoCliente->getCaPlanilla() . "</b>";
+                        $options["subject"] = "Planilla de Envío Id.: ". $reporte->getCaConsecutivo()." ";
+                    }
                     if ($this->getRequestParameter("mensaje_" . $oid)) {
                         $mensaje .= "\n" . $this->getRequestParameter("mensaje_" . $oid);
                     }
