@@ -18,7 +18,14 @@ class NuevoProveedorForm extends BaseForm {
 
         $widgets = array();
         $validator = array();
-
+        
+        $empresa=sfConfig::get('app_branding_name');
+        
+        $idempresa = array();
+        if($empresa=='TPLogistics')
+            $idempresa[]=array(7,0,0);
+        else
+            $idempresa = array(1,2,8);
 
         $q = Doctrine_Query::create()
                 ->from("IdsTipo t")
@@ -66,7 +73,7 @@ class NuevoProveedorForm extends BaseForm {
                         ->innerJoin('u.Cargo c')
                         ->innerJoin('c.Empresa e')
                         ->addWhere('u.ca_activo = ?', true)
-                        ->addWhere('e.ca_idempresa IN (?,?,?)', array(1,2,8))
+                        ->addWhere('e.ca_idempresa IN (?,?,?)', $idempresa)
                         ->addWhere('c.ca_manager= ?', true)
                         ->orWhere('u.ca_departamento = ?', 'Pricing')
                         ->addOrderBy("u.ca_nombre");
