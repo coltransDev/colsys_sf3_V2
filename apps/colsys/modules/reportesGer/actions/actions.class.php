@@ -805,7 +805,7 @@ class reportesGerActions extends sfActions {
                         inner join tb_ciudades ori on r.ca_origen=ori.ca_idciudad
                         inner join tb_ciudades des on r.ca_destino=des.ca_idciudad
                         JOIN vi_usuarios u ON r.ca_login = u.ca_login
-                    where r.ca_tiporep=4 and  r.ca_fchcreado >='2012-04-01' and r.ca_login='consolcargo'$where1
+                    where r.ca_tiporep=4 and  r.ca_fchcreado >='2012-04-01' and r.ca_login='consolcargo'
                     order by o.ca_fcharribo";
 
             $con = Doctrine_Manager::getInstance()->connection();
@@ -1434,7 +1434,7 @@ class reportesGerActions extends sfActions {
         $this->linea = $request->getParameter("linea");
 
         $this->sucursal = $request->getParameter("sucursal");
-        $this->idsucursal = $request->getParameter("idSucursal");
+        $this->idSucursal = $request->getParameter("idSucursal");
 
         $this->idcliente = $request->getParameter("idcliente");
         $this->cliente = $request->getParameter("cliente");
@@ -1488,7 +1488,7 @@ class reportesGerActions extends sfActions {
             }
 
             if ($this->sucursal)
-                $where.=" and u.ca_idsucursal='" . $this->sucursal . "'";
+                $where.=" and s.ca_nombre='" . $this->idSucursal . "'";
 
             if ($this->idcliente)
                 $where.=" and a.ca_idcliente='" . $this->idcliente . "'";
@@ -1525,7 +1525,7 @@ class reportesGerActions extends sfActions {
                         WHERE eq.ca_referencia = a.ca_referencia AND eq.ca_idconcepto = t.ca_idconcepto limit 1)/ 20) AS TEUS
                     FROM tb_expo_maestra as a 
                         LEFT OUTER JOIN tb_reportes rp ON rp.ca_idreporte = (SELECT ca_idreporte FROM tb_reportes WHERE ca_consecutivo = a.ca_consecutivo ORDER BY ca_version DESC limit 1)
-                        LEFT OUTER JOIN tb_expo_maritimo em ON a.ca_referencia = em.ca_referencia
+                        LEFT OUTER JOIN (SELECT DISTINCT ca_referencia, ca_idnaviera, max(ca_modalidad) as ca_modalidad FROM tb_expo_maritimo GROUP BY ca_referencia, ca_idnaviera) as em ON a.ca_referencia = em.ca_referencia
                         LEFT OUTER JOIN tb_expo_aerea ea ON a.ca_referencia = ea.ca_referencia
                         LEFT OUTER JOIN ids.tb_ids ida ON ida.ca_id = ea.ca_idaerolinea
                         LEFT OUTER JOIN ids.tb_ids i ON a.ca_idcliente = i.ca_id
@@ -1561,17 +1561,48 @@ class reportesGerActions extends sfActions {
             $this->grid = array();
             $this->tipo = array();
             $this->origen = array();
+            $this->cliente = array();
 
             foreach ($this->resul as $r) {
 
-
                 $this->tipo[($r["via"])][($r["sucursal"])][($r["mes"])] ++;
+                
                 $this->grid[($r["total_negocios"])][($r["sucursal"])][($r["mes"])] ++;
-                $this->origen[$r["ano"]][($r["ciuorigen"])][(int) ($r["mes"])]["total_negocios"] ++;
-                $this->origen[$r["ano"]][($r["ciuorigen"])][(int) ($r["mes"])]["peso"]+=$r["peso"];
+                $this->origen[($r["via"])][($r["sucursal"])][($r["mes"])]["total_negocios"] ++;
+                $this->origen[($r["via"])][($r["sucursal"])][($r["mes"])]["peso"]+=$r["peso"];
+                $this->origen[($r["via"])][($r["sucursal"])][($r["mes"])]["ino"]+=$r["ca_ino"];
+                
+                $this->trafico[$r["ciuorigen"]][$r["tradestino"]][$r["mes"]]++;
+            
+                if($r["via"]=="Aereo"){
+                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]][$r["via"]]+=$r["ca_ino"];
+                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo"]=null;
+                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo/Terrestre"]=null;
+                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Terrestre"]=null;
+                }
+                if($r["via"]=="Maritimo"){
+                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Aereo"] = $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Aereo"]?$this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Aereo"]:null;
+                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]][$r["via"]]+=$r["ca_ino"];
+                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo/Terrestre"]=null;
+                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Terrestre"]=null;
+                }
+                if($r["via"]=="Maritimo/Terrestre"){
+                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Aereo"] = $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Aereo"]?$this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Aereo"]:null;
+                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo"] = $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo"]?$this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo"]:null;
+                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]][$r["via"]]+=$r["ca_ino"];
+                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Terrestre"]=null;
+                }
+                if($r["via"]=="Terrestre"){
+                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Aereo"] = $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Aereo"]?$this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Aereo"]:null;
+                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo"] = $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo"]?$this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo"]:null;
+                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo/Terrestre"] = $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo/Terrestre"]?$this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo/Terrestre"]:null;
+                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Terrestre"]+=$r["ca_ino"];
+                }
+                $this->cliente1[$r["sucursal"]][$r["cliente"]][$r["mes"]][$r["via"]]+=$r["ca_ino"];
+                                
             }
             ksort($this->tipo);
-            //echo "<pre>";print_r($this->tipo);echo "</pre>";
+            //echo "<pre>";print_r($this->origen);echo "</pre>";
         }
     }
 }
