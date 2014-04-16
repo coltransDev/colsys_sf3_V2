@@ -434,7 +434,7 @@ class Reporte extends BaseReporte {
         return Doctrine::getTable("RepStatus")
                 ->createQuery("s")
                 ->innerJoin("s.Reporte r")
-                ->where("r.ca_consecutivo = ?", $this->getCaConsecutivo())
+                ->where("r.ca_consecutivo = ? and ca_tipo=0", $this->getCaConsecutivo())
                 ->addOrderBy("s.ca_fchenvio DESC")
                 ->execute();
     }
