@@ -565,6 +565,11 @@ class falabellaActions extends sfActions {
 
             $salida = "";
             while ($row = $stmt->fetch()) {
+                $vlr_afecto = floatval($invoice->getCaAfectoVlr());
+                $vlr_exento = floatval($invoice->getCaExentoVlr());
+                $vlr_iva = floatval($invoice->getCaIvaVlr());
+                $vlr_total = $vlr_afecto + $vlr_exento + $vlr_iva;
+
                 $documento = ($vlr_afecto!=0 and $vlr_exento==0)?"87":"88";
                 $salida.= $documento; // 1
                 $salida.= "800024075 "; // 2
@@ -581,11 +586,6 @@ class falabellaActions extends sfActions {
                 $salida.= $vencimiento; // 9
                 $salida.= str_pad($invoice->getCaMoneda(), 3, " "); // 10  Siempre en Pesos Colombianos
                 $salida.= str_pad(floatval($invoice->getCaTipoCambio()), 10, "0", STR_PAD_LEFT); // 11
-
-                $vlr_afecto = floatval($invoice->getCaAfectoVlr());
-                $vlr_exento = floatval($invoice->getCaExentoVlr());
-                $vlr_iva = floatval($invoice->getCaIvaVlr());
-                $vlr_total = $vlr_afecto + $vlr_exento + $vlr_iva;
 
                 $salida.= str_pad($vlr_total, 10, "0", STR_PAD_LEFT); // 12
                 $salida.= str_pad($vlr_afecto, 10, "0", STR_PAD_LEFT); // 13
