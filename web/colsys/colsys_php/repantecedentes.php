@@ -12,10 +12,10 @@
 // Copyright:     Coltrans S.A. - 2004                                        \\
 /*================-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*\
 */
-
 $titulo = 'Entrega Oportuna de Antecedentes';
 $meses  = array( "01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre" );
 $estados = array("Casos Cerrados" => "ca_estado <> \"Abierto\"","Cierre Provisional" => "ca_estado = \"Provisional\"","Casos Abiertos" => "ca_estado = \"Abierto\"","Todos los Casos" => "true");
+$request_uri = str_replace("/colsys_php/", "", $_SERVER["REQUEST_URI"]);
 
 include_once 'include/datalib.php';                                            // Incorpora la libreria de funciones, para accesar leer bases de datos
 require_once("checklogin.php");                                                                 // Captura las variables de la sessión abierta
@@ -63,7 +63,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
         exit;
     }
     $tm->MoveFirst();
-    echo "  <TD Class=mostrar style= 'vertical-align: top;'>Sufijo :<BR><SELECT NAME='trafico'>";
+    echo "  <TD Class=mostrar style= 'vertical-align: top;'>Sufijo :<BR><SELECT NAME='trafico[]'>";
     echo " <OPTION VALUE=%>Sufijos (Todos)</OPTION>";
     while ( !$tm->Eof()) {
         echo " <OPTION VALUE=".$tm->Value('ca_trafico').">".$tm->Value('ca_trafico')."</OPTION>";
@@ -77,7 +77,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
         exit;
     }
     $tm->MoveFirst();
-    echo "  <TD Class=mostrar style= 'vertical-align: top;'>Tráfico :<BR><SELECT NAME='traorigen'>";
+    echo "  <TD Class=mostrar style= 'vertical-align: top;'>Tráfico :<BR><SELECT NAME='traorigen[]'>";
     echo " <OPTION VALUE=%>Todos los Tráficos</OPTION>";
     while ( !$tm->Eof()) {
         echo " <OPTION VALUE=".$tm->Value('ca_nombre').">".$tm->Value('ca_nombre')."</OPTION>";
@@ -90,7 +90,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
         exit;
     }
     $tm->MoveFirst();
-    echo "  <TD Class=mostrar style= 'vertical-align: top;'>Puerto de Destino :<BR><SELECT NAME='ciudestino'>";
+    echo "  <TD Class=mostrar style= 'vertical-align: top;'>Puerto de Destino :<BR><SELECT NAME='ciudestino[]'>";
     echo " <OPTION VALUE=%>Todos los Puertos</OPTION>";
     while ( !$tm->Eof()) {
         echo " <OPTION VALUE=".$tm->Value('ca_ciudad').">".$tm->Value('ca_ciudad')."</OPTION>";
@@ -102,7 +102,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
         echo "<script>document.location.href = 'repcomisiones.php';</script>";
         exit;
     }
-    echo "  <TD Class=mostrar style= 'vertical-align: top;'>Sucursal:<BR><SELECT NAME='sucursal'>";
+    echo "  <TD Class=mostrar style= 'vertical-align: top;'>Sucursal:<BR><SELECT NAME='sucursal[]'>";
     echo "  <OPTION VALUE=%>Sucursales (Todas)</OPTION>";
     $tm->MoveFirst();
     while (!$tm->Eof()) {
@@ -142,6 +142,12 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
     $subtitulo = "Año(s): ".implode(", ",$ano)." / Mes(es): ".implode(", ",$mes);
     $ano = "im.ca_ano::text ".((count($ano)==1)?"like '$ano[0]'":"in ('".implode("','",$ano)."')");
     $mes = "im.ca_mes::text ".((count($mes)==1)?"like '$mes[0]'":"in ('".implode("','",$mes)."')");
+    
+    $sucursal = "ic.ca_sucursal::text ".((count($sucursal)==1)?"like '$sucursal[0]'":"in ('".implode("','",$sucursal)."')");
+    $ciudestino = "im.ca_ciudestino::text ".((count($ciudestino)==1)?"like '$ciudestino[0]'":"in ('".implode("','",$ciudestino)."')");
+    $trafico = (isset($trafico))?"im.ca_trafico::text ".((count($trafico)==1)?"like '$trafico[0]'":"in ('".implode("','",$trafico)."')"):"TRUE";
+    $traorigen = "im.ca_traorigen::text ".((count($traorigen)==1)?"= '$traorigen[0]'":"in ('".implode("','",$traorigen)."')");
+    $casos = (isset($casos))?$casos:"TRUE";
 
     if (!$rs->Open("select ca_ident, ca_value from control.tb_config_values cv inner join control.tb_config cn on cn.ca_idconfig = cv.ca_idconfig and cn.ca_param = 'CU119' order by ca_ident")) {       // Selecciona todos lo registros de la tabla Traficos
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
@@ -160,9 +166,9 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
     $query.= "left join tb_entrega_antecedentes ea1 on ea1.ca_idtrafico::text = cd.ca_idtrafico::text and ea1.ca_idciudad::text = '999-9999'  and ea1.ca_modalidad = '' ";
     $query.= "left join tb_entrega_antecedentes ea2 on ea2.ca_idtrafico::text = cd.ca_idtrafico::text and ea2.ca_idciudad::text = im.ca_origen::text ";
     $query.= "left join tb_entrega_antecedentes ea3 on ea3.ca_idtrafico::text = cd.ca_idtrafico::text and ea3.ca_modalidad::text = im.ca_modalidad::text ";
-    $query.= "where im.ca_impoexpo = 'Importación' and $ano and $mes and ca_trafico like '%$trafico%' and ca_traorigen like '%$traorigen%' and ca_ciudestino like '%$ciudestino%' and ".str_replace("\\","", str_replace("\"","'",$casos))." and ca_sucursal like '%$sucursal%' ";
+    $query.= "where im.ca_impoexpo = 'Importación' and $ano and $mes and $trafico and $traorigen and $ciudestino and ".str_replace("\\","", str_replace("\"","'",$casos))." and $sucursal ";
     $query.= "order by im.ca_ano, im.ca_mes, im.ca_referencia";
-    
+    //die($query);
     if (!$rs->Open($query)) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
@@ -372,7 +378,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
 
 
     echo "<TABLE CELLSPACING=10>";
-    echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Regresar' ONCLICK='javascript:document.location.href = \"repantecedentes.php\"'></TH>";  // Cancela la operación
+    echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Regresar' ONCLICK='javascript:document.location.href = \"$request_uri\"'></TH>";  // Cancela la operación
     echo "</TABLE>";
     echo "</FORM>";
     echo "</CENTER>";

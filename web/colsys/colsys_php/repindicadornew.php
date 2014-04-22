@@ -245,6 +245,11 @@ if (!isset($boton) and !isset($buscar)) {
         foreach ($ano as $tmp)
             $ano_mem[] = "'" . substr($tmp, -2) . "'";
     }
+    if ($indicador == "Oportunidad en Entrega de Antecedentes") {
+        // echo "<script>document.location.href = 'repantecedentes.php?$parametros';</script>";
+        include_once 'repantecedentes.php';
+        break;
+    }
     $ano = "ca_ano::text " . ((count($ano) == 1) ? "like '$ano[0]'" : "in ('" . implode("','", $ano) . "')");
     $mes_fes = "to_char(ca_fchfestivo,'MM') " . ((count($mes) == 1) ? "like '$mes[0]'" : "in ('" . implode("','", $mes) . "')");
     $mes_mem = "'" . implode("','", $mes) . "'";
