@@ -5588,7 +5588,8 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
             }
         case 'Grabar Cliente': {                                                      // El Botón Grabar Encabezado fue pulsado
                 $iddestino = ($iddestino == '') ? 'null' : "'$iddestino'";
-                $sinidentificacion = ($sinidentificacion == 'on') ? 'true' : 'false';                 
+                $sinidentificacion = ($sinidentificacion == 'on') ? 'true' : 'false';
+                $mercancia_desc = str_replace("'", "", $mercancia_desc);
                 if ($idinfodian == '') {                    
                     if (!$rs->Open("select max(ca_idinfodian) as ca_idinfodian from tb_dianmaestra where ca_referencia = '$referencia'")) {
                         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
