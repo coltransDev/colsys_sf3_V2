@@ -57,7 +57,7 @@ if (isset($suf) and $suf == 'findDianDeposito') {
     echo "</HTML>";
 } else if (isset($suf) and $suf == 'listDianDeposito') {
     $condicion = "where lower(ca_nombre) like lower('%" . $contents . "%')";
-    if (!$rs->Open("select * from tb_diandepositos $condicion order by ca_nombre")) {  // Selecciona todos lo registros de la tabla DianDepositos
+    if (!$rs->Open("select ca_codigo, ca_nombre, ca_fchdesde, ca_fchhasta from tb_diandepositos $condicion order by ca_nombre")) {  // Selecciona todos lo registros de la tabla DianDepositos
         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit;
@@ -95,7 +95,7 @@ if (isset($suf) and $suf == 'findDianDeposito') {
     $consecutivo = '';
     while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
         echo "<TR>";
-        echo "  <TD Class=listar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick=\"javascript:elegir('" . $rs->Value('ca_codigo') . "','" . $rs->Value('ca_nombre') . "')\">" . $rs->Value('ca_codigo') . "</TD>";
+        echo "  <TD Class=listar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick=\"javascript:elegir('" . $rs->Value('ca_codigo') . "','" . $rs->Value('ca_nombre') . " Vigencia: " . $rs->Value('ca_fchdesde') . " Hasta: " . $rs->Value('ca_fchhasta') . "')\">" . $rs->Value('ca_codigo') . "</TD>";
         echo "  <TD Class=listar>" . $rs->Value('ca_nombre') . "</TD>";
         echo "  <TD Class=listar>" . $rs->Value('ca_fchdesde') . "</TD>";
         echo "  <TD Class=listar>" . $rs->Value('ca_fchhasta') . "</TD>";

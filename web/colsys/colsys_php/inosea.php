@@ -3981,7 +3981,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
                 
                 $tm = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-                $query = "select DISTINCT ic.ca_idreporte, ic.ca_referencia,ic.ca_login, ic.ca_idproveedor, ic.ca_proveedor, ic.ca_idcliente, cl.ca_idalterno, cl.ca_compania, ic.ca_numorden, ic.ca_hbls, ic.ca_fchhbls, ic.ca_numpiezas, ic.ca_peso, ic.ca_volumen, ic.ca_continuacion, ic.ca_continuacion_dest, bg.ca_nombre as ca_bodega, dc.*, dd.ca_nombre as ca_nomdeposito 
+                $query = "select DISTINCT ic.ca_idreporte, ic.ca_referencia,ic.ca_login, ic.ca_idproveedor, ic.ca_proveedor, ic.ca_idcliente, cl.ca_idalterno, cl.ca_compania, ic.ca_numorden, ic.ca_hbls, ic.ca_fchhbls, ic.ca_numpiezas, ic.ca_peso, ic.ca_volumen, ic.ca_continuacion, ic.ca_continuacion_dest, bg.ca_nombre as ca_bodega, dc.*, dd.ca_nombre as ca_nomdeposito, dd.ca_fchdesde, dd.ca_fchhasta
                     from tb_inoclientes_sea ic";
                 $query.= " LEFT OUTER JOIN vi_clientes_reduc cl ON (ic.ca_idcliente = cl.ca_idcliente) LEFT OUTER JOIN tb_bodegas bg ON (ic.ca_idbodega = bg.ca_idbodega)";
                 $query.= " LEFT OUTER JOIN tb_dianclientes dc ON (ic.ca_idinocliente = dc.ca_idinocliente)";
@@ -4233,7 +4233,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "</TR>";
 
                 echo "<TR>";
-                echo "  <TD Class=mostrar COLSPAN=5><INPUT TYPE='TEXT' NAME='nomdeposito' VALUE='" . $tm->Value('ca_nomdeposito') . "' SIZE=110 MAXLENGTH=110 READONLY></TD>";
+                echo "  <TD Class=mostrar COLSPAN=5><INPUT TYPE='TEXT' NAME='nomdeposito' VALUE='" . $tm->Value('ca_nomdeposito') . " Vigencia: " . $tm->Value('ca_fchdesde') . " Hasta: " . $tm->Value('ca_fchhasta') . "' SIZE=105 MAXLENGTH=110 READONLY>&nbsp;<img src='./graficos/nuevo.gif'/ alt='Favor tener en cuenta la vigencia del depósito.'></TD>";
                 echo "</TR>";
                 echo "<TR>";
                 echo "  <TD Class=mostrar COLSPAN=5>Descripción de la Mercancía:<BR><TEXTAREA NAME='mercancia_desc' WRAP=virtual ROWS=3 COLS=110>$descripcion_merc</TEXTAREA></TD>";
