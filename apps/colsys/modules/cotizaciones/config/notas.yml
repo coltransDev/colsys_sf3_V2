@@ -201,7 +201,9 @@ seguro: |
       • Errores o faltas en el despacho, o pérdidas y/o daños por envío de bienes en mal estado.
       • Demoras en la entrega y pérdidas de mercado.
       • Mal empaque de las mercancías cuando el asegurado tiene el control sobre el mismo.
-  5. DEDUCIBLE: No se aceptan reclamaciones inferiores a 2,5 SMMLV (Salario mínimo mensual legal vigente).
+  5. DEDUCIBLE: 
+      • No se aceptan reclamaciones inferiores a 2,5 SMMLV (Salario mínimo mensual legal vigente).
+      • Despachos con valor superior a $650.000.000.oo 10% sobre el valor de la pérdida mínimo 3 SMMLV
   6. MERCANCÍAS DE ALTO RIESGO:  Llantas y neumáticos, algodón en pacas, productos biomédicos, teléfonos celulares o equivalentes, juegos de video, instrumentos musicales,  software de videos, pieles, cigarrillos, licores, cervezas, vinos, productos farmacéuticos y veterinarios, vehículos de cualquier clase, incluyendo botes o aviones, incluyendo los movilizados por sus propios medios, repuestos automotores, Material CKD, Zinc, cobre o aluminio, perfumes, colonias y productos similares (incluyendo productos de aseo personal), Electrodomésticos, sus partes, accesorios o repuestos para los mismos, libros e impresos y textos escolares, pinturas, alimentos enlatados, leche en polvo, polipropileno, polietileno y látex en bruto o a granel, equipos de computo y/o componentes o accesorios, calzado, textiles, confecciones y cueros en productos terminados, juguetería, café y sus derivados, papel y/o productos elaborados con pulpa de papel tales como: papel higiénico, servilletas, toallas para cocina, toallas sanitarias, y pañales desechables.
   7. EXCLUSIONES: Se considerarán excluidos los despachos que no cumplan las siguientes condiciones:
     A. Exclusiones por falta de acompañamiento vehicular: será obligatorio el uso de acompañantes vehiculares para los siguientes despachos
@@ -210,6 +212,7 @@ seguro: |
          $150.000.000 deberán llevar acompañamiento vehicular.
       b) Mercancía de bajo riesgo; despachos con un valor asegurable superior a 
          $300.000.000 deberán llevar acompañamiento vehicular.
+      c) Mercancía con valor superior a $650.000.000: no podrá transitar en horario de 9:00 pm a 5:00 am, ni domingos y festivos en carreteras nacionales y/o urbanas.
   Definición de Escolta: se entiende por escolta vehicular, el vehículo particular o público con personal de empresas especializadas en vigilancia de mercancías en todas sus modalidades, que cumplan con todas las normas técnicas, administrativas y legales para funcionar según su naturaleza, con su respectivo conductor, el cual tiene como obligación acompañar al vehículo que transporta las mercancías durante todo el trayecto, es decir, desde el sitio del despacho hasta su destino final, en orden a cumplir a cabalidad la función de custodia, control y cuidado que su labor profesional les exige.
       
     La firma que se utilice para el acompañamiento deberá cumplir con los siguientes requisitos:

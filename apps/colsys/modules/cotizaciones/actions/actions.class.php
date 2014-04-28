@@ -2001,13 +2001,14 @@ class cotizacionesActions extends sfActions {
 
         $conn = Doctrine::getTable("CotAduana")->getConnection();
         $conn->beginTransaction();
-        try {
+        try 
+        {
             $user_id = $this->getUser()->getUserId();
             $id = $this->getRequestParameter("id");
             if ($this->getRequestParameter("oid")) {
 
                 $aduana = Doctrine::getTable("CotAduana")->find($this->getRequestParameter("oid"));
-                $this->forward404Unless($aduana);
+                //$this->forward404Unless($aduana);
             } else {
                 $aduana = new CotAduana();
                 $aduana->setCaIdcotizacion($this->getRequestParameter("cotizacionId"));
