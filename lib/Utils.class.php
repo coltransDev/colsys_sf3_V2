@@ -160,6 +160,20 @@ class Utils{
 	}
 	
 	
+	/**
+	from php.net
+	give the number of days between two dates
+	*/
+	static function diffDays($date1, $date2){
+            
+                if (!is_integer($date1)) $date1 = strtotime($date1);
+                
+                if (!is_integer($date2)) $date2 = strtotime($date2);  
+                
+                return floor(abs($date1 - $date2) / 60 / 60 / 24);
+        }
+	
+	
 	public static function getMonth( $m ){
 		settype($m, "integer");
 		switch($m) {
