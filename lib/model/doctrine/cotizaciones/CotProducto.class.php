@@ -89,6 +89,7 @@ class CotProducto extends BaseCotProducto
                         ->innerJoin("o.Concepto c")
                         ->where("o.ca_idcotizacion = ? ", $this->getCaIdcotizacion() )
                         ->addWhere("o.ca_idproducto = ? ", $this->getCaIdproducto() )
+                        ->addOrderBy("o.ca_idequipo ASC")
                         ->addOrderBy("c.ca_liminferior ASC")
                         ->addOrderBy("c.ca_concepto")
                         ->execute();
