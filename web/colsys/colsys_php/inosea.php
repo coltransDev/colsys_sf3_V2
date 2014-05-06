@@ -2850,11 +2850,6 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     echo "<INPUT TYPE='HIDDEN' NAME='atransporte' id='atransporte' VALUE='" . $tm->Value('ca_transporte') . "'>";
                     $tm->MoveNext();
                 }
-                if (!$tm->Open("select ca_idconcepto, ca_concepto from vi_conceptos where ca_transporte = 'Marítimo' and (ca_modalidad = 'FCL' or ca_idconcepto = 9) order by ca_modalidad DESC, ca_concepto")) { // Selecciona todos lo registros de la tabla Ciudades
-                    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
-                    echo "<script>document.location.href = 'entrada.php?id=2812';</script>";
-                    exit;
-                }
                 $cu = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$cu->Open("select ca_identificacion, ca_valor from tb_parametros where ca_casouso = 'CU223' order by ca_identificacion")) {          // Selecciona los correos de la tabla Parametros
                     echo "<script>alert(\"" . addslashes($cu->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
@@ -3046,6 +3041,11 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "  } else {";
                 echo "      document.getElementById('viaje').style.display = 'block';";
                 echo "  }";
+                echo "  if (document.getElementById('impoexpo').value == 'OTM/DTA'){";
+                echo "      document.getElementById('notificar_td').style.display = 'block';";
+                echo "  } else {";
+                echo "      document.getElementById('notificar_td').style.display = 'none';";
+                echo "  }";
                 echo "  frame.src='ventanas.php?opcion=Ref_sea&departamento='+departamento+'&modalidad='+modalidad+'&origen='+origen+'&destino='+destino+'&mes='+mes;";
                 echo "}";
                 echo "function llenar_referencia(num_ref){";
@@ -3077,7 +3077,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "    <INPUT ID=POS_1 TYPE='TEXT' NAME='referencia[]' SIZE=3 MAXLENGTH=3 READONLY>.";
                 echo "    <INPUT ID=POS_2 TYPE='TEXT' NAME='referencia[]' SIZE=2 MAXLENGTH=2 READONLY>.";
                 echo "    <INPUT ID=POS_3 TYPE='TEXT' NAME='referencia[]' SIZE=2 MAXLENGTH=2 READONLY>.";
-                echo "    <INPUT ID=POS_4 TYPE='TEXT' NAME='referencia[]' SIZE=3 MAXLENGTH=3 READONLY>.";
+                echo "    <INPUT ID=POS_4 TYPE='TEXT' NAME='referencia[]' SIZE=4 MAXLENGTH=3 READONLY>.";
                 echo "    <INPUT ID=POS_5 TYPE='TEXT' NAME='referencia[]' SIZE=2 MAXLENGTH=1 READONLY>";
                 echo "  </CENTER></acronym></TD>";
                 echo "  <TD Class=listar>Mes de Grabación:<BR><CENTER><SELECT NAME='mes' ONCHANGE='validacion();'>";
@@ -3117,7 +3117,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "  </SELECT></TD>";
                 echo "</TR>";
                 echo "<TR>";
-                echo "  <TD Class=captura ROWSPAN=4>Información:</TD>";
+                echo "  <TD Class=captura ROWSPAN=5>Información:</TD>";
                 echo "  <TD Class=listar COLSPAN=3>Línea<BR><SELECT NAME='idlinea'>";             // Llena el cuadro de lista con los valores de la tabla Transportistas
                 echo "  </SELECT></TD>";
                 echo "  <TD Class=listar>Modalidad:<BR><SELECT NAME='modalidad' ONCHANGE='validacion();'>";
@@ -3148,6 +3148,28 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "<TR>";
                 echo "  <TD Class=mostrar COLSPAN=4>Observaciones:<BR><TEXTAREA NAME='observaciones' WRAP=virtual ROWS=4 COLS=90></TEXTAREA></TD>";
                 echo "</TR>";
+
+                if (!$tm->Open("select ca_login, ca_nombre, ca_sucursal from vi_usuarios where ca_departamento like '%Marítimo%' order by ca_login")) {       // Selecciona todos lo Usuarios del Departamento Marítimo
+                    echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'repauditoria.php';</script>";
+                    exit; }
+                $tm->MoveFirst();
+                echo "<TR>";
+                echo "  <TD id='notificar_td' Class=mostrar COLSPAN=4 style=\"display:'none'\">Notificar a:<BR><SELECT NAME='notificar'>";
+                while ( !$tm->Eof()) {
+                        echo " <OPTION VALUE='".$tm->Value('ca_login')."'>".$tm->Value('ca_nombre')."</OPTION>";
+                        $tm->MoveNext();
+                      }
+                echo "  </SELECT><img src='./graficos/nuevo.gif'/> Operativo de Marítimo reponsable de facturar este servicio.";
+                echo "  </TD>";
+                echo "</TR>";
+
+                if (!$tm->Open("select ca_idconcepto, ca_concepto from vi_conceptos where ca_transporte = 'Marítimo' and (ca_modalidad = 'FCL' or ca_idconcepto = 9) order by ca_modalidad DESC, ca_concepto")) { // Selecciona todos lo registros de la tabla Ciudades
+                    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'entrada.php?id=2812';</script>";
+                    exit;
+                }
+                $tm->MoveFirst();
                 echo "<TR HEIGHT=5>";
                 echo "  <TD Class=invertir COLSPAN=5></TD>";
                 echo "</TR>";
@@ -5505,6 +5527,32 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             echo "<script>document.location.href = 'entrada.php?id=5458';</script>";
                             exit;
                         }
+                    }
+                }
+                
+                if ($impoexpo == 'OTM/DTA' and isset($notificar)){  // Notificación por creación de OTM DIRECTO
+                    if (!$rs->Open("select us.ca_login, us.ca_email, rm.ca_email as ca_email_rem, rm.ca_nombre as ca_nombre_rem from control.tb_usuarios us inner join control.tb_usuarios rm ON rm.ca_login = '$usuario' where us.ca_login = '$notificar'")) {
+                        echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
+                        echo "<script>document.location.href = 'entrada.php?id=5458';</script>";
+                        exit;
+                    }
+                    $tm = & DlRecordset::NewRecordset($conn);
+                    $subject = "Aviso Creación OTM DIRECTO - $referencia";
+                    $bodyhtml = "Apreciado Compa&ntilde;ero:<br /><br />"
+                            . "Favor tener en cuenta que se ha creado la Referencia No. $referencia, que corresponde a un OTM DIRECTO con COLOTM. Agradecemos tener en cuenta<br/>"
+                            . "la presente instrucci&oacute;n y proceder a facturar al cliente el Servicio de OTM. Mil gracias.<br /><br />"
+                            . "<a href=\"https://www.coltrans.com.co/colsys_php/inosea.php?boton=Consultar&id=$referencia\" target=\"_blank\">Ver la Referencia : $referencia</a><br /><br />"
+                            . "Cordialmente,<br /><br />"
+                            . $rs->Value('ca_nombre_rem')."<br />"
+                            . $rs->Value('ca_email_rem')."";
+                    $rs->MoveFirst();
+                    while (!$rs->Eof()) {
+                        if (!$tm->Open("insert into tb_emails(ca_usuenvio, ca_tipo, ca_from, ca_fromname, ca_cc, ca_replyto, ca_address, ca_subject, ca_bodyhtml, ca_fchcreado) values ('$usuario', 'OTM DIRECTO', '".$rs->Value('ca_email_rem')."', '".$rs->Value('ca_nombre_rem')."', '".$rs->Value('ca_email_rem')."', '".$rs->Value('ca_email_rem')."', '".$rs->Value('ca_email')."', '$subject', '$bodyhtml', to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'))")) {
+                            echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
+                            echo "<script>document.location.href = 'entrada.php?id=5458';</script>";
+                            exit;
+                        }
+                        $rs->MoveNext();
                     }
                 }
                 break;
