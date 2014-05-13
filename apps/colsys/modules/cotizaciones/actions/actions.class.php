@@ -135,6 +135,9 @@ class cotizacionesActions extends sfActions {
         $this->criterio = $criterio;
         $this->cadena = $cadena;
         $this->login = $login;
+        $this->transporte = $transporte;
+        $this->idorigen = $idorigen;
+        $this->iddestino = $iddestino;
         $this->seguimiento = $seguimiento;
         $estados = ParametroTable::retrieveByCaso("CU074");
         $this->estados = array();

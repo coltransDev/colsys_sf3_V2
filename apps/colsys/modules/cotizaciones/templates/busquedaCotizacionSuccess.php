@@ -13,16 +13,31 @@ if( $cadena ){
 if( $login ){
 	$url.="&login=".$login;
 }
+if( $transporte ){
+	$url.="&transporte=".$transporte;
+}
+if( $idorigen ){
+	$url.="&idorigen=".$idorigen;
+}
+if( $iddestino ){
+	$url.="&iddestino=".$iddestino;
+}
 if( $seguimiento ){
 	$url.="&seguimiento=".$seguimiento;
 }
+?>
+    <table>
+        <tr>
+<?
 $pagerLayout = new Doctrine_Pager_Layout($pager,new Doctrine_Pager_Range_Sliding(array('chunk' => 5)),url_for($url)."?page={%page_number}");
-$pagerLayout->setTemplate('<a href="{%url}">{%page}</a> ');
-$pagerLayout->setSelectedTemplate('{%page}');
+$pagerLayout->setTemplate('<td style="width: 15px;"><a href="{%url}">{%page}</a><td>');
+$pagerLayout->setSelectedTemplate('<td style="width: 15px;">{%page}<td>');
 $idsList = $pager->execute();
 
 $pagerLayout->display();
 ?>
+        </tr>
+    </table>
 <br />
 <br />
 <form id="formProducto" name="formProducto" method="post" action="#" >
