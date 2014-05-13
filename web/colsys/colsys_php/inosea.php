@@ -5539,8 +5539,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     $tm = & DlRecordset::NewRecordset($conn);
                     $subject = "Aviso Creación OTM DIRECTO - $referencia";
                     $bodyhtml = "Apreciado Compa&ntilde;ero:<br /><br />"
-                            . "Favor tener en cuenta que se ha creado la Referencia No. $referencia, que corresponde a un OTM DIRECTO con COLOTM. Agradecemos tener en cuenta<br/>"
-                            . "la presente instrucci&oacute;n y proceder a facturar al cliente el Servicio de OTM. Mil gracias.<br /><br />"
+                            . "Favor tener en cuenta que se ha creado para su manejo, la Referencia No. $referencia que corresponde a un OTM DIRECTO con COLOTM.<br/>"
                             . "<a href=\"https://www.coltrans.com.co/colsys_php/inosea.php?boton=Consultar&id=$referencia\" target=\"_blank\">Ver la Referencia : $referencia</a><br /><br />"
                             . "Cordialmente,<br /><br />"
                             . $rs->Value('ca_nombre_rem')."<br />"
