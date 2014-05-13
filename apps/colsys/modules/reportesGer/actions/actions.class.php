@@ -806,6 +806,7 @@ class reportesGerActions extends sfActions {
                         inner join tb_ciudades des on r.ca_destino=des.ca_idciudad
                         JOIN vi_usuarios u ON r.ca_login = u.ca_login
                     where r.ca_tiporep=4 and  r.ca_fchcreado >='2012-04-01' and r.ca_login='consolcargo'
+                    $where1
                     order by o.ca_fcharribo";
 
             $con = Doctrine_Manager::getInstance()->connection();
@@ -1438,8 +1439,12 @@ class reportesGerActions extends sfActions {
 
         $this->idcliente = $request->getParameter("idcliente");
         $this->cliente = $request->getParameter("cliente");
-
+        
+        $this->estado = $request->getParameter("estado");
+        $this->vendedor = $request->getParameter("vendedor");
+        $this->login = $request->getParameter("login");
         $this->opcion = $request->getParameter("opcion");
+        
 
         if ($this->opcion) {
 
@@ -1464,7 +1469,7 @@ class reportesGerActions extends sfActions {
                 }
             }
 
-            if ($this->transporte)
+            if ($this->transporte!="Todos")
                 $where.= " and a.ca_via ='" . $this->transporte . "'";
 
             if ($this->idmodalidad && $this->transporte == "Maritimo")
@@ -1492,6 +1497,30 @@ class reportesGerActions extends sfActions {
 
             if ($this->idcliente)
                 $where.=" and a.ca_idcliente='" . $this->idcliente . "'";
+            
+            if ($this->login)
+                $where.=" and u.ca_login='" . $this->login . "'";
+            
+            if ($this->estado){
+                if($this->estado == "Abierto")
+                    $where.=" and a.ca_fchcerrado IS NULL";
+                else if($this->estado == "Cerrado")
+                    $where.=" and a.ca_fchcerrado IS NOT NULL";
+                else if($this->estado == "Sin Facturar")
+                    $where.=" and ei.ca_loginvendedor IS NULL";
+                else{
+                    $where.=" and q.ca_consecutivo IS NOT NULL";
+                    $select = ", q.ca_consecutivo as ca_anulado";
+                    $join = "LEFT JOIN (
+                            SELECT max(r.ca_consecutivo) as ca_consecutivo
+                            FROM tb_repstatus rs
+                                    LEFT JOIN tb_reportes r ON rs.ca_idreporte = r.ca_idreporte
+                            WHERE rs.ca_idetapa = '00000' and ca_impoexpo = 'Exportación'
+                            group by r.ca_consecutivo) AS q ON q.ca_consecutivo = a.ca_consecutivo";
+                    $groupBy = ", ca_anulado";
+                    
+                }
+            }
 
             $sql = "SELECT DISTINCT '201'||SUBSTR(a.ca_referencia,17,1) as ANO, 
                     SUBSTR(a.ca_referencia,8,2) as MES, 
@@ -1507,7 +1536,7 @@ class reportesGerActions extends sfActions {
                     max(round(ca_ino,0)) as ca_ino, 
                     a.ca_valorcarga AS VALOR_CARGA, 
                     em.ca_modalidad AS MODALIDAD,
-                    (select ca_concepto from tb_conceptos c join tb_expo_equipos e on c.ca_idconcepto = e.ca_idconcepto where c.ca_idconcepto = e.ca_idconcepto limit 1) AS CONCEPTO,
+                    (select ca_concepto from tb_conceptos c join tb_expo_equipos e on c.ca_idconcepto = e.ca_idconcepto where c.ca_idconcepto = e.ca_idconcepto and e.ca_referencia = a.ca_referencia limit 1) AS CONCEPTO,
                     a.ca_peso AS PESO, 
                     a.ca_pesovolumen AS PESO_VOLUMEN, 
                     rp.ca_idreporte AS IDREPORTE,
@@ -1523,6 +1552,7 @@ class reportesGerActions extends sfActions {
                         FROM tb_expo_equipos eq
                         JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto
                         WHERE eq.ca_referencia = a.ca_referencia AND eq.ca_idconcepto = t.ca_idconcepto limit 1)/ 20) AS TEUS
+                    $select
                     FROM tb_expo_maestra as a 
                         LEFT OUTER JOIN tb_reportes rp ON rp.ca_idreporte = (SELECT ca_idreporte FROM tb_reportes WHERE ca_consecutivo = a.ca_consecutivo ORDER BY ca_version DESC limit 1)
                         LEFT OUTER JOIN (SELECT DISTINCT ca_referencia, ca_idnaviera, max(ca_modalidad) as ca_modalidad FROM tb_expo_maritimo GROUP BY ca_referencia, ca_idnaviera) as em ON a.ca_referencia = em.ca_referencia
@@ -1542,6 +1572,7 @@ class reportesGerActions extends sfActions {
                         JOIN tb_ciudades des ON des.ca_idciudad = a.ca_destino
                         JOIN tb_traficos tra_des ON tra_des.ca_idtrafico = des.ca_idtrafico
                         LEFT OUTER JOIN ids.tb_proveedores p ON p.ca_idproveedor = em.ca_idnaviera
+                        $join                        
                         LEFT OUTER JOIN ids.tb_ids ids ON p.ca_idproveedor = ids.ca_id,
                         tb_clientes as b
                     WHERE a.ca_idcliente=b.ca_idcliente and a.ca_origen=ori.ca_idciudad and a.ca_destino=des.ca_idciudad " . $where . "
@@ -1549,7 +1580,7 @@ class reportesGerActions extends sfActions {
                          (( SELECT sum(t.ca_liminferior) AS sum
                             FROM tb_expo_equipos eq
                                   JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto
-                            WHERE eq.ca_referencia = a.ca_referencia AND eq.ca_idconcepto = t.ca_idconcepto limit 1) / 20), NAVIERA
+                            WHERE eq.ca_referencia = a.ca_referencia AND eq.ca_idconcepto = t.ca_idconcepto limit 1) / 20), NAVIERA $groupBy
                     ORDER BY ANO, MES, a.ca_referencia
                     ";
 
@@ -1562,6 +1593,17 @@ class reportesGerActions extends sfActions {
             $this->tipo = array();
             $this->origen = array();
             $this->cliente = array();
+            $this->resumen = array();
+            $this->traficos = array();
+            $this->sea = array();
+            $this->air = array();
+            $this->vendedores = array();
+            $tipo_transporte = array();
+            
+            $tipo_transporte[]="Aereo";
+            $tipo_transporte[]="Maritimo";
+            $tipo_transporte[]="Maritimo/Terrestre";
+            $tipo_transporte[]="Terrestre";
 
             foreach ($this->resul as $r) {
 
@@ -1574,36 +1616,94 @@ class reportesGerActions extends sfActions {
                 
                 $this->trafico[$r["ciuorigen"]][$r["tradestino"]][$r["mes"]]++;
             
-                if($r["via"]=="Aereo"){
-                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]][$r["via"]]+=$r["ca_ino"];
-                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo"]=null;
-                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo/Terrestre"]=null;
-                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Terrestre"]=null;
+                foreach($tipo_transporte as $key=>$val_trans){
+                    if($val_trans==$r["via"])
+                        $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]][$r["via"]]+=$r["ca_ino"];
+                    else
+                        $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]][$val_trans] = $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]][$val_trans]?$this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]][$val_trans]:null;                    
                 }
+                
+                $this->resumen[($r["sucursal"])][($r["mes"])]["peso"]+=$r["peso"];
+                $this->resumen[($r["sucursal"])][($r["mes"])]["volumen"]+=$r["peso_volumen"];
+                $this->resumen[($r["sucursal"])][($r["mes"])]["teus"]+=$r["teus"];
+                
+                $this->traficos[$r["via"]][$r["ciuorigen"]][$r["tradestino"]][$r["mes"]]++;
+                
+                
                 if($r["via"]=="Maritimo"){
-                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Aereo"] = $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Aereo"]?$this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Aereo"]:null;
-                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]][$r["via"]]+=$r["ca_ino"];
-                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo/Terrestre"]=null;
-                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Terrestre"]=null;
+                    $this->sea[$r["modalidad"]][$r["naviera"]][$r["mes"]]["casos"]++;
+                    $this->sea[$r["modalidad"]][$r["naviera"]][$r["mes"]]["peso"]+=$r["peso"];
+                    $this->sea[$r["modalidad"]][$r["naviera"]][$r["mes"]]["volumen"]+=$r["peso_volumen"];
+                    $this->sea[$r["modalidad"]][$r["naviera"]][$r["mes"]]["teus"]+=$r["teus"];                        
+                }else if($r["via"]=="Aereo"){
+                    $this->air[$r["aerolinea"]][$r["mes"]]["casos"]++;
+                    $this->air[$r["aerolinea"]][$r["mes"]]["peso"]+=$r["peso"];
+                    $this->air[$r["aerolinea"]][$r["mes"]]["volumen"]+=$r["peso_volumen"];                    
                 }
-                if($r["via"]=="Maritimo/Terrestre"){
-                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Aereo"] = $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Aereo"]?$this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Aereo"]:null;
-                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo"] = $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo"]?$this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo"]:null;
-                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]][$r["via"]]+=$r["ca_ino"];
-                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Terrestre"]=null;
-                }
-                if($r["via"]=="Terrestre"){
-                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Aereo"] = $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Aereo"]?$this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Aereo"]:null;
-                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo"] = $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo"]?$this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo"]:null;
-                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo/Terrestre"] = $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo/Terrestre"]?$this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Maritimo/Terrestre"]:null;
-                    $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]]["Terrestre"]+=$r["ca_ino"];
-                }
-                $this->cliente1[$r["sucursal"]][$r["cliente"]][$r["mes"]][$r["via"]]+=$r["ca_ino"];
+                
+                $this->vendedores[$r["comercial"]][$r["via"]][$r["cliente"]][$r["mes"]]+=$r["ca_ino"];                
                                 
             }
-            ksort($this->tipo);
-            //echo "<pre>";print_r($this->origen);echo "</pre>";
+            ksort($this->tipo);            
         }
     }
+    
+    public function executeReporteMonitoreoRecargos(sfWebRequest $request) {
+        $response = sfContext::getInstance()->getResponse();
+
+        $this->fechaInicial = $request->getParameter("fechaInicial");
+        $this->fechaFinal = $request->getParameter("fechaFinal");
+
+        $this->idpais_origen = $request->getParameter("idpais_origen");
+        $this->pais_origen = $request->getParameter("pais_origen");
+        $this->iddestino = $request->getParameter("iddestino");
+        $this->destino = $request->getParameter("destino");
+        $this->idmodalidad = $request->getParameter("idmodalidad");
+        $this->idlinea = $request->getParameter("idlinea");
+        $this->linea = $request->getParameter("linea");
+        $this->opcion = $request->getParameter("opcion");
+        
+        $andWhere = "";
+        if ($this->pais_origen){
+            $andWhere.= " and im.ca_traorigen = '".$this->pais_origen."'";
+        }
+        if ($this->destino){
+            $andWhere.= " and im.ca_ciudestino = '".$this->destino."'";
+        }
+        if ($this->idlinea){
+            $andWhere.= " and im.ca_idlinea = '".$this->idlinea."'";
+        }
+        if ($this->idmodalidad){
+            $andWhere.= " and im.ca_modalidad = '".$this->idmodalidad."'";
+        }
+           
+        if ($this->opcion) {
+            $annos = array();
+            $meses = array();
+            while ($this->fechaInicial <= $this->fechaFinal){
+                list($ano, $mes, $dia) = sscanf($this->fechaInicial, "%d-%d-%d");
+                if (!in_array($ano, $annos)){
+                    $annos[] = $ano;
+                }
+                if (!in_array($mes, $meses)){
+                    $meses[] = $mes;
+                }
+                $this->fechaInicial = date("Y-m-d", mktime(0, 0, 0, $mes, $dia+1, $ano));
+            }
+            $this->fechaInicial = $request->getParameter("fechaInicial");
+            
+            $sql = "select im.ca_ano, im.ca_mes, im.ca_referencia, im.ca_fchreferencia, im.ca_traorigen, im.ca_ciuorigen, im.ca_ciudestino, im.ca_volumen, im.ca_idlinea, ic.ca_idcosto, cs.ca_costo, ic.ca_factura, ic.ca_fchfactura, ic.ca_proveedor, "
+               . "      ic.ca_idmoneda, ic.ca_tcambio, ic.ca_neto, ic.ca_tcambio_usd, round(ic.ca_neto * ic.ca_tcambio / ic.ca_tcambio_usd,0) as ca_total_costo "
+               . "      from tb_inocostos_sea ic inner join vi_inomaestra_sea im on im.ca_referencia = ic.ca_referencia inner join tb_costos cs on cs.ca_idcosto = ic.ca_idcosto and cs.ca_parametros = 'Monitoreado' "
+               . "where im.ca_ano in (" . implode(",", $annos) . ") and im.ca_mes::int in (" . implode(",", $meses) . ") $andWhere"
+               . "      order by im.ca_ano, im.ca_mes, im.ca_traorigen, im.ca_ciuorigen, im.ca_ciudestino, ic.ca_referencia, cs.ca_costo"; 
+            
+            $con = Doctrine_Manager::getInstance()->connection();
+            $st = $con->execute($sql);
+            $this->resul = $st->fetchAll();           
+        }
+        
+    }
+    
 }
 ?>
