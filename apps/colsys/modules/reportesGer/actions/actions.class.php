@@ -1695,7 +1695,7 @@ class reportesGerActions extends sfActions {
             $sql = "select im.ca_ano, im.ca_mes, im.ca_referencia, im.ca_fchreferencia, im.ca_traorigen, im.ca_ciuorigen, im.ca_ciudestino, im.ca_volumen, im.ca_idlinea, ic.ca_idcosto, cs.ca_costo, ic.ca_factura, ic.ca_fchfactura, ic.ca_proveedor, "
                . "      ic.ca_idmoneda, ic.ca_tcambio, ic.ca_neto, ic.ca_tcambio_usd, round(ic.ca_neto * ic.ca_tcambio / ic.ca_tcambio_usd,0) as ca_total_costo "
                . "      from tb_inocostos_sea ic inner join vi_inomaestra_sea im on im.ca_referencia = ic.ca_referencia inner join tb_costos cs on cs.ca_idcosto = ic.ca_idcosto and cs.ca_parametros = 'Monitoreado' "
-               . "where im.ca_ano in (" . implode(",", $annos) . ") and im.ca_mes::int in (" . implode(",", $meses) . ") $andWhere"
+               . "where im.ca_fchcerrado IS NOT NULL and im.ca_ano in (" . implode(",", $annos) . ") and im.ca_mes::int in (" . implode(",", $meses) . ") $andWhere"
                . "      order by im.ca_ano, im.ca_mes, im.ca_traorigen, im.ca_ciuorigen, im.ca_ciudestino, ic.ca_referencia, cs.ca_costo"; 
             
             $con = Doctrine_Manager::getInstance()->connection();

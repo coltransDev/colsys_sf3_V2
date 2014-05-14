@@ -163,7 +163,10 @@ class reportesGerComponents extends sfComponents
         $this->sucursal = $this->getRequestParameter("sucursal");
         $this->idSucursal = $this->getRequestParameter("idSucursal");
         $this->idcliente = $this->getRequestParameter("idcliente");
-        $this->cliente = $this->getRequestParameter("cliente");      
+        $this->cliente = $this->getRequestParameter("cliente");
+        $this->login = $this->getRequestParameter("login");
+        $this->vendedor = $this->getRequestParameter("vendedor");
+        $this->estado = $this->getRequestParameter("estado");
         
     }
 }

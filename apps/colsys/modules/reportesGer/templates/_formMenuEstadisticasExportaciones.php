@@ -13,6 +13,7 @@ include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetTransporte");
 include_component("widgets", "widgetCliente");
 include_component("widgets", "widgetMultiDatos");
+include_component("widgets", "widgetComerciales");
 
 $nmes = $sf_data->getRaw("nmes");
 $meses = $sf_data->getRaw("meses");     
@@ -158,6 +159,7 @@ $idlinea = $sf_data->getRaw("idlinea");
                                 new WidgetTransporte({fieldLabel: 'Transporte',
                                     id: 'transporte',
                                     name: 'transporte',
+                                    emptyText:'Todos',
                                     hiddenName: "idtransporte",
                                     width:219,
                                     value:"<?=$transporte?>",
@@ -168,6 +170,7 @@ $idlinea = $sf_data->getRaw("idlinea");
                                     hiddenName: "idmodalidad",
                                     linkTransporte: "transporte",
                                     linkImpoexpo: "impoexpo",
+                                    width:219,
                                     value:"<?=$idmodalidad ?>"
                                 }),
                                 new WidgetCiudad({fieldLabel: 'Ciu. Origen',
@@ -187,6 +190,7 @@ $idlinea = $sf_data->getRaw("idlinea");
                                     name: 'pais_destino',
                                     hiddenName: "idpais_destino",
                                     pais:"todos",
+                                    width:219,
                                     value:"<?=$idpais_destino?>"
                                 }),
                                 new WidgetAgente({
@@ -195,7 +199,7 @@ $idlinea = $sf_data->getRaw("idlinea");
                                     linkListarTodos: "all",
                                     id:"agente",
                                     hiddenName:"idagente",
-                                    //width:250,
+                                    width:219,
                                     value:"<?= $agente?>",
                                     hiddenValue:"<?=$idagente ?>"
                                 }),
@@ -214,15 +218,27 @@ $idlinea = $sf_data->getRaw("idlinea");
                                     hiddenName:"sucursal",
                                     width:219,
                                     value:"<?=$idSucursal?>",
-                                    hiddenValue:"<?=$sucursal ?>"
+                                    hiddenValue:"<?=$sucursal ?>"                            
                                 }),
-                                new WidgetCliente({fieldLabel:'Cliente ',
-                                    width:219,
-                                    id:"cliente",
-                                    name:"cliente",
-                                    hiddenName:"idcliente",
-                                    value:"<?=$cliente?>",
-                                    hiddenValue:"<?=$idcliente ?>"
+                                new WidgetComerciales({fieldLabel: 'Vendedor',
+                                    id: 'vendedor',
+                                    name: 'vendedor',                                    
+                                    hiddenName:"login",                                    
+                                    value:"<?=$vendedor?>",
+                                    hiddenValue:"<?=$login?>",
+                                    width:219
+                                }),
+                                new Ext.form.ComboBox({
+                                    fieldLabel: 'Estado',
+                                    name:'estado',
+                                    hiddenName:'estado',
+                                    store: ['Abierto', 'Cerrado','Sin Facturar','Anulado'], 
+                                    valueField:'estado',
+                                    typeAhead: true,
+                                    triggerAction: 'all',
+                                    emptyText:'',
+                                    selectOnFocus:true,
+                                    width:219
                                 }),
                              ]
                          },
