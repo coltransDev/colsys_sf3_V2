@@ -1492,8 +1492,10 @@ class reportesGerActions extends sfActions {
                 }
             }
 
-            if ($this->sucursal)
-                $where.=" and s.ca_nombre='" . $this->idSucursal . "'";
+            if ($this->sucursal){
+                if($this->sucursal != "999")
+                    $where.=" and s.ca_nombre='" . $this->idSucursal . "'";
+            }
 
             if ($this->idcliente)
                 $where.=" and a.ca_idcliente='" . $this->idcliente . "'";
@@ -1548,10 +1550,12 @@ class reportesGerActions extends sfActions {
                     ida.ca_nombre as AEROLINEA,
                     ids.ca_nombre as NAVIERA,
                     CASE WHEN a.ca_fchcerrado IS NULL  THEN  'Abierto'  ELSE  'Cerrado'  END,
-                    (( SELECT sum(t.ca_liminferior) AS sum
-                        FROM tb_expo_equipos eq
-                        JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto
-                        WHERE eq.ca_referencia = a.ca_referencia AND eq.ca_idconcepto = t.ca_idconcepto limit 1)/ 20) AS TEUS
+                    (CASE WHEN em.ca_modalidad = 'FCL' THEN 
+                        (( SELECT sum(t.ca_liminferior) AS sum 
+                           FROM tb_expo_equipos eq JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto 
+                           WHERE eq.ca_referencia = a.ca_referencia AND eq.ca_idconcepto = t.ca_idconcepto limit 1)/ 20)
+                    ELSE null END ) as TEUS
+                    $select
                     $select
                     FROM tb_expo_maestra as a 
                         LEFT OUTER JOIN tb_reportes rp ON rp.ca_idreporte = (SELECT ca_idreporte FROM tb_reportes WHERE ca_consecutivo = a.ca_consecutivo ORDER BY ca_version DESC limit 1)
