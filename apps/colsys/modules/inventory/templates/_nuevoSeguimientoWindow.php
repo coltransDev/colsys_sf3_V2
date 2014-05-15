@@ -245,7 +245,7 @@ Ext.extend(NuevoSeguimientoWindow, Ext.Window, {
                         }
                     }
 
-                    //Ext.MessageBox.alert('Sistema de Activos:', 'El seguimiento se ha guardado correctamente');
+                    Ext.MessageBox.alert('Sistema de Activos:', 'El seguimiento se ha guardado correctamente');
                 },
                 // standardSubmit: false,
                 failure:function(form,action){

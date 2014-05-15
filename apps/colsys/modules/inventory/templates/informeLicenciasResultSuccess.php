@@ -106,18 +106,23 @@
             </th>
             
             <?
-            if( $idsucursal ){
+            /*if( $idsucursal ){
             ?>
             <th width="15%">
                 Asignadas Nivel Nacional
             </th>
             <?
-            }
+            }*/
             ?>
             
             <th width="15%">
                 Asignadas
             </th>
+            <?if( !$idsucursal ){?>
+            <th width="15%">
+                Sin asignar
+            </th>
+            <?}?>
         </tr>
         <?
         $total = 0;
@@ -131,35 +136,62 @@
         $totalLic = 0;
         $totalLicAsig = 0;
         
+        //echo "<pre>";print_r($software);echo "</pre>";
+        
+        $cant=array();
+        $id="";
         foreach( $software as $s ){
+            $ids[$s["a_ca_modelo"]][] = $s["as_ca_idequipo"];
+            if($s["a_ca_idactivo"]!=$id)             
+                $cant[$s["a_ca_modelo"]]+= $s["a_q"];
+                $totalIds[$s["a_ca_modelo"]][] = $s["a_ca_idactivo"];
+            $id = $s["a_ca_idactivo"];
             
-            
+            if(!$s["as_ca_idequipo"]){
+                $idsSinAsignar[$s["a_ca_modelo"]][]=$s["a_ca_idactivo"];
+                $cantIdSA[$s["a_ca_modelo"]]+=$s["a_q"]; 
+            }
+        }
+        
+        foreach( $software as $s ){            
             if( $lastLic!=$s["a_ca_modelo"] ){
-                
-                if( $countLic>1 ){
+                if( $lastLic ){
                 ?>
-                <tr class="row0">
+                <tr>
                     <td>
-                        Subtotal <b><?=$lastLic?></b>
+                        <b><?=$lastLic?></b>
                     </td>
                     <td>
-                        <?=$totalLic?>
+                        <?
+                        $url3 = "inventory/informeListadoActivosResult?param=Software&idactivo=".Utils::serializeArray($totalIds[$lastLic]);
+                        echo link_to($cant[$lastLic], $url3, array("target"=>"_blank"));
+                        ?>
                     </td>
                     <?
-                    if( $idsucursal ){
+                    /*if( $idsucursal ){
                     ?>
                     <td>
                         <?=$totalGlobLic?>
                     </td>
                     <?
-                    }
+                    }*/
                     ?>
                     <td>
-                        <?                
+                        <?
+                        $url1 = "inventory/informeListadoActivosResult?idactivo=".Utils::serializeArray($ids[$lastLic]);
                         $a = $totalLicAsig<=$totalLic?$totalLicAsig:"<span class='rojo'>".$totalLicAsig."</span>";                
-                        echo $a;
+                        echo link_to($a, $url1, array("target"=>"_blank"));
                         ?>
                     </td>
+                    <?if( !$idsucursal ){?>
+                    <td><?
+                        if(count($cantIdSA[$lastLic])>0){
+                            $url2 = "inventory/informeListadoActivosResult?param=Software&idactivo=".Utils::serializeArray($idsSinAsignar[$lastLic]);
+                            echo link_to($cantIdSA[$lastLic], $url2, array("target"=>"_blank"));
+                        }
+                        ?>
+                    </td>
+                    <?}?>
                 </tr>
                 <? 
                 }
@@ -174,7 +206,7 @@
             $total+=$s["a_q"];
             $totalAs+=$s["as_assigned"];
             $totalGlob+=$s["a_q2"];
-            if( $lastCat!= $s["c_ca_name"]){
+            /*if( $lastCat!= $s["c_ca_name"]){
                 $lastCat = $s["c_ca_name"];
                 ?>
                 <tr class="row0">
@@ -183,7 +215,7 @@
                     </td>                    
                 </tr>
                 <?
-            }
+            }*/
             
             $url = "inventory/informeListadoActivosResult?idasignacion=".$s["a_ca_idactivo"];
             
@@ -197,7 +229,7 @@
             $totalLicAsig+=$s["as_assigned"];
             
         ?>
-        <tr>
+        <!--<tr>
             <td>
                 <?=$s["a_ca_modelo"]?>
             </td>
@@ -226,10 +258,10 @@
                 echo link_to($a, $url, array("target"=>"_blank"));
                 ?>
             </td>
-        </tr>
+        </tr>-->
         <?
         }
-        
+        /*
         if( $countLic>1 ){
         ?>
         <tr class="row0">
@@ -237,7 +269,7 @@
                 Subtotal <b><?=$lastLic?></b>
             </td>
             <?
-            if( $idsucursal ){
+            /*if( $idsucursal ){
             ?>
             <td>
                 <?=$totalLic?>
@@ -256,10 +288,10 @@
             </td>
         </tr>
         <? 
-        }
+        }*/
         
         ?>
-        <tr class="row0">
+        <!--<tr class="row0">
             <td>
                 Gran Total
             </td>
@@ -267,21 +299,17 @@
                 <?=$total?>
             </td>
             <?
-            if( $idsucursal ){
+            /*if( $idsucursal ){
             ?>
             <td>
                 <?=$totalGlob?>
             </td>
             <?
-            }
+            }*/
             ?>
             <td>
-                <?=$totalAs<=$total?$totalAs:"<span class='rojo'>".$totalAs."</span>"?>                
+                <?=$totalAs<=$total?$totalAs:"<span class='rojo'>".$totalAs."</span>"?>
             </td>
-        </tr>
+        </tr>-->
     </table>
-
 </div>
-
-
-

@@ -4,6 +4,7 @@
  * (c) Coltrans S.A. - Colmas Ltda.
  * 
  */
+//echo "<pre>";print_r($activos);echo "</pre>";
 
 if( $param=="Software" ){
     $cols = 10;
@@ -120,6 +121,7 @@ $granTotal = 0;
     <?
     $lastCat = null;
     $cant = 0;
+    $cantLicencias = 0;
     foreach( $activos as $activo ){
         if( $lastCat!=$activo->getcaIdcategory() ){
             
@@ -143,6 +145,7 @@ $granTotal = 0;
             <?
         }
         $cant++;
+        $cantLicencias+=$activo->getCaCantidad();
         ?>
         <tr>
             <td>
@@ -245,6 +248,11 @@ $granTotal = 0;
         <tr class="row0">
             <td colspan="<?=$cols?>"><div align="right"><b>Total: <?=$cant?></b></div></td>
         </tr>
+        <?if($param=="Software"){?>
+        <tr class="row0">
+            <td colspan="<?=$cols?>"><div align="right"><b>Total Licencias: <?=$cantLicencias?></b></div></td>
+        </tr>
+        <?}?>
         <tr class="row0">
             <td colspan="<?=$cols?>"><div align="right"><b>Gran Total: <?=$granTotal?></b></div></td>
         </tr>
