@@ -140,13 +140,13 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
     set_time_limit(0);
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
     $subtitulo = "Año(s): ".implode(", ",$ano)." / Mes(es): ".implode(", ",$mes);
-    $ano = "im.ca_ano::text ".((count($ano)==1)?"like '$ano[0]'":"in ('".implode("','",$ano)."')");
-    $mes = "im.ca_mes::text ".((count($mes)==1)?"like '$mes[0]'":"in ('".implode("','",$mes)."')");
+    $ano = "(substr(im.ca_referencia::text, 16, 2)::integer + 2000)::text ".((count($ano)==1)?"like '$ano[0]'":"in ('".implode("','",$ano)."')");
+    $mes = "substr(im.ca_referencia::text, 8, 2)::text ".((count($mes)==1)?"like '$mes[0]'":"in ('".implode("','",$mes)."')");
     
-    $sucursal = "ic.ca_sucursal::text ".((count($sucursal)==1)?"like '$sucursal[0]'":"in ('".implode("','",$sucursal)."')");
-    $ciudestino = "im.ca_ciudestino::text ".((count($ciudestino)==1)?"like '$ciudestino[0]'":"in ('".implode("','",$ciudestino)."')");
-    $trafico = (isset($trafico))?"im.ca_trafico::text ".((count($trafico)==1)?"like '$trafico[0]'":"in ('".implode("','",$trafico)."')"):"TRUE";
-    $traorigen = "im.ca_traorigen::text ".((count($traorigen)==1)?"= '$traorigen[0]'":"in ('".implode("','",$traorigen)."')");
+    $sucursal = "su.ca_nombre::text ".((count($sucursal)==1)?"like '$sucursal[0]'":"in ('".implode("','",$sucursal)."')");
+    $ciudestino = "c2.ca_ciudad::text ".((count($ciudestino)==1)?"like '$ciudestino[0]'":"in ('".implode("','",$ciudestino)."')");
+    $trafico = (isset($trafico))?"substr(im.ca_referencia, 5, 2)::text ".((count($trafico)==1)?"like '$trafico[0]'":"in ('".implode("','",$trafico)."')"):"TRUE";
+    $traorigen = "t1.ca_nombre::text ".((count($traorigen)==1)?"like '$traorigen[0]'":"in ('".implode("','",$traorigen)."')");
     $casos = (isset($casos))?$casos:"TRUE";
 
     if (!$rs->Open("select ca_ident, ca_value from control.tb_config_values cv inner join control.tb_config cn on cn.ca_idconfig = cv.ca_idconfig and cn.ca_param = 'CU119' order by ca_ident")) {       // Selecciona todos lo registros de la tabla Traficos
@@ -160,14 +160,16 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
         $tipos[$rs->Value('ca_ident')] = $rs->Value('ca_value');
         $rs->MoveNext();
     }
-    $query = "select distinct im.ca_ano, im.ca_mes, im.ca_referencia, im.ca_traorigen, im.ca_ciuorigen, im.ca_tradestino, im.ca_ciudestino, im.ca_modalidad, im.ca_estado, im.ca_tipo, im.ca_fchrecibido, im.ca_propiedades, (SELECT ca_fchenvio FROM tb_emails where ca_tipo='Antecedentes' and ca_subject like '%'||im.ca_referencia||'%' order by ca_idemail DESC limit 1) as ca_envantecedentes, ";
-    $query.= "ic.ca_idcliente, ic.ca_compania, ic.ca_consecutivo, ic.ca_hbls, ic.ca_sucursal, im.ca_fchembarque, ic.ca_fchantecedentes, ea1.ca_dias::int as ca_numdias, ea2.ca_dias::int as ca_numdias2, ea3.ca_dias::int as ca_numdias3 ";
-    $query.= "from vi_inoclientes_sea ic inner join vi_inomaestra_sea im on ic.ca_referencia = im.ca_referencia inner join tb_ciudades cd on im.ca_origen = cd.ca_idciudad ";
-    $query.= "left join tb_entrega_antecedentes ea1 on ea1.ca_idtrafico::text = cd.ca_idtrafico::text and ea1.ca_idciudad::text = '999-9999'  and ea1.ca_modalidad = '' ";
-    $query.= "left join tb_entrega_antecedentes ea2 on ea2.ca_idtrafico::text = cd.ca_idtrafico::text and ea2.ca_idciudad::text = im.ca_origen::text ";
-    $query.= "left join tb_entrega_antecedentes ea3 on ea3.ca_idtrafico::text = cd.ca_idtrafico::text and ea3.ca_modalidad::text = im.ca_modalidad::text ";
+    $query = "select distinct substr(im.ca_referencia::text, 16, 2)::integer + 2000 AS ca_ano, substr(im.ca_referencia::text, 8, 2) AS ca_mes, substr(im.ca_referencia::text, 5, 2) AS ca_trafico, im.ca_referencia, t1.ca_nombre AS ca_traorigen, c1.ca_ciudad AS ca_ciuorigen, t2.ca_nombre AS ca_tradestino, c2.ca_ciudad AS ca_ciudestino, im.ca_modalidad, im.ca_estado, im.ca_tipo, im.ca_fchrecibido, im.ca_propiedades, im.ca_fchenvio as ca_envantecedentes, ";
+    $query.= "ic.ca_idcliente, id.ca_nombre AS ca_compania, rp.ca_consecutivo, ic.ca_hbls, su.ca_nombre as ca_sucursal, im.ca_fchembarque, ic.ca_fchantecedentes, ea1.ca_dias::int as ca_numdias, ea2.ca_dias::int as ca_numdias2, ea3.ca_dias::int as ca_numdias3 ";
+    $query.= "from tb_reportes rp join tb_inoclientes_sea ic on rp.ca_idreporte = ic.ca_idreporte join tb_inomaestra_sea im on ic.ca_referencia::text = im.ca_referencia::text join ids.tb_ids id on ic.ca_idcliente = id.ca_id ";
+    $query.= "join control.tb_usuarios us on rp.ca_login = us.ca_login join control.tb_sucursales su on us.ca_idsucursal = su.ca_idsucursal join tb_ciudades c1 on im.ca_origen::text = c1.ca_idciudad::text ";
+    $query.= "join tb_ciudades c2 on im.ca_destino::text = c2.ca_idciudad::text join tb_traficos t1 on c1.ca_idtrafico::text = t1.ca_idtrafico::text join tb_traficos t2 on c2.ca_idtrafico::text = t2.ca_idtrafico::text ";
+    $query.= "left join tb_entrega_antecedentes ea1 on ea1.ca_idtrafico::text = c1.ca_idtrafico::text and ea1.ca_idciudad::text = '999-9999' and ea1.ca_modalidad = '' ";
+    $query.= "left join tb_entrega_antecedentes ea2 on ea2.ca_idtrafico::text = c1.ca_idtrafico::text and ea2.ca_idciudad::text = im.ca_origen::text ";
+    $query.= "left join tb_entrega_antecedentes ea3 on ea3.ca_idtrafico::text = c1.ca_idtrafico::text and ea3.ca_modalidad::text = im.ca_modalidad::text ";
     $query.= "where im.ca_impoexpo = 'Importación' and $ano and $mes and $trafico and $traorigen and $ciudestino and ".str_replace("\\","", str_replace("\"","'",$casos))." and $sucursal ";
-    $query.= "order by im.ca_ano, im.ca_mes, im.ca_referencia";
+    $query.= "order by ca_ano, ca_mes, ca_referencia";
     //die($query);
     if (!$rs->Open($query)) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
