@@ -288,11 +288,10 @@ class confirmacionesActions extends sfActions {
                         UNION SELECT DISTINCT d.ca_usucreado as ca_usuario FROM tb_dianclientes d INNER JOIN tb_inoclientes_sea ics ON d.ca_idinocliente = ics.ca_idinocliente WHERE ics.ca_referencia = '" . $ca_referencia . "'
                         UNION SELECT DISTINCT d.ca_usuactualizado as ca_usuario FROM tb_dianclientes d INNER JOIN tb_inoclientes_sea ics ON d.ca_idinocliente = ics.ca_idinocliente WHERE ics.ca_referencia = '" . $ca_referencia . "'
                         UNION SELECT DISTINCT ca_usucreado as ca_usuario FROM tb_inomaestra_sea WHERE ca_referencia = '" . $ca_referencia . "'
-                        UNION (Select distinct(ca_login) from control.tb_usuarios where ca_idsucursal in (
-                                select ca_idsucursal from control.tb_usuarios where ca_login in (
-                                    select ca_vendedor from vi_clientes_reduc where ca_idcliente in (
-                                        select ca_idcliente from tb_inoclientes_sea where ca_referencia='" . $ca_referencia . "' ) and ca_propiedades like 'cuentaglobal=true%')) 
-                    and ca_departamento = 'Cuentas Globales'))";
+                        UNION (SELECT DISTINCT(ca_login) FROM control.tb_usuarios WHERE ca_idsucursal in (
+                                SELECT ca_idsucursal FROM control.tb_usuarios WHERE ca_login in (
+                                    SELECT ca_vendedor FROM vi_clientes_reduc WHERE ca_idcliente in (
+                                        SELECT ca_idcliente FROM tb_inoclientes_sea WHERE ca_referencia='" . $ca_referencia . "' ) and ca_propiedades like '%cuentaglobal=true%')) and ca_departamento = 'Cuentas Globales' and ca_activo = true))";
 
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
