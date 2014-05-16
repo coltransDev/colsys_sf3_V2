@@ -737,6 +737,22 @@ class traficosActions extends sfActions {
 
          $status->save($conn);
 
+         /*
+          * Actualuzación de la ETA en Referencia Ma?itima
+          */
+         if ( $status->getCaIdetapa() == "88888")  { // Si la etapa es Status (8888), entonces revisa si hay cambio de ETA y la actualiza en la referencia
+             $numref = $reporte->getNumReferencia();
+             if ($numref) {
+                 $master = Doctrine::getTable("InoMaestraSea")->find($numref);
+                 $this->forward404Unless($master);
+                 if ($status->getCaFchllegada() && $master->getCaFcharribo() != $status->getCaFchllegada()){
+                     $fchllegada = $status->getCaFchllegada();
+                     $master->setCaFcharribo($fchllegada);
+                     $master->save();
+                 }
+             }
+         }
+         
          $cc = array();
          for ($i = 0; $i < NuevoStatusForm::NUM_CC; $i++) {
             if ($request->getParameter("cc_" . $i)) {
