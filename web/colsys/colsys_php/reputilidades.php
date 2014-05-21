@@ -199,7 +199,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
     }
     $condicion.= " ca_mes::text like '$mes' and ca_ano::text = '$ano' and iu.ca_traorigen like '%$traorigen%' and iu.ca_modalidad like '%$modalidad%' and " . str_replace("\"", "'", $casos);
 
-    // die($condicion);
+    // die("select $condicion");
     $sql="select $condicion";
     $co = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
     if (!$rs->Open($sql)) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
@@ -384,35 +384,34 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
         $dat_imp = '';
         $tot_mes = 0;
         while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
-            if ($cli_mem != $rs->Value('ca_idcliente')) {
-                echo "<TR>";
-                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 11px;'>" . number_format($rs->Value('ca_idcliente')) . "</TD>";
-                echo "  <TD Class=invertir style='font-weight:bold; font-size: 11px;' COLSPAN=10>" . $rs->Value('ca_compania') . "</TD>";
-                echo "</TR>";
-                $cli_mem = $rs->Value('ca_idcliente');
-                $tot_fac = 0;
-                $tot_utl = 0;
-                $tot_sob = 0;
-            }
-            if ($hbl_mem == $rs->Value('ca_hbls')) {
-                $sub_sob+= $rs->Value('ca_valor_ded');
-                $rs->MoveNext();
-                continue;
-            }
-
             if ($mes_mem != $rs->Value('ca_mes') or $ano_mem != $rs->Value('ca_ano')) {
                 $ano_mem = $rs->Value('ca_ano');
                 $mes_mem = $rs->Value('ca_mes');
-                $dat_imp = $meses[$rs->Value('ca_mes')] . "/" . $rs->Value('ca_ano');
-            } else {
-                $dat_imp = '';
+                echo "<TR>";
+                echo "  <TD Class=invertir style='font-weight:bold; font-size: 11px;' COLSPAN=11>" . $meses[$rs->Value('ca_mes')] . "/" . $rs->Value('ca_ano') . "</TD>";
+                echo "</TR>";
             }
+            if ($cli_mem != $rs->Value('ca_idcliente')) {
+                echo "<TR>";
+                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 11px;'>" . number_format($rs->Value('ca_idalterno')) . "</TD>";
+                echo "  <TD Class=invertir style='font-weight:bold; font-size: 11px;' COLSPAN=10>" . $rs->Value('ca_compania') . "</TD>";
+                echo "</TR>";
+                $cli_fac = 0;
+                $cli_utl = 0;
+                $cli_sob = 0;
+            }
+            $par_sob+= $rs->Value('ca_valor_ded');
+            if ($hbl_mem == $rs->Value('ca_hbls')) {
+                $rs->MoveNext();
+                continue;
+            }
+            $cli_mem = $rs->Value('ca_idcliente');
             $utl_cbm = ($rs->Value('ca_facturacion_r') - $rs->Value('ca_deduccion_r') - $rs->Value('ca_utilidad_r')) / $rs->Value('ca_volumen_r');
             $back_col = ($rs->Value('ca_estado') == 'Provisional') ? " background: #CCCC99" : (($rs->Value('ca_estado') == 'Abierto') ? " background: #CCCCCC" : " background: #F0F0F0");
             $back_col = ($utl_cbm <= 0) ? " background: #FF6666" : $back_col;
             echo "<TR>";
             if ($ref_mem != $rs->Value('ca_referencia')) {
-                echo "  <TD Class=mostrar style='font-weight:bold; font-size: 9px;$back_col'>$dat_imp</TD>";
+                echo "  <TD Class=mostrar style='font-weight:bold; font-size: 9px;$back_col'></TD>";
                 echo "  <TD Class=listar  style='font-weight:bold; font-size: 9px;$back_col' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'" . substr($back_col, 14, 7) . "');\" onclick='javascript:window.open(\"inosea.php?boton=Consultar\&id=" . $rs->Value('ca_referencia') . "\");'>" . $rs->Value('ca_referencia') . "</TD>";
                 echo "  <TD Class=listar  style='font-size: 9px;$back_col'>" . $rs->Value('ca_estado') . "</TD>";
                 echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . $rs->Value('ca_sucursal') . "</TD>";
@@ -426,13 +425,28 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
             echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . number_format($rs->Value('ca_volumen_r'),2) . "</TD>";
             echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . number_format($rs->Value('ca_valor')) . "</TD>";
             echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . number_format($rs->Value('ca_volumen') * $utl_cbm) . "</TD>";
-            echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . number_format($rs->Value('ca_valor_ded')) . "</TD>";
+            echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . number_format($par_sob) . "</TD>";
             echo "</TR>";
             $hbl_mem = $rs->Value('ca_hbls');
+            // Totales x Cliente
+            $cli_fac+= $rs->Value('ca_valor');
+            $cli_utl+= ( $rs->Value('ca_volumen') * $utl_cbm);
+            $cli_sob+= $par_sob;
+            // Totales x Mes
             $sub_fac+= $rs->Value('ca_valor');
             $sub_utl+= ( $rs->Value('ca_volumen') * $utl_cbm);
-            $sub_sob+= $rs->Value('ca_valor_ded');
+            $sub_sob+= $par_sob;
+            $par_sob = 0;
             $rs->MoveNext();
+            if ($cli_mem != $rs->Value('ca_idcliente') or $rs->Eof()) {
+                echo "<TR>";
+                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;' COLSPAN=8>Total Cliente</TD>";
+                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($cli_fac) . "</TD>";
+                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($cli_utl) . "</TD>";
+                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($cli_sob) . "</TD>";
+                echo "</TR>";
+                $ref_mem = '';
+            }
             if ($mes_mem != $rs->Value('ca_mes') or $ano_mem != $rs->Value('ca_ano') or $rs->Eof()) {
                 echo "<TR>";
                 echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;' COLSPAN=8>Sub-Totales</TD>";
@@ -448,15 +462,12 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
                 $tot_sob+= $sub_sob;
                 $sub_fac = $sub_utl = $sub_sob = 0;
             }
-            if ($cli_mem != $rs->Value('ca_idcliente') or $rs->Eof()) {
-                echo "<TR HEIGHT=5>";
-                echo "  <TD Class=titulo COLSPAN=11></TD>";
-                echo "</TR>";
+            if ($rs->Eof()) {
                 echo "<TR>";
-                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;' COLSPAN=8>Totales</TD>";
-                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($tot_fac) . "</TD>";
-                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($tot_utl) . "</TD>";
-                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($tot_sob) . "</TD>";
+                echo "  <TD Class=titulo style='text-align:right; font-weight:bold; font-size: 10px;' COLSPAN=8>TOTAL GENERAL</TD>";
+                echo "  <TD Class=titulo style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($tot_fac) . "</TD>";
+                echo "  <TD Class=titulo style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($tot_utl) . "</TD>";
+                echo "  <TD Class=titulo style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($tot_sob) . "</TD>";
                 echo "</TR>";
             }
         }
