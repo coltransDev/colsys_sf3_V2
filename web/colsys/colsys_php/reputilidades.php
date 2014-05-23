@@ -396,6 +396,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
                 echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 11px;'>" . number_format($rs->Value('ca_idalterno')) . "</TD>";
                 echo "  <TD Class=invertir style='font-weight:bold; font-size: 11px;' COLSPAN=10>" . $rs->Value('ca_compania') . "</TD>";
                 echo "</TR>";
+                $ref_mem = "";
                 $cli_fac = 0;
                 $cli_utl = 0;
                 $cli_sob = 0;
