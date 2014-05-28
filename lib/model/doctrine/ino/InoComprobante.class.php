@@ -15,10 +15,14 @@ class InoComprobante extends BaseInoComprobante
 
     const ABIERTO = 0;
     const PARA_TRANSFERIR = 1;
-    const TRANSFERIDO = 1;
+    const TRANSFERIDO = 5;
+    const ERROR_TRANSFERIDO = 6;
+    const ANULADO = 8;
 
     const IDTIPO_F_INO = 1;
     const IDTIPO_P_INO = 2;
+    
+    const IDTIPO_F_INO_COLOTM_E = 14;
     
     const IDTIPO_V_INO = 11;
     const IDTIPO_R_INO = 12;
@@ -55,6 +59,15 @@ class InoComprobante extends BaseInoComprobante
             }
         }        
         return $total;
+    }
+    
+    public function anular($iduser)
+    {
+        $this->setCaFchanulado(date("Y-m-d H:i:s"));
+        $this->setCaUsuanulado($iduser);
+        $this->setCaEstado(self::ANULADO);
+        $this->save();
+        
     }
     
 }
