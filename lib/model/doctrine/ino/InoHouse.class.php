@@ -12,4 +12,97 @@
  */
 class InoHouse extends BaseInoHouse
 {
+    private $master=null;
+    private $comprobantes=null;
+    private $facturas=null;
+    private $rc=null;
+    private $comisiones=null;
+    
+    function calculateFee()
+    {
+        if($this->master==null)
+            $this->master=$this->getInoMaster();
+        
+        $sql="SELECT fun_getcomision('".$this->getCaIdcliente()."', '".$this->master->getCaReferencia()."', 'Coltrans'::text) AS ca_porcentaje";
+        $con = Doctrine_Manager::getInstance()->connection();        
+        $st = $con->execute($sql);
+        $porcentaje = $st->fetchColumn();
+        //print_r( $porcentaje);
+        //exit;
+        
+        $costo=$this->master->getInoViCosto()->getCaValor();
+        $ingreso=$this->master->getInoViIngreso()->getCaValor();
+        $deduccion=$this->master->getInoViDeduccion()->getCaValor();
+        $utilidad=$this->master->getInoViUtilidad()->getCaValor();
+        $ino=$ingreso+$utilidad-$costo-$deduccion;
+        $comision=($ino * ($porcentaje/100)  );
+        return $comision;
+    }
+    
+    function getCosto()
+    {
+        if($this->master==null)
+            $this->master=$this->getInoMaster();
+        return $this->master->getInoViCosto()->getCaValor();
+    }
+    function getIngreso()
+    {
+        if($this->master==null)
+            $this->master=$this->getInoMaster();
+        return $this->master->getInoViIngreso()->getCaValor();
+    }
+    function getUtilidad()
+    {
+        if($this->master==null)
+            $this->master=$this->getInoMaster();
+        return $this->master->getInoViUtilidad()->getCaValor();
+    }
+    function getDeduccion()
+    {
+        if($this->master==null)
+            $this->master=$this->getInoMaster();
+        return $this->master->getInoViDeduccion()->getCaValor();
+    }
+    
+    function getComprobantes()
+    {        
+        $this->comprobantes=$this->getInoComprobante();
+        foreach($this->comprobantes as $c)
+        {
+            switch($c->getCaIdtipo())
+            {
+                case "11":
+                    $this->comisiones[]=$c;
+                    break;
+                case "12":
+                    $this->rc[]=$c;
+                    break;
+                default :
+                    $this->facturas[]=$c;
+                    
+            }
+        }
+    }
+    
+    function getFacturas()
+    {
+        if($this->comprobantes==null)
+            $this->getComprobantes ();
+        return $this->facturas;
+    }
+    
+    function getReciboCaja()
+    {
+        if($this->comprobantes==null)
+            $this->getComprobantes ();
+        return $this->rc;
+    }
+    
+    function getComisiones()
+    {
+        if($this->comprobantes==null)
+            $this->getComprobantes ();
+        return $this->comisiones;
+    }
+    
 }
