@@ -13,6 +13,7 @@
 class InoMaster extends BaseInoMaster
 {
     private $vlrFacturado = null;
+    private $vlrNotasCredito = null;
     private $vlrDeducciones = null;
     private $vlrCosto = null;
     private $vlrSobreventa = null;
@@ -22,13 +23,30 @@ class InoMaster extends BaseInoMaster
             $this->vlrFacturado = Doctrine::getTable("InoComprobante")
                        ->createQuery("c")
                        ->innerJoin("c.InoHouse h")
+                       ->innerJoin("c.InoTipoComprobante t")
                        ->innerJoin("h.InoMaster m")
                        ->select("SUM(c.ca_valor*c.ca_tcambio)")
-                       ->addWhere("m.ca_idmaster = ? and c.ca_idtipo not in(11,12)", $this->getCaIdmaster())
+                       ->addWhere("m.ca_idmaster = ? ", $this->getCaIdmaster())
+                       ->addWhere("t.ca_tipo =?", "F")
+                       ->addWhere("c.ca_estado =?", InoComprobante::TRANSFERIDO)
                        ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)        
                        ->execute();
         }
-        return $this->vlrFacturado;
+        
+        if( $this->vlrNotasCredito===null ){
+            $this->vlrNotasCredito = Doctrine::getTable("InoComprobante")
+                       ->createQuery("c")
+                       ->innerJoin("c.InoHouse h")
+                       ->innerJoin("c.InoTipoComprobante t")
+                       ->innerJoin("h.InoMaster m")
+                       ->select("SUM(c.ca_valor*c.ca_tcambio)")
+                       ->addWhere("m.ca_idmaster = ? ", $this->getCaIdmaster())
+                       ->addWhere("t.ca_tipo =?", "C")
+                       ->addWhere("c.ca_estado =?", InoComprobante::TRANSFERIDO)
+                       ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)        
+                       ->execute();
+        }
+        return $this->vlrFacturado-$this->vlrNotasCredito;
     }
 
     public function getVlrDeducciones(){
