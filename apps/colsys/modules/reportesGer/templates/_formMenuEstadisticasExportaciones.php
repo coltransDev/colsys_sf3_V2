@@ -138,8 +138,7 @@ $idlinea = $sf_data->getRaw("idlinea");
                                                             }
                                                         })
                                                     ]
-                                                }                                                       
-                                            ]
+                                                }]
                                         }]
                                     }]
                                 }]
