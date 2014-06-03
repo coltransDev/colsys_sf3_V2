@@ -1709,5 +1709,78 @@ class reportesGerActions extends sfActions {
         
     }
     
+    public function executeCargaPorSucursal(sfWebRequest $request) {
+        
+        $this->aa = $request->getParameter("aa");
+        $this->nmes = $request->getParameter("nmes");
+        $this->mes = $request->getParameter("mes");
+        $this->idpais_origen = $request->getParameter("idpais_origen");
+        $this->pais_origen = $request->getParameter("pais_origen");
+        $this->idciuorigen = $request->getParameter("idciuorigen");
+        $this->ciuorigen = $request->getParameter("ciuorigen");
+        $this->idcliente = $request->getParameter("idcliente");
+        $this->cliente = $request->getParameter("Cliente");
+        $this->idsucursal = $request->getParameter("idsucursal");
+        $this->sucursal = $request->getParameter("sucursal");
+        $this->estado = $request->getParameter("estado");
+        $this->opcion = $request->getParameter("opcion");
+        
+        if($this->opcion){
+            $andWhere = "";        
+            if ($mm) {
+                if (count($mm) > 0) {
+                    $mes = "";
+                    for ($i = 0; $i < count($mm); $i++) {
+                        $mes.= "'" . $mm[$i] . "',";
+                    }
+                    if (strpos($mes, 'Todos los meses') != true)
+                        $where.= " and ca_mes IN (" . substr($mes, 0, -1) . ")";
+                }
+            }
+            if ($this->pais_origen){
+                $andWhere.= " and ca_traorigen = '".$this->pais_origen."'";
+            }
+            if ($this->ciuorigen){
+                $andWhere.= " and ca_ciuorigen = '".$this->ciuorigen."'";
+            }
+            if ($this->idcliente){
+                $andWhere.=" and ca_compania like '%" . $this->cliente . "%'";
+            }
+            if ($this->idsucursal){
+                if($this->idsucursal != "999")
+                    $andWhere.=" and ca_sucursal like '%" . $this->sucursal . "%'";
+            }
+            if ($this->estado){
+                $andWhere.= " and ca_estado = '".$this->estado."'";
+            }
+
+            $sql = "SELECT ca_sucursal, ca_ano, ca_mes, ca_traorigen, ca_ciuorigen, (CASE WHEN ca_modalidad = 'COLOADING' THEN 'LCL' ELSE ca_modalidad END) as ca_modalidad, ca_referencia, ca_hbls, ca_compania, ca_cbm, ca_teus, ca_estado "               
+                   . "FROM vi_repgerencia_sea rg "
+                   . "where ca_ano = '".$this->aa."' $andWhere" ; 
+
+            $con = Doctrine_Manager::getInstance()->connection();
+            $st = $con->execute($sql);
+            $this->resul = $st->fetchAll();
+
+            //echo "<pre>";print_r($this->data);echo "</pre>";
+            
+            $this->fcl = array();
+            $this->lcl = array();
+            
+            foreach ($this->resul as $r) {                
+                
+                if($r["ca_modalidad"]=="FCL"){
+                    $this->fcl[$r["ca_sucursal"]][$r["ca_estado"]][$r["ca_traorigen"]][$r["ca_ciuorigen"]][$r["ca_compania"]]["teus"]+=$r["ca_teus"];
+                    $this->fcl[$r["ca_sucursal"]][$r["ca_estado"]][$r["ca_traorigen"]][$r["ca_ciuorigen"]][$r["ca_compania"]]["hbls"]++;                    
+                }
+                
+                if($r["ca_modalidad"]=="LCL"){
+                    $this->lcl[$r["ca_sucursal"]][$r["ca_estado"]][$r["ca_traorigen"]][$r["ca_ciuorigen"]][$r["ca_compania"]]["hbls"]++;
+                    $this->lcl[$r["ca_sucursal"]][$r["ca_estado"]][$r["ca_traorigen"]][$r["ca_ciuorigen"]][$r["ca_compania"]]["cbm"]+=$r["ca_cbm"];
+                }
+            }            
+        }
+    }
+    
 }
 ?>

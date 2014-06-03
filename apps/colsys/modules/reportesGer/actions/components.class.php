@@ -169,5 +169,38 @@ class reportesGerComponents extends sfComponents
         $this->estado = $this->getRequestParameter("estado");
         
     }
+    public function executeFormMenuCargaPorSucursal(){
+        
+        $response = sfContext::getInstance()->getResponse();
+        $response->addJavaScript("extExtras/SuperBoxSelect", 'last');
+        
+        $this->meses = array();        
+        $this->meses[]=array("valor"=>"a-Enero"       ,"id"=>1);
+        $this->meses[]=array("valor"=>"b-Febrero"     ,"id"=>2);
+        $this->meses[]=array("valor"=>"c-Marzo"       ,"id"=>3);
+        $this->meses[]=array("valor"=>"d-Abril"       ,"id"=>4);
+        $this->meses[]=array("valor"=>"e-Mayo"        ,"id"=>5);
+        $this->meses[]=array("valor"=>"f-Junio"       ,"id"=>6);
+        $this->meses[]=array("valor"=>"g-Julio"       ,"id"=>7);
+        $this->meses[]=array("valor"=>"h-Agosto"      ,"id"=>8);
+        $this->meses[]=array("valor"=>"i-Septiembre"  ,"id"=>9);
+        $this->meses[]=array("valor"=>"j-Octubre"     ,"id"=>10);
+        $this->meses[]=array("valor"=>"k-Noviembre"   ,"id"=>11);
+        $this->meses[]=array("valor"=>"l-Diciembre"   ,"id"=>12);
+        
+        $this->aa = $this->getRequestParameter("aa");
+        $this->nmes = $this->getRequestParameter("nmes");
+        $this->mes = $this->getRequestParameter("mes");
+        $this->idpais_origen = $this->getRequestParameter("idpais_origen");
+        $this->pais_origen = $this->getRequestParameter("pais_origen");
+        $this->idciuorigen = $this->getRequestParameter("idciuorigen");
+        $this->ciuorigen = $this->getRequestParameter("ciuorigen");
+        $this->idcliente = $this->getRequestParameter("idcliente");
+        $this->cliente = $this->getRequestParameter("Cliente");
+        $this->idsucursal = $this->getRequestParameter("idsucursal");
+        $this->sucursal = $this->getRequestParameter("sucursal");
+        $this->estado = $this->getRequestParameter("estado");        
+        
+    }
 }
 ?>
