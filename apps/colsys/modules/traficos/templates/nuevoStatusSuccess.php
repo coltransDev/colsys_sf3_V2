@@ -4,6 +4,7 @@ use_helper("MimeType");
 
 $reporte = $sf_data->getRaw("reporte");
 $files = $sf_data->getRaw("files");
+$archivos = $sf_data->getRaw("archivos");
 $att = $sf_data->getRaw("att");
 $reporte_incompleto = $sf_data->getRaw("reporte_incompleto");
 
@@ -177,39 +178,38 @@ $folder = $reporte->getDirectorioBase();
                 mensaje.value = '';
                 break;
         }
-    }
 
-
-    switch (value){
-        <?
-        foreach ($etapas as $etapa) {
-            if ($etapa->getCaIntro()) {
-            ?>
-                case '<?= $etapa->getCaIdetapa() ?>':
-                    var val = '<?= str_replace("\n", "<br />", $etapa->getCaIntro()) ?>';
-                    document.form1.introduccion.value = val.split("<br />").join("\n");
-                    break;
+        switch (value){
             <?
+            foreach ($etapas as $etapa) {
+                if ($etapa->getCaIntro()) {
+                ?>
+                    case '<?= $etapa->getCaIdetapa() ?>':
+                        var val = '<?= str_replace("\n", "<br />", $etapa->getCaIntro()) ?>';
+                        document.form1.introduccion.value = val.split("<br />").join("\n");
+                        break;
+                <?
+                }
             }
-        }
 
-        if ($reporte->getCaImpoexpo() == Constantes::EXPO) {
+            if ($reporte->getCaImpoexpo() == Constantes::EXPO) {
+                ?>
+                    case 'EECEM':
+                        var val = '<?= str_replace("\n", "<br />", $saludoAviso) ?>';
+                        document.form1.introduccion.value = val.split("<br />").join("\n");
+                        break;
+                    case 'EEETD':
+                        var val = '<?= str_replace("\n", "<br />", $saludoAviso) ?>';
+                        document.form1.introduccion.value = val.split("<br />").join("\n");
+                        break;
+                <?
+            }
             ?>
-                case 'EECEM':
-                    var val = '<?= str_replace("\n", "<br />", $saludoAviso) ?>';
-                    document.form1.introduccion.value = val.split("<br />").join("\n");
-                    break;
-                case 'EEETD':
-                    var val = '<?= str_replace("\n", "<br />", $saludoAviso) ?>';
-                    document.form1.introduccion.value = val.split("<br />").join("\n");
-                    break;
-            <?
+            default:
+                var val = '<?= str_replace("\n", "<br />", $textos['saludo']) ?>';
+                document.form1.introduccion.value = val.split("<br />").join("\n");
+                break;
         }
-        ?>
-        default:
-            var val = '<?= str_replace("\n", "<br />", $textos['saludo']) ?>';
-            document.form1.introduccion.value = val.split("<br />").join("\n");
-            break;
     }
 
     if (type == "1"){
@@ -882,6 +882,22 @@ $folder = $reporte->getDirectorioBase();
                                 <input type="checkbox" name="attachments[]" value="<?= base64_encode(basename($file)) ?>"  <?= $option ?> />
                                 <?
                                 echo mime_type_icon(basename($file)) . " " . link_to(basename($file), url_for("traficos/fileViewer?idreporte=" . $reporte->getCaIdreporte() . "&file=" . base64_encode(basename($file))), array("target" => "blank")) . "<br />";
+                            }
+                        }
+                        
+                        if (count($archivos) > 0) {
+                            foreach ($archivos as $file) {
+                                $filename = $file->getCaNombre();
+                                if (array_search(base64_encode(basename($filename)), $att) !== false) {
+                                    $option = 'checked="checked"';
+                                } else {
+                                    $option = '';
+                                }
+                                ?>
+                                
+                                <input type="checkbox" name="attachments1[]" value="<?= base64_encode(basename($filename)) ?>"  <?= $option ?> />
+                                <?
+                                echo mime_type_icon(basename($filename)) . " " . link_to(basename($filename), url_for("traficos/fileViewer?idreporte=" . $reporte->getCaIdreporte() . "&gestDoc=true&file=" . base64_encode(basename($filename))), array("target" => "blank")) . "<br />";
                             }
                         }
                         ?>
