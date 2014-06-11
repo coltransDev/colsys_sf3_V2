@@ -4,15 +4,9 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
-
-
-
-
 ?>
 
 <script type="text/javascript">
-
 
 PanelPreviewTicket = function( config ){
     Ext.apply(this, config);
@@ -31,7 +25,6 @@ PanelPreviewTicket = function( config ){
     }
 
     this.readOnly = true;
-    
     
     this.preview = new Ext.Panel({
         //id: 'preview',
@@ -78,7 +71,7 @@ PanelPreviewTicket = function( config ){
         clear: function(){
             this.body.update('');
             var items = this.topToolbar.items;
-            tems.get('edit-'+idcomponent).disable();
+            items.get('edit-'+idcomponent).disable();
             items.get('tab-'+idcomponent).disable();
             items.get('print-'+idcomponent).disable();
             items.get('percent-'+idcomponent).disable();
@@ -147,6 +140,15 @@ PanelPreviewTicket = function( config ){
     if( btn ){
         btn.handler = this.onDeleteUser;
     }
+    
+    this.docsPanel = new PanelDocumentos({
+                                id: 'docs-panel-'+idcomponent,
+                                idticket: null,
+                                //folder: this.folder,
+                                closable: false,
+                                title: "Documentos",
+                                height: 400
+                            });
 
     PanelPreviewTicket.superclass.constructor.call(this, {
         
@@ -154,7 +156,6 @@ PanelPreviewTicket = function( config ){
         enableTabScroll: true,
         deferredRender: false,
         autoScroll: true,
-        
         
         items: [
             this.preview,
@@ -164,6 +165,7 @@ PanelPreviewTicket = function( config ){
         ]
     });
     var panel = this;
+    var index = panel.items.length;
     if( this.idticket ){
         Ext.Ajax.request({
             url: "<?=url_for("pm/datosTicket")?>",
@@ -182,6 +184,9 @@ PanelPreviewTicket = function( config ){
         });
     }
     
+    if (this.department == "Auditoría"){        // Habilita la pestaña de importación de documentos, para auditoría
+        panel.insert(index, this.docsPanel);
+    }
 
 };
 
@@ -206,8 +211,8 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
          });
 
     },
+    
     onDeleteUser: function(){
-
         var fv = this.dataView;
         records =  fv.getSelectedRecords();
         var storeView = this.store;
@@ -229,12 +234,12 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
                                 Ext.Msg.alert("Success", "Se ha eliminado el usuario");
                             }
                         });
-
                     }
                 });
             }
         }
     },
+    
     searchKb: function( record ){
        
        var win = new BusquedaIssueWindow( {idticket: this.idticket,
@@ -263,6 +268,11 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
         this.usersPanel.store.setBaseParam("idticket",record.data.idticket );
         this.usersPanel.store.reload();
         this.usersPanel.idticket = record.data.idticket;
+
+        this.docsPanel.setDataUrl("<?=url_for("pm/datosDocumentosTicket")?>");
+        this.docsPanel.store.setBaseParam("idticket",record.data.idticket );
+        this.docsPanel.store.reload();
+        this.docsPanel.idticket = record.data.idticket;
 
         responsePanel = this.responses;
 
@@ -317,7 +327,6 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
     },
 
     openTab : function(){
-        
         var idticket = this.idticket;
 
         var newComponent = new Ext.Panel({
@@ -330,8 +339,8 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
                                           });
         Ext.getCmp('tab-panel').add(newComponent);
         Ext.getCmp('tab-panel').setActiveTab(newComponent);
-    }
-    ,
+    },
+
     newResponse: function(){
         var idticket = this.idticket;
         
@@ -362,12 +371,8 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
                 percentage: this.record.data.percentage
             });
             win.show();
-
-
         }
     }
-
-   
 
 });
 

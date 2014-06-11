@@ -53,7 +53,7 @@ EditarTicketWindow = function( config ) {
         resizable: false,
         plain:true,
         modal: true,        
-        y: 0,
+        y: 100,
         autoScroll: true,
         closeAction: 'close',
         buttons: this.buttons,

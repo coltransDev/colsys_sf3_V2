@@ -7,7 +7,7 @@ foreach( $departamentos as $departamento ){
 	}   
 ?>
 	{
-		text:'<?=utf8_encode($departamento->getCaNombre())?>',
+		text:'<?=$departamento->getCaNombre()?>',
 		leaf:false,
 		children:[
             <?
@@ -61,7 +61,8 @@ foreach( $departamentos as $departamento ){
                                                         actionTicket: 'Abierto',
                                                         assignedTo: '<?=$usuario->getCaLogin()?>',
                                                         idproject: '<?=$proyecto->getCaIdproject()?>',
-                                                        project: '<?=$proyecto->getCaName()?>'
+                                                        project: '<?=$proyecto->getCaName()?>',
+                                                        department:'<?=$departamento->getCaNombre()?>'
                                                     },
                                                     {
                                                         text: 'Tickets asignados',
@@ -69,7 +70,8 @@ foreach( $departamentos as $departamento ){
                                                         action: 'tickets',
                                                         assignedTo: '<?=$usuario->getCaLogin()?>',
                                                         idproject: '<?=$proyecto->getCaIdproject()?>',
-                                                        project: '<?=$proyecto->getCaName()?>'
+                                                        project: '<?=$proyecto->getCaName()?>',
+                                                        department:'<?=$departamento->getCaNombre()?>'
                                                     }
                                                 ]
                                             }
@@ -132,7 +134,8 @@ foreach( $departamentos as $departamento ){
                                         actionTicket: 'Abierto',
                                         assignedTo: '<?=$usuario->getCaLogin()?>',
                                         idgroup: '<?=$grupo->getCaIdgroup()?>',
-                                        group: '<?=$grupo->getCaName()?>'
+                                        group: '<?=$grupo->getCaName()?>',
+                                        department:'<?=$departamento->getCaNombre()?>'
                                     },
                                     {
                                         text: 'Tickets asignados',
@@ -140,7 +143,8 @@ foreach( $departamentos as $departamento ){
                                         action: 'tickets',
                                         assignedTo: '<?=$usuario->getCaLogin()?>',
                                         idgroup: '<?=$grupo->getCaIdgroup()?>',
-                                        group: '<?=$grupo->getCaName()?>'
+                                        group: '<?=$grupo->getCaName()?>',
+                                        department:'<?=$departamento->getCaNombre()?>'
                                     },
                                     {
                                         text: 'Calendario',
@@ -148,7 +152,8 @@ foreach( $departamentos as $departamento ){
                                         action: 'calendar',
                                         user: '<?=$usuario->getCaLogin()?>',
                                         idgroup: '<?=$grupo->getCaIdgroup()?>',
-                                        group: '<?=$grupo->getCaName()?>'
+                                        group: '<?=$grupo->getCaName()?>',
+                                        department:'<?=$departamento->getCaNombre()?>'
                                     }
                                 ]
                             }
@@ -163,7 +168,8 @@ foreach( $departamentos as $departamento ){
                         action: 'tickets',
                         reportedBy: '<?=$user->getUserId()?>',
                         idgroup: '<?=$grupo->getCaIdgroup()?>',
-                        group: '<?=$grupo->getCaName()?>'
+                        group: '<?=$grupo->getCaName()?>',
+                        department:'<?=$departamento->getCaNombre()?>'
                     },
                     {
                         text:'Tickets asignados a mi',
@@ -172,7 +178,8 @@ foreach( $departamentos as $departamento ){
                         actionTicket: 'Abierto',
                         assignedTo: '<?=$user->getUserId()?>',
                         idgroup: '<?=$grupo->getCaIdgroup()?>',
-                        group: '<?=$grupo->getCaName()?>'
+                        group: '<?=$grupo->getCaName()?>',
+                        department:'<?=$departamento->getCaNombre()?>'
                     },
                     {
                         text:'Tickets abiertos del área',
@@ -180,7 +187,8 @@ foreach( $departamentos as $departamento ){
                         action: 'tickets',
                         actionTicket: 'Abierto',
                         idgroup: '<?=$grupo->getCaIdgroup()?>',
-                        group: '<?=$grupo->getCaName()?>'
+                        group: '<?=$grupo->getCaName()?>',
+                        department:'<?=$departamento->getCaNombre()?>'
                     },
                     {
                         text:'Todos los tickets del área',
@@ -188,7 +196,8 @@ foreach( $departamentos as $departamento ){
                         action: 'tickets',
                         actionTicket: 'Todos',
                         idgroup: '<?=$grupo->getCaIdgroup()?>',
-                        group: '<?=$grupo->getCaName()?>'
+                        group: '<?=$grupo->getCaName()?>',
+                        department:'<?=$departamento->getCaNombre()?>'
                     }
                 ]
 			}

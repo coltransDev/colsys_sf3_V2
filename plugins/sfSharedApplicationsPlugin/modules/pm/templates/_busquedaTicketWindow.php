@@ -17,7 +17,7 @@ BusquedaTicketWindow = function( config ) {
 
     this.items = [
         new PanelBusquedaTicket({height:350,
-                        y:10,
+                        y:100,
                         id: 'ticket-search-grid',
                         opener: this.opener,
                         autoload: false
@@ -36,14 +36,12 @@ BusquedaTicketWindow = function( config ) {
     id: 'search-ticket-option',
     lazyRender:true,
     listClass: 'x-combo-list-small',
-    value: "texto",
+    value: "idticket",
     store : [
-        ["texto","Entre los textos"],
         ["idticket","# ticket"],        
+        ["texto","Entre los textos"],
         ["reportedBy","Reportado por"],
         ["index","Indexada"]
-        
-
 	 ]})
 
     

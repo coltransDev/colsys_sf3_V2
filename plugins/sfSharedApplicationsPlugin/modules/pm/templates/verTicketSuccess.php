@@ -18,16 +18,24 @@ $ticket = $sf_data->getRaw("ticket");
                                     <tr>
                                         <td>&nbsp;</td><td>
 
+                                            <? $es_auditoria = ($ticket->getHdeskGroup()->getCaIddepartament()==4)?TRUE:FALSE; ?>
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Ticket # <?=$ticket->getCaIdticket().": ".$ticket->getCaTitle() ?></b></font><br />
-                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>&Aacute;rea:</b> <?=$ticket->getHdeskGroup()?$ticket->getHdeskGroup()->getCaName():""?></font><br />
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b><?=($es_auditoria)?"Proceso:":"&Aacute;rea:";?></b> <?=$ticket->getHdeskGroup()?$ticket->getHdeskGroup()->getCaName():""?></font><br />
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Reportado por:</b> <?=$ticket->getUsuario()?$ticket->getUsuario()->getCaNombre():$ticket->getCaLogin()?> <?=$ticket->getCaReportedby()?" por ".$ticket->getCaReportedby():""?></font><br />
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Sucursal:</b> <?=$ticket->getUsuario()->getSucursal()->getCaNombre()?></font><br />
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Extensi&oacute;n:</b> <?=$ticket->getUsuario()->getCaExtension()?></font><br />
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Fecha </b> <?=Utils::fechaMes($ticket->getCaOpened()) ?></font><br />
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Asignado a:</b> <?=$ticket->getAssignedTo()?$ticket->getAssignedTo():"Sin asignar"?></font><br />
-                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Tipo:</b> <?=$ticket->getCaType()?></font><br />
+                                            <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b><?=($es_auditoria)?"Hallazgo:":"Tipo:";?></b> <?=$ticket->getCaType()?></font><br />
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Prioridad:</b> <?=$ticket->getCaPriority()?></font><br />
                                             <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Porcentaje:</b> <?=$ticket->getCaPercentage()?>%</font><br />
+                                            <?
+                                            if ($es_auditoria){
+                                                ?>
+                                                <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Empresa:</b> <?=$ticket->getEmpresa()->getCaNombre()?></font><br />
+                                                <?
+                                            }
+                                            ?>
 
                                             <div style="background-color:#F6F6F6;border-color:#CCCCCC;border-style:dotted;border-width:1px;margin:12px 0 0;padding:12px 12px 24px;font-size: 12px;font-family: arial, helvetica, sans-serif;">
                                             <?=$ticket->getCaText()?>

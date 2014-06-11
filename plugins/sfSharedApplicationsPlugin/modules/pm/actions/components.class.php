@@ -81,7 +81,7 @@ class pmComponents extends sfComponents
 	*/
     public function executePanelTickets(){
         $response = sfContext::getInstance()->getResponse();
-		$response->addJavaScript("extExtras/RowExpander",'last');
+        $response->addJavaScript("extExtras/RowExpander",'last');
 
         $response->addJavaScript("extExtras/GridFilters",'last');
         $response->addJavaScript("extExtras/menu/ListMenu",'last');
@@ -97,10 +97,8 @@ class pmComponents extends sfComponents
         $response->addStyleSheet("extExtras/RangeMenu",'last');
 
         $response->addJavaScript("extExtras/CheckColumn",'last');
+        $response->addJavaScript("extExtras/StatusBar", 'last');
         $response->addJavaScript("extExtras/GroupSummary",'last');
-        
-        
-        
     }
 
 
@@ -196,14 +194,13 @@ class pmComponents extends sfComponents
                          ->execute();
         $this->departamentos = array();
 
-		foreach( $departamentos as $departamento ){
-			$this->departamentos[] = array("iddepartamento"=>$departamento->getCaIddepartamento(),
-										 "nombre"=>$departamento->getCaNombre()
-										);
-		}
+        foreach( $departamentos as $departamento ){
+              $this->departamentos[] = array("iddepartamento"=>$departamento->getCaIddepartamento(),
+                                                         "nombre"=>utf8_encode($departamento->getCaNombre())
+                                                        );
+        }
 
-
-		$this->iddepartamento = $this->getUser()->getIddepartamento();
+        $this->iddepartamento = $this->getUser()->getIddepartamento();
 
         $user = sfContext::getInstance()->getUser();
 
@@ -212,19 +209,29 @@ class pmComponents extends sfComponents
                          ->where("d.ca_login = ?", $user->getUserId())
                          ->execute();
         $this->grupos = array();
+        
         foreach( $usersGroup as $usersGroup ){
             $this->grupos[] = $usersGroup->getCaIdgroup();
         }
 
         $this->reportedThroughtParams = ParametroTable::retrieveByCaso("CU094");
         
-        
         $this->status = array();
         
         $params = ParametroTable::retrieveByCaso("CU110");
         foreach( $params as $p ){
             $row  =array( "status"=>utf8_encode($p->getCaIdentificacion()), "valor"=>$p->getCaValor() );            
-            $this->status[] = $row;   
+            $this->status[] = $row;
+        }
+        
+        $this->empresas = array();
+       
+        $empresas = Doctrine::getTable('Empresa')->findAll();
+        foreach( $empresas as $e ){
+            if ($e->getCaIdempresa()){
+                $row  =array( "idempresa"=>$e->getCaIdempresa(), "nombre"=>utf8_encode($e->getCaNombre()) );
+                $this->empresas[] = $row;
+            }
         }
     }
 
@@ -235,6 +242,20 @@ class pmComponents extends sfComponents
 	*/
     public function executePanelReading( ){
 
+    }
+
+    /*
+	* Panel que muestra una grilla para incorporar documentos asociados a un caso de auditoría.
+	* @author: Carlos G. López M.
+	*/
+    public function executePanelDocumentos( ){
+        
+        $this->tipos = array();
+        $params = ParametroTable::retrieveByCaso("CU054");
+        foreach( $params as $p ){
+            $row  =array( "tipo"=>$p->getCaIdentificacion(), "valor"=>utf8_encode($p->getCaValor()) );            
+            $this->tipos[] = $row;
+        }
     }
 
     /*

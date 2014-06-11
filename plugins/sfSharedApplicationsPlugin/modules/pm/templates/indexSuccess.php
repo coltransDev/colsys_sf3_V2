@@ -21,12 +21,12 @@ include_component("gestDocumental", "panelArchivos");
 include_component("pm","panelConsulta");
 
 include_component("pm","panelReading");
+include_component("pm","panelDocumentos");
 
 include_component("pm","nuevaRespuestaWindow");
 include_component("pm","porcentajeTicketWindow");
 
 include_component("users","panelUsers");
-
 
 include_component("kbase", "panelCategorias");
 include_component("kbase", "panelIssues");

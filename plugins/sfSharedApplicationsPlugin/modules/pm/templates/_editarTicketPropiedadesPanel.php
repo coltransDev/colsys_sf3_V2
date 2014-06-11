@@ -6,6 +6,7 @@
  */
 $grupos = $sf_data->getRaw("grupos");
 $status = $sf_data->getRaw("status");
+$empresas = $sf_data->getRaw("empresas");
 
 include_component("widgets", "widgetEquipo");
 
@@ -15,10 +16,9 @@ include_component("widgets", "widgetEquipo");
         Ext.apply(this, config);
 
         this.dataDepartamentos = <?=json_encode(array("departamentos" => $sf_data->getRaw("departamentos")))?>;
-
         this.dataStatus = <?=json_encode(array("root" => $status))?>;
+        this.dataEmpresas = <?=json_encode(array("root" => $empresas))?>;
 
-        
         this.departamentos = new Ext.form.ComboBox({
             fieldLabel: 'Departamento',
             typeAhead: true,
@@ -50,13 +50,9 @@ include_component("widgets", "widgetEquipo");
                 ])
             )
             })
-            
-            
-
         });
 
         this.departamentos.on("select", this.cargarDepartamentos, this );
-
 
         this.areas =  new Ext.form.ComboBox({
             fieldLabel: 'Área',
@@ -78,27 +74,35 @@ include_component("widgets", "widgetEquipo");
                 autoLoad : false ,
                 url: '<?=url_for("pm/datosAreas")?>',
                 reader: new Ext.data.JsonReader(
-                {
-                    id: 'idgrupo',
-                    root: 'grupos',
-                    totalProperty: 'total',
-                    successProperty: 'success'
-                },
-                Ext.data.Record.create([
-                    {name: 'idgrupo'},
-                    {name: 'nombre'}
-                ])
-            )
-            })
+                    {
+                        id: 'idgrupo',
+                        root: 'grupos',
+                        totalProperty: 'total',
+                        successProperty: 'success'
+                    },
+                    Ext.data.Record.create([
+                        {name: 'idgrupo'},
+                        {name: 'nombre'}
+                    ])
+                )
+            }),
             
-
+            listeners: {
+                select: function(combo, record, index) {
+                  // Verifica si la opción escogida es Tarifas Internacionales
+                  if(combo.getValue()==25){
+                      <?
+                      $folder = "Tarifario/helpdesk";
+                      $filename = "FORMATO_SOLICITUD_DE_TARIFAS.xls";                      
+                      ?>                      
+                      Ext.getCmp("title").setValue("Solicitud de Tarifas");                      
+                      Ext.getCmp("text_id").setValue('<div>Para solicitar tarifas por favor diligencie el presente formulario y adjuntelo al ticket.<br /><a href="../gestDocumental/verArchivo?idarchivo=<?=base64_encode($folder.'/'.$filename)?>" target="_blank"><b> Solicitud de Tarifas</b></a><br /></div>');
+                  }
+                }
+            }
         });
 
-
         this.areas.on("select", this.cargarAreas, this );
-
-
-
 
         this.projectos = new Ext.form.ComboBox({
             fieldLabel: 'Proyecto',
@@ -133,13 +137,9 @@ include_component("widgets", "widgetEquipo");
                 ])
             )
             })
-            
-            
         });
 
         this.projectos.on("select", this.cargarProyectos, this );
-
-
 
         this.milestones = new Ext.form.ComboBox({
             fieldLabel: 'Status',
@@ -176,7 +176,6 @@ include_component("widgets", "widgetEquipo");
             })
         });
 
-
         this.asignaciones = new Ext.form.ComboBox({
             fieldLabel: 'Asignado a',
             typeAhead: true,
@@ -195,8 +194,7 @@ include_component("widgets", "widgetEquipo");
             mode: 'local',
             store : new Ext.data.Store({
                 autoLoad : true ,
-                url: '<?=url_for("pm/datosAsignaciones")
-?>',
+                url: '<?=url_for("pm/datosAsignaciones")?>',
                 reader: new Ext.data.JsonReader(
                 {
                     id: 'login',
@@ -211,7 +209,6 @@ include_component("widgets", "widgetEquipo");
             )
             })
         });
-
 
         this.reportadoPor = new Ext.form.ComboBox({
             fieldLabel: 'Reportado por',
@@ -232,8 +229,7 @@ include_component("widgets", "widgetEquipo");
             mode: 'local',
             store : new Ext.data.Store({
                 autoLoad : true ,
-                url: '<?=url_for("pm/datosUsuarios")
-?>',
+                url: '<?=url_for("pm/datosUsuarios")?>',
                 reader: new Ext.data.JsonReader(
                 {
                     root: 'usuarios',
@@ -248,7 +244,6 @@ include_component("widgets", "widgetEquipo");
             )
             })
         });
-
 
         this.prioridades = new Ext.form.ComboBox({
             fieldLabel: 'Prioridad',
@@ -270,7 +265,6 @@ include_component("widgets", "widgetEquipo");
             ]
         });
 
-
         this.tipos = new Ext.form.ComboBox({
             fieldLabel: 'Tipo',
             typeAhead: true,
@@ -288,8 +282,7 @@ include_component("widgets", "widgetEquipo");
             valueField: 'clasification',
             store : new Ext.data.Store({
                 autoLoad : false ,
-                url: '<?=url_for("pm/datosClasificacion")
-?>',
+                url: '<?=url_for("pm/datosClasificacion")?>',
                 reader: new Ext.data.JsonReader(
                 {
                     root: 'root',
@@ -302,9 +295,7 @@ include_component("widgets", "widgetEquipo");
                 ])
             )
             })
-
         });
-
 
         this.acciones = new Ext.form.ComboBox({
             fieldLabel: 'Estado',
@@ -360,7 +351,43 @@ include_component("widgets", "widgetEquipo");
             hiddenName: 'idactivo',
             id: 'activo_id'
         });
-    
+
+        this.empresas = new Ext.form.ComboBox({
+            fieldLabel: 'Empresa',
+            typeAhead: true,
+            forceSelection: true,
+            triggerAction: 'all',
+            emptyText:'',
+            selectOnFocus: true,
+            value: '',
+            id: 'empresa_id',
+            lazyRender:true,
+            allowBlank: true,
+            displayField: 'nombre',
+            valueField: 'idempresa',
+            hiddenName: 'idempresa',
+            listClass: 'x-combo-list-small',
+            mode: 'local',
+
+            store : new Ext.data.Store({                
+                autoLoad : true ,
+                proxy: new Ext.data.MemoryProxy( this.dataEmpresas ),
+                reader: new Ext.data.JsonReader(
+                {
+
+                    root: 'root',
+                    totalProperty: 'total',
+                    successProperty: 'success'
+                },
+                Ext.data.Record.create([
+                    {name: 'idempresa'},
+                    {name: 'nombre'}
+                ])
+            )
+            })
+        });
+
+
         EditarTicketPropiedadesPanel.superclass.constructor.call(this, {            
             id: 'form-ticket-panel',
             autoHeight: true,            
@@ -393,7 +420,6 @@ include_component("widgets", "widgetEquipo");
                                 this.asignaciones,
                                 this.reportadoPor,
                                 this.activo
-
                             ]
                         },{
                             columnWidth:.5,
@@ -404,8 +430,8 @@ include_component("widgets", "widgetEquipo");
                                 this.prioridades,
                                 this.acciones,
                                 this.milestones,
-                                this.reportedoThrough
-                        
+                                this.reportedoThrough,
+                                this.empresas
                             ]
                         }]
                 },
@@ -425,6 +451,7 @@ include_component("widgets", "widgetEquipo");
                             xtype:'textfield',
                             fieldLabel: 'Titulo',
                             name: 'title',
+                            id: 'title',
                             anchor:'95%',
                             allowBlank: false
                         },
@@ -480,7 +507,6 @@ include_component("widgets", "widgetEquipo");
         },
 
         bloquearCampos: function(){
-
             Ext.getCmp('priority_id').setDisabled(true);
             Ext.getCmp('type_id').setDisabled(true);
             Ext.getCmp('assignedto_id').setDisabled(true);
@@ -494,11 +520,11 @@ include_component("widgets", "widgetEquipo");
             Ext.getCmp('reportedby_id').setValue("");
             Ext.getCmp('activo_id').setValue("");
             Ext.getCmp('activo_id').setDisabled(true);
-
+            Ext.getCmp('empresa_id').setValue("");
+            Ext.getCmp('empresa_id').setDisabled(true);
         },
 
         desbloquearCampos: function(){
-
             Ext.getCmp('priority_id').setDisabled(false);
             Ext.getCmp('type_id').setDisabled(false);
             Ext.getCmp('assignedto_id').setDisabled(false);
@@ -509,8 +535,38 @@ include_component("widgets", "widgetEquipo");
             Ext.getCmp('reportedby_id').setDisabled(false);
             Ext.getCmp('reportedthrough_id').setDisabled(false);            
             Ext.getCmp('activo_id').setDisabled(false);
+            Ext.getCmp('empresa_id').setDisabled(false);
         },
 
+        renombrarCampos: function(){
+            this.changeLabel( 'area_id', 'Procesos:');
+            this.changeLabel( 'proyecto_id', 'Tema:');
+            this.changeLabel( 'type_id', 'Hallazgo:');
+        },
+            
+        desnombrarCampos: function(){
+            this.changeLabel( 'area_id', 'Área:');
+            this.changeLabel( 'proyecto_id', 'Proyecto:');
+            this.changeLabel( 'type_id', 'Tipo:');
+        },
+
+        mostrarEmpresa: function(){
+            Ext.getCmp('empresa_id').setDisabled(false);
+            Ext.getCmp('empresa_id').setVisible(true);
+        },
+
+        ocultarEmpresa: function(){
+            Ext.getCmp('empresa_id').setDisabled(true);
+            Ext.getCmp('empresa_id').setVisible(false);
+        },
+
+        changeLabel: function(fieldId, newLabel){
+            var label = Ext.DomQuery.select(String.format('label[for="{0}"]', fieldId));
+            if (label){
+                label[0].childNodes[0].nodeValue = newLabel;
+            }
+        },
+            
         onRender: function(){
             // call parent
             EditarTicketPropiedadesPanel.superclass.onRender.apply(this, arguments);
@@ -538,7 +594,6 @@ include_component("widgets", "widgetEquipo");
                         area.hiddenField.value = this.res.data.idgroup;
                         panel.cargarAreas();
 
-
                         proyecto = Ext.getCmp('proyecto_id');
                         proyecto.setValue(this.res.data.project);
                         proyecto.hiddenField.value = this.res.data.idproject;
@@ -558,18 +613,10 @@ include_component("widgets", "widgetEquipo");
                         Ext.getCmp("milestone_id").setRawValue(this.res.data.status_name);
                         Ext.getCmp("milestone_id").hiddenField.value = this.res.data.status;
                         
-                        
                         Ext.getCmp("activo_id").setRawValue(this.res.data.activo);
                         Ext.getCmp("activo_id").hiddenField.value = this.res.data.idactivo;
-
-                        //
-
-                        
                     }
-
                 });
-
-
             }
         },
 
@@ -626,9 +673,15 @@ include_component("widgets", "widgetEquipo");
             assignedto = Ext.getCmp('assignedto_id');
             assignedto.setValue("");
            
-            //alert( record.data.iddepartamento+" "+iddepartamento );
-            if( this.nivel==2 || this.nivel==3 ){
+            if(iddepartamento==4){      // Si Departamento es Auditoría, renombra los campos
+                this.renombrarCampos();
+                this.mostrarEmpresa();
+            }else{
+                this.desnombrarCampos();
+                this.ocultarEmpresa();
+            }
 
+            if( this.nivel==2 || this.nivel==3 ){
                 if( iddepartamento!=<?=$iddepartamento?> ){
                     this.bloquearCampos();
                 }else{
@@ -639,9 +692,6 @@ include_component("widgets", "widgetEquipo");
             if( this.nivel<2 ){
                 this.bloquearCampos();
             }
-
-
-
         },
 
         cargarAreas: function(   ){
@@ -652,21 +702,17 @@ include_component("widgets", "widgetEquipo");
             };
             proyecto.store.load();
 
-
             assignedto = Ext.getCmp('assignedto_id');
             assignedto.store.baseParams = {
                 idgrupo: idgrupo
             };
             assignedto.store.load();
 
-
             proyecto = Ext.getCmp('proyecto_id');
             proyecto.setValue("");
 
             assignedto = Ext.getCmp('assignedto_id');
             assignedto.setValue("");
-
-            
 
             if( this.nivel==1 ){               
 
@@ -695,8 +741,6 @@ include_component("widgets", "widgetEquipo");
             milestone.store.load();
 
         }
-
     
     });
-
 </script>

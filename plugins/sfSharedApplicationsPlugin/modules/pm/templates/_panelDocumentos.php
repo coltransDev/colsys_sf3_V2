@@ -17,14 +17,13 @@ cantDocumentos = new Ext.Toolbar.TextItem('0');
 cantRecuperacion = new Ext.Toolbar.TextItem('0');
 cantPerdida = new Ext.Toolbar.TextItem('0');
 
-
 PanelDocumentos = function( config ){
     Ext.apply(this, config);
     
     this.docTipos = <?=json_encode(array("root" => $tipos))?>;
     
     this.checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:30});
-
+    /*
     this.bbar = new Ext.ux.StatusBar({
         id: 'word-status',
 
@@ -32,7 +31,7 @@ PanelDocumentos = function( config ){
         // custom classes below in the render handler which is what gives them their
         // customized inset appearance.
         items: ['No. Documentos: ', cantDocumentos, 'Total Recuperación: ', cantRecuperacion, 'Total Pérdida: ', cantPerdida, '&nbsp;&nbsp;&nbsp;&nbsp;']
-    });
+    });*/
 
     this.editorTipoDocumento = new Ext.form.ComboBox({
         typeAhead: true,
@@ -146,7 +145,7 @@ PanelDocumentos = function( config ){
     this.tipos = new Ext.data.Store({
 
         autoLoad : true,
-        proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$documentos))?>),
+        proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$tipos))?>),
         reader: new Ext.data.JsonReader(
             {
                 root: 'root'
@@ -158,10 +157,9 @@ PanelDocumentos = function( config ){
     });
 
     PanelDocumentos.superclass.constructor.call(this, {
-       id:'panel-documentos',
        loadMask: {msg:'Cargando...'},
        clicksToEdit: 1,
-       //autoHeight: true,
+       autoHeight: true,
        autoWidth : true,
        scroll: true,
        plugins: [this.checkColumn],
@@ -177,7 +175,7 @@ PanelDocumentos = function( config ){
                     folder: "<?=base64_encode("tmp")?>",
                     filePrefix: "",
                     confirm: true,
-                    callback: "Ext.getCmp('panel-documentos').actFile"
+                    callback: "Ext.getCmp('"+this.id+"').actFile"
                 })
             ],
        listeners:{            
@@ -230,17 +228,20 @@ Ext.extend(PanelDocumentos, Ext.grid.EditorGridPanel, {
     
     actFile:function (file)
     {
+        /*
         var store = this.store; // Llama el store para obtener el Idticket
         var records = store.getRange();
-        r = records[0];
-                
+        r = records[0];*/
+        var store = this.store;
+        var record = this.record;
+        
         Ext.MessageBox.wait('Procesando', '');
 
         Ext.Ajax.request(
         {
             url: '<?=url_for("pm/procesarArchivoDocs")?>',
             params :	{
-                idticket: r.data.idticket,
+                idticket: this.idticket,
                 archivo: file
             },
             failure:function(response,options){
@@ -256,27 +257,29 @@ Ext.extend(PanelDocumentos, Ext.grid.EditorGridPanel, {
                     //alert(res.reportes.toSource());
                     //reportes=Ext.util.JSON.decode(res.reportes);
                     //alert(res.reportes.length);
-                    recordReportes = Ext.getCmp('panel-documentos').record;
-                    storeReportes=Ext.getCmp('panel-documentos').getStore();
-                    for(i=0;i<res.reportes.length;i++)
+                    storeReportes=store;
+                    recordReportes=record;
+                    for(i=0;i<res.documentos.length;i++)
                     {
-
                      var newRec = new recordReportes({
-                            idreporte: res.reportes[i].ca_idreporte,
-                            consecutivo: res.reportes[i].ca_consecutivo,
-                            hbl: res.reportes[i].doctransporte,
-                            cliente: res.reportes[i].compania                                
+                            idticket:  res.documentos[i].idticket,
+                            idauditdocs: res.documentos[i].idauditdocs,
+                            tipo_documento: res.documentos[i].tipo_documento,
+                            documento: res.documentos[i].documento,
+                            recuperacion: res.documentos[i].recuperacion,
+                            perdida: res.documentos[i].perdida,
+                            observaciones: res.documentos[i].observaciones
                         });
                         storeReportes.addSorted(newRec);
                         storeReportes.sort("orden", "ASC");
                     }
-
-                    alert("Se Proceso correctamente");
+                    //alert("Se Proceso correctamente");
                     $("#resul").html("<p>Resumen:</p>"+res.resultado);
                     //location.href="/antecedentes/listadoReferencias/format/maritimo";
                 }
             }
         });
+        this.store.reload();
     },
     
     onRowcontextMenu: function(grid, index, e){
@@ -333,11 +336,11 @@ Ext.extend(PanelDocumentos, Ext.grid.EditorGridPanel, {
     },
 
     onAfterLoad : function(e) {
-        this.calcSum();
+        //this.calcSum();
     },
 
     onAfterEdit : function(e) {
-        this.calcSum();
+        //this.calcSum();
         if(e.record.data.sel){
             var records = this.store.getModifiedRecords();
             var lenght = records.length;
@@ -375,7 +378,7 @@ Ext.extend(PanelDocumentos, Ext.grid.EditorGridPanel, {
     },
 
     seleccionarTodo: function() {
-        var grid = Ext.getCmp("panel-documentos");
+        var grid = Ext.getCmp(this.id);
         var store = grid.getStore();
 
         store.each( function( r ){

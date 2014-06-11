@@ -4,15 +4,9 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
-
-
-
-
 ?>
 
 <script type="text/javascript">
-
 
 PanelTickets = function( config ){
 
@@ -26,9 +20,7 @@ PanelTickets = function( config ){
         width: 15,
         tpl : new Ext.Template(
           '<p><div class=\'btnComentarios\' id=\'obs_{_id}\'>&nbsp; {text}</div></p>'
-
         )
-        
     });
 
 
@@ -42,32 +34,26 @@ PanelTickets = function( config ){
         }, {
             type: 'string',
             dataIndex: 'project'
-
         }, {
             type: 'string',
             dataIndex: 'title'
-
         },
         {
             type: 'string',
             dataIndex: 'tipo'
-
         },
         {
             type: 'string',
             dataIndex: 'login'
-
         },
         {
             type: 'string',
             dataIndex: 'assignedto'
-
-        }
-        , {
+        },
+        {
             type: 'list',
             dataIndex: 'priority',
             options: ['Alta', 'Media', 'Baja']
-
         }, {
             type: 'list',
             dataIndex: 'action',
@@ -107,7 +93,6 @@ PanelTickets = function( config ){
         width: 63,
         sortable: true,
         renderer: this.formatItem 
-        
       },
       {
         header: "Titulo",
@@ -119,8 +104,6 @@ PanelTickets = function( config ){
         summaryRenderer: function(v, params, data){
             return ((v === 0 || v > 1) ? '(' + v +' Tickets)' : '(1 Ticket)');
         }
-
-        
       },
       {
         header: "Usuario",
@@ -128,15 +111,13 @@ PanelTickets = function( config ){
         hideable: false,
         sortable: true,
         width: 80
-
       },
       {
-        header: "Proyecto",
+        header: "Proyecto/Tema",
         dataIndex: 'project',
         //hideable: false,
         sortable: true,
         width: 280
-
       },
       {
         header: "Prioridad",
@@ -144,9 +125,7 @@ PanelTickets = function( config ){
         hideable: false,
         sortable: true,
         width: 80
-        
       },
-     
       {
         header: "Asignado a",
         dataIndex: 'assignedto',
@@ -161,12 +140,11 @@ PanelTickets = function( config ){
         sortable: true,
         width: 80
       },
-      
       {
-        header: "Tipo",
+        header: "Tipo/Hallazgo",
         dataIndex: 'tipo',
         hideable: false,
-        width: 100,
+        width: 120,
         sortable: true
       },
       {
@@ -218,9 +196,7 @@ PanelTickets = function( config ){
         width: 130,
         sortable: true       
       }
-
-      
-     ];
+    ];
 
 
     this.record = Ext.data.Record.create([
@@ -253,7 +229,6 @@ PanelTickets = function( config ){
             {name: 'status', type: 'string', mapping: 'h_ca_status'},
             {name: 'status_name', type: 'string', mapping: 'status_name'},
             {name: 'status_color', type: 'string', mapping: 'status_color'}
-            
     ]);
 
     this.store = new Ext.data.GroupingStore({
@@ -277,12 +252,8 @@ PanelTickets = function( config ){
         sortInfo:{field: 'idticket', direction: "ASC"},
         //groupOnSort: true,
         groupField: 'assignedto'
-        
 
     });
-
-
-    
 
     
     PanelTickets.superclass.constructor.call(this, {
@@ -301,7 +272,6 @@ PanelTickets = function( config ){
             hideGroupedColumn: true
             //showPreview:true,
             //hideGroupedColumn: true,
-            
             
        }),
        listeners:{            
@@ -348,7 +318,6 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
         this.win.show();
         this.win.grid.addListener("celldblclick", this.onMilestoneGridCelldblclick, this );
     },
-
 
     onMilestoneGridCelldblclick : function( grid, rowIndex, columnIndex, e ){
         var record = grid.getStore().getAt(rowIndex);  // Get the Record
@@ -483,7 +452,6 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
 		}
 	},
 
-    
     getRowClass : function(record, rowIndex, p, ds){
         p.cols = p.cols-1;
 
@@ -545,9 +513,7 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
             }
         }
 
-    }
-    
-    ,
+    },
 
     tomarAsignacion: function(){
         if( this.ctxRecord.data.idticket  ){
@@ -577,10 +543,9 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
 
                 }
             });
-
         }
-
     },
+
     actualizarPorcentaje: function(){
         if( this.ctxRecord.data.idticket  ){
             var idticket = this.ctxRecord.data.idticket;

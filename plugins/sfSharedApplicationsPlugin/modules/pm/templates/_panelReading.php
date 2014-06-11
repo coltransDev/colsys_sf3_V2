@@ -4,10 +4,9 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
 ?>
-<script type="text/javascript">
 
+<script type="text/javascript">
 
 PanelReading = function( config ){
 
@@ -26,8 +25,8 @@ PanelReading = function( config ){
     var idcomponent = this.id;
    
     
-    this.previewTicketPanel = new PanelPreviewTicket({
-            idcomponent:idcomponent,
+    this.previewTicketPanel = new PanelPreviewTicket({idcomponent:idcomponent,
+            department: this.department,
             region: 'south',
             deferredRender: false,
             activeTab: 0,     // first tab initially active
@@ -154,14 +153,9 @@ PanelReading = function( config ){
       
     });
 
-
-    
-
-
     this.gsm = this.grid.getSelectionModel();
 
     this.gsm.on('rowselect', this.onRowSelect, this, {buffer:250});
-
 
 };
 
@@ -170,10 +164,6 @@ Ext.extend(PanelReading, Ext.Panel, {
     getTemplate: function(){
         return this.tpl;
     },
-    
-    
-
-    
 
     recargar: function(){
         this.grid.recargar();
@@ -194,19 +184,11 @@ Ext.extend(PanelReading, Ext.Panel, {
     asignarMilestone: function( val ){
         this.grid.asignarMilestone( val );
     },
-
     
     onRowSelect: function(sm, index, record){
         this.idticket = record.data.idticket;
-        
-
         this.previewTicketPanel.loadRecord( record );
-        
     }
-
-    
-
-    
    
 });
 

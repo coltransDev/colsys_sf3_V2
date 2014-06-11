@@ -51,7 +51,7 @@ Ext.extend(PanelConsulta, Ext.tree.TreePanel, {
             var actionTicket = n.attributes.actionTicket;
             var assignedTo = n.attributes.assignedTo;
             var reportedBy = n.attributes.reportedBy;
-            
+            var department = n.attributes.department;
 
             //Coloca un identificador unico para evitar que el componente se cree dos veces
             var idcomponent = action;
@@ -59,7 +59,7 @@ Ext.extend(PanelConsulta, Ext.tree.TreePanel, {
             var title = "";
             if( typeof(n.attributes.idgroup)!="undefined" ){
                 idcomponent+="_A"+idgroup;
-                title += "Area  "+ n.attributes.group;
+                title += department + " "+ n.attributes.group;
             }
 
             if( typeof(n.attributes.idproject)!="undefined" ){
@@ -141,6 +141,7 @@ Ext.extend(PanelConsulta, Ext.tree.TreePanel, {
                                                               actionTicket: actionTicket,
                                                               assignedTo: assignedTo,
                                                               reportedBy: reportedBy,
+                                                              department: department,
                                                               title: title,
                                                               closable: true,
                                                               readOnly: this.readOnly

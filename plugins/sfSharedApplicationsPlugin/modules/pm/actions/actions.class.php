@@ -15,7 +15,7 @@
  * 3 Acceso a todo.
  */
 class pmActions extends sfActions {
-    const RUTINA = "39";
+    const RUTINA = "89";
 
     public function getNivel() {
         $this->nivel = $this->getUser()->getNivelAcceso(pmActions::RUTINA);
@@ -143,7 +143,7 @@ class pmActions extends sfActions {
                 $q->addWhere("(h.ca_login = ? OR uggg.ca_login = ?)", array($this->getUser()->getUserid(), $this->getUser()->getUserid()));
                 break;
         }
-        
+
         if ($nivel == 2 || $nivel == 3) {
             $q->addWhere("(h.ca_login = ? OR g.ca_iddepartament = ?)", array($this->getUser()->getUserid(), $this->getUser()->getIddepartamento()));            
         }
@@ -1294,16 +1294,11 @@ class pmActions extends sfActions {
 
     public function executeDatosPanelConsulta() {
         $this->user = $this->getUser();
-        
-        $usuario = Doctrine::getTable("Usuario")->find($this->user);        
-        $depAdic = $usuario->getProperty("helpDesk");
-        
         $this->departamentos = Doctrine::getTable("Departamento")
                         ->createQuery("d")
                         ->innerJoin("d.Usuario u")
                         ->where("d.ca_inhelpdesk = ?", true)
                         ->addWhere("u.ca_login = ?", $this->user)
-                        ->orWhere("d.ca_nombre = ?", $depAdic)
                         ->addOrderBy("d.ca_nombre ASC")
                         ->execute();
     }
@@ -1380,7 +1375,7 @@ class pmActions extends sfActions {
         $data = array();
 
         $data["iddepartament"] = $group->getCaIddepartament();
-        $data["departamento"] = $group->getDepartamento()->getCaNombre();
+        $data["departamento"] = utf8_encode($group->getDepartamento()->getCaNombre());
         $data["idticket"] = $ticket->getCaIdticket();
         $data["title"] = utf8_encode($ticket->getCaTitle());
         $data["text"] = utf8_encode($ticket->getCaText());
@@ -1397,6 +1392,7 @@ class pmActions extends sfActions {
         $data["action"] = $ticket->getCaAction();
         $data["status"] = $ticket->getCaStatus();
         $data["idactivo"] = $ticket->getCaIdactivo();
+        $data["idempresa"] = $ticket->getCaIdempresa();
         $data["activo"] = $ticket->getInvActivo()->getCaIdentificador();
         
         $parametros = ParametroTable::retrieveByCaso("CU110");
@@ -1444,8 +1440,6 @@ class pmActions extends sfActions {
                         ->addOrderBy("u.ca_nombre")
                         ->execute();
 
-
-
         $data = array();
 
         foreach ($usuarios as $usuario) {
@@ -1456,11 +1450,165 @@ class pmActions extends sfActions {
             $data[] = $row;
         }
 
-
         $this->responseArray = array("success" => true, "root" => $data);
         $this->setTemplate("responseTemplate");
     }
 
+    /*
+     * Panel que muestra una grilla con los documentos afectados con un Ticket de Auditoría
+     * @author: Carlos G. López M.
+     */
+
+    public function executeDatosDocumentosTicket($request) {
+
+        $this->forward404Unless($request->getParameter("idticket"));
+        $idticket = $request->getParameter("idticket");
+        $ticket = Doctrine::getTable("HdeskTicket")->find($idticket);
+        $this->forward404Unless($ticket);
+        
+        $documentos = $ticket->getHdeskAuditDocuments();
+
+        $data = array();
+
+        foreach ($documentos as $documento) {
+            $row = array();
+            $row["idticket"] = $idticket;
+            $row["idauditdocs"] = $documento->getCaIdauditdocs();
+            $row["tipo_documento"] = utf8_encode($documento->getCaTipoDoc());
+            $row["documento"] = $documento->getCaNumeroDoc();
+            $row["recuperacion"] = $documento->getCaRecuperacion();
+            $row["perdida"] = $documento->getCaPerdida();
+            $row["observaciones"] = utf8_encode($documento->getCaObservaciones());
+            $data[] = $row;
+        }
+        
+        for ($i==0; $i<1; $i++){
+            $row = array();
+            $row["idticket"] = $idticket;
+            $row["idauditdocs"] = '';
+            $row["tipo_documento"] = '';
+            $row["documento"] = '';
+            $row["recuperacion"] = '';
+            $row["perdida"] = '';
+            $row["observaciones"] = '';
+            $data[] = $row;
+        }
+        
+        $this->responseArray = array("success" => true, "root" => $data);
+        $this->setTemplate("responseTemplate");
+        
+    }
+
+    /*
+     * Guarda los cambios en los documentos del ticket de Auditoría
+     */
+
+    public function executeObserveDocuments() {
+        $idticket = $this->getRequestParameter('idticket');
+        if (!$this->getRequestParameter('idauditdocs')){
+            $auditDocuments = new HdeskAuditDocuments();
+            $auditDocuments->setCaIdticket($idticket);
+        }else{
+            $auditDocuments = Doctrine::getTable("HdeskAuditDocuments")->find($this->getRequestParameter('idauditdocs'));
+        }
+        
+        $this->responseArray = array("id" => $this->getRequestParameter('id'), "success" => false);
+        
+        if ($this->getRequestParameter('tipo_documento') !== null) {
+            $auditDocuments->setCaTipoDoc(utf8_decode($this->getRequestParameter('tipo_documento')));
+        }
+
+        if ($this->getRequestParameter('documento') !== null) {
+            $auditDocuments->setCaNumeroDoc($this->getRequestParameter('documento'));
+        }
+
+        if ($this->getRequestParameter('recuperacion') !== null) {
+            $auditDocuments->setCaRecuperacion($this->getRequestParameter('recuperacion'));
+        }
+
+        if ($this->getRequestParameter('perdida') !== null) {
+            $auditDocuments->setCaPerdida($this->getRequestParameter('perdida'));
+        }
+
+        if ($this->getRequestParameter('observaciones') !== null) {
+            $auditDocuments->setCaObservaciones(utf8_decode($this->getRequestParameter('observaciones')));
+        }
+        
+        $auditDocuments->save();
+
+        $this->responseArray["success"] = true;
+        $this->setTemplate("responseTemplate");
+    }
+    
+
+   public function executeProcesarArchivoDocs(sfWebRequest $request) {
+        $idticket = $this->getRequestParameter('idticket');
+        $ticket = Doctrine::getTable("HdeskTicket")->find($idticket);
+        
+        $folder = "tmp";
+        $file = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $request->getParameter("archivo");
+
+        $handle = fopen($file, "r");
+        $input = fread($handle, filesize($file));
+        $input = str_replace(chr(13),"",str_replace(chr(34), "", $input));
+
+        $records = explode(chr(10),$input); // Divide el archivo por los Saltos de Línea
+
+        foreach($records as $record){       // Hace una primera lectura para verificar la estructura del archivo
+
+            if(stristr($record, 'Documento/Referencia') === FALSE and strlen(trim($record)) != 0) {
+
+                $fields = explode(chr($this->getRequestParameter( 'separador' )), $record); // Divide el archivo en campos por el separador
+
+                if ( count($fields) != 5 ){
+                    $resultado = "¡El archivo tiene errores en su estructura, por tanto no se puede importar! ";
+                    $this->responseArray = array("success" => false, "resultado" => $resultado);
+                    $this->setTemplate("responseTemplate");
+                }
+            }else if(stristr($record, 'ca_iddoc') !== FALSE) {
+
+                $nameFields = explode(chr($this->getRequestParameter( 'separador' )), $record); // Toma los nombres de los campos
+            }
+        }
+            
+        //Elimina los documentos anteriores
+        $auditDocuments = $ticket->getHdeskAuditDocuments();
+        foreach( $auditDocuments as $auditDocument ){
+            $auditDocument->delete();
+        }
+
+        $documentos = array();
+        $records = explode(chr(10),$input); // Divide el archivo por los Saltos de Línea
+        foreach($records as $record){
+            if(stristr($record, 'Documento/Referencia') === FALSE and strlen(trim($record)) != 0) {
+
+                $fields = explode("," , $record); // Divide el archivo en campos por el separador
+
+                $auditDocuments = new HdeskAuditDocuments();
+                $auditDocuments->setCaIdticket($idticket);
+                $auditDocuments->setCaTipoDoc($fields[0]);
+                $auditDocuments->setCaNumeroDoc($fields[1]);
+                $auditDocuments->setCaRecuperacion(abs($fields[2]));
+                $auditDocuments->setCaPerdida(abs($fields[3]));
+                $auditDocuments->setCaObservaciones($fields[4]);
+                $auditDocuments->save();
+                
+                $row = array();
+                $row["idticket"] = $idticket;
+                $row["idauditdocs"] = $auditDocuments->getCaIdauditdocs();
+                $row["tipo_documento"] = utf8_encode($auditDocuments->getCaTipoDoc());
+                $row["documento"] = $auditDocuments->getCaNumeroDoc();
+                $row["recuperacion"] = $auditDocuments->getCaRecuperacion();
+                $row["perdida"] = $auditDocuments->getCaPerdida();
+                $row["observaciones"] = utf8_encode($auditDocuments->getCaObservaciones());
+                $documentos[] = $row;
+            }
+        }
+        unlink($file);
+        $this->responseArray = array("success" => true, "documentos" => $documentos, "resultado" => $resultado);
+        $this->setTemplate("responseTemplate");
+    }
+    
     /*
      * Panel que muestra un arbol con opciones de busqueda
      * @author: Andres Botero
