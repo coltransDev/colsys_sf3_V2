@@ -5,9 +5,13 @@
 */
 
 include_component("widgets", "widgetCiudad");
+$empresas = $sf_data->getRaw("empresas");
+
 ?>
 <form action="<?=url_for( "cotizaciones/busquedaCotizacion" )?>" method="post" >
 <script language="javascript">
+      this.dataEmpresas = <?=json_encode(array("root" => $empresas))?>;
+      
 	function cambiarVendedor( field ){
 		if( field.value=="mis_cotizaciones" ){
 			document.getElementById("visible").style.display="none";
@@ -42,7 +46,7 @@ include_component("widgets", "widgetCiudad");
     </tr>
 	<tr>
 		<td width="88" ><b>Buscar por:</b> <br />
-            <select name="criterio" size="7" onChange='cambiarVendedor(this)'>
+            <select name="criterio" size="8" onChange='cambiarVendedor(this)'>
                 <option value="mis_cotizaciones" selected="selected">Mis Cotizaciones</option>
                 <option value="consecutivo">Consecutivo</option>
                 <option value="seguimiento">Seguimientos</option>
@@ -94,11 +98,16 @@ include_component("widgets", "widgetCiudad");
                         <div><b>Destino</b> <br><span id="div_filtros2"></span></div>
                     </td>
                 </tr>
+                <tr>
+                    <td colspan="3">
+                        <div><b>Empresa</b> <br><span id="div_filtros3"></span></div>
+                    </td>
+                </tr>
             </table>
             
             
             <script>
-                 field=new Ext.form.ComboBox({
+                field=new Ext.form.ComboBox({
                         id: "transporte",
                         name:"transporte",
                         mode:'local',
@@ -134,6 +143,24 @@ include_component("widgets", "widgetCiudad");
                                     })
 
                 field.render("div_filtros2");
+
+                field=new Ext.form.ComboBox({
+                        id: "empresa",
+                        name:"empresa",
+                        mode:'local',
+                        width:100,
+                        store : [
+                            ['','...'],
+                            ['Coltrans','Coltrans'],
+                            ['Colmas','Colmas']
+                        ],
+                        forceSelection: true,
+                        triggerAction: 'all',
+                        selectOnFocus:true,
+                        lazyRender:true
+                });
+                
+                field.render("div_filtros3");
 
             </script>
         </td>

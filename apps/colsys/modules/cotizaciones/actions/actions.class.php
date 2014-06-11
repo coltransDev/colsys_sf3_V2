@@ -34,6 +34,16 @@ class cotizacionesActions extends sfActions {
             $this->forward404();
         }
         $this->estados = ParametroTable::retrieveByCaso("CU074");
+        
+        $this->empresas = array();
+       
+        $empresas = Doctrine::getTable('Empresa')->findAll();
+        foreach( $empresas as $e ){
+            if ($e->getCaIdempresa()){
+                $row  =array( "idempresa"=>$e->getCaIdempresa(), "nombre"=>utf8_encode($e->getCaNombre()) );
+                $this->empresas[] = $row;
+            }
+        }
     }
 
     /*
@@ -51,6 +61,7 @@ class cotizacionesActions extends sfActions {
         $transporte = $this->getRequestParameter("transporte");
         $idorigen = $this->getRequestParameter("idorigen");
         $iddestino = $this->getRequestParameter("iddestino");
+        $empresa = $this->getRequestParameter("empresa");
 
         $q = Doctrine_Query::create()
                         ->select("c.*,EXTRACT(YEAR FROM c.ca_fchcreado),to_number(SUBSTR(c.ca_consecutivo , 1 , (POSITION('-' in c.ca_consecutivo)-1) ),'999999')")
@@ -100,7 +111,9 @@ class cotizacionesActions extends sfActions {
                 break;
         }
 
-        if ($transporte || $idorigen) {
+        if ($empresa){
+                $q->addWhere("c.ca_empresa=? ", $empresa);
+        } else if ($transporte || $idorigen || $empresa) {
             if ($criterio != "seguimiento")
                 $q->innerJoin("c.CotProducto p");
             if ($transporte)
@@ -110,7 +123,6 @@ class cotizacionesActions extends sfActions {
             if ($iddestino)
                 $q->addWhere("p.ca_destino=? ", array($iddestino));
         }
-
 
         //$q->addOrderBy("c.ca_idcotizacion DESC");
         $q->limit(200);
