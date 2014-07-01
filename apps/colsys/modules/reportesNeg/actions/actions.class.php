@@ -239,6 +239,7 @@ class reportesNegActions extends sfActions {
         $this->sucursal = $this->getRequestParameter("sucursal");
         $this->continuacion = $this->getRequestParameter("continuacion");
         //echo $this->continuacion."-".$this->idsucursal;
+        $limit=" limit 150";
         $condicion = "";
         $this->tiporep = 0;
         $inner = "  ";
@@ -267,6 +268,7 @@ class reportesNegActions extends sfActions {
 
         if ($this->fechaInicial != "" && $this->fechaFinal != "") {
             $condicion.=" and r.ca_fchreporte between '" . Utils::parseDate($this->fechaInicial) . "' and '" . Utils::parseDate($this->fechaFinal) . "'";
+            $limit="";
         }
 
         if ($this->seguro != "") {
@@ -299,7 +301,7 @@ class reportesNegActions extends sfActions {
 
         if (($this->idimpo && $criterio) || !$this->idimpo) {
             $con = Doctrine_Manager::getInstance()->connection();
-            $sql = "select * from vi_reportes2 r where 1=1 $condicion limit 150";
+            $sql = "select * from vi_reportes2 r where 1=1 $condicion $limit ";
             $st = $con->execute($sql);
             $this->reportes = $st->fetchAll();
         } else
@@ -4121,7 +4123,7 @@ class reportesNegActions extends sfActions {
                     ->set("ca_detanulado", "'Unificado con el reporte " . $reporte->getCaConsecutivo() . "'")
                     ->where("ca_consecutivo = ?", $consecutivo)
                     ->execute();
-
+            
             $tmp = "";
 
             $proveedores = explode("|", $reporte->getCaIdproveedor());
@@ -4219,6 +4221,14 @@ class reportesNegActions extends sfActions {
                 }
             }
             $reporte->save();
+            
+            $files=$reporte2->getFiles();            
+            $directory = $reporte->getDirectorio();
+            foreach ($files as $f)
+            {
+                $newname = $directory . DIRECTORY_SEPARATOR . basename($f);
+                rename($f, $newname);
+            }
             $this->redirect($this->generateUrl('default', array('module' => 'reportesNeg', 'action' => 'consultaReporte', 'id' => $reporte->getCaIdreporte(), 'modo' => urlencode($reporte->getCaTransporte()), 'impoexpo' => urlencode($reporte->getCaImpoexpo()))));
         }
         $this->reporte = $reporte;
