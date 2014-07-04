@@ -184,9 +184,9 @@ $textos = $sf_data->getRaw("textos");
     function validarIdg(){
         if (document.getElementById('confirmacion_tbl').style.display != 'none'){
             if (modo != "puerto") {
-                var theDate=document.form1.fchconfirmacion.value;
-                var theTime=document.form1.horaconfirmacion.value;
-                var theJust=document.form1.observaciones_idg.value;
+                var theDate=$("#fchconfirmacion").val();
+                var theTime=$("#horaconfirmacion").val();
+                var theJust=$("#observaciones_idg").val();
 
                 Ext.Ajax.request(
                 {
@@ -204,25 +204,28 @@ $textos = $sf_data->getRaw("textos");
                     },
                     success:function(response,options){
                         var res = Ext.util.JSON.decode( response.responseText );
-                        element = document.getElementById('observaciones_idg');
+                                               
+                        //element = ("#observaciones_idg")// document.getElementById('observaciones_idg');
                         if( res.cumplio=="No" ){
-                            element.focus();
-                            element = document.getElementById('justify_tbl');
-                            element.style.display = "inline";
+                            $("#observaciones_idg").focus();
+                            //element = document.getElementById('justify_tbl');
+                            //element.style.display = "inline";
+                            $("#justify_tbl").show();
                             alert("De acuerdo al IDG está fuera del tiempo de oportunidad, favor dilgenciar la casilla de justificación que se ha habilitado.");
                         }else{ 
                             if( res.cumplio=="Si" ){
-                                element = document.getElementById('observaciones_idg');
-                                element.value = '';
-                                element = document.getElementById('justify_tbl');
-                                element.style.display = "none";
+                                //element = document.getElementById('observaciones_idg');
+                                $("#observaciones_idg").val('');
+                                //element = document.getElementById('justify_tbl');
+                                $("#justify_tbl").hide();
+                                //element.style.display = "none";
                             }
-                            document.getElementById("form1").submit();
+                            $("#form1").submit();
                         }
                     }
                 });
             }else{
-                document.getElementById("form1").submit();
+                $("#form1").submit();
             }
 	}
     }
@@ -647,7 +650,7 @@ $textos = $sf_data->getRaw("textos");
                                 <tr>                                
                                     <td class="mostrar" width="25%">Fecha Vaciado:<br><?echo extDatePicker('ca_fchvaciado', $referencia->getCaFchvaciado("Y-m-d"));?></td>
                                     <td class="mostrar" width="25%">Hora Vaciado:<br><?echo extTimePicker("ca_horavaciado", $referencia->getCaHoravaciado("Y-m-d"));?></td>
-                                    <td class="mostrar" width="25%">Fecha finalizaci&oacute;n MUISCA:<br><?echo extDatePicker('fchsyga', "");?></td>
+                                    <td class="mostrar" width="25%">Fecha finalizaci&oacute;n MUISCA:<br><?echo extDatePicker('fchsyga', $referencia->getCaFchfinmuisca("Y-m-d"));?></td>                                    
                                 </tr>
                             </tbody>
                         </table>
