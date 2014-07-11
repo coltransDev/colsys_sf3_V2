@@ -439,7 +439,7 @@ if($reporte->getCaTiporep()!="3")
         }
         $pdf->Row ( array ('Consignar MAWB/BL a :', $reporte->getConsignarmaster (),'Consignar HAWB/HBL a :', $cadena ) );
     }else{
-        $pdf->SetWidths(array(45,115,30,10));
+        $pdf->SetWidths(array(45,155));
         $consig = (($consignatario)?$consignatario->getCaNombre():$cliente->getCaCompania());
         $nit = (($consignatario)?$consignatario->getCaIdentificacion():$cliente->getCaIdalterno()."-".$cliente->getCaDigito());
         $consignar = Doctrine::getTable("Bodega")->find( $reporte->getCaIdconsignar() );
