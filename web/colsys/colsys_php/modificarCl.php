@@ -55,7 +55,7 @@
     <TITLE><?=$titulo?></TITLE>
     <script language='JavaScript' type='text/JavaScript'>
     function validar(){;
-      if (document.modificar.consecutivo.value == '' && document.modificar.vigencia.value == 'true' && document.modificar.impoexpo.value != 'OTM/DTA' )
+      if (document.modificar.consecutivo.value == '' && document.modificar.vigencia.value == 'true' && document.modificar.impoexpo.value != 'OTM/DTA' && document.modificar.modalidad.value != 'PARTICULARES')
           alert('El Número de Reporte de Negocio no es válido');
       else if (document.modificar.hbls.value == '')
           alert('El Número de HBL no es válido');
@@ -435,7 +435,7 @@
         ?>
         <TR>
           <TD Class=listar><INPUT ID='contenedor_<?= $i?>_id' TYPE='CHECKBOX' NAME='contenedores[<?=$i?>][id]' VALUE='<?= $co->Value('ca_idequipo') ?>' ONCLICK='seldetails(this);'<?=$cadena?> ></TD>
-          <TD Class=listar><?= $co->Value('ca_concepto') ?></TD>;
+          <TD Class=listar><?= $co->Value('ca_concepto') ?></TD>
           <TD Class=listar><?= $co->Value('ca_idequipo') ?></TD>
           <TD Class=listar><?= $co->Value('ca_numprecinto') ?></TD>
           <TD Class=listar><INPUT ID='contenedor_<?= $i ?>_pz' TYPE='TEXT' NAME='contenedores[<?=$i?>][pz]' VALUE='<?= $array_cont[$co->Value('ca_idequipo')]['pz'] ?>' SIZE=3 MAXLENGTH=6 <?=$vista ?> ></TD>
