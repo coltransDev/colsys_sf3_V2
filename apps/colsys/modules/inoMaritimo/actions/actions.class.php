@@ -137,16 +137,16 @@ class inoMaritimoActions extends sfActions {
         if ($mes != "%") {
             $sub.= "substr(im.ca_referencia::text, 8, 2) = '$mes' and ";
         }
-        if ($sucursal != "%") {
+        if ($sucursal != "Todas Las sucursales") {
             $sub.= "im.ca_referencia in ("
                . "select DISTINCT ic.ca_referencia from tb_inoclientes_sea ic "
                . "  inner join control.tb_usuarios us on us.ca_login = ic.ca_login "
                . "  inner join control.tb_sucursales su on su.ca_idsucursal = us.ca_idsucursal "
-               . "  where su.ca_nombre = '$sucursal'"
+               . "  where su.ca_nombre = '".utf8_decode($sucursal)."'"
                . ") and ";
         }
         if ($sufijo != "%") {
-            $sub.= "substr(im.ca_referencia::text, 11, 2) = '" . str_pad($sufijo, 2, "0", STR_PAD_LEFT) . "' and ";
+            $sub.= "substr(im.ca_referencia::text, 5, 2) = '" . str_pad($sufijo, 2, "0", STR_PAD_LEFT) . "' and ";
         }
         if ($trafico != "%") {
             $sub.= "t1.ca_nombre = '$trafico' and ";
@@ -165,6 +165,7 @@ class inoMaritimoActions extends sfActions {
             $sub = substr($sub, 0, strlen($sub) - 5);
             $sql.= " where $sub";
         }
+
         $rs = $con->execute($sql);
         $referencias_rs = $rs->fetchAll();
         $referencias = array();
