@@ -15,11 +15,12 @@
  * @version    SVN: $Id: actions.class.php 2692 2006-11-15 21:03:55Z fabien $
  */
 class inomaritimoComponents extends sfComponents {
-    
-    public function executePanelGridHouse(sfWebRequest $request)
-	{
 
+    public function executePanelGridHouse(sfWebRequest $request) {
+        
+    }
+
+    public function executePanelReferencias(sfWebRequest $request) {
     }
 
 }
-
