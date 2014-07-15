@@ -70,6 +70,66 @@ input.button, input.submit, input.reset{
    padding: 4px;
 }
 
+input#bigbutton {
+    width:500px;
+    background: #638CC2; /*the colour of the button*/
+    padding: 8px 14px 10px; /*apply some padding inside the button*/
+    border:1px solid #638CC2; /*required or the default border for the browser will appear*/
+    cursor:pointer; /*forces the cursor to change to a hand when the button is hovered*/
+    /*style the text*/
+    font-size:1.5em;
+    font-family:Oswald, sans-serif; /*Oswald is available from http://www.google.com/webfonts/specimen/Oswald*/
+    letter-spacing:.1em;
+    text-shadow: 0 -1px 0px rgba(0, 0, 0, 0.3); /*give the text a shadow - doesn't appear in Opera 12.02 or earlier*/
+    color: #fff;
+    font-weight:  bold;
+    /*use box-shadow to give the button some depth - see cssdemos.tupence.co.uk/box-shadow.htm#demo7 for more info on this technique*/
+    -webkit-box-shadow: inset 0px 1px 0px #638CC2, 0px 5px 0px 0px #454C76, 0px 10px 5px #999;
+    -moz-box-shadow: inset 0px 1px 0px #638CC2, 0px 5px 0px 0px #454C76, 0px 10px 5px #999;
+    box-shadow: inset 0px 1px 0px #638CC2, 0px 5px 0px 0px #454C76, 0px 10px 5px #999;
+    /*give the corners a small curve*/
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+/***SET THE BUTTON'S HOVER AND FOCUS STATES***/
+input#bigbutton:hover, input#bigbutton:focus {
+    color:#dfe7ea;
+    /*reduce the size of the shadow to give a pushed effect*/
+    -webkit-box-shadow: inset 0px 1px 0px #638CC2, 0px 2px 0px 0px #454C76, 0px 2px 5px #999;
+    -moz-box-shadow: inset 0px 1px 0px #638CC2, 0px 2px 0px 0px #454C76, 0px 2px 5px #999;
+    box-shadow: inset 0px 1px 0px #638CC2, 0px 2px 0px 0px #454C76, 0px 2px 5px #999;
+}
+input.bigbuttonmin {
+    width:120px;
+    background: #FFF; /*the colour of the button*/
+    padding: 8px 14px 10px; /*apply some padding inside the button*/
+    border:1px solid #638CC2; /*required or the default border for the browser will appear*/
+    cursor:pointer; /*forces the cursor to change to a hand when the button is hovered*/
+    /*style the text*/
+    font-size:9px;
+    font-family:Oswald, sans-serif; /*Oswald is available from http://www.google.com/webfonts/specimen/Oswald*/
+    letter-spacing:.1em;
+    text-shadow: 0 0px 0px #638CC2;; /*give the text a shadow - doesn't appear in Opera 12.02 or earlier*/
+    color: #638CC2;
+    font-weight:  bold;
+    /*use box-shadow to give the button some depth - see cssdemos.tupence.co.uk/box-shadow.htm#demo7 for more info on this technique*/
+    -webkit-box-shadow: inset 0px 1px 0px #FFF, 0px 5px 0px 0px #454C76, 0px 10px 5px #999;
+    -moz-box-shadow: inset 0px 1px 0px #FFF, 0px 5px 0px 0px #454C76, 0px 10px 5px #999;
+    box-shadow: inset 0px 1px 0px #FFF, 0px 5px 0px 0px #454C76, 0px 10px 5px #999;
+    /*give the corners a small curve*/
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+/***SET THE BUTTON'S HOVER AND FOCUS STATES***/
+input.bigbuttonmin:hover, input.bigbuttonmin:focus {
+    color:#dfe7ea;
+    /*reduce the size of the shadow to give a pushed effect*/
+    -webkit-box-shadow: inset 0px 1px 0px #638CC2, 0px 2px 0px 0px #454C76, 0px 2px 5px #999;
+    -moz-box-shadow: inset 0px 1px 0px #638CC2, 0px 2px 0px 0px #454C76, 0px 2px 5px #999;
+    box-shadow: inset 0px 1px 0px #638CC2, 0px 2px 0px 0px #454C76, 0px 2px 5px #999;
+}
 
 p{
    font-family: verdana,arial,helvetica,serif;
@@ -164,6 +224,10 @@ table.tableList tr.green{
 	background-color:#CEFFCE;
 }
 
+table.tableList tr.greentwo{
+	background-color:#F2FFF6;
+}
+
 table.tableList tr.blue{
 	background-color:#CEE7FF;
 }
@@ -207,7 +271,7 @@ table.tableList tr.row1:hover {
 table.tableList td {
 	border-bottom: 1px solid #e5e5e5;
 	padding: 4px;
-	color:#333333;
+	color:#333333;        
 
 }
 
@@ -278,6 +342,18 @@ table.tableList td.valores {
    text-align: right;
    vertical-align: top;
    background: #F0F0F0;
+   color: #000000;
+}
+table.tableList td.dinamica {
+   text-align: left;
+   vertical-align: top;
+   background: #F0F0F0;
+   color: #000000;
+}
+table.tableList td.numeros {
+   text-align: right;
+   vertical-align: top;
+   background: #FFFFFF;
    color: #000000;
 }
 table.tableList th.imprimir {
@@ -1152,4 +1228,7 @@ body.ext-ie6 .x-superboxselect-item {margin: 2px 1px 2px 1px; line-height: 1.2em
 .note-edit {
     background: url("../images/fam/note_edit.png") no-repeat scroll 0 0 transparent !important;
 }
+
+.trm {position: relative; -moz-border-radius: 6px; -webkit-border-radius: 6px; border-radius: 6px; o-border-radius: 6px; khtml-border-radius: 6px; border: 1px solid #CAD8F3; background-color: #157FCC; padding: 0px 3px 0px 3px !important;cursor: pointer;line-height: 24px; color: #FFF }
+.trm:hover{font-weight: bolder}
 
