@@ -196,7 +196,7 @@ $j = 0;
     <tr>
         <td colspan="9">
 <?
-            include_component("gestDocumental", "returnFiles", array("idsserie" => "2", "view" => "email1", "ref1" => $numRef, "ref2" => str_replace("|", "/", $inoCliente->getCaHbls()), "ref3" => "", "format" => "confirmaciones", "nameInput" => 'files_' . $inoCliente->getOid() . '[]'));
+            include_component("gestDocumental", "returnFiles", array("idsserie" => "2", "view" => "email1", "ref1" => $numRef, "ref2" => str_replace("|", "/", trim($inoCliente->getCaHbls())), "ref3" => "", "format" => "confirmaciones", "nameInput" => 'files_' . $inoCliente->getOid() . '[]'));
 ?>
         </td>
     </tr>
