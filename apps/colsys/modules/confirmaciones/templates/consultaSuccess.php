@@ -701,7 +701,7 @@ $textos = $sf_data->getRaw("textos");
                                 <tr>
                                     <td class="mostrar">Fecha Confirmación:<br><?echo extDatePicker('fchconfirmacion', $referencia->getCaFchconfirmacion("Y-m-d"));?></td>								
                                     <td class="mostrar">Hora en Formato 24h:<br>
-                                        <input name="horaconfirmacion" value="<?= $referencia->getCaHoraconfirmacion() ?>" onblur="CheckTime(this)" size="9" maxlength="8" type="text">00-23hrs</td>
+                                        <input name="horaconfirmacion" id="horaconfirmacion" value="<?= $referencia->getCaHoraconfirmacion() ?>" onblur="CheckTime(this)" size="9" maxlength="8" type="text">00-23hrs</td>
                                     <td class="mostrar">Registro Aduanero:<br><input name="registroadu" value="<?= $referencia->getCaRegistroadu() ?>" size="22" maxlength="20" type="text"></td>
                                     <td class="mostrar">Fecha Registro:<br><?echo extDatePicker('fchregistroadu', $referencia->getCaFchregistroadu("Y-m-d"));?></td>
                                 </tr>
