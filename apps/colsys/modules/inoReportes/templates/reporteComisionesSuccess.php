@@ -67,7 +67,7 @@ if($buscar)
                 <td><?=Utils::formatNumber(($d["comision_ino"]), 0)?></td>
                 <td><?=Utils::formatNumber($d["uti_valor"], 0)?></td>
                 <td><?=Utils::formatNumber($d["comision_cobrada"], 0)?></td>
-                <td><?=$d["comision_comprobante"]?></td>
+                <td><a href="/inoReportes/verPdf/idcomprobante/<?=$d["comision_idcomprobante"]?>" target="_blank"><?=$d["comision_comprobante"]?></a></td>
                 
                 <?                
                 //TODO ::circular 170

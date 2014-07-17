@@ -83,5 +83,55 @@ class inoReportesComponents extends sfComponents {
     
     }
     
+    public function executeFiltrosEstadisticasOtm(){
+   
+        $this->origen = $this->getRequestParameter("origen");
+        $this->idorigen = $this->getRequestParameter("idorigen");
+        $this->destino = $this->getRequestParameter("destino");
+        $this->iddestino = $this->getRequestParameter("iddestino");
+        $this->idmodalidad = $this->getRequestParameter("idmodalidad");
+        $this->sucursal = $this->getRequestParameter("sucursal");
+        $this->idsucursal = $this->getRequestParameter("idsucursal");
+        $this->linea = $this->getRequestParameter("linea");
+        $this->idlinea = $this->getRequestParameter("idlinea");
+        $this->vendedor = $this->getRequestParameter("vendedor");
+        $this->login = $this->getRequestParameter("login");
+        $this->idcliente = $this->getRequestParameter("idcliente");
+        $this->cliente = $this->getRequestParameter("cliente");
+        $this->opcion = $this->getRequestParameter("opcion");
+        
+        $this->fechainicial = $this->getRequestParameter("fechaInicial");
+        $this->fechafinal = $this->getRequestParameter("fechaFinal");
+        
+        $this->nempresa = $this->getRequestParameter("nempresa");
+        
+        $response = sfContext::getInstance()->getResponse();
+        $response->addJavaScript("extExtras/SuperBoxSelect", 'last');
+        
+        $this->meses = array();        
+        $this->meses[]=array("valor"=>"a-Enero"       ,"id"=>1);
+        $this->meses[]=array("valor"=>"b-Febrero"     ,"id"=>2);
+        $this->meses[]=array("valor"=>"c-Marzo"       ,"id"=>3);
+        $this->meses[]=array("valor"=>"d-Abril"       ,"id"=>4);
+        $this->meses[]=array("valor"=>"e-Mayo"        ,"id"=>5);
+        $this->meses[]=array("valor"=>"f-Junio"       ,"id"=>6);
+        $this->meses[]=array("valor"=>"g-Julio"       ,"id"=>7);
+        $this->meses[]=array("valor"=>"h-Agosto"      ,"id"=>8);
+        $this->meses[]=array("valor"=>"i-Septiembre"  ,"id"=>9);
+        $this->meses[]=array("valor"=>"j-Octubre"     ,"id"=>10);
+        $this->meses[]=array("valor"=>"k-Noviembre"   ,"id"=>11);
+        $this->meses[]=array("valor"=>"l-Diciembre"   ,"id"=>12);
+        
+        $this->anos = array();                
+        $this->anos[]=array("valor"=>"2012"    ,"id"=>2012);
+        $this->anos[]=array("valor"=>"2013"    ,"id"=>2013);
+        $this->anos[]=array("valor"=>"2014"    ,"id"=>2014);
+        
+        //$this->ano = $this->getRequestParameter("ano");
+        $this->nano = $this->getRequestParameter("nano");
+        $this->nmes = $this->getRequestParameter("nmes");
+    
+    }
+    
 }
 

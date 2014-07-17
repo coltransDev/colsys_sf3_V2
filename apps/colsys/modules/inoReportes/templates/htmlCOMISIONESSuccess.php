@@ -32,7 +32,7 @@ $usuario = $sf_data->getRaw("usuario");
                 foreach($inoDetalles as $d)
                 {                    
                     $house=$d->getInoHouse();
-                    $comision=$house->calculateFee();
+                    $comision=$d->getCaCr();//$house->calculateFee();
                     $total_comision+=$comision;
                 ?>
                 <tr>

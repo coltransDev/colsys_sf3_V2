@@ -77,7 +77,7 @@ if($buscar)
                 <td><?=$d["ca_modalidad"]?></td>
                 <td><?=$d["facturas"]?></td>
                 <td><?=Utils::formatNumber($d["ing_valor"], 0)?></td>
-                <td><?=$d["rcaja"]?></td>
+                <td><?=$d["rccaja"]?></td>
                 <td  ><?=$d["ca_volumen"]?></td>
                 <td><?=Utils::formatNumber($d["ino"], 0)?></td>
                 <td><?=Utils::formatNumber(($d["comision_ino"]), 0)?></td>
@@ -89,7 +89,7 @@ if($buscar)
                 $stdcircular = $d["ca_stdcircular"];    // Se basa en el dato calculado por la vista de clientes
                 //$diascircular= TimeUtils::dateDiff($d["ca_fchcircular"],date("Y-m-d"))-366;
                 //$d["comision_ino"]=-1;
-                if($d["ca_usucerrado"]!="" && $d["rcaja"]!="" )
+                if($d["ca_usucerrado"]!="" && $d["rccaja"]!="" )
                 {
                     //if($diascircular>0)
                     if($stdcircular == "Vencido")
