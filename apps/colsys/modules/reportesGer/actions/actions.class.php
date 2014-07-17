@@ -1287,14 +1287,18 @@ class reportesGerActions extends sfActions {
 
         if ($request->isMethod("post")) {
 
+            //print_r($request->getParameter("costo"));
+            
             $q = Doctrine::getTable("InoCostosSea")
                     ->createQuery("c")
                     ->innerJoin("c.Costo cs")
+                    ->innerJoin("c.UsuCreado u")
                     ->addWhere("substr(ca_referencia,5,2) like ?", $request->getParameter("sufijo"))
                     ->addWhere("ca_fchfactura >= ?", $request->getParameter("fchInicial"))
                     ->addWhere("ca_fchfactura <= ?", $request->getParameter("fchFinal"))
-                    ->addWhere("ca_usucreado like ?", $request->getParameter("login"))
+                    ->addWhere("ca_usucreado like ?", $request->getParameter("login"))                    
                     ->setHydrationMode(Doctrine::HYDRATE_ARRAY);
+
 
             if ($request->getParameter("proveedor")) {
                 $q->addWhere("UPPER(ca_proveedor) like ?", strtoupper($request->getParameter("proveedor")) . "%");
@@ -1302,17 +1306,43 @@ class reportesGerActions extends sfActions {
             if ($request->getParameter("factura")) {
                 $q->addWhere("UPPER(ca_factura) like ?", strtoupper($request->getParameter("factura")) . "%");
             }
+            
+            if(count($request->getParameter("costo"))>0)
+            {
+                $q->andWhereIn("ca_idcosto", $request->getParameter("costo") );                
+            }
+            
+            if($request->getParameter("sucursal")!="")
+            {
+                $q->addWhere("u.ca_idsucursal = ?", $request->getParameter("sucursal"));
+            }
+            
 
             $this->costos = $q->execute();
 
             $this->setTemplate("listadoFacturasResult");
             
         } else {
+            $this->costos = Doctrine::getTable("Costo")
+                    ->createQuery("c")
+                    ->where("c.ca_impoexpo = ? and c.ca_transporte=? ", array(Constantes::IMPO,Constantes::MARITIMO))
+                    ->OrderBy("c.ca_costo")
+                    ->addOrderBy("c.ca_modalidad")
+                    ->execute();
+            
             $this->usuarios = Doctrine::getTable("Usuario")
                     ->createQuery("u")
                     ->addWhere("u.ca_activo = ? ", true)
                     ->addOrderBy("u.ca_nombre")
                     ->execute();
+            
+            $this->sucursales = Doctrine::getTable("Sucursal")
+                ->createQuery("s")                
+                ->addOrderBy("s.ca_nombre")
+                ->addWhere("s.ca_idempresa=?", $this->getUser()->getIdempresa())                
+                ->execute();
+            //print_r(count($this->sucursales));
+
         }
     }
 

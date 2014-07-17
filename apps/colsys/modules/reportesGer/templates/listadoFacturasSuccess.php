@@ -4,7 +4,7 @@
  * (c) Coltrans S.A. - Colmas Ltda.
  * 
  */
-
+$sucursales = $sf_data->getRaw("sucursales");
 use_helper("ExtCalendar");
 ?>
 <div class="content" align="center">
@@ -38,11 +38,25 @@ use_helper("ExtCalendar");
                 <td>
                     Fecha Final:
                     <?=extDatePicker("fchFinal", date("Y-m-d"))?>
+                </td>                
+                <td>
+                    Sucursal:
+                    <br />
+                    <select name="sucursal">  
+                        <option value="">Todas</option>
+                    <?
+                    foreach( $sucursales as $s ){
+                    ?>
+                        <option value="<?=$s->getCaIdsucursal()?>"><?=$s->getCaNombre()?></option>
+                    <?
+                    }
+                    ?>
+                    </select>
                 </td>
                 <td>
                     Elaborada por:
                     <br />
-                    <select name="login">
+                    <select name="login"> 
                         <option value="%">Todos</option>
                     <?
                     foreach( $usuarios as $u ){
@@ -51,6 +65,23 @@ use_helper("ExtCalendar");
                     <?
                     }
                     ?>
+                    </select>
+                </td>
+                
+             </tr>
+             <tr>
+                <td colspan="2">
+                    Costo:
+                    <br />
+                    <select name="costo[]" multiple size="5" >                        
+                    <?
+                    foreach( $costos as $c ){
+                    ?>
+                        <option value="<?=$c->getCaIdcosto()?>"><?=$c->getCaCosto()." (".$c->getCaModalidad().")"?></option>
+                    <?
+                    }
+                    ?>
+                    </select>
                 </td>
                 <td>
                     Proveedor:<br />
@@ -62,19 +93,21 @@ use_helper("ExtCalendar");
                     <input type="text" name="factura" />
 
                 </td>
-                <td>
+             </tr>
+             <tr>
+                <td colspan="6" align="center">
                     <input type="submit" value="Consultar" class="button" />                
                 </td>
             </tr>
-
         </table>
-        
          <br />
         <br />
-    <table CELLSPACING=10>
+<!--    
+<table CELLSPACING=10>
     <tr>
       <th><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Regresar' ONCLICK='document.location="/colsys_php/reporteador.php"'></th>
     </tr>
-    </table>   
+</table>
+-->
     </form>       
 </div>

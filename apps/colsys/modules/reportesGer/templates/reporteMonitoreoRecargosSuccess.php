@@ -194,7 +194,7 @@ if ($opcion) {
         <br />
         <br />
     </div>
-    <table class="tableList" width="1100px" border="1" id="mainTable" align="center">
+    <table class="tableList" width="1150px" border="1" id="mainTable" align="center">
         <tr>
             <th>No</th>
             <th>A&ntilde;o</th>
@@ -208,6 +208,7 @@ if ($opcion) {
             <th>Factura</th>
             <th>Fecha Fac.</th>
             <th>Proveedor</th>
+            <th>Neto</th>
             <th>Valor</th>
             <th>Total Recargos</th>
             <th>Recargos / CBM  </th>
@@ -225,7 +226,7 @@ if ($opcion) {
                         <td align="right" style="font-weight: bold;"><?= number_format(round($tot_rec / $cmb_ref,0)) ?></td>
                         </tr>
                         <tr>
-                            <td colspan="15"></td>
+                            <td colspan="16"></td>
                     <?
                     $num_ref = $r["ca_referencia"];
                     $cmb_ref = $r["ca_volumen"];
@@ -264,6 +265,7 @@ if ($opcion) {
                 <td><?= $r["ca_factura"] ?></td>
                 <td><?= $r["ca_fchfactura"] ?></td>
                 <td><?= $r["ca_proveedor"] ?></td>
+                <td align="right"><?= $r["ca_idmoneda"]."&nbsp;".number_format($r["ca_neto"]) ?></td>
                 <td align="right"><?= number_format($r["ca_total_costo"]) ?></td>
             <?
             $tot_rec+= $r["ca_total_costo"];
