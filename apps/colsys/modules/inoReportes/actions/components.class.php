@@ -96,14 +96,25 @@ class inoReportesComponents extends sfComponents {
         $this->idlinea = $this->getRequestParameter("idlinea");
         $this->vendedor = $this->getRequestParameter("vendedor");
         $this->login = $this->getRequestParameter("login");
-        $this->idcliente = $this->getRequestParameter("idcliente");
-        $this->cliente = $this->getRequestParameter("cliente");
+        $this->idcliente = $this->getRequestParameter("idtercero");        
+        $this->idimportador = $this->getRequestParameter("idimportador");
         $this->opcion = $this->getRequestParameter("opcion");
         
-        $this->fechainicial = $this->getRequestParameter("fechaInicial");
-        $this->fechafinal = $this->getRequestParameter("fechaFinal");
+        $this->fechaInicial = $this->getRequestParameter("fechaInicial");
+        $this->fechaFinal = $this->getRequestParameter("fechaFinal");
         
         $this->nempresa = $this->getRequestParameter("nempresa");
+        $this->tipo = $this->getRequestParameter("tipo");
+        
+        if($this->idcliente){
+            $tercero = Doctrine::getTable("Tercero")->find($this->idcliente);
+            $this->cliente =  $tercero->getCaNombre();
+        }
+        
+        if($this->idimportador){
+            $importador = Doctrine::getTable("Tercero")->find($this->idimportador);
+            $this->importador =  $importador->getCaNombre();
+        }
         
         $response = sfContext::getInstance()->getResponse();
         $response->addJavaScript("extExtras/SuperBoxSelect", 'last');
@@ -125,9 +136,8 @@ class inoReportesComponents extends sfComponents {
         $this->anos = array();                
         $this->anos[]=array("valor"=>"2012"    ,"id"=>2012);
         $this->anos[]=array("valor"=>"2013"    ,"id"=>2013);
-        $this->anos[]=array("valor"=>"2014"    ,"id"=>2014);
+        $this->anos[]=array("valor"=>"2014"    ,"id"=>2014);        
         
-        //$this->ano = $this->getRequestParameter("ano");
         $this->nano = $this->getRequestParameter("nano");
         $this->nmes = $this->getRequestParameter("nmes");
     

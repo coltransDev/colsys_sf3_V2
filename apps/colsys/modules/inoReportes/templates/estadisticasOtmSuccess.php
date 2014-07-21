@@ -7,8 +7,10 @@
 include_component("inoReportes", "filtrosEstadisticasOtm");
 $resul = $sf_data->getRaw("resul");
 $comerciales = array();
+$serieX = array();
+$hijas = array();
 ?>
-<div align="center" id="container" ></div>
+<div align="center" id="container" class="esconder"></div>
 <?
 if ($opcion) {
     if (count($resul) <= 0) {
@@ -19,20 +21,23 @@ if ($opcion) {
         <?
     } else {
         ?>
+        <div align="center" class="esconder" ><img src="/images/22x22/printmgr.png" onclick="imprimir()" style="cursor: pointer"/></div>
         <div align= "center" style="margin: 10px;">
-            <input class="bigbuttonmin" type="submit" value="Contraer Todos" onclick="ocultar()"/> 
-            <input class="bigbuttonmin" type="submit" value="Expandir Todos" onclick="mostrarTodos()"/>         
+            <input class="bigbuttonmin" id="button1" type="submit" value="Contraer Todos" onclick="ocultar()"/> 
+            <input class="bigbuttonmin" id="button2" type="submit" value="Expandir Todos" onclick="mostrarTodos()"/>         
         </div>
+        
         <div align= "center" style="margin: 10px; font-weight:bold;"><input id="bigbutton" type="submit" value="Tabla de Datos" onclick="mostrar('datos')"/></div>
         <div id="datos">
-            <table style="font-size: 10" width="95%" border="1" class="tableList" align="center">
+            <table style="font-size: 8" width="90%" border="1" class="tableList" align="center">
                 <tr>
                     <th>AÑO</th>
-                    <th>MES</th>
+                    <th>MES</th>                    
+                    <th>FCH. ARRIBO</th>
                     <th>REFERENCIA</th>
                     <th>REPORTE</th>
                     <th>COMPANIA</th>
-                    <th>MODALIDAD</th>
+                    <th style="font-size: 6px;">MODALIDAD</th>
                     <th>DOC.TRANSPORTE</th>
                     <th>ORIGEN</th>
                     <th>DESTINO</th>
@@ -44,11 +49,10 @@ if ($opcion) {
                     <th>CONTENEDOR</th>
                     <th>VALOR FOB</th>
                     <th>DTM</th>
-                    <? if ($nempresa == 2) { ?>
-                        <th>IMPORTADOR</th>
-                        <th>BODEGA</th>
-                    <? } else { ?>                    
-                        <th>COMERCIAL</th>
+                    <th>BODEGA</th>
+                    <th>VEHICULO</th>
+                    <th>IMPORTADOR</th>                        
+                    <? if ($nempresa == 1) { ?>               
                         <th>SUCURSAL</th>
                     <? } ?>
                 </tr>
@@ -57,172 +61,290 @@ if ($opcion) {
                     $comerciales[$r["ca_vendedor"]][$r["ano"]][$r["mes"]] ++;
                     $sucursales[$r["ca_sucursal"]][$r["ano"]][$r["mes"]] ++;
                     $clientes[$r["ca_compania"]][$r["ano"]][$r["mes"]] ++;
-
-                    $nhijas+=$r["numhijas"];
-                    $pesoTotal+=$r["peso"];
-                    $volumenTotal+=$r["volumen"];
-
-                    if ($r["modalidad"] == "LCL")
-                        $porcentajeContenedor+=($r["peso"] / 25000);
+                    $vehiculos[$r["ca_vehiculo"]][$r["ano"]][$r["mes"]] ++;
                     
                     echo '<tr>';
                     echo '<td>' . $r["ano"] . '</td>';
-                    echo '<td>' . $r["mes"] . '</td>';
+                    echo '<td>' . $r["mes"] . '</td>';                    
+                    echo '<td>' . $r["ca_fcharribo"] . '</td>';
                     echo '<td> <a href="/ino/verReferencia/modo/5/idmaster/' . $r["ca_idmaster"] . '" target="_blank">' . $r["referencia"] . '</a></td>';
-                    echo '<td> <a href="/reportesNeg/consultaReporte/modo/Mar%EDtimo/impoexpo/Importaci%F3n/id/' . $r["idreporte"] . '" target="_blank">' . $r["no_reporte"] . '</a></td>';
+                    echo '<td class="numCenter"> <a href="/reportesNeg/consultaReporte/modo/Mar%EDtimo/impoexpo/Importaci%F3n/id/' . $r["idreporte"] . '" target="_blank">' . $r["no_reporte"] . '</a></td>';
                     echo '<td>' . $r["ca_compania"] . '</td>';
                     echo '<td>' . $r["modalidad"] . '</td>';
                     echo '<td>' . $r["doctransporte"] . '</td>';
                     echo '<td>' . $r["origen"] . '</td>';
                     echo '<td>' . $r["destino"] . '</td>';
                     echo '<td>' . $r["transportador"] . '</td>';
-                    echo '<td class="numeros">' . $r["numhijas"] . '</td>';
-                    echo '<td class="numeros">' . $r["peso"] . '</td>';
-                    echo '<td class="numeros">' . $r["numpiezas"] . '</td>';
-                    echo '<td class="numeros">' . $r["volumen"] . '</td>';
+                    $numhijas = in_array($r["referencia"], $hijas)?"-":$r["numhijas"];
+                    echo '<td class="numCenter">' . $numhijas . '</td>';
+                    
+                    echo '<td class="numCenter">' . $r["peso"] . '</td>';
+                    echo '<td class="numCenter">' . $r["numpiezas"] . '</td>';
+                    echo '<td class="numCenter">' . $r["volumen"] . '</td>';
                     if ($r["modalidad"] == "FCL" || $r["modalidad"] == "DIRECTO")
-                        echo '<td class="numeros">' . $r["contenedor"] . '</td>';
+                        echo '<td class="numCenter">' . $r["contenedor"] . '</td>';
                     else if ($r["modalidad"] == "LCL")
-                        echo '<td class="numeros">' . ($r["peso"] / 25000) . '</td>';
+                        echo '<td class="numCenter">' . ($r["peso"] / 25000) . '</td>';
                     else
                         echo '<td></td>';
-                    echo '<td class="numeros">' . $r["valorfob"] . '</td>';
-                    echo '<td>' . $r["dtm"] . '</td>';
-                    if ($nempresa == 2) {
-                        echo '<td>' . $r["importador"] . '</td>';
-                        echo '<td>' . $r["ca_bodega"] . '</td>';
-                    } else {
-                        echo '<td>' . $r["ca_vendedor"] . '</td>';
-                        echo '<td>' . $r["ca_sucursal"] . '</td>';
-                    }
+                    echo '<td class="numCenter">' . $r["valorfob"] . '</td>';
+                    echo '<td>' . $r["dtm"] . '</td>';                    
+                    echo '<td>' . $r["ca_bodega"] . '</td>';
+                    echo '<td>' . $r["ca_vehiculo"] . '</td>';
+                    echo '<td>' . $r["ca_importador"] . '</td>';
+                    if ($nempresa == 1)
+                        echo '<td>' . $r["ca_sucursal"] . '</td>';                    
+                    echo '</tr>';
                     
-                    echo '</tr>';                    
+                    $hijas[$r["modalidad"]]["suma"]+=in_array($r["referencia"], $hijas)?0:$r["numhijas"];
+                    $hijas[$r["referencia"]] = $r["referencia"];                    
+                    $piezas[$r["modalidad"]]+=$r["numpiezas"];
+                    $peso[$r["modalidad"]]+=$r["peso"];
+                    $volumen[$r["modalidad"]]+=$r["volumen"];
+                    $valorFOB[$r["modalidad"]]+=$r["valorfob"];
+                    $modalidad[$r["modalidad"]]++;
+
+                    if ($r["modalidad"] == "LCL")
+                        $porcentajeContenedor+=($r["peso"] / 25000);
                 }
+                
                 ?>
-                <tr><th colspan="19" style="text-align: center"># HIJAS: <?=$nhijas?> CONTENEDOR LCL: <?=$porcentajeContenedor?></th></tr>'
+            </table>            
+            <table class="tableList" align="center" width="30%">
+                <tr>
+                    <th colspan="4" style="text-align: center"><b>RESUMEN INFORME COLOTM</b></th>
+                </tr>
+                <tr>
+                    <th colspan="1"><b>Fecha Creación:</b></th>
+                    <td colspan="3"><?=date('Y-m-d H:i:s')?></td>
+                </tr>
+                <tr>
+                    <th colspan="1"><b>Periodo:</b></th>
+                    <td colspan="3"><b><?=$fechaInicial?></b> al <b><?=$fechaFinal?></b></td>
+                </tr>
+                <tr>
+                    <th colspan="1"><b>TOTALES</b></th>
+                    <th colspan="1" style="text-align: center;"><b>LCL</b></th>
+                    <th colspan="1" style="text-align: center;"><b>FCL</b></th>
+                    <th colspan="1" style="text-align: center;"><b>TODOS</b></th>
+                </tr>
+                <tr>
+                    <th><b>Cantidad de Registros:</b></th>
+                    <td style="text-align: right;"><b><?=$modalidad["LCL"]?></b></td>
+                    <td style="text-align: right;"><b><?=$modalidad["FCL"]?></b></td>                    
+                    <td style="text-align: right;"><font color="blue"><b><?=array_sum($modalidad)?></b></font></td>
+                </tr>
+                <? if($empresa == 1){?>
+                <tr>
+                    <th><b>Número de Hijas:</b></th>
+                    <td style="text-align: right;"><b><?=$hijas["LCL"]["suma"]?></b></td>
+                    <td style="text-align: right;"><b><?=$hijas["FCL"]["suma"]?></b></td>                    
+                    <td style="text-align: right;"><font color="blue"><b><?=$hijas["LCL"]["suma"]+$hijas["FCL"]["suma"]?></b></font></td>
+                </tr>
+                <?}?>
+                <tr>
+                    <th><b>Piezas:</b></th>
+                    <td style="text-align: right;"><b><?=$piezas["LCL"]?></b></td>
+                    <td style="text-align: right;"><b><?=$piezas["FCL"]?></b></td>                    
+                    <td style="text-align: right;"><font color="blue"><b><?=round(array_sum($piezas),2)?></b></font></td>
+                </tr>
+                <tr>
+                    <th><b>Peso:</b></th>
+                    <td style="text-align: right;"><b><?=$peso["LCL"]?></b></td>
+                    <td style="text-align: right;"><b><?=$peso["FCL"]?></b></td>                    
+                    <td style="text-align: right;"><font color="blue"><b><?=round(array_sum($peso),2)?></b></font></td>
+                </tr>
+                <tr>
+                    <th><b>Volumen:</b></th>
+                    <td style="text-align: right;"><b><?=$volumen["LCL"]?></b></td>
+                    <td style="text-align: right;"><b><?=$volumen["FCL"]?></b></td>                    
+                    <td style="text-align: right;"><font color="blue"><b><?=round(array_sum($volumen),2)?></b></font></td>
+                </tr>
+                <tr>
+                    <th><b>% Contenedor:</b></th>
+                    <td style="text-align: right;"><b><?=round($porcentajeContenedor,2)?></b></td>
+                    <td style="text-align: right;"><b>-</b></td>                    
+                    <td style="text-align: right;"><font color="blue"><b><?=round($porcentajeContenedor,2)?></b></font></td>
+                </tr>
+                <tr>
+                    <th><b>Valor FOB:</b></th>
+                    <td style="text-align: right;"><b><?=  number_format($valorFOB["LCL"],'0.00')?></b></td>
+                    <td style="text-align: right;"><b><?=number_format($valorFOB["FCL"],'0.00')?></b></td>                    
+                    <td style="text-align: right;"><font color="blue"><b><?=number_format(array_sum($valorFOB),'0.00')?></b></font></td>
+                </tr>
+                
             </table>
         </div>
         <?
-        foreach ($comerciales as $comercial => $gridAno) {
-            foreach ($gridAno as $ano => $gridMes) {
-                foreach ($gridMes as $mes => $data) {
-                    if (!in_array($mes, $serieX))
-                        $serieX[] = $mes;
+        if($tipo!=2){
+            foreach ($comerciales as $comercial => $gridAno) {
+                foreach ($gridAno as $ano => $gridMes) {
+                    foreach ($gridMes as $mes => $data) {
+                        if (!in_array($mes, $serieX))                                
+                            $serieX[] = $mes;
+                    }
                 }
             }
-        }
 
-        sort($serieX);
-        $nmeses = count($serieX);
+            sort($serieX);
+            $nmeses = count($serieX);
 
-        foreach ($comerciales as $key => $gridAno) {
-            foreach ($gridAno as $ano => $gridMes) {
-                $criterio[$key]+= array_sum($gridMes);
+            foreach ($comerciales as $key => $gridAno) {
+                foreach ($gridAno as $ano => $gridMes) {
+                    $criterio[$key]+= array_sum($gridMes);
+                }
             }
-        }
-        array_multisort($criterio, SORT_DESC, $comerciales);
-        ?>
-        <div align= "center" style="margin: 10px; font-weight:bold;"><input id="bigbutton" type="submit" value="Informe por Comercial" onclick="mostrar('por_comercial')"/></div>
-        <div id="por_comercial">
-            <table style="font-size: 10" width="50%" border="1" class="tableList" align="center">
-                <tr>
-                    <th>COMERCIAL</th>
-                    <th>ANO</th>
-                    <?
-                    foreach ($serieX as $k => $mes) {
-                        echo "<th style ='text-align:center'>" . Utils::getMonth($mes) . "</th>";
-                    }
-                    ?>
-                    <th>TOTAL</th>
-                </tr>
-                <?
-                foreach ($comerciales as $comercial => $gridAno) {
-                    echo "<tr><td class='dinamica' rowspan='" . count($gridAno) . "'>$comercial</td>";
-                    foreach ($gridAno as $ano => $gridMes) {
-                        echo "<td >$ano</td>";
+            array_multisort($criterio, SORT_DESC, $comerciales);
+            ?>
+            <div align= "center" style="margin: 10px; font-weight:bold;"><input id="bigbutton" type="submit" value="Informe por Comercial" onclick="mostrar('por_comercial')"/></div>
+            <div id="por_comercial">
+                <table style="font-size: 10" width="50%" border="1" class="tableList" align="center">
+                    <tr>
+                        <th>COMERCIAL</th>
+                        <th>ANO</th>
+                        <?
                         foreach ($serieX as $k => $mes) {
-                            if ($gridMes[$mes] == '')
-                                echo "<td> </td>";
-                            else
-                                echo "<td style ='text-align:center'>" . $gridMes[$mes] . "</td>";
-                            $total[$comercial][$ano]+=$gridMes[$mes];
+                            echo "<th style ='text-align:center'>" . Utils::getMonth($mes) . "</th>";
                         }
-                        echo "<th style ='text-align:right'>" . $total[$comercial][$ano] . "</th>";
-                        echo "</tr>";
-                        $totalComercial[$comercial]+=$total[$comercial][$ano];
+                        ?>
+                        <th>TOTAL</th>
+                    </tr>
+                    <?
+                    foreach ($comerciales as $comercial => $gridAno) {
+                        echo "<tr><td class='dinamica' rowspan='" . count($gridAno) . "'>$comercial</td>";
+                        foreach ($gridAno as $ano => $gridMes) {
+                            echo "<td >$ano</td>";
+                            foreach ($serieX as $k => $mes) {
+                                if ($gridMes[$mes] == '')
+                                    echo "<td> </td>";
+                                else
+                                    echo "<td style ='text-align:center'>" . $gridMes[$mes] . "</td>";
+                                $total[$comercial][$ano]+=$gridMes[$mes];
+                            }
+                            echo "<th style ='text-align:right'>" . $total[$comercial][$ano] . "</th>";
+                            echo "</tr>";
+                            $totalComercial[$comercial]+=$total[$comercial][$ano];
+                        }
+                        echo "<tr><th colspan = '" . (2 + $nmeses) . "' style ='text-align:right'>Total $comercial</th><th style ='text-align:right'>" . $totalComercial[$comercial] . "</th></tr>";
+                        $totalGnral+=$totalComercial[$comercial];
                     }
-                    echo "<tr><th colspan = '" . (2 + $nmeses) . "' style ='text-align:right'>Total $comercial</th><th style ='text-align:right'>" . $totalComercial[$comercial] . "</th></tr>";
-                    $totalGnral+=$totalComercial[$comercial];
+                    echo "<tr><th colspan = '" . (2 + $nmeses) . "' style ='text-align:right'>Total General</th><th style ='text-align:right'>" . $totalGnral . "</th></tr>";
+                    ?>
+                </table>
+            </div>
+            <?
+            $total = array();
+            $totalGnral = 0;
+            $criterio = array();
+
+            foreach ($sucursales as $key => $gridAno) {
+                foreach ($gridAno as $ano => $gridMes) {
+                    $criterio[$key]+= array_sum($gridMes);
                 }
-                echo "<tr><th colspan = '" . (2 + $nmeses) . "' style ='text-align:right'>Total General</th><th style ='text-align:right'>" . $totalGnral . "</th></tr>";
-                ?>
-            </table>
-        </div>
+            }
+            array_multisort($criterio, SORT_DESC, $sucursales);
+            ?>
+            <div align= "center" style="margin: 10px; font-weight:bold;"><input id="bigbutton" type="submit" value="Informe por Sucursal" onclick="mostrar('por_sucursal')"/></div>
+            <div id="por_sucursal">
+                <table style="font-size: 10" width="50%" border="1" class="tableList" align="center">
+                    <tr>
+                        <th>SUCURSAL</th>
+                        <th>ANO</th>
+                        <?
+                        foreach ($serieX as $k => $mes) {
+                            echo "<th style ='text-align:center'>" . Utils::getMonth($mes) . "</th>";
+                        }
+                        ?>
+                        <th>TOTAL</th>
+                    </tr>
+                    <?
+                    foreach ($sucursales as $sucursal => $gridAno) {
+                        echo "<tr><td class='dinamica' rowspan='" . count($gridAno) . "'>$sucursal</td>";
+                        foreach ($gridAno as $ano => $gridMes) {
+                            echo "<td >$ano</td>";
+                            foreach ($serieX as $k => $mes) {
+                                if ($gridMes[$mes] == '')
+                                    echo "<td> </td>";
+                                else
+                                    echo "<td style ='text-align:center'>" . $gridMes[$mes] . "</td>";
+                                $total[$sucursal][$ano]+=$gridMes[$mes];
+                            }
+                            echo "<th style ='text-align:right'>" . $total[$sucursal][$ano] . "</th>";
+                            echo "</tr>";
+                            $totalSucursal[$sucursal]+=$total[$sucursal][$ano];
+                        }
+                        echo "<tr><th colspan = '" . (2 + $nmeses) . "' style ='text-align:right'>Total $sucursal</th><th style ='text-align:right'>" . $totalSucursal[$sucursal] . "</th></tr>";
+                        $totalGnral+=$totalSucursal[$sucursal];
+                    }
+                    echo "<tr><th colspan = '" . (2 + $nmeses) . "' style ='text-align:right'>Total General</th><th style ='text-align:right'>" . $totalGnral . "</th></tr>";
+                    ?>
+                </table>
+            </div>
+            <?
+            $total = array();
+            $totalGnral = 0;
+            $criterio = array();
+
+            foreach ($clientes as $key => $gridAno) {
+                foreach ($gridAno as $ano => $gridMes) {
+                    $criterio[$key]+= array_sum($gridMes);
+                }
+            }
+            array_multisort($criterio, SORT_DESC, $clientes);
+            ?>
+            <div align= "center" style="margin: 10px; font-weight:bold;"><input id="bigbutton" type="submit" value="Informe por Cliente" onclick="mostrar('por_cliente')"/></div>
+            <div id="por_cliente">
+                <table style="font-size: 10" width="70%" border="1" class="tableList" align="center">
+                    <tr>
+                        <th>CLIENTES</th>
+                        <th>ANO</th>
+                        <?
+                        foreach ($serieX as $k => $mes) {
+                            echo "<th style ='text-align:center'>" . Utils::getMonth($mes) . "</th>";
+                        }
+                        ?>
+                        <th>TOTAL</th>
+                    </tr>
+                    <?
+                    foreach ($clientes as $cliente => $gridAno) {
+                        echo "<tr><td class='dinamica' rowspan='" . count($gridAno) . "'>$cliente</td>";
+                        foreach ($gridAno as $ano => $gridMes) {
+                            echo "<td >$ano</td>";
+                            foreach ($serieX as $k => $mes) {
+                                if ($gridMes[$mes] == '')
+                                    echo "<td> </td>";
+                                else
+                                    echo "<td style ='text-align:center'>" . $gridMes[$mes] . "</td>";
+                                $total[$cliente][$ano]+=$gridMes[$mes];
+                            }
+                            echo "<th style ='text-align:right'>" . $total[$cliente][$ano] . "</th>";
+                            echo "</tr>";
+                            $totalSucursal[$cliente]+=$total[$cliente][$ano];
+                        }
+                        echo "<tr><th colspan = '" . (2 + $nmeses) . "' style ='text-align:right'>Total $cliente</th><th style ='text-align:right'>" . $totalSucursal[$cliente] . "</th></tr>";
+                        $totalGnral+=$totalSucursal[$cliente];
+                    }
+                    echo "<tr><th colspan = '" . (2 + $nmeses) . "' style ='text-align:right'>Total General</th><th style ='text-align:right'>" . $totalGnral . "</th></tr>";
+                    ?>
+                </table>
+            </div>
         <?
         $total = array();
         $totalGnral = 0;
         $criterio = array();
 
-        foreach ($sucursales as $key => $gridAno) {
+        foreach ($vehiculos as $key => $gridAno) {
             foreach ($gridAno as $ano => $gridMes) {
                 $criterio[$key]+= array_sum($gridMes);
             }
         }
-        array_multisort($criterio, SORT_DESC, $sucursales);
+        array_multisort($criterio, SORT_DESC, $vehiculos);
         ?>
-        <div align= "center" style="margin: 10px; font-weight:bold;"><input id="bigbutton" type="submit" value="Informe por Sucursal" onclick="mostrar('por_sucursal')"/></div>
-        <div id="por_sucursal">
-            <table style="font-size: 10" width="50%" border="1" class="tableList" align="center">
-                <tr>
-                    <th>SUCURSAL</th>
-                    <th>ANO</th>
-                    <?
-                    foreach ($serieX as $k => $mes) {
-                        echo "<th style ='text-align:center'>" . Utils::getMonth($mes) . "</th>";
-                    }
-                    ?>
-                    <th>TOTAL</th>
-                </tr>
-                <?
-                foreach ($sucursales as $sucursal => $gridAno) {
-                    echo "<tr><td class='dinamica' rowspan='" . count($gridAno) . "'>$sucursal</td>";
-                    foreach ($gridAno as $ano => $gridMes) {
-                        echo "<td >$ano</td>";
-                        foreach ($serieX as $k => $mes) {
-                            if ($gridMes[$mes] == '')
-                                echo "<td> </td>";
-                            else
-                                echo "<td style ='text-align:center'>" . $gridMes[$mes] . "</td>";
-                            $total[$sucursal][$ano]+=$gridMes[$mes];
-                        }
-                        echo "<th style ='text-align:right'>" . $total[$sucursal][$ano] . "</th>";
-                        echo "</tr>";
-                        $totalSucursal[$sucursal]+=$total[$sucursal][$ano];
-                    }
-                    echo "<tr><th colspan = '" . (2 + $nmeses) . "' style ='text-align:right'>Total $sucursal</th><th style ='text-align:right'>" . $totalSucursal[$sucursal] . "</th></tr>";
-                    $totalGnral+=$totalSucursal[$sucursal];
-                }
-                echo "<tr><th colspan = '" . (2 + $nmeses) . "' style ='text-align:right'>Total General</th><th style ='text-align:right'>" . $totalGnral . "</th></tr>";
-                ?>
-            </table>
-        </div>
-        <?
-        $total = array();
-        $totalGnral = 0;
-        $criterio = array();
-
-        foreach ($clientes as $key => $gridAno) {
-            foreach ($gridAno as $ano => $gridMes) {
-                $criterio[$key]+= array_sum($gridMes);
-            }
-        }
-        array_multisort($criterio, SORT_DESC, $clientes);
-        ?>
-        <div align= "center" style="margin: 10px; font-weight:bold;"><input id="bigbutton" type="submit" value="Informe por Cliente" onclick="mostrar('por_cliente')"/></div>
-        <div id="por_cliente">
+        <div align= "center" style="margin: 10px; font-weight:bold;"><input id="bigbutton" type="submit" value="Informe por Vehiculo" onclick="mostrar('por_vehiculo')"/></div>
+        <div id="por_vehiculo">
             <table style="font-size: 10" width="70%" border="1" class="tableList" align="center">
                 <tr>
-                    <th>CLIENTES</th>
+                    <th>VEHICULO</th>
                     <th>ANO</th>
                     <?
                     foreach ($serieX as $k => $mes) {
@@ -232,8 +354,8 @@ if ($opcion) {
                     <th>TOTAL</th>
                 </tr>
                 <?
-                foreach ($clientes as $cliente => $gridAno) {
-                    echo "<tr><td class='dinamica' rowspan='" . count($gridAno) . "'>$cliente</td>";
+                foreach ($vehiculos as $vehiculo => $gridAno) {
+                    echo "<tr><td class='dinamica' rowspan='" . count($gridAno) . "'>$vehiculo</td>";
                     foreach ($gridAno as $ano => $gridMes) {
                         echo "<td >$ano</td>";
                         foreach ($serieX as $k => $mes) {
@@ -241,20 +363,21 @@ if ($opcion) {
                                 echo "<td> </td>";
                             else
                                 echo "<td style ='text-align:center'>" . $gridMes[$mes] . "</td>";
-                            $total[$cliente][$ano]+=$gridMes[$mes];
+                            $total[$vehiculo][$ano]+=$gridMes[$mes];
                         }
-                        echo "<th style ='text-align:right'>" . $total[$cliente][$ano] . "</th>";
+                        echo "<th style ='text-align:right'>" . $total[$vehiculo][$ano] . "</th>";
                         echo "</tr>";
-                        $totalSucursal[$cliente]+=$total[$cliente][$ano];
+                        $totalSucursal[$vehiculo]+=$total[$vehiculo][$ano];
                     }
-                    echo "<tr><th colspan = '" . (2 + $nmeses) . "' style ='text-align:right'>Total $cliente</th><th style ='text-align:right'>" . $totalSucursal[$cliente] . "</th></tr>";
-                    $totalGnral+=$totalSucursal[$cliente];
+                    echo "<tr><th colspan = '" . (2 + $nmeses) . "' style ='text-align:right'>Total $vehiculo</th><th style ='text-align:right'>" . $totalSucursal[$vehiculo] . "</th></tr>";
+                    $totalGnral+=$totalSucursal[$vehiculo];
                 }
                 echo "<tr><th colspan = '" . (2 + $nmeses) . "' style ='text-align:right'>Total General</th><th style ='text-align:right'>" . $totalGnral . "</th></tr>";
                 ?>
             </table>
         </div>
         <?
+        }
     }
 }
 ?>
@@ -297,6 +420,7 @@ if ($opcion) {
         document.getElementById('por_comercial').style.display = 'none';
         document.getElementById('por_sucursal').style.display = 'none';
         document.getElementById('por_cliente').style.display = 'none';
+        document.getElementById('por_vehiculo').style.display = 'none';
     }
 
     function mostrar(id) {
@@ -308,7 +432,18 @@ if ($opcion) {
         document.getElementById('por_comercial').style.display = 'inline';
         document.getElementById('por_sucursal').style.display = 'inline';
         document.getElementById('por_cliente').style.display = 'inline';
+        document.getElementById('por_vehiculo').style.display = 'inline';
     }
+    
+    
+    function imprimir(){
+        $(".esconder").hide();            
+        document.getElementById('container').style.display = 'none';
+        document.getElementById('button1').style.display = 'none';
+        document.getElementById('button2').style.display = 'none';
+        window.print();            
+    }
+    
 
     window.onload = function() {
         ocultar();
