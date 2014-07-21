@@ -1315,8 +1315,9 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
         $this->idlinea = $request->getParameter("idlinea");
         $this->vendedor = $request->getParameter("vendedor");
         $this->login = $request->getParameter("login");
-        $this->idcliente = $request->getParameter("idcliente");
-        $this->cliente = $request->getParameter("cliente");
+        $this->idcliente = $request->getParameter("idtercero");
+        $this->idimportador = $request->getParameter("idimportador");
+        
         $this->opcion = $request->getParameter("opcion");
         
         $this->fechainicial = $request->getParameter("fechaInicial");
@@ -1380,29 +1381,32 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
             }
 
             if ($this->idcliente){
-                $addWhere.= "AND h.ca_idcliente = " . $this->idcliente;
+                $tercero = Doctrine::getTable("Tercero")->find($this->idcliente);
+                $addWhere.= " AND ter.ca_nombre like '%" . $tercero->getCaNombre()."%'";
+            }
+            
+            if ($this->idimportador){
+                $tercero = Doctrine::getTable("Tercero")->find($this->idimportador);
+                $addWhere.= " AND imp.ca_nombre like '%" . $tercero->getCaNombre()."%'";
             }
             
             if ($this->login){
-                $addWhere.= "AND u.ca_nombre like '%" . $this->vendedor."%'";
+                $addWhere.= " AND u.ca_nombre like '%" . $this->vendedor."%'";
             }
             
             if ($this->idlinea){
-                $addWhere.= "AND i.ca_idlinea = " . $this->idlinea;
+                $addWhere.= " AND i.ca_idlinea = " . $this->idlinea;
             }
             
-            $select = $this->nempresa==2?",ter.ca_nombre as importador,bdg.ca_nombre as ca_bodega":"";
+            //$select = $this->nempresa==2?",ter.ca_nombre as importador,bdg.ca_nombre as ca_bodega":"";
             $from = $this->nempresa==1?"ino.tb_house h":"tb_reportes r";
             $inner1 = $this->nempresa==2?"
-                        INNER JOIN (SELECT max(ca_idreporte) as ca_idreporte, ca_consecutivo FROM tb_repotm GROUP BY ca_consecutivo) rp on r.ca_idreporte=rp.ca_idreporte 
+                        LEFT JOIN (SELECT max(ca_idreporte) as ca_idreporte, ca_consecutivo FROM tb_repotm GROUP BY ca_consecutivo) rp on r.ca_idreporte=rp.ca_idreporte 
                         LEFT JOIN tb_repotm ro ON ro.ca_idreporte = r.ca_idreporte
-                        INNER JOIN ino.tb_house h ON h.ca_idreporte = rp.ca_idreporte":"";
+                        LEFT JOIN ino.tb_house h ON h.ca_idreporte = rp.ca_idreporte":"";
             $inner2 = $this->nempresa==1?"
-                        INNER JOIN tb_repotm ro ON h.ca_idreporte = ro.ca_idreporte
-                        INNER JOIN tb_reportes r ON r.ca_idreporte = ro.ca_idreporte":"";
-            $inner3 = $this->nempresa==2?"
-                        LEFT JOIN tb_bodegas bdg ON bdg.ca_idbodega = r.ca_idbodega
-                        LEFT JOIN tb_terceros ter on ro.ca_idimportador=ter.ca_idtercero":"";
+                        LEFT JOIN tb_repotm ro ON h.ca_idreporte = ro.ca_idreporte
+                        LEFT JOIN tb_reportes r ON r.ca_idreporte = ro.ca_idreporte":"";            
             $where = $this->nempresa==1?"i.ca_fchanulado IS NULL AND i.ca_impoexpo = 'OTM-DTA'":"r.ca_tiporep = 4 and r.ca_login='consolcargo'";
             $sql ="
                 SELECT ro.ca_fcharribo, '20'||SUBSTR(i.ca_referencia,16,2)  as ANO,
@@ -1411,7 +1415,7 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
                         i.ca_referencia  as referencia,
                         r.ca_idreporte as idreporte,
                         r.ca_consecutivo as no_reporte, 
-                        i.ca_modalidad  as modalidad,
+                    (CASE WHEN i.ca_modalidad = 'DIRECTO' THEN 'FCL' ELSE I.ca_modalidad END) as modalidad,
                         h.ca_doctransporte as doctransporte, 
                         t.ca_ciudad AS origen, 
                         t2.ca_ciudad AS destino, 
@@ -1425,27 +1429,29 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
                         ro.ca_consecutivo as dtm,
                         u.ca_nombre as ca_vendedor,
                         s.ca_nombre as ca_sucursal,
-                        cl.ca_nombre as ca_compania
-                        $select
+                    ter.ca_nombre as ca_compania,
+                    i.ca_motonave as ca_vehiculo,
+                    imp.ca_nombre as ca_importador,
+                    bdg.ca_nombre as ca_bodega
                 FROM $from
                         $inner1
-                        INNER JOIN ino.tb_master i ON i.ca_idmaster = h.ca_idmaster
-                        INNER JOIN tb_ciudades t ON i.ca_origen = t.ca_idciudad 
-                        INNER JOIN tb_ciudades t2 ON i.ca_destino = t2.ca_idciudad 
-                        INNER JOIN ids.tb_proveedores i2 ON i.ca_idlinea = i2.ca_idproveedor 
-                        INNER JOIN ids.tb_ids i3 ON i2.ca_idproveedor = i3.ca_id
+                    LEFT JOIN ino.tb_master i ON i.ca_idmaster = h.ca_idmaster
+                    LEFT JOIN tb_ciudades t ON i.ca_origen = t.ca_idciudad 
+                    LEFT JOIN tb_ciudades t2 ON i.ca_destino = t2.ca_idciudad 
+                    LEFT JOIN ids.tb_proveedores i2 ON i.ca_idlinea = i2.ca_idproveedor 
+                    LEFT JOIN ids.tb_ids i3 ON i2.ca_idproveedor = i3.ca_id
                         $inner2
-                        INNER JOIN control.tb_usuarios u ON u.ca_login = r.ca_login
-                        INNER JOIN control.tb_sucursales s ON s.ca_idsucursal = u.ca_idsucursal
-                        LEFT JOIN tb_concliente con ON con.ca_idcontacto = r.ca_idconcliente
-                        LEFT JOIN ids.tb_ids cl ON cl.ca_id = con.ca_idcliente	
+                    LEFT JOIN control.tb_usuarios u ON u.ca_login = r.ca_login
+                    LEFT JOIN control.tb_sucursales s ON s.ca_idsucursal = u.ca_idsucursal                       	
+                    LEFT JOIN tb_terceros ter on ro.ca_idcliente =  ter.ca_idtercero
+                    LEFT JOIN tb_terceros imp on ro.ca_idimportador =  imp.ca_idtercero
                         LEFT JOIN ino.vi_costos i4 ON i.ca_idmaster = i4.ca_idmaster 
                         LEFT JOIN ino.vi_ingresos i5 ON i.ca_idmaster = i5.ca_idmaster 
                         LEFT JOIN ino.vi_deducciones i6 ON i.ca_idmaster = i6.ca_idmaster 
                         LEFT JOIN ino.vi_utilidades i7 ON i.ca_idmaster = i7.ca_idmaster 
                         LEFT JOIN ino.vi_unidades_master i8 ON i.ca_idmaster = i8.ca_idmaster 
                         LEFT JOIN ino.vi_teus i9 ON i.ca_idmaster = i9.ca_idmaster
-                        $inner3
+                    LEFT JOIN tb_bodegas bdg ON bdg.ca_idbodega = r.ca_idbodega                        
                 WHERE   $where $addWhere  
                 ORDER BY ano, mes, referencia";
 
