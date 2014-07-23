@@ -248,7 +248,7 @@ if (!isset($boton) and !isset($buscar)) {
     if ($indicador == "Oportunidad en Entrega de Antecedentes") {
         // echo "<script>document.location.href = 'repantecedentes.php?$parametros';</script>";
         include_once 'repantecedentes.php';
-        break;
+        exit;
     }
     $ano = "ca_ano::text " . ((count($ano) == 1) ? "like '$ano[0]'" : "in ('" . implode("','", $ano) . "')");
     $mes_fes = "to_char(ca_fchfestivo,'MM') " . ((count($mes) == 1) ? "like '$mes[0]'" : "in ('" . implode("','", $mes) . "')");
@@ -298,7 +298,7 @@ if (!isset($boton) and !isset($buscar)) {
     echo "<HTML>";
     echo "<HEAD>";
     echo "<TITLE>$titulo</TITLE>";
-    echo '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>';
+    echo '<script type="text/javascript" src="../js/jquery/jquery.min.js"></script>';
     echo "<script language='javascript' src='../js/highcharts/js/highcharts.js'></script>";
     echo "<script language='javascript' src='../js/highcharts/js/modules/exporting.js'></script>";
 
@@ -342,7 +342,7 @@ if (!isset($boton) and !isset($buscar)) {
     $format_avg = "d";
     if ($indicador == "Confirmación Salida de la Carga") {
         $source = "vi_repindicadores";
-        $subque = "LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_sub, rs.ca_fchsalida, rs.ca_usuenvio, min(to_date((rs.ca_fchenvio::timestamp)::text,'yyyy-mm-dd')) as ca_fchenvio, to_date((rs.ca_fchenvio::timestamp)::text,'yyyy-mm-dd')-rs.ca_fchsalida as ca_diferencia from tb_repstatus rs INNER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) where rs.ca_idetapa in ('IAETA','IMETA') group by ca_consecutivo, ca_fchsalida, ca_usuenvio, ca_diferencia ) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
+        $subque = "LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_sub, rs.ca_fchsalida, rs.ca_usuenvio, min(to_date((rs.ca_fchenvio::timestamp)::text,'yyyy-mm-dd')) as ca_fchenvio, to_date((rs.ca_fchenvio::timestamp)::text,'yyyy-mm-dd')-rs.ca_fchsalida as ca_diferencia from tb_repstatus rs INNER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) where rs.ca_idetapa in ('IAETA','IMETA') group by rp.ca_consecutivo, rs.ca_fchsalida, rs.ca_usuenvio, ca_diferencia) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
         $ind_mem = 1;
         $add_cols = 4;
     } else if ($indicador == "Tiempo de Tránsito") {
@@ -478,12 +478,12 @@ if (!isset($boton) and !isset($buscar)) {
         if ($departamento == 'Aéreo') {
             $tipo = "D";
             $source = "vi_repindicador_air";
-            $subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, min(rs.ca_fchenvio) as ca_fchconf_lleg, rs.ca_usuenvio from tb_repstatus rs INNER JOIN tb_reportes rp ON (rp.ca_transporte = 'Aéreo' and rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IACAD') group by rp.ca_consecutivo, rs.ca_fchllegada, rs.ca_usuenvio order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
+            $subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, min(rs.ca_fchenvio) as ca_fchconf_lleg, rs.ca_usuenvio, rs.ca_observaciones_idg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rp.ca_transporte = 'Aéreo' and rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IACAD') group by rp.ca_consecutivo, rs.ca_fchllegada, rs.ca_usuenvio order by rp.ca_consecutivo, rs.ca_observaciones_idg) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
         } else if ($departamento == 'Marítimo') {
             $tipo = "T";
             $format_avg = "H:i:s";
             $source = "vi_repindicador_sea";
-            $subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, min(rs.ca_fchenvio) as ca_fchconf_lleg, rs.ca_usuenvio from tb_repstatus rs INNER JOIN tb_reportes rp ON (rp.ca_transporte = 'Marítimo' and rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IMCPD') group by rp.ca_consecutivo, rs.ca_idetapa, rs.ca_fchllegada, rs.ca_usuenvio, rs.ca_horallegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
+            $subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, min(rs.ca_fchenvio) as ca_fchconf_lleg, rs.ca_usuenvio, rs.ca_observaciones_idg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rp.ca_transporte = 'Marítimo' and rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IMCPD') group by rp.ca_consecutivo, rs.ca_idetapa, rs.ca_fchllegada, rs.ca_usuenvio, rs.ca_horallegada, rs.ca_observaciones_idg order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
         }
         $sql="select ca_fchfestivo from tb_festivos";
         if (!$tm->Open($sql)) {        
@@ -498,7 +498,7 @@ if (!isset($boton) and !isset($buscar)) {
             $tm->MoveNext();
         }
         $ind_mem = 9;
-        $add_cols = 6;
+        $add_cols = 7;
         $ini_ant = null;
         $fin_ant = null;
     } else if ($indicador == "Oportunidad en Nacionalización de Mcias Sucursal" or $indicador == "Oportunidad en Nacionalización de Mcias Puerto") {
@@ -872,6 +872,7 @@ if (!isset($boton) and !isset($buscar)) {
             echo "	<TH>Fch.Confirmación</TH>";
             echo "	<TH>Usuario</TH>";
             echo "	<TH>Dif.</TH>";
+            echo "	<TH>Observaciones</TH>";
             break;
         case 10:
             echo "	<TH>Referencia</TH>";
@@ -1048,6 +1049,11 @@ if (!isset($boton) and !isset($buscar)) {
                 echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value("ca_observaciones") . "</TD>";
                 echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>" . $dif_mem . "</TD>";
                 echo "</TR>";
+                if ($departamento == 'Marítimo') {
+                    $data[] = array($rs->Value('ca_usucreado') => array(substr($fch_llegada, 5, 2) => $dif_mem));
+                } elseif ($departamento == 'Aéreo') {
+                    $data[] = array($rs->Value('ca_usucreado') => array($rs->Value('ca_mes') => $dif_mem));
+                }
                 if ($departamento != "OTM") {
                     $avanza = false;
                     if ($rs->Value('ca_continuacion') == "N/A") {
@@ -1081,12 +1087,7 @@ if (!isset($boton) and !isset($buscar)) {
                     if ($avanza and !$rs->Eof()) {           // Retrocede un registro para quedar en la última factura del Hbl de una Referencia
                         $rs->MovePrevious();
                     }
-                }
-                if ($departamento == 'Marítimo') {
-                    $data[] = array($rs->Value('ca_usucreado') => array(substr($fch_llegada, 5, 2) => $dif_mem));
-                } elseif ($departamento == 'Aéreo') {
-                    $data[] = array($rs->Value('ca_usucreado') => array($rs->Value('ca_mes') => $dif_mem));
-                }
+                }                
                 break;
             case 5:
                 $idreporte = $rs->Value('ca_idreporte');
@@ -1241,6 +1242,7 @@ if (!isset($boton) and !isset($buscar)) {
                 echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_fchconf_lleg') . "</TD>";
                 echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_usuenvio') . "</TD>";
                 echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>" . $dif_mem . "</TD>";
+                echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_observaciones_idg') . "</TD>";
                 $data[] = array($rs->Value('ca_usuenvio') => array($rs->Value('ca_mes') => hourTosec($dif_mem)));
                 continue;
                 break;
@@ -1706,6 +1708,8 @@ if (!isset($boton) and !isset($buscar)) {
     if ($data) {
         $dataJson = array();
         $datos = array();
+        
+        //echo "<pre>";print_r($data);echo "</pre>";
 
         foreach ($data as $key => $gridUsuario) {
             foreach ($gridUsuario as $usuario => $gridMes) {
@@ -1936,7 +1940,8 @@ if (!isset($boton) and !isset($buscar)) {
                             color: '#000000',
                             connectorColor: '#000000',
                             format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-                        }
+                        },
+                        showInLegend: true
                     }
                 },
                 series: [{
