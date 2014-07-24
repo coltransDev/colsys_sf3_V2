@@ -1811,6 +1811,178 @@ class reportesGerActions extends sfActions {
             }            
         }
     }
-    
+
+    /**
+     * Esta accion permitirá la apertura de varias referencias
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeReporteComisionesXCobrar(sfWebRequest $request) {
+        $this->annos = array();
+        for ($i = (date("Y")); $i >= (date("Y") - 5); $i--) {
+            $this->annos[] = $i;
+        }
+
+        // "%" => "Todos los Meses", 
+        $this->meses = array("01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre");
+
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select DISTINCT ca_nombre as ca_sucursal from control.tb_sucursales where ca_idempresa = 2 order by ca_sucursal";
+        $rs = $con->execute($sql);
+        $sucursales_rs = $rs->fetchAll();
+        $this->sucursales = array();
+        foreach ($sucursales_rs as $sucursal) {
+            $this->sucursales[$sucursal["ca_sucursal"]] = $sucursal["ca_sucursal"];
+        }
+
+        $usuarios_rs = Doctrine::getTable("Usuario")
+           ->createQuery("u")
+           ->innerJoin("u.Sucursal s")
+           ->addWhere("u.ca_departamento='Comercial'")
+           ->orderBy("u.ca_nombre")
+           ->execute();
+        $this->vendedores = array();
+        $this->vendedores["%"] = "Usuarios (Todos)";
+        foreach ($usuarios_rs as $usuario) {
+            $this->vendedores[$usuario->getCaLogin()] = $usuario->getCaNombre();
+        }
+
+        $this->resultados = array("%" => "Todos los Casos", "Perdida" => "Casos con Perdida", "Utilidad" => "Casos con Utilidad");
+        $this->estados = array("%" => "Todos los Casos", "Cerrado" => "Casos Cerrados", "Abierto" => "Casos Abiertos");
+        $this->circulares = array("%" => "Todos los Casos", "Vigente" => "Vigente", "Vencido" => "Vencido", "Sin" => "Sin");
+        
+        $incoterms_rs = ParametroTable::retrieveByCaso("CU062");
+        
+        $this->incoterms = array();
+        $this->incoterms["%"] = "Incoterms (Todos)";
+        foreach ($incoterms_rs as $incoterm) {
+            $this->incoterms[$incoterm->getCaValor()] = $incoterm->getCaValor();
+        }
+    }
+
+    /**
+     * Lista de referencias con opción de apertura
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeReporteComisionesXCobrarList(sfWebRequest $request) {
+        $response = sfContext::getInstance()->getResponse();
+        $response->addJavaScript("extExtras/GroupSummary",'last');
+        
+        $anio = $request->getParameter("anio");
+        $mes = $request->getParameter("mes");
+        $sucursal = $request->getParameter("selSucursal");
+        $usuario = $request->getParameter("selUsuario");
+        $circular = $request->getParameter("selCircular");
+        $resultado = $request->getParameter("selResultado");
+        $casos = $request->getParameter("selCasos");
+        $incoterms = $request->getParameter("selIncoterms");
+        
+        if ($mes == "%") {
+            $mes = date('m');
+        }
+
+        $meses = array();
+        $fch_fin = mktime(0, 0, 0, $mes, 1, $anio);
+
+        $fch_ini = mktime(0, 0, 0, 1, 1, $anio - 5); // FIX Menos el # de años que se desea analizar = 5
+        list($anio, $mes, $dia) = sscanf(date('Y-m-d', $fch_ini), "%d-%d-%d");
+
+        while ($fch_ini <= $fch_fin) {
+            $fch_ini = mktime(0, 0, 0, $mes, $dia, $anio);
+            list($anio, $mes, $dia) = sscanf(date('Y-m-d', $fch_ini), "%d-%d-%d");
+
+            $meses[] = date('Y-m', $fch_ini);
+            $mes++;
+        }
+
+        $meses = implode("','", $meses);
+        $condicion = "ca_ano::text||'-'||ca_mes::text in ('$meses')";
+        
+        if ($sucursal != "Todas Las sucursales") {
+            $condicion.= " and ca_sucursal = '$sucursal' ";
+        }
+
+        if ($usuario != "%") {
+            $condicion.= " and ca_login like '$usuario' ";
+        }
+        
+        if ($circular != "%") {
+            $condicion.= " and ca_stdcircular = '$circular' ";
+        }
+        
+        if ($casos != "%") {
+            $condicion.= " and ca_estado = '$casos' ";
+        }
+        
+        $columnas = "ca_oid, ca_referencia, ca_compania, ca_hbls, ca_incoterms, ca_factura, ca_fchfactura, ca_valor, ca_reccaja, ca_fchpago, ca_vlrcomisiones, ca_sbrcomisiones, ca_estado, ca_fchcerrado, ca_facturacion_r, ca_deduccion_r, ca_utilidad_r, ca_volumen_r, ca_vlrutilidad_liq, ca_volumen, ca_porcentaje, ca_sbrcomision, ca_stdcircular, ca_login, ca_sucursal";
+        
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select $columnas from vi_inoingresos_sea where $condicion";
+        $rs = $con->execute($sql);
+        $comisiones_rs = $rs->fetchAll();
+        
+        $data = array();
+        $key_tmp = null;
+        foreach ($comisiones_rs as $key => $comision) {
+            $row = array();
+            foreach (split(", ", $columnas) as $columna){
+                $row[$columna] = utf8_encode($comision[$columna]);
+            }
+            
+            $ca_vlrcomisiones_caus = 0;
+            if ($row["ca_vlrutilidad_liq"] != 0){
+                $ca_vlrcomisiones_caus = round($row["ca_vlrutilidad_liq"] * $row["ca_porcentaje"] / 100, 0);
+            }else{
+                $ca_vlrcomisiones_caus = round(($row["ca_facturacion_r"] - $row["ca_deduccion_r"] - $row["ca_utilidad_r"]) * ($row["ca_volumen"] / $row["ca_volumen_r"]) * $row["ca_porcentaje"] / 100, 0);
+            }
+            $ca_sbrcomisiones_caus = round($row["ca_sbrcomision"] * $row["ca_porcentaje"] / 100, 0);
+            
+            if ($row["ca_referencia"]."|".$row["ca_hbls"] != $key_tmp){
+                $row["ca_vlrcomisiones_caus"] = $ca_vlrcomisiones_caus;
+                $row["ca_sbrcomisiones_caus"] = $ca_sbrcomisiones_caus;
+                $ca_corrientes_dif = $ca_vlrcomisiones_caus - $row["ca_vlrcomisiones"];
+                $ca_sobreventa_dif = $ca_sbrcomisiones_caus - $row["ca_sbrcomisiones"];
+
+                $row["ca_corrientes_dif"] = $ca_corrientes_dif;
+                $row["ca_sobreventa_dif"] = $ca_sobreventa_dif;
+            }else{
+                $row["ca_vlrcomisiones_caus"] = 0;
+                $row["ca_sbrcomisiones_caus"] = 0;
+                $row["ca_corrientes_dif"] = 0;
+                $row["ca_sobreventa_dif"] = 0;
+            }
+            $key_tmp = $row["ca_referencia"]."|".$row["ca_hbls"];
+            
+            $condicion_utilidad = false;
+            if ($ca_corrientes_dif != 0 or $ca_sobreventa_dif != 0){
+                if ($resultado == "Perdida" and ($ca_corrientes_dif < 0 or $ca_sobreventa_dif < 0)){
+                    $condicion_utilidad = true;
+                }else if ($resultado == "Utilidad" and ($ca_corrientes_dif > 0 or $ca_sobreventa_dif > 0)){
+                    $condicion_utilidad = true;
+                }else if ($resultado == "%"){
+                    $condicion_utilidad = true;
+                }
+            }
+            
+            $condicion_incoterm = false;
+            if ($incoterms[0] !== "%"){
+                $incoterm_array = explode("|", $row["ca_incoterms"]);
+                foreach ($incoterm_array as $incoterm){
+                    if (in_array($incoterm, $incoterms)){
+                        $condicion_incoterm = true;
+                        break;
+                    }
+                }
+            }else{
+                $condicion_incoterm = true;
+            }
+            
+            if ($condicion_utilidad and $condicion_incoterm){
+                $data[] = $row;
+            }
+        }
+        $this->comisiones = $data;
+    }
 }
 ?>
