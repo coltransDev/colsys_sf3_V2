@@ -15,7 +15,7 @@
 
 $titulo = 'Generador de Informes Módulo Marítimo';
 $meses  = array( "%" => "Todos los Meses", "01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre" );
-$criterios = array( "ca_ano" => "Año", "ca_mes" => "Mes", "ca_sucursal" => "Sucursal", "ca_traorigen" => "Tráfico", "ca_vendedor" => "Vendedor", "ca_compania" => "Clientes", "ca_estado" => "Estado", "ca_ciudestino" => "Puerto/Destino", "ca_nomlinea" => "Naviera");
+$criterios = array( "ca_ano" => "Año", "ca_mes" => "Mes", "ca_sucursal" => "Sucursal", "ca_traorigen" => "Tráfico", "ca_vendedor" => "Vendedor", "ca_compania" => "Clientes", "ca_estado" => "Estado", "ca_ciudestino" => "Puerto/Destino",  "ca_ciuorigen" => "Puerto/Origen",  "ca_nomlinea" => "Naviera");
 $modalidades= array("LCL","FCL","COLOADING","PROYECTOS","PARTICULARES");                     // Arreglo con los tipos de Modalidades de Carga
 
 include_once 'include/datalib.php';                                            // Incorpora la libreria de funciones, para accesar leer bases de datos
