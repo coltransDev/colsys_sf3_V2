@@ -181,7 +181,7 @@ var crearSeguimiento=function(){
 			 $notas="";             
 			 $notas.= "Thks+Rgds,\n\n";
              
-             if(  ($reporte->getCaImpoexpo()==Constantes::IMPO || $reporte->getCaImpoexpo()==Constantes::TRIANGULACION) && ($reporte->getCaTransporte()==Constantes::MARITIMO)  )
+             if(  ($reporte->getCaImpoexpo()==Constantes::IMPO || $reporte->getCaImpoexpo()==Constantes::TRIANGULACION) && ($reporte->getCaTransporte()==Constantes::MARITIMO || $reporte->getCaTransporte()==Constantes::AEREO)  )
              {
                  $notas.="Sales Representative : ".$reporte->getUsuario()->getCaNombre()."\n\n";
              }
