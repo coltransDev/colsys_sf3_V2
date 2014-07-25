@@ -63,7 +63,7 @@ if($buscar)
                 for($i=0;$i<count($dat);$i++)
                 {
                     $d=$dat[$i];
-                    if(intval($d["comision_ino"])==0)
+                    if(intval($d["comision_ino"])==0 && $casos!="")
                         continue;
                     $url="/ino/verReferencia/modo/".$d["tipo"]."/idmaster/".$d["ca_idmaster"];
             ?>
@@ -92,13 +92,16 @@ if($buscar)
                 if($d["ca_usucerrado"]!="" && $d["rccaja"]!="" )
                 {
                     //if($diascircular>0)
-                    if($stdcircular == "Vencido")
+                    if( $stdcircular == "Vencido" && $d["comision_ino"]>0)
                     {
                         echo "Circular 170 Vencida";
                     }else{
+                        if(intval($d["comision_ino"])!=0)
+                        {
                 ?>
                     <input type="checkbox" name="idhouse[]" value="<?=$d["ca_idhouse"]?>" <?=($d["comision_ino"]<0)?"checked onclick=clickobligatorio(this)":""?>  />
                 <?
+                        }
                     }
                 }
                 ?>

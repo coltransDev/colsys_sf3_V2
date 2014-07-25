@@ -497,7 +497,7 @@ class inoReportesActions extends sfActions {
             $aa = $request->getParameter("anio");
             
             $mm = $request->getParameter("mes");
-            $casos = $request->getParameter("casos");
+            $this->casos = $request->getParameter("casos");
             $idcomercial = $request->getParameter("idcomercial");
             
 
@@ -548,13 +548,13 @@ class inoReportesActions extends sfActions {
                 $q->addWhere ("h.ca_vendedor =?",$idcomercial);
             }
             
-            if ($casos!="") {
-                if($casos==1)
+            if ($this->casos!="") {
+                if($this->casos==1)
                     $q->addWhere("m.ca_fchcerrado is null");
-                else if($casos==0)
+                else if($this->casos==0)
                     $q->addWhere("m.ca_fchcerrado is not null");
             }
-            if($this->getUser()->getUserId()=="maquinche")
+            if($this->getUser()->getUserId()=="maquinche11")
             {
                 echo "   ".$impoexpo."<br>"; //= $request->getParameter("impoexpo");
                 echo "   ".$transporte."<br>"; // = $request->getParameter("transporte");
@@ -755,7 +755,7 @@ class inoReportesActions extends sfActions {
             $aa = $request->getParameter("anio");
             
             $mm = $request->getParameter("mes");
-            $casos = $request->getParameter("casos");
+            $this->casos = $request->getParameter("casos");
 
             if ($impoexpo) {
                 $sql.=" and m.ca_impoexpo ='{$impoexpo}'";                
@@ -819,16 +819,16 @@ class inoReportesActions extends sfActions {
                 }*/
             }
 
-            if ($casos!="") {
-                if($casos==1)
+            if ($this->casos!="") {
+                if($this->casos==1)
                 {
                     $sql.=" and m.ca_fchcerrado is null";
                 }
-                else if($casos==0)
+                else if($this->casos==0)
                 {
                     $sql.=" and m.ca_fchcerrado is not null and m.ca_usucerrado is not null";
                 }
-                else if($casos==2)
+                else if($this->casos==2)
                 {
                     $sql.=" and rc.ca_consecutivo is not null and m.ca_fchcerrado is not null and m.ca_usucerrado is not null";
                 }
@@ -1057,7 +1057,7 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
             $aa = $request->getParameter("anio");
             
             $mm = $request->getParameter("mes");
-            $casos = $request->getParameter("casos");
+            $this->casos = $request->getParameter("casos");
 
             if ($impoexpo) {
                 $sql.=" and m.ca_impoexpo ='{$impoexpo}'";                
@@ -1116,16 +1116,16 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
                 }
             }
 
-            if ($casos!="") {
-                if($casos==1)
+            if ($this->casos!="") {
+                if($this->casos==1)
                 {
                     $sql.=" and m.ca_fchcerrado is null";
                 }
-                else if($casos==0)
+                else if($this->casos==0)
                 {
                     $sql.=" and m.ca_fchcerrado is not null and m.ca_usucerrado is not null";
                 }
-                else if($casos==2)
+                else if($this->casos==2)
                 {
                     //$sql.=" and rc.ca_consecutivo is not null and m.ca_fchcerrado is not null and m.ca_usucerrado is not null";
                     $sql.="and (SELECT count(ca_consecutivo) FROM ino.vi_comprobantes WHERE ca_idmaster=m.ca_idmaster AND ca_idhouse=h.ca_idhouse AND ca_idtipo IN(12))>0 ";
@@ -1151,7 +1151,7 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
                 echo "<pre>";print_r($this->refs);echo "</pre>";
             }
             foreach($this->refs as $key=>$r)
-            {
+            {                
                 if($r["ca_porcentaje"]<=0)
                     continue;
 
@@ -1168,7 +1168,7 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
                 }
                 
                 
-                $r["comision_cobrada"]=$com_cob;
+                $r["comision_cobrada"]=($com_cob!="")?$com_cob:0;
                 $r["comision_ino"]=($r["ino"]*($r["ca_porcentaje"]/100))-$r["comision_cobrada"];
                 $r["comision_comprobante"]=$com_comp;
                 //echo "<pre>";print_r($r);echo "<pre>";
@@ -1527,9 +1527,9 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
             array("id"=>"ca_traorigen","valor"=>utf8_encode("Tráfico")),
             array("id"=>"ca_vendedor","valor"=>"Vendedor"),
             array("id"=>"ca_compania","valor"=>"Clientes"),
-            array("id"=>"ca_estado","valor"=>"Estado"),
+            //array("id"=>"ca_estado","valor"=>"Estado"),
             array("id"=>"ca_ciudestino","valor"=>"Puerto/Destino"),
-            array("id"=>"ca_nomlinea","valor"=>"Naviera")                    
+            array("id"=>"ca_nomlinea","valor"=>"Transportador")
         );
         
         
@@ -1556,16 +1556,17 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
             $empresa=sfConfig::get('app_branding_name');
 
             $aa = $request->getParameter("aa");
-            $q = Doctrine::getTable("InoMaster")
+            /*$q = Doctrine::getTable("InoMaster")
                     ->createQuery("m")
                     ->innerJoin("m.InoHouse h")
                     ->innerJoin("m.Origen o")
-                    ->innerJoin("o.trafico to")
+                    ->innerJoin("o.Trafico to")
                     ->innerJoin("m.Destino d")
-                    ->innerJoin("d.trafico td")
+                    ->innerJoin("d.Trafico td")
                     ->innerJoin("m.IdsProveedor p")
                     ->leftJoin("h.Reporte r")
                     ->innerJoin("h.Vendedor v")
+                    ->innerJoin("v.Sucursal s" )
                     ->innerJoin("p.Ids i")
                     ->leftJoin("m.IdsAgente a")
                     ->leftJoin("a.Ids ia")
@@ -1575,59 +1576,81 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
                     ->leftJoin("m.InoViUtilidad uti")
                     ->leftJoin("m.InoViUnidadesMaster uni")
                     ->leftJoin("m.InoViTeus te")
-                    ->select("m.ca_idmaster, m.ca_referencia, uni.ca_numhijas, uni.ca_numpiezas, uni.ca_peso, uni.ca_volumen, 
-                                to.ca_nombre as ca_traorigen,o.ca_ciudad as ca_ciuorgen, td.ca_nombre as ca_traorigen, d.ca_ciudad as ca_ciudestino, h.ca_idhouse, r.ca_incoterms, p.ca_idproveedor, i.ca_nombre,a.ca_idagente,ia.ca_nombre, te.ca_valor,
-                                cost.ca_valor, cost.ca_venta, ing.ca_valor, ded.ca_valor, uti.ca_valor, m.ca_fchcerrado, m.ca_fchliquidado, m.ca_observaciones");
+                    ->select("m.ca_idmaster, m.ca_referencia, uni.ca_numhijas, uni.ca_numpiezas, uni.ca_peso, uni.ca_volumen,
+                                to.ca_nombre as ca_traorigen,o.ca_ciudad as ca_ciuorgen, 
+                                td.ca_nombre as ca_tradestino, d.ca_ciudad as ca_ciudestino, 
+                                h.ca_idhouse, r.ca_incoterms, p.ca_idproveedor, i.ca_nombre, a.ca_idagente,ia.ca_nombre, 
+                                te.ca_valor,cost.ca_valor, cost.ca_venta, ing.ca_valor, ded.ca_valor, uti.ca_valor, 
+                                m.ca_fchcerrado, m.ca_fchliquidado, m.ca_observaciones, h.ca_vendedor");
+            */
+            $q = Doctrine::getTable("InoViRepgenerador")
+                    ->createQuery("m")
+                    ->select($this->criterio.",ca_referencia,
+                        COUNT(DISTINCT ca_referencia) as ca_referencias, 
+                        COUNT(ca_numhijas) as ca_hbls, 
+                        SUM(ca_ingresos) as ca_facturacion, 
+                        SUM(ca_utilidades) as ca_utilidad, 
+                        SUM(ca_volumen) as ca_cbm, 
+                        SUM(ca_teus) as ca_teus");
+            
+            $q->orderBy($this->criterio);
+            $cri_tmp= explode(",",$this->criterio);
+            foreach($cri_tmp as $c)
+                $q->addGroupBy($c);
+            
+            $q->addOrderBy("ca_referencia");
+            $q->addGroupBy("ca_referencia");
+             
+                    //groupBy($this->criterio);
+                    
             
             $q->addWhere("m.ca_fchanulado IS NULL ");
-
-
             /*
-
             if ($origen) {
                 $q->addWhere("o.ca_ciudad = ? ", $origen);
             }*/
 
             if ($this->impoexpo) {
                 $q->addWhere("m.ca_impoexpo = ? ", $this->impoexpo);
-                echo $this->impoexpo."<br>";
+                echo "1597-".$this->impoexpo."<br>";
             }
 
             if ($this->transporte) {
                 $q->addWhere("m.ca_transporte = ? ", $this->transporte);
-                echo $this->transporte."<br>";
+                echo "1602-".$this->transporte."<br>";
             }
 
             if ($this->modalidad) {
                 $q->addWhere("m.ca_modalidad = ? ", $this->modalidad);
-                echo $this->modalidad."<br>";
+                echo "1607-".$this->modalidad."<br>";
             }
 
             if ($this->idlinea) {
                 $q->addWhere("m.ca_idlinea = ? ", $this->idlinea);
-                echo $this->idlinea."<br>";
+                echo "1612-".$this->idlinea."<br>";
             }
 
             if ($this->idcliente) {
-                $q->addWhere("h.ca_idcliente = ? ", $this->idcliente);
-                echo $this->idcliente."<br>";
+                $q->addWhere("m.ca_idcliente = ? ", $this->idcliente);
+                echo "1617-".$this->idcliente."<br>";
             }
 
             if ($this->mes) {
-                $q->andWhereIn("SUBSTR(m.ca_referencia,8,2)",  explode(",", $this->mes));
-                echo explode(",", $this->mes)."<br>";
+                $q->andWhereIn("ca_mes", $this->mes);
+                echo "1622-". $this->mes."<br>";
             }
 
             if ($this->destino) {
-                $q->andWhereIn("d.ca_idciudad",  explode(",", $this->destino));
-                echo explode(",", $this->destino)."<br>";
+                $q->andWhereIn("m.ca_destino",   $this->destino);
+                echo "1625-".$this->destino."<br>";
                 //$q->addWhere("d.ca_ciudad IN (?) ", $this->destino);
             }
 
-            if($this->sucursal && !$this->vendedor )
+            if($this->sucursal )
             {
-                $q->innerJoin("v.Sucursal s WITH s.ca_nombre='$this->sucursal'");
-                echo $this->sucursal."<br>";
+                //$q->innerJoin("v.Sucursal s WITH s.ca_nombre='$this->sucursal'");
+                $q->addWhere("m.ca_sucursal = ? ", $this->sucursal);                
+                echo "1635-".$this->sucursal."<br>";
             }
 
 /*            if ($idtrafico) {
@@ -1639,8 +1662,7 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
             }
  * 
  */
-
-            if (count($mm)>0) {
+            /*if (count($mm)>0) {
                 if($empresa!='TPLogistics'){
                     
                     $q->andWhereIn("SUBSTR(m.ca_referencia,8,2)",$mm);
@@ -1651,18 +1673,18 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
                         $q->andWhereIn("SUBSTR(m.ca_referencia,7,2)",$mm);
                     }
                 }
-                echo $mm."<br>";
-            }
+                echo "1659-".implode(",",$mm)."<br>";
+            }*/
 
             
             if ($this->vendedor) {
-                $q->andWhereIn("h.ca_vendedor",  explode(",", $this->vendedor));
-                echo $this->vendedor ."<br>";
+                $q->andWhereIn("m.ca_vendedor",  $this->vendedor);
+                echo "1665-".$this->vendedor ."<br>";
             }
 
             if ($this->year) {
                 if($empresa!='TPLogistics'){
-                    $q->addWhere("substr(m.ca_referencia,16,2) = ?", $aa % 100);
+                    $q->addWhere("ca_ano = ?", $aa % 100);
                 }else{
                     if($aa<='2012' || ($aa=='2013' && (in_array('1', $mm) || in_array('2', $mm)))){
                         $q->addWhere("substr(m.ca_referencia,15,1) = ?", $aa % 10);
@@ -1672,8 +1694,10 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
                 }
                 echo $aa%100 ."<br>";
             }
-            echo $q->getSqlQuery();
-            //$this->refs = $q->setHydrationMode(Doctrine::HYDRATE_ARRAY)->execute();
+            echo $q->getSqlQuery();   
+            
+            $this->datos = $q->setHydrationMode(Doctrine::HYDRATE_ARRAY)->execute();
+            print_r($this->datos);
         }
     }
 }
