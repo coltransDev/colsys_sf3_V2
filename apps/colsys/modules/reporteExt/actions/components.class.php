@@ -9,8 +9,7 @@
  * @version    SVN: $Id: actions.class.php 2692 2006-11-15 21:03:55Z fabien $
  */
 class reporteExtComponents extends sfComponents
-{ 
- 	
+{	
 	/*
 	* Muestra la presentación del reporte marítimo al exterior
 	* @author: Andres Botero 
@@ -18,8 +17,6 @@ class reporteExtComponents extends sfComponents
     public function executeReporteMaritimoExtNew(){
 
         $reporte = $this->reporte;
-
-        
 
         $idtrafico = $this->getUser()->getIdtrafico();
         
@@ -221,7 +218,14 @@ class reporteExtComponents extends sfComponents
                                    ->createQuery("t")
                                    ->where("t.ca_idreporte = ? ", $reporte->getCaIdreporte())
                                    ->execute();
-
+        if($reporte->getCaImpoexpo()==Constantes::EXPO)
+        {         
+            $this->gastos = Doctrine::getTable("RepGasto")
+                                   ->createQuery("g")
+                                   ->innerJoin("g.TipoRecargo t") 
+                                   ->addWhere("g.ca_idreporte = ? ", $reporte->getCaIdreporte())                                   
+                                   ->execute();
+        }
 //echo $reporte->getCaImpoexpo();
         if( $reporte->getCaIdmaster()){
             $consignatario = Doctrine::getTable("Tercero")->find( $reporte->getCaIdmaster() );
@@ -298,18 +302,21 @@ class reporteExtComponents extends sfComponents
         $bodega1 = $reporte->getBodegaConsignar();
         $bodega2 = Doctrine::getTable("Bodega")->find( $reporte->getCaIdbodega() );
 
+        
         if( $reporte->getCaIdconsignar()==1 ){
             $hijo = $consignatario_final;
         }else{
             $hijo = $bodegaConsignar->getCaNombre()." ".$bodegaConsignar->getCaDireccion();
         }
         
+        if($reporte->getProperty("entrega_lugar_arribo")=="true" || $reporte->getProperty("entrega_lugar_arribo")=="1")
+        {
+            $hijo.=" / Entrega en Lugar de Arribo ";
+        }
+        
         if($bodega2 && $reporte->getCaImpoexpo()!=Constantes::TRIANGULACION && $bodega2->getCaIdbodega()!="1")
         {
-            if($reporte->getProperty("entrega_lugar_arribo")=="true" || $reporte->getProperty("entrega_lugar_arribo")=="1")
-            {
-                $hijo.=" / Entrega en Lugar de Arribo ";
-            }
+
             if($bodega2->getCaTipo()==$bodega2->getCaNombre())
                 $hijo.=" / ".$bodega2->getCaNombre()." ".$bodega2->getCaDireccion();
             else

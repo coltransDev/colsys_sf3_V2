@@ -302,7 +302,7 @@ class reporteExtActions extends sfActions
                                      ->fetchOne();
             $this->forward404Unless( $this->reporte );
         }
-		$this->forward404Unless( $this->reporte->getCaImpoexpo()==Constantes::IMPO||$this->reporte->getCaImpoexpo()==Constantes::TRIANGULACION );
+		//$this->forward404Unless( $this->reporte->getCaImpoexpo()==Constantes::IMPO||$this->reporte->getCaImpoexpo()==Constantes::TRIANGULACION );
 
 		if( $this->getRequestParameter("layout") ){
 			$this->setLayout( $this->getRequestParameter("layout") );

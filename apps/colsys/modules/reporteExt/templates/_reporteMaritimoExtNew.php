@@ -83,7 +83,7 @@ if ( $reporte->getCaContinuacion() != 'N/A' ){
 ?>
 <tr>
 	<td><b>NATURE GOODS :</b></td>
-	<td colspan="3"><?=$reporte->getCaMercanciaDesc()?></td>
+	<td colspan="3"><?=$reporte->getCaMciaPeligrosa()?"DANGEROUS GOODS. ":""?><?=$reporte->getCaMercanciaDesc()?></td>
 </tr>
 <tr>
 	<td colspan="4">&nbsp;</td>
@@ -155,7 +155,7 @@ else
 		?>
 			<tr>
 				<td style="vertical-align:bottom" bgcolor="#CCCCCC" width="30%"><b>Ocean Freight :</b><br />
-					<?
+				<?
 				echo $tarifa->getConcepto()->getCaConcepto();
 				if( $tarifa->getCaCantidad()>0 ){
 					echo "[Cant.: ".Utils::formatNumber( $tarifa->getCaCantidad() ,3)."]";
@@ -163,82 +163,230 @@ else
 				?>				</td>
 				<td style="vertical-align:bottom" bgcolor="#CCCCCC" width="70%"><table border="1" cellspacing="0" width="100%">
 						<tr>
-							<?
-					if ( $tarifa->getCaNetaTar() > 0 ){
+				<?
+                    $tar_buy="";
+                    if($reporte->getCaImpoexpo()!=Constantes::EXPO || ($reporte->getCaImpoexpo()==Constantes::EXPO && $reporte->getCaIncoterms()=="DDP - Delivered Duty Paid" ))
+                    {
+                        if ( $tarifa->getCaNetaTar() > 0 )
+                            $tar_buy=number_format($tarifa->getCaNetaTar(),2)." ".$tarifa->getCaNetaIdm();
+                    }
+                    else
+                    {
+                        if ( $tarifa->getCaReportarTar() > 0 )
+                            $tar_buy=number_format($tarifa->getCaReportarTar(),2)." ".$tarifa->getCaReportarIdm();
+                    }
+					 if ( $tar_buy!="" ){
 					?>
 							<td bgcolor="#CCCCCC" width="25%"><b>Buying Rate :</b><br />
-								<?=number_format($tarifa->getCaNetaTar(),2)." ".$tarifa->getCaNetaIdm()?>							</td>
+								<?=$tar_buy?>							</td>
 							<?
 					}
-					if ($tarifa->getCaNetaMin() > 0){
+                    
+                    
+                    $tar_buy_min="";
+                    if($reporte->getCaImpoexpo()!=Constantes::EXPO || ($reporte->getCaImpoexpo()==Constantes::EXPO && $reporte->getCaIncoterms()=="DDP - Delivered Duty Paid" ))
+                    {
+                        if ( $tarifa->getCaNetaMin() > 0 )
+                            $tar_buy_min=number_format($tarifa->getCaNetaMin(),2)." ".$tarifa->getCaNetaIdm();
+                    }
+                    else
+                    {
+                        if ( $tarifa->getCaReportarMin() > 0 )
+                            $tar_buy_min=number_format($tarifa->getCaReportarMin(),2)." ".$tarifa->getCaReportarIdm();
+                    }
+					 if ( $tar_buy_min!="" ){
 					?>
-							<td bgcolor="#CCCCCC" width="25%"><b>Minimum :</b><br />
-								<?=number_format($tarifa->getCaNetaMin(),2)." ".$tarifa->getCaNetaIdm()?>							</td>
+							<td bgcolor="#CCCCCC" width="25%"><b>Buying Rate :</b><br />
+								<?=$tar_buy_min?>							</td>
 							<?
 					}
-
-					if ($tarifa->getCaReportarTar() > 0){
+                    
+                    
+                    
+                    
+                    $tar_sell="";
+                    if($reporte->getCaImpoexpo()!=Constantes::EXPO || ($reporte->getCaImpoexpo()==Constantes::EXPO && $reporte->getCaIncoterms()=="DDP - Delivered Duty Paid" ) )
+                    {
+                        if ( $tarifa->getCaReportarTar() > 0 )
+                            $tar_sell=number_format($tarifa->getCaReportarTar(),2)." ".$tarifa->getCaReportarIdm();
+                    }
+                    else
+                    {
+                        if ( $tarifa->getCaCobrarTar() > 0 )
+                            $tar_sell=number_format($tarifa->getCaCobrarTar(),2)." ".$tarifa->getCaCobrarIdm();
+                    }
+                    
+					if ( $tar_sell!="" ){
 					?>
 							<td bgcolor="#CCCCCC" width="25%"><b>Selling Rate :</b><br />
-								<?=number_format($tarifa->getCaReportarTar(),2)." ".$tarifa->getCaReportarIdm()?>							</td>
+								<?=$tar_sell?>							</td>
 							<?
 					}
-					if ($tarifa->getCaReportarMin() > 0){
-					?>
-						<td bgcolor="#CCCCCC" width="25%"><b>Minimum :</b><br />
-								<?=number_format($tarifa->getCaReportarMin(),2)." ".$tarifa->getCaReportarIdm()?>					</td>
-					<?
-					}
-					?>
-						</tr>
-					</table></td>
-			</tr>
-			<?
-			foreach( $gastos as $gasto ){
-				if ($gasto->getCaIdconcepto() == $tarifa->getCaIdconcepto() ){
-                    if ( $gasto->getCaNetaTar()== 0 && $gasto->getCaReportarTar() == 0) {
-                        continue;
+                    
+                    
+                    $tar_sell_min="";
+                    if($reporte->getCaImpoexpo()!=Constantes::EXPO || ($reporte->getCaImpoexpo()==Constantes::EXPO && $reporte->getCaIncoterms()=="DDP - Delivered Duty Paid" ))
+                    {
+                        if ( $tarifa->getCaReportarMin() > 0 )
+                            $tar_sell_min=number_format($tarifa->getCaReportarMin(),2)." ".$tarifa->getCaReportarIdm();
                     }
-			?>
-			<tr>
-				<td style="vertical-align:bottom" width="30%"><b>
-					<?=$gasto->getTipoRecargo()->getCaRecargo()?>
-				</b></td>
-				<td style="vertical-align:bottom" width="70%"><table border="1" cellspacing="0" width="100%">
-						<tr>
+                    else
+                    {
+                        if ( $tarifa->getCaCobrarMin() > 0 )
+                            $tar_sell_min=number_format($tarifa->getCaCobrarMin(),2)." ".$tarifa->getCaCobrarIdm();
+                    }
+					if ( $tar_sell_min!="" ){
+					?>
+							<td bgcolor="#CCCCCC" width="25%"><b>Selling Rate :</b><br />
+								<?=$tar_sell_min?>							</td>
 							<?
-							if ($gasto->getCaNetaTar() != 0){
-							?>
-							<td><b>Buying Rate :</b><br />
-								<?=(($gasto->getCaTipo()=='$')?number_format($gasto->getCaNetaTar() ,2)." ".$gasto->getCaIdmoneda():number_format($gasto->getCaNetaTar(),2).$gasto->getCaTipo())?>							</td>
-							<?
-							}
-							if ($gasto->getCaNetaMin() != 0){
-							?>
-							<td><b>Minimum :</b><br />
-								<?=number_format($gasto->getCaNetaMin() ,2)." ".$gasto->getCaIdmoneda()?>							</td>
-							<?
-							}
-							if ($gasto->getCaReportarTar() != 0){
-							?>
-							<td><b>Selling Rate :</b><br />
-								<?=(($gasto->getCaTipo()=='$')?number_format($gasto->getCaReportarTar() ,2)." ".$gasto->getCaIdmoneda():number_format($gasto->getCaReportarTar(),2).$gasto->getCaTipo())?>							</td>
-							<?
-							}
-
-							if ($gasto->getCaReportarMin() != 0){
-							?>
-							<td><b>Minimum :</b><br />
-								<?=number_format($gasto->getCaReportarMin(),2)." ".$gasto->getCaIdmoneda()?>							</td>
-							<?
-							}
-							?>
+					}
+					
+					?>
 						</tr>
 					</table></td>
 			</tr>
 			<?
-				}
-			}
+            
+            if($reporte->getCaImpoexpo()==Constantes::EXPO)
+            {
+                
+                foreach( $gastos as $gasto ){
+                    if ($gasto->getCaIdconcepto() == $tarifa->getCaIdconcepto() ){
+                        if ( $gasto->getCaCobrarTar()== 0 && $gasto->getCaReportarTar() == 0) {
+                            continue;
+                        }
+                ?>
+                <tr>
+                    <td style="vertical-align:bottom" width="30%"><b>
+                        <?=$gasto->getTipoRecargo()->getCaRecargo()?>
+                    </b></td>
+                    <td style="vertical-align:bottom" width="70%"><table border="1" cellspacing="0" width="100%">
+                            <tr>                                
+                                <?
+                                
+                                if($reporte->getCaImpoexpo()!=Constantes::EXPO || ($reporte->getCaImpoexpo()==Constantes::EXPO && $reporte->getCaIncoterms()=="DDP - Delivered Duty Paid" ))
+                                {
+                                    if ($gasto->getCaNetaTar() != 0){
+                                    ?>
+                                    <td><b>Buying Rate :</b><br />
+                                    <?=(($gasto->getCaTipo()=='$')?number_format($gasto->getCaNetaTar() ,2)." ".$gasto->getCaIdmoneda():number_format($gasto->getCaNetaTar(),2).$gasto->getCaTipo())?>
+                                    </td>
+                                    <?
+                                    }
+                                    if ($gasto->getCaReportarMin() != 0){
+                                    ?>
+                                    <td><b>Minimum :</b><br />
+                                        <?=number_format($gasto->getCaReportarMin(),2)." ".$gasto->getCaIdmoneda()?>
+                                    </td>
+                                    <?
+                                    }
+                                    if ($gasto->getCaReportarTar() != 0){
+                                    ?>
+                                    <td><b>Selling Rate :</b><br />
+                                        <?=(($gasto->getCaTipo()=='$')?number_format($gasto->getCaReportarTar() ,2)." ".$gasto->getCaIdmoneda():number_format($gasto->getCaReportarTar(),2).$gasto->getCaTipo())?>
+                                    </td>
+                                    <?
+                                    }
+
+                                    if ($gasto->getCaReportarMin() != 0){
+                                    ?>
+                                    <td><b>Minimum :</b><br />
+                                        <?=number_format($gasto->getCaReportarMin(),2)." ".$gasto->getCaIdmoneda()?>
+                                    </td>
+                                    <?
+                                    }
+                                }
+                                else
+                                {
+                                    
+                                
+                                    if ($gasto->getCaReportarTar() != 0){
+                                    ?>
+                                    <td><b>Buying Rate :</b><br />
+                                    <?=(($gasto->getCaTipo()=='$')?number_format($gasto->getCaReportarTar() ,2)." ".$gasto->getCaIdmoneda():number_format($gasto->getCaReportarTar(),2).$gasto->getCaTipo())?>
+                                    </td>
+                                    <?
+                                    }
+                                    if ($gasto->getCaReportarMin() != 0){
+                                    ?>
+                                    <td><b>Minimum :</b><br />
+                                        <?=number_format($gasto->getCaReportarMin(),2)." ".$gasto->getCaIdmoneda()?>
+                                    </td>
+                                    <?
+                                    }
+                                    if ($gasto->getCaCobrarTar() != 0){
+                                    ?>
+                                    <td><b>Selling Rate :</b><br />
+                                        <?=(($gasto->getCaTipo()=='$')?number_format($gasto->getCaCobrarTar() ,2)." ".$gasto->getCaIdmoneda():number_format($gasto->getCaCobrarTar(),2).$gasto->getCaTipo())?>
+                                    </td>
+                                    <?
+                                    }
+
+                                    if ($gasto->getCaCobrarMin() != 0){
+                                    ?>
+                                    <td><b>Minimum :</b><br />
+                                        <?=number_format($gasto->getCaCobrarMin(),2)." ".$gasto->getCaIdmoneda()?>
+                                    </td>
+                                    <?
+                                    }
+                                }
+                                ?>
+                            </tr>
+                        </table></td>
+                </tr>
+                <?
+                    }
+                }
+            }else
+            {
+
+                foreach( $gastos as $gasto ){
+                    if ($gasto->getCaIdconcepto() == $tarifa->getCaIdconcepto() ){
+                        if ( $gasto->getCaNetaTar()== 0 && $gasto->getCaReportarTar() == 0) {
+                            continue;
+                        }
+                ?>
+                <tr>
+                    <td style="vertical-align:bottom" width="30%"><b>
+                        <?=$gasto->getTipoRecargo()->getCaRecargo()?>
+                    </b></td>
+                    <td style="vertical-align:bottom" width="70%"><table border="1" cellspacing="0" width="100%">
+                            <tr>
+                                <?
+                                if ($gasto->getCaNetaTar() != 0){
+                                ?>
+                                <td><b>Buying Rate :</b><br />
+                                    <?=(($gasto->getCaTipo()=='$')?number_format($gasto->getCaNetaTar() ,2)." ".$gasto->getCaIdmoneda():number_format($gasto->getCaNetaTar(),2).$gasto->getCaTipo())?>							</td>
+                                <?
+                                }
+                                if ($gasto->getCaNetaMin() != 0){
+                                ?>
+                                <td><b>Minimum :</b><br />
+                                    <?=number_format($gasto->getCaNetaMin() ,2)." ".$gasto->getCaIdmoneda()?>							</td>
+                                <?
+                                }
+                                if ($gasto->getCaReportarTar() != 0){
+                                ?>
+                                <td><b>Selling Rate :</b><br />
+                                    <?=(($gasto->getCaTipo()=='$')?number_format($gasto->getCaReportarTar() ,2)." ".$gasto->getCaIdmoneda():number_format($gasto->getCaReportarTar(),2).$gasto->getCaTipo())?>							</td>
+                                <?
+                                }
+
+                                if ($gasto->getCaReportarMin() != 0){
+                                ?>
+                                <td><b>Minimum :</b><br />
+                                    <?=number_format($gasto->getCaReportarMin(),2)." ".$gasto->getCaIdmoneda()?>							</td>
+                                <?
+                                }
+                                ?>
+                            </tr>
+                        </table></td>
+                </tr>
+                <?
+                    }
+                }
+            }
 		}
 		?>
 			<tr>
@@ -298,6 +446,58 @@ else
 			<?
 			}
 		}
+        
+        
+        if($reporte->getCaImpoexpo()==Constantes::EXPO)
+        {
+?>
+            <tr>
+				<td bgcolor="#CCCCCC" colspan="4"><center>
+						<b>Others Costs</b>
+					</center></td>
+			</tr>
+			<?
+            //$reporte = new Reporte();
+            $costos = $reporte->getCostos();
+            
+            foreach ($costos as $c) {
+
+            ?>
+                <tr>
+                    <td style="vertical-align:bottom" width="30%"><b>
+                        <?=$c->getCosto()->getCaCosto()?>
+                    </b></td>
+                    <td style="vertical-align:bottom" width="70%"><table border="1" cellspacing="0" width="100%">
+                            <tr>
+                                <?
+
+
+                            //if ($gasto->getCaVlrcosto() != 0)
+                            {
+                            ?>
+                                <td width="50%"><b>Cost :</b><br />
+                                    <?=(($c->getCaTipo()=='%')?number_format($c->getCaVlrcosto(),2).$c->getCaTipo():number_format($c->getCaVlrcosto() ,2)." ".$c->getCaIdmoneda())?>
+                                </td>
+                                <?
+                            }
+                            //if ($gasto->getCaReportarMin() != 0)
+                            {
+                            ?>
+                                <td width="50%"><b>Minimum :</b><br />
+                                    <?=number_format($c->getCaMincosto(),2)." ".$c->getCaIdmoneda()?>							</td>
+                                <?
+                            }
+
+                            ?>
+                            </tr>
+                        </table></td>
+                </tr>
+                <?
+
+            }
+        }
+        
+        
 		?>
 		</table>
 </td>
