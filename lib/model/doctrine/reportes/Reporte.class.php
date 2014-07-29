@@ -893,6 +893,23 @@ class Reporte extends BaseReporte {
             return sfFinder::type('file')->maxDepth(0)->in($directory);
     }
 
+    public function getFilesGestDoc() {
+        
+        $referencia = $this->getNumReferencia();
+        $hbl = $this -> getDoctransporte();
+        
+        $archivos = array();
+        
+        if($referencia){
+            
+            $data = array();
+            $data["ref1"] = $referencia;
+            $data["ref2"] = $hbl;
+            $archivos = ArchivosTable::getArchivosActivos($data);            
+        }        
+        return $archivos;
+    }
+
     /*
      * Agrega un correo a la lista de confirmaciones
      * @author: Andres Botero
@@ -1101,6 +1118,9 @@ class Reporte extends BaseReporte {
         return sfConfig::get("app_digitalFile_root") . $this->getDirectorioBase();
     }
 
+    public function getDirectorioDocs() {
+        return sfConfig::get("app_digitalFile_root") . $this->getDirectorioBaseDocs();
+    }
     /*
      * Devuelve la ubicacion del directorio donde se encuentran los archivos de la referencia
      * @author Andres Botero
@@ -1108,6 +1128,22 @@ class Reporte extends BaseReporte {
 
     public function getDirectorioBase() {
         return "reportes" . DIRECTORY_SEPARATOR . substr($this->getCaConsecutivo(), -4).DIRECTORY_SEPARATOR . $this->getCaConsecutivo() . DIRECTORY_SEPARATOR;
+    }
+
+    public function getDirectorioBaseDocs($filename) {
+        
+        $archivos = $this->getFilesGestDoc();
+            
+        if($archivos){
+            foreach($archivos as $file){
+                $name = $file->getCaNombre();
+                if($name == $filename){
+                    return str_replace( sfConfig::get('app_digitalFile_root'), "", $file->getCaPath());
+                    exit;
+                }                    
+            }
+        }else
+            return null;            
     }
 
     /*
