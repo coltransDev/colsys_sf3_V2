@@ -500,10 +500,18 @@ class traficosActions extends sfActions {
             $this->att[] = $attachment;
          }
       }
+      // Archivos Gestión Documental
+      $attachments1 = $this->getRequestParameter("attachments1");
+      
+      if ($attachments1) {
+         foreach ($attachments1 as $key => $attachment) {
+            $this->att[] = $attachment;
+         }
+      }
 
-      //$att[]=$reporte->getDirectorioBase().base64_decode( $attachment );
-      //Busca los archivos del reporte
-      $this->files = $this->reporte->getFiles();
+      //Busca los archivos del reporte y de Gestión Documental
+      $this->files = $this->reporte->getFiles();      
+      $this->archivos = $this->reporte->getFilesGestDoc();
 
       $this->usuario = Doctrine::getTable("Usuario")->find($this->getuser()->getUserId());
 
@@ -774,6 +782,13 @@ class traficosActions extends sfActions {
          if ($attachments) {
             foreach ($attachments as $attachment) {
                $att[] = $reporte->getDirectorioBase() . base64_decode($attachment);
+            }
+         }
+         // Archivos de Gestión Documental
+         $attachments1 = $this->getRequestParameter("attachments1");         
+         if ($attachments1) {
+            foreach ($attachments1 as $attachment) {
+               $att[] = $reporte->getDirectorioBaseDocs(base64_decode($attachment));
             }
          }
 //---////
@@ -1204,6 +1219,22 @@ class traficosActions extends sfActions {
             $email->AddAttachment($name);
          }
       }
+      // Archivos de Gestión Documental
+      $attachments1 = $this->getRequestParameter("attachments1");
+      if ($attachments1) {
+         foreach ($attachments1 as $attachment1) {
+            $params = explode("_", $attachment1);
+            $idreporte = $params[0];
+            $reporte = Doctrine::getTable("Reporte")->find($idreporte);
+            $this->forward404Unless($reporte);
+
+            $file = base64_decode($params[1]);
+            $directory = $reporte->getDirectorioBaseDocs($file);
+
+            $name = $directory;
+            $email->AddAttachment($name);
+         }
+      }
       $email->save();
       //$email->send();
    }
@@ -1344,7 +1375,7 @@ class traficosActions extends sfActions {
 
       $name = $directory . DIRECTORY_SEPARATOR . $file;
       unlink($name);
-      return sfView::NONE;
+      return sfView::NONE;      
    }
 
    /*
@@ -1352,25 +1383,32 @@ class traficosActions extends sfActions {
     * author: Andres Botero
     */
 
-   public function executeFileViewer() {
-      $idreporte = $this->getRequestParameter("idreporte");
-      $this->forward404Unless($idreporte);
-      $reporte = Doctrine::getTable("Reporte")->find($idreporte);
-      $this->forward404Unless($reporte);
-      $file = base64_decode($this->getRequestParameter("file"));
+    public function executeFileViewer() {
+        $idreporte = $this->getRequestParameter("idreporte");
+        $this->forward404Unless($idreporte);
+        $reporte = Doctrine::getTable("Reporte")->find($idreporte);
+        $this->forward404Unless($reporte);
+        $gestDoc = $this->getRequestParameter("gestDoc");
+        $file = base64_decode($this->getRequestParameter("file"));
 
-      $directory = $reporte->getDirectorio();
-      $this->name = $directory . DIRECTORY_SEPARATOR . $file;
-      $this->setLayout("none");
+        if($gestDoc==true){
+            $directory = $reporte->getDirectorioBaseDocs($file);
+            $this->name = sfConfig::get('app_digitalFile_root')."/".$directory;
+        }else{
+            $directory = $reporte->getDirectorio();
+            $this->name = $directory . DIRECTORY_SEPARATOR . $file;
+        }
+                
+        $this->setLayout("none");
 
-      if (!file_exists($this->name) && !file_exists($this->name . ".gz")) {
-         $this->forward404("No se encuentra el archivo especificado");
-      }
+        if (!file_exists($this->name) && !file_exists($this->name . ".gz")) {
+           $this->forward404("No se encuentra el archivo especificado");
+        }
 
-      if (file_exists($this->name . ".gz")) {
-         $this->name.=".gz";
-      }
-   }
+        if (file_exists($this->name . ".gz")) {
+           $this->name.=".gz";
+        }
+    }
 
    /*    * *********************************************************************************
     * Formulario de seguimientos
