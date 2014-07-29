@@ -103,7 +103,8 @@ class gestDocumentalComponents extends sfComponents
                             ->innerJoin("a.TipoDocumental t")
                             
                             ->addWhere("a.ca_fcheliminado IS NULL")
-                            ->setHydrationMode(Doctrine::HYDRATE_ARRAY);
+                            ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                            ->orderBy("ca_ref2 desc");
          if($this->ref1!="")
              $q->andWhere("a.ca_ref1=?",$this->ref1);
          

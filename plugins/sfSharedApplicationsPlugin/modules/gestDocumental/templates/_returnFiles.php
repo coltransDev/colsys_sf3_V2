@@ -1,8 +1,9 @@
 <?php
 
 $archivos = $sf_data->getRaw("archivos");
+$eliminar=($sf_data->getRaw("eliminar")!="")?$sf_data->getRaw("eliminar"):"0";
 
-if($view!="email")
+if($view!="email" && $view!="email1")
 {
 ?>
 <script src="/js/pdf.js/compatibility.js"></script>
@@ -10,6 +11,7 @@ if($view!="email")
 <script src="/js/ext4/ux/panel/PDF.js"></script>
 <?
 }
+if ($archivos){
 ?>
 <table class="tableList" width="900px" border="1" id="mainTable" align="center" id="panel1">
     <tr>
@@ -88,7 +90,8 @@ if($view!="email")
     ?>
 </table>
 <?
-if($format!="confirmaciones")
+}
+if($format!="confirmaciones" && $view!="email1")
 {
 ?>
 <script>
@@ -127,7 +130,8 @@ if($format!="confirmaciones")
 <script>
 function eliminar(id)
 {
-    /*if(window.confirm("Esta Seguro de Eliminar el archivo"))
+    if( <?=$eliminar?>=="1")
+    if(window.confirm("Esta Seguro de Eliminar el archivo"))
     {
        Ext.Ajax.request({
            url: '/gestDocumental/eliminarArchivo',
@@ -143,48 +147,50 @@ function eliminar(id)
            },                                    
            failure: function(){console.log('failure');}
        });
-    }*/
+    }else
+    {
         Ext.MessageBox.show({
-                    title: 'Eliminacion de Archivo ',
-                    msg: 'Por favor ingrese el motivo de la eliminacion:',
-                    width:300,
-                    buttons: Ext.MessageBox.OKCANCEL,
-                    multiline: true,
-                    fn: function (btn, text){
-                        
-                        if( btn == "ok"){
-                            if( $.trim(text)==""){
-                                alert("Debe colocar un motivo");
-                            }else{
-                                if(btn=="ok")
-                                {
-                                    Ext.MessageBox.wait('Eliminando Archivo', '');
-                                    Ext.Ajax.request({
-                                        url: '/gestDocumental/eliminarArchivo',
-                                        method: 'POST',                
-                                        waitTitle: 'Connecting',
-                                        waitMsg: 'Eliminando Archivo...',                                     
-                                        params: {
-                                            "idarchivo" : id,
-                                            "observaciones": text
-                                        },
-                                        scope:this,
-                                        success: function(a,b){
-                                            //Ext.getCmp("tree-grid-file").getStore().reload();
-                                            //alert(a.toSource())
-                                            //alert(b.toSource())
-                                            //location.href=location.href;
-                                            //Ext.MessageBox.hide();
-                                            location.href=location.href;
-                                        },                                    
-                                        failure: function(){console.log('failure');}
-                                    });
-                                }
-                            }
+            title: 'Eliminacion de Archivo ',
+            msg: 'Por favor ingrese el motivo de la eliminacion:',
+            width:300,
+            buttons: Ext.MessageBox.OKCANCEL,
+            multiline: true,
+            fn: function (btn, text){
+
+                if( btn == "ok"){
+                    if( <?=$eliminar?>!="1" && $.trim(text)==""){
+                        alert("Debe colocar un motivo");
+                    }else{
+                        if(btn=="ok")
+                        {
+                            Ext.MessageBox.wait('Eliminando Archivo', '');
+                            Ext.Ajax.request({
+                                url: '/gestDocumental/eliminarArchivo',
+                                method: 'POST',                
+                                waitTitle: 'Connecting',
+                                waitMsg: 'Eliminando Archivo...',                                     
+                                params: {
+                                    "idarchivo" : id,
+                                    "observaciones": text
+                                },
+                                scope:this,
+                                success: function(a,b){
+                                    //Ext.getCmp("tree-grid-file").getStore().reload();
+                                    //alert(a.toSource())
+                                    //alert(b.toSource())
+                                    //location.href=location.href;
+                                    //Ext.MessageBox.hide();
+                                    location.href=location.href;
+                                },                                    
+                                failure: function(){console.log('failure');}
+                            });
                         }
-                        
-                        
-                    }                   
-                })
+                    }
+                }
+
+
+            }                   
+        })
+    }
 }
     </script>

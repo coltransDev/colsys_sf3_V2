@@ -6,7 +6,7 @@
 ]);
 </script>
 <?
-include_component("widgets", "wgDocumentos");
+include_component("widgets4", "wgDocumentos");
 
 include_component("gestDocumental", "formArchivos");
 include_component("gestDocumental", "treeGridFiles");
@@ -279,7 +279,8 @@ Ext.onReady(function() {
             },*/
             
 
-            Ext.create('ReportsPanel', {closable: true,title:"Transporte",id:'tab1',idsserie:"2"})
+            //Ext.create('ReportsPanel', {closable: true,title:"Maritimo",id:'tab1',idsserie:"2"}),
+            //Ext.create('ReportsPanel', {closable: true,title:"Aereo",id:'tab2',idsserie:"4"})
 
                             
             ]

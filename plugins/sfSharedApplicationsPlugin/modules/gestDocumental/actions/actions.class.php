@@ -134,6 +134,7 @@ class gestDocumentalActions extends sfActions {
 
     public function executeVerArchivo() {
 
+        $this->archivo1="";
         if ($this->getRequestParameter("idarchivo")) {
             $archivo = base64_decode($this->getRequestParameter("idarchivo"));
 
@@ -145,19 +146,44 @@ class gestDocumentalActions extends sfActions {
             $this->archivo = $directory . $archivo;
         } else if ($this->getRequestParameter("id_archivo")) {
             $archivo = Doctrine::getTable("Archivos")->find($this->getRequestParameter("id_archivo"));
-
-            $this->archivo = $archivo->getCaPath();
+            $this->archivo = $archivo->getCaPath();            
         }
+        
+        if (!file_exists($this->archivo) && !file_exists($this->archivo . ".gz" )) {
 
-        if (!file_exists($this->archivo) && !file_exists($this->archivo . ".gz")) {
-            $this->forward404("No se encuentra el archivo especificado");
+            $this->archivo1=$this->archivo;
+            $this->archivo1 = str_replace(" ", "_", $this->archivo1);
+            if (!file_exists($this->archivo1) && !file_exists($this->archivo1 . ".gz" )) 
+            {
+                $info = pathinfo($this->archivo);
+                $this->archivo1 =  basename($this->archivo,'.'.$info['extension']);
+                $this->dir1 =  dirname($this->archivo);            
+                $this->archivo1=$this->dir1."/".$this->archivo1."-P".".".$info['extension'];
+                if ( !file_exists($this->archivo1)) {
+                    $this->archivo=$this->archivo1;
+                }
+                //echo $this->archivo1."<br>";print_r($arch);
+                if (!file_exists($this->archivo) && !file_exists($this->archivo . ".gz" ))
+                {
+                    $this->archivo = str_replace(" ", "_", $this->archivo);
+                    if (!file_exists($this->archivo) && !file_exists($this->archivo . ".gz" )) 
+                    {
+                        $this->forward404("No se encuentra el archivo especificado ".$this->archivo);
+                    }
+                }                
+            }
+            else
+            {
+                $this->archivo=$this->archivo1;
+            }            
         }
 
         if (file_exists($this->archivo . ".gz")) {
             $this->archivo.=".gz";
         }
-
-        //session_cache_limiter('public');
+        else if (file_exists($this->archivo1)) {
+            $this->archivo=$this->archivo1;
+        }
     }
 
     /*
@@ -659,11 +685,7 @@ class gestDocumentalActions extends sfActions {
 
                 foreach ($_FILES as $nameFile => $uploadedFile) {
 
-                    /* print_r($uploadedFile);
-                      exit; */
-
                     $fileName = $uploadedFile['name'];
-
                     $algo = false;
                     $mime = Utils::mimetype($uploadedFile['name']);
 
@@ -673,9 +695,7 @@ class gestDocumentalActions extends sfActions {
                     $fileName = urlencode($fileName);
                     $fileName = str_replace("+", " ", $fileName);
 
-
                     if (Utils::isImage($uploadedFile['name'])) {
-
                         $tmp = explode(".", $fileName);
                         $fileNameMin = $tmp[0];
 
@@ -702,9 +722,25 @@ class gestDocumentalActions extends sfActions {
                         } else {
                             imagejpeg($image, $directory . $fileNameMin . ".jpg", 80);
                         }
+
+                        $fileName=$fileNameMin . ".jpg";
+                                  //      $fileName=$this->process_image($uploadedFile,$directory,$fileName);
                         $algo = true;
-                        $fileName = $fileNameMin . ".jpg";
                     } else {
+                        $existe=true;
+                        $con=0;
+                        while($existe)
+                        {
+                            $con++;
+                            if(file_exists($directory . $fileName))
+                            {
+                                $info = pathinfo($directory.$fileName);
+                                $fileName =  basename($directory.$fileName,'.'.$info['extension']);
+                                $fileName=$fileName.$con.".".$info['extension'];
+                            }
+                            else
+                                $existe=false;
+                        }
                         if (move_uploaded_file($uploadedFile['tmp_name'], $directory . $fileName)) {
 
                             $algo = true;
@@ -734,6 +770,39 @@ class gestDocumentalActions extends sfActions {
             $this->responseArray = array("error" => $e->getMessage(), "success" => false);
         }
         $this->setTemplate($template);
+    }
+    
+    
+    public function process_image($uploadedFile,$directory,$fileName) 
+    {
+        $tmp = explode(".", $fileName);
+        $fileNameMin = $tmp[0];
+
+        $image = $this->open_image($uploadedFile['tmp_name']);
+        $w = imagesx($image);
+        $h = imagesy($image);
+        if ($w > $tam_max || $h > $tam_max) {
+            $control = ($h >= $w);
+            if ($control) {
+                $porcen = $tam_max / $h;
+            } else {
+                $porcen = $tam_max / $w;
+            }
+
+            $new_w = $w * $porcen;
+            $new_h = $h * $porcen;
+
+            $im2 = ImageCreateTrueColor($new_w, $new_h);
+            imagecopyResampled($im2, $image, 0, 0, 0, 0, $new_w, $new_h, $w, $h);
+            $w = imagesx($im2);
+            $h = imagesy($im2);
+
+            imagejpeg($im2, $directory . $fileNameMin . ".jpg", 80);
+        } else {
+            imagejpeg($image, $directory . $fileNameMin . ".jpg", 80);
+        }
+        
+        return $fileNameMin . ".jpg";
     }
 
     public function executeEditarArchivo(sfWebRequest $request) {
@@ -817,7 +886,8 @@ class gestDocumentalActions extends sfActions {
                 ->select("a.*,t.ca_documento")
                 ->innerJoin("a.TipoDocumental t")
                 ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
-                ->where("a.ca_fcheliminado is NULL");
+                ->where("a.ca_fcheliminado is NULL")
+                ->orderBy("ca_ref2 desc,ca_nombre");
 
         //if($node!="")
         //    $q->where("ca_iddocumental = ?", $node );
@@ -846,9 +916,9 @@ class gestDocumentalActions extends sfActions {
             if ($t["ca_ref3"] != "")
                 $this->tipoDocs[$t["ca_ref1"]][$t["ca_ref2"]][$t["ca_ref3"]][] = array("idarchivo" => $t["ca_idarchivo"], "documento" => utf8_encode($t["TipoDocumental"]["ca_documento"]), "iddocumental" => $t["ca_iddocumental"], "ref1" => $t["ca_ref1"], "ref2" => $t["ca_ref2"], "ref3" => $t["ca_ref3"], "nombre" => ($t["ca_nombre"] . (($t["ca_fcheliminado"] != "") ? " (Eliminado)" : "" )), "usucreado" => $t["ca_usucreado"], "fchcreado" => $t["ca_fchcreado"], "leaf" => true, "expanded" => true);
             else if ($t["ca_ref2"] != "") {
-                $this->tipoDocs[$t["ca_ref1"]][$t["ca_ref2"]][] = array("idarchivo" => $t["ca_idarchivo"], "documento" => ($t["TipoDocumental"]["ca_documento"]), "iddocumental" => $t["ca_iddocumental"], "ref1" => $t["ca_ref1"], "ref2" => $t["ca_ref2"], "ref3" => $t["ca_ref3"], "nombre" => ($t["ca_nombre"] . (($t["ca_fcheliminado"] != "") ? " (Eliminado)" : "" )), "usucreado" => $t["ca_usucreado"], "fchcreado" => $t["ca_fchcreado"], "leaf" => true, "expanded" => true);
+                $this->tipoDocs[$t["ca_ref1"]][$t["ca_ref2"]][] = array("idarchivo" => $t["ca_idarchivo"], "documento" => utf8_encode($t["TipoDocumental"]["ca_documento"]), "iddocumental" => $t["ca_iddocumental"], "ref1" => $t["ca_ref1"], "ref2" => $t["ca_ref2"], "ref3" => $t["ca_ref3"], "nombre" => ($t["ca_nombre"] . (($t["ca_fcheliminado"] != "") ? " (Eliminado)" : "" )), "usucreado" => $t["ca_usucreado"], "fchcreado" => $t["ca_fchcreado"], "leaf" => true, "expanded" => true);
             } else if ($t["ca_ref1"] != "") {
-                $this->tipoDocs[$t["ca_ref1"]][] = array("idarchivo" => $t["ca_idarchivo"], "documento" => ($t["TipoDocumental"]["ca_documento"]), "iddocumental" => $t["ca_iddocumental"], "ref1" => $t["ca_ref1"], "ref2" => $t["ca_ref2"], "ref3" => $t["ca_ref3"], "nombre" => ($t["ca_nombre"] . (($t["ca_fcheliminado"] != "") ? " (Eliminado)" : "" )), "usucreado" => $t["ca_usucreado"], "fchcreado" => $t["ca_fchcreado"], "leaf" => true, "expanded" => true);
+                $this->tipoDocs[$t["ca_ref1"]][] = array("idarchivo" => $t["ca_idarchivo"], "documento" => utf8_encode($t["TipoDocumental"]["ca_documento"]), "iddocumental" => $t["ca_iddocumental"], "ref1" => $t["ca_ref1"], "ref2" => $t["ca_ref2"], "ref3" => $t["ca_ref3"], "nombre" => ($t["ca_nombre"] . (($t["ca_fcheliminado"] != "") ? " (Eliminado)" : "" )), "usucreado" => $t["ca_usucreado"], "fchcreado" => $t["ca_fchcreado"], "leaf" => true, "expanded" => true);
             }
         }
 
@@ -918,98 +988,168 @@ class gestDocumentalActions extends sfActions {
     }
 
     public function executeMailDocumentosF(sfWebRequest $request) {
-        ProjectConfiguration::registerZend();
-        Zend_Loader::loadClass('Zend_Gdata_ClientLogin');
-        Zend_Loader::loadClass('Zend_Gdata_Gapps');
-        $pass = 'cglti$col91';
-        $mail = new Zend_Mail_Storage_Imap(array('host' => 'imap.gmail.com', 'user' => "colsys@coltrans.com.co", 'password' => $pass, 'ssl' => 'SSL'));
-        $mail->selectFolder("FACTURAS");
-        foreach ($mail as $messageNum => $message) {
-            if ($message->hasFlag(Zend_Mail_Storage::FLAG_SEEN)) {
-                continue;
-            }
-            //$mail->
-
-            $from = $message->from;
-            /*             * *********************************** */
-            $part = $message;
-
-            while ($part->isMultipart()) {
-                $part = $message->getPart(1);
-                try {
-                    $path = "";
-                    $fileName = $part->getHeader('content-description');
-                    $attachment = base64_decode($part->getContent());
-                    $size = strlen($attachment);
-                    //$directory = sfConfig::get('app_digitalFile_root').date("Y").DIRECTORY_SEPARATOR;
-                    $mime = explode(";", $part->getHeader('content-type'));
-                    $mime = $mime[0];
-                    $asunto = substr($fileName, 0, strlen($fileName) - 21);
-                    $ref = array();
-                    $ref[] = substr($asunto, 0, 13);
-                    $ref[] = substr($asunto, 14, (strlen($asunto) - 14));
-                    $data = array();
-
-                    $ref[0] = str_replace(".", "", $ref[0]);
-                    $ref[0] = substr($ref[0], 0, 3) . "." . substr($ref[0], 3, 2) . "." . substr($ref[0], 5, 2) . "." . substr($ref[0], 7, 4) . "." . substr($ref[0], 11, 2);
-                    //print_r($ref);
-                    $data["ref1"] = $ref[0];
-                    if (isset($ref[1])) {
-                        if ($ref[1] == "costos") {
-                            $data["ref2"] = $ref[1];
-                        } else if ($ref[1] == "pref") {
-                            $data["ref2"] = "";
-                        } else {
-                            $sql = "select  ca_hbls from tb_inoclientes_sea 
-                            where ca_referencia='" . $ref[0] . "' and UPPER(substring(ca_hbls from (char_length(ca_hbls)-3) ))= UPPER('" . $ref[1] . "') limit 1";
-                            $con = Doctrine_Manager::getInstance()->connection();
-
-                            $st = $con->execute($sql);
-                            $resul = $st->fetchAll();
-                            $data["ref2"] = $resul[0]["ca_hbls"];
-                        }
-                    }
-                    if ($ref[1] == "costos")
-                        $data["iddocumental"] = "8";
-                    else if ($ref[1] == "pref")
-                        $data["iddocumental"] = "6";
-                    else
-                        $data["iddocumental"] = $request->getParameter("iddocumental");
-
-                    if ($data["ref1"])
-                        $path.=$data["ref1"] . DIRECTORY_SEPARATOR;
-                    if ($data["ref2"])
-                        $path.=$data["ref2"] . DIRECTORY_SEPARATOR;
-
-                    //print_r($data);
-                    $archivo = new Archivos();
-                    $archivo->setCaIddocumental($data["iddocumental"]);
-                    $archivo->setCaNombre($fileName);
-                    $archivo->setCaRef1($data["ref1"]);
-                    $archivo->setCaRef2($data["ref2"]);
-                    $archivo->setCaMime($mime);
-                    $archivo->setCaSize($size);
-                    $tipDoc = $archivo->getTipoDocumental();
-                    $folder = $tipDoc->getCaDirectorio();
-                    $directory = sfConfig::get('app_digitalFile_root') . date("Y") . DIRECTORY_SEPARATOR . $folder . $path;
-
-                    if (!is_dir($directory)) {
-                        mkdir($directory, 0777, true);
-                    }
-                    chmod($directory, 0777);
-
-                    $archivo->setCaPath($directory . $fileName);
-                    $archivo->save();
-                    $fh = fopen($directory . $fileName, 'w');
-                    fwrite($fh, $attachment);
-                    fclose($fh);
-                } catch (Excepcion $e) {
-                    
+        $folder1=$request->getParameter("folder");
+        $debug=$request->getParameter("debug");
+        /*if($debug!="true")
+        {
+            return;
+        }*/
+        try{
+            ProjectConfiguration::registerZend();
+            Zend_Loader::loadClass('Zend_Gdata_ClientLogin');
+            Zend_Loader::loadClass('Zend_Gdata_Gapps');
+            $pass = 'cglti$col91';
+            $mail = new Zend_Mail_Storage_Imap(array('host' => 'imap.gmail.com', 'user' => "colsys@coltrans.com.co", 'password' => $pass, 'ssl' => 'SSL'));
+            $mail->selectFolder($folder1);
+            
+            foreach ($mail as $messageNum => $message) {
+                if ($message->hasFlag(Zend_Mail_Storage::FLAG_SEEN)) {
+                    continue;
                 }
+                
+                $from = $message->from;
+                $part = $message;
+
+                while ($part->isMultipart()) {
+                    
+                    for($i=1;$i<=2;$i++)
+                    {
+                        $part = $message->getPart($i);
+                        if($debug=="true")
+                        {
+                            echo "<pre>";
+            //                print_r($part);
+                            echo "<pre>";
+                        }
+                        try{
+                            
+                            if($part->getHeader('content-disposition'))
+                            {
+                                $arr=explode(";", $part->getHeader('content-disposition'));
+                                if(trim($arr[0])=="attachment")
+                                {
+                                    $fileName=  str_replace("filename=", "", $arr[1]);
+                                    $fileName=  trim(str_replace('"', '', $fileName));
+                                    break;
+                                }
+                            }
+                                
+                        }
+                        catch(Exception $e)
+                        {
+                            
+                            continue;
+                        }
+                    }                    
+                    try {
+                        $path = "";
+                        $fileName = (strlen($fileName)>5)?$fileName:$part->getHeader('content-description');
+                        $attachment = base64_decode($part->getContent());
+                        $size = strlen($attachment);
+                        //$directory = sfConfig::get('app_digitalFile_root').date("Y").DIRECTORY_SEPARATOR;
+                        $mime = explode(";", $part->getHeader('content-type'));
+                        $mime = $mime[0];
+                        if($folder1=="DOCUMENTOS" || $folder1=="DOCUMENTOSAEREO")
+                            $asunto = $message->subject;
+                        else
+                            $asunto = $fileName;//substr($fileName, 0, strlen($fileName) - 21);
+                        
+                        
+                        if($debug=="true")
+                        {
+                            //echo $asunto."<br>".$fileName;
+                        }
+                        
+                        //echo "::".$asunto."::";
+                        $ref = array();
+                        $ref[] = substr($asunto, 0, 13);
+                        $ref[] = substr($asunto, 14, 4);
+                        //print_r($ref);
+                        $data = array();
+                        $ref[0] = str_replace(".", "", $ref[0]);
+                        $ref[0] = substr($ref[0], 0, 3) . "." . substr($ref[0], 3, 2) . "." . substr($ref[0], 5, 2) . "." . substr($ref[0], 7, 4) . "." . substr($ref[0], 11, 2);
+                        $data["ref1"] = $ref[0];
+                        if (isset($ref[1])) {
+                            if ($ref[1] == "cost") {
+                                $data["ref2"] = "costos";
+                            } else if ($ref[1] == "pref" || $ref[1] == "libp") {
+                                $data["ref2"] = "";
+                            } else {
+                                $sql = "select  ca_hbls from tb_inoclientes_sea 
+                                where ca_referencia='" . $ref[0] . "' and UPPER(substring(ca_hbls from (char_length(ca_hbls)-3) ))= UPPER('" . $ref[1] . "') limit 1";
+                                $con = Doctrine_Manager::getInstance()->connection();
+
+                                $st = $con->execute($sql);
+                                $resul = $st->fetchAll();
+                                $data["ref2"] = $resul[0]["ca_hbls"];
+                            }
+                        }
+                        if ($ref[1] == "costos" || $ref[1] == "cost")
+                            $data["iddocumental"] = "8";
+                        else if ($ref[1] == "pref")
+                            $data["iddocumental"] = "6";
+                        else if ($ref[1] == "libp")
+                            $data["iddocumental"] = "17";
+                        else if ($ref[1] == "plar")
+                            $data["iddocumental"] = "19";
+                        else if ($ref[1] == "cert")
+                            $data["iddocumental"] = "25";
+                        else
+                            $data["iddocumental"] = $request->getParameter("iddocumental");
+
+                        if ($data["ref1"])
+                            $path.=$data["ref1"] . DIRECTORY_SEPARATOR;
+                        if ($data["ref2"])
+                            $path.=$data["ref2"] . DIRECTORY_SEPARATOR;
+
+                        //print_r($data);
+                        if($debug=="true")
+                        {
+                            //exit;
+                        }
+                        $archivo = new Archivos();
+                        $archivo->setCaIddocumental($data["iddocumental"]);
+                        if($folder1=="DOCUMENTOS")
+                            $archivo->setCaNombre($asunto);
+                        else
+                            $archivo->setCaNombre($fileName);
+                        $archivo->setCaRef1($data["ref1"]);
+                        $archivo->setCaRef2($data["ref2"]);
+                        $archivo->setCaMime($mime);
+                        $archivo->setCaSize($size);
+                        $tipDoc = $archivo->getTipoDocumental();
+                        $folder = $tipDoc->getCaDirectorio();
+                        $directory = sfConfig::get('app_digitalFile_root') . date("Y") . DIRECTORY_SEPARATOR . $folder . $path;
+
+                        if (!is_dir($directory)) {
+                            mkdir($directory, 0777, true);
+                        }
+                        chmod($directory, 0777);
+
+                        $archivo->setCaPath($directory . $fileName);
+                        $archivo->save();
+                        $fh = fopen($directory . $fileName, 'w');
+                        fwrite($fh, $attachment);
+                        fclose($fh);
+                    } catch (Excepcion $e) {
+                        echo $e->getMessage();
+                    }
+                }
+                $uniq_id = $mail->getUniqueId($messageNum);
+                $messageId = $mail->getNumberByUniqueId($uniq_id);                
+                $mail->moveMessage($messageId, $folder1."P");                
             }
-            $uniq_id = $mail->getUniqueId($messageNum);
-            $messageId = $mail->getNumberByUniqueId($uniq_id);
-            $mail->moveMessage($messageId, "FACTURASP");
+        }
+        catch(Exception $e)
+        {
+            echo $e->getMessage();
+            /*$data=array();
+            $data["from"]="colsys@coltrans.com.co";
+            $data["to"]="maquinche@coltrans.com.co";
+            $data["subject"]="Error procesando correos $folder";
+            $data["mensaje"]=$e->getMessage();
+            Utils::sendEmail($data);
+             */
         }
         exit;
     }
