@@ -221,6 +221,19 @@ class confirmacionesActions extends sfActions {
                 $referencia->setCaFchfinmuisca(Utils::parseDate($request->getParameter("fchsyga")));
             }
             $referencia->save();
+            
+            if($referencia->getCaModalidad()== "FCL"){                
+                $idTarea = $referencia->getProperty("idtarea");
+                
+                if(!$idTarea){
+                    foreach ($oids as $oid) {
+                        $hbls = $this->getRequestParameter("hbls_" . $oid);
+                        $inoCliente = Doctrine::getTable("InoClientesSea")->findOneBy("ca_hbls",$hbls);
+                        if ($inoCliente->getCaContinuacion() != "N/A")
+                            $tarea1207 = true;
+                    }
+                }
+            }
         } else if ($modo == "puerto" && $tipo_msg == "Desc") {
             if ($request->getParameter("ca_fchvaciado") || $request->getParameter("ca_horavaciado")) {
                 if ($request->getParameter("fchdesconsolidacion")) {
@@ -232,6 +245,20 @@ class confirmacionesActions extends sfActions {
                     $referencia->setCaFchfinmuisca(Utils::parseDate($request->getParameter("fchsyga")));
                 }
                 $referencia->save();
+                               
+                if($referencia->getCaModalidad()== "LCL"){
+                    $idTarea = $referencia->getProperty("idtarea");                
+                    if(!$idTarea){ 
+                        foreach ($oids as $oid) {
+
+                            $hbls = $this->getRequestParameter("hbls_" . $oid);
+                            $inoCliente = Doctrine::getTable("InoClientesSea")->findOneBy("ca_hbls",$hbls);
+
+                            if ($inoCliente->getCaContinuacion() != "N/A")
+                                $tarea1207 = true;
+                        }
+                    }
+                }
             }
         } else if ($modo == "puerto" && $tipo_msg == "Planilla") {
             $email_body_planilla = "Se reportan los siguientes números de planilla así:<br>";
@@ -241,7 +268,7 @@ class confirmacionesActions extends sfActions {
                 $idcliente = $this->getRequestParameter("idcliente_" . $oid);
                 $hbls = $this->getRequestParameter("hbls_" . $oid);
                 $inoCliente = Doctrine::getTable("InoClientesSea")->find($hbls);
-
+                
                 if ($inoCliente->getCaContinuacion() != "N/A") {
                     continue;
                 }
@@ -300,7 +327,7 @@ class confirmacionesActions extends sfActions {
             foreach ($this->resul as $r) {
                 $destinatarios[] = $r["ca_email"];
             }
-
+            
             switch ($tipo_msg) {
                 case ("Puerto"):
                     $tipo = "Llegada";
@@ -323,7 +350,7 @@ class confirmacionesActions extends sfActions {
                     $title = "Información de Desconsolidación";
                     $intro = $request->getParameter("intro_body_desc");
                     $body = $request->getParameter("email_body");
-                    $otm = true;
+                    $otm = true;                    
                     $where = " and sc.ca_nombre in (
                                 select distinct(s.ca_nombre)
                                 from tb_inoclientes_sea  c
@@ -345,6 +372,21 @@ class confirmacionesActions extends sfActions {
 
                     $data["iddocumental"] = 11;
                     $destinatarios = array();
+                    //Finalización de Tarea Envio Formulario 1207
+                    $inoMaestraSea = Doctrine::getTable("InoMaestraSea")->find($ca_referencia);                
+                    $idtarea = $inoMaestraSea->getProperty("idtarea");
+                    if($idtarea){
+                         $tareas = Doctrine::getTable("NotTarea")
+                                ->createQuery("n")
+                                ->addWhere("n.ca_idtarea = ? ", $idtarea)                                  
+                                ->execute();
+                    }
+                   
+                    foreach($tareas as $tarea){
+                        $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
+                        $tarea->setCaUsuterminada($this->getUser()->getUserId());
+                        $tarea->save();
+                    }
                     break;
             }
 
@@ -376,7 +418,9 @@ class confirmacionesActions extends sfActions {
                     exit;
                 } 
             }
-
+            $con = Doctrine_Manager::getInstance()->connection();
+            $con->beginTransaction();
+            
             $email = new Email();
             $email->setCaUsuenvio($user->getUserId());
             $email->setCaTipo("Not." . $tipo);
@@ -412,8 +456,36 @@ class confirmacionesActions extends sfActions {
             }
             $modo = $request->getParameter("modo");
             $email->setCaBodyhtml(sfContext::getInstance()->getController()->getPresentationFor('confirmaciones', 'emailConfirmacion'));
-            $email->save();
-
+            $email->save($con);
+            
+            //Creación de tarea Envío Formulario 1207
+            if($tarea1207){
+                $numreferencia = str_replace(".", "-", $ca_referencia);
+                $tarea = new NotTarea();
+                $tarea->setCaUrl("/confirmaciones/consulta/referencia/$numreferencia/modo/puerto");
+                $tarea->setCaIdlistatarea(13);
+                $tarea->setCaFchcreado(date("Y-m-d H:i:s"));
+                $tarea->setCaFchvisible(date("Y-m-d H:i:s"));
+                $tarea->setCaFchvencimiento(date("Y-m-d H:i:s"));
+                $tarea->setCaUsucreado($this->getUser()->getUserId());
+                $tarea->setCaTitulo("Debe enviar el Formulario DIAN 1207 - Refererencia: ".$ca_referencia);
+                $tarea->setCaTexto("Debe enviar el Formulario DIAN 1207 - Refererencia: ".$ca_referencia);
+                $tarea->save( $con );
+                
+                $inoMaestraSea = Doctrine::getTable("InoMaestraSea")->find($ca_referencia);                
+                $inoMaestraSea->setProperty("idtarea",$tarea->getCaIdtarea());
+                $inoMaestraSea->save($con);
+                
+                $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());                
+                $usuariosTarea = UsuarioTable::getUsuariosxPerfil('finalizacion-de-descarge-dian-colsys',$usuario->getCaIdsucursal(),null);
+                
+                foreach($usuariosTarea as $usuarioTarea){
+                    $loginAsignaciones[] = $usuarioTarea->getCaLogin();
+                }
+                $tarea->setAsignaciones($loginAsignaciones);                
+            }            
+            $con->commit();
+            
             $this->modo = $modo;
             $this->ca_referencia = $ca_referencia;
         } else {
