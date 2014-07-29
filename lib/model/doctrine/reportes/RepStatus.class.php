@@ -315,6 +315,10 @@ class RepStatus extends BaseRepStatus {
                 $asunto = "";
                 $asunto.= $options["subject"] . " " . $this->getAsunto();
             }
+            if ($options["subject"] == "Planilla de Envío Id.: ". $reporte->getCaConsecutivo()." ") {
+                $asunto = "";
+                $asunto.= $options["subject"] . " " . $this->getAsunto();
+            }
         } else {
             $asunto.= $this->getAsunto();
         }
