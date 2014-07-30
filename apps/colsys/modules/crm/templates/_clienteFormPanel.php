@@ -162,10 +162,6 @@ include_component("widgets", "widgetCoordinadoresAduana");
                                         allowBlank: true,
                                         hiddenName: 'coordinador'                                        
                                     })
-                                    
-                                    
-                                    
-                           
                                 ]
                             },
 
@@ -625,42 +621,50 @@ include_component("widgets", "widgetCoordinadoresAduana");
                                         allowBlank:true,
                                         width: 200,
                                         maxLength: 255
-                                        
                                     },
                                     {
-                                                //the width of this field in the HBox layout is set directly
-                                                //the other 2 items are given flex: 1, so will share the rest of the space
-                                                width:          200,
-                                                xtype:          'combo',
-                                                mode:           'local',
-                                                triggerAction:  'all',
-                                                forceSelection: true,
-                                                editable:       false,
-                                                fieldLabel:     'Localidad',
-                                                name:           'localidad',                                                
-                                                displayField:   'name',
-                                                valueField:     'name',
-                                                allowBlank:     true,
-                                                itemSelector: 'div.search-item',
-                                                tpl:new Ext.XTemplate(
-                                                        '<tpl for="."><div class="search-item"><b>{name}</b><br /><span>{group} </span> </div></tpl>'
-                                                ),
-                                                store:          new Ext.data.JsonStore({
-                                                    fields : ['name',  'group'],
-                                                    data   : [
-                                                        <?
-                                                        $i=0;
-                                                        foreach($localidades as $key => $grupo){                                                             
-                                                             foreach($grupo as $localidad){
-                                                                 echo ($i++!=0)?",":"";
-                                                                 echo "{name : '$localidad',   group:'$key'}";
-                                                             }
-                                                        }  
-                                                        ?>
-                                                    ]
-                                                })
-                                                
-                                            }
+                                        //the width of this field in the HBox layout is set directly
+                                        //the other 2 items are given flex: 1, so will share the rest of the space
+                                        width:          200,
+                                        xtype:          'combo',
+                                        mode:           'local',
+                                        triggerAction:  'all',
+                                        forceSelection: true,
+                                        editable:       false,
+                                        fieldLabel:     'Localidad',
+                                        name:           'localidad',                                                
+                                        displayField:   'name',
+                                        valueField:     'name',
+                                        allowBlank:     true,
+                                        itemSelector: 'div.search-item',
+                                        tpl:new Ext.XTemplate(
+                                                '<tpl for="."><div class="search-item"><b>{name}</b><br /><span>{group} </span> </div></tpl>'
+                                        ),
+                                        store:          new Ext.data.JsonStore({
+                                            fields : ['name',  'group'],
+                                            data   : [
+                                                <?
+                                                $i=0;
+                                                foreach($localidades as $key => $grupo){                                                             
+                                                     foreach($grupo as $localidad){
+                                                         echo ($i++!=0)?",":"";
+                                                         echo "{name : '$localidad',   group:'$key'}";
+                                                     }
+                                                }  
+                                                ?>
+                                            ]
+                                        })
+
+                                    },
+                                    {
+                                        xtype:'textfield',
+                                        fieldLabel: 'Código Postal',
+                                        name: 'zipcode',
+                                        value: '',
+                                        allowBlank:true,
+                                        width: 60,
+                                        maxLength: 20
+                                    }
                                     
                                 ]
                             },
@@ -910,8 +914,16 @@ include_component("widgets", "widgetCoordinadoresAduana");
                                                 {name : 'Liquidada',  value: 'Liquidada'}
                                             ]
                                         })
+                                    },
+                                    {
+                                        xtype:'datefield',
+                                        fieldLabel: 'Firma Acuerdo de Confidencialidad',
+                                        name: 'fchacuerdoconf',
+                                        value: 'fchacuerdoconf',
+                                        allowBlank:true,
+                                        width: 100,
+                                        format: "Y-m-d"
                                     }
-
                                 ]
                             },
                             {
@@ -1129,7 +1141,6 @@ include_component("widgets", "widgetCoordinadoresAduana");
                 Ext.getCmp("localidad_ot").allowBlank = false;
                 Ext.getCmp("localidad_ot").validate();
             }
-            
             
             if( tipo.getValue()!="1" ){                
                 Ext.getCmp("dv_id").disable();

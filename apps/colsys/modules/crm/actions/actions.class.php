@@ -50,9 +50,6 @@ class crmActions extends sfActions {
         try{
             $nivel = $this->getNivel();
             
-            
-            
-            
             $conn = Doctrine::getTable("Cliente")->getConnection();
             $conn->beginTransaction();
             
@@ -78,9 +75,6 @@ class crmActions extends sfActions {
                 $prov = null;
             }
             
-            
-            
-            
             if( !$prov ){
                 if( !$request->getParameter("idcliente") || $this->getNivel()>=4 ){
                     $ids->setCaIdalterno( $request->getParameter("idalterno") );  
@@ -100,7 +94,6 @@ class crmActions extends sfActions {
             $cliente->setCaSexo( $request->getParameter("sexo") );
             $cliente->setCaCumpleanos( $request->getParameter("cumpleanos") );
             $cliente->setCaEmail( $request->getParameter("email") );
-            
             
             if( $nivel>=2 ){
                 if( $request->getParameter("vendedor") ){
@@ -141,11 +134,13 @@ class crmActions extends sfActions {
             }
             
             
-            $cliente->setCaTelefonos( $request->getParameter("phone")  );
-            $cliente->setCaFax( $request->getParameter("fax")  );            
-            $cliente->setCaIdciudad( $request->getParameter("idciudad")  );
+            $cliente->setCaTelefonos( $request->getParameter("phone") );
+            $cliente->setCaFax( $request->getParameter("fax") );
+            $cliente->setCaIdciudad( $request->getParameter("idciudad") );
             $cliente->setCaSectoreco( utf8_decode($request->getParameter("sectoreco")) );
             $cliente->setCaActividad( utf8_decode($request->getParameter("actividad")) );
+            $cliente->setCaFchacuerdoconf( $request->getParameter("fchacuerdoconf") );
+            $cliente->setCaZipcode( $request->getParameter("zipcode") );
             
             if( $nivel>=2 ){
                 if( $request->getParameter("status") ){
@@ -253,7 +248,7 @@ class crmActions extends sfActions {
             $data["comentario"] = $cliente->getCaComentario();
             $data["leyinsolvencia"] = utf8_encode($cliente->getCaLeyinsolvencia());
             $data["listaclinton"] = utf8_encode($cliente->getCaListaclinton());
-
+            $data["fchacuerdoconf"] = $cliente->getCaFchacuerdoconf();
 
             if( $data["idtrafico"]=="CO-057" ){
                 $direccion = explode("|",$cliente->getCaDireccion());
@@ -276,7 +271,7 @@ class crmActions extends sfActions {
 
             $data["idciudad"] = $cliente->getCaIdciudad();
             $data["ciudad"] = utf8_encode($cliente->getCiudad()->getCaCiudad());
-
+            $data["zipcode"] = $cliente->getCaZipcode();
 
             $data["phone"] = $cliente->getCaTelefonos();
             $data["fax"] = $cliente->getCaFax();
