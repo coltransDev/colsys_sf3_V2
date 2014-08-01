@@ -1470,8 +1470,33 @@ class antecedentesActions extends sfActions {
       $ref->setCaFchrecibido(date("Y-m-d H:i:s"));
       $ref->setCaEstado("D"); //desbloqueado        
       $ref->save();
+      
+      // Calcula un estimado del tiempo de transito
+      $diff = Utils::diffDays($ref->getCaFchembarque(), $ref->getCaFcharribo());
+      
+      if ($diff > 20) {      // Aplica para Referencias con más de 20 días de tiempo de tránsito
+          $titulo = "Seguimiento Referencia $numref por llegada de motonave en ".$ref->getCaFcharribo();
+          $texto = "Ha programado un seguimiento para una Referencia, por favor haga click en el link para realizar esta tarea";
+          $tarea = new NotTarea();
+          $tarea->setCaUrl("/colsys_php/inosea.php?boton=Consultar&id=$numref");
+          $tarea->setCaIdlistatarea(12);
+          
+          list($ano, $mes, $dia) = sscanf($ref->getCaFcharribo(), "%d-%d-%d %d:%d:%d");
+          $fch_ven = mktime( 0, 0, 0, $mes, $dia - 5, $ano);  // Calcula 5 días antes de la llegada de la motonave
+          $fch_ven = date("Y-m-d", $fch_ven);
+          $tarea->setCaFchvencimiento($fch_ven . " 23:59:59");
+          $tarea->setCaFchvisible($fch_ven . " 00:00:00");
+          $tarea->setCaUsucreado($this->getUser()->getUserId());
+          $tarea->setCaTitulo($titulo);
+          $tarea->setCaTexto($texto);
+          $tarea->save();
+          
+          $loginsAsignaciones = array($this->getUser()->getUserId());
+          $loginsAsignaciones = array_unique($loginsAsignaciones);
+          $tarea->setAsignaciones($loginsAsignaciones);
+        }
 
-      $this->hijas = Doctrine::getTable("InoClientesSea")
+        $this->hijas = Doctrine::getTable("InoClientesSea")
               ->createQuery("c")
               ->where("c.ca_referencia = ?", $numref)
               ->execute();
