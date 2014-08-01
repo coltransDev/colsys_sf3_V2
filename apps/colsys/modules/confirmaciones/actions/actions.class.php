@@ -292,16 +292,20 @@ class confirmacionesActions extends sfActions {
         }
 
         if ($attachment) {
-            $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR;
-            $subdirectory = date("Y") . DIRECTORY_SEPARATOR . "Referencias/" . $ca_referencia . "/";
+            
+            $data = array();
+            $data["iddocumental"] = 3;            
+            $data["ref1"] = $ca_referencia;
+            
+            $tipDoc = $tipDoc = Doctrine::getTable("TipoDocumental")->find($data['iddocumental']);
+            $folder = $tipDoc->getCaDirectorio();   
+            
+            $directorio = date("Y") . DIRECTORY_SEPARATOR . $folder . $data["ref1"] . "/";
             $fileName = preg_replace('/\s\s+/', ' ', $attachment['name']);
             $fileName=urlencode($fileName);
             $fileName = str_replace("+", " ", $fileName);
-            $attachments[] = $subdirectory . $fileName;
-
-            $data = array();
-            $data["iddocumental"] = 3;
-            $data["ref1"] = $ca_referencia;
+            $attachments[] = $directorio . $fileName;
+            
         }
         /*
          * Notificación Puerto
@@ -502,23 +506,24 @@ class confirmacionesActions extends sfActions {
                     $name = str_replace(sfConfig::get('app_digitalFile_root'),"",$archivo);
                     $attachments[] = $name;
                 }
-                
+                $success = array();
                 //Archivo que se adjunta a toda la referencia
                 if($i==0){ // Sólo pregunta por éste archivo la primera vez
                     if ($attachment) {
                         $success = ArchivosTable::subirDocumento($_FILES['attachment'], $data);
-                        if ($success != true) {                        
+                        if ($success["estado"] != true) {                        
                             echo "<script>alert('El archivo seleccionado en la opción General para toda la referencia no se ha subido correctamente')
                                 history.back();
                                 </script>";
                             exit;
                         } else {
-                            $attachments[] = date("Y").DIRECTORY_SEPARATOR."Referencias".DIRECTORY_SEPARATOR.$data["ref1"].DIRECTORY_SEPARATOR.$fileName;
+                            $directory = $success["directory"];
+                            $attachments[] = date("Y").DIRECTORY_SEPARATOR.$directory.$fileName;
                             $i++;
                         }
                     }
                 }else{
-                    $attachments[] = date("Y").DIRECTORY_SEPARATOR."Referencias".DIRECTORY_SEPARATOR.$data["ref1"].DIRECTORY_SEPARATOR.$fileName;
+                    $attachments[] = $directorio.$fileName;
                 }
 
                 //Archivo que se adjunta en cada HBL
@@ -541,14 +546,15 @@ class confirmacionesActions extends sfActions {
                     }
                     
                     $success = ArchivosTable::subirDocumento($attachment2, $data);
-                    if ($success != true) {
+                    
+                    if ($success["estado"] != true) {
                         echo "<script>alert('error');
                             history.back();
                             </script>";
                         exit;
                     }else{
-                        $ref2 = str_replace("/","-",$data['ref2']);
-                        $attachments[] = date("Y").DIRECTORY_SEPARATOR."Referencias".DIRECTORY_SEPARATOR.$data["ref1"].DIRECTORY_SEPARATOR.$ref2.DIRECTORY_SEPARATOR.$fileName2;
+                        $directory = $success["directory"];                        
+                        $attachments[] = date("Y").DIRECTORY_SEPARATOR.$directory.$fileName2;
                     }
                 }
 
@@ -667,6 +673,9 @@ class confirmacionesActions extends sfActions {
                         $mensaje.= "<br />Planilla No: <b>" . $inoCliente->getCaPlanilla() . "</b>";
                         $options["subject"] = "Planilla de Envío Id.: ". $reporte->getCaConsecutivo()." ";
                     }
+                    if($this->getRequestParameter("intro_otm"))
+                        $mensaje .= "\n" . $this->getRequestParameter("intro_body_otm");
+                            
                     if ($this->getRequestParameter("mensaje_" . $oid)) {
                         $mensaje .= "\n" . $this->getRequestParameter("mensaje_" . $oid);
                     }

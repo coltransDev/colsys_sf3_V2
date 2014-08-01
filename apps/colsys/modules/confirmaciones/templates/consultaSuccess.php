@@ -590,9 +590,10 @@ $textos = $sf_data->getRaw("textos");
                 <tr>
                     <td class="partir">&nbsp;</td>
                     <td class="partir">Status OTM:&nbsp;</td>
-                    <td class="mostrar" colspan="4"><b>Introducción al Mensaje:</b><br />
+                    <td class="mostrar" colspan="4"><b>Introducción al Mensaje:</b>
+                        <input type="checkbox" value="1" name="intro_otm" id="intro_otm" /><br />
                         <textarea name='intro_body_otm' wrap="virtual" rows="3" cols="93"><?= $textos['mensajeConfOTM'] ?></textarea>
-                    </td>				
+                    </td>
                 </tr>
 <?
             } else if ($modo == "puerto") {
