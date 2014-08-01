@@ -41,7 +41,11 @@ if( $format!="email" ){
         <form name="form1" id="form1" method="post" action="<?=url_for("antecedentes/enviarAntecedentes?ref=".str_replace(".","|",$ref->getCaReferencia()))?>" onsubmit="return validarForm();">
             <input type="hidden" name="checkObservaciones" id="checkObservaciones" value="" />
         <?
-        
+        if($user->getEmail()=="traficos1@coltrans.com.co" || $user->getEmail()=="traficos2@coltrans.com.co" ){			
+            $from = array('traficos1@coltrans.com.co'=>'traficos1@coltrans.com.co', 'traficos2@coltrans.com.co'=>'traficos2@coltrans.com.co');
+        }else{
+            $from=array();
+        }
         foreach( $hijas as $hija ){
             if($hija->getReporte()->getCaDeclaracionant()==true){
                 $da = " (***Declaración Anticipada***)";
@@ -51,7 +55,7 @@ if( $format!="email" ){
         
         $asunto  = "Envio de Antecedentes ".$ref->getCaReferencia().$da;
         $mensaje = "Adjunto encontrará los antecedentes de la referencia ".$ref->getCaReferencia();
-        include_component("email", "formEmail", array("subject"=>$asunto,"message"=>$mensaje, "contacts"=>$contactos,"contacts1"=>$contactos1,"nameContacts1"=>"Contactos Aduana"));
+        include_component("email", "formEmail", array("from"=>$from,"subject"=>$asunto,"message"=>$mensaje, "contacts"=>$contactos,"contacts1"=>$contactos1,"nameContacts1"=>"Contactos Aduana"));
         
         if ($antecedente_justifica){
             ?>
