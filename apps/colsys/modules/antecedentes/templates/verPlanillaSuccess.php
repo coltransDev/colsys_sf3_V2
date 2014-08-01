@@ -279,7 +279,7 @@ if( $format!="email" ){
     <a href="/gestDocumental/formUploadExt4/ref1/<?=str_replace(".","|",$ref->getCaReferencia())?>/idsserie/2"><img src="/images/48x48/edit_add.png" title="Agregar Archivo"></a>
     <?
     
-    include_component("gestDocumental", "returnFiles",array("idsserie"=>"2","view"=>"email","ref1"=>$ref->getCaReferencia(),"ref2"=>"","ref3"=>""));
+    include_component("gestDocumental", "returnFiles",array("idsserie"=>"2","view"=>"email","ref1"=>$ref->getCaReferencia(),"ref2"=>"","ref3"=>"","eliminar"=>"1"));
     if( count($emails)>0 && $format!="email" ){
     ?>
     <br />
