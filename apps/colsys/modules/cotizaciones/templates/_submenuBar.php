@@ -49,8 +49,10 @@ switch($action){
 		
 		$button[$i]["name"]="Copiar ";
 		$button[$i]["tooltip"]="Copia la cotizaci&oacute;n en una nueva cotizaci&oacute;n";
-		$button[$i]["image"]="22x22/copy.gif"; 		
-		$button[$i]["link"]= "cotizaciones/copiarCotizacion?idcotizacion=".$this->getRequestParameter("id");
+		$button[$i]["image"]="22x22/copy.gif";
+        $button[$i]["id"]="btncopiar";
+        $button[$i]["onClick"]= "copiarCot()";
+		//$button[$i]["link"]= "cotizaciones/copiarCotizacion?idcotizacion=".$this->getRequestParameter("id");
 		$i++;
 
                 $button[$i]["name"]="Nueva Version ";
@@ -79,7 +81,9 @@ switch($action){
 			$button[$i]["name"]="Copiar ";
 			$button[$i]["tooltip"]="Copia la cotizaci&oacute;n en una nueva cotizaci&oacute;n";
 			$button[$i]["image"]="22x22/copy.gif"; 		
-			$button[$i]["link"]= "cotizaciones/copiarCotizacion?idcotizacion=".$this->getRequestParameter("id");
+            $button[$i]["id"]="btncopiar";
+            $button[$i]["onClick"]= "copiarCot()";
+			//$button[$i]["link"]= "cotizaciones/copiarCotizacion?idcotizacion=".$this->getRequestParameter("id");
 			$i++;
 			
 			$button[$i]["name"]="Anular ";
@@ -101,3 +105,17 @@ if( $action!="ayuda" ){
 }
 
 ?>
+
+<script language="javascript" type="text/javascript">
+function copiarCot(){
+    
+    $("#btncopiar").attr("onClick", "");
+    //$("#btncopiar").hide();
+    location.href="/cotizaciones/copiarCotizacion?idcotizacion=<?=$this->getRequestParameter("id")?>";
+    
+    
+}
+	
+	
+	
+</script>
