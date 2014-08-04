@@ -109,11 +109,8 @@ if( $action!="ayuda" ){
 <script language="javascript" type="text/javascript">
 function copiarCot(){
     
-    $("#btncopiar").attr("onClick", "");
-    //$("#btncopiar").hide();
+    $("#btncopiar").attr("onClick", "");    
     location.href="/cotizaciones/copiarCotizacion?idcotizacion=<?=$this->getRequestParameter("id")?>";
-    
-    
 }
 	
 	
