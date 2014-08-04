@@ -573,13 +573,21 @@ class Reporte extends BaseReporte {
         }
         else
         {
+            $conceptos=array();
+            $c= ParametroTable::retrieveByCaso("CU048");
+            foreach($c as $s)
+            {
+                $conceptos[]=$s->getCaValor();                        
+            }
+
             $nreg = Doctrine::getTable("RepGasto")
-                            ->createQuery("r")
-                            ->select("count(*) as nreg")
-                            ->addWhere("r.ca_idreporte = ? ", $this->getCaIdreporte())
-                            ->addWhere("r.ca_idrecargo=652")
-                            ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
-                            ->execute();            
+                        ->createQuery("r")
+                        ->select("count(*) as nreg")
+                        ->addWhere("r.ca_idreporte = ? ", $this->getCaIdreporte())
+                        ->andWhereIn("r.ca_idrecargo", $conceptos)
+                        ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                        ->execute();
+
             if($nreg>0)
             {
                 return true;
