@@ -71,6 +71,8 @@ include_component("cotizaciones", "fieldsEncabezado");
 
 
             if( form.isValid() ){
+                
+                Ext.getCmp("guardar-encabezado-btn").disable();
 
                 form.submit({url:'<?= url_for('cotizaciones/formCotizacionGuardar') ?>',
                     waitMsg:'Salvando Datos básicos de la Cotizaci&oacute;n...',
@@ -80,10 +82,15 @@ include_component("cotizaciones", "fieldsEncabezado");
                         ?>
                             document.location='<?= url_for("cotizaciones/consultaCotizacion?id=") ?>'+action.result.idcotizacion;
                         <?
+                        }else{
+                        ?>
+                            Ext.getCmp("guardar-encabezado-btn").enable();
+                        <?
                         }
                         ?>
                     },
                     failure:function(form,action){
+                        Ext.getCmp("guardar-encabezado-btn").enable();
                         Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(action.result?": "+action.result.errorInfo:"")+" "+(action.response?"\n Codigo HTTP "+action.response.status:""));
                     }
                 });
