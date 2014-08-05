@@ -92,7 +92,8 @@ class Reporte extends BaseReporte {
                 $contac=array();
                 $usuarios = Doctrine::getTable("Usuario")
                         ->createQuery("u")
-                        ->addWhere("u.ca_departamento = ? and u.ca_idsucursal = ? and u.ca_activo=true ", array($this->getCaTransporte(), $this->getUsuario()->getSucursal()->getCaIdsucursal()))
+                        ->innerJoin("u.Sucursal s")
+                        ->addWhere("u.ca_departamento = ? and s.ca_nombre = ? and u.ca_activo=true ", array($this->getCaTransporte(), $this->getUsuario()->getSucursal()->getCaNombre()))
                         ->addOrderBy("u.ca_email")
                         ->execute();
                 foreach ($usuarios as $usuario) {
@@ -574,7 +575,7 @@ class Reporte extends BaseReporte {
         else
         {
             $conceptos=array();
-            $c= ParametroTable::retrieveByCaso("CU236");
+            $c= ParametroTable::retrieveByCaso("CU237");
             foreach($c as $s)
             {
                 $conceptos[]=$s->getCaValor();                        
