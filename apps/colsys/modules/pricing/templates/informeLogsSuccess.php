@@ -12,6 +12,7 @@ $grid = $sf_data->getRaw("grid");
 include_component("pricing", "filtrosInformeLogs");
 $tipoInforme = $typetar==1?"TARIFAS ACTUALES":"TARIFAS HISTORICAS";
 $periodo = $fechaInicial?"Periodo: $fechaInicial a $fechaFinal":"FASFDASD";
+//$colspan = $typelog
 ?>
 
 <? if ($opcion) { ?>
@@ -57,8 +58,8 @@ $periodo = $fechaInicial?"Periodo: $fechaInicial a $fechaFinal":"FASFDASD";
                     <th scope="col" style=" text-align: center"><b>Origen</b></th>
                     <th scope="col" style=" text-align: center"><b>Destino</b></th>
                     <th scope="col" style=" text-align: center"><b>Concepto</b></th>
-                    <th scope="col" style=" text-align: center"><b>Recargo</b></th>
-                    <th scope="col" style=" text-align: center; width: 150px;"><b>Fch. Creado</b></th>
+                    <th scope="col" style=" text-align: center; width: 150px;"><b>Recargo</b></th>
+                    <th scope="col" style=" text-align: center;"><b>Fch. Creado</b></th>
                     <th scope="col" style=" text-align: center; width: 20px;"><b>Vlr/Rec</b></th>
                     <th scope="col" style=" text-align: center; width: 70px;"><b>Aplicación</b></th>
                     <th scope="col" style=" text-align: center; width: 20px;"><b>Vlr/Mín</b></th>
@@ -84,9 +85,9 @@ $periodo = $fechaInicial?"Periodo: $fechaInicial a $fechaFinal":"FASFDASD";
                     break;
                 case 5:
                     ?>
+                    <th scope="col" style=" text-align: center"><b>Línea</b></th>
                     <th scope="col" style=" text-align: center"><b>Origen</b></th>
                     <th scope="col" style=" text-align: center"><b>Destino</b></th>
-                    <th scope="col" style=" text-align: center"><b>Línea</b></th>
                     <th scope="col" style=" text-align: center; vertical-align: top; width: 150px;"><b>Fch. Creado</b></th>
                     <th scope="col" style=" text-align: center"><b>Frecuencia</b></th>
                     <th scope="col" style=" text-align: center"><b>T. Transito</b></th>
@@ -112,7 +113,7 @@ $periodo = $fechaInicial?"Periodo: $fechaInicial a $fechaFinal":"FASFDASD";
         
         <?
         
-        foreach ($grid as $impoexpo=>$gridTransporte){
+        /*foreach ($grid as $impoexpo=>$gridTransporte){
             echo "<tr><td>" . $impoexpo. "</td>";
             for($i=0;$i<($numcolumnas);$i++){
                 echo "<td></td>";
@@ -201,7 +202,139 @@ $periodo = $fechaInicial?"Periodo: $fechaInicial a $fechaFinal":"FASFDASD";
                     }
                 }
             }            
+        }*/
+        
+        //echo "<pre>";print_r($grid);echo "</pre>";
+        
+        foreach ($grid as $key1 => $gridData1 ){
+            $nfilas1[$key1]=count($gridData1);            
+            foreach ($gridData1 as $key2 => $gridData2){
+                $nfilas2[$key1][$key2] = count($gridData2);                
+                foreach ($gridData2 as $key3 => $gridData3){
+                    $nfilas3[$key1][$key2][$key3] = count($gridData3);                
+                    foreach ($gridData3 as $key4 => $gridData4) {
+                        $nfilas4[$key1][$key2][$key3][$key4] = count($gridData4);
+                        foreach ($gridData4 as $key5 => $gridData5) {
+                            $nfilas5[$key1][$key2][$key3][$key4][$key5] = count($gridData5);
+                            foreach ($gridData5 as $key6 =>$gridData6){
+                                $nfilas6[$key1][$key2][$key3][$key4][$key5][$key6] = count($gridData6);
+                                if($typelog==2 || $typelog==5){
+                                    $ntotal1[$key1]+=$nfilas6[$key1][$key2][$key3][$key4][$key5][$key6];
+                                    $ntotal2[$key1][$key2]+=$nfilas6[$key1][$key2][$key3][$key4][$key5][$key6];
+                                    $ntotal3[$key1][$key2][$key3]+=$nfilas6[$key1][$key2][$key3][$key4][$key5][$key6];
+                                    $ntotal4[$key1][$key2][$key3][$key4]+=$nfilas6[$key1][$key2][$key3][$key4][$key5][$key6];
+                                    $ntotal5[$key1][$key2][$key3][$key4][$key5]+=$nfilas6[$key1][$key2][$key3][$key4][$key5][$key6];
+                                    $ntotal6[$key1][$key2][$key3][$key4][$key5][$key6]+=$nfilas6[$key1][$key2][$key3][$key4][$key5][$key6];
+                                }
+                                foreach ($gridData6 as $key7 => $gridData7) {
+                                    if($typelog==1 || $typelog==4){
+                                        $nfilas7[$key1][$key2][$key3][$key4][$key5][$key6][$key7] = count($gridData7);
+                                        $ntotal1[$key1]+=$nfilas7[$key1][$key2][$key3][$key4][$key5][$key6][$key7];
+                                        $ntotal2[$key1][$key2]+=$nfilas7[$key1][$key2][$key3][$key4][$key5][$key6][$key7];
+                                        $ntotal3[$key1][$key2][$key3]+=$nfilas7[$key1][$key2][$key3][$key4][$key5][$key6][$key7];
+                                        $ntotal4[$key1][$key2][$key3][$key4]+=$nfilas7[$key1][$key2][$key3][$key4][$key5][$key6][$key7];
+                                        $ntotal5[$key1][$key2][$key3][$key4][$key5]+=$nfilas7[$key1][$key2][$key3][$key4][$key5][$key6][$key7];
+                                        $ntotal6[$key1][$key2][$key3][$key4][$key5][$key6]+=$nfilas7[$key1][$key2][$key3][$key4][$key5][$key6][$key7];
+                                        $ntotal7[$key1][$key2][$key3][$key4][$key5][$key6][$key7]+=$nfilas7[$key1][$key2][$key3][$key4][$key5][$key6][$key7];
+                                    }
+                                    if($typelog==3){
+                                        $nfilas7[$key1][$key2][$key3][$key4][$key5][$key6][$key7] = count($gridData7);
+                                        foreach ($gridData7 as $key8 => $gridData8) {
+                                            $nfilas8[$key1][$key2][$key3][$key4][$key5][$key6][$key7][$key8] = count($gridData8);
+                                            $ntotal1[$key1]+=$nfilas8[$key1][$key2][$key3][$key4][$key5][$key6][$key7][$key8];
+                                            $ntotal2[$key1][$key2]+=$nfilas8[$key1][$key2][$key3][$key4][$key5][$key6][$key7][$key8];
+                                            $ntotal3[$key1][$key2][$key3]+=$nfilas8[$key1][$key2][$key3][$key4][$key5][$key6][$key7][$key8];
+                                            $ntotal4[$key1][$key2][$key3][$key4]+=$nfilas8[$key1][$key2][$key3][$key4][$key5][$key6][$key7][$key8];
+                                            $ntotal5[$key1][$key2][$key3][$key4][$key5]+=$nfilas8[$key1][$key2][$key3][$key4][$key5][$key6][$key7][$key8];
+                                            $ntotal6[$key1][$key2][$key3][$key4][$key5][$key6]+=$nfilas8[$key1][$key2][$key3][$key4][$key5][$key6][$key7][$key8];
+                                            $ntotal7[$key1][$key2][$key3][$key4][$key5][$key6][$key7]+=$nfilas8[$key1][$key2][$key3][$key4][$key5][$key6][$key7][$key8];                                        
+                                            $ntotal8[$key1][$key2][$key3][$key4][$key5][$key6][$key7][$key8]+=$nfilas8[$key1][$key2][$key3][$key4][$key5][$key6][$key7][$key8];                                        
+                                        }
+                                        
+                                    }                                                                    
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
+        //echo "<pre>";print_r($grid); echo "</pre>";
+                
+        foreach ($grid as $key1 => $gridData1 ){
+            echo "<td rowspan=".$ntotal1[$key1]." style='vertical-align: text-top;'>$key1</td>";
+            ksort($gridData1);
+            foreach ($gridData1 as $key2 => $gridData2){
+                echo "<td rowspan=".$ntotal2[$key1][$key2]." style='vertical-align: text-top;'>$key2</td>";
+                ksort($gridData2);
+                foreach ($gridData2 as $key3 => $gridData3){
+                    echo "<td rowspan=".$ntotal3[$key1][$key2][$key3]." style='vertical-align: text-top;'>$key3</td>";
+                    ksort($gridData3);
+                    foreach ($gridData3 as $key4 => $gridData4) {
+                        echo "<td rowspan=".$ntotal4[$key1][$key2][$key3][$key4]." style='vertical-align: text-top;'>$key4</td>";
+                        ksort($gridData4);
+                        foreach ($gridData4 as $key5 => $gridData5) {
+                            echo "<td rowspan=".$ntotal5[$key1][$key2][$key3][$key4][$key5]." style='vertical-align: text-top;'>$key5</td>";
+                            ksort($gridData5);
+                            foreach ($gridData5 as $key6 =>$gridData6){
+                                echo "<td rowspan=".$ntotal6[$key1][$key2][$key3][$key4][$key5][$key6]." style='vertical-align: text-top;'>$key6</td>";
+                                if($typelog==1 || $typelog==4){
+                                    ksort($gridData6);
+                                    foreach ($gridData6 as $key7 => $gridData7) {
+                                        echo "<td rowspan=".$ntotal7[$key1][$key2][$key3][$key4][$key5][$key6][$key7]." style='vertical-align: text-top;'>$key7</td>";
+                                        ksort($gridData7);
+                                        foreach ($gridData7 as $key8 => $gridData8) {
+                                            echo "<td style='vertical-align: text-top;'>$key8</td>";
+                                            foreach ($gridData8 as $key9 => $data) {
+                                                if(!data)
+                                                    echo "<td></td>";
+                                                else
+                                                    echo "<td style='vertical-align: text-top;'>$data</td>";
+                                            }
+                                            echo "</tr>";
+                                        }                                    
+                                    }
+                                }
+                                if($typelog==3){
+                                    ksort($gridData6);
+                                    foreach ($gridData6 as $key7 => $gridData7) {
+                                        echo "<td rowspan=".$ntotal7[$key1][$key2][$key3][$key4][$key5][$key6][$key7]." style='vertical-align: text-top;'>$key7</td>";
+                                        ksort($gridData7);
+                                        foreach ($gridData7 as $key8 => $gridData8) {
+                                            echo "<td rowspan=".$ntotal8[$key1][$key2][$key3][$key4][$key5][$key6][$key7][$key8]." style='vertical-align: text-top;'>$key8</td>";
+                                            ksort($gridData8);
+                                            foreach ($gridData8 as $key9 => $gridData9) {
+                                                echo "<td style='vertical-align: text-top;'>$key9</td>";
+                                                foreach ($gridData9 as $key10 => $data) {
+                                                    if(!data)
+                                                        echo "<td></td>";   
+                                                    else
+                                                        echo "<td style='vertical-align: text-top;'>$data</td>";
+                                                }
+                                                echo "</tr>";
+                                            }                                            
+                                        }                                    
+                                    }                                    
+                                }
+                                if($typelog==2 || $typelog==5){
+                                    ksort($gridData6);
+                                    foreach ($gridData6 as $key7 => $gridData7) {
+                                        echo "<td style='vertical-align: text-top;'>$key7</td>";
+                                        foreach ($gridData7 as $key8 => $data) {
+                                            if(!data)
+                                                echo "<td></td>";   
+                                            else
+                                                echo "<td style='vertical-align: text-top;'>$data</td>";
+                                        }
+                                        echo "</tr>";
+                                    }                                   
+                                }
+                            }                            
+                        }
+                    }
+                }
+            }
+        }        
         ?>
     </table>
 <? } ?>
