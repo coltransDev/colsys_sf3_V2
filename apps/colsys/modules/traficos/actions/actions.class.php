@@ -1025,9 +1025,9 @@ class traficosActions extends sfActions {
 
       $formato = $this->getRequestParameter("formato");
       switch ($formato) {
-         /* case 2:
+         case 2:
            $this->forward("traficos", "informeTraficosFormato2");
-           break; */
+           break;
          default:
             $this->forward("traficos", "informeTraficosFormato1");
             break;
@@ -1062,6 +1062,44 @@ class traficosActions extends sfActions {
       $this->parametros = ParametroTable::retrieveByCaso("CU059", null, null, $this->cliente->getCaIdgrupo());
 
       $this->filename = $this->getRequestParameter("filename");
+
+      $this->setLayout("excel");
+   }
+   
+   public function executeInformeTraficosFormato2() {
+
+        $this->idCliente = $this->getRequestParameter("idcliente");
+
+        $this->modo = $this->getRequestParameter("modo");
+        $this->cliente = Doctrine::getTable("Cliente")->find($this->idCliente);
+
+        $this->forward404Unless($this->cliente);
+        $this->forward404unless($this->modo);
+
+        if($this->getRequestParameter("orden")){
+            $orden = $this->getRequestParameter("orden");
+        }else{
+            $orden = "";
+        }
+
+        switch ($this->modo) {
+           case "aereo":
+              $this->reportes = ReporteTable::getReportesActivos($this->cliente->getCaIdcliente(), Constantes::IMPO, Constantes::AEREO, false, $orden);
+              break;
+           case "maritimo":
+              $this->reportes = ReporteTable::getReportesActivos($this->cliente->getCaIdcliente(), Constantes::IMPO, Constantes::MARITIMO, false, $orden);
+              break;
+           case "expo":
+              $this->reportes = ReporteTable::getReportesActivos($this->cliente->getCaIdcliente(), Constantes::EXPO);
+              break;
+           case "otm":
+              $this->reportes = ReporteTable::getReportesActivos($this->cliente->getCaIdcliente());
+              break;
+        }
+
+        $this->parametros = ParametroTable::retrieveByCaso("CU059", null, null, $this->cliente->getCaIdgrupo());
+
+        $this->filename = $this->getRequestParameter("filename");
 
       $this->setLayout("excel");
    }
@@ -1122,6 +1160,7 @@ class traficosActions extends sfActions {
    public function executeEnviarCorreoTraficos() {
 
       $idCliente = $this->getRequestParameter("idcliente");
+      $informeExcel = $this->getRequestParameter("informeExcel");
       $this->idCliente = $idCliente;
       $this->modo = $this->getRequestParameter("modo");
 
@@ -1199,8 +1238,9 @@ class traficosActions extends sfActions {
       $fileName = str_replace("&", "AND", $fileName);
 
       //Genera el archivo de excel
+      $this->getRequest()->setParameter('orden', 'xtrafico');
       $this->getRequest()->setParameter('filename', $email->getDirectorio() . $fileName);
-      sfContext::getInstance()->getController()->getPresentationFor('traficos', 'informeTraficosFormato1');
+      sfContext::getInstance()->getController()->getPresentationFor('traficos', $informeExcel);
       $email->AddAttachment($email->getDirectorioBase() . $fileName);
       //}
 
@@ -1253,6 +1293,7 @@ class traficosActions extends sfActions {
       $this->status = Doctrine::getTable("RepStatus")->find($this->getRequestParameter("idstatus"));
       $this->forward404Unless($this->status);
       $this->reporte = $this->status->getReporte();
+      $this->modo = $this->getRequestParameter("modo");
 
       $this->repotm = $this->reporte->getRepOtm();
       $this->firmaotm = false;

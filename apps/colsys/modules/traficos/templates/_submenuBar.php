@@ -26,6 +26,12 @@ switch($action){
 		$button[3]["tooltip"]="Envia información de varios embarques por correo ";
 		$button[3]["image"]="22x22/mail_forward.gif"; 			
 		$button[3]["link"]= "traficos/correoTraficos?modo=".$this->getRequestParameter("modo")."&idcliente=".$this->getRequestParameter("idcliente")."&reporte=".$this->getRequestParameter("reporte");		
+                
+                $button[4]["name"]="Excel x Tráfico";
+		$button[4]["tooltip"]="Exporta la informaci&oacute;n a excel x Trafico ";
+		$button[4]["image"]="22x22/excel.gif"; 			
+		$button[4]["link"]= "traficos/informeTraficos?modo=".$this->getRequestParameter("modo")."&formato=2&orden=xtrafico&idcliente=".$this->getRequestParameter("idcliente")."&reporte=".$this->getRequestParameter("reporte");
+		
 		break;
 	case "correoTraficos":
 		$button[2]["name"]="Volver";

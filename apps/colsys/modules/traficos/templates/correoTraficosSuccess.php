@@ -35,12 +35,14 @@ $reportes = $sf_data->getRaw("reportes");
             include_component("email", "formEmail", array("subject"=>$subject, "message"=>$message, "contacts"=>$contactos, "from"=> $from ));
             ?>
         </div>
-        </<br />
-        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tableForm">
+        <br /><br />
+        <table width="50%" border="0" cellspacing="0" cellpadding="0" class="tableForm">
             <tr>
                 <td>
-                    <div align="left"><b>
-                        <b>Este email adjunta documento en excel con contenido<br /></b>
+                    <div align="left" style="border:1px solid #b5b8c8;">
+                        <b>Por favor seleccione el archivo de excel que desea adjuntar en el correo.</b><br/>
+                        <input type="radio" name="informeExcel" value="informeTraficosFormato1" checked='checked'><img src="/images/22x22/kchart_chrt.gif" style="cursor: pointer" onclick="" /> Informe en Excel convencional<br>
+                        <input type="radio" name="informeExcel" value="informeTraficosFormato2"><img src="/images/22x22/excel.gif" style="cursor: pointer" onclick="" /> Informe en Excel por tráficos<br>
                     </div>
                 </td>
             </tr>
