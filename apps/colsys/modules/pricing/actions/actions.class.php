@@ -168,7 +168,7 @@ class pricingActions extends sfActions {
         $ultCiudad = null;
         $ultLinea = null;
 	$folder = "Tarifario/Traslados";
-        $filename = "TARIFAS_TRASLADOS_2013.xls";
+        $filename = "TARIFAS_TRASLADOS_2014.xls";
         //echo count( $trayectos );
         foreach ($trayectos as $trayecto) {
             //Por este campo se agrupan los conceptos
@@ -1168,7 +1168,7 @@ class pricingActions extends sfActions {
      * @author: Andres Botero
      */
 
-    public function executeDatosPanelRecargosPorLinea() {
+    /*public function executeDatosPanelRecargosPorLinea() {
 
         $this->nivel = $this->getNivel();
 
@@ -1233,7 +1233,7 @@ class pricingActions extends sfActions {
         $q->addOrderBy("t.ca_recargo");
         $recargos = $q->execute();
         //echo $q->getSqlQuery();
-
+        
         $this->data = array();
         $i = 0;
         $flag = false;
@@ -1258,6 +1258,163 @@ class pricingActions extends sfActions {
                 'recargo' => utf8_encode($recargo->getTipoRecargo()->getCaRecargo()),
                 'idconcepto' => $recargo->getCaIdconcepto(),
                 'concepto' => $recargo->getCaIdconcepto() == 9999 ? "Aplica para todos" : utf8_encode($recargo->getConcepto()->getCaConcepto()),
+                'inicio' => $recargo->getCaFchinicio(),
+                'vencimiento' => $recargo->getCaFchvencimiento(),
+                'vlrrecargo' => $recargo->getCaVlrrecargo(),
+                'vlrminimo' => $recargo->getCaVlrminimo(),
+                'aplicacion' => utf8_encode($recargo->getCaAplicacion()),
+                'aplicacion_min' => utf8_encode($recargo->getCaAplicacionMin()),
+                'idmoneda' => $recargo->getCaIdmoneda(),
+                'observaciones' => utf8_encode($recargo->getCaObservaciones()),
+                'aplicaciones' => utf8_encode($aplicaciones)
+            );
+            $this->data[] = $row;
+        }
+
+
+        if ($this->opcion != "consulta") {
+            /*
+             * Incluye una fila vacia que permite agregar datos
+             */
+            /*$row = array(
+                'id' => $i++,
+                'idtrafico' => $idtrafico,
+                'idlinea' => $idlinea ? $idlinea : "",
+                'linea' => '+',
+                'idrecargo' => '',
+                'recargo' => '',
+                'vlrrecargo' => '',
+                'vlrminimo' => '',
+                'aplicacion' => '',
+                'aplicacion_min' => '',
+                'idmoneda' => '',
+                'observaciones' => '',
+                'aplicaciones' => $flag?" <span class='rojo'>(Requiere firma Comodato)</span>":""            
+            );
+            $this->data[] = $row;
+        }
+        
+        $this->getUser()->log( "Consulta Tarifario", TRUE );
+        $this->responseArray = array(
+            'success' => true,
+            'total' => count($this->data),
+            'data' => $this->data
+        );
+        $this->setTemplate("responseTemplate");
+    }*/
+    
+    public function executeDatosPanelRecargosPorLinea() {
+
+        $this->nivel = $this->getNivel();
+
+        $this->opcion = "";
+        if ($this->nivel == -1) {
+            $this->forward404();
+        }
+
+        if ($this->nivel == 0) {
+            $this->opcion = "consulta";
+        }
+
+        if ($this->getRequestParameter("readOnly") == "true") {
+            $this->opcion = "consulta";
+        }
+
+        $transporte = utf8_decode($this->getRequestParameter("transporte"));
+        $idtrafico = $this->getRequestParameter("idtrafico");
+        $modalidad = $this->getRequestParameter("modalidad");
+        $impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
+        $idlinea = $this->getRequestParameter("idlinea");
+
+        $this->forward404Unless($transporte);
+        $this->forward404Unless($modalidad);
+        $this->forward404Unless($impoexpo);
+        //$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
+        if (!$idtrafico) {
+            $idtrafico = "99-999";
+        }
+        if ($idtrafico == "99-999") {
+            $this->forward404Unless($idlinea);
+        }
+        if ($this->getRequestParameter("fechacambio")) {
+            $fechacambio = str_replace("|", "-", $this->getRequestParameter("fechacambio"));
+            $timestamp = strtotime($fechacambio . " " . $this->getRequestParameter("horacambio"));
+            $this->opcion = "consulta";
+        } else {
+            $timestamp = null;
+        }
+        if ($timestamp) {
+            $fchcorte = date("Y-m-d H:i:s", $timestamp);
+        } else {
+            $fchcorte = date("Y-m-d H:i:s");
+        }
+        
+        
+        
+        if ($timestamp) {
+            
+            $q = new Doctrine_RawSql();
+                $where = "";
+                if ($idtrafico == "99-999") {
+                    $where = "AND p2.ca_idlinea = '".$idlinea."'";            
+                }
+                $q->select('{r.*}');
+                $q->from("pric.bs_recargosxlinea r
+                        INNER JOIN tb_tiporecargo t ON r.ca_idrecargo = t.ca_idrecargo and t.ca_transporte=r.ca_transporte
+                        INNER JOIN (SELECT max(p2.ca_consecutivo) as ca_consecutivo,p2.ca_idrecargo,ca_idtrafico,ca_idlinea,ca_modalidad, ca_impoexpo, p2.ca_transporte, ca_idconcepto
+                                    FROM pric.bs_recargosxlinea p2 
+                                        INNER JOIN tb_tiporecargo t ON p2.ca_idrecargo = t.ca_idrecargo
+                                        WHERE  p2.ca_fchcreado <= '".$fchcorte."' AND
+                                               p2.ca_idtrafico = '".$idtrafico."' AND 
+                                               p2.ca_transporte = '".$transporte."' AND
+                                               p2.ca_modalidad = '".$modalidad."' AND 
+                                               p2.ca_impoexpo = '".$impoexpo."' $where  
+                                        GROUP BY p2.ca_idrecargo,ca_idtrafico,ca_idlinea,ca_modalidad, ca_impoexpo, p2.ca_transporte, ca_idconcepto) as c2 ON c2.ca_consecutivo=r.ca_consecutivo
+                                        ORDER BY r.ca_idlinea, t.ca_recargo");
+                $q->addComponent('r', 'PricRecargoxLineaBs r');
+                $q->addComponent('t', 'r.TipoRecargo t');
+                $q->addComponent('c2', 'r.PricRecargoxLineaBs c2');
+            
+        } else {
+            $q = Doctrine_Query::create()->from("PricRecargoxLinea r");
+        }
+
+        if(!$timestamp){
+            $q->innerJoin("r.TipoRecargo t ON r.ca_idrecargo = t.ca_idrecargo and t.ca_transporte = r.ca_transporte");
+            $q->addWhere("r.ca_idtrafico = ? AND r.ca_transporte= ? AND r.ca_modalidad= ? AND r.ca_impoexpo = ?", array($idtrafico, $transporte, $modalidad, $impoexpo));
+            if ($idtrafico == "99-999") {
+                $q->addWhere("r.ca_idlinea = ?", $idlinea);            
+            }
+            $q->addOrderBy("r.ca_idlinea");
+            $q->addOrderBy("t.ca_recargo");
+        
+        }        
+        $recargos = $q->execute();        
+
+        $this->data = array();
+        $i = 0;
+        $flag = false;
+        foreach ($recargos as $recargo) {
+            
+            if ($recargo->getCaFcheliminado()) {
+                continue;
+            }
+            
+            $aplicaciones = $recargo->getTipoRecargo()->getCaAplicaciones();
+            if( $recargo->getIdsProveedor()->getCaContratoComodato()  ){
+                $aplicaciones.=" <span class='rojo'>(Requiere firma Comodato)</span>";
+                $flag = true;
+            }
+            $row = array(
+                'id' => $i++,
+                'consecutivo' => $recargo->getCaConsecutivo(),
+                'idtrafico' => $idtrafico,
+                'idlinea' => $recargo->getCaIdlinea(),
+                'linea' => utf8_encode($recargo->getIdsProveedor()->getCaSigla()?$recargo->getIdsProveedor()->getCaSigla():$recargo->getIdsProveedor()->getIds()->getCaNombre()),
+                'idrecargo' => $recargo->getCaIdrecargo(),
+                'recargo' => utf8_encode($recargo->getTipoRecargo()->getCaRecargo()),
+                'idconcepto' => $recargo->getCaIdconcepto(),
+                'concepto' => $recargo->getCaIdconcepto() == 9999 ? "Todos los conceptos" : utf8_encode($recargo->getConcepto()->getCaConcepto()),
                 'inicio' => $recargo->getCaFchinicio(),
                 'vencimiento' => $recargo->getCaFchvencimiento(),
                 'vlrrecargo' => $recargo->getCaVlrrecargo(),
@@ -1554,7 +1711,7 @@ class pricingActions extends sfActions {
                         ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                         ->execute();
         $this->conceptos = array();
-        $this->conceptos[] = array("idconcepto" => '9999', "concepto" => 'Aplica para todos');
+        $this->conceptos[] = array("idconcepto" => '9999', "concepto" => 'Todos los conceptos');
         foreach ($conceptos as $concepto) {
             $this->conceptos[] = array("idconcepto" => $concepto['c_ca_idconcepto'],
                 "concepto" => utf8_encode($concepto['c_ca_concepto'])
@@ -3005,6 +3162,7 @@ class pricingActions extends sfActions {
                     $whereAdd.= $this->idlinea?" AND tr.ca_idlinea = '".$this->idlinea."'":"";
                     $whereAdd.= $this->idpais_origen?" AND tor.ca_idtrafico = '".$this->idpais_origen."'":"";
                     $whereAdd.= $this->idconcepto?" AND r.ca_idconcepto = '".$this->idconcepto."'":"";
+                    $whereAdd.= $this->typetar==1?" AND tr.ca_activo = TRUE":"";
                     $sufijo = "tr";
                     $sufijo2="c";
                     break;
@@ -3031,6 +3189,7 @@ class pricingActions extends sfActions {
                              JOIN tb_traficos trades ON trades.ca_idtrafico = ori.ca_idtrafico";
                     $whereAdd.= $this->idlinea?" AND tr.ca_idlinea = '".$this->idlinea."'":"";
                     $whereAdd.= $this->idpais_origen?" AND traori.ca_idtrafico = '".$this->idpais_origen."'":"";
+                    $whereAdd.= $this->typetar==1?" AND tr.ca_activo = TRUE":"";
                     $sufijo = "tr";
                     $sufijo2= "c";
                     $sufijo3= "c";
@@ -3048,7 +3207,7 @@ class pricingActions extends sfActions {
                     $sufijo = "r";
                     break;
                 case 5: // Trayectos
-                    $select = "tr.ca_idlinea, i.ca_nombre as linea, ori.ca_ciudad as origen, des.ca_ciudad as destino, tr.ca_frecuencia, tr.ca_tiempotransito, tr.ca_observaciones as obs1, (CASE WHEN tr.ca_activo=TRUE THEN 'SI' WHEN tr.ca_activo=FALSE THEN 'NO'END ) AS ca_activo, tr.ca_ncontrato, r.ca_observaciones as obs2,";
+                    $select = "tr.ca_idlinea, i.ca_nombre as linea, ori.ca_ciudad as origen, des.ca_ciudad as destino, tr.ca_frecuencia, tr.ca_tiempotransito, tr.ca_observaciones as obs1, (CASE WHEN tr.ca_activo=TRUE THEN 'SI' WHEN tr.ca_activo=FALSE THEN 'NO'END ) AS ca_activo, tr.ca_ncontrato, r.ca_observaciones as obs2, tr.ca_usucreado,";
                     $from = "pric.".$pre."_trayectos r";
                     $join = "JOIN pric.tb_trayectos tr ON r.ca_idtrayecto = tr.ca_idtrayecto
                              JOIN ids.tb_proveedores p ON p.ca_idproveedor = tr.ca_idlinea
@@ -3059,6 +3218,7 @@ class pricingActions extends sfActions {
                              JOIN tb_traficos trades ON trades.ca_idtrafico = ori.ca_idtrafico";
                     $whereAdd.= $this->idlinea?" AND tr.ca_idlinea = '".$this->idlinea."'":"";
                     $whereAdd.= $this->idpais_origen?" AND traori.ca_idtrafico = '".$this->idpais_origen."'":"";
+                    $whereAdd.= $this->typetar==1?" AND tr.ca_activo = TRUE":"";
                     $sufijo = "tr";
                     break;
             }
@@ -3159,6 +3319,7 @@ class pricingActions extends sfActions {
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["fchcreado"]]["ca_activo"] = $r["ca_activo"];
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["fchcreado"]]["ca_ncontrato"] = $r["ca_ncontrato"];
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["fchcreado"]]["obs2"] = $r["obs2"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["fchcreado"]]["ca_usucreado"] = $r["ca_usucreado"];
                         break;
                 }
             }
