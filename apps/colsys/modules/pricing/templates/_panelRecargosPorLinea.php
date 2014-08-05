@@ -619,7 +619,7 @@ foreach ($parametros as $aplicacion) {
                                         }
                         
                                         rec.set("idconcepto", '9999');
-                                        rec.set("concepto", 'Aplica para todos');
+                                        rec.set("concepto", 'Todos los conceptos');
                                         rec.set("idrecargo", r.data.idconcepto);
                                         rec.set("idmoneda", "USD");
                                         e.value = r.data.concepto;
@@ -681,7 +681,7 @@ foreach ($parametros as $aplicacion) {
                                         }
                         
                                         rec.set("idconcepto", '9999');
-                                        rec.set("concepto", 'Aplica para todos');
+                                        rec.set("concepto", 'Todos los conceptos');
                                         rec.set("idlinea", r.data.idlinea);
                                         rec.set("idmoneda", "USD");
                                         e.value = r.data.linea;
