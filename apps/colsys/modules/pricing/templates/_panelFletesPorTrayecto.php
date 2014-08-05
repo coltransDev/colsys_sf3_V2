@@ -255,29 +255,29 @@ PanelFletesPorTrayecto = function( config ){
 		this.expander,
 		this.checkColumn,
 		{
-			id: 'concepto', //para aplicar estilos a esta columna
-			header: "Concepto",
-			width: 200,
-			sortable: false,
-			groupable: false,
-            hideable: false,
-			dataIndex: 'nconcepto',
-			hideable: false,
-			renderer: this.renderConcepto ,
-			editor: this.editorConceptos
+                    id: 'concepto', //para aplicar estilos a esta columna
+                    header: "Concepto",
+                    width: 200,
+                    sortable: false,
+                    groupable: false,
+                    hideable: false,
+                    dataIndex: 'nconcepto',
+                    hideable: false,
+                    renderer: this.renderConcepto ,
+                    editor: this.editorConceptos
 		},
-        {
-			id: 'equipo', //para aplicar estilos a esta columna
-			header: "Equipo",
-			width: 200,
-			sortable: false,
-			groupable: false,
-            hideable: false,
-			dataIndex: 'equipo',
-			hideable: false,
-            hidden: !this.mostrarEquipo,
-			renderer: this.renderConcepto ,
-			editor: this.editorEquipos
+                {
+                    id: 'equipo', //para aplicar estilos a esta columna
+                    header: "Equipo",
+                    width: 200,
+                    sortable: false,
+                    groupable: false,
+                    hideable: false,
+                    dataIndex: 'equipo',
+                    hideable: false,
+                    hidden: !this.mostrarEquipo,
+                    renderer: this.renderConcepto ,
+                    editor: this.editorEquipos
 		},
 		{
 			id: 'trayecto',
@@ -941,7 +941,7 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
 
     },
 
-    renderConcepto: function(value, metaData, record, rowIndex, colIndex, store){
+    renderConcepto: function(value, metaData, record, rowIndex, colIndex, store){        
         var data = record.data;
         // create tooltip
         var qtipTpl=new Ext.XTemplate(
@@ -951,28 +951,28 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
                 ,'<div ><h3>Actualización # {consecutivo}: </h3>{actualizado}</div>'
                 ,'</tpl>'
         );
-
+       
         var qtip = qtipTpl.apply(data);
 
 
 
         switch(  record.data.tipo ){
             case 'trayecto_obs':
-                return '<div qtip="' + qtip +'"><b>'+value+'</b></div>';
+                return '<div ext:qtip="' + qtip +'"><b>'+value+'</b></div>';
                 break;
             case 'concepto':
-                return '<div qtip="' + qtip +'"><b>'+value+'</b></div>';
+                return '<div ext:qtip="' + qtip +'"><b>'+value+'</b></div>';
                 break;
             case 'recargo':
                 
                 if( colIndex==2 ){
-                    return '<div qtip="' + qtip +'" class="recargo">'+value+'</div>';
+                    return '<div ext:qtip="' + qtip +'" class="recargo">'+value+'</div>';
                 }else{
-                    return '<div qtip="' + qtip +'" >'+value+'</div>';
+                    return '<div ext:qtip="' + qtip +'" >'+value+'</div>';
                 }
                 break;
             case 'recargoxciudad':
-                return '<div qtip="' + qtip +'" class="recargo">'+value+'</div>';
+                return '<div ext:qtip="' + qtip +'" class="recargo">'+value+'</div>';
                 break;
 
         }
