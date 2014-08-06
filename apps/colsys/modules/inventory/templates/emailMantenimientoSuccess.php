@@ -177,7 +177,7 @@ foreach( $mantenimientos as $mantenimiento ){
                                     DEPARTAMENTO DE SISTEMAS<br>
                                 </div>
                                 <div style="background-color:#FFFFFF;border-color:#CCCCCC;border-style:dotted;border-width:1px;margin:12px 0 0;padding:12px 12px 24px;font-size: 12px;font-family: arial, helvetica, sans-serif;">
-                                    <form action="<?=url_for("inventory/guardarAnotacion?idactivo=$idactivo&idmantenimiento=$idman")?>" method="post">
+                                    <form action="<?=url_for("inventory/guardarAnotacion?fuente=email&idactivo=$idactivo&idmantenimiento=$idman")?>" method="post">
                                         <b>Observaciones Mantenimiento</b><br /><br /> 
                                         <textarea name="text-anotacion" style="width:500px" rows="5">El mantenimiento no fue aceptado
 Razones:

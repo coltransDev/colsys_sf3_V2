@@ -149,6 +149,8 @@ class inventoryActions extends sfActions {
             }
             $result[] = $row;
         }
+        
+        
 
         $this->responseArray = array("success" => true, "root" => $result);
 
@@ -527,6 +529,7 @@ class inventoryActions extends sfActions {
         $idactivo = $request->getParameter("idactivo");
         $textAnotacion = $request->getParameter("text-anotacion");
         $autorizado = $request->getParameter("idfirma");
+        $fuente = $request->getParameter("fuente");
         $this->user = $this->getUser();
         $this->recordatorio = $request->getParameter("recordatorio");
         
@@ -589,7 +592,14 @@ class inventoryActions extends sfActions {
             $usuario = Doctrine::getTable("Usuario")->find( $login );
             $email->addCc( $usuario->getCaEmail() );
         }
-        $email->save();        
+        $email->save();
+        
+        if(!$fuente){        
+            $texto1 = sfContext::getInstance()->getController()->getPresentationFor('inventory', 'verSeguimientos');
+
+            $this->responseArray = array("success" => true, "idactivo" => $idactivo, "info" => utf8_encode($texto1));
+            $this->setTemplate("responseTemplate");
+        }
     }
     /**
      * Guarda un seguimiento a un activo

@@ -92,15 +92,18 @@ Ext.extend(NuevaAnotacionWindow, Ext.Window, {
         var form = panel.getForm();
         var win = this;
 
-        var opener = this.opener;
         if( form.isValid() ){
 
             form.submit({
                 success:function(form,action){
 
-                    //Ext.Msg.alert( "Información" );
+                    win.close();
+                    
+                    var cmp = Ext.getCmp('ext-comp-1024');
+                    if( cmp ){
+                        cmp.body.update(action.result.info);                        
+                    }
                     Ext.MessageBox.alert('Sistema de Activos:', 'La anotación se ha guardado correctamente');
-                    win.close();                   
                 },
                 // standardSubmit: false,
                 failure:function(form,action){
