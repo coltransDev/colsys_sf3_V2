@@ -674,7 +674,7 @@ class confirmacionesActions extends sfActions {
                         $options["subject"] = "Planilla de Envío Id.: ". $reporte->getCaConsecutivo()." ";
                     }
                     if($this->getRequestParameter("intro_otm"))
-                        $mensaje .= "\n" . $this->getRequestParameter("intro_body_otm");
+                        $status->setCaIntroduccion($this->getRequestParameter("intro_body_otm"));
                             
                     if ($this->getRequestParameter("mensaje_" . $oid)) {
                         $mensaje .= "\n" . $this->getRequestParameter("mensaje_" . $oid);
