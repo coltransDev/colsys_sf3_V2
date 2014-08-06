@@ -104,7 +104,14 @@ PanelNoticias = function( config ){
                 iconCls:'application_form',  // reference to our css
                 scope: this,
                 handler: this.crearTicket
-            }            
+            },
+            {
+                text: 'Tarifario ASW',
+                tooltip: 'Ver Tarifas ASW',
+                iconCls:'website',  // reference to our css
+                scope: this,
+                handler: this.verTarifario
+            }
         ],
         
         viewConfig: {
@@ -261,6 +268,10 @@ Ext.extend(PanelNoticias, Ext.grid.GridPanel, {
     crearTicket: function(){
         var win = new EditarTicketWindow();
         win.show();
+    },
+    
+    verTarifario: function(){
+        window.open('http://apps.aswgroup.com.hk/en/scripts/adm/login.php');
     },
 
     ventanaEdicion: function( record ){
