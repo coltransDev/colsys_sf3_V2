@@ -131,6 +131,23 @@ input.bigbuttonmin:hover, input.bigbuttonmin:focus {
     box-shadow: inset 0px 1px 0px #638CC2, 0px 2px 0px 0px #454C76, 0px 2px 5px #999;
 }
 
+div.bigbutton {
+    width:500px;    
+    padding: 8px 14px 10px; /*apply some padding inside the button*/
+    border:2px solid #157FCC; /*required or the default border for the browser will appear*/
+    cursor:pointer; /*forces the cursor to change to a hand when the button is hovered*/
+    
+    font-weight:  bold;
+    /*use box-shadow to give the button some depth - see cssdemos.tupence.co.uk/box-shadow.htm#demo7 for more info on this technique*/
+    -webkit-box-shadow: inset 0px 1px 0px #638CC2, 0px 5px 0px 0px #454C76, 0px 10px 5px #999;
+    -moz-box-shadow: inset 0px 1px 0px #638CC2, 0px 5px 0px 0px #454C76, 0px 10px 5px #999;
+    box-shadow: inset 0px 1px 0px #638CC2, 0px 5px 0px 0px #454C76, 0px 10px 5px #999;
+    /*give the corners a small curve*/
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+
 p{
    font-family: verdana,arial,helvetica,serif;
    font-size:9px;
@@ -353,6 +370,12 @@ table.tableList td.dinamica {
 table.tableList td.numeros {
    text-align: right;
    vertical-align: top;
+   background: #FFFFFF;
+   color: #000000;
+}
+table.tableList td.numCenter {
+   text-align: right;
+   vertical-align: center;
    background: #FFFFFF;
    color: #000000;
 }
@@ -684,6 +707,10 @@ div.storybox .body {
 	background-image:url('../images/fam/add.png') !important;
 }
 
+.application_form{
+	background-image:url('../images/fam/application_form.png') !important;
+}
+
 .folder{
 	background-image:url('../images/fam/folder.png') !important;
 }
@@ -809,6 +836,9 @@ div.storybox .body {
     background: url('../images/16x16/new_tab.gif') no-repeat 0 0 !important;
 }
 
+.website{
+	background-image:url('../images/fam/website.png') !important;
+}
 
 
 
