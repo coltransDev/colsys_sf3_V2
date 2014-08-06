@@ -311,6 +311,19 @@ class traficosActions extends sfActions {
       $q->addOrderBy("t.ca_orden");
       $this->form->setQueryIdEtapa($q);
       $this->etapas = $q->execute();
+    
+    if($reporte->getCaContinuacion()=="OTM")
+    {
+        foreach($this->etapas as $k=>$e)
+        {
+            
+            if($this->etapas[$k]->getCaIdetapa()=="IMCEM" || $this->etapas[$k]->getCaIdetapa()=="IMCMT" )
+            {                
+                $etapaOtm = Doctrine::getTable("TrackingEtapa")->find("OTSDO");                
+                $this->etapas[$k]->setCaMessageDefault($e->getCaMessageDefault()."\n".$etapaOtm->getCaMessageDefault());
+            }
+        }
+    }
 
       $u = Doctrine::getTable("Usuario")->createQuery("u");
       $u->where("ca_idsucursal = ? and ca_activo=true", $this->getUser()->getSucursal());
