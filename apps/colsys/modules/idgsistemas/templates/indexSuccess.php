@@ -27,7 +27,7 @@
                 </td>
             </tr>      
             <tr>
-                <td> <?=link_to("Reporte IDG Sistemas","idgsistemas/reporteIdgSistemas")?>
+                <td> <?=link_to("Reporte IDG Help Desk","idgsistemas/reporteIdgSistemas")?>
                 </td>
             </tr>
             

@@ -9,6 +9,7 @@
  * @version    SVN: $Id: actions.class.php 23810 2009-11-12 11:07:44Z Kris.Wallsmith $
  */
 class idgsistemasActions extends sfActions {
+
     /**
      * Executes index action
      *
@@ -16,9 +17,7 @@ class idgsistemasActions extends sfActions {
      */
     public function executeIndex(sfWebRequest $request) {
         
-
     }
-
 
     /*
      * Informe Promedio de Tickets total
@@ -26,7 +25,7 @@ class idgsistemasActions extends sfActions {
      */
 
     public function executeInformePromedioTicketsForm(sfWebRequest $request) {
-
+        
     }
 
     public function executeInformePromedioTickets(sfWebRequest $request) {
@@ -37,59 +36,46 @@ class idgsistemasActions extends sfActions {
         $idgroup = $request->getParameter("idgroup");
         $login = $request->getParameter("login");
 
-        
+
         $q = Doctrine_Query::create()
-                            ->select("c.ca_idcriterio,c.ca_criterio, us.ca_login, us.ca_nombre, AVG(ca_valor) as promedio, COUNT(*) as numeval")
-                            ->from("SurvCriterio c")
-                            ->innerJoin("c.SurvEvaluacionxCriterio exc")
-                            ->innerJoin("exc.SurvEvaluacion ev")
-                            ->innerJoin( "ev.HdeskTicket t" )
-                            ->innerJoin( "t.HdeskGroup g" )
-                            ->innerJoin("t.AssignedTo us")
-                            ->addGroupBy("c.ca_criterio")
-                            ->addGroupBy("us.ca_login")
-                            ->addGroupBy("us.ca_nombre")
-                            ->addGroupBy("c.ca_idcriterio")
-                            ->addOrderBy("us.ca_nombre")
-                            ->addOrderBy("c.ca_criterio");
-        if( $iddepartamento ){
-            
-            $q->addWhere("g.ca_iddepartament=?",$iddepartamento );
-
-
-
-            if( $idgroup ){
-
-                $q->addWhere("t.ca_idgroup=?",$idgroup );
-
-                if( $login ){
-                    $q->addWhere("t.ca_assignedto=?",$login );
+                ->select("c.ca_idcriterio,c.ca_criterio, us.ca_login, us.ca_nombre, AVG(ca_valor) as promedio, COUNT(*) as numeval")
+                ->from("SurvCriterio c")
+                ->innerJoin("c.SurvEvaluacionxCriterio exc")
+                ->innerJoin("exc.SurvEvaluacion ev")
+                ->innerJoin("ev.HdeskTicket t")
+                ->innerJoin("t.HdeskGroup g")
+                ->innerJoin("t.AssignedTo us")
+                ->addGroupBy("c.ca_criterio")
+                ->addGroupBy("us.ca_login")
+                ->addGroupBy("us.ca_nombre")
+                ->addGroupBy("c.ca_idcriterio")
+                ->addOrderBy("us.ca_nombre")
+                ->addOrderBy("c.ca_criterio");
+        if ($iddepartamento) {
+            $q->addWhere("g.ca_iddepartament=?", $iddepartamento);
+            if ($idgroup) {
+                $q->addWhere("t.ca_idgroup=?", $idgroup);
+                if ($login) {
+                    $q->addWhere("t.ca_assignedto=?", $login);
                 }
             }
         }
 
-        if( $fchinicio ){
-            $q->addWhere("ev.ca_fchcreado>=?",$fchinicio );
-        }
-        
-        if( $fchfin ){
-            $q->addWhere("ev.ca_fchcreado<=?",$fchfin );
+        if ($fchinicio) {
+            $q->addWhere("ev.ca_fchcreado>=?", $fchinicio);
         }
 
+        if ($fchfin) {
+            $q->addWhere("ev.ca_fchcreado<=?", $fchfin);
+        }
 
-
-        $this->eval = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                        ->execute();
+        $this->eval = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
 
         $this->fchinicio = $fchinicio;
         $this->fchfin = $fchfin;
         $this->idgroup = $idgroup;
         $this->login = $login;
-
-
     }
-
-
 
     /*
      * Informe Listado de Evaluaciones
@@ -97,7 +83,7 @@ class idgsistemasActions extends sfActions {
      */
 
     public function executeInformeListadoEvaluacionesForm(sfWebRequest $request) {
-
+        
     }
 
     public function executeInformeListadoEvaluaciones(sfWebRequest $request) {
@@ -109,76 +95,59 @@ class idgsistemasActions extends sfActions {
         $login = $request->getParameter("login");
 
         $q = Doctrine_Query::create()
-                            ->select("ev.ca_idevaluacion, AVG(ca_valor) as promedio, ev.ca_titulo, us.ca_nombre, us2.ca_nombre, ev.ca_comentarios")
-                            ->from("SurvEvaluacion ev")
-                            ->innerJoin("ev.SurvEvaluacionxCriterio exc")
-                            ->innerJoin( "ev.HdeskTicket t" )
-                            ->innerJoin( "t.HdeskGroup g" )
-                            ->innerJoin("t.AssignedTo us")
-                            ->innerJoin("t.Usuario us2")
-                            ->addGroupBy("ev.ca_idevaluacion")
-                            ->addGroupBy("ev.ca_titulo")
-                            ->addGroupBy("us.ca_nombre")
-                            ->addGroupBy("us2.ca_nombre")
-                            ->addGroupBy("ev.ca_comentarios")
-                            ->addOrderBy("us.ca_nombre");
-                            
-        if( $iddepartamento ){
-            
-            $q->addWhere("g.ca_iddepartament=?",$iddepartamento );
+                ->select("ev.ca_idevaluacion, AVG(ca_valor) as promedio, ev.ca_titulo, us.ca_nombre, us2.ca_nombre, ev.ca_comentarios")
+                ->from("SurvEvaluacion ev")
+                ->innerJoin("ev.SurvEvaluacionxCriterio exc")
+                ->innerJoin("ev.HdeskTicket t")
+                ->innerJoin("t.HdeskGroup g")
+                ->innerJoin("t.AssignedTo us")
+                ->innerJoin("t.Usuario us2")
+                ->addGroupBy("ev.ca_idevaluacion")
+                ->addGroupBy("ev.ca_titulo")
+                ->addGroupBy("us.ca_nombre")
+                ->addGroupBy("us2.ca_nombre")
+                ->addGroupBy("ev.ca_comentarios")
+                ->addOrderBy("us.ca_nombre");
 
-
-
-            if( $idgroup ){
-
-                $q->addWhere("t.ca_idgroup=?",$idgroup );
-
-                if( $login ){
-                    $q->addWhere("t.ca_assignedto=?",$login );
+        if ($iddepartamento) {
+            $q->addWhere("g.ca_iddepartament=?", $iddepartamento);
+            if ($idgroup) {
+                $q->addWhere("t.ca_idgroup=?", $idgroup);
+                if ($login) {
+                    $q->addWhere("t.ca_assignedto=?", $login);
                 }
             }
         }
-        
-        if( $fchinicio ){
-            $q->addWhere("ev.ca_fchcreado>=?",$fchinicio );
+
+        if ($fchinicio) {
+            $q->addWhere("ev.ca_fchcreado>=?", $fchinicio);
         }
 
-        if( $fchfin ){
-            $q->addWhere("ev.ca_fchcreado<=?",$fchfin );
+        if ($fchfin) {
+            $q->addWhere("ev.ca_fchcreado<=?", $fchfin);
         }
 
-
-
-        $this->eval = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                        ->execute();
+        $this->eval = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
 
         $this->fchinicio = $fchinicio;
         $this->fchfin = $fchfin;
         $this->idgroup = $idgroup;
         $this->login = $login;
-
-
-
     }
-
-
 
     public function executeVerEvaluacion(sfWebRequest $request) {
 
         $idevaluacion = $request->getParameter("idevaluacion");
-        $this->forward404Unless( $idevaluacion );
-        $this->evaluacion = Doctrine::getTable("SurvEvaluacion")->find( $idevaluacion );
-        $this->forward404Unless( $this->evaluacion );
+        $this->forward404Unless($idevaluacion);
+        $this->evaluacion = Doctrine::getTable("SurvEvaluacion")->find($idevaluacion);
+        $this->forward404Unless($this->evaluacion);
 
 
         $this->ticket = Doctrine::getTable("HDeskTicket")
-                        ->createQuery("h")
-                        ->addWhere("h.ca_idevaluacion=?", $this->evaluacion->getCaIdevaluacion())
-                        ->fetchOne();
-
-
+                ->createQuery("h")
+                ->addWhere("h.ca_idevaluacion=?", $this->evaluacion->getCaIdevaluacion())
+                ->fetchOne();
     }
-
 
     public function executeInformeListadoEvaluacionesCriterio(sfWebRequest $request) {
 
@@ -190,161 +159,168 @@ class idgsistemasActions extends sfActions {
 
 
         $q = Doctrine_Query::create()
-                            ->select("cr.ca_criterio,  ev.ca_idevaluacion, ev.ca_titulo, cr.ca_criterio, exc.ca_valor, exc.ca_ponderacion, us.ca_nombre, us2.ca_nombre, exc.ca_observaciones")
-                            ->from("SurvEvaluacionxCriterio exc")
-                            ->innerJoin("exc.SurvCriterio cr")
-                            ->innerJoin("exc.SurvEvaluacion ev")
-                            ->innerJoin( "ev.HdeskTicket t" )
-                            ->innerJoin("t.AssignedTo us")
-                            ->innerJoin("t.Usuario us2")
-                            ->addOrderBy("ev.ca_idevaluacion");
+                ->select("cr.ca_criterio,  ev.ca_idevaluacion, ev.ca_titulo, cr.ca_criterio, exc.ca_valor, exc.ca_ponderacion, us.ca_nombre, us2.ca_nombre, exc.ca_observaciones")
+                ->from("SurvEvaluacionxCriterio exc")
+                ->innerJoin("exc.SurvCriterio cr")
+                ->innerJoin("exc.SurvEvaluacion ev")
+                ->innerJoin("ev.HdeskTicket t")
+                ->innerJoin("t.AssignedTo us")
+                ->innerJoin("t.Usuario us2")
+                ->addOrderBy("ev.ca_idevaluacion");
 
-        if( $idgroup ){
-            
-            $q->addWhere("t.ca_idgroup=?",$idgroup );
-            if( $login ){
-                $q->addWhere("t.ca_assignedto=?",$login );
+        if ($idgroup) {
+            $q->addWhere("t.ca_idgroup=?", $idgroup);
+            if ($login) {
+                $q->addWhere("t.ca_assignedto=?", $login);
             }
         }
 
-        if( $fchinicio ){
-            $q->addWhere("ev.ca_fchcreado>=?",$fchinicio );
+        if ($fchinicio) {
+            $q->addWhere("ev.ca_fchcreado>=?", $fchinicio);
         }
 
-
-        if( $fchfin ){
-            $q->addWhere("ev.ca_fchcreado<=?",$fchfin );
+        if ($fchfin) {
+            $q->addWhere("ev.ca_fchcreado<=?", $fchfin);
         }
 
-        if( $idcriterio ){
-            $q->addWhere("exc.ca_idcriterio=?",$idcriterio );
+        if ($idcriterio) {
+            $q->addWhere("exc.ca_idcriterio=?", $idcriterio);
         }
 
-
-        $this->eval = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                        ->execute();
+        $this->eval = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
 
         $this->fchinicio = $fchinicio;
         $this->fchfin = $fchfin;
         $this->idgroup = $idgroup;
         $this->login = $login;
-
     }
-    
-    public function executeReporteIdgSistemas($request){
-        
+
+    public function executeReporteIdgSistemas($request) {
+
         $response = sfContext::getInstance()->getResponse();
         $response->addJavaScript("extExtras/SuperBoxSelect", 'last');
+
+        $this->narea = $request->getParameter("narea");
+        $iddepartamento = $request->getParameter("departamento");
         
-        $this->idgroup = $request->getParameter("idgroup");
-        $this->grupos = $request->getParameter("grupos");
-        $this->login = $request->getParameter("login");
-        $this->type_est = $request->getParameter( "type_est" );
-        $this->porcentaje = $request->getParameter( "porcentaje" );
+        $this->type_est = $request->getParameter("type_est");
+        $this->porcentaje = $request->getParameter("porcentaje");
         $this->fechaInicial = Utils::parseDate($request->getParameter("fechaInicial"));
         $this->fechaFinal = Utils::parseDate($request->getParameter("fechaFinal"));
         $this->fechaUltSeg = Utils::parseDate($request->getParameter("ultimoseg"));
         $this->lcs = $request->getParameter("lcs");
         $this->lc = $request->getParameter("lc");
         $this->lci = $request->getParameter("lci");
-        $opcion=$this->getRequestParameter("opcion");
-        $checkboxGrupo = $request->getParameter( "checkboxGrupo" );
-        $checkboxUsuario = $request->getParameter( "checkboxUsuario" );
-        $checkboxOpenTicket = $request->getParameter( "checkboxOpenTicket" );
+        $opcion = $request->getParameter("opcion");
 
-        $this->idgsistemas="";
+        $checkboxOpenTicket = $request->getParameter("checkboxOpenTicket");
+
+        $this->idgsistemas = "";
         $type_est = $this->type_est;
         $porcentaje = $this->porcentaje;
 
-        if( $checkboxGrupo ){
-            if ($this->grupos && count($this->grupos) > 0){
-                $sql_grupo = "";
-                $sql_grupo.=" and (";
-                foreach ($this->grupos as $key => $grupo) {
-                    if ($key > 0)
-                        $sql_grupo.=" or ";
-                    $sql_grupo.=" gr.ca_name like '" . $grupo . "%'";
-                }
-                $sql_grupo.=" )";
+        if (is_array($this->narea) && array_sum($this->narea) > 0) {
+            
+            $sql_grupo = "";
+            $sql_grupo.=" and (";
+            foreach ($this->narea as $key => $area) {
+                if ($key > 0)
+                    $sql_grupo.=" or ";
+                $sql_grupo.=" gr.ca_idgroup = " . $area;
             }
-          //  $sql_grupo=" AND gr.ca_idgroup = '".$this->idgroup."'";
-        }else{
+            $sql_grupo.=" )";            
+        }else {
             $this->idgroup = "";
             $sql_grupo = "";
         }
 
-        if( $checkboxGrupo && $this->login ){
-            $assigned=" AND tk.ca_assignedto = '".$this->login."'";
-        }else{
+        if ($checkboxGrupo && $this->login) {
+            $assigned = " AND tk.ca_assignedto = '" . $this->login . "'";
+        } else {
             $this->login = "";
             $assigned = "";
         }
 
-        if($opcion=="buscar"){
+        if ($opcion == "buscar") {
+            $this->departamento = Doctrine::getTable("Departamento")->find($iddepartamento);
+
             $con = Doctrine_Manager::getInstance()->connection();
-            switch($type_est){
+            switch ($type_est) {
                 case 1:
-                     $sql="SELECT date_part('month',tk.ca_opened) as mes, tk.ca_idticket, tk.ca_title, tk.ca_assignedto,
+                    $sql = "SELECT date_part('month',tk.ca_opened) as mes, tk.ca_idticket, tk.ca_title, tk.ca_assignedto,
                             to_char( nt.ca_fchcreado, 'YYYY-MM-DD') as fechacreado,to_char( nt.ca_fchcreado, 'HH24:MI:SS') as horacreado,
                             to_char( nt.ca_fchterminada, 'YYYY-MM-DD') as fechaterminada, to_char( nt.ca_fchterminada, 'HH24:MI:SS') as horaterminada,
                             gr.ca_name, tk.ca_login, nt.ca_observaciones, nt.ca_fchcreado, nt.ca_fchterminada
                         FROM helpdesk.tb_tickets tk
                             LEFT OUTER JOIN helpdesk.tb_groups gr ON (tk.ca_idgroup = gr.ca_idgroup)
                             LEFT OUTER JOIN notificaciones.tb_tareas nt ON nt.ca_idtarea = tk.ca_idtarea
-                        WHERE to_char( nt.ca_fchcreado, 'YYYY-MM-DD') BETWEEN '".$this->fechaInicial."' AND '".$this->fechaFinal."' $sql_grupo $assigned
+                        WHERE to_char( nt.ca_fchcreado, 'YYYY-MM-DD') BETWEEN '" . $this->fechaInicial . "' AND '" . $this->fechaFinal . "' AND gr.ca_iddepartament = $iddepartamento $sql_grupo $assigned
                         ORDER BY tk.ca_opened, tk.ca_idticket";
-                break;
+                    break;
                 case 2:
-                    $sql="SELECT date_part('month',tk.ca_opened) as mes,tk.ca_idticket, tk.ca_title, tk.ca_assignedto,
+                    $sql = "SELECT date_part('month',tk.ca_opened) as mes,tk.ca_idticket, tk.ca_title, tk.ca_assignedto,
                             to_char( tk.ca_opened, 'YYYY-MM-DD') as fechacreado, to_char( tk.ca_opened, 'HH24:MI:SS') as horacreado,
                             to_char(tk.ca_closedat, 'YYYY-MM-DD') as close_fch, to_char(tk.ca_closedat, 'HH24:MI:SS') as close_hou,
                             gr.ca_name, tk.ca_login, tk.ca_opened as ca_fchcreado, tk.ca_closedat as fch_close
                         FROM helpdesk.tb_tickets tk
                                 LEFT OUTER JOIN helpdesk.tb_groups gr ON (tk.ca_idgroup = gr.ca_idgroup)
-                        WHERE tk.ca_closedat IS NOT NULL and to_char(tk.ca_closedat, 'YYYY-MM-DD') BETWEEN '".$this->fechaInicial."' AND '".$this->fechaFinal."' $sql_grupo $assigned
+                        WHERE tk.ca_closedat IS NOT NULL and to_char(tk.ca_closedat, 'YYYY-MM-DD') BETWEEN '" . $this->fechaInicial . "' AND '" . $this->fechaFinal . "' AND gr.ca_iddepartament = $iddepartamento $sql_grupo $assigned
                         ORDER BY tk.ca_idticket";
-                break;
+                    break;
                 case 3:
-                    $sql="SELECT *
+                    $sql = "SELECT *
                         FROM (
                             SELECT date_part('month',tk.ca_opened) as mes,tk.ca_idticket, tk.ca_title, tk.ca_assignedto,
                                 to_char( tk.ca_opened, 'YYYY-MM-DD') as fechacreado, to_char( tk.ca_opened, 'HH24:MI:SS') as horacreado,
                                 to_char(MAX(rs.ca_createdat), 'YYYY-MM-DD') as ult_fch, to_char(MAX(rs.ca_createdat), 'HH24:MI:SS') as ult_hou,
-                                gr.ca_name, tk.ca_login, tk.ca_opened as ca_fchcreado, MAX(rs.ca_createdat) as fch_ultseg, tk.ca_percentage
+                                gr.ca_iddepartament, gr.ca_name, tk.ca_login, tk.ca_opened as ca_fchcreado, MAX(rs.ca_createdat) as fch_ultseg, tk.ca_percentage
                             FROM helpdesk.tb_tickets tk
                                 INNER JOIN helpdesk.tb_responses rs ON tk.ca_idticket=rs.ca_idticket
                                 LEFT OUTER JOIN helpdesk.tb_groups gr ON (tk.ca_idgroup = gr.ca_idgroup)
                             WHERE tk.ca_closedat IS NULL $sql_grupo $assigned
-                            GROUP BY tk.ca_opened, tk.ca_idticket, tk.ca_title, tk.ca_assignedto, fechacreado, horacreado, tk.ca_login, gr.ca_name, tk.ca_percentage
+                            GROUP BY tk.ca_opened, tk.ca_idticket, tk.ca_title, tk.ca_assignedto, fechacreado, horacreado, tk.ca_login, gr.ca_iddepartament, gr.ca_name, tk.ca_percentage
                             ORDER BY tk.ca_idticket
                              ) as consulta
-                        WHERE ult_fch < '".$this->fechaUltSeg."' AND ca_percentage<='".$porcentaje."'";
-                break;
-                case 4:
-                    $sql="SELECT date_part('month',tk.ca_opened) as mes,tk.ca_idticket, tk.ca_title, tk.ca_assignedto,
-                            to_char( tk.ca_opened, 'YYYY-MM-DD') as fechacreado, to_char( tk.ca_opened, 'HH24:MI:SS') as horacreado,
-                            to_char(tk.ca_closedat, 'YYYY-MM-DD') as close_fch, to_char(tk.ca_closedat, 'HH24:MI:SS') as close_hou,
-                            gr.ca_name, tk.ca_login, tk.ca_opened as ca_fchcreado, tk.ca_closedat as fch_close
-                        FROM helpdesk.tb_tickets tk
-                            LEFT OUTER JOIN helpdesk.tb_groups gr ON (tk.ca_idgroup = gr.ca_idgroup)
-                        WHERE to_char(tk.ca_closedat, 'YYYY-MM-DD') BETWEEN '".$this->fechaInicial."' AND '".$this->fechaFinal."' $sql_grupo $assigned
-                        ORDER BY tk.ca_idticket";
-                    $abiertos=
-                            "SELECT date_part('month',tk.ca_opened) as mes,tk.ca_idticket, tk.ca_title, tk.ca_assignedto,
-                            to_char( tk.ca_opened, 'YYYY-MM-DD') as fechacreado, to_char( tk.ca_opened, 'HH24:MI:SS') as horacreado,
-                            to_char(tk.ca_closedat, 'YYYY-MM-DD') as close_fch, to_char(tk.ca_closedat, 'HH24:MI:SS') as close_hou,
-                            gr.ca_name, tk.ca_login, tk.ca_opened as ca_fchcreado, tk.ca_closedat as fch_close
-                        FROM helpdesk.tb_tickets tk
-                            LEFT OUTER JOIN helpdesk.tb_groups gr ON (tk.ca_idgroup = gr.ca_idgroup)
-                        WHERE to_char(tk.ca_opened, 'YYYY-MM-DD') BETWEEN '".$this->fechaInicial."' AND '".$this->fechaFinal."' $sql_grupo $assigned
-                        ORDER BY tk.ca_idticket";
-                    $sta = $con->execute($abiertos);
-                    $this->abiertos = $sta->fetchAll();
-                break;
+                        WHERE ult_fch < '" . $this->fechaUltSeg . "' AND consulta.ca_iddepartament = $iddepartamento AND ca_percentage<='" . $porcentaje . "'";
+                    break;
             }
-        $st = $con->execute($sql);
-        $this->idgsistemas = $st->fetchAll();
+            $st = $con->execute($sql);
+            $this->idgsistemas = $st->fetchAll();
         }
     }
-    
+
+    public function executeDatosAreas($request) {
+
+        $departamento = $request->getParameter("departamento");
+        $query = $request->getParameter("query");
+        $gruposArray = array();
+
+        if ($departamento) {
+            $grupos = Doctrine::getTable("HdeskGroup")
+                    ->createQuery("g")
+                    ->where("g.ca_iddepartament = ?", $departamento)
+                    ->addOrderBy("g.ca_name")
+                    ->execute();
+
+            foreach ($grupos as $grupo) {
+                $gruposArray[] = array("idgrupo" => $grupo->getCaIdgroup(), "nombre" => utf8_encode($grupo->getCaName()));
+            }
+        }
+
+        if ($query) {
+            $this->query = $query;
+            $grupos = Doctrine::getTable("HdeskGroup")
+                    ->createQuery("g")
+                    ->where("g.ca_idgroup IN ('" . str_replace("|", "','", $query) . "')")
+                    ->addOrderBy("g.ca_name")
+                    ->execute();
+
+            foreach ($grupos as $grupo) {
+                $gruposArray[] = array("idgrupo" => $grupo->getCaIdgroup(), "nombre" => utf8_encode($grupo->getCaName()));
+            }
+        }
+
+        $this->responseArray = array("root" => $gruposArray, "success" => true);
+        $this->setTemplate("responseTemplate");
+    }
 }
