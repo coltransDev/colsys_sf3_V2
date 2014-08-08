@@ -9,1597 +9,6 @@
  */
 class pruebasActions extends sfActions {
 
-    public function executeEncoding() {
-        //$sql =  "SET NAMES  'LATIN1'";
-        $sql = "SHOW CLIENT_ENCODING";
-
-        $con = Propel::getConnection(EmailPeer::DATABASE_NAME);
-
-        $stmt = $con->prepareStatement($sql);
-        $rs = $stmt->executeQuery();
-        $rs->next();
-        echo $rs->getString('client_encoding');
-
-        /*
-         * ciudad = new Ciudad();
-         * ciudad->setCaCiudad( "ASD" );
-         * ciudad->setCaIdTrafico("99-999");
-         * ciudad->setCaIdCiudad("pruebá");
-         * ciudad->setCaPuerto("pruebá");
-         * ciudad->save(); */
-        print_r($this->getRequestParameter("asd"));
-        $ciudad = CiudadPeer::retrieveByPk("pruebá");
-        $ciudad->setCaPuerto($this->getRequestParameter("asd"));
-        //$ciudad->setCaPuerto( utf8_encode("pruebá"));
-        //$ciudad->save();
-        //print_r( Utils::replace($ciudad->getCaIdCiudad()) );
-    }
-
-    public function executeSendEmail() {
-        exit("detenido");
-        set_time_limit(0);
-        
-
-        $emails = Doctrine::getTable("Email")
-                            ->createQuery("e")
-                            ->addWhere("e.ca_fchenvio>= ?", "2010-12-13 13:38:00" )
-                            ->addWhere("e.ca_fchenvio<= ?", "2010-12-13 15:28:00" )
-                            ->execute();
-        //$email = Doctrine::getTable("Email")->find(516616);
-        foreach ($emails as $email) {
-            //print_r( $email);
-            echo "<b>Enviando " . $i++ . "</b>	emailid: " . $email->getCaIdemail() . " Fch: " . $email->getCaFchenvio() . " <br />From: " . $email->getCaFrom() . "<br />";
-
-            /* $addresses = explode(",",$email->getCaAddress());
-             * oreach( $addresses as $key=>$address ){
-             * f( strpos( $address, "coltrans.com.co" )!=false ){
-             * nset( $addresses[$key] );
-             }
-             }
-             * email->setCaAddress( implode(",", $addresses) );
-             */
-
-            /* $ccs = explode(",",$email->getCaCC());
-             * oreach( $ccs as $key=>$address ){
-             * f( strpos( $address, "coltrans.com.co" )!=false ){
-             * nset( $addresses[$key] );
-             }
-             }
-             * email->setCaCc( implode(",", $ccs) );
-             */
-
-
-            echo "To: " . $email->getCaAddress() . "<br />";
-            echo "CC: " . $email->getCaCC() . "<br />";
-            echo "Subject" . $email->getCaSubject() . "<br />";
-
-
-
-
-            echo $email->send() ? "OK" : "NO" . "<br /><br />";
-        }
-
-        $this->setTemplate("blank");
-    }
-
-    public function executeSendStatus() {
-        exit("detenido");
-        //esto no sirve
-        $status = RepStatusPeer::retrieveByPk(158756);
-        $status->send();
-    }
-
-    public function executeCambiaTipoStatus() {
-        $c = new Criteria ( );
-        $avisos = RepAvisoPeer::doSelect($c);
-
-        foreach ($avisos as $aviso) {
-            $email = EmailPeer::retrieveByPk($aviso->getcaIdEmail());
-            if ($email) {
-                echo $email->getCatipo();
-                $aviso->setCaTipo($email->getCatipo());
-                $aviso->save();
-            }
-        }
-        return sfView::NONE;
-    }
-
-    public function executeActualizarEstadoReportes() {
-        set_time_limit(0);
-        $c = new Criteria ( );
-        $c->add(ReportePeer::CA_FCHDESPACHO, "2008-04-01", Criteria::GREATER_EQUAL);
-        $c->add(ReportePeer::CA_IMPOEXPO, "Importación");
-        $c->add(ReportePeer::CA_ETAPA_ACTUAL, "Carga Entregada", Criteria::NOT_EQUAL);
-        $c->add(ReportePeer::CA_TRANSPORTE, "Marítimo");
-        $c->addAscendingOrderByColumn(ReportePeer::CA_FCHREPORTE);
-        $reportes = ReportePeer::doSelect($c);
-        set_time_limit(0);
-        foreach ($reportes as $reporte) {
-            $inoclientesSea = $reporte->getInoClientesSea();
-            if ($inoclientesSea) {
-                $statusOTM = $inoclientesSea->getUltimoStatusOTM();
-                if ($statusOTM) {
-                    echo "otm<br>";
-                    $reporte->setCaEtapaActual("Carga Entregada");
-                    $reporte->save();
-                } else {
-                    $refSea = $inoclientesSea->getInoMaestraSea();
-                    if ($refSea->getCaFchconfirmado()) {
-
-                        if ($reporte->getCaContinuacion() != "N/A") {
-                            echo "en transito terrestre <br>";
-                            $reporte->setCaEtapaActual("Carga en Transito Terrestre");
-                        } else {
-                            echo "llego<br>";
-                            $reporte->setCaEtapaActual("Carga Entregada");
-                        }
-                        $reporte->save();
-                    }
-                }
-            }
-        }
-    }
-
-    /*
-     * Convertir avisos x status
-     */
-
-    public function executeCambiarAvisos() {
-        set_time_limit(0);
-        $c = new Criteria();
-        //$c->setLimit(5000);
-        $c->add(RepAvisoPeer::CA_FCHENVIO, "2008-01-01", Criteria::GREATER_EQUAL);
-        $avisos = RepAvisoPeer::doSelect($c);
-        foreach ($avisos as $aviso) {
-            $status = new RepStatus();
-            $status->setCaIdReporte($aviso->getCaIdReporte());
-            $status->setCaIdEmail($aviso->getCaIdEmail());
-            $status->setCafchsalida($aviso->getCafchsalida());
-            $status->setCafchllegada($aviso->getCafchllegada());
-            $status->setCafchcontinuacion($aviso->getCafchcontinuacion());
-            $status->setCaPiezas($aviso->getCaPiezas());
-            $status->setCaPeso($aviso->getCaPeso());
-            $status->setCaVolumen($aviso->getCaVolumen());
-            $status->setCaDoctransporte($aviso->getCaDoctransporte());
-            $status->setCadocmaster($aviso->getCadocmaster());
-            $status->setCaidnave($aviso->getCaidnave());
-            $status->setCaComentarios($aviso->getCanotas());
-            $status->setCaequipos($aviso->getCaequipos());
-            $status->setCafchenvio($aviso->getCafchenvio("Y-m-d H:i:s"));
-            $status->setCaUsuenvio($aviso->getCaUsuenvio());
-            $status->setCaHoraSalida($aviso->getCaHoraSalida());
-            $status->setCaEtapa("Carga Embarcada");
-            $status->setCastatus($aviso->getStatus());
-            $status->setCafchstatus($aviso->getCafchenvio("Y-m-d H:i:s"));
-            $status->setCafchrecibo($aviso->getCafchenvio("Y-m-d H:i:s"));
-
-            $status->save();
-            $aviso->delete();
-            echo $status->getCaIdReporte() . " " . $aviso->getStatus() . "<br /><br />";
-        }
-    }
-
-    /*
-     * in comentarios
-     */
-
-    public function executeCorregirAvisosAereo() {
-        $c = new Criteria();
-        $c->addJoin(RepStatusPeer::CA_IDEMAIL, EmailPeer::CA_IDEMAIL);
-        $c->addJoin(RepStatusPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE);
-        $c->add(EmailPeer::CA_TIPO, "Confirmación");
-        $c->add(RepStatusPeer::CA_ETAPA, "Carga Embarcada");
-        $c->add(ReportePeer::CA_TRANSPORTE, "Aéreo");
-        set_time_limit(0);
-        $statuss = RepStatusPeer::doSelect($c);
-        foreach ($statuss as $status) {
-            echo $status->getCaIdEmail() . "<br />";
-            $status->setCaEtapa("Carga en Puerto de Destino");
-            $status->save();
-            $reporte = $status->getReporte();
-            $reporte->setCaEtapaActual("Carga en Puerto de Destino");
-            $reporte->save();
-        }
-    }
-
-    /*
-     * Analizar texto para colocar fecha de salida info reserva
-     */
-
-    public function executeFixReservas() {
-        $c = new Criteria();
-        $c->add(RepStatusPeer::CA_FCHENVIO, '2008-04-01', Criteria::GREATER_EQUAL);
-        $c->add(RepStatusPeer::CA_FCHENVIO, '2008-06-30', Criteria::LESS_EQUAL);
-        $c->add(RepStatusPeer::CA_STATUS, RepStatusPeer::CA_STATUS . " like '%reserva%'", Criteria::CUSTOM);
-        $statuss = RepStatusPeer::doSelect($c);
-
-        $i = 0;
-        foreach ($statuss as $status) {
-
-
-            //Ubica ETS
-            if (!$status->getCaFchSalida()) {
-
-                //
-
-                $pos = strripos($status->getCaStatus(), "zarpe");
-                if ($pos!==false) {
-                    $diaStr = "";
-
-
-                    if ($status->getCaIdEmail() == 13737) {
-                        continue;
-                    }
-
-                    /*
-                     * str = substr( $status->getCaStatus(), $pos+6, 30 );
-                     * pos2 = stripos($str, "mayo");
-                     * f( $pos2!==false ){
-                     * mes = "05";
-                     * diaStr = trim(substr($str, $pos2-6, 2));
-                     * f($pos2>2 && is_numeric ( $diaStr )){
-                     * f( strlen($diaStr)==1){
-                     * diaStr="0".$diaStr;
-                     }
-                     * fechaSalida = "2008-".$mes."-".$diaStr;
-                     * cho $status->getCaIdEmail()." ";
-                     * cho $status->getCaStatus()."<br />";
-                     * cho "<b>".$fechaSalida."</b><br /><br />";
-                     * /$status->setCaFchSalida( $fechaSalida );
-                     * /$status->save();
-                     * i++;
-                     * else{
-                     * diaStr = trim(substr($str, $pos2+6, 2));
-                     * f(is_numeric ( $diaStr )){
-                     * f( strlen($diaStr)==1){
-                     * diaStr="0".$diaStr;
-                     }
-                     * fechaSalida = "2008-".$mes."-".$diaStr;
-                     * cho $status->getCaIdEmail()." ";
-                     * cho $status->getCaStatus()."<br />";
-                     * cho "<b> 2-> ".$fechaSalida."</b><br /><br />";
-                     * /$status->setCaFchSalida( $fechaSalida );
-                     * /$status->save();
-                     * cho "<b>".$fechaSalida."</b><br /><br />";
-                     * i++;
-                     }
-                     }
-                     }
-                     */
-                    /* $pos2 = stripos($str, "junio");
-                     * f( $pos2!==false ){
-                     * mes = "06";
-                     * diaStr = trim(substr($str, $pos2-6, 2));
-                     * f($pos2>3 && is_numeric ( $diaStr )){
-                     * cho $diaStr;
-                     * f( strlen($diaStr)==1){
-                     * diaStr="0".$diaStr;
-                     }
-                     * fechaSalida = "2008-".$mes."-".$diaStr;
-                     * cho $status->getCaStatus()."<br />";
-                     * cho "<b>".$fechaSalida."</b><br /><br />";
-                     * status->setCaFchSalida( $fechaSalida );
-                     * status->save();
-                     * i++;
-                     * else{
-                     * diaStr = trim(substr($str, $pos2+6, 2));
-                     * f(is_numeric ( $diaStr )){
-                     * f( strlen($diaStr)==1){
-                     * diaStr="0".$diaStr;
-                     }
-                     * fechaSalida = "2008-".$mes."-".$diaStr;
-                     * /echo $status->getCaStatus()."<br />";
-                     * cho "<b> 2-> ".$fechaSalida."</b><br /><br />";
-                     * status->setCaFchSalida( $fechaSalida );
-                     * status->save();
-                     * cho "<b>".$fechaSalida."</b><br /><br />";
-                     * i++;
-                     }
-                     }
-                     }
-                     */
-                    /* $pos2 = stripos($str, "/");
-                     * f( $pos2!==false ){
-                     * cho $status->getCaStatus()."<br />";
-                     * diaStr = trim(substr($str, $pos2-2, 2));
-                     * mesStr = trim(substr($str, $pos2+1, 2));
-                     * f( is_numeric ( $diaStr ) && is_numeric($mesStr) && $mesStr<=6 ){
-                     * cho $diaStr;
-                     * f( strlen($diaStr)==1){
-                     * diaStr="0".$diaStr;
-                     }
-                     * f( strlen($mesStr)==1){
-                     * mesStr="0".$mesStr;
-                     }
-                     * fechaSalida = "2008-".$mesStr."-".$diaStr;
-                     * cho "<b>".$fechaSalida."</b><br /><br />";
-                     * /$status->setCaFchSalida( $fechaSalida );
-                     * /$status->save();
-                     * i++;
-                     }
-                     } */
-                }
-            }
-        }
-        echo "->" . $i;
-        return sfView::NONE;
-    }
-
-    public function executeDecodeFile() {
-        $file = 'LTR0Qk4ybk1jcWMta0FiMngtVkVpMDcxU1VjWmJfcG05T05XWF91YW1qTmpia255b2ZLSUc0NHlZejU3eEpXaUx3MkJ3RGUzb1ZoQk8yT0hYaVVrZ080RXl0ZEVLeFF2eTAydTVCclRLNG5Bek5zVWxDMVNoNWIxUW9sRjc1dmdlV3ZmcGhoQnU1MDBSMFI0U3NHQzFSckpKa29RTGh0TXM5ZHhGQ2lnem5XRGVFeXFfWldPU25wVlNGNW9rQ3ZlMkl5aEoyT29vVk51RUotbEVFM21lX0VteVNYOWFHTHRHN1dZT1BMNFRjMDVhLVpycm1uMEZQNEFIcVRidFVVSUt6UEQzSXQtdHdNUDVFYVRNNUdINkVoQWZmbE9oMjdtMmdndjVwbldRVG8u';
-        //header("Content-Type: application/octet-stream");
-        //header("Content-Disposition: attachment; filename=archivo.tiff");
-        echo base64_decode($file);
-    }
-
-    /*
-     * Se pretende corregir un error donde se coloco el numero del consecutivo sin el año en el ino aereo
-     */
-
-    public function executeFixReportesAereo() {
-        $c = new Criteria();
-        //$c->setLimit(10);
-        $c->add(InoClientesAirPeer::CA_IDREPORTE, NULL, Criteria::ISNOTNULL);
-        $c->addAnd(InoClientesAirPeer::CA_IDREPORTE, "%-%", Criteria::NOT_LIKE);
-        //$c->add(InoClientesAirPeer::CA_REFERENCIA, "%8", Criteria::LIKE );
-
-        set_time_limit(0);
-        $inoairs = InoClientesAirPeer::doSelect($c);
-
-        foreach ($inoairs as $inoair) {
-            echo $inoair->getCaReferencia() . " " . $inoair->getCaIdReporte();
-
-            $c = new Criteria();
-            $c->add(ReportePeer::CA_CONSECUTIVO, $inoair->getCaIdReporte() . "-%", Criteria::LIKE);
-            $c->addJoin(ReportePeer::CA_IDCONCLIENTE, ContactoPeer::CA_IDCONTACTO);
-            $c->add(ContactoPeer::CA_IDCLIENTE, $inoair->getCaIdCliente());
-            $reporte = reportePeer::doSelectOne($c);
-            if ($reporte) {
-                $inoair->setCaIdReporte($reporte->getCaConsecutivo());
-                $inoair->save();
-                echo "<b> OK</b>" . $reporte->getCaConsecutivo();
-            } else {
-                $c = new Criteria();
-                $c->add(ReportePeer::CA_IDREPORTE, $inoair->getCaIdReporte());
-                $c->addJoin(ReportePeer::CA_IDCONCLIENTE, ContactoPeer::CA_IDCONTACTO);
-                $c->add(ContactoPeer::CA_IDCLIENTE, $inoair->getCaIdCliente());
-                $reporte = reportePeer::doSelectOne($c);
-                if ($reporte) {
-                    $inoair->setCaIdReporte($reporte->getCaConsecutivo());
-                    $inoair->save();
-                    echo "<b> OK2</b> " . $reporte->getCaConsecutivo();
-                } else {
-                    $inoair->setCaIdReporte(null);
-                    $inoair->save();
-                }
-            }
-
-
-
-            echo "<br />";
-        }
-    }
-
-    /*
-     * Coloca el consecutivo de acuerdo a la fecha de creado
-     */
-
-    public function executeAsignarConsecutivoCotizaciones() {
-
-        set_time_limit(0);
-
-        $c = new Criteria();
-        $c->add(CotizacionPeer::CA_CONSECUTIVO, null, Criteria::ISNULL);
-        $c->addAscendingOrderByColumn(CotizacionPeer::CA_FCHCREADO);
-        $cotizaciones = CotizacionPeer::doSelect($c);
-        $c->setLimit(8000);
-        foreach ($cotizaciones as $cotizacion) {
-            $sig = CotizacionPeer::siguienteConsecutivo($cotizacion->getCaFchCreado("Y"));
-            $cotizacion->setCaConsecutivo($sig);
-            $cotizacion->save();
-        }
-    }
-
-    /*
-     * Importa el tarifario anterior dentro del nuevo taarifario
-     */
-
-    public function executeImportarTarifario() {
-        sfConfig::set('sf_web_debug', false);
-
-        $porBL = array("POR BL", "POR BL ", "Por B/l", "Por BL", "Por Bl");
-
-        $porHbl = array("Por HBL");
-
-        $porCtnr = array("POR CNTR", "POR CONTENEDOR", "Por contenedor", "Por contenedor", "Por Cntr");
-
-        $porEmbarque = array("Por embarque", "Por embarque\n", "Por Embarque");
-
-        $porTm3 = array("Por T/M3", "POR T/M3", "T/M3", "T/M3\n", "T/M3 ", "por T/M3", "POR T/M3",);
-
-
-        $c = new Criteria();
-        //$c->add( TrayectoPeer::CA_IDTRAYECTO, 1294, Criteria::NOT_EQUAL );
-        //$c->addAnd( TrayectoPeer::CA_IDTRAYECTO, 1297, Criteria::NOT_EQUAL );
-        /*
-         * c->add( TrayectoPeer::CA_IMPOEXPO, "Importación" );
-         * c->add( TrayectoPeer::CA_TRANSPORTE , "Marítimo" );
-         */
-
-        /*
-         * c->add( TrayectoPeer::CA_IMPOEXPO, "Importación" );
-         * c->add( TrayectoPeer::CA_TRANSPORTE , "Aéreo" );
-         */
-
-
-        $c->add(TrayectoPeer::CA_IMPOEXPO, "Exportación");
-        $c->add(TrayectoPeer::CA_TRANSPORTE, "Aéreo");
-
-
-
-
-        //$c->add( TrayectoPeer::CA_IMPOEXPO, "Importación" );
-        //$c->add( TrayectoPeer::CA_TRANSPORTE , "Marítimo" );
-        //$c->addJoin( TrayectoPeer::CA_ORIGEN , CiudadPeer::CA_IDCIUDAD );
-        //$c->add( CiudadPeer::CA_IDTRAFICO, "DE-049" );
-        //$c->add( TrayectoPeer::CA_MODALIDAD, "FCL" );
-        //$c->add( TrayectoPeer::CA_IDTRAYECTO, 3705 );
-        //$c->setLimit(30);
-        $trayectos = TrayectoPeer::doSelect($c);
-        set_time_limit(0);
-
-        foreach ($trayectos as $trayecto) {
-            if ($trayecto->getCaIdtarifas()!=$trayecto->getCaIdTrayecto()) {
-                $trayecto2 = trayectoPeer::retrieveByPk($trayecto->getCaIdtarifas());
-
-                $fletes = $trayecto2->getFletes();
-            } else {
-                $fletes = $trayecto->getFletes();
-            }
-
-
-            foreach ($fletes as $flete) {
-                $pricflete = new PricFlete();
-                $pricflete->setCaIdTrayecto($trayecto->getCaIdTrayecto());
-                $pricflete->setCaIdConcepto($flete->getCaIdConcepto());
-                $pricflete->setCaVlrneto($flete->getCaVlrneto());
-                $pricflete->setCaVlrsugerido($flete->getCaVlrminimo());
-                $pricflete->setCaFchinicio($flete->getCaFchinicio());
-                $pricflete->setCaFchvencimiento($flete->getCaFchvencimiento());
-                $pricflete->setCaIdmoneda($flete->getCaIdmoneda());
-                if ($flete->getCaSugerida()=="*") {
-                    $pricflete->setCaEstado(1);
-                }
-                if ($flete->getCaMantenimiento()=="*") {
-                    $pricflete->setCaEstado(2);
-                }
-                $pricflete->save();
-                //echo "asd1";
-                if ($trayecto->getCaModalidad()=="LCL" && $flete->getCaFleteminimo() > 0 && ( $flete->getCaVlrminimo()!=$flete->getCaFleteminimo() || $flete->getCaFleteminimo()!=0 )) {
-                    $pricflete = PricFletePeer::retrieveByPk($trayecto->getCaIdTrayecto(), 88);
-                    if (!$pricflete) {
-                        $pricflete = new PricFlete();
-                        $pricflete->setCaIdTrayecto($trayecto->getCaIdTrayecto());
-                        $pricflete->setCaIdConcepto(88);
-                    }
-                    $pricflete->setCaVlrneto($flete->getCaFleteminimo());
-                    $pricflete->setCaVlrsugerido($flete->getCaFleteminimo());
-                    $pricflete->setCaFchinicio($flete->getCaFchinicio());
-                    $pricflete->setCaFchvencimiento($flete->getCaFchvencimiento());
-                    $pricflete->setCaIdmoneda($flete->getCaIdmoneda());
-                    if ($flete->getCaSugerida()=="*") {
-                        $pricflete->setCaEstado(1);
-                    }
-                    if ($flete->getCaMantenimiento()=="*") {
-                        $pricflete->setCaEstado(2);
-                    }
-                    $pricflete->save();
-                    //echo "asd2";
-                }
-
-                //Importación de los recargos
-
-
-                $c = new Criteria();
-                //$c->setLimit(500);
-                $c->add(RecargoFletePeer::CA_IDCONCEPTO, $flete->getCaIdConcepto());
-
-                if ($trayecto->getCaIdtarifas()!=$trayecto->getCaIdTrayecto()) {
-                    $c->add(RecargoFletePeer::CA_IDTRAYECTO, $trayecto2->getCaIdtrayecto());
-                } else {
-                    $c->add(RecargoFletePeer::CA_IDTRAYECTO, $trayecto->getCaIdtrayecto());
-                }
-
-
-                $recargos = RecargoFletePeer::doSelect($c);
-                foreach ($recargos as $recargo) {
-
-                    $pricrecargo = PricRecargoxConceptoPeer::retrieveByPk($trayecto->getCaIdtrayecto(), $recargo->getCaIdConcepto(), $recargo->getCaIdRecargo());
-                    if (!$pricrecargo) {
-                        $pricrecargo = new PricRecargoxConcepto();
-                        $pricrecargo->setCaIdTrayecto($trayecto->getCaIdtrayecto());
-                        $pricrecargo->setCaIdConcepto($recargo->getCaIdConcepto());
-                        $pricrecargo->setCaIdRecargo($recargo->getCaIdRecargo());
-                    }
-
-                    if ($recargo->getCaVlrfijo()&& $recargo->getCaVlrfijo()!=0) {
-                        $pricrecargo->setCaVlrrecargo($recargo->getCaVlrfijo());
-                        //echo "-> fijo ".$recargo->getCaVlrfijo()."<br />";
-                    } else {
-                        if ($recargo->getCaPorcentaje() && $recargo->getCaPorcentaje()!=0) {
-                            echo "-> % " . $recargo->getCaPorcentaje() . " " . $recargo->getCaBasePorcentaje() . "<br />";
-                            $pricrecargo->setCaVlrrecargo($recargo->getCaPorcentaje());
-
-                            //if( $recargo->getCaBasePorcentaje()=='Sobre Flete' ){
-                            $pricrecargo->setCaAplicacion('% Sobre Flete');
-                            //}
-                        } else {
-                            echo "-> Unit " . $recargo->getCaVlrunitario() . " " . $recargo->getCaBaseunitario() . "<br />";
-                            $pricrecargo->setCaVlrrecargo($recargo->getCaVlrunitario());
-
-                            if ($recargo->getCaBaseunitario()=='Unidades Peso/Volumen') {
-                                echo " OK <br />";
-                                $pricrecargo->setCaAplicacion('x Kg ó 6 Dm³');
-                            }
-
-                            if ($recargo->getCaBaseunitario()=='Cantidad de BLs/AWBs') {
-                                //$trayecto = TrayectoPeer::retrieveByPk( $recargo->getCaIdTrayecto() );
-                                if ($trayecto->getCaTransporte()=="Aéreo") {
-                                    $pricrecargo->setCaAplicacion('x HAWB');
-                                }
-                                if ($trayecto->getCaTransporte()=="Marítimo") {
-                                    $pricrecargo->setCaAplicacion('x HBL');
-                                }
-                            }
-
-                            if ($recargo->getCaBaseunitario()=="Número de Piezas") {
-                                $pricrecargo->setCaAplicacion("x Pieza");
-                            }
-                        }
-                    }
-                    $pricrecargo->setCaFchinicio($recargo->getCaFchinicio());
-                    $pricrecargo->setCaFchvencimiento($recargo->getCaFchvencimiento());
-
-                    $pricrecargo->setCaVlrminimo($recargo->getCaRecargominimo());
-                    $pricrecargo->setCaIdmoneda($recargo->getCaIdmoneda());
-
-                    if (in_array($recargo->getCaObservaciones(), $porHbl)) {
-                        $pricrecargo->setCaAplicacionMin("x HBL");
-                    } elseif (in_array($recargo->getCaObservaciones(), $porCtnr)) {
-                        $pricrecargo->setCaAplicacionMin("x Contenedor");
-                    } elseif (in_array($recargo->getCaObservaciones(), $porEmbarque)) {
-                        $pricrecargo->setCaAplicacionMin("x Embarque");
-                    } elseif (in_array($recargo->getCaObservaciones(), $porTm3)) {
-                        $pricrecargo->setCaAplicacionMin("x T/M³");
-                    } else {
-                        $pricrecargo->setCaObservaciones($recargo->getCaObservaciones());
-                    }
-
-                    if ($recargo->getCaUsuActualizado()) {
-                        $pricrecargo->setCaUsucreado($recargo->getCaUsuactualizado());
-                        $pricrecargo->setCaFchcreado($recargo->getCaFchactualizado());
-                    } elseif ($recargo->getCaUsucreado()) {
-                        $pricrecargo->setCaUsucreado($recargo->getCaUsucreado());
-                        $pricrecargo->setCaFchcreado($recargo->getCaFchcreado());
-                    }
-
-                    if (!$pricrecargo->getCaUsucreado()) {
-                        $pricrecargo->setCaUsucreado("Administrador");
-                    }
-
-                    if (!$pricrecargo->getCaFchcreado()) {
-                        $pricrecargo->setCaFchcreado(date("Y-m-d"));
-                    }
-
-                    $pricrecargo->save();
-                }
-                //----------------------
-            }
-
-
-            // Recargos generales
-            $c = new Criteria();
-            //$c->setLimit(500);
-            $c->add(RecargoFletePeer::CA_IDCONCEPTO, '9999');
-            if ($trayecto->getCaIdtarifas()!=$trayecto->getCaIdTrayecto()) {
-                $c->add(RecargoFletePeer::CA_IDTRAYECTO, $trayecto2->getCaIdtrayecto());
-            } else {
-                $c->add(RecargoFletePeer::CA_IDTRAYECTO, $trayecto->getCaIdtrayecto());
-            }
-
-            //$c->add( RecargoFletePeer::CA_IDTRAYECTO, $trayecto->getCaIdtrayecto() );
-            $recargos = RecargoFletePeer::doSelect($c);
-            foreach ($recargos as $recargo) {
-
-                $pricrecargo = PricRecargoxConceptoPeer::retrieveByPk($trayecto->getCaIdtrayecto(), $recargo->getCaIdConcepto(), $recargo->getCaIdRecargo());
-                if (!$pricrecargo) {
-                    $pricrecargo = new PricRecargoxConcepto();
-                    $pricrecargo->setCaIdTrayecto($trayecto->getCaIdtrayecto());
-                    $pricrecargo->setCaIdConcepto($recargo->getCaIdConcepto());
-                    $pricrecargo->setCaIdRecargo($recargo->getCaIdRecargo());
-                }
-
-                if ($recargo->getCaVlrfijo() && $recargo->getCaVlrfijo()!=0) {
-                    $pricrecargo->setCaVlrrecargo($recargo->getCaVlrfijo());
-                    echo "-> fijo " . $recargo->getCaVlrfijo() . "<br />";
-                } else {
-                    if ($recargo->getCaPorcentaje() && $recargo->getCaPorcentaje()!=0) {
-                        echo "-> % " . $recargo->getCaPorcentaje() . " " . $recargo->getCaBasePorcentaje() . "<br />";
-                        $pricrecargo->setCaVlrrecargo($recargo->getCaPorcentaje());
-
-                        //if( $recargo->getCaBasePorcentaje()=='Sobre Flete' ){
-                        $pricrecargo->setCaAplicacion('% Sobre Flete');
-                        //}
-                    } else {
-                        echo "-> Unit " . $recargo->getCaVlrunitario() . " " . $recargo->getCaBaseunitario() . "<br />";
-                        $pricrecargo->setCaVlrrecargo($recargo->getCaVlrunitario());
-
-                        if ($recargo->getCaBaseunitario()=='Unidades Peso/Volumen') {
-                            echo " OK <br />";
-                            $pricrecargo->setCaAplicacion('x Kg ó 6 Dm³');
-                        }
-
-                        if ($recargo->getCaBaseunitario()=='Cantidad de BLs/AWBs') {
-                            $trayecto = TrayectoPeer::retrieveByPk($recargo->getCaIdTrayecto());
-                            if ($trayecto->getCaTransporte()=="Aéreo") {
-                                $pricrecargo->setCaAplicacion('x HAWB');
-                            }
-                            if ($trayecto->getCaTransporte()=="Marítimo") {
-                                $pricrecargo->setCaAplicacion('x HBL');
-                            }
-                        }
-
-                        if ($recargo->getCaBaseunitario()=="Número de Piezas") {
-                            $pricrecargo->setCaAplicacion("x Pieza");
-                        }
-                    }
-                }
-                $pricrecargo->setCaFchinicio($recargo->getCaFchinicio());
-                $pricrecargo->setCaFchvencimiento($recargo->getCaFchvencimiento());
-
-                $pricrecargo->setCaVlrminimo($recargo->getCaRecargominimo());
-                $pricrecargo->setCaIdmoneda($recargo->getCaIdmoneda());
-
-
-
-                if (in_array($recargo->getCaObservaciones(), $porHbl)) {
-                    $pricrecargo->setCaAplicacionMin("x HBL");
-                } elseif (in_array($recargo->getCaObservaciones(), $porCtnr)) {
-                    $pricrecargo->setCaAplicacionMin("x Contenedor");
-                } elseif (in_array($recargo->getCaObservaciones(), $porEmbarque)) {
-                    $pricrecargo->setCaAplicacionMin("x Embarque");
-                } elseif (in_array($recargo->getCaObservaciones(), $porTm3)) {
-                    $pricrecargo->setCaAplicacionMin("x T/M³");
-                } else {
-                    $pricrecargo->setCaObservaciones($recargo->getCaObservaciones());
-                }
-
-
-                if ($recargo->getCaUsuActualizado()) {
-                    $pricrecargo->setCaUsucreado($recargo->getCaUsuactualizado());
-                    $pricrecargo->setCaFchcreado($recargo->getCaFchactualizado());
-                } elseif ($recargo->getCaUsucreado()) {
-                    $pricrecargo->setCaUsucreado($recargo->getCaUsucreado());
-                    $pricrecargo->setCaFchcreado($recargo->getCaFchcreado());
-                }
-
-                if (!$pricrecargo->getCaUsucreado()) {
-                    $pricrecargo->setCaUsucreado("Administrador");
-                }
-
-                if (!$pricrecargo->getCaFchcreado()) {
-                    $pricrecargo->setCaFchcreado(date("Y-m-d"));
-                }
-
-                $pricrecargo->save();
-            }
-        }
-    }
-
-    /*
-     * Importa el tarifario anterior dentro del nuevo tarifario
-     */
-
-    public function executeImportarNotasTarifario() {
-        sfConfig::set('sf_web_debug', false);
-        exit("Ejecutar solo una vez");
-        $c = new Criteria();
-        $c->add(TrayectoPeer::CA_IMPOEXPO, "Exportación");
-        //$c->add( TrayectoPeer::CA_TRANSPORTE , "Aéreo" );
-
-        $c->addJoin(TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD);
-
-        //$c->add( CiudadPeer::CA_IDTRAFICO, "DE-049" );
-        //$c->add( TrayectoPeer::CA_MODALIDAD, "LCL" );
-        //$c->setLimit(30);
-        $trayectos = TrayectoPeer::doSelect($c);
-        set_time_limit(0);
-
-        foreach ($trayectos as $trayecto) {
-            echo "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-<br />";
-            $fletes = $trayecto->getFletes();
-            $notas = array();
-            $str = "";
-            foreach ($fletes as $flete) {
-                //print_r( $flete );
-                //echo $flete->getCaobservaciones()."<br />";
-                if ($flete->getCaobservaciones()) {
-
-                    $notas[] = $flete->getCaobservaciones();
-                }
-            }
-
-            /* if( count($notas )>0 && count($fletes)!=count($notas ) ){
-             * cho count($fletes)." ".count($notas )."<br />";
-             * cho  $trayecto->getCaIdTrayecto()." diferencia entre los comentarios repetidos <br />";
-             } */
-
-            $notas = array_unique($notas);
-
-            print_r($notas);
-
-            if ($trayecto->getCaObservaciones()) {
-                $str.= $trayecto->getCaObservaciones() . "\n";
-            }
-            $str.=implode("\n", $notas);
-            echo Utils::replace($str) . "<br />-->---------->--------<br />";
-            $trayecto->setCaObservaciones($str);
-            $trayecto->save();
-        }
-    }
-
-    /*
-     * Importa el tarifario anterior dentro del nuevo tarifario
-     */
-
-    public function executeImportarTarifarioRecargosGrales() {
-        set_time_limit(0);
-
-        sfConfig::set('sf_web_debug', false);
-
-        $c = new Criteria();
-        //$c->add(  RecargoFleteTrafPeer:: );
-        //$c->setLimit(10);
-        //$c->add(  RecargoFleteTrafPeer::CA_IMPOEXPO, "Importación" );
-        $recargos = RecargoFleteTrafPeer::doSelect($c);
-        $i = 0;
-
-        foreach ($recargos as $recargo) {
-
-            echo (++$i) . " " . $recargo->getCaIdTrafico() . " " . $recargo->getCaIdCiudad() . " " . $recargo->getCaIdRecargo() . " " . $recargo->getCaModalidad() . "<br />";
-
-            $pricrecargo = PricRecargosxCiudadPeer::retrieveByPk($recargo->getCaIdTrafico(), $recargo->getCaIdCiudad(), $recargo->getCaIdRecargo(), $recargo->getCaModalidad(), $recargo->getCaImpoexpo());
-            if (!$pricrecargo) {
-                $pricrecargo = new PricRecargosxCiudad();
-                $pricrecargo->setCaIdTrafico($recargo->getCaIdTrafico());
-                $pricrecargo->setCaIdCiudad($recargo->getCaIdCiudad());
-                $pricrecargo->setCaIdRecargo($recargo->getCaIdRecargo());
-                $pricrecargo->setCaModalidad($recargo->getCaModalidad());
-                $pricrecargo->setCaImpoexpo($recargo->getCaImpoexpo());
-            }
-
-            if ($recargo->getCaVlrfijo() && $recargo->getCaVlrfijo()!=0) {
-                $pricrecargo->setCaVlrrecargo($recargo->getCaVlrfijo());
-                //echo "-> fijo ".$recargo->getCaVlrfijo()."<br />";
-            } else {
-                if ($recargo->getCaPorcentaje() && $recargo->getCaPorcentaje()!=0) {
-                    echo "-> % " . $recargo->getCaPorcentaje() . " " . $recargo->getCaBasePorcentaje() . "<br />";
-                    $pricrecargo->setCaVlrrecargo($recargo->getCaPorcentaje());
-
-                    //if( $recargo->getCaBasePorcentaje()=='Sobre Flete' ){
-                    $pricrecargo->setCaAplicacion('% Sobre Flete');
-                    //}
-                } else {
-                    echo "-> Unit " . $recargo->getCaVlrunitario() . " " . $recargo->getCaBaseunitario() . "<br />";
-                    $pricrecargo->setCaVlrrecargo($recargo->getCaVlrunitario());
-
-                    if ($recargo->getCaBaseunitario()=='Unidades Peso/Volumen') {
-                        echo " OK <br />";
-                        $pricrecargo->setCaAplicacion('x Kg ó 6 Dm³');
-                    }
-
-                    if ($recargo->getCaBaseunitario()=='Cantidad de BLs/AWBs') {
-                        $trayecto = TrayectoPeer::retrieveByPk($recargo->getCaIdTrayecto());
-                        if ($trayecto->getCaTransporte()=="Aéreo") {
-                            $pricrecargo->setCaAplicacion('x HAWB');
-                        }
-                        if ($trayecto->getCaTransporte()=="Marítimo") {
-                            $pricrecargo->setCaAplicacion('x HBL');
-                        }
-                    }
-
-                    if ($recargo->getCaBaseunitario()=="Número de Piezas") {
-                        $pricrecargo->setCaAplicacion("x Pieza");
-                    }
-                }
-            }
-
-            $pricrecargo->setCaFchinicio($recargo->getCaFchinicio());
-            $pricrecargo->setCaFchvencimiento($recargo->getCaFchvencimiento());
-
-            $pricrecargo->setCaVlrminimo($recargo->getCaRecargominimo());
-            $pricrecargo->setCaIdmoneda($recargo->getCaIdmoneda());
-            $pricrecargo->setCaObservaciones($recargo->getCaObservaciones());
-
-            if (!$pricrecargo->getCaUsucreado()) {
-                $pricrecargo->setCaUsucreado("Administrador");
-            }
-
-            if (!$pricrecargo->getCaFchcreado()) {
-                $pricrecargo->setCaFchcreado(date("Y-m-d"));
-            }
-
-            $pricrecargo->save();
-        }
-    }
-
-    /*
-     *
-     */
-
-    public function executeImportarArchivos() {
-        $c = new Criteria();
-        $traficos = TraficoPeer::doSelect($c);
-        $dir = "d:\\links\\";
-        foreach ($traficos as $trafico) {
-            echo $trafico->getCaNombre() . "<br />";
-            $links = explode("|", $trafico->getCalink());
-            foreach ($links as $link) {
-                echo "<br />---->" . $link;
-                $path = $dir . $link;
-
-
-                $fileObj = new PricArchivo();
-
-                $fileObj->setCaNombre($link);
-                $fileObj->setCaIdTrafico($trafico->getCaIdtrafico());
-
-                $fileObj->setCaTamano($size);
-                $fileObj->setCaTipo(Utils::mimetype($link));
-                $fileObj->setCaTransporte($transporte);
-                $fileObj->setCaModalidad("FCL");
-                $fileObj->setCaImpoExpo("Importación");
-                $fp = fopen($path, "r");
-                $data = fread($fp, $size);
-                fclose($fp);
-                $fileObj->setCaDatos($data);
-                $fileObj->setCaFchcreado(time());
-                $user = $this->getUser();
-                $fileObj->setCaUsucreado("Administrador");
-                //$fileObj->save();
-            }
-        }
-
-        //$path  = "";
-    }
-
-    /*
-     * Importa el tarifario anterior dentro del nuevo tarifario
-     */
-
-    /*
-     * ublic function executeImportarTarifarioRecargos(){
-     * et_time_limit(0);
-     * xit("Este no");
-     * c = new Criteria();
-     * /$c->setLimit(500);
-     * c->add( RecargoFletePeer::CA_IDCONCEPTO, '9999' );
-     * /$c->add( RecargoFletePeer::CA_IDTRAYECTO, $trayecto->getCaIdtrayecto() );
-     * recargos = RecargoFletePeer::doSelect( $c );
-     * fConfig::set('sf_web_debug', false) ;
-     * oreach( $recargos as $recargo ){
-     * trayecto = RecargoFletePeer::retrieveByPk( $recargo->getCaIdtrayecto() );
-     * pricrecargo = PricRecargoxConceptoPeer::retrieveByPk( $recargo->getCaIdTrayecto(), $recargo->getCaIdConcepto(), $recargo->getCaIdRecargo() );
-     * f( !$pricrecargo ){
-     * pricrecargo = new PricRecargoxConcepto();
-     * pricrecargo->setCaIdTrayecto( $recargo->getCaIdTrayecto() );
-     * pricrecargo->setCaIdConcepto( $recargo->getCaIdConcepto() );
-     * pricrecargo->setCaIdRecargo( $recargo->getCaIdRecargo() );
-     }
-     * f( $recargo->getCaVlrfijo() ){
-     * pricrecargo->setCaVlrrecargo( $recargo->getCaVlrfijo() );
-     * /echo "-> fijo ".$recargo->getCaVlrfijo()."<br />";
-     * else{
-     * f( $recargo->getCaPorcentaje() ){
-     * cho "-> % ".$recargo->getCaPorcentaje()." ".$recargo->getCaBasePorcentaje()."<br />";
-     * pricrecargo->setCaVlrrecargo( $recargo->getCaPorcentaje() );
-     * /if( $recargo->getCaBasePorcentaje()=='Sobre Flete' ){
-     * pricrecargo->setCaAplicacion( '% Sobre Flete' );
-     * /}
-     * else{
-     * cho "-> Unit ".$recargo->getCaVlrunitario()." ".$recargo->getCaBaseunitario()."<br />";
-     * pricrecargo->setCaVlrrecargo( $recargo->getCaVlrunitario() );
-     * f( $recargo->getCaBaseunitario()=='Unidades Peso/Volumen' ){
-     * cho " OK <br />";
-     * pricrecargo->setCaAplicacion( 'x Kg ó 6 Dm³' );
-     }
-     * f( $recargo->getCaBaseunitario()=='Cantidad de BLs/AWBs' ){
-     * trayecto = TrayectoPeer::retrieveByPk( $recargo->getCaIdTrayecto() );
-     * f( $trayecto->getCaTransporte()=="Aéreo" ){
-     * pricrecargo->setCaAplicacion( 'x HAWB' );
-     }
-     * f( $trayecto->getCaTransporte()=="Marítimo" ){
-     * pricrecargo->setCaAplicacion( 'x HBL' );
-     }
-     }
-     * f( $recargo->getCaBaseunitario()=="Número de Piezas" ){
-     * pricrecargo->setCaAplicacion( "x Pieza" );
-     }
-     }
-     }
-     * pricrecargo->setCaFchinicio( $recargo->getCaFchinicio() );
-     * pricrecargo->setCaFchvencimiento( $recargo->getCaFchvencimiento() );
-     * pricrecargo->setCaVlrminimo( $recargo->getCaRecargominimo() );
-     * pricrecargo->setCaIdmoneda( $recargo->getCaIdmoneda() );
-     * porBL = array( "POR BL", "POR BL ", "Por B/l", "Por BL", "Por Bl" );
-     * porHbl = array( "Por HBL" );
-     * porCtnr  = array( "POR CNTR" , "POR CONTENEDOR", "Por contenedor", "Por contenedor", "Por Cntr");
-     * porEmbarque = array( "Por embarque", "Por embarque\n", "Por Embarque" );
-     * porTm3 = array( "Por T/M3", "POR T/M3", "T/M3", "T/M3\n", "T/M3 ", "por T/M3", "POR T/M3",);
-     * f(in_array($recargo->getCaObservaciones(), $porHbl )){
-     * pricrecargo->setCaAplicacionMin( "x HBL" );
-     * elseif(in_array($recargo->getCaObservaciones(), $porCtnr )){
-     * pricrecargo->setCaAplicacionMin( "x Contenedor" );
-     * elseif(in_array($recargo->getCaObservaciones(), $porEmbarque )){
-     * pricrecargo->setCaAplicacionMin( "x Embarque" );
-     * elseif(in_array($recargo->getCaObservaciones(), $porTm3 )){
-     * pricrecargo->setCaAplicacionMin( "x T/M³" );
-     }
-     * lse{
-     * pricrecargo->setCaObservaciones( $recargo->getCaObservaciones() );
-     }
-     * f( $recargo->getCaUsuActualizado() ){
-     * pricrecargo->setCaUsucreado($recargo->getCaUsuactualizado());
-     * pricrecargo->setCaFchcreado($recargo->getCaFchactualizado());
-     * elseif( $recargo->getCaUsucreado() ){
-     * pricrecargo->setCaUsucreado($recargo->getCaUsucreado());
-     * pricrecargo->setCaFchcreado($recargo->getCaFchcreado());
-     }
-     * f( !$pricrecargo->getCaUsucreado() ){
-     * pricrecargo->setCaUsucreado("Administrador");
-     }
-     * f( !$pricrecargo->getCaFchcreado() ){
-     * pricrecargo->setCaFchcreado(date("Y-m-d"));
-     }
-     * pricrecargo->save();
-     }
-     }
-     */
-
-
-
-
-
-
-
-    /*
-     * Esta funcion se va a borrar
-     */
-
-    public function executeParametrizarConceptos() {
-        $c = new Criteria();
-        $c->add(TrayectoPeer::CA_IMPOEXPO, "Exportación");
-        $c->add(TrayectoPeer::CA_TRANSPORTE, "Aéreo");
-        $c->add(TrayectoPeer::CA_MODALIDAD, "DIRECTO");
-
-        /* $c->addJoin( TrayectoPeer::CA_ORIGEN , CiudadPeer::CA_IDCIUDAD );
-         * c->add( CiudadPeer::CA_IDTRAFICO, "DE-049" ); */
-        //$c->add( TrayectoPeer::CA_MODALIDAD, "LCL" );
-        //$c->setLimit(30);
-        $trayectos = TrayectoPeer::doSelect($c);
-
-        set_time_limit(0);
-
-        foreach ($trayectos as $trayecto) {
-
-            $fletes = $trayecto->getFletes();
-
-            //		$trayecto->getOrigen();
-
-            $ciudad = CiudadPeer::retrieveByPk($trayecto->getCaOrigen());
-            $trafico = $ciudad->getTrafico();
-
-            $conceptosStr = $trafico->getCaConceptos();
-            //$conceptosStr="";
-            //$recargosStr = $trafico->getCaRecargos();
-            //$recargosStr="";
-
-            foreach ($fletes as $flete) {
-                //echo $flete->getCaIdConcepto()."<br />";
-                /* if( $flete->getCaIdConcepto()==9999){
-                 * ontinue;
-                 } */
-
-                if (strlen($conceptosStr)!=0) {
-                    $conceptosStr.="|";
-                }
-
-                $conceptosStr.=$flete->getCaIdConcepto();
-            }
-
-            //$conceptosStr.="|22|23|24|25|26|27|28";
-            $conceptosArr = explode("|", $conceptosStr);
-            $conceptosArr = array_unique($conceptosArr);
-            /* $conceptosStr=implode("|",$conceptosArr);
-             * cho "<br />Conceptos -->".$conceptosStr."<br />"; */
-            $trafico->setCaConceptos($conceptosStr);
-            $trafico->save();
-
-
-            /* $c = new Criteria();
-             * c->add( RecargoFletePeer::CA_IDTRAYECTO, $trayecto->getCaIdTrayecto() );
-             * recargos = RecargoFletePeer::doSelect($c);
-             * oreach( $recargos as $recargo ){
-             * f(strlen($recargosStr)!=0){
-             * recargosStr.="|";
-             }
-             * tipoRec = $recargo->getTipoRecargo();
-             * cho "->".$tipoRec->getCaRecargo();
-             * recargosStr.= $tipoRec->getCaIdrecargo();
-             }
-             * recargosArr = explode("|",$recargosStr);
-             * recargosArr = array_unique($recargosArr);
-             * recargosStr=implode("|",$recargosArr);
-             * cho "<br />Recargos -->".$recargosStr."<br />";
-             * trafico->setCaRecargos($recargosStr);
-             * /$trafico->save(); */
-        }
-    }
-
-    /*
-     * Incluye los conceptos basico en todos los traficos
-     * 88 9  //tm3 minimo
-     * 1  minimo aereo
-     * 133 134 coloadins
-     */
-
-    public function executeIncluirConceptosTrafico() {
-        $c = new Criteria();
-        $traficos = TraficoPeer::doSelect($c);
-        print_r($traficos);
-        foreach ($traficos as $trafico) {
-            $conceptosStr = $trafico->getCaConceptos();
-            if ($conceptosStr) {
-                $conceptosArr = explode("|", $conceptosStr);
-            } else {
-                $conceptosArr = array();
-            }
-            $conceptosArr[] = 88;
-            $conceptosArr[] = 9;
-            $conceptosArr[] = 1;
-            $conceptosArr[] = 133;
-            $conceptosArr[] = 134;
-            $conceptosArr = array_unique($conceptosArr);
-            $conceptosStr = implode("|", $conceptosArr);
-
-            echo "->" . $trafico . " " . $conceptosStr . "<br />";
-            $trafico->setCaConceptos($conceptosStr);
-            $trafico->save();
-        }
-    }
-
-    /*
-     * TRM
-     */
-
-    public function executeGetTRM() {
-
-        /* Guarda en la base de datos la tasa representativa del mercado. */
-        $fecha_actual = date("Y-m-d");
-
-        $string = strtolower(file_get_contents("http://www.banrep.gov.co/"));
-
-        $initialTag = 'tasa de cambio';
-        $finalTag = '</div></td>';
-        $trm = Utils::getInformation($string, $initialTag, $finalTag) . "chm";
-
-        $initialTag = 'numeros">';
-        $finalTag = "chm";
-
-        $trm = Utils::getInformation($trm, $initialTag, $finalTag);
-        $trm = str_replace(",", "", $trm);
-        $trm = doubleval($trm);
-
-        $initialTag2 = "<p>indicadores -";
-        $finalTag2 = "</p>";
-        $act = Utils::getInformation($string, $initialTag2, $finalTag2);
-
-        $mytrm = (float) $trm;
-
-        /* 0 es Domingo, 6 es Sabado */
-        $num_day = date('w');
-        if (substr($act, 0, 2)== date("d") || $num_day==0 || $num_day==6) {
-            if ($trm) {
-                $trmObj = new TRM();
-                $trmObj->setCaFecha($fecha_actual);
-                $trmObj->setCaPesos($mytrm);
-                $trmObj->save();
-            }
-        }
-    }
-
-    /*
-     * TRM
-     */
-
-    public function executeGetAlaico() {
-
-
-        $actual = date("Y-m-d");
-        $sql = "SELECT COUNT(*) as numreg FROM " . TasaAlaicoPeer::TABLE_NAME . " WHERE " . TasaAlaicoPeer::CA_FECHAINICIAL . " <= '" . $actual . "' AND " . TasaAlaicoPeer::CA_FECHAFINAL . " >= '" . $actual . "'";
-
-        $con = Propel::getConnection(TasaAlaicoPeer::DATABASE_NAME);
-        $stmt = $con->prepare($sql);
-        $stmt->execute();
-        $row = $stmt->fetch();
-
-        $tmp = $row['numreg'];
-
-        if ($tmp==0) {
-            //echo "asd";
-            //Actualizacion de la tasa alaico
-            $meses = array("Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Agt", "Sep", "Oct", "Nov", "Dic");
-            $string = file_get_contents("http://www.alaico.org/2008/ALAICOJHON/htdocs//modules/mastop_publish/?tac=TasaAlaico");
-
-            $initialTag = '<span class="Apple-style-span" style="font-weight: bold; font-size: 24px; color: #000080; font-family: tahoma; background-color: #ffffff">$ ';
-            $finalTag = "</span";
-            $alaico = Utils::getInformation($string, $initialTag, $finalTag);
-
-            $alaico = str_replace(".", "", $alaico);
-            $tasa_alaico = (float) $alaico;
-
-
-
-            $initialTag = '<font face="verdana,geneva" size="3"><b><font color="#000080" style="background-color: #ffffff">';
-            $finalTag = "</font";
-            $vigencia = Utils::getInformation($string, $initialTag, $finalTag);
-
-            $month1 = array_search(substr($vigencia, 0, 3), $meses) + 1;
-            if ($month1 < 10) {
-                $month1 = "0" . $month1;
-            }
-
-
-            $month2 = array_search(substr($vigencia, 7, 3), $meses) + 1;
-            if ($month2 < 10) {
-                $month2 = "0" . $month2;
-            }
-
-            $year1 = date("Y");
-            $year2 = date("Y");
-            if ($month1=="12" && $month2=="01") {
-                $year2++;
-            }
-
-
-            $day1 = Utils::getInformation(substr($vigencia, 2, 5), ".", "a");
-            $day2 = substr($vigencia, 6, 30);
-            $day2 = substr($day2, strpos($day2, ".") + 1, 30);
-
-            $day1 = str_pad($day1, 2, "0", STR_PAD_LEFT);
-            $day2 = str_pad($day2, 2, "0", STR_PAD_LEFT);
-
-            $f1 = $year1 . "-" . $month1 . "-" . $day1;
-            $f2 = $year2 . "-" . $month2 . "-" . $day2;
-
-
-            $alaico = new TasaAlaico();
-            $alaico->setCaFechaInicial($f1);
-            $alaico->setCaFechaFinal($f2);
-            $alaico->setCaValortasa($tasa_alaico);
-            //$alaico->setUltimaActualizacion(date("Y-m-d H:i:s"));
-            $alaico->save();
-        }
-    }
-
-    /*
-     * Unifica los recargos LCL en recargos generales del trayecto
-     */
-
-    public function executeFixTarifarioLCL() {
-
-        exit("detenido");
-        $c = new Criteria();
-
-
-        $c->add(TrayectoPeer::CA_IMPOEXPO, "Importación");
-        $c->add(TrayectoPeer::CA_TRANSPORTE, "Marítimo");
-        $c->add(TrayectoPeer::CA_MODALIDAD, "LCL");
-
-
-
-        //$c->add( TrayectoPeer::CA_IMPOEXPO, "Importación" );
-        //$c->add( TrayectoPeer::CA_TRANSPORTE , "Marítimo" );
-        //$c->addJoin( TrayectoPeer::CA_ORIGEN , CiudadPeer::CA_IDCIUDAD );
-        //$c->add( CiudadPeer::CA_IDTRAFICO, "DE-049" );
-        //
-        //$c->add( TrayectoPeer::CA_IDTRAYECTO, 3705 );
-        //$c->setLimit(30);
-        $trayectos = TrayectoPeer::doSelect($c);
-        set_time_limit(0);
-
-        foreach ($trayectos as $trayecto) {
-
-            $c = new Criteria();
-            $c->add(PricRecargoxConceptoPeer::CA_IDTRAYECTO, $trayecto->getCaIdtrayecto());
-            $recs = PricRecargoxConceptoPeer::doSelect($c);
-            if (count($recs) > 0) {
-                $idRecargos = array();
-                foreach ($recs as $recargo) {
-                    $idRecargos[] = $recargo->getCaIdrecargo();
-                }
-
-                foreach ($idRecargos as $idRecargo) {
-                    if ($idRecargo==9999) {
-                        continue;
-                    }
-                    $c = new Criteria();
-                    $c->add(PricRecargoxConceptoPeer::CA_IDTRAYECTO, $trayecto->getCaIdtrayecto());
-                    $c->add(PricRecargoxConceptoPeer::CA_IDRECARGO, $idRecargo);
-                    $recargos = PricRecargoxConceptoPeer::doSelect($c);
-
-                    echo count($recargos) . "<br />";
-                    for ($i = 0; $i < count($recargos); $i++) {
-                        if ($i==0) {
-
-                            $vlrRecargo = $recargos[$i]->getCaVlrrecargo();
-                            $vlrMinimo = $recargos[$i]->getCaVlrminimo();
-                        } else {
-                            echo "asasd";
-                            if ($vlrRecargo!=$recargos[$i]->getCaVlrrecargo() && $vlrMinimo != $recargo[$i]->getCaVlrminimo()) {
-                                echo "aca no se pudo<br /> " . $recargo->getCaIdTrayecto();
-                            } else {
-                                echo "OK " . $recargo->getCaIdTrayecto();
-                            }
-                        }
-
-                        /*
-                         * f($i==0){
-                         * recargos[$i]->setCaIdConcepto(9999);
-                         * recargos[$i]->save();
-                         * else{
-                         } */
-                    }
-                }
-            }
-        }
-    }
-
-    /*
-     * Coloca la fecha de presentacion de acuerdo a los envios por email
-     */
-
-    public function executeFixCotFchpresentacion() {
-        exit();
-        set_time_limit(0);
-
-        $sql = "select ca_consecutivo, notificaciones.tb_tareas.ca_idtarea, min(ca_fchenvio) as ca_fchenvio from tb_cotizaciones inner join notificaciones.tb_tareas on ca_idg_envio_oportuno = ca_idtarea
-	inner join notificaciones.tb_notificaciones on 	notificaciones.tb_tareas.ca_idtarea = notificaciones.tb_notificaciones.ca_idtarea
-	inner join tb_emails on	tb_emails.ca_idemail = tb_notificaciones.ca_idemail 
-where ca_consecutivo like '%2009'  and ca_fchterminada is null and tb_emails.ca_fchenvio is not null 
-
-group by ca_consecutivo,  notificaciones.tb_tareas.ca_idtarea";
-        $con = Propel::getConnection(NotTareaPeer::DATABASE_NAME);
-
-        $stmt = $con->prepare($sql);
-        $stmt->execute();
-
-        while ($row = $stmt->fetch()) {
-            //print_r( $row );
-            $tarea = NotTareaPeer::retrieveByPk($row['ca_idtarea']);
-            $tarea->setCaFchterminada($row['ca_fchenvio']);
-            //$tarea->save();
-
-            echo "OK " . $row['ca_consecutivo'] . "<br />";
-        }
-        return sfView::NONE;
-    }
-
-    public function executeGenerarFuente() {
-        require( "D:\\Desarrollo\\colsys_sf12\\lib\\vendor\\FPDF\\font\\makefont\\makefont.php" );
-        MakeFont('D:\\Desarrollo\\sw\\ttf2pt1\\tahoma.ttf', 'D:\\Desarrollo\\sw\\ttf2pt1\\tahoma.afm', 'cp1252');
-        MakeFont('D:\\Desarrollo\\sw\\ttf2pt1\\tahomabd.ttf', 'D:\\Desarrollo\\sw\\ttf2pt1\\tahomab.afm', 'cp1252');
-        exit("detenido");
-    }
-
-    public function executeImportarHelpdesk() {
-
-        exit("detenido");
-
-        $c = new Criteria();
-        //$c->add( ExoTicketPeer::STATUS, "Open" );
-
-        $criterion = $c->getNewCriterion(ExoTicketPeer::OPENED, mktime(0, 0, 0, 1, 1, 2009), Criteria::GREATER_EQUAL);
-        $criterion->addOr($c->getNewCriterion(ExoTicketPeer::STATUS, "Open"));
-        $c->add($criterion);
-
-
-        //$c->setLimit( 10 );
-        $tickets = ExoTicketPeer::doSelect($c);
-
-        foreach ($tickets as $ticket) {
-            //echo strtolower($ticket->getAdminUser())." ".utf8_decode($ticket->getTitle())."<br />";
-
-            $hTicket = new HdeskTicket();
-            if ($ticket->getAdminUser()=="backups") {
-                $hTicket->setCaLogin("wjimenez");
-                $hTicket->setCaAssignedto("thomaspeters");
-            } else {
-                $hTicket->setCaLogin(strtolower($ticket->getAdminUser()));
-            }
-
-            $hTicket->setCaOpened(date("Y-m-d h:i:s", $ticket->getOpened()));
-            $hTicket->setCaTitle(utf8_decode($ticket->getTitle()));
-            $hTicket->setCaText(utf8_decode($ticket->getText()));
-            if ($ticket->getOwner()) {
-                $hTicket->setCaAssignedto($ticket->getOwner());
-            }
-
-            if ($ticket->getStatus()=="Closed") {
-                $hTicket->setCaAction("Cerrado");
-            } else {
-                $hTicket->setCaAction("Abierto");
-            }
-
-            //echo utf8_decode($ticket->getGroup());
-
-            $c = new Criteria();
-            $c->add(HdeskGroupPeer::CA_NAME, utf8_decode($ticket->getGroup()));
-            $group = HdeskGroupPeer::doSelectOne($c);
-
-            $hTicket->setCaIdgroup($group->getCaIdgroup());
-
-            $hTicket->save();
-
-            $responses = $ticket->getExoResponses();
-
-            foreach ($responses as $response) {
-                $hresponse = new HdeskResponse();
-                $hresponse->setCaIdticket($hTicket->getCaidticket());
-                if ($response->getSname()=="admin") {
-                    $hresponse->setCaLogin("falopez");
-                } else {
-                    if ($response->getSname()=="backups") {
-                        $hresponse->setCaLogin("wjimenez");
-                    } else {
-                        $hresponse->setCaLogin(strtolower($response->getSname()));
-                    }
-                }
-                $hresponse->setCaText(utf8_decode($response->getComment()));
-                $hresponse->setCaCreatedat(date("Y-m-d H:i:s", $response->getPosted()));
-                $hresponse->save();
-            }
-
-            /* $usuario = UsuarioPeer::retrieveByPk( strtolower($ticket->getAdminUser()) );
-             * f( !$usuario  && $ticket->getAdminUser()!= "backups"){
-             * /echo strtolower($ticket->getAdminUser())." ".utf8_decode($ticket->getTitle())."<br />";
-             * cho $ticket->getId()." ".$ticket->getOpened()." No existe ". $ticket->getAdminUser()."<br />";
-             } */
-        }
-
-        /*
-         * c = new Criteria();
-         * c->add( ExoResponsePeer::POSTED, mktime(0,0,0,1,1,2009) , Criteria::GREATER_EQUAL );
-         * responses = ExoResponsePeer::doSelect( $c );
-         * oreach( $responses as $response ){
-         * /echo strtolower($ticket->getAdminUser())." ".utf8_decode($ticket->getTitle())."<br />";
-         * usuario = UsuarioPeer::retrieveByPk( strtolower($response->getSname()) );
-         * f( !$usuario  && $response->getSname()!= "backups"){
-         * /echo strtolower($ticket->getAdminUser())." ".utf8_decode($ticket->getTitle())."<br />";
-         * cho $response->getId()." No existe ". $response->getSname()."<br />";
-         }
-         } */
-
-        return sfView::NONE;
-    }
-
-    public function executeImportarHelpdeskRespuestas() {
-        exit("detenido");
-        $c = new Criteria();
-        $tickets = HdeskTicketPeer::doSelect($c);
-
-        foreach ($tickets as $ticket) {
-            $text = str_replace("<br />", "<br>", $ticket->getCaText());
-
-            echo $text;
-
-            $ticket->setCaText($text);
-            $ticket->save();
-
-            /* if( !$ticket->getCaResponseTime() ){
-             * logins = array(  );
-             * c = new Criteria();
-             * c->add( HdeskUserGroupPeer::CA_IDGROUP, $ticket->getCaIdgroup() );
-             * c->addAscendingOrderByColumn( HdeskUserGroupPeer::CA_LOGIN);
-             * usuarios = HdeskUserGroupPeer::doSelect( $c );
-             * oreach( $usuarios as $usuario ){
-             * logins[]=$usuario->getCaLogin();
-             }
-             * c = new Criteria();
-             * c->add( HdeskResponsePeer::CA_IDTICKET, $ticket->getcaIdticket() );
-             * c->add( HdeskResponsePeer::CA_LOGIN, $logins, Criteria::IN );
-             * c->addAscendingOrderByColumn( HdeskResponsePeer::CA_CREATEDAT );
-             * response = HdeskResponsePeer::doSelectOne( $c );
-             * f( $response ){
-             * ticket->setCaResponsetime($response->getcaCreatedat());
-             * ticket->save();
-             }
-             } */
-        }
-
-
-
-        return sfView::NONE;
-    }
-
-    /*
-     * Coloca la hora de respuesta en tb_tickets
-     */
-
-    public function executeFixRespuestas() {
-        //exit("detenido");
-        $c = new Criteria();
-        $c->add(HdeskTicketPeer::CA_RESPONSETIME, null, Criteria::ISNULL);
-        $tickets = HdeskTicketPeer::doSelect($c);
-
-        foreach ($tickets as $ticket) {
-            if (!$ticket->getCaResponseTime()) {
-
-                $logins = array();
-
-                $c = new Criteria();
-                $c->add(HdeskUserGroupPeer::CA_IDGROUP, $ticket->getCaIdgroup());
-                $c->addAscendingOrderByColumn(HdeskUserGroupPeer::CA_LOGIN);
-                $usuarios = HdeskUserGroupPeer::doSelect($c);
-                foreach ($usuarios as $usuario) {
-                    $logins[] = $usuario->getCaLogin();
-                }
-
-
-                $c = new Criteria();
-                $c->add(HdeskResponsePeer::CA_IDTICKET, $ticket->getcaIdticket());
-                $c->add(HdeskResponsePeer::CA_LOGIN, $logins, Criteria::IN);
-                $c->addAscendingOrderByColumn(HdeskResponsePeer::CA_CREATEDAT);
-
-                $response = HdeskResponsePeer::doSelectOne($c);
-
-                if ($response) {
-                    $ticket->setCaResponsetime($response->getcaCreatedat());
-                    $ticket->save();
-                }
-            }
-        }
-
-
-
-        return sfView::NONE;
-    }
-
-    public function executePermisosColsys() {
-        $c = new Criteria();
-        $usuarios = UsuarioPeer::doSelect($c);
-
-        foreach ($usuarios as $usuario) {
-            $rutinas = explode("|", $usuario->getCaRutinas());
-            if (in_array("0200220000", $rutinas)) {
-                $rutinas[] = "0200240000";
-            }
-
-            //$rutinas[] = "0500600000";
-            //$rutinas[] = "0500700000";
-
-            $rutinas = array_unique($rutinas);
-            sort($rutinas);
-            $rutinasStr = implode("|", $rutinas);
-            if ($rutinasStr) {
-                $usuario->setCaRutinas($rutinasStr);
-            } else {
-                $usuario->setCaRutinas(null);
-            }
-            echo $usuario->getCaLogin() . " " . implode("|", $rutinas) . " <br />";
-            $usuario->save();
-        }
-    }
-
-    public function executeMenusUsuario() {
-        $usuario = UsuarioPeer::retrieveByPk($this->getRequestParameter("login"));
-        $rutinas = explode("|", $usuario->getCaRutinas());
-
-        $c = new Criteria();
-        $c->add(RutinaOldPeer::CA_RUTINA, $rutinas, Criteria::IN);
-        $c->addAscendingOrderByColumn(RutinaOldPeer::CA_GRUPO);
-        $c->addAscendingOrderByColumn(RutinaOldPeer::CA_OPCION);
-        $this->rutinas = RutinaOldPeer::doSelect($c);
-    }
-
-    public function executeFixMenus() {
-
-        exit("OK");
-        $c = new Criteria();
-        $c->addAscendingOrderByColumn(RutinaPeer::CA_GRUPO);
-        $c->addAscendingOrderByColumn(RutinaPeer::CA_OPCION);
-
-        $rutinas = RutinaPeer::doSelect($c);
-        $i = 1;
-        foreach ($rutinas as $rutina) {
-
-            $sql = "UPDATE control.tb_rutinasnew SET ca_rutina='$i' WHERE ca_rutina='" . $rutina->getCaRutina() . "'";
-
-            $con = Propel::getConnection(ReportePeer::DATABASE_NAME);
-
-            $stmt = $con->prepare($sql);
-            $stmt->execute();
-
-            $i++;
-        }
-    }
-
-    public function executeMatchNits() {
-
-        sfConfig::set('sf_web_debug', false);
-        set_time_limit(0);
-        $path = "d:\\AlemaniaTotal.txt";
-
-        $content = file_get_contents($path);
-        $this->nits = explode("\n", $content);
-
-        $this->setLayout("none");
-    }
-
-    public function executeCopiarTrayectos() {
-        $c = new Criteria();
-
-        $c->addJoin(CiudadPeer::CA_IDTRAFICO, TraficoPeer::CA_IDTRAFICO);
-        $c->addJoin(TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD);
-        $c->add(TrayectoPeer::CA_IMPOEXPO, "Importación");
-        $c->add(TrayectoPeer::CA_TRANSPORTE, "Marítimo");
-        $c->add(TrayectoPeer::CA_MODALIDAD, "LCL");
-        $c->add(TrayectoPeer::CA_IDLINEA, 78);
-
-
-        $c->add(TraficoPeer::CA_IDGRUPO, 6);
-        $trayectos = TrayectoPeer::doSelect($c);
-        $lineas = array(20, 87, 86, 18, 14, 123, 16, 121, 17, 8);
-        $i = 1;
-        foreach ($trayectos as $trayecto) {
-
-            foreach ($lineas as $linea) {
-
-                $c = new Criteria();
-                $c->add(TrayectoPeer::CA_IMPOEXPO, "Importación");
-                $c->add(TrayectoPeer::CA_TRANSPORTE, "Marítimo");
-                $c->add(TrayectoPeer::CA_MODALIDAD, "FCL");
-                $c->add(TrayectoPeer::CA_ORIGEN, $trayecto->getCaOrigen());
-                $c->add(TrayectoPeer::CA_DESTINO, $trayecto->getCaDestino());
-                $c->add(TrayectoPeer::CA_IDLINEA, $linea);
-                $tr = TrayectoPeer::doSelectOne($c);
-
-                if (!$tr) {
-
-                    $trayectoNew = new Trayecto();
-                    $trayectoNew->setCaTransporte("Marítimo");
-                    $trayectoNew->setCaImpoexpo("Importación");
-                    $trayectoNew->setCaOrigen($trayecto->getCaOrigen());
-                    $trayectoNew->setCaDestino($trayecto->getCaDestino());
-                    $trayectoNew->setCaModalidad("FCL");
-                    $trayectoNew->setCaIdlinea($linea);
-                    $trayectoNew->setCaIdagente(0);
-                    $trayectoNew->setCaFrecuencia("-");
-                    $trayectoNew->setCaTiempotransito("-");
-                    $trayectoNew->setCaFchcreado(time());
-                    $trayectoNew->setCaIdtarifas(1);
-                    $trayectoNew->save();
-
-                    $trayectoNew->setCaIdtarifas($trayectoNew->getCaIdtrayecto());
-                    $trayectoNew->save();
-                    echo "OK " . $linea . " " . $trayecto->getOrigen() . " " . $i++ . "<br />";
-                }
-            }
-        }
-
-        return sfView::NONE;
-    }
-
     public function executeCircularColsys() {
 
         exit("detenido");
@@ -1658,10 +67,10 @@ Departamento Comercial
         exit("detenido");
         $sql = "select * from pg_user";
         $con = Propel::getConnection(UsuarioPeer::DATABASE_NAME);
-        $stmt = $con->prepare($sql);
+        $stmt = $con->prepare($sql);        
         $stmt->execute();
         while ($row = $stmt->fetch()) {
-            if ($row['usename']!="postgres" && $row['usename']!="Administrador") {
+            if ($row['usename'] != "postgres" && $row['usename'] != "Administrador") {
                 $sql = "ALTER ROLE \"" . $row['usename'] . "\" SET statement_timeout=240000";
                 //echo $row['usename']."<br />";
                 echo $sql . ";<br />";
@@ -1677,7 +86,7 @@ Departamento Comercial
         $stmt = $con->prepare($sql);
         $stmt->execute();
         while ($row = $stmt->fetch()) {
-            if ($row['usename']!="postgres" && $row['usename']!="Administrador") {
+            if ($row['usename'] != "postgres" && $row['usename'] != "Administrador") {
                 $sql = "DROP ROLE \"" . $row['usename'] . "\" ";
                 //echo $row['usename']."<br />";
                 echo $sql . ";<br />";
@@ -1709,7 +118,7 @@ Departamento Comercial
             }
             /* }else{
              * cho "fchpresentacion  ".$row[0]." ".$cotizacion->getCaFchpresentacion()." ".$row[2];
-             } */
+              } */
 
             echo "<br />";
         }
@@ -1758,16 +167,16 @@ Departamento Comercial
         foreach ($statusList as $status) {
             $reporte = $status->getReporte();
 
-            if ($reporte->getCaImpoexpo()=="Triangulación") {
+            if ($reporte->getCaImpoexpo() == "Triangulación") {
                 $reporte->setCaImpoexpo("Importación");
             }
-            if ($status->getEtapa()=="Carga Entregada") {
+            if ($status->getEtapa() == "Carga Entregada") {
                 $idetapa = "99999";
                 //print_r( $status );
-            } elseif ($status->getEtapa()=="Orden Anulada") {
+            } elseif ($status->getEtapa() == "Orden Anulada") {
                 $idetapa = "00000";
             } else {
-                if ($reporte->getCaImpoexpo()=="Importación") {
+                if ($reporte->getCaImpoexpo() == "Importación") {
                     $idetapa = $etapas[$reporte->getCaImpoexpo()][$reporte->getCaTransporte()][$status->getEtapa()];
                 } else {
                     $idetapa = $etapas[$reporte->getCaImpoexpo()][''][$status->getEtapa()];
@@ -1812,7 +221,7 @@ Departamento Comercial
             }
             /* }else{
              * cho "fchpresentacion  ".$row[0]." ".$cotizacion->getCaFchpresentacion()." ".$row[2];
-             } */
+              } */
 
             echo "<br />";
         }
@@ -1830,7 +239,7 @@ Departamento Comercial
         foreach ($reportes as $reporte) {
             $status = $reporte->getUltimoStatus();
             if ($status) {
-                if ($status->getCaEtapa()=="Carga en Tránsito a Destino") {
+                if ($status->getCaEtapa() == "Carga en Tránsito a Destino") {
                     echo $reporte->getCaConsecutivo() . " " . $reporte->getCaTransporte() . "<br />";
                 }
             }
@@ -1857,7 +266,7 @@ Departamento Comercial
                 $c = new Criteria();
                 $c->add(RutinaOldPeer::CA_RUTINA, $rutinasArr, Criteria::IN);
                 $rutinas = RutinaOldPeer::doSelect($c);
-                if ($usuario->getCaDepartamento()!="Comercial" && $usuario->getCaDepartamento()!="Servicio al Cliente") {
+                if ($usuario->getCaDepartamento() != "Comercial" && $usuario->getCaDepartamento() != "Servicio al Cliente") {
 
                     $permisosArr = array(39, 38);
 
@@ -1889,9 +298,9 @@ Departamento Comercial
                  * permiso->setCaRutina( $rutinaNew->getCaRutina() );
                  * permiso->setCaAcceso( 0 );
                  * permiso->save();
-                 }
-                 }
-                 } */
+                  }
+                  }
+                  } */
             }
         }
     }
@@ -1939,7 +348,7 @@ Departamento Comercial
 
         foreach ($usuarios as $usuario) {
             //echo $usuario->getCaDepartamento();
-            if ($usuario->getCaDepartamento()=="Marítimo") {
+            if ($usuario->getCaDepartamento() == "Marítimo") {
                 $acceso = UsuarioGrupoPeer::retrieveByPk($usuario->getCaLogin(), "maritimo");
                 /*
                  * c = new Criteria();
@@ -1948,7 +357,7 @@ Departamento Comercial
                  * accesosUsuarios = AccesoUsuarioPeer::doSelect( $c );
                  * oreach( $accesosUsuarios as $accesosUsuario ){
                  * accesosUsuario->delete();
-                 } */
+                  } */
 
                 //print_r( $accesosUsuario );
 
@@ -1966,11 +375,11 @@ Departamento Comercial
         return sfView::NONE;
     }
 
-    /******************************************************************
- *
+    /*     * ****************************************************************
+     *
      *  Estos procedimientos se usan para estandarizar el proceso del tracking
      *
-	***************************************************************** */
+     * **************************************************************** */
     /*
      * Aplica la plantilla de la etapa al status
      */
@@ -2116,17 +525,17 @@ Departamento Comercial
                 if ($reporte) {
                     $texto = $aviso->getCaAviso();
                     $email = $aviso->getEmail();
-                    if ($email && strpos($email->getCaSubject(), "Confirmación de Llegada")!==false) {
+                    if ($email && strpos($email->getCaSubject(), "Confirmación de Llegada") !== false) {
                         $texto = "La MN " . ($referencia->getCaMnLlegada() ? $referencia->getCaMnLlegada() : $referencia->getCaMotonave()) . " arribó a " . $referencia->getDestino()->getCaCiudad() . ", el dia " . Utils::fechaMes($referencia->getCaFchconfirmacion()) . " con la orden en referencia a bordo.\n" . ucfirst($inoCliente->getCamensaje());
 
                         $idetapa = "IMCOL";
                     } else {
                         break;
-                        if (strpos($texto, "Confirmamos cierre y finalización de los documentos del proceso de OTM")!==false) {
+                        if (strpos($texto, "Confirmamos cierre y finalización de los documentos del proceso de OTM") !== false) {
                             $idetapa = "99999";
-                        } elseif (strpos($texto, "Confirmamos el cargue y despacho de la")!==false) {
+                        } elseif (strpos($texto, "Confirmamos el cargue y despacho de la") !== false) {
                             $idetapa = "IMCMP";
-                        } elseif (strpos($texto, "Informamos que los documentos correspondientes al trámite OTM")!==false) {
+                        } elseif (strpos($texto, "Informamos que los documentos correspondientes al trámite OTM") !== false) {
                             $idetapa = "IMPOD";
                         } else {
                             $idetapa = "88888";
@@ -2147,7 +556,7 @@ Departamento Comercial
                             $status->setCaVolumen($ultimostatus->getCaVolumen());
                             $status->setCaFchsalida($ultimostatus->getCaFchsalida());
                             $status->setCaFchcontinuacion($ultimostatus->getCaFchcontinuacion());
-                            if ($idetapa=="IMCOL") {
+                            if ($idetapa == "IMCOL") {
                                 $status->setCaIdnave(($referencia->getCaMnLlegada() ? $referencia->getCaMnLlegada() : $referencia->getCaMotonave()));
                                 $status->setCaFchllegada($referencia->getCaFchconfirmacion());
                             } else {
@@ -2235,7 +644,7 @@ Departamento Comercial
                 $ultimoStatus = $reporte->getUltimoStatus();
 
                 if ($ultimoStatus) {
-                    if ($reporte->getCaEtapaActual()=="Carga Entregada") {
+                    if ($reporte->getCaEtapaActual() == "Carga Entregada") {
                         $reporte->setCaIdetapa("99999");
                     } else {
                         $reporte->setCaIdetapa($ultimoStatus->getCaIdetapa());
@@ -2243,17 +652,17 @@ Departamento Comercial
                     $reporte->setCaFchultstatus($ultimoStatus->getCaFchenvio());
                     $reporte->save();
                 } else {
-                    if ($reporte->getCaEtapaActual()=="Carga Entregada" || $reporte->getCaEtapaActual()=="Carga en Aeropuerto de Destino") {
+                    if ($reporte->getCaEtapaActual() == "Carga Entregada" || $reporte->getCaEtapaActual() == "Carga en Aeropuerto de Destino") {
                         $reporte->setCaIdetapa("99999");
                     }
 
-                    if ($reporte->getCaEtapaActual()=="Contacto con nuestro Agente" &&
-                            $reporte->getCaTransporte()=="Aéreo") {
+                    if ($reporte->getCaEtapaActual() == "Contacto con nuestro Agente" &&
+                            $reporte->getCaTransporte() == "Aéreo") {
                         $reporte->setCaIdetapa("IACAG");
                     }
 
-                    if ($reporte->getCaEtapaActual()=="Contacto con nuestro Agente" &&
-                            $reporte->getCaTransporte()=="Marítimo") {
+                    if ($reporte->getCaEtapaActual() == "Contacto con nuestro Agente" &&
+                            $reporte->getCaTransporte() == "Marítimo") {
                         $reporte->setCaIdetapa("IMCAG");
                     }
                     $reporte->save();
@@ -2266,12 +675,12 @@ Departamento Comercial
         }
     }
 
-    /******************************************************************
- *
+    /*     * ****************************************************************
+     *
      *  Crea sentencias SQL Para crear foreign key en todos los
      *  campos usucreado usuactualizado
      *
-	***************************************************************** */
+     * **************************************************************** */
 
     public function executeCrearFKUsuarios() {
         $sql = "SELECT * FROM information_schema.columns
@@ -2323,7 +732,7 @@ where (column_name like 'ca_login%' ) and table_name like 'tb_%' and table_schem
      * Crea una tarea para cada ticket.
      */
 
-    public function executeAsignarTareaHelpdesk($request ) {
+    public function executeAsignarTareaHelpdesk($request) {
         exit();
         set_time_limit(0);
         $c = new Criteria();
@@ -2419,17 +828,17 @@ where (column_name like 'ca_login%' ) and table_name like 'tb_%' and table_schem
              * fchCreado = $cotizacion->getCafchSolicitud()." ".$cotizacion->getCaHoraSolicitud();
              * else{
              * fchCreado = $cotizacion->getCaFchcreado( );
-             }
+              }
              * tarea = $cotizacion->crearTareaIDGEnvioOportuno( $fchCreado );
              * f( $tarea ){
              * f( $cotizacion->getCaFchpresentacion( ) ){
              * tarea->setCaFchterminada( $cotizacion->getCaFchpresentacion() );
-             }
+              }
              * /else{
              * /	$tarea->setCaFchterminada( $tarea->getCaFchvencimiento() );
              * /}
              * tarea->save();
-             } */
+              } */
         }
 
         $this->setTemplate("blank");
@@ -2470,7 +879,7 @@ where (column_name like 'ca_login%' ) and table_name like 'tb_%' and table_schem
                     break;
             }
 
-            if ($etapa!="SEG") {
+            if ($etapa != "SEG") {
 
                 $cotizacion = $producto->getCotizacion();
                 $seguimiento = new CotSeguimiento();
@@ -2594,7 +1003,7 @@ ORDER BY ca_fchstatus ";
             $nombreComp = $contacto->getCaNombre();
 
             $array = explode(" ", trim($nombreComp));
-            if (count($array) ==2) {
+            if (count($array) == 2) {
                 $nombre = ucfirst(trim($array[1]));
                 $apellido = ucfirst(trim($array[0]));
 
@@ -2609,7 +1018,7 @@ ORDER BY ca_fchstatus ";
         }
     }
 
-    public function executeImportarTransportistas($request ) {
+    public function executeImportarTransportistas($request) {
         exit("Ya importados");
         $c = new Criteria();
         $c->addAscendingOrderByColumn(TransportistaPeer::CA_NOMBRE);
@@ -2623,7 +1032,7 @@ ORDER BY ca_fchstatus ";
             $id = null;
             foreach ($lineas as $linea) {
 
-                if ($linea->getCaNombre()==$transportista->getCaNombre()) {
+                if ($linea->getCaNombre() == $transportista->getCaNombre()) {
                     $id = $linea->getCaidlinea();
                 }
             }
@@ -2678,10 +1087,10 @@ ORDER BY ca_fchstatus ";
                 $contacto = new IdsContacto();
                 $nombres = explode(" ", $transContacto->getCaNombre());
 
-                if (count($nombres)==2) {
+                if (count($nombres) == 2) {
                     $nombre = $nombres[0];
                     $apellido = $nombres[1];
-                } elseif (count($nombres)==3) {
+                } elseif (count($nombres) == 3) {
                     $nombre = $nombres[0] . " " . $nombres[1];
                     $apellido = $nombres[2];
                 } else {
@@ -2703,7 +1112,7 @@ ORDER BY ca_fchstatus ";
             $idGrupo = $ids->getCaId();
             foreach ($lineas as $linea) {
 
-                if ($linea->getCaNombre()!=$transportista->getCaNombre()) {
+                if ($linea->getCaNombre() != $transportista->getCaNombre()) {
                     $id = $linea->getCaidlinea();
 
                     $ids = new Ids();
@@ -2799,7 +1208,7 @@ ORDER BY ca_fchstatus ";
             $transContactos = $agente->getContactoAgentes($c);
 
 
-            if (count($transContactos)==0) {
+            if (count($transContactos) == 0) {
                 $sucursal = new IdsSucursal();
                 $sucursal->setCaId($ids->getCaId());
                 $sucursal->setCaIdciudad($agente->getCaIdciudad());
@@ -2813,13 +1222,13 @@ ORDER BY ca_fchstatus ";
 
             foreach ($transContactos as $transContacto) {
 
-                if ($ult!=$transContacto->getCaIdciudad()) {
+                if ($ult != $transContacto->getCaIdciudad()) {
                     $ult = $transContacto->getCaIdciudad();
                     $sucursal = new IdsSucursal();
                     $sucursal->setCaId($ids->getcaId());
                     $sucursal->setCaIdciudad($transContacto->getCaIdciudad());
 
-                    if ($transContacto->getCaIdciudad()==$agente->getCaIdciudad()) {
+                    if ($transContacto->getCaIdciudad() == $agente->getCaIdciudad()) {
                         $sucursal->setCaPrincipal(true);
 
                         $sucursal->setCaDireccion($agente->getCaDireccion());
@@ -2880,7 +1289,7 @@ ORDER BY ca_fchstatus ";
          * contactosAg = ContactoAgentePeer::doSelect($c);
          * oreach( $contactosAg as $contacto ){
          * idContactos[$contacto->getCaIdcontacto()] = $contacto->getCaId
-         } */
+          } */
         $c = new Criteria();
         $c->addDescendingOrderByColumn(CotizacionPeer::CA_IDCOTIZACION);
         $c->add(CotizacionPeer::CA_DATOSAG, null, Criteria::ISNOTNULL);
@@ -2943,7 +1352,7 @@ ORDER BY ca_fchstatus ";
          * cho $tarea->getCaTitulo()."<br />";
          * tarea->setCaFchterminada(time());
          * tarea->save();
-         } */
+          } */
 
         $c = new Criteria();
         $c->addJoin(ReportePeer::CA_IDSEGUIMIENTO, NotTareaPeer::CA_IDTAREA);
@@ -2969,8 +1378,8 @@ ORDER BY ca_fchstatus ";
          * f( is_dir($file."/.svn") ){
          * /echo shell_exec("rm -rf ".$file."/.svn")."<br />";
          * cho "rm -rf ".$file."/.svn<br />";
-         }
-         } */
+          }
+          } */
         //$this->setTemplate("blank");
     }
 
@@ -3056,9 +1465,6 @@ ORDER BY ca_idproducto";
         while ($row = $stmt->fetch()) {
             $idcotizacion = $row['ca_idcotizacion'];
             $idproducto = $row['ca_idproducto'];
-
-
-
             if ($lastIdproducto != $idproducto) {
                 $lastIdproducto = $idproducto;
             } else {
@@ -3088,6 +1494,30 @@ ORDER BY ca_idproducto";
                 $stmt2->execute();
             }
         }
+    }
+
+    public function executeFixOtmReporte() {
+
+        /* $reportes = Doctrine::getTable("RepGasto")
+          ->createQuery("r")
+          ->where("ca_idrecargo=61")
+          ->execute();
+          echo count($reportes);
+
+         */
+        $con = Doctrine_Manager::getInstance()->connection();
+
+        $sql = "select * from tb_repgastos where ca_idrecargo=61";
+        $st = $con->execute($sql);
+        $rep = $st->fetchAll();
+
+
+        foreach ($rep as $r) {
+            
+        }
+        //echo count($rep);
+
+        exit();
     }
 
     /*
@@ -3208,7 +1638,7 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
             if (($lastRow['ca_idtrayecto'] != $row['ca_idtrayecto']
                     || $lastRow['ca_idconcepto'] != $row['ca_idconcepto']
                     || $lastRow['ca_idrecargo'] != $row['ca_idrecargo'] )
-                    && ! $lastRow['ca_fcheliminado'] && $lastRow['ca_consecutivo']
+                    && !$lastRow['ca_fcheliminado'] && $lastRow['ca_consecutivo']
             ) {
 
                 echo $lastRow['ca_idtrayecto'] . " " . $lastRow['ca_idconcepto'] . " " . $lastRow['ca_idrecargo'] . " " . $lastRow['ca_consecutivo'] . " " . $lastRow['ca_fcheliminado'] . "<br />";
@@ -3248,7 +1678,6 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
             $inoConcepto->setCaTipo($recargo->getCaTipo());
             $inoConcepto->setCaIncoterms($recargo->getCaIncoterms());
             $inoConcepto->save();
-
 
             $impoexpoParam = explode("|", $recargo->getCaImpoexpo());
 
@@ -3306,34 +1735,34 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
             $mod = $costo->getCaModalidad();
 
 
-            if ($impoexpo=="Importacion" && $transporte=="Aéreo" && $mod=="Consolidado") {
+            if ($impoexpo == "Importacion" && $transporte == "Aéreo" && $mod == "Consolidado") {
                 $impoexpo = "Importación";
                 $mod = "CONSOLIDADO";
             }
 
-            if ($impoexpo=="Importacion" && $transporte=="Aéreo" && $mod=="Guia Directa") {
+            if ($impoexpo == "Importacion" && $transporte == "Aéreo" && $mod == "Guia Directa") {
                 $impoexpo = "Importación";
                 $mod = "DIRECTO";
             }
 
-            if ($impoexpo=="Exportacion" && $transporte=="Aereo" && $mod=="Consolidado") {
+            if ($impoexpo == "Exportacion" && $transporte == "Aereo" && $mod == "Consolidado") {
                 $impoexpo = "Exportación";
                 $transporte = "Aéreo";
                 $mod = "CONSOLIDADO";
             }
 
-            if ($impoexpo=="Exportacion" && $transporte=="Maritimo" && $mod=="Consolidado") {
+            if ($impoexpo == "Exportacion" && $transporte == "Maritimo" && $mod == "Consolidado") {
                 $impoexpo = "Exportación";
                 $transporte = "Marítimo";
                 $mod = "LCL";
             }
 
-            if ($impoexpo=="Exportacion" && $transporte=="Terrestre" && $mod=="Consolidado") {
+            if ($impoexpo == "Exportacion" && $transporte == "Terrestre" && $mod == "Consolidado") {
                 $impoexpo = "Exportación";
                 $mod = "LCL";
             }
 
-            if ($impoexpo=="Aduanas" && $transporte=="Marítimo" && $mod=="Consolidado") {
+            if ($impoexpo == "Aduanas" && $transporte == "Marítimo" && $mod == "Consolidado") {
                 $impoexpo = "Importación";
                 $transporte = "Marítimo";
                 $mod = "ADUANA";
@@ -3358,7 +1787,7 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
                 $conceptoModalidad = new InoConceptoModalidad();
                 $conceptoModalidad->setCaIdconcepto($inoConcepto->getCaIdconcepto());
                 $conceptoModalidad->setCaIdmodalidad($modalidad->getCaIdmodalidad());
-                if ($costo->getCaComisionable()=="Sí") {
+                if ($costo->getCaComisionable() == "Sí") {
                     $conceptoModalidad->setCaComisionable(true);
                 } else {
                     $conceptoModalidad->setCaComisionable(false);
@@ -3386,8 +1815,8 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
              * conceptoModalidad->setCaIdconcepto( $inoConcepto->getCaIdconcepto() );
              * conceptoModalidad->setCaIdmodalidad( $modalidad->getCaIdmodalidad() );
              * conceptoModalidad->save();
-             }
-             } */
+              }
+              } */
         }
 
         $this->setTemplate("blank");
@@ -3409,24 +1838,24 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
-            if ($lastConcepto!=$row['ca_concepto']) {
+            if ($lastConcepto != $row['ca_concepto']) {
                 $lastConcepto = $row['ca_concepto'];
                 $idconceptoOrigen = $row['ca_idconcepto'];
             }
             $idconceptoDestino = $row['ca_idconcepto'];
             echo $row['ca_idconcepto'] . " " . $row['ca_concepto'] . "<br />";
 
-            if ($idconceptoOrigen!=$idconceptoDestino) {
+            if ($idconceptoOrigen != $idconceptoDestino) {
                 echo "Se unificara: " . $idconceptoOrigen . " con " . $idconceptoDestino . "<br />";
 
                 /* $recargoOrigen = Doctrine::getTable("InoConcepto")->find($idconceptoOrigen);
                  * recargoDestino = Doctrine::getTable("InoConcepto")->find($idconceptoDestino);
                  * f( $recargoDestino->getCaRecargolocal() ){
                  * recargoOrigen->setCaRecargolocal(true);
-                 }
+                  }
                  * f( $recargoDestino->getCaRecargoorigen() ){
                  * recargoOrigen->setCaRecargoorigen(true);
-                 } */
+                  } */
 
                 //$recargoOrigen->save();
 
@@ -3487,7 +1916,7 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
                 if ($i++ < 5) {
                     echo $fileContent;
                 }
-                if (strpos($fileContent, strtolower("Produced By Microsoft MimeOLE"))!==false) {
+                if (strpos($fileContent, strtolower("Produced By Microsoft MimeOLE")) !== false) {
                     echo "$file<br />";
                     rename($dir . "/" . $file, $dstDir . "/" . $file);
                 }
@@ -3512,7 +1941,7 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
             $i = 0;
             /* This is the correct way to loop over the directory. */
             while (false !== ( $file = readdir($handle))) {
-                if ($file =="." || $file=="..") {
+                if ($file == "." || $file == "..") {
                     continue;
                 }
                 $newfile = substr($file, 3, strpos($file, "_o") - 3);
@@ -3527,16 +1956,16 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
         $this->setTemplate("blank");
     }
 
-    /* * Inicia la sesion y verifica a los grupos a los que pertenece
+    /*     * Inicia la sesion y verifica a los grupos a los que pertenece
      *  el usuario el el directorio LDAP
      */
 
-    public function executeImportarLDAP( $request ) {
+    public function executeImportarLDAP($request) {
 
         $users = Doctrine::getTable("Usuario")->createQuery("u")->limit("3")->execute();
-        foreach($users as $user ){
+        foreach ($users as $user) {
             $username = $user->getCaLogin();
-            
+
             $gruposArray = array();
             $ldap_server = sfConfig::get("app_ldap_host");
             $auth_user = "cn=" . sfConfig::get("app_ldap_user") . ",o=coltrans_bog";
@@ -3557,221 +1986,196 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
 
                     //echo $attrs["count"] . " attributes held for this entry:<p>";
 
-                    for ($i=0; $i < $attrs["count"]; $i++) {
-                        echo "<b>".$attrs[$i] . "</b><br />";
+                    for ($i = 0; $i < $attrs["count"]; $i++) {
+                        echo "<b>" . $attrs[$i] . "</b><br />";
 
                         $values = ldap_get_values_len($connect, $entry, $attrs[$i]);
 
                         //echo $values["count"] . " entry.<br />";
 
-                        for ($j=0; $j < $values["count"]; $j++) {
+                        for ($j = 0; $j < $values["count"]; $j++) {
                             echo $values[$j] . "<br />";
-
-                        }                       
+                        }
                     }
 
                     /*
-                    $sr = ldap_search($connect, "o=coltrans_bog", "(&(objectClass=Person))");
-                    $info = ldap_get_entries($connect, $sr);
-                    $person = $info[0];
+                      $sr = ldap_search($connect, "o=coltrans_bog", "(&(objectClass=Person))");
+                      $info = ldap_get_entries($connect, $sr);
+                      $person = $info[0];
 
 
-                    print_r($info);*/
+                      print_r($info); */
                     echo "<br /><br /><br /><br />";
                 }
             }
-            
         }
         $this->setTemplate("blank");
     }
-    public function executeImportarExcel($request){
-        //$users = Doctrine::getTable("Usuario")->createQuery("u")->execute();
-        
-        //foreach($users as $user ){
-            //$username = $user->getCaLogin();
-            $file="C:\\Users\\alramirez\\Desktop\\ldap.csv";
-            $content=file_get_contents($file);
-            $lines=explode("\n",$content);
-            foreach($lines as $line){
-                //echo $line.'<br />';
-                $dato=explode(";",$line);
-                if( $dato[0] && $dato[0]!="dn"){
-                    $user = Doctrine::getTable("Usuario")->find( $dato[0] );
-                    if( !$user ){
-                        $user = new Usuario();
-                        $user->setCaLogin($dato[0]);
-                    }
-                    //echo $username."<br />";
-                    echo $dato[0]." ->".$dato[16]."<-<br />";
-                    $user->setCaTiposangre($dato[1]);
-                    $user->setCa_Telfamiliar($dato[2]);
-                    $user->setCa_Nombrefamiliar($dato[3]);
-                    $user->setCa_Movil($dato[4]);
-                    $user->setCa_Telparticular($dato[5]);
-                    $user->setCa_Direccion($dato[6]);
-                    $user->setCa_Nombres($dato[7]);
-                    $user->setCa_Apellidos($dato[8]);
-                    if( $dato[9] ){
-                        $user->setCa_Manager($dato[9]);
-                    }else{
-                        $user->setCa_Manager(null);
-                    }
-                    $user->setCa_TelOficina($dato[10]);
-                    $user->setCa_Nombre($dato[11]);
-                    $user->setCa_Cargo($dato[12]);
-                    if( $dato[13] ){
-                        $user->setCa_Departamento($dato[13]);
-                    }
-                    $user->setCa_Sucursal($dato[14]);
-                    $user->setCa_Extension($dato[15]);
-                    $user->setCa_Idsucursal(trim($dato[16]));
-                    $user->setCa_Cumpleanos($dato[17]);
-                    $user->setCa_Empresa($dato[18]);
-                    $user->setCa_Fchingreso($dato[19]);
-                    $user->setCa_Email($dato[20]);
-                    $user->setCa_Authmethod($dato[21]);
-                    //$user->setCa_Activo($dato[22]);
-                    $user->setCa_Activo(true);
-                    $user->setCa_Forcechange(false);
 
-                    $user->save();
+    public function executeImportarExcel($request) {
+        //$users = Doctrine::getTable("Usuario")->createQuery("u")->execute();
+        //foreach($users as $user ){
+        //$username = $user->getCaLogin();
+        $file = "C:\\Users\\alramirez\\Desktop\\ldap.csv";
+        $content = file_get_contents($file);
+        $lines = explode("\n", $content);
+        foreach ($lines as $line) {
+            //echo $line.'<br />';
+            $dato = explode(";", $line);
+            if ($dato[0] && $dato[0] != "dn") {
+                $user = Doctrine::getTable("Usuario")->find($dato[0]);
+                if (!$user) {
+                    $user = new Usuario();
+                    $user->setCaLogin($dato[0]);
                 }
+                //echo $username."<br />";
+                echo $dato[0] . " ->" . $dato[16] . "<-<br />";
+                $user->setCaTiposangre($dato[1]);
+                $user->setCa_Telfamiliar($dato[2]);
+                $user->setCa_Nombrefamiliar($dato[3]);
+                $user->setCa_Movil($dato[4]);
+                $user->setCa_Telparticular($dato[5]);
+                $user->setCa_Direccion($dato[6]);
+                $user->setCa_Nombres($dato[7]);
+                $user->setCa_Apellidos($dato[8]);
+                if ($dato[9]) {
+                    $user->setCa_Manager($dato[9]);
+                } else {
+                    $user->setCa_Manager(null);
+                }
+                $user->setCa_TelOficina($dato[10]);
+                $user->setCa_Nombre($dato[11]);
+                $user->setCa_Cargo($dato[12]);
+                if ($dato[13]) {
+                    $user->setCa_Departamento($dato[13]);
+                }
+                $user->setCa_Sucursal($dato[14]);
+                $user->setCa_Extension($dato[15]);
+                $user->setCa_Idsucursal(trim($dato[16]));
+                $user->setCa_Cumpleanos($dato[17]);
+                $user->setCa_Empresa($dato[18]);
+                $user->setCa_Fchingreso($dato[19]);
+                $user->setCa_Email($dato[20]);
+                $user->setCa_Authmethod($dato[21]);
+                //$user->setCa_Activo($dato[22]);
+                $user->setCa_Activo(true);
+                $user->setCa_Forcechange(false);
+
+                $user->save();
             }
-                //echo 'Los datos no coinciden'.'<br />';
-            
-            $this->setTemplate("blank");
+        }
+        //echo 'Los datos no coinciden'.'<br />';
+
+        $this->setTemplate("blank");
         //}
     }
 
-    public function executeImportarExcel1($request){
+    public function executeImportarExcel1($request) {
         //$users = Doctrine::getTable("Usuario")->createQuery("u")->execute();
-
         //foreach($users as $user ){
-            //$username = $user->getCaLogin();
-            $file="\\home\\alramirez\\Desktop\\ldap.csv";
-            $content=file_get_contents($file);
-            $lines=explode("\n",$content);
-            foreach($lines as $line){
-                //echo $line.'<br />';
-                $dato=explode(";",$line);
-                if( $dato[0] && $dato[0]!="dn"){
-                    $user = Doctrine::getTable("Usuario")->find( $dato[0] );
-                    if( !$user ){
-                        $user = new Usuario();
-                        $user->setCaLogin($dato[0]);
-                    }
-                    //echo $username."<br />";
-                    echo $dato[0]." ->".$dato[1]."<-".$dato[2]."<-<br />";
-                    $user->setCaCargo($dato[1]);
-                    if( $dato[2] ){
-                        $user->setCaDepartamento(trim($dato[2]));
-                    }
-                    $user->save();
+        //$username = $user->getCaLogin();
+        $file = "C:\\Users\\alramirez\\Desktop\\ldap.csv";
+        $content = file_get_contents($file);
+        $lines = explode("\n", $content);
+        foreach ($lines as $line) {
+            //echo $line.'<br />';
+            $dato = explode(";", $line);
+            if ($dato[0] && $dato[0] != "dn") {
+                $user = Doctrine::getTable("Usuario")->find($dato[0]);
+                if (!$user) {
+                    $user = new Usuario();
+                    $user->setCaLogin($dato[0]);
                 }
+                //echo $username."<br />";
+                echo $dato[0] . " ->" . $dato[1] . "<-" . $dato[2] . "<-<br />";
+                $user->setCaCargo($dato[1]);
+                if ($dato[2]) {
+                    $user->setCaDepartamento(trim($dato[2]));
+                }
+                $user->save();
             }
-                //echo 'Los datos no coinciden'.'<br />';
+        }
+        //echo 'Los datos no coinciden'.'<br />';
 
-            $this->setTemplate("blank");
+        $this->setTemplate("blank");
         //}
     }
-    
-    public function executeImportarExcelActivos($request){
-        $file="/home/alramirez/active.csv";
-            $content=file_get_contents($file);
-            $lines=explode("\n",$content);
-            foreach($lines as $line){
-                //echo $line.'<br />';
-                $dato=explode(";",$line);
-                    $activos = Doctrine::getTable("InvActivo")->find( $dato[0] );
-                    echo $dato[0]." ->".$dato[1]."<-";
-                    $activos->setCaPrgmantenimiento($dato[1]);
-                    $activos->save();
+
+    public function executeRedimensionarImagen($request) {
+        $users = Doctrine::getTable("Usuario")->createQuery("u")->execute();
+        foreach ($users as $user) {
+
+            if ($user->getCaActivo()) {
+                $username = $user->getCaLogin();
+
+                //indicamos el directorio donde se van a colgar las imágenes
+                $imagen = 'E:\\Desarrollo\\digitalFile\\Usuarios\\' . $username . '\\foto120x150.jpg';
+                $nombre_imagen_asociada = 'foto60x80.jpg';
+                $directorio = 'E:\\Desarrollo\\digitalFile\\Usuarios\\' . $username . '\\';
+                //establecemos los límites de ancho y alto
+                $nuevo_ancho = 60;
+                $nuevo_alto = 80;
+
+                //Recojo información de la imágen
+                $info_imagen = getimagesize($imagen);
+                $alto = $info_imagen[1];
+                $ancho = $info_imagen[0];
+                $tipo_imagen = $info_imagen[2];
+
+                //Determino las nuevas medidas en función de los límites
+                if ($ancho > $nuevo_ancho OR $alto > $nuevo_alto) {
+                    if (($alto - $nuevo_alto) > ($ancho - $nuevo_ancho)) {
+                        $nuevo_ancho = round($ancho * $nuevo_alto / $alto, 0);
+                        echo 'primer if';
+                    } else {
+                        $nuevo_alto = round($alto * $nuevo_ancho / $ancho, 0);
+                        echo 'segundo if';
+                    }
+                } else { //si la imagen es más pequeña que los límites la dejo igual.
+                    $nuevo_alto = $alto;
+                    $nuevo_ancho = $ancho;
+                    echo 'tercer if';
                 }
-            }
-    
 
-
-    public function executeRedimensionarImagen($request){
-       $users = Doctrine::getTable("Usuario")->createQuery("u")->execute();
-       foreach($users as $user ){
-              
-           if($user->getCaActivo()){
-               $username = $user->getCaLogin();
-
-               //indicamos el directorio donde se van a colgar las imágenes
-               $imagen = 'E:\\Desarrollo\\digitalFile\\Usuarios\\'.$username.'\\foto120x150.jpg' ;
-               $nombre_imagen_asociada = 'foto60x80.jpg';
-               $directorio = 'E:\\Desarrollo\\digitalFile\\Usuarios\\'.$username.'\\';
-               //establecemos los límites de ancho y alto
-               $nuevo_ancho = 60 ;
-               $nuevo_alto = 80 ;
-
-               //Recojo información de la imágen
-               $info_imagen = getimagesize($imagen);
-               $alto = $info_imagen[1];
-               $ancho = $info_imagen[0];
-               $tipo_imagen = $info_imagen[2];
-
-               //Determino las nuevas medidas en función de los límites
-               if($ancho > $nuevo_ancho OR $alto > $nuevo_alto)
-               {
-                 if(($alto - $nuevo_alto) > ($ancho - $nuevo_ancho))
-                 {
-                   $nuevo_ancho = round($ancho * $nuevo_alto / $alto,0) ;
-                   echo 'primer if';
-                 }
-                 else
-                 {
-                   $nuevo_alto = round($alto * $nuevo_ancho / $ancho,0);
-                   echo 'segundo if';
-                 }
-               }
-               else //si la imagen es más pequeña que los límites la dejo igual.
-               {
-                 $nuevo_alto = $alto;
-                 $nuevo_ancho = $ancho;
-                 echo 'tercer if';
-               }
-
-                 $imagen_nueva = imagecreatetruecolor($nuevo_ancho, $nuevo_alto);
-                 $imagen_vieja = imagecreatefromjpeg($imagen);
-                 //cambio de tamaño?
-                 imagecopyresampled($imagen_nueva, $imagen_vieja, 0, 0, 0, 0, $nuevo_ancho, $nuevo_alto, $ancho, $alto);
-                 if (!imagejpeg($imagen_nueva, $directorio . $nombre_imagen_asociada)) {
-                     echo "error";
-                 };
-                 //rename($directorio . "foto.jpg", $directorio . "foto120x150.jpg");
+                $imagen_nueva = imagecreatetruecolor($nuevo_ancho, $nuevo_alto);
+                $imagen_vieja = imagecreatefromjpeg($imagen);
+                //cambio de tamaño?
+                imagecopyresampled($imagen_nueva, $imagen_vieja, 0, 0, 0, 0, $nuevo_ancho, $nuevo_alto, $ancho, $alto);
+                if (!imagejpeg($imagen_nueva, $directorio . $nombre_imagen_asociada)) {
+                    echo "error";
+                };
+                //rename($directorio . "foto.jpg", $directorio . "foto120x150.jpg");
 
                 $this->setTemplate("blank");
             }
         }//return true; //si todo ha ido bien devuelve true
     }
-    public function executeIndexar($request){
 
-        $this->usuarios=Doctrine::getTable('Usuario')
-                        ->createQuery("u")
-                        ->addWhere('ca_activo = ?', true)
-                        ->execute();
+    public function executeIndexar($request) {
 
-        foreach( $usuarios as $usuario ){
-        
+        $this->usuarios = Doctrine::getTable('Usuario')
+                ->createQuery("u")
+                ->addWhere('ca_activo = ?', true)
+                ->execute();
+
+        foreach ($usuarios as $usuario) {
+            
         }
     }
 
-
-    public function executeRevisarCorreos( $request ){
+    public function executeRevisarCorreos($request) {
 
         set_time_limit(0);
-        $emails=Doctrine::getTable('Email')
-                        ->createQuery("e")
-                        ->addWhere('e.ca_tipo = ? OR e.ca_tipo = ?', array('Rep.MarítimoExterior', 'Rep.AéreoExterior'))
-                        ->addWhere('ca_fchenvio >= ? AND ca_fchenvio <=?', array("2010-10-03 00:00:00", "2010-10-04 15:00:00"))
-                        //->addWhere("e.ca_idemail = 520403")
-                        ->execute();
+        $emails = Doctrine::getTable('Email')
+                ->createQuery("e")
+                ->addWhere('e.ca_tipo = ? OR e.ca_tipo = ?', array('Rep.MarítimoExterior', 'Rep.AéreoExterior'))
+                ->addWhere('ca_fchenvio >= ? AND ca_fchenvio <=?', array("2010-10-03 00:00:00", "2010-10-04 15:00:00"))
+                //->addWhere("e.ca_idemail = 520403")
+                ->execute();
 
-        echo count( $emails );
-        $i= 0;
-        foreach( $emails as $email ){
+        echo count($emails);
+        $i = 0;
+        foreach ($emails as $email) {
             $flag = false;
 
             //echo "<b>Enviando " . $i++ . "</b>	emailid: " . $email->getCaIdemail() . " Fch: " . $email->getCaFchenvio() . " <br />From: " . $email->getCaFrom() . "<br />";
@@ -3781,8 +2185,7 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
         $this->setTemplate("blank");
     }
 
-
-    public function executeGearmanTest(){
+    public function executeGearmanTest() {
         $this->setTemplate("blank");
 
 
@@ -3791,961 +2194,2105 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
 
         // this blocks until a worker do the job and return result
         $result = sfGearmanClient::getInstance()->task('reverse1', 'Hello!');
-
-
     }
+    public function executeEmailRefMaritimo() {
+         $this->setLayout("email");
+    }
+    
+    public function executeEmailRefxNotificar(sfWebRequest $request) {
 
-
-
-    /*
-     *
-     *
-     * @author: Andres Botero
-     */
-
-    public function executeCierresTickets($request) {
-        $q = Doctrine::getTable("HDeskTicket")
-                        ->createQuery("t")
-                        ->select("t.*")
-                        ->addWhere("t.ca_closedat IS NULL")
-                        ->addWhere("t.ca_action=?", "Cerrado")
-                        //->limit(100)
-                        ->addOrderBy("t.ca_idticket ASC");
-                        
-        
-        $tickets = $q->execute();
-
-
-        foreach( $tickets as $ticket ){
-
-
-
-            $response = Doctrine::getTable("HDeskResponse")
-                            ->createQuery("r")
-                            ->select( "MAX(ca_createdat)")
-                            ->addWhere("r.ca_idticket = ? ", $ticket->getCaIdticket())
-                            ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
-                            ->execute();
-
-
-            if( $response ){
-                echo $ticket->getCaIdticket()." ---->".$response."<br />";
-                $ticket->setCaClosedat($response);
-                $ticket->save();
-            }else{
-                $ticket->setCaClosedat($ticket->getcaOpened());
-                $ticket->save();
+        if ($request->isMethod('post')) {
+            $refs=$request->getParameter("referencia");
+            foreach($refs as $r)
+            {
+                $master = Doctrine::getTable("InoMaestraSea")->find( $r );
+                //echo $master->getCaReferencia();
+                $nevios = $master->getProperty("nenvios")+1;
+                $master->setProperty("nenvios", $nevios);
+                $master->save();
             }
-
         }
-        $this->setTemplate("blank");
+
+
+        $databaseConf = sfYaml::load(sfConfig::get('sf_config_dir') . '/databases.yml');
+        $dsn      = explode("=",$databaseConf ['all']['doctrine']['param']['dsn']);        
+        $host = $dsn[count($dsn)-1];
+        $con = Doctrine_Manager::connection(new PDO("pgsql:dbname=Coltrans;host={$host}", 'Administrador', 'V9p0%rRc9$'));
+        
+        $fecha=  Utils::addDate(date("Y-m-d"), 0, -2);
+        $fecha1=  Utils::addDate(date("Y-m-d"), 0, -3);
+        $sql="SELECT r.ca_idreporte,r.ca_consecutivo,r.ca_version,r.ca_versiones,r.ca_fchllegada,r.ca_fchsalida,ca_ciuorigen,ca_ciudestino,ca_login,ca_nombre_cli,r.ca_usucreado,r.ca_fchcreado,
+                (EXTRACT(EPOCH FROM age(date(r.ca_fchllegada),date(r.ca_fchsalida) ) )/86400 ) dtransito,
+                (EXTRACT(EPOCH FROM age('now()',date(r.ca_fchsalida) ) )/86400) dtransitoactual                
+            from vi_reportes2 r
+            where r.ca_fchcreado>'".$fecha."' and ca_consecutivo not in(
+            select ca_consecutivo from tb_reportes r,tb_inoclientes_sea ic where r.ca_fchcreado>'".$fecha1."' and r.ca_idreporte=ic.ca_idreporte
+            )
+            and ca_impoexpo='Importación' and ca_transporte='Marítimo'
+            and r.ca_tiporep<>4 and r.ca_fchllegada is not null
+            /*and ( SELECT max(rr.ca_version) AS max
+                FROM tb_reportes rr
+               WHERE r.ca_consecutivo::text = rr.ca_consecutivo::text)=r.ca_version
+               and r.ca_fchllegada>now()*/
+            order by r.ca_fchllegada,r.ca_consecutivo , r.ca_version desc ";
+        //echo $sql;
+        $st = $con->execute(utf8_encode($sql));
+        $reportes = $st->fetchAll();
+        $nrep="0";
+        $this->reportes=array();
+        foreach($reportes as $k=>$r )
+        {
+            //echo $nrep."--".$r["ca_consecutivo"]."<br>";
+            if($r["ca_versiones"]==$r["ca_version"] && Utils::compararFechas(date("Y-m-d"),$r["ca_fchllegada"])<=0 )
+            {
+//                if($r["ca_fchllegada"])
+//                    echo $r["ca_consecutivo"]."::::".date("Y-m-d") ."::::::::". $r["ca_fchllegada"]."::::::::".Utils::compararFechas(date("Y-m-d"),$r["ca_fchllegada"])."<br>";
+                $r["%transito"]=round((($r["dtransitoactual"]/$r["dtransito"]))*100);
+                $this->reportes[]=$r;
+            }
+            $nrep=$r["ca_consecutivo"];
+        }        
+        //print_r($this->reportes);
+        
+        $sql="select m.ca_referencia,m.ca_fchreferencia,m.ca_fchcreado,m.ca_provisional,m.ca_modalidad,m.ca_motonave,m.ca_fchembarque,
+                m.ca_fcharribo,m.ca_usucreado,ori.ca_ciudad as ca_ciu_origen,des.ca_ciudad as ca_ciu_destino,u.ca_idsucursal,
+                m.ca_fchmuisca
+                ,m.ca_estado,m.ca_impoexpo
+                ,(EXTRACT(EPOCH FROM age('now()',date(m.ca_fchcreado) ) )/86400 ) dantecedentesactual                
+                ,(select ca_dias from tb_entrega_antecedentes ea where ori.ca_idtrafico=ea.ca_idtrafico order by ca_idciudad limit 1) dantecedentes
+                ,((EXTRACT(EPOCH FROM age('now()',m.ca_fchembarque) ) )/86400 ) dtransitoactual
+                ,((EXTRACT(EPOCH FROM age(date(m.ca_fcharribo),date(m.ca_fchembarque)) ) )/86400 ) dtransito,
+                m.ca_fchenvio,m.ca_propiedades
+                from tb_inomaestra_sea m
+                JOIN tb_ciudades ori ON ori.ca_idciudad = m.ca_origen
+                JOIN tb_ciudades des ON des.ca_idciudad = m.ca_destino
+                JOIN control.tb_usuarios u ON u.ca_login = m.ca_usucreado
+                where m.ca_fchcreado>='2011-03-01'
+                 and m.ca_provisional = true
+                order by m.ca_referencia";
+        
+
+        //echo $sql;
+        $st = $con->execute(utf8_encode($sql));
+            
+        $this->referencias = $st->fetchAll();
+        
+        $this->refBloqueadas=array();
+        $this->refRechazadas=array();
+        $this->refSinMuisca=array();
+        $this->refSinAceptar=array();
+        foreach($this->referencias as $ref)
+        {
+            if( trim($ref["ca_provisional"])=="1" )
+            {
+                $nenvios=0;
+                /*$prop=explode(" ", $ref["ca_propiedades"]);
+                foreach( $prop as $p)
+                {
+                    
+                }
+                 * 
+                 */
+                $array = sfToolkit::stringToArray( $ref["ca_propiedades"] );
+                
+                $ref["nenvios"]=$array["nenvios"];
+                $ref["ttransito"]=$ref["dtransito"];
+                $ref["%transito"]=(($ref["dtransitoactual"]/$ref["dtransito"]))*100;
+                $ref["ttransitoctual"]=$ref["dtransitoactual"];
+                
+                $ref["tantecedentes"]=$ref["dantecedentes"];
+                $ref["%antecedentes"]=(($ref["dantecedentesactual"]/$ref["dantecedentes"]))*100;
+                $ref["tantecedentesctual"]=$ref["dantecedentesactual"];
+                
+                if( $ref["ca_estado"]=="R" )
+                    $this->refRechazadas[]=$ref;
+                else if( $ref["ca_estado"]=="E" )
+                    $this->refSinAceptar[]=$ref;
+                else 
+                    $this->refBloqueadas[]=$ref;
+            }
+        }
+        //$this->setLayout("email");
     }
 
-
-
-    /*
-     *
-     *
-     * @author: Andres Botero
-     */
-
-    public function executePruebaEnvioEmail($request) {        
-
-        $user = $this->getUser();
-
+    public function executeEnvioEmails() {
+        $this->setLayout("email");
+        //$this->getRequest()->setParameter('tipo',"INSTRUCCIONES");
+        //$this->getRequest()->setParameter('mensaje',$request->getParameter("mensaje"));
+        //$this->getRequest()->setParameter('html',$html);
+        //$request->setParameter("format", "email");
+//        $html="<div><caption>A continuacion encontrara el listado de Referencias por Desbloquear y el Libro de referencias</caption></div>";
+/*        $html="<div><caption>A continuacion encontrara el listado de Referencias </caption></div>";
+        //$html.= sfContext::getInstance()->getController()->getPresentationFor( 'pruebas', 'emailRefMaritimo');
+        $html.= sfContext::getInstance()->getController()->getPresentationFor( 'pruebas', 'emailRefxNotificar');
         $email = new Email();
-        $email->setCaUsuenvio($user->getUserId());
-        $email->setCaTipo("Envío de cotización");
-        $email->setCaIdcaso($this->getRequestParameter("id"));
-        $email->setCaFrom($user->getEmail());
-        $email->setCaFromname($user->getNombre());
-        $email->setCaSubject("asdsa");
-       
-
-        $email->setCaReplyto($user->getEmail());
-
-        $email->addTo($user->getEmail());
-
-       
-        //$mensaje = utf8_decode($this->getRequestParameter("mensaje")."\n\n");
-        $mensaje = "Text message";
+        $asunto = "Circular Informativa";
+        $emailFrom = "no-reply@coltrans.com.co";
         
-        $email->setCaBody($mensaje );
-        $email->setCaBodyhtml(Utils::replace($mensaje));
+        $email->setCaUsuenvio("maquinche");
+                $email->setCaFrom($emailFrom);
+                $email->setCaFromname("COLTRANS S.A.S.");
+                $email->setCaSubject($asunto);
+                $email->setCaAddress("maquinche@coltrans.com.co");
+                //$email->setCaAddress("bbetancourt@coltrans.com.co");
+                //$email->setCaAddress("maquinche@hotmail.com");
+                //$email->setCaAddress("gbedoya@coltrans.com.co");
+                //$email->setCaAddress("maquinche@coltrans.com.co");
+                //$email->addTo("drearam51@gmail.com");
+                //$email->addTo("nconsuegra@coltrans.com.co");
+                //$email->addTo("cjmontero@coltrans.com.co");
+                //$email->addTo("parteaga@coltrans.com.co");
+                //$email->addTo("GW_VENTASBOG@coltrans.com.co");
+                //$email->addTo("maquincher@hotmail.com");
+                $email->setCaBodyhtml($html);
+                //$email->setCaBodyhtml($html);
+                $email->setCaTipo("Comunicado");
+                //$email->send();
+                //echo "sdsdf";
+                $email->save();
+        echo $html;
+        exit;
+  */
+        //exit;
+        error_reporting(E_ALL);
+        $filecontrol = $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "pruebas" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "control.txt";
 
-        $email->save(); //guarda el cuerpo del mensaje
-
-        $cotizacion = Doctrine::getTable("Cotizacion")->find(70);
-
-        if (!$cotizacion->enBlanco()) {
-            $directory = $email->getDirectorio();
-            if (!is_dir($directory)) {
-                @mkdir($directory, 0777, true);
-            }
-
-            $fileName = "cotizacion" . $cotizacion->getCaConsecutivo() . ".pdf";
-            if (file_exists($fileName)) {
-                @unlink($fileName);
-            }
-
-            $this->getRequest()->setParameter('id', $cotizacion->getCaIdcotizacion());
-            $this->getRequest()->setParameter('filename', $directory . $fileName);
-            sfContext::getInstance()->getController()->getPresentationFor('cotizaciones', 'generarPDF');
-
-            $email->addAttachment($email->getDirectorioBase() . $fileName);
+        if (file_exists($filecontrol)) {
+            $inicio = file_get_contents($filecontrol);
         }
+        if (!$inicio)
+            $inicio = 0;
 
-       
-        $email->save();
+//        $inicio = 53;
+        $con = Doctrine_Manager::getInstance()->connection();
 
-        $email->send();
+        $nreg = 120;
+/*
+        $sql = "select c.ca_idcliente,c.ca_compania, con.ca_email,ca_coltrans_std,ca_colmas_std  from vi_clientes c
+            inner join tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
+            where (c.ca_coltrans_std = 'Activo'  or c.ca_colmas_std = 'Activo' )  and 
+            c.ca_idcliente in 
+                (select h.ca_idcliente from tb_inomaestra_sea m  
+                inner join tb_inoclientes_sea h on m.ca_referencia=h.ca_referencia
+                where m.ca_origen ='MIA-0305' and m.ca_destino='CTG-0005')        
+            order by 2,3 limit $nreg offset $inicio";
+*/      
+        $sql = "select c.ca_idcliente,c.ca_compania, con.ca_email,ca_coltrans_std,ca_colmas_std  from vi_clientes c
+            inner join tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
+            where (c.ca_coltrans_std = 'Activo'  or c.ca_colmas_std = 'Activo' )          
+            order by 2,3 limit $nreg offset $inicio";
 
-        $this->setTemplate("blank");
+/*        
+        $sql = "select c.ca_idcliente,c.ca_compania, con.ca_email
+            from vi_clientes_reduc c
+            inner join tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
+            order by 2,3 limit $nreg offset $inicio";
+*/        
+/*        $sql="select i.ca_nombre,c.* from ids.tb_ids i
+inner join ids.tb_proveedores p on p.ca_idproveedor=i.ca_id
+inner join ids.tb_sucursales s on s.ca_id=i.ca_id
+inner join ids.tb_contactos c on c.ca_idsucursal=s.ca_idsucursal
+where c.ca_email like '%@%'
+order by 2,3 limit $nreg offset $inicio";*/
+//        echo $sql;
+        $st = $con->execute($sql);
+        $clientes = $st->fetchAll();
+        //echo count($clientes);
+        //if($clientes) {
 
-    }
+            /* $html='
+              <html>
+              <head>
+              <title></title>
+              <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+              <style>
+              .contentheading {
+              border-bottom: 1px solid #E4E4E4;
+              color: #1C3A56;
+              font-size: 2.3em;
+              margin: 0 0 14px;
+              padding: 8px 0;
+              }
+              template.css (línea 211)
+              h2, .componentheading {
+              color: #1C3A56;
+              font-size: 2.2em;
+              font-weight: lighter;
+              line-height: 1.4em;
+              margin: 0;
+              padding: 6px 0;
+              }
+              .tableMap {
+              border: 1px solid #E4E4E4;
+              background-color: #fff;
+              }
+              .tableMap td {
+              color: #888888;
+              text-align: left;
+              font-family: Verdana;
+              font-size: 11px;
+              }
+              .tableMap th {
+              color: #FFFFFF;
+              text-align: center;
+              font-family: Verdana;
+              font-size: 12px;
+              font-weight: bolder;
+              background-color: #003DB8;
+              }
+              .destacado{
+              color: #000000;
+              font-family: Verdana;
+              font-size: 11px;
+              font-weight: bolder;
+              }
+              .rojo
+              {
+              color: #FF3333 ;
+              font-family: Verdana;
+              }
+
+              </style>
+              </head>
+              <body bgcolor="#5599BB">
+              <table class="tableMap measure_converter" width="50%" align="center">
+              <tr>
+              <td>
+              <img src="http://www.coltrans.com.co/templates/coltrans/images/logo_coltrans.png" />
+              </td>
+              </tr>
+              <tr>
+              <td style="padding:20px"  >
+              <div style="text-align: center;font-size: 15px">
 
 
-    public function executePruebasAlertas(){
-        exit();
-        /*
-         * Alertas.recordatorio = select ca_referencia, ca_cuerpoalerta, ca_fchvencimiento, ca_usucreacion from tb_expo_alertas where ca_fchrecordatorio <= ? and ca_fchvencimiento >= ?
-            Alertas.vencimiento  = select ca_referencia, ca_cuerpoalerta, ca_fchvencimiento, ca_usucreacion from tb_expo_alertas where ca_fchvencimiento = ?
-         */
+              Este mes t    enemos una oferta que no podr&aacute; desaprovechar<br>
+              <span class="rojo" >
+              Pregunte por nuestra oferta especial desde Viracopos Brasil para +500 kgl<br>
+              Vuelo diario a Bogota
+              </span>
+              <br><br><br>
 
-        $hoy = date("Y-m-d");
-        $alertas = Doctrine::getTable("ExpoAlerta")
-                            ->createQuery("a")
-                            ->addWhere("a.ca_fchrecordatorio <= ? and a.ca_fchvencimiento >= ?", array($hoy, $hoy))
-                            ->execute();
+              <img src="https://www.coltrans.com.co/images/noticias/estatua-y-bandera-de-brasil.jpg"><br><br>
 
-        foreach( $alertas as  $alerta ){
-            $user = $alerta->getUsuario();
-            $email = new Email();
-            $email->setCaUsuenvio($user->getCaLogin());
-            $email->setCaTipo("Alerta Expo");
-            //$email->setCaIdcaso("");
-            $email->setCaFrom($user->getCaEmail());
-            $email->setCaFromname($user->getCaNombre());
-
-            if( $alerta->getCaFchvencimiento()==$hoy ){
-                $txt = "Vencimiento";
-                $mensaje = "La alerta asignada a ".$user->getCaNombre()." vence hoy.\n\nInformación de la tarea : ".$alerta->getCaCuerpoalerta()."\n\nFecha de Vencimiento : \n\n".Utils::fechaMes($alerta->getCaFchvencimiento())."\n\n";
-            }else{
-                $txt = "Recordatorio";
-                $mensaje = "Información de la tarea : ".$alerta->getCaCuerpoalerta()."\n\nFecha de Vencimiento : \n\n".Utils::fechaMes($alerta->getCaFchvencimiento())."\n\n";
-            }
-            $email->setCaSubject($txt." : Alerta de la referencia ".$alerta->getCaReferencia());
+              Sin compromiso recibirá la información que necesita YA MISMO
 
 
-            $email->setCaReplyto($user->getCaEmail());
+              <br><br>
+              GEIMAR A. BEDOYA<br>
+              Representante Comercial<br>
+              COLTRANS S.A.S<br>
+              Movil: 3124783288<br>
+              Email: gbedoya@coltrans.com.co<br>
+              Cr. 98 No. 25G &mdash; 10 Int.18 <br>
+              Bogot&aacute;  D. C.   Colombia<br>
+              PBX    57 1  &mdash;  423  9300<br>
+              Fax 57 1  &mdash;  423  9323<br>
+              <a href="http://www.coltrans.com.co/">www.coltrans.com.co<a><br>
 
-            $email->addTo($user->getCaEmail());
-
-
-            //$mensaje = utf8_decode($this->getRequestParameter("mensaje")."\n\n");
-
-            
-
-            $email->setCaBody($mensaje.$user->getFirma() );
-            $email->setCaBodyhtml(Utils::replace($mensaje).$user->getFirmaHtml());
-
-            $email->save();
-            $email->send();  
-
-        }
-
-        $this->setTemplate("blank");
-
-    }
-
-
-
-    public function executeMigrarInoAereo(){
-        
-    }
-    
-    
-    public function executeImportarInv1($request){
-      
-        /*$file="/home/abotero/hauri.csv";
-        $content=file_get_contents($file);
-        $lines=explode("\n",$content);
-        foreach($lines as $line){                
-
-            $activo = Doctrine::getTable("InvActivo")
-                      ->createQuery("a")  
-                      ->addWhere("a.ca_identificador = ? " , $line )
-                      ->fetchOne();
-
-            if( $activo ){ 
-                echo "INSERT INTO inv.tb_asignaciones_software (ca_idactivo, ca_idequipo, ca_usucreado, ca_fchcreado) VALUES (622, ".$activo->getCaIdactivo().", 'abotero', '".date("Y-m-d H:i:s")."' );";                    
-                echo "<br />";
-            }else{
-                //echo $line.'<br />';                    
-            }
-
-        }*/
-        
-        
-        $file="/home/abotero/sophos.csv";
-        $content=file_get_contents($file);
-        $lines=explode("\n",$content);
-        foreach($lines as $line){                
-
-            $activo = Doctrine::getTable("InvActivo")
-                      ->createQuery("a")  
-                      ->addWhere("a.ca_identificador = ? " , $line )
-                      ->fetchOne();
-
-            if( $activo ){ 
-                echo "INSERT INTO inv.tb_asignaciones_software (ca_idactivo, ca_idequipo, ca_usucreado, ca_fchcreado) VALUES (621, ".$activo->getCaIdactivo().", 'abotero', '".date("Y-m-d H:i:s")."' );";                    
-                echo "<br />";
-            }else{
-                //echo $line.'<br />';                    
-            }
-
-        }
-            //echo 'Los datos no coinciden'.'<br />';
-
-        $this->setTemplate("blank");
-        
-    }
-    
-    
-    
-    public function executeImportINOExpo(){
-        exit();
-        //Creado para Perú
-        $masters = Doctrine::getTable("InoMaestraExpo")
-                    ->createQuery("m")
-                    ->execute();
-        
-        
-        $conn = Doctrine::getTable("Reporte")->getConnection();
-        $conn->beginTransaction();
-        foreach( $masters as $m ){
-            
-            
-            $newMaster = new InoMaster();
-            $newMaster->setCaImpoexpo(Constantes::EXPO);
-            $newMaster->setCaReferencia($m->getCaReferencia());            
-            $newMaster->setCaFchreferencia($m->getCaFchreferencia());            
-            $newMaster->setCaMaster($m->getCaReferencia());
-            //$newMaster->setCaFchmaster($m->getCaFchreferencia());
-            if( $m->getCaVia()=="Aereo" ){
-                $newMaster->setCaTransporte(Constantes::AEREO);
-            }
-            
-            if( $m->getCaVia()=="Maritimo" ){
-                $newMaster->setCaTransporte(Constantes::MARITIMO);
-            }
-            
-            $newMaster->setCaModalidad($m->getCaModalidad());
-            $newMaster->setCaOrigen($m->getCaOrigen());
-            $newMaster->setCaDestino($m->getCaDestino());
-            $newMaster->setCaPeso($m->getCaPeso());
-            $newMaster->setCaVolumen($m->getCaPesovolumen()); 
-                       
-            $newMaster->setCaFchcreado($m->getCaFchcreado());
-            $newMaster->setCaUsucreado($m->getCaUsucreado());
-            $newMaster->setCaFchactualizado($m->getCaFchactualizado());
-            $newMaster->setCaUsuactualizado($m->getCaUsuactualizado());
-            
-            $reporte = ReporteTable::retrieveByConsecutivo($m->getCaConsecutivo());
-            
-            $newMaster->setCaIdagente( $reporte->getCaIdagente() );
-            $newMaster->setCaIdlinea( $reporte->getCaIdlinea()?$reporte->getCaIdlinea():0 );
-            $newMaster->stopBlaming();
-            $newMaster->save($conn);
-            echo $m->getCaReferencia()." consecutivo: ".$reporte->getCaConsecutivo()." idlinea: ".$reporte->getCaIdlinea()."<br />";     
-            
-            
-            $newHouse = new InoHouse();
-            $newHouse->setCaIdmaster( $newMaster->getCaIdmaster() );
-            $newHouse->setCaIdcliente( $m->getCaIdcliente() );
-            $newHouse->setCaProducto($m->getCaProducto());
-            $newHouse->setCaIdreporte( $reporte->getCaIdreporte() );
-            $newHouse->setCaVendedor($reporte->getCaLogin());
-            $newHouse->setCaDoctransporte($m->getCaReferencia());
-            $newHouse->setCaFchdoctransporte($m->getCaFchreferencia());
-            
-            
-            $newHouse->setCaPeso($m->getCaPeso());
-            $newHouse->setCaVolumen($m->getCaPesovolumen());
-            $newHouse->setCaNumorden($reporte->getCaOrdenClie());
-            
-            $ultStatus = $reporte->getUltimoStatus();
-            if( $ultStatus ){
-                $newHouse->setCaDoctransporte( $ultStatus->getCaDoctransporte() );
-                $newHouse->setCaNumpiezas( $ultStatus->getCaNumpiezas() );
-            }else{
-                $newHouse->setCaNumpiezas( 0 );
-            }
-            
-            
-            $newHouse->setCaFchcreado($m->getCaFchcreado());
-            $newHouse->setCaUsucreado($m->getCaUsucreado());
-            $newHouse->setCaFchactualizado($m->getCaFchactualizado());
-            $newHouse->setCaUsuactualizado($m->getCaUsuactualizado());
-            
-            $newHouse->stopBlaming();
-            $newHouse->save( $conn );
-            
-            
-            $ingresos = Doctrine::getTable("InoIngresosExpo")
-                    ->createQuery("c")
-                    ->addWhere("c.ca_referencia = ?", $m->getCaReferencia() )
-                    ->execute();
-            
-            
-            foreach( $ingresos as $i ){
-                
-                $newIng = new InoComprobante();                
-                $newIng->setCaIdhouse( $newHouse->getCaIdhouse() );    
-                $newIng->setCaId( $newHouse->getCaIdcliente() );   
-                $newIng->setCaIdtipo( 1 );
-                $newIng->setCaConsecutivo( $i->getCaFactura() );
-                $newIng->setCaFchcomprobante( $i->getCaFchfactura() );
-                if( $i->getCaTasacambio()==1 ){
-                    $newIng->setCaIdmoneda("PEN");
-                }else{
-                    $newIng->setCaIdmoneda("USD");
-                }
-                $newIng->setCaTcambio( $i->getCaTasacambio() );
-                $newIng->setCaValor( $i->getCaValor() );
-                //$newIng->setCaIdMoneda( $i->getCaIdmoneda() );
-                $newIng->setCaObservaciones( $i->getCaObservaciones() );                               
-                $newIng->setCaFchcreado($i->getCaFchcreado());
-                $newIng->setCaUsucreado($i->getCaUsucreado());
-                $newIng->setCaFchactualizado($i->getCaFchactualizado());
-                $newIng->setCaUsuactualizado($i->getCaUsuactualizado());
-                $newIng->stopBlaming();
-                $newIng->save( $conn );
-                
-               
-            }
-            
-            $costos = Doctrine::getTable("InoCostoExpo")
-                    ->createQuery("c")
-                    ->addWhere("c.ca_referencia = ?", $m->getCaReferencia() )
-                    ->execute();
-            
-            foreach( $costos as $c ){
-                
-                $newCosto = new InoCosto();
-                $newCosto->setCaIdmaster( $newMaster->getCaIdmaster() );
-                $newCosto->setCaIdcosto( $c->getCaIdcosto() );
-                $newCosto->setCaFactura( $c->getCaFactura() );
-                $newCosto->setCaFchfactura( $c->getCaFchfactura() );
-                $newCosto->setCaNeto( $c->getCaNeta() );
-                $newCosto->setCaVenta( $c->getCaVenta() );
-                $newCosto->setCaIdmoneda( $c->getCaMoneda() );
-                $newCosto->setCaIdproveedor( $c->getCaIdproveedor() );
-                $newCosto->setCaTcambio( $c->getCaIdproveedor() );
-                $newCosto->setCaFchcreado($c->getCaFchcreado());
-                $newCosto->setCaUsucreado($c->getCaUsucreado());
-                $newCosto->setCaFchactualizado($c->getCaFchactualizado());
-                $newCosto->setCaUsuactualizado($c->getCaUsuactualizado());
-                
-                $ingreso = Doctrine::getTable("InoComprobante")
-                    ->createQuery("c")
-                    ->innerJoin("c.InoHouse h")    
-                    ->innerJoin("h.InoMaster m")    
-                    ->addWhere("c.ca_consecutivo like ?", $c->getCaFacturaing()."%" )
-                    ->addWhere("m.ca_referencia = ? ", $c->getCaReferencia() )    
-                    ->fetchOne();
-                
-                if( $ingreso ){
-                    $newCosto->setCaTcambio($ingreso->getCaTcambio());
-                    $newCosto->setCaIdcomprobante($ingreso->getCaIdcomprobante());
-                }else{
-                    $newCosto->setCaTcambio(1);
-                }
-                $newCosto->setCaTcambioUsd(1);
-                
-                $newCosto->stopBlaming();
-                $newCosto->save( $conn );
-                
-                if( $c->getCaVenta()-$c->getCaNeta()>0 ){
-                    $util = new InoUtilidad();
-                    $util->setCaValor( $c->getCaVenta()-$c->getCaNeta() );
-                    $util->setCaIdhouse( $newHouse->getCaIdhouse() );
-                    $util->setCaIdinocosto( $newCosto->getCaIdinocosto() );
-                    $util->save();
-                }
-            } 
-        }
-            
-         $conn->commit();            
-        
-        $this->setTemplate("blank");
-    }
-    
-    
-    
-    public function executeImportarCostosEnConceptos($request){
-        
-        $costos=Doctrine::getTable('Costo')
-                        ->createQuery("c")                        
-                        ->addWhere("c.ca_impoexpo = ?", 'Importación')
-                        ->addWhere("c.ca_transporte = ?", 'Aéreo')
-                        ->execute();
-        
-        
-        $conn = Doctrine::getTable("InoCosto")->getConnection();
-        $conn->beginTransaction();
-        foreach( $costos as $c ){
-            $concepto = new InoConcepto();
-            $concepto->setCaIdconcepto( $c->getCaIdcosto() );
-            $concepto->setCaConcepto( $c->getCaCosto() );
-            $concepto->setCaCosto( true );
-            $concepto->save( $conn );
-           
-          
-            if( $c->getCaTransporte()==Constantes::MARITIMO ){
-                $cmodalidad = new InoConceptoModalidad();
-                $cmodalidad->setCaIdconcepto( $c->getCaIdcosto() );
-                $cmodalidad->setCaIdmodalidad( 2 );            
-                $cmodalidad->save( $conn );
-                
-                $cmodalidad = new InoConceptoModalidad();
-                $cmodalidad->setCaIdconcepto( $c->getCaIdcosto() );
-                $cmodalidad->setCaIdmodalidad( 3 );            
-                $cmodalidad->save( $conn );
-                
-                $cmodalidad = new InoConceptoModalidad();
-                $cmodalidad->setCaIdconcepto( $c->getCaIdcosto() );
-                $cmodalidad->setCaIdmodalidad( 4 );            
-                $cmodalidad->save( $conn );
-            }
-            
-            if( $c->getCaTransporte()==Constantes::AEREO ){
-                $cmodalidad = new InoConceptoModalidad();
-                $cmodalidad->setCaIdconcepto( $c->getCaIdcosto() );
-                $cmodalidad->setCaIdmodalidad( 7 );            
-                $cmodalidad->save( $conn );
-                
-                $cmodalidad = new InoConceptoModalidad();
-                $cmodalidad->setCaIdconcepto( $c->getCaIdcosto() );
-                $cmodalidad->setCaIdmodalidad( 8 );            
-                $cmodalidad->save( $conn );
-            }
-            
-            
-            
-        }
-        
-        $conn->commit();
-        
-        $this->setTemplate("blank");
-    }
-    
-    public function executeFixComprobantesDetalles($request){
-        
-        exit();
-        $comp =Doctrine::getTable('InoComprobante')
-                        ->createQuery("c")                        
-                        ->addWhere("c.ca_idcomprobante != ?", 40)
-                        ->execute();
-        
-        
-        $conn = Doctrine::getTable("InoComprobante")->getConnection();
-        $conn->beginTransaction();
-        foreach( $comp as $c ){
-            $det = new InoDetalle();
-            $det->setCaIdcomprobante( $c->getCaIdcomprobante() );
-            $det->setCaId( $c->getCaId() );
-            $det->setCaIdconcepto( 663 );
-            $house = Doctrine::getTable("InoHouse")->find( $c->getCaIdhouse() );
-            $det->setCaIdhouse( $house->getCaIdhouse() );            
-            $det->setCaIdmaster( $house->getCaIdmaster() );            
-            $det->setCaCr( $c->getCaValor() );
-            $det->save( $conn );
-            
-            
-            $det = new InoDetalle();
-            $det->setCaIdcomprobante( $c->getCaIdcomprobante() );
-            $det->setCaId( $c->getCaId() );
-            $det->setCaIdconcepto( 664 );
-            $house = Doctrine::getTable("InoHouse")->find( $c->getCaIdhouse() );
-            $det->setCaIdhouse( $house->getCaIdhouse() );            
-            $det->setCaIdmaster( $house->getCaIdmaster() );            
-            $det->setCaDb( $c->getCaValor() );
-            $det->save( $conn );
-           
-        }
-        
-        $conn->commit();
-        
-        $this->setTemplate("blank");
-    }
-    
-    
-    
-    
-    public function executeImportINOAereo(){
-        exit();
-        //Creado para Perú
-        $masters = Doctrine::getTable("InoMaestraAir")
-                    ->createQuery("m")
-                    ->execute();
-        
-        
-        $conn = Doctrine::getTable("Reporte")->getConnection();
-        $conn->beginTransaction();
-        foreach( $masters as $m ){
-            
-            
-            $newMaster = new InoMaster();
-            $newMaster->setCaImpoexpo(Constantes::IMPO);
-            $newMaster->setCaTransporte(Constantes::AEREO);
-            $newMaster->setCaReferencia($m->getCaReferencia());            
-            $newMaster->setCaFchreferencia($m->getCaFchreferencia());            
-            $newMaster->setCaMaster($m->getCaReferencia());
-            //$newMaster->setCaFchmaster($m->getCaFchreferencia());
-            $newMaster->setCaOrigen($m->getCaOrigen());
-            $newMaster->setCaDestino($m->getCaDestino());            
-            $newMaster->setCaModalidad($m->getCaModalidad());
-            $newMaster->setCaIdlinea($m->getCaIdlinea());            
-            /*
-             // En coltrans no hay agente a partir de una fecha
-            $reporte = ReporteTable::retrieveByConsecutivo($m->getCaConsecutivo());            
-            $newMaster->setCaIdagente( $reporte->getCaIdagente() ); 
+              </td>
+              </tr>
+              </table>
+              </body>
+              </html>
+              ';
              */
-            $newMaster->setCaIdagente($m->getCaIdagente()); 
-            $newMaster->setCaPiezas($m->getCaPiezas());
-            $newMaster->setCaPeso($m->getCaPeso());
-            $newMaster->setCaVolumen($m->getCaPesovolumen()); 
-                       
-            $newMaster->setCaMaster($m->getCaMawb());            
-            
-            $newMaster->setCaObservaciones( $m->getCaObservaciones() );
-            
-            $newMaster->setCaFchsalida( $m->getCaFchpreaviso() );
-            $newMaster->setCaFchllegada( $m->getCaFchllegada() );
-            
-            $newMaster->setCaFchcreado($m->getCaFchcreado());
-            $newMaster->setCaUsucreado($m->getCaUsucreado());
-            $newMaster->setCaFchactualizado($m->getCaFchactualizado());
-            $newMaster->setCaUsuactualizado($m->getCaUsuactualizado());
-            $newMaster->setCaFchliquidado($m->getCaFchliquidado());
-            $newMaster->setCaUsuliquidado($m->getCaUsuliquidado());
-            $newMaster->setCaFchliquidado($m->getCaFchcerrado());
-            $newMaster->setCaUsuliquidado($m->getCaUsucerrado());
-            
-            
-            
-            $newMaster->stopBlaming();
-            $newMaster->save($conn);
-            echo "<br /><br /><b>Master</b> ".$m->getCaReferencia()." idlinea: ".$m->getCaIdlinea()."<br />";     
-            
-            
-            $houses = Doctrine::getTable("InoClientesAir")
-                    ->createQuery("c")
-                    ->addWhere("c.ca_referencia = ?", $m->getCaReferencia() )
-                    ->execute();
-            
-            
-            foreach( $houses as $h ){
-                $newHouse = new InoHouse();
-                $newHouse->setCaIdmaster( $newMaster->getCaIdmaster() );
-                $newHouse->setCaIdcliente( $h->getCaIdcliente() );                                
-                
-                $reporte = ReporteTable::retrieveByConsecutivo($h->getCaIdreporte());                                            
-                $newHouse->setCaIdreporte( $reporte->getCaIdreporte() );
-                $newHouse->setCaVendedor($h->getCaLoginvendedor());               
-                $newHouse->setCaDoctransporte($h->getCaHawb());
-                $newHouse->setCaFchdoctransporte($m->getCaFchreferencia());
-                
-               
-                $newHouse->setCaNumpiezas($h->getCaNumpiezas());
-                $newHouse->setCaPeso($h->getCaPeso());
-                $newHouse->setCaVolumen($h->getCaVolumen());
-                $newHouse->setCaNumorden($h->getCaNumorden());
-                $newHouse->setCaIdtercero($reporte->getCaIdproveedor());
-                $newHouse->setCaTercero($h->getCaProveedor());
-                
-
-
-                $newHouse->setCaFchcreado($h->getCaFchcreado());
-                $newHouse->setCaUsucreado($h->getCaUsucreado());
-                $newHouse->setCaFchactualizado($h->getCaFchactualizado());
-                $newHouse->setCaUsuactualizado($h->getCaUsuactualizado());
-                $newHouse->setCaIdbodega( $h->getCaIdbodega() );
-                $newHouse->stopBlaming();
-                $newHouse->save( $conn );
-
-
-                $ingresos = Doctrine::getTable("InoIngresosAir")
-                        ->createQuery("c")
-                        ->addWhere("c.ca_referencia = ?", $m->getCaReferencia() )
-                        ->addWhere("c.ca_idcliente = ?", $h->getCaIdcliente() )
-                        ->addWhere("c.ca_hawb = ?", $h->getCaHawb() )
-                        ->execute();
-
-
-                foreach( $ingresos as $i ){
-
-                    $newIng = new InoComprobante();                
-                    $newIng->setCaIdhouse( $newHouse->getCaIdhouse() );    
-                    $newIng->setCaId( $newHouse->getCaIdcliente() );   
-                    $newIng->setCaIdtipo( 1 );
-                    $newIng->setCaConsecutivo( $i->getCaFactura() );
-                    $newIng->setCaFchcomprobante( $i->getCaFchfactura() );
-                    
-                    $newIng->setCaIdmoneda("PEN");
-                    $newIng->setCaTcambio( $i->getCaTcalaico() );
-                    $newIng->setCaTcambioUsd( 1 );
-                    $newIng->setCaValor( $i->getCaValor() );
-                    //$newIng->setCaIdMoneda( $i->getCaIdmoneda() );
-                    $newIng->setCaObservaciones( $i->getCaObservaciones() );                               
-                    $newIng->setCaFchcreado($i->getCaFchcreado());
-                    $newIng->setCaUsucreado($i->getCaUsucreado());
-                    $newIng->setCaFchactualizado($i->getCaFchactualizado());
-                    $newIng->setCaUsuactualizado($i->getCaUsuactualizado());
-                    $newIng->stopBlaming();
-                    $newIng->save( $conn );
-                    
-                    
-                    $det = new InoDetalle();
-                    $det->setCaIdcomprobante( $newIng->getCaIdcomprobante() );
-                    $det->setCaId( $newIng->getCaId() );
-                    $det->setCaIdconcepto( 663 );
-                    
-                    $det->setCaIdhouse( $newHouse->getCaIdhouse() );            
-                    $det->setCaIdmaster( $newHouse->getCaIdmaster() );            
-                    $det->setCaCr( $newIng->getCaValor() );
-                    $det->save( $conn );
-
-
-                    $det = new InoDetalle();
-                    $det->setCaIdcomprobante( $newIng->getCaIdcomprobante() );
-                    $det->setCaId( $newIng->getCaId() );
-                    $det->setCaIdconcepto( 664 );
-                    
-                    $det->setCaIdhouse( $newHouse->getCaIdhouse() );            
-                    $det->setCaIdmaster( $newHouse->getCaIdmaster() );             
-                    $det->setCaDb( $newIng->getCaValor() );
-                    $det->save( $conn );
-                }
-            }
-            
-            $costos = Doctrine::getTable("InoCostosAir")
-                    ->createQuery("c")
-                    ->addWhere("c.ca_referencia = ?", $m->getCaReferencia() )
-                    ->execute();
-            
-            foreach( $costos as $c ){
-                
-                $newCosto = new InoCosto();
-                $newCosto->setCaIdmaster( $newMaster->getCaIdmaster() );
-                $newCosto->setCaIdcosto( $c->getCaIdcosto() );
-                $newCosto->setCaFactura( $c->getCaFactura() );
-                $newCosto->setCaFchfactura( $c->getCaFchfactura() );
-                $newCosto->setCaNeto( $c->getCaNeto() );
-                $newCosto->setCaVenta( $c->getCaVenta() );
-                $newCosto->setCaIdmoneda( $c->getCaIdmoneda() );
-                
-                $newCosto->setCaTcambio( $c->getCaTrm() );
-                $newCosto->setCaTcambioUsd($c->getCaTrmUsd());
-                $newCosto->setCaFchcreado($c->getCaFchcreado());
-                $newCosto->setCaUsucreado($c->getCaUsucreado());
-                $newCosto->setCaFchactualizado($c->getCaFchactualizado());
-                $newCosto->setCaUsuactualizado($c->getCaUsuactualizado());                
-                $newCosto->setCaIdproveedor( $c->getCaIdproveedor() );
-                
-                $newCosto->stopBlaming();
-                $newCosto->save( $conn );
-                
-                $utils = Doctrine::getTable("InoUtilidadAir")
-                    ->createQuery("c")
-                    ->addWhere("c.ca_referencia = ?", $m->getCaReferencia() )
-                    ->addWhere("c.ca_idcosto = ?", $c->getCaIdcosto()  )
-                    ->addWhere("c.ca_factura = ?", $c->getCaFactura()  )                
-                    ->execute();
-                
-                foreach( $utils as $u ){    
-                    
-                    $house = Doctrine::getTable("InoHouse")
-                    ->createQuery("c")
-                    ->innerJoin("c.InoMaster m")        
-                    ->addWhere("m.ca_referencia = ?", $m->getCaReferencia() )
-                    ->addWhere("c.ca_idcliente = ?", $u->getCaIdcliente()  )
-                    ->addWhere("c.ca_doctransporte = ?", $u->getCaHawb()  )                
-                    ->fetchOne();
-                    
-                    $util = new InoUtilidad();
-                    $util->setCaValor( $u->getCaValor() );
-                    $util->setCaIdhouse( $house->getCaIdhouse() );
-                    $util->setCaIdinocosto( $newCosto->getCaIdinocosto() );
-                    $util->save( $conn );                    
-                
-                }
-            } 
-         }
-            
-         $conn->commit();            
         
-        $this->setTemplate("blank");
+            $html1='
+              <html>
+              <head>
+              <title></title>
+              <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+              <style>
+              .contentheading {
+              border-bottom: 1px solid #E4E4E4;
+              color: #1C3A56;
+              font-size: 2.3em;
+              margin: 0 0 14px;
+              padding: 8px 0;
+              }
+              template.css (línea 211)
+              h2, .componentheading {
+              color: #1C3A56;
+              font-size: 2.2em;
+              font-weight: lighter;
+              line-height: 1.4em;
+              margin: 0;
+              padding: 6px 0;
+              }
+              .tableMap {
+              border: 1px solid #E4E4E4;
+              background-color: #fff;
+              }
+              .tableMap td {
+              color: #888888;
+              text-align: left;
+              font-family: Verdana;
+              font-size: 11px;
+              }
+              .tableMap th {
+              color: #FFFFFF;
+              text-align: center;
+              font-family: Verdana;
+              font-size: 12px;
+              font-weight: bolder;
+              background-color: #003DB8;
+              }
+              .destacado{
+              color: #000000;
+              font-family: Verdana;
+              font-size: 11px;
+              font-weight: bolder;
+              }
+              .rojo
+              {
+              color: #FF3333 ;
+              font-family: Verdana;
+              }
+              .titulo{
+              color: #000000;
+              font-family: Verdana;
+              font-size: 15px;
+              font-weight: bolder;
+              }
+              .l11{
+              font-size: 11px;
+              }
+              </style>
+              </head>
+              
+              <body bgcolor="#EAEAEA">
+              <table class="tableMap measure_converter" width="70%" align="center">
+              <tr>
+              <td>              
+              [div_coltrans] [div_colmas]
+              </td>
+              </tr>
+              <tr>
+              <td style="padding:20px"  >
+              <div style="text-align: justify;font-size: 12px">
+              <span class="l11">Bogot&aacute;, 24 Abril de 2014</span><br>
+              <br>
+              Apreciado Cliente, Queremos informarle que nuestras lineas telef&oacute;nicas presentan daños por parte de nuestro proveedor de servicios. Esperamos contar lo antes posible de nuevo con el servicio y agradecemos su comprensi&oacute;n.<br><br>
+              Esperamos nos puedan contactar por medio de correo electr&oacute;nico y/o telef&oacute;nos celulares.
+              <br><br><br> 
+              A continuaci&oacute;n relacionamos nuestros n&uacute;meros celulares de contacto
+         <table>     
+<tbody>
+<tr style="height:15pt" height="20">
+    <td style="height:15pt;width:163pt" height="20" width="217">JEFE DPTO.&nbsp;</td>
+    <td style="border-left-style:none;width:100pt" width="133">DPTO.&nbsp;</td><td style="border-left-style:none;width:60pt" width="80">CELULAR&nbsp;</td>
+</tr>
+
+<tr style="height:15pt" height="20">
+    <td style="height:15pt;border-top-style:none" height="20">SANDRA YANIRA CARDENAS</td>
+    <td style="border-top-style:none;border-left-style:none">ADUANA</td>
+    <td style="border-top-style:none;border-left-style:none" align="right">3112155538</td>
+</tr>
+
+<tr style="height:15pt" height="20">
+<td style="height:15pt;border-top-style:none" height="20">ADUANA</td>
+<td style="border-top-style:none;border-left-style:none">ADUANA</td>
+<td style="border-top-style:none;border-left-style:none" align="right">3102566741</td>
+</tr>
+
+<tr style="height:15pt" height="20">
+    <td style="height:15pt;border-top-style:none" height="20">CELUFIJO ADUANA</td>
+    <td style="border-top-style:none;border-left-style:none">ADUANA</td>
+    <td style="border-top-style:none;border-left-style:none" align="right">3115140250</td>
+</tr>
+
+<tr style="height:15pt" height="20">
+    <td style="height:15pt;border-top-style:none" height="20">ADRIANA VEGA</td>
+    <td style="border-top-style:none;border-left-style:none">ADUANA</td>
+    <td style="border-top-style:none;border-left-style:none" align="right">3105729373</td>
+</tr>
+
+<tr style="height:15pt" height="20">
+    <td style="height:15pt;border-top-style:none" height="20">JUAN CARLOS ALVAREZ</td>
+    <td style="border-top-style:none;border-left-style:none">ADUANA</td>
+    <td style="border-top-style:none;border-left-style:none" align="right">3105636997</td>
+</tr>
+
+<tr style="height:15pt" height="20">
+    <td style="height:15pt;border-top-style:none" height="20">OLGA MOSQUERA</td>
+    <td style="border-top-style:none;border-left-style:none">ADUANA</td>
+    <td style="border-top-style:none;border-left-style:none" align="right">3105656946</td>
+</tr>
+
+<tr style="height:15pt" height="20">
+    <td style="height:15pt;border-top-style:none" height="20">SUGEILA OLIVELLA</td>
+    <td style="border-top-style:none;border-left-style:none">ADUANA</td>
+    <td style="border-top-style:none;border-left-style:none" align="right">3105720625</td>
+</tr>
+
+<tr style="height:15pt" height="20">
+    <td style="height:15pt;border-top-style:none" height="20">BORIS MANTILLA</td>
+    <td style="border-top-style:none;border-left-style:none">AEREO</td>
+    <td style="border-top-style:none;border-left-style:none" align="right">3102566748</td>
+</tr>
+
+<tr style="height:15pt" height="20">
+    <td style="height:15pt;border-top-style:none" height="20">AEREO</td>
+    <td style="border-top-style:none;border-left-style:none">AEREO</td>
+    <td style="border-top-style:none;border-left-style:none" align="right">3132621514</td>
+</tr>
+
+<tr style="height:15pt" height="20">
+    <td style="height:15pt;border-top-style:none" height="20">BRUNO BETANCOURT</td>
+    <td style="border-top-style:none;border-left-style:none">PRICING</td>
+    <td style="border-top-style:none;border-left-style:none" align="right">3208659536</td>
+</tr>
+
+<tr style="height:15pt" height="20">
+    <td style="height:15pt;border-top-style:none" height="20">JEANNETTE RODRIGUEZ</td>
+    <td style="border-top-style:none;border-left-style:none">CARTERA</td>
+    <td style="border-top-style:none;border-left-style:none" align="right">3112179821</td>
+</tr>
+
+<tr style="height:15pt" height="20">
+    <td style="height:15pt;border-top-style:none" height="20">MAGDA PULIDO</td>
+    <td style="border-top-style:none;border-left-style:none">GER COMER</td>
+    <td style="border-top-style:none;border-left-style:none" align="right">3104781892</td>
+</tr>
+
+<tr style="height:15pt" height="20">
+    <td style="height:15pt;border-top-style:none" height="20">EXPORTACIONES</td>
+    <td style="border-top-style:none;border-left-style:none">EXPO</td>
+    <td style="border-top-style:none;border-left-style:none" align="right">3132940638</td>
+</tr>
+
+<tr style="height:15pt" height="20">
+    <td style="height:15pt;border-top-style:none" height="20">YESID GUERRERO</td>
+    <td style="border-top-style:none;border-left-style:none">EXPO</td>
+    <td style="border-top-style:none;border-left-style:none" align="right">3105656953</td>
+</tr>
+
+<tr style="height:15pt" height="20">
+    <td style="height:15pt;border-top-style:none" height="20">JUAN CAMILO ORTEGA</td>
+    <td style="border-top-style:none;border-left-style:none">FINANCIERO</td>
+    <td style="border-top-style:none;border-left-style:none" align="right">3144446136</td>
+</tr>
+
+<tr style="height:15pt" height="20">
+    <td style="height:15pt;border-top-style:none" height="20">SANDRA YEPES</td>
+    <td style="border-top-style:none;border-left-style:none">otm</td>
+    <td style="border-top-style:none;border-left-style:none" align="right">3102566740</td>
+</tr>
+
+<tr style="height:15pt" height="20">
+    <td style="height:15pt;border-top-style:none" height="20">OTM</td>
+    <td style="border-top-style:none;border-left-style:none">OTM</td>
+    <td style="border-top-style:none;border-left-style:none" align="right">3112870864</td>
+</tr>
+
+<tr style="height:15pt" height="20">
+    <td style="height:15pt;border-top-style:none" height="20">PATRICIA ARTEAGA</td>
+    <td style="border-top-style:none;border-left-style:none">MARITIMO</td>
+    <td style="border-top-style:none;border-left-style:none" align="right">3132940620</td>
+</tr>
+
+<tr style="height:15pt" height="20">
+    <td style="height:15pt;border-top-style:none" height="20">CONTENEDORES</td>
+    <td style="border-top-style:none;border-left-style:none">MARITIMO</td>
+    <td style="border-top-style:none;border-left-style:none" align="right">3143582689</td>
+</tr>
+
+
+<tr style="height:15pt" height="20">
+    <td style="height:15pt;border-top-style:none" height="20">OLGA VIASUS SERV.CLIENTE</td>
+    <td style="border-top-style:none;border-left-style:none">S. CLIENTE</td>
+    <td style="border-top-style:none;border-left-style:none" align="right">3102124201</td>
+</tr>
+
+<tr style="height:15pt" height="20">
+    <td style="height:15pt;border-top-style:none" height="20">CELUFIJO S. CLIENTE</td>
+    <td style="border-top-style:none;border-left-style:none">S. CLIENTE</td>
+    <td style="border-top-style:none;border-left-style:none" align="right">3102124199</td>
+</tr>
+
+<tr style="height:15pt" height="20"><td style="height:15pt;border-top-style:none" height="20">FLOR ALBA LOPEZ</td><td style="border-top-style:none;border-left-style:none">SISTEMAS</td><td style="border-top-style:none;border-left-style:none" align="right">
+
+3138512614</td></tr><tr style="height:15pt" height="20"><td style="height:15pt;border-top-style:none" height="20">KATHERINE CAMACHO</td><td style="border-top-style:none;border-left-style:none">TALENTO HUMANO</td><td style="border-top-style:none;border-left-style:none" align="right">
+
+3208659557</td></tr></tbody>
+</table>
+<br><br><br>
+
+              [div_firma_coltrans] [div_firma_colmas]
+              </td>
+              </tr>
+              </table>
+              </body>
+              </html>';
+             
+            /*$html1 = '
+            <html>
+              <head>
+                <title></title>
+                <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+                <style>
+                        .contentheading {
+                            border-bottom: 1px solid #E4E4E4;
+                            color: #1C3A56;
+                            font-size: 2.3em;
+                            margin: 0 0 14px;
+                            padding: 8px 0;
+                        }                        
+                        h2, .componentheading {
+                            color: #1C3A56;
+                            font-size: 2.2em;
+                            font-weight: lighter;
+                            line-height: 1.4em;
+                            margin: 0;
+                            padding: 6px 0;
+                        }
+                        .tableMap {
+                            border: 1px solid #E4E4E4;
+                            background-color: #fff;
+                        }
+                        .tableMap td {
+                            color: #888888;
+                            text-align: left;
+                            font-family: Verdana;
+                            font-size: 11px;
+                        }
+                        .tableMap th {
+                            color: #FFFFFF;
+                            text-align: center;
+                            font-family: Verdana;
+                            font-size: 12px;
+                            font-weight: bolder;
+                            background-color: #003DB8;
+                        }
+                        .destacado{
+                            color: #000000;
+                            font-family: Verdana;
+                            font-size: 11px;
+                            font-weight: bolder;
+                        }
+                        .rojo
+                        {
+                            color: #FF3333 ;
+                            font-family: Verdana;
+                        }
+                        .titulo{
+                            color: #000000;
+                            font-family: Verdana;
+                            font-size: 15px;
+                            font-weight: bolder;
+                        }
+                        .l11{                
+                            font-size: 13px;
+                        }
+                        </style>
+              </head>
+              <body bgcolor="">
+              <!--<table class="tableMap measure_converter" width="100%" align="center; border:none !important;">
+              <td style="text-align:center">
+                Si no puede visualizar correctamente el siguiente mensaje de click <a href="http://www.coltrans.com.co/es/component/content/article/1/82">AQUI</a>
+                </td>
+                </table>-->
+                <br>
+                  <table class="tableMap measure_converter" width="800" align="center">
+                <tr>
+                    <td width="100%">
+                    <table  width="100%">
+                        <tr>
+                            <td width="33%" align="left"><img src="http://www.coltrans.com.co/images/logos/coltrans/coltrans-web.png"/></td>
+                            <td width="33%" align="center" ><img src="http://www.coltrans.com.co/images/logos/colmas/colmas.png" /></td>
+                            <td width="33%" align="right"><img src="http://www.coltrans.com.co/images/logos/LOGO200.jpg" ></td>
+                        </tr>
+                    </table>                        
+                    </td>
+                  </tr>
+                    <tr>
+                        <td style="padding:20px"  >
+                        
+            <div style="text-align: justify;font-size: 12px">
+            <span class="l11"> '.date("d").' de '.(Utils::mesLargo(date("m"))).' de '.date('Y').'</span><br>
+            <br>
+            <div style="text-align: center;font-size: 18px">
+                <b>CIRCULAR INFORMATIVA</b>
+            </div>
+            <br>
+             Estimado Socio de Negocio
+            <br><br>
+
+            <p class="l11">
+            En virtud de lo estipulado en la Ley 1581 de 2012, por la cual se dictan disposiciones generales para la protección de datos personales, y teniendo en cuenta el Decreto 1377 de Junio 27 de 2013, que la reglamenta, solicitamos su autorizaci&oacute;n para que  COLTRANS S.A.S/ COLMAS LTDA/ COLOTM S.A.S pueda continuar realizando el tratamiento de la informaci&oacute;n contenida en nuestras bases de datos.<br><br>
+            Si en el t&eacute;rmino de treinta (30) d&iacute;as h&aacute;biles despu&eacute;s de recibir este comunicado, usted como asociado de negocios no nos contacta para solicitar la supresi&oacute;n de sus datos personales en los t&eacute;rminos del mencionado decreto,  COLTRANS / COLMAS / COLOTM continuar&aacute; realizando el tratamiento de la informaci&oacute;n contenida en nuestras bases de datos, para las finalidades expuestas en nuestra pol&iacute;tica de privacidad, sin perjuicio de la facultad que tiene el titular de ejercer su derecho a pedir la eliminaci&oacute;n de sus datos personales en cualquier momento.<br><br>
+            Para cualquier inquietud al respecto por favor contactarnos a nuestro correo: <br><b>sercliente-bog@coltrans.com.co</b>
+</p>
+            <br><br>
+            Cordialmente,
+            <br><br>
+            <div style="float:left">GRUPO COLTRANS SAS<br>
+            <a href="http://www.coltrans.com.co/">www.coltrans.com.co<a><br> </div>
+                        </td>
+                    </tr>
+                  </table>
+              </body>
+            </html>';
+             * */
+             
+
+/*
+        //plantilla colmas
+            $html1 = '
+            <html >
+                <body link="blue" style="margin-bottom: 1px; font-weight: normal; font-style: normal; margin-left: 4px; margin-top: 4px; font-family: Tahoma; line-height: normal; margin-right: 4px; font-size: 10pt; font-variant: normal" vlink="purple" lang="ES">
+                  <p style="margin-top: 0; margin-bottom: 0">
+
+                  <div class="Section1">
+                    <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+                      &#160;      </p>
+                    <div align="center">
+                      <table cellpadding="0" class="MsoNormalTable" style="border-right: #cfcfd1 1pt solid; border-bottom: #cfcfd1 1pt solid; border-top: #cfcfd1 1pt solid; width: 517.5pt; border-left: #cfcfd1 1pt solid" border="1" width="690" cellspacing="0">
+                        <tr>
+                          <td style="padding-top: 15pt; padding-right: 15pt; border-right: medium none; border-top: medium none; border-bottom: medium none; padding-left: 15pt; padding-bottom: 15pt; border-left: medium none">
+                            <table cellpadding="0" class="MsoNormalTable" style="width: 487.5pt" border="0" width="650" cellspacing="0">
+                              <tr>
+                                <td style="padding-left: 0cm; padding-bottom: 0cm; padding-right: 0cm; padding-top: 0cm">
+                                  <table cellpadding="0" class="MsoNormalTable" style="width: 487.5pt" border="0" width="650" cellspacing="0">
+                                    <tr>
+                                      <td style="padding-left: 0cm; padding-bottom: 0cm; padding-right: 0cm; padding-top: 0cm">
+                                      <br>                            
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="padding-left: 0cm; padding-bottom: 0cm; padding-right: 0cm; padding-top: 0cm">
+                                  <table cellpadding="0" class="MsoNormalTable" style="width: 487.5pt" border="0" width="650" cellspacing="0">
+                                    <tr>
+                                      <td style="padding-top: 0pt; padding-right: 0cm; border-right: medium none; border-top: medium none; border-bottom: #fabb00 1.5pt solid; padding-left: 0cm; padding-bottom: 0pt; border-left: medium none">
+                                        <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+                                          </p>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="padding-left: 0cm; padding-bottom: 0cm; padding-right: 0cm; padding-top: 0cm">
+                                  <table cellpadding="0" class="MsoNormalTable" style="width: 487.5pt" border="0" width="650" cellspacing="0">
+                                    <tr>
+                                      <td >
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="padding-left: 0cm; padding-bottom: 0cm; padding-right: 0cm; padding-top: 0cm">
+                                  <table cellpadding="0" class="MsoNormalTable" style="width: 487.5pt" border="0" width="650" cellspacing="0">
+                                    <tr>
+                                      <td style="padding-left: 0cm; padding-bottom: 15pt; padding-right: 0cm; padding-top: 0cm">
+                                        <p class="MsoNormal" style="margin-top: 0; text-align: center; margin-bottom: 0" align="center">
+                                          <SPAN STYLE=\'COLOR:"#00469b" ;FONT-FAMILY:"Arial,sans-serif" ;FONT-SIZE:"22pt"\'><span style="color: #00469b; font-family: Arial,sans-serif; font-size: 22pt">Colmas Agencia de Aduanas</span></SPAN>
+                                        </p>
+                                        <p class="MsoNormal" style="margin-top: 0; text-align: center; margin-bottom: 0" align="center">
+                                          <SPAN STYLE=\'COLOR:"#00469b" ;FONT-FAMILY:"Arial,sans-serif" ;FONT-SIZE:"22pt"\'><span style="color: #00469b; font-family: Arial,sans-serif; font-size: 22pt">16&#160;a&#241;os de experiencia<br style="color: #00469b; font-family: Arial,sans-serif; font-size: 22pt">para un servicio sin competencia<o style="color: #00469b; font-size: 22pt; font-family: Arial,sans-serif" p="#DEFAULT"></o style="color: #00469b; font-size: 22pt; font-family: Arial,sans-serif"></span></SPAN>                          </p>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="padding-left: 0cm; padding-bottom: 0cm; padding-right: 0cm; padding-top: 0cm">
+                                  <table cellpadding="0" class="MsoNormalTable" style="width: 487.5pt" border="0" width="650" cellspacing="0">
+                                    <tr>
+                                      <td style="padding-left: 0cm; padding-bottom: 7.5pt; padding-right: 0cm; padding-top: 0cm">
+                                        <img id="Imagen_x0020_1" src="http://www.coltrans.com.co/images/IMAGE1.jpeg" height="296" border="0" alt="" width="650">
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="padding-left: 0cm; padding-bottom: 0cm; padding-right: 0cm; padding-top: 0cm">
+                                  <table cellpadding="0" class="MsoNormalTable" style="width: 487.5pt; background-attachment: scroll; background-color: #cfcfd1; background-position: null; background-repeat: repeat; background-image: null" border="0" width="650" cellspacing="0">
+                                    <tr>
+                                      <td style="padding-top: 15pt; padding-right: 15pt; padding-left: 15pt; width: 236.25pt; padding-bottom: 15pt" width="315">
+                                        <p class="MsoNormal" style="line-height: 15pt; margin-top: 0; margin-bottom: 0">
+                                          <SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif">Nuestros </span></SPAN><b><SPAN STYLE=\'COLOR:"#00469b" ;FONT-FAMILY:"Arial,sans-serif" ;FONT-SIZE:"10pt"\'><span style="font-family: Arial,sans-serif; color: #00469b">m&#225;s de&#160;16 a&#241;os de experiencia</span></SPAN></b><SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif">&#160;nacionalizando mercanc&#237;as&#160;en </span></SPAN><b><SPAN STYLE=\'COLOR:"#00469b" ;FONT-FAMILY:"Arial,sans-serif" ;FONT-SIZE:"10pt"\'><span style="font-family: Arial,sans-serif; color: #00469b">Colombia</span></SPAN></b><SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif">&nbsp;son&#44; sin duda&#44; la clave para ofrecerle un </span></SPAN><SPAN STYLE=\'COLOR:"#00469b" ;FONT-FAMILY:"Arial,sans-serif" ;FONT-SIZE:"10pt"\'><span style="color: #00469b">servicio l&#237;der en el mercado</span></SPAN><SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif">. Sin olvidar que cubrimos todo el proceso desde origen a destino con </span></SPAN><SPAN STYLE=\'COLOR:"#00469b" ;FONT-FAMILY:"Arial,sans-serif" ;FONT-SIZE:"10pt"\'><span style="color: #00469b">recursos propios</span></SPAN><SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif">&#44; lo que garantiza a nuestros clientes<o style="font-family: Arial,sans-serif; font-size: 10pt" p="#DEFAULT"></o style="font-family: Arial,sans-serif; font-size: 10pt"></span></SPAN>                          </p>
+                                      </td>
+                                      <td style="padding-top: 15pt; padding-right: 15pt; padding-left: 15pt; width: 236.25pt; padding-bottom: 15pt" width="315">
+                                        <p class="MsoNormal" style="line-height: 15pt; margin-top: 0; margin-bottom: 0">
+                                          <SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif">eficiencia&#44; transparencia y seguridad en todo&#160;sus procesos. Y es que la </span></SPAN><SPAN STYLE=\'COLOR:"#00469b" ;FONT-FAMILY:"Arial,sans-serif" ;FONT-SIZE:"10pt"\'><span style="color: #00469b">especial realidad aduanera</span></SPAN><SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif">&nbsp;de Colombia nos obliga a ser expertos&#160;&#32;para realizar nuestros objetivos con todas las </span></SPAN><b><SPAN STYLE=\'COLOR:"#00469b" ;FONT-FAMILY:"Arial,sans-serif" ;FONT-SIZE:"10pt"\'><span style="font-family: Arial,sans-serif; color: #00469b">garant&#237;as de&#32;&#233;xito</span></SPAN></b><SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif">.<o style="font-family: Arial,sans-serif; font-size: 10pt" p="#DEFAULT"></o style="font-family: Arial,sans-serif; font-size: 10pt"></span></SPAN>                          </p>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="">
+                                  <table cellpadding="0" class="MsoNormalTable" style="" border="0" width="650" cellspacing="0">
+                                      <tr style="display:none">
+                                          <td width="50%" >
+                                              <img id="Imagen_x0020_2" src="http://www.coltrans.com.co/images/IMAGE2.jpeg" style="width: 325px; height: 248px" height="248" border="0"  width="325">
+                                          </td>
+                                          <td width="50%" >
+                                              <img id="Imagen_x0020_3" src="http://www.coltrans.com.co/images/IMAGE3.jpeg" style="width: 325px; height: 248px" height="248" border="0"  width="325">
+                                          </td>
+                                      </tr>
+                                      <tr><td colspan=2><img id="Imagen_x0020_200" src="http://www.coltrans.com.co/randomimages/banner4.jpg"  style="width: 650px; height: 120px" width="650" height="120" border="0"   ></td></tr>
+                                  </table>
+                                  <table cellpadding="0" class="MsoNormalTable" style="background-color: #cfcfd1;" border="0" width="650" cellspacing="0">  
+                                    <tr>
+                                      <td  width="50%" style="vertical-align: top">   
+
+                                          <table cellpadding="0" class="MsoNormalTable" border="0" width="325" cellspacing="0">
+                                            <tr style="height: 52.5pt">
+                                              <td style="padding-top: 0cm; padding-right: 0cm; padding-left: 0cm; padding-bottom: 0cm; height: 52.5pt">
+                                                <p class="MsoNormal" style="margin-top: 0; text-align: center; margin-bottom: 0" align="center">
+                                                  <b><font face="Arial,sans-serif" color="#00469b">
+                                                          <span style="font-family: Arial,sans-serif; color: #00469b">
+                                                              Recursos propios para
+                                                          </span>
+                                                          <span style="font-family: Arial,sans-serif; color: #00469b">
+                                                              <br style="color: #00469b; font-family: Arial,sans-serif; font-weight: bold">
+                                                          </span><span style="font-family: Arial,sans-serif">un servicio especializado</span><span style="font-family: Arial,sans-serif; color: #00469b"><o style="color: #00469b; font-family: Arial,sans-serif; font-weight: bold" p="#DEFAULT"></o style="color: #00469b; font-family: Arial,sans-serif; font-weight: bold"></span></font></b></p>
+                                              </td>
+                                            </tr>
+                                            <tr style="height: 45pt">
+                                              <td style="padding-top: 0cm; padding-right: 7.5pt; padding-left: 7.5pt; padding-bottom: 0cm; height: 45pt">
+                                                <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+                                                  <SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif">. </span></SPAN><b><SPAN STYLE=\'COLOR:"#00469b" ;FONT-FAMILY:"Arial,sans-serif" ;FONT-SIZE:"10pt"\'><span style="font-family: Arial,sans-serif; color: #00469b">Agente de aduanas&#160;</span></SPAN></b><SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif">&nbsp;gesti&#243;n y equipo experto en </span></SPAN><SPAN STYLE=\'COLOR:"#00469b" ;FONT-FAMILY:"Arial,sans-serif" ;FONT-SIZE:"10pt"\'><span style="color: #00469b">tramitaci&#243;n aduanera</span></SPAN><SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif">&#160;en </span></SPAN><b><SPAN STYLE=\'COLOR:"#00469b" ;FONT-FAMILY:"Arial,sans-serif" ;FONT-SIZE:"10pt"\'><span style="font-family: Arial,sans-serif; color: #00469b">Colombia</span></SPAN></b>                                      </p>
+                                                <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+                                                  &#160;                                      </p>
+                                                <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+                                                  &#160;                                      </p>
+                                                <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+                                                  <b><SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif">. Alianzas Estrategicas para Bodegaje&#44; almacenamiento y </span></SPAN><SPAN STYLE=\'COLOR:"#00469b" ;FONT-FAMILY:"Arial,sans-serif" ;FONT-SIZE:"10pt"\'><span style="font-family: Arial,sans-serif; color: #00469b">log&#237;stica</span></SPAN><SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif">&#44; repacking&#44; embalaje&#44; control de inventarios y Distribuci&#243;n Nacional<o style="font-size: 10pt; font-family: Arial,sans-serif; font-weight: bold" p="#DEFAULT"></o style="font-size: 10pt; font-family: Arial,sans-serif; font-weight: bold"></span><span style="font-size: 10pt; font-family: Arial,sans-serif"></span></SPAN></b>                                      </p>
+                                              </td>
+                                            </tr>
+                                            <tr style="height: 45pt">
+                                              <td style="padding-top: 0cm; padding-right: 7.5pt; padding-left: 7.5pt; padding-bottom: 0cm; height: 45pt">
+                                                <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+                                                  <SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif">. Coordinaci&#243;n en toda la cadena de suministro con un </span></SPAN><SPAN STYLE=\'COLOR:"#00469b" ;FONT-FAMILY:"Arial,sans-serif" ;FONT-SIZE:"10pt"\'><span style="color: #00469b">&#250;nico proveedor</span></SPAN><SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif"><o style="font-family: Arial,sans-serif; font-size: 10pt" p="#DEFAULT"></o style="font-family: Arial,sans-serif; font-size: 10pt"></span></SPAN>                                      </p>
+                                              </td>
+                                            </tr>
+                                            <tr style="height: 48.75pt">
+                                              <td style="padding-top: 0cm; padding-right: 7.5pt; padding-left: 7.5pt; padding-bottom: 0cm; height: 48.75pt">
+                                              <br>                                        
+                                                <table cellpadding="0" class="MsoNormalTable"  border="0" width="100%" cellspacing="0">
+                                                  <tr style="height: 52.5pt">
+                                                    <td style="padding-top: 0cm; padding-right: 7.5pt; padding-left: 7.5pt; padding-bottom: 0cm;">
+                                                        <SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif">.&#160;Sucursales en los </span></SPAN><SPAN STYLE=\'COLOR:"#00469b" ;FONT-FAMILY:"Arial,sans-serif" ;FONT-SIZE:"10pt"\'><span style="color: #00469b">principales centros neur&#225;lgicos del pa&#237;s</span></SPAN><SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif">: Pereira&#44; Barranquilla&#44; Cartagena&#44; Bucaramanga&#44; Medell&#237;n&#44; Cali y Buenaventura<o style="font-family: Arial,sans-serif; font-size: 10pt" p="#DEFAULT"></o style="font-family: Arial,sans-serif; font-size: 10pt"></span></SPAN>
+
+                                                    </td>
+                                                  </tr>
+
+                                                </table>
+                                              </td>
+                                            </tr>
+                                          </table>
+
+                                      </td>
+                                      <td  width="50%" style="vertical-align: top">
+
+
+                                              <table cellpadding="0" class="MsoNormalTable"  border="0" width="325" cellspacing="0">
+                                                <tr style="height: 52.5pt">
+                                                  <td style="padding-top: 0cm; padding-right: 0cm; padding-left: 0cm; padding-bottom: 0cm; height: 52.5pt">
+                                                    <p class="MsoNormal" style="margin-top: 0; text-align: center; margin-bottom: 0" align="center">
+                                                      <b><font face="Arial,sans-serif" color="#00469b"><span style="font-family: Arial,sans-serif; color: #00469b">Una gran gama de</span><span style="font-family: Arial,sans-serif; color: #00469b"><br style="color: #00469b; font-family: Arial,sans-serif; font-weight: bold"></span><span style="font-family: Arial,sans-serif">servicios con valor a&#241;adido</span><span style="font-family: Arial,sans-serif; color: #00469b"><o style="color: #00469b; font-family: Arial,sans-serif; font-weight: bold" p="#DEFAULT"></o style="color: #00469b; font-family: Arial,sans-serif; font-weight: bold"></span></font></b>                                      </p>
+                                                  </td>
+                                                </tr>
+                                                <tr style="height: 45pt">
+                                                  <td style="padding-top: 0cm; padding-right: 7.5pt; padding-left: 7.5pt; padding-bottom: 0cm; height: 45pt">
+                                                    <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+                                                      <SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif">.&#160;16</span></SPAN><SPAN STYLE=\'COLOR:"#00469b" ;FONT-FAMILY:"Arial,sans-serif" ;FONT-SIZE:"10pt"\'><span style="color: #00469b">&nbsp;a&#241;os de experiencia</span></SPAN><SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif">&nbsp;en el pa&#237;s y asesoramiento t&#233;cnico en </span></SPAN><SPAN STYLE=\'COLOR:"#00469b" ;FONT-FAMILY:"Arial,sans-serif" ;FONT-SIZE:"10pt"\'><span style="color: #00469b">Comercio Exterior</span></SPAN><SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif"><o style="font-family: Arial,sans-serif; font-size: 10pt" p="#DEFAULT"></o style="font-family: Arial,sans-serif; font-size: 10pt"></span></SPAN>                                      </p>
+                                                  </td>
+                                                </tr>
+                                                <tr style="height: 45pt">
+                                                  <td style="padding-top: 0cm; padding-right: 7.5pt; padding-left: 7.5pt; padding-bottom: 0cm; height: 45pt">
+                                                    <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+                                                      <SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif">.Agencia de Aduana Nivel 1</span></SPAN>                                      </p>
+                                                  </td>
+                                                </tr>
+                                                <tr style="height: 45pt">
+                                                  <td style="padding-top: 0cm; padding-right: 7.5pt; padding-left: 7.5pt; padding-bottom: 0cm; height: 45pt">
+                                                    <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+                                                      <SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif">. </span></SPAN><SPAN STYLE=\'COLOR:"#00469b" ;FONT-FAMILY:"Arial,sans-serif" ;FONT-SIZE:"10pt"\'><span style="color: #00469b">Proyectos especiales&#44;</span></SPAN><SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif">&nbsp;gesti&#243;n documental y Track &amp; Trace online<o style="font-family: Arial,sans-serif; font-size: 10pt" p="#DEFAULT"></o style="font-family: Arial,sans-serif; font-size: 10pt"></span></SPAN>                                      </p>
+                                                  </td>
+                                                </tr>
+                                                <tr style="height: 45pt">
+                                                  <td style="padding-top: 0cm; padding-right: 7.5pt; padding-left: 7.5pt; padding-bottom: 0cm; height: 45pt">
+                                                    <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+                                                      <SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif">. Sede central en </span></SPAN><SPAN STYLE=\'COLOR:"#00469b" ;FONT-FAMILY:"Arial,sans-serif" ;FONT-SIZE:"10pt"\'><span style="color: #00469b">Bogot&#225;</span></SPAN><SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif"><o style="font-family: Arial,sans-serif; font-size: 10pt" p="#DEFAULT"></o style="font-family: Arial,sans-serif; font-size: 10pt"></span></SPAN>                                      </p>
+                                                  </td>
+                                                </tr>
+                                              </table>
+                                      </td>
+                                    </tr>
+                                    <tr><td>&nbsp;</td></tr>
+                                  </table>
+                                </td>
+                              </tr>
+                              <tr style="height: 150pt">
+                                <td style="padding-top: 0cm; padding-right: 0cm; padding-left: 0cm; padding-bottom: 0cm; height: 150pt">
+                                  <div align="center">
+                                    <table cellpadding="0" class="MsoNormalTable" style="border-right: #fabb00 1.5pt solid; border-bottom: #fabb00 1.5pt solid; border-top: #fabb00 1.5pt solid; width: 412.5pt; border-left: #fabb00 1.5pt solid" border="1" width="550" cellspacing="0">
+                                      <tr>
+                                        <td style="padding-top: 3.75pt; padding-right: 3.75pt; border-right: medium none; border-top: medium none; border-bottom: medium none; padding-left: 3.75pt; padding-bottom: 3.75pt; border-left: medium none">
+                                          <div style="padding-top: 0cm; padding-right: 0cm; border-right: medium none; border-top: medium none; border-bottom: #cfcfd1 1pt solid; padding-left: 0cm; padding-bottom: 8pt; border-left: medium none">
+                                            <p class="MsoNormal" style="margin-top: 0; text-align: center; margin-bottom: 0" align="center">
+                                              <b><font face="Arial,sans-serif"><span style="font-family: Arial,sans-serif">&#161;Estamos a su disposici&#243;n&#33;</span></font></b><font face="Arial,sans-serif"><span style="font-family: Arial,sans-serif"><o style="font-family: Arial,sans-serif" p="#DEFAULT"></o style="font-family: Arial,sans-serif"></span></font>                              </p>
+                                          </div>
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td style="padding-top: 7.5pt; padding-right: 7.5pt; border-right: medium none; border-top: medium none; border-bottom: medium none; padding-left: 7.5pt; padding-bottom: 7.5pt; border-left: medium none">
+                                          <p class="MsoNormal" style="margin-top: 0; text-align: center; margin-bottom: 0; line-height: 18pt" align="center">
+                                            <b><SPAN STYLE=\'FONT-SIZE:"14pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 14pt; font-family: Arial,sans-serif">4239300 ext 196 </span></SPAN></b><SPAN STYLE=\'COLOR:"#00469b" ;FONT-FAMILY:"Arial,sans-serif" ;FONT-SIZE:"14pt"\'><a href="http://www.colmas.com.co"><span style="text-decoration: none; color: #00469b">www.colmas.com.co</span></a></SPAN>                            </p>
+                                          <p class="MsoNormal" style="margin-top: 0; text-align: center; margin-bottom: 0; line-height: 18pt" align="center">
+                                            <SPAN STYLE=\'COLOR:"#000000" ;FONT-FAMILY:"Arial,sans-serif" ;FONT-SIZE:"14pt"\'><span style="text-decoration: none; color: #00469b"><a href="mailto:gbedoya@coltrans.com.co">gbedoya@coltrans.com.co</a></span></SPAN>                            </p>
+                                        </td>
+                                      </tr>
+                                    </table>
+                                  </div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="padding-left: 0cm; padding-bottom: 0cm; padding-right: 0cm; padding-top: 0cm">
+                                  <table cellpadding="0" class="MsoNormalTable" style="width: 487.5pt" border="0" width="650">
+                                    <tr>
+                                      <td style="padding-left: 0.75pt; padding-bottom: 7.5pt; padding-right: 0.75pt; padding-top: 7.5pt">
+                                        <p style="margin-left: 0cm; margin-top: 0; text-align: center; margin-bottom: 0; margin-right: 0cm" align="center">
+                                          <b><SPAN STYLE=\'COLOR:"#00469b" ;FONT-FAMILY:"Arial,sans-serif" ;FONT-SIZE:"16pt"\'><span style="color: #00469b; font-family: Arial,sans-serif; font-size: 16pt">Colmas &amp; Coltrans S.A.S</span></SPAN></b>                          </p>
+                                        <p style="text-align: center; margin-top: 0; margin-bottom: 0" align="center">
+                                          <b><SPAN STYLE=\'FONT-SIZE:"10pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 10pt; font-family: Arial,sans-serif">Log&iacute;stica integral&#160;<o style="font-size: 10pt; font-family: Arial,sans-serif; font-weight: bold" p="#DEFAULT"></o style="font-size: 10pt; font-family: Arial,sans-serif; font-weight: bold"></span></SPAN></b>                          </p>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="padding-left: 0cm; padding-bottom: 0cm; padding-right: 0cm; padding-top: 0cm">
+                                  <table cellpadding="0" class="MsoNormalTable" style="width: 487.5pt" border="0" width="650">
+                                    <tr>
+                                      <td style="padding-left: 0.75pt; padding-bottom: 0.75pt; padding-right: 0.75pt; padding-top: 1.5pt">
+                                        <p class="MsoNormal" style="margin-top: 0; text-align: center; margin-bottom: 0" align="center">
+                                          <SPAN STYLE=\'FONT-SIZE:"8pt" ;FONT-FAMILY:"Arial,sans-serif"\'><span style="font-size: 8pt; font-family: Arial,sans-serif"><br style="font-family: Arial,sans-serif; font-size: 8pt">
+                                          Cra 98&#35;25G-10 Int 18 Fontibon.&#160;</span></SPAN>                          </p>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                    <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+                      <o p="#DEFAULT">
+                      &#160;</o>      </p>
+                    <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+                      <o p="#DEFAULT">
+                      </o>
+                      &#160;      </p>
+                  </div>    
+                  <div>
+                    <p style="margin-top: 0; margin-bottom: 0">
+                      Home Page: www.coltrans.com.co<br><br><br>
+                    </p>
+                  </div>
+                </body>
+            </html>';
+
+
+        //plantilla coltrans
+            $html1 = '
+            <html >
+                <body link="blue" style="margin-bottom: 1px; font-weight: normal; font-style: normal; margin-left: 4px; margin-top: 4px; font-family: Tahoma; line-height: normal; margin-right: 4px; font-size: 10pt; font-variant: normal" vlink="purple" lang="ES">
+                  <p style="margin-top: 0; margin-bottom: 0">
+
+                  <div class="Section1">
+                    <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+                      &#160;      </p>
+                    <div align="center">
+                      <table cellpadding="0" class="MsoNormalTable" style="border-right: #cfcfd1 1pt solid; border-bottom: #cfcfd1 1pt solid; border-top: #cfcfd1 1pt solid; width: 517.5pt; border-left: #cfcfd1 1pt solid" border="1" width="690" cellspacing="0">
+                        <tr>
+                          <td style="padding-top: 15pt; padding-right: 15pt; border-right: medium none; border-top: medium none; border-bottom: medium none; padding-left: 15pt; padding-bottom: 15pt; border-left: medium none">
+                            <table cellpadding="0" class="MsoNormalTable" style="width: 487.5pt" border="0" width="650" cellspacing="0">
+                              <tr>
+                                <td style="padding-left: 0cm; padding-bottom: 0cm; padding-right: 0cm; padding-top: 0cm">
+                                  <table cellpadding="0" class="MsoNormalTable" style="width: 487.5pt" border="0" width="650" cellspacing="0">
+                                    <tr>
+                                      <td style="padding-left: 0cm; padding-bottom: 0cm; padding-right: 0cm; padding-top: 0cm">
+              <br>                            
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="padding-left: 0cm; padding-bottom: 0cm; padding-right: 0cm; padding-top: 0cm">
+                                  <table cellpadding="0" class="MsoNormalTable" style="width: 487.5pt" border="0" width="650" cellspacing="0">
+                                    <tr>
+                                      <td style="padding-top: 0pt; padding-right: 0cm; border-right: medium none; border-top: medium none; border-bottom: #fabb00 1.5pt solid; padding-left: 0cm; padding-bottom: 0pt; border-left: medium none">
+                                        <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+                                          </p>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="padding-left: 0cm; padding-bottom: 0cm; padding-right: 0cm; padding-top: 0cm">
+                                  <table cellpadding="0" class="MsoNormalTable" style="width: 487.5pt" border="0" width="650" cellspacing="0">
+                                    <tr>
+                                      <td >
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="padding-left: 0cm; padding-bottom: 0cm; padding-right: 0cm; padding-top: 0cm">
+                                  <table cellpadding="0" class="MsoNormalTable" style="width: 487.5pt" border="0" width="650" cellspacing="0">
+                                    <tr>
+                                      <td style="padding-left: 0cm; padding-bottom: 15pt; padding-right: 0cm; padding-top: 0cm">
+                                        <p class="MsoNormal" style="margin-top: 0; text-align: center; margin-bottom: 0" align="center">
+                                          <span style="color: #00469b; font-family: Arial,sans-serif; font-size: 22pt"><b>COLTRANS S.A.S</b><br>Log&iacute;stica Integral desde 1988</span>
+                                        </p>
+                                        <p class="MsoNormal" style="margin-top: 0; text-align: center; margin-bottom: 0" align="center">
+                                        <span style="color: #00469b; font-family: Arial,sans-serif; font-size: 22pt">24 a&ntilde;os de experiencia<br>para un servicio sin competencia</span>
+
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="padding-left: 0cm; padding-bottom: 0cm; padding-right: 0cm; padding-top: 0cm">
+                                  <table cellpadding="0" class="MsoNormalTable" style="width: 487.5pt" border="0" width="650" cellspacing="0">
+                                    <tr>
+                                      <td style="padding-left: 0cm; padding-bottom: 7.5pt; padding-right: 0cm; padding-top: 0cm">
+                                        <img id="Imagen_x0020_1" src="http://www.coltrans.com.co/images/IMAGE1.jpeg" height="296" border="0" alt="" width="650">
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="padding-left: 0cm; padding-bottom: 0cm; padding-right: 0cm; padding-top: 0cm">
+                                  <table cellpadding="0" class="MsoNormalTable" style="width: 487.5pt; background-attachment: scroll; background-color: #cfcfd1; background-position: null; background-repeat: repeat; background-image: null" border="0" width="650" cellspacing="0">
+                                    <tr>
+                                      <td style="padding: 15pt;  width: 236.25pt;vertical-align: super;text-align: justify;" width="315">
+                                        <p class="MsoNormal" style="line-height: 15pt; margin-top: 0; margin-bottom: 0">
+                                          <SPAN STYLE=\'FONT-SIZE:12px; font-family: Arial,sans-serif; "\'>Nuestros <b>m&aacute;s de 23 años de experiencia</b> transportando mercanc&iacute;as a <b>Colombia</b> son, sin duda, la clave para ofrecerle un servicio l&iacute;der en el mercado. Sin olvidar que cubrimos todo el proceso desde origen a destino, lo que garantiza a nuestro clientes:</SPAN>                          </p>
+                                      </td>
+                                      <td style="padding: 15pt;  width: 236.25pt;vertical-align: super;text-align: justify;" width="315">
+                                        <p class="MsoNormal" style="line-height: 15pt; margin-top: 0; margin-bottom: 0">
+                                          <SPAN STYLE=\'FONT-SIZE:12px ;font-family: Arial,sans-serif;\'>Eficiencia, transparencia y seguridad en todo el trayecto. Y es que la realidad aduanera y log&iacute;stica de Colombia nos obliga a ser expertos para realizar un transporte con todas las <b>garant&iacute;as de &eacute;xito<b>.</SPAN></p>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="">
+                                  <table cellpadding="0" class="MsoNormalTable" style="" border="0" width="650" cellspacing="0">                        
+                                      <tr><td colspan=2><img id="Imagen_x0020_200" src="http://www.coltrans.com.co/randomimages/banner4.jpg"  style="width: 650px; height: 120px" width="650" height="120" border="0"   ></td></tr>
+                                  </table>
+                                  <table cellpadding="0" class="MsoNormalTable" style="background-color: #cfcfd1;" border="0" width="650" cellspacing="0">  
+                                    <tr>
+                                      <td  width="50%" style="vertical-align: top">
+                                          <table cellpadding="0" class="MsoNormalTable" border="0" width="325" cellspacing="0">
+                                            <tr style="height: 52.5pt">
+                                              <td style="padding-top: 0cm; padding-right: 0cm; padding-left: 0cm; padding-bottom: 0cm; height: 52.5pt">
+                                                <p class="MsoNormal" style="margin-top: 0; text-align: center; margin-bottom: 0" align="center">
+                                                  <b>
+                                                      <span style="font-family: Arial,sans-serif; color: #00469b">
+                                                          Recursos propios para <br> un servicio especializado
+                                                      </span>
+                                                  </b>
+                                                 </p>
+                                              </td>
+                                            </tr>
+                                            <tr style="height: 45pt">
+                                              <td style="padding: 0 7.5pt;text-align: justify; height: 45pt">
+                                                  <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+                                                      <li><span style="font-size: 10pt; font-family: Arial,sans-serif"> Agente de aduanas propio, gesti&oacute;n y equipo experto en Agenciamiento Aduanero</span></li></p>
+                                                      <br>
+                                                      <li><span style="font-size: 10pt; font-family: Arial,sans-serif"> Transporte multimodal y cobertura completa</span></li></p>
+                                                      <br>
+                                                      <li><span style="font-size: 10pt; font-family: Arial,sans-serif">Consolidados A&eacute;reos y mar&iacute;timos.</span></li></p>
+                                                      <br>
+                                                      <li><span style="font-size: 10pt; font-family: Arial,sans-serif"><b>FCL</b>,<b>LCL</b>, Break Bulk, servicio puerta-puerta, distribuci&oacute;n local en destino y recogidas en origen.</span></li></p>                                    
+                                                      <br>
+                                                      <li><span style="font-size: 10pt; font-family: Arial,sans-serif">Proyectos especiales, Mercanc&iacute;a peligrosa, carga pesada y dimensiones especiales</span></li></p>                                    
+                                                      <br>
+                                                      <li><span style="font-size: 10pt; font-family: Arial,sans-serif">Alianzas estrategicas con Dep&oacute;sitos aduaneros y Zonas Francas</span></li>
+                                                      <br>
+                                                      <li><span style="font-size: 10pt; font-family: Arial,sans-serif">Coordinaci&oacute;n en toda la cadena de suministro con un &uacute;nico proveedor.</span></li></p>
+                                                      <br>
+                                                      <li><span style="font-size: 10pt; font-family: Arial,sans-serif">Coordinaci&oacute;n de exportaciones aereas y maritimas.</span></li></p>
+                                                  </p>
+                                              </td>
+                                            </tr>                              
+                                          </table>
+                                      </td>
+                                      <td  width="50%" style="vertical-align: top">
+                                              <table cellpadding="0" class="MsoNormalTable"  border="0" width="325" cellspacing="0">
+                                                <tr style="height: 52.5pt">
+                                                  <td style="padding-top: 0cm; padding-right: 0cm; padding-left: 0cm; padding-bottom: 0cm; height: 52.5pt">
+                                                    <p class="MsoNormal" style="margin-top: 0; text-align: center; margin-bottom: 0" align="center">
+                                                      <b>
+                                                          <span style="font-family: Arial,sans-serif; color: #00469b">
+                                                              Una gran gama de<br>servicios con valor a&ntilde;adido
+                                                          </span>
+                                                      </b>
+                                                  </p>
+                                                  </td>
+                                                </tr>
+                                                <tr style="height: 45pt">
+                                                  <td style="padding: 0 7.5pt;text-align: justify; height: 45pt">
+                                                      <li><span style="font-size: 10pt; font-family: Arial,sans-serif">M&aacute;s de 23 a&ntilde;os de experiencia en el pais y asesoramiento t&eacute;cnico en Comercio Exterior</span></li></p>
+                                                      <br>
+                                                      <li><span style="font-size: 10pt; font-family: Arial,sans-serif">Licencia IATA y seguro de transporte</span></li></p>                                    
+                                                      <br>
+                                                      <li><span style="font-size: 10pt; font-family: Arial,sans-serif">Certificaci&oacute;n de calidad ISO 9001 y BASC</span></li></p>
+                                                      <br>
+                                                      <li><span style="font-size: 10pt; font-family: Arial,sans-serif">Socios Globales con una misma identidad de calidad</span></li></p>
+                                                      <br>
+                                                      <li><span style="font-size: 10pt; font-family: Arial,sans-serif">Proyectos especiales, gesti&oacute;n documental y Tracking & Tracing online</span></li></p>
+                                                      <br>
+                                                      <li><span style="font-size: 10pt; font-family: Arial,sans-serif">Sede central en Bogot&aacute;</span></li></p>
+                                                      <br>
+                                                      <li><span style="font-size: 10pt; font-family: Arial,sans-serif">Sucursales comerciales en los principales centros neur&aacute;lgicos del pais: Medell&iacute;n, Cali, Barranquilla, Pereira, Bucaramanga, Cartagena  y Buenaventura</span></li></p>
+                                                      <br>
+                                                      <li><span style="font-size: 10pt; font-family: Arial,sans-serif">Sucursales internacionalesen Miami y Lima</span></li></p>
+                                                  </td>
+                                                </tr>
+                                              </table>
+                                      </td>
+                                    </tr>
+                                    <tr><td>&nbsp;</td></tr>
+                                  </table>
+                                </td>
+                              </tr>
+                              <tr style="height: 150pt">
+                                <td style="padding-top: 0cm; padding-right: 0cm; padding-left: 0cm; padding-bottom: 0cm; height: 150pt">
+                                  <div align="center">
+                                    <table cellpadding="0" class="MsoNormalTable" style="border-right: #fabb00 1.5pt solid; border-bottom: #fabb00 1.5pt solid; border-top: #fabb00 1.5pt solid; width: 412.5pt; border-left: #fabb00 1.5pt solid" border="1" width="550" cellspacing="0">
+                                      <tr>
+                                        <td style="padding-top: 3.75pt; padding-right: 3.75pt; border-right: medium none; border-top: medium none; border-bottom: medium none; padding-left: 3.75pt; padding-bottom: 3.75pt; border-left: medium none">
+                                          <div style="padding-top: 0cm; padding-right: 0cm; border-right: medium none; border-top: medium none; border-bottom: #cfcfd1 1pt solid; padding-left: 0cm; padding-bottom: 8pt; border-left: medium none">
+                                            <p class="MsoNormal" style="margin-top: 0; text-align: center; margin-bottom: 0" align="center">
+                                              <b><span style="font-family: Arial,sans-serif;font-size:14px"><b>¡Estamos a su disposici&oacute;n!<br>Nos gustaria visitarle el dia y hora que usted <br>estime mas conveniente</b></span></b>
+                                            </p>
+                                          </div>
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td style="padding-top: 7.5pt; padding-right: 7.5pt; border-right: medium none; border-top: medium none; border-bottom: medium none; padding-left: 7.5pt; padding-bottom: 7.5pt; border-left: medium none">
+                                          <p class="MsoNormal" style="margin-top: 0; text-align: center; margin-bottom: 0; line-height: 18pt" align="center">
+                                            <b><span style="font-size: 14pt; font-family: Arial,sans-serif">4239300 ext 196 <br> Geimar Bedoya</span></b>
+                                            <br><a href="http://www.coltrans.com.co"><span style="text-decoration: none; color: #00469b">www.coltrans.com.co</span></a></p>
+                                        </td>
+                                      </tr>
+                                    </table>
+                                  </div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="padding-left: 0cm; padding-bottom: 0cm; padding-right: 0cm; padding-top: 0cm">
+                                  <table cellpadding="0" class="MsoNormalTable" style="width: 487.5pt" border="0" width="650">
+                                    <tr>
+                                      <td style="padding-left: 0.75pt; padding-bottom: 7.5pt; padding-right: 0.75pt; padding-top: 7.5pt">
+                                        <p style="margin-left: 0cm; margin-top: 0; text-align: center; margin-bottom: 0; margin-right: 0cm" align="center">
+                                          <b><span style="color: #00469b; font-family: Arial,sans-serif; font-size: 16pt">Coltrans S.A.S<br>Log&iacute;stica Integral<br>Su carga en movimiento<br>Colmas Ltda.<br>Agencia de Aduana Nivel 1</span></b></p>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                    <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+                      <o p="#DEFAULT">
+                      &#160;</o>      </p>
+              ¬      <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+                      <o p="#DEFAULT">
+                      </o>
+                      &#160;</p>
+                  </div>
+                </body>
+              </html>';
+*/
+/*            $html1 ='
+              <html>
+                <head>
+                  <title></title>
+                  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+                  <style>
+                          .contentheading {
+                              border-bottom: 1px solid #E4E4E4;
+                              color: #1C3A56;
+                              font-size: 2.3em;
+                              margin: 0 0 14px;
+                              padding: 8px 0;
+                          }
+                          template.css (línea 211)
+                          h2, .componentheading {
+                              color: #1C3A56;
+                              font-size: 2.2em;
+                              font-weight: lighter;
+                              line-height: 1.4em;
+                              margin: 0;
+                              padding: 6px 0;
+                          }
+                          .tableMap {
+                              border: 1px solid #E4E4E4;
+                              background-color: #fff;
+                          }
+                          .tableMap td {
+                              color: #888888;
+                              text-align: left;
+                              font-family: Verdana;
+                              font-size: 11px;
+                          }
+                          .tableMap th {
+                              color: #FFFFFF;
+                              text-align: center;
+                              font-family: Verdana;
+                              font-size: 12px;
+                              font-weight: bolder;
+                              background-color: #003DB8;
+                          }
+                          .destacado{
+                              color: #000000;
+                              font-family: Verdana;
+                              font-size: 11px;
+                              font-weight: bolder;
+                          }
+                          .rojo
+                          {
+                              color: #FF3333 ;
+                              font-family: Verdana;
+                          }
+                          .titulo{
+                              color: #000000;
+                              font-family: Verdana;
+                              font-size: 15px;
+                              font-weight: bolder;
+                          }
+                          .l11{                
+                              font-size: 13px;
+                          }
+                          </style>
+                </head>
+                <body bgcolor="#EAEAEA">
+
+                  <br>
+                    <table class="tableMap measure_converter" width="50%" align="center">
+                    <tr>
+                    <td style="text-align:center">
+                  Si no puede visualizar correctamente el siguiente mensaje de click <a href="http://www.coltrans.com.co/es/component/content/article/1/75">AQUI</a>
+                  </td>
+                  </tr>
+                  <tr>
+                      <td>
+                          <div style="float:left"><img src="http://www.coltrans.com.co/templates/coltrans/images/logo_coltrans.png" /> </div>
+                      </td>
+                    </tr>
+                    <tr>
+                          <td style="padding:20px"  >
+              <div style="text-align: justify;font-size: 12px">
+              <span class="l11">' . date("d") . ' de ' . Utils::mesLargo(date("m")) . ' de ' . date("Y") . '</span><br>
+              <br>
+               Estimado cliente: Queremos brindarle una informaci&oacute;n que puede resultarle importante
+              <br><br>
+              <br><br>
+              <div align="center"><img src="https://www.coltrans.com.co/images/publicidad/envioitalia.jpg" border="0" /></div>
+              <br>
+              <div style="text-align:center">Si deseas recibir mas informaci&oacute;n o tienes inquietudes,<br>Por favor contacta a tu asesor comercial o 
+              <br>a Natalie Consuegra Jefe de tr&aacute;fico de Italia<br>4239300 ext 231</div>
+              <br>
+              <br><br>
+              <div style="float:left">COLTRANS S.A.S<br>
+                  <a href="http://www.coltrans.com.co/">www.coltrans.com.co<a><br> </div>
+                          </div>
+                          </td>
+                      </tr>
+                    </table>
+                </body>
+              </html>';
+*/
+            
+            $email = new Email();
+
+                        
+            $conteo = 0;
+            $emails_Control = "";
+            $asunto = "Comunicado Grupo Coltrans ";
+            $emailFrom = "sercliente-bog@coltrans.com.co";
+            $tipo_email="Comunicado";
+            $fromName="Coltrans SAS";
+
+            $div_coltrans="<div style='float: left'><img src='http://www.coltrans.com.co/images/logos/coltrans/coltrans-web.png'/></div>";
+            $div_colmas="<div style='float: right'><img src='http://www.coltrans.com.co/images/logos/colmas/colmas.png'/></div>";
+            
+            $div_firma_coltrans="<div style='float: left'>COLTRANS S.A.S<br>
+              Cr. 98 No. 25G &mdash; 10 Int.18 <br>
+              Bogot&aacute;  D. C.   Colombia<br>
+              PBX    57 1  &mdash;  423  9300<br>
+              Fax 57 1  &mdash;  423  9323<br>
+              <a href='http://www.coltrans.com.co/'>www.coltrans.com.co<a><br>
+              </div>";
+        
+            $div_firma_colmas="<div style='float: right'>COLMAS LTDA<br>
+              Cr. 98 No. 25G &mdash; 10 Int.18 <br>
+              Bogot&aacute;  D. C.   Colombia<br>
+              PBX    57 1  &mdash;  423  9300<br>
+              Fax 57 1  &mdash;  423  9323<br>
+              <a href='http://www.colmas.com.co/'>www.colmas.com.co<a><br>
+              </div>";
+            
+            
+
+            $keys=array("[div_coltrans]","[div_colmas]","[div_firma_coltrans]","[div_firma_colmas]");
+            if(count($clientes)>0)
+            {
+                foreach ($clientes as $cliente) {
+                    $data=  array();
+                    //if($cliente["ca_coltrans_std"]!="Activo")
+                    //    continue;
+                  //  try {
+                        $data[0]=($cliente["ca_coltrans_std"]=="Activo")?$div_coltrans:"";
+                        $data[1]=($cliente["ca_colmas_std"]=="Activo")?$div_colmas:"";
+                        
+                        $data[2]=($cliente["ca_coltrans_std"]=="Activo")?$div_firma_coltrans:"";
+                        $data[3]=($cliente["ca_colmas_std"]=="Activo")?$div_firma_colmas:"";
+                        
+                        $html1=str_replace($keys,$data,$html1);
+                        //echo $html;
+                        //exit;
+                        $conteo++;
+                        $email = new Email();
+                        $email->setCaUsuenvio("Administrador");
+                        $email->setCaFrom($emailFrom);
+                        $email->setCaFromname($fromName);
+                        $email->setCaSubject($asunto);
+                        $email->setCaAddress($cliente["ca_email"]);
+                        //$email->setCaAddress("maquinche@coltrans.com.co");
+                    	//$email->setCaAttachment( "tmp/tracking_colmas.pdf" );
+                        $email->setCaBodyhtml($html1);
+                        $email->setCaTipo($tipo_email);
+                        $email->send();
+                        $email->save();
+                        $emails_Control.=$cliente["ca_email"] . "<br>";
+                    //} catch (Exception $e) {
+                    //    $emails_Control.="No se pudo enviar " . $cliente["ca_email"] . ": porque : " . $e->getMessage() . "<br>";
+                    //}
+                    echo $cliente["ca_email"]."<br>";
+                }
+                
+                file_put_contents($filecontrol, $inicio + $nreg);
+                
+                $email->setCaUsuenvio("Administrador");
+                $email->setCaFrom($emailFrom);
+                $email->setCaFromname($fromName);
+                $email->setCaSubject($asunto);
+                $email->setCaAddress("maquinche@coltrans.com.co");
+                $email->setCaBodyhtml($html1 . "emails:<br>". $emails_Control);
+                //$email->setCaAttachment( "tmp/tracking_colmas.pdf" );
+                //$email->setCaBodyhtml($html);
+                $email->setCaTipo($tipo_email);
+                $email->send();
+                
+                 
+            }
+             
+            
+            
+              /*  $email->setCaUsuenvio("Administrador");
+                $email->setCaFrom($emailFrom);
+                $email->setCaFromname($fromName);
+                $email->setCaSubject($asunto);
+                $email->setCaAddress("maquinche@coltrans.com.co");
+//                $email->addTo("falopez@coltrans.com.co");
+                $email->setCaBodyhtml($html1 . "emails:<br>". $emails_Control);
+                //$email->setCaAttachment( "tmp/tracking_colmas.pdf" );
+                //$email->setCaBodyhtml($html);
+                $email->setCaTipo($tipo_email);
+                //$email->save();
+                $email->send();
+                */
+                echo $html1;
+                exit;
+        //}
     }
-    
-    
-    public function executeImportINOMaritimo(){
+    public function executeEnvioEmails1() {
         
-
-        //Creado para Perú
-        $masters = Doctrine::getTable("InoMaestraSea")
-                    ->createQuery("m")
-                    ->execute();
-        
-        
-        $conn = Doctrine::getTable("Reporte")->getConnection();
-        $conn->beginTransaction();
-        foreach( $masters as $m ){
-            echo "<br /><br /><b>Master</b> ".$m->getCaReferencia();
-            
-            $houses = Doctrine::getTable("InoClientesSea")
-                    ->createQuery("c")
-                    ->addWhere("c.ca_referencia = ?", $m->getCaReferencia() )
-                    ->execute();
-            
-            $newMaster = new InoMaster();
-            $newMaster->setCaImpoexpo(Constantes::IMPO);
-            $newMaster->setCaTransporte(Constantes::MARITIMO);
-            $newMaster->setCaReferencia($m->getCaReferencia());            
-            $newMaster->setCaFchreferencia($m->getCaFchreferencia());            
-            $newMaster->setCaMaster($m->getCaReferencia());
-            //$newMaster->setCaFchmaster($m->getCaFchmbls());
-            $newMaster->setCaOrigen($m->getCaOrigen());
-            $newMaster->setCaDestino($m->getCaDestino());            
-            $newMaster->setCaModalidad($m->getCaModalidad());
-            $newMaster->setCaIdlinea($m->getCaIdlinea());            
-            
-             // En coltrans no hay agente a partir de una fecha
-            
-            if( $houses[0] && $houses[0]->getCaIdreporte()){            
-                $reporte = Doctrine::getTable("Reporte")->find($houses[0]->getCaIdreporte());            
-                $newMaster->setCaIdagente( $reporte->getCaIdagente() ); 
-            }else{
-                echo "<SPAN CLASS='rojo'> AGENTE NO ENCONTRADO </SPAN>";
-                if( $newMaster->getOrigen()->getCaIdtrafico()=="CO-057" ){
-                    $newMaster->setCaIdagente( 800024075 ); 
-                }else{
-                    $newMaster->setCaIdagente( 622 );                     
-                }
-            }
-            
-            //$newMaster->setCaIdagente($m->getCaIdagente()); 
-            /*$newMaster->setCaPiezas($m->getCaPiezas());
-            $newMaster->setCaPeso($m->getCaPeso());
-            $newMaster->setCaVolumen($m->getCaPesovolumen()); */
-                       
-            $newMaster->setCaMaster($m->getCaMbls());            
-            
-            $newMaster->setCaObservaciones( $m->getCaObservaciones() );
-            
-            $newMaster->setCaFchsalida( $m->getCaFchembarque() );
-            $newMaster->setCaFchllegada( $m->getCaFcharribo() );
-            
-            $newMaster->setCaFchcreado($m->getCaFchcreado());
-            $newMaster->setCaUsucreado($m->getCaUsucreado());
-            $newMaster->setCaFchactualizado($m->getCaFchactualizado());
-            $newMaster->setCaUsuactualizado($m->getCaUsuactualizado());
-            $newMaster->setCaFchliquidado($m->getCaFchliquidado());
-            $newMaster->setCaUsuliquidado($m->getCaUsuliquidado());
-            $newMaster->setCaFchliquidado($m->getCaFchcerrado());
-            $newMaster->setCaUsuliquidado($m->getCaUsucerrado());
-            
-            
-            
-            $newMaster->stopBlaming();
-            $newMaster->save($conn);
-            echo "<br /><br />"." idagente: ".$newMaster->getCaIdagente() ." origen".$newMaster->getCaOrigen()." "." dest".$newMaster->getCaDestino(). "<br />";     
-            
-            
-            $houses = Doctrine::getTable("InoClientesSea")
-                    ->createQuery("c")
-                    ->addWhere("c.ca_referencia = ?", $m->getCaReferencia() )
-                    ->execute();
-            
-            
-            foreach( $houses as $h ){
-                $newHouse = new InoHouse();
-                $newHouse->setCaIdmaster( $newMaster->getCaIdmaster() );
-                $newHouse->setCaIdcliente( $h->getCaIdcliente() );                                
-                                
-                $newHouse->setCaIdreporte( $h->getCaIdreporte() );
-                $newHouse->setCaVendedor($h->getCaLogin());               
-                $newHouse->setCaDoctransporte($h->getCaHbls());
-                $newHouse->setCaFchdoctransporte($h->getCaFchhbls());
-                $newHouse->setCaNumpiezas($h->getCaNumpiezas());
-                $newHouse->setCaPeso($h->getCaPeso());
-                $newHouse->setCaVolumen($h->getCaVolumen());
-                $newHouse->setCaNumorden($h->getCaNumorden());
-                $newHouse->setCaIdtercero($reporte->getCaIdproveedor());
-                $newHouse->setCaTercero($h->getCaProveedor());
-                $newHouse->setCaIdbodega( $h->getCaIdbodega() );
-
-
-                $newHouse->setCaFchcreado($h->getCaFchcreado());
-                $newHouse->setCaUsucreado($h->getCaUsucreado());
-                $newHouse->setCaFchactualizado($h->getCaFchactualizado());
-                $newHouse->setCaUsuactualizado($h->getCaUsuactualizado());
-                
-                $newHouse->stopBlaming();
-                $newHouse->save( $conn );
-
-
-                $ingresos = Doctrine::getTable("InoIngresosSea")
-                        ->createQuery("c")
-                        ->addWhere("c.ca_referencia = ?", $m->getCaReferencia() )
-                        ->addWhere("c.ca_idcliente = ?", $h->getCaIdcliente() )
-                        ->addWhere("c.ca_hbls = ?", $h->getCaHbls() )
-                        ->execute();
-
-
-                foreach( $ingresos as $i ){
-
-                    $newIng = new InoComprobante();                
-                    $newIng->setCaIdhouse( $newHouse->getCaIdhouse() );    
-                    $newIng->setCaId( $newHouse->getCaIdcliente() );   
-                    $newIng->setCaIdtipo( 1 );
-                    $newIng->setCaConsecutivo( $i->getCaFactura() );
-                    $newIng->setCaFchcomprobante( $i->getCaFchfactura() );
-                    
-                    $newIng->setCaIdmoneda($i->getCaIdmoneda());
-                    $newIng->setCaTcambio( $i->getCaTcambio() );
-                    $newIng->setCaTcambioUsd( 1 );
-                    $newIng->setCaValor( $i->getCaNeto() );
-                    //$newIng->setCaIdMoneda( $i->getCaIdmoneda() );
-                    $newIng->setCaObservaciones( $i->getCaObservaciones() );                               
-                    $newIng->setCaFchcreado($i->getCaFchcreado());
-                    $newIng->setCaUsucreado($i->getCaUsucreado());
-                    $newIng->setCaFchactualizado($i->getCaFchactualizado());
-                    $newIng->setCaUsuactualizado($i->getCaUsuactualizado());
-                    $newIng->stopBlaming();
-                    $newIng->save( $conn );
-                    
-                    
-                    $det = new InoDetalle();
-                    $det->setCaIdcomprobante( $newIng->getCaIdcomprobante() );
-                    $det->setCaId( $newIng->getCaId() );
-                    $det->setCaIdconcepto( 663 );
-                    
-                    $det->setCaIdhouse( $newHouse->getCaIdhouse() );            
-                    $det->setCaIdmaster( $newHouse->getCaIdmaster() );            
-                    $det->setCaCr( $newIng->getCaValor() );
-                    $det->save( $conn );
-
-
-                    $det = new InoDetalle();
-                    $det->setCaIdcomprobante( $newIng->getCaIdcomprobante() );
-                    $det->setCaId( $newIng->getCaId() );
-                    $det->setCaIdconcepto( 664 );
-                    
-                    $det->setCaIdhouse( $newHouse->getCaIdhouse() );            
-                    $det->setCaIdmaster( $newHouse->getCaIdmaster() );             
-                    $det->setCaDb( $newIng->getCaValor() );
-                    $det->save( $conn );
-                }
-            }
-            
-            $costos = Doctrine::getTable("InoCostosSea")
-                    ->createQuery("c")
-                    ->addWhere("c.ca_referencia = ?", $m->getCaReferencia() )
-                    ->execute();
-            
-            foreach( $costos as $c ){
-                
-                $newCosto = new InoCosto();
-                $newCosto->setCaIdmaster( $newMaster->getCaIdmaster() );
-                $newCosto->setCaIdcosto( $c->getCaIdcosto() );
-                $newCosto->setCaFactura( $c->getCaFactura() );
-                $newCosto->setCaFchfactura( $c->getCaFchfactura() );
-                $newCosto->setCaNeto( $c->getCaNeto() );
-                $newCosto->setCaVenta( $c->getCaVenta() );
-                $newCosto->setCaIdmoneda( $c->getCaIdmoneda() );
-                
-                $newCosto->setCaTcambio( $c->getCaTrm() );
-                $newCosto->setCaTcambioUsd($c->getCaTrmUsd());
-                $newCosto->setCaFchcreado($c->getCaFchcreado());
-                $newCosto->setCaUsucreado($c->getCaUsucreado());
-                $newCosto->setCaFchactualizado($c->getCaFchactualizado());
-                $newCosto->setCaUsuactualizado($c->getCaUsuactualizado());                
-                $newCosto->setCaIdproveedor( $c->getCaIdproveedor() );
-                
-                $newCosto->stopBlaming();
-                $newCosto->save( $conn );
-                
-                $utils = Doctrine::getTable("InoUtilidadAir")
-                    ->createQuery("c")
-                    ->addWhere("c.ca_referencia = ?", $m->getCaReferencia() )
-                    ->addWhere("c.ca_idcosto = ?", $c->getCaIdcosto()  )
-                    ->addWhere("c.ca_factura = ?", $c->getCaFactura()  )                
-                    ->execute();
-                
-                foreach( $utils as $u ){    
-                    
-                    $house = Doctrine::getTable("InoHouse")
-                    ->createQuery("c")
-                    ->innerJoin("c.InoMaster m")        
-                    ->addWhere("m.ca_referencia = ?", $m->getCaReferencia() )
-                    ->addWhere("c.ca_idcliente = ?", $u->getCaIdcliente()  )
-                    ->addWhere("c.ca_doctransporte = ?", $u->getCaHawb()  )                
-                    ->fetchOne();
-                    
-                    $util = new InoUtilidad();
-                    $util->setCaValor( $u->getCaValor() );
-                    $util->setCaIdhouse( $house->getCaIdhouse() );
-                    $util->setCaIdinocosto( $newCosto->getCaIdinocosto() );
-                    $util->save( $conn );                    
-                
-                }
-            } 
-         }
-            
-         //$conn->commit();            
-        
-        $this->setTemplate("blank");
-    }
     
-    
-    
-    public function executeImportParametros(){
-        
-        $params = Doctrine::getTable("Parametro")
-                            ->createQuery("p")
-                            ->addOrderBy("p.ca_casouso")
+        $emails = Doctrine::getTable("Email")
+                            ->createQuery("e")
+                            ->addWhere("e.ca_idemail=1299445")                            
+                            ->limit(15)
                             ->execute();
+        //1299445
+        //$data = array();
+        //Utils::sendEmail($data);
+        foreach( $emails as $email ){
+            try{        
+                $email->setCaSubject(date("Y-m-d H:i:s"));
+                $email->send1();
+
+            }catch(Exception $e){
+                echo $e."<br />";
+
+                $data = array();
+                $data["mensaje"]="Id Email: ".$email->getCaIdemail() . "<br />".$e->getMessage(). "<br />".$e->getTraceAsString();
+                Utils::sendEmail($data);            
+            }
+        }
+        exit;
+    }
+    
+    
+     public function executeWs(sfWebRequest $request){
+        ProjectConfiguration::registerZend();   
+        Zend_Loader::loadClass('Zend_Gdata_ClientLogin');
+        Zend_Loader::loadClass('Zend_Gdata_Gapps');
         
-        $conn = Doctrine::getTable("InoCosto")->getConnection();
-        $conn->beginTransaction();
+        //$client = Zend_Gdata_ClientLogin::getHttpClient("maquinche", "80166236", Zend_Gdata_Gapps::AUTH_SERVICE_NAME);
+        //$gdata = new Zend_Gdata_Gapps($client, 'coltrans.co');
+        //$gdata->updateUser("colsys", "cglti$col9110");
+        $email="maquinche@coltrans.co";
+        $password="80166236";
+        $client = Zend_Gdata_ClientLogin::getHttpClient($email, $password, Zend_Gdata_Gapps::AUTH_SERVICE_NAME);
+        $gdata = new Zend_Gdata_Gapps($client, 'coltrans.co');
+
+        $data=$gdata->retrievePageOfUsers($startUsername=null);
+        echo "<table border=1><tr> <td>UserName</td>
+            <td>name</td>
+            <td>LastName</td>
+            <td>Suspended</td>
+            <td>admin</td>
+            <td>changePasswordAtNextLogin</td>
+            <td>agreedToTerms</td>
+            </tr>";
+        foreach($data as $user)
+        {
+            echo "<tr> <td>".$user->login->userName."</td>
+            <td>".$user->name->givenName."</td>
+            <td>".$user->name->familyName."</td>
+            <td>".($user->login->suspended ? 'Yes' : 'No')."</td>
+            <td>".($user->login->admin ? 'Yes' : 'No')."</td>
+            <td>".($user->login->changePasswordAtNextLogin ? 'Yes' : 'No')."</td>
+            <td>".($user->login->agreedToTerms ? 'Yes' : 'No')."</td>";            
+        }
+        echo "</table>";
+
+        exit;
+    }
+    
+    
+    public function executeMail()
+    {
         
-        $lastCu = null;
-        foreach( $params as $p ){
-            echo $p->getCaCasouso()."<br />";
-            
-            if( $lastCu!=$p->getCaCasouso() ){            
-                $config = new ColsysConfig();
-                $config->setCaParam( $p->getCaCasouso() );
-                $config->save( $conn );
-                $lastCu=$p->getCaCasouso();
+        /*$ref="42050111623-99192013-11-22-111136.pdf";        
+        $ref[0] =  substr($ref[0], 0,3).".".substr($ref[0], 3,2).".".substr($ref[0], 5,2).".".substr($ref[0], 7,3).".".substr($ref[0], 10,1);
+        
+        exit;*/
+        ProjectConfiguration::registerZend();   
+        Zend_Loader::loadClass('Zend_Gdata_ClientLogin');
+        Zend_Loader::loadClass('Zend_Gdata_Gapps');
+        $pass='cglti$col91';
+        $mail = new Zend_Mail_Storage_Imap(array('host' => 'imap.gmail.com', 'user' => "colsys@coltrans.com.co", 'password' => $pass, 'ssl' => 'SSL'));
+        /*$mail = new Zend_Mail_Storage_Pop3(array('host'     => 'imap.gmail.com',
+                                         'user'     => 'colsys@coltrans.com.co',
+                                         'password' => $pass));*/
+        
+        //$folder = $mail->getFolders()->FACTURAS;
+        //echo $forlder->countMessages()."-";
+        $mail->selectFolder("FACTURAS");
+        //$mail->selectFolder("MAURICIO");
+        //echo $mail->countMessages();
+        
+        foreach ($mail as $messageNum => $message)
+        {
+            if ($message->hasFlag(Zend_Mail_Storage::FLAG_SEEN)) {
+                continue;
+            }
+
+            $from=$message->from ;            
+            /**************************************/
+            $part = $message;
+
+            while ($part->isMultipart()) {
+                $part = $message->getPart(1);
+                try{
+                    $fileName = $part->getHeader('content-description');
+                    $attachment = base64_decode($part->getContent());
+                    $size = strlen($attachment);
+                    //$directory = sfConfig::get('app_digitalFile_root').date("Y").DIRECTORY_SEPARATOR;
+                    $mime = explode(";", $part->getHeader('content-type'));
+                    $mime=$mime[0];
+                    $asunto=substr($fileName,0,strlen($fileName)-21);
+                    $ref=array();
+                    $ref[]=substr($asunto, 0,11);
+                    $ref[]=substr($asunto, 12,4);
+                    $data=array();
+                    
+                    $ref[0] =  str_replace(".", "", $ref[0]);
+                    $ref[0] =  substr($ref[0], 0,3).".".substr($ref[0], 3,2).".".substr($ref[0], 5,2).".".substr($ref[0], 7,3).".".substr($ref[0], 10,1);
+                    
+                    $data["ref1"]=$ref[0];
+                    if(isset($ref[1]))
+                    {
+                        $sql="select  ca_hbls from tb_inoclientes_sea 
+                        where ca_referencia='".$ref[0]."' and UPPER(substring(ca_hbls from (char_length(ca_hbls)-3) ))= UPPER('".$ref[1]."') limit 1";
+                        $con = Doctrine_Manager::getInstance()->connection();
+
+                        $st = $con->execute($sql);
+                        $resul = $st->fetchAll();
+                        $data["ref2"]=$resul[0]["ca_hbls"];
+                    }
+                    $data["iddocumental"]="7";
+
+                    if($data["ref1"])
+                        $path.=$data["ref1"].DIRECTORY_SEPARATOR;
+                    if($data["ref2"])
+                        $path.=$data["ref2"].DIRECTORY_SEPARATOR;
+
+                    $archivo = new Archivos();
+                    $archivo->setCaIddocumental($data["iddocumental"]);
+                    $archivo->setCaNombre($fileName);
+                    $archivo->setCaRef1($data["ref1"]);
+                    $archivo->setCaRef2($data["ref2"]);
+                    $archivo->setCaMime($mime);
+                    $archivo->setCaSize($size);
+                    $tipDoc = $archivo->getTipoDocumental();
+                    $folder = $tipDoc->getCaDirectorio();
+                    $directory = sfConfig::get('app_digitalFile_root').date("Y").DIRECTORY_SEPARATOR.$folder.$path;
+                    $archivo->setCaPath($directory.$fileName);
+                    $archivo->save();
+                    $fh = fopen($directory.$fileName, 'w');
+                    fwrite($fh, $attachment);
+                    fclose($fh);
+                    //print_r($data);
+                    //echo $directory.$fileName;
+                }
+                catch(Excepcion $e)
+                {
+                    
+                }                
             }
             
-            $value = new ColsysConfigValue();
-            $value->setCaIdent( $p->getCaIdentificacion() );
-            $value->setCaValue( $p->getCaValor() );
-            $value->setCaValue2( $p->getCaValor2() );
-            $value->setCaIdconfig( $config->getCaIdconfig() );
-            $value->save( $conn );            
+            
+            /**************************************/
+            
+//            $mail->setFlags($messageNum,array(Zend_Mail_Storage::FLAG_SEEN));
+            
+    
+            //echo "<pre>";print_r($message->getHeaders());echo "</pre>";
+            
+            //$from=$request->getParameter("from");
+            
+            //$from=$request->getParameter("from");
+            
+            /*$part = $message;            
+            while ($part->isMultipart()) {
+                $part = $message->getPart(1);            
+                $fileName = $part->getHeader('content-description');
+                $attachment = base64_decode($part->getContent());
+                $directory = sfConfig::get('app_digitalFile_root').date("Y").DIRECTORY_SEPARATOR;
+                $fh = fopen($directory.$fileName, 'w');
+                fwrite($fh, $attachment);             
+                fclose($fh);                
+                exit;
+            }*/
+        }
+        //echo htmlspecialchars($folder);
+        
+      /*      $folders = new RecursiveIteratorIterator($mail->getFolders(),
+                                             RecursiveIteratorIterator::SELF_FIRST);
+    echo '<select name="folder">';
+    foreach ($folders as $localName => $folder) {
+        $localName = str_pad('', $folders->getDepth(), '-', STR_PAD_LEFT) .
+                     $localName;
+        echo '<option';
+        if (!$folder->isSelectable()) {
+            echo ' disabled="disabled"';
+        }
+        echo ' value="' . htmlspecialchars($folder) . '">'
+            . htmlspecialchars($localName) . '</option>';
+    }
+    echo '</select>';
+        */
+        
+        
+        /*echo $mail->countMessages();
+        foreach ($mail as $message)
+        {
+            if($message->isMultipart())
+            {
+               $part = $message->getPart(2);
+            
+
+            // Get the attacment file name
+            //$fileName = $part->getHeader('content-description');
+
+            // Get the attachement and decode
+                //$attachment = base64_decode($part->getContent());
+               //$part->
+                
+                 //   echo  $attachment;
+                
+            }
+            // Save the attachment
+            //$fh = fopen($fileName, 'w');
+
+            //fwrite($fh, $attachment);
+
+            //fclose($fh);
+        }*/
+        //$mail->
+        exit;
+        
+    }
+    
+    public function executeCalendar(sfWebRequest $request){
+        ProjectConfiguration::registerZend();   
+        Zend_Loader::loadClass('Zend_Gdata_ClientLogin');
+        Zend_Loader::loadClass('Zend_Gdata_Gapps');
+        
+        
+        $service = Zend_Gdata_Calendar::AUTH_SERVICE_NAME;
+/*        $user="soporte-sistemas@coltrans.com.co";
+        $pass="80166236";
+        $keypass="528a6254afc2a026066fceb0b89e4094";
+        $mailpass="pHaonZJtaWc=";
+ * 
+ */
+        $usuario=new Usuario();
+        $pass=$usuario->getDecrypt($mailpass, $keypass);
+        echo $pass;
+        
+
+        // Create an authenticated HTTP client
+        $client = Zend_Gdata_ClientLogin::getHttpClient($user, $pass, $service);
+
+        // Create an instance of the Calendar service
+        $service = new Zend_Gdata_Calendar($client);
+        
+        
+        
+        
+        try {
+            $listFeed= $service->getCalendarListFeed();
+        } catch (Zend_Gdata_App_Exception $e) {
+            echo "Error: " . $e->getMessage();
         }
         
+        echo "<h1>Calendar List Feed</h1>";
+        echo "<ul>";
+        foreach ($listFeed as $calendar) {
+            echo "<li>" . $calendar->title .
+                 " (Event Feed: " . $calendar->id . ")</li>";
+        }
+        echo "</ul>";
         
-        $conn->commit();            
+        $query = $service->newEventQuery();
+        $query->setUser('default');
+        // Set to $query->setVisibility('private-magicCookieValue') if using
+        // MagicCookie auth
+        $query->setVisibility('private');
+        $query->setProjection('full');
+        $query->setOrderby('starttime');
+        $query->setFutureevents('true');
+
+        // Retrieve the event list from the calendar server
+        try {
+            $eventFeed = $service->getCalendarEventFeed($query);
+        } catch (Zend_Gdata_App_Exception $e) {
+            echo "Error: " . $e->getMessage();
+        }
+
+        // Iterate through the list of events, outputting them as an HTML list
+        echo "<ul>";
+        foreach ($eventFeed as $event) {
+            echo "<li>" . $event->title . " (Event ID: " . $event->id . ")</li>";
+            /*echo "<pre>";
+            print_r($event);
+            echo "</pre>";*/
+                $eventURL = $event->link;
+     
+            try {
+                $event = $service->getCalendarEventEntry($eventURL);
+            } catch (Zend_Gdata_App_Exception $e) {
+                echo "Error: " . $e->getMessage();
+            }
+        }
+        echo "</ul>";
         
-        $this->setTemplate("blank");
+        /*$event= $service->newEventEntry();
+ 
+        // Populate the event with the desired information
+        // Note that each attribute is crated as an instance of a matching class
+        $event->title = $service->newTitle("My Event");
+        $event->where = array($service->newWhere("Mountain View, California"));
+        $event->content =
+            $service->newContent(" This is my awesome event. RSVP required.");
+
+        // Set the date using RFC 3339 format.
+        $startDate = "2013-03-14";
+        $startTime = "14:00";
+        $endDate = "2013-03-14";
+        $endTime = "16:00";
+        $tzOffset = "-05";
+
+        $when = $service->newWhen();
+        $when->startTime = "{$startDate}T{$startTime}:00.000{$tzOffset}:00";
+        $when->endTime = "{$endDate}T{$endTime}:00.000{$tzOffset}:00";
+        $event->when = array($when);
+
+        // Upload the event to the calendar server
+        // A copy of the event as it is recorded on the server is returned
+        $newEvent = $service->insertEvent($event);
+         * */
+        exit;
     }
     
+    public function executeColsysNotification(sfWebRequest $request)
+    {
+        $subject="Nueva respuesta Ticket #3341 [EQUIPO LENTO]";
+        $resp="prueba:".date("Y-m-d");
+        $from="maquinche@coltrans.com.co";
+        $from = "maquinche@coltrans.com.co";
+        //$string = '"Joe Smith" <jsmith@example.com>, kjones@aol.com; someoneelse@nowhere.com mjane@gmail.com';
+        $email_regex = "/[^0-9< ][A-z0-9_]+([.][A-z0-9_]+)*@[A-z0-9_]+([.][A-z0-9_]+)*[.][A-z]{2,4}/";
+        preg_match_all($email_regex, $from, $matches);
+        $emails = $matches[0];
+        echo ($emails[0]);
+        exit;
+        
+        try{
+            $id=0;
+            $subject=  str_replace("Re: ", "", $subject);
+            
+            $user = Doctrine::getTable("Usuario")
+                            ->createQuery("u")
+                            ->select("u.ca_login")
+                            ->where("u.ca_email = ? ", $from)
+                            ->limit(1)
+                            ->fetchOne();
+            
+            $email = Doctrine::getTable("Email")
+                            ->createQuery("e")
+                            ->select("e.ca_idcaso")
+                            ->where("e.ca_subject = ? ", $subject)
+                            ->limit(1)
+                            ->fetchOne();
+
+            if($email)
+            {
+                //$conn = Doctrine::getTable("HdeskResponse")->getConnection();
+                //$conn->beginTransaction();
+                try{
+
+                    $idticket = $email->getCaIdcaso();                    
+                    
+                    $ticket = Doctrine_Query::create()->from("HdeskTicket h")->where("h.ca_idticket = ?", $idticket)->fetchOne();
+
+                    error_reporting(E_ALL);
+                    $respuesta = new HdeskResponse();
+                    //echo $subject.":".$respuesta.":".$from.":2:".$email->getCaIdemail();
+                    //exit;
+                    $respuesta->setCaIdticket($idticket);
+
+                    $respuesta->setCaText(utf8_decode($resp));
+
+                    $respuesta->setCaLogin($user->getCaLogin());
+                    //echo $user->getCaLogin().":".$respuesta.":".$idticket;
+                    $respuesta->setCaCreatedat(date("Y-m-d H:i:s"));
+                    
+                    
+                    $respuesta->save(  );
+
+                    
+                    $logins = array($ticket->getCaLogin());
+                    if ($ticket->getCaAssignedto()) {
+                        $logins[] = $ticket->getCaAssignedto();
+                    } else {
+                        $usuarios = Doctrine::getTable("HdeskUserGroup")
+                                        ->createQuery("h")
+                                        ->innerJoin("h.Usuario u")        
+                                        ->addWhere("h.ca_idgroup = ? ", $ticket->getCaIdgroup())  
+                                        ->addWhere("u.ca_activo = ? ", true )  
+                                        ->addOrderBy("h.ca_login")
+                                        ->execute();
+                        foreach ($usuarios as $usuario) {
+                            $logins[] = $usuario->getCaLogin();
+                        }
+                    }
+
+
+                    $email1 = new Email();
+                    $email1->setCaUsuenvio($this->getUser()->getUserId());
+                    $email1->setCaTipo("Notificación");
+                    $email1->setCaIdcaso($ticket->getCaIdticket());
+                    $email1->setCaFrom("no-reply@coltrans.com.co");
+                    $email1->setCaFromname("Colsys Notificaciones");
+
+
+                    $email1->setCaSubject("Nueva respuesta Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]");
+
+
+                    $request->setParameter("id", $ticket->getCaIdticket());
+                    $request->setParameter("format", "email");
+
+                    $texto = sfContext::getInstance()->getController()->getPresentationFor('pm', 'verTicket');
+
+                    $email1->setCaBodyhtml($texto);
+
+                    foreach ($logins as $login) {
+                        if ($this->getUser()->getUserId() != $login) {
+                            $usuario = Doctrine::getTable("Usuario")->find($login);
+                            $email->addTo($usuario->getCaEmail());
+                        }
+                    }
+
+                    $email1->save( );
+
+
+                    //$conn->commit();
+                    //$request->setParameter("format", "");
+                    //$texto = sfContext::getInstance()->getController()->getPresentationFor('pm', 'verRespuestas');
+
+                    //$this->responseArray = array("success" => true, "idticket" => $ticket->getCaIdticket(), "info" => utf8_encode($texto));
+                }catch(Exception $e){
+                    //$conn->rollback();
+                    print_r($e);
+                    //$this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+                }
+            }
+            else
+            {
+                $id=$subject;
+                echo $subject.":".$respuesta.":".$from;
+        exit;
+            }
+            return $id;
+        }
+        catch (Exception $e)
+        {
+            print_r($e);
+            //echo "Remote: ".$e->getMessage()." server:".$_SERVER["SERVER_ADDR"];//." u:".$usuario."-nu:".$newUsuario;
+        }
+        //exit;
+    }
+  
+
+    public function executeExt4(sfWebRequest $request)
+    {
+        $tipo=$request->getParameter("tipo");        
+        switch ($tipo)
+        {
+            case "grid":
+                $this->setTemplate("gridExt4");
+                break;
+            case "multiupload":
+                $this->setTemplate("multipleUploadExt4");
+                break;
+            case "formUpload":                
+                $this->getResponse()->setCookie('back_refer', (($this->getRequest()->getCookie('back_refer')!="")?$this->getRequest()->getCookie('back_refer'): $request->getReferer()));
+                $this->idsserie = ($this->getRequestParameter("idsserie")!="")?$this->getRequestParameter("idsserie"):"2";
+                
+                $this->ref1 = str_replace("|", ".", $this->getRequestParameter("ref1"));
+                $this->ref2 = str_replace("|", ".", $this->getRequestParameter("ref2"));
+                $this->ref3 = str_replace("|", ".", $this->getRequestParameter("ref3"));
+                
+/*                $this->serie = ($this->getRequestParameter("serie")!="")?$this->getRequestParameter("serie"):"44";
+                $this->subserie = ($this->getRequestParameter("subserie")!="")?$this->getRequestParameter("subserie"):"2";
+                
+                
+                $this->ref1 = str_replace("|", ".", $this->getRequestParameter("ref1"));
+                $this->ref2 = str_replace("|", ".", $this->getRequestParameter("ref2"));
+                $this->ref3 = str_replace("|", ".", $this->getRequestParameter("ref3"));
+                
+                $tipoDocs = Doctrine::getTable("TipoDocumental")
+                            ->createQuery("t")
+                            ->select("*")                            
+                            ->where("t.ca_serie = ? AND t.ca_subserie=?", array($this->serie,$this->subserie) )
+                            ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                            ->execute();
+                $this->tipoDocs=array();
+                foreach($tipoDocs as $t)
+                {
+                    $this->tipoDocs[]=array("id"=>$t["ca_iddocumental"],"name"=>$t["ca_documento"]);                    
+                }
+                
+*/
+                
+                $this->setTemplate("formUploadExt4");
+                break;
+            case "reporteador" :
+                
+                $this->years=array();
+                
+                for ( $i=0; $i<5; $i++ )
+                {
+                    $this->years[] = array("year" => date('Y')-$i);
+                }
+                
+                $this->meses = array();
+                //$this->meses[]=array("id" => "%","valor" => "Todos los Meses");
+                for ( $i=1; $i<=12; $i++ )
+                {
+                    $this->meses[] = array("id" => $i,"valor" => Utils::mesLargo($i));
+                }
+                
+                //select distinct ca_nombre as ca_sucursal from control.tb_sucursales order by ca_sucursal
+                $this->sucursales = array();
+                
+                $sucursales = Doctrine::getTable("Sucursal")
+                ->createQuery("s")
+                ->select("s.ca_nombre")
+                ->distinct()
+                //->select("s.ca_idsucursal,s.ca_nombre")
+                ->addOrderBy("s.ca_nombre")
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->execute();
+
+                foreach ($sucursales as $sucursal) {
+                    $this->sucursales[] = array("id" => utf8_encode($sucursal["s_ca_nombre"]), "valor" => utf8_encode($sucursal["s_ca_nombre"]));
+                }
+                
+                
+                
+                $traficos = Doctrine::getTable('Trafico')->createQuery('t')
+                        ->where('t.ca_idtrafico != ?', '99-999')
+                        ->addOrderBy('t.ca_nombre ASC')
+                        ->execute();
+
+                $this->traficos = array();
+                foreach ($traficos as $trafico) {
+                    $this->traficos[] = array("nombre" => utf8_encode($trafico->getCaNombre()),
+                        "idtrafico" => $trafico->getCaIdtrafico()
+                    );
+                }
+                
+                
+                /*$ciudades = Doctrine::getTable('Ciudad')->createQuery('c')
+                ->innerJoin('c.Trafico t')                        
+                ->where("c.ca_idtrafico=?","CO-057")
+                ->addOrderBy('c.ca_ciudad ASC')
+                ->addOrderBy('t.ca_nombre ASC')
+                ->execute();
+                
+                $this->ciudades = array();
+                foreach ($ciudades as $ciudad) {
+                    $this->ciudades[] = array("ciudad" => utf8_encode($ciudad->getCaCiudad()),
+                        "idciudad" => $ciudad->getCaIdtrafico()
+                    );
+                }*/
+                
+
+                $this->setTemplate("reporteador");
+                break;
+        }
+    }
+
+    public function executeDatosVendedores(sfWebRequest $request)
+    {
+        $sucursal=  utf8_decode($request->getParameter("sucursal"));
+        
+        $contactos = UsuarioTable::getUsuariosxPerfil('comercial',null,$sucursal);
+        $c1=array();
+        foreach($contactos as $c)
+        {
+            $c1[]=array("id"=>$c->getCaLogin(),"valor"=>utf8_encode($c->getCaNombre()));
+        }
+        $this->responseArray = array("root" => $c1, "total" => count($this->c1), "success" => true);
+        $this->setTemplate("responseTemplate");
+        
+    }
+
+     public function executeSubirArchivo(sfWebRequest $request)
+     {
+        sfConfig::set('sf_web_debug', false) ;
+        
+        $idarchivo = base64_decode($this->getRequestParameter("idarchivo"));
+        
+        $iddocumental = $this->getRequestParameter("documento");
+        $nombre = $this->getRequestParameter("nombre");
+        $ref1 = $this->getRequestParameter("ref1");
+        $ref2 = $this->getRequestParameter("ref2");
+        $ref3 = $this->getRequestParameter("ref3");
+        
+//		$folder = base64_decode($this->getRequestParameter("folder"));
+        $tipDoc = Doctrine::getTable("TipoDocumental")->find($iddocumental);
+        $this->forward404Unless($tipDoc);
+        $folder = $tipDoc->getCaDirectorio();
+        $this->referer=base64_decode($this->getRequestParameter("referer"));// para que sera???
+        //$this->nameFileType=$this->getRequestParameter("namefiletype");
+        
+        $template = ($this->getRequestParameter("template")!="")?$this->getRequestParameter("template"):"responseTemplate";
+        $path="";
+        if($ref1)
+            $path.=$ref1.DIRECTORY_SEPARATOR;
+        if($ref2)
+            $path.=$ref2.DIRECTORY_SEPARATOR;
+        if($ref3)
+            $path.=$ref3.DIRECTORY_SEPARATOR;
+//		$this->forward404Unless($folder);
+        $directory = sfConfig::get('app_digitalFile_root').date("Y").DIRECTORY_SEPARATOR.$folder.$path;
+        //echo $directory;
+        if(!is_dir($directory)){
+            mkdir($directory, 0777, true);
+        }
+        chmod ( $directory , 0777 );
+        //print_r($_FILES);
+        //error_reporting(E_ALL);
+        try
+        {
+            if ( count( $_FILES )>0 ){
+
+                $filePrefix = $this->getRequestParameter("filePrefix");
+                if( $filePrefix ){
+                    $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
+                    foreach($archivos as $archivo ){
+                        if( substr(basename($archivo),0, strlen($filePrefix))==$filePrefix ){
+                            @unlink($archivo);
+                        }
+                    }
+                }
+
+                foreach ( $_FILES as $nameFile =>$uploadedFile){
+                    //if($uploadedFile['name']=="")
+                    //    continue;                    
+                    
+                    if( $filePrefix ){
+                        $fileName  = $filePrefix."_".$uploadedFile['name'] ;
+                    }else{
+                        $fileName  = $uploadedFile['name'] ;
+                    }
+
+                    $mime = $uploadedFile['type'];
+                    $size = $uploadedFile['size'];
+                    $fileName = preg_replace('/\s\s+/', ' ', $fileName);
+                    $fileName=urlencode($fileName);
+                    $fileName = str_replace("+", " ", $fileName);                    
+                    $nombre = ($nombre!="")?$nombre:$fileName;
+                    if(move_uploaded_file($uploadedFile['tmp_name'],$directory.$fileName )){
+                        
+                        $archivo = new Archivos();                        
+                        $archivo->setCaIddocumental($iddocumental);
+                        $archivo->setCaNombre($nombre);
+                        $archivo->setCaMime($mime);
+                        $archivo->setCaSize($size);
+                        $archivo->setCaPath($directory.DIRECTORY_SEPARATOR.$fileName);
+                        $archivo->setCaRef1($ref1);
+                        $archivo->setCaRef2($ref2);
+                        $archivo->setCaRef3($ref3);
+                        $archivo->save();                        
+                        $this->responseArray = array("id"=>base64_encode($fileName), "file"=>$fileName, "folder"=>$folder, "success"=>true);
+                    }else{
+                        $this->responseArray = array("error"=>"No se pudo mover el archivo","filename"=>$fileName, "folder"=>$folder, "success"=>false);
+                    }
+                }
+            }else{
+                $this->responseArray = array("success"=>false);
+            }
+        }
+        catch(Exception $e)
+        {
+            $this->responseArray = array("error"=>$e->getMessage(), "success"=>false);
+        }
+
+		$this->setTemplate($template);
+         
+     }
+     
+     
+     public function executeEliminarArchivo(sfWebRequest $request)
+     {
+         $user = $this->getUser();            
+         $idarchivo=$request->getParameter("idarchivo");
+         $observaciones=$request->getParameter("observaciones");
+         $archivo = Doctrine::getTable("Archivos")->find($idarchivo);
+         $archivo->setCaFcheliminado( date("Y-m-d H:i:s") );
+         $archivo->setCaUsueliminado($user->getUserId());
+         $archivo->setCaObservaciones(  );
+         $archivo->save();
+         $this->responseArray = array("success"=>true);
+         $this->setTemplate("responseTemplate");
+         
+     }
+     
+     public function executeBackRefer(sfWebRequest $request)
+     {  
+         $this->back=$this->getRequest()->getCookie('back_refer');
+         $this->getResponse()->setCookie('back_refer',"");         
+         
+     }
+     
+     
+     
+     public function executeGappSH(sfWebRequest $request)
+     {  
+         echo phpinfo();
+         exit;
+        ProjectConfiguration::registerZend();   
+        Zend_Loader::loadClass('Zend_Gdata_ClientLogin');
+        Zend_Loader::loadClass('Zend_Gdata_Gapps');
+        Zend_Loader::loadClass('Zend_Gdata_Spreadsheets');
+        //$pass='cglti$col91';
+        //$mail = new Zend_Mail_Storage_Imap(array('host' => 'imap.gmail.com', 'user' => "colsys@coltrans.com.co", 'password' => $pass, 'ssl' => 'SSL'));
+          
+         
+         
+        $pass='80166236';
+        $user="maquinche@coltrans.com.co";
+        $service = Zend_Gdata_Spreadsheets::AUTH_SERVICE_NAME;
+        $client = Zend_Gdata_ClientLogin::getHttpClient($user, $pass, $service);
+        $spreadsheetService = new Zend_Gdata_Spreadsheets($client);
+        //$feed = $spreadsheetService->getSpreadsheetFeed();
+        $spreadsheetKey="1-rI5Jb8PqlBvZJ9u7SGyVUE-8KYj5L24IUduO_faeTw";
+        $worksheetId="Sheet1";
+        
+        //$feed = $spreadsheetService->getSpreadsheetFeed();
+        /*$spreads=$spreadsheetService->getSpreadsheets();
+        
+        foreach($spreads as $s) {
+            echo $s->title."<br>";
+        }*/
+        //print_r($spread);
+
+        /*$query = new Zend_Gdata_Spreadsheets_ListQuery();
+        $query->setSpreadsheetKey($spreadsheetKey);
+        $query->setWorksheetId($worksheetId);
+        $listFeed = $spreadsheetService->getListFeed($query);
+        */
+        
+        $query = new Zend_Gdata_Spreadsheets_CellQuery();
+        $query->setSpreadsheetKey($spreadsheetKey);
+        //$query->setWorksheetId($worksheetId);
+        $cell = $spreadsheetService->getCellEntry($query);
+        
+        foreach($cell as $cellEntry) {
+            $row = $cellEntry->cell->getRow();
+            $col = $cellEntry->cell->getColumn();
+            $val = $cellEntry->cell->getText();
+            echo "$row, $col = $val\n";
+        }
+        
+         exit;
+     }
     
 }
+
 ?>
