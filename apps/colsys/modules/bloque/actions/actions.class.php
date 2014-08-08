@@ -10,7 +10,7 @@
  */
 class bloqueActions extends sfActions {
 
-    const RUTINA = 136;
+    const RUTINA = 144;
     public function executeIndex(sfWebRequest $request) {
         $this->user = $this->getUser();
         $this->nivel = $this->user->getNivelAcceso(bloqueActions::RUTINA);
