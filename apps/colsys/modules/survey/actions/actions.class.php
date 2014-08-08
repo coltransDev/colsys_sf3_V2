@@ -38,9 +38,9 @@ class surveyActions extends sfActions {
             }
 
             $this->ticket = Doctrine::getTable("HDeskTicket")
-                        ->createQuery("h")
-                        ->addWhere("h.ca_idevaluacion=?", $evaluacion->getCaIdevaluacion())
-                        ->fetchOne();
+                    ->createQuery("h")
+                    ->addWhere("h.ca_idevaluacion=?", $evaluacion->getCaIdevaluacion())
+                    ->fetchOne();
 
 
         } else {
@@ -55,17 +55,25 @@ class surveyActions extends sfActions {
         if ($evaluacion->getCaEstado() == SurvEvaluacion::ESTADO_RESUELTA) {
             $this->redirect("survey/finalizarEvaluacion");
         }
-
-
-        $q = Doctrine::getTable("SurvCriterio")->createQuery("c");
-        $q->addWhere("c.ca_activo = ?", true);
-        $this->criterios = $q->execute();
         
+        $grupo = $this->ticket->getHdeskGroup();
+        $tipos = array("Defecto", "Mejora");
+        
+        $q = Doctrine::getTable("SurvCriterio")->createQuery("c")
+            ->addWhere("c.ca_activo = ?", true)
+            ->addWhere("c.ca_idtipo = ?", $grupo->getCaIdtipo());
+        
+        if(in_array($this->ticket->getCaType(), $tipos)){
+            $q->addWhere("c.ca_tipocriterio = ?", $this->ticket->getCaType());
+        }else{
+            $q->addWhere("c.ca_tipocriterio = '-'");
+        }
+            
+        $this->criterios = $q->execute();
+
         $this->form = new NuevaEvaluacionForm();
         $this->form->setCriterios($this->criterios);
         $this->form->configure();
-
-
 
         if ($request->isMethod('post')) {
 
@@ -73,13 +81,11 @@ class surveyActions extends sfActions {
 
             $bindValues["idtipo"] = $request->getParameter("idtipo");
             $bindValues["comentarios"] = $request->getParameter("comentarios");
-            
-            if(!$request->getParameter("comentarios_check") ){
+
+            if (!$request->getParameter("comentarios_check")) {
                 $bindValues["comentarios"] = "";
             }
 
-            
-            
             foreach ($this->criterios as $criterio) {
                 $bindValues["ponderacion_" . $criterio->getCaIdcriterio()] = $request->getParameter("ponderacion_" . $criterio->getCaIdcriterio());
                 $bindValues["calificacion_" . $criterio->getCaIdcriterio()] = $request->getParameter("calificacion_" . $criterio->getCaIdcriterio());
@@ -92,7 +98,7 @@ class surveyActions extends sfActions {
                 if (!$request->getParameter("idevaluacion")) {
                     $evaluacion->setCaIdtipo($request->getParameter('idtipo'));
                 }
-                
+
                 if ($bindValues["comentarios"]) {
                     $evaluacion->setCaComentarios($bindValues["comentarios"]);
                 }
@@ -136,7 +142,7 @@ class surveyActions extends sfActions {
     }
 
     public function executeFinalizarEvaluacion(sfWebRequest $request) {
-
+        
     }
 
     /*
@@ -171,10 +177,9 @@ class surveyActions extends sfActions {
         $this->setLayout("email");
 
         $this->ticket = Doctrine::getTable("HDeskTicket")
-                        ->createQuery("h")
-                        ->addWhere("h.ca_idevaluacion=?", $this->evaluacion->getCaIdevaluacion())
-                        ->fetchOne();
-
+                ->createQuery("h")
+                ->addWhere("h.ca_idevaluacion=?", $this->evaluacion->getCaIdevaluacion())
+                ->fetchOne();
 
         //$datos = sfContext::getInstance()->getController()->getPresentationFor( 'traficos', 'informeTraficosFormato1');
     }
@@ -186,11 +191,11 @@ class surveyActions extends sfActions {
         $fecha = date("Y-m-d H:i:s", time() - (8 * 86400));
 
         $evaluaciones = Doctrine::getTable("SurvEvaluacion")
-                        ->createQuery("e")
-                        ->addWhere("e.ca_estado = ? ", SurvEvaluacion::ESTADO_SINCONTESTAR )
-                        ->addWhere("e.ca_fchnotificacion <= ? OR e.ca_fchnotificacion IS NULL", $fecha)
-                        ->addWhere("e.ca_numnotificacion < ?", SurvEvaluacion::MAX_NOTIFICACIONES )
-                        ->execute();
+                ->createQuery("e")
+                ->addWhere("e.ca_estado = ? ", SurvEvaluacion::ESTADO_SINCONTESTAR)
+                ->addWhere("e.ca_fchnotificacion <= ? OR e.ca_fchnotificacion IS NULL", $fecha)
+                ->addWhere("e.ca_numnotificacion < ?", SurvEvaluacion::MAX_NOTIFICACIONES)
+                ->execute();
 
         foreach ($evaluaciones as $evaluacion) {
             $conn = Doctrine::getTable("Reporte")->getConnection();
@@ -211,21 +216,18 @@ class surveyActions extends sfActions {
                 $request->setParameter("idevaluacion", $evaluacion->getCaIdevaluacion());
                 $contenido = sfContext::getInstance()->getController()->getPresentationFor('survey', 'emailEvaluacion');
                 $email->setCaBodyhtml($contenido);
-                $email->save( $conn );
+                $email->save($conn);
                 $email->send();
-                $evaluacion->setCaFchnotificacion( date("Y-m-d H:i:s") );
-                $evaluacion->setCaNumnotificacion( $evaluacion->getCaNumnotificacion()+1 );
-                $evaluacion->save( $conn );
+                $evaluacion->setCaFchnotificacion(date("Y-m-d H:i:s"));
+                $evaluacion->setCaNumnotificacion($evaluacion->getCaNumnotificacion() + 1);
+                $evaluacion->save($conn);
                 $conn->commit();
             } catch (Exception $e) {
                 $conn->rollBack();
                 throw $e;
             }
         }
-
         return sfView::NONE;
-
         //
     }
-
 }
