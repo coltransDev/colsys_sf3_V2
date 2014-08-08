@@ -17,8 +17,7 @@ $reporte = $sf_data->getRaw("reporte");
 	}
 	
 	function guardar_comentario( id ){
-		cancelar_comentar( id );
-		
+		cancelar_comentar( id );		
 		var txt = document.getElementById( "coment_status_field_"+id ).value;
 		document.getElementById( "coment_status_field_"+id ).value="";
 		Ext.Ajax.request( 
@@ -29,9 +28,8 @@ $reporte = $sf_data->getRaw("reporte");
 					idstatus: id,					
 					comentario: txt
 				},
-										
 				callback :function(options, success, response){	
-					document.getElementById("coments_"+id).innerHTML = response.responseText; 
+					document.getElementById("coments_"+id).innerHTML = response.responseText;
 					<?
 					if(!$user->getTrackingUser()){
 					?>
@@ -43,12 +41,10 @@ $reporte = $sf_data->getRaw("reporte");
 					<?
 					}
 					?>
-				}	
+				}
 			 }
-		); 				
-		
+		);
 	}
-		
 </script>
 <div align="center">
 
@@ -300,6 +296,8 @@ $reporte = $sf_data->getRaw("reporte");
 <br />
 <?
 
+if($tipo!="1")
+{
 $statuss = $reporte->getRepStatus();
 
 ?>
@@ -371,9 +369,8 @@ $statuss = $reporte->getRepStatus();
 	?>
 </table>
 <?
-
-
-	?>
+}
+?>
 <br />
 <a name="archivos"></a>
 <table width="90%" border="1" class="table1">
@@ -384,7 +381,6 @@ $statuss = $reporte->getRepStatus();
 	//Los archivos en la carpeta
 	if ($files) {
 		foreach ( $files as $file ) {
-            
             if( substr($file, -3,3)==".gz"){
                 $nombreArchivo = substr($file,0, strlen($file)-3);
             }else{
@@ -405,11 +401,7 @@ $statuss = $reporte->getRepStatus();
 			$fileIdx++;
 		}
 	}
-	
-	
 	//Los archivos en los attachments
-		
-	
 	
 	$repstatuss = $reporte->getRepStatus();	
 	foreach( $repstatuss as $repstatus ){

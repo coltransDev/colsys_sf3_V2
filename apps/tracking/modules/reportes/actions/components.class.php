@@ -32,12 +32,12 @@ class reportesComponents extends sfComponents
 	public function executeListaReportes(){
 		$response = sfContext::getInstance()->getResponse();		
 		$response->addJavaScript("extExtras/RowExpander",'last');
-
         $historial = sfContext::getInstance()->getRequest()->getParameter("historial");
         $this->idclienteActivo = $this->getUser()->getClienteActivo();
 
-        
+        //echo $this->transporte;
 		$reportes = ReporteTable::getReportesActivos( $this->getUser()->getClienteActivo(), $this->impoexpo, $this->transporte, false, "", $historial );
+        //echo count($reportes);
 		
 		$this->historial = $historial;
 		$this->data=array();

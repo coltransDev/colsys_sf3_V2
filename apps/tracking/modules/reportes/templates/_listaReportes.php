@@ -153,10 +153,8 @@ Ext.onReady(function(){
 	* 
 	*/
 	var excelBtnHandler=function( btn , e ){
-				
-		var url = "<?=url_for("reportes/informeTraficosFormato1?impoexpo=".$impoexpo.($impoexpo!=Constantes::EXPO?"&transporte=".$transporte:"").($historial?"&historial=".$historial:""))?>";
+		var url = "<?=url_for("reportes/informeTraficosFormato1?impoexpo=".$impoexpo."&transporte=".$transporte.($historial?"&historial=".$historial:""))?>";
 		document.location.href = url;
-		
 	}
 	
 	var rowdblclickHandler=function( grid , rowIndex, e ){

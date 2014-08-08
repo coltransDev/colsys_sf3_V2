@@ -22,13 +22,21 @@ class reportesActions extends sfActions
 		$this->forward404Unless( $this->reporte );
 		
 		
-		$this->user = $this->getUser();	
+		$this->user = $this->getUser();        
 		$cliente = $this->reporte->getCliente();
+        
+        
+        
 		
 		
 		if(!$this->user->getTrackingUser()){
 			$this->user->setClienteActivo($cliente->getCaIdcliente());
+            $this->tipo=0;
 		}
+        else
+        {
+            $this->tipo = $this->getUser()->getContacto()->getCaTipo();            
+        }
 				
 		if( $cliente->getCaIdcliente()!= $this->getUser()->getClienteActivo() && $cliente->getCaIdgrupo()!= $this->getUser()->getClienteActivo()){ // En este caso esta tratando de ver informacion que no es del cliente
 			$this->forward404();			
@@ -105,9 +113,9 @@ class reportesActions extends sfActions
                 $respuesta->setCaLogin( $this->getUser()->getUserId() );
             }
             $respuesta->save();
-
-
-
+            
+            
+            
             $respuestas = Doctrine::getTable("RepStatusRespuesta")
                                     ->createQuery("rs")
                                     ->addWhere("rs.ca_idstatus=?", $status->getCaIdstatus())
@@ -274,24 +282,29 @@ class reportesActions extends sfActions
 		if( $this->impoexpo==Constantes::IMPO ){	
 			$this->forward404unless( $this->transporte );
 			if( $this->transporte==Constantes::MARITIMO ){
-
 				$this->reportes = ReporteTable::getReportesActivos( $this->getUser()->getClienteActivo(),  Constantes::IMPO, Constantes::MARITIMO, false, "", $historial );
 			}elseif( $this->transporte==Constantes::AEREO ){
                 $this->reportes = ReporteTable::getReportesActivos( $this->getUser()->getClienteActivo(),  Constantes::IMPO, Constantes::AEREO, false, "", $historial );
 			}
-		}elseif( $this->impoexpo==Constantes::EXPO ){
-            $this->reportes = ReporteTable::getReportesActivos( $this->getUser()->getClienteActivo(),  Constantes::EXPO, null, false, "", $historial );				
 		}
-					
+        else if( $this->impoexpo==Constantes::EXPO ){
+            
+            if( $this->transporte=="maritimo" ){                
+                $this->reportes = ReporteTable::getReportesActivos( $this->getUser()->getClienteActivo(),  Constantes::EXPO, Constantes::MARITIMO, false, "", $historial );
+			}elseif( $this->transporte=="aereo" ){                
+                $this->reportes = ReporteTable::getReportesActivos( $this->getUser()->getClienteActivo(),  Constantes::EXPO, Constantes::AEREO, false, "", $historial );
+            }elseif( $this->transporte=="terrestre" ){                
+                $this->reportes = ReporteTable::getReportesActivos( $this->getUser()->getClienteActivo(),  Constantes::EXPO, Constantes::TERRESTRE, false, "", $historial );
+			}
+            else
+            {                
+                $this->reportes = ReporteTable::getReportesActivos( $this->getUser()->getClienteActivo(),  Constantes::EXPO, null, false, "", $historial );
+            }
+		}
 		
 		$this->parametros = ParametroTable::retrieveByCaso( "CU059", null , null, $this->getUser()->getClienteActivo() );
-		
 		$this->filename = $this->getRequestParameter("filename");
-		
 		$this->setLayout("excel");
-	}
-	
+	}	
 }
-
-
 ?>
