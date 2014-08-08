@@ -22,7 +22,7 @@ class pmActions extends sfActions {
         if (!$this->nivel) {
             $this->nivel = 0;
         }
-       
+
         $this->forward404Unless($this->nivel != -1);
         //return 0;
         return $this->nivel;
@@ -56,22 +56,22 @@ class pmActions extends sfActions {
         $criterio = $request->getParameter("criterio");
         $groupby = $request->getParameter("groupby");
 
-        $this->forward404Unless($request->getParameter("idgroup") || $request->getParameter("idproject") || $request->getParameter("option") );
+        $this->forward404Unless($request->getParameter("idgroup") || $request->getParameter("idproject") || $request->getParameter("option"));
 
         $q = Doctrine_Query::create()
-            ->select("h.ca_starred, h.*, g.ca_name, u.ca_nombre, u.ca_extension, s.ca_nombre, m.ca_due,
+                ->select("h.ca_starred, h.*, g.ca_name, u.ca_nombre, u.ca_extension, s.ca_nombre, m.ca_due,
                       m.ca_title, p.ca_name, tar.ca_fchterminada, tar.ca_fchvencimiento,
                       (SELECT MAX(rr.ca_createdat) FROM HdeskResponse rr WHERE rr.ca_idticket = h.ca_idticket ) as ultseg,
                       (SELECT MAX(t.ca_fchvencimiento) FROM HdeskResponse rr2 , NotTarea t WHERE rr2.ca_idtarea=t.ca_idtarea AND rr2.ca_idticket = h.ca_idticket ) as proxseg")
-            ->from('HdeskTicket h');
+                ->from('HdeskTicket h');
         $q->innerJoin("h.HdeskGroup g");
         $q->leftJoin("h.HdeskTicketUser hu  ");
         $q->leftJoin("h.HdeskProject p");
         $q->leftJoin("h.HdeskMilestone m");
         $q->leftJoin("h.NotTarea tar");
         $q->leftJoin("h.Usuario u");
-        $q->leftJoin("u.Sucursal s");        
-        
+        $q->leftJoin("u.Sucursal s");
+
         if ($request->getParameter("iddepartament")) {
 
             $q->addWhere("g.ca_iddepartament = ? ", $request->getParameter("iddepartament"));
@@ -89,15 +89,15 @@ class pmActions extends sfActions {
         if ($request->getParameter("idproject")) {
             $q->addWhere("h.ca_idproject = ? ", $request->getParameter("idproject"));
         }
-        
+
         if ($request->getParameter("priority")) {
             $q->addWhere("h.ca_priority = ? ", $request->getParameter("priority"));
         }
 
         if ($request->getParameter("actionTicket")) {
-            if( $request->getParameter("actionTicket")=="Cerrado" ){
+            if ($request->getParameter("actionTicket") == "Cerrado") {
                 $q->addWhere("h.ca_closedat IS NOT NULL");
-            }elseif($request->getParameter("actionTicket")=="Abierto"){
+            } elseif ($request->getParameter("actionTicket") == "Abierto") {
                 $q->addWhere("h.ca_closedat IS NULL");
             }
         }
@@ -117,7 +117,7 @@ class pmActions extends sfActions {
         }
 
 
-        if ( $request->getParameter("option")=="misTickets" ){
+        if ($request->getParameter("option") == "misTickets") {
             $q->addWhere("(h.ca_login = ? or hu.ca_login = ?)", array($this->getUser()->getUserid(), $this->getUser()->getUserid()));
             $q->addWhere("h.ca_closedat IS NULL");
         }
@@ -127,8 +127,8 @@ class pmActions extends sfActions {
         $q->addOrderBy("h.ca_idticket DESC");
         $q->addOrderBy("h.ca_closedat");
         $q->addOrderBy("h.ca_opened ASC");
-        
-        
+
+
         /*
          * Aplica restricciones de acuerdo al nivel de acceso.
          */
@@ -145,7 +145,7 @@ class pmActions extends sfActions {
         }
 
         if ($nivel == 2 || $nivel == 3) {
-            $q->addWhere("(h.ca_login = ? OR g.ca_iddepartament = ?)", array($this->getUser()->getUserid(), $this->getUser()->getIddepartamento()));            
+            $q->addWhere("(h.ca_login = ? OR g.ca_iddepartament = ?)", array($this->getUser()->getUserid(), $this->getUser()->getIddepartamento()));
         }
 
 
@@ -155,15 +155,15 @@ class pmActions extends sfActions {
         //$q->limit(400);
         $tickets = $q->execute();
 
-        $parametros = ParametroTable::retrieveByCaso("CU110");        
+        $parametros = ParametroTable::retrieveByCaso("CU110");
         $status = array();
-        foreach( $parametros as $p ){
-            $status[ $p->getCaIdentificacion() ] = array("nombre"=>utf8_encode($p->getCaValor()), "color" => $p->getCaValor2());            
+        foreach ($parametros as $p) {
+            $status[$p->getCaIdentificacion()] = array("nombre" => utf8_encode($p->getCaValor()), "color" => $p->getCaValor2());
         }
-                
-        
+
+
         foreach ($tickets as $key => $val) {
-            $tickets[$key]["h_ca_action"] = $tickets[$key]["h_ca_closedat"]?"Cerrado":"Abierto";
+            $tickets[$key]["h_ca_action"] = $tickets[$key]["h_ca_closedat"] ? "Cerrado" : "Abierto";
             $tickets[$key]["g_ca_name"] = utf8_encode($tickets[$key]["g_ca_name"]);
             $tickets[$key]["milestone"] = utf8_encode($tickets[$key]["m_ca_title"] . " " . Utils::fechaMes($tickets[$key]["m_ca_due"]));
             $tickets[$key]["h_ca_title"] = utf8_encode(str_replace('"', "'", $tickets[$key]["h_ca_title"]));
@@ -172,13 +172,11 @@ class pmActions extends sfActions {
             $tickets[$key]["folder"] = base64_encode(HdeskProject::FOLDER . DIRECTORY_SEPARATOR . $tickets[$key]["h_ca_idticket"]);
             $tickets[$key]["contact"] = utf8_encode($tickets[$key]["s_ca_nombre"] . " " . $tickets[$key]["u_ca_extension"]);
             $tickets[$key]["u_ca_nombre"] = utf8_encode($tickets[$key]["u_ca_nombre"]);
-            $tickets[$key]["status_name"] = isset($status[ $tickets[$key]["h_ca_status"] ])?utf8_encode($status[ $tickets[$key]["h_ca_status"] ]["nombre"]):"";
-            $tickets[$key]["status_color"] = isset($status[ $tickets[$key]["h_ca_status"] ])?$status[ $tickets[$key]["h_ca_status"] ]["color"]:"";
-                        
-            
+            $tickets[$key]["status_name"] = isset($status[$tickets[$key]["h_ca_status"]]) ? utf8_encode($status[$tickets[$key]["h_ca_status"]]["nombre"]) : "";
+            $tickets[$key]["status_color"] = isset($status[$tickets[$key]["h_ca_status"]]) ? $status[$tickets[$key]["h_ca_status"]]["color"] : "";
         }
 
-        $this->responseArray = array("success" => true, "total"=>count($tickets), "root" => $tickets);
+        $this->responseArray = array("success" => true, "total" => count($tickets), "root" => $tickets);
 
         $this->setTemplate("responseTemplate");
     }
@@ -200,18 +198,18 @@ class pmActions extends sfActions {
         $this->ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel);
         $this->forward404Unless($this->ticket);
 
-        if ($request->getParameter("format") == "email") {            
+        if ($request->getParameter("format") == "email") {
             $this->setLayout("none");
-        }else{
-            $this->redirect("pm/index?idticket=".$idticket);
+        } else {
+            $this->redirect("pm/index?idticket=" . $idticket);
         }
 
 
         $this->loginsGrupo = array();
         $usuarios = Doctrine::getTable("HdeskUserGroup")->createQuery("ug")
-                        ->where("ug.ca_idgroup = ?", $this->ticket->getCaIdgroup())
-                        ->addOrderBy("ug.ca_login")
-                        ->execute();
+                ->where("ug.ca_idgroup = ?", $this->ticket->getCaIdgroup())
+                ->addOrderBy("ug.ca_login")
+                ->execute();
         foreach ($usuarios as $usuario) {
             $this->loginsGrupo[] = $usuario->getCaLogin();
         }
@@ -224,11 +222,11 @@ class pmActions extends sfActions {
         $this->files = sfFinder::type('file')->maxDepth(0)->in($directorio);
 
         $this->usuarios = Doctrine::getTable("Usuario")->createQuery("u")
-                        ->innerJoin("u.HdeskTicketUser ug")
-                        ->addWhere("ug.ca_idticket = ?", $this->ticket->getCaIdticket())
-                        ->addWhere("u.ca_activo = ?", true)
-                        ->addOrderBy("u.ca_nombre")
-                        ->execute();
+                ->innerJoin("u.HdeskTicketUser ug")
+                ->addWhere("ug.ca_idticket = ?", $this->ticket->getCaIdticket())
+                ->addWhere("u.ca_activo = ?", true)
+                ->addOrderBy("u.ca_nombre")
+                ->execute();
 
 
         $response = sfContext::getInstance()->getResponse();
@@ -255,9 +253,9 @@ class pmActions extends sfActions {
         }
 
         $departamentos = Doctrine::getTable("Departamento")
-                        ->createQuery("d")
-                        ->where("d.ca_inhelpdesk = ?", true)
-                        ->execute();
+                ->createQuery("d")
+                ->where("d.ca_inhelpdesk = ?", true)
+                ->execute();
 
         $this->departamentos = array();
 
@@ -271,18 +269,16 @@ class pmActions extends sfActions {
         $this->iddepartamento = $this->getUser()->getIddepartamento();
 
         $usersGroup = Doctrine::getTable("HdeskUserGroup")
-                        ->createQuery("d")
-                        ->where("d.ca_login = ?", $this->getUser()->getUserId())
-                        ->execute();
+                ->createQuery("d")
+                ->where("d.ca_login = ?", $this->getUser()->getUserId())
+                ->execute();
         $this->grupos = array();
         foreach ($usersGroup as $usersGroup) {
             $this->grupos[] = $usersGroup->getCaIdgroup();
         }
 
         $this->user = $this->getuser();
-        
     }
-
 
     /**
      * Coloca una estrella al ticket
@@ -292,25 +288,24 @@ class pmActions extends sfActions {
     public function executeStarTicket(sfWebRequest $request) {
         $conn = Doctrine::getTable("HdeskResponse")->getConnection();
         $conn->beginTransaction();
-        try{
+        try {
             $this->nivel = $this->getNivel();
             $idticket = $request->getParameter("idticket");
-            $this->forward404Unless($this->nivel>0);
+            $this->forward404Unless($this->nivel > 0);
             $ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel);
             $this->forward404Unless($ticket);
 
-            $status = $request->getParameter("status");            
+            $status = $request->getParameter("status");
             $ticket->setCaStarred($status);
-            $ticket->save( $conn );
+            $ticket->save($conn);
             $this->responseArray = array("success" => true, "idticket" => $idticket);
             $conn->commit();
-        }catch(Exception $e){
+        } catch (Exception $e) {
             $conn->rollback();
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
         $this->setTemplate("responseTemplate");
     }
-
 
     /**
      * Guarda un seguimiento a un ticket
@@ -323,7 +318,7 @@ class pmActions extends sfActions {
 
         $conn = Doctrine::getTable("HdeskResponse")->getConnection();
         $conn->beginTransaction();
-        try{
+        try {
             $this->nivel = $this->getNivel();
             $idticket = $request->getParameter("idticket");
             $ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel);
@@ -358,19 +353,37 @@ class pmActions extends sfActions {
             }
             $respuesta->setCaLogin($user->getUserId());
             $respuesta->setCaCreatedat(date("Y-m-d H:i:s"));
-            $respuesta->save( $conn );
+            $respuesta->save($conn);
 
             $logins = array($ticket->getCaLogin());
+            $loginsDepartamento = array($ticket->getCaLogin());
+            $usuarios = Doctrine::getTable("HdeskUserGroup")
+                    ->createQuery("h")
+                    ->select("h.ca_login")
+                    ->innerJoin("h.Usuario u")
+                    ->innerJoin("u.Departamento d")
+                    ->addWhere("d.ca_iddepartamento = ? ", $this->getUser()->getIddepartamento())
+                    //->addWhere("h.ca_idgroup = ? ", $ticket->getCaIdgroup())  
+                    ->addWhere("u.ca_activo = ? ", true)
+                    ->addOrderBy("h.ca_login")
+                    ->distinct()
+                    ->execute();
+            foreach ($usuarios as $usuario) {
+                $loginsDepartamento[] = $usuario->getCaLogin();
+            }
+
             if ($ticket->getCaAssignedto()) {
                 $logins[] = $ticket->getCaAssignedto();
             } else {
                 $usuarios = Doctrine::getTable("HdeskUserGroup")
-                                ->createQuery("h")
-                                ->innerJoin("h.Usuario u")        
-                                ->addWhere("h.ca_idgroup = ? ", $ticket->getCaIdgroup())  
-                                ->addWhere("u.ca_activo = ? ", true )  
-                                ->addOrderBy("h.ca_login")
-                                ->execute();
+                        ->createQuery("h")
+                        ->innerJoin("h.Usuario u")
+                        ->innerJoin("u.Departamento d")
+                        //->addWhere("d.ca_iddepartamento = ? ", $this->getUser()->getIddepartamento())  
+                        ->addWhere("h.ca_idgroup = ? ", $ticket->getCaIdgroup())
+                        ->addWhere("u.ca_activo = ? ", true)
+                        ->addOrderBy("h.ca_login")
+                        ->execute();
                 foreach ($usuarios as $usuario) {
                     $logins[] = $usuario->getCaLogin();
                 }
@@ -382,14 +395,14 @@ class pmActions extends sfActions {
                 $logins[] = $usuario->getCaLogin();
             }
 
-            if ($ticket->getCaAssignedto() == $this->getUser()->getUserId() || in_array($this->getUser()->getUserId(), $logins)) {
+            if ($ticket->getCaAssignedto() == $this->getUser()->getUserId() || in_array($this->getUser()->getUserId(), $logins) || in_array($this->getUser()->getUserId(), $loginsDepartamento)) {
                 $tarea = $ticket->getTareaIdg();
                 if ($tarea) {
                     if (!$tarea->getCaFchterminada()) {
                         $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
                         $tarea->setCaObservaciones(utf8_decode($request->getParameter("motivo")));
                         $tarea->setCaUsuterminada($this->getUser()->getUserId());
-                        $tarea->save( $conn );
+                        $tarea->save($conn);
                     }
                 }
             }
@@ -403,7 +416,7 @@ class pmActions extends sfActions {
                     $tarea = $res->getNotTarea();
                     if ($tarea && !$tarea->getCaFchterminada()) {
                         $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
-                        $tarea->save( $conn );
+                        $tarea->save($conn);
                     }
                 }
             }
@@ -429,12 +442,12 @@ class pmActions extends sfActions {
                 $tarea->setCaUsucreado($this->getUser()->getUserId());
                 $tarea->setCaTitulo($titulo);
                 $tarea->setCaTexto($texto);
-                $tarea->save( $conn );
+                $tarea->save($conn);
 
                 $tarea->setAsignaciones(array($this->getUser()->getUserId()));
 
                 $respuesta->setCaIdtarea($tarea->getCaIdtarea());
-                $respuesta->save( $conn );
+                $respuesta->save($conn);
             }
 
 
@@ -445,8 +458,8 @@ class pmActions extends sfActions {
             $email->setCaFrom("no-reply@coltrans.com.co");
             $email->setCaFromname("Colsys Notificaciones");
 
-
-            $email->setCaSubject("Nueva respuesta Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]");
+            $departamento = $ticket->getHdeskGroup()->getDepartamento()->getCaNombre();
+            $email->setCaSubject($departamento.": Nueva respuesta Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]");
 
 
             $request->setParameter("id", $ticket->getCaIdticket());
@@ -472,25 +485,25 @@ class pmActions extends sfActions {
                 }
             }
 
-            $email->save( $conn );
+            $email->save($conn);
             //$email->send();
             //$this->ticket = $ticket;
-            
-            
+
+
             /*
              * Cambia el status
              */
-            if( $request->getParameter("status")!==null ){
-                $ticket->setCaStatus( intval($request->getParameter("status")) ) ;
-                $ticket->save( $conn );
+            if ($request->getParameter("status") !== null) {
+                $ticket->setCaStatus(intval($request->getParameter("status")));
+                $ticket->save($conn);
             }
-            
+
             $conn->commit();
             $request->setParameter("format", "");
             $texto = sfContext::getInstance()->getController()->getPresentationFor('pm', 'verRespuestas');
 
             $this->responseArray = array("success" => true, "idticket" => $ticket->getCaIdticket(), "info" => utf8_encode($texto));
-        }catch(Exception $e){
+        } catch (Exception $e) {
             $conn->rollback();
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
@@ -523,28 +536,28 @@ class pmActions extends sfActions {
 
         $conn = Doctrine::getTable("HdeskTicket")->getConnection();
         $conn->beginTransaction();
-        try{
+        try {
             if ($request->getParameter("idticket")) {
                 $ticket = Doctrine::getTable("HdeskTicket")->find($request->getParameter("idticket"));
                 $update = true;
-                $changeDepto=false;
+                $changeDepto = false;
                 if ($request->getParameter("area") != $ticket->getCaIdgroup()) { //Cuando cambia el area notifica.
                     $tarea = $ticket->getNotTarea();
-                    /*if ($tarea) {
-                        $tarea->delete(); //Antes se eliminaba, ahora no para que conserve los datos del IDG.
-                    }*/
+                    /* if ($tarea) {
+                      $tarea->delete(); //Antes se eliminaba, ahora no para que conserve los datos del IDG.
+                      } */
 
                     //Crea un nuevo status para saber que se cambio de área
-                    $area1 = Doctrine::getTable("HdeskGroup")->find($ticket->getCaIdgroup() );
-                    $area2 = Doctrine::getTable("HdeskGroup")->find($request->getParameter("area") );
-                    $txt = "Se cambio de ".$area1->getCaName()." a ".$area2->getCaName();                    
+                    $area1 = Doctrine::getTable("HdeskGroup")->find($ticket->getCaIdgroup());
+                    $area2 = Doctrine::getTable("HdeskGroup")->find($request->getParameter("area"));
+                    $txt = "Se cambio de " . $area1->getCaName() . " a " . $area2->getCaName();
                     $respuesta = new HdeskResponse();
                     $respuesta->setCaIdticket($request->getParameter("idticket"));
                     $respuesta->setCaText($txt);
                     $respuesta->setCaLogin($user->getUserId());
                     $respuesta->setCaCreatedat(date("Y-m-d H:i:s"));
-                    $respuesta->save( $conn );                    
-                    $changeDepto=true;
+                    $respuesta->save($conn);
+                    $changeDepto = true;
                     //$update = false;
                 }
             } else {
@@ -564,10 +577,10 @@ class pmActions extends sfActions {
 
 
 
-            if ($request->getParameter("actionTicket")=="Cerrado") {
+            if ($request->getParameter("actionTicket") == "Cerrado") {
                 $ticket->setCaClosedat(date("Y-m-d H:i:s"));
                 $ticket->setCaClosedby($this->getUser()->getUserId());
-            }else{
+            } else {
                 $ticket->setCaClosedat(null);
                 $ticket->setCaClosedby(null);
             }
@@ -584,7 +597,7 @@ class pmActions extends sfActions {
                 $ticket->setCaAssignedto($request->getParameter("assignedto"));
             }
 
-            if ($request->getParameter("status")!==null) {
+            if ($request->getParameter("status") !== null) {
                 $ticket->setCaStatus(intval($request->getParameter("status")));
             }
 
@@ -595,22 +608,22 @@ class pmActions extends sfActions {
             if ($request->getParameter("reportedthrough")) {
                 $ticket->setCaReportedby($request->getParameter("reportedthrough"));
             }
-            
-            if ($request->getParameter("idactivo")!==null) {
-                if( $request->getParameter("idactivo") ){
+
+            if ($request->getParameter("idactivo") !== null) {
+                if ($request->getParameter("idactivo")) {
                     $ticket->setCaIdactivo($request->getParameter("idactivo"));
-                }else{
+                } else {
                     $ticket->setCaIdactivo(null);
                 }
             }
 
-            $ticket->save( $conn );
+            $ticket->save($conn);
 
             if ($request->getParameter("actionTicket") == "Cerrado") {
-                $ticket->cerrarSeguimientos( $conn );
+                $ticket->cerrarSeguimientos($conn);
 
-                if( $request->getParameter("type")!="Invalido"){
-                    $ticket->crearEvaluacion( $conn );
+                if ($request->getParameter("type") != "Invalido") {
+                    $ticket->crearEvaluacion($conn);
                 }
             }
 
@@ -630,17 +643,18 @@ class pmActions extends sfActions {
             if (!$update) {
                 $request->setParameter("id", $ticket->getCaIdticket());
                 $request->setParameter("format", "email");
-                $titulo = "Nuevo Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]";
+                $grupo = $ticket->getHdeskGroup();
+                
+                $titulo = $grupo->getDepartamento()->getCaNombre().": Nuevo Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]";
 
                 $texto = "Se ha creado un nuevo ticket \n\n<br /><br />";
                 $texto.= sfContext::getInstance()->getController()->getPresentationFor('pm', 'verTicket');
 
-                $grupo = $ticket->getHdeskGroup();
                 /*
                  * Se crea la tarea para los miembros del grupo.
                  */
                 $tarea = $ticket->getTareaIdg();
-                if( !$tarea || !$tarea->getCaIdtarea() ){
+                if (!$tarea || !$tarea->getCaIdtarea()) {
                     $tarea = new NotTarea();
                     $tarea->setCaUrl("/pm/verTicket?id=" . $ticket->getCaIdticket());
                     $tarea->setCaIdlistatarea(1);
@@ -651,11 +665,11 @@ class pmActions extends sfActions {
                     $tarea->setCaUsucreado($this->getUser()->getUserId());
                     $tarea->setCaTitulo($titulo);
                     $tarea->setCaTexto($texto);
-                    $tarea->save( $conn );
+                    $tarea->save($conn);
                 }
 
                 $ticket->setCaIdtarea($tarea->getCaIdtarea());
-                $ticket->save( $conn );
+                $ticket->save($conn);
             } else {
                 $tarea = $ticket->getNotTarea();
             }
@@ -663,22 +677,21 @@ class pmActions extends sfActions {
             if ($tarea) {
                 //Verifica las asignaciones de la tarea.
                 $loginsAsignaciones = $ticket->getLoginsGroup();
-                $tarea->setAsignaciones($loginsAsignaciones, $conn );
+                $tarea->setAsignaciones($loginsAsignaciones, $conn);
             }
 
-            if (!$update &&  $request->getParameter("actionTicket") != "Cerrado") {
-                $tarea->notificar( $conn );
+            if (!$update && $request->getParameter("actionTicket") != "Cerrado") {
+                $tarea->notificar($conn);
             }
-            if($changeDepto==true)
-            {                    
+            if ($changeDepto == true) {
                 $email = new Email();
                 $email->setCaUsuenvio($this->getUser()->getUserId());
                 $email->setCaTipo("Notificación");
                 $email->setCaIdcaso($ticket->getCaIdticket());
                 $email->setCaFrom("no-reply@coltrans.com.co");
                 $email->setCaFromname("Colsys Notificaciones");
-                $email->setCaSubject($txt." el Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]");
-                $texto = $txt."";
+                $email->setCaSubject($txt . " el Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]");
+                $texto = $txt . "";
                 $request->setParameter("id", $ticket->getCaIdticket());
                 $request->setParameter("format", "email");
                 $texto.= sfContext::getInstance()->getController()->getPresentationFor('pm', 'verTicket');
@@ -693,15 +706,14 @@ class pmActions extends sfActions {
                         $usuariotmp = Doctrine::getTable("Usuario")->find($usuario);
                         $email->addTo($usuariotmp->getCaEmail());
                     }
-                }                    
+                }
                 $email->save();
             }
 
             $conn->commit();
 
             $this->responseArray = array("success" => true, "idticket" => $ticket->getCaIdticket());
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
             $conn->rollback();
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
@@ -739,11 +751,11 @@ class pmActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeCerrarTicket(sfWebRequest $request) {
-        try{
+        try {
             if ($request->getParameter("idticket")) {
                 $ticket = Doctrine::getTable("HdeskTicket")->find($request->getParameter("idticket"));
                 $ticket->setCaClosedat(date("Y-m-d H:i:s"));
-                $ticket->setCaClosedby( $this->getUser()->getUserId() );
+                $ticket->setCaClosedby($this->getUser()->getUserId());
 
                 $ticket->setCaPercentage(100);
                 $ticket->save();
@@ -762,7 +774,7 @@ class pmActions extends sfActions {
 
 
             $this->responseArray = array("success" => true, "idticket" => $request->getParameter("idticket"));
-        }catch( Exception $e ){
+        } catch (Exception $e) {
             $this->responseArray = array("success" => false, "errorInfo");
         }
 
@@ -839,10 +851,10 @@ class pmActions extends sfActions {
 
         if ($departamento) {
             $grupos = Doctrine::getTable("HdeskGroup")
-                            ->createQuery("g")
-                            ->where("g.ca_iddepartament = ?", $departamento)
-                            ->addOrderBy("g.ca_name")
-                            ->execute();
+                    ->createQuery("g")
+                    ->where("g.ca_iddepartament = ?", $departamento)
+                    ->addOrderBy("g.ca_name")
+                    ->execute();
 
             foreach ($grupos as $grupo) {
                 $gruposArray[] = array("idgrupo" => $grupo->getCaIdgroup(), "nombre" => utf8_encode($grupo->getCaName()));
@@ -864,10 +876,10 @@ class pmActions extends sfActions {
 
         if ($idgrupo) {
             $proyectos = Doctrine::getTable("HdeskProject")
-                            ->createQuery("p")
-                            ->where("p.ca_idgroup = ? and p.ca_active=true", $idgrupo)
-                            ->addOrderBy("p.ca_name")
-                            ->execute();
+                    ->createQuery("p")
+                    ->where("p.ca_idgroup = ? and p.ca_active=true", $idgrupo)
+                    ->addOrderBy("p.ca_name")
+                    ->execute();
 
             foreach ($proyectos as $proyecto) {
                 $proyectosArray[] = array("idproyecto" => $proyecto->getCaIdproject(), "nombre" => utf8_encode($proyecto->getCaName()));
@@ -893,11 +905,11 @@ class pmActions extends sfActions {
         $this->forward404Unless($project);
 
         $q = Doctrine_Query::create()
-                        ->select("h.ca_idmilestone, h.ca_title")
-                        ->from('HdeskMilestone h')
-                        ->addWhere("h.ca_idproject = ?", $request->getParameter("idproject"))
-                        ->addOrderBy("h.ca_due ASC")
-                        ->addOrderBy("h.ca_title ASC");
+                ->select("h.ca_idmilestone, h.ca_title")
+                ->from('HdeskMilestone h')
+                ->addWhere("h.ca_idproject = ?", $request->getParameter("idproject"))
+                ->addOrderBy("h.ca_due ASC")
+                ->addOrderBy("h.ca_title ASC");
 
 
 
@@ -928,10 +940,10 @@ class pmActions extends sfActions {
 
         if ($idgrupo) {
             $usuarios = Doctrine::getTable("HdeskUserGroup")
-                            ->createQuery("g")
-                            ->where("g.ca_idgroup = ?", $idgrupo)
-                            ->addOrderBy("g.ca_login")
-                            ->execute();
+                    ->createQuery("g")
+                    ->where("g.ca_idgroup = ?", $idgrupo)
+                    ->addOrderBy("g.ca_login")
+                    ->execute();
             foreach ($usuarios as $usuario) {
                 $usuariosArray[] = array("login" => $usuario->getCaLogin());
             }
@@ -950,10 +962,10 @@ class pmActions extends sfActions {
 
         $usuariosArray = array();
         $usuarios = Doctrine::getTable("Usuario")
-                        ->createQuery("g")
-                        ->where("g.ca_activo = ?", true)
-                        ->addOrderBy("g.ca_login")
-                        ->execute();
+                ->createQuery("g")
+                ->where("g.ca_activo = ?", true)
+                ->addOrderBy("g.ca_login")
+                ->execute();
         foreach ($usuarios as $usuario) {
             $usuariosArray[] = array("login" => $usuario->getCaLogin(), "nombre" => utf8_encode($usuario->getCaNombre()));
         }
@@ -974,10 +986,10 @@ class pmActions extends sfActions {
 
         if ($departamento) {
             $clasificaciones = Doctrine::getTable("HdeskDepartamentClasification")
-                            ->createQuery("c")
-                            ->where("c.ca_iddepartament = ?", $departamento)
-                            ->addOrderBy("c.ca_order")
-                            ->execute();
+                    ->createQuery("c")
+                    ->where("c.ca_iddepartament = ?", $departamento)
+                    ->addOrderBy("c.ca_order")
+                    ->execute();
 
             foreach ($clasificaciones as $clasificacion) {
                 $data[] = array("iddepartamento" => $departamento, "clasification" => utf8_encode($clasificacion->getCaClasification()));
@@ -987,8 +999,6 @@ class pmActions extends sfActions {
         $this->responseArray = array("root" => $data, "success" => true);
         $this->setTemplate("responseTemplate");
     }
-
-    
 
     /**
      * Agrega un usuario a un ticket para copiarle las comunicaciones o escritbir respuestas
@@ -1010,7 +1020,7 @@ class pmActions extends sfActions {
         $bindValues["ca_idticket"] = $request->getParameter("idticket");
 
         $usuarioTicket = Doctrine::getTable("HdeskTicketUser")->find(array($this->ticket->getCaIdticket(), $bindValues["ca_login"]));
-        if (!$usuarioTicket) {           
+        if (!$usuarioTicket) {
             $usuarioTicket = new HdeskTicketUser();
             $usuarioTicket->setCaLogin($bindValues["ca_login"]);
             $usuarioTicket->setCaIdticket($this->ticket->getCaIdticket());
@@ -1059,9 +1069,9 @@ class pmActions extends sfActions {
 
 
         $usuario = Doctrine::getTable("HdeskTicketUser")->createQuery("ug")
-                        ->where("ug.ca_idticket = ?", $this->ticket->getCaIdticket())
-                        ->addWhere("ug.ca_login = ?", $request->getParameter("login"))
-                        ->fetchOne();
+                ->where("ug.ca_idticket = ?", $this->ticket->getCaIdticket())
+                ->addWhere("ug.ca_login = ?", $request->getParameter("login"))
+                ->fetchOne();
         if ($usuario) {
             $usuario->delete();
             $this->responseArray = array("success" => true, "idticket" => $this->ticket->getCaIdticket(), "id" => $request->getParameter("id"));
@@ -1090,10 +1100,10 @@ class pmActions extends sfActions {
 
 
         $tareas = Doctrine::getTable("HdeskTask")
-                        ->createQuery("t")
-                        ->where("t.ca_idticket = ?", $ticket->getCaIdticket())
-                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                        ->execute();
+                ->createQuery("t")
+                ->where("t.ca_idticket = ?", $ticket->getCaIdticket())
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->execute();
 
         foreach ($tareas as $key => $val) {
             $tareas[$key]["t_ca_task"] = utf8_encode($tareas[$key]["t_ca_task"]);
@@ -1133,11 +1143,11 @@ class pmActions extends sfActions {
      */
     public function executeListaProyectos(sfWebRequest $request) {
         $this->projects = Doctrine::getTable("HdeskProject")
-                        ->createQuery("p")
-                        ->select("p.ca_idproject, p.ca_name, (SELECT COUNT(*) FROM HdeskTicket ta WHERE ta.ca_idproject = p.ca_idproject AND ta.ca_action ='Abierto') as ta, (SELECT COUNT(*) FROM HdeskTicket tc WHERE tc.ca_idproject = p.ca_idproject AND tc.ca_action ='Cerrado') as tc")
-                        ->addOrderBy("p.ca_name")
-                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                        ->execute();
+                ->createQuery("p")
+                ->select("p.ca_idproject, p.ca_name, (SELECT COUNT(*) FROM HdeskTicket ta WHERE ta.ca_idproject = p.ca_idproject AND ta.ca_action ='Abierto') as ta, (SELECT COUNT(*) FROM HdeskTicket tc WHERE tc.ca_idproject = p.ca_idproject AND tc.ca_action ='Cerrado') as tc")
+                ->addOrderBy("p.ca_name")
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->execute();
     }
 
     /**
@@ -1162,11 +1172,11 @@ class pmActions extends sfActions {
         $this->forward404Unless($request->getParameter("idproject"));
 
         $numtickets = Doctrine::getTable("HdeskProject")
-                        ->createQuery("p")
-                        ->select("p.*, (SELECT COUNT(*) FROM HdeskTicket ta WHERE ta.ca_idproject = p.ca_idproject AND ta.ca_action ='Abierto') as ta, (SELECT COUNT(*) FROM HdeskTicket tc WHERE tc.ca_idproject = p.ca_idproject AND tc.ca_action ='Cerrado') as tc")
-                        ->where("p.ca_idproject = ? ", $request->getParameter("idproject"))
-                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                        ->fetchOne();
+                ->createQuery("p")
+                ->select("p.*, (SELECT COUNT(*) FROM HdeskTicket ta WHERE ta.ca_idproject = p.ca_idproject AND ta.ca_action ='Abierto') as ta, (SELECT COUNT(*) FROM HdeskTicket tc WHERE tc.ca_idproject = p.ca_idproject AND tc.ca_action ='Cerrado') as tc")
+                ->where("p.ca_idproject = ? ", $request->getParameter("idproject"))
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->fetchOne();
 
 
         if ($numtickets["p_tc"] + $numtickets["p_ta"] > 0) {
@@ -1194,11 +1204,11 @@ class pmActions extends sfActions {
         $this->forward404Unless($project);
 
         $q = Doctrine_Query::create()
-                        ->select("h.*")
-                        ->from('HdeskMilestone h')
-                        ->addWhere("h.ca_idproject = ?", $request->getParameter("idproject"))
-                        ->addOrderBy("h.ca_due ASC")
-                        ->addOrderBy("h.ca_title ASC");
+                ->select("h.*")
+                ->from('HdeskMilestone h')
+                ->addWhere("h.ca_idproject = ?", $request->getParameter("idproject"))
+                ->addOrderBy("h.ca_due ASC")
+                ->addOrderBy("h.ca_title ASC");
 
 
 
@@ -1294,13 +1304,18 @@ class pmActions extends sfActions {
 
     public function executeDatosPanelConsulta() {
         $this->user = $this->getUser();
+
+        $usuario = Doctrine::getTable("Usuario")->find($this->user);
+        $depAdic = $usuario->getProperty("helpDesk");
+
         $this->departamentos = Doctrine::getTable("Departamento")
-                        ->createQuery("d")
-                        ->innerJoin("d.Usuario u")
-                        ->where("d.ca_inhelpdesk = ?", true)
-                        ->addWhere("u.ca_login = ?", $this->user)
-                        ->addOrderBy("d.ca_nombre ASC")
-                        ->execute();
+                ->createQuery("d")
+                ->innerJoin("d.Usuario u")
+                ->where("d.ca_inhelpdesk = ?", true)
+                ->addWhere("u.ca_login = ?", $this->user)
+                ->orWhere("d.ca_nombre = ?", $depAdic)
+                ->addOrderBy("d.ca_nombre ASC")
+                ->execute();
     }
 
     /*
@@ -1394,29 +1409,30 @@ class pmActions extends sfActions {
         $data["idactivo"] = $ticket->getCaIdactivo();
         $data["idempresa"] = $ticket->getCaIdempresa();
         $data["activo"] = $ticket->getInvActivo()->getCaIdentificador();
-        
+
         $parametros = ParametroTable::retrieveByCaso("CU110");
-        
+
         $status = array();
-        foreach( $parametros as $p ){
-            $status[ $p->getCaIdentificacion() ] = array("nombre"=>$p->getCaValor(), "color" => $p->getCaValor2());            
+        foreach ($parametros as $p) {
+            $status[$p->getCaIdentificacion()] = array("nombre" => $p->getCaValor(), "color" => $p->getCaValor2());
         }
-        $data["status_name"] = isset($status[ $ticket->getCaStatus() ])?utf8_encode($status[ $ticket->getCaStatus() ]["nombre"]):"";
-                
-        
+        $data["status_name"] = isset($status[$ticket->getCaStatus()]) ? utf8_encode($status[$ticket->getCaStatus()]["nombre"]) : "";
+
+
         $data["percentage"] = $ticket->getCaPercentage();
         $data["folder"] = base64_encode($ticket->getDirectorioBase());
         $data["contact"] = utf8_encode($ticket->getUsuario() ? $ticket->getUsuario()->getSucursal()->getCaNombre() . " " . $ticket->getUsuario()->getCaExtension() : "");
 
         $tarea = $ticket->getNotTarea();
-        if( $tarea ){
+        if ($tarea) {
             $data["respuesta"] = $tarea->getCaFchterminada();
             $data["vencimiento"] = $tarea->getCaFchvencimiento();
         }
 
         $nivel = $this->getNivel();
 
-        $data["readOnly"] = $ticket->getReadonly( $nivel );;
+        $data["readOnly"] = $ticket->getReadonly($nivel);
+        ;
 
         $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");
@@ -1434,11 +1450,11 @@ class pmActions extends sfActions {
 
 
         $usuarios = Doctrine::getTable("Usuario")->createQuery("u")
-                        ->innerJoin("u.HdeskTicketUser ug")
-                        ->where("ug.ca_idticket = ?", $idticket)
-                        ->addWhere("u.ca_activo = ?", true)
-                        ->addOrderBy("u.ca_nombre")
-                        ->execute();
+                ->innerJoin("u.HdeskTicketUser ug")
+                ->where("ug.ca_idticket = ?", $idticket)
+                ->addWhere("u.ca_activo = ?", true)
+                ->addOrderBy("u.ca_nombre")
+                ->execute();
 
         $data = array();
 
@@ -1465,7 +1481,7 @@ class pmActions extends sfActions {
         $idticket = $request->getParameter("idticket");
         $ticket = Doctrine::getTable("HdeskTicket")->find($idticket);
         $this->forward404Unless($ticket);
-        
+
         $documentos = $ticket->getHdeskAuditDocuments();
 
         $data = array();
@@ -1481,8 +1497,8 @@ class pmActions extends sfActions {
             $row["observaciones"] = utf8_encode($documento->getCaObservaciones());
             $data[] = $row;
         }
-        
-        for ($i==0; $i<1; $i++){
+
+        for ($i == 0; $i < 1; $i++) {
             $row = array();
             $row["idticket"] = $idticket;
             $row["idauditdocs"] = '';
@@ -1493,10 +1509,9 @@ class pmActions extends sfActions {
             $row["observaciones"] = '';
             $data[] = $row;
         }
-        
+
         $this->responseArray = array("success" => true, "root" => $data);
         $this->setTemplate("responseTemplate");
-        
     }
 
     /*
@@ -1505,15 +1520,15 @@ class pmActions extends sfActions {
 
     public function executeObserveDocuments() {
         $idticket = $this->getRequestParameter('idticket');
-        if (!$this->getRequestParameter('idauditdocs')){
+        if (!$this->getRequestParameter('idauditdocs')) {
             $auditDocuments = new HdeskAuditDocuments();
             $auditDocuments->setCaIdticket($idticket);
-        }else{
+        } else {
             $auditDocuments = Doctrine::getTable("HdeskAuditDocuments")->find($this->getRequestParameter('idauditdocs'));
         }
-        
+
         $this->responseArray = array("id" => $this->getRequestParameter('id'), "success" => false);
-        
+
         if ($this->getRequestParameter('tipo_documento') !== null) {
             $auditDocuments->setCaTipoDoc(utf8_decode($this->getRequestParameter('tipo_documento')));
         }
@@ -1533,66 +1548,64 @@ class pmActions extends sfActions {
         if ($this->getRequestParameter('observaciones') !== null) {
             $auditDocuments->setCaObservaciones(utf8_decode($this->getRequestParameter('observaciones')));
         }
-        
+
         $auditDocuments->save();
 
         $this->responseArray["success"] = true;
         $this->setTemplate("responseTemplate");
     }
-    
 
-   public function executeProcesarArchivoDocs(sfWebRequest $request) {
+    public function executeProcesarArchivoDocs(sfWebRequest $request) {
         $idticket = $this->getRequestParameter('idticket');
         $ticket = Doctrine::getTable("HdeskTicket")->find($idticket);
-        
+
         $folder = "tmp";
         $file = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $request->getParameter("archivo");
 
         $handle = fopen($file, "r");
         $input = fread($handle, filesize($file));
-        $input = str_replace(chr(13),"",str_replace(chr(34), "", $input));
+        $input = str_replace(chr(13), "", str_replace(chr(34), "", $input));
 
-        $records = explode(chr(10),$input); // Divide el archivo por los Saltos de Línea
+        $records = explode(chr(10), $input); // Divide el archivo por los Saltos de Línea
 
-        foreach($records as $record){       // Hace una primera lectura para verificar la estructura del archivo
+        foreach ($records as $record) {       // Hace una primera lectura para verificar la estructura del archivo
+            if (stristr($record, 'Documento/Referencia') === FALSE and strlen(trim($record)) != 0) {
 
-            if(stristr($record, 'Documento/Referencia') === FALSE and strlen(trim($record)) != 0) {
+                $fields = explode(chr($this->getRequestParameter('separador')), $record); // Divide el archivo en campos por el separador
 
-                $fields = explode(chr($this->getRequestParameter( 'separador' )), $record); // Divide el archivo en campos por el separador
-
-                if ( count($fields) != 5 ){
+                if (count($fields) != 5) {
                     $resultado = "¡El archivo tiene errores en su estructura, por tanto no se puede importar! ";
                     $this->responseArray = array("success" => false, "resultado" => $resultado);
                     $this->setTemplate("responseTemplate");
                 }
-            }else if(stristr($record, 'ca_iddoc') !== FALSE) {
+            } else if (stristr($record, 'ca_iddoc') !== FALSE) {
 
-                $nameFields = explode(chr($this->getRequestParameter( 'separador' )), $record); // Toma los nombres de los campos
+                $nameFields = explode(chr($this->getRequestParameter('separador')), $record); // Toma los nombres de los campos
             }
         }
-            
+
         //Elimina los documentos anteriores
         $auditDocuments = $ticket->getHdeskAuditDocuments();
-        foreach( $auditDocuments as $auditDocument ){
+        foreach ($auditDocuments as $auditDocument) {
             $auditDocument->delete();
         }
 
         $documentos = array();
-        $records = explode(chr(10),$input); // Divide el archivo por los Saltos de Línea
-        foreach($records as $record){
-            if(stristr($record, 'Documento/Referencia') === FALSE and strlen(trim($record)) != 0) {
+        $records = explode(chr(10), $input); // Divide el archivo por los Saltos de Línea
+        foreach ($records as $record) {
+            if (stristr($record, 'Documento/Referencia') === FALSE and strlen(trim($record)) != 0) {
 
-                $fields = explode("," , $record); // Divide el archivo en campos por el separador
+                $fields = explode(",", $record); // Divide el archivo en campos por el separador
 
                 $auditDocuments = new HdeskAuditDocuments();
                 $auditDocuments->setCaIdticket($idticket);
                 $auditDocuments->setCaTipoDoc($fields[0]);
                 $auditDocuments->setCaNumeroDoc($fields[1]);
-                $auditDocuments->setCaRecuperacion(abs($fields[2]));
-                $auditDocuments->setCaPerdida(abs($fields[3]));
+                $auditDocuments->setCaRecuperacion($fields[2]);
+                $auditDocuments->setCaPerdida($fields[3]);
                 $auditDocuments->setCaObservaciones($fields[4]);
                 $auditDocuments->save();
-                
+
                 $row = array();
                 $row["idticket"] = $idticket;
                 $row["idauditdocs"] = $auditDocuments->getCaIdauditdocs();
@@ -1608,14 +1621,14 @@ class pmActions extends sfActions {
         $this->responseArray = array("success" => true, "documentos" => $documentos, "resultado" => $resultado);
         $this->setTemplate("responseTemplate");
     }
-    
+
     /*
      * Panel que muestra un arbol con opciones de busqueda
      * @author: Andres Botero
      */
 
     public function executeCalendar($request) {
-
+        
     }
 
     /*
@@ -1627,7 +1640,7 @@ class pmActions extends sfActions {
 
 
         $q = Doctrine::getTable("HdeskMilestone")
-                        ->createQuery("m");
+                ->createQuery("m");
 
         $milestones = $q->execute();
 
@@ -1654,21 +1667,21 @@ class pmActions extends sfActions {
 
         $nivel = $this->getUser()->getNivelAcceso(self::RUTINA);
 
-        try{
+        try {
             $option = $request->getParameter("option");
             $query = $request->getParameter("query");
             Doctrine::getTable("HdeskGroup")
                     ->setAttribute(Doctrine_Core::ATTR_QUERY_LIMIT, Doctrine_Core::LIMIT_ROWS);
 
             $q = Doctrine_Query::create()
-                            ->select("r.ca_text, t.ca_text, t.ca_idticket, t.ca_title, r.ca_createdat, r.ca_login, g.ca_name")
-                            ->from("HdeskGroup g")
-                            ->leftJoin("g.HdeskTicket t")
-                            ->leftJoin("t.HdeskResponse r")
-                            //->limit(100)
-                            ->distinct()
-                            ->orderBy("r.ca_createdat DESC")
-                            ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+                    ->select("r.ca_text, t.ca_text, t.ca_idticket, t.ca_title, r.ca_createdat, r.ca_login, g.ca_name")
+                    ->from("HdeskGroup g")
+                    ->leftJoin("g.HdeskTicket t")
+                    ->leftJoin("t.HdeskResponse r")
+                    //->limit(100)
+                    ->distinct()
+                    ->orderBy("r.ca_createdat DESC")
+                    ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
 
 
 
@@ -1682,16 +1695,15 @@ class pmActions extends sfActions {
                     $q->addWhere("(LOWER(t.ca_title) LIKE ? OR LOWER(t.ca_text) LIKE ? OR LOWER(r.ca_text) LIKE ?)", array("%" . strtolower($query) . "%", "%" . strtolower($query) . "%", "%" . strtolower($query) . "%"));
                     break;
                 case "index":
-                    if( substr($query,0,1)=="=" ){
-                        $newQuery = substr($query,1);
-                    }else{
+                    if (substr($query, 0, 1) == "=") {
+                        $newQuery = substr($query, 1);
+                    } else {
                         $queryarray = explode(' ', $query);
 
                         foreach ($queryarray as $key => $value) {
                             if (strlen($queryarray[$key]) >= 3) {
 
                                 $queryarray[$key].='*';
-
                             }
                         }
                         $newQuery = implode(' and ', $queryarray);
@@ -1700,16 +1712,16 @@ class pmActions extends sfActions {
 
                     $pksResponses = Doctrine::getTable("HdeskResponse")->getPksForLuceneQuery($newQuery);
 
-                    if (!empty($pks) && !empty($pksResponses)) {                        
+                    if (!empty($pks) && !empty($pksResponses)) {
                         //$q->addWhere('(t.ca_idticket IN ? OR r.ca_idresponse IN ?)', array($pks, $pksResponses));
-                        
-                        $q->orWhereIn('r.ca_idresponse', $pksResponses );
-                        $q->orwhereIn('t.ca_idticket', $pks );
-                    }elseif( !empty($pks) ){
-                        $q->whereIn('t.ca_idticket', $pks );
-                    }elseif( !empty($pksResponses) ){
-                        $q->whereIn('r.ca_idresponse', $pksResponses );
-                    }else {
+
+                        $q->orWhereIn('r.ca_idresponse', $pksResponses);
+                        $q->orwhereIn('t.ca_idticket', $pks);
+                    } elseif (!empty($pks)) {
+                        $q->whereIn('t.ca_idticket', $pks);
+                    } elseif (!empty($pksResponses)) {
+                        $q->whereIn('r.ca_idresponse', $pksResponses);
+                    } else {
                         $q->where('t.ca_idticket', -1);
                     }
                     $q->limit(500);
@@ -1744,9 +1756,9 @@ class pmActions extends sfActions {
                     break;
             }
 
-       
-            $q->addOrderBy("t.ca_idticket DESC");           
-            
+
+            $q->addOrderBy("t.ca_idticket DESC");
+
             $results = $q->execute();
 
 
@@ -1807,12 +1819,12 @@ class pmActions extends sfActions {
             if (!$query) {
 
                 $q = Doctrine::getTable("HdeskTicket")
-                                ->createQuery("t")
-                                ->innerJoin("t.HdeskGroup g")
-                                ->select("t.ca_idticket, t.ca_title, t.ca_opened, t.ca_login, g.ca_name")
-                                ->orderBy("t.ca_opened DESC")
-                                ->addWhere("g.ca_iddepartament = 13")
-                                ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+                        ->createQuery("t")
+                        ->innerJoin("t.HdeskGroup g")
+                        ->select("t.ca_idticket, t.ca_title, t.ca_opened, t.ca_login, g.ca_name")
+                        ->orderBy("t.ca_opened DESC")
+                        ->addWhere("g.ca_iddepartament = 13")
+                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
 
                 if ($lastDate) {
                     $time = strtotime($lastDate);
@@ -1836,15 +1848,10 @@ class pmActions extends sfActions {
                 }
             }
             $this->responseArray = array("success" => true, "root" => $data);
-        }catch(Exception $e){
+        } catch (Exception $e) {
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
         $this->setTemplate("responseTemplate");
     }
 
-
-
-    
-
 }
-
