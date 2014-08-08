@@ -28,9 +28,9 @@ foreach( $departamentos as $departamento ){
                         children: [
                             <?                            
                             $proyectos = $grupo->getHdeskProject();
-                            $k=0;
+                            $kk=0;                            
                             foreach( $proyectos as $proyecto ){
-                               if( $k++!=0){
+                               if( $kk++!=0){
                                     echo ",";
                                 }  
                                 ?>
