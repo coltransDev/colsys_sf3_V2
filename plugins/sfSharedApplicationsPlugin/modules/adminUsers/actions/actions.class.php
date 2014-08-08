@@ -582,9 +582,13 @@ class adminUsersActions extends sfActions {
                 $this->cambiodireccion = $cambiodireccion + 1;
             }
         //Envia correo a nivel nacional sobre ingreso de un colaborador a la compañía    
-        }else{         
-            $asunto = "ingreso";
-            $usuario->emailUsuario($login,$asunto,null,null,null);
+        }else{
+            $empresa=sfConfig::get('app_branding_name');
+            
+            if($empresa!='TPLogistics'){
+                $asunto = "ingreso";
+                $usuario->emailUsuario($login,$asunto,null,null,null);
+            }
         }
         
         $this->usuario = $usuario;
