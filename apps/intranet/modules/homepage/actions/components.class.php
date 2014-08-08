@@ -65,7 +65,7 @@ class homepageComponents extends sfComponents {
                 ->innerJoin('s.Empresa e')                 
                 ->where('u.ca_activo = ?', true)
                 ->addWhere('e.ca_idempresa != 4')
-                ->addWhere("CASE WHEN (date_part('".month."', c.ca_fchingreso) = date_part('".month."', now()) and (date_part('".day."', c.ca_fchingreso)-date_part('".day."', now()))::int=4) THEN(CASE WHEN ((date_part('".year."', now()) - date_part('".year."', c.ca_fchingreso))::int)!=5 THEN ((date_part('".year."', now()) - date_part('".year."', c.ca_fchingreso))::int)%5=0 ELSE false END ) ELSE false END")
+                ->addWhere("CASE WHEN substr((c.ca_fchingreso)::text,6,5) = substr(now()::text,6,5) THEN(CASE WHEN ((date_part('".year."', now()) - date_part('".year."', c.ca_fchingreso))::int) NOT IN (5,0) THEN ((date_part('".year."', now()) - date_part('".year."', c.ca_fchingreso))::int)%5=0 ELSE false END ) ELSE false END")
                 ->orderby('u.ca_fchingreso DESC')
                 ->execute();             
         }

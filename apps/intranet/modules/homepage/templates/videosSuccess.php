@@ -6,7 +6,7 @@
  */
 ?>
 
-<a href="/intranet/images/video/error.flv" style="display:block;width:520px;height:330px" id="player"></a>
+<a href="/intranet/images/video/canales_sensoriales.flv" style="display:block;width:520px;height:330px" id="player"></a>
 <!--<br><br
 <a href="/intranet/images/video/errorcomunicacion.flv" style="display:block;width:520px;height:330px" id="player"></a>
 -->
