@@ -641,6 +641,8 @@ include_component("widgets", "widgetEquipo");
                             }
                             if( gridId ){
                                 Ext.getCmp(gridId).store.reload();
+                            }else{
+                                location.href="/helpdesk/verTicket/id/"+action.result.idticket;                                
                             }
                         },
                         // standardSubmit: false,
