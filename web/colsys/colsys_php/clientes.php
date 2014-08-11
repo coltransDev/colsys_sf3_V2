@@ -1410,7 +1410,7 @@ require_once("menu.php");
                  exit;
                 }
              $tm =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-             if (!$tm->Open("select * from tb_porcentajescomisiones where ca_idcliente = ".$id." order by ca_inicio, ca_fin DESC")) {    // Mueve el apuntador al registro que se desea eliminar
+             if (!$tm->Open("select * from tb_porcentajescomisiones where ca_idcliente = ".$id." order by ca_inicio DESC")) {    // Mueve el apuntador al registro que se desea eliminar
                  echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                  //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
@@ -1438,7 +1438,7 @@ require_once("menu.php");
              echo "<FORM METHOD=post NAME='comision' ACTION='clientes.php' ONSUBMIT='return validar();'>";  // Llena la forma con los datos actuales del registro
              echo "<TABLE CELLSPACING=1 WIDTH=500>";
              echo "<INPUT TYPE='HIDDEN' NAME='id' VALUE=".$id.">";              // Hereda el Id del registro que se esta eliminando
-             echo "<TH Class=titulo COLSPAN=5>Información del Cliente</TH>";
+             echo "<TH Class=titulo COLSPAN=6>Información del Cliente</TH>";
              echo "<TR>";
              echo "  <TD Class=mostrar style='vertical-align: top;' ROWSPAN=5>".number_format($rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."</TD>";
              $img="";
@@ -1453,28 +1453,29 @@ require_once("menu.php");
                     $img.='<img src="/images/consolidate.png" title="Cliente de Cuadro" width="20" height="20" />';
                 }
             }
-             echo "  <TD Class=mostrar COLSPAN=4 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')." $img</TD>";
+             echo "  <TD Class=mostrar COLSPAN=5 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')." $img</TD>";
              echo "</TR>";
              echo "<TR>";
              $complemento = (($rs->Value('ca_oficina')!='')?" Oficina : ".$rs->Value('ca_oficina'):"").(($rs->Value('ca_torre')!='')?" Torre : ".$rs->Value('ca_torre'):"").(($rs->Value('ca_interior')!='')?" Interior : ".$rs->Value('ca_interior'):"").(($rs->Value('ca_complemento')!='')?" - ".$rs->Value('ca_complemento'):"").(($rs->Value('ca_zipcode')!='')?" Cod.Postal : ".$rs->Value('ca_zipcode'):"");
-             echo "  <TD Class=mostrar COLSPAN=4>&nbsp;&nbsp;<B>Dirección : </B>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=5>&nbsp;&nbsp;<B>Dirección : </B>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=4>&nbsp;&nbsp;<B>Teléfonos : </B>".$rs->Value('ca_telefonos')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=5>&nbsp;&nbsp;<B>Teléfonos : </B>".$rs->Value('ca_telefonos')."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=4>&nbsp;&nbsp;<B>Fax : </B>".$rs->Value('ca_fax')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=5>&nbsp;&nbsp;<B>Fax : </B>".$rs->Value('ca_fax')."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=4>&nbsp;&nbsp;<B>Ciudad : </B>".$rs->Value('ca_ciudad')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=5>&nbsp;&nbsp;<B>Ciudad : </B>".$rs->Value('ca_ciudad')."</TD>";
              echo "</TR>";
-             echo "<TH Class=titulo COLSPAN=5>Histórico de Porcentajes de Comisión</TH>";
+             echo "<TH Class=titulo COLSPAN=6>Histórico de Porcentajes de Comisión</TH>";
              echo "<TR>";
              echo "  <TD Class=invertir>Inicio</TD>";
              echo "  <TD Class=invertir>Fin</TD>";
 			 echo "  <TD Class=invertir>Porcentaje</TD>";
              echo "  <TD Class=invertir>Empresa</TD>";
-             echo "  <TD Class=invertir>Registro</TD>";
+             echo "  <TD Class=invertir>Creación</TD>";
+             echo "  <TD Class=invertir>Ult.Modificación</TD>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='inicio' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
@@ -1485,7 +1486,7 @@ require_once("menu.php");
              	echo " <OPTION VALUE='".$val."'>".$val;
              }
              echo "  </SELECT></TD>";
-             echo "  <TD Class=mostrar></TD>";
+             echo "  <TD Class=mostrar COLSPAN='2'></TD>";
              echo "</TR>";
              while (!$tm->Eof() and !$tm->IsEmpty()) {
                  echo "<TR>";
@@ -1494,11 +1495,13 @@ require_once("menu.php");
 				 echo "  <TD Class=listar>".$tm->Value('ca_porcentaje')."</TD>";
 				 echo "  <TD Class=listar>".$tm->Value('ca_empresa')."</TD>";
                  echo "  <TD Class=listar>".$tm->Value('ca_fchcreado')."<BR>".$tm->Value('ca_usucreado')."</TD>";
+                 echo "  <TD Class=listar>".$tm->Value('ca_fchactualizado')."<BR>".$tm->Value('ca_usuactualizado')."</TD>";
                  echo "</TR>";
                  $tm->MoveNext();
              }
              echo "</TABLE><BR>";
              $cadena = "?modalidad=N.i.t.\&criterio=$id";
+             echo "<CENTER><B>Nota: El Sistema revisa automáticamente las fechas y verifica que no se traslapen las fechas,<br />haciendo los ajustes correspondientes. Comisiones por el 10% no se registran por ser el valor por defecto.</B></CENTER>";
              echo "<TABLE CELLSPACING=10>";
              echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Registrar Porcentaje'></TH>";     // Ordena eliminar el registro de forma permanente
              echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='accion' VALUE='Cancelar' ONCLICK='javascript:document.location.href = \"clientes.php$cadena\"'></TH>";  // Cancela la operación
@@ -1770,11 +1773,51 @@ elseif (isset($accion)) {                                                      /
              $inicio = date("Y-m-d", mktime(0, 0, 0, $mes, 1, $ano));
              list($ano, $mes, $dia) = sscanf($fin, "%d-%d-%d");
              $fin = date("Y-m-d", mktime(0, 0, 0, $mes+1, 0, $ano));
+             
+             if (!$rs->Open("select * from tb_porcentajescomisiones where ca_idcliente = $id and ca_empresa = '$empresa' and (ca_inicio between '$inicio' and '$fin' or ca_fin between '$inicio' and '$fin')")) {    // Busca un registro que traslape las fechas
+                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                 //echo "<script>document.location.href = 'clientes.php';</script>";
+                 exit;
+                }
+                
+             $comandos = array();
+             if ($rs->Value('ca_idcliente') != ""){
+                 $ca_inicio = $rs->Value('ca_inicio');
+                 $ca_fin = $rs->Value('ca_fin');
+                 $ca_empresa = $rs->Value('ca_empresa');
+                 $ca_porcentaje = $rs->Value('ca_porcentaje');
+                 
+                 if ($inicio < $ca_inicio and $porcentaje <> $ca_porcentaje){
+                     $comandos[] = ($porcentaje!=10)?"insert into tb_porcentajescomisiones (ca_idcliente, ca_inicio, ca_fin, ca_porcentaje, ca_empresa, ca_fchcreado, ca_usucreado) values($id, '$inicio', '$fin', $porcentaje, '$empresa', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')":null;
+                     $comandos[] = "update tb_porcentajescomisiones set ca_inicio = '$fin', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = '$id' and ca_empresa = '$empresa' and ca_inicio = '$ca_inicio' and ca_fin = '$ca_fin'";
+                 }else if ($inicio < $ca_fin and $porcentaje <> $ca_porcentaje){
+                     $comandos[] = ($porcentaje!=10)?"insert into tb_porcentajescomisiones (ca_idcliente, ca_inicio, ca_fin, ca_porcentaje, ca_empresa, ca_fchcreado, ca_usucreado) values($id, '$inicio', '$fin', $porcentaje, '$empresa', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')":null;
+                     $comandos[] = "update tb_porcentajescomisiones set ca_fin = '$inicio', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = '$id' and ca_empresa = '$empresa' and ca_inicio = '$ca_inicio' and ca_fin = '$ca_fin'";
+                 }else if ($inicio > $ca_inicio and $final < $ca_final and $porcentaje <> $ca_porcentaje){
+                     $comandos[] = ($porcentaje!=10)?"insert into tb_porcentajescomisiones (ca_idcliente, ca_inicio, ca_fin, ca_porcentaje, ca_empresa, ca_fchcreado, ca_usucreado) values($id, '$inicio', '$fin', $porcentaje, '$empresa', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')":null;
+                     $comandos[] = "update tb_porcentajescomisiones set ca_fin = '$inicio', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = '$id' and ca_empresa = '$empresa' and ca_inicio = '$ca_inicio' and ca_fin = '$ca_fin'";
+                     $comandos[] = "insert into tb_porcentajescomisiones (ca_idcliente, ca_inicio, ca_fin, ca_porcentaje, ca_empresa, ca_fchcreado, ca_usucreado) values($id, '$fin', '$ca_fin', $ca_porcentaje, '$ca_empresa', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')";
+                 }
+             }else {
+                 $comandos[] = ($porcentaje!=10)?"insert into tb_porcentajescomisiones (ca_idcliente, ca_inicio, ca_fin, ca_porcentaje, ca_empresa, ca_fchcreado, ca_usucreado) values($id, '$inicio', '$fin', $porcentaje, '$empresa', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')":null;
+             }
+             
+             foreach ($comandos as $comando) {
+                if (!$comando){
+                    continue;
+                }
+                if (!$rs->Open("$comando")) {
+                    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
+                    //echo "<script>document.location.href = 'clientes.php';</script>";
+                    exit;
+                }
+             }
+             /*
              if (!$rs->Open("insert into tb_porcentajescomisiones (ca_idcliente, ca_inicio, ca_fin, ca_porcentaje, ca_empresa, ca_fchcreado, ca_usucreado) values($id, '$inicio', '$fin', $porcentaje, '$empresa', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), '$usuario')")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  //echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
-                }
+                } */
              break;
              }
         case 'Registrar Estado': {                                               // El Botón Guardar fue pulsado
@@ -1914,6 +1957,8 @@ elseif (isset($accion)) {                                                      /
    $cadena = "";
    if(isset($id) and $accion == 'anular_vig') {
       $cadena = "?boton=Contrato\&id=$id";
+   } else if(isset($id) and $accion == 'Registrar Porcentaje'){
+      $cadena = "?boton=Comisión\&id=$id";
    } else if(isset($id) and $accion != 'Eliminar'){
       $cadena = "?modalidad=N.i.t.\&criterio=$id";
    }
