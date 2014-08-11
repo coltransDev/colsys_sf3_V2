@@ -498,6 +498,35 @@ class usersActions extends sfActions
     }
 
 
+    public function executeParamUsuariosExt4( $request ){
+        
+    }
+    
+    public function executeDatosParamUsuarios( $request ){
+        
+        //$impoexpo= Constantes::IMPO;
+        //$transporte=Constantes::MARITIMO;
+        $q=Doctrine::getTable("UsuParametros")
+                    ->createQuery("r")
+                    ->select("r.*,u.ca_nombre as ca_usuario,t.ca_nombre as trafico,c.ca_ciudad as ciudad,cl.ca_compania as cliente")
+                    ->leftJoin("r.Usuario u")
+                    ->leftJoin("r.Trafico t")
+                    ->leftJoin("r.Ciudad c")
+                    ->leftJoin("r.Cliente cl")
+                    //->where("r.ca_impoexpo = ? and r.ca_transporte = ?   ", array( $impoexpo , $transporte ) )
+                    ->addOrderBy("r.ca_ciudad DESC,r.ca_trafico ")
+                    ->fetchArray();
+        
+        for($i=0;$i<count($q);$i++)
+        {
+            $q[$i]["ca_usuario"] =  utf8_encode($q[$i]["ca_usuario"]);
+            $q[$i]["ca_impoexpo"] =  utf8_encode($q[$i]["ca_impoexpo"]);
+            $q[$i]["ca_transporte"] =  utf8_encode($q[$i]["ca_transporte"]);
+        }
+
+        $this->responseArray = array("success" => true,"root"=>$q);
+        $this->setTemplate("responseTemplate");
+    }
 
 
 		
