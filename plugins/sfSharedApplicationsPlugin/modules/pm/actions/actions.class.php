@@ -459,7 +459,7 @@ class pmActions extends sfActions {
             $email->setCaFromname("Colsys Notificaciones");
 
             $departamento = $ticket->getHdeskGroup()->getDepartamento()->getCaNombre();
-            $email->setCaSubject($departamento.": Nueva respuesta Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]");
+            $email->setCaSubject($departamento." Nueva respuesta Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]");
 
 
             $request->setParameter("id", $ticket->getCaIdticket());
@@ -645,7 +645,7 @@ class pmActions extends sfActions {
                 $request->setParameter("format", "email");
                 $grupo = $ticket->getHdeskGroup();
                 
-                $titulo = $grupo->getDepartamento()->getCaNombre().": Nuevo Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]";
+                $titulo = $grupo->getDepartamento()->getCaNombre()." Nuevo Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]";
 
                 $texto = "Se ha creado un nuevo ticket \n\n<br /><br />";
                 $texto.= sfContext::getInstance()->getController()->getPresentationFor('pm', 'verTicket');
