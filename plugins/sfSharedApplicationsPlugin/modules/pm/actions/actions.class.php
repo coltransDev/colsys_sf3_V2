@@ -313,9 +313,6 @@ class pmActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeGuardarRespuestaTicket(sfWebRequest $request) {
-
-
-
         $conn = Doctrine::getTable("HdeskResponse")->getConnection();
         $conn->beginTransaction();
         try {
@@ -389,7 +386,6 @@ class pmActions extends sfActions {
                 }
             }
 
-
             $usuarios = $ticket->getUsuarios();
             foreach ($usuarios as $usuario) {
                 $logins[] = $usuario->getCaLogin();
@@ -459,8 +455,8 @@ class pmActions extends sfActions {
             $email->setCaFromname("Colsys Notificaciones");
 
             $departamento = $ticket->getHdeskGroup()->getDepartamento()->getCaNombre();
-            $email->setCaSubject($departamento." Nueva respuesta Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]");
-
+            $subject = ($ticket->getHdeskGroup()->getCaIddepartament()==4)?" Hallazgo Auditoría #":" Nueva respuesta Ticket #";
+            $email->setCaSubject($departamento . $subject . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]");
 
             $request->setParameter("id", $ticket->getCaIdticket());
             $request->setParameter("format", "email");
@@ -474,14 +470,17 @@ class pmActions extends sfActions {
                 $texto = sfContext::getInstance()->getController()->getPresentationFor('pm', 'verTicket');
             }
 
-
             $email->setCaBodyhtml($texto);
 
-            foreach ($logins as $login) {
-
-                if ($this->getUser()->getUserId() != $login) {
-                    $usuario = Doctrine::getTable("Usuario")->find($login);
-                    $email->addTo($usuario->getCaEmail());
+            if ($ticket->getHdeskGroup()->getCaIddepartament()==4 and $ticket->getCaAssignedto()) {
+                $usuario = Doctrine::getTable("Usuario")->find($ticket->getCaAssignedto());
+                $email->addTo($usuario->getCaEmail());
+            } else {
+                foreach ($logins as $login) {
+                    if ($this->getUser()->getUserId() != $login) {
+                        $usuario = Doctrine::getTable("Usuario")->find($login);
+                        $email->addTo($usuario->getCaEmail());
+                    }
                 }
             }
 
@@ -690,7 +689,8 @@ class pmActions extends sfActions {
                 $email->setCaIdcaso($ticket->getCaIdticket());
                 $email->setCaFrom("no-reply@coltrans.com.co");
                 $email->setCaFromname("Colsys Notificaciones");
-                $email->setCaSubject($txt . " el Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]");
+                $subject = ($ticket->getHdeskGroup()->getCaIddepartament()==4)?"Hallazgo de Auditoría":"Ticket";
+                $email->setCaSubject($txt . " el $subject #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]");
                 $texto = $txt . "";
                 $request->setParameter("id", $ticket->getCaIdticket());
                 $request->setParameter("format", "email");
@@ -1033,8 +1033,8 @@ class pmActions extends sfActions {
             $email->setCaFrom("no-reply@coltrans.com.co");
             $email->setCaFromname("Colsys Notificaciones");
 
-
-            $email->setCaSubject("Ha sido involucrado en el Ticket #" . $this->ticket->getCaIdticket() . " [" . $this->ticket->getCaTitle() . "]");
+            $subject = ($ticket->getHdeskGroup()->getCaIddepartament()==4)?"Hallazgo de Auditoría":"Ticket";
+            $email->setCaSubject("Ha sido involucrado en el $subject #" . $this->ticket->getCaIdticket() . " [" . $this->ticket->getCaTitle() . "]");
 
             $texto = "Ha sido involucrado en el Ticket \n\n<br /><br />";
             $request->setParameter("id", $this->ticket->getCaIdticket());

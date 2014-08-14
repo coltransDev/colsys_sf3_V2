@@ -509,7 +509,7 @@ include_component("widgets", "widgetEquipo");
         bloquearCampos: function(){
             Ext.getCmp('priority_id').setDisabled(true);
             Ext.getCmp('type_id').setDisabled(true);
-            Ext.getCmp('assignedto_id').setDisabled(true);
+            // Ext.getCmp('assignedto_id').setDisabled(true);
             Ext.getCmp('type_id').setDisabled(true);
             Ext.getCmp('actionTicket_id').setDisabled(true);
             Ext.getCmp('proyecto_id').setDisabled(true);
@@ -527,7 +527,7 @@ include_component("widgets", "widgetEquipo");
         desbloquearCampos: function(){
             Ext.getCmp('priority_id').setDisabled(false);
             Ext.getCmp('type_id').setDisabled(false);
-            Ext.getCmp('assignedto_id').setDisabled(false);
+            // Ext.getCmp('assignedto_id').setDisabled(false);
             Ext.getCmp('type_id').setDisabled(false);
             Ext.getCmp('actionTicket_id').setDisabled(false);
             Ext.getCmp('proyecto_id').setDisabled(false);
@@ -542,12 +542,18 @@ include_component("widgets", "widgetEquipo");
             this.changeLabel( 'area_id', 'Procesos:');
             this.changeLabel( 'proyecto_id', 'Tema:');
             this.changeLabel( 'type_id', 'Hallazgo:');
+            this.changeLabel( 'reportedby_id', 'Reportado a:');
         },
             
         desnombrarCampos: function(){
             this.changeLabel( 'area_id', 'Área:');
             this.changeLabel( 'proyecto_id', 'Proyecto:');
             this.changeLabel( 'type_id', 'Tipo:');
+            this.changeLabel( 'reportedby_id', 'Reportado por:');
+        },
+
+        desbloquearAsignado: function(){
+            Ext.getCmp('assignedto_id').setDisabled(false);
         },
 
         mostrarEmpresa: function(){
@@ -678,6 +684,7 @@ include_component("widgets", "widgetEquipo");
             if(iddepartamento==4){      // Si Departamento es Auditoría, renombra los campos
                 this.renombrarCampos();
                 this.mostrarEmpresa();
+                this.desbloquearAsignado();
             }else{
                 this.desnombrarCampos();
                 this.ocultarEmpresa();

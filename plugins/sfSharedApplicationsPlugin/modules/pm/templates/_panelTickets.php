@@ -144,7 +144,7 @@ PanelTickets = function( config ){
         header: "Tipo/Hallazgo",
         dataIndex: 'tipo',
         hideable: false,
-        width: 120,
+        width: 100,
         sortable: true
       },
       {
