@@ -644,11 +644,9 @@ include_component("widgets", "widgetEquipo");
                             Ext.getCmp("editar-ticket-win").close();
                             if( !idticket ){
                                 Ext.MessageBox.alert('Mensaje', 'El ticket se ha enviado al área correspondiente, el numero de ticket es: '+action.result.idticket);
-                            }
-                            if( gridId ){
+                                location.href="/helpdesk/verTicket/id/"+action.result.idticket;
+                            } else {                            
                                 Ext.getCmp(gridId).store.reload();
-                            }else{
-                                location.href="/helpdesk/verTicket/id/"+action.result.idticket;                                
                             }
                         },
                         // standardSubmit: false,
