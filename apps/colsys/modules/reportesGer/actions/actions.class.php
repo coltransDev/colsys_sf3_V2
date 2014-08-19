@@ -1256,11 +1256,11 @@ class reportesGerActions extends sfActions {
                 if ($this->tipo == 0) {
                     $join = "INNER JOIN tb_inoingresos_sea ic ON t.ca_idinocliente = ic.ca_idinocliente ";
                 } elseif ($this->tipo == 1) {
-                    $join = "INNER JOIN tb_inoingresos_air ic ON t.ca_referencia = ic.ca_referencia ";
+                    $join = "INNER JOIN tb_inoingresos_air ic ON t.ca_referencia = ic.ca_referencia and t.ca_idcliente = ic.ca_idcliente and t.ca_hawb = ic.ca_hawb ";
                 } elseif ($this->tipo == 2) {
-                    $join = "INNER JOIN tb_expo_ingresos ic ON t.ca_referencia = ic.ca_referencia ";
+                    $join = "INNER JOIN tb_expo_ingresos ic ON t.ca_referencia = ic.ca_referencia and t.ca_idcliente = ic.ca_idcliente  ";
                 } else if ($this->tipo == 3) {
-                    $join = "INNER JOIN tb_brk_ingresos ic on t.ca_referencia = ic.ca_referencia";
+                    $join = "INNER JOIN tb_brk_ingresos ic on t.ca_referencia = ic.ca_referencia ";
                 }
 
                 if ($this->sucursal) {
@@ -1838,8 +1838,8 @@ class reportesGerActions extends sfActions {
         $usuarios_rs = Doctrine::getTable("Usuario")
            ->createQuery("u")
            ->innerJoin("u.Sucursal s")
-           ->addWhere("u.ca_departamento='Comercial'")
-           ->orderBy("u.ca_nombre")
+           ->addWhere("u.ca_departamento='Comercial' or u.ca_cargo='Representante de Ventas'")
+           ->orderBy("u.ca_login")
            ->execute();
         $this->vendedores = array();
         $this->vendedores["%"] = "Usuarios (Todos)";
