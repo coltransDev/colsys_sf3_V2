@@ -980,8 +980,8 @@ class reportesNegActions extends sfActions {
                 if ($request->getParameter("ca_liberacion")) {
                     $reporte->setCaLiberacion(utf8_decode($request->getParameter("ca_liberacion")));
                 }
-                if ($request->getParameter("ca_tiempocredito")) {
-                    $reporte->setCaTiempocredito($request->getParameter("ca_tiempocredito"));
+                if (!is_null($request->getParameter("ca_tiempocredito"))) {
+                    $reporte->setCaTiempocredito(utf8_decode($request->getParameter("ca_tiempocredito")));
                 }
                 if ($request->getParameter("ca_comodato") && $request->getParameter("ca_comodato") == "on") {
                     $reporte->setCaComodato("Sí");
@@ -1572,13 +1572,14 @@ class reportesNegActions extends sfActions {
             if ($request->getParameter("ca_liberacion")) {
                 if ($request->getParameter("ca_liberacion") == "S&iacute;" || $request->getParameter("ca_liberacion") == utf8_decode("Sí") || $request->getParameter("ca_liberacion") == utf8_encode("Sí"))
                     $reporte->setCaLiberacion("Sí");
-                else
+                else {
                     $reporte->setCaLiberacion(($request->getParameter("ca_liberacion")));
+                    $reporte->setCaTiempocredito(0);
+                }
             }
             if ($request->getParameter("ca_tiempocredito")) {
                 $reporte->setCaTiempocredito($request->getParameter("ca_tiempocredito"));
             }
-
 
             if ($request->getParameter("consignar") && $request->getParameter("consignar") > 0) {
                 $reporte->setCaIdconsignar($request->getParameter("consignar"));
