@@ -141,13 +141,14 @@ OTM_FCL: |
   • Devolución de contenedor ( 7 dias para devolver a puerto ? en compensación)
   • Dropoff ? Depende de la naviera
   • Demoras de Contenedor
-  • Tramite Ica, Dasalud, Invima $130.000,oo (por entidad).
+  • Tramite Ica, Dasalud, Invima $150.000,oo (por entidad).
   • Recargo IMO $150,000,oo
   • Costos adicionales que se puedan generar para el manejo de mercancías peligrosas.
   • Recargo contenedor Refrigerado $300.000,oo
   • Gastos portuarios generados adicional a los no especificados.
   • Desistimiento de OTM $ 80.000,oo (manejo de OTM, endoso, liberación), adicional se facturaran los gastos ocasionados en el puerto.
   • Trámite de cesión de derecho y transporte a Zona de destino en caso de requerir otro usuario en Zona franca.
+  • Descargue de contenedores en puerto de Contecar-Compas Cartagena.
 
   Nota: Estos gastos serán facturados solo si el proceso de OTM lo requiere.
   
@@ -179,14 +180,36 @@ OTM_FCL: |
   • Rut del importador
   • Original del BL
   • La documentación completa debe ser entregada 48 horas antes de la llegada de la motonave a puerto Colombiano
-  • Historial del Importador ( soporte declaración anterior)
+  • Historial del Importador ( soporte declaración anterior).Tener en cuenta que para realizar un OTM el importador debe por lo menos haber hecho una operación de comercio exterior.
 
   PÓLIZA DE SEGURO DE LA MERCANCIA OPERADOR OTM
 
-  • Nuestro Operador cuenta con una póliza para el transporte de la mercancía hasta de $500.000.000 de pesos con un deducible del 10% del valor de la pérdida con un mínimo de $5.000.000.oo por lo anterior se responderá únicamente hasta por el valor que responda nuestra compañía de seguros en subrogación.  Si la mercancía cuesta más de este valor, el cliente y/o importador deberá tramitar un excedente de seguro.
+  • Nuestro Operador cuenta con una póliza para el transporte de la mercancía hasta de $500.000.000 de pesos con un deducible del 10% del valor de la pérdida con un mínimo de $5.000.000.oo por lo anterior se responderá únicamente hasta por el valor que responda nuestra compañía de seguros via subrogación.  Si la mercancía cuesta más de este valor, el cliente y/o importador deberá tramitar un excedente de seguro.
   • Toda mercancía debe estar asegurada desde ORIGEN hasta el DESTINO, incluyendo el valor de los tributos aduaneros (DDP) y cualquier reclamación hacia COLTRANS  S.A.S.  es por vía subrogación.
   • La mercancía viaja por cuenta y riesgo del importador y no aseguramos cargas de no mediar orden por escrito.
   • Mercancía mayor a $ 150.000.000 COP se solicitara un acompañamiento  vehicular.
+
+  Las mercancías que mencionamos a continuación son catalogadas como de ?Alto Riesgo? es importante tenerlo en cuenta por que aunque no superen los $150.000.000,oo requieren acompañamiento vehicular.
+  
+  • Leche en polvo
+  • Harina de pescado
+  • Juegos de videos
+  • Perfumes y pieles
+  • Equipos de computo y/o Componentes o Accesorios
+  • Cerveza nacional o de importación (en botella y/o en lata)
+  • Alimentos enlatados
+  • Azucar refinada
+  • Café exportación
+  • Electrodomesticos en general, sus partes, accesorios o repuestos para los mismos.
+  • Productos para eseo personal (producto terminado)
+  • Abonos y fertilizantes
+  • Pinturas industriales
+  • Llantas y neumáticos
+  • Pruductos farmacéuticos
+  • Calzado en general
+  • Textiles
+  • Confecciones
+  • Juguetería en General
   
 aduanaImpoTitulo: NOTAS IMPORTANTES QUE DEBEN TENER EN CUENTA EN SUS NACIONALIZACIONES
 aduanaImpo: |
