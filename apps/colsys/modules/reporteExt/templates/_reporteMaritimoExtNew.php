@@ -237,7 +237,7 @@ else
                     }
 					if ( $tar_sell_min!="" ){
 					?>
-							<td bgcolor="#CCCCCC" width="25%"><b>Selling Rate :</b><br />
+							<td bgcolor="#CCCCCC" width="25%"><b>Minimum :</b><br />
 								<?=$tar_sell_min?>							</td>
 							<?
 					}
