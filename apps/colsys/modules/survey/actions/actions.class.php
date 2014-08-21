@@ -63,7 +63,7 @@ class surveyActions extends sfActions {
             ->addWhere("c.ca_activo = ?", true)
             ->addWhere("c.ca_idtipo = ?", $grupo->getCaIdtipo());
         
-        if(in_array($this->ticket->getCaType(), $tipos)){
+        if(in_array($this->ticket->getCaType(), $tipos) && $grupo->getCaIdtipo() != 2 ){
             $q->addWhere("c.ca_tipocriterio = ?", $this->ticket->getCaType());
         }else{
             $q->addWhere("c.ca_tipocriterio = '-'");
