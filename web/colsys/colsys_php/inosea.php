@@ -552,7 +552,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     echo "  <TH COLSPAN=3>Comodato</TH>";
                     $arr_equ = array();
                     list($mod, $tra, $mes, $con, $ano) = sscanf($rs->Value('ca_referencia'), "%d.%d.%d.%d.%d");
-                    $ver = ($rs->Value('ca_modalidad') == 'FCL' and $cl->Value('ca_fchvencimiento') >= date("Y-m-d", mktime(0, 0, 0, $mes, $dia, $ano + 2000))) ? "block" : "none";
+                    $ver = ($rs->Value('ca_modalidad') == 'FCL') ? "block" : "none";   //  and $cl->Value('ca_fchvencimiento') >= date("Y-m-d", mktime(0, 0, 0, $mes, $dia, $ano + 2000))
                     while (!$co->Eof() and !$co->IsEmpty()) {                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
                         echo "<TR>";
                         echo "  <TD WIDTH=100 Class=listar>" . $co->Value('ca_concepto') . "</TD>";
