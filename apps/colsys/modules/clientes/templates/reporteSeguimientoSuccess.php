@@ -11,7 +11,7 @@ error_reporting(0);
 <?} ?> 
 <br />
 <? if ($reporte == "Potenciales"){ ?>
-<p>Reporte de <strong>Clientes Potenciales</strong> sobre el cual se se&ntilde;alar&aacute; en color amarillo aquellos clientes entre 6 y 7 meses sin ninguna actividad comercial, y en naranja los que tengan m&aacute;s de 7 meses sin dicha actividad.</p>
+<p>Reporte de <strong>Clientes Potenciales</strong> sobre el cual se se&ntilde;alar&aacute; en color amarillo aquellos clientes entre 5 y 6 meses sin ninguna actividad comercial, y en naranja los que tengan m&aacute;s de 6 meses sin dicha actividad.</p>
 <? }elseif ($reporte == "Activos"){ ?>
 <p>Reporte de <strong>Clientes Activos</strong> sobre el cual se podr&aacute; visualizar cual ha sido su comportamiento en t&eacute;rminos de n&uacute;meros de negocios en Impo, Expo y Aduana. Dicho comportamiento se tabula por periodos y se califica su tendencia.</p>
 <? } ?>

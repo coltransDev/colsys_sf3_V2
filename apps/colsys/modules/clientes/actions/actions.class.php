@@ -450,9 +450,11 @@ class clientesActions extends sfActions {
         $sucursal = $this->getRequestParameter("sucursal");
         $vendedor = $this->getRequestParameter("vendedor");
         $reporte = $this->getRequestParameter("reporte");
+        $layout = $this->getRequestParameter("layout");
 
         list($year, $month, $day) = sscanf($final, "%d-%d-%d");
 
+        $clientesActivos = array();
         $this->reporte = $reporte;
         if ($reporte == "Potenciales") {
             // Lista los Clientes Potenciales a los cuales no se les ha hecho seguimiento reciente
@@ -465,9 +467,12 @@ class clientesActions extends sfActions {
             $this->corte_uno = date("Y-m-d", mktime(0, 0, 0, $month - $parametro->getCaValor2(), $day, $year));
             $parametro = Doctrine::getTable("Parametro")->find(array("CU113", 1, 'CorteDos'));
             $this->corte_dos = date("Y-m-d", mktime(0, 0, 0, $month - $parametro->getCaValor2(), $day, $year));
+            if (count($this->clientesSinSeguimiento) != 0){
+                //$this->clientesLiberados = ClienteTable::liberarClientesSinSeguimiento($this->corte_uno, $this->corte_dos, $this->clientesSinSeguimiento);
+            }
         } elseif ($reporte == "Activos") {
             // Lista los Clientes Activos y clasifica su comportamiento en los ultimos tres periodos
-            $this->fechas = $this->clientesActivos = $clientesActivos = array();
+            $this->fechas = $this->clientesActivos = array();
             $datetime1 = new DateTime($inicio);
             $datetime2 = new DateTime($final);
 
@@ -561,7 +566,6 @@ class clientesActions extends sfActions {
         $this->fechas[4] = $corte2;
         $this->fechas[5] = $final;
 
-        $layout = $this->getRequestParameter("layout");
         if ($layout) {
             $this->setLayout($layout);
         }
