@@ -247,7 +247,6 @@ class ClienteTable extends Doctrine_Table {
         }
         $query.= "order by ca_sucursal, ca_vendedor, ca_fchvencimiento ";
 
-        //echo "<br />".$query."<br />";
         $q = Doctrine_Manager::getInstance()->connection();
         $stmt = $q->execute($query);
         return $stmt;
@@ -325,7 +324,7 @@ class ClienteTable extends Doctrine_Table {
     }
 
      /*
-     * Lista los Clientes Potenciales que no tengan seguimientos en los últimos 6 mese a partir de una fecha específicada.
+     * Lista los Clientes Potenciales que no tengan seguimientos en los últimos X meses a partir de una fecha específicada.
      * @author Carlos G. López M.
      */
 
@@ -360,6 +359,40 @@ class ClienteTable extends Doctrine_Table {
         return $stmt;
     }
 
+
+     /*
+     * Libera los Clientes Potenciales que no tengan seguimientos en los últimos X meses a partir de una fecha específicada.
+     * @author Carlos G. López M.
+     */
+
+    public static function liberarClientesSinSeguimiento($fch_ini, $fch_fin, $clientesSinSeguimiento) {
+        set_time_limit(0);
+        $liberado = array();
+        foreach ($clientesSinSeguimiento as $cliente){
+            $fechas = array($cliente["ca_cotizacion_last"], $cliente["ca_reporte_last"], $cliente["ca_seguimiento_last"], $cliente["ca_evento_max"]);
+            rsort($fechas);
+            if ($fechas[0]<$fch_fin){
+                $cliente = Doctrine::getTable("IdsCliente")->find($cliente["ca_idcliente"]);
+                
+                $sucursal = $cliente->getUsuario()->getSucursal()->getCaNombre();
+                $vendedor = $cliente->getCaVendedor();
+                $parametros = Doctrine::getTable("Parametro")->retrieveByCaso("CU238", $sucursal);
+                if ($parametros){
+                    foreach($parametros as $parametro) {
+                        $cuentas = explode(",", $parametro->getCaValor2());
+                        if (!in_array($cliente->getCaVendedor(), $cuentas)){
+                            $cliente->setCaVendedor($cuentas[0]);   // Libera el cliente, asignando la cuenta por defecto de Comercial para la sucursal
+                            $cliente->save();
+                            $liberado[] = $cliente->getCaIdcliente();
+                        }
+                    }
+                }
+            }
+        }
+        return $liberado;
+    }
+    
+    
     /*
      * Lista los Clientes Activos para hacer analisis de la fluctuación de sus negocios.
      * @author Carlos G. López M.
