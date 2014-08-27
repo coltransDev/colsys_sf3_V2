@@ -65,6 +65,18 @@ if (!isset($buscar) and !isset($accion)) {
       $tm->MoveNext();
    }
    echo "  </TD>";
+   if (!$tm->Open("select distinct ca_nombre as ca_sucursal from control.tb_sucursales order by ca_sucursal")) {       // Selecciona todos lo registros de la tabla Sucursales
+       echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+       echo "<script>document.location.href = 'repcomisiones.php';</script>";
+       exit; }
+   echo "  <TD Class=mostrar>Sucursal:<BR><SELECT NAME='sucursal'>";
+   echo "  <OPTION VALUE=%>Sucursales (Todas)</OPTION>";
+   $tm->MoveFirst();
+   while (!$tm->Eof()) {
+       echo "<OPTION VALUE='".$tm->Value('ca_sucursal')."'>".$tm->Value('ca_sucursal')."</OPTION>";
+       $tm->MoveNext();
+   }
+   echo "  </SELECT></TD>";
    if (!$tm->Open("select ca_idtrafico, ca_nombre from vi_traficos order by ca_nombre")) {       // Selecciona todos lo registros de la tabla Traficos
       echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
       echo "<script>document.location.href = 'reptraficos.php';</script>";
@@ -78,26 +90,48 @@ if (!isset($buscar) and !isset($accion)) {
       $tm->MoveNext();
    }
    echo "  </TD>";
-   echo "  <TD Class=listar><B>No.Contenedor:</B><BR><INPUT TYPE='text' NAME='idequipo' VALUE='' size='15' maxlength='12'></TD>";
-   echo "  <TH style='vertical-align:bottom;' rowspan='2'><INPUT Class=submit TYPE='SUBMIT' NAME='buscar' VALUE='  Buscar  ' ONCLIK='menuform.submit();'></TH>";
+   echo "  <TH style='vertical-align:center;' rowspan='3'><INPUT Class=submit TYPE='SUBMIT' NAME='buscar' VALUE='  Buscar  ' ONCLIK='menuform.submit();'></TH>";
    echo "</TR>";
    echo "<TR>";
-   echo "  <TD Class=listar colspan='3'><B>Nombre del Cliente:</B><BR><INPUT TYPE='text' NAME='compania' VALUE='' size='40' maxlength='60'></TD>";
-   
    if (!$tm->Open("select ca_idlinea, ca_nombre from vi_transporlineas where ca_transporte = 'Marítimo' and ca_activo_impo=true order by ca_nombre")) {       // Selecciona todos los prefijos de la InoMaestra
       echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
       echo "<script>document.location.href = 'repreferencia.php';</script>";
       exit;
    }
    $tm->MoveFirst();
-   echo "  <TD Class=listar colspan='2'><B>Línea Naviera:</B><BR><SELECT NAME='linea'>";
-    echo "    <OPTION VALUE=%>Todas las Líneas</OPTION>";
-    while (!$tm->Eof()) {
-        echo "    <OPTION VALUE='" . $tm->Value('ca_idlinea') . "'>" . $tm->Value('ca_nombre') . "</OPTION>";
-        $tm->MoveNext();
-    }
-    echo "    </SELECT>";
-   
+   echo "  <TD Class=listar colspan='3'><B>Línea Naviera:</B><BR><SELECT NAME='linea'>";
+   echo "    <OPTION VALUE=%>Todas las Líneas</OPTION>";
+   while (!$tm->Eof()) {
+       echo "    <OPTION VALUE='" . $tm->Value('ca_idlinea') . "'>" . $tm->Value('ca_nombre') . "</OPTION>";
+       $tm->MoveNext();
+   }
+   echo "  </SELECT></TD>";
+   echo "  <TD Class=listar colspan='2'><B>Nombre del Cliente:</B><BR><INPUT TYPE='text' NAME='compania' VALUE='' size='40' maxlength='60'></TD>";
+   echo "</TR>";
+   echo "<TR>";
+   echo "  <TD Class=listar colspan='4'><B>Sitio de Devolución:</B><BR><SELECT NAME='idpatio'>";  // Llena el cuadro de lista con los valores de la tabla Conceptos
+   echo "  <OPTION VALUE=''></OPTION>";
+   if (!$tm->Open("select pt.*, cd.ca_ciudad from pric.tb_patios pt inner join tb_ciudades cd on pt.ca_idciudad = cd.ca_idciudad order by cd.ca_ciudad")) {       // Selecciona todos lo registros de la tabla Eventos Clientes
+       echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";          // Muestra el mensaje de error
+       echo "<script>document.location.href = 'entrada.php?id=1503';</script>";
+       exit;
+   }
+   $tm->MoveFirst();
+   $ciu_mem = null;
+   while (!$tm->Eof()) {
+       if ($ciu_mem != $tm->Value('ca_ciudad')) {
+           if ($ciu_mem != null) {
+               echo "</OPTGROUP>";
+           }
+           echo "<OPTGROUP LABEL='" . $tm->Value('ca_ciudad') . "'>";
+           $ciu_mem = $tm->Value('ca_ciudad');
+       }
+       echo "<OPTION VALUE=" . $tm->Value('ca_idpatio') . ">" . $tm->Value('ca_nombre') . " - " . substr($tm->Value('ca_direccion'), 0, 25) . "</OPTION>";
+       $tm->MoveNext();
+   }
+   echo "  </OPTGROUP>";
+   echo "  </SELECT></TD>";
+   echo "  <TD Class=listar><B>No.Contenedor:</B><BR><INPUT TYPE='text' NAME='idequipo' VALUE='' size='15' maxlength='12'></TD>";
    echo "</TR>";
 
    echo "<TR HEIGHT=5>";
@@ -133,6 +167,12 @@ if (!isset($buscar) and !isset($accion)) {
    }else{
       $condicion.= " and ca_referencia in (select ca_referencia from tb_inoequipos_sea where ca_idequipo != '*-*')";
    }
+   if (strlen($idpatio) != 0){
+       $condicion.= " and ca_referencia in (select ca_referencia from tb_inocontratos_sea where ca_idpatio = '$idpatio')";
+   }
+   if ($sucursal != "%"){
+       $condicion.= " and ca_referencia in (select ca_referencia from tb_inoclientes_sea ic LEFT OUTER JOIN control.tb_usuarios us ON (ic.ca_login = us.ca_login) LEFT OUTER JOIN control.tb_sucursales sc ON (us.ca_idsucursal = sc.ca_idsucursal) where sc.ca_nombre like '%$sucursal%')";
+   }
    $sql="select * from vi_inoctrlcontenedores_sea $condicion order by ca_fchconfirmacion, ca_fchdevolucion, ca_referencia";
    //echo $sql."<br>";
    if (!$rs->Open($sql)) {
@@ -146,8 +186,11 @@ if (!isset($buscar) and !isset($accion)) {
       $ref_mem[] = "'".$rs->Value('ca_referencia')."'";
       $rs->MoveNext();
    }
-   $rs->MoveFirst();
+   if (count($ref_mem)==0){
+       $ref_mem[] = "null";
+   }
    
+   $rs->MoveFirst();
    $eq = & DlRecordset::NewRecordset($conn);
    $sql="select ca_referencia, ca_concepto, ca_idequipo, ca_inspeccion_nta, ca_inspeccion_fch from vi_inoequipos_sea where ca_referencia in (". implode( ",", $ref_mem) .") order by ca_referencia, ca_concepto";
    if (!$eq->Open($sql)) { 
