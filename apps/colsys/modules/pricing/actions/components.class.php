@@ -252,5 +252,8 @@ class pricingComponents extends sfComponents
         $this->typelog = $this->getRequestParameter("typelog");
         $this->typetar = $this->getRequestParameter("typetar");
     }
+    
+    public function executePanelPatios(){        
+    }
 }
 ?>

@@ -30,6 +30,7 @@ include_component("pricing","panelConsultaCiudades");
 //Panel de parametros
 
 include_component("conceptos","panelParametros" );
+include_component("pricing","panelPatios" );
 include_component("conceptos","modalidadWindow" );
 include_component("conceptos","modalidadGrid");
 

@@ -2792,6 +2792,41 @@ class pricingActions extends sfActions {
 
         $this->setTemplate("responseTemplate");
     }
+    
+    /**
+     * Datos de los patios
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeDatosPanelParametrosPatios(sfWebRequest $request) {
+        $readOnly = $request->getParameter("readOnly");
+        $nivel = $this->getNivel();
+        
+        $q = Doctrine::getTable("PricPatio")
+                        ->createQuery("p")
+                        ->select("p.*, c.ca_ciudad") //,
+                        ->leftJoin("p.Ciudad c")                        
+                        ->addOrderBy("p.ca_nombre");
+
+        $patios = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
+
+        $k = 0;
+        foreach ($patios as $key => $val) {
+            $patios[$key]["p_ca_idpatio"] = $patios[$key]["p_ca_idpatio"];
+            $patios[$key]["p_ca_nombre"] = utf8_encode($patios[$key]["p_ca_nombre"]);
+            $patios[$key]["p_ca_idciudad"] = utf8_encode($patios[$key]["p_ca_idciudad"]);
+            $patios[$key]["p_ca_direccion"] = utf8_encode($patios[$key]["p_ca_direccion"]);
+            $patios[$key]["c_ca_ciudad"] = utf8_encode($patios[$key]["c_ca_ciudad"]);            
+        }
+
+        if ($readOnly == "false") {
+            $patios[] = array("ca_idpatio" => "", "ca_nombre" => "", "orden" => "Z");
+        }
+        $this->getUser()->log( "Consulta Tarifario", TRUE );
+        $this->responseArray = array("totalCount" => count($patios), "root" => $patios);
+
+        $this->setTemplate("responseTemplate");
+    }
 
     /*
      * guarda el panel de conceptos
@@ -2869,6 +2904,42 @@ class pricingActions extends sfActions {
         $concepto->save();
         $this->responseArray["success"] = true;
         $this->responseArray["idconcepto"] = $concepto->getCaIdconcepto();
+        $this->setTemplate("responseTemplate");
+    }
+    
+    /*
+     * guarda el panel de patios
+     * @param sfRequest $request A request object
+     */
+
+    public function executeGuardarPanelPatios(sfWebRequest $request) {
+        $id = $request->getParameter("id");
+        $this->responseArray = array("id" => $id, "success" => false);
+
+        $idpatio = $request->getParameter("idpatio");
+
+        if ($idpatio) {
+            $patio = Doctrine::getTable("PricPatio")->find($idpatio);
+            $this->forward404Unless($idpatio);
+        } else {
+            $patio = new PricPatio();            
+        }
+
+        if ($request->getParameter("nombre") !== null) {
+            $patio->setCaNombre(utf8_decode($request->getParameter("nombre")));
+        }
+
+        if ($request->getParameter("ciudad") !== null) {
+            $patio->setCaIdciudad(utf8_decode($request->getParameter("ciudad")));
+        }
+
+        if ($request->getParameter("direccion") !== null) {
+            $patio->setCaDireccion(utf8_decode($request->getParameter("direccion")));
+        }
+        
+        $patio->save();
+        $this->responseArray["success"] = true;
+        $this->responseArray["idpatio"] = $patio->getCaIdpatio();
         $this->setTemplate("responseTemplate");
     }
 
