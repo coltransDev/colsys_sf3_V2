@@ -386,6 +386,19 @@ public function getFirmaOtmHTML($company) {
         return $link;
     }
     
+    public function getGrupoEmpresarial() {
+        
+        $sucursal = Doctrine::getTable("Sucursal")->find($this->getCaIdsucursal());
+        $grupoColtrans = array(1,2,8);
+        
+        if(in_array($sucursal->getCaIdempresa(), $grupoColtrans))
+            $idempresa = $grupoColtrans;
+        else
+            $idempresa = array($sucursal->getCaIdempresa());
+        
+        return $idempresa; 
+    }
+    
     public function emailUsuario($login,$asunto,$direccion,$tiempoCumplido,$fchingreso){
         
         $user = Doctrine::getTable('Usuario')->find(sfContext::getInstance()->getUser()->getUserId());
