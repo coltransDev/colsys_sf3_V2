@@ -295,15 +295,19 @@ class adminUsersActions extends sfActions {
                 
                 break;
         }
+        
+        $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
+        $grupoEmp = $usuario->getGrupoEmpresarial();
 
         $this->usuarios = Doctrine::getTable("Usuario")
                         ->createQuery("u")
                         ->innerJoin('u.Sucursal s')
                         ->innerJoin('s.Empresa e')
                         ->addWhere('e.ca_activo = ?', true)
+                        ->andWhereIn("s.ca_idempresa", $grupoEmp)
                         ->addOrderBy("u.ca_activo DESC")
                         ->addOrderBy("u.ca_login")
-                        ->execute();
+                        ->execute();      
     }
 
     public function executeGuardarUsuario($request) {
@@ -585,7 +589,7 @@ class adminUsersActions extends sfActions {
         }else{
             $empresa=sfConfig::get('app_branding_name');
             
-            if($empresa!='TPLogistics'){
+            if($empresa!='TPLogistics' || $this->getUser()->getIdempresa()!=4){ // Solo se envia correo para Coltrans, Colmas y ColOtm
                 $asunto = "ingreso";
                 $usuario->emailUsuario($login,$asunto,null,null,null);
             }
@@ -1003,13 +1007,16 @@ class adminUsersActions extends sfActions {
      */
     public function executeSearch(sfWebRequest $request) {
         $criterio = ('%' . strtolower($request->getParameter('buscar')) . '%');
-       
+        
+        $usuario = Doctrine::getTable("usuario")->find($this->getUser()->getUserId());
+        $grupoEmp = $usuario->getGrupoEmpresarial();       
 
         $q = Doctrine::getTable('Usuario')
                         ->createQuery('u')
                         ->innerJoin('u.Sucursal s')
                         ->innerJoin('s.Empresa e')
-                        ->addWhere('u.ca_activo = ?', true);
+                        ->addWhere('u.ca_activo = ?', true)
+                        ->andWhereIn("s.ca_idempresa", $grupoEmp);
         
         
         
