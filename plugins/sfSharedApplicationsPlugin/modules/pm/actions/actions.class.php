@@ -242,7 +242,10 @@ class pmActions extends sfActions {
      */
     public function executeCrearTicket(sfWebRequest $request) {
 
-        $this->nivel = $this->getNivel();
+        $this->nivel = $this->getNivel();        
+        
+        $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
+        $grupoEmp = $usuario->getGrupoEmpresarial();
 
         $idticket = $request->getParameter("id");
         $this->ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel);
@@ -255,6 +258,7 @@ class pmActions extends sfActions {
         $departamentos = Doctrine::getTable("Departamento")
                 ->createQuery("d")
                 ->where("d.ca_inhelpdesk = ?", true)
+                ->andWhereIn("d.ca_idempresa", $grupoEmp)                
                 ->execute();
 
         $this->departamentos = array();
