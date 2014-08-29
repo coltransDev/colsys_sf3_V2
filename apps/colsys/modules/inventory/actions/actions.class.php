@@ -27,24 +27,20 @@ class inventoryActions extends sfActions {
     public function executeIndex(sfWebRequest $request) {
 
         $this->nivel = $this->getNivel(self::RUTINA);
-
+        $this->user = $this->getUser();
 
         $q = Doctrine::getTable("Sucursal")
                 ->createQuery("s")
-                ->addWhere("s.ca_idempresa = ?", 2)
+                ->addWhere("s.ca_idempresa = ?", $this->user->getIdempresa())
                 ->addOrderBy("s.ca_nombre");
 
-        
-        $this->user = $this->getUser();
-        $this->suc = Doctrine::getTable("Sucursal")->find( $this->user->getIdsucursal() );
-        
-        $usuario = Doctrine::getTable("Usuario")->find($this->user);
-        
         if($this->nivel == 1){
-            $q->addWhere("s.ca_nombre = ?", $usuario->getSucursal()->getCaNombre());
+            $q->addWhere("s.ca_idsucursal = ?", $this->user->getIdsucursal());
         }
 
         $this->sucursales = $q->execute();
+        
+        $this->suc = Doctrine::getTable("Sucursal")->find( $this->user->getIdsucursal() );
     }
 
     /*
@@ -89,7 +85,9 @@ class inventoryActions extends sfActions {
                 ->createQuery("s")
                 ->addWhere("s.ca_idsucursal = ?",$idsucursal);
         
-        $sucursal = $q->fetchOne();
+        $sucursal = $q->fetchOne(); 
+        
+        $grupoEmp = $sucursal->getGrupoEmpresarial($idsucursal);
         
         $q = Doctrine::getTable("InvActivo")
                 ->createQuery("a")
@@ -104,8 +102,10 @@ class inventoryActions extends sfActions {
         }
         $q->addWhere("a.ca_idcategory = ?", $idcategory);
         $q->addWhere("s.ca_nombre = ?", $sucursal->getCaNombre());
+        $q->andWhereIn("s.ca_idempresa", $grupoEmp);
         //$q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
         $q->limit(500);
+        
         $activos = $q->execute();
         $result = array();
         foreach ($activos as $activo) {
@@ -413,7 +413,9 @@ class inventoryActions extends sfActions {
         $textMantenimiento = str_replace("<br>","",$request->getParameter("text_mantenimiento"));
         $textSeguimiento = $request->getParameter("text_seguimiento");
         
-        $usuarios = UsuarioTable::getCoordinadoresMantenimiento();
+        $activo = Doctrine::getTable("InvActivo")->find($idactivo);
+        
+        $usuarios = UsuarioTable::getCoordinadoresMantenimiento($activo->getCaIdsucursal());
         foreach( $usuarios as $usuario ){
             $logins[]=$usuario->getCaLogin();
         }
@@ -429,7 +431,9 @@ class inventoryActions extends sfActions {
             
             if(!$recordatorio){
                 
-                $activo = Doctrine::getTable("InvActivo")->find($idactivo);
+                $con = Doctrine_Manager::getInstance()->connection();
+                $con->beginTransaction();
+                
                 $fchprgmantenimiento = $activo->getCaPrgmantenimiento();
                 
                 $mantenimiento = new InvMantenimiento();
@@ -437,7 +441,7 @@ class inventoryActions extends sfActions {
                 $mantenimiento->setCaFchmantenimiento($fchMantenimiento);
                 $mantenimiento->setCaObservaciones(utf8_decode($textMantenimiento));
                 $mantenimiento->setCaFchprgmantenimiento($fchprgmantenimiento);
-                $mantenimiento->save();
+                $mantenimiento->save($con);
 
                 $idman = $mantenimiento->getCaIdmantenimiento();
 
@@ -459,7 +463,7 @@ class inventoryActions extends sfActions {
                             $labores = new InvMantenimientoLabores();
                             $labores->setCaIdetapa($i);
                             $labores->setCaIdmantenimiento($idman);
-                            $labores->save();
+                            $labores->save($con);
                         }
                     }
                 $mantenimiento = Doctrine::getTable("InvMantenimiento")->find($idman);
@@ -486,15 +490,20 @@ class inventoryActions extends sfActions {
             $texto.= sfContext::getInstance()->getController()->getPresentationFor( 'inventory', 'emailMantenimiento');
             $email->setCaBodyhtml( $texto );
             $email->addTo($mantenimiento->getInvActivo()->getUsuario()->getCaEmail());
-
-            foreach( $logins as $login ){
-                $usuario = Doctrine::getTable("Usuario")->find( $login );
-                $suc_cm = $usuario->getSucursal()->getCaNombre();
-                if($suc_usu==$suc_cm){
-                    $email->addCc( $usuario->getCaEmail() );
+            
+            if (isset($logins)){
+                foreach( $logins as $login ){
+                    $usuario = Doctrine::getTable("Usuario")->find( $login );
+                    $suc_cm = $usuario->getSucursal()->getCaNombre();
+                    if($suc_usu==$suc_cm){
+                        $email->addCc( $usuario->getCaEmail() );
+                    }
                 }
             }
-            $email->save();
+            $email->save($con);
+            
+            $con->commit();
+            
             if($recordatorio){
                 $this->redirect("inventory/recordatorio?mes_man=".$mes_man.'&idsucursal='.$idsucursal);
             }
@@ -533,7 +542,10 @@ class inventoryActions extends sfActions {
         $this->user = $this->getUser();
         $this->recordatorio = $request->getParameter("recordatorio");
         
-        $usuarios = UsuarioTable::getCoordinadoresMantenimiento();
+        $activo = Doctrine::getTable("InvActivo")->find($idactivo);
+        
+        $usuarios = UsuarioTable::getCoordinadoresMantenimiento($activo->getCaIdsucursal());
+        
         foreach( $usuarios as $usuario ){
             $logins[]=$usuario->getCaLogin();
         }
@@ -942,6 +954,11 @@ class inventoryActions extends sfActions {
      */
 
     public function executeDatosWidgetEquipo($request) {
+        
+        $user = $this->getUser();
+        $sucUsuario = Doctrine::getTable("Sucursal")->find($user->getIdsucursal());
+        $grupoEmp = $sucUsuario->getGrupoEmpresarial($user->getIdsucursal());
+        
         $query = "%" . strtoupper($request->getParameter("query")) . "%";
 
         $equipos = Doctrine_Query::create()
@@ -952,6 +969,7 @@ class inventoryActions extends sfActions {
                 ->leftJoin("u.Sucursal s")
                 ->addWhere("UPPER(a.ca_identificador) LIKE ? OR UPPER(u.ca_nombre) LIKE ? ", array($query, $query))
                 ->addWhere("c.ca_parameter = ?", "Hardware")
+                ->andWhereIn("s.ca_idempresa", $grupoEmp)
                 ->addOrderBy("a.ca_identificador")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                 ->execute();
@@ -994,16 +1012,17 @@ class inventoryActions extends sfActions {
     }
 
     public function executeInformeLicencias($request) {
+        
+        $user = $this->getUser();        
+        
         $q = Doctrine::getTable("Sucursal")
                 ->createQuery("s")
-                ->addWhere("s.ca_idempresa = ?", 2)
+                ->addWhere("s.ca_idempresa = ?", $user->getIdempresa())
                 ->addOrderBy("s.ca_nombre");
 
         $this->nivel = $this->getNivel();
-        if ($this->nivel < 2) {
-            $user = $this->getUser();
-            $usuario = Doctrine::getTable("Usuario")->find($user);
-            $q->addWhere("s.ca_nombre = ? ", $usuario->getSucursal()->getCaNombre());
+        if ($this->nivel < 2) {            
+            $q->addWhere("s.ca_idsucursal = ? ", $user->getIdsucursal());
         }
 
         $this->sucursales = $q->execute();
@@ -1011,11 +1030,17 @@ class inventoryActions extends sfActions {
 
     public function executeInformeLicenciasResult($request) {
 
+        $this->nivel = $this->getNivel();
         $idsucursal = $request->getParameter("idsucursal");
+        
+        $user = $this->getUser();
+        $sucUsuario = Doctrine::getTable("Sucursal")->find($user->getIdsucursal());
+        $grupoEmp = $sucUsuario->getGrupoEmpresarial($user->getIdsucursal());
         
         $q = Doctrine::getTable("InvActivo")
                 ->createQuery("a")
-                ->innerJoin("a.InvCategory c")
+                ->innerJoin("a.InvCategory c")                
+                ->leftJoin("a.Sucursal s")
                 ->addWhere("a.ca_fchbaja IS NULL")
                 ->select("a.ca_so, count(*) as q")
                 ->addWhere("a.ca_so IS NOT NULL  AND a.ca_so!='' AND a.ca_so!=?", "No tiene ")
@@ -1024,8 +1049,18 @@ class inventoryActions extends sfActions {
 
         $sucursal = null;
         if ($idsucursal) {
-            $q->addWhere("a.ca_idsucursal = ?", $idsucursal);
-            $sucursal = Doctrine::getTable("Sucursal")->find($idsucursal);   
+            //$q->addWhere("a.ca_idsucursal = ?", $idsucursal);
+            $sucursal = Doctrine::getTable("Sucursal")->find($idsucursal);            
+            $grupoEmp = $sucursal->getGrupoEmpresarial($idsucursal); 
+            $q->andWhereIn("s.ca_idempresa", $grupoEmp);
+            $q->addWhere("s.ca_nombre = ? ", $sucursal->getCaNombre());
+        }else{            
+            $q->andWhereIn("s.ca_idempresa", $grupoEmp);   
+        }
+        
+        if ($this->nivel < 2 ) {
+            //$q->andWhereIn("s.ca_idempresa", $grupoEmp);            
+            $q->addWhere("s.ca_nombre = ? ", $sucUsuario->getCaNombre());
         }
 
         $this->soOEM = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)
@@ -1034,6 +1069,7 @@ class inventoryActions extends sfActions {
         $q = Doctrine::getTable("InvActivo")
                 ->createQuery("a")
                 ->innerJoin("a.InvCategory c")
+                ->leftJoin("a.Sucursal s")
                 ->addWhere("a.ca_fchbaja IS NULL")
                 ->select("a.ca_office, count(*) as q")
                 ->addWhere("a.ca_office IS NOT NULL  AND a.ca_office!='' AND a.ca_office!=?", "No tiene")
@@ -1041,7 +1077,18 @@ class inventoryActions extends sfActions {
                 ->addOrderBy("a.ca_office");
         
         if ($idsucursal) {
-            $q->addWhere("a.ca_idsucursal = ?", $idsucursal);
+            //$q->addWhere("a.ca_idsucursal = ?", $idsucursal);
+            //$sucursal = Doctrine::getTable("Sucursal")->find($idsucursal);            
+            //$grupoEmp = $sucursal->getGrupoEmpresarial($idsucursal); 
+            $q->andWhereIn("s.ca_idempresa", $grupoEmp);
+            $q->addWhere("s.ca_nombre = ? ", $sucursal->getCaNombre());
+        }else{            
+            $q->andWhereIn("s.ca_idempresa", $grupoEmp);   
+        }
+        
+        if ($this->nivel < 2 ) {
+            //$q->andWhereIn("s.ca_idempresa", $grupoEmp);            
+            $q->addWhere("s.ca_nombre = ? ", $sucUsuario->getCaNombre());
         }
 
         $this->ofOEM = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)
@@ -1050,10 +1097,10 @@ class inventoryActions extends sfActions {
 
         $q = Doctrine::getTable("InvActivo")
                 ->createQuery("a")
-                ->innerJoin("a.InvCategory c")                
+                ->innerJoin("a.InvCategory c")
+                ->leftJoin("a.Sucursal s")
                 ->leftJoin("a.InvAsignacionSoftwareActivo as")
-                ->leftJoin("as.Equipo ac")
-                                              
+                ->leftJoin("as.Equipo ac")                                              
                 ->select("a.ca_idactivo, c.ca_name,a.ca_modelo, a.ca_cantidad as q, count(as.ca_idactivo) as assigned, as.ca_idequipo")
                 ->addWhere("c.ca_parameter=?", "Software")
                 ->addWhere("a.ca_fchbaja IS NULL")
@@ -1062,8 +1109,19 @@ class inventoryActions extends sfActions {
                 ->addOrderBy("c.ca_name, a.ca_modelo");
                 
         if ($idsucursal) {
-            $q->addWhere("ac.ca_idsucursal = ?", array( $idsucursal ));
+            //$q->addWhere("ac.ca_idsucursal = ?", array( $idsucursal ));
+            //$sucursal = Doctrine::getTable("Sucursal")->find($idsucursal);            
+            //$grupoEmp = $sucursal->getGrupoEmpresarial($idsucursal); 
+            $q->andWhereIn("s.ca_idempresa", $grupoEmp);
+            $q->addWhere("s.ca_nombre = ? ", $sucursal->getCaNombre());
             
+        }else{            
+            $q->andWhereIn("s.ca_idempresa", $grupoEmp);   
+        }
+        
+        if ($this->nivel < 2 ) {
+            //$q->andWhereIn("s.ca_idempresa", $grupoEmp);            
+            $q->addWhere("s.ca_nombre = ? ", $sucUsuario->getCaNombre());
         }
         //echo $q->getSqlQuery();
         
@@ -1079,19 +1137,20 @@ class inventoryActions extends sfActions {
      */
 
     public function executeInformeListadoActivos($request) {
+        
+        $user = $this->getUser();        
+        
         $q = Doctrine::getTable("Sucursal")
                 ->createQuery("s")
-                ->addWhere("s.ca_idempresa = ?", 2)
+                ->addWhere("s.ca_idempresa = ?", $user->getIdempresa())
                 ->addOrderBy("s.ca_nombre");
 
         $this->nivel = $this->getNivel();
-        if ($this->nivel < 2) {
-            $user = $this->getUser();
+        if ($this->nivel < 2) {            
             $q->addWhere("s.ca_idsucursal = ? ", $user->getIdsucursal());
         }
 
         $this->sucursales = $q->execute();
-
         
         $this->cats = Doctrine::getTable("InvCategory")
                 ->createQuery("c")
@@ -1112,9 +1171,13 @@ class inventoryActions extends sfActions {
 
         $idactivos = Utils::unSerializeArray($request->getParameter("idactivo"));
         
+        $user = $this->getUser();
+        $sucUsuario = Doctrine::getTable("Sucursal")->find($user->getIdsucursal());
+        $grupoEmp = $sucUsuario->getGrupoEmpresarial($user->getIdsucursal());
+        
         $q = Doctrine::getTable("InvActivo")
                 ->createQuery("a")
-                ->innerJoin("a.InvCategory c")
+                ->innerJoin("a.InvCategory c")                
                 ->leftJoin("c.Parent p")
                 ->leftJoin("a.Usuario u")
                 ->leftJoin("a.Sucursal s")
@@ -1130,8 +1193,13 @@ class inventoryActions extends sfActions {
         }
         $sucursal = null;
         if ($idsucursal) {
-            $q->addWhere("a.ca_idsucursal = ?", $idsucursal);
-            $sucursal = Doctrine::getTable("Sucursal")->find($idsucursal);            
+            //$q->addWhere("a.ca_idsucursal = ?", $idsucursal);
+            $sucursal = Doctrine::getTable("Sucursal")->find($idsucursal); 
+            $grupoEmp = $sucursal->getGrupoEmpresarial($idsucursal); 
+            $q->andWhereIn("s.ca_idempresa", $grupoEmp);
+            $q->addWhere("s.ca_nombre = ? ", $sucursal->getCaNombre());
+        }else{            
+            $q->andWhereIn("s.ca_idempresa", $grupoEmp);   
         }
 
         if ($so) {
@@ -1159,9 +1227,9 @@ class inventoryActions extends sfActions {
         }
 
         $this->nivel = $this->getNivel();
-        if ($this->nivel < 2) {
-            $user = $this->getUser();
-            $q->addWhere("s.ca_idsucursal = ? ", $user->getIdsucursal());
+        if ($this->nivel < 2 ) {
+            //$q->andWhereIn("s.ca_idempresa", $grupoEmp);            
+            $q->addWhere("s.ca_nombre = ? ", $sucUsuario->getCaNombre());
         }
 
         if ($bajasChkbox) {
@@ -1197,14 +1265,19 @@ class inventoryActions extends sfActions {
     
     public function executeInformeListadoMantenimientos($request) {
         
+        $this->nivel = $this->getNivel();
+        $user = $this->getUser();
+        
+        $usuario = Doctrine::getTable("Usuario")->find($user);        
+        $this->empresa = Doctrine::getTable("Empresa")->find( $usuario->getSucursal()->getEmpresa()->getCaIdempresa());
+        
         $q = Doctrine::getTable("Sucursal")
                 ->createQuery("s")
-                ->addWhere("s.ca_idempresa = ?", 2)
+                ->addWhere("s.ca_idempresa = ?", $this->empresa->getCaIdempresa())
                 ->addOrderBy("s.ca_nombre");
 
-        $this->nivel = $this->getNivel();
-        if ($this->nivel < 2) {
-            $user = $this->getUser();
+        
+        if ($this->nivel < 2) {            
             $q->addWhere("s.ca_idsucursal = ? ", $user->getIdsucursal());
         }
 
@@ -1215,6 +1288,12 @@ class inventoryActions extends sfActions {
         
         $idsucursal = $request->getParameter("idsucursal");
         $mes = $request->getParameter("mes");
+        
+        $user = $this->getUser();        
+        //$usuario = Doctrine::getTable("Usuario")->find($user);
+        $sucursal = Doctrine::getTable("Sucursal")->find($user->getIdSucursal());
+        
+        $grupoEmp = $sucursal->getGrupoEmpresarial($sucursal->getCaIdsucursal());
         
         $criterio = $request->getParameter("criterio");
                 
@@ -1229,6 +1308,9 @@ class inventoryActions extends sfActions {
             $q->addWhere("a.ca_idsucursal = ?", $idsucursal);
             $sucursal = Doctrine::getTable("Sucursal")->find($idsucursal);
             
+        }else{
+            $q->leftJoin("a.Sucursal s");
+            $q->andWhereIn("s.ca_idempresa", $grupoEmp);            
         }
             $q->addWhere("c.ca_parameter IN ('Hardware','Dispositivo')");
         

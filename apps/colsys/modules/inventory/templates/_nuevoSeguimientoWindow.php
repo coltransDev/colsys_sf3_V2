@@ -73,7 +73,8 @@ NuevoSeguimientoWindow = function( config ) {
                                                     title: 'Especificaciones Generales',
                                                     checkboxName: "checkboxEspMantenimiento",
                                                     layout:"form",
-                                                    anchor:'95%',
+                                                    //anchor:'85%',
+                                                    width: 245,
                                                     items:[
                                                         {
                                                             xtype:'fieldset',                                                              
@@ -124,14 +125,14 @@ NuevoSeguimientoWindow = function( config ) {
                                                     id:"chkobservaciones",
                                                     title: 'Observaciones',
                                                     checkboxName: "checkboxObservaciones",
-                                                    height:210,
-                                                    anchor:'95%',
+                                                    height:245,
+                                                    anchor:'85%',
                                                     bodyStyle:'padding-left:5px;',
                                                     items:[
                                                         {
                                                             xtype:'htmleditor',
                                                             name:'text_mantenimiento',
-                                                            height:200,
+                                                            height:180,
                                                             width: 400,
                                                             enableFont: false,
                                                             enableFontSize: false,

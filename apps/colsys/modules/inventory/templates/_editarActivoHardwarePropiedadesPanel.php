@@ -153,7 +153,8 @@ $office_types = $sf_data->getRaw("office_types");*/
                                     new WidgetUsuario({fieldLabel: 'Asignado a',
                                         name: 'asignadoa_name',
                                         hiddenName: 'asignadoa',
-                                        id: 'asignadoa_id'
+                                        id: 'asignadoa_id',
+                                        idempresa: '<?=$idempresa?>'
                                     }),
                                     {
                                         xtype:'numberfield',

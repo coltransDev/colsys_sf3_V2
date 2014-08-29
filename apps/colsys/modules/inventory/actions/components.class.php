@@ -82,6 +82,9 @@ class inventoryComponents extends sfComponents
     public function executeEditarActivoHardwarePropiedadesPanel( ){
         $this->so_types = ParametroTable::retrieveByCaso("CU095");
         $this->office_types = ParametroTable::retrieveByCaso("CU096");
+        
+        $usuario = Doctrine::getTable("Usuario")->find($this->getUser());
+        $this->idempresa = $usuario->getSucursal()->getEmpresa()->getCaIdempresa();
     }
     
     

@@ -9,7 +9,7 @@ use_helper("ExtCalendar");
 ?>
 
 <div class="content" align="center">
-    <h2>Listados de Activos</h2>
+    <h2>Listados de Licencias</h2>
     <br />
     <form action="<?= url_for("inventory/informeLicenciasResult") ?>" method="post">
         <input type="hidden" id="idcategory" name="idcategory" />
