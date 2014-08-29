@@ -69,7 +69,7 @@ class UsuarioTable extends Doctrine_Table {
         return $q->execute();
     }
     
-    public static function getUsuariosxPerfil($perfil,$idsucursal=null) {
+    public static function getUsuariosxPerfil($perfil,$idsucursal=null,$sucursal=null) {
 //servicio-al-cliente
         $q = Doctrine::getTable("Usuario")
                ->createQuery("u")               
@@ -79,6 +79,10 @@ class UsuarioTable extends Doctrine_Table {
                ->addOrderBy("u.ca_nombre");
         if( $idsucursal ){
             $q->addWhere("u.ca_idsucursal = ?", $idsucursal);
+        }
+        if( $sucursal ){
+            $q->innerJoin("u.Sucursal s")                    
+              ->addWhere("s.ca_nombre = ?", $sucursal);
         }
         //echo $q->getSqlQuery();
         return $q->execute();
