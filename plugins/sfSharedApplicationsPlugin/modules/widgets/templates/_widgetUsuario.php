@@ -20,7 +20,7 @@ WidgetUsuario = function( config ){
             url: '<?=url_for("widgets/datosComboUsuario")?>'
             
         }),
-        baseParams: {tipo: this.tipo},
+        baseParams: {idempresa: this.idempresa},
         reader: new Ext.data.JsonReader({
             root: 'root',
             totalProperty: 'total'

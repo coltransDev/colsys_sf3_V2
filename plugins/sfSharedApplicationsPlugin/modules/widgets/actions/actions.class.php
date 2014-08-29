@@ -356,8 +356,9 @@ class widgetsActions extends sfActions {
         $criterio = $this->getRequestParameter("query");
         $ciudad = utf8_decode($this->getRequestParameter("ciudad"));
         $perfil = utf8_decode($this->getRequestParameter("perfil"));
+        $idempresa = $this->getRequestParameter("idempresa");
 
-        if ($criterio || $ciudad || $perfil) {
+        if ($criterio || $ciudad || $perfil || $idempresa) {
 
             $q = Doctrine::getTable("Usuario")
                     ->createQuery("u")
@@ -380,7 +381,13 @@ class widgetsActions extends sfActions {
                 $q->innerJoin("u.UsuarioPerfil up")
                 ->addWhere("up.ca_perfil = ?", $perfil);
             }
-            
+            if($idempresa)
+            {
+                $suc[2] = array(1,2,8); // Grupo Coltrans, Colmas y Colotm
+                //echo $ciudad;
+                $q->innerJoin("u.Sucursal s");                
+                $q->andWhereIn("s.ca_idempresa", ($suc[$idempresa]?$suc[$idempresa]:array($idempresa)));
+            }
             $sql=$q->getSqlQuery();
 
             $usuarios = $q->execute();
