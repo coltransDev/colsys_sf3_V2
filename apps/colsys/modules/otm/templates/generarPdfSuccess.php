@@ -219,6 +219,7 @@ Ext.onReady(function(){
                 success:function(response,options){
                     var res = Ext.util.JSON.decode( response.responseText );
                     if( res.success ){
+                        alert( " El numero generado es : "+res.consecutivo );
                         location.href=location.href;
                     }
                 }

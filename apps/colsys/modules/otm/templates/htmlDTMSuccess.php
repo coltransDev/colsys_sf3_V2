@@ -66,7 +66,7 @@ $firmaautorizada=($datos["origen"]=="Cartagena")?"Carlos A. Bola&ntilde;o M.<br>
                 <tr>
                     <td style="font-size: 26px;" align="center">NEGOTIABLE MULTIMODAL TRANSPORTATION ANDEAN<BR>DOCUMENT INTERNATIONATIONAL M.T.A.D.I<BR>Documento Andino de Transporte<br> Multimodal Internacional D.A.T5.M.I.<br>
                         <br><img src="/images/logos/LOGOCOLTM200.jpg" width="200" height="69"><br>
-                        El O.T.M abajo firmante ser&aacute; responsable por el cumplimiento de los t&eacute;rminos del contrato de Transporte Multimodal y las DESICIONES 331 Y 393 DE LA COMISI&Oacute;N DEL ACUERDO DE CARTAGENA
+                        El O.T.M abajo firmante ser&aacute; responsable por el cumplimiento de los t&eacute;rminos del contrato de Transporte Multimodal y las DECISIONES 331 Y 393 DE LA COMISI&Oacute;N DEL ACUERDO DE CARTAGENA
                         <br>&nbsp;<br><br>
                     </td>                
                 </tr>

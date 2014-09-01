@@ -311,7 +311,7 @@ class otmActions extends sfActions
             $fecha="2012-04-01";
             $where.="and ca_version=( SELECT max(rr.ca_version) AS max
             FROM tb_reportes rr
-            WHERE r.ca_consecutivo::text = rr.ca_consecutivo::text) ";
+            WHERE r.ca_consecutivo::text = rr.ca_consecutivo::text and rr.ca_tiporep=4) ";
 
             if($this->idorigen!="")
             {
@@ -361,7 +361,7 @@ class otmActions extends sfActions
                     where r.ca_tiporep=4
                     and  r.ca_fchcreado >='{$fecha}' 
                     and ( o.ca_dtm = true and o.ca_continuacion = true and (o.ca_presentacion= false or o.ca_presentacion is null)  )
-                    and r.ca_consecutivo not in ( select (rr.ca_consecutivo) from tb_repstatus ss,tb_reportes rr where ss.ca_idreporte=rr.ca_idreporte and ss.ca_idetapa in ('OTLEV') and r.ca_consecutivo=rr.ca_consecutivo )
+                    and r.ca_consecutivo not in ( select (rr.ca_consecutivo) from tb_repstatus ss,tb_reportes rr where ss.ca_idreporte=rr.ca_idreporte and ss.ca_idetapa in ('OTPRC') and r.ca_consecutivo=rr.ca_consecutivo )
                     $where "; //and o.ca_presentacion= false
 
                     //$con = Doctrine_Manager::getInstance()->connection();                        
@@ -369,7 +369,7 @@ class otmActions extends sfActions
                     $conn=$this->getConnReplica();
                     //echo $sql;
             $st = $conn->execute($sql);
-    //        echo $sql;
+//            echo $sql;
             $this->reportes = $st->fetchAll();
         }
         
@@ -540,17 +540,22 @@ class otmActions extends sfActions
 
             if(!$repOtm)
             {
-                $repOtm=new RepOtm();
+                $repOtm=new RepOtm(); 
                 $repOtm->setCaIdreporte($idreporte);                
             }
             if($tipo=="OTM")
+            {
                 $repOtm->setCaContinuacion(true);
+                $conse=$repOtm->getConsecutivoCv();
+                $this->forward404Unless( $conse );
+                $repOtm->setCaCv($conse);                
+            }
             else if($tipo=="DTM")
             {
                 if($repOtm->getCaConsecutivo()=="")
                 {
                     $conse=$repOtm->getConsecutivoDtm();
-                    $this->forward404Unless( $conse );                    
+                    $this->forward404Unless( $conse );
                     $repOtm->setCaConsecutivo($conse);
                     $reporte=$repOtm->getReporte();
                     if($reporte)
@@ -562,7 +567,7 @@ class otmActions extends sfActions
                 $repOtm->setCaDtm(true);            
             }
             $repOtm->save();
-            $this->responseArray=array("success"=>true);
+            $this->responseArray=array("success"=>true,"consecutivo"=>$conse);
         }
         catch(Exception $e)
         {
@@ -976,7 +981,7 @@ class otmActions extends sfActions
             $fecha="2012-04-01";
             $where.="and ca_version=( SELECT max(rr.ca_version) AS max
             FROM tb_reportes rr
-            WHERE r.ca_consecutivo::text = rr.ca_consecutivo::text) ";
+            WHERE r.ca_consecutivo::text = rr.ca_consecutivo::text ) ";
 
             if($this->idorigen!="")
             {
@@ -1043,7 +1048,7 @@ class otmActions extends sfActions
 
 
             $st = $conn->execute($sql);
-    //        echo $sql;
+            echo $sql;
             $this->reportes = $st->fetchAll();
         }
     }
