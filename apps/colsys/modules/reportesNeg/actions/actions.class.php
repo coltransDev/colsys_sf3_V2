@@ -3827,7 +3827,7 @@ class reportesNegActions extends sfActions {
 
         $this->forward404Unless($reporte);
 
-        $this->selec = array();
+        /*$this->selec = array();
         //if($user->getUserId()=="maquinche" || $user->getUserId()=="ndiaz")
         {
             $this->selec = UsuParametrosTable::getUserxParams($reporte);
@@ -3835,7 +3835,7 @@ class reportesNegActions extends sfActions {
             //echo count($this->selec);
             //if(count($this->selec)>0)                
             //  $this->selec=$this->selec[0];            
-        }
+        }*/
         
         $this->selec=array();
         //if($user->getUserId()=="maquinche" || $user->getUserId()=="ndiaz")
@@ -3852,12 +3852,22 @@ class reportesNegActions extends sfActions {
         $gruposObligatorios = array();
 
         $usuarios = $reporte->getUsuariosOperativos();
-
+        $user_found=false;
         if ($reporte->getCaImpoexpo() == Constantes::IMPO || $reporte->getCaImpoexpo() == Constantes::TRIANGULACION) {
             $grupos["operativo"] = array();
+            
             foreach ($usuarios as $usuario) {
                 $grupos["operativo"][] = $usuario->getCaLogin();
+                if($usuario->getCaLogin()==$this->selec["ca_idusuario"])
+                    $user_found=true;
             }
+            if(!$user_found)
+            {
+                $this->usu_alt=Doctrine::getTable("Usuario")->find($this->selec["ca_idusuario"]);
+                if($this->usu_alt)                    
+                    $grupos["operativo"][] =$this->usu_alt->getCaLogin();
+            }
+            
         } else {
             $grupos["exportaciones"] = array();
             foreach ($usuarios as $usuario) {
