@@ -219,6 +219,7 @@ $pdf->MultiCell(0, 4, strtoupper($empresa->getCaNombre()), 0, 1);
 $pdf->MultiCell(0, 4, $sucursal->getCaDireccion(), 0, 1);
 $pdf->MultiCell(0, 4, "Tel.:" . $sucursal->getCaTelefono() . " " . $usuario->getCaExtension(), 0, 1);
 $pdf->MultiCell(0, 4, "Fax :" . $sucursal->getCaFax(), 0, 1);
+$pdf->MultiCell(0, 4, "Cod. Postal :" . $sucursal->getCaCodpostal(), 0, 1);
 
 $pdf->MultiCell(0, 4, $sucursal->getCaNombre() . " - " . $empresa->getTrafico()->getCaNombre(), 0, 1);
 $pdf->MultiCell(0, 4, $usuario->getCaEmail(), 0, 1);
