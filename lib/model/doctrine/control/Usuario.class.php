@@ -59,6 +59,7 @@ class Usuario extends BaseUsuario {
             $resultado .= $sucursal->getCaDireccion() . "<br />";
             $resultado .= "Tel.: " . $sucursal->getCaTelefono() . " " . $this->getCaExtension() . "<br />";
             $resultado .= "Fax.: " . $sucursal->getCaFax() . "<br />";
+            $resultado .= "Cod. Postal: " . $sucursal->getCaCodpostal() . "<br />";
         }
         $resultado .= Utils::replace($sucursal->getCaNombre()) . "-" . $empresa->getTrafico()->getCaNombre() . "<br />";
         $resultado .= "<a href=\"http://" . $empresa->getCaUrl() . "\">" . $empresa->getCaUrl() . "</a>";
@@ -75,6 +76,7 @@ class Usuario extends BaseUsuario {
             $resultado .= $sucursal->getCaDireccion() . "\n";
             $resultado .= "Tel.: " . $sucursal->getCaTelefono() . " " . $this->getCaExtension() . "\n";
             $resultado .= "Fax.: " . $sucursal->getCaFax() . "\n";
+            $resultado .= "Cod. Postal: " . $sucursal->getCaCodpostal() . "\n";
         }
         $resultado .= $sucursal->getCaNombre() . " - " . $empresa->getTrafico()->getCaNombre();
         $resultado .= "http://" . $empresa->getCaUrl();
@@ -125,6 +127,7 @@ public function getFirmaOtmHTML($company) {
             $resultado .= $sucursal->getCaDireccion() . "<br />";
             $resultado .= "Tel.: " . $sucursal->getCaTelefono() . " " . (($ext!="")?$ext:$this->getCaExtension()) . "<br />";
             $resultado .= "Fax.: " . $sucursal->getCaFax() . "<br />";
+            $resultado .= "Cod. Postal: " . $sucursal->getCaCodpostal() . "<br />";
         }
         $resultado .= $sucursal->getCaNombre() . " - " . $empresa->getTrafico()->getCaNombre(). "<br />";
         $resultado .= "<a href=\"http://" . $empresa->getCaUrl() . "\">" . $empresa->getCaUrl() . "</a>";
@@ -389,7 +392,7 @@ public function getFirmaOtmHTML($company) {
     public function getGrupoEmpresarial() {
         
         $sucursal = Doctrine::getTable("Sucursal")->find($this->getCaIdsucursal());
-        $grupoColtrans = array(1,2,8);
+        $grupoColtrans = array(1,2,6,8);
         
         if(in_array($sucursal->getCaIdempresa(), $grupoColtrans))
             $idempresa = $grupoColtrans;
