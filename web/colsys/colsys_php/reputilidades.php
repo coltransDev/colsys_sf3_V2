@@ -121,11 +121,25 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
         exit;
     }
     $tm->MoveFirst();
-    echo "  <TD Class=listar COLSPAN=3>Seleccione el Concepto:<BR><SELECT ID=con_costo NAME='concepto[xsobreventa]' style='display:none'>";
+    echo "  <TD Class=listar COLSPAN=2>Seleccione el Concepto:<BR><SELECT ID=con_costo NAME='concepto[xsobreventa]' style='display:none'>";
     while (!$tm->Eof()) {
         echo " <OPTION VALUE='" . $tm->Value('ca_costo') . "'>" . $tm->Value('ca_costo') . "</OPTION>";
         $tm->MoveNext();
     }
+    if (!$tm->Open("select DISTINCT ca_nombre as ca_sucursal from control.tb_sucursales order by ca_sucursal")) {       // Selecciona todos lo registros de la tabla Sucursales
+        echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+        echo "<script>document.location.href = 'repcomisiones.php';</script>";
+        exit;
+    }
+    echo "  <TD Class=mostrar>Sucursal:<BR><SELECT NAME='sucursal'>";
+    echo "  <OPTION VALUE=%>Sucursales (Todas)</OPTION>";
+    $tm->MoveFirst();
+    while (!$tm->Eof()) {
+        echo "<OPTION VALUE='".$tm->Value('ca_sucursal')."'>".$tm->Value('ca_sucursal')."</OPTION>";
+        $tm->MoveNext();
+    }
+	
+    echo "  </SELECT></TD>";
     if (!$tm->Open("select DISTINCT ca_deduccion from tb_deducciones where ca_transporte = 'Marítimo' and ca_impoexpo = 'Importación' order by ca_deduccion")) {       // Selecciona todos lo registros de la tabla Deducciones
         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'reputilidades.php';</script>";
@@ -163,13 +177,17 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
 
+    $sub = "";
+    if ($sucursal != "%"){
+        $sub = " INNER JOIN (select ic.ca_referencia from tb_inoclientes_sea ic INNER JOIN control.tb_usuarios us ON us.ca_login = ic.ca_login INNER JOIN control.tb_sucursales sc ON sc.ca_idsucursal = us.ca_idsucursal where sc.ca_nombre = '$sucursal') sc ON sc.ca_referencia = iu.ca_referencia ";
+    }
     if ($reportar == 'utilidad') {
         $col_one = "Util.x CBM";
         $col_two = "Utilidad";
         if (isset($compania) and $compania != '') {
-            $condicion = "* from vi_inocomisiones_sea iu where upper(ca_compania) like upper('%" . strtolower($compania) . "%') and ";
+            $condicion = "* from vi_inocomisiones_sea iu $sub where upper(ca_compania) like upper('%" . strtolower($compania) . "%') and ";
         } else {
-            $condicion = "* from vi_inoutilidades_sea iu where";
+            $condicion = "* from vi_inoutilidades_sea iu $sub where";
             if (isset($comparable) and $comparable != 0) {
                 $condicion.= " ca_utilxcbm " . $signo . " " . $comparable . " and";
             }
@@ -177,19 +195,17 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
     } elseif ($reportar == 'xsobreventa') {
         $col_one = "Concepto";
         $col_two = "Util.x Sobreventa";
-        $condicion = "iu.*, isv.ca_util_costo from vi_inoutilidades_sea iu ";
+        $condicion = "iu.*, isv.ca_util_costo from vi_inoutilidades_sea iu $sub ";
         $condicion.= "INNER JOIN (select ca_referencia, ca_costo, sum(round(ca_venta::numeric-((ca_tcambio::numeric/ca_tcambio_usd::numeric)*ca_neto::numeric),2)) as ca_util_costo from tb_inocostos_sea ic INNER JOIN tb_costos ct ON (ic.ca_idcosto = ct.ca_idcosto and ct.ca_costo = '$concepto[$reportar]') ";
         $condicion.= "group by ca_referencia, ca_costo) isv ON (iu.ca_referencia = isv.ca_referencia) where ";
     } elseif ($reportar == 'xdeducciones') {
         $col_one = "Deducible";
         $col_two = "Vlr.Recaudo";
-        $condicion = "iu.*, ca_deduccion, isv.ca_recaudo_deduccion from vi_inoutilidades_sea iu ";
+        $condicion = "iu.*, ca_deduccion, isv.ca_recaudo_deduccion from vi_inoutilidades_sea iu $sub ";
         //$condicion.= "INNER JOIN (select ca_referencia, ca_deduccion, sum(ca_valor) as ca_recaudo_deduccion from tb_inodeduccion_sea id INNER JOIN tb_deducciones dd ON (id.ca_iddeduccion = dd.ca_iddeduccion and dd.ca_deduccion = '$concepto[$reportar]') ";
         if($concepto[$reportar]=='%'){
             $condicion.= "INNER JOIN (select ca_referencia, ca_deduccion, sum(id.ca_valor) as ca_recaudo_deduccion from tb_inodeduccion_sea id INNER JOIN tb_deducciones dd ON (id.ca_iddeduccion = dd.ca_iddeduccion) ";
-        }
-        else
-        {
+        } else {
             //hay que imprimir el concepto en el resultado
             $condicion.= "INNER JOIN (select ca_referencia, ca_deduccion, sum(id.ca_valor) as ca_recaudo_deduccion from tb_inodeduccion_sea id INNER JOIN tb_deducciones dd ON (id.ca_iddeduccion = dd.ca_iddeduccion and dd.ca_deduccion = '$concepto[$reportar]') ";
         }
@@ -198,7 +214,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
         $condicion.= "group by ca_referencia, ca_deduccion) isv ON (iu.ca_referencia = isv.ca_referencia) where ";
     }
     $condicion.= " ca_mes::text like '$mes' and ca_ano::text = '$ano' and iu.ca_traorigen like '%$traorigen%' and iu.ca_modalidad like '%$modalidad%' and " . str_replace("\"", "'", $casos);
-
+    
     // die("select $condicion");
     $sql="select $condicion";
     $co = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
