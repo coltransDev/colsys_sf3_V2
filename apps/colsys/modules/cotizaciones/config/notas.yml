@@ -126,8 +126,7 @@ OTM_FCL: |
   • Gastos de liberación con la naviera, para embarques directos.
   • Servicio por liberación USD60,oo para embarques directos.
   • Bodegajes en puerto a partir del cuarto (4) día de arribo del buque.
-  • Inspección Física a la carga solicitada por las Autoridades Aduaneras.
-  • Movilización para inspección
+  • Inspección Física a la carga solicitada por las Autoridades Aduaneras.  
   • Movilización para inspección Física
   • Vaciado de contenedor para Inspección Física 
   • Seguros a la mercancía en el trayecto terrestre Nacional
@@ -138,8 +137,8 @@ OTM_FCL: |
   • Stand By del vehículo por demoras ajenas en el descargue $450.000,oo por día
   • Almacenajes en bodega de destino
   • Descargue, vaciado del contenedor en Bodega de destino
-  • Devolución de contenedor ( 7 dias para devolver a puerto ? en compensación)
-  • Dropoff ? Depende de la naviera
+  • Devolución de contenedor ( 7 dias para devolver a puerto en compensación)
+  • Dropoff. Depende de la naviera
   • Demoras de Contenedor
   • Tramite Ica, Dasalud, Invima $150.000,oo (por entidad).
   • Recargo IMO $150,000,oo
@@ -152,25 +151,6 @@ OTM_FCL: |
 
   Nota: Estos gastos serán facturados solo si el proceso de OTM lo requiere.
   
-  NOTAS IMPORTANTES: 
-  • Es responsabilidad del importador, los perjuicios a que haya lugar como consecuencia de inexactitudes o errores en la documentación suministrada, así como de las sanciones resultado de requerimientos aduaneros por faltantes o sobrantes.
-  • La Póliza del Importador deberá incluir los tributos aduaneros. El OTM no se hace responsable por el pago de tributos aduaneros a la DIAN, la póliza de tributos aduanero sólo cumple la función de garantía a la DIAN. Los pagos por tributos aduaneros deberán ser asumidos por el importador y reclamados a su compañía de seguros para ser pagados a la DIAN.  
-  • Al peso de la mercancía deberá adicionarse el peso del contenedor. La tara promedio para contenedor de 20' es de 2.300 kg y 40' de 4.300 kg.
-  • Las tarifas de los contenedores de 20' son tarifas para combinar. El tiempo estimado  de cargue para contenedores de 20' consolidados es de 48 horas.
-  • Los días de restricción vial informados por el Ministerio de Transporte no se tendrán en cuenta como días hábiles de entrega del contenedor.
-  
-  Restricciones
-  NO se pueden aceptar las siguientes cargas:
-  • Menajes domésticos
-  • Químicos precursores
-  • Licores
-  • Cigarrillos
-  • Productos perecederos
-  • Armas y explosivos
-  • Teléfonos celulares
-  • Vidrios
-  • Todas aquellas mercancías con restricciones aduaneras legales vigentes
-    
   CONDICIONES GENERALES PARA EL MANEJO DE CARGA
 
   DOCUMENTACION
@@ -193,7 +173,7 @@ OTM_FCL: |
   • La mercancía viaja por cuenta y riesgo del importador y no aseguramos cargas de no mediar orden por escrito.
   • Mercancía mayor a $ 150.000.000 COP se solicitara un acompañamiento  vehicular.
 
-  Las mercancías que mencionamos a continuación son catalogadas como de ?Alto Riesgo? es importante tenerlo en cuenta por que aunque no superen los $150.000.000,oo requieren acompañamiento vehicular.
+  Las mercancías que mencionamos a continuación son catalogadas como de "Alto Riesgo" es importante tenerlo en cuenta por que aunque no superen los $150.000.000,oo requieren acompañamiento vehicular.
   
   • Leche en polvo
   • Harina de pescado
@@ -205,7 +185,7 @@ OTM_FCL: |
   • Azucar refinada
   • Café exportación
   • Electrodomesticos en general, sus partes, accesorios o repuestos para los mismos.
-  • Productos para eseo personal (producto terminado)
+  • Productos para aseo personal (producto terminado)
   • Abonos y fertilizantes
   • Pinturas industriales
   • Llantas y neumáticos
@@ -214,6 +194,18 @@ OTM_FCL: |
   • Textiles
   • Confecciones
   • Juguetería en General
+  
+  Restricciones
+  NO se pueden aceptar las siguientes cargas para manejo de OTM:
+  • Menajes domésticos
+  • Químicos precursores
+  • Licores Whisky
+  • Cigarrillos
+  • Productos perecederos
+  • Armas y explosivos
+  • Teléfonos celulares
+  • Vidrios
+  • Todas aquellas mercancías con restricciones aduaneras legales vigentes
   
 aduanaImpoTitulo: NOTAS IMPORTANTES QUE DEBEN TENER EN CUENTA EN SUS NACIONALIZACIONES
 aduanaImpo: |
