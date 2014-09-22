@@ -969,12 +969,11 @@ class antecedentesActions extends sfActions {
          $antecedentes = $st->fetchAll();
 
          list($ano, $mes, $dia) = sscanf($antecedentes[0]['ca_fchembarque'], "%d-%d-%d");
-
-         if ($antecedentes[0]['ca_numdias3'] != null){
+         if ($antecedentes[0]['ca_numdias3'] !== null){
              $this->ent_opo = date("Y-m-d", mktime(0, 0, 0, $mes, $dia+$antecedentes[0]['ca_numdias3'], $ano));
-         }else if ($antecedentes[0]['ca_numdias2'] != null){
+         }else if ($antecedentes[0]['ca_numdias2'] !== null){
              $this->ent_opo = date("Y-m-d", mktime(0, 0, 0, $mes, $dia+$antecedentes[0]['ca_numdias2'], $ano));
-         }else if ($antecedentes[0]['ca_numdias'] != null){
+         }else if ($antecedentes[0]['ca_numdias'] !== null){
              $this->ent_opo = date("Y-m-d", mktime(0, 0, 0, $mes, $dia+$antecedentes[0]['ca_numdias'], $ano));
          }else{
              $this->ent_opo = null;
@@ -1047,7 +1046,7 @@ class antecedentesActions extends sfActions {
       $user = $this->getUser();
 
       $this->numRef = str_replace("|", ".", $request->getParameter("ref"));
-      $this->justificacion_idg = str_replace("|", ".", $request->getParameter("justificacion_idg"));
+      $this->justificacion_idg = $request->getParameter("justificacion_idg");
 
       $email = new Email();
 
@@ -1109,14 +1108,21 @@ class antecedentesActions extends sfActions {
       $this->forward404Unless($ref);
       $ref->setCaEstado("E"); //Enviado
       $ref->setCaFchenvio(date("Y-m-d H:i:s"));
-      if (isset($this->justificacion_idg)){
+      if (isset($this->justificacion_idg) and trim($this->justificacion_idg)!=""){
           if (strlen(trim($ref->getCaPropiedades()))!=0){
             $propiedades = trim($ref->getCaPropiedades());
             $propiedades = explode(";", $propiedades);
           }else{
             $propiedades = array();
           }
-          $propiedades[] = "idg=".$this->justificacion_idg;
+          $key = 0;
+          foreach ($propiedades as $key => $propiedad){
+              $item = explode("=", $propiedad);
+              if ($item[0] == "idg"){
+                  break;
+              }
+          }
+          $propiedades[$key] = "idg=".$this->justificacion_idg;
           $ref->setCaPropiedades(implode(";",$propiedades));
       }
       $ref->save();
