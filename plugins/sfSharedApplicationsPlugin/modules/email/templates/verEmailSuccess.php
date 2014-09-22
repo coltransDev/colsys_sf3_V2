@@ -1,9 +1,7 @@
 <?
 use_helper("MimeType");
-
 $email = $sf_data->getRaw("email");
 ?>
-
 <div class="content" align="center">
 <b><?=$email->getCaSubject()?></b>
 <br />
@@ -42,17 +40,13 @@ $email = $sf_data->getRaw("email");
 	<?
 	}
 	?>
-
-
 		<tr>
 			<td><div align="left">
 					<?=$email->getCaBodyhtml()?$email->getCaBodyhtml():$email->getCaBody()?>
 			</div></td>
 		</tr>		
 		<?
-				 
 		if( $email->getCaAttachment() ){
-
             $attachments = explode("|",$email->getCaAttachment());
 		?>
 		<tr>
@@ -62,16 +56,13 @@ $email = $sf_data->getRaw("email");
 						<tr>
 							<td>
 							<?
-							
 							foreach( $attachments as $attachment ){
-                                
-                                
                             if( substr($attachment, -3,3)==".gz"){
                                 $nombreArchivo = substr($attachment,0, strlen($attachment)-3);
                             }else{
                                 $nombreArchivo = $attachment;
                             }
-								echo link_to(mime_type_icon(basename($nombreArchivo))." ".basename($nombreArchivo), "email/verAttachment?id=".base64_encode($nombreArchivo))."<br />";
+								echo link_to(mime_type_icon(basename($nombreArchivo))." ".basename($nombreArchivo), "gestDocumental/verArchivo?idarchivo=".base64_encode($nombreArchivo))."<br />";
 							}
 							?>
 							</td>
@@ -81,9 +72,6 @@ $email = $sf_data->getRaw("email");
 		</tr>
 		<?
 		}
-		?>
-	
+		?>	
 </table>
-
-
 </div>
