@@ -20,7 +20,6 @@ $email = $sf_data->getRaw("email");
                 }
                 ?>
         </td>
-
 	</tr>
     <?
 	if($email->getCaAddress()){
@@ -51,27 +50,25 @@ $email = $sf_data->getRaw("email");
 		?>
 		<tr>
 			<td><b>Adjuntos:</b>
-				<table cellspacing="1" width="95%">
-					<tbody>
-						<tr>
-							<td>
-							<?
-							foreach( $attachments as $attachment ){
-                            if( substr($attachment, -3,3)==".gz"){
-                                $nombreArchivo = substr($attachment,0, strlen($attachment)-3);
-                            }else{
-                                $nombreArchivo = $attachment;
-                            }
-								echo link_to(mime_type_icon(basename($nombreArchivo))." ".basename($nombreArchivo), "gestDocumental/verArchivo?idarchivo=".base64_encode($nombreArchivo))."<br />";
-							}
-							?>
-							</td>
-						</tr>
-					</tbody>
+				<table cellspacing="1" width="95%">					
+                    <tr>
+                        <td>
+                        <?
+                        foreach( $attachments as $attachment ){
+                        if( substr($attachment, -3,3)==".gz"){
+                            $nombreArchivo = substr($attachment,0, strlen($attachment)-3);
+                        }else{
+                            $nombreArchivo = $attachment;
+                        }
+                            echo link_to(mime_type_icon(basename($nombreArchivo))." ".basename($nombreArchivo), "gestDocumental/verArchivo?idarchivo=".base64_encode($nombreArchivo))."<br />";
+                        }
+                        ?>
+                        </td>
+                    </tr>
 				</table></td>
 		</tr>
 		<?
 		}
-		?>	
+		?>
 </table>
 </div>
