@@ -283,14 +283,24 @@ class antecedentesActions extends sfActions {
             if ($reporte) {
 
                $proveedores = $reporte->getProveedores();
-               foreach ($proveedores as $proveedor) {
-                  $status = $reporte->getUltimoStatus();
-                  if ($status && $status->getCaDoctransporte()) {
+               $proveedor=$proveedores[0];
+               //foreach ($proveedores as $proveedor) {
+                 
+                $status = $reporte->getUltimoStatus();
+                if ($status && $status->getCaDoctransporte()) {
+                      
+                    $valida = Doctrine::getTable("InoClientesSea")
+                    ->createQuery("m")
+                    ->addWhere("m.ca_referencia != ? and m.ca_hbls= ?  ", array($numref,$status->getCaDoctransporte()) )
+                    ->fetchOne();
+                    
+                    if($valida)
+                        continue;
+
                      $inoCliente = Doctrine::getTable("InoClientesSea")->find(array($status->getCaDoctransporte()));
 
                      if (!$inoCliente)
                         $inoCliente = new InoClientesSea();
-
 
                      $inoCliente->setCaIdreporte($reporte->getCaIdreporte());
                      $inoCliente->setCaReferencia($numref);
@@ -319,7 +329,7 @@ class antecedentesActions extends sfActions {
                      }
                      $inoCliente->save($conn);
                   }
-               }
+               //}
             }
          }         
          //$conn->rollBack();
