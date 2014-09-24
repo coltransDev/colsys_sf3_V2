@@ -22,7 +22,8 @@
                 <td width="88" ><b>Buscar por:</b> <br />
                     <select name="criterio" size="7" >
                         <option value="reporte" selected="selected">Reporte</option>
-                        <option value="referencia">Referencia</option>                        
+                        <option value="referencia">Referencia</option>
+                        <option value="master">Master</option>
                         <option value="hbl">hbl</option>
                         <option value="cliente">Cliente</option>
                         <option value="motonave">Motonave</option>

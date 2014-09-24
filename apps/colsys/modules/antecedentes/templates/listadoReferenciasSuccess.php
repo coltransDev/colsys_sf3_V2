@@ -14,6 +14,7 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU010"));
             <th width="70" scope="col">Modalidad</th>
             <th width="70" scope="col">Origen</th>
             <th width="70" scope="col">Destino</th>
+            <th width="70" scope="col">Master</th>
             <th width="70" scope="col">Motonave</th>
             <th width="70" scope="col">ETD</th>
             <th width="70" scope="col">ETA</th>
@@ -47,6 +48,9 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU010"));
             </td>
             <td  >
                 <?=$referencia["ca_ciu_destino"]?>
+            </td>
+            <td  >
+                <?=$referencia["ca_mbls"]?>
             </td>
             <td  >
                 <?=$referencia["ca_motonave"]?>

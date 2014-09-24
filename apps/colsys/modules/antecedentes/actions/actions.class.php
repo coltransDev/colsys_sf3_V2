@@ -35,7 +35,7 @@ class antecedentesActions extends sfActions {
       $q = Doctrine::getTable("InoMaestraSea")
               ->createQuery("m")
               ->select("m.*")
-              ->innerJoin('m.InoClientesSea ic')
+              ->leftJoin('m.InoClientesSea ic')
               ->addWhere("m.ca_provisional = ?", true);
 
       $q->distinct();
@@ -54,6 +54,9 @@ class antecedentesActions extends sfActions {
             break;
          case "referencia":
             $q->addWhere("m.ca_referencia like ?", $cadena . "%");
+            break;
+         case "master":
+            $q->addWhere("m.ca_mbls = ?", $cadena);
             break;
          case "hbl":
             $q->addWhere("ic.ca_hbls like ?", $cadena . "%");
@@ -111,7 +114,7 @@ class antecedentesActions extends sfActions {
          $whereEmail = "";
       }
 
-      $sql = "select m.ca_referencia,m.ca_fchreferencia,m.ca_provisional,m.ca_modalidad,m.ca_motonave,m.ca_fchembarque,m.ca_fcharribo,m.ca_usucreado,ori.ca_ciudad as ca_ciu_origen,des.ca_ciudad as ca_ciu_destino,u.ca_idsucursal,m.ca_fchmuisca                
+      $sql = "select m.ca_referencia,m.ca_fchreferencia,m.ca_provisional,m.ca_modalidad,m.ca_motonave,m.ca_mbls, m.ca_fchembarque,m.ca_fcharribo,m.ca_usucreado,ori.ca_ciudad as ca_ciu_origen,des.ca_ciudad as ca_ciu_destino,u.ca_idsucursal,m.ca_fchmuisca                
                 ,m.ca_estado,m.ca_impoexpo
                 from tb_inomaestra_sea m
                 JOIN tb_ciudades ori ON ori.ca_idciudad = m.ca_origen

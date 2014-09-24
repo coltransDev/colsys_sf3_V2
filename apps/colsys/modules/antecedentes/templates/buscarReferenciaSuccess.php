@@ -29,6 +29,7 @@ $pagerLayout->display();*/
             <th width="70" scope="col">Modalidad</th>
             <th width="70" scope="col">Origen</th>
             <th width="70" scope="col">Destino</th>
+            <th width="70" scope="col">Master</th>
             <th width="70" scope="col">Motonave</th>
             <th width="70" scope="col">ETD</th>
             <th width="70" scope="col">ETA</th>
@@ -48,6 +49,9 @@ $pagerLayout->display();*/
             </td>
             <td  >
                 <?=$referencia->getDestino()->getCaCiudad()?>
+            </td>
+            <td  >
+                <?=$referencia->getCaMbls()?>
             </td>
             <td  >
                 <?=$referencia->getCaMotonave()?>
