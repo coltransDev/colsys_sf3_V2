@@ -291,7 +291,8 @@ class widgetsActions extends sfActions {
             $q->addWhere("r.ca_destino = ?", $request->getParameter("destino"));
         }
 
-        if ($request->getParameter("estado") == "activo") {
+        
+        if ($request->getParameter("estado") == "activo" && $this->getUser()->getUserId()!="maquinche") {
             $q->addWhere("r.ca_idetapa != ?", "99999");
         }        
         $reportes = $q->fetchArray();
@@ -365,6 +366,7 @@ class widgetsActions extends sfActions {
                     //->where("(u.ca_cargo='Gerente Sucursal' OR u.ca_cargo like '%Ventas%' OR u.ca_departamento='Comercial')")
                     ->addWhere("u.ca_activo = true")
                     ->addOrderBy("u.ca_nombre");
+
             if ($criterio) {
                 $q->addWhere("LOWER(u.ca_nombre) LIKE ?", "%" . strtolower($criterio) . "%");
             }
