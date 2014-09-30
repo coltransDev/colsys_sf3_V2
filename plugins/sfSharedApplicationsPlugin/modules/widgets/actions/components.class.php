@@ -408,15 +408,15 @@ class widgetsComponents extends sfComponents {
     
     public function executeWidgetMes() {
         $this->data = array();
-        $this->data[]=array("mes"=>"Enero","nmes"=>"1");
-        $this->data[]=array("mes"=>"Febrero","nmes"=>"2");
-        $this->data[]=array("mes"=>"Marzo","nmes"=>"3");
-        $this->data[]=array("mes"=>"Abril","nmes"=>"4");
-        $this->data[]=array("mes"=>"Mayo","nmes"=>"5");
-        $this->data[]=array("mes"=>"Junio","nmes"=>"6");
-        $this->data[]=array("mes"=>"Julio","nmes"=>"7");
-        $this->data[]=array("mes"=>"Agosto","nmes"=>"8");
-        $this->data[]=array("mes"=>"Septiembre","nmes"=>"9");
+        $this->data[]=array("mes"=>"Enero","nmes"=>"01");
+        $this->data[]=array("mes"=>"Febrero","nmes"=>"02");
+        $this->data[]=array("mes"=>"Marzo","nmes"=>"03");
+        $this->data[]=array("mes"=>"Abril","nmes"=>"04");
+        $this->data[]=array("mes"=>"Mayo","nmes"=>"05");
+        $this->data[]=array("mes"=>"Junio","nmes"=>"06");
+        $this->data[]=array("mes"=>"Julio","nmes"=>"07");
+        $this->data[]=array("mes"=>"Agosto","nmes"=>"08");
+        $this->data[]=array("mes"=>"Septiembre","nmes"=>"09");
         $this->data[]=array("mes"=>"Octubre","nmes"=>"10");
         $this->data[]=array("mes"=>"Noviembre","nmes"=>"11");
         $this->data[]=array("mes"=>"Diciembre","nmes"=>"12");
