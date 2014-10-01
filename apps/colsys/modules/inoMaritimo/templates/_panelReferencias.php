@@ -18,15 +18,24 @@
                     p.css += ' x-grid3-check-col-td';
                     return '<div class="x-grid3-check-col' + (v ? '-on' : '') + ' x-grid3-cc-' + this.id + '"> </div>';
                 }
-
-            },
-            listeners: {
-                checkchange: function(column, recordIndex, checked) {
-                    alert("checked");
-                }
-
             }
         });
+        this.checkColumn.on('click', function(check, p, record){
+            if (record.data['sel']){
+                Ext.MessageBox.show({
+                    title: 'Auditoría',
+                    msg: 'Por favor ingrese la razón para la apertura:',
+                    width:500,
+                    buttons: Ext.MessageBox.OKCANCEL,
+                    multiline: true,
+                    fn: function(btn, text){
+                        record.data['ca_observaciones'] = text;
+                    }
+                });
+                
+            }
+        });
+        
         this.columns = [
             new Ext.grid.RowNumberer(),
             this.checkColumn,
@@ -122,6 +131,7 @@
             {name: 'ca_sigla', type: 'string'},
             {name: 'ca_mbls', type: 'string'},
             {name: 'ca_estado', type: 'string'},
+            {name: 'ca_observaciones', type: 'string'},
             {name: 'ca_usucerrado', type: 'string'},
             {name: 'ca_fchcerrado', type: 'string'},
             {name: 'ca_usuabierto', type: 'string'},
@@ -176,7 +186,6 @@
     Ext.extend(PanelReferencias, Ext.grid.EditorGridPanel, {
         abrir: function() {
             var storeAbrirRefs = this.store;
-            var success = true;
             var records = storeAbrirRefs.getModifiedRecords();
             var lenght = records.length;
             // Ext.getCmp('abrirbtn').disable();
@@ -187,6 +196,7 @@
                     var changes = r.getChanges();
                     changes['id'] = r.id;
                     changes['referencia'] = r.data.ca_referencia;
+                    changes['observaciones'] = r.data.ca_observaciones;
                     //envia los datos al servidor
                     Ext.Ajax.request(
                             {

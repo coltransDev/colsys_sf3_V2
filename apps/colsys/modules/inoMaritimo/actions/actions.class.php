@@ -204,7 +204,7 @@ class inoMaritimoActions extends sfActions {
         $this->responseArray = array("success" => false, "id" => $request->getParameter("id"));
 
         $con = Doctrine_Manager::getInstance()->connection();
-        $sql = "update tb_inomaestra_sea set ca_usucerrado = null, ca_usuoperacion = '" . $this->getUser()->getUserId() . "', ca_fchcerrado = null where ca_referencia = '" . $request->getParameter("referencia") . "' and ca_usucerrado IS NOT NULL and ca_fchcerrado IS NOT NULL";
+        $sql = "update tb_inomaestra_sea set ca_usucerrado = null, ca_usuoperacion = '" . $this->getUser()->getUserId() . "', ca_fchcerrado = null, ca_observaciones = ca_observaciones || '\n' || '" . date("Y-m-d") . " " . $request->getParameter("observaciones") . "'  where ca_referencia = '" . $request->getParameter("referencia") . "' and ca_usucerrado IS NOT NULL and ca_fchcerrado IS NOT NULL";
 
         $st = $con->execute($sql);
         $referencia = $st->fetchAll();
