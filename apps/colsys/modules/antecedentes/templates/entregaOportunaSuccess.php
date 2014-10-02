@@ -5,6 +5,7 @@
          <th>Transporte</th>
          <th>Tr&aacute;fico</th>
          <th>Puerto</th>
+         <th>Destino</th>
          <th>Modalidad</th>
          <th>D&iacute;as</th>
          <th>Observaciones</th>
@@ -42,11 +43,12 @@
             }
             ?>
             <td><?= $antecedente->getCiudad()->getCaCiudad() ?></td>
+            <td><?= $antecedente->getDestino()->getCaCiudad() ?></td>
             <td><?= $antecedente->getCaModalidad() ?></td>
             <td><?= $antecedente->getCaDias() ?></td>
             <td><?= $antecedente->getCaObservaciones() ?></td>
             <td>
-               <?= link_to(image_tag("16x16/edit.gif"), "antecedentes/editarEntregaOportuna?idtrafico=" . $antecedente->getCaIdtrafico() . "&idciudad=" . $antecedente->getCaIdciudad() . "&modalidad=" . $antecedente->getCaModalidad()) ?> 
+               <?= link_to(image_tag("16x16/edit.gif"), "antecedentes/editarEntregaOportuna?idtrafico=" . $antecedente->getCaIdtrafico() . "&idciudad=" . $antecedente->getCaIdciudad() . "&iddestino=" . $antecedente->getCaIddestino() . "&modalidad=" . $antecedente->getCaModalidad()) ?>
             </td>
          </tr>
          <?

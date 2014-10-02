@@ -32,8 +32,7 @@ include_component("widgets", "widgetCiudad");
                   border:false,
                   defaultType: 'textfield',
                   items: [
-                     new WidgetImpoexpo(
-                     {
+                     new WidgetImpoexpo({
                         fieldLabel: 'Impoexpo',                        
                         id: 'impoexpo',
                         name:'impoexpo',
@@ -48,7 +47,7 @@ include_component("widgets", "widgetCiudad");
                         tabIndex:5,
                         pais:"todos",
                         value: '<?= $antecedente->getCaIdtrafico(); ?>'
-                     }),                     
+                     }),
                      new WidgetCiudad({fieldLabel: 'Ciudad',
                         id: 'ciudad',
                         name: 'ciudad',
@@ -59,6 +58,16 @@ include_component("widgets", "widgetCiudad");
                         allowBlank: true,
                         value: '<?= (($antecedente->getCaIdciudad() != "999-9999") ? $antecedente->getCiudad()->getCaCiudad() : '') ?>',
                         hiddenValue:"<?= (($antecedente->getCaIdciudad() != "999-9999") ? $antecedente->getCaIdciudad() : '') ?>"
+                     }),
+                     new WidgetCiudad({fieldLabel: 'Destino',
+                        id: 'destino',
+                        name: 'destino',
+                        tipo:"2",
+                        idtrafico: "CO-057",
+                        hiddenName: 'iddestino',
+                        allowBlank: true,
+                        value: '<?= (($antecedente->getCaIddestino() != "999-9999") ? $antecedente->getDestino()->getCaCiudad() : '') ?>',
+                        hiddenValue:"<?= (($antecedente->getCaIddestino() != "999-9999") ? $antecedente->getCaIddestino() : '') ?>"
                      }),
                      {
                         name: 'numdias',
@@ -97,7 +106,7 @@ include_component("widgets", "widgetCiudad");
                         type: 'textfield',
                         value: '<?= $antecedente->getCaObservaciones(); ?>',
                         width:330,
-                        height:50
+                        height:80
                      }
                   ]
                }                    
