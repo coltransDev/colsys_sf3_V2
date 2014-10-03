@@ -185,7 +185,8 @@ if($contacto)
     $pdf->SetStyles ( array ("B", "B", "", "B", "" ) );
     $pdf->Row ( array ('Cliente:', 'Nombre:', $cliente->getCaCompania ()." Nit : ".$cliente->getCaIdalterno()."-".$cliente->getCaDigito(), $reporte->getCaOrdenClie () != "''" ? 'Orden:' : ' ', $reporte->getCaOrdenClie () != "''" ? $reporte->getCaOrdenClie () : " " ) );
     $pdf->SetWidths ( array (5, 20, 70, 25, 80 ) );
-    $pdf->Row ( array ('', 'Contacto:', ($contacto->getNombre ()) , 'Dirección:', $cliente->getDireccion ()  ) );
+    $cliente= new Cliente();
+    $pdf->Row ( array ('', 'Contacto:', ($contacto->getNombre ()) , 'Dirección:', $cliente->getDireccion (). " ".$cliente->getCiudad()->getCaCiudad()  ) );
     $pdf->SetWidths ( array (5, 20, 40, 15, 30, 18, 72 ) );
     $pdf->SetFills ( array (1, 0, 0, 0, 0, 0, 0 ) );
     $pdf->SetStyles ( array ("B", "B", "", "B", "", "B", "" ) );
