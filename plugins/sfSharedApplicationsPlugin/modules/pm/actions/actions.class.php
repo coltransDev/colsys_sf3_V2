@@ -540,10 +540,10 @@ class pmActions extends sfActions {
         $conn = Doctrine::getTable("HdeskTicket")->getConnection();
         $conn->beginTransaction();
         try {
+            $changeDepto = false;
             if ($request->getParameter("idticket")) {
                 $ticket = Doctrine::getTable("HdeskTicket")->find($request->getParameter("idticket"));
-                $update = true;
-                $changeDepto = false;
+                $update = true;                
                 if ($request->getParameter("area") != $ticket->getCaIdgroup()) { //Cuando cambia el area notifica.
                     $tarea = $ticket->getNotTarea();
                     /* if ($tarea) {
@@ -1037,7 +1037,7 @@ class pmActions extends sfActions {
             $email->setCaFrom("no-reply@coltrans.com.co");
             $email->setCaFromname("Colsys Notificaciones");
 
-            $subject = ($ticket->getHdeskGroup()->getCaIddepartament()==4)?"Hallazgo de Auditoría":"Ticket";
+            $subject = ($this->ticket->getHdeskGroup()->getCaIddepartament()==4)?"Hallazgo de Auditoría":"Ticket";
             $email->setCaSubject("Ha sido involucrado en el $subject #" . $this->ticket->getCaIdticket() . " [" . $this->ticket->getCaTitle() . "]");
 
             $texto = "Ha sido involucrado en el Ticket \n\n<br /><br />";
@@ -1856,6 +1856,186 @@ class pmActions extends sfActions {
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
         $this->setTemplate("responseTemplate");
+    }
+    
+    
+    public function executeProcesarRespuestaEmail($request) {
+        $folder1=$request->getParameter("folder");
+        //$debug=$request->getParameter("debug");
+        $debug="true";
+        /*if($debug!="true")
+        {
+            return;
+        }*/
+        try{
+            ProjectConfiguration::registerZend();
+            Zend_Loader::loadClass('Zend_Gdata_ClientLogin');
+            Zend_Loader::loadClass('Zend_Gdata_Gapps');
+            $pass = 'cglti$col91';
+            $mail = new Zend_Mail_Storage_Imap(array('host' => 'imap.gmail.com', 'user' => "colsys@coltrans.com.co", 'password' => $pass, 'ssl' => 'SSL'));
+            
+            $mail->selectFolder($folder1);
+            
+            foreach ($mail as $messageNum => $message) {
+                //if ($message->hasFlag(Zend_Mail_Storage::FLAG_SEEN)) {
+                //    continue;
+                //}                
+                
+                $from = $message->from;
+                
+                
+                if($debug=="true")
+                        {
+                            echo "<pre>";
+                            print_r($message);
+                            echo "<pre>";
+                        }
+                $part = $message;
+                while ($part->isMultipart()) {
+                    
+                    for($i=1;$i<=2;$i++)
+                    {
+                        $part = $message->getPart($i);
+                        if($debug=="true")
+                        {
+                            echo "<pre>";
+                            print_r($part);
+                            echo "<pre>";
+                        }
+                        try{
+                            
+                            if($part->getHeader('content-disposition'))
+                            {
+                                $arr=explode(";", $part->getHeader('content-disposition'));
+                                if(trim($arr[0])=="attachment")
+                                {
+                                    $fileName=  str_replace("filename=", "", $arr[1]);
+                                    $fileName=  trim(str_replace('"', '', $fileName));
+                                    break;
+                                }
+                            }
+                                
+                        }
+                        catch(Exception $e)
+                        {
+                            continue;
+                        }
+                    }                    
+                    /*try {
+                        $path = "";
+                        $fileName = (strlen($fileName)>5)?$fileName:$part->getHeader('content-description');
+                        $attachment = base64_decode($part->getContent());
+                        $size = strlen($attachment);
+                        //$directory = sfConfig::get('app_digitalFile_root').date("Y").DIRECTORY_SEPARATOR;
+                        $mime = explode(";", $part->getHeader('content-type'));
+                        $mime = $mime[0];
+                        if($folder1=="DOCUMENTOS" || $folder1=="DOCUMENTOSAEREO" || $folder1=="DOCUMENTOSOTM")
+                            $asunto = $message->subject;
+                        else
+                            $asunto = $fileName;//substr($fileName, 0, strlen($fileName) - 21);
+                        
+                        if($debug=="true")
+                        {
+                            //echo $asunto."<br>".$fileName;
+                        }
+                        
+                        //echo "::".$asunto."::";
+                        $ref = array();
+                        $ref[] = substr($asunto, 0, 13);
+                        $ref[] = substr($asunto, 14, 4);
+                        //print_r($ref);
+                        $data = array();
+                        $ref[0] = str_replace(".", "", $ref[0]);
+                        $ref[0] = substr($ref[0], 0, 3) . "." . substr($ref[0], 3, 2) . "." . substr($ref[0], 5, 2) . "." . substr($ref[0], 7, 4) . "." . substr($ref[0], 11, 2);
+                        $data["ref1"] = $ref[0];
+                        if (isset($ref[1])) {
+                            if ($ref[1] == "cost") {
+                                $data["ref2"] = "costos";
+                            } else if ($ref[1] == "pref" || $ref[1] == "libp") {
+                                $data["ref2"] = "";
+                            } else {
+                                $sql = "select  ca_hbls from tb_inoclientes_sea 
+                                where ca_referencia='" . $ref[0] . "' and UPPER(substring(ca_hbls from (char_length(ca_hbls)-3) ))= UPPER('" . $ref[1] . "') limit 1";
+                                $con = Doctrine_Manager::getInstance()->connection();
+
+                                $st = $con->execute($sql);
+                                $resul = $st->fetchAll();
+                                $data["ref2"] = $resul[0]["ca_hbls"];
+                            }
+                        }
+                        if ($ref[1] == "costos" || $ref[1] == "cost")
+                        {
+                            if($folder1=="DOCUMENTOSOTM")
+                                $data["iddocumental"] = "27";
+                            else
+                                $data["iddocumental"] = "8";
+                        }
+                        else if ($ref[1] == "pref")
+                            $data["iddocumental"] = "6";
+                        else if ($ref[1] == "libp")
+                            $data["iddocumental"] = "17";
+                        else if ($ref[1] == "plar")
+                            $data["iddocumental"] = "19";
+                        else if ($ref[1] == "cert")
+                            $data["iddocumental"] = "25";
+                        else
+                            $data["iddocumental"] = $request->getParameter("iddocumental");
+
+                        if ($data["ref1"])
+                            $path.=$data["ref1"] . DIRECTORY_SEPARATOR;
+                        if ($data["ref2"])
+                            $path.=$data["ref2"] . DIRECTORY_SEPARATOR;
+
+                        //print_r($data);
+                        if($debug=="true")
+                        {
+                            //exit;
+                        }
+                        $archivo = new Archivos();
+                        $archivo->setCaIddocumental($data["iddocumental"]);
+                        if($folder1=="DOCUMENTOS")
+                            $archivo->setCaNombre($asunto);
+                        else
+                            $archivo->setCaNombre($fileName);
+                        $archivo->setCaRef1($data["ref1"]);
+                        $archivo->setCaRef2($data["ref2"]);
+                        $archivo->setCaMime($mime);
+                        $archivo->setCaSize($size);
+                        $tipDoc = $archivo->getTipoDocumental();
+                        $folder = $tipDoc->getCaDirectorio();
+                        $directory = sfConfig::get('app_digitalFile_root') . date("Y") . DIRECTORY_SEPARATOR . $folder . $path;
+
+                        if (!is_dir($directory)) {
+                            mkdir($directory, 0777, true);
+                        }
+                        chmod($directory, 0777);
+
+                        $archivo->setCaPath($directory . $fileName);
+                        $archivo->save();
+                        $fh = fopen($directory . $fileName, 'w');
+                        fwrite($fh, $attachment);
+                        fclose($fh);
+                    } catch (Excepcion $e) {
+                        echo $e->getMessage();
+                    }*/
+                }
+                //$uniq_id = $mail->getUniqueId($messageNum);
+                //$messageId = $mail->getNumberByUniqueId($uniq_id);                
+                //$mail->moveMessage($messageId, $folder1."P");                
+            }
+        }
+        catch(Exception $e)
+        {
+            echo $e->getMessage();
+            /*$data=array();
+            $data["from"]="colsys@coltrans.com.co";
+            $data["to"]="maquinche@coltrans.com.co";
+            $data["subject"]="Error procesando correos $folder";
+            $data["mensaje"]=$e->getMessage();
+            Utils::sendEmail($data);
+             */
+        }
+        exit;
     }
 
 }

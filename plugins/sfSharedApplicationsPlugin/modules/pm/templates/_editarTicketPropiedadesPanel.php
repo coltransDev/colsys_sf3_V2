@@ -18,11 +18,36 @@ include_component("widgets", "widgetEquipo");
         this.dataDepartamentos = <?=json_encode(array("departamentos" => $sf_data->getRaw("departamentos")))?>;
         this.dataStatus = <?=json_encode(array("root" => $status))?>;
         this.dataEmpresas = <?=json_encode(array("root" => $empresas))?>;
+        
+        this.resultTpl = new Ext.XTemplate(
+            '<tpl for=".">',
+            '<tpl if="!this.idempresa(idempresa)">',
+                '<div class="search-item" style="background:#F0F0F0;">',
+                '<b>{nombre}</b><br /><span style="font-size:9px;">{empresa}</span>',                
+            '</tpl>',
+            '<tpl if="this.idempresa(idempresa)">',
+                '<div class="search-item">',
+                '<b>{nombre}</b><br /><span style="font-size:9px;">{empresa}</span>',                
+            '</tpl>',
+            '</span></div></tpl>',
+            {
+                idempresa: function(val){                    
+                    var grupo = "<?=json_encode($sf_data->getRaw("grupoEmp"))?>";
+                    
+                    grupo = grupo.replace('[','').replace(']','')+',';                    
+                    if(grupo.indexOf(val) >= 0)
+                        return true;
+                    else
+                        return false;                    
+                }
+            }
+        );
 
         this.departamentos = new Ext.form.ComboBox({
             fieldLabel: 'Departamento',
             typeAhead: true,
             forceSelection: true,
+            itemSelector: 'div.search-item',
             triggerAction: 'all',
             emptyText:'',
             selectOnFocus: true,
@@ -32,28 +57,30 @@ include_component("widgets", "widgetEquipo");
             lazyRender:true,
             allowBlank: false,
             listClass: 'x-combo-list-small',
+            tpl: this.resultTpl,
             displayField: 'nombre',
             valueField: 'iddepartamento',
-
-
+            forceSelection: true,            
             store : new Ext.data.Store({
                 autoLoad : true ,
                 proxy: new Ext.data.MemoryProxy( this.dataDepartamentos ),
                 reader: new Ext.data.JsonReader(
-                {
-                    id: 'iddepartamento',
-                    root: 'departamentos'
-                },
-                Ext.data.Record.create([
-                    {name: 'iddepartamento'},
-                    {name: 'nombre'}
-                ])
-            )
+                    {
+                        id: 'iddepartamento',
+                        root: 'departamentos'
+                    },
+                    Ext.data.Record.create([
+                        {name: 'iddepartamento'},
+                        {name: 'nombre'},
+                        {name: 'idempresa'},
+                        {name: 'empresa'}
+                    ])
+                )
             })
         });
 
         this.departamentos.on("select", this.cargarDepartamentos, this );
-
+        
         this.areas =  new Ext.form.ComboBox({
             fieldLabel: 'Área',
             typeAhead: true,
@@ -414,7 +441,7 @@ include_component("widgets", "widgetEquipo");
                             layout: 'form',
                             xtype:'fieldset',
                             items: [
-                                this.departamentos,
+                                this.departamentos,                                
                                 this.projectos,
                                 this.tipos,
                                 this.asignaciones,
@@ -644,7 +671,7 @@ include_component("widgets", "widgetEquipo");
                             Ext.getCmp("editar-ticket-win").close();
                             if( !idticket ){
                                 Ext.MessageBox.alert('Mensaje', 'El ticket se ha enviado al área correspondiente, el numero de ticket es: '+action.result.idticket);
-                                location.href="/helpdesk/verTicket/id/"+action.result.idticket;
+                                location.href="<?=url_for('helpdesk/verTicket')?>"+"/id/"+action.result.idticket;
                             } else {                            
                                 Ext.getCmp(gridId).store.reload();
                             }

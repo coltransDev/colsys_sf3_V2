@@ -191,18 +191,22 @@ class pmComponents extends sfComponents {
         $response->addJavaScript("extExtras/FileUploadField", 'last');
 
         $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
-        $grupoEmp = $usuario->getGrupoEmpresarial();
+        $this->grupoEmp = $usuario->getGrupoEmpresarial();
 
         $departamentos = Doctrine::getTable("Departamento")
                 ->createQuery("d")
                 ->where("d.ca_inhelpdesk = ?", true)
-                ->andWhereIn("d.ca_idempresa", $grupoEmp)
+                ->leftJoin("d.Empresa e")
+                ->orderBy("e.ca_nombre, d.ca_nombre")
+                //->andWhereIn("d.ca_idempresa", $grupoEmp)
                 ->execute();
         $this->departamentos = array();
 
         foreach ($departamentos as $departamento) {
-            $this->departamentos[] = array("iddepartamento" => $departamento->getCaIddepartamento(),
-                "nombre" => utf8_encode($departamento->getCaNombre())
+            $this->departamentos[] = array( "iddepartamento" => $departamento->getCaIddepartamento(),
+                                            "nombre" => utf8_encode($departamento->getCaNombre()), 
+                                            "idempresa"=>$departamento->getCaIdempresa(),
+                                            "empresa"=>utf8_encode($departamento->getEmpresa()->getCaNombre())
             );
         }
 
