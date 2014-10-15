@@ -126,20 +126,6 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
         echo " <OPTION VALUE='" . $tm->Value('ca_costo') . "'>" . $tm->Value('ca_costo') . "</OPTION>";
         $tm->MoveNext();
     }
-    if (!$tm->Open("select DISTINCT ca_nombre as ca_sucursal from control.tb_sucursales order by ca_sucursal")) {       // Selecciona todos lo registros de la tabla Sucursales
-        echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-        echo "<script>document.location.href = 'repcomisiones.php';</script>";
-        exit;
-    }
-    echo "  <TD Class=mostrar>Sucursal:<BR><SELECT NAME='sucursal'>";
-    echo "  <OPTION VALUE=%>Sucursales (Todas)</OPTION>";
-    $tm->MoveFirst();
-    while (!$tm->Eof()) {
-        echo "<OPTION VALUE='".$tm->Value('ca_sucursal')."'>".$tm->Value('ca_sucursal')."</OPTION>";
-        $tm->MoveNext();
-    }
-	
-    echo "  </SELECT></TD>";
     if (!$tm->Open("select DISTINCT ca_deduccion from tb_deducciones where ca_transporte = 'Marítimo' and ca_impoexpo = 'Importación' order by ca_deduccion")) {       // Selecciona todos lo registros de la tabla Deducciones
         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'reputilidades.php';</script>";
@@ -153,6 +139,20 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
         $tm->MoveNext();
     }
 
+    echo "  </SELECT></TD>";
+    if (!$tm->Open("select DISTINCT ca_nombre as ca_sucursal from control.tb_sucursales order by ca_sucursal")) {       // Selecciona todos lo registros de la tabla Sucursales
+        echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+        echo "<script>document.location.href = 'repcomisiones.php';</script>";
+        exit;
+    }
+    echo "  <TD Class=mostrar>Sucursal:<BR><SELECT NAME='sucursal'>";
+    echo "  <OPTION VALUE=%>Sucursales (Todas)</OPTION>";
+    $tm->MoveFirst();
+    while (!$tm->Eof()) {
+        echo "<OPTION VALUE='".$tm->Value('ca_sucursal')."'>".$tm->Value('ca_sucursal')."</OPTION>";
+        $tm->MoveNext();
+    }
+	
     echo "  </SELECT></TD>";
     echo "</TR>";
 
