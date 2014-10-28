@@ -257,7 +257,7 @@ class reportesNegActions extends sfActions {
                 $condicion.= " and lower(r.$opcion) like lower('%" . $criterio . "%')";
             } else if ($opcion == "ca_nombre_cli_otm") {
                 $condicion.=" and o.ca_idcliente in (select ca_idtercero from tb_terceros where lower(ca_nombre) like lower('%" . $criterio . "%') )";
-            } else if ("ca_importador") {
+            } else if ($opcion =="ca_importador") {
                 $condicion.=" and o.ca_idimportador in (select ca_idtercero from tb_terceros where lower(ca_nombre) like lower('%" . $criterio . "%') )";
             }
         } else {
