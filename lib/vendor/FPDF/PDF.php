@@ -8,6 +8,7 @@ class PDF extends FPDF {
     private $aligns;
     private $borders;
     private $sucursal;
+    private $footerSucursal;
     private $coltransFooter = false;
     private $coltransHeader = false;
     private $colmasFooter = false;
@@ -15,10 +16,13 @@ class PDF extends FPDF {
     private $linerepeat;
     private $grouping = false;
     private $bufferGroup = array();
-    private $idempresa = 1;
+    var $angle=0;
+    private $idempresa = 2;
 
-    const COLTRANS = 1;
-    const COLMAS = 2;
+    const COLTRANS = 2;
+    const COLMAS = 1;
+    const COLOTM = 8;
+    
 
     private $B;
     private $I;
@@ -36,8 +40,10 @@ class PDF extends FPDF {
         if ($this->coltransHeader) {
             if ($this->idempresa == 7) {
                 $image = "TPLogistics.jpg";
-            } else {
-                $image = "ColtransSA.jpg";
+            } else if ($this->idempresa == 2) {
+                $image = "ColtransSA.jpg";            
+            } else if ($this->idempresa == 8) {
+                $image = "colotm.jpg";
             }
             //Posición: a 1,6 cm del final
             $this->SetY(16);
@@ -78,29 +84,109 @@ class PDF extends FPDF {
         //Arial italic 8
         $this->SetFont('Arial', 'I', 8);
 
-        if ($this->coltransFooter) {
+        if ($this->coltransFooter) {            
             //Número de página
             $this->Cell(0, 14, 'Página ' . $this->PageNo() . '/{nb}', 0, 0, 'C');
             if ($this->idempresa == 7) {
                 $file = "pie_pagina_tplogistics.jpg";
-            } else {
+                $this->Image(sfConfig::get('sf_web_dir') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'pdf' . DIRECTORY_SEPARATOR . $file, 18, 270, 40, 16, 'JPG');
+            } else if ($this->idempresa == 2){
+                //echo $this->idempresa;
+                $posx=18;
+                $diffx=16;
+                //echo "ddd";
+                //print_r($this->footerSucursal);
+                //exit();
+                if(isset($this->footerSucursal["imagenes"]))
+                {
+                    foreach( $this->footerSucursal["imagenes"] as $im)
+                    {
+                        $this->Image(sfConfig::get('sf_web_dir') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'pdf' . DIRECTORY_SEPARATOR . $im , $posx, 270, 16);
+                        $posx=$posx+$diffx;
+                    }
+                }
+                
+                /*
+                $this->Image(sfConfig::get('sf_web_dir') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'pdf' . DIRECTORY_SEPARATOR . "basc.jpg" , $posx, 270, 16 );
+                $posx=$posx+$diffx;
+                $this->Image(sfConfig::get('sf_web_dir') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'pdf' . DIRECTORY_SEPARATOR . "iata.jpg" , $posx, 270, 14 );                
+                */
+            } else {                
                 $file = "pie_pagina.jpg";
+                $this->Image(sfConfig::get('sf_web_dir') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'pdf' . DIRECTORY_SEPARATOR . $file, 18, 270, 40, 16, 'JPG');
             }
-            $this->Image(sfConfig::get('sf_web_dir') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'pdf' . DIRECTORY_SEPARATOR . $file, 18, 270, 40, 16, 'JPG');
+            
+            //Image($file,$x,$y,$w,$h=0,$type='',$link='')
+            
+
+
             if (!strlen(trim($this->sucursal)) == 0) {
-                $this->Image(sfConfig::get('sf_web_dir') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'pdf' . DIRECTORY_SEPARATOR . 'Dir' . $this->sucursal . '.jpg', 160, 270, 40, 18, 'JPG');
+                //$this->GetX();
+                $x=-50;
+                $y=-25;
+                $spacing=2.5;
+                $width=2.5;
+                $fontsize=8;
+
+                $this->SetXY($x, $y);
+                $this->SetFont($font, 'B', $fontsize);
+                $this->Cell(0,$width,$this->footerSucursal["datos"][0],0,0,'L');
+                $y+=4;
+
+                for( $i=1 ; $i<count($this->footerSucursal["datos"]) ; $i++)
+                {
+                    if($this->footerSucursal["datos"][$i]=="")
+                        continue;
+                    $this->SetFont($font, '', $fontsize);
+                    $this->SetXY($x, $y);
+                    $this->Cell(0,$width,$this->footerSucursal["datos"][$i],0,0,'L');
+                    $y+=$spacing;
+                }
+
             }
         }else if ($this->colmasFooter) {
             //Número de página
             $this->Cell(0, 14, 'Página ' . $this->PageNo() . '/{nb}', 0, 0, 'C');
             $file = "pie_pagina_colmas.jpg";
             
-            $this->Image(sfConfig::get('sf_web_dir') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'pdf' . DIRECTORY_SEPARATOR . $file, 18, 270, 40, 23, 'JPG');
+            //$this->Image(sfConfig::get('sf_web_dir') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'pdf' . DIRECTORY_SEPARATOR . $file, 18, 270, 40, 23, 'JPG');
+             $posx=18;
+                $diffx=16;
+                //echo "ddd";
+                //print_r($this->footerSucursal);
+                //exit();
+                if(isset($this->footerSucursal["imagenes"]))
+                {
+                    foreach( $this->footerSucursal["imagenes"] as $im)
+                    {
+                        $this->Image(sfConfig::get('sf_web_dir') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'pdf' . DIRECTORY_SEPARATOR . $im , $posx, 270, 16);
+                        $posx=$posx+$diffx;
+                    }
+                }
             if (!strlen(trim($this->sucursal)) == 0) {
-                $this->Image(sfConfig::get('sf_web_dir') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'pdf' . DIRECTORY_SEPARATOR . 'Dir' . $this->sucursal . '_colmas.jpg', 160, 270, 40, 18, 'JPG');
+                 $x=-50;
+                $y=-25;
+                $spacing=2.5;
+                $width=2.5;
+                $fontsize=8;
+
+                $this->SetXY($x, $y);
+                $this->SetFont($font, 'B', $fontsize);
+                $this->Cell(0,$width,$this->footerSucursal["datos"][0],0,0,'L');
+                $y+=4;
+
+                for( $i=1 ; $i<count($this->footerSucursal["datos"]) ; $i++)
+                {
+                    if($this->footerSucursal["datos"][$i]=="")
+                        continue;
+                    $this->SetFont($font, '', $fontsize);
+                    $this->SetXY($x, $y);
+                    $this->Cell(0,$width,$this->footerSucursal["datos"][$i],0,0,'L');
+                    $y+=$spacing;
+                }
+                //$this->Image(sfConfig::get('sf_web_dir') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'pdf' . DIRECTORY_SEPARATOR . 'Dir' . $this->sucursal . '_colmas.jpg', 160, 270, 40, 18, 'JPG');
             }
         }
-
     }
 
     function SetWidths($w) {
@@ -260,6 +346,13 @@ class PDF extends FPDF {
         //Set the name of the branch
         $this->sucursal = $s;
     }
+    
+    function SetFooterSucursal($s) {
+        //Set the name of the branch
+        $this->footerSucursal = $s;
+    }
+    
+    
 
     function setColtransHeader($s) {
         $this->coltransHeader = $s;
@@ -499,6 +592,37 @@ class PDF extends FPDF {
         $this->Write(5, $txt, $URL);
         $this->SetStyle('U', false);
         $this->SetTextColor(0);
+    }
+    
+    
+    function Rotate($angle,$x=-1,$y=-1)
+    {
+        if($x==-1)
+            $x=$this->x;
+        if($y==-1)
+            $y=$this->y;
+        if($this->angle!=0)
+            $this->_out('Q');
+        $this->angle=$angle;
+        if($angle!=0)
+        {
+            $angle*=M_PI/180;
+            $c=cos($angle);
+            $s=sin($angle);
+            $cx=$x*$this->k;
+            $cy=($this->h-$y)*$this->k;
+            $this->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',$c,$s,-$s,$c,$cx,$cy,-$cx,-$cy));
+        }
+    }
+
+    function _endpage()
+    {
+        if($this->angle!=0)
+        {
+            $this->angle=0;
+            $this->_out('Q');
+        }
+        parent::_endpage();
     }
 
 }
