@@ -1,10 +1,22 @@
 <?
 $cotizacion = $sf_data->getRaw("cotizacion");
 $notas = $sf_data->getRaw("notas");
+//$usuario = $cotizacion->getUsuario();
+//$contacto = $cotizacion->getContacto();
+//$cliente = $contacto->getCliente();
+//$empresa = $usuario->getSucursal()->getEmpresa();
+//$empresa = Doctrine::getTable("Empresa")->find(2);
+
 $usuario = $cotizacion->getUsuario();
 $contacto = $cotizacion->getContacto();
 $cliente = $contacto->getCliente();
-$empresa = $usuario->getSucursal()->getEmpresa();
+$empresa = Doctrine::getTable("Empresa")->find(2); // Localiza la empresa Colmas
+
+$sucursal =  Doctrine::getTable("Sucursal")
+        ->createQuery("s")                
+        ->where("ca_nombre = ? and ca_idempresa= 2" , $usuario->getSucursal()->getcaNombre() )
+        ->fetchOne();
+
 
 $comodato = false;
 
@@ -12,7 +24,7 @@ $meses = array("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "
 
 $pdf = new PDF ( );
 $pdf->Open();
-$pdf->setIdempresa($empresa->getCaIdempresa());
+$pdf->setIdempresa(2);
 $pdf->setColtransHeader(true);
 $pdf->setColtransFooter(true);
 $pdf->AliasNbPages();
@@ -42,8 +54,37 @@ switch ($cotizacion->getCaFuente()) {
 $pdf->SetFont($font, '', 10);
 $directorioAg = array();
 $imprimirNotas = array();
-$sucursal = $usuario->getSucursal();
+//$sucursal = $usuario->getSucursal();
+
 $pdf->SetSucursal($sucursal->getCaIdsucursal());
+//$sucursal = new Sucursal();
+$txtSucursal=array();
+$txtSucursal["datos"][]= $sucursal->getCaNombre();
+$dir= explode("  ", $sucursal->getCaDireccion());
+
+foreach($dir as $d)
+    $txtSucursal["datos"][]=$d;
+//$txtSucursal[]="Centro El dorado";
+$txtSucursal["datos"][]="Pbx: ".$sucursal->getCaTelefono();//"Pxb : (57 - 1) 4239300";
+$txtSucursal["datos"][]="Fax: ".$sucursal->getCaFax();//"Pxb : (57 - 1) 4239300";
+if($sucursal->getCaEmail()!="")
+$txtSucursal["datos"][]="Email: ".$sucursal->getCaEmail();//"Email: bogota@coltrans.com.co";
+$txtSucursal["datos"][]=$empresa->getCaUrl();// "www.coltrans.com.co";
+//echo $sucursal->getCaIso();
+if($sucursal->getCaIso()!="")
+    $txtSucursal["imagenes"][]=$sucursal->getCaIso();
+if($sucursal->getCaBasc()!="")
+    $txtSucursal["imagenes"][]=$sucursal->getCaBasc();
+if($sucursal->getCaIata()!="")
+    $txtSucursal["imagenes"][]=$sucursal->getCaIata();
+
+
+/*if($cotizacion->getCaIdcotizacion()=="130686")
+{print_r($txtSucursal);
+exit;
+}*/
+$pdf->SetFooterSucursal($txtSucursal);
+
 //$pdf->SetLineRepeat("Señores: ".strtoupper($cliente->getCaCompania()."    ".$cotizacion->getCaFchcreado()));
 $pdf->Ln(5);
 list($anno, $mes, $dia, $tiempo, $minuto, $segundo) = sscanf($cotizacion->getCaFchcreado(), "%d-%d-%d %d:%d:%d");
