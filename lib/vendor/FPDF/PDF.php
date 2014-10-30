@@ -151,7 +151,7 @@ class PDF extends FPDF {
             
             //$this->Image(sfConfig::get('sf_web_dir') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'pdf' . DIRECTORY_SEPARATOR . $file, 18, 270, 40, 23, 'JPG');
              $posx=18;
-                $diffx=16;
+                $diffx=20;
                 //echo "ddd";
                 //print_r($this->footerSucursal);
                 //exit();
@@ -164,7 +164,7 @@ class PDF extends FPDF {
                     }
                 }
             if (!strlen(trim($this->sucursal)) == 0) {
-                 $x=-50;
+                 $x=-60;
                 $y=-25;
                 $spacing=2.5;
                 $width=2.5;
