@@ -501,10 +501,20 @@ class cotseguimientosActions extends sfActions {
         $sql.= " order by c.ca_consecutivo DESC, c.ca_version DESC, seg.ca_fchseguimiento_cot DESC";
         // die($sql);
 
-        $con = Doctrine_Manager::getInstance()->connection();
+        $databaseConf = sfYaml::load(sfConfig::get('sf_config_dir') . '/databases_replica.yml');
+        $dsn = explode("=", $databaseConf ['prod']['doctrine']['param']['dsn']);
+        $userName = $databaseConf ['prod']['doctrine']['param']['username'];
+        $userPass = $databaseConf ['prod']['doctrine']['param']['password'];
+        $host = $dsn[count($dsn) - 1];
+        $con = Doctrine_Manager::connection(new PDO("pgsql:dbname=Coltrans;host={$host}", $userName, $userPass));
+
+        $st = $con->execute($sql);
+
+        $this->cotizaciones = $st->fetchAll();
+        /*$con = Doctrine_Manager::getInstance()->connection();
         $st = $con->execute($sql);
         $this->cotizaciones = $st->fetchAll();
-
+        */
         $this->est = $est;
 
         $estados = ParametroTable::retrieveByCaso("CU074");
