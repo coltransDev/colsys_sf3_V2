@@ -502,11 +502,14 @@ class cotseguimientosActions extends sfActions {
         // die($sql);
 
         $databaseConf = sfYaml::load(sfConfig::get('sf_config_dir') . '/databases_replica.yml');
-        $dsn = explode("=", $databaseConf ['prod']['doctrine']['param']['dsn']);
+        $dsn = explode(";", $databaseConf ['prod']['doctrine']['param']['dsn']);        
+        $dsn0= explode("=", $dsn[0]);
+        $dsn1= explode("=", $dsn[1]);        
         $userName = $databaseConf ['prod']['doctrine']['param']['username'];
         $userPass = $databaseConf ['prod']['doctrine']['param']['password'];
-        $host = $dsn[count($dsn) - 1];
-        $con = Doctrine_Manager::connection(new PDO("pgsql:dbname=Coltrans;host={$host}", $userName, $userPass));
+        $database = $dsn0[1];
+        $host = $dsn1[1];        
+        $con = Doctrine_Manager::connection(new PDO("pgsql:dbname={$database};host={$host}", $userName, $userPass));
 
         $st = $con->execute($sql);
 
