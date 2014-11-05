@@ -134,10 +134,12 @@ class antecedentesActions extends sfActions {
           }
          * 
          */
-        $databaseConf = sfYaml::load(sfConfig::get('sf_config_dir') . '/databases.yml');
-        $dsn = explode("=", $databaseConf ['all']['doctrine']['param']['dsn']);
+        $databaseConf = sfYaml::load(sfConfig::get('sf_config_dir') . '/databases_replica.yml');
+        $dsn = explode("=", $databaseConf ['prod']['doctrine']['param']['dsn']);
+        $userName = $databaseConf ['prod']['doctrine']['param']['username'];
+        $userPass = $databaseConf ['prod']['doctrine']['param']['password'];
         $host = $dsn[count($dsn) - 1];
-        $con = Doctrine_Manager::connection(new PDO("pgsql:dbname=Coltrans;host={$host}", 'Administrador', 'V9p0%rRc9$'));
+        $con = Doctrine_Manager::connection(new PDO("pgsql:dbname=Coltrans;host={$host}", $userName, $userPass));
 
         $st = $con->execute(utf8_encode($sql));
 
