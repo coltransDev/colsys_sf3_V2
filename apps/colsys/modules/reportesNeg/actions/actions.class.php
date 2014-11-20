@@ -4238,7 +4238,8 @@ class reportesNegActions extends sfActions {
             foreach ($files as $f)
             {
                 $newname = $directory . DIRECTORY_SEPARATOR . basename($f);
-                rename($f, $newname);
+                copy($f, $newname);
+                //rename($f, $newname);
             }
             $this->redirect($this->generateUrl('default', array('module' => 'reportesNeg', 'action' => 'consultaReporte', 'id' => $reporte->getCaIdreporte(), 'modo' => urlencode($reporte->getCaTransporte()), 'impoexpo' => urlencode($reporte->getCaImpoexpo()))));
         }
