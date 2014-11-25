@@ -25,6 +25,7 @@ error_reporting(0);
   <th>Cliente</th>
   <th>Vendedor</th>
   <th>Sucursal</th>
+  <th>&Uacute;ltima<br/>Creado</th>
   <th>&Uacute;ltima<br/>Cotizaci&oacute;n</th>
   <th>&Uacute;ltimo<br/>Reporte</th>
   <th>&Uacute;ltimo<br/>Seg.Cotizaci&oacute;n</th>
@@ -36,7 +37,7 @@ error_reporting(0);
 <tbody>
 <?php foreach ($clientesSinSeguimiento as $cliente): ?>
 <?
-    $fechas = array($cliente["ca_cotizacion_last"], $cliente["ca_reporte_last"], $cliente["ca_seguimiento_last"], $cliente["ca_evento_max"]);
+    $fechas = array($cliente["ca_fchcreado_clie"], $cliente["ca_cotizacion_last"], $cliente["ca_reporte_last"], $cliente["ca_seguimiento_last"], $cliente["ca_evento_max"]);
     rsort($fechas);
     if ($fechas[0]<$corte_dos){
         $color = "style='background-color:orange'";
@@ -52,6 +53,7 @@ error_reporting(0);
       <td><?php echo $cliente["ca_compania"] ?></td>
       <td><?php echo $cliente["ca_vendedor"] ?></td>
       <td><?php echo $cliente["ca_sucursal"] ?></td>
+      <td><?php echo $cliente["ca_fchcreado_clie"] ?></td>
       <td><?php echo $cliente["ca_cotizacion_last"] ?></td>
       <td><?php echo $cliente["ca_reporte_last"] ?></td>
       <td><?php echo $cliente["ca_seguimiento_last"] ?></td>
@@ -65,7 +67,7 @@ error_reporting(0);
 	if( count($clientesSinSeguimiento)==0 ){
 ?>
     <tr>
-	    <td colspan="11"><div align="center">Reporte sin Registros</div></td>
+	    <td colspan="12"><div align="center">Reporte sin Registros</div></td>
     </tr>
 
 <?
