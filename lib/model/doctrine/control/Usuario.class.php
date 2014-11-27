@@ -83,7 +83,7 @@ class Usuario extends BaseUsuario {
         return $resultado;
     }
     
-public function getFirmaOtmHTML($company) {
+    public function getFirmaOtmHTML($company) {
         $sucursaltmp = $this->getSucursal();
         
             if($company=="coltrans.com.co")
@@ -149,8 +149,11 @@ public function getFirmaOtmHTML($company) {
             }
 
             if ($this->getCaAuthmethod() == "ldap") {
-                $auth_user = "cn=" . $username . ",o=coltrans_bog";
+                //$auth_user = "cn=" . $username . ",o=coltrans_bog";
+                // CN=CARLOS GILBERTO LOPEZ MENDEZ,OU=Sistemas,OU=Usuarios,OU=Coltrans_Bog,DC=COLTRANS,DC=LOCAL
+                $auth_user = $username . "@COLTRANS.LOCAL";
                 $ldap_server = sfConfig::get("app_ldap_host");
+                
                 $connect = ldap_connect($ldap_server);
                 if ($connect) {
                     if (@$bind = ldap_bind($connect, $auth_user, utf8_encode($passwd))) {
@@ -234,11 +237,16 @@ public function getFirmaOtmHTML($company) {
     }
 
     public function getImagenUrl($tamano='120x150') {
-
+        $baseUrl = "";
+        $app = sfContext::getInstance()->getConfiguration()->getApplication();
+        
+        if($app == "intranet")
+            $baseUrl = "/intranet";
+        
         if (file_exists($this->getImagen($tamano))) {
-            $imagen = "/gestDocumental/verArchivo/folder/" . base64_encode($this->getDirectorioBase()) . "/idarchivo/" . base64_encode("foto" . $tamano . ".jpg");
+            $imagen = $baseUrl."/gestDocumental/verArchivo/folder/" . base64_encode($this->getDirectorioBase()) . "/idarchivo/" . base64_encode("foto" . $tamano . ".jpg");
         } else {
-            $imagen = "/gestDocumental/verArchivo/folder/" . base64_encode(Usuario::FOLDER) . "/idarchivo/" . base64_encode("nologin60x80.jpg");
+            $imagen = $baseUrl."/gestDocumental/verArchivo/folder/" . base64_encode(Usuario::FOLDER) . "/idarchivo/" . base64_encode("nologin60x80.jpg");
         }
 
         return $imagen;
@@ -379,6 +387,9 @@ public function getFirmaOtmHTML($company) {
             case 2:
                 $link = 'http://www.coltrans.com.co/logosoficiales/coltrans/ColtransSmall.png';
                 break;
+            case 4:
+                $link = 'http://www.coltrans.com.co/logosoficiales/consolcargo/ConsolcargoSmall.png';
+                break;
             case 8:
                 $link = 'http://www.coltrans.com.co/logosoficiales/colotm/logo_colotm.png';
                 break;
@@ -402,93 +413,112 @@ public function getFirmaOtmHTML($company) {
         return $idempresa; 
     }
     
-    public function emailUsuario($login,$asunto,$direccion,$tiempoCumplido,$fchingreso){
+    public function emailUsuario($login,$asunto,$direccion,$tiempoCumplido,$fchingreso, $grupoEmp = array()){
         
         $user = Doctrine::getTable('Usuario')->find(sfContext::getInstance()->getUser()->getUserId());
         $usuario = Doctrine::getTable("Usuario")->find($login);
         $idempresa = $usuario->getSucursal()->getEmpresa()->getCaIdempresa();             
-        if($idempresa == 1 || $idempresa == 2 || $idempresa == 8){
-            $logo = $usuario->getLogoHtml($idempresa);        
-            $sucursal = $usuario->getSucursal()->getCaNombre();
-
-            $email = new Email();
-            $email->setCaUsuenvio($asunto=="address"||$asunto=="desvinculacion"?$user->getCaLogin():"Administrador");
-            $email->setCaIdcaso(null);
-            $email->setCaFrom($asunto=="address"?$user->getCaEmail():"talentohumano@coltrans.com.co");
-            $email->setCaFromname($asunto=="address"?$user->getCaNombre():"TALENTO HUMANO");
-            $email->setCaCc($asunto=="address"?$usuario->getCaEmail():"");
-            $email->setCaReplyto($asunto=="address"?$usuario->getCaEmail():"");
-            
-            switch ($asunto) {
-                case "address":
-                    $subject = 'Cambio de dirección Colaborador '.strtoupper($usuario->getSucursal()->getEmpresa()->getCaNombre())." ".$usuario->getSucursal()->getCaNombre();
-                    if( $sucursal != "Bogotá D.C." ){
-                        $cargo = 'Jefe Dpto. Administrativo';
-                    }else{            
-                        $cargo = 'Jefe Dpto. Talento Humano';
-                    }
-
-                    $recips = Doctrine::getTable("Usuario")
-                            ->createQuery('u')
-                            ->innerJoin('u.Sucursal s')
-                            ->addWhere('s.ca_nombre = ?', $sucursal)
-                            ->addWhere('u.ca_activo=?', true)
-                            ->addWhere('u.ca_cargo=?', $cargo)
-                            ->execute();
-                    foreach ($recips as $recip) {
-                        if ($recip->getCaEmail()) {
-                            $email->addTo(str_replace(" ", "", $recip->getCaEmail()));
-                        }
-                    }
-                    $tipo = "Cambio de Direccion";
-                    break;
-                case "ingreso":
-                    $subject = 'Ingreso Nuevo Colaborador '.strtoupper($usuario->getSucursal()->getEmpresa()->getCaNombre())." ".$usuario->getSucursal()->getCaNombre();
-                    $tipo = "Nuevo Colaborador";
-                    break;
-                case "desvinculacion":
-                    $subject = 'Desvinculación Colaborador '.strtoupper($usuario->getSucursal()->getEmpresa()->getCaNombre())." ".$usuario->getSucursal()->getCaNombre();
-                    $tipo = "Desvinculacion";
-                    break;
-                case "reconocimiento":
-                    $subject = 'Reconocimiento Especial: '.$usuario->getCaNombre()." ".strtoupper($usuario->getSucursal()->getEmpresa()->getCaNombre())." ".$usuario->getSucursal()->getCaNombre();
-                    $email->addTo("kcamacho@coltrans.com.co");
-                    $email->addTo("jraute@coltrans.com.co");
-                    $email->addTo("thomaspeters@coltrans.com.co");
-                    $tipo = "Reconocimiento";
-                    break;
-                case "cumpleanos":
-                    $fecha = date('Y-m-d');
-                    $dia = date('N');
-                    $finDeSemana = "";
-                    if($dia>=5){
-                        $finDeSemana = " & FIN DE SEMANA";
-                    }
-                    $subject = 'FELIZ CUMPLEAÑOS '.$fecha.$finDeSemana;
-                    $tipo = "Cumpleanos";
-                    break;                
-            }
-            $email->setCaTipo($tipo);
-            $email->setCaSubject($subject);
-
-            if($asunto=="ingreso" || $asunto == "desvinculacion" || $asunto == "cumpleanos"){
-                $email->setCaAddress("empleados-nal@coltrans.com.co");
-                $email->addTo("colmasnal@colmas.com.co");
-                $email->addTo("colotmnal@colotm.com");
-            }
-
-            $request = sfContext::getInstance()->getRequest();
-            $request->setParameter('direccion', $direccion);
-            $request->setParameter('login', $login);
-            $request->setParameter("format", "email" );	
-            $request->setParameter("asunto", $asunto);
-            $request->setParameter('logo', $logo);
-            $request->setParameter('tiempo', $tiempoCumplido);
-            $request->setParameter('fchingreso', $fchingreso);
-            $texto= sfContext::getInstance()->getController()->getPresentationFor( 'adminUsers', 'emailIntranet');
-
-            $email->setCaBodyhtml($texto);
-            $email->save();
+        //if($idempresa == 1 || $idempresa == 2 || $idempresa == 8){
+        $logo = $usuario->getLogoHtml($idempresa);        
+        //$sucursal = $usuario->getSucursal()->getCaNombre();
+        $parametros = ParametroTable::retrieveByCaso("CU239");
+        $remitente = array();
+        $destinatarios = array();
+        foreach($parametros as $parametro){
+            $remitente[$parametro->getCaIdentificacion()] = $parametro->getCaValor2();
+            $destinatarios[$parametro->getCaIdentificacion()] = $parametro->getCaValor();
         }
+            
+        $email = new Email();
+        $email->setCaUsuenvio($asunto=="address"||$asunto=="desvinculacion"?$user->getCaLogin():$login);
+        $email->setCaIdcaso(null);
+        $email->setCaFrom($asunto=="address"?$user->getCaEmail():$remitente[$idempresa]);
+        $email->setCaFromname($asunto=="address"?$user->getCaNombre():"TALENTO HUMANO");
+        $email->setCaCc($asunto=="address"?$usuario->getCaEmail():"");
+        $email->setCaReplyto($asunto=="address"?$usuario->getCaEmail():"");
+
+        switch ($asunto) {
+            case "address":
+                $subject = 'Cambio de dirección Colaborador '.strtoupper($usuario->getSucursal()->getEmpresa()->getCaNombre())." ".$usuario->getSucursal()->getCaNombre();
+                if( $sucursal != "Bogotá D.C." ){
+                    $cargo = 'Jefe Dpto. Administrativo';
+                }else{            
+                    $cargo = 'Jefe Dpto. Talento Humano';
+                }
+
+                $recips = Doctrine::getTable("Usuario")
+                        ->createQuery('u')
+                        ->innerJoin('u.Sucursal s')
+                        ->addWhere('s.ca_nombre = ?', $sucursal)
+                        ->addWhere('u.ca_activo=?', true)
+                        ->addWhere('u.ca_cargo=?', $cargo)
+                        ->execute();
+                foreach ($recips as $recip) {
+                    if ($recip->getCaEmail()) {
+                        $email->addTo(str_replace(" ", "", $recip->getCaEmail()));
+                    }
+                }
+                $tipo = "Cambio de Direccion";
+                break;
+            case "ingreso":
+                $subject = 'Ingreso Nuevo Colaborador '.strtoupper($usuario->getSucursal()->getEmpresa()->getCaNombre())." ".$usuario->getSucursal()->getCaNombre();
+                $tipo = "Nuevo Colaborador";
+                break;
+            case "desvinculacion":
+                $subject = 'Desvinculación Colaborador '.strtoupper($usuario->getSucursal()->getEmpresa()->getCaNombre())." ".$usuario->getSucursal()->getCaNombre();
+                $tipo = "Desvinculacion";
+                break;
+            case "reconocimiento":
+                $subject = 'Reconocimiento Especial: '.$usuario->getCaNombre()." ".strtoupper($usuario->getSucursal()->getEmpresa()->getCaNombre())." ".$usuario->getSucursal()->getCaNombre();
+                $email->addTo("kcamacho@coltrans.com.co");
+                $email->addTo("jraute@coltrans.com.co");
+                $email->addTo("thomaspeters@coltrans.com.co");
+                $tipo = "Reconocimiento";
+                break;
+            case "cumpleanos":
+                $fecha = date('Y-m-d');
+                $dia = date('N');
+                $finDeSemana = "";
+                if($dia>=5){
+                    $finDeSemana = " & FIN DE SEMANA";
+                }
+                $subject = 'FELIZ CUMPLEAÑOS '.$fecha.$finDeSemana;
+                $tipo = "Cumpleanos";
+                break;                
+        }
+        $email->setCaTipo($tipo);
+        $email->setCaSubject($subject);
+
+        if($asunto=="ingreso" || $asunto == "desvinculacion" || $asunto == "cumpleanos"){
+            //$email->setCaAddress("empleados-nal@coltrans.com.co");
+            //$email->addTo("colmasnal@colmas.com.co");
+            //$email->addTo("colotmnal@colotm.com");
+            foreach($grupoEmp as $empresa){
+                if($destinatarios[$empresa] != "null")
+                    $email->addTo($destinatarios[$empresa]);
+                else {
+                    //$correos = array();
+                    $correos = $email->getDirectorioCorp($empresa);
+                    foreach($correos as $correo){
+                        $email->addCC($correo);
+                    }
+                    break;
+                }
+            }
+        }
+
+        $request = sfContext::getInstance()->getRequest();
+        $request->setParameter('direccion', $direccion);
+        $request->setParameter('login', $login);
+        $request->setParameter("format", "email" );	
+        $request->setParameter("asunto", $asunto);
+        $request->setParameter('logo', $logo);
+        $request->setParameter('tiempo', $tiempoCumplido);
+        $request->setParameter('fchingreso', $fchingreso);
+        $request->setParameter('grupoEmp', $grupoEmp);
+        $texto= sfContext::getInstance()->getController()->getPresentationFor( 'adminUsers', 'emailIntranet');
+
+        $email->setCaBodyhtml($texto);
+        $email->save();        
     }
 }
