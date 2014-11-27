@@ -9,17 +9,17 @@ all:
 
   branding:
     template: coltrans
-    url: www.tplogistics.com.pe
-    name: TPLogistics
-    from: info@tplogistics.com.pe
-    
+    url: www.coltrans.com.co
+    name: Coltrans S.A.S. - Colmas Ltda.
+    from: serclientebog@coltrans.com.co
+
   smtp:
     host: smtp.coltrans.com.co
     user:  tasas_cambios
     passwd:  tasas_cambios
     port: 25
-    debugAddress: abotero@coltrans.com.co
+#    debugAddress: abotero@coltrans.com.co
     
   ldap:
-    host: 10.192.1.83
+    host: 10.192.1.91
     auth_enabled: true
