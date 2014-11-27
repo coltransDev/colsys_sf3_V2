@@ -1,4 +1,4 @@
-<?php
+    <?php
 
 /**
  * adminUsers actions.
@@ -34,12 +34,15 @@ class adminUsersActions extends sfActions {
         }
 
         $this->nivel = $this->getUser()->getNivelAcceso($rutina);
-                
+        
         if ($this->nivel<0 && $app=="intranet" ) {
             $this->nivel = 0;
         }
 
-        $this->forward404Unless($this->nivel>=0);
+        //$this->forward404Unless($this->nivel>=0);
+        if ($this->nivel == -1) {
+            $this->forward404();
+        }        
 
         return $this->nivel;
     }
@@ -87,6 +90,9 @@ class adminUsersActions extends sfActions {
         $app = sfContext::getInstance()->getConfiguration()->getApplication();
         $this->usuario = Doctrine::getTable("Usuario")->find($request->getParameter("login"));
         $this->userinicio = sfContext::getInstance()->getUser();
+        $userinicio = Doctrine::getTable('Usuario')->find($this->userinicio->getUserId());
+        $this->grupoEmp = $userinicio->getGrupoEmpresarial();
+        
         $this->nivel = $this->getNivel();
 
         $this->key = $request->getParameter("key");
@@ -160,10 +166,12 @@ class adminUsersActions extends sfActions {
                         ->addWhere('c.ca_manager= ?', true)
                         ->addOrderBy("j.ca_nombre")
                         ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                        //->limit(2)
                         ->execute();
         
         foreach ($this->jefes as $key => $val) {
             $this->jefes[$key]["j_ca_nombre"] = utf8_encode($this->jefes[$key]["j_ca_nombre"]);
+            $this->jefes[$key]["j_ca_cargo"] = utf8_encode($this->jefes[$key]["j_ca_cargo"]);            
         }
         
         $this->claves = Doctrine::getTable("UsuarioClave")
@@ -204,10 +212,29 @@ class adminUsersActions extends sfActions {
         $query.= "	from control.tb_usuarios";
         $query.= "  order by ca_tiposangre ASC";
         $this->tiposangre = $p->execute($query);
-
+        
+        //print_r($this->grupoEmp);
+        $q = Doctrine::getTable("Sucursal")
+                ->createQuery("s")
+                ->select("s.ca_idsucursal")
+                ->andWhereIn("s.ca_idempresa",$this->grupoEmp)
+                ->andWhere("s.ca_nombre = ?", $userinicio->getSucursal()->getCaNombre())
+                ->orderBy("s.ca_idsucursal")
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->execute();
+        
+        foreach($q as $key => $val){
+            $s[] = $val["s_ca_idsucursal"];
+        }
+        //echo "<pre>";print_r($q);echo "</pre>";
+        $suc = implode("|",$s);
+        
         $this->parentescos = ParametroTable::retrieveByCaso('CU093');
         $this->nivestudios = ParametroTable::retrieveByCaso('CU105');
         $this->fcesantias = ParametroTable::retrieveByCaso('CU225');
+        $this->estados = ParametroTable::retrieveByCaso('CU240');
+        $this->comites = ParametroTable::retrieveByCaso('CU241');
+        $this->zonas = ParametroTable::retrieveByCaso('CU242',null,$suc);
         $this->sexo = array("F","M");
         
         $response = sfContext::getInstance()->getResponse();
@@ -316,6 +343,9 @@ class adminUsersActions extends sfActions {
         $conn->beginTransaction();
         
         $config = sfConfig::get("app_soap_adminUsers");
+        
+        $user = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
+        $grupoEmp = $user->getGrupoEmpresarial();
        
         $usuario = Doctrine::getTable("Usuario")->find($request->getParameter("login"));
         $new = $request->getParameter("key");
@@ -345,7 +375,7 @@ class adminUsersActions extends sfActions {
                 $usuario->setCaLogin(strtolower($request->getParameter("login")));
             }
         }
-
+        
         if ($request->getParameter("nombre")) {
             $usuario->setCaNombre(ucwords(strtolower($request->getParameter("nombre"))));
         }
@@ -387,7 +417,8 @@ class adminUsersActions extends sfActions {
             $usuario->setCaFchvencimiento(Utils::calcularVencimientoClave());
         }
         
-        if( $this->nivel>=3 ){
+        if(( $this->nivel>=2 && in_array($usuario->getSucursal()->getCaIdempresa(),$grupoEmp)) || $this->nivel>=3){
+            
             if ($request->getParameter("activo")) {
                 $usuario->setCaActivo(true);
             }else{
@@ -496,6 +527,7 @@ class adminUsersActions extends sfActions {
         } else {
             $usuario->setCaDonante(false);
         }
+        
         if ($request->getParameter("chk_enfermedad")=='on') {
             if ($request->getParameter("enfermedad")) {
                 $usuario->setCaEnfermedad($request->getParameter("enfermedad"));
@@ -562,6 +594,37 @@ class adminUsersActions extends sfActions {
         }
         
         $usuario->save( $conn );
+        
+        $usuBrigadas = $usuario->getUsuBrigadas();
+        
+        if(!$usuBrigadas->getCaLogin())
+            $usuBrigadas->setCaLogin($usuario->getCaLogin());
+        
+        if ($request->getParameter("zona")) {
+            $usuBrigadas->setCaZona($request->getParameter("zona"));
+        }
+        
+        if ($request->getParameter("estado")) {
+            $usuBrigadas->setCaEcivil($request->getParameter("estado"));
+        }
+        
+        $comites = ParametroTable::retrieveByCaso('CU241');
+        
+        foreach($comites as $comite){
+            if ($request->getParameter("comite".$comite->getCaIdentificacion())) {
+                $ids[] = $comite->getCaIdentificacion();
+                if ($request->getParameter("comite_pr".$comite->getCaIdentificacion()))
+                    $obs[$comite->getCaIdentificacion()]["obs"] = $request->getParameter("comite_pr".$comite->getCaIdentificacion());
+            }
+        }
+        
+        $usuBrigadas->setCaComites(implode("|",$ids));        
+        $usuBrigadas->setCaPropiedades(null);
+        foreach($obs as $key=>$val){            
+            $usuBrigadas->setProperty("comite".$key, $val["obs"] );
+        }
+        $usuBrigadas->save($conn);
+        
         $conn->commit();
         
         if( $config["updateUser"] ){
@@ -589,9 +652,18 @@ class adminUsersActions extends sfActions {
         }else{
             $empresa=sfConfig::get('app_branding_name');
             
-            if($empresa!='TPLogistics' || $this->getUser()->getIdempresa()!=4){ // Solo se envia correo para Coltrans, Colmas y ColOtm
+            $parametros = ParametroTable::retrieveByCaso("CU239");
+            $empresas = array();
+            
+            foreach($parametros as $parametro){
+                $empresas[] = $parametro->getCaIdentificacion();
+            }
+            
+            $grupoEmp = $usuario->getGrupoEmpresarial();
+            
+            if($empresa!='TPLogistics' && in_array($usuario->getSucursal()->getCaIdempresa(), $empresas)){ // Solo se envia correo para Coltrans, Colmas y ColOtm
                 $asunto = "ingreso";
-                $usuario->emailUsuario($login,$asunto,null,null,null);
+                $usuario->emailUsuario($login,$asunto,null,null,null,$grupoEmp);
             }
         }
         
@@ -970,34 +1042,43 @@ class adminUsersActions extends sfActions {
                 break;
         }
         $this->userinicio = sfContext::getInstance()->getUser();
+        $userinicio = Doctrine::getTable('Usuario')->find($this->userinicio->getUserId());
+        
+        $this->grupoEmp = $userinicio->getGrupoEmpresarial();
+        
         $this->nivel = $this->getNivel();
 
+        $verUsuario = $request->getParameter('verUsuario');
         $this->user = Doctrine::getTable('Usuario')->find($request->getParameter('login'));
+        if($this->user){
+            $this->manager = Doctrine::getTable('Usuario')->find($request->getParameter('login'));
+            $this->manager = $this->manager->getManager();
 
-        $this->manager = Doctrine::getTable('Usuario')->find($request->getParameter('login'));
-        $this->manager = $this->manager->getManager();
+            //Obtiene direccion desde e-directory
+            $ldap_server = sfConfig::get("app_ldap_host");
+            //$auth_user = "cn=" . sfConfig::get("app_ldap_user") . ",o=coltrans_bog";
+            $auth_user = sfConfig::get("app_ldap_user") . "@COLTRANS.LOCAL";
+            $passwd = sfConfig::get("app_ldap_passwd");
 
-        //Obtiene direccion desde e-directory
-        $ldap_server = sfConfig::get("app_ldap_host");
-        $auth_user = "cn=" . sfConfig::get("app_ldap_user") . ",o=coltrans_bog";
-        $passwd = sfConfig::get("app_ldap_passwd");
-
-        $this->addresses = array();
-        if ($connect = ldap_connect($ldap_server)) {
-            if ($bind = ldap_bind($connect, $auth_user, $passwd)) {
-                $searchString = "(&(cn=" . $request->getParameter('login') . "))";
-                $sr = ldap_search($connect, "o=coltrans_bog", $searchString, array("networkAddress"));
-                $entry = ldap_first_entry($connect, $sr);
-                @$attrs = ldap_get_attributes($connect, $entry);
-                @$result = $attrs["networkAddress"];
-                if(is_array($result)){
-                    foreach ($result as $key => $val) {
-                        if (trim($key) != "count") {
-                            $this->addresses[] = Utils::LDAPNetAddr($val);
+            $this->addresses = array();
+            if ($connect = ldap_connect($ldap_server)) {
+                if ($bind = ldap_bind($connect, $auth_user, $passwd)) {
+                    $searchString = "(&(cn=" . $request->getParameter('login') . "))";
+                    $sr = ldap_search($connect, "o=coltrans_bog", $searchString, array("networkAddress"));
+                    $entry = ldap_first_entry($connect, $sr);
+                    @$attrs = ldap_get_attributes($connect, $entry);
+                    @$result = $attrs["networkAddress"];
+                    if(is_array($result)){
+                        foreach ($result as $key => $val) {
+                            if (trim($key) != "count") {
+                                $this->addresses[] = Utils::LDAPNetAddr($val);
+                            }
                         }
                     }
                 }
             }
+            
+            $this->responseArray = array("success" => true, "login" => $this->user->getCaLogin());            
         }
     }
     
@@ -1115,7 +1196,8 @@ class adminUsersActions extends sfActions {
         $this->direccion = $request->getParameter("direccion");
         $this->logo = $request->getParameter("logo");
         $this->tiempo = $request->getParameter("tiempo");
-        $this->fchingreso = $request->getParameter("fchingreso");  
+        $this->fchingreso = $request->getParameter("fchingreso");
+        $this->grupoEmp = $request->getParameter("grupoEmp");
         
         if($this->asunto=="cumpleanos"){
             $inicial = date('m-d',time());
@@ -1128,7 +1210,7 @@ class adminUsersActions extends sfActions {
                     ->innerJoin('u.Sucursal s')
                     ->innerJoin('s.Empresa e')
                     ->where('substring(ca_cumpleanos::text, 6,5) BETWEEN ? AND ?', array($inicial,$final))
-                    ->addWhere('e.ca_idempresa IN (?,?,?)',array('1','2','8'))
+                    ->andWhereIn('e.ca_idempresa',$this->grupoEmp)
                     ->addWhere('ca_activo = ?', true)
                     ->addOrderBy('substring(ca_cumpleanos::text, 6,5)  ASC')
                     ->execute();            
@@ -1166,7 +1248,9 @@ class adminUsersActions extends sfActions {
     }
     
     public function executeBirthdayEmail(sfWebRequest $request) {
-
+        
+        $usuario = $usuario = Doctrine::getTable("Usuario")->find($request->getParameter("login"));
+        $grupoEmp = $usuario->getGrupoEmpresarial();
         $dia = date('N');
         $inicial = date('m-d',time());
         $final = $inicial;
@@ -1178,7 +1262,7 @@ class adminUsersActions extends sfActions {
                     ->innerJoin('u.Sucursal s')
                     ->innerJoin('s.Empresa e')
                     ->where('substring(ca_cumpleanos::text, 6,5) BETWEEN ? AND ?', array($inicial,$final))
-                    ->addWhere('e.ca_idempresa IN (?,?,?)',array('1','2','8'))
+                    ->andWhereIn('e.ca_idempresa',$grupoEmp)
                     ->addWhere('ca_activo = ?', true)
                     ->addOrderBy('substring(ca_cumpleanos::text, 6,5)  ASC')
                     ->execute();
@@ -1187,7 +1271,7 @@ class adminUsersActions extends sfActions {
             if($dia != 6 && $dia != 7){            
                 $asunto = "cumpleanos";            
                 $usuario = new Usuario();
-                $usuario->emailUsuario('Administrador',$asunto,null,null,null);
+                $usuario->emailUsuario($request->getParameter("login"),$asunto,null,null,null,$grupoEmp);
             }
         }
     }
@@ -1196,9 +1280,10 @@ class adminUsersActions extends sfActions {
         
         $login = $request->getParameter("login");
         $usuario = Doctrine::getTable("Usuario")->find($login);        
+        $grupoEmp = $usuario->getGrupoEmpresarial();
         $asunto = "desvinculacion";
         
-        $usuario->emailUsuario($login,$asunto,null,null,null);
+        $usuario->emailUsuario($login,$asunto,null,null,null,$grupoEmp);
     }
 }
 ?>
