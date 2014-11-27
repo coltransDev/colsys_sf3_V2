@@ -1,61 +1,78 @@
 # default values
 all:
   digitalFile:
-    root:  /home/abotero/Desarrollo/digitalFile/    
-#    root:  C:\Desarrollo\digitalFile\
+    root:  /srv/www/digitalFile/   
 
+#    root:  C:\Desarrollo\digitalFile\
 
   branding:
     template: coltrans
+    template4: consolcargo
     url: www.coltrans.com.co
     name: Coltrans S.A.S. - Colmas Ltda.
     name1: Coltrans S.A.S.
     name2: Colmas Ltda
     from: serclientebog@coltrans.com.co
-    idempresa: 623
-    idempresa2: 620 #PARA CORTE GUIAS AÉREAS PERÚ
+    idempresa: 800024075
 
   smtp:
-    host: smtp.coltrans.com.co
-    user:  tasas_cambios
-    passwd:  tasas_cambios
-#    host: smtp.colmas.com.co
-#    user: bogota-aduana@colmas.com.co
-#    passwd:  bogotaadu
+    host: 10.192.1.63
     port: 25
-#    debugAddress: maquinche@coltrans.com.co
-    debugAddress: abotero@coltrans.com.co
-#    debugAddress: botero82@gmail.com
-#    public_ip: 200.14.235.62
+    security: null   
+
+#    debugAddress: alramirez@coltrans.com.co
+
+#     GOOGLE
+#    host: smtp.gmail.com
+#    port: 465
+#    security: ssl
+#    user: maquinche@coltrans.co
+#    passwd:  80166236
+
 
   ldap:
-    host: 10.192.1.83
+    host: 10.192.1.91
     auth_enabled: true
-
+#    user: colsys
+#    passwd: $tlco5903Am
 
   memcache:
-#    host: 127.0.0.1
     host: 10.192.1.62
     port: 11211
     prefix: colsess
 
   session:
     maxinactive: 1800
-#archivos de falabella
+  ip:
+    trusted: 127.0.0.1 10.192.1 10.192.2
+
+ #archivos de falabella
   falabella:
     input:  /home/falabella/OUT
     input_processed:  /home/falabella/OUT/processed
     output:  /home/falabella/IN    
-#    input: c:\fala\
-#    input_processed: c:\fala\procesados\
+
+    input_adu:  /home/falafact/OUT
+    input_processed_adu:  /home/falafact/OUT/processed
+    output_adu:  /home/falafact/IN
+
+ #archivos de clariant
+  clariant:
+    input:  /home/clariant/OUT
+    input_processed:  /home/clariant/OUT/processed
+    output:  /home/clariant/IN
+
+
   gestDocumental:
     noAuth: KBaseWeb, KBase
-  
+
   soap:
     secret: srTYudsa%&7dsa!Por#az+zX985>Fm
     adminUsers:
       updateUser: false
       wsdl_uri: https://www.coltrans.com.co/ws/users/usersWS?wsdl
 
+    gincomex:
+      url: http://www.gincomex.biz/pruebas/webservices/servicio.php
+      pass: HJDSJHSDUU3313JKIAASSJU12
 
- 
