@@ -32,7 +32,8 @@ class usersComponents extends sfComponents
 		$grupos=array();
 				
 		if( $username && $passwd ){
-			$auth_user="cn=".$username.",o=coltrans_bog";			
+			// $auth_user="cn=".$username.",o=coltrans_bog";			
+                        $auth_user = $username . "@COLTRANS.LOCAL";
 			$ldap_server=sfConfig::get("app_ldap_host");
 			
 			if($connect=ldap_connect($ldap_server)){
