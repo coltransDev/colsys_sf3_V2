@@ -7,7 +7,7 @@ all:
 #    root:  /home/abotero/Desarrollo/digitalFile/
     root:  /srv/www/digitalFile/
   ldap:
-    host: 10.192.1.81
+    host: 10.192.1.91
     auth_enabled: true
     user: colsys
     passwd: $tlco5903Am
