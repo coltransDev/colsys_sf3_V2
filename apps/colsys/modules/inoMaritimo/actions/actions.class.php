@@ -476,4 +476,54 @@ class inoMaritimoActions extends sfActions {
         $this->forward("homepage", "index");
     }
 
+    /**
+     * Executes index action
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeImportarParametricas(sfWebRequest $request) {
+        $DOM = new DOMDocument;
+
+        $this->tablas = ParametroTable::retrieveByCaso("CU243");
+
+        foreach ($this->tablas as $tabla) {
+            $servicio = $tabla->getCaValor();
+            $url = $tabla->getCaValor2();
+            
+            $homepage = file_get_contents($url);
+            $DOM->loadHTML($homepage);
+
+            $items = $DOM->getElementsByTagName('table');
+
+            $q = Doctrine_Manager::getInstance()->connection();
+            for ($i = 0; $i < $items->length; $i++) {
+                $eliminar = true;
+                if ($items->item($i)->getAttribute('class') == "EstiloTabla") {
+                    $children = $items->item($i)->childNodes;
+                    $skip = TRUE;
+                    foreach ($children as $child) {
+                        $elements = $child->childNodes;
+                        $record = array();
+                        foreach ($elements as $element) {
+                            $record[] = utf8_decode($element->nodeValue);
+                        }
+                        if ($skip and $record[0] == "No." and $record[1] == "NIT" and $record[3] == "Ciudad") {
+                            $skip = false;
+                            continue;
+                        }
+                        if (!$skip) {
+                            if ($eliminar) {    // Borra registros anteriores de la tabla
+                                $query = "delete from tb_dianservicios where ca_tipo = '$servicio';";
+                                $stmt = $q->execute($query);
+                                $eliminar = false;
+                            }
+                            $query = "insert into tb_dianservicios (ca_idservicio, ca_identificacion, ca_razonsocial, ca_ciudad, ca_codigo, ca_tipo) values ($record[0], '$record[1]', '$record[2]', '$record[3]', '$record[4]', '$servicio');";
+                            $stmt = $q->execute($query);
+                        }
+                    }
+                }
+            }
+        }
+        $this->forward("homepage", "index");
+    }
 }
