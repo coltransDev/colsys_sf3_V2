@@ -4272,7 +4272,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "<TR>";
                 echo "  <TD Class=mostrar COLSPAN=5>Descripción de la Mercancía:<BR><TEXTAREA NAME='mercancia_desc' WRAP=virtual ROWS=3 COLS=110>$descripcion_merc</TEXTAREA></TD>";
                 echo "</TR>";
-                if ($tm->Value('ca_continuacion') == "OTM"){
+                if ($tm->Value('ca_continuacion') == "OTM" or $tm->Value('ca_continuacion') == "DTA"){
                     echo "<TR>";
                     echo "  <TD Class=mostrar COLSPAN=5>Nit del Depósito destino de la Carga:<BR><SELECT ID='nitdeposito' NAME='nitdeposito'>";  // Campo Asociado a tb_dianservicios
                     echo"   <OPTION VALUE=0>Sin Seleccionar</OPTION>";
@@ -4931,7 +4931,12 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     }
 
                     // =========================== Destinatario ===========================
-                    if ($ic->Value("ca_continuacion") == "OTM") {
+                    if ($ic->Value("ca_continuacion") == "DTA" and $dc->Value("ca_nitdeposito") != ""){
+                        $nit = explode("-", $dc->Value("ca_nitdeposito"));
+                        $xml_hijo->setAttribute("hdo3", 31);
+                        $xml_hijo->setAttribute("hni3", $nit[0]);
+                        $xml_hijo->setAttribute("hdv3", $nit[1]);
+                    } elseif ($ic->Value("ca_continuacion") == "OTM") {
                         if ($dc->Value("ca_nitdeposito") != "") {
                             $nit = explode("-", $dc->Value("ca_nitdeposito"));
                             $xml_hijo->setAttribute("hdo3", 31);
