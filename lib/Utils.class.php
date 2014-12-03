@@ -609,7 +609,7 @@ class Utils {
         return $tmp;
     }
     
-    function calcularDV($nit) {
+    public static function calcularDV($nit) {
         if (! is_numeric($nit)) {
             return false;
         }
