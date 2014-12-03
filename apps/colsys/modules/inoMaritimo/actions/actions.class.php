@@ -489,6 +489,7 @@ class inoMaritimoActions extends sfActions {
         foreach ($this->tablas as $tabla) {
             $servicio = $tabla->getCaValor();
             $url = $tabla->getCaValor2();
+            $eliminar = true;
             
             $homepage = file_get_contents($url);
             $DOM->loadHTML($homepage);
@@ -497,7 +498,6 @@ class inoMaritimoActions extends sfActions {
 
             $q = Doctrine_Manager::getInstance()->connection();
             for ($i = 0; $i < $items->length; $i++) {
-                $eliminar = true;
                 if ($items->item($i)->getAttribute('class') == "EstiloTabla") {
                     $children = $items->item($i)->childNodes;
                     $skip = TRUE;
@@ -517,7 +517,9 @@ class inoMaritimoActions extends sfActions {
                                 $stmt = $q->execute($query);
                                 $eliminar = false;
                             }
-                            $query = "insert into tb_dianservicios (ca_idservicio, ca_identificacion, ca_razonsocial, ca_ciudad, ca_codigo, ca_tipo) values ($record[0], '$record[1]', '$record[2]', '$record[3]', '$record[4]', '$servicio');";
+                            $dv = Utils::calcularDV($record[1]);
+                            $nit = $record[1] . "-" . $dv;  // Agrega el DV al Nit
+                            $query = "insert into tb_dianservicios (ca_idservicio, ca_identificacion, ca_razonsocial, ca_ciudad, ca_codigo, ca_tipo) values ($record[0], '$nit', '$record[2]', '$record[3]', '$record[4]', '$servicio');";
                             $stmt = $q->execute($query);
                         }
                     }
