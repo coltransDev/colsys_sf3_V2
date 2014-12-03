@@ -4044,6 +4044,12 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     echo "<script>document.location.href = 'entrada.php?id=3977';</script>";
                     exit;
                 }
+                $dp = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
+                if (!$dp->Open("select DISTINCT ca_identificacion, ca_razonsocial, ca_tipo from tb_dianservicios order by ca_razonsocial, ca_tipo")) {          // Selecciona los depósitos de la DIAN
+                    echo "<script>alert(\"" . addslashes($dp->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'entrada.php?id=3977';</script>";
+                    exit;
+                }
 
                 $siono = array("Sí", "No");
                 echo "<HEAD>";
@@ -4061,6 +4067,12 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "  frame.src='ventanas.php?suf=findDianDeposito';";
                 echo "}";
                 echo "function validar(){";
+                echo "  if (isNaN(document.getElementById('nitdeposito'))) {";
+                echo "      if (document.getElementById('nitdeposito').value == 0) {";
+                echo "          alert('Debe seleccionar el Nit del Depósito o Zona Franca, a donde será trasladada la carga.');";
+                echo "          return (false);";
+                echo "      }";
+                echo "  }";
                 echo "  return (true);";
                 echo "}";
                 echo "</script>";
@@ -4260,6 +4272,19 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "<TR>";
                 echo "  <TD Class=mostrar COLSPAN=5>Descripción de la Mercancía:<BR><TEXTAREA NAME='mercancia_desc' WRAP=virtual ROWS=3 COLS=110>$descripcion_merc</TEXTAREA></TD>";
                 echo "</TR>";
+                if ($tm->Value('ca_continuacion') == "OTM"){
+                    echo "<TR>";
+                    echo "  <TD Class=mostrar COLSPAN=5>Nit del Depósito destino de la Carga:<BR><SELECT ID='nitdeposito' NAME='nitdeposito'>";  // Campo Asociado a tb_dianservicios
+                    echo"   <OPTION VALUE=0>Sin Seleccionar</OPTION>";
+                    $dp->MoveFirst();
+                    while (!$dp->Eof()) {
+                        $sel = ($dp->Value('ca_identificacion') == $tm->Value('ca_nitdeposito')) ? 'SELECTED' : '';
+                        echo"<OPTION VALUE=" . $dp->Value('ca_identificacion') . " $sel>" . $dp->Value('ca_razonsocial') . " " . $dp->Value('ca_identificacion') . " (" . $dp->Value('ca_tipo') . ")" . "</OPTION>";
+                        $dp->MoveNext();
+                    }
+                    echo "  </TD>";
+                    echo "</TR>";
+                }
 
                 echo "  </TABLE></TD>";
                 echo "</TR>";
@@ -4284,9 +4309,6 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 }
                 else
                     echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Grabar Cliente'></TH>";     // Ordena Grabar el Registro del Cliente
-
-
-
 
 // echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Grabar Cliente'></TH>";     // Ordena Grabar el Registro del Cliente
                 echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Cancelar' ONCLICK='javascript:document.location.href = \"inosea.php?boton=Consultar\&id=$id\"'></TH>";  // Cancela la operación
@@ -4910,59 +4932,66 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
 
                     // =========================== Destinatario ===========================
                     if ($ic->Value("ca_continuacion") == "OTM") {
-                        if ($rp->Value("ca_idconsignatario") == 0) {
-                            $cadena = str_replace(array(",", "."), "", $rp->Value("ca_consignar"));
-                            $nit = substr($cadena, strpos($cadena, "Nit") + 3);
-                        } else {
-                            $nit = $rp->Value("ca_identificacion_con");
-                        }
-                        $nit = explode("-", $nit);
-                        $nit = $nit[0];
-
-                        if (!$tm->Open("select * from vi_transportistas where ca_idtransportista::text = '" . trim($nit) . "'")) {    // Trae la información del Operador Multimodal de la Tabla Transportistas.
-                            echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
-                            echo "<script>document.location.href = 'entrada.php?id=4855';</script>";
-                            exit;
-                        }
-                        if ($dc->Value("ca_sinidentificacion") == 'f') {
+                        if ($dc->Value("ca_nitdeposito") != "") {
+                            $nit = explode("-", $dc->Value("ca_nitdeposito"));
                             $xml_hijo->setAttribute("hdo3", 31);
-                            $xml_hijo->setAttribute("hni3", $tm->Value("ca_idtransportista"));
-                            $xml_hijo->setAttribute("hdv3", $tm->Value("ca_digito"));
+                            $xml_hijo->setAttribute("hni3", $nit[0]);
+                            $xml_hijo->setAttribute("hdv3", $nit[1]);
+                        }else{
+                            if ($rp->Value("ca_idconsignatario") == 0) {
+                                $cadena = str_replace(array(",", "."), "", $rp->Value("ca_consignar"));
+                                $nit = substr($cadena, strpos($cadena, "Nit") + 3);
+                            } else {
+                                $nit = $rp->Value("ca_identificacion_con");
+                            }
+                            $nit = explode("-", $nit);
+                            $nit = $nit[0];
 
-                            $arribo_array = array();
-                            $cu->MoveFirst();
-                            while (!$cu->Eof()) {
-                                if ($cu->Value('ca_identificacion') == 9 and $cu->Value('ca_valor') == $tm->Value("ca_idciudad")) {
-                                    $arribo_array = explode("|", $cu->Value('ca_valor2'));
-                                    break;
-                                }
-                                $cu->MoveNext();
+                            if (!$tm->Open("select * from vi_transportistas where ca_idtransportista::text = '" . trim($nit) . "'")) {    // Trae la información del Operador Multimodal de la Tabla Transportistas.
+                                echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
+                                echo "<script>document.location.href = 'entrada.php?id=4855';</script>";
+                                exit;
                             }
-                            if (strlen($arribo_array[0]) != 0) {
-                                $xml_hijo->setAttribute("hde3", $arribo_array[0]);
-                            }
-                            if (strlen($arribo_array[1]) != 0) {
-                                $xml_hijo->setAttribute("hci3", $arribo_array[1]);
-                            }
-                        } else {
-                            $xml_hijo->setAttribute("hdo3", 43);
-                            $xml_hijo->setAttribute("hrs3", utf8_encode($tm->Value("ca_nombre")));
-                            $xml_hijo->setAttribute("hdir", utf8_encode(substr($tm->Value("ca_direccion"), 0, 48)));
+                            if ($dc->Value("ca_sinidentificacion") == 'f') {
+                                $xml_hijo->setAttribute("hdo3", 31);
+                                $xml_hijo->setAttribute("hni3", $tm->Value("ca_idtransportista"));
+                                $xml_hijo->setAttribute("hdv3", $tm->Value("ca_digito"));
 
-                            $arribo_array = array();
-                            $cu->MoveFirst();
-                            while (!$cu->Eof()) {
-                                if ($cu->Value('ca_identificacion') == 9 and $cu->Value('ca_valor') == $tm->Value("ca_idciudad")) {
-                                    $arribo_array = explode("|", $cu->Value('ca_valor2'));
-                                    break;
+                                $arribo_array = array();
+                                $cu->MoveFirst();
+                                while (!$cu->Eof()) {
+                                    if ($cu->Value('ca_identificacion') == 9 and $cu->Value('ca_valor') == $tm->Value("ca_idciudad")) {
+                                        $arribo_array = explode("|", $cu->Value('ca_valor2'));
+                                        break;
+                                    }
+                                    $cu->MoveNext();
                                 }
-                                $cu->MoveNext();
-                            }
-                            if (strlen($arribo_array[0]) != 0) {
-                                $xml_hijo->setAttribute("hde3", $arribo_array[0]);
-                            }
-                            if (strlen($arribo_array[1]) != 0) {
-                                $xml_hijo->setAttribute("hci3", $arribo_array[1]);
+                                if (strlen($arribo_array[0]) != 0) {
+                                    $xml_hijo->setAttribute("hde3", $arribo_array[0]);
+                                }
+                                if (strlen($arribo_array[1]) != 0) {
+                                    $xml_hijo->setAttribute("hci3", $arribo_array[1]);
+                                }
+                            } else {
+                                $xml_hijo->setAttribute("hdo3", 43);
+                                $xml_hijo->setAttribute("hrs3", utf8_encode($tm->Value("ca_nombre")));
+                                $xml_hijo->setAttribute("hdir", utf8_encode(substr($tm->Value("ca_direccion"), 0, 48)));
+
+                                $arribo_array = array();
+                                $cu->MoveFirst();
+                                while (!$cu->Eof()) {
+                                    if ($cu->Value('ca_identificacion') == 9 and $cu->Value('ca_valor') == $tm->Value("ca_idciudad")) {
+                                        $arribo_array = explode("|", $cu->Value('ca_valor2'));
+                                        break;
+                                    }
+                                    $cu->MoveNext();
+                                }
+                                if (strlen($arribo_array[0]) != 0) {
+                                    $xml_hijo->setAttribute("hde3", $arribo_array[0]);
+                                }
+                                if (strlen($arribo_array[1]) != 0) {
+                                    $xml_hijo->setAttribute("hci3", $arribo_array[1]);
+                                }
                             }
                         }
                     } else if ($rp->Value("ca_idconsignatario") != 0) {
@@ -5637,6 +5666,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $iddestino = ($iddestino == '') ? 'null' : "'$iddestino'";
                 $sinidentificacion = ($sinidentificacion == 'on') ? 'true' : 'false';
                 $mercancia_desc = str_replace("'", "", $mercancia_desc);
+                $nitdeposito = (isset($nitdeposito))?$nitdeposito:'null';
                 if ($idinfodian == '') {                    
                     if (!$rs->Open("select max(ca_idinfodian) as ca_idinfodian from tb_dianmaestra where ca_referencia = '$referencia'")) {
                         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
@@ -5650,7 +5680,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     }
                     //echo "5527:: $referencia";
                 //exit;
-                    if (!$rs->Open("insert into tb_dianclientes (ca_idinfodian, ca_dispocarga, ca_coddeposito, ca_tipodocviaje, ca_idcondiciones, ca_responsabilidad, ca_tiponegociacion, ca_tipocarga, ca_precursores, ca_vlrfob, ca_vlrflete, ca_mercancia_desc, ca_iddestino, ca_sinidentificacion, ca_fchcreado, ca_usucreado, ca_idinocliente) values ('$idinfodian', '$dispocarga', '$coddeposito', '$tipodocviaje', '$idcondiciones', '" . substr($responsabilidad, 0, 1) . "', '$tiponegociacion', '$tipocarga', '" . substr($precursores, 0, 1) . "', '$vlrfob', '$vlrflete', '$mercancia_desc', $iddestino, $sinidentificacion, to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario', $idinocliente)")) {
+                    if (!$rs->Open("insert into tb_dianclientes (ca_idinfodian, ca_dispocarga, ca_coddeposito, ca_tipodocviaje, ca_idcondiciones, ca_responsabilidad, ca_tiponegociacion, ca_tipocarga, ca_precursores, ca_vlrfob, ca_vlrflete, ca_mercancia_desc, ca_iddestino, ca_sinidentificacion, ca_fchcreado, ca_usucreado, ca_idinocliente, ca_nitdeposito) values ('$idinfodian', '$dispocarga', '$coddeposito', '$tipodocviaje', '$idcondiciones', '" . substr($responsabilidad, 0, 1) . "', '$tiponegociacion', '$tipocarga', '" . substr($precursores, 0, 1) . "', '$vlrfob', '$vlrflete', '$mercancia_desc', $iddestino, $sinidentificacion, to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario', $idinocliente, $nitdeposito)")) {
                         echo "<pre>";print_r($_REQUEST);echo "</pre>";
                         echo "insert into tb_dianclientes (ca_idinfodian, ca_referencia, ca_idcliente, ca_house, ca_dispocarga, ca_coddeposito, ca_tipodocviaje, ca_idcondiciones, ca_responsabilidad, ca_tiponegociacion, ca_tipocarga, ca_precursores, ca_vlrfob, ca_vlrflete, ca_mercancia_desc, ca_iddestino, ca_sinidentificacion, ca_fchcreado, ca_usucreado, ca_idinocliente) values ('$idinfodian', '$referencia', '$idcliente', '$house', '$dispocarga', '$coddeposito', '$tipodocviaje', '$idcondiciones', '" . substr($responsabilidad, 0, 1) . "', '$tiponegociacion', '$tipocarga', '" . substr($precursores, 0, 1) . "', '$vlrfob', '$vlrflete', '$mercancia_desc', $iddestino, $sinidentificacion, to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), '$usuario', $idinocliente)";
                         //echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
@@ -5662,7 +5692,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     //echo "<pre>";print_r($_REQUEST);echo "</pre>";
                     //echo "update tb_dianclientes set ca_idinfodian = '$idinfodian', ca_referencia = '$referencia', ca_idcliente = '$idcliente', ca_house = '$house', ca_dispocarga = '$dispocarga', ca_coddeposito = '$coddeposito', ca_tipodocviaje = '$tipodocviaje', ca_idcondiciones = '$idcondiciones', ca_responsabilidad = '" . substr($responsabilidad, 0, 1) . "', ca_tiponegociacion = '$tiponegociacion', ca_tipocarga = '$tipocarga', ca_precursores = '" . substr($precursores, 0, 1) . "', ca_vlrfob = '$vlrfob', ca_vlrflete = '$vlrflete', ca_mercancia_desc = '$mercancia_desc', ca_iddestino = $iddestino, ca_sinidentificacion = $sinidentificacion, ca_fchactualizado = to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idinfodian = '$idinfodian' and ca_idinocliente = $idinocliente";
                     //exit;
-                    if (!$rs->Open("update tb_dianclientes set ca_idinfodian = '$idinfodian',  ca_dispocarga = '$dispocarga', ca_coddeposito = '$coddeposito', ca_tipodocviaje = '$tipodocviaje', ca_idcondiciones = '$idcondiciones', ca_responsabilidad = '" . substr($responsabilidad, 0, 1) . "', ca_tiponegociacion = '$tiponegociacion', ca_tipocarga = '$tipocarga', ca_precursores = '" . substr($precursores, 0, 1) . "', ca_vlrfob = '$vlrfob', ca_vlrflete = '$vlrflete', ca_mercancia_desc = '$mercancia_desc', ca_iddestino = $iddestino, ca_sinidentificacion = $sinidentificacion, ca_fchactualizado = to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idinfodian = '$idinfodian' and ca_idinocliente = $idinocliente")) {
+                    if (!$rs->Open("update tb_dianclientes set ca_idinfodian = '$idinfodian',  ca_dispocarga = '$dispocarga', ca_coddeposito = '$coddeposito', ca_tipodocviaje = '$tipodocviaje', ca_idcondiciones = '$idcondiciones', ca_responsabilidad = '" . substr($responsabilidad, 0, 1) . "', ca_tiponegociacion = '$tiponegociacion', ca_tipocarga = '$tipocarga', ca_precursores = '" . substr($precursores, 0, 1) . "', ca_vlrfob = '$vlrfob', ca_vlrflete = '$vlrflete', ca_mercancia_desc = '$mercancia_desc', ca_iddestino = $iddestino, ca_sinidentificacion = $sinidentificacion, ca_nitdeposito = $nitdeposito, ca_fchactualizado = to_timestamp('" . date("d M Y H:i:s") . "', 'DD Mon YYYY HH24:mi:ss'), ca_usuactualizado = '$usuario' where ca_idinfodian = '$idinfodian' and ca_idinocliente = $idinocliente")) {
                         echo $rs->mErrMsg;
                     //    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
 //                        echo "<script>document.location.href = 'inosea.php?id=$referencia';</script>";

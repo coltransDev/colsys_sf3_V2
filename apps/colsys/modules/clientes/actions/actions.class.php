@@ -468,7 +468,10 @@ class clientesActions extends sfActions {
             $parametro = Doctrine::getTable("Parametro")->find(array("CU113", 1, 'CorteDos'));
             $this->corte_dos = date("Y-m-d", mktime(0, 0, 0, $month - $parametro->getCaValor2(), $day, $year));
             if (count($this->clientesSinSeguimiento) != 0){
-                //$this->clientesLiberados = ClienteTable::liberarClientesSinSeguimiento($this->corte_uno, $this->corte_dos, $this->clientesSinSeguimiento);
+                if(php_sapi_name()=='cli')
+                {
+                    $this->clientesLiberados = ClienteTable::liberarClientesSinSeguimiento($this->corte_uno, $this->corte_dos, $this->clientesSinSeguimiento);
+                }
             }
         } elseif ($reporte == "Activos") {
             // Lista los Clientes Activos y clasifica su comportamiento en los ultimos tres periodos
