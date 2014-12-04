@@ -18,10 +18,10 @@ $cliente = $inoCliente->getCliente();
                 <?= Utils::replace($status->getCaIntroduccion()); ?>
             </td>
             <?
-            if (1 == 2 && $user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S." && $reporte->getCaTransporte() == Constantes::MARITIMO) {
+            if ($user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S." && $reporte->getCaTransporte() == Constantes::MARITIMO) {
                 ?>
-                <td width="320">
-                    <div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/brasil12092012.jpg"/></div>
+                <td width="170">
+                    <div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/amb-bog20140814.jpg"/></div>
                 </td>
                 <?
             }
@@ -220,7 +220,7 @@ $cliente = $inoCliente->getCliente();
                 <li>El recibo de los contenedores en el interior del País esta sujeto a la disponibilidad de espacio en el respectivo patio de las Navieras.</li>
                 <li>En caso de aceptación se debe cancelar un Drop Off , el cual fue previamente cotizado a Ustedes.</li>
                 <li>Solicitamos a ustedes devolver los contenedores a la mayor brevedad posible, para evitar costos  adicionales por concepto de demoras en la devolución de las unidades.</li>
-                <li>El tiempo libre para la devolución de los contenedores vacíos es estimado en 9 días calendario a partir de la fecha de arribo del buque para las unidades estándar. Y  los contenedores  especiales como refrigeradas tienen  3 días  siguientes a la llegada del buque, y sin excepcion la devolucion es en el  Puerto  ( este tiempo  esta sujeto a cambios o variaciones del mercado).</li>
+                <li>El tiempo libre para la devolución de los contenedores vacíos es estimado en 9 días calendario a partir de la fecha de arribo del buque para las unidades estándar. Y  los contenedores  especiales como refrigeradas tienen  3 días  siguientes a la llegada del buque, y sin excepcion la devolucion es en el  Puerto  (este tiempo esta sujeto a variaciones del mercado o condiciones específicas definidas en la oferta comercial).</li>
             </ul>
             <?
         }
