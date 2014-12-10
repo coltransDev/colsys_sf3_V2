@@ -337,7 +337,7 @@ class ClienteTable extends Doctrine_Table {
             $fch_fin = date('Y-m-d H:i:s', mktime(23, 59, 59, date('m'), date('d'), date('Y')));
         }
 
-        $query = "SELECT c.ca_idcliente, c.ca_idalterno, ca_digito, c.ca_compania, c.ca_vendedor, c.ca_sucursal, cot.ca_cotizacion_last, rep.ca_reporte_last, seg.ca_seguimiento_last, eve.ca_evento_max, c.ca_coltrans_std, c.ca_coltrans_fch::date, c.ca_colmas_std, c.ca_colmas_fch::date ";
+        $query = "SELECT c.ca_idcliente, c.ca_idalterno, ca_digito, c.ca_compania, c.ca_vendedor, c.ca_sucursal, c.ca_fchcreado::date as ca_fchcreado_clie, cot.ca_cotizacion_last, rep.ca_reporte_last, seg.ca_seguimiento_last, eve.ca_evento_max, c.ca_coltrans_std, c.ca_coltrans_fch::date, c.ca_colmas_std, c.ca_colmas_fch::date ";
         $query.= "FROM vi_clientes c ";
         $query.= "LEFT JOIN (select cl.ca_idcliente, max(co.ca_fchcreado)::date as ca_cotizacion_last, count(co.ca_idcotizacion) as ca_cotizaciones from tb_cotizaciones co inner join tb_concliente cl on co.ca_idcontacto = cl.ca_idcontacto where co.ca_fchcreado < '$fch_fin' group by cl.ca_idcliente order by cl.ca_idcliente) cot ON c.ca_idcliente = cot.ca_idcliente ";
         $query.= "LEFT JOIN (select cl.ca_idcliente, max(rp.ca_fchreporte)::date as ca_reporte_last, count(rp.ca_idreporte) as ca_reportes from tb_reportes rp inner join tb_concliente cl on rp.ca_idconcliente = cl.ca_idcontacto where rp.ca_fchreporte < '$fch_fin' group by cl.ca_idcliente order by cl.ca_idcliente) rep ON c.ca_idcliente = rep.ca_idcliente ";
@@ -368,22 +368,25 @@ class ClienteTable extends Doctrine_Table {
     public static function liberarClientesSinSeguimiento($fch_ini, $fch_fin, $clientesSinSeguimiento) {
         set_time_limit(0);
         $liberado = array();
-        foreach ($clientesSinSeguimiento as $cliente){
-            $fechas = array($cliente["ca_cotizacion_last"], $cliente["ca_reporte_last"], $cliente["ca_seguimiento_last"], $cliente["ca_evento_max"]);
+        $q = Doctrine_Manager::getInstance()->connection();
+        foreach ($clientesSinSeguimiento as $clienteSinSeguimiento){
+            $fechas = array($clienteSinSeguimiento["ca_fchcreado_clie"], $clienteSinSeguimiento["ca_cotizacion_last"], $clienteSinSeguimiento["ca_reporte_last"], $clienteSinSeguimiento["ca_seguimiento_last"], $clienteSinSeguimiento["ca_evento_max"]);
             rsort($fechas);
             if ($fechas[0]<$fch_fin){
-                $cliente = Doctrine::getTable("IdsCliente")->find($cliente["ca_idcliente"]);
+                $sql =  "select ca_idcliente, ca_vendedor, sc.ca_nombre as ca_sucursal from tb_clientes cl inner join control.tb_usuarios us on us.ca_login = cl.ca_vendedor inner join control.tb_sucursales sc on sc.ca_idsucursal = us.ca_idsucursal where ca_idcliente = ".$clienteSinSeguimiento["ca_idcliente"];
+                $stmt = $q->execute($sql);
+                $row = $stmt->fetch();
                 
-                $sucursal = $cliente->getUsuario()->getSucursal()->getCaNombre();
-                $vendedor = $cliente->getCaVendedor();
-                $parametros = Doctrine::getTable("Parametro")->retrieveByCaso("CU238", $sucursal);
-                if ($parametros){
-                    foreach($parametros as $parametro) {
-                        $cuentas = explode(",", $parametro->getCaValor2());
-                        if (!in_array($cliente->getCaVendedor(), $cuentas)){
-                            $cliente->setCaVendedor($cuentas[0]);   // Libera el cliente, asignando la cuenta por defecto de Comercial para la sucursal
-                            $cliente->save();
-                            $liberado[] = $cliente->getCaIdcliente();
+                if ($row["ca_sucursal"] != ""){
+                    $parametros = Doctrine::getTable("Parametro")->retrieveByCaso("CU238", $row["ca_sucursal"]);
+                    if ($parametros){
+                        foreach($parametros as $parametro) {
+                            $cuentas = explode(",", $parametro->getCaValor2());
+                            if (!in_array($row["ca_vendedor"], $cuentas)){
+                                $query = "update tb_clientes set ca_vendedor = '".$cuentas[0]."', ca_usuactualizado = 'Administrador', ca_fchactualizado = '".date("Y-m-d H:i:s")."' where ca_idcliente = ".$clienteSinSeguimiento["ca_idcliente"];
+                                $q->execute($query);
+                                $liberado[] = $row["ca_idcliente"];
+                            }
                         }
                     }
                 }
