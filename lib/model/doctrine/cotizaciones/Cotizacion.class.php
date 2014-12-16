@@ -304,7 +304,7 @@ class Cotizacion extends BaseCotizacion {
 
     public function getDirectorioBase() {
         $folder = Cotizacion::FOLDER;
-        return $directory = $folder . DIRECTORY_SEPARATOR . $this->getCaEmpresa() . DIRECTORY_SEPARATOR . $this->getCaConsecutivo();
+        return $directory = $folder . DIRECTORY_SEPARATOR . $this->getCaEmpresa() .DIRECTORY_SEPARATOR .substr($this->getCaConsecutivo(), -4).DIRECTORY_SEPARATOR . $this->getCaConsecutivo();
     }
 
 }
