@@ -91,6 +91,10 @@ class reportesGerActions extends sfActions {
         $this->idcliente = $request->getParameter("idcliente");
         $this->cliente = $request->getParameter("cliente");
         $this->proyectos = ($request->getParameter("proyectos")) ? TRUE : FALSE;
+        
+        $this->ntipo = $request->getParameter("ntipo");
+        $this->tipo = $request->getParameter("tipo");
+        
 
         if ($this->opcion) {
 
@@ -156,6 +160,10 @@ class reportesGerActions extends sfActions {
                 $joinclientes = "JOIN tb_concliente cc ON cc.ca_idcontacto=r.ca_idconcliente";
                 $where.=" and cc.ca_idcliente = '" . $this->idcliente . "'";
             }
+            
+            if ($this->ntipo>0)
+                $where.=" and m.ca_tipo='" . $this->ntipo . "'";
+            
 
             $sql = "SELECT tt.ca_liminferior,m.ca_referencia, tt.ca_concepto,tt.ca_idconcepto, m.ca_fchembarque, m.ca_fcharribo, m.ca_fchreferencia, 
                         m.ca_origen, ori.ca_ciudad AS ori_ca_ciudad, m.ca_destino, des.ca_ciudad AS des_ca_ciudad, tra_ori.ca_idtrafico AS ori_ca_idtrafico, 
@@ -860,16 +868,16 @@ class reportesGerActions extends sfActions {
         $this->peso = array();
         $wherePpal = "";
 
-        if ($this->opcion) {
+        if ($this->opcion) {            
             switch ($this->typeidg) {
                 case 1:
                     $select1 = ",(ca_fchllegada- (CASE WHEN sq.ca_carga_disponible != '' THEN date(sq.ca_carga_disponible) ELSE date(v.ca_fchcreado) END)) as ca_diferencia";
                     $where1 = "WHERE rs.ca_idetapa in ('IMCPD','IACAD','IMETA','IMETT','IACCR')";
                     $where2 = "WHERE rs.ca_idetapa in ('IMETA','IMETT','IACCR','IMCEM')";
                     $select3 = ", ca_carga_disponible";
-                    $select4 = ",substr(pro.ca_propiedades, strpos(pro.ca_propiedades, 'cargaDisponible=')+16,10) as ca_carga_disponible";
-                    $join2 = "LEFT JOIN (select max(ca_idreporte) as ca_idreporte, est.ca_propiedades FROM tb_repstatus est WHERE strpos(est.ca_propiedades, 'cargaDisponible=')>0 GROUP BY est.ca_propiedades) pro ON pro.ca_idreporte = rs.ca_idreporte";
-                    $group2 = ", pro.ca_propiedades ORDER BY rp.ca_consecutivo";
+                    $select4 = ", ca_carga_disponible";
+                    $join2 = "LEFT JOIN (select max(ca_idreporte) as ca_idreporte, max(substr(est.ca_propiedades, strpos(est.ca_propiedades, 'cargaDisponible=')+16,10)) as ca_carga_disponible FROM tb_repstatus est WHERE strpos(est.ca_propiedades, 'cargaDisponible=')>0 GROUP BY ca_idreporte) pro ON pro.ca_idreporte = rs.ca_idreporte";
+                    $group2 = ", pro.ca_carga_disponible ORDER BY rp.ca_consecutivo";
                     break;
                 case 2:
                     $select1 = ",ca_fchsalida_cd, (CASE WHEN sqa.ca_fchllegada-ca_fchsalida_cd = 0 THEN 1 ELSE sqa.ca_fchllegada-ca_fchsalida_cd END) as ca_diferencia";
@@ -906,14 +914,16 @@ class reportesGerActions extends sfActions {
                     break;
             }
             
+            $wherePpal.= $this->transporte?"AND v.ca_transporte IN ('" . $this->transporte . "')":"";
+            $wherePpal.= $this->pais_origen?"AND v.ca_traorigen= '" . $this->pais_origen . "'":"";
             $wherePpal.= $this->corigen?"AND v.ca_ciuorigen = '".$this->corigen."'":"";
             $wherePpal.= $this->cdestino?"AND v.ca_ciudestino = '".$this->cdestino."'":"";
 
             $sql = "SELECT DISTINCT sqa.ca_ano1, sqa.ca_mes1, v.ca_consecutivo, v.ca_orden_clie as ca_orden, date(v.ca_fchcreado) as ca_fchcreado, v.ca_idreporte, v.ca_traorigen, v.ca_ciuorigen, v.ca_ciudestino,v.ca_modalidad,v.ca_transporte, v.ca_nombre as proveedor, v.ca_propiedades, 
-                            (CASE WHEN v.ca_modalidad = 'COLOADING' THEN 'LCL' ELSE v.ca_modalidad END) as nva_modalidad,  sqa.ca_fchllegada, sqa.ca_peso, sqa.ca_piezas as ca_piezas, sqa.ca_volumen
+                            (CASE WHEN v.ca_modalidad = 'COLOADING' THEN 'LCL' ELSE v.ca_modalidad END) as nva_modalidad,  sqa.ca_fchllegada, sqa.ca_peso, sqa.ca_piezas as ca_piezas, sqa.ca_volumen, sqa.ca_doctransporte
                             $select1
                     FROM vi_repindicadores v
-                        RIGHT OUTER JOIN ( SELECT extract(YEAR from rs.ca_fchllegada) as ca_ano1 ,extract(MONTH from rs.ca_fchllegada) as ca_mes1, ca_idreporte, ca_consecutivo, ca_fchllegada, ca_piezas, ca_peso, ca_volumen
+                        RIGHT OUTER JOIN ( SELECT extract(YEAR from rs.ca_fchllegada) as ca_ano1 ,extract(MONTH from rs.ca_fchllegada) as ca_mes1, ca_idreporte, ca_consecutivo, ca_fchllegada, ca_piezas, ca_peso, ca_volumen, ca_doctransporte
                                             $select2
                                             FROM tb_repstatus rs 
                                                 RIGHT JOIN ( SELECT rp.ca_consecutivo, min(rs.ca_idstatus) as ca_idstatus 
@@ -931,10 +941,8 @@ class reportesGerActions extends sfActions {
                                             GROUP BY rp.ca_consecutivo $group2) sf on rs.ca_idstatus = sf.ca_idstatus)  sq ON v.ca_consecutivo = sq.ca_consecutivo
                         $joinPpal
                         $joinSec
-                     WHERE v.ca_impoexpo IN ('" . Constantes::IMPO . "','" . Constantes::OTMDTA1 . "') 
-                           AND v.ca_transporte IN ('" . $this->transporte . "') 
-                           AND v.ca_idcliente = " . $this->idcliente . "
-                           AND v.ca_traorigen= '" . $this->pais_origen . "'
+                     WHERE v.ca_impoexpo IN ('" . Constantes::IMPO . "','" . Constantes::OTMDTA1 . "')                            
+                           AND v.ca_idcliente = " . $this->idcliente . "                           
                            AND ca_ano1::numeric = " . $this->ano_ini . "
                            AND ca_mes1::numeric BETWEEN " . $this->mesinicial . " and " . $this->mesfinal . " $wherePpal 
                     ORDER BY sqa.ca_fchllegada";
@@ -972,6 +980,11 @@ class reportesGerActions extends sfActions {
                             $this->indicador[(int) ($r["ca_mes1"])]["cumplimiento"] ++;
                         }
                     }
+                }else{                    
+                    if ($r[$this->dataIdg] > $this->indi_AIR[$this->pais_origen?$this->pais_origen:null] ||$r[$this->dataIdg] > $this->indi_FCL[$this->pais_origen?$this->pais_origen:null] || $r[$this->dataIdg] > $this->indi_LCL[$this->pais_origen?$this->pais_origen:null])
+                        $this->indicador[(int) ($r["ca_mes1"])]["incumplimiento"] ++;
+                    else
+                        $this->indicador[(int) ($r["ca_mes1"])]["cumplimiento"] ++;
                 }
 
                 $this->grid[$r["ca_ano1"]][$r["nva_modalidad"]][(int) ($r["ca_mes1"])]["conta"] = (isset($this->grid[$r["ca_ano1"]][$r["nva_modalidad"]][(int) ($r["ca_mes1"])]["conta"])) ? ($this->grid[$r["ca_ano1"]][$r["nva_modalidad"]][(int) ($r["ca_mes1"])]["conta"] + 1) : "1";
@@ -1194,9 +1207,9 @@ class reportesGerActions extends sfActions {
                         $filtroTipoInforme
                        -- Calcula el numero de negocios
                         LEFT OUTER JOIN (select ca_referencia, ca_consecutivo, count(ca_doctransporte) as ca_cant_negocios from (select ca_referencia, ca_hbls as ca_doctransporte, ca_consecutivo::text from tb_inoclientes_sea ics INNER JOIN tb_reportes rpt ON rpt.ca_idreporte = ics.ca_idreporte union  select ca_referencia, ca_hawb as ca_doctransporte, ca_idreporte::text as ca_consecutivo from tb_inoclientes_air) as cn where ca_consecutivo IS NOT NULL group by ca_referencia, ca_consecutivo order by ca_consecutivo) nn ON (rp.ca_consecutivo = nn.ca_consecutivo)
-                        INNER JOIN vi_usuarios us ON (rp.ca_login = us.ca_login)
-                        INNER JOIN vi_usuarios op ON (rf.ca_usuenvio = op.ca_login)
+                        INNER JOIN control.tb_usuarios us ON (rp.ca_login = us.ca_login)
                         INNER JOIN control.tb_sucursales sc ON (us.ca_idsucursal = sc.ca_idsucursal)
+                        INNER JOIN control.tb_usuarios op ON (rf.ca_usuenvio = op.ca_login)
                         INNER JOIN tb_ciudades cio ON (rp.ca_origen = cio.ca_idciudad)
                         INNER JOIN tb_traficos tro ON (cio.ca_idtrafico = tro.ca_idtrafico)
                         INNER JOIN tb_ciudades cid ON (rp.ca_destino = cid.ca_idciudad)
@@ -1757,6 +1770,12 @@ class reportesGerActions extends sfActions {
         
         if($this->opcion){
             $andWhere = "";        
+            if ($this->nmes) {
+                foreach ($this->nmes as $m) {
+                    if ($m != "")
+                        $mm[] = str_pad($m, 2, "0", STR_PAD_LEFT);
+                }
+            }
             if ($mm) {
                 if (count($mm) > 0) {
                     $mes = "";
@@ -1764,7 +1783,7 @@ class reportesGerActions extends sfActions {
                         $mes.= "'" . $mm[$i] . "',";
                     }
                     if (strpos($mes, 'Todos los meses') != true)
-                        $where.= " and ca_mes IN (" . substr($mes, 0, -1) . ")";
+                        $andWhere.= " and ca_mes IN (" . substr($mes, 0, -1) . ")";
                 }
             }
             if ($this->pais_origen){
@@ -1784,9 +1803,12 @@ class reportesGerActions extends sfActions {
                 $andWhere.= " and ca_estado = '".$this->estado."'";
             }
 
-            $sql = "SELECT ca_sucursal, ca_ano, ca_mes, ca_traorigen, ca_ciuorigen, (CASE WHEN ca_modalidad = 'COLOADING' THEN 'LCL' ELSE ca_modalidad END) as ca_modalidad, ca_referencia, ca_hbls, ca_compania, ca_cbm, ca_teus, ca_estado "               
-                   . "FROM vi_repgerencia_sea rg "
-                   . "where ca_ano = '".$this->aa."' $andWhere" ; 
+            $sql = "SELECT ca_sucursal, ca_ano, ca_mes, ca_traorigen, ca_ciuorigen, (CASE WHEN rg.ca_modalidad = 'COLOADING' THEN 'LCL' ELSE rg.ca_modalidad END) as ca_modalidad, ca_referencia, ca_hbls, ca_compania, ca_cbm, ca_teus, ca_estado, r.ca_idproveedor, tr1.ca_nombre AS ca_nombre_pro "
+                    . "FROM vi_repgerencia_sea rg"
+                    . "  LEFT JOIN tb_reportes r ON rg.ca_idreporte = r.ca_idreporte
+                        LEFT JOIN tb_terceros tr1 ON tr1.ca_idtercero::text = array_to_string(string_to_array(r.ca_idproveedor::text, '|'::text), ','::text) "
+                    . "WHERE ca_ano = '".$this->aa."' $andWhere"
+                    . "ORDER BY ca_ano, ca_mes, ca_referencia"; 
 
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
@@ -1984,5 +2006,55 @@ class reportesGerActions extends sfActions {
         }
         $this->comisiones = $data;
     }
+
+
+    /**
+     * Esta accion permitirá la apertura de varias referencias
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeReporteReportesDeNegocio(sfWebRequest $request) {
+        $this->annos = array();
+        for ($i = (date("Y")); $i >= (date("Y") - 5); $i--) {
+            $this->annos[] = $i;
+        }
+
+        // "%" => "Todos los Meses", 
+        $this->meses = array("01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre");
+
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select DISTINCT ca_nombre as ca_sucursal from control.tb_sucursales where ca_idempresa = 2 order by ca_sucursal";
+        $rs = $con->execute($sql);
+        $sucursales_rs = $rs->fetchAll();
+        $this->sucursales = array();
+        foreach ($sucursales_rs as $sucursal) {
+            $this->sucursales[$sucursal["ca_sucursal"]] = $sucursal["ca_sucursal"];
+        }
+
+        $usuarios_rs = Doctrine::getTable("Usuario")
+           ->createQuery("u")
+           ->innerJoin("u.Sucursal s")
+           ->addWhere("u.ca_departamento='Comercial' or u.ca_cargo='Representante de Ventas'")
+           ->orderBy("u.ca_login")
+           ->execute();
+        $this->vendedores = array();
+        $this->vendedores["%"] = "Usuarios (Todos)";
+        foreach ($usuarios_rs as $usuario) {
+            $this->vendedores[$usuario->getCaLogin()] = $usuario->getCaNombre();
+        }
+
+        $incoterms_rs = ParametroTable::retrieveByCaso("CU062");
+        
+        $this->incoterms = array();
+        $this->incoterms["%"] = "Incoterms (Todos)";
+        foreach ($incoterms_rs as $incoterm) {
+            $this->incoterms[$incoterm->getCaValor()] = $incoterm->getCaValor();
+        }
+        
+        list($ano, $mes, $dia) = sscanf(date('Y-m-d'), "%d-%d-%d");
+        $this->fch_ini = date('Y-m-d', mktime( 0, 0, 0, $mes, 1, $ano));
+        $this->fch_fin = date('Y-m-d', mktime( 0, 0, 0, $mes+1, 0, $ano));
+    }
+    
 }
 ?>
