@@ -1,23 +1,15 @@
 <?
 $cotizacion = $sf_data->getRaw("cotizacion");
 $notas = $sf_data->getRaw("notas");
-//$usuario = $cotizacion->getUsuario();
-//$contacto = $cotizacion->getContacto();
-//$cliente = $contacto->getCliente();
-//$empresa = $usuario->getSucursal()->getEmpresa();
-//$empresa = Doctrine::getTable("Empresa")->find(2);
-
 $usuario = $cotizacion->getUsuario();
 $contacto = $cotizacion->getContacto();
 $cliente = $contacto->getCliente();
-$empresa = Doctrine::getTable("Empresa")->find(2); // Localiza la empresa Colmas
+$empresa = Doctrine::getTable("Empresa")->find(2); // Localiza la empresa Coltrans
 
 $sucursal =  Doctrine::getTable("Sucursal")
         ->createQuery("s")                
         ->where("ca_nombre = ? and ca_idempresa= 2" , $usuario->getSucursal()->getcaNombre() )
         ->fetchOne();
-
-
 $comodato = false;
 
 $meses = array("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre");
@@ -54,23 +46,24 @@ switch ($cotizacion->getCaFuente()) {
 $pdf->SetFont($font, '', 10);
 $directorioAg = array();
 $imprimirNotas = array();
-//$sucursal = $usuario->getSucursal();
-
+$sucursal = $usuario->getSucursal();
 $pdf->SetSucursal($sucursal->getCaIdsucursal());
-//$sucursal = new Sucursal();
+
 $txtSucursal=array();
 $txtSucursal["datos"][]= $sucursal->getCaNombre();
 $dir= explode("  ", $sucursal->getCaDireccion());
 
 foreach($dir as $d)
     $txtSucursal["datos"][]=$d;
-//$txtSucursal[]="Centro El dorado";
 $txtSucursal["datos"][]="Pbx: ".$sucursal->getCaTelefono();//"Pxb : (57 - 1) 4239300";
 $txtSucursal["datos"][]="Fax: ".$sucursal->getCaFax();//"Pxb : (57 - 1) 4239300";
+$txtSucursal["datos"][] = "Cod. Postal: ". $sucursal->getCaCodpostal();
 if($sucursal->getCaEmail()!="")
-$txtSucursal["datos"][]="Email: ".$sucursal->getCaEmail();//"Email: bogota@coltrans.com.co";
+    $txtSucursal["datos"][]= $sucursal->getCaEmail();//"Email: bogota@coltrans.com.co";
 $txtSucursal["datos"][]=$empresa->getCaUrl();// "www.coltrans.com.co";
-//echo $sucursal->getCaIso();
+$txtSucursal["datos"][]="NIT: ".$empresa->getCaId();// "800024075";
+$txtSucursal["datos"][]="Cod. DIAN ".$empresa->getCaCoddian();
+
 if($sucursal->getCaIso()!="")
     $txtSucursal["imagenes"][]=$sucursal->getCaIso();
 if($sucursal->getCaBasc()!="")
@@ -78,11 +71,6 @@ if($sucursal->getCaBasc()!="")
 if($sucursal->getCaIata()!="")
     $txtSucursal["imagenes"][]=$sucursal->getCaIata();
 
-
-/*if($cotizacion->getCaIdcotizacion()=="130686")
-{print_r($txtSucursal);
-exit;
-}*/
 $pdf->SetFooterSucursal($txtSucursal);
 
 //$pdf->SetLineRepeat("Señores: ".strtoupper($cliente->getCaCompania()."    ".$cotizacion->getCaFchcreado()));
@@ -1194,12 +1182,7 @@ if (in_array("OTM", $transportes) || in_array("DTA", $transportes)) {
     $pdf->Ln(2);
     $pdf->MultiCell(0, 4, "Nota Importante: Es responsabilidad del importador, los perjuicios a que haya lugar como consecuencia de inexactitudes o errores en la documentación suministrada, así como de las sanciones resultado de requerimientos aduaneros por faltantes o sobrantes.
 
-La Poliza del Importador deberá incluir los tributos aduaneros. El OTM no se hace responsable por el pago de tributos aduaneros a la DIAN, la póliza de tributos aduanero sólo cumple la función de garantía a la DIAN. Los pagos por tríbutos aduaneros deberán ser asumidos por el importador y reclamados a su compañía de seguros para ser pagados a la DIAN.
-
-Importante:
-    • Al peso de la mercancía deberá adicionarse el peso del contenedor. La tara promedio para contenedor de 20' es de 2.300 kg y 40' de 4.300 kg.
-    • Las tarifas de los contenedores de 20' son tarifas para combinar. El tiempo estimado  de cargue para contenedores de 20' consolidados es de 48 horas.
-    • Los días de restricción vial informados por el Ministerio de Transporte no se tendrán en cuenta como días hábiles de entrega del contenedor.", 0, 'J', 0);
+La Poliza del Importador deberá incluir los tributos aduaneros. El OTM no se hace responsable por el pago de tributos aduaneros a la DIAN, la póliza de tributos aduanero sólo cumple la función de garantía a la DIAN. Los pagos por tríbutos aduaneros deberán ser asumidos por el importador y reclamados a su compañía de seguros para ser pagados a la DIAN.", 0, 'J', 0);
 
 
     $pdf->flushGroup();
@@ -1293,7 +1276,6 @@ $pdf->MultiCell(0, 4, strtoupper($empresa->getCaNombre()), 0, 1);
 $pdf->MultiCell(0, 4, $sucursal->getCaDireccion(), 0, 1);
 $pdf->MultiCell(0, 4, "Tel.:" . $sucursal->getCaTelefono() . " " . $usuario->getCaExtension(), 0, 1);
 $pdf->MultiCell(0, 4, "Fax :" . $sucursal->getCaFax(), 0, 1);
-$pdf->MultiCell(0, 4, "Cod. Postal :" . $sucursal->getCaCodpostal(), 0, 1);
 
 $pdf->MultiCell(0, 4, $sucursal->getCaNombre() . " - " . $empresa->getTrafico()->getCaNombre(), 0, 1);
 $pdf->MultiCell(0, 4, $usuario->getCaEmail(), 0, 1);
