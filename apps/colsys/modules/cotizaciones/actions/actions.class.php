@@ -567,7 +567,7 @@ class cotizacionesActions extends sfActions {
 
 
     public function executeGenerarPDFColtrans() {
-        $this->cotizacion = Doctrine::getTable("Cotizacion")->find($this->getRequestParameter("id"));
+        $this->cotizacion = Doctrine::getTable("Cotizacion")->find($this->getRequestParameter("id"));        
         $this->forward404Unless($this->cotizacion);
 
         $this->filename = $this->getRequestParameter("filename");
@@ -587,6 +587,18 @@ class cotizacionesActions extends sfActions {
             $grupos[$row["ca_transporte"]][] = $row["ca_modalidad"];
             $grupos[$row["ca_transporte"]] = array_unique($grupos[$row["ca_transporte"]]);
         }
+        
+        $this->cotizacion = Doctrine::getTable("Cotizacion")->find($this->getRequestParameter("id"));
+        $this->usuario = $this->cotizacion->getUsuario();
+        $this->contacto = $this->cotizacion->getContacto();
+        $this->cliente = $this->contacto->getCliente();
+        $this->empresa = Doctrine::getTable("Empresa")->find(2); // Localiza la empresa Colmas
+
+        $this->sucursal =  Doctrine::getTable("Sucursal")
+                ->createQuery("s")                
+                ->where("ca_nombre = ? and ca_idempresa=2" , $this->usuario->getSucursal()->getcaNombre() )
+                ->fetchOne();
+        
         $this->setTemplate("generarPDF" . $this->cotizacion->getCaEmpresa());
 
         $this->grupos = $grupos;
@@ -595,7 +607,7 @@ class cotizacionesActions extends sfActions {
 
     public function executeGenerarPDFColmas() {
         $this->cotizacion = Doctrine::getTable("Cotizacion")->find($this->getRequestParameter("id"));
-        $this->forward404Unless($this->cotizacion);
+        $this->forward404Unless($this->cotizacion);     
 
         $this->filename = $this->getRequestParameter("filename");
         $this->notas = sfYaml::load(sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "cotizaciones" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "notas.yml");
@@ -2016,10 +2028,13 @@ class cotizacionesActions extends sfActions {
 
         $conn = Doctrine::getTable("CotAduana")->getConnection();
         $conn->beginTransaction();
+        
+        $this->setTemplate("responseTemplate");
         try 
         {
             $user_id = $this->getUser()->getUserId();
             $id = $this->getRequestParameter("id");
+            $observaciones = $this->getRequestParameter("observaciones");
             if ($this->getRequestParameter("oid")) {
 
                 $aduana = Doctrine::getTable("CotAduana")->find($this->getRequestParameter("oid"));
@@ -2061,10 +2076,10 @@ class cotizacionesActions extends sfActions {
                 $aduana->setCaFchfin($this->getRequestParameter("fchfin"));
             }
 
-            if ($this->getRequestParameter("observaciones")) {
-                $aduana->setCaObservaciones(utf8_decode($this->getRequestParameter("observaciones")));
-            }else{
+            if (trim($this->getRequestParameter("observaciones")) == ""){
                 $aduana->setCaObservaciones(null);
+            }else{
+                $aduana->setCaObservaciones(utf8_decode($this->getRequestParameter("observaciones")));
             }
 
             if (!$this->getRequestParameter("oid")) {

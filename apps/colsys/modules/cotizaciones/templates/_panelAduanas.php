@@ -293,10 +293,9 @@ Ext.extend(PanelAduanas, Ext.grid.EditorGridPanel, {
                         scope:this,
                         handler: function(){
                             if( this.ctxRecord && confirm("Desea continuar?") ){
-
-
                                 var id = this.ctxRecord.id;
                                 var oid = this.ctxRecord.data.oid;
+                                var storeAduanasCot = this.store;
 
                                 if( oid ){
                                     Ext.Ajax.request(
