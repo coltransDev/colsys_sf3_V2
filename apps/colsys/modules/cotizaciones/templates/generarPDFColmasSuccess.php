@@ -260,6 +260,12 @@ if ($cotizacion->getCaAnexos() != '' && $empresa->getCaIdempresa() == 1) {
 }
 $pdf->flushGroup();
 
+// ======================== Seguros Contenedor ======================== //
+
+if($cotizacion->getEsSeguroContenedor()){
+    $imprimirNotas[] = "seguroContenedor";
+}
+
 // ======================== Notas ======================== //
 //if( $empresa->getCaIdempresa()==2 ){
 //if( $empresa->getCaIdempresa() )

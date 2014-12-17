@@ -306,5 +306,27 @@ class Cotizacion extends BaseCotizacion {
         $folder = Cotizacion::FOLDER;
         return $directory = $folder . DIRECTORY_SEPARATOR . $this->getCaEmpresa() .DIRECTORY_SEPARATOR .substr($this->getCaConsecutivo(), -4).DIRECTORY_SEPARATOR . $this->getCaConsecutivo();
     }
-
+    
+    public function getEsSeguroContenedor() {
+        
+        $conceptos = ParametroTable::retrieveByCaso("CU237");
+        
+        $idconceptos = array();
+        foreach($conceptos as $concepto){
+            $idconceptos[] = $concepto->getCaValor();
+        }
+        
+        $nreg = Doctrine::getTable("CotRecargo")
+                ->createQuery("r")
+                ->select("count(*) as nreg")
+                ->addWhere("r.ca_idcotizacion = ? ", $this->getCaIdcotizacion())
+                ->andWhereIn("r.ca_idrecargo", $idconceptos)
+                ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                ->execute();            
+        
+        if($nreg>0)
+            return true;            
+        
+        return false;
+    }
 }

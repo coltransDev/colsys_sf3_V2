@@ -1165,6 +1165,12 @@ if (count($seguros) > 0) {
     $pdf->flushGroup();
 }
 
+// ======================== Seguros Contenedor ======================== //
+
+if($cotizacion->getEsSeguroContenedor()){
+    $imprimirNotas[] = "seguroContenedor";
+}
+
 // ========================== Notas Importantes ========================== //
 $pdf->beginGroup();
 $pdf->SetFont($font, 'B', 8);
@@ -1182,9 +1188,12 @@ if (in_array("OTM", $transportes) || in_array("DTA", $transportes)) {
     $pdf->Ln(2);
     $pdf->MultiCell(0, 4, "Nota Importante: Es responsabilidad del importador, los perjuicios a que haya lugar como consecuencia de inexactitudes o errores en la documentación suministrada, así como de las sanciones resultado de requerimientos aduaneros por faltantes o sobrantes.
 
-La Poliza del Importador deberá incluir los tributos aduaneros. El OTM no se hace responsable por el pago de tributos aduaneros a la DIAN, la póliza de tributos aduanero sólo cumple la función de garantía a la DIAN. Los pagos por tríbutos aduaneros deberán ser asumidos por el importador y reclamados a su compañía de seguros para ser pagados a la DIAN.", 0, 'J', 0);
+    La Poliza del Importador deberá incluir los tributos aduaneros. El OTM no se hace responsable por el pago de tributos aduaneros a la DIAN, la póliza de tributos aduanero sólo cumple la función de garantía a la DIAN. Los pagos por tríbutos aduaneros deberán ser asumidos por el importador y reclamados a su compañía de seguros para ser pagados a la DIAN.
 
-
+    Importante:
+        • Al peso de la mercancía deberá adicionarse el peso del contenedor. La tara promedio para contenedor de 20' es de 2.300 kg y 40' de 4.300 kg.
+        • Las tarifas de los contenedores de 20' son tarifas para combinar. El tiempo estimado  de cargue para contenedores de 20' consolidados es de 48 horas.
+        • Los días de restricción vial informados por el Ministerio de Transporte no se tendrán en cuenta como días hábiles de entrega del contenedor.", 0, 'J', 0);
     $pdf->flushGroup();
 }
 
