@@ -2076,11 +2076,13 @@ class cotizacionesActions extends sfActions {
                 $aduana->setCaFchfin($this->getRequestParameter("fchfin"));
             }
 
-            if (trim($this->getRequestParameter("observaciones")) == ""){
-                $aduana->setCaObservaciones(null);
-            }else{
-                $aduana->setCaObservaciones(utf8_decode($this->getRequestParameter("observaciones")));
-            }
+            if ($this->getRequestParameter("observaciones")) {
+                if (trim($this->getRequestParameter("observaciones")) == ""){
+                    $aduana->setCaObservaciones(null);
+                }else{
+                    $aduana->setCaObservaciones(utf8_decode($this->getRequestParameter("observaciones")));
+                }
+            }    
 
             if (!$this->getRequestParameter("oid")) {
                 $aduana->setCaFchcreado(date("Y-m-d H:i:s"));
