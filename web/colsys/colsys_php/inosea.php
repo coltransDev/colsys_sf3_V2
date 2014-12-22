@@ -4003,12 +4003,15 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
                 
                 $tm = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-                $query = "select DISTINCT ic.ca_idreporte, ic.ca_referencia,ic.ca_login, ic.ca_idproveedor, ic.ca_proveedor, ic.ca_idcliente, cl.ca_idalterno, cl.ca_compania, ic.ca_numorden, ic.ca_hbls, ic.ca_fchhbls, ic.ca_numpiezas, ic.ca_peso, ic.ca_volumen, ic.ca_continuacion, ic.ca_continuacion_dest, bg.ca_nombre as ca_bodega, dc.*, dd.ca_nombre as ca_nomdeposito, dd.ca_fchdesde, dd.ca_fchhasta
-                    from tb_inoclientes_sea ic";
-                $query.= " LEFT OUTER JOIN vi_clientes_reduc cl ON (ic.ca_idcliente = cl.ca_idcliente) LEFT OUTER JOIN tb_bodegas bg ON (ic.ca_idbodega = bg.ca_idbodega)";
-                $query.= " LEFT OUTER JOIN tb_dianclientes dc ON (ic.ca_idinocliente = dc.ca_idinocliente)";
-                $query.= " LEFT OUTER JOIN tb_diandepositos dd ON (dc.ca_coddeposito = dd.ca_codigo::text)";
-                $query.= " where ic.ca_idinocliente = '$idinocliente' order by ca_idinfodian DESC";
+                $query = "select DISTINCT ic.ca_idreporte, ic.ca_referencia,ic.ca_login, ic.ca_idproveedor, ic.ca_proveedor, ic.ca_idcliente, cl.ca_idalterno, cl.ca_compania, ic.ca_numorden, ic.ca_hbls, ic.ca_fchhbls, ic.ca_numpiezas, ic.ca_peso, ic.ca_volumen, ic.ca_continuacion, ic.ca_continuacion_dest, bg.ca_nombre as ca_bodega, dc.*, dd.ca_nombre as ca_nomdeposito, dd.ca_fchdesde, dd.ca_fchhasta, bd.ca_identificacion
+                    from tb_inoclientes_sea ic
+                            LEFT OUTER JOIN vi_clientes_reduc cl ON (ic.ca_idcliente = cl.ca_idcliente)
+                            LEFT OUTER JOIN tb_bodegas bg ON (ic.ca_idbodega = bg.ca_idbodega)
+                            LEFT OUTER JOIN tb_reportes rp ON (ic.ca_idreporte = rp.ca_idreporte)
+                            LEFT OUTER JOIN tb_bodegas bd ON (rp.ca_idbodega = bd.ca_idbodega)
+                            LEFT OUTER JOIN tb_dianclientes dc ON (ic.ca_idinocliente = dc.ca_idinocliente)
+                            LEFT OUTER JOIN tb_diandepositos dd ON (dc.ca_coddeposito = dd.ca_codigo::text)
+                            where ic.ca_idinocliente = '$idinocliente' order by ca_idinfodian DESC ";
                 if (!$tm->Open("$query")) {    // Trae de la Tabla de la Dian por lo menos un registr vacio de la referencia.
                     echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
                     echo "<script>document.location.href = 'entrada.php?id=3947';</script>";
@@ -4037,6 +4040,10 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $consignatario = ($rp->Value('ca_continuacion') != "N/A" and $rp->Value('ca_idconsignatario') != 0) ? $rp->Value('ca_nombre_con') . " Nit. " . $rp->Value('ca_identificacion_con') . (($rp->Value('ca_tipobodega') != "Coordinador Logistico") ? " / " . $rp->Value('ca_tipobodega') . " " . (($rp->Value('ca_bodega') != 'N/A') ? $rp->Value('ca_bodega') : "") : "") : $consignatario; //" / ".$rp->Value('ca_tipobodega')." ".(($rp->Value('ca_bodega')!='N/A')?$rp->Value('ca_bodega'):"")
                 $descripcion_merc = (strlen(trim($tm->Value('ca_mercancia_desc'))) != 0) ? $tm->Value('ca_mercancia_desc') : $rp->Value('ca_mercancia_desc');
                 $checked = ($tm->Value('ca_sinidentificacion') == 't') ? "CHECKED" : "";
+                
+                // ca_nitdeposito -> Nit del depósito registrado en tb_dianclientes
+                // ca_identificacion -> Nit del depósito registrado en Reporte de Negocios
+                $nitdeposito = ($tm->Value('ca_nitdeposito') <> $tm->Value('ca_identificacion') and $tm->Value('ca_identificacion') != "")?$tm->Value('ca_identificacion'):$tm->Value('ca_nitdeposito');
 
                 $cu = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$cu->Open("select ca_identificacion, ca_valor, ca_valor2 from tb_parametros where ca_casouso = 'CU073' order by ca_identificacion, ca_valor2")) {          // Selecciona los correos de la tabla Parametros
@@ -4278,8 +4285,9 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     echo"   <OPTION VALUE=0>Sin Seleccionar</OPTION>";
                     $dp->MoveFirst();
                     while (!$dp->Eof()) {
-                        $sel = ($dp->Value('ca_identificacion') == $tm->Value('ca_nitdeposito')) ? 'SELECTED' : '';
-                        echo"<OPTION VALUE=" . $dp->Value('ca_identificacion') . " $sel>" . $dp->Value('ca_razonsocial') . " " . $dp->Value('ca_identificacion') . " (" . $dp->Value('ca_tipo') . ")" . "</OPTION>";
+                        $sel = ($dp->Value('ca_identificacion') == $nitdeposito) ? 'SELECTED' : '';
+                        // echo"<OPTION VALUE=" . $dp->Value('ca_identificacion') . " $sel>" . $dp->Value('ca_razonsocial') . " " . $dp->Value('ca_identificacion') . " (" . $dp->Value('ca_tipo') . ")" . "</OPTION>";
+                        echo"<OPTION VALUE=" . $dp->Value('ca_identificacion') . " $sel>" . $dp->Value('ca_razonsocial') . " " . $dp->Value('ca_identificacion') . "</OPTION>";
                         $dp->MoveNext();
                     }
                     echo "  </TD>";
