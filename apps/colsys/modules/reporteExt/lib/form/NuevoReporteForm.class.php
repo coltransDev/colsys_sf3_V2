@@ -34,6 +34,7 @@ class NuevoReporteForm extends BaseForm{
 		$widgets['instrucciones'] = new sfWidgetFormTextarea(array(), array("rows"=>5, "cols"=>140 ));		
 		$widgets['notas'] = new sfWidgetFormTextarea(array(), array("rows"=>4, "cols"=>140 ));				
 		$widgets['archivo'] = new sfWidgetFormInputFile(array(), array("size"=>120 ));
+                $widgets['hbltxt'] = new sfWidgetFormTextarea(array(), array("rows"=>4, "cols"=>140 ));
 				
 		
 		
@@ -71,6 +72,7 @@ class NuevoReporteForm extends BaseForm{
 		
 		
 		$validator['notas'] = new sfValidatorString(array('required' => false ));
+                $validator['hbltxt'] = new sfValidatorString(array('required' => false ));
 		
 		
 														

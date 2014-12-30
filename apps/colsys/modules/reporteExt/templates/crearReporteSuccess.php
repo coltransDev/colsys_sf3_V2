@@ -24,7 +24,7 @@ var crearSeguimiento=function(){
 <div id='find_texts' style='display:none; border-width:3; border-color:#666666; border-style:solid; position:absolute;' >
 		<iframe id="find_texts_frame" src="<?=url_for("reporteExt/instruccionesAgentes?transporte=".$reporte->getCaTransporte());?>" scrolling="yes" frameborder="0" marginheight="0" marginwidth="0" width="650px" height="800px"></iframe>	
 	</div>
-<form action="<?=url_for("reporteExt/crearReporte?idreporte=".$reporte->getCaIdreporte())?>" method="post" enctype="multipart/form-data">
+<form action="<?=url_for("reporteExt/crearReporte?idreporte=".$reporte->getCaIdreporte())?>" method="post" enctype="multipart/form-data" >
 <table width="60%" border="0" class="tableList">
 	<tr>
 		<th colspan="2"><div align="center"><b>Nuevo Reporte <?=$reporte->getCaTransporte()?> al exterior </b></div></th>
@@ -166,6 +166,18 @@ var crearSeguimiento=function(){
 			</div>
         </td>
 	</tr>
+<!--        <tr>
+		<td colspan="2" valign="top"><div align="left"><b>HBL CONSIGNED TO: </b>		
+			 <?			
+			 /*echo $form['hbltxt']->renderError(); 
+                        $form->setDefault('hbltxt', $hijo);
+                        echo $form['hbltxt']->render();*/
+			 ?>
+		</div></td>
+	</tr>
+-->        
+
+        
 	<tr>
 		<td colspan="2" valign="top"><div align="left"><b>Adjuntar Documento: </b>		
 			 <?			

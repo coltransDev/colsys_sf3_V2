@@ -3,6 +3,9 @@ $consignatario_m = $sf_data->getRaw("consignatario_m");
 $master = $sf_data->getRaw("master");
 $notify_h = $sf_data->getRaw("notify_h");
 $hijo = $sf_data->getRaw("hijo");
+$hbltxt = $sf_data->getRaw("hbltxt");
+
+
 ?>
 <table width="100%" cellspacing="1" border="1" class="tableList">
 <tr>
@@ -120,7 +123,21 @@ if ( (($reporte->getCaModalidad() != 'LCL' || ($reporte->getCaModalidad() != 'LC
 </tr>
 <tr>
 	<td style="vertical-align:top"><b>HBL CONSIGNED TO:</b></td>
-	<td colspan="3"><?=$hijo?></td>
+	<td colspan="3">
+            <?= ($hbltxt!="")?$hbltxt:$hijo?><br>
+            <?
+            if($layout!="email") 
+            {
+            ?>
+            <textarea id="hbltxt" name="hbltxt" cols="100" rows="4"><?=str_replace("<br />", "\n", $hijo)?></textarea>
+            <?
+            }
+//            echo $form['hbltxt']->renderError(); 
+//            $form->setDefault('hbltxt', $hijo);
+//            echo $form['hbltxt']->render();
+            ?>
+            
+        </td>
 </tr>
 <?
 if( $idtrafico=="PE-051" ){

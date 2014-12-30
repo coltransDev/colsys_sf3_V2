@@ -113,6 +113,9 @@ class reporteExtActions extends sfActions
 			$bindValues["instrucciones"] = $request->getParameter("instrucciones");
 			
 			$bindValues["notas"] = $request->getParameter("notas");
+                        $bindValues["hbltxt"] = $request->getParameter("hbltxt");
+                        //echo $bindValues["hbltxt"];
+                        //exit;
 			
 			
 			$bindValues["prog_seguimiento"] = $request->getParameter("prog_seguimiento");
@@ -144,18 +147,18 @@ class reporteExtActions extends sfActions
                     $tarea->setCaFchcreado( date("Y-m-d H:i:s") );
                     $tarea->setCaUsucreado( $this->getUser()->getUserId() );
 
-					$tarea->setCaUrl( "/traficos/listaStatus/modo/".$this->modo."/reporte/".$reporte->getCaConsecutivo() );
-					$tarea->setCaIdlistatarea( 3 );			
-					$tarea->setCaFchvencimiento( $request->getParameter("fchseguimiento")." 23:59:59" );
-					$tarea->setCaFchvisible( $request->getParameter("fchseguimiento")." 00:00:00" );			
-					$tarea->setCaTitulo( $titulo );		
-					$tarea->setCaTexto( $request->getParameter("txtseguimiento") );
+                    $tarea->setCaUrl( "/traficos/listaStatus/modo/".$this->modo."/reporte/".$reporte->getCaConsecutivo() );
+                    $tarea->setCaIdlistatarea( 3 );			
+                    $tarea->setCaFchvencimiento( $request->getParameter("fchseguimiento")." 23:59:59" );
+                    $tarea->setCaFchvisible( $request->getParameter("fchseguimiento")." 00:00:00" );			
+                    $tarea->setCaTitulo( $titulo );		
+                    $tarea->setCaTexto( $request->getParameter("txtseguimiento") );
                     if( $request->getParameter("remitente") ){
                         $tarea->setCaNotificar( $request->getParameter("remitente") );
                     }
-					$tarea->save();
-					$loginsAsignaciones = array( $this->getUser()->getUserId() );
-					$tarea->setAsignaciones( $loginsAsignaciones );	
+                    $tarea->save();
+                    $loginsAsignaciones = array( $this->getUser()->getUserId() );
+                    $tarea->setAsignaciones( $loginsAsignaciones );	
 
 
                     $asignacion = Doctrine::getTable("RepAsignacion")->find(array($reporte->getCaIdreporte(), $tarea->getCaIdtarea()));
@@ -174,75 +177,70 @@ class reporteExtActions extends sfActions
 				/*
 				* Crea el reporte
 				*/
-                
 				
-		
-				
-				$request->setParameter('layout', "email");
 
-				$contenido = sfContext::getInstance()->getController()->getPresentationFor( 'reporteExt', 'verReporte');
-							
-				//$contenido = AddSlashes($contenido);
-						
-				$user = $this->getUser();
+                $request->setParameter('layout', "email");
+                $request->setParameter('hbltxt', $request->getParameter("hbltxt"));
+                
+                $contenido = sfContext::getInstance()->getController()->getPresentationFor( 'reporteExt', 'verReporte');
+                //$contenido = AddSlashes($contenido);
+                $user = $this->getUser();
+                $email = new Email();
+                $email->setCaUsuenvio( $user->getUserId() );	
+                if( $this->reporte->getCaTransporte()==Constantes::MARITIMO || $this->reporte->getCaTransporte()==Constantes::TERRESTRE ){
+                        $email->setCaTipo( "Rep.MarítimoExterior" );
+                }
+
+                if( $this->reporte->getCaTransporte()==Constantes::AEREO ){
+                        $email->setCaTipo( "Rep.AéreoExterior" );
+                }
+
+                $email->setCaIdcaso( $this->reporte->getCaIdreporte() );
+
+                //print_r( $_POST );
+
+                if( $request->getParameter("remitente") ){
+                        $email->setCaFrom( $request->getParameter("remitente") );
+                        $email->setCaReplyto( $request->getParameter("remitente") );
+                }else{
+                        $email->setCaFrom( $user->getEmail() );
+                        $email->setCaReplyto( $user->getEmail() );
+                }
+                $email->setCaFromname( $user->getNombre() );
+
+                if( $request->getParameter("readreceipt") ){
+                        $email->setCaReadReceipt( true );
+                }
+
+                foreach( $contactos as $contacto ){		
+                        @$recip = $bindValues["destinatarios_".$contacto->getCaIdcontacto()];
+
+                        $recip = str_replace(" ", "", $recip );			
+                        if( $recip ){
+                                $email->addTo( $recip ); 
+                        }									 
+                }
 				
-				$email = new Email();	
-								
-				$email->setCaUsuenvio( $user->getUserId() );	
-				if( $this->reporte->getCaTransporte()==Constantes::MARITIMO || $this->reporte->getCaTransporte()==Constantes::TERRESTRE ){
-					$email->setCaTipo( "Rep.MarítimoExterior" );
-				}
-				
-				if( $this->reporte->getCaTransporte()==Constantes::AEREO ){
-					$email->setCaTipo( "Rep.AéreoExterior" );
-				}
-							
-				$email->setCaIdcaso( $this->reporte->getCaIdreporte() );
-				
-				//print_r( $_POST );
-				
-				if( $request->getParameter("remitente") ){
-					$email->setCaFrom( $request->getParameter("remitente") );
-					$email->setCaReplyto( $request->getParameter("remitente") );
-				}else{
-					$email->setCaFrom( $user->getEmail() );
-					$email->setCaReplyto( $user->getEmail() );
-				}
-				$email->setCaFromname( $user->getNombre() );
-				
-				if( $request->getParameter("readreceipt") ){
-					$email->setCaReadReceipt( true );
-				}
-				
-				foreach( $contactos as $contacto ){		
-					@$recip = $bindValues["destinatarios_".$contacto->getCaIdcontacto()];
-					
-					$recip = str_replace(" ", "", $recip );			
-					if( $recip ){
-						$email->addTo( $recip ); 
-					}									 
-				}
-				
-				for( $i=0; $i<NuevoReporteForm::NUM_CC ; $i++ ){
-					@$recip = $bindValues["cc_".$i];
-					if( $recip ){
-						$email->addCc( $recip ); 
-					}
-				}
-								
-				if( $request->getParameter("remitente") ){
-					$email->addCc( $request->getParameter("remitente"));
-				}else{				
-					$email->addCc( $user->getEmail() );
-				}
-												
-				$email->setCaSubject( $request->getParameter("asunto") );
-				$email->setCaBodyhtml( $contenido );
-				$email->save();
-							
-				$fileName = $_FILES['archivo']['tmp_name'];
-				
-				if( is_uploaded_file( $fileName ) ){
+                for( $i=0; $i<NuevoReporteForm::NUM_CC ; $i++ ){
+                        @$recip = $bindValues["cc_".$i];
+                        if( $recip ){
+                                $email->addCc( $recip ); 
+                        }
+                }
+
+                if( $request->getParameter("remitente") ){
+                        $email->addCc( $request->getParameter("remitente"));
+                }else{				
+                        $email->addCc( $user->getEmail() );
+                }
+
+                $email->setCaSubject( $request->getParameter("asunto") );
+                $email->setCaBodyhtml( $contenido );
+                $email->save();
+
+                $fileName = $_FILES['archivo']['tmp_name'];
+
+                if( is_uploaded_file( $fileName ) ){
                     $directory = $email->getDirectorio();
                     if( !is_dir($directory) ){
                         @mkdir($directory, 0777, true);
@@ -288,29 +286,32 @@ class reporteExtActions extends sfActions
 
 
 	public function executeVerReporte( sfWebRequest $request ){
-		$this->forward404Unless( $this->getRequestParameter("idreporte") );
-		$this->reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("idreporte") );
-		$this->forward404Unless( $this->reporte );
+            $this->forward404Unless( $this->getRequestParameter("idreporte") );
+            $this->reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("idreporte") );
+            $this->forward404Unless( $this->reporte );
 
-        if($this->reporte->getCaImpoexpo()==Constantes::OTMDTA)
-        {
-            $this->reporte = Doctrine::getTable("Reporte")
+            $this->layout=$this->getRequestParameter("layout");
+            $this->hbltxt=Utils::replace($this->getRequestParameter("hbltxt"));
+            
+            if($this->reporte->getCaImpoexpo()==Constantes::OTMDTA)
+            {
+                $this->reporte = Doctrine::getTable("Reporte")
                                      ->createQuery("r")                                     
                                      ->whereIn("r.ca_tiporep", array('1','2','3'))
                                      ->addWhere("r.ca_consecutivo = ? ", $this->reporte->getCaConsecutivo()  )                                     
                                      ->addOrderBy("r.ca_consecutivo DESC")                                     
                                      ->fetchOne();
-            $this->forward404Unless( $this->reporte );
-        }
+                $this->forward404Unless( $this->reporte );
+            }
 		//$this->forward404Unless( $this->reporte->getCaImpoexpo()==Constantes::IMPO||$this->reporte->getCaImpoexpo()==Constantes::TRIANGULACION );
 
-		if( $this->getRequestParameter("layout") ){
-			$this->setLayout( $this->getRequestParameter("layout") );
-		}
+            if( $this->getRequestParameter("layout") ){
+                $this->setLayout( $this->layout );
+            }
 
-        $this->introduccion = $this->getRequestParameter("introduccion");
-        $this->instrucciones = $this->getRequestParameter("instrucciones");
-        $this->notas = $this->getRequestParameter("notas");
+            $this->introduccion = $this->getRequestParameter("introduccion");
+            $this->instrucciones = $this->getRequestParameter("instrucciones");
+            $this->notas = $this->getRequestParameter("notas");
 	}
 	
 	

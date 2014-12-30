@@ -103,8 +103,6 @@ class reporteExtComponents extends sfComponents
                     $consignatario_final .= "<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />Email: ".$consignatario->getCaEmail();
                 }
             }
-            
-            
         }else{
             $contacto = $reporte->getContacto();
             $cliente = $reporte->getContacto()->getCliente();
@@ -127,23 +125,30 @@ class reporteExtComponents extends sfComponents
         $bodega2 = Doctrine::getTable("Bodega")->find( $reporte->getCaIdbodega() );
         
         if( $reporte->getCaIdconsignar()==1 ){
-            $hijo = $consignatario_final;
+            if($reporte->getCaContinuacion()!="OTM")
+                $hijo = $consignatario_final;
+            else
+            {
+                $cliente = $reporte->getContacto()->getCliente();
+                $hijo = $cliente->getCaCompania().($idtrafico!="PE-051"?" Nit. ".$cliente->getCaIdalterno()."-".$cliente->getCaDigito():"");
+            }
+                
         }else{
-
-
-
             $hijo = $bodega1->getCaNombre()." ".$bodega1->getCaDireccion();
         }
-        
+
         if( $bodega2 && ($bodega2->getCaTipo()!= "Coordinador Logistico" && $bodega2->getCaTipo()!="Coordinador Logístico" && $bodega2->getCaTipo()!="Cliente/Consignatario" && $bodega2->getCaTipo()!="-")  )
         {
             if($bodega2->getCaTipo()==$bodega2->getCaNombre() || $bodega2->getCaTipo()=="Entrega Urgente")
                 $hijo .=" / ".$bodega2->getCaTipo();
             else if($reporte->getCaContinuacion()!="N/A")
-                $hijo .=" / ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre()." ".$bodega2->getCaDireccion():"")." ".$bodega2->getCaTipo().(($reporte->getCaContinuacion()!="N/A")? " / ".$reporte->getDestinoCont()->getCaCiudad()." - ".$reporte->getDestinoCont()->getTrafico()->getCaNombre():"");
+                $hijo .=" / ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre()." Nit.".$bodega2->getCaIdentificacion()." ".$bodega2->getCaDireccion():"")." ".$bodega2->getCaTipo().(($reporte->getCaContinuacion()!="N/A")? " / ".$reporte->getDestinoCont()->getCaCiudad()." - ".$reporte->getDestinoCont()->getTrafico()->getCaNombre():"");
             else
                 $hijo .=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre()." ".$bodega2->getCaDireccion():"");
         }
+
+        if($reporte->getCaContinuacion()=="OTM")
+                $hijo .=" / ". $consignatario_final;
         
         /*
          * Notify
