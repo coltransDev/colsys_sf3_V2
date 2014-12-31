@@ -13,34 +13,37 @@ $numYears = $actualYear-$initialYear+1;
     <thead>
         <tr>
             <th >Nombre</th>
-			<th >Ciudad</th>
+            <th >Ciudad</th>
+            <th >Fch. Aprobado</th>
+            <th >Usu. Aprobado</th>
             <th >Estado Impo</th>
             <th >Estado Expo</th>
         </tr>
         <?
-        foreach( $proveedores as $proveedor ){
-			
-			$ids = $proveedor->getIds();
-			$tipo = $proveedor->getIdsTipo();
-			$sucursales = $ids->getIdsSucursal();
-                ?>
-		<tr>
+        foreach( $proveedores as $proveedor ){			
+            $ids = $proveedor->getIds();
+            $tipo = $proveedor->getIdsTipo();
+            $sucursales = $ids->getIdsSucursal();
+            ?>
+        <tr>
             <td width="300"><div align="left"><?=link_to($proveedor->getIds()->getCaNombre(), "ids/verIds?modo=prov&id=".$ids->getCaId())?></div></td>
             <!--<td  colspan="2"><div align="left"><b><?=$proveedor->getIds()->getCaNombre()?></b></div></td>-->
             <td width="100">
-                    <div align="left">
+                <div align="left">
                     <?
                     foreach( $sucursales as $sucursal ){
                         echo $sucursal->getCiudad()->getCaCiudad()." ";
                     }
                     ?>
-                    </div>
+                </div>
             </td>
+            <td><div align="left"><?=$proveedor->getCaFchaprobado()?></div></td>
+            <td><div align="left"><?=$proveedor->getCaUsuaprobado()?></div></td>
             <td><div align="left"><?=$proveedor->getCaActivoImpo()?"Activo":"<span class='rojo'>Inactivo</span>"?></div></td>
             <td><div align="left"><?=$proveedor->getCaActivoExpo()?"Activo":"<span class='rojo'>Inactivo</span>"?></div></td>
-		</tr>
+        </tr>
         <?
         }
         ?>
-	</table>
+    </table>
 </div>

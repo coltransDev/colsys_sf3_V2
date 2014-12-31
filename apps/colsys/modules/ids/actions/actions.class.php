@@ -1461,10 +1461,10 @@ class idsActions extends sfActions {
     public function executeListadoProveedoresAprobados(sfWebRequest $request) {
          $q= Doctrine::getTable("IdsProveedor")
                 ->createQuery("p")
-                ->innerJoin("p.Ids i")
-                ->innerJoin("i.IdsSucursal s")
-                ->innerJoin("s.Ciudad c")
-                ->innerJoin("p.IdsTipo t")                
+                ->leftJoin("p.Ids i")
+                ->leftJoin("i.IdsSucursal s")
+                ->leftJoin("s.Ciudad c")
+                ->leftJoin("p.IdsTipo t")                
                 
                 ->addOrderBy("t.ca_nombre ASC")
                 ->addOrderBy("p.ca_transporte ASC")
