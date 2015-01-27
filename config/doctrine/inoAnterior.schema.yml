@@ -1,10 +1,9 @@
-
 InoMaestraSea:
   options:
     symfony:
       form: false
       filter: false
-  generatePath: sea
+  generatePath: inoAnterior
   tableName: tb_inomaestra_sea
   columns:
     ca_referencia:
@@ -66,6 +65,10 @@ InoMaestraSea:
       local: ca_referencia
       foreign: ca_referencia
       type: many
+    InoUtilidadprmsSea:
+       local: ca_referencia
+       foreign: ca_referencia
+       type: many
     IdsProveedor:
       local: ca_idlinea
       foreign: ca_idproveedor
@@ -89,19 +92,25 @@ InoMaestraSea:
       local: ca_muelle
       foreign: ca_codigo
 
+
 InoClientesSea:
   options:
     symfony:
       form: false
       filter: false
-  generatePath: sea
+  generatePath: inoAnterior
   tableName: tb_inoclientes_sea
   columns:
-    ca_idinocliente: integer      
-    ca_referencia: string
-    ca_idcliente: integer      
-    ca_hbls: 
-      type: string
+    ca_idinocliente:
+      type: integer      
+    ca_referencia:
+      type: string   
+      primary: true
+    ca_idcliente:
+      type: integer  
+      primary: true
+    ca_hbls:
+      type: string  
       primary: true
     ca_idreporte: integer
     ca_idproveedor: integer
@@ -129,8 +138,6 @@ InoClientesSea:
     ca_fchantecedentes: date
     ca_imprimirorigen : boolean
     ca_idaduana: integer
-    ca_detlibero: string
-    ca_planilla: string
   relations:
      Reporte:
        local: ca_idreporte
@@ -140,6 +147,14 @@ InoClientesSea:
        local: ca_referencia
        foreign: ca_referencia
        type: one
+     InoIngresosSea:
+       local: ca_idinocliente
+       foreign: ca_idinocliente
+       type: many
+     InoUtilidadliqSea:
+       local: ca_idinocliente
+       foreign: ca_idinocliente
+       type: many
      Cliente:
        local: ca_idcliente
        foreign: ca_idcliente
@@ -174,12 +189,13 @@ InoClientesSea:
       type: one
       class: Ids
 
+
 InoEquiposSea:
   options:
     symfony:
       form: false
       filter: false
-  generatePath: sea
+  generatePath: inoAnterior
   tableName: tb_inoequipos_sea
   columns:
     ca_referencia:
@@ -218,7 +234,7 @@ InoContratosSea:
     symfony:
       form: false
       filter: false
-  generatePath: sea
+  generatePath: inoAnterior
   tableName: tb_inocontratos_sea
   columns:
     ca_referencia:
@@ -245,7 +261,7 @@ InoContratosSea:
        local: ca_idpatio
        foreign: ca_idpatio
        type: one
-       
+
 
 InoIngresosSea:
   options:
@@ -255,18 +271,12 @@ InoIngresosSea:
   generatePath: inoAnterior
   tableName: tb_inoingresos_sea
   columns:
-    ca_referencia:
-      type: string
-      primary: true
-    ca_idcliente:
+    ca_idinoingreso:
       type: integer
       primary: true
-    ca_hbls:
-      type: string
-      primary: true
-    ca_factura:
-      type: string
-      primary: true
+      autoincrement: true
+    ca_idinocliente: integer
+    ca_factura: string
     ca_fchfactura: date
     ca_idmoneda: string
     ca_neto: decimal
@@ -280,33 +290,35 @@ InoIngresosSea:
     ca_fchactualizado: timestamp
     ca_usuactualizado: string    
   relations:    
-     InoMaestraSea:
-       local: ca_referencia
-       foreign: ca_referencia
-       type: one        
-     Cliente:
-       local: ca_idcliente
-       foreign: ca_idcliente
+     InoClientesSea:
+       local: ca_idinocliente
+       foreign: ca_idinocliente
        type: one
-    
+     InoDeduccionesSea:
+       local: ca_idinoingreso
+       foreign: ca_idinoingreso
+       type: many
 
 InoCostosSea:
   options:
     symfony:
       form: false
       filter: false
-  generatePath: sea
+  generatePath: inoAnterior
   tableName: tb_inocostos_sea
   columns:
-    oid:
+    ca_idinocostos_sea:
       type: integer
-      primary: true
+      autoincrement: true
     ca_referencia:
       type: string      
+      primary: true
     ca_idcosto:
       type: integer      
+      primary: true
     ca_factura:
       type: string          
+      primary: true
     ca_fchfactura: date
     #ca_idproveedor: integer
     ca_proveedor: string
@@ -341,33 +353,69 @@ InoCostosSea:
       class: Usuario
 
 
+InoUtilidadSea:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_inoutilidad_sea
+  columns:
+    ca_idinocliente:
+      type: integer
+      primary: true
+    ca_idinocosto:
+      type: integer
+      primary: true
+    ca_valor: decimal
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+     InoClientesSea:
+       local: ca_idinocliente
+       foreign: ca_idinocliente
+       type: one
+     InoCostosSea:
+       local: ca_idinocosto
+       foreign: ca_idinocostos_sea
+       type: one
+     UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+     UsuActualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      class: Usuario
+
+
 InoUtilidadliqSea:
   options:
     symfony:
       form: false
       filter: false
-  generatePath: sea
+  generatePath: inoAnterior
   tableName: tb_inoutilidadliq_sea
-  columns:    
-    ca_referencia:
-      type: string 
+  columns:
+    ca_idinocliente:
+      type: integer
       primary: true
-    ca_idcliente:
-      type: integer      
-      primary: true
-    ca_hbls:
-      type: string   
-      primary: true
-    ca_valor: decimal    
+    ca_prepaid_vlr: decimal
+    ca_factura_vlr: decimal
+    ca_valor: decimal
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
-    ca_usuactualizado: string    
+    ca_usuactualizado: string
   relations:
-     InoMaestraSea:
-       local: ca_referencia
-       foreign: ca_referencia
-       type: one     
+     InoClientesSea:
+       local: ca_idinocliente
+       foreign: ca_idinocliente
+       type: one
      UsuCreado:
       local: ca_usucreado
       foreign: ca_login
@@ -380,43 +428,35 @@ InoUtilidadliqSea:
       class: Usuario
 
 
-InoutilidadSea:
+InoUtilidadprmsSea:
   options:
     symfony:
       form: false
       filter: false
-  generatePath: sea
-  tableName: tb_inoutilidad_sea
-  columns:    
-    ca_referencia:
-      type: string 
+  generatePath: inoAnterior
+  tableName: tb_inoutilidadprms_sea
+  columns:
+    ca_idparametro:
+      type: integer
       primary: true
-    ca_idcliente:
-      type: integer      
-      primary: true
-    ca_hbls:
-      type: string   
-      primary: true
-    ca_idcosto:
-      type: integer      
-      primary: true
-    ca_factura:
-      type: string      
-      primary: true
-    ca_valor: decimal    
+    ca_referencia: string
+    ca_idcosto: integer
+    ca_tipo: string
+    ca_valor: decimal
+    ca_aplicacion: string
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
-    ca_usuactualizado: string    
+    ca_usuactualizado: string
   relations:
+     InoMaestraSea:
+       local: ca_referencia
+       foreign: ca_referencia
+       type: one
      Costo:
        local: ca_idcosto
        foreign: ca_idcosto
        type: one
-     InoMaestraSea:
-       local: ca_referencia
-       foreign: ca_referencia
-       type: one     
      UsuCreado:
       local: ca_usucreado
       foreign: ca_login
@@ -427,6 +467,7 @@ InoutilidadSea:
       foreign: ca_login
       type: one
       class: Usuario
+
 
 InoMaestraAir:
   options:
@@ -489,8 +530,7 @@ InoMaestraAir:
       foreign: ca_login
       type: one
       class: Usuario
-   
- 
+
 
 InoClientesAir:
   options:
@@ -547,6 +587,7 @@ InoClientesAir:
       type: one
       class: Usuario
 
+
 InoIngresosAir:
   options:
     symfony:
@@ -583,7 +624,8 @@ InoIngresosAir:
        local: ca_referencia
        foreign: ca_referencia
        type: one          
-      
+
+
 InoCostosAir:
   options:
     symfony:
@@ -618,7 +660,8 @@ InoCostosAir:
        local: ca_referencia
        foreign: ca_referencia
        type: one          
- 
+
+
 InoUtilidadAir:
   options:
     symfony:
@@ -650,8 +693,8 @@ InoUtilidadAir:
        local: ca_referencia
        foreign: ca_referencia
        type: one      
-      
-      
+
+
 InoMaestraExpo:
   options:
     symfony:
@@ -696,7 +739,7 @@ InoMaestraExpo:
        foreign: ca_idcliente
        type: one
 
-      
+
 InoMaestraExpoAir:
   options:
     symfony:
@@ -711,7 +754,8 @@ InoMaestraExpoAir:
     ca_idexpo: integer
     ca_idaerolinea: string
     ca_hawb: string
-    
+
+
 InoMaestraExpoSea:
   options:
     symfony:
@@ -728,7 +772,7 @@ InoMaestraExpoSea:
     ca_modalidad: string
     ca_hija: string
 
-    
+
 InoMaestraExpoTer:
   options:
     symfony:
@@ -743,8 +787,8 @@ InoMaestraExpoTer:
     ca_idexpo: integer
     ca_idtransportador: integer
     ca_cartaporte: string    
-    
-    
+
+
 InoCostoExpo:
   options:
     symfony:
@@ -774,8 +818,8 @@ InoCostoExpo:
     ca_usucreado: string
     ca_fchactualizado: timestamp
     ca_usuactualizado: string
-  
- 
+
+
 InoIngresosExpo:
   options:
     symfony:
@@ -815,10 +859,8 @@ InoIngresosExpo:
       local: ca_referencia
       foreign: ca_referencia
       type: one
-    
 
-    
-    
+
 ExpoAlerta:
   options:
     symfony:
@@ -849,12 +891,13 @@ ExpoAlerta:
       foreign: ca_referencia
       type: one
 
+
 InoDianDepositos:
   options:
     symfony:
       form: false
       filter: false
-  generatePath: sea
+  generatePath: inoAnterior
   tableName: tb_diandepositos
   columns:
     ca_codigo:
@@ -867,30 +910,18 @@ InoDianDepositos:
     ca_fchdesde: string
     ca_fchhasta: string
 
-
 InoDeduccionesSea:
   options:
     symfony:
       form: false
       filter: false
-  generatePath: sea
+  generatePath: inoAnterior
   tableName: tb_inodeduccion_sea
   columns:
-    ca_referencia: 
-      type: string  
-      primary: true
-    ca_idcliente:
-      type: integer
-      primary: true
-    ca_hbls:
-      type: string
-      primary: true
-    ca_factura:
-      type: string
-      primary: true
     ca_iddeduccion:
       type: integer
       primary: true
+    ca_idinoingreso: integer
     ca_neto: numeric
     ca_valor: numeric
     ca_fchcreado: timestamp
@@ -898,11 +929,12 @@ InoDeduccionesSea:
     ca_fchactualizado: timestamp
     ca_usuactualizado: string
   relations:
-     InoMaestraSea:
-       local: ca_referencia
-       foreign: ca_referencia
+     InoIngresosSea:
+       local: ca_idinoingreso
+       foreign: ca_idinoingreso
        type: one
-     Cliente:
-       local: ca_idcliente
-       foreign: ca_idcliente
+     Deduccion:
+       local: ca_iddeduccion
+       foreign: ca_iddeduccion
        type: one
+         
