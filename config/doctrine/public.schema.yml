@@ -68,8 +68,8 @@ Trafico:
       fixed: false
       notnull: false
       primary: false
-  ca_cod_dian:
-      type: string(3)
+    ca_conceptos:
+      type: string(255)
       fixed: false
       notnull: false
       primary: false
