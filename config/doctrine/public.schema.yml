@@ -449,17 +449,22 @@ Deduccion:
     symfony:
       form: false
       filter: false
-  generatePath: public
+  generatePath: inoAnterior
   tableName: tb_deducciones
   columns:
     ca_iddeduccion:
       type: integer
       primary: true
-      autoincrement: true
-    ca_deduccion: string    
-    ca_transporte: string
-    ca_modalidad: string
-    ca_habilitado: boolean
+    ca_deduccion : string
+    ca_transporte : string
+    ca_impoexpo : string
+    ca_modalidad : string
+    ca_habilitado : boolean
+  relations:
+    InoDeduccionesSea:
+      local: ca_iddeduccion
+      foreign: ca_iddeduccion
+      type: many
 
 ColNovedad:
   options:
