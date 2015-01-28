@@ -458,7 +458,8 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 		   $vista_3 = ($nivel >= 3)?'visible':'hidden'; // Habilita la opción para definir porcentaje de comisión
 		   $vista_2 = ($nivel >= 1)?'visible':'hidden'; // Habilita la opción para firma de comodato
 		   $visible = ($rs->Value('ca_vendedor')==$usuario or $rs->Value('ca_vendedor')=='' or $nivel>1)?'visible':'hidden';
-		   $vetado = ($rs->Value('ca_coltrans_std')=='Vetado' or $rs->Value('ca_colmas_std')=='Vetado' )?'background-color:#FFb2b2;':'';
+                   $vetado = ($rs->Value('ca_entidad')!='Vigente')?'background-color:#9999CC;':'';
+		   $vetado = ($rs->Value('ca_coltrans_std')=='Vetado' or $rs->Value('ca_colmas_std')=='Vetado' )?'background-color:#FFb2b2;':$vetado;
 		   $alerta = ($rs->Value('ca_coltrans_std')=='Vetado' or $rs->Value('ca_colmas_std')=='Vetado' )?'<IMG src=\'./graficos/izquierda.gif\' border=0>':'';
 		   if (!$cn->Open("select * from vi_concliente where ca_idcliente = ".$rs->Value('ca_idcliente')." and ca_idcontacto != 0 and ca_cargo<>'Extrabajador'")) {          // Selecciona todos lo registros de la tabla Contacos de Clientes
 				echo "<script>alert(\"".addslashes($cn->mErrMsg)."\");</script>";      // Muestra el mensaje de error
