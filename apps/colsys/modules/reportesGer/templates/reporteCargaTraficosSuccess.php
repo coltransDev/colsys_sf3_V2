@@ -8,6 +8,8 @@ include_component("widgets", "widgetMultiIncoterms");
 include_component("widgets", "widgetAgente");
 include_component("widgets", "widgetCliente");
 include_component("widgets", "widgetSucursalAgente");
+include_component("widgets", "widgetParametros",array("caso_uso"=>"CU119"));
+
 $agente = $sf_data->getRaw("agente");
 $linea = $sf_data->getRaw("linea");
 $sucursalagente = $sf_data->getRaw("sucursalagente");
@@ -143,6 +145,17 @@ $resul = $sf_data->getRaw("resul");
                                             name: 'incoterms[]',                                                      
                                             width:250,
                                             value:'<?= implode(",", $incoterms) ?>'
+                                        }),
+                                        new WidgetParametros({
+                                            id:'tipo',
+                                            name:'tipo',
+                                            hiddenName:'ntipo',
+                                            fieldLabel: "Tipo",
+                                            caso_uso:"CU119",
+                                            width:200,
+                                            idvalor:"id",
+                                            value:"<?= $tipo ?>",
+                                            hiddenValue:"<?= $idtipo ?>"
                                         })
                                     ]
                                 },

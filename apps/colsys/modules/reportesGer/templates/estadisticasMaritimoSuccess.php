@@ -126,7 +126,6 @@ $meses = $sf_data->getRaw("meses");
     });
     tabs.render("container");
 </script>
-
 <?
 if ($opcion) {
     ?>
@@ -182,7 +181,7 @@ if ($opcion) {
                 <td><?=($g["LCL"][$year]["ca_teus"]+$g["FCL"][$year]["ca_teus"])?></td>
                 <td><?=$totalM?>%</td>
                 
-                <td><?=($g["LCL"][$year-1]["ca_teus"]+$g["FCL"][$year-1]["ca_teus"])-($g["LCL"][$year]["ca_teus"]+$g["FCL"][$year]["ca_teus"]) ?></td>
+                <td><?=($g["LCL"][$year]["ca_teus"]+$g["FCL"][$year]["ca_teus"])-($g["LCL"][$year-1]["ca_teus"]+$g["FCL"][$year-1]["ca_teus"]) ?></td>
             </tr>
             <?            
         }
@@ -193,8 +192,9 @@ if ($opcion) {
             $data2[]=$dataM[$p];
         }   
         {
-            $dataJSON[]=array("name"=>($year),"data"=>$data1);
             $dataJSON[]=array("name"=>($year-1),"data"=>$data2);
+            $dataJSON[]=array("name"=>($year),"data"=>$data1);
+            
         }
         //$dataJSON=array("name"=>$p,"data"=>$data);
         //print_r($dataJSON);
@@ -205,7 +205,8 @@ if ($opcion) {
             <td></td>
             <td align="right" colspan="2"></td>
             <td align="right"><?=$totalTeusM?></td>
-            <td></td>
+            <td align="right"><?//=round(( 1-($totalTeus/$totalTeusM) )*100,2);?></td>
+            <td align="right"><?=$totalTeusM-$totalTeus?></td>
         </tr>
         <tr><td colspan="10"><div align="center" id="grafica1" ></div></td></tr>
     </table>
@@ -256,11 +257,9 @@ if ($opcion) {
                 <td><?=$total?>%</td>
                 <td><?=($g["FCL"][$year]["ca_20pies"])?></td>
                 <td><?=($g["FCL"][$year]["ca_40pies"])?></td>
-                <td><?=($g["FCL"][$year]["ca_teus"])?></td>                
-                
+                <td><?=($g["FCL"][$year]["ca_teus"])?></td>
                 <td><?=$totalM?>%</td>
-                
-                <td><?=($g["FCL"][$year-1]["ca_teus"])-($g["FCL"][$year]["ca_teus"]) ?></td>
+                <td><?=($g["FCL"][$year]["ca_teus"])-($g["FCL"][$year-1]["ca_teus"]) ?></td>
             </tr>
             <?            
         }
@@ -271,8 +270,8 @@ if ($opcion) {
             $data2[]=$dataM[$p];
         }   
         {
-            $dataJSON[]=array("name"=>($year),"data"=>$data1);
             $dataJSON[]=array("name"=>($year-1),"data"=>$data2);
+            $dataJSON[]=array("name"=>($year),"data"=>$data1);            
         }
         //$dataJSON=array("name"=>$p,"data"=>$data);
         //print_r($dataJSON);
@@ -284,6 +283,7 @@ if ($opcion) {
             <td align="right" colspan="2"></td>
             <td align="right"><?=$totalTeusM?></td>
             <td></td>
+            <td align="right"><?=$totalTeusM-$totalTeus?></td>
         </tr>
         <tr><td colspan="10"><div align="center" id="grafica2" ></div></td></tr>
     </table>
@@ -336,7 +336,7 @@ if ($opcion) {
                 <td><?=($g["LCL"][$year]["ca_teus"])?></td>
                 <td><?=$totalM?>%</td>
                 
-                <td><?=($g["LCL"][$year-1]["ca_teus"])-($g["LCL"][$year]["ca_teus"]) ?></td>
+                <td><?=($g["LCL"][$year]["ca_teus"]) -($g["LCL"][$year-1]["ca_teus"]) ?></td>
             </tr>
             <?
         }
@@ -360,6 +360,7 @@ if ($opcion) {
             <td align="right" colspan="3"></td>
             <td align="right"><?=$totalTeusM?></td>
             <td></td>
+            <td align="right"><?=$totalTeusM-$totalTeus?></td>
         </tr>
         <tr><td colspan="10"><div align="center" id="grafica3" ></div></td></tr>
     </table>
@@ -483,7 +484,6 @@ foreach($grid["origen"] as $pais=> $gridO)
 <table class="tableList" width="600px" border="1" id="mainTable" align="center">
     <caption>Participacion FCL</caption>
 </table>
-
 
 <?
 //ksort($grid["origen"]);

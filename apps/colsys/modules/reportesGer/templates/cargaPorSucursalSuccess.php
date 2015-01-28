@@ -40,6 +40,7 @@ if ($opcion) {
                     <th>MODALIDAD</th>
                     <th>REFERENCIA</th>
                     <th>HBLS</th>
+                    <th>PROVEEDOR</th>
                     <th>COMPAÑIA</th>
                     <th>SUCURSAL</th>
                     <th>ESTADO</th>
@@ -57,6 +58,7 @@ if ($opcion) {
                     echo '<td>' . $r["ca_modalidad"] . '</td>';
                     echo '<td> <a href="/colsys_php/inosea.php?boton=Consultar&id='. $r["ca_referencia"] . '" target="_blank">'. $r["ca_referencia"].'</a></td>';
                     echo '<td>' . $r["ca_hbls"] . '</td>';
+                    echo '<td>' . $r["ca_nombre_pro"] . '</td>';
                     echo '<td>' . $r["ca_compania"] . '</td>';
                     echo '<td>' . $r["ca_sucursal"] . '</td>';
                     echo '<td>' . $r["ca_estado"] . '</td>';

@@ -67,42 +67,54 @@ if($opcion){
         ksort($data[$mod]); // Organiza el arreglo por el Key (mes)
     }
     
+    ksort($serieX); // Organiza los meses por el key
+    
     foreach($data as $mod => $mes){
-        foreach($mes as $km => $vm){
-            $dataEnd[$mod][] = $vm;
+        foreach($serieX as $key => $val){
+            $dataEnd[$mod][] = $mes[$key];            
         }
     }
-    
-    ksort($serieX); // Organiza los meses por el key
     
     foreach($serieX as $s){
         $serieM[]=$s; // Corre el arreglo empezando por la pocisión 0
     }
     $serieX=$serieM;
     
-    if($transporte=="Marítimo"){
+    switch($transporte){
+        case Constantes::MARITIMO:
+            if($typeidg!=6)
+                $dataJSON[]=array("name"=>"FCL","data"=>$dataEnd["FCL"]);
+
+            $dataJSON[]=array("name"=>"LCL","data"=>$dataEnd["LCL"]);
+
+            $meta = "<b>Meta LCL".$indi_LCL[$pais_origen]." días - FCL->".$indi_FCL[$pais_origen]." días.</b>";
+            $plotLCL = $indi_LCL[$pais_origen];
+            $plotFCL = $indi_FCL[$pais_origen];
+            break;
+        case Constantes::AEREO:
+            $dataJSON[]=array("name"=>"CONSOLIDADO","data"=>$dataEnd["CONSOLIDADO"]);
+            $dataJSON[]=array("name"=>"BACK TO BACK","data"=>$dataEnd["BACK TO BACK"]);
+            $plotAIR = $indi_AIR[$pais_origen];
+            $meta = "<b>Meta AEREO: ".$indi_AIR[$pais_origen]." días.</b>";
+            break;
+    }
+    
+    if(!$transporte){
         if($typeidg!=6)
             $dataJSON[]=array("name"=>"FCL","data"=>$dataEnd["FCL"]);
         
         $dataJSON[]=array("name"=>"LCL","data"=>$dataEnd["LCL"]);
-        
-        $meta = "<b>Meta LCL".$indi_LCL[$pais_origen]." días - FCL->".$indi_FCL[$pais_origen]." días.</b>";
-        $plotLCL = $indi_LCL[$pais_origen];
-        $plotFCL = $indi_FCL[$pais_origen];
-        $meta = "<b>Meta LCL: ".$indi_LCL[$pais_origen]." días - FCL: ".$indi_FCL[$pais_origen]." días.</b>";
-        $linkTransporte = "maritimo";        
-    }
-    if($transporte=="Aéreo"){
-        $dataJSON[]=array("name"=>"CONSOLIDADO","data"=>$dataEnd["CONSOLIDADO"]);
         $dataJSON[]=array("name"=>"BACK TO BACK","data"=>$dataEnd["BACK TO BACK"]);
-        $plotAIR = $indi_AIR[$pais_origen];
-        $meta = "<b>Meta AEREO: ".$indi_AIR[$pais_origen]." días.</b>";
-        $linkTransporte = "aereo";
+        $dataJSON[]=array("name"=>"CONSOLIDADO","data"=>$dataEnd["CONSOLIDADO"]);
+        $plotLCL = $indi_LCL[$pais_origen?$pais_origen:null];
+        $plotFCL = $indi_FCL[$pais_origen?$pais_origen:null];
+        $plotAIR = $indi_AIR[$pais_origen?$pais_origen:null];
+        $meta = "<b>Meta LCL: ".$indi_LCL[$pais_origen?$pais_origen:null]." días    FCL: ".$indi_FCL[$pais_origen?$pais_origen:null]." días    AEREO: ".$indi_AIR[$pais_origen?$pais_origen:null]." días.</b>";
     }
     
     switch($typeidg){
         case 1:
-            $title = $ano_ini."- Coordinación de Embarque - ".$pais_origen." - "."$transporte";
+            $title = $ano_ini."- Coordinación de Embarque - ".$pais_origen." - "."$transporte";            
             $leyendaIndicador = $transporte=="Marítimo"?"La meta para este indicador está dada por el tiempo transcurrido desde la fecha de la primera instrucción hasta el arribo a Puerto Colombiano.<br/>":"La meta para este indicador está dada por el tiempo transcurrido desde la fecha de la primera instrucción hasta el arribo al Aeropuerto Colombiano.<br/>";
             $encFchIni = "Fch. 1er.Instrucci&oacute;n o Carga Disponible";
             $encFchEnd = "Fch. de Llegada";
@@ -122,10 +134,10 @@ if($opcion){
             $dataFchEnd = "ca_fchllegada";
             break;
         case 3:
-            $title = $ano_ini." - ";
-            $title.= $transporte=="Marítimo"?"Oportunidad en el Zarpe":"Oportunidad en la Fecha de Salida";
-            $title.= " - ".$pais_origen." - ".$transporte;
-            $leyendaIndicador = $transporte=="Marítimo"?"La meta para este indicador está dada por el tiempo transcurrido desde el primer status de Carga Embarcada, hasta la fecha de zarpe del buque<br/>":"La meta para este indicador está dada por el tiempo transcurrido desde el primer status de Carga Embarcada, hasta la fecha de salida del avión<br/>";
+            $title = $ano_ini." - Oportunidad en el Zarpe / Fecha de Salida ";                        
+            $title.= $pais_origen?" - ".$pais_origen:"";
+            $title.= $transporte?" - ".$transporte:"";
+            $leyendaIndicador = "La meta para este indicador está dada por el tiempo transcurrido desde el primer status de Carga Embarcada, hasta la fecha de zarpe o salida <br/>";
             $encFchIni = "Fch. Carga con Reserva";
             $encFchEnd = "Fch. de Salida";
             $encIdg = "Oport. Zarpe/Fch. Salida";
@@ -133,7 +145,9 @@ if($opcion){
             $dataFchEnd = "ca_fchsalida_ccr";
             break;
         case 4:
-            $title = $ano_ini."- Oportunidad en la Llegada ".$pais_origen." - "."$transporte";
+            $title = $ano_ini."- Oportunidad en la Llegada ";
+            $title.= $pais_origen?" - ".$pais_origen:"";
+            $title.= $transporte?" - ".$transporte:"";
             $leyendaIndicador = "La meta para este indicador está dada por la diferencia entre la fecha confirmada en el aviso de ETA y la fecha real de llegada.<br/>";
             $encFchIni = "Fch. Informada en ETA";
             $encFchEnd = "Fch. de Llegada";
@@ -142,7 +156,9 @@ if($opcion){
             $dataFchEnd = "ca_fchllegada_cd";
             break;
         case 5:
-            $title = $ano_ini."- Oportunidad la Facturación ".$pais_origen." - "."$transporte";
+            $title = $ano_ini."- Oportunidad la Facturación ";
+            $title.= $pais_origen?" - ".$pais_origen:"";
+            $title.= $transporte?" - ".$transporte:"";
             $leyendaIndicador = "La meta para este indicador está dada por la diferencia entre la fecha de llegada y la fecha de facturación.<br/>";
             $encFchIni = "Fch. Llegada";
             $encFchEnd = "Fch. de Factura";
@@ -151,7 +167,9 @@ if($opcion){
             $dataFchEnd = "ca_fchfactura";
             break;
         case 6:
-            $title = $ano_ini."- Oportunidad en la Desconsolidación ".$pais_origen." - "."$transporte";
+            $title = $ano_ini."- Oportunidad en la Desconsolidación ";
+            $title.= $pais_origen?" - ".$pais_origen:"";
+            $title.= $transporte?" - ".$transporte:"";
             $leyendaIndicador = "La meta para este indicador está dada por la diferencia entre la fecha de llegada y la fecha de desconsolidación.<br/>";
             $encFchIni = "Fch. Llegada";
             $encFchEnd = "Fch. Desconsolidación";
@@ -197,6 +215,7 @@ if($opcion){
                 <th scope="col" style=" text-align: center"><b>Mes</b></th>
                 <th scope="col" style=" text-align: center"><b>R.Negocio</b></th>
                 <th scope="col" style=" text-align: center; width: 80px"><b>Orden No.</b></th>
+                <th scope="col" style=" text-align: center; width: 80px"><b>Doc. Transporte</b></th>
                 <th scope="col" style=" text-align: center"><b> Tra. Origen</b></th>
                 <?if($corigen){?><th scope="col" style=" text-align: center"><b> Ciu. Origen</b></th><?}?>
                 <th scope="col" style=" text-align: center"><b>Destino</b></th>
@@ -239,17 +258,19 @@ if($opcion){
                 $oids = array();
                 $oids[] = $idreporte;
                 
-                if($transporte == "Marítimo"){
-                    if(($r["nva_modalidad"]=="LCL" && $r[$dataIdg] > $indi_LCL[$pais_origen]) || $r["nva_modalidad"]=="FCL" && $r[$dataIdg] > $indi_FCL[$pais_origen]){
+                if($r["ca_transporte"]==Constantes::MARITIMO){
+                    if(($r["nva_modalidad"]=="LCL" && $r[$dataIdg] > $indi_LCL[$pais_origen?$pais_origen:null]) || $r["nva_modalidad"]=="FCL" && $r[$dataIdg] > $indi_FCL[$pais_origen?$pais_origen:null]){
                         $color = "red";
                         $Obs = "true";
                     }
+                    $linkTransporte = "maritimo";
                 }
-                if($transporte == "Aéreo"){
-                    if($r[$dataIdg] > $indi_AIR[$pais_origen]){
+                if($r["ca_transporte"]==Constantes::AEREO){
+                    if($r[$dataIdg] > $indi_AIR[$pais_origen?$pais_origen:null]){
                         $color = "red";
                         $Obs = "true";
                     }
+                    $linkTransporte = "aereo";
                 }
 ?>
             <tr>
@@ -257,6 +278,7 @@ if($opcion){
                 <td><?=$r["ca_mes1"]?></td>
                 <td><a href="../traficos/listaStatus/modo/<?=$linkTransporte?>?reporte=<?=$r['ca_consecutivo']?>" target='_blank'><?=$r['ca_consecutivo']?></a></td>
                 <td><?=$r["ca_orden"]?></td>
+                <td><?=$r["ca_doctransporte"]?></td>
                 <td><?=$r["ca_traorigen"]?></td>
                 <?if($corigen){?><td><?=$r["ca_ciuorigen"]?></td><?}?>
                 <td><?=$r["ca_ciudestino"]?></td>
@@ -322,13 +344,14 @@ if($opcion){
                 ,
                 {
                     color: '#B7E84D',
-                    width: 2,
+                    width: 3,
                     value: <?=$plotFCL?$plotFCL:0?>,
                     label: {
                         text: 'Limite FCL',
                         style: {
                             color: '#B7E84D',
-                            fontWeight: 'bold'
+                            fontWeight: 'bold',
+                            textAlign: 'right'
                         }
                     } 
                 }
@@ -340,6 +363,49 @@ if($opcion){
                     value: <?=$plotAIR?$plotAIR:0?>,
                     label: {
                         text: 'Limite Aéreo',
+                        style: {
+                            color: '#62B1FF',
+                            fontWeight: 'bold'
+                        }
+                    } 
+                }
+            <?}else{?>
+                {
+                    color: '#62B1FF',
+                    width: 2,
+                    value: <?=$plotLCL?$plotLCL:0?>,
+                    label: {
+                        text: 'Limite LCL',
+                        align: 'center',
+                        style: {
+                            color: '#62B1F1',
+                            fontWeight: 'bold'                            
+                        }
+                    }
+                }
+                <?if($typeidg!=6){?>
+                ,
+                {
+                    color: '#B7E84D',
+                    width: 2,
+                    value: <?=$plotFCL?$plotFCL:0?>,
+                    label: {
+                        text: 'Limite FCL',
+                        style: {
+                            color: '#B7E84D',
+                            fontWeight: 'bold'
+                        }
+                    } 
+                }
+                <?}?>
+                ,
+                {
+                    color: '#62B1FF',
+                    width: 2,
+                    value: <?=$plotAIR?$plotAIR:0?>,
+                    label: {
+                        text: 'Limite Aéreo',
+                        align: 'right',
                         style: {
                             color: '#62B1FF',
                             fontWeight: 'bold'

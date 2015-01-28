@@ -1075,6 +1075,11 @@ class reportesGerActions extends sfActions {
             if ($this->detalle) {
                 $q->innerJoin("m.InoClientesAir c");
                 $q->innerJoin("c.Cliente cl");
+                if ($sucursal != "%") {
+                    $q->innerJoin("c.Vendedor v");
+                    $q->innerJoin("v.Sucursal s");
+                    $q->addWhere("s.ca_nombre LIKE ?", $sucursal);
+                }
 
                 if (count($array_refs) != 0) {
                     $q->whereIn("c.ca_referencia", $array_refs);
