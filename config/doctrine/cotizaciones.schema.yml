@@ -21,6 +21,7 @@ Cotizacion:
     ca_usuario: string
     ca_empresa: string
     ca_fuente: string
+    ca_mediosolicitud: string
     ca_idg_envio_oportuno: integer
     ca_etapa: string
     ca_idtarea: integer
