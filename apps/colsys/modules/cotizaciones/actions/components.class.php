@@ -169,8 +169,8 @@ class cotizacionesComponents extends sfComponents {
                 'concepto' => utf8_encode($aduana->getCosto()->getCaCosto()),
                 'valor' => $aduana->getCaValor(),
                 'valorminimo' => $aduana->getCaValorminimo(),
-                'aplicacion' => utf8_encode($aduana->getCaAplicacion()),
-                'aplicacionminimo' => utf8_encode($aduana->getCaAplicacionminimo()),
+                'aplicacion' => $aduana->getCaAplicacion(),
+                'aplicacionminimo' => $aduana->getCaAplicacionminimo(),
                 'parametro' => $aduana->getCaParametro(),
                 'fchini' => $aduana->getCaFchini(),
                 'fchfin' => $aduana->getCaFchfin(),
@@ -206,14 +206,13 @@ class cotizacionesComponents extends sfComponents {
     }
 
     public function executeFormEncabezadoPanel() {
-
+        
     }
 
     public function executeFieldsEncabezado() {
-        //echo $this->getRequestParameter("id");
         $this->nivel = $this->getUser()->getNivelAcceso(cotizacionesActions::RUTINA);
         $this->sucursal=$this->getUser()->getIdsucursal();
-        //echo $this->sucursal;
+        $this->medios = ParametroTable::retrieveByCaso("CU244");        
     }
 
     public function executeChart() {

@@ -49,6 +49,16 @@ if( !$cotizacion->getCaUsuanulado() ){
     <br />
     <?
     }
+    if($cotizacion->getEsSeguroContenedor()){
+        echo "si";
+    }else{
+        $conceptos = ParametroTable::retrieveByCaso("CU237");
+        
+        $idconceptos = array();
+        foreach($conceptos as $concepto){
+            $idconceptos[] = $concepto->getCaValor();
+        }        
+    }
     ?>
 
 

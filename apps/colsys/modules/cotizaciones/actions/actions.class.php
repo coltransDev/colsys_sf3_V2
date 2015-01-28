@@ -270,12 +270,16 @@ class cotizacionesActions extends sfActions {
             }
             //$errors["fchSolicitud"]="La fecha y hora de solicitud no pueden ser mayor a las actuales";
             if (count($errors) == 0) {
+                if ($this->getRequestParameter("medioSolicitud")) {
+                    $cotizacion->setCaMediosolicitud(utf8_decode($this->getRequestParameter("medioSolicitud")));
+                }
                 $cotizacion->save();
+
                 if ($this->getRequestParameter("fchSolicitud")) {
                     $cotizacion->crearTareaIDGEnvioOportuno($this->getRequestParameter("fchSolicitud") . " " . $this->getRequestParameter("horaSolicitud"));
                 }
-
-                if ($this->getRequestParameter("fchPresentacion")) {                    
+                
+                if ($this->getRequestParameter("fchPresentacion")) {
                     $cotizacion->setFchpresentacion($this->getRequestParameter("fchPresentacion") . " " . $this->getRequestParameter("horaPresentacion"));
                 }
 
@@ -2404,6 +2408,7 @@ class cotizacionesActions extends sfActions {
                     $data["consecutivo"] = "C" . $cotizacion->getCaConsecutivo();
                     $data["fchSolicitud"] = $tarea ? Utils::parseDate($tarea->getCaFchcreado(), "Y-m-d") : "";
                     $data["horaSolicitud"] = $tarea ? Utils::parseDate($tarea->getCaFchcreado(), "H:i:s") : "";
+                    $data["medioSolicitud"] = utf8_encode($cotizacion->getCaMediosolicitud());
                     $data["idcliente"] = $cotizacion->getContacto()->getCaIdcliente();
                     $data["cliente"] = utf8_encode($cotizacion->getContacto()->getCliente()->getCaCompania());
 

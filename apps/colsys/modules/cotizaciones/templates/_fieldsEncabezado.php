@@ -46,7 +46,7 @@ include_component("widgets", "widgetComerciales");
                     layout:'table',
                     layoutConfig: {
                         // The total column count must be specified here
-                        columns: 3
+                        columns: 4
                     },
                     
                     border: false,
@@ -106,6 +106,33 @@ include_component("widgets", "widgetComerciales");
                                     format: "H:i:s",
                                     allowBlank:false,
                                     width: 120
+                                }]
+                        },{
+                            layout: 'form',
+                            labelAlign: 'top',
+                            items: [{
+                                    xtype:          'combo',
+                                    mode:           'local',
+                                    triggerAction:  'all',
+                                    forceSelection: true,
+                                    editable:       true,
+                                    fieldLabel:     'Medio de Solicitud',
+                                    name:           'medioSolicitud',
+                                    displayField:   'value',
+                                    valueField:     'value',                    
+                                    allowBlank:     false,
+                                    store:          new Ext.data.JsonStore({
+                                        fields : ['value'],
+                                        data   : [
+                                            <?
+                                            foreach( $medios as $medio ){
+                                            ?>
+                                                {value: '<?=  $medio->getCaValor()?>'},
+                                            <?
+                                            }
+                                            ?>                            
+                                        ]
+                                    })
                                 }]
                         }
                     ]
