@@ -55,6 +55,8 @@ InoMaestraSea:
     ca_estado: string
     ca_fchenvio: timestamp
     ca_fchrecibido: timestamp
+    ca_tipo: integer
+    ca_emisionbl: integer
     ca_propiedades: string
   relations:
     InoClientesSea:
@@ -98,19 +100,14 @@ InoClientesSea:
     symfony:
       form: false
       filter: false
-  generatePath: inoAnterior
+  generatePath: sea
   tableName: tb_inoclientes_sea
   columns:
-    ca_idinocliente:
-      type: integer      
-    ca_referencia:
-      type: string   
-      primary: true
-    ca_idcliente:
-      type: integer  
-      primary: true
+    ca_idinocliente: integer     
+    ca_referencia: string
+    ca_idcliente: integer     
     ca_hbls:
-      type: string  
+      type: string
       primary: true
     ca_idreporte: integer
     ca_idproveedor: integer
@@ -138,6 +135,8 @@ InoClientesSea:
     ca_fchantecedentes: date
     ca_imprimirorigen : boolean
     ca_idaduana: integer
+    ca_detlibero: string
+    ca_planilla: string
   relations:
      Reporte:
        local: ca_idreporte
@@ -188,7 +187,6 @@ InoClientesSea:
       foreign: ca_id
       type: one
       class: Ids
-
 
 InoEquiposSea:
   options:
@@ -309,29 +307,24 @@ InoCostosSea:
   columns:
     ca_idinocostos_sea:
       type: integer
+      primary: true
       autoincrement: true
-    ca_referencia:
-      type: string      
-      primary: true
-    ca_idcosto:
-      type: integer      
-      primary: true
-    ca_factura:
-      type: string          
-      primary: true
+    ca_referencia: string      
+    ca_idcosto: integer      
+    ca_factura: string          
     ca_fchfactura: date
-    #ca_idproveedor: integer
+    ca_idproveedor: integer
     ca_proveedor: string
     ca_idmoneda: string
     ca_tcambio: decimal
     ca_tcambio_usd: decimal
     ca_neto: decimal
-    ca_venta: decimal    
+    ca_venta: decimal
+    ca_login: string
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
     ca_usuactualizado: string 
-    ca_idproveedor: integer
   relations:
      Costo:
        local: ca_idcosto
@@ -933,7 +926,7 @@ InoDeduccionesSea:
        local: ca_idinoingreso
        foreign: ca_idinoingreso
        type: one
-     Deduccion:
+     Deducciones:
        local: ca_iddeduccion
        foreign: ca_iddeduccion
        type: one
