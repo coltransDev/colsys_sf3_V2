@@ -52,7 +52,7 @@ class InoMaestraAirTable extends Doctrine_Table
 
         $referencia[3] = str_pad($mes, 2, "0", STR_PAD_LEFT);
         $referencia[4] = "%";
-        $referencia[5] = $ano%10;
+        $referencia[5] = $ano%100;
 
         $ref = Doctrine::getTable("InoMaestraAir")
                          ->createQuery("m")
@@ -66,9 +66,9 @@ class InoMaestraAirTable extends Doctrine_Table
         if( $ref ){
              $ref = explode('.', $ref);
              $val = intval( isset($ref[3])?$ref[3]:0 )+1;
-             $referencia[4] = str_pad($val, 3, "0", STR_PAD_LEFT);
+             $referencia[4] = str_pad($val, 4, "0", STR_PAD_LEFT);
         }else{
-             $referencia[4] = '001';
+             $referencia[4] = '0001';
         }
                 
         return implode(".", $referencia);
