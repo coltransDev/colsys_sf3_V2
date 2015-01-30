@@ -40,6 +40,8 @@ FalaHeader:
     ca_trans_ship_port: string
     ca_reqd_delivery: date
     ca_orden_comments: string
+    ca_concepto: string
+    ca_documento_tipo: string
     ca_manufacturer_contact: string
     ca_manufacturer_phone: string
     ca_manufacturer_fax: string

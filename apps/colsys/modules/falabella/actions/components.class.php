@@ -16,7 +16,7 @@ class falabellaComponents extends sfComponents {
     public function executeMainPanel() {
         $this->header = Doctrine::getTable("FalaHeader")
                 ->createQuery("d")
-                ->select("d.ca_iddoc, d.ca_reporte, d.ca_num_viaje, d.ca_cod_carrier, d.ca_container_mode, d.ca_numero_invoice, d.ca_monto_invoice_miles")
+                ->select("d.ca_iddoc, d.ca_reporte, d.ca_num_viaje, d.ca_cod_carrier, d.ca_container_mode, d.ca_numero_invoice, d.ca_monto_invoice_miles, d.ca_concepto, d.ca_documento_tipo")
                 ->where("d.ca_iddoc = ? ", $this->fala_header->getCaIddoc())
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                 ->execute();

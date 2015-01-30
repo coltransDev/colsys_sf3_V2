@@ -216,6 +216,13 @@ class falabellaActions extends sfActions {
             $fala_header->setCaMontoInvoiceMiles($this->getRequestParameter('monto_invoice_miles'));
         }
 
+        if ($this->getRequestParameter('concepto') !== null) {
+            $fala_header->setCaConcepto($this->getRequestParameter('concepto'));
+        }
+
+        if ($this->getRequestParameter('documento_tipo') !== null) {
+            $fala_header->setCaDocumentoTipo($this->getRequestParameter('documento_tipo'));
+        }        
         $fala_header->save();
 
         $this->responseArray["success"] = true;
@@ -555,7 +562,7 @@ class falabellaActions extends sfActions {
         $invoices = $q->execute();
 
         foreach ($invoices as $invoice) {
-            $sql = "select fh.ca_iddoc, fh.ca_numero_invoice, fh.ca_cod_carrier, fh.ca_monto_invoice_miles, fs.ca_monto_invoice_sum, (fh.ca_monto_invoice_miles / fs.ca_monto_invoice_sum) as ca_percent";
+            $sql = "select fh.ca_iddoc, fh.ca_numero_invoice, fh.ca_cod_carrier, fh.ca_monto_invoice_miles, fs.ca_monto_invoice_sum, (fh.ca_monto_invoice_miles / fs.ca_monto_invoice_sum) as ca_percent, fh.ca_concepto, fh.ca_documento_tipo";
             $sql.= "  from tb_falaheader fh inner join";
             $sql.= "  (select ca_numero_invoice, sum(ca_monto_invoice_miles) as ca_monto_invoice_sum from tb_falaheader group by ca_numero_invoice) fs";
             $sql.= "  on fs.ca_numero_invoice = fh.ca_numero_invoice";
@@ -564,14 +571,15 @@ class falabellaActions extends sfActions {
             $stmt = $q->execute($sql);
 
             $salida = "";
+            $vlr_control = 0;
             while ($row = $stmt->fetch()) {
                 $vlr_afecto = floatval($invoice->getCaAfectoVlr());
                 $vlr_exento = floatval($invoice->getCaExentoVlr());
                 $vlr_iva = floatval($invoice->getCaIvaVlr());
                 $vlr_total = $vlr_afecto + $vlr_exento + $vlr_iva;
 
-                $documento = ($vlr_afecto!=0 and $vlr_exento==0)?"87":"88";
-                $salida.= $documento; // 1
+                //$documento = ($vlr_afecto!=0 and $vlr_exento==0)?"87":"88";
+                $salida.= $row["ca_documento_tipo"]; // 1
                 $salida.= "800024075 "; // 2
                 $salida.= "8"; // 3
                 $salida.= "900017447 "; // 4
@@ -591,13 +599,15 @@ class falabellaActions extends sfActions {
                 $salida.= str_pad($vlr_afecto, 10, "0", STR_PAD_LEFT); // 13
                 $salida.= str_pad($vlr_iva, 10, "0", STR_PAD_LEFT); // 14
 
-                $concepto = ($vlr_afecto!=0 and $vlr_exento==0)?"12":"21";
-                $salida.= str_pad($concepto, 5, " "); // 15 Concepto
+                //$concepto = ($vlr_afecto!=0 and $vlr_exento==0)?"12":"21";
+                $salida.= str_pad($row["ca_concepto"], 5, " "); // 15 Concepto
                 $salida.= str_pad(substr($row["ca_iddoc"], 0, 15), 20, " "); // 16
 
                 $dec_pre = ($invoice->getCaMoneda()!="COP")?2:0;
                 $salida.= str_pad(floatval($row["ca_cod_carrier"]), 2, "0", STR_PAD_LEFT); // 17 Embarque
-                $salida.= str_pad(round(floatval($vlr_total * $row["ca_percent"]), $dec_pre), 10, "0", STR_PAD_LEFT); // 18 Valor del Embarque
+                $vlr_control+= round(floatval($vlr_total * $row["ca_percent"]), $dec_pre);
+                $vlr_ajustes = ( abs($vlr_total-$vlr_control) <= 2 )? $vlr_total - $vlr_control: 0; // Si hay una diferencia inferior o igual a 2 pesos -> ajusta
+                $salida.= str_pad(round(floatval($vlr_total * $row["ca_percent"]), $dec_pre) + $vlr_ajustes, 10, "0", STR_PAD_LEFT); // 18 Valor del Embarque
 
                 $spaces = array(8, 30, 30, 4, 20, 20, 10); // Campos del 19 al 27
                 foreach ($spaces as $space) {
