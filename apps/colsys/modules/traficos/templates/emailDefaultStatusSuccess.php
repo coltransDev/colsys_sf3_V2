@@ -22,16 +22,16 @@ $company = $sf_data->getRaw("company");
                     <?= $status->getCaIntroduccion() ?>
                 </td>
                 <?
-                if (1 == 2 && $user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S." && $reporte->getCaTransporte() == Constantes::MARITIMO && ($status->getCaIdetapa() == "IMETA" || $status->getCaIdetapa() == "IMCPD")) {
+                if ( $user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S." && $reporte->getCaTransporte() == Constantes::MARITIMO && ($status->getCaIdetapa() == "IMETA" || $status->getCaIdetapa() == "IMCPD")) {
                 ?>
-                    <td width="320">
-                        <div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/brasil12092012.jpg"/></div>
+                    <td width="170">
+                        <div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/amb-bog20140814.jpg"/></div>
                     </td>
                 <?
-                } else if (1 == 2 && $user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S." && $reporte->getCaTransporte() == Constantes::AEREO && ($status->getCaIdetapa() == "IACCR" || $status->getCaIdetapa() == "IACAD")) {
+                } else if ( $user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S." && $reporte->getCaTransporte() == Constantes::AEREO && ($status->getCaIdetapa() == "IACCR" || $status->getCaIdetapa() == "IACAD")) {
                 ?>
-                    <td width="320">
-                        <div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/brasil12092012.jpg"/></div>
+                    <td width="170">
+                        <div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/amb-bog20140814.jpg"/></div>
                     </td>
                 <?
                 }
