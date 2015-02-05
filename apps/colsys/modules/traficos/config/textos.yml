@@ -22,10 +22,15 @@ mensajeCierreOTM: |
   
 mensajeConfOTMCliente: |
   Como requisito indispensable para efectuar el OTM necesitamos los siguientes documentos:
-  - HBL original
-  - Copia Factura Comercial con Término de Negociación
-  - Copia Lista de Empaque
-  - Copia Póliza de Seguro
+  - Hbl original
+  - Copia de la factura comercial conteniendo la siguiente información: Moneda, termino de negociación,Nombre del Proveedor , debe venir consignada a nombre del Importador, Numero de factura .
+  - Copia de la lista de empaque, debe detallar las piezas y peso de la mercancía.
+  - Descripción de la mercancía en español.
+  - Enviar certificación de gastos adicionales si se requieren dependiendo del termino de negociación de la factura comercial.
+  - Certificación de fletes.
+  - RUT del importador actualizado.
+  - Copia del registro de importación o certificación de las posiciones arancelarias.
+  - Copia de la póliza de Seguros amparando el trayecto interno e incluyendo el valor de los tributos Aduaneros + Iva. Los reclamos serán atendidos vía subrogación.
   
   Si su mercancía requiere tramite Invima favor enviar original del certificado del proveedor de mercancia apta para el consumo humano+ el registro de importación.
   
