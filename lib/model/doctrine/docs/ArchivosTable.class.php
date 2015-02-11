@@ -85,6 +85,7 @@ class ArchivosTable extends Doctrine_Table
         }
         
         chmod ( $directory , 0777 );
+        $result = array();
         
              
         try{
@@ -109,28 +110,29 @@ class ArchivosTable extends Doctrine_Table
                     $archivo->setCaRef3($data['ref3']);
                     $archivo->save();
                     
-                    $result = true;
+                    $result["estado"] = true;
+                    $result["directory"] = $folder.$path;
                     $event = date("Y-m-d H:i:s")."Referencia:".$data['ref1']."=>El archivo se subió correctamente";
                     Utils::writeLog($logFile, $event);
                 }else{
-                    $result = false;
+                    $result["estado"] = false;
                     $event = date("Y-m-d H:i:s")."Referencia:".$data['ref1']."=>No se pudo mover el archivo";
                     Utils::writeLog($logFile, $event);                    
                 }
             }else{
-                $result = false;
+                $result["estado"] = false;
                 $event = date("Y-m-d H:i:s")."Referencia:".$data['ref1']."=>No existe archivo";
                 Utils::writeLog($logFile, $event);
             }
         }catch(Exception $e){
-            $result = false;
+            $result["estado"] = false;
             $event = date("Y-m-d H:i:s")."Referencia:".$data['ref1']."=>".$e."error";
             Utils::writeLog($logFile, $event);
         }
         return $result;
     }
     
-    public static function getArchivosActivos($data){
+    public static function getArchivosActivos($data = array()){
         
         if($data["ref1"] || $data["ref2"]){
             
