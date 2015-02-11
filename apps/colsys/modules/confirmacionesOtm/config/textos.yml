@@ -1,0 +1,49 @@
+#Recuerde identar correctamente las notas y los correspondientes espacios entre renglones 
+#RECOMENDACION USE NOTEPAD++ PARA EDITAR ESTE ARCHIVO 
+
+mensajeConf: |
+  Respetado cliente buenos días, confirmamos la llegada de su carga con la siguiente información.
+
+mensajeStatusIntro: |
+  Respetado cliente buenos días: 
+
+mensajeStatus: |
+  
+  
+mensajeConfOTM: |
+  Respetado cliente buenos días, nos complace suministrarle nueva información en relación a su carga en OTM. 
+mensajeCierreOTM: |  
+  Confirmamos cierre y finalización de los documentos del proceso de OTM, los cuales se encuentran en nuestras oficinas para la correspondiente liberación.  
+  
+mensajeConfOTMCliente: |
+  Como requisito indispensable para efectuar el OTM necesitamos los siguientes documentos:
+  - HBL original
+  - Copia Factura Comercial con Término de Negociación
+  - Copia Lista de Empaque
+  - Copia Póliza de Seguro
+  
+  Si su mercancía requiere tramite Invima favor enviar original del certificado del proveedor de mercancia apta para el consumo humano+ el registro de importación.
+  
+  
+  Cualquier información adicional respecto al OTM favor contactar a  
+
+mensajeFacFletes: |
+  Adjunto enviamos la Factura  de la importacion maritima  en referencia, la cual es soporte de certificacion de fletes ante la DIAN.
+  Cualquier información adicional con gusto  será suministrada.
+  
+mensajeFacOtm: |
+  Adjunto enviamos la Factura de trámite OTM.
+
+mensajeFacCont: |
+  Adjunto enviamos la Factura de Contenedores.
+  
+mensajePlanilla: |
+  Nos permitimos informar el número de planilla de envío asignado por la DIAN - Muisca,  con el fin de que prosiga su proceso de nacionalización.
+
+mensajeDesc: |
+  Nos complace informar que hemos terminado nuestro proceso de desconsolidación y que la carga del asunto, se encuentra disponible para pasar a la siguiente fase dentro de su proceso de importación.
+  
+  
+mensajeConfPuerto: |
+  Buenos días:    
+  Puerto notifica la llegada a puerto de la(s) carga(s) con el siguiente registro:
