@@ -12,5 +12,17 @@
  */
 class Departamento extends BaseDepartamento
 {
-
+    public static function getGrupos($iddepartamento, $login) {
+        
+        $grupos = Doctrine::getTable("HdeskGroup")
+                ->createQuery("hg")
+                ->leftJoin("hg.HdeskUserGroup hug")
+                ->addWhere("hg.ca_iddepartament = ?", $iddepartamento)
+                ->addWhere("hug.ca_login = ?", $login)
+                ->orderBy("hg.ca_idgroup")
+                ->execute();
+        
+        return $grupos;
+        
+    }
 }
