@@ -14,7 +14,7 @@ include_component("widgets", "widgetEquipo");
 <script type="text/javascript">
     EditarTicketPropiedadesPanel = function( config ) {
         Ext.apply(this, config);
-
+        
         this.dataDepartamentos = <?=json_encode(array("departamentos" => $sf_data->getRaw("departamentos")))?>;
         this.dataStatus = <?=json_encode(array("root" => $status))?>;
         this.dataEmpresas = <?=json_encode(array("root" => $empresas))?>;
@@ -22,12 +22,12 @@ include_component("widgets", "widgetEquipo");
         this.resultTpl = new Ext.XTemplate(
             '<tpl for=".">',
             '<tpl if="!this.idempresa(idempresa)">',
-                '<div class="search-item" style="background:#F0F0F0;">',
-                '<b>{nombre}</b><br /><span style="font-size:9px;">{empresa}</span>',                
+                '<div class="search-item">',
+                '<span style="color:#F89253;"><b>{nombre}</b></span><br /><span style="font-size:9px;">{empresa}</span>',                
             '</tpl>',
             '<tpl if="this.idempresa(idempresa)">',
                 '<div class="search-item">',
-                '<b>{nombre}</b><br /><span style="font-size:9px;">{empresa}</span>',                
+                '<span style="color:#33518C;"><b>{nombre}</b></span><br /><span style="font-size:9px;">{empresa}</span>',                
             '</tpl>',
             '</span></div></tpl>',
             {
@@ -42,12 +42,13 @@ include_component("widgets", "widgetEquipo");
                 }
             }
         );
-
+    
         this.departamentos = new Ext.form.ComboBox({
             fieldLabel: 'Departamento',
             typeAhead: true,
             forceSelection: true,
             itemSelector: 'div.search-item',
+            linkListarTodos: "listar_todos",
             triggerAction: 'all',
             emptyText:'',
             selectOnFocus: true,
@@ -80,6 +81,58 @@ include_component("widgets", "widgetEquipo");
         });
 
         this.departamentos.on("select", this.cargarDepartamentos, this );
+        
+        this.departamentos.doQuery = function(q, forceAll){
+            q = Ext.isEmpty(q) ? '' : q;
+            var qe = {
+                query: q,
+                forceAll: forceAll,
+                combo: this,
+                cancel:false
+            };            
+            q = qe.query;
+            forceAll = qe.forceAll;
+            if(forceAll === true || (q.length >= this.minChars)){
+
+                var listarTodos = (Ext.getCmp(this.linkListarTodos))?Ext.getCmp(this.linkListarTodos).getValue():this.linkListarTodos;
+                var empresa = Ext.getCmp("grupoEmp").getValue();
+                
+                empresa = empresa.replace('[','').replace(']','')+',';
+               
+                if (!listarTodos){
+                    this.store.filterBy(function (record, id) {
+                        //alert(empresa.indexOf(record.get("idempresa")));
+                        if(empresa.indexOf(record.get("idempresa")) >= 0){
+                            var str = record.get("nombre");                            
+
+                            var txt = new RegExp(q, "ig");
+                            if (str.search(txt) == -1)
+                                return false;
+                            else
+                                return true;
+                        }
+                        else
+                            return false;                       
+                    });                                        
+                }else{
+                    if (q != ""){
+                        this.store.filterBy(function (record, id) {
+                            var str = record.get("nombre");
+                            var str1 = record.get("empresa");
+
+                            var txt = new RegExp(q, "ig");
+                            if (str.search(txt) == -1 && str1.search(txt) == -1)
+                                return false;
+                            else
+                                return true;
+                        });
+                    }
+                    else
+                        this.store.filter("", "", true, true);
+                }
+                this.onLoad();
+            }
+        }
         
         this.areas =  new Ext.form.ComboBox({
             fieldLabel: 'Área',
@@ -427,21 +480,20 @@ include_component("widgets", "widgetEquipo");
                     xtype:'fieldset',
                     title: 'Clasificación',
                     autoHeight:true,
-
                     layout:'column',
-                    columns: 2,
+                    columns: 3,
                     defaults:{
-                        columnWidth:0.5,
+                        //columnWidth:0.5,
                         layout:'form',
                         border:false,
                         bodyStyle:'padding:4px'
                     },
                     items:[{
-                            columnWidth:.5,
+                            columnWidth:.44,
                             layout: 'form',
                             xtype:'fieldset',
                             items: [
-                                this.departamentos,                                
+                                this.departamentos,
                                 this.projectos,
                                 this.tipos,
                                 this.asignaciones,
@@ -449,7 +501,25 @@ include_component("widgets", "widgetEquipo");
                                 this.activo
                             ]
                         },{
-                            columnWidth:.5,
+                            columnWidth:.09 ,
+                            layout: 'form',
+                            xtype:'fieldset',
+                            items: [
+                                {
+                                    xtype: "checkbox",
+                                    hideLabel: "true",                                    
+                                    id: "listar_todos",
+                                    name:"listar_todos",                                    
+                                },
+                                {
+                                    xtype:"hidden",
+                                    id: 'grupoEmp',
+                                    name: 'empresa',
+                                    value:'<?=json_encode($sf_data->getRaw("grupoEmp"))?>'
+                                }
+                            ]
+                        },{
+                            columnWidth:.44,
                             layout: 'form',
                             xtype:'fieldset',
                             items: [
@@ -522,6 +592,7 @@ include_component("widgets", "widgetEquipo");
         });
 
         this.addEvents({add:true});
+        
     }
 
     Ext.extend(EditarTicketPropiedadesPanel, Ext.FormPanel, {
@@ -536,7 +607,7 @@ include_component("widgets", "widgetEquipo");
         bloquearCampos: function(){
             Ext.getCmp('priority_id').setDisabled(true);
             Ext.getCmp('type_id').setDisabled(true);
-            // Ext.getCmp('assignedto_id').setDisabled(true);
+            Ext.getCmp('assignedto_id').setDisabled(true);
             Ext.getCmp('type_id').setDisabled(true);
             Ext.getCmp('actionTicket_id').setDisabled(true);
             Ext.getCmp('proyecto_id').setDisabled(true);
@@ -554,7 +625,7 @@ include_component("widgets", "widgetEquipo");
         desbloquearCampos: function(){
             Ext.getCmp('priority_id').setDisabled(false);
             Ext.getCmp('type_id').setDisabled(false);
-            // Ext.getCmp('assignedto_id').setDisabled(false);
+            Ext.getCmp('assignedto_id').setDisabled(false);
             Ext.getCmp('type_id').setDisabled(false);
             Ext.getCmp('actionTicket_id').setDisabled(false);
             Ext.getCmp('proyecto_id').setDisabled(false);
