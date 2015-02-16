@@ -11,7 +11,9 @@ foreach( $departamentos as $departamento ){
 		leaf:false,
 		children:[
             <?
-            $grupos = $departamento->getHdeskGroup();
+            //$grupos = $departamento->getHdeskGroup();
+            $grupos = $departamento->getGrupos($departamento->getCaIddepartamento(), $user->getUserId());
+            
             $j = 0;
             foreach( $grupos as $grupo ){
                 if( $j++!=0){
