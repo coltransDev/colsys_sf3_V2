@@ -8,7 +8,7 @@ $actualYear = date("Y");
 $numYears = $actualYear-$initialYear+1;
 ?>
 <div class="content" align="center">
-    <h2>LISTADO DE PROVEEDORES INACTIVOS</h2><br/>
+    <h2>LISTADO DE PROVEEDORES APROBADOS E INACTIVOS</h2><br/>
     <table border="1" class="tableList" width="70%">
     <thead>
         <tr>

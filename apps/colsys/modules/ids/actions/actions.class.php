@@ -1481,7 +1481,7 @@ class idsActions extends sfActions {
              $q->addWhere("p.ca_activo_impo = ? OR p.ca_activo_expo = ?", array("true","true"));
          }else{
              $q->addWhere("p.ca_fchaprobado IS NULL");
-             $q->addWhere("p.ca_activo_impo = ? OR p.ca_activo_expo = ?", array("true","true"));
+             //$q->addWhere("p.ca_activo_impo = ? OR p.ca_activo_expo = ?", array("true","true"));
          }
          $this->proveedores = $q->execute();
     }
