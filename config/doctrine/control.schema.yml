@@ -125,7 +125,17 @@ UsuBrigadas:
     Usuario:
       local: ca_login
       foreign: ca_login
-      type: one    
+      type: one
+    Usucreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    Usuactualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      class: Usuario
 
 
 UsuParametros:
