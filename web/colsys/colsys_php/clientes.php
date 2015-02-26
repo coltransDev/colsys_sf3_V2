@@ -541,6 +541,8 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 		   echo "      <TR><TD Class=mostrar style='visibility: $visible; text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:liberar(".$rs->Value('ca_idcliente').");'><BR><IMG src='graficos/no.gif'><BR>Liberar Cliente</TD></TR>";
 		   echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"ListaClinton\", ".$rs->Value('ca_idcliente').");' style='color=blue;'><BR><IMG src='graficos/vista.gif'><BR>Lista Clinton</TD></TR>";
 		   echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/clavesTracking?id=".$rs->Value('ca_idcliente')."\"'><BR><IMG src='graficos/tracking.gif'><BR>Tracking</TD></TR>";
+                    if($nivel>=1)
+                        echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/ids/verIds/modo/clientes?id=".$rs->Value('ca_idcliente')."\"'><BR><IMG src='graficos/encuesta.gif'><BR>Sucursales</TD></TR>";
 		   echo "    </TABLE>";
 		   echo "  </TD>";
 		   echo "</TR>";
