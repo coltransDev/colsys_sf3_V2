@@ -11,6 +11,7 @@
 class idsActions extends sfActions {
     const RUTINA_AGENTES = "8";
     const RUTINA_PROV = "81";
+    const RUTINA_CLIENTES = "10";
     /*
      * Retorna el nivel de acceso de acuerdo al modo
      */
@@ -29,6 +30,9 @@ class idsActions extends sfActions {
 
         if ($this->modo == "prov") {
             $this->nivel = $this->getUser()->getNivelAcceso(idsActions::RUTINA_PROV);
+        }
+        if ($this->modo == "clientes") {
+            $this->nivel = $this->getUser()->getNivelAcceso(idsActions::RUTINA_CLIENTES);
         }
 
 
