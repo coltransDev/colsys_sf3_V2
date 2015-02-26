@@ -54,6 +54,7 @@ Usuario:
     ca_keypass: string(40)
     ca_mailpasw: string(40)    
     ca_sexo: string(1)
+    ca_fcesantias: integer
   relations:
     AccesoUsuario:
       local: ca_login
@@ -71,6 +72,10 @@ Usuario:
       local: ca_login
       foreign: ca_usuario
       type: many
+    Departamento:
+      local: ca_departamento
+      foreign: ca_nombre
+      type: one
     NotTareaAsignacion:
       local: ca_login
       foreign: ca_login
@@ -89,7 +94,38 @@ Usuario:
       local: ca_cargo
       foreign: ca_cargo
       type: one
+    UsuBrigadas:
+      local: ca_login
+      foreign: ca_login
+      type: one
 
+UsuBrigadas:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: control
+  tableName: control.tb_usu_brigadas
+  columns:    
+    ca_login:
+      type: string      
+      primary: true
+    ca_donante: boolean
+    ca_enfermedad: string
+    ca_alergico: string    
+    ca_comites: string
+    ca_zona: integer
+    ca_propiedades: string,
+    ca_ecivil: integer,
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string    
+  relations:
+    Usuario:
+      local: ca_login
+      foreign: ca_login
+      type: one    
 
 
 UsuParametros:
@@ -366,10 +402,19 @@ Empresa:
     ca_activo: boolean
     ca_idtrafico : string
     ca_url : string
+    ca_id : integer
+    ca_pathsiigo: string
+    ca_logo: string
+    ca_tracking: string
+    ca_coddian: smallint
   relations:
     Trafico:
       local: ca_idtrafico
       foreign: ca_idtrafico
+      type: one
+    Ids:
+      local: ca_id
+      foreign: ca_id
       type: one
 
 Sucursal:
@@ -389,6 +434,14 @@ Sucursal:
     ca_fax: string
     ca_direccion: string
     ca_idempresa: string
+    ca_entrada: date
+    ca_salida: date
+    ca_email: string
+    ca_plantilla: string
+    ca_codpostal: string
+    ca_iso: string
+    ca_basc: string
+    ca_iata: string
   relations:
     Empresa:
       local: ca_idempresa
@@ -513,6 +566,9 @@ ColsysConfigValue:
       local: ca_idconfig
       foreign: ca_idconfig
       type: one
+    ResultadoEncuesta:
+      local: ca_ident
+      foreign: ca_servicio
 
 UsuarioClave:
   options:
@@ -539,3 +595,31 @@ UsuarioClave:
       local: ca_login
       foreign: ca_login
       type: one
+      
+Directorio:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: control
+  tableName: control.tb_directorio
+  columns:
+    ca_id:
+      type: smallint
+      primary: true   
+      autoincrement: true
+    ca_callfrom: integer
+    ca_callto: string
+    ca_phoneip: string
+  relations:
+    SucursalFrom:
+      local: ca_callfrom
+      foreign: ca_idsucursal
+      type: one
+      class: Sucursal
+    SucursalTo:
+      local: ca_callto
+      foreign: ca_idsucursal
+      type: one
+      class: Sucursal
+        
