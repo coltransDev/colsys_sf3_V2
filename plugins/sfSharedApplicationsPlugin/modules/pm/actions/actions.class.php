@@ -36,6 +36,7 @@ class pmActions extends sfActions {
     public function executeIndex(sfWebRequest $request) {
 
         $this->nivel = $this->getNivel();
+        //echo $this->nivel;
         $response = sfContext::getInstance()->getResponse();
         $response->addJavaScript("extExtras/RowExpander", 'last');
         $response->addJavaScript("extExtras/SliderTip", 'last');
@@ -854,11 +855,16 @@ class pmActions extends sfActions {
         $gruposArray = array();
 
         if ($departamento) {
-            $grupos = Doctrine::getTable("HdeskGroup")
+            $q = Doctrine::getTable("HdeskGroup")
                     ->createQuery("g")
                     ->where("g.ca_iddepartament = ?", $departamento)
-                    ->addOrderBy("g.ca_name")
-                    ->execute();
+                    ->addWhere("g.ca_activo = ?", TRUE)                    
+                    ->addOrderBy("g.ca_name");
+                    
+            if($departamento!=$this->getUser()->getIddepartamento())
+                $q->addWhere("g.ca_interno = ?",FALSE);
+            
+            $grupos = $q->execute();
 
             foreach ($grupos as $grupo) {
                 $gruposArray[] = array("idgrupo" => $grupo->getCaIdgroup(), "nombre" => utf8_encode($grupo->getCaName()));
@@ -1312,14 +1318,22 @@ class pmActions extends sfActions {
         $usuario = Doctrine::getTable("Usuario")->find($this->user);
         $depAdic = $usuario->getProperty("helpDesk");
 
-        $this->departamentos = Doctrine::getTable("Departamento")
+        $q = Doctrine::getTable("Departamento")
                 ->createQuery("d")
                 ->innerJoin("d.Usuario u")
                 ->where("d.ca_inhelpdesk = ?", true)
                 ->addWhere("u.ca_login = ?", $this->user)
-                ->orWhere("d.ca_nombre = ?", $depAdic)
-                ->addOrderBy("d.ca_nombre ASC")
-                ->execute();
+                //->orWhere("d.ca_nombre = ?", $depAdic)
+                ->addOrderBy("d.ca_nombre ASC");
+        
+        if($depAdic){
+            if(strpos($depAdic,"|"))
+                $q->orWhereIn("d.ca_nombre", explode("|",$depAdic));
+            else
+                $q->orWhere("d.ca_nombre = ?", $depAdic);            
+        }
+        
+        $this->departamentos = $q->execute();
     }
 
     /*
@@ -1745,20 +1759,20 @@ class pmActions extends sfActions {
             /*
              * Aplica restricciones de acuerdo al nivel de acceso.
              */
-            switch ($nivel) {
-                case 0:
+             switch ($nivel) {
+            case 0:
                     $q->leftJoin("t.HdeskTicketUser hu  ");
-                    $q->addWhere("(t.ca_login = ? or hu.ca_login = ?)", array($this->getUser()->getUserid(), $this->getUser()->getUserid()));
-                    break;
-                case 1:
-                    $q->innerJoin("g.HdeskUserGroup uggg ");
+                $q->addWhere("(t.ca_login = ? or hu.ca_login = ?)", array($this->getUser()->getUserid(), $this->getUser()->getUserid()));
+                break;
+            case 1:
+                $q->innerJoin("g.HdeskUserGroup uggg ");
 
-                    $q->addWhere("(t.ca_login = ? OR uggg.ca_login = ?)", array($this->getUser()->getUserid(), $this->getUser()->getUserid()));
-                    break;
-                case 2:
+                $q->addWhere("(t.ca_login = ? OR uggg.ca_login = ?)", array($this->getUser()->getUserid(), $this->getUser()->getUserid()));
+                break;
+            case 2:
                     $q->addWhere("(t.ca_login = ? OR g.ca_iddepartament = ?)", array($this->getUser()->getUserid(), $this->getUser()->getIddepartamento()));
-                    break;
-            }
+                break;
+        }
 
 
             $q->addOrderBy("t.ca_idticket DESC");

@@ -230,10 +230,10 @@ class pmComponents extends sfComponents {
 
         $params = ParametroTable::retrieveByCaso("CU110");
         foreach ($params as $p) {
-            $row = array("status" => utf8_encode($p->getCaIdentificacion()), "valor" => $p->getCaValor());
+            $row = array("status" => utf8_encode($p->getCaIdentificacion()), "valor" => utf8_encode($p->getCaValor()));
             $this->status[] = $row;
         }
-
+        
         $this->empresas = array();
 
         $empresas = Doctrine::getTable('Empresa')->findAll();
