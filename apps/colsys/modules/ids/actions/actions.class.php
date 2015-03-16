@@ -1463,23 +1463,28 @@ class idsActions extends sfActions {
      */
 
     public function executeListadoProveedoresAprobados(sfWebRequest $request) {
-         $q= Doctrine::getTable("IdsProveedor")
-                ->createQuery("p")
-                ->leftJoin("p.Ids i")
-                ->leftJoin("i.IdsSucursal s")
-                ->leftJoin("s.Ciudad c")
-                ->leftJoin("p.IdsTipo t")                
-                
-                ->addOrderBy("t.ca_nombre ASC")
-                ->addOrderBy("p.ca_transporte ASC")
-                ->addOrderBy("i.ca_nombre ASC");
+        $q= Doctrine::getTable("IdsProveedor")
+           ->createQuery("p")
+           ->leftJoin("p.Ids i")
+           ->leftJoin("i.IdsSucursal s")
+           ->leftJoin("s.Ciudad c")
+           ->leftJoin("p.IdsTipo t")                
+
+           ->addOrderBy("t.ca_nombre ASC")
+           ->addOrderBy("p.ca_transporte ASC")
+           ->addOrderBy("i.ca_nombre ASC");
          
          $this->critico= $request->getParameter("critico");
          $this->type= $request->getParameter("type");
+         $this->iddoc= $request->getParameter("iddoc");
          
          if( $this->type){
              $q->addWhere("p.ca_fchaprobado IS NOT NULL");
              $q->addWhere("p.ca_controladoporsig = ?",$this->type);
+             if($this->iddoc){
+                 $q->leftJoin("i.IdsDocumento id");
+                 $q->addWhere("id.ca_idtipo = ?", $this->iddoc);
+             }
          }elseif( $this->critico){
              $q->addWhere("p.ca_critico = true");
              $q->addWhere("p.ca_activo_impo = ? OR p.ca_activo_expo = ?", array("true","true"));

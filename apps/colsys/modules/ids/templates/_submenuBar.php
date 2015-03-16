@@ -92,6 +92,12 @@ if ($this->getRequestParameter("modo") == "prov" && $action != "listadoProveedor
         $button[$i]["image"] = "22x22/gohome.gif";
         $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=5&modo=" . $this->getRequestParameter("modo");
         $i++;
+        
+        $button[$i]["name"] = "Prov.Aprobados con CERTIFICACION BASC";
+        $button[$i]["tooltip"] = "Listado de proveedores aprobados";
+        $button[$i]["image"] = "22x22/gohome.gif";
+        $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=5&iddoc=7&modo=" . $this->getRequestParameter("modo");
+        $i++;
 
         $button[$i]["name"] = "Prov. NO controlados COLOTM";
         $button[$i]["tooltip"] = "Listado de proveedores no controlados COLOTM";
