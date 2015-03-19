@@ -118,7 +118,7 @@ $ticket = $sf_data->getRaw("ticket");
                                     <tr><td>&nbsp;</td><td colspan="2"><hr noshade size="1"></td></tr>
 
                                     <tr><td>&nbsp;</td><td>
-                                            <font size="1" face="arial, helvetica, sans-serif" color="#000000"> Si los links no estan funcionando, copie y pegue esta dirección en el navegador:<br>https://www.coltrans.com.co<?=url_for("/pm/verTicket?id=".$ticket->getCaIdticket())?> <br><br> Gracias por utilizar el sistema de tickets!<br><br>Coltrans S.A. - Colmas Ltda. Agencia de Aduanas Nivel 1<br>
+                                            <font size="1" face="arial, helvetica, sans-serif" color="#000000"> Si los links no estan funcionando, copie y pegue esta dirección en el navegador:<br>https://www.coltrans.com.co<?=url_for("/pm/verTicket?id=".$ticket->getCaIdticket())?> <br><br> Gracias por utilizar el sistema de tickets!<br><br>Coltrans S.A.S. - Colmas Ltda. Agencia de Aduanas Nivel 1<br>
                                                 <a href="https://www.coltrans.com.co/">http://www.coltrans.com.co/</a>
                                             </font>
                                         </td>
@@ -129,7 +129,7 @@ $ticket = $sf_data->getRaw("ticket");
                     </table>
                 </td></tr>
             <!-- COPYRIGHT -->
-            <tr><td><font size="1" face="arial, helvetica, sans-serif" color="#666666">&copy; Coltrans S.A. Colmas Ltda. Agencia de Aduanas Nivel 1</font></td></tr>
+            <tr><td><font size="1" face="arial, helvetica, sans-serif" color="#666666">&copy; Coltrans S.A.S. Colmas Ltda. Agencia de Aduanas Nivel 1</font></td></tr>
         </table>
 
         <img src="https://www.coltrans.com.co/images/spacer.gif" style="width:1px; height:1px;"/></body>
