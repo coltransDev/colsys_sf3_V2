@@ -27,7 +27,8 @@ class usersActions extends sfActions {
              
         } else {
             //handle SOAP request
-            $wsdl_uri = "https://www.coltrans.com.co/ws/users/usersWS?wsdl";
+            //$wsdl_uri = "https://www.coltrans.com.co/ws/users/usersWS?wsdl";
+            $wsdl_uri = "https://10.192.1.62/ws/users/usersWS?wsdl";
             $soap = new Zend_Soap_Server($wsdl_uri); 
             $options = array('encoding'=>'ISO-8859-1');
             $soap->setOptions($options);
@@ -37,5 +38,30 @@ class usersActions extends sfActions {
         exit();
         return sfView::NONE;
     }
+    
+    
+    /**
+     * Executes index action
+     *
+     * @param sfRequest $request A request object
+     */    
+    public function executeUsersGoogle(sfWebRequest $request) {    
+        
+        ProjectConfiguration::registerZend();   
+        Zend_Loader::loadClass('Zend_Gdata_ClientLogin');
+        Zend_Loader::loadClass('Zend_Gdata_Gapps');
+        
+        //$client = Zend_Gdata_ClientLogin::getHttpClient("maquinche", "80166236", Zend_Gdata_Gapps::AUTH_SERVICE_NAME);
+        //$gdata = new Zend_Gdata_Gapps($client, 'coltrans.co');
+        //$gdata->updateUser("colsys", "cglti$col9110");
+        $email="maquinche";
+        $password="80166236";
+        $client = Zend_Gdata_ClientLogin::getHttpClient($email, $password, Zend_Gdata_Gapps::AUTH_SERVICE_NAME);
+        $gdata = new Zend_Gdata_Gapps($client, 'coltrans.co');
+        $data=$gdata->retrievePageOfUsers($startUsername=null);
+        print_r($data);
+        exit;
+    }
+    
 
 }

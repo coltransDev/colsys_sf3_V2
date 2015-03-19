@@ -27,38 +27,50 @@ class TicketSoap {
         }
         $resp=$message;        
 
-        $email_regex = "/[^0-9< ][A-z0-9_]+([.][A-z0-9_]+)*@[A-z0-9_]+([.][A-z0-9_]+)*[.][A-z]{2,4}/";
+        //$email_regex = "/[^0-9< ][A-z0-9._%+-]+([.][A-z0-9_]+)*@[A-z0-9_]+([.][A-z0-9_]+)*[.][A-z]{2,4}/";
+        //$email_regex ="\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b";
+        $email_regex ="/[^0-9< ][A-z0-9._%+-]+([.][A-z0-9_]+)*@[A-z0-9_]+([.][A-z0-9_]+)*[.][A-z]{2,4}/";
+        
         preg_match_all($email_regex, $from, $matches);
         $from = $matches[0][0];   
+        /*$t="";
+        foreach($matches as $m)
+        {
+            foreach($m as $f)
+                $t.= ("|".$f);
+        }
+        return $t;*/
         $idticket=0;
 
         try{
             $id=0;
-            $subject=  str_replace("Re: ", "", $subject);
             
             $user = Doctrine::getTable("Usuario")
                             ->createQuery("u")
                             ->select("u.ca_login")
                             ->where("u.ca_email = ? ", $from)
+                            ->addWhere("u.ca_activo = true ")
                             ->limit(1)
-                            ->fetchOne();            
+                            ->fetchOne();
+
+            //$ticket_regex = "/[^#A-záéíóúÁÉÍÓÚüÜñÑ ][A-z0-9]*/";
+            $ticket_regex = "/#[0-9]+/";
             
-            $ticket_regex = "/[^#A-záéíóúÁÉÍÓÚüÜñÑ ][A-z0-9]*/";
             preg_match_all($ticket_regex, $subject, $matches_ticket);
-            $idticket=$matches_ticket[0][0];            
+            $idticket=  str_replace("#","",$matches_ticket[0][0]);
+
             if($idticket>0)
             {
                 $conn = Doctrine::getTable("HdeskResponse")->getConnection();
                 $conn->beginTransaction();
                 try{                    
                     $ticket = Doctrine_Query::create()->from("HdeskTicket h")->where("h.ca_idticket = ?", $idticket)->fetchOne();
-                    $respuesta = new HdeskResponse();                    
+                    $respuesta = new HdeskResponse();
                     $respuesta->setCaIdticket($idticket);
                     $respuesta->setCaText($resp);
                     $respuesta->setCaLogin($user->getCaLogin());
-                    $respuesta->setCaCreatedat(date("Y-m-d H:i:s"));                    
-                    $respuesta->save( $conn );
-                    
+                    $respuesta->setCaCreatedat(date("Y-m-d H:i:s"));
+                    $respuesta->save( $conn );                    
                     $logins = array($ticket->getCaLogin());
                     if ($ticket->getCaAssignedto()) {
                         $logins[] = $ticket->getCaAssignedto();
@@ -78,7 +90,6 @@ class TicketSoap {
                     foreach ($usuarios as $usuario) {
                         $logins[] = $usuario->getCaLogin();
                     }
-                    
                     
                     if ($ticket->getCaAssignedto() == $user->getCaLogin() || in_array($user->getCaLogin(), $logins)) {
                         $tarea = $ticket->getTareaIdg();
@@ -122,17 +133,35 @@ class TicketSoap {
                     $conn->commit();                    
                     return "success";
                 }catch(Exception $e){
+                    /*$myfile = fopen("/srv/www/digitalFile/2014/newfile.txt", "w") or die("Unable to open file!");
+                    $txt = "John Doe\n";
+                    fwrite($myfile, $txt);
+                    $txt = "Jane Doe\n";
+                    fwrite($myfile, $txt);
+                    fclose($myfile);*/
                     $conn->rollback();
                     return "Remote: ".$e->getMessage()." server:".$_SERVER["SERVER_ADDR"]." ticket:".$idticket;
                 }
             }
             else
             {
-               return "correo no encontrado ".$subject;    
+                /*$myfile = fopen("/srv/www/digitalFile/2014/newfile.txt", "w") or die("Unable to open file!");
+                $txt = "John Doe\n";
+                fwrite($myfile, $txt);
+                $txt = "Jane Doe\n";
+                fwrite($myfile, $txt);
+                fclose($myfile);*/
+               return "ticket no encontrado ".$subject;
             }            
         }
         catch (Exception $e)
         {
+            /*$myfile = fopen("/srv/www/digitalFile/2014/newfile.txt", "w") or die("Unable to open file!");
+            $txt = "John Doe\n";
+            fwrite($myfile, $txt);
+            $txt = "Jane Doe\n";
+            fwrite($myfile, $txt);
+            fclose($myfile);*/
             return "Remote: ".$e->getMessage()." server:".$_SERVER["SERVER_ADDR"]." ticket:".$idticket;
         } 
     }
@@ -260,7 +289,7 @@ class TicketSoap {
                                                 
                                                 $htmlVT.='<tr><td>&nbsp;</td><td colspan="2"><hr noshade size="1"></td></tr>
                                                 <tr><td>&nbsp;</td><td>
-                                                        <font size="1" face="arial, helvetica, sans-serif" color="#000000"> Si los links no estan funcionando, copie y pegue esta dirección en el navegador:<br>https://www.coltrans.com.co<?=url_for("/pm/verTicket?id='.$ticket->getCaIdticket().' <br><br> Gracias por utilizar el sistema de tickets!<br><br>Coltrans S.A. - Colmas Ltda. Agencia de Aduanas Nivel 1<br>
+                                                        <font size="1" face="arial, helvetica, sans-serif" color="#000000"> Si los links no estan funcionando, copie y pegue esta dirección en el navegador:<br>https://www.coltrans.com.co<?=url_for("/pm/verTicket?id='.$ticket->getCaIdticket().' <br><br> Gracias por utilizar el sistema de tickets!<br><br>Coltrans S.A.S - Colmas Ltda. Agencia de Aduanas Nivel 1<br>
                                                             <a href="https://www.coltrans.com.co/">http://www.coltrans.com.co/</a>
                                                         </font>
                                                     </td>
@@ -270,7 +299,7 @@ class TicketSoap {
                                         </td></tr>
                                 </table>
                             </td></tr>                        
-                        <tr><td><font size="1" face="arial, helvetica, sans-serif" color="#666666">&copy; Coltrans S.A. Colmas Ltda. Agencia de Aduanas Nivel 1</font></td></tr>
+                        <tr><td><font size="1" face="arial, helvetica, sans-serif" color="#666666">&copy; Coltrans S.A.S. Colmas Ltda. Agencia de Aduanas Nivel 1</font></td></tr>
                     </table>
                     <img src="https://www.coltrans.com.co/images/spacer.gif" style="width:1px; height:1px;"/></body>
             </html>';
