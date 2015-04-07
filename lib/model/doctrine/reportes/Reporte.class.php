@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Reporte
  * 
@@ -435,7 +434,7 @@ class Reporte extends BaseReporte {
         return Doctrine::getTable("RepStatus")
                 ->createQuery("s")
                 ->innerJoin("s.Reporte r")
-                ->where("r.ca_consecutivo = ? and ca_tipo=0", $this->getCaConsecutivo())
+                ->where("r.ca_consecutivo = ? and ca_tipo in (0,2)", $this->getCaConsecutivo())
                 ->addOrderBy("s.ca_fchenvio DESC")
                 ->execute();
     }
@@ -1259,101 +1258,100 @@ class Reporte extends BaseReporte {
                 $repSeguroNew->save($conn);
             }
             
-            if ($this->getCaTiporep() == "4" ) {
-                
-            $status = $this->getUltimoStatus();
-            if(!$status)
-                $status=new RepStatus();
-            
-            $house= $this->getInoClientesSea();
-            if(!$house)
-                $house=new InoClientesSea();
-            $master=$house->getInoMaestraSea();
-            
-            if(!$master)
-                $master=new InoMaestraSea();
-            
-                $repOtm = $this->getRepOtm();
-                if($repOtm)
-                {
-                    $repOtmNew = $repOtm->copy();
-                    $repOtmNew->setCaIdreporte($reporte->getCaIdreporte());
-                }
-                else
-                {
-                    $repOtmNew = new RepOtm();
-                    $repOtmNew->setCaIdreporte($reporte->getCaIdreporte());
-                    
-                }
-                $volumen = explode("|", $status->getCaVolumen());
-                if($repOtmNew->getCaVolumen()=="")
-                {
-                    $repOtmNew->setCaVolumen($volumen[0] ? $volumen[0] : 0);
-                }
+                if ($this->getCaTiporep() == 4 && $this->getCaImpoexpo() == Constantes::OTMDTA ) {
 
-                $piezas = explode("|", $status->getCaPiezas());
-                if($repOtmNew->getCaNumpiezas()=="")
-                {
-                    $repOtmNew->setCaNumpiezas( $piezas[0] ? $piezas[0] : 0 );
-                }
-                
-                if($repOtmNew->getCaNumpiezasun()=="")
-                {
-                    $repOtmNew->setCaNumpiezasun( $piezas[1] ? $piezas[1] : "" );
-                }
-                
-                $peso = explode("|", $status->getCaPeso());
-                if($repOtmNew->getCaPeso()=="")
-                {
-                    $repOtmNew->setCaPeso($peso[0] ? $peso[0] : 0);
-                }
-                
-                if($repOtmNew->getCaOrigenimpo()=="")
-                {
-                    $repOtmNew->setCaOrigenimpo($this->getCaOrigen());
-                }
-                
-                if($repOtmNew->getCaHbls()=="")
-                {
-                    $repOtmNew->setCaHbls($house->getCaHbls());
-                }
-                
-                if($repOtmNew->getCaFcharribo()=="")
-                {
-                   $repOtmNew->setCaFcharribo($status->getCaFchllegada()) ;
-                }
-                
-                if($repOtmNew->getCaFchdoctransporte()=="")
-                {
-                    $repOtmNew->setCaFchdoctransporte($house->getCaFchhbls());
-                }
+                    $status = $this->getUltimoStatus();
+                    if(!$status)
+                        $status=new RepStatus();
 
-                if($repOtmNew->getCaMotonave()=="")
-                {
-                    $repOtmNew->setCaMotonave($status->getCaIdnave());
-                }
-                
-                if($repOtmNew->getCaReferencia()=="")
-                {
-                    $repOtmNew->setCaReferencia($house->getCaReferencia());
-                }
+                    $house= $this->getInoClientesSea();
+                    if(!$house)
+                        $house=new InoClientesSea();
+                    $master=$house->getInoMaestraSea();
 
-                if($repOtmNew->getCaLiberacion()=="")
-                {
-                    $repOtmNew->setCaLiberacion("coltrans.com.co");
-                }
-                
-                if($repOtmNew->getCaManifiesto()=="")
-                {
-                    $repOtmNew->setCaManifiesto($master->getCaFchregistroadu());
-                }
-                
-                if($repOtmNew->getCaMuelle()=="")
-                {
-                    $repOtmNew->setCaMuelle($master->getCaMuelle());
-                }
+                    if(!$master)
+                        $master=new InoMaestraSea();
 
-                $repOtmNew->save($conn);
+                    $repOtm = $this->getRepOtm();
+                    if($repOtm)
+                    {
+                        $repOtmNew = $repOtm->copy();
+                        $repOtmNew->setCaIdreporte($reporte->getCaIdreporte());
+                    }
+                    else
+                    {
+                        $repOtmNew = new RepOtm();
+                        $repOtmNew->setCaIdreporte($reporte->getCaIdreporte());
+                    }
+                    $volumen = explode("|", $status->getCaVolumen());
+                    if($repOtmNew->getCaVolumen()=="")
+                    {
+                        $repOtmNew->setCaVolumen($volumen[0] ? $volumen[0] : 0);
+                    }
+
+                    $piezas = explode("|", $status->getCaPiezas());
+                    if($repOtmNew->getCaNumpiezas()=="")
+                    {
+                        $repOtmNew->setCaNumpiezas( $piezas[0] ? $piezas[0] : 0 );
+                    }
+
+                    if($repOtmNew->getCaNumpiezasun()=="")
+                    {
+                        $repOtmNew->setCaNumpiezasun( $piezas[1] ? $piezas[1] : "" );
+                    }
+
+                    $peso = explode("|", $status->getCaPeso());
+                    if($repOtmNew->getCaPeso()=="")
+                    {
+                        $repOtmNew->setCaPeso($peso[0] ? $peso[0] : 0);
+                    }
+
+                    if($repOtmNew->getCaOrigenimpo()=="")
+                    {
+                        $repOtmNew->setCaOrigenimpo($this->getCaOrigen());
+                    }
+
+                    if($repOtmNew->getCaHbls()=="")
+                    {
+                        $repOtmNew->setCaHbls($house->getCaHbls());
+                    }
+
+                    if($repOtmNew->getCaFcharribo()=="")
+                    {
+                       $repOtmNew->setCaFcharribo($status->getCaFchllegada()) ;
+                    }
+
+                    if($repOtmNew->getCaFchdoctransporte()=="")
+                    {
+                        $repOtmNew->setCaFchdoctransporte($house->getCaFchhbls());
+                    }
+
+                    if($repOtmNew->getCaMotonave()=="")
+                    {
+                        $repOtmNew->setCaMotonave($status->getCaIdnave());
+                    }
+
+                    if($repOtmNew->getCaReferencia()=="")
+                    {
+                        $repOtmNew->setCaReferencia($house->getCaReferencia());
+                    }
+
+                    if($repOtmNew->getCaLiberacion()=="")
+                    {
+                        $repOtmNew->setCaLiberacion("coltrans.com.co");
+                    }
+
+                    if($repOtmNew->getCaManifiesto()=="")
+                    {
+                        $repOtmNew->setCaManifiesto($master->getCaFchregistroadu());
+                    }
+
+                    if($repOtmNew->getCaMuelle()=="")
+                    {
+                        $repOtmNew->setCaMuelle($master->getCaMuelle());
+                    }
+
+                    $repOtmNew->save($conn);
             }
             $conn->commit();
         } catch (Exception $e) {
@@ -1668,6 +1666,4 @@ class Reporte extends BaseReporte {
         if($this->preInsert($event))
         parent::save($con);        
     }*/
-    
-    
 }
