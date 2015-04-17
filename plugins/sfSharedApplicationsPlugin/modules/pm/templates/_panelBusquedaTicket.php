@@ -220,7 +220,7 @@ PanelBusquedaTicket = function( config ){
             enableRowBody:true,
             hideGroupedColumn: true,
             startCollapsed : true,
-            emptyText: "No se han encontrado resultados"
+            emptyText: "No hay tickets con ese criterio o usted no posee permisos para verlo. Consulte el administrador."
             //showPreview:true,
             //hideGroupedColumn: true,
             

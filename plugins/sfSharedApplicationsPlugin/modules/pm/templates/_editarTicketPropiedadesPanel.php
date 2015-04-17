@@ -737,13 +737,16 @@ include_component("widgets", "widgetEquipo");
                 }else{
                     form.submit({
                         success:function(form,action){
-
                             //Ext.Msg.alert( "Información" );
-                            Ext.getCmp("editar-ticket-win").close();
+                            Ext.getCmp("editar-ticket-win").close();                            
                             if( !idticket ){
                                 Ext.MessageBox.alert('Mensaje', 'El ticket se ha enviado al área correspondiente, el numero de ticket es: '+action.result.idticket);
                                 location.href="<?=url_for('helpdesk/verTicket')?>"+"/id/"+action.result.idticket;
-                            } else {                            
+                            } else {
+                                if(action.result.change){
+                                    Ext.MessageBox.alert('Mensaje', action.result.txt);
+                                    location.href="<?=url_for('pm/index')?>";
+                                }
                                 Ext.getCmp(gridId).store.reload();
                             }
                         },

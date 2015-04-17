@@ -172,14 +172,15 @@ PanelPreviewTicket = function( config ){
             params: {
                 idticket: this.idticket
             },
-
             callback :function(options, success, response){
                 var res = Ext.util.JSON.decode( response.responseText );
-                res.data.opened = Date.parseDate( res.data.opened, "Y-m-d H:i:s" );
-                res.data.vencimiento = Date.parseDate( res.data.vencimiento, "Y-m-d H:i:s" );
-                res.data.respuesta = Date.parseDate( res.data.respuesta, "Y-m-d H:i:s" );
-                panel.loadRecord( res );
-
+                if(res.success == true){
+                    res.data.opened = Date.parseDate( res.data.opened, "Y-m-d H:i:s" );
+                    res.data.vencimiento = Date.parseDate( res.data.vencimiento, "Y-m-d H:i:s" );
+                    res.data.respuesta = Date.parseDate( res.data.respuesta, "Y-m-d H:i:s" );
+                    panel.loadRecord( res );
+                }else
+                    location.href="<?=url_for('pm/noAccess')?>";
             }
         });
     }
