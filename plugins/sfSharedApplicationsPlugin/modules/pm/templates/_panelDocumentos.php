@@ -4,7 +4,6 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-$documentos = $sf_data->getRaw( "documentos" );
 $tipos = $sf_data->getRaw("tipos");
 include_component("gestDocumental", "widgetUploadButton");
 ?>
@@ -130,15 +129,16 @@ PanelDocumentos = function( config ){
 
     this.store = new Ext.data.Store({
 
-        autoLoad : true,
-        proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$documentos))?>),
+        autoLoad : false,
+        url: '<?=url_for("pm/datosDocumentosTicket")?>',
         reader: new Ext.data.JsonReader(
             {
-                root: 'root'
+                root: 'root',
+                totalProperty: 'total'
             },
             this.record
         ),
-        sortInfo: {field: 'idauditdocs', direction: 'DESC'} //,
+        sortInfo: {field: 'idauditdocs', direction: 'ASC'} //,
         
     });
 
@@ -164,20 +164,26 @@ PanelDocumentos = function( config ){
        scroll: true,
        plugins: [this.checkColumn],
        
-       tbar: [{
-               text:'Guardar',
-               iconCls: 'disk',
+       tbar: [
+           {
+               text:'Nuevo Registro',
+               iconCls: 'add',
                scope:this,
-               handler: this.guardarCambios
-             }, new WidgetUploadButton({
+               handler: this.nuevoRegistro
+           }, new WidgetUploadButton({
                     text: "Importar Archivo",
                     iconCls: 'arrow_up',
                     folder: "<?=base64_encode("tmp")?>",
                     filePrefix: "",
                     confirm: true,
                     callback: "Ext.getCmp('"+this.id+"').actFile"
-                })
-            ],
+           }), {
+               text:'Guardar',
+               iconCls: 'disk',
+               scope:this,
+               handler: this.guardarCambios
+           }
+       ],
        listeners:{            
            rowcontextmenu: this.onRowcontextMenu,
            afterEdit: this.onAfterEdit
@@ -187,6 +193,22 @@ PanelDocumentos = function( config ){
 
 Ext.extend(PanelDocumentos, Ext.grid.EditorGridPanel, {
     height: 300,
+    nuevoRegistro: function(){
+        var recordFile = this.record;
+        var store = this.store;
+        var record = new recordFile({sel:false,
+                        idticket: this.idticket,
+                        idauditdocs: null,
+                        tipo_documento: '',
+                        documento: '',
+                        recuperacion: '',
+                        perdida: '',
+                        observaciones: ''
+                    });
+        records = [];
+        records.push( record );
+        store.insert( store.getCount(), records );
+    },
     guardarCambios: function(){
         var store = this.store;
         var records = store.getModifiedRecords();

@@ -491,14 +491,14 @@ class pmActions extends sfActions {
             $email->setCaBodyhtml($texto);
 
             if ($ticket->getHdeskGroup()->getCaIddepartament()==4 and $ticket->getCaAssignedto()) {
-                $usuario = Doctrine::getTable("Usuario")->find($ticket->getCaAssignedto());
-                $email->addTo($usuario->getCaEmail());
-            } else {
-                foreach ($logins as $login) {
-                    if ($this->getUser()->getUserId() != $login) {
-                        $usuario = Doctrine::getTable("Usuario")->find($login);
-                        $email->addTo($usuario->getCaEmail());
-                    }
+                // Si el ticket es puesto por Auditoría, sobreescribe los destinatarios del mensaje
+                // Si el ticket está asignado a algúna persona en particular, no copia a los demas del departamento
+                $logins = array($ticket->getCaLogin(), $this->getUser()->getUserId(), $ticket->getCaAssignedto());
+            }
+            foreach ($logins as $login) {
+                if ($this->getUser()->getUserId() != $login) {
+                    $usuario = Doctrine::getTable("Usuario")->find($login);
+                    $email->addTo($usuario->getCaEmail());
                 }
             }
 
@@ -548,6 +548,7 @@ class pmActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeFormTicketGuardar(sfWebRequest $request) {
+        $txt = "";
         $update = false;
         $user = $this->getUser();
 
@@ -583,7 +584,6 @@ class pmActions extends sfActions {
                 $ticket->setCaOpened(date("Y-m-d H:i:s"));
             }
 
-
             $ticket->setCaIdgroup($request->getParameter("area"));
             if ($request->getParameter("project")) {
                 $ticket->setCaIdproject($request->getParameter("project"));
@@ -591,8 +591,6 @@ class pmActions extends sfActions {
 
             $ticket->setCaTitle(($request->getParameter("title")));
             $ticket->setCaText(($request->getParameter("text")));
-
-
 
             if ($request->getParameter("actionTicket") == "Cerrado") {
                 $ticket->setCaClosedat(date("Y-m-d H:i:s"));
@@ -643,9 +641,8 @@ class pmActions extends sfActions {
                     $ticket->crearEvaluacion($conn);
                 }
             }
-
-
-            if (isset($_FILES["archivo"])) {
+            
+            if (isset($_FILES["archivo"]) and $_FILES["archivo"]["name"]) {
 
                 $archivo = $_FILES["archivo"];
                 $directorio = $ticket->getDirectorio();
@@ -656,15 +653,15 @@ class pmActions extends sfActions {
                 move_uploaded_file($archivo["tmp_name"], $directorio . DIRECTORY_SEPARATOR . $archivo["name"]);
             }
 
-
             if (!$update) {
                 $request->setParameter("id", $ticket->getCaIdticket());
                 $request->setParameter("format", "email");
                 $grupo = $ticket->getHdeskGroup();
                 
-                $titulo = $grupo->getDepartamento()->getCaNombre()." Nuevo Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]";
+                $tipo = ($ticket->getHdeskGroup()->getCaIddepartament()==4)?"Hallazgo":"Ticket";
+                $titulo = $grupo->getDepartamento()->getCaNombre()." Nuevo $tipo #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]";
 
-                $texto = "Se ha creado un nuevo ticket \n\n<br /><br />";
+                $texto = ($ticket->getHdeskGroup()->getCaIddepartament()==4)?"Se ha reportado un nuevo hallazgo \n\n<br /><br />":"Se ha creado un nuevo ticket \n\n<br /><br />";
                 $texto.= sfContext::getInstance()->getController()->getPresentationFor('pm', 'verTicket');
 
                 /*
@@ -672,9 +669,10 @@ class pmActions extends sfActions {
                  */
                 $tarea = $ticket->getTareaIdg();
                 if (!$tarea || !$tarea->getCaIdtarea()) {
+                    $lista = ($ticket->getHdeskGroup()->getCaIddepartament()==4)?10:1;  // Lista para Tickets de Auditoría o Lista General
                     $tarea = new NotTarea();
                     $tarea->setCaUrl("/pm/verTicket?id=" . $ticket->getCaIdticket());
-                    $tarea->setCaIdlistatarea(1);
+                    $tarea->setCaIdlistatarea($lista);
                     $tarea->setCaFchcreado(date("Y-m-d H:i:s"));
 
                     $tarea->setTiempo(TimeUtils::getFestivos(), $grupo->getCaMaxresponsetime());
@@ -692,9 +690,15 @@ class pmActions extends sfActions {
             }
 
             if ($tarea) {
-                //Verifica las asignaciones de la tarea.
-                $loginsAsignaciones = $ticket->getLoginsGroup();
-                $tarea->setAsignaciones($loginsAsignaciones, $conn);
+                if ($ticket->getHdeskGroup()->getCaIddepartament()==4 and $ticket->getCaAssignedto()){
+                    //Si es Auditoría, crea la tarea solo la persona reportada.
+                    $loginsAsignaciones = array($ticket->getCaLogin());
+                    $tarea->setAsignaciones($loginsAsignaciones, $conn);
+                }else{
+                    //Verifica las asignaciones de la tarea.
+                    $loginsAsignaciones = $ticket->getLoginsGroup();
+                    $tarea->setAsignaciones($loginsAsignaciones, $conn);
+                }
             }
 
             if (!$update && $request->getParameter("actionTicket") != "Cerrado") {
@@ -1531,18 +1535,6 @@ class pmActions extends sfActions {
             $row["recuperacion"] = $documento->getCaRecuperacion();
             $row["perdida"] = $documento->getCaPerdida();
             $row["observaciones"] = utf8_encode($documento->getCaObservaciones());
-            $data[] = $row;
-        }
-
-        for ($i == 0; $i < 1; $i++) {
-            $row = array();
-            $row["idticket"] = $idticket;
-            $row["idauditdocs"] = '';
-            $row["tipo_documento"] = '';
-            $row["documento"] = '';
-            $row["recuperacion"] = '';
-            $row["perdida"] = '';
-            $row["observaciones"] = '';
             $data[] = $row;
         }
 
