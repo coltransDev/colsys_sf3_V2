@@ -1705,7 +1705,7 @@ class pmActions extends sfActions {
                     ->select("r.ca_text, t.ca_text, t.ca_idticket, t.ca_title, r.ca_createdat, r.ca_login, g.ca_name")
                     ->from("HdeskGroup g")
                     ->leftJoin("g.HdeskTicket t")
-                    ->leftJoin("t.HdeskResponse r")
+                    ->leftJoin("t.HdeskResponse r")                    
                     //->limit(100)
                     ->distinct()
                     ->orderBy("r.ca_createdat DESC")
@@ -1721,6 +1721,10 @@ class pmActions extends sfActions {
                     break;
                 case "texto":
                     $q->addWhere("(LOWER(t.ca_title) LIKE ? OR LOWER(t.ca_text) LIKE ? OR LOWER(r.ca_text) LIKE ?)", array("%" . strtolower($query) . "%", "%" . strtolower($query) . "%", "%" . strtolower($query) . "%"));
+                    break;
+                case "documento":
+                    $q->leftJoin("t.HdeskAuditDocuments ad");
+                    $q->addWhere("(LOWER(ad.ca_numero_doc) LIKE ? OR LOWER(ad.ca_observaciones) LIKE ?)", array("%" . strtolower($query) . "%", "%" . strtolower($query) . "%"));
                     break;
                 case "index":
                     if (substr($query, 0, 1) == "=") {

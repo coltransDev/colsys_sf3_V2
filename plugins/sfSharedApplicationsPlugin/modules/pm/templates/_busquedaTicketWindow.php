@@ -41,6 +41,7 @@ BusquedaTicketWindow = function( config ) {
         ["idticket","# ticket"],        
         ["texto","Entre los textos"],
         ["reportedBy","Reportado por"],
+        ["documento","Documento"],
         ["index","Indexada"]
 	 ]})
 
