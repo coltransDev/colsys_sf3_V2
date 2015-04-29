@@ -91,8 +91,7 @@ class Reporte extends BaseReporte {
                 $contac=array();
                 $usuarios = Doctrine::getTable("Usuario")
                         ->createQuery("u")
-                        ->innerJoin("u.Sucursal s")
-                        ->addWhere("u.ca_departamento = ? and s.ca_nombre = ? and u.ca_activo=true ", array($this->getCaTransporte(), $this->getUsuario()->getSucursal()->getCaNombre()))
+                        ->addWhere("u.ca_departamento = ? and u.ca_idsucursal = ? and u.ca_activo=true ", array($this->getCaTransporte(), $this->getUsuario()->getSucursal()->getCaIdsucursal()))
                         ->addOrderBy("u.ca_email")
                         ->execute();
                 foreach ($usuarios as $usuario) {

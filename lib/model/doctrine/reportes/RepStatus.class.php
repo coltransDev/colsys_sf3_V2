@@ -92,14 +92,17 @@ class RepStatus extends BaseRepStatus {
         if ($etapa) {
             $template = $etapa->getCaMessage();
             if ($template) {
+                $reporte = $this->getReporte();
                 if ($this->getCaIdetapa() == "IACAD") {
                     /*
                      * Si es un cabotaje el destino debe ser el final
                      */
-                    $reporte = $this->getReporte();
                     if ($reporte->getCaContinuacion() == "CABOTAJE") {
                         $template = "Nos permitimos informar que la carga en referencia llegó a {reporte_destinoCont_caCiudad} el {caFchcontinuacion}";
                     }
+                }else if($this->getCaIdetapa() == "IMETA"){
+                    if($reporte->getCaDeclaracionant())
+                        $template = "<b>DECLARACION ANTICIPADA<b><br/>".$etapa->getCaMessage();
                 }
                 $txt = $this->applyTemplate($template) . "\n\n";
             }
@@ -175,16 +178,17 @@ class RepStatus extends BaseRepStatus {
             $proveedor = substr($reporte->getProveedoresStr(), 0, 130);
             $asunto .= $proveedor . " / " . $cliente . " [" . $origen . " -> " . $destino . "] " . $reporte->getCaOrdenClie();
         } else {
+            
             $consignatario = $reporte->getConsignatario();
             $user = sfContext::getInstance()->getUser();
-            if ($user->getUserId() == "maquinche") {
-                echo "180";
+            if ($user->getUserId() == "maquinche") {                
                 try {
                     echo $consignatario . " / " . $cliente . " [" . $origen . " -> " . $destino . "] ";
                 } catch (Exception $e) {
                     print_r($e);
                 }
                 echo "181";
+                //exit;
             }
             $asunto .= $consignatario . " / " . $cliente . " [" . $origen . " -> " . $destino . "] ";
         }
@@ -269,8 +273,11 @@ class RepStatus extends BaseRepStatus {
         }
 
         //$reporte = $this->getUltReporte();        
+        
         if ($reporte->getEsSeguro()) {
-            $email->addCc("seguros@coltrans.com.co");
+                
+            if(sfConfig::get('app_branding_name')!=Constantes::TPLOGISTICS)
+                $email->addCc("seguros@coltrans.com.co");
 
             $repseguro = $reporte->getRepSeguro();
             if ($repseguro) {
@@ -421,7 +428,8 @@ class RepStatus extends BaseRepStatus {
                                 ->select("c.ca_email")
                                 ->innerJoin("c.Sucursal s")
                                 ->where("s.ca_nombre = ?", array($sucursal->getCaNombre()))
-                                ->andWhereIn("c.ca_cargo", $perfiles);
+                                ->addWhere("c.ca_activo = ?", true)
+                                ->andWhereIn("c.ca_cargo", $perfiles);                                
                         $jef_adu = $q->execute();
                         foreach ($jef_adu as $j) {
                             $email->addCc($j->getCaEmail());
@@ -448,7 +456,8 @@ class RepStatus extends BaseRepStatus {
                 }
             }
         }
-
+        if(isset($options["modo"]) && $options["modo"])
+            sfContext::getInstance()->getRequest()->setParameter("modo", $options["modo"]);
         sfContext::getInstance()->getRequest()->setParameter("idstatus", $this->getCaIdstatus());
         $email->setCaBodyhtml(sfContext::getInstance()->getController()->getPresentationFor('traficos', 'verStatus'));
         $email->save($conn);

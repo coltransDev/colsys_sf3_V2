@@ -18,11 +18,12 @@ class RepOtm extends BaseRepOtm
     public function getConsecutivoDtm() {
         
         if(trim($this->getCaConsecutivo())=="")
-        {        
+        {            
             if($this->reporte==null)
             {
                 $this->reporte=$this->getReporte();
             }
+            
             if($this->reporte->getCaOrigen()=="CTG-0005")
             {
                 $sql="select ('01-".date("my")."-'||lpad( COALESCE(((max(substring(ca_consecutivo from 9 for 12)::integer)+1)::text),'1'), 4, '0')) consecutivo   from tb_repotm 
@@ -32,6 +33,11 @@ class RepOtm extends BaseRepOtm
             {
                 $sql="select ('02-".date("my")."-'||lpad((max(substring(ca_consecutivo from 9 for 12)::integer)+1)::text, 4, '0')) consecutivo   from tb_repotm 
                 where substring(ca_consecutivo from 1 for 2)::integer = 2";            
+            }else if($this->reporte->getCaOrigen()=="BOG-0001")
+            {
+                $sql="select ('03-".date("my")."-'||lpad( COALESCE(((max(substring(ca_consecutivo from 9 for 12)::integer)+1)::text),'1'), 4, '0')) consecutivo   from tb_repotm 
+                where substring(ca_consecutivo from 1 for 2)::integer = 3";
+
             }
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
@@ -41,4 +47,89 @@ class RepOtm extends BaseRepOtm
         else
             return $this->getCaConsecutivo();
     }
+    
+    
+    public function getConsecutivoCv() {
+        
+        if(trim($this->getCaCv())=="")
+        {
+            
+            
+            $sql="select max(ca_cv)+1 consecutivo   from tb_repotm ";
+            
+            $con = Doctrine_Manager::getInstance()->connection();
+            $st = $con->execute($sql);
+            $data = $st->fetchAll();
+            
+            return ($data[0]["consecutivo"]+1);
+        }
+        else
+            return $this->getCaCv();
+    }
+    
+    
+     public function getConsecutivoCvAll() {
+        
+         $conse=array();
+        if(trim($this->getCaCv())!="")
+        {
+            
+            if($this->reporte==null)
+            {
+                $this->reporte=$this->getReporte();
+            }
+
+            $conse[]="660";
+
+            
+            $conse[]=date("Y");
+
+            $conse[]="0645";  
+            
+            $conse[]="00";
+            /*if($this->reporte->getCaOrigen()=="CTG-0005")
+            {
+                $conse[]="01";
+
+            }else  if($this->reporte->getCaOrigen()=="BUN-0002")
+            {
+                $conse[]="02";
+            }*/
+
+            $conse[]=str_pad($this->getCaCv() , 5 ,"0",STR_PAD_LEFT);            
+        }
+        else
+            $conse[]="SOLICITAR NUMERO";
+        return implode("", $conse);
+    }
+    
+    /*public function postInsert($event) {
+        parent::postInsert($event);
+        
+        $sfModule=sfContext::getInstance()->getModuleName ();
+        $sfAction=sfContext::getInstance()->getActionName ();
+        $sfDirectory=sfContext::getInstance()->getModuleDirectory();        
+        $sfUri=sfContext::getInstance()->getRouting()->getCurrentInternalUri();
+        $sfRoute=sfContext::getInstance()->getRouting()->getCurrentRouteName();
+        
+        $sfFirstStack=sfContext::getInstance()->getActionStack()->getFirstEntry();
+        $sfLastStack=sfContext::getInstance()->getActionStack()->getLastEntry();
+        //$sfLogger=sfContext::getInstance()->getLogger()->getPriorityName();
+       
+        
+        $this->setProperty("module", $sfModule);
+        $this->setProperty("action", $sfAction );
+        $this->setProperty("uri", $sfUri );
+        $this->setProperty("route", $sfRoute );
+        $this->setProperty("directory", $sfDirectory );
+        //$this->setProperty("action", $sfActionStack );
+        //$this->setProperty("logger", $sfLogger );
+        $this->setProperty("FirstStack", $sfFirstStack );
+        $this->setProperty("LastStack", $sfLastStack );
+        
+        
+        $this->save();
+       
+    } */
+    
 }
