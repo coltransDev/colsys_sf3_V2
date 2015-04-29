@@ -408,7 +408,7 @@ class NuevoStatusForm extends BaseForm {
                 $idgMax = IdgTable::getUnIndicador(RepStatus::IDG_AEREO, $taintedValues["fchrecibo"], $this->idsucursal);
                 $maxTime = $idgMax?$idgMax->getCaLim1()*3600:0;
             }
-
+             
             if (!$taintedValues["observaciones_idg"] && $dif > $maxTime) {
                 $this->validatorSchema['observaciones_idg']->setOption('required', true);
             }
