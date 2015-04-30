@@ -32,7 +32,7 @@ foreach ($inoClientes as $inoCliente) {
     $archivosOld = sfFinder::type('file')->maxDepth(0)->in($directoryOld);
     
     // Archivos ubicados en directorio de Gestion Documental    
-    $folder = date('Y') . DIRECTORY_SEPARATOR . "Referencias/" . $inoCliente->getCaReferencia() . "/" . $inoCliente->getCaHbls() . "/";
+    $folder = date('Y') . DIRECTORY_SEPARATOR . "Referencias/maritimo/" . $inoCliente->getCaReferencia() . "/" . $inoCliente->getCaHbls() . "/";
     $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
     
     $data = array();
@@ -133,6 +133,7 @@ foreach ($inoClientes as $inoCliente) {
         </td>
     </tr>
     <?
+    $narchivos = 0;
 }
 ?>
 <script>

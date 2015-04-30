@@ -41,7 +41,7 @@ foreach ($inoClientes as $inoCliente) {
             <input type="hidden" name='oid[]' id="checkbox_<?= $inoCliente->getOid() ?>"  value="<?= $inoCliente->getOid() ?>" />
             <input type="hidden" name='idcliente_<?= $inoCliente->getOid() ?>' value="<?= $inoCliente->getCaIdcliente() ?>" />
             <input type="hidden" name='hbls_<?= $inoCliente->getOid() ?>' value="<?= $inoCliente->getCaHbls() ?>" />
-            Planilla Envio # &nbsp;<input type="text" name='idplanilla_<?= $inoCliente->getOid() ?>' value="<?= $inoCliente->getCaPlanilla() ?>" />
+            Planilla Envio # &nbsp;<input type="text" name='idplanilla_<?= $inoCliente->getOid() ?>' value="<?= $inoCliente->getCaPlanilla() ?>" /><?=$inoCliente->getCaContinuacion() != "N/A"?"<span style='color:red'>OTM: Este número no se notificará a los usuarios</span>":""?>
         </td>
     </tr>	
     <tr height="<?= $alto + 20 ?>">

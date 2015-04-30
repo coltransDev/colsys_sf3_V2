@@ -21,7 +21,7 @@ $j = 0;
         <td width="8%" class="listar"><b>No.Piezas:</b><br /><?= Utils::formatNumber($inoCliente->getCaNumpiezas()) ?></td>
         <td width="8%" class="listar"><b>Peso en Kilos:</b><br /><?= Utils::formatNumber($inoCliente->getCaPeso()) ?></td>
         <td width="8%" class="listar"><b>Volumen CMB:</b><br /><?= Utils::formatNumber($inoCliente->getCaVolumen()) ?></td>
-        <td width="50%" class="listar" colspan="2" valign="top" rowspan="<?= $modo == "otm" ? 6 : 4 ?>" ><b>Correos Electr&oacute;nicos a enviar Confirmaci&oacute;n:</b><br />
+        <td width="50%" class="listar" colspan="2" valign="top" rowspan="<?= $modo == "otm" ? 6 : 5 ?>" ><b>Correos Electr&oacute;nicos a enviar Confirmaci&oacute;n:</b><br />
             <?
             $i = 0;
             if (count($fijos) > 0) {
@@ -159,7 +159,7 @@ $j = 0;
             </select></div>
         </td>
     </tr>
-    <tr>
+    <tr >
         <td><h1>Indicadores de Gesti&oacute;n:</h1></td>
         <td><div id="divfchrecibo_<?= $inoCliente->getOid() ?>"> <b>Fecha Recibido Status:</b><br /><?echo extDatePicker('fchrecibido_' . $inoCliente->getOid(), "");?></div></td>
         <td><div id="divhorarecibo_<?= $inoCliente->getOid() ?>"> <b>Hora:</b><br /><?echo extTimePicker('horarecibido_' . $inoCliente->getOid(), "");?></div></td>        
@@ -193,6 +193,18 @@ $j = 0;
         <td class="mostrar">Adjunto para Cliente : </td>
         <td class="mostrar" colspan="4"><input type='file' name='attachment_<?= $inoCliente->getOid() ?>' id='attachment_<?= $inoCliente->getOid() ?>' size="75" /></td>
     </tr>
+<?    
+    if ($modo != "otm")
+    {
+?>        
+    <tr>
+        <td class="mostrar"><h1>Indicadores de Gesti&oacute;n:</h1></td>
+        <td class="mostrar"><div id="divfchrecibo_<?= $inoCliente->getOid() ?>"> <b>Fecha Recibido Status:</b><br /><?echo extDatePicker('fchrecibido_' . $inoCliente->getOid(), "");?></div></td>
+        <td class="mostrar" colspan="3"><div id="divhorarecibo_<?= $inoCliente->getOid() ?>"> <b>Hora:</b><br /><?echo extTimePicker('horarecibido_' . $inoCliente->getOid(), "");?></div></td>        
+    </tr>
+<?
+    }
+?>
     <tr>
         <td colspan="9">
 <?

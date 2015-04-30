@@ -573,6 +573,7 @@ class confirmacionesActions extends sfActions {
                 $status->setCaComentarios($this->getRequestParameter("notas"));
                 $status->setCaFchenvio(date("Y-m-d H:i:s"));
                 $status->setCaUsuenvio($this->getUser()->getUserId());
+                $status->setCaTipo("2");//tipo 2 para maritimo
 
                 if ($request->getParameter("observaciones_idg")) {
                    $status->setCaObservacionesIdg($request->getParameter("observaciones_idg"));
@@ -671,6 +672,7 @@ class confirmacionesActions extends sfActions {
                     $mensaje = $this->getRequestParameter("status_body");
                     if ($tipo_msg == "not_planilla"){
                         $mensaje.= "<br />Planilla No: <b>" . $inoCliente->getCaPlanilla() . "</b>";
+                        $status->setCaIdetapa("IMPLA");
                         $options["subject"] = "Planilla de Envío Id.: ". $reporte->getCaConsecutivo()." ";
                     }
                     if($this->getRequestParameter("intro_otm"))

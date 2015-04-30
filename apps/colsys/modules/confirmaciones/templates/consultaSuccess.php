@@ -21,16 +21,19 @@ switch ($modo) {
 $textos = $sf_data->getRaw("textos");
 ?>
 <script language="javascript" type="text/javascript">
-    var modo = '<?= $modo ?>'
+    var modo = '<?= $modo ?>';    
     function validarFormConfirmacion(tipomsg){
+        var now = new Date();
+        var currentDate = formatDate(now);
+        var currentHours = formatHours(now);
 <?
         if ($modo != "puerto") {
             $oids = array();
             foreach ($inoClientes as $inoCliente) {
                 $oids[] = $inoCliente->getOid();
             }
-?>
-            var oids = <?= json_encode($oids); ?>;
+?>        
+            var oids = <?= json_encode($oids); ?>;            
             for (i in oids){
                 if (typeof (oids[i]) == "number"){
                     var checkbox = document.getElementById("checkbox_" + oids[i]);
@@ -74,9 +77,35 @@ $textos = $sf_data->getRaw("textos");
                                 }
                             }
                         }
+                        
+                        if(valor!="Conf" && valor!="Fact")
+                        {
+                            var fchrecibo = document.getElementById("fchrecibido_" + oids[i]);
+                            var horarecibo = document.getElementById("horarecibido_" + oids[i]);
+                            if (fchrecibo.value == ""){
+                                alert("Por favor coloque la FECHA de recibo del Status");
+                                fchrecibo.focus();
+                                return false;
+                            }
+                            if (horarecibo.value == ""){
+                                alert("Por favor coloque la HORA de recibo del Status");
+                                horarecibo.focus();
+                                return false;
+                            }
+                            if (fchrecibo.value > currentDate){
+                                alert("La fecha recibo status es mayor a la fecha actual");
+                                fchrecibo.focus();
+                                return false;
+                            } /*else if (horarecibo.value > currentHours){
+                                alert("La hora de recibo status es mayor a la hora actual");
+                                horarecibo.focus();
+                                return false;
+                            }*/
+                        }
+                        
                     }
                 }
-            }
+            }            
 <?
         }
         if ($modo == "otm") {
@@ -86,9 +115,7 @@ $textos = $sf_data->getRaw("textos");
                     var checkbox = document.getElementById("checkbox_" + oids[i]);
                     var fchrecibo = document.getElementById("fchrecibido_" + oids[i]);
                     var horarecibo = document.getElementById("horarecibido_" + oids[i]);
-                    var now = new Date();
-                    var currentDate = formatDate(now);
-                    var currentHours = formatHours(now);
+                    
                     if (checkbox.checked){
                         if (document.getElementById("divmessage_" + oids[i]).innerHTML == "" && document.getElementById("mensaje_" + oids[i]).value == ""){
                             alert("Por favor coloque un mensaje para el status");
@@ -146,6 +173,7 @@ $textos = $sf_data->getRaw("textos");
                     alert('Ingrese el nombre de la Motonoave de Llegada');
                     return false;
                 }
+                //alert(177);
                 this.validarIdg();      // Valida si se cumple el indicado de Oportunida en el envio de Confirmaciones
                 return false;
             } else{
@@ -176,8 +204,9 @@ $textos = $sf_data->getRaw("textos");
 ?>
             }
 <?
-        }
+        }        
 ?>
+        
         document.getElementById("form1").submit();
     }
 
@@ -243,13 +272,45 @@ $textos = $sf_data->getRaw("textos");
         }
     }
 
-    function habilitar(oid){
+    function habilitar(oid) {
         objeto = document.getElementById('tb_' + oid);
         campo = document.getElementById('checkbox_' + oid);
+        //alert($("#tipo_msg").val());
+        //$('#tb_' + oid).toggle();
         if (campo.checked) {
-            objeto.style.display = "inline";
+            
+            $('#tb_' + oid).show();
+            
+            switch($(".tipostatus:checked").val() )
+            {
+                case "Conf":
+                case "Fact":
+                    $('#divfchrecibo_' + oid).hide();
+                    $('#divhorarecibo_' + oid).hide();
+                break;
+                default :
+                    $('#divfchrecibo_' + oid).show();
+                    $('#divhorarecibo_' + oid).show();
+            }
+            
+            
+            
+            
+            if($(".tipostatus:checked").val()=="Desc")
+            {
+                $('#fchrecibido_'+ oid).val($('#desconsolidacionF').val());
+                $('#horarecibido_'+ oid).val($('#desconsolidacionH').val());
+            }
+            else if($(".tipostatus:checked").val()=="not_planilla")
+            {
+                $('#fchrecibido_'+ oid).val($('#planillaF').val());
+                $('#horarecibido_'+ oid).val($('#planillaH').val());
+            }
         } else {
-            objeto.style.display = "none";
+            //objeto.style.display = "none";
+            $('#tb_' + oid).hide();
+            $('#fchrecibido_'+ oid).val('');
+            $('#horarecibido_'+ oid).val('');
         }
     }
 
@@ -420,7 +481,7 @@ $textos = $sf_data->getRaw("textos");
             $("#status_fct").hide();
             $("#confirmacion_tbl").hide();
             $("#upload_tbl").hide();
-            $("#planilla_form").show();
+            $("#planilla_form").show();            
         } else if (value == "1207"){
             $("#status_tbl").hide ();
             $("#1207_tbl").show();
@@ -838,6 +899,31 @@ $textos = $sf_data->getRaw("textos");
                             </tr>
 <?
                             foreach ($confirmaciones as $confirmacion) {
+                                
+                                $fechatmp= explode(" ", $confirmacion->getCaFchenvio());
+                                
+                                if (strpos($confirmacion->getCaSubject(), "Notificación de Desconsolidación desde el Puerto") !== false)
+                                {                            
+                            ?>
+                            <script>
+                            descF='<?=$fechatmp[0]?>';
+                            descH='<?=$fechatmp[1]?>';
+                            </script>
+                            <input type="hidden" name="desconsolidacionF"id="desconsolidacionF" value="<?=$fechatmp[0]?>"> 
+                            <input type="hidden" name="desconsolidacionH" id="desconsolidacionH" value="<?=$fechatmp[1]?>"> 
+                            <?
+                                }
+                                if (strpos($confirmacion->getCaSubject(), "Notificación de Planilla desde el Puerto de")!== false)
+                                {
+                            ?>
+                            <script>
+                            plaF='<?=$fechatmp[0]?>';
+                            plaH='<?=$fechatmp[1]?>';
+                            </script>
+                            <input type="hidden" name="planillaF"id="planillaF" value="<?=$fechatmp[0]?>"> 
+                            <input type="hidden" name="planillaH" id="planillaH" value="<?=$fechatmp[1]?>"> 
+                            <?
+                                }
 ?>
                             <tr>
                                 <td><?= Utils::fechaMes($confirmacion->getCaFchenvio()) ?></td>
@@ -853,7 +939,7 @@ $textos = $sf_data->getRaw("textos");
                                 </td>							
                             </tr>
 <?
-                            }
+                            }                            
 ?>
                         </table>
                     </td>
@@ -922,3 +1008,11 @@ $textos = $sf_data->getRaw("textos");
 ?>
     modFcharribo();
 </script>
+<?
+//print_r($fechasRecibido);
+foreach($fechasRecibido as $f)
+{
+
+}
+
+?>

@@ -21,10 +21,13 @@ mensajeConfOTMCliente: |
   - Copia Factura Comercial con Término de Negociación
   - Copia Lista de Empaque
   - Copia Póliza de Seguro
+  - Certificación posición arancelaria y/o registro de importación
+  - Valor CIF de la mercancía
   
   Si su mercancía requiere tramite Invima favor enviar original del certificado del proveedor de mercancia apta para el consumo humano+ el registro de importación.
   
-  
+  Si los documentos ya han sido enviados, favor omitir este mensaje.
+
   Cualquier información adicional respecto al OTM favor contactar a  
 
 mensajeFacFletes: |
