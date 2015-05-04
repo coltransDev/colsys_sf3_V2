@@ -593,6 +593,10 @@ a.toolbar:active {
 	background-color:#FFCC66 !important;	
 }
 
+.row_apricot{
+	background-color:#FAE9DE !important;	
+}
+
 /*
 * Thumbnails
 */
@@ -839,6 +843,7 @@ div.storybox .body {
 .website{
 	background-image:url('../images/fam/website.png') !important;
 }
+
 
 
 
