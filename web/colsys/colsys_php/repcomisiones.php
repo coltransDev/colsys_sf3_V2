@@ -393,28 +393,33 @@ elseif (isset($boton)) {                                                      //
 		$modulo = "00100100";                                              // Identificación del módulo para la ayuda en línea
 //          include_once 'include/seguridad.php';                             // Control de Acceso al módulo
             list($mes, $ano, $sucursal, $login, $casos) = split('[|]', $cl);  // sscanf($cl, "%d|%d|%s|%s|%s");
+            $mes_imp = $mes;
             
-            $annos = $ano;
-            $nanos = '';
-            while ($annos >= 2009){                                             // Trae lo pendiente x cobrar en comisiones desde el año 2009 hasta el año solicitado
-                $nanos.= "'".$annos."',";
-                $annos--;
+            if ($mes == "%"){
+                $mes = date('m');
             }
-            $nanos = substr($nanos,0,strlen($nanos)-1);
-            $condicion = "ca_ano::text in ($nanos) ";
+            
+            $meses = array();
+            $fch_fin = mktime(0, 0, 0, $mes, 1, $ano);
+            
+            $fch_ini = mktime(0, 0, 0, 1, 1, $ano-3);
+            list($ano, $mes, $dia) = sscanf(date('Y-m-d', $fch_ini), "%d-%d-%d");
 
-            $nmeses = '';
-            $mes = ($mes=='%')?12:$mes;
-            for ($i=1; $i<=$mes; $i++){
-                    $nmeses.= "'".substr(100+$i,1,2)."',";
+            while ($fch_ini <= $fch_fin){
+                $fch_ini = mktime(0, 0, 0, $mes, $dia, $ano);
+                list($ano, $mes, $dia) = sscanf(date('Y-m-d', $fch_ini), "%d-%d-%d");
+                
+                $meses[] = date('Y-m', $fch_ini);
+                $mes++;
             }
-            $nmeses = substr($nmeses,0,strlen($nmeses)-1);
-            if(strlen($nmeses) != 0){
-                $condicion.= " and ca_mes::text in ($nmeses)";
-            }
-            $condicion.= " and ca_login like '$id' and ca_estado <> 'Abierto'";
             
-            if (!$rs->Open("select * from vi_inoingresos_sea where $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
+            $meses = implode("','", $meses);
+            $condicion = "ca_ano::text||'-'||ca_mes::text in ('$meses')";
+            
+            $condicion.= " and ca_login like '$id' and ca_estado <> 'Abierto'";
+            $columnas = "ca_oid, ca_referencia, ca_compania, ca_hbls, ca_incoterms, ca_factura, ca_fchfactura, ca_valor, ca_reccaja, ca_fchpago, ca_vlrcomisiones, ca_sbrcomisiones, ca_estado, ca_facturacion_r, ca_deduccion_r, ca_utilidad_r, ca_volumen_r, ca_vlrutilidad_liq, ca_volumen, ca_porcentaje, ca_vlrcomisiones, ca_sbrcomisiones, ca_sbrcomision, ca_estado, ca_stdcircular";
+            
+            if (!$rs->Open("select $columnas from vi_inoingresos_sea where $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                 echo "<script>document.location.href = 'entrada.php?id=390';</script>";
                 exit; }
@@ -500,7 +505,7 @@ require_once("menu.php");
             echo "<INPUT TYPE='HIDDEN' NAME='id'>";
             echo "<TABLE CELLSPACING=1>";                                              // un boton de comando definido para hacer mantemientos
             echo "<TR>";
-            echo "  <TH Class=titulo COLSPAN=10>".COLTRANS."<BR>$titulo<BR>".$meses[substr(100+$mes,1,2)]."/".$ano."</TH>";
+            echo "  <TH Class=titulo COLSPAN=11>".COLTRANS."<BR>$titulo<BR>".$mes_imp."/".$ano."</TH>";
             echo "</TR>";
             echo "<TH>Referencia</TH>";
             echo "<TH>Hbls</TH>";
@@ -508,6 +513,7 @@ require_once("menu.php");
             echo "<TH>Factura</TH>";
             echo "<TH>Fch.Factura</TH>";
             echo "<TH>Vlr.Facturado</TH>";
+            echo "<TH>Circular</TH>";
             echo "<TH>Rec.Caja</TH>";
             echo "<TH>Fch.Pago</TH>";
             echo "<TH>Com.Causada</TH>";
@@ -527,7 +533,7 @@ require_once("menu.php");
                 $back_col= ($utl_cbm<=0)?" background: #FF6666":$back_col;
                 if ($rs->Value('ca_compania') != $nom_cli) {
                     echo "<TR>";
-                    echo "  <TD Class=invertir style='font-weight:bold; font-size: 9px;' COLSPAN=8>".$rs->Value('ca_compania')."</TD>";
+                    echo "  <TD Class=invertir style='font-weight:bold; font-size: 9px;' COLSPAN=9>".$rs->Value('ca_compania')."</TD>";
                     echo "  <TD Class=invertir>";
                     echo "    <TABLE CELLSPACING=1>";
                     echo "    <TR>";
@@ -543,7 +549,7 @@ require_once("menu.php");
                 }
                 echo "<TR>";
                 if ($num_ref != $rs->Value('ca_referencia')) {
-					echo "  <TD Class=listar style='font-weight:bold; font-size: 9px;$back_col' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'".substr($back_col,14,6)."');\" onclick='javascript:window.open(\"inosea.php?boton=Consultar\&id=".$rs->Value('ca_referencia')."\");'>".$rs->Value('ca_referencia')."</TD>";
+                    echo "  <TD Class=listar style='font-weight:bold; font-size: 9px;$back_col' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'".substr($back_col,14,6)."');\" onclick='javascript:window.open(\"inosea.php?boton=Consultar\&id=".$rs->Value('ca_referencia')."\");'>".$rs->Value('ca_referencia')."</TD>";
                     $num_ref = $rs->Value('ca_referencia');
                 }else{
                     echo "  <TD Class=listar></TD>";
@@ -561,6 +567,7 @@ require_once("menu.php");
                 echo "  <TD Class=listar  WIDTH=50 style='font-size: 9px;$back_col'>".$rs->Value('ca_factura')."</TD>";
                 echo "  <TD Class=listar  WIDTH=70 style='font-size: 9px;$back_col'>".$rs->Value('ca_fchfactura')."</TD>";
                 echo "  <TD Class=valores WIDTH=75 style='font-size: 9px;$back_col'>".number_format($rs->Value('ca_valor'))."</TD>";
+                echo "  <TD Class=listar  WIDTH=75 style='font-size: 9px;$back_col'>".$rs->Value('ca_stdcircular')."</TD>";
                 echo "  <TD Class=listar  WIDTH=75 style='font-size: 9px;$back_col'>".$rs->Value('ca_reccaja')."</TD>";
                 echo "  <TD Class=listar  WIDTH=75 style='font-size: 9px;$back_col'>".$rs->Value('ca_fchpago')."</TD>";
                 if ($rec_com) {
@@ -585,22 +592,22 @@ require_once("menu.php");
                 $j++;
                 }
             echo "<TR HEIGHT=5>";
-            echo "  <TD Class=invertir COLSPAN=10></TD>";
+            echo "  <TD Class=invertir COLSPAN=11></TD>";
             echo "</TR>";
-			echo "";
+		echo "";
             echo "<TR>";
-			echo "  <TD COLSPAN=8 Class=invertir style='text-align:right'><B>TOTALES :</B>";
-			echo "  </TD>";
-			echo "  <TD Class=invertir>";
-			echo "    <TABLE CELLSPACING=1>";
-			echo "    <TR>";
-			echo "     <TD Class=valores WIDTH=70 style='font-size: 9px;$back_col'><B>".number_format($tot_vlr)."</B></TD>";
-			echo "     <TD Class=valores WIDTH=70 style='font-size: 9px;$back_col'><B>".number_format($tot_sbr)."</B></TD>";
-			echo "    <TR>";
-			echo "    </TABLE>";
-			echo "  </TD>";
+            echo "  <TD COLSPAN=9 Class=invertir style='text-align:right'><B>TOTALES :</B>";
+            echo "  </TD>";
+            echo "  <TD Class=invertir>";
+            echo "    <TABLE CELLSPACING=1>";
+            echo "    <TR>";
+            echo "     <TD Class=valores WIDTH=70 style='font-size: 9px;$back_col'><B>".number_format($tot_vlr)."</B></TD>";
+            echo "     <TD Class=valores WIDTH=70 style='font-size: 9px;$back_col'><B>".number_format($tot_sbr)."</B></TD>";
+            echo "    <TR>";
+            echo "    </TABLE>";
+            echo "  </TD>";
             echo "</TR>";
-			echo "</B>";
+            echo "</B>";
 
             echo "</TABLE><BR>";
            
@@ -611,7 +618,7 @@ require_once("menu.php");
             echo "</CENTER>";
 //          echo "<P DIR='RTL'><A HREF=\"#\" ONCLICK='javascript:window.open(\"./help/$modulo.html\",\"Ayuda\",\"scrollbars=yes,width=600,height=400,top=200,left=150\")'><IMG SRC='./graficos/help.gif' border=0 ALT='Ayuda en Línea'><BR>Ayuda</A></P>";  // Link que proporciona la Ayuda en línea
             require_once("footer.php");
-echo "</BODY>";
+            echo "</BODY>";
             echo "</HTML>";
             break;
            }
