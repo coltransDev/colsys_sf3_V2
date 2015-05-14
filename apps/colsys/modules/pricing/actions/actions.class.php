@@ -2539,12 +2539,12 @@ class pricingActions extends sfActions {
             $row['concepto'] = utf8_encode($aduconcepto->getCosto()->getCaCosto());
             $row['parametro'] = $aduconcepto->getCaParametro();
             $row['valor'] = $aduconcepto->getCaValor();
-            $row['aplicacion'] = $aduconcepto->getCaAplicacion();
+            $row['aplicacion'] = utf8_encode($aduconcepto->getCaAplicacion());
             $row['valorminimo'] = $aduconcepto->getCaValorminimo();
-            $row['aplicacionminimo'] = $aduconcepto->getCaAplicacionminimo();
+            $row['aplicacionminimo'] = utf8_encode($aduconcepto->getCaAplicacionminimo());
             $row['fchini'] = $aduconcepto->getCaFchini();
             $row['fchfin'] = $aduconcepto->getCaFchfin();
-            $row['observaciones'] = $aduconcepto->getCaObservaciones();
+            $row['observaciones'] = utf8_encode($aduconcepto->getCaObservaciones());
             $row['orden'] = "Z";
             $this->data[] = $row;
         }
