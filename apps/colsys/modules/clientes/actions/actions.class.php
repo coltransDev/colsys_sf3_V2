@@ -345,15 +345,6 @@ class clientesActions extends sfActions {
                 while ($row1 = $sb->fetch()) {
                     $estado_cal = ($row1["ca_numnegocios"] == "" or $row1["ca_numnegocios"] == 0 or $row1["ca_numnegocios"] == NULL) ? "Potencial" : "Activo";
                     $resultado = ($row["ca_estado"] != $estado_cal) ? "Error" : "OK";
-                    /*
-                    if ($row["ca_idcliente"] == 80089103){     // Ruptura de Control ver Variables
-                      print_r($row);
-                      print_r($row1);
-                      echo "$fch_ini, $fch_fin | ";
-                      echo $row["ca_estado"]." ".$estado_cal." ".$resultado." ".$empresa." ".$row1["ca_numnegocios"];
-                      die();
-                    } 
-                    */
                     if ($row["ca_estado"] != "Vetado" and $resultado != "OK") {
                         if ($row1["ca_fchnegocio"] != "") {
                             list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($row1["ca_fchnegocio"], "%d-%d-%d %d:%d:%d");
@@ -623,21 +614,8 @@ class clientesActions extends sfActions {
                 $email->setCaReplyto($comercial->getCaEmail());
                 $email->addCc($comercial->getCaEmail());
 
-                // $email->addCc("clopez@coltrans.com.co");    // Pruebas de envio controlado
-
                 $sucursal_obj = $comercial->getSucursal();
                 $direccion_suc = $sucursal_obj->getCaDireccion() . " " . $sucursal_obj->getCaNombre();
-
-                /*
-                  reset($defaultEmail);
-                  while (list ($clave, $val) = each ($defaultEmail)) {
-                  $email->addCc( $val );
-                  }
-                  reset($ccEmails);
-                  while (list ($clave, $val) = each ($ccEmails)) {
-                  $email->addCc( $val );
-                  }
-                 */
 
                 $email->setCaSubject("Vencimiento de Circular 0170 Coltrans S.A.S. ".$cliente->getCaCompania());
 
@@ -649,7 +627,7 @@ class clientesActions extends sfActions {
                   <table style=\"width: 100%\">
                      <tr>
                         <td style=\"text-align: center; font-weight: bold\">
-                           DOCUMENTOS  IDENTIFICACIÓN  CLIENTES
+                           DOCUMENTOS IDENTIFICACIÓN CLIENTES
                         </td>
                      </tr>
                      <tr>
@@ -659,50 +637,55 @@ class clientesActions extends sfActions {
                      </tr>
                      <tr>
                         <td style=\"text-align: justify\">
-                           Es necesario para COLTRANS S.A.S. y/o AGENCIA DE ADUANAS COLMAS LTDA NIVEL 1 dar cumplimiento a la  Circular  0170 expedida  por la  DIAN el 10 de  octubre de 2002, siendo  nuestra  obligación  como  Agentes  de  Carga   Internacional / Agentes de Aduana, crear un  banco de datos de  nuestros clientes  cuyo  objetivo  es  la  'Prevención  y  Control de  lavado de Activos'.<br /><br />
-                           Por  lo anterior,   nuestro  Representante  Comercial  estará  retirando  de sus  instalaciones  los  siguientes  documentos:<br /><br />
+                           Es necesario para <strong>COLTRANS S.A.S.</strong> y/o <strong>AGENCIA DE ADUANAS COLMAS S.A.S. NIVEL 1</strong> dar cumplimiento a la Circular 0170 expedida por la  DIAN el 10 de octubre de 2002 y la circular externa 100-000005 de junio 17 de 2014, expedida por al Superintendencia de Sociedades, siendo nuestra obligación como Agentes de Carga Internacional / Agentes de Aduana, crear un banco de datos de nuestros clientes que nos permita establecer un adecuado auto control y gestión del riesgo para la  'Prevención del lavado de Activos y Financiación del Terrorismo' en nuestras operaciones.<br /><br />
+                           Por lo anterior, el Representante Comercial que atiende su cuenta, estará retirando de sus instalaciones los siguientes documentos:<br /><br />
                         </td>
                      </tr>
                      <tr>
                         <td style=\"text-align: justify\">
                            <ol>
-                              <li>Original de la Circular 0170 debidamente diligenciada y firmada por el  Representante Legal o  la persona facultada según certificado de Cámara de Comercio.</li>
-                              <li>Certificado de Cámara de Comercio en original con vigencia no superior a 30 días.</li>
-                              <li>Copia  del  RUT</li>
-                              <li>Balance General, Estado de Resultados y las respectivas notas  a los  Estados  Financieros  (certificado y dictaminado por  Revisor Fiscal o Contador Público)  con fecha  de corte a 31 de  diciembre del año inmediatamente  anterior o balance inicial  si la  compañía  se  encuentra  recientemente  constituida.  En caso de personas naturales Declaración de Renta.</li>
-                              <li>Fotocopia del documento de identidad de la persona que  firma  la    Circular 0170  (Representante Legal o persona  facultada  según Cámara  de  Comercio)</li>
-                              <li>Resolución de la  DIAN que autoriza a  la  compañía  para  actuar  como  Comercializadoras Internacionales y/o  realizar  actividades como  importación de licores,  calzados,  textiles  y/o  confecciones. Si aplica.</li>
+                              <li>Formato de Identificación del cliente debidamente diligenciado y firmado en original  por el Representante Legal o la persona facultada según certificado de Cámara y Comercio.</li>
+                              <li>Certificado y Cámara de Comercio en original con vigencia no superior a 30 días.</li>
+                              <li>Copia del RUT (actualizado)</li>
+                              <li>Información Financiera:
+                                <ul>
+                                  <li type=\"disc\">Balance General</li>
+                                  <li type=\"disc\">Estado de Resultados</li>
+                                  <li type=\"disc\">Estado de Cambios en el Capital</li>
+                                  <li type=\"disc\">Estado de cambios en la situación financiera</li>
+                                  <li type=\"disc\">Estado de flujo de efectivo</li>
+                                  <li type=\"disc\">Notas a los Estados Financieros</li>
+                                </ul>
+                                Los Estados Financieros deben estar certificados y dictaminados por Representante Legal y Revisor Fiscal y/o Contador Público con fecha de corte a Dic. 31 del año inmediatamente anterior.<br />
+                                Si la compañía se encuentra  recientemente constituida, deberá entregar un balance inicial. Si usted es persona natural, deberá entregar copia de la última Declaración de Renta.
+                              </li>
+                              <li>Fotocopia del Documento de identidad del Representante Legal o persona facultada según Cámara y Comercio que firma la Circular 0170.</li>
+                              <li>Fotocopia del Documento de identidad del Contador y Revisor Fiscal (Si aplica) que certifican y dictaminan los Estados Financieros.</li>
+                              <li>Certificado de vigencia y antecedentes disciplinarios expedida por la Junta Central de Contadores del Contador y del Revisor Fiscal (Si aplica).</li>
                            </ol>
                         </td>
                      </tr>
                      <tr>
                         <td style=\"text-align: justify\">
-                           Está documentación  debe ser actualizada cada  año;  el incumplimiento de alguno de los puntos anteriores acarreará una sanción por parte de la DIAN.<br /><br />
-                           Esta información  reposará  en  nuestros  archivos y  tendrá  un  trato de  ABSOLUTA  RESERVA  Y  CONFIDENCIALIDAD.<br /><br />
+                           Está documentación debe ser actualizada cada año. El incumplimiento de alguno de los puntos anteriores acarreará una sanción por parte de la DIAN.<br /><br />
+                           Esta información reposará en nuestros archivos y tendrá un trato de <strong>ABSOLUTA RESERVA Y CONFIDENCIALIDAD.</strong><br /><br />
+                           <strong>IMPORTANTE:</strong><br />
+                           En caso de no tener un Representante Comercial asignado, agradecemos enviar los mismos en original a la atención de Yeimy C. Garzón y/o Juan Camilo Ortega en la dirección : Cra 98 No 25G-10 INT 18.<br /><br />
                            Cordialmente,<br /><br /><br />
                            <strong>
                               DEPARTAMENTO  COMERCIAL<br />
                               COLTRANS S.A.S./<br />
-                              AGENCIA DE ADUANAS COLMAS LTDA NIVEL 1
+                              AGENCIA DE ADUANAS COLMAS S.A.S. NIVEL 1
                            </strong>
                         </td>
                      </tr>
                   </table>";
                 
-                /*
-                $bodyHtml = "Señores<br />";
-                $bodyHtml.= "<b>" . $cliente->getCaCompania() . "</b><br />";
-                $bodyHtml.= "La Ciudad<br /><br /><br />";
-                $bodyHtml.= "<u><b>ASUNTO: DOCUMENTOS IDENTIFICACIÓN CLIENTE<b></u><br /><br /><br />";
-                $bodyHtml.= "Respetado Cliente:<br /><br />";
-                $bodyHtml.= "En cumplimiento con la Circular No 0170 de la DIAN expedida el 10 de Octubre de 2002, es nuestra Obligaciòn como Agentes de Carga Internacional, crear un banco de datos de nuestros clientes para <b>Prevenciòn y Control de Lavado de Activos</b>, solicitamos su colaboración con el diligenciamiento de la misma y enviarlo a la $direccion_suc con los documentos requeridos en la carta adjunta antes de <b>$siguiente_mes</b> o si lo prefiere puede contactarnos para que un funcionario recoja los documentos.<br /><br /><br />";
-                $bodyHtml.= "Agradezco su colaboración.<br /><br /><br />";
-                $bodyHtml.= "<b>Recuerde que esta información se debe actualizar cada año.</b>";
-                */
-                
                 $email->setCaBodyhtml($bodyHtml);
-                // $email->addAttachment("ids/formatos/CARTA_CIRCULAR_184.doc");
-                $email->addAttachment("ids/formatos/NUEVA_CIRC_ 170.xls");
+                if($cliente->getLibCliente()->getCaDiascredito()){
+                    $email->addAttachment("ids/formatos/Solicitud_de_Credito.xls");
+                }
+                $email->addAttachment("ids/formatos/Circular_0170.xls");
 
                 $email->save();
             }
