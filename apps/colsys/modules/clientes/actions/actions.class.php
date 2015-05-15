@@ -623,6 +623,9 @@ class clientesActions extends sfActions {
                 $siguiente_mes = mktime(0, 0, 0, $month + 1, 5, $year);
                 $siguiente_mes = $mes_esp[date("m", $siguiente_mes)] . " " . date("d", $siguiente_mes) . " de " . date("Y", $siguiente_mes);
 
+                $con_credito = $cliente->getLibCliente()->getCaDiascredito();
+                $renovacion_credito = ($con_credito)?"Así mismo solicitamos diligenciar y adjuntar (con firma en original), el formulario de solicitud de crédito el cual permitirá renovar las condiciones crediticias que su compañía tiene con nuestro grupo empresarial.<br /><br />":"";
+                
                 $bodyHtml = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
                   <table style=\"width: 100%\">
                      <tr>
@@ -667,8 +670,7 @@ class clientesActions extends sfActions {
                      </tr>
                      <tr>
                         <td style=\"text-align: justify\">
-                           Está documentación debe ser actualizada cada año. El incumplimiento de alguno de los puntos anteriores acarreará una sanción por parte de la DIAN.<br /><br />
-                           Esta información reposará en nuestros archivos y tendrá un trato de <strong>ABSOLUTA RESERVA Y CONFIDENCIALIDAD.</strong><br /><br />
+                           Está documentación debe ser actualizada cada año y reposará en nuestros archivos con un trato de <strong>ABSOLUTA RESERVA Y CONFIDENCIALIDAD.</strong> El incumplimiento de alguno de los puntos anteriores acarreará una sanción por parte de la DIAN.<br /><br />$renovacion_credito
                            <strong>IMPORTANTE:</strong><br />
                            En caso de no tener un Representante Comercial asignado, agradecemos enviar los mismos en original a la atención de Yeimy C. Garzón y/o Juan Camilo Ortega en la dirección : Cra 98 No 25G-10 INT 18.<br /><br />
                            Cordialmente,<br /><br /><br />
@@ -682,7 +684,7 @@ class clientesActions extends sfActions {
                   </table>";
                 
                 $email->setCaBodyhtml($bodyHtml);
-                if($cliente->getLibCliente()->getCaDiascredito()){
+                if($con_credito){
                     $email->addAttachment("ids/formatos/Solicitud_de_Credito.xls");
                 }
                 $email->addAttachment("ids/formatos/Circular_0170.xls");
