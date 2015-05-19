@@ -5,6 +5,7 @@ include_component("widgets", "widgetMuelles", array("ciudad" => $referencia->get
 
 $inoClientes = $sf_data->getRaw("inoClientes");
 $confirmaciones = $sf_data->getRaw("confirmaciones");
+$tickets = $sf_data->getRaw("tickets");
 
 switch ($modo) {
     case "otm":
@@ -944,8 +945,42 @@ $textos = $sf_data->getRaw("textos");
                         </table>
                     </td>
                 </tr>
-<?
+                <?
             }
+            if(isset($tickets) && count($tickets)>0){?>
+                <tr>
+                    <td class="listar" colspan="6">
+                        <b>Tickets Asociados</b>
+                        <table width="100%" border="0" class="tableList">
+                             <tr>
+                                <th width="18%" >Ticket No.</th>							
+                                <th width="60%" >Asunto</th>
+                                <th width="22%" >Ver Email</th>
+                            </tr>
+                            <?
+                                foreach ($tickets as $ticket) {
+                                    ?>
+                                    <tr>
+                                        <td><?= $ticket->getCaIdticket() ?></td>
+                                        <td><?= $ticket->getCaTitle() ?></td>
+                                        <td>
+                                            <?
+                                                echo "<a href='#' onClick=window.open('" . url_for("email/verEmail?id=" . $ticket->getIdemail()) . "')>" . image_tag("22x22/email.gif") . "</a>";
+                                            ?>
+                                        </td>							
+                                    </tr>
+                                    <?
+                                }
+                                ?>
+                        </table>
+                    </td>
+                </tr>
+                <?
+            }
+            ?>
+                
+<?
+            
         if ($modo != "puerto")
             include_component("confirmaciones", "notClientes", array("numRef" => $referencia->getCaReferencia(), "inoClientes" => $inoClientes, "modo" => $modo, "etapas" => $etapas, "coordinadores" => $coordinadores, "textos" => $textos, $bodegas = "bodegas"));
 ?>

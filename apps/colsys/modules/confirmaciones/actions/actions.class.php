@@ -155,6 +155,17 @@ class confirmacionesActions extends sfActions {
                     ->addOrderBy("e.ca_fchenvio DESC")
                     ->execute();
         }
+        
+        $this->tickets = Doctrine::getTable("HdeskTicket")
+                    ->createQuery("t")
+                    ->select(".ca_idticket, t.ca_title, MAX(e.ca_idemail) as idemail")
+                    ->leftJoin("t.HdeskAuditDocuments ad")
+                    ->leftJoin("t.Email e")
+                    ->where("ad.ca_numero_doc like ?", '%' . $this->referencia->getCaReferencia() . '%')
+                    ->addWhere("e.ca_tipo = 'Notificación'")
+                    ->groupBy("t.ca_idticket, t.ca_title")
+                    ->addOrderBy("t.ca_idticket DESC")
+                    ->execute();
 
         $q = Doctrine::getTable("InoClientesSea")
                 ->createQuery("c")
