@@ -543,6 +543,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 		   echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/clavesTracking?id=".$rs->Value('ca_idcliente')."\"'><BR><IMG src='graficos/tracking.gif'><BR>Tracking</TD></TR>";
                     if($nivel>=1)
                         echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/ids/verIds/modo/clientes?id=".$rs->Value('ca_idcliente')."\"'><BR><IMG src='graficos/encuesta.gif'><BR>Sucursales</TD></TR>";
+                   echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/gestDocumental/formUploadExt4/ref1/".$rs->Value('ca_idcliente')."/ref2/".date("Y")."/idsserie/9 \"'><BR><IMG src='graficos/fileopen.png'><BR>Docs</TD></TR>";
 		   echo "    </TABLE>";
 		   echo "  </TD>";
 		   echo "</TR>";
