@@ -41,6 +41,9 @@ include_component("conceptos","AKAGrid");
 //Tarifario Colmas
 include_component("pricing","panelTarifarioAduana");
 //include_component("pricing","panelTarifarioAduanaCliente");
+
+//Tarifario Coldepositos
+include_component("pricing","panelTarifarioDeposito");
 ?>
 <script type="text/javascript">
 
@@ -135,6 +138,11 @@ Ext.onReady(function(){
                         title: "Aduana Exportación",
                         "impoexpo": "<?=(Constantes::EXPO)?>",
                         "modalidad": "<?=(Constantes::ADUANA)?>",
+                        "readOnly": <?=$opcion=="consulta"?"true":"false"?>
+                    }),
+                    new PanelConsultaCiudades({
+                        title: "Depósitos",
+                        "impoexpo": "<?=(Constantes::DEPOSITOS)?>",
                         "readOnly": <?=$opcion=="consulta"?"true":"false"?>
                     }),
                 

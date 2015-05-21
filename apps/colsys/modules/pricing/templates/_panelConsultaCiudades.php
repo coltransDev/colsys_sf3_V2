@@ -103,6 +103,10 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
                 impoexpo = "<?=Constantes::INTERNO?>";
             }
             
+            if( impoexpo=="<?=Constantes::DEPOSITOS?>" ){
+                parametro = n.attributes.parametro;
+            }
+            
             /*
             * Todo debe quedar de esta manera
             **/
@@ -197,6 +201,48 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
                                                               readOnly: this.readOnly
                                                              });
                         break;
+                    case "depair":
+                        /*
+                        * Se muestran la administracion de tarifario depositos carga aerea y carga lcl
+                        */
+                        var newComponent = new PanelTarifarioDeposito({id:idcomponent,
+                                                              impoexpo: impoexpo,
+                                                              transporte:transporte,
+                                                              modalidad: modalidad,
+                                                              parametro: parametro,
+                                                              title:"Depósito "+parametro,
+                                                              closable: true,
+                                                              readOnly: this.readOnly
+                                                             });
+                        break;
+                    case "dep20p":
+                        /*
+                        * Se muestran la administracion de tarifario depositos carga aerea y carga lcl
+                        */
+                        var newComponent = new PanelTarifarioDeposito({id:idcomponent,
+                                                              impoexpo: impoexpo,
+                                                              transporte:transporte,
+                                                              modalidad: modalidad,
+                                                              parametro: parametro,
+                                                              title:"Depósito "+parametro,
+                                                              closable: true,
+                                                              readOnly: this.readOnly
+                                                             });
+                        break;
+                    case "dep40p":
+                        /*
+                        * Se muestran la administracion de tarifario depositos carga aerea y carga lcl
+                        */
+                        var newComponent = new PanelTarifarioDeposito({id:idcomponent,
+                                                              impoexpo: impoexpo,
+                                                              transporte:transporte,
+                                                              modalidad: modalidad,
+                                                              parametro: parametro,
+                                                              title:"Depósito "+parametro,
+                                                              closable: true,
+                                                              readOnly: this.readOnly
+                                                             });
+                        break;
                     case "recgen":
                         /*
                         * Se muestran la administracion de trayectos para el pais seleccionado
@@ -285,7 +331,6 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
 
                         break;
                 }
-
 
                 Ext.getCmp('tab-panel').add(newComponent);
                 Ext.getCmp('tab-panel').setActiveTab(newComponent);

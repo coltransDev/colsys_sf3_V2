@@ -2269,6 +2269,8 @@ class pricingActions extends sfActions {
                 $this->setTemplate("datosAduanaImpo");
             } else if ($impoexpo == Constantes::EXPO && $modalidad == Constantes::ADUANA) {
                 $this->setTemplate("datosAduanaExpo");
+            } else if ($impoexpo == Constantes::DEPOSITOS) {
+                $this->setTemplate("datosDeposito");
             }else {
                 $q = Doctrine_Query::create()
                                 ->select("t.ca_modalidad, tg.ca_descripcion, tr.ca_nombre, tr.ca_idtrafico")
@@ -2537,13 +2539,13 @@ class pricingActions extends sfActions {
             $row['consecutivo'] = $aduconcepto->getCaConsecutivo();
             $row['idconcepto'] = $aduconcepto->getCaIdconcepto();
             $row['concepto'] = utf8_encode($aduconcepto->getCosto()->getCaCosto());
-            $row['parametro'] = $aduconcepto->getCaParametro();
+            $row['parametro'] = utf8_encode($aduconcepto->getCosto()->getCaParametro()); // $aduconcepto->getCaParametro();
             $row['valor'] = $aduconcepto->getCaValor();
             $row['aplicacion'] = utf8_encode($aduconcepto->getCaAplicacion());
             $row['valorminimo'] = $aduconcepto->getCaValorminimo();
             $row['aplicacionminimo'] = utf8_encode($aduconcepto->getCaAplicacionminimo());
-            $row['fchini'] = $aduconcepto->getCaFchini();
-            $row['fchfin'] = $aduconcepto->getCaFchfin();
+            $row['fchini'] = Utils::parseDate($depconcepto->getCaFchini(),'m/d/Y');
+            $row['fchfin'] = Utils::parseDate($depconcepto->getCaFchfin(),'m/d/Y');
             $row['observaciones'] = utf8_encode($aduconcepto->getCaObservaciones());
             $row['orden'] = "Z";
             $this->data[] = $row;
@@ -2551,6 +2553,75 @@ class pricingActions extends sfActions {
         $this->data[] = array("concepto" => "+", "orden" => "Z");
          //print_r($this->data);
         $this->getUser()->log( "Consulta Tarifario Aduana ".$this->impoexpo, TRUE );
+        $this->responseArray = array(
+            'success' => true,
+            'total' => count($this->data),
+            'root' => $this->data
+        );
+        
+        $this->setTemplate("responseTemplate");
+    }
+
+    /*
+     * Tarifario Deposito
+     */
+
+    public function executeDatosPanelTarifarioDeposito() {
+
+        $this->nivel = $this->getNivel();
+
+        $this->opcion = "";
+        if ($this->nivel == -1) {
+            $this->forward404();
+        }
+
+        if ($this->nivel == 0) {
+            $this->opcion = "consulta";
+        }
+
+        $this->impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
+        $this->transporte = utf8_decode($this->getRequestParameter("transporte"));
+        $this->modalidad = utf8_decode($this->getRequestParameter("modalidad"));
+        $this->parametro = utf8_decode($this->getRequestParameter("parametro"));
+        //$this->forward404Unless($this->transporte);
+
+        if($this->impoexpo == Constantes::DEPOSITOS and $this->transporte == Constantes::AEREO){
+            $this->idcomponent = "depair_";
+        }else if($this->impoexpo == Constantes::DEPOSITOS and $this->transporte == Constantes::MARITIMO){
+            if($this->parametro == Constantes::VEINTE_PIES){
+                $this->idcomponent = "dep20p_";
+            } else if($this->parametro == Constantes::VEINTE_PIES){
+                $this->idcomponent = "dep40p_";
+            }
+        }
+        $this->idcomponent.= $this->impoexpo . "_" . $this->parametro;
+
+        $depconceptos = Doctrine::getTable("ConceptoDeposito")
+                        ->createQuery("cd")
+                        ->where("c.ca_transporte = ? AND c.ca_impoexpo = ? AND c.ca_parametros = ?", array($this->transporte, $this->impoexpo, $this->parametro))
+                        ->innerJoin("cd.Costo c")
+                        ->addOrderBy("c.ca_costo")
+                        ->execute();
+
+        $this->data = array();
+        foreach ($depconceptos as $depconcepto) {
+            $row['consecutivo'] = $depconcepto->getCaConsecutivo();
+            $row['idconcepto'] = $depconcepto->getCaIdconcepto();
+            $row['concepto'] = utf8_encode($depconcepto->getCosto()->getCaCosto());
+            $row['parametro'] = $depconcepto->getCaParametro();
+            $row['valor'] = $depconcepto->getCaValor();
+            $row['aplicacion'] = utf8_encode($depconcepto->getCaAplicacion());
+            $row['valorminimo'] = $depconcepto->getCaValorminimo();
+            $row['aplicacionminimo'] = utf8_encode($depconcepto->getCaAplicacionminimo());
+            $row['fchini'] = Utils::parseDate($depconcepto->getCaFchini(),'m/d/Y');
+            $row['fchfin'] = Utils::parseDate($depconcepto->getCaFchfin(),'m/d/Y');
+            $row['observaciones'] = utf8_encode($depconcepto->getCaObservaciones());
+            $row['orden'] = "Z";
+            $this->data[] = $row;
+        }
+        $this->data[] = array("concepto" => "+", "orden" => "Z");
+         //print_r($this->data);
+        $this->getUser()->log( "Consulta Tarifario Depositos ".$this->impoexpo, TRUE );
         $this->responseArray = array(
             'success' => true,
             'total' => count($this->data),

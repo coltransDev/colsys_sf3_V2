@@ -222,6 +222,11 @@ class pricingComponents extends sfComponents
     {
         $this->aplicaciones = ParametroTable::retrieveByCaso("CU228");
     }
+ 
+    public function executePanelTarifarioDeposito()
+    {
+        $this->aplicaciones = ParametroTable::retrieveByCaso("CU246");
+    }
     
     public function executeFiltrosInformeLogs()
     {

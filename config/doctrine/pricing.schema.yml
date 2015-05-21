@@ -37,7 +37,6 @@ Trayecto:
     ca_activo: boolean
     ca_fchcreado: timestamp
     ca_usucreado: string
-    ca_netnet: boolean
   relations:
     Origen:
       local: ca_origen
@@ -65,6 +64,57 @@ ConceptoAduana:
       filter: false
   generatePath: pricing
   tableName: pric.tb_conceptoaduana
+  attributes:
+    export: tables
+  columns:
+    ca_consecutivo:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idconcepto:
+      type: integer
+      notnull: true
+    ca_valor:
+      type: numeric
+      notnull: true
+    ca_aplicacion:
+      type: string
+      notnull: true
+    ca_valorminimo:
+      type: numeric
+      notnull: true
+    ca_parametro:
+      type: string
+      notnull: true
+    ca_aplicacionminimo:
+      type: string
+      notnull: true
+    ca_parametro:
+      type: string
+      notnull: true
+    ca_fchini:
+      type: date
+    ca_fchfin:
+      type: date
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_observaciones:
+      type: string
+      notnull: true
+  relations:
+    Costo:
+      local: ca_idconcepto
+      foreign: ca_idcosto
+      type: one
+
+
+ConceptoDeposito:
+  options:
+    symfony:
+      form: true
+      filter: false
+  generatePath: pricing
+  tableName: pric.tb_conceptodeposito
   attributes:
     export: tables
   columns:
