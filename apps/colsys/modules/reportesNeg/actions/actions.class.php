@@ -418,10 +418,12 @@ class reportesNegActions extends sfActions {
 
         $this->asignaciones = $reporte->getRepAsignacion();
         $this->reporte = $reporte;
-
-        if ($this->reporte->getCaVersion() > 1 && $this->reporte->getCaUsuanulado()!="") {
+        
+        if ($this->reporte->getCaVersion() > 1 && trim($this->reporte->getCaUsuanulado())=="") {
+        
             $this->reporte_old = ReporteTable::retrieveByConsecutivo($this->reporte->getCaConsecutivo(), " and ca_version='" . ($this->reporte->getCaVersion() - 1) . "'");
-            if($this->reporte_old){            
+            
+            if($this->reporte_old){
                 $this->getRequest()->setParameter('id', $this->reporte->getCaIdreporte());
                 $this->getRequest()->setParameter('consulta', "true");
                 $this->html = sfContext::getInstance()->getController()->getPresentationFor('reportesNeg', 'compReporte');
@@ -828,7 +830,7 @@ class reportesNegActions extends sfActions {
                 $prov = "";
                 $incoterms = "";
                 $orden = "";
-                for ($i = 0; $i < 15; $i++) {
+                for ($i = 0; $i < 20; $i++) {
                     if ($request->getParameter("prov" . $i) && $request->getParameter("prov" . $i) != "") {
                         $prov.=($prov != "") ? "|" : "";
                         $prov.=$request->getParameter("prov" . $i);
@@ -842,7 +844,7 @@ class reportesNegActions extends sfActions {
                     $texto.="Proveedor<br>";
                 }
 
-                for ($i = 0; $i < 15; $i++) {
+                for ($i = 0; $i < 20; $i++) {
                     if ($request->getParameter("incoterms" . $i) != "" && ($request->getParameter("prov" . $i) != "" || $reporte->getCaImpoexpo() == Constantes::EXPO)) {
                         $incoterms.=($incoterms != "") ? "|" : "";
                         $incoterms.=$request->getParameter("incoterms" . $i);
@@ -856,7 +858,7 @@ class reportesNegActions extends sfActions {
                     $texto.="Incoterms<br>";
                 }
 
-                for ($i = 0; $i < 15; $i++) {
+                for ($i = 0; $i < 20; $i++) {
                     if ($request->getParameter("orden_pro" . $i) && $request->getParameter("prov" . $i) != "") {
                         $orden.=($orden != "") ? "|" : "";
                         $orden.=utf8_decode($request->getParameter("orden_pro" . $i));
@@ -2463,7 +2465,7 @@ class reportesNegActions extends sfActions {
             $data["consignarmaster"] = utf8_encode($reporte->getConsignarmaster());
             $data["tipobodega"] = utf8_encode($reporte->getBodega()->getCaTipo());
             $data["idbodega_hd"] = $reporte->getCaIdbodega();
-            $data["bodega_consignar"] = utf8_encode($reporte->getBodega()->getCaNombre() . " " . $reporte->getBodega()->getCaDireccion());
+            $data["bodega_consignar"] = utf8_encode($reporte->getBodega()->getCaNombre()." Nit:".$reporte->getBodega()->getCaIdentificacion() . " " . $reporte->getBodega()->getCaDireccion());
 
             if ($reporte->getCaIdconsignatario()) {
                 $data["idconsignatario"] = $reporte->getCaIdconsignatario();
