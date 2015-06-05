@@ -7,6 +7,9 @@
 include_component("widgets", "widgetTransporte");
 include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetSucursales");
+include_component("widgets", "widgetImpoexpo");
+include_component("widgets", "widgetModalidad");
+include_component("widgets", "widgetIncoterms");
 $sucursal=$sf_data->getRaw("sucursal");
 
 ?>
@@ -75,15 +78,18 @@ $sucursal=$sf_data->getRaw("sucursal");
             </div>
             <br>
              <div>
-            <div style="float:left;width: 33%"><b>Transporte</b> <br><span id="transpor"></span></div>
-            <div style="float:left;width: 33%"><b>Origen</b> <br><span id="orig"></span></div>
-            <div style="float:left;width: 33%"><b>Destino</b> <br><span id="dest"></span></div>
+            <div style="float:left;width: 28%"><b>Transporte</b> <br><span id="transpor"></span></div>
+            <div style="float:left;width: 28%"><b>Modalidad</b> <br><span id="mod"></span></div>
+            <div style="float:left;width: 22%"><b>Origen</b> <br><span id="orig"></span></div>
+            <div style="float:left;width: 22%"><b>Destino</b> <br><span id="dest"></span></div>
             </div>
             <br>            
             <script>
                 var trasnpo=new WidgetTransporte({fieldLabel: "Transporte",id:"transporte", renderTo:'transpor',width:100,value:'<?=$transporte?>'});
-                var orig=new WidgetCiudad({name: 'origen',hiddenName: 'idorigen',id: 'origen',width:100,renderTo:'orig',value:'<?=$origen?>',hiddenValue:'<?=$idorigen?>'});
-                var dest=new WidgetCiudad({name: 'destino',hiddenName: 'iddestino',id: 'destino',width:100, renderTo:'dest', value:'<?=$destino?>', hiddenValue:'<?=$iddestino?>'});
+                var impoexpo =new WidgetImpoexpo({fieldLabel: 'Impo/Expo', id: 'impoexpo', hiddenName: "impoexpo", value:"<?=Constantes::IMPO ?>"});
+                var modalidad=new WidgetModalidad({fieldLabel: "Modalidad",id:"modalidad", name: 'modalidad', linkTransporte: "transporte", linkImpoexpo: "impoexpo", allowBlank: true,renderTo:'mod',width:100,value:'<?=$modalidad?>'});
+                var orig=new WidgetCiudad({name: 'origen',hiddenName: 'idorigen',id: 'origen',width:80,renderTo:'orig',value:'<?=$origen?>',hiddenValue:'<?=$idorigen?>'});
+                var dest=new WidgetCiudad({name: 'destino',hiddenName: 'iddestino',id: 'destino',width:80, renderTo:'dest', value:'<?=$destino?>', hiddenValue:'<?=$iddestino?>'});
 
                 var fech1= new Ext.form.DateField(
                     {
@@ -126,9 +132,10 @@ $sucursal=$sf_data->getRaw("sucursal");
             </script>
             <br>&nbsp;
             <div>
-                <div  style="float: left;width: 33%"><b>Seguro</b><br><select id="seguro" name="seguro"><option value="">...</option><option value="Sí" <?=($seguro=="Sí")?"selected":""?>>Sí</option><option value="No" <?=($seguro=="No")?"selected":""?>>No</option></select></div>
-                <div  style="float: left;width: 33%"><b>Aduanas</b> <br><select id="colmas" name="colmas"><option value="">...</option><option value="Sí" <?=($colmas=="Sí")?"selected":""?>>Sí</option><option value="No" <?=(cadena=="No")?"selected":""?>>No</option></select></div>
-                <div  style="float: left;width: 33%"><b>Continuacion</b> <br>
+                <div style="float:left;width: 28%"><b>Incoterms</b> <br><span id="terms"></span></div>
+                <div  style="float: left;width: 22%"><b>Seguro</b><br><select id="seguro" name="seguro"><option value="">...</option><option value="Sí" <?=($seguro=="Sí")?"selected":""?>>Sí</option><option value="No" <?=($seguro=="No")?"selected":""?>>No</option></select></div>
+                <div  style="float: left;width: 25%"><b>Aduanas</b> <br><select id="colmas" name="colmas"><option value="">...</option><option value="Sí" <?=($colmas=="Sí")?"selected":""?>>Sí</option><option value="No" <?=(cadena=="No")?"selected":""?>>No</option></select></div>
+                <div  style="float: left;width: 25%"><b>Continuacion</b> <br>
                         <select id="continuacion" name="continuacion">
                             <option value="">...</option>
                             <option value="OTM" <?=($continuacion=="OTM")?"selected":""?>>OTM</option>
@@ -137,7 +144,9 @@ $sucursal=$sf_data->getRaw("sucursal");
                         </select>
                 </div>
             </div>
-
+            <script>
+                var incoterms=new WidgetIncoterms({name:"incoterms",id:"incoterms",renderTo:'terms',width:100, value:'<?=$incoterm?>'});
+            </script>
 
         </td>
 		<td  ><input class="submit" type='submit' name='buscar' value=' Buscar' /></td>

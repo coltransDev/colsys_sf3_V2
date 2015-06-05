@@ -855,6 +855,8 @@ class reportesNegComponents extends sfComponents {
         $this->colmas = $this->getRequestParameter("colmas");
 
         $this->transporte = $this->getRequestParameter("transporte");
+        $this->modalidad = $this->getRequestParameter("modalidad");
+        $this->incoterms = $this->getRequestParameter("incoterms");
         $this->idorigen = $this->getRequestParameter("idorigen");
         $this->iddestino = $this->getRequestParameter("iddestino");
         $this->origen = $this->getRequestParameter("origen");

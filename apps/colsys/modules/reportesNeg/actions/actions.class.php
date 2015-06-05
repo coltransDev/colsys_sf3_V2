@@ -226,10 +226,12 @@ class reportesNegActions extends sfActions {
         $this->fechaInicial = $this->getRequestParameter("fechaInicial");
         $this->fechaFinal = $this->getRequestParameter("fechaFinal");
 
+        $this->incoterms = $this->getRequestParameter("incoterms");
         $this->seguro = $this->getRequestParameter("seguro");
         $this->colmas = $this->getRequestParameter("colmas");
 
         $this->transporte = $this->getRequestParameter("transporte");
+        $this->modalidad = $this->getRequestParameter("modalidad");
         $this->idorigen = $this->getRequestParameter("idorigen");
         $this->iddestino = $this->getRequestParameter("iddestino");
         $this->origen = $this->getRequestParameter("origen");
@@ -271,6 +273,10 @@ class reportesNegActions extends sfActions {
             $limit="";
         }
 
+        if ($this->incoterms != "") {
+            $condicion.=" and r.ca_incoterms= '$this->incoterms'";
+        }
+        
         if ($this->seguro != "") {
             $condicion.=" and r.ca_seguro= '$this->seguro'";
         }
@@ -297,6 +303,10 @@ class reportesNegActions extends sfActions {
 
         if ($this->transporte != "") {
             $condicion.=" and r.ca_transporte = '$this->transporte'";
+        }
+
+        if ($this->modalidad != "") {
+            $condicion.=" and r.ca_modalidad = '$this->modalidad'";
         }
 
         if (($this->idimpo && $criterio) || !$this->idimpo) {
