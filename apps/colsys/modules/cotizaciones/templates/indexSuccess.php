@@ -5,6 +5,9 @@
 */
 
 include_component("widgets", "widgetCiudad");
+include_component("widgets", "widgetIncoterms");
+include_component("widgets", "widgetModalidad");
+include_component("widgets", "widgetImpoexpo");
 $empresas = $sf_data->getRaw("empresas");
 
 ?>
@@ -90,7 +93,7 @@ $empresas = $sf_data->getRaw("empresas");
                 <tr>
                     <td>
                         <div><b>Transporte</b> <br><span id="div_filtros"></span></div>
-                    </td>
+                    </td>                    
                     <td>
                         <div><b>Origen</b> <br><span id="div_filtros1"></span></div>
                     </td>
@@ -99,8 +102,14 @@ $empresas = $sf_data->getRaw("empresas");
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="3">
+                    <td>
+                        <div><b>Modalidad</b> <br><span id="div_filtros5"></span></div>
+                    </td>
+                    <td >
                         <div><b>Empresa</b> <br><span id="div_filtros3"></span></div>
+                    </td>
+                    <td >
+                        <div><b>Incoterms</b> <br><span id="div_filtros4"></span></div>
                     </td>
                 </tr>
             </table>
@@ -125,6 +134,24 @@ $empresas = $sf_data->getRaw("empresas");
                         lazyRender:true
                 });
                 field.render("div_filtros");
+                
+                field = new WidgetImpoexpo({fieldLabel: 'Impo/Expo',
+                                id: 'impoexpo',
+                                hiddenName: "impoexpo",
+                                value:"<?=Constantes::IMPO ?>",
+                                width:100
+                    })
+                
+                field= new WidgetModalidad({fieldLabel: 'Modalidad',
+                        id: 'modalidad',
+                        name: 'modalidad',
+                        linkTransporte: "transporte",
+                        linkImpoexpo: "impoexpo",
+                        allowBlank: true,
+                        width:100
+                     })
+                     
+                field.render("div_filtros5");
 
                 field=new WidgetCiudad({
                                       name: 'origen',
@@ -161,6 +188,13 @@ $empresas = $sf_data->getRaw("empresas");
                 });
                 
                 field.render("div_filtros3");
+                
+                field=new WidgetIncoterms({
+                                      name:"incoterms",
+                                      width:100
+                                    })
+
+                field.render("div_filtros4");
 
             </script>
         </td>

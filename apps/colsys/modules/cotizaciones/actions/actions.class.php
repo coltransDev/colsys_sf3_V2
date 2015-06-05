@@ -62,6 +62,8 @@ class cotizacionesActions extends sfActions {
         $idorigen = $this->getRequestParameter("idorigen");
         $iddestino = $this->getRequestParameter("iddestino");
         $empresa = $this->getRequestParameter("empresa");
+        $incoterms = $this->getRequestParameter("incoterms");
+        $modalidad = $this->getRequestParameter("modalidad");
 
         $q = Doctrine_Query::create()
                         ->select("c.*,EXTRACT(YEAR FROM c.ca_fchcreado),to_number(SUBSTR(c.ca_consecutivo , 1 , (POSITION('-' in c.ca_consecutivo)-1) ),'999999')")
@@ -113,7 +115,7 @@ class cotizacionesActions extends sfActions {
 
         if ($empresa){
                 $q->addWhere("c.ca_empresa=? ", $empresa);
-        } else if ($transporte || $idorigen || $empresa) {
+        } else if ($transporte || $idorigen || $empresa || $incoterms || $modalidad) {
             if ($criterio != "seguimiento")
                 $q->innerJoin("c.CotProducto p");
             if ($transporte)
@@ -122,6 +124,10 @@ class cotizacionesActions extends sfActions {
                 $q->addWhere("p.ca_origen=? ", array($idorigen));
             if ($iddestino)
                 $q->addWhere("p.ca_destino=? ", array($iddestino));
+            if ($incoterms)
+                $q->addWhere("p.ca_incoterms=? ", array($incoterms));
+            if ($modalidad)
+                $q->addWhere("p.ca_modalidad=? ", array($modalidad));
         }
 
         //$q->addOrderBy("c.ca_idcotizacion DESC");
