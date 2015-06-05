@@ -200,6 +200,7 @@ PanelProductosOtm = function( config ){
                 },
                 {
                     id: 'concepto',
+                    name: 'concepto',
                     header: "Concepto",
                     width: 200,
                     sortable: false,
