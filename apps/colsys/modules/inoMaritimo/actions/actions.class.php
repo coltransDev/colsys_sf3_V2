@@ -755,8 +755,12 @@ class inoMaritimoActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeNumerosRadicacion(sfWebRequest $request) {
-        set_time_limit(0);
-        $file = sfConfig::get('sf_root_dir') . DIRECTORY_SEPARATOR . "tmp" . DIRECTORY_SEPARATOR . "NumerosReservados.txt";
+        //set_time_limit(0);
+        //$file = sfConfig::get('sf_root_dir') . DIRECTORY_SEPARATOR . "tmp" . DIRECTORY_SEPARATOR . "NumerosReservados.txt";
+        $file=$_FILES['archivo']['tmp_name'];
+        
+        //echo $file;
+        //exit;
 
         $f = fopen($file, 'r');
         $data = '';
@@ -778,7 +782,9 @@ class inoMaritimoActions extends sfActions {
             }
         }
         unlink($file);
-        $this->forward("homepage", "index");
+        //$this->forward("homepage", "index");
+        $this->responseArray = array("errorInfo" => $errorInfo, "success" => true);
+        $this->setTemplate("responseTemplate");
     }
 
     /**
@@ -824,7 +830,8 @@ class inoMaritimoActions extends sfActions {
                             }
                             $dv = Utils::calcularDV($record[1]);
                             $nit = $record[1] . "-" . $dv;  // Agrega el DV al Nit
-                            $query = "insert into tb_dianservicios (ca_idservicio, ca_identificacion, ca_razonsocial, ca_ciudad, ca_codigo, ca_tipo) values ($record[0], '$nit', '$record[2]', '$record[3]', '$record[4]', '$servicio');";
+                            $razonsocial = addslashes($record[2]);
+                            $query = "insert into tb_dianservicios (ca_idservicio, ca_identificacion, ca_razonsocial, ca_ciudad, ca_codigo, ca_tipo) values ($record[0], '$nit', '$razonsocial', '$record[3]', '$record[4]', '$servicio');";
                             $stmt = $q->execute($query);
                         }
                     }
