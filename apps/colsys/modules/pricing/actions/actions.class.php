@@ -3440,7 +3440,7 @@ class pricingActions extends sfActions {
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_fchinicio"] = $r["ca_fchinicio"];
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_fchvencimiento"] = $r["ca_fchvencimiento"];
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_usucreado"] = $r["ca_usucreado"];
-                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_usueliminado"] = $r["ca_usueliminado"];
+                        $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["origen"]][$r["destino"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_usueliminado"] = $r["ca_fcheliminado"];
                         break;
                     case 4: // Recargos x Línea
                         $this->grid[$r["ca_impoexpo"]][$r["ca_transporte"]][$r["ca_modalidad"]][$r["linea"]][$r["trafico"]][$r["concepto"]][$r["recargo"]][$r["fchcreado"]]["ca_vlrrecargo"] = number_format($r["ca_vlrrecargo"], 2, '.', '');
