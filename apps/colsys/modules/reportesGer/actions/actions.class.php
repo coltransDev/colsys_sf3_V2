@@ -134,13 +134,15 @@ class reportesGerActions extends sfActions {
             $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
             $joinclientes = "";
             if ($this->incoterms && count($this->incoterms) > 0) {
-                $where.=" and (";
-                foreach ($this->incoterms as $key => $inco) {
-                    if ($key > 0)
-                        $where.=" or ";
-                    $where.=" r.ca_incoterms like '" . $inco . "%'";
+                if (implode("",$this->incoterms) != ""){
+                    $where.=" and (";
+                    foreach ($this->incoterms as $key => $inco) {
+                        if ($key > 0)
+                            $where.=" or ";
+                        $where.=" r.ca_incoterms like '" . $inco . "%'";
+                    }
+                    $where.=" )";
                 }
-                $where.=" )";
                 $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
             }
 
@@ -205,7 +207,7 @@ class reportesGerActions extends sfActions {
                                 WHERE eq.ca_referencia = m.ca_referencia AND eq.ca_idconcepto = tt.ca_idconcepto)
                     ORDER BY m.ca_fchreferencia, r.ca_incoterms ,r.ca_idagente";
             $con = Doctrine_Manager::getInstance()->connection();
-            //echo $sql;
+            // echo $sql;
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
         }
@@ -1114,6 +1116,8 @@ class reportesGerActions extends sfActions {
     }
 
     public function executeReporteCargaOperativa(sfWebRequest $request) {
+        echo "Este informe está temporalmente fuera de Servicio. Por favor comunicarse al área de Sistemas";
+        exit();
         $response = sfContext::getInstance()->getResponse();
         $response->addJavaScript("extExtras/SuperBoxSelect", 'last');
 
