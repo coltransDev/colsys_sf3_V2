@@ -363,19 +363,20 @@ if (!isset($boton) and !isset($buscar)) {
         } else if ($departamento == 'Marítimo') {
             $source = "vi_repindicador_sea";
             $subque = " LEFT OUTER JOIN (select to_char(rs.ca_fchllegada,'YYYY') as ca_ano_new, to_char(rs.ca_fchllegada,'MM') as ca_mes_new, rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa in ('IMCPD')) group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
-            $subque.= " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_cont, (string_to_array(rs.ca_propiedades, '='::text))[2] as ca_fchplanilla, min(rs.ca_fchenvio) as ca_fchconf_plan from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = '99999') group by rp.ca_consecutivo, rs.ca_propiedades order by rp.ca_consecutivo) rs2 ON ($source.ca_consecutivo = rs2.ca_consecutivo_cont) ";
             if ($departamento == "Marítimo") {
-                $subque.= "LEFT OUTER JOIN (
-        select c.ca_referencia as ca_referencia_fac, c.ca_idcliente as ca_idcliente_fac, c.ca_hbls as ca_hbls_fac, 
-            i.ca_fchfactura, i.ca_usucreado, i.ca_observaciones 
-		from tb_inoingresos_sea  i
-            inner join tb_inoclientes_sea c on c.ca_idinocliente=i.ca_idinocliente
-        where 
-            substr(i.ca_observaciones,1,12) != 'Contenedores' and substr(i.ca_observaciones,1,7) != 'OTM/DTA' 
-        order by ca_referencia, ca_idcliente, ca_hbls, ca_fchfactura) ii        
-        ON ($source.ca_referencia = ii.ca_referencia_fac and $source.ca_idcliente = ii.ca_idcliente_fac and $source.ca_hbls = ii.ca_hbls_fac) "; 
+                $subque.= " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_fact, min(rs.ca_fchenvio::date) as ca_fchenvio from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = '88888' and substr(ca_status,1,27) = 'Adjunto enviamos la Factura') group by rp.ca_consecutivo) rs2 ON ($source.ca_consecutivo = rs2.ca_consecutivo_fact) ";
+                $subque.= " LEFT OUTER JOIN (
+                select c.ca_referencia as ca_referencia_fac, c.ca_idcliente as ca_idcliente_fac, c.ca_hbls as ca_hbls_fac, 
+                    i.ca_fchfactura, i.ca_usucreado, i.ca_observaciones 
+                        from tb_inoingresos_sea  i
+                    inner join tb_inoclientes_sea c on c.ca_idinocliente=i.ca_idinocliente
+                where 
+                    substr(i.ca_observaciones,1,12) != 'Contenedores' and substr(i.ca_observaciones,1,7) != 'OTM/DTA' 
+                order by ca_referencia, ca_idcliente, ca_hbls, ca_fchfactura) ii        
+                ON ($source.ca_referencia = ii.ca_referencia_fac and $source.ca_idcliente = ii.ca_idcliente_fac and $source.ca_hbls = ii.ca_hbls_fac) ";
             } else if ($departamento == "OTM") {
                 $transporte = "ca_transporte = 'Marítimo' ";   // Esta variable viene con valor "Terrestre"
+                $subque.= " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_cont, (string_to_array(rs.ca_propiedades, '='::text))[2] as ca_fchplanilla, min(rs.ca_fchenvio) as ca_fchconf_plan from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = '99999') group by rp.ca_consecutivo, rs.ca_propiedades order by rp.ca_consecutivo) rs2 ON ($source.ca_consecutivo = rs2.ca_consecutivo_cont) ";
                 $subque.= " RIGHT OUTER JOIN (select ca_referencia as ca_referencia_fac, ca_idcliente as ca_idcliente_fac, ca_hbls as ca_hbls_fac, ca_fchfactura, ca_usucreado, ca_observaciones from tb_inoingresos_sea where substr(ca_observaciones,1,12) != 'Contenedores' and substr(ca_observaciones,1,7) = 'OTM/DTA' order by ca_referencia, ca_idcliente, ca_hbls, ca_fchfactura) ii ON ($source.ca_referencia = ii.ca_referencia_fac and $source.ca_idcliente = ii.ca_idcliente_fac and $source.ca_hbls = ii.ca_hbls_fac and $source.ca_modalidad = 'FCL') ";
             }
 
@@ -406,7 +407,7 @@ if (!isset($boton) and !isset($buscar)) {
         $source = "vi_repindicadores";
         $transporte = "ca_transporte = '$departamento'";
         $impoexpo = "ca_impoexpo = 'Importación'";
-        $subque = "LEFT OUTER JOIN (select to_char(ca_fchrecibo,'YYYY') as ca_ano_new, to_char(ca_fchrecibo,'MM') as ca_mes_new, ca_ciudad as ca_ciuorigen, ca_consecutivo as ca_consecutivo_sub, ca_fchrecibo, ca_fchenvio, ca_usuenvio, ca_observaciones_idg from tb_repstatus rs RIGHT OUTER JOIN vi_usuarios usr ON rs.ca_usuenvio = usr.ca_login and usr.ca_empresa = 'Coltrans S.A.S.' LEFT OUTER JOIN tb_reportes rp ON (rs.ca_idetapa != 'IAVAR' and rp.ca_idreporte = rs.ca_idreporte and rp.$transporte) INNER JOIN tb_ciudades pd ON (rp.ca_origen = pd.ca_idciudad) where " . str_replace("ca_ano", "to_char(ca_fchrecibo,'YYYY')", $ano) . " and " . str_replace("ca_mes", "to_char(ca_fchrecibo,'MM')", $mes) . " order by ca_consecutivo, ca_fchrecibo) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
+        $subque = "LEFT OUTER JOIN (select to_char(ca_fchrecibo,'YYYY') as ca_ano_new, to_char(ca_fchrecibo,'MM') as ca_mes_new, ca_ciudad as ca_ciuorigen, ca_consecutivo as ca_consecutivo_sub, ca_fchrecibo, ca_fchenvio, ca_usuenvio, ca_observaciones_idg from tb_repstatus rs RIGHT OUTER JOIN vi_usuarios usr ON rs.ca_usuenvio = usr.ca_login and usr.ca_empresa = 'Coltrans S.A.S.' LEFT OUTER JOIN tb_reportes rp ON (rs.ca_idetapa != 'IAVAR' and rp.ca_idreporte = rs.ca_idreporte and rp.$transporte) INNER JOIN tb_ciudades pd ON (rp.ca_origen = pd.ca_idciudad) where " . str_replace("ca_ano", "to_char(ca_fchrecibo,'YYYY')", $ano) . " and " . str_replace("ca_mes", "to_char(ca_fchrecibo,'MM')", $mes) . " and ca_tipo != 2 order by ca_consecutivo, ca_fchrecibo) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
         $sql="select ca_fchfestivo from tb_festivos";
         if (!$tm->Open($sql)) {
             echo "Error 399: $sql";
@@ -546,7 +547,7 @@ if (!isset($boton) and !isset($buscar)) {
     } else if ($indicador == "Oportunidad en la Facturación" and $departamento == "Aduanas_") {
         $tipo = "D";
         $source = "vi_repindicador_brk";
-        $transporte = "ca_transporte = 'Aduana'";
+        $transporte = "ca_transporte = 'Aduana' and (ca_propiedades IS NULL OR ca_propiedades not like '%idg_fac_aduana=false%')";
         $subque = " INNER JOIN ( select bke.*, prm.ca_valor, prm.ca_valor2 from tb_brk_evento bke INNER JOIN (select * from tb_parametros where ca_casouso = 'CU037' and ca_identificacion in (15, 17) order by ca_valor2) prm ON (prm.ca_identificacion = bke.ca_idevento) order by ca_referencia ) bke ON ($source.ca_referencia = bke.ca_referencia) ";
         $subque.= " LEFT JOIN (select DISTINCT subf.ca_referencia_sub, subf.ca_fchfactura, fact.ca_usucreado, fact.ca_observaciones from tb_brk_ingresos fact INNER JOIN (select ca_referencia as ca_referencia_sub, min(ca_fchfactura) as ca_fchfactura from tb_brk_ingresos group by ca_referencia) subf ON fact.ca_referencia = subf.ca_referencia_sub and fact.ca_fchfactura = subf.ca_fchfactura) rf ON (rf.ca_referencia_sub = vi_repindicador_brk.ca_referencia) ";
 
@@ -570,7 +571,7 @@ if (!isset($boton) and !isset($buscar)) {
         $tipo = "D";
         $impoexpo = "ca_impoexpo = 'Exportación'";
         if (substr($indicador, 0, 6) == 'Aduana') {
-            $impoexpo.= " and ca_nomsia = 'COLMAS'";
+            $impoexpo.= " and ca_nomsia = 'COLMAS S.A.S.'";
         }
         $no_docs = array("SAE", "DEX", "Cancelación Póliza Seguro", "Radicación Documento de Transporte", "Recibo de Soportes desde Puerto");
         $source = "vi_repindicador_exp";
@@ -601,7 +602,7 @@ if (!isset($boton) and !isset($buscar)) {
         $tipo = "D";
         $impoexpo = "ca_impoexpo = 'Exportación'";
         if (substr($indicador, 0, 6) == 'Aduana') {
-            $impoexpo.= " and ca_nomsia = 'COLMAS'";
+            $impoexpo.= " and ca_nomsia = 'COLMAS S.A.S.'";
         }
         $source = "vi_repindicador_exp";
         $subque = "LEFT OUTER JOIN (select ca_consecutivo as ca_consecutivo_sub, ca_fchsalida, ca_horasalida from tb_repstatus rps LEFT OUTER JOIN ( select max(srps.ca_idstatus) as ca_idstatus, srpt.ca_consecutivo from tb_repstatus srps LEFT OUTER JOIN tb_reportes srpt ON (srps.ca_idreporte = srpt.ca_idreporte) where srpt.ca_impoexpo = 'Exportación'  group by ca_consecutivo) rpf ON (rps.ca_idstatus = rpf.ca_idstatus)) rs ON (rs.ca_consecutivo_sub = vi_repindicador_exp.ca_consecutivo) ";
@@ -747,7 +748,8 @@ if (!isset($boton) and !isset($buscar)) {
 		c.ca_hbls as ca_hbls_fac, i.ca_factura, i.ca_fchfactura, i.ca_usucreado, i.ca_observaciones 
 	from tb_inoingresos_sea i
 	inner join tb_inoclientes_sea c on c.ca_idinocliente=i.ca_idinocliente
-	where i.oid in (
+
+where i.oid in (
 			select min(oid) from tb_inoingresos_sea 
 			where ca_observaciones = 'Contenedores' 			) 
 	order by ca_referencia, ca_idcliente, ca_hbls, ca_fchfactura)            
@@ -769,6 +771,34 @@ if (!isset($boton) and !isset($buscar)) {
 
         $ind_mem = 21;
         $add_cols = 9;
+    } else if ($indicador == "Oportunidad en Comunicaciones Maritimas") {
+        $format_avg = "H:i:s";
+        $source = "vi_repindicador_sea";
+        $subque = "INNER JOIN (
+                        select to_char(ca_fchrecibo,'YYYY') as ca_ano_new, to_char(ca_fchrecibo,'MM') as ca_mes_new, rs.ca_idstatus, rp.ca_consecutivo as ca_consecutivo_conf,rs.ca_fchenvio, u.ca_departamento, rs.ca_fchrecibo, rs.ca_usuenvio, rs.ca_observaciones_idg 
+                        ,CASE WHEN rs.ca_idetapa= '88888' THEN 'Status' WHEN rs.ca_idetapa = 'IMDES' THEN 'Desconsolidación' WHEN rs.ca_idetapa = 'IMPLA' THEN 'Planilla' END
+                        from tb_repstatus rs 
+                                INNER JOIN tb_reportes rp ON (rp.ca_transporte = 'Marítimo' and rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa IN ('88888','IMDES','IMPLA'))
+                                LEFT JOIN tb_emails e ON rs.ca_idemail = e.ca_idemail
+                                LEFT JOIN control.tb_usuarios u ON rs.ca_usuenvio = u.ca_login
+                    WHERE ca_subject NOT LIKE '%Factura de%' and rs.ca_tipo = 2 and u.ca_departamento NOT IN ('OTM','Operativo')
+                    ORDER BY rp.ca_consecutivo, rs.ca_fchenvio ) rs1 ON (vi_repindicador_sea.ca_consecutivo = rs1.ca_consecutivo_conf) ";
+        $sql="select ca_fchfestivo from tb_festivos";
+        if (!$tm->Open($sql)) {
+            echo "Error 399: $sql";
+            //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
+            //echo "<script>document.location.href = 'entrada.php';</script>";
+            exit;
+        }
+        $festi = array();
+        while (!$tm->Eof() and !$tm->IsEmpty()) {
+            $festi[] = $tm->Value('ca_fchfestivo');
+            $tm->MoveNext();
+        }
+        $tm->MoveFirst();
+        $ind_mem = 22;
+        $add_cols = 6;
+        $campos.= ",ca_mes";        
     }
 
     $queries = "select * from $source $subque where " . ($impoexpo ? $impoexpo . " and " : "") . "  $sucursal $cliente and " . ($ciudestino ? $ciudestino . " and" : "") . "   " . ($transporte ? $transporte . " and" : "") . " $ano and $mes";
@@ -826,14 +856,16 @@ if (!isset($boton) and !isset($buscar)) {
         case 4:
             echo "	<TH>Referencia</TH>";
             echo "	<TH>Continuación</TH>";
-            if ($departamento == 'Aéreo') {
-                echo "	<TH>Fch.Llegada</TH>";
-            } else if ($departamento == 'Marítimo') {
+            if ($departamento == 'Aéreo' or $departamento == 'Marítimo') {
                 echo "	<TH>Fch.Llegada</TH>";
             } else if ($departamento == 'Terrestre') {
                 echo "	<TH>Fch.Planilla</TH>";
             }
-            echo "	<TH>Fch.Factura</TH>";
+            if ($departamento == 'Marítimo') {
+                echo "	<TH>Fch.Envio Email</TH>";
+            } else {
+                echo "	<TH>Fch.Factura</TH>";
+            }
             echo "	<TH>Usuario</TH>";
             echo "	<TH>Observaciones</TH>";
             echo "	<TH>Dif.</TH>";
@@ -945,12 +977,23 @@ if (!isset($boton) and !isset($buscar)) {
             echo "	<TH>Usuario</TH>";
             echo "	<TH>Dif.</TH>";
             break;
+        case 22:            
+            echo "	<TH>Tipo</TH>";
+            echo "	<TH>Fch.Recibo</TH>";
+            echo "	<TH>Envío Msg</TH>";
+            echo "	<TH>Usuario</TH>";
+            echo "	<TH>Dif.</TH>";
+            echo "	<TH>Observaciones</TH>";
+            break;
     }
     echo "</TR>";
     $rs->MoveFirst();
     $contador = 1;
     $data = array();
+    echo $rs->Eof();
+    echo $rs->IsEmpty();
     while (!$rs->Eof() and !$rs->IsEmpty()) {                                  // Lee la totalidad de los registros obtenidos en la instrucción Select
+        //echo "paso por aqui";
         $adicionales = false;
         if ($ind_mem == 3 and ($rs->Value('ca_transporte') != 'Marítimo' or $rs->Value('ca_modalidad') != 'LCL')) {
             $rs->MoveNext();
@@ -982,7 +1025,7 @@ if (!isset($boton) and !isset($buscar)) {
             echo "  <TD Class=mostrar style='font-size: 9px;'>" . $rs->Value('ca_consecutivo') . "</TD>";
             echo "  <TD Class=mostrar style='font-size: 9px;'>" . $rs->Value('ca_version') . "</TD>";
         }
-        if ($ind_mem == 5 or $ind_mem == 16) {
+        if ($ind_mem == 5 or $ind_mem == 16 or $ind_mem == 22) {
             echo "  <TD Class=mostrar style='font-size: 9px;'>" . $rs->Value('ca_ano_new') . "</TD>";
             echo "  <TD Class=mostrar style='font-size: 9px;'>" . $rs->Value('ca_mes_new') . "</TD>";
         } else {
@@ -1030,6 +1073,7 @@ if (!isset($boton) and !isset($buscar)) {
                 $idc_tmp = $rs->Value('ca_idcliente');
                 $hbl_tmp = $rs->Value('ca_hbls');
                 $fch_llegada = ($departamento == "OTM") ? $rs->Value('ca_fchplanilla') : $rs->Value('ca_fchllegada');
+                $fch_factura = ($departamento == "Marítimo") ? $rs->Value('ca_fchenvio') : $rs->Value('ca_fchfactura');
                 echo "  <TD Class=mostrar style='font-size: 9px;'>" . $rs->Value('ca_referencia') . "</TD>";
                 echo "  <TD Class=mostrar style='font-size: 9px;'>" . $rs->Value('ca_continuacion') . "</TD>";
                 if (in_array(trim($rs->Value("ca_observaciones")), array("Facturación al Agente", "Reemplazo Factura", "Cierre contable de Clientes", "Referencia Particulares", "Acuerdos Comerciales"))) {
@@ -1038,13 +1082,13 @@ if (!isset($boton) and !isset($buscar)) {
                     if ($rs->Value('ca_continuacion') == "CABOTAJE") {
                         $fch_llegada = $rs->Value('ca_fchcontinuacion');
                     }
-                    $dif_mem = workDiff($festi, $fch_llegada, $rs->Value('ca_fchfactura'));
+                    $dif_mem = workDiff($festi, $fch_llegada, $fch_factura);
                 }
 
                 $lcs_var = ($lcs_array[$rs->Value('ca_sucursal')]) ? $lcs_array[$rs->Value('ca_sucursal')] : $lcs_array['Todas'];
                 $color = analizar_dif("D", $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
                 echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $fch_llegada . "</TD>";
-                echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_fchfactura') . "</TD>";
+                echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $fch_factura . "</TD>";
                 echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_usucreado') . "</TD>";
                 echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value("ca_observaciones") . "</TD>";
                 echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>" . $dif_mem . "</TD>";
@@ -1054,6 +1098,7 @@ if (!isset($boton) and !isset($buscar)) {
                 } elseif ($departamento == 'Aéreo') {
                     $data[] = array($rs->Value('ca_usucreado') => array($rs->Value('ca_mes') => $dif_mem));
                 }
+                /*
                 if ($departamento != "OTM") {
                     $avanza = false;
                     if ($rs->Value('ca_continuacion') == "N/A") {
@@ -1087,7 +1132,7 @@ if (!isset($boton) and !isset($buscar)) {
                     if ($avanza and !$rs->Eof()) {           // Retrocede un registro para quedar en la última factura del Hbl de una Referencia
                         $rs->MovePrevious();
                     }
-                }                
+                }*/                
                 break;
             case 5:
                 $idreporte = $rs->Value('ca_idreporte');
@@ -1537,7 +1582,7 @@ if (!isset($boton) and !isset($buscar)) {
                     $matriz_eventos["intervalo_1"]['Rec.Último Documento'] = $ult_mem;
                     $matriz_eventos["intervalo_1"]['SAE'] = $sae_mem;
                 } else if (substr($indicador, 0, 5) == 'Carga') {
-                    if (!is_null($sae_mem) and $nom_sia == 'COLMAS' and $tra_mem == 'Marítimo') {
+                    if (!is_null($sae_mem) and $nom_sia == 'COLMAS S.A.S.' and $tra_mem == 'Marítimo') {
                         $matriz_eventos["intervalo_1"]['SAE'] = $sae_mem;
                     } else {
                         $matriz_eventos["intervalo_1"]['Rec.Último Documento'] = $ult_mem;
@@ -1596,7 +1641,7 @@ if (!isset($boton) and !isset($buscar)) {
                     }
                 } else if (substr($indicador, 0, 5) == 'Carga') {
                     if ($tra_mem == 'Aéreo') {
-                        if ($nom_sia == 'COLMAS') {
+                        if ($nom_sia == 'COLMAS S.A.S.') {
                             $matriz_eventos["intervalo_1"]['DEX'] = $rs->Value('ca_fechadoc');
                         } else {
                             $matriz_eventos["intervalo_1"]['Fch.Carga Embarcada'] = $rs->Value('ca_fchsalida');
@@ -1699,6 +1744,43 @@ if (!isset($boton) and !isset($buscar)) {
                 echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>" . $dif_mem . "</TD>";
                 $data[] = array($rs->Value('ca_usucreado') => array($rs->Value('ca_mes') => $dif_mem));
                 break;
+            case 22:
+                $idreporte = $rs->Value('ca_idreporte');
+                while ($idreporte == $rs->Value('ca_idreporte') and !$rs->Eof() and !$rs->IsEmpty()) {
+                    if ($adicionales) {
+                        echo "<TR>";
+                        echo "  <TD Class=mostrar COLSPAN=11></TD>";
+                    }
+                    list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchrecibo'), "%d-%d-%d %d:%d:%d");
+                    $tstamp_recibido = mktime($hor, $min, $seg, $mes, $dia, $ano);
+                    list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchenvio'), "%d-%d-%d %d:%d:%d");
+                    $tstamp_enviado = mktime($hor, $min, $seg, $mes, $dia, $ano);
+                    $dif_mem = calc_dif($festi, $tstamp_recibido, $tstamp_enviado, $entrada, $salida);
+                    $lcs_var = ($lcs_array[$rs->Value('ca_sucursal')]) ? $lcs_array[$rs->Value('ca_sucursal')] : $lcs_array['Todas'];
+                    $color = analizar_dif("T", $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
+                    echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value('case') . "</TD>";
+                    echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_fchrecibo') . "</TD>";
+                    echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_fchenvio') . "</TD>";
+                    echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_usuenvio') . "</TD>";
+                    echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>" . $dif_mem . "</TD>";
+                    echo "  <TD Class=mostrar style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_observaciones_idg') . "</TD>";
+                    if ($adicionales) {
+                        echo "</TR>";
+                    }
+                    $adicionales = true;
+                    $data[] = array($rs->Value('ca_usuenvio') => array($rs->Value('ca_mes') => hourTosec($dif_mem)));
+                    $rs->MoveNext(); // Buscar Todos los Status de un Embarque
+                }
+                if (!$rs->Eof()) {           // Retrocede un registro para quedar en el último Status del Reporte
+                    $rs->MovePrevious();
+                }
+                if (!$adicionales) {
+                    echo "  <TD Class=mostrar></TD>";
+                    echo "  <TD Class=mostrar></TD>";
+                    echo "  <TD Class=invertir></TD>";
+                }
+                //$data[] = array($rs->Value('ca_usuenvio')=>array($rs->Value('ca_mes_new')=>hourTosec($dif_mem)));
+                break;
         }
         $rs->MoveNext();
     }
@@ -1730,7 +1812,7 @@ if (!isset($boton) and !isset($buscar)) {
         foreach ($data as $key => $gridUsuario) {
             foreach ($gridUsuario as $usuario => $gridMes) {
                 foreach ($serieX as $mes) {
-                    if ($ind_mem == 5 || $ind_mem == 6 || $ind_mem == 8 || $ind_mem == 9) {
+                    if ($ind_mem == 5 || $ind_mem == 6 || $ind_mem == 8 || $ind_mem == 9 || $ind_mem == 22) {
                         $datos[$usuario][$mes]["prom"] = round($datos[$usuario][$mes]["valor"] / $datos[$usuario][$mes]["total"], 0) * 1000;
                         $datosProm[$usuario]["prom"] = round($datosProm[$usuario]["valor"] / $datosProm[$usuario]["total"], 0) * 1000;
                     } else {
@@ -1816,7 +1898,7 @@ if (!isset($boton) and !isset($buscar)) {
                                 }
                             }
                         }, { //  Secondary yAxis
-                            <? if ($ind_mem == 5 || $ind_mem == 6 || $ind_mem == 8 || $ind_mem == 9) { ?>
+                            <? if ($ind_mem == 5 || $ind_mem == 6 || $ind_mem == 8 || $ind_mem == 9 || $ind_mem == 22) { ?>
                                 type: 'datetime',
                                 title: {
                                     text: 'Tiempo (Horas)'
@@ -1835,7 +1917,7 @@ if (!isset($boton) and !isset($buscar)) {
                         formatter: function() {
                             var str = "";
                             if (this.series.type == "column"){
-                            <? if ($ind_mem == 5 || $ind_mem == 6 || $ind_mem == 8 || $ind_mem == 9) { ?>
+                            <? if ($ind_mem == 5 || $ind_mem == 6 || $ind_mem == 8 || $ind_mem == 9 || $ind_mem == 22) { ?>
                                 str = '<u>' + this.series.name + ': ' + dateFormat1(this.y) + ' horas</u><br/>';
                             <? } else { ?>
                                 str = '<u>' + this.series.name + ': ' + this.y + ' días</u><br/>';
@@ -1869,7 +1951,7 @@ if (!isset($boton) and !isset($buscar)) {
                     categories: <?= json_encode($serieX) ?>
                 },
                 yAxis: {
-                    <? if ($ind_mem == 5 || $ind_mem == 6 || $ind_mem == 8 || $ind_mem == 9) { ?>
+                    <? if ($ind_mem == 5 || $ind_mem == 6 || $ind_mem == 8 || $ind_mem == 9 || $ind_mem == 22) { ?>
                         type: 'datetime',
                         title: {
                             text: 'Tiempo (Horas)'
@@ -1885,7 +1967,7 @@ if (!isset($boton) and !isset($buscar)) {
                      formatter: function() {
                         var str="";
                         if(this.series.type=="column"){
-                            <?if($ind_mem==5||$ind_mem==6||$ind_mem==8||$ind_mem==9){?>
+                            <?if($ind_mem==5||$ind_mem==6||$ind_mem==8||$ind_mem==9 || $ind_mem == 22){?>
                                 str = '<u>' + this.series.name + ': ' + dateFormat1(this.y) + ' horas</u><br/>';
                             <?}else{?>
                                 str = '<u>' + this.series.name + ': '+ this.y +' días</u><br/>';
