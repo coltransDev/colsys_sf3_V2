@@ -109,7 +109,7 @@ require_once("menu.php");
     echo "  <TD Class=captura ROWSPAN=5></TD>";
     echo "  <TD Class=listar ROWSPAN=2>Año:<BR><SELECT NAME='ano[]' SIZE=5 MULTIPLE>";
     $sel = "SELECTED";
-    for ( $i=0; $i<5; $i++ ){
+    for ( $i=0; $i<6; $i++ ){
           echo " <OPTION VALUE=".(date('Y')-$i)." $sel>".(date('Y')-$i)."</OPTION>";
 		  $sel = "";
         }
@@ -274,7 +274,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)){
 	$queries.= "and ca_referencia in (select ca_referencia from vi_inomaestra_sea where $ano and $mes and $sufijo and $traorigen and $modalidad and $ciudestino) ";
 	$queries.= "group by $campos ";
 	$queries.= "order by $campos ";
-	// die ("$queries");
+	 //die ("$queries");
     if (!$rs->Open("$queries")) {                       							// Selecciona todos lo registros de la vista vi_repgerencia_sea 
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      		// Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
