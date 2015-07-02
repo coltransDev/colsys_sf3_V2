@@ -15,7 +15,7 @@
 
 $titulo = 'Generador de Informes Módulo Marítimo';
 $meses  = array( "%" => "Todos los Meses", "01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre" );
-$criterios = array( "ca_ano" => "Año", "ca_mes" => "Mes", "ca_sucursal" => "Sucursal", "ca_traorigen" => "Tráfico", "ca_vendedor" => "Vendedor", "ca_compania" => "Clientes", "ca_estado" => "Estado", "ca_ciudestino" => "Puerto/Destino",  "ca_ciuorigen" => "Puerto/Origen",  "ca_nomlinea" => "Naviera");
+$criterios = array( "ca_ano" => "Año", "ca_mes" => "Mes", "ca_sucursal" => "Sucursal", "ca_traorigen" => "Tráfico", "ca_vendedor" => "Vendedor", "ca_compania" => "Clientes", "ca_estado" => "Estado", "ca_ciudestino" => "Puerto/Destino",  "ca_ciuorigen" => "Puerto/Origen", "ca_nomagente" => "Agente", "ca_nomlinea" => "Naviera");
 $modalidades= array("LCL","FCL","COLOADING","PROYECTOS","PARTICULARES");                     // Arreglo con los tipos de Modalidades de Carga
 
 include_once 'include/datalib.php';                                            // Incorpora la libreria de funciones, para accesar leer bases de datos
@@ -106,7 +106,7 @@ require_once("menu.php");
         exit; }
 
     echo "<TR>";
-    echo "  <TD Class=captura ROWSPAN=5></TD>";
+    echo "  <TD Class=captura ROWSPAN=6></TD>";
     echo "  <TD Class=listar ROWSPAN=2>Año:<BR><SELECT NAME='ano[]' SIZE=5 MULTIPLE>";
     $sel = "SELECTED";
     for ( $i=0; $i<6; $i++ ){
@@ -147,7 +147,7 @@ require_once("menu.php");
           }
     echo "  </TD>";
 
-    echo "  <TH style='vertical-align:bottom;' ROWSPAN=5><INPUT Class=submit TYPE='SUBMIT' NAME='buscar' VALUE='  Buscar  ' ONCLIK='menuform.submit();'><BR /><BR /></TH>";
+    echo "  <TH style='vertical-align:bottom;' ROWSPAN=6><INPUT Class=submit TYPE='SUBMIT' NAME='buscar' VALUE='  Buscar  ' ONCLIK='menuform.submit();'><BR /><BR /></TH>";
     echo "</TR>";
 
     echo "<TR>";
@@ -168,6 +168,23 @@ require_once("menu.php");
     echo "<TR>";
     echo "  <TD Class=listar>Cliente: </TD>";
     echo "  <TD Class=listar COLSPAN=4><INPUT TYPE='text' NAME='cliente' size='100'></TD>";
+    echo "</TR>";
+
+    echo "<TR>";
+    if (!$tm->Open("select ca_nombre from vi_agentes where ca_activo = TRUE")) {       // Selecciona todos lo registros de la tabla Agente
+        echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+        echo "<script>document.location.href = 'repgenerator.php';</script>";
+        exit; }
+    $tm->MoveFirst();
+    echo "  <TD Class=listar>Agente: </TD>";
+    echo "  <TD Class=listar COLSPAN=4><SELECT ID=nomagente NAME='nomagente'>";                 // Llena el cuadro de lista con los valores de la tabla Agentes
+    echo "  <OPTION VALUE='%' SELECTED>Listar Todos</OPTION>";
+    $tm->MoveFirst();
+    while (!$tm->Eof()) {
+            echo "<OPTION VALUE=\"".$tm->Value('ca_nombre')."\">".$tm->Value('ca_nombre')."</OPTION>";
+            $tm->MoveNext();
+          }
+    echo "  </SELECT></TD>";
     echo "</TR>";
 
     echo "<TR>";
@@ -222,7 +239,6 @@ require_once("menu.php");
 	echo"   </TD></TABLE>";
 	echo"</TD></TR>";
 	
-    echo "  <TD Class=listar COLSPAN=3></TD>";
     echo "</TR>";
 
     echo "<TR HEIGHT=5>";
@@ -250,19 +266,41 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)){
 	
 	$ano = "ca_ano::text ".((count($ano)==1)?"like '$ano[0]'":"in ('".implode("','",$ano)."')");
 	$mes = "ca_mes::text ".((count($mes)==1)?"like '$mes[0]'":"in ('".implode("','",$mes)."')");
-	$sucursal = "ca_sucursal ".((count($sucursal)==1)?"like '$sucursal[0]'":"in ('".implode("','",$sucursal)."')");
-	$vendedor = "ca_vendedor ".((count($vendedor)==1)?"like '$vendedor[0]'":"in ('".implode("','",$vendedor)."')");
-	$cliente = ((strlen($cliente)!=0)?"and upper(ca_compania) like upper('%$cliente%')":"");
-	$traorigen = "ca_traorigen ".((count($traorigen)==1)?"like '$traorigen[0]'":"in ('".implode("','",$traorigen)."')");
-	$nomlinea = "and ca_nomlinea like '$nomlinea'";
-	$sufijo = "substr(ca_referencia,5,2) like '$sufijo'";
-	$modalidad = "ca_modalidad ".((count($modalidad)==1)?"like '$modalidad[0]'":"in ('".implode("','",$modalidad)."')");
-	$ciudestino = "ca_ciudestino ".((count($ciudestino)==1)?"like '$ciudestino[0]'":"in ('".implode("','",$ciudestino)."')");
-        $subcond = "";
-        if (!$proyectos){
-            $subcond = " and ca_modalidad != 'PROYECTOS'";
+        
+        $filtro_1 = "";
+        $filtro_2 = " and ";
+        if ($sucursal[0] != "%"){
+            $filtro_1.= "ca_sucursal ".((count($sucursal)==1)?"= '$sucursal[0]'":"in ('".implode("','",$sucursal)."')")." and ";
         }
-
+        if ($vendedor[0] != "%"){
+            $filtro_1.= "ca_vendedor ".((count($vendedor)==1)?"like '$vendedor[0]'":"in ('".implode("','",$vendedor)."')")." and ";
+        }
+        if (strlen($cliente)!=0){
+            $filtro_1.= "upper(ca_compania) like upper('%$cliente%') and ";
+        }
+        if ($traorigen[0] != "%"){
+            $filtro_2.= "ca_traorigen ".((count($traorigen)==1)?"= '$traorigen[0]'":"in ('".implode("','",$traorigen)."')")." and ";
+        }
+        if ($nomagente != "%"){
+            $filtro_1.= "ca_nomagente like '$nomagente' and ";
+        }
+        if ($nomlinea != "%"){
+            $filtro_1.= "ca_nomlinea like '$nomlinea' and ";
+        }
+	if ($sufijo != "%"){
+            $filtro_2.= "substr(ca_referencia,5,2) like '$sufijo' and ";
+        }
+        if ($modalidad[0] != "%"){
+            $filtro_2.= "ca_modalidad ".((count($modalidad)==1)?"like '$modalidad[0]'":"in ('".implode("','",$modalidad)."') and ");
+        }
+        if ($ciudestino[0] != "%"){
+            $filtro_2.= "ca_ciudestino ".((count($ciudestino)==1)?"like '$ciudestino[0]'":"in ('".implode("','",$ciudestino)."') and ");
+        }
+        if (!$proyectos){
+            $filtro_1.= "ca_modalidad != 'PROYECTOS' and ";
+        }
+        $filtro_2 = substr($filtro_2, 0, strlen($filtro_2)-5);
+        
 	$campos = "";
 	while (list ($clave, $val) = each ($agrupamiento)) {
 		$campos.= $val.",";
@@ -270,11 +308,11 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)){
 	$campos = substr($campos,0,strlen($campos)-1);
 	$queries = "select $campos";
 	$queries.= ", count(distinct ca_referencia) as ca_referencias, count(ca_hbls) as ca_hbls, sum(ca_facturacion) as ca_facturacion, sum(ca_utilidad) as ca_utilidad, sum(ca_sobreventa) as ca_sobreventa, sum(ca_cbm) as ca_cbm, sum(ca_teus) as ca_teus ";
-	$queries.= "from vi_repgerencia_sea where $sucursal and $vendedor $cliente $nomlinea $subcond ";
-	$queries.= "and ca_referencia in (select ca_referencia from vi_inomaestra_sea where $ano and $mes and $sufijo and $traorigen and $modalidad and $ciudestino) ";
+	$queries.= "from vi_repgerencia_sea where $filtro_1 ";
+	$queries.= "ca_referencia in (select ca_referencia from vi_inomaestra_sea where $ano and $mes $filtro_2) ";
 	$queries.= "group by $campos ";
 	$queries.= "order by $campos ";
-	 //die ("$queries");
+	// die ("$queries");
     if (!$rs->Open("$queries")) {                       							// Selecciona todos lo registros de la vista vi_repgerencia_sea 
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      		// Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
