@@ -1228,7 +1228,8 @@ where i.oid in (
                 if (trim($rs->Value("ca_observaciones")) == "Licitaciones" or trim($rs->Value("ca_observaciones")) == "Acuerdos autorizados") {
                     $dif_mem = null;
                 }
-                if ((trim($rs->Value("ca_observaciones")) == "Gastos en origen" or trim($rs->Value("ca_observaciones")) == "Gastos proveedores") and ($rs->Value('ca_sucursal') == "Pereira" or $rs->Value('ca_sucursal') == "Bucaramanga")) {
+                // if ((trim($rs->Value("ca_observaciones")) == "Gastos en origen" or trim($rs->Value("ca_observaciones")) == "Gastos proveedores") and ($rs->Value('ca_sucursal') == "Pereira" or $rs->Value('ca_sucursal') == "Bucaramanga")) {
+                if (trim($rs->Value("ca_observaciones")) == "Gastos en origen" or trim($rs->Value("ca_observaciones")) == "Gastos proveedores") {
                     $dif_mem = null;
                 }
                 $lcs_var = ($lcs_array[$rs->Value('ca_sucursal')]) ? $lcs_array[$rs->Value('ca_sucursal')] : $lcs_array['Todas'];
