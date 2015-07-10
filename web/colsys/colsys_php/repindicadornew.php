@@ -890,10 +890,10 @@ where i.oid in (
             echo "	<TH>Dif.</TH>";
             break;
         case 8:
+            echo "	<TH>Vendedor</TH>";
             echo "	<TH>Fch.Solicitud</TH>";
             echo "	<TH>Fch.Envio</TH>";
             echo "	<TH>Usu.Envio</TH>";
-            echo "	<TH>Vendedor</TH>";
             echo "	<TH>Observaciones</TH>";
             echo "	<TH>Dif.</TH>";
             break;
@@ -1233,21 +1233,22 @@ where i.oid in (
                 }
                 $lcs_var = ($lcs_array[$rs->Value('ca_sucursal')]) ? $lcs_array[$rs->Value('ca_sucursal')] : $lcs_array['Todas'];
                 $color = analizar_dif("T", $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
+                echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_usuario') . "</TD>";
                 echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_fchsolicitud') . "</TD>";
                 echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_fchpresentacion') . "</TD>";
                 echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_usupresentacion') . "</TD>";
-                echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_usuario') . "</TD>";
                 echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_observaciones') . "</TD>";
                 echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>" . $dif_mem . "</TD>";
                 $cot_ant = $rs->Value('ca_consecutivo');
-                while ($cot_ant == $rs->Value('ca_consecutivo') and !$rs->Eof() and !$rs->IsEmpty()) {
+                $ver_ant = $rs->Value('ca_version');
+                while ($cot_ant == $rs->Value('ca_consecutivo') and $ver_ant == $rs->Value('ca_version') and !$rs->Eof() and !$rs->IsEmpty()) {
                     echo "<TR>";
                     echo "  <TD Class=mostrar style='font-size: 9px;' COLSPAN=5>&nbsp;</TD>";
                     echo "  <TD Class=invertir style='font-size: 9px;'>" . $rs->Value('ca_traorigen') . "</TD>";
                     echo "  <TD Class=invertir style='font-size: 9px;'>" . $rs->Value('ca_ciudestino') . "</TD>";
                     echo "  <TD Class=invertir style='font-size: 9px;'>" . $rs->Value('ca_transporte') . "</TD>";
                     echo "  <TD Class=invertir style='font-size: 9px;'>" . $rs->Value('ca_modalidad') . "</TD>";
-                    echo "  <TD Class=mostrar style='font-size: 9px;' COLSPAN=7>&nbsp;</TD>";
+                    echo "  <TD Class=mostrar style='font-size: 9px;' COLSPAN=8>&nbsp;</TD>";
                     echo "</TR>";
                     $rs->MoveNext();
                 }
