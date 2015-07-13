@@ -293,12 +293,14 @@ if (!isset($boton) and !isset($agrupamiento)) {
         $filtro_2.= "substr(ca_referencia,5,2) like '$sufijo' and ";
     }
     if ($modalidad[0] != "%"){
-        $filtro_2.= "ca_modalidad ".((count($modalidad)==1)?"like '$modalidad[0]'":"in ('".implode("','",$modalidad)."') and ");
+        $filtro_2.= "ca_modalidad ".((count($modalidad)==1)?"like '$modalidad[0]'":"in ('".implode("','",$modalidad)."')")." and ";
     }
     if ($ciudestino[0] != "%"){
-        $filtro_2.= "ca_ciudestino ".((count($ciudestino)==1)?"like '$ciudestino[0]'":"in ('".implode("','",$ciudestino)."') and ");
+        $filtro_2.= "ca_ciudestino ".((count($ciudestino)==1)?"like '$ciudestino[0]'":"in ('".implode("','",$ciudestino)."')")." and ";
     }
-    $filtro_2 = substr($filtro_2, 0, strlen($filtro_2)-5);
+    if (substr($filtro_2, -5) == " and "){
+        $filtro_2 = substr($filtro_2, 0, strlen($filtro_2)-5);
+    }
 
     $campos = "";
     while (list ($clave, $val) = each($agrupamiento)) {
@@ -311,7 +313,7 @@ if (!isset($boton) and !isset($agrupamiento)) {
     $queries.= "ca_referencia in (select ca_referencia from vi_repgerencia_air where $ano and $mes $filtro_2) ";
     $queries.= "group by $campos ";
     $queries.= "order by $campos ";
-    // die ("$queries");
+    die ("$queries");
     if (!$rs->Open("$queries")) {                              // Selecciona todos lo registros de la vista vi_repgerencia_sea
         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";        // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";

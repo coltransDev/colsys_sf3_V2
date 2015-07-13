@@ -291,15 +291,17 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)){
             $filtro_2.= "substr(ca_referencia,5,2) like '$sufijo' and ";
         }
         if ($modalidad[0] != "%"){
-            $filtro_2.= "ca_modalidad ".((count($modalidad)==1)?"like '$modalidad[0]'":"in ('".implode("','",$modalidad)."') and ");
+            $filtro_2.= "ca_modalidad ".((count($modalidad)==1)?"like '$modalidad[0]'":"in ('".implode("','",$modalidad)."')")." and ";
         }
         if ($ciudestino[0] != "%"){
-            $filtro_2.= "ca_ciudestino ".((count($ciudestino)==1)?"like '$ciudestino[0]'":"in ('".implode("','",$ciudestino)."') and ");
+            $filtro_2.= "ca_ciudestino ".((count($ciudestino)==1)?"like '$ciudestino[0]'":"in ('".implode("','",$ciudestino)."')")." and ";
         }
         if (!$proyectos){
             $filtro_1.= "ca_modalidad != 'PROYECTOS' and ";
         }
-        $filtro_2 = substr($filtro_2, 0, strlen($filtro_2)-5);
+        if (substr($filtro_2, -5) == " and "){
+            $filtro_2 = substr($filtro_2, 0, strlen($filtro_2)-5);
+        }
         
 	$campos = "";
 	while (list ($clave, $val) = each ($agrupamiento)) {
