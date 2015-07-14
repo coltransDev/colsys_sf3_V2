@@ -313,7 +313,7 @@ if (!isset($boton) and !isset($agrupamiento)) {
     $queries.= "ca_referencia in (select ca_referencia from vi_repgerencia_air where $ano and $mes $filtro_2) ";
     $queries.= "group by $campos ";
     $queries.= "order by $campos ";
-    die ("$queries");
+    // die ("$queries");
     if (!$rs->Open("$queries")) {                              // Selecciona todos lo registros de la vista vi_repgerencia_sea
         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";        // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
