@@ -59,7 +59,7 @@
       }
       ?>
       <tr class="<?=$class?>">
-           <td><div align="left"><div class="qtip" title="<?=$text?>"><?=$contacto->getNombre()?> <?=!$contacto->getCaActivo()?"(INACTIVO)":""?> <?=$contacto->getCaCelular()?image_tag("16x16/mobile.gif"):""?> <?=$contacto->getCaSkype()?image_tag("16x16/skype.png"):""?></div></div></td>
+           <td id="name<?=$i.$contacto->getIdsSucursal()->getCaIdsucursal()?>" onclick='changeText(<?=$i.$contacto->getIdsSucursal()->getCaIdsucursal()?>,"<?=$sucursal->getCiudad()->getCaCiudad()."(".$sucursal->getCiudad()->getTrafico()->getCaNombre().")" ?>","<?=$contacto->getIdsSucursal()->getCaDireccion()?>","<?=$contacto->getCaTelefonos()?>","<?=$contacto->getCaFax()?>","<?=$contacto->getCaEmail()?>","<?=$contacto->getCaTransporte()?>")'><div align="left"><div class="qtip" title="<?=$text?>"><?=$contacto->getNombre()?> <?=!$contacto->getCaActivo()?"(INACTIVO)":""?> <?=$contacto->getCaCelular()?image_tag("16x16/mobile.gif"):""?> <?=$contacto->getCaSkype()?image_tag("16x16/skype.png"):""?></div></div></td>
            <td><div align="left" class="qtip" title="<?=$text?>">(<?=$sucursal->getCiudad()->getTrafico()->getCodigoarea()?>)(<?=$contacto->getCodigoarea()?>)</div></td>
            <td><div align="left" class="qtip" title="<?=$text?>"><?=$contacto->getCaTelefonos()?></div></td>
            <td><div align="left" class="qtip" title="<?=$text?>"><?=$contacto->getCaFax()?></div></td>           
@@ -98,3 +98,19 @@
       }
       ?>
   </table>
+
+<script type="text/javascript">
+    function changeText(id,sucursal,direccion,telefono,fax,email,transporte){
+        var oldHTML = document.getElementById('name'+id).innerHTML;
+        var newHTML = "<table class='tableList'><tr><td><b><?=  utf8_decode($ids->getCaNombre())?></b></td></tr>\n\
+                        <tr><td><b>Suc:</b>"+sucursal+"</td></tr>\n\
+                        <tr><td><b>Dir:</b>"+direccion+"</td></tr>\n\
+                        <tr><td><b>Contacto:</b>"+ oldHTML + "</td></tr>\n\
+                        <tr><td><b>Tel:</b>"+ telefono + "</td></tr>\n\
+                        <tr><td><b>Fax:</b>"+ fax + "</td></tr>\n\
+                        <tr><td><b>Email:</b>"+ email + "</td></tr>\n\
+                        <tr><td><b>"+ transporte + "</b></td></tr>\n\
+                        </table>";
+        document.getElementById('name'+id).innerHTML = newHTML;
+    }
+</script>

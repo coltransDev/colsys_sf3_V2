@@ -65,7 +65,7 @@
         <div align="left">
         <?
             include_partial("ids/verContactos", array("sucursal"=>$sucursal, "user"=>$user
-                    ,"contactos"=>$contactos, "modo"=>$modo, "nivel"=>$nivel ));
+                    ,"contactos"=>$contactos, "modo"=>$modo, "nivel"=>$nivel, "ids"=>$ids ));
         ?>
         </div>
         </td>
