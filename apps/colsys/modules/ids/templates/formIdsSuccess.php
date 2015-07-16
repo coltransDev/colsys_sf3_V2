@@ -39,7 +39,7 @@
     }
     
     var habilitar = function(){
-        if( document.getElementById("controladoporsig").value=="1" || document.getElementById("controladoporsig").value=="2" || document.getElementById("controladoporsig").value=="5"){
+        if( document.getElementById("controladoporsig").value=="1" || document.getElementById("controladoporsig").value=="2" || document.getElementById("controladoporsig").value=="5" || document.getElementById("controladoporsig").value=="6"){
             document.getElementById("fchvencimiento").style.display = "none";
             document.getElementById("nfchvencimiento").style.display = "none";
         }else{
