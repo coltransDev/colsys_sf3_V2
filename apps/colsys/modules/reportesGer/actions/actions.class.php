@@ -1116,8 +1116,8 @@ class reportesGerActions extends sfActions {
     }
 
     public function executeReporteCargaOperativa(sfWebRequest $request) {
-        echo "Este informe está temporalmente fuera de Servicio. Por favor comunicarse al área de Sistemas";
-        exit();
+        //echo "Este informe está temporalmente fuera de Servicio. Por favor comunicarse al área de Sistemas";
+        //exit();
         $response = sfContext::getInstance()->getResponse();
         $response->addJavaScript("extExtras/SuperBoxSelect", 'last');
 
@@ -1270,32 +1270,46 @@ class reportesGerActions extends sfActions {
 
             if ($this->tipo >= 0 && $this->tipo < 4) {
                 if ($this->fechainicial && $this->fechafinal)
-                    $where = " t.ca_fchcreado between '" . $this->fechainicial . "' and '" . $this->fechafinal . "' and ";
+                    $where = " and t.ca_fchcreado between '" . $this->fechainicial . "' and '" . $this->fechafinal . "'  ";
                 $innerJoin = "INNER JOIN vi_clientes_reduc c ON c.ca_idcliente = t.ca_idcliente
                                   INNER JOIN control.tb_usuarios u on u.ca_login = c.ca_vendedor
                                   INNER JOIN control.tb_sucursales s ON s.ca_idsucursal = u.ca_idsucursal";
                 $join = "";
                 if ($this->tipo == 0) {
                     $join = "INNER JOIN tb_inoingresos_sea ic ON t.ca_idinocliente = ic.ca_idinocliente ";
+                    if ($this->vendedor) {
+                        $where.= " and t.ca_login ='" . $this->vendedor . "'  ";
+                    }
+                    
                 } elseif ($this->tipo == 1) {
                     $join = "INNER JOIN tb_inoingresos_air ic ON t.ca_referencia = ic.ca_referencia and t.ca_idcliente = ic.ca_idcliente and t.ca_hawb = ic.ca_hawb ";
+                    if ($this->vendedor) {
+                        $where.= " and t.ca_loginvendedor ='" . $this->vendedor . "'  ";
+                    }
                 } elseif ($this->tipo == 2) {
                     $join = "INNER JOIN tb_expo_ingresos ic ON t.ca_referencia = ic.ca_referencia and t.ca_idcliente = ic.ca_idcliente  ";
+                    if ($this->vendedor) {
+                        $where.= " and ic.ca_loginvendedor ='" . $this->vendedor . "'  ";
+                    }
                 } else if ($this->tipo == 3) {
                     $join = "INNER JOIN tb_brk_ingresos ic on t.ca_referencia = ic.ca_referencia ";
+                    if ($this->vendedor) {
+                        $where.= " and t.ca_vendedor ='" . $this->vendedor . "'  ";
+                    }
+                    
                 }
 
                 if ($this->sucursal) {
-                    $where.= "s.ca_nombre ='" . $this->sucursal . "' and ";
+                    $where.= "and s.ca_nombre ='" . $this->sucursal . "'  ";
                 }
-                if ($this->vendedor) {
+                /*if ($this->vendedor) {
                     $where.= " u.ca_login ='" . $this->vendedor . "' and ";
-                }
+                }*/
                 $sql = "SELECT ic.*,t.ca_referencia, c.ca_compania, u.ca_nombre as ca_vendedor, s.ca_nombre as ca_sucursal
                       FROM " . $tipos[$this->tipo] . " t
                         $join
                         $innerJoin
-                      WHERE $where (ic.ca_reccaja='' or ic.ca_reccaja IS NULL)
+                      WHERE 1=1 $where  and (ic.ca_reccaja='' or ic.ca_reccaja IS NULL)
                       ORDER BY ic.ca_fchfactura";
 
                 $con = Doctrine_Manager::getInstance()->connection();
