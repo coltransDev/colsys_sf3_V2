@@ -185,7 +185,6 @@ if($contacto)
     $pdf->SetStyles ( array ("B", "B", "", "B", "" ) );
     $pdf->Row ( array ('Cliente:', 'Nombre:', $cliente->getCaCompania ()." Nit : ".$cliente->getCaIdalterno()."-".$cliente->getCaDigito(), $reporte->getCaOrdenClie () != "''" ? 'Orden:' : ' ', $reporte->getCaOrdenClie () != "''" ? $reporte->getCaOrdenClie () : " " ) );
     $pdf->SetWidths ( array (5, 20, 70, 25, 80 ) );
-    $cliente= new Cliente();
     $pdf->Row ( array ('', 'Contacto:', ($contacto->getNombre ()) , 'Dirección:', $cliente->getDireccion (). " ".$cliente->getCiudad()->getCaCiudad()  ) );
     $pdf->SetWidths ( array (5, 20, 40, 15, 30, 18, 72 ) );
     $pdf->SetFills ( array (1, 0, 0, 0, 0, 0, 0 ) );
@@ -366,7 +365,7 @@ $tiempo_cred = ($reporte->getCaLiberacion()=='Sí')?" Tiempo de Crédito: ".$repor
 
 if( $reporte->getCaImpoexpo()==Constantes::IMPO ){
     $pdf->SetWidths ( array (45, 10, 25, 10, 25, 10,25,50 ) );
-    $pdf->Row ( array ('Colmas Ltda:', $reporte->getCaColmas (), 'Seguro:', $reporte->getCaSeguro () ,'Lib. Automática:' ,$reporte->getCaLiberacion().$tiempo_cred  ,'Declaración Ant:',(($reporte->getCaDeclaracionant())?"SÍ":"NO") ));
+    $pdf->Row ( array ('Colmas S.A.S.:', $reporte->getCaColmas (), 'Seguro:', $reporte->getCaSeguro () ,'Lib. Automática:' ,$reporte->getCaLiberacion().$tiempo_cred  ,'Declaración Ant:',(($reporte->getCaDeclaracionant())?"SÍ":"NO") ));
     if( $reporte->getCaTransporte()==Constantes::MARITIMO && $reporte->getCaModalidad()=='FCL' )
         $pdf->Row ( array ('Firma Contrato Comodato', $reporte->getCaComodato(), '', '' ,'' ,'','','' ) );
 }else{
@@ -521,9 +520,9 @@ if( (($reporte->getCaImpoexpo()==Constantes::IMPO || $reporte->getCaImpoexpo()==
 	$pdf->SetAligns ( array ("C" ) );
 	$pdf->SetStyles ( array ("B" ) );
 	if ($reporte->getCaImpoexpo () == Constantes::IMPO) {
-		$pdf->Row ( array ('NACIONALIZACION CON AGENCIA DE ADUANAS COLMAS LTDA.' ) );
+            $pdf->Row ( array ('NACIONALIZACION CON AGENCIA DE ADUANAS COLMAS S.A.S.' ) );
 	} else {
-		$pdf->Row ( array ('AGENCIAMIENTO CON AGENCIA DE ADUANAS COLMAS  LTDA.' ) );
+            $pdf->Row ( array ('AGENCIAMIENTO CON AGENCIA DE ADUANAS COLMAS S.A.S.' ) );
 	}
 
 	$pdf->SetWidths ( array (100, 100 ) );
@@ -1067,7 +1066,7 @@ if( ( ($reporte->getCaImpoexpo()==constantes::IMPO || $reporte->getCaImpoexpo ()
 		$pdf->SetFills ( array (1 ) );
 		$pdf->SetAligns ( array ("C" ) );
 		$pdf->SetStyles ( array ("B" ) );
-		$pdf->Row ( array ('CONCEPTOS DE COBRO EN AGENCIAMIENTO COLMAS LTDA.' ) );
+		$pdf->Row ( array ('CONCEPTOS DE COBRO EN AGENCIAMIENTO COLMAS S.A.S.' ) );
 
 		$pdf->SetWidths ( array (49, 8, 21, 21, 21, 10, 70 ) );
 		$pdf->SetFills ( array_fill ( 0, 7, "1" ) );

@@ -41,6 +41,8 @@ if ($this->getRequestParameter("id") || $this->getRequestParameter("consecutivo"
     }
     
     $editable = $reporte->getEditable($permiso, $user);
+    //echo "Estado:".(($repAntecedentes->getCaEstado()=="R" || $repAntecedentes->getCaEstado()=="")).":";
+    
     $cerrado = $reporte->getCerrado();
     $anulado = $reporte->getAnulado();
     $tipo=$reporte->getCaTiporep();
@@ -127,7 +129,8 @@ switch ($action) {
             $i++;
         }
         
-        if ($editable) {
+        if ($editable && ($repAntecedentes->getCaEstado()=="R" || $repAntecedentes->getCaEstado()=="")  ) {
+            
             $button[$i]["name"] = "Editar";
             $button[$i]["tooltip"] = "Modificar este reporte";
             $button[$i]["image"] = "22x22/edit.gif";

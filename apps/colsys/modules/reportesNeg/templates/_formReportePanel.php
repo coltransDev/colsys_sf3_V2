@@ -54,7 +54,7 @@ $cacheext = 'colsys';
 $cachepage = md5("formReporte-modo-$modo-impoexpo-$impoexpo-permiso-$permiso-nprov-$nprov-trafico-$trafico-tipo-".$reporte->getCaTiporep());
 $cachefile = $cachedir.$cachepage.'.'.$cacheext;
 //echo $cachefile;
-if($impoexpo==Constantes::OTMDTA)
+//if($impoexpo==Constantes::OTMDTA)//maqr 20150610
     $cache="false";
 if($cache=="refresh")
 {

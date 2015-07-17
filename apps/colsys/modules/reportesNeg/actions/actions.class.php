@@ -2387,7 +2387,7 @@ class reportesNegActions extends sfActions {
                     $tercero = Doctrine::getTable("Tercero")->find($values[$i]);
                     if ($tercero) {
                         $data["idproveedor" . $i] = $values[$i];
-                        $data["proveedor" . $i] = Utils::replace($tercero->getCaNombre());
+                        $data["proveedor" . $i] = utf8_encode($tercero->getCaNombre());
                     }
                 }
             }
