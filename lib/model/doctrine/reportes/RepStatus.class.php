@@ -384,6 +384,40 @@ class RepStatus extends BaseRepStatus {
             }
         }
 
+        if ($reporte->getCaIdbodega() == '1179') {
+                $perfiles = $etapa->getPerfilxTipo('COLDEPOSITOS');                
+                if (count($perfiles) > 0) {
+                    $email->addCc("coordinacion@coldepositos.com.co");
+                    $email->addCc("operaciones@coldepositos.com.co");
+                    
+
+                    /*
+                    $suc = $user->getSucursal();
+                    if ($suc == "PBO" ) {
+                        
+                        $suc = "BOG";
+                    }
+                    $sucursal = Doctrine::getTable("Sucursal")->find($suc);
+                    if (!$sucursal)
+                        $sucursal = new Sucursal();
+
+                    //echo $cargo.'--Coordinador Control Riesgo Aduana---'.$sucursal->getCaNombre();
+                    {
+                        $q = Doctrine::getTable("Usuario")
+                                ->createQuery("c")
+                                ->select("c.ca_email")
+                                ->innerJoin("c.Sucursal s")
+                                ->where("s.ca_nombre = ?", array($sucursal->getCaNombre()))
+                                ->addWhere("c.ca_activo = ?", true)
+                                ->andWhereIn("c.ca_cargo", $perfiles);                                
+                        $jef_adu = $q->execute();
+                        foreach ($jef_adu as $j) {
+                            $email->addCc($j->getCaEmail());
+                        }
+                    }*/
+                }            
+        }
+        
         if ($reporte->getCaColmas() == 'Sí') {
             $repaduana = $reporte->getRepAduana();
             $coordinador = null;

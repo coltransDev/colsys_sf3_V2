@@ -370,10 +370,13 @@ class Reporte extends BaseReporte {
 
     public function getEditable($permiso=0, $user=null) {
         if ($permiso < 4 && $this->getCaTiporep()!=4 ) {
+            
             if ($this->esUltimaVersion()) {
+                
                 if ($this->getCerrado()) {
                     $this->editable = false;
                 } else {
+                    
                     if ($this->existeReporteExteriorVersionActual()) {
                         $this->editable = false;
                     } else {
@@ -383,6 +386,12 @@ class Reporte extends BaseReporte {
                         else
                             $this->editable = true;
                     }
+                    /*$repAntecedentes=$this->getRepAntecedentes();
+                    if($repAntecedentes)
+                    {
+                        if($repAntecedentes->getCaEstado()!="R")
+                            $this->editable = false;                       
+                    }*/
                 }
             }
         }else
@@ -968,20 +977,34 @@ class Reporte extends BaseReporte {
         if ($this->getCaImpoexpo() == Constantes::IMPO || $this->getCaImpoexpo() == Constantes::TRIANGULACION) {
             if (!$this->repExterior) {
                 //Reportes al exterior
-                if ($this->getCaTransporte() == Constantes::MARITIMO) {
-                    $tipo = 'Rep.MarítimoExterior';
-                } else {
-                    $tipo = 'Rep.AéreoExterior';
+                if($this->getProperty("repexterior")=="1")
+                {
+                   $this->repExterior=true; 
                 }
+                else
+                {
+                
+                    if ($this->getCaTransporte() == Constantes::MARITIMO) {
+                        $tipo = 'Rep.MarítimoExterior';
+                    } else {
+                        $tipo = 'Rep.AéreoExterior';
+                    }
 
-                $numReportes = Doctrine::getTable("Email")
-                                ->createQuery("e")
-                                ->select("COUNT(*)")
-                                ->where("e.ca_idcaso = ?", $this->getCaIdreporte())
-                                ->addWhere("e.ca_tipo = ? ", $tipo)
-                                ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
-                                ->execute();
-                $this->repExterior = $numReportes > 0;
+                    $numReportes = Doctrine::getTable("Email")
+                                    ->createQuery("e")
+                                    ->select("COUNT(*)")
+                                    ->where("e.ca_idcaso = ?", $this->getCaIdreporte())
+                                    ->addWhere("e.ca_tipo = ? ", $tipo)
+                                    ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                                    ->execute();
+                    $this->repExterior = $numReportes > 0;
+                    if($numReportes>0)
+                    {
+                        $this->setProperty("repexterior","1");
+                        $this->stopBlaming();
+                        $this->save();
+                    }
+                }                
             }
             return $this->repExterior;
         }
