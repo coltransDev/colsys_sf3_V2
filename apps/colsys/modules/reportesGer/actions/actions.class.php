@@ -1267,12 +1267,13 @@ class reportesGerActions extends sfActions {
             $this->tipo = $request->getParameter("tipo");
 
             $tipos = array("tb_inoclientes_sea", "tb_inoclientes_air", "tb_expo_maestra", "tb_brk_maestra");
+            $tiposC = array("t.ca_login", "t.ca_loginvendedor", "ic.ca_loginvendedor", "t.ca_vendedor");
 
             if ($this->tipo >= 0 && $this->tipo < 4) {
                 if ($this->fechainicial && $this->fechafinal)
                     $where = " and t.ca_fchcreado between '" . $this->fechainicial . "' and '" . $this->fechafinal . "'  ";
                 $innerJoin = "INNER JOIN vi_clientes_reduc c ON c.ca_idcliente = t.ca_idcliente
-                                  INNER JOIN control.tb_usuarios u on u.ca_login = c.ca_vendedor
+                                  INNER JOIN control.tb_usuarios u on u.ca_login = ".$tiposC[$this->tipo]."
                                   INNER JOIN control.tb_sucursales s ON s.ca_idsucursal = u.ca_idsucursal";
                 $join = "";
                 if ($this->tipo == 0) {
