@@ -128,6 +128,7 @@ PanelFletesPorTrayecto = function( config ){
         {name: 'actualizado', type: 'string'},
         {name: 'pkBlocked', type: 'bool'},
         {name: 'deleted', type: 'bool'},
+        {name: 'fchdeleted', type: 'string'},
         {name: 'netnet', type: 'string'}
 
     ]);
@@ -943,13 +944,13 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
 
     renderConcepto: function(value, metaData, record, rowIndex, colIndex, store){        
         var data = record.data;
-        // create tooltip
+        var tpAd = record.data.fchdeleted?'<tpl if="fchdeleted"><div ><h3>Eliminado: </h3>{fchdeleted}</div></tpl>':'</tpl>';
+        
         var qtipTpl=new Ext.XTemplate(
-                 '<h3>Observaciones:</h3>'
-                ,'<tpl for=".">'
-                ,'<div>{observaciones}</div>'
-                ,'<div ><h3>Actualización # {consecutivo}: </h3>{actualizado}</div>'
-                ,'</tpl>'
+            '<h3>Observaciones:</h3>'
+           ,'<tpl for=".">'
+           ,'<div>{observaciones}</div>'
+           ,'<div ><h3>Actualización # {consecutivo}: </h3>{actualizado}</div>'+tpAd
         );
        
         var qtip = qtipTpl.apply(data);
