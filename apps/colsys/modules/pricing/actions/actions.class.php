@@ -221,8 +221,11 @@ class pricingActions extends sfActions {
 
             if ($pricRecargosGen) {
                 foreach ($pricRecargosGen as $pricRecargo) {
-                    if ($pricRecargo->getCaFcheliminado()) {
-                        continue;
+                    if($pricRecargo->getCaFcheliminado()!=""){
+                        if(!$timestamp)
+                            continue;
+                        else if(Utils::compararFechas($pricRecargo->getCaFcheliminado(),$fchcorte)== -1 )
+                            continue;
                     }
                     $tipoRecargo = $pricRecargo->getTipoRecargo();
                     $sugerida = $pricRecargo->getCaVlrrecargo();
@@ -244,7 +247,8 @@ class pricingActions extends sfActions {
                         'minima' => $minima,
                         'aplicacion_min' => utf8_encode($pricRecargo->getCaAplicacionMin()),
                         'consecutivo' => $pricRecargo->getCaConsecutivo(),
-                        'actualizado' => $pricRecargo->getCaUsucreado() . " " . Utils::fechaMes($pricRecargo->getCaFchcreado())
+                        'actualizado' => $pricRecargo->getCaUsucreado() . " " . Utils::fechaMes($pricRecargo->getCaFchcreado()),
+                        'fchdeleted' => $pricRecargo->getCaFcheliminado()
                     );
                     $recargosGenerales[] = array_merge($baseRow, $row);
                 }
@@ -273,8 +277,11 @@ class pricingActions extends sfActions {
             }
             if ($pricRecargosxCiudad) {
                 foreach ($pricRecargosxCiudad as $pricRecargo) {
-                    if ($pricRecargo->getCaFcheliminado()) {
-                        continue;
+                    if($pricRecargo->getCaFcheliminado()!=""){
+                        if(!$timestamp)
+                            continue;
+                        else if(Utils::compararFechas($pricRecargo->getCaFcheliminado(),$fchcorte)== -1 )
+                            continue;
                     }
                     $tipoRecargo = $pricRecargo->getTipoRecargo();
                     $sugerida = $pricRecargo->getCaVlrrecargo();
@@ -294,7 +301,8 @@ class pricingActions extends sfActions {
                         'minima' => $minima,
                         'aplicacion_min' => utf8_encode($pricRecargo->getCaAplicacionMin()),
                         'consecutivo' => $pricRecargo->getCaConsecutivo(),
-                        'actualizado' => $pricRecargo->getCaUsucreado() . " " . Utils::fechaMes($pricRecargo->getCaFchcreado())
+                        'actualizado' => $pricRecargo->getCaUsucreado() . " " . Utils::fechaMes($pricRecargo->getCaFchcreado()),
+                        'fchdeleted' => $pricRecargo->getCaFcheliminado()
                     );
                     $recargosGenerales[] = array_merge($baseRow, $row);
                 }
@@ -317,9 +325,12 @@ class pricingActions extends sfActions {
                 $PricRecargoxLinea = $q->execute();
             }
             if ($PricRecargoxLinea) {
-                foreach ($PricRecargoxLinea as $pricRecargo) {
-                    if ($pricRecargo->getCaFcheliminado()) {
-                        continue;
+                foreach ($PricRecargoxLinea as $pricRecargo) {                    
+                    if($pricRecargo->getCaFcheliminado()!=""){
+                        if(!$timestamp)
+                            continue;
+                        else if(Utils::compararFechas($pricRecargo->getCaFcheliminado(),$fchcorte)== -1 )
+                            continue;
                     }
                     $tipoRecargo = $pricRecargo->getTipoRecargo();
                     $sugerida = $pricRecargo->getCaVlrrecargo();
@@ -339,7 +350,8 @@ class pricingActions extends sfActions {
                         'minima' => $minima,
                         'aplicacion_min' => utf8_encode($pricRecargo->getCaAplicacionMin()),
                         'consecutivo' => $pricRecargo->getCaConsecutivo(),
-                        'actualizado' => $pricRecargo->getCaUsucreado() . " " . Utils::fechaMes($pricRecargo->getCaFchcreado())
+                        'actualizado' => $pricRecargo->getCaUsucreado() . " " . Utils::fechaMes($pricRecargo->getCaFchcreado()),
+                        'fchdeleted' => $pricRecargo->getCaFcheliminado()
                     );
                     $recargosGenerales[] = array_merge($baseRow, $row);
                 }
@@ -407,8 +419,11 @@ class pricingActions extends sfActions {
             // Se incluyen las filas de cada concepto y sus respectivos recargos
             foreach ($pricConceptos as $pricConcepto) {
 
-                if ($pricConcepto->getCaFcheliminado()) {
-                    continue;
+                if($pricConcepto->getCaFcheliminado()!=""){
+                    if(!$timestamp)
+                        continue;
+                    else if(Utils::compararFechas($pricConcepto->getCaFcheliminado(),$fchcorte)== -1 )
+                        continue;
                 }
                 if ($this->opcion == "consulta" && $pricConcepto->getCaEstado() == 2) {//Las tarifas en mantenimiento no se muestran en consulta
                     $neta = 0;
@@ -434,7 +449,8 @@ class pricingActions extends sfActions {
                     'aplicacion' => utf8_encode($pricConcepto->getCaAplicacion()),
                     'consecutivo' => $pricConcepto->getCaConsecutivo(),
                     'orden' => str_pad($i, 3, "0", STR_PAD_LEFT),
-                    'actualizado' => $pricConcepto->getCaUsucreado() . " " . Utils::fechaMes($pricConcepto->getCaFchcreado())
+                    'actualizado' => $pricConcepto->getCaUsucreado() . " " . Utils::fechaMes($pricConcepto->getCaFchcreado()),
+                    'fchdeleted' => $pricConcepto->getCaFcheliminado()
                 );
 
                 $data[] = array_merge($baseRow, $row);
@@ -461,8 +477,11 @@ class pricingActions extends sfActions {
 
                 if ($pricRecargos) {
                     foreach ($pricRecargos as $pricRecargo) {
-                        if ($pricRecargo->getCaFcheliminado()) {
-                            continue;
+                        if($pricRecargo->getCaFcheliminado()!=""){
+                            if(!$timestamp)
+                                continue;
+                            else if(Utils::compararFechas($pricRecargo->getCaFcheliminado(),$fchcorte)== -1 )
+                                continue;
                         }
                         $tipoRecargo = $pricRecargo->getTipoRecargo();
 
@@ -493,7 +512,8 @@ class pricingActions extends sfActions {
                             'aplicacion_min' => utf8_encode($pricRecargo->getCaAplicacionMin()),
                             'consecutivo' => $pricRecargo->getCaConsecutivo(),
                             'orden' => str_pad($i, 3, "0", STR_PAD_LEFT) . " " . utf8_encode($tipoRecargo->getCaRecargo()),
-                            'actualizado' => $pricRecargo->getCaUsucreado() . " " . Utils::fechaMes($pricRecargo->getCaFchcreado())
+                            'actualizado' => $pricRecargo->getCaUsucreado() . " " . Utils::fechaMes($pricRecargo->getCaFchcreado()),
+                            'fchdeleted' => $pricRecargo->getCaFcheliminado()                            
                         );
                         $data[] = array_merge($baseRow, $row);
                     }
