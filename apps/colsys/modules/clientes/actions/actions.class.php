@@ -469,6 +469,7 @@ class clientesActions extends sfActions {
             $this->fechas = $this->clientesActivos = array();
             $datetime1 = new DateTime($inicio);
             $datetime2 = new DateTime($final);
+            $months = (isset($months))?$months:1;
 
             if ($datetime1->format('Y') != $datetime2->format('Y')) {
                 $inicio = date("Y-m-d", mktime(0, 0, 0, $month + 1, 1, $year - 3));
