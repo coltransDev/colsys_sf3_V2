@@ -301,7 +301,7 @@ class inoMaritimoActions extends sfActions {
         foreach ($inoclientes as $inocliente){
             $liquidacion[$inocliente->getCaHbls()]["idinocliente"] = $inocliente->getCaIdinocliente();
             $liquidacion[$inocliente->getCaHbls()]["cliente"] = $inocliente->getCliente()->getCaCompania();
-            $cbm = ($inocliente->getCaPeso() > 1000 and ($inocliente->getCaVolumen() < round($inocliente->getCaPeso()/1000,2)))?round($inocliente->getCaPeso()/1000,2):$inocliente->getCaVolumen();
+            $cbm = ($inocliente->getCaPeso() >= 1000 and ($inocliente->getCaVolumen() < round($inocliente->getCaPeso()/1000,2)))?round($inocliente->getCaPeso()/1000,2):$inocliente->getCaVolumen();
             $liquidacion[$inocliente->getCaHbls()]["cbm"] = $cbm;
             $cbm_total+= $cbm;
         }
