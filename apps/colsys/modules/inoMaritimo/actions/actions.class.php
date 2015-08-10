@@ -435,7 +435,7 @@ class inoMaritimoActions extends sfActions {
                             ->orderBy("i.ca_fchfactura")
                             ->fetchOne();
                     if ($inoingreso){
-                        $trm = $inoingreso->getCaTcambio();
+                        $trm = $inoingreso->getCaTcambio()!=1?$inoingreso->getCaTcambio():$trm;
                         $valor = round($liquidacion->valor * $trm, 0);
                         if (!isset($ids[$liquidacion->idinocliente]["valor"])){
                             $ids[$liquidacion->idinocliente]["valor"] = 0;
