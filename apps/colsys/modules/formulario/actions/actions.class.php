@@ -11,7 +11,7 @@
 class formularioActions extends sfActions {
 
     const RUTINA = 144;
-    
+
     /**
      * Realiza un duplicado del objeto con todas sus relaciones.
      * @param sfWebRequest $request
@@ -68,9 +68,9 @@ class formularioActions extends sfActions {
         $id = $request->getParameter('id');
         $this->user = $this->getUser();
         $this->nivel = $this->user->getNivelAcceso(formularioActions::RUTINA);
+
+        $this->id = $id;
         
-        $this->id=$id;
-        //$formularios = Doctrine_Core::getTable('formulario')->createQuery('a');
         $formulario = new Formulario();
         $this->filtroFormulario = new FormularioFormFilter();
         $this->pager = new sfDoctrinePager('formulario', 30);
@@ -93,7 +93,7 @@ class formularioActions extends sfActions {
         $this->filtroFormulario->bind($request->getParameter(
                         $this->filtroFormulario->getName()));
         $this->pager = new sfDoctrinePager(
-                        'formulario', 500);
+                'formulario', 500);
         $this->pager->setQuery($this->filtroFormulario->getQuery());
         $this->pager->setPage(
                 $request->getParameter('pagina', 1));
@@ -129,7 +129,7 @@ class formularioActions extends sfActions {
         $fchCierre = $this->formulario->getCaCierre();
         $hoy = date('Y-m-d');
         
-        if($hoy>=$fchCierre){
+        if ($hoy >= $fchCierre) {
             $this->setTemplate('cerrado');
             $detect = new Mobile_Detect();
             $dispositivo = ($detect->isMobile() ? ($detect->isTablet() ? 'tablet' : 'mobile') : 'desktop');
@@ -144,12 +144,12 @@ class formularioActions extends sfActions {
             if ($bloque) {
                 $this->setTemplate('selServicios');
             }
-        }else{
+        } else {
 
             $existe_contacto = getExisteControl($num_contacto, $idFormulario);
 
             if ($existe_contacto) {
-                
+
                 $this->setTemplate('guardado');
                 $detect = new Mobile_Detect();
                 $dispositivo = ($detect->isMobile() ? ($detect->isTablet() ? 'tablet' : 'mobile') : 'desktop');
@@ -182,89 +182,179 @@ class formularioActions extends sfActions {
                 if ($bloque) {
                     $this->setTemplate('selServicios');
                 }
+            }
         }
     }
-    }
-
+    
     /**
-     * Carga el reporte detallado de las encuestas.
-     * @param sfWebRequest $request
+     * Reporte Global de las encuestas enviadas y contestadas con gráficas
+     * @param sfWebRequest $request 
      */
-    public function executeReporteDetallado(sfWebRequest $request) {
-
-        //se recibe el id del formulario para cambiarlo de base y poder construir 
-        //el objeto mas adelante
+    public function executeReporteDetalladoExt4(sfWebRequest $request) {
+        
+        $response = sfContext::getInstance()->getResponse();
+        $response->addJavaScript("highcharts/js/highcharts", 'last');
+        $response->addJavaScript("highcharts/js/modules/exporting", 'last');
+        
         $idFormulario = intval(base64_decode($request->getParameter('id')));
         $this->forward404Unless($idFormulario);
-        //parametros del formulario
-        $sucursal = $request->getParameter('sucursal');
-        $pregunta = $request->getParameter('pregunta');
-        $servicio = $request->getParameter('servicio');
-        //valores necesarios para mostrar los valores
-        $this->p_sucursal = $sucursal;
-        $this->p_pregunta = $pregunta;
-        $this->p_servicio = $servicio;
-        $this->servicio = null;
-
-        /* objetos */
         $this->formulario = Doctrine_Core::getTable('formulario')->find($idFormulario);
-        
-        $vigenciaIni = $this->formulario->getCaVigenciaInicial();
-        $vigenciaEnd = $this->formulario->getcaVigenciaFinal();
-        
-        $this->resultado = new ResultadoEncuesta();
-        $this->control = new ControlEncuesta();
-        //calcula el numero de formularios diligenciados
-        $this->encuestas_diligenciadas = $this->control->contarEncuestas($idFormulario);
-        /* objetos */
 
-        if ($pregunta != '0') {
-            $this->pregunta = Doctrine_Core::getTable('pregunta')->find($pregunta);
-        } else {
-            $this->pregunta = '0';
+        $servicio = $request->getParameter("servicio");        
+        $this->servicio = Doctrine::getTable("ColsysConfigValue")
+                ->createQuery('cf')
+                ->select('cf.ca_ident')
+                ->where("cf.ca_idconfig = 211")
+                ->addWhere("cf.ca_value = ?", $servicio)
+                ->fetchOne();
+
+        $options = array();
+        $options["idsucursal"] = $request->getParameter("idsucursal");;
+        $options["sucursal"] = $request->getParameter("sucursal");
+        $options["login"] = $request->getParameter("login");
+        $options["comercial"] = $request->getParameter("vendedor");
+        $options["idcliente"] = $request->getParameter("idcliente");
+        $options["cliente"] = $request->getParameter("Cliente");
+        $options["idservicio"] = $servicio ? $this->servicio->getCaIdent() : null;
+        $options["idpregunta"] = $request->getParameter("pregunta");
+
+        if ($options["idpregunta"]) {
+            $this->pregunta = Doctrine::getTable("Pregunta")->findBy("ca_id", $options["idpregunta"]);
+            $primero = strip_tags($this->pregunta[0]->getCaTexto());
+            $texto = html_entity_decode($primero, ENT_COMPAT, 'ISO-8859-1');
         }
-        if ($servicio != '0') {
-            $this->servicio = Doctrine_Core::getTable('opcion')->find($servicio);
+        
+        $options["pregunta"] = $texto;
+        $this->options = $options;
+
+        $encEnv = $this->formulario->getNumEncuestasEnviadas($options);                
+        $encAvg = $this->formulario->getListaEncuestasDiligenciadas($options, true);
+
+        $clientes = array();
+        $sucursales = array();
+        $encuestas = array();
+        
+        foreach ($encEnv as $enc) {
+
+            if (!in_array(utf8_encode($enc["s_ca_idsucursal"]), $encuestas)) {
+                $encuestas[utf8_encode($enc["s_ca_nombre"])]["idsucursal"] = $enc["s_ca_idsucursal"];
+            }
+            $encuestas[utf8_encode($enc["s_ca_nombre"])]["totEnv"] ++;
+
+            if (!in_array($enc["i_ca_nombre"], $clientes)) {
+                $clientes[] = $enc["i_ca_nombre"];
+                $encuestas[utf8_encode($enc["s_ca_nombre"])]["cliEnv"] ++;
+            }
+
+            if (!in_array(utf8_encode($enc["s_ca_nombre"]), $sucursales)) {
+                $sucursales[] = utf8_encode($enc["s_ca_nombre"]);
+            }
         }
 
-        //Listado de contactos que respondieron la encuesta
-        $this->contactos = $this->formulario->getListaContactosRespuesta($sucursal);
+        $clientes1 = array();
+        $this->sucRes = array();
+        $this->encuestas3 = array();
+        $this->encuestas4 = array();
+        $this->encuestas5 = array();
+        
+        foreach ($encAvg as $enc) {
+            if (!in_array(utf8_encode($enc["s_ca_nombre"]), $this->sucRes)) {
+                $this->sucRes[] = utf8_encode($enc["s_ca_nombre"]);
+            }
 
-        $con = Doctrine_Manager::getInstance()->connection();
+            $encuestas1[utf8_encode($enc["s_ca_nombre"])]["idsucursal"] = $enc["s_ca_idsucursal"];
+            $encuestas[utf8_encode($enc["s_ca_nombre"])]["idservicio"] = $enc["cf_ca_ident"];
+            $encuestas[utf8_encode($enc["s_ca_nombre"])]["idpregunta"] = $enc["p_ca_id"];
+            $encuestas2[utf8_encode($enc["cf_ca_value"])]["idservicio"] = $enc["cf_ca_ident"];
 
-        $this->encuestas_enviadas = $this->formulario->getNumEncuestasEnviadas($idFormulario,$vigenciaIni,$vigenciaEnd);
-        $this->lista_encuestas_enviadas = $this->formulario->getListaEncuestasEnviadasPorSucursal($idFormulario,$vigenciaIni,$vigenciaEnd);
-        $this->lista_empresas_enviadas = $this->formulario->getListaEmpresasEnviadasPorSucursal($idFormulario,null);
+            if (!in_array($enc["i_ca_nombre"], $clientes1)) {
+                $clientes1[] = $enc["i_ca_nombre"];
+                $encuestas[utf8_encode($enc["s_ca_nombre"])]["totRes"] ++;
+            }
 
-       //calcula el numero de contactos  únicos enviados via mail.
-        $con2 = Doctrine_Manager::getInstance()->connection();
-        $sql2 = "
-        SELECT count(distinct ca_address) as unicas
-        FROM public.tb_emails
-        WHERE ca_tipo = 'Encuesta'
-        AND ca_usuenvio = 'Administrador'
-        AND ca_address != 'gmartinez@coltrans.com.co'
-        AND ca_idcaso = " . $idFormulario . ";";
-        $temp2 = $con2->execute($sql2);
-        $this->encuestas_unicas_enviadas = $temp2->fetchAll();
+            $encuestas1[utf8_encode($enc["s_ca_nombre"])]["suma"]+=$enc["re_ca_resultado"];
+            $encuestas1[utf8_encode($enc["s_ca_nombre"])]["casos"] ++;
 
-        //calcula el consolidado.
-        $this->c_encuestas = $this->formulario->getComentarios('NA', '0', '0', null);
+            $encuestas2[utf8_encode($enc["cf_ca_value"])]["suma"]+=$enc["re_ca_resultado"];
+            $encuestas2[utf8_encode($enc["cf_ca_value"])]["casos"] ++;
+
+            if (utf8_encode($enc["s_ca_nombre"])) {
+                $this->encuestas3[utf8_encode($enc["cf_ca_value"])][utf8_encode($enc["s_ca_nombre"])]["suma"]+=$enc["re_ca_resultado"];
+                $this->encuestas3[utf8_encode($enc["cf_ca_value"])][utf8_encode($enc["s_ca_nombre"])]["casos"] ++;
+                $this->encuestas5[utf8_encode($enc["cf_ca_value"])][utf8_encode($enc["s_ca_nombre"])][$enc["i_ca_nombre"]] = 1;
+                $this->encuestas4[html_entity_decode($enc["p_ca_texto"], ENT_COMPAT, 'ISO-8859-1')][utf8_encode($enc["cf_ca_value"])][utf8_encode($enc["s_ca_nombre"])]["suma"]+=$enc["re_ca_resultado"];
+                $this->encuestas4[html_entity_decode($enc["p_ca_texto"], ENT_COMPAT, 'ISO-8859-1')][utf8_encode($enc["cf_ca_value"])][utf8_encode($enc["s_ca_nombre"])]["casos"] ++;
+            } else {
+                $this->encuestas3[utf8_encode($enc["cf_ca_value"])]["Sin asignar"]["suma"]+=$enc["re_ca_resultado"];
+                $this->encuestas3[utf8_encode($enc["cf_ca_value"])]["Sin asignar"]["casos"] ++;
+                $this->encuestas5[utf8_encode($enc["cf_ca_value"])]["Sin asignar"][$enc["i_ca_nombre"]] = 1;
+                $this->encuestas4[html_entity_decode($enc["p_ca_texto"], ENT_COMPAT, 'ISO-8859-1')][utf8_encode($enc["cf_ca_value"])]["Sin asignar"]["suma"]+=$enc["re_ca_resultado"];
+                $this->encuestas4[html_entity_decode($enc["p_ca_texto"], ENT_COMPAT, 'ISO-8859-1')][utf8_encode($enc["cf_ca_value"])]["Sin asignar"]["casos"] ++;
+            }
+        }
+        
+        $this->grid1 = array();
+        ksort($encuestas);
+        foreach ($encuestas as $sucursal => $gridSucursal) {
+            $this->grid1[] = array(
+                "title" => utf8_encode($this->formulario->getCaTitulo()),
+                "idform" => utf8_encode($this->formulario->getCaId()),
+                "idpregunta" => $gridSucursal["idservicio"],
+                "idservicio" => $gridSucursal["idpregunta"],
+                "idsucursal" => $gridSucursal["idsucursal"],
+                "sucursal" => $sucursal==null?"Sin asignar":$sucursal,
+                "totEnv" => $gridSucursal["totEnv"],
+                "cliEnv" => $gridSucursal["cliEnv"],
+                "totRes" => $gridSucursal["totRes"]
+            );
+        }
+        
+        $this->grid2 = array();
+        ksort($encuestas1);
+        foreach ($encuestas1 as $sucursal => $gridSucursal) {
+            $this->grid2[] = array(
+                "title" => utf8_encode($this->formulario->getCaTitulo()),
+                "idform" => utf8_encode($this->formulario->getCaId()),
+                "idsucursal" => $gridSucursal["idsucursal"],
+                "sucursal" => $sucursal==null?"Sin asignar":$sucursal,
+                "promedio" => round(($gridSucursal["suma"] / $gridSucursal["casos"]), 2),
+                "suma" => $gridSucursal["suma"],
+                "casos" => $gridSucursal["casos"]
+            );
+        }
+        
+        $this->grid3 = array();
+        ksort($encuestas2);
+        foreach ($encuestas2 as $servicio => $gridServicio) {
+            $this->grid3[] = array(
+                "title" => utf8_encode($this->formulario->getCaTitulo()),
+                "idform" => utf8_encode($this->formulario->getCaId()),
+                "idservicio" => $gridServicio["idservicio"],
+                "servicio" => $servicio==null?"Sin asignar":$servicio,
+                "promedio" => round(($gridServicio["suma"] / $gridServicio["casos"]), 2),
+                "suma" => $gridServicio["suma"],
+                "casos" => $gridServicio["casos"]
+            );
+        }
+        
+        ksort($this->encuestas3);
+        ksort($this->encuestas4);
+        asort($this->sucRes);
 
         $detect = new Mobile_Detect();
         $dispositivo = ($detect->isMobile() ? ($detect->isTablet() ? 'tablet' : 'mobile') : 'desktop');
         $this->device = $dispositivo;
-        $this->setLayout('layout_home');
     }
 
     /**
-     * Carga el consolidado de las encuestas.
+     * Carga el listado de contactos que diligenciaron la encuesta
      * @param sfWebRequest $request
      */
-    public function executeConsolidado(sfWebRequest $request) {
-        $id = $request->getParameter('ca_id');
-        $idDecode = base64_decode($id);
-        $idControl = intval($idDecode);
+    public function executeContactosExt4(sfWebRequest $request) {
+        
+        $idFormulario = $request->getParameter('ca_id');
+        $this->forward404Unless($idFormulario);
+        $this->formulario = Doctrine_Core::getTable('formulario')->find($idFormulario);
         $this->sucursal = $request->getParameter('sid');
         $this->pregunta = $request->getParameter('pid');
         $this->p_servicio = $request->getParameter('seid');
@@ -279,46 +369,160 @@ class formularioActions extends sfActions {
             $this->lPregunta = $pregunta->getCaTexto();
         }
 
+        $this->pregunta = $request->getParameter('pid');
+        $this->servicio = $request->getParameter('seid');
+        
+        $idsucursal = $request->getParameter('idsucursal');
 
-        $this->formulario = Doctrine_Core::getTable('formulario')->find($idControl);
-        $this->sucursal = $this->formulario->decodeSucursal($this->sucursal);
-        $this->control = new ControlEncuesta();
+        $options["login"] = $request->getParameter('login');
+        $options["idcliente"] = $request->getParameter('idcliente');
+        $options["idservicio"] = $request->getParameter('seid');
+        $options["idpregunta"] = $request->getParameter('pid');
+        $options["sucursal"] = $idsucursal == "NA" ? "Todas Las sucursales" : ($idsucursal == null ? "Sin asignar" : "");
 
-        //calcula el numero de formularios diligenciados
-        $this->encuestas_diligenciadas = $this->control->contarEncuestas($idControl);
-
-        //calcula el numero de formularios enviados via mail.
-        $con = Doctrine_Manager::getInstance()->connection();
-        $sql1 = "
-           SELECT count (*) as enviados
-           FROM public.tb_emails
-           WHERE ca_tipo = 'Encuesta'
-           AND ca_usuenvio = 'Administrador'
-           AND ca_address != 'gmartinez@coltrans.com.co'
-           AND ca_idcaso = " . $idControl;
-        $temp1 = $con->execute($sql1);
-        $this->encuestas_enviadas = $temp1->fetchAll();
-
-        //calcula el numero de formularios  unicos enviados via mail.
-        $con2 = Doctrine_Manager::getInstance()->connection();
-        $sql2 = "
-        SELECT count(distinct ca_address) as unicas
-        FROM public.tb_emails
-        WHERE ca_tipo = 'Encuesta'
-        AND ca_usuenvio = 'Administrador'
-        AND ca_address != 'gmartinez@coltrans.com.co'
-        AND ca_idcaso = " . $idControl . ";";
-        $temp2 = $con2->execute($sql2);
-        $this->encuestas_unicas_enviadas = $temp2->fetchAll();
-
-        //calcula el consolidado.
-        $this->c_encuestas = $this->formulario->getConsolidado($this->sucursal, $this->pregunta, $this->p_servicio, $this->servicio);
-
-
+        if ($idsucursal && $idsucursal != "NA") {
+            $sucursal = Doctrine::getTable("Sucursal")->find($idsucursal);
+            $options["sucursal"] = $sucursal->getCaNombre();
+        }
+        
+        $contactos = $this->formulario->getListaEncuestasDiligenciadas($options, true);
+        
+        foreach($contactos as $contacto){
+            $cliente[$contacto["i_ca_nombre"]]["suma"]+= $contacto["re_ca_resultado"];
+            $cliente[$contacto["i_ca_nombre"]]["casos"]++;
+        }
+        
+        $listaContactos = array();
+        $this->contactos = array();        
+        foreach ($contactos as $contacto) {
+            
+            $seguimientos = Doctrine::getTable("EveCliente")
+                    ->createQuery("e")
+                    ->where("e.ca_asunto = ? ", $this->formulario->getCaTitulo())
+                    ->addWhere("e.ca_idcliente = ?", $contacto["i_ca_id"])
+                    ->orderBy("e.ca_fchevento ASC")
+                    ->execute();
+            
+            if (!in_array(utf8_encode($contacto["cc_ca_nombres"])." ".utf8_encode($contacto["cc_ca_papellido"]), $listaContactos)) {
+                $listaContactos[] = utf8_encode($contacto["cc_ca_nombres"])." ".utf8_encode($contacto["cc_ca_papellido"]);                
+                $this->contactos[] = array(                    
+                    "title" => utf8_encode($this->formulario->getCaTitulo()), 
+                    "idform" => $this->formulario->getCaId(),
+                    "idcliente" => $contacto["i_ca_id"],
+                    "idencuesta" => $contacto["ce_ca_id"],
+                    "compania" => utf8_encode($contacto["i_ca_nombre"]), 
+                    "nombre" => utf8_encode($contacto["cc_ca_nombres"])." ".utf8_encode($contacto["cc_ca_papellido"]),
+                    "sucursal"=> utf8_encode($contacto["s_ca_nombre"]), 
+                    "comercial" =>  utf8_encode($contacto["u_ca_nombre"]),
+                    "promedio" => round(($cliente[$contacto["i_ca_nombre"]]["suma"]/$cliente[$contacto["i_ca_nombre"]]["casos"]),2),
+                    "seguimiento" => count($seguimientos)>0?true:false);                
+            }
+        }
+        
         $detect = new Mobile_Detect();
         $dispositivo = ($detect->isMobile() ? ($detect->isTablet() ? 'tablet' : 'mobile') : 'desktop');
         $this->device = $dispositivo;
-        $this->setLayout('layout_home');
+    }
+    
+    public function executeContactosDetalladoExt4(sfWebRequest $request) {
+        
+        $idFormulario = $request->getParameter('ca_id');
+        $this->forward404Unless($idFormulario);
+        $this->formulario = Doctrine_Core::getTable('formulario')->find($idFormulario);
+
+        $this->pregunta = $request->getParameter('pid');
+        $this->servicio = $request->getParameter('seid');
+        
+        $idsucursal = $request->getParameter('idsucursal');
+
+        $options["login"] = $request->getParameter('login');
+        $options["idcliente"] = $request->getParameter('idcliente');
+        $options["idservicio"] = $request->getParameter('seid');
+        $options["idpregunta"] = $request->getParameter('pid');
+        $options["sucursal"] = $idsucursal == "NA" ? "Todas Las sucursales" : ($idsucursal == null ? "Sin asignar" : "");
+
+        if ($idsucursal && $idsucursal != "NA") {
+            $sucursal = Doctrine::getTable("Sucursal")->find($idsucursal);
+            $options["sucursal"] = $sucursal->getCaNombre();
+        }
+        
+        $contactos = $this->formulario->getListaEncuestasDiligenciadas($options, true);
+        
+        foreach($contactos as $contacto){
+            $cliente[$contacto["i_ca_nombre"]]["suma"]+= $contacto["re_ca_resultado"];
+            $cliente[$contacto["i_ca_nombre"]]["casos"]++;
+        }
+        
+        $listaContactos = array();
+        $this->contactos = array();        
+        foreach ($contactos as $contacto) {
+            
+            $seguimientos = Doctrine::getTable("EveCliente")
+                    ->createQuery("e")
+                    ->where("e.ca_asunto = ? ", $this->formulario->getCaTitulo())
+                    ->addWhere("e.ca_idcliente = ?", $contacto["i_ca_id"])
+                    ->orderBy("e.ca_fchevento ASC")
+                    ->execute();
+            
+            $this->contactos[] = array(                    
+                "title" => utf8_encode($this->formulario->getCaTitulo()), 
+                "idform" => $this->formulario->getCaId(),
+                "idcliente" => $contacto["i_ca_id"],
+                "idencuesta" => $contacto["ce_ca_id"],
+                "compania" => utf8_encode($contacto["i_ca_nombre"]), 
+                "nombre" => utf8_encode($contacto["cc_ca_nombres"])." ".utf8_encode($contacto["cc_ca_papellido"]),
+                "sucursal"=> utf8_encode($contacto["s_ca_nombre"]), 
+                "comercial" =>  utf8_encode($contacto["u_ca_nombre"]),
+                "pregunta"=>utf8_encode($contacto["p_ca_texto"]),
+                "resultado"=>$contacto["re_ca_resultado"],
+                "servicio"=>utf8_encode($contacto["cf_ca_value"]),
+                "seguimiento" => count($seguimientos)>0?true:false);                
+
+        }
+        
+        $detect = new Mobile_Detect();
+        $dispositivo = ($detect->isMobile() ? ($detect->isTablet() ? 'tablet' : 'mobile') : 'desktop');
+        $this->device = $dispositivo;
+    }
+    
+    /**
+     * Listado que muestra las empresas a las cuáles se envió la encuesta
+     * @param sfWebRequest $request
+     */
+    public function executeListaEmpresasEnviadasExt4(sfWebRequest $request) {
+        
+        $idFormulario = $request->getParameter('ca_id');
+        $this->forward404Unless($idFormulario);
+        $this->formulario = Doctrine_Core::getTable('formulario')->find($idFormulario);
+        
+        $idsucursal = $request->getParameter('idsucursal');
+        
+        $options = array();
+        $options["sucursal"] = $idsucursal == "NA" ? "Todas Las sucursales" : ($idsucursal == null ? "Sin asignar" : "");
+        $options["login"] = $request->getParameter('login');
+        $options["idcliente"] = $request->getParameter('idcliente');
+
+        if ($idsucursal && $idsucursal != "NA") {
+            $sucursal = Doctrine::getTable("Sucursal")->find($idsucursal);
+            $options["sucursal"] = $sucursal->getCaNombre();
+        }
+
+        $empresas = $this->formulario->getNumEncuestasEnviadas($options);
+        
+        $this->empresas = array();        
+        foreach ($empresas as $empresa) {
+            $this->empresas[] = array("title"=> $this->formulario->getCaTitulo(), 
+                "idform" => $this->formulario->getCaId(),
+                "idemail" => $empresa["e_ca_idemail"],
+                "compania" => utf8_encode($empresa["i_ca_nombre"]) , 
+                "sucursal"=> $idsucursal==null?"Sin asignar":utf8_encode($empresa["s_ca_nombre"]), 
+                "comercial" =>  utf8_encode($empresa["u_ca_nombre"]),
+                "fchenvio"=> $empresa["e_ca_fchenvio"]);
+        }
+        
+        $detect = new Mobile_Detect();
+        $dispositivo = ($detect->isMobile() ? ($detect->isTablet() ? 'tablet' : 'mobile') : 'desktop');
+        $this->device = $dispositivo;       
     }
 
     /**
@@ -326,93 +530,14 @@ class formularioActions extends sfActions {
      * @param sfWebRequest $request
      */
     public function executeContactos(sfWebRequest $request) {
-        $id = $request->getParameter('ca_id');
-        $idDecode = base64_decode($id);
-        $idFormulario = intval($idDecode);
-        $this->sucursal = $request->getParameter('sid');
-        $this->pregunta = $request->getParameter('pid');
-        $this->servicio = $request->getParameter('seid');
-        if ($this->servicio != '0') {
-            $opcion = Doctrine_Core::getTable('opcion')->find(intval($this->servicio));
-            $this->servicio = $opcion;
-        }
-        //if()
-
-        $this->formulario = Doctrine_Core::getTable('formulario')->find($idFormulario);
-        $this->sucursal = $this->formulario->decodeSucursal($this->sucursal);
-        $this->contactos = $this->formulario->getListaContactosRespuesta($this->sucursal);
-
-        $detect = new Mobile_Detect();
-        $dispositivo = ($detect->isMobile() ? ($detect->isTablet() ? 'tablet' : 'mobile') : 'desktop');
-        $this->device = $dispositivo;
-        $this->setLayout('layout_home');
-    }
-    
-    public function executeListaEmpresasEnviadas(sfWebRequest $request) {
-        $id = $request->getParameter('ca_id');
-        $idDecode = base64_decode($id);
-        $idFormulario = intval($idDecode);
-        $this->sucursal = $request->getParameter('sid');
         
-        
-        $this->formulario = Doctrine_Core::getTable('formulario')->find($idFormulario);
-        $this->sucursal = $this->formulario->decodeSucursal($this->sucursal);
-        $this->empresas = $this->formulario->getListaEmpresasEnviadasPorSucursal($idFormulario, $this->sucursal);
-        
-        $detect = new Mobile_Detect();
-        $dispositivo = ($detect->isMobile() ? ($detect->isTablet() ? 'tablet' : 'mobile') : 'desktop');
-        $this->device = $dispositivo;
-        $this->setLayout('layout_home');
-    }
-
-    /**
-     * Carga la encuesta de servicio, luego de recibir como parÃ¡metro el listado de servicios previamente seleccionados por el usuario.
-     * @param sfWebRequest $request
-     */
-    public function executeEstadistica(sfWebRequest $request) {
         $this->user = $this->getUser();
+        $this->nivel = $this->user->getNivelAcceso(formularioActions::RUTINA);
+        
         $id = $request->getParameter('ca_id');
         $idDecode = base64_decode($id);
-        $idFormulario = intval($idDecode);
-
-        //listado de preguntas
-        $sq1 = "
-            select p.ca_id,p.ca_texto 
-            from encuestas.tb_pregunta p
-            left join encuestas.tb_bloque b on  p.ca_idbloque = b.ca_id
-            left join encuestas.tb_formulario f on  b.ca_idformulario=f.ca_id
-            where f.ca_id = " . $idFormulario . "and p.ca_activo = '1' and b.ca_tipo != '1'
-            order by p.ca_texto;    
-        ";
-        $con = Doctrine_Manager::getInstance()->connection();
-        $temp1 = $con->execute($sq1);
-        $this->preguntas = $temp1->fetchAll();
-
-        $this->formulario = Doctrine_Core::getTable('formulario')->find($idFormulario);
-        $idEmpresa = $this->formulario->getCaEmpresa();
-        if ($idEmpresa == 2) {
-            $this->nivel = $this->user->getNivelAcceso(formularioActions::RUTINA);
-        } else if ($idEmpresa == 1) {
-            $this->nivel = $this->user->getNivelAcceso(formularioActions::RUTINA);
-        } else {
-            $this->nivel = $this->user->getNivelAcceso(formularioActions::RUTINA);
-        }
-        $this->sucursales = $this->formulario->getListaSucursales();
-
-        //listado de  servicios
-        $sq3 = "
-            select o.ca_id,o.ca_texto 
-            from encuestas.tb_opcion o
-            left join encuestas.tb_pregunta p on  o.ca_idpregunta = p.ca_id 
-            left join encuestas.tb_bloque b on  p.ca_idbloque = b.ca_id
-            left join encuestas.tb_formulario f on  b.ca_idformulario=f.ca_id
-            where f.ca_id = " . $idFormulario . "and p.ca_activo = '1' and b.ca_tipo != '0'
-            order by p.ca_texto;    
-        ";
-        $con3 = Doctrine_Manager::getInstance()->connection();
-        $temp3 = $con3->execute($sq3);
-        $this->servicios = $temp3->fetchAll();
-
+        $this->idFormulario = intval($idDecode);
+        
         $detect = new Mobile_Detect();
         $dispositivo = ($detect->isMobile() ? ($detect->isTablet() ? 'tablet' : 'mobile') : 'desktop');
         $this->device = $dispositivo;
@@ -526,240 +651,84 @@ class formularioActions extends sfActions {
     }
 
     public function executeEnvioEmailsPrueba() {
-        $filecontrol = $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "formulario" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "control.txt";
-
-        if (file_exists($filecontrol)) {
-            $inicio = file_get_contents($filecontrol);
-        }
-        if (!$inicio)
-            $inicio = 0;
-        $con = Doctrine_Manager::getInstance()->connection();
-
-        $nreg = 10;
-
-        $sql = "
-            select c.ca_idcliente,c.ca_compania, con.ca_email,ca_coltrans_std,ca_colmas_std,con.ca_idcontacto
-            from vi_clientes c
-            inner join tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
-            where (c.ca_coltrans_std = 'Activo'  or c.ca_colmas_std = 'Activo' )
-            order by 2,3 limit $nreg offset $inicio";
-
-        $st = $con->execute($sql);
-        $clientes = $st->fetchAll();
-        //plantilla evalucion servicio
-        $conteo = 0;
-        $emails_Control = "";
-        $asunto = "Dos minutos de su tiempo nos ayuda a prestarle un mejor servicio";
-        $emailFrom = "gmartinez@coltrans.com.co";
-        foreach ($clientes as $cliente) {
-            $conteo++;
-            if ($cliente["ca_coltrans_std"] != "Activo")
-                continue;
-            try {
-                $contacto = $cliente["ca_idcontacto"];
-                $html = $this->getPartial('formulario/emailHtml', array('contacto' => $contacto));
-                $email = new Email();
-                $email->setCaUsuenvio("Administrador");
-                $email->setCaFrom("no-response@coltrans.com.co");
-                $email->setCaFromname("COLTRANS S.A.S");
-                $email->setCaSubject($asunto);
-                //$email->setCaAddress($cliente["ca_email"]);
-                $email->setCaAddress("gmartinez@coltrans.com.co");
-                $email->setCaBodyhtml($html);
-                $email->setCaTipo("Encuesta");
-                $email->save();
-                $emails_Control.=$cliente["ca_compania"] . "->" . $cliente["ca_email"] . "<br>";
-            } catch (Exception $e) {
-                $emails_Control.="No se pudo enviar " . $cliente["ca_email"] . ": porque : " . $e->getMessage() . "<br>";
-            }
-            $this->html = $html;
-            echo $cliente["ca_email"] . "<br>";
-        }
-
-        file_put_contents($filecontrol, $inicio + $conteo);
-        $email = new Email();
-        $email->setCaUsuenvio("gmartinez");
-        $email->setCaFrom($emailFrom);
-        $email->setCaFromname("COLTRANS LTDA");
-        $email->setCaSubject($asunto . ". Emails enviados");
-        $email->setCaAddress("gmartinez@coltrans.com.co");
-        $email->setCaBodyhtml($html . "Emails enviados:<br>" . $emails_Control);
-        $email->setCaTipo("Encuesta");
-        //$email->send();
-        $email->save();
-        echo "enviados";
-        exit;
-        //echo $html;
-        //}
-        $this->setTemplate('envioEmailsPrueba');
-    }
-
-    /**
-     * Metodo para enviar la encuesta
-     * @param type $idCaso Es el id del formulario que se esta enviando
-     */
-    public function executeEnvioEmailsColtrans() {
-
-        $filecontrol = $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "formulario" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "control.txt";
-
-        if (file_exists($filecontrol)) {
-            $inicio = file_get_contents($filecontrol);
-        }
-        if (!$inicio)
-            $inicio = 0;
-        $con = Doctrine_Manager::getInstance()->connection();
-
-        $nreg = 15;
-
-        $sql = "
-            select c.ca_idcliente,c.ca_compania, con.ca_email,ca_coltrans_std,ca_colmas_std,con.ca_idcontacto
-            from vi_clientes c
-            inner join tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
-            where (c.ca_coltrans_std = 'Activo'  or c.ca_colmas_std = 'Activo' )
-            order by 2,3 limit $nreg offset $inicio";
-
-        $st = $con->execute($sql);
-        $clientes = $st->fetchAll();
-        //plantilla evalucion servicio
-        $conteo = 0;
-        $emails_Control = "";
-        $asunto = "Dos minutos de su tiempo nos ayuda a prestarle un mejor servicio";
-        $emailFrom = "alramirez@coltrans.com.co";
-        $emailCa = array("alramirez@coltrans.com.co", 
-                        "alramirez@coltrans.com.co");
+        $clientes = array();
         
-        foreach ($clientes as $cliente) {
-            $conteo++;
-            if ($cliente["ca_coltrans_std"] != "Activo")
-                continue;
+        $clientes["BANCO DE BOGOTA S.A."]["ca_idcontacto"] = 11124;
+        $clientes["BANCO DE BOGOTA S.A."]["ca_email"] = "alramirez@coltrans.com.co";
+        
+        $clientes["A2 INGENIERIA LTDA."]["ca_idcontacto"] = 14835;
+        $clientes["A2 INGENIERIA LTDA."]["ca_email"] = "mmgonzalez@coltrans.com.co";
+        
+        $clientes["ACERSHOES LTDA."]["ca_idcontacto"] = 9143;
+        $clientes["ACERSHOES LTDA."]["ca_email"] = "cazambrano@coltrans.com.co";
+        
+        $clientes["AGAVAL S.A"]["ca_idcontacto"] = 15571;
+        $clientes["AGAVAL S.A"]["ca_email"] = "mpulido@coltrans.com.co";
+        
+        $clientes["AFA MEDICAL WORLD SAS"]["ca_idcontacto"] = 14386;
+        $clientes["AFA MEDICAL WORLD SAS"]["ca_email"] = "icastiblanco@coltrans.com.co";
+        
+        $clientes["AMAREY NOVAMEDICAL S A"]["ca_idcontacto"] = 1029;
+        $clientes["AMAREY NOVAMEDICAL S A"]["ca_email"] = "pizquierdo@coltrans.com.co";
+        
+        $clientes["ALLERS S.A."]["ca_idcontacto"] = 11784;
+        $clientes["ALLERS S.A."]["ca_email"] = "tdiaz@coltrans.com.co";
+        
+        $clientes["ASCENSORES ANDINO SAS "]["ca_idcontacto"] = 13774;
+        $clientes["ASCENSORES ANDINO SAS "]["ca_email"] = "oviasus@coltrans.com.co";
+        
+        $clientes["ALPINA PRODUCTOS ALIMENTICIOS S A"]["ca_idcontacto"] = 15056;
+        $clientes["ALPINA PRODUCTOS ALIMENTICIOS S A"]["ca_email"] = "yydiaz@coltrans.com.co";
+        
+        $clientes["AVE COLOMBIANA S.A.S"]["ca_idcontacto"] = 649;
+        $clientes["AVE COLOMBIANA S.A.S"]["ca_email"] = "acmoreno@coltrans.com.co";
+        
+        $clientes["BRILLADORA EL DIAMANTE S.A"]["ca_idcontacto"] = 15529;
+        $clientes["BRILLADORA EL DIAMANTE S.A"]["ca_email"] = "apsanchez@coltrans.com.co";
+        
+        $empresa = "COLTRANS S.A.S";
+        $idformulario = 11;
+        $emails_Control = "";
+        $asunto = "Dos minutos de su tiempo nos ayuda a prestarle un mejor servicio";
+        $emailFrom = "no-response@coltrans.com.co";
+        foreach ($clientes as $key=> $cli) {            
             try {
-                $contacto = $cliente["ca_idcontacto"];
-                $html = $this->getPartial('formulario/emailHtmlColtrans', array('contacto' => $contacto));
+                $contacto = $cli["ca_idcontacto"];
+                $html = $this->getPartial('formulario/emailHtml', array('contacto' => $contacto, 'idformulario'=>$idformulario));
                 $email = new Email();
                 $email->setCaUsuenvio("Administrador");
-                $email->setCaFrom("no-response@coltrans.com.co");
-                $email->setCaFromname("COLTRANS S.A.S.");
+                $email->setCaFrom($emailFrom);
+                $email->setCaFromname($empresa);
                 $email->setCaSubject($asunto);
-                $email->setCaAddress($cliente["ca_email"]);
-                //$email->setCaAddress($emailCa[$conteo-1]);
+                $email->setCaAddress($cli["ca_email"]);                
                 $email->setCaBodyhtml($html);
                 $email->setCaBody($contacto);
                 $email->setCaTipo("Encuesta");
-                $email->setCaIdcaso(8);
+                $email->setCaIdcaso($idformulario);
                 $email->save();
-                $emails_Control.=$cliente["ca_compania"] . "->" . $cliente["ca_email"] . "<br>";
+                $emails_Control.=$key . "->" . $cli["ca_email"] . "<br>";
             } catch (Exception $e) {
-                $emails_Control.="No se pudo enviar " . $cliente["ca_email"] . ": porque : " . $e->getMessage() . "<br>";
+                $emails_Control.="No se pudo enviar " . $cli["ca_email"] . ": porque : " . $e->getMessage() . "<br>";
             }
             $this->html = $html;
-            echo $cliente["ca_email"] . "<br>";
+            echo $cli["ca_email"] . "<br>";
         }
 
-        file_put_contents($filecontrol, $inicio + $conteo);
-        
-        $emailsControl.= "inicio=>".$inicio." nreg=>".$nreg." control.txt=>".file_get_contents($filecontrol)."<br/>";
-        
         $email = new Email();
-        $email->setCaUsuenvio("alramirez");
+        $email->setCaUsuenvio("Administrador");
         $email->setCaFrom($emailFrom);
-        $email->setCaFromname("COLTRANS LTDA");
-        $email->setCaSubject("Emails enviados");
+        $email->setCaFromname($empresa);
+        $email->setCaSubject("Pruebas:Emails enviados - Encuesta Formulario->".$idformulario);
         $email->setCaAddress("alramirez@coltrans.com.co");
-        $email->setCaCc("alramirez@coltrans.com.co");
-        //$email->setCaCc("gmartinez@coltrans.com.co");
-        $email->setCaBodyhtml("Emails enviados:<br>" . $emails_Control);
-        $email->setCaTipo("Encuesta");
-        //$email->send();
-        $email->save();
-        echo "enviados";
-        exit;
-        //echo $html;
-        //}
-        $this->setTemplate('envioEmailsPrueba');
-    }
-    
- /**
-     * Metodo para enviar la encuesta
-     * @param type $idCaso Es el id del formulario que se esta enviando
-     */
-    public function executeEnvioEmailsContactoColmas() {
-        $idcontacto='9667';        
-        $filecontrol = $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "formulario" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "control.txt";
-
-        if (file_exists($filecontrol)) {
-            $inicio = file_get_contents($filecontrol);
-        }
-        if (!$inicio)
-            $inicio = 0;
-        $con = Doctrine_Manager::getInstance()->connection();
-
-        $nreg = 1;
-
-        $sql = "
-            select c.ca_idcliente,c.ca_compania, con.ca_email,ca_coltrans_std,ca_colmas_std,con.ca_idcontacto
-            from vi_clientes c
-            inner join tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
-            where (c.ca_coltrans_std = 'Activo'  or c.ca_colmas_std = 'Activo' ) and con.ca_idcontacto = '$idcontacto'
-            order by 2,3 limit $nreg offset $inicio";
-
-        $st = $con->execute($sql);
-        $clientes = $st->fetchAll();
-        //plantilla evalucion servicio
-        $conteo = 0;
-        $emails_Control = "";
-        $asunto = "Dos minutos de su tiempo nos ayuda a prestarle un mejor servicio";
-        $emailFrom = "gmartinez@coltrans.com.co";
-        //para destinatarios de prueba
-        //$emailCa = array("gmartinez@coltrans.com.co", "cazambrano@coltrans.com.co", "mpulido@coltrans.com.co", "pizquierdo@coltrans.com.co", "falopez@coltrans.com.co", "gmartinez@coltrans.co");
-        foreach ($clientes as $cliente) {
-            $conteo++;
-            if ($cliente["ca_colmas_std"] != "Activo")
-                continue;
-            try {
-                $contacto = $cliente["ca_idcontacto"];
-                $html = $this->getPartial('formulario/emailHtmlColmas', array('contacto' => $contacto));
-                $email = new Email();
-                $email->setCaUsuenvio("Administrador");
-                $email->setCaFrom("no-response@colmas.com.co");
-                $email->setCaFromname("COLMAS LTDA.");
-                $email->setCaSubject($asunto);
-                $email->setCaAddress($cliente["ca_email"]);
-                //$email->setCaAddress('gmartinez@coltrans.com.co');
-                //$email->setCaAddress($emailCa[$conteo-1]);
-                $email->setCaBodyhtml($html);
-                $email->setCaTipo("Encuesta");
-                $email->setCaIdcaso(5);
-                $email->save();
-                $emails_Control.=$cliente["ca_compania"] . "->" . $cliente["ca_email"] . "<br>";
-            } catch (Exception $e) {
-                $emails_Control.="No se pudo enviar " . $cliente["ca_email"] . ": porque : " . $e->getMessage() . "<br>";
-            }
-            $this->html = $html;
-            echo $cliente["ca_email"] . "<br>";
-        }
-
-        file_put_contents($filecontrol, $inicio + $conteo);
-        $email = new Email();
-        $email->setCaUsuenvio("gmartinez");
-        $email->setCaFrom($emailFrom);
-        $email->setCaFromname("COLMAS LTDA");
-        $email->setCaSubject($asunto . ". Emails enviados");
-        $email->setCaAddress("gmartinez@coltrans.com.co");
-        //$email->setCaCc("gmartinez@coltrans.com.co");
         $email->setCaBodyhtml($html . "Emails enviados:<br>" . $emails_Control);
         $email->setCaTipo("Encuesta");
-        //$email->send();
+        $email->setCaIdcaso($idformulario);
         $email->save();
-        
-        //echo $html;
-        //}
+        echo "enviados";        
+       
         $this->setTemplate('envioEmailsPrueba');
     }    
-    
-    /**
-     * Metodo para enviar la encuesta
-     * @param type $idCaso Es el id del formulario que se esta enviando
-     */
+
     public function executeEnvioEmailsColmas() {
 
         $filecontrol = $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "formulario" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "control.txt";
@@ -772,78 +741,95 @@ class formularioActions extends sfActions {
 
         $con = Doctrine_Manager::getInstance()->connection();
 
-        $nreg = 10;
+        $nreg = 120;
+        $conteo = 0;
+        $emails_Control = "";
+        $empresa = "AGENCIA DE ADUANAS COLMAS LTDA Nivel 1";
+        $idformulario = 10;
+        $asunto = "Dos minutos de su tiempo nos ayuda a prestarle un mejor servicio";
+        $emailFrom = "no-response@colmas.com.co";
 
+        /*$sql = "
+            SELECT c.ca_idcliente,c.ca_compania, con.ca_email,ca_coltrans_std,ca_colmas_std,con.ca_idcontacto
+            FROM vi_clientes c
+                INNER join tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
+            WHERE (c.ca_colmas_std = 'Activo') and c.ca_vendedor IS NOT NULL
+            ORDER BY by 2,3 limit $nreg offset $inicio";*/
+        
+        //Consulta para Reenvio
         $sql = "
-            select c.ca_idcliente,c.ca_compania, con.ca_email,ca_coltrans_std,ca_colmas_std,con.ca_idcontacto
-            from vi_clientes c
-            inner join tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
-            where (c.ca_coltrans_std = 'Activo'  or c.ca_colmas_std = 'Activo' )
-            order by 2,3 limit $nreg offset $inicio";
+            SELECT c.ca_idcliente,c.ca_compania, con.ca_email, ca_coltrans_std, ca_colmas_std, con.ca_idcontacto
+            FROM vi_clientes c
+                    RIGHT JOIN tb_concliente con ON c.ca_idcliente = con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
+            WHERE NOT EXISTS 
+                (SELECT * FROM encuestas.tb_control_encuesta cf WHERE con.ca_idcontacto = cf.ca_id_contestador and cf.ca_idformulario = $idformulario) 
+                and c.ca_colmas_std = 'Activo' and c.ca_vendedor IS NOT NULL
+            ORDER BY 2,3 limit $nreg offset $inicio";
+        
+         /* Envío a contacto específico
+        $idcontacto = '9667';
+        $sql = "
+            SELECT c.ca_idcliente,c.ca_compania, con.ca_email,ca_coltrans_std,ca_colmas_std,con.ca_idcontacto
+            FROM vi_clientes c
+                INNER JOIN tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
+            WHERE (c.ca_colmas_std = 'Activo' ) and con.ca_idcontacto = '$idcontacto'
+            ORDER BY 2,3 limit $nreg offset $inicio";* 
+        */
 
         $st = $con->execute($sql);
         $clientes = $st->fetchAll();
-        //plantilla evalucion servicio
-        $conteo = 0;
-        $emails_Control = "";
-        $asunto = "Dos minutos de su tiempo nos ayuda a prestarle un mejor servicio";
-        $emailFrom = "alramirez@coltrans.com.co";
-        //para destinatarios de prueba
-        //$emailCa = array("alramirez@coltrans.com.co","alramirez@coltrans.com.co");
-
+        
         foreach ($clientes as $cliente) {
             $conteo++;
             if ($cliente["ca_colmas_std"] != "Activo")
                 continue;
             try {
                 $contacto = $cliente["ca_idcontacto"];
-                $html = $this->getPartial('formulario/emailHtmlColmas', array('contacto' => $contacto));
+                $html = $this->getPartial('formulario/emailHtmlColmas', array('contacto' => $contacto, 'idformulario'=>$idformulario));
                 $email = new Email();
                 $email->setCaUsuenvio("Administrador");
-                $email->setCaFrom("no-response@colmas.com.co");
-                $email->setCaFromname("COLMAS LTDA.");
+                $email->setCaFrom($emailFrom);
+                $email->setCaFromname($empresa);
                 $email->setCaSubject($asunto);
                 $email->setCaAddress($cliente["ca_email"]);
+                //$email->setCaAddress('alramirez@coltrans.com.co');
+                $email->setCaBody($contacto);
                 $email->setCaBodyhtml($html);
+                $email->setCaBody($contacto);
                 $email->setCaTipo("Encuesta");
-                $email->setCaIdcaso(9);
+                $email->setCaIdcaso($idformulario);
                 $email->save();
+                $email->send();
                 $emails_Control.=$cliente["ca_compania"] . "->" . $cliente["ca_email"] . "<br>";
             } catch (Exception $e) {
                 $emails_Control.="No se pudo enviar " . $cliente["ca_email"] . ": porque : " . $e->getMessage() . "<br>";
                 print_r($e);
             }
             $this->html = $html;
-            echo $cliente["ca_email"] . "<br>";
+            echo $cliente["ca_email"] . "<br/>";
         }
 
-        
         file_put_contents($filecontrol, $inicio + $conteo);
-        
-        $emailsControl.= "inicio=>".$inicio." nreg=>".$nreg." control.txt=>".file_get_contents($filecontrol)."<br/>";
-        
+        $emailsControl.= "inicio=>" . $inicio . " nreg=>" . $nreg . " control.txt=>" . file_get_contents($filecontrol) . "<br/>";
+
         $email = new Email();
-        $email->setCaUsuenvio("alramirez");
+        $email->setCaUsuenvio("Administrador");
         $email->setCaFrom($emailFrom);
-        $email->setCaFromname("COLMAS LTDA");
-        $email->setCaSubject("Emails enviados");
+        $email->setCaFromname($empresa);
+        $email->setCaSubject("Emails enviados - Encuesta Formulario->".$idformulario);
         $email->setCaAddress("alramirez@coltrans.com.co");
         $email->setCaBodyhtml("Emails enviados:<br>" . $emails_Control);
         $email->setCaTipo("Encuesta");
-        $email->setCaIdcaso(9);
+        $email->setCaIdcaso($idformulario);
         $email->save();
         echo "enviados";
+        echo $html;
         exit;
-        //echo $html;
-        //}
+        
         $this->setTemplate('envioEmailsPrueba');
     }
 
-    /**
-     * Metodo para enviar la encuesta
-     * @param type $idCaso Es el id del formulario que se esta enviando
-     */
-    public function executeReenvioEmailsColmas() {
+    public function executeEnvioEmailsColtrans() {
 
         $filecontrol = $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "formulario" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "control.txt";
 
@@ -854,122 +840,54 @@ class formularioActions extends sfActions {
             $inicio = 0;
         $con = Doctrine_Manager::getInstance()->connection();
 
-        $nreg = 15;
+        $nreg = 120;
 
+        /*$sql = "
+            SELECT c.ca_idcliente,c.ca_compania, con.ca_email,ca_coltrans_std,ca_colmas_std,con.ca_idcontacto
+            FROM vi_clientes c
+                INNER JOIN tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
+            WHERE (c.ca_coltrans_std = 'Activo') and c.ca_vendedor IS NOT NULL
+            ORDER BY 2,3 limit $nreg offset $inicio";*/
+        
+        //Consulta para Reenvio
         $sql = "
-        select c.ca_idcliente,c.ca_compania, con.ca_email,ca_coltrans_std,ca_colmas_std,con.ca_idcontacto, cf.ca_id
-        from vi_clientes c
-        inner join tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
-        full join encuestas.tb_control_encuesta cf on con.ca_idcontacto=cf.ca_id_contestador   
-        where (c.ca_coltrans_std = 'Activo'  or c.ca_colmas_std = 'Activo' ) and (cf.ca_id is Null) 
-        order by 2,3 limit $nreg offset $inicio";
+            SELECT c.ca_idcliente,c.ca_compania, con.ca_email,ca_coltrans_std,ca_colmas_std,con.ca_idcontacto, cf.ca_id
+            FROM vi_clientes c
+                INNER JOIN tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
+                FULL JOIN encuestas.tb_control_encuesta cf on con.ca_idcontacto=cf.ca_id_contestador   
+            WHERE (c.ca_coltrans_std = 'Activo') and c.ca_vendedor IS NOT NULL and (cf.ca_id IS NULL) 
+            ORDER BY 2,3 limit $nreg offset $inicio";
 
         $st = $con->execute($sql);
         $clientes = $st->fetchAll();
-        //plantilla evalucion servicio
+        
         $conteo = 0;
         $emails_Control = "";
+        $empresa = "COLTRANS S.A.S";
+        $idformulario = 11;
         $asunto = "Dos minutos de su tiempo nos ayuda a prestarle un mejor servicio";
-        $emailFrom = "alramirez@coltrans.com.co";
-        //para destinatarios de prueba
-        //$emailCa = array("alramirez@coltrans.com.co","alramirez@coltrans.com.co");
+        $emailFrom = "no-response@coltrans.com.co";        
 
-        foreach ($clientes as $cliente) {
-            $conteo++;
-            if ($cliente["ca_colmas_std"] != "Activo")
-                continue;
-            try {
-                $contacto = $cliente["ca_idcontacto"];
-                $html = $this->getPartial('formulario/emailHtmlColmas', array('contacto' => $contacto));
-                $email = new Email();
-                $email->setCaUsuenvio("Administrador");
-                $email->setCaFrom("no-response@colmas.com.co");
-                $email->setCaFromname("COLMAS LTDA.");
-                $email->setCaSubject($asunto);
-                $email->setCaAddress($cliente["ca_email"]);
-                $email->setCaBodyhtml($html);
-                $email->setCaTipo("Encuesta");
-                $email->setCaIdcaso(9);
-                $email->save();
-                $emails_Control.=$cliente["ca_compania"] . "->" . $cliente["ca_email"] . "<br>";
-            } catch (Exception $e) {
-                $emails_Control.="No se pudo enviar " . $cliente["ca_email"] . ": porque : " . $e->getMessage() . "<br>";
-                print_r($e);
-            }
-            $this->html = $html;
-            echo $cliente["ca_email"] . "<br>";
-        }
-
-        
-        file_put_contents($filecontrol, $inicio + $conteo);
-        
-        $emailsControl.= "inicio=>".$inicio." nreg=>".$nreg." control.txt=>".file_get_contents($filecontrol)."<br/>";
-        
-        $email = new Email();
-        $email->setCaUsuenvio("alramirez");
-        $email->setCaFrom($emailFrom);
-        $email->setCaFromname("COLMAS LTDA");
-        $email->setCaSubject("Emails enviados");
-        $email->setCaAddress("alramirez@coltrans.com.co");
-        $email->setCaBodyhtml("Emails enviados:<br>" . $emails_Control);
-        $email->setCaTipo("Encuesta");
-        $email->setCaIdcaso(9);
-        $email->save();
-        echo "enviados";
-        exit;
-        //echo $html;
-        //}
-        $this->setTemplate('envioEmailsPrueba');
-    }
-    
-    public function executeReenvioEmailsColtrans() {
-
-        $filecontrol = $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "formulario" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "control.txt";
-
-        if (file_exists($filecontrol)) {
-            $inicio = file_get_contents($filecontrol);
-        }
-        if (!$inicio)
-            $inicio = 0;
-        $con = Doctrine_Manager::getInstance()->connection();
-
-        $nreg = 15;
-
-        $sql = "
-        select c.ca_idcliente,c.ca_compania, con.ca_email,ca_coltrans_std,ca_colmas_std,con.ca_idcontacto, cf.ca_id
-        from vi_clientes c
-        inner join tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
-        full join encuestas.tb_control_encuesta cf on con.ca_idcontacto=cf.ca_id_contestador   
-        where (c.ca_coltrans_std = 'Activo'  or c.ca_colmas_std = 'Activo' ) and (cf.ca_id is Null) and con.ca_email != 'lorenaz@yupi.com.co'
-        order by 2,3 limit $nreg offset $inicio";
-
-        $st = $con->execute($sql);
-        $clientes = $st->fetchAll();
-        //plantilla evalucion servicio
-        $conteo = 0;
-        $emails_Control = "";
-        $asunto = "Dos minutos de su tiempo nos ayuda a prestarle un mejor servicio";
-        $emailFrom = "alramirez@coltrans.com.co";
-        $emailCa = array("alramirez@coltrans.com.co","alramirez@coltrans.com.co");
-        
         foreach ($clientes as $cliente) {
             $conteo++;
             if ($cliente["ca_coltrans_std"] != "Activo")
                 continue;
             try {
                 $contacto = $cliente["ca_idcontacto"];
-                $html = $this->getPartial('formulario/emailHtmlColtrans', array('contacto' => $contacto));
+                $html = $this->getPartial('formulario/emailHtmlColtrans', array('contacto' => $contacto, 'idformulario'=>$idformulario));
                 $email = new Email();
                 $email->setCaUsuenvio("Administrador");
-                $email->setCaFrom("no-response@coltrans.com.co");
-                $email->setCaFromname("COLTRANS S.A.S.");
+                $email->setCaFrom($emailFrom);
+                $email->setCaFromname($empresa);
                 $email->setCaSubject($asunto);
                 $email->setCaAddress($cliente["ca_email"]);
-                $email->setCaBodyhtml($html);
+                //$email->setCaAddress('alramirez@coltrans.com.co');
                 $email->setCaBody($contacto);
+                $email->setCaBodyhtml($html);
                 $email->setCaTipo("Encuesta");
-                $email->setCaIdcaso(8);
+                $email->setCaIdcaso(11);
                 $email->save();
+                $email->send();
                 $emails_Control.=$cliente["ca_compania"] . "->" . $cliente["ca_email"] . "<br>";
             } catch (Exception $e) {
                 $emails_Control.="No se pudo enviar " . $cliente["ca_email"] . ": porque : " . $e->getMessage() . "<br>";
@@ -979,27 +897,25 @@ class formularioActions extends sfActions {
         }
 
         file_put_contents($filecontrol, $inicio + $conteo);
-        
-        $emailsControl.= "inicio=>".$inicio." nreg=>".$nreg." control.txt=>".file_get_contents($filecontrol)."<br/>";
-        
+
+        $emailsControl.= "inicio=>" . $inicio . " nreg=>" . $nreg . " control.txt=>" . file_get_contents($filecontrol) . "<br/>";
+
         $email = new Email();
-        $email->setCaUsuenvio("alramirez");
+        $email->setCaUsuenvio("Administrador");
         $email->setCaFrom($emailFrom);
-        $email->setCaFromname("COLTRANS LTDA");
-        $email->setCaSubject("Emails enviados");
-        $email->setCaAddress("alramirez@coltrans.com.co");
-        $email->setCaCc("alramirez@coltrans.com.co");        
+        $email->setCaFromname($empresa);
+        $email->setCaSubject("Emails enviados - Encuesta Formulario->".$idformulario);
+        $email->setCaAddress("alramirez@coltrans.com.co");                
         $email->setCaBodyhtml("Emails enviados:<br>" . $emails_Control);
-        $email->setCaTipo("Encuesta");        
+        $email->setCaTipo("Encuesta");
+        $email->setCaIdcaso($idformulario);        
         $email->save();
         echo "enviados";
-        exit;        
+        echo $html;
+        exit;
+        
         
         $this->setTemplate('envioEmailsPrueba');
-    }
-
-    public function executeTest(sfWebRequest $request) {
-        $this->setLayout('testmail');
     }
 
     /**
@@ -1035,8 +951,6 @@ class formularioActions extends sfActions {
             }
         }
 
-        //$this->parametros = ParametroTable::retrieveByCaso("CU116", null, null, null);
-        //$parametros = $this->parametros;
         $id = $request->getParameter('id');
         $idDecode = base64_decode($id);
         $idFormulario = intval($idDecode);
@@ -1046,16 +960,13 @@ class formularioActions extends sfActions {
         $contacto = $request->getParameter('co');
         $idContact = base64_decode($contacto);
         $idContacto = intval($idContact);
-        /* if(!$idContacto){
-          } */
         $idEmpresa = 1;
-        //$idContactoCliente = 2;  // debo recibirlo en la ruta
-        //guardando el resumen del resultado
+        
         $conn = Doctrine::getTable("controlEncuesta")->getConnection();
         $conn->beginTransaction();
-        
-        try {           
-            
+
+        try {
+
             $control = new ControlEncuesta;
             $control->setCaId(null);
             $control->setCaIdformulario($idFormulario);
@@ -1063,21 +974,26 @@ class formularioActions extends sfActions {
             $control->setCaTipoContestador(1);
             $control->setCaIdContestador($idContacto);
             $control->save($conn);
-            
+
             $idcontrol = $control->getCaId();
-            
+
             foreach ($request->getPostParameters() as $param => $val) {
-                //procesar los datos
-            
-                $parampreg = explode('_', $param);
-                if(count($parampreg)>1){
+                $parampreg = explode('.', $param);
+                if (count($parampreg) > 1) {
                     $idpregunta = $parampreg[1];
                     $temp = $parampreg[2];
-                }else{
-                    $idpregunta = substr($param,3,2);
-                    $temp = substr($param,10,1);
+                } else {
+                    $idpregunta = substr($param, 3, 2);
+                    $temp = substr($param, 10, 1);
                 }
                 $servicio = $temp;
+                
+                $pregunta = Doctrine::getTable("Pregunta")->find($idpregunta);
+                
+                if($servicio == 0){
+                    if(isset($pregunta) && $pregunta->getCaAyuda()== "Todos los Servicios")
+                        $servicio = 8; // Servicio Quejas y Reclamos
+                }
                 
                 //guardar los datos
                 $resultado = new ResultadoEncuesta();
@@ -1088,18 +1004,13 @@ class formularioActions extends sfActions {
                 $resultado->setCaServicio(intval($servicio));
                 $resultado->save($conn);
             }
-            
             $conn->commit();
         } catch (Exception $e) {
-            
             $conn->rollBack();
             throw $e;
         }
         $this->control = $idcontrol;
-        /*
-          print_r($request->getPostParameters());
-         */
-
+        
         $this->setTemplate('exito');
         $detect = new Mobile_Detect();
         $dispositivo = ($detect->isMobile() ? ($detect->isTablet() ? 'tablet' : 'mobile') : 'desktop');
@@ -1147,7 +1058,7 @@ class formularioActions extends sfActions {
         $this->contacto = $idContacto;
 
 
-        $bloque = $this->formulario->getBloqueServicio($idFormulario);
+        $bloque = $this->formulario->getBloqueServicio($idFormulario);        
         $this->bloque = $bloque;
         if ($bloque) {
             $this->setTemplate('selServicios');
@@ -1231,46 +1142,30 @@ class formularioActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
-
-
-
-
-    /**
-     * Permite previsualizar de manera exclusiva el formulario de evaluaciÃ³n de clientes.
-     * @deprecated
-     * @param sfWebRequest $request
-     */
-    public function executeEvalServicioClientes(sfWebRequest $request) {
-        $this->formulario = Doctrine_Core::getTable('formulario')->getFormulario(1);
-        //$this->bloques = Doctrine_Core::getTable('bloque')->getBloquesOrdenados(1);
-        $this->setLayout('formulario');
-        $this->setTemplate('vistaPrevia');
-    }
-
     /**
      * Metodo personalizado para mostrar los datos del formulario guardado
      * @param sfWebRequest $request
      * @deprecated
      * aun no se esta utilizando.
      */
-    public function executeResultado(sfWebRequest $request) {
-        //$this->parametros = ParametroTable::retrieveByCaso("CU116", null, null, null);
-        //$parametros = $this->parametros;
-
+    public function executeResultadoExt4(sfWebRequest $request) {
+    
         $id = $request->getParameter('ca_id');
-        $this->id = $id;
-        $idDecode = base64_decode($id);
-        $idControl = intval($idDecode);
-
-        $this->control = Doctrine_Core::getTable('controlEncuesta')->find($idControl);
-        $this->resultado = Doctrine_Core::getTable('controlEncuesta')->find($idControl);
-
-        $this->formulario = new Formulario();
-        $this->pregunta = new Pregunta();
-        // $this->setTemplate('resultado');
-        $this->setLayout('layout_home');
-
-        $this->control = new ControlEncuesta();
+        $this->formulario = Doctrine_Core::getTable('formulario')->find($id);
+        
+        $options["idencuesta"] = $request->getParameter("idencuesta");
+        
+        $this->encuestas = $this->formulario->getListaEncuestasDiligenciadas($options, false);
+        
+        $this->consolidado = array();        
+        $i=1;
+        foreach ($this->encuestas as $encuesta) {
+                $this->consolidado[] = array(
+                    "idform" => $this->formulario->getCaId(),
+                    "servicio"=> utf8_encode($encuesta["cf_ca_value"]), 
+                    "pregunta"=>$encuesta["p_ca_texto"],
+                    "resultado"=>utf8_encode($encuesta["re_ca_resultado"]));
+        }
 
         $con = Doctrine_Manager::getInstance()->connection();
         $sql = "
@@ -1305,5 +1200,74 @@ class formularioActions extends sfActions {
         $this->setTemplate('exito');
         $this->setLayout('layout_home');
     }
-
+    
+    public function executeVerSeguimientos(sfWebRequest $request){
+        
+        $idcliente = $request->getParameter("idcliente");
+        
+        $this->seguimientos = Doctrine::getTable("EveCliente")
+                ->createQuery("s")
+                ->addWhere("s.ca_idcliente = ? ", $idcliente)
+                ->addWhere("s.ca_asunto like '%Encuesta satisfacción del Cliente%'")
+                ->addOrderBy("s.ca_fchevento ASC")
+                ->execute();
+        
+        
+    }
+    
+    public function executeGuardarSeguimiento(sfWebRequest $request){
+        
+        $this->user = $this->getUser();
+        
+        $idcliente = $request->getParameter("idcliente");
+        $idform = $request->getParameter("idform");
+        $idencuesta = $request->getParameter("idencuesta");
+        
+        $formulario = Doctrine_Core::getTable('formulario')->find($idform);
+        
+        $con = Doctrine_Manager::getInstance()->connection();
+        $con->beginTransaction();
+        
+        $seguimiento = new EveCliente();        
+        $seguimiento->setCaFchevento(date('Y-m-d H:i:s'));
+        $seguimiento->setCaIdcliente($request->getParameter("idcliente"));
+        $seguimiento->setCaTipo(utf8_decode($request->getParameter("tipo")));
+        $seguimiento->setCaAsunto($formulario->getCaTitulo());
+        $seguimiento->setCaDetalle(utf8_decode($request->getParameter("detalle")));
+        $seguimiento->setCaCompromisos(utf8_decode($request->getParameter("compromiso")));
+        $seguimiento->setCaFchcompromiso($request->getParameter("fchcompromiso"));
+        $seguimiento->setCaIdantecedente(0);
+        $seguimiento->setCaUsuario($this->user->getUserId());
+        $seguimiento->save($con);
+        
+        if($request->getParameter("fchcompromiso")){
+            
+                $cliente = Doctrine_Core::getTable('IdsCliente')->find($idcliente);
+                
+                $tarea = new NotTarea();
+                $tarea->setCaUrl('/formulario/resultadoExt4/ca_id/'.$formulario->getCaId().'/idcliente/'.$idcliente.'/idencuesta/'.$idencuesta);
+                $tarea->setCaIdlistatarea(9);
+                $tarea->setCaFchcreado(date("Y-m-d H:i:s"));
+                $tarea->setCaFchvisible(date("Y-m-d H:i:s"));
+                $tarea->setCaFchvencimiento(date("Y-m-d H:i:s"));
+                $tarea->setCaUsucreado($this->getUser()->getUserId());
+                $tarea->setCaTitulo("Seguimiento programado Cliente: ".$cliente->getIds()->getCaNombre());
+                $tarea->setCaTexto("En el seguimiento a ".$formulario->getCaTitulo()." se programó este seguimiento.");
+                $tarea->save($con);
+                               
+                $cliente->setProperty("idtarea",$tarea->getCaIdtarea());
+                $cliente->save($con);
+                
+                $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());   
+                $loginAsignaciones[] = $usuario->getCaLogin();
+                
+                $tarea->setAsignaciones($loginAsignaciones);
+        }
+        $con->commit();
+        
+        $texto = sfContext::getInstance()->getController()->getPresentationFor('formulario', 'verSeguimientos');
+        
+        $this->responseArray = array("success" => true, "idactivo" => $idcliente, "info" => utf8_encode($texto));
+        $this->setTemplate("responseTemplate");        
+    }
 }
