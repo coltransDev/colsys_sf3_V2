@@ -19,7 +19,9 @@ if ($parametros) {
 
 error_reporting(E_ERROR);
 
-$objPHPExcel = new sfPhpExcel();
+error_reporting( E_ALL );
+require_once sfConfig::get('app_sourceCode_lib').'vendor/phpexcel1.8/Classes/PHPExcel/IOFactory.php';
+$objPHPExcel = new PHPExcel();
 
 // Set properties	
 $objPHPExcel->getProperties()->setCreator("Colsys");
@@ -545,21 +547,26 @@ $objPHPExcel->setActiveSheetIndex(0);
 
 
 
-$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
+//$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
+$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
 // Send HTTP headers to tell the browser what's coming
 
 
 
-if (!$filename) {
+if(!$filename){
     header("Content-type: application/vnd.ms-excel");
-    header("Content-Disposition: attachment; filename=\"" . $cliente->getCaCompania() . ".xls\"");
+    header("Content-Disposition: attachment; filename=\"".$cliente->getCaCompania().".xls\"");
     header("Expires: 0");
     header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
     header("Pragma: public");
+    $objWriter->save('php://output');
 }
-$objWriter->save(str_replace('.php', '.xls', $filename));
+else
+    $objWriter->save(str_replace('.php', '.xls', $filename ));	
+    
+		
+if(!$filename){
+	exit;
+}
 
-if (!$filename) {
-    exit;
-}
 ?>

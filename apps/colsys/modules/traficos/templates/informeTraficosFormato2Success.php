@@ -25,8 +25,9 @@ foreach($reportes as $reporte){
 }
 
 error_reporting(E_ERROR);
-
-$objPHPExcel = new sfPhpExcel();
+require_once sfConfig::get('app_sourceCode_lib').'vendor/phpexcel1.8/Classes/PHPExcel/IOFactory.php';
+//$objPHPExcel = new sfPhpExcel();
+$objPHPExcel = new PHPExcel();
 
 // Set properties	
 $objPHPExcel->getProperties()->setCreator("Colsys");
@@ -143,7 +144,7 @@ for ($j=0; $j<count($traficos); $j++)  {
     
     foreach ($reportes as $reporte) {
     
-        if($objPHPExcel->getActiveSheet() == $objPHPExcel->getSheetByName($reporte->getOrigen()->getTrafico()->getCaNombre())){
+        if($objPHPExcel->getActiveSheet() === $objPHPExcel->getSheetByName($reporte->getOrigen()->getTrafico()->getCaNombre())){
             $objPHPExcel->getSheetByName($reporte->getOrigen()->getTrafico()->getCaNombre());
         if (!$reporte->esUltimaVersion()) {
             continue;
@@ -297,7 +298,7 @@ for ($j=0; $j<count($traficos); $j++)  {
         $objPHPExcel->getActiveSheet()->setCellValue('BA' . $i, $reporte->getCaModalidad());
         $objPHPExcel->getActiveSheet()->getColumnDimension('BA')->setVisible(false);
         $objPHPExcel->getActiveSheet()->getColumnDimension('BA')->setWidth(20);
-        //$idx++;
+        //$idx++1
         //$col = $cols[$key + $idx];
         $objPHPExcel->getActiveSheet()->setCellValue('BB' . $i, $reporte->getOrigen()->getTrafico()->getCaNombre());
         $objPHPExcel->getActiveSheet()->getColumnDimension('BB')->setVisible(false);
@@ -534,19 +535,37 @@ $objPHPExcel->setActiveSheetIndex(0);
 
 //Remove last sheet
 $objPHPExcel->removeSheetByIndex(count($traficos));
-
-$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
+$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
 // Send HTTP headers to tell the browser what's coming
-
+//echo $filename;
+//exit;
 if (!$filename) {
     header("Content-type: application/vnd.ms-excel");
     header("Content-Disposition: attachment; filename=\"" . $cliente->getCaCompania() . ".xls\"");
     header("Expires: 0");
     header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
     header("Pragma: public");
+$objWriter->save('php://output');    
 }
+else
+{
 $objWriter->save(str_replace('.php', '.xls', $filename));
+/*
+ * 
+ */
+/*header('Content-Type: application/vnd.ms-excel');
+header('Content-Disposition: attachment;filename="01simple.xls"');
+header('Cache-Control: max-age=0');
+// If you're serving to IE 9, then the following may be needed
+header('Cache-Control: max-age=1');
 
+// If you're serving to IE over SSL, then the following may be needed
+header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+header ('Pragma: public'); // HTTP/1.0*/
+
+}
 if (!$filename) {
     exit;
 }

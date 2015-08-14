@@ -39,6 +39,7 @@ if ($reporte) {
                 </div>
             </form>
             <div id="div<?= $i ?>"></div>
+            <input type="checkbox"  title="Marcar o Desmarcar Todas las Fotos" onclick="selTodasFotos(this)"> Marcar o Desmarcar Todas las Fotos
             <script>
 
                 chart<?= $i ?> = new WidgetUploadImages({
@@ -70,10 +71,10 @@ if ($reporte) {
                                     <img style=" vertical-align: middle;" src="/gestDocumental/verArchivo?idarchivo=' . base64_encode($folderOld . "/" . $filename) . '" width="' . $dimVisual . '" height="' . $dimVisual . '" />
                                 </div>
                                 <div style="position:absolute;top:0px;right:0px" >
-                                    <img src="/images/16x16/button_cancel.gif" style="cursor: pointer" onclick="deleteFile(&quot;' . $id_base . '&quot;,&quot;file_' . $j++ . '&quot;)" />
+                                    <img src="/images/16x16/button_cancel.gif" style="cursor: pointer"   onclick="deleteFile(&quot;' . $id_base . '&quot;,&quot;file_' . $j . '&quot;)" />
                                 </div>
-                                <div style="position:absolute;top:20px;right:0px;display:none" >
-                                    <input type="checkbox" value="' . $folderOld . '"/"' . $filename . '" name="files[]" />
+                                <div style="position:absolute;top:20px;right:0px;display:block" >
+                                    <input type="checkbox" value="' . $folderOld . '"/"' . $filename . '" name="files[]" class="imgS" idbase="' . $id_base . '" fileid="file_' . $j++ . '" />
                                 </div>
                             </div>                        
                           </div>';
@@ -101,37 +102,95 @@ if ($reporte) {
             </div>
         </td>
     </tr>
+    
+    <tr>
+        <td style="border-bottom: 0px;">
+            <input type="button" value="Eliminar Fotos" onclick="eliminarFotos()">            
+        </td>
+    </tr>
     <?
     //break;
 }
 ?>
+    
 <script>
-
-    function deleteFile(file, idtr)
+    function eliminarFotos()
+    {        
+        $('.imgS:checked').each(
+            function() {
+                //alert($(this).attr("fileid") );
+                deleteFile($(this).attr("idbase"),$(this).attr("fileid"),"1")
+            }
+        );
+    }
+    
+    function selTodasFotos(obj)
     {
-        if (window.confirm("Realmente desea eliminar este archivo?"))
+        //alert(obj.checked);
+        $('.imgS').attr("checked",!$('.imgS').attr("checked"));
+        /*$('.imgS:checked').each(
+        
+            function() {
+                //alert($(this).attr("fileid") );
+                $(this).attr("c")
+                //deleteFile($(this).attr("idbase"),$(this).attr("fileid"),"1")
+            }
+        );*/
+    }
+
+
+    function deleteFile(file, idtr,msg)
+    {
+        if(msg=="1")
         {
             Ext.MessageBox.wait('Guardando, Espere por favor', '---');
             Ext.Ajax.request(
-                    {
-                        waitMsg: 'Guardando cambios...',
-                        url: '<?= url_for("gestDocumental/borrarArchivo") ?>',
-                        params: {
-                            idarchivo: file
-                        },
-                        failure: function(response, options) {
-                            var res = Ext.util.JSON.decode(response.responseText);
-                            if (res.err)
-                                Ext.MessageBox.alert("Mensaje", 'Se presento un error guardando por favor informe al Depto. de Sistemas<br>' + res.err);
-                            else
-                                Ext.MessageBox.alert("Mensaje", 'Se produjo un error, vuelva a intentar o informe al Depto. de Sistema<br>' + res.texto);
-                        },
-                        success: function(response, options) {
-                            var res = Ext.util.JSON.decode(response.responseText);
-                            $("#" + idtr).remove();
-                            Ext.MessageBox.hide();
-                        }
-                    });
+            {
+                waitMsg: 'Guardando cambios...',
+                url: '<?= url_for("gestDocumental/borrarArchivo") ?>',
+                params: {
+                    idarchivo: file
+                },
+                failure: function(response, options) {
+                    var res = Ext.util.JSON.decode(response.responseText);
+                    if (res.err)
+                        Ext.MessageBox.alert("Mensaje", 'Se presento un error guardando por favor informe al Depto. de Sistemas<br>' + res.err);
+                    else
+                        Ext.MessageBox.alert("Mensaje", 'Se produjo un error, vuelva a intentar o informe al Depto. de Sistema<br>' + res.texto);
+                },
+                success: function(response, options) {
+                    var res = Ext.util.JSON.decode(response.responseText);
+                    $("#" + idtr).remove();
+                    Ext.MessageBox.hide();
+                }
+            });
+        }else
+        {
+            if (window.confirm("Realmente desea eliminar este archivo?"))
+            {
+                Ext.MessageBox.wait('Guardando, Espere por favor', '---');
+                Ext.Ajax.request(
+                        {
+                            waitMsg: 'Guardando cambios...',
+                            url: '<?= url_for("gestDocumental/borrarArchivo") ?>',
+                            params: {
+                                idarchivo: file
+                            },
+                            failure: function(response, options) {
+                                var res = Ext.util.JSON.decode(response.responseText);
+                                if (res.err)
+                                    Ext.MessageBox.alert("Mensaje", 'Se presento un error guardando por favor informe al Depto. de Sistemas<br>' + res.err);
+                                else
+                                    Ext.MessageBox.alert("Mensaje", 'Se produjo un error, vuelva a intentar o informe al Depto. de Sistema<br>' + res.texto);
+                            },
+                            success: function(response, options) {
+                                var res = Ext.util.JSON.decode(response.responseText);
+                                $("#" + idtr).remove();
+                                Ext.MessageBox.hide();
+                            }
+                        });
+            }
         }
     }
 </script>
+
