@@ -73,6 +73,17 @@ switch ($action) {
             }
         }
         break;
+    case "verComunicado":
+        @$nivel = idsActions::getNivel();
+        if ($nivel >= 3) {
+            $button[$i]["name"]="Email ";
+            $button[$i]["tooltip"]="Enviar el comunicado por e-mail";
+            $button[$i]["image"]="22x22/email.gif"; 			
+            $button[$i]["link"]= "ids/verComunicado?id=".$this->getRequestParameter("id"). "&modo=" . $this->getRequestParameter("modo");
+            $button[$i]["onClick"]= "showEmailForm()";
+            $i++;
+        }
+        break;
     case "formContactosIds":
 
 

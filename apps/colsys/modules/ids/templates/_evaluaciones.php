@@ -149,6 +149,7 @@ $numYears = $actualYear - $initialYear + 1;
          </td>
          <td align="center">
             <?= link_to(image_tag("16x16/edit.gif"), "ids/verEvaluacion?modo=" . $modo . "&idevaluacion=" . $evaluacion->getCaIdevaluacion()) ?>
+            <?= link_to(image_tag("16x16/pdf.gif"), "/ids/verComunicado/modo/$modo/id/".$ids->getCaId()."/ano/".$evaluacion->getCaAno()."/periodo/".$evaluacion->getCaPeriodo() ) ?>
          </td>        
       </tr>
       <?

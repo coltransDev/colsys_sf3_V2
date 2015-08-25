@@ -2357,5 +2357,163 @@ class idsActions extends sfActions {
         
         
     }
+    
+       public function executeGenerarPDFComunicadoProveedores(sfWebRequest $request){
+        
+        $this->proveedor = Doctrine::getTable("IdsProveedor")->find($this->getRequestParameter("idproveedor"));        
+        $this->forward404Unless($this->proveedor);
+        
+        $this->ano = $this->getRequestParameter("ano");
+        $this->periodo = $this->getRequestParameter("periodo");
+        
+        $this->filename = $this->getRequestParameter("filename");
+        $this->textos = sfYaml::load(sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "ids" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "textos.yml");
+
+        $this->empresa = Doctrine::getTable("Empresa")->find(2);
+        $this->sucursal =  Doctrine::getTable("Sucursal")
+                ->createQuery("s")                
+                ->where("ca_nombre = 'Bogotá D.C.' and ca_idempresa=2" )
+                ->fetchOne();
+        
+        $this->sucursalProv = Doctrine::getTable("IdsSucursal")
+                ->createQuery("s")
+                ->where("ca_id = ?", $this->proveedor->getCaIdproveedor())
+                ->andWhere("ca_principal = ?", true)
+                ->fetchOne();
+        
+        $contactos = Doctrine::getTable("IdsContacto")
+                ->createQuery("c")
+                ->where("ca_idsucursal = ?", $this->sucursalProv->getCaIdsucursal())
+                ->andWhere("ca_fcheliminado IS NULL")
+                ->andWhere("ca_notificar_vencimientos = ?", true)
+                ->execute();
+        
+        $this->contactos = array();
+        
+        foreach($contactos as $contacto){
+            $this->contactos[$contacto->getCaIdcontacto()]["nombre"] = $contacto->getCaNombres()." ".$contacto->getCaPapellido()." ".$contacto->getCaSapellido();
+            $this->contactos[$contacto->getCaIdcontacto()]["email"] = $contacto->getCaEmail();            
+        }
+        
+        $this->evaluaciones = Doctrine::getTable("IdsEvaluacion")
+                             ->createQuery("e")
+                             ->where("e.ca_id=?",$this->proveedor->getCaIdproveedor())
+                             ->addWhere("e.ca_ano=?",$this->ano)
+                             ->addWhere("e.ca_periodo=?",$this->periodo)
+                             ->addOrderBy("e.ca_fchevaluacion")
+                             ->execute();
+        
+        $this->setTemplate("generarPDFComunicadoProveedores");
+    }
+    
+    
+    public function executeEnviarComunicadoEmail(sfWebRequest $request){
+        
+        $this->proveedor = Doctrine::getTable("IdsProveedor")->find($this->getRequestParameter("id"));
+
+        $user = $this->getUser();
+        //Crea el correo electronico
+        $email = new Email();
+        $email->setCaUsuenvio($user->getUserId());
+        $email->setCaTipo("Envío de Evaluación");
+        $email->setCaIdcaso($this->getRequestParameter("id"));
+        $email->setCaFrom($user->getEmail());
+        $email->setCaFromname($user->getNombre());
+
+        if ($this->getRequestParameter("readreceipt")) {
+            $email->setCaReadreceipt(true);
+        } else {
+            $email->setCaReadreceipt(false);
+        }
+
+        $email->setCaReplyto($user->getEmail());
+
+        $recips = explode(",", $this->getRequestParameter("destinatario"));
+        if (is_array($recips)) {
+            foreach ($recips as $recip) {
+                $recip = str_replace(" ", "", $recip);
+                if ($recip) {
+                    $email->addTo($recip);
+                }
+            }
+        }
+
+        $recips = explode(",", $this->getRequestParameter("cc"));
+        if (is_array($recips)) {
+            foreach ($recips as $recip) {
+                $recip = str_replace(" ", "", $recip);
+                if ($recip) {
+                    $email->addCc($recip);
+                }
+            }
+        }
+        $mensaje = ($this->getRequestParameter("mensaje") . "\n\n");
+        $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
+
+        $email->addCc($this->getUser()->getEmail());
+        
+        $email->setCaSubject(($this->getRequestParameter("asunto")));
+        $email->setCaBody($mensaje . $usuario->getFirma());
+        $email->setCaBodyhtml(Utils::replace($mensaje) . $usuario->getFirmaHTML());
+
+        $email->save(); //guarda el cuerpo del mensaje
+       
+        
+        $directory = $email->getDirectorio();
+        if (!is_dir($directory)) {
+            @mkdir($directory, 0777, true);
+        }
+
+        $fileName = "proveedor" . $this->proveedor->getCaIdproveedor() . ".pdf";
+        if (file_exists($fileName)) {
+            @unlink($fileName);
+        }
+
+        $this->getRequest()->setParameter('filename', $directory . $fileName);
+        $this->getRequest()->setParameter('idproveedor', $this->proveedor->getCaIdproveedor());
+        sfContext::getInstance()->getController()->getPresentationFor('ids', 'generarPDFComunicadoProveedores');
+
+        $email->addAttachment($email->getDirectorioBase() . $fileName);
+        $email->save();
+        
+        $this->setTemplate("enviarComunicadoEmail");
+    }
+    
+    public function executeVerComunicado() {
+        
+        $this->proveedor = Doctrine::getTable("IdsProveedor")->find($this->getRequestParameter("id"));
+        $this->forward404Unless($this->proveedor);
+        
+        $this->modo = $this->getRequestParameter("modo");
+        $this->ano = $this->getRequestParameter("ano");
+        $this->periodo = $this->getRequestParameter("periodo");
+        
+        $this->textos = sfYaml::load(sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "ids" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "textos.yml");        
+        
+        $this->sucursalProv = Doctrine::getTable("IdsSucursal")
+                ->createQuery("s")
+                ->where("ca_id = ?", $this->proveedor->getCaIdproveedor())
+                ->andWhere("ca_principal = ?", true)
+                ->fetchOne();
+        
+        $contactos = Doctrine::getTable("IdsContacto")
+                ->createQuery("c")
+                ->where("ca_idsucursal = ?", $this->sucursalProv->getCaIdsucursal())
+                ->andWhere("ca_fcheliminado IS NULL")
+                ->andWhere("ca_notificar_vencimientos = ?", true)
+                ->execute();
+        
+        $this->contactos = "";
+        
+        foreach($contactos as $contacto){            
+            $this->contactos.= $contacto->getCaEmail().",";            
+        }
+        
+        $this->emails = Doctrine::getTable("Email")
+                ->createQuery("e")
+                ->where("e.ca_tipo = ? AND e.ca_idcaso = ?", array("Envío de Evaluación", $this->proveedor->getCaIdproveedor()))
+                ->addOrderBy("e.ca_fchenvio")
+                ->execute();
+    }
 }
 ?>
