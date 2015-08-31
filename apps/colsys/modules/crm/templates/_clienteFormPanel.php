@@ -25,7 +25,7 @@ $bdatos = array("Maestra Clientes", "Mis Clientes", "Clientes Libres");  // Arre
 $tipos = array("Llamada", "Visita", "Correo Electrónico", "Correspondencia", "Cerrar Caso");
 $estados = array("Potencial","Activo","Vetado");
 $libestados = array("Vigente","Congelada");
-$sstatus = array("","Vetado");
+$sstatus = array("","Restrictivo","Vetado");
 $empresas= array("Coltrans","Colmas");
 $circular=array("Sin","Vencido","Vigente");
 $presentacion=array("Detallado","Columnas");
@@ -860,6 +860,7 @@ include_component("widgets", "widgetCoordinadoresAduana");
                                             fields : ['name', 'value'],
                                             data   : [
                                                 {name : '',   value: ''},
+                                                {name : 'Restrictivo',  value: 'Restrictivo'},
                                                 {name : 'Vetado',  value: 'Vetado'}
                                             ]
                                         })

@@ -374,7 +374,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 		echo "</TR>";
 
 		while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
-                    $vetado = ($rs->Value('ca_coltrans_std')=='Vetado' or $rs->Value('ca_colmas_std')=='Vetado' )?'background-color:#FFb2b2;':'';
+                    $bkground = ($rs->Value('ca_coltrans_std')=='Vetado' or $rs->Value('ca_colmas_std')=='Vetado' )?'background-color:#FFb2b2;':'';
                     echo "<TR>";
                     foreach($columnas as $campos ){
                         $img="";
@@ -399,13 +399,13 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
                             }
                         }
                         if (is_array($campos)){
-                            echo "<TD Class=mostrar style='font-size: 9px; center; $vetado'>";
+                            echo "<TD Class=mostrar style='font-size: 9px; center; $bkground'>";
                             foreach($campos as $campo){
                                     echo str_replace("|","",$rs->Value($campo))." $img";
                             }
                             echo "</TD>";
                         }else{
-                            echo "<TD Class=mostrar style='font-size: 9px; center; $vetado'>".$rs->Value($campos)." $img</TD>";
+                            echo "<TD Class=mostrar style='font-size: 9px; center; $bkground'>".$rs->Value($campos)." $img</TD>";
                         }
                     }
                     echo "</TR>";
@@ -458,8 +458,9 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 		   $vista_3 = ($nivel >= 3)?'visible':'hidden'; // Habilita la opción para definir porcentaje de comisión
 		   $vista_2 = ($nivel >= 1)?'visible':'hidden'; // Habilita la opción para firma de comodato
 		   $visible = ($rs->Value('ca_vendedor')==$usuario or $rs->Value('ca_vendedor')=='' or $nivel>1)?'visible':'hidden';
-                   $vetado = ($rs->Value('ca_entidad')!='Vigente')?'background-color:#9999CC;':'';
-		   $vetado = ($rs->Value('ca_coltrans_std')=='Vetado' or $rs->Value('ca_colmas_std')=='Vetado' )?'background-color:#FFb2b2;':$vetado;
+                   $bkground = ($rs->Value('ca_entidad')!='Vigente')?'background-color:#9999CC;':'';
+                   $bkground = ($rs->Value('ca_status')=='Restrictivo')?'background-color:#088A29;':$bkground;
+		   $bkground = ($rs->Value('ca_coltrans_std')=='Vetado' or $rs->Value('ca_colmas_std')=='Vetado' )?'background-color:#FFb2b2;':$bkground;
 		   $alerta = ($rs->Value('ca_coltrans_std')=='Vetado' or $rs->Value('ca_colmas_std')=='Vetado' )?'<IMG src=\'./graficos/izquierda.gif\' border=0>':'';
 		   if (!$cn->Open("select * from vi_concliente where ca_idcliente = ".$rs->Value('ca_idcliente')." and ca_idcontacto != 0 and ca_cargo<>'Extrabajador'")) {          // Selecciona todos lo registros de la tabla Contacos de Clientes
 				echo "<script>alert(\"".addslashes($cn->mErrMsg)."\");</script>";      // Muestra el mensaje de error
@@ -499,10 +500,10 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
                        $cn->MoveFirst();
                        while (!$cn->Eof() and !$cn->IsEmpty()) {
                             echo "<TR>";
-                            echo "  <TD Class=mostrar style='font-size: 9px; center; $vetado'>".$cn->Value('ca_ncompleto_cn')."</TD>";
-                            echo "  <TD Class=mostrar style='font-size: 9px; center; $vetado'>".$cn->Value('ca_cargo')."</TD>";
-                            echo "  <TD Class=mostrar style='font-size: 9px; center; $vetado'>".$cn->Value('ca_telefonos')."</TD>";
-                            echo "  <TD Class=mostrar style='font-size: 9px; center; $vetado'>".$cn->Value('ca_email')."</TD>";
+                            echo "  <TD Class=mostrar style='font-size: 9px; center; $bkground'>".$cn->Value('ca_ncompleto_cn')."</TD>";
+                            echo "  <TD Class=mostrar style='font-size: 9px; center; $bkground'>".$cn->Value('ca_cargo')."</TD>";
+                            echo "  <TD Class=mostrar style='font-size: 9px; center; $bkground'>".$cn->Value('ca_telefonos')."</TD>";
+                            echo "  <TD Class=mostrar style='font-size: 9px; center; $bkground'>".$cn->Value('ca_email')."</TD>";
                             echo "</TR>";
                             $cn->MoveNext();
                        }
@@ -512,10 +513,10 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
                        echo "</TR>";
 		   }
 		   echo "  <TR>";
-		   echo "    <TD Class=mostrar style='font-size: 9px; center; $vetado'>".$rs->Value('ca_ncompleto')."</TD>";
-		   echo "    <TD Class=mostrar style='font-size: 9px; center; $vetado'>Representante Legal</TD>";
-		   echo "    <TD Class=mostrar style='font-size: 9px; center; $vetado'>".$rs->Value('ca_telefonos')."</TD>";
-		   echo "    <TD Class=mostrar style='font-size: 9px; center; $vetado'>".$rs->Value('ca_email')."</TD>";
+		   echo "    <TD Class=mostrar style='font-size: 9px; center; $bkground'>".$rs->Value('ca_ncompleto')."</TD>";
+		   echo "    <TD Class=mostrar style='font-size: 9px; center; $bkground'>Representante Legal</TD>";
+		   echo "    <TD Class=mostrar style='font-size: 9px; center; $bkground'>".$rs->Value('ca_telefonos')."</TD>";
+		   echo "    <TD Class=mostrar style='font-size: 9px; center; $bkground'>".$rs->Value('ca_email')."</TD>";
 		   echo "  </TR>";
 		   echo "  </TABLE>";
 		   echo "</TD>";
@@ -523,7 +524,7 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 
 		   $complemento = (($rs->Value('ca_oficina')!='')?" Oficina : ".$rs->Value('ca_oficina'):"").(($rs->Value('ca_torre')!='')?" Torre : ".$rs->Value('ca_torre'):"").(($rs->Value('ca_interior')!='')?" Interior : ".$rs->Value('ca_interior'):"").(($rs->Value('ca_complemento')!='')?" - ".$rs->Value('ca_complemento'):"").(($rs->Value('ca_zipcode')!='')?" Cod.Postal : ".$rs->Value('ca_zipcode'):"");
 		   echo "<TR>";
-		   echo "  <TD Class=listar ROWSPAN=10 style='text-align: center; center; $vetado'>";
+		   echo "  <TD Class=listar ROWSPAN=10 style='text-align: center; center; $bkground'>";
 		   echo "    <TABLE>";
 		   echo "      <TR><TD style='visibility: $vista_3; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Comisión\", ".$rs->Value('ca_idcliente').");'><BR><IMG src='graficos/Info.gif'><BR>Porcentaje de Comisión</TD></TR>";
 		   echo "      <TR><TD style='visibility: $vista_2; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Contrato\", ".$rs->Value('ca_idcliente').");'><BR><IMG src='graficos/contrato.gif'><BR>Contrato de<br>Comodato</TD></TR>";
@@ -532,9 +533,9 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 		   echo "      <TR><TD style='visibility: $vista_2; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Libestados\", ".$rs->Value('ca_idcliente').");'><BR><IMG src='graficos/lock_close.gif'><BR>Estado de<br>Liberación</TD></TR>";
 		   echo "    </TABLE>";
 		   echo "  </TD>";
-		   echo "  <TD Class=mostrar style='$vetado'>Dirección :</TD>";
-		   echo "  <TD Class=listar style='$vetado' COLSPAN=3>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento."</TD>";
-		   echo "  <TD Class=listar style='$vetado' ROWSPAN=10 style='text-align: center;'>";
+		   echo "  <TD Class=mostrar style='$bkground'>Dirección :</TD>";
+		   echo "  <TD Class=listar style='$bkground' COLSPAN=3>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento."</TD>";
+		   echo "  <TD Class=listar style='$bkground' ROWSPAN=10 style='text-align: center;'>";
 		   echo "    <TABLE>";
 		   echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"concliente.php?id=".$rs->Value('ca_idcliente')."\"'><BR><IMG src='graficos/contacto.gif'><BR>Contactos</TD></TR>";
 		   echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"enccliente.php?id=".$rs->Value('ca_idcliente')."\"'><BR><IMG src='graficos/encuesta.gif'><BR>Visitas<BR>".$rs->Value('ca_fchvisita')."</TD></TR>";
@@ -548,77 +549,77 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 		   echo "  </TD>";
 		   echo "</TR>";
 		   echo "<TR>";
-		   echo "  <TD Class=mostrar style='$vetado'>Teléfonos :</TD>";
-		   echo "  <TD Class=mostrar style='$vetado'>".$rs->Value('ca_telefonos')."</TD>";
-		   echo "  <TD Class=mostrar style='$vetado'>Fax :</TD>";
-		   echo "  <TD Class=mostrar style='$vetado'>".$rs->Value('ca_fax')."</TD>";
+		   echo "  <TD Class=mostrar style='$bkground'>Teléfonos :</TD>";
+		   echo "  <TD Class=mostrar style='$bkground'>".$rs->Value('ca_telefonos')."</TD>";
+		   echo "  <TD Class=mostrar style='$bkground'>Fax :</TD>";
+		   echo "  <TD Class=mostrar style='$bkground'>".$rs->Value('ca_fax')."</TD>";
 		   echo "</TR>";
 		   echo "<TR>";
-		   echo "  <TD Class=mostrar style='$vetado'>".($regional!="PE-051"?"Localidad":"Distrito")." :</TD>";
-		   echo "  <TD Class=mostrar style='$vetado'>".$rs->Value('ca_localidad')."</TD>";
-		   echo "  <TD Class=mostrar style='$vetado'>Ciudad :</TD>";
-		   echo "  <TD Class=mostrar style='$vetado'>".$rs->Value('ca_ciudad')."</TD>";
+		   echo "  <TD Class=mostrar style='$bkground'>".($regional!="PE-051"?"Localidad":"Distrito")." :</TD>";
+		   echo "  <TD Class=mostrar style='$bkground'>".$rs->Value('ca_localidad')."</TD>";
+		   echo "  <TD Class=mostrar style='$bkground'>Ciudad :</TD>";
+		   echo "  <TD Class=mostrar style='$bkground'>".$rs->Value('ca_ciudad')."</TD>";
 		   echo "</TR>";
 		   echo "<TR>";
-		   echo "  <TD Class=mostrar style='$vetado'>Web Site :</TD>";
-		   echo "  <TD Class=mostrar style='$vetado'><a href='http://".$rs->Value('ca_website')."'target='_blank'>".$rs->Value('ca_website')."</a></TD>";
-		   echo "  <TD Class=mostrar style='$vetado'>Email :</TD>";
-		   echo "  <TD Class=mostrar style='$vetado'>".$rs->Value('ca_email')."</TD>";
+		   echo "  <TD Class=mostrar style='$bkground'>Web Site :</TD>";
+		   echo "  <TD Class=mostrar style='$bkground'><a href='http://".$rs->Value('ca_website')."'target='_blank'>".$rs->Value('ca_website')."</a></TD>";
+		   echo "  <TD Class=mostrar style='$bkground'>Email :</TD>";
+		   echo "  <TD Class=mostrar style='$bkground'>".$rs->Value('ca_email')."</TD>";
 		   echo "</TR>";
 		   echo "<TR>";
-		   echo "  <TD Class=mostrar style='$vetado'>Status :</TD>";
-		   echo "  <TD Class=mostrar style='$vetado'>".$rs->Value('ca_status')."</TD>";
-		   echo "  <TD Class=mostrar style='$vetado'>Calificación :</TD>";
-		   echo "  <TD Class=mostrar style='$vetado'>".$rs->Value('ca_calificacion')."</TD>";
+		   echo "  <TD Class=mostrar style='$bkground'>Status :</TD>";
+		   echo "  <TD Class=mostrar style='$bkground'>".$rs->Value('ca_status').(($rs->Value('ca_status')=="Restrictivo")?" <IMG SRC='./graficos/nuevo.gif' border=0 ALT='Cliente con algunas restricciones!'>":"")."</TD>";
+		   echo "  <TD Class=mostrar style='$bkground'>Calificación :</TD>";
+		   echo "  <TD Class=mostrar style='$bkground'>".$rs->Value('ca_calificacion')."</TD>";
 		   echo "</TR>";
 		   echo "<TR>";
-		   echo "  <TD Class=listar style='$vetado' rowspan=4>Sector :</TD>";
-		   echo "  <TD Class=listar style='$vetado' rowspan=4>".$rs->Value('ca_sectoreco')."</TD>";
-		   echo "  <TD Class=listar style='$vetado'>Vendedor :</TD>";
-		   echo "  <TD Class=listar style='$vetado'>".$rs->Value('ca_vendedor')."<BR>".$rs->Value('ca_sucursal')."</TD>";
+		   echo "  <TD Class=listar style='$bkground' rowspan=4>Sector :</TD>";
+		   echo "  <TD Class=listar style='$bkground' rowspan=4>".$rs->Value('ca_sectoreco')."</TD>";
+		   echo "  <TD Class=listar style='$bkground'>Vendedor :</TD>";
+		   echo "  <TD Class=listar style='$bkground'>".$rs->Value('ca_vendedor')."<BR>".$rs->Value('ca_sucursal')."</TD>";
 		   echo "</TR>";
 		   echo "<TR>";
-		   echo "  <TD Class=mostrar style='$vetado'>Coord. Colmas:</TD>";
-		   echo "  <TD Class=mostrar style='$vetado'>".$rs->Value('ca_coordinador')."</TD>";
+		   echo "  <TD Class=mostrar style='$bkground'>Coord. Colmas:</TD>";
+		   echo "  <TD Class=mostrar style='$bkground'>".$rs->Value('ca_coordinador')."</TD>";
 		   echo "</TR>";
 		   echo "<TR>";
-		   echo "  <TD Class=mostrar style='$vetado'>Tipo NIT:</TD>";
-		   echo "  <TD Class=mostrar style='$vetado'>".str_replace("|","<br>",$rs->Value('ca_tipo'))."</TD>";
+		   echo "  <TD Class=mostrar style='$bkground'>Tipo NIT:</TD>";
+		   echo "  <TD Class=mostrar style='$bkground'>".str_replace("|","<br>",$rs->Value('ca_tipo'))."</TD>";
 		   echo "</TR>";
 		   echo "<TR>";
-		   echo "  <TD Class=mostrar style='$vetado'>Entidad:</TD>";
-		   echo "  <TD Class=mostrar style='$vetado'>".$rs->Value('ca_entidad')."</TD>";
+		   echo "  <TD Class=mostrar style='$bkground'>Entidad:</TD>";
+		   echo "  <TD Class=mostrar style='$bkground'>".$rs->Value('ca_entidad')."</TD>";
 		   echo "</TR>";
 
 		   echo "<TR>";
 		   echo "  <TD Class=invertir COLSPAN=4><TABLE WIDTH=100% CELLSPACING=1 BORDER=1>";
 		   echo "  <TR>";
-		   echo "    <TD Class=listar style='$vetado'>Circular 170:<BR /><CENTER>".$rs->Value('ca_fchcircular')."</CENTER></TD>";
-		   echo "    <TD Class=listar style='$vetado'>Estado Circular:<BR /><CENTER>".$rs->Value('ca_stdcircular')."</CENTER></TD>";
-		   echo "    <TD Class=listar style='$vetado'>Nivel Riesgo:<BR /><CENTER>".$rs->Value('ca_nvlriesgo')."</CENTER></TD>";
-		   echo "    <TD Class=listar style='$vetado'>Lista Clinton:<BR /><CENTER>".$rs->Value('ca_listaclinton')."</CENTER></TD>";
-               echo "    <TD Class=listar style='$vetado'>Acuerdo Conf.:<BR /><CENTER>".$rs->Value('ca_fchacuerdoconf')."</CENTER></TD>";
+		   echo "    <TD Class=listar style='$bkground'>Circular 170:<BR /><CENTER>".$rs->Value('ca_fchcircular')."</CENTER></TD>";
+		   echo "    <TD Class=listar style='$bkground'>Estado Circular:<BR /><CENTER>".$rs->Value('ca_stdcircular')."</CENTER></TD>";
+		   echo "    <TD Class=listar style='$bkground'>Nivel Riesgo:<BR /><CENTER>".$rs->Value('ca_nvlriesgo')."</CENTER></TD>";
+		   echo "    <TD Class=listar style='$bkground'>Lista Clinton:<BR /><CENTER>".$rs->Value('ca_listaclinton')."</CENTER></TD>";
+               echo "    <TD Class=listar style='$bkground'>Acuerdo Conf.:<BR /><CENTER>".$rs->Value('ca_fchacuerdoconf')."</CENTER></TD>";
 		   echo "  </TR>";
 		   echo "  <TR>";
-		   echo "    <TD Class=listar style='$vetado'>Contrato Agenc.:<BR /><CENTER>".$rs->Value('ca_fchcotratoag')."</CENTER></TD>";
-		   echo "    <TD Class=listar style='$vetado'>Estado Contrato:<BR /><CENTER>".$rs->Value('ca_stdcotratoag')."</CENTER></TD>";
-		   echo "    <TD Class=listar style='$vetado'>Ley Insolvencia Eco.:<BR /><CENTER>".$rs->Value('ca_leyinsolvencia')."</CENTER></TD>";
-		   echo "    <TD Class=listar style='$vetado' COLSPAN='2'>Comentario:<BR /><CENTER>".$rs->Value('ca_comentario')."</CENTER></TD>";
+		   echo "    <TD Class=listar style='$bkground'>Contrato Agenc.:<BR /><CENTER>".$rs->Value('ca_fchcotratoag')."</CENTER></TD>";
+		   echo "    <TD Class=listar style='$bkground'>Estado Contrato:<BR /><CENTER>".$rs->Value('ca_stdcotratoag')."</CENTER></TD>";
+		   echo "    <TD Class=listar style='$bkground'>Ley Insolvencia Eco.:<BR /><CENTER>".$rs->Value('ca_leyinsolvencia')."</CENTER></TD>";
+		   echo "    <TD Class=listar style='$bkground' COLSPAN='2'>Comentario:<BR /><CENTER>".$rs->Value('ca_comentario')."</CENTER></TD>";
 		   echo "  </TR>";
 		   echo "  </TABLE></TD>";
 		   echo "</TR>";
 
 		   echo "<TR>";
-		   echo "  <TD Class=listar style='$vetado' COLSPAN=6><TABLE WIDTH=100% CELLSPACING=1 BORDER=1>";
+		   echo "  <TD Class=listar style='$bkground' COLSPAN=6><TABLE WIDTH=100% CELLSPACING=1 BORDER=1>";
 		   echo "  <TR>";
-		   echo "  	 <TD Class=listar COLSPAN=2 style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; $vetado'><B>Actividad Económica:</B><BR>".$rs->Value('ca_actividad')."&nbsp;</TD>";
-		   echo "    <TD Class=listar COLSPAN=2 style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; $vetado'><B>Preferencias :</B><BR>".$rs->Value('ca_preferencias')."&nbsp;</TD>";
+		   echo "  	 <TD Class=listar COLSPAN=2 style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; $bkground'><B>Actividad Económica:</B><BR>".$rs->Value('ca_actividad')."&nbsp;</TD>";
+		   echo "    <TD Class=listar COLSPAN=2 style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; $bkground'><B>Preferencias :</B><BR>".$rs->Value('ca_preferencias')."&nbsp;</TD>";
 		   echo "  </TR>";
 		   echo "  </TABLE></TD>";
 		   echo "</TR>";
 
 		   echo "<TR>";
-		   echo "  <TD Class=mostrar style='$vetado' COLSPAN=5><b>Libreta de Direcciones del Cliente:</b> <!--<IMG SRC='./graficos/nuevo.gif' border=0 ALT='Opción de mantenimiento a libreta de direcciones por cliente!'> --></TD>";
+		   echo "  <TD Class=mostrar style='$bkground' COLSPAN=5><b>Libreta de Direcciones del Cliente:</b> <!--<IMG SRC='./graficos/nuevo.gif' border=0 ALT='Opción de mantenimiento a libreta de direcciones por cliente!'> --></TD>";
 		   echo "  <TD Class=invertir style='vertical-align: top; text-align: center;'>";                                            // Botones para hacer Mantenimiento a la Tabla
 		   echo "    <IMG style='visibility: $visible;' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Libreta\", ".$rs->Value('ca_idcliente').");'>";
 		   echo "  </TD>";
@@ -630,11 +631,11 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 		   echo "      <TABLE WIDTH=100% CELLSPACING=1 CELLPADDING=0 BORDER=0>";
 		   $z=0;
 		   $emails = explode(",", $rs->Value('ca_confirmar'));
-		   for ($i=0; $i<5; $i++){
+		   for ($i=0; $i<7; $i++){
                         echo "  <TR>";
                         for ($j=0; $j<3; $j++) {
                             $cadena = (strlen($emails[$z])==0)?"&nbsp;":$emails[$z];
-                            echo "<TD Class=mostrar style='$vetado'>$cadena</TD>";
+                            echo "<TD Class=mostrar style='$bkground'>$cadena</TD>";
                             $z++; }
                         echo "  </TR>";
                    }
@@ -976,7 +977,7 @@ require_once("menu.php");
              echo "<TR>";
              $z=0;
              $emails = explode(",", $rs->Value('ca_confirmar'));
-             for ($i=0; $i<6; $i++){
+             for ($i=0; $i<7; $i++){
              	echo "  <TR>";
              	for ($j=0; $j<3; $j++) {
              		$cadena = (strlen($emails[$z])==0)?"&nbsp;":$emails[$z];
