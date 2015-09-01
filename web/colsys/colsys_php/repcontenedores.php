@@ -13,8 +13,9 @@
   // Copyright:     Coltrans S.A. - 2004                                        \\
   /*================-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*\
  */
-$titulo = 'Informe de Contenedores';
+$titulo = 'Informe de Contenedores - Oportunidad en la Devolucion';
 $meses  = array( "%" => "Todos los Meses", "01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre" );
+$continuacion = array("%" => "Todos", "N/A" => "Sin Continuación", "OTM" => "Carga en OTM", "DTA" => "Carga en DTA", "OTM/DTA" => "OTM o DTA");
 
 include_once 'include/datalib.php';                                            // Incorpora la libreria de funciones, para accesar leer bases de datos
 include_once 'include/functions.php';                                          // Incorpora la libreria de funciones varias
@@ -65,6 +66,11 @@ if (!isset($buscar) and !isset($accion)) {
       $tm->MoveNext();
    }
    echo "  </TD>";
+   echo "  <TD Class=listar>Continuacion de Viaje:<BR><SELECT NAME='continuacion'>";
+   while (list ($val, $clave) = each ($continuacion)) {
+       echo " <OPTION VALUE='".$val."'>".$clave;
+       }
+   echo "  </SELECT></TD>";
    if (!$tm->Open("select distinct ca_nombre as ca_sucursal from control.tb_sucursales order by ca_sucursal")) {       // Selecciona todos lo registros de la tabla Sucursales
        echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
        echo "<script>document.location.href = 'repcomisiones.php';</script>";
@@ -99,17 +105,17 @@ if (!isset($buscar) and !isset($accion)) {
       exit;
    }
    $tm->MoveFirst();
-   echo "  <TD Class=listar colspan='3'><B>Línea Naviera:</B><BR><SELECT NAME='linea'>";
+   echo "  <TD Class=listar colspan='4'><B>Línea Naviera:</B><BR><SELECT NAME='linea'>";
    echo "    <OPTION VALUE=%>Todas las Líneas</OPTION>";
    while (!$tm->Eof()) {
        echo "    <OPTION VALUE='" . $tm->Value('ca_idlinea') . "'>" . $tm->Value('ca_nombre') . "</OPTION>";
        $tm->MoveNext();
    }
    echo "  </SELECT></TD>";
-   echo "  <TD Class=listar colspan='2'><B>Nombre del Cliente:</B><BR><INPUT TYPE='text' NAME='compania' VALUE='' size='40' maxlength='60'></TD>";
+   echo "  <TD Class=listar colspan='2'><B>Nombre del Cliente:</B><BR><INPUT TYPE='text' NAME='compania' VALUE='' size='50' maxlength='60'></TD>";
    echo "</TR>";
    echo "<TR>";
-   echo "  <TD Class=listar colspan='4'><B>Sitio de Devolución:</B><BR><SELECT NAME='idpatio'>";  // Llena el cuadro de lista con los valores de la tabla Conceptos
+   echo "  <TD Class=listar colspan='5'><B>Sitio de Devolución:</B><BR><SELECT NAME='idpatio'>";  // Llena el cuadro de lista con los valores de la tabla Conceptos
    echo "  <OPTION VALUE=''></OPTION>";
    if (!$tm->Open("select pt.*, cd.ca_ciudad from pric.tb_patios pt inner join tb_ciudades cd on pt.ca_idciudad = cd.ca_idciudad order by cd.ca_ciudad")) {       // Selecciona todos lo registros de la tabla Eventos Clientes
        echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";          // Muestra el mensaje de error
@@ -135,7 +141,7 @@ if (!isset($buscar) and !isset($accion)) {
    echo "</TR>";
 
    echo "<TR HEIGHT=5>";
-   echo "  <TD Class=captura COLSPAN=7></TD>";
+   echo "  <TD Class=captura COLSPAN=8></TD>";
    echo "</TR>";
 
    echo "</TABLE><BR>";
@@ -172,6 +178,12 @@ if (!isset($buscar) and !isset($accion)) {
    }
    if ($sucursal != "%"){
        $condicion.= " and ca_referencia in (select ca_referencia from tb_inoclientes_sea ic LEFT OUTER JOIN control.tb_usuarios us ON (ic.ca_login = us.ca_login) LEFT OUTER JOIN control.tb_sucursales sc ON (us.ca_idsucursal = sc.ca_idsucursal) where sc.ca_nombre like '%$sucursal%')";
+   }
+   if ($continuacion != "%"){
+       if ($continuacion != "OTM/DTA")
+           $condicion.= " and ca_continuacion = '".$continuacion."'";
+       else
+           $condicion.= " and ca_continuacion <> 'N/A'";
    }
    $sql="select * from vi_inoctrlcontenedores_sea $condicion order by ca_fchconfirmacion, ca_fchdevolucion, ca_referencia";
    //echo $sql."<br>";
@@ -220,7 +232,22 @@ if (!isset($buscar) and !isset($accion)) {
    echo "<TR>";
    echo "  <TH Class=titulo COLSPAN=3>" . COLTRANS . "<BR>$titulo</TH>";
    echo "</TR>";
-   echo "<TH COLSPAN=3>Referencia</TH>";
+   echo "<TD Class=listar COLSPAN=3><CENTER>";
+   echo "   <TABLE CELLSPACING=1>";
+   echo "       <TH style='background: #9999CC'>&nbsp;&nbsp;&nbsp;</TH>";
+   echo "       <TH>Sin Fecha de Inspeccion</TH>";
+   echo "       <TD>&nbsp;</TD>";
+   echo "       <TH style='background: #FF0000'>&nbsp;&nbsp;&nbsp;</TH>";
+   echo "       <TH>Menos del 33%</TH>";
+   echo "       <TD>&nbsp;</TD>";
+   echo "       <TH style='background: #FFFF00'>&nbsp;&nbsp;&nbsp;</TH>";
+   echo "       <TH>Entre el 33% y el 66%</TH>";
+   echo "       <TD>&nbsp;</TD>";
+   echo "       <TH style='background: #009900'>&nbsp;&nbsp;&nbsp;</TH>";
+   echo "       <TH>Mas del 66% de oportunidad</TH>";
+   echo "       <TD>&nbsp;</TD>";
+   echo "   </TABLE></CENTER>";
+   echo "</TD>";
    $oid_mem = 0;
    while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
       if ($oid_mem != $rs->Value('ca_oid')) {
@@ -283,11 +310,13 @@ if (!isset($buscar) and !isset($accion)) {
          echo "  <TD Class=invertir style='font-size: 9px;' WIDTH=300><TABLE WIDTH=100% CELLSPACING=1>";
          echo "  <TH>Cliente</TH>";
          echo "  <TH>HBL</TH>";
+         echo "  <TH>C.Viaje</TH>";
       }
       echo "<TR>";
       $back_col = (strlen($rs->Value('ca_fchvencimiento')) != 0) ? " background: #CCCC99" : " background: #F0F0F0";
       echo "  <TD Class=listar style='font-size: 9px;$back_col'>" . $rs->Value('ca_compania') . " " . ((strlen($rs->Value('ca_fchvencimiento')) != 0) ? " <B>©</B>" : "") . "</TD>";
       echo "  <TD Class=listar style='font-size: 9px;$back_col'>" . $rs->Value('ca_hbls') . "</TD>";
+      echo "  <TD Class=listar style='font-size: 9px;$back_col'>" . $rs->Value('ca_continuacion') . "</TD>";
       echo "</TR>";
       $rs->MoveNext();
       if ($oid_mem != $rs->Value('ca_oid') or $rs->Eof()) {
