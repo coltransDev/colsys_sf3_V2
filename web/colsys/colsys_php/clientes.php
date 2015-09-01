@@ -45,7 +45,7 @@ if ($regional == 'CO-057'){
 $circular=array("Sin","Vencido","Vigente");
 $presentacion=array("Detallado","Columnas");
 $entidades=array("Vigente","Fusionada","Disuelta","Liquidada");
-$tiposnits=array("","Agente","Proveedor");
+$tiposnits=array("","Agente","Proveedor","Excepción Temporal","Excepción Permanente");
 $operaciones=array("I" => "Nuevo Registro", "U" => "Actualización", "D" => "Borrado");
 
                                                                // Captura las variables de la sessión abierta
