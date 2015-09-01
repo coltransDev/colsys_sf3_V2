@@ -20,7 +20,7 @@ $bdatos = array("Mestra Clientes", "Mis Clientes", "Clientes Libres");  // Arreg
 $estados = array("Potencial","Activo","Vetado");
 $empresas= array("Coltrans","Colmas");
 $circular=array("Sin","Vencido","Vigente");
-$tiposnits=array("","Agente","Proveedor");
+$tiposnits=array("","Agente","Proveedor","Excepción Temporal","Excepción Permanente");
 $operaciones=array("I" => "Nuevo Registro", "U" => "Actualización", "D" => "Borrado");
 
 include_once 'include/datalib.php';                                                // Incorpora la libreria de funciones, para accesar leer bases de datos
@@ -427,7 +427,7 @@ elseif (isset($boton)) {                                                       /
                  echo "<script>document.location.href = 'clientes_financ.php';</script>";
                  exit;
                 }
-			 $tipos = explode("|", $rs->Value('ca_tipo'));
+             $tipos = explode("|", $rs->Value('ca_tipo'));
 			 
              echo "<HEAD>";
              echo "<script language='JavaScript' type='text/JavaScript'>";     // Código en JavaScript para validar las opciones de mantenimiento
@@ -435,7 +435,7 @@ elseif (isset($boton)) {                                                       /
              echo "      return (true);";
              echo "}";
              echo "</script>";
-			 echo "<script language='javascript' src='javascripts/popcalendar.js'></script>";
+             echo "<script language='javascript' src='javascripts/popcalendar.js'></script>";
              echo "</HEAD>";
              echo "<BODY>";
 require_once("menu.php");
@@ -456,41 +456,43 @@ require_once("menu.php");
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura>Circular 170:</TD>";
-			 echo "  <TD Class=invertir><TABLE CELLSPACING=1 WIDTH=100%><TR>";
+             echo "  <TD Class=invertir><TABLE CELLSPACING=1 WIDTH=100%><TR>";
              echo "  <TD Class=mostrar>Diligenciado: (aaaa/mm/dd)<BR /><CENTER><INPUT TYPE='TEXT' NAME='fchcircular' SIZE=12 VALUE='".$rs->Value('ca_fchcircular')."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></CENTER></TD>";
              echo "  <TD Class=mostrar>Nivel de Riesgo:<BR /><CENTER><SELECT NAME='nvlriesgo'>";
              for ($i=0; $i < count($riesgos); $i++) {
                   echo " <OPTION VALUE='".$riesgos[$i]."'";
                   if ($riesgos[$i]==$rs->Value('ca_nvlriesgo')) {
                       echo" SELECTED"; }
-				  echo ">".$riesgos[$i];
+                      echo ">".$riesgos[$i];
                   }
              echo "  </SELECT></CENTER></TD>";
-			 echo "  </TABLE><TD>";
+             echo "  </TABLE><TD>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura>Ley Insolvencia Eco.:</TD>";
-			 echo "  <TD Class=invertir><TABLE CELLSPACING=1 WIDTH=100%><TR>";
+             echo "  <TD Class=invertir><TABLE CELLSPACING=1 WIDTH=100%><TR>";
              echo "  <TD Class=mostrar WIDTH=100>Reportado:<BR /><CENTER><SELECT NAME='leyinsolvencia'>";
              echo "  	<OPTION VALUE='No' ".(($rs->Value('ca_leyinsolvencia')=='No')?'SELECTED':'').">No";
              echo "  	<OPTION VALUE='Sí' ".(($rs->Value('ca_leyinsolvencia')=='Sí')?'SELECTED':'').">Sí";
              echo "  </SELECT></CENTER></TD>";
-			 echo "  <TD Class=mostrar>Comentario:<BR /><CENTER><INPUT TYPE='TEXT' NAME='comentario' SIZE=60 VALUE='".$rs->Value('ca_comentario')."' MAXLENGTH=255></CENTER></TD>";
-			 echo "  </TABLE><TD>";
+             echo "  <TD Class=mostrar>Comentario:<BR /><CENTER><INPUT TYPE='TEXT' NAME='comentario' SIZE=60 VALUE='".$rs->Value('ca_comentario')."' MAXLENGTH=255></CENTER></TD>";
+             echo "  </TABLE><TD>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=captura>Lista Clinton:</TD>";
-			 echo "  <TD Class=invertir><TABLE CELLSPACING=1 WIDTH=425><TR>";
-             echo "  <TD Class=mostrar>Reportado:<BR /><CENTER><SELECT NAME='listaclinton'>";
+             echo "  <TD Class=invertir><TABLE CELLSPACING=1 WIDTH=425><TR>";
+             echo "  <TD Class=mostrar style='vertical-align: top;'>Reportado:<BR /><CENTER><SELECT NAME='listaclinton'>";
              echo "  	<OPTION VALUE='No' ".(($rs->Value('ca_listaclinton')=='No')?'SELECTED':'').">No";
              echo "  	<OPTION VALUE='Sí' ".(($rs->Value('ca_listaclinton')=='Sí')?'SELECTED':'').">Sí";
              echo "  </SELECT></CENTER></TD>";
              echo "  <TD Class=captura>Tipo de NIT.:</TD>";
-			 echo "  <TD Class=invertir style='vertical-align: bottom;'>";
-			 echo "  	<INPUT TYPE='CHECKBOX' NAME='tipo_nit[]' ".((in_array("Agente",$tipos))?'CHECKED':'')." VALUE='Agente'> Agente<br/>";
-			 echo "  	<INPUT TYPE='CHECKBOX' NAME='tipo_nit[]' ".((in_array("Proveedor",$tipos))?'CHECKED':'')." VALUE='Proveedor'> Proveedor";
+             echo "  <TD Class=invertir style='vertical-align: bottom;'>";
+             echo "  	<INPUT TYPE='CHECKBOX' NAME='tipo_nit[]' ".((in_array("Agente",$tipos))?'CHECKED':'')." VALUE='Agente'> Agente<br/>";
+             echo "  	<INPUT TYPE='CHECKBOX' NAME='tipo_nit[]' ".((in_array("Proveedor",$tipos))?'CHECKED':'')." VALUE='Proveedor'> Proveedor<br/>";
+             echo "  	<INPUT TYPE='CHECKBOX' NAME='tipo_nit[]' ".((in_array("Excepción Temporal",$tipos))?'CHECKED':'')." VALUE='Excepción Temporal'> Excepción Temporal<br/>";
+             echo "  	<INPUT TYPE='CHECKBOX' NAME='tipo_nit[]' ".((in_array("Excepción Permanente",$tipos))?'CHECKED':'')." VALUE='Excepción Permanente'> Excepción Permanente";
              echo "  </TD>";
-			 echo "  </TR></TABLE></TD>";
+             echo "  </TR></TABLE></TD>";
              echo "</TR>";
              echo"</TABLE><BR>";
              echo "<TABLE CELLSPACING=10>";
