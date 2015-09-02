@@ -185,7 +185,7 @@ if (!isset($buscar) and !isset($accion)) {
        else
            $condicion.= " and ca_continuacion <> 'N/A'";
    }
-   $sql="select * from vi_inoctrlcontenedores_sea $condicion order by ca_fchconfirmacion, ca_fchdevolucion, ca_referencia";
+   $sql="select * from vi_inoctrlcontenedores_sea $condicion order by ca_referencia";
    //echo $sql."<br>";
    if (!$rs->Open($sql)) {
        echo "Error 138: $sql";
@@ -204,7 +204,7 @@ if (!isset($buscar) and !isset($accion)) {
    
    $rs->MoveFirst();
    $eq = & DlRecordset::NewRecordset($conn);
-   $sql="select ca_referencia, ca_concepto, ca_idequipo, ca_inspeccion_nta, ca_inspeccion_fch from vi_inoequipos_sea where ca_referencia in (". implode( ",", $ref_mem) .") order by ca_referencia, ca_concepto";
+   $sql="select ca_referencia, ca_concepto, ca_idequipo, ca_inspeccion_nta, ca_inspeccion_fch, ca_dias_libres, ca_observaciones_con from vi_inoequipos_sea where ca_referencia in (". implode( ",", $ref_mem) .") order by ca_referencia, ca_concepto";
    if (!$eq->Open($sql)) { 
        echo "Error 153: $sql";
       //echo "<script>alert(\"" . addslashes($eq->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
@@ -228,23 +228,23 @@ if (!isset($buscar) and !isset($accion)) {
    echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";                      // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
    echo "<CENTER>";
    echo "<FORM METHOD=post NAME='informe' ACTION='repcontenedores.php'>";       // Hace una llamado nuevamente a este script pero con
-   echo "<TABLE WIDTH=700 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
+   echo "<TABLE WIDTH=850 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
    echo "<TR>";
    echo "  <TH Class=titulo COLSPAN=3>" . COLTRANS . "<BR>$titulo</TH>";
    echo "</TR>";
    echo "<TD Class=listar COLSPAN=3><CENTER>";
    echo "   <TABLE CELLSPACING=1>";
    echo "       <TH style='background: #9999CC'>&nbsp;&nbsp;&nbsp;</TH>";
-   echo "       <TH>Sin Fecha de Inspeccion</TH>";
+   echo "       <TH>Sin Información Registrada</TH>";
    echo "       <TD>&nbsp;</TD>";
    echo "       <TH style='background: #FF0000'>&nbsp;&nbsp;&nbsp;</TH>";
-   echo "       <TH>Menos del 33%</TH>";
+   echo "       <TH>Atención Urgente</TH>";
    echo "       <TD>&nbsp;</TD>";
    echo "       <TH style='background: #FFFF00'>&nbsp;&nbsp;&nbsp;</TH>";
-   echo "       <TH>Entre el 33% y el 66%</TH>";
+   echo "       <TH>Próximo a Vencer</TH>";
    echo "       <TD>&nbsp;</TD>";
    echo "       <TH style='background: #009900'>&nbsp;&nbsp;&nbsp;</TH>";
-   echo "       <TH>Mas del 66% de oportunidad</TH>";
+   echo "       <TH>Tiempo Libre</TH>";
    echo "       <TD>&nbsp;</TD>";
    echo "   </TABLE></CENTER>";
    echo "</TD>";
@@ -253,45 +253,58 @@ if (!isset($buscar) and !isset($accion)) {
       if ($oid_mem != $rs->Value('ca_oid')) {
          $ref_mem = $rs->Value('ca_referencia');
          $oid_mem = $rs->Value('ca_oid');
-         $cas_cer = TRUE;
          
          $id_array = array();
          $tabla_equipos = "";
-         $tabla_equipos.= "<TABLE WIDTH=100% CELLSPACING=1>";
+         $tabla_equipos.= "<TABLE WIDTH=350px CELLSPACING=1>";
          $tabla_equipos.= "<TH>Equipo</TH>";
          $tabla_equipos.= "<TH>Id</TH>";
+         $tabla_equipos.= "<TH>Días Lib.</TH>";
+         $tabla_equipos.= "<TH>Devolución</TH>";
+         $tabla_equipos.= "<TH>Observaciones</TH>";
          $eq->MoveFirst();
+         $intervalo = dateDiff($rs->Value('ca_fchconfirmacion'), date("Y-m-d"));
          while (!$eq->Eof() and !$eq->IsEmpty()) {
+            $sin_dat = FALSE;
+            $cas_cer = FALSE;
+            
             if ($eq->Value('ca_referencia') != $ref_mem) {
                $eq->MoveNext();
                continue;
             }
-            if ($eq->Value('ca_inspeccion_fch') == ''){     //$eq->Value('ca_inspeccion_nta') == '' or 
-               $cas_cer = FALSE;
+            if ($eq->Value('ca_inspeccion_fch') == ""){     //$eq->Value('ca_inspeccion_nta') == '' or 
+               $sin_dat = TRUE;
+            }
+            if (strpos(strtolower($eq->Value('ca_observaciones_con')), "dev") !== FALSE){
+               $cas_cer = TRUE;
+            }
+            // FF0000 -> Rojo
+            // 009900 -> Verde
+            // FFFF00 -> Amarillo
+            // 9999CC -> Lila
+            if($sin_dat and !$cas_cer){
+               $back_col = "background: #9999CC";
+            }else if(!$sin_dat and $cas_cer){
+               $back_col = "";
+            }else if($intervalo >= round($eq->Value('ca_dias_libres')*0.6666666666,0)){
+               $back_col = "background: #FF0000";
+            }else if($intervalo >= round($eq->Value('ca_dias_libres')*0.3333333333,0)){
+               $back_col = "background: #FFFF00";
+            }else{
+               $back_col = "background: #009900";
             }
             $tabla_equipos.= "<TR>";
-            $tabla_equipos.= "  <TD Class=listar style='font-size: 9px;'>" . $eq->Value('ca_concepto') . "</TD>";
-            $tabla_equipos.= "  <TD Class=listar style='font-size: 9px;'>" . $eq->Value('ca_idequipo') . "</TD>";
+            $tabla_equipos.= "  <TD Class=listar style='font-size: 9px; $back_col'>" . $eq->Value('ca_concepto') . "</TD>";
+            $tabla_equipos.= "  <TD Class=listar style='font-size: 9px; $back_col'>" . $eq->Value('ca_idequipo') . "</TD>";
+            $tabla_equipos.= "  <TD Class=listar style='font-size: 9px; $back_col'>" . $eq->Value('ca_dias_libres') . "</TD>";
+            $tabla_equipos.= "  <TD Class=listar style='font-size: 9px; $back_col'>" . $eq->Value('ca_inspeccion_fch') . "</TD>";
+            $tabla_equipos.= "  <TD Class=listar style='font-size: 9px; $back_col'>" . $eq->Value('ca_observaciones_con') . "</TD>";
             $tabla_equipos.= "</TR>";
             $id_array[] = $eq->Value('ca_concepto');
             $eq->MoveNext();
          }
          $tabla_equipos.= "</TABLE>";
          
-         $intervalo = dateDiff($rs->Value('ca_fchconfirmacion'), date("Y-m-d"));
-         // FF0000 -> Rojo
-         // 009900 -> Verde
-         // FFFF00 -> Amarillo
-         // 9999CC -> Lila
-         if($cas_cer){
-            $back_col = " background: #9999CC";
-         }else if($intervalo >= round($rs->Value('ca_numdias')*0.6666666666,0)){
-            $back_col = " background: #FF0000";
-         }else if($intervalo >= round($rs->Value('ca_numdias')*0.3333333333,0)){
-            $back_col = " background: #FFFF00";
-         }else{
-            $back_col = " background: #009900";
-         }
          echo "<TR>";
          echo "<TD Class=invertir style='font-size: 9px;' COLSPAN=3><TABLE WIDTH=100% CELLSPACING=1>";
          echo "<TR>";
@@ -300,8 +313,7 @@ if (!isset($buscar) and !isset($accion)) {
          echo "  <TD Class=listar style='font-size: 9px;'><b>Origen:</b><br>" . $rs->Value('ca_ciuorigen') . "</TD>";
          echo "  <TD Class=listar style='font-size: 9px;'><b>Destino:</b><br>" . $rs->Value('ca_ciudestino') . "</TD>";
          echo "  <TD Class=listar style='font-size: 9px;'><b>MBL:</b><br>" . $rs->Value('ca_mbls') . "|" . $rs->Value('ca_fchmbls') . "</TD>";
-         echo "  <TD Class=listar style='font-size: 9px;'><b>E.T.A.:</b><br>" . $rs->Value('ca_fchconfirmacion') . "</TD>";
-         echo "  <TD Class=listar style='font-size: 9px;;$back_col'><b>Devolución:</b><br>" . $rs->Value('ca_fchdevolucion') . "</TD>";
+         echo "  <TD Class=listar style='font-size: 9px;'><b>Conf.Arribo:</b><br>" . $rs->Value('ca_fchconfirmacion') . "</TD>";
          echo "</TR>";
          echo "</TABLE></TD>";
          echo "</TR>";
