@@ -22,8 +22,6 @@ class helpdeskActions extends sfActions {
         $this->app = sfContext::getInstance()->getConfiguration()->getApplication();
         if ($this->app == "intranet") {
             $this->setLayout("layout1col");
-            $response = sfContext::getInstance()->getResponse();
-            $response->addJavaScript("blog", 'last');
         }
         parent::preExecute();
     }
@@ -39,7 +37,6 @@ class helpdeskActions extends sfActions {
         $this->user = $this->getUser();
 
         $this->nivel = $this->getUser()->getNivelAcceso(helpdeskActions::RUTINA);
-        //echo $this->getUser()->getUserId()." ".$this->nivel;
         if (!$this->nivel) {
             $this->nivel = 0;
         }
@@ -53,6 +50,10 @@ class helpdeskActions extends sfActions {
     public function executeListaTickets(sfWebRequest $request) {
 
         $nivel = $this->getUser()->getNivelAcceso(helpdeskActions::RUTINA);
+        
+        if (!$nivel || $nivel<0) {
+            $nivel = 0;
+        }
         $opcion = $request->getParameter("opcion");
         $criterio = $request->getParameter("criterio");
         $groupby = $request->getParameter("groupby");
@@ -64,12 +65,7 @@ class helpdeskActions extends sfActions {
         $q->leftJoin("h.HdeskTicketUser hu  ");
         switch ($opcion) {
             case "numero":
-                if (intval($criterio)) {
-                    $ticket = Doctrine::getTable("HdeskTicket")->find(intval($criterio));
-                    if ($ticket) {
-                        $this->redirect("helpdesk/verTicket?id=" . $ticket->getCaIdticket());
-                    }
-                }
+                $q->addWhere("h.ca_idticket = ?", intval($criterio));
                 break;
             case "criterio":
                 $q->innerJoin("h.HdeskResponse r");
@@ -129,24 +125,6 @@ class helpdeskActions extends sfActions {
                 $q->addOrderBy("h.ca_closedat DESC");
                 $q->addOrderBy("h.ca_opened ASC");
 
-                break;
-
-            case "group":
-
-                $q->innerJoin("g.HdeskUserGroup ugg ");
-                $q->addWhere("( ugg.ca_login = ?)", $this->getUser()->getUserid());
-
-                if ($request->getParameter("assigned")) {
-                    if ($request->getParameter("assigned") == "true") {
-                        $q->addWhere("h.ca_assignedto IS NOT NULL");
-                    } else {
-                        $q->addWhere("h.ca_assignedto IS NULL");
-                    }
-                }
-                $q->addWhere("h.ca_closedat IS NULL");
-                $q->addOrderBy("h.ca_idgroup");
-
-                if ($groupby == "project") {
                     $q->addOrderBy("h.ca_idproject DESC");
                 }
                 $q->addOrderBy("h.ca_opened DESC");
@@ -163,104 +141,48 @@ class helpdeskActions extends sfActions {
             case 1:
                 $q->innerJoin("g.HdeskUserGroup uggg ");
 
-                $q->addWhere("(h.ca_login = ? OR uggg.ca_login = ?)", array($this->getUser()->getUserid(), $this->getUser()->getUserid()));
-                break;
-            case 2:
-                $q->addWhere("(h.ca_login = ? OR g.ca_iddepartament = ?)", array($this->getUser()->getUserid(), $this->getUser()->getIddepartamento()));
-                break;
-        }
 
+                break;
 
-        $q->distinct();
+            case "group":
+
+                $q->innerJoin("g.HdeskUserGroup ugg ");
+                $q->addWhere("( ugg.ca_login = ?)", $this->getUser()->getUserid());
+
+                if ($request->getParameter("assigned")) {
+                    if ($request->getParameter("assigned") == "true") {
+                        $q->addWhere("h.ca_assignedto IS NOT NULL");
+                    } else {
+                        $q->addWhere("h.ca_assignedto IS NULL");
+                    }
+                }
+                $q->addWhere("h.ca_closedat IS NULL");
+                $q->addOrderBy("h.ca_idgroup");
+                break;
         //exit($q->getSql());
         $this->tickets = $q->execute();
 
-        $this->groupby = $groupby;
-
-        $this->nivel = $this->getUser()->getNivelAcceso(helpdeskActions::RUTINA);
-    }
-
-    /**
-     * Vista previa de un ticket y permite adicionar respuestas
-     *
-     * @param sfRequest $request A request object
-     */
-    public function executeVerTicket(sfWebRequest $request) {
-
-        $this->nivel = $this->getUser()->getNivelAcceso(helpdeskActions::RUTINA);
-        $this->iddepartamento = $this->getUser()->getIddepartamento();
 
         $idticket = $request->getParameter("id");
 
         if (!$this->nivel) {
             $this->nivel = 0;
         }
+                if ($groupby == "project") {
 
-        if ($this->nivel > 0 && $this->app != "intranet") {
-            $this->redirect("pm/index?idticket=" . $idticket);
-        }
+                $q->addWhere("(h.ca_login = ? OR uggg.ca_login = ?)", array($this->getUser()->getUserid(), $this->getUser()->getUserid()));
+                break;
+            case 2:
+                $q->addWhere("(h.ca_login = ? OR g.ca_iddepartament = ? or hu.ca_login = ?)", array($this->getUser()->getUserid(), $this->getUser()->getIddepartamento(), $this->getUser()->getUserid()));
 
-
-        $this->ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel);
-        $this->forward404Unless($this->ticket);
-
-        if ($request->getParameter("format") == "email") {
-            $this->setTemplate("verTicketEmail");
-            $this->setLayout("none");
-        }
-
-
-        $this->loginsGrupo = array();
-        $usuarios = Doctrine::getTable("HdeskUserGroup")->createQuery("ug")
-                ->where("ug.ca_idgroup = ?", $this->ticket->getCaIdgroup())
-                ->addOrderBy("ug.ca_login")
-                ->execute();
-        foreach ($usuarios as $usuario) {
-            $this->loginsGrupo[] = $usuario->getCaLogin();
-        }
-
-
-        $this->user = $this->getUser();
-
-        $directorio = $this->ticket->getDirectorioBase();
 
         $this->usuarios = Doctrine::getTable("Usuario")->createQuery("u")
-                ->innerJoin("u.HdeskTicketUser ug")
-                ->where("ug.ca_idticket = ?", $this->ticket->getCaIdticket())
-                ->addOrderBy("u.ca_nombre")
-                ->execute();
-        
-        $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $directorio . DIRECTORY_SEPARATOR;
-        
-        if (!is_dir($directorio)) {
-            @mkdir($directorio, 0777, true);
         }
-        chmod($directorio, 0777);
 
-        $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
-        
-        $filenames = array();
-        
-        foreach ($archivos as $archivo) {
-            $file = explode("/", $archivo);
-            $filenames[]["file"] = $file[count($file) - 1];
-        }
-        $this->folder = $directorio;
-        $this->filenames = $filenames;
-    }
 
-    /**
-     * Executes index action
-     *
-     * @param sfRequest $request A request object
-     */
-    public function executeGuardarRespuestaTicket(sfWebRequest $request) {
+        $q->distinct();
 
-        $this->nivel = $this->getUser()->getNivelAcceso(helpdeskActions::RUTINA);
         $idticket = $request->getParameter("idticket");
-        $ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel);
-        $this->forward404Unless($ticket);
-
 
 
         $user = $this->getUser();
@@ -364,5 +286,134 @@ class helpdeskActions extends sfActions {
             $this->forward404();
         }
     }
+        $this->groupby = $groupby;
+
+        $this->nivel = $nivel;
+        
+    }
+
+    /**
+     * Vista previa de un ticket y permite adicionar respuestas
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeVerTicket(sfWebRequest $request) {
+
+        $this->nivel = $this->getUser()->getNivelAcceso(helpdeskActions::RUTINA);
+        
+        //echo "189".$this->nivel;
+        $this->iddepartamento = $this->getUser()->getIddepartamento();
+    public function executeResponseTickets(sfWebRequest $request) {
+        //$folder1=$request->getParameter("folder");
+        $folder1="COLSYS";
+        $debug=$request->getParameter("debug");
+        //exit;
+        //try
+        {
+            ProjectConfiguration::registerZend();
+            Zend_Loader::loadClass('Zend_Gdata_ClientLogin');
+            Zend_Loader::loadClass('Zend_Gdata_Gapps');
+            $pass = 'cglti$col91';
+            $mail = new Zend_Mail_Storage_Imap(array('host' => 'imap.gmail.com', 'user' => "colsys@coltrans.com.co", 'password' => $pass, 'ssl' => 'SSL'));
+            $mail->selectFolder($folder1);
+            
+            foreach ($mail as $messageNum => $message) {
+                if ($message->hasFlag(Zend_Mail_Storage::FLAG_SEEN)) {
+                    continue;
+                }
+              
+                $from = $message->from;
+                $part = $message;
+                
+
+                $sender = trim(utf8_encode($message->from));
+                preg_match('/<(.*?)>/s', $sender, $matches);
+                $from =$matches[1];
+//                echo $sender_mail;
+                
+                $ticket_regex = "/#[0-9]+/";
+            
+                preg_match_all($ticket_regex, $message->subject, $matches_ticket);
+                $idticket=  str_replace("#","",$matches_ticket[0][0]);
+                //echo $idticket;
+                //echo $message->getPart(2)->getContent();
+                //exit;
+
+                while ($part->isMultipart()) {
+                    try{
+                        for($i=1;$i<=1;$i++)
+                        {
+
+                            $part = $message->getPart($i);
+                            //if($debug=="true")
+                            {
+                                //echo "<br><b>{$i}</b><br>";
+                                //echo "<pre>";
+                                //print_r($part->getContent());
+                                //echo "<pre>";
+                                $mess=$part->getContent();
+
+                                $p=strpos($mess, "Colsys Notificaciones");
+
+
+                                if($p>=0)
+                                {
+                                  $p=$p-130;
+                                }
+                                $mess = substr($mess, 0, $p);//message.substring(p + 1, message); //now get the address  
+                                $mess.="<br><span style='font-size:9px'><b>response from google app-script</b></span>"; 
+
+                                $request->setParameter("idticket",$idticket);
+                                $request->setParameter("comentario",$mess);
+
+                                $user = Doctrine::getTable("Usuario")
+                                ->createQuery("u")
+                                ->select("u.ca_login")
+                                ->where("u.ca_email = ? ", $from)
+                                ->addWhere("u.ca_activo = true ")
+                                ->limit(1)
+                                ->fetchOne();
+
+
+                                $request->setParameter("idticket",$idticket);
+                                $request->setParameter("comentario",$mess);
+                                $request->setParameter("iduser",$user->getCaLogin());
+
+                                $this->executeGuardarRespuestaTicket($request);
+
+
+
+
+                            }
+
+                        }
+                    }  catch (Exception $e)
+                            {
+                                
+                                Utils::sendEmail(
+                                    array(
+                                        "from"=>"colsys@coltrans.com.co",
+                                        "to"=>"admin@coltrans.com.co",
+                                        "subject"=>"Error en tickets email",
+                                        "body"=>"Error en tickets",
+                                        "mensaje"=> "Se presento el siguiente error al tratar de dar respuesta al ticket: {$idticket} ". $e->getTraceAsString()
+                                    )
+                                );
+                            }
+                    
+                }
+                $uniq_id = $mail->getUniqueId($messageNum);
+                $messageId = $mail->getNumberByUniqueId($uniq_id);
+                $mail->moveMessage($messageId, $folder1."P");
+
+            }
+        }
+        /*catch(Exception $e)
+        {
+            echo $e->getMessage();
+           
+        }*/
+        exit;
+    }    
 }
 ?>
