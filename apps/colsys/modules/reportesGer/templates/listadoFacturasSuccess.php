@@ -5,6 +5,7 @@
  * 
  */
 $sucursales = $sf_data->getRaw("sucursales");
+$destinos = $sf_data->getRaw("destinos");
 use_helper("ExtCalendar");
 ?>
 <div class="content" align="center">
@@ -83,15 +84,29 @@ use_helper("ExtCalendar");
                     ?>
                     </select>
                 </td>
-                <td>
+                <td style="vertical-align:top;">
                     Proveedor:<br />
                     <input type="text" name="proveedor" />
 
                 </td>
-                <td>
+                <td style="vertical-align:top;">
                     N&uacute;mero Factura:<br />
                     <input type="text" name="factura" />
 
+                </td>
+                <td style="vertical-align:top;">
+                    Puerto de descarga:
+                    <br />
+                    <select name="destino" >
+                        <option value="%">Todos</option>
+                    <?
+                    foreach( $destinos as $d ){
+                    ?>
+                        <option value="<?=$d->getCaIdciudad()?>"><?=$d->getCaCiudad()?></option>
+                    <?
+                    }
+                    ?>
+                    </select>
                 </td>
              </tr>
              <tr>

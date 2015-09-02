@@ -4,8 +4,10 @@
  * (c) Coltrans S.A. - Colmas Ltda.
  * 
  */
-
+$fchInicial = $sf_data->getRaw("fchInicial");
+$fchFinal = $sf_data->getRaw("fchFinal");
 $costos = $sf_data->getRaw("costos");
+$destino = $sf_data->getRaw("destino");
 ?>
 <div class="content" align="center">
     <h2>Informe de Facturación Proveedores Mar&iacute;timo</h2>
@@ -15,6 +17,13 @@ $costos = $sf_data->getRaw("costos");
        <th class="titulo" COLSPAN="13">
         <BR/>Informe de Facturaci&oacute;n Mar&iacute;tima
         <BR/>Fecha de Liquidaci&oacute;n desde <?=$fchInicial?> hasta <?=$fchFinal?>
+        <?
+        if ($destino){
+            ?>
+            <BR/>Cargas con Puerto de Destino: <?=$destino?>
+            <?
+        }
+        ?>
        </th>
      </tr>
      <?

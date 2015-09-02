@@ -1354,7 +1354,17 @@ class reportesGerActions extends sfActions {
                 $q->addWhere("u.ca_idsucursal = ?", $request->getParameter("sucursal"));
             }
             
-
+            if($request->getParameter("destino")!="%")
+            {   
+                $q->innerJoin("c.InoMaestraSea m");
+                $q->addWhere("m.ca_destino = ?", $request->getParameter("destino"));
+                $destino = Doctrine::getTable("Ciudad")->find($request->getParameter("destino"));
+                if($destino){
+                    $this->destino = $destino->getCaCiudad();
+                }
+            }
+            $this->fchInicial = $request->getParameter("fchInicial");
+            $this->fchFinal = $request->getParameter("fchFinal");
             $this->costos = $q->execute();
 
             $this->setTemplate("listadoFacturasResult");
@@ -1376,9 +1386,15 @@ class reportesGerActions extends sfActions {
             $this->sucursales = Doctrine::getTable("Sucursal")
                 ->createQuery("s")                
                 ->addOrderBy("s.ca_nombre")
-                ->addWhere("s.ca_idempresa=?", $this->getUser()->getIdempresa())                
+                ->addWhere("s.ca_idempresa=?", $this->getUser()->getIdempresa())
                 ->execute();
-            //print_r(count($this->sucursales));
+            
+            $this->destinos = Doctrine::getTable("Ciudad")
+                ->createQuery("c")
+                ->where("c.ca_idtrafico = ?", "CO-057")
+                ->addWhere("c.ca_puerto in ('Marítimo','Ambos')")
+                ->orderBy("c.ca_ciudad")
+                ->execute();
 
         }
     }
