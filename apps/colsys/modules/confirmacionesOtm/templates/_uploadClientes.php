@@ -115,6 +115,7 @@ foreach ($inoClientes as $inoCliente) {
         </td>
     </tr>
     <?
+    $narchivos = 0;
 }
 ?>
 <script>
