@@ -37,6 +37,8 @@ if( $fechainicial && $fechafinal ){
         }
         ?>
 </table>
+
+
 <?
 }
 ?>

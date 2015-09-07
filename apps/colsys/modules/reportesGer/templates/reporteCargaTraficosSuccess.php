@@ -20,8 +20,7 @@ $resul = $sf_data->getRaw("resul");
 <div align="center" >
     <br />
     <h3> Reporte de carga tráficos </h3>
-    <br />
-    <?= print_r($cargas) ?>
+    <br />    
     <br />
 </div>
 <div align="center" id="container"></div>
@@ -344,6 +343,7 @@ if ($opcion) {
         $nhbls = 0;
         $nitem = 1;
         $totales = array();
+        
         foreach ($resul as $r) {
             //print_r($r);
 
@@ -381,11 +381,12 @@ if ($opcion) {
                 $arrtmp = explode("-", $r["ca_fchreferencia"]);
                 $arrtmp1 = explode(".", $r["ca_referencia"]);
                 $teus=$r["teus"];
+                $tteus+=$teus;
                 $incoterms=$r["ca_incoterms"];
 
 
                 if ($arrtmp1[2] == 1)
-                    $arrtmp[0] = substr($arrtmp[0], 0, 3) . $arrtmp1[4];
+                    $arrtmp[0] = substr($arrtmp[0], 0, 2) . $arrtmp1[4];
 
                 $totales["modalidad"][$r["ca_modalidad"]]["origen"][$r["ori_ca_nombre"]]["volumen"]+=$r["volumen"];
                 $totales["modalidad"][$r["ca_modalidad"]]["destino"][$r["des_ca_ciudad"]]["volumen"]+=$r["volumen"];
@@ -428,7 +429,7 @@ if ($opcion) {
         }
         ?>
         <tr><td colspan="10">Totales</td>
-            <td align="right"><?= $teus ?></td>
+            <td align="right"><?= $tteus ?></td>
             <td align="right"><?= number_format($tpiezas, 0) ?></td><td align="right"><?= number_format($tpeso, 2) ?></td><td align="right"><?= number_format($tvolumen, 2) ?></td></tr>
 
     </table>
