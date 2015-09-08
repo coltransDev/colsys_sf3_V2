@@ -1905,7 +1905,7 @@ class idsActions extends sfActions {
 
     public function executeNotificacionDocumentosVencidos(sfWebRequest $request) {
         $this->modo = $request->getParameter("modo");
-        $this->fecha = date("Y-m-d", time() + 86400 * 16);
+        $this->fecha = date("Y-m-d", time() + 86400 * 30);
         //echo$this->fecha ;
         $q = Doctrine::getTable("IdsDocumento")
                 ->createQuery("d")
