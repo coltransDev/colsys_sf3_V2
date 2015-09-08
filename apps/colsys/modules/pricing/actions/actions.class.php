@@ -57,7 +57,10 @@ class pricingActions extends sfActions {
      */
 
     public function executeDatosPanelFletesPorTrayecto() {
-        set_time_limit(90);       
+        
+        //try
+        {
+        set_time_limit(500);       
         
         $this->nivel = $this->getNivel();
 
@@ -359,16 +362,49 @@ class pricingActions extends sfActions {
             //Fin recargos generales
             //Trae los conceptos hasta una fecha de corte
             if ($timestamp) {
-                $q = Doctrine_Query::create()->from("PricFleteBs f");
-                $q->addWhere("f.ca_fchcreado IN (SELECT fh.ca_fchcreado FROM PricFleteBs fh WHERE fh.ca_fchcreado<= ? AND f.ca_idconcepto = fh.ca_idconcepto AND f.ca_idtrayecto = fh.ca_idtrayecto
+                
+                //$q = Doctrine_Query::create()->from("PricFleteBs f");
+                //$q->innerJoin("");
+                
+                /*$q->addWhere("f.ca_fchcreado IN (SELECT fh.ca_fchcreado FROM PricFleteBs fh WHERE fh.ca_fchcreado<= ? AND f.ca_idconcepto = fh.ca_idconcepto AND f.ca_idtrayecto = fh.ca_idtrayecto
                                               ORDER BY fh.ca_consecutivo DESC LIMIT 1  )", $fchcorte);
+                 * 
+                 */
+                /*$q->select('{f.*}');
+                $q = Doctrine_Query::create()->from("PricFleteBs f
+                        INNER JOIN (SELECT MAX(p2.ca_consecutivo) AS ca_consecutivo,p2.ca_idconcepto
+                                    FROM PricFleteBs p2                                         
+                                        WHERE  p2.ca_fchcreado <= '".$fchcorte."' AND
+                                               p2.ca_idtrayecto = '".$trayecto["t_ca_idtrayecto"]."   
+                                        GROUP BY  p2.ca_idconcepto) AS c2 ON c2.ca_consecutivo=f.ca_consecutivo");
+                //$q->addComponent('f', 'PricFleteBs f');                
+                //$q->addComponent('c2', 'f.PricFleteBs c2');
+                 * 
+                 */
+                $q = new Doctrine_RawSql();
+                $where = "";
+                
+                $q->select('{f.*}');
+                $q->from("pric.bs_fletes f
+                        INNER JOIN tb_conceptos c ON f.ca_idconcepto = c.ca_idconcepto
+                        LEFT JOIN tb_conceptos e ON f.ca_idequipo = e.ca_idconcepto  
+                        INNER JOIN (SELECT MAX(p2.ca_consecutivo) AS ca_consecutivo,p2.ca_idconcepto
+                                    FROM pric.bs_fletes p2                                         
+                                        WHERE  p2.ca_fchcreado <= '".$fchcorte."' AND
+                                               p2.ca_idtrayecto = '".$trayecto["t_ca_idtrayecto"]."'
+                                        GROUP BY  p2.ca_idconcepto) AS c2 ON c2.ca_consecutivo=f.ca_consecutivo");
+                
+                $q->addComponent('f', 'PricFleteBs f');
+                $q->addComponent('c', 'f.Concepto c');
+                $q->addComponent('e', 'f.Equipo e');
+               
+                
             } else {
                 $q = Doctrine_Query::create()->from("PricFlete f");
+                $q->innerJoin("f.Concepto c");
+                $q->leftJoin("f.Equipo e");
+                $q->addWhere("f.ca_idtrayecto = ?", $trayecto["t_ca_idtrayecto"]);
             }
-            $q->innerJoin("f.Concepto c");
-            $q->leftJoin("f.Equipo e");
-            $q->addWhere("f.ca_idtrayecto = ?", $trayecto["t_ca_idtrayecto"]);
-            //$q->addWhere("(f.ca_fcheliminado >= ? OR f.ca_fcheliminado IS NULL )", $fchcorte );            
             $q->addOrderBy("e.ca_concepto");
             $q->addOrderBy("c.ca_liminferior");
             $q->addOrderBy("c.ca_concepto");
@@ -559,7 +595,9 @@ class pricingActions extends sfActions {
             }
             $i++;
         }
-
+        }/*catch(Exception $e){
+            print_r($e->getMessage());
+        }*/
         $this->getUser()->log( "Consulta Tarifario", TRUE );
         $this->responseArray = array(
             'success' => true,
@@ -568,6 +606,7 @@ class pricingActions extends sfActions {
             'sql' => $sql
                 
         );
+        
         $this->setTemplate("responseTemplate");
     }
 
