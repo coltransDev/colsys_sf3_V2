@@ -170,9 +170,7 @@ class pricingActions extends sfActions {
 
         $ultCiudad = null;
         $ultLinea = null;
-	$folder = "Tarifario/Traslados";
-        $filename = "TARIFAS_TRASLADOS_2014.xls";
-        //echo count( $trayectos );
+	
         foreach ($trayectos as $trayecto) {
             //Por este campo se agrupan los conceptos
             $trayectoStr = strtoupper($trayecto["o_ca_ciudad"]) . "»" . strtoupper($trayecto["d_ca_ciudad"]) . " - ";
@@ -194,9 +192,7 @@ class pricingActions extends sfActions {
                 $contrato =" [Contrato No " . $trayecto["t_ca_ncontrato"]." ] ";
             }
             $trayectoStr.=" (TT " . $trayecto["t_ca_tiempotransito"] . " Freq. " . $trayecto["t_ca_frecuencia"] . ") " .$contrato.$trayecto["t_ca_idtrayecto"];
-            if($transporte=="Marítimo"){
-                $trayectoStr.= "<a href=\"../gestDocumental/verArchivo?idarchivo=".base64_encode($folder.'/'.$filename).'" target="_blank"> Traslados</a>';
-            }
+            
 	    $trayectoStr = utf8_encode($trayectoStr);
 
             $baseRow = array(
