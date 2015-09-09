@@ -1284,6 +1284,7 @@ class idsActions extends sfActions {
             $bindValues["id"] = $request->getParameter("id");
             $bindValues["tipo_evento"] = $request->getParameter("tipo_evento");
             $bindValues["evento"] = $request->getParameter("evento");
+            $bindValues["referencia"] = $request->getParameter("referencia");
 
             $this->form->bind($bindValues);
             if ($this->form->isValid()) {
@@ -1292,6 +1293,8 @@ class idsActions extends sfActions {
                 $evento->setCaEvento($bindValues["evento"]);
                 if ($numreferencia) {
                     $evento->setCaReferencia($numreferencia);
+                }else if($bindValues["referencia"]){
+                    $evento->setCaReferencia($bindValues["referencia"]);
                 }
                 $evento->setCaIdcriterio($bindValues["tipo_evento"]);
                 $evento->save();
@@ -1429,7 +1432,7 @@ class idsActions extends sfActions {
             $bindValues = array();
             $bindValues["id"] = $request->getParameter("id");
             $bindValues["tipo_evento"] = $request->getParameter("tipo_evento");
-            $bindValues["evento"] = $request->getParameter("evento");
+            $bindValues["evento"] = $request->getParameter("evento");            
 
             $this->form->bind($bindValues);
             if ($this->form->isValid()) {

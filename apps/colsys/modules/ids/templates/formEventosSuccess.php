@@ -90,6 +90,20 @@
         </tr>
         <tr>
             <td colspan="2">
+                <b>Referencia / Reporte:</b><br />
+                <?
+                echo $form['referencia']->renderError();
+                $disabled = false;
+                if($evento->getCaReferencia()){
+                    $form->setDefault('referencia', $evento->getCaReferencia() );
+                    $disabled = true;
+                }
+                echo $form['referencia']->render(array('disabled' => $disabled));
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
                 <div align="center">
                     <input type="submit" value="Guardar" class="button" />
                     
