@@ -67,6 +67,10 @@ class widgets4Components extends sfComponents {
         
     }
     
+    public function executeWgClienteSucursal( ){
+        
+    }
+    
     public function executeWgLinea( ){
         
     }
