@@ -198,7 +198,7 @@ var crearSeguimiento=function(){
                  $notas.="Sales Representative : ".$reporte->getUsuario()->getCaNombre()."\n\n";
              }
 			 
-			 $notas .= $usuario->getFirma();
+			 $notas .= html_entity_decode($usuario->getFirma());
 			 echo $form['notas']->renderError(); 
 			 $form->setDefault('notas', $notas);
 			 echo $form['notas']->render();
