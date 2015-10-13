@@ -9,5 +9,5 @@
 ?>
 
 <?
-include_component("pm", "listaRespuestasTicket", array("idticket"=>$ticket->getCaIdticket(), "opener"=>$opener, "format"=>$format) );
+include_component("pm", "listaRespuestasTicket", array("idticket"=>$ticket->getCaIdticket(), "opener"=>$opener, "format"=>$format));
 ?>

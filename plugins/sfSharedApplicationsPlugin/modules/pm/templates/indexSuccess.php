@@ -10,6 +10,10 @@ include_component("pm", "panelTickets");
 include_component("pm", "panelProyectos");
 include_component("pm", "panelMilestones");
 include_component("pm", "asignarMilestoneWindow");
+include_component("pm", "agendarEntregasWindow");
+include_component("pm", "unificarTicketsWindow");
+//include_component("pm", "agendarEtapasWindow");
+//include_component("pm", "gridAgendaEtapas");
 //include_component("gestDocumental", "panelArchivos");
 include_component("pm", "editarTicketWindow", array("nivel"=>$nivel));
 //include_component("pm", "mainPanel");
@@ -22,7 +26,7 @@ include_component("pm","panelConsulta");
 
 include_component("pm","panelReading");
 include_component("pm","panelDocumentos");
-
+include_component("pm","panelEntregas");
 include_component("pm","nuevaRespuestaWindow");
 include_component("pm","porcentajeTicketWindow");
 
@@ -68,7 +72,7 @@ var buscarTicket = function(){
 }
 
 
-var newResponse = function( idticket , idresponse, vencimiento, respuesta, opener, status, status_name ){
+var newResponse = function( idticket , idresponse, vencimiento, respuesta, opener, status, status_name, idgroup, /*estimated,*/ idgrid ){
     var win = Ext.getCmp("nueva-respuesta-ticket");
     if( win ){
         win.close();
@@ -78,9 +82,12 @@ var newResponse = function( idticket , idresponse, vencimiento, respuesta, opene
                                         idresponse: idresponse,
                                         vencimiento: vencimiento,
                                         respuesta: respuesta,
+                                        idgroup: idgroup,
+                                        //estimated: estimated,
                                         opener: opener,
                                         status: status,
-                                        status_name: status_name
+                                        status_name: status_name,
+                                        idgrid: idgrid
                                       });
     win.show();
 }

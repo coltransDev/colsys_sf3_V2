@@ -50,7 +50,12 @@ class pmActions extends sfActions {
         $response->addJavaScript("extExtras/RowExpander", 'last');
         $response->addJavaScript("extExtras/SliderTip", 'last');
         $response->addStylesheet("extExtras/slider", 'last');
-        $response->addJavaScript("extExtras/StarColumn", 'last');
+        $response->addJavaScript("extExtras/StarColumn", 'last');        
+        $response->addJavaScript("extExtras/Spinner.js", 'last');
+        $response->addJavaScript("extExtras/SpinnerField.js", 'last');
+        $response->addJavaScript("extExtras/NumberFieldMin.js", 'last');
+        
+        $response->addStyleSheet("extExtras/Spinner.css",'last');
 
         $this->idticket = $request->getParameter("idticket");
     }
@@ -74,6 +79,13 @@ class pmActions extends sfActions {
                       (SELECT MAX(rr.ca_createdat) FROM HdeskResponse rr WHERE rr.ca_idticket = h.ca_idticket ) as ultseg,
                       (SELECT MAX(t.ca_fchvencimiento) FROM HdeskResponse rr2 , NotTarea t WHERE rr2.ca_idtarea=t.ca_idtarea AND rr2.ca_idticket = h.ca_idticket ) as proxseg")
                 ->from('HdeskTicket h');
+        /*$q = Doctrine_Query::create()
+                ->select("h.ca_starred, h.*, g.ca_name, u.ca_nombre, u.ca_extension, s.ca_nombre, m.ca_due,
+                      m.ca_title, p.ca_name, tar.ca_fchterminada, tar.ca_fchvencimiento,
+                      (SELECT MAX(rr.ca_createdat) FROM HdeskResponse rr WHERE rr.ca_idticket = h.ca_idticket ) as ultseg,
+                      (SELECT MAX(t.ca_fchvencimiento) FROM HdeskResponse rr2 , NotTarea t WHERE rr2.ca_idtarea=t.ca_idtarea AND rr2.ca_idticket = h.ca_idticket ) as proxseg/ *, h.ca_estimated * /")
+                ->from('HdeskTicket h');
+        */
         $q->innerJoin("h.HdeskGroup g");
         $q->leftJoin("h.HdeskTicketUser hu  ");
         $q->leftJoin("h.HdeskProject p");
@@ -182,6 +194,7 @@ class pmActions extends sfActions {
             $tickets[$key]["folder"] = base64_encode(HdeskProject::FOLDER . DIRECTORY_SEPARATOR . $tickets[$key]["h_ca_idticket"]);
             $tickets[$key]["contact"] = utf8_encode($tickets[$key]["s_ca_nombre"] . " " . $tickets[$key]["u_ca_extension"]);
             $tickets[$key]["u_ca_nombre"] = utf8_encode($tickets[$key]["u_ca_nombre"]);
+            $tickets[$key]["s_ca_nombre"] = utf8_encode($tickets[$key]["s_ca_nombre"]);
             $tickets[$key]["status_name"] = isset($status[$tickets[$key]["h_ca_status"]]) ? utf8_encode($status[$tickets[$key]["h_ca_status"]]["nombre"]) : "";
             $tickets[$key]["status_color"] = isset($status[$tickets[$key]["h_ca_status"]]) ? $status[$tickets[$key]["h_ca_status"]]["color"] : "";
         }
@@ -201,6 +214,7 @@ class pmActions extends sfActions {
 	$this->nivel = $this->getNivel();
             
         $this->iddepartamento = $this->getUser()->getIddepartamento();
+        $this->empresa=sfConfig::get('app_branding_name');
         
         $idticket = $request->getParameter("id");
         $this->format = $request->getParameter("format");
@@ -230,7 +244,7 @@ class pmActions extends sfActions {
 
 
         $this->user = $this->getUser();
-
+       
         $directorio = $this->ticket->getDirectorio();
 
         $this->files = sfFinder::type('file')->maxDepth(0)->in($directorio);
@@ -369,6 +383,22 @@ class pmActions extends sfActions {
             $respuesta->setCaLogin($user->getUserId());
             $respuesta->setCaCreatedat(date("Y-m-d H:i:s"));
             $respuesta->save($conn);
+            
+            /*if($request->getParameter("fchentrega")){
+                $estimations = new HdeskEstimations();
+                $estimations->setCaIdticket($idticket);
+                $estimations->setCaIdresponse($respuesta->getCaIdresponse());
+                $estimations->setCaEstimated($request->getParameter("fchentrega"));
+                $estimations->save($conn);
+            }*/
+            
+            if($request->getParameter("stage_id")){
+                $estimation = Doctrine::getTable("HdeskEstimations")->find($request->getParameter("stage_id")); 
+                if(!$estimation->getCaIdresponse){
+                    $estimation->setCaIdresponse($respuesta->getCaIdresponse());                
+                    $estimation->save($conn);
+            }
+            }
 
             $logins = array($ticket->getCaLogin());
             $loginsDepartamento = array($ticket->getCaLogin());
@@ -633,7 +663,7 @@ class pmActions extends sfActions {
             }
 
             $ticket->save($conn);
-
+            
             if ($request->getParameter("actionTicket") == "Cerrado") {
                 $ticket->cerrarSeguimientos($conn);
 
@@ -1445,6 +1475,8 @@ class pmActions extends sfActions {
             $data["idactivo"] = $ticket->getCaIdactivo();
             $data["idempresa"] = $ticket->getCaIdempresa();
             $data["activo"] = $ticket->getInvActivo()->getCaIdentificador();
+            //$data["estimated"] = $ticket->getCaEstimated();
+            $data["parent"] = $ticket->getCaParent();
 
             $parametros = ParametroTable::retrieveByCaso("CU110");
 
@@ -2067,7 +2099,203 @@ class pmActions extends sfActions {
         exit;
     }
 
-     public function executeNoAccess(sfWebRequest $request) {
+    public function executeNoAccess(sfWebRequest $request) {
          
+    }
+    
+    public function executeUnificarTickets(sfWebRequest $request){
+        
+        $kk = count(explode("|", $request->getParameter("ticketval")));
+        $tickets = array_unique(explode("|", $request->getParameter("ticketval")));        
+        $idticketPpal = $request->getParameter("idticket");
+        $ticketPpal = Doctrine::getTable("HdeskTicket")->find($idticketPpal);
+        
+        $usuariosPpal = $ticketPpal->getUsuarios();        
+        foreach($usuariosPpal as $usuario){
+            $loginsPpal[] = $usuario->getCaLogin();
+        }
+        
+        $conn = Doctrine::getTable("HdeskTicket")->getConnection();
+        $conn->beginTransaction();
+        
+        try{
+            for ($i = 0; $i < $kk; $i++) {
+                if (!isset($tickets[$i]))
+                    continue;
+                $idticket = $tickets[$i];
+                
+                if ($idticket != $idticketPpal) {
+                    
+                    $ticket = Doctrine::getTable("HdeskTicket")->find($idticket);
+                    $ticket->setCaParent($idticketPpal);
+                    //$ticket->setCaEstimated(null);
+                    $ticket->save($conn);
+                    
+                    $respuesta = "El Ticket # ".$idticket." se ha unificado con el Ticket Principal # ".$idticketPpal.".<br/>"
+                            . "A partir de &eacute;ste momento el presente ticket queda cerrado y todo los asuntos se manejar&aacute;n con el ticket principal.<br/>"
+                            . "Los documentos y usuarios involucrados en el presente ticket se adicionar&aacute;n al Ticket Principal";
+                    
+                    $request->setParameter("idticket", $idticket);
+                    $request->setParameter("respuesta", $respuesta);                    
+                    $success = $this->executeGuardarRespuestaTicket($request);
+                    
+                    $logins = array($ticket->getCaLogin());
+                    $usuarios = $ticket->getUsuarios();
+                    
+                    foreach ($usuarios as $usuario) {
+                        $logins[] = $usuario->getCaLogin();
+                    }
+                    
+                    foreach($logins as $login){
+                        $request->setParameter("idticket", $idticketPpal);
+                        $request->setParameter("login", $login); 
+                        $success = $this->executeAgregarUsuario($request);                        
+                    }
+                    
+                    $files=$ticket->getFiles();            
+                    $directory = $ticketPpal->getDirectorio();
+                    if($files){
+                        foreach ($files as $f){
+                            $newname = $directory . DIRECTORY_SEPARATOR . basename($f);
+                            copy($f, $newname);
+                        }
+                    }
+                    
+                    $request->setParameter("idticket", $idticket);                    
+                    $success = $this->executeCerrarTicket($request);
+                }
+            }
+            
+            $respuestaPpal = "El Ticket # ".$idticketPpal." se ha sido designado como Ticket Principal y manejar&aacute; los asuntos de (el/los) ticket(s) # ".$request->getParameter("ticketval")."<br/>"
+                    . "Todas las respuestas, documentos y usuarios de los tickes mencionados se podr&aacute;n visualizar atrav&eacute;s de éste ticket.<br/>"
+                    . "Cualquier duda o informaci&ocute;n adicional por favor notificarla sobre &eacute;ste ticket.<br/>";  
+
+            $request->setParameter("idticket", $idticketPpal);
+            $request->setParameter("respuesta", $respuestaPpal);                    
+            $success = $this->executeGuardarRespuestaTicket($request); 
+            
+            $this->responseArray = array("success" => true, "idticket" => $idticket, "sel"=>$success);        
+            $conn->commit();
+        } catch (Exception $e) {
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+        }
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeAgendarEntregas($request){
+        
+        $kk = count(explode("|", $request->getParameter("ticketval")));
+        $tickets = array_unique(explode("|", $request->getParameter("ticketval")));
+        $respuesta = $request->getParameter("respuesta");
+        $dias = $request->getParameter("dias");
+        
+        $data = array();
+        $row = array();
+        
+        for ($i = 0; $i < $kk; $i++) {
+            if (!isset($tickets[$i]))
+                continue;
+            $idticket = $tickets[$i];
+            if ($idticket) {
+                $ticket = Doctrine::getTable("HdeskTicket")->find($idticket);
+                $entregas = $ticket->getHdeskEstimations();
+                
+                if(count($entregas)>0){
+                    foreach($entregas as $entrega){
+                        $fchentregaIni = $entrega->getCaEstimated();
+                        $fchentregaFin = Utils::addDays($fchentregaIni, $dias);
+                        
+                        $entrega->setCaEstimated($fchentregaFin);
+                        $entrega->save();
+                    }
+                $request->setParameter("idticket", $idticket);
+                $request->setParameter("respuesta", $respuesta);
+                $request->setParameter("fchentrega", $fchentregaFin);
+                
+                $success = $this->executeGuardarRespuestaTicket($request);                
+                }else{
+                    $row[] = $idticket;
+                }
+            }
+        }
+        $data = $row;
+        $this->responseArray = array("success" => true, "idticket" => $idticket, "sel"=>$success, "data"=>$data);        
+        $this->setTemplate("responseTemplate");
+    }
+                
+    public function executeDatosEntregasTicket($request){
+        
+        
+        $this->forward404Unless($request->getParameter("idticket"));
+        $idticket = $request->getParameter("idticket");
+        $ticket = Doctrine::getTable("HdeskTicket")->find($idticket);
+        $this->forward404Unless($ticket);
+
+        $entregas = $ticket->getHdeskEstimations();
+
+        $data = array();
+
+        foreach ($entregas as $entrega) {
+            $row = array();
+            $row["idticket"] = $idticket;
+            $row["idstage"] = $entrega->getCaIdstage();
+            $row["stage"] = utf8_encode($entrega->getCaStage());
+            $row["detail"] = utf8_encode($entrega->getCaDetail());
+            $row["estimated"] = $entrega->getCaEstimated();
+            $row["delivery"] = null;
+            
+            if($entrega->getCaIdresponse()){
+                $response = Doctrine::getTable("HdeskResponse")->find($entrega->getCaIdresponse());
+                $row["delivery"] = $response->getCaCreatedat();  
+            }
+            
+            $data[] = $row;
+        }
+        
+        //echo "<pre>".print_r($data)."</pre>";
+
+        $this->responseArray = array("success" => true, "root" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeGuardarEntregas() {
+        $this->forward404Unless($this->getRequestParameter('idticket'));
+        $idticket = $this->getRequestParameter('idticket');
+        
+        try {
+            if (!$this->getRequestParameter('idstage')) {
+                $entregas = new HdeskEstimations();
+                $entregas->setCaIdticket($idticket);
+            } else {
+                $entregas = Doctrine::getTable("HdeskEstimations")->find($this->getRequestParameter('idstage'));
+}
+
+            $row = array();
+
+            if ($this->getRequestParameter('stage') !== null) {
+                $entregas->setCaStage(utf8_decode($this->getRequestParameter('stage')));
+                $row["stage"] = utf8_decode($this->getRequestParameter('stage'));
+            }
+
+            if ($this->getRequestParameter('detail') !== null) {
+                $entregas->setCaDetail($this->getRequestParameter('detail'));
+                $row["detail"] = utf8_encode($this->getRequestParameter('detail'));
+            }
+
+            if ($this->getRequestParameter('estimated') !== null) {
+                $entregas->setCaEstimated($this->getRequestParameter('estimated'));
+                $row["estimated"] = $this->getRequestParameter('estimated');
+            }
+
+            $entregas->save();
+            $row["idstage"] = $entregas->getCaIdstage();
+
+            $this->responseArray = array( "id" => $this->getRequestParameter('id'), "success" => true, "data" => $row);
+            
+        } catch (Exception $e) {            
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+        }
+        $this->setTemplate("responseTemplate");
     }
 }

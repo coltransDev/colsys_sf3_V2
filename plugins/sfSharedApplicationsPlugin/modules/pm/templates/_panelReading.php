@@ -15,17 +15,26 @@ PanelReading = function( config ){
     this.grid = new PanelTickets({id:idcomponent,
                       idgroup: this.idgroup,
                       idproject: this.idproject,
+                      department: this.department,
                       actionTicket: this.actionTicket,
                       assignedTo: this.assignedTo,
                       reportedBy: this.reportedBy,                      
                       readOnly: this.readOnly,
                       region: 'center'                      
                      });
-
-    var idcomponent = this.id;
-   
+                     
+    var idcomponent = this.id;    
+    var idGrid = this.grid.getId();
     
+    this.grid.on('beforerender', function(grid, rowIndex, columnIndex, e) {        
+        if(this.department=="Sistemas"){
+            grid.getColumnModel().setHidden(1, false);//Checkcolumn
+            grid.getColumnModel().setHidden(12, false);//Fecha de Entrega            
+        }
+    });
+   
     this.previewTicketPanel = new PanelPreviewTicket({idcomponent:idcomponent,
+            idgrid: idGrid,
             department: this.department,
             region: 'south',
             deferredRender: false,
@@ -36,73 +45,55 @@ PanelReading = function( config ){
     });
     
     this.tbar = [
+            {
+                text: 'Nuevo ticket',
+                tooltip: '',
+                iconCls: 'add',  // reference to our css
+                scope: this,
+                handler: this.crearTicket
+            },
+            {
+                text: 'Recargar',
+                tooltip: 'Actualiza losdatos del panel',
+                iconCls: 'refresh',  // reference to our css
+                scope: this,
+                handler: this.recargar
+            },
+            {
+                text: 'Roadmap',
+                tooltip: 'Permite ver el cronograma de entrega de los tickets',
+                iconCls: 'calendar',  // reference to our css
+                scope: this,
+                handler: this.roadmap
+            },
 
-                /*{
-                    split:true,
-                    text:'Panel Lectura',
-                    tooltip: {title:'Reading Pane',text:'Show, move or hide the Reading Pane'},
-                    iconCls: 'preview-bottom',
-                    handler: this.movePreview.createDelegate(this, []),
-                    menu:{
-                        id:'reading-menu-'+idcomponent,
-                        cls:'reading-menu',
-                        width:100,
-                        items: [{
-                            text:'Abajo',
-                            checked:true,
-                            group:'rp-group',
-                            checkHandler:this.movePreview,
-                            scope:this,
-                            iconCls:'preview-bottom'
-                        },{
-                            text:'Derecha',
-                            checked:false,
-                            group:'rp-group',
-                            checkHandler:this.movePreview,
-                            scope:this,
-                            iconCls:'preview-right'
-                        },{
-                            text:'Ocultar',
-                            checked:false,
-                            group:'rp-group',
-                            checkHandler:this.movePreview,
-                            scope:this,
-                            iconCls:'preview-hide'
-                        }]
-                    }
-                },*/
-                {
-                    text: 'Nuevo ticket',
-                    tooltip: '',
-                    iconCls: 'add',  // reference to our css
-                    scope: this,
-                    handler: this.crearTicket
-                },
-                {
-                    text: 'Recargar',
-                    tooltip: 'Actualiza losdatos del panel',
-                    iconCls: 'refresh',  // reference to our css
-                    scope: this,
-                    handler: this.recargar
-                },
-                {
-                    text: 'Roadmap',
-                    tooltip: 'Permite ver el cronograma de entrega de los tickets',
-                    iconCls: 'calendar',  // reference to our css
-                    scope: this,
-                    handler: this.roadmap
-                },
-
-                {
-                    text: 'Asignaciones',
-                    tooltip: 'Agrupa los tickets por usuario',
-                    iconCls: 'tux',  // reference to our css
-                    scope: this,
-                    handler: function(){
-                        this.agruparPor('assignedto');
-                    }
+            {
+                text: 'Asignaciones',
+                tooltip: 'Agrupa los tickets por usuario',
+                iconCls: 'tux',  // reference to our css
+                scope: this,
+                handler: function(){
+                    this.agruparPor('assignedto');
                 }
+            },            
+            {
+                text: 'Unificar Tickets',
+                tooltip: 'Unifica los tickets seleccionados',
+                iconCls: 'link',  // reference to our css
+                scope: this,
+                handler: this.unificar
+            }
     ]
+    
+    if(this.department == "Sistemas"){
+        this.tbar.push(  {
+                    text: 'Re-Agendar Entregas',
+                    tooltip: 'Agrupa los tickets por usuario',
+                    iconCls: 'calendar-today',  // reference to our css
+                    scope: this,
+                    handler: this.programacion
+                } )
+    }
 
     if( this.idproject ){
         this.tbar.push(  {
@@ -120,37 +111,20 @@ PanelReading = function( config ){
         layout: 'fit',        
         tbar: this.tbar,        
         
-        items: {
-            //id:'main-view',
-            layout:'border',
-            //title:'Loading...',
+        items: {            
+            layout:'border',            
             hideMode:'offsets',
             items:[
-                this.grid,
-                //this.tabPanel
-            {
-
-                //id:'bottom-preview-'+idcomponent,
-                layout:'fit',
-                items: this.previewTicketPanel,
-                height: 300,
-                split: true,
-                border:false,
-                region:'south'
-            }/*, {
-                id:'right-preview-'+idcomponent,
-                layout:'fit',
-                border:false,
-                region:'east',
-                width: 400,
-                split: true,
-                hidden:true
-            }*/]
+                this.grid,                
+                {
+                    layout:'fit',
+                    items: this.previewTicketPanel,
+                    height: 300,
+                    split: true,
+                    border:false,
+                    region:'south'
+                }]
         }
-
-      
-      
-      
     });
 
     this.gsm = this.grid.getSelectionModel();
@@ -176,6 +150,14 @@ Ext.extend(PanelReading, Ext.Panel, {
     roadmap: function(){
         this.grid.roadmap();
     },
+    
+    programacion: function(){
+        this.grid.programacion(this.grid);
+    },
+
+    unificar: function(){
+        this.grid.unificar(this.grid);
+    },
 
     agruparPor: function( val ){
         this.grid.agruparPor( val );
@@ -189,7 +171,7 @@ Ext.extend(PanelReading, Ext.Panel, {
         this.idticket = record.data.idticket;
         this.previewTicketPanel.loadRecord( record );
     }
-   
+    
 });
 
 </script>

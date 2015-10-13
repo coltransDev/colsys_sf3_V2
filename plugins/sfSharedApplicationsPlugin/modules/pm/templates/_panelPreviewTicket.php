@@ -150,6 +150,14 @@ PanelPreviewTicket = function( config ){
                                 height: 400
                             });
 
+    this.entregasPanel = new PanelEntregas({
+        id: 'entregas-panel-'+idcomponent,
+        idticket: null,        
+        closable: false,
+        title: "Entregas",
+        height: 400
+    });
+
     PanelPreviewTicket.superclass.constructor.call(this, {
         
         activeTab:0,
@@ -161,7 +169,8 @@ PanelPreviewTicket = function( config ){
             this.preview,
             this.responses,
             this.filePanel,
-            this.usersPanel
+            this.usersPanel,
+            this.entregasPanel
         ]
     });
     var panel = this;
@@ -178,6 +187,8 @@ PanelPreviewTicket = function( config ){
                     res.data.opened = Date.parseDate( res.data.opened, "Y-m-d H:i:s" );
                     res.data.vencimiento = Date.parseDate( res.data.vencimiento, "Y-m-d H:i:s" );
                     res.data.respuesta = Date.parseDate( res.data.respuesta, "Y-m-d H:i:s" );
+                    res.data.idgroup = res.data.idgroup;
+                    //res.data.estimated = Date.parseDate( res.data.estimated, "Y-m-d" );
                     panel.loadRecord( res );
                 }else
                     location.href="<?=url_for('pm/noAccess')?>";
@@ -257,6 +268,8 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
         this.idticket = record.data.idticket;
         this.vencimiento = record.data.vencimiento;
         this.respuesta = record.data.respuesta;
+        this.idgroup = record.data.idgroup;
+        //this.estimated = record.data.estimated;        
         this.status = record.data.status;
         this.status_name = record.data.status_name;
 
@@ -274,6 +287,11 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
         this.docsPanel.store.setBaseParam("idticket",record.data.idticket );
         this.docsPanel.store.reload();
         this.docsPanel.idticket = record.data.idticket;
+
+        this.entregasPanel.setDataUrl("<?=url_for("pm/datosEntregasTicket")?>");
+        this.entregasPanel.store.setBaseParam("idticket",record.data.idticket );
+        this.entregasPanel.store.reload();
+        this.entregasPanel.idticket = record.data.idticket;
 
         responsePanel = this.responses;
 
@@ -345,7 +363,7 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
     newResponse: function(){
         var idticket = this.idticket;
         
-        newResponse(idticket, null, this.vencimiento, this.respuesta, this.responses.id, this.status, this.status_name );
+        newResponse(idticket, null, this.vencimiento, this.respuesta, this.responses.id, this.status, this.status_name, this.idgroup/*, this.estimated*/ );
     },
 
     editTicket: function(){

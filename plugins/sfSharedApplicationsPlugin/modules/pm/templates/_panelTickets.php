@@ -7,6 +7,8 @@
 ?>
 
 <script type="text/javascript">
+var winAgenda = null;
+var winUnificar = null;
 
 PanelTickets = function( config ){
 
@@ -23,7 +25,7 @@ PanelTickets = function( config ){
         )
     });
 
-
+    
     this.filters = new Ext.ux.grid.GridFilters({
         // encode and local configuration options defined previously for easier reuse
         encode: false, // json encode the filter query
@@ -50,11 +52,11 @@ PanelTickets = function( config ){
             type: 'string',
             dataIndex: 'assignedto'
         },
-        {
+        /*{
             type: 'list',
             dataIndex: 'priority',
             options: ['Alta', 'Media', 'Baja']
-        }, {
+        },*/ {
             type: 'list',
             dataIndex: 'action',
             options: ['Abierto', 'Cerrado']
@@ -79,125 +81,125 @@ PanelTickets = function( config ){
     this.summary = new Ext.ux.grid.GroupSummary();
 
     this.starColumn = new Ext.grid.StarColumn({header:' ', dataIndex:'starred', width:30, hideable: false});
-
+    this.checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:30, hideable: false, hidden:true});
+    
 
     this.starColumn.onChange = this.onChangeStar;
 
     this.columns = [
       //this.expander,
-      this.starColumn,
-      {
-        header: "Ticket #",
-        dataIndex: 'idticket',
-        //hideable: false,
-        width: 63,
-        sortable: true,
-        renderer: this.formatItem 
-      },
-      {
-        header: "Titulo",
-        dataIndex: 'title',
-        //hideable: false,
-        sortable: true,
-        width: 280,
-        summaryType: 'count',
-        summaryRenderer: function(v, params, data){
-            return ((v === 0 || v > 1) ? '(' + v +' Tickets)' : '(1 Ticket)');
-        }
-      },
-      {
-        header: "Usuario",
-        dataIndex: 'login',
-        hideable: false,
-        sortable: true,
-        width: 80
-      },
-      {
-        header: "Proyecto/Tema",
-        dataIndex: 'project',
-        //hideable: false,
-        sortable: true,
-        width: 280
-      },
-      {
-        header: "Prioridad",
-        dataIndex: 'priority',
-        hideable: false,
-        sortable: true,
-        width: 80
-      },
-      {
-        header: "Asignado a",
-        dataIndex: 'assignedto',
-        hideable: false,
-        sortable: true,
-        width: 80
-      },
-       {
-        header: "Estado",
-        dataIndex: 'action',
-        hideable: false,
-        sortable: true,
-        width: 80
-      },
-      {
-        header: "Tipo/Hallazgo",
-        dataIndex: 'tipo',
-        hideable: false,
-        width: 100,
-        sortable: true
-      },
-      {
-        header: "Abierto",
-        dataIndex: 'opened',
-        hideable: false,
-        width: 120,
-        sortable: true,
-        renderer: Ext.util.Format.dateRenderer('d/m/y H:i')
-      },
-      /*{
-        header: "Respuesta",
-        dataIndex: 'respuesta',
-        hideable: false,
-        width: 120,
-        sortable: true,
-        renderer: Ext.util.Format.dateRenderer('d/m/y H:i')
-      },*/
-      {
-        header: "Ult. Seg.",
-        dataIndex: 'ultseg',
-        hideable: false,
-        width: 100,
-        sortable: true,
-        renderer: Ext.util.Format.dateRenderer('d/m/y')
-      },
-      {
-        header: "Prox. Seg.",
-        dataIndex: 'proxseg',
-        hideable: false,
-        width: 100,
-        sortable: true,
-        renderer: Ext.util.Format.dateRenderer('d/m/y')
-      },
-      {
-        header: "%",
-        dataIndex: 'percentage',
-        hideable: true,
-        width: 100,
-        sortable: true,
-        renderer: function(v){
-            return (v?v:0)+"%";
-        }
-      },
-      {
-        header: "Status",
-        dataIndex: 'status_name',
-        hideable: true,
-        width: 130,
-        sortable: true       
-      }
-    ];
-
+      this.starColumn,        
+      this.checkColumn,
+        {
+            header: "Ticket #",
+            dataIndex: 'idticket',            
+            width: 63,
+            sortable: true,
+            renderer: this.formatItem
+        },
+        {
+            header: "Titulo",
+            dataIndex: 'title',            
+            sortable: true,
+            width: 280,
+            summaryType: 'count',
+            summaryRenderer: function(v, params, data){
+                return ((v === 0 || v > 1) ? '(' + v + ' Tickets)' : '(1 Ticket)');
+            }
+        },
+        {
+            header: "Usuario",
+            dataIndex: 'login',
+            hideable: false,
+            sortable: true,
+            width: 80
+        },
+        {
+            header: "Proyecto/Tema",
+            dataIndex: 'project',
+            //hideable: false,
+            sortable: true,
+            width: 200
+        },
+        /*{
+            header: "Prioridad",
+            dataIndex: 'priority',
+            hideable: false,
+            sortable: true,
+            width: 80
+        },*/
+        {
+            header: "Asignado a",
+            dataIndex: 'assignedto',
+            hideable: false,
+            sortable: true,
+            width: 80
+        },
+        {
+            header: "Estado",
+            dataIndex: 'action',
+            hideable: false,
+            sortable: true,
+            width: 80
+        },
+        {
+            header: "Tipo/Hallazgo",
+            dataIndex: 'tipo',
+            hideable: false,
+            width: 80,
+            sortable: true
+        },
+        {
+            header: "Abierto",
+            dataIndex: 'opened',
+            hideable: false,
+            width: 110,
+            sortable: true,
+            renderer: Ext.util.Format.dateRenderer('d/m/y H:i')
+        },
+        {
+            header: "Ult. Seg.",
+            dataIndex: 'ultseg',
+            hideable: false,
+            width: 100,
+            sortable: true,
+            renderer: Ext.util.Format.dateRenderer('d/m/y')
+        },
+        {
+            header: "Prox. Seg.",
+            dataIndex: 'proxseg',
+            hideable: false,
+            width: 100,
+            sortable: true,
+            renderer: Ext.util.Format.dateRenderer('d/m/y')
+        },
+        /*{
+            header: "Fch. Entrega",
+            dataIndex: 'estimated',
+            hideable: false,
+            sortable: true,
+            width: 100,
+            hidden: true,
+            renderer: Ext.util.Format.dateRenderer('d/m/y')
+        },*/
+        {
+            header: "%",
+            dataIndex: 'percentage',
+            hideable: true,
+            width: 50,
+            sortable: true,
+            renderer: function(v){
+                return (v?v:0) + "%";
+            }
+        },
+        {
+            header: "Status",
+            dataIndex: 'status_name',
+            hideable: true,
+            width: 170,
+            sortable: true
+        }];
+    
 
     this.record = Ext.data.Record.create([
             {name: 'sel', type: 'bool'},
@@ -218,6 +220,8 @@ PanelTickets = function( config ){
             {name: 'action', type: 'string', mapping: 'h_ca_action'},
             {name: 'ultseg', type: 'date', mapping: 'h_ultseg', dateFormat:'Y-m-d H:i:s'},
             {name: 'proxseg', type: 'date', mapping: 'h_proxseg', dateFormat:'Y-m-d H:i:s'},
+            //{name: 'estimated', type: 'date', mapping: 'h_ca_estimated', dateFormat:'Y-m-d'},
+            {name: 'parent', type: 'integer', mapping: 'h_ca_parent'},
             {name: 'respuesta', type: 'date', mapping: 'tar_ca_fchterminada', dateFormat:'Y-m-d H:i:s'},
             {name: 'vencimiento', type: 'date', mapping: 'tar_ca_fchvencimiento', dateFormat:'Y-m-d H:i:s'},
             {name: 'percentage', type: 'integer', mapping: 'h_ca_percentage'},
@@ -257,10 +261,10 @@ PanelTickets = function( config ){
 
     
     PanelTickets.superclass.constructor.call(this, {
-       loadMask: {msg:'Cargando...'},       
-       //boxMinHeight: 300,
+       loadMask: {msg:'Cargando...'},              
        plugins: [
                     this.expander,
+                    this.checkColumn,
                     this.filters,
                     this.starColumn,
                     this.summary
@@ -270,8 +274,6 @@ PanelTickets = function( config ){
             forceFit:true,
             enableRowBody:true,
             hideGroupedColumn: true
-            //showPreview:true,
-            //hideGroupedColumn: true,
             
        }),
        listeners:{            
@@ -281,7 +283,7 @@ PanelTickets = function( config ){
        }
        
     });
-    this.getView().getRowClass = this.getRowClass;
+    this.getView().getRowClass = this.getRowClass;    
 
 };
 
@@ -305,7 +307,60 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
         this.store.sort("estimated","ASC");
         this.store.groupBy("milestone");
     },
+    programacion: function(grid){
+        var records = grid.getStore().getRange();
+        var tickets = [];
+        var temp = [];
+        var win = Ext.getCmp("agenda-ticket-win");
+        var panel = Ext.getCmp("agenda-panel");
+        panel?panel.getForm().reset():"";
 
+        for( var i=0; i<records.length; i++ ){                
+            if(records[i].data.sel===true){
+                //if(records[i].data.estimated)
+                    tickets.push(records[i].data.idticket);
+                /*else{                    
+                    temp.push(records[i].data.idticket);                    
+                } */  
+                }   
+            }
+        
+        /*if(temp.length >0){
+            var tempSelect = temp.join(" ,");
+            alert("El (los) tickets "+tempSelect+" no tienen Fecha de Entrega Programada!");
+        } else {*/
+            var rowSelect = tickets.join("|");            
+            if(tickets.length>0){
+                if( !win ){
+                    this.win = new AgendarEntregasWindow({ticketval: rowSelect, idcomponent: this.id});
+                    this.win.show();
+                }else
+                    win.show();
+            }else
+                alert("Por favor seleccione al menos un ticket!!");            
+        //}
+    },
+    unificar:function(grid){
+        var tickets = [];
+        var titulos = [];
+        var records = grid.getStore().getRange();
+        for( var i=0; i<records.length; i++ ){                
+            if(records[i].data.sel===true){                
+                tickets.push(records[i].data.idticket);
+                titulos.push(records[i].data.title);
+        }
+        }
+        
+        var rowSelect = tickets.join("|");        
+        if(tickets.length>0){
+            if( !winUnificar ){
+                winUnificar = new UnificarTicketsWindow({ticketval: rowSelect, idcomponent: this.id, tickets:tickets, titulos: titulos});
+                winUnificar.show();
+            }else
+                winUnificar.show();
+        }else
+            alert("Por favor seleccione al menos un ticket!!");   
+    },
     agruparPor: function( a ){
         this.store.groupBy( a );
     },
@@ -597,7 +652,7 @@ Ext.extend(PanelTickets, Ext.grid.GridPanel, {
             }
          }
     );
-    }
+        }
 
 });
 

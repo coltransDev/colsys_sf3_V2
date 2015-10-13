@@ -1,5 +1,12 @@
 <div style="margin:20px;">
     <?
+    if(count($childrens)>0){
+        echo "<span style='color:blue;'><b>Ticket unificado con el (los) tickets: </b></span>";
+        foreach($childrens as $children ){?>
+            <a href="https://localhost/pm/verTicket/id/<?=$children->getCaIdticket()?>" target="_blank"><?=$children->getCaIdticket()?></a>
+            <?  
+        }
+    }
     $responses = $sf_data->getRaw("responses");
     $i = 0;
     foreach ($responses as $response) {
@@ -47,7 +54,7 @@
             if ($format != "email") {
                 ?>
                 <br />
-                <div style="float:right;"><a href="#" onClick="newResponse(<?= $response->getCaIdticket() ?>, <?= $response->getCaIdresponse() ?>, null, '<?= $response->getCaCreatedat() ?>', <?= isset($opener) && $opener ? "'" . $opener . "'" : "" ?>, '<?= $ticket->getCaStatus() ?>', '<?= $status_name ?>')">Respuesta</a></div>
+                <div style="float:right;"><a href="#" onClick="newResponse(<?= $response->getCaIdticket() ?>, <?= $response->getCaIdresponse() ?>, null, '<?= $response->getCaCreatedat() ?>', <?= isset($opener) && $opener ? "'" . $opener . "'" : "" ?>, '<?= $ticket->getCaStatus() ?>', '<?= $status_name ?>','<?=$ticket->getCaIdgroup()?>'/*,'<?//=$ticket->getCaEstimated()?>'*/)">Respuesta</a></div>
                 <?
             }
             ?>

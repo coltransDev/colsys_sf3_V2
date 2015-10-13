@@ -17,14 +17,23 @@ class pmComponents extends sfComponents {
     public function executeListaRespuestasTicket() {
 
         $this->ticket = Doctrine::getTable("HdeskTicket")->find($this->idticket);
+        $this->childrens = $this->ticket->getChildren(); 
 
-        $this->responses = Doctrine::getTable("HdeskResponse")
+        $q = Doctrine::getTable("HdeskResponse")
                 ->createQuery("r")
                 ->where("r.ca_idticket = ? ", $this->idticket)
-                ->addWhere("r.ca_responseto IS NULL ")
-                ->addOrderBy("r.ca_createdat ASC")
-                ->addOrderBy("r.ca_idresponse ASC")
-                ->execute();
+                ->addWhere("r.ca_responseto IS NULL ");                
+
+        if(count($this->childrens)>0){
+            $this->childrenVal = "";
+            for ($i = 0; $i < count($this->childrens); $i++) {
+                $children = $this->childrens[$i];                
+                $q->orWhere("r.ca_idticket = ? ", $children->getCaIdticket());
+            }
+        }
+        $q->addOrderBy("r.ca_createdat ASC");
+        $q->addOrderBy("r.ca_idresponse ASC");
+        $this->responses = $q->execute();
 
         $this->idLastResponse = Doctrine::getTable("HdeskResponse")
                 ->createQuery("r")
@@ -383,6 +392,34 @@ class pmComponents extends sfComponents {
                 "nombre" => $departamento->getCaNombre()
             );
         }
+    }
+    
+    /*
+     * Panel que muestra una grilla para incorporar fecha de entrega de los proyectos
+     * @author: Andrea Ramírez
+     */
+
+    public function executePanelEntregas() {
+        
+    }
+
+    
+     /*
+     * Muestra una ventana para re-agendar las fechas de entrega de los tickets
+     * @author: Andrea Ramírez
+     */
+
+    public function executeAgendarEntregasWindow() {
+        
+    }
+    
+    /*
+     * Muestra una ventana para unificar tickets
+     * @author: Andrea Ramírez
+     */
+
+    public function executeUnificarTicketsWindow() {
+        
     }
 }
 ?>
