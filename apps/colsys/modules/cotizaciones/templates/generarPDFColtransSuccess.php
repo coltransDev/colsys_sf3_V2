@@ -305,7 +305,7 @@ for ($k = 0; $k < count($transportes); $k++):
             $widths = array();
             $datos = array();
             $pos_mem = 0;
-
+            
             $recargosGen = $producto->getRecargosGenerales();
             if (count($recargosGen) > 0) {
                 $imprimirObservaciones = false;
@@ -328,6 +328,7 @@ for ($k = 0; $k < count($transportes); $k++):
                 $pdf->Ln(2);
                 $pdf->SetFont($font, '', 7);
 
+                
                 $titu_mem = array('Concepto', 'Tarifa');
                 if ($imprimirObservaciones) {
                     array_push($titu_mem, 'Observaciones');
@@ -345,7 +346,8 @@ for ($k = 0; $k < count($transportes); $k++):
                 $pdf->SetAligns(array_fill(0, count($width_mem), "L"));
                 $pdf->SetStyles(array_fill(0, count($width_mem), ""));
                 $pdf->SetFills(array_fill(0, count($width_mem), 0));
-
+                
+                
                 foreach ($recargosGen as $recargo) {
                     $equipo = ($recargo->getEquipo()) ? $recargo->getEquipo()->getCaConcepto() : "";
                     $row = array($recargo->getTipoRecargo()->getCaRecargo(), $recargo->getTextoTarifa() . " " . $equipo);

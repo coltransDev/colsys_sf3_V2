@@ -113,8 +113,10 @@ include_component("cotizaciones", "fieldsEncabezado");
                     form.findField("vendedor").hiddenField.value = res.data.idvendedor;
                     Ext.getCmp("entradaColtrans").setValue( res.data.entrada);
                     Ext.getCmp("entradaColmas").setValue( res.data.entradaColmas);
+                    Ext.getCmp("entradaColdepósitos").setValue( res.data.entradaColdepositos);
                     Ext.getCmp("anexosColtrans").setValue( res.data.anexos);
                     Ext.getCmp("anexosColmas").setValue( res.data.anexosColmas);
+                    Ext.getCmp("anexosColdepósitos").setValue( res.data.anexosColdepositos);
                 }
             });
 

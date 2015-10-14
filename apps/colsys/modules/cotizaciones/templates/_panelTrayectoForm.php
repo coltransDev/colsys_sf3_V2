@@ -47,6 +47,8 @@ include_component("widgets", "widgetCiudad");
                         , new WidgetLinea({fieldLabel: 'Linea',
                                            linkTransporte: "transporte",
                                            linkImpoexpo: "impoexpo",
+                                           activoImpo: true,
+                                           activoExpo: true,
                                            id:"linea",
                                            hiddenName:"idlinea",
                                            //allowBlank:false,

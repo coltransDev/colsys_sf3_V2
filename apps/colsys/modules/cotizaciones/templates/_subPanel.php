@@ -13,6 +13,8 @@ if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS || $cotizacion->getCaEmp
     include_component("cotizaciones","panelAgentes",array("cotizacion"=>$cotizacion));
 }else if($cotizacion->getCaEmpresa() == Constantes::COLMAS){
     include_component("cotizaciones","panelAduanas",array("cotizacion"=>$cotizacion));
+}else if($cotizacion->getCaEmpresa() == Constantes::COLDEPOSITOS){
+    include_component("cotizaciones","panelDepositos",array("cotizacion"=>$cotizacion));
 }
 
 /*
@@ -43,6 +45,10 @@ SubPanel = function(){
     }else if($cotizacion->getCaEmpresa() == Constantes::COLMAS){
         ?>
         this.gridAduanas = new PanelAduanas({empresa:'<?=$cotizacion->getCaEmpresa()?>',title:'Aduana Importaciones'});
+        <?
+    } else if ($cotizacion->getCaEmpresa() == Constantes::COLDEPOSITOS) {
+        ?>
+        this.gridDepositos = new PanelDepositos({empresa:'<?=$cotizacion->getCaEmpresa()?>', title:'Coldepósitos'});
         <?
     }
     ?>
@@ -81,6 +87,10 @@ SubPanel = function(){
                 ?>
                    this.gridAduanas,
                 <?
+                } else if ($cotizacion->getCaEmpresa() == Constantes::COLDEPOSITOS) {
+                ?>
+                   this.gridDepositos,
+                <?
                 }
                 ?>
                 this.panelArchivos
@@ -96,7 +106,7 @@ Ext.extend(SubPanel, Ext.FormPanel, {
             this.gridProductos.guardarItems();
             this.gridRecargos.guardarItems();
             this.gridContviajes.guardarItems();
-			this.gridAduanas.guardarItems();
+            this.gridAduanas.guardarItems();
             this.gridSeguros.guardarItems();
             this.gridAgentes.guardarItems();
         <?
@@ -104,6 +114,10 @@ Ext.extend(SubPanel, Ext.FormPanel, {
         {
         ?>
             this.gridAduanas.guardarItems();
+        <?
+        } else if ($cotizacion->getCaEmpresa() == Constantes::COLDEPOSITOS) {
+        ?>
+            this.gridDepositos.guardarItems();
         <?
         }
         ?>

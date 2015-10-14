@@ -9,11 +9,20 @@ entrada: 'Nos complace saludarlos, de acuerdo con su amable solicitud a continua
 
 entradaColmas: 'Nos complace saludarlos y a continuación nos permitimos presentar nuestra oferta para el Servicio de Nacionalización con vigencia a partir del día {inicio} hasta el {final} así:'
 
+entradaColdepositos: |
+  A continuación nos permitimos ofrecer nuestros servicios en logistica y almacenamiento para el manejo de sus mercancias en la ZONA FRANCA DE BOGOTA como USUARIO INDUSTRIAL DE SERVICIOS.
+  
+  TARIFAS
+  
+  A continuación relacionamos las TARIFAS ESPECIALES para el manejo de su carga, la cual estará vigente desde la fecha hasta el {final}:
+
 despedida: Esperamos que esta cotización sea de su conveniencia y quedamos a su entera disposición para atender cualquier inquietud adicional.
 
 anexos: Notas importantes para sus importaciones y/o exportaciones.
 
 anexosColmas: Notas importantes para sus nacionalizaciones.
+
+anexosColdepositos: Notas importantes para sus cargas en Coldepósitos.
 
 asuntoEmail: 'COTIZACION %s N° C%s'
   
@@ -30,6 +39,15 @@ mensajeEmailColmas: |
   Estimado(a)  señor(a)  %s:
   
   Anexo  nos permitimos enviar  nuestra  comunicación No.  %s  correspondiente al servicio de Aduana.
+  
+  Esperamos que esta oferta sea de su conveniencia y quedamos atentos a cualquier inquietud adicional  que  se  pueda  presentar.
+  
+  Cordialmente,
+  
+mensajeEmailColdepósitos: |
+  Estimado(a)  señor(a)  %s:
+  
+  Anexo  nos permitimos enviar  nuestra  comunicación No.  %s  correspondiente al servicios en logistica y almacenamiento para el manejo de sus mercancias en la ZONA FRANCA DE BOGOTA como USUARIO INDUSTRIAL DE SERVICIOS.
   
   Esperamos que esta oferta sea de su conveniencia y quedamos atentos a cualquier inquietud adicional  que  se  pueda  presentar.
   

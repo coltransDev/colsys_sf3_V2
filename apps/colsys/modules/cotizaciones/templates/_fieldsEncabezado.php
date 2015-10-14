@@ -181,11 +181,12 @@ include_component("widgets", "widgetComerciales");
                         fields : ['name'],
                         data   : [
                             <? if($sucursal=="PER"){?>
-                              {name : '<?=Constantes::TPLOGISTICS?>'}
+                               {name : '<?=Constantes::TPLOGISTICS?>'}
                             <?}
                             else{?>
-                            {name : '<?=Constantes::COLTRANS?>'},
-                            {name : '<?=Constantes::COLMAS?>'}
+                               {name : '<?=Constantes::COLTRANS?>'},
+                               {name : '<?=Constantes::COLMAS?>'},
+                               {name : '<?=Constantes::COLDEPOSITOS?>'}
                             <?
                             }?>                            
                             
@@ -253,16 +254,18 @@ include_component("widgets", "widgetComerciales");
                             id: 'entrada',
                             value: '',
                             allowBlank:false
-                        },
-                        {
+                        }, {
                             xtype: 'hidden',                            
                             name: 'entradaColmas',
                             id: 'entradaColmas'                            
-                        },
-                        {
+                        }, {
                             xtype: 'hidden',                            
                             name: 'entradaColtrans',
                             id: 'entradaColtrans'                            
+                        }, {
+                            xtype: 'hidden',
+                            name: 'entradaColdepósitos',
+                            id: 'entradaColdepósitos'
                         }
                     ]
                 }
@@ -295,8 +298,7 @@ include_component("widgets", "widgetComerciales");
                             id: 'despedida',
                             value: '',
                             allowBlank:false
-                        },
-                        {
+                        }, {
                             xtype: 'textarea',
                             width: 500,
                             fieldLabel: 'Anexos',
@@ -304,16 +306,18 @@ include_component("widgets", "widgetComerciales");
                             id: 'anexos',
                             value: '',
                             allowBlank:false
-                        },
-                        {
+                        }, {
                             xtype: 'hidden',                            
                             name: 'anexosColmas',
                             id: 'anexosColmas'                            
-                        },
-                        {
+                        }, {
                             xtype: 'hidden',                            
                             name: 'anexosColtrans',
                             id: 'anexosColtrans'                            
+                        }, {
+                            xtype: 'hidden',                          
+                            name: 'anexosColdepósitos',
+                            id: 'anexosColdepósitos'
                         }
                     ]
                 }
@@ -339,8 +343,7 @@ include_component("widgets", "widgetComerciales");
                 {
                     xtype:'fieldset',                    
                     autoHeight:true,
-                    items:[
-                        {
+                    items:[{
                             xtype:'datefield',
                             fieldLabel: 'Fecha de Presentación',
                             name: 'fchPresentacion',
@@ -349,8 +352,7 @@ include_component("widgets", "widgetComerciales");
                             format: "Y-m-d",
                             allowBlank:true,
                             width: 120
-                        },
-                        {
+                        }, {
                             xtype:'timefield',
                             fieldLabel: 'Hora de Presentación',
                             name: 'horaPresentacion',
@@ -359,8 +361,7 @@ include_component("widgets", "widgetComerciales");
                             format: "H:i:s",
                             allowBlank:true,
                             width: 100
-                        }
-                        ,{
+                        }, {
                             xtype:'textfield',
                             width: 400,
                             fieldLabel: 'Observaciones',
@@ -419,11 +420,8 @@ include_component("widgets", "widgetComerciales");
         });
     };
 
-
     Ext.extend(TabFormatoPanel, Ext.Panel, {
 
-
-        
     });
 
 </script>

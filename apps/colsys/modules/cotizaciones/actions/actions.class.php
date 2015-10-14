@@ -225,7 +225,7 @@ class cotizacionesActions extends sfActions {
                 $cotizacion->setCaConsecutivo($sig);
             }
             if ($this->getRequestParameter("empresa")) {
-                $cotizacion->setCaEmpresa($this->getRequestParameter("empresa"));
+                $cotizacion->setCaEmpresa(utf8_decode($this->getRequestParameter("empresa")));
             }
             
             if ($this->getRequestParameter("idvendedor")) {
@@ -623,6 +623,16 @@ class cotizacionesActions extends sfActions {
         $this->notas = sfYaml::load(sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "cotizaciones" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "notas.yml");
 
         $this->setTemplate("generarPDF" . $this->cotizacion->getCaEmpresa());
+    }
+    
+    public function executeGenerarPDFColdepositos() {
+        $this->cotizacion = Doctrine::getTable("Cotizacion")->find($this->getRequestParameter("id"));
+        $this->forward404Unless($this->cotizacion);     
+
+        $this->filename = $this->getRequestParameter("filename");
+        $this->notas = sfYaml::load(sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "cotizaciones" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "notas.yml");
+
+        $this->setTemplate("generarPDF" . strtr($this->cotizacion->getCaEmpresa(), "áéíóú", "aeiou"));
     }
     
     public function executeGenerarPDFTPLogistics() {
@@ -2127,6 +2137,109 @@ class cotizacionesActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
+    /* ************************************************************************
+     * GRILLA DEPOSITOS
+     *
+     * ************************************************************************ */
+
+    /*
+     * Guarda los cambios realizados en la Plantilla Depositos
+     * @author Carlos G. López M.
+     */
+
+    public function executeObserveDepositosManagement() {
+
+        $conn = Doctrine::getTable("CotDeposito")->getConnection();
+        $conn->beginTransaction();
+        
+        $this->setTemplate("responseTemplate");
+        try 
+        {
+            $user_id = $this->getUser()->getUserId();
+            $id = $this->getRequestParameter("id");
+            $observaciones = $this->getRequestParameter("observaciones");
+            if ($this->getRequestParameter("oid")) {
+
+                $deposito = Doctrine::getTable("CotDeposito")->find($this->getRequestParameter("oid"));
+                //$this->forward404Unless($deposito);
+            } else {
+                $deposito = new CotDeposito();
+                $deposito->setCaIdcotizacion($this->getRequestParameter("cotizacionId"));
+            }
+
+            if ($this->getRequestParameter("idconcepto")) {
+                $deposito->setCaIdconcepto($this->getRequestParameter("idconcepto"));
+            }
+
+            if ($this->getRequestParameter("valor")) {
+                $deposito->setCaValor($this->getRequestParameter("valor"));
+            }
+
+            if ($this->getRequestParameter("valorminimo")) {
+                $deposito->setCaValorminimo($this->getRequestParameter("valorminimo"));
+            }
+
+            if ($this->getRequestParameter("aplicacion")) {
+                $deposito->setCaAplicacion(utf8_decode($this->getRequestParameter("aplicacion")));
+            }
+
+            if ($this->getRequestParameter("aplicacionminimo")) {
+                $deposito->setCaAplicacionminimo(utf8_decode($this->getRequestParameter("aplicacionminimo")));
+            }
+
+            if ($this->getRequestParameter("parametro")) {
+                $deposito->setCaParametro(utf8_decode($this->getRequestParameter("parametro")));
+            }
+
+            if ($this->getRequestParameter("fchini")) {
+                $deposito->setCaFchini($this->getRequestParameter("fchini"));
+            }
+
+            if ($this->getRequestParameter("fchfin")) {
+                $deposito->setCaFchfin($this->getRequestParameter("fchfin"));
+            }
+
+            if ($this->getRequestParameter("observaciones")) {
+                if (trim($this->getRequestParameter("observaciones")) == ""){
+                    $deposito->setCaObservaciones(null);
+                }else{
+                    $deposito->setCaObservaciones(utf8_decode($this->getRequestParameter("observaciones")));
+                }
+            }    
+
+            if (!$this->getRequestParameter("oid")) {
+                $deposito->setCaFchcreado(date("Y-m-d H:i:s"));
+                $deposito->setCaUsucreado($user_id);
+            } else {
+                $deposito->setCaFchactualizado(date("Y-m-d H:i:s"));
+                $deposito->setCaUsuactualizado($user_id);
+            }
+
+            $deposito->save( $conn );
+            $this->responseArray = array("success"=>true,"id" => $id, "oid"=>$deposito->getCaIddeposito() );
+            $conn->commit();
+        } catch (Exception $e) {
+            $conn->rollBack();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+        $this->setTemplate("responseTemplate");
+
+    }
+
+    public function executeEliminarGrillaDepositos() {
+        $user_id = $this->getUser()->getUserId();
+        $id = $this->getRequestParameter("id");
+        if ($this->getRequestParameter("oid")) {
+            $deposito = Doctrine::getTable("CotDeposito")->find($this->getRequestParameter("oid"));
+            if ($deposito) {
+                $deposito->delete();
+                $this->responseArray = array("id" => $id);
+            }
+        }
+
+        $this->setTemplate("responseTemplate");
+    }
+
     /*
      * Muestra las tarifas de aduanas de acuerdo a los productos cotizados
      */
@@ -2175,7 +2288,51 @@ class cotizacionesActions extends sfActions {
         }
     }
     
-    /*     * ***********************************************************************
+    /*
+     * Muestra las tarifas de deposito de acuerdo a los productos cotizados
+     */
+
+    public function executeTarifarioDepositos() {
+
+        $idcotizacion = $this->getRequestParameter("idcotizacion");
+        $this->idcomponent = "depositos_" . $idcotizacion;
+        
+        $cotizacion = Doctrine::getTable("Cotizacion")->find($idcotizacion);
+        $cotDepositos = $cotizacion->getCotDeposito();
+        
+        $idConceptos = array();
+        foreach ($cotDepositos as $cotDeposito) {
+            $idConceptos[] = $cotDeposito->getCaIdconcepto();
+        }
+
+        $depconceptos = Doctrine::getTable("ConceptoDeposito")
+                        ->createQuery("ca")
+                        ->where("c.ca_impoexpo = ?", "Depósitos")
+                        ->whereNotIn("ca_idconcepto", $idConceptos)
+                        ->innerJoin("ca.Costo c")
+                        ->addOrderBy("c.ca_transporte, c.ca_costo")
+                        ->execute();
+       
+        $this->data = array();
+        foreach ($depconceptos as $depconcepto) {
+            $row['idcotizacion'] = $idcotizacion;
+            $row['idconcepto'] = $depconcepto->getCaIdconcepto();
+            $row['parametros'] = utf8_encode($depconcepto->getCosto()->getCaParametros());
+            $row['concepto'] = utf8_encode($depconcepto->getCosto()->getCaCosto());
+            $row['parametro'] = utf8_encode($depconcepto->getCaParametro());
+            $row['valor'] = $depconcepto->getCaValor();
+            $row['aplicacion'] = utf8_encode($depconcepto->getCaAplicacion());
+            $row['valorminimo'] = $depconcepto->getCaValorminimo();
+            $row['aplicacionminimo'] = utf8_encode($depconcepto->getCaAplicacionminimo());
+            $row['fchini'] = $depconcepto->getCaFchini();
+            $row['fchfin'] = $depconcepto->getCaFchfin();
+            $row['observaciones'] = utf8_encode($depconcepto->getCaObservaciones());
+            $this->data[] = $row;
+        }
+    }
+    
+    
+    /* ************************************************************************
      * OTROS
      *
      * ************************************************************************ */
@@ -2396,10 +2553,18 @@ class cotizacionesActions extends sfActions {
                 $entradaColmas = str_replace("{final}", "31 de Diciembre de " . ($anno + $next), $entradaColmas);
                 $data["entradaColmas"] = utf8_encode($entradaColmas);
 
+                $entradaColdepositos = $textos['entradaColdepositos'];
+                $anno = (int) date("Y");
+                $next = (date("Y-m-d") > date("Y-m-d", mktime(0, 0, 0, 12, 0, $anno)))?1:0;
+                $entradaColdepositos = str_replace("{inicio}", "01 de Enero de " . ($anno + $next), $entradaColdepositos);
+                $entradaColdepositos = str_replace("{final}", "31 de Diciembre de " . ($anno + $next), $entradaColdepositos);
+                $data["entradaColdepositos"] = utf8_encode($entradaColdepositos);
+
                 $data["despedida"] = utf8_encode($textos['despedida']);
                 $data["anexos"] = utf8_encode($textos['anexos']);
                 $data["anexosColtrans"] = utf8_encode($textos['anexos']);
 		$data["anexosColmas"] = utf8_encode($textos['anexosColmas']);
+                $data["anexosColdepositos"] = utf8_encode($textos['anexosColdepositos']);
                 $data["fuente_id"] = "Tahoma";
             }else{
                 $cotizacion = Doctrine::getTable("Cotizacion")->find($idcotizacion);
@@ -2423,7 +2588,7 @@ class cotizacionesActions extends sfActions {
 
                     $data["idvendedor"] = utf8_encode($cotizacion->getCaUsuario());
                     $data["vendedor"] = utf8_encode($cotizacion->getUsuario()->getCaNombre());
-                    $data["empresa"] = $cotizacion->getCaEmpresa();
+                    $data["empresa"] = utf8_encode($cotizacion->getCaEmpresa());
                     
                     $data["asunto"] = utf8_encode($cotizacion->getCaAsunto());
                     $data["saludo"] = utf8_encode($cotizacion->getCaSaludo());

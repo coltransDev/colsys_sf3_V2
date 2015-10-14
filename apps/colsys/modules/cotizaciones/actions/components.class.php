@@ -99,15 +99,15 @@ class cotizacionesComponents extends sfComponents {
                         ->execute();
 
         $this->recargosTerrestreOTM = Doctrine::getTable("InoConcepto")
-                                  ->createQuery("c")
-                                 ->innerJoin("c.InoConceptoModalidad cm")
-                                 ->innerJoin("cm.Modalidad m")
-                                 ->addWhere("m.ca_transporte = ? ", Constantes::TERRESTRE )
-                                 ->addWhere("c.ca_recargootmdta = ? ", true )
-                                 ->addWhere("c.ca_usueliminado IS NULL" )
-                                 ->distinct()
-                                 ->addOrderBy( "c.ca_concepto" )
-                                 ->execute();
+                        ->createQuery("c")
+                        ->innerJoin("c.InoConceptoModalidad cm")
+                        ->innerJoin("cm.Modalidad m")
+                        ->addWhere("m.ca_transporte = ? ", Constantes::TERRESTRE )
+                        ->addWhere("c.ca_recargootmdta = ? ", true )
+                        ->addWhere("c.ca_usueliminado IS NULL" )
+                        ->distinct()
+                        ->addOrderBy( "c.ca_concepto" )
+                        ->execute();
 
         if(!isset($this->modo)){
             $this->modo = "";
@@ -175,6 +175,45 @@ class cotizacionesComponents extends sfComponents {
                 'fchini' => $aduana->getCaFchini(),
                 'fchfin' => $aduana->getCaFchfin(),
                 'observaciones' => utf8_encode($aduana->getCaObservaciones()),
+            );
+        }
+        
+        if (!isset($this->modo)) {
+            $this->modo = "";
+        }
+    }
+
+    public function executePanelDepositos() {
+        $id = $this->cotizacion->getCaIdcotizacion();
+
+        $depositos = Doctrine::getTable("CotDeposito")
+                        ->createQuery("s")
+                        ->where("s.ca_idcotizacion = ? ", $id)
+                        ->execute();
+        
+        $sql = "select distinct ca_parametro from pric.tb_conceptodeposito";
+        $con = Doctrine_Manager::getInstance()->connection();
+        $st = $con->execute($sql);
+        $this->parametros = $st->fetchAll();
+            
+        $this->aplicaciones = ParametroTable::retrieveByCaso("CU246");
+        $this->depositos = array();
+
+        foreach ($depositos as $deposito) {
+            $this->depositos[] = array('oid' => $deposito->getCaIddeposito(),
+                'idcotizacion' => $deposito->getCaIdcotizacion(),
+                'idconcepto' => $deposito->getCaIdconcepto(),
+                'transporte' => utf8_encode($deposito->getCosto()->getCaTransporte()),
+                'parametros' => utf8_encode($deposito->getCosto()->getCaParametros()),
+                'concepto' => utf8_encode($deposito->getCosto()->getCaCosto()),
+                'valor' => $deposito->getCaValor(),
+                'valorminimo' => $deposito->getCaValorminimo(),
+                'aplicacion' => utf8_encode($deposito->getCaAplicacion()),
+                'aplicacionminimo' => utf8_encode($deposito->getCaAplicacionminimo()),
+                'parametro' => utf8_encode($deposito->getCaParametro()),
+                'fchini' => $deposito->getCaFchini(),
+                'fchfin' => $deposito->getCaFchfin(),
+                'observaciones' => utf8_encode($deposito->getCaObservaciones())
             );
         }
         

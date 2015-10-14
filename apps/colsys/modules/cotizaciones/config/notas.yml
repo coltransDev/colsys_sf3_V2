@@ -115,15 +115,15 @@ OTM_FCL: |
   • Tres (3) días libres de bodegajes a partir del arribo de la carga a puerto
   • Coordinación con el Transporte terrestre Puerto Colombiano ? Destino
   • Sellos para el Contenedor 
-  • Uso de instalaciones portuarias
   • Coordinación Logística
-  • Cargue del contenedor en el terminal Marítimo
   • Entrega de documentos sellados por la DIAN en destino en las oficinas de Coltrans S.A.S.
 
   Las anteriores tarifas NO Incluyen :
 
   • Servicio documental, administración de inventario de SPRC $62.000,oo
   • Gastos de liberación con la naviera, para embarques directos.
+  • Uso de instalaciones portuarias (20 USD 110 - 40 USD 145)
+  • Cargue del contenedor en el terminal Marítimo (USD 35)
   • Servicio por liberación USD60,oo para embarques directos.
   • Bodegajes en puerto a partir del cuarto (4) día de arribo del buque.
   • Inspección Física a la carga solicitada por las Autoridades Aduaneras.  
@@ -346,3 +346,27 @@ seguroContenedor: |
     Formular protesta al transportador o similar en los plazos establecidos
   10. CLÁUSULA DE INCUMPLIMIENTO DE CONDICIONES
     El incumplimiento de cualquiera de las obligaciones, cláusulas, garantías estipuladas en el presente contrato de seguros dará lugar a la exclusión automática de la cobertura para el despacho afectado con dicho incumplimiento.
+
+depositoTitulo: NOTAS IMPORTANTES QUE DEBEN TENER EN CUENTA SOBRE SUS CARGAS EN COLDEPOSITOS
+deposito: | 
+  1. Esta cotización no aplica para el almacenamiento de químicos ni materiales peligrosos.
+  2. Cualquier servicio adicional será cotizado según necesidades.
+  3. En los contenedores los servicios (cargue / descargue) se cobran por separado.
+  4. Horario de almacén de Lun a Viernes 8am - 5:30 pm sábado 8:00 - 12M, de requerirse modificación al horario favor coordinarlo previamente.
+  5. COLDEPOSITOS S.A.S tiene poliza todo riesgo para las mercancias mientras permanecen dentro de las instalaciones, por $ 1.000.000.000 y responde por precio de costo.
+  6. La mercancía debe estar acompañada de su respectivo seguro el cual está por cuenta del cliente, y de su respectiva documentación (Factura Comercial).
+  7. Si la Mercancía requiere servicio de Montacarga Superior a 1,5 Ton se cobrará al cliente según costo.
+  8. Las tarifas presentadas no incluyen IVA. FORMA DE PAGO DE CONTADO / EN EL MOMENTO DEL RETIRO DE SU MERCANCÍA
+  9. Es obligación del cliente, suministrar previamente al ingreso de la mercancía todas las indicaciones o instrucciones sobre cuidados especiales o restricciones de la carga, que deban ser tenidas en cuenta para el almacenamiento y manipulación de la mercancía.
+  10. Los documentos de transporte deben ser consignados según modo de transporte así:
+    a. INSTRUCCIONES DE CONSIGNACION PARA CARGA AEREA:
+        RAZON SOCIAL IMPORTADOR NIT No. XXXXXXXXXX
+        COLDEPOSITOS LOGISTICA S.A.S ZONA FRANCA BOGOTA S.A. NIT No.900.841.486-9
+        Carrera 106 No. 15 A 25 ? Interior 11 ? Manzana 4 Bodega 4 Bogotá DC ? Colombia
+    b. INSTRUCCIONES DE CONSIGNACION PARA CARGA MARITIMA:
+        RAZON SOCIAL IMPORTADOR NIT No. XXXXXXXXXX
+        COLDEPOSITOS LOGISTICA S.A.S ZONA FRANCA BOGOTA S.A. NIT No.900.841.486-9
+        Carrera 106 No. 15 A 25 ? Interior 11 ? Manzana 4 Bodega 4 Bogotá DC ? Colombia
+        RAZON SOCIAL DEL OTM Nit. No. XXXXXXXXXXX ? Carga en OTM
+  11. Debemos mantener los documentos legales de su compañía  actualizados y la circular 170, por lo que serán exigidos antes de retirar sus mercancías.
+  

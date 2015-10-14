@@ -3,7 +3,6 @@
 * Pantalla de bienvenida para el modulo de reportes 
 * @author Andres Botero
 */
-
 include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetIncoterms");
 include_component("widgets", "widgetModalidad");
@@ -17,9 +16,9 @@ $empresas = $sf_data->getRaw("empresas");
       
 	function cambiarVendedor( field ){
 		if( field.value=="mis_cotizaciones" ){
-			document.getElementById("visible").style.display="none";
+                    document.getElementById("visible").style.display="none";
 		}else{
-			document.getElementById("visible").style.display="inline";
+                    document.getElementById("visible").style.display="inline";
 		}
 		switch( field.value ){
             case "vendedor":
@@ -49,17 +48,17 @@ $empresas = $sf_data->getRaw("empresas");
     </tr>
 	<tr>
 		<td width="88" ><b>Buscar por:</b> <br />
-            <select name="criterio" size="8" onChange='cambiarVendedor(this)'>
-                <option value="mis_cotizaciones" selected="selected">Mis Cotizaciones</option>
-                <option value="consecutivo">Consecutivo</option>
-                <option value="seguimiento">Seguimientos</option>
-                <option value="nombre_del_cliente">Nombre del Cliente</option>
-                <option value="nombre_del_contacto">Nombre del Contacto</option>
-                <option value="asunto">Asunto</option>
-                <option value="vendedor">Vendedor</option>                
-                <option value="sucursal">Sucursal</option>
-                <option value="numero_de_cotizacion">Id</option>
-            </select>
+                <select name="criterio" size="8" onChange='cambiarVendedor(this)'>
+                    <option value="mis_cotizaciones" selected="selected">Mis Cotizaciones</option>
+                    <option value="consecutivo">Consecutivo</option>
+                    <option value="seguimiento">Seguimientos</option>
+                    <option value="nombre_del_cliente">Nombre del Cliente</option>
+                    <option value="nombre_del_contacto">Nombre del Contacto</option>
+                    <option value="asunto">Asunto</option>
+                    <option value="vendedor">Vendedor</option>                
+                    <option value="sucursal">Sucursal</option>
+                    <option value="numero_de_cotizacion">Id</option>
+                </select>
 	    </td>
 		<td width="337" >&nbsp;
 		  <div id="visible" style="display:none"><b>Que contenga la cadena:</b><br />
@@ -116,7 +115,7 @@ $empresas = $sf_data->getRaw("empresas");
             
             
             <script>
-                field=new Ext.form.ComboBox({
+                field = new Ext.form.ComboBox({
                         id: "transporte",
                         name:"transporte",
                         mode:'local',
@@ -136,42 +135,42 @@ $empresas = $sf_data->getRaw("empresas");
                 field.render("div_filtros");
                 
                 field = new WidgetImpoexpo({fieldLabel: 'Impo/Expo',
-                                id: 'impoexpo',
-                                hiddenName: "impoexpo",
-                                value:"<?=Constantes::IMPO ?>",
-                                width:100
-                    })
+                        id: 'impoexpo',
+                        hiddenName: "impoexpo",
+                        value:"<?=Constantes::IMPO ?>",
+                        width:100
+                })
                 
-                field= new WidgetModalidad({fieldLabel: 'Modalidad',
+                field = new WidgetModalidad({fieldLabel: 'Modalidad',
                         id: 'modalidad',
                         name: 'modalidad',
                         linkTransporte: "transporte",
                         linkImpoexpo: "impoexpo",
                         allowBlank: true,
                         width:100
-                     })
+                })
                      
                 field.render("div_filtros5");
 
-                field=new WidgetCiudad({
-                                      name: 'origen',
-                                      hiddenName: 'idorigen',
-                                      id: 'origen',
-                                      width:100
-                                    })
+                field = new WidgetCiudad({
+                        name: 'origen',
+                        hiddenName: 'idorigen',
+                        id: 'origen',
+                        width:100
+                })
 
                 field.render("div_filtros1");
 
-                field=new WidgetCiudad({
-                                      name: 'destino',
-                                      hiddenName: 'iddestino',
-                                      id: 'destino',
-                                      width:100
-                                    })
+                field = new WidgetCiudad({
+                        name: 'destino',
+                        hiddenName: 'iddestino',
+                        id: 'destino',
+                        width:100
+                })
 
                 field.render("div_filtros2");
 
-                field=new Ext.form.ComboBox({
+                field = new Ext.form.ComboBox({
                         id: "empresa",
                         name:"empresa",
                         mode:'local',
@@ -179,7 +178,8 @@ $empresas = $sf_data->getRaw("empresas");
                         store : [
                             ['','...'],
                             ['Coltrans','Coltrans'],
-                            ['Colmas','Colmas']
+                            ['Colmas','Colmas'],
+                            ['Coldepósitos','Coldepósitos']
                         ],
                         forceSelection: true,
                         triggerAction: 'all',
@@ -189,10 +189,10 @@ $empresas = $sf_data->getRaw("empresas");
                 
                 field.render("div_filtros3");
                 
-                field=new WidgetIncoterms({
-                                      name:"incoterms",
-                                      width:100
-                                    })
+                field = new WidgetIncoterms({
+                        name:"incoterms",
+                        width:100
+                })
 
                 field.render("div_filtros4");
 
