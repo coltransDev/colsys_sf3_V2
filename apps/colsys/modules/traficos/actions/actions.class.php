@@ -874,12 +874,35 @@ class traficosActions extends sfActions {
 
             $titulo = "Antecedentes RN" . $reporte->getCaConsecutivo() . " [" . $reporte->getCaModalidad() . " " . $reporte->getOrigen()->getCaCiudad() . "->" . $reporte->getDestino()->getCaCiudad() . "]";
             $texto = "";
-
+            
             $numdias = 2;
-            $parametros = ParametroTable::retrieveByCaso("CU086", $reporte->getOrigen()->getCaIdtrafico());
-            if (count($parametros) > 0) {
-               $numdias = $parametros[0]->getCaValor2();
+            //$parametros = ParametroTable::retrieveByCaso("CU086", $reporte->getOrigen()->getCaIdtrafico());
+            //->find($request->getParameter("idcliente"));
+            $parametros = Doctrine::getTable("EntregaAntecedentes")
+                          ->createQuery("SalidaAntecedente")
+                          ->addWhere("SalidaAntecedente.ca_idtrafico=?",$reporte->getOrigen()->getCaIdtrafico());
+            $param_antecedente=$parametros->execute();
+            
+            foreach ($param_antecedente as $valor_parametro) {
+                if ((($valor_parametro->getCaIddestino() == $reporte->getCaDestino()) || ($valor_parametro->getCaIdciudad() == $reporte->getCaOrigen())) || ($valor_parametro->getCaModalidad() == $reporte->getCaModalidad())) {
+                    if ((($valor_parametro->getCaIddestino() == $reporte->getCaDestino()) || ($valor_parametro->getCaIdciudad() == $reporte->getCaOrigen())) && ($valor_parametro->getCaModalidad() == $reporte->getCaModalidad())) {
+                        if (($valor_parametro->getCaIddestino() == $reporte->getCaDestino()) && ($valor_parametro->getCaIdciudad() == $reporte->getCaOrigen())) {
+                            $numdias = $valor_parametro->getCaDias();
+                        } elseif ($valor_parametro->getCaIddestino() == $reporte->getCaDestino()) {
+                            $numdias = $valor_parametro->getCaDias();
+                        } elseif ($valor_parametro->getCaIdciudad() == $reporte->getCaOrigen()) {
+                            $numdias = $valor_parametro->getCaDias();
+                        }
+                    } elseif ($valor_parametro->getCaIddestino() == $reporte->getCaDestino()) {
+                        $numdias = $valor_parametro->getCaDias();
+                    } elseif ($valor_parametro->getCaIdciudad() == $reporte->getCaOrigen()) {
+                        $numdias = $valor_parametro->getCaDias();
+                    }
+                } elseif (($valor_parametro->getCaIddestino() == "999-9999") && ($valor_parametro->getCaIdciudad() == "999-9999") && ($valor_parametro->getCaModalidad() == "")) {
+                    $numdias = $valor_parametro->getCaDias();
+                }
             }
+
             $tarea->setCaUrl("/antecedentes/buscarReferencia/reporte/" . $reporte->getCaConsecutivo());
             $tarea->setCaFchvisible(date("Y-m-d H:i:s"));
 
@@ -934,14 +957,20 @@ class traficosActions extends sfActions {
                }
             }
 
-            $recips = explode(",", $request->getParameter("cci"));
+            /*$recips = explode(",", $request->getParameter("cci"));
             foreach ($recips as $recip) {
                $recip = str_replace(" ", "", $recip);
                if ($recip) {
                   $email->addCc($recip);
                }
-            }
-
+            }*/
+            for ($i = 0; $i < NuevoStatusForm::NUM_CC; $i++) {
+                if($request->getParameter("cci_" . $i)!="")
+                    $email->addCc($request->getParameter("cci_" . $i));                
+             }
+            
+            
+            
             $email->addCc($this->getUser()->getEmail());
 
             $subjectRN = "Reporte Incompleto RN" . $reporte->getCaConsecutivo() . " [" . $reporte->getCaModalidad() . " " . $reporte->getOrigen()->getCaCiudad() . "->" . $reporte->getDestino()->getCaCiudad() . "]";

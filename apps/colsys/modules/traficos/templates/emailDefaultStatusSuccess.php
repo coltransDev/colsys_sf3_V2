@@ -4,12 +4,15 @@ $status = $sf_data->getRaw("status");
 $etapa = $sf_data->getRaw("etapa");
 $firmaotm = $sf_data->getRaw("firmaotm");
 $company = $sf_data->getRaw("company");
+$modo = $sf_data->getRaw("modo");
 ?>
 
 <div class="htmlContent">
     <?
     $reporte = $status->getReporte();
-    $cliente = $reporte->getCliente();
+    $cliente = $reporte->getCliente();  
+    $comercial = $reporte->getCaLogin();    
+    
     ?>
     <div align="center"><h3><?= ($etapa && $etapa->getCaTitle()) ? $etapa->getCaTitle() : "SEGUIMIENTO DE CARGA" ?></h3></div>
     <div align="left">
@@ -17,7 +20,24 @@ $company = $sf_data->getRaw("company");
             <tr>
                 <td style="padding: 2px; font-size: 13px;font-family: Arial,Helvetica,sans-serif;">
                     Señores:<br />
-                    <b><?= strtoupper($cliente->getCaCompania()) ?></b>
+                    <? if ($modo != "otm") { ?>
+                        <b><?= strtoupper($cliente->getCaCompania()) ?></b>
+                        <?
+                    } else {
+                        $inoClientes = $reporte->getInoHouse();
+                        if ($comercial == "consolcargo" || count($inoClientes) <= 0) {
+                            ?>
+                            <b><?= strtoupper($cliente->getCaCompania()) ?></b>
+                            <?
+                        } else {
+                            foreach ($inoClientes as $inoCliente) {
+                                ?>
+                                <b><?= strtoupper($inoCliente->getCliente()->getCaCompania()) ?></b>
+                                <?
+                            }
+                        }
+                    }
+                    ?>
                     <br /><br />
                     <?= $status->getCaIntroduccion() ?>
                 </td>
@@ -49,6 +69,7 @@ $company = $sf_data->getRaw("company");
                     $array = array_unique($array);
                     $incoterms = implode(" ", $array);
                     echo $incoterms;
+                    //echo $reporte->getIncotermsStr();
                     ?>
                 </td>
                 <?
