@@ -9,18 +9,22 @@ Archivos:
     ca_idarchivo:
       type: integer
       primary: true
-      autoincrement: true 
+      autoincrement: true
     ca_iddocumental: integer
-    ca_nombre: string(100)    
+    ca_nombre: string(100)
     ca_mime: string(20)
     ca_size: numeric
     ca_procesado: boolean
-    path: string(255)
+    ca_path: string
+    ca_ref1: string(20)
+    ca_ref2: string(20)
+    ca_ref3: string(20)
+    ca_observaciones: string
     ca_usucreado: string(20)
     ca_fchcreado: timestamp
     ca_usueliminado: string(20)
     ca_fcheliminado: timestamp
-  relations:    
+  relations:
     TipoDocumental:
       local: ca_iddocumental
       foreign: ca_iddocumental
@@ -51,7 +55,9 @@ TipoDocumental:
     ca_serie: integer
     ca_subserie: integer
     ca_documento: string
-    ca_observaciones: string    
+    ca_observaciones: string
+    ca_directorio: string
+    ca_idsserie: integer
     ca_usucreado: string(20)
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
@@ -67,3 +73,40 @@ TipoDocumental:
       foreign: ca_login
       type: one
       class: Usuario
+      
+Series:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: docs
+  tableName: docs.tb_sseries
+  columns:
+    ca_idsserie:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idpadre: integer    
+    ca_nombre: string
+    ca_grupo: string    
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+    ca_usueliminado: string(20)
+    ca_fcheliminado: timestamp
+  relations:
+    UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    UsuActualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    Series:
+      local: ca_idpadre
+      foreign: ca_idsserie
+      type: one
