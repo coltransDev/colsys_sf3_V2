@@ -68,8 +68,8 @@ Trafico:
       fixed: false
       notnull: false
       primary: false
-    ca_conceptos:
-      type: string(255)
+    ca_cod_dian:
+      type: string(3)
       fixed: false
       notnull: false
       primary: false
@@ -580,3 +580,76 @@ LibCliente:
       foreign: ca_idcliente
       type: one
 
+MandatosTipo:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: public
+  tableName: tb_mandatos_tipo
+  columns:
+    ca_idtipo:
+      type: integer
+      primary: true
+    ca_tipo:
+      type: string(255)
+      notnull: true
+    ca_clase: string(32)
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    Mancliente:
+      local: ca_idtipo
+      foreign: ca_idtipo
+      type: many
+
+
+Mancliente:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: public
+  tableName: tb_mancliente
+  columns:
+    ca_idcliente:
+      type: integer
+      primary: true
+    ca_idciudad:
+      type: string(8)
+      primary: true
+    ca_idtipo:
+      type: integer
+      primary: true
+    ca_idarchivo: integer
+    ca_observaciones: string(255)
+    ca_fchradicado: date
+    ca_fchvencimiento: date
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    Cliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: one
+    Ciudad:
+      local: ca_idciudad
+      foreign: ca_idciudad
+      type: one
+    MandatosTipo:
+      local: ca_idtipo
+      foreign: ca_idtipo
+      type: one
+    Archivos:
+      local: ca_idarchivo
+      foreign: ca_idarchivo
+      type: one
+    UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
