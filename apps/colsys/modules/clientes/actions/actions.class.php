@@ -1550,7 +1550,7 @@ class clientesActions extends sfActions {
             $estadisticas = array();
             $folder = "Rc";
             $file = sfConfig::get('app_digitalFile_root') . $folder . DIRECTORY_SEPARATOR . $request->getParameter("archivo");
-            
+
             chmod($file, 0777);
             $lines = file($file);
             $resultado = array();
@@ -1589,10 +1589,13 @@ class clientesActions extends sfActions {
                     continue;
                 }
                 //echo $sucRec[$suc_recibo].'-'.$sucFac[$suc_factura]."<br>";
-                if ($sucRec[$suc_recibo] != $sucFac[$suc_factura]) {
-                    $resultado[$i] = $comienzo_log . "La sucursal registrada en el recibo es diferente a la de la factura";
-                    $estadisticas["direfente_sucursal"]++;
-                    continue;
+                if($suc_recibo!="15")
+                {
+                    if ($sucRec[$suc_recibo] != $sucFac[$suc_factura]) {
+                        $resultado[$i] = $comienzo_log . "La sucursal registrada en el recibo es diferente a la de la factura (".$suc_recibo ." :: ".$sucFac[$suc_factura].")";
+                        $estadisticas["direfente_sucursal"]++;
+                        continue;
+                    }
                 }
                 //echo $nfact."".$tipo_comp."<br>";
                 if (!$nfact) {
@@ -1625,7 +1628,14 @@ class clientesActions extends sfActions {
                 $encontro = false;
                 $actualizo = false;
 
-                $sucursal = $sucRec[$suc_recibo];
+                if($suc_recibo=="15")
+                {
+                    $sucursal=$this->getUser()->getIdSucursal();
+                    //echo "RECIBO L15".$suc_recibo;
+                }
+                else
+                    $sucursal = $sucRec[$suc_recibo];
+                
                 if ($sucursal == "BOG" || $sucursal == "ABO" || $sucursal == "OBO")
                     $sucursal = "'BOG','ABO','OBO'";
                 else
@@ -1705,7 +1715,7 @@ class clientesActions extends sfActions {
             //echo $sqltmp;
             $this->responseArray = array("success" => "true", "resultado" => implode("<br>", $resultado), "estadisticas" => $estadisticas, "sqlimpor" => $sqltmp);
         } catch (Exception $e) {
-            $this->responseArray = array("success" => "false", "errorInfo" => $e->getMessage());
+            $this->responseArray = array("success" => "false", "errorInfo" => $e->getTraceAsString());
         }
         $this->setTemplate("responseTemplate");
     }
