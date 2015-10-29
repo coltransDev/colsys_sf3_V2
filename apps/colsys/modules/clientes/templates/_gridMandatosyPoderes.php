@@ -426,6 +426,14 @@ include_component("clientes", "formSubirArchivos");
                                         }
                                         win_arc.show();
                                     }
+                                }, {
+                                    text: 'Regresar',
+                                    tooltip: 'Regresar al Cliente',
+                                    iconCls: 'refresh',
+                                    scope: this,
+                                    handler: function () {
+                                        document.location.href = "/colsys_php/clientes.php?modalidad=N.i.t.&criterio=<?= $id ?>";
+                                    }
                                 }]
                         }],
             // paging bar on the bottom
