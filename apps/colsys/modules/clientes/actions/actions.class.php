@@ -1828,8 +1828,10 @@ class clientesActions extends sfActions {
             $mandatos->setCaObservaciones($observaciones);
             $mandatos->save();
 
+            $conn->commit();
             $this->responseArray = array("success" => "true");
         } catch (Exception $e) {
+            $conn->rollback();
             $this->responseArray = array("success" => "false", "errorInfo" => $e->getMessage());
         }
         $this->setTemplate("responseTemplate");
@@ -1851,10 +1853,11 @@ class clientesActions extends sfActions {
                     ->fetchOne();
             if ($mandatos) {
                 $mandatos->delete();
+                $conn->commit();
             }
-
             $this->responseArray = array("success" => "true");
         } catch (Exception $e) {
+            $conn->rollback();
             $this->responseArray = array("success" => "false", "errorInfo" => $e->getMessage());
         }
         $this->setTemplate("responseTemplate");
