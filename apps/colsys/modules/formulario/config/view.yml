@@ -1,7 +1,7 @@
 all:
 
 
-  stylesheets:    [jquery-ui/overcast/jquery-ui-1.9.1.css, stars/jquery.rating.css]
+  stylesheets:    [jquery-ui/overcast/jquery-ui-1.9.1.css, stars/jquery.rating.css, formulario_home.css]
 #  stylesheets:    [coltrans, print: { media: print }, jquery/jquery.tooltip.css, menu/menu, blog]
 
   javascripts:    [tiny_mce/tiny_mce.js, stars/jquery.rating.pack.js]

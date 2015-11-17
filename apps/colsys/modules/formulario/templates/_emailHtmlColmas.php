@@ -82,7 +82,7 @@
                         <p>Lo invitamos a ingresar al siguiente enlace:</p>
                         <br>
                         <div style="text-align:center">
-                            <a href="https://www.coltrans.com.co/formulario/servicios/id/<?php echo base64_encode(9) ?>/co/<?php echo base64_encode($contacto) ?>">Encuesta de servicio</a>
+                            <a href="https://www.coltrans.com.co/formulario/servicios/id/<?php echo base64_encode($idformulario) ?>/co/<?php echo base64_encode($contacto) ?>">Encuesta de servicio</a>
                         </div>
                         <br>
                         <br>
@@ -92,7 +92,7 @@
                         <hr class ="hr">
                         <br>
 
-                        <div style="text-align: center;">COLMAS LTDA.<br>
+                        <div style="text-align: center;">AGENCIA DE ADUNAS COLMAS LTDA Nivel 1.<br>
                             <a href="http://www.colmas.com.co/" target="_BLANK">www.colmas.com.co</a>
                         </div>
                     </div>

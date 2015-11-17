@@ -17,7 +17,7 @@
     <br>
     <br>
     <? if ($formulario->ca_empresa == 1) { ?>
-        <p class="align-center">Puede continuar visitando nuestro sitio web  <a href="http://www.colmas.com.co/" target="_BLANK">COLMAS LTDA.</a></p>    
+        <p class="align-center">Puede continuar visitando nuestro sitio web  <a href="http://www.colmas.com.co/" target="_BLANK">COLMAS S.A.S</a></p>    
     <? } else { ?>
         <p class="align-center">Puede continuar visitando nuestro sitio web  <a href="http://www.coltrans.com.co/" target="_BLANK">COLTRANS S.A.S</a></p>
     <? } ?>   

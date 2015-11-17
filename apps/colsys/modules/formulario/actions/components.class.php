@@ -4,60 +4,80 @@
  * formulario actions.
  *
  * @package    colsys
- * @subpackage falabella
- * @author     Your name here
+ * @subpackage formulario
+ * @author     Andrea Ramírez
  * @version    SVN: $Id: actions.class.php 3335 2007-01-23 16:19:56Z fabien $
  */
 class formularioComponents extends sfComponents {
+    /*
+     *   Carga el Registro de la Cabecera
+     */
+    public function executeFormMenuEstadisticas($request) {
 
-	/*
-	*   Carga el Registro de la Cabecera
-	*/
-	public function executeMainPanel() {
-            $this->header = Doctrine::getTable("FalaHeader")
-                                   ->createQuery("d")
-                                   ->select("d.ca_iddoc, d.ca_reporte, d.ca_num_viaje, d.ca_cod_carrier, ca_container_mode, ca_numero_invoice, ca_monto_invoice_miles")
-                                   ->where("d.ca_iddoc = ? ", $this->fala_header->getCaIddoc())
-                                   ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                                   ->execute();
-            
-            $this->container = ParametroTable::retrieveByCaso("CU084");
-	}
-
-
-	/*
-	*   Carga los Registros del Detalle
-	*/
-	public function executePanelDetalles() {
-            //$this->details = $this->fala_header->getFalaDetail();
-
-            $this->details = Doctrine::getTable("FalaDetail")
-                                       ->createQuery("d")
-                                       ->select("d.*")
-                                       ->where("d.ca_iddoc = ? ", $this->fala_header->getCaIddoc())
-                                       ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                                       ->execute();
-
-            $this->container = ParametroTable::retrieveByCaso("CU057");
-	}
-    
-    public function executeFormMenuIndicadoresPanel($request) {
+        $response = sfContext::getInstance()->getResponse();
+        $response->removeStylesheet("formulario_home.css");
         
-        $this->grupos = Doctrine::getTable("HdeskGroup")
-                ->createQuery("g")
-                ->select("g.ca_idgroup, g.ca_name")
-                ->distinct()
-                ->addOrderBy("g.ca_idgroup")
-                ->where("g.ca_iddepartament=13")
-                ->execute();
+        try {
+            error_reporting(E_ALL);
+            $servicios = Doctrine::getTable("Opcion")->createQuery("o")
+                    ->select("o.ca_texto, o.ca_id")
+                    ->leftJoin("o.Pregunta p")
+                    ->leftJoin("p.Bloque b")
+                    ->leftJoin("b.Formulario f")
+                    ->where("f.ca_id = ?", $this->idFormulario)
+                    ->addWhere("p.ca_activo = ?", '1')
+                    ->addWhere("b.ca_tipo != ?", '0')
+                    ->execute();
+
+            $this->servicios = array();
+            foreach ($servicios as $servicio) {
+                $this->servicios[] = array("idservicio" => $servicio->getCaId(), "nombre" => utf8_encode($servicio->getCaTexto()));
+            }
+            
+            $preguntas = Doctrine::getTable("Pregunta")->createQuery("p")
+                    ->select("p.ca_id, p.ca_texto")
+                    ->leftJoin("p.Bloque b")
+                    ->leftJoin("b.Formulario f")
+                    ->where("f.ca_id = ?", $this->idFormulario)
+                    ->addWhere("p.ca_activo = ?", '1')
+                    ->addWhere("b.ca_tipo != ?", '1')
+                    ->addOrderBy("p.ca_texto")                    
+                    ->execute();
+
+            $this->preguntas = array();
+            foreach ($preguntas as $pregunta) {                
+                $this->preguntas[] = array("idpregunta" => $pregunta->getCaId(), "nombre" => utf8_encode($pregunta->getCaTexto()));
+            }
+        } catch (Exception $e) {
+            print_r($e);
+        }
+    }
+
+    public function executeReportePorServicio($request) {
+        
+    }
+
+    public function executeReportePorSucursal($request) {
+        
+    }
+
+    public function executeReporteEncuestas($request) {
+        
+    }
     
-        $this->idpais_origen=$this->getRequestParameter("idpais_origen");
-        $this->pais_origen=$this->getRequestParameter("pais_origen");
-        $this->opcion=$this->getRequestParameter("opcion");
-        $this->fechainicial = $request->getParameter("fechaInicial");
-        $this->fechafinal = $request->getParameter("fechaFinal");
-        $this->idtransporte = $this->getRequestParameter("idtransporte");
-        $this->transporte = $this->getRequestParameter("transporte");
+    public function executeReportePorSucursalServicio($request) {
+        
+    }
+    
+    public function executeReportePorNumSucursalServicio($request) {
+        
+    }
+    
+    public function executeReportePorPregunta($request) {
+        
+    }
+    
+    public function executeNuevoSeguimientoWindow( ){
         
     }
 }

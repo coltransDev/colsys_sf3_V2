@@ -12,7 +12,7 @@
     <div class="mensaje-obligatorio"><span class="pregunta-obligatoria">*</span>Campo Obligatorio</div>
     <? foreach ($formulario->getBloquesOrdenados($formulario->ca_id) as $bloque){?>
         <?
-        include_partial('bloque/vistaPreviaBloque', array('bloque' => $bloque, 'servicios' => $servicios));
+        include_partial('bloque/vistaPreviaBloque', array('bloque' => $bloque, 'servicios' => $servicios, "formulario"=>$formulario));
         ?>
     <? } ?>
     
@@ -45,17 +45,19 @@ function validarFormulario(){
             
             if(tipo=="radio"){
                 if(el.checked==true){
-                    eval( "Campos."+el.name+" = 'true';" )
+                    eval( "Campos."+el.name+" = 'true';" );
+                    pregunta.style.color='#000000';
                 }
             }
+            
             if(tipo=="select-one"){
                 var opcion =$('select[name='+el.name+']').val();
                 if(opcion!=""){
                     eval( "Campos."+el.name+" = 'true';" )
+                    pregunta.style.color='#000000';
                 }
-            }
+            }            
         }
-        
     });
     
     $.each( Campos, function( key, el ) {
