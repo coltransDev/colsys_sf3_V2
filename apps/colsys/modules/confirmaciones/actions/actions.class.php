@@ -674,6 +674,7 @@ class confirmacionesActions extends sfActions {
                     $options["subject"] = "División de Contenedores Id.: " . $reporte->getCaConsecutivo()." ";
                     $status->setCaIntroduccion($this->getRequestParameter("status_intro_cont"));
                     $mensaje = $this->getRequestParameter("status_body_cont") . "\n";
+                    $status->setCaIdetapa("IMCNT");
                     if ($this->getRequestParameter("mensaje_" . $oid)) {
                         $mensaje .= "\n" . $this->getRequestParameter("mensaje_" . $oid);
                     }
@@ -762,7 +763,7 @@ class confirmacionesActions extends sfActions {
         
         if ($diff > $idgMax and strlen($justifica)==0){
             $this->responseArray = array("success" => true, "cumplio" => "No");
-        }else if ($diff > $idgMax and strlen($justifica)!=0){
+        }else if ($diff > $idgMax and strlen($justifica)>0){
             $this->responseArray = array("success" => true, "cumplio" => "Justifico");
         }else{
             $this->responseArray = array("success" => true, "cumplio" => "Si");

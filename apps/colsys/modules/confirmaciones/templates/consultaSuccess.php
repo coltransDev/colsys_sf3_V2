@@ -235,20 +235,14 @@ $textos = $sf_data->getRaw("textos");
                     success:function(response,options){
                         var res = Ext.util.JSON.decode( response.responseText );
                                                
-                        //element = ("#observaciones_idg")// document.getElementById('observaciones_idg');
                         if( res.cumplio=="No" ){
-                            $("#observaciones_idg").focus();
-                            //element = document.getElementById('justify_tbl');
-                            //element.style.display = "inline";
                             $("#justify_tbl").show();
+                            $("#observaciones_idg").focus();                            
                             alert("De acuerdo al IDG está fuera del tiempo de oportunidad, favor dilgenciar la casilla de justificación que se ha habilitado.");
                         }else{ 
-                            if( res.cumplio=="Si" ){
-                                //element = document.getElementById('observaciones_idg');
-                                $("#observaciones_idg").val('');
-                                //element = document.getElementById('justify_tbl');
-                                $("#justify_tbl").hide();
-                                //element.style.display = "none";
+                            if( res.cumplio=="Si" ){                                
+                                $("#observaciones_idg").val('');                                
+                                $("#justify_tbl").hide();                                
                             }
                             $("#form1").submit();
                         }
