@@ -93,7 +93,7 @@ class emailActions extends sfActions
             return sfView::ERROR;
         }
         
-        $dias = 8;
+        $dias = 10;
         if( $email->getCaFchenvio()<=date("Y-m-d H:i:s", time()-86400*$dias) ){
             $this->mensaje = "No se puede reenviar un email enviado hace mas de ".$dias." días";
             $this->email = $email;
