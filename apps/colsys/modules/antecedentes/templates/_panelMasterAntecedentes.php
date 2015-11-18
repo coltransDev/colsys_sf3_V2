@@ -124,6 +124,9 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU049,CU119,C
                                                     
                             new WidgetLinea({fieldLabel: 'Linea',
                                 linkTransporte: "transporte",
+                                impoexpo:"impoexpo",
+                                activoImpo: true,
+                                activoExpo: true,
                                 name: 'linea',
                                 id: 'linea',
                                 hiddenName: 'idlinea',

@@ -717,19 +717,26 @@ class antecedentesActions extends sfActions {
 
     public function executeDatosReferencia($request) {
 
-        $this->forward404Unless($request->getParameter("numRef"));
+         $this->forward404Unless($request->getParameter("numRef"));
         $numRef = $request->getParameter("numRef");
         $ref = Doctrine::getTable("InoMaestraSea")->find($numRef);
         $this->forward404Unless($ref);
 
-        $parametrosTipo = ParametroTable::retrieveByCaso("CU119", null, null, $ref->getCaTipo());
-        foreach ($parametrosTipo as $parametroTipo) {
-            $ntipo = $parametroTipo->getCaValor();
+        if($ref->getCaTipo()){
+            $parametrosTipo = ParametroTable::retrieveByCaso("CU119", null, null, $ref->getCaTipo());
+            foreach ($parametrosTipo as $parametroTipo) {
+                $tipo = $parametroTipo->getCaValor();
+                $ntipo = $parametroTipo->getCaIdentificacion();
+            }
         }
-        $parametrosEmision = ParametroTable::retrieveByCaso("CU223", null, null, $ref->getCaEmisionbl());
-        foreach ($parametrosEmision as $parametroEmision) {
-            $emisionbl = $parametroEmision->getCaValor();
-        }
+                
+        if($ref->getCaEmisionbl()){
+            $parametrosEmision = ParametroTable::retrieveByCaso("CU223", null, null, $ref->getCaEmisionbl());
+            foreach ($parametrosEmision as $parametroEmision) {
+                $emisionbl = $parametroEmision->getCaValor();
+                $idemisionbl = $parametroEmision->getCaIdentificacion();
+            }
+        }        
 
         $data = array();
 
@@ -753,8 +760,10 @@ class antecedentesActions extends sfActions {
 
         $data["viaje"] = $ref->getCaCiclo();
         $data["observaciones"] = $ref->getCaObservaciones();
-        $data["tipo"] = $ntipo;
+        $data["tipo"] = utf8_encode($tipo);
+        $data["ntipo"] = $ntipo;
         $data["emisionbl"] = utf8_encode($emisionbl);
+        $data["idemisionbl"] = $idemisionbl;
 
         $data["linea"] = $ref->getIdsProveedor()->getIds()->getCaNombre();
 
@@ -1119,11 +1128,14 @@ class antecedentesActions extends sfActions {
         $email->setCaBody($this->getRequestParameter("mensaje"));
 
         $mensaje = Utils::replace($this->getRequestParameter("mensaje")) . "<br />";
+        if (isset($this->justificacion_idg) and trim($this->justificacion_idg) != "") {
+            $mensaje.= "<br />Justificaci&oacute;n IDG: " . $this->justificacion_idg . "<br />";
+        }
         $request->setParameter("format", "email");
         $mensaje .= sfContext::getInstance()->getController()->getPresentationFor('antecedentes', 'verPlanilla');
         $email->setCaBodyhtml($mensaje);
         $email->save();
-        $email->send();
+        //$email->send();
 
         $ref = Doctrine::getTable("InoMaestraSea")->find($this->numRef);
         $this->forward404Unless($ref);
@@ -1600,7 +1612,7 @@ class antecedentesActions extends sfActions {
 
 
             $email->save();
-            $email->send();
+            //$email->send();
 
             $ref = Doctrine::getTable("InoMaestraSea")->find($this->numRef);
             $this->forward404Unless($ref);
@@ -1905,7 +1917,7 @@ class antecedentesActions extends sfActions {
             $name = $archivo;
             $email->AddAttachment($name);
         }
-        $email->send();
+        //$email->send();
         $email->save();
     }
 
