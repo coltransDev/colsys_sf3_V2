@@ -940,7 +940,11 @@ class reportesNegActions extends sfActions {
 
                 if ($request->getParameter("consig")) {
                     if (($reporte->getCaImpoexpo() == constantes::IMPO || $reporte->getCaImpoexpo() == constantes::OTMDTA || $reporte->getCaImpoexpo() == constantes::OTMDTA1 || $reporte->getCaImpoexpo() == constantes::TRIANGULACION) && $request->getParameter("consig") > 4) {
+                        
                         $reporte->setCaIdconsignatario($request->getParameter("consig"));
+                        if($reporte->getCaTransporte()==constantes::MARITIMO)
+                            $reporte->setProperty("idimportador", $request->getParameter("idimportador"));
+                        
                         if ($request->getParameter("continuacion") == "OTM")
                             $reporte->setCaIdconsignar(1);
                     }
@@ -2490,6 +2494,22 @@ class reportesNegActions extends sfActions {
                 $data["idconsignatario"] = "";
                 $data["consignatario"] = "";
             }
+            
+            if ($reporte->getProperty("idimportador")!="") {
+                $data["idimportador"] = $reporte->getProperty("idimportador");
+                if ($data["idimportador"] == "1") {
+                    $data["importador"] = "Cliente/Consignatario";
+                } else if ($data["idimportador"] == "2") {
+                    $data["importador"] = "Coltrans/Consignatario";
+                } else
+                    $data["importador"] = ($reporte->getImportador()) ? utf8_encode($reporte->getImportador()->getCaNombre()) : "";
+            }
+            else {
+                $data["idimportador"] = "";
+                $data["importador"] = "";
+            }
+            
+            
 
             if ($reporte->getCaTiporep() > 0)
                 $idM = $reporte->getCaIdconsignarmaster();
@@ -3819,10 +3839,10 @@ class reportesNegActions extends sfActions {
         $email->setCaBody($this->getRequestParameter("mensaje"));
         $email->addAttachment($fileName);
         $email->save(); //guarda el cuerpo del mensaje
-        $this->error = $email->send();
+        /*$this->error = $email->send();
         if ($this->error) {
             $this->getRequest()->setError("mensaje", "no se ha enviado correctamente");
-        }
+        }*/
         @unlink($fileName);
     }
 
@@ -3922,48 +3942,6 @@ class reportesNegActions extends sfActions {
             }
         }
 
-        /* if( $reporte->getCaContinuacion()=="OTM" ){    
-          $suc=array();
-          switch($reporte->getCaContinuacionConf())
-          {
-          case "BOG":
-          $suc[]='OBO';
-          $suc[]='BOG';
-          break;
-          case "OBO":
-          $suc[]='OBO';
-          $suc[]='BOG';
-
-          break;
-
-          case "MDE":
-          $suc[]='OMD';
-          $suc[]='MDE';
-          break;
-          case "OMD":
-          $suc[]='OMD';
-          $suc[]='MDE';
-          break;
-          }
-
-          $coordinadores = Doctrine::getTable("Usuario")
-          ->createQuery("u")
-          ->select("u.ca_login,u.ca_nombre,u.ca_email")
-          ->innerJoin("u.UsuarioPerfil up")
-          ->where("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE','cordinador-de-otm'))
-          ->andWhereIn("u.ca_idsucursal",$suc)
-          ->addOrderBy("u.ca_idsucursal")
-          ->addOrderBy("u.ca_nombre")
-          ->execute();
-
-          foreach($coordinadores as $coordinador)
-          {
-          $grupos["otm"][] = $coordinador->getCaLogin();
-          }
-          }
-         * 
-         */
-
         //Crea la tarea para los usuarios seleccionados
         if ($request->isMethod('post')) {
             $con = Doctrine_Manager::getInstance()->connection();
@@ -4023,8 +4001,9 @@ class reportesNegActions extends sfActions {
             foreach ($repAntUsuario as $ra) {
                 $email->addTo($ra->getUsuario()->getCaEmail());
                 //echo $ra->getUsuario()->getCaEmail();
-            }
-
+            }            
+            if($destinatario!="")
+                $email->addTo($destinatario);
 
             if ($from) {
                 $email->addCc($from);
@@ -4377,8 +4356,8 @@ class reportesNegActions extends sfActions {
                 $html = sfContext::getInstance()->getController()->getPresentationFor('reportesNeg', 'emailReporte');
 
                 $email->setCaBodyhtml($html);
-                //$email->save();
-                $email->send($con);
+                $email->save();
+                //$email->send($con);
 
                 $sql2 = "update tb_reportes set ca_usucerrado='Administrador' , ca_fchcerrado=now() where ca_consecutivo in ($sql1)";
 
@@ -4439,8 +4418,8 @@ class reportesNegActions extends sfActions {
                 $html = sfContext::getInstance()->getController()->getPresentationFor('reportesNeg', 'emailReporte');
 
                 $email->setCaBodyhtml($html);
-                //$email->save();
-                $email->send($con);
+                $email->save();
+                //$email->send($con);
 
                 $sql2 = "update tb_reportes set ca_usucerrado='Administrador' , ca_fchcerrado=now()
              where ca_consecutivo in ($sql1)";
@@ -4498,7 +4477,7 @@ class reportesNegActions extends sfActions {
                 $html = sfContext::getInstance()->getController()->getPresentationFor('reportesNeg', 'emailReporte');
 
                 $email->setCaBodyhtml($html);
-                $email->send($con);
+                $email->save();
 
                 $sql2 = "update tb_reportes set ca_usucerrado='Administrador' , ca_fchcerrado=now()
              where ca_consecutivo in ($sql1)";
@@ -4530,7 +4509,7 @@ class reportesNegActions extends sfActions {
 
             $email->setCaBodyhtml($mensaje);
             $email->save();
-            $email->send();
+            //$email->send();
             $con->rollBack();
         }
         exit;
@@ -4689,7 +4668,7 @@ class reportesNegActions extends sfActions {
             $email->AddAttachment($name);
         }
         $email->save();
-        $email->send();
+        //$email->send();
     }
 
     public function executeRechazarReporte(sfWebRequest $request) {
@@ -4739,7 +4718,7 @@ class reportesNegActions extends sfActions {
             $email->setCaBodyhtml($mensaje);
 
             $email->save();
-            $email->send();
+            //$email->send();
 
             $this->responseArray = array("success" => true);
         } catch (Exception $e) {
@@ -4838,7 +4817,7 @@ class reportesNegActions extends sfActions {
             //echo $html;
             //exit;
             $email->save();
-            $email->send();
+            //$email->send();
             
 
             $this->responseArray = array("success" => true, "consecutivo" => $reporte->getCaConsecutivo(), "transporte" => utf8_encode($reporte->getCaTransporte()), "impoexpo" => utf8_encode($reporte->getCaImpoexpo()));
