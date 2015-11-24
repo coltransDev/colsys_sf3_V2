@@ -28,6 +28,17 @@ if (!isset($buscar) and !isset($accion)) {
    echo "<HEAD>";
    echo "<TITLE>$titulo</TITLE>";
    echo "<script language='javascript' src='javascripts/popcalendar.js'></script>";
+   echo "<script language='javascript'>"
+   . "  function habilitar_arribo(checkbox){"
+           . "if(checkbox.checked){"
+           . "      document.getElementById('fchinicial').disabled = false;"
+           . "      document.getElementById('fchfinal').disabled = false;"
+           . "  }else{"
+           . "      document.getElementById('fchinicial').disabled = true;"
+           . "      document.getElementById('fchfinal').disabled = true;"
+           . "  }"
+           . "}"
+   . "</script>";
    echo "</HEAD>";
    echo "<BODY>";
    require_once("menu.php");
@@ -115,7 +126,7 @@ if (!isset($buscar) and !isset($accion)) {
    echo "  <TD Class=listar colspan='2'><B>Nombre del Cliente:</B><BR><INPUT TYPE='text' NAME='compania' VALUE='' size='50' maxlength='60'></TD>";
    echo "</TR>";
    echo "<TR>";
-   echo "  <TD Class=listar colspan='5'><B>Sitio de Devolución:</B><BR><SELECT NAME='idpatio'>";  // Llena el cuadro de lista con los valores de la tabla Conceptos
+   echo "  <TD Class=listar colspan='4'><B>Sitio de Devolución:</B><BR><SELECT NAME='idpatio'>";  // Llena el cuadro de lista con los valores de la tabla Conceptos
    echo "  <OPTION VALUE=''></OPTION>";
    if (!$tm->Open("select pt.*, cd.ca_ciudad from pric.tb_patios pt inner join tb_ciudades cd on pt.ca_idciudad = cd.ca_idciudad order by cd.ca_ciudad")) {       // Selecciona todos lo registros de la tabla Eventos Clientes
        echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";          // Muestra el mensaje de error
@@ -138,6 +149,7 @@ if (!isset($buscar) and !isset($accion)) {
    echo "  </OPTGROUP>";
    echo "  </SELECT></TD>";
    echo "  <TD Class=listar><B>No.Contenedor:</B><BR><INPUT TYPE='text' NAME='idequipo' VALUE='' size='15' maxlength='12'></TD>";
+   echo "  <TD Class=listar><B>Fecha de Arribo:</B><BR><table border=0><tr><td><input id='arribo' type=checkbox name='arribo' onclick='habilitar_arribo(this)'></td><td><INPUT ID='fchinicial' TYPE='text' NAME='fchinicial' DISABLED SIZE=12 VALUE='".date(date("Y")."-".date("m")."-"."01")."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></td><td><INPUT ID='fchfinal' TYPE='text' NAME='fchfinal' DISABLED SIZE=12 VALUE='".date(date("Y")."-".date("m")."-"."01")."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></td></tr></table></TD>";
    echo "</TR>";
 
    echo "<TR HEIGHT=5>";
@@ -185,8 +197,11 @@ if (!isset($buscar) and !isset($accion)) {
        else
            $condicion.= " and ca_continuacion <> 'N/A'";
    }
+   if ($arribo){
+       $condicion.= " and ca_fchconfirmacion between '$fchinicial' and '$fchfinal'";
+   }
    $sql="select * from vi_inoctrlcontenedores_sea $condicion order by ca_referencia";
-   //echo $sql."<br>";
+   // echo $sql."<br>";
    if (!$rs->Open($sql)) {
        echo "Error 138: $sql";
       //echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
