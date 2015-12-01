@@ -54,11 +54,12 @@ class Usuario extends BaseUsuario {
         $empresa = $sucursal->getEmpresa();
         $resultado = "<strong>" . Utils::replace(strtoupper($this->getCaNombre())) . "</strong><br />";
         $resultado .= $this->getCaCargo() . "-" . strtoupper($empresa->getCaNombre()) . "<br />";
+        $fax = $sucursal->getCaFax();
 
         if ($sucursal) {
             $resultado .= $sucursal->getCaDireccion() . "<br />";
-            $resultado .= "Tel.: " . $sucursal->getCaTelefono() . " " . $this->getCaExtension() . "<br />";
-            $resultado .= "Fax.: " . $sucursal->getCaFax() . "<br />";
+            $resultado .= "Tel.: " . $sucursal->getCaTelefono() . " Ext. " . $this->getCaExtension() . "<br />";
+            $resultado .= $fax?"Fax.: " . $sucursal->getCaFax() . "<br />":"";
             $resultado .= "Cod. Postal: " . $sucursal->getCaCodpostal() . "<br />";
         }
         $resultado .= Utils::replace($sucursal->getCaNombre()) . "-" . $empresa->getTrafico()->getCaNombre() . "<br />";
@@ -71,11 +72,12 @@ class Usuario extends BaseUsuario {
         $empresa = $sucursal->getEmpresa();
         $resultado = Utils::replace(strtoupper($this->getCaNombre())) . "\n";
         $resultado .= $this->getCaCargo() . "\n" . strtoupper($empresa->getCaNombre()) . ".\n";
+        $fax = $sucursal->getCaFax();
 
         if ($sucursal) {
             $resultado .= $sucursal->getCaDireccion() . "\n";
-            $resultado .= "Tel.: " . $sucursal->getCaTelefono() . " " . $this->getCaExtension() . "\n";
-            $resultado .= "Fax.: " . $sucursal->getCaFax() . "\n";
+            $resultado .= "Tel.: " . $sucursal->getCaTelefono() . " Ext. " . $this->getCaExtension() . "\n";
+            $resultado .= $fax?"Fax.: " . $sucursal->getCaFax() . "\n":"";
             $resultado .= "Cod. Postal: " . $sucursal->getCaCodpostal() . "\n";
         }
         $resultado .= $sucursal->getCaNombre() . " - " . $empresa->getTrafico()->getCaNombre();
@@ -393,6 +395,9 @@ class Usuario extends BaseUsuario {
             case 8:
                 $link = 'http://www.coltrans.com.co/logosoficiales/colotm/logo_colotm.png';
                 break;
+            case 11:
+                $link = 'http://www.coltrans.com.co/logosoficiales/coldepositos/ColdepositosSmall.jpg';
+                break;
             default:
                 $link = "";
         }
@@ -403,7 +408,7 @@ class Usuario extends BaseUsuario {
     public function getGrupoEmpresarial() {
         
         $sucursal = Doctrine::getTable("Sucursal")->find($this->getCaIdsucursal());
-        $grupoColtrans = array(1,2,6,8);
+        $grupoColtrans = array(1,2,3,5,6,8,11);
         
         if(in_array($sucursal->getCaIdempresa(), $grupoColtrans))
             $idempresa = $grupoColtrans;
@@ -420,7 +425,7 @@ class Usuario extends BaseUsuario {
         $idempresa = $usuario->getSucursal()->getEmpresa()->getCaIdempresa();             
         //if($idempresa == 1 || $idempresa == 2 || $idempresa == 8){
         $logo = $usuario->getLogoHtml($idempresa);        
-        //$sucursal = $usuario->getSucursal()->getCaNombre();
+        $sucursal = $usuario->getSucursal();
         $parametros = ParametroTable::retrieveByCaso("CU239");
         $remitente = array();
         $destinatarios = array();
@@ -440,25 +445,25 @@ class Usuario extends BaseUsuario {
         switch ($asunto) {
             case "address":
                 $subject = 'Cambio de dirección Colaborador '.strtoupper($usuario->getSucursal()->getEmpresa()->getCaNombre())." ".$usuario->getSucursal()->getCaNombre();
-                if( $sucursal != "Bogotá D.C." ){
-                    $cargo = 'Jefe Dpto. Administrativo';
-                }else{            
-                    $cargo = 'Jefe Dpto. Talento Humano';
-                }
+                $tipo = "Cambio de Direccion";
 
                 $recips = Doctrine::getTable("Usuario")
                         ->createQuery('u')
-                        ->innerJoin('u.Sucursal s')
-                        ->addWhere('s.ca_nombre = ?', $sucursal)
-                        ->addWhere('u.ca_activo=?', true)
-                        ->addWhere('u.ca_cargo=?', $cargo)
+                        ->leftJoin('u.UsuarioPerfil up')
+                        ->leftJoin('u.Sucursal s')                        
+                        ->andWhere('up.ca_perfil = ?','notificaciones-talento-humano-colsys')
+                        ->andWhere('s.ca_nombre = ?',$sucursal->getCaNombre())
+                        ->andWhere('u.ca_activo = ?',true)
+                        ->andWhereIn('s.ca_idempresa',$grupoEmp)                        
                         ->execute();
+                if(isset($recips) && count($recips)>0){
                 foreach ($recips as $recip) {
                     if ($recip->getCaEmail()) {
                         $email->addTo(str_replace(" ", "", $recip->getCaEmail()));
                     }
                 }
-                $tipo = "Cambio de Direccion";
+                }else
+                    $email->addTo($remitente[$idempresa]);                
                 break;
             case "ingreso":
                 $subject = 'Ingreso Nuevo Colaborador '.strtoupper($usuario->getSucursal()->getEmpresa()->getCaNombre())." ".$usuario->getSucursal()->getCaNombre();
@@ -494,15 +499,17 @@ class Usuario extends BaseUsuario {
             //$email->addTo("colmasnal@colmas.com.co");
             //$email->addTo("colotmnal@colotm.com");
             foreach($grupoEmp as $empresa){
-                if($destinatarios[$empresa] != "null")
-                    $email->addTo($destinatarios[$empresa]);
-                else {
-                    //$correos = array();
-                    $correos = $email->getDirectorioCorp($empresa);
-                    foreach($correos as $correo){
-                        $email->addCC($correo);
+                if($destinatarios[$empresa]){
+                    if( $destinatarios[$empresa] != "null")
+                        $email->addTo($destinatarios[$empresa]);
+                    else {
+                        //$correos = array();
+                        $correos = $email->getDirectorioCorp($empresa);
+                        foreach($correos as $correo){
+                            $email->addCC($correo);
+                        }
+                        break;
                     }
-                    break;
                 }
             }
         }
