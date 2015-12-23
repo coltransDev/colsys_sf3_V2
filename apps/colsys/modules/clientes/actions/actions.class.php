@@ -348,7 +348,7 @@ class clientesActions extends sfActions {
                     if ($row["ca_estado"] != "Vetado" and $resultado != "OK") {
                         if ($row1["ca_fchnegocio"] != "") {
                             list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($row1["ca_fchnegocio"], "%d-%d-%d %d:%d:%d");
-                            if (($hor == 0 and $min == 0 and $seg == 0) or ( $hor == null and $min == null and $seg == null)) {
+                            if (($hor == 0 and $min == 0 and $seg == 0) or ($hor == null and $min == null and $seg == null)) {
                                 $hor = 23;
                                 $min = 59;
                                 $seg = 59;
@@ -365,12 +365,12 @@ class clientesActions extends sfActions {
 
                         if ($row["ca_estado"] != "Vetado" and $resultado != "OK") {
                             Doctrine::getTable("StdCliente")                    // Elimina cualquier estado posterior al 
-                                    ->createQuery("s")
-                                    ->delete()
-                                    ->where("s.ca_idcliente = ? ", $row["ca_idcliente"])
-                                    ->andWhere("s.ca_empresa = ? ", $row["ca_empresa"])
-                                    ->andWhere("s.ca_fchestado > ? ", $fchnegocio)
-                                    ->execute();
+                                ->createQuery("s")
+                                ->delete()
+                                ->where("s.ca_idcliente = ? ", $row["ca_idcliente"])
+                                ->andWhere("s.ca_empresa = ? ", $row["ca_empresa"])
+                                ->andWhere("s.ca_fchestado > ? ", $fchnegocio)
+                                ->execute();
                         }
 
                         $estado = Doctrine::getTable("StdCliente")              // Valida si ya existe el estado en la base de datos.
@@ -458,8 +458,9 @@ class clientesActions extends sfActions {
             $this->corte_uno = date("Y-m-d", mktime(0, 0, 0, $month - $parametro->getCaValor2(), $day, $year));
             $parametro = Doctrine::getTable("Parametro")->find(array("CU113", 1, 'CorteDos'));
             $this->corte_dos = date("Y-m-d", mktime(0, 0, 0, $month - $parametro->getCaValor2(), $day, $year));
-            if (count($this->clientesSinSeguimiento) != 0) {
-                if (php_sapi_name() == 'cli') {
+            if (count($this->clientesSinSeguimiento) != 0){
+                if(php_sapi_name()=='cli')
+                {
                     $this->clientesLiberados = ClienteTable::liberarClientesSinSeguimiento($this->corte_uno, $this->corte_dos, $this->clientesSinSeguimiento);
                 }
             }
@@ -468,7 +469,7 @@ class clientesActions extends sfActions {
             $this->fechas = $this->clientesActivos = array();
             $datetime1 = new DateTime($inicio);
             $datetime2 = new DateTime($final);
-            $months = (isset($months)) ? $months : 1;
+            $months = (isset($months))?$months:1;
 
             if ($datetime1->format('Y') != $datetime2->format('Y')) {
                 $inicio = date("Y-m-d", mktime(0, 0, 0, $month + 1, 1, $year - 3));
@@ -504,35 +505,35 @@ class clientesActions extends sfActions {
                 }
             }
         }
-
+        
         foreach ($clientesActivos as $key_suc => $sucursal):
             foreach ($sucursal as $key_ven => $vendedor):
                 foreach ($vendedor as $key_cli => $cliente):
                     $calificacion = "";
-                    if ($cliente["ca_periodo_1"] > $cliente["ca_periodo_2"]) {
+                    if ($cliente["ca_periodo_1"]>$cliente["ca_periodo_2"]){
                         $calificacion.= "Caida";
-                    } elseif ($cliente["ca_periodo_2"] > $cliente["ca_periodo_1"]) {
+                    }elseif ($cliente["ca_periodo_2"]>$cliente["ca_periodo_1"]){
                         $calificacion.= "Incremento";
-                    } elseif ($cliente["ca_periodo_1"] == 0 and $cliente["ca_periodo_2"] == 0) {
+                    }elseif ($cliente["ca_periodo_1"]==0 and $cliente["ca_periodo_2"]==0){
                         $calificacion.= "Sin Negocios";
-                    } elseif ($cliente["ca_periodo_2"] == $cliente["ca_periodo_1"]) {
+                    }elseif ($cliente["ca_periodo_2"]==$cliente["ca_periodo_1"]){
                         $calificacion.= "Estable";
                     }
                     $calificacion.= "/";
-                    if ($cliente["ca_periodo_2"] > $cliente["ca_periodo_3"]) {
+                    if ($cliente["ca_periodo_2"]>$cliente["ca_periodo_3"]){
                         $calificacion.= "Caida";
-                    } elseif ($cliente["ca_periodo_3"] > $cliente["ca_periodo_2"]) {
+                    }elseif ($cliente["ca_periodo_3"]>$cliente["ca_periodo_2"]){
                         $calificacion.= "Incremento";
-                    } elseif ($cliente["ca_periodo_2"] == 0 and $cliente["ca_periodo_3"] == 0) {
+                    }elseif ($cliente["ca_periodo_2"]==0 and $cliente["ca_periodo_3"]==0){
                         $calificacion.= "Sin Negocios";
-                    } elseif ($cliente["ca_periodo_3"] == $cliente["ca_periodo_2"]) {
+                    }elseif ($cliente["ca_periodo_3"]==$cliente["ca_periodo_2"]){
                         $calificacion.= "Estable";
                     }
                     $clientesActivos[$key_suc][$key_ven][$key_cli]["ca_calificacion"] = $calificacion;
                 endforeach;
             endforeach;
         endforeach;
-
+        
         foreach ($clientesActivos as $key_suc => $sucursal):
             foreach ($sucursal as $key_ven => $vendedor):
                 foreach ($vendedor as $key_cli => $cliente):
@@ -544,19 +545,19 @@ class clientesActions extends sfActions {
                 endforeach;
             endforeach;
         endforeach;
-
+        
         $this->inicio = $inicio;
         $this->final = $final;
         $this->fechas[0] = $inicio;
         $date = new DateTime($corte1);
         $date->modify('-1 day');
         $this->fechas[1] = $date->format('Y-m-d');
-
+        
         $this->fechas[2] = $corte1;
         $date = new DateTime($corte2);
         $date->modify('-1 day');
         $this->fechas[3] = $date->format('Y-m-d');
-
+        
         $this->fechas[4] = $corte2;
         $this->fechas[5] = $final;
 
@@ -617,15 +618,15 @@ class clientesActions extends sfActions {
                 $sucursal_obj = $comercial->getSucursal();
                 $direccion_suc = $sucursal_obj->getCaDireccion() . " " . $sucursal_obj->getCaNombre();
 
-                $email->setCaSubject("Vencimiento de Circular 0170 Coltrans S.A.S. " . $cliente->getCaCompania());
+                $email->setCaSubject("Vencimiento de Circular 0170 Coltrans S.A.S. ".$cliente->getCaCompania());
 
                 $mes_esp = array("01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre");
                 $siguiente_mes = mktime(0, 0, 0, $month + 1, 5, $year);
                 $siguiente_mes = $mes_esp[date("m", $siguiente_mes)] . " " . date("d", $siguiente_mes) . " de " . date("Y", $siguiente_mes);
 
                 $con_credito = $cliente->getLibCliente()->getCaDiascredito();
-                $renovacion_credito = ($con_credito) ? "Así mismo solicitamos diligenciar y adjuntar (con firma en original), el formulario de solicitud de crédito el cual permitirá renovar las condiciones crediticias que su compañía tiene con nuestro grupo empresarial.<br /><br />" : "";
-
+                $renovacion_credito = ($con_credito)?"Así mismo solicitamos diligenciar y adjuntar (con firma en original), el formulario de solicitud de crédito el cual permitirá renovar las condiciones crediticias que su compañía tiene con nuestro grupo empresarial.<br /><br />":"";
+                
                 $bodyHtml = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
                   <table style=\"width: 100%\">
                      <tr>
@@ -682,9 +683,9 @@ class clientesActions extends sfActions {
                         </td>
                      </tr>
                   </table>";
-
+                
                 $email->setCaBodyhtml($bodyHtml);
-                if ($con_credito) {
+                if($con_credito){
                     $email->addAttachment("ids/formatos/Solicitud_de_Credito.xls");
                 }
                 $email->addAttachment("ids/formatos/Circular_0170.xls");
@@ -863,9 +864,9 @@ class clientesActions extends sfActions {
                 $email->setCaSubject("Clientes Activos con Vencimiento de Carta de Garantía a : $inicio - $vendedor");
 
                 $bodyHtml = sfContext::getInstance()->getController()->getPresentationFor('clientes', 'reporteCartaGarantia');
-                if (strpos($bodyHtml, 'Reporte sin Registros') === false) {
-                    $email->setCaBodyhtml($bodyHtml);
-                    $email->save();
+                if (strpos($bodyHtml, 'Reporte sin Registros') === false){
+                  $email->setCaBodyhtml($bodyHtml);
+                  $email->save();
                 }
             }
         } catch (Exception $e) {
@@ -946,10 +947,10 @@ class clientesActions extends sfActions {
                     $email->addCc($val);
                 }
                 $jefe_inmediato = $comercial->getManager();
-                if ($jefe_inmediato and $jefe_inmediato->getCaCargo() != 'Presidente' and $jefe_inmediato->getCaCargo() != 'Gerente General') {
-                    if (stristr($email->getCaCc(), $jefe_inmediato->getCaEmail()) === false) {
-                        $email->addCc($jefe_inmediato->getCaEmail());    // Copia al Jefe Inmediato
-                    }
+                if ($jefe_inmediato and $jefe_inmediato->getCaCargo()!='Presidente' and $jefe_inmediato->getCaCargo()!='Gerente General'){
+                   if(stristr($email->getCaCc(), $jefe_inmediato->getCaEmail()) === false){
+                      $email->addCc($jefe_inmediato->getCaEmail());    // Copia al Jefe Inmediato
+                   }
                 }
                 // $email->addCc("clopez@coltrans.com.co");    // Pruebas de envio controlado
 
@@ -966,17 +967,17 @@ class clientesActions extends sfActions {
                 $this->getRequest()->setParameter("reporte", $reporte);
 
                 $this->getRequest()->setParameter("layout", "email");
-                if ($this->getRequestParameter("reporte") == "Potenciales") {
+                if ($this->getRequestParameter("reporte")=="Potenciales"){
                     $email->setCaTipo("SeguiCliPotenciales");
                     $email->setCaSubject("Seguimientos a Clientes Potenciales, periodo: $inicio - $final / $vendedor");
                     $bodyHtml = sfContext::getInstance()->getController()->getPresentationFor('clientes', 'reporteSeguimiento');
-                } elseif ($this->getRequestParameter("reporte") == "Activos") {
+                }elseif ($this->getRequestParameter("reporte")=="Activos"){
                     $email->setCaTipo("ComportaCliActivos");
                     $email->setCaSubject("Comportamiento de Clientes Activos, periodo: $inicio - $final / $vendedor");
                     $bodyHtml = sfContext::getInstance()->getController()->getPresentationFor('clientes', 'reporteSeguimiento');
                 }
-
-                if (strpos($bodyHtml, 'Reporte sin Registros') === false) {
+                
+                if (strpos($bodyHtml, 'Reporte sin Registros') === false){
                     $email->setCaBodyhtml($bodyHtml);
                     $email->save();
                 }
@@ -1003,14 +1004,14 @@ class clientesActions extends sfActions {
             $email->setCaFromname("Administrador Sistema Colsys");
             $email->setCaReplyto("admin@coltrans.com.co");
 
-            if ($this->getRequestParameter("reporte") == "Potenciales") {
+            if ($this->getRequestParameter("reporte")=="Potenciales"){
                 $email->setCaTipo("SeguimientoClientesPotenciales");
                 $email->setCaSubject("¡Error en Informe sobre Seguimiento en Clientes Potenciales!");
-            } elseif ($this->getRequestParameter("reporte") == "Activos") {
+            }elseif ($this->getRequestParameter("reporte")=="Activos"){
                 $email->setCaTipo("ComportamientoClientesActivos");
                 $email->setCaSubject("¡Error en Informe sobre Comportamiento de Clientes Activos!");
             }
-
+            
             foreach ($usuarios as $usuario) {
                 $email->addTo($usuario->getCaEmail());
             }
@@ -1417,7 +1418,7 @@ class clientesActions extends sfActions {
                         $empleados = $sucursal->getUsuario();
                         foreach ($empleados as $empleado) {
                             if ($empleado->getCaActivo()) {
-                                if ($empleado->getCaCargo() == "Jefe Dpto. Administrativo" and ( $empleado->getCaSucursal() == "Barranquilla" or $empleado->getCaSucursal() == "Cali" or $empleado->getCaSucursal() == "Medellín")) {
+                                if ($empleado->getCaCargo() == "Jefe Dpto. Administrativo" and ($empleado->getCaSucursal() == "Barranquilla" or $empleado->getCaSucursal() == "Cali" or $empleado->getCaSucursal() == "Medellín")) {
                                     $email->addCc($user->getCaEmail());
                                 } else if ($empleado->getCaCargo() == "Asistente Dpto. Administrativo" and $empleado->getCaSucursal() == "Bucaramanga") {
                                     $email->addCc($user->getCaEmail());
@@ -1527,7 +1528,7 @@ class clientesActions extends sfActions {
         $query = "select ic.ca_referencia, ic.ca_idcliente, cl.ca_idalterno, cl.ca_compania, ic.ca_fchliberacion, ic.ca_notaliberacion, ic.ca_fchliberado, ii.ca_factura, ic.ca_hbls, u.ca_nombre, u.ca_sucursal";
         $query.= "		from tb_inoclientes_sea ic";
         $query.= "		INNER JOIN vi_clientes_reduc cl ON ic.ca_idcliente = cl.ca_idcliente";
-        $query.= "		INNER JOIN tb_inoingresos_sea ii ON ic.ca_idinocliente = ii.ca_idinocliente ";
+        $query.= "		INNER JOIN tb_inoingresos_sea ii ON ic.ca_idinocliente = ii.ca_idinocliente ";        
         $query.= "		INNER JOIN vi_usuarios u ON u.ca_login = ic.ca_usuliberado";
         $query.= "		where ic.ca_fchliberacion IS NOT NULL and ic.ca_fchliberacion BETWEEN '$fchinicial' and '$fchfinal'";
         $query.= "		and cl.ca_compania='$cliente'";
@@ -1584,59 +1585,71 @@ class clientesActions extends sfActions {
                 $comienzo_log = "<b>linea</b>=" . $i . ":::<b>Factura</b>=" . $nfact . ":::<b>Recibo</b>=" . $nrecibo . " ::: ";
                 if (count($datos) != 13) {
                     $resultado[$i] = $comienzo_log . "Existen cantidad de campos diferente a los establecidos<br>";
-                    $estadisticas["formato_incorrecto"] ++;
+                    $estadisticas["formato_incorrecto"]++;
                     continue;
                 }
                 //echo $sucRec[$suc_recibo].'-'.$sucFac[$suc_factura]."<br>";
-                if ($sucRec[$suc_recibo] != $sucFac[$suc_factura]) {
-                    $resultado[$i] = $comienzo_log . "La sucursal registrada en el recibo es diferente a la de la factura";
-                    $estadisticas["direfente_sucursal"] ++;
-                    continue;
+                if($suc_recibo!="15")
+                {
+                    if ($sucRec[$suc_recibo] != $sucFac[$suc_factura]) {
+                        $resultado[$i] = $comienzo_log . "La sucursal registrada en el recibo es diferente a la de la factura (".$suc_recibo ." :: ".$sucFac[$suc_factura].")";
+                        $estadisticas["direfente_sucursal"]++;
+                        continue;
+                    }
                 }
                 //echo $nfact."".$tipo_comp."<br>";
                 if (!$nfact) {
 
                     $resultado[$i] = $comienzo_log . "No posee No Factura";
-                    $estadisticas["sin_factura"] ++;
+                    $estadisticas["sin_factura"]++;
                     continue;
                 }
                 if (strcmp($tipo_comp, 'F') != 0) {
                     $resultado[$i] = $comienzo_log . "No posee No Factura " . $tipo_comp . " ";
-                    $estadisticas["sin_factura"] ++;
+                    $estadisticas["sin_factura"]++;
                     continue;
                 }
 
                 if ($datos[2] == "" && $datos[7] == "") {
                     $resultado[$i] = $comienzo_log . "No posee No Recibo de caja ni fecha de pago";
-                    $estadisticas["sin_recibo"] ++;
-                    $estadisticas["sin_fecha"] ++;
+                    $estadisticas["sin_recibo"]++;
+                    $estadisticas["sin_fecha"]++;
                     continue;
                 }
                 if ($datos[2] == "") {
                     $resultado[$i] = $comienzo_log . "No posee No Recibo de caja";
-                    $estadisticas["sin_recibo"] ++;
+                    $estadisticas["sin_recibo"]++;
                 }
                 if ($datos[7] == "") {
                     $resultado[$i] = $comienzo_log . "No posee fecha de pago";
-                    $estadisticas["sin_fecha"] ++;
+                    $estadisticas["sin_fecha"]++;
                 }
 
                 $encontro = false;
                 $actualizo = false;
 
-                $sucursal = $sucRec[$suc_recibo];
+                if($suc_recibo=="15")
+                {
+                    $sucursal=$this->getUser()->getIdSucursal();
+                    //echo "RECIBO L15".$suc_recibo;
+                }
+                else
+                    $sucursal = $sucRec[$suc_recibo];
+                
                 if ($sucursal == "BOG" || $sucursal == "ABO" || $sucursal == "OBO")
                     $sucursal = "'BOG','ABO','OBO'";
+                else if ($sucursal == "CLO" || $sucursal == "ACL" || $sucursal == "OCL")
+                    $sucursal = "'CLO','ACL','OCL'";
                 else
                     $sucursal = "'$sucursal'";
 
                 foreach ($tipos as $tabla) {
                     //$sql="select t.*,u.ca_idsucursal from ".$tabla." t,control.tb_usuarios u where (ca_factura ='".$nfact."' or ca_factura ='F".$suc_factura."-".$nfact."' ) and t.ca_usucreado=u.ca_login and u.ca_idsucursal in ($sucursal) ";
                     $sql = "select t.*,u.ca_idsucursal 
-                        from " . $tabla . " t,control.tb_usuarios u where (ca_factura ='" . $nfact . "' or ca_factura ='F" . $suc_factura . "-" . $nfact . "' ) and t.ca_usucreado=u.ca_login and u.ca_idsucursal in ($sucursal) ";
+                        from " . $tabla . " t,control.tb_usuarios u where (ca_factura ='" . $nfact . "' or ca_factura ='F" . $suc_factura . "-" . $nfact . "' or ca_factura ='F" . $suc_factura . " " . $nfact . "' or ca_factura ='f" . $suc_factura . "-" . $nfact . "' or ca_factura ='f" . $suc_factura . " " . $nfact . "' ) and t.ca_usucreado=u.ca_login and u.ca_idsucursal in ($sucursal) ";
                     //echo  $sql."<br>";
                     $st = $con->execute($sql);
-                    $ref = $st->fetch();
+                    $ref = $st->fetch();                    
 
                     if ($ref) {
                         $set = "";
@@ -1687,14 +1700,14 @@ class clientesActions extends sfActions {
                     $resultado[$i].=($resultado[$i] == "") ? $comienzo_log : "";
                     if (!$encontro) {
                         $resultado[$i].="FACTURA NO ENCONTRADA";
-                        $estadisticas["no_encontrado"] ++;
+                        $estadisticas["no_encontrado"]++;
                     }
                     if (!$actualizo) {
                         $resultado[$i].="Registro no actualizado";
-                        $estadisticas["no_actualizado"] ++;
+                        $estadisticas["no_actualizado"]++;
                     }
                 } else {
-                    $estadisticas["actualizada"] ++;
+                    $estadisticas["actualizada"]++;
 
                     $resultado[$i] = $comienzo_log . " REGISTRO IMPORTADO";
                 }
@@ -1704,31 +1717,31 @@ class clientesActions extends sfActions {
             //echo $sqltmp;
             $this->responseArray = array("success" => "true", "resultado" => implode("<br>", $resultado), "estadisticas" => $estadisticas, "sqlimpor" => $sqltmp);
         } catch (Exception $e) {
-            $this->responseArray = array("success" => "false", "errorInfo" => $e->getMessage());
+            $this->responseArray = array("success" => "false", "errorInfo" => $e->getTraceAsString());
         }
         $this->setTemplate("responseTemplate");
     }
-
-    public function executeCancelarSuscripcion(sfWebRequest $request) {
-
+    
+    public function executeCancelarSuscripcion(sfWebRequest $request){
+        
         $idcontacto = $this->getRequestParameter("idcontacto");
         $idcliente = $this->getRequestParameter("idcliente");
         $this->aceptacion = $this->getRequestParameter("aceptacion");
         $comentarios = $this->getRequestParameter("comentarios");
         $masiva = $this->getRequestParameter("masiva");
-
+        
         $this->contacto = Doctrine::getTable("Contacto")->find($idcontacto);
-
-        if ($idcliente == $this->contacto->getCaIdcliente()) {
+        
+        if($idcliente==$this->contacto->getCaIdcliente()){
             $this->cliente = Doctrine::getTable("Cliente")->find($this->contacto->getCaIdcliente());
-            if ($this->aceptacion) {
-                if ($this->contacto) {
+            if($this->aceptacion){
+                if($this->contacto){
                     $email = new Email();
                     $email->setCaUsuenvio("Administrador");
                     $email->setCaTipo("Not. Masivas");
                     $email->setCaFrom($this->contacto->getCaEmail());
                     $email->setCaReplyto($this->contacto->getCaEmail());
-                    $email->setCaFromname($this->contacto->getCaNombres() . " " . $this->contacto->getCaPapellido() . " " . $this->contacto->getCaSapellido());
+                    $email->setCaFromname($this->contacto->getCaNombres()." ".$this->contacto->getCaPapellido()." ".$this->contacto->getCaSapellido());
                     $email->addTo($this->cliente->getUsuario()->getCaEmail());
                     //$email->addTo('alramirez@coltrans.com.co');
                     $email->addCc('alramirez@coltrans.com.co');
@@ -1741,27 +1754,27 @@ class clientesActions extends sfActions {
                     $email->setCaBodyhtml(sfContext::getInstance()->getController()->getPresentationFor('clientes', 'emailCancelarSuscripcion'));
                     $email->save();
 
-                    if ($masiva) {
+                    if($masiva){
                         $this->contacto->setProperty("masivas", $email->getCaIdemail());
                         $this->contacto->save();
                     }
                 }
             }
         }
-
+        
         $this->setLayout('formulario');
     }
-
-    public function executeEmailCancelarSuscripcion(sfWebRequest $request) {
-
+    
+    public function executeEmailCancelarSuscripcion(sfWebRequest $request){
+        
         $idcontacto = $request->getParameter("idcontacto");
         $idcliente = $request->getParameter("idcliente");
         $this->comentarios = $this->getRequestParameter("comentarios");
         $this->masiva = $this->getRequestParameter("masiva");
-
+        
         $this->contacto = Doctrine::getTable("Contacto")->find($idcontacto);
         $this->cliente = Doctrine::getTable("Cliente")->find($idcliente);
-
+        
         $this->setLayout("none");
     }
 
@@ -1971,7 +1984,6 @@ class clientesActions extends sfActions {
 
         $this->setTemplate("responseTemplate");
     }
-
+    
 }
-
 ?>
