@@ -4,11 +4,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-$comisiones = $sf_data->getRaw("comisiones");
+$incoterms = $sf_data->getRaw("incoterms");
 ?>
 <script type="text/javascript">
+    var win=null;
 
     Ext.onReady(function() {
+        var checkColumn = new Ext.grid.CheckColumn({header: ' ', dataIndex: 'sel', width: 30});
+
+        var summary = new Ext.ux.grid.GroupSummary();
+        
         this.columns = [
             {
                 header: "Referencia",
@@ -52,7 +57,6 @@ $comisiones = $sf_data->getRaw("comisiones");
                 dataIndex: 'ca_valor',
                 sortable: true,
                 align: 'right',
-                summaryType: 'sum',
                 renderer: Ext.util.Format.usMoney,
                 width: 85
             }, {
@@ -122,11 +126,14 @@ $comisiones = $sf_data->getRaw("comisiones");
                 summaryType: 'sum',
                 renderer: Ext.util.Format.usMoney,
                 width: 85
-            }
+            },
+            checkColumn
         ];
 
         this.record = Ext.data.Record.create([
             {name: 'ca_oid', type: 'boolean'},
+            {name: 'sel', type: 'bool', value: 0},
+            {name: 'ca_idinocliente', type: 'string'},
             {name: 'ca_referencia', type: 'string'},
             {name: 'ca_compania', type: 'string'},
             {name: 'ca_hbls', type: 'string'},
@@ -155,20 +162,32 @@ $comisiones = $sf_data->getRaw("comisiones");
         
         this.store = new Ext.data.GroupingStore({
             autoLoad: true,
-            proxy: new Ext.data.MemoryProxy(<?= json_encode(array("root" => $comisiones)) ?>),
+            url: '<?= url_for("reportesGer/datosComisionesXCobrar") ?>',
+            baseParams: {
+                anio: '<?= $anio ?>',
+                mes: '<?= $mes ?>',
+                sucursal: '<?= $sucursal ?>',
+                usuario: '<?= $usuario ?>',
+                circular: '<?= $circular ?>',
+                resultado: '<?= $resultado ?>',
+                casos: '<?= $casos ?>',
+                incoterms: '<?= json_encode($incoterms) ?>'
+            },
             reader: new Ext.data.JsonReader(
                     {
-                        root: 'root'
+                        root: 'root',
+                        totalProperty: 'total'
                     },
-            this.record
-                    ),
+            this.record),
             sortInfo: {field: 'ca_referencia', direction: 'ASC'},
             groupField: 'ca_login'
         });
+        
+        // Loading Mask
+        new Ext.LoadMask(Ext.getBody(),{msg:'Cargando informe...', store: this.store});
 
-        this.summary = new Ext.ux.grid.GroupSummary();
-
-        var gridComisiones = new Ext.grid.EditorGridPanel({
+        this.gridComisiones = new Ext.grid.EditorGridPanel({
+            id: 'gridComisiones',
             title: 'Comisiones Pendientes por Cobrar',
             autoHeight: "auto",
             width: 1800,
@@ -181,8 +200,188 @@ $comisiones = $sf_data->getRaw("comisiones");
                 },
                 columns: columns
             }),
+            tbar: [{
+                id: 'regresarbtn',
+                text: 'Volver al menú inicial',
+                iconCls: 'new-tab',
+                handler: function(){
+                    window.location = '/reportesGer/reporteComisionesXCobrar';
+                }
+            },{
+                id: 'recargarbtn',
+                text: 'Recargar el Informe',
+                iconCls: 'refresh',
+                handler: function(){
+                    var grid = Ext.getCmp("gridComisiones");
+                    var store = grid.getStore();
+                    store.reload();
+                }            
+            },{
+                id: 'liquidarbtn',
+                text: 'Generar Comprobante Ajuste',
+                iconCls: 'page_white_edit',
+                handler: function(){
+                    var box = Ext.MessageBox.wait('Procesando', 'Buscando Registros');
+                    var records = this.store.getModifiedRecords();
+                    var lenght = records.length;
+                    var count = 0;
+                    for (var i = 0; i < lenght; i++) {
+                        if (records[i].data.sel)
+                            count++;
+                    }
+                    console.log(count);
+                    if(count > 0) {
+                        if(win== null) {
+                            win = new Ext.Window({
+                                id: 'winComprobante',
+                                width: 870,
+                                height: 400,
+                                //closeable: true,
+                                closeAction: 'hide',
+                                //plain: true,
+                                items: new Ext.grid.EditorGridPanel({
+                                    id: 'gridComprobante',
+                                    clicksToEdit: 1,
+                                    width: 850,
+                                    height: 400,
+                                    columns: [
+                                        new Ext.grid.RowNumberer(),
+                                        {
+                                            header: "Referencia",
+                                            dataIndex: 'ca_referencia',
+                                            sortable: true,
+                                            width: 110,
+                                        }, {
+                                            header: "Cliente",
+                                            dataIndex: 'ca_compania',
+                                            sortable: true,
+                                            width: 180
+                                        }, {
+                                            header: "Doc.Transporte",
+                                            dataIndex: 'ca_hbls',
+                                            sortable: true,
+                                            width: 100
+                                        }, {
+                                            header: "Término de Neg.",
+                                            dataIndex: 'ca_incoterms',
+                                            sortable: true,
+                                            width: 90
+                                        }, {
+                                            header: "Vendedor",
+                                            dataIndex: 'ca_login',
+                                            sortable: true,
+                                            width: 80
+                                        }, {
+                                            header: "Sucursal",
+                                            dataIndex: 'ca_sucursal',
+                                            sortable: true,
+                                            width: 60
+                                        }, {
+                                            header: "Comisión Referencia",
+                                            dataIndex: 'ca_corrientes_dif',
+                                            sortable: true,
+                                            selectOnFocus: true,
+                                            renderer: Ext.util.Format.usMoney,
+                                            align: 'right',
+                                            editor: new Ext.form.NumberField(),
+                                            width: 85
+                                        }, {
+                                            header: "Comisión Sobreventa",
+                                            dataIndex: 'ca_sobreventa_dif',
+                                            sortable: true,
+                                            selectOnFocus: true,
+                                            renderer: Ext.util.Format.usMoney,
+                                            align: 'right',
+                                            editor: new Ext.form.NumberField(),
+                                            width: 85
+                                        }
+                                    ],
+                                    store: new Ext.data.ArrayStore({
+                                        fields: this.record
+                                    }),
+                                    listeners: {
+                                        'render': function(component) {
+                                            var me = this;
+                                            var grid = Ext.getCmp("gridComisiones");
+                                            grid.getStore().each(function (record, idx) {
+                                                if (record.get('sel')){
+                                                    me.store.insert(me.store.getCount(), record);
+                                                }
+                                            });
+                                        }
+                                    }
+                                }),
+                                buttons: [{
+                                    text: 'Aplicar Comprobante',
+                                    handler: function () {
+                                        Ext.Msg.show({
+                                            title:'Aplicación Comprobante de Ajuste',
+                                            msg: '¿Está seguro que desea aplicar el comprobante de ajuste con los registros seleccionados?',
+                                            buttons: Ext.Msg.YESNO,
+                                            fn: function(btn, text) {
+                                                if (btn == "yes") {
+                                                    var grid = Ext.getCmp("gridComprobante");
+                                                    var store = grid.getStore();
+                                                    var records = store.getModifiedRecords();
+                                                    var lenght = records.length;
+
+                                                    changes = [];
+                                                    for (var i = 0; i < lenght; i++) {
+                                                        r = records[i];
+                                                        if (r.costo != "")
+                                                        {
+                                                            records[i].data.id = r.id;
+                                                            changes[i] = records[i].data;
+                                                        }
+                                                    }
+                                                    var str = JSON.stringify(changes);
+                                                    if (str.length > 5) {
+                                                        Ext.Ajax.request({
+                                                            waitMsg: 'Guardando cambios...',
+                                                            url: '<?= url_for("reportesGer/guardarComprobanteAjuste") ?>',
+                                                            params: {
+                                                                datos: str
+                                                            },
+                                                            failure: function (response, options) {
+                                                                var res = Ext.util.JSON.decode(response.responseText);
+                                                                if (res.err)
+                                                                    Ext.MessageBox.alert("Mensaje", 'Se presento un error guardando por favor informe al Depto. de Sistemas<br>' + res.err);
+                                                                else
+                                                                    Ext.MessageBox.alert("Mensaje", 'Se produjo un error, vuelva a intentar o informe al Depto. de Sistema<br>' + res.texto);
+                                                            },
+                                                            success: function (response, options)
+                                                            {
+                                                                Ext.getCmp("gridComisiones").getStore().reload();
+                                                                Ext.getCmp("winComprobante").close();
+                                                                win = null;
+                                                            }
+                                                        });
+                                                    }
+                                                }
+                                            },
+                                            animEl: 'elId'
+                                        });
+                                    }
+                                }, {
+                                    text: 'Cancelar',
+                                    handler: function () {
+                                        this.findParentByType( 'window' ).close();
+                                        win = null;
+                                    }
+                                }]
+                            });
+                        }
+                        box.hide();
+                        win.show();
+                    }else{
+                        Ext.Msg.alert('Error', 'Debe seleccionar por lo menos un registro, para elaborar el comprobante de ajuste!');
+                    }
+                },
+                scope: this
+            }],
             plugins: [
-                this.summary
+                checkColumn,
+                summary
             ],
             view: new Ext.grid.GroupingView({
                 forceFit: true,
