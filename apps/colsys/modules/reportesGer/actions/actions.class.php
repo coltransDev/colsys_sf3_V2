@@ -40,6 +40,7 @@ class reportesGerActions extends sfActions {
 
         $this->nivel = $this->getUser()->getNivelAcceso(reportesGerActions::RUTINA);
         //echo $this->nivel;
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         if ($this->nivel == -1) {
             $this->forward404();
         }
@@ -207,7 +208,7 @@ class reportesGerActions extends sfActions {
                                 WHERE eq.ca_referencia = m.ca_referencia AND eq.ca_idconcepto = tt.ca_idconcepto)
                     ORDER BY m.ca_fchreferencia, r.ca_incoterms ,r.ca_idagente";
             $con = Doctrine_Manager::getInstance()->connection();
-            // echo $sql;
+            
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
         }
@@ -348,6 +349,8 @@ class reportesGerActions extends sfActions {
                         ( SELECT count(*) AS count FROM ino.tb_equipos eq WHERE eq.ca_idmaster = m.ca_idmaster AND eq.ca_idconcepto = tt.ca_idconcepto) , 
                         md.ca_idmodo,m.ca_idmaster
                     ORDER BY m.ca_fchreferencia";
+            
+            Doctrine_Manager::getInstance()->setCurrentConnection('replica');
             $con = Doctrine_Manager::getInstance()->connection();
             //echo $sql;
             $st = $con->execute($sql);
@@ -362,6 +365,8 @@ class reportesGerActions extends sfActions {
     public function executeEstadisticasMaritimo(sfWebRequest $request) {
 
 
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
+            
         $this->opcion = $request->getParameter("opcion");
         $this->year = ($request->getParameter("year") != "") ? $request->getParameter("year") : date("Y");
         $this->mes = $request->getParameter("mes");
@@ -473,6 +478,8 @@ class reportesGerActions extends sfActions {
         if ($this->permiso == -1)
             $this->forward404();
 
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
+            
         $this->opcion = $request->getParameter("opcion");
 
         $this->idsucursal = $request->getParameter("idsucursal");
@@ -554,6 +561,8 @@ class reportesGerActions extends sfActions {
                     from vi_reportes_estadisticas where ca_fchreporte between '" . $this->fechainicial . "' and '" . $this->fechafinal . "'  $where and ca_traorigen in ($tra_principal) and ca_ciuorigen!='Shanghai'
                     group by ca_year,ca_mes,ca_traorigen
                     order by 4,2,3";
+            
+            Doctrine_Manager::getInstance()->setCurrentConnection('replica');            
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
@@ -1024,7 +1033,7 @@ class reportesGerActions extends sfActions {
         $this->responseArray = array("success" => true);
         $this->setTemplate("responseTemplate");
     }
-
+    
     public function executeLibroReferenciasAereo(sfWebRequest $request) {
         $anio = $request->getParameter("anio");
         $mes = $request->getParameter("mes");
@@ -1412,7 +1421,7 @@ class reportesGerActions extends sfActions {
                     ->addWhere("ii.ca_usucreado like ?", $request->getParameter("login"));
 
             if ($request->getParameter("cliente")) {
-                $q->innerJoin("ii.Cliente cl");
+                $q->innerJoin("ics.Cliente cl");
                 $q->innerJoin("cl.Ids id");
                 $q->addWhere("UPPER(id.ca_nombre) like ?", strtoupper($request->getParameter("cliente")) . "%");
             }
@@ -1929,16 +1938,34 @@ class reportesGerActions extends sfActions {
      */
     public function executeReporteComisionesXCobrarList(sfWebRequest $request) {
         $response = sfContext::getInstance()->getResponse();
+        $response->addJavaScript("extExtras/CheckColumn",'last');
         $response->addJavaScript("extExtras/GroupSummary",'last');
         
+        $this->anio = $request->getParameter("anio");
+        $this->mes = $request->getParameter("mes");
+        $this->sucursal = $request->getParameter("selSucursal");
+        $this->usuario = $request->getParameter("selUsuario");
+        $this->circular = $request->getParameter("selCircular");
+        $this->resultado = $request->getParameter("selResultado");
+        $this->casos = $request->getParameter("selCasos");
+        $this->incoterms = $request->getParameter("selIncoterms");
+    }
+
+    
+    /**
+     * Lista de referencias con opción de apertura
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeDatosComisionesXCobrar(sfWebRequest $request) {
         $anio = $request->getParameter("anio");
         $mes = $request->getParameter("mes");
-        $sucursal = $request->getParameter("selSucursal");
-        $usuario = $request->getParameter("selUsuario");
-        $circular = $request->getParameter("selCircular");
-        $resultado = $request->getParameter("selResultado");
-        $casos = $request->getParameter("selCasos");
-        $incoterms = $request->getParameter("selIncoterms");
+        $sucursal = utf8_decode($request->getParameter("sucursal"));
+        $usuario = $request->getParameter("usuario");
+        $circular = $request->getParameter("circular");
+        $resultado = $request->getParameter("resultado");
+        $casos = $request->getParameter("casos");
+        $incoterms = json_decode($request->getParameter("incoterms"));
         
         if ($mes == "%") {
             $mes = date('m');
@@ -1977,18 +2004,21 @@ class reportesGerActions extends sfActions {
             $condicion.= " and ca_estado = '$casos' ";
         }
         
-        $columnas = "ca_oid, ca_referencia, ca_compania, ca_hbls, ca_incoterms, ca_factura, ca_fchfactura, ca_valor, ca_reccaja, ca_fchpago, ca_vlrcomisiones, ca_sbrcomisiones, ca_estado, ca_fchcerrado, ca_facturacion_r, ca_deduccion_r, ca_utilidad_r, ca_volumen_r, ca_vlrutilidad_liq, ca_volumen, ca_porcentaje, ca_sbrcomision, ca_stdcircular, ca_login, ca_sucursal";
+        $columnas = "ca_oid, ca_idinocliente, ca_referencia, ca_compania, ca_hbls, ca_incoterms, ca_factura, ca_fchfactura, ca_valor, ca_reccaja, ca_fchpago, ca_vlrcomisiones, ca_sbrcomisiones, ca_estado, ca_fchcerrado, ca_facturacion_r, ca_deduccion_r, ca_utilidad_r, ca_volumen_r, ca_vlrutilidad_liq, ca_volumen, ca_porcentaje, ca_sbrcomision, ca_stdcircular, ca_login, ca_sucursal";
         
-        $con = Doctrine_Manager::getInstance()->connection();
+        $conn = Doctrine_Manager::getInstance()->connection();
         $sql = "select $columnas from vi_inoingresos_sea where $condicion";
-        $rs = $con->execute($sql);
+        
+        set_time_limit(0);
+        $rs = $conn->execute($sql);
         $comisiones_rs = $rs->fetchAll();
         
         $data = array();
         $key_tmp = null;
+        $columnas = explode(", ", $columnas);
         foreach ($comisiones_rs as $key => $comision) {
             $row = array();
-            foreach (split(", ", $columnas) as $columna){
+            foreach ($columnas as $columna){
                 $row[$columna] = utf8_encode($comision[$columna]);
             }
             
@@ -2044,9 +2074,12 @@ class reportesGerActions extends sfActions {
                 $data[] = $row;
             }
         }
-        $this->comisiones = $data;
+        $this->responseArray = array("success" => true, "total" => count($data), "root" => $data);
+        $this->setTemplate("responseTemplate");
+       
     }
 
+    
 
     /**
      * Esta accion permitirá la apertura de varias referencias
@@ -2094,6 +2127,46 @@ class reportesGerActions extends sfActions {
         list($ano, $mes, $dia) = sscanf(date('Y-m-d'), "%d-%d-%d");
         $this->fch_ini = date('Y-m-d', mktime( 0, 0, 0, $mes, 1, $ano));
         $this->fch_fin = date('Y-m-d', mktime( 0, 0, 0, $mes+1, 0, $ano));
+    }
+
+    /**
+     * Executes guardarComprobanteAjuste action
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeGuardarComprobanteAjuste(sfWebRequest $request) {
+        $datos = $request->getParameter("datos");
+        
+        $ajustes = json_decode($datos);
+        $errorInfo = "";
+        $ids = array();
+        if ($ajustes){
+            $conn = Doctrine_Manager::getInstance()->connection();
+            $sql = "select nextval('tb_inocomisiones_sea_id') as ca_consecutivo";
+            $st = $conn->execute($sql);
+            $consecutivos_rs = $st->fetchAll();
+            
+            $conn->beginTransaction();
+            try {
+                foreach ($consecutivos_rs as $key => $consecutivo) {
+                    foreach ($ajustes as $ajuste) {
+                        $comprobante = new InoComisionesSea();
+                        $comprobante->setCaComprobante($consecutivo["ca_consecutivo"]);
+                        $comprobante->setCaFchliquidacion(date("Y-m-d"));
+                        $comprobante->setCaVlrcomision($ajuste->ca_corrientes_dif);
+                        $comprobante->setCaSbrcomision($ajuste->ca_sobreventa_dif);
+                        $comprobante->setCaIdinocliente($ajuste->ca_idinocliente);
+                        $comprobante->save();
+                    }
+                }
+                $conn->commit();
+                $this->responseArray = array("success" => true);
+            } catch (Exception $e) {
+                $conn->rollback();
+                $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+            }
+        }
+        $this->setTemplate("responseTemplate");
     }
     
 }
