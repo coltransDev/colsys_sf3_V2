@@ -25,7 +25,7 @@ if (!isset($usuario)) {                                                        /
 }
 
 $rs = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-if (!isset($boton) and !isset($buscar)) {
+if (!isset($boton) and ! isset($buscar)) {
     echo "<HTML>";
     echo "<HEAD>";
     echo "<TITLE>$titulo</TITLE>";
@@ -81,7 +81,7 @@ if (!isset($boton) and !isset($buscar)) {
         $dep_mem = $departamento = str_replace(" ", "_", $tm->Value('ca_departamento'));
         echo "<INPUT ID='array_departamentos' TYPE='HIDDEN' NAME='array_departamentos' VALUE='$dep_mem'>";
         $i = 0;
-        while ($departamento == $dep_mem and !$tm->Eof()) {
+        while ($departamento == $dep_mem and ! $tm->Eof()) {
             echo "<INPUT ID='" . $departamento . "_" . $i . "' TYPE='HIDDEN' NAME='" . $departamento . "_" . $i . "' VALUE='" . $tm->Value('ca_indicador') . "'>";
             $tm->MoveNext();
             $departamento = str_replace(" ", "_", $tm->Value('ca_departamento'));
@@ -97,7 +97,7 @@ if (!isset($boton) and !isset($buscar)) {
     echo "<TH COLSPAN=7 style='font-size: 10px;'>Pulse la tecla control para seleccionar varios ítems <IMG SRC='./graficos/nuevo.gif' border=0 ALT='Nuevo Servicio'></TH>";
     echo "</TR>";
     $tm->MoveFirst();
-    $sql="select distinct ca_nombre as ca_sucursal from control.tb_sucursales order by ca_sucursal";
+    $sql = "select distinct ca_nombre as ca_sucursal from control.tb_sucursales order by ca_sucursal";
     if (!$tm->Open($sql)) {       // Selecciona todos lo registros de la tabla Sucursales
         echo "Error 102: $sql";
         //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
@@ -105,7 +105,7 @@ if (!isset($boton) and !isset($buscar)) {
         exit;
     }
     $us = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-    $sql="select ca_nombre, ca_sucursal from vi_usuarios where ca_login != 'Administrador' and (ca_cargo = 'Gerente Regional' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_nombre";
+    $sql = "select ca_nombre, ca_sucursal from vi_usuarios where ca_login != 'Administrador' and (ca_cargo = 'Gerente Regional' or ca_cargo like '%Ventas%' or ca_departamento like '%Ventas%' or ca_departamento like '%Comercial%') order by ca_nombre";
     if (!$us->Open($sql)) {
         echo "Error 110: $sql";
         //echo "<script>alert(\"" . addslashes($us->mErrMsg) . "\");</script>";
@@ -148,7 +148,7 @@ if (!isset($boton) and !isset($buscar)) {
         $tm->MoveNext();
     }
     echo "  </SELECT></TD>";
-    $sql="select ca_idtrafico, ca_nombre from vi_traficos order by ca_nombre";
+    $sql = "select ca_idtrafico, ca_nombre from vi_traficos order by ca_nombre";
     if (!$tm->Open($sql)) {       // Selecciona todos lo registros de la tabla Traficos
         echo "Error 153: $sql";
         //echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
@@ -163,7 +163,7 @@ if (!isset($boton) and !isset($buscar)) {
         $tm->MoveNext();
     }
     echo "  </TD>";
-    $sql="select ca_ciudad from vi_ciudades where ca_idtrafico = '$regional' and ca_puerto in ('Marítimo','Ambos') order by ca_ciudad";
+    $sql = "select ca_ciudad from vi_ciudades where ca_idtrafico = '$regional' and ca_puerto in ('Marítimo','Ambos') order by ca_ciudad";
     if (!$tm->Open("select ca_ciudad from vi_ciudades where ca_idtrafico = '$regional' and ca_puerto in ('Marítimo','Ambos') order by ca_ciudad")) {       // Selecciona todos lo registros de la tabla ciudades
         echo "Error 168: $sql";
         //echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
@@ -213,7 +213,7 @@ if (!isset($boton) and !isset($buscar)) {
     require_once("footer.php");
     echo "</BODY>";
     echo "</HTML>";
-} elseif (!isset($boton) and !isset($accion) and isset($buscar)) {
+} elseif (!isset($boton) and ! isset($accion) and isset($buscar)) {
     set_time_limit(1000000000000);
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
     include_once 'include/functions.php';                                      // Módulo de Funciones Varias
@@ -324,7 +324,7 @@ if (!isset($boton) and !isset($buscar)) {
     $array_avg = array();  // Para el calcilo del Promedio General
     $array_pnc = array();  // Para el calculo del Producto no Conforme
     $array_null = array();  // Para el conteo de los Registros que nos pueden calcular
-    $sql="select cfg.ca_idsucursal, suc.ca_nombre, ca_lim1, ca_tiempo from idg.tb_idg idg inner join idg.tb_config cfg on idg.ca_idg = cfg.ca_idg inner join control.tb_departamentos dep on idg.ca_iddepartamento = dep.ca_iddepartamento left join control.tb_sucursales suc on suc.ca_idsucursal = cfg.ca_idsucursal where dep.ca_nombre = '" . str_replace("_", " ", $departamento) . "' and idg.ca_nombre = '$indicador'";
+    $sql = "select cfg.ca_idsucursal, suc.ca_nombre, ca_lim1, ca_tiempo from idg.tb_idg idg inner join idg.tb_config cfg on idg.ca_idg = cfg.ca_idg inner join control.tb_departamentos dep on idg.ca_iddepartamento = dep.ca_iddepartamento left join control.tb_sucursales suc on suc.ca_idsucursal = cfg.ca_idsucursal where dep.ca_nombre = '" . str_replace("_", " ", $departamento) . "' and idg.ca_nombre = '$indicador'";
     if (!$tm->Open($sql)) {
         echo "Error 324: $sql";
         //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
@@ -332,7 +332,7 @@ if (!isset($boton) and !isset($buscar)) {
         exit;
     }
     $lcs_array = array();
-    while (!$tm->Eof() and !$tm->IsEmpty()) {
+    while (!$tm->Eof() and ! $tm->IsEmpty()) {
         $suc_mem = ($tm->Value('ca_idsucursal') == "999") ? "Todas" : $tm->Value('ca_nombre');
         $lcs_array[$suc_mem] = $tm->Value('ca_lim1');
         $ca_tiempoindi = $tm->Value('ca_tiempo');
@@ -387,7 +387,7 @@ if (!isset($boton) and !isset($buscar)) {
             $campos = str_replace("ca_ano", "ca_ano_new", $campos);
             $campos = str_replace("ca_mes", "ca_mes_new", $campos);
         }
-        $sql="select ca_fchfestivo from tb_festivos";
+        $sql = "select ca_fchfestivo from tb_festivos";
         if (!$tm->Open($sql)) {
             echo "Error 378: $sql";
             //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
@@ -395,7 +395,7 @@ if (!isset($boton) and !isset($buscar)) {
             exit;
         }
         $festi = array();
-        while (!$tm->Eof() and !$tm->IsEmpty()) {
+        while (!$tm->Eof() and ! $tm->IsEmpty()) {
             $festi[] = $tm->Value('ca_fchfestivo');
             $tm->MoveNext();
         }
@@ -407,8 +407,9 @@ if (!isset($boton) and !isset($buscar)) {
         $source = "vi_repindicadores";
         $transporte = "ca_transporte = '$departamento'";
         $impoexpo = "ca_impoexpo = 'Importación'";
-        $subque = "LEFT OUTER JOIN (select to_char(ca_fchrecibo,'YYYY') as ca_ano_new, to_char(ca_fchrecibo,'MM') as ca_mes_new, ca_ciudad as ca_ciuorigen, ca_consecutivo as ca_consecutivo_sub, ca_fchrecibo, ca_fchenvio, ca_usuenvio, ca_observaciones_idg from tb_repstatus rs RIGHT OUTER JOIN vi_usuarios usr ON rs.ca_usuenvio = usr.ca_login and usr.ca_empresa = 'Coltrans S.A.S.' LEFT OUTER JOIN tb_reportes rp ON (rs.ca_idetapa != 'IAVAR' and rp.ca_idreporte = rs.ca_idreporte and rp.$transporte) INNER JOIN tb_ciudades pd ON (rp.ca_origen = pd.ca_idciudad) where " . str_replace("ca_ano", "to_char(ca_fchrecibo,'YYYY')", $ano) . " and " . str_replace("ca_mes", "to_char(ca_fchrecibo,'MM')", $mes) . " and ca_tipo != 2 order by ca_consecutivo, ca_fchrecibo) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
-        $sql="select ca_fchfestivo from tb_festivos";
+        $sin_etapa = ($departamento == "Marítimo") ? "rs.ca_idetapa != 'IMAGR' and" : "";
+        $subque = "LEFT OUTER JOIN (select to_char(ca_fchrecibo,'YYYY') as ca_ano_new, to_char(ca_fchrecibo,'MM') as ca_mes_new, ca_ciudad as ca_ciuorigen, ca_consecutivo as ca_consecutivo_sub, ca_fchrecibo, ca_fchenvio, ca_usuenvio, ca_observaciones_idg from tb_repstatus rs RIGHT OUTER JOIN vi_usuarios usr ON rs.ca_usuenvio = usr.ca_login and usr.ca_empresa = 'Coltrans S.A.S.' LEFT OUTER JOIN tb_reportes rp ON ($sin_etapa rs.ca_idetapa != 'IAVAR' and rp.ca_idreporte = rs.ca_idreporte and rp.$transporte) INNER JOIN tb_ciudades pd ON (rp.ca_origen = pd.ca_idciudad) where " . str_replace("ca_ano", "to_char(ca_fchrecibo,'YYYY')", $ano) . " and " . str_replace("ca_mes", "to_char(ca_fchrecibo,'MM')", $mes) . " and ca_tipo != 2 order by ca_consecutivo, ca_fchrecibo) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
+        $sql = "select ca_fchfestivo from tb_festivos";
         if (!$tm->Open($sql)) {
             echo "Error 399: $sql";
             //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
@@ -416,7 +417,7 @@ if (!isset($boton) and !isset($buscar)) {
             exit;
         }
         $festi = array();
-        while (!$tm->Eof() and !$tm->IsEmpty()) {
+        while (!$tm->Eof() and ! $tm->IsEmpty()) {
             $festi[] = $tm->Value('ca_fchfestivo');
             $tm->MoveNext();
         }
@@ -431,15 +432,15 @@ if (!isset($boton) and !isset($buscar)) {
         $format_avg = "H:i:s";
         $source = "vi_repindicadores";
         $subque = "LEFT OUTER JOIN (select fs.ca_idstatus, rp.ca_consecutivo as ca_consecutivo_sub, ca_fchenvio, ca_usuenvio from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) RIGHT OUTER JOIN (select ca_consecutivo, min(ca_idstatus) as ca_idstatus from tb_repstatus rps INNER JOIN tb_reportes rpt ON (rps.ca_idreporte = rpt.ca_idreporte) group by ca_consecutivo) fs ON (fs.ca_idstatus = rs.ca_idstatus) where " . str_replace("ca_ano", "to_char(ca_fchrecibo,'YYYY')", $ano) . " and " . str_replace("ca_mes", "to_char(ca_fchrecibo,'MM')", $mes) . " order by rp.ca_consecutivo, ca_fchrecibo) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
-        $sql="select ca_fchfestivo from tb_festivos";
-        if (!$tm->Open($sql)) {        
+        $sql = "select ca_fchfestivo from tb_festivos";
+        if (!$tm->Open($sql)) {
             echo "Error 422: $sql";
             //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
             //echo "<script>document.location.href = 'entrada.php';</script>";
             exit;
         }
         $festi = array();
-        while (!$tm->Eof() and !$tm->IsEmpty()) {
+        while (!$tm->Eof() and ! $tm->IsEmpty()) {
             $festi[] = $tm->Value('ca_fchfestivo');
             $tm->MoveNext();
         }
@@ -458,15 +459,15 @@ if (!isset($boton) and !isset($buscar)) {
         $format_avg = "H:i:s";
         $source = "vi_cotindicadores";
         $impoexpo = " ca_empresa = '$empresa' ";
-        $sql="select ca_fchfestivo from tb_festivos";
-        if (!$tm->Open($sql)) {        
+        $sql = "select ca_fchfestivo from tb_festivos";
+        if (!$tm->Open($sql)) {
             echo "Error 449: $sql";
             //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
             //echo "<script>document.location.href = 'entrada.php';</script>";
             exit;
         }
         $festi = array();
-        while (!$tm->Eof() and !$tm->IsEmpty()) {
+        while (!$tm->Eof() and ! $tm->IsEmpty()) {
             $festi[] = $tm->Value('ca_fchfestivo');
             $tm->MoveNext();
         }
@@ -486,15 +487,15 @@ if (!isset($boton) and !isset($buscar)) {
             $source = "vi_repindicador_sea";
             $subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, min(rs.ca_fchenvio) as ca_fchconf_lleg, rs.ca_usuenvio, rs.ca_observaciones_idg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rp.ca_transporte = 'Marítimo' and rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IMCPD') group by rp.ca_consecutivo, rs.ca_idetapa, rs.ca_fchllegada, rs.ca_usuenvio, rs.ca_horallegada, rs.ca_observaciones_idg order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
         }
-        $sql="select ca_fchfestivo from tb_festivos";
-        if (!$tm->Open($sql)) {        
+        $sql = "select ca_fchfestivo from tb_festivos";
+        if (!$tm->Open($sql)) {
             echo "Error 477: $sql";
             //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
             //echo "<script>document.location.href = 'entrada.php';</script>";
             exit;
         }
         $festi = array();
-        while (!$tm->Eof() and !$tm->IsEmpty()) {
+        while (!$tm->Eof() and ! $tm->IsEmpty()) {
             $festi[] = $tm->Value('ca_fchfestivo');
             $tm->MoveNext();
         }
@@ -528,15 +529,15 @@ if (!isset($boton) and !isset($buscar)) {
                 $sucursal.= " and ((string_to_array($source.ca_referencia,'.'))[2]) = '" . $suc_nam[$suc] . "'";
             }
         }
-        $sql="select ca_fchfestivo from tb_festivos";
-        if (!$tm->Open($sql)) {       
+        $sql = "select ca_fchfestivo from tb_festivos";
+        if (!$tm->Open($sql)) {
             echo "Error 519: $sql";
             //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
             //echo "<script>document.location.href = 'entrada.php';</script>";
             exit;
         }
         $festi = array();
-        while (!$tm->Eof() and !$tm->IsEmpty()) {
+        while (!$tm->Eof() and ! $tm->IsEmpty()) {
             $festi[] = $tm->Value('ca_fchfestivo');
             $tm->MoveNext();
         }
@@ -551,7 +552,7 @@ if (!isset($boton) and !isset($buscar)) {
         $subque = " INNER JOIN ( select bke.*, prm.ca_valor, prm.ca_valor2 from tb_brk_evento bke INNER JOIN (select * from tb_parametros where ca_casouso = 'CU037' and ca_identificacion in (15, 17) order by ca_valor2) prm ON (prm.ca_identificacion = bke.ca_idevento) order by ca_referencia ) bke ON ($source.ca_referencia = bke.ca_referencia) ";
         $subque.= " LEFT JOIN (select DISTINCT subf.ca_referencia_sub, subf.ca_fchfactura, fact.ca_usucreado, fact.ca_observaciones from tb_brk_ingresos fact INNER JOIN (select ca_referencia as ca_referencia_sub, min(ca_fchfactura) as ca_fchfactura from tb_brk_ingresos group by ca_referencia) subf ON fact.ca_referencia = subf.ca_referencia_sub and fact.ca_fchfactura = subf.ca_fchfactura) rf ON (rf.ca_referencia_sub = vi_repindicador_brk.ca_referencia) ";
 
-        $sql="select ca_fchfestivo from tb_festivos";
+        $sql = "select ca_fchfestivo from tb_festivos";
         if (!$tm->Open($sql)) {        // Selecciona todos lo registros de la tabla Festivos
             echo "Error 542: $sql";
             //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
@@ -559,7 +560,7 @@ if (!isset($boton) and !isset($buscar)) {
             exit;
         }
         $festi = array();
-        while (!$tm->Eof() and !$tm->IsEmpty()) {
+        while (!$tm->Eof() and ! $tm->IsEmpty()) {
             $festi[] = $tm->Value('ca_fchfestivo');
             $tm->MoveNext();
         }
@@ -582,15 +583,15 @@ if (!isset($boton) and !isset($buscar)) {
         $subque.= "INNER JOIN tb_parametros pre ON (pre.ca_casouso = prm.ca_valor2 and pre.ca_identificacion = ext.ca_idevento) ";
         $subque.= "order by ca_referencia_exm) exe ON (vi_repindicador_exp.ca_referencia = exe.ca_referencia_exm) ";
 
-        $sql="select ca_fchfestivo from tb_festivos";
-        if (!$tm->Open($sql)) {        
+        $sql = "select ca_fchfestivo from tb_festivos";
+        if (!$tm->Open($sql)) {
             echo "Error 573: $sql";
             //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
             //echo "<script>document.location.href = 'entrada.php';</script>";
             exit;
         }
         $festi = array();
-        while (!$tm->Eof() and !$tm->IsEmpty()) {
+        while (!$tm->Eof() and ! $tm->IsEmpty()) {
             $festi[] = $tm->Value('ca_fchfestivo');
             $tm->MoveNext();
         }
@@ -616,15 +617,15 @@ if (!isset($boton) and !isset($buscar)) {
 
         $subque.= "LEFT OUTER JOIN (select DISTINCT subf.ca_referencia_sub, subf.ca_fchfactura, subf.ca_usuario, fact.ca_observaciones from tb_expo_ingresos fact INNER JOIN (select ca_referencia as ca_referencia_sub, min(ca_fchfactura) as ca_fchfactura, min(ca_usucreado) as ca_usuario from tb_expo_ingresos group by ca_referencia) subf ON fact.ca_referencia = subf.ca_referencia_sub and fact.ca_fchfactura = subf.ca_fchfactura) rf ON (rf.ca_referencia_sub = vi_repindicador_exp.ca_referencia) ";
 
-        $sql="select ca_fchfestivo from tb_festivos";
-        if (!$tm->Open($sql)) {        
+        $sql = "select ca_fchfestivo from tb_festivos";
+        if (!$tm->Open($sql)) {
             echo "Error 606: $sql";
             //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
             //echo "<script>document.location.href = 'entrada.php';</script>";
             exit;
         }
         $festi = array();
-        while (!$tm->Eof() and !$tm->IsEmpty()) {
+        while (!$tm->Eof() and ! $tm->IsEmpty()) {
             $festi[] = $tm->Value('ca_fchfestivo');
             $tm->MoveNext();
         }
@@ -638,15 +639,15 @@ if (!isset($boton) and !isset($buscar)) {
         $transporte = "ca_transporte = 'Terrestre'";
         $subque = "LEFT OUTER JOIN (select fs.ca_idstatus, rp.ca_consecutivo as ca_consecutivo_sub, ca_fchenvio as ca_fchrecibo from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) RIGHT OUTER JOIN (select ca_consecutivo, min(ca_idstatus) as ca_idstatus from tb_repstatus rps INNER JOIN tb_reportes rpt ON (rps.ca_idreporte = rpt.ca_idreporte and rps.ca_etapa = 'OTRDO') group by ca_consecutivo) fs ON (fs.ca_idstatus = rs.ca_idstatus) order by rp.ca_consecutivo, ca_fchrecibo) sq ON ($source.ca_consecutivo = sq.ca_consecutivo_sub) ";
         $subque.= "LEFT OUTER JOIN (select fs.ca_idstatus, rp.ca_consecutivo as ca_consecutivo_sub, ca_fchenvio as ca_fchrevision from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) RIGHT OUTER JOIN (select ca_consecutivo, min(ca_idstatus) as ca_idstatus from tb_repstatus rps INNER JOIN tb_reportes rpt ON (rps.ca_idreporte = rpt.ca_idreporte and rps.ca_etapa = 'OTRVD') group by ca_consecutivo) fs ON (fs.ca_idstatus = rs.ca_idstatus) order by rp.ca_consecutivo, ca_fchrecibo) sf ON ($source.ca_consecutivo = sf.ca_consecutivo_sub) ";
-        $sql="select ca_fchfestivo from tb_festivos";
-        if (!$tm->Open($sql)) {        
+        $sql = "select ca_fchfestivo from tb_festivos";
+        if (!$tm->Open($sql)) {
             echo "Error 629: $sql";
             //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
             //echo "<script>document.location.href = 'entrada.php';</script>";
             exit;
         }
         $festi = array();
-        while (!$tm->Eof() and !$tm->IsEmpty()) {
+        while (!$tm->Eof() and ! $tm->IsEmpty()) {
             $festi[] = $tm->Value('ca_fchfestivo');
             $tm->MoveNext();
         }
@@ -659,15 +660,15 @@ if (!isset($boton) and !isset($buscar)) {
         $transporte = "ca_transporte = 'Terrestre'";
         $subque = "LEFT OUTER JOIN (select ca_idreporte, ca_fechafinalizacion, ca_fchpresentacion from tb_repotm) ro ON ($source.ca_idreporte = ro.ca_idreporte) ";
 
-        $sql="select ca_fchfestivo from tb_festivos";
-        if (!$tm->Open($sql)) {        
+        $sql = "select ca_fchfestivo from tb_festivos";
+        if (!$tm->Open($sql)) {
             echo "Error 650: $sql";
             //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
             //echo "<script>document.location.href = 'entrada.php';</script>";
             exit;
         }
         $festi = array();
-        while (!$tm->Eof() and !$tm->IsEmpty()) {
+        while (!$tm->Eof() and ! $tm->IsEmpty()) {
             $festi[] = $tm->Value('ca_fchfestivo');
             $tm->MoveNext();
         }
@@ -681,15 +682,15 @@ if (!isset($boton) and !isset($buscar)) {
         $subque = "LEFT OUTER JOIN (select fs.ca_idstatus, rp.ca_consecutivo as ca_consecutivo_sub, ca_fchenvio as ca_fchaceptacion from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) RIGHT OUTER JOIN (select ca_consecutivo, min(ca_idstatus) as ca_idstatus from tb_repstatus rps INNER JOIN tb_reportes rpt ON (rps.ca_idreporte = rpt.ca_idreporte and rps.ca_etapa = 'OTACP') group by ca_consecutivo) fs ON (fs.ca_idstatus = rs.ca_idstatus) order by rp.ca_consecutivo, ca_fchrecibo) sq ON ($source.ca_consecutivo = sq.ca_consecutivo_sub) ";
         $subque.= "LEFT OUTER JOIN (select fs.ca_idstatus, rp.ca_consecutivo as ca_consecutivo_sub, ca_fchenvio as ca_fchcargue from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) RIGHT OUTER JOIN (select ca_consecutivo, min(ca_idstatus) as ca_idstatus from tb_repstatus rps INNER JOIN tb_reportes rpt ON (rps.ca_idreporte = rpt.ca_idreporte and rps.ca_etapa = 'OTPRC') group by ca_consecutivo) fs ON (fs.ca_idstatus = rs.ca_idstatus) order by rp.ca_consecutivo, ca_fchrecibo) sd ON ($source.ca_consecutivo = sd.ca_consecutivo_sub) ";
 
-        $sql="select ca_fchfestivo from tb_festivos";
-        if (!$tm->Open($sql)) {        
+        $sql = "select ca_fchfestivo from tb_festivos";
+        if (!$tm->Open($sql)) {
             echo "Error 672: $sql";
             //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
             //echo "<script>document.location.href = 'entrada.php';</script>";
             exit;
         }
         $festi = array();
-        while (!$tm->Eof() and !$tm->IsEmpty()) {
+        while (!$tm->Eof() and ! $tm->IsEmpty()) {
             $festi[] = $tm->Value('ca_fchfestivo');
             $tm->MoveNext();
         }
@@ -703,15 +704,15 @@ if (!isset($boton) and !isset($buscar)) {
         $subque = "LEFT OUTER JOIN (select ca_idreporte, ca_fechafinalizacion from tb_repotm)  ro ON $source.ca_idreporte = ro.ca_idreporte ";
         $subque.= "LEFT OUTER JOIN (select fs.ca_idstatus, rp.ca_consecutivo as ca_consecutivo_sub, ca_fchenvio as ca_fchdespacho from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) RIGHT OUTER JOIN (select ca_consecutivo, min(ca_idstatus) as ca_idstatus from tb_repstatus rps INNER JOIN tb_reportes rpt ON (rps.ca_idreporte = rpt.ca_idreporte and rps.ca_etapa = 'OTDES') group by ca_consecutivo) fs ON (fs.ca_idstatus = rs.ca_idstatus) order by rp.ca_consecutivo, ca_fchrecibo) sq ON ($source.ca_consecutivo = sq.ca_consecutivo_sub) ";
 
-        $sql="select ca_fchfestivo from tb_festivos";
-        if (!$tm->Open($sql)) {        
+        $sql = "select ca_fchfestivo from tb_festivos";
+        if (!$tm->Open($sql)) {
             echo "Error 693: $sql";
             //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
             //echo "<script>document.location.href = 'entrada.php';</script>";
             exit;
         }
         $festi = array();
-        while (!$tm->Eof() and !$tm->IsEmpty()) {
+        while (!$tm->Eof() and ! $tm->IsEmpty()) {
             $festi[] = $tm->Value('ca_fchfestivo');
             $tm->MoveNext();
         }
@@ -725,15 +726,15 @@ if (!isset($boton) and !isset($buscar)) {
         $subque = " LEFT OUTER JOIN (select ii.ca_referencia, ii.ca_idcliente, ii.ca_hbls, rp.ca_consecutivo as ca_consecutivo_ref, ii.ca_fchfactura, ii.ca_observaciones from tb_inoingresos_sea ii inner join tb_inomaestra_sea im on ii.ca_referencia = im.ca_referencia inner join tb_inoclientes_sea ic on ii.ca_referencia = ic.ca_referencia and ii.ca_idcliente = ic.ca_idcliente and ii.ca_hbls = ic.ca_hbls inner join tb_reportes rp on ic.ca_idreporte = rp.ca_idreporte where im.ca_impoexpo = 'OTM/DTA' and substr(ii.ca_observaciones,1,7) = 'OTM/DTA') rs2 ON ($source.ca_consecutivo = rs2.ca_consecutivo_ref) ";
         $subque.= " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_cont, (string_to_array(rs.ca_propiedades, '='::text))[2] as ca_fchplanilla, min(rs.ca_fchenvio) as ca_fchconf_plan from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = '99999') group by rp.ca_consecutivo, rs.ca_propiedades order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_cont) ";
 
-        $sql="select ca_fchfestivo from tb_festivos";
-        if (!$tm->Open($sql)) {        
+        $sql = "select ca_fchfestivo from tb_festivos";
+        if (!$tm->Open($sql)) {
             echo "Error 719: $sql";
             //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
             //echo "<script>document.location.href = 'entrada.php';</script>";
             exit;
         }
         $festi = array();
-        while (!$tm->Eof() and !$tm->IsEmpty()) {
+        while (!$tm->Eof() and ! $tm->IsEmpty()) {
             $festi[] = $tm->Value('ca_fchfestivo');
             $tm->MoveNext();
         }
@@ -755,16 +756,16 @@ where i.oid in (
 	order by ca_referencia, ca_idcliente, ca_hbls, ca_fchfactura)            
  ii ON ($source.ca_referencia = ii.ca_referencia_fac and $source.ca_idcliente = ii.ca_idcliente_fac and $source.ca_hbls = ii.ca_hbls_fac) ";
         $campos.= ", ca_referencia, ca_idcliente_fac, ca_hbls, ca_fchfactura";
-        
-        $sql="select ca_fchfestivo from tb_festivos";
-        if (!$tm->Open($sql)) {        
+
+        $sql = "select ca_fchfestivo from tb_festivos";
+        if (!$tm->Open($sql)) {
             echo "Error 735: $sql";
             //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
             //echo "<script>document.location.href = 'entrada.php';</script>";
             exit;
         }
         $festi = array();
-        while (!$tm->Eof() and !$tm->IsEmpty()) {
+        while (!$tm->Eof() and ! $tm->IsEmpty()) {
             $festi[] = $tm->Value('ca_fchfestivo');
             $tm->MoveNext();
         }
@@ -783,7 +784,7 @@ where i.oid in (
                                 LEFT JOIN control.tb_usuarios u ON rs.ca_usuenvio = u.ca_login
                     WHERE ca_subject NOT LIKE '%Factura de%' and rs.ca_tipo = 2 and u.ca_departamento NOT IN ('OTM','Operativo')
                     ORDER BY rp.ca_consecutivo, rs.ca_fchenvio ) rs1 ON (vi_repindicador_sea.ca_consecutivo = rs1.ca_consecutivo_conf) ";
-        $sql="select ca_fchfestivo from tb_festivos";
+        $sql = "select ca_fchfestivo from tb_festivos";
         if (!$tm->Open($sql)) {
             echo "Error 399: $sql";
             //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
@@ -791,14 +792,14 @@ where i.oid in (
             exit;
         }
         $festi = array();
-        while (!$tm->Eof() and !$tm->IsEmpty()) {
+        while (!$tm->Eof() and ! $tm->IsEmpty()) {
             $festi[] = $tm->Value('ca_fchfestivo');
             $tm->MoveNext();
         }
         $tm->MoveFirst();
         $ind_mem = 22;
         $add_cols = 6;
-        $campos.= ",ca_mes";        
+        $campos.= ",ca_mes";
     }
 
     $queries = "select * from $source $subque where " . ($impoexpo ? $impoexpo . " and " : "") . "  $sucursal $cliente and " . ($ciudestino ? $ciudestino . " and" : "") . "   " . ($transporte ? $transporte . " and" : "") . " $ano and $mes";
@@ -977,7 +978,7 @@ where i.oid in (
             echo "	<TH>Usuario</TH>";
             echo "	<TH>Dif.</TH>";
             break;
-        case 22:            
+        case 22:
             echo "	<TH>Tipo</TH>";
             echo "	<TH>Fch.Recibo</TH>";
             echo "	<TH>Envío Msg</TH>";
@@ -992,10 +993,10 @@ where i.oid in (
     $data = array();
     echo $rs->Eof();
     echo $rs->IsEmpty();
-    while (!$rs->Eof() and !$rs->IsEmpty()) {                                  // Lee la totalidad de los registros obtenidos en la instrucción Select
+    while (!$rs->Eof() and ! $rs->IsEmpty()) {                                  // Lee la totalidad de los registros obtenidos en la instrucción Select
         //echo "paso por aqui";
         $adicionales = false;
-        if ($ind_mem == 3 and ($rs->Value('ca_transporte') != 'Marítimo' or $rs->Value('ca_modalidad') != 'LCL')) {
+        if ($ind_mem == 3 and ( $rs->Value('ca_transporte') != 'Marítimo' or $rs->Value('ca_modalidad') != 'LCL')) {
             $rs->MoveNext();
             continue;
         } else if ($ind_mem == 8 and $rs->Value('ca_consecutivo') == $cot_ant and false) {
@@ -1003,14 +1004,14 @@ where i.oid in (
             $rs->MoveNext();
             continue;
         }
-        $sql="select suc.ca_nombre as ca_sucursal, suc.ca_entrada, suc.ca_salida, emp.ca_nombre as ca_empresa from control.tb_sucursales suc inner join control.tb_empresas emp on suc.ca_idempresa = emp.ca_idempresa where emp.ca_nombre = 'Coltrans S.A.S.' and suc.ca_nombre = '" . $rs->Value('ca_sucursal') . "'";
+        $sql = "select suc.ca_nombre as ca_sucursal, suc.ca_entrada, suc.ca_salida, emp.ca_nombre as ca_empresa from control.tb_sucursales suc inner join control.tb_empresas emp on suc.ca_idempresa = emp.ca_idempresa where emp.ca_nombre = 'Coltrans S.A.S.' and suc.ca_nombre = '" . $rs->Value('ca_sucursal') . "'";
         if (!$tm->Open($sql)) {
             echo "Error 940: $sql";
 //            echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
 //            echo "<script>document.location.href = 'entrada.php';</script>";
             exit;
         }
-        while (!$tm->Eof() and !$tm->IsEmpty()) {
+        while (!$tm->Eof() and ! $tm->IsEmpty()) {
             $entrada = $tm->Value('ca_entrada');    // Hora de entrada para la sucursal
             $salida = $tm->Value('ca_salida');    // Hora de salida para la sucursal
             $tm->MoveNext();
@@ -1038,7 +1039,7 @@ where i.oid in (
         echo "  <TD Class=mostrar style='font-size: 9px;'>" . $rs->Value('ca_transporte') . "</TD>";
         echo "  <TD Class=mostrar style='font-size: 9px;'>" . $rs->Value('ca_modalidad') . "</TD>";
         echo "  <TD Class=mostrar style='font-size: 9px;'>" . $rs->Value('ca_compania') . "</TD>";
-      
+
         //echo "-------------------------------->".$ind_mem."<br /><br /><br />";
         switch ($ind_mem) {
             case 1:
@@ -1055,8 +1056,8 @@ where i.oid in (
                 $data[] = array($rs->Value('ca_traorigen') => array($rs->Value('ca_mes') => $rs->Value('ca_diferencia')));
                 break;
             case 3:
-                $sql="select ic.ca_referencia, rp.ca_consecutivo, im.ca_fchconfirmacion, (CASE WHEN to_date(im.ca_fchdesconsolidacion,'YYYY-MM-DD') < im.ca_fchconfirmacion THEN NULL ELSE to_date(im.ca_fchdesconsolidacion,'YYYY-MM-DD') END) as ca_fchdesconsolidacion, (CASE WHEN to_date(im.ca_fchdesconsolidacion,'YYYY-MM-DD') < im.ca_fchconfirmacion THEN NULL ELSE to_date(im.ca_fchdesconsolidacion,'YYYY-MM-DD') END)-im.ca_fchconfirmacion as ca_diferencia from tb_inoclientes_sea ic LEFT OUTER JOIN tb_reportes rp ON (ic.ca_idreporte::text = rp.ca_idreporte::text) LEFT OUTER JOIN tb_inomaestra_sea im ON (ic.ca_referencia = im.ca_referencia) where ca_consecutivo = '" . $rs->Value('ca_consecutivo') . "' order by ic.ca_referencia, im.ca_fchconfirmacion";
-                if (!$tm->Open($sql)) {       
+                $sql = "select ic.ca_referencia, rp.ca_consecutivo, im.ca_fchconfirmacion, (CASE WHEN to_date(im.ca_fchdesconsolidacion,'YYYY-MM-DD') < im.ca_fchconfirmacion THEN NULL ELSE to_date(im.ca_fchdesconsolidacion,'YYYY-MM-DD') END) as ca_fchdesconsolidacion, (CASE WHEN to_date(im.ca_fchdesconsolidacion,'YYYY-MM-DD') < im.ca_fchconfirmacion THEN NULL ELSE to_date(im.ca_fchdesconsolidacion,'YYYY-MM-DD') END)-im.ca_fchconfirmacion as ca_diferencia from tb_inoclientes_sea ic LEFT OUTER JOIN tb_reportes rp ON (ic.ca_idreporte::text = rp.ca_idreporte::text) LEFT OUTER JOIN tb_inomaestra_sea im ON (ic.ca_referencia = im.ca_referencia) where ca_consecutivo = '" . $rs->Value('ca_consecutivo') . "' order by ic.ca_referencia, im.ca_fchconfirmacion";
+                if (!$tm->Open($sql)) {
                     echo "Error 963: $sql";
                     //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
                     //echo "<script>document.location.href = 'repindicadornew.php';</script>";
@@ -1099,44 +1100,44 @@ where i.oid in (
                     $data[] = array($rs->Value('ca_usucreado') => array($rs->Value('ca_mes') => $dif_mem));
                 }
                 /*
-                if ($departamento != "OTM") {
-                    $avanza = false;
-                    if ($rs->Value('ca_continuacion') == "N/A") {
-                        $avanza = true;
-                        while ($rs->Value('ca_referencia') == $ref_tmp and $rs->Value('ca_idcliente') == $idc_tmp and $rs->Value('ca_hbls') == $hbl_tmp and !$rs->Eof()) {
-                            $rs->MoveNext(); // Omite las facturas adicionales sobre una misma carga.
-                        }
-                    } else if ($rs->Value('ca_continuacion') == "OTM" or $rs->Value('ca_continuacion') == "DTA") {
-                        $avanza = true;
-                        while ($rs->Value('ca_referencia') == $ref_tmp and $rs->Value('ca_idcliente') == $idc_tmp and $rs->Value('ca_hbls') == $hbl_tmp and !$rs->Eof()) {
-                            if (trim($rs->Value('ca_observaciones')) == "OTM/DTA") { // Busca la Factura por el OTM o el DTA
-                                echo "<TR>";
-                                echo "  <TD Class=mostrar style='font-size: 9px;'>" . $contador++ . "</TD>";
-                                echo "  <TD Class=mostrar COLSPAN=12></TD>";
-                                if (in_array($rs->Value("ca_observaciones"), array("Facturación al Agente", "Reemplazo Factura", "Cierre contable de Clientes"))) {
-                                    $dif_mem = null;
-                                } else {
-                                    $dif_mem = workDiff($festi, $rs->Value('ca_fchplanilla'), $rs->Value('ca_fchfactura'));
-                                }
-                                $lcs_var = ($lcs_array[$rs->Value('ca_sucursal')]) ? $lcs_array[$rs->Value('ca_sucursal')] : $lcs_array['Todas'];
-                                $color = analizar_dif("D", $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
-                                echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_fchplanilla') . "</TD>";
-                                echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_fchfactura') . "</TD>";
-                                echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value("ca_observaciones") . "</TD>";
-                                echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>" . $dif_mem . "</TD>";
-                                echo "</TR>";
-                            }
-                            $rs->MoveNext();
-                        }
-                    }
-                    if ($avanza and !$rs->Eof()) {           // Retrocede un registro para quedar en la última factura del Hbl de una Referencia
-                        $rs->MovePrevious();
-                    }
-                }*/                
+                  if ($departamento != "OTM") {
+                  $avanza = false;
+                  if ($rs->Value('ca_continuacion') == "N/A") {
+                  $avanza = true;
+                  while ($rs->Value('ca_referencia') == $ref_tmp and $rs->Value('ca_idcliente') == $idc_tmp and $rs->Value('ca_hbls') == $hbl_tmp and !$rs->Eof()) {
+                  $rs->MoveNext(); // Omite las facturas adicionales sobre una misma carga.
+                  }
+                  } else if ($rs->Value('ca_continuacion') == "OTM" or $rs->Value('ca_continuacion') == "DTA") {
+                  $avanza = true;
+                  while ($rs->Value('ca_referencia') == $ref_tmp and $rs->Value('ca_idcliente') == $idc_tmp and $rs->Value('ca_hbls') == $hbl_tmp and !$rs->Eof()) {
+                  if (trim($rs->Value('ca_observaciones')) == "OTM/DTA") { // Busca la Factura por el OTM o el DTA
+                  echo "<TR>";
+                  echo "  <TD Class=mostrar style='font-size: 9px;'>" . $contador++ . "</TD>";
+                  echo "  <TD Class=mostrar COLSPAN=12></TD>";
+                  if (in_array($rs->Value("ca_observaciones"), array("Facturación al Agente", "Reemplazo Factura", "Cierre contable de Clientes"))) {
+                  $dif_mem = null;
+                  } else {
+                  $dif_mem = workDiff($festi, $rs->Value('ca_fchplanilla'), $rs->Value('ca_fchfactura'));
+                  }
+                  $lcs_var = ($lcs_array[$rs->Value('ca_sucursal')]) ? $lcs_array[$rs->Value('ca_sucursal')] : $lcs_array['Todas'];
+                  $color = analizar_dif("D", $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
+                  echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_fchplanilla') . "</TD>";
+                  echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_fchfactura') . "</TD>";
+                  echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value("ca_observaciones") . "</TD>";
+                  echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>" . $dif_mem . "</TD>";
+                  echo "</TR>";
+                  }
+                  $rs->MoveNext();
+                  }
+                  }
+                  if ($avanza and !$rs->Eof()) {           // Retrocede un registro para quedar en la última factura del Hbl de una Referencia
+                  $rs->MovePrevious();
+                  }
+                  } */
                 break;
             case 5:
                 $idreporte = $rs->Value('ca_idreporte');
-                while ($idreporte == $rs->Value('ca_idreporte') and !$rs->Eof() and !$rs->IsEmpty()) {
+                while ($idreporte == $rs->Value('ca_idreporte') and ! $rs->Eof() and ! $rs->IsEmpty()) {
                     if ($adicionales) {
                         echo "<TR>";
                         echo "  <TD Class=mostrar COLSPAN=11></TD>";
@@ -1186,7 +1187,7 @@ where i.oid in (
                 $data[] = array($rs->Value('ca_usuenvio') => array($rs->Value('ca_mes') => hourTosec($dif_mem)));
                 break;
             case 7:
-                $sql="select rs.ca_fchllegada from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) where ca_consecutivo = '" . $rs->Value('ca_consecutivo') . "' order by ca_fchllegada";
+                $sql = "select rs.ca_fchllegada from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) where ca_consecutivo = '" . $rs->Value('ca_consecutivo') . "' order by ca_fchllegada";
                 if (!$tm->Open($sql)) {       // Selecciona todos lo registros de la tabla Status
                     echo "Error 1092: $sql";
                     //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
@@ -1197,7 +1198,7 @@ where i.oid in (
                 $fch_eta = $fch_llegada = null;
                 $tm->MoveFirst();
 
-                while (!$tm->Eof() and !$tm->IsEmpty()) {
+                while (!$tm->Eof() and ! $tm->IsEmpty()) {
                     if ($first_date and strlen($tm->Value('ca_fchllegada')) != 0) {
                         $fch_eta = $tm->Value('ca_fchllegada');
                         $first_date = false;
@@ -1242,7 +1243,7 @@ where i.oid in (
                 echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>" . $dif_mem . "</TD>";
                 $cot_ant = $rs->Value('ca_consecutivo');
                 $ver_ant = $rs->Value('ca_version');
-                while ($cot_ant == $rs->Value('ca_consecutivo') and $ver_ant == $rs->Value('ca_version') and !$rs->Eof() and !$rs->IsEmpty()) {
+                while ($cot_ant == $rs->Value('ca_consecutivo') and $ver_ant == $rs->Value('ca_version') and ! $rs->Eof() and ! $rs->IsEmpty()) {
                     echo "<TR>";
                     echo "  <TD Class=mostrar style='font-size: 9px;' COLSPAN=5>&nbsp;</TD>";
                     echo "  <TD Class=invertir style='font-size: 9px;'>" . $rs->Value('ca_traorigen') . "</TD>";
@@ -1318,7 +1319,7 @@ where i.oid in (
                 $exc_dig = true;
                 $exc_fac = true;
                 $exc_idg = ($rs->Value('ca_aplicaidg') == "t") ? true : false;
-                while ($referencia == $rs->Value('ca_referencia') and !$rs->Eof() and !$rs->IsEmpty()) {
+                while ($referencia == $rs->Value('ca_referencia') and ! $rs->Eof() and ! $rs->IsEmpty()) {
                     $array_eventos[$rs->Value('ca_valor2')] = $rs->Value('ca_valor');
                     $fchEventoArry = date_parse($rs->Value('ca_fchevento'));
                     $fchEvento = date("Y-m-d H:i:s", mktime($fchEventoArry["hour"], $fchEventoArry["minute"], $fchEventoArry["second"], $fchEventoArry["month"], $fchEventoArry["day"], $fchEventoArry["year"]));
@@ -1459,7 +1460,7 @@ where i.oid in (
                 $hour = intval($dif_ref / 60);
                 $minute = $dif_ref % 60;
 
-                $dif_ref = ($exc_dig or $exc_fac or !$exc_idg) ? null : str_pad($hour, 2, "0", STR_PAD_LEFT) . ":" . str_pad($minute, 2, "0", STR_PAD_LEFT) . ":" . str_pad(null, 2, "0", STR_PAD_LEFT);
+                $dif_ref = ($exc_dig or $exc_fac or ! $exc_idg) ? null : str_pad($hour, 2, "0", STR_PAD_LEFT) . ":" . str_pad($minute, 2, "0", STR_PAD_LEFT) . ":" . str_pad(null, 2, "0", STR_PAD_LEFT);
 
                 $lcs_var = ($lcs_array[$rs->Value('ca_sucursal')]) ? $lcs_array[$rs->Value('ca_sucursal')] : $lcs_array['Todas'];
                 $color = analizar_dif($tipo, $lcs_var, $dif_ref, $array_avg, $array_pnc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
@@ -1482,7 +1483,7 @@ where i.oid in (
                 $excluir = true;
                 $matriz_eventos = array();
                 $referencia = $rs->Value('ca_referencia');
-                while ($referencia == $rs->Value('ca_referencia') and !$rs->Eof() and !$rs->IsEmpty()) {
+                while ($referencia == $rs->Value('ca_referencia') and ! $rs->Eof() and ! $rs->IsEmpty()) {
                     $fchEventoArry = date_parse($rs->Value('ca_fchevento'));
                     $fchEvento = date("Y-m-d", mktime($fchEventoArry["hour"], $fchEventoArry["minute"], $fchEventoArry["second"], $fchEventoArry["month"], $fchEventoArry["day"], $fchEventoArry["year"]));
                     echo "<TR>";
@@ -1534,8 +1535,8 @@ where i.oid in (
                 echo "  <TD Class=mostrar style='font-size: 9px;'>" . $rs->Value('ca_referencia') . "</TD>";
                 echo "  <TD Class=mostrar style='font-size: 9px;'>" . (($rs->Value('ca_aplicaidg') == 't') ? "Sí" : "No") . "</TD>";
                 echo "  <TD Class=mostrar style='font-size: 9px;'>" . $rs->Value('ca_nomsia') . "</TD>";
-                $sql="select rps.* from tb_repstatus rps INNER JOIN tb_reportes rep ON rps.ca_idreporte = rep.ca_idreporte and rep.ca_consecutivo = '" . $rs->Value('ca_consecutivo') . "' where rps.ca_observaciones_idg IS NOT NULL order by ca_fchenvio";
-                if (!$tm->Open($sql)) {       
+                $sql = "select rps.* from tb_repstatus rps INNER JOIN tb_reportes rep ON rps.ca_idreporte = rep.ca_idreporte and rep.ca_consecutivo = '" . $rs->Value('ca_consecutivo') . "' where rps.ca_observaciones_idg IS NOT NULL order by ca_fchenvio";
+                if (!$tm->Open($sql)) {
                     echo "Error 1437: $sql";
                     //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
                     //echo "<script>document.location.href = 'repindicadornew.php';</script>";
@@ -1562,7 +1563,7 @@ where i.oid in (
 
                 $matriz_eventos = array();
                 $referencia = $rs->Value('ca_referencia');
-                while ($referencia == $rs->Value('ca_referencia') and !$rs->Eof() and !$rs->IsEmpty()) {
+                while ($referencia == $rs->Value('ca_referencia') and ! $rs->Eof() and ! $rs->IsEmpty()) {
                     echo "<TR>";
                     echo "  <TD Class=mostrar style='font-size: 9px;'>" . $rs->Value('ca_valor') . "</TD>";
                     echo "  <TD Class=mostrar style='font-size: 9px;'>" . $rs->Value('ca_usuario') . "</TD>";
@@ -1608,7 +1609,7 @@ where i.oid in (
                         echo "<TD>$clave <br /> $val</TD>";
                     }
                     $dif_mem = workDiff($festi, $ini_event, $fin_event);
-                    $dif_mem = (!is_null($ini_event) and !is_null($fin_event) and $ini_event > $fin_event) ? 1 : $dif_mem;
+                    $dif_mem = (!is_null($ini_event) and ! is_null($fin_event) and $ini_event > $fin_event) ? 1 : $dif_mem;
                     echo "</TR>";
                 }
                 echo "  </TABLE></TD>";
@@ -1748,7 +1749,7 @@ where i.oid in (
                 break;
             case 22:
                 $idreporte = $rs->Value('ca_idreporte');
-                while ($idreporte == $rs->Value('ca_idreporte') and !$rs->Eof() and !$rs->IsEmpty()) {
+                while ($idreporte == $rs->Value('ca_idreporte') and ! $rs->Eof() and ! $rs->IsEmpty()) {
                     if ($adicionales) {
                         echo "<TR>";
                         echo "  <TD Class=mostrar COLSPAN=11></TD>";
@@ -1792,7 +1793,7 @@ where i.oid in (
     if ($data) {
         $dataJson = array();
         $datos = array();
-        
+
         //echo "<pre>";print_r($data);echo "</pre>";
 
         foreach ($data as $key => $gridUsuario) {
@@ -1802,9 +1803,9 @@ where i.oid in (
                         $serieX[] = $mes;
 
                     $datos[$usuario][$mes]["valor"] += $valor;
-                    $datos[$usuario][$mes]["total"]++;
+                    $datos[$usuario][$mes]["total"] ++;
                     $datosProm[$usuario]["valor"] += $valor;
-                    $datosProm[$usuario]["total"]++;
+                    $datosProm[$usuario]["total"] ++;
                 }
             }
         }
@@ -1827,8 +1828,8 @@ where i.oid in (
             }
         }
 
-            
-            $data[] = array($rs->Value('ca_usuario')=>array($rs->Value('ca_mes')=>$dif_mem));
+
+        $data[] = array($rs->Value('ca_usuario') => array($rs->Value('ca_mes') => $dif_mem));
 
         /* Gráfica por Meses */
         foreach ($datos as $usuario => $gridMes) {
@@ -1873,183 +1874,180 @@ where i.oid in (
         //echo "<pre>";print_r($d);echo "</pre>";
         ?>  
 
-    <script type="text/javascript">
+        <script type="text/javascript">
         <? if (count($serieX) > 1) { ?>
-            var chart;
-            $(document).ready(function() {
+                var chart;
+                        $(document).ready(function() {
                 chart = new Highcharts.Chart({
-                    chart: {
-                        renderTo: 'container',
-                    },
-                    title: {
+                chart: {
+                renderTo: 'container',
+                },
+                        title: {
                         text: '<?= $indicador ?>'
-                    },
-                    subtitle: {
+                        },
+                        subtitle: {
                         text: '<?= $mes_tit . "-" . $ano_tit ?>'
-                    },
-                    xAxis: [{
+                        },
+                        xAxis: [{
                         categories: <?= json_encode($serieX) ?>
-                    }],
-                    yAxis: [
+                        }],
+                        yAxis: [
                         { // Primary yAxis
-                            gridLineWidth: 0,
-                            title: {
+                        gridLineWidth: 0,
+                                title: {
                                 text: '# Casos',
-                                style: {
-                                    color: '#4572A7'
+                                        style: {
+                                        color: '#4572A7'
+                                        }
                                 }
-                            }
                         }, { //  Secondary yAxis
-                            <? if ($ind_mem == 5 || $ind_mem == 6 || $ind_mem == 8 || $ind_mem == 9 || $ind_mem == 22) { ?>
-                                type: 'datetime',
-                                title: {
+            <? if ($ind_mem == 5 || $ind_mem == 6 || $ind_mem == 8 || $ind_mem == 9 || $ind_mem == 22) { ?>
+                            type: 'datetime',
+                                    title: {
                                     text: 'Tiempo (Horas)'
-                                },
-                            <? } else { ?>
-                                title: {
-                                    text: 'Tiempo (Días)'
-                                },
-                            <? } ?>
-                            opposite: true
+                                    },
+            <? } else { ?>
+                            title: {
+                            text: 'Tiempo (Días)'
+                            },
+            <? } ?>
+                        opposite: true
                         }, { // Tertiary yAxis
-                            gridLineWidth: 0,
+                        gridLineWidth: 0,
                         }
-                    ],
-                    tooltip: {
+                        ],
+                        tooltip: {
                         formatter: function() {
-                            var str = "";
-                            if (this.series.type == "column"){
-                            <? if ($ind_mem == 5 || $ind_mem == 6 || $ind_mem == 8 || $ind_mem == 9 || $ind_mem == 22) { ?>
-                                str = '<u>' + this.series.name + ': ' + dateFormat1(this.y) + ' horas</u><br/>';
-                            <? } else { ?>
-                                str = '<u>' + this.series.name + ': ' + this.y + ' días</u><br/>';
-                            <? } ?>
-                            } else if (this.series.type == "pie"){
-                                str = '<u>' + this.point.name + ': ' + this.y + ' casos</u><br/>';
-                            } else{
-                                str = '<u>' + this.series.name + ': ' + this.y + ' casos</u><br/>';
-                            }
-                            return str;
+                        var str = "";
+                                if (this.series.type == "column"){
+            <? if ($ind_mem == 5 || $ind_mem == 6 || $ind_mem == 8 || $ind_mem == 9 || $ind_mem == 22) { ?>
+                            str = '<u>' + this.series.name + ': ' + dateFormat1(this.y) + ' horas</u><br/>';
+            <? } else { ?>
+                            str = '<u>' + this.series.name + ': ' + this.y + ' días</u><br/>';
+            <? } ?>
+                        } else if (this.series.type == "pie"){
+                        str = '<u>' + this.point.name + ': ' + this.y + ' casos</u><br/>';
+                        } else{
+                        str = '<u>' + this.series.name + ': ' + this.y + ' casos</u><br/>';
                         }
-                    },
-                    series: <?= json_encode($dataIdg) ?>
+                        return str;
+                        }
+                        },
+                        series: <?= json_encode($dataIdg) ?>
                 });
-            });
+                });
         <? } ?>
             var chart2;
-            $(document).ready(function() {
+                    $(document).ready(function() {
 
-                chart2 = new Highcharts.Chart({
-                chart: {
-                    renderTo: 'container2',
-                },
-                title: {
+            chart2 = new Highcharts.Chart({
+            chart: {
+            renderTo: 'container2',
+            },
+                    title: {
                     text: '<?= $indicador ?>'
-                },
-                subtitle: {
+                    },
+                    subtitle: {
                     text: '<?= "PROMEDIO: " . $mes_tit . "-" . $ano_tit ?>'
-                },
-                xAxis: {
+                    },
+                    xAxis: {
                     categories: <?= json_encode($serieX) ?>
-                },
-                yAxis: {
-                    <? if ($ind_mem == 5 || $ind_mem == 6 || $ind_mem == 8 || $ind_mem == 9 || $ind_mem == 22) { ?>
+                    },
+                    yAxis: {
+        <? if ($ind_mem == 5 || $ind_mem == 6 || $ind_mem == 8 || $ind_mem == 9 || $ind_mem == 22) { ?>
                         type: 'datetime',
+                                title: {
+                                text: 'Tiempo (Horas)'
+                                },
+        <? } else { ?>
                         title: {
-                            text: 'Tiempo (Horas)'
+                        text: 'Tiempo (Días)'
                         },
-                    <? } else { ?>
-                        title: {
-                            text: 'Tiempo (Días)'
-                        },
-                    <? } ?>
+        <? } ?>
                     opposite: true
-                },
-                tooltip: {
-                     formatter: function() {
-                        var str="";
-                        if(this.series.type=="column"){
-                            <?if($ind_mem==5||$ind_mem==6||$ind_mem==8||$ind_mem==9 || $ind_mem == 22){?>
-                                str = '<u>' + this.series.name + ': ' + dateFormat1(this.y) + ' horas</u><br/>';
-                            <?}else{?>
-                                str = '<u>' + this.series.name + ': '+ this.y +' días</u><br/>';
-                            <?}?>    
-                        }else if(this.series.type=="pie"){
-                            str = '<u>' + this.point.name + ': '+ this.y +' casos</u><br/>';
-                        }else{
-                            str = '<u>' + this.series.name + ': '+ this.y +' casos</u><br/>';
-                        }
+                    },
+                    tooltip: {
+                    formatter: function() {
+                    var str = "";
+                            if (this.series.type == "column"){
+        <? if ($ind_mem == 5 || $ind_mem == 6 || $ind_mem == 8 || $ind_mem == 9 || $ind_mem == 22) { ?>
+                        str = '<u>' + this.series.name + ': ' + dateFormat1(this.y) + ' horas</u><br/>';
+        <? } else { ?>
+                        str = '<u>' + this.series.name + ': ' + this.y + ' días</u><br/>';
+        <? } ?>
+                    } else if (this.series.type == "pie"){
+                    str = '<u>' + this.point.name + ': ' + this.y + ' casos</u><br/>';
+                    } else{
+                    str = '<u>' + this.series.name + ': ' + this.y + ' casos</u><br/>';
+                    }
                     return str;
                     }
-                },
-                plotOptions: {
+                    },
+                    plotOptions: {
                     column: {
                     pointPadding: 0.2,
                             borderWidth: 0
                     }
-                },
-                series: <?= json_encode($dataIdg2) ?>
+                    },
+                    series: <?= json_encode($dataIdg2) ?>
             });
-        });
-        
-        var chart3;
-        $(document).ready(function() {
+            });
+                    var chart3;
+                    $(document).ready(function() {
 
             chart2 = new Highcharts.Chart({
-                chart: {
-                    renderTo: 'container3',
+            chart: {
+            renderTo: 'container3',
                     plotBackgroundColor: null,
                     plotBorderWidth: null,
                     plotShadow: false
-                },
-                title: {
+            },
+                    title: {
                     text: '<?= $indicador ?>'
-                },
-                subtitle: {
+                    },
+                    subtitle: {
                     text: '<?= "Consolidado de casos por usuario: " . $mes_tit . "-" . $ano_tit ?>'
-                },
-                tooltip: {
+                    },
+                    tooltip: {
                     formatter: function() {
-                        var str="";
-                        str = '<u>' + this.point.name + ': '+ this.y +' casos</u><br/>';
-                        return str;
+                    var str = "";
+                            str = '<u>' + this.point.name + ': ' + this.y + ' casos</u><br/>';
+                            return str;
                     }
-                },
-                plotOptions: {
+                    },
+                    plotOptions: {
                     pie: {
-                        allowPointSelect: true,
-                        cursor: 'pointer',
-                        dataLabels: {
+                    allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
                             enabled: true,
-                            color: '#000000',
-                            connectorColor: '#000000',
-                            format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-                        },
-                        showInLegend: true
+                                    color: '#000000',
+                                    connectorColor: '#000000',
+                                    format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                            },
+                            showInLegend: true
                     }
-                },
-                series: [{
+                    },
+                    series: [{
                     type: 'pie',
-                    data: <?=  json_encode($d)?>
-                }]
+                            data: <?= json_encode($d) ?>
+                    }]
             });
-        });
+            });
+                    function dateFormat1(tim){
 
-        function dateFormat1(tim){
-
-            horas = Math.floor(((tim / 1000) / 60) / 60);
-            min = Math.floor(((tim - (horas * 60 * 60 * 1000)) / 1000) / 60);
-            sec = Math.round((tim - ((horas * 60 * 60 * 1000) + (min * 60 * 1000))) / 1000);
-            horas = horas < 9?"0" + horas:horas;
-            min = min < 9?"0" + min:min;
-            sec = sec < 9?"0" + sec:sec;
-
-            return horas + ":" + min + ":" + sec;
-        }
+                    horas = Math.floor(((tim / 1000) / 60) / 60);
+                            min = Math.floor(((tim - (horas * 60 * 60 * 1000)) / 1000) / 60);
+                            sec = Math.round((tim - ((horas * 60 * 60 * 1000) + (min * 60 * 1000))) / 1000);
+                            horas = horas < 9?"0" + horas:horas;
+                            min = min < 9?"0" + min:min;
+                            sec = sec < 9?"0" + sec:sec;
+                            return horas + ":" + min + ":" + sec;
+                    }
         </script>
-<?
+        <?
     }
-  
+
     if ($format_avg == "d") {
         $promedio_general = array_avg($array_avg);
     } else if ($array_avg < "24:00:00") {
@@ -2113,9 +2111,9 @@ where i.oid in (
     echo '<TD><div id="container3" style="height: 600px; margin: 0 auto"></div></TD>';
     echo "</TR>";
     if (count($serieX) > 1) {
-       echo "<TR colspan='2'>";
-       echo '<TD><div id="container" style="min-width: 310px; height: 600px; margin: 0 auto"></div></TD>';
-       echo "</TR>";
+        echo "<TR colspan='2'>";
+        echo '<TD><div id="container" style="min-width: 310px; height: 600px; margin: 0 auto"></div></TD>';
+        echo "</TR>";
     }
     echo "</TABLE>";
 
