@@ -31,126 +31,57 @@ anexoExpo: |
 
 OTM_LCLTitulo:  NOTAS INCLUYE Y NO INCLUYE EN CONTINUACIÓN DE VIAJE (OTM/DTA) - CARGA LCL
 OTM_LCL: |
+  Especificaciones del Servicio:
+    Para FCL y LCL expreso el valor incluye 2 DTM por HBL, a partir del 3 DTM  $85.000,oo adicional por DTM.
+    Las tarifas son válidas para los puertos de Cartagena y Buenaventura.
+    Las cargas LCL/LCL en OTM están sujetas a consolidación saliendo desde CONTECAR, SPRB.
+    Las cargas LCL/LCL llegando a TCBUEN están sujetas a consolidación.
+    Las cargas LCL/LCL llegando a Muelles el Bosque se manejarán en expreso.
+    Las cargas LCL/LCL cuyo destino es diferente a la Zona Franca Calle 13 se manejarán en expreso.
+    La tarifa aplica para la relación por  cada tonelada son 2 metros cúbicos, relación 1 a 2.
+  Nota Importante: Es responsabilidad del importador, los perjuicios a que haya lugar como consecuencia de inexactitudes o errores en la documentación suministrada, así como de las sanciones resultado de requerimientos aduaneros por faltantes o sobrantes. La Póliza del Importador deberá incluir los tributos aduaneros. El OTM no se hace responsable por el pago de tributos aduaneros a la DIAN, la póliza de tributos aduanero sólo cumple la función de garantía a la DIAN. Los pagos por tributos aduaneros deberán ser asumidos por el importador y reclamados a su compañía de seguros para ser pagados a la DIAN.
+  
   Las anteriores tarifas incluyen:
  
-  • Formulario DIAN para Continuación de Viaje
-  • Elaboración OTM para Continuación de Viaje
-  • Elaboración y coordinación OTM para continuación de viaje
-  • Tres (3) días libres de bodegajes a partir del arribo de la carga a puerto
+  • Tres días libres de bodegajes a partir del arribo de la carga a puerto
   • Coordinación con el Transporte terrestre Puerto Colombiano ? Destino
-  • Sellos para el vehículo 
-  • Coordinación Logística
-  • Entrega de documentos sellados por la DIAN en destino en las oficinas de Coltrans S.A.S.
-  • Cargue de la mercancía a camión.
-
-  Las anteriores tarifas NO Incluyen :
-
-  • Uso de instalaciones portuarias
-  • Gastos de liberación con la naviera
-  • Servicio por liberación USD60,oo para embarques directos.
-  • Servicio documental, administración de inventario de SPRC $62.000,oo
-  • Bodegajes en puerto a partir del cuarto (4) día de arribo del buque a puerto $12.000,oo ton/m3 Min $20.000,oo
-  • Inspección Aduanera $4.000,oo ton/m3 min $20.000,oo 
-  • Inspección Aduanera Puerto de Buenaventura $108.000,oo
-  • Alquiler de Estibas COP811,oo, servicio por dia o fracción.
-  • Movilización para inspección física
-  • Seguros a la mercancía en el trayecto terrestre Nacional
-  • El amparo del exceso de póliza del Transportista cuyo monto supere  $500,000,000,oo
-  • Servicio de acompañamiento vehicular para cargas que superen los $150.000.000,oo
-  • Stand By del vehículo por demoras ajenas en el descargue $450.000,oo por día
-  • Almacenajes en bodega de destino
-  • Descargue, mercancía en Bodega de destino
-  • Tramite Ica, Dasalud, Invima $130.000,oo
-  • Recargo IMO $150,000,oo
-  • Desistimiento de OTM $ 80.000,oo (manejo de OTM, endoso, liberación), adicional se facturaran los gastos ocasionados en el puerto.
-  • Trámite de cesión de derecho y transporte a Zona de destino en caso de requerir otro usuario en Zona franca.
-
-  Nota: Estos gastos serán facturados solo si el proceso de OTM lo requiere.
-  
-  Nota Importante: Es responsabilidad del importador, los perjuicios a que haya lugar como consecuencia de inexactitudes o errores en la documentación suministrada, así como de las sanciones resultado de requerimientos aduaneros por faltantes o sobrantes.
-  La Póliza del Importador deberá incluir los tributos aduaneros. El OTM no se hace responsable por el pago de tributos aduaneros a la DIAN, la póliza de tributos aduanero sólo cumple la función de garantía a la DIAN. Los pagos por tributos aduaneros deberán ser asumidos por el importador y reclamados a su compañía de seguros para ser pagados a la DIAN.                                                                                                                                                                                                              
-  
-  Restricciones
-  NO se pueden aceptar las siguientes cargas:
-  • Menajes domésticos
-  • Químicos precursores
-  • Licores
-  • Cigarrillos
-  • Productos perecederos
-  • Armas y explosivos
-  • Teléfonos celulares
-  • Vidrios
-  • Todas aquellas mercancías con restricciones aduaneras legales vigentes
-    
-  CONDICIONES GENERALES PARA EL MANEJO DE CARGA
-
-  DOCUMENTACION
-
-  • Fotocopia de la factura comercial, debe incluir moneda, tipo de negociación y número.
-  • Valor FOB de la mercancía
-  • Cuando la factura comercial está en un término de negociación diferente a FOB es indispensable tener las certificaciones adicionales de los otros gastos.
-  • Descripción en español de la mercancía por escrito
-  • Lista de empaque
-  • Fotocopia de la póliza del seguro de la mercancía con condiciones y restricciones.
-  • Rut del importador
-  • Original del BL
-  • La documentación completa debe ser entregada 48 horas antes de la llegada de la motonave a puerto Colombiano
-  • Historial del Importador ( soporte declaración anterior)
-
-  PÓLIZA DE SEGURO DE LA MERCANCIA OPERADOR OTM
-
-  • Nuestro Operador cuenta con una póliza para el transporte de la mercancía hasta de $500.000.000 de pesos con un deducible del 10% del valor de la pérdida con un mínimo de $5.000.000.oo por lo anterior se responderá únicamente hasta por el valor que responda nuestra compañía de seguros en subrogación.  Si la mercancía cuesta más de este valor, el cliente y/o importador deberá tramitar un excedente de seguro.
-  • Toda mercancía debe estar asegurada desde ORIGEN hasta el DESTINO, incluyendo el valor de los tributos aduaneros (DDP) y cualquier reclamación hacia COLTRANS  S.A.S.  es por vía subrogación.
-  • La mercancía viaja por cuenta y riesgo del importador y no aseguramos cargas de no mediar orden por escrito.
-  • Mercancía mayor a $ 150.000.000 COP se solicitara un acompañamiento  vehicular.
-  
-OTM_FCLTitulo:  NOTAS INCLUYE Y NO INCLUYE EN CONTINUACIÓN DE VIAJE (OTM/DTA) - CARGA FCL
-OTM_FCL: |  
-  Las anteriores tarifas incluyen:
- 
-  • Formulario DIAN para Continuación de Viaje
-  • Elaboración OTM para Continuación de Viaje
+  • Formulario DIAN para continuación de viaje
   • Elaboración y coordinación OTM para continuación de viaje
-  • Polizá DIAN- Decreto 2685/99 para Continuación de Viaje
-  • Tres (3) días libres de bodegajes a partir del arribo de la carga a puerto
-  • Coordinación con el Transporte terrestre Puerto Colombiano ? Destino
-  • Sellos para el Contenedor 
+  • Sellos para el contendor
   • Coordinación Logística
   • Entrega de documentos sellados por la DIAN en destino en las oficinas de Coltrans S.A.S.
 
   Las anteriores tarifas NO Incluyen :
 
-  • Servicio documental, administración de inventario de SPRC $62.000,oo
+  • Servicio documental, administración de inventario de SPRC $62.900,oo
+  • Uso de instalaciones portuarias para carga LCL/LCL
+  • Cargue del contenedor en el terminal Marítimo
   • Gastos de liberación con la naviera, para embarques directos.
-  • Uso de instalaciones portuarias (20 USD 110 - 40 USD 145)
-  • Cargue del contenedor en el terminal Marítimo (USD 35)
   • Servicio por liberación USD60,oo para embarques directos.
   • Bodegajes en puerto a partir del cuarto (4) día de arribo del buque.
-  • Inspección Física a la carga solicitada por las Autoridades Aduaneras.  
+  • Inspección Física a la carga solicitada por las Autoridades Aduaneras.
+  • Movilización para inspección
   • Movilización para inspección Física
-  • Vaciado de contenedor para Inspección Física 
+  • Cargue y descargue de la mercancía para Inspección Física
   • Seguros a la mercancía en el trayecto terrestre Nacional
   • Repeso USD85,oo
   • El amparo del exceso de póliza del Transportista cuyo monto supere  $500,000,000,oo
-  • Servicio de acompañamiento vehicular para cargas que superen los $150.000.000,oo
+  • Servicio de acompañamiento vehicular para cargas que superen los $300.000.000,oo
+  • Rastreo satelital-Trakalok dependiendo el perfil de la mercancía y el monto.
   • Firma de contrato de comodato
   • Stand By del vehículo por demoras ajenas en el descargue $450.000,oo por día
   • Almacenajes en bodega de destino
   • Descargue, vaciado del contenedor en Bodega de destino
-  • Devolución de contenedor ( 7 dias para devolver a puerto en compensación)
-  • Dropoff. Depende de la naviera
-  • Demoras de Contenedor
   • Tramite Ica, Dasalud, Invima $150.000,oo (por entidad).
   • Recargo IMO $150,000,oo
   • Costos adicionales que se puedan generar para el manejo de mercancías peligrosas.
   • Recargo contenedor Refrigerado $300.000,oo
   • Gastos portuarios generados adicional a los no especificados.
   • Desistimiento de OTM $ 80.000,oo (manejo de OTM, endoso, liberación), adicional se facturaran los gastos ocasionados en el puerto.
-  • Trámite de cesión de derecho y transporte a Zona de destino en caso de requerir otro usuario en Zona franca.
-  • Descargue de contenedores en puerto de Contecar-Compas Cartagena.
+  • Trámite de cesión de derecho y transporte a Zona de destino en caso de requerir otro usuario en Zona franca.  
 
   Nota: Estos gastos serán facturados solo si el proceso de OTM lo requiere.
-  
+
   CONDICIONES GENERALES PARA EL MANEJO DE CARGA
 
   DOCUMENTACION
@@ -160,21 +91,42 @@ OTM_FCL: |
   • Cuando la factura comercial está en un término de negociación diferente a FOB es indispensable tener las certificaciones adicionales de los otros gastos.
   • Descripción en español de la mercancía por escrito
   • Lista de empaque
+  • Certificación Posiciones Arancelarias ó Registro de Importación.
   • Fotocopia de la póliza del seguro de la mercancía con condiciones y restricciones.
+  • Certificación del valor del seguro 
   • Rut del importador
   • Original del BL
   • La documentación completa debe ser entregada 48 horas antes de la llegada de la motonave a puerto Colombiano
-  • Historial del Importador ( soporte declaración anterior).Tener en cuenta que para realizar un OTM el importador debe por lo menos haber hecho una operación de comercio exterior.
+
+  Corte del HBL
+    El Bl debe venir consignado de la siguiente forma:
+    Importador NIT
+    Zona Aduanera XX ò Zona Franca XXX de XX 
+    Codigo MUISCA XXXX  NIT de la Bodega/usuario
+    COL OTM S.A.S. NIT 900.451.936-8
+    Carga en OTM
+    Ciudad
 
   PÓLIZA DE SEGURO DE LA MERCANCIA OPERADOR OTM
 
-  • Nuestro Operador cuenta con una póliza para el transporte de la mercancía hasta de $500.000.000 de pesos con un deducible del 10% del valor de la pérdida con un mínimo de $5.000.000.oo por lo anterior se responderá únicamente hasta por el valor que responda nuestra compañía de seguros via subrogación.  Si la mercancía cuesta más de este valor, el cliente y/o importador deberá tramitar un excedente de seguro.
-  • Toda mercancía debe estar asegurada desde ORIGEN hasta el DESTINO, incluyendo el valor de los tributos aduaneros (DDP) y cualquier reclamación hacia COLTRANS  S.A.S.  es por vía subrogación.
+  • Nuestro Operador cuenta con una póliza para el transporte de la mercancía hasta de $500.000.000 de pesos con un deducible del 10% del valor de la pérdida con un mínimo de $5.000.000.oo., por lo anterior se responderá únicamente hasta por el valor que responda nuestra compañía de seguros vía subrogación.  Si la mercancía cuesta más de este valor, el cliente y/o importador deberá tramitar un excedente de seguro.
+  • Toda mercancía debe estar asegurada desde ORIGEN hasta el DESTINO, incluyendo el valor de los tributos aduaneros (DDP) y cualquier reclamación hacia COLTRANS S.A.S, / COL OTM  S.A.S.  es por vía subrogación.
   • La mercancía viaja por cuenta y riesgo del importador y no aseguramos cargas de no mediar orden por escrito.
-  • Mercancía mayor a $ 150.000.000 COP se solicitara un acompañamiento  vehicular.
-
-  Las mercancías que mencionamos a continuación son catalogadas como de "Alto Riesgo" es importante tenerlo en cuenta por que aunque no superen los $150.000.000,oo requieren acompañamiento vehicular.
   
+  PROTOCOLO DE SEGURIDAD 
+  
+  • Tecnología de Consumo Masivo
+    Acompañamiento Vehicular a partir de $100.000.000,oo
+    Despachos a partir de $450.000.000,oo se requieren dos acompañamientos y GPS en la carga.
+  • Mercancía Vulnerables o Alto Riesgo
+    De $0 a $200.000.000,oo GPS en Cabina
+    De $200.000.001,oo a $300.000.000,oo Rastreo Satelital
+    A partir de $300.000.001,oo hasta $500.000.000,oo Acompañamiento Vehicular
+    De $500.000.000,oo a $700.000.000, Acompañamiento Vehiuclar + Rastreo Satelitas + Exceso de Poliza 
+
+  Horario de Transito 4:00 AM A 8:00 PM.
+
+  Las mercancías que mencionamos a continuación son catalogadas como de 'Alto Riesgo'  
   • Leche en polvo
   • Harina de pescado
   • Juegos de videos
@@ -196,22 +148,173 @@ OTM_FCL: |
   • Juguetería en General
   
   Restricciones
-  NO se pueden aceptar las siguientes cargas para manejo de OTM:
+  NO se pueden aceptar las siguientes cargas:
   • Menajes domésticos
   • Químicos precursores
-  • Licores Whisky
+  • Licores
+  • Vidrios
   • Cigarrillos
   • Productos perecederos
   • Armas y explosivos
   • Teléfonos celulares
+  • Y todas aquellas mercancías con restricciones aduaneras legales vigentes.
+  
+  NOTAS IMPORTANTES A TENER EN CUENTA EN SUS OPERACIONES OTM A COLOMBIA
+  1. Los fletes incluidos en la presente oferta estan basados en las tarifas actuales establecidas por los transportadores efectivos de carga, estando en consecuencia sujetos a revisiones, modificaciones, incrementos y demas cambios sin previo aviso por parte de dichos transportadores.
+  2. Los fletes para importaciones maritimas se liquidarán a la TRM de la fecha de pago + $30 pesos colombianos, siempre y cuando esta no sea inferior a la TRM de referencia de la fecha de emision de la factura. COLTRANS S.A.S./ COL OTM S.A.S., se reserva el derecho de aplicar un ajuste en caso de que la fluctuacion de la moneda supere tasas impredecibles.
+  3. Los costos adicionales, incluso aquellos no cotizados, derivados de la operación OTM serán asumidos por el importador o cliente destinatario de esta oferta.
+  4. Debido a las fluctuaciones en el precio del petroleo, pueden ser aplicables variaciones en el recargo por combustible según así lo determinen los transportadores efectivos de carga (aerolineas, navieras, ferrocarriles, entre otros).
+  5. Para garantizar que la tarifa ofrecida sea aplicada correctamente por nuestro agente en el exterior, solicitamos que nos envien la confirmación de pedido vía e-mail o fax, para asegurar el seguimiento y suministrar la informacion oportuna sobre sus embarques; a su vez es indispensable dar isntrucciones a su proveedor a favor de nuestro agente en el exterior.
+  6. El importador o cliente destinatario de esta oferta asumirá cualquier costo relativo a correcciones, multas o sanciones legales o administrativas causadas por informacion errada, inexacta o incompleta suministrada por su proveedor o el exportador en origen; igualmente asumirá los costos o sobrecostos relativos a bodegajes y/o alquiler de contenedores generados por hechos ajenos a COLTRANS S.A.S./COL OTM S.A.S., tales como: festivos, huelgas, paros, asonadas, cambio de itinerarios, fuerza mayor o caso fortuito, entre otros. Por favor exigir a su (s) proveedor (es) en el exterior el suministro oportuno, exacto y completo de informacion en los documentos (tal como: descripcion o identificación de la mercancía, volumen, numero de bultos).   
+  7. Durante la operación OTM la carga se manejará bajo condiciones standard, a menos que el importador o el cliente destinatario de esta oferta suministre a COLTRANS S.A.S./COL OTM S.A.S., por escrito, instruciones particulares y precisas sobre el apilamiento, manipulacion, embalaje y/o estiba, almacenamiento y transporte de su carga.
+  8. En relacion con la Norma NIMF 15, solicitamos informar a su (s) proveedor (es) en el exterior dar estricto cumplimiento a las normas legales y administrativas pertinentes, en especial la Resolucion No. 1079 de 2004 del ICA. COLTRANS S.A.S.,/COL OTM S.A.S.,  se exonera de cualquier responsabilidad por el incumplimiento de dicha norma.
+  9. En los eventos que los transportadores maritimos exijan la firma de Contratos de Comodato para el uso de contenedores, COLTRANS S.A.S.,/COL OTM S.A.S.,  solicitará al importador o cliente destinatario de esta oferta una carta de garantía, firmada por su representante legal, en los mismos terminos establecidos por la línea naviera, aplicando un costo por dicho concepto. Asi mismo, todo cobro efectuado por el transportador maritimo relativo a demoras, daños y/o limpiezas de los contenedores, será facturado al importador o cliente destinatario de esta oferta, mas el cobro de un costo administrativo.
+  10.  Debido a las limitaciones de responsabilidad de COLTRANS S.A.S.,/COL OTM S.A.S., transportadores efectivos de carga y demas terceros intervinientes en la operación OTM, se exige que el cliente tenga constituido un seguro de transporte de mercancías. En caso de requerir dicho seguro, se deberá solicitar por escrito dirigido a COLTRANS S.A.S.,/COL OTM  S.A.S., El seguro de transporte del importador deberá cubrir los tributos aduaneros de la mercancía. COL OTM S.A.S.,  en su calidad de OTM no asume responsabilidad por el pago de tributos aduaneros a la DIAN, toda vez que la poliza por tributos aduaneros solo cumple una funcion de garantía ante dicha entidad. Los pagos a la DIAN por concepto de tributos aduaneros serán asumidos por el importador o su aseguradora.
+  11. La responsabilidad contractual de COLTRANS S.A.S.,/COL OTM S.A.S.,  será la estipulada en el respectivo contrato de transporte multimodal, y en todo caso no excederá la de los transportadores efectivos de carga y demas terceros intervinientes  en la operación OTM.
+  12. Si al efectuarse una inspeccion fisica a la carga en el puerto por parte de la DIAN u otras autoridades, se evidencian diferencias o inconsistencias respecto de la informacion de los respectivos documentos, COLTRANS S.A.S.,/COL OTM S.A.S.,  podrá desistir de la operación OTM, facturando al importador o cliente los costos ocasionados.
+  13. Los itinerarios estan sujetos a cambio sin previo aviso por parte de los transportadores efectivos de la carga.
+  
+OTM_FCLTitulo:  NOTAS INCLUYE Y NO INCLUYE EN CONTINUACIÓN DE VIAJE (OTM/DTA) - CARGA FCL
+OTM_FCL: |  
+  Especificaciones del Servicio:
+      
+  Para FCL  el valor incluye 2 DTM por HBL, a partir del 3 DTM  $85.000,oo adicional por DTM.
+  Las tarifas son válidas para el puertos de Cartagena.
+  Importante:      
+  • Al peso de la mercancía deberá adicionarse el peso del contenedor. La tara promedio  para contenedor de 20´es de 2.300 kg y 40´de 4.300 kg.
+  • Las tarifas de los contenedores de 20´son tarifas para combinar. El tiempo estimado  de cargue para contenedores de 20´consolidados es de 48 horas.
+  • Los días de restricción vial informados por el Ministerio de Transporte no se tendrán en cuenta como días hábiles de entrega del contendor.
+
+  Nota Importante: Es responsabilidad del importador, los perjuicios a que haya lugar como consecuencia de inexactitudes o errores en la documentación suministrada, así como de las sanciones resultado de requerimientos aduaneros por faltantes o sobrantes.
+  La Póliza del Importador deberá incluir los tributos aduaneros. El OTM no se hace responsable por el pago de tributos aduaneros a la DIAN, la póliza de tributos aduanero sólo cumple la función de garantía a la DIAN. Los pagos por tributos aduaneros deberán ser asumidos por el importador y reclamados a su compañía de seguros para ser pagados a la DIAN.
+        
+  Las anteriores tarifas incluyen:
+ 
+  • Tres días libres de bodegajes a partir del arribo de la carga a puerto
+  • Coordinación con el Transporte terrestre Puerto Colombiano ? Destino
+  • Formulario DIAN para continuación de viaje
+  • Elaboración y coordinación OTM para continuación de viaje
+  • Sellos para el contendor
+  • Coordinación Logística
+  • Entrega de documentos sellados por la DIAN en destino en las oficinas de Coltrans S.A.S.
+
+  Las anteriores tarifas NO Incluyen :
+
+  • Servicio documental, administración de inventario de SPRC $62.900,oo
+  • Uso de instalaciones portuarias 
+  • Cargue del contenedor en el terminal Marítimo
+  • Gastos de liberación con la naviera, para embarques directos.
+  • Servicio por liberación USD60,oo para embarques directos.
+  • Bodegajes en puerto a partir del cuarto (4) día de arribo del buque.
+  • Inspección Física a la carga solicitada por las Autoridades Aduaneras.
+  • Movilización para inspección Física
+  • Vaciado de contenedor para Inspección Física
+  • Cargue y descargue del contenedor para Inspección Física
+  • Seguros a la mercancía en el trayecto terrestre Nacional
+  • Repeso USD85,oo
+  • El amparo del exceso de póliza del Transportista cuyo monto supere  $500,000,000,oo
+  • Servicio de acompañamiento vehicular para cargas que superen los $300.000.000,oo
+  • Rastreo satelital-Trakalok dependiendo el perfil de la mercancía a partir de $200.000.000,oo
+  • Firma de contrato de comodato
+  • Stand By del vehículo por demoras ajenas en el descargue $450.000,oo por día
+  • Almacenajes en bodega de destino
+  • Descargue, vaciado del contenedor en Bodega de destino
+  • Devolución de contenedor ( 7 días para devolver a puerto ? en compensación)
+  • Dropoff ? Depende de la naviera
+  • Demoras de Contenedor
+  • Tramite Ica, Dasalud, Invima $190.000,oo (por entidad).
+  • Recargo IMO $150,000,oo
+  • Costos adicionales que se puedan generar para el manejo de mercancías peligrosas.
+  • Recargo contenedor Refrigerado $300.000,oo
+  • Gastos portuarios generados adicional a los no especificados.
+  • Desistimiento de OTM $ 80.000,oo (manejo de OTM, endoso, liberación), adicional se facturaran los gastos ocasionados en el puerto.
+  • Trámite de cesión de derecho y transporte a Zona de destino en caso de requerir otro usuario en Zona franca.
+  • Descargue de contenedores en puerto de Contecar-Compas Cartagena.
+  
+  Nota: Estos gastos serán facturados solo si el proceso de OTM lo requiere.
+    
+  CONDICIONES GENERALES PARA EL MANEJO DE CARGA
+
+  DOCUMENTACION
+
+  • Fotocopia de la factura comercial, debe incluir moneda, tipo de negociación y número.
+  • Valor FOB de la mercancía
+  • Cuando la factura comercial está en un término de negociación diferente a FOB es indispensable tener las certificaciones adicionales de los otros gastos.
+  • Descripción en español de la mercancía por escrito
+  • Lista de empaque
+  • Certificación Posiciones Arancelarias ó Registro de Importación.
+  • Fotocopia de la póliza del seguro de la mercancía con condiciones y restricciones.
+  • Certificación del valor del seguro 
+  • Rut del importador
+  • Original del BL
+  • La documentación completa debe ser entregada 48 horas antes de la llegada de la motonave a puerto Colombiano
+
+  Corte del HBL
+    El Bl debe venir consignado de la siguiente forma:
+    Importador NIT
+    Zona Aduanera XX ò Zona Franca XXX de XX 
+    Codigo MUISCA XXXX  NIT de la Bodega/usuario
+    COL OTM S.A.S. NIT 900.451.936-8
+    Carga en OTM
+    Ciudad
+    
+  PÓLIZA DE SEGURO DE LA MERCANCIA OPERADOR OTM
+
+  • Nuestro Operador cuenta con una póliza para el transporte de la mercancía hasta de $500.000.000 de pesos con un deducible del 10% del valor de la pérdida con un mínimo de $5.000.000.oo., por lo anterior se responderá únicamente hasta por el valor que responda nuestra compañía de seguros vía subrogación.  Si la mercancía cuesta más de este valor, el cliente y/o importador deberá tramitar un excedente de seguro.
+  • Toda mercancía debe estar asegurada desde ORIGEN hasta el DESTINO, incluyendo el valor de los tributos aduaneros (DDP) y cualquier reclamación hacia COLTRANS S.A.S/ COL OTM  S.A.S.  es por vía subrogación.
+  • La mercancía viaja por cuenta y riesgo del importador y no aseguramos cargas de no mediar orden por escrito. 
+
+  PROTOCOLO DE SEGURIDAD 
+  
+  • Tecnología de Consumo Masivo
+    Acompañamiento Vehicular a partir de $100.000.000,oo
+    Despachos a partir de $450.000.000,oo se requieren dos acompañamientos y GPS en la carga.
+  • Mercancía Vulnerables o Alto Riesgo
+    De $0 a $200.000.000,oo GPS en Cabina
+    De $200.000.001,oo a $300.000.000,oo Rastreo Satelital
+    A partir de $300.000.001,oo hasta $500.000.000,oo Acompañamiento Vehicular
+    De $500.000.000,oo a $700.000.000, Acompañamiento Vehiuclar + Rastreo Satelitas + Exceso de Poliza 
+
+  Horario de Transito 4:00 AM A 8:00 PM.
+
+  Las mercancías que mencionamos a continuación son catalogadas como de 'Alto Riesgo'  
+  • Leche en polvo
+  • Harina de pescado
+  • Juegos de videos
+  • Perfumes y pieles
+  • Equipos de computo y/o Componentes o Accesorios
+  • Cerveza nacional o de importación (en botella y/o en lata)
+  • Alimentos enlatados
+  • Azucar refinada
+  • Café exportación
+  • Electrodomesticos en general, sus partes, accesorios o repuestos para los mismos.
+  • Productos para aseo personal (producto terminado)
+  • Abonos y fertilizantes
+  • Pinturas industriales
+  • Llantas y neumáticos
+  • Pruductos farmacéuticos
+  • Calzado en general
+  • Textiles
+  • Confecciones
+  • Juguetería en General
+  
+  Restricciones
+  NO se pueden aceptar las siguientes cargas:
+  • Menajes domésticos
+  • Químicos precursores
+  • Licores
   • Vidrios
-  • Todas aquellas mercancías con restricciones aduaneras legales vigentes
+  • Cigarrillos
+  • Productos perecederos
+  • Armas y explosivos
+  • Teléfonos celulares
+  • Y todas aquellas mercancías con restricciones aduaneras legales vigentes.
   
 aduanaImpoTitulo: NOTAS IMPORTANTES QUE DEBEN TENER EN CUENTA EN SUS NACIONALIZACIONES
 aduanaImpo: |
   
   
-  ES DE ANOTAR QUE SEGÚN MODIFICACION DEL ESTATUTO ADUANERO EL PLAZO DE NACIONALIZAR UNA MERCANCIA EN PUERTO ES DE UN (1) MES A PARTIR DE LA LLEGADA AL PUERTO O AEROPUERTO. Antes de traer mercancías al territorio Colombiano debe consultarse, tener la Ficha Técnica del producto a importar y la Clasificación Arancelaria., Y tener aprobada la licencia Previa para las mercancías usadas, saldos y cuando la partida lo determine. La legislación aduanera exigente en cuanto pre-requisitos, controles previos o prohibiciones. AGENCIA DE ADUANAS COLMAS LTDA NIVEL 1., no se hará responsable por lo trastornos, demoras, sanciones, sobre costos o aprehensiones causados a una importación que no haya seguido el siguiente procedimiento y no se encuentre en su poder antes de  iniciar el proceso de nacionalización, los originales de los documentos exigidos por la DIAN son:
+  ES DE ANOTAR QUE SEGÚN MODIFICACION DEL ESTATUTO ADUANERO EL PLAZO DE NACIONALIZAR UNA MERCANCIA EN PUERTO ES DE UN (1) MES A PARTIR DE LA LLEGADA AL PUERTO O AEROPUERTO. Antes de traer mercancías al territorio Colombiano debe consultarse, tener la Ficha Técnica del producto a importar y la Clasificación Arancelaria., Y tener aprobada la licencia Previa para las mercancías usadas, saldos y cuando la partida lo determine. La legislación aduanera exigente en cuanto pre-requisitos, controles previos o prohibiciones. AGENCIA DE ADUANAS COLMAS SAS NIVEL 1., no se hará responsable por lo trastornos, demoras, sanciones, sobre costos o aprehensiones causados a una importación que no haya seguido el siguiente procedimiento y no se encuentre en su poder antes de  iniciar el proceso de nacionalización, los originales de los documentos exigidos por la DIAN son:
   
   1. Suministro de la Ficha Técnica del (los) producto (s).
   2. Clasificación Arancelaria.
@@ -346,27 +449,3 @@ seguroContenedor: |
     Formular protesta al transportador o similar en los plazos establecidos
   10. CLÁUSULA DE INCUMPLIMIENTO DE CONDICIONES
     El incumplimiento de cualquiera de las obligaciones, cláusulas, garantías estipuladas en el presente contrato de seguros dará lugar a la exclusión automática de la cobertura para el despacho afectado con dicho incumplimiento.
-
-depositoTitulo: NOTAS IMPORTANTES QUE DEBEN TENER EN CUENTA SOBRE SUS CARGAS EN COLDEPOSITOS
-deposito: | 
-  1. Esta cotización no aplica para el almacenamiento de químicos ni materiales peligrosos.
-  2. Cualquier servicio adicional será cotizado según necesidades.
-  3. En los contenedores los servicios (cargue / descargue) se cobran por separado.
-  4. Horario de almacén de Lun a Viernes 8am - 5:30 pm sábado 8:00 - 12M, de requerirse modificación al horario favor coordinarlo previamente.
-  5. COLDEPOSITOS S.A.S tiene poliza todo riesgo para las mercancias mientras permanecen dentro de las instalaciones, por $ 1.000.000.000 y responde por precio de costo.
-  6. La mercancía debe estar acompañada de su respectivo seguro el cual está por cuenta del cliente, y de su respectiva documentación (Factura Comercial).
-  7. Si la Mercancía requiere servicio de Montacarga Superior a 1,5 Ton se cobrará al cliente según costo.
-  8. Las tarifas presentadas no incluyen IVA. FORMA DE PAGO DE CONTADO / EN EL MOMENTO DEL RETIRO DE SU MERCANCÍA
-  9. Es obligación del cliente, suministrar previamente al ingreso de la mercancía todas las indicaciones o instrucciones sobre cuidados especiales o restricciones de la carga, que deban ser tenidas en cuenta para el almacenamiento y manipulación de la mercancía.
-  10. Los documentos de transporte deben ser consignados según modo de transporte así:
-    a. INSTRUCCIONES DE CONSIGNACION PARA CARGA AEREA:
-        RAZON SOCIAL IMPORTADOR NIT No. XXXXXXXXXX
-        COLDEPOSITOS LOGISTICA S.A.S ZONA FRANCA BOGOTA S.A. NIT No.900.841.486-9
-        Carrera 106 No. 15 A 25 ? Interior 11 ? Manzana 4 Bodega 4 Bogotá DC ? Colombia
-    b. INSTRUCCIONES DE CONSIGNACION PARA CARGA MARITIMA:
-        RAZON SOCIAL IMPORTADOR NIT No. XXXXXXXXXX
-        COLDEPOSITOS LOGISTICA S.A.S ZONA FRANCA BOGOTA S.A. NIT No.900.841.486-9
-        Carrera 106 No. 15 A 25 ? Interior 11 ? Manzana 4 Bodega 4 Bogotá DC ? Colombia
-        RAZON SOCIAL DEL OTM Nit. No. XXXXXXXXXXX ? Carga en OTM
-  11. Debemos mantener los documentos legales de su compañía  actualizados y la circular 170, por lo que serán exigidos antes de retirar sus mercancías.
-  
