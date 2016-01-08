@@ -77,6 +77,17 @@ class clientesComponents extends sfComponents {
         $this->idsserie = ($this->getRequestParameter("idsserie") != "") ? $this->getRequestParameter("idsserie") : "10";
     }
 
-}
+    public function executeFormEncuestaVisita(sfWebRequest $request) {
+        $this->idcliente = $request->getParameter("idcliente");
+        
+        $cliente = Doctrine::getTable("Cliente")->find($this->idcliente);
+        $contactos = $cliente->getContacto();
 
+        $this->concliente = array();
+        foreach ($contactos as $contacto) {
+            $this->concliente[] = array("idcontacto" => $contacto->getCaIdcontacto(),
+                "nombre" => utf8_encode(strtoupper($contacto->getNombre())));
+        }
+    }
+}
 ?>

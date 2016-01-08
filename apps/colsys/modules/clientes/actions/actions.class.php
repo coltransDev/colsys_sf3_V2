@@ -1985,5 +1985,244 @@ class clientesActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
     
+    public function executeEncuestaVisitaExt4(sfWebRequest $request){
+        
+    }
+    
+    public function executeControlFinancieroExt4(sfWebRequest $request){
+        
+    }
+    
+    public function executeDatosEncuestaVisita(sfWebRequest $request){
+        $idcliente = $request->getParameter("idcliente");
+        
+        $data = array();
+       
+        $con = Doctrine_Manager::getInstance()->connection();
+
+        $sql = "select * from tb_concliente c inner join encuestas.tb_encuesta_visita v on (c.ca_idcontacto = v.ca_idcontacto)
+                where ca_idcliente = ".$idcliente ." and v.ca_usuanulado is null";
+
+        $rs = $con->execute($sql);
+        $encuestas_rs = $rs->fetchAll();
+        foreach ($encuestas_rs as $encuesta) {
+            $data[] = array("idencuesta" => $encuesta["ca_idencuesta"],
+                            "idcontacto" => $encuesta["ca_idcontacto"],
+                            "idcliente" => utf8_encode($encuesta["ca_idcliente"]),
+                            "contacto" => utf8_encode($encuesta["ca_nombres"]." ".$encuesta["ca_papellido"]." ".$encuesta["ca_sapellido"]),
+                            "fchvisita" => utf8_encode($encuesta["ca_fchvisita"]),
+                            "politica_seguridad_salud" => utf8_encode($encuesta["ca_politica_seguridad_salud"]),
+                            "mano_obra_infantil" => utf8_encode($encuesta["ca_mano_obra_infantil"]),
+                            "peligros_riesgos_identificados" => utf8_encode($encuesta["ca_peligros_riesgos_identificados"]),
+                            "peligros_riesgos_identificar" => utf8_encode($encuesta["ca_peligros_riesgos_identificar"]),
+                            "riesgos_control" => utf8_encode($encuesta["ca_riesgos_control"]),
+                            "requisitos_legales_conocimiento" => utf8_encode($encuesta["ca_requisitos_legales_conocimiento"]),
+                            "requisitos_legales_aplicacion" => utf8_encode($encuesta["ca_requisitos_legales_aplicacion"]),
+                            "requisitos_legales_detalles" => utf8_encode($encuesta["ca_requisitos_legales_detalles"]),
+                            "pago_seguridad_social" => utf8_encode($encuesta["ca_pago_seguridad_social"]),
+                            "panorama_riesgos" => utf8_encode($encuesta["ca_panorama_riesgos"]),
+                            "respuesta_emergencias" => utf8_encode($encuesta["ca_respuesta_emergencias"]),
+                            "numero_personas" => utf8_encode($encuesta["ca_numero_personas"]),
+                            "instalaciones_tipo" => utf8_encode($encuesta["ca_instalaciones_tipo"]),
+                            "instalaciones_pertenencia" => utf8_encode($encuesta["ca_instalaciones_pertenencia"]),
+                            "instalaciones_uso" => utf8_encode($encuesta["ca_instalaciones_uso"]),
+                            "areas_sensibles" => utf8_encode($encuesta["ca_areas_sensibles"]),
+                            "areas_autorizadas" => utf8_encode($encuesta["ca_areas_autorizadas"]),
+                            "sistema_seguridad" => utf8_encode($encuesta["ca_sistema_seguridad"]),
+                            "manejo_mercancias" => utf8_encode($encuesta["ca_manejo_mercancias"]),
+                            "certificacion" => utf8_encode($encuesta["ca_certificacion"]),
+                            "certificacion_detalles" => utf8_encode($encuesta["ca_certificacion_detalles"]),
+                            "implementacion_plan" => utf8_encode($encuesta["ca_implementacion_plan"]),
+                            "implementacion_plan_detalles" => utf8_encode($encuesta["ca_implementacion_plan_detalles"]),
+                            "evaluacion_terceros" => utf8_encode($encuesta["ca_evaluacion_terceros"]),
+                            "evaluacion_personal" => utf8_encode($encuesta["ca_evaluacion_personal"]),
+                            "programas_capacitacion" => utf8_encode($encuesta["ca_programas_capacitacion"]),
+                            "manejo_mercancias_proceso" => utf8_encode($encuesta["ca_manejo_mercancias_proceso"]),
+                            "prevencion_lavado_activos" => utf8_encode($encuesta["ca_prevencion_lavado_activos"]),
+                            "manejo_mercancias_zona" => utf8_encode($encuesta["ca_manejo_mercancias_zona"]),
+                            "manejo_mercancias_detalles" => utf8_encode($encuesta["ca_manejo_mercancias_detalles"]),
+                            "control_empleados" => utf8_encode($encuesta["ca_control_empleados"]),
+                            "control_empleados_detalles" => utf8_encode($encuesta["ca_control_empleados_detalles"]),
+                            "control_visitantes" => utf8_encode($encuesta["ca_control_visitantes"]),
+                            "control_visitantes_detalles" => utf8_encode($encuesta["ca_control_visitantes_detalles"]),
+                            "seguridad_informatica" => utf8_encode($encuesta["ca_seguridad_informatica"]),
+                            "seguridad_informatica_detalles" => utf8_encode($encuesta["ca_seguridad_informatica_detalles"]),
+                            "personal_calificado" => utf8_encode($encuesta["ca_personal_calificado"]),
+                            "observaciones" => utf8_encode($encuesta["ca_observaciones"]),
+                            "concepto_seguridad" => utf8_encode($encuesta["ca_concepto_seguridad"]),
+                            "recomienda_trabajar" => utf8_encode($encuesta["ca_recomienda_trabajar"])
+                            );
+            }
+        
+        
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
+
+        $this->setTemplate("responseTemplate");
+    }
+    public function executeAnularEncuestaVisita(sfWebRequest $request){
+        $idencuesta = $request->getParameter("idencuesta");         
+        $encuestaVisita = new EncuestaVisita();
+        $conn = Doctrine::getTable("EncuestaVisita")->getConnection();
+        $encuestaVisita = Doctrine::getTable('EncuestaVisita')->find($idencuesta);
+        $conn->beginTransaction();
+        try {
+            $encuestaVisita->setCaUsuanulado($this->getUser()->getUserId());
+            $encuestaVisita->setCaFchanulado(date("Y-m-d H:i:s"));
+            $encuestaVisita->save();            
+            $conn->commit();         
+            $this->responseArray = array("success" => true);
+        } catch (Exception $e) {
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+         $this->setTemplate("responseTemplate");
+        
+    }
+    public function executeGuardarEncuestaVisita(sfWebRequest $request){
+        $datos = $request->getParameter("datos");
+        $datos = json_decode($datos);
+        $nuevo = false;        
+        $conn = Doctrine::getTable("EncuestaVisita")->getConnection();
+        $conn->beginTransaction();
+        try {
+            $encuestaVisita = new EncuestaVisita(); 
+            
+            if ($datos->idcontacto) {
+                $encuestaVisita->setCaIdcontacto($datos->idcontacto);
+            }
+            if ($datos->fchvisita) {
+                $encuestaVisita->setCaFchvisita($datos->fchvisita);
+            }
+            if ($datos->politica_seguridad_salud) {
+                $encuestaVisita->setCaPoliticaSeguridadSalud($datos->politica_seguridad_salud);
+            }
+            if ($datos->mano_obra_infantil) {
+                $encuestaVisita->setCaManoObraInfantil($datos->mano_obra_infantil);
+            }
+            if ($datos->peligros_riesgos_identificados) {
+                $encuestaVisita->setCaPeligrosRiesgosIdentificados($datos->peligros_riesgos_identificados);
+            }
+            if ($datos->peligros_riesgos_identificar) {
+                $encuestaVisita->setCaPeligrosRiesgosIdentificar($datos->peligros_riesgos_identificar);
+            }
+            if ($datos->riesgos_control) {
+                $encuestaVisita->setCaRiesgosControl(utf8_decode($datos->riesgos_control));
+            }
+            if ($datos->requisitos_legales_conocimiento) {
+                $encuestaVisita->setCaRequisitosLegalesConocimiento(utf8_decode($datos->requisitos_legales_conocimiento));
+            }
+            if ($datos->requisitos_legales_aplicacion) {
+                $encuestaVisita->setCaRequisitosLegalesAplicacion(utf8_decode($datos->requisitos_legales_aplicacion));
+            }
+            if ($datos->requisitos_legales_detalles) {
+                $encuestaVisita->setCaRequisitosLegalesDetalles(utf8_decode($datos->requisitos_legales_detalles));
+            }
+            if ($datos->pago_seguridad_social) {
+                $encuestaVisita->setCaPagoSeguridadSocial(utf8_decode($datos->pago_seguridad_social));
+            }
+            if ($datos->panorama_riesgos) {
+                $encuestaVisita->setCaPanoramaRiesgos($datos->panorama_riesgos);
+            }
+            if ($datos->respuesta_emergencias) {
+                $encuestaVisita->setCaRespuestaEmergencias(utf8_decode($datos->respuesta_emergencias));
+            }
+            if ($datos->numero_personas) {
+                $encuestaVisita->setCaNumeroPersonas($datos->numero_personas);
+            }
+            if ($datos->instalaciones_tipo) {
+                $encuestaVisita->setCaInstalacionesTipo(utf8_decode($datos->instalaciones_tipo));
+            }
+            if ($datos->instalaciones_pertenencia) {
+                $encuestaVisita->setCaInstalacionesPertenencia(utf8_decode($datos->instalaciones_pertenencia));
+            }
+            if ($datos->instalaciones_uso) {
+                $encuestaVisita->setCaInstalacionesUso($datos->instalaciones_uso);
+            }
+            if ($datos->areas_sensibles) {
+                $encuestaVisita->setCaAreasSensibles(utf8_decode($datos->areas_sensibles));
+            }
+            if ($datos->areas_autorizadas) {
+                $encuestaVisita->setCaAreasAutorizadas($datos->areas_autorizadas);
+            }
+            if ($datos->sistema_seguridad) {
+                $encuestaVisita->setCaSistemaSeguridad(utf8_decode($datos->sistema_seguridad));
+            }
+            if ($datos->manejo_mercancias) {
+                $encuestaVisita->setCaManejoMercancias(utf8_decode($datos->manejo_mercancias));
+            }
+            if ($datos->certificacion) {
+                $encuestaVisita->setCaCertificacion($datos->certificacion);
+            }
+            if ($datos->certificacion_detalles) {
+                $encuestaVisita->setCaCertificacionDetalles(utf8_decode($datos->certificacion_detalles));
+            }
+            if ($datos->implementacion_plan) {
+                $encuestaVisita->setCaImplementacionPlan($datos->implementacion_plan);
+            }
+            if ($datos->implementacion_plan_detalles) {
+                $encuestaVisita->setCaImplementacionPlanDetalles($datos->implementacion_plan_detalles);
+            }
+            if ($datos->evaluacion_terceros) {
+                $encuestaVisita->setCaEvaluacionTerceros(utf8_decode($datos->evaluacion_terceros));
+            }
+            if ($datos->evaluacion_personal) {
+                $encuestaVisita->setCaEvaluacionPersonal(utf8_decode($datos->evaluacion_personal));
+            }
+            if ($datos->programas_capacitacion) {
+                $encuestaVisita->setCaProgramasCapacitacion($datos->programas_capacitacion);
+            }
+            if ($datos->manejo_mercancias_proceso) {
+                $encuestaVisita->setCaManejoMercanciasProceso(utf8_decode($datos->manejo_mercancias_proceso));
+            }
+            if ($datos->prevencion_lavado_activos) {
+                $encuestaVisita->setCaPrevencionLavadoActivos($datos->prevencion_lavado_activos);
+            }
+            if ($datos->manejo_mercancias_zona) {
+                $encuestaVisita->setCaManejoMercanciasZona(utf8_decode($datos->manejo_mercancias_zona));
+            }
+            if ($datos->manejo_mercancias_detalles) {
+                $encuestaVisita->setCaManejoMercanciasDetalles($datos->manejo_mercancias_detalles);
+            }
+            if ($datos->control_empleados) {
+                $encuestaVisita->setCaControlEmpleados(utf8_decode($datos->control_empleados));
+            }
+            if ($datos->control_empleados_detalles) {
+                $encuestaVisita->setCaControlEmpleadosDetalles($datos->control_empleados_detalles);
+            }
+            if ($datos->control_visitantes) {
+                $encuestaVisita->setCaControlVisitantes(utf8_decode($datos->control_visitantes));
+            }
+            if ($datos->control_visitantes_detalles) {
+                $encuestaVisita->setCaControlVisitantesDetalles($datos->control_visitantes_detalles);
+            }
+            if ($datos->seguridad_informatica) {
+                $encuestaVisita->setCaSeguridadInformatica(utf8_decode($datos->seguridad_informatica));
+            }
+            if ($datos->seguridad_informatica_detalles) {
+                $encuestaVisita->setCaSeguridadInformaticaDetalles($datos->seguridad_informatica_detalles);
+            }
+            if ($datos->personal_calificado) {
+                $encuestaVisita->setCaPersonalCalificado(utf8_decode($datos->personal_calificado));
+            }
+            if ($datos->observaciones) {
+                $encuestaVisita->setCaObservaciones($datos->observaciones);
+            }
+            if ($datos->concepto_seguridad) {
+                $encuestaVisita->setCaConceptoSeguridad($datos->concepto_seguridad);
+            }
+            if ($datos->recomienda_trabajar) {
+                $encuestaVisita->setCaRecomiendaTrabajar($datos->recomienda_trabajar);
+            }
+            $encuestaVisita->save();
+            $conn->commit();           
+            $this->responseArray = array("success" => true);
+        } catch (Exception $e) {
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+
+        $this->setTemplate("responseTemplate");
+    }
+    
 }
 ?>
