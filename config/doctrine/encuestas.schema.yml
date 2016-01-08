@@ -293,3 +293,169 @@ ControlEncuesta:
       fields: [ca_idformulario]
     fki_tb_control_encuesta_tb_empresa:
       fields: [tb_idempresa]
+
+EncuestaVisita:
+  options:
+    form: false
+    filter: false
+  generatePath: encuestas
+  tableName: encuestas.tb_encuesta_visita
+  columns:
+    ca_idencuesta:
+      type: integer(4)
+      primary: true
+      notnull: true
+      autoincrement: false
+    ca_idcontacto:
+      type: integer(4)
+      notnull: true
+    ca_fchvisita:
+      type: date  
+    ca_politica_seguridad_salud:
+      type: string(2)
+      notnull: true
+    ca_mano_obra_infantil:
+       type: string(2)
+       notnull: true 
+    ca_peligros_riesgos_identificados:
+        type: string(2)
+        notnull: true
+    ca_peligros_riesgos_identificar:
+        type: string(2)
+        notnull: true
+    ca_riesgos_control:
+        type: string(2)
+        notnull: true
+    ca_requisitos_legales_conocimiento:
+        type: string(2)
+        notnull: true
+    ca_requisitos_legales_aplicacion:
+        type: string(2)
+        notnull: true
+    ca_requisitos_legales_detalles:
+        type: string(128)
+        notnull: false
+    ca_pago_seguridad_social:
+        type: string(2)
+        notnull: true
+    ca_panorama_riesgos:
+        type: string(2)
+        notnull: true
+    ca_respuesta_emergencias:
+        type: string(2)
+        notnull: true
+    ca_numero_personas:
+        type: integer
+        notnull: true
+    ca_instalaciones_tipo:
+        type: string(25)
+        notnull: true
+    ca_instalaciones_pertenencia:
+        type: string(15)
+        notnull: true
+    ca_instalaciones_uso:
+        type: string(15)
+        notnull: true
+    ca_areas_sensibles:
+        type: string(2)
+        notnull: true
+    ca_areas_autorizadas:
+        type: string(2)
+        notnull: true
+    ca_sistema_seguridad:
+        type: string(25)
+        notnull: true
+    ca_manejo_mercancias:
+        type: string(2)
+        notnull: true
+    ca_certificacion:
+        type: string(10)
+        notnull: true
+    ca_certificacion_detalles:
+        type: string(128)
+        notnull: false
+    ca_implementacion_plan:
+        type: string(2)
+    ca_implementacion_plan_detalles:
+        type: string(128)
+        notnull: false
+    ca_evaluacion_terceros:
+        type: string(2)
+        notnull: true
+    ca_evaluacion_personal:
+        type: string(2)
+        notnull: true
+    ca_programas_capacitacion:
+        type: string(2)
+        notnull: true
+    ca_manejo_mercancias_proceso:
+        type: string(2)
+        notnull: true
+    ca_prevencion_lavado_activos:
+        type: string(2)
+        notnull: true
+    ca_manejo_mercancias_zona:
+        type: string(2)
+        notnull: true
+    ca_manejo_mercancias_detalles:
+        type: text
+        notnull: false
+    ca_control_empleados:
+        type: string(2)
+        notnull: true
+    ca_control_empleados_detalles:
+        type: text
+        notnull: false
+    ca_control_visitantes:
+        type: string(2)
+        notnull: true
+    ca_control_visitantes_detalles:
+        type: text
+        notnull: false
+    ca_seguridad_informatica:
+        type: string(40)
+        notnull: true
+    ca_seguridad_informatica_detalles:
+        type: text
+        notnull: false
+    ca_personal_calificado:
+         type: string(2)
+         notnull: true
+    ca_observaciones:
+        type: text
+        notnull: true
+    ca_concepto_seguridad:
+        type: text
+        notnull: true
+    ca_recomienda_trabajar:
+        type: string(2)
+        notnull: true
+    ca_fchcreado:
+      type: timestamp
+    ca_usucreado:
+      type: string(20)
+    ca_fchactualizado:
+      type: timestamp
+    ca_usuactualizado:
+      type: string(20)
+    ca_fchanulado:
+      type: timestamp
+    ca_usuanulado:
+      type: string(20)
+  relations:
+    Contacto:
+      local: ca_idcontacto
+      foreign: ca_idcontacto
+      foreignAlias: tb_concliente
+      type: one
+      class: Contacto
+    UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    UsuActualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      class: Usuario
