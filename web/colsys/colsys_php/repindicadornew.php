@@ -282,13 +282,25 @@ if (!isset($boton) and ! isset($buscar)) {
         }
         $impoexpo = "";
     } else {
-        $ciudestino = "ca_ciudestino " . ((count($ciudestino) == 1) ? "like '$ciudestino[0]'" : "in ('" . implode("','", $ciudestino) . "')");
-        $traorigen = "ca_traorigen " . ((count($traorigen) == 1) ? "like '$traorigen[0]'" : "in ('" . implode("','", $traorigen) . "')");
+        if (in_array("%", $ciudestino)) {
+            $ciudestino = "";
+        } else {
+            $ciudestino = "ca_ciudestino " . ((count($ciudestino) == 1) ? "like '$ciudestino[0]'" : "in ('" . implode("','", $ciudestino) . "')");
+        }
+        if (in_array("%", $traorigen)) {
+            $traorigen = "";
+        } else {
+            $traorigen = "ca_traorigen " . ((count($traorigen) == 1) ? "like '$traorigen[0]'" : "in ('" . implode("','", $traorigen) . "')");
+        }
         if ($departamento == 'Exportaciones') {
             $array_indicador = explode(" - ", $indicador);
             $tra_mem = $transporte[] = $array_indicador[2];
         }
-        $transporte = "ca_transporte " . ((count($transporte) == 1) ? "like '$transporte[0]'" : "in ('" . implode("','", $transporte) . "')");
+        if (in_array("%", $transporte)) {
+            $transporte = "";
+        } else {
+            $transporte = "ca_transporte " . ((count($transporte) == 1) ? "like '$transporte[0]'" : "in ('" . implode("','", $transporte) . "')");
+        }
     }
 
     $cliente = ((strlen($cliente) != 0) ? "and upper(ca_compania) like upper('%$cliente%')" : "");
