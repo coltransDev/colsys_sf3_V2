@@ -71,7 +71,7 @@ class clientesComponents extends sfComponents {
             $this->clases[] = array("clase" => utf8_encode($parametroClase->getCaValor()));
         }
     }
-    
+
     public function executeFormSubirArchivos(sfWebRequest $request) {
         $this->id = $request->getParameter("id");
         $this->idsserie = ($this->getRequestParameter("idsserie") != "") ? $this->getRequestParameter("idsserie") : "10";
@@ -79,7 +79,7 @@ class clientesComponents extends sfComponents {
 
     public function executeFormEncuestaVisita(sfWebRequest $request) {
         $this->idcliente = $request->getParameter("idcliente");
-        
+
         $cliente = Doctrine::getTable("Cliente")->find($this->idcliente);
         $contactos = $cliente->getContacto();
 
@@ -89,5 +89,27 @@ class clientesComponents extends sfComponents {
                 "nombre" => utf8_encode(strtoupper($contacto->getNombre())));
         }
     }
+
+    public function executeFormControlFinanciero(sfWebRequest $request) {
+        $this->idcliente = $request->getParameter("idcliente");
+        $cliente = Doctrine::getTable("IdsCliente")->find($this->idcliente);
+        $this->razonSocial = utf8_encode($cliente->getIds()->getCaNombre());
+        
+        $this->data = array("idcliente" => $cliente->getCaIdcliente(),
+                            "fchcircular" => $cliente->getCaFchcircular(),
+                            "nvlriesgo" => utf8_encode($cliente->getCaNvlriesgo()),
+                            "leyinsolvencia" => utf8_encode($cliente->getCaLeyinsolvencia()),
+                            "comentario" => utf8_encode($cliente->getCaComentario()),
+                            "listaclinton" => utf8_encode($cliente->getCaListaclinton()),
+                            "tipo" => utf8_encode($cliente->getCaTipo()),
+                            "iso" => utf8_encode($cliente->getCaIso()),
+                            "iso_detalles" => utf8_encode($cliente->getCaIsoDetalles()),
+                            "basc" => utf8_encode($cliente->getCaBasc()),
+                            "otro_cert" => utf8_encode($cliente->getCaOtroCert()),
+                            "otro_detalles" => utf8_encode($cliente->getCaOtroDetalles())
+                            );
+    }
+
 }
+
 ?>
