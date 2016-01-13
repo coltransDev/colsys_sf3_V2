@@ -280,71 +280,6 @@ Parametro:
     ca_valor2:
       type: string
 
-
-#Cliente:
-#  options:
-#    symfony:
-#      form: false
-#      filter: false
-#  generatePath: public
-#  tableName: tb_clientes
-#  columns:
-#    ca_idcliente:
-#      type: integer
-#      primary: true
-#    ca_digito: integer
-#    ca_compania: string
-#    ca_papellido: string
-#    ca_sapellido: string
-#    ca_nombres: string
-#    ca_saludo: string
-#    ca_sexo: string
-#    ca_cumpleanos: string
-#    ca_oficina: string
-#    ca_email: string
-#    ca_vendedor: string
-#    ca_coordinador: string
-#    ca_vendedor: string
-#    ca_direccion: string
-#    ca_torre: string
-#    ca_bloque: string
-#    ca_interior: string
-#    ca_localidad: string
-#    ca_complemento: string
-#    ca_telefonos: string
-#    ca_fax: string
-#    ca_preferencias: string
-#    ca_confirmar: string
-#    ca_idciudad: string
-#    ca_idgrupo: string
-#    ca_listaclinton: string
-#    ca_fchcircular: date
-#    ca_status: string
-#    ca_propiedades: string
-#    ca_tipo: string
-#  relations:
-#    Contacto:
-#      local: ca_idcliente
-#      foreign: ca_idcliente
-#      type: many
-#    Usuario:
-#      local: ca_vendedor
-#      foreign: ca_login
-#      type: one
-#    Ciudad:
-#      local: ca_idciudad
-#      foreign: ca_idciudad
-#      type: one
-#    StdCliente:
-#      local: ca_idcliente
-#      foreign: ca_idcliente
-#      type: many
-#    LibCliente:
-#      local: ca_idcliente
-#      foreign: ca_idcliente
-#      type: one
-
-
 Contacto:
   options:
     symfony:
@@ -397,6 +332,8 @@ Concepto:
     ca_liminferior: integer
     ca_fcheliminado: timestamp
     ca_usueliminado: string
+
+
 TipoRecargo:
   options:
     symfony:
@@ -653,3 +590,41 @@ Mancliente:
       foreign: ca_login
       type: one
       class: Usuario
+
+DocClientes:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: public
+  tableName: tb_doccliente
+  columns:
+    ca_fchdocumento:
+      type: date   
+      notnull: true
+    ca_observaciones:
+      type: text      
+    ca_fchvigencia:
+      type: date   
+      notnull: true
+    ca_iddocumento:
+      type: integer
+      notnull: true
+      primary: true
+    ca_idcliente:
+      type: integer
+      notnull: true
+      primary: true
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp  
+  relations:
+    Cliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: one
+    ColsysConfigValue:
+      local: ca_iddocumento
+      foreign: ca_idvalue
+      type: one

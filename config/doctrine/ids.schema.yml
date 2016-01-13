@@ -539,6 +539,8 @@ Cliente:
     ca_usuactualizado: string
     ca_fchfinanciero: timestamp
     ca_usufinanciero: string
+    ca_fchacuerdoconf: date
+    ca_zipcode: string(20)
   relations:
     Ids:
       local: ca_idcliente
@@ -622,6 +624,14 @@ IdsCliente:
     ca_usuactualizado: string
     ca_fchfinanciero: timestamp
     ca_usufinanciero: string
+    ca_fchacuerdoconf: date
+    ca_zipcode: string(20)
+    ca_iso: string(2)
+    ca_iso_detalles: string(128)
+    ca_basc: string(2)
+    ca_otro_cert: string(2)
+    ca_otro_detalles: string(128)
+    ca_fch_circular: date
   relations:
     Ids:
       local: ca_idcliente
