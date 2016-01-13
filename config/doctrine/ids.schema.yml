@@ -631,7 +631,6 @@ IdsCliente:
     ca_basc: string(2)
     ca_otro_cert: string(2)
     ca_otro_detalles: string(128)
-    ca_fch_circular: date
   relations:
     Ids:
       local: ca_idcliente
