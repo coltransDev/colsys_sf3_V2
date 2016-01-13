@@ -294,7 +294,7 @@ if (!isset($boton) and ! isset($buscar)) {
         }
         if ($departamento == 'Exportaciones') {
             $array_indicador = explode(" - ", $indicador);
-            $tra_mem = $transporte[] = $array_indicador[2];
+            $tra_mem = $transporte[0] = $array_indicador[2];
         }
         if (in_array("%", $transporte)) {
             $transporte = "";
@@ -588,9 +588,11 @@ if (!isset($boton) and ! isset($buscar)) {
         }
         $no_docs = array("SAE", "DEX", "Cancelación Póliza Seguro", "Radicación Documento de Transporte", "Recibo de Soportes desde Puerto");
         $source = "vi_repindicador_exp";
+        
         $subque = "LEFT OUTER JOIN (select exm.ca_referencia_exm, ext.ca_idevento, ext.ca_fchevento, ext.ca_usuario, pre.ca_valor, aed.ca_fechadoc from (select ca_referencia as ca_referencia_exm, ca_tipoexpo, ca_consecutivo from tb_expo_maestra) exm ";
         $subque.= "LEFT OUTER JOIN (select ca_referencia as ca_referencia_ext, ca_idevento, ca_fchevento, ca_usuario from tb_expo_tracking where ca_realizado = 1) ext ON (ext.ca_referencia_ext = exm.ca_referencia_exm) ";
-        $subque.= "LEFT OUTER JOIN (select DISTINCT ca_referencia as ca_referencia_aed, ca_idevento, ca_fechadoc from tb_expo_aedex) aed ON (aed.ca_referencia_aed = ext.ca_referencia_ext and aed.ca_idevento = ext.ca_idevento) ";
+        $subque.= "LEFT OUTER JOIN (select DISTINCT ca_referencia as ca_referencia_aed, ca_idevento, min(ca_fechadoc) as ca_fechadoc from tb_expo_aedex group by ca_referencia, ca_idevento) aed ON (aed.ca_referencia_aed = ext.ca_referencia_ext and aed.ca_idevento = ext.ca_idevento) ";
+        
         $subque.= "INNER JOIN tb_parametros prm ON (prm.ca_casouso = 'CU011' and exm.ca_tipoexpo = prm.ca_identificacion) ";
         $subque.= "INNER JOIN tb_parametros pre ON (pre.ca_casouso = prm.ca_valor2 and pre.ca_identificacion = ext.ca_idevento) ";
         $subque.= "order by ca_referencia_exm) exe ON (vi_repindicador_exp.ca_referencia = exe.ca_referencia_exm) ";
