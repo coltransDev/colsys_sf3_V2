@@ -9,7 +9,7 @@ $stmt = $sf_data->getRaw("stmt");
 
 ?>
 <div class="content" align="center">
-   La siguiente es una relación de <b>SIMILITUDES</b>, halladas entre el cliente consultado y la lista Clinton publicada el <?=$fechaActualizacion?>.
+   La siguiente es una relación de <b>SIMILITUDES</b>, halladas entre el cliente consultado y la lista OFAC publicada el <?=$fechaActualizacion?>.
    <br />Tener en cuenta que se compara Número de Nit y Razón Social.<br /><br />
 
     <table align="center" class="tableList">

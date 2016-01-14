@@ -1615,7 +1615,7 @@ class idsActions extends sfActions {
         $email->setCaBodyhtml($contentHTML);
 
         $email->save();
-        $email->send();
+        //$email->send();
 
         return sfView::NONE;
     }
@@ -1703,7 +1703,7 @@ class idsActions extends sfActions {
 
         $email = new Email();
         $email->setCaUsuenvio("Administrador");
-        $email->setCaTipo("Not. Lista Clinton");
+        $email->setCaTipo("Not. Lista OFAC");
         $email->setCaFrom("no-reply@coltrans.com.co");
         $email->setCaReplyto("no-reply@coltrans.com.co");
         $email->setCaFromname("Colsys");
@@ -1720,7 +1720,7 @@ class idsActions extends sfActions {
             $email->addTo($usuario->getCaEmail());
         }
 
-        $email->setCaSubject("Verificación Lista Clinton");
+        $email->setCaSubject("Verificación Lista OFAC");
         $request->setParameter("modo", "prov");
         $request->setParameter("layout", "email");
         $contentHTML = sfContext::getInstance()->getController()->getPresentationFor('ids', 'verificarListaClinton');

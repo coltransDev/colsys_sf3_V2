@@ -49,7 +49,7 @@ switch ($action) {
             $button[$i]["link"] = "ids/formSucursalIds?id=" . $this->getRequestParameter("id") . "&modo=" . $this->getRequestParameter("modo");
             $i++;
 
-            $button[$i]["name"] = "Lista Clinton";
+            $button[$i]["name"] = "Lista OFAC";
             $button[$i]["tooltip"] = "";
             $button[$i]["image"] = "22x22/kfind.gif";
             $button[$i]["link"] = "ids/verificarListaClinton?id=" . $this->getRequestParameter("id") . "&modo=" . $this->getRequestParameter("modo");
@@ -114,6 +114,12 @@ if ($this->getRequestParameter("modo") == "prov" && $action != "listadoProveedor
         $button[$i]["tooltip"] = "Listado de proveedores no controlados COLOTM";
         $button[$i]["image"] = "22x22/gohome.gif";
         $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=2&modo=" . $this->getRequestParameter("modo");
+        $i++;
+        
+        $button[$i]["name"] = "Prov. NO controlados COLDEPOSITOS";
+        $button[$i]["tooltip"] = "Listado de proveedores no controlados COLDEPOSITOS";
+        $button[$i]["image"] = "22x22/gohome.gif";
+        $button[$i]["link"] = "ids/listadoProveedoresAprobados?type=6&modo=" . $this->getRequestParameter("modo");
         $i++;
 
         $button[$i]["name"] = "Prov. NO controlados esporádicos";
