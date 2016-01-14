@@ -827,7 +827,7 @@ include_component("widgets", "widgetCoordinadoresAduana");
                                         triggerAction:  'all',
                                         forceSelection: true,
                                         editable:       false,
-                                        fieldLabel:     'Reportado en Lista Clinton.',
+                                        fieldLabel:     'Reportado en Lista OFAC',
                                         name:           'listaclinton',
                                         hiddenName:     'listaclinton',
                                         displayField:   'name',
