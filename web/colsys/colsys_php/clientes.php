@@ -188,9 +188,9 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
     echo "		</TD>";
 
     echo "  	<TD Class=listar>";
-    echo "          <B>Lista Clinton:</B>";
+    echo "          <B>Lista OFAC:</B>";
     echo "          <BR /><INPUT TYPE='CHECKBOX' NAME='listaclinton' VALUE='Sí'>Sí";
-    echo "          <BR /><B>Ley Insolvencia:</B>";
+    echo "          <BR /><B>SuperSociedades:</B>";
     echo "          <BR /><INPUT TYPE='CHECKBOX' NAME='leyinsolvencia' VALUE='Sí'>Sí";
     echo "		</TD>";
     echo "	</TR>";
@@ -349,9 +349,9 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
     echo "<TITLE>Tabla de Clientes " . COLTRANS . "</TITLE>";
     if ($salida[0] == "Columnas") {
         if ($regional == "PE-051") {
-            $columnas = array("RUC" => "ca_idalterno", "Cliente" => "ca_compania", "Dirección" => array("ca_direccion", "ca_oficina", "ca_torre", "ca_bloque", "ca_interior", "ca_localidad", "ca_complemento"), "Teléfonos" => "ca_telefonos", "Fax" => "ca_fax", "Ciudad" => "ca_ciudad", "Vendedor" => "ca_vendedor", "Sucursal" => "ca_sucursal", "Circular 170" => array("ca_fchcircular", "ca_stdcircular"), "Carta Grtia." => array("ca_fchvencimiento", "ca_stdcarta_gtia"), "Encuesta/Visita" => "ca_fchvisita", "Nivel/Riesgo" => "ca_nvlriesgo", "Coord.Colmas" => "ca_nombre_coor", "Lista Clinton" => "ca_listaclinton", "Ley/Insolvencia" => "ca_leyinsolvencia", "Estado/TPLogistics" => array("ca_coltrans_std", "ca_coltrans_fch"), "Días/Crédito" => "ca_diascredito", "Cupo/Crédito" => "ca_cupo", "Observaciones" => "ca_observaciones");
+            $columnas = array("RUC" => "ca_idalterno", "Cliente" => "ca_compania", "Dirección" => array("ca_direccion", "ca_oficina", "ca_torre", "ca_bloque", "ca_interior", "ca_localidad", "ca_complemento"), "Teléfonos" => "ca_telefonos", "Fax" => "ca_fax", "Ciudad" => "ca_ciudad", "Vendedor" => "ca_vendedor", "Sucursal" => "ca_sucursal", "Circular 170" => array("ca_fchcircular", "ca_stdcircular"), "Carta Grtia." => array("ca_fchvencimiento", "ca_stdcarta_gtia"), "Encuesta/Visita" => "ca_fchvisita", "Nivel/Riesgo" => "ca_nvlriesgo", "Coord.Colmas" => "ca_nombre_coor", "Lista OFAC" => "ca_listaclinton", "SuperSociedades" => "ca_leyinsolvencia", "Estado/TPLogistics" => array("ca_coltrans_std", "ca_coltrans_fch"), "Días/Crédito" => "ca_diascredito", "Cupo/Crédito" => "ca_cupo", "Observaciones" => "ca_observaciones");
         } else {
-            $columnas = array("Id" => "ca_idcliente", "N.i.t." => "ca_idalterno", "DV" => "ca_digito", "Cliente" => "ca_compania", "Dirección" => array("ca_direccion", "ca_oficina", "ca_torre", "ca_bloque", "ca_interior", "ca_localidad", "ca_complemento"), "Teléfonos" => "ca_telefonos", "Fax" => "ca_fax", "Ciudad" => "ca_ciudad", "Vendedor" => "ca_vendedor", "Sucursal" => "ca_sucursal", "Circular 170" => array("ca_fchcircular", "ca_stdcircular"), "Carta Grtia." => array("ca_fchvencimiento", "ca_stdcarta_gtia"), "Encuesta/Visita" => "ca_fchvisita", "Nivel/Riesgo" => "ca_nvlriesgo", "Coord.Colmas" => "ca_nombre_coor", "Lista Clinton" => "ca_listaclinton", "Ley/Insolvencia" => "ca_leyinsolvencia", "Estado/Coltrans" => array("ca_coltrans_std", "ca_coltrans_fch"), "Estado/Colmas" => array("ca_colmas_std", "ca_colmas_fch"), "Días/Crédito" => "ca_diascredito", "Cupo/Crédito" => "ca_cupo", "Observaciones" => "ca_observaciones");
+            $columnas = array("Id" => "ca_idcliente", "N.i.t." => "ca_idalterno", "DV" => "ca_digito", "Cliente" => "ca_compania", "Dirección" => array("ca_direccion", "ca_oficina", "ca_torre", "ca_bloque", "ca_interior", "ca_localidad", "ca_complemento"), "Teléfonos" => "ca_telefonos", "Fax" => "ca_fax", "Ciudad" => "ca_ciudad", "Vendedor" => "ca_vendedor", "Sucursal" => "ca_sucursal", "Circular 170" => array("ca_fchcircular", "ca_stdcircular"), "Carta Grtia." => array("ca_fchvencimiento", "ca_stdcarta_gtia"), "Encuesta/Visita" => "ca_fchvisita", "Nivel/Riesgo" => "ca_nvlriesgo", "Coord.Colmas" => "ca_nombre_coor", "Lista OFAC" => "ca_listaclinton", "SuperSociedades" => "ca_leyinsolvencia", "Estado/Coltrans" => array("ca_coltrans_std", "ca_coltrans_fch"), "Estado/Colmas" => array("ca_colmas_std", "ca_colmas_fch"), "Días/Crédito" => "ca_diascredito", "Cupo/Crédito" => "ca_cupo", "Observaciones" => "ca_observaciones");
         }
         echo "</HEAD>";
         echo "<BODY>";
@@ -521,6 +521,7 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
             echo "    <TABLE>";
             echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/mandatosyPoderesExt4/id/" . $rs->Value('ca_idcliente') . "\"'><BR><IMG src='graficos/mandato.gif'><BR>Control<br>Mandatos</TD></TR>";
             echo "      <TR><TD style='visibility: $vista_3; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Comisión\", " . $rs->Value('ca_idcliente') . ");'><BR><IMG src='graficos/Info.gif'><BR>Porcentaje de Comisión</TD></TR>";
+            echo "      <TR><TD style='visibility: $vista_3; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/encuestaVisitaExt4/idcliente/" . $rs->Value('ca_idcliente') . "\"'><BR><IMG src='graficos/encuesta.gif'><BR>Nueva<br />Encuesta</TD></TR>";
             echo "      <TR><TD style='visibility: $vista_2; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Contrato\", " . $rs->Value('ca_idcliente') . ");'><BR><IMG src='graficos/contrato.gif'><BR>Contrato de<br>Comodato</TD></TR>";
             echo "      <TR><TD style='visibility: $vista_1; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Liberacion\", " . $rs->Value('ca_idcliente') . ");'><BR><IMG src='graficos/si.gif'><BR>Liberación<br>Automática</TD></TR>";
             echo "      <TR><TD style='visibility: $vista_2; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Libestados\", " . $rs->Value('ca_idcliente') . ");'><BR><IMG src='graficos/lock_close.gif'><BR>Estado de<br>Liberación</TD></TR>";
@@ -531,9 +532,9 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
             echo "  <TD Class=listar style='$bkground' ROWSPAN=10 style='text-align: center;'>";
             echo "    <TABLE>";
             echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"concliente.php?id=" . $rs->Value('ca_idcliente') . "\"'><BR><IMG src='graficos/contacto.gif'><BR>Contactos</TD></TR>";
-            echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/encuestaVisitaExt4/idcliente/" . $rs->Value('ca_idcliente') . "\"'><BR><IMG src='graficos/encuesta.gif'><BR>Encuestas</TD></TR>";
+            echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"enccliente.php?id=".$rs->Value('ca_idcliente')."\"'><BR><IMG src='graficos/encuesta.gif'><BR>Visitas<BR>".$rs->Value('ca_fchvisita')."</TD></TR>";
             echo "      <TR><TD Class=mostrar style='visibility: $visible; text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:liberar(" . $rs->Value('ca_idcliente') . ");'><BR><IMG src='graficos/no.gif'><BR>Liberar Cliente</TD></TR>";
-            echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"ListaClinton\", " . $rs->Value('ca_idcliente') . ");' style='color=blue;'><BR><IMG src='graficos/vista.gif'><BR>Lista Clinton</TD></TR>";
+            echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"ListaClinton\", " . $rs->Value('ca_idcliente') . ");' style='color=blue;'><BR><IMG src='graficos/vista.gif'><BR>Lista OFAC</TD></TR>";
             echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/clavesTracking?id=" . $rs->Value('ca_idcliente') . "\"'><BR><IMG src='graficos/tracking.gif'><BR>Tracking</TD></TR>";
             if ($nivel >= 1)
             echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/ids/verIds/modo/clientes?id=" . $rs->Value('ca_idcliente') . "\"'><BR><IMG src='graficos/encuesta.gif'><BR>Sucursales</TD></TR>";
@@ -590,14 +591,20 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
             echo "    <TD Class=listar style='$bkground'>Circular 170:<BR /><CENTER>" . $rs->Value('ca_fchcircular') . "</CENTER></TD>";
             echo "    <TD Class=listar style='$bkground'>Estado Circular:<BR /><CENTER>" . $rs->Value('ca_stdcircular') . "</CENTER></TD>";
             echo "    <TD Class=listar style='$bkground'>Nivel Riesgo:<BR /><CENTER>" . $rs->Value('ca_nvlriesgo') . "</CENTER></TD>";
-            echo "    <TD Class=listar style='$bkground'>Lista Clinton:<BR /><CENTER>" . $rs->Value('ca_listaclinton') . "</CENTER></TD>";
+            echo "    <TD Class=listar style='$bkground'>Lista OFAC:<BR /><CENTER>" . $rs->Value('ca_listaclinton') . "</CENTER></TD>";
             echo "    <TD Class=listar style='$bkground'>Acuerdo Conf.:<BR /><CENTER>" . $rs->Value('ca_fchacuerdoconf') . "</CENTER></TD>";
             echo "  </TR>";
             echo "  <TR>";
             echo "    <TD Class=listar style='$bkground'>Contrato Agenc.:<BR /><CENTER>" . $rs->Value('ca_fchcotratoag') . "</CENTER></TD>";
             echo "    <TD Class=listar style='$bkground'>Estado Contrato:<BR /><CENTER>" . $rs->Value('ca_stdcotratoag') . "</CENTER></TD>";
-            echo "    <TD Class=listar style='$bkground'>Ley Insolvencia Eco.:<BR /><CENTER>" . $rs->Value('ca_leyinsolvencia') . "</CENTER></TD>";
+            echo "    <TD Class=listar style='$bkground'>SuperSociedades:<BR /><CENTER>" . $rs->Value('ca_leyinsolvencia') . "</CENTER></TD>";
             echo "    <TD Class=listar style='$bkground' COLSPAN='2'>Comentario:<BR /><CENTER>" . $rs->Value('ca_comentario') . "</CENTER></TD>";
+            echo "  </TR>";
+            echo "  <TR>";
+            echo "    <TD Class=listar style='$bkground'>Certificaci&oacute;n ISO:<BR /><CENTER>" . $rs->Value('ca_iso') . " " . $rs->Value('ca_iso_detalles') . "</CENTER></TD>";
+            echo "    <TD Class=listar style='$bkground'>Certificaci&oacute;n BASC:<BR /><CENTER>" . $rs->Value('ca_basc') . "</CENTER></TD>";
+            echo "    <TD Class=listar style='$bkground'>Otra Certificaci&oacute;n:<BR /><CENTER>" . $rs->Value('ca_otro_cert') . "</CENTER></TD>";
+            echo "    <TD Class=listar style='$bkground' COLSPAN='2'>Detalles:<BR /><CENTER>" . $rs->Value('ca_otro_detalles') . "</CENTER></TD>";
             echo "  </TR>";
             echo "  </TABLE></TD>";
             echo "</TR>";
@@ -1040,10 +1047,10 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
                 $tit_mem = array("ca_idcliente", "ca_compania", "ca_nombres", "ca_papellido", "ca_sapellido", "ca_vendedor", "sdnm_uid", "sdnm_firstname", "sdnm_lastname", "sdnm_title", "sdnm_sdntype", "sdnm_remarks", "sdid_uid_id", "sdid_idtype", "sdid_idnumber", "sdid_idcountry", "sdid_issuedate", "sdid_expirationdate", "sdal_uid_aka", "sdal_type", "sdal_category", "sdal_firstname", "sdal_lastname", "sdak_uid_aka", "sdak_type", "sdak_category", "sdak_firstname", "sdak_lastname");
 
                 echo "<FORM METHOD=post NAME='ListaClinton' ACTION='clientes.php'>";  // Llena la forma con los datos actuales del registro
-                echo "La siguiente es una relación de <b>SIMILITUDES</b>, halladas entre el cliente consultado y la lista Clinton publicada el " . $dia . ' de ' . $meses[$mes - 1] . ' de ' . $anno . ".<br />Tener en cuenta que se compara Número de Nit, Razón Social y Nombre del Representante Legal.<br /><br />";
+                echo "La siguiente es una relación de <b>SIMILITUDES</b>, halladas entre el cliente consultado y la lista OFAC publicada el " . $dia . ' de ' . $meses[$mes - 1] . ' de ' . $anno . ".<br />Tener en cuenta que se compara Número de Nit, Razón Social y Nombre del Representante Legal.<br /><br />";
                 echo "<TABLE CELLSPACING=1 WIDTH=400>";
                 echo "<INPUT TYPE='HIDDEN' NAME='id' VALUE=" . $id . ">";              // Hereda el Id del registro que se esta eliminando
-                echo "<TH Class=titulo COLSPAN=" . count($tit_mem) . ">Consulta del Cliente en Lista Clinton</TH>";
+                echo "<TH Class=titulo COLSPAN=" . count($tit_mem) . ">Consulta del Cliente en Lista OFAC</TH>";
                 echo "<TR>";
                 for ($i = 0; $i < count($tit_mem); $i++) {
                     echo "<TH>" . $tit_mem[$i] . "</TH>";
@@ -1563,9 +1570,9 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
                 echo "  </TABLE><TD>";
                 echo "</TR>";
                 echo "<TR>";
-                echo "  <TD Class=captura>Ley Insolvencia Eco.:</TD>";
+                echo "  <TD Class=captura>SuperSociedades:</TD>";
                 echo "  <TD Class=invertir COLSPAN=2><TABLE CELLSPACING=1 WIDTH=100%><TR>";
-                echo "  <TD Class=mostrar>Reportado en Ley Insolvencia Eco.:<BR /><CENTER>" . $rs->Value('ca_leyinsolvencia') . "</CENTER></TD>";
+                echo "  <TD Class=mostrar>En Lista de SuperSociedades:<BR /><CENTER>" . $rs->Value('ca_leyinsolvencia') . "</CENTER></TD>";
                 echo "  <TD Class=mostrar>Comentario:<BR /><CENTER>" . $rs->Value('ca_comentario') . "</CENTER></TD>";
                 echo "  </TABLE><TD>";
                 echo "</TR>";
@@ -1573,7 +1580,7 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
                 echo "  <TD Class=captura>Contrato/Agenciamiento:</TD>";
                 echo "  <TD Class=invertir COLSPAN=2><TABLE CELLSPACING=1 WIDTH=100%><TR>";
                 echo "  <TD Class=mostrar>Último Radicado: (aaaa/mm/dd)<BR /><CENTER>" . $rs->Value('ca_fchcotratoag') . "</CENTER></TD>";
-                echo "  <TD Class=mostrar>Reportado en Lista Clinton:<BR /><CENTER>" . $rs->Value('ca_listaclinton') . "</CENTER></TD>";
+                echo "  <TD Class=mostrar>Reportado en Lista OFAC:<BR /><CENTER>" . $rs->Value('ca_listaclinton') . "</CENTER></TD>";
                 echo "  </TABLE><TD>";
                 echo "</TR>";
                 echo "<TR>";
