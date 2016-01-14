@@ -1,9 +1,9 @@
 <?php
-class CumpleanosColaboradoresTask extends sfDoctrineBaseTask {
+class CumpleanosColaboradoresConsolTask extends sfDoctrineBaseTask {
  
     protected function configure() {
         $this->namespace = 'colsys';
-        $this->name = 'cumpleanos';
+        $this->name = 'cumpleanos-consol';
         $this->briefDescription = 'Notifica diaramente los cumpleaños de los colaboradores COLTRANS, COLMAS Y COL OTM';
         $this->detailedDescription = <<<EOF
 The [notificar-tiempo-colaborador|INFO] task does things.
@@ -25,7 +25,7 @@ EOF;
         $databaseManager->loadConfiguration();
 
         sfContext::createInstance($this->configuration)->dispatch();
-        sfContext::getInstance()->getRequest()->setParameter("login", "Administrador");
+        sfContext::getInstance()->getRequest()->setParameter("login", "consolcargo");
         sfContext::getInstance()->getController()->getPresentationFor('adminUsers', 'birthdayEmail');
     }
 }

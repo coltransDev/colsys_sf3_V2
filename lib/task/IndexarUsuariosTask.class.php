@@ -34,12 +34,12 @@ EOF;
 
     foreach($usuarios as $usuario){
         echo $usuario->getCaLogin()."\n";
-        $usuario->updateLuceneIndex();
+        //try{
+            $usuario->updateLuceneIndex();
+        //}catch( Exception $e ){
+        //    echo $e->getMessage();
+        //}
     }
-	
-	
-	
-		
   }
 }
 ?>

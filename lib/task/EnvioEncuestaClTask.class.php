@@ -1,17 +1,17 @@
 <?php
- 
-class NotificacionesTask extends sfDoctrineBaseTask
+
+class EnvioEncuestaClTask extends sfDoctrineBaseTask
 {
   protected function configure()
   {
     $this->namespace        = 'colsys';
-    $this->name             = 'notificaciones';
-    $this->briefDescription = 'Envia notificaciones via email';
+    $this->name             = 'envio-encuesta-clientes';
+    $this->briefDescription = 'envio';
     $this->detailedDescription = <<<EOF
-The [circularClientes|INFO] task does things.
+The [Cierre de reportes|INFO] task does things.
 Call it with:
 
-  [php symfony circularClientes|INFO]
+  [php symfony alertaSeguimientos|INFO]
 EOF;
     // add arguments here, like the following:
     //$this->addArgument('application', sfCommandArgument::REQUIRED, 'The application name');
@@ -27,23 +27,9 @@ EOF;
 	$databaseManager = new sfDatabaseManager($this->configuration);
 	$databaseManager->loadConfiguration();
 
-
-
-    $q = Doctrine::getTable("NotTarea")->createQuery("t");
-    $q->select("t.*");
-    $q->leftJoin("t.Notificacion n");    
-    $q->addWhere("t.ca_fchvisible <= ?", date("Y-m-d H:i:s"));
-    $q->addWhere("t.ca_idlistatarea != ? ", 11);
-    $q->addWhere("t.ca_fchterminada IS NULL");
-    $q->addWhere("n.ca_idemail IS NULL");
-    $q->distinct();
-
-    $tareas = $q->execute();
+	sfContext::createInstance($this->configuration)->dispatch();	
 	
-	foreach( $tareas as $tarea ){
-		$tarea->notificar();
-	}	
-		
+	echo sfContext::getInstance()->getController()->getPresentationFor( 'formulario', 'envioEmailsColmas');
   }
 }
-?>
+

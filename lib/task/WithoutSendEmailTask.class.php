@@ -43,17 +43,12 @@ EOF;
             $email = new Email();		
             $email->setCaUsuenvio("Administrador");
             $email->setCaTipo( "Error Email" );
-            $email->setCaFrom( "no-reply@coltrans.com.co" );
+            $email->setCaFrom( "nagios@correo.colsys.coltrans.com.co" );
             $email->setCaFromname( "Colsys Notificaciones" );
             $email->setCaSubject(date("Y-m-d").": Correos sin despachar");
-            $email->addTo("alramirez@coltrans.com.co");
-            $email->addTo("maquinche@coltrans.com.co");
-            $email->addTo("clopez@coltrans.com.co");
-            $email->addTo("grmartinez@coltrans.com.co");
-            $email->addTo("falopez@coltrans.com.co");
+            $email->addTo("admin@coltrans.com.co");
 
-            $texto = "Los siguientes correos no han sido despachados \n\n<br /><br />" ;
-            
+            $texto = "Los siguientes correos no han sido despachados \n\n<br /><br />" ;            
             
             $texto .= "<table border='0'><tr><th>Enviado Por:</th> <th>Tipo</th> <th>Asunto</th> <th>Fch. Creado</th></tr>";
             foreach( $listado as $lista ){
@@ -63,7 +58,7 @@ EOF;
             
             $email->setCaBodyhtml($texto);            
             $email->save();
-            
+            //$email->send();
 	}		
   }
 }

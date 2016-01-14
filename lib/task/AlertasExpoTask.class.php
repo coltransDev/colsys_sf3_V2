@@ -81,7 +81,7 @@ EOF;
             $email->setCaBodyhtml(Utils::replace($mensaje) . $user->getFirmaHtml());
 
             $email->save();
-            $email->send();
+            //$email->send();
         }
     }
 
