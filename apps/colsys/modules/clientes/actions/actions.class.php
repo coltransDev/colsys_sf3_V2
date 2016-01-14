@@ -1388,7 +1388,7 @@ class clientesActions extends sfActions {
                         while (list ($clave, $val) = each($ccEmails)) {
                             $email->addCc($val);
                         }
-                        $email->setCaSubject("Verificación Clientes en Lista Clinton - $ven_mem");
+                        $email->setCaSubject("Verificación Clientes en Lista OFAC - $ven_mem");
                         $email->setCaBodyhtml($msn_mem);
                         $email->save(); //guarda el cuerpo del mensaje
                     }
@@ -1429,7 +1429,7 @@ class clientesActions extends sfActions {
                         $email->addCc($val);
                     }
                     $ven_mem = $row["ca_vendedor"];
-                    $msn_mem = "El sistema ha encontrado algunas similitudes en su listado de Clientes, comparado con la Lista Clinton del día $nueva_fecha. Favor hacer la respectivas verificaciones y tomar acción en caso de que un cliente haya sido reportado.";
+                    $msn_mem = "El sistema ha encontrado algunas similitudes en su listado de Clientes, comparado con la Lista OFAC del día $nueva_fecha. Favor hacer la respectivas verificaciones y tomar acción en caso de que un cliente haya sido reportado.";
                     $msn_mem.= "<br />";
                     $msn_mem.= "<table width='90%' cellspacing='1' border='1'>";
                     $msn_mem.= "	<tr>";
@@ -1451,7 +1451,7 @@ class clientesActions extends sfActions {
             while (list ($clave, $val) = each($ccEmails)) {
                 $email->addCc($val);
             }
-            $email->setCaSubject("Verificación Clientes en Lista Clinton - " . $ven_mem);
+            $email->setCaSubject("Verificación Clientes en Lista OFAC - " . $ven_mem);
             $email->setCaBodyhtml($msn_mem);
             $email->save(); //guarda el cuerpo del mensaje
 
@@ -1493,8 +1493,8 @@ class clientesActions extends sfActions {
               $email->addTo( $val );
               } */
 
-            $email->setCaSubject("¡Error en la Verificación con Lista Clinton!");
-            $email->setCaBodyhtml("Caught exception: " . $e->getMessage() . "\n\n" . $e->getTraceAsString() . "\n\n Se ha presentado un error en el proceso que lee la información de Lista Clinton y la compara con la Maestra de Clientes Activos de COLSYS. Agradecemos confirmar que el Departamento de Sistemas esté enterado de esta falla. Gracias!");
+            $email->setCaSubject("¡Error en la Verificación con Lista OFAC!");
+            $email->setCaBodyhtml("Caught exception: " . $e->getMessage() . "\n\n" . $e->getTraceAsString() . "\n\n Se ha presentado un error en el proceso que lee la información de Lista OFAC y la compara con la Maestra de Clientes Activos de COLSYS. Agradecemos confirmar que el Departamento de Sistemas esté enterado de esta falla. Gracias!");
             $email->save(); //guarda el cuerpo del mensaje
         }
     }
