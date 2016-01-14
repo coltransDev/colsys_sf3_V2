@@ -241,6 +241,8 @@ class adminUsersActions extends sfActions {
         $response->addJavaScript("tabpane/tabpane", 'last');
         $response->addStylesheet("tabpane/luna/tab", 'last');
         
+        $this->app = $app;
+        
     }
     
     /*
@@ -645,7 +647,7 @@ class adminUsersActions extends sfActions {
         if ($nuevo == 0) {
             if ($direccion != $usuario->getCaDireccion()) {
                 $asunto = "address";
-                $usuario->emailUsuario($login,$asunto,$direccion,null,null);
+                $usuario->emailUsuario($login,$asunto,$direccion,null,null,$grupoEmp);
                 $this->cambiodireccion = $cambiodireccion + 1;
             }
         //Envia correo a nivel nacional sobre ingreso de un colaborador a la compañía    
@@ -1045,6 +1047,7 @@ class adminUsersActions extends sfActions {
         $userinicio = Doctrine::getTable('Usuario')->find($this->userinicio->getUserId());
         
         $this->grupoEmp = $userinicio->getGrupoEmpresarial();
+        $this->comites = array();
         
         $this->nivel = $this->getNivel();
 
@@ -1056,8 +1059,7 @@ class adminUsersActions extends sfActions {
 
             //Obtiene direccion desde e-directory
             $ldap_server = sfConfig::get("app_ldap_host");
-            //$auth_user = "cn=" . sfConfig::get("app_ldap_user") . ",o=coltrans_bog";
-            $auth_user = sfConfig::get("app_ldap_user") . "@COLTRANS.LOCAL";
+            $auth_user = "cn=" . sfConfig::get("app_ldap_user") . ",o=coltrans_bog";
             $passwd = sfConfig::get("app_ldap_passwd");
 
             $this->addresses = array();
@@ -1078,10 +1080,14 @@ class adminUsersActions extends sfActions {
                 }
             }
             
+            if($this->user->getUsuBrigadas()->getCaComites() && strrpos($this->user->getUsuBrigadas()->getCaComites(), "|"))
+                $this->comites = explode("|",$this->user->getUsuBrigadas()->getCaComites());
+            else
+                $this->comites[] = $this->user->getUsuBrigadas()->getCaComites();
+            
             $this->responseArray = array("success" => true, "login" => $this->user->getCaLogin());            
         }
     }
-    
     
     /*
      * Busqueda general
@@ -1227,7 +1233,7 @@ class adminUsersActions extends sfActions {
                 ->innerJoin('s.Empresa e')
                 ->where('u.ca_activo = ?', true)
                 ->addWhere('e.ca_idempresa != 4')
-                ->addWhere("CASE WHEN substr((c.ca_fchingreso - 4)::text,6,5) = substr(now()::text,6,5) THEN(CASE WHEN ((date_part('".year."', now()) - date_part('".year."', c.ca_fchingreso))::int) NOT IN (5,0) THEN ((date_part('".year."', now()) - date_part('".year."', c.ca_fchingreso))::int)%5=0 ELSE false END ) ELSE false END")
+                ->addWhere("CASE WHEN substr((c.ca_fchingreso - 4)::text,6,5) = substr(now()::text,6,5) THEN(CASE WHEN ((date_part('year', now()) - date_part('year', c.ca_fchingreso))::int) NOT IN (5,0) THEN ((date_part('year', now()) - date_part('year', c.ca_fchingreso))::int)%5=0 ELSE false END ) ELSE false END")
                 ->orderby('u.ca_fchingreso DESC')
                 ->execute();
         
