@@ -199,7 +199,8 @@ class confirmacionesActions extends sfActions {
         $text = sfYaml::load($config);
 
         $inoClientes = array();
-
+    
+        
         if (( $modo == "conf" && $tipo_msg == "Conf") || ($modo == "puerto" && $tipo_msg == "Puerto")) {
             if ($request->getParameter("fchconfirmacion")) {
                 $fchconfirmacion = Utils::parseDate($request->getParameter("fchconfirmacion"));
@@ -473,6 +474,11 @@ class confirmacionesActions extends sfActions {
             $email->setCaBodyhtml(sfContext::getInstance()->getController()->getPresentationFor('confirmaciones', 'emailConfirmacion'));
             $email->save($con);
             
+            if($user->getUserId()=="maquinche")
+            {
+                echo $email->getCaIdemail();
+            }
+            
             //Creación de tarea Envío Formulario 1207
             if($tarea1207){
                 $numreferencia = str_replace(".", "-", $ca_referencia);
@@ -647,6 +653,8 @@ class confirmacionesActions extends sfActions {
                         }
                         break;
                     case "otm":
+                        
+                        
                         $etapa = $this->getRequestParameter("tipo_" . $oid);
 
                         if ($etapa == "IMCOL" || $this->getRequestParameter("modfchllegada_" . $oid)) {
@@ -667,6 +675,7 @@ class confirmacionesActions extends sfActions {
                         break;
                 }
 
+                
                 if ($tipo_msg == "Conf" || $tipo_msg == "Puerto") {
                     $status->setCaIntroduccion($this->getRequestParameter("intro_body"));
                     $status->setStatus($this->getRequestParameter("mensaje_" . $oid));
@@ -706,6 +715,7 @@ class confirmacionesActions extends sfActions {
                                 break;
                         }
                     }
+                    
                     $status->setStatus($mensaje);
                 }
 
