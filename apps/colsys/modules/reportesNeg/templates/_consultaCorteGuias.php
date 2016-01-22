@@ -84,6 +84,20 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO){
     </tr>
     
     <tr>
+        <td width="33%" <?=($comparar)? (($reporte->compDato('Property',"idimportador" )!=0 ) ?"class='rojo'":"") :""?>>
+             <b>Importador Final</b>
+         </td>
+         <td width="67%">
+            <?
+            if($reporte->getProperty("idimportador")!="" && $reporte->getProperty("idimportador")>4)
+            {                
+                echo  $reporte->getImportador()->getCaNombre();
+            }
+            ?>
+        </td>
+    </tr>
+    
+    <!--<tr>
          <td>
              <b>Igualar Master/Hijo:</b>
          </td>
@@ -93,6 +107,7 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO){
             ?>
         </td>
     </tr>
+    -->
     <tr>
         <td colspan="2" align="center">
             <input type="button" value="Ver rep. al exterior" onclick="popup('<?=url_for("reporteExt/verReporte?idreporte=".$reporte->getCaIdreporte()."&layout=popup")?>')" class="button" />

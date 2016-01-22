@@ -178,7 +178,7 @@ if($contacto)
     $pdf->Ln(2);
     $contacto = Doctrine::getTable("Contacto")->find($reporte->getCaIdconcliente());
 
-    $cliente = $contacto->getCliente();    
+    $cliente = $contacto->getCliente();
 //$cliente = $reporte->getCliente();
     $pdf->SetWidths ( array (25, 25, 85, 25, 40 ) );
     $pdf->SetFills ( array (1, 0, 0, 0, 0 ) );
@@ -440,7 +440,14 @@ if($reporte->getCaTiporep()!="3")
         $pdf->Row ( array ('Consignar MAWB/BL a :', $reporte->getConsignarmaster (),'Consignar HAWB/HBL a :', $cadena ) );
     }else{
         $pdf->SetWidths(array(45,155));
-        $consig = (($consignatario)?$consignatario->getCaNombre():$cliente->getCaCompania());
+        
+        $importador="";
+        if ($reporte->getProperty("idimportador")!="")
+        {
+            //$importador=$reporte->getImportador();
+            $importador= $reporte->getImportador()->getCaNombre()." Nit. ".$reporte->getImportador()->getCaIdentificacion()."/";
+        }   
+        $consig = $importador.(($consignatario)?$consignatario->getCaNombre():$contacto->getCliente()->getCaCompania());
         $nit = (($consignatario)?$consignatario->getCaIdentificacion():$cliente->getCaIdalterno()."-".$cliente->getCaDigito());
         $consignar = Doctrine::getTable("Bodega")->find( $reporte->getCaIdconsignar() );
 

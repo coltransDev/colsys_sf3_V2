@@ -16,6 +16,12 @@ include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$imp
                                             hiddenName:"consig",
                                             id:"idconsignatario"                                            
                                            });
+        this.wgImpofinal=new WidgetTercero({fieldLabel:"Importador Final",
+                                            tipo:'Consignatario',
+                                            width:500,
+                                            hiddenName:"idimportador",
+                                            id:"importador"
+                                           });
         this.wgBodega=new WidgetBodega({fieldLabel:"Trasladar a",
                                             id:"bodega_consignar",
                                             hiddenName:"idbodega_hd",
@@ -39,6 +45,8 @@ include_component("widgets", "widgetBodega",array("modo"=>$modo,"impoexpo"=>$imp
             this.wgBodega.fieldLabel="Usuario";            
             camposHija.push(this.wgTercero);
             camposHija.push(this.wgBodega);
+            camposHija.push(this.wgImpofinal);
+            
             camposNotificar.push(this.wgNotify);
         <?
         }

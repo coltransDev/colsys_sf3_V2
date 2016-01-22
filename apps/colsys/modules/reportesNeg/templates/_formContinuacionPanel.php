@@ -211,17 +211,26 @@ include_component("widgets","widgetBodega");
                 {
                     Ext.getCmp('idconsignatario').allowBlank=false;
                     Ext.getCmp('bodega_consignar').allowBlank=false;
+                    if(Ext.getCmp('importador'))
+                    {
+                        Ext.getCmp('importador').setDisabled(false);
+                        
+                    }                    
                 }
                 else
                 {
                     Ext.getCmp('idconsignatario').allowBlank=true;
                     Ext.getCmp('bodega_consignar').allowBlank=true;
+                    if(Ext.getCmp('importador'))
+                        Ext.getCmp('importador').setDisabled(true);
                 }
             }
             else
             {
                 Ext.getCmp('idconsignatario').allowBlank=true;
                 Ext.getCmp('bodega_consignar').allowBlank=true;
+                if(Ext.getCmp('importador'))
+                        Ext.getCmp('importador').setDisabled(true);
             }
 
         },

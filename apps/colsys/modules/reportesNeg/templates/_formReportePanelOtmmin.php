@@ -283,6 +283,9 @@ include_component("reportesNeg", "checkListOtm");
                                 },
                                 new WidgetLinea({fieldLabel: 'Transportador',
                                                      linkTransporte: "transporte",
+                                                     impoexpo:"impoexpo",
+                                                     activoImpo: true,
+                                                     activoExpo: true,
                                                      id:"linea",
                                                      hiddenName: "idlinea",
                                                      width:300

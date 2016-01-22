@@ -198,6 +198,9 @@ include_component("widgets", "widgetComerciales");
                                     },
                                     new WidgetLinea({fieldLabel: '<?=$nomLinea?>',
                                                      linkTransporte: "transporte",
+                                                     impoexpo:"impoexpo",
+                                                     activoImpo: true,
+                                                     activoExpo: true,
                                                      id:"linea",
                                                      hiddenName: "idlinea",
                                                      width:300
@@ -497,6 +500,11 @@ include_component("widgets", "widgetComerciales");
                         }
                         $("#idconsignatario").val(res.data.consignatario);
 
+                        if(Ext.getCmp("idimportador"))
+                        {
+                            Ext.getCmp("idimportador").setValue(res.data.idimportador);
+                            $("#idimportador").val(res.data.importador);                            
+                        }
                         if(Ext.getCmp("idconsigmaster"))
                         {
                             Ext.getCmp("idconsigmaster").setValue(res.data.idconsigmaster);

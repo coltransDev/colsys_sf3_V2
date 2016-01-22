@@ -400,6 +400,13 @@ var idreporte='<?=$idreporte?>';
                             $("#notify").val(res.data.notify);
                         }
                         $("#idconsignatario").val(res.data.consignatario);
+                        
+                        
+                        if(Ext.getCmp("importador"))
+                        {
+                            Ext.getCmp("importador").setValue(res.data.idimportador);
+                            $("#importador").val(res.data.importador);                            
+                        }
                         /*if(Ext.getCmp("idconsigmaster"))
                         {                            
                             $("#idconsigmaster").val(res.data.consigmaster);
