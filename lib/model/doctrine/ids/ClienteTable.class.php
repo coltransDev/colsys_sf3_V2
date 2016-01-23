@@ -253,6 +253,42 @@ class ClienteTable extends Doctrine_Table {
     }
 
     /*
+     * Lista los Clientes Activos que tengan vencimiento de sus Mandatos en los próximos 30 días a partir de una fecha específicada.
+     * @author Carlos G. López M.
+     */
+
+    public static function controlMandatosClientes($fch_ini, $fch_fin, $sucursal, $vendedor) {
+        if ($fch_ini == null) {
+            $fch_ini = date('Y-m-d', mktime(0, 0, 0, date('m') + 1, 1, date('Y')));
+        }
+
+        if ($fch_fin == null) {
+            $fch_fin = date('Y-m-d', mktime(0, 0, 0, date('m') + 2, 0, date('Y')));
+        }
+
+        $query = "select c.ca_idalterno, c.ca_digito, c.ca_compania, replace(c.ca_direccion,'|',' ') as ca_direccion, c.ca_oficina, c.ca_torre, c.ca_bloque, c.ca_interior, c.ca_localidad, c.ca_complemento, c.ca_telefonos, c.ca_fax, d.ca_ciudad, mn.ca_lugar, mn.ca_clase, mn.ca_tipo, mn.ca_fchradicado, mn.ca_fchvencimiento, ct.ca_coltrans_std, cm.ca_colmas_std, c.ca_vendedor, u.ca_nombre, u.ca_sucursal from ";
+        $query.= "(select mc.ca_idcliente, mt.ca_clase, mt.ca_tipo, cd.ca_ciudad as ca_lugar, mc.ca_fchradicado, mc.ca_fchvencimiento from tb_mancliente mc inner join tb_ciudades cd on cd.ca_idciudad = mc.ca_idciudad inner join tb_mandatos_tipo mt on mt.ca_idtipo = mc.ca_idtipo where mc.ca_fchvencimiento between '$fch_ini' and '$fch_fin') mn ";
+        $query.= "INNER JOIN vi_clientes_reduc c ON c.ca_idcliente = mn.ca_idcliente ";
+        $query.= "LEFT OUTER JOIN vi_usuarios u ON (c.ca_vendedor = u.ca_login) ";
+        $query.= "LEFT OUTER JOIN tb_ciudades d ON (c.ca_idciudad = d.ca_idciudad) ";
+        $query.= "LEFT OUTER JOIN (select colt.ca_idcliente as ca_idcliente_colt, colt.ca_estado as ca_coltrans_std, colt.ca_fchestado as ca_coltrans_fch from tb_stdcliente colt INNER JOIN (select ca_idcliente, max(ca_fchestado) as ca_fchestado from tb_stdcliente where ca_empresa = 'Coltrans' and ca_fchestado <= '$fch_fin' group by ca_idcliente order by ca_idcliente) sub ON (colt.ca_idcliente = sub.ca_idcliente and colt.ca_fchestado = sub.ca_fchestado and colt.ca_empresa = 'Coltrans')) ct ON (ct.ca_idcliente_colt = c.ca_idcliente) ";
+        $query.= "LEFT OUTER JOIN (select colm.ca_idcliente as ca_idcliente_colm, colm.ca_estado as ca_colmas_std, colm.ca_fchestado as ca_colmas_fch from tb_stdcliente colm INNER JOIN (select ca_idcliente, max(ca_fchestado) as ca_fchestado from tb_stdcliente where ca_empresa = 'Colmas' and ca_fchestado <= '$fch_fin' group by ca_idcliente order by ca_idcliente) sub ON (colm.ca_idcliente = sub.ca_idcliente and colm.ca_fchestado = sub.ca_fchestado and colm.ca_empresa = 'Colmas')) cm ON (cm.ca_idcliente_colm = c.ca_idcliente) ";
+        $query.= "where mn.ca_fchvencimiento between '$fch_ini' and '$fch_fin' and (ct.ca_coltrans_std = 'Activo' or cm.ca_colmas_std = 'Activo') ";
+        
+        if ($sucursal != null) {
+            $query.= "and u.ca_sucursal = '$sucursal' ";
+        }
+        if ($vendedor != null) {
+            $query.= "and u.ca_login = '$vendedor' ";
+        }
+        $query.= "order by ca_sucursal, ca_vendedor, ca_fchvencimiento ";
+
+        $q = Doctrine_Manager::getInstance()->connection();
+        $stmt = $q->execute($query);
+        return $stmt;
+    }
+    
+    /*
      * Lista los Clientes que NO tengan Circular 170.
      * @author Carlos G. López M.
      */

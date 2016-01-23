@@ -122,6 +122,18 @@ class clientesActions extends sfActions {
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                 ->execute();
     }
+    /*
+     * Entrada Reporte de Mandatos Clientes
+     */
+
+    public function executeListaControlMandatos() {
+        $this->sucursales = Doctrine::getTable("Sucursal")
+                ->createQuery("s")
+                ->select("DISTINCT s.ca_nombre")
+                ->addOrderBy("s.ca_nombre")
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->execute();
+    }
 
     /*
      * Entrada Reporte de Circular 170 Clientes
@@ -426,6 +438,30 @@ class clientesActions extends sfActions {
         $stmt = ClienteTable::cartaGarantiaClientes($inicio, $final, $sucursal, $vendedor);
         while ($row = $stmt->fetch()) {
             $this->clientesCartaGarantia[] = $row;
+        }
+
+        $layout = $this->getRequestParameter("layout");
+        if ($layout) {
+            $this->setLayout($layout);
+        }
+    }
+
+    public function executeReporteControlMandatos($request) {
+        set_time_limit(0);
+        $inicio = $this->getRequestParameter("fchStart");
+        $final = $this->getRequestParameter("fchEnd");
+        $sucursal = $this->getRequestParameter("sucursal");
+        $vendedor = $this->getRequestParameter("vendedor");
+
+        $this->inicio = $inicio;
+        $this->final = $final;
+        $this->clientesControlMandatos = array();
+        list($year, $month, $day) = sscanf($final, "%d-%d-%d");
+
+        // Lista los Clientes a los cuales se les vence la Carta de Garantía en el siguiente mes
+        $stmt = ClienteTable::controlMandatosClientes($inicio, $final, $sucursal, $vendedor);
+        while ($row = $stmt->fetch()) {
+            $this->clientesControlMandatos[] = $row;
         }
 
         $layout = $this->getRequestParameter("layout");
@@ -901,6 +937,103 @@ class clientesActions extends sfActions {
 
             $email->setCaSubject("¡Error en Informe sobre vencimiento Carta de Garantía!");
             $email->setCaBodyhtml("Caught exception: " . $e->getMessage() . "\n\n" . $e->getTraceAsString() . "\n\n Se ha presentado un error en el proceso que envía correo con el reporte Cartas de Garantía por vencer en Maestra de Clientes Activos de COLSYS. Agradecemos confirmar que el Departamento de Sistemas esté enterado de esta falla. Gracias!");
+            $email->save(); //guarda el cuerpo del mensaje
+        }
+    }
+
+    public function executeReporteControlMandatosEmail() {
+        try {               //  Controla cualquier error el la ejecución de la rutina
+            $defaultEmail = array();
+            $usuarios = Doctrine::getTable("Usuario")
+                    ->createQuery("u")
+                    ->where("u.ca_cargo = ? ", "Jefe Nacional de Operaciones")
+                    ->execute();
+            foreach ($usuarios as $usuario) {
+                $defaultEmail[] = $usuario->getCaEmail();
+            }
+            
+            $comerciales = UsuarioTable::getComerciales();
+            foreach ($comerciales as $comercial) {
+
+                $email = new Email();
+                $email->setCaUsuenvio("Administrador");
+                $email->setCaTipo("ControlMandatosClientes");
+                $email->setCaIdcaso("1");
+                $email->setCaFrom("admin@coltrans.com.co");
+                $email->setCaFromname("Administrador Sistema Colsys");
+                $email->setCaReplyto("admin@coltrans.com.co");
+
+                // $email->setCaFchenvio(date("Y-m-d H:i:s"));  // Hay que quitar cuando salga de seguimiento la rutina
+
+                $email->addTo($comercial->getCaEmail());
+                $ccEmails = array();
+                $usuarios = Doctrine::getTable("Usuario")       // Compia el mensaje a las personas de la sucursal con el perfil control alertas
+                    ->createQuery("u")
+                    ->innerJoin("u.UsuarioPerfil p")
+                    ->where("u.ca_idsucursal = ? ", $comercial->getCaIdsucursal())
+                    ->addWhere("p.ca_perfil = ? ", "control-alertas-aduana-colsys")
+                    ->execute();
+                foreach ($usuarios as $usuario) {
+                    $ccEmails[] = $usuario->getCaEmail();
+                }
+                
+                reset($defaultEmail);
+                while (list ($clave, $val) = each($defaultEmail)) {
+                    $email->addCc($val);
+                }
+                reset($ccEmails);
+                while (list ($clave, $val) = each($ccEmails)) {
+                    $email->addCc($val);
+                }
+                //$email->setCaAddress("alramirez@coltrans.com.co");    // Pruebas de envio controlado
+
+                $inicio = $this->getRequestParameter("fchStart");
+                $final = $this->getRequestParameter("fchEnd");
+                $sucursal = $comercial->getCaSucursal();
+                $vendedor = $comercial->getCaLogin();
+
+                $this->getRequest()->setParameter("fchStart", $inicio);
+                $this->getRequest()->setParameter("fchEnd", $final);
+                $this->getRequest()->setParameter("sucursal", $sucursal);
+                $this->getRequest()->setParameter("vendedor", $vendedor);
+
+                $this->getRequest()->setParameter("layout", "email");
+
+                $email->setCaSubject("Clientes Activos con Vencimiento de Mandatos a : $inicio - $vendedor");
+
+                $bodyHtml = sfContext::getInstance()->getController()->getPresentationFor('clientes', 'reporteControlMandatos');
+                if (strpos($bodyHtml, 'Reporte sin Registros') === false) {
+                    $email->setCaBodyhtml($bodyHtml);
+                    $email->save();
+                }
+            }
+        } catch (Exception $e) {
+            echo $e->getMessage() . "\n\n" . $e->getTraceAsString();
+            $usuarios = Doctrine::getTable("Usuario")
+                    ->createQuery("u")
+                    ->innerJoin("u.UsuarioPerfil p")
+                    ->where("p.ca_perfil = ? ", "sistemas")
+                    ->execute();
+
+            //Crea el correo electronico
+            $email = new Email();
+            $email->setCaUsuenvio("Administrador");
+            $email->setCaTipo("ControlMandatos");
+            $email->setCaIdcaso("1");
+            $email->setCaFrom("admin@coltrans.com.co");
+            $email->setCaFromname("Administrador Sistema Colsys");
+            $email->setCaReplyto("admin@coltrans.com.co");
+
+            foreach ($usuarios as $usuario) {
+                $email->addTo($usuario->getCaEmail());
+            }
+            /* reset($ccEmails);
+              while (list ($clave, $val) = each ($ccEmails)) {
+              $email->addTo( $val );
+              } */
+
+            $email->setCaSubject("¡Error en Informe sobre vencimiento Control de Mandatos!");
+            $email->setCaBodyhtml("Caught exception: " . $e->getMessage() . "\n\n" . $e->getTraceAsString() . "\n\n Se ha presentado un error en el proceso que envía correo con el reporte Control de Mandatos por vencer en Maestra de Clientes Activos de COLSYS. Agradecemos confirmar que el Departamento de Sistemas esté enterado de esta falla. Gracias!");
             $email->save(); //guarda el cuerpo del mensaje
         }
     }
