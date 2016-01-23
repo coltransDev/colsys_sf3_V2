@@ -957,7 +957,7 @@ class clientesActions extends sfActions {
 
                 $email = new Email();
                 $email->setCaUsuenvio("Administrador");
-                $email->setCaTipo("ControlMandatosClientes");
+                $email->setCaTipo("ControlMandatos");
                 $email->setCaIdcaso("1");
                 $email->setCaFrom("admin@coltrans.com.co");
                 $email->setCaFromname("Administrador Sistema Colsys");
@@ -970,7 +970,8 @@ class clientesActions extends sfActions {
                 $usuarios = Doctrine::getTable("Usuario")       // Compia el mensaje a las personas de la sucursal con el perfil control alertas
                     ->createQuery("u")
                     ->innerJoin("u.UsuarioPerfil p")
-                    ->where("u.ca_idsucursal = ? ", $comercial->getCaIdsucursal())
+                    ->innerJoin("u.Sucursal s")
+                    ->where("s.ca_nombre = ? ", $comercial->getSucursal()->getCaNombre())
                     ->addWhere("p.ca_perfil = ? ", "control-alertas-aduana-colsys")
                     ->execute();
                 foreach ($usuarios as $usuario) {
