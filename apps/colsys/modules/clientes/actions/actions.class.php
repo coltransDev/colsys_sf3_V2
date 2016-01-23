@@ -649,6 +649,13 @@ class clientesActions extends sfActions {
                 $email->setCaFromname($comercial->getCaNombre());
                 $email->setCaReplyto($comercial->getCaEmail());
                 $email->addCc($comercial->getCaEmail());
+                $coordinador = Doctrine::getTable("Usuario")       // Compia el mensaje a las personas de la sucursal con el perfil control alertas
+                    ->createQuery("u")
+                    ->where("u.ca_login = ? ", $cliente->getCaCoordinador())
+                    ->fetchOne();
+                if ($coordinador) {
+                    $email->addCc($coordinador->getCaEmail());
+                }
 
                 $sucursal_obj = $comercial->getSucursal();
                 $direccion_suc = $sucursal_obj->getCaDireccion() . " " . $sucursal_obj->getCaNombre();
@@ -694,6 +701,8 @@ class clientesActions extends sfActions {
                                   <li type=\"disc\">Estado de cambios en la situación financiera</li>
                                   <li type=\"disc\">Estado de flujo de efectivo</li>
                                   <li type=\"disc\">Notas a los Estados Financieros</li>
+                                  <li type=\"disc\">Certificado de EE.FF emitido por Contador público</li>
+                                  <li type=\"disc\">Dictamen de EE.FF emitido por Revisor Fiscal</li>
                                 </ul>
                                 Los Estados Financieros deben estar certificados y dictaminados por Representante Legal y Revisor Fiscal y/o Contador Público con fecha de corte a Dic. 31 del año inmediatamente anterior.<br />
                                 Si la compañía se encuentra  recientemente constituida, deberá entregar un balance inicial. Si usted es persona natural, deberá entregar copia de la última Declaración de Renta.
@@ -701,6 +710,8 @@ class clientesActions extends sfActions {
                               <li>Fotocopia del Documento de identidad del Representante Legal o persona facultada según Cámara y Comercio que firma la Circular 0170.</li>
                               <li>Fotocopia del Documento de identidad del Contador y Revisor Fiscal (Si aplica) que certifican y dictaminan los Estados Financieros.</li>
                               <li>Certificado de vigencia y antecedentes disciplinarios expedida por la Junta Central de Contadores del Contador y del Revisor Fiscal (Si aplica).</li>
+                              <li>Copia Certificado ISO</li>
+                              <li>Copia Certificado BASC</li>
                            </ol>
                         </td>
                      </tr>
@@ -1198,6 +1209,16 @@ class clientesActions extends sfActions {
                 reset($ccEmails);
                 while (list ($clave, $val) = each($ccEmails)) {
                     $email->addCc($val);
+                }
+                $usuarios = Doctrine::getTable("Usuario")       // Compia el mensaje a las personas de la sucursal con el perfil control alertas
+                    ->createQuery("u")
+                    ->innerJoin("u.UsuarioPerfil p")
+                    ->innerJoin("u.Sucursal s")
+                    ->where("s.ca_nombre = ? ", $comercial->getSucursal()->getCaNombre())
+                    ->addWhere("p.ca_perfil in ('control-alertas-clientes-colsys', 'control-alertas-aduana-colsys')")
+                    ->execute();
+                foreach ($usuarios as $usuario) {
+                    $email->addCc($usuario->getCaEmail());
                 }
                 // $email->addCc("clopez@coltrans.com.co");    // Pruebas de envio controlado
 
