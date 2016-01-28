@@ -20,8 +20,8 @@ if ($parametros) {
 //Verifica la cantidad de tráficos en el reporte
 $traficos = array();
 foreach($reportes as $reporte){
-    if(!in_array($reporte->getOrigen()->getTrafico()->getCaNombre(), $traficos))
-        $traficos[] = $reporte->getOrigen()->getTrafico()->getCaNombre();    
+    if(!in_array(utf8_encode($reporte->getOrigen()->getTrafico()->getCaNombre()), $traficos))
+        $traficos[] = utf8_encode($reporte->getOrigen()->getTrafico()->getCaNombre());    
 }
 
 error_reporting(E_ERROR);
@@ -144,8 +144,8 @@ for ($j=0; $j<count($traficos); $j++)  {
     
     foreach ($reportes as $reporte) {
     
-        if($objPHPExcel->getActiveSheet() === $objPHPExcel->getSheetByName($reporte->getOrigen()->getTrafico()->getCaNombre())){
-            $objPHPExcel->getSheetByName($reporte->getOrigen()->getTrafico()->getCaNombre());
+        if($objPHPExcel->getActiveSheet() === $objPHPExcel->getSheetByName(utf8_encode($reporte->getOrigen()->getTrafico()->getCaNombre()))){
+            $objPHPExcel->getSheetByName(utf8_encode($reporte->getOrigen()->getTrafico()->getCaNombre()));
         if (!$reporte->esUltimaVersion()) {
             continue;
         }

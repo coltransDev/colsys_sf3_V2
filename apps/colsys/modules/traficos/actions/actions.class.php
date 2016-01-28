@@ -875,43 +875,34 @@ class traficosActions extends sfActions {
             $titulo = "Antecedentes RN" . $reporte->getCaConsecutivo() . " [" . $reporte->getCaModalidad() . " " . $reporte->getOrigen()->getCaCiudad() . "->" . $reporte->getDestino()->getCaCiudad() . "]";
             $texto = "";
             
-            $numdias = 2;
-            //$parametros = ParametroTable::retrieveByCaso("CU086", $reporte->getOrigen()->getCaIdtrafico());
-            //->find($request->getParameter("idcliente"));
-            $parametros = Doctrine::getTable("EntregaAntecedentes")
-                          ->createQuery("SalidaAntecedente")
-                          ->addWhere("SalidaAntecedente.ca_idtrafico=?",$reporte->getOrigen()->getCaIdtrafico());
-            $param_antecedente=$parametros->execute();
-            
-            foreach ($param_antecedente as $valor_parametro) {
-                if ((($valor_parametro->getCaIddestino() == $reporte->getCaDestino()) || ($valor_parametro->getCaIdciudad() == $reporte->getCaOrigen())) || ($valor_parametro->getCaModalidad() == $reporte->getCaModalidad())) {
-                    if ((($valor_parametro->getCaIddestino() == $reporte->getCaDestino()) || ($valor_parametro->getCaIdciudad() == $reporte->getCaOrigen())) && ($valor_parametro->getCaModalidad() == $reporte->getCaModalidad())) {
-                        if (($valor_parametro->getCaIddestino() == $reporte->getCaDestino()) && ($valor_parametro->getCaIdciudad() == $reporte->getCaOrigen())) {
-                            $numdias = $valor_parametro->getCaDias();
-                        } elseif ($valor_parametro->getCaIddestino() == $reporte->getCaDestino()) {
-                            $numdias = $valor_parametro->getCaDias();
-                        } elseif ($valor_parametro->getCaIdciudad() == $reporte->getCaOrigen()) {
-                            $numdias = $valor_parametro->getCaDias();
-                        }
-                    } elseif ($valor_parametro->getCaIddestino() == $reporte->getCaDestino()) {
-                        $numdias = $valor_parametro->getCaDias();
-                    } elseif ($valor_parametro->getCaIdciudad() == $reporte->getCaOrigen()) {
-                        $numdias = $valor_parametro->getCaDias();
-                    }
-                } elseif (($valor_parametro->getCaIddestino() == "999-9999") && ($valor_parametro->getCaIdciudad() == "999-9999") && ($valor_parametro->getCaModalidad() == "")) {
-                    $numdias = $valor_parametro->getCaDias();
-                }
-            }
+            $sql = "select rp.ca_consecutivo, rp.ca_fchsalida as ca_fchembarque, rp.ca_tiporep as ca_tipo, ea1.ca_dias::int as ca_numdias, ea2.ca_dias::int as ca_numdias2, ea3.ca_dias::int as ca_numdias3 from tb_reportes rp inner join tb_ciudades cd on rp.ca_origen = cd.ca_idciudad
+                left join tb_entrega_antecedentes ea1 on ea1.ca_idtrafico::text = cd.ca_idtrafico::text and ea1.ca_idciudad::text = '999-9999' and ea1.ca_modalidad = ''
+                left join tb_entrega_antecedentes ea2 on ea2.ca_idtrafico::text = cd.ca_idtrafico::text and ea2.ca_idciudad::text = rp.ca_origen::text
+                left join tb_entrega_antecedentes ea3 on ea3.ca_idtrafico::text = cd.ca_idtrafico::text and ea3.ca_modalidad::text = rp.ca_modalidad::text
+                where rp.ca_consecutivo = '" . $reporte->getCaConsecutivo() . "' and rp.ca_tiporep != 4
+                order by rp.ca_version desc
+                limit 1";
 
+            $con = Doctrine_Manager::getInstance()->connection();
+            $st = $con->execute($sql);
+            $antecedentes = $st->fetchAll();
+
+            list($ano, $mes, $dia) = sscanf($antecedentes[0]['ca_fchembarque'], "%d-%d-%d");
+            if ($antecedentes[0]['ca_numdias3'] !== null) {
+                $fechaEta = date("Y-m-d", mktime(0, 0, 0, $mes, $dia + $antecedentes[0]['ca_numdias3'], $ano));
+            } else if ($antecedentes[0]['ca_numdias2'] !== null) {
+                $fechaEta = date("Y-m-d", mktime(0, 0, 0, $mes, $dia + $antecedentes[0]['ca_numdias2'], $ano));
+            } else if ($antecedentes[0]['ca_numdias'] !== null) {
+                $fechaEta = date("Y-m-d", mktime(0, 0, 0, $mes, $dia + $antecedentes[0]['ca_numdias'], $ano));
+            } else {
+                $fechaEta = null;
+            }
             $tarea->setCaUrl("/antecedentes/buscarReferencia/reporte/" . $reporte->getCaConsecutivo());
             $tarea->setCaFchvisible(date("Y-m-d H:i:s"));
-
-            $fechaEta = Utils::addDays($request->getParameter("fchsalida"), $numdias);
-
             $tarea->setCaFchvencimiento(date("Y-m-d H:i:s", strtotime(date($fechaEta . " " . date("H:i:s")))));
 
             $tarea->setCaTitulo($titulo);
-            $texto = "Debe entregar los antecedentes dentro de los proximos $numdias dias"; //[TODO] Colocar un texto mas descriptivo
+            $texto = "Debe entregar los antecedentes antes del $fechaEta"; //[TODO] Colocar un texto mas descriptivo
             $tarea->setCaTexto($texto);
             if ($request->getParameter("remitente")) {
                $tarea->setCaNotificar($request->getParameter("remitente"));
