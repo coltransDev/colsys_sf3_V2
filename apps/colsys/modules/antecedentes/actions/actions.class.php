@@ -134,7 +134,7 @@ class antecedentesActions extends sfActions {
           }
          * 
          */
-        $databaseConf = sfYaml::load(sfConfig::get('sf_config_dir') . '/databases_replica.yml');
+        /*$databaseConf = sfYaml::load(sfConfig::get('sf_config_dir') . '/databases_replica.yml');
         $dsn = explode(";", $databaseConf ['prod']['doctrine']['param']['dsn']);        
         $dsn0= explode("=", $dsn[0]);
         $dsn1= explode("=", $dsn[1]);        
@@ -143,7 +143,11 @@ class antecedentesActions extends sfActions {
         $database = $dsn0[1];
         $host = $dsn1[1];        
         $con = Doctrine_Manager::connection(new PDO("pgsql:dbname={$database};host={$host}", $userName, $userPass));
-
+         * 
+         */
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
+        $con = Doctrine_Manager::connection();
+        
         $st = $con->execute(utf8_encode($sql));
 
         $referencias = $st->fetchAll();

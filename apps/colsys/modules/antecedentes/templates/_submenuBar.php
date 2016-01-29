@@ -7,7 +7,7 @@
  */
 
 $i = 0;
-echo $this->getRequestParameter("format");
+//echo $this->getRequestParameter("format");
 
 if ($this->getRequestParameter("ref")) {
    $numref = str_replace("|", ".", $this->getRequestParameter("ref"));
