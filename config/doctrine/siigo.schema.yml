@@ -1,0 +1,115 @@
+SiigoComprobante:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: siigo
+  tableName: t_docum_contable
+  columns:
+    id_uneg_cont: 
+      type: integer      
+      primary: true      
+    cd_doc_cont: string
+    nu_docsop_cont: integer
+    nu_cont: integer
+    tp_doc_sop_cont: string
+    fecha_cont: date
+    idtpo_idapb_cont: string
+    nit_apb_cont: string
+    dv_apb_cont: string
+    id_suc_cont: integer
+    total_db_cont: numeric
+    total_cr_cont: numeric
+    ind_incorp_cont: string
+    codalt_uneg_cont: string
+    codalt_empre_cont: string
+    cd_errsiigo_cont: integer
+    ind_anul_cont: string
+    archivo: string
+    error_archivo: string
+  relations:
+    SiigoDetComprobante:
+      local: id_uneg_cont
+      foreign: id_uneg_movcont
+      type: many
+    InoComprobante:
+      local: id_uneg_cont
+      foreign: ca_idcomprobante
+      type: one
+      
+    
+SiigoDetComprobante:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: siigo
+  tableName: t_detcontable
+  columns:
+    id_movcont: 
+      type: integer
+      primary: true
+      autoincrement: true
+    id_uneg_movcont: integer
+    cod_doccont_movcont: string
+    num_tip_doccont_movcont: integer
+    num_doccont_movcont: numeric 
+    cta_movcont: string
+    tp_idepcte_movcont: string
+    suc_movcont: string
+    ident_pcte_movcont: integer
+    descrip_movcont: string
+    valor_movcont: numeric
+    natu_movcont: string
+    vl_base_movcont: integer
+    id_cc_movcont: string
+    id_bodega_movcont: string
+    codal_inv_movcont: string
+    cant_inv_movcont: numeric
+    codalt_dep_movcont: string
+    codalt_bod_movcont: string
+    codalt_ubi_movcont: string
+    codalt_cc_movcont: string
+    id_area_movcont: string
+    codalt_scc_movcont: string
+    tp_idter_movcont: string
+    ident_ter_movcont: string
+    tip_con_car_movcont: string
+    com_con_car_movcont: integer
+    num_con_car_movcont: numeric
+    vct_con_car_movcont: integer
+    fec_con_movcont: date,
+    nom_terc_movcont: string
+    concepto_nom_movcont: integer
+    variable_acum_movcont: numeric
+    nroquin_acum_movcont: integer    
+    tip_mod_movhb_movcont: string
+    ref_mas_movhb_movcont: string
+    nro_blh_movhb_movcont: string
+    
+    
+SiigoCuenta:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: siigo
+  tableName: t_cuenta
+  columns:
+    ca_idcuenta:  
+      primary: true
+      autoincrement: true
+    codigocuenta: string      
+    ca_idempresa: integer      
+    nombrecuenta: string
+    naturaleza: string
+    ca_fchanulado:
+      type: timestamp
+    ca_usuanulado:
+      type: string(20)
+  relations:
+    Empresa:
+      local: ca_idempresa
+      foreign: ca_idempresa
+      type: one
+    
