@@ -209,6 +209,7 @@ PanelTarifarioAduanaCliente = function( config ){
         editor: new Ext.form.NumberField({
                     allowBlank: false ,
                     style: 'text-align:left',
+                    allowNegative: false,
                     decimalPrecision :2
                 })
       },
@@ -231,6 +232,7 @@ PanelTarifarioAduanaCliente = function( config ){
         editor: new Ext.form.NumberField({
                     allowBlank: false ,
                     style: 'text-align:left',
+                    allowNegative: false,
                     decimalPrecision :2
                 })
       },
