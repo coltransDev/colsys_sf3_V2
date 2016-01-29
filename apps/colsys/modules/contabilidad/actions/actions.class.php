@@ -106,22 +106,39 @@ class contabilidadActions extends sfActions {
         $this->responseArray = $tree;
         $this->setTemplate("responseTemplate");
     }
-    
-    
+    function executeEliminarGridConceptos($request) {
+         $datos = $request->getParameter("datos");
+         $datos = json_decode($datos);               
+         $ids = array();
+         $i=0;        
+         
+        foreach($datos as $dato){
+            $i++;
+            $inoconsiigo = Doctrine::getTable("InoConSiigo")->find($dato->s_ca_idconceptosiigo);
+            if($inoconsiigo){
+                $inoconsiigo->delete();
+            }            
+            $ids[] = $dato->id;
+        }         
+         $this->responseArray = array("success" => true ,"ids" => $ids ,"count" => $i);   
+         $this->setTemplate("responseTemplate");
+    }    
     
     function executeDatosConceptosSiigo($request) {
-     
+        $idempresa = $request->getParameter("idempresa");
         $q = Doctrine::getTable("InoConSiigo")
                             ->createQuery("s")
                             ->select("s.*,e.ca_nombre")
                             ->innerjoin("s.Empresa e")
-                             //->where("SUBSTR(ca_cod::TEXT,1,2)=? and ca_idempresa=?  ",array($ccosto->getCaCentro().$ccosto->getCaSubcentro() , $ccosto->getCaIdempresa()) )
                             ->addOrderBy( "s.ca_idconceptosiigo" )
                             ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-            /*if($query!="")
+            if ($idempresa){
+                $q->addWhere("ca_idempresa = ?",$idempresa);
+            }    
+            if($query!="")
             {
                 $q->addWhere("UPPER(ca_descripcion) like ?",'%'.  strtoupper($query).'%');
-            }*/
+            }
             $debug=$q->getSqlQuery();
 
         $conceptosSiigo=$q->execute();
@@ -130,21 +147,23 @@ class contabilidadActions extends sfActions {
             $conceptosSiigo[$k]["s_ca_descripcion"]=utf8_encode($conceptosSiigo[$k]["s_ca_descripcion"]);
             $conceptosSiigo[$k]["e_ca_nombre"]=utf8_encode($conceptosSiigo[$k]["e_ca_nombre"]);
         }        
-        //print_r($conceptosSiigo);
         $this->responseArray = array("success" => true, "root" => $conceptosSiigo, "total" => count($conceptosSiigo),"debug"=>$debug);
         $this->setTemplate("responseTemplate");
     }
     
     function executeDatosCuentas($request) {
-     
+        $empresa = $request->getParameter("idempresa");
         $q = Doctrine::getTable("SiigoCuenta")
                             ->createQuery("s")
-                            ->select("s.codigocuenta,s.nombrecuenta,s.ca_idempresa,e.ca_nombre")
+                            ->select("s.ca_idcuenta,s.codigocuenta,s.nombrecuenta,s.ca_idempresa,e.ca_nombre")
                             ->innerjoin("s.Empresa e")
+                            ->where("s.ca_usuanulado is null ")
                              //->where("SUBSTR(ca_cod::TEXT,1,2)=? and ca_idempresa=?  ",array($ccosto->getCaCentro().$ccosto->getCaSubcentro() , $ccosto->getCaIdempresa()) )
                             ->addOrderBy( "s.codigocuenta" )
                             ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-
+        if($empresa){
+            $q->addWhere("s.ca_idempresa = ?",$empresa);
+        }
             $debug=$q->getSqlQuery();
         
         $cuentas=$q->execute();
@@ -153,7 +172,7 @@ class contabilidadActions extends sfActions {
             $cuentas[$k]["s_nombrecuenta"]=utf8_encode($cuentas[$k]["s_nombrecuenta"]);
             $cuentas[$k]["e_ca_nombre"]=utf8_encode($cuentas[$k]["e_ca_nombre"]);
         }
-
+       
         $this->responseArray = array("success" => true, "root" => $cuentas, "total" => count($cuentas),"debug"=>$debug);
         $this->setTemplate("responseTemplate");
     }
@@ -161,73 +180,135 @@ class contabilidadActions extends sfActions {
     
     function executeGuardarGridCuentas($request) {
         
-        $datos = $request->getParameter("datos");
+        $datos = $request->getParameter("datos");        
         $cuentas = json_decode($datos);
         $ids = array();
         
-
-        foreach($cuentas as  $c)
-        {
-            $cuenta = Doctrine::getTable("SiigoCuenta")->find(array($c->codigocuenta,$c->ca_idempresa));
-            if(!$cuenta)
-            {
-                $cuenta= new SiigoCuenta();
-                $cuenta->setCodigocuenta($c->codigocuenta);
-                $cuenta->setCaIdempresa($c->ca_idempresa);
-            }
-            $cuenta->setNombrecuenta($c->nombrecuenta);
-            $cuenta->save();
-            $ids[] = $c->id;
+        try{
+            foreach($cuentas as  $c)
+            {           
+                $cuenta = Doctrine::getTable("SiigoCuenta")->find($c->ca_idcuenta);                    
+                if(!$cuenta)
+                {
+                    $cuenta= new SiigoCuenta();
+                    $cuenta->setCodigocuenta($c->codigocuenta);
+                    $cuenta->setCaIdempresa($c->ca_idempresa);
+                }
+                $cuenta->setNombrecuenta($c->nombrecuenta);
+                $cuenta->save();
+                $ids[] = $c->id;
+                $this->responseArray = array("errorInfo" => '', "id" => implode(",", $ids), "success" => true);
+            }            
+        }catch (Exception $e){
+            $this->responseArray = array("errorInfo" => 'Error. La empresa ya cuenta con este código', "id" => implode(",", $ids), "success" => true);
         }
-        
-        $this->responseArray = array("errorInfo" => $errorInfo, "id" => implode(",", $ids), "success" => true);
+       
         $this->setTemplate("responseTemplate");
     }
     
+    function executeEliminarGridCuentas($request) {
+         $datos = $request->getParameter("datos");
+         $datos = json_decode($datos);               
+         $ids = array();
+                 
+        $conn = Doctrine::getTable("SiigoCuenta")->getConnection();        
+        $conn->beginTransaction();
+        
+        try{        
+            foreach($datos as $dato){            
+                $cuenta = Doctrine::getTable("SiigoCuenta")->find($dato->s_ca_idcuenta);
+                if($cuenta){
+                    $cuenta->setCaUsuanulado($this->getUser()->getUserId());
+                    $cuenta->setCaFchanulado(date("Y-m-d H:i:s"));
+                    $cuenta->save();                 
+                }            
+                 $ids[] = $dato->id;
+            } 
+            $conn->commit();
+            $this->responseArray = array("success" => true ,"ids" => $ids);
+        }catch(Exception $e){
+           $conn->rollback(); 
+           $this->responseArray = array("success" => false); 
+        }        
+        $this->setTemplate("responseTemplate");
+    }
     
     function executeGuardarGridConceptos($request) {
         
-        $datos = $request->getParameter("datos");
+        $datos = $request->getParameter("datos");        
         $cuentas = json_decode($datos);
         $ids = array();
-        $errorInfo="";
-
-        foreach($cuentas as  $c)
-        {
-            try
-            {
-                $concepto = Doctrine::getTable("InoConSiigo")->find(array($c->ca_idconceptosiigo));
-                if(!$concepto)
-                {                
+        $idconceptos = array();
+        $errorInfo="";   
+        $conn = Doctrine::getTable("InoConSiigo")->getConnection();        
+        $conn->beginTransaction();      
+        
+        try
+        {   
+            foreach($cuentas as  $c){
+                
+                if ($c->ca_idconceptosiigo){
+                    $concepto = Doctrine::getTable("InoConSiigo")
+                                ->createQuery("s")
+                                ->where("s.ca_idconceptosiigo = ?",$c->ca_idconceptosiigo)
+                                ->andWhere("s.ca_idempresa = ?",$c->ca_idempresa)
+                                ->fetchOne();
+                    
+                    if(!$concepto){       
+                        $concepto= new InoConSiigo();                          
+                        $concepto->setCaIdempresa($c->ca_idempresa);
+                    }
+                }
+                else{                       
                     $concepto= new InoConSiigo();
-                    $concepto->setCaCuenta($c->ca_cuenta);
                     $concepto->setCaIdempresa($c->ca_idempresa);
-                }            
-                $concepto->setCaDescripcion($c->ca_descripcion);
+                }
+                $concepto->setCaCod($c->ca_cod);
+                $concepto->setCaCuenta($c->ca_cuenta);
+                $concepto->setCaDescripcion(utf8_encode($c->ca_descripcion));
                 $concepto->setCaPt($c->ca_pt);
                 $concepto->setCaIva($c->ca_iva);
                 $concepto->setCaPorciva($c->ca_porciva);
-                $concepto->setCaAutoret($c->ca_autoret);                
+                $concepto->setCaAutoret($c->ca_autoret);
                 $concepto->setCaBasear($c->ca_basear);
-                
+                $concepto->setCaCc($c->ca_cc);
+                $concepto->setCaScc($c->ca_scc);
+                $concepto->setCaValor($c->ca_valor);
+                $concepto->setCaRetfte($c->ca_retfte);
+                $concepto->setCaCuentarf($c->ca_cuentarf);
+                $concepto->setCaBaserf($c->ca_baserf);
+                $concepto->setCaPorcrf($c->ca_porcrf);
+                $concepto->setCaMone($c->ca_mone);
+                $concepto->setCaConvenio($c->ca_convenio);
+                $concepto->setCaTipo($c->ca_tipo);
+
                 $concepto->save();
-                $ids[] = $c->id;
+                $ids[] = $c->id;               
+                if ($c->ca_idconceptosiigo){                    
+                    $idconceptos[]=$c->ca_idconceptosiigo;
+                }
+                else{                    
+                    $sql = "select last_value from ino.tb_conceptossiigo_id";
+                    $q = Doctrine_Manager::getInstance()->connection();
+                    $stmt = $q->execute($sql);
+                    $idcon = $stmt->fetch();
+                    $idconceptos[]= $idcon['last_value'];
+                }
             }
-            catch(Exception $e)
-            {
-                $errorInfo.=$c->ca_descripcion+":"+$e->getMessage()."<br>";
-            }
+            $conn->commit();
+        }   
+        catch(Exception $e){
+            $conn->rollback();
+            $errorInfo.= $e->getMessage()."<br>";
         }
         
-        $this->responseArray = array("errorInfo" => $errorInfo, "id" => implode(",", $ids), "success" => true);
+        $this->responseArray = array("idconceptos"=> $idconceptos,"errorInfo" => $errorInfo,"id" => implode(",", $ids), "success" => true);
         $this->setTemplate("responseTemplate");
     }
     
     
-    function executeConsultaResult($request) {
-        
-        $fecha_inicial = $request->getParameter("fecha_inicial");
-        
+    function executeConsultaResult($request) {        
+        $fecha_inicial = $request->getParameter("fecha_inicial");        
         $fecha_final = $request->getParameter("fecha_final");
         $idtipocomprobante = $request->getParameter("idtipocomprobante");
         $no_comprobante = $request->getParameter("no_comprobante");
@@ -410,10 +491,6 @@ class contabilidadActions extends sfActions {
         {
             $data[]=$r;
         }
-        
-        
-        
-        
         $this->responseArray = array("errorInfo" => $errorInfo, "root" => $data, "success" => true);
         $this->setTemplate("responseTemplate");
         
