@@ -16,8 +16,6 @@ class gestDocumentalActions extends sfActions {
      */
     public function executeIndex() {
 
-        //$response = sfContext::getInstance()->getResponse();
-        //$response->addJavaScript("extExtras/FileUploadField",'last');
     }
 
     /*
@@ -72,11 +70,8 @@ class gestDocumentalActions extends sfActions {
             mkdir($directory, 0777, true);
         }
         chmod($directory, 0777);
-        //print_r($_FILES);
-        //error_reporting(E_ALL);
         try {
             if (count($_FILES) > 0) {
-
                 $filePrefix = $this->getRequestParameter("filePrefix");
                 if ($filePrefix) {
                     $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
@@ -95,9 +90,7 @@ class gestDocumentalActions extends sfActions {
                         if (count($archivos) > 0) {
                             Unlink($archivos[0]);
                         }
-
                         $filePrefix = $nameFile . "--";
-                        //$fileName  = $uploadedFile['name'] ;
                     }
 
                     if ($filePrefix) {
@@ -109,8 +102,6 @@ class gestDocumentalActions extends sfActions {
                     $fileName = urlencode($fileName);
                     $fileName = str_replace("+", " ", $fileName);
 
-                    //echo $directory.$fileName;
-                    //error_reporting(E_ALL);
                     if (move_uploaded_file($uploadedFile['tmp_name'], $directory . $fileName)) {
                         $this->responseArray = array("id" => base64_encode($fileName), "filename" => $fileName, "folder" => $folder, "success" => true);
                     } else {
@@ -123,7 +114,6 @@ class gestDocumentalActions extends sfActions {
         } catch (Exception $e) {
             $this->responseArray = array("error" => $e->getMessage(), "success" => false);
         }
-
         $this->setTemplate($template);
     }
 
@@ -137,20 +127,18 @@ class gestDocumentalActions extends sfActions {
         $this->archivo1="";
         if ($this->getRequestParameter("idarchivo")) {
             $archivo = base64_decode($this->getRequestParameter("idarchivo"));
-
             $this->forward404Unless($archivo);
-
             $folder = base64_decode($this->getRequestParameter("folder"));
             $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
-
             $this->archivo = $directory . $archivo;
         } else if ($this->getRequestParameter("id_archivo")) {
             $archivo = Doctrine::getTable("Archivos")->find($this->getRequestParameter("id_archivo"));
-            $this->archivo = $archivo->getCaPath();            
+            $this->archivo = $archivo->getCaPath();
+        }else if ($this->getRequestParameter("name")!="") {
+            $this->archivo= base64_decode($this->getRequestParameter("name"));
         }
         
         if (!file_exists($this->archivo) && !file_exists($this->archivo . ".gz" )) {
-
             $this->archivo1=$this->archivo;
             $this->archivo1 = str_replace(" ", "_", $this->archivo1);
             if (!file_exists($this->archivo1) && !file_exists($this->archivo1 . ".gz" )) 
@@ -162,15 +150,14 @@ class gestDocumentalActions extends sfActions {
                 if ( !file_exists($this->archivo1)) {
                     $this->archivo=$this->archivo1;
                 }
-                //echo $this->archivo1."<br>";print_r($arch);
                 if (!file_exists($this->archivo) && !file_exists($this->archivo . ".gz" ))
                 {
                     $this->archivo = str_replace(" ", "_", $this->archivo);
-                    if (!file_exists($this->archivo) && !file_exists($this->archivo . ".gz" )) 
+                    if (!file_exists($this->archivo) && !file_exists($this->archivo . ".gz" ))
                     {
                         $this->forward404("No se encuentra el archivo especificado ".$this->archivo);
                     }
-                }                
+                }
             }
             else
             {
@@ -202,7 +189,6 @@ class gestDocumentalActions extends sfActions {
 
         $this->archivo = $directory . $archivo;
 
-
         if (!file_exists($this->archivo) && !file_exists($this->archivo . ".gz")) {
             $this->forward404("No se encuentra el archivo especificado");
         }
@@ -210,8 +196,6 @@ class gestDocumentalActions extends sfActions {
         if (file_exists($this->archivo . ".gz")) {
             $this->archivo.=".gz";
         }
-
-        //session_cache_limiter('public');
     }
 
     /*
@@ -220,9 +204,6 @@ class gestDocumentalActions extends sfActions {
      */
 
     public function executeVerImagen() {
-//         echo "hgfhgf";
-//        exit;
-        //sfConfig::set('sf_web_debug', false) ;
         try {
             $archivo = base64_decode($this->getRequestParameter("idarchivo"));
             $tam_max = ($this->getRequestParameter("tam_max")) ? $this->getRequestParameter("tam_max") : 200;
@@ -242,7 +223,6 @@ class gestDocumentalActions extends sfActions {
             }
             $w = imagesx($image);
             $h = imagesy($image);
-            //$tam_max=200;
             if ($w > $tam_max || $h > $tam_max) {
                 $control = ($h >= $w);
                 if ($control) {
@@ -256,18 +236,12 @@ class gestDocumentalActions extends sfActions {
                 $im2 = ImageCreateTrueColor($new_w, $new_h);
                 imagecopyResampled($im2, $image, 0, 0, 0, 0, $new_w, $new_h, $w, $h);
 
-                //imagejpeg($img2,NULL,80); 
                 imagejpeg($img2);
                 imagedestroy($img2);
             } else {
-                //imagejpeg($image,NULL,80);
                 imagejpeg($image);
                 imagedestroy($image);
-                //$this->im=$image;
             }
-//imagejpeg($im,NULL,80);
-//header ('Content-type: image/jpeg');
-//imagejpeg($im, NULL, 80);
         } catch (Exception $e) {
             print_r($e);
         }
@@ -293,8 +267,6 @@ class gestDocumentalActions extends sfActions {
         } else {
             $this->responseArray = array("id" => $id, "success" => false);
         }
-
-
         $this->setTemplate("responseTemplate");
     }
 
@@ -314,14 +286,11 @@ class gestDocumentalActions extends sfActions {
     public function executeUploadImage($request) {
         $folder = $request->getParameter("folder");
         $idissue = $request->getParameter("idissue");
-        //header("content-type: text/html"); // the return type must be text/html
-        //if file has been sent successfully:
         $this->responseArray = array();
         if (isset($_FILES['image']['tmp_name'])) {
-            // open the file
             $img = $_FILES['image']['tmp_name'];
             $ext = strtolower(substr($_FILES['image']['name'], -3, 3));
-            $himage = fopen($img, "r"); // read the temporary file into a buffer
+            $himage = fopen($img, "r");
             $image = fread($himage, filesize($img));
             fclose($himage);
             //if image can't be opened, either its not a valid format or even an image:
@@ -331,13 +300,11 @@ class gestDocumentalActions extends sfActions {
                 // create a new random numeric name to avoid rewriting other images already on the server...
                 $ran = rand();
                 $ran2 = $ran . ".";
-
                 $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
 
                 if (!is_dir($directory)) {
                     @mkdir($directory, 0777, true);
                 }
-
                 $filename = $ran2 . $ext;
                 // join path and name
                 $path = $directory . $filename;
@@ -345,7 +312,6 @@ class gestDocumentalActions extends sfActions {
                 $hout = fopen($path, "w");
                 fwrite($hout, $image);
                 fclose($hout);
-                //you'll need to modify the path here to reflect your own server.
 
                 $urlpath = "/gestDocumental/verArchivo/folder/" . base64_encode($folder) . "/idarchivo/" . base64_encode($filename);
                 $this->responseArray["status"] = 'UPLOADED';
@@ -354,11 +320,6 @@ class gestDocumentalActions extends sfActions {
         } else {
             $this->responseArray["status"] = utf8_encode('No file was submitted');
         }
-
-
-
-
-
         $this->setTemplate("responseTemplate");
     }
 
@@ -368,8 +329,6 @@ class gestDocumentalActions extends sfActions {
      */
 
     public function executeDatosPanelDirectorios() {
-
-
         $folder = base64_decode($this->getRequestParameter("folder"));
         $digitalFile = sfConfig::get('app_digitalFile_root');
         $directory = $digitalFile . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
@@ -377,16 +336,6 @@ class gestDocumentalActions extends sfActions {
         if (!is_dir($directory)) {
             @mkdir($directory, 0777, true);
         }
-        /*
-          $archivos = sfFinder::type('file')->maxDepth(0)->in($directory);
-          $this->files = array();
-          foreach($archivos as $archivo ){
-          $this->files[]=array("idarchivo"=>base64_encode(basename($archivo)),
-          "name"=>utf8_encode(basename($archivo)),
-          "lastmod"=>time()
-          );
-          } */
-        //echo $directory;
 
         $dirs = glob($directory . DIRECTORY_SEPARATOR . '*', GLOB_ONLYDIR);
         $data = array();
@@ -399,7 +348,6 @@ class gestDocumentalActions extends sfActions {
                 'expanded' => false
             );
         }
-
         print json_encode($data);
     }
 
@@ -439,7 +387,6 @@ class gestDocumentalActions extends sfActions {
             mkdir($directory, 0777, true);
         }
         chmod($directory, 0777);
-        //echo count($_FILES);
         try {
             if (count($_FILES) > 0) {
 
@@ -476,7 +423,6 @@ class gestDocumentalActions extends sfActions {
                         } else {
                             imagejpeg($image, $directory . $fileNameMin . ".jpg", 80);
                         }
-                        //exit(0);
                         $this->responseArray = array("success" => true, "filename" => $fileNameMin . ".jpg", "folder" => $folder, "filebase" => base64_encode($folder . "/" . $fileNameMin . ".jpg"), "thumbnails" => $thumbnails, "dimension" => $dimVisual);
                     } catch (Exception $e) {
                         $this->responseArray = array("error" => $e->getMessage(), "filename" => $fileName, "folder" => $folder, "success" => false);
@@ -488,7 +434,6 @@ class gestDocumentalActions extends sfActions {
         } catch (Exception $e) {
             $this->responseArray = array("error" => $e->getMessage(), "success" => false);
         }
-
         $this->setTemplate("responseTemplate");
     }
 
@@ -496,7 +441,6 @@ class gestDocumentalActions extends sfActions {
         sfConfig::set('sf_web_debug', false);
         $folder = base64_decode($this->getRequestParameter("folder"));
         $thumbnails = $this->getRequestParameter("thumbnails");
-        //$dimension = $this->getRequestParameter("dimension");
         $tam_max = ($this->getRequestParameter("tam_max")) ? $this->getRequestParameter("tam_max") : "200";
         $dimVisual = ($this->getRequestParameter("tam_max_visual")) ? $this->getRequestParameter("tam_max_visual") : $tam_max;
 
@@ -510,26 +454,15 @@ class gestDocumentalActions extends sfActions {
 
         try {
             if (count($_FILES) > 0) {
-
                 foreach ($_FILES as $uploadedFile) {
                     try {
-
-                        //$tmp = explode(".", $fileName);
-
                         $fileNameMin = $tmp[0];
-
                         $name_tmp = $uploadedFile['tmp_name'];
-
                         $fileName = $uploadedFile['name'];
-
                         $tmp = explode(".", $fileName);
                         $fileNameMin = $tmp[0];
-
                         $name_tmp = $uploadedFile['tmp_name'];
 
-                        //echo $fileName."<br>";
-                        //echo (string)Utils::isImage($fileName);
-                        //exit;
                         if (Utils::isImage($fileName)) {
                             $image = $this->open_image($uploadedFile['tmp_name']);
 
@@ -550,7 +483,6 @@ class gestDocumentalActions extends sfActions {
                                 imagecopyResampled($im2, $image, 0, 0, 0, 0, $new_w, $new_h, $w, $h);
                                 $w = imagesx($im2);
                                 $h = imagesy($im2);
-
                                 imagejpeg($im2, $directory . $fileNameMin . ".jpg", 80);
                             } else {
                                 imagejpeg($image, $directory . $fileNameMin . ".jpg", 80);
@@ -577,30 +509,9 @@ class gestDocumentalActions extends sfActions {
 
     public function executeMultipleUpload($request) {
 
-
-
-        //global $sfContext_sfResponse;
         $respuesta = sfContext::getInstance()->getResponse();
-
-        //$respuesta->removeJavascript("localhost/js/ext/ext-all-debug.js");
-        //$respuesta->removeJavascript("/js/ext/ext-all-debug.js");
-        //$respuesta->removeJavascript("ext/ext-all-debug.js");
-        /* echo "cc";
-          //$this->response->removeJavascript("comunes.js","default");
-          print_r($respuesta->getJavascripts());
-          echo "dd";
-         */
-
-        /* $respuesta->removeJavascript("localhost/js/ext/ext-all-debug");
-          $respuesta->removeJavascript("/js/ext/ext-all-debug");
-          $respuesta->removeJavascript("ext/ext-all-debug");
-          $respuesta->removeJavascript("ext-all-debug");
-         */
-        //$respuesta->removeJavascript("ext/adapter/ext/ext-base");
         $respuesta->addJavascript("ext4/ext-all.js");
         $respuesta->addJavascript("ext4/ux/multiupload/swfobject.js");
-        //print_r($sfContext_sfResponse);
-        //print_r($GLOBALS["sfContext_sfResponse"]->getJavascripts());
     }
 
     function executeDatosSeries($request) {
@@ -611,14 +522,11 @@ class gestDocumentalActions extends sfActions {
                 ->where("s.ca_idpadre = ? ", $idpadre)
                 ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                 ->execute();
-        //print_r($series);
-        //$tree=array();
         $tree = array("text" => "Gestion Documental",
             "leaf" => true,
             "id" => "1");
 
         foreach ($series as $s) {
-
             $subseries = Doctrine::getTable("Series")
                     ->createQuery("s")
                     ->select("s.*")
@@ -635,16 +543,12 @@ class gestDocumentalActions extends sfActions {
                 "id" => $s["ca_idsserie"]);
         }
         $tree["children"] = $childrens;
-        //echo json_encode($tree );
-        //exit;
         $this->responseArray = $tree;
         $this->setTemplate("responseTemplate");
     }
 
     public function executeSubirArchivoTRD(sfWebRequest $request) {
         sfConfig::set('sf_web_debug', false);
-
-        //$idarchivo = base64_decode($this->getRequestParameter("idarchivo"));
 
         $iddocumental = $this->getRequestParameter("documento");
         $nombre = $this->getRequestParameter("nombre");
@@ -655,13 +559,11 @@ class gestDocumentalActions extends sfActions {
         $tam_max = ($this->getRequestParameter("tam_max")) ? $this->getRequestParameter("tam_max") : "200";
         $dimVisual = ($this->getRequestParameter("tam_max_visual")) ? $this->getRequestParameter("tam_max_visual") : $tam_max;
 
-//		$folder = base64_decode($this->getRequestParameter("folder"));
         $tipDoc = Doctrine::getTable("TipoDocumental")->find($iddocumental);
         $this->forward404Unless($tipDoc);
         $folder = $tipDoc->getCaDirectorio();
 
-        $this->referer = base64_decode($this->getRequestParameter("referer")); // para que sera???
-        //$this->nameFileType=$this->getRequestParameter("namefiletype");
+        $this->referer = base64_decode($this->getRequestParameter("referer"));
 
         $template = ($this->getRequestParameter("template") != "") ? $this->getRequestParameter("template") : "responseTemplate";
         $path = "";
@@ -671,15 +573,13 @@ class gestDocumentalActions extends sfActions {
             $path.=$ref2 . DIRECTORY_SEPARATOR;
         if ($ref3)
             $path.=$ref3 . DIRECTORY_SEPARATOR;
-//		$this->forward404Unless($folder);
+
         $directory = sfConfig::get('app_digitalFile_root') . date("Y") . DIRECTORY_SEPARATOR . $folder . $path;
-        //echo $directory;
         if (!is_dir($directory)) {
             mkdir($directory, 0777, true);
         }
         chmod($directory, 0777);
-        //print_r($_FILES);
-        //error_reporting(E_ALL);
+
         try {
             if (count($_FILES) > 0) {
 
@@ -689,7 +589,6 @@ class gestDocumentalActions extends sfActions {
                     $algo = false;
                     $mime = Utils::mimetype($uploadedFile['name']);
 
-                    //exit;  
                     $size = $uploadedFile['size'];
                     $fileName = preg_replace('/\s\s+/', ' ', $fileName);
                     $fileName = urlencode($fileName);
@@ -724,7 +623,6 @@ class gestDocumentalActions extends sfActions {
                         }
 
                         $fileName=$fileNameMin . ".jpg";
-                                  //      $fileName=$this->process_image($uploadedFile,$directory,$fileName);
                         $algo = true;
                     } else {
                         $existe=true;
@@ -745,7 +643,17 @@ class gestDocumentalActions extends sfActions {
 
                             $algo = true;
                         } else {
-                            $this->responseArray = array("error" => "No se pudo mover el archivo", "filename" => $fileName, "folder" => $folder, "success" => false);
+                            Utils::sendEmail(                                  
+                                    
+                            array(
+                                "from"=>"colsys@coltrans.com.co",
+                                "to"=>"maquinche@coltrans.com.co",
+                                "subject"=>"Error subir archivo",
+                                "body"=>$uploadedFile['error'] . "--". $_SERVER["SERVER_ADDR"]."--".$this->getUser()->getUserId()."--".$request->getUri()."::".print_r($uploadedFile),
+                                "mensaje"=>$uploadedFile['error'] . "--". $_SERVER["SERVER_ADDR"]."--".$this->getUser()->getUserId()."--".$request->getUri()."::".print_r($uploadedFile)
+                                )
+                        );
+                            $this->responseArray = array("error" => "No se pudo mover el archivo ". $uploadedFile["error"], "filename" => $fileName, "folder" => $folder, "success" => false);
                         }
                     }
                     $nombre = ($nombre != "") ? $nombre : $fileName;
@@ -767,7 +675,15 @@ class gestDocumentalActions extends sfActions {
                 $this->responseArray = array("success" => false);
             }
         } catch (Exception $e) {
-            $this->responseArray = array("error" => $e->getMessage(), "success" => false);
+            Utils::sendEmail(
+                        array(
+                            "from"=>"colsys@coltrans.com.co",
+                            "to"=>"maquinche@coltrans.com.co",
+                            "subject"=>"Error subir archivo",
+                            "body"=>$e->getTraceAsString()."--".$_SERVER["SERVER_ADDR"]
+                            )
+                        );
+            $this->responseArray = array("error" => $e->getTraceAsString(), "success" => false);
         }
         $this->setTemplate($template);
     }
@@ -788,7 +704,6 @@ class gestDocumentalActions extends sfActions {
             } else {
                 $porcen = $tam_max / $w;
             }
-
             $new_w = $w * $porcen;
             $new_h = $h * $porcen;
 
@@ -796,12 +711,10 @@ class gestDocumentalActions extends sfActions {
             imagecopyResampled($im2, $image, 0, 0, 0, 0, $new_w, $new_h, $w, $h);
             $w = imagesx($im2);
             $h = imagesy($im2);
-
             imagejpeg($im2, $directory . $fileNameMin . ".jpg", 80);
         } else {
             imagejpeg($image, $directory . $fileNameMin . ".jpg", 80);
         }
-        
         return $fileNameMin . ".jpg";
     }
 
@@ -869,9 +782,8 @@ class gestDocumentalActions extends sfActions {
 
     public function executeDataFilesTree($request) {
 
-
         $node = ($request->getParameter("node") != "root" ) ? $request->getParameter("node") : "0";
-        $idsserie = $request->getParameter("idsserie");
+        $idsserie = $this->getRequestParameter("idsserie");        
         $documento = $request->getParameter("documento");
         $nombre = $request->getParameter("nombre");
         $ref1 = $request->getParameter("ref1");
@@ -883,17 +795,15 @@ class gestDocumentalActions extends sfActions {
 
         $q = Doctrine::getTable("Archivos")
                 ->createQuery("a")
-                ->select("a.*,t.ca_documento")
+                ->select("a.*,t.ca_documento,t.ca_idsserie")
                 ->innerJoin("a.TipoDocumental t")
                 ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
-                ->where("a.ca_fcheliminado is NULL")
+                ->where("a.ca_fcheliminado is NULL " )
+                ->addWhere("ca_idsserie = ?", $idsserie)
                 ->orderBy("ca_ref2 desc,ca_nombre");
 
-        //if($node!="")
-        //    $q->where("ca_iddocumental = ?", $node );
-
         if ($nombre != "")
-            $q->addWhere("ca_nombre = ?", $nombre);
+            $q->addWhere("ca_nombre like ?", "%" .$nombre. "%");
 
         if ($documento != "")
             $q->addWhere("ca_iddocumental = ?", $documento);
@@ -907,7 +817,6 @@ class gestDocumentalActions extends sfActions {
         if ($ref3 != "")
             $q->addWhere("ca_ref2 like ?", "%" . $ref3 . "%");
 
-        //$this->sql=$q->getSqlQuery();
         $tipoDocs = $q->execute();
         $this->tipoDocs = array();
         foreach ($tipoDocs as $t) {
@@ -923,7 +832,6 @@ class gestDocumentalActions extends sfActions {
         }
 
         $tree = $this->generateTree($this->tipoDocs);
-
         $this->responseArray = $tree;
         $this->setTemplate("responseTemplate");
     }
@@ -939,8 +847,6 @@ class gestDocumentalActions extends sfActions {
 
     public function getChildrensFiles($docs) {
         $tipoDocs = array();
-
-
         foreach ($docs as $key => $t) {
 
             if (is_array($t)) {
@@ -990,10 +896,7 @@ class gestDocumentalActions extends sfActions {
     public function executeMailDocumentosF(sfWebRequest $request) {
         $folder1=$request->getParameter("folder");
         $debug=$request->getParameter("debug");
-        /*if($debug!="true")
-        {
-            return;
-        }*/
+
         try{
             ProjectConfiguration::registerZend();
             Zend_Loader::loadClass('Zend_Gdata_ClientLogin');
@@ -1022,7 +925,6 @@ class gestDocumentalActions extends sfActions {
                             echo "<pre>";
                         }
                         try{
-                            
                             if($part->getHeader('content-disposition'))
                             {
                                 $arr=explode(";", $part->getHeader('content-disposition'));
@@ -1033,48 +935,60 @@ class gestDocumentalActions extends sfActions {
                                     break;
                                 }
                             }
-                                
                         }
                         catch(Exception $e)
                         {
-                            
                             continue;
                         }
-                    }                    
+                    }
                     try {
-                        $path = "";
+                        $path = $prepath ="";
                         $fileName = (strlen($fileName)>5)?$fileName:$part->getHeader('content-description');
                         $attachment = base64_decode($part->getContent());
                         $size = strlen($attachment);
                         //$directory = sfConfig::get('app_digitalFile_root').date("Y").DIRECTORY_SEPARATOR;
                         $mime = explode(";", $part->getHeader('content-type'));
                         $mime = $mime[0];
-                        if($folder1=="DOCUMENTOS" || $folder1=="DOCUMENTOSAEREO")
-                            $asunto = $message->subject;
+                        if($folder1=="DOCUMENTOS" || $folder1=="DOCUMENTOSAEREO" || $folder1=="DOCUMENTOSOTM" || $folder1=="DOCUMENTOSCLIENTES")
+                           $asunto = $message->subject;
                         else
-                            $asunto = $fileName;//substr($fileName, 0, strlen($fileName) - 21);
-                        
-                        
-                        if($debug=="true")
+                            $asunto = $fileName;                        
+
+                        $ref = array();
+                        $data = array();
+                        $ref = explode("-",$asunto);
+                        if($ref[1]!="cgar" && $folder1!="DOCUMENTOSCLIENTES")
                         {
-                            //echo $asunto."<br>".$fileName;
+                            $ref[] = substr($asunto, 0, 13);
+                            $ref[] = substr($asunto, 14, 4);
+                            $ref[0] = str_replace(".", "", $ref[0]);
+                            $ref[0] = substr($ref[0], 0, 3) . "." . substr($ref[0], 3, 2) . "." . substr($ref[0], 5, 2) . "." . substr($ref[0], 7, 4) . "." . substr($ref[0], 11, 2);
+                            $data["ref1"] = $ref[0];
                         }
                         
-                        //echo "::".$asunto."::";
-                        $ref = array();
-                        $ref[] = substr($asunto, 0, 13);
-                        $ref[] = substr($asunto, 14, 4);
-                        //print_r($ref);
-                        $data = array();
-                        $ref[0] = str_replace(".", "", $ref[0]);
-                        $ref[0] = substr($ref[0], 0, 3) . "." . substr($ref[0], 3, 2) . "." . substr($ref[0], 5, 2) . "." . substr($ref[0], 7, 4) . "." . substr($ref[0], 11, 2);
-                        $data["ref1"] = $ref[0];
+                        if($ref[1]=="cgar" || $folder1=="DOCUMENTOSCLIENTES")
+                        {                            
+                            $sql = "select  ca_id from ids.tb_ids 
+                                where ca_idalterno='" . $ref[0] . "' limit 1";
+                                $con = Doctrine_Manager::getInstance()->connection();
+                                $st = $con->execute($sql);
+                                $resul = $st->fetchAll();
+                                $data["ref1"] = $resul[0]["ca_id"];
+                                if($folder1=="DOCUMENTOSCLIENTES")
+                                {
+                                    $data["ref2"] = str_replace( "/","-",$ref[1]);
+                                    //print_r($data);
+                                    
+                                    //exit;
+                                }
+                        }
+                        
                         if (isset($ref[1])) {
-                            if ($ref[1] == "cost") {
+                            if ($ref[1] == "cost" || $ref[1] == "costos") {
                                 $data["ref2"] = "costos";
                             } else if ($ref[1] == "pref" || $ref[1] == "libp") {
                                 $data["ref2"] = "";
-                            } else {
+                            } else if($data["ref2"]=="") {
                                 $sql = "select  ca_hbls from tb_inoclientes_sea 
                                 where ca_referencia='" . $ref[0] . "' and UPPER(substring(ca_hbls from (char_length(ca_hbls)-3) ))= UPPER('" . $ref[1] . "') limit 1";
                                 $con = Doctrine_Manager::getInstance()->connection();
@@ -1084,8 +998,16 @@ class gestDocumentalActions extends sfActions {
                                 $data["ref2"] = $resul[0]["ca_hbls"];
                             }
                         }
+                        
                         if ($ref[1] == "costos" || $ref[1] == "cost")
-                            $data["iddocumental"] = "8";
+                        {
+                            if($folder1=="DOCUMENTOSOTM")
+                                $data["iddocumental"] = "27";
+                            else
+                                $data["iddocumental"] = "8";
+                            //echo $asunto;
+
+                        }
                         else if ($ref[1] == "pref")
                             $data["iddocumental"] = "6";
                         else if ($ref[1] == "libp")
@@ -1094,19 +1016,34 @@ class gestDocumentalActions extends sfActions {
                             $data["iddocumental"] = "19";
                         else if ($ref[1] == "cert")
                             $data["iddocumental"] = "25";
+                        else if ($ref[1] == "remi")
+                            $data["iddocumental"] = "29";
+                        else if ($ref[1] == "cgar")
+                        {
+                            $data["iddocumental"] = "30";
+                            //$prepath=date('Y'). DIRECTORY_SEPARATOR;
+                            //$prepath=date('Y'). DIRECTORY_SEPARATOR;
+                            
+                            /*$sql = "select  ca_id from ids.tb_ids 
+                                where ca_idalterno='" . $ref[0] . "' limit 1";
+                                $con = Doctrine_Manager::getInstance()->connection();
+                                $st = $con->execute($sql);
+                                $resul = $st->fetchAll();
+                                $data["ref1"] = $resul[0]["ca_id"];
+                             *  
+                             */
+                        }
                         else
                             $data["iddocumental"] = $request->getParameter("iddocumental");
+                        
+                        //print_r($data);
+                        //exit;
 
                         if ($data["ref1"])
                             $path.=$data["ref1"] . DIRECTORY_SEPARATOR;
                         if ($data["ref2"])
                             $path.=$data["ref2"] . DIRECTORY_SEPARATOR;
 
-                        //print_r($data);
-                        if($debug=="true")
-                        {
-                            //exit;
-                        }
                         $archivo = new Archivos();
                         $archivo->setCaIddocumental($data["iddocumental"]);
                         if($folder1=="DOCUMENTOS")
@@ -1119,7 +1056,7 @@ class gestDocumentalActions extends sfActions {
                         $archivo->setCaSize($size);
                         $tipDoc = $archivo->getTipoDocumental();
                         $folder = $tipDoc->getCaDirectorio();
-                        $directory = sfConfig::get('app_digitalFile_root') . date("Y") . DIRECTORY_SEPARATOR . $folder . $path;
+                        $directory = sfConfig::get('app_digitalFile_root') . date("Y") . DIRECTORY_SEPARATOR . $folder .$prepath. $path;
 
                         if (!is_dir($directory)) {
                             mkdir($directory, 0777, true);
@@ -1136,8 +1073,8 @@ class gestDocumentalActions extends sfActions {
                     }
                 }
                 $uniq_id = $mail->getUniqueId($messageNum);
-                $messageId = $mail->getNumberByUniqueId($uniq_id);                
-                $mail->moveMessage($messageId, $folder1."P");                
+                $messageId = $mail->getNumberByUniqueId($uniq_id);
+                $mail->moveMessage($messageId, $folder1."P");
             }
         }
         catch(Exception $e)
@@ -1154,5 +1091,4 @@ class gestDocumentalActions extends sfActions {
         exit;
     }
 }
-
 ?>

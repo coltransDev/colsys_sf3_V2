@@ -20,7 +20,7 @@ Ext.require([
      */
     var constrainedWin2=null;   
 
-    var store = Ext.create('Ext.data.TreeStore', {
+    /*var store = Ext.create('Ext.data.TreeStore', {
         fields: [
             {name: 'idarchivo',     type: 'string'},
             {name: 'nombre',     type: 'string'},
@@ -40,7 +40,7 @@ Ext.require([
         },
         //folderSort: true,
         autoLoad: false
-    });
+    });*/
 
     
     //4life transfer.factor white nano factor inmune spray
@@ -49,13 +49,33 @@ Ext.require([
         extend: 'Ext.tree.Panel',
         alias: 'widget.wTreeGridFile',    
         title: 'Archivos',
-        width: 500,
-        height: 300,
+        //width: 1000,
+        //height: 300,
         //renderTo: "sub-panel",
         collapsible: true,
         useArrows: true,
         rootVisible: false,
-        store: store,
+        store: Ext.create('Ext.data.TreeStore', {
+        fields: [
+            {name: 'idarchivo',     type: 'string'},
+            {name: 'nombre',     type: 'string'},
+            {name: 'documento',     type: 'string'},
+            {name: 'iddocumental',     type: 'string'},
+            {name: 'path', type: 'string'},
+            {name: 'ref1', type: 'string'},
+            {name: 'ref2', type: 'string'},
+            {name: 'ref3', type: 'string'},
+            {name: 'usucreado', type: 'string'},
+            {name: 'fchcreado', type: 'string'}
+        ],
+        proxy: {
+            type: 'ajax',
+            url: '<?= url_for('gestDocumental/dataFilesTree') ?>',
+            autoLoad: false
+        },
+        //folderSort: true,
+        autoLoad: false
+    }),
         multiSelect: true,
         singleExpand: true,
         columnLines :true,
@@ -247,8 +267,12 @@ Ext.require([
                                             },
                                             scope:this,
                                             success: function(a,b){
-                                                Ext.getCmp("tree-grid-file").getStore().reload();
-                                                Ext.getCmp("tree-grid-file").expandAll();
+                                                //Ext.getCmp("tree-grid-file").getStore().reload();
+                                                //Ext.getCmp("tree-grid-file").expandAll();
+                                                //this.up('grid').getStore().reload();
+                                                //this.up('grid').expandAll();
+                                                grid.getStore().reload();
+                                                //grid.expandAll();
                                                 Ext.MessageBox.hide();
                                             },
                                             failure: function(){console.log('failure');}

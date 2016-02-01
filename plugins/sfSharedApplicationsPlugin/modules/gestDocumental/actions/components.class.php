@@ -125,6 +125,11 @@ class gestDocumentalComponents extends sfComponents
     {
         
     }
+    
+    public function executeFormConsultaArchivos()
+    {
+        
+    }
 	
 }
 ?>

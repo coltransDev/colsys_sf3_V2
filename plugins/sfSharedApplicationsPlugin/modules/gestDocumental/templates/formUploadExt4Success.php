@@ -153,7 +153,9 @@ Ext.onReady(function(){
     var storeTree=Ext.getCmp("tree-grid-file").getStore();
                 storeTree.load({
                     params : {
-                        ref1 : '<?=$ref1?>'/*,
+                        ref1 : '<?=$ref1?>',
+                        idsserie: '<?=$idsserie?>'
+                        /*,
                         ref2 : '<?=$ref2?>',
                         ref3 : '<?=$ref3?>',
                         idsserie: '<?=$idsserie?>'*/

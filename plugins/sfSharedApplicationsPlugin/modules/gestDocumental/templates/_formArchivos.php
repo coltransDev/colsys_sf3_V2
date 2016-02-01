@@ -74,7 +74,7 @@ Ext.define('Ext.colsys.formArchivo', {
                                 waitMsg: 'Guardando',
                                 success: function(fp, o) {
                                     //msg('Mensaje', 'Archivo Procesado "' + o.result.file + '" en el servidor');
-                                    Ext.getCmp("tree-grid-file").getStore().reload();
+                                    
                                     Ext.getCmp("winFormEdit").hide();
                                     //location.href=location.href;
                                 }
