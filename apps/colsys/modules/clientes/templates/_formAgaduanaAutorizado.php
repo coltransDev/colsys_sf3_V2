@@ -5,6 +5,7 @@
  * and open the template in the editor.
  */
 $idcliente = $sf_data->getRaw("idcliente");
+$razonSocial = $sf_data->getRaw("razonSocial");
 include_component("widgets", "wgDocumentos");
 include_component("widgets4", "wgAgentesAduana");
 include_component("clientes", "formSubirArchivoAgente");
@@ -77,7 +78,7 @@ include_component("clientes", "formSubirArchivoAgente");
 
         new Ext.grid.GridPanel({
             id: 'gridAgaduanaAutorizado',
-            title: 'Agentes de Aduana Autorizados',
+            title: 'Agentes de Aduana Autorizados<br /><?=$razonSocial?>',
             store: storeAgaduanaAutorizado,
             renderTo: 'se-form',
             stripeRows: true,

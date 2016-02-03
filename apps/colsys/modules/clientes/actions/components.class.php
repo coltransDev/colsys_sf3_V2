@@ -79,7 +79,8 @@ class clientesComponents extends sfComponents {
 
     public function executeFormAgaduanaAutorizado(sfWebRequest $request) {
         $this->idcliente = $request->getParameter("idcliente"); 
-        //$idcliente = $request->getParameter("idcliente");        
+        $cliente = Doctrine::getTable("IdsCliente")->find($this->idcliente);
+        $this->razonSocial = utf8_encode($cliente->getIds()->getCaNombre());
     }
 
     public function executeFormSubirArchivoAgente(sfWebRequest $request) {
