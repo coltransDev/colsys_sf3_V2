@@ -185,7 +185,7 @@ include_component("clientes", "formSubirArchivoAgente");
                                                     params: {
                                                         idsserie: 11,   /*Constante para Autorizaciones Clientes*/
                                                         ref1: <?= $idcliente ?>,
-                                                        ref2: 'Agentes de Aduana'
+                                                        ref2: id_ag
                                                     }
                                                 });
                                             }

@@ -82,7 +82,7 @@ include_component("gestDocumental", "treeGridFiles");
                                 url: '<?= url_for("gestDocumental/SubirArchivoTRD") ?>',
                                 params: {
                                     ref1: form.owner.store.idcliente,
-                                    ref2: Ext.getCmp("documento").rawValue
+                                    ref2: form.owner.store.id_agente
                                 },
                                 success: function (response, opts) {
                                     if (opts.result.success) {
