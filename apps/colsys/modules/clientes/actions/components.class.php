@@ -77,6 +77,16 @@ class clientesComponents extends sfComponents {
         $this->idsserie = ($this->getRequestParameter("idsserie") != "") ? $this->getRequestParameter("idsserie") : "10";
     }
 
+    public function executeFormAgaduanaAutorizado(sfWebRequest $request) {
+        $this->idcliente = $request->getParameter("idcliente"); 
+        //$idcliente = $request->getParameter("idcliente");        
+    }
+
+    public function executeFormSubirArchivoAgente(sfWebRequest $request) {
+        $this->id = $request->getParameter("id");
+        $this->idsserie = ($this->getRequestParameter("idsserie") != "") ? $this->getRequestParameter("idsserie") : "11";
+    }
+
     public function executeFormEncuestaVisita(sfWebRequest $request) {
         $this->idcliente = $request->getParameter("idcliente");
 

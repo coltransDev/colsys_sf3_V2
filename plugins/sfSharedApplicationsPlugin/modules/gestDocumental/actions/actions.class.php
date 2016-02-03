@@ -668,7 +668,9 @@ class gestDocumentalActions extends sfActions {
                         $archivo->setCaRef2($ref2);
                         $archivo->setCaRef3($ref3);
                         $archivo->save();
-                        $this->responseArray = array("id" => base64_encode($fileName), "file" => $fileName, "folder" => $folder, "success" => true);
+                        
+                        $idarchivo = $archivo->getCaIdarchivo();
+                        $this->responseArray = array("id" => base64_encode($fileName), "file" => $fileName, "folder" => $folder, "idarchivo" => $idarchivo, "success" => true);
                     }
                 }
             } else {

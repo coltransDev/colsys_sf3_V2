@@ -122,6 +122,7 @@ class clientesActions extends sfActions {
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                 ->execute();
     }
+
     /*
      * Entrada Reporte de Mandatos Clientes
      */
@@ -650,9 +651,9 @@ class clientesActions extends sfActions {
                 $email->setCaReplyto($comercial->getCaEmail());
                 $email->addCc($comercial->getCaEmail());
                 $coordinador = Doctrine::getTable("Usuario")       // Compia el mensaje a las personas de la sucursal con el perfil control alertas
-                    ->createQuery("u")
-                    ->where("u.ca_login = ? ", $cliente->getCaCoordinador())
-                    ->fetchOne();
+                        ->createQuery("u")
+                        ->where("u.ca_login = ? ", $cliente->getCaCoordinador())
+                        ->fetchOne();
                 if ($coordinador) {
                     $email->addCc($coordinador->getCaEmail());
                 }
@@ -962,7 +963,7 @@ class clientesActions extends sfActions {
             foreach ($usuarios as $usuario) {
                 $defaultEmail[] = $usuario->getCaEmail();
             }
-            
+
             $comerciales = UsuarioTable::getComerciales();
             foreach ($comerciales as $comercial) {
 
@@ -979,16 +980,16 @@ class clientesActions extends sfActions {
                 $email->addTo($comercial->getCaEmail());
                 $ccEmails = array();
                 $usuarios = Doctrine::getTable("Usuario")       // Compia el mensaje a las personas de la sucursal con el perfil control alertas
-                    ->createQuery("u")
-                    ->innerJoin("u.UsuarioPerfil p")
-                    ->innerJoin("u.Sucursal s")
-                    ->where("s.ca_nombre = ? ", $comercial->getSucursal()->getCaNombre())
-                    ->addWhere("p.ca_perfil = ? ", "control-alertas-aduana-colsys")
-                    ->execute();
+                        ->createQuery("u")
+                        ->innerJoin("u.UsuarioPerfil p")
+                        ->innerJoin("u.Sucursal s")
+                        ->where("s.ca_nombre = ? ", $comercial->getSucursal()->getCaNombre())
+                        ->addWhere("p.ca_perfil = ? ", "control-alertas-aduana-colsys")
+                        ->execute();
                 foreach ($usuarios as $usuario) {
                     $ccEmails[] = $usuario->getCaEmail();
                 }
-                
+
                 reset($defaultEmail);
                 while (list ($clave, $val) = each($defaultEmail)) {
                     $email->addCc($val);
@@ -1211,12 +1212,12 @@ class clientesActions extends sfActions {
                     $email->addCc($val);
                 }
                 $usuarios = Doctrine::getTable("Usuario")       // Compia el mensaje a las personas de la sucursal con el perfil control alertas
-                    ->createQuery("u")
-                    ->innerJoin("u.UsuarioPerfil p")
-                    ->innerJoin("u.Sucursal s")
-                    ->where("s.ca_nombre = ? ", $comercial->getSucursal()->getCaNombre())
-                    ->addWhere("p.ca_perfil in ('control-alertas-clientes-colsys', 'control-alertas-aduana-colsys')")
-                    ->execute();
+                        ->createQuery("u")
+                        ->innerJoin("u.UsuarioPerfil p")
+                        ->innerJoin("u.Sucursal s")
+                        ->where("s.ca_nombre = ? ", $comercial->getSucursal()->getCaNombre())
+                        ->addWhere("p.ca_perfil in ('control-alertas-clientes-colsys', 'control-alertas-aduana-colsys')")
+                        ->execute();
                 foreach ($usuarios as $usuario) {
                     $email->addCc($usuario->getCaEmail());
                 }
@@ -2485,6 +2486,113 @@ class clientesActions extends sfActions {
 
         $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
 
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeAgaduanaAutorizadoExt4(sfWebRequest $request) {
+        
+    }
+
+    public function executeDatosAgaduanaAutorizado(sfWebRequest $request) {
+        $idcliente = $request->getParameter("idcliente");
+        $data = array();
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select ca_idcliente, ca_idagaduana, ca_nombre, ca_iddocumento, ca_fchvigencia, ca_fchautorizacion from tb_aducliente a inner join ids.tb_ids i on (i.ca_id = a.ca_idagaduana) where a.ca_idcliente= " . $idcliente . " and ca_usuanulado is null";
+        $rs = $con->execute($sql);
+        $aduclientes = $rs->fetchAll();
+
+        foreach ($aduclientes as $aducliente) {
+            $data[] = array("idcliente" => $aducliente["ca_idcliente"],
+                "id_agente" => $aducliente["ca_idagaduana"],
+                "nombre_agente" => utf8_encode($aducliente["ca_nombre"]),
+                "fecha_vigencia" => $aducliente["ca_fchvigencia"],
+                "fecha_autorizacion" => $aducliente["ca_fchautorizacion"],
+                "iddocumento" => utf8_encode($aducliente["ca_iddocumento"]));
+        }
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeAnularAgaduanaAutorizado(sfWebRequest $request) {
+        $idcliente = $request->getParameter("idcliente");
+        $id_agente = $request->getParameter("id_agente");
+
+        $conn = Doctrine::getTable("IdsCliente")->getConnection();
+        $conn->beginTransaction();
+
+        $aducliente = new AduCliente();
+        $aducliente = Doctrine::getTable("AduCliente")
+                ->createQuery("d")
+                ->where("d.ca_idagaduana = ?", $id_agente)
+                ->addWhere("d.ca_idcliente = ?", $idcliente)
+                ->fetchOne();
+        if ($aducliente) {
+            $aducliente->setCaUsuanulado($this->getUser()->getUserId());
+            $aducliente->setCaFchanulado(date("Y-m-d H:i:s"));
+            $aducliente->save();
+            $conn->commit();
+        }
+        $this->responseArray = array("success" => true);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeGuardarAgaduanaAutorizado(sfWebRequest $request) {
+        $idcliente = $request->getParameter("idcliente");
+        $datos = $request->getParameter("datos");
+        $datos = json_decode($datos);
+        $ids = array();
+        $idclientes = array();
+
+        $conn = Doctrine::getTable("AduCliente")->getConnection();
+        $conn->beginTransaction();
+        try {
+            foreach ($datos as $dato) {
+                $agente = Doctrine::getTable('Ids')->find($dato->id_agente);
+                if ($agente) {
+                    $aducliente = Doctrine::getTable("AduCliente")
+                            ->createQuery("d")
+                            ->where("d.ca_idagaduana = ?", $dato->id_agente)
+                            ->addWhere("d.ca_idcliente = ?", $idcliente)
+                            ->fetchOne();
+
+                    if (!$aducliente) {
+                        $aducliente = new AduCliente();
+                        $aducliente->setCaIdcliente($idcliente);
+                        $aducliente->setCaIdagaduana($dato->id_agente);
+                    }
+                    $aducliente->setCaFchvigencia($dato->fecha_vigencia);
+                    $aducliente->setCaFchautorizacion($dato->fecha_autorizacion);
+                    $aducliente->save();
+                    $idclientes[] = $aducliente->getCaIdcliente();
+                }
+                $ids[] = $dato->id;
+            }
+            $conn->commit();
+            $this->responseArray = array("success" => true, "id" => $ids, "idclientes" => $idclientes);
+        } catch (Exception $e) {
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeActualizarDocumentoAgaduana(sfWebRequest $request) {
+        $idcliente = $request->getParameter("idcliente");
+        $id_agente = $request->getParameter("id_agente");
+        $idarchivo = $request->getParameter("idarchivo");
+
+        if ($id_agente && $idcliente && $idarchivo) {
+            $aducliente = Doctrine::getTable("AduCliente")
+                    ->createQuery("d")
+                    ->where("d.ca_idagaduana = ?", $id_agente)
+                    ->addWhere("d.ca_idcliente = ?", $idcliente)
+                    ->fetchOne();
+            
+            if ($aducliente) {
+                $aducliente->setCaIddocumento($idarchivo);
+                $aducliente->save();
+            }
+        }
         $this->setTemplate("responseTemplate");
     }
 
