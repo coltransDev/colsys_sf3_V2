@@ -628,3 +628,40 @@ DocClientes:
       local: ca_iddocumento
       foreign: ca_idvalue
       type: one
+      
+AduCliente:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: public
+  tableName: tb_aducliente
+  columns:
+    ca_idcliente: 
+      type: integer      
+      primary: true
+    ca_idagaduana:
+      type: integer      
+      primary: true
+    ca_fchautorizacion: date
+    ca_fchvigencia: date
+    ca_iddocumento: integer
+    ca_fchanulado: timestamp
+    ca_usuanulado: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    Cliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: one
+    Ids:
+      local: ca_idagaduana
+      foreign: ca_id
+      type: one
+    Archivos:
+      local: ca_iddocumento
+      foreign: ca_idarchivo
+      type: one
