@@ -354,6 +354,9 @@ class NuevoStatusForm extends BaseForm {
           if ($request->hasParameter(self::$CSRFFieldName)){
           $taintedValues[self::$CSRFFieldName] = $request->getParameter(self::$CSRFFieldName);
           } */
+        $etapasExcluidas[] = "IMAGR";
+        $etapasExcluidas[] = "IAAGR";
+        
         if ($taintedValues["mensaje_mask"]) {
             $this->validatorSchema['mensaje']->setOption('required', false);
         }
@@ -373,7 +376,12 @@ class NuevoStatusForm extends BaseForm {
             $this->validatorSchema['fchrecibo']->setOption('required', true);
             $this->validatorSchema['horarecibo']->setOption('required', true);
         }
-
+        //Ticket 27959
+        if (in_array($taintedValues["idetapa"], $etapasExcluidas)) {
+            $this->validatorSchema['fchrecibo']->setOption('required', false);
+            $this->validatorSchema['horarecibo']->setOption('required', false);
+        }
+       
         if ($taintedValues["prog_seguimiento"]) {
             $this->validatorSchema['fchseguimiento']->setOption('required', true);
             $this->validatorSchema['txtseguimiento']->setOption('required', true);
@@ -399,18 +407,21 @@ class NuevoStatusForm extends BaseForm {
         $dif = TimeUtils::calcDiff($fest, strtotime($fch), time());
 
         if ($taintedValues["impoexpo"] == Constantes::IMPO && ($taintedValues["transporte"] == Constantes::MARITIMO || $taintedValues["transporte"] == Constantes::AEREO || $taintedValues["transporte"] == Constantes::TERRESTRE)) {
-            $maxTime = 0;
-            if ($taintedValues["transporte"] == Constantes::MARITIMO || $taintedValues["transporte"] == Constantes::TERRESTRE) {
-                $idgMax = IdgTable::getUnIndicador(RepStatus::IDG_MARITIMO, $taintedValues["fchrecibo"], $this->idsucursal);
-                $maxTime = $idgMax?$idgMax->getCaLim1()*3600:0;
-            }
-            if ($taintedValues["transporte"] == Constantes::AEREO) {
-                $idgMax = IdgTable::getUnIndicador(RepStatus::IDG_AEREO, $taintedValues["fchrecibo"], $this->idsucursal);
-                $maxTime = $idgMax?$idgMax->getCaLim1()*3600:0;
-            }
+            
+            if(!in_array($taintedValues["idetapa"], $etapasExcluidas)){ //Ticket 27959
+                $maxTime = 0;
+                if ($taintedValues["transporte"] == Constantes::MARITIMO || $taintedValues["transporte"] == Constantes::TERRESTRE) {
+                    $idgMax = IdgTable::getUnIndicador(RepStatus::IDG_MARITIMO, $taintedValues["fchrecibo"], $this->idsucursal);
+                    $maxTime = $idgMax?$idgMax->getCaLim1()*3600:0;
+                }
+                if ($taintedValues["transporte"] == Constantes::AEREO) {
+                    $idgMax = IdgTable::getUnIndicador(RepStatus::IDG_AEREO, $taintedValues["fchrecibo"], $this->idsucursal);
+                    $maxTime = $idgMax?$idgMax->getCaLim1()*3600:0;
+                }
              
-            if (!$taintedValues["observaciones_idg"] && $dif > $maxTime) {
-                $this->validatorSchema['observaciones_idg']->setOption('required', true);
+                if (!$taintedValues["observaciones_idg"] && $dif > $maxTime) {
+                    $this->validatorSchema['observaciones_idg']->setOption('required', true);
+                }
             }
         }
         $taintedValues["fchhorarecibo"] = $fch;

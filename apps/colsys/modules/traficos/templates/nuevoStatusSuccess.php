@@ -90,10 +90,15 @@ $folder = $reporte->getDirectorioBase();
             return 0;
         }
     }
+    
     if ($("#fchrecibo_ext_control").val() == "" || $("#horarecibo_hour").val() == "" || $("#horarecibo_minute").val() == "")
     {
-        alert("Por Favor ingrese la fecha y hora de recibido el status");
-        return 0;
+        var etapasExcluidas = ["IMAGR","IAAGR"];
+        
+        if(etapasExcluidas.indexOf($("#idetapa").val())<0){        
+            alert("Por Favor ingrese la fecha y hora de recibido el status");
+            return 0;
+        }
     }
 
     if (numChecked > 0 || <?= $reporte->getCliente()->getProperty("consolidar_comunicaciones") ? "true" : "false" ?>){
