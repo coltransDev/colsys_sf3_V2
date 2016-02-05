@@ -78,7 +78,7 @@ class clientesComponents extends sfComponents {
     }
 
     public function executeFormAgaduanaAutorizado(sfWebRequest $request) {
-        $this->idcliente = $request->getParameter("idcliente"); 
+        $this->idcliente = $request->getParameter("idcliente");
         $cliente = Doctrine::getTable("IdsCliente")->find($this->idcliente);
         $this->razonSocial = utf8_encode($cliente->getIds()->getCaNombre());
     }
@@ -105,20 +105,32 @@ class clientesComponents extends sfComponents {
         $this->idcliente = $request->getParameter("idcliente");
         $cliente = Doctrine::getTable("IdsCliente")->find($this->idcliente);
         $this->razonSocial = utf8_encode($cliente->getIds()->getCaNombre());
-        
+
         $this->data = array("idcliente" => $cliente->getCaIdcliente(),
-                            "fchcircular" => $cliente->getCaFchcircular(),
-                            "nvlriesgo" => utf8_encode($cliente->getCaNvlriesgo()),
-                            "leyinsolvencia" => utf8_encode($cliente->getCaLeyinsolvencia()),
-                            "comentario" => utf8_encode($cliente->getCaComentario()),
-                            "listaclinton" => utf8_encode($cliente->getCaListaclinton()),
-                            "tipo" => utf8_encode($cliente->getCaTipo()),
-                            "iso" => utf8_encode($cliente->getCaIso()),
-                            "iso_detalles" => utf8_encode($cliente->getCaIsoDetalles()),
-                            "basc" => utf8_encode($cliente->getCaBasc()),
-                            "otro_cert" => utf8_encode($cliente->getCaOtroCert()),
-                            "otro_detalles" => utf8_encode($cliente->getCaOtroDetalles())
-                            );
+            "fchcircular" => $cliente->getCaFchcircular(),
+            "nvlriesgo" => utf8_encode($cliente->getCaNvlriesgo()),
+            "leyinsolvencia" => utf8_encode($cliente->getCaLeyinsolvencia()),
+            "comentario" => utf8_encode($cliente->getCaComentario()),
+            "listaclinton" => utf8_encode($cliente->getCaListaclinton()),
+            "tipo" => utf8_encode($cliente->getCaTipo()),
+            "iso" => utf8_encode($cliente->getCaIso()),
+            "iso_detalles" => utf8_encode($cliente->getCaIsoDetalles()),
+            "basc" => utf8_encode($cliente->getCaBasc()),
+            "otro_cert" => utf8_encode($cliente->getCaOtroCert()),
+            "otro_detalles" => utf8_encode($cliente->getCaOtroDetalles())
+        );
+    }
+
+    public function executeFormFichaTecnica(sfWebRequest $request) {
+        $this->idcliente = $request->getParameter("idcliente");
+        $fichatecnica = Doctrine::getTable("FichaTecnica")
+                ->createQuery("d")
+                ->where("d.ca_idcliente = ?", $this->idcliente)
+                ->fetchOne();
+        if ($fichatecnica) {
+            $this->documentacion = $fichatecnica->getCaDocumentacion();
+            $this->transporte = $fichatecnica->getCaTransporteinternacional();
+        }
     }
 
 }

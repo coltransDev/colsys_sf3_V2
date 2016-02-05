@@ -1940,7 +1940,7 @@ class clientesActions extends sfActions {
     }
 
     public function executeDatosMandatosyPoderes(sfWebRequest $request) {
-        $mandatos = Doctrine::getTable("Mancliente")
+        $mandatos = Doctrine::getTable("ManCliente")
                 ->createQuery("m")
                 ->addWhere("m.ca_idcliente = ?", $this->getRequestParameter("id"))
                 ->execute();
@@ -1973,17 +1973,17 @@ class clientesActions extends sfActions {
         $fchvencimiento = $this->getRequestParameter("fchvencimiento");
         $observaciones = $this->getRequestParameter("observaciones");
 
-        $conn = Doctrine::getTable("Mancliente")->getConnection();
+        $conn = Doctrine::getTable("ManCliente")->getConnection();
         $conn->beginTransaction();
         try {
-            $mandatos = Doctrine::getTable("Mancliente")
+            $mandatos = Doctrine::getTable("ManCliente")
                     ->createQuery("m")
                     ->addWhere("m.ca_idcliente = ?", $id)
                     ->addWhere("m.ca_idtipo = ?", $idtipo)
                     ->addWhere("m.ca_idciudad = ?", $idciudad)
                     ->fetchOne();
             if (!$mandatos) {
-                $mandatos = new Mancliente();
+                $mandatos = new ManCliente();
                 $mandatos->setCaIdcliente($id);
                 $mandatos->setCaIdtipo($idtipo);
                 $mandatos->setCaIdciudad($idciudad);
@@ -2007,10 +2007,10 @@ class clientesActions extends sfActions {
         $idtipo = $this->getRequestParameter("idtipo");
         $idciudad = $this->getRequestParameter("idciudad");
 
-        $conn = Doctrine::getTable("Mancliente")->getConnection();
+        $conn = Doctrine::getTable("ManCliente")->getConnection();
         $conn->beginTransaction();
         try {
-            $mandatos = Doctrine::getTable("Mancliente")
+            $mandatos = Doctrine::getTable("ManCliente")
                     ->createQuery("m")
                     ->addWhere("m.ca_idcliente = ?", $id)
                     ->addWhere("m.ca_idtipo = ?", $idtipo)
@@ -2392,15 +2392,15 @@ class clientesActions extends sfActions {
             $conn->beginTransaction();
             try {
                 foreach ($datosGrid as $datoGrid) {
-                    $doccliente = new DocClientes();
-                    $doccliente = Doctrine::getTable("DocClientes")
+                    $doccliente = new DocCliente();
+                    $doccliente = Doctrine::getTable("DocCliente")
                             ->createQuery("d")
                             ->where("d.ca_idcliente = ?", $idcliente)
                             ->addWhere("d.ca_iddocumento = ?", $datoGrid->iddocumento)
                             ->fetchOne();
 
                     if (!$doccliente) {
-                        $doccliente = new DocClientes();
+                        $doccliente = new DocCliente();
                         if ($datoGrid->iddocumento) {
                             $doccliente->setCaIddocumento($datoGrid->iddocumento);
                         }
@@ -2587,13 +2587,76 @@ class clientesActions extends sfActions {
                     ->where("d.ca_idagaduana = ?", $id_agente)
                     ->addWhere("d.ca_idcliente = ?", $idcliente)
                     ->fetchOne();
-            
+
             if ($aducliente) {
                 $aducliente->setCaIddocumento($idarchivo);
                 $aducliente->save();
             }
         }
         $this->setTemplate("responseTemplate");
+    }
+
+    public function executeFichaTecnicaExt4(sfWebRequest $request) {
+        
+    }
+
+    public function executeDatosFichaTecnica(sfWebRequest $request) {
+        
+    }
+
+    public function executeDatosTransporteFichaTecnica(sfWebRequest $request) {
+        $idcliente = $request->getParameter("idcliente");
+        $fichatecnica = new FichaTecnica();
+        $fichatecnica = Doctrine::getTable("FichaTecnica")
+                ->createQuery("d")
+                ->where("d.ca_idcliente = ?", $idcliente)
+                ->fetchOne();
+        $this->responseArray = array("success" => true, "root" => json_decode($fichatecnica->getCaTransporteinternacional()));
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeActualizarFichaTecnica(sfWebRequest $request) {
+        $datos = $request->getParameter("datos");
+
+        $datosGrilla = $request->getParameter("datosGrid");
+        $idcliente = $request->getParameter("idcliente");
+        $conn = Doctrine::getTable("FichaTecnica")->getConnection();
+        $conn->beginTransaction();
+        try {
+            $fichatecnica = new FichaTecnica();
+            $fichatecnica = Doctrine::getTable("FichaTecnica")
+                    ->createQuery("d")
+                    ->where("d.ca_idcliente = ?", $idcliente)
+                    ->fetchOne();
+            if (!$fichatecnica) {
+                $fichatecnica = new FichaTecnica();
+                $fichatecnica->setCaIdcliente($idcliente);
+            }
+            $fichatecnica->setCaTransporteinternacional(utf8_decode($datosGrilla));
+            $fichatecnica->setCaDocumentacion(utf8_decode($datos));
+            $fichatecnica->save();
+            $conn->commit();
+            $this->responseArray = array("success" => true, "f" => $datos->fchvencimientoRCE);
+        } catch (Exception $e) {
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+
+
+        $this->responseArray = array("success" => true);
+
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeFichaTecnicaPdf(sfWebRequest $request) {
+        $idcliente = $request->getParameter("idcliente");
+        $conn = Doctrine::getTable("FichaTecnica")->getConnection();
+        $this->fichatecnica = Doctrine::getTable("FichaTecnica")
+                ->createQuery("d")
+                ->where("d.ca_idcliente = ?", $idcliente)
+                ->fetchOne();
+        
+        $this->setTemplate("fichaTecnicaPdf");
     }
 
 }

@@ -656,7 +656,22 @@ IdsCliente:
       local: ca_idcliente
       foreign: ca_idcliente
       type: one
-
+    ManCliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: many
+    DocCliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: many
+    AduCliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: many
+    FichaTecnica:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: one
 
 IdsSeguimiento:
   options:

@@ -537,13 +537,12 @@ MandatosTipo:
     ca_fchactualizado: timestamp
     ca_usuactualizado: string
   relations:
-    Mancliente:
+    ManCliente:
       local: ca_idtipo
       foreign: ca_idtipo
       type: many
 
-
-Mancliente:
+ManCliente:
   options:
     symfony:
       form: false
@@ -591,7 +590,7 @@ Mancliente:
       type: one
       class: Usuario
 
-DocClientes:
+DocCliente:
   options:
     symfony:
       form: false
@@ -664,4 +663,30 @@ AduCliente:
     Archivos:
       local: ca_iddocumento
       foreign: ca_idarchivo
+      type: one
+
+FichaTecnica:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: public
+  tableName: tb_ficha_tecnica
+  columns:
+    ca_documentacion:
+      type: json
+    ca_transporteinternacional:
+      type: json
+    ca_idcliente:
+      type: integer
+      notnull: true
+      primary: true
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    Cliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
       type: one
