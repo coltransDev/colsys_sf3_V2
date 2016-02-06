@@ -783,7 +783,6 @@ class gestDocumentalActions extends sfActions {
     }
 
     public function executeDataFilesTree($request) {
-
         $node = ($request->getParameter("node") != "root" ) ? $request->getParameter("node") : "0";
         $idsserie = $this->getRequestParameter("idsserie");        
         $documento = $request->getParameter("documento");
@@ -817,7 +816,7 @@ class gestDocumentalActions extends sfActions {
             $q->addWhere("ca_ref2 like ?", "%" . $ref2 . "%");
 
         if ($ref3 != "")
-            $q->addWhere("ca_ref2 like ?", "%" . $ref3 . "%");
+            $q->addWhere("ca_ref3 like ?", "%" . $ref3 . "%");
 
         $tipoDocs = $q->execute();
         $this->tipoDocs = array();
