@@ -98,9 +98,9 @@ include_component("clientes", "formSubirArchivoAgente");
                         xtype: 'wAgentesAduana',
                     },
                 }, {
-                    header: 'Fecha Vigencia',
-                    width: 120,
-                    dataIndex: 'fecha_vigencia',
+                    header: 'Fecha Autorización',
+                    width: 140,
+                    dataIndex: 'fecha_autorizacion',
                     renderer: Ext.util.Format.dateRenderer('Y-m-d'),
                     editor: new Ext.form.DateField({
                         width: 90,
@@ -109,9 +109,9 @@ include_component("clientes", "formSubirArchivoAgente");
                         useStrict: undefined
                     })
                 }, {
-                    header: 'Fecha Autorizacion',
-                    width: 140,
-                    dataIndex: 'fecha_autorizacion',
+                    header: 'Fin de Vigencia',
+                    width: 120,
+                    dataIndex: 'fecha_vigencia',
                     renderer: Ext.util.Format.dateRenderer('Y-m-d'),
                     editor: new Ext.form.DateField({
                         width: 90,
