@@ -20,6 +20,23 @@ class TimeUtils{
             $difference = (round(($end_date-$start_date),0)==0)?1:round(($end_date-$start_date),0);
             return $difference;
         }
+        
+        public static function dateDiff1($startDate, $endDate) {
+            if (strlen($startDate) == 0 or strlen($endDate) == 0) { // Valida si Inicio o Final viene en Blanco
+                return (null);  // Retorna un Null cuando no se puede calcular la diferencia.
+            }            
+            // Parse dates for conversion
+            $startArry = date_parse($startDate);
+            $endArry = date_parse($endDate);
+
+            // Convert dates to Julian Days
+            $start_date = gregoriantojd($startArry["month"], $startArry["day"], $startArry["year"]);
+            $end_date = gregoriantojd($endArry["month"], $endArry["day"], $endArry["year"]);
+
+            // Return difference
+            $difference = round(($end_date-$start_date),0);
+            return $difference;
+        }
 
 	/*
 	* Retorna la diferencia en días laborales de dos fechas, excluyendo fines de
