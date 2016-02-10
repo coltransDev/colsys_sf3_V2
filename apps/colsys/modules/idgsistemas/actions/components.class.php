@@ -28,7 +28,8 @@ class idgsistemasComponents extends sfComponents {
         
         $departamentos = Doctrine::getTable("Departamento")
                 ->createQuery("d")
-                ->innerJoin("d.Usuario u")
+                ->select("d.ca_iddepartamento", "d.ca_nombre")
+                ->leftJoin("d.Usuario u")
                 ->where("d.ca_inhelpdesk = ?", true)
                 ->addWhere("u.ca_login = ?", $user->getUserId())
                 ->orWhere("d.ca_nombre = ?", $depAdic)

@@ -281,7 +281,7 @@ class idgsistemasActions extends sfActions {
                             GROUP BY tk.ca_opened, tk.ca_idticket, tk.ca_title, tk.ca_assignedto, fechacreado, horacreado, tk.ca_login, gr.ca_iddepartament, gr.ca_name, tk.ca_percentage
                             ORDER BY tk.ca_idticket
                              ) as consulta
-                        WHERE ult_fch < '" . $this->fechaUltSeg . "' AND consulta.ca_iddepartament = $iddepartamento AND ca_percentage<='" . $porcentaje . "'";
+                        WHERE ult_fch <= '" . $this->fechaUltSeg . "' AND consulta.ca_iddepartament = $iddepartamento AND ca_percentage<='" . $porcentaje . "'";
                     break;
             }
             $st = $con->execute($sql);
