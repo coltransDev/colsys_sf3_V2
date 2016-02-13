@@ -2169,5 +2169,145 @@ class reportesGerActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
     
+    public function executeReporteElaboracionCotizacionesExt5(sfWebRequest $request) {
+        
+    }
+
+    public function executeDatosVendedores(sfWebRequest $request) {
+        $this->responseArray = "";
+        if($request->getParameter("verificacion") == 1){
+            $nombresucursal = $request->getParameter("nombresucursal");
+            $nombresucursal = utf8_decode($nombresucursal);
+            $vendedores = array();
+
+            $where = "";
+
+            if($nombresucursal == ''){
+                $where = "and s.ca_nombre like '%'";
+            }
+
+            if($nombresucursal != "Todas Las sucursales"){
+                $where = "and s.ca_nombre = '" . $nombresucursal . "'";
+            }
+
+            $usuarios_rs = Doctrine::getTable("Usuario")
+                    ->createQuery("u")
+                    ->innerJoin("u.Sucursal s")
+                    ->addWhere("(u.ca_departamento='Comercial' or u.ca_cargo='Representante de Ventas')  ".$where)
+                    ->orderBy("u.ca_login")
+                    ->execute();
+
+            $vendedores[] = array("id" => "%", "text" => "Usuarios (Todos)", "leaf" => true, "checked" => false);
+
+            foreach ($usuarios_rs as $usuario) {
+                $vendedores[] = array("id" => $usuario->getCaLogin(), "text" => utf8_encode($usuario->getCaNombre()), "leaf" => true, "checked" => false);
+            }
+
+        $this->responseArray = $vendedores;
+        }
+
+    $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosOperativos(sfWebRequest $request) {
+        $this->responseArray = "";
+        if($request->getParameter("verificacion") == 1){
+        
+            $nombresucursal = $request->getParameter("nombresucursal");
+            $nombresucursal = utf8_decode($nombresucursal);
+            $vendedores = array();
+
+            $where = "";
+
+            if($nombresucursal == ''){
+                $where = "and s.ca_nombre like '%'";
+            }
+
+            if($nombresucursal != "Todas Las sucursales"){
+                $where = "and s.ca_nombre = '" . $nombresucursal . "'";
+            }
+            $usuarios_rs = Doctrine::getTable("Usuario")
+                    ->createQuery("u")
+                    ->innerJoin("u.Sucursal s")
+                    ->addWhere("(u.ca_departamento='Servicio al Cliente' or u.ca_cargo='Asistente Servicio al Cliente')  ".$where)
+                    ->orderBy("u.ca_login")
+                    ->execute();
+
+
+            $vendedores[] = array("id" => "%", "text" => "Usuarios (Todos)", "leaf" => true, "checked" => false);
+
+            foreach ($usuarios_rs as $usuario) {
+                $vendedores[] = array("id" => $usuario->getCaLogin(), "text" => utf8_encode($usuario->getCaNombre()), "leaf" => true, "checked" => false);
+            }
+
+            $this->responseArray = $vendedores;
+
+        }
+        $this->setTemplate("responseTemplate");
+    }
+    public function executeReporteElaboracionCotizacionesListExt5(sfWebRequest $request){
+        
+        $anio = $request->getParameter("anio");
+        $mes = $request->getParameter("mes");
+        $sucursal = $request->getParameter("sucursal");
+        $vendedores = $request->getParameter("vendedores");
+        $operativos = $request->getParameter("operativos");
+        $vendedores = json_decode($vendedores);
+        $operativos = json_decode($operativos);
+       
+        $where = array();
+        foreach ($vendedores as $vendedor){
+            $where[] = "'".$vendedor->id."'";
+        }
+         
+        foreach ($operativos as $operativo){
+            $where[] = "'".$operativo->id."'";
+        }
+       
+        $whereUsuarios = implode(",", $where);
+        
+        if($whereUsuarios != ""){
+            $whereUsuarios = "tr.ca_usucreado in (".$whereUsuarios.") and ";
+        }
+        
+        $dateInicial = $anio."-".$mes."-01";
+        $ultimodia = date("d",(mktime(0,0,0,$mes+1,1,$anio)-1));
+        $dateFinal = $anio."-".$mes."-".$ultimodia; 
+        
+        $sql = "select tr.ca_fchcreado  , cc.ca_idalterno, cc.ca_digito, ";
+        $sql.= "cc.ca_compania, cc.ca_ncompleto_cn, cc.ca_cargo, ct.ca_consecutivo,tr.ca_usucreado ";
+        $sql.= "from tb_cotizaciones ct ";
+        $sql.= "inner join vi_concliente cc on cc.ca_idcontacto = ct.ca_idcontacto ";
+        $sql.= "inner join notificaciones.tb_tareas tr on tr.ca_idtarea = ct.ca_idg_envio_oportuno ";
+        $sql.= "where ".$whereUsuarios;
+        $sql.= "tr.ca_fchcreado between '".$dateInicial."' and '".$dateFinal."'";
+        
+        $q = Doctrine_Manager::getInstance()->connection();
+        $stmt = $q->execute($sql);
+        $rs = $stmt->fetchAll();
+        
+        $listaReporte = array();
+        foreach ($rs as $result){
+            $creador = Doctrine::getTable("Usuario")
+                ->createQuery("u")
+                ->select("*")
+                ->where("u.ca_login = ?",utf8_encode($result["ca_usucreado"]))
+                ->fetchOne();
+            if ($creador){              
+                $listaReporte[] = array("ca_fchcreado" => utf8_encode($result["ca_fchcreado"]),
+                                        "ca_nit" => utf8_encode($result["ca_idalterno"]."-".($result["ca_digito"])),                            
+                                        "ca_compania" => utf8_encode($result["ca_compania"]),    
+                                        "ca_ncompleto_cn" => utf8_encode($result["ca_ncompleto_cn"]),  
+                                        "ca_consecutivo" => utf8_encode($result["ca_consecutivo"]),
+                                        "ca_usucreado" => utf8_encode($creador->getCaNombres()." ".$creador->getCaApellidos()),
+                                        );
+            }
+        }  
+        
+        $this->rs = $listaReporte;
+        $this->dateInicial = $dateInicial;
+        $this->dateFinal = $dateFinal;
+        
+    }
 }
 ?>

@@ -202,5 +202,52 @@ class reportesGerComponents extends sfComponents
         $this->estado = $this->getRequestParameter("estado");        
         
     }
+    
+    public function executeFormReporteElaboracionCotizaciones(sfWebRequest $request){
+        $this->annos = array();
+        for ($i = (date("Y")); $i >= (date("Y") - 5); $i--) {
+            $this->annos[] = $i;
+        }
+
+        // "%" => "Todos los Meses", 
+        $this->meses = array();
+        $this->meses[] = array("idmes" => "01", "nommes" => "Enero");
+        $this->meses[] = array("idmes" => "02", "nommes" => "Febrero");
+        $this->meses[] = array("idmes" => "03", "nommes" => "Marzo");
+        $this->meses[] = array("idmes" => "04", "nommes" => "Abril");
+        $this->meses[] = array("idmes" => "05", "nommes" => "Mayo");
+        $this->meses[] = array("idmes" => "06", "nommes" => "Junio");
+        $this->meses[] = array("idmes" => "07", "nommes" => "Julio");
+        $this->meses[] = array("idmes" => "08", "nommes" => "Agosto");
+        $this->meses[] = array("idmes" => "09", "nommes" => "Septiembre");
+        $this->meses[] = array("idmes" => "10", "nommes" => "Octubre");
+        $this->meses[] = array("idmes" => "11", "nommes" => "Noviembre");
+        $this->meses[] = array("idmes" => "12", "nommes" => "Diciembre");
+            
+        //"01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre");
+        
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select DISTINCT ca_nombre as ca_sucursal from control.tb_sucursales where ca_idempresa = 2 order by ca_sucursal";
+        $rs = $con->execute($sql);
+        $sucursales_rs = $rs->fetchAll();
+        $this->sucursales = array();
+        foreach ($sucursales_rs as $sucursal) {
+            $this->sucursales[] = utf8_encode($sucursal["ca_sucursal"]);
+        }
+        
+        $usuarios_rs = Doctrine::getTable("Usuario")
+           ->createQuery("u")
+           ->innerJoin("u.Sucursal s")
+           ->addWhere("u.ca_departamento='Servicio al Cliente' or u.ca_cargo='Asistente Servicio al Cliente'")
+           ->orderBy("u.ca_login")
+           ->execute();
+        $this->operativos = array();
+        $this->operativos[] = array("id" => "%", "nombre" => "Usuarios (Todos)");
+        foreach ($usuarios_rs as $usuario) {
+             $this->operativos[] = array("id" => $usuario->getCaLogin(), "nombre" => utf8_decode($usuario->getCaNombre()));
+        }
+        
+        
+    }
 }
 ?>
