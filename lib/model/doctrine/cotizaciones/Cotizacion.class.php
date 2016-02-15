@@ -80,6 +80,7 @@ class Cotizacion extends BaseCotizacion {
      */
 
     public function getTiempoIdg($fchTarea) {
+        $idgMax = null;
         if ($this->getCaEmpresa() == Constantes::COLTRANS) {
             $idgMax = IdgTable::getUnIndicador(Cotizacion::IDG_COLTRANS, $fchTarea, $this->getUsuario()->getCaIdsucursal());
         }else if ($this->getCaEmpresa() == Constantes::COLMAS) {
