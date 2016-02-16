@@ -380,7 +380,8 @@ Costo:
     ca_comisionable: string
     ca_parametros: string
     ca_activo: boolean
-
+    ca_conceptoopen: string
+    
 Deduccion:
   options:
     symfony:
