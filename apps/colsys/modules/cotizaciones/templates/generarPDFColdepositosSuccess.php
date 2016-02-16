@@ -247,7 +247,7 @@ $pdf->MultiCell(0, 4, $sucursal->getCaNombre() . " - " . $empresa->getTrafico()-
 $pdf->MultiCell(0, 4, $usuario->getCaEmail(), 0, 1);
 $pdf->MultiCell(0, 4, $empresa->getCaUrl(), 0, 1);
 
-if ($cotizacion->getCaAnexos() != '' && $empresa->getCaIdempresa() == 1) {
+if ($cotizacion->getCaAnexos() != '') {
     $pdf->Ln(6);
     $pdf->MultiCell(0, 4, "Anexo: " . $cotizacion->getCaAnexos(), 0, 1);
 }

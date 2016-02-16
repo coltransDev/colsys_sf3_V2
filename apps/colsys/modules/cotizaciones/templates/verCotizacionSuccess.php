@@ -215,7 +215,7 @@ if( !$cotizacion->getCaUsuanulado() ){
 }
 if( !$enBlanco  ){
 ?>	
-<iframe src="<?=url_for("cotizaciones/generarPDF".$cotizacion->getCaEmpresa()."?id=".$cotizacion->getCaIdcotizacion()."&token=".md5(time()))?>" width="830px" height="650px"></iframe>
+<iframe src="<?=url_for("cotizaciones/generarPDF".strtr($cotizacion->getCaEmpresa(), "αινσϊ", "aeiou")."?id=".$cotizacion->getCaIdcotizacion()."&token=".md5(time()))?>" width="830px" height="650px"></iframe>
 
 <?
 }else{

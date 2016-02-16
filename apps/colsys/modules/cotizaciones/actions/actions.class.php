@@ -609,8 +609,6 @@ class cotizacionesActions extends sfActions {
                 ->where("ca_nombre = ? and ca_idempresa=2" , $this->usuario->getSucursal()->getcaNombre() )
                 ->fetchOne();
         
-        $this->setTemplate("generarPDF" . $this->cotizacion->getCaEmpresa());
-
         $this->grupos = $grupos;
     }
     
@@ -621,8 +619,6 @@ class cotizacionesActions extends sfActions {
 
         $this->filename = $this->getRequestParameter("filename");
         $this->notas = sfYaml::load(sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "cotizaciones" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "notas.yml");
-
-        $this->setTemplate("generarPDF" . $this->cotizacion->getCaEmpresa());
     }
     
     public function executeGenerarPDFColdepositos() {
@@ -631,8 +627,6 @@ class cotizacionesActions extends sfActions {
 
         $this->filename = $this->getRequestParameter("filename");
         $this->notas = sfYaml::load(sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "cotizaciones" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "notas.yml");
-
-        $this->setTemplate("generarPDF" . strtr($this->cotizacion->getCaEmpresa(), "αινσϊ", "aeiou"));
     }
     
     public function executeGenerarPDFTPLogistics() {
@@ -656,8 +650,6 @@ class cotizacionesActions extends sfActions {
             $grupos[$row["ca_transporte"]][] = $row["ca_modalidad"];
             $grupos[$row["ca_transporte"]] = array_unique($grupos[$row["ca_transporte"]]);
         }
-        $this->setTemplate("generarPDF" . $this->cotizacion->getCaEmpresa());
-
         $this->grupos = $grupos;
     }
 
@@ -682,8 +674,8 @@ class cotizacionesActions extends sfActions {
             $grupos[$row["ca_transporte"]][] = $row["ca_modalidad"];
             $grupos[$row["ca_transporte"]] = array_unique($grupos[$row["ca_transporte"]]);
         }
-        //$this->setTemplate("generarPDFColtrans" );
-        $this->setTemplate("generarPDF" . $this->cotizacion->getCaEmpresa());
+        
+        $this->setTemplate("generarPDF" . strtr($this->cotizacion->getCaEmpresa(), "αινσϊ", "aeiou"));
         $this->grupos = $grupos;
     }
 
@@ -931,6 +923,13 @@ class cotizacionesActions extends sfActions {
                 $newAduana = $aduana->copy(false);
                 $newAduana->setCaIdcotizacion($newCotizacion->getCaIdcotizacion());
                 $newAduana->save($conn);
+            }
+
+            $depositos = $cotizacion->getCotDeposito();
+            foreach ($depositos as $deposito) {
+                $newDeposito = $deposito->copy(false);
+                $newDeposito->setCaIdcotizacion($newCotizacion->getCaIdcotizacion());
+                $newDeposito->save($conn);
             }
 
             $continuaciones = $cotizacion->getCotContinuacion();
@@ -2564,6 +2563,7 @@ class cotizacionesActions extends sfActions {
                 $data["anexos"] = utf8_encode($textos['anexos']);
                 $data["anexosColtrans"] = utf8_encode($textos['anexos']);
 		$data["anexosColmas"] = utf8_encode($textos['anexosColmas']);
+                $data["instruccionesColdepositos"] = utf8_encode($textos['instruccionesColdepositos']);
                 $data["anexosColdepositos"] = utf8_encode($textos['anexosColdepositos']);
                 $data["fuente_id"] = "Tahoma";
             }else{

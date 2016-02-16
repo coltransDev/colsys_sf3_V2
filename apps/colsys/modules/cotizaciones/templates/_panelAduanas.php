@@ -194,7 +194,7 @@ PanelAduanas = function( config ){
                 sortable: true,
                 dataIndex: 'observaciones',
                 hideable: false,
-                editor: new Ext.form.TextField({
+                editor: new Ext.form.TextArea({
                             name: 'observaciones'
                 })
             }
@@ -292,12 +292,11 @@ Ext.extend(PanelAduanas, Ext.grid.EditorGridPanel, {
                         iconCls: 'delete',
                         scope:this,
                         handler: function(){
-                            if( this.ctxRecord && confirm("Desea continuar?") ){
-                                var id = this.ctxRecord.id;
-                                var oid = this.ctxRecord.data.oid;
-                                var storeAduanasCot = this.store;
-
-                                if( oid ){
+                            var id = this.ctxRecord.id;
+                            var oid = this.ctxRecord.data.oid;
+                            var storeAduanasCot = this.store;
+                            if( oid ){
+                                if( this.ctxRecord && confirm("Desea continuar?") ){
                                     Ext.Ajax.request(
                                     {
                                         waitMsg: 'Guardando cambios...',
@@ -320,6 +319,8 @@ Ext.extend(PanelAduanas, Ext.grid.EditorGridPanel, {
                                         }
                                     });
                                 }
+                            } else {
+                                storeAduanasCot.remove(this.ctxRecord);
                             }
                         }
                     }
@@ -530,12 +531,9 @@ Ext.extend(PanelAduanas, Ext.grid.EditorGridPanel, {
                               fchfin:'',
                               observaciones:'',
                               orden:'Z'
-
                             });
-        records = [];
-        records.push( rec );
-        storeAduanasCot.insert( 0, records );
-        rec = storeAduanasCot.getAt(0);
+        storeAduanasCot.insert( 0, rec );
+        this.startEditing( 0, 1 );
     },
 
     /*

@@ -202,7 +202,7 @@ PanelDepositos = function( config ){
                 sortable: true,
                 dataIndex: 'observaciones',
                 hideable: false,
-                editor: new Ext.form.TextField({
+                editor: new Ext.form.TextArea({
                             name: 'observaciones'
                 })
             }
@@ -215,7 +215,7 @@ PanelDepositos = function( config ){
                 width: 25,
                 items: [{
                     icon   : '/images/fam/table_add.png',  // Use a URL in the icon config
-                    tooltip: 'Menu contextual'                        
+                    tooltip: 'Menu contextual'
                 }]
             }
             <?
@@ -311,12 +311,11 @@ Ext.extend(PanelDepositos, Ext.grid.EditorGridPanel, {
                         iconCls: 'delete',
                         scope:this,
                         handler: function(){
-                            if( this.ctxRecord && confirm("Desea continuar?") ){
-                                var id = this.ctxRecord.id;
-                                var oid = this.ctxRecord.data.oid;
-                                var storeDepositosCot = this.store;
-
-                                if( oid ){
+                            var id = this.ctxRecord.id;
+                            var oid = this.ctxRecord.data.oid;
+                            var storeDepositosCot = this.store;
+                            if( oid ){
+                                if( this.ctxRecord && confirm("Desea continuar?") ){
                                     Ext.Ajax.request(
                                     {
                                         waitMsg: 'Guardando cambios...',
@@ -339,6 +338,8 @@ Ext.extend(PanelDepositos, Ext.grid.EditorGridPanel, {
                                         }
                                     });
                                 }
+                            } else {
+                                storeDepositosCot.remove(this.ctxRecord);
                             }
                         }
                     }
@@ -368,8 +369,7 @@ Ext.extend(PanelDepositos, Ext.grid.EditorGridPanel, {
     },
     
     onRowcellclick: function( grid, rowIndex, columnIndex, e ){    
-        
-        if( columnIndex == 10 ){
+        if( columnIndex == 11 ){
             storeDepositosCot = grid.store;
             var store = this.store;
             this.ctxRecord = this.store.getAt( rowIndex );
@@ -560,12 +560,9 @@ Ext.extend(PanelDepositos, Ext.grid.EditorGridPanel, {
                               fchfin:'',
                               observaciones:'',
                               orden:'Z'
-
                             });
-        records = [];
-        records.push( rec );
-        storeDepositosCot.insert( 0, records );
-        rec = storeDepositosCot.getAt(0);
+        storeDepositosCot.insert( 0, rec );
+        this.startEditing( 0, 1 );
     },
 
     /*
