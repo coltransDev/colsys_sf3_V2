@@ -127,7 +127,7 @@ $depositos = Doctrine::getTable("CotDeposito")
         ->where("ca.ca_idcotizacion = ?", $cotizacion->getCaIdcotizacion())
         ->innerJoin("ca.Costo c") // ON ca.ca_parametro = c.ca_parametros
         ->leftJoin("c.ConceptoDeposito a ON c.ca_idcosto = a.ca_idconcepto and ca.ca_parametro = a.ca_parametro")
-        ->addOrderBy("c.ca_transporte, c.ca_parametros, a.ca_consecutivo")
+        ->addOrderBy("c.ca_transporte, c.ca_modalidad, c.ca_idcosto")
         //->getSqlQuery();
         ->execute();
 
