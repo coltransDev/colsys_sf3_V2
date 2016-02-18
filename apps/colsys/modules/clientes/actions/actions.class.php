@@ -1740,15 +1740,14 @@ class clientesActions extends sfActions {
                 $comienzo_log = "<b>linea</b>=" . $i . ":::<b>Factura</b>=" . $nfact . ":::<b>Recibo</b>=" . $nrecibo . " ::: ";
                 if (count($datos) != 13) {
                     $resultado[$i] = $comienzo_log . "Existen cantidad de campos diferente a los establecidos<br>";
-                    $estadisticas["formato_incorrecto"]++;
+                    $estadisticas["formato_incorrecto"] ++;
                     continue;
                 }
                 //echo $sucRec[$suc_recibo].'-'.$sucFac[$suc_factura]."<br>";
-                if($suc_recibo!="15" && $suc_recibo!="5" )
-                {
+                if ($suc_recibo != "15" && $suc_recibo != "5") {
                     if ($sucRec[$suc_recibo] != $sucFac[$suc_factura]) {
-                        $resultado[$i] = $comienzo_log . "La sucursal registrada en el recibo es diferente a la de la factura (".$suc_recibo ." :: ".$sucFac[$suc_factura].")";
-                        $estadisticas["direfente_sucursal"]++;
+                        $resultado[$i] = $comienzo_log . "La sucursal registrada en el recibo es diferente a la de la factura (" . $suc_recibo . " :: " . $sucFac[$suc_factura] . ")";
+                        $estadisticas["direfente_sucursal"] ++;
                         continue;
                     }
                 }
@@ -1756,41 +1755,39 @@ class clientesActions extends sfActions {
                 if (!$nfact) {
 
                     $resultado[$i] = $comienzo_log . "No posee No Factura";
-                    $estadisticas["sin_factura"]++;
+                    $estadisticas["sin_factura"] ++;
                     continue;
                 }
                 if (strcmp($tipo_comp, 'F') != 0) {
                     $resultado[$i] = $comienzo_log . "No posee No Factura " . $tipo_comp . " ";
-                    $estadisticas["sin_factura"]++;
+                    $estadisticas["sin_factura"] ++;
                     continue;
                 }
 
                 if ($datos[2] == "" && $datos[7] == "") {
                     $resultado[$i] = $comienzo_log . "No posee No Recibo de caja ni fecha de pago";
-                    $estadisticas["sin_recibo"]++;
-                    $estadisticas["sin_fecha"]++;
+                    $estadisticas["sin_recibo"] ++;
+                    $estadisticas["sin_fecha"] ++;
                     continue;
                 }
                 if ($datos[2] == "") {
                     $resultado[$i] = $comienzo_log . "No posee No Recibo de caja";
-                    $estadisticas["sin_recibo"]++;
+                    $estadisticas["sin_recibo"] ++;
                 }
                 if ($datos[7] == "") {
                     $resultado[$i] = $comienzo_log . "No posee fecha de pago";
-                    $estadisticas["sin_fecha"]++;
+                    $estadisticas["sin_fecha"] ++;
                 }
 
                 $encontro = false;
                 $actualizo = false;
 
-                if($suc_recibo=="15" || $suc_recibo=="5")
-                {
-                    $sucursal=$this->getUser()->getIdSucursal();
+                if ($suc_recibo == "15" || $suc_recibo == "5") {
+                    $sucursal = $this->getUser()->getIdSucursal();
                     //echo "RECIBO L15".$suc_recibo;
-                }
-                else
+                } else
                     $sucursal = $sucRec[$suc_recibo];
-                
+
                 if ($sucursal == "BOG" || $sucursal == "ABO" || $sucursal == "OBO")
                     $sucursal = "'BOG','ABO','OBO'";
                 else if ($sucursal == "CLO" || $sucursal == "ACL" || $sucursal == "OCL")
@@ -1804,7 +1801,7 @@ class clientesActions extends sfActions {
                         from " . $tabla . " t,control.tb_usuarios u where (ca_factura ='" . $nfact . "' or ca_factura ='F" . $suc_factura . "-" . $nfact . "' or ca_factura ='F" . $suc_factura . " " . $nfact . "' or ca_factura ='f" . $suc_factura . "-" . $nfact . "' or ca_factura ='f" . $suc_factura . " " . $nfact . "' ) and t.ca_usucreado=u.ca_login and u.ca_idsucursal in ($sucursal) ";
                     //echo  $sql."<br>";
                     $st = $con->execute($sql);
-                    $ref = $st->fetch();                    
+                    $ref = $st->fetch();
 
                     if ($ref) {
                         $set = "";
@@ -1855,14 +1852,14 @@ class clientesActions extends sfActions {
                     $resultado[$i].=($resultado[$i] == "") ? $comienzo_log : "";
                     if (!$encontro) {
                         $resultado[$i].="FACTURA NO ENCONTRADA";
-                        $estadisticas["no_encontrado"]++;
+                        $estadisticas["no_encontrado"] ++;
                     }
                     if (!$actualizo) {
                         $resultado[$i].="Registro no actualizado";
-                        $estadisticas["no_actualizado"]++;
+                        $estadisticas["no_actualizado"] ++;
                     }
                 } else {
-                    $estadisticas["actualizada"]++;
+                    $estadisticas["actualizada"] ++;
 
                     $resultado[$i] = $comienzo_log . " REGISTRO IMPORTADO";
                 }
@@ -2395,13 +2392,14 @@ class clientesActions extends sfActions {
             $conn->beginTransaction();
             try {
                 foreach ($datosGrid as $datoGrid) {
-                    $doccliente = new DocCliente();
-                    $doccliente = Doctrine::getTable("DocCliente")
-                            ->createQuery("d")
-                            ->where("d.ca_idcliente = ?", $idcliente)
-                            ->addWhere("d.ca_iddocumento = ?", $datoGrid->iddocumento)
-                            ->fetchOne();
 
+                    if ($datoGrid->iddocumento) {
+                        $doccliente = Doctrine::getTable("DocCliente")
+                                ->createQuery("d")
+                                ->where("d.ca_idcliente = ?", $idcliente)
+                                ->addWhere("d.ca_iddocumento = ?", $datoGrid->iddocumento)
+                                ->fetchOne();
+                    }
                     if (!$doccliente) {
                         $doccliente = new DocCliente();
                         if ($datoGrid->iddocumento) {
@@ -2410,6 +2408,9 @@ class clientesActions extends sfActions {
                         $doccliente->setCaIdcliente($idcliente);
                     }
 
+                    if ($datoGrid->idtipo) {
+                        $doccliente->setCaIdtipo($datoGrid->idtipo);
+                    }
                     if ($datoGrid->fch_documento) {
                         $doccliente->setCaFchdocumento($datoGrid->fch_documento);
                     }
@@ -2419,7 +2420,6 @@ class clientesActions extends sfActions {
                     if ($datoGrid->fch_vigencia) {
                         $doccliente->setCaFchvigencia($datoGrid->fch_vigencia);
                     }
-
                     $doccliente->save();
                     $ids[] = $datoGrid->id;
                 }
@@ -2457,7 +2457,42 @@ class clientesActions extends sfActions {
                 if ($datos->otro_detalles) {
                     $cliente->setCaOtroDetalles(utf8_decode($datos->otro_detalles));
                 }
+                if ($datos->tipopersona) {
+                    $cliente->setCaTipopersona(utf8_decode($datos->tipopersona));
+                }
+                if ($datos->sectoreconomico) {
+                    $cliente->setCaSector(utf8_decode($datos->sectoreconomico));
+                }
+                if ($datos->fechaconstitucion) {
+                    $cliente->setCaFchconstitucion(utf8_decode($datos->fechaconstitucion));
+                }
+                $cliente->setCaGrancontribuyente($datos->grancontribuyente);
+                $cliente->setCaUap($datos->uap);
 
+                if ($datos->activostotales) {
+                    $cliente->setCaActivostotales(utf8_decode($datos->activostotales));
+                }
+                if ($datos->activoscorrientes) {
+                    $cliente->setCaActivoscorrientes(utf8_decode($datos->activoscorrientes));
+                }
+                if ($datos->pasivostotales) {
+                    $cliente->setCaPasivostotales(utf8_decode($datos->pasivostotales));
+                }
+                if ($datos->pasivoscorrientes) {
+                    $cliente->setCaPasivoscorrientes(utf8_decode($datos->pasivoscorrientes));
+                }
+                if ($datos->inventarios) {
+                    $cliente->setCaInventarios(utf8_decode($datos->inventarios));
+                }
+                if ($datos->patrimonios) {
+                    $cliente->setCaPatrimonios(utf8_decode($datos->patrimonios));
+                }
+                if ($datos->utilidades) {
+                    $cliente->setCaUtilidades(utf8_decode($datos->utilidades));
+                }
+                if ($datos->ventas) {
+                    $cliente->setCaVentas(utf8_decode($datos->ventas));
+                }
                 $cliente->save();
                 $conn->commit();
                 $this->responseArray = array("success" => true, "ids" => $ids);
@@ -2471,20 +2506,48 @@ class clientesActions extends sfActions {
 
     public function executeDatosControlFinanciero(sfWebRequest $request) {
         $idcliente = $request->getParameter("idcliente");
+        $tipopersona = $request->getParameter("tipo");
+        $activostotales = $request->getParameter("activostotales");
+        $fechconstitucion = $request->getParameter("fechconstitucion");
+        $anioactual = date("Y");
+        $minimo = Doctrine::getTable('Smlv')->find($anioactual);
+
+        if ($minimo) {
+            if (($activostotales / $minimo->getCaSmlv()) < 500) {
+                $tipopersona = "ca_perjuridica_activos";
+            }
+        }
+
+        if ($tipopersona == "ca_perjuridica" || $tipopersona == "ca_gran_contribuyente" || $tipopersona == "ca_perjuridica_activos") {
+            $fechahaceunano = date("Y") - 1 . "-" . date("m") . "-" . date("d");
+            if ($fechahaceunano < $fechconstitucion) {
+                $tipopersona = "ca_perjuridica_reciente";
+            }
+        }
+
         $data = array();
 
-        $con = Doctrine_Manager::getInstance()->connection();
-        $sql = "select * from control.tb_config_values c left join tb_doccliente d on  c.ca_idvalue = d.ca_iddocumento where  c.ca_idconfig = 254 order by c.ca_ident ASC";
-        $rs = $con->execute($sql);
-        $control_rs = $rs->fetchAll();
-        foreach ($control_rs as $control) {
-            $data[] = array("iddocumento" => $control["ca_idvalue"],
-                "empresa" => $control["ca_value2"],
-                "documento" => utf8_encode($control["ca_value"]),
-                "fch_vigencia" => $control["ca_fchvigencia"],
-                "fch_documento" => $control["ca_fchdocumento"],
-                "observaciones" => utf8_encode($control["ca_observaciones"])
-            );
+        if ($tipopersona) {
+
+            $con = Doctrine_Manager::getInstance()->connection();
+            $sql = "select " . $tipopersona . " , d.ca_id, ca_nombre, t.ca_tipo,ca_fchvigencia, dc.ca_fchdocumento, dc.ca_observaciones  from ids.tb_documentosxconc d ";
+            $sql .= " left join tb_doccliente dc on (dc.ca_idtipo = d.ca_id and dc.ca_idcliente = " . $idcliente . ") ";
+            $sql .= " inner join control.tb_empresas e on(e.ca_idempresa = d.ca_idempresa)";
+            $sql .= " inner join ids.tb_tipodocumentos t on (t.ca_idtipo = d.ca_idtipo) where " . $tipopersona . "= true ";
+
+            $rs = $con->execute($sql);
+            $control_rs = $rs->fetchAll();
+            foreach ($control_rs as $control) {
+                $data[] = array(
+                    "idtipo" => $control["ca_id"],
+                    "iddocumento" => $control["ca_iddocumento"],
+                    "empresa" => $control["ca_nombre"],
+                    "documento" => utf8_encode($control["ca_tipo"]),
+                    "fch_vigencia" => $control["ca_fchvigencia"],
+                    "fch_documento" => $control["ca_fchdocumento"],
+                    "observaciones" => utf8_encode($control["ca_observaciones"])
+                );
+            }
         }
 
         $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
@@ -2658,7 +2721,7 @@ class clientesActions extends sfActions {
                 ->createQuery("d")
                 ->where("d.ca_idcliente = ?", $idcliente)
                 ->fetchOne();
-        
+
         $this->setTemplate("fichaTecnicaPdf");
     }
 

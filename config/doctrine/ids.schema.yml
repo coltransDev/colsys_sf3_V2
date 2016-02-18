@@ -631,6 +631,19 @@ IdsCliente:
     ca_basc: string(2)
     ca_otro_cert: string(2)
     ca_otro_detalles: string(128)
+    ca_tipopersona: integer
+    ca_sector: integer
+    ca_fchconstitucion: date 
+    ca_activostotales: integer
+    ca_activoscorrientes: integer
+    ca_pasivostotales: integer
+    ca_pasivoscorrientes: integer
+    ca_inventarios: integer
+    ca_patrimonios: integer
+    ca_utilidades: integer
+    ca_ventas: integer
+    ca_grancontribuyente: boolean
+    ca_uap: boolean
   relations:
     Ids:
       local: ca_idcliente
@@ -671,6 +684,46 @@ IdsCliente:
     FichaTecnica:
       local: ca_idcliente
       foreign: ca_idcliente
+      type: one
+
+Documentosxconc:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: public
+  tableName: ids.tb_documentosxconc
+  columns:
+    ca_id:
+      type: integer
+      notnull: true
+      primary: true
+    ca_idtipo: integer    
+    ca_tipo: string(3)
+    ca_idempresa: integer
+    ca_perjuridica: boolean
+    ca_perjuridica_reciente: boolean
+    ca_perjuridica_activos: boolean
+    ca_gran_contribuyente: boolean
+    ca_persona_natural: boolean
+    ca_persona_natural_comerciante: boolean 
+    ca_observaciones: text   
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp  
+  relations:
+    Empresa:
+      local: ca_idempresa
+      foreign: ca_idempresa
+      type: one
+    IdsTipo:
+      local: ca_tipo
+      foreign: ca_tipo
+      type: one
+    IdsTipoDocumento:
+      local: ca_idtipo
+      foreign: ca_id
       type: one
 
 IdsSeguimiento:

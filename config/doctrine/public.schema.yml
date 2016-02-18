@@ -599,22 +599,24 @@ DocCliente:
   generatePath: public
   tableName: tb_doccliente
   columns:
-    ca_fchdocumento:
-      type: date   
-      notnull: true
-    ca_observaciones:
-      type: text      
-    ca_fchvigencia:
-      type: date   
-      notnull: true
     ca_iddocumento:
       type: integer
       notnull: true
       primary: true
+    ca_fchdocumento:
+      type: date   
+      notnull: true
+    ca_fchvigencia:
+      type: date   
+      notnull: true
     ca_idcliente:
       type: integer
       notnull: true
       primary: true
+    ca_idtipo:
+      type: integer
+    ca_observaciones:
+      type: text      
     ca_usucreado: string(20)
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
@@ -628,6 +630,25 @@ DocCliente:
       local: ca_iddocumento
       foreign: ca_idvalue
       type: one
+    Documentosxconc:
+      local: ca_idtipo
+      foreign: ca_id
+      type: one
+      
+Smlv:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: public
+  tableName: tb_smlv
+  columns:
+    ca_anno:
+      type: integer
+      primary: true
+      notnull: true
+    ca_smlv:
+      type: integer   
       
 AduCliente:
   options:

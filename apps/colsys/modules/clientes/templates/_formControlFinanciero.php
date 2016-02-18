@@ -7,12 +7,16 @@
 $idcliente = $sf_data->getRaw("idcliente");
 $razonSocial = $sf_data->getRaw("razonSocial");
 $data = $sf_data->getRaw("data");
+$sectorfinanciero = $sf_data->getRaw("sectorfinanciero");
+$tipopersona = $sf_data->getRaw("tipopersona");
+$minimo = $sf_data->getRaw("minimo");
 ?>
 <script type="text/javascript">
 
     Ext.define('ControlFinanciero', {
         extend: 'Ext.data.Model',
         fields: [
+            {name: 'idtipo', type: 'string'},
             {name: 'iddocumento', type: 'string'},
             {name: 'empresa', type: 'string'},
             {name: 'documento', type: 'string'},
@@ -24,7 +28,7 @@ $data = $sf_data->getRaw("data");
 
     var storeControlFinanciero = Ext.create('Ext.data.Store', {
         id: 'storeControlFinanciero',
-        autoLoad: true,
+        autoLoad: false,
         model: 'ControlFinanciero',
         proxy: {
             type: 'ajax',
@@ -36,15 +40,59 @@ $data = $sf_data->getRaw("data");
             extraParams: {
                 idcliente: '<?= $idcliente ?>'
             },
-            // Parameter name to send filtering information in
             filterParam: 'query',
         },
         groupField: 'empresa'
     });
 
+    var fieldsetPersonaJuridica = Ext.create('Ext.form.FieldSet', {
+        xtype: 'fieldset',
+        title: 'Persona jurídica',
+        id: 'personajuridica',
+        hidden: true,
+        width: 620,
+        collapsible: false,
+        defaults: {
+            labelWidth: 89,
+            anchor: '90%',
+            layout: {
+                type: 'column',
+                defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
+            }},
+        items: [{
+                xtype: 'fieldcontainer',
+                combineErrors: true,
+                height: 50,
+                width: 200,
+                msgTarget: 'under',
+                items: [{
+                        xtype: 'tbspacer',
+                        columnWidth: 0.2,
+                    }, {
+                        xtype: 'fieldset',
+                        title: '',
+                        columnWidth: 0.6,
+                        defaultType: 'checkbox',
+                        layout: 'column',
+                        items: [{
+                                id: 'grancontribuyente',
+                                name: 'grancontribuyente',
+                                fieldLabel: 'Gran contribuyente',
+                                boxLabel: '',
+                            }, {
+                                fieldLabel: 'UAP',
+                                boxLabel: '',
+                                name: 'uap',
+                                id: 'uap',
+                            }]
+                    }]
+            }]
+    });
+
     var gridControlFinanciero = new Ext.grid.GridPanel({
         id: 'gridControlFinanciero',
         store: storeControlFinanciero,
+        hidden: true,
         height: 400,
         width: 650,
         features: [{
@@ -68,26 +116,27 @@ $data = $sf_data->getRaw("data");
                     return ((value === 0 || value > 1) ? '(' + value + ' Documentos)' : '(1 Documento)');
                 }
             }, {
+                header: 'idtipo',
+                width: 300,
+                dataIndex: 'idtipo',
+                hidden: true
+            }, {
                 header: 'Fecha Documento',
-                flex: 1,
-                width: 100,
+                width: 120,
                 dataIndex: 'fch_documento',
                 renderer: Ext.util.Format.dateRenderer('Y-m-d'),
                 editor: new Ext.form.DateField({
                     width: 90,
-                    allowBlank: false,
                     format: 'Y-m-d',
                     useStrict: undefined
                 })
             }, {
-                header: 'Fecha de Vigencia',
-                flex: 1,
-                width: 100,
+                header: 'Fecha Vigencia',
+                width: 120,
                 dataIndex: 'fch_vigencia',
                 renderer: Ext.util.Format.dateRenderer('Y-m-d'),
                 editor: new Ext.form.DateField({
                     width: 90,
-                    allowBlank: false,
                     format: 'Y-m-d',
                     useStrict: undefined
                 })
@@ -125,6 +174,30 @@ $data = $sf_data->getRaw("data");
             store: ['Agente', 'Proveedor', 'Excepción Temporal', 'Excepción Permanente']
         });
 
+        Ext.define('ComboSectorEconomico', {
+            extend: 'Ext.form.field.ComboBox',
+            alias: 'widget.combo-sectoreconomico',
+            queryMode: 'local',
+            valueField: 'id',
+            displayField: 'sector',
+            store: {
+                fields: [{name: 'sector', type: 'string'}, {name: 'id', type: 'string'}],
+                data: <?= json_encode($sectorfinanciero) ?>
+            }
+        });
+
+        Ext.define('ComboPersona', {
+            extend: 'Ext.form.field.ComboBox',
+            alias: 'widget.combo-persona',
+            queryMode: 'local',
+            valueField: 'id',
+            displayField: 'tipo',
+            store: {
+                fields: [{name: 'tipo', type: 'string'}, {name: 'id', type: 'string'}],
+                data: <?= json_encode($tipopersona) ?>
+            }
+        });
+
         Ext.define('ComboRiesgo', {
             extend: 'Ext.form.field.ComboBox',
             alias: 'widget.combo-riesgo',
@@ -137,10 +210,12 @@ $data = $sf_data->getRaw("data");
             store: ['Sí', 'No']
         });
 
+
+
         var tabPanel = new Ext.tab.Panel({
             id: 'panelControlFianciero',
             items: [{
-                    title: 'Documentos',
+                    title: 'General',
                     items: [{
                             xtype: 'fieldset',
                             title: 'Nuevos Datos para el Cliente',
@@ -231,7 +306,6 @@ $data = $sf_data->getRaw("data");
                                                     labelWidth: 100,
                                                     name: 'comentario',
                                                     width: 350,
-                                                    allowBlank: false
                                                 }]
                                         }]
                                 }, {
@@ -318,7 +392,6 @@ $data = $sf_data->getRaw("data");
                                                     labelWidth: 100,
                                                     name: 'iso_detalles',
                                                     width: 160,
-                                                    allowBlank: false
                                                 }, {
                                                     xtype: 'combo-si-no',
                                                     hideLabel: false,
@@ -355,13 +428,347 @@ $data = $sf_data->getRaw("data");
                                                     labelWidth: 80,
                                                     name: 'otro_detalles',
                                                     width: 220,
-                                                    allowBlank: false
                                                 }]
                                         }]
                                 }]
                         }]
                 }, {
+                    title: 'Supersociedades',
+                    autoScroll: true,
+                    height: 400,
+                    items: [{
+                            xtype: 'fieldset',
+                            title: 'Nuevos Datos para el Cliente',
+                            width: 640,
+                            collapsible: false,
+                            defaults: {
+                                labelWidth: 89,
+                                anchor: '90%',
+                                layout: {
+                                    type: 'column',
+                                    defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
+                                }},
+                            items: [{
+                                    xtype: 'fieldset',
+                                    title: 'Persona',
+                                    width: 620,
+                                    collapsible: false,
+                                    defaults: {
+                                        labelWidth: 89,
+                                        anchor: '90%',
+                                        layout: {
+                                            type: 'column',
+                                            defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
+                                        }},
+                                    items: [{
+                                            xtype: 'fieldcontainer',
+                                            hideLabel: true,
+                                            combineErrors: true,
+                                            height: 80,
+                                            msgTarget: 'under',
+                                            layout: 'column',
+                                            defaults: {
+                                                flex: 2,
+                                                hideLabel: false
+                                            },
+                                            items: [{
+                                                    xtype: 'combo-persona',
+                                                    hideLabel: false,
+                                                    fieldLabel: 'Tipo Persona',
+                                                    labelWidth: 100,
+                                                    id: 'tipopersona',
+                                                    name: 'tipopersona',
+                                                    width: 240,
+                                                    forceSelection: true,
+                                                    listeners: {
+                                                        select: {
+                                                            fn: function (combo, record, eOpts) {
+                                                                //alert(combo.value);
+                                                                if (combo.value == "2") {
+                                                                    fieldsetPersonaJuridica.setVisible(true);
+                                                                } else {
+                                                                    fieldsetPersonaJuridica.setVisible(false);
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }, {
+                                                    xtype: 'combo-sectoreconomico',
+                                                    hideLabel: false,
+                                                    fieldLabel: 'Sector Económico',
+                                                    labelWidth: 100,
+                                                    id: 'sectoreconomico',
+                                                    name: 'sectoreconomico',
+                                                    width: 280,
+                                                    forceSelection: true,
+                                                    listeners: {
+                                                        select: {
+                                                            fn: function (combo, record, eOpts) {
+
+                                                            }
+                                                        }
+                                                    }
+                                                }, {
+                                                    xtype: 'datefield',
+                                                    fieldLabel: 'Fecha de Constitución',
+                                                    name: 'fechaconstitucion',
+                                                    id: 'fechaconstitucion',
+                                                    width: 235,
+                                                    forceSelection: false
+                                                }]
+                                        }]
+                                },
+                                fieldsetPersonaJuridica
+                            ]
+                        }]
+                }, {
+                    title: 'Info. financiera',
+                    autoScroll: true,
+                    height: 400,
+                    items: [{
+                            xtype: 'fieldset',
+                            title: 'Información financiera',
+                            width: 640,
+                            collapsible: false,
+                            defaults: {
+                                labelWidth: 89,
+                                anchor: '90%',
+                                layout: {
+                                    type: 'column',
+                                    defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
+                                }},
+                            items: [{
+                                    xtype: 'fieldset',
+                                    title: '',
+                                    width: 620,
+                                    collapsible: false,
+                                    defaults: {
+                                        labelWidth: 89,
+                                        anchor: '90%',
+                                        layout: {
+                                            type: 'column',
+                                            defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
+                                        }},
+                                    items: [{
+                                            xtype: 'fieldcontainer',
+                                            hideLabel: true,
+                                            combineErrors: true,
+                                            height: 150,
+                                            msgTarget: 'under',
+                                            layout: 'column',
+                                            defaults: {
+                                                flex: 2,
+                                                hideLabel: false
+                                            },
+                                            items: [{
+                                                    xtype: 'numberfield',
+                                                    value: '0',
+                                                    fieldLabel: 'Activos Totales',
+                                                    name: 'activostotales',
+                                                    id: 'activostotales',
+                                                    width: 220,
+                                                    listeners: {
+                                                        blur: function (e, eOpts) {
+                                                            calculo();
+                                                        }
+                                                    }
+                                                }, {
+                                                    xtype: 'numberfield',
+                                                    value: '0',
+                                                    fieldLabel: 'Activos Corrientes',
+                                                    name: 'activoscorrientes',
+                                                    id: 'activoscorrientes',
+                                                    width: 260,
+                                                    labelWidth: 150,
+                                                    listeners: {
+                                                        blur: function (e, eOpts) {
+                                                            calculo();
+                                                        }
+                                                    }
+                                                }, {
+                                                    xtype: 'tbspacer',
+                                                    height: 10,
+                                                    width: 500,
+                                                }, {
+                                                    xtype: 'numberfield',
+                                                    value: '0',
+                                                    fieldLabel: 'Pasivos Totales',
+                                                    name: 'pasivostotales',
+                                                    id: 'pasivostotales',
+                                                    width: 220,
+                                                    listeners: {
+                                                        blur: function (e, eOpts) {
+                                                            calculo();
+                                                        }
+                                                    }
+                                                }, {
+                                                    xtype: 'numberfield',
+                                                    value: '0',
+                                                    fieldLabel: 'Pasivos Corrientes',
+                                                    name: 'pasivoscorrientes',
+                                                    id: 'pasivoscorrientes',
+                                                    width: 260,
+                                                    labelWidth: 150,
+                                                    listeners: {
+                                                        blur: function (e, eOpts) {
+                                                            calculo();
+                                                        }
+                                                    }
+                                                }, {
+                                                    xtype: 'tbspacer',
+                                                    height: 10,
+                                                    width: 500,
+                                                }, {
+                                                    xtype: 'numberfield',
+                                                    value: '0',
+                                                    fieldLabel: 'Inventarios',
+                                                    name: 'inventarios',
+                                                    id: 'inventarios',
+                                                    width: 220,
+                                                    listeners: {
+                                                        blur: function (e, eOpts) {
+                                                            calculo();
+                                                        }
+                                                    }
+                                                }, {
+                                                    xtype: 'numberfield',
+                                                    value: '0',
+                                                    fieldLabel: 'Patrimonios',
+                                                    name: 'patrimonios',
+                                                    id: 'patrimonios',
+                                                    width: 260,
+                                                    labelWidth: 150,
+                                                    listeners: {
+                                                        blur: function (e, eOpts) {
+                                                            calculo();
+                                                        }
+                                                    }
+                                                }, {
+                                                    xtype: 'tbspacer',
+                                                    height: 10,
+                                                    width: 500,
+                                                }, {
+                                                    xtype: 'numberfield',
+                                                    value: '0',
+                                                    fieldLabel: 'Utilidades',
+                                                    name: 'utilidades',
+                                                    id: 'utilidades',
+                                                    width: 220,
+                                                    listeners: {
+                                                        blur: function (e, eOpts) {
+                                                            calculo();
+                                                        }
+                                                    }
+                                                }, {
+                                                    xtype: 'numberfield',
+                                                    value: '0',
+                                                    fieldLabel: 'Ventas',
+                                                    name: 'ventas',
+                                                    id: 'ventas',
+                                                    width: 260,
+                                                    labelWidth: 150,
+                                                    listeners: {
+                                                        blur: function (e, eOpts) {
+                                                            calculo();
+                                                        }
+                                                    }
+                                                }]
+                                        }]
+
+                                }]
+                        }, {
+                            xtype: 'fieldset',
+                            title: 'Información financiera',
+                            width: 640,
+                            collapsible: false,
+                            defaults: {
+                                labelWidth: 89,
+                                anchor: '90%',
+                                layout: {
+                                    type: 'column',
+                                    defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
+                                }},
+                            items: [{
+                                    xtype: 'fieldset',
+                                    title: '',
+                                    width: 620,
+                                    collapsible: false,
+                                    defaults: {
+                                        labelWidth: 89,
+                                        anchor: '90%',
+                                        layout: {
+                                            type: 'column',
+                                            defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
+                                        }},
+                                    items: [{
+                                            xtype: 'fieldcontainer',
+                                            hideLabel: true,
+                                            combineErrors: true,
+                                            height: 150,
+                                            msgTarget: 'under',
+                                            layout: 'column',
+                                            defaults: {
+                                                flex: 2,
+                                                hideLabel: false
+                                            },
+                                            items: [{
+                                                    xtype: 'textfield',
+                                                    value: '0',
+                                                    fieldLabel: 'Activos en SMMLV',
+                                                    name: 'activosSMMLV',
+                                                    id: 'activosSMMLV',
+                                                    editable: false,
+                                                    width: 220,
+                                                }, {
+                                                    xtype: 'textfield',
+                                                    value: '0',
+                                                    fieldLabel: 'Indice de liquidez',
+                                                    name: 'indiceliquidez',
+                                                    id: 'indiceliquidez',
+                                                    editable: false,
+                                                    width: 275,
+                                                    labelWidth: 150,
+                                                }, {
+                                                    xtype: 'tbspacer',
+                                                    height: 10,
+                                                    width: 500,
+                                                }, {
+                                                    xtype: 'textfield',
+                                                    value: '0',
+                                                    fieldLabel: 'Indice endeudamiento',
+                                                    name: 'indiceendeudamiento',
+                                                    id: 'indiceendeudamiento',
+                                                    editable: false,
+                                                    width: 220,
+                                                }, {
+                                                    xtype: 'textfield',
+                                                    value: '0',
+                                                    fieldLabel: 'Prueba ácida',
+                                                    name: 'pruebaacida',
+                                                    id: 'pruebaacida',
+                                                    editable: false,
+                                                    width: 275,
+                                                    labelWidth: 150,
+                                                }, {
+                                                    xtype: 'tbspacer',
+                                                    height: 10,
+                                                    width: 500,
+                                                }, {
+                                                    xtype: 'textfield',
+                                                    value: '0',
+                                                    fieldLabel: 'INO',
+                                                    id: 'ino',
+                                                    editable: false,
+                                                    name: 'ino',
+                                                    width: 220,
+                                                }]
+                                        }]
+
+                                }]
+                        }]
+                }, {
                     title: 'Documentos',
+                    id: 'documentosTab',
                     items: [
                         gridControlFinanciero
                     ]
@@ -369,7 +776,7 @@ $data = $sf_data->getRaw("data");
         });
 
         Ext.create('Ext.form.Panel', {
-            title: 'Control Financiero de Documentos.<br /><?=$razonSocial?>',
+            title: 'Control Financiero de Documentos.<br /><?= $razonSocial ?>',
             stripeRows: true,
             height: 535,
             width: 660,
@@ -378,12 +785,10 @@ $data = $sf_data->getRaw("data");
                 "margin-left": "auto",
                 "margin-right": "auto"
             },
-            // Fields will be arranged vertically, stretched to full width
             layout: 'anchor',
             defaults: {
                 anchor: '100%'
             },
-            // The fields
             defaultType: 'textfield',
             items: [
                 tabPanel
@@ -391,12 +796,14 @@ $data = $sf_data->getRaw("data");
             listeners: {
                 afterRender: function (panel, eOpts) {
                     panel.getForm().setValues(<?= json_encode($data) ?>);
+                    recarga();
                 }
             },
             buttons: [{
                     id: 'bntGuardar',
                     text: 'Guardar',
                     handler: function () {
+
                         var me = this;
                         var form = me.up('form').getForm();
                         var data = form.getFieldValues();
@@ -437,6 +844,7 @@ $data = $sf_data->getRaw("data");
                                 },
                                 success: function (response, options) {
                                     var res = Ext.decode(response.responseText);
+                                    var store = gridControlFinanciero.getStore();
                                     ids = res.ids;
                                     if (res.ids) {
                                         for (i = 0; i < ids.length; i++) {
@@ -444,10 +852,12 @@ $data = $sf_data->getRaw("data");
                                             rec.commit();
                                         }
                                         Ext.MessageBox.alert("Mensaje", 'Información almacenada correctamente<br>');
+                                        recarga();
                                     }
                                 }
                             });
                         }
+
                     }
                 }, {
                     text: 'Cancelar',
@@ -460,4 +870,91 @@ $data = $sf_data->getRaw("data");
         });
 
     });
+    function calculo() {
+        var activosSMMLV = Ext.getCmp("activosSMMLV");
+        var indiceliquidez = Ext.getCmp("indiceliquidez");
+        var indiceendeudamiento = Ext.getCmp("indiceendeudamiento");
+        var pruebaacida = Ext.getCmp("pruebaacida");
+        var ino = Ext.getCmp("ino");
+
+        var activostotales = Ext.getCmp("activostotales").value;
+        var activoscorrientes = Ext.getCmp("activoscorrientes").value;
+        var pasivostotales = Ext.getCmp("pasivostotales").value;
+        var pasivoscorrientes = Ext.getCmp("pasivoscorrientes").value;
+        var inventarios = Ext.getCmp("inventarios").value;
+        var patrimonios = Ext.getCmp("patrimonios").value;
+        var utilidades = Ext.getCmp("utilidades").value;
+        var ventas = Ext.getCmp("ventas").value;
+
+        <? if ($minimo) { ?>
+            activosSMMLV.setValue(activostotales /<?= $minimo ?>);
+        <? } ?>
+        if (pasivoscorrientes != 0) {
+            indiceliquidez.setValue(activoscorrientes / pasivoscorrientes);
+        } else {
+            indiceliquidez.setValue("Imposible Calcular");
+        }
+        if (activostotales != 0) {
+            indiceendeudamiento.setValue(pasivostotales / activostotales);
+        } else {
+            indiceendeudamiento.setValue("Imposible Calcular");
+        }
+        if (pasivoscorrientes != 0) {
+            pruebaacida.setValue((activoscorrientes - inventarios) / pasivoscorrientes);
+        } else {
+            pruebaacida.setValue("Imposible Calcular");
+        }
+    }
+    function recarga() {
+
+        var tip = Ext.getCmp("tipopersona");
+
+        if (tip != "") {
+            var activostotales = Ext.getCmp("activostotales").value;
+            var fechconstitucion = Ext.getCmp("fechaconstitucion").value;
+            var tipopersona = Ext.getCmp("tipopersona");
+            var sectoreconomico = Ext.getCmp("sectoreconomico");
+            var grancontribuyente = Ext.getCmp("grancontribuyente");
+            var sectoreconomico = Ext.getCmp("sectoreconomico");
+            var uap = Ext.getCmp("uap");
+
+            if (tipopersona.value == 2) {
+                fieldsetPersonaJuridica.setVisible(true);
+            }
+
+            var tipo = "";
+
+            if (tipopersona.value == 1 && sectoreconomico.value == 10) {  //comercio y persona natural
+                tipo = "ca_persona_natural_comerciante";
+            } else {
+                if (tipopersona.value == 1) {
+                    tipo = "ca_persona_natural";
+                } else {
+                    if (tipopersona.value == 2) {
+                        tipo = "ca_perjuridica";
+
+                        if (grancontribuyente.value || uap.value) {
+                            tipo = "ca_gran_contribuyente";
+                        }
+                    }
+                }
+            }
+            if (tipo.toString() != "" && fechconstitucion.toString() != "") {
+                var store = gridControlFinanciero.getStore();
+                store.load({
+                    params: {
+                        idcliente: <?= $idcliente ?>,
+                        tipo: tipo,
+                        fechconstitucion: fechconstitucion,
+                        activostotales: activostotales
+                    }
+                });
+                gridControlFinanciero.setVisible(true);
+                calculo();
+
+
+
+            }
+        }
+    }
 </script>
