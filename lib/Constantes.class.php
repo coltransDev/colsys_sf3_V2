@@ -11,9 +11,11 @@ class Constantes{
     const COLMAS = "Colmas";
     const COLOTM = "COL OTM";
     const TPLOGISTICS = "TPLogistics";
+    const COLDEPOSITOS = "Coldepósitos";
     const COLTRANS_RAZONSOCIAL = "Coltrans S.A.";
     const COLMAS_RAZONSOCIAL = "Colmas Agente de Aduana Ltda.";
     const COLOTM_RAZONSOCIAL = "Colotm";
+    const COLDEPOSITOS_RAZONSOCIAL = "Coldepósitos S.A.S";
 	
     const IMPO = "Importación";
     const EXPO = "Exportación";
@@ -48,8 +50,8 @@ class Constantes{
     const BOGOTA = "Bogotá D.C.";
     const MEDELLIN = "Medellín";
 
-    const AEREA_Y_LCL = "Carga Aérea y Carga Suelta";
-    const VEINTE_PIES = "Contenedor 20 pies";
-    const CUARENTA_PIES = "Contenedor 40 pies";
+    const CARGA_AEREA = "Carga Aérea";
+    const MARITIMA_LCL = "Carga Marítima LCL";
+    const MARITIMA_FCL = "Carga Marítima FCL";
 }
 ?>
