@@ -2643,9 +2643,9 @@ class pricingActions extends sfActions {
         if($this->impoexpo == Constantes::DEPOSITOS and $this->transporte == Constantes::AEREO){
             $this->idcomponent = "depair_";
         }else if($this->impoexpo == Constantes::DEPOSITOS and $this->transporte == Constantes::MARITIMO){
-            if($this->parametro == Constantes::VEINTE_PIES){
+            if($this->parametro == Constantes::MARITIMA_LCL){
                 $this->idcomponent = "dep20p_";
-            } else if($this->parametro == Constantes::VEINTE_PIES){
+            } else if($this->parametro == Constantes::MARITIMA_FCL){
                 $this->idcomponent = "dep40p_";
             }
         }

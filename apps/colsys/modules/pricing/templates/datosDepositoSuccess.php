@@ -1,28 +1,28 @@
 [
     {
-	text:'Carga Aérea y Carga LCL',
+	text:'Carga Aérea',
 	leaf:true,
         opcion: 'depair',
         impoexpo: '<?=Constantes::DEPOSITOS?>',
         transporte: '<?=Constantes::AEREO?>',
         modalidad: '<?=Constantes::CONSOLIDADO?>',
-        parametro: '<?=Constantes::AEREA_Y_LCL?>'
+        parametro: '<?=Constantes::CARGA_AEREA?>'
     }, {
-	text:'Carga FCL - 20 Pies',
+	text:'Carga Marítima LCL',
 	leaf:true,
         opcion: 'dep20p',
         impoexpo: '<?=Constantes::DEPOSITOS?>',
         transporte: '<?=Constantes::MARITIMO?>',
-        modalidad: '<?=Constantes::FCL?>',
-        parametro: '<?=Constantes::VEINTE_PIES?>'
+        modalidad: '<?=Constantes::LCL?>',
+        parametro: '<?=Constantes::MARITIMA_LCL?>'
     }, {
-	text:'Carga FCL - 40 Pies',
+	text:'Carga Marítima FCL',
 	leaf:true,
         opcion: 'dep40p',
         impoexpo: '<?=Constantes::DEPOSITOS?>',
         transporte: '<?=Constantes::MARITIMO?>',
         modalidad: '<?=Constantes::FCL?>',
-        parametro: '<?=Constantes::CUARENTA_PIES?>'
+        parametro: '<?=Constantes::MARITIMA_FCL?>'
     }        
 ]
 <?

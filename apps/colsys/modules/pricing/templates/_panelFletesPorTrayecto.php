@@ -781,6 +781,14 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
                                         handler: function(){
                                             this.colocarEstilo( rec , "pink");
                                         }
+                                    }, {
+                                        text: 'Futura',
+                                        checked: rec.get("style")=="green"?true:false,
+                                        group: 'theme',
+                                        scope: this,
+                                        handler: function(){
+                                            this.colocarEstilo( rec , "green");
+                                        }
                                     }
                                 ]
                             }
