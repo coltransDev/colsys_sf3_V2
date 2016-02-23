@@ -121,6 +121,8 @@ InoClientesSea:
     ca_observaciones: string
     ca_fchliberacion: date
     ca_notaliberacion: string
+    ca_estadoliberacion: string
+    ca_detalleliberacion: string
     ca_mensaje: string
     ca_continuacion: string
     ca_continuacion_dest: string
@@ -135,6 +137,8 @@ InoClientesSea:
     ca_fchantecedentes: date
     ca_imprimirorigen : boolean
     ca_idaduana: integer
+    ca_fchlibero: timestamp
+    ca_usulibero: string
     ca_detlibero: string
     ca_planilla: string
   relations:
@@ -461,6 +465,41 @@ InoUtilidadprmsSea:
       type: one
       class: Usuario
 
+InoComisionesSea:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_inocomisiones_sea
+  columns:
+    ca_idinocliente:
+      type: integer
+      primary: true
+    ca_comprobante: integer
+    ca_fchliquidacion: date  
+    ca_vlrcomision: decimal
+    ca_sbrcomision: decimal
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+     InoClientesSea:
+       local: ca_idinocliente
+       foreign: ca_idinocliente
+       type: one
+     UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+     UsuActualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      class: Usuario
+
 
 InoMaestraAir:
   options:
@@ -727,10 +766,24 @@ InoMaestraExpo:
     ca_consecutivo: string
     ca_aplicaidg: boolean
   relations:         
-     Cliente:
+    Origen:
+      local: ca_origen
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    Destino:
+      local: ca_destino
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    Cliente:
        local: ca_idcliente
        foreign: ca_idcliente
        type: one
+    ExpoDoctransporte:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: many
 
 
 InoMaestraExpoAir:
@@ -884,6 +937,120 @@ ExpoAlerta:
       foreign: ca_referencia
       type: one
 
+ExpoDoctransporte:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_expo_doctransporte
+  columns:
+    ca_iddoctransporte:
+      type: integer
+      primary: true
+    ca_referencia: string(17)
+    ca_consecutivo: integer
+    ca_fchdoctransporte: date
+    ca_place_delivery: string(8)
+    ca_terminos_transporte: string(10)
+    ca_terminos_transporte: string(10)
+    ca_liberacion: string(20)
+    ca_ocean_vessel: string(30)
+    ca_declaration_interest: string(128)
+    ca_declared_value: string(128)
+    ca_freight_amount: string(64)
+    ca_freight_payable: string(12)
+    ca_number_original: string(12)
+    ca_delivery_goods: string(512)
+    ca_font_size: integer
+    ca_fchcreado: timestamp
+    ca_usucreado: string(20)
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchanulado: timestamp
+    ca_usuanulado: string(20)
+  relations:
+    ExpoMaestra:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: one
+    ExpoDocItems:
+      local: ca_iddoctransporte
+      foreign: ca_iddoctransporte
+      type: many
+    Usucreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+    Usuactualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+
+
+ExpoDocNumbers:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_expo_doc_numbers
+  columns:
+    ca_consecutivo:
+      type: integer
+      primary: true
+    ca_referencia: string
+    ca_observaciones: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string(20)
+    ca_fchimpreso: timestamp
+    ca_usuimpreso: string(20)
+    ca_fchremitido: timestamp
+    ca_usuremitido: string(20)
+    ca_fchanulado: timestamp
+    ca_usuanulado: string(20)
+  relations:
+    Usucreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+
+
+ExpoDocItems:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_expo_doc_items
+  columns:
+    ca_item_number:
+      type: integer
+      primary: true
+    ca_iddoctransporte: integer
+    ca_container_number: string(17)
+    ca_number_packages: integer
+    ca_kind_packages: string(128)
+    ca_gross_weight: integer
+    ca_gross_unit: string(4)
+    ca_net_weight: integer
+    ca_net_unit: string(4)
+    ca_measurement_weight: integer
+    ca_measurement_unit: string(4)
+    ca_seals: string(128)
+    ca_marks_numbers: string
+    ca_description_goods: string
+    ca_same_goods: boolean
+    ca_fchcreado: timestamp
+    ca_usucreado: string(20)
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string(20)
+  relations:
+    ExpoDoctransporte:
+      local: ca_iddoctransporte
+      foreign: ca_iddoctransporte
+      type: one
+
 
 InoDianDepositos:
   options:
@@ -902,6 +1069,7 @@ InoDianDepositos:
     ca_direccion: string
     ca_fchdesde: string
     ca_fchhasta: string
+
 
 InoDeduccionesSea:
   options:
@@ -930,4 +1098,3 @@ InoDeduccionesSea:
        local: ca_iddeduccion
        foreign: ca_iddeduccion
        type: one
-         

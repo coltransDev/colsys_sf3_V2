@@ -294,75 +294,75 @@ class inoMaritimoActions extends sfActions {
         $this->forward404Unless($request->getParameter("numRef"));
         $referencia = Doctrine::getTable("InoMaestraSea")->find($request->getParameter("numRef"));
         $this->forward404Unless($referencia);
-        
+
         $cbm_total = 0;
         $liquidacion = array();
         $inoclientes = $referencia->getInoClientesSea();
-        foreach ($inoclientes as $inocliente){
+        foreach ($inoclientes as $inocliente) {
             $liquidacion[$inocliente->getCaHbls()]["idinocliente"] = $inocliente->getCaIdinocliente();
             $liquidacion[$inocliente->getCaHbls()]["cliente"] = $inocliente->getCliente()->getCaCompania();
-            $cbm = ($inocliente->getCaPeso() >= 1000 and ($inocliente->getCaVolumen() < round($inocliente->getCaPeso()/1000,2)))?round($inocliente->getCaPeso()/1000,2):$inocliente->getCaVolumen();
+            $cbm = ($inocliente->getCaPeso() >= 1000 and ( $inocliente->getCaVolumen() < round($inocliente->getCaPeso() / 1000, 2))) ? round($inocliente->getCaPeso() / 1000, 2) : $inocliente->getCaVolumen();
             $liquidacion[$inocliente->getCaHbls()]["cbm"] = $cbm;
             $cbm_total+= $cbm;
         }
-        
+
         $parametros = Doctrine::getTable("InoUtilidadprmsSea")
                 ->createQuery("p")
                 ->addWhere("p.ca_referencia = ?", $referencia->getCaReferencia())
                 ->execute();
-        
+
         foreach ($parametros as $pr) {
-            $valor = ($pr->getCaTipo() == "ING") ? $pr->getCaValor():$pr->getCaValor()*-1;
-            if ($pr->getCaAplicacion() == "Valor Fijo"){
-                foreach ($liquidacion as $key => $hbl){
+            $valor = ($pr->getCaTipo() == "ING") ? $pr->getCaValor() : $pr->getCaValor() * -1;
+            if ($pr->getCaAplicacion() == "Valor Fijo") {
+                foreach ($liquidacion as $key => $hbl) {
                     $liquidacion[$key][$pr->getCaIdcosto()]["aplicacion"] = $pr->getCaAplicacion();
                     $liquidacion[$key][$pr->getCaIdcosto()]["multiplicando"] = 0;
                     $liquidacion[$key][$pr->getCaIdcosto()]["multiplicador"] = $valor;
                     $liquidacion[$key][$pr->getCaIdcosto()]["costo"] = utf8_encode($pr->getCosto()->getCaCosto());
                     $liquidacion[$key][$pr->getCaIdcosto()]["valor"] = $valor;
                 }
-            }else if ($pr->getCaAplicacion() == "Valor Unitario M3"){
-                foreach ($liquidacion as $key => $hbl){
-                    $sub_valor = (round($valor * $liquidacion[$key]["cbm"],2) < $valor)?round($valor * $liquidacion[$key]["cbm"],2):$valor;
+            } else if ($pr->getCaAplicacion() == "Valor Unitario M3") {
+                foreach ($liquidacion as $key => $hbl) {
+                    $sub_valor = (round($valor * $liquidacion[$key]["cbm"], 2) < $valor) ? round($valor * $liquidacion[$key]["cbm"], 2) : $valor;
                     $liquidacion[$key][$pr->getCaIdcosto()]["aplicacion"] = $pr->getCaAplicacion();
                     $liquidacion[$key][$pr->getCaIdcosto()]["multiplicando"] = $liquidacion[$key]["cbm"];
                     $liquidacion[$key][$pr->getCaIdcosto()]["multiplicador"] = $valor;
                     $liquidacion[$key][$pr->getCaIdcosto()]["costo"] = utf8_encode($pr->getCosto()->getCaCosto());
                     $liquidacion[$key][$pr->getCaIdcosto()]["valor"] = $sub_valor;
                 }
-            }else if ($pr->getCaAplicacion() == "X Doc. Transporte"){
-                $sub_valor = round($valor / count($liquidacion),2);
-                foreach ($liquidacion as $key => $hbl){
+            } else if ($pr->getCaAplicacion() == "X Doc. Transporte") {
+                $sub_valor = round($valor / count($liquidacion), 2);
+                foreach ($liquidacion as $key => $hbl) {
                     $liquidacion[$key][$pr->getCaIdcosto()]["aplicacion"] = $pr->getCaAplicacion();
                     $liquidacion[$key][$pr->getCaIdcosto()]["multiplicando"] = 1;
                     $liquidacion[$key][$pr->getCaIdcosto()]["multiplicador"] = $sub_valor;
                     $liquidacion[$key][$pr->getCaIdcosto()]["costo"] = utf8_encode($pr->getCosto()->getCaCosto());
                     $liquidacion[$key][$pr->getCaIdcosto()]["valor"] = $sub_valor;
                 }
-            }else if ($pr->getCaAplicacion() == utf8_encode("X Metro Cúbico")){
+            } else if ($pr->getCaAplicacion() == utf8_encode("X Metro Cúbico")) {
                 $sub_valor = $valor / $cbm_total;
-                foreach ($liquidacion as $key => $hbl){
+                foreach ($liquidacion as $key => $hbl) {
                     $liquidacion[$key][$pr->getCaIdcosto()]["aplicacion"] = $pr->getCaAplicacion();
                     $liquidacion[$key][$pr->getCaIdcosto()]["multiplicando"] = $liquidacion[$key]["cbm"];
                     $liquidacion[$key][$pr->getCaIdcosto()]["multiplicador"] = $sub_valor;
                     $liquidacion[$key][$pr->getCaIdcosto()]["costo"] = utf8_encode($pr->getCosto()->getCaCosto());
-                    $liquidacion[$key][$pr->getCaIdcosto()]["valor"] = round($sub_valor * $liquidacion[$key]["cbm"],2);
+                    $liquidacion[$key][$pr->getCaIdcosto()]["valor"] = round($sub_valor * $liquidacion[$key]["cbm"], 2);
                 }
             }
         }
         $key = 0;
         $referencias = array();
         foreach ($liquidacion as $hbl => $items) {
-            
+
             foreach ($items as $concepto => $item) {
-                if ($concepto != "cliente" and $concepto != "cbm"){
+                if ($concepto != "cliente" and $concepto != "cbm") {
                     $referencias[$key]["ca_idinocliente"] = $items["idinocliente"];
-                    $referencias[$key]["ca_caso"] = utf8_encode($hbl." - ".$items["cliente"]." Cbm: ".$items["cbm"]);
+                    $referencias[$key]["ca_caso"] = utf8_encode($hbl . " - " . $items["cliente"] . " Cbm: " . $items["cbm"]);
                     $referencias[$key]["ca_costo"] = $item["costo"];
                     $referencias[$key]["ca_aplicacion"] = $item["aplicacion"];
-                    $referencias[$key]["ca_multiplicando"] = round($item["multiplicando"],2);
-                    $referencias[$key]["ca_multiplicador"] = round($item["multiplicador"],2);
-                    $referencias[$key]["ca_valor"] = round($item["valor"],2);
+                    $referencias[$key]["ca_multiplicando"] = round($item["multiplicando"], 2);
+                    $referencias[$key]["ca_multiplicador"] = round($item["multiplicador"], 2);
+                    $referencias[$key]["ca_valor"] = round($item["valor"], 2);
                     $key++;
                 }
             }
@@ -382,30 +382,28 @@ class inoMaritimoActions extends sfActions {
         $errorInfo = "";
         $ids = array();
         foreach ($liquidaciones as $liquidacion) {
-            $error = "";
-            {
+            $error = ""; {
                 $utilidadliq = null;
-                if ($liquidacion->idinocliente){
+                if ($liquidacion->idinocliente) {
                     $utilidadliq = Doctrine::getTable("InoUtilidadliqSea")
                             ->createQuery("p")
                             ->addWhere("p.ca_idinocliente = ?", $liquidacion->idinocliente)
                             ->fetchOne();
                 }
-                if (!$utilidadliq){
+                if (!$utilidadliq) {
                     $utilidadliq = new InoUtilidadliqSea();
                     $utilidadliq->setCaIdinocliente($liquidacion->idinocliente);
                 }
                 $utilidadliq->setCaPrepaidVlr($liquidacion->prepaid_vlr);
                 $utilidadliq->setCaFacturaVlr($liquidacion->factura_vlr);
                 $utilidadliq->setCaValor($liquidacion->valor);
-                
-                if($error!="")
-                    $errorInfo.="Error en item ".utf8_encode($liquidacion->hbl).": ".$error." <br>";
-                else
-                {
+
+                if ($error != "")
+                    $errorInfo.="Error en item " . utf8_encode($liquidacion->hbl) . ": " . $error . " <br>";
+                else {
                     $utilidadliq->save();
-                    $ids[]=$liquidacion->id;
-                    $ids_reg[]=$utilidadliq->getCaIdinocliente();
+                    $ids[] = $liquidacion->id;
+                    $ids_reg[] = $utilidadliq->getCaIdinocliente();
                 }
             }
         }
@@ -413,7 +411,6 @@ class inoMaritimoActions extends sfActions {
         $this->responseArray = array("errorInfo" => $errorInfo, "id" => implode(",", $ids), "idreg" => implode(",", $ids_reg), "success" => true);
         $this->setTemplate("responseTemplate");
     }
-
 
     /**
      * Executes guardarDatosLiquidacionHouse action
@@ -426,29 +423,28 @@ class inoMaritimoActions extends sfActions {
         $errorInfo = "";
         $ids = array();
         foreach ($liquidaciones as $liquidacion) {
-            $error = "";
-            {
-                if ($liquidacion->idinocliente){
+            $error = ""; {
+                if ($liquidacion->idinocliente) {
                     $inoingreso = Doctrine::getTable("InoIngresosSea")
                             ->createQuery("i")
                             ->addWhere("i.ca_idinocliente = ?", $liquidacion->idinocliente)
                             ->orderBy("i.ca_fchfactura")
                             ->fetchOne();
-                    if ($inoingreso){
-                        $trm = $inoingreso->getCaTcambio()!=1?$inoingreso->getCaTcambio():$trm;
+                    if ($inoingreso) {
+                        $trm = $inoingreso->getCaTcambio() != 1 ? $inoingreso->getCaTcambio() : $trm;
                         $valor = round($liquidacion->valor * $trm, 0);
-                        if (!isset($ids[$liquidacion->idinocliente]["valor"])){
+                        if (!isset($ids[$liquidacion->idinocliente]["valor"])) {
                             $ids[$liquidacion->idinocliente]["valor"] = 0;
                         }
                         $ids[$liquidacion->idinocliente]["valor"]+= $valor;
-                        if (!isset($ids[$liquidacion->idinocliente]["trm"])){
+                        if (!isset($ids[$liquidacion->idinocliente]["trm"])) {
                             $ids[$liquidacion->idinocliente]["trm"] = $trm;
                         }
                     }
                 }
             }
         }
-        foreach ($ids as $key => $valor){
+        foreach ($ids as $key => $valor) {
             $utilidadliq = Doctrine::getTable("InoUtilidadliqSea")
                     ->createQuery("u")
                     ->addWhere("u.ca_idinocliente = ?", $key)
@@ -456,12 +452,11 @@ class inoMaritimoActions extends sfActions {
             $utilidadliq->setCaValor($utilidadliq->getCaFacturaVlr() + round($utilidadliq->getCaPrepaidVlr() * $valor["trm"], 0) + $valor["valor"]);
             $utilidadliq->save();
         }
-        
+
         $this->responseArray = array("errorInfo" => $errorInfo, "success" => true);
         $this->setTemplate("responseTemplate");
     }
 
-    
     /**
      * Executes datosGridParametrosLiquida action
      *
@@ -471,31 +466,31 @@ class inoMaritimoActions extends sfActions {
         $this->forward404Unless($request->getParameter("numRef"));
         $referencia = Doctrine::getTable("InoMaestraSea")->find($request->getParameter("numRef"));
         $this->forward404Unless($referencia);
-        
+
         $con = Doctrine_Manager::getInstance()->connection();
-        $sql = "delete from tb_inoutilidadliq_sea where ca_idinocliente in (select ca_idinocliente from tb_inoclientes_sea where ca_referencia = '".$request->getParameter("numRef")."')";
+        $sql = "delete from tb_inoutilidadliq_sea where ca_idinocliente in (select ca_idinocliente from tb_inoclientes_sea where ca_referencia = '" . $request->getParameter("numRef") . "')";
         $st = $con->execute($sql);
-        
+
         $deducciones = array();
         $aplicaciones = ParametroTable::retrieveByCaso("CU245");
-        foreach ($aplicaciones as $aplicacion){
+        foreach ($aplicaciones as $aplicacion) {
             $deducciones[] = $aplicacion->getCaIdentificacion();
         }
-        
+
         $errorInfo = "";
         $cbm_total = 0;
         $liquidacion = array();
         $inoclientes = $referencia->getInoClientesSea();
-        foreach ($inoclientes as $inocliente){
+        foreach ($inoclientes as $inocliente) {
             $facturaVlr = 0;
             $sobreventaVlr = 0;
             $deduccionesVlr = 0;
             $inoingresos = $inocliente->getInoIngresosSea();
-            foreach ($inoingresos as $inoingreso){
-                if (trim($inoingreso->getCaObservaciones()) != "Contenedores" and trim($inoingreso->getCaObservaciones()) != "Bodegajes"){
+            foreach ($inoingresos as $inoingreso) {
+                if (trim($inoingreso->getCaObservaciones()) != "Contenedores" and trim($inoingreso->getCaObservaciones()) != "Bodegajes") {
                     $inodeducciones = $inoingreso->getInoDeduccionesSea();
-                    foreach($inodeducciones as $inodeduccion){
-                        if (in_array($inodeduccion->getCaIddeduccion(),$deducciones)){
+                    foreach ($inodeducciones as $inodeduccion) {
+                        if (in_array($inodeduccion->getCaIddeduccion(), $deducciones)) {
                             $deduccionesVlr+= $inodeduccion->getCaValor();
                         }
                     }
@@ -503,34 +498,32 @@ class inoMaritimoActions extends sfActions {
                 $facturaVlr+= $inoingreso->getCaValor() - $deduccionesVlr;
             }
             $inoutilidades = Doctrine::getTable("InoUtilidadSea")
-                ->createQuery("c")
-                ->addWhere("c.ca_idinocliente = ?", $inocliente->getCaIdinocliente())
-                ->execute();
-
-            foreach($inoutilidades as $inoutilidad){
-                $inocosto = Doctrine::getTable("InoCostosSea")
                     ->createQuery("c")
-                    ->addWhere("c.ca_idinocostos_sea = ?", $inoutilidad->getCaIdinocosto())
-                    ->fetchOne();
-                if ($inocosto->getCosto()->getCaCosto() == "OTM"){
+                    ->addWhere("c.ca_idinocliente = ?", $inocliente->getCaIdinocliente())
+                    ->execute();
+
+            foreach ($inoutilidades as $inoutilidad) {
+                $inocosto = Doctrine::getTable("InoCostosSea")
+                        ->createQuery("c")
+                        ->addWhere("c.ca_idinocostos_sea = ?", $inoutilidad->getCaIdinocosto())
+                        ->fetchOne();
+                if ($inocosto->getCosto()->getCaCosto() == "OTM") {
                     $sobreventaVlr+= $inocosto->getCaVenta();
                 }
             }
             $facturaVlr-= $sobreventaVlr;
-            
+
             $utilidadliq = new InoUtilidadliqSea();
             $utilidadliq->setCaIdinocliente($inocliente->getCaIdinocliente());
             $utilidadliq->setCaPrepaidVlr(0);
-            $utilidadliq->setCaFacturaVlr(round($facturaVlr,0));
+            $utilidadliq->setCaFacturaVlr(round($facturaVlr, 0));
             $utilidadliq->setCaValor(0);
             $utilidadliq->save();
         }
         $this->responseArray = array("errorInfo" => $errorInfo, "success" => true);
         $this->setTemplate("responseTemplate");
     }
-    
-    
-    
+
     /**
      * Executes guardarDatosParametros action
      *
@@ -542,16 +535,15 @@ class inoMaritimoActions extends sfActions {
         $errorInfo = "";
         $ids = array();
         foreach ($parametros as $parametro) {
-            $error = "";
-            {
+            $error = ""; {
                 $utilidadprm = null;
-                if ($parametro->idparametro){
+                if ($parametro->idparametro) {
                     $utilidadprm = Doctrine::getTable("InoUtilidadprmsSea")
                             ->createQuery("p")
                             ->addWhere("p.ca_idparametro = ?", $parametro->idparametro)
                             ->fetchOne();
                 }
-                if (!$utilidadprm){
+                if (!$utilidadprm) {
                     $utilidadprm = new InoUtilidadprmsSea();
                     $utilidadprm->setCaReferencia($parametro->referencia);
                 }
@@ -559,14 +551,13 @@ class inoMaritimoActions extends sfActions {
                 $utilidadprm->setCaTipo($parametro->tipo);
                 $utilidadprm->setCaAplicacion($parametro->aplicacion);
                 $utilidadprm->setCaValor($parametro->valor);
-                
-                if($error!="")
-                    $errorInfo.="Error en item ".utf8_encode($parametro->item).": ".$error." <br>";
-                else
-                {
+
+                if ($error != "")
+                    $errorInfo.="Error en item " . utf8_encode($parametro->item) . ": " . $error . " <br>";
+                else {
                     $utilidadprm->save();
-                    $ids[]=$parametro->id;
-                    $ids_reg[]=$utilidadprm->getCaReferencia();
+                    $ids[] = $parametro->id;
+                    $ids_reg[] = $utilidadprm->getCaReferencia();
                 }
             }
         }
@@ -586,16 +577,15 @@ class inoMaritimoActions extends sfActions {
         $errorInfo = "";
         $ids = array();
         foreach ($parametros as $parametro) {
-            $error = "";
-            {
-                if ($parametro->referencia and $parametro->idcosto and $parametro->tipo){
+            $error = ""; {
+                if ($parametro->referencia and $parametro->idcosto and $parametro->tipo) {
                     $utilidadprm = Doctrine::getTable("InoUtilidadprmsSea")
                             ->createQuery("p")
                             ->addWhere("p.ca_referencia = ?", $parametro->referencia)
                             ->addWhere("p.ca_idcosto = ?", $parametro->idcosto)
                             ->addWhere("p.ca_tipo = ?", $parametro->tipo)
                             ->fetchOne();
-                    if ($utilidadprm){
+                    if ($utilidadprm) {
                         $utilidadprm->delete();
                     }
                 }
@@ -757,8 +747,8 @@ class inoMaritimoActions extends sfActions {
     public function executeNumerosRadicacion(sfWebRequest $request) {
         //set_time_limit(0);
         //$file = sfConfig::get('sf_root_dir') . DIRECTORY_SEPARATOR . "tmp" . DIRECTORY_SEPARATOR . "NumerosReservados.txt";
-        $file=$_FILES['archivo']['tmp_name'];
-        
+        $file = $_FILES['archivo']['tmp_name'];
+
         //echo $file;
         //exit;
 
@@ -839,6 +829,119 @@ class inoMaritimoActions extends sfActions {
             }
         }
         $this->forward("homepage", "index");
+    }
+
+    /**
+     * Pantalla de entrada para Gestion Documentos de Transporte
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeInoLiberacionSea(sfWebRequest $request) {
+        $this->filtros = array("ca_referencia" => "Número de Referencia");
+    }
+
+    /**
+     * Lista de Referencias para Gestion Documentos de Transporte
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeInoLiberacionSeaList(sfWebRequest $request) {
+        $this->selFiltro = $request->getParameter("selFiltro");
+        $this->cadena = $request->getParameter("cadena");
+        $this->data = array();
+
+        $referencias_rs = Doctrine::getTable("InoMaestraSea")
+                ->createQuery("i")
+                ->where("i.ca_referencia like '%$this->cadena%'")
+                ->execute();
+        foreach ($referencias_rs as $key => $referencia) {
+            $row = array();
+            $row["ca_referencia"] = $referencia->getCaReferencia();
+            $row["ca_impoexpo"] = $referencia->getCaImpoexpo();
+            $row["ca_traorigen"] = $referencia->getOrigen()->getTrafico()->getCaNombre();
+            $row["ca_ciuorigen"] = $referencia->getOrigen()->getCaCiudad();
+            $row["ca_tradestino"] = $referencia->getDestino()->getTrafico()->getCaNombre();
+            $row["ca_ciudestino"] = $referencia->getDestino()->getCaCiudad();
+            $row["ca_fchreferencia"] = $referencia->getCaFchreferencia();
+            $row["ca_modalidad"] = $referencia->getCaModalidad();
+            $this->data[] = $row;
+        }
+    }
+
+    public function executeFormLiberacionSeaExt5(sfWebRequest $request) {
+
+        $id = base64_decode($request->getParameter("id"));
+        $referencia = Doctrine::getTable("InoMaestraSea")
+                ->createQuery("i")
+                ->where("i.ca_referencia like '$id'")
+                ->fetchOne();
+
+        $this->referencia = $referencia;
+    }
+
+    public function executeLiberarCarga(sfWebRequest $request) {
+        $idinocliente = $request->getParameter("idinocliente");
+        $estado_liberacion = $request->getParameter("estado_liberacion");
+        $nota_liberacion = $request->getParameter("nota_liberacion");
+        $fch_liberacion = $request->getParameter("fch_liberacion");
+        $detalle_liberacion = $request->getParameter("detalle_liberacion");
+
+        $clientesea = Doctrine::getTable("InoClientesSea")
+                ->createQuery("d")
+                ->where("d.ca_idinocliente = ?", $idinocliente)
+                ->fetchOne();
+        if ($estado_liberacion == '' || $nota_liberacion == '' || $fch_liberacion == '') {
+            $this->responseArray = array("success" => false, 'errorInfo' => 'Error');
+        } else {
+            if ($clientesea) {
+                $conn = Doctrine::getTable("InoClientesSea")->getConnection();
+                $conn->beginTransaction();
+                try {
+                    $clientesea->setCaFchliberacion($fch_liberacion);
+                    $clientesea->setCaNotaliberacion(utf8_decode($nota_liberacion));
+                    $clientesea->setCaDetalleliberacion(utf8_decode($detalle_liberacion));
+                    $clientesea->setCaEstadoliberacion($estado_liberacion);
+                    $clientesea->setCaUsuliberado($this->getUser()->getUserId());
+                    $clientesea->setCaFchliberado(date("Y-m-d H:i:s"));
+
+                    $clientesea->save();
+                    $conn->commit();
+                    $this->responseArray = array("success" => true);
+                } catch (Exception $e) {
+                    $this->responseArray = array("success" => false);
+                }
+            }
+        }
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeRevertirLiberarCarga(sfWebRequest $request) {
+        $idinocliente = $request->getParameter("idinocliente");
+
+        $clientesea = Doctrine::getTable("InoClientesSea")
+                ->createQuery("d")
+                ->where("d.ca_idinocliente = ?", $idinocliente)
+                ->fetchOne();
+        if ($clientesea) {
+            $conn = Doctrine::getTable("InoClientesSea")->getConnection();
+            $conn->beginTransaction();
+            try {
+                $clientesea->setCaFchliberacion(null);
+                $clientesea->setCaNotaliberacion(null);
+                $clientesea->setCaDetalleliberacion(null);
+                $clientesea->setCaEstadoliberacion('Sin Liberar');
+                $clientesea->setCaUsuliberado($this->getUser()->getUserId());
+                $clientesea->setCaFchliberado(date("Y-m-d H:i:s"));
+
+                $clientesea->save();
+                $conn->commit();
+                $this->responseArray = array("success" => true);
+            } catch (Exception $e) {
+                $this->responseArray = array("success" => false);
+            }
+        }
+
+        $this->setTemplate("responseTemplate");
     }
 
 }
