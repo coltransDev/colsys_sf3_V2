@@ -39,6 +39,7 @@ foreach ($referencia->getInoClientesSea() as $inocliente){
                 flex: 1,
                 hideLabel: false
             },
+            
             items: [{
                 xtype: 'label',
                 text: 'Id Cliente:',
@@ -49,18 +50,18 @@ foreach ($referencia->getInoClientesSea() as $inocliente){
                 text: 'Nombre del Cliente:',
                 style: 'display:inline-block;text-align:left;font-weight:bold;background-color: #BDBDBD;',
                 columnWidth: 0.6
-            },";
-    
+            }, ";
             if ($inocliente->getCaFchliberacion() == ''){
     
                 $fieldset .= "{
                     columnWidth: 0.2,
                     xtype: 'button',
+                    iconAlign: 'bottom',
                     iconCls: 'refresh',
                    // style:'background:none;color:red',
-                    text: 'liberar',
+                    text: 'Liberar',
                     handler: function() {";
-                    $nombrecliente = "Cliente : ".$inocliente->getCliente()->getIds()->getCaNombre();
+                    $nombrecliente = $inocliente->getCliente()->getIds()->getCaNombre();
                     $fieldset .= " if (win_liberacion == null) {
                          win_liberacion = new Ext.Window({
                             title: 'Liberación',
@@ -129,8 +130,8 @@ foreach ($referencia->getInoClientesSea() as $inocliente){
                         });
                        }
                     },";
-                }
-                $fieldset .= "{
+                }//fin else 
+    $fieldset .= "{
                 xtype: 'label',
                 text: '".$inocliente->getCliente()->getCaIdcliente()."',
                 style: 'display:inline-block;text-align:left',
@@ -291,7 +292,7 @@ foreach ($referencia->getInoClientesSea() as $inocliente){
                 text: '',
                 style: 'display:inline-block;text-align:left',
                 columnWidth: 1
-            },";
+            }";
             $acumulador = 0;
             
             foreach ($inocliente->getInoIngresosSea() as $factura){
@@ -314,7 +315,7 @@ foreach ($referencia->getInoClientesSea() as $inocliente){
                         type: 'column',
                         defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
                 }},
-
+                
                 items: [{
                     xtype: 'fieldcontainer',
                     title: 'Factura',
@@ -386,14 +387,34 @@ foreach ($referencia->getInoClientesSea() as $inocliente){
                         text: '".$factura->getCaReccaja()."',
                         style: 'display:inline-block;text-align:left',
                         columnWidth: 0.14
-                    }]
-                }]";
-            
+                    }
+                    
+                    ]//fin items fieldcontainer facturas
+
+
+                    } // fin field container facturas
+                    
+
+                    ]// fin items fieldset facturas
+                
+
+                }// fin fieldset facturas 
+
+
+                
+                ";
             }
-            
-    $fieldset .= "
-    }]
-        }],height: ".$alto.",},";
+
+    $fieldset .="]// fin items fieldcontainer 
+
+
+
+        }],height: ".$alto."//fin items fieldset padre
+        
+    
+    
+     }, //fin fieldset padre";
+    
 }
 ?>
 
@@ -433,7 +454,7 @@ foreach ($referencia->getInoClientesSea() as $inocliente){
     autoScroll: true,
     items: [{
         xtype: 'fieldset',
-        title: 'Datos de Liberación',
+        title: 'Cliente',
         width: 645,
         height: 260,
         collapsible: false,
@@ -603,7 +624,7 @@ foreach ($referencia->getInoClientesSea() as $inocliente){
     
 
     Ext.create('Ext.form.Panel', {
-        title: 'Sistema Administrador de Referencias Marítimas',
+        title: 'Sistema Administrador de Referencias Marítimas <?=$referencia->getCaReferencia()?>',
         bodyPadding: 5,
         width: 800,
         height: 650,
