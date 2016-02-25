@@ -33,13 +33,13 @@
     Ext.define('ComboUnidadesPaquete', {
         extend: 'Ext.form.field.ComboBox',
         alias: 'widget.combo-unidades-paquete',
-        store: ['Cajas', 'Cartones', 'Estuches', 'Jaulas', 'Palets', 'Tamores', 'Barriles', 'Bidones', 'Rollos', 'Bobina', 'Laminas', ]
+        store: ['Paquetes','Piezas','Cajas', 'Cartones', 'Estuches', 'Jaulas', 'Palets', 'Tamores', 'Barriles', 'Bidones', 'Rollos', 'Bobina', 'Laminas', 'Pallets', 'Boxes', 'Bags', 'Bulk', 'Skid', 'Barrels', 'Cartons', 'Case', 'Tarp']
     });
 
     Ext.define('ComboUnidadesPeso', {
         extend: 'Ext.form.field.ComboBox',
         alias: 'widget.combo-unidades-peso',
-        store: ['TONS', 'LBR', 'KGS']
+        store: ['KGS', 'LBR', 'TONS']
     });
 
     Ext.define('ComboUnidadesMedida', {
@@ -80,7 +80,7 @@
                 name: 'item_number'
             }, {
                 xtype: 'fieldset',
-                columnWidth: 0.5,
+                columnWidth: 0.48,
                 title: 'Container Number',
                 defaults: {anchor: '100%'},
                 layout: 'anchor',
@@ -93,7 +93,7 @@
                 }
             }, {
                 xtype: 'fieldset',
-                columnWidth: 0.5,
+                columnWidth: 0.49,
                 title: 'Seals',
                 defaults: {anchor: '100%'},
                 layout: 'anchor',
@@ -114,12 +114,12 @@
                 items: {
                     xtype: 'textareafield',
                     name: 'marks_numbers',
-                    allowBlank: false,
+                    allowBlank: true,
                     height: 115
                 }
             }, {
                 xtype: 'fieldset',
-                columnWidth: 0.70,
+                columnWidth: 0.68,
                 title: 'Description of goods',
                 defaults: {anchor: '100%'},
                 layout: 'anchor',
@@ -143,7 +143,7 @@
                 }]
             }, {
                 xtype: 'fieldset',
-                columnWidth: 0.25,
+                columnWidth: 0.245,
                 title: 'Net Weight',
                 defaults: {anchor: '100%'},
                 layout: 'anchor',
@@ -152,12 +152,13 @@
                     name: 'net_weight',
                     allowBlank: false,
                     hideTrigger: true,
+                    decimalPrecision: 2,
                     keyNavEnabled: false,
                     mouseWheelEnabled: false
                 }
             }, {
                 xtype: 'fieldset',
-                columnWidth: 0.25,
+                columnWidth: 0.245,
                 title: 'Net Unit',
                 defaults: {anchor: '100%'},
                 layout: 'anchor',
@@ -169,7 +170,7 @@
                 }
             }, {
                 xtype: 'fieldset',
-                columnWidth: 0.25,
+                columnWidth: 0.245,
                 title: 'Gross Weight',
                 defaults: {anchor: '100%'},
                 layout: 'anchor',
@@ -178,12 +179,13 @@
                     name: 'gross_weight',
                     allowBlank: false,
                     hideTrigger: true,
+                    decimalPrecision: 2,
                     keyNavEnabled: false,
                     mouseWheelEnabled: false
                 }
             }, {
                 xtype: 'fieldset',
-                columnWidth: 0.25,
+                columnWidth: 0.245,
                 title: 'Gross Unit',
                 defaults: {anchor: '100%'},
                 layout: 'anchor',
@@ -195,7 +197,7 @@
                 }
             }, {
                 xtype: 'fieldset',
-                columnWidth: 0.25,
+                columnWidth: 0.245,
                 title: 'Number Packages',
                 defaults: {anchor: '100%'},
                 layout: 'anchor',
@@ -205,12 +207,13 @@
                     name: 'number_packages',
                     allowBlank: false,
                     hideTrigger: true,
+                    decimalPrecision: 2,
                     keyNavEnabled: false,
                     mouseWheelEnabled: false
                 }
             }, {
                 xtype: 'fieldset',
-                columnWidth: 0.25,
+                columnWidth: 0.245,
                 title: 'Kind Packages',
                 defaults: {anchor: '100%'},
                 layout: 'anchor',
@@ -223,8 +226,8 @@
                 }
             }, {
                 xtype: 'fieldset',
-                columnWidth: 0.25,
-                title: 'Measurement Weight',
+                columnWidth: 0.245,
+                title: 'Measure Weight',
                 defaults: {anchor: '100%'},
                 layout: 'anchor',
                 items: {
@@ -232,13 +235,14 @@
                     name: 'measurement_weight',
                     allowBlank: true,
                     hideTrigger: true,
+                    decimalPrecision: 2,
                     keyNavEnabled: false,
                     mouseWheelEnabled: false
                 }
             }, {
                 xtype: 'fieldset',
-                columnWidth: 0.25,
-                title: 'Measurement Unit',
+                columnWidth: 0.245,
+                title: 'Measure Unit',
                 defaults: {anchor: '100%'},
                 layout: 'anchor',
                 items: {

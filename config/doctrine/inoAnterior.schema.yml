@@ -951,7 +951,7 @@ ExpoDoctransporte:
     ca_referencia: string(17)
     ca_consecutivo: integer
     ca_fchdoctransporte: date
-    ca_place_delivery: string(8)
+    ca_port_discharge: string(8)
     ca_terminos_transporte: string(10)
     ca_terminos_transporte: string(10)
     ca_liberacion: string(20)
@@ -1029,13 +1029,13 @@ ExpoDocItems:
       primary: true
     ca_iddoctransporte: integer
     ca_container_number: string(17)
-    ca_number_packages: integer
+    ca_number_packages: float
     ca_kind_packages: string(128)
-    ca_gross_weight: integer
+    ca_gross_weight: float
     ca_gross_unit: string(4)
-    ca_net_weight: integer
+    ca_net_weight: float
     ca_net_unit: string(4)
-    ca_measurement_weight: integer
+    ca_measurement_weight: float
     ca_measurement_unit: string(4)
     ca_seals: string(128)
     ca_marks_numbers: string

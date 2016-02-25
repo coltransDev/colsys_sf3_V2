@@ -18,34 +18,37 @@ while (true) {
         $pdf->Image( '/srv/www/digitalFile/formatos/HBL0001.jpg', -5,-10,221,337 );
     }
 
-    $pdf->SetFont ( 'Arial', '', 11 );
-    $pdf->Text(10, 20, $reporte->getContacto()->getCliente()->getCaCompania());
-    $pdf->Text(10, 25, $reporte->getContacto()->getCliente()->getDireccion());
-    $pdf->Text(10, 30, $reporte->getContacto()->getCliente()->getCiudad()->getCaCiudad().", ".$reporte->getContacto()->getCliente()->getCiudad()->getTrafico()->getCaNombre()." ".$reporte->getContacto()->getCliente()->getCaZipcode());
+    $pdf->SetFont ( 'Arial', '', 9 );
+    $pdf->SetXY(10, 13);
+    $shipper = $reporte->getContacto()->getCliente()->getCaCompania()."\n";
+    $shipper.= $reporte->getContacto()->getCliente()->getDireccion()."\n";
+    $shipper.= $reporte->getContacto()->getCliente()->getCiudad()->getCaCiudad().", ".$reporte->getContacto()->getCliente()->getCiudad()->getTrafico()->getCaNombre()." ".$reporte->getContacto()->getCliente()->getCaZipcode();
+    $pdf->MultiCell(100, 4, $shipper, 0, 1);
 
-    $pdf->Text(10, 45, $consignatario->getCaNombre());
-    $pdf->Text(10, 50, $consignatario->getCaDireccion());
-    $pdf->Text(10, 55, $consignatario->getCiudad()->getCaCiudad().", ".$consignatario->getCiudad()->getTrafico()->getCaNombre());
-    $pdf->Text(10, 60, $consignatario->getCaIdentificacion());
-
+    $pdf->SetXY(10, 42);
+    $consignee = $consignatario->getCaNombre()."\n";
+    $consignee.= $consignatario->getCaDireccion()."\n";
+    $consignee.= $consignatario->getCiudad()->getCaCiudad().", ".$consignatario->getCiudad()->getTrafico()->getCaNombre()."\n";
+    $consignee.= $consignatario->getCaIdentificacion();
+    $pdf->MultiCell(100, 4, $consignee, 0, 1);
+    
+    $pdf->SetXY(10, 68);
     if ($notify) {
-        $pdf->Text(10, 72, $notify->getCaNombre());
-        $pdf->Text(10, 77, $notify->getCaDireccion());
-        $pdf->Text(10, 82, $notify->getCiudad()->getCaCiudad().", ".$consignatario->getCiudad()->getTrafico()->getCaNombre());
-        $pdf->Text(10, 87, $notify->getCaIdentificacion());
+        $notified = $notify->getCaNombre()."\n";
+        $notified.= $notify->getCaDireccion()."\n";
+        $notified.= $notify->getCiudad()->getCaCiudad().", ".$notify->getCiudad()->getTrafico()->getCaNombre()."\n";
+        $notified.= $notify->getCaIdentificacion()."\n";
+        $pdf->MultiCell(100, 4, $notified, 0, 1);
     } else {
-        $pdf->Text(10, 72, $consignatario->getCaNombre());
-        $pdf->Text(10, 77, $consignatario->getCaDireccion());
-        $pdf->Text(10, 82, $consignatario->getCiudad()->getCaCiudad().", ".$consignatario->getCiudad()->getTrafico()->getCaNombre());
-        $pdf->Text(10, 87, $consignatario->getCaIdentificacion());
+        $pdf->MultiCell(100, 4, $consignee, 0, 1);
     }
 
     $pdf->Text(150, 20, $documento->getInoMaestraExpo()->getCaReferencia());
 
     $pdf->Text(10, 107, $documento->getCaOceanVessel());
     $pdf->Text(60, 107, $referencia->getOrigen()->getCaCiudad().", ".$referencia->getOrigen()->getTrafico()->getCaNombre());
-    $pdf->Text(10, 118, $referencia->getDestino()->getCaCiudad().", ".$referencia->getDestino()->getTrafico()->getCaNombre());
-    $pdf->Text(60, 118, $delivery->getCaCiudad().", ".$delivery->getTrafico()->getCaNombre());
+    $pdf->Text(10, 118, $discharge->getCaCiudad().", ".$discharge->getTrafico()->getCaNombre());
+    $pdf->Text(60, 118, $referencia->getDestino()->getCaCiudad().", ".$referencia->getDestino()->getTrafico()->getCaNombre());
     
     $pdf->Text(140, 118, "Page: ".($page++)." / {nb}");
 
@@ -140,7 +143,7 @@ while (true) {
     $pdf->SetXY(140, 233);
     $pdf->MultiCell(70, 4, $documento->getCaDeclaredValue(), 0, 1);
 
-    $pdf->SetFont ( 'Arial', '', 11 );
+    $pdf->SetFont ( 'Arial', '', 9 );
     $pdf->Text(20, 278, $documento->getCaFreightAmount());
     $pdf->Text(90, 278, $documento->getCaFreightPayable());
     $pdf->Text(135, 278, str_replace(' D.C.', '', $usuario->getSucursal()->getcaNombre()) . ', ' . Utils::fechaLarga($documento->getCaFchdoctransporte()));

@@ -66,7 +66,7 @@ class inoExpoActions extends sfActions {
         
     }
 
-    public function executeDatosPlaceDelivery(sfWebRequest $request) {
+    public function executeDatosPortDischarge(sfWebRequest $request) {
         $query = strtolower($this->getRequestParameter("query"));
         $data = array();
         if ($query) {
@@ -105,7 +105,7 @@ class inoExpoActions extends sfActions {
                 "ciudestino" => utf8_encode($documento->getInoMaestraExpo()->getDestino()->getCaCiudad()),
                 "consecutivo" => $documento->getCaConsecutivo(),
                 "fchdoctransporte" => $documento->getCaFchdoctransporte(),
-                "place_delivery" => utf8_encode($documento->getCaPlaceDelivery()),
+                "port_discharge" => utf8_encode($documento->getCaPortDischarge()),
                 "terminos_transporte" => $documento->getCaTerminosTransporte(),
                 "liberacion" => $documento->getCaLiberacion(),
                 "ocean_vessel" => utf8_encode($documento->getCaOceanVessel()),
@@ -152,8 +152,12 @@ class inoExpoActions extends sfActions {
     public function executeConsecutivosDisponibles(sfWebRequest $request) {
         $consecutivo = $this->getRequestParameter("consecutivo");
         $con = Doctrine_Manager::getInstance()->connection();
-
-        $sql = "select c.ca_consecutivo from tb_expo_doc_numbers c where ca_consecutivo = $consecutivo or (ca_referencia is null and ca_fchimpreso is null and ca_fchanulado is null) order by c.ca_consecutivo";
+        
+        $filtro = "(ca_referencia is null and ca_fchimpreso is null and ca_fchanulado is null)";
+        if($consecutivo){
+            $filtro.= " or ca_consecutivo = $consecutivo";
+        }
+        $sql = "select c.ca_consecutivo from tb_expo_doc_numbers c where $filtro order by c.ca_consecutivo";
 
         $rs = $con->execute($sql);
         $consecutivos_rs = $rs->fetchAll();
@@ -221,7 +225,7 @@ class inoExpoActions extends sfActions {
         $conn = Doctrine::getTable("ExpoDocNumbers")->getConnection();
         $expoDocNumbers = Doctrine::getTable('ExpoDocNumbers')->find($consecutivo);
         $conn->beginTransaction();
-        if ($numero) {
+        if ($expoDocNumbers) {
             try {
                 $expoDocNumbers->setCaUsuanulado($this->getUser()->getUserId());
                 $expoDocNumbers->setCaFchanulado(date("Y-m-d H:i:s"));
@@ -256,7 +260,7 @@ class inoExpoActions extends sfActions {
 
         $this->consignatario = Doctrine::getTable("Tercero")->find($this->reporte->getCaIdconsignatario());
         $this->notify = Doctrine::getTable("Tercero")->find($this->reporte->getCaIdnotify());
-        $this->delivery = Doctrine::getTable("Ciudad")->find($this->documento->getCaPlaceDelivery());
+        $this->discharge = Doctrine::getTable("Ciudad")->find($this->documento->getCaPortDischarge());
         $this->usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
         $this->borrador = ($this->getRequestParameter("borrador")=='true')?true:false;
         $this->plantilla = ($this->getRequestParameter("plantilla")=='true')?true:false;
@@ -322,8 +326,8 @@ class inoExpoActions extends sfActions {
             if ($datos->fchdoctransporte) {
                 $expoDoctransporte->setCaFchdoctransporte($datos->fchdoctransporte);
             }
-            if ($datos->place_delivery) {
-                $expoDoctransporte->setCaPlaceDelivery($datos->place_delivery);
+            if ($datos->port_discharge) {
+                $expoDoctransporte->setCaPortDischarge($datos->port_discharge);
             }
             if ($datos->terminos_transporte) {
                 $expoDoctransporte->setCaTerminosTransporte($datos->terminos_transporte);
@@ -508,13 +512,8 @@ class inoExpoActions extends sfActions {
             $expoAlerta = new ExpoAlerta();
         }
 
-
         $this->form = new AlertaForm();
         $this->form->configure();
-
-
-
-
 
         if ($request->isMethod('post')) {
 

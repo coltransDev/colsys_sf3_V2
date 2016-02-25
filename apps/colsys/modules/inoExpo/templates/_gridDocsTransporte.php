@@ -24,7 +24,7 @@ include_component("inoExpo", "gridItemsDocs");
                 {name: 'ciudestino', type: 'string'},
                 {name: 'consecutivo', type: 'string'},
                 {name: 'fchdoctransporte', type: 'string'},
-                {name: 'place_delivery', type: 'string'},
+                {name: 'port_discharge', type: 'string'},
                 {name: 'terminos_transporte', type: 'string'},
                 {name: 'liberacion', type: 'string'},
                 {name: 'ocean_vessel', type: 'string'},
@@ -42,7 +42,7 @@ include_component("inoExpo", "gridItemsDocs");
             extend: 'Ext.data.Model',
             proxy: {
                 type: 'ajax',
-                url: '<?= url_for('inoExpo/datosPlaceDelivery') ?>',
+                url: '<?= url_for('inoExpo/datosPortDischarge') ?>',
                 reader: {
                     type: 'json',
                     root: 'root',
@@ -126,7 +126,7 @@ include_component("inoExpo", "gridItemsDocs");
         Ext.define('ComboPagadero', {
             extend: 'Ext.form.field.ComboBox',
             alias: 'widget.combo-pagadero',
-            store: ['ORIGEN', 'DESTINO'],
+            store: ['ORIGEN', 'DESTINO', 'ORIGIN', 'DESTINATION'],
             forceSelection: true
         });
 
@@ -162,7 +162,7 @@ include_component("inoExpo", "gridItemsDocs");
                     name: 'iddoctransporte'
                 }, {
                     xtype: 'fieldset',
-                    columnWidth: 0.5,
+                    columnWidth: 0.48,
                     title: 'Fch.Documento',
                     defaults: {anchor: '100%'},
                     layout: 'anchor',
@@ -174,18 +174,18 @@ include_component("inoExpo", "gridItemsDocs");
                     }
                 }, {
                     xtype: 'fieldset',
-                    columnWidth: 0.5,
-                    title: 'Place Delivery',
+                    columnWidth: 0.48,
+                    title: 'Port of Discharge',
                     defaults: {anchor: '100%'},
                     layout: 'anchor',
                     items: {
                         xtype: 'combo-ciudades',
-                        name: 'place_delivery',
+                        name: 'port_discharge',
                         allowBlank: false
                     }
                 }, {
                     xtype: 'fieldset',
-                    columnWidth: 0.5,
+                    columnWidth: 0.48,
                     title: 'Términos de Transporte',
                     defaults: {anchor: '100%'},
                     layout: 'anchor',
@@ -196,7 +196,7 @@ include_component("inoExpo", "gridItemsDocs");
                     }
                 }, {
                     xtype: 'fieldset',
-                    columnWidth: 0.5,
+                    columnWidth: 0.48,
                     title: 'Liberación',
                     defaults: {anchor: '100%'},
                     layout: 'anchor',
@@ -207,7 +207,7 @@ include_component("inoExpo", "gridItemsDocs");
                     }
                 }, {
                     xtype: 'fieldset',
-                    columnWidth: 0.7,
+                    columnWidth: 0.68,
                     title: 'Ocean Vessel',
                     defaults: {anchor: '100%'},
                     layout: 'anchor',
@@ -220,7 +220,7 @@ include_component("inoExpo", "gridItemsDocs");
                     }
                 }, {
                     xtype: 'fieldset',
-                    columnWidth: 0.3,
+                    columnWidth: 0.28,
                     title: 'Tamaño de Letra',
                     defaults: {anchor: '100%'},
                     layout: 'anchor',
@@ -232,7 +232,7 @@ include_component("inoExpo", "gridItemsDocs");
                     }
                 }, {
                     xtype: 'fieldset',
-                    columnWidth: 0.5,
+                    columnWidth: 0.48,
                     title: 'Declaration of interest of the consigner',
                     defaults: {anchor: '100%'},
                     layout: 'anchor',
@@ -245,7 +245,7 @@ include_component("inoExpo", "gridItemsDocs");
                     }
                 }, {
                     xtype: 'fieldset',
-                    columnWidth: 0.5,
+                    columnWidth: 0.48,
                     title: 'Declared value for ad valorem rate',
                     defaults: {anchor: '100%'},
                     layout: 'anchor',
@@ -258,7 +258,7 @@ include_component("inoExpo", "gridItemsDocs");
                     }
                 }, {
                     xtype: 'fieldset',
-                    columnWidth: 0.5,
+                    columnWidth: 0.48,
                     title: 'Freight Amount',
                     defaults: {anchor: '100%'},
                     layout: 'anchor',
@@ -272,7 +272,7 @@ include_component("inoExpo", "gridItemsDocs");
                     }
                 }, {
                     xtype: 'fieldset',
-                    columnWidth: 0.5,
+                    columnWidth: 0.48,
                     title: 'Freight Payable at',
                     defaults: {anchor: '100%'},
                     layout: 'anchor',
@@ -293,8 +293,8 @@ include_component("inoExpo", "gridItemsDocs");
                     }
                 }, {
                     xtype: 'fieldset',
-                    columnWidth: 0.3,
-                    title: 'Number of Original FBL\'s',
+                    columnWidth: 0.28,
+                    title: 'Number Original FBL\'s',
                     defaults: {anchor: '100%'},
                     layout: 'anchor',
                     items: {
@@ -306,7 +306,7 @@ include_component("inoExpo", "gridItemsDocs");
                     }
                 }, {
                     xtype: 'fieldset',
-                    columnWidth: 0.5,
+                    columnWidth: 0.48,
                     title: 'For delivery of goods please apply to',
                     defaults: {anchor: '100%'},
                     layout: 'anchor',
@@ -507,6 +507,7 @@ include_component("inoExpo", "gridItemsDocs");
                                             })
                                         }
                                         rec = Ext.create('DocsTransporte', {});
+                                        storeNumeros.reload();
                                         win_header.down('form').loadRecord(rec);
                                         win_header.show();
                                     }
