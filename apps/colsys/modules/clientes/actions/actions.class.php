@@ -2381,49 +2381,54 @@ class clientesActions extends sfActions {
         $datos = $request->getParameter("datos");
         $datosGrid = $request->getParameter("datosGrid");
         $datosGrid = json_decode($datosGrid);
+        $datosGridFinanciera = $request->getParameter("datosGridFinanciera");
+        $datosGridFinanciera = json_decode($datosGridFinanciera);
         $datos = json_decode($datos);
         $nuevo = false;
         $ids = array();
         $cliente = new IdsCliente();
+        
+        $con = Doctrine_Manager::getInstance()->connection();
+        
         $idcliente = $datos->idcliente;
         $conn = Doctrine::getTable("IdsCliente")->getConnection();
         $cliente = Doctrine::getTable('IdsCliente')->find($idcliente);
+        
         if ($cliente) {
             $conn->beginTransaction();
             try {
                 foreach ($datosGrid as $datoGrid) {
-
-                    if ($datoGrid->iddocumento) {
-                        $doccliente = Doctrine::getTable("DocCliente")
+                    $documentosxConc = Doctrine::getTable("Documentosxconc")
                                 ->createQuery("d")
-                                ->where("d.ca_idcliente = ?", $idcliente)
-                                ->addWhere("d.ca_iddocumento = ?", $datoGrid->iddocumento)
+                                ->addWhere("d.ca_idtipo = ?", $datoGrid->idtipo)
+                                ->execute();
+                    foreach($documentosxConc as $documentoxConc){
+                        $doccliente = Doctrine::getTable("Doccliente")
+                                ->createQuery("d")
+                                ->addWhere("d.ca_idtipo = ?", $documentoxConc->getCaId())
+                                ->addWhere("d.ca_idcliente = ?", $idcliente)
                                 ->fetchOne();
-                    }
-                    if (!$doccliente) {
-                        $doccliente = new DocCliente();
-                        if ($datoGrid->iddocumento) {
-                            $doccliente->setCaIddocumento($datoGrid->iddocumento);
+                        if (!$doccliente){
+                            $doccliente = new Doccliente();
+                            $doccliente->setCaIdcliente($idcliente);
+                            $doccliente->setCaIdtipo($documentoxConc->getCaId());
                         }
-                        $doccliente->setCaIdcliente($idcliente);
+                        if ($datoGrid->fch_documento) {
+                            $doccliente->setCaFchdocumento($datoGrid->fch_documento);
+                        }
+                        if ($datoGrid->observaciones) {
+                            $doccliente->setCaObservaciones(utf8_decode($datoGrid->observaciones));
+                        }
+                        $doccliente->save();
+                        $ids[] = $datoGrid->id;
+                        $borrado[] = $documentoxConc->getCaId();
                     }
-
-                    if ($datoGrid->idtipo) {
-                        $doccliente->setCaIdtipo($datoGrid->idtipo);
-                    }
-                    if ($datoGrid->fch_documento) {
-                        $doccliente->setCaFchdocumento($datoGrid->fch_documento);
-                    }
-                    if ($datoGrid->observaciones) {
-                        $doccliente->setCaObservaciones(utf8_decode($datoGrid->observaciones));
-                    }
-                    if ($datoGrid->fch_vigencia) {
-                        $doccliente->setCaFchvigencia($datoGrid->fch_vigencia);
-                    }
-                    $doccliente->save();
-                    $ids[] = $datoGrid->id;
                 }
-
+                
+                $sql = "delete from tb_doccliente where ca_idcliente = $idcliente and ca_idtipo not in (".implode(",", $borrado).")";
+                $rs = $con->execute($sql);
+                
+                
                 if ($datos->fchcircular) {
                     $cliente->setCaFchcircular($datos->fchcircular);
                 }
@@ -2468,33 +2473,53 @@ class clientesActions extends sfActions {
                 }
                 $cliente->setCaGrancontribuyente($datos->grancontribuyente);
                 $cliente->setCaUap($datos->uap);
+                $cliente->setCaAltex($datos->altex);
 
-                if ($datos->activostotales) {
-                    $cliente->setCaActivostotales(utf8_decode($datos->activostotales));
-                }
-                if ($datos->activoscorrientes) {
-                    $cliente->setCaActivoscorrientes(utf8_decode($datos->activoscorrientes));
-                }
-                if ($datos->pasivostotales) {
-                    $cliente->setCaPasivostotales(utf8_decode($datos->pasivostotales));
-                }
-                if ($datos->pasivoscorrientes) {
-                    $cliente->setCaPasivoscorrientes(utf8_decode($datos->pasivoscorrientes));
-                }
-                if ($datos->inventarios) {
-                    $cliente->setCaInventarios(utf8_decode($datos->inventarios));
-                }
-                if ($datos->patrimonios) {
-                    $cliente->setCaPatrimonios(utf8_decode($datos->patrimonios));
-                }
-                if ($datos->utilidades) {
-                    $cliente->setCaUtilidades(utf8_decode($datos->utilidades));
-                }
-                if ($datos->ventas) {
-                    $cliente->setCaVentas(utf8_decode($datos->ventas));
-                }
                 $cliente->save();
                 $conn->commit();
+                
+                $conect = Doctrine::getTable("BlcCliente")->getConnection();
+                $conect->beginTransaction();
+                
+                foreach($datosGridFinanciera as $datoGridFinanciera){
+                    $blccliente = Doctrine::getTable("BlcCliente")
+                        ->createQuery("d")
+                        ->where("d.ca_idcliente = ?", $idcliente)
+                        ->addWhere("d.ca_anno = ?",$datoGridFinanciera->ca_anno)
+                        ->fetchOne();
+                    
+                    if ($blccliente){
+                        if($datoGridFinanciera->ca_activostotales){
+                            $blccliente->setCaActivostotales($datoGridFinanciera->ca_activostotales);
+                        }
+                        if($datoGridFinanciera->ca_activoscorrientes){
+                           $blccliente->setCaActivoscorrientes($datoGridFinanciera->ca_activoscorrientes);
+                        }
+                        if($datoGridFinanciera->ca_pasivostotales){
+                            $blccliente->setCaPasivostotales($datoGridFinanciera->ca_pasivostotales);
+                        }
+                        if($datoGridFinanciera->ca_pasivoscorrientes){
+                            $blccliente->setCaPasivoscorrientes($datoGridFinanciera->ca_pasivoscorrientes);
+                        }
+                        if($datoGridFinanciera->ca_inventarios){
+                            $blccliente->setCaInventarios($datoGridFinanciera->ca_inventarios);
+                        }
+                        if($datoGridFinanciera->ca_patrimonios){
+                            $blccliente->setCaPatrimonios($datoGridFinanciera->ca_patrimonios);
+                        }
+                        if($datoGridFinanciera->ca_utilidades){
+                            $blccliente->setCaUtilidades($datoGridFinanciera->ca_utilidades);
+                        }
+                        if($datoGridFinanciera->ca_ventas){
+                            $blccliente->setCaVentas($datoGridFinanciera->ca_ventas);
+                        }
+                        $blccliente->save();
+                    } 
+                }
+                $conect->commit();
+                
+                
+                
                 $this->responseArray = array("success" => true, "ids" => $ids);
             } catch (Exception $e) {
                 $conn->rollback();
@@ -2503,6 +2528,8 @@ class clientesActions extends sfActions {
         }
         $this->setTemplate("responseTemplate");
     }
+    
+    
 
     public function executeDatosControlFinanciero(sfWebRequest $request) {
         $idcliente = $request->getParameter("idcliente");
@@ -2530,21 +2557,29 @@ class clientesActions extends sfActions {
         if ($tipopersona) {
 
             $con = Doctrine_Manager::getInstance()->connection();
-            $sql = "select " . $tipopersona . " , d.ca_id, ca_nombre, t.ca_tipo,ca_fchvigencia, dc.ca_fchdocumento, dc.ca_observaciones  from ids.tb_documentosxconc d ";
-            $sql .= " left join tb_doccliente dc on (dc.ca_idtipo = d.ca_id and dc.ca_idcliente = " . $idcliente . ") ";
-            $sql .= " inner join control.tb_empresas e on(e.ca_idempresa = d.ca_idempresa)";
-            $sql .= " inner join ids.tb_tipodocumentos t on (t.ca_idtipo = d.ca_idtipo) where " . $tipopersona . "= true ";
-
+            $sql =  "select distinct tpd.ca_idtipo as a, tpd.ca_tipo as ca_tipo, tpd.ca_equivalentea, ";
+            $sql .=  " dc.ca_fchdocumento as ca_fchdocumento, dc.ca_observaciones as ca_observaciones ";
+            $sql .= " from tb_doccliente dc ";
+            $sql .= " inner join ids.tb_documentosxconc dxc ON (dxc.ca_id = dc.ca_idtipo and dc.ca_idcliente = 800024075) ";
+            $sql .= "right join ids.tb_tipodocumentos tpd ON (tpd.ca_idtipo = dxc.ca_idtipo) ";
+            $sql .= " where tpd.ca_equivalentea = 25 ";
+            $sql .= "order by tpd.ca_idtipo";
+            
             $rs = $con->execute($sql);
             $control_rs = $rs->fetchAll();
             foreach ($control_rs as $control) {
+                $seleccionado = false;
+                if ($control["ca_fchdocumento"]){
+                    $seleccionado = true;
+                }
                 $data[] = array(
-                    "idtipo" => $control["ca_id"],
-                    "iddocumento" => $control["ca_iddocumento"],
-                    "empresa" => $control["ca_nombre"],
+                    "idtipo" => $control["a"],
+                    "iddocumento" => /*$control["ca_iddocumento"]*/"",
+                    "empresa" => /*$control["ca_nombre"]*/"",
                     "documento" => utf8_encode($control["ca_tipo"]),
-                    "fch_vigencia" => $control["ca_fchvigencia"],
+                    "fch_vigencia" => /*$control["ca_fchvigencia"]*/"",
                     "fch_documento" => $control["ca_fchdocumento"],
+                    "seleccionado" => $seleccionado,
                     "observaciones" => utf8_encode($control["ca_observaciones"])
                 );
             }
@@ -2724,7 +2759,169 @@ class clientesActions extends sfActions {
 
         $this->setTemplate("fichaTecnicaPdf");
     }
+    public function executeGuardarDatosFinancieros(sfWebRequest $request){
+        $idcliente = $request->getParameter("idcliente");
+        $anno = $request->getParameter("anno");
+        $activostotales = $request->getParameter("activostotales");
+        $activoscorrientes = $request->getParameter("activoscorrientes");
+        $pasivostotales = $request->getParameter("pasivostotales");
+        $pasivoscorrientes = $request->getParameter("pasivoscorrientes");
+        $inventarios = $request->getParameter("inventarios");
+        $patrimonios = $request->getParameter("patrimonios");
+        $utilidades = $request->getParameter("utilidades");
+        $ventas = $request->getParameter("ventas");
+        
+        $conn = Doctrine::getTable("BlcCliente")->getConnection();
+        $conn->beginTransaction();
+        
+        try{
+            
+            $blccliente = Doctrine::getTable("BlcCliente")
+                    ->createQuery("d")
+                    ->where("d.ca_idcliente = ?", $idcliente)
+                    ->addWhere("d.ca_anno = ?", $anno)
+                    ->fetchOne();
+            
+            
+            if(!$blccliente){
+               $blccliente = new BlcCliente();
+               $blccliente->setCaIdcliente($idcliente);
+               $blccliente->setCaAnno($anno);
+               
+            }
+               $blccliente->setCaActivostotales($activostotales);
+               $blccliente->setCaActivoscorrientes($activoscorrientes);
+               $blccliente->setCaPasivostotales($pasivostotales);
+               $blccliente->setCaPasivoscorrientes($pasivoscorrientes);
+               $blccliente->setCaInventarios($inventarios);
+               $blccliente->setCaPatrimonios($patrimonios);
+               $blccliente->setCaUtilidades($utilidades);
+               $blccliente->setCaVentas($ventas);
+               $blccliente->save();
+            
+            $conn->commit();
+            $this->responseArray = array("success" => true);
+        }
+        catch(Exception $e){
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+        
+        $this->setTemplate("responseTemplate");
 
+    }
+    public function executeAnularInfoFinanciera(sfWebRequest $request){
+        $idcliente = $request->getParameter("idcliente");       
+        $anno = $request->getParameter("anno");
+        $conn = Doctrine::getTable("BlcCliente")->getConnection();
+        $conn->beginTransaction();
+        
+        try{
+            
+            $blccliente = Doctrine::getTable("BlcCliente")
+                    ->createQuery("d")
+                    ->where("d.ca_idcliente = ?", $idcliente)
+                    ->addWhere("d.ca_anno = ?", $anno)
+                    ->fetchOne();
+                        
+            if ($blccliente){
+                $blccliente->delete();
+            }
+            $conn->commit();
+            $this->responseArray = array("success" => true);
+        }
+        catch(Exception $e){
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+        
+        
+        $this->setTemplate("responseTemplate");
+    }
+    public function executeDatosInfoFinanciera(sfWebRequest $request) {
+        $idcliente = $request->getParameter("idcliente");
+        
+        $blcclientes = Doctrine::getTable("BlcCliente")
+                ->createQuery("d")
+                ->where("d.ca_idcliente = ?", $idcliente)
+                ->execute();
+        
+        $aniopasado = date("Y") - 1;
+        $anioantepasado = date("Y") - 2;
+        
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select  sum(ca_utilidad)+sum(ca_sobreventa) as ca_ino
+                from vi_repgerencia_sea
+                where ca_idcliente = " . $idcliente . "  and ca_ano in ('" . $aniopasado . "','" . $anioantepasado . "')";
+
+        $rs = $con->execute($sql);
+        $maritimo = $rs->fetch();
+
+        $sql = "select  sum(ca_utilidad) as ca_ino
+                from vi_repgerencia_air
+                where ca_idcliente = " .$idcliente . "  and ca_ano in ('" . $aniopasado . "','" . $anioantepasado . "')";
+
+        $rs = $con->execute($sql);
+        $aereo = $rs->fetch();
+        
+        $anioactual = date("Y");
+        
+        $minimol = Doctrine::getTable("Smlv")
+                ->createQuery("d")
+                ->where("d.ca_anno = ?", $anioactual)
+                ->fetchOne();
+
+        $minimo = $minimol->getCaSmlv();
+        
+        
+        $data = array();
+
+        foreach ($blcclientes as $blccliente) {
+            
+            if ($minimo) { 
+                $ca_actsmmlv = ($blccliente->getCaActivostotales() / $minimo );
+                $ca_actsmmlv = round($ca_actsmmlv, 2);
+             } 
+            if ($blccliente->getCaPasivoscorrientes() != 0) {
+                $ca_indliquidez = ($blccliente->getCaActivoscorrientes() / $blccliente->getCaPasivoscorrientes());
+                $ca_indliquidez = round($ca_indliquidez, 2);
+            } else {
+                $ca_indliquidez = "Imposible Calcular";
+            }
+            if ($blccliente->getCaActivostotales() != 0) {
+                $ca_indendeudamiento = ($blccliente->getCaPasivostotales() / $blccliente->getCaActivostotales());
+                $ca_indendeudamiento = round($ca_indendeudamiento, 2);
+            } else {
+                $ca_indendeudamiento = "Imposible Calcular";
+            }
+            if ($blccliente->getCaPasivoscorrientes() != 0) {
+                $ca_pbaacida = ($blccliente->getCaActivoscorrientes() - $blccliente->getCaInventarios()) / $blccliente->getCaPasivoscorrientes();
+                $ca_pbaacida = round($ca_pbaacida, 2);
+            } else {
+               $ca_pbaacida = "Imposible Calcular";
+            }
+            
+            
+            $data[] = array(
+            "ca_activostotales" => /*number_format(*/$blccliente->getCaActivostotales()/*, 0, '', '.')*/,
+            "ca_activoscorrientes" => utf8_encode($blccliente->getCaActivoscorrientes()),
+            "ca_pasivostotales" => utf8_encode($blccliente->getCaPasivostotales()),
+            "ca_pasivoscorrientes" => utf8_encode($blccliente->getCaPasivoscorrientes()),
+            "ca_inventarios" => utf8_encode($blccliente->getCaInventarios()),
+            "ca_patrimonios" => utf8_encode($blccliente->getCaPatrimonios()),
+            "ca_utilidades" => utf8_encode($blccliente->getCaUtilidades()),                
+            "ca_actsmmlv" => $ca_actsmmlv,
+            "ca_indliquidez" => $ca_indliquidez,
+            "ca_indendeudamiento" =>  $ca_indendeudamiento,
+            "ca_pbaacida" => $ca_pbaacida,
+            "ca_ino" => ($aereo["ca_ino"] + $maritimo["ca_ino"]),                
+            "ca_anno" => utf8_encode($blccliente->getCaAnno()),
+            "ca_ventas" => utf8_encode($blccliente->getCaVentas()));
+        }
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
+
+        $this->setTemplate("responseTemplate");
+    }
 }
 
 ?>

@@ -606,9 +606,6 @@ DocCliente:
     ca_fchdocumento:
       type: date   
       notnull: true
-    ca_fchvigencia:
-      type: date   
-      notnull: true
     ca_idcliente:
       type: integer
       notnull: true
@@ -633,6 +630,42 @@ DocCliente:
     Documentosxconc:
       local: ca_idtipo
       foreign: ca_id
+      type: one
+     
+BlcCliente:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: public
+  tableName: tb_blccliente
+  columns:
+    ca_idcliente: 
+      type: integer 
+      notnull: true
+    ca_anno:
+      type: integer
+      notnull: true
+    ca_activostotales: integer
+    ca_activoscorrientes: integer
+    ca_pasivostotales: integer
+    ca_pasivoscorrientes: integer
+    ca_inventarios: integer
+    ca_patrimonios: integer
+    ca_utilidades: integer
+    ca_ventas: integer
+    ca_fchcreado:
+      type: date
+      notnull: true
+    ca_usucreado:
+      type: string(20) 
+      notnull: true
+    ca_fchanulado: date
+    ca_usuanulado: string(20)
+  relations:
+    Cliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
       type: one
       
 Smlv:

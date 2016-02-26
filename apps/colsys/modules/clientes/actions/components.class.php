@@ -104,6 +104,8 @@ class clientesComponents extends sfComponents {
     public function executeFormControlFinanciero(sfWebRequest $request) {
         $this->idcliente = $request->getParameter("idcliente");
         $cliente = Doctrine::getTable("IdsCliente")->find($this->idcliente);
+                
+        
         $this->razonSocial = utf8_encode($cliente->getIds()->getCaNombre());
         $anioactual = date("Y");
         $minimo = Doctrine::getTable("Smlv")
@@ -115,6 +117,7 @@ class clientesComponents extends sfComponents {
 
         $aniopasado = date("Y") - 1;
         $anioantepasado = date("Y") - 2;
+        $this->hoy = date("Y")."-".date("m")."-".date("d");
         $con = Doctrine_Manager::getInstance()->connection();
         $sql = "select  sum(ca_utilidad)+sum(ca_sobreventa) as ca_ino
                 from vi_repgerencia_sea
@@ -147,15 +150,8 @@ class clientesComponents extends sfComponents {
             "fechaconstitucion" => utf8_encode($cliente->getCaFchconstitucion()),
             "grancontribuyente" => utf8_encode($cliente->getCaGrancontribuyente()),
             "uap" => utf8_encode($cliente->getCaUap()),
-            "activostotales" => utf8_encode($cliente->getCaActivostotales()),
-            "activoscorrientes" => utf8_encode($cliente->getCaActivoscorrientes()),
-            "pasivostotales" => utf8_encode($cliente->getCaPasivostotales()),
-            "pasivoscorrientes" => utf8_encode($cliente->getCaPasivoscorrientes()),
-            "inventarios" => utf8_encode($cliente->getCaInventarios()),
-            "patrimonios" => utf8_encode($cliente->getCaPatrimonios()),
-            "utilidades" => utf8_encode($cliente->getCaUtilidades()),
-            "ino" => ($aereo["ca_ino"] + $maritimo["ca_ino"]),
-            "ventas" => utf8_encode($cliente->getCaVentas()));
+            "altex" => utf8_encode($cliente->getCaAltex())
+            );
 
         $con = Doctrine_Manager::getInstance()->connection();
         $sql = "select cv.* from control.tb_config_values cv inner join control.tb_config cf on cf.ca_idconfig = cv.ca_idconfig where ca_param = 'CU257'";

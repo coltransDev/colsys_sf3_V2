@@ -634,16 +634,9 @@ IdsCliente:
     ca_tipopersona: integer
     ca_sector: integer
     ca_fchconstitucion: date 
-    ca_activostotales: integer
-    ca_activoscorrientes: integer
-    ca_pasivostotales: integer
-    ca_pasivoscorrientes: integer
-    ca_inventarios: integer
-    ca_patrimonios: integer
-    ca_utilidades: integer
-    ca_ventas: integer
     ca_grancontribuyente: boolean
     ca_uap: boolean
+    ca_altex: boolean
   relations:
     Ids:
       local: ca_idcliente
@@ -674,6 +667,10 @@ IdsCliente:
       foreign: ca_idcliente
       type: many
     DocCliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: many
+    BlcCliente:
       local: ca_idcliente
       foreign: ca_idcliente
       type: many
@@ -761,4 +758,3 @@ IdsSeguimiento:
       local: ca_usuario
       foreign: ca_login
       type: one
-
