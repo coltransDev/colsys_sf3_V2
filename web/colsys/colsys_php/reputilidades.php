@@ -177,46 +177,71 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
 
-    $sub = "";
-    if ($sucursal != "%"){
-        $sub = " INNER JOIN (select ic.ca_referencia from tb_inoclientes_sea ic INNER JOIN control.tb_usuarios us ON us.ca_login = ic.ca_login INNER JOIN control.tb_sucursales sc ON sc.ca_idsucursal = us.ca_idsucursal where sc.ca_nombre = '$sucursal') sc ON sc.ca_referencia = iu.ca_referencia ";
-    }
+    //$sub = "";
+    //if ($sucursal != "%"){
+        // $sub = " INNER JOIN (select ic.ca_referencia from tb_inoclientes_sea ic INNER JOIN control.tb_usuarios us ON us.ca_login = ic.ca_login INNER JOIN control.tb_sucursales sc ON sc.ca_idsucursal = us.ca_idsucursal where sc.ca_nombre = '$sucursal') sc ON sc.ca_referencia = iu.ca_referencia ";
+        $sub = "INNER JOIN ("
+                . "select ic.ca_referencia, ct.ca_idcosto, ct.ca_costo, sum(round(ca_venta::numeric-((ca_tcambio::numeric/ca_tcambio_usd::numeric)*ca_neto::numeric),2)) as ca_util_costo"
+                . " from tb_costos ct"
+                . "     INNER JOIN tb_inocostos_sea ic ON (ic.ca_idcosto = ct.ca_idcosto)"
+                . "     INNER JOIN tb_inoutilidad_sea iu ON (iu.ca_idinocosto = ic.ca_idinocostos_sea)"
+                . "     INNER JOIN tb_inoclientes_sea cl ON (cl.ca_idinocliente = iu.ca_idinocliente)"
+                . "     INNER JOIN control.tb_usuarios us ON us.ca_login = cl.ca_login"
+                . "     INNER JOIN control.tb_sucursales sc ON sc.ca_idsucursal = us.ca_idsucursal and sc.ca_nombre like '$sucursal'"
+                . " group by ic.ca_referencia, ct.ca_idcosto, ct.ca_costo) sc ON (sc.ca_referencia = iu.ca_referencia)";
+    //}
+        $order = " order by ca_ano, ca_mes";
     if ($reportar == 'utilidad') {
         $col_one = "Util.x CBM";
         $col_two = "Utilidad";
         if (isset($compania) and $compania != '') {
+            $sub = str_replace(', ct.ca_idcosto, ct.ca_costo', '', $sub);
             $condicion = "* from vi_inocomisiones_sea iu $sub where upper(ca_compania) like upper('%" . strtolower($compania) . "%') and ";
+            $order = " order by ca_ano, ca_mes, iu.ca_referencia";
         } else {
+            if ($sucursal == "%"){
+                $sub = str_replace('INNER JOIN (', 'LEFT JOIN (', $sub);
+                $sub = str_replace(', ct.ca_idcosto, ct.ca_costo', '', $sub);
+            }else{
+                $sub = str_replace('ct.ca_idcosto, ct.ca_costo', 'max(cl.ca_volumen) as ca_volumen', $sub);
+                $sub = str_replace('group by ic.ca_referencia, max(cl.ca_volumen) as ca_volumen', 'group by ic.ca_referencia', $sub);
+            }
             $condicion = "* from vi_inoutilidades_sea iu $sub where";
             if (isset($comparable) and $comparable != 0) {
                 $condicion.= " ca_utilxcbm " . $signo . " " . $comparable . " and";
             }
+            $order = " order by ca_ano, ca_mes, iu.ca_traorigen, iu.ca_referencia";
         }
     } elseif ($reportar == 'xsobreventa') {
         $col_one = "Concepto";
         $col_two = "Util.x Sobreventa";
-        $condicion = "iu.*, isv.ca_util_costo from vi_inoutilidades_sea iu $sub ";
-        $condicion.= "INNER JOIN (select ca_referencia, ca_costo, sum(round(ca_venta::numeric-((ca_tcambio::numeric/ca_tcambio_usd::numeric)*ca_neto::numeric),2)) as ca_util_costo from tb_inocostos_sea ic INNER JOIN tb_costos ct ON (ic.ca_idcosto = ct.ca_idcosto and ct.ca_costo = '$concepto[$reportar]') ";
-        $condicion.= "group by ca_referencia, ca_costo) isv ON (iu.ca_referencia = isv.ca_referencia) where ";
+        $condicion = "iu.*, sc.ca_util_costo from vi_inoutilidades_sea iu $sub";
+        $condicion.= " where sc.ca_costo = '$concepto[$reportar]' and";
     } elseif ($reportar == 'xdeducciones') {
         $col_one = "Deducible";
         $col_two = "Vlr.Recaudo";
-        $condicion = "iu.*, ca_deduccion, isv.ca_recaudo_deduccion from vi_inoutilidades_sea iu $sub ";
-        //$condicion.= "INNER JOIN (select ca_referencia, ca_deduccion, sum(ca_valor) as ca_recaudo_deduccion from tb_inodeduccion_sea id INNER JOIN tb_deducciones dd ON (id.ca_iddeduccion = dd.ca_iddeduccion and dd.ca_deduccion = '$concepto[$reportar]') ";
+        $sub = "";
+        $condicion = "distinct iu.*, ca_deduccion, isv.ca_recaudo_deduccion from vi_inoutilidades_sea iu ";
+        $condicion.= "INNER JOIN (select cl.ca_referencia, cl.ca_idinocliente, dd.ca_deduccion, sum(id.ca_valor) as ca_recaudo_deduccion from tb_inodeduccion_sea id ";
         if($concepto[$reportar]=='%'){
-            $condicion.= "INNER JOIN (select ca_referencia, ca_deduccion, sum(id.ca_valor) as ca_recaudo_deduccion from tb_inodeduccion_sea id INNER JOIN tb_deducciones dd ON (id.ca_iddeduccion = dd.ca_iddeduccion) ";
+          $condicion.= "INNER JOIN tb_deducciones dd ON (dd.ca_iddeduccion = id.ca_iddeduccion) ";
         } else {
-            //hay que imprimir el concepto en el resultado
-            $condicion.= "INNER JOIN (select ca_referencia, ca_deduccion, sum(id.ca_valor) as ca_recaudo_deduccion from tb_inodeduccion_sea id INNER JOIN tb_deducciones dd ON (id.ca_iddeduccion = dd.ca_iddeduccion and dd.ca_deduccion = '$concepto[$reportar]') ";
+          $condicion.= "INNER JOIN tb_deducciones dd ON (dd.ca_iddeduccion = id.ca_iddeduccion and dd.ca_deduccion = '".$concepto[$reportar]."') ";
         }
-        $condicion.= "INNER JOIN tb_inoingresos_sea ii on ii.ca_idinoingreso = id.ca_idinoingreso ";
-        $condicion.= "INNER JOIN tb_inoclientes_sea ic on ii.ca_idinocliente = ic.ca_idinocliente ";
-        $condicion.= "group by ca_referencia, ca_deduccion) isv ON (iu.ca_referencia = isv.ca_referencia) where ";
+        $condicion.= "INNER JOIN tb_inoingresos_sea ii ON (ii.ca_idinoingreso = id.ca_idinoingreso) ";
+        $condicion.= "INNER JOIN tb_inoclientes_sea cl ON (cl.ca_idinocliente = ii.ca_idinocliente) ";
+        if ($sucursal != "%"){
+            $condicion.= "INNER JOIN control.tb_usuarios us ON (us.ca_login = cl.ca_login) ";
+            $condicion.= "INNER JOIN control.tb_sucursales sc ON sc.ca_idsucursal = us.ca_idsucursal and sc.ca_nombre like '$sucursal' ";
+        }
+        $condicion.= "group by cl.ca_referencia, cl.ca_idinocliente, dd.ca_deduccion) isv ON (iu.ca_referencia = isv.ca_referencia) where ";
+        $order = " order by ca_ano, ca_mes, iu.ca_traorigen, ca_deduccion";
     }
-    $condicion.= " ca_mes::text like '$mes' and ca_ano::text = '$ano' and iu.ca_traorigen like '%$traorigen%' and iu.ca_modalidad like '%$modalidad%' and " . str_replace("\"", "'", $casos);
+    $condicion.= " ca_mes::text like '$mes' and ca_ano::text = '$ano' and iu.ca_traorigen like '%$traorigen%' and iu.ca_modalidad like '%$modalidad%' and " . str_replace("\"", "'", $casos) . $order;
     
     // die("select $condicion");
     $sql="select $condicion";
+    // echo $sql;
     $co = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
     if (!$rs->Open($sql)) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "Error 204: $sql";
@@ -267,7 +292,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
         $nom_tra = '';
         $mod_mem = $rs->Value('ca_modalidad');
         while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
-            $utl_cbm = $rs->Value('ca_utilcons');
+            $utl_cbm = ($reportar == 'utilidad' and $sucursal != "%")?round($rs->Value('ca_utilxcbm')*$rs->Value('ca_volumen'),0):$rs->Value('ca_utilcons');
             $back_col = ($rs->Value('ca_estado') == 'Provisional') ? " background: #CCCC99" : (($rs->Value('ca_estado') == 'Abierto') ? " background: #CCCCCC" : " background: #F0F0F0");
             $back_col = ($utl_cbm <= 0) ? " background: #FF6666" : $back_col;
             if ($ano_mem != $rs->Value('ca_ano') or $mes_mem != $rs->Value('ca_mes')) {
@@ -380,7 +405,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
         echo "</TR>";
     } else {
         echo "<TR>";
-        echo "  <TH Class=titulo COLSPAN=11>" . COLTRANS . "<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
+        echo "  <TH Class=titulo COLSPAN=12>" . COLTRANS . "<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
         echo "</TR>";
         echo "<TH>ID Cliente</TH>";
         echo "<TH>Referencia</TH>";
@@ -392,6 +417,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
         echo "<TH>CBM x Ref.</TH>";
         echo "<TH>Facturación</TH>";
         echo "<TH>Util/Cliente</TH>";
+        echo "<TH>Rentabilidad</TH>";
         echo "<TH>Util/Sobreventa</TH>";
         $cli_mem = 0;
         $ref_mem = '';
@@ -404,13 +430,13 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
                 $ano_mem = $rs->Value('ca_ano');
                 $mes_mem = $rs->Value('ca_mes');
                 echo "<TR>";
-                echo "  <TD Class=invertir style='font-weight:bold; font-size: 11px;' COLSPAN=11>" . $meses[$rs->Value('ca_mes')] . "/" . $rs->Value('ca_ano') . "</TD>";
+                echo "  <TD Class=invertir style='font-weight:bold; font-size: 11px;' COLSPAN=12>" . $meses[$rs->Value('ca_mes')] . "/" . $rs->Value('ca_ano') . "</TD>";
                 echo "</TR>";
             }
             if ($cli_mem != $rs->Value('ca_idcliente')) {
                 echo "<TR>";
                 echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 11px;'>" . number_format($rs->Value('ca_idalterno')) . "</TD>";
-                echo "  <TD Class=invertir style='font-weight:bold; font-size: 11px;' COLSPAN=10>" . $rs->Value('ca_compania') . "</TD>";
+                echo "  <TD Class=invertir style='font-weight:bold; font-size: 11px;' COLSPAN=11>" . $rs->Value('ca_compania') . "</TD>";
                 echo "</TR>";
                 $ref_mem = "";
                 $cli_fac = 0;
@@ -418,10 +444,10 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
                 $cli_sob = 0;
             }
             $par_sob+= $rs->Value('ca_valor_ded');
-            if ($hbl_mem == $rs->Value('ca_hbls')) {
-                $rs->MoveNext();
-                continue;
-            }
+            //if ($hbl_mem == $rs->Value('ca_hbls')) {
+                //$rs->MoveNext();
+                //continue;
+            //}
             $cli_mem = $rs->Value('ca_idcliente');
             $utl_cbm = ($rs->Value('ca_facturacion_r') - $rs->Value('ca_deduccion_r') - $rs->Value('ca_utilidad_r')) / $rs->Value('ca_volumen_r');
             $back_col = ($rs->Value('ca_estado') == 'Provisional') ? " background: #CCCC99" : (($rs->Value('ca_estado') == 'Abierto') ? " background: #CCCCCC" : " background: #F0F0F0");
@@ -442,6 +468,7 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
             echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . number_format($rs->Value('ca_volumen_r'),2) . "</TD>";
             echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . number_format($rs->Value('ca_valor')) . "</TD>";
             echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . number_format($rs->Value('ca_volumen') * $utl_cbm) . "</TD>";
+            echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . number_format(($rs->Value('ca_volumen') * $utl_cbm)/$rs->Value('ca_valor')*100,2) . "%</TD>";
             echo "  <TD Class=valores style='font-size: 9px;$back_col'>" . number_format($par_sob) . "</TD>";
             echo "</TR>";
             $hbl_mem = $rs->Value('ca_hbls');
@@ -455,20 +482,12 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
             $sub_sob+= $par_sob;
             $par_sob = 0;
             $rs->MoveNext();
-            if ($cli_mem != $rs->Value('ca_idcliente') or $rs->Eof()) {
-                echo "<TR>";
-                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;' COLSPAN=8>Total Cliente</TD>";
-                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($cli_fac) . "</TD>";
-                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($cli_utl) . "</TD>";
-                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($cli_sob) . "</TD>";
-                echo "</TR>";
-                $ref_mem = '';
-            }
             if ($mes_mem != $rs->Value('ca_mes') or $ano_mem != $rs->Value('ca_ano') or $rs->Eof()) {
                 echo "<TR>";
                 echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;' COLSPAN=8>Sub-Totales</TD>";
                 echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($sub_fac) . "</TD>";
                 echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($sub_utl) . "</TD>";
+                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($sub_utl/$sub_fac*100, 2) . "%</TD>";
                 echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($sub_sob) . "</TD>";
                 echo "</TR>";
                 echo "<TR HEIGHT=5>";
@@ -479,11 +498,22 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
                 $tot_sob+= $sub_sob;
                 $sub_fac = $sub_utl = $sub_sob = 0;
             }
+            if ($cli_mem != $rs->Value('ca_idcliente') or $rs->Eof()) {
+                echo "<TR>";
+                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;' COLSPAN=8>Total Cliente</TD>";
+                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($cli_fac) . "</TD>";
+                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($cli_utl) . "</TD>";
+                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($cli_utl/$cli_fac*100, 2) . "%</TD>";
+                echo "  <TD Class=invertir style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($cli_sob) . "</TD>";
+                echo "</TR>";
+                $ref_mem = '';
+            }
             if ($rs->Eof()) {
                 echo "<TR>";
                 echo "  <TD Class=titulo style='text-align:right; font-weight:bold; font-size: 10px;' COLSPAN=8>TOTAL GENERAL</TD>";
                 echo "  <TD Class=titulo style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($tot_fac) . "</TD>";
                 echo "  <TD Class=titulo style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($tot_utl) . "</TD>";
+                echo "  <TD Class=titulo style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($tot_utl/$tot_fac*100,2) . "%</TD>";
                 echo "  <TD Class=titulo style='text-align:right; font-weight:bold; font-size: 10px;'>" . number_format($tot_sob) . "</TD>";
                 echo "</TR>";
             }
