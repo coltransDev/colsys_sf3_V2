@@ -30,7 +30,7 @@ $calificaciones = array("A", "B", "C", "D", "E");
 $riesgos = array("Sin", "Mínimo", "Medio", "Alto");
 
 $col = ( $regional == "PE-051" ? "RUC" : "N.i.t.");
-$campos = array("Nombre del Cliente" => "ca_compania", "Representante Legal" => "ca_ncompleto", $col => "ca_idcliente", "Calificación" => "ca_calificacion", "Coordinador Aduana" => "ca_coordinador", "Actividad Económica" => "ca_actividad", "Sector Económico" => "ca_sector", "Localidad" => "ca_localidad", "Ciudad" => "ca_ciudad", "Contrato Agenciamiento" => "ca_stdcotratoag");  // Arreglo con las opciones de busqueda
+$campos = array("Nombre del Cliente" => "ca_compania", "Representante Legal" => "ca_ncompleto", $col => "ca_idcliente", "Calificación" => "ca_calificacion", "Coordinador Aduana" => "ca_coordinador", "Actividad Económica" => "ca_actividad", "Sector Económico" => "ca_sector", "Localidad" => "ca_localidad", "Ciudad" => "ca_ciudad", "Sucursal" => "ca_sucursal", "Contrato Agenciamiento" => "ca_stdcotratoag");  // Arreglo con las opciones de busqueda
 $bdatos = array("Maestra Clientes", "Mis Clientes", "Clientes Libres");  // Arreglo con los lugares donde buscar
 $tipos = array("Llamada", "Visita", "Correo Electrónico", "Correspondencia", "Cerrar Caso");
 $estados = array("Potencial", "Activo", "Vetado");
@@ -462,8 +462,9 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
                 //echo "<script>document.location.href = 'clientes.php';</script>";
                 exit;
             }
+            $nit_mem = (($rs->Value('ca_idalterno')) ? (is_numeric($rs->Value('ca_idalterno')) ? number_format($rs->Value('ca_idalterno')) : $rs->Value('ca_idalterno')) : number_format($rs->Value('ca_idcliente'))) . ($rs->Value('ca_tipoidentificacion') == 1 && $rs->Value('ca_digito') !== 0 ? "-" . $rs->Value('ca_digito') : "");
             echo "<TR>";
-            echo "<TD Class=titulo style='vertical-align: top;'>" . number_format($rs->Value('ca_idalterno') ? $rs->Value('ca_idalterno') : $rs->Value('ca_idcliente')) . ($rs->Value('ca_tipoidentificacion') == 1 && $rs->Value('ca_digito') !== 0 ? "-" . $rs->Value('ca_digito') : "") . "</TD>";
+            echo "<TD Class=titulo style='vertical-align: top;'>$nit_mem</TD>";
             $img = "";
             if ($rs->Value('ca_propiedades') != "") {
                 if (strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
@@ -521,7 +522,8 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
             echo "    <TABLE>";
             echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/mandatosyPoderesExt4/id/" . $rs->Value('ca_idcliente') . "\"'><BR><IMG src='graficos/mandato.gif'><BR>Control<br>Mandatos</TD></TR>";
             echo "      <TR><TD style='visibility: $vista_3; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Comisión\", " . $rs->Value('ca_idcliente') . ");'><BR><IMG src='graficos/Info.gif'><BR>Porcentaje de Comisión</TD></TR>";
-            echo "      <TR><TD style='visibility: $vista_3; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/agaduanaAutorizadoExt4/idcliente/" . $rs->Value('ca_idcliente') . "\"'><BR><IMG src='graficos/pdf.gif'><BR>Ag.Aduana<br />Autorizados</TD></TR>";
+            echo "      <TR><TD style='text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/agaduanaAutorizadoExt4/idcliente/" . $rs->Value('ca_idcliente') . "\"'><BR><IMG src='graficos/pdf.gif'><BR>Ag.Aduana<br />Autorizados</TD></TR>";
+            echo "      <TR><TD style='text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/fichaTecnicaExt4/idcliente/" . $rs->Value('ca_idcliente') . "\"'><BR><IMG src='graficos/pdf.gif'><BR>Ficha Tecnica</TD></TR>";
             echo "      <TR><TD style='visibility: $vista_2; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Contrato\", " . $rs->Value('ca_idcliente') . ");'><BR><IMG src='graficos/contrato.gif'><BR>Contrato de<br>Comodato</TD></TR>";
             echo "      <TR><TD style='visibility: $vista_1; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Liberacion\", " . $rs->Value('ca_idcliente') . ");'><BR><IMG src='graficos/si.gif'><BR>Liberación<br>Automática</TD></TR>";
             echo "      <TR><TD style='visibility: $vista_2; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Libestados\", " . $rs->Value('ca_idcliente') . ");'><BR><IMG src='graficos/lock_close.gif'><BR>Estado de<br>Liberación</TD></TR>";
