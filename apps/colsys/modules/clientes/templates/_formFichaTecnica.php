@@ -590,7 +590,7 @@ $transporte = $sf_data->getRaw("transporte");
              */
             //plain: true,
             items: [{
-                    title: 'Clasificacion y Registros',
+                    title: 'Informacion General',
                     items: [{
                             xtype: 'fieldset',
                             hideLabel: true,
@@ -874,7 +874,7 @@ $transporte = $sf_data->getRaw("transporte");
                                                     items: [
                                                         {boxLabel: 'Colmas', name: 'registro_importacionColmas', inputValue: '1', width: 60},
                                                         {boxLabel: 'Otro', name: 'registro_importacionOtro', inputValue: '2', width: 40},
-                                                        {boxLabel: 'Aceptación previa de la D.I.', name: 'registro_importacionAP', inputValue: '3', width: 160}
+                                                        {boxLabel: 'Aceptación previa de DI', name: 'registro_importacionAP', inputValue: '3', width: 160}
                                                     ]
 
                                                 }]
