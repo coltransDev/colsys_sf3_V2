@@ -643,9 +643,11 @@ BlcCliente:
     ca_idcliente: 
       type: integer 
       notnull: true
+      primary: true
     ca_anno:
       type: integer
       notnull: true
+      primary: true
     ca_activostotales: integer
     ca_activoscorrientes: integer
     ca_pasivostotales: integer
