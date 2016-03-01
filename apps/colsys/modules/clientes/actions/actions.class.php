@@ -2202,7 +2202,6 @@ class clientesActions extends sfActions {
             );
         }
 
-
         $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
 
         $this->setTemplate("responseTemplate");
@@ -2425,9 +2424,10 @@ class clientesActions extends sfActions {
                     }
                 }
                 
-                $sql = "delete from tb_doccliente where ca_idcliente = $idcliente and ca_idtipo not in (".implode(",", $borrado).")";
-                $rs = $con->execute($sql);
-                
+                if (!empty($borrado)){
+                    $sql = "delete from tb_doccliente where ca_idcliente = $idcliente and ca_idtipo not in (".implode(",", $borrado).")";
+                    $rs = $con->execute($sql);
+                }
                 
                 if ($datos->fchcircular) {
                     $cliente->setCaFchcircular($datos->fchcircular);
@@ -2471,18 +2471,21 @@ class clientesActions extends sfActions {
                 if ($datos->fechaconstitucion) {
                     $cliente->setCaFchconstitucion(utf8_decode($datos->fechaconstitucion));
                 }
-                $cliente->setCaGrancontribuyente($datos->grancontribuyente);
+                if($datos->regimen){
+                $cliente->setCaRegimen($datos->regimen);
+                
+                }
                 $cliente->setCaUap($datos->uap);
                 $cliente->setCaAltex($datos->altex);
 
                 $cliente->save();
                 $conn->commit();
                 
-                $conect = Doctrine::getTable("BlcCliente")->getConnection();
+                $conect = Doctrine::getTable("Blccliente")->getConnection();
                 $conect->beginTransaction();
                 
                 foreach($datosGridFinanciera as $datoGridFinanciera){
-                    $blccliente = Doctrine::getTable("BlcCliente")
+                    $blccliente = Doctrine::getTable("Blccliente")
                         ->createQuery("d")
                         ->where("d.ca_idcliente = ?", $idcliente)
                         ->addWhere("d.ca_anno = ?",$datoGridFinanciera->ca_anno)
@@ -2517,9 +2520,6 @@ class clientesActions extends sfActions {
                     } 
                 }
                 $conect->commit();
-                
-                
-                
                 $this->responseArray = array("success" => true, "ids" => $ids);
             } catch (Exception $e) {
                 $conn->rollback();
@@ -2553,14 +2553,12 @@ class clientesActions extends sfActions {
         }
 
         $data = array();
-
         if ($tipopersona) {
-
             $con = Doctrine_Manager::getInstance()->connection();
             $sql =  "select distinct tpd.ca_idtipo as a, tpd.ca_tipo as ca_tipo, tpd.ca_equivalentea, ";
             $sql .=  " dc.ca_fchdocumento as ca_fchdocumento, dc.ca_observaciones as ca_observaciones ";
             $sql .= " from tb_doccliente dc ";
-            $sql .= " inner join ids.tb_documentosxconc dxc ON (dxc.ca_id = dc.ca_idtipo and dc.ca_idcliente = 800024075) ";
+            $sql .= " inner join ids.tb_documentosxconc dxc ON (dxc.ca_id = dc.ca_idtipo and dc.ca_idcliente = $idcliente) ";
             $sql .= "right join ids.tb_tipodocumentos tpd ON (tpd.ca_idtipo = dxc.ca_idtipo) ";
             $sql .= " where tpd.ca_equivalentea = 25 ";
             $sql .= "order by tpd.ca_idtipo";
@@ -2922,6 +2920,6 @@ class clientesActions extends sfActions {
 
         $this->setTemplate("responseTemplate");
     }
+    
 }
-
 ?>

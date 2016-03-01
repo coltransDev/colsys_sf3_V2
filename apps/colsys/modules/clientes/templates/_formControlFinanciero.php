@@ -8,6 +8,7 @@ $idcliente = $sf_data->getRaw("idcliente");
 $razonSocial = $sf_data->getRaw("razonSocial");
 $data = $sf_data->getRaw("data");
 $sectorfinanciero = $sf_data->getRaw("sectorfinanciero");
+$regimen = $sf_data->getRaw("regimen");
 $tipopersona = $sf_data->getRaw("tipopersona");
 $minimo = $sf_data->getRaw("minimo");
 $hoy = $sf_data->getRaw("hoy");
@@ -614,12 +615,7 @@ var win_infofinanciera = null;
                         columnWidth: 0.8,
                         defaultType: 'checkbox',
                         layout: 'column',
-                        items: [{
-                                id: 'grancontribuyente',
-                                name: 'grancontribuyente',
-                                fieldLabel: 'Gran contribuyente',
-                                boxLabel: '',
-                            }, {
+                        items: [ {
                                 fieldLabel: 'UAP',
                                 boxLabel: '',
                                 name: 'uap',
@@ -743,6 +739,18 @@ var win_infofinanciera = null;
             store: {
                 fields: [{name: 'sector', type: 'string'}, {name: 'id', type: 'string'}],
                 data: <?= json_encode($sectorfinanciero) ?>
+            }
+        });
+        
+        Ext.define('ComboRegimen', {
+            extend: 'Ext.form.field.ComboBox',
+            alias: 'widget.combo-regimen',
+            queryMode: 'local',
+            valueField: 'id',
+            displayField: 'regimen',
+            store: {
+                fields: [{name: 'regimen', type: 'string'}, {name: 'id', type: 'string'}],
+                data: <?= json_encode($regimen) ?>
             }
         });
 
@@ -1074,6 +1082,11 @@ var win_infofinanciera = null;
                                                     id: 'fechaconstitucion',
                                                     width: 235,
                                                     forceSelection: false
+                                                }, {
+                                                    id: 'regimen',
+                                                    name: 'regimen',
+                                                    xtype: 'combo-regimen',
+                                                    fieldLabel: 'Régimen',
                                                 }]
                                         }]
                                 },
@@ -1252,6 +1265,7 @@ var win_infofinanciera = null;
             var grancontribuyente = Ext.getCmp("grancontribuyente");
             var sectoreconomico = Ext.getCmp("sectoreconomico");
             var uap = Ext.getCmp("uap");
+            var regimen = Ext.getCmp("regimen");
 
             if (tipopersona.value == 2) {
                 fieldsetPersonaJuridica.setVisible(true);
@@ -1268,7 +1282,7 @@ var win_infofinanciera = null;
                     if (tipopersona.value == 2) {
                         tipo = "ca_perjuridica";
 
-                        if (grancontribuyente.value || uap.value) {
+                        if ( regimen.value == 1 ) {
                             tipo = "ca_gran_contribuyente";
                         }
                     }

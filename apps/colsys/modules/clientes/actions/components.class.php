@@ -148,7 +148,7 @@ class clientesComponents extends sfComponents {
             "tipopersona" => utf8_encode($cliente->getCaTipopersona()),
             "sectoreconomico" => utf8_encode($cliente->getCaSector()),
             "fechaconstitucion" => utf8_encode($cliente->getCaFchconstitucion()),
-            "grancontribuyente" => utf8_encode($cliente->getCaGrancontribuyente()),
+            "regimen" => utf8_encode($cliente->getCaRegimen()),
             "uap" => utf8_encode($cliente->getCaUap()),
             "altex" => utf8_encode($cliente->getCaAltex())
             );
@@ -161,7 +161,15 @@ class clientesComponents extends sfComponents {
         foreach ($sectoresfinancieros_rs as $sector) {
             $this->sectorfinanciero[] = array("sector" => utf8_encode($sector["ca_value"]), "id" => utf8_encode($sector["ca_ident"]));
         }
-
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select cv.* from control.tb_config_values cv inner join control.tb_config cf on cf.ca_idconfig = cv.ca_idconfig where ca_param = 'CU259' order by ca_ident";
+        $rs = $con->execute($sql);
+        $regimenes = $rs->fetchAll();
+        $this->regimen = array();
+        foreach ($regimenes as $regimen) {
+            $this->regimen[] = array("regimen" => utf8_encode($regimen["ca_value"]), "id" => utf8_encode($regimen["ca_ident"]));
+        }
+        
         $con = Doctrine_Manager::getInstance()->connection();
         $sql = "select cv.* from control.tb_config_values cv inner join control.tb_config cf on cf.ca_idconfig = cv.ca_idconfig where ca_param = 'CU227' order by ca_ident";
         $rs = $con->execute($sql);
@@ -185,5 +193,4 @@ class clientesComponents extends sfComponents {
     }
 
 }
-
 ?>

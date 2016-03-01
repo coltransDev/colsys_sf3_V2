@@ -634,7 +634,7 @@ IdsCliente:
     ca_tipopersona: integer
     ca_sector: integer
     ca_fchconstitucion: date 
-    ca_grancontribuyente: boolean
+    ca_regimen: integer
     ca_uap: boolean
     ca_altex: boolean
   relations:
