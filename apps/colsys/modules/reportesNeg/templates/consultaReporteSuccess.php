@@ -96,7 +96,7 @@ $notas = $sf_data->getRaw('notas');
                             <?= $reporte->getRepAntecedentes()->getCaUsucreado() ?> <?= $reporte->getRepAntecedentes()->getCaFchcreado() ?>
                         </div>
                     </td>
-                    <td colspan="<?= ($reporte->getRepAntecedentes()->getCaEstado() != "A") ? "4" : "1" ?>" width="20%" >
+                    <td colspan="<?= ($reporte->getRepAntecedentes()->getCaEstado() != "A" && $reporte->getRepAntecedentes()->getCaEstado() != "R" ) ? "4" : "1" ?>" width="20%" >
                         <div align="left">
                             <b>Enviado a:</b><br />
                             <?= $reporte->getRepAntecedentes()->getCaLogin() ?> 
@@ -113,7 +113,7 @@ $notas = $sf_data->getRaw('notas');
 
                         <td width="20%" >
                             <div align="left">
-                                <b>Desboqueado por:</b><br />
+                                <b>Desbloqueado por:</b><br />
                                 <?= $reporte->getRepAntecedentes()->getCaUsuaceptado() ?> <?= $reporte->getRepAntecedentes()->getCaFchactualizado() ?>
                             </div>
                         </td>
@@ -122,6 +122,21 @@ $notas = $sf_data->getRaw('notas');
                             <div align="left" >
                                 <b>Notificado a:</b><br />
                                 <?= $reporte->getRepAntecedentes()->getCaResponder() . $email ?> 
+                            </div>
+                        </td>
+                        <?
+                    }else if($reporte->getRepAntecedentes()->getCaEstado() == "R"){
+                        ?>
+                        <td width="20%" >
+                            <div align="left">
+                                <b>Rechazado por:</b><br />
+                                <?= $reporte->getRepAntecedentes()->getCaUsurechazo() ?> <?= $reporte->getRepAntecedentes()->getCaFchrechazo() ?>
+                            </div>
+                        </td>
+                        <td  colspan="2">
+                            <div align="left" >
+                                <b>Motivo rechazo:</b><br />
+                                <?= $reporte->getRepAntecedentes()->getCaMotrechazo() ?> 
                             </div>
                         </td>
                         <?

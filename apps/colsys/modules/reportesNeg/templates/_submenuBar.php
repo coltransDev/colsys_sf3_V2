@@ -128,21 +128,16 @@ switch ($action) {
             $button[$i]["link"] = "/reportesNeg/formReporteOtmmin";
             $i++;
         }
-        
-        if($impoexpo == Constantes::EXPO || utf8_decode($impoexpo) == Constantes::EXPO)
-        {
-            if($editable && !( $repAntecedentes->getCaIdantecedente()>0))
-            {
+        //if ($impoexpo == Constantes::EXPO || utf8_decode($impoexpo) == Constantes::EXPO) {
+            if ($editable && (!( $repAntecedentes->getCaIdantecedente() > 0)) || $repAntecedentes->getCaEstado() == "") {
                 $button[$i]["name"] = "Editar";
                 $button[$i]["tooltip"] = "Modificar este reporte";
                 $button[$i]["image"] = "22x22/edit.gif";
-                if($reporte->getCaTiporep()=="3")
+                if ($reporte->getCaTiporep() == "3")
                     $button[$i]["link"] = "/reportesNeg/formReporteOs/id/" . $this->getRequestParameter("id");
-                else if(/*$reporte->getCaTiporep()=="4"*/"otmmin"==$this->getRequestParameter("opcion"))
-                {
+                else if (/* $reporte->getCaTiporep()=="4" */"otmmin" == $this->getRequestParameter("opcion")) {
                     $button[$i]["link"] = "/reportesNeg/formReporteOtmmin/id/" . $this->getRequestParameter("id");
-                }
-                else
+                } else
                     $button[$i]["link"] = "/reportesNeg/formReporte/id/" . $this->getRequestParameter("id") . "/impoexpo/" . $impoexpo . "/modo/" . $modo;
 
                 $i++;
@@ -153,22 +148,19 @@ switch ($action) {
                 $button[$i]["onClick"] = "changeTrans()";
                 $i++;
             }
-        }
-        else
-        {
+        //}
+        /*else {
         
-            if ($editable && ($repAntecedentes->getCaEstado()=="R" || $repAntecedentes->getCaEstado()=="")  ) {
+            if ($editable && ($repAntecedentes->getCaEstado() == "")) {
             
                 $button[$i]["name"] = "Editar";
                 $button[$i]["tooltip"] = "Modificar este reporte";
                 $button[$i]["image"] = "22x22/edit.gif";
-                if($reporte->getCaTiporep()=="3")
+                if ($reporte->getCaTiporep() == "3")
                     $button[$i]["link"] = "/reportesNeg/formReporteOs/id/" . $this->getRequestParameter("id");
-                else if(/*$reporte->getCaTiporep()=="4"*/"otmmin"==$this->getRequestParameter("opcion"))
-                {
+                else if (/* $reporte->getCaTiporep()=="4" *//*"otmmin" == $this->getRequestParameter("opcion")) {
                     $button[$i]["link"] = "/reportesNeg/formReporteOtmmin/id/" . $this->getRequestParameter("id");
-                }
-                else
+                } else
                     $button[$i]["link"] = "/reportesNeg/formReporte/id/" . $this->getRequestParameter("id") . "/impoexpo/" . $impoexpo . "/modo/" . $modo;
 
                 $i++;
@@ -179,7 +171,7 @@ switch ($action) {
                 $button[$i]["onClick"] = "changeTrans()";
                 $i++;
             }
-        }
+        }*/
         $button[$i]["name"] = "Generar ";
         $button[$i]["tooltip"] = "Genera un archivo PDF con el reporte";
         $button[$i]["image"] = "22x22/pdf.gif";
