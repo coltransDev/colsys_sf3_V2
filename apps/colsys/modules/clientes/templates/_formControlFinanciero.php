@@ -14,7 +14,7 @@ $minimo = $sf_data->getRaw("minimo");
 $hoy = $sf_data->getRaw("hoy");
 ?>
 <script type="text/javascript">
-var win_infofinanciera = null;
+    var win_infofinanciera = null;
 
     Ext.define('ControlFinanciero', {
         extend: 'Ext.data.Model',
@@ -26,10 +26,10 @@ var win_infofinanciera = null;
             {name: 'observaciones', type: 'string'},
             {name: 'fch_vigencia', type: 'date'},
             {name: 'fch_documento', type: 'date'},
-            {name: 'seleccionado', type: 'boolean'}    
+            {name: 'seleccionado', type: 'boolean'}
         ]
     });
-    
+
     Ext.define('InfoFinanciera', {
         extend: 'Ext.data.Model',
         fields: [
@@ -49,7 +49,7 @@ var win_infofinanciera = null;
             {name: 'ca_ino', type: 'string'},
         ]
     });
-    
+
     var storeInfoFinanciera = Ext.create('Ext.data.Store', {
         id: 'storeInfoFinanciera',
         autoLoad: true,
@@ -85,315 +85,299 @@ var win_infofinanciera = null;
             filterParam: 'query',
         },
     });
-    
-    var forminfofinanciera =  Ext.create('Ext.form.Panel', {
-    id: 'forminfofinanciera',
-    bodyPadding: 5,
-    width: 510,
-    height: 340,
-    items: [{
-        xtype: 'fieldset',
-        title: ' ',
-        width: 620,
-        height: 260,
-        collapsible: false,
-        
+
+    var forminfofinanciera = Ext.create('Ext.form.Panel', {
+        id: 'forminfofinanciera',
+        bodyPadding: 5,
+        width: 510,
+        height: 340,
         items: [{
-                xtype: 'fieldcontainer',
-                hideLabel: true,
-                combineErrors: true,
-                height: 45,
-                msgTarget: 'under',
-                layout: 'column',
-                defaults: {
-                    flex: 2,
-                    hideLabel: false
-                },
+                xtype: 'fieldset',
+                title: ' ',
+                width: 620,
+                height: 260,
+                collapsible: false,
                 items: [{
-                        xtype: 'numberfield',
-                        style: 'display:inline-block;text-align:left;font-weight:bold;',
-                        fieldLabel: 'Año',
-                        id: 'ca_anno',                        
-                        width: 220
-                    }, {
-                        xtype: 'tbspacer',
-                        height: 10,
-                        width: 500,
-                    }, {
-                        xtype: 'numberfield',
-                        //value: '0',
-                        fieldLabel: 'Activos Totales',
-                        name: 'ca_activostotales',
-                        id: 'ca_activostotales',           
-                        hideTrigger: true,
-                        //decimalSeparator: '.',
-                        thousandSeparator: '.',
-                        decimalSeparator:',',
-                        renderer: Ext.util.Format.numberRenderer('0,000'),                        
-                        keyNavEnabled: false,
-                        mouseWheelEnabled: false,
-                        width: 220
+                        xtype: 'fieldcontainer',
+                        hideLabel: true,
+                        combineErrors: true,
+                        height: 45,
+                        msgTarget: 'under',
+                        layout: 'column',
+                        defaults: {
+                            flex: 2,
+                            hideLabel: false
+                        },
+                        items: [{
+                                xtype: 'numberfield',
+                                style: 'display:inline-block;text-align:left;font-weight:bold;',
+                                fieldLabel: 'Año',
+                                id: 'ca_anno',
+                                width: 220
+                            }, {
+                                xtype: 'tbspacer',
+                                height: 10,
+                                width: 500,
+                            }, {
+                                xtype: 'numberfield',
+                                //value: '0',
+                                fieldLabel: 'Activos Totales',
+                                name: 'ca_activostotales',
+                                id: 'ca_activostotales',
+                                hideTrigger: true,
+                                //decimalSeparator: '.',
+                                thousandSeparator: '.',
+                                decimalSeparator: ',',
+                                renderer: Ext.util.Format.numberRenderer('0,000'),
+                                keyNavEnabled: false,
+                                mouseWheelEnabled: false,
+                                width: 220
 
-                    }, {
-                        xtype: 'numberfield',
-                        value: '0',
-                        fieldLabel: 'Activos Corrientes',
-                        name: 'ca_activoscorrientes',
-                        id: 'ca_activoscorrientes',
-                        width: 260,
-                        labelWidth: 150,
-                        hideTrigger: true,
-                        decimalPrecision: 2,
-                        keyNavEnabled: false,
-                        mouseWheelEnabled: false,
+                            }, {
+                                xtype: 'numberfield',
+                                value: '0',
+                                fieldLabel: 'Activos Corrientes',
+                                name: 'ca_activoscorrientes',
+                                id: 'ca_activoscorrientes',
+                                width: 260,
+                                labelWidth: 150,
+                                hideTrigger: true,
+                                decimalPrecision: 2,
+                                keyNavEnabled: false,
+                                mouseWheelEnabled: false,
+                            }, {
+                                xtype: 'tbspacer',
+                                height: 10,
+                                width: 500,
+                            }, {
+                                xtype: 'numberfield',
+                                value: '0',
+                                fieldLabel: 'Pasivos Totales',
+                                name: 'ca_pasivostotales',
+                                id: 'ca_pasivostotales',
+                                width: 220,
+                                hideTrigger: true,
+                                decimalPrecision: 2,
+                                keyNavEnabled: false,
+                                mouseWheelEnabled: false,
+                            }, {
+                                xtype: 'numberfield',
+                                value: '0',
+                                fieldLabel: 'Pasivos Corrientes',
+                                name: 'ca_pasivoscorrientes',
+                                id: 'ca_pasivoscorrientes',
+                                width: 260,
+                                labelWidth: 150,
+                                hideTrigger: true,
+                                decimalPrecision: 2,
+                                keyNavEnabled: false,
+                                mouseWheelEnabled: false,
+                            }, {
+                                xtype: 'tbspacer',
+                                height: 10,
+                                width: 500,
+                            }, {
+                                xtype: 'numberfield',
+                                value: '0',
+                                fieldLabel: 'Inventarios',
+                                name: 'ca_inventarios',
+                                id: 'ca_inventarios',
+                                width: 220,
+                                hideTrigger: true,
+                                decimalPrecision: 2,
+                                keyNavEnabled: false,
+                                mouseWheelEnabled: false,
+                            }, {
+                                xtype: 'numberfield',
+                                value: '0',
+                                fieldLabel: 'Patrimonios',
+                                name: 'ca_patrimonios',
+                                id: 'ca_patrimonios',
+                                width: 260,
+                                labelWidth: 150,
+                                hideTrigger: true,
+                                decimalPrecision: 2,
+                                keyNavEnabled: false,
+                                mouseWheelEnabled: false,
+                            }, {
+                                xtype: 'tbspacer',
+                                height: 10,
+                                width: 500,
+                            }, {
+                                xtype: 'numberfield',
+                                value: '0',
+                                fieldLabel: 'Utilidades',
+                                name: 'ca_utilidades',
+                                id: 'ca_utilidades',
+                                width: 220,
+                                hideTrigger: true,
+                                decimalPrecision: 2,
+                                keyNavEnabled: false,
+                                mouseWheelEnabled: false,
+                            }, {
+                                xtype: 'numberfield',
+                                value: '0',
+                                fieldLabel: 'Ventas',
+                                name: 'ca_ventas',
+                                id: 'ca_ventas',
+                                width: 260,
+                                labelWidth: 150,
+                                hideTrigger: true,
+                                decimalPrecision: 2,
+                                keyNavEnabled: false,
+                                mouseWheelEnabled: false,
+                            }]
+                    }]
+            }],
+        buttons: [{
+                text: 'Guardar',
+                handler: function () {
+                    var me = this;
+                    var form = me.up('form').getForm();
+                    if (form.isValid()) {
+                        var activostotales = Ext.getCmp('ca_activostotales');
+                        var activoscorrientes = Ext.getCmp('ca_activoscorrientes');
+                        var pasivostotales = Ext.getCmp('ca_pasivostotales');
+                        var pasivoscorrientes = Ext.getCmp('ca_pasivoscorrientes');
+                        var inventarios = Ext.getCmp('ca_inventarios');
+                        var patrimonios = Ext.getCmp('ca_patrimonios');
+                        var utilidades = Ext.getCmp('ca_utilidades');
+                        var ventas = Ext.getCmp('ca_ventas');
+                        var anno = Ext.getCmp('ca_anno');
 
-                    }, {
-                        xtype: 'tbspacer',
-                        height: 10,
-                        width: 500,
-                    }, {
-                        xtype: 'numberfield',
-                        value: '0',
-                        fieldLabel: 'Pasivos Totales',
-                        name: 'ca_pasivostotales',
-                        id: 'ca_pasivostotales',
-                        width: 220,
-                        hideTrigger: true,
-                        decimalPrecision: 2,
-                        keyNavEnabled: false,
-                        mouseWheelEnabled: false,
 
-                    }, {
-                        xtype: 'numberfield',
-                        value: '0',
-                        fieldLabel: 'Pasivos Corrientes',
-                        name: 'ca_pasivoscorrientes',
-                        id: 'ca_pasivoscorrientes',
-                        width: 260,
-                        labelWidth: 150,
-                        hideTrigger: true,
-                        decimalPrecision: 2,
-                        keyNavEnabled: false,
-                        mouseWheelEnabled: false,
+                        Ext.Ajax.request({
+                            waitMsg: 'Guardando cambios...',
+                            url: '<?= url_for('clientes/guardarDatosFinancieros') ?>',
+                            params: {
+                                activostotales: activostotales.value,
+                                activoscorrientes: activoscorrientes.value,
+                                pasivostotales: pasivostotales.value,
+                                pasivoscorrientes: pasivoscorrientes.value,
+                                inventarios: inventarios.value,
+                                patrimonios: patrimonios.value,
+                                utilidades: utilidades.value,
+                                ventas: ventas.value,
+                                idcliente: <?= $idcliente ?>,
+                                anno: anno.value
+                            },
+                            failure: function (response, options) {
+                                var res = Ext.util.JSON.decode(response.responseText);
+                                if (res.errorInfo)
+                                    Ext.MessageBox.alert("Mensaje", 'Debe diligenciar completamente el formulario');
 
-                    }, {
-                        xtype: 'tbspacer',
-                        height: 10,
-                        width: 500,
-                    }, {
-                        xtype: 'numberfield',
-                        value: '0',
-                        fieldLabel: 'Inventarios',
-                        name: 'ca_inventarios',
-                        id: 'ca_inventarios',
-                        width: 220,
-                        hideTrigger: true,
-                        decimalPrecision: 2,
-                        keyNavEnabled: false,
-                        mouseWheelEnabled: false,
+                            },
+                            success: function (response, options) {
+                                var res = Ext.decode(response.responseText);
+                                ids = res.ids;
+                                if (res.success) {
+                                    Ext.MessageBox.alert("Mensaje", 'Datos Almacenados Correctamente<br>');
+                                    storeInfoFinanciera.reload();
 
-                    }, {
-                        xtype: 'numberfield',
-                        value: '0',
-                        fieldLabel: 'Patrimonios',
-                        name: 'ca_patrimonios',
-                        id: 'ca_patrimonios',
-                        width: 260,
-                        labelWidth: 150,
-                        hideTrigger: true,
-                        decimalPrecision: 2,
-                        keyNavEnabled: false,
-                        mouseWheelEnabled: false,
-
-                    }, {
-                        xtype: 'tbspacer',
-                        height: 10,
-                        width: 500,
-                    }, {
-                        xtype: 'numberfield',
-                        value: '0',
-                        fieldLabel: 'Utilidades',
-                        name: 'ca_utilidades',
-                        id: 'ca_utilidades',
-                        width: 220,
-                        hideTrigger: true,
-                        decimalPrecision: 2,
-                        keyNavEnabled: false,
-                        mouseWheelEnabled: false,
-
-                    }, {
-                        xtype: 'numberfield',
-                        value: '0',
-                        fieldLabel: 'Ventas',
-                        name: 'ca_ventas',
-                        id: 'ca_ventas',
-                        width: 260,
-                        labelWidth: 150,
-                        hideTrigger: true,
-                        decimalPrecision: 2,
-                        keyNavEnabled: false,
-                        mouseWheelEnabled: false,
-
-                    }]   
-                }]
-    }],
-    buttons : [{
-        text: 'Guardar',
-        handler: function (){
-            var me = this;
-            var form = me.up('form').getForm();
-            if(form.isValid()){
-            
-                var activostotales = Ext.getCmp('ca_activostotales');
-                var activoscorrientes = Ext.getCmp('ca_activoscorrientes');
-                var pasivostotales = Ext.getCmp('ca_pasivostotales');
-                var pasivoscorrientes = Ext.getCmp('ca_pasivoscorrientes');
-                var inventarios = Ext.getCmp('ca_inventarios');
-                var patrimonios = Ext.getCmp('ca_patrimonios');
-                var utilidades = Ext.getCmp('ca_utilidades');
-                var ventas = Ext.getCmp('ca_ventas');
-                var anno = Ext.getCmp('ca_anno');
-               
-                
-                    Ext.Ajax.request({
-                    waitMsg: 'Guardando cambios...',
-                    url: '<?= url_for('clientes/guardarDatosFinancieros') ?>',
-                    params: {
-                        activostotales: activostotales.value,
-                        activoscorrientes: activoscorrientes.value,
-                        pasivostotales: pasivostotales.value,
-                        pasivoscorrientes: pasivoscorrientes.value,
-                        inventarios: inventarios.value,
-                        patrimonios: patrimonios.value,
-                        utilidades: utilidades.value,
-                        ventas: ventas.value,
-                        idcliente: <?= $idcliente ?>,
-                        anno: anno.value
-                    },
-                    failure: function (response, options) {
-                        var res = Ext.util.JSON.decode(response.responseText);
-                        if (res.errorInfo)
-                            Ext.MessageBox.alert("Mensaje", 'Debe diligenciar completamente el formulario');
-                        
-                    },
-                    success: function (response, options) {
-                        var res = Ext.decode(response.responseText);
-                        ids = res.ids;
-                        if (res.success) {
-                            Ext.MessageBox.alert("Mensaje", 'Datos Almacenados Correctamente<br>');
-                            storeInfoFinanciera.reload();
-                            
-                        }
-                        else{
-                            Ext.MessageBox.alert("Mensaje", 'Datos Incompletos<br>');
-                        }
+                                } else {
+                                    Ext.MessageBox.alert("Mensaje", 'Datos Incompletos<br>');
+                                }
+                            }
+                        });
                     }
-                });
-            }
-        }
-    }]
+                }
+            }]
     });
-    
-    
+
+
     var gridInfoFinanciera = new Ext.grid.GridPanel({
         id: 'gridInfoFinanciera',
         store: storeInfoFinanciera,
         stripeRows: true,
         height: 400,
         width: 650,
-        
-
         plugins: [{
-        ptype: 'rowexpander',
-        rowBodyTpl : new Ext.XTemplate(
-         '<table class="bgrGREYlight" align=center width="100%" height="99%" border=0>' +
-            '<tbody>' +
-                '<tr>' +
-                    '<th align="left" width="25%" class="tableTEXT2">Inventarios</th>' +
-                    '<td  width="40%" align="left" class="tableTEXT">{ca_inventarios}</td>' + 
-                '</tr>'+
-                '<tr>' +
-                    '<th align="left" width="25%" class="tableTEXT2">Patrimonios</th>' +
-                    '<td  width="40%" align="left" class="tableTEXT">{ca_patrimonios}</td>' + 
-                '</tr>'+
-                '<tr>' +
-                    '<th align="left" width="25%" class="tableTEXT2">Utilidades</th>' +
-                    '<td  width="40%" align="left" class="tableTEXT">{ca_utilidades}</td>' + 
-                '</tr>'+
-                '<tr>' +
-                    '<th align="left" width="25%" class="tableTEXT2">Ventas</th>' +
-                    '<td  width="40%" align="left" class="tableTEXT">{ca_ventas}</td>' + 
-                '</tr>'+
-                '<tr>' +
-                    '<th align="left" width="25%" class="tableTEXT2">Activos en SMMLV</th>' +
-                    '<td  width="40%" align="left" class="tableTEXT">{ca_actsmmlv}</td>' + 
-                '</tr>'+
-                '<tr>' +
-                    '<th align="left" width="25%" class="tableTEXT2">Indice de Liquidez</th>' +
-                    '<td  width="40%" align="left" class="tableTEXT">{ca_indliquidez}</td>' + 
-                '</tr>'+
-                '<tr>' +
-                    '<th align="left" width="25%" class="tableTEXT2">Indice de Endeudamiento</th>' +
-                    '<td  width="40%" align="left" class="tableTEXT">{ca_indendeudamiento}</td>' + 
-                '</tr>'+
-                '<tr>' +
-                    '<th align="left" width="25%" class="tableTEXT2">Prueba ácida</th>' +
-                    '<td  width="40%" align="left" class="tableTEXT">{ca_pbaacida}</td>' + 
-                '</tr>'+
-                '<tr>' +
-                    '<th align="left" width="25%" class="tableTEXT2">Ino</th>' +
-                    '<td  width="40%" align="left" class="tableTEXT">{ca_ino}</td>' + 
-                '</tr>'+                
-            '</tbody>' +
-        '</table>', 
-            
-            
-        {
-            formatChange: function(v){
-                var color = v >= 0 ? 'green' : 'red';
-                return '<span style="color: ' + color + ';">' + Ext.util.Format.usMoney(v) + '</span>';
-            }
-        })
-    }],
-        
+                ptype: 'rowexpander',
+                rowBodyTpl: new Ext.XTemplate(
+                        '<table class="bgrGREYlight" align=center width="100%" height="99%" border=0>' +
+                        '<tbody>' +
+                        '<tr>' +
+                        '<th align="left" width="25%" class="tableTEXT2">Inventarios</th>' +
+                        '<td  width="40%" align="left" class="tableTEXT">{ca_inventarios}</td>' +
+                        '</tr>' +
+                        '<tr>' +
+                        '<th align="left" width="25%" class="tableTEXT2">Patrimonios</th>' +
+                        '<td  width="40%" align="left" class="tableTEXT">{ca_patrimonios}</td>' +
+                        '</tr>' +
+                        '<tr>' +
+                        '<th align="left" width="25%" class="tableTEXT2">Utilidades</th>' +
+                        '<td  width="40%" align="left" class="tableTEXT">{ca_utilidades}</td>' +
+                        '</tr>' +
+                        '<tr>' +
+                        '<th align="left" width="25%" class="tableTEXT2">Ventas</th>' +
+                        '<td  width="40%" align="left" class="tableTEXT">{ca_ventas}</td>' +
+                        '</tr>' +
+                        '<tr>' +
+                        '<th align="left" width="25%" class="tableTEXT2">Activos en SMMLV</th>' +
+                        '<td  width="40%" align="left" class="tableTEXT">{ca_actsmmlv}</td>' +
+                        '</tr>' +
+                        '<tr>' +
+                        '<th align="left" width="25%" class="tableTEXT2">Indice de Liquidez</th>' +
+                        '<td  width="40%" align="left" class="tableTEXT">{ca_indliquidez}</td>' +
+                        '</tr>' +
+                        '<tr>' +
+                        '<th align="left" width="25%" class="tableTEXT2">Indice de Endeudamiento</th>' +
+                        '<td  width="40%" align="left" class="tableTEXT">{ca_indendeudamiento}</td>' +
+                        '</tr>' +
+                        '<tr>' +
+                        '<th align="left" width="25%" class="tableTEXT2">Prueba ácida</th>' +
+                        '<td  width="40%" align="left" class="tableTEXT">{ca_pbaacida}</td>' +
+                        '</tr>' +
+                        '<tr>' +
+                        '<th align="left" width="25%" class="tableTEXT2">Ino</th>' +
+                        '<td  width="40%" align="left" class="tableTEXT">{ca_ino}</td>' +
+                        '</tr>' +
+                        '</tbody>' +
+                        '</table>',
+                        {
+                            formatChange: function (v) {
+                                var color = v >= 0 ? 'green' : 'red';
+                                return '<span style="color: ' + color + ';">' + Ext.util.Format.usMoney(v) + '</span>';
+                            }
+                        })
+            }],
         columns: [{
                 header: 'Año',
                 width: 60,
                 dataIndex: 'ca_anno',
-                
                 editor: {xtype: "textfield"}
             }, {
-            text: 'Activos',
-            columns: [{
-                header: 'Totales',
-                width: 130,
-                dataIndex: 'ca_activostotales',
-                renderer: Ext.util.Format.numberRenderer('0,000'),
-                editor: {xtype: "textfield"}
-            }, {
-                header: 'Corrientes',
-                width: 130,
-                dataIndex: 'ca_activoscorrientes',
-                renderer: Ext.util.Format.numberRenderer('0,000'),
-                editor: {xtype: "textfield"}
-            }]
+                text: 'Activos',
+                columns: [{
+                        header: 'Totales',
+                        width: 130,
+                        dataIndex: 'ca_activostotales',
+                        renderer: Ext.util.Format.numberRenderer('0,000'),
+                        editor: {xtype: "textfield"}
+                    }, {
+                        header: 'Corrientes',
+                        width: 130,
+                        dataIndex: 'ca_activoscorrientes',
+                        renderer: Ext.util.Format.numberRenderer('0,000'),
+                        editor: {xtype: "textfield"}
+                    }]
             }, {
                 text: 'Pasivos',
                 columns: [{
-                header: 'Totales',
-                width: 130,
-                dataIndex: 'ca_pasivostotales',
-                renderer: Ext.util.Format.numberRenderer('0,000'),
-                editor: {xtype: "textfield"}
-            },{
-                header: 'Corrientes',
-                width: 130,
-                dataIndex: 'ca_pasivoscorrientes',
-                renderer: Ext.util.Format.numberRenderer('0,000'),
-                editor: {xtype: "textfield"}
-            }]
-            
-            } ,{
+                        header: 'Totales',
+                        width: 130,
+                        dataIndex: 'ca_pasivostotales',
+                        renderer: Ext.util.Format.numberRenderer('0,000'),
+                        editor: {xtype: "textfield"}
+                    }, {
+                        header: 'Corrientes',
+                        width: 130,
+                        dataIndex: 'ca_pasivoscorrientes',
+                        renderer: Ext.util.Format.numberRenderer('0,000'),
+                        editor: {xtype: "textfield"}
+                    }]
+
+            }, {
                 header: 'Inventarios',
                 width: 150,
                 hidden: true,
@@ -404,7 +388,7 @@ var win_infofinanciera = null;
                 keyNavEnabled: false,
                 mouseWheelEnabled: false,
                 editor: {xtype: "textfield"}
-            },{
+            }, {
                 header: 'Patrimonios',
                 width: 150,
                 hidden: true,
@@ -415,7 +399,7 @@ var win_infofinanciera = null;
                 keyNavEnabled: false,
                 mouseWheelEnabled: false,
                 editor: {xtype: "textfield"}
-            },{
+            }, {
                 header: 'Utilidades',
                 width: 150,
                 hidden: true,
@@ -426,7 +410,7 @@ var win_infofinanciera = null;
                 keyNavEnabled: false,
                 mouseWheelEnabled: false,
                 editor: {xtype: "textfield"}
-            },{
+            }, {
                 header: 'Ventas',
                 hidden: true,
                 width: 150,
@@ -437,7 +421,7 @@ var win_infofinanciera = null;
                 keyNavEnabled: false,
                 mouseWheelEnabled: false,
                 editor: {xtype: "textfield"}
-            },{
+            }, {
                 header: 'ca_actsmmlv',
                 hidden: true,
                 width: 150,
@@ -447,7 +431,7 @@ var win_infofinanciera = null;
                 keyNavEnabled: false,
                 mouseWheelEnabled: false,
                 editor: {xtype: "textfield"}
-            },{
+            }, {
                 header: 'ca_indliquidez',
                 hidden: true,
                 width: 150,
@@ -457,7 +441,7 @@ var win_infofinanciera = null;
                 keyNavEnabled: false,
                 mouseWheelEnabled: false,
                 editor: {xtype: "textfield"}
-            },{
+            }, {
                 header: 'ca_indendeudamiento',
                 hidden: true,
                 width: 150,
@@ -467,7 +451,7 @@ var win_infofinanciera = null;
                 keyNavEnabled: false,
                 mouseWheelEnabled: false,
                 editor: {xtype: "textfield"}
-            },{
+            }, {
                 header: 'ca_pbaacida',
                 hidden: true,
                 width: 150,
@@ -477,7 +461,7 @@ var win_infofinanciera = null;
                 keyNavEnabled: false,
                 mouseWheelEnabled: false,
                 editor: {xtype: "textfield"}
-            },{
+            }, {
                 header: 'ca_ino',
                 hidden: true,
                 width: 150,
@@ -489,80 +473,79 @@ var win_infofinanciera = null;
                 mouseWheelEnabled: false,
                 editor: {xtype: "textfield"}
             }, {
-                    menuDisabled: true,
-                    sortable: false,
-                    xtype: 'actioncolumn',
-                    width: 40,
-                    items: [{
-                            iconCls: 'page_white_edit',
-                            tooltip: 'Consultar la Encuesta',
-                            handler: function(grid, rowIndex, colIndex) {
-                                var rec = grid.getStore().getAt(rowIndex);
-                             
-                               if (win_infofinanciera == null) {
-                                   
-                                    win_infofinanciera = new Ext.Window({
-                                        
-                                        title: 'Edición de Registro',
-                                        width: 530,
-                                        height: 390,
-                                        closeAction: 'close',
-                                        items: {
-                                            xtype: forminfofinanciera
-                                        },
-                                        listeners: {
-                                            close: function (win, eOpts ){
-                                                win_infofinanciera = null;
-                                            }
-                                         }
-                                    })
-                                } 
-                                win_infofinanciera.down('form').loadRecord(rec);
-                                win_infofinanciera.show();
+                menuDisabled: true,
+                sortable: false,
+                xtype: 'actioncolumn',
+                width: 40,
+                items: [{
+                        iconCls: 'page_white_edit',
+                        tooltip: 'Consultar la Encuesta',
+                        handler: function (grid, rowIndex, colIndex) {
+                            var rec = grid.getStore().getAt(rowIndex);
 
-                            }
-                        }, {
-                            iconCls: 'delete',
-                            tooltip: 'Anular la Encuesta',
-                            handler: function(grid, rowIndex, colIndex) {
-                                var rec = grid.getStore().getAt(rowIndex);
-                                Ext.MessageBox.confirm('Confirmación de Eliminación', 'Está seguro que desea anular el registro?', function(choice) {
-                                    if (choice == 'yes') {
-                                        Ext.Ajax.request({
-                                            waitMsg: 'Eliminado...',
-                                            url: '<?= url_for("clientes/anularInfoFinanciera") ?>',
-                                            params: {                                                
-                                                idcliente: <?= $idcliente ?>,
-                                                anno: rec.data.ca_anno
-                                            },
-                                            failure: function(response, options) {
-                                                Ext.MessageBox.alert("Mensaje", 'Se presento un error Eliminando el registro.<br>' + response.errorInfo);
-                                                success = false;
-                                            },
-                                            success: function(response, options) {
-                                                var res = Ext.JSON.decode(response.responseText);
-                                                if (res.success) {
-                                                    store = storeInfoFinanciera;
-                                                    store.reload();
-                                                } else {
-                                                    Ext.MessageBox.alert("Mensaje", 'Se presento un error guardando los registros.<br>' + res.responseInfo);
-                                                }
-                                            }
-                                        });
+                            if (win_infofinanciera == null) {
+
+                                win_infofinanciera = new Ext.Window({
+                                    title: 'Edición de Registro',
+                                    width: 530,
+                                    height: 390,
+                                    closeAction: 'close',
+                                    items: {
+                                        xtype: forminfofinanciera
+                                    },
+                                    listeners: {
+                                        close: function (win, eOpts) {
+                                            win_infofinanciera = null;
+                                        }
                                     }
-                                });
+                                })
                             }
-                        }]
-                }
+                            win_infofinanciera.down('form').loadRecord(rec);
+                            win_infofinanciera.show();
+
+                        }
+                    }, {
+                        iconCls: 'delete',
+                        tooltip: 'Anular la Encuesta',
+                        handler: function (grid, rowIndex, colIndex) {
+                            var rec = grid.getStore().getAt(rowIndex);
+                            Ext.MessageBox.confirm('Confirmación de Eliminación', 'Está seguro que desea anular el registro?', function (choice) {
+                                if (choice == 'yes') {
+                                    Ext.Ajax.request({
+                                        waitMsg: 'Eliminado...',
+                                        url: '<?= url_for("clientes/anularInfoFinanciera") ?>',
+                                        params: {
+                                            idcliente: <?= $idcliente ?>,
+                                            anno: rec.data.ca_anno
+                                        },
+                                        failure: function (response, options) {
+                                            Ext.MessageBox.alert("Mensaje", 'Se presento un error Eliminando el registro.<br>' + response.errorInfo);
+                                            success = false;
+                                        },
+                                        success: function (response, options) {
+                                            var res = Ext.JSON.decode(response.responseText);
+                                            if (res.success) {
+                                                store = storeInfoFinanciera;
+                                                store.reload();
+                                            } else {
+                                                Ext.MessageBox.alert("Mensaje", 'Se presento un error guardando los registros.<br>' + res.responseInfo);
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }]
+            }
         ],
         tbar: [{
                 text: 'Adicionar',
                 iconCls: 'add',
-                handler : function(){    
-                    
+                handler: function () {
+
                     if (win_infofinanciera == null) {
-                        
-                            win_infofinanciera = new Ext.Window({
+
+                        win_infofinanciera = new Ext.Window({
                             title: 'Datos financieros',
                             width: 530,
                             height: 380,
@@ -571,21 +554,21 @@ var win_infofinanciera = null;
                                 xtype: forminfofinanciera
                             },
                             listeners: {
-                                close: function (win, eOpts ){
-                                   
+                                close: function (win, eOpts) {
+
                                     win_infofinanciera = null;
                                 }
-                             }
-                         })
-                        }
-                        rec = Ext.create ('InfoFinanciera',{});
-                        win_infofinanciera.down('form').loadRecord(rec);
-                        win_infofinanciera.show();
-                     }
-                
-        }],
+                            }
+                        })
+                    }
+                    rec = Ext.create('InfoFinanciera', {});
+                    win_infofinanciera.down('form').loadRecord(rec);
+                    win_infofinanciera.show();
+                }
+
+            }],
     });
-    
+
     var fieldsetPersonaJuridica = Ext.create('Ext.form.FieldSet', {
         xtype: 'fieldset',
         title: 'Persona jurídica',
@@ -615,7 +598,7 @@ var win_infofinanciera = null;
                         columnWidth: 0.8,
                         defaultType: 'checkbox',
                         layout: 'column',
-                        items: [ {
+                        items: [{
                                 fieldLabel: 'UAP',
                                 boxLabel: '',
                                 name: 'uap',
@@ -636,24 +619,22 @@ var win_infofinanciera = null;
         hidden: true,
         height: 400,
         width: 650,
-        
         columns: [{
                 header: 'idtipo',
                 width: 25,
                 dataIndex: 'idtipo',
                 hidden: true
-            },  {
+            }, {
                 xtype: "checkcolumn",
-                dataIndex: 'seleccionado', 
+                dataIndex: 'seleccionado',
                 width: 40,
-                listeners:{
-                    checkchange: function (grid, rowIndex, colIndex){
+                listeners: {
+                    checkchange: function (grid, rowIndex, colIndex) {
                         var record = storeControlFinanciero.getAt(rowIndex);
-                        if (record.get('seleccionado')){
-                            record.set('fch_documento','<?= $hoy?>');
-                        }
-                        else{
-                            record.set('fch_documento','');
+                        if (record.get('seleccionado')) {
+                            record.set('fch_documento', '<?= $hoy ?>');
+                        } else {
+                            record.set('fch_documento', '');
                         }
                     }
                 }
@@ -686,26 +667,23 @@ var win_infofinanciera = null;
         ],
         tbar: [{
                 text: 'Seleccionar todo',
-                handler : function(){    
-                    for(var i=0 ; i<storeControlFinanciero.getTotalCount(); i++){
+                handler: function () {
+                    for (var i = 0; i < storeControlFinanciero.getTotalCount(); i++) {
                         var record = storeControlFinanciero.getAt(i);
-                            
-                                record.set('seleccionado',true);
-                            
+                        record.set('seleccionado', true);
+                        record.set('fch_documento', '<?= $hoy ?>');
                     }
-                    
+
                 }
             }, {
                 text: 'Deseleccionar todo',
-                handler : function(){    
-                    for(var i=0 ; i<storeControlFinanciero.getTotalCount(); i++){
+                handler: function () {
+                    for (var i = 0; i < storeControlFinanciero.getTotalCount(); i++) {
                         var record = storeControlFinanciero.getAt(i);
-                            
-                                record.set('seleccionado',false);
-                                record.set('fch_documento','');
-                            
+                        record.set('seleccionado', false);
+                        record.set('fch_documento', '');
                     }
-                    
+
                 }
             }],
         selType: 'cellmodel',
@@ -741,7 +719,7 @@ var win_infofinanciera = null;
                 data: <?= json_encode($sectorfinanciero) ?>
             }
         });
-        
+
         Ext.define('ComboRegimen', {
             extend: 'Ext.form.field.ComboBox',
             alias: 'widget.combo-regimen',
@@ -777,8 +755,6 @@ var win_infofinanciera = null;
             alias: 'widget.combo-si-no',
             store: ['Sí', 'No']
         });
-
-
 
         var tabPanel = new Ext.tab.Panel({
             id: 'panelControlFianciero',
@@ -1148,30 +1124,30 @@ var win_infofinanciera = null;
                             changes = [];
                             for (var i = 0; i < store.getCount(); i++) {
                                 var record = store.getAt(i);
-                                    if (record.get('seleccionado')){
-                                    
-                                        record.data.id = record.id
-                                        changes[x] = record.data;
-                                        x++;
-                                    }
+                                if (record.get('seleccionado')) {
+
+                                    record.data.id = record.id
+                                    changes[x] = record.data;
+                                    x++;
+                                }
                             }
                             var strGrid = JSON.stringify(changes);
-                            
+
                             var store = storeInfoFinanciera;
                             x = 0;
                             changes = [];
                             for (var i = 0; i < store.getCount(); i++) {
                                 var record = store.getAt(i);
-                                       if (Ext.Object.getSize(record.getChanges()) != 0) {
-                                    
-                                        record.data.id = record.id
-                                        changes[x] = record.data;
-                                        x++;
-                                       }
+                                if (Ext.Object.getSize(record.getChanges()) != 0) {
+
+                                    record.data.id = record.id
+                                    changes[x] = record.data;
+                                    x++;
+                                }
                             }
                             var strGridFinanciera = JSON.stringify(changes);
-                            
-                            
+
+
 
                             Ext.Ajax.request({
                                 waitMsg: 'Guardando cambios...',
@@ -1234,9 +1210,9 @@ var win_infofinanciera = null;
         var utilidades = Ext.getCmp("utilidades").value;
         var ventas = Ext.getCmp("ventas").value;
 
-        <? if ($minimo) { ?>
+<? if ($minimo) { ?>
             activosSMMLV.setValue(activostotales /<?= $minimo ?>);
-        <? } ?>
+<? } ?>
         if (pasivoscorrientes != 0) {
             indiceliquidez.setValue(activoscorrientes / pasivoscorrientes);
         } else {
@@ -1258,7 +1234,7 @@ var win_infofinanciera = null;
         var tip = Ext.getCmp("tipopersona");
 
         if (tip != "") {
-           // var activostotales = Ext.getCmp("activostotales").value;
+            // var activostotales = Ext.getCmp("activostotales").value;
             var fechconstitucion = Ext.getCmp("fechaconstitucion").value;
             var tipopersona = Ext.getCmp("tipopersona");
             var sectoreconomico = Ext.getCmp("sectoreconomico");
@@ -1282,7 +1258,7 @@ var win_infofinanciera = null;
                     if (tipopersona.value == 2) {
                         tipo = "ca_perjuridica";
 
-                        if ( regimen.value == 1 ) {
+                        if (regimen.value == 1) {
                             tipo = "ca_gran_contribuyente";
                         }
                     }
