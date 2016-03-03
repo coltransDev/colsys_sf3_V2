@@ -24,8 +24,7 @@ $hoy = $sf_data->getRaw("hoy");
             {name: 'empresa', type: 'string'},
             {name: 'documento', type: 'string'},
             {name: 'observaciones', type: 'string'},
-            {name: 'fch_vigencia', type: 'date'},
-            {name: 'fch_documento', type: 'date'},
+            {name: 'fch_documento'},
             {name: 'seleccionado', type: 'boolean'}
         ]
     });
@@ -235,6 +234,7 @@ $hoy = $sf_data->getRaw("hoy");
                     var me = this;
                     var form = me.up('form').getForm();
                     if (form.isValid()) {
+
                         var activostotales = Ext.getCmp('ca_activostotales');
                         var activoscorrientes = Ext.getCmp('ca_activoscorrientes');
                         var pasivostotales = Ext.getCmp('ca_pasivostotales');
@@ -244,7 +244,6 @@ $hoy = $sf_data->getRaw("hoy");
                         var utilidades = Ext.getCmp('ca_utilidades');
                         var ventas = Ext.getCmp('ca_ventas');
                         var anno = Ext.getCmp('ca_anno');
-
 
                         Ext.Ajax.request({
                             waitMsg: 'Guardando cambios...',
@@ -283,7 +282,6 @@ $hoy = $sf_data->getRaw("hoy");
                 }
             }]
     });
-
 
     var gridInfoFinanciera = new Ext.grid.GridPanel({
         id: 'gridInfoFinanciera',
@@ -482,9 +480,7 @@ $hoy = $sf_data->getRaw("hoy");
                         tooltip: 'Consultar la Encuesta',
                         handler: function (grid, rowIndex, colIndex) {
                             var rec = grid.getStore().getAt(rowIndex);
-
                             if (win_infofinanciera == null) {
-
                                 win_infofinanciera = new Ext.Window({
                                     title: 'Edición de Registro',
                                     width: 530,
@@ -542,9 +538,7 @@ $hoy = $sf_data->getRaw("hoy");
                 text: 'Adicionar',
                 iconCls: 'add',
                 handler: function () {
-
                     if (win_infofinanciera == null) {
-
                         win_infofinanciera = new Ext.Window({
                             title: 'Datos financieros',
                             width: 530,
@@ -632,7 +626,8 @@ $hoy = $sf_data->getRaw("hoy");
                     checkchange: function (grid, rowIndex, colIndex) {
                         var record = storeControlFinanciero.getAt(rowIndex);
                         if (record.get('seleccionado')) {
-                            record.set('fch_documento', '<?= $hoy ?>');
+                            record.set('fch_documento', '<?= date('Y-m-d') ?>');
+                            //console.log('<?= date('Y-m-d') ?>');
                         } else {
                             record.set('fch_documento', '');
                         }
@@ -647,7 +642,23 @@ $hoy = $sf_data->getRaw("hoy");
                 header: 'Fecha Documento',
                 width: 125,
                 dataIndex: 'fch_documento',
-                renderer: Ext.util.Format.dateRenderer('Y-m-d'),
+                renderer: function (a, b, c, d){
+                    if (a) {
+                        var formattedDate = new Date(a);
+                        var formattedDate = new Date(formattedDate.valueOf() + formattedDate.getTimezoneOffset() * 60000);
+                        var d = formattedDate.getDate();
+                        if (d < 10) {
+                            d = "0" + d
+                        }
+                        var m = formattedDate.getMonth();
+                        m += 1;  // JavaScript months are 0-11
+                        if (m < 10) {
+                            m = "0" + m;
+                        }
+                        var y = formattedDate.getFullYear();
+                        return y + "-" + m + "-" + d;
+                    }
+                },
                 editor: new Ext.form.DateField({
                     width: 90,
                     format: 'Y-m-d',
@@ -668,6 +679,17 @@ $hoy = $sf_data->getRaw("hoy");
         tbar: [{
                 text: 'Seleccionar todo',
                 handler: function () {
+                    var fech = new Date();
+                    var dd = fech.getDate();
+                    if (dd < 10) {
+                        dd = "0" + dd;
+                    }
+                    var mm = fech.getMonth() + 1; //hoy es 0!
+                    if (mm < 10) {
+                        mm = "0" + mm;
+                    }
+                    var yyyy = fech.getFullYear();
+                    var hoy = yyyy + "-" + mm + "-" + dd;
                     for (var i = 0; i < storeControlFinanciero.getTotalCount(); i++) {
                         var record = storeControlFinanciero.getAt(i);
                         record.set('seleccionado', true);
@@ -1147,8 +1169,6 @@ $hoy = $sf_data->getRaw("hoy");
                             }
                             var strGridFinanciera = JSON.stringify(changes);
 
-
-
                             Ext.Ajax.request({
                                 waitMsg: 'Guardando cambios...',
                                 url: '<?= url_for('clientes/actualizarControlFinanciero') ?>',
@@ -1181,7 +1201,6 @@ $hoy = $sf_data->getRaw("hoy");
                                 }
                             });
                         }
-
                     }
                 }, {
                     text: 'Cancelar',
