@@ -1,4 +1,17 @@
 <?php
+$liberaciones = array();
+if ($documento->getCaLiberacion() == "EXPRESS RELEASE") {
+    $liberacion = "EXPRESS RELEASE";
+}else if ($documento->getCaLiberacion() == "TELEX RELEASE"){
+    $liberacion = " TELEX RELEASE ";
+}else if ($documento->getCaLiberacion() == "ORIGINAL Y COPIA"){ 
+    if ($copia) {
+        $liberacion = "   C O P I A   ";
+    } else {
+        $liberacion = "O R I G I N A L";
+    }
+}
+
 $pdf = new PDF ( 'P', 'mm', 'oficio' );
 $pdf->Open ();
 $pdf->AliasNbPages ();
@@ -12,27 +25,31 @@ $pdf->SetAutoPageBreak(true, 0);
 $items = $documento->getExpoDocItems();
 $count = count($items);
 $page  = 1;
+$marg  = 0;
+$font_size = ($documento->getCaFontSize())?$documento->getCaFontSize():9;
 while (true) {
     $pdf->AddPage ();
     if ($plantilla){
         $pdf->Image( '/srv/www/digitalFile/formatos/HBL0001.jpg', -5,-10,221,337 );
+    } else {
+        $marg = 8;
     }
 
-    $pdf->SetFont ( 'Arial', '', 9 );
-    $pdf->SetXY(10, 13);
+    $pdf->SetFont ( 'Arial', '', $font_size );
+    $pdf->SetXY(10, 13 + $marg);
     $shipper = $reporte->getContacto()->getCliente()->getCaCompania()."\n";
     $shipper.= $reporte->getContacto()->getCliente()->getDireccion()."\n";
     $shipper.= $reporte->getContacto()->getCliente()->getCiudad()->getCaCiudad().", ".$reporte->getContacto()->getCliente()->getCiudad()->getTrafico()->getCaNombre()." ".$reporte->getContacto()->getCliente()->getCaZipcode();
     $pdf->MultiCell(100, 4, $shipper, 0, 1);
 
-    $pdf->SetXY(10, 42);
+    $pdf->SetXY(10, 42 + $marg);
     $consignee = $consignatario->getCaNombre()."\n";
     $consignee.= $consignatario->getCaDireccion()."\n";
     $consignee.= $consignatario->getCiudad()->getCaCiudad().", ".$consignatario->getCiudad()->getTrafico()->getCaNombre()."\n";
     $consignee.= $consignatario->getCaIdentificacion();
     $pdf->MultiCell(100, 4, $consignee, 0, 1);
-    
-    $pdf->SetXY(10, 68);
+
+    $pdf->SetXY(10, 68 + $marg);
     if ($notify) {
         $notified = $notify->getCaNombre()."\n";
         $notified.= $notify->getCaDireccion()."\n";
@@ -43,16 +60,29 @@ while (true) {
         $pdf->MultiCell(100, 4, $consignee, 0, 1);
     }
 
-    $pdf->Text(150, 20, $documento->getInoMaestraExpo()->getCaReferencia());
+    if ($borrador) {
+        $pdf->SetXY( 5, 160);
+        $pdf->SetTextColor(200, 200, 200);
+        $pdf->SetFont('Arial', 'B', 68);
+        $pdf->Rotate(45);
+        $pdf->Write(150, 'BORRADOR');
+        $pdf->SetTextColor(0, 0, 0);
+        $pdf->Rotate(0);
+        $pdf->SetXY(30,  20);
+    }
 
-    $pdf->Text(10, 107, $documento->getCaOceanVessel());
-    $pdf->Text(60, 107, $referencia->getOrigen()->getCaCiudad().", ".$referencia->getOrigen()->getTrafico()->getCaNombre());
-    $pdf->Text(10, 118, $discharge->getCaCiudad().", ".$discharge->getTrafico()->getCaNombre());
-    $pdf->Text(60, 118, $referencia->getDestino()->getCaCiudad().", ".$referencia->getDestino()->getTrafico()->getCaNombre());
-    
-    $pdf->Text(140, 118, "Page: ".($page++)." / {nb}");
+    $pdf->SetFont ( 'Arial', '', $font_size );
+    $pdf->Text(150, 20 + $marg, $documento->getInoMaestraExpo()->getCaReferencia());
 
-    $pdf->SetFont ( 'Arial', '', $documento->getCaFontSize());
+    $pdf->Text(10, 107 + $marg, $documento->getCaOceanVessel());
+    $pdf->Text(60, 107 + $marg, $referencia->getOrigen()->getCaCiudad().", ".$referencia->getOrigen()->getTrafico()->getCaNombre());
+    $pdf->Text(10, 118 + $marg, $discharge->getCaCiudad().", ".$discharge->getTrafico()->getCaNombre());
+    $pdf->Text(60, 118 + $marg, $referencia->getDestino()->getCaCiudad().", ".$referencia->getDestino()->getTrafico()->getCaNombre());
+
+    $pdf->Text(137, 113 + $marg, $liberacion);
+    $pdf->Text(140, 118 + $marg, "Page: ".($page++)." / {nb}");
+
+    $pdf->SetFont ( 'Arial', '', $font_size);
 
     $tot_packages = 0;
     $tot_gross = 0;
@@ -61,7 +91,7 @@ while (true) {
 
     $nextY = 0;
     $ejeY = $sameY = 130;
-    
+
     foreach ($items as $key => $item){
         $count--;
         if($item->getCaSameGoods()){
@@ -91,8 +121,17 @@ while (true) {
             $tot_packages+= $item->getCaNumberPackages();
         }
         $descriptionGoods.= "\n".$item->getCaDescriptionGoods();
-
-        $pdf->MultiCell(110, 4, $descriptionGoods, 0, 1);
+        $pos = strpos($descriptionGoods, "«break»");
+        if ($pos === false){
+            $pdf->MultiCell(110, 4, $descriptionGoods, 0, 1);
+        }else{
+            $descriptionGoods = str_replace("«break»", "", $descriptionGoods);
+            $part_1 = substr($descriptionGoods, 0, $pos - 1);
+            $part_2 = substr($descriptionGoods, $pos+1, strlen($descriptionGoods));
+            $pdf->MultiCell(110, 4, $part_1, 0, 1);
+            $pdf->SetXY(100, $ejeY);
+            $pdf->MultiCell(110, 4, $part_2, 0, 1);
+        }
 
         $nextY = ($pdf->getY()>$nextY)?$pdf->getY():$nextY;
 
@@ -121,29 +160,20 @@ while (true) {
             break;
         }
     }
-    if ($borrador) {
-        $pdf->SetTextColor(200, 200, 200);
-        $pdf->SetFont('Arial', 'B', 68);
-        $pdf->Rotate(45);
-        $pdf->Write(150, 'BORRADOR');
-        $pdf->SetTextColor(0, 0, 0);
-        $pdf->Rotate(0);
-    }
 
-    $pdf->SetFont ( 'Arial', '', 9 );
-    $pdf->Text(10, 210, $documento->getCaTerminosTransporte());
-    $pdf->Text(35, 210, "Packages Total: ".$tot_packages);
-    $pdf->Text(70, 210, "Net Total : ".$tot_net);
-    $pdf->Text(100, 210, "Gross Total : ".$tot_gross);
-    $pdf->Text(135, 210, "Measurement Total : ".$tot_measurement);
-    $pdf->Text(175, 210, $documento->getCaLiberacion());
+    $pdf->SetFont ( 'Arial', '', $font_size );
+    $pdf->Text( 10, 210 + $marg, $documento->getCaTerminosTransporte());
+    $pdf->Text( 40, 210 + $marg, "Packages Total: ".$tot_packages);
+    $pdf->Text( 85, 210 + $marg, "Net Total : ".$tot_net);
+    $pdf->Text(125, 210 + $marg, "Gross Total : ".$tot_gross);
+    $pdf->Text(165, 210 + $marg, "Measurement Total : ".$tot_measurement);
 
-    $pdf->SetXY(15, 233);
+    $pdf->SetXY(15, 233 + $marg);
     $pdf->MultiCell(60, 4, $documento->getCaDeclarationInterest(), 0, 1);
-    $pdf->SetXY(140, 233);
+    $pdf->SetXY(140, 233 + $marg);
     $pdf->MultiCell(70, 4, $documento->getCaDeclaredValue(), 0, 1);
 
-    $pdf->SetFont ( 'Arial', '', 9 );
+    $pdf->SetFont ( 'Arial', '', $font_size );
     $pdf->Text(20, 278, $documento->getCaFreightAmount());
     $pdf->Text(90, 278, $documento->getCaFreightPayable());
     $pdf->Text(135, 278, str_replace(' D.C.', '', $usuario->getSucursal()->getcaNombre()) . ', ' . Utils::fechaLarga($documento->getCaFchdoctransporte()));
@@ -151,10 +181,10 @@ while (true) {
 
     $pdf->Text(90, 287, $documento->getCaNumberOriginal());
 
-    $pdf->SetFont ( 'Arial', '', 9 );
+    $pdf->SetFont ( 'Arial', '', $font_size );
     $pdf->SetXY(15, 290);
     $pdf->MultiCell(120, 4, $documento->getCaDeliveryGoods(), 0, 1);
-    
+
     if(!$count){
         break;
     }

@@ -264,6 +264,7 @@ class inoExpoActions extends sfActions {
         $this->usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
         $this->borrador = ($this->getRequestParameter("borrador")=='true')?true:false;
         $this->plantilla = ($this->getRequestParameter("plantilla")=='true')?true:false;
+        $this->copia = ($this->getRequestParameter("copia")=='true')?true:false;
     }
 
     public function executeDatosItemsDocs(sfWebRequest $request) {
@@ -285,9 +286,9 @@ class inoExpoActions extends sfActions {
                 "net_unit" => $item->getCaNetUnit(),
                 "measurement_weight" => $item->getCaMeasurementWeight(),
                 "measurement_unit" => $item->getCaMeasurementUnit(),
-                "seals" => $item->getCaSeals(),
-                "marks_numbers" => $item->getCaMarksNumbers(),
-                "description_goods" => $item->getCaDescriptionGoods(),
+                "seals" => utf8_encode($item->getCaSeals()),
+                "marks_numbers" => utf8_encode($item->getCaMarksNumbers()),
+                "description_goods" => utf8_encode($item->getCaDescriptionGoods()),
                 "same_goods" => $item->getCaSameGoods()
             );
         }
@@ -371,6 +372,29 @@ class inoExpoActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
+    public function executeEliminarDocsTransporte(sfWebRequest $request) {
+        $iddoctransporte = $request->getParameter("id");
+        $conn = Doctrine::getTable("ExpoDoctransporte")->getConnection();
+        $conn->beginTransaction();
+        try {
+            $expoDoctransporte = Doctrine::getTable("ExpoDoctransporte")
+                    ->createQuery("d")
+                    ->addWhere("d.ca_iddoctransporte = ?", $iddoctransporte)
+                    ->fetchOne();
+            if ($expoDoctransporte) {
+                $expoDoctransporte->delete();
+            }
+            $conn->commit();
+
+            $this->responseArray = array("success" => true);
+        } catch (Exception $e) {
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+        $this->setTemplate("responseTemplate");
+        
+    }
+
     public function executeGuardarItemsDocs(sfWebRequest $request) {
         $datos = $request->getParameter("datos");
         $datos = json_decode($datos);
@@ -390,7 +414,7 @@ class inoExpoActions extends sfActions {
                         ->fetchOne();
             }
             if ($datos->container_number) {
-                $item->setCaContainerNumber($datos->container_number);
+                $item->setCaContainerNumber(utf8_decode($datos->container_number));
             }
             if (isset($datos->number_packages)) {
                 $item->setCaNumberPackages($datos->number_packages);
@@ -417,13 +441,13 @@ class inoExpoActions extends sfActions {
                 $item->setCaMeasurementUnit($datos->measurement_unit);
             }
             if ($datos->seals) {
-                $item->setCaSeals($datos->seals);
+                $item->setCaSeals(utf8_decode($datos->seals));
             }
             if ($datos->marks_numbers) {
-                $item->setCaMarksNumbers($datos->marks_numbers);
+                $item->setCaMarksNumbers(utf8_decode($datos->marks_numbers));
             }
             if (isset($datos->description_goods)) {
-                $item->setCaDescriptionGoods($datos->description_goods);
+                $item->setCaDescriptionGoods(utf8_decode($datos->description_goods));
             }
             if ($datos->same_goods) {
                 $item->setCaSameGoods($datos->same_goods);

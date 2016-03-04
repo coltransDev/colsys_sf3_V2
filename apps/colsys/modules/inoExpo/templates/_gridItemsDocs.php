@@ -122,22 +122,39 @@
                 columnWidth: 0.68,
                 title: 'Description of goods',
                 defaults: {anchor: '100%'},
-                layout: 'anchor',
+                layout: 'column',
                 items: [{
                     id: 'description_goods',
                     xtype: 'textareafield',
                     name: 'description_goods',
                     allowBlank: false,
-                    height: 86
+                    columnWidth: 0.98,
+                    height: 96
                 },{
                     xtype: 'checkbox',
                     boxLabel: 'Usar la misma descripción del ítem anterior',
                     name: 'same_goods',
+                    columnWidth: 0.78,
                     listeners:{
                         change: function (check, newValue, oldValue, eOpts){
                             Ext.getCmp('description_goods').setDisabled(newValue);
                             Ext.getCmp('number_packages').setDisabled(newValue);
                             Ext.getCmp('kind_packages').setDisabled(newValue);
+                        }
+                    }
+                }, {
+                    xtype: 'checkbox',
+                    boxLabel: 'Dividir',
+                    name: 'div',
+                    columnWidth: 0.22,
+                    listeners:{
+                        change: function (check, newValue, oldValue, eOpts){
+                            var contenido = Ext.getCmp('description_goods');
+                            if (newValue){
+                                contenido.setValue(contenido.getValue()+"«break»");;
+                            }else{
+                                contenido.setValue(contenido.getValue().replace("«break»", ""));
+                            }
                         }
                     }
                 }]
@@ -425,7 +442,6 @@
                         tooltip: 'Generar Documento de Transporte',
                         iconCls: 'page_white_acrobat',
                         handler: function () {
-                            console.log();
                             var id = storeItemsDocs.proxy.extraParams.id;
                             if (win_file == null) {
                                 win_file = new Ext.Window({
@@ -441,7 +457,7 @@
                                                 height: '100%',
                                                 frameborder: '0',
                                                 scrolling: 'auto',
-                                                src: '<?= url_for('inoExpo/imprimirDocsTransporte') ?>' + '/id/' + id + '/borrador/' + Ext.getCmp('borradorChk').value + '/plantilla/' + Ext.getCmp('plantillaChk').value
+                                                src: '<?= url_for('inoExpo/imprimirDocsTransporte') ?>' + '/id/' + id + '/borrador/' + Ext.getCmp('borradorChk').value + '/plantilla/' + Ext.getCmp('plantillaChk').value + '/copia/' + Ext.getCmp('copiaChk').value
                                             }
                                         }],
                                     listeners: {
@@ -468,6 +484,10 @@
                                 boxLabel: 'Borrador&nbsp;&nbsp;',
                                 name: 'borrador',
                                 id: 'borradorChk'
+                            }, {
+                                boxLabel: 'Copia&nbsp;&nbsp;',
+                                name: 'copia',
+                                id: 'copiaChk'
                             }
                         ]
                     }]

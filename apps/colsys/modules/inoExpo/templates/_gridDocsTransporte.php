@@ -228,7 +228,7 @@ include_component("inoExpo", "gridItemsDocs");
                         xtype: 'numberfield',
                         name: 'font_size',
                         maxValue: 14,
-                        minValue: 7
+                        minValue: 5
                     }
                 }, {
                     xtype: 'fieldset',
@@ -458,11 +458,9 @@ include_component("inoExpo", "gridItemsDocs");
                                     if (choice == 'yes') {
                                         Ext.Ajax.request({
                                             waitMsg: 'Eliminado...',
-                                            url: '<?= url_for("clientes/eliminarDocsTransporte") ?>',
+                                            url: '<?= url_for("inoExpo/eliminarDocsTransporte") ?>',
                                             params: {
-                                                id: '<?= $referencia ?>',
-                                                idtipo: rec.data.idtipo,
-                                                idciudad: rec.data.idciudad
+                                                id: rec.data.iddoctransporte
                                             },
                                             failure: function (response, options) {
                                                 Ext.MessageBox.alert("Mensaje", 'Se presento un error guardando los registros.<br>' + response.errorInfo);
