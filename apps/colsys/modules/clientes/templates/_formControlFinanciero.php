@@ -1203,7 +1203,7 @@ $hoy = $sf_data->getRaw("hoy");
                         }
                     }
                 }, {
-                    text: 'Cancelar',
+                    text: 'Regresar',
                     handler: function () {
                         window.location.replace("/colsys_php/clientes_financ.php");
                     }
