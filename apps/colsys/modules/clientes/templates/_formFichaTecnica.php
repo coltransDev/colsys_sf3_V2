@@ -7,7 +7,6 @@
 $idcliente = $sf_data->getRaw("idcliente");
 $data = $sf_data->getRaw("data");
 $documentacion = $sf_data->getRaw("documentacion");
-
 $transporte = $sf_data->getRaw("transporte");
 ?>
 <style> 
@@ -43,10 +42,12 @@ $transporte = $sf_data->getRaw("transporte");
             {name: 'fchvencimientoPCE', type: 'string'},
             {name: 'cierreCE', type: 'string'},
             {name: 'bancoCE', type: 'string'},
+            {name: 'observaciones_generales', type: 'string'},
             ///////////MANDATOS Y SEGURO/////////////////////
             {name: 'ciaaseguradoraMS', type: 'string'},
             {name: 'porcentajeMS', type: 'string'},
             {name: 'vigenciaMS', type: 'string'},
+            {name: 'cotizacionMS', type: 'string'},
             /////////DOCUMENTACION///////////////
             {name: 'registro_importacionColmas', type: 'string'},
             {name: 'registro_importacionOtro', type: 'string'},
@@ -129,12 +130,17 @@ $transporte = $sf_data->getRaw("transporte");
             {name: 'contacto_empresasve', type: 'string'},
             {name: 'tel_empresasve', type: 'string'},
             {name: 'convenio_empresasve', type: 'string'},
-            ///////////////////REPORTES E INFORMES/////////////
+            //////////REQUERIMIENTOS DEL CLIENTE///////
+            {name: 'tnacionalizacionRC', type: 'string'},
+            {name: 'tfacturacionRC', type: 'string'},
             {name: 'indicadoresRE', type: 'string'},
             {name: 'estadoRE', type: 'string'},
             {name: 'reporteRE', type: 'string'},
             {name: 'informesRE', type: 'string'},
-            {name: 'declaracionesRE', type: 'string'}
+            {name: 'declaracionesRE', type: 'string'},
+            {name: 'inhouseRC', type: 'string'},
+            {name: 'contactoRC', type: 'string'},
+            {name: 'telefonoRC', type: 'string'}
         ]
     });
 
@@ -152,6 +158,35 @@ $transporte = $sf_data->getRaw("transporte");
             {name: 'dropoffI', type: 'string'},
             {name: 'contenedorvacioI', type: 'string'}
         ]
+    });
+
+    Ext.define('FichaTecnicaCO', {
+        extend: 'Ext.data.Model',
+        fields: [
+            /////////CONTACTOS//////////
+            {name: 'tipo', type: 'string'},
+            {name: 'contacto', type: 'string'},
+            {name: 'telefono', type: 'string'},
+            {name: 'convenio', type: 'string'}
+        ]
+    });
+
+    var storeFichaTecnicaCO = Ext.create('Ext.data.Store', {
+        id: 'storeFichaTecnicaCO',
+        autoLoad: false,
+        model: 'FichaTecnicaCO',
+        proxy: {
+            type: 'ajax',
+            url: '<?= url_for('clientes/datosContactosFichaTecnica') ?>',
+            reader: {
+                type: 'json',
+                root: 'root'
+            },
+            extraParams: {
+                idcliente: <?= $idcliente ?>
+            },
+            filterParam: 'query',
+        }
     });
 
     var storeFichaTecnicaTI = Ext.create('Ext.data.Store', {
@@ -182,6 +217,12 @@ $transporte = $sf_data->getRaw("transporte");
         store: ['Agente de Carga', 'Naviera', 'Aerolinea', 'Transporte Terrestre']
     });
 
+    Ext.define('ComboTipoContacto', {
+        extend: 'Ext.form.field.ComboBox',
+        alias: 'widget.combo-tipocontacto',
+        store: ['Depósito', 'Operador Portuario', 'Empresa de Transporte nal/urbano', 'Empresa de vigilancia/Escoltas']
+    });
+
     Ext.define('ComboTipoCe', {
         extend: 'Ext.form.field.ComboBox',
         alias: 'widget.combo-tipo-ce',
@@ -210,7 +251,22 @@ $transporte = $sf_data->getRaw("transporte");
                         xtype: 'combo-tipoTI',
                         fieldLabel: 'Tipo',
                         forceSelection: true,
-                        name: 'tipoI'
+                        name: 'tipoI',
+                        listeners: {
+                            select: function (combo, records, eOpts) {
+                                if (combo.value == "Naviera") {
+                                    Ext.getCmp("dropoffI").setVisible(true);
+                                    Ext.getCmp("contenedorvacioI").setVisible(true);
+                                } else {
+                                    Ext.getCmp("dropoffI").setVisible(false);
+                                    Ext.getCmp("contenedorvacioI").setVisible(false);
+                                    Ext.getCmp("dropoffI").reset();
+                                    Ext.getCmp("contenedorvacioI").reset();
+
+                                }
+
+                            }
+                        }
                     }, {
                         xtype: 'textfield',
                         fieldLabel: 'Nombre',
@@ -233,19 +289,6 @@ $transporte = $sf_data->getRaw("transporte");
                         fieldLabel: 'Pago de Fletes',
                         labelWidth: 110,
                         vertical: false,
-                        listeners: {
-                            change: function (newValue, oldValue, eOpts) {
-                                if (newValue.lastValue.pagofletesI == 1) {
-                                    Ext.getCmp("dropoffI").setVisible(false);
-                                    Ext.getCmp("contenedorvacioI").setVisible(false);
-                                    Ext.getCmp("dropoffI").reset();
-                                    Ext.getCmp("contenedorvacioI").reset();
-                                } else {
-                                    Ext.getCmp("dropoffI").setVisible(true);
-                                    Ext.getCmp("contenedorvacioI").setVisible(true);
-                                }
-                            }
-                        },
                         items: [
                             {boxLabel: '', name: 'pagofletesI', inputValue: '1', width: 60},
                         ]
@@ -317,6 +360,8 @@ $transporte = $sf_data->getRaw("transporte");
             }]
     });
 
+
+
     Ext.define('ComboSiNo', {
         extend: 'Ext.form.field.ComboBox',
         alias: 'widget.combo-si-no',
@@ -345,6 +390,95 @@ $transporte = $sf_data->getRaw("transporte");
             filterParam: 'query',
         }
     });
+    var gridContactos = Ext.create('Ext.grid.Panel', {
+        id: 'gridContactos',
+        store: 'storeFichaTecnicaCO',
+        height: 350,
+        width: 980,
+        columns: [{
+                header: 'Tipo',
+                width: 230,
+                dataIndex: 'tipo',
+                editor: {
+                    xtype: 'combo-tipocontacto',
+                    originalValue: '',
+                    allowBlank: true
+                }
+            }, {
+                header: 'Contacto',
+                width: 400,
+                dataIndex: 'contacto',
+                editor: {
+                    xtype: 'textfield',
+                    originalValue: '',
+                    allowBlank: true
+                }
+            }, {
+                header: 'Teléfono',
+                width: 150,
+                dataIndex: 'telefono',
+                editor: {
+                    xtype: 'textfield',
+                    originalValue: '',
+                    allowBlank: true
+                }
+            }, {
+                header: 'Convenio',
+                width: 170,
+                dataIndex: 'convenio',
+                editor: {
+                    xtype: 'textfield',
+                    originalValue: '',
+                    allowBlank: true
+                }
+            }, {
+                menuDisabled: true,
+                sortable: false,
+                xtype: 'actioncolumn',
+                width: 25,
+                items: [{
+                        iconCls: 'delete',
+                        tooltip: 'Eliminar Método',
+                        handler: function (grid, rowIndex, colIndex) {
+                            var rec = grid.getStore().getAt(rowIndex);
+                            Ext.MessageBox.confirm('Confirmación de Eliminación', 'Está seguro que desea anular el registro?', function (choice) {
+                                if (choice == 'yes') {
+                                    grid.getStore().remove(rec);
+                                }
+                            });
+
+                        }
+                    }]
+            }
+        ],
+        dockedItems: [{
+                xtype: 'toolbar',
+                dock: 'top',
+                height: 44,
+                items: [{
+                        iconCls: 'add',
+                        id: 'adicion-metodos',
+                        handler: function () {
+                            var store = Ext.getCmp("gridContactos").store;
+                            var r = Ext.create(store.model);
+                            store.insert(0, r);
+                        }
+
+                    }]
+            }],
+        selType: 'cellmodel',
+        plugins: [
+            Ext.create('Ext.grid.plugin.CellEditing', {
+                clicksToEdit: 1
+            })
+        ],
+        bbar: Ext.create('Ext.PagingToolbar', {
+            displayInfo: true,
+            displayMsg: 'Registros {0} - {1} of {2}',
+            emptyMsg: "No hay registros"
+        })
+
+    });
 
     var tabTransporteInternacional = new Ext.define('GridTI', {
         extend: 'Ext.form.Panel',
@@ -356,7 +490,6 @@ $transporte = $sf_data->getRaw("transporte");
             Ext.apply(this, {
                 width: 800,
                 height: 370,
-                // style: 'display:inline-block;text-align:center',
                 fieldDefaults: {
                     labelAlign: 'left',
                     labelWidth: 90,
@@ -568,27 +701,6 @@ $transporte = $sf_data->getRaw("transporte");
 
         var tabPanel = new Ext.tab.Panel({
             id: 'panelFichaTecnica',
-            //cls:'verticaltab',
-            /*tabBar: {
-             defaults: {
-             layout: 'column',
-             style: {
-             float: 'left'
-             },
-             height: 24,  //basic height
-             margin: '0 4 8' //basic margins - all elements are floated to left without bottom margin
-             },
-             overflowX: 'scroll',
-             width: 340,
-             multirows: true,
-             minTabWidth: 330,
-             maxTabWidth: 330,
-             height:100,                
-             orientation: 'horizontal'
-             },
-             tabPosition: 'top',
-             */
-            //plain: true,
             items: [{
                     title: 'Informacion General',
                     items: [{
@@ -625,7 +737,7 @@ $transporte = $sf_data->getRaw("transporte");
                                                     xtype: 'fieldset',
                                                     title: 'Condiciones Especiales',
                                                     width: 450,
-                                                    height: 300,
+                                                    height: 220,
                                                     collapsible: false,
                                                     items: [{
                                                             xtype: 'fieldcontainer',
@@ -670,7 +782,7 @@ $transporte = $sf_data->getRaw("transporte");
                                                                     width: 205,
                                                                 }, {
                                                                     xtype: 'tbspacer',
-                                                                    height: 15
+                                                                    height: 5
                                                                 }, {
                                                                     style: 'display:inline-block;text-align:left',
                                                                     xtype: 'textfield',
@@ -737,38 +849,14 @@ $transporte = $sf_data->getRaw("transporte");
                                                                     labelWidth: 90,
                                                                     name: 'bancoCE',
                                                                     width: 400,
+                                                                    height: 50
                                                                 }]
                                                         }]
-                                                }]
-                                        }]
-                                }, {
-                                    xtype: 'fieldset',
-                                    hideLabel: true,
-                                    width: 490,
-                                    collapsible: false,
-                                    defaults: {
-                                        labelWidth: 89,
-                                        anchor: '90%',
-                                        layout: {
-                                            type: 'column',
-                                            defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
-                                        }},
-                                    items: [{
-                                            xtype: 'fieldcontainer',
-                                            hideLabel: true,
-                                            combineErrors: true,
-                                            height: 360,
-                                            msgTarget: 'under',
-                                            layout: 'column',
-                                            defaults: {
-                                                flex: 1,
-                                                hideLabel: false
-                                            },
-                                            items: [{
+                                                }, {
                                                     xtype: 'fieldset',
                                                     title: 'Mandatos y Seguro',
                                                     width: 450,
-                                                    height: 300,
+                                                    height: 120,
                                                     collapsible: false,
                                                     items: [{
                                                             xtype: 'fieldcontainer',
@@ -815,6 +903,72 @@ $transporte = $sf_data->getRaw("transporte");
                                                                     renderer: Ext.util.Format.dateRenderer('Y-m-d'),
                                                                     format: 'Y-m-d',
                                                                     width: 200,
+                                                                }, {
+                                                                    xtype: 'tbspacer',
+                                                                    height: 30
+                                                                }, {
+                                                                    style: 'display:inline-block;text-align:left',
+                                                                    xtype: 'combo-si-no',
+                                                                    name: 'cotizacionMS',
+                                                                    fieldLabel: 'Cotización de seguro',
+                                                                    width: 220,
+                                                                    labelWidth: 150
+                                                                }]
+                                                        }]
+                                                }]
+                                        }]
+                                }, {
+                                    xtype: 'fieldset',
+                                    hideLabel: true,
+                                    width: 490,
+                                    collapsible: false,
+                                    defaults: {
+                                        labelWidth: 89,
+                                        anchor: '90%',
+                                        layout: {
+                                            type: 'column',
+                                            defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
+                                        }},
+                                    items: [{
+                                            xtype: 'fieldcontainer',
+                                            hideLabel: true,
+                                            combineErrors: true,
+                                            height: 360,
+                                            msgTarget: 'under',
+                                            layout: 'column',
+                                            defaults: {
+                                                flex: 1,
+                                                hideLabel: false
+                                            },
+                                            items: [{
+                                                    xtype: 'fieldset',
+                                                    title: 'Observaciones Generales',
+                                                    width: 450,
+                                                    height: 400,
+                                                    collapsible: false,
+                                                    items: [{
+                                                            xtype: 'fieldcontainer',
+                                                            hideLabel: true,
+                                                            combineErrors: true,
+                                                            width: 450,
+                                                            height: 300,
+                                                            msgTarget: 'under',
+                                                            layout: 'column',
+                                                            defaults: {
+                                                                flex: 1,
+                                                                hideLabel: false
+                                                            },
+                                                            items: [{
+                                                                    style: 'display:inline-block;text-align:center',
+                                                                    xtype: 'textareafield',
+                                                                    id: 'observaciones_generales',
+                                                                    hideLabel: false,
+                                                                    labelAlign: 'left',
+                                                                    fieldLabel: 'Observaciones',
+                                                                    labelWidth: 90,
+                                                                    name: 'observaciones_generales',
+                                                                    width: 400,
+                                                                    height: 300
                                                                 }]
                                                         }]
                                                 }
@@ -874,7 +1028,6 @@ $transporte = $sf_data->getRaw("transporte");
                                                     items: [
                                                         {boxLabel: 'Colmas', name: 'registro_importacionColmas', inputValue: '1', width: 60},
                                                         {boxLabel: 'Otro', name: 'registro_importacionOtro', inputValue: '2', width: 40},
-                                                        {boxLabel: 'Aceptación previa de DI', name: 'registro_importacionAP', inputValue: '3', width: 160}
                                                     ]
 
                                                 }]
@@ -1413,6 +1566,7 @@ $transporte = $sf_data->getRaw("transporte");
                                                 }, {
                                                     xtype: 'tbspacer',
                                                     height: 40
+
                                                 }, {
                                                     style: 'display:inline-block;text-align:left',
                                                     xtype: 'combo-si-no',
@@ -1424,10 +1578,51 @@ $transporte = $sf_data->getRaw("transporte");
                                                     style: 'display:inline-block;text-align:left',
                                                     xtype: 'textareafield',
                                                     name: 'bancosSF',
-                                                    width: 250,
-                                                    fieldLabel: 'Bancos',
+                                                    height: 50,
                                                     width: 500,
-                                                            labelWidth: 150
+                                                    fieldLabel: 'Bancos',
+                                                    labelWidth: 150
+                                                }, {
+                                                    xtype: 'tbspacer',
+                                                    height: 20,
+                                                    width: 500,
+                                                }, {
+                                                    xtype: 'combo-si-no',
+                                                    name: 'transferenciaF',
+                                                    width: 250,
+                                                    fieldLabel: 'Transferencia',
+                                                    width: 250,
+                                                }, {
+                                                    xtype: 'textfield',
+                                                    name: 'plazotransferenciaF',
+                                                    width: 250,
+                                                    fieldLabel: 'Plazo',
+                                                }, {
+                                                    xtype: 'tbspacer',
+                                                    width: 500,
+                                                    height: 20
+                                                }, {
+                                                    xtype: 'combo-si-no',
+                                                    name: 'chequeF',
+                                                    fieldLabel: 'Cheque',
+                                                    width: 250,
+                                                    labelWidth: 150
+                                                }, {
+                                                    xtype: 'combo-si-no',
+                                                    name: 'consignacionF',
+                                                    width: 250,
+                                                    fieldLabel: 'Consignación Efectivo',
+                                                    labelWidth: 150
+                                                }, {
+                                                    xtype: 'tbspacer',
+                                                    width: 500,
+                                                    height: 20
+                                                }, {
+                                                    xtype: 'combo-si-no',
+                                                    name: 'pagoelectronicoF',
+                                                    fieldLabel: 'Pago Electrónico',
+                                                    width: 250,
+                                                    labelWidth: 150
                                                 }]
                                         }]
                                 }]
@@ -1531,67 +1726,27 @@ $transporte = $sf_data->getRaw("transporte");
                                                     name: 'pagoF',
                                                     width: 250,
                                                     fieldLabel: 'Pago',
-                                                    width: 250,
                                                 }, {
                                                     xtype: 'tbspacer',
                                                     width: 100
                                                 }, {
                                                     xtype: 'textfield',
                                                     name: 'bancoF',
-                                                    width: 250,
                                                     fieldLabel: 'Banco',
                                                     width: 200,
                                                 }, {
                                                     xtype: 'tbspacer',
                                                     height: 40
                                                 }, {
-                                                    xtype: 'combo-si-no',
-                                                    name: 'transferenciaF',
-                                                    width: 250,
-                                                    fieldLabel: 'Transferencia',
-                                                    width: 250,
-                                                }, {
-                                                    xtype: 'textfield',
-                                                    name: 'plazotransferenciaF',
-                                                    width: 250,
-                                                    fieldLabel: 'Plazo',
-                                                    width: 200,
-                                                }, {
-                                                    xtype: 'tbspacer',
-                                                    height: 40
-                                                }, {
-                                                    xtype: 'combo-si-no',
-                                                    name: 'chequeF',
-                                                    width: 250,
-                                                    fieldLabel: 'Cheque',
-                                                    width: 250,
-                                                            labelWidth: 150
-                                                }, {
-                                                    xtype: 'combo-si-no',
-                                                    name: 'consignacionF',
-                                                    width: 250,
-                                                    fieldLabel: 'Consignación Efectivo',
-                                                    width: 250,
-                                                            labelWidth: 150
-                                                }, {
-                                                    xtype: 'combo-si-no',
-                                                    name: 'pagoelectronicoF',
-                                                    width: 250,
-                                                    fieldLabel: 'Pago Electrónico',
-                                                    width: 250,
-                                                            labelWidth: 150
-                                                }, {
                                                     style: 'display:inline-block;text-align:left',
                                                     xtype: 'textfield',
                                                     name: 'contactoareaF',
-                                                    width: 250,
                                                     fieldLabel: 'Contacto área financiera',
                                                     width: 500
                                                 }, {
                                                     style: 'display:inline-block;text-align:left',
                                                     xtype: 'textfield',
                                                     name: 'telefonoF',
-                                                    width: 250,
                                                     fieldLabel: 'Tel.',
                                                     width: 250
                                                 }, {
@@ -1606,275 +1761,12 @@ $transporte = $sf_data->getRaw("transporte");
                         }]
                 }, {
                     title: 'Otros Contactos',
-                    items: [{
-                            xtype: 'fieldset',
-                            hideLabel: true,
-                            width: 970,
-                            heigth: 500,
-                            collapsible: false,
-                            layout: 'hbox',
-                            items: [{
-                                    xtype: 'fieldset',
-                                    title: 'Depósito',
-                                    width: 470,
-                                    heigth: 300,
-                                    collapsible: false,
-                                    defaults: {
-                                        labelWidth: 89,
-                                        anchor: '100%',
-                                        layout: {
-                                            type: 'column',
-                                            defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
-                                        }},
-                                    items: [{
-                                            xtype: 'fieldcontainer',
-                                            hideLabel: true,
-                                            combineErrors: true,
-                                            height: 130,
-                                            msgTarget: 'under',
-                                            layout: 'column',
-                                            defaults: {
-                                                flex: 2,
-                                                hideLabel: false
-                                            },
-                                            items: [{
-                                                    xtype: 'textfield',
-                                                    hideLabel: false,
-                                                    fieldLabel: 'Depósito',
-                                                    labelWidth: 200,
-                                                    name: 'nombre_deposito',
-                                                    width: 400,
-                                                }, {
-                                                    xtype: 'tbspacer',
-                                                    height: 30
-                                                }, {
-                                                    xtype: 'textfield',
-                                                    hideLabel: false,
-                                                    fieldLabel: 'Contacto',
-                                                    labelWidth: 200,
-                                                    name: 'contacto_deposito',
-                                                    width: 400,
-                                                }, {
-                                                    xtype: 'tbspacer',
-                                                    height: 30
-                                                }, {
-                                                    xtype: 'textfield',
-                                                    hideLabel: false,
-                                                    fieldLabel: 'Teléfono',
-                                                    labelWidth: 200,
-                                                    name: 'tel_deposito',
-                                                    width: 400,
-                                                }, {
-                                                    xtype: 'tbspacer',
-                                                    height: 30
-                                                }, {
-                                                    xtype: 'textfield',
-                                                    hideLabel: false,
-                                                    fieldLabel: 'Convenio',
-                                                    labelWidth: 200,
-                                                    name: 'convenio_deposito',
-                                                    width: 400,
-                                                }]
-                                        }]
-                                }, {
-                                    xtype: 'fieldset',
-                                    title: 'Operador Portuario',
-                                    width: 470,
-                                    heigth: 300,
-                                    collapsible: false,
-                                    defaults: {
-                                        labelWidth: 89,
-                                        anchor: '100%',
-                                        layout: {
-                                            type: 'column',
-                                            defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
-                                        }},
-                                    items: [{
-                                            xtype: 'fieldcontainer',
-                                            hideLabel: true,
-                                            combineErrors: true,
-                                            height: 130,
-                                            msgTarget: 'under',
-                                            layout: 'column',
-                                            defaults: {
-                                                flex: 2,
-                                                hideLabel: false
-                                            },
-                                            items: [{
-                                                    xtype: 'textfield',
-                                                    hideLabel: false,
-                                                    fieldLabel: 'Operador portuario',
-                                                    labelWidth: 200,
-                                                    name: 'nombre_operador',
-                                                    width: 400,
-                                                }, {
-                                                    xtype: 'tbspacer',
-                                                    height: 30
-                                                }, {
-                                                    xtype: 'textfield',
-                                                    hideLabel: false,
-                                                    fieldLabel: 'Contacto',
-                                                    labelWidth: 200,
-                                                    name: 'contacto_operador',
-                                                    width: 400,
-                                                }, {
-                                                    xtype: 'tbspacer',
-                                                    height: 30
-                                                }, {
-                                                    xtype: 'textfield',
-                                                    hideLabel: false,
-                                                    fieldLabel: 'Teléfono',
-                                                    labelWidth: 200,
-                                                    name: 'tel_operador',
-                                                    width: 400,
-                                                }, {
-                                                    xtype: 'tbspacer',
-                                                    height: 30
-                                                }, {
-                                                    xtype: 'textfield',
-                                                    hideLabel: false,
-                                                    fieldLabel: 'Convenio',
-                                                    labelWidth: 200,
-                                                    name: 'convenio_operador',
-                                                    width: 400,
-                                                }]
-                                        }]
-                                }]
-                        }, {
-                            xtype: 'fieldset',
-                            hideLabel: true,
-                            width: 970,
-                            heigth: 200,
-                            collapsible: false,
-                            layout: 'hbox',
-                            items: [{
-                                    xtype: 'fieldset',
-                                    title: 'Empresa de transporte nacional / urbano',
-                                    width: 470,
-                                    collapsible: false,
-                                    defaults: {
-                                        labelWidth: 89,
-                                        anchor: '100%',
-                                        layout: {
-                                            type: 'column',
-                                            defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
-                                        }},
-                                    items: [{
-                                            xtype: 'fieldcontainer',
-                                            hideLabel: true,
-                                            combineErrors: true,
-                                            height: 130,
-                                            msgTarget: 'under',
-                                            layout: 'column',
-                                            defaults: {
-                                                flex: 2,
-                                                hideLabel: false
-                                            },
-                                            items: [{
-                                                    xtype: 'textfield',
-                                                    hideLabel: false,
-                                                    fieldLabel: 'Empresa',
-                                                    labelWidth: 200,
-                                                    name: 'nombre_empresanu',
-                                                    width: 400,
-                                                }, {
-                                                    xtype: 'tbspacer',
-                                                    height: 30
-                                                }, {
-                                                    xtype: 'textfield',
-                                                    hideLabel: false,
-                                                    fieldLabel: 'Contacto',
-                                                    labelWidth: 200,
-                                                    name: 'contacto_empresanu',
-                                                    width: 400,
-                                                }, {
-                                                    xtype: 'tbspacer',
-                                                    height: 30
-                                                }, {
-                                                    xtype: 'textfield',
-                                                    hideLabel: false,
-                                                    fieldLabel: 'Teléfono',
-                                                    labelWidth: 200,
-                                                    name: 'tel_empresanu',
-                                                    width: 400,
-                                                }, {
-                                                    xtype: 'tbspacer',
-                                                    height: 30
-                                                }, {
-                                                    xtype: 'textfield',
-                                                    hideLabel: false,
-                                                    fieldLabel: 'Convenio',
-                                                    labelWidth: 200,
-                                                    name: 'convenio_empresanu',
-                                                    width: 400,
-                                                }]
-                                        }]
-                                }, {
-                                    xtype: 'fieldset',
-                                    title: 'Empresas de vigilancia / escoltas',
-                                    width: 470,
-                                    collapsible: false,
-                                    defaults: {
-                                        labelWidth: 89,
-                                        anchor: '100%',
-                                        layout: {
-                                            type: 'column',
-                                            defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
-                                        }},
-                                    items: [{
-                                            xtype: 'fieldcontainer',
-                                            hideLabel: true,
-                                            combineErrors: true,
-                                            height: 130,
-                                            msgTarget: 'under',
-                                            layout: 'column',
-                                            defaults: {
-                                                flex: 2,
-                                                hideLabel: false
-                                            },
-                                            items: [{
-                                                    xtype: 'textfield',
-                                                    hideLabel: false,
-                                                    fieldLabel: 'Empresa',
-                                                    labelWidth: 200,
-                                                    name: 'nombre_empresasve',
-                                                    width: 400,
-                                                }, {
-                                                    xtype: 'tbspacer',
-                                                    height: 30
-                                                }, {
-                                                    xtype: 'textfield',
-                                                    hideLabel: false,
-                                                    fieldLabel: 'Contacto',
-                                                    labelWidth: 200,
-                                                    name: 'contacto_empresasve',
-                                                    width: 400,
-                                                }, {
-                                                    xtype: 'tbspacer',
-                                                    height: 30
-                                                }, {
-                                                    xtype: 'textfield',
-                                                    hideLabel: false,
-                                                    fieldLabel: 'Teléfono',
-                                                    labelWidth: 200,
-                                                    name: 'tel_empresasve',
-                                                    width: 400,
-                                                }, {
-                                                    xtype: 'tbspacer',
-                                                    height: 30
-                                                }, {
-                                                    xtype: 'textfield',
-                                                    hideLabel: false,
-                                                    fieldLabel: 'Convenio',
-                                                    labelWidth: 200,
-                                                    name: 'convenio_empresasve',
-                                                    width: 400,
-                                                }]
-                                        }]
-                                }]
-                        }]
+                    items: [
+                        gridContactos
+                    ]
+
                 }, {
-                    title: 'Reportes e Informes',
+                    title: 'Requerimientos del Cliente',
                     items: [{
                             style: 'display:inline-block;text-align:center',
                             xtype: 'fieldset',
@@ -1895,6 +1787,7 @@ $transporte = $sf_data->getRaw("transporte");
                                     title: 'Reportes e Informes',
                                     style: 'display:inline-block;text-align:center',
                                     width: 620,
+                                    height: 300,
                                     collapsible: false,
                                     defaults: {
                                         labelWidth: 89,
@@ -1920,35 +1813,123 @@ $transporte = $sf_data->getRaw("transporte");
                                                     xtype: 'combo-si-no',
                                                     name: 'indicadoresRE',
                                                     fieldLabel: 'Presentación de indicadores',
-                                                    width: 300,
+                                                    width: 250,
                                                     labelWidth: 150
                                                 }, {
                                                     style: 'display:inline-block;text-align:left',
                                                     xtype: 'combo-si-no',
                                                     name: 'estadoRE',
                                                     fieldLabel: 'Estado de D.O diario',
-                                                    width: 300,
+                                                    width: 240,
                                                     labelWidth: 150
                                                 }, {
                                                     style: 'display:inline-block;text-align:left',
                                                     xtype: 'combo-si-no',
                                                     name: 'reporteRE',
                                                     fieldLabel: 'Reporte despacho de mercancias',
-                                                    width: 300,
+                                                    width: 250,
                                                     labelWidth: 150
                                                 }, {
                                                     style: 'display:inline-block;text-align:left',
                                                     xtype: 'textareafield',
                                                     name: 'informesRE',
-                                                    width: 250,
-                                                    fieldLabel: 'Otros informes',
                                                     width: 500,
-                                                            labelWidth: 150
+                                                    height: 55,
+                                                    fieldLabel: 'Otros informes',
+                                                    labelWidth: 150
                                                 }, {
                                                     style: 'display:inline-block;text-align:left',
                                                     xtype: 'combo-declaraciones',
                                                     name: 'declaracionesRE',
                                                     fieldLabel: 'Envío copia de declaraciones',
+                                                    width: 250,
+                                                    labelWidth: 150
+                                                }, {
+                                                    xtype: 'fieldcontainer',
+                                                    fieldLabel: 'Aceptación previa de DI',
+                                                    defaultType: 'checkboxfield',
+                                                    width: 240,
+                                                    labelWidth: 150,
+                                                    items: [
+                                                        {
+                                                            boxLabel: '',
+                                                            name: 'registro_importacionAP',
+                                                            id: 'registro_importacionAP',
+                                                            inputValue: '3'
+                                                        }]
+
+                                                }, {
+                                                    style: 'display:inline-block;text-align:left',
+                                                    xtype: 'combo-si-no',
+                                                    name: 'inhouseRC',
+                                                    fieldLabel: 'IN HOUSE',
+                                                    width: 300,
+                                                    labelWidth: 150
+                                                }, {
+                                                    xtype: 'tbspacer',
+                                                    width: 500,
+                                                    height: 10
+                                                }, {
+                                                    style: 'display:inline-block;text-align:left',
+                                                    xtype: 'textfield',
+                                                    hideLabel: false,
+                                                    fieldLabel: 'Contacto',
+                                                    labelWidth: 150,
+                                                    name: 'contactoRC',
+                                                    width: 500,
+                                                }, {
+                                                    xtype: 'tbspacer',
+                                                    width: 500,
+                                                    height: 10
+                                                }, {
+                                                    style: 'display:inline-block;text-align:left',
+                                                    xtype: 'textfield',
+                                                    hideLabel: false,
+                                                    fieldLabel: 'Teléfono',
+                                                    labelWidth: 150,
+                                                    name: 'telefonoRC',
+                                                    width: 300,
+                                                }]
+                                        }]
+                                }, {
+                                    xtype: 'fieldset',
+                                    hideLabel: false,
+                                    title: 'IDG',
+                                    style: 'display:inline-block;text-align:center',
+                                    width: 620,
+                                    height: 100,
+                                    collapsible: false,
+                                    defaults: {
+                                        labelWidth: 89,
+                                        anchor: '90%',
+                                        layout: {
+                                            type: 'column',
+                                            defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
+                                        }},
+                                    items: [{
+                                            xtype: 'fieldcontainer',
+                                            style: 'display:inline-block;text-align:center',
+                                            hideLabel: true,
+                                            combineErrors: true,
+                                            height: 360,
+                                            msgTarget: 'under',
+                                            layout: 'column',
+                                            defaults: {
+                                                flex: 1,
+                                                hideLabel: false
+                                            },
+                                            items: [{
+                                                    style: 'display:inline-block;text-align:left',
+                                                    xtype: 'textfield',
+                                                    name: 'tnacionalizacionRC',
+                                                    fieldLabel: 'Tiempos de Nacionalización',
+                                                    width: 300,
+                                                    labelWidth: 150
+                                                }, {
+                                                    style: 'display:inline-block;text-align:left',
+                                                    xtype: 'textfield',
+                                                    name: 'tfacturacionRC',
+                                                    fieldLabel: 'Tiempos de Facturación',
                                                     width: 300,
                                                     labelWidth: 150
                                                 }]
@@ -1956,12 +1937,6 @@ $transporte = $sf_data->getRaw("transporte");
                                 }]
                         }]
                 }],
-            listeners: {
-                tabchange: function (tabPanel, newCard, oldCard, eOpts) {
-
-                }
-            }
-
         });
 
         Ext.create('Ext.form.Panel', {
@@ -1985,6 +1960,7 @@ $transporte = $sf_data->getRaw("transporte");
             listeners: {
                 afterRender: function (panel, eOpts) {
                     panel.getForm().setValues(<?= $documentacion ?>);
+                    storeFichaTecnicaCO.load();
                 }
             },
             buttons: [{
@@ -2051,12 +2027,27 @@ $transporte = $sf_data->getRaw("transporte");
                             }
                             var strGrid = JSON.stringify(changes);
 
+                            var gridContactos = Ext.getCmp("gridContactos");
+
+                            var store = storeFichaTecnicaCO;
+                            x = 0;
+                            changes = [];
+                            for (var i = 0; i < store.getCount(); i++) {
+                                var record = store.getAt(i);
+                                if (record.isValid()) {
+                                    changes[x] = record.data;
+                                    x++;
+                                }
+                            }
+                            var strGridCO = JSON.stringify(changes);
+
                             Ext.Ajax.request({
                                 waitMsg: 'Guardando cambios...',
                                 url: '<?= url_for('clientes/actualizarFichaTecnica') ?>',
                                 params: {
                                     datos: str,
                                     datosGrid: strGrid,
+                                    datosGridCO: strGridCO,
                                     idcliente: <?= $idcliente ?>
                                 },
                                 failure: function (response, options) {

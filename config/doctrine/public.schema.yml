@@ -738,6 +738,8 @@ FichaTecnica:
       type: integer
       notnull: true
       primary: true
+    ca_contactos:
+      type: json
     ca_usucreado: string(20)
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
