@@ -8,6 +8,7 @@ $idcliente = $sf_data->getRaw("idcliente");
 $data = $sf_data->getRaw("data");
 $documentacion = $sf_data->getRaw("documentacion");
 $transporte = $sf_data->getRaw("transporte");
+$imprimir = $sf_data->getRaw("imprimir");
 ?>
 <style> 
     .verticaltab {    
@@ -1961,10 +1962,14 @@ $transporte = $sf_data->getRaw("transporte");
                 afterRender: function (panel, eOpts) {
                     panel.getForm().setValues(<?= $documentacion ?>);
                     storeFichaTecnicaCO.load();
+                    var imprimir =  Ext.getCmp("btnImprimir").setVisible(<?= $imprimir ?>);
+                    
                 }
             },
             buttons: [{
                     text: 'Imprimir',
+                    id: 'btnImprimir',
+                   
                     tooltip: 'Generar Documento de Transporte',
                     iconCls: 'page_white_acrobat',
                     handler: function () {
@@ -2062,6 +2067,7 @@ $transporte = $sf_data->getRaw("transporte");
                                     ids = res.ids;
                                     if (res.success) {
                                         Ext.MessageBox.alert("Mensaje", 'Ficha almacenada correctamente<br>');
+                                        var imprimir =  Ext.getCmp("btnImprimir").setVisible(true);
                                     }
                                 }
                             });

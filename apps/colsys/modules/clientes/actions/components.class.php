@@ -189,6 +189,10 @@ class clientesComponents extends sfComponents {
         if ($fichatecnica) {
             $this->documentacion = $fichatecnica->getCaDocumentacion();
             $this->transporte = $fichatecnica->getCaTransporteinternacional();
+            $this->imprimir = true;
+        }
+        else{
+            $this->imprimir = false;
         }
     }
 
