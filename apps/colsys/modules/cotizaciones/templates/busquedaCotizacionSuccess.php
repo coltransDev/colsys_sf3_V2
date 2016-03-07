@@ -120,13 +120,13 @@ $pagerLayout->display();
                         <br/>
                         <div id="NAP_<?=$producto->getCaIdproducto()?>" style="display:none;" >
                             <select name="seguimiento[]" id="seg_<?=$producto->getCaIdproducto()?>" disabled style="width: 250px"  >
-                                <option value="Tarifa NO competitiva" title="Tarifa NO competitiva">Tarifa NO competitiva</option>
-                                <option value="No se realizo el embarque" title="No se realizo el embarque">No se realizo el embarque</option>
-                                <option value="Asignado a la competencia por preferencia del cliente" title="Asignado a la competencia por preferencia del cliente">Asignado a la competencia por preferencia del cliente</option>
-                                <option value="Cot. solicitada para efectos de presupuesto del cliente" title="Cot. solicitada para efectos de presupuesto del cliente">Cot. solicitada para efectos de presupuesto del cliente</option>
-                                <option value="Embarque asignado y anulado por el cliente" title="Embarque asignado y anulado por el cliente">Embarque asignado y anulado por el cliente</option>
-                                <option value="Cambio de Modalidad" title="Cambio de Modalidad">Cambio de Modalidad</option>
-                                <option value="Cambio de tarifas en el trafico cotizado" title="Cambio de tarifas en el trafico cotizado">Cambio de tarifas en el trafico cotizado</option>
+                                <?
+                                    foreach ($motivos as $motivo) {
+                                        ?>
+                                        <option value="<?=$motivo?>" title="<?=$motivo?>"><?=$motivo?></option>
+                                        <?
+                                    }
+                                ?>
                             </select>
                         </div>
                         <div id="SEG_<?=$producto->getCaIdproducto()?>" style="display:none">
@@ -212,13 +212,13 @@ $pagerLayout->display();
                         <br/>
                         <div id="NAPCOT_<?=$cotizacion->getCaIdcotizacion()?>" style="display:none;" >
                             <select name="seguimientocot[]" id="segcot_<?=$cotizacion->getCaIdcotizacion()?>" disabled style="width: 250px"  >
-                                <option value="Tarifa NO competitiva" title="Tarifa NO competitiva">Tarifa NO competitiva</option>
-                                <option value="No se realizo el embarque" title="No se realizo el embarque">No se realizo el embarque</option>
-                                <option value="Asignado a la competencia por preferencia del cliente" title="Asignado a la competencia por preferencia del cliente">Asignado a la competencia por preferencia del cliente</option>
-                                <option value="Cot. solicitada para efectos de presupuesto del cliente" title="Cot. solicitada para efectos de presupuesto del cliente">Cot. solicitada para efectos de presupuesto del cliente</option>
-                                <option value="Embarque asignado y anulado por el cliente" title="Embarque asignado y anulado por el cliente">Embarque asignado y anulado por el cliente</option>
-                                <option value="Cambio de Modalidad" title="Cambio de Modalidad">Cambio de Modalidad</option>
-                                <option value="Cambio de tarifas en el trafico cotizado" title="Cambio de tarifas en el trafico cotizado">Cambio de tarifas en el trafico cotizado</option>
+                                <?
+                                    foreach ($motivos as $motivo) {
+                                        ?>
+                                        <option value="<?=$motivo?>" title="<?=$motivo?>"><?=$motivo?></option>
+                                        <?
+                                    }
+                                ?>
                             </select>
                         </div>
                         <div id="SEGCOT_<?=$cotizacion->getCaIdcotizacion()?>" style="display:none">

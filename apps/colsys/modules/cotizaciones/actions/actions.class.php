@@ -162,6 +162,11 @@ class cotizacionesActions extends sfActions {
         foreach ($estados as $estado) {
             $this->estados[$estado->getCaValor()] = $estado->getCaValor2();
         }
+        $motivos = ParametroTable::retrieveByCaso("CU260");
+        $this->motivos = array();
+        foreach ($motivos as $motivo) {
+            $this->motivos[$motivo->getCaValor()] = $motivo->getCaValor();
+        }
     }
 
     /**
