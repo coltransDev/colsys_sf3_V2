@@ -189,7 +189,7 @@ $hoy = $sf_data->getRaw("hoy");
                             }, {
                                 xtype: 'numberfield',
                                 value: '0',
-                                fieldLabel: 'Patrimonios',
+                                fieldLabel: 'Patrimonio',
                                 name: 'ca_patrimonios',
                                 id: 'ca_patrimonios',
                                 width: 260,
@@ -639,10 +639,10 @@ $hoy = $sf_data->getRaw("hoy");
                 flex: 1,
                 dataIndex: 'documento'
             }, {
-                header: 'Fecha Documento',
+                header: 'Fecha Revisión',
                 width: 125,
                 dataIndex: 'fch_documento',
-                renderer: function (a, b, c, d){
+                renderer: function (a, b, c, d) {
                     if (a) {
                         var formattedDate = new Date(a);
                         var formattedDate = new Date(formattedDate.valueOf() + formattedDate.getTimezoneOffset() * 60000);
@@ -1293,9 +1293,6 @@ $hoy = $sf_data->getRaw("hoy");
                     }
                 });
                 gridControlFinanciero.setVisible(true);
-
-
-
             }
         }
     }
