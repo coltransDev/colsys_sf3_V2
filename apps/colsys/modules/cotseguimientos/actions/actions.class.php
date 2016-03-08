@@ -421,7 +421,7 @@ class cotseguimientosActions extends sfActions {
             $email->addTo($this->emails[$key]["email"]);
             //$email->addTo( "maquinche@coltrans.com.co" );
             $email->save(); //guarda el cuerpo del mensaje
-            $email->send(); //envia el mensaje de correo
+            //$email->send(); //envia el mensaje de correo
             //break;
         }
     }
