@@ -614,15 +614,13 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
             $cli->Open("select public.estado_documentos($idcli)");
             $documentos  = explode("|", $cli->Value("estado_documentos"));
             echo " <TR>";
-            echo "   <TD Class=listar style='$bkground' COLSPAN='4'><CENTER>Estado de Circular 0170 por cada Empresa del Grupo</CENTER></TD>";
+            echo "   <TD Class=listar style='$bkground' COLSPAN='5'><CENTER>Estado de Circular 0170 por cada Empresa del Grupo</CENTER></TD>";
             echo " </TR>";
             echo " <TR>";
             echo "   <TD Class=listar style='$bkground'>Coltrans:<BR /><CENTER>" . $documentos[0]. "</CENTER></TD>";
             echo "   <TD Class=listar style='$bkground'>Colmas:<BR /><CENTER>" . $documentos[1]. "</CENTER></TD>";
             echo "   <TD Class=listar style='$bkground'>ColOTM:<BR /><CENTER>" . $documentos[2]. "</CENTER></TD>";
-            echo "   <TD Class=listar style='$bkground'>ColDep&oacute;ositos:<BR /><CENTER>" . $documentos[3]. "</CENTER></TD>";
-            echo " </TR>";            
-            echo "  </TABLE></TD>";
+            echo "   <TD Class=listar style='$bkground' COLSPAN='2'>ColDep&oacute;ositos:<BR /><CENTER>" . $documentos[3]. "</CENTER></TD>";
             echo "</TR>";
             echo "  </TABLE></TD>";
             echo "</TR>";
