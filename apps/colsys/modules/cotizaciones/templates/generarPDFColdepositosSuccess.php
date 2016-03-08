@@ -8,7 +8,7 @@ $empresa = Doctrine::getTable("Empresa")->find(11); // Localiza la empresa Colde
 
 $sucursal =  Doctrine::getTable("Sucursal")
         ->createQuery("s")                
-        ->where("ca_nombre = ? and ca_idempresa= 11" , $usuario->getSucursal()->getcaNombre() )
+        ->where("ca_nombre = 'Bogotá D.C.' and ca_idempresa= 11")
         ->fetchOne();
 
 $comodato = false;
