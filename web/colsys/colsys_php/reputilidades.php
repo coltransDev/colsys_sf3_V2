@@ -181,20 +181,21 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
     //if ($sucursal != "%"){
         // $sub = " INNER JOIN (select ic.ca_referencia from tb_inoclientes_sea ic INNER JOIN control.tb_usuarios us ON us.ca_login = ic.ca_login INNER JOIN control.tb_sucursales sc ON sc.ca_idsucursal = us.ca_idsucursal where sc.ca_nombre = '$sucursal') sc ON sc.ca_referencia = iu.ca_referencia ";
         $sub = "INNER JOIN ("
-                . "select ic.ca_referencia, ct.ca_idcosto, ct.ca_costo, sum(round(ca_venta::numeric-((ca_tcambio::numeric/ca_tcambio_usd::numeric)*ca_neto::numeric),2)) as ca_util_costo"
+                . "select ic.ca_referencia as ca_referencia_sub, ct.ca_idcosto, ct.ca_costo, sum(round(ca_venta::numeric-((ca_tcambio::numeric/ca_tcambio_usd::numeric)*ca_neto::numeric),2)) as ca_util_costo"
                 . " from tb_costos ct"
                 . "     INNER JOIN tb_inocostos_sea ic ON (ic.ca_idcosto = ct.ca_idcosto)"
                 . "     INNER JOIN tb_inoutilidad_sea iu ON (iu.ca_idinocosto = ic.ca_idinocostos_sea)"
                 . "     INNER JOIN tb_inoclientes_sea cl ON (cl.ca_idinocliente = iu.ca_idinocliente)"
                 . "     INNER JOIN control.tb_usuarios us ON us.ca_login = cl.ca_login"
                 . "     INNER JOIN control.tb_sucursales sc ON sc.ca_idsucursal = us.ca_idsucursal and sc.ca_nombre like '$sucursal'"
-                . " group by ic.ca_referencia, ct.ca_idcosto, ct.ca_costo) sc ON (sc.ca_referencia = iu.ca_referencia)";
+                . " group by ic.ca_referencia, ct.ca_idcosto, ct.ca_costo) sc ON (sc.ca_referencia_sub = iu.ca_referencia)";
     //}
         $order = " order by ca_ano, ca_mes";
     if ($reportar == 'utilidad') {
         $col_one = "Util.x CBM";
         $col_two = "Utilidad";
         if (isset($compania) and $compania != '') {
+            $sub = str_replace('INNER JOIN (', 'LEFT JOIN (', $sub);
             $sub = str_replace(', ct.ca_idcosto, ct.ca_costo', '', $sub);
             $condicion = "* from vi_inocomisiones_sea iu $sub where upper(ca_compania) like upper('%" . strtolower($compania) . "%') and ";
             $order = " order by ca_ano, ca_mes, iu.ca_referencia";
@@ -444,10 +445,10 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)) {
                 $cli_sob = 0;
             }
             $par_sob+= $rs->Value('ca_valor_ded');
-            //if ($hbl_mem == $rs->Value('ca_hbls')) {
-                //$rs->MoveNext();
-                //continue;
-            //}
+            if ($hbl_mem == $rs->Value('ca_hbls')) {
+                $rs->MoveNext();
+                continue;
+            }
             $cli_mem = $rs->Value('ca_idcliente');
             $utl_cbm = ($rs->Value('ca_facturacion_r') - $rs->Value('ca_deduccion_r') - $rs->Value('ca_utilidad_r')) / $rs->Value('ca_volumen_r');
             $back_col = ($rs->Value('ca_estado') == 'Provisional') ? " background: #CCCC99" : (($rs->Value('ca_estado') == 'Abierto') ? " background: #CCCCCC" : " background: #F0F0F0");
