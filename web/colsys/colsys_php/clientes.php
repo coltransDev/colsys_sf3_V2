@@ -611,10 +611,10 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
             echo "  </TR>";
             $cli = & DlRecordset::NewRecordset($conn);
             $idcli = $rs->Value('ca_idcliente');
-            $cli->Open("select public.estado_documentos($idcli)");
-            $documentos  = explode("|", $cli->Value("estado_documentos"));
+            $cli->Open("select public.fun_estado_documentos($idcli)");
+            $documentos  = explode("|", $cli->Value("fun_estado_documentos"));
             echo " <TR>";
-            echo "   <TD Class=listar style='$bkground' COLSPAN='5'><CENTER>Estado de Circular 0170 por cada Empresa del Grupo</CENTER></TD>";
+            echo "   <TD Class=listar style='$bkground' COLSPAN='5'><CENTER>Cumplimiento de la documentaci&oacute;n para Circular 0170</CENTER></TD>";
             echo " </TR>";
             echo " <TR>";
             echo "   <TD Class=listar style='$bkground'>Coltrans:<BR /><CENTER>" . $documentos[0]. "</CENTER></TD>";
