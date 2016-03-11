@@ -22,7 +22,6 @@ $pdf->setColtransHeader ( false );
 
 $pdf->SetAutoPageBreak(true, 0);
 
-$items = $documento->getExpoDocItems();
 $count = count($items);
 $page  = 1;
 $marg  = 0;
@@ -101,13 +100,21 @@ while (true) {
         $pdf->SetXY(10, $ejeY);
         $marksNumbers = "";
         if ($item->getCaContainerNumber()){
-            $marksNumbers.= $item->getCaContainerNumber()."\n";
+            $marksNumbers.= $item->getCaContainerNumber();
         }
         if ($item->getCaSeals()){
-            $marksNumbers.= $item->getCaSeals()."\n";
+            $marksNumbers.= ((strlen($marksNumbers)!=0)?"\n":"").$item->getCaSeals();
         }
         if ($item->getCaMarksNumbers()){
-            $marksNumbers.= $item->getCaMarksNumbers()."\n";
+            $marksNumbers.= ((strlen($marksNumbers)!=0)?"\n":"").$item->getCaMarksNumbers();
+        }
+        if ($item->getCaNumberPackages()){
+            $marksNumbers.= ((strlen($marksNumbers)!=0)?"\n":"")."Pks: ".$item->getCaNumberPackages()." ".$item->getCaKindPackages();
+            $tot_packages+= $item->getCaNumberPackages();
+        }
+        if ($item->getCaNetWeight()){
+            $marksNumbers.= ((strlen($marksNumbers)!=0)?"\n":"")."Net.:".$item->getCaNetWeight()." ".$item->getCaNetUnit();
+            $tot_net+= $item->getCaNetWeight();
         }
 
         $pdf->MultiCell(50, 4, $marksNumbers, 0, 1);
@@ -115,12 +122,7 @@ while (true) {
         $nextY = ($pdf->getY()>$nextY)?$pdf->getY():$nextY;
 
         $pdf->SetXY(45, $ejeY);
-        $descriptionGoods = "";
-        if ($item->getCaNumberPackages()){
-            $descriptionGoods.= "Packages: ".$item->getCaNumberPackages()." ".$item->getCaKindPackages();
-            $tot_packages+= $item->getCaNumberPackages();
-        }
-        $descriptionGoods.= "\n".$item->getCaDescriptionGoods();
+        $descriptionGoods = $item->getCaDescriptionGoods();
         $pos = strpos($descriptionGoods, "«break»");
         if ($pos === false){
             $pdf->MultiCell(110, 4, $descriptionGoods, 0, 1);
@@ -134,23 +136,17 @@ while (true) {
         }
 
         $nextY = ($pdf->getY()>$nextY)?$pdf->getY():$nextY;
-
         if ($item->getCaGrossWeight()){
             $grossWeight = $item->getCaGrossWeight()." ".$item->getCaGrossUnit();
-            if ($item->getCaNetWeight()){
-                $grossWeight.= "\nNET :".$item->getCaNetWeight()." ".$item->getCaNetUnit();
-                $tot_net+= $item->getCaNetWeight();
-            }
-            $pdf->SetXY(160, $ejeY);
-            $pdf->MultiCell(30, 4, $grossWeight, 0, 1);
+            $pdf->SetXY(155, $ejeY);
+            $pdf->MultiCell(40, 4, $grossWeight, 0, 1);
             $nextY = ($pdf->getY()>$nextY)?$pdf->getY():$nextY;
             $tot_gross+= $item->getCaGrossWeight();
         }
-
         if ($item->getCaMeasurementWeight()){
             $measurementWeight = $item->getCaMeasurementWeight()." ".$item->getCaMeasurementUnit();
             $pdf->SetXY(190, $ejeY);
-            $pdf->MultiCell(30, 4, $measurementWeight, 0, 1);
+            $pdf->MultiCell(40, 4, $measurementWeight, 0, 1);
             $nextY = ($pdf->getY()>$nextY)?$pdf->getY():$nextY;
             $tot_measurement+= $item->getCaMeasurementWeight();
         }

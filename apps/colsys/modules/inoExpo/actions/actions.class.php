@@ -246,6 +246,11 @@ class inoExpoActions extends sfActions {
                 ->createQuery("e")
                 ->addWhere("e.ca_iddoctransporte = ?", $this->getRequestParameter("id"))
                 ->fetchOne();
+        $this->items = Doctrine::getTable("ExpoDocItems")
+                ->createQuery("d")
+                ->addWhere("d.ca_iddoctransporte = ?", $this->getRequestParameter("id"))
+                ->orderBy("d.ca_item_number")
+                ->execute();
         $this->referencia = $this->documento->getInoMaestraExpo();
 
         $consecutivo = $this->referencia->getCaConsecutivo();
@@ -269,8 +274,9 @@ class inoExpoActions extends sfActions {
 
     public function executeDatosItemsDocs(sfWebRequest $request) {
         $items = Doctrine::getTable("ExpoDocItems")
-                ->createQuery("i")
-                ->addWhere("i.ca_iddoctransporte = ?", $this->getRequestParameter("id"))
+                ->createQuery("d")
+                ->addWhere("d.ca_iddoctransporte = ?", $this->getRequestParameter("id"))
+                ->orderBy("d.ca_item_number")
                 ->execute();
         $data = array();
 

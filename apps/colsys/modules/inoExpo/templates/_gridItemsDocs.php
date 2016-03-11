@@ -33,7 +33,7 @@
     Ext.define('ComboUnidadesPaquete', {
         extend: 'Ext.form.field.ComboBox',
         alias: 'widget.combo-unidades-paquete',
-        store: ['Paquetes','Piezas','Cajas', 'Cartones', 'Estuches', 'Jaulas', 'Palets', 'Tamores', 'Barriles', 'Bidones', 'Rollos', 'Bobina', 'Laminas', 'Pallets', 'Boxes', 'Bags', 'Bulk', 'Skid', 'Barrels', 'Cartons', 'Case', 'Tarp']
+        store: ['Paquetes','Piezas','Cajas', 'Cartones', 'Sacos', 'Estuches', 'Jaulas', 'Palets', 'Tamores', 'Barriles', 'Bidones', 'Rollos', 'Bobina', 'Laminas', 'Pallets', 'Boxes', 'Sacks', 'Bags', 'Bulk', 'Skid', 'Rolls', 'Barrels', 'Cartons', 'Case', 'Tarp']
     });
 
     Ext.define('ComboUnidadesPeso', {
@@ -138,8 +138,6 @@
                     listeners:{
                         change: function (check, newValue, oldValue, eOpts){
                             Ext.getCmp('description_goods').setDisabled(newValue);
-                            Ext.getCmp('number_packages').setDisabled(newValue);
-                            Ext.getCmp('kind_packages').setDisabled(newValue);
                         }
                     }
                 }, {
@@ -194,7 +192,7 @@
                 items: {
                     xtype: 'numberfield',
                     name: 'gross_weight',
-                    allowBlank: false,
+                    allowBlank: true,
                     hideTrigger: true,
                     decimalPrecision: 2,
                     keyNavEnabled: false,
@@ -209,8 +207,8 @@
                 items: {
                     xtype: 'combo-unidades-peso',
                     name: 'gross_unit',
-                    forceSelection: true,
-                    allowBlank: false
+                    forceSelection: false,
+                    allowBlank: true
                 }
             }, {
                 xtype: 'fieldset',
@@ -222,7 +220,7 @@
                     id: 'number_packages',
                     xtype: 'numberfield',
                     name: 'number_packages',
-                    allowBlank: false,
+                    allowBlank: true,
                     hideTrigger: true,
                     decimalPrecision: 2,
                     keyNavEnabled: false,
@@ -238,8 +236,8 @@
                     id: 'kind_packages',
                     xtype: 'combo-unidades-paquete',
                     name: 'kind_packages',
-                    forceSelection: true,
-                    allowBlank: false
+                    forceSelection: false,
+                    allowBlank: true
                 }
             }, {
                 xtype: 'fieldset',
