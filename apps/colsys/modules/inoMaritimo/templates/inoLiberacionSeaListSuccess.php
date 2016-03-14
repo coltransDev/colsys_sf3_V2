@@ -15,7 +15,7 @@
                     <td class="invertir" colspan="2" style="text-align: center">Origen</td>
                     <td class="invertir" colspan="2" style="text-align: center">Destino</td>
                     <td class="invertir">Fch.Referencia</td>
-                    <td class="invertir">V&iacute;a</td>
+                    <td class="invertir">Modalidad</td>
                 </tr>
                 <tr>
                     <td class="listar"><?= $referencia["ca_traorigen"] ?></td>
@@ -23,7 +23,7 @@
                     <td class="listar"><?= $referencia["ca_tradestino"] ?></td>
                     <td class="listar"><?= $referencia["ca_ciudestino"] ?></td>
                     <td class="listar"><?= $referencia["ca_fchreferencia"] ?></td>
-                    <td class="listar"><?= $referencia["ca_via"] ?></td>
+                    <td class="listar"><?= $referencia["ca_modalidad"] ?></td>
                 </tr>
 
                 <tr style="height:5">

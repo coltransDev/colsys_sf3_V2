@@ -382,7 +382,8 @@ class inoMaritimoActions extends sfActions {
         $errorInfo = "";
         $ids = array();
         foreach ($liquidaciones as $liquidacion) {
-            $error = ""; {
+            $error = "";
+            {
                 $utilidadliq = null;
                 if ($liquidacion->idinocliente) {
                     $utilidadliq = Doctrine::getTable("InoUtilidadliqSea")
@@ -423,7 +424,8 @@ class inoMaritimoActions extends sfActions {
         $errorInfo = "";
         $ids = array();
         foreach ($liquidaciones as $liquidacion) {
-            $error = ""; {
+            $error = "";
+            {
                 if ($liquidacion->idinocliente) {
                     $inoingreso = Doctrine::getTable("InoIngresosSea")
                             ->createQuery("i")
@@ -535,7 +537,8 @@ class inoMaritimoActions extends sfActions {
         $errorInfo = "";
         $ids = array();
         foreach ($parametros as $parametro) {
-            $error = ""; {
+            $error = "";
+            {
                 $utilidadprm = null;
                 if ($parametro->idparametro) {
                     $utilidadprm = Doctrine::getTable("InoUtilidadprmsSea")
@@ -577,7 +580,8 @@ class inoMaritimoActions extends sfActions {
         $errorInfo = "";
         $ids = array();
         foreach ($parametros as $parametro) {
-            $error = ""; {
+            $error = "";
+            {
                 if ($parametro->referencia and $parametro->idcosto and $parametro->tipo) {
                     $utilidadprm = Doctrine::getTable("InoUtilidadprmsSea")
                             ->createQuery("p")
@@ -837,7 +841,13 @@ class inoMaritimoActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeInoLiberacionSea(sfWebRequest $request) {
-        $this->filtros = array("ca_referencia" => "Número de Referencia");
+        $this->filtros = array();
+        $this->filtros["ca_referencia"] = "Número de Referencia";
+        $this->filtros["ca_idalterno"] = "Nit del Cliente";
+        $this->filtros["ca_compania"] = "Nombre del Cliente";
+        $this->filtros["ca_factura"] = "Número de Factura";
+        $this->filtros["ca_mbls"] = "Bl Master";
+        $this->filtros["ca_hbls"] = "Bl Hijo";
     }
 
     /**
@@ -846,26 +856,48 @@ class inoMaritimoActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeInoLiberacionSeaList(sfWebRequest $request) {
-        $this->selFiltro = $request->getParameter("selFiltro");
-        $this->cadena = $request->getParameter("cadena");
+        $opcion = $request->getParameter("selFiltro");
+        $criterio = $request->getParameter("cadena");
+        $fchinicial = $request->getParameter("fchinicial");
+        $fchfinal = $request->getParameter("fchfinal");
         $this->data = array();
 
-        $referencias_rs = Doctrine::getTable("InoMaestraSea")
-                ->createQuery("i")
-                ->where("i.ca_referencia like '%$this->cadena%'")
-                ->execute();
+        $condicion = "where ";
+        if ($fchinicial and $fchfinal){
+            $condicion.= "ca_fchreferencia between '$fchinicial' and '$fchfinal' and";
+        }
+        if ($opcion == 'ca_referencia') {
+            $condicion.= " $opcion like lower('%" . $criterio . "%') and";
+        } elseif ($opcion == 'ca_mbls' or $opcion == 'ca_motonave') {
+            $condicion.= " lower($opcion) like lower('%" . $criterio . "%') and";
+        } elseif ($opcion == 'ca_idequipo') {
+            $condicion.= " ca_referencia in (select ca_referencia from vi_inoequipos_sea where lower($opcion) like lower('%" . $criterio . "%') order by ca_referencia) and";
+        } elseif ($opcion == 'ca_hbls' or $opcion == 'ca_idalterno' or $opcion == 'ca_compania' or $opcion == 'ca_factura') {
+            $condicion.= " ca_referencia in (select ca_referencia from vi_inoclientes_sea where lower($opcion) like lower('%" . $criterio . "%') order by ca_referencia) and";
+        } elseif ($opcion == 'ca_factura_prov') {
+            $condicion.= " ca_referencia in (select ca_referencia from vi_inocostos_sea where lower(" . substr($opcion, 0, 10) . ") like lower('%" . $criterio . "%') order by ca_referencia) and";
+        }
+        $condicion = substr($condicion, 0, strlen($condicion)-4);
+        
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select * from vi_inomaestra_sea $condicion";
+        //die($sql);
+        
+        $rs = $con->execute($sql);
+        $referencias_rs = $rs->fetchAll();
         foreach ($referencias_rs as $key => $referencia) {
             $row = array();
-            $row["ca_referencia"] = $referencia->getCaReferencia();
-            $row["ca_impoexpo"] = $referencia->getCaImpoexpo();
-            $row["ca_traorigen"] = $referencia->getOrigen()->getTrafico()->getCaNombre();
-            $row["ca_ciuorigen"] = $referencia->getOrigen()->getCaCiudad();
-            $row["ca_tradestino"] = $referencia->getDestino()->getTrafico()->getCaNombre();
-            $row["ca_ciudestino"] = $referencia->getDestino()->getCaCiudad();
-            $row["ca_fchreferencia"] = $referencia->getCaFchreferencia();
-            $row["ca_modalidad"] = $referencia->getCaModalidad();
+            $row["ca_referencia"] = $referencia["ca_referencia"];
+            $row["ca_impoexpo"] = $referencia["ca_impoexpo"];
+            $row["ca_traorigen"] = $referencia["ca_traorigen"];
+            $row["ca_ciuorigen"] = $referencia["ca_ciuorigen"];
+            $row["ca_tradestino"] = $referencia["ca_tradestino"];
+            $row["ca_ciudestino"] = $referencia["ca_ciudestino"];
+            $row["ca_fchreferencia"] = $referencia["ca_fchreferencia"];
+            $row["ca_modalidad"] = $referencia["ca_modalidad"];
             $this->data[] = $row;
         }
+
     }
 
     public function executeFormLiberacionSeaExt5(sfWebRequest $request) {
