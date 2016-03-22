@@ -78,36 +78,56 @@ $folder = $reporte->getDirectorioBase();
 
 
     var enviarFormulario = function(){
-    var numChecked = 0;
-    for (var i = 0; i <<?= count($destinatariosFijos) ?>; i++){
-        var checkFld = document.getElementById("destinatariosfijos_" + i);
-        if (checkFld.checked && checkFld.value.trim() != ""){
-            numChecked++;
-        }   
+        var numChecked = 0;
+        for (var i = 0; i <<?= count($destinatariosFijos) ?>; i++){
+            var checkFld = document.getElementById("destinatariosfijos_" + i);
+            if (checkFld.checked && checkFld.value.trim() != ""){
+                numChecked++;
+            }   
 
-        if (checkFld.checked && checkFld.value.trim() == ""){
-            alert("Un contacto fijo seleccionado no tiene e-mail, por favor seleccione otro");
-            return 0;
+            if (checkFld.checked && checkFld.value.trim() == ""){
+                alert("Un contacto fijo seleccionado no tiene e-mail, por favor seleccione otro");
+                return 0;
+            }
         }
-    }
-    
-    if ($("#fchrecibo_ext_control").val() == "" || $("#horarecibo_hour").val() == "" || $("#horarecibo_minute").val() == "")
-    {
-        var etapasExcluidas = ["IMAGR","IAAGR"];
-        
-        if(etapasExcluidas.indexOf($("#idetapa").val())<0){        
-            alert("Por Favor ingrese la fecha y hora de recibido el status");
-            return 0;
+        //Evalua si la etapa requiere datos para indicador
+        var tipo = document.form1.idetapa;
+        var value = '';
+        for (i = 0; i < tipo.length; i++){
+            if (tipo[i].selected){
+                value = tipo[i].value;
+                break;
+            }
         }
-    }
 
-    if (numChecked > 0 || <?= $reporte->getCliente()->getProperty("consolidar_comunicaciones") ? "true" : "false" ?>){
-        document.getElementById("form1").submit();
-    } else{
-        if (<?= ($reporte->getCaTiporep() == 4) ? "true" : "false" ?>)
+        switch (value){
+            <?
+            foreach ($etapas as $etapa) {
+                ?>
+                    case '<?= $etapa->getCaIdetapa() ?>':
+                        <?
+                        if($etapa->getCaIdg()){
+                            ?>
+                            if ($("#fchrecibo_ext_control").val() == "" || $("#horarecibo_hour").val() == "" || $("#horarecibo_minute").val() == ""){
+                                alert("Por Favor ingrese la fecha y hora de recibido el status");
+                                return 0;
+                            }   
+                            <?
+                        }
+                        ?>
+                        break;
+                <?
+            }
+            ?>
+        }
+
+        if (numChecked > 0 || <?= $reporte->getCliente()->getProperty("consolidar_comunicaciones") ? "true" : "false" ?>){
             document.getElementById("form1").submit();
-        else
-            alert("debe seleccionar al menos un contacto fijo.");
+        } else{
+            if (<?= ($reporte->getCaTiporep() == 4) ? "true" : "false" ?>)
+                document.getElementById("form1").submit();
+            else
+                alert("debe seleccionar al menos un contacto fijo.");
         }
     }
 
@@ -130,16 +150,27 @@ $folder = $reporte->getDirectorioBase();
         var mensaje_mask = document.form1.mensaje_mask;
         switch (value){
             <?
-            foreach ($etapas as $etapa) {
-                /* if( $etapa->getCaIdetapa()=="IMETA" && $count>0 ){
-                  continue;
-                  } */
+            foreach ($etapas as $etapa) {                
                 ?>
-                    case '<?= $etapa->getCaIdetapa() ?>':
-                            var val = '<?= str_replace("\n", "<br />", $etapa->getCaMessage()) ?>';
-                            divmensaje.innerHTML = val.split("<br />").join("\n");
-                            mensaje_mask.value = val.split("<br />").join("\n");
-                            break;
+                case '<?= $etapa->getCaIdetapa() ?>':                    
+                    var val = '<?= str_replace("\n", "<br />", $etapa->getCaMessage()) ?>';
+                    divmensaje.innerHTML = val.split("<br />").join("\n");
+                    mensaje_mask.value = val.split("<br />").join("\n");                    
+                    <?
+                    if($etapa->getCaIdg()!="1"){
+                        ?>
+                        $("#indicador").hide();
+                        $("#observaciones").hide();                    
+                        <?
+                    }else{
+                        
+                        ?>
+                        $("#indicador").show();
+                        $("#observaciones").show();                        
+                        <?
+                    }
+                    ?>
+                    break;
                 <?
             }
             ?>
@@ -149,108 +180,110 @@ $folder = $reporte->getDirectorioBase();
                 break;
         }
 
-    switch (value){
-        <?
-        foreach ($etapas as $etapa) {
-            if ($etapa->getIntroAsunto()) {
-            ?>
-                case '<?= $etapa->getCaIdetapa() ?>':
-                    document.getElementById("asuntoIntro").innerHTML = "<?= $etapa->getIntroAsunto() ?>";
-                    break;
-            <?
-            }
-        }
-        ?>
-        default:
-            document.getElementById("asuntoIntro").innerHTML = "";
-            break;
-    }
-
-
-    if (!document.form1.mensaje_dirty.value){
         switch (value){
             <?
             foreach ($etapas as $etapa) {
-                ?>
-                case '<?= $etapa->getCaIdetapa() ?>':
-                    var val = '<?= str_replace("\n", "<br />", $etapa->getCaMessageDefault()) ?>';
-                    mensaje.value = val.split("<br />").join("\n");
-                    break;
-                <?
-            }
-            ?>
-            default:
-                mensaje.value = '';
-                break;
-        }
-
-        switch (value){
-            <?
-            foreach ($etapas as $etapa) {
-                if ($etapa->getCaIntro()) {
+                if ($etapa->getIntroAsunto()) {
                 ?>
                     case '<?= $etapa->getCaIdetapa() ?>':
-                        var val = '<?= str_replace("\n", "<br />", $etapa->getCaIntro()) ?>';
-                        document.form1.introduccion.value = val.split("<br />").join("\n");
+                        document.getElementById("asuntoIntro").innerHTML = "<?= $etapa->getIntroAsunto() ?>";
                         break;
                 <?
                 }
             }
+            ?>
+            default:
+                document.getElementById("asuntoIntro").innerHTML = "";
+                break;
+        }
 
-            if ($reporte->getCaImpoexpo() == Constantes::EXPO) {
+
+        if (!document.form1.mensaje_dirty.value){
+            switch (value){
+                <?
+                foreach ($etapas as $etapa) {
+                    ?>
+                    case '<?= $etapa->getCaIdetapa() ?>':
+                        var val = '<?= str_replace("\n", "<br />", $etapa->getCaMessageDefault()) ?>';
+                        mensaje.value = val.split("<br />").join("\n");
+                        break;
+                    <?
+                }
                 ?>
-                    case 'EECEM':
-                        var val = '<?= str_replace("\n", "<br />", $saludoAviso) ?>';
-                        document.form1.introduccion.value = val.split("<br />").join("\n");
-                        break;
-                    case 'EEETD':
-                        var val = '<?= str_replace("\n", "<br />", $saludoAviso) ?>';
-                        document.form1.introduccion.value = val.split("<br />").join("\n");
-                        break;
+                default:
+                    mensaje.value = '';
+                    break;
+            }
+
+            switch (value){
+                <?
+                foreach ($etapas as $etapa) {
+                    if ($etapa->getCaIntro()) {
+                    ?>
+                        case '<?= $etapa->getCaIdetapa() ?>':
+                            var val = '<?= str_replace("\n", "<br />", $etapa->getCaIntro()) ?>';
+                            document.form1.introduccion.value = val.split("<br />").join("\n");
+                            break;
+                    <?
+                    }
+                }
+
+                if ($reporte->getCaImpoexpo() == Constantes::EXPO) {
+                    ?>
+                        case 'EECEM':
+                            var val = '<?= str_replace("\n", "<br />", $saludoAviso) ?>';
+                            document.form1.introduccion.value = val.split("<br />").join("\n");
+                            break;
+                        case 'EEETD':
+                            var val = '<?= str_replace("\n", "<br />", $saludoAviso) ?>';
+                            document.form1.introduccion.value = val.split("<br />").join("\n");
+                            break;
+                    <?
+                }
+                ?>
+                default:
+                    var val = '<?= str_replace("\n", "<br />", $textos['saludo']) ?>';
+                    document.form1.introduccion.value = val.split("<br />").join("\n");
+                    break;
+            }
+        }
+
+        if (type == "1"){
+            <?
+            if ($_REQUEST["introduccion"] != "") {
+                $intro = htmlentities($_REQUEST["introduccion"]); //make remaining items html entries.
+                $intro = nl2br($intro); //add html line returns
+                $intro = str_replace(chr(10), "", $intro); //remove carriage returns
+                $intro = str_replace(chr(13), "", $intro); //remove carriage returns
+                ?>
+                    var val = '<?= str_replace("\n", "<br />", $intro) ?>';
+                            document.form1.introduccion.value = val.split("<br />").join("\n");
                 <?
             }
             ?>
-            default:
-                var val = '<?= str_replace("\n", "<br />", $textos['saludo']) ?>';
-                document.form1.introduccion.value = val.split("<br />").join("\n");
-                break;
+            $("#indicador").show();
+            $("#observaciones").show();
         }
-    }
+        if (value == "IMETA"){
+            document.getElementById("prog_seguimiento").checked = false;
+            crearSeguimiento();
+            document.getElementById("prog_seguimiento").disabled = true;
+        } else{
+            document.getElementById("prog_seguimiento").disabled = false;
+        }
 
-    if (type == "1"){
         <?
-        if ($_REQUEST["introduccion"] != "") {
-            $intro = htmlentities($_REQUEST["introduccion"]); //make remaining items html entries.
-            $intro = nl2br($intro); //add html line returns
-            $intro = str_replace(chr(10), "", $intro); //remove carriage returns
-            $intro = str_replace(chr(13), "", $intro); //remove carriage returns
+        if ($_REQUEST["txtincompleto"] != "") {
+            $txtincompleto = htmlentities($_REQUEST["txtincompleto"]); //make remaining items html entries.
+            $txtincompleto = nl2br($txtincompleto); //add html line returns
+            $txtincompleto = str_replace(chr(10), "", $txtincompleto); //remove carriage returns
+            $txtincompleto = str_replace(chr(13), "", $txtincompleto); //remove carriage returns
             ?>
-                var val = '<?= str_replace("\n", "<br />", $intro) ?>';
-                        document.form1.introduccion.value = val.split("<br />").join("\n");
+                var val = '<?= str_replace("\n", "<br />", $txtincompleto) ?>';
+                        document.form1.txtincompleto.value = val.split("<br />").join("\n");
             <?
         }
         ?>
-    }
-    if (value == "IMETA"){
-        document.getElementById("prog_seguimiento").checked = false;
-        crearSeguimiento();
-        document.getElementById("prog_seguimiento").disabled = true;
-    } else{
-        document.getElementById("prog_seguimiento").disabled = false;
-    }
-
-    <?
-    if ($_REQUEST["txtincompleto"] != "") {
-        $txtincompleto = htmlentities($_REQUEST["txtincompleto"]); //make remaining items html entries.
-        $txtincompleto = nl2br($txtincompleto); //add html line returns
-        $txtincompleto = str_replace(chr(10), "", $txtincompleto); //remove carriage returns
-        $txtincompleto = str_replace(chr(13), "", $txtincompleto); //remove carriage returns
-        ?>
-            var val = '<?= str_replace("\n", "<br />", $txtincompleto) ?>';
-                    document.form1.txtincompleto.value = val.split("<br />").join("\n");
-        <?
-    }
-    ?>
 
     }
 
@@ -961,17 +994,17 @@ $folder = $reporte->getDirectorioBase();
                     </div>
                 </td>
             </tr>
-            <tr>
-                <td colspan="2" id="button1"></td>
-            </tr>
+            <!--<tr>
+                <td colspan="2" id="button11"></td>
+            </tr>-->
 
-            <tr>
+            <tr id="indicador">
                 <td><div align="left"><b>Fecha Recibido Status:</b><br />
-            <?
-            echo $form['fchhorarecibo']->renderError();
-            echo $form['fchrecibo']->renderError();
-            echo $form['fchrecibo']->render();
-            ?>		
+                    <?
+                    echo $form['fchhorarecibo']->renderError();
+                    echo $form['fchrecibo']->renderError();
+                    echo $form['fchrecibo']->render();
+                    ?>		
                     </div></td>
                 <td><div align="left"><b>Hora de Recibido - Formato 24h: (HH:mm)</b><br />
                         <?
@@ -980,7 +1013,7 @@ $folder = $reporte->getDirectorioBase();
                         ?>		
                     </div></td>
             </tr>
-            <tr>
+            <tr id="observaciones">
                 <td colspan="2"><div align="left"><b>Observaciones IDG (Justificaci&oacute;n Demoras):</b><br />
                         <?
                         echo $form['observaciones_idg']->renderError();

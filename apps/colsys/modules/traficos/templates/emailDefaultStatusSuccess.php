@@ -343,8 +343,8 @@ $modo = $sf_data->getRaw("modo");
         <br />
         <br />
         <?
-        if ($reporte->getCaTransporte() == Constantes::AEREO && ($status->getCaIdetapa() == "IACAD" || $status->getCaIdetapa() == "IACCR" || $status->getCaIdetapa() == "IACEM" || $status->getCaIdetapa() == "IACDE" || $status->getCaIdetapa() == "IACIM" || $status->getCaIdetapa() == "IACMV" || $status->getCaIdetapa() == "IACTD" ))
-            echo $textos['mensajeAereo'] . "<br />";
+        /*if ($reporte->getCaTransporte() == Constantes::AEREO && ($status->getCaIdetapa() == "IACAD" || $status->getCaIdetapa() == "IACCR" || $status->getCaIdetapa() == "IACEM" || $status->getCaIdetapa() == "IACDE" || $status->getCaIdetapa() == "IACIM" || $status->getCaIdetapa() == "IACMV" || $status->getCaIdetapa() == "IACTD" ))
+            echo $textos['mensajeAereo'] . "<br />";*/
 
         if ($status->getCaIdetapa() == "IMCCR")
             echo $textos['mensajeReservaMaritimo'] . "<br />";
