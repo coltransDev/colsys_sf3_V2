@@ -172,6 +172,7 @@ class pricingActions extends sfActions {
         $ultLinea = null;
 	
         foreach ($trayectos as $trayecto) {
+            $contrato = "";
             //Por este campo se agrupan los conceptos
             $trayectoStr = strtoupper($trayecto["o_ca_ciudad"]) . "»" . strtoupper($trayecto["d_ca_ciudad"]) . " - ";
 
