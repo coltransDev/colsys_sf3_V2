@@ -20,6 +20,7 @@ class idsComponents  extends sfComponents
                             ->createQuery("c")
                             ->innerJoin("c.Ciudad ci")
                             ->where("c.ca_id = ?",  $this->ids->getCaId() )
+                            ->addWhere("c.ca_fcheliminado IS NULL")
                             ->addOrderBy( "c.ca_principal DESC" )
                             ->addOrderBy( "ci.ca_ciudad ASC" )
                             ->execute();

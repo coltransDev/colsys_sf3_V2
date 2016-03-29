@@ -132,6 +132,7 @@ class idsActions extends sfActions {
                 if ($idciudad) {
                     $q->addWhere('c.ca_idciudad = ?', $idciudad);
                 }
+                $q->addWhere("s.ca_fcheliminado IS NULL");
                 break;
         }
 
@@ -633,6 +634,39 @@ class idsActions extends sfActions {
         }
     }
 
+    /**
+     * Deshabilita una sucursal con sus contactos
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeEliminarSucursalIds(sfWebRequest $request) {
+        $this->nivel = $this->getNivel();
+
+        /* if( $this->nivel<=0 ){
+          $this->forward404();
+          } */
+
+        $this->modo = $request->getParameter("modo");
+
+        $sucursal = Doctrine::getTable("IdsSucursal")->find($request->getParameter("idsucursal"));
+        $this->forward404Unless($sucursal);
+        
+        $sucursal->setCaFcheliminado(date("Y-m-d H:i:s"));
+        $sucursal->setCaUsueliminado($this->getUser()->getUserId());
+        $sucursal->save();
+        
+        $contactos = $sucursal->getContactos();
+        
+        if($contactos){
+            foreach($contactos as $contacto){
+                $contacto->setCaFcheliminado(date("Y-m-d H:i:s"));
+                $contacto->setCaUsueliminado($this->getUser()->getUserId());
+                $contacto->save();
+            }
+        }
+        $this->redirect("ids/verIds?modo=" . $this->modo . "&id=" . $sucursal->getCaId());
+    }
+    
     /**
      * Elimina un contacto de una sucursal
      *
@@ -1298,6 +1332,35 @@ class idsActions extends sfActions {
                 }
                 $evento->setCaIdcriterio($bindValues["tipo_evento"]);
                 $evento->save();
+                
+                if ($this->modo == "prov") {
+                    $usuarios = Doctrine::getTable("Usuario")
+                            ->createQuery("u")
+                            ->innerJoin("u.UsuarioPerfil p")
+                            ->where("p.ca_perfil = ? ", "administracion-de-proveedores")
+                            ->addWhere("u.ca_activo = ?", true)
+                            ->execute();
+
+                    $email = new Email();
+                    $email->setCaUsuenvio($evento->getCaUsucreado());
+                    $email->setCaTipo("Eventos");
+                    $email->setCaFrom($evento->getUsuCreado()->getCaEmail());
+                    $email->setCaReplyto($evento->getUsuCreado()->getCaEmail());
+                    $email->setCaFromname($evento->getUsuCreado()->getCaNombre());
+                    foreach ($usuarios as $usuario) {
+                        $email->addTo($usuario->getCaEmail());
+                    }              
+                    $email->setCaSubject("Evento reportado: ".$evento->getIds()->getCaNombre());
+                    $request->setParameter("format", "email");
+                    $request->setParameter("evento", $evento->getCaEvento());
+                    $request->setParameter("compania", $evento->getIds()->getCaNombre());
+                    $request->setParameter("criterio", $evento->getIdsCriterio()->getCaTipocriterio());
+                    $request->setParameter("documento", $evento->getCaReferencia());
+
+                    $mensaje = sfContext::getInstance()->getController()->getPresentationFor( 'ids', 'emailEventos');
+                    $email->setCaBodyhtml($mensaje);
+                    $email->save();             
+                }
 
                 $this->redirect($this->url);
             }
@@ -1444,6 +1507,33 @@ class idsActions extends sfActions {
                 }
                 $evento->setCaIdcriterio($bindValues["tipo_evento"]);
                 $evento->save();
+                
+                $usuarios = Doctrine::getTable("Usuario")
+                        ->createQuery("u")
+                        ->innerJoin("u.UsuarioPerfil p")
+                        ->where("p.ca_perfil = ? ", "asistente-de-pricing")
+                        ->addWhere("u.ca_activo = ?", true)
+                        ->execute();
+
+                $email = new Email();
+                $email->setCaUsuenvio($evento->getCaUsucreado());
+                $email->setCaTipo("Eventos");
+                $email->setCaFrom($evento->getUsuCreado()->getCaEmail());
+                $email->setCaReplyto($evento->getUsuCreado()->getCaEmail());
+                $email->setCaFromname($evento->getUsuCreado()->getCaNombre());
+                foreach ($usuarios as $usuario) {
+                    $email->addTo($usuario->getCaEmail());
+                }              
+                $email->setCaSubject("Evento reportado: ".$evento->getIds()->getCaNombre());
+                $request->setParameter("format", "email");
+                $request->setParameter("evento", $evento->getCaEvento());
+                $request->setParameter("compania", $evento->getIds()->getCaNombre());
+                $request->setParameter("criterio", $evento->getIdsCriterio()->getCaTipocriterio());
+                $request->setParameter("documento", $evento->getCaReferencia());
+
+                $mensaje = sfContext::getInstance()->getController()->getPresentationFor( 'ids', 'emailEventos');
+                $email->setCaBodyhtml($mensaje);
+                $email->save();                
 
                 $this->redirect($this->url);
             }
@@ -1495,6 +1585,7 @@ class idsActions extends sfActions {
              $q->addWhere("p.ca_fchaprobado IS NULL");
              //$q->addWhere("p.ca_activo_impo = ? OR p.ca_activo_expo = ?", array("true","true"));
          }
+         $q->addWhere("p.ca_activo_impo = true OR p.ca_activo_expo=true");
          $this->proveedores = $q->execute();
     }
 
@@ -1982,7 +2073,14 @@ class idsActions extends sfActions {
             foreach ($contactos as $contacto) {
                 $email->addTo($contacto->getCaEmail());
             }
-
+            
+            $usuarios = Doctrine::getTable("Usuario")
+                ->createQuery("u")
+                ->innerJoin("u.UsuarioPerfil p")
+                ->where("p.ca_perfil = ? ", "asistente-de-pricing")
+                ->addWhere("u.ca_activo = ?", true)
+                ->execute();
+            
             $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "ids" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "textos.yml";
             $textos = sfYaml::load($config);
 
@@ -2009,7 +2107,9 @@ class idsActions extends sfActions {
             $email->setCaFromname("Pricing & Procurement Coltrans S.A.");
             $email->setCaSubject($textos['asuntoEmail']);
             $email->setCaReplyto("pricing@coltrans.com.co");
-
+            foreach($usuarios as $usuario){
+                $email->addCc($usuario->getCaEmail());
+            }
             $email->setCaBody($msg);
             $email->setCaBodyhtml(Utils::replace($msg));
 
@@ -2361,7 +2461,17 @@ class idsActions extends sfActions {
         
     }
     
-       public function executeGenerarPDFComunicadoProveedores(sfWebRequest $request){
+    public function executeEmailEventos(sfWebRequest $request){
+        
+        $this->setLayout("email");
+        
+        $this->compania = $request->getParameter("compania");
+        $this->evento = $request->getParameter("evento");
+        $this->criterio = $request->getParameter("criterio");
+        $this->documento = $request->getParameter("documento");
+    }
+    
+    public function executeGenerarPDFComunicadoProveedores(sfWebRequest $request){
         
         $this->proveedor = Doctrine::getTable("IdsProveedor")->find($this->getRequestParameter("idproveedor"));        
         $this->forward404Unless($this->proveedor);

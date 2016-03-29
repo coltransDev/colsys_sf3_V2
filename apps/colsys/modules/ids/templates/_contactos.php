@@ -47,6 +47,7 @@
                     <?
                     if( $nivel>=3 ){
                         echo link_to(image_tag("16x16/edit.gif"), "ids/formSucursalIds?idsucursal=".$sucursal->getCaIdsucursal()."&modo=".$modo,  array("title"=>"Editar sucursal"));
+                        echo link_to(image_tag("16x16/delete.gif"), "ids/eliminarSucursalIds?modo=" . $modo . "&idsucursal=".$sucursal->getCaIdsucursal() . "", array("confirm" => "Esta seguro?"));
                     }
                     ?>
                     
