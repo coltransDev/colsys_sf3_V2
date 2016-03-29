@@ -924,6 +924,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     }
 
                     $visible = ($rs->Value('ca_usucerrado') == '') ? 'visible' : 'hidden';
+                    $visibleLiq = ($nivel > 3) ? 'visible' : 'hidden';
                     echo "<TR>";
                     echo "  <TD Class=imprimir COLSPAN=6>&nbsp;</TD>";
                     echo "</TR>";
@@ -939,7 +940,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     echo "      <IMG style='visibility: $visible;$level0;cursor:pointer' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"AdicionarCs\",  \"" . $rs->Value('ca_referencia') . "\", 0);'>";  // Botón para la creación de un Registro Nuevo
                     echo "      <IMG style='cursor:pointer;$level0' src='./graficos/details.gif' onClick=\"document.location='/ids/formEventos?referencia=" . $rs->Value('ca_referencia') . "'\" title='Eventos Proveedores' >";
                     //if ($nivel > 3) {
-                        echo "  <IMG style='visibility: $visible;$level0;cursor:pointer' src='./graficos/fileopen.png' onClick=\"document.location='/inoMaritimo/formUtilidadesNew?referencia=" . $rs->Value('ca_referencia') . "'\" title='Liquidación Utilidad' >";
+                        echo "  <IMG style='visibility: $visibleLiq;$level0;cursor:pointer' src='./graficos/fileopen.png' onClick=\"document.location='/inoMaritimo/formUtilidadesNew?referencia=" . $rs->Value('ca_referencia') . "'\" title='Liquidación Utilidad' >";
                     //}
                     echo "      <IMG style='cursor:pointer;$level0' src='./graficos/fileopen.png' alt='Agregar Copia Archivos de costos' border=0 onclick='javascript:subir_hbl(\"" . str_replace(".","|",$rs->Value('ca_referencia')) . "\",\"costos\")'>";
                     echo "  </TH>";
