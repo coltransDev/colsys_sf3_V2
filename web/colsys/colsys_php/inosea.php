@@ -428,7 +428,6 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     }
                     $visible = ($rs->Value('ca_usucerrado') == '') ? 'visible' : 'hidden';
                     $abrible = ($rs->Value('ca_usucerrado') != '' and $nivel >= 3) ? 'visible' : 'hidden';
-                    $liquida = ($nivel >= 3) ? 'visible' : 'hidden';
                     echo "<TR>";
                     echo "  <TD Class=partir>Referencia:</TD>";
                     echo "  <TD Class=listar style='font-size: 11px; font-weight:bold;' COLSPAN=2>" . $rs->Value('ca_referencia') . "</TD>";
@@ -800,7 +799,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             $hay_cot = false;
                             $tm = & DlRecordset::NewRecordset($conn);
                             if($cl->Value('ca_consecutivo') != ""){
-                              if (!$tm->Open("select ca_idcotizacion, ca_consecutivo from tb_cotizaciones where ca_consecutivo in (select ca_idcotizacion from tb_reportes rp inner join (select ca_consecutivo, max(ca_version) as ca_version from tb_reportes where ca_consecutivo = '".$cl->Value('ca_consecutivo')."' group by ca_consecutivo) vr on rp.ca_consecutivo = vr.ca_consecutivo and rp.ca_version = vr.ca_version)")) {
+                              if (!$tm->Open("select ca_idcotizacion, ca_consecutivo from tb_cotizaciones where ca_consecutivo in (select ca_idcotizacion from tb_reportes rp inner join (select ca_consecutivo, max(ca_version) as ca_version from tb_reportes where ca_consecutivo = '".$cl->Value('ca_consecutivo')."' group by ca_consecutivo) vr on rp.ca_consecutivo = vr.ca_consecutivo and rp.ca_version = vr.ca_version) order by ca_idcotizacion desc limit 1")) {
                                  echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
                                  echo "<script>document.location.href = 'entrada.php?id=780';</script>";
                                  exit;
@@ -935,14 +934,17 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     echo "  <TABLE WIDTH=100% CELLSPACING=1>";
 
                     echo "<TR>";
-                    echo "<TH Class=titulo COLSPAN=6>Cuadro de Costos de la Referencia</TH>";                    
-                    echo "<TH style='width: 50px;'>";
-                    echo "ll";
-                    echo " <IMG style='visibility: $visible;$level0;cursor:pointer' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"AdicionarCs\",  \"" . $rs->Value('ca_referencia') . "\", 0);'>";  // Botón para la creación de un Registro Nuevo
-                    echo " <IMG style='cursor:pointer;$level0' src='./graficos/details.gif' onClick=\"document.location='/ids/formEventos?referencia=" . $rs->Value('ca_referencia') . "'\" title='Eventos Proveedores' >";
-                    echo " <IMG style='visibility: $liquida;$level0;cursor:pointer' src='./graficos/fileopen.png' onClick=\"document.location='/inoMaritimo/formUtilidadesNew?referencia=" . $rs->Value('ca_referencia') . "'\" title='Liquidación Utilidad' >";
-                    echo " <IMG style='cursor:pointer;$level0' src='./graficos/fileopen.png' alt='Agregar Copia Archivos de costos' border=0 onclick='javascript:subir_hbl(\"" . str_replace(".","|",$rs->Value('ca_referencia')) . "\",\"costos\")'>";
-                    echo "</TH>";
+                    echo "  <TH Class=titulo COLSPAN=5>Cuadro de Costos de la Referencia</TH>";                    
+                    echo "  <TH Class=titulo COLSPAN=2 style='width: 100px; text-align: right;'>";
+                    echo "      <IMG style='visibility: $visible;$level0;cursor:pointer' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"AdicionarCs\",  \"" . $rs->Value('ca_referencia') . "\", 0);'>";  // Botón para la creación de un Registro Nuevo
+                    echo "      <IMG style='cursor:pointer;$level0' src='./graficos/details.gif' onClick=\"document.location='/ids/formEventos?referencia=" . $rs->Value('ca_referencia') . "'\" title='Eventos Proveedores' >";
+                    //if ($nivel > 3) {
+                        echo "  <IMG style='visibility: $visible;$level0;cursor:pointer' src='./graficos/fileopen.png' onClick=\"document.location='/inoMaritimo/formUtilidadesNew?referencia=" . $rs->Value('ca_referencia') . "'\" title='Liquidación Utilidad' >";
+                    //}
+                    echo "      <IMG style='cursor:pointer;$level0' src='./graficos/fileopen.png' alt='Agregar Copia Archivos de costos' border=0 onclick='javascript:subir_hbl(\"" . str_replace(".","|",$rs->Value('ca_referencia')) . "\",\"costos\")'>";
+                    echo "  </TH>";
+                    echo "</TR>";
+                    
                     while (!$cs->Eof() and !$cs->IsEmpty()) {                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
                         echo "<TR HEIGHT=5>";
                         echo "  <TD Class=invertir COLSPAN=7></TD>";
