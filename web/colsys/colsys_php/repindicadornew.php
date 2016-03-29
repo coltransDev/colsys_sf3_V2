@@ -370,8 +370,9 @@ if (!isset($boton) and ! isset($buscar)) {
         if ($departamento == 'Aéreo') {
             $source = "vi_repindicador_air";
             $subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, rs.ca_fchcontinuacion, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IACAD') group by rp.ca_consecutivo, rs.ca_fchllegada, rs.ca_fchcontinuacion order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
+            $subque.= " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_fact, min(rs.ca_fchenvio::date) as ca_fchenvio from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IAFFL') group by rp.ca_consecutivo) rs2 ON (vi_repindicador_air.ca_consecutivo = rs2.ca_consecutivo_fact)";
             $subque.= " LEFT OUTER JOIN (select ca_referencia as ca_referencia_fac, ca_idcliente as ca_idcliente_fac, ca_hawb as ca_hawb_fac, ca_fchfactura, ca_usucreado, ca_observaciones from tb_inoingresos_air where ((string_to_array(ca_referencia,'.'))[5]::int) in ($ano_mem) and ((string_to_array(ca_referencia,'.'))[3])::text in ($mes_mem) order by ca_referencia, ca_idcliente, ca_hawb, ca_fchfactura) ii ON ($source.ca_referencia = ii.ca_referencia_fac and $source.ca_idcliente = ii.ca_idcliente_fac and $source.ca_hawb = ii.ca_hawb_fac) ";
-            $campos.= ", ca_referencia, ca_idcliente_fac, ca_hawb, ca_fchfactura";
+            $campos.= ", ca_referencia, ca_idcliente_fac, ca_hawb, ca_fchenvio, ca_fchfactura";
         } else if ($departamento == 'Marítimo') {
             $source = "vi_repindicador_sea";
             $subque = " LEFT OUTER JOIN (select to_char(rs.ca_fchllegada,'YYYY') as ca_ano_new, to_char(rs.ca_fchllegada,'MM') as ca_mes_new, rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa in ('IMCPD')) group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
@@ -420,7 +421,7 @@ if (!isset($boton) and ! isset($buscar)) {
         $transporte = "ca_transporte = '$departamento'";
         $impoexpo = "ca_impoexpo = 'Importación'";
         $sin_etapa = ($departamento == "Marítimo") ? "rs.ca_idetapa != 'IMAGR' and" : "";
-        $subque = "LEFT OUTER JOIN (select to_char(ca_fchrecibo,'YYYY') as ca_ano_new, to_char(ca_fchrecibo,'MM') as ca_mes_new, ca_ciudad as ca_ciuorigen, ca_consecutivo as ca_consecutivo_sub, ca_fchrecibo, ca_fchenvio, ca_usuenvio, ca_observaciones_idg from tb_repstatus rs RIGHT OUTER JOIN vi_usuarios usr ON rs.ca_usuenvio = usr.ca_login and usr.ca_empresa = 'Coltrans S.A.S.' LEFT OUTER JOIN tb_reportes rp ON ($sin_etapa rs.ca_idetapa != 'IAVAR' and rp.ca_idreporte = rs.ca_idreporte and rp.$transporte) INNER JOIN tb_ciudades pd ON (rp.ca_origen = pd.ca_idciudad) where " . str_replace("ca_ano", "to_char(ca_fchrecibo,'YYYY')", $ano) . " and " . str_replace("ca_mes", "to_char(ca_fchrecibo,'MM')", $mes) . " and ca_tipo != 2 order by ca_consecutivo, ca_fchrecibo) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
+        $subque = "LEFT OUTER JOIN (select to_char(ca_fchrecibo,'YYYY') as ca_ano_new, to_char(ca_fchrecibo,'MM') as ca_mes_new, ca_ciudad as ca_ciuorigen, ca_consecutivo as ca_consecutivo_sub, ca_fchrecibo, ca_fchenvio, ca_usuenvio, ca_observaciones_idg, te.ca_etapa from tb_repstatus rs RIGHT OUTER JOIN vi_usuarios usr ON rs.ca_usuenvio = usr.ca_login and usr.ca_empresa = 'Coltrans S.A.S.' LEFT OUTER JOIN tb_reportes rp ON ($sin_etapa rp.ca_idreporte = rs.ca_idreporte and rp.$transporte) INNER JOIN tb_ciudades pd ON (rp.ca_origen = pd.ca_idciudad) JOIN tb_tracking_etapas te ON te.ca_idetapa = rs.ca_idetapa where " . str_replace("ca_ano", "to_char(ca_fchrecibo,'YYYY')", $ano) . " and " . str_replace("ca_mes", "to_char(ca_fchrecibo,'MM')", $mes) . " and rs.ca_tipo != 2 order by ca_consecutivo, ca_fchrecibo) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
         $sql = "select ca_fchfestivo from tb_festivos";
         if (!$tm->Open($sql)) {
             echo "Error 399: $sql";
@@ -435,7 +436,7 @@ if (!isset($boton) and ! isset($buscar)) {
         }
         $tm->MoveFirst();
         $ind_mem = 5;
-        $add_cols = 6;
+        $add_cols = 7;
         $ano = str_replace("ca_ano", "ca_ano_new", $ano);
         $mes = str_replace("ca_mes", "ca_mes_new", $mes);
         $campos = str_replace("ca_ano", "ca_ano_new", $campos);
@@ -819,7 +820,7 @@ where i.oid in (
     $queries = "select * from $source $subque where " . ($impoexpo ? $impoexpo . " and " : "") . "  $sucursal $cliente and " . ($ciudestino ? $ciudestino . " and" : "") . "   " . ($transporte ? $transporte . " and" : "") . " $ano and $mes";
     $queries.= " order by $campos";
 //    die($queries);
-//    echo $queries;
+    //echo $queries;
     if (!$rs->Open("$queries")) {                              // Selecciona todos lo registros de la vista vi_repgerencia_sea
         echo "Error 755: $queries";
         //echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";        // Muestra el mensaje de error
@@ -881,6 +882,9 @@ where i.oid in (
             } else {
                 echo "	<TH>Fch.Factura</TH>";
             }
+            if ($departamento == 'Aéreo'){
+                echo "	<TH>Fch.Envío</TH>";
+            }
             echo "	<TH>Usuario</TH>";
             echo "	<TH>Observaciones</TH>";
             echo "	<TH>Dif.</TH>";
@@ -892,6 +896,7 @@ where i.oid in (
             echo "	<TH>Usuario</TH>";
             echo "	<TH>Dif.</TH>";
             echo "	<TH>Observaciones</TH>";
+            echo "	<TH>Etapa</TH>";
             break;
         case 6:
             echo "	<TH>Fch.Reporte</TH>";
@@ -1088,10 +1093,11 @@ where i.oid in (
                 $idc_tmp = $rs->Value('ca_idcliente');
                 $hbl_tmp = $rs->Value('ca_hbls');
                 $fch_llegada = ($departamento == "OTM") ? $rs->Value('ca_fchplanilla') : $rs->Value('ca_fchllegada');
-                $fch_factura = ($departamento == "Marítimo") ? $rs->Value('ca_fchenvio') : $rs->Value('ca_fchfactura');
+                $fch_factura = ($departamento == "Marítimo") ? $rs->Value('ca_fchenvio') :($rs->Value('ca_fchenvio')?$rs->Value('ca_fchenvio'):$rs->Value('ca_fchfactura'));
+                //$fch_factura = ($departamento == "Marítimo") ? $rs->Value('ca_fchenvio') :$rs->Value('ca_fchfactura');
                 echo "  <TD Class=mostrar style='font-size: 9px;'>" . $rs->Value('ca_referencia') . "</TD>";
                 echo "  <TD Class=mostrar style='font-size: 9px;'>" . $rs->Value('ca_continuacion') . "</TD>";
-                if (in_array(trim($rs->Value("ca_observaciones")), array("Facturación al Agente", "Reemplazo Factura", "Cierre contable de Clientes", "Referencia Particulares", "Acuerdos Comerciales"))) {
+                if (in_array(trim($rs->Value("ca_observaciones")), array("Facturación al Agente", "Reemplazo Factura", "Cierre contable de Clientes", "Referencia Particulares", "Acuerdos Comerciales","Costos de Origen no informados a tiempo"))) {
                     $dif_mem = null;
                 } else {
                     if ($rs->Value('ca_continuacion') == "CABOTAJE") {
@@ -1104,6 +1110,9 @@ where i.oid in (
                 $color = analizar_dif("D", $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
                 echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $fch_llegada . "</TD>";
                 echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $fch_factura . "</TD>";
+                if ($departamento == 'Aéreo') {
+                    echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_fchenvio') . "</TD>";
+                }
                 echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_usucreado') . "</TD>";
                 echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value("ca_observaciones") . "</TD>";
                 echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>" . $dif_mem . "</TD>";
@@ -1160,7 +1169,12 @@ where i.oid in (
                     $tstamp_recibido = mktime($hor, $min, $seg, $mes, $dia, $ano);
                     list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchenvio'), "%d-%d-%d %d:%d:%d");
                     $tstamp_enviado = mktime($hor, $min, $seg, $mes, $dia, $ano);
-                    $dif_mem = calc_dif($festi, $tstamp_recibido, $tstamp_enviado, $entrada, $salida);
+                    
+                    if ($departamento == "Aéreo" && $rs->Value('ca_etapa')=="Comunicaciones Varias") {
+                        $dif_mem = null;
+                    }else{
+                        $dif_mem = calc_dif($festi, $tstamp_recibido, $tstamp_enviado, $entrada, $salida);
+                    }
                     $lcs_var = ($lcs_array[$rs->Value('ca_sucursal')]) ? $lcs_array[$rs->Value('ca_sucursal')] : $lcs_array['Todas'];
                     $color = analizar_dif("T", $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
                     echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_ciuorigen') . "</TD>";
@@ -1169,6 +1183,7 @@ where i.oid in (
                     echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_usuenvio') . "</TD>";
                     echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>" . $dif_mem . "</TD>";
                     echo "  <TD Class=mostrar style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_observaciones_idg') . "</TD>";
+                    echo "  <TD Class=mostrar style='font-size: 9px; text-align:left;'>" . $rs->Value('ca_etapa') . "</TD>";
                     if ($adicionales) {
                         echo "</TR>";
                     }
@@ -2110,7 +2125,7 @@ where i.oid in (
     echo "</TR>";
     echo "<TR>";
     echo "  <TD Class=listar>Registros Excluidos del Promedio</TD>";
-    echo "  <TD Class=listar>No. Casos " . count($array_null) . "</TD>";
+    echo "  <TD Class=listar>No. Casos " . count($array_null) ."</TD>";
     echo "  <TD Class=listar style='font-size: 9px; text-align:right; font-weight:bold;'>" . formatNumber(round(count($array_null) / $contador * 100, 2), 2) . "%</TD>";
     echo "  <TD Class=listar COLSPAN=3>&nbsp;</TD>";
     echo "</TR>";
