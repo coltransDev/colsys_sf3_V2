@@ -236,6 +236,7 @@ class inoMaritimoActions extends sfActions {
         $utilidades = Doctrine::getTable("InoUtilidadliqSea")
                 ->createQuery("u")
                 ->innerJoin("u.InoClientesSea c")
+                ->innerJoin("c.InoMaestraSea im")
                 ->addWhere("c.ca_referencia = ?", $referencia->getCaReferencia())
                 ->execute();
 
@@ -249,6 +250,7 @@ class inoMaritimoActions extends sfActions {
             $referencias[$key]["ca_prepaid_vlr"] = $ut->getCaPrepaidVlr();
             $referencias[$key]["ca_factura_vlr"] = $ut->getCaFacturaVlr();
             $referencias[$key]["ca_valor"] = $ut->getCaValor();
+            $referencias[$key]["ca_usucerrado"] = $ut->getInoClientesSea()->getInoMaestraSea()->getCaUsucerrado();
         }
 
         $this->responseArray = array("success" => true, "total" => count($referencias), "root" => $referencias);
@@ -867,7 +869,7 @@ class inoMaritimoActions extends sfActions {
             $condicion.= "ca_fchreferencia between '$fchinicial' and '$fchfinal' and";
         }
         if ($opcion == 'ca_referencia') {
-            $condicion.= " $opcion like lower('%" . $criterio . "%') and";
+            $condicion = " $opcion like lower('%" . $criterio . "%') and";
         } elseif ($opcion == 'ca_mbls' or $opcion == 'ca_motonave') {
             $condicion.= " lower($opcion) like lower('%" . $criterio . "%') and";
         } elseif ($opcion == 'ca_idequipo') {

@@ -38,6 +38,12 @@ class inomaritimoComponents extends sfComponents {
             $this->costos[] = array("idcosto" => $costo["ca_idcosto"], "costo" => utf8_encode($costo["ca_costo"]));
         }
         
+        $inoMaestraSea = Doctrine::getTable("InoMaestraSea")->find($this->numRef);
+        
+        if ($inoMaestraSea->getCaUsucerrado())
+            $this->noeditable = true;
+        else
+            $this->noeditable = "false";        
     }
 
     public function executePanelReferencias(sfWebRequest $request) {

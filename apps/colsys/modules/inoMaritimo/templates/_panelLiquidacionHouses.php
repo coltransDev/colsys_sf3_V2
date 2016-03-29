@@ -5,6 +5,7 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 $costos = $sf_data->getRaw("costos");
+$noeditable = $sf_data->getRaw("noeditable");
 ?>
 
 <script type="text/javascript">
@@ -128,7 +129,8 @@ $costos = $sf_data->getRaw("costos");
             {name: 'hbl', type: 'string', mapping: 'ca_hbl'},
             {name: 'prepaid_vlr', type: 'float', mapping: 'ca_prepaid_vlr'},
             {name: 'factura_vlr', type: 'float', mapping: 'ca_factura_vlr'},
-            {name: 'valor', type: 'float', mapping: 'ca_valor'}
+            {name: 'valor', type: 'float', mapping: 'ca_valor'},
+            {name: 'usucerrado', type: 'string', mapping: 'ca_usucerrado'}
         ]);
         this.recordPrm = new Ext.data.Record.create([
             {name: 'idparametro', type: 'integer', mapping: 'ca_idparametro'},
@@ -171,13 +173,15 @@ $costos = $sf_data->getRaw("costos");
                 text: 'Importar Bls',
                 iconCls: 'import',
                 handler: this.importar,
-                scope: this
+                scope: this,
+                disabled: <?=$noeditable?>
             }, {
                 id: 'parametrosbtn',
                 text: 'Parámetros',
                 iconCls: 'page_white_edit',
                 handler: this.parametros,
-                scope: this
+                scope: this,
+                disabled: <?=$noeditable?>
             }, {
                 id: 'liquidarbtn',
                 text: 'Liquidar',
@@ -265,6 +269,15 @@ $costos = $sf_data->getRaw("costos");
                 }
             }]
         });
+        
+        var store = this.store;        
+        this.getColumnModel().isCellEditable = function(colIndex, rowIndex) {
+            var record = store.getAt(rowIndex);                        
+            if(record.data.usucerrado){                
+                return false;
+            }
+            return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);       
+        }   
     };
     Ext.extend(PanelLiquidaHouses, Ext.grid.EditorGridPanel, {
         importar: function () {
