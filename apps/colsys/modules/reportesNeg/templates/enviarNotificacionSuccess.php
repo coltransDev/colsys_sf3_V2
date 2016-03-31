@@ -6,7 +6,7 @@
 
 <br />
 
-<form action="<?=url_for("reportesNeg/enviarNotificacion?idreporte=".$reporte->getCaIdreporte())?>" method="post">
+<form action="<?=url_for("reportesNeg/enviarNotificacion?idreporte=".$reporte->getCaIdreporte())?>" method="post" enctype="multipart/form-data">
 
 <table width="50%" border="0" class="tableList">
 <tr>
@@ -112,6 +112,15 @@ foreach( $gruposObligatorios as $grupo=>$logins ){
                 ?>
             </select>
             </td>
+    </tr>
+    <tr>
+        <td colspan="7">
+            <div align="left"><b>Mensaje (Opcional)</b><br>
+            <textarea name="mensaje" style="width: 99%" rows="2" ><?=isset($message)?$message:""?></textarea></div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="7"><div align="left"><b>Adjuntar Archivo</b><br><input type='file' id='attachment' name='attachment' size="65" /></td></div>
     </tr>
     <tr>
         <td colspan="7">

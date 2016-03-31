@@ -4049,6 +4049,26 @@ class reportesNegActions extends sfActions {
             $mensaje = sfContext::getInstance()->getController()->getPresentationFor('reportesNeg', 'emailReporte');
             $email->setCaBodyhtml($mensaje);            
             $email->save($conn);
+            
+            if (is_uploaded_file($_FILES['attachment']['tmp_name'])) {
+                $attachment = $_FILES['attachment'];
+            } else {
+                $attachment = null;
+            }
+
+            if ($attachment) {
+                $directory = $email->getDirectorio();
+                if( !is_dir($directory) ){
+                    @mkdir($directory, 0777, true);
+                }
+                if (move_uploaded_file($_FILES['attachment']['tmp_name'] , $directory.basename($_FILES['attachment']['name']) )) {
+                    $email->addAttachment($email->getDirectorioBase().basename($_FILES['attachment']['name']));
+                    $email->save($conn);
+                }else{
+                    echo "Error: El archivo adjunto no se ha subido correctamente.";
+                }
+            }
+            
             $con->commit();
             $this->asignaciones = $notificar;
             
