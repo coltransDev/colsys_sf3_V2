@@ -117,9 +117,15 @@ Ext.onReady(function(){
                         "readOnly": <?=$opcion=="consulta"?"true":"false"?>
                     }),
                     new PanelConsultaCiudades({
-                        title: "OTM/DTA",
+                        title: "OTM Marítimo",
                         "impoexpo": "<?=(Constantes::IMPO)?>",
                         "transporte": "<?=(Constantes::OTMDTA)?>",
+                        "readOnly": <?=$opcion=="consulta"?"true":"false"?>
+                    }),
+                    new PanelConsultaCiudades({
+                        title: "OTM Aéreo",
+                        "impoexpo": "<?=(Constantes::IMPO)?>",
+                        "transporte": "<?=(Constantes::OTMAIR)?>",
                         "readOnly": <?=$opcion=="consulta"?"true":"false"?>
                     }),
                     new PanelConsultaCiudades({
