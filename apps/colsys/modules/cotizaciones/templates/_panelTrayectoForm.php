@@ -168,7 +168,7 @@ include_component("widgets", "widgetCiudad");
                             id: 'producto',
                             lazyRender:true,
                             listClass: 'x-combo-list-small',
-                            store: [['OTM', 'OTM'],['DTA', 'DTA']]
+                            store: [['OTM', 'OTM'],['DTA', 'DTA'],['OTMAIR', 'OTM AEREO']]
                         })
                         ,
                         new Ext.form.ComboBox({
@@ -182,7 +182,7 @@ include_component("widgets", "widgetCiudad");
                             id: 'modalidad',
                             lazyRender:true,
                             listClass: 'x-combo-list-small',
-                            store: [['FCL', 'FCL'],['LCL', 'LCL']]
+                            store: [['FCL', 'FCL'],['LCL', 'LCL'],['CONTINUACION', 'CONTINUACION']]
                         })
                         ,{
                             xtype:'hidden',
