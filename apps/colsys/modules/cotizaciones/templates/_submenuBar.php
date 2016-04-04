@@ -58,7 +58,9 @@ switch($action){
                 $button[$i]["name"]="Nueva Version ";
 		$button[$i]["tooltip"]="Crea una nueva versi&oacute;n con los datos de la cotizaci&oacute;n anterior";
 		$button[$i]["image"]="22x22/copy.gif";
-		$button[$i]["link"]= "cotizaciones/copiarCotizacion?idcotizacion=".$this->getRequestParameter("id")."&nv=true";
+                $button[$i]["id"]="btnversion";
+                $button[$i]["onClick"]= "nuevaVersion()";
+		//$button[$i]["link"]= "cotizaciones/copiarCotizacion?idcotizacion=".$this->getRequestParameter("id")."&nv=true";
 		$i++;
 		
 		$button[$i]["name"]="Anular ";
@@ -108,11 +110,16 @@ if( $action!="ayuda" ){
 
 <script language="javascript" type="text/javascript">
 function copiarCot(){
-    
-    $("#btncopiar").attr("onClick", "");    
-    location.href="/cotizaciones/copiarCotizacion?idcotizacion=<?=$this->getRequestParameter("id")?>";
+    if(window.confirm("Realmente desea copiar la cotización?")){
+        $("#btncopiar").attr("onClick", "");    
+        location.href="/cotizaciones/copiarCotizacion?idcotizacion=<?=$this->getRequestParameter("id")?>";
+    }
 }
-	
-	
-	
+
+function nuevaVersion(){
+    if(window.confirm("Realmente desea crear una nueva versión de la cotización?")){
+        $("#btnversion").attr("onClick", "");    
+        location.href="/cotizaciones/copiarCotizacion?idcotizacion=<?=$this->getRequestParameter("id")?>&nv=true";
+    }
+}
 </script>
