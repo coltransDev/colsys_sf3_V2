@@ -86,7 +86,52 @@ class falabellaComponents extends sfComponents {
         $this->idtransporte = $this->getRequestParameter("idtransporte");
         $this->transporte = $this->getRequestParameter("transporte");
     }
-
-}
-
+    
+    public function executeGridDatosIdg($request) {
+        
+                
+    }
+    
+    public function executeGridPanelObservaciones($request) {
+        
+        $this->periodos = array();        
+        $this->periodos[]=array("id"=>1, "name"=>"Ene-Feb");
+        $this->periodos[]=array("id"=>2, "name"=>"Mar-Abr");
+        $this->periodos[]=array("id"=>3, "name"=>"May-Jun");
+        $this->periodos[]=array("id"=>4, "name"=>"Jul-Ago");
+        $this->periodos[]=array("id"=>5, "name"=>"Sep-Oct");
+        $this->periodos[]=array("id"=>6, "name"=>"Nov-Dic");
+        
+        $this->graficas = array();        
+        $this->graficas[]=array("id"=>1, "name"=>"Asn Performance Bimonthly");
+        $this->graficas[]=array("id"=>3, "name"=>"Asn Performance by Origin Bimonthly");
+        $this->graficas[]=array("id"=>5, "name"=>"Document Performance Bimonthly");
+        $this->graficas[]=array("id"=>7, "name"=>"Departure Performance Bimonthly");
+        $this->graficas[]=array("id"=>9, "name"=>"Load Performance");
+        $this->graficas[]=array("id"=>11, "name"=>"Carrier Allocation");
+        
+    }
+    
+    public function executeGridPanelDatosWindow(sfWebRequest $request){
+        
+        $this->periodos = array();        
+        $this->periodos[]=array("id"=>1, "name"=>"Ene-Feb");
+        $this->periodos[]=array("id"=>2, "name"=>"Mar-Abr");
+        $this->periodos[]=array("id"=>3, "name"=>"May-Jun");
+        $this->periodos[]=array("id"=>4, "name"=>"Jul-Ago");
+        $this->periodos[]=array("id"=>5, "name"=>"Sep-Oct");
+        $this->periodos[]=array("id"=>6, "name"=>"Nov-Dic");
+        
+        $this->graficas = array();        
+        $this->graficas[]=array("id"=>1, "name"=>"Asn Performance Bimonthly");
+        $this->graficas[]=array("id"=>3, "name"=>"Asn Performance by Origin Bimonthly");
+        $this->graficas[]=array("id"=>5, "name"=>"Document Performance Bimonthly");
+        $this->graficas[]=array("id"=>7, "name"=>"Departure Performance Bimonthly");
+        $this->graficas[]=array("id"=>9, "name"=>"Load Performance");
+        $this->graficas[]=array("id"=>10, "name"=>"Volume By Origin");
+        $this->graficas[]=array("id"=>11, "name"=>"Carrier Allocation");
+        
+        $this->idreportes = $this->getRequestParameter("idreportes");        
+    }
+}   
 ?>

@@ -16,6 +16,11 @@ switch($action){
 		$button[2]["tooltip"]="Genera los indicadores trimestrales";
 		$button[2]["image"]="22x22/statistics.png"; 			
 		$button[2]["link"]= "falabella/indicadoresGestion";
+                
+                $button[3]["name"]="Nuevos Indicadores";
+		$button[3]["tooltip"]="Genera los indicadores trimestrales";
+		$button[3]["image"]="22x22/statistics.png"; 			
+		$button[3]["link"]= "falabella/indicadoresGestionExt4";
         
 		break;	
 	case "datosFacturacion":		
@@ -95,6 +100,19 @@ switch($action){
 		$button[2]["image"]="22x22/email.gif"; 			
 		$button[2]["link"]= "#";
 		$button[2]["onClick"]= "showEmailForm()";
+		break;	
+       case "indicadoresGestionExt4":	
+		$button[0]["name"]="Imprimir";
+		$button[0]["tooltip"]="Genera ambiente para imprimir informe";
+		$button[0]["image"]="22x22/printmgr.png"; 			
+		$button[0]["link"]= "#";
+                $button[0]["onClick"]= "imprimir()";
+	
+		$button[1]["name"]="Observaciones";
+		$button[1]["tooltip"]="Permite incluir observaciones en las gráficas";
+		$button[1]["image"]="22x22/kexi_kexi.gif"; 			
+		$button[1]["link"]= "#";
+                $button[1]["onClick"]= "verObservaciones()";
 		break;	
 	
 }

@@ -16,6 +16,29 @@ class falabellaActions extends sfActions {
     public function executeIndex() {
         return $this->forward('falabella', 'list');
     }
+    
+    /*
+     * Conexión a la base de datos de réplica
+     */
+    
+    public  function getConnReplica()
+    {
+        if(!$this->conReplica)
+        {
+            $databaseConf = sfYaml::load(sfConfig::get('sf_config_dir') . '/databases_replica.yml');
+            $confCon=$databaseConf['prod']['doctrine'];            
+            $dsn = $confCon['param']['dsn'];        
+            $principal =  substr( $dsn, 0,  strpos( $dsn, ";") );            
+            $servidor = substr( $dsn,  strlen( $principal )+6 );
+            $database = substr( $principal, strpos( $principal, "dbname")+7 );
+            $usuarioDb = $confCon['param']['username'];
+            $password = $confCon['param']['password'];
+            
+            $this->conReplica = Doctrine_Manager::connection(new PDO("pgsql:dbname=".$database.";host=".$servidor, $usuarioDb, $password));
+
+        }
+        return $this->conReplica;
+    }
 
     /*
      * Lista los PO disponibles
@@ -696,7 +719,7 @@ class falabellaActions extends sfActions {
         $email->setCaBody($this->getRequestParameter("mensaje") . "<br />" . $content);
 
         $email->save(); //guarda el cuerpo del mensaje
-        $email->send(); //envía el mensaje
+        //$email->send(); //envía el mensaje
 
         $this->redirect("falabella/list");
     }
@@ -786,21 +809,7 @@ class falabellaActions extends sfActions {
             }
 
             foreach ($this->resul as $r) {
-                /* if (!$r["ca_diferencia"])
-                  continue;
-                  if ($r["ca_modalidad"] == Constantes::FCL) {
-                  if ($r["ca_diferencia"] > $this->indi_FCL[$this->pais_origen]) {
-                  $this->indicador[(int) ($r["ca_mes1"])]["incumplimiento"]++;
-                  } else {
-                  $this->indicador[(int) ($r["ca_mes1"])]["cumplimiento"]++;
-                  }
-                  } else if ($r["ca_modalidad"] == Constantes::LCL) {
-                  if ($r["ca_diferencia"] > $this->indi_LCL[$this->pais_origen]) {
-                  $this->indicador[(int) ($r["ca_mes1"])]["incumplimiento"]++;
-                  } else {
-                  $this->indicador[(int) ($r["ca_mes1"])]["cumplimiento"]++;
-                  }
-                  } */
+               
                 if ($r["ca_diferencia"] < 1) {
                     $r["ca_diferencia"] = 1;
                 }
@@ -862,6 +871,413 @@ class falabellaActions extends sfActions {
         //echo "<pre>";print_r($this->resul);echo "</pre>";
     }
 
+    public function executeIndicadoresGestionExt4(sfWebRequest $request) {
+        
+        
+        $this->years = array();
+        for ($i = 0; $i < 5; $i++) {
+            $this->years[] = array("year" => date('Y') - $i);
+        }
+        
+        $periodo = utf8_decode($this->getRequestParameter("combo-inputEl"));
+        $ano = $this->getRequestParameter("year");
+        $idtrafico = utf8_decode($this->getRequestParameter("idtrafico"));        
+        $criterio = $request->getParameter("criterio");
+        $transporte = $request->getParameter("transporte-inputEl");
+        $trans = $transporte=="air"?"Aéreo":"Marítimo";
+        
+        switch($periodo){
+            case 1:
+                $serieMes = array('Ene','Feb');
+                $subtitle = $ano." / Ene-Feb";
+                $periodo = 1;
+                $end = 2;
+                break;
+            case 2:
+                $serieMes = array('Mar','Abr');
+                $subtitle = $ano." / Mar-Abr";
+                $periodo = 2;
+                $end = 4;
+                break;
+            case 3:
+                $serieMes = array('May','Jun');
+                $subtitle = $ano." / May-Jun";
+                $periodo = 3;
+                $end = 6;
+                break;
+            case 4:
+                $serieMes = array('Jul','Ago');
+                $subtitle = $ano." / Jul-Ago";
+                $periodo = 4;
+                $end = 8;
+                break;
+            case 5:
+                $serieMes = array('Sep','Oct');
+                $subtitle = $ano." / Sep-Oct";
+                $periodo = 5;
+                $end = 10;
+                break;
+            case 6:
+                $serieMes = array('Nov','Dic');
+                $subtitle = $ano." / Nov-Dic";
+                $periodo = 6;
+                $end = 12;
+                break;
+        }
+        $andWhere = "";
+        
+        if($criterio){
+
+            if($idtrafico){
+                $andWhere = "and tro.ca_idtrafico = '" . $idtrafico . "'";                
+            }
+
+            $sql1 = "SELECT sqa.ca_ano1, sqa.ca_mes1, rp.ca_idreporte, rp.ca_consecutivo, rp.ca_orden_clie, /*i.ca_nombre AS ca_linea,*/(CASE rp.ca_modalidad 
+				WHEN 'LCL' THEN 'CONSOLIDADO PROPIO COLTRANS' 
+				WHEN 'COLOADING' THEN 'CONSOLIDADO PROPIO COLTRANS' 
+				ELSE i.ca_nombre END) as ca_linea, tro.ca_idtrafico, tro.ca_nombre AS ca_traorigen, cio.ca_ciudad AS ca_ciuorigen, cid.ca_ciudad AS ca_ciudestino, rp.ca_transporte,rp.ca_modalidad,rp.ca_propiedades, 
+                            ccn.ca_idcliente as ca_idcliente, sqa.ca_fchllegada, sqa.ca_peso, sqa.ca_piezas as ca_piezas, sqa.ca_volumen, sqa.ca_doctransporte, ca_fchsalida_cd, (CASE WHEN sqa.ca_fchllegada-ca_fchsalida_cd = 0 THEN 1 ELSE sqa.ca_fchllegada-ca_fchsalida_cd END) as ca_diferencia,
+                            (CASE WHEN rp.ca_modalidad = 'COLOADING' THEN 'LCL' ELSE rp.ca_modalidad END) as nva_modalidad,	
+                            (select ca_concepto 
+                                    from tb_conceptos c 
+                                    join tb_repequipos e on c.ca_idconcepto = e.ca_idconcepto
+                                    JOIN tb_reportes r ON e.ca_idreporte = r.ca_idreporte 
+                                    where c.ca_idconcepto = e.ca_idconcepto and r.ca_consecutivo = rp.ca_consecutivo
+                            limit 1) as concepto
+                    FROM tb_reportes rp
+                         RIGHT JOIN ( SELECT tb_reportes.ca_consecutivo AS ca_consecutivo_f,
+                                tb_reportes.ca_fchreporte,
+                                max(tb_reportes.ca_version) AS ca_version,
+                                min(tb_reportes.ca_fchcreado) AS ca_fchcreado
+                               FROM tb_reportes
+                              WHERE tb_reportes.ca_usuanulado IS NULL AND tb_reportes.ca_tiporep <> 4
+                              GROUP BY tb_reportes.ca_consecutivo, tb_reportes.ca_fchreporte
+                              ORDER BY tb_reportes.ca_consecutivo) rx ON rp.ca_consecutivo::text = rx.ca_consecutivo_f::text AND rp.ca_version = rx.ca_version
+                         RIGHT OUTER JOIN ( SELECT extract(YEAR from rs.ca_fchsalida) as ca_ano1 ,extract(MONTH from rs.ca_fchsalida) as ca_mes1, ca_idreporte, ca_consecutivo, ca_fchllegada, ca_piezas, ca_peso, ca_volumen, ca_doctransporte
+                                ,ca_fchsalida as ca_fchsalida_cd
+                                FROM tb_repstatus rs 
+                                    RIGHT JOIN ( SELECT rp.ca_consecutivo, max(rs.ca_idstatus) as ca_idstatus 
+                                            FROM tb_repstatus rs 
+                                                INNER JOIN tb_reportes rp on rp.ca_idreporte = rs.ca_idreporte 
+                                            WHERE rs.ca_idetapa in ('IMETA','IMETT','IACCR','IMCEM')
+                                            GROUP BY rp.ca_consecutivo) sf on rs.ca_idstatus = sf.ca_idstatus)  sqa ON rp.ca_consecutivo = sqa.ca_consecutivo
+                         JOIN ids.tb_ids i ON rp.ca_idlinea = i.ca_id
+                         JOIN tb_ciudades cio ON rp.ca_origen::text = cio.ca_idciudad::text
+                         JOIN tb_traficos tro ON cio.ca_idtrafico::text = tro.ca_idtrafico::text
+                         JOIN tb_ciudades cid ON rp.ca_destino::text = cid.ca_idciudad::text
+                         JOIN tb_concliente ccn ON rp.ca_idconcliente = ccn.ca_idcontacto     
+                 WHERE ca_impoexpo IN ('Importación','OTM-DTA')                            
+                       AND ca_idcliente = 900017447
+                       AND ca_ano1::numeric = $ano
+                       AND ca_mes1::numeric BETWEEN 1 and $end AND ca_transporte IN ('$trans') $andWhere
+                ORDER BY sqa.ca_fchsalida_cd";
+                    
+            $con = Doctrine_Manager::getInstance()->connection();
+            //$con = $this->getConnReplica();
+            $st = $con->execute($sql1);            
+            $this->resul = $st->fetchAll();
+            
+            $obs = array();
+            
+            $q = Doctrine::getTable("FalaIdg")
+                    ->createQuery("f")
+                    ->where("f.ca_periodo = ? and ca_via = ?", array($periodo, $transporte));                    
+            
+            if($idtrafico)
+                $q->addWhere("f.ca_idtrafico = ?", $idtrafico);
+                    
+            $observaciones = $q->execute();
+            
+            if($observaciones){
+                foreach($observaciones as $observacion){
+                    if($obs[$observacion->getCaIdgrafica()])
+                        $obs[$observacion->getCaIdgrafica()] = $obs[$observacion->getCaIdgrafica()]."<br/>".$observacion->getCaObservacion();
+                    else
+                        $obs[$observacion->getCaIdgrafica()] = $observacion->getCaObservacion();
+                }
+            }
+            
+
+            $data = array();
+            $data2 = array();
+            $dataTraf = array();            
+            $dataVol = array();
+            $load = array();            
+            $serieMes2 = array();
+            $serieTraf = array();            
+            
+            $metaAsn_air = 1;
+            $metaAsn_sea = 2;
+            
+            $metaDoc_air = 2;
+            $metaDoc_sea = 2;
+            
+            $metaAsn = ${"metaAsn_".$transporte};
+            $metaDoc = ${"metaDoc_".$transporte};
+
+            foreach ($this->resul as $r) {
+
+                $mes = Utils::getMonth(substr($r["ca_fchsalida_cd"], 5,2));
+                $trafico = utf8_encode($r["ca_traorigen"]);
+                $modalidad = $r["nva_modalidad"];
+                $fchsalida = $r["ca_fchsalida_cd"];                
+                $concepto = $modalidad!="LCL"?utf8_decode($r["concepto"]):"LCL";
+                $cofa = $r["ca_orden_clie"];
+                $idreporte = $r["ca_idreporte"];
+                $linea = utf8_encode($r["ca_linea"]);
+                
+                if(!in_array($mes, $serieMes2))
+                    $serieMes2[] = $mes;
+                
+                if(!in_array($trafico, $serieTraf))
+                    $serieTraf[] = $trafico;
+                
+                //* Ventana de Despacho
+                
+                $shipment = Doctrine::getTable("FalaShipmentInfo")
+                        ->createQuery("f")
+                        ->select("f.ca_iddoc, f.ca_begin_window, f.ca_end_window")
+                        ->where("f.ca_iddoc like ?", "%" . $cofa . "%")
+                        ->limit(1)
+                        ->fetchOne();
+                
+                if($shipment){
+                    $beginW = $shipment->getCaBeginWindow();
+                    $endW = $shipment->getCaEndWindow();                    
+                }
+               
+                //* Fechas de Indicadores Falabella
+                $reporte = Doctrine::getTable("Reporte")->find($idreporte);
+                $parametros = ParametroTable::retrieveByCaso("CU103", null, null, '900017447');
+
+                foreach ($parametros as $parametro) {
+
+                    $valor = explode(":", $parametro->getCaValor());
+                    $name = $valor[0];
+                    $type = $valor[1];
+
+                    switch ($name) {
+                        case "fchdocorig":
+                            $fchdocorig = $reporte->getProperty($name);
+                            break;
+                        case "fchentregamcia":
+                            $fchentregamcia = $reporte->getProperty($name);
+                            break;
+                        case "fchingresoasn":                                
+                            $fchingresoasn = $reporte->getProperty($name);
+                            break;
+                    }
+                }
+                
+                $festivos = TimeUtils::getFestivos($ano);
+                $diffFchAsn = TimeUtils::workDiff($festivos, $fchsalida, $fchingresoasn);
+                $diffFchDoc = TimeUtils::dateDiff($fchsalida, $fchdocorig);
+                
+                //*GRID DE DATOS
+                    
+                $datos[] = array(                                        
+                    "month" => $r["ca_mes1"],
+                    "mes" => $mes,
+                    "cofa" => utf8_encode($cofa),
+                    "origen" => utf8_encode($r["ca_traorigen"]),
+                    "destino" => utf8_encode($r["ca_ciudestino"]),                    
+                    "modalidad" => $r["nva_modalidad"],
+                    "rn"=> $r["ca_consecutivo"],
+                    "peso"=> $r["ca_peso"],
+                    "piezas"=> $r["ca_piezas"],
+                    "volumen"=> $r["ca_volumen"],
+                    "fchsalida" => $fchsalida,
+                    "fchllegada" =>$r["ca_fchllegada"] ,
+                    "fchdocorig" => $fchdocorig,
+                    "fchingresoasn" => $fchingresoasn,
+                    "beginw" => $beginW,
+                    "endw" => $endW
+                );
+                
+                //PARA LAS GRAFICAS BIMESTRALES
+                if(in_array($mes, $serieMes)){
+                    
+                    $data[$mes]["total"] +=1;
+                    $dataTraf[$trafico]["total"]+=1;
+                    $load[$concepto]+=1;
+                    $lineaBim[$linea]+=$r["ca_volumen"];
+
+                    if($diffFchAsn && $diffFchAsn<=$metaAsn)
+                        $dataTraf[$trafico]["cumplimiento_asn"]+=1;
+                    else
+                        $dataTraf[$trafico]["incumplimiento_asn"]+=1;
+                }
+                
+                $data2[$mes]["total"] +=1; 
+                $dataTrafCon[$trafico]["total"]+=1;
+                $loadAcum[$concepto]+=1;
+                $lineaAcum[$linea]+=$r["ca_volumen"];
+               
+                if($diffFchAsn && $diffFchAsn<=$metaAsn){
+                    $data2[$mes]["cumplimiento_asn"]+=1;
+                    $dataTrafCon[$trafico]["cumplimiento_asn"]+=1;
+                }else{
+                    $data2[$mes]["incumplimiento_asn"]+=1;
+                    $dataTrafCon[$trafico]["incumplimiento_asn"]+=1;
+                }
+                
+                if($diffFchDoc && $diffFchDoc<=$metaDoc)
+                    $data2[$mes]["cumplimiento_doc"]+=1;                 
+                else
+                    $data2[$mes]["incumplimiento_doc"]+=1;
+                
+                if($fchsalida >= $beginW && $fchsalida<=$endW)
+                    $data2[$mes]["cumplimiento_des"]+=1;
+                else
+                    $data2[$mes]["incumplimiento_des"]+=1;
+                
+                $dataVol[$trafico][$mes]+=$r["ca_volumen"];
+                
+                
+            }
+
+            foreach($serieMes2 as $key => $mes){
+                if(in_array($mes, $serieMes)){
+                    if($data[$mes]["total"]>0){
+                        $data[$mes]["performance_asn"] = $data2[$mes]["cumplimiento_asn"]?round(($data2[$mes]["cumplimiento_asn"]*100)/$data[$mes]["total"]):0;
+                        $data[$mes]["performance_doc"] = $data2[$mes]["cumplimiento_doc"]?round(($data2[$mes]["cumplimiento_doc"]*100)/$data[$mes]["total"]):0;
+                        $data[$mes]["performance_des"] = $data2[$mes]["cumplimiento_des"]?round(($data2[$mes]["cumplimiento_des"]*100)/$data[$mes]["total"]):0;
+                    }
+                }
+                if($data2[$mes]["total"]>0){
+                    $data2[$mes]["performance_asn"] = $data2[$mes]["cumplimiento_asn"]?round(($data2[$mes]["cumplimiento_asn"]*100)/$data2[$mes]["total"]):0;
+                    $data2[$mes]["performance_doc"] = $data2[$mes]["cumplimiento_doc"]?round(($data2[$mes]["cumplimiento_doc"]*100)/$data2[$mes]["total"]):0;
+                    $data2[$mes]["performance_des"] = $data2[$mes]["cumplimiento_des"]?round(($data2[$mes]["cumplimiento_des"]*100)/$data2[$mes]["total"]):0;
+                }                
+            }
+            
+            foreach($serieTraf as $key => $trafico){
+                if($dataTraf[$trafico]["total"]>0){
+                    $dataTraf[$trafico]["performance_asn"] = $dataTraf[$trafico]["cumplimiento_asn"]?round(($dataTraf[$trafico]["cumplimiento_asn"]*100)/$dataTraf[$trafico]["total"]):0;
+                    $dataTraf[$trafico]["performance_doc"] = $dataTraf[$trafico]["cumplimiento_doc"]?round(($dataTraf[$trafico]["cumplimiento_doc"]*100)/$dataTraf[$trafico]["total"]):0;
+                }
+                if($dataTrafCon[$trafico]["total"]>0){
+                    $dataTrafCon[$trafico]["performance_asn"] = $dataTrafCon[$trafico]["cumplimiento_asn"]?round(($dataTrafCon[$trafico]["cumplimiento_asn"]*100)/$dataTrafCon[$trafico]["total"]):0;
+                    $dataTrafCon[$trafico]["performance_doc"] = $dataTrafCon[$trafico]["cumplimiento_doc"]?round(($dataTrafCon[$trafico]["cumplimiento_doc"]*100)/$dataTrafCon[$trafico]["total"]):0;
+                }
+            }
+            
+            foreach($dataVol as $trafico => $gridMes){
+                foreach($serieMes2 as $key => $mes){
+                    if($gridMes[$mes]){
+                        $data3[$trafico]["name"] = $trafico;                    
+                        $data3[$trafico]["data"][] = $gridMes[$mes];                    
+                    }else{
+                        $data3[$trafico]["name"] = $trafico;
+                        $data3[$trafico]["data"][] = null;
+                    }
+                }
+            }
+            
+            foreach($data3 as $trafico => $gridSerie){
+                $data4[] = $gridSerie;                
+            }
+            
+            foreach($load as $key=> $val){
+                $pieBim[] = array("index"=>$key, "value"=>$val);
+            }
+
+            foreach($loadAcum as $key=> $val){
+                $pieAcum[] = array("index"=>$key, "value"=>$val);
+            }
+            if($lineaBim){
+                arsort($lineaBim);
+                foreach($lineaBim as $key=> $val){
+                    $pieLineaBim[] = array("index"=>$key, "value"=>$val);
+                }
+            }
+            arsort($lineaAcum);
+            foreach($lineaAcum as $key=> $val){
+                $pieLineaAcum[] = array("index"=>$key, "value"=>$val);
+            }
+
+            $this->responseArray = array("success" => true, "total" => count($data), "data" => $data, "transporte"=>$transporte, "data2"=>$data2,  "dataTraf" => $dataTraf , "dataTrafCon" => $dataTrafCon, "dataVol"=>$data4, "trafico"=>$trafico, "load"=> $pieBim, "loadAcum"=>$pieAcum, "pieLineaBim"=> $pieLineaBim, "pieLineaAcum"=>$pieLineaAcum, "datos"=>$datos, "subtitle"=>$subtitle, "ano"=>$ano, "obs"=>$obs);
+            $this->setTemplate("responseTemplate");
+        }
+    }
+    
+    public function executeDatosGridObservaciones(sfWebRequest $request) {
+        
+        $observaciones = Doctrine::getTable("FalaIdg")
+            ->createQuery("f")            
+            ->orderBy("f.ca_ano, f.ca_via, f.ca_periodo, f.ca_idgrafica")
+            ->execute();
+        
+        $periodos = json_decode($request->getParameter("periodos"), true);
+        $graficas = json_decode($request->getParameter("graficas"), true);
+        $graf = array();
+        
+        foreach($graficas as $grafica){
+            $graf[$grafica["id"]] = $grafica["name"];
+        }
+        
+        $vias = array("air" => "Aéreo", "sea"=>"Marítimo");
+        
+        //echo "<pre>";print_r($graficas);echo "</pre>";
+        
+        foreach($observaciones as $obs){
+            
+            $trafico = Doctrine::getTable("Trafico")->find($obs->getCaIdtrafico());
+            
+            $data[] = array(
+                "ca_ididg" => $obs->getCaIdidg(),
+                "ca_ano" => $obs->getCaAno(),
+                "ca_idvia" => $obs->getCaVia(),
+                "ca_via" => utf8_encode($vias[$obs->getCaVia()]),
+                "ca_idperiodo" => $obs->getCaPeriodo(),
+                "ca_periodo" => $periodos[$obs->getCaPeriodo()-1]["name"],
+                "ca_idgrafica" => $obs->getCaIdgrafica(),
+                "ca_grafica"=>$graf[$obs->getCaIdgrafica()],
+                "ca_idtrafico"=>$obs->getCaIdtrafico(),
+                "ca_trafico"=>$obs->getCaIdtrafico()?utf8_encode($trafico->getCaNombre()):"",
+                "ca_observacion" => $obs->getCaObservacion()
+            );
+        }
+        
+        //echo "<pre>";print_r($data);echo "</pre>";
+        
+        $this->responseArray = array("total" => count($data), "data" => $data, "success" => true);
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeGuardarObservacionesIdg(sfWebRequest $request) {
+        
+        $datos = json_decode($request->getParameter("datos"),true);
+                
+        $conn = Doctrine::getTable("FalaIdg")->getConnection();
+        $conn->beginTransaction();
+        try{
+            foreach ($datos as $dato) {
+                if ($dato["ca_ididg"] > 0) {
+                    $falaIdg = Doctrine::getTable("FalaIdg")
+                            ->createQuery("f")
+                            ->where("f.ca_ididg = ?", $dato["ca_ididg"])
+                            ->fetchOne();
+                } else {
+                    $falaIdg = new FalaIdg();
+                }
+                $falaIdg->setCaAno($dato["ca_ano"]);
+                $falaIdg->setCaVia($dato["ca_idvia"]);
+                $falaIdg->setCaPeriodo($dato["ca_idperiodo"]);
+                $falaIdg->setCaIdgrafica($dato["ca_idgrafica"]);
+                $falaIdg->setCaIdtrafico($dato["ca_trafico"]);
+                $falaIdg->setCaObservacion($dato["ca_observacion"]);
+                $falaIdg->save($conn);                
+            }
+            $conn->commit();            
+
+            $this->responseArray = array("success" => true, "total" => count($datos), "data" => $datos);            
+        } catch (Exception $e) {
+            $conn->rollBack();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+        $this->setTemplate("responseTemplate");
+        
+    }
 }
 ?>
-
