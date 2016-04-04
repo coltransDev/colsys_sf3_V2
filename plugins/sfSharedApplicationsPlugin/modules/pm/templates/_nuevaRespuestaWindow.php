@@ -58,7 +58,8 @@ $status = $sf_data->getRaw("status");
                 autoDestroy: true,
                 url: '<?= url_for("pm/datosEntregasTicket") ?>',
                 baseParams: {
-                    idticket: this.idticket
+                    idticket: this.idticket,
+                    modo: 'modo'
                 },
                 reader: new Ext.data.JsonReader({
                         id: 'idstage',
@@ -333,22 +334,13 @@ $status = $sf_data->getRaw("status");
             
             var panel = Ext.getCmp("respuesta-ticket-panel");
             var res = panel.getForm().findField("respuesta").getValue();            
-            var entrega = "Se hace entrega oficial para pruebas de la Etapa: <b>" + record.data.stage + ".<br/>Detalles:</b><ul><li>" + record.data.detail + "</ul></li><br/> Agradecemos realizar las pruebas necesarias e informar cualquier eventualidad sobre este mismo ticket.";
-            panel.getForm().findField("respuesta").setValue(res + "\n<br />" + entrega);
-            //combo.setValue();
+            
+            var entrega = "<div style='background-color:#F6F6F6;border-color:#CCCCCC;border-style:dotted;border-width:1px;margin:12px 0 0;padding:12px 12px 24px;'><b>Etapa: </b><span style='color: #0A2A80;'><b>" + record.data.stage+"</b></span><br/>"+ record.data.detail +"</div>";
+            panel.getForm().findField("respuesta").setValue(res + entrega);            
         },
         onAfterRender: function (cmp) {
             Ext.getCmp("status_id").setRawValue(this.status_name);
-            Ext.getCmp("status_id").hiddenField.value = this.status;
-            //Ext.getCmp("fchentrega").setValue(this.estimated);
-
-            if (this.idgroup == 2) {
-                /*Ext.getCmp("field_entrega").enable();
-                Ext.getCmp("field_entrega").setVisible(true);
-                 if(this.estimated)
-                 Ext.getCmp("listar_todos").setValue(true);*/
-
-            }
+            Ext.getCmp("status_id").hiddenField.value = this.status;            
         },
         crearEntregas: function(){
             var panel = Ext.getCmp("respuesta-ticket-panel");
@@ -368,7 +360,7 @@ $status = $sf_data->getRaw("status");
             var win;
             if(!win){
                 win = new Ext.Window({
-                    title: 'Seleccione el milestone',
+                    title: 'Panel de Entregas',
                     id: 'crear-entregas-win',
                     autoHeight: true,
                     width: 650,

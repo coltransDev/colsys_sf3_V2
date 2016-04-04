@@ -744,8 +744,7 @@ include_component("widgets", "widgetEquipo");
                                 location.href="<?=url_for('helpdesk/verTicket')?>"+"/id/"+action.result.idticket;
                             } else {
                                 if(action.result.change){
-                                    Ext.MessageBox.alert('Mensaje', action.result.txt);
-                                    location.href="<?=url_for('pm/index')?>";
+                                    Ext.MessageBox.alert('Mensaje', action.result.txt);                                    
                                 }
                                 Ext.getCmp(gridId).store.reload();
                             }

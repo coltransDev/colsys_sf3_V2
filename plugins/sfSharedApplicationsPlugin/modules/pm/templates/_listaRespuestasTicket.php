@@ -1,12 +1,5 @@
 <div style="margin:20px;">
     <?
-    if(count($childrens)>0){
-        echo "<span style='color:blue;'><b>Ticket unificado con el (los) tickets: </b></span>";
-        foreach($childrens as $children ){?>
-            <a href="https://localhost/pm/verTicket/id/<?=$children->getCaIdticket()?>" target="_blank"><?=$children->getCaIdticket()?></a>
-            <?  
-        }
-    }
     $responses = $sf_data->getRaw("responses");
     $i = 0;
     foreach ($responses as $response) {

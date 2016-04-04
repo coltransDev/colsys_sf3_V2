@@ -12,13 +12,7 @@ include_component("pm", "panelMilestones");
 include_component("pm", "asignarMilestoneWindow");
 include_component("pm", "agendarEntregasWindow");
 include_component("pm", "unificarTicketsWindow");
-//include_component("pm", "agendarEtapasWindow");
-//include_component("pm", "gridAgendaEtapas");
-//include_component("gestDocumental", "panelArchivos");
 include_component("pm", "editarTicketWindow", array("nivel"=>$nivel));
-//include_component("pm", "mainPanel");
-
-//include_component("gestDocumental", "fileManagerPanel");
 include_component("gestDocumental", "panelArchivos");
 
 //Paneles laterales
@@ -29,28 +23,17 @@ include_component("pm","panelDocumentos");
 include_component("pm","panelEntregas");
 include_component("pm","nuevaRespuestaWindow");
 include_component("pm","porcentajeTicketWindow");
-
 include_component("users","panelUsers");
-
 include_component("kbase", "panelCategorias");
 include_component("kbase", "panelIssues");
 include_component("kbase", "panelReadingKBase");
 include_component("kbase", "panelCategoriaWindow");
-
 include_component("kbase", "busquedaIssueWindow");
-
-
 include_component("pm","panelBusquedaTicket");
 include_component("pm","panelPreviewTicket");
-
 include_component("pm","panelTicketsActivos");
-
-
-
 include_component("pm", "busquedaTicketWindow");
 
-
-//include_component("fileManager", "fileBrowser");
 ?>
 <script type="text/javascript">
 
@@ -90,6 +73,20 @@ var newResponse = function( idticket , idresponse, vencimiento, respuesta, opene
                                         idgrid: idgrid
                                       });
     win.show();
+}
+
+var openTab = function(idticket){
+
+        var newComponent = new Ext.Panel({
+                    closable: true,
+                    title: 'Ticket # '+idticket,
+                    //autoHeight: true,
+                    items: new PanelPreviewTicket({
+                        idticket: idticket
+                    })
+        });
+        Ext.getCmp('tab-panel').add(newComponent);
+        Ext.getCmp('tab-panel').setActiveTab(newComponent);
 }
 
 var registroEventos = function(){
@@ -314,60 +311,18 @@ Ext.onReady(function(){
 <div style="height:100%"></div>
 <script type="text/javascript">
     Ext.onReady(function(){
-        /*var newComponent = new PanelReading({           id: 'adad',
-                                                             closable: true,
-                                                             idproject: 3,
-                                                             title: 'Panel prueba'
-                                                            });
-                    Ext.getCmp('tab-panel').add(newComponent);
-                    Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
-        
-
-        /*var newComponent = new PanelCronogramaUsuario({    id: 'adad',
-                                                 closable: true,
-                                                 idproject: 3,
-                                                 title: 'Panel prueba'
-                                                });
-        Ext.getCmp('tab-panel').add(newComponent);
-        Ext.getCmp('tab-panel').setActiveTab(newComponent);
-        */
-
-       /*var newComponent = new FileBrowser({    id: 'adad',
-                                                 closable: true,
-                                                 idproject: 3,
-                                                 title: 'Panel prueba Archivos',
-                                                 baseFolder: '<?="KB"?>'
-                                                });
-        Ext.getCmp('tab-panel').add(newComponent);
-        Ext.getCmp('tab-panel').setActiveTab(newComponent);*/
-       <?
-       if( $idticket ){
-       ?>
+        <?
+        if( $idticket ){
+            ?>
             var newComponent = new PanelPreviewTicket({
-                                                closable: true,
-                                                title: 'Ticket # <?=$idticket?>',
-                                                idticket: <?=$idticket?>
-                                              });
+                closable: true,
+                title: 'Ticket # <?=$idticket?>',
+                idticket: <?=$idticket?>
+            });
             Ext.getCmp('tab-panel').add(newComponent);
             Ext.getCmp('tab-panel').setActiveTab(newComponent);
-       <?
-       }
+            <?
+        }
        ?>
-
-
-       /*var panel = new PanelTicketsActivos({
-           title: "Tickets Abiertos",
-           width: 650,
-           height: 300,
-           autoload: false
-       });
-       panel.render("panel-activos");
-       panel.store.setBaseParam("option", "misTickets");
-       panel.recargar();*/
-       
-       
-
-
     });
-
 </script>

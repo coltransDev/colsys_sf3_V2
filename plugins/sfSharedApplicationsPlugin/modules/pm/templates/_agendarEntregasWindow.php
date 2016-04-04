@@ -130,8 +130,7 @@ Ext.extend(AgendarEntregasWindow, Ext.Window, {
             form.submit({
                 url: '<?=url_for("pm/agendarEntregas")?>',
                 waitMsg: 'Guardando Respuesta para cada ticket...',                                    
-                success:function(form,action){
-                    //alert("dfasdfasdfasdf"+action.result.data.toSource());
+                success:function(form,action){                    
                     var tickets = "";
                     if(action.result.data && action.result.data.length>0){
                         $.each(action.result.data, function( index, value ) {

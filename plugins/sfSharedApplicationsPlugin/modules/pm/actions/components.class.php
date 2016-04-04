@@ -23,14 +23,7 @@ class pmComponents extends sfComponents {
                 ->createQuery("r")
                 ->where("r.ca_idticket = ? ", $this->idticket)
                 ->addWhere("r.ca_responseto IS NULL ");                
-
-        if(count($this->childrens)>0){
-            $this->childrenVal = "";
-            for ($i = 0; $i < count($this->childrens); $i++) {
-                $children = $this->childrens[$i];                
-                $q->orWhere("r.ca_idticket = ? ", $children->getCaIdticket());
-            }
-        }
+        
         $q->addOrderBy("r.ca_createdat ASC");
         $q->addOrderBy("r.ca_idresponse ASC");
         $this->responses = $q->execute();

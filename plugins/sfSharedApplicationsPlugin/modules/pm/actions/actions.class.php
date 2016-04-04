@@ -75,17 +75,11 @@ class pmActions extends sfActions {
 
         $q = Doctrine_Query::create()
                 ->select("h.ca_starred, h.*, g.ca_name, u.ca_nombre, u.ca_extension, s.ca_nombre, m.ca_due,
-                      m.ca_title, p.ca_name, tar.ca_fchterminada, tar.ca_fchvencimiento,
-                      (SELECT MAX(rr.ca_createdat) FROM HdeskResponse rr WHERE rr.ca_idticket = h.ca_idticket ) as ultseg,
-                      (SELECT MAX(t.ca_fchvencimiento) FROM HdeskResponse rr2 , NotTarea t WHERE rr2.ca_idtarea=t.ca_idtarea AND rr2.ca_idticket = h.ca_idticket ) as proxseg")
+                    m.ca_title, p.ca_name, tar.ca_fchterminada, tar.ca_fchvencimiento,
+                    (SELECT MAX(rr.ca_createdat) FROM HdeskResponse rr WHERE rr.ca_idticket = h.ca_idticket ) as ultseg,
+                    (SELECT MAX(t.ca_fchvencimiento) FROM HdeskResponse rr2 , NotTarea t WHERE rr2.ca_idtarea=t.ca_idtarea AND rr2.ca_idticket = h.ca_idticket ) as proxseg,
+                    (SELECT MIN(he.ca_estimated) FROM HdeskEstimations he WHERE he.ca_idticket = h.ca_idticket AND he.ca_idresponse IS NULL) as proxest")
                 ->from('HdeskTicket h');
-        /*$q = Doctrine_Query::create()
-                ->select("h.ca_starred, h.*, g.ca_name, u.ca_nombre, u.ca_extension, s.ca_nombre, m.ca_due,
-                      m.ca_title, p.ca_name, tar.ca_fchterminada, tar.ca_fchvencimiento,
-                      (SELECT MAX(rr.ca_createdat) FROM HdeskResponse rr WHERE rr.ca_idticket = h.ca_idticket ) as ultseg,
-                      (SELECT MAX(t.ca_fchvencimiento) FROM HdeskResponse rr2 , NotTarea t WHERE rr2.ca_idtarea=t.ca_idtarea AND rr2.ca_idticket = h.ca_idticket ) as proxseg/ *, h.ca_estimated * /")
-                ->from('HdeskTicket h');
-        */
         $q->innerJoin("h.HdeskGroup g");
         $q->leftJoin("h.HdeskTicketUser hu  ");
         $q->leftJoin("h.HdeskProject p");
@@ -248,6 +242,8 @@ class pmActions extends sfActions {
         $directorio = $this->ticket->getDirectorio();
 
         $this->files = sfFinder::type('file')->maxDepth(0)->in($directorio);
+        $this->childrens = $this->ticket->getChildren();
+        $this->entregas = $this->ticket->getHdeskEstimations();
 
         $this->usuarios = Doctrine::getTable("Usuario")->createQuery("u")
                 ->innerJoin("u.HdeskTicketUser ug")
@@ -384,20 +380,13 @@ class pmActions extends sfActions {
             $respuesta->setCaCreatedat(date("Y-m-d H:i:s"));
             $respuesta->save($conn);
             
-            /*if($request->getParameter("fchentrega")){
-                $estimations = new HdeskEstimations();
-                $estimations->setCaIdticket($idticket);
-                $estimations->setCaIdresponse($respuesta->getCaIdresponse());
-                $estimations->setCaEstimated($request->getParameter("fchentrega"));
-                $estimations->save($conn);
-            }*/
-            
             if($request->getParameter("stage_id")){
                 $estimation = Doctrine::getTable("HdeskEstimations")->find($request->getParameter("stage_id")); 
-                if(!$estimation->getCaIdresponse){
+                if(!$estimation->getCaIdresponse()){
                     $estimation->setCaIdresponse($respuesta->getCaIdresponse());                
                     $estimation->save($conn);
-            }
+                }
+                $ticket->getActualizarPorcentaje();
             }
 
             $logins = array($ticket->getCaLogin());
@@ -567,6 +556,7 @@ class pmActions extends sfActions {
         $ticket = Doctrine::getTable("HdeskTicket")->find($request->getParameter("idticket"));
         $this->forward404Unless($ticket);
         $this->ticket = $ticket;
+        $this->childrens = $this->ticket->getChildren();
 
         $this->opener = $request->getParameter("opener");
         $this->format = $request->getParameter("format");
@@ -2203,17 +2193,19 @@ class pmActions extends sfActions {
                 
                 if(count($entregas)>0){
                     foreach($entregas as $entrega){
-                        $fchentregaIni = $entrega->getCaEstimated();
-                        $fchentregaFin = Utils::addDays($fchentregaIni, $dias);
-                        
-                        $entrega->setCaEstimated($fchentregaFin);
-                        $entrega->save();
+                        if(!$entrega->getCaIdresponse()){
+                            $fchentregaIni = $entrega->getCaEstimated();
+                            $fchentregaFin = Utils::addDays($fchentregaIni, $dias);
+
+                            $entrega->setCaEstimated($fchentregaFin);
+                            $entrega->save();
+                        }
                     }
-                $request->setParameter("idticket", $idticket);
-                $request->setParameter("respuesta", $respuesta);
-                $request->setParameter("fchentrega", $fchentregaFin);
-                
-                $success = $this->executeGuardarRespuestaTicket($request);                
+                    $request->setParameter("idticket", $idticket);
+                    $request->setParameter("respuesta", $respuesta);
+                    $request->setParameter("fchentrega", $fchentregaFin);
+
+                    $success = $this->executeGuardarRespuestaTicket($request);                
                 }else{
                     $row[] = $idticket;
                 }
@@ -2229,10 +2221,11 @@ class pmActions extends sfActions {
         
         $this->forward404Unless($request->getParameter("idticket"));
         $idticket = $request->getParameter("idticket");
+        $modo = $request->getParameter("modo");
         $ticket = Doctrine::getTable("HdeskTicket")->find($idticket);
         $this->forward404Unless($ticket);
 
-        $entregas = $ticket->getHdeskEstimations();
+        $entregas = $ticket->getHdeskEstimations($modo);
 
         $data = array();
 
@@ -2263,6 +2256,8 @@ class pmActions extends sfActions {
         $this->forward404Unless($this->getRequestParameter('idticket'));
         $idticket = $this->getRequestParameter('idticket');
         
+        $ticket = Doctrine::getTable("HdeskTicket")->find($idticket);
+        
         try {
             if (!$this->getRequestParameter('idstage')) {
                 $entregas = new HdeskEstimations();
@@ -2279,8 +2274,8 @@ class pmActions extends sfActions {
             }
 
             if ($this->getRequestParameter('detail') !== null) {
-                $entregas->setCaDetail($this->getRequestParameter('detail'));
-                $row["detail"] = utf8_encode($this->getRequestParameter('detail'));
+                $entregas->setCaDetail(utf8_decode($this->getRequestParameter('detail')));
+                $row["detail"] = utf8_decode($this->getRequestParameter('detail'));
             }
 
             if ($this->getRequestParameter('estimated') !== null) {
@@ -2288,10 +2283,10 @@ class pmActions extends sfActions {
                 $row["estimated"] = $this->getRequestParameter('estimated');
             }
 
-            $entregas->save();
-            $row["idstage"] = $entregas->getCaIdstage();
-
-            $this->responseArray = array( "id" => $this->getRequestParameter('id'), "success" => true, "data" => $row);
+            $entregas->save(); 
+            $ticket->getActualizarPorcentaje();
+            
+            $this->responseArray = array( "idstage" =>$entregas->getCaIdstage(), "id" =>$this->getRequestParameter('id'), "success" => true, "data" => $row);
             
         } catch (Exception $e) {            
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
