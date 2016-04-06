@@ -1,12 +1,11 @@
 <?
-    include_component("gestDocumental", "widgetUploadButton");
-    use_helper("MimeType");
-    $grupo = $ticket->getHdeskGroup();
-    $proyecto = $ticket->getHdeskProject();
+include_component("gestDocumental", "widgetUploadButton");
+use_helper("MimeType");
+$grupo = $ticket->getHdeskGroup();
+$proyecto = $ticket->getHdeskProject();
 
-    $ticket = $sf_data->getRaw("ticket");
-    $i = 1;
-
+$ticket = $sf_data->getRaw("ticket");
+$i = 1;
 ?>
 
 <script language="javascript">
@@ -14,7 +13,7 @@
         document.getElementById("coment_status_txt").style.display = "inline";
         document.getElementById("coment_status").style.display = "none";
     }
-    
+
     function cancelar_comentar(  ) {
         document.getElementById("coment_status").style.display = "inline";
         document.getElementById("coment_status_txt").style.display = "none";
@@ -26,17 +25,17 @@
         var txt = document.getElementById("coment_status_field").value;
         document.getElementById("coment_status_field").value = "";
         Ext.Ajax.request(
-            {
-                waitMsg: 'Guardando...',
-                url: '<?= url_for("helpdesk/guardarRespuestaTicket") ?>',
-                params: {
-                    idticket: idticket,
-                    comentario: txt
-                },
-                callback: function(options, success, response) {
-                    document.getElementById("coments").innerHTML = response.responseText;
+                {
+                    waitMsg: 'Guardando...',
+                    url: '<?= url_for("helpdesk/guardarRespuestaTicket") ?>',
+                    params: {
+                        idticket: idticket,
+                        comentario: txt
+                    },
+                    callback: function (options, success, response) {
+                        document.getElementById("coments").innerHTML = response.responseText;
+                    }
                 }
-            }
         );
     }
 </script>
@@ -140,7 +139,7 @@
             </th>
             <td>
                 <div id="button" name="button" align="center" ></div>
-             </td>
+            </td>
         </tr>
         <?
         foreach ($filenames as $file) {
@@ -150,7 +149,7 @@
                 <td colspan="2">
                     <div id="hbl_defs">
                         <b><?= $i++ ?>.</b>&nbsp;&nbsp;&nbsp;&nbsp;
-                        <?= link_to("Archivo ".basename($folder . "/" . $file["file"]), "gestDocumental/verArchivo?idarchivo=" . base64_encode($folder . "/" . $file["file"])) ?>
+                        <?= link_to("Archivo " . basename($folder . "/" . $file["file"]), "gestDocumental/verArchivo?idarchivo=" . base64_encode($folder . "/" . $file["file"])) ?>
                     </div>
                 </td>
                 <td>
@@ -192,22 +191,64 @@
     </table><br>
 </div>
 <script>
-     button = 0;
+<? if ($app != "intranet") { ?>
+        button = 0;
 
-    var uploadButton = new WidgetUploadButton({
-        text: "Agregar Archivo",
-        iconCls: 'arrow_up',
-        folder: "<?= base64_encode($folder) ?>",
-        filePrefix: "",
-        confirm: true,
-        callback: "actualizar"
-    });
-    uploadButton.render("button");
+        var uploadButton = new WidgetUploadButton({
+            text: "Agregar Archivo",
+            iconCls: 'arrow_up',
+            folder: "<?= base64_encode($folder) ?>",
+            filePrefix: "",
+            confirm: true,
+            callback: "actualizar"
+        });
+        uploadButton.render("button");
 
-    function actualizar(file)    {
-        
-        $("#archivos").append("<tr><td ><b>" + (button++) + ".</b>&nbsp;&nbsp;&nbsp;&nbsp;<div id='hbl_defs'><a href='<?= url_for("gestDocumental/verArchivo?idarchivo=") ?>" + Base64.encode("<?= $folder ?>/" + file) + "'>Archivo " + file + "</a></div></td><td>&nbsp;</td></tr>");
-    }
+        function actualizar(file) {
 
-    button =<?= $i ?>;
+            $("#archivos").append("<tr><td ><b>" + (button++) + ".</b>&nbsp;&nbsp;&nbsp;&nbsp;<div id='hbl_defs'><a href='<?= url_for("gestDocumental/verArchivo?idarchivo=") ?>" + Base64.encode("<?= $folder ?>/" + file) + "'>Archivo " + file + "</a></div></td><td>&nbsp;</td></tr>");
+        }
+
+        button =<?= $i ?>;
+<? } else { ?>
+        Ext.onReady(function () {
+
+            Ext.create('Ext.form.Panel', {
+                title: 'File Uploader',
+                width: 400,
+                bodyPadding: 10,
+                frame: true,
+                renderTo: 'button',
+                items: [{
+                        xtype: 'filefield',
+                        name: 'file',
+                        fieldLabel: 'File',
+                        labelWidth: 50,
+                        msgTarget: 'side',
+                        allowBlank: false,
+                        anchor: '100%',
+                        buttonText: 'Select a File...'
+                    }],
+                buttons: [{
+                        text: 'Upload',
+                        handler: function () {
+                            var form = this.up('form').getForm();
+                            if (form.isValid()) {
+                                form.submit({
+                                    url: '<?= url_for("gestDocumental/subirArchivo") ?>',
+                                    waitMsg: 'Uploading your file...',
+                                    params: {
+                                        folder: "<?= base64_encode($folder) ?>",
+                                    },
+                                    success: function (fp, o) {
+                                        Ext.Msg.alert('Enviado', 'El archivo se ha subido correctamente');
+                                        window.location.reload();
+                                    }
+                                });
+                            }
+                        }
+                    }]
+            });
+        });
+<? } ?>
 </script>
