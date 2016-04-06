@@ -8,9 +8,25 @@ class HdeskTicketTable extends Doctrine_Table {
      * @author Andres Botero
      */
 
-    public static function retrieveIdTicket($idticket, $nivel) {
+    public static function retrieveIdTicket($idticket, $nivel,$user=null) {
 
-        $user = sfContext::getInstance()->getUser();
+        if($user==null)
+        {
+            $user = Doctrine::getTable("Usuario")->find(sfContext::getInstance()->getUser()->getUserId());
+            $iddepartamento=sfContext::getInstance()->getUser()->getIddepartamento();           
+        }
+        else
+        {
+             $departamento = Doctrine::getTable("Departamento")
+                 ->createQuery("d")
+                 ->where("d.ca_nombre = ?", $user->getCaDepartamento())
+                 ->fetchOne();
+            $iddepartamento=$departamento->getCaIddepartamento();            
+        }
+            
+        
+        
+            
         $q = Doctrine_Query::create()->from("HdeskTicket h");
         $q->where("h.ca_idticket = ?", $idticket);
         /*$ticket = $q->fetchOne();
@@ -18,25 +34,29 @@ class HdeskTicketTable extends Doctrine_Table {
          * Aplica restricciones de acuerdo al nivel de acceso.
          */
         
-        switch ($nivel) {
+          switch ($nivel) {
             case 0:
                 $q->leftJoin("h.HdeskTicketUser hu  ");
-                $q->addWhere("(h.ca_login = ? OR hu.ca_login = ?)", array($user->getUserid(), $user->getUserid()));
+                $q->addWhere("(h.ca_login = ? OR hu.ca_login = ?)", array($user->getCaLogin(), $user->getCaLogin()));
+
                 break;
             case 1:
-                $q->leftJoin("h.HdeskUserGroup ug ");
+                $q->leftJoin("h.HdeskUserGroup ug "); 
                 $q->leftJoin("h.HdeskTicketUser hu  ");
-                $q->addWhere("(h.ca_login = ? OR ug.ca_login = ? OR hu.ca_login = ? )", array($user->getUserid(), $user->getUserid(), $user->getUserid()));
+                $q->addWhere("(h.ca_login = ? OR ug.ca_login = ? OR hu.ca_login = ? )", array($user->getCaLogin(), $user->getCaLogin(), $user->getCaLogin()));
                 break;
             case 2:
                 $q->leftJoin("h.HdeskGroup g ");
                 $q->leftJoin("h.HdeskTicketUser hu  ");
-                $q->addWhere("(h.ca_login = ? OR g.ca_iddepartament = ? OR hu.ca_login = ?)", array($user->getUserid(), $user->getIddepartamento(), $user->getUserid()));
+                $q->addWhere("(h.ca_login = ? OR g.ca_iddepartament = ? OR hu.ca_login = ?)", array($user->getCaLogin(), $iddepartamento, $user->getCaLogin()));
                 break;
-        }
-        //echo $q->getSqlQuery();
+        } 
+        /*echo $idticket."<br>".$user->getCaLogin()."<br>".$iddepartamento."<br>".$user->getCaLogin()."<br>";
+        echo $q->getSqlQuery();
+        exit;*/
         return $q->fetchOne();
     }
+    
 
     public function getLuceneIndex() {
 
