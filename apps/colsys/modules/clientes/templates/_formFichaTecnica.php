@@ -855,7 +855,7 @@ $imprimir = $sf_data->getRaw("imprimir");
                                                         }]
                                                 }, {
                                                     xtype: 'fieldset',
-                                                    title: 'Mandatos y Seguro',
+                                                    title: 'Seguro',
                                                     width: 450,
                                                     height: 120,
                                                     collapsible: false,
