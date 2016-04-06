@@ -14,6 +14,7 @@ PanelReading = function( config ){
     
     this.grid = new PanelTickets({id:idcomponent,
                       idgroup: this.idgroup,
+                      group: this.group,
                       idproject: this.idproject,
                       department: this.department,
                       actionTicket: this.actionTicket,
@@ -22,7 +23,7 @@ PanelReading = function( config ){
                       readOnly: this.readOnly,
                       region: 'center'                      
                      });
-                     
+    
     var idcomponent = this.id;    
     var idGrid = this.grid.getId();
     
@@ -60,7 +61,7 @@ PanelReading = function( config ){
                 handler: this.recargar
             },
             {
-                text: 'Roadmap',
+                text: 'Agenda',
                 tooltip: 'Permite ver el cronograma de entrega de los tickets',
                 iconCls: 'calendar',  // reference to our css
                 scope: this,

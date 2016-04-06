@@ -272,6 +272,7 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
         //this.estimated = record.data.estimated;        
         this.status = record.data.status;
         this.status_name = record.data.status_name;
+        this.action = record.data.action;
 
         this.tpl.overwrite(this.preview.body, record.data);
 
@@ -334,8 +335,10 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
         }*/
 
         var items = this.responses.topToolbar.items;
-        items.get('response-'+idcomponent).enable();
-        items.get('kb-'+idcomponent).enable();
+        if(this.action == "Abierto"){
+            items.get('response-'+idcomponent).enable();
+            items.get('kb-'+idcomponent).enable();
+        }
         this.usersPanel.wgUsuario.enable();
     },
 

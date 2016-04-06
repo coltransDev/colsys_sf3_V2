@@ -414,5 +414,14 @@ class pmComponents extends sfComponents {
     public function executeUnificarTicketsWindow() {
         
     }
+    
+    /*
+     * Muestra grid con Agenda de Entregas
+     * @author: Andrea Ramírez
+     */
+
+    public function executePanelAgenda() {
+        
+    }
 }
 ?>

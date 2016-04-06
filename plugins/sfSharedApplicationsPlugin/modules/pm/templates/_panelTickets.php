@@ -294,24 +294,25 @@
             this.win.show();
         },
         recargar: function () {
-
-            /*if(this.store.getModifiedRecords().length>0){
-             if(!confirm("Se perderan los cambios no guardados en los recargos locales unicamente, desea continuar?")){
-             return 0;
-             }
-             }*/
             this.store.reload();
         },
         roadmap: function () {
-
-            this.store.sort("estimated", "ASC");
-            this.store.groupBy("milestone");
+            var newComponent = new PanelAgenda({                
+                title: this.department + " " +this.group + ' >> Agenda',                
+                autoScroll: true,
+                height: 300,
+                closable: true
+            });
+            Ext.getCmp('tab-panel').add(newComponent);
+            Ext.getCmp('tab-panel').setActiveTab(newComponent);
+            /*this.store.sort("estimated", "ASC");
+            this.store.groupBy("milestone");*/
         },
         programacion: function (grid) {
             var records = grid.getStore().getRange();
             var tickets = [];            
             var win = Ext.getCmp("agenda-ticket-win");
-            var panel = Ext.getCmp("agenda-panel");
+            var panel = Ext.getCmp("entregas-panel");
             panel ? panel.getForm().reset() : "";
 
             for (var i = 0; i < records.length; i++) {

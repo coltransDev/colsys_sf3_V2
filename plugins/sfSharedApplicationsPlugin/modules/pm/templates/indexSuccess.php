@@ -21,6 +21,7 @@ include_component("pm","panelConsulta");
 include_component("pm","panelReading");
 include_component("pm","panelDocumentos");
 include_component("pm","panelEntregas");
+include_component("pm","panelAgenda");
 include_component("pm","nuevaRespuestaWindow");
 include_component("pm","porcentajeTicketWindow");
 include_component("users","panelUsers");

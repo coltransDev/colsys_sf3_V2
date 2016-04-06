@@ -380,11 +380,23 @@ class pmActions extends sfActions {
             $respuesta->setCaCreatedat(date("Y-m-d H:i:s"));
             $respuesta->save($conn);
             
+            /*
+             * Finaliza la Tarea de entrega programada y la marca para IDG.
+             */
             if($request->getParameter("stage_id")){
                 $estimation = Doctrine::getTable("HdeskEstimations")->find($request->getParameter("stage_id")); 
                 if(!$estimation->getCaIdresponse()){
                     $estimation->setCaIdresponse($respuesta->getCaIdresponse());                
                     $estimation->save($conn);
+                }
+                $tarea = $estimation->getTareaIdg();
+                if ($tarea) {
+                    if (!$tarea->getCaFchterminada()) {
+                        $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
+                        //$tarea->setCaObservaciones(utf8_decode($request->getParameter("motivo")));
+                        $tarea->setCaUsuterminada($this->getUser()->getUserId());
+                        $tarea->save($conn);
+                    }
                 }
                 $ticket->getActualizarPorcentaje();
             }
@@ -2129,6 +2141,9 @@ class pmActions extends sfActions {
                     $request->setParameter("respuesta", $respuesta);                    
                     $success = $this->executeGuardarRespuestaTicket($request);
                     
+                    $detalleTk = $ticket->getCaText();
+                    $detalleSec = $detalleSec."<br/>----------------------------------------------------------------------<br/><b>Ticket # ".$ticket->getCaIdticket()."</b><br/>".$detalleTk."<br/>";
+                    
                     $logins = array($ticket->getCaLogin());
                     $usuarios = $ticket->getUsuarios();
                     
@@ -2155,6 +2170,10 @@ class pmActions extends sfActions {
                     $success = $this->executeCerrarTicket($request);
                 }
             }
+            
+            $detalleTkPpal = $ticketPpal->getCaText();
+            $ticketPpal->setCaText($detalleTkPpal."<br/>".$detalleSec);
+            $ticketPpal->save($conn);
             
             $respuestaPpal = "El Ticket # ".$idticketPpal." se ha sido designado como Ticket Principal y manejar&aacute; los asuntos de (el/los) ticket(s) # ".$request->getParameter("ticketval")."<br/>"
                     . "Todas las respuestas, documentos y usuarios de los tickes mencionados se podr&aacute;n visualizar atrav&eacute;s de éste ticket.<br/>"
@@ -2218,37 +2237,52 @@ class pmActions extends sfActions {
                 
     public function executeDatosEntregasTicket($request){
         
-        
-        $this->forward404Unless($request->getParameter("idticket"));
         $idticket = $request->getParameter("idticket");
-        $modo = $request->getParameter("modo");
-        $ticket = Doctrine::getTable("HdeskTicket")->find($idticket);
-        $this->forward404Unless($ticket);
+        $modo = $request->getParameter("modo");        
+        
+        if($idticket){
+            $ticket = Doctrine::getTable("HdeskTicket")->find($idticket);
+            $this->forward404Unless($ticket);
 
-        $entregas = $ticket->getHdeskEstimations($modo);
-
-        $data = array();
-
-        foreach ($entregas as $entrega) {
-            $row = array();
-            $row["idticket"] = $idticket;
-            $row["idstage"] = $entrega->getCaIdstage();
-            $row["stage"] = utf8_encode($entrega->getCaStage());
-            $row["detail"] = utf8_encode($entrega->getCaDetail());
-            $row["estimated"] = $entrega->getCaEstimated();
-            $row["delivery"] = null;
+            $entregas = $ticket->getHdeskEstimations($modo);
             
-            if($entrega->getCaIdresponse()){
-                $response = Doctrine::getTable("HdeskResponse")->find($entrega->getCaIdresponse());
-                $row["delivery"] = $response->getCaCreatedat();  
+        }else{
+            
+            $entregas = Doctrine::getTable("HdeskEstimations")
+                    ->createQuery("he")
+                    ->innerJoin("he.HdeskTicket h")
+                    ->where("he.ca_idresponse IS NULL")
+                    ->orderBy("he.ca_estimated")
+                    ->execute(); 
+        }
+        
+        if($entregas){
+            $data = array();
+            foreach ($entregas as $entrega) {
+                $row = array();
+                $row["idticket"] = $idticket?$idticket:$entrega->getHdeskTicket()->getCaIdticket();
+                $row["title"] = $entrega->getHdeskTicket()->getCaTitle()?utf8_encode($entrega->getHdeskTicket()->getCaTitle()):"";
+                $row["assignedto"] = $entrega->getHdeskTicket()->getCaAssignedto()?$entrega->getHdeskTicket()->getCaAssignedto():"";
+                $row["login"] = $entrega->getHdeskTicket()->getCaLogin()?$entrega->getHdeskTicket()->getCaLogin():"";
+                $row["opened"] = $entrega->getHdeskTicket()->getCaOpened()?$entrega->getHdeskTicket()->getCaOpened():""; 
+                $row["idstage"] = $entrega->getCaIdstage();
+                $row["stage"] = utf8_encode($entrega->getCaStage());
+                $row["detail"] = utf8_encode($entrega->getCaDetail());
+                $row["estimated"] = $entrega->getCaEstimated();
+                $row["delivery"] = null;
+
+                if($entrega->getCaIdresponse()){
+                    $response = Doctrine::getTable("HdeskResponse")->find($entrega->getCaIdresponse());
+                    $row["delivery"] = $response->getCaCreatedat();  
+                }
+
+                $data[] = $row;
             }
-            
-            $data[] = $row;
         }
         
         //echo "<pre>".print_r($data)."</pre>";
 
-        $this->responseArray = array("success" => true, "root" => $data);
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
         $this->setTemplate("responseTemplate");
     }
     
@@ -2258,13 +2292,15 @@ class pmActions extends sfActions {
         
         $ticket = Doctrine::getTable("HdeskTicket")->find($idticket);
         
+        $conn = Doctrine::getTable("HdeskEstimations")->getConnection();
+        $conn->beginTransaction();
         try {
             if (!$this->getRequestParameter('idstage')) {
                 $entregas = new HdeskEstimations();
                 $entregas->setCaIdticket($idticket);
             } else {
                 $entregas = Doctrine::getTable("HdeskEstimations")->find($this->getRequestParameter('idstage'));
-}
+            }
 
             $row = array();
 
@@ -2283,12 +2319,36 @@ class pmActions extends sfActions {
                 $row["estimated"] = $this->getRequestParameter('estimated');
             }
 
-            $entregas->save(); 
+            $entregas->save($conn); 
             $ticket->getActualizarPorcentaje();
             
-            $this->responseArray = array( "idstage" =>$entregas->getCaIdstage(), "id" =>$this->getRequestParameter('id'), "success" => true, "data" => $row);
+            /*
+            * Se crea la tarea para el usuario
+            */
+            $tarea = new NotTarea();
+            $tarea->setCaUrl("/pm/index?idticket=" . $ticket->getCaIdticket());
+            $tarea->setCaIdlistatarea(14);
+            $tarea->setCaFchcreado(date("Y-m-d H:i:s"));
+
+            $tarea->setCaFchvisible($this->getRequestParameter('estimated'));
+            $seguimiento = Utils::parseDate($this->getRequestParameter('estimated'));
+            $tarea->setCaFchvencimiento($seguimiento . " 23:59:59");            
+
+            $tarea->setCaUsucreado($this->getUser()->getUserId());
+            $tarea->setCaTitulo(utf8_decode($this->getRequestParameter('stage')));
+            $tarea->setCaTexto(utf8_decode($this->getRequestParameter('detail')));
+            $tarea->save($conn);
+
+            $tarea->setAsignaciones(array($this->getUser()->getUserId()));
+
+            $entregas->setCaIdtarea($tarea->getCaIdtarea());
+            $entregas->save($conn);
             
-        } catch (Exception $e) {            
+            $this->responseArray = array( "idstage" =>$entregas->getCaIdstage(), "id" =>$this->getRequestParameter('id'), "success" => true, "data" => $row);
+            $conn->commit();
+            
+        } catch (Exception $e) {
+            $conn->rollback();            
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
         $this->setTemplate("responseTemplate");

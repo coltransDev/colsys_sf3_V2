@@ -5,8 +5,6 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
-$tipos = $sf_data->getRaw("tipos");
-include_component("gestDocumental", "widgetUploadButton");
 ?>
 <style type="text/css">
     .reply-text {
@@ -24,10 +22,6 @@ include_component("gestDocumental", "widgetUploadButton");
     /**
      * PanelEntregas object definition
      **/
-
-    cantDocumentos = new Ext.Toolbar.TextItem('0');
-    cantRecuperacion = new Ext.Toolbar.TextItem('0');
-    cantPerdida = new Ext.Toolbar.TextItem('0');
 
     PanelEntregas = function (config) {
         Ext.apply(this, config);

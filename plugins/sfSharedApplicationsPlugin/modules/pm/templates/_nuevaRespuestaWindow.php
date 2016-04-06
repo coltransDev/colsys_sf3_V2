@@ -250,11 +250,14 @@ $status = $sf_data->getRaw("status");
         this.tbar = [this.combo];
 
         if (this.idgroup == 2) {
-            Ext.getCmp('info').add(this.etapas);            
+            Ext.getCmp('info').add(this.etapas);
+            this.tbar.push({
+                text:' '
+            });
             this.tbar.push({
                 text:'Agendar Entregas',
                 handler: this.crearEntregas
-             });
+            });
         }    
 
         NuevaRespuestaWindow.superclass.constructor.call(this, {
@@ -363,7 +366,7 @@ $status = $sf_data->getRaw("status");
                     title: 'Panel de Entregas',
                     id: 'crear-entregas-win',
                     autoHeight: true,
-                    width: 650,
+                    width: 850,
                     height: 400,
                     resizable: false,
                     plain:true,

@@ -52,6 +52,7 @@ Ext.extend(PanelConsulta, Ext.tree.TreePanel, {
             var assignedTo = n.attributes.assignedTo;
             var reportedBy = n.attributes.reportedBy;
             var department = n.attributes.department;
+            var group = n.attributes.group;
 
             //Coloca un identificador unico para evitar que el componente se cree dos veces
             var idcomponent = action;
@@ -137,6 +138,7 @@ Ext.extend(PanelConsulta, Ext.tree.TreePanel, {
                         */
                         var newComponent = new PanelReading({id:idcomponent,
                                                               idgroup: idgroup,
+                                                              group: group,
                                                               idproject: idproject,
                                                               actionTicket: actionTicket,
                                                               assignedTo: assignedTo,

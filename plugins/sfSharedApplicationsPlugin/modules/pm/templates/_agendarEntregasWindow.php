@@ -23,7 +23,7 @@ AgendarEntregasWindow = function( config ) {
     
     this.items = [{
             xtype: 'form',
-            id: "agenda-panel", 
+            id: "entregas-panel", 
             border: true,            
             bodyStyle:'padding:5px 5px 0',
             items: [
@@ -121,7 +121,7 @@ AgendarEntregasWindow = function( config ) {
 Ext.extend(AgendarEntregasWindow, Ext.Window, {
     
     enviarTicket: function(){
-        var panel = Ext.getCmp("agenda-panel");
+        var panel = Ext.getCmp("entregas-panel");
         var form = panel.getForm();
         var win = Ext.getCmp("agenda-ticket-win");        
         var grid = Ext.getCmp(this.idcomponent);        
