@@ -1,4 +1,3 @@
-
 HdeskGroup:
   options:
     symfony:
@@ -15,6 +14,8 @@ HdeskGroup:
     ca_name: string
     ca_maxresponsetime: integer
     ca_idtipo: integer
+    ca_activo: boolean
+    ca_interno: boolean
   relations:    
     HdeskTicket:
       local: ca_idgroup
@@ -52,25 +53,31 @@ HdeskTicket:
       autoincrement: true
     ca_idgroup: integer
     ca_idproject: integer
-    ca_login: string(15)    
+    ca_login: string(15)
     ca_title: string(255)
     ca_text: string
     ca_priority: string(8)
     ca_opened: timestamp
     ca_type: string(20)
-    ca_assignedto: string(15)    
-    ca_reportedby: string(20)
+    ca_assignedto: string(15)
+    ca_action: string(15)
     ca_responsetime: timestamp
     ca_idtarea: integer
     ca_idseguimiento: integer
-    ca_idmilestone: integer
+    ca_order: integer
+    ca_estimatedhours: integer
     ca_percentage: integer
+    ca_idmilestone: integer
+    ca_reportedby: string(20)    
     ca_idevaluacion: integer
     ca_starred: boolean
     ca_closedat: timestamp
     ca_closedby: string(15)
     ca_status: integer
     ca_idactivo: integer
+    ca_idempresa: integer
+    ca_estimated: date
+    ca_parent: integer
   relations:    
     HdeskGroup:
       local: ca_idgroup
@@ -88,9 +95,13 @@ HdeskTicket:
       local: ca_idticket
       foreign: ca_idticket
       type: many
+    HdeskAuditDocuments:
+      local: ca_idticket
+      foreign: ca_idticket
+      type: many
     HdeskUserGroup:
-      local: ca_login
-      foreign: ca_login
+      local: ca_idgroup
+      foreign: ca_idgroup
       type: many
     HdeskMilestone:
       local: ca_idmilestone
@@ -118,12 +129,37 @@ HdeskTicket:
       foreign: ca_login
       type: one
       class: Usuario
+    ClosedBy:
+      local: ca_closedby
+      foreign: ca_login
+      type: one
+      class: Usuario
     SurvEvaluacion:
       local: ca_idevaluacion
       foreign: ca_idevaluacion
     InvActivo:
       local: ca_idactivo
       foreign: ca_idactivo
+      type: one
+    Empresa:
+      class: Empresa
+      local: ca_idempresa
+      foreign: ca_idempresa
+      type: one
+    Email:
+      local: ca_idticket
+      foreign: ca_idcaso
+      type: one
+    Parent:
+      local: ca_parent
+      foreign: ca_idticket
+      type: one
+      class: HdeskTicket
+    Children:
+      local: ca_idticket
+      foreign: ca_parent
+      type: many
+      class: HdeskTicket
 
 
 HdeskResponse:
@@ -139,11 +175,11 @@ HdeskResponse:
       primary: true
       autoincrement: true
     ca_idticket: integer
+    ca_responseto: integer
+    ca_text: string
     ca_login: string(15)
     ca_createdat: timestamp
-    ca_text: string
     ca_idissue: integer
-    ca_responseto: integer
     ca_idtarea: integer
   relations:    
     Usuario:
@@ -164,8 +200,6 @@ HdeskResponse:
       local: ca_idtarea
       foreign: ca_idtarea
       type: one
-
-
 
 HdeskProject:
   options:
@@ -243,7 +277,6 @@ HdeskTicketUser:
       foreign: ca_login
       type: one
 
-
 HdeskDepartamentClasification:
   options:
     symfony:
@@ -263,35 +296,6 @@ HdeskDepartamentClasification:
     Departamento:
       local: ca_iddepartament
       foreign: ca_iddepartamento
-      type: one
-
-HdeskTask:
-  options:
-    symfony:
-      form: false
-      filter: false
-  generatePath: helpdesk
-  tableName: helpdesk.tb_tasks
-  columns:
-    ca_idtask:
-      type: integer
-      primary: true
-      autoincrement: true
-    ca_idticket: integer
-    ca_task: string(25)
-    ca_weight: integer
-    ca_percentage: integer
-    ca_assigned_to: string
-    ca_fchcreado: timestamp
-    ca_usucreado: string
-  relations:
-    HdeskTicket:
-      local: ca_idticket
-      foreign: ca_idticket
-      type: one
-    Usuario:
-      local: ca_assigned_to
-      foreign: ca_assigned_to
       type: one
 
 HdeskMilestone:
@@ -317,3 +321,67 @@ HdeskMilestone:
       foreign: ca_idproject
       type: one
 
+
+HdeskAuditDocuments:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: helpdesk
+  tableName: helpdesk.tb_auditdocs
+  columns:
+    ca_idauditdocs:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idticket: integer
+    ca_tipo_doc: string(25)
+    ca_numero_doc: string(255)
+    ca_recuperacion: decimal
+    ca_perdida: decimal
+    ca_observaciones: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    HdeskTicket:
+      local: ca_idticket
+      foreign: ca_idticket
+      type: one
+    Usuario:
+      local: ca_assigned_to
+      foreign: ca_assigned_to
+      type: one
+      
+HdeskEstimations:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: helpdesk
+  tableName: helpdesk.tb_estimations
+  columns:
+    ca_idstage:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idticket: integer      
+    ca_idresponse: integer
+    ca_stage: string
+    ca_detail: string
+    ca_estimated: date
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+    ca_idtarea: integer
+  relations:    
+    HdeskResponse:
+      local: ca_idresponse
+      foreign: ca_idresponse
+      type: one
+    HdeskTicket:
+      local: ca_idticket
+      foreign: ca_idticket
+      type: one
