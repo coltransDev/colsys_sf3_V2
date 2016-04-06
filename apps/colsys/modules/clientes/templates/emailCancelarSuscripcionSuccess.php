@@ -33,7 +33,7 @@
                     </table>
                 </td></tr>
             <!-- COPYRIGHT -->
-            <tr><td><font size="1" face="arial, helvetica, sans-serif" color="#666666">&copy; Coltrans S.A. Colmas Ltda. Agencia de Aduanas Nivel 1</font></td></tr>
+            <tr><td><font size="1" face="arial, helvetica, sans-serif" color="#666666">&copy; Grupo Coltrans</font></td></tr>
         </table>
 
         <img src="https://www.coltrans.com.co/images/spacer.gif" style="width:1px; height:1px;"/></body>
