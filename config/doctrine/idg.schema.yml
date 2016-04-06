@@ -83,3 +83,55 @@ IdgConfig:
       local: ca_idsucursal
       foreign: ca_idsucursal
       type: one
+
+IdgProcesos:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: idg
+  tableName: idg.tb_procesos
+  columns:
+    ca_idproceso:
+      type: integer
+      primary: true
+      autoincrement: true    
+    ca_nombre: string(30)
+    ca_iddepartamento: integer    
+    ca_usuproceso: string(20)    
+  relations:
+    IdgRiesgos:
+      local: ca_idproceso
+      foreign: ca_idproceso
+      type: many
+
+
+IdgRiesgos:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: idg
+  tableName: idg.tb_riesgos
+  columns:
+    ca_idriesgo:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idproceso: integer
+    ca_codigo: string(10)    
+    ca_descripcion: string
+    ca_causas: string
+    ca_controles: string
+    ca_operativo: integer
+    ca_legal: integer
+    ca_economico: integer
+    ca_comercial: integer
+    ca_peso: integer
+    ca_ap: string
+    ca_contingencia: string
+  relations:
+    IdgProcesos:
+      local: ca_idproceso
+      foreign: ca_idproceso
+      type: one
