@@ -189,6 +189,19 @@ class HdeskTicket extends BaseHdeskTicket {
         $index->commit();
     }
 
+    public function getFiles($name=array(),$not_name=array()) {
+        $directory = $this->getDirectorio();
+        if (!is_dir($directory)) {
+            mkdir($directory, 0777, true);
+        }
+        if(count($name)>0)
+            return sfFinder::type('file')->maxDepth(0)->name($name)->in($directory);
+        else if(count($not_name)>0)            
+            return sfFinder::type('file')->maxDepth(0)->not_name($not_name)->in($directory);
+        else
+            return sfFinder::type('file')->maxDepth(0)->in($directory);
+    }
+
     /*public function save(Doctrine_Connection $conn = null) {
         // ...
 
@@ -251,5 +264,31 @@ class HdeskTicket extends BaseHdeskTicket {
             return true;
         }
     }
+    
+    public function getActualizarPorcentaje() {
+        $estimations = $this->getHdeskEstimations();             
+        if(count($estimations) > 0){
+            $j=0;
+            foreach($estimations as $estimation){
+                if($estimation->getCaIdresponse())
+                    $j++;
+            }
+            if($j>0){
+                $this->setCaPercentage(number_format($j*100/count($estimations),0));
+                $this->save();
+            }
+        }
+    }
+    
+    public function getHdeskEstimations($modo=null) {
 
+        $q =  Doctrine::getTable("HdeskEstimations")->createQuery("e")
+                ->where("e.ca_idticket = ?", $this->getCaIdticket())
+                ->addOrderBy("e.ca_estimated, ca_fchcreado ASC");
+        
+        if($modo)
+            $q->addWhere("e.ca_idresponse IS NULL");
+        
+        return $q->execute();
+    }
 }
