@@ -1,0 +1,55 @@
+Comunicado:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: comunicaciones
+  tableName: comunicaciones.tb_comunicados
+  columns:
+    ca_idcomunicado:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_type: string(20)
+    ca_from: string(50)
+    ca_fromname: string(250)
+    ca_replyto: string(50)
+    ca_subject: string(250)
+    ca_body: text
+    ca_attachment: text
+    ca_usucreado: string(15)
+    ca_fchcreado: timestamp
+    
+Envio:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: comunicaciones
+  tableName: comunicaciones.tb_envios
+  columns:
+    ca_idenvio:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idcomunicado: integer
+    ca_id: integer
+    ca_idcontacto: integer
+    ca_idemail: integer
+    ca_conf: boolean    
+    ca_fchconf: timestamp
+    ca_test: boolean
+    ca_observaciones: text
+  relations:
+    Comunicado:
+      local: ca_idcomunicado
+      foreign: ca_idcomunicado
+      type: many 
+    Email:
+      local: ca_idemail
+      foreign: ca_idemail
+      type: one
+    Contacto:
+      local: ca_idcontacto
+      foreign: ca_idcontacto
+      type: one
