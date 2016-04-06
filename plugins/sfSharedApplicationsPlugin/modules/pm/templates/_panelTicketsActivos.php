@@ -262,7 +262,7 @@ Ext.extend(PanelTicketsActivos, Ext.grid.GridPanel, {
     recargar: function(){
 
         if(this.store.getModifiedRecords().length>0){
-            if(!confirm("Se perderan los cambios no guardados en los recargos locales unicamente, desea continuar?")){
+            if(!confirm("Se perderan los cambios no guardados, desea continuar?")){
                 return 0;
             }
         }
