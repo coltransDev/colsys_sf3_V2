@@ -65,6 +65,14 @@ class Utils {
         list( $year, $month, $day ) = sscanf($fecha, "%d-%d-%d");
         return date($format, mktime(0, 0, 0, $month, $day, $year));
     }
+    
+    public static function transformDate1($fecha) {
+        if (!$fecha) {
+            return "";
+        }
+        list( $day,$month,   $year ) = split( "/",$fecha);
+        return "$year-$month-$day";
+    }
 
     public static function fechaMes($fecha) {
         if ($fecha) {
@@ -592,7 +600,7 @@ class Utils {
         $mensaje = (isset($data["mensaje"])) ? $data["mensaje"] : "Email No enviado";
         //$mensaje = "Id Email: ".$email->getCaIdemail() . "<br />".$e->getMessage(). "<br />".$e->getTraceAsString();
         $mail->setCaBodyhtml($mensaje);
-        $mail->send();
+        $mail->save();
     }
     
      public static function serializeArray($data = array()) {
