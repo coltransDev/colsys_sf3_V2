@@ -26,7 +26,7 @@ EOF;
 
         sfContext::createInstance($this->configuration)->dispatch();
 
-        sfContext::getInstance()->getController()->getPresentationFor('adminUsers', 'tiempoColaborador');
+        echo sfContext::getInstance()->getController()->getPresentationFor('adminUsers', 'tiempoColaborador');
     }
 }
 
