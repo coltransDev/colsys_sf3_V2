@@ -291,7 +291,7 @@ switch ($action) {
         $button[$i]["link"] = "/reportesNeg/enviarNotificacion/idreporte/" . $this->getRequestParameter("id") . "/token/" . md5(time());
         $i++;
 
-        if(($reporte->getCaUsuanulado()==$user->getUserId() && !$reporte->getCaIdgrupo()) || $permiso > 2 )
+        if(($reporte->getCaUsuanulado()==$user->getUserId()) || $permiso > 2 )
         {
             $button[$i]["id"] = "revivir-reporte";
             $button[$i]["name"] = "Revivir";
