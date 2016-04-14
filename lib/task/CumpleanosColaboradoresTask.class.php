@@ -6,10 +6,10 @@ class CumpleanosColaboradoresTask extends sfDoctrineBaseTask {
         $this->name = 'cumpleanos';
         $this->briefDescription = 'Notifica diaramente los cumpleaños de los colaboradores COLTRANS, COLMAS Y COL OTM';
         $this->detailedDescription = <<<EOF
-The [notificar-tiempo-colaborador|INFO] task does things.
+The [cumpleanos|INFO] task does things.
 Call it with:
 
-  [php symfony tiempoColaborador|INFO]
+  [php symfony birthdayEmail|INFO]
 EOF;
         // add arguments here, like the following:
         //$this->addArgument('application', sfCommandArgument::REQUIRED, 'The application name');
@@ -25,8 +25,8 @@ EOF;
         $databaseManager->loadConfiguration();
 
         sfContext::createInstance($this->configuration)->dispatch();
-        sfContext::getInstance()->getRequest()->setParameter("login", "Administrador");
-        sfContext::getInstance()->getController()->getPresentationFor('adminUsers', 'birthdayEmail');
+        sfContext::getInstance()->getRequest()->setParameter('login', 'Administrador');
+        echo sfContext::getInstance()->getController()->getPresentationFor('adminUsers', 'birthdayEmail');
     }
 }
 

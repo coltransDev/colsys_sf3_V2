@@ -26,7 +26,7 @@ EOF;
 
         sfContext::createInstance($this->configuration)->dispatch();
         sfContext::getInstance()->getRequest()->setParameter("login", "consolcargo");
-        sfContext::getInstance()->getController()->getPresentationFor('adminUsers', 'birthdayEmail');
+        echo sfContext::getInstance()->getController()->getPresentationFor('adminUsers', 'birthdayEmail');
     }
 }
 
