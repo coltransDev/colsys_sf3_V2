@@ -625,8 +625,15 @@ class pmActions extends sfActions {
             $ticket->setCaText(($request->getParameter("text")));
 
             if ($request->getParameter("actionTicket") == "Cerrado") {
-                $ticket->setCaClosedat(date("Y-m-d H:i:s"));
-                $ticket->setCaClosedby($this->getUser()->getUserId());
+                
+                $entregas = $ticket->getHdeskEstimations('modo');
+                
+                if(count($entregas)>0){
+                    $error["entregas"] = "El ticket ".$ticket->getCaIdticket()." tiene entregas pendientes por ejecutar";
+                }else{
+                    $ticket->setCaClosedat(date("Y-m-d H:i:s"));
+                    $ticket->setCaClosedby($this->getUser()->getUserId());
+                }
             } else {
                 $ticket->setCaClosedat(null);
                 $ticket->setCaClosedby(null);
@@ -763,10 +770,12 @@ class pmActions extends sfActions {
                 }
                 $email->save();
             }
-
-            $conn->commit();
-
-            $this->responseArray = array("success" => true, "idticket" => $ticket->getCaIdticket(), "change"=>$changeDepto, "txt"=>utf8_encode($txt));
+            if($error){
+                $this->responseArray = array("success" => false, "idticket" => $ticket->getCaIdticket(), "errorInfo"=>$error["entregas"]);
+            }else{
+                $conn->commit();
+                $this->responseArray = array("success" => true, "idticket" => $ticket->getCaIdticket(), "change"=>$changeDepto, "txt"=>utf8_encode($txt));
+            }
         } catch (Exception $e) {
             $conn->rollback();
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
@@ -807,27 +816,33 @@ class pmActions extends sfActions {
     public function executeCerrarTicket(sfWebRequest $request) {
         try {
             if ($request->getParameter("idticket")) {
+                
                 $ticket = Doctrine::getTable("HdeskTicket")->find($request->getParameter("idticket"));
-                $ticket->setCaClosedat(date("Y-m-d H:i:s"));
-                $ticket->setCaClosedby($this->getUser()->getUserId());
+                
+                $entregas = $ticket->getHdeskEstimations('modo');
+                
+                if(count($entregas)>0)
+                   $this->responseArray = array("idticket" => $request->getParameter("idticket"), "success" => false); 
+                else{
+                    $ticket->setCaClosedat(date("Y-m-d H:i:s"));
+                    $ticket->setCaClosedby($this->getUser()->getUserId());
 
-                $ticket->setCaPercentage(100);
-                $ticket->save();
+                    $ticket->setCaPercentage(100);
+                    $ticket->save();
 
-                //Solo por compatibilidad
-                $tarea = $ticket->getTareaSeguimiento();
-                if ($tarea) {
-                    $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
-                    $tarea->setCaUsuterminada($this->getUser()->getUserId());
-                    $tarea->save();
+                    //Solo por compatibilidad
+                    $tarea = $ticket->getTareaSeguimiento();
+                    if ($tarea) {
+                        $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
+                        $tarea->setCaUsuterminada($this->getUser()->getUserId());
+                        $tarea->save();
+                    }
+
+                    $ticket->cerrarSeguimientos();
+                    $ticket->crearEvaluacion();
+                    $this->responseArray = array("success" => true, "idticket" => $request->getParameter("idticket"));
                 }
-
-                $ticket->cerrarSeguimientos();
-                $ticket->crearEvaluacion();
             }
-
-
-            $this->responseArray = array("success" => true, "idticket" => $request->getParameter("idticket"));
         } catch (Exception $e) {
             $this->responseArray = array("success" => false, "errorInfo");
         }
@@ -2130,12 +2145,11 @@ class pmActions extends sfActions {
                     
                     $ticket = Doctrine::getTable("HdeskTicket")->find($idticket);
                     $ticket->setCaParent($idticketPpal);
-                    //$ticket->setCaEstimated(null);
                     $ticket->save($conn);
                     
                     $respuesta = "El Ticket # ".$idticket." se ha unificado con el Ticket Principal # ".$idticketPpal.".<br/>"
                             . "A partir de &eacute;ste momento el presente ticket queda cerrado y todo los asuntos se manejar&aacute;n con el ticket principal.<br/>"
-                            . "Los documentos y usuarios involucrados en el presente ticket se adicionar&aacute;n al Ticket Principal";
+                            . "Los documentos, tareas y usuarios involucrados en el presente ticket se adicionar&aacute;n al Ticket Principal";
                     
                     $request->setParameter("idticket", $idticket);
                     $request->setParameter("respuesta", $respuesta);                    
@@ -2182,6 +2196,13 @@ class pmActions extends sfActions {
             $request->setParameter("idticket", $idticketPpal);
             $request->setParameter("respuesta", $respuestaPpal);                    
             $success = $this->executeGuardarRespuestaTicket($request); 
+            
+            $entregas = $ticket->getHdeskEstimations();
+            
+            foreach($entregas as $entrega){
+                $entrega->setCaIdticket($idticketPpal);
+                $entrega->save($conn);
+            }
             
             $this->responseArray = array("success" => true, "idticket" => $idticket, "sel"=>$success);        
             $conn->commit();
@@ -2306,12 +2327,12 @@ class pmActions extends sfActions {
 
             if ($this->getRequestParameter('stage') !== null) {
                 $entregas->setCaStage(utf8_decode($this->getRequestParameter('stage')));
-                $row["stage"] = utf8_decode($this->getRequestParameter('stage'));
+                $row["stage"] = utf8_encode($this->getRequestParameter('stage'));
             }
 
             if ($this->getRequestParameter('detail') !== null) {
                 $entregas->setCaDetail(utf8_decode($this->getRequestParameter('detail')));
-                $row["detail"] = utf8_decode($this->getRequestParameter('detail'));
+                $row["detail"] = utf8_encode($this->getRequestParameter('detail'));
             }
 
             if ($this->getRequestParameter('estimated') !== null) {
@@ -2335,7 +2356,7 @@ class pmActions extends sfActions {
             $tarea->setCaFchvencimiento($seguimiento . " 23:59:59");            
 
             $tarea->setCaUsucreado($this->getUser()->getUserId());
-            $tarea->setCaTitulo(utf8_decode($this->getRequestParameter('stage')));
+            $tarea->setCaTitulo("Programación de Entrega >> Ticket # ".$idticket." : ".utf8_decode($this->getRequestParameter('stage')));
             $tarea->setCaTexto(utf8_decode($this->getRequestParameter('detail')));
             $tarea->save($conn);
 

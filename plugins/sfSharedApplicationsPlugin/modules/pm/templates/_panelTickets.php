@@ -525,8 +525,6 @@
 
                     var idticket = this.ctxRecord.data.idticket;
 
-
-
                     Ext.Ajax.request({
                         url: "<?= url_for("pm/cerrarTicket") ?>",
                         params: {
@@ -534,17 +532,20 @@
                         },
                         callback: function (options, success, response) {
                             var res = Ext.util.JSON.decode(response.responseText);
-                            var store = Ext.getCmp(gridId).store;
-                            store.each(function (r) {
-                                if (r.data.idticket == res.idticket) {
-                                    //storeView.remove(r);
-                                    r.set("action", "Cerrado");
-                                    r.set("percentage", 100);
-                                    r.commit();
-                                    Ext.Msg.alert("Success", "Se ha cerrado el ticket");
-                                }
-                            });
-
+                            if(res.success == true){
+                                var store = Ext.getCmp(gridId).store;
+                                store.each(function (r) {
+                                    if (r.data.idticket == res.idticket) {
+                                        //storeView.remove(r);
+                                        r.set("action", "Cerrado");
+                                        r.set("percentage", 100);
+                                        r.commit();
+                                        Ext.Msg.alert("Success", "Se ha cerrado el ticket");
+                                    }
+                                });
+                            }else{
+                                Ext.Msg.alert("Error", "El ticket "+ res.idticket +" tiene entregas pendientes por ejecutar");
+                            }
                         }
                     });
                 }

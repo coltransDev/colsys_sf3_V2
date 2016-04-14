@@ -31,7 +31,7 @@
                 header: "Etapa",
                 dataIndex: 'stage',
                 sortable: true,                
-                width: 200,
+                width: 200,                
                 renderer : function (value){
                     str = '<div class="reply-text">'+value+'</div>';
                     return str;
@@ -182,9 +182,11 @@
                 
                 var changes = r.getChanges();
                 changes['id'] = r.id;
-                changes['idticket'] = r.data.idticket;
-                changes['idstage'] = r.data.idstage;
-
+                changes['idticket'] = r.data.idticket;                
+                
+                if(r.data.stage == "" || r.data.detail == "" || r.data.estimated == "")
+                    continue;
+                
                 //envia los datos al servidor
                 Ext.Ajax.request({
                     waitMsg: 'Guardando cambios...',
@@ -192,29 +194,23 @@
                     //method: 'POST',
                     //Solamente se envian los cambios
                     params: changes,
-                    success:function(response,options){
-                        var res = Ext.util.JSON.decode(response.responseText);
+                    callback :function(options, success, response){
+                        var res = Ext.util.JSON.decode( response.responseText );
                         console.log(res);
                         if (res.id && res.success) {
                             var rec = store.getById(res.id);
-
+                            
                             rec.set("sel", false); //Quita la seleccion de todas las columnas
                             rec.data.idstage = res.idstage;
                             rec.commit();
 
                             Ext.MessageBox.alert('Etapas', 'Se ha(n) creado el(los) registro(s) correctamente.');
-                            
-                            var pe = Ext.getCmp("grid-panel-entregas");
-                            pe.recargar();
+                            store.reload();
                             
                         } else {
                             Ext.MessageBox.alert('Error Message', "Se ha presentado un error" + " " + (res.errorInfo ? "\n Codigo HTTP " + res.errorInfo : ""));
                         }
-                    },
-                    failure:function(response,options){
-                        var res = Ext.util.JSON.decode(response.responseText);
-                        Ext.MessageBox.alert('Error Message', "Se ha presentado un error" + " " + (res.errorInfo ? "\n Codigo HTTP " + res.errorInfo : ""));
-                    }
+                    }                    
                 });
             }
             var win = Ext.getCmp("crear-entregas-win");
