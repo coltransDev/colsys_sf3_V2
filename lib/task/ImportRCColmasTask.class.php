@@ -27,6 +27,6 @@ EOF;
 	$databaseManager = new sfDatabaseManager($this->configuration);
 	$databaseManager->loadConfiguration();
     sfContext::createInstance($this->configuration)->dispatch();	
-	echo sfContext::getInstance()->getController()->getPresentationFor( 'ino', 'importRCColmas');
+	echo sfContext::getInstance()->getController()->getPresentationFor( 'inoF', 'importRCColmas');
   }
 }
