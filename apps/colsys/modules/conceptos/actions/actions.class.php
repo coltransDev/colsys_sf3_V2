@@ -214,6 +214,7 @@ class conceptosActions extends sfActions {
     public function executeDatosConceptos(sfWebRequest $request) {
         $transporte = utf8_decode($request->getParameter("transporte"));
         $modalidad = utf8_decode($request->getParameter("modalidad"));
+        $parametro = utf8_decode($request->getParameter("parametro"));
         $impoexpo = utf8_decode($request->getParameter("impoexpo"));
         $tipo = utf8_decode($request->getParameter("tipo"));
         $modo = $request->getParameter("modo");
@@ -227,10 +228,13 @@ class conceptosActions extends sfActions {
             //echo $tipo;
             //$c->setLimit(3);
 
-            if ($transporte == Constantes::OTMDTA || $transporte == Constantes::TERRESTRE) { //FIX-ME [Actualizar los registros de la tabla para que coincidan y arreglar las cotizaciones]
+            if ($transporte == Constantes::OTMDTA || $transporte == Constantes::TERRESTRE || $transporte == Constantes::OTMAIR) { //FIX-ME [Actualizar los registros de la tabla para que coincidan y arreglar las cotizaciones]
                 $transporte = Constantes::TERRESTRE;
-                $modalidad = Constantes::OTMDTA;
-            }
+                if($modalidad == Constantes::CONTINUACION)
+                    $impoexpo = Constantes::OTMAIR;
+                else
+                    $modalidad = Constantes::OTMDTA;
+            }            
             if ($modalidad == Constantes::ADUANAFCL || $modalidad == Constantes::ADUANALCL) { //FIX-ME [Actualizar los registros de la tabla para que coincidan y arreglar las cotizaciones]
                 $modalidad = Constantes::OTMDTA;
             }
@@ -285,13 +289,35 @@ class conceptosActions extends sfActions {
                 );
                 $this->conceptos[] = $row;
             }
+        } elseif ($modo == "parametros") {
+            $this->forward404Unless($impoexpo);
+            //echo $tipo;
+            //$c->setLimit(3);
+            $q = Doctrine::getTable("Costo")
+                    ->createQuery("c")
+                    ->addWhere("c.ca_impoexpo = ? ", $impoexpo)
+                    ->addWhere("c.ca_parametros = ? ", $parametro)
+                    ->distinct()
+                    ->addOrderBy("c.ca_costo");
+
+            $costos = $q->execute();
+            $this->conceptos = array();
+            foreach ($costos as $costo) {
+                $row = array("idconcepto" => $costo->getCaIdcosto(),
+                    "concepto" => utf8_encode($costo->getCaCosto())
+                );
+                $this->conceptos[] = $row;
+            }
         } else {
             $this->forward404Unless($transporte);
             $this->forward404Unless($modalidad);
-            if ($transporte == Constantes::OTMDTA || $transporte == Constantes::TERRESTRE) { //FIX-ME [Actualizar los registros de la tabla para que coincidan y arreglar las cotizaciones]
+            if ($transporte == Constantes::OTMDTA || $transporte == Constantes::TERRESTRE || $transporte == Constantes::OTMAIR) { //FIX-ME [Actualizar los registros de la tabla para que coincidan y arreglar las cotizaciones]
                 $transporte = Constantes::TERRESTRE;
-                $modalidad = Constantes::OTMDTA;
-            }
+                if($modalidad == Constantes::CONTINUACION)
+                    $modalidad = Constantes::CONTINUACION;
+                else
+                    $modalidad = Constantes::OTMDTA;
+            }            
             if ($modalidad == Constantes::ADUANAFCL || $modalidad == Constantes::ADUANALCL) { //FIX-ME [Actualizar los registros de la tabla para que coincidan y arreglar las cotizaciones]
                 $modalidad = Constantes::OTMDTA;
             }
