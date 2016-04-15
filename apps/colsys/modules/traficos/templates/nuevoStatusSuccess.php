@@ -814,7 +814,7 @@ $folder = $reporte->getDirectorioBase();
                                 </td>
                             </tr>
                                                 <?
-                                            }if ($reporte->getCaTiporep() == 4) {
+                                            }if ($reporte->getCaTransporte() == Constantes::AEREO) {
                                                 ?>
                             <tr>
                                 <td valign="top" colspan="3"><b>Manifiesto:</b><br>
@@ -827,7 +827,18 @@ $folder = $reporte->getDirectorioBase();
                                                     ?>				
                                 </td>
                             </tr>
-
+                            <tr>
+                                <td valign="top" colspan="3"><b>Fch. Manifiesto:</b><br>
+                                                    <?
+                                                    echo $form['fchmanifiesto']->renderError();
+                                                    if ($ultStatus) {
+                                                        $form->setDefault('fchmanifiesto', $ultStatus->getProperty("fchmanifiesto"));
+                                                    }
+                                                    echo $form['fchmanifiesto']->render();
+                                                    ?>				
+                                </td>
+                            </tr>
+                            <!--
                             <tr>
                                 <td valign="top" colspan="3"><b>Valor Fob:</b>
                                                     <?
@@ -838,7 +849,7 @@ $folder = $reporte->getDirectorioBase();
                                                     echo $form['valor_fob']->render();
                                                     ?>				
                                 </td>
-                            </tr>
+                            </tr>-->
     <?
 }
 ?>		
