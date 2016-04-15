@@ -101,11 +101,11 @@ $j = 0;
         <td class="listar"><b>ID Proveedor:</b><br /><?= $inoCliente->getCaIdtercero() ?></td>
         <td class="listar" ><b>Proveedor:</b><br /><?= $inoCliente->getTercero()->getCaNombre() ?></td>
         <td class="listar" style='vertical-align:top;' >
-            <div id="divmodfchllegada_<?= $inoCliente->getOid() ?>">
+            <div id="divmodfchllegada_<?= $inoCliente->getOid() ?>" style="display:none;">
                 <input type="checkbox" value="1" name="modfchllegada_<?= $inoCliente->getOid() ?>" id="modfchllegada_<?= $inoCliente->getOid() ?>" onclick="mostrarFchllegada(<?= $inoCliente->getOid() ?>)" />
                 Modificar fecha de llegada:
+                <div id="divfchllegada_<?= $inoCliente->getOid() ?>"> <b>Fecha llegada:</b><br /><? echo extDatePicker('fchllegada_' . $inoCliente->getOid(), date("Y-m-d")); ?></div><br/><br/>
             </div><br />
-            <div id="divfchllegada_<?= $inoCliente->getOid() ?>"> <b>Fecha llegada:</b><br /><? echo extDatePicker('fchllegada_' . $inoCliente->getOid(), date("Y-m-d")); ?></div><br/><br/>
             <div id="divfchplanilla_<?= $inoCliente->getOid() ?>" style="display:none;"> <b>Fecha Planilla:</b><br /><? echo extDatePicker('fchplanilla_' . $inoCliente->getOid(), date("Y-m-d")); ?></div>
         </td>
 

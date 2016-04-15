@@ -184,10 +184,11 @@ class confirmacionesOtmActions extends sfActions {
 
             $files = $this->getRequestParameter("files_" . $oid);   
 
-
-            foreach ($files as $archivo) {
-                $name = str_replace(sfConfig::get('app_digitalFile_root'),"",$archivo);
-                $attachments[] = $name;
+            if($files){
+                foreach ($files as $archivo) {
+                    $name = str_replace(sfConfig::get('app_digitalFile_root'),"",$archivo);
+                    $attachments[] = $name;
+                }
             }
             $success = array();
             //Archivo que se adjunta a toda la referencia
@@ -287,7 +288,8 @@ class confirmacionesOtmActions extends sfActions {
                     
             $origen = $reporte->getOrigen()->getCaCiudad();
             $destino = $reporte->getDestino()->getCaCiudad();
-            $cliente = $reporte->getCliente()->getCaCompania();
+
+            $cliente = $inoCliente->getCliente()->getCaCompania();
             
             $consignatario = $reporte->getConsignatario();
             
