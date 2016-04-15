@@ -193,7 +193,7 @@ if($cliente->getProperty("tipopersona")=="1")
 
 //casilla 11
 $y=$y+9;
-if($cliente->getProperty("tipopersona")=="2")
+if($cliente->getProperty("tipopersona")!="1")
     $txt=utf8_encode($cliente->getCaCompania());
 else
     $txt="";
@@ -228,13 +228,41 @@ $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+180, $y);
 
 $y=$y+8;
 $pdf->setFontSpacing($spacing);
-
-$representante["cedula"]=($reporte->getOrigen()->getCaCiudad()=="Cartagena")?"73569889":"67006136";
+$trans2=Constantes::MARITIMO;
+switch($reporte->getOrigen()->getCaCiudad())
+{
+    case "Cartagena":
+    case "Santa Marta":
+        $representante["cedula"]="73569889";
+        $representante["nombre1"]="CARLOS";
+        $representante["nombre2"]="ALFONSO";
+        $representante["apellido1"]=utf8_encode("BOLAÑO");
+        $representante["apellido2"]="MELENDEZ";
+    break;
+    case "Buenaventura":
+        $representante["cedula"]="67006136";
+        $representante["nombre1"]="SANTOS";
+        $representante["nombre2"]="MABEL";
+        $representante["apellido1"]=utf8_encode("TUFIÑO");
+        $representante["apellido2"]="PALACIOS";
+    break;
+    case "Bogotá":
+    case "Bogota":
+    case "Bogotá D.C.":
+        $trans2=Constantes::AEREO;
+        $representante["cedula"]="52556478";
+        $representante["nombre1"]="SANDRA";
+        $representante["nombre2"]="LUCIA";
+        $representante["apellido1"]=utf8_encode("YEPES");
+        $representante["apellido2"]=utf8_encode("LEON");
+    break;
+}
+/*$representante["cedula"]=($reporte->getOrigen()->getCaCiudad()=="Cartagena")?"73569889":"67006136";
 $representante["nombre1"]=($reporte->getOrigen()->getCaCiudad()=="Cartagena")?"CARLOS":"SANTOS";
 $representante["nombre2"]=($reporte->getOrigen()->getCaCiudad()=="Cartagena")?"ALFONSO":"MABEL";
 $representante["apellido1"]=($reporte->getOrigen()->getCaCiudad()=="Cartagena")?utf8_encode("BOLAÑO"):utf8_encode("TUFIÑO");
 $representante["apellido2"]=($reporte->getOrigen()->getCaCiudad()=="Cartagena")?"MELENDEZ":"PALACIOS";
-
+*/
 
 //casilla 29-34
 $txt=$representante["cedula"];//sprintf ("%s %13s ",$cliente->getCaIdalterno(),$cliente->getCaDigito());
@@ -317,11 +345,23 @@ switch($repotm->getIdsProveedor()->getIds()->getCaIdalterno())
     case "890904713"://Tcoordinadora
         $txt="454";
         break;
-    case "900416879":
+    case "900416879"://conalca
         $txt="651";
         break;
     case "805010341":
         $txt="622";
+        break;
+    case "811033031":
+        $txt="690";
+        break;
+    case "900055029":
+        $txt="665";
+        break;
+    case "830144803":
+        $txt="396";
+        break;
+    case "805021657"://movitrans sas
+        $txt="761";
         break;
     default:
         $txt="146";
@@ -341,36 +381,53 @@ $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+20, $y);
 $txt="2";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+46, $y);
 
-$txt="31 DL 013 763";
+$txt="31 DL 014 615";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+72, $y);
 
 //casilla 42
-$txt=  number_format("1232000000");
+$txt=  number_format("1288700000");
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+121, $y);
 
 //casilla 43
-$txt=  "2015";
+$txt=  "2017";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+163, $y);
 
-$txt=  "11";
+$txt=  "02";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+175, $y);
 
-$txt=  "23";
+$txt=  "24";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+183, $y);
 
 $y=$y+8;
 //datos de la operacion
+
+
+if($trans2==Constantes::AEREO)
+{
+//casilla 45
+$txt="X";
+$pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+30, $y);
+}
+else
+{
 //casilla 44
 $txt="X";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+13, $y);
+
+}
+
 //casilla 46
 $txt="X";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+49, $y);
 
 //$reporte = new Reporte();
 
+//casilla 48
 $txt=  utf8_encode($repotm->getOrigenimp()->getCaCiudad());
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+83, $y);
+//casilla 49
+/*$txt=  "WLL503 Vehiculo Furgonado";
+$pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+120, $y);*/
 
 //$reporte=new Reporte();
 $y=$y+9;
@@ -439,7 +496,7 @@ $pdf->SetFont($fontname, '', $fontsize-1);
 $txt1=trim(utf8_encode($reporte->getBodega()->getCaNombre()."/".$reporte->getBodega()->getCaTipo().$adudestino));
 $tam=  strlen($txt1);
 //$txt1=$tam.$txt1;
-if($tam>80)
+if($tam>75)
 {
     $sumy=$y+8;    
     $txt1=trim(utf8_encode($reporte->getBodega()->getCaNombre()."/".$reporte->getBodega()->getCaTipo().$adudestino));
@@ -465,14 +522,14 @@ if($tam>80)
     //$txt=$txt1;
     $pdf->SetFont($fontname, '', $fontsize-3);
 }
-else if($tam>65)
+else if($tam>62)
 {
     $sumy=$y+8;
     //$txt=  substr($txt1, 0,58)."\n".substr($txt1, 58,$tam-58);
     $txt=$txt1;
     $pdf->SetFont($fontname, '', $fontsize-2);
 }
-else if($tam>55)
+else if($tam>52)
 {
     $sumy=$y+7;
     //$txt=  substr($txt1, 0,58)."\n".substr($txt1, 58,$tam-58);
@@ -495,6 +552,7 @@ else
 */
 //casilla 57
 $txt=$reporte->getBodega()->getCaCodDian();
+//$txt = 2005;
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+105, $y);
 
 //casilla 58
@@ -715,7 +773,7 @@ if($cliente->getProperty("tipopersona")=="1")
 
 //casilla 11
 $y=$y+9;
-if($cliente->getProperty("tipopersona")=="2")
+if($cliente->getProperty("tipopersona")!="1")
     $txt=utf8_encode($cliente->getCaCompania());
 else
     $txt="";
@@ -751,12 +809,12 @@ $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+180, $y);
 $y=$y+8;
 $pdf->setFontSpacing($spacing);
 
-$representante["cedula"]=($reporte->getOrigen()->getCaCiudad()=="Cartagena")?"73569889":"67006136";
+/*$representante["cedula"]=($reporte->getOrigen()->getCaCiudad()=="Cartagena")?"73569889":"67006136";
 $representante["nombre1"]=($reporte->getOrigen()->getCaCiudad()=="Cartagena")?"CARLOS":"SANTOS";
 $representante["nombre2"]=($reporte->getOrigen()->getCaCiudad()=="Cartagena")?"ALFONSO":"MABEL";
 $representante["apellido1"]=($reporte->getOrigen()->getCaCiudad()=="Cartagena")?utf8_encode("BOLAÑO"):utf8_encode("TUFIÑO");
 $representante["apellido2"]=($reporte->getOrigen()->getCaCiudad()=="Cartagena")?"MELENDEZ":"PALACIOS";
-
+*/
 
 //casilla 29-34
 $txt=$representante["cedula"];//sprintf ("%s %13s ",$cliente->getCaIdalterno(),$cliente->getCaDigito());
@@ -839,11 +897,23 @@ switch($repotm->getIdsProveedor()->getIds()->getCaIdalterno())
     case "890904713"://Tcoordinadora
         $txt="454";
         break;
-    case "900416879":
+    case "900416879"://conalca
         $txt="651";
         break;
-    case "805010341":
+    case "805010341"://
         $txt="622";
+        break;
+    case "811033031"://
+        $txt="690";
+        break;
+    case "900055029"://
+        $txt="665";
+        break;
+    case "830144803"://
+        $txt="396";
+        break;
+    case "805021657"://movitrans sas
+        $txt="761";
         break;
     default:
         $txt="146";
@@ -863,36 +933,54 @@ $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+20, $y);
 $txt="2";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+46, $y);
 
-$txt="31 DL 013 763";
+$txt="31 DL 014 615";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+72, $y);
 
 //casilla 42
-$txt=  number_format("1232000000");
+$txt=  number_format("1288700000");
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+121, $y);
 
 //casilla 43
-$txt=  "2015";
+$txt=  "2017";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+163, $y);
 
-$txt=  "11";
+$txt=  "02";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+175, $y);
 
-$txt=  "23";
+$txt=  "24";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+183, $y);
+
 
 $y=$y+8;
 //datos de la operacion
+if($trans2==Constantes::AEREO)
+{
+//casilla 45
+$txt="X";
+$pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+30, $y);
+}
+else
+{
 //casilla 44
 $txt="X";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+13, $y);
+
+}
+
+
+
 //casilla 46
 $txt="X";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+49, $y);
 
 //$reporte = new Reporte();
-
+//casilla 46
 $txt=  utf8_encode($repotm->getOrigenimp()->getCaCiudad());
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+83, $y);
+
+//casilla 49
+/*$txt=  "WLL503 Vehiculo Furgonado";
+$pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+120, $y);*/
 
 //$reporte=new Reporte();
 $y=$y+9;
@@ -965,7 +1053,7 @@ $pdf->SetFont($fontname, '', $fontsize-1);
 $txt1=trim(utf8_encode($reporte->getBodega()->getCaNombre()."/".$reporte->getBodega()->getCaTipo().$adudestino));
 $tam=  strlen($txt1);
 //$txt1=$tam.$txt1;
-if($tam>80)
+if($tam>75)
 {
     $sumy=$y+8;    
     $txt1=trim(utf8_encode($reporte->getBodega()->getCaNombre()."/".$reporte->getBodega()->getCaTipo().$adudestino));
@@ -991,14 +1079,14 @@ if($tam>80)
     //$txt=$txt1;
     $pdf->SetFont($fontname, '', $fontsize-3);
 }
-else if($tam>65)
+else if($tam>62)
 {
     $sumy=$y+8;
     //$txt=  substr($txt1, 0,58)."\n".substr($txt1, 58,$tam-58);
     $txt=$txt1;
     $pdf->SetFont($fontname, '', $fontsize-2);
 }
-else if($tam>55)
+else if($tam>52)
 {
     $sumy=$y+7;
     //$txt=  substr($txt1, 0,58)."\n".substr($txt1, 58,$tam-58);
@@ -1021,6 +1109,7 @@ else
 */
 //casilla 57
 $txt=$reporte->getBodega()->getCaCodDian();
+//$txt = 2005;
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+105, $y);
 
 //casilla 58

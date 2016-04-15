@@ -532,7 +532,7 @@ class otmActions extends sfActions
     
     public function executeAprobarReporte(sfWebRequest $request)
     {
-        try
+        //try
         {
             $idreporte=$request->getParameter("id");
             $repOtm = Doctrine::getTable("RepOtm")->find( $idreporte );
@@ -569,10 +569,10 @@ class otmActions extends sfActions
             $repOtm->save();
             $this->responseArray=array("success"=>true,"consecutivo"=>$conse);
         }
-        catch(Exception $e)
+        /*catch(Exception $e)
         {
             $this->responseArray=array("success"=>false,"err"=>$e->getMessage());
-        }
+        }*/
         $this->setTemplate("responseTemplate");
     }
     
@@ -1132,7 +1132,7 @@ class otmActions extends sfActions
 
         $mensaje = sfContext::getInstance()->getController()->getPresentationFor( 'reportesNeg', 'emailReporte');
         $email->setCaBodyhtml($mensaje);
-        $email->send();
+        //$email->send();
         $email->save();
         exit;
     }
@@ -1315,4 +1315,203 @@ class otmActions extends sfActions
         $this->setTemplate("responseTemplate");
     }
     
+    public function executeEstadisticasOtm(sfWebRequest $request) {
+        
+        $response = sfContext::getInstance()->getResponse();
+        $response->addJavaScript("extExtras/GroupSummary",'last');
+        $response->addJavaScript("extExtras/GridFilters",'last');       
+        $response->addJavaScript("extExtras/filters/Filter",'last');
+        $response->addJavaScript("extExtras/filters/StringFilter",'last');
+        $response->addJavaScript("extExtras/filters/DateFilter",'last');
+        $response->addJavaScript("extExtras/filters/ListFilter",'last');
+        $response->addJavaScript("extExtras/filters/NumericFilter",'last');
+        $response->addJavaScript("extExtras/filters/BooleanFilter",'last');        
+        
+        $this->origen = $request->getParameter("origen");
+        $this->idorigen = $request->getParameter("idorigen");
+        $this->destino = $request->getParameter("destino");
+        $this->iddestino = $request->getParameter("iddestino");
+        $this->idmodalidad = $request->getParameter("idmodalidad");
+        $this->sucursal = $request->getParameter("sucursal");
+        $this->idsucursal = $request->getParameter("idsucursal");
+        $this->linea = $request->getParameter("linea");
+        $this->idlinea = $request->getParameter("idlinea");
+        $this->vendedor = $request->getParameter("vendedor");
+        $this->login = $request->getParameter("login");
+        $this->idcliente = $request->getParameter("idtercero");
+        $this->idimportador = $request->getParameter("idimportador");
+        
+        $this->opcion = $request->getParameter("opcion");
+        $this->tipo = $request->getParameter("tipo");
+        
+        $this->fechainicial = $request->getParameter("fechaInicial");
+        $this->fechafinal = $request->getParameter("fechaFinal");
+        
+        $this->nano = $request->getParameter("nano");
+        $this->nmes = $request->getParameter("nmes");
+        
+        $this->nempresa = $request->getParameter("nempresa");
+        
+        if($this->opcion){
+            if($this->tipo == 1){
+                if ($this->nano) {
+                    foreach ($this->nano as $n) {
+                        if ($n != "")
+                            $aa[] = str_pad($n, 2, "0", STR_PAD_LEFT);
+                    }
+                }
+                if ($aa) {
+                    if (count($aa) > 0) {
+                        $ano = "";
+                        for ($i = 0; $i < count($aa); $i++) {
+                            $ano.= "'" . $aa[$i] . "',";
+                        }
+                        $addWhere.= " AND '20'||SUBSTR(i.ca_referencia,16,2) IN (" . substr($ano, 0, -1) . ")";
+                    }
+                }
+                if ($this->nmes) {
+                    foreach ($this->nmes as $m) {
+                        if ($m != "")
+                            $mm[] = str_pad($m, 2, "0", STR_PAD_LEFT);
+                    }
+                }
+                if ($mm) {
+                    if (count($mm) > 0) {
+                        $mes = "";
+                        for ($i = 0; $i < count($mm); $i++) {
+                            $mes.= "'" . $mm[$i] . "',";
+                        }
+                        if (strpos($mes, 'Todos los meses') != true)
+                            $addWhere.= " and SUBSTR(i.ca_referencia,8,2) IN (" . substr($mes, 0, -1) . ")";
+                    }
+                }
+                $anosStr = "'".implode("','", $aa)."'";
+                $mesesStr = "'".implode("','", $mm)."''";
+            }else {
+                $addWhere.= " and ro.ca_fcharribo BETWEEN '$this->fechainicial' and '$this->fechafinal'";
+            }
+            
+            if ($this->idorigen) {
+                $addWhere.= "AND i.ca_origen = '".$this->idorigen."'";
+            }
+
+            if ($this->iddestino) {
+                $addWhere.= "AND i.ca_destino = '".$this->iddestino."'";
+            }
+
+            if ($this->idmodalidad) {
+                $addWhere.= "AND i.ca_modalidad = '".$this->idmodalidad."'";
+            }
+
+            if ($this->idsucursal){
+                if($this->idsucursal != "999")
+                    $addWhere.= "AND s.ca_nombre like '%" . $this->sucursal . "%'";
+            }
+
+            if ($this->idcliente){
+                $tercero = Doctrine::getTable("Tercero")->find($this->idcliente);
+                $addWhere.= " AND ter.ca_nombre like '%" . $tercero->getCaNombre()."%'";
+            }
+            
+            if ($this->idimportador){
+                $tercero = Doctrine::getTable("Tercero")->find($this->idimportador);
+                $addWhere.= " AND imp.ca_nombre like '%" . $tercero->getCaNombre()."%'";
+            }
+            
+            if ($this->login){
+                $addWhere.= " AND u.ca_nombre like '%" . $this->vendedor."%'";
+            }
+            
+            if ($this->idlinea){
+                $addWhere.= " AND i.ca_idlinea = " . $this->idlinea;
+            }
+            
+            //$select = $this->nempresa==2?",ter.ca_nombre as importador,bdg.ca_nombre as ca_bodega":"";
+            $from = $this->nempresa==1?"ino.tb_house h":"tb_reportes r";
+            $inner1 = $this->nempresa==2?"
+                        LEFT JOIN (SELECT max(ca_idreporte) as ca_idreporte, ca_consecutivo FROM tb_repotm GROUP BY ca_consecutivo) rp on r.ca_idreporte=rp.ca_idreporte 
+                        LEFT JOIN tb_repotm ro ON ro.ca_idreporte = r.ca_idreporte
+                        LEFT JOIN ino.tb_house h ON h.ca_idreporte = rp.ca_idreporte":"";
+            $inner2 = $this->nempresa==1?"
+                        LEFT JOIN tb_repotm ro ON h.ca_idreporte = ro.ca_idreporte
+                        LEFT JOIN tb_reportes r ON r.ca_idreporte = ro.ca_idreporte":"";            
+            $where = $this->nempresa==1?"i.ca_fchanulado IS NULL AND i.ca_impoexpo = 'OTM-DTA'":"r.ca_tiporep = 4 and r.ca_login='consolcargo'";
+            $sql ="
+                SELECT ro.ca_fcharribo, '20'||SUBSTR(i.ca_referencia,16,2)  as ANO,
+                    SUBSTR(i.ca_referencia,8,2)  as MES,
+                    i.ca_idmaster as ca_idmaster,
+                    i.ca_referencia  as referencia,
+                    r.ca_idreporte as idreporte,
+                    r.ca_consecutivo as no_reporte, 
+                    (CASE WHEN i.ca_modalidad = 'DIRECTO' THEN 'FCL' ELSE I.ca_modalidad END) as modalidad,
+                    h.ca_doctransporte as doctransporte, 
+                    t.ca_ciudad AS origen, 
+                    t2.ca_ciudad AS destino, 
+                    i3.ca_nombre AS transportador, 
+                    i8.ca_numhijas AS numhijas, 
+                    h.ca_numpiezas as numpiezas , 
+                    h.ca_peso as peso, 
+                    h.ca_volumen as volumen, 
+                    ro.ca_contenedor as contenedor,
+                    ro.ca_valorfob as valorfob, 
+                    ro.ca_consecutivo as dtm,
+                    u.ca_nombre as ca_vendedor,
+                    s.ca_nombre as ca_sucursal,
+                    ter.ca_nombre as ca_compania,
+                    i.ca_motonave as ca_vehiculo,
+                    imp.ca_nombre as ca_importador,
+                    bdg.ca_nombre as ca_bodega
+                FROM $from
+                    $inner1
+                    LEFT JOIN ino.tb_master i ON i.ca_idmaster = h.ca_idmaster
+                    LEFT JOIN tb_ciudades t ON i.ca_origen = t.ca_idciudad 
+                    LEFT JOIN tb_ciudades t2 ON i.ca_destino = t2.ca_idciudad 
+                    LEFT JOIN ids.tb_proveedores i2 ON i.ca_idlinea = i2.ca_idproveedor 
+                    LEFT JOIN ids.tb_ids i3 ON i2.ca_idproveedor = i3.ca_id
+                    $inner2
+                    LEFT JOIN control.tb_usuarios u ON u.ca_login = r.ca_login
+                    LEFT JOIN control.tb_sucursales s ON s.ca_idsucursal = u.ca_idsucursal                       	
+                    LEFT JOIN tb_terceros ter on ro.ca_idcliente =  ter.ca_idtercero
+                    LEFT JOIN tb_terceros imp on ro.ca_idimportador =  imp.ca_idtercero
+                    LEFT JOIN ino.vi_costos i4 ON i.ca_idmaster = i4.ca_idmaster 
+                    LEFT JOIN ino.vi_ingresos i5 ON i.ca_idmaster = i5.ca_idmaster 
+                    LEFT JOIN ino.vi_deducciones i6 ON i.ca_idmaster = i6.ca_idmaster 
+                    LEFT JOIN ino.vi_utilidades i7 ON i.ca_idmaster = i7.ca_idmaster 
+                    LEFT JOIN ino.vi_unidades_master i8 ON i.ca_idmaster = i8.ca_idmaster 
+                    LEFT JOIN ino.vi_teus i9 ON i.ca_idmaster = i9.ca_idmaster
+                    LEFT JOIN tb_bodegas bdg ON bdg.ca_idbodega = r.ca_idbodega                        
+                WHERE   $where $addWhere  
+                ORDER BY ano, mes, referencia";
+
+            $con = Doctrine_Manager::getInstance()->connection();            
+            $st = $con->execute($sql);
+            $this->resul = $st->fetchAll();
+
+            //echo "<pre>";print_r($this->resul);echo "</pre>";
+        }
+        
+        $columnas = "ano, mes, ca_fcharribo, ca_idmaster, referencia, idreporte, no_reporte, modalidad, doctransporte, origen, destino, transportador, peso, volumen, numhijas, contenedor, valorfob, dtm, ca_vendedor, ca_sucursal, ca_compania, ca_vehiculo, ca_importador, ca_bodega";
+        
+        $data = array();
+        $hijas = array();
+            if($this->resul){
+            foreach ($this->resul as $key => $datos) {
+                $row = array();
+                foreach (preg_split("/, /", $columnas) as $columna){
+                    if($columna == "numhijas"){
+                        $datos["numhijas"] = in_array($datos["referencia"], $hijas)?0:$datos["numhijas"];
+                        $hijas[$datos["modalidad"]]["suma"]+=in_array($datos["referencia"], $hijas)?0:$datos["numhijas"];
+                        $hijas[$datos["referencia"]] = $datos["referencia"];                    
+                    }
+                    if($datos["modalidad"]=="LCL")
+                        $datos["contenedor"] = ($datos["peso"] / 25000);
+                    $row[$columna] = utf8_encode($datos[$columna]);
+
+                }
+                $data[] = $row;
+            }
+        }
+        $this->datos = $data;
+        //echo "<pre>";print_r($data);echo "</pre>";
+    }    
 }

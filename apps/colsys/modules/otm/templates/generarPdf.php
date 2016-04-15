@@ -7,4 +7,4 @@
 	
 	<iframe src ='<?=$url?>' width='830' height='650' ></iframe>
 	<br />
-	<br />
+</div>

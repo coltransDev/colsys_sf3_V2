@@ -36,7 +36,7 @@ else
     $datos["piezas"]=($piezas[0] ? $piezas[0] : 0). " ". ($piezas[1] ? $piezas[1] : "");
     $datos["volumen"]=$volumen[0] ? $volumen[0] : 0;
 }
-$firmaautorizada=($datos["origen"]=="Cartagena")?"Carlos A. Bola&ntilde;o M.<br>C.C. 73569889 Cartagena":"Santos Mabel Tufi&ntilde;o Palacio <br>C.C. 67006136 Cali ";
+$firmaautorizada=($datos["origen"]=="Cartagena")?"Carlos A. Bola&ntilde;o M.<br>C.C. 73569889 Cartagena":(($datos["origen"]=="Buenaventura")?"Santos Mabel Tufi&ntilde;o Palacio <br>C.C. 67006136 Cali":"Carlos A. Bola&ntilde;o M.<br>C.C. 73569889 Cartagena");
 ?>
 
 <table width="100%" border="1" cellspacing="15" cellpadding="0"  >
