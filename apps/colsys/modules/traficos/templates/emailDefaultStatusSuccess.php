@@ -126,7 +126,13 @@ $modo = $sf_data->getRaw("modo");
                 <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b><?= ($reporte->getCaTransporte() == Constantes::MARITIMO || $reporte->getCaTransporte() == Constantes::TERRESTRE) ? "HBL:" : "HAWB:" ?></b></td>
                 <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $status->getCaDoctransporte() ? $status->getCaDoctransporte() : "&nbsp;" ?></td>
                 <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $reporte->getCaModalidad() == "FCL" && $status->getCaDocmaster() ? "<b>Master:</b>" : "&nbsp;" ?></td>
-                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="3"><?= $reporte->getCaModalidad() == "FCL" && $status->getCaDocmaster() ? $status->getCaDocmaster() : "&nbsp;" ?></td>
+                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" ><?= $reporte->getCaModalidad() == "FCL" && $status->getCaDocmaster() ? $status->getCaDocmaster() : "&nbsp;" ?></td>
+                <? if ($reporte->getCaTransporte() == Constantes::AEREO && $status->getProperty("manifiesto")){?>
+                <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Manifiesto</td>
+                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" ><?= $status->getProperty("manifiesto") ? $status->getProperty("manifiesto") : "&nbsp;" ?>&nbsp;<?= $status->getProperty("fchmanifiesto") ? $status->getProperty("fchmanifiesto") : "&nbsp;" ?></td>
+                <? }else{?>
+                <td></td><td></td>
+                <?}?>
             </tr>
             <?
             if ($reporte->getCaTransporte() == Constantes::AEREO && ($reporte->getCaImpoexpo() == Constantes::IMPO || $reporte->getCaImpoexpo() == Constantes::TRIANGULACION)) {
