@@ -649,9 +649,14 @@ class traficosActions extends sfActions {
          }
 
          //Para OTM
-/*         if ($reporte->getCaTiporep() == "4" && $reporte->getCaImpoexpo()==Constantes::OTMDTA) {
+        //if ($reporte->getCaTiporep() == "4" && $reporte->getCaImpoexpo()==Constantes::OTMDTA) {
+            if($request->getParameter("manifiesto")){
             $status->setProperty("manifiesto", $request->getParameter("manifiesto"));
-            $repotm = $reporte->getRepOtm();
+            }
+            if($request->getParameter("fchmanifiesto")){
+                $status->setProperty("fchmanifiesto", $request->getParameter("fchmanifiesto"));
+            }
+            /*$repotm = $reporte->getRepOtm();
 
             $status->setProperty("valor_fob", $request->getParameter("valor_fob"));
 
@@ -663,9 +668,9 @@ class traficosActions extends sfActions {
 
                $repotm->setProperty("function", "executeGuardarStatus" );
                $repotm->save($conn);
-            }
-         }
-*/
+            }*/
+         //}
+
          //borra los equipos viejos
          $repequipos = $reporte->getRepEquipos();
          foreach ($repequipos as $equipo) {
