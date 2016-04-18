@@ -445,6 +445,14 @@ class cotseguimientosActions extends sfActions {
         $this->sucursal = $this->getUser()->getIdsucursal();
 
         $this->estados = ParametroTable::retrieveByCaso("CU074");
+        
+        $this->motivos = ParametroTable::retrieveByCaso("CU260");
+        
+        //$this->motivos = array();
+        /*foreach ($motivos as $motivo) {
+            $this->motivos[$motivo->getCaValor()] = $motivo->getCaValor();
+        }*/
+        
     }
 
     public function executeAuditoria($request) {
@@ -456,6 +464,13 @@ class cotseguimientosActions extends sfActions {
         $checkboxSucursal = $request->getParameter("checkboxSucursal");
         $idsucursal = $request->getParameter("sucursal_est");
         $cliente = $request->getParameter("cliente");
+        
+        $idpais = $request->getParameter("idpais");
+        $pais = $request->getParameter("pais");
+        
+        $idmodalidad = $request->getParameter("idmodalidad");
+        $idimpoexpo = $request->getParameter("idimpoexpo");
+        $idtransporte = $request->getParameter("idtransporte");        
 
         if ($checkboxSucursal && $idsucursal) {
             $this->sucursal = Doctrine::getTable("Sucursal")->find($idsucursal)->getCaNombre();
@@ -465,6 +480,7 @@ class cotseguimientosActions extends sfActions {
         $sql.= " from tb_cotizaciones c ";
         $sql.= "    LEFT JOIN tb_cotproductos p ON c.ca_idcotizacion = p.ca_idcotizacion";
         $sql.= "    LEFT JOIN tb_ciudades o ON p.ca_origen = o.ca_idciudad ";
+        $sql.= "    LEFT JOIN tb_traficos t ON t.ca_idtrafico = o.ca_idtrafico ";
         $sql.= "    LEFT JOIN tb_ciudades d ON p.ca_destino = d.ca_idciudad ";
         $sql.= "    LEFT JOIN (select ct0.ca_idseguimiento as ca_idseguimiento_cot, ca_idcotizacion, ca_fchseguimiento as ca_fchseguimiento_cot, ca_seguimiento as ca_seguimiento_cot, ca_etapa as ca_etapa_cot from tb_cotseguimientos ct0 RIGHT JOIN (select max(ca_idseguimiento) as ca_idseguimiento from tb_cotseguimientos ct group by ca_idcotizacion) ct1 ON ct0.ca_idseguimiento = ct1.ca_idseguimiento) seg ON c.ca_idcotizacion = seg.ca_idcotizacion";
         $sql.= "    LEFT JOIN (select ct0.ca_idseguimiento as ca_idseguimiento_pro, ca_idproducto, ca_fchseguimiento as ca_fchseguimiento_pro, ca_seguimiento as ca_seguimiento_pro, ca_etapa as ca_etapa_pro from tb_cotseguimientos ct0 RIGHT JOIN (select max(ca_idseguimiento) as ca_idseguimiento from tb_cotseguimientos ct group by ca_idproducto) ct1 ON ct0.ca_idseguimiento = ct1.ca_idseguimiento) seg2 ON p.ca_idproducto = seg2.ca_idproducto";
@@ -497,11 +513,35 @@ class cotseguimientosActions extends sfActions {
                 $sql.= " and (c.ca_etapa = '$est' OR p.ca_etapa = '$est')";
             }
         }
+        
+        $mot = $request->getParameter("mot");
+        if ($mot) {            
+                $sql.= " and seg2.ca_seguimiento_pro='$mot'";
+            
+        }
+        
+        if ($idpais) {            
+            $sql.= " and t.ca_idtrafico = '$idpais'";            
+        }
+        
+        
+        if ($idmodalidad) {            
+            $sql.= " and p.ca_modalidad = '$idmodalidad'";            
+        }
+        if ($idimpoexpo) {            
+            $sql.= " and p.ca_impoexpo= '$idimpoexpo'";
+        }
+        if ($idtransporte) {            
+            $sql.= " and p.ca_transporte= '$idtransporte'";
+        }
+        
+        
+        //and seg2.ca_seguimiento_pro='Tarifa NO competitiva'
 
         $sql.= " order by c.ca_consecutivo DESC, c.ca_version DESC, seg.ca_fchseguimiento_cot DESC";
         // die($sql);
 
-        $databaseConf = sfYaml::load(sfConfig::get('sf_config_dir') . '/databases_replica.yml');
+        /*$databaseConf = sfYaml::load(sfConfig::get('sf_config_dir') . '/databases_replica.yml');
         $dsn = explode(";", $databaseConf ['prod']['doctrine']['param']['dsn']);        
         $dsn0= explode("=", $dsn[0]);
         $dsn1= explode("=", $dsn[1]);        
@@ -509,8 +549,9 @@ class cotseguimientosActions extends sfActions {
         $userPass = $databaseConf ['prod']['doctrine']['param']['password'];
         $database = $dsn0[1];
         $host = $dsn1[1];        
-        $con = Doctrine_Manager::connection(new PDO("pgsql:dbname={$database};host={$host}", $userName, $userPass));
-
+        //$con = Doctrine_Manager::connection(new PDO("pgsql:dbname={$database};host={$host}", $userName, $userPass));*/
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
+        $con = Doctrine_Manager::getInstance()->connection();
         $st = $con->execute($sql);
 
         $this->cotizaciones = $st->fetchAll();

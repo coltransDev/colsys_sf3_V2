@@ -5,6 +5,8 @@ foreach($cotizaciones as $cotizacion){
         $num_cotizaciones[] = $cotizacion["ca_consecutivo"];
     }
 }
+$cotizaciones=$sf_data->getRaw('cotizaciones');
+
 ?>
 <div align="center">
     <br>
@@ -71,14 +73,14 @@ foreach($cotizaciones as $cotizacion){
                 ?>
                 <tr class="row0" style="vertical-align: top;">
                     <td><?= link_to($cot["ca_consecutivo"] . "-V" . $cot["ca_version"], "cotseguimientos/verSeguimiento?idcotizacion=" . $cot["ca_cotizacion_id"], array("target" => "_blank")) ?></td>
-                    <td><?= $cliente ?></td>
+                    <td><?= ($cliente) ?></td>
                     <td><?= Utils::fechaMes($cot["ca_fchcreado"]) ?></td>
-                    <td><?= $cot["ca_usuario"] ?></td>
-                    <td><?= $cot["ca_sucursal"] ?></td>
+                    <td><?= ($cot["ca_usuario"]) ?></td>
+                    <td> <?= ($cot["ca_sucursal"]) ?></td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                     <td><?= $fchSeg ? Utils::fechaMes($fchSeg) : "&nbsp;" ?></td>
-                    <td><?= $lastSeg ? $lastSeg : "&nbsp;" ?></td>
+                    <td><?= $lastSeg ? utf8_decode($lastSeg) : "&nbsp;" ?></td>
                     <td><?= ($cot["ca_etapa_cot"] and !$cot["ca_idproducto"])? $estados[$cot["ca_etapa_cot"]] : "&nbsp;" ?></td>
                     <td><?= $cot["ca_empresa"] ?></td>
                 </tr>                
@@ -95,16 +97,14 @@ foreach($cotizaciones as $cotizacion){
             <tr >
                 <td colspan="5">                            
                     &nbsp;</td>
-                <td ><?= $cot["ca_origen"] ?></td>
-                <td ><?= $cot["ca_destino"] ?></td>
-                <td><?= $fchSeg ? Utils::fechaMes($fchSeg) : "&nbsp;" ?></td>
-                <td><?= $lastSeg ? $lastSeg : "&nbsp;" ?></td>
+                <td ><?= utf8_decode($cot["ca_origen"]) ?></td>
+                <td ><?= utf8_decode($cot["ca_destino"]) ?></td>
+                <td><?= $fchSeg ? Utils::fechaMes($fchSeg): "&nbsp;" ?></td>
+                <td><?= $lastSeg ? utf8_decode($lastSeg)  : "&nbsp;" ?></td>
                 <td><?= $etapaSeg ? $estados[$etapaSeg] : "&nbsp;" ?></td>
                 <td></td>
             </tr>     
-            <?
-                    
-            
+        <?
         }
         ?>				
     </table>
