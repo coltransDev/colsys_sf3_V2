@@ -1475,6 +1475,7 @@ class clientesActions extends sfActions {
                                     $sdnIdListObj->setCaUidId($sub_id);
                                     while (list ($clave, $val) = each($arreglo)) {
                                         $campo = "setCa" . ucfirst(strtolower($clave));
+                                        $val = ($campo=="setCaIdnumber"?substr($val,0,40):$val);
                                         $sdnIdListObj->$campo($val);
                                     }
                                     $sdnIdListObj->save();
@@ -1624,6 +1625,7 @@ class clientesActions extends sfActions {
                     ->createQuery("u")
                     ->innerJoin("u.UsuarioPerfil p")
                     ->where("p.ca_perfil = ? ", "sistemas")
+                    ->addWhere("u.ca_activo = ?", true)
                     ->execute();
             /* $parametro = Doctrine::getTable("Parametro")->find(array("CU065",3,"ccEmails"));
               if (stripos($parametro->getCaValor2(), ',') !== false) {
