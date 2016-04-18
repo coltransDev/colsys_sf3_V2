@@ -188,6 +188,21 @@ Ext.define('FormIndicadores', {
                                 }
                             }
                             
+                            colind5= new Array();
+                            for(i=0;i<res.indicador5grid.length;i++)
+                            {
+                                for(var aux in res.indicador5grid[i])
+                                {
+                                    colind5.push({
+                                        dataIndex : aux,
+                                        text : aux ,                                            
+                                        summaryType: ((aux!="TERMINAL" && aux!="TIPO")?'sum':'')                                            
+                                    });
+                                }
+                            }
+                            //console.log(colind5);
+                            
+                            
                             /*colindicador4= new Array()
                             for(i=1;i<2;i++)
                             {
@@ -220,7 +235,7 @@ Ext.define('FormIndicadores', {
                     
                                 Ext.create('Colsys.FalabellaAdu.PanelIndDet',{
                                     title: 'IDG NAL ',
-                                    id:"panel-ind1f"+idtab,                        
+                                    id:"panel-ind1"+idtab,                        
                                     items: [
                                     {
                                         xtype: 'highchart',
@@ -527,7 +542,7 @@ Ext.define('FormIndicadores', {
             ///////////////////////////INDICADOR DE DOCUMENTOS/////////////////////////////////////////////////////
                                 Ext.create('Colsys.FalabellaAdu.PanelIndDet',{
                                     //title: 'DOCUMENTOS ORIGINALES',
-                                    id:"panel-prueba"+idtab,
+                                    id:"panel-declant"+idtab,
                                     items: [
                                         grafica({id:'hcd'+idtab,title:'Declaraciones Anticipadas vs Iniciales',datos:JSON.stringify(res.declaraciones),nameSerie:'Referencias'}),
                                         {
@@ -752,7 +767,22 @@ Ext.define('FormIndicadores', {
                                         ]
                                     }
                                     ]
-                                })
+                                }),
+                                
+                                Ext.create('Colsys.FalabellaAdu.PanelIndDet',{
+                                    //title: 'DOCUMENTOS ORIGINALES',
+                                    id:"panel-ind5"+idtab,
+                                    items: [
+                                        graficaLineas({id:'hind5'+idtab,title:'Tendencia contenedores',datos:JSON.stringify(res.indicador5),nameSerie:'NoContenedores',titleY:'No Contenedores'})
+                                        ,
+                                        {
+                                            xtype:'Colsys.FalabellaAdu.GridDatosIndDet',
+                                            id:'gind5'+idtab,
+                                            name:'gind5'+idtab,
+                                            columns: colind5
+                                        }
+                                    ]
+                                }),
                             ];
                 
                             tabpanel.add({
@@ -779,6 +809,9 @@ Ext.define('FormIndicadores', {
                             
                             store=Ext.getCmp('gind4'+idtab).store;
                             store.loadData(res.indicador4grid);
+                            
+                            store=Ext.getCmp('gind5'+idtab).store;
+                            store.loadData(res.indicador5grid);
 
 
                             store=Ext.getCmp('gcon'+idtab).store;
@@ -801,6 +834,29 @@ Ext.define('FormIndicadores', {
     }]
 });
 
+
+function graficaLineas(obj)
+{
+    return Ext.create('Colsys.Chart.Line',{
+        id: obj.id,
+        name:obj.id,
+        datos:obj.datos,
+        title:obj.title,
+        subtitle:obj.subtitle,
+        titleY:obj.titleY,
+        url: '<?=url_for("/falabellaAdu2/datosGrafica")?>',
+        series: [
+            {
+                type: 'line',
+                name: (obj.nameSerie)?obj.nameSerie:'Carpetas',
+                //categorieField: 'indicador',
+                //dataField: 'total'
+                yField: 'total',
+                xField: 'indicador'
+            }
+        ]
+    });
+}
 
 function grafica(obj)
 {

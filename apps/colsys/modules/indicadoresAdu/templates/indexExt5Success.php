@@ -30,7 +30,7 @@ Ext.Loader.setConfig({
     'Ext.grid.*',    
     'Ext.form.Panel',    
     'Chart.ux.Highcharts',
-    'Chart.ux.Highcharts.PieSerie',
+    //'Chart.ux.Highcharts.PieSerie',
     'Chart.ux.Highcharts.ColumnSerie',
     'Ext.ux.exporter.Exporter'
     ]);

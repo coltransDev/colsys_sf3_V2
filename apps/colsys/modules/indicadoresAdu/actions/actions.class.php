@@ -179,9 +179,7 @@ class indicadoresAduActions extends sfActions {
                         {
                             $columnasDatos[$t->getCaNombre()]=array($t->getCaOrden(),$t->getCaNombrejson());
                         }
-                            
                     }
-                   
                 }
 
                 if( $pos < 3 || $row[$columnas["ca_referencia"]]==""  ){
@@ -445,6 +443,10 @@ class indicadoresAduActions extends sfActions {
             if(!in_array($c["c_ca_referencia"],$tmpRef ))
             {
                 $indicadores["contenedores"][$c["c_ca_terminal"]]+=$datosJson->O;//Q.CONT
+            
+                $indicadores["contenedores"][$c["c_ca_terminal"]]+=$datosJson->O;//Q.CONT
+                $indicadores["contenedores1"][substr($c["c_ca_fcheta"], 0, 7)]+=$datosJson->O;
+                //$c["c_ca_fcheta"]
                 $tmpRef[]=$c["c_ca_referencia"];
             }
             
@@ -456,7 +458,6 @@ class indicadoresAduActions extends sfActions {
             
             $indicadores["declaracionesinsp"][$c["c_ca_inspeccion"]]["tipodim"][$c["c_ca_tipodim"]][$c["c_ca_referencia"]]=$c["c_ca_referencia"];//TIPO DIM
             $indicadores["declaracionesinsp"][$c["c_ca_inspeccion"]]["muelle"][$c["c_ca_terminal"]][$c["c_ca_tipodim"]][$c["c_ca_referencia"]]=$c["c_ca_referencia"];
-
         }
 
         // CONTENEDORES
@@ -490,6 +491,20 @@ class indicadoresAduActions extends sfActions {
             );
         }
         
+        foreach($indicadores["contenedores1"] as $k=>$r )
+        {
+            $indicador5[]=array("indicador"=>"$k","total"=>$r );
+        }
+        $tmp=null;
+        foreach($indicadores["contenedores1"] as $periodo=>$r )
+        {
+            //foreach($r as $tipodim=>$d )
+            {
+                $tmp[$periodo]=$r;
+            }
+            
+        }
+        $indicador5grid[]= $tmp;
         
         //TIPO DIM
         foreach($indicadores["declaraciones"]["tipodim"] as $k=>$r )
@@ -624,6 +639,7 @@ class indicadoresAduActions extends sfActions {
             "indicador1"=>$indicador1,"indicador1grid"=>$indicador1grid,
             "indicador3"=>$indicador3,"indicador3grid"=>$indicador3grid,
             "indicador4"=>$indicador4,"indicador4grid"=>$indicador4grid,
+            "indicador5"=>$indicador5,"indicador5grid"=>$indicador5grid,
             "debug"=>$debug);
         //$this->responseArray = array("success" => true, "indicador"=>$indicador, "muelles"=>$count_values, "consolidados"=>$consolidados,"containers"=>$containers,"nacionalizaciongrid"=>$nacionalizaciongrid);
         $this->setTemplate("responseTemplate");
