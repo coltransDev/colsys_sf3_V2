@@ -102,7 +102,7 @@ Ext.onReady(function() {
                             if(!tabpanel.getChildByElement('tab'+record.data.id) && record.data.id!="")
                             {       
                                 if(record.data.id=="1")
-                                    obj=[new GridCuentas({id:'grid-cuentas',name:'grid-cuentas',width: 800, height: 800})];
+                                    obj=[new GridCuentas({id:'grid-cuentas',name:'grid-cuentas'})];
                                 else if(record.data.id=="2")
                                     obj=[new GridConceptosSiigo({id:'grid-conceptos-siigo',name:'grid-conceptos-siigo'})];
                                 else if(record.data.id=="3")

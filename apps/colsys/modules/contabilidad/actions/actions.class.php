@@ -34,6 +34,7 @@ class contabilidadActions extends sfActions {
                     $this->permisos["anular"]=true;
                     $this->permisos["busquedatotal"]=true;
                     $this->permisos["maestras"]=true;
+                    $this->permisos["enviarsiigo"]=true;
                 break;
                 case "3"://auditoria
                     $this->permisos["busquedatotal"]=true;

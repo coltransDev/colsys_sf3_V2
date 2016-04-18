@@ -5,22 +5,9 @@
  * and open the template in the editor.
  */
 //include_component("widgets5", "wgEmpresas");
-$puedeBorrar = $sf_data->getRaw("puedeBorrar");
 ?>
 <script>
-    var combo = new wgEmpresas({
-        displayField: 'name',
-        valueField: 'id'
-    });
-    var comboBoxRenderer = function(combo) {
-        return function(value) {   
-        var idx = combo.store.find(combo.valueField, value);
-        var rec = combo.store.getAt(idx);
-        return (rec === null ? value : rec.get(combo.displayField) );
-       
-        };
-    }
-            
+
     Ext.define('GridCuentas',{
         extend: 'Ext.grid.Panel',
         bufferedRenderer: false,
@@ -29,11 +16,9 @@ $puedeBorrar = $sf_data->getRaw("puedeBorrar");
                 { name: 'codigocuenta', mapping: 's_codigocuenta' },
                 { name: 'nombrecuenta', mapping: 's_nombrecuenta' },
                 { name: 'ca_idempresa', mapping: 's_ca_idempresa' },
-                { name: 'empresa', mapping: 'e_ca_nombre' },
-                { name: 'id_cuenta',mapping: 's_ca_idcuenta' },
-                { name: 'borrado', mapping: 'borrado' }
+                { name: 'empresa', mapping: 'e_ca_nombre' }
             ],
-            autoLoad: false,
+            autoLoad: true,
             remoteSort: true,
             proxy: {
                 type: 'ajax',
@@ -44,13 +29,10 @@ $puedeBorrar = $sf_data->getRaw("puedeBorrar");
                 }
             }
         }),
-        
-        columns: [   
-            {xtype: "checkcolumn",  dataIndex: 'borrado', width: 40            }, 
-            {text: "idcuenta", dataIndex: 'id_cuenta', width:150, hidden: true, sortable: true, editor: {xtype: "textfield"}},
+        columns: [            
             {text: "Codigo", dataIndex: 'codigocuenta', width:150, sortable: true, editor: {xtype: "textfield"}},
-            {text: "Nombre",  dataIndex: 'nombrecuenta',width:700, sortable: true,editor: {xtype: "textfield"}},       
-            {text: "Empresa",  dataIndex: 'ca_idempresa', width:150, hidden: true, sortable: true, editor: combo,renderer: comboBoxRenderer(combo)}
+            {text: "Nombre",  dataIndex: 'nombrecuenta',width:350, sortable: true,editor: {xtype: "textfield"}},       
+            {text: "Empresa",  dataIndex: 'empresa', width:150, sortable: true, editor: new wgEmpresas()}
         ],
         plugins: [new Ext.grid.plugin.CellEditing({
                     clicksToEdit: 1
@@ -59,18 +41,15 @@ $puedeBorrar = $sf_data->getRaw("puedeBorrar");
             edit : function(editor, e, eOpts)
             {
                 //alert(e.field);
-                var store = this.store;//Ext.getCmp("grid-facturacion").getStore();
-                /*if(e.field=="empresa")
+                var store = this.store//Ext.getCmp("grid-facturacion").getStore();
+                if(e.field=="empresa")
                 {
-                    //alert(e.rowIdx);
-                    //alert(editor.editors.items[0].field.rawValue + " "+e.value);
-                    //alert(e.value );
-                    //console.log(e);
+                    //alert(editor.editors.items[0].field.rawValue);
+                    //alert(e.value);
                     store.data.items[e.rowIdx].set('ca_idempresa', e.value);
-                    console.log(editor.editors.items);
+                    //alert(editor.editors.items[0].field.rawValue);
                     store.data.items[e.rowIdx].set('empresa', editor.editors.items[0].field.rawValue);
-                    //store.data.items[e.rowIdx].set('empresa', e.originalValue);
-                }*/
+                }
             }
         },
         tbar: [
@@ -78,9 +57,8 @@ $puedeBorrar = $sf_data->getRaw("puedeBorrar");
                 text: 'Agregar',
                 iconCls: 'add',
                 handler : function(){        
-                    var store=this.up("grid").getStore();
-                    var r = Ext.create(store.getModel());
-                    store.insert(0, r);
+                    //var store = Ext.getCmp("grid-facturacion").getStore();            
+                    //Ext.getCmp("grid-facturacion").ventanaFac(null);
                 }
             },
             {
@@ -94,11 +72,13 @@ $puedeBorrar = $sf_data->getRaw("puedeBorrar");
                     //alert(store);
                     var records = store.getModifiedRecords();
                     var lenght = records.length;
+                    //alert(records[0].data.toSource());
+                    //return;
                     changes=[];
                     for( var i=0; i< lenght; i++){
                         r = records[i];
 
-                         if(r.getChanges())
+                         if(/* r.data.idconcepto!="" && r.data.valor!="" &&*/ r.getChanges())
                          {
                             records[i].data.id=r.id;
                             changes[i]=records[i].data;
@@ -113,11 +93,9 @@ $puedeBorrar = $sf_data->getRaw("puedeBorrar");
                                 params: {                            
                                     datos:str                            
                                 },
-                                success: function(response, opts) {                                    
+                                success: function(response, opts) {
                                     var res = Ext.decode(response.responseText);
-                                    //var store =  Ext.getCmp('grid-cuentas').getStore();
-                                    //store.reload();
-                                    
+
                                     if( res.id && res.success)
                                     {
                                         id=res.id.split(",");                                        
@@ -144,113 +122,7 @@ $puedeBorrar = $sf_data->getRaw("puedeBorrar");
                     else
                         Ext.getCmp('btn-guardar').enable();
                 }
-            },{
-                xtype: 'exporterbutton',
-                text: 'XLS',
-                iconCls: 'csv',
-                format:'excel'
-            }, {
-                xtype: 'button',               
-                text: 'Eliminar',
-                iconCls: 'delete',
-                width: 25,
-                allowBlank: false,
-                hidden: <?=$puedeBorrar?>,
-                handler: function() {
-                    var store =  Ext.getCmp('grid-cuentas').getStore();   
-                    x = 0;
-                    changes = [];
-                    for (var i = 0; i < store.getCount(); i++) {
-                        var record = store.getAt(i);                        
-                        if (record.get("borrado")) {                            
-                                record.data.id = record.id
-                                changes[x] = record.data;
-                                x++;                                
-                        } 
-                    }                    
-                    var strGrid = JSON.stringify(changes);                    
-                    Ext.Ajax.request({
-                        waitMsg: 'Guardando cambios...',
-                        url: '<?= url_for("contabilidad/eliminarGridCuentas") ?>',
-
-                        params: {                                    
-                            datos: strGrid 
-                        },
-                        failure: function(response, options) {
-                            var res = Ext.util.JSON.decode(response.responseText);
-                            if (res.errorInfo)
-                                Ext.MessageBox.alert("Mensaje", 'Se presento un error guardando por favor informe al Depto. de Sistemas<br>' + res.errorInfo);
-                            else
-                                Ext.MessageBox.alert("Mensaje", 'Se produjo un error, vuelva a intentar o informe al Depto. de Sistema<br>' + res.texto);
-                        },
-                        success: function(response, options) {
-                            var store =  Ext.getCmp('grid-cuentas').getStore();
-                            store.reload();
-                            if (changes.length >0)
-                                Ext.MessageBox.alert("Mensaje", 'Datos Eliminados Correctamente<br>');                                             
-                        }
-                    });                         
-                }
-                
-            }, {
-                xtype: 'wempresas',
-                hideLabel: false,
-                fieldLabel: 'Empresa',
-                labelWidth: 80,
-                name: 'filtro_empresas',
-                id: 'filtro_empresas',
-                width: 220,
-                allowBlank: false
-            }, {
-                xtype: 'button',
-                hideLabel: false,
-                text: 'Buscar',
-                iconCls: 'search',
-                width: 25,
-                allowBlank: false,                
-                handler: function() {
-                    //console.log(this.up(""));
-                    var idempresa = Ext.getCmp("filtro_empresas").getValue();
-                    var store =  Ext.getCmp('grid-cuentas').getStore();
-                    store.load({
-                        params : {
-                            idempresa: idempresa
-                        }
-                    })
-                }
-                
-            },{
-                xtype: "textfield",
-                fieldLabel: 'Filtrar',
-                labelWidth: 40,
-                listeners:{
-                    change:function( obj, newValue, oldValue, eOpts )
-                    {
-                        
-                        //var storeTree=Ext.getCmp("grid-consulta-comprobantes").getStore();
-                        var store =  Ext.getCmp('grid-cuentas').getStore();
-                        store.clearFilter();
-                        if(newValue!=""){
-                                                 
-                            store.filterBy(function(record, id){
-                            var str=record.get("codigocuenta");
-                            var str1=record.get("nombrecuenta");
-                            //var str2=record.get("empresa");
-                            
-                            if(str.toString().toUpperCase().contains(newValue.toUpperCase()) || str1.toString().toUpperCase().contains(newValue.toUpperCase()) ){
-                                return true;
-                            }
-                            else{
-                                return false;
-                            }
-                           
-                            });
-                        }
-                        
-                    }
-                    
-                }
-            },
+            }
 
         ],
         height:500
