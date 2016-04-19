@@ -592,7 +592,9 @@ class Utils {
         $fromname = (isset($data["fromname"])) ? $data["fromname"] : "Nagios";
         $mail->setCaFromname($fromname);
         $to = (isset($data["to"])) ? $data["to"] : "admin@coltrans.com.co";
-        $mail->addTo($to);
+        //$arrayTo=  explode(",", $to);
+        foreach($arrayTo as $t)            
+            $mail->addTo($t);
         $subject = (isset($data["subject"])) ? $data["subject"] : "Email No enviado";
         $mail->setCaSubject($subject);
         $body = (isset($data["body"])) ? $data["body"] : "Email No enviado";
