@@ -110,10 +110,10 @@ class Reporte extends BaseReporte {
     public function getCliente($opciontmp=null) {
         if(!$this->cliente)
         {
-            if($this->getCaTiporep()==4 && ($this->getRepOtm()->getCaIdimportador()!="" || $this->getRepOtm()->getCaIdcliente() ) )
+            if($this->getCaTiporep()==4 && ($this->getRepOtm()->getCaIdimportador()!="" || $this->getRepOtm()->getCaIdcliente()!="" ) )
             {
                 $this->cliente = new Cliente();
-                $idt=($opciontmp=="continuacion")?$this->getRepOtm()->getCaIdimportador():$this->getRepOtm()->getCaIdcliente();
+                $idt=($opciontmp=="continuacion")?$this->getRepOtm()->getCaIdimportador():(($this->getRepOtm()->getCaIdcliente()!="")?$this->getRepOtm()->getCaIdcliente():$this->getRepOtm()->getCaIdimportador());
                 $tercero=Doctrine::getTable("Tercero")->find($idt);
                 if($tercero)
                 {
@@ -457,6 +457,15 @@ class Reporte extends BaseReporte {
     public function getConsignatario() {
         if ($this->getCaIdconsignatario()) {
             $consignee = Doctrine::getTable("Tercero")->find($this->getCaIdconsignatario());
+            return $consignee;
+        } else {
+            return null;
+        }
+    }
+    
+    public function getImportador() {
+        if ($this->getProperty("idimportador")!="") {
+            $consignee = Doctrine::getTable("Tercero")->find($this->getProperty("idimportador"));
             return $consignee;
         } else {
             return null;
@@ -1265,6 +1274,7 @@ class Reporte extends BaseReporte {
                 $repExpo = $this->getRepExpo();
                 $repExpoNew = $repExpo->copy();
                 $repExpoNew->setCaIdreporte($reporte->getCaIdreporte());
+                $repExpoNew->setCaDatosbl(null);
                 $repExpoNew->save($conn);
             }
 
