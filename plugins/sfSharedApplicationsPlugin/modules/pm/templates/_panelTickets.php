@@ -300,6 +300,7 @@
             var newComponent = new PanelAgenda({                
                 title: this.department + " " +this.group + ' >> Agenda',                
                 autoScroll: true,
+                idgroup: this.idgroup,
                 height: 300,
                 closable: true
             });

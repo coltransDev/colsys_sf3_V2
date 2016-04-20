@@ -125,6 +125,9 @@
         this.store = new Ext.data.GroupingStore({
             autoLoad: true,
             url: '<?= url_for("pm/datosEntregasTicket") ?>',
+            baseParams: {
+                idgroup: this.idgroup                
+            },
             reader: new Ext.data.JsonReader(
                     {
                         root: 'root',
@@ -155,10 +158,12 @@
                 
                 if( btn.getText()=='Entregados'){
                     btn.setText( "Activos" );
-                    store.setBaseParam("mostrarEntregas", true );                    
+                    store.setBaseParam("mostrarEntregas", true );
+                    store.setBaseParam("idgroup", this.idgroup );
                 }else{
                     btn.setText( "Entregados" );                    
                     store.setBaseParam("mostrarEntregas", false );
+                    store.setBaseParam("idgroup", this.idgroup );
                 }
                 store.reload();
             }

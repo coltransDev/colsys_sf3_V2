@@ -2261,6 +2261,7 @@ class pmActions extends sfActions {
         $idticket = $request->getParameter("idticket");
         $modo = $request->getParameter("modo");
         $mostrarEntregas = $request->getParameter("mostrarEntregas");
+        $idgroup = $request->getParameter("idgroup");
         
         if($idticket){
             $ticket = Doctrine::getTable("HdeskTicket")->find($idticket);
@@ -2279,6 +2280,10 @@ class pmActions extends sfActions {
                 $q->addWhere("he.ca_idresponse IS NOT NULL");                
             }else{
                 $q->addWhere("he.ca_idresponse IS NULL");                
+            }
+            
+            if($idgroup){
+                $q->addWhere("h.ca_idgroup = ?", $idgroup);
             }
             $q->orderBy("he.ca_estimated");            
             $entregas = $q->execute(); 
