@@ -94,7 +94,18 @@
                     format: 'Y-m-d',
                     allowBlank: false
                 })
-            }            
+            },
+            {
+                header: "Fch. Entrega",
+                dataIndex: 'delivery',                
+                sortable: true,
+                width: 130,
+                editable: false,                
+                renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s'),
+                editor: new Ext.form.DateField({
+                    format: 'Y-m-d H:i:s'
+                })
+            }
         ];
 
         this.record = Ext.data.Record.create([
@@ -125,19 +136,39 @@
             groupField: 'assignedto'
 
         });
-
-        PanelAgenda.superclass.constructor.call(this, {
-            loadMask: {msg: 'Cargando...'},
-            clicksToEdit: 1,            
-            id: 'grid-panel-agenda',
-            tbar: [
+        
+        this.tbar = [
                 {
                     text: 'Recargar',
                     iconCls: 'refresh',
                     scope: this,
                     handler: this.recargar
                 }
-            ],
+            ];
+        
+        this.tbar.push({
+            text: 'Entregados',
+            scope: this,
+            iconCls: 'refresh',  // reference to our css            
+            handler: function(btn , e){
+                var store = this.store;
+                
+                if( btn.getText()=='Entregados'){
+                    btn.setText( "Activos" );
+                    store.setBaseParam("mostrarEntregas", true );                    
+                }else{
+                    btn.setText( "Entregados" );                    
+                    store.setBaseParam("mostrarEntregas", false );
+                }
+                store.reload();
+            }
+        });
+        
+        PanelAgenda.superclass.constructor.call(this, {
+            loadMask: {msg: 'Cargando...'},
+            clicksToEdit: 1,            
+            id: 'grid-panel-agenda',
+            tbar: this.tbar,
             view: new Ext.grid.GroupingView({
                 forceFit: true,
                 enableRowBody: true,
@@ -154,7 +185,7 @@
                 return false;                
             }
             return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);       
-       }       
+        }       
     }
 
     Ext.extend(PanelAgenda, Ext.grid.EditorGridPanel, {        

@@ -2180,6 +2180,13 @@ class pmActions extends sfActions {
                         }
                     }
                     
+                    $entregas = $ticket->getHdeskEstimations();
+            
+                    foreach($entregas as $entrega){
+                        $entrega->setCaIdticket($idticketPpal);
+                        $entrega->save($conn);
+                    }
+                    
                     $request->setParameter("idticket", $idticket);                    
                     $success = $this->executeCerrarTicket($request);
                 }
@@ -2196,13 +2203,6 @@ class pmActions extends sfActions {
             $request->setParameter("idticket", $idticketPpal);
             $request->setParameter("respuesta", $respuestaPpal);                    
             $success = $this->executeGuardarRespuestaTicket($request); 
-            
-            $entregas = $ticket->getHdeskEstimations();
-            
-            foreach($entregas as $entrega){
-                $entrega->setCaIdticket($idticketPpal);
-                $entrega->save($conn);
-            }
             
             $this->responseArray = array("success" => true, "idticket" => $idticket, "sel"=>$success);        
             $conn->commit();
@@ -2259,7 +2259,8 @@ class pmActions extends sfActions {
     public function executeDatosEntregasTicket($request){
         
         $idticket = $request->getParameter("idticket");
-        $modo = $request->getParameter("modo");        
+        $modo = $request->getParameter("modo");
+        $mostrarEntregas = $request->getParameter("mostrarEntregas");
         
         if($idticket){
             $ticket = Doctrine::getTable("HdeskTicket")->find($idticket);
@@ -2269,12 +2270,18 @@ class pmActions extends sfActions {
             
         }else{
             
-            $entregas = Doctrine::getTable("HdeskEstimations")
+            $q = Doctrine::getTable("HdeskEstimations")
                     ->createQuery("he")
-                    ->innerJoin("he.HdeskTicket h")
-                    ->where("he.ca_idresponse IS NULL")
-                    ->orderBy("he.ca_estimated")
-                    ->execute(); 
+                    ->select("he.*, (SELECT r.ca_createdat FROM HdeskResponse r where r.ca_idresponse = he.ca_idresponse) as ca_createdat)")
+                    ->innerJoin("he.HdeskTicket h");
+            
+            if($mostrarEntregas=="true"){
+                $q->addWhere("he.ca_idresponse IS NOT NULL");                
+            }else{
+                $q->addWhere("he.ca_idresponse IS NULL");                
+            }
+            $q->orderBy("he.ca_estimated");            
+            $entregas = $q->execute(); 
         }
         
         if($entregas){
@@ -2292,9 +2299,8 @@ class pmActions extends sfActions {
                 $row["estimated"] = $entrega->getCaEstimated();
                 $row["delivery"] = null;
 
-                if($entrega->getCaIdresponse()){
-                    $response = Doctrine::getTable("HdeskResponse")->find($entrega->getCaIdresponse());
-                    $row["delivery"] = $response->getCaCreatedat();  
+                if($entrega->getCaIdresponse()){                    
+                    $row["delivery"] = $entrega->getHdeskResponse()->getCaCreatedat();  
                 }
 
                 $data[] = $row;
