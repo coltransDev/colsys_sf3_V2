@@ -35,6 +35,7 @@ NuevoSeguimientoWindow = function( config ) {
                                 listeners:{
                                     collapse: function(p){
                                         Ext.getCmp("chkseguimiento").expand();
+                                        Ext.getCmp("chkseguimiento").enable();
                                     },
                                     expand: function(p){
                                         Ext.getCmp("chkseguimiento").collapse();
@@ -152,6 +153,17 @@ NuevoSeguimientoWindow = function( config ) {
                                 title: 'Seguimiento',
                                 collapsed: false,
                                 checkboxToggle:true,
+                                listeners:{
+                                    collapse: function(p){
+                                        Ext.getCmp("chkmantenimiento").expand();
+                                        Ext.getCmp("chkmantenimiento").enable();
+                                    },
+                                    expand: function(p){
+                                        Ext.getCmp("chkmantenimiento").collapse();
+                                        Ext.getCmp("chkmantenimiento").disable();
+                                        
+                                    }
+                                },
                                 defaults: {
                                             // applied to each contained panel
                                             bodyStyle:'padding-right:25px;background-color:#EEEEEE',

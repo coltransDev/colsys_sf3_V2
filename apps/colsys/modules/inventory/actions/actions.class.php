@@ -429,10 +429,10 @@ class inventoryActions extends sfActions {
         
         if($chkmantenimiento&&$chkmantenimiento=='on'){
             
+            $con = Doctrine_Manager::getInstance()->connection();
+            $con->beginTransaction();
+            
             if(!$recordatorio){
-                
-                $con = Doctrine_Manager::getInstance()->connection();
-                $con->beginTransaction();
                 
                 $fchprgmantenimiento = $activo->getCaPrgmantenimiento();
                 
@@ -470,8 +470,7 @@ class inventoryActions extends sfActions {
                 $texto_rec = "";
             
             //Envía email informando mantenimiento al usuario que tiene asignado el equipo
-            }
-            else{
+            } else {
                 $texto_rec = "Recordatorio->";
                 $mantenimiento = Doctrine::getTable("InvMantenimiento")->find($idman);
                 $idsucursal = $request->getParameter("idsucursal");
@@ -490,7 +489,7 @@ class inventoryActions extends sfActions {
             $texto.= sfContext::getInstance()->getController()->getPresentationFor( 'inventory', 'emailMantenimiento');
             $email->setCaBodyhtml( $texto );
             $email->addTo($mantenimiento->getInvActivo()->getUsuario()->getCaEmail());
-            
+
             if (isset($logins)){
                 foreach( $logins as $login ){
                     $usuario = Doctrine::getTable("Usuario")->find( $login );
@@ -501,19 +500,18 @@ class inventoryActions extends sfActions {
                 }
             }
             $email->save($con);
-            
             $con->commit();
-            
+
             if($recordatorio){
                 $this->redirect("inventory/recordatorio?mes_man=".$mes_man.'&idsucursal='.$idsucursal);
             }
-            
+
             $texto = sfContext::getInstance()->getController()->getPresentationFor('inventory', 'verSeguimientos');
 
             $this->responseArray = array("success" => true, "idactivo" => $idactivo, "info" => utf8_encode($texto));
             $this->setTemplate("responseTemplate");
-     
-        }elseif($chkseguimiento&&$chkseguimiento=='on'){
+
+        }else if($chkseguimiento&&$chkseguimiento=='on'){
             
             $seguimiento = new InvSeguimiento();
             $seguimiento->setCaIdactivo($idactivo);
@@ -969,7 +967,7 @@ class inventoryActions extends sfActions {
                 ->leftJoin("u.Sucursal s")
                 ->addWhere("UPPER(a.ca_identificador) LIKE ? OR UPPER(u.ca_nombre) LIKE ? ", array($query, $query))
                 ->addWhere("c.ca_parameter = ?", "Hardware")
-                ->andWhereIn("s.ca_idempresa", $grupoEmp)
+                //->andWhereIn("s.ca_idempresa", $grupoEmp)
                 ->addOrderBy("a.ca_identificador")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                 ->execute();
@@ -1462,10 +1460,10 @@ class inventoryActions extends sfActions {
         $mesprg = (int) date('m', strtotime($hoy));
         $anoprg = date('Y', strtotime($hoy));
         $mesLargo = Utils::mesLargo($mesprg);
-        $suc = array("BOG","MDE","CLO");
+        $suc = array("BOG","MDE","CLO","CBO");
         
         foreach($suc as $s){
-            
+            $logins = array();
             $usuarios = UsuarioTable::getCoordinadoresMantenimiento($s);
             foreach( $usuarios as $usuario ){
                     $logins[]=$usuario->getCaLogin();
@@ -1495,14 +1493,13 @@ class inventoryActions extends sfActions {
                 $usuario = Doctrine::getTable("Usuario")->find( $login );
                 $email->addCc( $usuario->getCaEmail() );
             }
-            $email->addCc("falopez@coltrans.com.co");
+            //$email->addCc("falopez@coltrans.com.co");
             $a = "-Programación  de Mantenimiento: ".$mesLargo." de ".$anoprg;
             $email->setCaSubject($s.$a);
             $request->setParameter("idsucursal", $s );
             $contenido = sfContext::getInstance()->getController()->getPresentationFor('inventory', 'emailPrgmantenimiento');
             $email->setCaBodyhtml($contenido);
-            $email->save();
-            $email->send();
+            $email->save();            
         }
         exit;
         
