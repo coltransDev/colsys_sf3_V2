@@ -126,5 +126,10 @@ class inoparametrosComponents extends sfComponents
 
 
     }
+    
+     public function executeGridTrmsExt4(){
+
+
+    }
 }
 ?>

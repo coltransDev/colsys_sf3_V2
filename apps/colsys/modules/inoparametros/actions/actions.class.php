@@ -11,6 +11,7 @@
 class inoparametrosActions extends sfActions
 {
 
+    const RUTINA_TRM = 155;
     public function getNivel(){
         $this->modo = $this->getRequestParameter("modo");
 
@@ -316,14 +317,134 @@ class inoparametrosActions extends sfActions
                     $conn->rollBack();
                 }
 
-               
-                
-
             }
 
 
         }
     }
+    
+    
+    public function executeGenFileFact( sfWebRequest $request  ){
+        
+        
+        
+        if ($request->isMethod('post')){
+            $file = $_FILES["file"];
+            if(is_uploaded_file($file["tmp_name"])){
+                //exit;
+                $objReader = new PHPExcel_Reader_Excel5();
+                $objPHPExcel = $objReader->load($file["tmp_name"]);
+
+                //print_r( $objPHPExcel );
+
+                $ws = $objPHPExcel->getSheet(0);
+                
+            
+            $con = Doctrine_Manager::getInstance()->connection();            
+            $sql = "select ca_fecha,ca_pesos from tb_trms t order by ca_fecha desc";
+            $st = $con->execute($sql);
+            $trmTmp = $st->fetchAll();
+            $trms= array();
+            foreach($trmTmp as $t)
+            {
+                $trms[$t["ca_fecha"]]=$t["ca_pesos"];
+            }
+            $trm_hoy=$trms[date("Y-m-d")];
+            
+            //print_r($trms);
+            //exit;
+                
+                
+
+                try{
+                    //$conn = Doctrine::getTable("InoCuenta")->getConnection();
+                    //$conn->beginTransaction();
+
+                    $array = $ws->toArray();
+                    
+                    $colTipo=0;
+                    $colNumTipo=1;
+                    $colNumDoc=2;
+                    $colFecDoc=4;
+                    $colFecVen=5;
+                    $colNit=6;
+                    $colSaldo=10;
+                    
+                    //exit;
+                    $i = 0;
+                    $nuevos = 0;
+                    $actualizados = 0;
+                    $contador=1;
+                    $this->error="";
+                    $datos=array();
+                    foreach( $array as $pos=>$row ){
+                        if( $pos < 8){
+                            continue;
+                        }
+                        else{
+                            $nFactura=trim($row[$colTipo]).trim($row[$colNumTipo])."-".$row[$colNumDoc];
+                            
+                            if(trim($row[$colTipo])!="F")
+                                continue;
+                            
+                            $inoIngreso = Doctrine::getTable("InoIngresosAll")->find($nFactura);
+                            if(!$inoIngreso)
+                            {
+                                $this->error.=($contador++)." - Fila ".$pos.":{$row[$colFecDoc]} No se encontro la factura No. $nFactura en Colsys<br>";
+                                continue;
+                            }
+                            else
+                            {                                
+                                $trm_tipo=($inoIngreso->getCaTipo()=="M")?30:0;
+                            }
+                            
+                            $row[$colFecDoc]=  str_replace("/","-",$row[$colFecDoc]);
+                            $row[$colFecVen]=  str_replace("/","-",$row[$colFecVen]);
+                            
+                            $saldo="";
+                            if(isset($trms[$row[$colFecDoc]]))
+                            {
+                                if($trm_hoy>$trms[$row[$colFecDoc]])
+                                {
+                                    $saldo_dolares=$row[$colSaldo]/$trms[$row[$colFecDoc]];
+                                    $saldo=round($saldo_dolares*($trm_hoy+$trm_tipo));
+                                }else
+                                    $saldo=round($row[$colSaldo]);
+                            }else
+                            {
+                                $this->error.=($contador++)." - Fila ".$pos.":{$row[$colFecDoc]} No posee TRM para la fecha<br>";
+                                continue;
+                            }                            
+                            $datos[]="0;".$nFactura.";".$row[$colNit].";".$row[$colFecDoc].";".$saldo.";0;0;".$row[$colFecVen].";0\n";
+                        }
+                        $i++;
+                    }
+                    
+                    //echo "<br><br><b>".$error."</b>";
+                    //$conn->commit();
+                    
+                    $this->nameFile="fac".date("Y-m-d H:i:s").".csv";
+                    $this->folder="factopen";
+                    $this->cachefile = $config = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$this->folder.DIRECTORY_SEPARATOR.$this->nameFile;
+                    $fp = fopen($this->cachefile, 'c');
+                    //fputcsv($fp, array($datos));
+                    foreach($datos as $d)
+                    {
+                        fwrite($fp, $d);
+                    }
+                    fclose($fp);
+                    //echo $this->cachefile;
+                    //echo "<a href='/gestDocumental/verArchivo?idarchivo=".base64_encode($folder.$nameFile)+"'>".$nameFile."</a>";
+                    //exit;
+                }
+                catch (Exception $e){
+                    throw $e;
+                    //$conn->rollBack();
+                }
+            }
+        }
+    }
+    
 
     /**
     * Datos para el panel de parametros. 
@@ -468,24 +589,55 @@ class inoparametrosActions extends sfActions
     }
 
     public function executeDatosConceptosSiigo( sfWebRequest $request ){
-        
         $idconcepto = $request->getParameter("idconcepto");
         $idccosto = $request->getParameter("idccosto");
         
         
-        $ccosto = Doctrine::getTable("InoCentroCosto")->find($idccosto);
         
+        $modo = Doctrine::getTable("Modo")->find( $request->getParameter("modo") );
+        $query = $request->getParameter("query");
+        
+        $idcomprobante = $request->getParameter("idcomprobante");
+        $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
+        if($comprobante)
+        {
+            $idsucursal=$comprobante->getInoTipoComprobante()->getCaIdsucursal();
+        }
+        else
+        {
+            $idsucursal="";//$this->getUser()->getSucursal()
+        }
+//        $idempresa = $request->getParameter("idempresa");
 
-        $conceptosSiigo = Doctrine::getTable("InoConSiigo")
-                         ->createQuery("s")
-                         ->select("*")
-                         ->where("ca_cc = ?  and ca_scc = ? ", array($ccosto->getCaCentro() , $ccosto->getCaSubcentro()))
-                         ->addOrderBy( "s.ca_idconceptosiigo" )
-                         ->execute();
+        //$ccosto = Doctrine::getTable("InoCentroCosto")->find($idccosto);
+
+         $ccosto = Doctrine::getTable("InoCentroCosto")
+                                  ->createQuery("c")
+                                  ->addWhere("c.ca_impoexpo = ?", $modo->getCaImpoexpo())
+                                  ->addWhere("c.ca_transporte = ?", $modo->getCaTransporte())
+                                  ->addWhere("c.ca_idsucursal = ?", $idsucursal)
+                                  ->fetchOne();
+        if($ccosto)
+        {
+            $q = Doctrine::getTable("InoConSiigo")
+                             ->createQuery("s")
+                             ->select("*")                         
+                             ->where("SUBSTR(ca_cod::TEXT,1,2)=? and ca_idempresa=?  ",array($ccosto->getCaCentro().$ccosto->getCaSubcentro() , $ccosto->getCaIdempresa()) )
+                             ->addOrderBy( "s.ca_idconceptosiigo" );
+            if($query!="")
+            {
+                $q->addWhere("UPPER(ca_descripcion) like ?",'%'.  strtoupper($query).'%');
+            }
+            $debug=$q->getSqlQuery();
+        }
+//        echo $debug;
+        //echo $ccosto->getCaCentro() ."::". $ccosto->getCaSubcentro() ."::". $ccosto->getCaIdempresa();
+//        exit;
+        $conceptosSiigo=$q->execute();
         $data=$seleccionados=array();
         foreach ($conceptosSiigo as $s)
         {
-            $data[]=array("id"=>$s->getCaIdconceptosiigo(),"name"=>$s->getCaCod()."-".$s->getCaDescripcion());
+            $data[]=array("id"=>$s->getCaCod(),"name"=>$s->getCaCod()."-".utf8_encode($s->getCaDescripcion()));
         }
         
         
@@ -505,7 +657,7 @@ class inoparametrosActions extends sfActions
         //print_r($seleccionados);
         //exit;
 
-        $this->responseArray = array("root"=>$data,"seleccionados"=>$seleccionados, "success"=>true );
+        $this->responseArray = array("root"=>$data,"seleccionados"=>$seleccionados, "success"=>true,"debug"=>$debug );
         $this->setTemplate("responseTemplate");
     }
     
@@ -570,6 +722,53 @@ class inoparametrosActions extends sfActions
         $this->setTemplate("responseTemplate");
         
     }
+
     
+    public function executeTrmsExt4( sfWebRequest $request ){
+        
+        $this->permiso = $this->getUser()->getNivelAcceso(inoparametrosActions::RUTINA_TRM);
+        if($this->permiso<=0)            
+            $this->setLayout("sinmenu");
+        
+        
+    }
+    
+    public function executeDatosTrms( sfWebRequest $request ){
+     
+        
+        //$q[]=array("ca_fecha"=>date("Y-m-d"),"ca_pesos"=>30,"ca_euro"=>20);
+        
+        $con = Doctrine_Manager::getInstance()->connection();            
+        $sql = "select ca_fecha,ca_pesos,ca_euro from tb_trms t order by ca_fecha desc";
+        $st = $con->execute($sql);
+        $trmTmp = $st->fetchAll();
+        
+        $this->responseArray = array("success" => true,"root"=>$trmTmp);
+        $this->setTemplate("responseTemplate");
+    }
+    
+    
+    public function executeGuardarGridTrms( sfWebRequest $request ){
+        
+        $datos =  json_decode($request->getParameter("datos"));
+        foreach($datos as $d)
+        {        
+            if($d->fecha=="")
+                continue;
+            $trm = Doctrine::getTable("Trms")->find($d->fecha);
+            if(!$trm)
+            {
+                $trm= new Trms();
+                $trm->setCaFecha($d->fecha);
+            }
+            $trm->setCaPesos($d->pesos);
+            if($d->euro!="")
+                $trm->setCaEuro($d->euro);
+            $trm->save();            
+        }
+        
+        $this->responseArray = array("success" => true);
+        $this->setTemplate("responseTemplate");
+    }
 
 }
