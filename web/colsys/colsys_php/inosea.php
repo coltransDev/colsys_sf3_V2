@@ -923,8 +923,8 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         exit;
                     }
 
-                    $visible = ($rs->Value('ca_usucerrado') == '') ? 'visible' : 'hidden';
-                    $visibleLiq = ($nivel > 3) ? 'visible' : 'hidden';
+                    $visibleLiq = ($rs->Value('ca_usucerrado') == '') ? 'visible' : (($nivel > 3) ? 'visible' : 'hidden');
+                    
                     echo "<TR>";
                     echo "  <TD Class=imprimir COLSPAN=6>&nbsp;</TD>";
                     echo "</TR>";
