@@ -2,7 +2,7 @@
 include_component("pm", "editarTicketWindow", array("nivel" => $nivelTickets));
 $plantillas = $sf_data->getRaw("plantillas");
 ?>
-
+    
 <script type="text/javascript">
     var crearTicket = function(){
         var win = new EditarTicketWindow();
@@ -28,8 +28,15 @@ $plantillas = $sf_data->getRaw("plantillas");
                     </div>
                 </div>
             </div>
-            <div style="padding:10px 0 0;">
+            <div style="padding:10px 0 0;">                
                 <div class="left-column">
+                    <br/>
+                    <!--<p style="text-align: left;">
+                        <iframe src="https://docs.google.com/presentation/d/1GWT1ysQ2vy-e4CqRt3ore_lt-T29MDob0ZGo5Q-v6Dc/embed?start=true&loop=true&delayms=5000" 
+                         frameborder="0" style="border:0" width="700" height="555" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true">
+                        </iframe>
+                   </p>
+                    <br/><br/>-->
                     <? include_component("notificaciones", "tareasPendientes"); ?>
                     <div class="content-box">&nbsp;<? include_component("homepage", "novedades", array("nivelNoticias" => $nivelNoticias)); ?></div>
                     <? include_component("survey", "listaEvaluaciones"); ?>
@@ -41,7 +48,8 @@ $plantillas = $sf_data->getRaw("plantillas");
                                 <li><a href="#" onClick="crearTicket()">Nuevo ticket</a></li>
                                 <li><a href="http://www.coltrans.com.co/intranet" target="blank">Intranet</a></li>
                                 <li><a href="<?=$usuario->getSucursal()->getEmpresa()->getCaTracking()?>" target="blank">Tracking</a></li>
-                                <!--<li><a href="http://correoapp.coltrans.com.co" target="blank">Google Apps</a></li>-->
+                                <li><a href="http://www.gerenteslatinos.com/aulavirtualgrupo" target="blank">Aula Virtual</a></li>
+                                <li><a href="https://www.coltrans.com.co/images/publicidad/GoverLAN_Client_Agent_Installer.zip" target="blank">Soporte Remoto</a></li>
                             </ul>
                         </div>
                     </div>
@@ -215,4 +223,4 @@ $plantillas = $sf_data->getRaw("plantillas");
                 bindScroll();
     });
     
-    </script>
+</script>

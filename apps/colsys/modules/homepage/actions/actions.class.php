@@ -121,5 +121,22 @@ class homepageActions extends sfActions {
 
         $this->idnovedad = $idnovedad;
     }
+    
+     public function executeGenerarPDFPlantilla(sfWebRequest $request) {
+        
+        
+        $idsucursal = $request->getParameter("suc");
+        $this->filename = $this->getRequestParameter("filename");
+        
+        $this->sucursal =  Doctrine::getTable("Sucursal")
+            ->createQuery("s")                
+            ->where("ca_idsucursal = ?" , $idsucursal )
+            ->fetchOne();
+        
+        
+        $this->empresa = Doctrine::getTable("Empresa")->find($this->sucursal->getCaIdempresa());
+        
+        $this->setLayout("none");
+    }
 }
 ?>
