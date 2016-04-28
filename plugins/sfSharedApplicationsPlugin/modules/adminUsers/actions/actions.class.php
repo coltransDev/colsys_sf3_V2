@@ -1227,29 +1227,31 @@ class adminUsersActions extends sfActions {
         
         $anoActual = date('Y');
 
-        $usuarios = Doctrine::getTable('Usuario')
+        $q = Doctrine::getTable('Usuario')
                 ->createQuery ('u')
                 ->innerJoin('u.Sucursal s')
                 ->innerJoin('s.Empresa e')
                 ->where('u.ca_activo = ?', true)
                 ->addWhere('e.ca_idempresa != 4')
-                ->addWhere("CASE WHEN substr((c.ca_fchingreso - 4)::text,6,5) = substr(now()::text,6,5) THEN(CASE WHEN ((date_part('year', now()) - date_part('year', c.ca_fchingreso))::int) NOT IN (5,0) THEN ((date_part('year', now()) - date_part('year', c.ca_fchingreso))::int)%5=0 ELSE false END ) ELSE false END")
-                ->orderby('u.ca_fchingreso DESC')
-                ->execute();
+                ->addWhere("CASE WHEN substr((c.ca_fchingreso - 4)::text,6,5) = substr(now()::text,6,5) THEN(CASE WHEN ((date_part('".year."', now()) - date_part('".year."', c.ca_fchingreso))::int) NOT IN (5,0) THEN ((date_part('".year."', now()) - date_part('".year."', c.ca_fchingreso))::int)%5=0 ELSE false END ) ELSE false END")
+                ->orderby('u.ca_fchingreso DESC');
         
-        foreach ($usuarios as $usuario){
-            
-            list($ano,$mes,$dia) = explode("-",$usuario->getCaFchingreso());
-            
-            $tiempoCumplido = date("Y") - $ano;
-            $login = $usuario->getCaLogin();
-            $fchingreso = $usuario->getCaFchingreso();
-            
-            $usuario = Doctrine::getTable("Usuario")->find($login);
-            $asunto = "reconocimiento";
-           
-            $usuario->emailUsuario($login,$asunto,null,$tiempoCumplido,$fchingreso);
-            
+        $usuarios = $q->execute();
+        
+        if($usuarios)
+            foreach ($usuarios as $usuario){
+
+                list($ano,$mes,$dia) = explode("-",$usuario->getCaFchingreso());
+
+                $tiempoCumplido = date("Y") - $ano;
+                $login = $usuario->getCaLogin();
+                $fchingreso = $usuario->getCaFchingreso();
+
+                $usuario = Doctrine::getTable("Usuario")->find($login);
+                $asunto = "reconocimiento";
+
+                $usuario->emailUsuario($login,$asunto,null,$tiempoCumplido,$fchingreso);            
+            }
         }
     }
     
