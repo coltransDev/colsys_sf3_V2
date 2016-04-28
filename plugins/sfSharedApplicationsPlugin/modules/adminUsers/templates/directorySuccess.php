@@ -21,7 +21,7 @@ var buscar=function(){
             opcion: document.getElementById("opcion").value,
             departamento: document.getElementById("departamento").value,
             sucursal: document.getElementById("idsucursal").value,
-			empresa: document.getElementById("empresa").value
+            empresa: document.getElementById("empresa").value
             
         },
 
@@ -66,7 +66,7 @@ function cambiarValores(){
 
 </script>
 <div class="content" align="center">
-    <table class="tableList" width="400px">
+    <table width="100%" border="1" class="tableList">
         <th colspan="3" style="border-bottom: none"><b>Buscar Personas</b></th>
         <tr>
             <td>
@@ -79,44 +79,39 @@ function cambiarValores(){
                     <option value="cargo">Cargo</option>
                 </select>
             </td>
-			<td colspan="2">
-				Ingrese un criterio para realizar la consulta<br />
-				<input size="55" type="text" name="criterio" id="criterio"/>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<select name="empresa" id="empresa" onChange="cambiarValores()">
-					<option value="" selected="selected">Todas las Empresas</option>
-					<?
-					foreach( $empresas as $empresa ){
-					?>
-						<option value="<?=$empresa->getCaIdempresa()?>"><?=$empresa->getCaNombre()?>
-						</option>
-					<?
-					}
-					?>
-				</select>
-			</td>
-			<td>
-                <select name="idsucursal" id="idsucursal">
+            <td colspan="2">
+                Ingrese un criterio para realizar la consulta<br />
+                <input size="30" type="text" name="criterio" id="criterio"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <select name="empresa" id="empresa" onChange="cambiarValores()">
+                    <option value="" selected="selected">Todas las Empresas</option>
+                    <?
+                    foreach( $empresas as $empresa ){
+                        ?>
+                        <option value="<?=$empresa->getCaIdempresa()?>"><?=$empresa->getCaNombre()?>
+                        </option>
+                        <?
+                    }
+                    ?>
                 </select>
             </td>
             <td>
-                <select name="departamento" id="departamento">
-				</select>
+                <select name="idsucursal" id="idsucursal"></select>
             </td>
-		</tr>
-		<tr>
-            <td><input type="button" value="Buscar" OnClick="buscar()"></td>
+            <td>
+                <select name="departamento" id="departamento"></select>
+            </td>
         </tr>
-    </table>
-<br />
-
-<div align="center">
-    <div id="resultados"></div>
-</div>
-
+        <tr>
+            <td colspan="3"><input type="button" value="Buscar" OnClick="buscar()"></td>
+        </tr>
+    </table><br />
+    <div align="center">
+        <div id="resultados"></div>
+    </div>
 </div>
 <script language="javascript" type="text/javascript">
 	cambiarValores();

@@ -8,13 +8,13 @@
     <h2 style="font-size: 200%">Directorio Telef&oacute;nico Nacional</h2>
     <br />
     
-    <table class="tableList" border="1" width="95%">
+    <table class="tableList" border="1" width="100%">
         <tr>
             <th >Usuario</th>
             <th >Cargo</th>
             <th >Email</th>
             <th >Tel&eacute;fono</th>
-            <th >Extensi&oacute;n</th>
+            <th >Ext.</th>
         </tr>
         <?
         $lastEmpresa = "";
@@ -47,12 +47,12 @@
             <?
             }
             ?>
-             <tr>
-                <td style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?echo link_to($usuario->getCaNombre(), "adminUsers/viewUser?login=".$usuario->getCaLogin());?></td>
-                <td style="text-align: left"><?=$usuario->getCaCargo()?></td>
-                <td style="text-align: left"><?=$usuario->getCaEmail()?></td>
-                <td style="text-align: left"><?=$usuario->getSucursal()->getCaTelefono()?></td>
-                <td style="text-align: left"><?=$usuario->getCaExtension()?></td>
+            <tr>
+                <td style="text-align: left; font-size:11px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?echo link_to($usuario->getCaNombre(), "adminUsers/viewUser?login=".$usuario->getCaLogin());?></td>
+                <td style="text-align: left; font-size:10px;"><?=$usuario->getCaCargo()?></td>
+                <td style="text-align: left; font-size:10px;"><?=$usuario->getCaEmail()?></td>
+                <td style="text-align: left; font-size:10px;"><?=$usuario->getSucursal()->getCaTelefono()?></td>
+                <td style="text-align: left; font-size:10px;"><?=$usuario->getCaExtension()?></td>
             </tr>
             <?
             }
@@ -64,13 +64,13 @@
     ?>
     <h2 style="font-size: 200%">Directorio Telef&oacute;nico por Empresa</h2>
     <br />
-    <table class="tableList" border="1" width="95%">
+    <table class="tableList" border="1" width="100%">
         <tr>
             <th >Usuario</th>
             <th >Cargo</th>
             <th >Email</th>
             <th >Tel&eacute;fono</th>
-            <th >Extensi&oacute;n</th>
+            <th >Ext.</th>
         </tr>
         <?
         $lastEmpresa = "";
@@ -104,11 +104,11 @@
             }
             ?>
              <tr>
-                <td style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?echo link_to($usuario->getCaNombre(), "adminUsers/viewUser?login=".$usuario->getCaLogin());?></td>
-                <td style="text-align: left"><?=$usuario->getCaCargo()?></td>
-                <td style="text-align: left"><?=$usuario->getCaEmail()?></td>
-                <td style="text-align: left"><?=$usuario->getCaTeloficina()?></td>
-                <td style="text-align: left"><?=$usuario->getCaExtension()?></td>
+                <td style="text-align: left; font-size:11px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?echo link_to($usuario->getCaNombre(), "adminUsers/viewUser?login=".$usuario->getCaLogin());?></td>
+                <td style="text-align: left; font-size:10px;"><?=$usuario->getCaCargo()?></td>
+                <td style="text-align: left; font-size:10px;"><?=$usuario->getCaEmail()?></td>
+                <td style="text-align: left; font-size:10px;"><?=$usuario->getSucursal()->getCaTelefono()?></td>
+                <td style="text-align: left; font-size:10px;"><?=$usuario->getCaExtension()?></td>
             </tr>
             <?
             }
@@ -121,13 +121,13 @@
 
     <h2 style="font-size: 200%">Directorio Telef&oacute;nico por Sucursal</h2>
     <br />
-    <table class="tableList" border="1" width="95%">
+    <table class="tableList" border="1" width="100%">
         <tr>
             <th >Usuario</th>
             <th >Cargo</th>
             <th >Email</th>
             <th >Tel&eacute;fono</th>
-            <th >Extensi&oacute;n</th>
+            <th >Ext.</th>
         </tr>
         <?
         $lastEmpresa = "";
@@ -160,11 +160,11 @@
             }
             ?>
              <tr>
-                <td style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?echo link_to($usuario->getCaNombre(), "adminUsers/viewUser?login=".$usuario->getCaLogin());?></td>
-                <td style="text-align: left"><?=$usuario->getCaCargo()?></td>
-                <td style="text-align: left"><?=$usuario->getCaEmail()?></td>
-                <td style="text-align: left"><?=$usuario->getCaTeloficina()?></td>
-                <td style="text-align: left"><?=$usuario->getCaExtension()?></td>
+                <td style="text-align: left; font-size:11px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?echo link_to($usuario->getCaNombre(), "adminUsers/viewUser?login=".$usuario->getCaLogin());?></td>
+                <td style="text-align: left; font-size:10px;"><?=$usuario->getCaCargo()?></td>
+                <td style="text-align: left; font-size:10px;"><?=$usuario->getCaEmail()?></td>
+                <td style="text-align: left; font-size:10px;"><?=$usuario->getSucursal()->getCaTelefono()?></td>
+                <td style="text-align: left; font-size:10px;"><?=$usuario->getCaExtension()?></td>
             </tr>
             <?
             }
@@ -177,13 +177,13 @@
 
     <h2 style="font-size: 200%">Directorio Telef&oacute;nico por Departamento</h2>
     <br />
-    <table class="tableList" border="1" width="95%">
+    <table class="tableList" border="1" width="100%">
         <tr>
             <th >Usuario</th>
             <th >Cargo</th>
             <th >Email</th>
             <th >Tel&eacute;fono</th>
-            <th >Extensi&oacute;n</th>
+            <th >Ext.</th>
         </tr>
         <?
         $lastDepartamento = "";
@@ -216,11 +216,11 @@
             }
             ?>
              <tr>
-                <td style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?echo link_to($usuario->getCaNombre(), "adminUsers/viewUser?login=".$usuario->getCaLogin());?></td>
-                <td style="text-align: left"><?=$usuario->getCaCargo()?></td>
-                <td style="text-align: left"><?=$usuario->getCaEmail()?></td>
-                <td style="text-align: left"><?=$usuario->getCaTeloficina()?></td>
-                <td style="text-align: left"><?=$usuario->getCaExtension()?></td>
+                <td style="text-align: left; font-size:11px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?echo link_to($usuario->getCaNombre(), "adminUsers/viewUser?login=".$usuario->getCaLogin());?></td>
+                <td style="text-align: left; font-size:10px;"><?=$usuario->getCaCargo()?></td>
+                <td style="text-align: left; font-size:10px;"><?=$usuario->getCaEmail()?></td>
+                <td style="text-align: left; font-size:10px;"><?=$usuario->getSucursal()->getCaTelefono()?></td>
+                <td style="text-align: left; font-size:10px;"><?=$usuario->getCaExtension()?></td>
             </tr>
             <?
             }

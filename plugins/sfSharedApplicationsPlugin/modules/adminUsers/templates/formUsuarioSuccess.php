@@ -1,4 +1,13 @@
 <?
+if($app=="intranet"){
+    sfContext::getInstance()->getResponse()->removeStylesheet("/js/ext4/resources/css/ext-all-neptune.css");
+    sfContext::getInstance()->getResponse()->removeJavascript("ext4/ext-all.js");
+    sfContext::getInstance()->getResponse()->removeJavascript("ext4/ux/multiupload/swfobject.js");
+    use_stylesheet('ext/css/ext-all.css');
+    use_javascript('ext/adapter/ext/ext-base.js');
+    use_javascript('ext/ext-all.js');
+    use_javascript('ext/src/locale/ext-lang-es.js');
+}
 use_helper('ExtCalendar');
 
 $sucursales = $sf_data->getRaw("sucursales");
@@ -46,22 +55,22 @@ $jefes = $sf_data->getRaw("jefes");
         }
     }
     
-    function showFieldsEnf( field ){
+    /*function showFieldsEnf( name ){
         if(field&&typeof(field)!='undefined'){
             if( field.checked){
-                document.getElementById("enfermedad").disabled=false;
+                document.getElementById(name).disabled=false;
             }else{
-                document.getElementById("enfermedad").disabled=true;
+                document.getElementById(name).disabled=true;
             }
         }
-    }
+    }*/
     
-    function showFieldsAle( field ){
-        if(field&&typeof(field)!='undefined'){
+    function showFields( field, nombre ){
+        if(field&&typeof(field)!='undefined'){            
             if( field.checked){
-                document.getElementById("alergico").disabled=false;
+                document.getElementById(nombre).disabled=false;
             }else{
-                document.getElementById("alergico").disabled=true;
+                document.getElementById(nombre).disabled=true;
             }
         }
     }
@@ -202,7 +211,8 @@ $jefes = $sf_data->getRaw("jefes");
         <tr>
             <td width="100">
                 <div class="box1">
-                        <img src="<?=url_for('adminUsers/traerImagen?username='.$usuario->getCaLogin().'&tamano=120x150')?>" />
+                        <!--<img src="<?=url_for('adminUsers/traerImagen?username='.$usuario->getCaLogin().'&tamano=120x150')?>" />-->
+                    <img src="<?=$usuario->getImagenUrl()?>"
                 </div>
             </td>
             <td valign="top" align="left">
@@ -546,6 +556,28 @@ $jefes = $sf_data->getRaw("jefes");
                                 <td>&nbsp;</td>
                                 <td width="40%">
                                     <div align="left">  
+                                        <b>Estado Civil</b>
+                                    </div>
+                                </td>
+                                 <td>
+                                    <div align="left">
+                                        <select name="estado">
+                                            <option value="">Por favor seleccione una opci&oacute;n</option>
+                                                <?
+                                                foreach( $estados as $estado ){
+                                                    ?>
+                                                    <option value="<?=$estado->getCaIdentificacion()?>"<?=$usuario->getUsuBrigadas()->getCaEcivil()==$estado->getCaIdentificacion()?'selected="selected"':''?> > <?=($estado->getCaValor())?></option>
+                                                    <?
+                                                }
+                                            ?>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="row0">
+                                <td>&nbsp;</td>
+                                <td width="40%">
+                                    <div align="left">  
                                         <b>Sexo</b>
                                     </div>
                                 </td>
@@ -598,6 +630,28 @@ $jefes = $sf_data->getRaw("jefes");
                             <tr class="row0">
                                 <td>&nbsp;</td>
                                 <td width="40%">
+                                    <div align="left">  
+                                        <b>Zona de Evacuaci&oacute;n</b>
+                                    </div>
+                                </td>
+                                 <td>
+                                    <div align="left">
+                                        <select name="zona"  style="width: 400px">
+                                            <option value="">Por favor seleccione una opci&oacute;n</option>
+                                                <?
+                                                foreach( $zonas as $zona ){
+                                                    ?>
+                                                    <option value="<?=$zona->getCaIdentificacion()?>"<?=$usuario->getUsuBrigadas()->getCaZona()==$zona->getCaIdentificacion()?'selected="selected"':''?> > <?=($zona->getCaValor())?></option>
+                                                    <?
+                                                }
+                                            ?>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="row0">
+                                <td>&nbsp;</td>
+                                <td width="40%">
                                     <div align="left">
                                         <b>Tipo de Sangre</b>
                                     </div>
@@ -638,7 +692,7 @@ $jefes = $sf_data->getRaw("jefes");
                                 </td>
                                 <td>
                                     <div align="left">
-                                        <input type="checkbox" onclick='showFieldsEnf(this)' name="chk_enfermedad" id="chk_enfermedad" <?=$usuario->getCaEnfermedad()!=null?'checked="checked"':''?>/>
+                                        <input type="checkbox" onclick='showFields(this, "enfermedad")' name="chk_enfermedad" id="chk_enfermedad" <?=$usuario->getCaEnfermedad()!=null?'checked="checked"':''?>/>
                                     </div>
                                 </td>
                             </tr>
@@ -651,7 +705,7 @@ $jefes = $sf_data->getRaw("jefes");
                                 </td>
                                 <td>
                                     <div align="left">
-                                        <input type="text" name="enfermedad" id="enfermedad" value="<?$usuario->getCaEnfermedad()?>" size="40" />
+                                        <input type="text" name="enfermedad" id="enfermedad" disabled="disabled" value="<?$usuario->getCaEnfermedad()?>" size="40" />
                                     </div>
                                 </td>
                             </tr>
@@ -664,7 +718,7 @@ $jefes = $sf_data->getRaw("jefes");
                                 </td>
                                 <td>
                                     <div align="left">
-                                        <input type="checkbox" onclick='showFieldsAle(this)' name="chk_alergico" id="chk_alergico" <?=$usuario->getCaAlergico()!=null?'checked="checked"':''?>/>
+                                        <input type="checkbox" onclick='showFields(this, "alergico")' name="chk_alergico" id="chk_alergico" <?=$usuario->getCaAlergico()!=null?'checked="checked"':''?>/>
                                     </div>
                                 </td>
                             </tr>
@@ -681,6 +735,32 @@ $jefes = $sf_data->getRaw("jefes");
                                     </div>
                                 </td>
                             </tr>
+                            <tr class="row2" >
+                                <td colspan="3">
+                                    <div align="left">  
+                                        <b>Pertenece a:</b>
+                                    </div>
+                                </td>
+                            </tr>
+                            <? 
+                            $usuComites = explode("|",$usuario->getUsuBrigadas()->getCaComites());    
+                            
+                            foreach ($comites as $comite) { ?>
+                                <tr class="row0">                                
+                                    <td>&nbsp;</td>
+                                    <td width="40%">
+                                        <div align="left">
+                                            <b><?= $comite->getCaValor() ?></b>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div align="left">
+                                            <input type="checkbox" onclick='showFields(this, "comite_pr<?=$comite->getCaIdentificacion()?>")' name="comite<?=$comite->getCaIdentificacion()?>" id="comite<?=$comite->getCaIdentificacion()?>" <?=in_array($comite->getCaIdentificacion(), $usuComites)  ? 'checked="checked"' : '' ?>/>
+                                            <input type="text" disabled="disabled" name="comite_pr<?=$comite->getCaIdentificacion()?>" id="comite_pr<?=$comite->getCaIdentificacion()?>" value="<?=$usuario->getUsuBrigadas()->getProperty("comite".$comite->getCaIdentificacion())?>" />
+                                        </div>
+                                    </td>
+                                </tr>
+                            <? } ?>
                         </table>
                     </div>
                     <div class="tab-page">
@@ -765,6 +845,7 @@ $jefes = $sf_data->getRaw("jefes");
                     <?
                 }
                 if($nivel>=2 ){
+                    
                     ?>
                     <div class="tab-page">
                         <h2 class="tab">Sistemas</h2>
@@ -785,7 +866,7 @@ $jefes = $sf_data->getRaw("jefes");
                                 </td>
                                 <td>
                                     <div align="left">
-                                        <select name="auth_method" id="auth_method" onchange='lockFields(this)' <?if(!($nivel==3)){?>disabled="disabled"<?}?>  >
+                                        <select name="auth_method" id="auth_method" onchange='lockFields(this)' <?if(!($nivel>=2) || !in_array($usuario->getSucursal()->getCaIdempresa(), $sf_data->getRaw("grupoEmp"))){?>disabled="disabled"<?}?>  >
                                             <option value="ldap" <?=$usuario->getCaAuthmethod()=="ldap"?'selected="selected"':''?>>LDAP con Perfiles</option>
                                             <option value="sha1" <?=$usuario->getCaAuthmethod()=="sha1"?'selected="selected"':''?>>Base de datos</option>
                                         </select>
@@ -801,7 +882,7 @@ $jefes = $sf_data->getRaw("jefes");
                                 </td>
                                 <td>
                                     <div align="left">
-                                        <input type="password" name="passwd1" id="passwd1" Autocomplete="off" <?if(!($nivel==3)){?>disabled="disabled"<?}?>/>
+                                        <input type="password" name="passwd1" id="passwd1" Autocomplete="off" <?if(!($nivel>=2) || !in_array($usuario->getSucursal()->getCaIdempresa(), $sf_data->getRaw("grupoEmp"))){?>disabled="disabled"<?}?>/>
                                     </div>
                                 </td>
                             </tr>
@@ -814,7 +895,7 @@ $jefes = $sf_data->getRaw("jefes");
                                 </td>
                                 <td>
                                     <div align="left">
-                                        <input type="password" name="passwd2" id="passwd2" Autocomplete="off"  <?if(!($nivel==3)){?>disabled="disabled"<?}?>/>
+                                        <input type="password" name="passwd2" id="passwd2" Autocomplete="off"  <?if(!($nivel>=2) || !in_array($usuario->getSucursal()->getCaIdempresa(), $sf_data->getRaw("grupoEmp"))){?>disabled="disabled"<?}?>/>
                                     </div>
                                 </td>
                             </tr>
@@ -827,7 +908,7 @@ $jefes = $sf_data->getRaw("jefes");
                                 </td>
                                 <td>
                                     <div align="left">
-                                        <input type="checkbox" name="forcechange" id="forcechange"  <?=$usuario->getCaForcechange()?'checked="checked"':''?> <?if(!($nivel==3)){?>disabled="disabled"<?}?>/>
+                                        <input type="checkbox" name="forcechange" id="forcechange"  <?=$usuario->getCaForcechange()?'checked="checked"':''?> <?if(!($nivel>=2) || !in_array($usuario->getSucursal()->getCaIdempresa(), $sf_data->getRaw("grupoEmp"))){?>disabled="disabled"<?}?>/>
                                     </div>
                                 </td>
                             </tr>
@@ -840,7 +921,7 @@ $jefes = $sf_data->getRaw("jefes");
                                 </td>
                                 <td>
                                     <div align="left">
-                                        <input type="checkbox" name="activo" id="activo"  <?=($usuario->getCaActivo()||!$usuario->getCaLogin())?'checked="checked"':''?> <?if(!($nivel==3)){?>disabled="disabled"<?}?>/>
+                                        <input type="checkbox" name="activo" id="activo"  <?=($usuario->getCaActivo()||!$usuario->getCaLogin())?'checked="checked"':''?> <?if(!($nivel>=2)){?>disabled="disabled"<?}?>/>
                                     </div>
                                 </td>
                             </tr>
@@ -931,7 +1012,7 @@ $jefes = $sf_data->getRaw("jefes");
                                 </td>
                                 <td>
                                     <div align="left">
-                                        <input type="password" name="clave_email" id="clave_email" Autocomplete="off" <?if(!($nivel==3)||!($usuario->getCaEmail())||$usuario->getCaMailpasw()){?>disabled="disabled"<?}?> />
+                                        <input type="password" name="clave_email" id="clave_email" Autocomplete="off" <?if(!($nivel>=2)||!($usuario->getCaEmail())||$usuario->getCaMailpasw() ){?>disabled="disabled"<?}?> />
                                     </div>
                                 </td>
                             </tr>
@@ -955,8 +1036,12 @@ $jefes = $sf_data->getRaw("jefes");
 </div>
 </form>
 <script language="javascript" type="text/javascript">
-	lockFields(document.getElementById('auth_method'));
-    showFieldsEnf(document.getElementById('chk_enfermedad'));
-    showFieldsAle(document.getElementById('chk_alergico'));
+    lockFields(document.getElementById('auth_method'));
+    showFields(document.getElementById('chk_enfermedad'),'enfermedad');
+    showFields(document.getElementById('chk_alergico'),'alergico');
+    <?foreach($comites as $comite){?>
+        var idComite = <?=$comite->getCaIdentificacion()?> 
+        showFields(document.getElementById('comite'+idComite),'comite_pr<?=$comite->getCaIdentificacion()?>');
+    <?}?>
     cambiarValores('<?=$usuario->getCaIdsucursal()?>','<?=$usuario->getCaDepartamento()?>','<?=$usuario->getCaCargo()?>','<?=$usuario->getCaManager()?>');
 </script>

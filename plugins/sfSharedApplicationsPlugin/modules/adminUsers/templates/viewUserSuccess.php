@@ -1,10 +1,16 @@
-<div class="content" align="center">
+<?
+$comites = $sf_data->getRaw("comites");
+?>
+
+<div class="content" align="center" id="resultado">
+    <?if($user){?>
     <table width="100%"  class="tableList" >
         <tr>
             <td style="border:none; border-bottom: 1px solid #D0D0D0;text-align:left" <?if(($userinicio->getUserId()==$user->getCaLogin()) or $nivel>=1){?>colspan="3"<?}else{?>colspan="2"<?}?> scope="col">Perfil del usuario</td>
             <td></td>
                 <?
-                if(($userinicio->getUserId()==$user->getCaLogin()) or $nivel>=2 ){
+                
+                if(($userinicio->getUserId()==$user->getCaLogin()) or( $nivel>=2 && in_array($user->getSucursal()->getCaIdempresa(),$sf_data->getRaw("grupoEmp"))) or $nivel>=3){
                 ?>
             <td width="5" style="border:none; border-bottom: 1px solid #D0D0D0;text-align:right" align="right" title="Editar"><?=link_to(image_tag("page_white_edit.png"),"adminUsers/formUsuario?login=".$user->getCaLogin())?></td>
                 <?
@@ -22,13 +28,34 @@
         <tr>
             <td width="150">
                 <div class="box1" align="center">
-                    <img src="<?=url_for('adminUsers/traerImagen?username='.$user->getCaLogin().'&tamano=120x150')?>" />
+                    <!--<img src="<?=url_for('adminUsers/traerImagen?username='.$user->getCaLogin().'&tamano=120x150')?>" />-->
+                    <img src="<?=$user->getImagenUrl()?>"
                 </div>
             </td>
             <td valign="top" align="left" <?if(($userinicio->getUserId()==$user->getCaLogin()) or $nivel>=1){?>colspan="3"<?}else{?>colspan="2"<?}?> >
-                <b><?=(strtoupper($user->getCaNombre())) ?></b><br/>
-                <b><?=($user->getCaCargo()) ?></b><br />
+                <b><?= (strtoupper($user->getCaNombre())) ?></b><br/>
+                    <b><?= ($user->getCaCargo()) ?></b><br /><br />
+                    <?//Brigadista
+                    if (in_array(1, $comites)) {
+                        ?> 
+                        <img src="<?= url_for("images/22x22") ?>/brigadas.png" alt="Brigada de Emergencia" title="Brigada de Emergencia">
+                    <?}//Convivencia 
+                    if (in_array(2, $comites)) {
+                        ?>
+                        <img src="<?= url_for("images/22x22") ?>/convivencia.png" alt="Comité de Convivencia" title="Comité de Convivencia">
+                    <?}//Comité de Etica
+                    if (in_array(3, $comites)) {  
+                        ?>
+                        <img src="<?= url_for("images/22x22") ?>/etica.png" alt="Comité de Etica" title="Comité de Etica">
+                    <?}//Copass
+                    if (in_array(4, $comites)) {  
+                        ?>
+                        <img src="<?= url_for("images/22x22") ?>/copass.png" alt="Copass" title="Copass">
+                        <?
+                    }
+                    ?>
             </td>
+            
             <td align="left">&nbsp;</td>
         </tr>
     </table>
@@ -77,7 +104,7 @@
             </tr>
             <?
             }
-            if( $user->getEsJefe( $userinicio->getUserId() ) or $userinicio->getUserId()==$user->getCaLogin() or $nivel>=2 ){
+            if( $user->getEsJefe( $userinicio->getUserId() ) or $userinicio->getUserId()==$user->getCaLogin() or ($nivel>=2 && in_array($user->getSucursal()->getCaIdempresa(),$sf_data->getRaw("grupoEmp"))) or $nivel>=3){
             ?>
             <tr>
                 <td align="left">Nivel de estudios:</td><td align="left"><b><?=$user->getCaNivestudios()?></b></td>
@@ -107,7 +134,7 @@
             }
             ?>
         </table>
-        
+    <?}?>
         <br />
         <?
         include_component("adminUsers", "directorio");
