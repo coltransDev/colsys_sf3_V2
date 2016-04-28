@@ -936,7 +936,16 @@ class adminUsersActions extends sfActions {
         //echo "login".session_id();
         //$response = sfContext::getInstance()->getResponse();
         //$response->addStylesheet("login");
-
+        
+        $app = sfContext::getInstance()->getConfiguration()->getApplication();
+        
+        if($app=="intranet"){
+            if( $request->isMethod("get")){            
+                $this->getUser()->setAttribute("path_info", substr($request->getPathInfo(),1,  strlen($request->getPathInfo())-1));
+                $this->getUser()->setAttribute("request_parameters", $request->getGetParameters());
+            }
+        }
+        
         if ($this->getUser()->isAuthenticated()) {
             $this->redirect("homepage/index");
         }
@@ -950,8 +959,31 @@ class adminUsersActions extends sfActions {
                     )
             );
             if ($this->form->isValid()) {
+                if( $this->getUser()->getAttribute("path_info") && $this->getUser()->getAttribute("path_info")!="/adminUsers/logout"){
+                    $url = $this->getUser()->getAttribute("path_info");
+                    $params = $this->getUser()->getAttribute("request_parameters");
+                    
+                    $p = "";
+                    $i=0;
+                    foreach( $params as $key=>$val ){
+                        if( $i++==0 ){
+                            $p.="?";
+                        }else{
+                            $p.="&";
+                        }
+
+                        $p.=$key."=".$val;
+                        $request->setParameter($key, $val);
+                    }
+                    
+                    $url.= $p;                   
+                    $url="/intranet/".$url;
+                   
+                }else{
+                    $url = "homepage/index";
+                }
                 //Se valido correctamente
-                $this->redirect("homepage/index");
+                $this->redirect($url);
                 //echo "OK";
             }
         }
@@ -1033,6 +1065,21 @@ class adminUsersActions extends sfActions {
             $this->manager = $this->manager->getManager();
             $this->usuarios = $this->manager->getSubordinado();
         }
+        
+        $q = Doctrine::getTable("Usuario")
+                ->createQuery("u")
+                ->select("u.ca_login, u.ca_manager, u.ca_nombre, s.ca_idsucursal, u.ca_cargo, r.ca_idempresa, e.ca_nombre")
+                ->leftJoin("u.Sucursal s")
+                ->leftJoin("s.Empresa e")
+                ->where("u.ca_activo = true")
+                ->andWhere("e.ca_idempresa in (1,2,8,11)")
+                ->andWhere("u.ca_login not in ('web','falabella','Comercial','comercialmed','comercialbaq','auxaduana','comercial-baq','comercial-med')")                                
+                ->orderBy("u.ca_fchingreso");
+                
+        $this->usuariosNal = $q->execute();
+        $this->presidencia = Doctrine::getTable("Usuario")->find("jraute");
+        
+        $this->user = sfContext::getInstance()->getUser();
     }
 
     public function executeViewUser(sfWebRequest $request) {
