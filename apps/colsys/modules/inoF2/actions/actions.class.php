@@ -1,5 +1,4 @@
 <?php
-
 /**
  * gestDocumental actions.
  *
@@ -9,27 +8,23 @@
  * @version    SVN: $Id: actions.class.php 2692 2006-11-15 21:03:55Z fabien $
  */
 class inoF2Actions extends sfActions {
-
-    
     
     /**
      * Executes index action
      *
-     */
-    
+     */    
     public function executeIndexExt5() {
 
         //$response = sfContext::getInstance()->getResponse();
         //$response->addJavaScript("extExtras/FileUploadField",'last');
         
         $this->modo = Doctrine::getTable("Modo")
-                                  ->createQuery("m")
-                                  ->addWhere("m.ca_impoexpo = 'INTERNO'" )
-                                  ->addWhere("m.ca_transporte = 'Terrestre'")
-                                  ->fetchOne();
+          ->createQuery("m")
+          ->addWhere("m.ca_impoexpo = 'INTERNO'" )
+          ->addWhere("m.ca_transporte = 'Terrestre'")
+          ->fetchOne();
         
     }
-
 
 
     function executeDatosIndex($request) {
@@ -125,13 +120,13 @@ class inoF2Actions extends sfActions {
         $idmaster = $request->getParameter("idmaster");
         $this->forward404Unless($idmaster);
         $inoHouses = Doctrine::getTable("InoHouse")
-                        ->createQuery("c")
-                        ->select("c.*, cl.*")
-                        //->innerJoin("c.Ids cl")
-                        ->innerJoin("c.Cliente cl")
-                        ->where("c.ca_idmaster = ?", $idmaster)
-                        ->addOrderBy("cl.ca_compania")
-                        ->execute();
+                ->createQuery("c")
+                ->select("c.*, cl.*")
+                //->innerJoin("c.Ids cl")
+                ->innerJoin("c.Cliente cl")
+                ->where("c.ca_idmaster = ?", $idmaster)
+                ->addOrderBy("cl.ca_compania")
+                ->execute();
 
         $data = array();
         //$totales =array("doctransporte"=>"TOTALES") ;
@@ -168,6 +163,45 @@ class inoF2Actions extends sfActions {
 
         $this->responseArray = array("success" => true, "root" => $data, "total" => count($data),"ncomprobantes"=>count($comprobantes));
 
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeDatosReporteCarga(sfWebRequest $request) {
+
+        $data = array();
+        $reporte = Doctrine::getTable("Reporte")->find($request->getParameter("idreporte"));
+
+        $prov = $reporte->getProveedores();
+        if (count($prov) > 0) {
+            $data["idproveedor"] = $prov[0]->getCaIdtercero();
+            $data["proveedor"] = $prov[0]->getCaNombre();
+        }
+
+        $data["origen"] = $reporte->getDocTransporte();
+
+        $data["impoexpo"] = utf8_encode($reporte->getCaImpoexpo());
+        $data["transporte"] = utf8_encode($reporte->getCaTransporte());
+        $data["modalidad"] = $reporte->getCaModalidad();
+        $data["origen"] = $reporte->getCaOrigen();
+        $data["destino"] = $reporte->getCaDestino();
+        $data["idlinea"] = $reporte->getCaIdlinea();
+        $data["linea"] = utf8_encode($reporte->getIdsProveedor()->getIds()->getCaNombre());
+
+        $data["idagente"] = $reporte->getCaIdagente();
+        $data["ca_fchsalida"] = $reporte->getEts();
+        $data["ca_fchllegada"] = $reporte->getEta();
+        $data["ca_master"] = $reporte->getCaDocmaster();
+
+        $repstatus = $reporte->getUltimoStatus();
+
+        if ($repstatus) {
+            $data["ca_peso"] = $repstatus->getCaPeso();
+            $data["ca_piezas"] = $repstatus->getCaPiezas();
+            $data["ca_volumen"] = $repstatus->getCaVolumen();
+            $data["ca_docmaster"] = $repstatus->getCaDocmaster();
+        }
+
+        $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");
     }
     
@@ -217,23 +251,17 @@ class inoF2Actions extends sfActions {
             if($d["comp_ca_fchgenero"]!="" && $d["comp_ca_usugenero"]!="")
                 $consecutivo.= "({$d["comp_ca_usugenero"]}-{$d["comp_ca_fchgenero"]})";
             
-                $class="";
             if($d["comp_ca_estado"]=="5")
             {
-                $class="row_green";
-                //$consecutivo="<span class='row_green'>$consecutivo</span>";
-                
+                $consecutivo="<span class='row_green'>$consecutivo</span>";
             }
             else if($d["comp_ca_estado"]=="6")
             {
-                $class="row_pink";
-                //$consecutivo="<span class='row_pink'>$consecutivo</span>";
-                
+                $consecutivo="<span class='row_pink'>$consecutivo</span>";
             }
             else if($d["comp_ca_estado"]=="8")
             {
-                $class="row_purple";
-                //$consecutivo="<span class='row_purple'>$consecutivo</span>";
+                $consecutivo="<span class='row_purple'>$consecutivo</span>";
             }
             $cuenta_forma_pago="";
             if( $d["cl_ca_propiedades"] ){
@@ -250,6 +278,7 @@ class inoF2Actions extends sfActions {
 
             $this->data[]=array(
                 "idhouse"=>$d["c_ca_idhouse"]      ,   "idcomprobante"=>$d["comp_ca_idcomprobante"],
+                "tipocomprobante"=>$d["tcomp_ca_tipo"],
                 "comprobante"=>$consecutivo      ,   "fchcomprobante"=>$d["comp_ca_fchcomprobante"],
                 "cliente"=>$d["cl_ca_nombre"]      ,   "doctransporte"=>$d["c_ca_doctransporte"],
                 "idmoneda"=>$d["m_ca_idmoneda"]      ,   "moneda"=>$d["m_ca_nombre"],
@@ -258,8 +287,7 @@ class inoF2Actions extends sfActions {
                 "idconcepto"=>$d["det_ca_idconcepto"],
                 "concepto"=>  utf8_encode($d["det_ca_idconcepto"]."-".$d["s_ca_descripcion"]),
                 "iddetalle"=>$d["det_ca_iddetalle"],"estado"=>$d["comp_ca_estado"],
-                "cuentapago"=>$cuenta_forma_pago    , "idccosto"=>$d["tcomp_ca_idccosto"],
-                "class"=>$class
+                "cuentapago"=>$cuenta_forma_pago    , "idccosto"=>$d["tcomp_ca_idccosto"]                
                 );
 
         }
@@ -268,6 +296,7 @@ class inoF2Actions extends sfActions {
         $this->responseArray = array("success" => true, "root" => $this->data, "total" => count($this->data),"debug"=>$q->getSqlQuery());
         $this->setTemplate("responseTemplate");
     }
+    
     
     public function executeDatosFacturas2(sfWebRequest $request) {
         $idmaster = $request->getParameter("idmaster");
@@ -360,242 +389,317 @@ class inoF2Actions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
     
-    public function executeDatosGridCostos(sfWebRequest $request) {
+    /*public function executeDatosGridCostosPanel(sfWebRequest $request) {
         $idmaster = $request->getParameter("idmaster");
         $this->forward404Unless($idmaster);
-        
+
         $costos = Doctrine::getTable("InoCosto")
-                        ->createQuery("c")
-                        ->select("c.ca_idinocosto, c.ca_idmaster, c.ca_neto, c.ca_venta, c.ca_factura,c.ca_fchfactura,
+                ->createQuery("c")
+                ->select("c.ca_idinocosto, c.ca_idmaster, c.ca_neto, c.ca_venta, c.ca_factura,
                                   c.ca_tcambio, c.ca_tcambio_usd, c.ca_idcosto, p.ca_sigla, i.ca_nombre,
                                   c.ca_idmoneda, cs.ca_concepto,c.ca_fchfactura,c.ca_idproveedor ")
-                        ->innerJoin("c.InoConcepto cs")
-                        ->innerJoin("c.Ids i")
-                        ->where("c.ca_idmaster = ?", $idmaster)
-                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                        ->execute();
+                ->innerJoin("c.InoConcepto cs")
+                ->innerJoin("c.Ids i")
+                ->where("c.ca_idmaster = ?", $idmaster)
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->execute();
 
-        foreach( $costos as $key=>$val ){
-            $costos[$key]["neto_usd"] = $costos[$key]["c_ca_neto"]*$costos[$key]["c_ca_tcambio"];
+        foreach ($costos as $key => $val) {
             $costos[$key]["i_ca_nombre"] = utf8_encode($costos[$key]["i_ca_nombre"]);
             $costos[$key]["cs_ca_concepto"] = utf8_encode($costos[$key]["cs_ca_concepto"]);
-            $costos[$key]["orden"] = utf8_encode($costos[$key]["ca_idinocosto"]);            
+            $costos[$key]["orden"] = utf8_encode($costos[$key]["ca_idinocosto"]);
         }
-        
+
         //$costos[]["cs_ca_concepto"]="+";
         //$costos[]["orden"]="z";
 
         $this->responseArray = array("success" => true, "root" => $costos, "total" => count($costos));
         $this->setTemplate("responseTemplate");
-    }
+    }*/
+    
+    
     
     
     
     /**
-    * @autor ?
-    * @return un objeto JSON con idreferencia , idtransporte e idimpoexpo
-    * @param sfRequest $request A request 
-    *        idmaster,tipo, impoexpo, transporte, modalidad, idorigen, iddestino,fchreferencia,
+     * @autor ?
+     * @return un objeto JSON con idreferencia , idtransporte e idimpoexpo
+     * @param sfRequest $request A request 
+     *        idmaster,tipo, impoexpo, transporte, modalidad, idorigen, iddestino,fchreferencia,
      *       fchllegada, proveedor, idagente,piezas, peso, volumen, idreporte, observaciones
      *       (los datos capturados de Formmaster.js)
      * 
-    * @date:  2016-03-28
-    */
-    
-    
+     * @date:  2016-03-28
+     */
     public function executeGuardarMaster(sfWebRequest $request) {
         $errors = array();
         $conn = Doctrine::getTable("InoMaster")->getConnection();
-        $conn->beginTransaction();            
-            
-            $idmaster=$request->getParameter("idmaster");
-            $tipo=($request->getParameter("tipo")=="")?"full":$request->getParameter("tipo");
-           
-            
-                $impoexpo = utf8_decode($request->getParameter("impoexpo"));
-                $transporte = utf8_decode($request->getParameter("transporte"));                
-                
-                $modalidad = utf8_decode($request->getParameter("modalidad"));
-                $idorigen = $request->getParameter("idorigen");
-                $iddestino = $request->getParameter("iddestino");
-                $fchreferencia = $request->getParameter("fchreferencia");
-                $fchreferenciaTm = strtotime($fchreferencia);                
-                
-                $fchllegada = $request->getParameter("ca_fchllegada");
-                $fchllegadaTm = strtotime($fchllegada);     
-                $error = "";
-            
-                $q = Doctrine::getTable("InoMaster")
-                               ->createQuery("m")
-                               ->addWhere("m.ca_master = ?", $request->getParameter("ca_master") );
+        $conn->beginTransaction();
 
-                if( $idmaster ){
-                    $q->addWhere("m.ca_idmaster != ?", $idmaster);
-                }            
-                $m = $q->fetchOne();
-                
-                if( $m ){               
-                    $error = "El numero de master ya se incluyo en la referencia ".$m->getCaReferencia();
-                }
-                
-                if ($error == ""){
-                
-                    if( $idmaster && $idmaster != "0"){
-                        $ino = Doctrine::getTable("InoMaster")->find($idmaster);
-                        $this->forward404Unless( $ino );                
-                    }else{
+        try {
 
-                        $ino = new InoMaster();
-                        $mmRef = Utils::parseDate($fchllegada, "m");
-                        $aaRef = substr(Utils::parseDate($fchllegada, "Y"), -2, 2);
-                        if (Utils::parseDate($fchllegada, "d") >= "26") {
-                           $mmRef = $mmRef + 1;
-                           if ($mmRef >= 13) {
-                              $mmRef = "01";
-                              $aaRef = $aaRef + 1;
-                           }
+            $idmaster = $request->getParameter("idmaster");
+            $tipo = ($request->getParameter("tipo") == "") ? "full" : $request->getParameter("tipo");
+
+
+            $impoexpo = utf8_decode($request->getParameter("impoexpo"));
+            $transporte = utf8_decode($request->getParameter("transporte"));
+
+            $modalidad = utf8_decode($request->getParameter("modalidad"));
+            $idorigen = $request->getParameter("idorigen");
+            $iddestino = $request->getParameter("iddestino");
+            $fchreferencia = $request->getParameter("fchreferencia");
+            $fchreferenciaTm = strtotime($fchreferencia);
+
+            $fchllegada = $request->getParameter("ca_fchllegada");
+            $fchllegadaTm = strtotime($fchllegada);
+            $error = "";
+
+            $q = Doctrine::getTable("InoMaster")
+                    ->createQuery("m")
+                    ->addWhere("m.ca_master = ?", $request->getParameter("ca_master"));
+
+            if ($idmaster) {
+                $q->addWhere("m.ca_idmaster != ?", $idmaster);
+            }
+            $m = $q->fetchOne();
+
+            if ($m) {
+                $error = "El numero de master ya se incluyo en la referencia " . $m->getCaReferencia();
+            }
+
+            if ($error == "") {
+
+                if ($idmaster && $idmaster != "0") {
+                    $ino = Doctrine::getTable("InoMaster")->find($idmaster);
+                    $this->forward404Unless($ino);
+                } else {
+
+                    $ino = new InoMaster();
+                    $mmRef = Utils::parseDate($fchllegada, "m");
+                    $aaRef = substr(Utils::parseDate($fchllegada, "Y"), -2, 2);
+                    if (Utils::parseDate($fchllegada, "d") >= "26") {
+                        $mmRef = $mmRef + 1;
+                        if ($mmRef >= 13) {
+                            $mmRef = "01";
+                            $aaRef = $aaRef + 1;
                         }
-                        $numRef = InoMasterTable::getNumReferencia($impoexpo, $transporte, $modalidad, $idorigen, $iddestino, $mmRef , $aaRef);
-
-                        $ino->setCaReferencia($numRef);
-                        $ino->setCaImpoexpo($impoexpo);
-                        $ino->setCaTransporte($transporte);
-
                     }
+                    $numRef = InoMasterTable::getNumReferencia($impoexpo, $transporte, $modalidad, $idorigen, $iddestino, $mmRef, $aaRef);
+
+                    $ino->setCaReferencia($numRef);
+                    $ino->setCaImpoexpo($impoexpo);
+                    $ino->setCaTransporte($transporte);
+                }
+
+                if ($impoexpo == "Exportaci?n") {
+                    $datos = array("modalidad" => $request->getParameter("ca_modalidad"),
+                        "agencia" => $request->getParameter("idlinea"),
+                        "idlinea" => $request->getParameter("idlinea"),
+                        "incoterms" => $request->getParameter("ca_incoterms"),
+                        "consignatario" => $request->getParameter("ca_consignatario"),
+                        "direccion" => $request->getParameter("ca_direccion"),
+                        "idg" => $request->getParameter("aplicaidg"),
+                        "cliente" => $request->getParameter("cliente"),
+                        "contacto" => $request->getParameter("ca_contacto"),
+                        "descripcion" => $request->getParameter("ca_descripcion"),
+                        "cartaporte" => $request->getParameter("ca_cartaporte"),
+                        "fchcargue" => $request->getParameter("ca_fechacargue"),
+                    );
+                    $ino->setCaDatos(json_encode($datos));
+                } else {
+                    
+                }
+
+                $ino->setCaModalidad($modalidad);
+                $ino->setCaFchreferencia($fchreferencia);
+                $ino->setCaOrigen($idorigen);
+                $ino->setCaDestino($iddestino);
+                $ino->setCaIdlinea($request->getParameter("proveedor"));
+
+                if ($request->getParameter("agente")) {
+                    $ino->setCaIdagente($request->getParameter("agente"));
+                }
+
+                if (($impoexpo == "INTERNO" || $impoexpo == "OTM-DTA") && $transporte == "Terrestre") {//terrestre y empoexpo interno -> modo 6
+                    if ($numRef != "")
+                        $ino->setCaMaster($numRef);
+                } else
+                    $ino->setCaMaster($request->getParameter("ca_master"));
 
 
-                    $ino->setCaModalidad($modalidad);
-                    $ino->setCaFchreferencia($fchreferencia);
-                    $ino->setCaOrigen($idorigen);
-                    $ino->setCaDestino($iddestino);
-                    $ino->setCaIdlinea($request->getParameter("proveedor"));
 
-                    if( $request->getParameter("idagente") ){
-                        $ino->setCaIdagente($request->getParameter("idagente"));
+                $ino->setCaFchsalida($request->getParameter("ca_fchsalida"));
+                $ino->setCaFchllegada($request->getParameter("ca_fchllegada"));
+                $ino->setCaMotonave(utf8_decode($request->getParameter("ca_motonave")));
+
+                if ($request->getParameter("ca_piezas") != "")
+                    $ino->setCaPiezas($request->getParameter("ca_piezas"));
+                else
+                    $ino->setCaPiezas(0);
+
+                if ($request->getParameter("ca_peso") != "")
+                    $ino->setCaPeso($request->getParameter("ca_peso"));
+                else
+                    $ino->setCaPeso(0);
+
+                if ($request->getParameter("ca_volumen") != "")
+                    $ino->setCaVolumen($request->getParameter("ca_volumen"));
+                else
+                    $ino->setCaVolumen(0);
+
+
+                $ino->setCaObservaciones(utf8_decode($request->getParameter("ca_observaciones")));
+                $ino->save();
+
+
+                if (!$idmaster && $request->getParameter("idreporte") != "" /* && $impoexpo==Constantes::EXPO */) {
+
+
+                    $reporte = Doctrine::getTable("Reporte")->find($request->getParameter("idreporte"));
+
+                    $house = new InoHouse();
+                    $house->setCaIdmaster($ino->getCaIdmaster());
+                    $house->setCaIdreporte($request->getParameter("idreporte"));
+
+                    $house->setCaIdcliente($reporte->getCliente()->getCaIdcliente());
+                    $house->setCaVendedor($reporte->getCaLogin());
+                    $house->setCaNumorden($reporte->getCaOrdenClie());
+                    $status = $reporte->getUltimoStatus();
+
+                    if ($status) {
+                        $piezas = explode("|", $status->getCaPiezas());
+                        $house->setCaNumpiezas(($request->getParameter("ca_piezas") != "") ? $request->getParameter("ca_piezas") : ($piezas[0] ? $piezas[0] : 0));
+                        $house->setCaMpiezas($piezas[1] ? $piezas[1] : "");
+
+                        $peso = explode("|", $status->getCaPeso());
+                        $house->setCaPeso(($request->getParameter("peso") != "") ? $request->getParameter("peso") : ((isset($peso[0])) ? $peso[0] : 0));
+
+                        $volumen = explode("|", $status->getCaVolumen());
+                        $house->setCaVolumen(($request->getParameter("ca_volumen") != "") ? $request->getParameter("ca_volumen") : ((isset($volumen[0])) ? $volumen[0] : 0));
+                        $house->setCaFchdoctransporte(null);
+                        $house->setCaDoctransporte($status->getCaDoctransporte());
+                    } else {
+                        $house->setCaNumpiezas(($request->getParameter("ca_piezas") != "") ? $request->getParameter("ca_piezas") : 0);
+                        $house->setCaPeso(($request->getParameter("peso") != "") ? $request->getParameter("peso") : 0);
+                        $house->setCaVolumen(($request->getParameter("ca_volumen") != "") ? $request->getParameter("ca_volumen") : 0);
                     }
-
-                    if($impoexpo == "INTERNO" && $transporte == "Terrestre")//terrestre y empoexpo interno -> modo 6
-                    {
-                        if($numRef!="")
-                            $ino->setCaMaster($numRef);
-                    }
-                    else
-                        $ino->setCaMaster($request->getParameter("ca_master"));
-
-
-
-                    $ino->setCaFchsalida($request->getParameter("ca_fchsalida"));
-                    $ino->setCaFchllegada($request->getParameter("ca_fchllegada"));
-                    $ino->setCaMotonave(utf8_decode($request->getParameter("ca_motonave")));
-
-                    if($request->getParameter("ca_piezas")!="")
-                        $ino->setCaPiezas($request->getParameter("ca_piezas"));
-                    else
-                        $ino->setCaPiezas(0);
-
-                    if($request->getParameter("ca_peso")!="")
-                        $ino->setCaPeso($request->getParameter("ca_peso"));
-                    else
-                        $ino->setCaPeso(0);
-
-                    if($request->getParameter("ca_volumen")!="")
-                        $ino->setCaVolumen($request->getParameter("ca_volumen"));
-                    else
-                        $ino->setCaVolumen(0);
-
-                    $ino->setCaObservaciones(utf8_decode($request->getParameter("ca_observaciones")));
-                    $ino->save();
-
-
-                    if( !$idmaster && $request->getParameter("idreporte")!="" /*&& $impoexpo==Constantes::EXPO*/ ){
-
-                        $reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("idreporte") );
-
-                            $house = new InoHouse();
-                            $house->setCaIdmaster($ino->getCaIdmaster());
-                            $house->setCaIdreporte($request->getParameter("idreporte"));
-
-                            $house->setCaIdcliente($reporte->getCliente()->getCaIdcliente());
-                            $house->setCaVendedor($reporte->getCaLogin());
-                            $house->setCaNumorden($reporte->getCaOrdenClie());
-                            $status = $reporte->getUltimoStatus();
-
-                            if($status)
-                            {
-                                $piezas = explode("|", $status->getCaPiezas());
-                                $house->setCaNumpiezas( ($request->getParameter("ca_piezas")!="")?$request->getParameter("ca_piezas"):  ($piezas[0] ? $piezas[0] : 0));
-                                $house->setCaMpiezas($piezas[1] ? $piezas[1] : "");
-
-                                $peso = explode("|", $status->getCaPeso());
-                                $house->setCaPeso( ($request->getParameter("peso")!="")?$request->getParameter("peso"):  ((isset($peso[0])) ? $peso[0] : 0));
-
-                                $volumen = explode("|", $status->getCaVolumen());
-                                $house->setCaVolumen(($request->getParameter("ca_volumen")!="")?$request->getParameter("ca_volumen"):  ((isset($volumen[0])) ? $volumen[0] : 0));
-                                $house->setCaFchdoctransporte(null);
-                                $house->setCaDoctransporte($status->getCaDoctransporte());
-                            }
-
-                            $house->save();
-                    }
-
+                    $house->save();
+                }
 
                 $conn->commit();
-                $this->responseArray = array("success" => true , "idreferencia" => $numRef , "idmaster" => $ino->getCaIdmaster() , 
-                                                'idtransporte' => $transporte ,'idimpoexpo'=>$impoexpo);
-            
-            }
-            else{
-                $this->responseArray = array("success" => false , "errorInfo" => $error);
+                $this->responseArray = array("success" => true, "idreferencia" => $numRef, "idmaster" => $ino->getCaIdmaster(),
+                    'idtransporte' => utf8_encode($transporte), 'idimpoexpo' => utf8_encode($impoexpo));
+                $this->setTemplate("responseTemplate");
+            } else {
+
+                $this->responseArray = array("success" => false, "errorInfo" => $error);
                 $this->setTemplate("responseTemplate");
             }
+        } catch (Exception $e) {
 
-        $this->setTemplate("responseTemplate");
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+            $this->setTemplate("responseTemplate");
+        }
     }
-        /**
-    * @autor ?
-    * @return un objeto JSON con los datos de la tabla inomaster filtrados por un idmaster
-    * @param sfRequest $request A request 
-    *        idmaster : entero identificador de inomaster
-     * 
-    * @date:  2016-03-28
-    */
     
+    /**
+     * @autor ?
+     * @return un objeto JSON con los datos de la tabla inomaster filtrados por un idmaster
+     * @param sfRequest $request A request 
+     *        idmaster : entero identificador de inomaster
+     * 
+     * @date:  2016-03-28
+     */
     public function executeDatosMaster(sfWebRequest $request) {
         $idmaster = $request->getParameter("idmaster");
-        if ($idmaster != "0"){
-        $this->forward404Unless($idmaster);
+        if ($idmaster != "0") {
+            $this->forward404Unless($idmaster);
 
-        $ino = Doctrine::getTable("InoMaster")->find($idmaster);
-        
+            $ino = Doctrine::getTable("InoMaster")->find($idmaster);
+
             $this->forward404Unless($ino);
 
             try {
-                $data["impoexpo"]=utf8_encode($ino->getCaImpoexpo());
-                $data["transporte"]=utf8_encode($ino->getCaTransporte());
-                $data["modalidad"]=$ino->getCaModalidad();
-                $data["fchreferencia"]=$ino->getCaFchreferencia();
-                $data["idorigen"]=$ino->getCaOrigen();
-                $data["iddestino"]=$ino->getCaDestino();
-                $data["proveedor"]=$ino->getCaIdlinea();
-                $data["linea"]=utf8_encode($ino->getIdsProveedor()->getIds()->getCaNombre());
-                $data["idagente"]=$ino->getCaIdagente();
-                $data["ca_master"]=$ino->getCaMaster();
-                $data["ca_motonave"]=utf8_encode($ino->getCaMotonave());
-                $data["ca_fchsalida"]=$ino->getCaFchsalida();
-                $data["ca_fchllegada"]=$ino->getCaFchllegada();
-                $data["ca_piezas"]= $ino->getCaPiezas();
-                $data["ca_peso"]=$ino->getCaPeso();
-                $data["ca_volumen"]=$ino->getCaVolumen();
-                $data["ca_observaciones"]=utf8_encode($ino->getCaObservaciones());
+                $datos = json_decode(utf8_encode($ino->getCaDatos()));
 
-                $this->responseArray = array("success" => true,"data"=>$data);
+                $data["aplicaidg"] = utf8_encode($datos->idg);
+                $data["ca_idlinea"] = utf8_encode($ino->getCaIdlinea());
+                if ($datos->agencia) {
+                    $proveedor = Doctrine::getTable("IdsProveedor")->find(utf8_encode($datos->agencia));
+                    $data["ca_linea"] = utf8_encode($proveedor->getIds()->getCaNombre());
+                }
+
+                $data["ca_idcliente"] = utf8_encode($datos->cliente);
+                if ($datos->cliente) {
+                    $cliente = Doctrine::getTable("Cliente")->find(utf8_encode($datos->cliente));
+                    $data["ca_compania"] = utf8_encode($cliente->getCaCompania());
+                }
+
+                $data["ca_contacto"] = utf8_encode($datos->contacto);
+                $data["ca_direccion"] = utf8_encode($datos->direccion);
+                $data["fchcargue"] = utf8_encode($datos->fchcargue);
+                $data["ca_incoterms"] = utf8_encode($datos->incoterms);
+
+                $caso = "CU011";
+                $datomod = ParametroTable::retrieveByCaso($caso, null, null, $datos->modalidad);
+
+                $data["id_modalidad"] = $datos->modalidad;
+                if ($datos->modalidad) {
+                    $data["ca_modalidad"] = utf8_encode($datomod[0]->getCaValor());
+                }
+                $data["cartaporte"] = utf8_encode($datos->cartaporte);
+                $data["ca_descripcion"] = utf8_encode($datos->descripcion);
+                $data["ca_consignatario"] = utf8_encode($datos->consignatario);
+                $data["idlinea"] = utf8_encode($datos->idlinea);
+                if ($datos->idlinea) {
+                    $agencia = Doctrine::getTable("Ids")->find(utf8_encode($datos->idlinea));
+                    $data["agencia"] = utf8_encode($agencia->getCaNombre());
+                }
+
+                $data["impoexpo"] = utf8_encode($ino->getCaImpoexpo());
+                $data["transporte"] = utf8_encode($ino->getCaTransporte());
+                $data["modalidad"] = utf8_encode($ino->getCaModalidad());
+                $data["fchreferencia"] = utf8_encode($ino->getCaFchreferencia());
+                $data["idorigen"] = utf8_encode($ino->getCaOrigen());
+                $ciudadorigen = Doctrine::getTable('Ciudad')->createQuery('c')
+                        ->innerJoin('c.Trafico t')
+                        ->addWhere('c.ca_idciudad = ?', $ino->getCaOrigen())
+                        ->fetchOne();
+                if ($ciudadorigen) {
+                    $data['origen'] = utf8_encode($ciudadorigen->getCaCiudad());
+                }
+
+                $data["iddestino"] = utf8_encode($ino->getCaDestino());
+                $ciudadestino = Doctrine::getTable('Ciudad')->createQuery('c')
+                        ->innerJoin('c.Trafico t')
+                        ->addWhere('c.ca_idciudad = ?', $ino->getCaDestino())
+                        ->fetchOne();
+                if ($ciudadestino) {
+                    $data['destino'] = utf8_encode($ciudadestino->getCaCiudad());
+                }
+
+                $data["proveedor"] = utf8_encode($ino->getCaIdlinea());
+                $data["linea"] = utf8_encode($ino->getIdsProveedor()->getIds()->getCaNombre());
+
+
+                $data["idagente"] = utf8_encode($ino->getCaIdagente());
+                $data["nombre"] = utf8_encode($ino->getIdsAgente()->getIds()->getCaNombre());
+                $data["ca_master"] = utf8_encode($ino->getCaMaster());
+                $data["ca_motonave"] = utf8_encode($ino->getCaMotonave());
+                $data["ca_fchsalida"] = utf8_encode($ino->getCaFchsalida());
+                $data["ca_fchllegada"] = utf8_encode($ino->getCaFchllegada());
+                $data["ca_piezas"] = utf8_encode($ino->getCaPiezas());
+                $data["ca_peso"] = utf8_encode($ino->getCaPeso());
+                $data["ca_volumen"] = utf8_encode($ino->getCaVolumen());
+                $data["ca_observaciones"] = utf8_encode($ino->getCaObservaciones());
+
+                $this->responseArray = array("success" => true, "data" => $data);
             } catch (Exception $e) {
                 $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
             }
-        
-        }
-        else{
-              $this->responseArray = array("success" => true,"data"=>'');
+        } else {
+            $this->responseArray = array("success" => true, "data" => '');
         }
         $this->setTemplate("responseTemplate");
     }
@@ -826,173 +930,170 @@ class inoF2Actions extends sfActions {
     
     
     /**
-    * @autor Felipe Nariño
-    * @return un objeto JSON con los eventos (fechas, documentos) correspondientes a un caso de uso específico 
-     * y a una referencia especifíca.
-    * @param sfRequest $request A request 
-    *       caso_uso: caso de uso en el cual se buscan los eventos
+     * @autor Felipe Nari?o
+     * @return un objeto JSON con los eventos (fechas, documentos) correspondientes a un caso de uso espec?fico 
+     * y a una referencia especif?ca.
+     * @param sfRequest $request A request 
+     *       caso_uso: caso de uso en el cual se buscan los eventos
      *      referencia: identificador de referencia
-    *              
-    * @date:  2016-03-28
-    */
-    public function executeDatosEventos(sfWebRequest $request){
+     *              
+     * @date:  2016-03-28
+     */
+    public function executeDatosEventos(sfWebRequest $request) {
         $caso_uso = $request->getParameter("caso_uso");
         $datos = array();
         $referencia = $request->getParameter("referencia");
         $con = Doctrine_Manager::getInstance()->connection();
-        
-        $q1 = ParametroTable::retrieveByCaso("CU011",null,null,$caso_uso);
-        $sql = "select ca_idconfig from control.tb_config where ca_param = '".$q1[0]->getCaValor2()."'";
+
+        $q1 = ParametroTable::retrieveByCaso("CU011", null, null, $caso_uso);
+        $sql = "select ca_idconfig from control.tb_config where ca_param = '" . $q1[0]->getCaValor2() . "'";
         $rs = $con->execute($sql);
         $ca_config = $rs->fetchAll();
-        
+
         $sql = "select * from control.tb_config_values cv 
                 left join tb_expo_tracking et 
                 ON (cv.ca_ident = et.ca_idevento and  
-                et.ca_referencia = '$referencia' ) where cv.ca_idconfig =".$ca_config[0]["ca_idconfig"]." order by ca_ident";
-        
+                et.ca_referencia = '$referencia' ) where cv.ca_idconfig =" . $ca_config[0]["ca_idconfig"] . " order by ca_ident";
+
         $rs = $con->execute($sql);
         $eventos = $rs->fetchAll();
         $eve = "";
-        foreach($eventos as $evento){
-            
-            if ($evento["ca_realizado"] == "1"){
+        foreach ($eventos as $evento) {
+
+            if ($evento["ca_realizado"] == "1") {
                 $evento["ca_realizado"] = "SI";
-            }else if($evento["ca_realizado"] == "0"){
+            } else if ($evento["ca_realizado"] == "0") {
                 $evento["ca_realizado"] = "NO";
             }
             $tipoespecial = "";
-            if(utf8_encode($evento["ca_value"]) == "SAE"){
-                $tipoespecial = "SAE"; 
-            }else if(utf8_encode($evento["ca_value"]) == "DEX"){
-                $tipoespecial = "DEX"; 
+            if (utf8_encode($evento["ca_value"]) == "SAE") {
+                $tipoespecial = "SAE";
+            } else if (utf8_encode($evento["ca_value"]) == "DEX") {
+                $tipoespecial = "DEX";
             }
-            
+
             $stringdocs = "";
-            $eve .= $evento["ca_idevento"] ;
-            
-            if($evento["ca_idevento"] == 9 || $evento["ca_idevento"] == 10){
-                
+            $eve .= $evento["ca_idevento"];
+
+            if ($evento["ca_idevento"] == 9 || $evento["ca_idevento"] == 10) {
+
                 $documentos = Doctrine::getTable("ExpoAedex")
-                               ->createQuery("m")
-                               ->addWhere("m.ca_referencia = ? and ca_idevento = ?", array($referencia,$evento["ca_idevento"]))
-                               ->execute();
-                
-                if ($documentos){
-                    foreach ($documentos as $document){
-                        $stringdocs .= "Doc: ".$document->getCaIddocumento()." Fecha: ". $document->getCaFechadoc()." | ";  
+                        ->createQuery("m")
+                        ->addWhere("m.ca_referencia = ? and ca_idevento = ?", array($referencia, $evento["ca_idevento"]))
+                        ->execute();
+
+                if ($documentos) {
+                    foreach ($documentos as $document) {
+                        $stringdocs .= "Doc: " . $document->getCaIddocumento() . " Fecha: " . $document->getCaFechadoc() . " | ";
                     }
                 }
             }
-            $datos[] = array ("idevento"=>$evento["ca_ident"],
-                             "evento"=>utf8_encode($evento["ca_value"]),
-                             "fchevento"=>$evento["ca_fchevento"],
-                             "opcion"=>$evento["ca_realizado"],
-                             "tipoespecial"=>$tipoespecial,
-                             "documentos" => utf8_encode($stringdocs));           
-
+            $datos[] = array("idevento" => $evento["ca_ident"],
+                "evento" => utf8_encode($evento["ca_value"]),
+                "fchevento" => $evento["ca_fchevento"],
+                "opcion" => $evento["ca_realizado"],
+                "tipoespecial" => $tipoespecial,
+                "documentos" => utf8_encode($stringdocs));
         }
-        
-        $this->responseArray = array("eve" => $eve , "success" => true, "root" => $datos);
+
+        $this->responseArray = array("eve" => $eve, "success" => true, "root" => $datos);
         $this->setTemplate("responseTemplate");
     }
+
     /**
-    * @autor Felipe Nariño
-    * @return retorna success cuando se almacena correctamente la información
-    * @param sfRequest $request A request 
-    *      datosGrid : json con todos los elementos de la grilla de eventos
-    *              
-    * @date:  2016-03-28
-    */
-    public function executeGuardarEventos(sfWebRequest $request){
-        
+     * @autor Felipe Nari?o
+     * @return retorna success cuando se almacena correctamente la informaci?n
+     * @param sfRequest $request A request 
+     *      datosGrid : json con todos los elementos de la grilla de eventos
+     *              
+     * @date:  2016-03-28
+     */
+    public function executeGuardarEventos(sfWebRequest $request) {
+
         $gridEventos = $request->getParameter("datosGrid");
         $gridEventos = json_decode($gridEventos);
         $referencia = $request->getParameter("referencia");
-        
+
         $conn = Doctrine::getTable("IdsCliente")->getConnection();
         $conn->beginTransaction();
-        
-        try{
-            
-            foreach($gridEventos as $evento){
+
+        try {
+
+            foreach ($gridEventos as $evento) {
                 $ev = Doctrine::getTable("ExpoTracking")
                         ->createQuery("m")
-                        ->addWhere("m.ca_referencia = ? and m.ca_idevento = ?",array($referencia,$evento->idevento))
+                        ->addWhere("m.ca_referencia = ? and m.ca_idevento = ?", array($referencia, $evento->idevento))
                         ->fetchOne();
-                if (!$ev){
+                if (!$ev) {
                     $ev = new ExpoTracking();
                     $ev->setCaReferencia($referencia);
                     $ev->setCaIdevento($evento->idevento);
                 }
-                if ($evento->opcion == "SI"){
+                if ($evento->opcion == "SI") {
                     $ev->setCaRealizado(1);
-                }
-                else{
+                } else {
                     $ev->setCaRealizado(0);
                 }
-                    
+
                 $ev->setCaUsuario($this->getUser()->getUserId());
                 $ev->setCaFchevento($evento->fchevento);
                 $ev->save();
             }
             $conn->commit();
             $this->responseArray = array("success" => true);
-        }
-        catch(Exception $e){
+        } catch (Exception $e) {
             $conn->rollback();
             $this->responseArray = array("success" => false, "error" => $e->getMessage());
         }
         $this->setTemplate("responseTemplate");
     }
+
     /**
-    * @autor Felipe Nariño
-    * @return retorna JSON de todos los documentos para eventos SAE y DEX
-    * @param sfRequest $request A request 
-     *     referencia: entero identificador de referencia a la cual se le almacenarán
+     * @autor Felipe Nari?o
+     * @return retorna JSON de todos los documentos para eventos SAE y DEX
+     * @param sfRequest $request A request 
+     *     referencia: entero identificador de referencia a la cual se le almacenar?n
      *      los eventos.
      *      idevento: entero identificador del evento del cual se buscan los eventos SAE y DEX
-    * @date:  2016-03-28
-    */
-    public function executeDatosEventosSAEDEX(sfWebRequest $request){
+     * @date:  2016-03-28
+     */
+    public function executeDatosEventosSAEDEX(sfWebRequest $request) {
         $referencia = $request->getParameter("referencia");
         $idevento = $request->getParameter("idevento");
         $eventos = Doctrine::getTable("ExpoAedex")
-                        ->createQuery("m")
-                        ->addWhere("ca_idevento = ? and m.ca_referencia = ? ",array($idevento, $referencia))
-                        ->execute();
+                ->createQuery("m")
+                ->addWhere("ca_idevento = ? and m.ca_referencia = ? ", array($idevento, $referencia))
+                ->execute();
         $datos = array();
-        foreach($eventos as $evento){
-               $datos[] = array("documento" => $evento->getCaIddocumento(),
-                                "fchelaboracion"=>$evento->getCaFechadoc(),
-                                "fchremision"=>$evento->getCaFecharem());
+        foreach ($eventos as $evento) {
+            $datos[] = array("documento" => $evento->getCaIddocumento(),
+                "fchelaboracion" => $evento->getCaFechadoc(),
+                "fchremision" => $evento->getCaFecharem());
         }
         $this->responseArray = array("success" => true, "root" => $datos);
         $this->setTemplate("responseTemplate");
     }
-    
 
     /**
-    * @autor Felipe Nariño
-    * @return retorna success cuando se almacena correctamente la información
-    * @param sfRequest $request A request 
-    *      datos : json con todos los elementos de la grilla de eventos
-     *     referencia: entero identificador de referencia a la cual se le almacenarán
+     * @autor Felipe Nari?o
+     * @return retorna success cuando se almacena correctamente la informaci?n
+     * @param sfRequest $request A request 
+     *      datos : json con todos los elementos de la grilla de eventos
+     *     referencia: entero identificador de referencia a la cual se le almacenar?n
      *      los eventos.
-     * Descripción : almacena los eventos SAE y DEX.
-    *              
-    * @date:  2016-03-28
-    */
-    
-    public function executeGuardarEventosSAEDEX(sfWebRequest $request){
+     * Descripci?n : almacena los eventos SAE y DEX.
+     *              
+     * @date:  2016-03-28
+     */
+    public function executeGuardarEventosSAEDEX(sfWebRequest $request) {
         $referencia = $request->getParameter("referencia");
-        
+
         $gridEventos = $request->getParameter("datos");
         $gridEventos = json_decode($gridEventos);
         $conn = Doctrine::getTable("ExpoAedex")->getConnection();
         $conn->beginTransaction();
-        try{
-            foreach($gridEventos as $evento){
+        try {
+            foreach ($gridEventos as $evento) {
                 $eventoDEX = new ExpoAedex();
                 $eventoDEX->setCaReferencia($referencia);
                 $eventoDEX->setCaIdevento($evento->idevento);
@@ -1003,56 +1104,53 @@ class inoF2Actions extends sfActions {
             }
             $conn->commit();
             $this->responseArray = array("success" => true);
-            
-        }catch (Exception $e){
-		print_r($e->getMessage());
+        } catch (Exception $e) {
             $this->responseArray = array("errorInfo" => "No pueden haber documentos repetidos");
             $conn->rollback();
         }
-        
+
         $this->setTemplate("responseTemplate");
     }
-        /**
-    * @autor Felipe Nariño
-    * @return retorna success cuando se elimina correctamente la información
-    * @param sfRequest $request A request     *     
+
+    /**
+     * @autor Felipe Nari?o
+     * @return retorna success cuando se elimina correctamente la informaci?n
+     * @param sfRequest $request A request     *     
      *     referencia: entero identificador de referencia a la cual se le eliminan
      *      los eventos.
-         * fecha: fecha de creación del documento
-         * fecharemision: fecha de remisión del documento
-         * documento: nombre del documento
-         * idevento: entero identificicador del evento.
-     * Descripción : elimina los eventos SAE y DEX.
-    *              
-    * @date:  2016-03-28
-    */
-    
-    public function executeEliminardocumentosSAEDEX(sfWebRequest $request){
+     * fecha: fecha de creaci?n del documento
+     * fecharemision: fecha de remisi?n del documento
+     * documento: nombre del documento
+     * idevento: entero identificicador del evento.
+     * Descripci?n : elimina los eventos SAE y DEX.
+     *              
+     * @date:  2016-03-28
+     */
+    public function executeEliminardocumentosSAEDEX(sfWebRequest $request) {
         $referencia = $request->getParameter("referencia");
         $fecha = $request->getParameter("fecha");
         $fecharemision = $request->getParameter("fecharemision");
         $documento = $request->getParameter("documento");
         $idevento = $request->getParameter("idevento");
-        
-        
+
+
         $conn = Doctrine::getTable("ExpoAedex")->getConnection();
         $conn->beginTransaction();
-        try{
+        try {
             $eventoDEX = Doctrine::getTable("ExpoAedex")
-                            ->createQuery("m")
-                            ->addWhere("m.ca_referencia = ? and m.ca_fechadoc = ? and m.ca_iddocumento = ? and ca_idevento = ? ",array($referencia,$fecha,$documento,$idevento))
-                            ->fetchOne();
-            if ($eventoDEX){    
+                    ->createQuery("m")
+                    ->addWhere("m.ca_referencia = ? and m.ca_fechadoc = ? and m.ca_iddocumento = ? and ca_idevento = ? ", array($referencia, $fecha, $documento, $idevento))
+                    ->fetchOne();
+            if ($eventoDEX) {
                 $eventoDEX->delete();
             }
             $conn->commit();
             $this->responseArray = array("success" => true);
-        }catch(Exception $e){
+        } catch (Exception $e) {
             $conn->rollback();
             $this->responseArray = array("success" => true);
         }
         $this->setTemplate("responseTemplate");
-        
     }
     
     
@@ -1664,5 +1762,358 @@ class inoF2Actions extends sfActions {
         $this->setTemplate("responseTemplate");
         
     }
+    
+    
+    /**
+     * @autor Felipe Nari?o
+     * @return un objeto JSON con los datos de cierre y liquidacion de una referencia
+     * @param sfRequest $request A request 
+     *        idmaster     * 
+     * @date:  2016-04-25
+     */
+
+    public function executeDatosCierre(sfWebRequest $request) {
+        $idmaster = $request->getParameter("idmaster");
+        $ino = Doctrine::getTable("InoMaster")->find($idmaster);
+        $data = array();
+        
+        $data["creado"] = utf8_encode($ino->getCaUsucreado() . " " . $ino->getCaFchcreado());
+        $data["actualizado"] = utf8_encode($ino->getCaUsuactualizado() . " " . $ino->getCaFchactualizado());
+       
+        $data["cerrado"] = utf8_encode($ino->getCaUsucerrado() . " " . $ino->getCaFchcerrado());
+        $data["liquidado"] = utf8_encode($ino->getCaUsuliquidado() . " " . $ino->getCaFchliquidado());
+
+        $this->responseArray = array("success" => true, "data" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+    /**
+     * @autor Felipe Nari?o
+     * @return un objeto JSON con la variable succes representando exito o falla en la transaccion
+     * @param sfRequest $request A request 
+     *        datos : JSON con todos los elementos del house correspondiente a una referencia especifica  * 
+     * @date:  2016-04-25
+     */
+
+    public function executeGuardarGridHouse($request) {
+        $datos = $request->getParameter("datos");
+
+        $houses = json_decode($datos);
+        $ids = array();
+        try {
+            foreach ($houses as $c) {
+
+                if ($c->idhouse) {
+                    $house = Doctrine::getTable("InoHouse")->find($c->idhouse);
+
+                    $this->forward404Unless($house);
+                } else {
+                    $house = new InoHouse();
+                    $house->setCaIdmaster($c->idmaster);
+                }
+                if ($c->idreporte != "") {
+                    $house->setCaIdreporte($c->idreporte);
+                }
+
+                if ((!$c->doctransporte == "") && (!$c->idcliente == "")) {
+                    $house->setCaDoctransporte($c->doctransporte);
+                    $house->setCaIdtercero($c->idtercero);
+                    $house->setCaTercero(utf8_encode($c->tercero));
+                    $house->setCaIdcliente($c->idcliente);
+                    $house->setCaVendedor($c->vendedor);
+                    $house->setCaNumorden($c->numorden);
+                    $house->setCaNumpiezas($c->numpiezas);
+                    $house->setCaPeso($c->peso);
+                    $house->setCaVolumen($c->volumen);
+                    $house->save();
+                    $ids[] = $c->null;
+                }
+
+
+
+                $this->responseArray = array("errorInfo" => '', "id" => implode(",", $ids), "success" => true);
+            }
+        } catch (Exception $e) {
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+        }
+
+        $this->setTemplate("responseTemplate");
+    }
+        /**
+     * @autor Felipe Nari?o
+         * Liquida una referencia llenanado los campos usuliquidado y fchliquidado con el usuario de la sesion
+     * @return un objeto JSON con la variable succes representando exito o falla en la transaccion
+     * @param sfRequest $request A request 
+     *        idmaster
+         *    opcion: liquidar o deshacer liquidacion
+     * @date:  2016-04-25
+     */
+    public function executeLiquidarReferencia(sfWebRequest $request){
+        $idmaster = $request->getParameter("idmaster");
+        $opcion = $request->getParameter("opcion");
+        $conn = Doctrine::getTable("InoMaster")->getConnection();
+        $conn->beginTransaction();
+        
+        try{
+            $ino = Doctrine::getTable("InoMaster")->find($idmaster);
+            if($opcion == "Liquidar"){
+                $ino->setCaUsuliquidado($this->getUser()->getUserId());
+                $ino->setCaFchliquidado(date("Y-m-d H:i:s"));
+            }
+            else{
+                $ino->setCaUsuliquidado(null);
+                $ino->setCaFchliquidado(null);    
+            }
+            $ino->save();
+            $conn->commit();
+            $this->responseArray = array("success" => true , "usuarioLiquidado" => ($ino->getCaUsuliquidado()." ".$ino->getCaFchliquidado()));
+        }
+        catch(Exception $e){
+            $conn->rollBack();
+            $this->responseArray = array("success"=>false , "errorInfo" => $e->getMessage());
+        }
+        $this->setTemplate("responseTemplate");
+    } 
+    /**
+     * @autor Felipe Nari?o
+         * cierra una referencia llenanado los campos uducerrado y fchcerrado con el usuario de la sesion
+     * @return un objeto JSON con la variable succes representando exito o falla en la transaccion
+     * @param sfRequest $request A request 
+     *        idmaster
+         *    opcion: abrir o cerrar referencia
+     * @date:  2016-04-25
+     */
+    public function executeCerrarReferencia(sfWebRequest $request){
+        $idmaster = $request->getParameter("idmaster");
+        $opcion = $request->getParameter("opcion");
+        $conn = Doctrine::getTable("InoMaster")->getConnection();
+        $conn->beginTransaction();
+        
+        try{
+            $ino = Doctrine::getTable("InoMaster")->find($idmaster);
+            if($opcion == "Cerrar"){
+                $ino->setCaUsucerrado($this->getUser()->getUserId());
+                $ino->setCaFchcerrado(date("Y-m-d H:i:s")); 
+            }
+            else{
+                $ino->setCaUsucerrado(null);
+                $ino->setCaFchcerrado(null); 
+            }
+            $ino->save();
+            $conn->commit();
+            $this->responseArray = array("success" => true, "usuarioCerrado" => ($ino->getCaUsucerrado()." ".$ino->getCaFchcerrado()));
+        }
+        catch(Exception $e){
+            $conn->rollBack();
+            $this->responseArray = array("success"=>false , "errorInfo" => $e->getMessage());
+        }
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeHistorialStatus($request) {
+
+        $this->forward404Unless($this->getRequestParameter("idreporte"));
+        $house = $this->getRequestParameter("idhouse");
+        $this->reporte = Doctrine::getTable("Reporte")->find($this->getRequestParameter("idreporte"));
+        $this->forward404Unless($this->reporte);
+        if ($house) {
+
+            $statusList = $this->reporte->getRepstatus();
+
+            $data = array();
+            foreach ($statusList as $status) {
+                $row = array();
+                $row["fchstatus"] = $status->getCaFchenvio();
+                $row["etapa"] = utf8_encode($status->getTrackingEtapa()->getCaEtapa());
+                $row["idemail"] = $status->getCaIdemail();
+                $row["status"] = utf8_encode($status->getStatus());
+                $data[] = $row;
+            }
+
+            $this->responseArray = array("root" => $data);
+            $this->setTemplate("responseTemplate");
+        }
+    }
+        /**
+     * @autor Felipe Nari?o
+         * eliminar costos
+     * @return un objeto JSON con la variable succes representando exito o falla en la transaccion
+     * @param sfRequest $request A request 
+     *        idinocosto : identificador de costo a eliminar
+         
+     * @date:  2016-04-25
+     */
+    public function executeEliminarCosto(sfWebRequest $request) {
+
+        $idinocosto = $request->getParameter("idinocosto");
+        $inoCosto = Doctrine::getTable("InoCosto")->find($idinocosto);
+        $this->forward404Unless($inoCosto);
+
+        try {
+            $inoCosto->delete();
+            $this->responseArray = array("success" => true);
+        } catch (Exception $e) {
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+        }
+
+        $this->setTemplate("responseTemplate");
+    }
+    
+    
+     /**
+     * @autor Felipe Nari?o
+         * Cargar los costos en una grilla, correspondientes a un idmaster
+     * @return un objeto JSON con los datos de la grilla de costos
+     * @param sfRequest $request A request 
+     *       idmaster
+         
+     * @date:  2016-04-25
+     */
+    public function executeDatosGridCostos(sfWebRequest $request) {
+        $idmaster = $request->getParameter("idmaster");
+        $this->forward404Unless($idmaster);
+
+        $costos = Doctrine::getTable("InoCosto")
+                ->createQuery("c")
+                ->select("c.ca_idinocosto, c.ca_idmaster, c.ca_neto, c.ca_venta, c.ca_factura,c.ca_fchfactura,
+                                  c.ca_tcambio, c.ca_tcambio_usd, c.ca_idcosto, p.ca_sigla, i.ca_nombre,
+                                  c.ca_idmoneda, cs.ca_concepto,c.ca_fchfactura,c.ca_idproveedor ")
+                ->innerJoin("c.InoConcepto cs")
+                ->innerJoin("c.Ids i")
+                ->where("c.ca_idmaster = ?", $idmaster)
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->execute();
+
+        foreach ($costos as $key => $val) {
+            $data = array();
+
+            $utils = Doctrine::getTable("InoHouse")
+                    ->createQuery("h")
+                    ->select("h.ca_doctransporte,u.ca_idutilidad,h.ca_idhouse,c.ca_idinocosto,u.ca_valor")
+                    ->innerJoin("h.InoMaster m WITH h.ca_idmaster=m.ca_idmaster")
+                    ->innerJoin("m.InoCosto c WITH c.ca_idinocosto=?", $costos[$key]["c_ca_idinocosto"])
+                    ->leftJoin("h.InoUtilidad u WITH u.ca_idinocosto=?", $costos[$key]["c_ca_idinocosto"])
+                    ->where("h.ca_idmaster = ?", $idmaster)
+                    ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                    ->execute();
+
+            $data["idmaster"] = $costos[$key]["c_ca_idmaster"];
+            $data["idmaster" . $data["idmaster"]] = $costos[$key]["c_ca_idmaster"];
+            $data["idinocosto" . $data["idmaster"]] = $costos[$key]["c_ca_idinocosto"];
+            $data["idcosto" . $data["idmaster"]] = $costos[$key]["c_ca_idcosto"];
+            $data["idproveedor" . $data["idmaster"]] = utf8_encode($costos[$key]["c_ca_idproveedor"]);
+            $data["proveedor" . $data["idmaster"]] = utf8_encode($costos[$key]["i_ca_nombre"]);
+            $data["factura" . $data["idmaster"]] = $costos[$key]["c_ca_factura"];
+            $data["fchfactura" . $data["idmaster"]] = $costos[$key]["c_ca_fchfactura"];
+            $data["idmoneda" . $data["idmaster"]] = $costos[$key]["c_ca_idmoneda"];
+            $data["neto" . $data["idmaster"]] = $costos[$key]["c_ca_neto"];
+            $data["neto_usd" . $data["idmaster"]] = $costos[$key]["c_ca_neto"] * $costos[$key]["c_ca_tcambio"];
+            $data["venta" . $data["idmaster"]] = $costos[$key]["c_ca_venta"];
+            $data["tcambio" . $data["idmaster"]] = $costos[$key]["c_ca_tcambio"];
+            $data["tcambio_usd" . $data["idmaster"]] = $costos[$key]["c_ca_tcambio_usd"];
+            $data["valor_pesos" . $data["idmaster"]] = $costos[$key]["c_ca_tcambio"] * $costos[$key]["neto_usd"];
+            $data["utilidad" . $data["idmaster"]] = $costos[$key]["utilidad"];
+
+            $valor = 0;
+            foreach ($utils as $util => $va) {
+                $valor = $valor + $utils[$util]["u_ca_valor"];
+            }
+            $data["valor" . $data["idmaster"]] = $valor;
+            $valor = 0;
+            $data["inoventa" . $data["idmaster"]] = $costos[$key]["c_ca_venta"] - $costos[$key]["neto_usd"];
+
+            $data["ventacop" . $data["idmaster"]] = $costos[$key][""];
+
+
+            $data["orden" . $data["idmaster"]] = utf8_encode($costos[$key]["ca_idinocosto"]);
+
+            $root[] = $data;
+        }
+
+
+        $this->responseArray = array("success" => true, "root" => $root, "total" => count($root));
+        $this->setTemplate("responseTemplate");
+    }
+
+     /**
+     * @autor Felipe Nari?o
+         * guardar costos
+     * @return un objeto JSON con la variable succes representando exito o falla en la transaccion
+     * @param sfRequest $request A request 
+     *        datos: JSON con la grilla de todos los costos a almacenar
+         
+     * @date:  2016-04-25
+     */
+    public function executeGuardarGridCosto(sfWebRequest $request) {
+
+        $datos = $request->getParameter("datos");
+        $datos = json_decode($datos);
+
+        $conn = Doctrine::getTable("InoCosto")->getConnection();
+        $conn->beginTransaction();
+
+        try {
+
+            foreach ($datos as $dato) {
+                $costo = Doctrine::getTable("InoCosto")->find($dato->idinocosto);
+
+                if (!$costo) {
+                    $costo = new InoCosto();
+                }
+                $costo->setCaIdmaster($dato->idmaster);
+                if ($dato->idcosto) {
+
+                    $costo->setCaIdcosto($dato->idcosto);
+                }
+                $costo->setCaFactura($dato->factura);
+                $costo->setCaFchfactura($dato->fchfactura);
+                $costo->setCaIdproveedor($dato->idproveedor);
+                $costo->setCaIdmoneda($dato->idmoneda);
+                $costo->setCaTcambio($dato->tcambio);
+                $costo->setCaTcambioUsd($dato->tcambio_usd);
+                $costo->setCaNeto($dato->neto);
+                $costo->setCaVenta($dato->venta);
+                $costo->setCaFchactualizado(date("Y-m-d H:i:s"));
+                $costo->setCaUsuactualizado($this->getUser()->getUserId());
+
+                $costo->save();
+            }
+            $conn->commit();
+            $this->responseArray = array("success" => true);
+        } catch (Exception $e) {
+            $conn->rollBack();
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+        }
+        $this->setTemplate("responseTemplate");
+    }
+    
+    
+    public function executeDatosProveedor(sfWebRequest $request) {
+        $idproveedor = $request->getParameter("idproveedor");
+
+        $proveedor = Doctrine::getTable("Tercero")
+                ->createQuery("t")
+                ->addWhere("t.ca_idtercero = ?", $idproveedor)
+                ->fetchOne();
+
+
+        if ($proveedor) {
+            $data[] = array(
+                "nombre" => $proveedor->getCaNombre(),
+                "identificacion" => $proveedor->getCaIdentificacion(),
+                "direccion" => $proveedor->getCaDireccion(),
+                "telefono" => $proveedor->getCaTelefono(),
+                "fax" => $proveedor->getCaFax(),
+                "email" => $proveedor->getCaEmail(),
+                "contacto" => $proveedor->getCaContacto(),
+                "ciudad" => $proveedor->getCaIdCiudad()
+                    //"nombreciudad"=>$proveedor->getCiudad()->getCaNombre();
+            );
+        }
+        $this->responseArray = array("success" => true, "root" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+    
+    
+    
     
 }

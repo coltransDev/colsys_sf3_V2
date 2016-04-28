@@ -131,7 +131,7 @@ Ext.onReady(function() {
     });
     
     
-    
+    var permisos={'Consultar':true,'Crear':true,'Editar':true,'Anular':true,'General':true,'House':true,'Facturacion':true,'Costos':true,'Documentos':true}
     ref=12176;    
     tabpanel = Ext.getCmp('tabpanel1');
     
@@ -144,9 +144,10 @@ Ext.onReady(function() {
             itemId:'tab'+ref,
             closable :true,
             autoScroll: true,
-            items: [new Colsys.Ino.Mainpanel({"idmaster":ref,
-                    idtransporte: 'Terrestre',
-                    idimpoexpo: 'INTERNO'
+            items: [new Colsys.Ino.Mainpanel({'idmaster':ref,
+                    'idtransporte': 'Terrestre',
+                    'idimpoexpo': 'INTERNO',
+                    'permisos':permisos
                 })]
         }).show();
     }
