@@ -1238,7 +1238,7 @@ class adminUsersActions extends sfActions {
         
         $usuarios = $q->execute();
         
-        if($usuarios)
+        if($usuarios){
             foreach ($usuarios as $usuario){
 
                 list($ano,$mes,$dia) = explode("-",$usuario->getCaFchingreso());
