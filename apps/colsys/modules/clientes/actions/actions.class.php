@@ -691,7 +691,7 @@ class clientesActions extends sfActions {
                      <tr>
                         <td style=\"text-align: justify\">
                            <ol>
-                              <li>Formato de Identificación del cliente debidamente diligenciado y firmado en original  por el Representante Legal o la persona facultada según certificado de Cámara y Comercio.</li>
+                              <li>Formato de Visita del cliente debidamente diligenciado y firmado en original  por el Representante Legal o la persona facultada según certificado de Cámara y Comercio.</li>
                               <li>Certificado y Cámara de Comercio en original con vigencia no superior a 30 días.</li>
                               <li>Copia del RUT (actualizado)</li>
                               <li>Información Financiera:
@@ -2447,7 +2447,11 @@ class clientesActions extends sfActions {
                     $cliente->setCaListaclinton(utf8_decode($datos->listaclinton));
                 }
                 if ($datos->tipo) {
-                    $cliente->setCaTipo(utf8_decode($datos->tipo));
+                    if($datos->tipo == ''){
+                        $cliente->setCaTipo(null);
+                    } else {
+                        $cliente->setCaTipo(utf8_decode($datos->tipo));
+                    }
                 }
                 if ($datos->iso) {
                     $cliente->setCaIso(utf8_decode($datos->iso));
@@ -2534,6 +2538,7 @@ class clientesActions extends sfActions {
         $idcliente = $request->getParameter("idcliente");
         $tipopersona = $request->getParameter("tipo");
         $activostotales = $request->getParameter("activostotales");
+        
         $fechconstitucion = $request->getParameter("fechconstitucion");
         $anioactual = date("Y");
         $minimo = Doctrine::getTable('Smlv')->find($anioactual);
@@ -2546,8 +2551,10 @@ class clientesActions extends sfActions {
 
         if ($tipopersona == "ca_perjuridica" || $tipopersona == "ca_gran_contribuyente" || $tipopersona == "ca_perjuridica_activos") {
             $fechahaceunano = date("Y") - 1 . "-" . date("m") . "-" . date("d");
-            if ($fechahaceunano < $fechconstitucion) {
-                $tipopersona = "ca_perjuridica_reciente";
+            if($fechconstitucion){
+                if ($fechahaceunano < $fechconstitucion) {
+                    $tipopersona = "ca_perjuridica_reciente";
+                }
             }
         }
 

@@ -3487,9 +3487,61 @@ if (isset($suf) and $suf == 'findDianDeposito') {
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit;
     }
+    if ($rs->Value('ca_vendedor')) {
+        $suc = & DlRecordset::NewRecordset($conn);
+        $sql = "select s.* from control.tb_usuarios u LEFT JOIN control.tb_sucursales s ON u.ca_idsucursal = s.ca_idsucursal WHERE u.ca_login = '" . $rs->Value('ca_vendedor') . "'";
+        if (!$suc->Open($sql)) {
+            echo "Error 3494: $sql";
+            exit;
+        };
+    } else {
+        $suc = & DlRecordset::NewRecordset($conn);
+        $sql = "select s.* from control.tb_usuarios u LEFT JOIN control.tb_sucursales s ON u.ca_idsucursal = s.ca_idsucursal WHERE u.ca_login = 'Comercial'";
+        if (!$suc->Open($sql)) {
+            echo "Error 3500: $sql";
+            exit;
+        };
+    }
+    
+    $emp = & DlRecordset::NewRecordset($conn);
+    $sql = "select * from control.tb_empresas e where e.ca_idempresa = '" . $suc->Value('ca_idempresa') . "'";
+    if (!$emp->Open($sql)) {
+        echo "Error 3502: $sql";
+        exit;
+    }
+
+    $txtSucursal=array();
+    $txtSucursal["datos"][]= $suc->Value('ca_nombre');
+    $dir= explode("  ", $suc->Value('ca_direccion'));
+
+    foreach($dir as $d)
+        $txtSucursal["datos"][]=$d;
+    $txtSucursal["datos"][]=$suc->Value('ca_telefono')?"Pbx: ".$suc->Value('ca_telefono'):"";//"Pxb : (57 - 1) 4239300";
+    $txtSucursal["datos"][]=$suc->Value('ca_fax')?"Fax: ".$suc->Value('ca_fax'):"";//"Pxb : (57 - 1) 4239300";
+    $txtSucursal["datos"][] = $suc->Value('ca_codpostal')?"Cod. Postal: ". $suc->Value('ca_codpostal'):"";
+    if($suc->Value('ca_email')!="")
+        $txtSucursal["datos"][]= $suc->Value('ca_email');//"Email: bogota@coltrans.com.co";
+    $txtSucursal["datos"][]= $emp->Value('ca_url');// "www.coltrans.com.co";
+    $txtSucursal["datos"][]="NIT: ".$emp->Value('ca_id');// "800024075";
+    $txtSucursal["datos"][]=$emp->Value('ca_coddian')?"Cod. DIAN ".$emp->Value('ca_coddian'):"";
+
+    if($suc->Value('ca_iso')!="")
+        $txtSucursal["imagenes"][]=$suc->Value('ca_iso');
+    if($suc->Value('ca_basc')!="")
+        $txtSucursal["imagenes"][]=$suc->Value('ca_basc');
+    if($suc->Value('ca_iata')!="")
+        $txtSucursal["imagenes"][]=$suc->Value('ca_iata');
+    
+    $idempresa = $emp->Value('ca_idempresa');
 
     $pdf = new PDF();
     $pdf->Open();
+    $pdf->SetIdempresa($idempresa);
+    if($idempresa ==1){
+        $pdf->SetColmasHeader(true);
+    }else if($idempresa ==2){
+        $pdf->SetColtransHeader(true);
+    }
     $pdf->AliasNbPages();
     $pdf->SetTopMargin(14);
     $pdf->SetLeftMargin(18);
@@ -3497,13 +3549,15 @@ if (isset($suf) and $suf == 'findDianDeposito') {
     $pdf->SetAutoPageBreak(true, 26);
     $pdf->AddPage();
     $pdf->SetHeight(4);
+    $pdf->SetSucursal($suc->Value('ca_idsucursal'));
+    $pdf->SetFooterSucursal($txtSucursal);
     $id_temp = 0;
 
     $pdf->Ln(4);
     $pdf->SetFont('Arial', 'B', 11);
     $pdf->SetWidths(array(170));
     $pdf->SetAligns(array("C"));
-    $pdf->Row(array("FORMATO DE IDENTIFICACIÓN DEL CLIENTE"));
+    $pdf->Row(array("FORMATO DE VISITA DEL CLIENTE"));
     $pdf->Ln(3);
 
     while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
