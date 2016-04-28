@@ -1282,6 +1282,8 @@ class adminUsersActions extends sfActions {
                 $usuario->emailUsuario($request->getParameter("login"),$asunto,null,null,null,$grupoEmp);
             }
         }
+        
+        $this->setTemplate("responseTemplate");
     }
     
     public function executeEmailDesvinculacion(sfWebRequest $request){
