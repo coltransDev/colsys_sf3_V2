@@ -727,7 +727,7 @@ $hoy = $sf_data->getRaw("hoy");
         Ext.define('ComboNit', {
             extend: 'Ext.form.field.ComboBox',
             alias: 'widget.combo-nit',
-            store: ['Agente', 'Proveedor', 'Excepción Temporal', 'Excepción Permanente']
+            store: ['-', 'Agente', 'Proveedor', 'Excepción Temporal', 'Excepción Permanente']
         });
 
         Ext.define('ComboSectorEconomico', {
@@ -1283,17 +1283,34 @@ $hoy = $sf_data->getRaw("hoy");
                     }
                 }
             }
-            if (tipo.toString() != "" && fechconstitucion.toString() != "") {
-                var store = gridControlFinanciero.getStore();
-                store.load({
-                    params: {
-                        idcliente: <?= $idcliente ?>,
-                        tipo: tipo,
-                        fechconstitucion: fechconstitucion,
+            /*if(!fechconstitucion){
+                fechconstitucion = "";
+            }*/
+                if(fechconstitucion){
+                    if (tipo.toString() != "" && fechconstitucion.toString() != "") {
+                        var store = gridControlFinanciero.getStore();
+                        store.load({
+                            params: {
+                                idcliente: <?= $idcliente ?>,
+                                tipo: tipo,
+                                fechconstitucion: fechconstitucion,
+                            }
+                        });
+                        gridControlFinanciero.setVisible(true);
                     }
-                });
-                gridControlFinanciero.setVisible(true);
-            }
+                }                
+                else{
+                    var store = gridControlFinanciero.getStore();
+                    store.load({
+                        params: {
+                            idcliente: <?= $idcliente ?>,
+                            tipo: tipo                            
+                        }
+                    });
+                    gridControlFinanciero.setVisible(true);
+                }
+            
+            
         }
     }
 </script>
