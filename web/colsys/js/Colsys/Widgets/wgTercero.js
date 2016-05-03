@@ -26,7 +26,7 @@ Ext.define('Colsys.Widgets.wgTercero', {
         model: 'mdTercero',
         proxy: {
         type: 'ajax',
-        url: '/widgets/listaTercerosJSON',
+        url: '/widgets5/listaTercerosJSON',
          reader: {
              type: 'json',
              rootProperty: 'terceros'

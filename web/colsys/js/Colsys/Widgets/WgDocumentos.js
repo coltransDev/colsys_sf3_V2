@@ -19,15 +19,14 @@ Ext.define('Colsys.Widgets.WgDocumentos', {
             fields: ['id','name'],
             proxy: {
                 type: 'ajax',
-                url: '/widgets/datosDocumentos',
+                url: '/widgets5/datosDocumentos',
                 reader: {
                     type: 'json',
                     root: 'root'
                 }
             },
             autoLoad: false
-        }),
-  qtip:'Listado de Series TRD',
+        }),  
         onRender: function(ct, position){
             
             

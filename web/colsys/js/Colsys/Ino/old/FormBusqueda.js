@@ -309,7 +309,8 @@ Ext.define('Colsys.Ino.FormBusqueda', {
                                                     xtype: 'Colsys.Ino.FormCierre',
                                                     id: 'formCierre' + ref,
                                                     name: 'formCierre' + ref,
-                                                    idmaster: ref
+                                                    idmaster: ref,
+                                                    permisos:permisos
                                                 }]
                                         }).show();
                             }
@@ -385,7 +386,7 @@ Ext.define('Colsys.Ino.FormBusqueda', {
         }]
 
 });
-
+/*
 function loadRef(ref1)
 {
     ref = ref1;
@@ -406,4 +407,4 @@ function loadRef(ref1)
                 }).show();
     }
     tabpanel.setActiveTab('tab' + ref);
-}
+}*/

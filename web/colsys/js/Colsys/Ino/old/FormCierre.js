@@ -16,14 +16,14 @@ Ext.define('Colsys.Ino.FormCierre', {
     listeners: {
         render: function (me, eOpts) {
             idmaster = this.idmaster;
-
+           
             this.add({
                 xtype: 'fieldset',
                 autoHeight: true,
                 style: 'display:inline-block;text-align:center',
-//                title: '',
+                //title: '',
                 hideLabel: true,
-//                width: 1110,
+                //width: 1110,
                 collapsible: false,
                 defaults: {
                     labelWidth: 89,
@@ -33,95 +33,92 @@ Ext.define('Colsys.Ino.FormCierre', {
                         defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
                     }},
                 items: [{
-                        xtype: 'fieldcontainer',
-                        title: ' ',
-//                        width: 930,
-                        height: 40,
-                        collapsible: false,
-                        layout: 'column',
-                        border: 0,
-                        defaults: {
-                            flex: 1,
-                            hideLabel: false
+                    xtype: 'fieldcontainer',
+                    title: ' ',
+                    //width: 930,
+                    height: 40,
+                    collapsible: false,
+                    layout: 'column',
+                    border: 0,
+                    defaults: {
+                        flex: 1,
+                        hideLabel: false
+                    },
+                    items: [{
+                            xtype: 'label',
+                            text: 'Elaborado Por:',
+                            style: 'display:inline-block;text-align:left;font-weight:bold;',
+                            allowBlank: true,
+                            width: '23%',
+                            readOnly: true
                         },
-                        items: [{
-                                xtype: 'label',
-                                text: 'Elaborado Por:',
-                                style: 'display:inline-block;text-align:left;font-weight:bold;',
-                                allowBlank: true,
-                                width: '23%',
-                                readOnly: true
-                            },
-                            {
-                                xtype: 'label',
-                                text: 'Actualizado Por:',
-                                style: 'display:inline-block;text-align:left;font-weight:bold;',
-                                width: '23%',
-                                readOnly: true
-                            },
-                            {
-                                xtype: 'label',
-                                text: 'Liquidado Por:',
-                                width: '23%',
-                                style: 'display:inline-block;text-align:left;font-weight:bold;',
-                                readOnly: true
-                            },
-                            {
-                                xtype: 'label',
-                                text: 'Cerrado Por:',
-                                style: 'display:inline-block;text-align:left;font-weight:bold;',
-                                width: '23%',
-                                readOnly: true
-                            },
-                            {
-                                xtype: 'tbspacer',
-                                height: 5,
-                                //width: 1200
-                            },
-                            {
-                                xtype: 'label',
-                                text: '',
-                                id: 'creado' + this.idmaster,
-                                style: 'display:inline-block;text-align:left;',
-                                name: 'creado',
-                                width: '23%',
-                                readOnly: true
-                            },
-                            {
-                                xtype: 'label',
-                                text: '',
-                                style: 'display:inline-block;text-align:left;',
-                                id: 'actualizado' + this.idmaster,
-                                name: 'actualizado',
-                                width: '23%',
-                                readOnly: true
-                            },
-                            {
-                                xtype: 'label',
-                                text: '',
-                                style: 'display:inline-block;text-align:left;',
-                                id: 'liquidado' + this.idmaster,
-                                name: 'liquidado',
-                                width: '23%',
-                                readOnly: true
-                            },
-                            {
-                                xtype: 'label',
-                                text: '',
-                                style: 'display:inline-block;text-align:left;',
-                                id: 'cerrado' + this.idmaster,
-                                name: 'cerrado',
-                                width: '23%',
-                                readOnly: true
-                            }
-                        ]
-                    }]
-            }
+                        {
+                            xtype: 'label',
+                            text: 'Actualizado Por:',
+                            style: 'display:inline-block;text-align:left;font-weight:bold;',
+                            width: '23%',
+                            readOnly: true
+                        },
+                        {
+                            xtype: 'label',
+                            text: 'Liquidado Por:',
+                            width: '23%',
+                            style: 'display:inline-block;text-align:left;font-weight:bold;',
+                            readOnly: true
+                        },
+                        {
+                            xtype: 'label',
+                            text: 'Cerrado Por:',
+                            style: 'display:inline-block;text-align:left;font-weight:bold;',
+                            width: '23%',
+                            readOnly: true
+                        },
+                        {
+                            xtype: 'tbspacer',
+                            height: 5,
+                            //width: 1200
+                        },
+                        {
+                            xtype: 'label',
+                            text: '',
+                            id: 'creado' + this.idmaster,
+                            style: 'display:inline-block;text-align:left;',
+                            name: 'creado',                            
+                            width: '23%',
+                            readOnly: true
+                        },
+                        {
+                            xtype: 'label',
+                            text: '',
+                            style: 'display:inline-block;text-align:left;',
+                            id: 'actualizado' + this.idmaster,
+                            name: 'actualizado',
+                            width: '23%',
+                            readOnly: true
+                        },
+                        {
+                            xtype: 'label',
+                            text: '',
+                            style: 'display:inline-block;text-align:left;',
+                            id: 'liquidado' + this.idmaster,
+                            name: 'liquidado',                            
+                            width: '23%',
+                            readOnly: true
+                        },
+                        {
+                            xtype: 'label',
+                            text: '',
+                            style: 'display:inline-block;text-align:left;',
+                            id: 'cerrado' + this.idmaster,
+                            name: 'cerrado',
+                            width: '23%',
+                            readOnly: true
+                        }
+                    ]
+                }]
+                }
             );
-
-            // this.add(
-            // {
-            //buttons: [
+    
             var btnLiquidar = {
                 text: 'Liquidar',
                 id: 'btnLiquidar' + this.idmaster,
@@ -258,8 +255,7 @@ Ext.define('Colsys.Ino.FormCierre', {
                     botones
             );
 
-
-            this.getForm().load({
+            /*this.getForm().load({
                 params: {
                     idmaster: idmaster
                 },
@@ -289,18 +285,17 @@ Ext.define('Colsys.Ino.FormCierre', {
                         if(Ext.getCmp("btnLiquidar" + idmaster))
                             Ext.getCmp("btnLiquidar" + idmaster).setText("Cancelar Liquidacion");
                     } else {
-                        if(Ext.getCmp("btnCerrar" + idmaster))
-                            Ext.getCmp("btnCerrar" + idmaster).hide();
+                        Ext.getCmp("btnCerrar" + idmaster).hide();
                     }
                     
                     if (Ext.getCmp("cerrado" + idmaster).text != "" && Ext.getCmp("cerrado" + idmaster).text != " ") {
                         if(Ext.getCmp("btnLiquidar" + idmaster))
                             Ext.getCmp("btnLiquidar" + idmaster).hide();
                         if(Ext.getCmp("btnCerrar" + idmaster))
-                            Ext.getCmp("btnCerrar" + idmaster).setText("Abrir");
+                        Ext.getCmp("btnCerrar" + idmaster).setText("Abrir");
                     }
                 }
-            });
+            });*/
         }
     }
 })

@@ -1,52 +1,49 @@
-
-/**
-* @autor Felipe Nariño 
-* @return Combobox cargado con proveedores filtrados por
-* tipo de transporte
-* @param sfRequest $request A request 
-*               idtransporte : tipo de transporte
-*               
-*              
-* @date:  2016-03-28
-*/
 Ext.define('Colsys.Widgets.wgConceptos', {
   extend: 'Ext.form.field.ComboBox',
-  alias: 'widget.Colsys.Widgets.WgProveedores',
+  alias: 'widget.Colsys.Widgets.wgConceptos',
   triggerTip: 'Click para limpiar',
   spObj:'',
-  spForm:'',
-  trans:'',
+  mode:'local',
+  spForm:'',  
   spExtraParam:'',
   displayField: 'name',
   valueField: 'id',
-  queryMode :'local',
-  
-  store: Ext.create('Ext.data.Store', {
-            fields: ['id','name'],
-            proxy: {
-                type: 'ajax',
-                url: '/widgets5/datosConceptos',
-                reader: {
-                    type: 'json',
-                    root: 'root'
-                }
-            },
-            autoLoad: false
-        }),
-        qtip:'Listado de lineas',
-        labelWidth: 60,
-      
-      boxready:  function ( me, width, height, eOpts )
-      {          alert("HOLA");
-              
-              this.store.load({
-                params : {
-                    costo: this.costo,
-                    transporte : this.up('grid').idtransporte,
-                    impoexpo: this.up('grid').idimpoexpo
-                }
-            });
-          
-      }
-
+  minChars:3,
+  listConfig: {
+        loadingText: 'buscando...',
+        emptyText: 'No existen registros',
+        getInnerTpl: function() {
+            return '<tpl for="."><div class="search-item1">{name}</div></tpl>';
+        }
+    },
+    store: Ext.create('Ext.data.Store', {
+        fields: ['id','name'],
+        proxy: {
+            type: 'ajax',
+            url: '/widgets5/datosConceptos',
+            reader: {
+                type: 'json',
+                root: 'root'
+            }
+        },
+        autoLoad: false
+    }),
+    qtip:'Listado de Conceptos',
+    initComponent: function() {
+        var me = this; 
+        Ext.applyIf(me, {
+            emptyText: 'Seleccione un concepto',
+            loadingText: 'Loading...',
+            store: {type: 'roletemplateslocal'}
+        });
+        me.callParent(arguments);
+        me.getStore().on('beforeload', this.beforeTemplateLoad, this);
+    },
+    beforeTemplateLoad: function(store) {
+        store.proxy.extraParams = {
+            transporte:this.idtransporte,
+            impoexpo:this.idimpoexpo,
+            costo:this.costo
+        }
+    }
 });

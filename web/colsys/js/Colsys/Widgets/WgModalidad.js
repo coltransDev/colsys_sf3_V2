@@ -23,7 +23,7 @@ Ext.define('Colsys.Widgets.WgModalidad', {
             fields: ['idmodalidad','modalidad','impoexpo','transporte'],
             proxy: {
                 type: 'ajax',
-                url: '/widgets5/datosModalidades',
+                url: '/widgets/datosModalidades',
                 reader: {
                     type: 'json',
                     root: 'root'
@@ -34,7 +34,6 @@ Ext.define('Colsys.Widgets.WgModalidad', {
         qtip:'Listado de Modalidades',
     
     onFocus: function( field, newVal, oldVal ){
-        
         this.store.filter([
             {property: 'impoexpo' , value:  Ext.getCmp('impoexpo_'+this.idmaster).getValue()},
             {property: 'transporte' , value:  Ext.getCmp('transporte'+this.idmaster).getValue()}

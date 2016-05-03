@@ -475,7 +475,7 @@ Ext.define('Colsys.Ino.GridHouse', {
             );
 
         }
-        else if (this.permisos.Editar == true) {
+        if (this.permisos.Editar == true) {
             tb.add(guardar);
         }
         this.addDocked(tb, 'top');

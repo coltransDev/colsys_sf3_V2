@@ -5,8 +5,6 @@ Ext.define('Colsys.Widgets.wgMoneda', {
   spObj:'',
   spForm:'',  
   spExtraParam:'',
-  valueField: 'id',
-  displayField: 'name',    
   store: Ext.create('Ext.data.Store', {
             fields: ['id','name','sugerido'],
             proxy: {
