@@ -64,6 +64,8 @@
 
 </style>
 <script>
+    
+var permisos={'Consultar':true,'Crear':true,'Editar':true,'Anular':true,'Cerrar':true,'Liquidar':true,'General':true,'House':true,'Facturacion':true,'Costos':true,'Documentos':true}
 Ext.Loader.setConfig({
     enabled: true,
     paths: {
@@ -99,61 +101,76 @@ include_component("inoF2", "mainPanel");
 Ext.onReady(function() {
     Ext.tip.QuickTipManager.init();
     
+    //var permisos={'Consultar':true,'Crear':true,'Editar':true,'Anular':true,'General':true,'House':true,'Facturacion':true,'Costos':true,'Documentos':true}
     
+
     Ext.create("Ext.container.Viewport",{
         renderTo: 'panel',
         layout:'border',
         scope:this,
         items:[
-            //new Colsys.Ino.FormBusqueda(
             {
                 region: 'west',
-                xtype: 'Colsys.Ino.FormBusqueda'
+                xtype: 'Colsys.Ino.FormBusqueda',
+                'permisos':permisos
             }
-            //)
             ,{
-            region: 'center',
-            xtype: 'tabpanel',
-            id:'tabpanel1',
-            name:'tabpanel1',
-            activeTab: 0
-        },
-        {
-            region: 'north',
-            html: '',
-            border: false,
-            height: 30,
-            style: {
-                display: 'none'
-            }            
-        }
+                region: 'center',
+                xtype: 'tabpanel',
+                id:'tabpanel1',
+                name:'tabpanel1',
+                activeTab: 0
+            },
+            {
+                region: 'north',
+                html: '',
+                border: false,
+                height: 30,
+                style: {
+                    display: 'none'
+                }
+            }
         ]
     });
-    
-    
-    var permisos={'Consultar':true,'Crear':true,'Editar':true,'Anular':true,'General':true,'House':true,'Facturacion':true,'Costos':true,'Documentos':true}
+
     ref=12176;    
     tabpanel = Ext.getCmp('tabpanel1');
-    
+    numRef='910.10.01.0010.16';
     if(!tabpanel.getChildByElement('tab'+ref) && ref!="")
     {
         tabpanel.add(
         {
-            title: '910.10.01.0010.16',
+            title: numRef,
             id:'tab'+ref,
             itemId:'tab'+ref,
             closable :true,
             autoScroll: true,
-            items: [new Colsys.Ino.Mainpanel({'idmaster':ref,
-                    'idtransporte': 'Terrestre',
-                    'idimpoexpo': 'INTERNO',
-                    'permisos':permisos
-                })]
+            items: [
+                new Colsys.Ino.Mainpanel({
+                    region: 'north',
+                    "idmaster":ref,
+                    "idimpoexpo": 'INTERNO',
+                    "idtransporte":'Terrestre',
+                    'idreferencia':numRef,
+                    'permisos': permisos
+                    
+                }),
+               {
+                    region: 'south',
+                    xtype: 'Colsys.Ino.FormCierre',
+                    id: 'formCierre'+ref,
+                    name: 'formCierre'+ref,
+                    idmaster: ref,
+                    'permisos': permisos,
+                    alignTarget :'bottom'
+                    
+                }
+            ]
         }).show();
     }
     tabpanel.setActiveTab('tab'+ref);
-    
-    /*ref=12143;    
+
+    ref=12143;    
     tabpanel = Ext.getCmp('tabpanel1');
     
     if(!tabpanel.getChildByElement('tab'+ref) && ref!="")
@@ -165,16 +182,33 @@ Ext.onReady(function() {
             itemId:'tab'+ref,
             closable :true,
             autoScroll: true,
-            items: [new Colsys.Ino.Mainpanel({"idmaster":ref,
-                    idtransporte: 'Terrestre',
-                    idimpoexpo: 'OTM-DTA'
-                })]
+            items: [
+                new Colsys.Ino.Mainpanel({
+                    region: 'north',
+                    "idmaster":ref,
+                    "idimpoexpo": 'OTM-DTA',
+                    "idtransporte":'Terrestre',
+                    'idreferencia':numRef,
+                    'permisos': permisos
+                    
+                }),
+               {
+                    region: 'south',
+                    xtype: 'Colsys.Ino.FormCierre',
+                    id: 'formCierre'+ref,
+                    name: 'formCierre'+ref,
+                    idmaster: ref,
+                    'permisos': permisos,
+                    alignTarget :'bottom'
+                    
+                }
+            ]
+            
         }).show();
     }
     tabpanel.setActiveTab('tab'+ref);
-    */
     
-    
+
     /*function openFile(val){
         var windowpdf = Ext.create('Colsys.Widgets.WgVerPdf', {
             sorc: val

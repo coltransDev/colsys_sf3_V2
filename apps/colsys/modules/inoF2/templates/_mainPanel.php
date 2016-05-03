@@ -20,19 +20,22 @@ Ext.define('Colsys.Ino.Mainpanel', {
     onRender: function(ct, position){
      
         tabs=new Array();
-        tabs.push({
-                    xtype:'Colsys.Ino.FormMaster',
-                    title: "General "+this.idmaster,
-                    id:"form-master-"+this.idmaster,
-                    name:"form-master-"+this.idmaster,
-                    idmaster: this.idmaster,
-                    idtransporte: this.idtransporte,
-                    idimpoexpo: this.idimpoexpo,
-                    permisos: this.permisos
-                });
+        if(this.permisos.General == true){
+            tabs.push({
+                        xtype:'Colsys.Ino.FormMaster',
+                        title: "General "+this.idmaster,
+                        id:"form-master-"+this.idmaster,
+                        name:"form-master-"+this.idmaster,
+                        idmaster: this.idmaster,
+                        idtransporte: this.idtransporte,
+                        idimpoexpo: this.idimpoexpo,
+                        permisos: this.permisos
+                    });
+        }
         if(!isNaN(this.idmaster) && this.idmaster>0)
         {
-            tabs.push(                
+            if(this.permisos.House == true){
+                tabs.push(                
                 {
                     xtype:'Colsys.Ino.GridHouse',
                     title: "House"+this.idmaster,
@@ -42,8 +45,10 @@ Ext.define('Colsys.Ino.Mainpanel', {
                     idtransporte: this.idtransporte,
                     idimpoexpo: this.idimpoexpo,
                     permisos: this.permisos
-                },
-                {
+                });
+            }
+            if(this.permisos.Facturacion == true){
+                tabs.push({
                     xtype:'Colsys.Ino.GridFacturacion',
                     title: "Facturacion"+this.idmaster,
                     id:"grid-facturacion-"+this.idmaster,
@@ -52,8 +57,10 @@ Ext.define('Colsys.Ino.Mainpanel', {
                     idtransporte: this.idtransporte,
                     idimpoexpo: this.idimpoexpo,
                     permisos: this.permisos
-                },
-                {
+                });
+            }
+            if(this.permisos.Facturacion == true){
+                tabs.push({
                     xtype:'Colsys.Ino.PanelFacturacion',
                     title: "Facturacion"+this.idmaster,
                     id:"panel-facturacion-"+this.idmaster,
@@ -62,8 +69,11 @@ Ext.define('Colsys.Ino.Mainpanel', {
                     idtransporte: this.idtransporte,
                     idimpoexpo: this.idimpoexpo,
                     permisos: this.permisos
-                },
-                {
+                });
+            }
+            if(this.permisos.Costos == true){
+             
+                tabs.push({
                     xtype:'Colsys.Ino.GridCosto',
                     title: "Costos"+this.idmaster,
                     id:"costo-"+this.idmaster,
@@ -72,8 +82,10 @@ Ext.define('Colsys.Ino.Mainpanel', {
                     idtransporte: this.idtransporte,
                     idimpoexpo: this.idimpoexpo,
                     permisos: this.permisos
-                },
-                {
+                });
+            }
+            
+                tabs.push({
                     xtype:'Colsys.Ino.GridEvento',
                     title: "Eventos"+this.idmaster,
                     id:"Eventos-"+this.idmaster,
@@ -84,7 +96,12 @@ Ext.define('Colsys.Ino.Mainpanel', {
                     idreferencia:this.idreferencia,
                     caso_uso: '11',
                     permisos: this.permisos
-                },{
+                });
+            
+            if(this.permisos.Documentos == true){
+               // alert(this.idtransporte + " "+ this.idimpoexpo);
+                
+                tabs.push({
                     xtype:'Colsys.GestDocumental.treeGridFiles',
                     title: "Documentos"+this.idmaster,
                     id:"Documentos-"+this.idmaster,
@@ -94,8 +111,8 @@ Ext.define('Colsys.Ino.Mainpanel', {
                     idtransporte: this.idtransporte,
                     idimpoexpo: this.idimpoexpo,
                     permisos: this.permisos
-                }
-            );
+                });
+            }
                     
         }
         this.add(

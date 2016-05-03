@@ -12,7 +12,14 @@ class inoF2Actions extends sfActions {
     /**
      * Executes index action
      *
-     */    
+     */
+    const RUTINA_AEREO = 200;
+    const RUTINA_MARITIMO = 201;
+    const RUTINA_TERRESTRE = 202;
+    const RUTINA_EXPORTACION = 203;
+    const RUTINA_OTM = 204;
+    
+    
     public function executeIndexExt5() {
 
         //$response = sfContext::getInstance()->getResponse();
@@ -62,8 +69,35 @@ class inoF2Actions extends sfActions {
     
     function executeDatosBusqueda($request) {
         
+        /*
+            const RUTINA_AEREO = 200;
+    const RUTINA_MARITIMO = 201;
+    const RUTINA_TERRESTRE = 202;
+    const RUTINA_EXPORTACION = 203;
+    const RUTINA_OTM = 204;
+         */
+        $permisos["aereo"]=array(
+            'Consultar'=>true,      'Crear'=>true,      'Editar'=>true,     'Anular'=>true,     'Liquidar'=>true,     'Cerrar'=>true,
+            'General'=>true,        'House'=>true,      'Facturacion'=>true,'Costos'=>true,     'Documentos'=>true
+        );
+        $permisos["maritimo"]=array(
+            'Consultar'=>true,      'Crear'=>true,      'Editar'=>true,     'Anular'=>true,     'Liquidar'=>true,     'Cerrar'=>true,
+            'General'=>true,        'House'=>true,      'Facturacion'=>true,'Costos'=>true,     'Documentos'=>true
+        );
+        $permisos["terrestre"]=array(
+            'Consultar'=>true,      'Crear'=>true,      'Editar'=>true,     'Anular'=>true,     'Liquidar'=>true,     'Cerrar'=>true,
+            'General'=>true,        'House'=>true,      'Facturacion'=>true,'Costos'=>true,     'Documentos'=>true
+        );
+        $permisos["exportacion"]=array(
+            'Consultar'=>true,      'Crear'=>true,      'Editar'=>true,     'Anular'=>true,     'Liquidar'=>true,     'Cerrar'=>true,
+            'General'=>true,        'House'=>true,      'Facturacion'=>true,'Costos'=>true,     'Documentos'=>true
+        );
+        $permisos["otm"]=array(
+            'Consultar'=>true,      'Crear'=>true,      'Editar'=>true,     'Anular'=>true,     'Liquidar'=>true,     'Cerrar'=>true,
+            'General'=>true,        'House'=>true,      'Facturacion'=>true,'Costos'=>true,     'Documentos'=>true
+        );
         
-        //print_r($request->getParameter("opciones"));
+
         $where="";
         foreach($request->getParameter("opciones") as $o)
         {
@@ -84,6 +118,67 @@ class inoF2Actions extends sfActions {
             ->orderBy("ca_fchcreado DESC")
             ->limit(40)
             ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+        
+        $impo="";
+        $trans="";
+        $wherePermisos=" (";
+        if($permisos["aereo"]["Consultar"])
+        {
+            if($where!="")
+                $where .=" OR ";
+            $where .= "(ca_impoexpo = ? AND ca_transporte=? ) ";
+            $whereq[]=Constantes::IMPO;
+            $whereq[]=Constantes::AEREO;
+//            $q->addWhere(" (ca_impoexpo = ? OR ca_transporte=? )", array(Constantes::IMPO,Constantes::AEREO));
+        }
+        $where="";
+        $whereq=array();
+        
+        if($permisos["maritimo"]["Consultar"])
+        {
+            if($where!="")
+                $where .=" OR ";
+            $where .= "(ca_impoexpo = ? AND ca_transporte=? ) ";
+            $whereq[]=Constantes::IMPO;
+            $whereq[]=Constantes::MARITIMO;
+            
+            //$q->addWhere(" (ca_impoexpo = ? OR ca_transporte=? )", array(Constantes::IMPO,Constantes::MARITIMO));
+        }
+        
+        if($permisos["terrestre"]["Consultar"])
+        {
+            if($where!="")
+                $where .=" OR ";
+            $where .= "(ca_impoexpo = ? AND ca_transporte=? ) ";
+            $whereq[]=Constantes::INTERNO;
+            $whereq[]=Constantes::TERRESTRE;
+        //    $q->addWhere(" (ca_impoexpo = ? OR ca_transporte=? )", array(Constantes::INTERNO,Constantes::TERRESTRE));
+        }
+        
+        if($permisos["exportacion"]["Consultar"])
+        {
+                if($where!="")
+                $where .=" OR ";
+            $where .= "(ca_impoexpo = ?  ) ";
+            $whereq[]=Constantes::EXPO;
+        
+        //    $q->addWhere(" (ca_impoexpo = ? )", array(Constantes::EXPO));
+        }
+        
+        if($permisos["otm"]["Consultar"])
+        {
+            if($where!="")
+                $where .=" OR ";
+            $where .= "(ca_impoexpo = ? AND ca_transporte=? ) ";
+            $whereq[]=Constantes::OTMDTA;
+            $whereq[]=Constantes::TERRESTRE;
+        //    $q->addWhere(" (ca_impoexpo = ? OR ca_transporte=? )", array(Constantes::OTMDTA,Constantes::TERRESTRE));
+        }
+        
+        $wherePermisos.=$where." )";
+        $q->addWhere("".$where, $whereq);
+        //echo $wherePermisos;
+        
         $debug=$q->getSqlQuery();
         $datos=$q->execute();
         //print_r($datos);
