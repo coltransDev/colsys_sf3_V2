@@ -256,7 +256,7 @@ if (!isset($contents) and !isset($boton) and !isset($accion)) {
                 echo "function seleccion(i) {";
                 echo "    source = document.getElementById('idcliente_'+i);";
                 echo "    elemento = window.parent.document.getElementById('idcliente');";
-                echo "    if (elemento.value.length != 0 && elemento.value != source.value){";
+                echo "  if (elemento.value.length != 0 && elemento.value != source.value){";
                 echo "    	alert('Error - El número de Nit del Reporte no corresponde con el Nit de la Referencia!');";
                 echo "    	return;";
                 echo "    }else if (document.getElementById('idconsignatario_'+i).value != '' && document.getElementById('identificacion_'+i).value == '') {";
@@ -312,7 +312,8 @@ if (!isset($contents) and !isset($boton) and !isset($accion)) {
                 echo "    window.parent.elegir_item('continuacion',source.value);";
                 echo "    habilita = (source.value != 'N/A')?false:true;";
                 echo "    source = document.getElementById('continuacion_dest_'+i);";
-                echo "    window.parent.elegir_item('continuacion_dest',source.value);";
+                echo "    if(!habilita)"
+                   . "      window.parent.elegir_item('continuacion_dest',source.value);";
                 echo "    elemento = window.parent.document.getElementById('continuacion_dest');";
                 echo "    elemento.disabled = habilita;";
                 echo "    source = document.getElementById('idbodega_'+i);";
@@ -374,7 +375,10 @@ if (!isset($contents) and !isset($boton) and !isset($accion)) {
                     } else {
                         echo "  <TD Class=listar ROWSPAN=2></TD>";
                     }
-                    if (!$tm->Open("select ca_idbodega, ca_nombre from tb_bodegas where ca_transporte = 'Marítimo' and ca_tipo = 'Operador Multimodal' and ca_nombre like '%" . number_format(substr($rs->Value('ca_identificacion_con'), 0, strlen($rs->Value('ca_identificacion_con')) - 2), 0, ',', '.') . "%'")) {
+                    
+                    $nit = intval(preg_replace('/[^0-9]+/', '', $rs->Value('ca_identificacion_con')), 10);
+                    $sql = "select ca_idbodega, ca_nombre from tb_bodegas where ca_transporte = 'Marítimo' and ca_tipo = 'Operador Multimodal' and regexp_replace(ca_nombre, '[^0-9]+', '', 'g') like '%$nit%'";
+                    if (!$tm->Open($sql)) {
                         echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";
                         echo "<script>document.location.href = 'inosea.php';</script>";
                         exit;
