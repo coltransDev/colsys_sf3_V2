@@ -100,6 +100,19 @@ class clientesComponents extends sfComponents {
                 "nombre" => utf8_encode(strtoupper($contacto->getNombre())));
         }
     }
+    
+    public function executeGridParamDocs(sfWebRequest $request){
+        $empresas = Doctrine::getTable("Empresa")
+                ->createQuery("d")
+                ->execute();
+        $this->empresas = array();
+        foreach ($empresas as $empresa){
+            $this->empresas[] = array (
+                "id" => $empresa->getCaIdempresa(),
+                "name" => utf8_encode($empresa->getCaNombre())
+            );
+        }
+    }
 
     public function executeFormControlFinanciero(sfWebRequest $request) {
         $this->idcliente = $request->getParameter("idcliente");
@@ -150,7 +163,8 @@ class clientesComponents extends sfComponents {
             "fechaconstitucion" => utf8_encode($cliente->getCaFchconstitucion()),
             "regimen" => utf8_encode($cliente->getCaRegimen()),
             "uap" => utf8_encode($cliente->getCaUap()),
-            "altex" => utf8_encode($cliente->getCaAltex())
+            "altex" => utf8_encode($cliente->getCaAltex()),
+            "numempleados" => utf8_encode($cliente->getCaMasxempleados())
             );
 
         $con = Doctrine_Manager::getInstance()->connection();

@@ -571,39 +571,51 @@ $hoy = $sf_data->getRaw("hoy");
         width: 620,
         collapsible: false,
         defaults: {
-            labelWidth: 89,
-            anchor: '90%',
+            
             layout: {
                 type: 'column',
                 defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
-            }},
+            }
+        },
         items: [{
                 xtype: 'fieldcontainer',
                 combineErrors: true,
                 height: 50,
-                width: 200,
                 msgTarget: 'under',
                 items: [{
-                        xtype: 'tbspacer',
-                        columnWidth: 0.2,
-                    }, {
                         xtype: 'fieldset',
                         title: '',
-                        columnWidth: 0.8,
+                        columnWidth: 0.44,
                         defaultType: 'checkbox',
                         layout: 'column',
                         items: [{
                                 fieldLabel: 'UAP',
+                                labelWidth: 60,
                                 boxLabel: '',
                                 name: 'uap',
                                 id: 'uap',
                             }, {
                                 fieldLabel: 'Altex',
+                                labelWidth: 60,
                                 boxLabel: '',
                                 name: 'altex',
                                 id: 'altex',
                             }]
-                    }]
+                    }, {
+                        xtype: 'fieldset',
+                        title: '',
+                        columnWidth: 0.55,
+                        defaultType: 'checkbox',
+                        layout: 'column',
+                        items: [{
+                                fieldLabel: 'Menos de diez empleados',
+                                labelWidth: 180,
+                                boxLabel: '',
+                                name: 'numempleados',
+                                id: 'numempleados',
+                            }]
+                    }
+                ]
             }]
     });
 
@@ -1276,7 +1288,11 @@ $hoy = $sf_data->getRaw("hoy");
                 } else {
                     if (tipopersona.value == 2) {
                         tipo = "ca_perjuridica";
-
+                        if (uap != null) {
+                            if (uap.value == true) {
+                                tipo = "ca_gran_contribuyente_uap";
+                            }
+                        }
                         if (regimen.value == 1) {
                             tipo = "ca_gran_contribuyente";
                         }
@@ -1284,33 +1300,32 @@ $hoy = $sf_data->getRaw("hoy");
                 }
             }
             /*if(!fechconstitucion){
-                fechconstitucion = "";
-            }*/
-                if(fechconstitucion){
-                    if (tipo.toString() != "" && fechconstitucion.toString() != "") {
-                        var store = gridControlFinanciero.getStore();
-                        store.load({
-                            params: {
-                                idcliente: <?= $idcliente ?>,
-                                tipo: tipo,
-                                fechconstitucion: fechconstitucion,
-                            }
-                        });
-                        gridControlFinanciero.setVisible(true);
-                    }
-                }                
-                else{
+             fechconstitucion = "";
+             }*/
+            if (fechconstitucion) {
+                if (tipo.toString() != "" && fechconstitucion.toString() != "") {
                     var store = gridControlFinanciero.getStore();
                     store.load({
                         params: {
                             idcliente: <?= $idcliente ?>,
-                            tipo: tipo                            
+                            tipo: tipo,
+                            fechconstitucion: fechconstitucion,
                         }
                     });
                     gridControlFinanciero.setVisible(true);
                 }
-            
-            
+            } else {
+                var store = gridControlFinanciero.getStore();
+                store.load({
+                    params: {
+                        idcliente: <?= $idcliente ?>,
+                        tipo: tipo
+                    }
+                });
+                gridControlFinanciero.setVisible(true);
+            }
+
+
         }
     }
 </script>

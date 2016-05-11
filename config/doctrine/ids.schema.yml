@@ -637,6 +637,7 @@ IdsCliente:
     ca_regimen: integer
     ca_uap: boolean
     ca_altex: boolean
+    ca_masxempleados: boolean
   relations:
     Ids:
       local: ca_idcliente

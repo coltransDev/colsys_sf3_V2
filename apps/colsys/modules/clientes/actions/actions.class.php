@@ -223,6 +223,21 @@ class clientesActions extends sfActions {
             $this->setLayout($layout);
         }
     }
+    
+    public function executeDatosEmpresas(sfWebRequest $request){
+        $empresas = Doctrine::getTable("Empresa")
+                ->createQuery("d")
+                ->execute();
+        $data= array();
+        foreach ($empresas as $empresa){
+            $data[] = array (
+                "id" => $empresa->getCaIdempresa(),
+                "name" => utf8_encode($empresa->getCaNombre())
+            );
+        }
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
+        $this->setTemplate("responseTemplate");
+    }
 
     public function executeReporteEstados() {
         set_time_limit(0);
@@ -2142,6 +2157,80 @@ class clientesActions extends sfActions {
     public function executeEncuestaVisitaExt4(sfWebRequest $request) {
         
     }
+    
+    public function executeParamDocsExt4(sfWebRequest $request){
+        
+    }
+    
+    public function executeActualizarParamDocs (sfWebRequest $request){
+        $grid = json_decode($request->getParameter("datosGrid"));
+        $conn = Doctrine::getTable("Documentosxconc")->getConnection();
+        $conn->beginTransaction();
+        
+        try{
+        $ids = array(); 
+            foreach($grid as $registro){
+               
+                $documento = Doctrine::getTable("Documentosxconc")
+                        ->createQuery("d")
+                        ->addWhere("d.ca_id = ?",$registro->ca_id)
+                        ->fetchOne();
+                if($documento){
+                    $documento->setCaIdtipo($registro->ca_idtipo);
+                    $documento->setCaTipo($registro->ca_tipo);
+                    $documento->setCaIdempresa($registro->ca_idempresa);
+                    $documento->setCaPerjuridica($registro->ca_perjuridica);
+                    $documento->setCaPerjuridicaReciente($registro->ca_perjuridica_reciente);
+                    $documento->setCaPerjuridicaActivos($registro->ca_perjuridica_activos);
+                    $documento->setCaGranContribuyente($registro->ca_gran_contribuyente);
+                    $documento->setCaPersonaNatural($registro->ca_persona_natural);
+                    $documento->setCaPersonaNaturalComerciante($registro->ca_persona_natural_comerciante);
+                    $documento->save();
+                    $ids[] = $registro->id;
+                }
+            }
+            $conn->commit();
+            $this->responseArray = array("success" => true,"ids" => $ids);
+        
+        }catch(Exception $e){
+            $conn->rollBack();
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+        }
+        $this->setTemplate("responseTemplate");
+    } 
+    
+    public function executeDatosParamDocs(sfWebRequest $request){
+        $idempresa = $request->getParameter("idempresa");
+        
+        $documentos = Doctrine::getTable("Documentosxconc")
+            ->createQuery("d")
+            ->select("d.*, p.ca_tipo as ca_documento")
+            ->innerJoin("d.IdsTipoDocumento p ON p.ca_idtipo = d.ca_idtipo")
+            ->addWhere("d.ca_idempresa = ? ", $idempresa)
+            ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+            ->execute();
+        
+        $data = array();
+        foreach ($documentos as $documento){
+            $data[] = array(
+                            'ca_id' => $documento['ca_id'],
+                            'ca_idtipo' =>  $documento['ca_idtipo'],
+                            'ca_tipo' => $documento['ca_tipo'],
+                            'ca_idempresa' => $documento['ca_idempresa'],
+                            'ca_perjuridica' => $documento['ca_perjuridica'],
+                            'ca_perjuridica_reciente' => $documento['ca_perjuridica_reciente'] ,
+                            'ca_perjuridica_activos' => $documento['ca_perjuridica_activos'],
+                            'ca_gran_contribuyente' => $documento['ca_gran_contribuyente'],
+                            'ca_persona_natural' => $documento['ca_persona_natural'],
+                            'ca_persona_natural_comerciante' => $documento['ca_persona_natural_comerciante'],
+                            'ca_documento' => utf8_encode($documento['ca_documento'])
+                
+            );
+            
+        }
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
+        $this->setTemplate("responseTemplate");
+    }
 
     public function executeDatosEncuestaVisita(sfWebRequest $request) {
         $idcliente = $request->getParameter("idcliente");
@@ -2481,9 +2570,10 @@ class clientesActions extends sfActions {
                     $cliente->setCaRegimen($datos->regimen);
                 }
                 $cliente->setCaUap($datos->uap);
-                $cliente->setCaAltex($datos->altex);
-
-                $cliente->save();
+                $cliente->setCaAltex($datos->altex); 
+                $cliente->setCaMasxempleados($datos->numempleados);
+                
+                $cliente->save(); 
                 $conn->commit();
 
                 $conect = Doctrine::getTable("Blccliente")->getConnection();
@@ -2543,10 +2633,14 @@ class clientesActions extends sfActions {
         $anioactual = date("Y");
         $minimo = Doctrine::getTable('Smlv')->find($anioactual);
 
-        if ($minimo) {
+        if ($minimo && $tipopersona != "ca_gran_contribuyente_uap") {
             if (($activostotales / $minimo->getCaSmlv()) < 500) {
                 $tipopersona = "ca_perjuridica_activos";
             }
+        }
+        
+        if ($tipopersona == "ca_gran_contribuyente_uap"){
+            $tipopersona = "ca_gran_contribuyente";
         }
 
         if ($tipopersona == "ca_perjuridica" || $tipopersona == "ca_gran_contribuyente" || $tipopersona == "ca_perjuridica_activos") {
