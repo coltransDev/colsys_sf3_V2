@@ -362,36 +362,51 @@ class widgetsActions extends sfActions {
         if ($criterio || $ciudad || $perfil || $idempresa) {
 
             $q = Doctrine::getTable("Usuario")
-                    ->createQuery("u")
-                    //->where("(u.ca_cargo='Gerente Sucursal' OR u.ca_cargo like '%Ventas%' OR u.ca_departamento='Comercial')")
+                    ->createQuery("u")                    
                     ->addWhere("u.ca_activo = true")
+                    ->leftJoin("u.Sucursal s")
                     ->addOrderBy("u.ca_nombre");
 
-            if ($criterio) {
-                $q->addWhere("LOWER(u.ca_nombre) LIKE ?", "%" . strtolower($criterio) . "%");
+            if ($criterio) {                
+                /*$q->addWhere("LOWER(u.ca_login) LIKE ?", "%" . strtolower($criterio) . "%");
+                $q->orWhere("LOWER(u.ca_nombre) LIKE ?", "%" . strtolower($criterio) . "%");
+                $q->orWhere("LOWER(u.ca_nombres) LIKE ?", "%" . strtolower($criterio) . "%");
+                $q->orWhere("LOWER(u.ca_apellidos) LIKE ?", "%" . strtolower($criterio) . "%");
+                $q->orWhere("LOWER(u.ca_email) LIKE ?", "%" . strtolower($criterio) . "%");
+                $q->orWhere("LOWER(u.ca_cargo) LIKE ?", "%" . strtolower($criterio) . "%");
+                $q->orWhere("LOWER(u.ca_departamento) LIKE ?", "%" . strtolower($criterio) . "%");*/
+                $q->addWhere('(LOWER(u.ca_login) LIKE ? OR LOWER(u.ca_nombre) LIKE ? 
+                        OR LOWER(u.ca_nombre) LIKE ? OR LOWER(u.ca_nombres) LIKE ?
+                        OR LOWER(u.ca_apellidos) LIKE ? OR LOWER(u.ca_email) LIKE ?
+                        OR LOWER(u.ca_cargo) LIKE ? OR LOWER(u.ca_departamento) LIKE ?
+                        OR LOWER(s.ca_nombre) LIKE ?)
+                        
+                     ', array("%" . strtolower($criterio) . "%", "%" . strtolower($criterio) . "%", "%" . strtolower($criterio) . "%", "%" . strtolower($criterio) . "%", "%" . strtolower($criterio) . "%",
+                              "%" . strtolower($criterio) . "%", "%" . strtolower($criterio) . "%", "%" . strtolower($criterio) . "%", "%" . strtolower($criterio) . "%"));
             }
             
-            if($ciudad)
-            {
-                //echo $ciudad;
-                $q->innerJoin("u.Sucursal s");
+            if($ciudad){
                 $q->addWhere("LOWER(s.ca_nombre) LIKE ?", "%" . strtolower($ciudad) . "%");
             }
-            if($perfil)
-            {
+            
+            if($perfil){
                 //echo $perfil;
                 $q->innerJoin("u.UsuarioPerfil up")
                 ->addWhere("up.ca_perfil = ?", $perfil);
             }
-            if($idempresa)
+            /*if($idempresa)
             {
                 $suc[2] = array(1,2,8); // Grupo Coltrans, Colmas y Colotm
                 //echo $ciudad;
                 $q->innerJoin("u.Sucursal s");                
                 $q->andWhereIn("s.ca_idempresa", ($suc[$idempresa]?$suc[$idempresa]:array($idempresa)));
+            }*/
+            if($idempresa){
+                $suc[2] = array(1,2,8,11); // Grupo Coltrans, Colmas, Colotm y Coldepositos
+                $q->andWhereIn("s.ca_idempresa", ($suc[$idempresa]?$suc[$idempresa]:array($idempresa)));
             }
             $sql=$q->getSqlQuery();
-
+            
             $usuarios = $q->execute();
             $data = array();
             foreach ($usuarios as $usuario) {
@@ -400,7 +415,10 @@ class widgetsActions extends sfActions {
                 $row["nombre"] = utf8_encode($usuario->getCaNombre());
                 $row["cargo"] = utf8_encode($usuario->getCaCargo());
                 $row["sucursal"] = utf8_encode($usuario->getSucursal()->getCaNombre());
-                $row["icon"] = $row["icon"] = $usuario->getImagenUrl("60x80");
+                $row["email"] = utf8_encode($usuario->getCaEmail());
+                $row["empresa"] = utf8_encode($usuario->getSucursal()->getEmpresa()->getCaNombre());
+                $row["extension"] = utf8_encode($usuario->getCaExtension());
+                $row["icon"] = $usuario->getImagenUrl("60x80");                
                 $data[] = $row;
             }
             $this->responseArray = array("total" => count($data), "root" => $data, "success" => true,"debug"=>$sql);
@@ -533,14 +551,14 @@ class widgetsActions extends sfActions {
 
 
         $ids = array();
-
+        
         foreach ($rows as $row) {
-            $row["ca_id"] = $row["i_ca_id"];
-            $row["ca_nombre"] = utf8_encode($row["i_ca_nombre"]);
-
-            $ids[] = $row;
-        }
-        $this->responseArray = array("totalCount" => count($ids), "root" => $ids);
+            $row1=array();
+            $row1["ca_id"] = $row["i_ca_id"];            
+            $row1["ca_nombre"] = utf8_encode($row["i_ca_nombre"]);
+            $ids[] = $row1;
+        }        
+        $this->responseArray = array("totalCount" => count($ids), "root" => $ids/*,"server"=>$_SERVER*/);
         $this->setTemplate("responseTemplate");
     }
 
@@ -555,16 +573,14 @@ class widgetsActions extends sfActions {
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                 ->limit(40)
                 ->execute();
-
-
-
         $ids = array();
 
         foreach ($rows as $row) {
-            $row["ca_id"] = $row["i_ca_id"];
-            $row["ca_nombre"] = utf8_encode($row["i_ca_nombre"]);
-            $row["ca_trafico"] = utf8_encode($row["i_ca_trafico"]);
-            $ids[] = $row;
+            $row1=array();
+            $row1["ca_id"] = $row["i_ca_id"];
+            $row1["ca_nombre"] = utf8_encode($row["i_ca_nombre"]);
+            $row1["ca_trafico"] = utf8_encode($row["i_ca_trafico"]);
+            $ids[] = $row1;
         }
         $this->responseArray = array("totalCount" => count($ids), "root" => $ids);
         $this->setTemplate("responseTemplate");
@@ -999,6 +1015,7 @@ class widgetsActions extends sfActions {
                 ->from("IdsSucursal s")
                 ->innerJoin("s.Ciudad c")
                 ->where("s.ca_id=?", $idagente)
+                ->addWhere("s.ca_fcheliminado IS NULL")
                 ->addOrderBy("c.ca_ciudad")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                 ->execute();
@@ -1110,7 +1127,49 @@ class widgetsActions extends sfActions {
         $this->responseArray = array("root" => $this->data, "total" => count($this->data), "success" => true);
         $this->setTemplate("responseTemplate");
     }
+
     
+        /**
+     * Retorna un objeto JSON con la información de todas las bodegas
+     *
+     * @param sfRequest $request A request object
+         * query : texto digitado para filtrar bodegas
+         * modo :  hace referencia al transporte
+     */
+    
+    
+    public function executeListaBodegas(){
+        
+        $criterio = utf8_decode($this->getRequestParameter("query"));
+        $modo = utf8_decode($this->getRequestParameter("modo"));
+        
+        if($modo==Constantes::TERRESTRE)
+        {
+            $modo=  Constantes::MARITIMO;
+        }
+        if($criterio){
+            $q = Doctrine::getTable("Bodega")
+                            ->createQuery("b")
+                            ->select("*")
+                            ->addOrderBy( "b.ca_nombre" )
+                            ->where("b.ca_transporte like ? and b.ca_nombre<>'-'  and ca_tipo!='Operador Multimodal'", "%" . $modo . "%")
+                            ->addWhere("UPPER(b.ca_nombre) like ?", "%" . strtoupper($criterio) . "%")
+                            ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+        $debug=$q->getSqlQuery();        
+        $bodegas=$q->execute();      
+        foreach($bodegas as $k=>$c)
+        {
+            $bodegas[$k]["b_ca_nombre"]=utf8_encode($bodegas[$k]["b_ca_nombre"].
+                    " -Nit: ".$bodegas[$k]["b_ca_identificacion"].
+                    " "      .$bodegas[$k]["b_ca_direccion"]." - ".$bodegas[$k]["b_ca_tipo"]);
+            $bodegas[$k]["b_ca_tipo"]=utf8_encode($bodegas[$k]["b_ca_tipo"]);
+            $bodegas[$k]["b_ca_transporte"]=utf8_encode($bodegas[$k]["b_ca_transporte"]);
+            $bodegas[$k]["b_ca_direccion"]=utf8_encode($bodegas[$k]["b_ca_direccion"]);
+        }
+        $this->responseArray = array("success" => true, "root" => $bodegas, "totalC" => count($bodegas),"debug"=>$debug);
+        }
+        $this->setTemplate("responseTemplate");
+    }
     
     
 
