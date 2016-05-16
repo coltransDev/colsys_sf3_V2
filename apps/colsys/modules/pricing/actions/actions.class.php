@@ -2595,13 +2595,13 @@ class pricingActions extends sfActions {
             $row['consecutivo'] = $aduconcepto->getCaConsecutivo();
             $row['idconcepto'] = $aduconcepto->getCaIdconcepto();
             $row['concepto'] = utf8_encode($aduconcepto->getCosto()->getCaCosto());
-            $row['parametro'] = utf8_encode($aduconcepto->getCosto()->getCaParametro()); // $aduconcepto->getCaParametro();
+            $row['parametro'] = utf8_encode($aduconcepto->getCosto()->getCaParametros()); // $aduconcepto->getCaParametro();
             $row['valor'] = $aduconcepto->getCaValor();
             $row['aplicacion'] = utf8_encode($aduconcepto->getCaAplicacion());
             $row['valorminimo'] = $aduconcepto->getCaValorminimo();
             $row['aplicacionminimo'] = utf8_encode($aduconcepto->getCaAplicacionminimo());
-            $row['fchini'] = Utils::parseDate($depconcepto->getCaFchini(),'m/d/Y');
-            $row['fchfin'] = Utils::parseDate($depconcepto->getCaFchfin(),'m/d/Y');
+            $row['fchini'] = Utils::parseDate($aduconcepto->getCaFchini(),'m/d/Y');
+            $row['fchfin'] = Utils::parseDate($aduconcepto->getCaFchfin(),'m/d/Y');
             $row['observaciones'] = utf8_encode($aduconcepto->getCaObservaciones());
             $row['orden'] = "Z";
             $this->data[] = $row;
@@ -3198,6 +3198,53 @@ class pricingActions extends sfActions {
         $id = $this->getRequestParameter("id");
 
         $this->responseArray = array("id" => $id, "consecutivo" => $conceptoaduana->getCaConsecutivo(), "success" => true);
+        $this->setTemplate("responseTemplate");
+    }
+    /**
+     * Datos de los conceptos para usar en pricing cotizaciones etc.
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeGuardarPanelTarifarioDeposito() {
+//if($this->getRequestParameter( "consecutivo" )!=null && $this->getRequestParameter( "consecutivo" )>0 )
+        $consecutivo = ($this->getRequestParameter("consecutivo") != null && $this->getRequestParameter("consecutivo") > 0 ) ? $this->getRequestParameter("consecutivo") : "0";
+        $conceptodeposito = Doctrine::getTable("ConceptoDeposito")->find($consecutivo);
+
+        if (!$conceptodeposito) {
+            $conceptodeposito = new ConceptoDeposito();
+        }
+
+        $conceptodeposito->setCaParametro($this->getRequestParameter("parametro"));
+        $conceptodeposito->setCaIdconcepto($this->getRequestParameter("idconcepto"));
+
+        if ($this->getRequestParameter("valor")) {
+            $conceptodeposito->setCaValor($this->getRequestParameter("valor"));
+        }
+        if ($this->getRequestParameter("valorminimo")) {
+            $conceptodeposito->setCaValorminimo($this->getRequestParameter("valorminimo"));
+        }
+
+        if ($this->getRequestParameter("aplicacion")) {
+            $conceptodeposito->setCaAplicacion($this->getRequestParameter("aplicacion"));
+        }
+
+        if ($this->getRequestParameter("aplicacionminimo")) {
+            $conceptodeposito->setCaAplicacionminimo($this->getRequestParameter("aplicacionminimo"));
+        }
+        if ($this->getRequestParameter("fchini")) {
+            $conceptodeposito->setCaFchini($this->getRequestParameter("fchini"));
+        }
+        if ($this->getRequestParameter("fchfin")) {
+            $conceptodeposito->setCaFchfin($this->getRequestParameter("fchfin"));
+        }
+        if ($this->getRequestParameter("observaciones")) {
+            $conceptodeposito->setCaObservaciones($this->getRequestParameter("observaciones"));
+        }
+        $conceptodeposito->save();
+
+        $id = $this->getRequestParameter("id");
+
+        $this->responseArray = array("id" => $id, "consecutivo" => $conceptodeposito->getCaConsecutivo(), "success" => true);
         $this->setTemplate("responseTemplate");
     }
 
