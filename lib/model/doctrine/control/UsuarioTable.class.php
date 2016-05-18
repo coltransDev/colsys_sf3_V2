@@ -96,7 +96,7 @@ class UsuarioTable extends Doctrine_Table {
                ->addWhere("up.ca_login = ?", $login)
                ->addOrderBy("u.ca_idsucursal")
                ->addOrderBy("u.ca_nombre");
-        echo $q->getSqlQuery();
+        
         return $q->execute();
     }
 
