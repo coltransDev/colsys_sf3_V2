@@ -88,6 +88,19 @@ class UsuarioTable extends Doctrine_Table {
         return $q->execute();
     }
 
+    public static function getUsuariosxPerfilxUsuario($perfil,$login) {
+        $q = Doctrine::getTable("Usuario")
+               ->createQuery("u")               
+               ->innerJoin("u.UsuarioPerfil up")
+               ->addWhere("u.ca_activo=? AND up.ca_perfil=? ", array('TRUE',$perfil))
+               ->addWhere("up.ca_login = ?", $login)
+               ->addOrderBy("u.ca_idsucursal")
+               ->addOrderBy("u.ca_nombre");
+        echo $q->getSqlQuery();
+        return $q->execute();
+    }
+
+
     public function getLuceneIndex(){
 
 		ProjectConfiguration::registerZend();
