@@ -416,7 +416,6 @@ include_component("inoExpo", "gridItemsDocs");
                                         id: 'winDocsTransporte',
                                         title: 'Cabecera del Documento',
                                         width: 600,
-                                        //height: 400,
                                         closeAction: 'close',
                                         items: {
                                             xtype: formDocsTransporte
@@ -497,7 +496,6 @@ include_component("inoExpo", "gridItemsDocs");
                                                 id: 'winDocsTransporte',
                                                 title: 'Cabecera del Documento',
                                                 width: 600,
-                                                height: 590,
                                                 closeAction: 'close',
                                                 items: {
                                                     xtype: formDocsTransporte

@@ -16,6 +16,11 @@ class inoExpoComponents extends sfComponents {
         $idtrafico = $expoMaestra->getDestino()->getCaIdtrafico();
     }
 
+    public function executeGridAwbsTransporte(sfWebRequest $request) {
+        $this->referencia = base64_decode($request->getParameter("id"));
+        $expoMaestra = Doctrine::getTable("InoMaestraExpo")->find($this->referencia);
+    }
+
     public function executeGridItemsDocs(sfWebRequest $request) {
         
     }

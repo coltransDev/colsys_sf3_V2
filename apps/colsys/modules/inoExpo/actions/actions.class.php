@@ -54,7 +54,7 @@ class inoExpoActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeDefinicionDocsTransporteExt4(sfWebRequest $request) {
-        
+        $this->via = $request->getParameter("via");
     }
 
     /**
@@ -88,6 +88,47 @@ class inoExpoActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
+    public function executeDatosCarriers(sfWebRequest $request) {
+        $query = strtolower($this->getRequestParameter("query"));
+        $data = array();
+        if ($query) {
+            $carriers = Doctrine::getTable("ExpoCarrier")
+                ->createQuery("c")
+                ->addWhere("lower(c.ca_carrier) like '%$query%'")
+                //->getSQLQuery();
+                ->execute();
+            
+            foreach ($carriers as $carrier) {
+                $data[] = array("idcarrier" => $carrier->getCaIdcarrier(), "carrier" => utf8_encode($carrier->getCaCarrier()));
+            }
+        }
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
+
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeValoresPorDefecto(sfWebRequest $request) {
+        $data = array();
+        if( $request->getParameter("idconfig") ){
+            $config = Doctrine::getTable("ColsysConfig")->find( $request->getParameter("idconfig") );
+            $this->forward404Unless($config);
+            
+            $values = $config->getColsysConfigValue();
+            foreach ($values as $value) {
+                $data[$value->getCaValue2()] = utf8_encode($value->getCaValue());
+            }
+        }
+        
+        $con = Doctrine_Manager::connection();
+        $sql = "select ca_fecha,ca_pesos,ca_euro from tb_trms t order by ca_fecha desc limit 1";
+        $trm = $con->fetchArray($sql);
+        
+        $data['accounting_info'] = "T.C.$ ".number_format($trm[1], 2)."\nHAWB: ".$request->getParameter("referencia");
+        $this->responseArray = array("success" => true, "data" => $data);
+
+        $this->setTemplate("responseTemplate");
+    }
+    
     public function executeDatosDocsTransporte(sfWebRequest $request) {
         $referencia = $this->getRequestParameter("id");
         $documentos = Doctrine::getTable("ExpoDoctransporte")
@@ -116,6 +157,55 @@ class inoExpoActions extends sfActions {
                 "number_original" => utf8_encode($documento->getCaNumberOriginal()),
                 "delivery_goods" => utf8_encode($documento->getCaDeliveryGoods()),
                 "font_size" => $documento->getCaFontSize()
+            );
+        }
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
+
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosAwbsTransporte(sfWebRequest $request) {
+        $referencia = $this->getRequestParameter("id");
+        $documentos = Doctrine::getTable("ExpoAwbtransporte")
+                ->createQuery("e")
+                ->addWhere("e.ca_referencia = ?", $referencia)
+                ->execute();
+        $data = array();
+
+        foreach ($documentos as $documento) {
+            $data[] = array("iddoctransporte" => $documento->getCaIddoctransporte(),
+                "referencia" => $documento->getCaReferencia(),
+                "iddestino_uno" => $documento->getCaIddestinoUno(),
+                "idcarrier_uno" => $documento->getCaIdcarrierUno(),
+                "carrier_uno" => $documento->getExpoCarrierUno()->getCaCarrier(),
+                "iddestino_dos" => $documento->getCaIddestinoDos(),
+                "idcarrier_dos" => $documento->getCaIdcarrierDos(),
+                "carrier_dos" => $documento->getExpoCarrierDos()->getCaCarrier(),
+                "iddestino_trs" => $documento->getCaIddestinoTrs(),
+                "idcarrier_trs" => $documento->getCaIdcarrierTrs(),
+                "carrier_trs" => $documento->getExpoCarrierTrs()->getCaCarrier(),
+                "consecutivo" => $documento->getCaConsecutivo(),
+                "fchdoctransporte" => $documento->getCaFchdoctransporte(),
+                "charges_code" => $documento->getCaChargesCode(),
+                "airport_departure" => $documento->getCaAirportDeparture(),
+                "airport_destination" => $documento->getCaAirportDestination(),
+                "accounting_info" => $documento->getCaAccountingInfo(),
+                "handing_info" => $documento->getCaHandingInfo(),
+                "number_packages" => $documento->getCaNumberPackages(),
+                "kind_packages" => $documento->getCaKindPackages(),
+                "gross_weight" => $documento->getCaGrossWeight(),
+                "gross_unit" => $documento->getCaGrossUnit(),
+                "weight_charge" => $documento->getCaWeightCharge(),
+                "weight_details" => $documento->getCaWeightDetails(),
+                "rate_charge" => $documento->getCaRateCharge(),
+                "due_agent" => $documento->getCaDueAgent(),
+                "due_carrier" => $documento->getCaDueCarrier(),
+                "delivery_goods" => $documento->getCaDeliveryGoods(),
+                "other_charges" => $documento->getCaOtherCharges(),
+                "shipper_certifies" => $documento->getCaShipperCertifies(),
+                "childrens" => $documento->getCaChildrens(),
+                "fchliquidado" => $documento->getCaFchliquidado(),
+                "usuliquidado" => $documento->getCaUsuliquidado()
             );
         }
         $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
@@ -272,6 +362,39 @@ class inoExpoActions extends sfActions {
         $this->copia = ($this->getRequestParameter("copia")=='true')?true:false;
     }
 
+    public function executeImprimirAwbsTransporte(sfWebRequest $request) {
+        $this->documento = Doctrine::getTable("ExpoAwbtransporte")
+                ->createQuery("e")
+                ->addWhere("e.ca_iddoctransporte = ?", $this->getRequestParameter("id"))
+                ->fetchOne();
+        $this->referencia = $this->documento->getInoMaestraExpo();
+
+        $consecutivo = $this->referencia->getCaConsecutivo();
+
+        $this->reporte = Doctrine::getTable("Reporte")
+                ->createQuery("r")
+                ->where("r.ca_consecutivo = ?", $consecutivo)
+                ->addWhere("r.ca_fchanulado IS NULL")
+                ->addOrderBy("r.ca_version DESC")
+                ->limit(1)
+                ->fetchOne();
+        $this->empresa = Doctrine::getTable("Empresa")->find(2); // Localiza la empresa Coltrans
+        
+        $config = Doctrine::getTable("ColsysConfig")->find( 260 );
+        $values = $config->getColsysConfigValue();
+        $this->config = array();
+        foreach ($values as $value) {
+            $this->config[$value->getCaValue2()] = utf8_encode($value->getCaValue());
+        }
+        
+        $this->consignatario = Doctrine::getTable("Tercero")->find($this->reporte->getCaIdconsignatario());
+        $this->notify = Doctrine::getTable("Tercero")->find($this->reporte->getCaIdnotify());
+        $this->usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
+        $this->borrador = ($this->getRequestParameter("borrador")=='true')?true:false;
+        $this->plantilla = ($this->getRequestParameter("plantilla")=='true')?true:false;
+        $this->copia = ($this->getRequestParameter("copia")=='true')?true:false;
+    }
+
     public function executeDatosItemsDocs(sfWebRequest $request) {
         $items = Doctrine::getTable("ExpoDocItems")
                 ->createQuery("d")
@@ -378,12 +501,113 @@ class inoExpoActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
+    public function executeGuardarAwbsTransporte(sfWebRequest $request) {
+        $referencia = $request->getParameter("id");
+        $datos = $request->getParameter("datos");
+        $datos = json_decode($datos);
+
+        $conn = Doctrine::getTable("ExpoAwbtransporte")->getConnection();
+        $conn->beginTransaction();
+        try {
+            if (!$datos->iddoctransporte) {
+                $expoAwbtransporte = new ExpoAwbtransporte();
+                $expoAwbtransporte->setCaReferencia($referencia);
+            } else {
+                $expoAwbtransporte = Doctrine::getTable("ExpoAwbtransporte")
+                        ->createQuery("d")
+                        ->addWhere("d.ca_iddoctransporte = ?", $datos->iddoctransporte)
+                        ->fetchOne();
+            }
+
+            if ($datos->consecutivo) {
+                $expoDocNumbers = Doctrine::getTable('ExpoDocNumbers')->find($datos->consecutivo);
+                if ($expoDocNumbers) {
+                    $expoDocNumbers->setCaReferencia($referencia);
+                    $expoDocNumbers->save();
+                }
+                $expoAwbtransporte->setCaConsecutivo($datos->consecutivo);
+            }
+
+            if ($datos->fchdoctransporte) {
+                $expoAwbtransporte->setCaFchdoctransporte($datos->fchdoctransporte);
+            }
+            if ($datos->iddestino_uno) {
+                $expoAwbtransporte->setCaIddestinoUno($datos->iddestino_uno);
+            }
+            if ($datos->idcarrier_uno) {
+                $expoAwbtransporte->setCaIdcarrierUno($datos->idcarrier_uno);
+            }
+            if ($datos->iddestino_dos) {
+                $expoAwbtransporte->setCaIddestinoDos($datos->iddestino_dos);
+            }
+            if ($datos->idcarrier_dos) {
+                $expoAwbtransporte->setCaIdcarrierDos($datos->idcarrier_dos);
+            }
+            if ($datos->iddestino_trs) {
+                $expoAwbtransporte->setCaIddestinoTrs($datos->iddestino_trs);
+            }
+            if ($datos->idcarrier_trs) {
+                $expoAwbtransporte->setCaIdcarrierTrs($datos->idcarrier_trs);
+            }
+            if ($datos->charges_code) {
+                $expoAwbtransporte->setCaChargesCode($datos->charges_code);
+            }
+            if ($datos->airport_departure) {
+                $expoAwbtransporte->setCaAirportDeparture($datos->airport_departure);
+            }
+            if ($datos->airport_destination) {
+                $expoAwbtransporte->setCaAirportDestination($datos->airport_destination);
+            }
+            if ($datos->accounting_info) {
+                $expoAwbtransporte->setCaAccountingInfo(utf8_decode($datos->accounting_info));
+            }
+            if ($datos->handing_info) {
+                $expoAwbtransporte->setCaHandingInfo(utf8_decode($datos->handing_info));
+            }
+            if ($datos->shipper_certifies) {
+                $expoAwbtransporte->setCaShipperCertifies(utf8_decode($datos->shipper_certifies));
+            }
+            $expoAwbtransporte->save();
+            $conn->commit();
+
+            $this->responseArray = array("success" => true);
+        } catch (Exception $e) {
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+
+        $this->setTemplate("responseTemplate");
+    }
+
     public function executeEliminarDocsTransporte(sfWebRequest $request) {
         $iddoctransporte = $request->getParameter("id");
         $conn = Doctrine::getTable("ExpoDoctransporte")->getConnection();
         $conn->beginTransaction();
         try {
             $expoDoctransporte = Doctrine::getTable("ExpoDoctransporte")
+                    ->createQuery("d")
+                    ->addWhere("d.ca_iddoctransporte = ?", $iddoctransporte)
+                    ->fetchOne();
+            if ($expoDoctransporte) {
+                $expoDoctransporte->delete();
+            }
+            $conn->commit();
+
+            $this->responseArray = array("success" => true);
+        } catch (Exception $e) {
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+        $this->setTemplate("responseTemplate");
+        
+    }
+
+    public function executeEliminarAwbsTransporte(sfWebRequest $request) {
+        $iddoctransporte = $request->getParameter("id");
+        $conn = Doctrine::getTable("ExpoAwbtransporte")->getConnection();
+        $conn->beginTransaction();
+        try {
+            $expoDoctransporte = Doctrine::getTable("ExpoAwbtransporte")
                     ->createQuery("d")
                     ->addWhere("d.ca_iddoctransporte = ?", $iddoctransporte)
                     ->fetchOne();
@@ -470,6 +694,67 @@ class inoExpoActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
+    public function executeGuardarLiquidDocs(sfWebRequest $request) {
+        $referencia = $request->getParameter("id");
+        $datos = $request->getParameter("datos");
+        $datos = json_decode($datos);
+
+        $conn = Doctrine::getTable("ExpoAwbtransporte")->getConnection();
+        $conn->beginTransaction();
+        try {
+            if ($datos->iddoctransporte) {
+                $expoAwbtransporte = Doctrine::getTable("ExpoAwbtransporte")
+                        ->createQuery("d")
+                        ->addWhere("d.ca_iddoctransporte = ?", $datos->iddoctransporte)
+                        ->fetchOne();
+            }
+            if (isset($datos->number_packages)) {
+                $expoAwbtransporte->setCaNumberPackages($datos->number_packages);
+            }
+            if (isset($datos->kind_packages)) {
+                $expoAwbtransporte->setCaKindPackages($datos->kind_packages);
+            }
+            if ($datos->gross_weight) {
+                $expoAwbtransporte->setCaGrossWeight($datos->gross_weight);
+            }
+            if ($datos->gross_unit) {
+                $expoAwbtransporte->setCaGrossUnit($datos->gross_unit);
+            }
+            if ($datos->weight_details) {
+                $expoAwbtransporte->setCaWeightDetails($datos->weight_details);
+            }
+            if ($datos->weight_charge) {
+                $expoAwbtransporte->setCaWeightCharge($datos->weight_charge);
+            }
+            if ($datos->rate_charge) {
+                $expoAwbtransporte->setCaRateCharge($datos->rate_charge);
+            }
+            if ($datos->due_agent) {
+                $expoAwbtransporte->setCaDueAgent($datos->due_agent);
+            }
+            if ($datos->due_carrier) {
+                $expoAwbtransporte->setCaDueCarrier($datos->due_carrier);
+            }
+            if ($datos->delivery_goods) {
+                $expoAwbtransporte->setCaDeliveryGoods($datos->delivery_goods);
+            }
+            if ($datos->other_charges) {
+                $expoAwbtransporte->setCaOtherCharges($datos->other_charges);
+            }
+            $expoAwbtransporte->setCaUsuliquidado($this->getUser()->getUserId());
+            $expoAwbtransporte->setCaFchliquidado(date("Y-m-d H:i:s"));
+            $expoAwbtransporte->save();
+
+            $conn->commit();
+            $this->responseArray = array("success" => true);
+        } catch (Exception $e) {
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+
+        $this->setTemplate("responseTemplate");
+    }
+    
     /**
      * Abre, cierra o liquida un caso de exportaciones
      *

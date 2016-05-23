@@ -937,6 +937,46 @@ ExpoAlerta:
       foreign: ca_referencia
       type: one
 
+ExpoCarrier:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_expo_carrier
+  columns:
+    ca_idcarrier:
+      type: integer
+      primary: true
+      autoincrement: false
+    ca_carrier: string
+    ca_prefijo: string
+    ca_codigo: string
+    ca_account: string
+    ca_path_logo: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+  relations:
+    Ids:
+      local: ca_idcarrier
+      foreign: ca_id
+      type: one
+    ExpoAwbtransporte_uno:
+      class: ExpoAwbtransporte
+      local: ca_idcarrier
+      foreign: ca_idcarrier_uno
+      type: many
+    ExpoAwbtransporte_dos:
+      class: ExpoAwbtransporte
+      local: ca_idcarrier
+      foreign: ca_idcarrier_dos
+      type: many
+    ExpoAwbtransporte_trs:
+      class: ExpoAwbtransporte
+      local: ca_idcarriera
+      foreign: ca_idcarrier_trs
+      type: many
+
 ExpoDoctransporte:
   options:
     symfony:
@@ -970,7 +1010,7 @@ ExpoDoctransporte:
     ca_fchanulado: timestamp
     ca_usuanulado: string(20)
   relations:
-    ExpoMaestra:
+    InoMaestraExpo:
       local: ca_referencia
       foreign: ca_referencia
       type: one
@@ -987,6 +1027,85 @@ ExpoDoctransporte:
       foreign: ca_login
       type: one
 
+ExpoAwbtransporte:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_expo_awbtransporte
+  columns:
+    ca_iddoctransporte:
+      type: integer
+      primary: true
+    ca_referencia: string(17)
+    ca_iddestino_uno: string(3)
+    ca_idcarrier_uno: integer
+    ca_iddestino_dos: string(3)
+    ca_idcarrier_dos: integer
+    ca_iddestino_trs: string(3)
+    ca_idcarrier_trs: integer
+    ca_consecutivo:  string(15)
+    ca_fchdoctransporte: date
+    ca_charges_code: string(2)
+    ca_airport_departure: string(64)
+    ca_airport_destination: string(64)
+    ca_accounting_info: string(512)
+    ca_handing_info: string(512)
+    ca_number_packages: float
+    ca_kind_packages: string(128)
+    ca_gross_weight: float
+    ca_gross_unit: string(4)
+    ca_weight_charge: float
+    ca_weight_details: string(10)
+    ca_rate_charge: float
+    ca_due_agent: float
+    ca_due_carrier: float
+    ca_delivery_goods: string(512)
+    ca_other_charges: string(512)
+    ca_shipper_certifies: string(512)
+    ca_childrens: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchliquidado: timestamp
+    ca_usuliquidado: string(20)
+    ca_fchanulado: timestamp
+    ca_usuanulado: string(20)
+  relations:
+    InoMaestraExpo:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: one
+    ExpoCarrierUno:
+        class: ExpoCarrier
+        local: ca_idcarrier_uno
+        foreign: ca_idcarrier
+        type: one
+    ExpoCarrierDos:
+        class: ExpoCarrier
+        local: ca_idcarrier_dos
+        foreign: ca_idcarrier
+        type: one
+    ExpoCarrierTrs:
+        class: ExpoCarrier
+        local: ca_idcarrier_trs
+        foreign: ca_idcarrier
+        type: one
+    Usucreado:
+      class: Usuario
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+    Usuliquidado:
+      class: Usuario
+      local: ca_usuliquidado
+      foreign: ca_login
+      type: one
+    Usuactualizado:
+      class: Usuario
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
 
 ExpoDocNumbers:
   options:

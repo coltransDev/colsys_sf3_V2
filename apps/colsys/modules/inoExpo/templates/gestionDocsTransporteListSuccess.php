@@ -8,7 +8,7 @@
             foreach ($data as $key => $referencia) {
                 ?>
                 <tr>
-                    <td class="listar" rowspan="3" style="vertical-align: top; font-weight: bold"><a href="/inoExpo/definicionDocsTransporteExt4/id/<?= base64_encode($referencia["ca_referencia"]) ?>"><?= $referencia["ca_referencia"] ?></a></td>
+                    <td class="listar" rowspan="3" style="vertical-align: top; font-weight: bold"><a href="/inoExpo/definicionDocsTransporteExt4/id/<?= base64_encode($referencia["ca_referencia"]) ?>/via/<?= $referencia["ca_via"] ?>"><?= $referencia["ca_referencia"] ?></a></td>
                     <td class="listar" colspan="6" style="font-weight: bold"><?= $referencia["ca_compania"] ?></td>
                 </tr>
                 <tr>

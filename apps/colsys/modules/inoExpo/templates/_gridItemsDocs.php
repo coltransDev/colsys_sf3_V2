@@ -110,13 +110,30 @@
                 columnWidth: 0.3,
                 title: 'Marks and Numbers',
                 defaults: {anchor: '100%'},
-                layout: 'anchor',
-                items: {
+                layout: 'column',
+                items: [{
+                    id: 'marks_numbers',
                     xtype: 'textareafield',
                     name: 'marks_numbers',
                     allowBlank: true,
-                    height: 115
-                }
+                    columnWidth: 0.98,
+                    height: 96
+                }, {
+                    xtype: 'checkbox',
+                    boxLabel: 'Dividir',
+                    columnWidth: 0.98,
+                    name: 'div',
+                    listeners:{
+                        change: function (check, newValue, oldValue, eOpts){
+                            var contenido = Ext.getCmp('marks_numbers');
+                            if (newValue){
+                                contenido.setValue(contenido.getValue()+"«break»");;
+                            }else{
+                                contenido.setValue(contenido.getValue().replace("«break»", ""));
+                            }
+                        }
+                    }
+                }]
             }, {
                 xtype: 'fieldset',
                 columnWidth: 0.68,
