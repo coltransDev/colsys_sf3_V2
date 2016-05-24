@@ -775,7 +775,7 @@ $hoy = $sf_data->getRaw("hoy");
         Ext.define('ComboRiesgo', {
             extend: 'Ext.form.field.ComboBox',
             alias: 'widget.combo-riesgo',
-            store: ['Mínimo', 'Medio', 'Alto']
+            store: ['Bajo', 'Medio', 'Alto', 'Crítico']
         });
 
         Ext.define('ComboSiNo', {

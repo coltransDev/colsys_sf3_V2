@@ -272,7 +272,7 @@ require_once("menu.php");
 	   echo "  <TD Class=listar style='$vetado' ROWSPAN=9 style='text-align: center;'>";
 	   echo "    <TABLE>";
 	   echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Control Financiero\", ".$rs->Value('ca_idcliente').");' style='color=blue;'><BR><IMG src='graficos/vista.gif'><BR>Control Financiero</TD></TR>";
-           echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/controlFinancieroExt4/idcliente/" . $rs->Value('ca_idcliente') . "\"'><BR><IMG src='graficos/encuesta.gif'><BR>Cumplimiento</TD></TR>";
+           echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/controlFinancieroExt4/idcliente/" . $rs->Value('ca_idcliente') . "\"'><BR><IMG src='graficos/encuesta.gif'><BR>Cumplimiento<BR />Circular 0170</TD></TR>";
 	   echo "    </TABLE>";
 	   echo "  </TD>";
 	   echo "</TR>";
