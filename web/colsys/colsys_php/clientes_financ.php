@@ -463,7 +463,7 @@ require_once("menu.php");
              echo "<CENTER>";
              echo "<H3>$titulo</H3>";
              echo "<FORM METHOD=post NAME='modificar' ACTION='clientes_financ.php' ONSUBMIT='return validar();'>"; // Llena la forma con los datos actuales del registro
-             echo "<TABLE CELLSPACING=1>";
+             echo "<TABLE WIDTH=350 CELLSPACING=1>";
              echo "<INPUT TYPE='HIDDEN' NAME='id' VALUE=".$id.">";              // Hereda el Id del registro que se esta modificando
              echo "<TH Class=titulo COLSPAN=2>Nuevos Datos para el Cliente</TH>";
              echo "<TR>";
@@ -475,36 +475,6 @@ require_once("menu.php");
              echo "  <TD Class=mostrar>".$rs->Value('ca_compania')."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=captura>Circular 170:</TD>";
-             echo "  <TD Class=invertir><TABLE CELLSPACING=1 WIDTH=100%><TR>";
-             echo "  <TD Class=mostrar>Diligenciado: (aaaa/mm/dd)<BR /><CENTER><INPUT TYPE='TEXT' NAME='fchcircular' SIZE=12 VALUE='".$rs->Value('ca_fchcircular')."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></CENTER></TD>";
-             echo "  <TD Class=mostrar>Nivel de Riesgo:<BR /><CENTER><SELECT NAME='nvlriesgo'>";
-             for ($i=0; $i < count($riesgos); $i++) {
-                  echo " <OPTION VALUE='".$riesgos[$i]."'";
-                  if ($riesgos[$i]==$rs->Value('ca_nvlriesgo')) {
-                      echo" SELECTED"; }
-                      echo ">".$riesgos[$i];
-                  }
-             echo "  </SELECT></CENTER></TD>";
-             echo "  </TABLE><TD>";
-             echo "</TR>";
-             echo "<TR>";
-             echo "  <TD Class=captura>SuperSociedades:</TD>";
-             echo "  <TD Class=invertir><TABLE CELLSPACING=1 WIDTH=100%><TR>";
-             echo "  <TD Class=mostrar WIDTH=100>Reportado:<BR /><CENTER><SELECT NAME='leyinsolvencia'>";
-             echo "  	<OPTION VALUE='No' ".(($rs->Value('ca_leyinsolvencia')=='No')?'SELECTED':'').">No";
-             echo "  	<OPTION VALUE='Sí' ".(($rs->Value('ca_leyinsolvencia')=='Sí')?'SELECTED':'').">Sí";
-             echo "  </SELECT></CENTER></TD>";
-             echo "  <TD Class=mostrar>Comentario:<BR /><CENTER><INPUT TYPE='TEXT' NAME='comentario' SIZE=60 VALUE='".$rs->Value('ca_comentario')."' MAXLENGTH=255></CENTER></TD>";
-             echo "  </TABLE><TD>";
-             echo "</TR>";
-             echo "<TR>";
-             echo "  <TD Class=captura>Lista OFAC:</TD>";
-             echo "  <TD Class=invertir><TABLE CELLSPACING=1 WIDTH=425><TR>";
-             echo "  <TD Class=mostrar style='vertical-align: top;'>Reportado:<BR /><CENTER><SELECT NAME='listaclinton'>";
-             echo "  	<OPTION VALUE='No' ".(($rs->Value('ca_listaclinton')=='No')?'SELECTED':'').">No";
-             echo "  	<OPTION VALUE='Sí' ".(($rs->Value('ca_listaclinton')=='Sí')?'SELECTED':'').">Sí";
-             echo "  </SELECT></CENTER></TD>";
              echo "  <TD Class=captura>Tipo de NIT.:</TD>";
              echo "  <TD Class=invertir style='vertical-align: bottom;'>";
              echo "  	<INPUT TYPE='CHECKBOX' NAME='tipo_nit[]' ".((in_array("Agente",$tipos))?'CHECKED':'')." VALUE='Agente'> Agente<br/>";
@@ -512,7 +482,6 @@ require_once("menu.php");
              echo "  	<INPUT TYPE='CHECKBOX' NAME='tipo_nit[]' ".((in_array("Excepción Temporal",$tipos))?'CHECKED':'')." VALUE='Excepción Temporal'> Excepción Temporal<br/>";
              echo "  	<INPUT TYPE='CHECKBOX' NAME='tipo_nit[]' ".((in_array("Excepción Permanente",$tipos))?'CHECKED':'')." VALUE='Excepción Permanente'> Excepción Permanente";
              echo "  </TD>";
-             echo "  </TR></TABLE></TD>";
              echo "</TR>";
              echo"</TABLE><BR>";
              echo "<TABLE CELLSPACING=10>";
@@ -532,12 +501,10 @@ echo "</BODY>";
 elseif (isset($accion)) {                                                      // Rutina que registra los cambios en la tabla de la base de datos
     switch(trim($accion)) {                                                    // Switch que evalua cual botòn de comando fue pulsado por el usuario
         case 'Actualizar': {                                                   // El Botón Actualizar fue pulsado
-             $fchcircular = (strlen($fchcircular)!=0)?"'".$fchcircular."'":'date(null)';
-
              $tipo_nit = implode("|",$tipo_nit);
              $tipo_nit = ((strlen(trim($tipo_nit))==0)?'NULL':"'$tipo_nit'");
              
-             if (!$rs->Open("update tb_clientes set ca_fchcircular = $fchcircular, ca_nvlriesgo = '$nvlriesgo', ca_listaclinton = '$listaclinton', ca_leyinsolvencia = '$leyinsolvencia', ca_comentario = '$comentario', ca_tipo = $tipo_nit, ca_fchfinanciero = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY HH24:mi:ss'), ca_usufinanciero = '$usuario' where ca_idcliente = $id")) {
+             if (!$rs->Open("update tb_clientes set ca_tipo = $tipo_nit where ca_idcliente = $id")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes_financ.php';</script>";
                  exit;

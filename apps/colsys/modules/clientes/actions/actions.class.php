@@ -2565,6 +2565,8 @@ class clientesActions extends sfActions {
                 $cliente->setCaUap($datos->uap);
                 $cliente->setCaAltex($datos->altex); 
                 $cliente->setCaMasxempleados($datos->numempleados);
+                $cliente->setCaFchfinanciero(date("Y-m-d H:i:s"));
+                $cliente->setCaUsufinanciero($this->getUser()->getUserId());
                 
                 $cliente->save(); 
                 $conn->commit();
