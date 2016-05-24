@@ -736,12 +736,6 @@ $hoy = $sf_data->getRaw("hoy");
 
     Ext.onReady(function () {
 
-        Ext.define('ComboNit', {
-            extend: 'Ext.form.field.ComboBox',
-            alias: 'widget.combo-nit',
-            store: ['-', 'Agente', 'Proveedor', 'Excepción Temporal', 'Excepción Permanente']
-        });
-
         Ext.define('ComboSectorEconomico', {
             extend: 'Ext.form.field.ComboBox',
             alias: 'widget.combo-sectoreconomico',
@@ -797,25 +791,23 @@ $hoy = $sf_data->getRaw("hoy");
                     items: [{
                             xtype: 'fieldset',
                             title: 'Nuevos Datos para el Cliente',
-                            width: 655,
                             collapsible: false,
                             defaults: {
                                 labelWidth: 89,
-                                anchor: '90%',
                                 layout: {
                                     type: 'column',
                                     defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
                                 }},
                             items: [{
                                     xtype: 'fieldset',
-                                    title: 'Circular 170',
+                                    title: 'Circular 0170',
                                     width: 620,
+                                    height: 120,
                                     collapsible: false,
                                     defaults: {
                                         labelWidth: 89,
-                                        anchor: '90%',
                                         layout: {
-                                            type: 'column',
+                                            // type: 'column',
                                             defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
                                         }},
                                     items: [{
@@ -840,25 +832,12 @@ $hoy = $sf_data->getRaw("hoy");
                                                     xtype: 'combo-riesgo',
                                                     hideLabel: false,
                                                     fieldLabel: 'Nivel de Riesgo',
-                                                    labelWidth: 100,
+                                                    columnWidth: 0.4,
                                                     name: 'nvlriesgo',
                                                     width: 240,
                                                     forceSelection: true
                                                 }]
-                                        }]
-                                }, {
-                                    xtype: 'fieldset',
-                                    title: 'Superintendencia de Sociedades',
-                                    width: 620,
-                                    collapsible: false,
-                                    defaults: {
-                                        labelWidth: 89,
-                                        anchor: '90%',
-                                        layout: {
-                                            type: 'column',
-                                            defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
-                                        }},
-                                    items: [{
+                                        },{
                                             xtype: 'fieldcontainer',
                                             hideLabel: true,
                                             combineErrors: true,
@@ -870,64 +849,82 @@ $hoy = $sf_data->getRaw("hoy");
                                                 hideLabel: false
                                             },
                                             items: [{
-                                                    xtype: 'combo-si-no',
-                                                    value: '',
-                                                    fieldLabel: 'Reportado',
-                                                    name: 'leyinsolvencia',
-                                                    width: 160,
-                                                    columnWidth: 0.4,
-                                                    forceSelection: true
-                                                }, {
                                                     xtype: 'textfield',
                                                     hideLabel: false,
                                                     fieldLabel: 'Comentario',
                                                     labelWidth: 100,
                                                     name: 'comentario',
-                                                    width: 350,
+                                                    width: 500
                                                 }]
                                         }]
                                 }, {
-                                    xtype: 'fieldset',
-                                    title: 'Lista OFAC',
-                                    width: 620,
-                                    collapsible: false,
+                                    xtype: 'fieldcontainer',
+                                    hideLabel: true,
+                                    layout: 'column',
+                                    //width: 620,
                                     defaults: {
-                                        labelWidth: 89,
-                                        anchor: '90%',
-                                        layout: {
-                                            type: 'column',
-                                            defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
-                                        }},
+                                        flex: 2,
+                                        hideLabel: false
+                                    },
                                     items: [{
-                                            xtype: 'fieldcontainer',
-                                            hideLabel: true,
-                                            combineErrors: true,
-                                            height: 45,
-                                            msgTarget: 'under',
-                                            layout: 'column',
-                                            defaults: {
-                                                flex: 2,
-                                                hideLabel: false
-                                            },
-                                            items: [{
-                                                    xtype: 'combo-si-no',
-                                                    value: '',
-                                                    fieldLabel: 'Reportado',
-                                                    name: 'listaclinton',
-                                                    width: 160,
-                                                    columnWidth: 0.4,
-                                                    forceSelection: true
-                                                }, {
-                                                    xtype: 'combo-nit',
-                                                    hideLabel: false,
-                                                    fieldLabel: 'Tipo de NIT',
-                                                    labelWidth: 100,
-                                                    name: 'tipo',
-                                                    width: 350,
-                                                    forceSelection: true
-                                                }]
+                                        xtype: 'fieldset',
+                                        title: 'Superintendencia de Sociedades',
+                                        columnWidth: 0.495,
+                                        collapsible: false,
+                                        defaults: {
+                                            labelWidth: 89,
+                                            layout: {
+                                                type: 'column',
+                                                defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
+                                            }},
+                                        items: [{
+                                                xtype: 'fieldcontainer',
+                                                hideLabel: true,
+                                                combineErrors: true,
+                                                height: 45,
+                                                msgTarget: 'under',
+                                                defaults: {
+                                                    flex: 2,
+                                                    hideLabel: false
+                                                },
+                                                items: [{
+                                                        xtype: 'combo-si-no',
+                                                        value: '',
+                                                        fieldLabel: 'Reportado',
+                                                        name: 'leyinsolvencia',
+                                                        forceSelection: true
+                                                    }]
+                                            }]
+                                    },{
+                                        xtype: 'fieldset',
+                                        title: 'Lista OFAC',
+                                        columnWidth: 0.495,
+                                        collapsible: false,
+                                        defaults: {
+                                            labelWidth: 89,
+                                            layout: {
+                                                type: 'column',
+                                                defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
+                                            }},
+                                        items: [{
+                                                xtype: 'fieldcontainer',
+                                                hideLabel: true,
+                                                combineErrors: true,
+                                                height: 45,
+                                                msgTarget: 'under',
+                                                defaults: {
+                                                    flex: 2,
+                                                    hideLabel: false
+                                                },
+                                                items: [{
+                                                        xtype: 'combo-si-no',
+                                                        value: '',
+                                                        fieldLabel: 'Reportado',
+                                                        name: 'listaclinton',
+                                                        forceSelection: true
+                                                    }]
+                                            }]
                                         }]
-
                                 }, {
                                     xtype: 'fieldset',
                                     title: 'Certificaciones',
@@ -936,7 +933,6 @@ $hoy = $sf_data->getRaw("hoy");
                                     collapsible: false,
                                     defaults: {
                                         labelWidth: 89,
-                                        anchor: '90%',
                                         layout: {
                                             type: 'column',
                                             defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
@@ -1013,11 +1009,9 @@ $hoy = $sf_data->getRaw("hoy");
                 }, {
                     title: 'Info. Tributaria',
                     autoScroll: true,
-                    height: 400,
                     items: [{
                             xtype: 'fieldset',
                             title: 'Nuevos Datos para el Cliente',
-                            width: 640,
                             collapsible: false,
                             defaults: {
                                 labelWidth: 89,
@@ -1029,7 +1023,6 @@ $hoy = $sf_data->getRaw("hoy");
                             items: [{
                                     xtype: 'fieldset',
                                     title: 'Persona',
-                                    width: 620,
                                     collapsible: false,
                                     defaults: {
                                         labelWidth: 89,

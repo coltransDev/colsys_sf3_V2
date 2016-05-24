@@ -2535,13 +2535,6 @@ class clientesActions extends sfActions {
                 if ($datos->listaclinton) {
                     $cliente->setCaListaclinton(utf8_decode($datos->listaclinton));
                 }
-                if ($datos->tipo) {
-                    if($datos->tipo == ''){
-                        $cliente->setCaTipo(null);
-                    } else {
-                        $cliente->setCaTipo(utf8_decode($datos->tipo));
-                    }
-                }
                 if ($datos->iso) {
                     $cliente->setCaIso(utf8_decode($datos->iso));
                 }
