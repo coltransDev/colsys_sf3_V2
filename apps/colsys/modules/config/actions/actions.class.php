@@ -117,8 +117,7 @@ class configActions extends sfActions {
         {
             $childrens[] = array("text" => "Dian Servicios","leaf" => true,"id" => "1");            
             $childrens[] = array("text" => "No. Radicaci&oacute;n Muisca","leaf" => true,"id" => "2");
-            $childrens[] = array("text" => "Bodegas","leaf" => true,"id" => "3");
-            $childrens[] = array("text" => "Cargos","leaf" => true,"id" => "4");
+            $childrens[] = array("text" => "Bodegas","leaf" => true,"id" => "3");            
         }
 
         $tree["children"] = $childrens;
@@ -211,71 +210,4 @@ class configActions extends sfActions {
         $this->responseArray = array("errorInfo" => $errorInfo, "id" => implode(",", $ids), "success" => true);
         $this->setTemplate("responseTemplate");
     }
-    
-    
-        /*
-     * @Nataly
-     * @return arreglo de cargos por empresa
-     * @param $request 
-        * idempresa: n\FAmero de identificaci\F3n de la empresa
-     */
-    function executeDatosCargos($request) {
-        $empresa = $request->getParameter("idempresa");
-        
-        $c=Doctrine::getTable("Cargo")
-                            ->createQuery("s")
-                            ->select("count(*)")
-                            ->where("s.ca_idempresa= ?",$empresa) 
-                            ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-        $debug=$c->getSqlQuery();
-        $totalc=$c->execute();
-        
-        $q = Doctrine::getTable("Cargo")
-                            ->createQuery("s")
-                            ->select("*")
-                            ->addOrderBy( "s.ca_cargo ASC" )
-                            ->limit(71)
-                            ->offset($request->getParameter("start"))
-                            ->Where("s.ca_idempresa = ?",$empresa)
-                            ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-        $debug=$q->getSqlQuery();
-        $cargos=$q->execute();
-        
-        foreach($cargos as $k=>$c)
-        {
-            $cargos[$k]["s_ca_cargo"]=utf8_encode($cargos[$k][utf8_encode("s_ca_cargo")]);
-        }
-        $this->responseArray = array("success" => true, "root" => $cargos, "total" => $totalc ,"debug"=>$debug,"idempresa"=>$empresa);
-        $this->setTemplate("responseTemplate");
-    }
-    /*
-     * @Nataly
-     * @return nuevo Cargo
-     * @param $request 
-        * datos: Json de datos por almacenar
-     */
-    function executeGuardarGridCargos($request) {
-        $datos = $request->getParameter("datos");
-        $datos=  utf8_decode($datos);
-        $cargos = json_decode($datos);
-        $ids = array();
-            foreach($cargos as  $c)
-            {           
-                $cargo = Doctrine::getTable("Cargo")->find($c->s_ca_cargo);
-                if(!$cargo)
-                {
-                    $cargo = new Cargo();
-                    $cargo->setCaCargo($c->ca_cargo);  
-                }
-                $cargo->setCaActivo($c->ca_activo);
-                $cargo->setCaManager($c->ca_manager);
-                $cargo->setCaIdempresa($c->ca_idempresa);            
-                $cargo->save();
-                $ids[] = $c->id;
-            }
-        $this->responseArray = array("errorInfo" => '', "id" => implode(",", $ids), "success" => true);
-        $this->setTemplate("responseTemplate");
-    }
-    
-    
 }

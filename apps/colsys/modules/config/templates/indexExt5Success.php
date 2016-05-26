@@ -28,17 +28,10 @@ Ext.Loader.setConfig({
 </script>
 <?
 $permisos = $sf_data->getRaw("permisos");
-include_component("config", "gridCargos");
-//include_component("widgets5", "wgEmpresas");
 include_component("config", "gridDianServicios");
-//include_component("contabilidad", "gridCuentas");
 include_component("config", "formNumerosRadicacion");
 include_component("config", "gridBodegas");
 
-//include_component("contabilidad", "gridConsultaComprobantes",array("permisos"=>$permisos) );
-
-//include_component("riesgos", "formArchivos");
-//include_component("riesgos", "treeGridFiles");
 ?>
 <table align="center" width="98%" cellspacing="0" border="0" cellpading="0"><tr><td>
 <div id="panel"></div>
@@ -116,13 +109,7 @@ Ext.onReady(function() {
                                 else if(record.data.id=="3")
                                 {
                                     obj=[new GridBodegas({id:'form-bodegas',name:'form-bodegas',frame:true})];
-                                }
-                                else if(record.data.id=="4")
-                                {
-                                   obj=[new GridCargos({id:'grid-cargos',name:'grid-cargos'})];
-                                }
-
-                                
+                                }                               
                                 
                                 tabpanel.add(                                
                                     {
