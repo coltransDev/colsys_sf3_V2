@@ -71,7 +71,7 @@ button=0;
 });
     function actualizar_file(file)
     {
-        
+        //Ext.Ajax.setTimeout(120000);
         Ext.MessageBox.wait('Procesando', '');
 
         Ext.Ajax.request(
@@ -80,6 +80,7 @@ button=0;
             params :	{
                 archivo: file
             },
+            timeout: 120000,
             failure:function(response,options){
                 //var res = Ext.util.JSON.decode( options.response.responseText );
 
