@@ -1716,7 +1716,7 @@ class clientesActions extends sfActions {
         
     }
 
-    public function executeProcesarRc(sfWebRequest $request) {
+   public function executeProcesarRc(sfWebRequest $request) {
         try {
             $con = Doctrine_Manager::getInstance()->connection();
             $estadisticas = array();
@@ -1757,14 +1757,15 @@ class clientesActions extends sfActions {
                 $comienzo_log = "<b>linea</b>=" . $i . ":::<b>Factura</b>=" . $nfact . ":::<b>Recibo</b>=" . $nrecibo . " ::: ";
                 if (count($datos) != 13) {
                     $resultado[$i] = $comienzo_log . "Existen cantidad de campos diferente a los establecidos<br>";
-                    $estadisticas["formato_incorrecto"] ++;
+                    $estadisticas["formato_incorrecto"]++;
                     continue;
                 }
                 //echo $sucRec[$suc_recibo].'-'.$sucFac[$suc_factura]."<br>";
-                if ($suc_recibo != "15" && $suc_recibo != "5") {
+                if($suc_recibo!="15" && $suc_recibo!="5" )
+                {
                     if ($sucRec[$suc_recibo] != $sucFac[$suc_factura]) {
-                        $resultado[$i] = $comienzo_log . "La sucursal registrada en el recibo es diferente a la de la factura (" . $suc_recibo . " :: " . $sucFac[$suc_factura] . ")";
-                        $estadisticas["direfente_sucursal"] ++;
+                        $resultado[$i] = $comienzo_log . "La sucursal registrada en el recibo es diferente a la de la factura (".$suc_recibo ." :: ".$sucFac[$suc_factura].")";
+                        $estadisticas["direfente_sucursal"]++;
                         continue;
                     }
                 }
@@ -1772,39 +1773,41 @@ class clientesActions extends sfActions {
                 if (!$nfact) {
 
                     $resultado[$i] = $comienzo_log . "No posee No Factura";
-                    $estadisticas["sin_factura"] ++;
+                    $estadisticas["sin_factura"]++;
                     continue;
                 }
                 if (strcmp($tipo_comp, 'F') != 0) {
                     $resultado[$i] = $comienzo_log . "No posee No Factura " . $tipo_comp . " ";
-                    $estadisticas["sin_factura"] ++;
+                    $estadisticas["sin_factura"]++;
                     continue;
                 }
 
                 if ($datos[2] == "" && $datos[7] == "") {
                     $resultado[$i] = $comienzo_log . "No posee No Recibo de caja ni fecha de pago";
-                    $estadisticas["sin_recibo"] ++;
-                    $estadisticas["sin_fecha"] ++;
+                    $estadisticas["sin_recibo"]++;
+                    $estadisticas["sin_fecha"]++;
                     continue;
                 }
                 if ($datos[2] == "") {
                     $resultado[$i] = $comienzo_log . "No posee No Recibo de caja";
-                    $estadisticas["sin_recibo"] ++;
+                    $estadisticas["sin_recibo"]++;
                 }
                 if ($datos[7] == "") {
                     $resultado[$i] = $comienzo_log . "No posee fecha de pago";
-                    $estadisticas["sin_fecha"] ++;
+                    $estadisticas["sin_fecha"]++;
                 }
 
                 $encontro = false;
                 $actualizo = false;
 
-                if ($suc_recibo == "15" || $suc_recibo == "5") {
-                    $sucursal = $this->getUser()->getIdSucursal();
+                if($suc_recibo=="15" || $suc_recibo=="5")
+                {
+                    $sucursal=$this->getUser()->getIdSucursal();
                     //echo "RECIBO L15".$suc_recibo;
-                } else
+                }
+                else
                     $sucursal = $sucRec[$suc_recibo];
-
+                
                 if ($sucursal == "BOG" || $sucursal == "ABO" || $sucursal == "OBO")
                     $sucursal = "'BOG','ABO','OBO'";
                 else if ($sucursal == "CLO" || $sucursal == "ACL" || $sucursal == "OCL")
@@ -1818,7 +1821,7 @@ class clientesActions extends sfActions {
                         from " . $tabla . " t,control.tb_usuarios u where (ca_factura ='" . $nfact . "' or ca_factura ='F" . $suc_factura . "-" . $nfact . "' or ca_factura ='F" . $suc_factura . " " . $nfact . "' or ca_factura ='f" . $suc_factura . "-" . $nfact . "' or ca_factura ='f" . $suc_factura . " " . $nfact . "' ) and t.ca_usucreado=u.ca_login and u.ca_idsucursal in ($sucursal) ";
                     //echo  $sql."<br>";
                     $st = $con->execute($sql);
-                    $ref = $st->fetch();
+                    $ref = $st->fetch();                    
 
                     if ($ref) {
                         $set = "";
@@ -1869,14 +1872,14 @@ class clientesActions extends sfActions {
                     $resultado[$i].=($resultado[$i] == "") ? $comienzo_log : "";
                     if (!$encontro) {
                         $resultado[$i].="FACTURA NO ENCONTRADA";
-                        $estadisticas["no_encontrado"] ++;
+                        $estadisticas["no_encontrado"]++;
                     }
                     if (!$actualizo) {
                         $resultado[$i].="Registro no actualizado";
-                        $estadisticas["no_actualizado"] ++;
+                        $estadisticas["no_actualizado"]++;
                     }
                 } else {
-                    $estadisticas["actualizada"] ++;
+                    $estadisticas["actualizada"]++;
 
                     $resultado[$i] = $comienzo_log . " REGISTRO IMPORTADO";
                 }
@@ -2564,7 +2567,7 @@ class clientesActions extends sfActions {
                 }
                 $cliente->setCaUap($datos->uap);
                 $cliente->setCaAltex($datos->altex); 
-                $cliente->setCaMasxempleados($datos->numempleados);
+                $cliente->setCaMenosxempleados($datos->numempleados);
                 $cliente->setCaFchfinanciero(date("Y-m-d H:i:s"));
                 $cliente->setCaUsufinanciero($this->getUser()->getUserId());
                 

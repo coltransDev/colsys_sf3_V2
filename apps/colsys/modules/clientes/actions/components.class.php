@@ -164,7 +164,7 @@ class clientesComponents extends sfComponents {
             "regimen" => utf8_encode($cliente->getCaRegimen()),
             "uap" => utf8_encode($cliente->getCaUap()),
             "altex" => utf8_encode($cliente->getCaAltex()),
-            "numempleados" => utf8_encode($cliente->getCaMasxempleados())
+            "numempleados" => utf8_encode($cliente->getCaMenosxempleados())
             );
 
         $con = Doctrine_Manager::getInstance()->connection();
