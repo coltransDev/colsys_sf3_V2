@@ -90,14 +90,14 @@ $referencia = $sf_data->getRaw("referencia");
         Ext.define('ComboCodCargos', {
             extend: 'Ext.form.field.ComboBox',
             alias: 'widget.combo-cod-cargos',
-            store: ['CC','PP'],
+            store: ['CC', 'PP'],
             forceSelection: true
         });
 
         Ext.define('ComboUnidadesPaquete', {
             extend: 'Ext.form.field.ComboBox',
             alias: 'widget.combo-unidades-paquete',
-            store: ['Paquetes','Piezas','Cajas', 'Cartones', 'Sacos', 'Estuches', 'Jaulas', 'Palets', 'Tamores', 'Barriles', 'Bidones', 'Rollos', 'Bobina', 'Laminas', 'Pallets', 'Boxes', 'Sacks', 'Bags', 'Bulk', 'Skid', 'Rolls', 'Barrels', 'Cartons', 'Case', 'Tarp']
+            store: ['Paquetes', 'Piezas', 'Cajas', 'Cartones', 'Sacos', 'Estuches', 'Jaulas', 'Palets', 'Tamores', 'Barriles', 'Bidones', 'Rollos', 'Bobina', 'Laminas', 'Pallets', 'Boxes', 'Sacks', 'Bags', 'Bulk', 'Skid', 'Rolls', 'Barrels', 'Cartons', 'Case', 'Tarp']
         });
 
         Ext.define('ComboUnidadesPeso', {
@@ -154,85 +154,85 @@ $referencia = $sf_data->getRaw("referencia");
                     title: 'Ruta y Destino',
                     flex: 1,
                     items: [{
-                        xtype: 'container',
-                        anchor: '100%',
-                        layout: 'hbox',
-                        items:[{
                             xtype: 'container',
-                            layout: 'anchor',
+                            anchor: '100%',
+                            layout: 'hbox',
                             items: [{
-                                xtype:'textfield',
-                                fieldLabel: 'To',
-                                name: 'iddestino_uno',
-                                allowBlank: false,
-                                maxLength: 3,
-                                maxLengthText: 'Excede el tamaño permitido',
-                                labelWidth: 25,
-                                width: 70,
-                                listeners:{
-                                    change:function(field){
-                                        field.setValue(field.getValue().toUpperCase());
-                                    }
-                                }
-                            }, {
-                                xtype:'textfield',
-                                fieldLabel: 'To',
-                                name: 'iddestino_dos',
-                                allowBlank: true,
-                                maxLength: 3,
-                                maxLengthText: 'Excede el tamaño permitido',
-                                labelWidth: 25,
-                                width: 70,
-                                listeners:{
-                                    change:function(field){
-                                        field.setValue(field.getValue().toUpperCase());
-                                    }
-                                }
-                            }, {
-                                xtype:'textfield',
-                                fieldLabel: 'To',
-                                name: 'iddestino_trs',
-                                allowBlank: true,
-                                maxLength: 3,
-                                maxLengthText: 'Excede el tamaño permitido',
-                                labelWidth: 25,
-                                width: 70,
-                                listeners:{
-                                    change:function(field){
-                                        field.setValue(field.getValue().toUpperCase());
-                                    }
-                                }
-                            }]
-                        },{
-                            xtype: 'container',
-                            layout: 'anchor',
-                            defaults: {
-                                flex: 1,
-                                style: {
-                                    padding: '10px'
-                                }
-                            },
-                            items: [{
-                                xtype: 'combo-carriers',
-                                fieldLabel: '&nbsp;By Carrier',
-                                name: 'idcarrier_uno',
-                                labelWidth: 75,
-                                anchor:'95%'
-                            },{
-                                xtype: 'combo-carriers',
-                                fieldLabel: '&nbsp;By Carrier',
-                                name: 'idcarrier_dos',
-                                labelWidth: 75,
-                                anchor:'95%'
-                            },{
-                                xtype: 'combo-carriers',
-                                fieldLabel: '&nbsp;By Carrier',
-                                name: 'idcarrier_trs',
-                                labelWidth: 75,
-                                anchor:'95%'
-                            }]
-                        }]
-                    }],
+                                    xtype: 'container',
+                                    layout: 'anchor',
+                                    items: [{
+                                            xtype: 'textfield',
+                                            fieldLabel: 'To',
+                                            name: 'iddestino_uno',
+                                            allowBlank: false,
+                                            maxLength: 3,
+                                            maxLengthText: 'Excede el tamaño permitido',
+                                            labelWidth: 25,
+                                            width: 70,
+                                            listeners: {
+                                                change: function (field) {
+                                                    field.setValue(field.getValue().toUpperCase());
+                                                }
+                                            }
+                                        }, {
+                                            xtype: 'textfield',
+                                            fieldLabel: 'To',
+                                            name: 'iddestino_dos',
+                                            allowBlank: true,
+                                            maxLength: 3,
+                                            maxLengthText: 'Excede el tamaño permitido',
+                                            labelWidth: 25,
+                                            width: 70,
+                                            listeners: {
+                                                change: function (field) {
+                                                    field.setValue(field.getValue().toUpperCase());
+                                                }
+                                            }
+                                        }, {
+                                            xtype: 'textfield',
+                                            fieldLabel: 'To',
+                                            name: 'iddestino_trs',
+                                            allowBlank: true,
+                                            maxLength: 3,
+                                            maxLengthText: 'Excede el tamaño permitido',
+                                            labelWidth: 25,
+                                            width: 70,
+                                            listeners: {
+                                                change: function (field) {
+                                                    field.setValue(field.getValue().toUpperCase());
+                                                }
+                                            }
+                                        }]
+                                }, {
+                                    xtype: 'container',
+                                    layout: 'anchor',
+                                    defaults: {
+                                        flex: 1,
+                                        style: {
+                                            padding: '10px'
+                                        }
+                                    },
+                                    items: [{
+                                            xtype: 'combo-carriers',
+                                            fieldLabel: '&nbsp;By Carrier',
+                                            name: 'idcarrier_uno',
+                                            labelWidth: 75,
+                                            anchor: '95%'
+                                        }, {
+                                            xtype: 'combo-carriers',
+                                            fieldLabel: '&nbsp;By Carrier',
+                                            name: 'idcarrier_dos',
+                                            labelWidth: 75,
+                                            anchor: '95%'
+                                        }, {
+                                            xtype: 'combo-carriers',
+                                            fieldLabel: '&nbsp;By Carrier',
+                                            name: 'idcarrier_trs',
+                                            labelWidth: 75,
+                                            anchor: '95%'
+                                        }]
+                                }]
+                        }],
                 }, {
                     xtype: 'fieldset',
                     columnWidth: 0.15,
@@ -255,8 +255,30 @@ $referencia = $sf_data->getRaw("referencia");
                         name: 'consecutivo',
                         allowBlank: false,
                         maxLength: 20,
-                        maxLengthText: 'Excede el tamaño permitido'
-                    }
+                        maxLengthText: 'Excede el tamaño permitido',
+                        validateBlank: true,
+                        validateOnBlur: true,
+                        validateOnChange: false,
+                        validator: function (value) {
+                                var me = this;
+                                Ext.Ajax.request({
+                                    url: '<?= url_for('inoExpo/validarGuiaNumero') ?>',
+                                    params: {
+                                        ref: '<?= $referencia ?>',
+                                        datos: value
+                                    },
+                                    success: function (response) {
+                                        if (Ext.decode(response.responseText).valid){
+                                            me.clearInvalid();
+                                            me.textValid = true;
+                                        }else{
+                                            me.markInvalid(Ext.decode(response.responseText).errorInfo);
+                                            me.textValid = false;
+                                        }
+                                    }
+                                });
+                            }
+                        }
                 }, {
                     xtype: 'fieldset',
                     columnWidth: 0.55,
@@ -375,255 +397,259 @@ $referencia = $sf_data->getRaw("referencia");
             },
             layout: 'column', // arrange fieldsets side by side
             items: [{
-                xtype: 'hiddenfield',
-                name: 'iddoctransporte'
-            }, {
-                xtype: 'fieldset',
-                columnWidth: 0.245,
-                title: 'Number Packages',
-                defaults: {anchor: '100%'},
-                layout: 'anchor',
-                items: {
-                    id: 'number_packages',
-                    xtype: 'numberfield',
-                    name: 'number_packages',
-                    allowBlank: true,
-                    hideTrigger: true,
-                    decimalPrecision: 2,
-                    keyNavEnabled: false,
-                    mouseWheelEnabled: false
-                }
-            }, {
-                xtype: 'fieldset',
-                columnWidth: 0.245,
-                title: 'Kind Packages',
-                defaults: {anchor: '100%'},
-                layout: 'anchor',
-                items: {
-                    id: 'kind_packages',
-                    xtype: 'combo-unidades-paquete',
-                    name: 'kind_packages',
-                    forceSelection: false,
-                    allowBlank: true
-                }
-            }, {
-                xtype: 'fieldset',
-                columnWidth: 0.245,
-                title: 'Gross Weight',
-                defaults: {anchor: '100%'},
-                layout: 'anchor',
-                items: {
-                    xtype: 'numberfield',
-                    name: 'gross_weight',
-                    allowBlank: true,
-                    hideTrigger: true,
-                    decimalPrecision: 2,
-                    keyNavEnabled: false,
-                    mouseWheelEnabled: false
-                }
-            }, {
-                xtype: 'fieldset',
-                columnWidth: 0.245,
-                title: 'Gross Unit',
-                defaults: {anchor: '100%'},
-                layout: 'anchor',
-                items: {
-                    xtype: 'combo-unidades-peso',
-                    name: 'gross_unit',
-                    forceSelection: false,
-                    allowBlank: true
-                }
-            }, {
-                xtype: 'fieldset',
-                columnWidth: 0.245,
-                title: 'Chargeable Details',
-                defaults: {anchor: '100%'},
-                layout: 'anchor',
-                items: {
-                    xtype: 'textfield',
-                    name: 'weight_details',
-                    allowBlank: true,
-                    maxLength: 17,
-                    maxLengthText: 'Excede el tamaño permitido'
-                }
-            }, {
-                xtype: 'fieldset',
-                columnWidth: 0.245,
-                title: 'Chargeable Weight',
-                defaults: {anchor: '100%'},
-                layout: 'anchor',
-                items: {
-                    id: 'weight_charge',
-                    xtype: 'numberfield',
-                    name: 'weight_charge',
-                    allowBlank: false,
-                    hideTrigger: true,
-                    decimalPrecision: 2,
-                    keyNavEnabled: false,
-                    mouseWheelEnabled: false,
-                    listeners:{
-                        change:function(field){
-                            rate = Ext.getCmp('rate_charge');
-                            total = Ext.getCmp('total_charge');
-                            total.setValue(field.getValue() * rate.getValue());
+                    xtype: 'hiddenfield',
+                    name: 'iddoctransporte'
+                }, {
+                    xtype: 'fieldset',
+                    columnWidth: 0.245,
+                    title: 'Number Packages',
+                    defaults: {anchor: '100%'},
+                    layout: 'anchor',
+                    items: {
+                        id: 'number_packages',
+                        xtype: 'numberfield',
+                        name: 'number_packages',
+                        allowBlank: true,
+                        hideTrigger: true,
+                        decimalPrecision: 2,
+                        keyNavEnabled: false,
+                        mouseWheelEnabled: false
+                    }
+                }, {
+                    xtype: 'fieldset',
+                    columnWidth: 0.245,
+                    title: 'Kind Packages',
+                    defaults: {anchor: '100%'},
+                    layout: 'anchor',
+                    items: {
+                        id: 'kind_packages',
+                        xtype: 'combo-unidades-paquete',
+                        name: 'kind_packages',
+                        forceSelection: false,
+                        allowBlank: true
+                    }
+                }, {
+                    xtype: 'fieldset',
+                    columnWidth: 0.245,
+                    title: 'Gross Weight',
+                    defaults: {anchor: '100%'},
+                    layout: 'anchor',
+                    items: {
+                        xtype: 'numberfield',
+                        name: 'gross_weight',
+                        allowBlank: true,
+                        hideTrigger: true,
+                        decimalPrecision: 2,
+                        keyNavEnabled: false,
+                        mouseWheelEnabled: false
+                    }
+                }, {
+                    xtype: 'fieldset',
+                    columnWidth: 0.245,
+                    title: 'Gross Unit',
+                    defaults: {anchor: '100%'},
+                    layout: 'anchor',
+                    items: {
+                        xtype: 'combo-unidades-peso',
+                        name: 'gross_unit',
+                        forceSelection: false,
+                        allowBlank: true
+                    }
+                }, {
+                    xtype: 'fieldset',
+                    columnWidth: 0.245,
+                    title: 'Chargeable Details',
+                    defaults: {anchor: '100%'},
+                    layout: 'anchor',
+                    items: {
+                        xtype: 'textfield',
+                        name: 'weight_details',
+                        allowBlank: true,
+                        maxLength: 17,
+                        maxLengthText: 'Excede el tamaño permitido'
+                    }
+                }, {
+                    xtype: 'fieldset',
+                    columnWidth: 0.245,
+                    title: 'Chargeable Weight',
+                    defaults: {anchor: '100%'},
+                    layout: 'anchor',
+                    items: {
+                        id: 'weight_charge',
+                        xtype: 'numberfield',
+                        name: 'weight_charge',
+                        allowBlank: false,
+                        hideTrigger: true,
+                        decimalPrecision: 2,
+                        keyNavEnabled: false,
+                        mouseWheelEnabled: false,
+                        listeners: {
+                            change: function (field) {
+                                rate = Ext.getCmp('rate_charge');
+                                total = Ext.getCmp('total_charge');
+                                total.setValue(field.getValue() * rate.getValue());
+                            }
                         }
                     }
-                }
-            }, {
-                xtype: 'fieldset',
-                columnWidth: 0.245,
-                title: 'Rate Charge',
-                defaults: {anchor: '100%'},
-                layout: 'anchor',
-                items: {
-                    id: 'rate_charge',
-                    xtype: 'numberfield',
-                    name: 'rate_charge',
-                    allowBlank: false,
-                    hideTrigger: true,
-                    decimalPrecision: 2,
-                    keyNavEnabled: false,
-                    mouseWheelEnabled: false,
-                    listeners:{
-                        change:function(field){
-                            weight = Ext.getCmp('weight_charge');
-                            total = Ext.getCmp('total_charge');
-                            total.setValue(field.getValue() * weight.getValue());
+                }, {
+                    xtype: 'fieldset',
+                    columnWidth: 0.245,
+                    title: 'Rate Charge',
+                    defaults: {anchor: '100%'},
+                    layout: 'anchor',
+                    items: {
+                        id: 'rate_charge',
+                        xtype: 'numberfield',
+                        name: 'rate_charge',
+                        allowBlank: false,
+                        hideTrigger: true,
+                        decimalPrecision: 2,
+                        keyNavEnabled: false,
+                        mouseWheelEnabled: false,
+                        listeners: {
+                            change: function (field) {
+                                weight = Ext.getCmp('weight_charge');
+                                total = Ext.getCmp('total_charge');
+                                total.setValue(field.getValue() * weight.getValue());
+                            }
                         }
                     }
-                }
-            }, {
-                xtype: 'fieldset',
-                columnWidth: 0.245,
-                title: 'Total',
-                defaults: {anchor: '100%'},
-                layout: 'anchor',
-                items: {
-                    id: 'total_charge',
-                    xtype: 'numberfield',
-                    name: 'total_charge',
-                    readOnly: true,
-                    hideTrigger: true,
-                    decimalPrecision: 2,
-                    keyNavEnabled: false,
-                    mouseWheelEnabled: false
-                }
-            }, {
-                xtype: 'fieldset',
-                columnWidth: 0.245,
-                title: 'Due Agent',
-                defaults: {anchor: '100%'},
-                layout: 'anchor',
-                items: {
-                    xtype: 'numberfield',
-                    name: 'due_agent',
-                    allowBlank: false,
-                    hideTrigger: true,
-                    decimalPrecision: 2,
-                    keyNavEnabled: false,
-                    mouseWheelEnabled: false
-                }
-            }, {
-                xtype: 'fieldset',
-                columnWidth: 0.245,
-                title: 'Due Carrier',
-                defaults: {anchor: '100%'},
-                layout: 'anchor',
-                items: {
-                    xtype: 'numberfield',
-                    name: 'due_carrier',
-                    allowBlank: false,
-                    hideTrigger: true,
-                    decimalPrecision: 2,
-                    keyNavEnabled: false,
-                    mouseWheelEnabled: false
-                }
-            }, {
-                xtype: 'fieldset',
-                columnWidth: 0.490,
-                title: 'Nature and Qantity of Goods',
-                defaults: {anchor: '100%'},
-                layout: 'anchor',
-                items: {
-                    xtype: 'textareafield',
-                    name: 'delivery_goods',
-                    allowBlank: true,
-                    height: 65,
-                    maxLength: 128,
-                    maxLengthText: 'Excede el tamaño permitido'
-                }
-            }, {
-                xtype: 'fieldset',
-                columnWidth: 0.99,
-                title: 'Other Charges',
-                defaults: {anchor: '100%'},
-                layout: 'anchor',
-                items: {
-                    xtype: 'textareafield',
-                    name: 'other_charges',
-                    allowBlank: true,
-                    height: 100,
-                    maxLength: 17,
-                    maxLengthText: 'Excede el tamaño permitido'
-                }
-            }],
+                }, {
+                    xtype: 'fieldset',
+                    columnWidth: 0.245,
+                    title: 'Total',
+                    defaults: {anchor: '100%'},
+                    layout: 'anchor',
+                    items: {
+                        id: 'total_charge',
+                        xtype: 'numberfield',
+                        name: 'total_charge',
+                        readOnly: true,
+                        hideTrigger: true,
+                        decimalPrecision: 2,
+                        keyNavEnabled: false,
+                        mouseWheelEnabled: false
+                    }
+                }, {
+                    xtype: 'fieldset',
+                    columnWidth: 0.245,
+                    title: 'Due Agent',
+                    defaults: {anchor: '100%'},
+                    layout: 'anchor',
+                    items: {
+                        xtype: 'numberfield',
+                        name: 'due_agent',
+                        allowBlank: false,
+                        hideTrigger: true,
+                        decimalPrecision: 2,
+                        keyNavEnabled: false,
+                        mouseWheelEnabled: false
+                    }
+                }, {
+                    xtype: 'fieldset',
+                    columnWidth: 0.245,
+                    title: 'Due Carrier',
+                    defaults: {anchor: '100%'},
+                    layout: 'anchor',
+                    items: {
+                        xtype: 'numberfield',
+                        name: 'due_carrier',
+                        allowBlank: false,
+                        hideTrigger: true,
+                        decimalPrecision: 2,
+                        keyNavEnabled: false,
+                        mouseWheelEnabled: false
+                    }
+                }, {
+                    xtype: 'fieldset',
+                    columnWidth: 0.490,
+                    title: 'Nature and Qantity of Goods',
+                    defaults: {anchor: '100%'},
+                    layout: 'anchor',
+                    items: {
+                        xtype: 'textareafield',
+                        name: 'delivery_goods',
+                        allowBlank: true,
+                        height: 65,
+                        maxLength: 512,
+                        maxLengthText: 'Excede el tamaño permitido'
+                    }
+                }, {
+                    xtype: 'fieldset',
+                    columnWidth: 0.99,
+                    title: 'Other Charges',
+                    defaults: {anchor: '100%'},
+                    layout: 'anchor',
+                    items: {
+                        xtype: 'textareafield',
+                        name: 'other_charges',
+                        allowBlank: true,
+                        height: 100,
+                        maxLength: 512,
+                        maxLengthText: 'Excede el tamaño permitido'
+                    }
+                }],
             dockedItems: [{
-                xtype: 'toolbar',
-                items: [{
-                        text: 'Imprimir',
-                        tooltip: 'Generar Documento de Transporte',
-                        iconCls: 'page_white_acrobat',
-                        handler: function () {
-                            var id = this.up('form').getForm().getRecord().get('iddoctransporte');
-                            if (win_file == null) {
-                                win_file = new Ext.Window({
-                                    title: 'Vista Preliminar del Documento',
-                                    height: 600,
-                                    width: 900,
-                                    items: [{
-                                            xtype: 'component',
-                                            itemId: 'panel-document-preview',
-                                            autoEl: {
-                                                tag: 'iframe',
-                                                width: '100%',
-                                                height: '100%',
-                                                frameborder: '0',
-                                                scrolling: 'auto',
-                                                src: '<?= url_for('inoExpo/imprimirAwbsTransporte') ?>' + '/id/' + id + '/borrador/' + Ext.getCmp('borradorChk').value + '/plantilla/' + Ext.getCmp('plantillaChk').value + '/copia/' + Ext.getCmp('copiaChk').value
+                    xtype: 'toolbar',
+                    items: [{
+                            text: 'Imprimir',
+                            tooltip: 'Generar Documento de Transporte',
+                            iconCls: 'page_white_acrobat',
+                            handler: function () {
+                                var id = this.up('form').getForm().getRecord().get('iddoctransporte');
+                                if (win_file == null) {
+                                    win_file = new Ext.Window({
+                                        title: 'Vista Preliminar del Documento',
+                                        height: 600,
+                                        width: 900,
+                                        items: [{
+                                                xtype: 'component',
+                                                itemId: 'panel-document-preview',
+                                                autoEl: {
+                                                    tag: 'iframe',
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    frameborder: '0',
+                                                    scrolling: 'auto',
+                                                    src: '<?= url_for('inoExpo/imprimirAwbsTransporte') ?>' + '/id/' + id + '/borrador/' + Ext.getCmp('borradorChk').value + '/plantilla/' + Ext.getCmp('plantillaChk').value + '/guiahija/' + Ext.getCmp('guiahijaChk').value + '/copia/' + Ext.getCmp('copiaChk').value
+                                                }
+                                            }],
+                                        listeners: {
+                                            close: function (panel, eOpts) {
+                                                win_file = null;
                                             }
-                                        }],
-                                    listeners: {
-                                        close: function (panel, eOpts) {
-                                            win_file = null;
                                         }
-                                    }
-                                })
+                                    })
+                                }
+                                win_file.show();
                             }
-                            win_file.show();
-                        }
-                    }, {
-                        xtype: 'tbspacer'
-                    }, {
-                        xtype: 'fieldcontainer',
-                        defaultType: 'checkboxfield',
-                        layout: 'hbox',
-                        items: [{
-                                boxLabel: 'Con Plantilla&nbsp;&nbsp;',
-                                name: 'plantilla',
-                                checked: true,
-                                id: 'plantillaChk'
-                            }, {
-                                boxLabel: 'Borrador&nbsp;&nbsp;',
-                                name: 'borrador',
-                                id: 'borradorChk'
-                            }, {
-                                boxLabel: 'Copia&nbsp;&nbsp;',
-                                name: 'copia',
-                                id: 'copiaChk'
-                            }
-                        ]
-                    }]
-            }],
+                        }, {
+                            xtype: 'tbspacer'
+                        }, {
+                            xtype: 'fieldcontainer',
+                            defaultType: 'checkboxfield',
+                            layout: 'hbox',
+                            items: [{
+                                    boxLabel: 'Con Plantilla&nbsp;&nbsp;',
+                                    name: 'plantilla',
+                                    checked: true,
+                                    id: 'plantillaChk'
+                                }, {
+                                    boxLabel: 'Guia hija&nbsp;&nbsp;',
+                                    name: 'guia_hija',
+                                    id: 'guiahijaChk'
+                                }, {
+                                    boxLabel: 'Borrador&nbsp;&nbsp;',
+                                    name: 'borrador',
+                                    id: 'borradorChk'
+                                }, {
+                                    boxLabel: 'Copia&nbsp;&nbsp;',
+                                    name: 'copia',
+                                    id: 'copiaChk'
+                                }
+                            ]
+                        }]
+                }],
             buttons: [{
                     text: 'Guardar',
                     handler: function () {
@@ -662,7 +688,7 @@ $referencia = $sf_data->getRaw("referencia");
                 }
             ]
         });
-        
+
         // create the grid
         new Ext.grid.GridPanel({
             id: 'gridAwbsTransporte',
@@ -770,15 +796,15 @@ $referencia = $sf_data->getRaw("referencia");
                                                 }
                                             })
                                         }
-                                        if (rec.data.delivery_goods == ""){
+                                        if (rec.data.delivery_goods == "") {
                                             rec.set('delivery_goods', res.data.nature_quantity);
                                         }
                                         win_liquid.down('form').loadRecord(rec);
                                         win_liquid.show();
                                     },
-                                    failure: function(form, action) {
+                                    failure: function (form, action) {
                                         Ext.Msg.alert("Load failed", action.result.errorMessage);
-                                    }                                    
+                                    }
                                 });
                             }
                         }, {
@@ -838,10 +864,10 @@ $referencia = $sf_data->getRaw("referencia");
                                         win_header.down('form').getForm().load({
                                             url: '<?= url_for("inoExpo/valoresPorDefecto") ?>',
                                             params: {
-                                                idconfig: 260,   // Id Caso de Uso Valores por defecto para la Guía
-                                                referencia: '<?=  str_replace(".", "", $referencia)?>'
+                                                idconfig: 260, // Id Caso de Uso Valores por defecto para la Guía
+                                                referencia: '<?= str_replace(".", "", $referencia) ?>'
                                             },
-                                            failure: function(form, action) {
+                                            failure: function (form, action) {
                                                 Ext.Msg.alert("Load failed", action.result.errorMessage);
                                             }
                                         });

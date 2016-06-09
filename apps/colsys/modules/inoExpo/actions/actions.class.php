@@ -393,6 +393,7 @@ class inoExpoActions extends sfActions {
         $this->borrador = ($this->getRequestParameter("borrador")=='true')?true:false;
         $this->plantilla = ($this->getRequestParameter("plantilla")=='true')?true:false;
         $this->copia = ($this->getRequestParameter("copia")=='true')?true:false;
+        $this->guiahija = ($this->getRequestParameter("guiahija")=='true')?true:false;
     }
 
     public function executeDatosItemsDocs(sfWebRequest $request) {
@@ -576,6 +577,24 @@ class inoExpoActions extends sfActions {
             $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
         }
 
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeValidarGuiaNumero(sfWebRequest $request) {
+        $referencia = $request->getParameter("ref");
+        $consecutivo = $request->getParameter("datos");
+        $expoAwbtransporte = Doctrine::getTable("ExpoAwbtransporte")
+                ->createQuery("d")
+                ->addWhere("d.ca_referencia != ?", $referencia)
+                ->addWhere("d.ca_consecutivo = ?", $consecutivo)
+                ->fetchOne();
+        
+        if (!$expoAwbtransporte){
+            $this->responseArray = array("success" => true, "valid" => true);
+        }else{
+            $this->responseArray = array("success" => true, "valid" => false, "errorInfo" => utf8_encode("Número de guía usado en Referencia ".$expoAwbtransporte->getCaReferencia()));
+        }
+        
         $this->setTemplate("responseTemplate");
     }
 
