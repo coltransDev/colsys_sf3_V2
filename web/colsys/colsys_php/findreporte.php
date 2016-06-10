@@ -316,8 +316,10 @@ if (!isset($contents) and !isset($boton) and !isset($accion)) {
                    . "      window.parent.elegir_item('continuacion_dest',source.value);";
                 echo "    elemento = window.parent.document.getElementById('continuacion_dest');";
                 echo "    elemento.disabled = habilita;";
-                echo "    source = document.getElementById('idbodega_'+i);";
-                echo "    window.parent.elegir_item('idbodega',source.value);";
+                echo "    if(document.getElementById('continuacion_'+i).value != 'DTA'){";
+                echo "      source = document.getElementById('idbodega_'+i);";
+                echo "      window.parent.elegir_item('idbodega',source.value);";
+                echo "    }";
                 echo "    source = document.getElementById('login_'+i);";
                 echo "    window.parent.elegir_item('login',source.value);";
                 echo "    window.parent.frames.findreporte.style.visibility = \"hidden\";";
