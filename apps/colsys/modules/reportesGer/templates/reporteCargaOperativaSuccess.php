@@ -516,7 +516,7 @@ if ($opcion and $tipoInforme != "") {
     <?
             $cliente_tot[$idcliente][$ano_mem][$mes_mem]["cant_emails"]+= $r["ca_cant_emails"];
             $operativo_sub["Comunicaciones"][$ano_mem][Utils::mesLargo ($mes_mem)]+= $r["ca_cant_emails"];
-            $operativo_tot["Comunicaciones"][$r["ca_nomoperativo"]][$r["ca_traorigen"]][$r["ca_transporte"]][$r["ca_modalidad"]]+= $r["ca_cant_emails"];
+            $operativo_tot["Comunicaciones"][utf8_encode($r["ca_nomoperativo"])][$r["ca_traorigen"]][$r["ca_transporte"]][$r["ca_modalidad"]]+= $r["ca_cant_emails"];
             if(!in_array(Utils::mesLargo ($mes_mem)."-".$ano_mem, $mesesX)){
                 $mesesX[]=Utils::mesLargo ($mes_mem)."-".$ano_mem;
             }
