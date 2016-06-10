@@ -188,6 +188,15 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 	$registros = (!$rs->IsEmpty())?"ca_idcliente = ".$rs->Value('ca_idcliente'):"false";
 	$cn =& DlRecordset::NewRecordset($conn);
 	$tm =& DlRecordset::NewRecordset($conn);
+	if (!$tm->Open("SELECT DISTINCT ca_perfil FROM control.tb_usuarios_perfil WHERE ca_login = '$usuario' AND ca_perfil in ('cumplimiento-colsys','tipos-de-nit-colsys')")) {                  // Busca si el usuario tiene el perfil para el acceso
+		echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+		echo "<script>document.location.href = 'entrada.php';</script>";
+		exit; }
+        $perfiles = array();
+        while (!$tm->Eof() and !$tm->IsEmpty()) {
+            $perfiles[] = $tm->Value('ca_perfil');
+            $tm->MoveNext();
+        }
 
 	echo "<HTML>";
 	echo "<HEAD>";
@@ -271,8 +280,12 @@ require_once("menu.php");
 	   echo "  <TD Class=listar style='$vetado' COLSPAN=3>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento."</TD>";
 	   echo "  <TD Class=listar style='$vetado' ROWSPAN=9 style='text-align: center;'>";
 	   echo "    <TABLE>";
-	   echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Control Financiero\", ".$rs->Value('ca_idcliente').");' style='color=blue;'><BR><IMG src='graficos/vista.gif'><BR>Control Financiero</TD></TR>";
-           echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/controlFinancieroExt4/idcliente/" . $rs->Value('ca_idcliente') . "\"'><BR><IMG src='graficos/encuesta.gif'><BR>Cumplimiento<BR />Circular 0170</TD></TR>";
+           if (in_array('tipos-de-nit-colsys', $perfiles)){
+               echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Control Financiero\", ".$rs->Value('ca_idcliente').");' style='color=blue;'><BR><IMG src='graficos/vista.gif'><BR>Control Financiero</TD></TR>";
+           }
+           if (in_array('cumplimiento-colsys', $perfiles)){
+               echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/controlFinancieroExt4/idcliente/" . $rs->Value('ca_idcliente') . "\"'><BR><IMG src='graficos/encuesta.gif'><BR>Cumplimiento<BR />Circular 0170</TD></TR>";
+           }
 	   echo "    </TABLE>";
 	   echo "  </TD>";
 	   echo "</TR>";
