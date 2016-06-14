@@ -1969,10 +1969,10 @@ class clientesActions extends sfActions {
         foreach ($mandatos as $mandato) {
             $data[] = array("idcliente" => $mandato->getCaIdcliente(),
                 "idciudad" => $mandato->getCaIdciudad(),
-                "ciudad" => $mandato->getCiudad()->getCaCiudad(),
+                "ciudad" => utf8_encode($mandato->getCiudad()->getCaCiudad()),
                 "idtipo" => $mandato->getCaIdtipo(),
-                "tipo" => $mandato->getMandatosTipo()->getCaTipo(),
-                "clase" => $mandato->getMandatosTipo()->getCaClase(),
+                "tipo" => utf8_encode($mandato->getMandatosTipo()->getCaTipo()),
+                "clase" => utf8_encode($mandato->getMandatosTipo()->getCaClase()),
                 "fchradicado" => $mandato->getCaFchradicado(),
                 "fchvencimiento" => $mandato->getCaFchvencimiento(),
                 "idarchivo" => $mandato->getCaIdarchivo(),
@@ -2138,7 +2138,7 @@ class clientesActions extends sfActions {
                 $uno = false;
             }
             if ($clase != $tipo->getCaClase()) {
-                $data[] = array("text" => $clase, "expanded" => false, "children" => $childrens);
+                $data[] = array("text" => utf8_encode($clase), "expanded" => false, "children" => $childrens);
                 $clase = $tipo->getCaClase();
                 $childrens = array();
             }
