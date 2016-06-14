@@ -3634,10 +3634,10 @@ if (isset($suf) and $suf == 'findDianDeposito') {
         $pdf->SetAligns(array("C"));
         $pdf->Row(array("Concepto para el Cliente"));
         $pdf->SetFont('Arial', '', 8);
-        $pdf->SetWidths(array(65, 30, 65, 10));
-        $pdf->SetAligns(array("L", "L", "L", "L"));
+        $pdf->SetWidths(array(65, 30, 75));
+        $pdf->SetAligns(array("L", "L", "L"));
         $pdf->Row(array("¿Recomienda Trabajar con esta firma? :", $rs->Value('ca_recomendable'), "¿Refleja operar bajo la Legalida? :", $rs->Value('ca_legalidad')));
-        $pdf->Row(array("¿Ofrece algún peligro para Coltrans o Colmas? :", $rs->Value('ca_peligro'), "Explique :", $rs->Value('ca_explicacion')));
+        $pdf->Row(array("¿Ofrece algún peligro para Coltrans o Colmas? :", $rs->Value('ca_peligro'), "Explique : ". $rs->Value('ca_explicacion')));
 
         $pdf->Ln(2);
         $pdf->SetFont('Arial', '', 9);
