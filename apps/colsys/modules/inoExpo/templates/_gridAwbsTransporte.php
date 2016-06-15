@@ -256,22 +256,20 @@ $referencia = $sf_data->getRaw("referencia");
                         allowBlank: false,
                         maxLength: 20,
                         maxLengthText: 'Excede el tamaño permitido',
-                        validateBlank: true,
-                        validateOnBlur: true,
-                        validateOnChange: false,
-                        validator: function (value) {
+                        listeners: {
+                            blur: function (field) {
                                 var me = this;
                                 Ext.Ajax.request({
                                     url: '<?= url_for('inoExpo/validarGuiaNumero') ?>',
                                     params: {
                                         ref: '<?= $referencia ?>',
-                                        datos: value
+                                        datos: field.getValue()
                                     },
                                     success: function (response) {
-                                        if (Ext.decode(response.responseText).valid){
+                                        if (Ext.decode(response.responseText).valid) {
                                             me.clearInvalid();
                                             me.textValid = true;
-                                        }else{
+                                        } else {
                                             me.markInvalid(Ext.decode(response.responseText).errorInfo);
                                             me.textValid = false;
                                         }
@@ -279,6 +277,7 @@ $referencia = $sf_data->getRaw("referencia");
                                 });
                             }
                         }
+                    }
                 }, {
                     xtype: 'fieldset',
                     columnWidth: 0.55,

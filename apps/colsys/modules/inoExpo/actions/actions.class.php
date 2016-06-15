@@ -583,18 +583,17 @@ class inoExpoActions extends sfActions {
     public function executeValidarGuiaNumero(sfWebRequest $request) {
         $referencia = $request->getParameter("ref");
         $consecutivo = $request->getParameter("datos");
-        $expoAwbtransporte = Doctrine::getTable("ExpoAwbtransporte")
-                ->createQuery("d")
-                ->addWhere("d.ca_referencia != ?", $referencia)
-                ->addWhere("d.ca_consecutivo = ?", $consecutivo)
-                ->fetchOne();
         
-        if (!$expoAwbtransporte){
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select ca_referencia from tb_expo_awbtransporte where ca_consecutivo = '$consecutivo' limit 1";
+        $rs = $con->execute($sql);
+        $expoAwbtransporte = $rs->fetch();
+        
+        if (!$expoAwbtransporte['ca_referencia']){
             $this->responseArray = array("success" => true, "valid" => true);
         }else{
-            $this->responseArray = array("success" => true, "valid" => false, "errorInfo" => utf8_encode("Número de guía usado en Referencia ".$expoAwbtransporte->getCaReferencia()));
+            $this->responseArray = array("success" => true, "valid" => false, "errorInfo" => utf8_encode("Número de guía usado en Referencia ".$expoAwbtransporte['ca_referencia']));
         }
-        
         $this->setTemplate("responseTemplate");
     }
 
