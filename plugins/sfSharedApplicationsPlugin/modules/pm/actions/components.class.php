@@ -63,7 +63,7 @@ class pmComponents extends sfComponents {
         $this->departamentos = array();
         foreach ($departamentos as $departamento) {
             $this->departamentos[] = array("iddepartamento" => $departamento->getCaIddepartamento(),
-                "nombre" => $departamento->getCaNombre()
+                "nombre" => utf8_encode($departamento->getCaNombre())
             );
         }
     }
@@ -382,7 +382,7 @@ class pmComponents extends sfComponents {
 
         foreach ($departamentos as $departamento) {
             $this->departamentos[] = array("iddepartamento" => $departamento->getCaIddepartamento(),
-                "nombre" => $departamento->getCaNombre()
+                "nombre" => utf8_encode($departamento->getCaNombre())
             );
         }
     }
