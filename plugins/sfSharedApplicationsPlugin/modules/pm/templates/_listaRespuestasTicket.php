@@ -44,7 +44,7 @@
                 <?
             }
 
-            if ($format != "email") {
+            if ($format != "email" && !$ticket->getCaClosedat()) {
                 ?>
                 <br />
                 <div style="float:right;"><a href="#" onClick="newResponse(<?= $response->getCaIdticket() ?>, <?= $response->getCaIdresponse() ?>, null, '<?= $response->getCaCreatedat() ?>', <?= isset($opener) && $opener ? "'" . $opener . "'" : "" ?>, '<?= $ticket->getCaStatus() ?>', '<?= $status_name ?>','<?=$ticket->getCaIdgroup()?>'/*,'<?//=$ticket->getCaEstimated()?>'*/)">Respuesta</a></div>
