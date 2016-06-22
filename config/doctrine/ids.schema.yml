@@ -703,6 +703,7 @@ Documentosxconc:
     ca_perjuridica_reciente: boolean
     ca_perjuridica_activos: boolean
     ca_gran_contribuyente: boolean
+    ca_perjuridica_cincomil: boolean
     ca_persona_natural: boolean
     ca_persona_natural_comerciante: boolean 
     ca_observaciones: text   
