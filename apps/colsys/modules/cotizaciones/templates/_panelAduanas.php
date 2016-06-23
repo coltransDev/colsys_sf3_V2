@@ -12,7 +12,7 @@ PanelAduanas = function( config ){
     this.record = Ext.data.Record.create([
         {name: 'idcotizacion', type: 'string'},
         {name: 'transporte', type: 'string'},
-        {name: 'nacionalizacion', type: 'string'},
+        {name: 'transportes', type: 'string'},
         {name: 'consecutivo', type: 'int'},
         {name: 'idconcepto', type: 'int'},
         {name: 'concepto', type: 'string'},
@@ -49,11 +49,11 @@ PanelAduanas = function( config ){
     *Store que carga los conceptos
     */
     this.storeRecargos = new Ext.data.Store({
-        autoLoad : true,
+        autoLoad : false,
         id:"store-recargos",
         url: '<?=url_for("conceptos/datosConceptos")?>',
         baseParams : {
-            impoexpo: "Aduanas", //[FIX-ME] Organizar todos los conceptos
+            impoexpo: this.impoexpo,
             transporte: this.transporte,
             modo: "costos"
         },
@@ -92,7 +92,16 @@ PanelAduanas = function( config ){
         }*/
     });
 
-    this.editorNacionalizaciones = new Ext.form.ComboBox({
+    if (this.impoexpo == "Exportacion") {
+        this.headerImpoexpo = "Medio de Transporte";
+        this.storeTransportes = [['Maritimo', 'Marítimo'],['Aereo', 'Aéreo'],['Terrestre', 'Terrestre']];
+    }else{
+        this.headerImpoexpo = "Tipo de Nacionalización";
+        this.storeTransportes = [['Marítimo', 'Nacionalización en Puerto'],['Aéreo', 'Nacionalización Aéreo/OTM']];
+    }
+    
+
+    this.editorTransportes = new Ext.form.ComboBox({
         typeAhead: true,
         forceSelection: true,
         triggerAction: 'all',
@@ -100,7 +109,7 @@ PanelAduanas = function( config ){
         mode: 'local',        
         lazyRender:true,
         listClass: 'x-combo-list-small',
-        store: [['Marítimo', 'Nacionalización en Puerto'],['Aéreo', 'Nacionalización Aéreo/OTM']],
+        store: this.storeTransportes,
     });
 
     this.columns = [
@@ -113,13 +122,13 @@ PanelAduanas = function( config ){
                 hideable: false,
                 hidden: true
             },{
-                id: 'nacionalizacion',
-                header: "Nacionalizacion",
+                id: 'transportes',
+                header: this.headerImpoexpo,
                 width: 170,
                 sortable: true,
-                dataIndex: 'nacionalizacion',
+                dataIndex: 'transportes',
                 hideable: false,
-                editor: this.editorNacionalizaciones
+                editor: this.editorTransportes
             },{
                 header: "Concepto",
                 dataIndex: 'concepto',
@@ -217,7 +226,6 @@ PanelAduanas = function( config ){
 
 
     PanelAduanas.superclass.constructor.call(this, {
-
         master_column_id : 'aduana',
         loadMask: {msg:'Cargando...'},
         clicksToEdit: 1,
@@ -227,37 +235,44 @@ PanelAduanas = function( config ){
         closable: false,
         id: 'grid_aduanas',
 
-        tbar: [
-        {
-            text: 'Guardar Cambios',
-            tooltip: 'Guarda los cambios realizados en Aduanas',
-            iconCls: 'disk',  // reference to our css
-            id: 'guardarbtn-aduanas',
-            handler: function(){
-                Ext.getCmp("subpanel-cotizaciones").guardarDatosPaneles();
+        tbar: [{
+                text: 'Guardar Cambios',
+                tooltip: 'Guarda los cambios realizados en Aduanas',
+                iconCls: 'disk',  // reference to our css
+                id: 'guardarbtn-aduanas',
+                handler: function(){
+                    Ext.getCmp("subpanel-cotizaciones").guardarDatosPaneles();
+                }
+            }, {
+                text: 'Agregar Aduana',
+                tooltip: 'Opción para agregar opciones de Aduana',
+                iconCls: 'add',  // reference to our css
+                scope:this,
+                handler: function(){
+                    Ext.getCmp("grid_aduanas").agregarFilaAduanas();
+                }
+            }, {
+                text: 'Importar del tarifario',
+                tooltip: 'Opción para agregar opciones de Aduana',
+                iconCls: 'import',  // reference to our css
+                scope:this,
+                handler: function(){
+                    Ext.getCmp("grid_aduanas").ventanaTarifarioAduanas();
+                }
+            }, {
+                text: 'Recargar',
+                tooltip: 'Actualiza los registros y elimina modifcaciones',
+                iconCls: 'refresh',  // reference to our css
+                handler: function(){
+                    var storeAduanas = Ext.getCmp("grid_aduanas").store;
+                    if(storeAduanas.getModifiedRecords().length>0){
+                        if(!confirm("Se perderan los cambios no guardados en el directorio de agentes unicamente, desea continuar?")){
+                            return 0;
+                        }
+                    }
+                    storeAduanas.reload();
+                }
             }
-        }
-        ,
-        {
-            text: 'Importar del tarifario',
-            tooltip: 'Opción para agregar opciones de Aduana',
-            iconCls: 'import',  // reference to our css
-            scope:this,
-            handler: function(){
-                Ext.getCmp("grid_aduanas").ventanaTarifarioAduanas();
-            }
-        }
-        ,
-        {
-            text: 'Agregar Aduana',
-            tooltip: 'Opción para agregar opciones de Aduana',
-            iconCls: 'add',  // reference to our css
-            scope:this,
-            handler: function(){
-                Ext.getCmp("grid_aduanas").agregarFilaAduanas();
-            }
-        }
-
         ],
 
         view: new Ext.grid.GridView({
@@ -422,7 +437,7 @@ Ext.extend(PanelAduanas, Ext.grid.EditorGridPanel, {
                     return true;
                 }
             });
-         }else if( e.field == "nacionalizacion"){
+         }else if( e.field == "transportes"){
              store.each( function( r ){
                  if( r.data.field1==e.value ){
                     rec.set("transporte", r.data.field1 );
@@ -448,8 +463,12 @@ Ext.extend(PanelAduanas, Ext.grid.EditorGridPanel, {
         //Validacion
         for( var i=0; i< lenght; i++){
             r = records[i];
-            if( !r.data.nacionalizacion ){
-                Ext.Msg.alert( "","Debe elegir una modalidad de Nacionalizacion" );
+            if( !r.data.transportes ){
+                if (this.impoexpo == "Exportacion"){
+                    Ext.Msg.alert( "","Debe elegir un Medio de Transporte" );
+                }else{
+                    Ext.Msg.alert( "","Debe elegir una modalidad de Nacionalización" );
+                }
                 return 0;
             }
 
@@ -519,7 +538,8 @@ Ext.extend(PanelAduanas, Ext.grid.EditorGridPanel, {
         var storeAduanasCot = this.store;
 
         var rec = new recordGrilla({idcotizacion:'<?=$cotizacion->getCaIdcotizacion()?>',
-                              nacionalizacion:'',
+                              transporte:'',
+                              transportes:'',
                               idconcepto:0,
                               concepto:'',
                               parametro:'',
@@ -578,7 +598,7 @@ Ext.extend(PanelAduanas, Ext.grid.EditorGridPanel, {
 
                                     var rec = new recordGrilla({idcotizacion:'<?=$cotizacion->getCaIdcotizacion()?>',
                                                           transporte:'',
-                                                          nacionalizacion:'',
+                                                          transportes:'',
                                                           idconcepto:0,
                                                           concepto:'',
                                                           parametro:'',
@@ -597,7 +617,7 @@ Ext.extend(PanelAduanas, Ext.grid.EditorGridPanel, {
                                     storeAduanasCot.insert( 0, records );
                                     rec = storeAduanasCot.getAt(0);
                                     rec.set("transporte", r.data.transporte );
-                                    rec.set("nacionalizacion", r.data.nacionalizacion );
+                                    rec.set("transportes", r.data.transportes );
                                     rec.set("idconcepto", r.data.idconcepto );
                                     rec.set("concepto", r.data.concepto );
                                     rec.set("parametro", r.data.parametro );

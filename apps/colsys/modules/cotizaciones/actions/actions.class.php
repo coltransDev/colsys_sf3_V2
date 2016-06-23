@@ -2260,10 +2260,10 @@ class cotizacionesActions extends sfActions {
         foreach ($cotAduanas as $cotAduana) {
             $idConceptos[] = $cotAduana->getCaIdconcepto();
         }
-
+        $impoexpo = ($cotizacion->getCaEmpresa()=="Coltrans")?"Exportacion":"Aduanas";
         $aduconceptos = Doctrine::getTable("ConceptoAduana")
                         ->createQuery("ca")
-                        ->where("c.ca_impoexpo = ?", "Aduanas")
+                        ->where("c.ca_impoexpo = ?", $impoexpo)
                         ->whereNotIn("ca_idconcepto", $idConceptos)
                         ->innerJoin("ca.Costo c")
                         ->addOrderBy("c.ca_transporte, c.ca_costo")
@@ -2271,15 +2271,19 @@ class cotizacionesActions extends sfActions {
        
         $this->data = array();
         foreach ($aduconceptos as $aduconcepto) {
-            if ($aduconcepto->getCosto()->getCaTransporte() == Constantes::MARITIMO) {
-                $row['nacionalizacion'] = utf8_encode("Nacionalización en Puerto");
-            } else if ($aduconcepto->getCosto()->getCaTransporte() == Constantes::AEREO) {
-                $row['nacionalizacion'] = utf8_encode("Nacionalización Aéreo/OTM");
+            if ($cotizacion->getCaEmpresa()=="Coltrans") {
+                $row['transportes'] = utf8_encode($aduconcepto->getCosto()->getCaTransporte());
+            }else{
+                if ($aduconcepto->getCosto()->getCaTransporte() == Constantes::MARITIMO) {
+                    $row['transportes'] = utf8_encode("Nacionalización en Puerto");
+                } else if ($aduconcepto->getCosto()->getCaTransporte() == Constantes::AEREO) {
+                    $row['transportes'] = utf8_encode("Nacionalización Aéreo/OTM");
+                }
             }
             $row['idcotizacion'] = $idcotizacion;
             $row['idconcepto'] = $aduconcepto->getCaIdconcepto();
             $row['concepto'] = utf8_encode($aduconcepto->getCosto()->getCaCosto());
-            $row['parametro'] = $aduconcepto->getCaParametro();
+            $row['parametro'] = utf8_encode($aduconcepto->getCaParametro());
             $row['valor'] = $aduconcepto->getCaValor();
             $row['aplicacion'] = utf8_encode($aduconcepto->getCaAplicacion());
             $row['valorminimo'] = $aduconcepto->getCaValorminimo();
@@ -2287,7 +2291,7 @@ class cotizacionesActions extends sfActions {
             $row['fchini'] = $aduconcepto->getCaFchini();
             $row['fchfin'] = $aduconcepto->getCaFchfin();
             $row['observaciones'] = utf8_encode($aduconcepto->getCaObservaciones());
-            $row['orden'] = $aduconcepto->getCosto()->getCaTransporte();
+            $row['orden'] = utf8_encode($aduconcepto->getCosto()->getCaTransporte());
             $this->data[] = $row;
         }
     }

@@ -9,7 +9,7 @@ $data = $sf_data->getRaw("data");
 var recordAduanas = Ext.data.Record.create([   		
 	{name: 'sel', type: 'string'},
         {name: 'idconcepto', type: 'int'},
-        {name: 'nacionalizacion', type: 'string'},
+        {name: 'transportes', type: 'string'},
         {name: 'concepto', type: 'string'},
         {name: 'parametro', type: 'string'},
         {name: 'valor', type: 'float'},
@@ -49,11 +49,11 @@ var colModelAduanas = new Ext.grid.ColumnModel({
 	columns: [		
 		checkColumn,
 		{
-			header: "Nacionalización",
+			header: "Transporte/Nacionalización",
 			width: 90,
 			sortable: false,
 			hideable: false,
-			dataIndex: 'nacionalizacion'
+			dataIndex: 'transportes'
 		},
 		{
 			header: "Concepto",

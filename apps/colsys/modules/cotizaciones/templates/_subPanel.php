@@ -30,21 +30,19 @@ if( $cotizacion->getCaIdcotizacion() ){
 
 
 SubPanel = function(){
-    
     <?
     if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS || $cotizacion->getCaEmpresa() == Constantes::TPLOGISTICS  ){
         ?>
         this.gridProductos = new PanelProductos({tipo:'Trayecto',empresa:'<?=$cotizacion->getCaEmpresa()?>',id:'grid_productos',title:'Tarifas de trayectos'});
         this.gridRecargos = new PanelRecargosCotizacion();
         this.gridContviajes = new PanelProductos({tipo:'OTM/DTA',empresa:'<?=$cotizacion->getCaEmpresa()?>',id:'grid_productos1',title:'Tarifas para OTM/DTA'});
-	this.gridAduanas = new PanelAduanas({empresa:'<?=$cotizacion->getCaEmpresa()?>',title:'Aduana Exportaciones en Pruebas'});
+	this.gridAduanas = new PanelAduanas({empresa:'<?=$cotizacion->getCaEmpresa()?>',title:'Aduana Exportaciones',impoexpo:'Exportacion'});
         this.gridSeguros = new PanelSeguros();
         this.gridAgentes = new PanelAgentes();
-
         <?
     }else if($cotizacion->getCaEmpresa() == Constantes::COLMAS){
         ?>
-        this.gridAduanas = new PanelAduanas({empresa:'<?=$cotizacion->getCaEmpresa()?>',title:'Aduana Importaciones'});
+        this.gridAduanas = new PanelAduanas({empresa:'<?=$cotizacion->getCaEmpresa()?>',title:'Aduana Importaciones',impoexpo:'Aduanas'});
         <?
     } else if ($cotizacion->getCaEmpresa() == Constantes::COLDEPOSITOS) {
         ?>
@@ -79,7 +77,7 @@ SubPanel = function(){
                    this.gridProductos,                     
                    this.gridRecargos,
                    this.gridContviajes,
-				   this.gridAduanas,
+                   this.gridAduanas,
                    this.gridSeguros,
                    this.gridAgentes,
                 <?

@@ -161,17 +161,22 @@ class cotizacionesComponents extends sfComponents {
         $this->aduanas = array();
 
         foreach ($aduanas as $aduana) {
+            if ($this->impoexpo == "Exportacion") {
+                $transportes = utf8_encode(($aduana->getCosto()->getCaTransporte()==Constantes::MARITIMO)?"Nacionalización en Puerto":(($aduana->getCosto()->getCaTransporte()==Constantes::AEREO)?"Nacionalización Aéreo/OTM":""));
+            } else {
+                $transportes = utf8_encode($aduana->getCosto()->getCaTransporte());
+            }
             $this->aduanas[] = array('oid' => $aduana->getCaIdaduana(),
                 'idcotizacion' => $aduana->getCaIdcotizacion(),
-                'idconcepto' => $aduana->getCaIdconcepto(),
                 'transporte' => utf8_encode($aduana->getCosto()->getCaTransporte()),
-                'nacionalizacion' => utf8_encode(($aduana->getCosto()->getCaTransporte()==Constantes::MARITIMO)?"Nacionalización en Puerto":(($aduana->getCosto()->getCaTransporte()==Constantes::AEREO)?"Nacionalización Aéreo/OTM":"")),
+                'transportes' => $transportes,
+                'idconcepto' => $aduana->getCaIdconcepto(),
                 'concepto' => utf8_encode($aduana->getCosto()->getCaCosto()),
                 'valor' => $aduana->getCaValor(),
                 'valorminimo' => $aduana->getCaValorminimo(),
-                'aplicacion' => $aduana->getCaAplicacion(),
-                'aplicacionminimo' => $aduana->getCaAplicacionminimo(),
-                'parametro' => $aduana->getCaParametro(),
+                'aplicacion' => utf8_encode($aduana->getCaAplicacion()),
+                'aplicacionminimo' => utf8_encode($aduana->getCaAplicacionminimo()),
+                'parametro' => utf8_encode($aduana->getCaParametro()),
                 'fchini' => $aduana->getCaFchini(),
                 'fchfin' => $aduana->getCaFchfin(),
                 'observaciones' => utf8_encode($aduana->getCaObservaciones()),
