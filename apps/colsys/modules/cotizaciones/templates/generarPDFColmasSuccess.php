@@ -120,7 +120,15 @@ $pdf->MultiCell(0, 4, $cotizacion->getCaEntrada(), 0, 1);
 
 
 // ======================== Aduanas ======================== //
-$aduanas = $cotizacion->getCotAduana();
+// $aduanas = $cotizacion->getCotAduana();
+$aduanas = Doctrine::getTable("CotAduana")
+        ->createQuery("ca")
+        ->where("ca.ca_idcotizacion = ?", $cotizacion->getCaIdcotizacion())
+        ->innerJoin("ca.Costo c")
+        ->leftJoin("c.ConceptoAduana a ON c.ca_idcosto = a.ca_idconcepto")
+        ->addOrderBy("c.ca_transporte, a.ca_consecutivo")
+        ->execute();
+
 $imprimirObservaciones = false;
 
 foreach ($aduanas as $aduana) {
