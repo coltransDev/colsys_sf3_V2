@@ -120,16 +120,7 @@ $pdf->MultiCell(0, 4, $cotizacion->getCaEntrada(), 0, 1);
 
 
 // ======================== Aduanas ======================== //
-// $aduanas = $cotizacion->getCotAduana();
-
-$aduanas = Doctrine::getTable("CotAduana")
-        ->createQuery("ca")
-        ->where("ca.ca_idcotizacion = ?", $cotizacion->getCaIdcotizacion())
-        ->innerJoin("ca.Costo c")
-        ->leftJoin("c.ConceptoAduana a ON c.ca_idcosto = a.ca_idconcepto")
-        ->addOrderBy("c.ca_transporte, a.ca_consecutivo")
-        ->execute();
-
+$aduanas = $cotizacion->getCotAduana();
 $imprimirObservaciones = false;
 
 foreach ($aduanas as $aduana) {
@@ -159,10 +150,10 @@ if (count($aduanas) > 0) {
             } else if ($aduana->getCosto()->getCaTransporte() == Constantes::AEREO) {
                 $nacionalizacion = "Nacionalización Aéreo/OTM";
             }
-            $pdf->Ln(4);
+            $pdf->Ln(2);
             $pdf->SetFont($font, '', 9);
             $pdf->Cell(0, 4, $nacionalizacion, 0, 1, 'L', 0);
-            $pdf->Ln(2);
+            $pdf->Ln(3);
             $pdf->SetFont($font, '', 7);
 
             $titu_mem = array('Concepto', 'Valor');

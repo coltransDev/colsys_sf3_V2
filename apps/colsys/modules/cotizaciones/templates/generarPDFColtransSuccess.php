@@ -1107,6 +1107,89 @@ for ($k = 0; $k < count($transportes); $k++):
     }
 
 endfor; //transportes
+// ======================== Aduanas ======================== //
+$aduanas = $cotizacion->getCotAduana();
+$imprimirObservaciones = false;
+
+foreach ($aduanas as $aduana) {
+    if (trim($aduana->getCaObservaciones()) != "") {
+        $imprimirObservaciones[$aduana->getCosto()->getCaTransporte()] = true;
+    }
+}
+
+if (count($aduanas) > 0) {
+
+    $imprimirNotas[] = "aduanaImpo";
+
+    $pdf->Ln(4);
+    $pdf->SetFont($font, 'B', 9);
+    $pdf->Cell(0, 4, 'COSTOS DE NACIONALIZACION', 0, 1, 'L', 0);
+    $pdf->SetFont($font, '', 9);
+    $i = 1;
+    $linea = "";
+    $vigencia = array();
+
+    foreach ($aduanas as $aduana) {
+        $pdf->beginGroup();
+        if ($linea != $aduana->getCosto()->getCaTransporte()){
+            //Control impresión
+            $pdf->Ln(2);
+            $pdf->SetFont($font, '', 9);
+            $pdf->Cell(0, 4, "Transporte ".$aduana->getCosto()->getCaTransporte(), 0, 1, 'L', 0);
+            $pdf->Ln(3);
+            $pdf->SetFont($font, '', 7);
+
+            $titu_mem = array('Concepto', 'Valor');
+            if ($imprimirObservaciones[$aduana->getCosto()->getCaTransporte()]) {
+                array_push($titu_mem, 'Observaciones');
+                $width_mem = array(35, 65, 70); // = 170
+            } else {
+                $width_mem = array(40, 130);  // = 170
+            }
+            $pdf->SetWidths($width_mem);
+            $pdf->SetAligns(array_fill(0, count($width_mem), "C"));
+            $pdf->SetStyles(array_fill(0, count($width_mem), "B"));
+            $pdf->SetFills(array_fill(0, count($width_mem), 1));
+            $pdf->Row($titu_mem);
+            $linea = $aduana->getCosto()->getCaTransporte();
+        }
+        $pdf->SetAligns(array_fill(0, count($width_mem), "L"));
+        $pdf->SetStyles(array_fill(0, count($width_mem), ""));
+        $pdf->SetFills(array_fill(0, count($width_mem), 0));
+		
+        $valor = "";
+        if ($aduana->getCaValor() > 0 and $aduana->getCaValor() < 1) {
+                $valor.= Utils::formatNumber($aduana->getCaValor())." %";
+        }else if ($aduana->getCaValor() >= 1) {
+                $valor.= "$ ".Utils::formatNumber($aduana->getCaValor());
+        }
+        if ($aduana->getCaAplicacion()){
+                $valor.= " " . $aduana->getCaAplicacion();
+        }
+        if ($aduana->getCaValorminimo()){
+            $valor.= " Mínimo :";
+            if ($aduana->getCaValorminimo() > 0 and $aduana->getCaValorminimo() < 1) {
+                    $valor.= Utils::formatNumber($aduana->getCaValorminimo())." %";
+            }else if ($aduana->getCaValorminimo() >= 1) {
+                    $valor.= "$ ".Utils::formatNumber($aduana->getCaValorminimo());
+            }
+            if ($aduana->getCaAplicacionminimo()){
+                    $valor.= " " . $aduana->getCaAplicacionminimo();
+            }
+        }
+		
+        $row = array(
+            $aduana->getCosto()->getCaCosto(),
+            $valor
+        );
+        if ($imprimirObservaciones) {
+            array_push($row, $aduana->getCaObservaciones());
+        }
+        $pdf->Row($row);
+        $pdf->flushGroup();
+    }
+}
+
 // ======================== Seguros ======================== //
 $seguros = $cotizacion->getCotSeguros();
 $imprimirObservaciones = false;
