@@ -26,13 +26,10 @@ Reporte:
       type: date
       notnull: true
     ca_idagente: integer
-    ca_idsucursalagente: integer
-    ca_incoterms: string
+    ca_idsucursalagente: integer    
     ca_mercancia_desc:
       type: string
-      notnull: true
-    ca_idproveedor: string
-    ca_orden_prov: string
+      notnull: true    
     ca_idconcliente:
       type: integer
       notnull: true
@@ -67,7 +64,8 @@ Reporte:
     ca_continuacion_conf: string
     ca_etapa_actual: string
     ca_login: string
-    ca_colmas: string    
+    ca_colmas: string
+    ca_propiedades: string
     ca_idetapa: string
     ca_fchultstatus: timestamp
     ca_idtarea_rext: integer
@@ -92,8 +90,19 @@ Reporte:
     ca_idproductootm: integer
     ca_tiporep: integer
     ca_declaracionant: boolean
-    ca_propiedades: string
+    ca_fchllegada: date
+    ca_fchsalida: date
   relations:
+    Usucreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    Usuactualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      class: Usuario
     RepStatus:
       local: ca_idreporte
       foreign: ca_idreporte
@@ -225,6 +234,38 @@ Reporte:
       local: ca_idreporte
       foreign: ca_idreporte
       type: one
+    Bavaria:
+      local: ca_consecutivo
+      foreign: ca_consecutivo
+      type: one
+    Clariant:
+      local: ca_consecutivo
+      foreign: ca_consecutivo
+      type: one
+    InoHouse:
+      local: ca_idreporte
+      foreign: ca_idreporte
+      type: many
+    InoMaestraSea:
+      local: ca_idreporte
+      foreign: ca_idreporte
+      type: many
+    NotTarea:
+      local: ca_idseguimiento
+      foreign: ca_idtarea    
+      type: many
+    Email:
+      local: ca_idreporte
+      foreign: ca_idcaso
+      type: many
+    Reporte:
+      local: ca_idreporte
+      foreign: ca_idgrupo
+      type: many
+    RepProveedor:
+      local: ca_idreporte
+      foreign: ca_idreporte
+      type: many
 
 
 RepStatus:
@@ -337,8 +378,8 @@ TrackingEtapa:
     ca_preasunto: string 
     ca_fcheliminado: timestamp
     ca_usueliminado: string
-
-
+    ca_tipo: integer
+    ca_idg: boolean
 Tercero:
   options:
     symfony:
@@ -360,18 +401,23 @@ Tercero:
     ca_email: string
     ca_vendedor: string
     ca_tipo: string
-    ca_identificacion: string
+    ca_identificacion: string    
     ca_idciudad: string
     ca_usucreado: string
     ca_fchcreado: timestamp
     ca_usuactualizado: string
     ca_fchactualizado: timestamp
-    ca_tipopersona: char
+    ca_tipopersona: integer
+    ca_propiedades: string
   relations:
     Ciudad:
       local: ca_idciudad
       foreign: ca_idciudad
       type: one
+    RepProveedor:
+      local: ca_idtercero
+      foreign: ca_idproveedor
+      type: many
 
 
 RepEquipo:
@@ -418,6 +464,7 @@ Bodega:
     ca_usuactualizado: string
     ca_cod_dian: integer
     ca_direccion: integer
+    ca_identificacion: integer
 
 
 RepTarifa:
@@ -807,7 +854,7 @@ RepAntecedentes:
     ca_usuactualizado: string
     ca_fchaceptado: timestamp
     ca_usuaceptado: string   
-    ca_responder: string    
+    ca_responder: string
     ca_propiedades: string
   relations:
     Reporte:
@@ -913,4 +960,85 @@ EntregaAntecedentes:
     Ciudad:
       local: ca_idciudad
       foreign: ca_idciudad
+      type: one
+
+EntregaAntecedentes:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: public
+  tableName: tb_entrega_antecedentes
+  columns:
+    ca_idtrafico:
+      type: string(6)
+      fixed: false
+      primary: true
+    ca_idciudad:
+      type: string(8)
+      fixed: false
+      primary: true
+    ca_iddestino:
+      type: string(8)
+      fixed: false
+      primary: true
+    ca_modalidad:
+      type: string(15)
+      fixed: false
+      primary: true
+    ca_dias: integer
+    ca_impoexpo: string
+    ca_transporte: string
+    ca_observaciones: string
+    ca_usucreado: string
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string
+    ca_fchactualizado: timestamp
+  relations:
+    Trafico:
+      local: ca_idtrafico
+      foreign: ca_idtrafico
+      type: one
+    Ciudad:
+      local: ca_idciudad
+      foreign: ca_idciudad
+      type: one
+    Destino:
+      class: Ciudad
+      foreignAlias: Destino
+      local: ca_iddestino
+      foreign: ca_idciudad
+      type: one
+
+RepProveedor:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: reportes
+  tableName: tb_repproveedores
+  columns:
+    ca_idrepproveedor:
+      type: integer      
+      primary: true
+      autoincrement: true
+    ca_idreporte:
+      type: integer      
+    ca_idproveedor:
+      type: integer
+    ca_incoterms: string
+    ca_orden_prov: string
+    ca_carga_disponible: date
+    ca_usucreado: string
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string
+    ca_fchactualizado: timestamp
+  relations:
+    Reporte:
+      local: ca_idreporte
+      foreign: ca_idreporte
+      type: many
+    Tercero:
+      local: ca_idproveedor
+      foreign: ca_idtercero
       type: one
