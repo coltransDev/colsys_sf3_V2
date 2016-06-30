@@ -65,12 +65,12 @@ class Utils {
         list( $year, $month, $day ) = sscanf($fecha, "%d-%d-%d");
         return date($format, mktime(0, 0, 0, $month, $day, $year));
     }
-    
+
     public static function transformDate1($fecha) {
         if (!$fecha) {
             return "";
         }
-        list( $day,$month,   $year ) = split( "/",$fecha);
+        list( $day, $month, $year ) = split("/", $fecha);
         return "$year-$month-$day";
     }
 
@@ -161,18 +161,20 @@ class Utils {
         $diff = TimeUtils::getHumanTime($second);
         return $diff;
     }
-	
+
     /**
-    from php.net
-    give the number of days between two dates
-    */
-    static function diffDays($date1, $date2){
+      from php.net
+      give the number of days between two dates
+     */
+    static function diffDays($date1, $date2) {
 
-            if (!is_integer($date1)) $date1 = strtotime($date1);
+        if (!is_integer($date1))
+            $date1 = strtotime($date1);
 
-            if (!is_integer($date2)) $date2 = strtotime($date2);  
+        if (!is_integer($date2))
+            $date2 = strtotime($date2);
 
-            return floor(abs($date1 - $date2) / 60 / 60 / 24);
+        return floor(abs($date1 - $date2) / 60 / 60 / 24);
     }
 
     public static function getMonth($m) {
@@ -311,8 +313,8 @@ class Utils {
     }
 
     public static function extension($file) {
-        $tmp = explode(".",$file);
-        return $tmp[count($tmp)-1];        
+        $tmp = explode(".", $file);
+        return $tmp[count($tmp) - 1];
     }
 
     public static function mimetype($name) {
@@ -592,8 +594,8 @@ class Utils {
         $fromname = (isset($data["fromname"])) ? $data["fromname"] : "Nagios";
         $mail->setCaFromname($fromname);
         $to = (isset($data["to"])) ? $data["to"] : "admin@coltrans.com.co";
-        //$arrayTo=  explode(",", $to);
-        foreach($arrayTo as $t)            
+        $arrayTo = explode(",", $to);
+        foreach ($arrayTo as $t)
             $mail->addTo($t);
         $subject = (isset($data["subject"])) ? $data["subject"] : "Email No enviado";
         $mail->setCaSubject($subject);
@@ -604,49 +606,66 @@ class Utils {
         $mail->setCaBodyhtml($mensaje);
         $mail->save();
     }
-    
-     public static function serializeArray($data = array()) {
-        
-        $tmp=serialize($data); //Serializar el arreglo.
-        $tmp=urlencode($tmp);
-        return $tmp;        
+
+    public static function serializeArray($data = array()) {
+
+        $tmp = serialize($data); //Serializar el arreglo.
+        $tmp = urlencode($tmp);
+        return $tmp;
     }
-    
+
     public static function unSerializeArray($serie) {
-        
-        $tmp = stripslashes($serie);        
+
+        $tmp = stripslashes($serie);
         $tmp = unserialize(urldecode($tmp));
         return $tmp;
     }
-    
+
     public static function calcularDV($nit) {
-        if (! is_numeric($nit)) {
+        if (!is_numeric($nit)) {
             return false;
         }
 
         $arr = array(1 => 3, 4 => 17, 7 => 29, 10 => 43, 13 => 59, 2 => 7, 5 => 19,
-        8 => 37, 11 => 47, 14 => 67, 3 => 13, 6 => 23, 9 => 41, 12 => 53, 15 => 71);
+            8 => 37, 11 => 47, 14 => 67, 3 => 13, 6 => 23, 9 => 41, 12 => 53, 15 => 71);
         $x = 0;
         $y = 0;
         $z = strlen($nit);
         $dv = '';
 
-        for ($i=0; $i<$z; $i++) {
+        for ($i = 0; $i < $z; $i++) {
             $y = substr($nit, $i, 1);
-            $x += ($y*$arr[$z-$i]);
+            $x += ($y * $arr[$z - $i]);
         }
 
-        $y = $x%11;
+        $y = $x % 11;
 
         if ($y > 1) {
-            $dv = 11-$y;
+            $dv = 11 - $y;
             return $dv;
         } else {
             $dv = $y;
             return $dv;
         }
+    }
 
-    }    
+    public static function get_decorated_diff($old, $new) {
+        $from_start = strspn($old ^ $new, "\0");
+        $from_end = strspn(strrev($old) ^ strrev($new), "\0");
+
+        $old_end = strlen($old) - $from_end;
+        $new_end = strlen($new) - $from_end;
+
+        $start = substr($new, 0, $from_start);
+        $end = substr($new, $new_end);
+        $new_diff = substr($new, $from_start, $new_end - $from_start);
+        $old_diff = substr($old, $from_start, $old_end - $from_start);
+
+        $new = "$start<ins style='background-color:#ccffcc'>$new_diff</ins>$end";
+        $old = "$start<del style='background-color:#ffcccc'>$old_diff</del>$end";
+        return array("old" => $old, "new" => $new);
+    }
+
 }
 
 ?>
