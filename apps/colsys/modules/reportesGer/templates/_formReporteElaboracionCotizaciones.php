@@ -241,7 +241,7 @@ $operativos = $sf_data->getRaw("operativos");
                         }]
                 }, {
                     xtype: 'fieldset',
-                    columnWidth: 0.29,
+                    columnWidth: 0.28,
                     title: '',
                     collapsible: false,
                     height: 380,

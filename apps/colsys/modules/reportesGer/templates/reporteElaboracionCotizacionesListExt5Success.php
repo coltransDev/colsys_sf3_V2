@@ -102,7 +102,7 @@ $dateFinal = $sf_data->getRaw("dateFinal");
                     width: 350,
                     dataIndex: 'ca_compania'
                 }, {
-                    header: 'Vendedor',
+                    header: 'Contacto',
                     width: 240,
                     dataIndex: 'ca_ncompleto_cn',
                 }, {

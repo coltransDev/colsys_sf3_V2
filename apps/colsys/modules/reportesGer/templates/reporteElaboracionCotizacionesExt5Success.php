@@ -1,6 +1,6 @@
 <?php
 /* 
- *  This file is part of the Gemda Project.
+ *  This file is part of the Colsys Project.
  * 
  *  Author: Carlos Gilberto Lopez Mendez
  */
