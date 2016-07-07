@@ -69,7 +69,6 @@ $clases = $sf_data->getRaw("clases");
                     width: 150,
                     editor: {
                         xtype: 'combo-clases',
-                        forceSelection: true
                     }
                 }, {
                     menuDisabled: true,
@@ -138,6 +137,10 @@ $clases = $sf_data->getRaw("clases");
                             changes = [];
                             for (var i = 0; i < store.getCount(); i++) {
                                 var record = store.getAt(i);
+                                if (record.get('tipo') == "" || record.get('clase') == ''){
+                                    Ext.MessageBox.alert("Error", 'La información está incompleta o no es válida.');
+                                    return;
+                                }
                                 if (record.isValid()) {
                                     if (Ext.Object.getSize(record.getChanges()) != 0) {
                                         record.data.id = record.id
