@@ -2188,6 +2188,7 @@ class clientesActions extends sfActions {
                     $documento->setCaGranContribuyente($registro->ca_gran_contribuyente);
                     $documento->setCaPersonaNatural($registro->ca_persona_natural);
                     $documento->setCaPersonaNaturalComerciante($registro->ca_persona_natural_comerciante);
+                    $documento->setCaPerjuridicaCincomil($registro->ca_perjuridica_5000);
                     $documento->save();
                     $ids[] = $registro->id;
                 }
@@ -2226,6 +2227,7 @@ class clientesActions extends sfActions {
                             'ca_gran_contribuyente' => $documento['ca_gran_contribuyente'],
                             'ca_persona_natural' => $documento['ca_persona_natural'],
                             'ca_persona_natural_comerciante' => $documento['ca_persona_natural_comerciante'],
+                            'ca_perjuridica_5000' => $documento['ca_perjuridica_cincomil'],
                             'ca_documento' => utf8_encode($documento['ca_documento'])
                 
             );

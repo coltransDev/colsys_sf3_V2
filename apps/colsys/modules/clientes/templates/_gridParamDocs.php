@@ -45,6 +45,7 @@
                 {name: 'ca_perjuridica', type: 'boolean'},
                 {name: 'ca_perjuridica_reciente', type: 'boolean'},
                 {name: 'ca_perjuridica_activos', type: 'boolean'},
+                {name: 'ca_perjuridica_5000', type: 'boolean'},
                 {name: 'ca_gran_contribuyente', type: 'boolean'},
                 {name: 'ca_persona_natural', type: 'boolean'},
                 {name: 'ca_persona_natural_comerciante', type: 'boolean'},
@@ -110,6 +111,12 @@
                 {
                     text: 'ca_perjuridica_activos',
                     dataIndex: 'ca_perjuridica_activos',
+                    width: 180,
+                    xtype: 'checkcolumn'
+                },
+                {
+                    text: 'ca_perjuridica_5000',
+                    dataIndex: 'ca_perjuridica_5000',
                     width: 180,
                     xtype: 'checkcolumn'
                 },
