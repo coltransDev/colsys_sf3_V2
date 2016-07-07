@@ -39,6 +39,7 @@ include_component("clientes", "formSubirArchivos");
             queryMode: 'local',
             valueField: 'idciudad',
             displayField: 'ciudad',
+            forceSelection: true,
             store: {
                 fields: [{name: 'idciudad', type: 'string'}, {name: 'ciudad', type: 'string'}],
                 data: <?= json_encode($ciudades) ?>

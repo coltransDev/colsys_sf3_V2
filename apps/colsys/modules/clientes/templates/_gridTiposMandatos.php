@@ -23,6 +23,7 @@ $clases = $sf_data->getRaw("clases");
         queryMode: 'local',
         valueField: 'clase',
         displayField: 'clase',
+        forceSelection: true,
         store: {
             fields: [{name: 'clase', type: 'string'}],
             data: <?= json_encode($clases) ?>
@@ -69,6 +70,7 @@ $clases = $sf_data->getRaw("clases");
                     width: 150,
                     editor: {
                         xtype: 'combo-clases',
+                        allowBlank: false
                     }
                 }, {
                     menuDisabled: true,
