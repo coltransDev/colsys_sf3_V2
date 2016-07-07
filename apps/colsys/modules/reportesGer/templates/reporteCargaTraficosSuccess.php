@@ -83,6 +83,13 @@ $resul = $sf_data->getRaw("resul");
                                         [
                                         {
                                             xtype:'datefield',
+                                            fieldLabel: 'Reporte Neg.',
+                                            name : 'fechaRepInicial',
+                                            format: 'Y-m-d',
+                                            value: '<?= $fecharepinicial ?>'
+                                        },
+                                        {
+                                            xtype:'datefield',
                                             fieldLabel: 'Fecha Emb Ini',
                                             name : 'fechaEmbInicial',
                                             format: 'Y-m-d',
@@ -163,6 +170,13 @@ $resul = $sf_data->getRaw("resul");
                                     border:false,
                                     items:
                                         [
+                                        {
+                                            xtype:'datefield',
+                                            fieldLabel: 'Fecha Reporte Neg.',
+                                            name : 'fechaRepFinal',
+                                            format: 'Y-m-d',
+                                            value: '<?= $fecharepfinal ?>'
+                                        },
                                         {
                                             xtype:'datefield',
                                             fieldLabel: 'Fecha Emb fin',
@@ -330,7 +344,7 @@ if ($opcion) {
         <br />
     </div>
     <table class="tableList" width="900px" border="1" id="mainTable" align="center">
-        <tr><td>No</td><td>Fecha<br>Embarque</td><td>Fecha<br>Arribo</td><td>Fecha<br>Referencia</td><td>Referencia</td><td>Origen</td><td>Destino</td><td>Linea</td><td>Agente</td><td>Contenedores</td><td>Teus</td><td>Piezas</td><td>Peso</td><td>Volumen</td><td>Incoterms</td></tr>
+        <tr><td>No</td><td>Fecha<br>Reporte</td><td>Fecha<br>Embarque</td><td>Fecha<br>Arribo</td><td>Fecha<br>Referencia</td><td>Referencia</td><td>Origen</td><td>Destino</td><td>Linea</td><td>Agente</td><td>Contenedores</td><td>Teus</td><td>Piezas</td><td>Peso</td><td>Volumen</td><td>Incoterms</td></tr>
         <?
         $ref = $inco=$agen="";
         $idcon="";
@@ -406,6 +420,7 @@ if ($opcion) {
             ?>
         <tr style="background-color: <?=$bgcolor?>">
                 <td><?= $nitem++ ?></td>
+                <td><?= $r["ca_fchreporte"] ?></td>
                 <td><?= $r["ca_fchembarque"] ?></td>
                 <td><?= $r["ca_fcharribo"] ?></td>
                 <td><?= $r["ca_fchreferencia"] ?></td>
