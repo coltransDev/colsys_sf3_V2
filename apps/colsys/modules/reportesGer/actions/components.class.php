@@ -211,6 +211,7 @@ class reportesGerComponents extends sfComponents
 
         // "%" => "Todos los Meses", 
         $this->meses = array();
+        $this->meses[] = array("idmes" => "%", "nommes" => "Todos");
         $this->meses[] = array("idmes" => "01", "nommes" => "Enero");
         $this->meses[] = array("idmes" => "02", "nommes" => "Febrero");
         $this->meses[] = array("idmes" => "03", "nommes" => "Marzo");
@@ -246,8 +247,100 @@ class reportesGerComponents extends sfComponents
         foreach ($usuarios_rs as $usuario) {
              $this->operativos[] = array("id" => $usuario->getCaLogin(), "nombre" => utf8_decode($usuario->getCaNombre()));
         }
-        
-        
     }
+    
+    public function executeFormReporteReportesDeNegocio(sfWebRequest $request){
+        $this->annos = array();
+        for ($i = (date("Y")); $i >= (date("Y") - 5); $i--) {
+            $this->annos[] = $i;
+        }
+
+        // "%" => "Todos los Meses", 
+        $this->meses = array();
+        $this->meses[] = array("idmes" => "%", "nommes" => "Meses (Todos)");
+        $this->meses[] = array("idmes" => "01", "nommes" => "Enero");
+        $this->meses[] = array("idmes" => "02", "nommes" => "Febrero");
+        $this->meses[] = array("idmes" => "03", "nommes" => "Marzo");
+        $this->meses[] = array("idmes" => "04", "nommes" => "Abril");
+        $this->meses[] = array("idmes" => "05", "nommes" => "Mayo");
+        $this->meses[] = array("idmes" => "06", "nommes" => "Junio");
+        $this->meses[] = array("idmes" => "07", "nommes" => "Julio");
+        $this->meses[] = array("idmes" => "08", "nommes" => "Agosto");
+        $this->meses[] = array("idmes" => "09", "nommes" => "Septiembre");
+        $this->meses[] = array("idmes" => "10", "nommes" => "Octubre");
+        $this->meses[] = array("idmes" => "11", "nommes" => "Noviembre");
+        $this->meses[] = array("idmes" => "12", "nommes" => "Diciembre");
+
+        $this->transportes = array();
+        $this->transportes[] = utf8_encode(Constantes::AEREO);
+        $this->transportes[] = utf8_encode(Constantes::MARITIMO);
+        $this->transportes[] = utf8_encode(Constantes::TERRESTRE);
+        
+        $this->impoexpo = array();
+        $this->impoexpo[] = utf8_encode(Constantes::IMPO);
+        $this->impoexpo[] = utf8_encode(Constantes::EXPO);
+
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select DISTINCT ca_nombre as ca_sucursal from control.tb_sucursales where ca_idempresa = 2 and ca_idsucursal != '999' order by ca_sucursal";
+        $rs = $con->execute($sql);
+        $sucursales_rs = $rs->fetchAll();
+        $this->sucursales = array();
+        $this->sucursales[] = "Sucursales (Todas)";
+        foreach ($sucursales_rs as $sucursal) {
+            $this->sucursales[] = utf8_encode($sucursal["ca_sucursal"]);
+        }
+        
+        $usuarios_rs = Doctrine::getTable("Usuario")
+           ->createQuery("u")
+           ->innerJoin("u.Sucursal s")
+           ->addWhere("u.ca_departamento='Comercial' or u.ca_cargo='Representante de Ventas'")
+           ->orderBy("u.ca_login")
+           ->execute();
+        $this->vendedores = array();
+        $this->vendedores[] = array("idUsuario" => "%", "usuario" => "Vendedores (Todos)", "sucursal" => "%");
+        foreach ($usuarios_rs as $usuario) {
+             $this->vendedores[] = array("idUsuario" => $usuario->getCaLogin(), "usuario" => utf8_encode($usuario->getCaNombre()), "sucursal" => utf8_encode(($usuario->getSucursal()->getCaNombre())));
+        }
+        
+        $traficos_rs = Doctrine::getTable("Trafico")
+           ->createQuery("t")
+           ->addWhere("t.ca_idtrafico != '99-999'")
+           ->addOrderBy("t.ca_nombre")
+           ->execute();
+        $this->traficos = array();
+        $this->traficos[] = array("idTrafico" => "%", "trafico" => "Traficos (Todos)");
+        foreach ($traficos_rs as $trafico) {
+             $this->traficos[] = array("idTrafico" => $trafico->getCaIdtrafico(), "trafico" => utf8_encode($trafico->getCaNombre()));
+        }
+        
+        $columnas = array();
+        $columnas[] = array("text" => utf8_encode("Año"), "sql" => "to_char(ca_fchreporte, 'YYYY')", "alias" => "rp_annio", "leaf" => true, "default" => true, "groupBy" => true, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Mes"), "sql" => "to_char(ca_fchreporte, 'MM')", "alias" => "rp_mes", "leaf" => true, "default" => true, "groupBy" => true, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Consecutivo"), "sql" => "rp.ca_consecutivo", "alias" => "rp_ca_consecutivo", "leaf" => true, "default" => true, "groupBy" => false, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Versión"), "sql" => "rp.ca_version", "alias" => "rp_ca_version", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Fch.Reporte"), "sql" => "rp.ca_fchreporte", "alias" => "rp_ca_fchreporte", "leaf" => true, "default" => true, "groupBy" => false, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Cotización"), "sql" => "rp.ca_idcotizacion", "alias" => "rp_ca_idcotizacion", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Tráfico Org."), "sql" => "org.ca_idtrafico", "alias" => "trg_ca_nombre", "leaf" => true, "default" => true, "groupBy" => true, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Puerto Org."), "sql" => "rp.ca_origen", "alias" => "org_ca_ciudad", "leaf" => true, "default" => false, "groupBy" => true, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Tráfico Dst."), "sql" => "dst.ca_idtrafico", "alias" => "tds_ca_nombre", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Puerto Dst."), "sql" => "rp.ca_destino", "alias" => "dst_ca_ciudad", "leaf" => true, "default" => true, "groupBy" => true, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Impo/Expo"), "sql" => "rp.ca_impoexpo", "alias" => "rp_ca_impoexpo", "leaf" => true, "default" => true, "groupBy" => false, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Agente"), "sql" => "agt.ca_nombre", "alias" => "agt_ca_nombre", "leaf" => true, "default" => false, "groupBy" => true, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Incoterms"), "sql" => "rp.ca_incoterms", "alias" => "rp_ca_incoterms", "leaf" => true, "default" => true, "groupBy" => false, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Descripción Mercancía"), "sql" => "rp.ca_mercancia_desc", "alias" => "rp_ca_mercancia_desc", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Transporte"), "sql" => "rp.ca_transporte", "alias" => "rp_ca_transporte", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Modalidad"), "sql" => "rp.ca_modalidad", "alias" => "rp_ca_modalidad", "leaf" => true, "default" => true, "groupBy" => false, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Transportista"), "sql" => "prv.ca_nombre", "alias" => "prv_ca_nombre", "leaf" => true, "default" => false, "groupBy" => true, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Cliente"), "sql" => "cli.ca_nombre", "alias" => "cli_ca_nombre", "leaf" => true, "default" => false, "groupBy" => true, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Vendedor"), "sql" => "usr.ca_nombre", "alias" => "usr_ca_nombre", "leaf" => true, "default" => true, "groupBy" => true, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Sucursal"), "sql" => "suc.ca_nombre", "alias" => "suc_ca_nombre", "leaf" => true, "default" => true, "groupBy" => true, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Elaboró"), "sql" => "rp.ca_usucreado", "alias" => "rp_ca_usucreado", "leaf" => true, "default" => false, "groupBy" => true, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Información Status"), "sql" => "", "alias" => "status", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Datos/Carga"), "sql" => "", "alias" => "equipos", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Tarifas"), "sql" => "", "alias" => "tarifas", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
+        
+        $this->columnas = array("fields" => $columnas);
+        
+    }    
 }
 ?>
