@@ -1,5 +1,4 @@
 <?
-
 class PDF extends FPDF {
 
     //Variables para manejo de Tablas
@@ -22,6 +21,7 @@ class PDF extends FPDF {
     const COLTRANS = 2;
     const COLMAS = 1;
     const COLOTM = 8;
+    const COLDEPOSITOS = 11;
     
 
     private $B;
@@ -58,7 +58,11 @@ class PDF extends FPDF {
             //Salto de línea
             $this->Ln(10);
         } else if ($this->colmasHeader) {
-            $image = "Colmas.jpg";
+            if ($this->idempresa == 1) {
+                $image = "Colmas.jpg";
+            } else if ($this->idempresa == 11) {
+                $image = "Coldepositos.jpg";
+            }
             
             //Posición: a 1,6 cm del final
             $this->SetY(16);
@@ -122,14 +126,15 @@ class PDF extends FPDF {
 
             if (!strlen(trim($this->sucursal)) == 0) {
                 //$this->GetX();
-                $x=-50;
-                $y=-25;
+                $x=-55;
+                $y=-29;
                 $spacing=2.5;
                 $width=2.5;
                 $fontsize=8;
 
                 $this->SetXY($x, $y);
-                $this->SetFont($font, 'B', $fontsize);
+                list($family, $style, $size) = explode(",", $this->GetStyle());
+                $this->SetFont($family, 'B', $fontsize);
                 $this->Cell(0,$width,$this->footerSucursal["datos"][0],0,0,'L');
                 $y+=4;
 
@@ -137,7 +142,7 @@ class PDF extends FPDF {
                 {
                     if($this->footerSucursal["datos"][$i]=="")
                         continue;
-                    $this->SetFont($font, '', $fontsize);
+                    $this->SetFont($family, '', $fontsize);
                     $this->SetXY($x, $y);
                     $this->Cell(0,$width,$this->footerSucursal["datos"][$i],0,0,'L');
                     $y+=$spacing;
@@ -164,14 +169,15 @@ class PDF extends FPDF {
                     }
                 }
             if (!strlen(trim($this->sucursal)) == 0) {
-                 $x=-60;
-                $y=-25;
+                $x=-60;
+                $y=-29;
                 $spacing=2.5;
                 $width=2.5;
                 $fontsize=8;
 
                 $this->SetXY($x, $y);
-                $this->SetFont($font, 'B', $fontsize);
+                list($family, $style, $size) = explode(",", $this->GetStyle());
+                $this->SetFont($family, 'B', $fontsize);
                 $this->Cell(0,$width,$this->footerSucursal["datos"][0],0,0,'L');
                 $y+=4;
 
@@ -179,7 +185,7 @@ class PDF extends FPDF {
                 {
                     if($this->footerSucursal["datos"][$i]=="")
                         continue;
-                    $this->SetFont($font, '', $fontsize);
+                    $this->SetFont($family, '', $fontsize);
                     $this->SetXY($x, $y);
                     $this->Cell(0,$width,$this->footerSucursal["datos"][$i],0,0,'L');
                     $y+=$spacing;

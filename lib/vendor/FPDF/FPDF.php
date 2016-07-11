@@ -130,6 +130,8 @@ function FPDF($orientation='P',$unit='mm',$format='A4')
             $format=array(420.94,595.28);
         elseif($format=='letter')
             $format=array(612,792);
+        elseif($format=='oficio')
+            $format=array(612,900);
         elseif($format=='legal')
             $format=array(612,1008);
         else
