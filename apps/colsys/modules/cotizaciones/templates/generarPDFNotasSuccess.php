@@ -13,8 +13,14 @@ $imprimirNotas = $sf_data->getRaw("imprimirNotas");
 
 $pdf = new PDF (  );
 $pdf->Open ();
-$pdf->setColtransHeader ( true );
-$pdf->setColtransFooter ( true );
+$pdf->setIdempresa($idempresa);
+if (in_array($idempresa, array(1, 11))){
+    $pdf->setColmasHeader(true);
+    $pdf->setColmasFooter(true);
+}else if (in_array($idempresa, array(2, 7, 8))){
+    $pdf->setColtransHeader ( true );
+    $pdf->setColtransFooter ( true );
+}
 $pdf->AliasNbPages();
 $pdf->SetTopMargin(14);
 $pdf->SetLeftMargin(18);

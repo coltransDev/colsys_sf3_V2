@@ -697,6 +697,13 @@ class cotizacionesActions extends sfActions {
         $this->notas = sfYaml::load(sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "cotizaciones" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "notas.yml");
 
         $this->imprimirNotas = $this->getRequestParameter("notas");
+        $empresa = Doctrine::getTable("Empresa")
+                ->createQuery("e")
+                ->select("e.ca_idempresa")
+                ->where("e.ca_nombre like ?", "%".$this->cotizacion->getCaEmpresa()."%")
+                ->addWhere("e.ca_id is not null")
+                ->fetchOne();
+        $this->idempresa = $empresa->getCaIdempresa();
     }
 
     /*
