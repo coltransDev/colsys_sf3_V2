@@ -328,7 +328,7 @@ class reportesGerComponents extends sfComponents
         $columnas[] = array("text" => utf8_encode("Agente"), "sql" => "agt.ca_nombre", "alias" => "agt_ca_nombre", "leaf" => true, "default" => false, "groupBy" => true, "iconCls" => 'no-icon');
         $columnas[] = array("text" => utf8_encode("Incoterms"), "sql" => "rp.ca_incoterms", "alias" => "rp_ca_incoterms", "leaf" => true, "default" => true, "groupBy" => false, "iconCls" => 'no-icon');
         $columnas[] = array("text" => utf8_encode("Descripción Mercancía"), "sql" => "rp.ca_mercancia_desc", "alias" => "rp_ca_mercancia_desc", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
-        $columnas[] = array("text" => utf8_encode("Transporte"), "sql" => "rp.ca_transporte", "alias" => "rp_ca_transporte", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Transporte"), "sql" => "rp.ca_transporte", "alias" => "rp_ca_transporte", "leaf" => true, "default" => false, "groupBy" => true, "iconCls" => 'no-icon');
         $columnas[] = array("text" => utf8_encode("Modalidad"), "sql" => "rp.ca_modalidad", "alias" => "rp_ca_modalidad", "leaf" => true, "default" => true, "groupBy" => false, "iconCls" => 'no-icon');
         $columnas[] = array("text" => utf8_encode("Transportista"), "sql" => "prv.ca_nombre", "alias" => "prv_ca_nombre", "leaf" => true, "default" => false, "groupBy" => true, "iconCls" => 'no-icon');
         $columnas[] = array("text" => utf8_encode("Cliente"), "sql" => "cli.ca_nombre", "alias" => "cli_ca_nombre", "leaf" => true, "default" => false, "groupBy" => true, "iconCls" => 'no-icon');
@@ -336,7 +336,7 @@ class reportesGerComponents extends sfComponents
         $columnas[] = array("text" => utf8_encode("Sucursal"), "sql" => "suc.ca_nombre", "alias" => "suc_ca_nombre", "leaf" => true, "default" => true, "groupBy" => true, "iconCls" => 'no-icon');
         $columnas[] = array("text" => utf8_encode("Elaboró"), "sql" => "rp.ca_usucreado", "alias" => "rp_ca_usucreado", "leaf" => true, "default" => false, "groupBy" => true, "iconCls" => 'no-icon');
         $columnas[] = array("text" => utf8_encode("Información Status"), "sql" => "", "alias" => "status", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
-        $columnas[] = array("text" => utf8_encode("Datos/Carga"), "sql" => "", "alias" => "equipos", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Datos/Carga"), "sql" => "", "alias" => "equipos", "leaf" => true, "default" => true, "groupBy" => false, "iconCls" => 'no-icon');
         $columnas[] = array("text" => utf8_encode("Tarifas"), "sql" => "", "alias" => "tarifas", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
         
         $this->columnas = array("fields" => $columnas);

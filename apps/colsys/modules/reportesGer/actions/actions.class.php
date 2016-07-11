@@ -2371,6 +2371,10 @@ class reportesGerActions extends sfActions {
                     $q->addSelect("rp.ca_usucreado");
                     $orderBy.= "rp.ca_usucreado, ";
                     break;
+                case "rp_ca_transporte":
+                    $q->addSelect("rp.ca_transporte");
+                    $orderBy.= "rp.ca_transporte, ";
+                    break;
                 default:
                     $orderBy.= $filtro->sql . ", ";
                     break;

@@ -13,6 +13,14 @@ $sucursales = $sf_data->getRaw("sucursales");
 $vendedores = $sf_data->getRaw("vendedores");
 $traficos = $sf_data->getRaw("traficos");
 $columnas = $sf_data->getRaw("columnas");
+
+$filtros = array();
+foreach ($columnas['fields'] as $key => $value){
+    // print_r($value);
+    if ($columnas['fields'][$key]['groupBy'] === true){
+        $filtros['fields'][] = $value;
+    }
+}
 ?>
 <style>
     /*Inicio Julio*/
@@ -182,7 +190,7 @@ $columnas = $sf_data->getRaw("columnas");
                     },
                     proxy: {
                         type: 'memory',
-                        data: <?= json_encode($columnas) ?>,
+                        data: <?= json_encode($filtros) ?>,
                         reader: {
                             type: 'json',
                             root: 'fields'
@@ -199,24 +207,7 @@ $columnas = $sf_data->getRaw("columnas");
                         sortOnDrop: true,
                         containerScroll: true
                     }
-                },
-                listeners:{
-                    afterRender: function(combo){
-                        /* this.store.filter('groupBy', true); */
-                        // console.log(this.getRootNode().get("groupBy"));
-                        
-                        this.store.filter('groupBy', true); //FIX-ME Para que no desparezca la raiz despues del filtro
-                        
-                        // console.log(combo.getStore());
-                        // this.store.filter('text', 'Campos');
-                        // var root = this.getRootNode();
-                        // root.set("groupBy",true);
-                        // this.getRootNode().set("groupBy",true);
-                        // console.log(this.getRootNode().get("groupBy"));
-                        //this.setRootNode(root);
-                    }
                 }
-                
             }, {
                 title: 'Criterio de Ordenamiento',
                 xtype: 'treepanel',
