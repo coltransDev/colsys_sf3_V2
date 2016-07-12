@@ -697,19 +697,19 @@ $folder = $reporte->getDirectorioBase();
                                     } ?>
                                 </div></td>
                         </tr>
-                        <tr>
+                        <!--<tr>
                             <td><div align="left"><b>Carga Disponible</b>:<br />
                                     <?
-                                    echo $form['fch_cargadisponible']->renderError();
-                                    if ($ultStatus) {
+                                    //echo $form['fch_cargadisponible']->renderError();
+                                    /*if ($ultStatus) {
                                         $form->setDefault('fch_cargadisponible', $ultStatus->getProperty("cargaDisponible"));
                                     }
-                                    echo $form['fch_cargadisponible']->render(); 
+                                    echo $form['fch_cargadisponible']->render(); */
                                     ?>				
                                 </div></td>
                                 <td><div align="left">&nbsp;</div></td>
                                 <td><div align="left">&nbsp;</div></td>
-                        </tr>
+                        </tr>                        -->
                         <?
                         if ($reporte->getCaTiporep() != 4) {
                             $widgets = $form->getWidgetsClientes();
@@ -731,6 +731,32 @@ $folder = $reporte->getDirectorioBase();
                         </tr>						
                                     <?
                                 }
+                            }
+                        }
+                        if($reporte->getCliente()->getProperty("idgProveedor")){
+                            $widgets = $form->getWidgetsProveedores();                            
+                            if(count($widgets)>0){
+                                ?>
+                                <tr>
+                                    <td colspan="3">Proveedores: <br/>
+                                        Fechas de carga disponible para medir indicador Coordinación de Embarque:
+                                        <?
+                                        foreach ($widgets as $name => $val) {                                            
+                                            ?>
+                                            <div align="left">
+                                                <?
+                                                echo "<b>" . $val["label"] . ":</b>";
+                                                echo $form["id_".$name]->renderError();                                                
+                                                $form->setDefault('id_'.$name, $val["valor"]);                                                
+                                                echo $form["id_".$name]->render();
+                                                ?>
+                                            </div>
+                                            <?
+                                        }  
+                                        ?>
+                                    </td>
+                                </tr>
+                                <?
                             }
                         }
                         if ($reporte->getCaModalidad() == "FCL") {

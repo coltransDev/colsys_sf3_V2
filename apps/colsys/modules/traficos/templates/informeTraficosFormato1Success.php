@@ -197,7 +197,7 @@ foreach ($reportes as $reporte) {
         $objPHPExcel->getActiveSheet()->setCellValue('C' . $i, utf8_encode($destino->getCaCiudad()));
     }
 
-    $objPHPExcel->getActiveSheet()->setCellValue('D' . $i, utf8_encode(substr($reporte->getCaIncoterms(), 0, 3)));
+    $objPHPExcel->getActiveSheet()->setCellValue('D' . $i, utf8_encode(substr($reporte->getIncotermsStr(), 0, 3)));
     $ets = Utils::parseDate($reporte->getETS(), "d/m/y");
     if ($ets) {
         $objPHPExcel->getActiveSheet()->setCellValue('E' . $i, $ets);

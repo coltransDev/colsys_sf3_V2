@@ -106,7 +106,7 @@ $reportes = $sf_data->getRaw("reportes");
                                     $archivos = $reporte->getFilesGestDoc();
                                     if(count($archivos)){
                                         foreach( $archivos as $file ){
-                                            $filename = $file->getCaNombre();                                            
+                                            $filename = $file->getCaNombre();                                             
                                             ?>
                                                 <input type="checkbox" name="attachments1[]" value="<?=$reporte->getCaIdreporte()."_".base64_encode(basename($filename))?>" />
                                             <?

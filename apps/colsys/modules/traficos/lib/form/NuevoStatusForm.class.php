@@ -16,6 +16,7 @@ class NuevoStatusForm extends BaseForm {
     private $operativos = array();
     private $destinatariosFijos = array();
     private $widgetsClientes = array();
+    private $widgetsProveedores = array();
     private $idsucursal = null;
     
     public function configure() {
@@ -167,6 +168,12 @@ class NuevoStatusForm extends BaseForm {
                 $widgets[$name] = new sfWidgetFormInputText(array(), array("size" => 70));
                 $validator[$name] = new sfValidatorString(array('required' => false));
             }
+        }
+
+        foreach ($this->widgetsProveedores as $name => $val) {
+            
+            $widgets["id_".$name] = new sfWidgetFormExtDate();
+            $validator["id_".$name] = new sfValidatorDate(array('required' => false));                                                
         }
 
         $widgets['observaciones_idg'] = new sfWidgetFormInputText(array(), array("size" => 120));
@@ -482,6 +489,10 @@ class NuevoStatusForm extends BaseForm {
         return $this->widgetsClientes;
     }
 
+    public function getWidgetsProveedores() {
+        return $this->widgetsProveedores;
+    }
+
     public function getDestinatarios() {
         return $this->destinatarios;
     }
@@ -512,6 +523,15 @@ class NuevoStatusForm extends BaseForm {
 
             $this->widgetsClientes[$name] = array("type" => $type, "label" => $parametro->getCaValor2());
         }
+    }
+    
+    public function setWidgetsProveedores($proveedores) {
+
+        foreach ($proveedores as $proveedor) {
+            $tercero = Doctrine::getTable("Tercero")->find($proveedor->getCaIdproveedor());
+            if($tercero)
+                $this->widgetsProveedores[$proveedor->getCaIdrepproveedor()] = array("type" => "date", "label"=>$tercero->getCaNombre(), "valor"=>$proveedor->getCaCargaDisponible());
+}
     }
 }
 ?>

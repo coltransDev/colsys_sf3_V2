@@ -41,7 +41,7 @@ $modo = $sf_data->getRaw("modo");
                     <br /><br />
                     <?= $status->getCaIntroduccion() ?>
                 </td>
-                <?
+                <?/*
                 if ( $user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S." && $reporte->getCaTransporte() == Constantes::MARITIMO && ($status->getCaIdetapa() == "IMETA" || $status->getCaIdetapa() == "IMCPD")) {
                 ?>
                     <td width="170">
@@ -54,7 +54,7 @@ $modo = $sf_data->getRaw("modo");
                         <div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/amb-bog20140814.jpg"/></div>
                     </td>
                 <?
-                }
+                }*/
                 ?>
         </table><br /><br />
         
@@ -65,11 +65,11 @@ $modo = $sf_data->getRaw("modo");
                 <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>T&eacute;rmino de Negociaci&oacute;n:</b></td>
                 <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">
                     <?
-                    $array = explode("|", $reporte->getCaIncoterms());
+                    /*$array = explode("|", $reporte->getCaIncoterms());
                     $array = array_unique($array);
                     $incoterms = implode(" ", $array);
-                    echo $incoterms;
-                    //echo $reporte->getIncotermsStr();
+                    echo $incoterms;*/
+                    echo $reporte->getIncotermsStr();
                     ?>
                 </td>
                 <?
@@ -81,8 +81,8 @@ $modo = $sf_data->getRaw("modo");
             <tr>
                 <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Proveedor:</b></td>
                 <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="3"><?= $reporte->getProveedoresStr(false, "<br>") ?></td>
-                <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" width="20%"><b><?= $reporte->getCaOrdenProv() ? "Orden Proveedor" : "&nbsp;" ?></b></td>
-                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"width="22%"><?= $reporte->getCaOrdenProv() ? str_replace("|", "<br>", $reporte->getCaOrdenProv()) : "&nbsp;" ?></td>
+                <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" width="20%"><b><?= $reporte->getOrdenesStr() ? "Orden Proveedor" : "&nbsp;" ?></b></td>
+                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"width="22%"><?= $reporte->getOrdenesStr() ? $reporte->getOrdenesStr() : "&nbsp;" ?></td>
             </tr>
             <tr>
                 <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Origen:</b></td>

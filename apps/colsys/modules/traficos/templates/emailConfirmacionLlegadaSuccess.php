@@ -17,14 +17,14 @@ $cliente = $inoCliente->getCliente();
                 <br /><br />
                 <?= Utils::replace($status->getCaIntroduccion()); ?>
             </td>
-            <?
+            <?/*
             if ($user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S." && $reporte->getCaTransporte() == Constantes::MARITIMO) {
                 ?>
                 <td width="170">
                     <div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/amb-bog20140814.jpg"/></div>
                 </td>
                 <?
-            }
+            }*/
             ?>
         </tr>
     </table><br /><br />

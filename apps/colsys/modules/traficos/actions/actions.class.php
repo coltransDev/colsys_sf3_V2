@@ -358,6 +358,9 @@ class traficosActions extends sfActions {
 
       $this->form->setWidgetsClientes($parametros);
 
+      $proveedores = $reporte->getRepProveedor();      
+      $this->form->setWidgetsProveedores($proveedores);
+
       $this->form->configure();
       /*
        * Fin de la configuración
@@ -670,6 +673,19 @@ class traficosActions extends sfActions {
                $repotm->save($conn);
             }*/
          //}
+
+        if($reporte->getCliente()->getProperty("idgProveedor")){
+            $proveedores = $reporte->getRepProveedor();
+            if(count($proveedores)>0){
+                foreach($proveedores as $proveedor){
+                    if($request->getParameter("id_".$proveedor->getCaIdrepproveedor())){
+                        $repProveedor = Doctrine::getTable("RepProveedor")->find($proveedor->getCaIdrepproveedor());
+                        $repProveedor->setCaCargaDisponible($request->getParameter("id_".$proveedor->getCaIdrepproveedor()));
+                        $repProveedor->save($conn);
+                    }
+                }                
+            }
+        }
 
          //borra los equipos viejos
          $repequipos = $reporte->getRepEquipos();
