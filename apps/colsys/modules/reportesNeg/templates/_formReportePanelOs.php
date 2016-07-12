@@ -1,7 +1,8 @@
 <?php
 //error_reporting(E_ALL);
 
-$nprov=count(explode("|", $reporte->getCaIdproveedor() ));
+//$nprov=count(explode("|", $reporte->getCaIdproveedor() ));
+$nprov = count($reporte->getProveedores());
 
 //$cachedir = 'C:/desarrollo/colsys_sf3/apps/colsys/modules/reportesNeg/cache/';
 //$cachedir = '/srv/www/colsys_sf3/apps/colsys/modules/reportesNeg/cache/';
@@ -277,7 +278,7 @@ var idreporte='<?=$idreporte?>';
                         Ext.getCmp("cliente").setValue(res.data.idcliente);
                         $("#cliente").attr("value",res.data.cliente);
 
-                        for(i=0;i<<?=($nprov>0)?$nprov:0?>;i++)
+                        /*for(i=0;i<<?=($nprov>0)?$nprov:0?>;i++)
                         {
                             {
                                 if(Ext.getCmp("proveedor"+i))
@@ -286,7 +287,7 @@ var idreporte='<?=$idreporte?>';
                                     $("#proveedor"+i).attr("value",eval("res.data.proveedor"+i));
                                 }
                             }
-                        };
+                        };*/
                         for( i=0; i<20; i++ ){
                             if( Ext.getCmp("contacto_"+i) && Ext.getCmp("contacto_"+i).getValue()!="" ){
                                 Ext.getCmp("contacto_"+i).setReadOnly( true );

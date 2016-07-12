@@ -129,6 +129,11 @@ include_component("widgets", "widgetContactoCliente");
                                     border:false,
                                     title:"Proveedor ",
                                     items:[
+                                        {
+                                            xtype:"hidden",
+                                            id:"idrepproveedor0",
+                                            name:"idrepproveedor0"
+                                        },
                                         new WidgetTercero({
                                             tipo:'Proveedor',
                                             width:300,
@@ -185,6 +190,11 @@ include_component("widgets", "widgetContactoCliente");
                                     border:false,
                                     layout:'column',
                                     items:[
+                                        {
+                                            xtype:"hidden",
+                                            id:"idrepproveedor<?=$i?>",
+                                            name:"idrepproveedor<?=$i?>"
+                                        },
                                         new WidgetTercero({
                                                     tipo:'Proveedor',
                                                     width:300,
@@ -317,7 +327,13 @@ var ij=parseInt(<?=($nprov>1)?($nprov):1?>);
                             xtype:'fieldset',
                             layout:'column',
                             bodyCssClass:'x-fieldset',
+                            id: 'pr'+ij,
                             items:[
+                                {
+                                    xtype:"hidden",
+                                    id:"idrepproveedor"+ij,
+                                    name:"idrepproveedor"+ij
+                                },
                                 new WidgetTercero({
                                             tipo:'Proveedor',
                                             width:300,

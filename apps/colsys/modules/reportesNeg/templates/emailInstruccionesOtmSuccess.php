@@ -28,7 +28,7 @@ $folder = "reportes/" . $this->year . "/" . $reporte->getCaConsecutivo() . "/ins
         $html .="<tr><td>MOTONAVE : </td><td><input style='width: 100%' id='motonave' name='motonave' value='" . $repotm->getCaMotonave() . "'></td></tr>";
         $html .="<tr><td>MUELLE: </td><td><input style='width: 100%' id='muelle' name='muelle' value='" . $repotm->getInoDianDepositos()->getCaNombre() . "'></td></tr>";
         $html .="<tr><td>REF: </td><td><input style='width: 100%' id='ref' name='ref' value='" . $reporte->getCaOrdenClie() . "'></td></tr>";
-        $html .="<tr><td>TERMINO DE NEGOCIACION: </td><td><input style='width: 100%' id='incoterm' name='incoterm' value='" . $reporte->getCaIncoterms() . "'></td></tr>";
+        $html .="<tr><td>TERMINO DE NEGOCIACION: </td><td><input style='width: 100%' id='incoterm' name='incoterm' value='" . $reporte->getIncotermsStr() . "'></td></tr>";
         $html .="<tr><td>BODEGA: </td><td><input style='width: 100%' id='bodega' name='bodega' value='" . ($reporte->getBodega()->getCaNombre()) . "'></td></tr>";
         $html .="<tr><td>DESCRIPCION : </td><td><input style='width: 100%' id='mercancia' name='mercancia' value='" . $reporte->getCaMercanciaDesc() . "'></td></tr>";
         $html .="<tr><td>VALOR FOB : </td><td><input style='width: 100%' id='valorfob' name='valorfob' value='" . $reporte->getRepOtm()->getCaValorfob() . "'></td></tr>";

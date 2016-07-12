@@ -84,7 +84,7 @@
                              ?>
                             </td>
                             <td width="33%" <?=($comparar)? (($reporte->compDato("CaIdconcliente")!=0)?"class='rojo'":"") :""?> ><b>Contacto:</b> <?=Utils::replace($contacto->getCaNombres())?></td>
-                            <td width="33%" <?=($comparar)? (($reporte->compDato("CaOrdenClie")!=0)?"class='rojo'":"") :""?> ><b>Orden:</b><?=$reporte->getCaOrdenClie()?></td>
+                            <td width="33%" <?=($comparar)? (($reporte->compDato("CaOrdenClie")!=0)?"class='rojo'":"") :""?> ><b>Orden:</b><?=$reporte->getOrdenesStr()?></td>
                         </tr>
                         <tr>
                             <td><b>Direcci&oacute;n:</b> <?=Utils::replace($cliente->getDireccion())?></td>
@@ -127,7 +127,7 @@
                 ?>			</td>
         </tr>
         <?
-        if( $reporte->getCaIdproveedor() ){
+        /*if( $reporte->getCaIdproveedor() ){
 
             $values = explode("|", $reporte->getCaIdproveedor() );
 
@@ -145,9 +145,30 @@
             </tr>
             <?
             }
+        }*/
+        $proveedores = $reporte->getProveedores();
+        $strProveedores = $reporte->getProveedoresStr();
+        if( count($proveedores)>0 ){
+            foreach( $proveedores as $proveedor ){
+                
+                if($comparar){
+                    echo "comparacion".$reporte->compDato("ProveedoresStr");
+                }
+                ?>
+                <tr class="row0">
+                    <td <?=($comparar)? (($reporte->compDato("ProveedoresStr")!=0)?"class='rojo'":"") :""?> colspan="6"><b>Proveedor</b></td>
+                </tr>
+                <tr>
+                    <td colspan="6" >
+                        <?
+                        include_component("reportesNeg", "previewTercero", array("idtercero"=>$proveedor->getCaIdtercero(), "reporte"=>$reporte));
+                        ?>
+                    </td>
+                </tr>
+                <?
+            }
         }
         ?>
-
     </table>
 </div>
 

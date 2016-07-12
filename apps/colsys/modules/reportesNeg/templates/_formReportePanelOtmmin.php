@@ -5,7 +5,8 @@ $cachetime = 86400;
 //$cachetime = 1;
 $cacheext = 'colsys';
 
-$nprov=count(explode("|", $reporte->getCaIdproveedor() ));
+//$nprov=count(explode("|", $reporte->getCaIdproveedor() ));
+$nprov = count($reporte->getRepProveedor());
 $trafico=$user->getIdtrafico();
 $cachepage = md5("formReporteOtmmin");
 $cachefile = $cachedir.$cachepage.'.'.$cacheext;
@@ -349,6 +350,11 @@ include_component("reportesNeg", "checkListOtm");
                                     border:false,
                                     title: "Proveedor ",
                                     items: [
+                                        {
+                                            xtype:"hidden",
+                                            id:"idrepproveedor0",
+                                            name:"idrepproveedor0"
+                                        },
                                         new WidgetTercero({
                                             tipo: 'Proveedor',
                                             width: 400,
@@ -597,6 +603,15 @@ include_component("reportesNeg", "checkListOtm");
                         var res = Ext.util.JSON.decode( action.response.responseText );
                         Ext.MessageBox.alert("Mensaje",'Se guardo correctamente el reporte con el consecutivo '+res.consecutivo);
                         idreporte=res.idreporte;
+                        idsProv = res.idsProv;
+                        idsProvIni = res.idsProvIni;
+                        idsProvEnd = res.idsProvEnd;
+                        for(i=0;i<=15;i++){                            
+                            if(Ext.getCmp("idrepproveedor"+i)){
+                                if(Ext.getCmp("idrepproveedor"+i).getValue()!=idsProv[i])
+                                    Ext.getCmp("idrepproveedor"+i).setValue(idsProv[i]);
+                            }                            
+                        }
                         if(res.redirect=="true" || res.redirect==true)
                             location.href="/reportesNeg/consultaReporte/id/"+res.idreporte+"/impoexpo/<?=$impoexpo?>/modo/<?=$modo?>";
                     }
@@ -636,6 +651,11 @@ include_component("reportesNeg", "checkListOtm");
                             layout:'column',
                             bodyCssClass:'x-fieldset',
                             items: [
+                                {
+                                    xtype:"hidden",
+                                    id:"idrepproveedor"+ij,
+                                    name:"idrepproveedor"+ij
+                                },
                                 new WidgetTercero({
                                             tipo: 'Proveedor',
                                             width: 400,
@@ -681,6 +701,11 @@ include_component("reportesNeg", "checkListOtm");
                                     Ext.getCmp("proveedor"+i).setValue(eval("res.data.idproveedor"+i));
                                     $("#proveedor"+i).attr("value",eval("res.data.proveedor"+i));
                                 }
+                                if(Ext.getCmp("idrepproveedor"+i))
+                                {
+                                    Ext.getCmp("idrepproveedor"+i).setValue(eval("res.data.idrepproveedor"+i));
+                                    $("#idrepproveedor"+i).attr("value",eval("res.data.idrepproveedor"+i));
+                            }
                             }
                         };
                         for( i=0; i<20; i++ ){
@@ -724,7 +749,7 @@ include_component("reportesNeg", "checkListOtm");
                         Ext.getCmp("idimportador").setValue(res.data.ca_idimportador);
                         $("#idimportador").attr("value",res.data.idimportador);
                         
-                        for(i=0;i<<?=($nprov>0)?$nprov:0?>;i++)
+                        /*for(i=0;i<<?=($nprov>0)?$nprov:0?>;i++)
                         {
                             {
                                 if(Ext.getCmp("proveedor"+i))
@@ -733,7 +758,7 @@ include_component("reportesNeg", "checkListOtm");
                                     $("#proveedor"+i).attr("value",eval("res.data.proveedor"+i));
                                 }
                             }
-                        };
+                        }*/;
                         
                         Ext.getCmp("origen").setValue(res.data.idorigen);
                         $("#origen").attr("value",res.data.origen);

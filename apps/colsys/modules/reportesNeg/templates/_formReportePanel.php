@@ -1,7 +1,9 @@
 <?php
 //error_reporting(E_ALL);
 
-$nprov=count(explode("|", $reporte->getCaIdproveedor() ));
+//$nprov1=count(explode("|", $reporte->getCaIdproveedor() ));
+$nprov = count($reporte->getRepProveedor());
+
 $trafico=$user->getIdtrafico();
 
 if($reporte->getCaIdreporte())
@@ -253,6 +255,15 @@ var idreporte='<?=$idreporte?>';
                         var res = Ext.util.JSON.decode( action.response.responseText );
                         Ext.MessageBox.alert("Mensaje",'Se guardo correctamente el reporte con el consecutivo '+res.consecutivo);
                         idreporte=res.idreporte;
+                        idsProv = res.idsProv;
+                        idsProvIni = res.idsProvIni;
+                        idsProvEnd = res.idsProvEnd;                        
+                        for(i=0;i<=15;i++){                            
+                            if(Ext.getCmp("idrepproveedor"+i)){
+                                if(Ext.getCmp("idrepproveedor"+i).getValue()!=idsProv[i])
+                                    Ext.getCmp("idrepproveedor"+i).setValue(idsProv[i]);
+                            }                            
+                        }
                         if(res.redirect=="true" || res.redirect==true)
                             location.href="/reportesNeg/consultaReporte/id/"+res.idreporte+"/impoexpo/<?=$impoexpo?>/modo/<?=$modo?>";
                     }
@@ -351,6 +362,11 @@ var idreporte='<?=$idreporte?>';
                                     Ext.getCmp("proveedor"+i).setValue(eval("res.data.idproveedor"+i));
                                     $("#proveedor"+i).attr("value",eval("res.data.proveedor"+i));
                                 }
+                                if(Ext.getCmp("idrepproveedor"+i))
+                                {
+                                    Ext.getCmp("idrepproveedor"+i).setValue(eval("res.data.idrepproveedor"+i));
+                                    $("#idrepproveedor"+i).attr("value",eval("res.data.idrepproveedor"+i));
+                            }
                             }
                         };
                         for( i=0; i<20; i++ ){

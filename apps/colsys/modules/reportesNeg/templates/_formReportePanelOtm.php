@@ -1,7 +1,8 @@
 <?php
 //error_reporting(E_ALL);
 
-$nprov=count(explode("|", $reporte->getCaIdproveedor() ));
+//$nprov=count(explode("|", $reporte->getCaIdproveedor() ));
+$nprov = count($reporte->getRepProveedor());
 $trafico=$user->getIdtrafico();
 
 if($reporte->getCaIdreporte())

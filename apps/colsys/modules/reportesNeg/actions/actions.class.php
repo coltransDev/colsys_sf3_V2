@@ -245,6 +245,8 @@ class reportesNegActions extends sfActions {
         $condicion = "";
         $this->tiporep = 0;
         $inner = "  ";
+        $select ="";
+        $join="";
         if ($this->opcion == "otmmin") {
 //            $condicion.=" and ca_tiporep = 4";
             $this->tiporep = 4;
@@ -255,9 +257,11 @@ class reportesNegActions extends sfActions {
         if ($criterio) {
             if ($opcion == 'ca_consecutivo') {
                 $condicion.= " and r.$opcion like '" . $criterio . "%'";
-            } else if ($opcion == 'ca_nombre_cli' or $opcion == 'ca_nombre_con' or $opcion == 'ca_nombre_pro' or $opcion == 'ca_orden_prov' or $opcion == 'ca_orden_clie' or $opcion == 'ca_idcotizacion' or $opcion == 'ca_login' or $opcion == 'ca_mercancia_desc' or $opcion == 'ca_traorigen' or $opcion == 'ca_ciuorigen') {
+            } else if ($opcion == 'ca_nombre_cli' or $opcion == 'ca_nombre_con' or $opcion == 'ca_orden_prov' or $opcion == 'ca_orden_clie' or $opcion == 'ca_idcotizacion' or $opcion == 'ca_login' or $opcion == 'ca_mercancia_desc' or $opcion == 'ca_traorigen' or $opcion == 'ca_ciuorigen') {
                 $condicion.= " and lower(r.$opcion) like lower('%" . $criterio . "%')";
-            } else if ($opcion == "ca_nombre_cli_otm") {
+            } else if($opcion == 'ca_nombre_pro'){
+                $condicion.= " and lower(proveedores) like lower('%" . $criterio . "%')";
+            }else if ($opcion == "ca_nombre_cli_otm") {
                 $condicion.=" and o.ca_idcliente in (select ca_idtercero from tb_terceros where lower(ca_nombre) like lower('%" . $criterio . "%') )";
             } else if ($opcion =="ca_importador") {
                 $condicion.=" and o.ca_idimportador in (select ca_idtercero from tb_terceros where lower(ca_nombre) like lower('%" . $criterio . "%') )";
@@ -311,8 +315,10 @@ class reportesNegActions extends sfActions {
 
         if (($this->idimpo && $criterio) || !$this->idimpo) {
             $con = Doctrine_Manager::getInstance()->connection();
-            $sql = "select * from vi_reportes2 r where 1=1 $condicion $limit ";
+            $sql = "select * $select from vi_reportes2 r $join where 1=1 $condicion $limit ";
             $st = $con->execute($sql);
+            
+            //echo $sql;
             $this->reportes = $st->fetchAll();
         } else
             $this->reportes = array();
@@ -837,10 +843,10 @@ class reportesNegActions extends sfActions {
                     $texto.="Descripcion de Mercancia<br>";
                 }
 
-                $prov = "";
+                /*$prov = "";
                 $incoterms = "";
                 $orden = "";
-                for ($i = 0; $i < 20; $i++) {
+                for ($i = 0; $i < 15; $i++) {
                     if ($request->getParameter("prov" . $i) && $request->getParameter("prov" . $i) != "") {
                         $prov.=($prov != "") ? "|" : "";
                         $prov.=$request->getParameter("prov" . $i);
@@ -854,7 +860,7 @@ class reportesNegActions extends sfActions {
                     $texto.="Proveedor<br>";
                 }
 
-                for ($i = 0; $i < 20; $i++) {
+                for ($i = 0; $i < 15; $i++) {
                     if ($request->getParameter("incoterms" . $i) != "" && ($request->getParameter("prov" . $i) != "" || $reporte->getCaImpoexpo() == Constantes::EXPO)) {
                         $incoterms.=($incoterms != "") ? "|" : "";
                         $incoterms.=$request->getParameter("incoterms" . $i);
@@ -868,7 +874,7 @@ class reportesNegActions extends sfActions {
                     $texto.="Incoterms<br>";
                 }
 
-                for ($i = 0; $i < 20; $i++) {
+                for ($i = 0; $i < 15; $i++) {
                     if ($request->getParameter("orden_pro" . $i) && $request->getParameter("prov" . $i) != "") {
                         $orden.=($orden != "") ? "|" : "";
                         $orden.=utf8_decode($request->getParameter("orden_pro" . $i));
@@ -880,6 +886,7 @@ class reportesNegActions extends sfActions {
                     $errors["orden_pro0"] = "Debe colocar una orden de proveedor";
                     $texto.="Orden de Proveedor<br>";
                 }
+                }*/
 
                 if ($request->getParameter("orden_clie")) {
                     $reporte->setCaOrdenClie(utf8_decode($request->getParameter("orden_clie")));
@@ -1136,7 +1143,55 @@ class reportesNegActions extends sfActions {
                     $reporte->setCaIdproductootm($request->getParameter("idproductootm"));
 
                 $reporte->save();
-                if ($tipo != "full") {
+                
+                if ($tipo != "full") {                
+                    if ($reporte->getCaImpoexpo() == Constantes::EXPO) {
+                        $incoterms = $reporte->getRepProveedor();
+                        if(count($incoterms)<=0){                        
+                            if($request->getParameter("incoterms0")){
+                                $repProveedor = new RepProveedor();
+                                $repProveedor->setCaIdreporte($reporte->getCaIdreporte());
+                                $repProveedor->setCaIdproveedor(null);
+                                $repProveedor->setCaIncoterms($request->getParameter("incoterms0"));
+                                $repProveedor->setCaOrdenProv(null);
+                                $repProveedor->save();                            
+                            }
+                        }else{                        
+                            foreach($incoterms as $incoterm){
+                                if($request->getParameter("incoterms0")){
+                                    $incoterm->setCaIncoterms($request->getParameter("incoterms0"));
+                                    $incoterm->save();                      
+                                }else{
+                                    $incoterm->delete();                      
+                                }
+                            }
+                        }                   
+                    } else {
+                        $idsProvIni = array();
+
+                        for ($i = 0; $i < 15; $i++) {                        
+                            if($request->getParameter("idrepproveedor" . $i)){
+                                $idsProvIni[] = $request->getParameter("idrepproveedor" . $i);
+                                $repProveedor = Doctrine::getTable("RepProveedor")->find($request->getParameter("idrepproveedor" . $i));                        
+                                if($request->getParameter("prov" . $i) == null || $request->getParameter("prov" . $i)==""){
+                                    if(isset($repProveedor) || count($repProveedor)>0)
+                                        $repProveedor->delete();
+                                    continue;
+                                }
+                            }else{
+                                if($request->getParameter("prov" . $i) == null || $request->getParameter("prov" . $i)=="")
+                                    continue;
+                                $repProveedor = new RepProveedor();
+                                $repProveedor->setCaIdreporte($reporte->getCaIdreporte());
+                            }
+
+                            $repProveedor->setCaIdproveedor($request->getParameter("prov" . $i));
+                            $repProveedor->setCaIncoterms($request->getParameter("incoterms".$i));
+                            $repProveedor->setCaOrdenProv($request->getParameter("orden_pro".$i));
+                            $repProveedor->save();
+                        }
+                    }                
+                
                     if ($request->getParameter("idproducto")) {
                         $idproducto = $request->getParameter("idproducto");
                         $param = array();
@@ -1363,7 +1418,38 @@ class reportesNegActions extends sfActions {
                         $repExpo->save();
                     }
                 }
-                $this->responseArray = array("success" => true, "idreporte" => $reporte->getCaIdreporte(), "redirect" => $redirect, "consecutivo" => $reporte->getCaConsecutivo());
+                $idsProv = array();
+                $idsProvEnd = array();
+                
+                $proveedores = $reporte->getRepProveedor();
+                
+                foreach($proveedores as $proveedor){                    
+                    $idsProvEnd[] = $proveedor->getCaIdrepproveedor();
+                }
+                sort($idsProvEnd);
+                if(!empty($idsProvIni)){
+                    foreach($idsProvIni as $key => $val){
+                        if(in_array($val, $idsProvEnd))
+                            $idsProv[] = $val;
+                        else
+                            $idsProv[] = null;
+                    }
+                    if(!empty($idsProvEnd)){
+                        foreach ($idsProvEnd as $key => $val){
+                            if(in_array($val, $idsProv))
+                                continue;
+                            else
+                                $idsProv[] = $val;
+                        }
+                    }
+                }else{
+                    foreach($idsProvEnd as $key => $val){
+                        $idsProv[] = $val;
+                    } 
+                }
+                
+                
+                $this->responseArray = array("success" => true, "idreporte" => $reporte->getCaIdreporte(), "redirect" => $redirect, "consecutivo" => $reporte->getCaConsecutivo(), "idsProv"=> $idsProv, "idsProvIni"=>$idsProvIni, "idsProvEnd"=>$idsProvEnd);
             }
         } /*catch (Exception $e) {
             //print_r($e);
@@ -1494,7 +1580,7 @@ class reportesNegActions extends sfActions {
                 $texto.="Orden de cliente <br>";
             }
 
-            $prov = "";
+            /*$prov = "";
             $incoterms = "";
             $orden = "";
             for ($i = 0; $i < 15; $i++) {
@@ -1529,7 +1615,7 @@ class reportesNegActions extends sfActions {
             }
             if ($orden) {
                 $reporte->setCaOrdenProv($orden);
-            }
+            }*/
             $ca_confirmar_clie = "";
             $cc = "";
             for ($i = 0; $i < 20; $i++) {
@@ -1622,6 +1708,31 @@ class reportesNegActions extends sfActions {
                 $this->responseArray = array("success" => false, "redirect" => false, "errors" => $errors, "texto" => $texto);
             else {
                 $reporte->save();
+                //reporte Ag                
+                $idsProvIni = array();
+
+                for ($i = 0; $i < 15; $i++) {
+                        
+                    if($request->getParameter("idrepproveedor" . $i)){
+                        $idsProvIni[] = $request->getParameter("idrepproveedor" . $i);
+                        $repProveedor = Doctrine::getTable("RepProveedor")->find($request->getParameter("idrepproveedor" . $i));                        
+                        if($request->getParameter("prov" . $i) == null || $request->getParameter("prov" . $i)==""){
+                            if(isset($repProveedor) || count($repProveedor)>0)
+                                $repProveedor->delete();
+                            continue;
+                        }
+                    }else{
+                        if($request->getParameter("prov" . $i) == null || $request->getParameter("prov" . $i)=="" )
+                            continue;                                                                                                                                       
+                        $repProveedor = new RepProveedor();
+                        $repProveedor->setCaIdreporte($reporte->getCaIdreporte());
+                    }
+                    
+                    $repProveedor->setCaIdproveedor($request->getParameter("prov" . $i));
+                    $repProveedor->setCaIncoterms($request->getParameter("incoterms".$i));
+                    $repProveedor->setCaOrdenProv($request->getParameter("orden_pro".$i));
+                    $repProveedor->save();
+                }
 
                 $mail = new Email();
                 $asunto = $request->getParameter("asunto") . " - " . $reporte->getCaConsecutivo();
@@ -1651,7 +1762,7 @@ class reportesNegActions extends sfActions {
                 $ids = $reporte->getIdsAgente()->getIds();
                 $agente = $ids->getCaNombre();
                 $trayecto = $reporte->getOrigen()->getTrafico()->getCaNombre() . "-" . $reporte->getOrigen()->getCaCiudad() . "&raquo;" . $reporte->getDestino()->getTrafico()->getCaNombre() . "-" . $reporte->getDestino()->getCaCiudad();
-                $proveedor = "";
+                /*$proveedor = "";
                 if ($reporte->getCaIdproveedor()) {
                     $values = explode("|", $reporte->getCaIdproveedor());
                     $values1 = explode("|", $reporte->getCaIncoterms());
@@ -1663,7 +1774,7 @@ class reportesNegActions extends sfActions {
                             $proveedor .=Utils::replace($tercero->getCaNombre()) . " - " . $values1[$i] . " - " . $values2[$i] . "<br>";
                         }
                     }
-                }
+                }*/
 
                 $this->getRequest()->setParameter('tipo', "AG");
                 $this->getRequest()->setParameter('idreporte', $reporte->getCaIdreporte());
@@ -1683,8 +1794,35 @@ class reportesNegActions extends sfActions {
                 $mail->setCaAddress($cc);
                 $mail->setCaCc($email_send . "," . $reporte->getUsuario()->getCaEmail() . "," . $cc);
                 $mail->save();
+                //Reporte Ag
+                $proveedores = $reporte->getRepProveedor();
 
-                $this->responseArray = array("success" => true, "idreporte" => $reporte->getCaIdreporte(), "consecutivo" => $reporte->getCaConsecutivo(), "transporte" => utf8_encode($request->getParameter("transporte")), "impoexpo" => utf8_encode($request->getParameter("impoexpo")));
+                foreach($proveedores as $proveedor){                    
+                    $idsProvEnd[] = $proveedor->getCaIdrepproveedor();
+            }
+                sort($idsProvEnd);
+                if(!empty($idsProvIni)){
+                    foreach($idsProvIni as $key => $val){
+                        if(in_array($val, $idsProvEnd))
+                            $idsProv[] = $val;
+                        else
+                            $idsProv[] = null;
+                    }
+                    if(!empty($idsProvEnd)){
+                        foreach ($idsProvEnd as $key => $val){
+                            if(in_array($val, $idsProv))
+                                continue;
+                            else
+                                $idsProv[] = $val;
+                        }
+                    }
+                } else {
+                    foreach($idsProvEnd as $key => $val){
+                        $idsProv[] = $val;
+                    } 
+                }
+
+                $this->responseArray = array("success" => true, "idreporte" => $reporte->getCaIdreporte(), "consecutivo" => $reporte->getCaConsecutivo(), "transporte" => utf8_encode($request->getParameter("transporte")), "impoexpo" => utf8_encode($request->getParameter("impoexpo")), "idsProv"=> $idsProv);
             }
         } catch (Exception $e) {
             $this->responseArray = array("success" => false, "err" => utf8_encode($e->getMessage()));
@@ -1818,7 +1956,7 @@ class reportesNegActions extends sfActions {
                     $texto.="Desripcion de Mercacia <br>";
                 }
 
-                $prov = "";
+                /*$prov = "";
                 $incoterms = "";
                 $orden = "";
                 for ($i = 0; $i < 15; $i++) {
@@ -1854,7 +1992,7 @@ class reportesNegActions extends sfActions {
 
                 if ($incoterms) {
                     $reporte->setCaIncoterms($incoterms);
-                }
+                }*/
 
                 if ($request->getParameter("orden_clie")) {
                     $reporte->setCaOrdenClie(utf8_decode($request->getParameter("orden_clie")));
@@ -1926,6 +2064,31 @@ class reportesNegActions extends sfActions {
                 $this->responseArray = array("success" => false, "redirect" => false, "errors" => $errors, "texto" => $texto);
             else {
                 $reporte->save();
+
+                $idsProvIni = array();
+                    
+                for ($i = 0; $i < 15; $i++) {
+                        
+                    if($request->getParameter("idrepproveedor" . $i)){
+                        $idsProvIni[] = $request->getParameter("idrepproveedor" . $i);
+                        $repProveedor = Doctrine::getTable("RepProveedor")->find($request->getParameter("idrepproveedor" . $i));                        
+                        if($request->getParameter("prov" . $i) == null || $request->getParameter("prov" . $i)==""){
+                            if(isset($repProveedor) || count($repProveedor)>0)
+                                $repProveedor->delete();
+                            continue;
+                        }
+                    }else{
+                        if($request->getParameter("prov" . $i) == null || $request->getParameter("prov" . $i)=="" )
+                            continue;                                                                                                                                       
+                        $repProveedor = new RepProveedor();
+                        $repProveedor->setCaIdreporte($reporte->getCaIdreporte());
+                    }
+                    
+                    $repProveedor->setCaIdproveedor($request->getParameter("prov" . $i));
+                    $repProveedor->setCaIncoterms($request->getParameter("incoterms".$i));
+                    $repProveedor->setCaOrdenProv($request->getParameter("orden_pro".$i));
+                    $repProveedor->save();
+                }
 
                 $repOtm = Doctrine::getTable("RepOtm")->find($reporte->getCaIdreporte());
                 if (!$repOtm) {
@@ -2107,8 +2270,35 @@ class reportesNegActions extends sfActions {
                 }
 
                 $repOtm->save();
+                //Reporte Otm
+                $proveedores = $reporte->getRepProveedor();
 
-                $this->responseArray = array("success" => true, "idreporte" => $reporte->getCaIdreporte(), "redirect" => $redirect, "consecutivo" => $reporte->getCaConsecutivo());
+                foreach($proveedores as $proveedor){                    
+                    $idsProvEnd[] = $proveedor->getCaIdrepproveedor();
+            }
+                sort($idsProvEnd);
+                if(!empty($idsProvIni)){
+                    foreach($idsProvIni as $key => $val){
+                        if(in_array($val, $idsProvEnd))
+                            $idsProv[] = $val;
+                        else
+                            $idsProv[] = null;
+                    }
+                    if(!empty($idsProvEnd)){
+                        foreach ($idsProvEnd as $key => $val){
+                            if(in_array($val, $idsProv))
+                                continue;
+                            else
+                                $idsProv[] = $val;
+                        }
+                    }
+                } else {
+                    foreach($idsProvEnd as $key => $val){
+                        $idsProv[] = $val;
+                    } 
+                }
+
+                $this->responseArray = array("success" => true, "idreporte" => $reporte->getCaIdreporte(), "redirect" => $redirect, "consecutivo" => $reporte->getCaConsecutivo(), "idsProv"=> $idsProv);
             }
         } catch (Exception $e) {
             $this->responseArray = array("success" => false, "err" => utf8_encode($e->getMessage()));
@@ -2195,7 +2385,7 @@ class reportesNegActions extends sfActions {
                 $reporte->setCaInstrucciones(null);
             }
 
-            $prov = "";
+            /*$prov = "";
             $incoterms = "";
             $orden = "";
             for ($i = 0; $i < 15; $i++) {
@@ -2220,7 +2410,7 @@ class reportesNegActions extends sfActions {
             if ($orden) {
                 $reporte->setCaOrdenProv($orden);
             } else
-                $reporte->setCaIdproveedor(null);
+                $reporte->setCaIdproveedor(null);*/
 
             $ca_confirmar_clie = "";
             $cc = "";
@@ -2385,13 +2575,13 @@ class reportesNegActions extends sfActions {
             $data["preferencias"] = utf8_encode($reporte->getCaPreferenciasClie());
 
             $data["ca_comodato"] = ($reporte->getCaComodato() == "Sí" || $reporte->getCaComodato() == "on" ) ? true : false;
-            if ($reporte->getCaIdproveedor()) {
+            /*if ($reporte->getCaIdproveedor()) {
                 $values = explode("|", $reporte->getCaIdproveedor());
                 for ($i = 0; $i < count($values); $i++) {
                     $tercero = Doctrine::getTable("Tercero")->find($values[$i]);
                     if ($tercero) {
                         $data["idproveedor" . $i] = $values[$i];
-                        $data["proveedor" . $i] = utf8_encode($tercero->getCaNombre());
+                        $data["proveedor" . $i] = Utils::replace($tercero->getCaNombre());
                     }
                 }
             }
@@ -2407,6 +2597,59 @@ class reportesNegActions extends sfActions {
                 $values = explode("|", $reporte->getCaOrdenProv());
                 for ($i = 0; $i < count($values); $i++) {
                     $data["orden_pro" . $i] = utf8_encode($values[$i]);
+                }
+            }*/
+            /*$proveedores = $reporte->getRepProveedor(array("ca_idrepproveedor","ASC"));
+            //echo count($provedores);
+            
+            
+            if(count($proveedores)>0){
+                $i=0;
+                foreach($proveedores as $proveedor){
+                    //echo $proveedor->getCaIdrepproveedor()."<br/>";
+                    $tercero = Doctrine::getTable("Tercero")->find($proveedor->getCaIdproveedor());
+                    if ($tercero) {
+                        $data["idrepproveedor".$i] = $proveedor->getCaIdrepproveedor();
+                        $data["idproveedor" . $i] = $proveedor->getCaIdproveedor();
+                        $data["proveedor" . $i] = Utils::replace($tercero->getCaNombre());
+                        $data["incoterms" . $i] = $proveedor->getCaIncoterms();
+                        $data["orden_pro" . $i] = $proveedor->getCaOrdenProv();
+            }
+                    $i++;                    
+                }
+            }*/
+
+            $proveedores = $reporte->getProveedores();
+            //print_r($proveedores);
+            //echo count($proveedores);
+            if(count($proveedores)>0){
+                $i=0;
+                foreach($proveedores as $proveedor){                    
+                    $repProveedor =  Doctrine::gettable("RepProveedor")
+                        ->createQuery("rp")
+                        ->where("rp.ca_idreporte = ?", $reporte->getCaIdreporte())
+                        ->addWhere("rp.ca_idproveedor = ?", $proveedor->getCaIdtercero())
+                        ->limit(1)
+                        ->execute();
+                    
+                    if ($repProveedor) {
+                        //echo utf8_encode($repProveedor[0]->getCaOrdenProv());
+                        $data["idrepproveedor".$i] = $repProveedor[0]->getCaIdrepproveedor();
+                        $data["idproveedor" . $i] = $proveedor->getCaIdtercero();
+                        $data["proveedor" . $i] = utf8_encode($proveedor->getCaNombre());
+                        $data["incoterms" . $i] = utf8_encode($repProveedor[0]->getCaIncoterms());
+                        $data["orden_pro" . $i] = utf8_encode($repProveedor[0]->getCaOrdenProv());
+                    }
+                    $i++;
+                }
+            }else {                
+                if ($reporte->getCaImpoexpo() == Constantes::EXPO) {
+                    $incoterms = $reporte->getRepProveedor();
+                    if(count($incoterms)>0){  
+                        foreach($incoterms as $incoterm){
+                            $data["incoterms0"] =   utf8_encode($incoterm->getCaIncoterms());                           
+                        }
+                    }
                 }
             }
 
@@ -3490,7 +3733,7 @@ class reportesNegActions extends sfActions {
                 $row["aplicacionminimo"] = $recargo->getCaAplicacionminimo();
                 $row["observaciones"] = $recargo->getCaDetalles();
                 $row['tipo'] = "costo";
-                $row['orden'] = "Y-" . $recargo->getCosto()->getCaCosto();
+                $row['orden'] = "Y-" . utf8_encode($recargo->getCosto()->getCaCosto());
                 $conceptos[] = $row;
             }
         }
@@ -4144,11 +4387,11 @@ class reportesNegActions extends sfActions {
                     ->set("ca_fchanulado", "'" . date("Y-m-d H:i:s") . "'")
                     ->set("ca_detanulado", "'Unificado con el reporte " . $reporte->getCaConsecutivo() . "'")
                     ->where("ca_consecutivo = ?", $consecutivo)
-                    ->execute();
+                    ->execute($conn);
             
             $tmp = "";
 
-            $proveedores = explode("|", $reporte->getCaIdproveedor());
+            /*$proveedores = explode("|", $reporte->getCaIdproveedor());
             $ordenes = explode("|", $reporte->getCaOrdenProv());
             $incoterms = explode("|", $reporte->getCaIncoterms());
 
@@ -4173,7 +4416,58 @@ class reportesNegActions extends sfActions {
 
             $reporte->setCaIdproveedor(implode("|", $proveedores));
             $reporte->setCaIncoterms(implode("|", $incoterms));
-            $reporte->setCaOrdenProv(implode("|", $ordenes));
+            $reporte->setCaOrdenProv(implode("|", $ordenes));*/
+
+            //$idsProv = array();
+            //$idsProv1 = array();
+            
+            
+            
+            /*
+            foreach($proveedores as $proveedor){
+                foreach($proveedores1 as $proveedor1){
+                    if($proveedor->getCaIdproveedor()==$proveedor1->getCaIdproveedor()){
+                        if($proveedor->getCaIncoterms()==$proveedor1->getCaIncoterms()){
+                            continue;
+                        }else {
+                            $repProveedor = new RepProveedor();
+                            $repProveedor->setCaIdreporte($reporte->getCaIdreporte());
+                            $repProveedor->setCaIdproveedor($proveedor2->getCaIdproveedor());
+                            $repProveedor->setCaIncoterms($proveedor2->getCaIncoterms());
+                            $repProveedor->setCaOrdenProv($proveedor2->getCaOrdenProv());
+                            $repProveedor->save();
+                        }
+                    }else{
+                        continue;
+                    }
+                }
+            }*/
+            
+            /*$idsProv = array();
+            $idsProvEnd = array();
+
+            $proveedores = $reporte->getRepProveedor();
+
+            foreach($proveedores as $proveedor){                    
+                $idsProvEnd[] = $proveedor->getCaIdrepproveedor();
+            }
+            sort($idsProvEnd);
+            if(!empty($idsProvIni)){
+                foreach($idsProvIni as $key => $val){
+                    if(in_array($val, $idsProvEnd))
+                        $idsProv[] = $val;
+                    else
+                        $idsProv[] = null;
+                }                
+            }else{
+                foreach($idsProvEnd as $key => $val){
+                    $idsProv[] = $val;
+                } 
+            }*/
+            
+            
+
+            
 
             $tmp = "";
             if ($reporte->getCaOrdenClie() != "")
@@ -4242,7 +4536,9 @@ class reportesNegActions extends sfActions {
                     continue;
                 }
             }
-            $reporte->save();
+            $reporte->save($conn);
+            
+            
             
             $files=$reporte2->getFiles();            
             $directory = $reporte->getDirectorio();
@@ -4252,6 +4548,47 @@ class reportesNegActions extends sfActions {
                 copy($f, $newname);
                 //rename($f, $newname);
             }
+            
+            $proveedores = $reporte->getRepProveedor();            
+            $proveedores2 = $reporte2->getRepProveedor();            
+            
+            foreach($proveedores2 AS $proveedor2){
+                echo $reporte->getCaIdreporte();
+                echo $proveedor2->getCaIdproveedor();
+                $q =  Doctrine::gettable("RepProveedor")
+                        ->createQuery("pr")
+                        ->where("pr.ca_idreporte = ?", $reporte->getCaIdreporte())
+                        ->addWhere("pr.ca_idproveedor = ?", $proveedor2->getCaIdproveedor())
+                        ->addWhere("pr.ca_incoterms = ?", $proveedor2->getCaIncoterms());
+                
+                $repProveedor = $q->execute();                
+                
+                /*echo count($q);
+                if($repProveedor){
+                    echo "si";
+                }else{
+                    echo "no";
+                }
+                
+                exit();*/
+                
+                if(count($repProveedor)<=0){
+                    $repNew = new RepProveedor();
+                    $repNew->setCaIdreporte($reporte->getCaIdreporte());
+                    $repNew->setCaIdproveedor($proveedor2->getCaIdproveedor());
+                    $repNew->setCaIncoterms($proveedor2->getCaIncoterms());
+                    $repNew->setCaOrdenProv($proveedor2->getCaOrdenProv());
+                    $repNew->setCaCargaDisponible($proveedor2->getCaCargaDisponible());
+                    $repNew->save($conn);
+                }else{
+                    $orden2 = $proveedor2->getCaOrdenProv();
+                    $orden1 = $repProveedor->getCaOrdenProv();
+                    
+                    $repProveedor->setCaOrdenProv($orden1."|".$orden2);
+                    $repProveedor->save($conn);
+                }
+            }
+            
             $this->redirect($this->generateUrl('default', array('module' => 'reportesNeg', 'action' => 'consultaReporte', 'id' => $reporte->getCaIdreporte(), 'modo' => urlencode($reporte->getCaTransporte()), 'impoexpo' => urlencode($reporte->getCaImpoexpo()))));
         }
         $this->reporte = $reporte;
@@ -4547,7 +4884,7 @@ class reportesNegActions extends sfActions {
             $this->agente = $ids->getCaNombre();
             $this->trayecto = $this->reporte->getOrigen()->getTrafico()->getCaNombre() . "-" . $this->reporte->getOrigen()->getCaCiudad() . "&raquo;" . $this->reporte->getDestino()->getTrafico()->getCaNombre() . "-" . $this->reporte->getDestino()->getCaCiudad();
 
-            $this->proveedor = "";
+            /*$this->proveedor = "";
             if ($this->reporte->getCaIdproveedor()) {
                 $values = explode("|", $this->reporte->getCaIdproveedor());
                 $values1 = explode("|", $this->reporte->getCaIncoterms());
@@ -4559,6 +4896,13 @@ class reportesNegActions extends sfActions {
                         $proveedor .=Utils::replace($tercero->getCaNombre()) . " - " . $values1[$i] . " - " . $values2[$i] . "<br>";
                     }
                 }
+            }*/
+            $proveedores = $this->reporte->getProveedores();
+            if(count($proveedores)>0){
+                $this->proveedor = "";
+                foreach($proveedores as $prov){                    
+                    $this->proveedor.= Utils::replace($prov->getCaNombre())." - ".$this->reporte->getOrdenesStr($prov->getCaIdtercero())."<br/>";
+            }
             }
             $this->mensaje_comercial = $request->getParameter("mensaje_comercial");
         }
@@ -4695,6 +5039,7 @@ class reportesNegActions extends sfActions {
         try {
             $user = $this->getUser();
             $this->idantecedente = $request->getParameter("idantecedente");
+            $this->opcion = $request->getParameter("opcion");
             $email = new Email();
 
             $email->setCaUsuenvio($user->getUserId());
@@ -4716,7 +5061,11 @@ class reportesNegActions extends sfActions {
                 if ($ur != "")
                     $email->addTo($ur);
             }
-            $repAntecedentes->setCaEstado('R');
+            if($this->opcion=="eliminar")
+                $repAntecedentes->setCaEstado('X');
+            else
+                $repAntecedentes->setCaEstado('R');
+
             $repAntecedentes->setCaUsurechazo($user->getUserId());
             $repAntecedentes->setCaFchrechazo(date("Y-m-d H:i:s"));
             $repAntecedentes->setCaMotrechazo(utf8_decode($request->getParameter("mensaje")));
@@ -4724,20 +5073,23 @@ class reportesNegActions extends sfActions {
             //$repAntecedentes->setProperty("motivoRechazo",$request->getParameter("mensaje"));
             $repAntecedentes->save();
 
-            $email->addCc($user->getEmail());
+            if($this->opcion!="eliminar")
+            {
+                $email->addCc($user->getEmail());
 
-            $email->setCaSubject("Rechazo de Envío de reportes " . $reporte->getCaConsecutivo() . " V" . $reporte->getCaVersion());
-            $email->setCaBody($request->getParameter("mensaje"));
-            $mensaje = Utils::replace($this->getRequestParameter("mensaje")) . "<br />";
-            $this->getRequest()->setParameter('tipo', "INSTRUCCIONES");
-            $this->getRequest()->setParameter('mensaje', $request->getParameter("mensaje"));
-            $request->setParameter("format", "email");
+                $email->setCaSubject("Rechazo de Envío de reportes " . $reporte->getCaConsecutivo() . " V" . $reporte->getCaVersion());
+                $email->setCaBody($request->getParameter("mensaje"));
+                $mensaje = Utils::replace($this->getRequestParameter("mensaje")) . "<br />";
+                $this->getRequest()->setParameter('tipo', "INSTRUCCIONES");
+                $this->getRequest()->setParameter('mensaje', $request->getParameter("mensaje"));
+                $request->setParameter("format", "email");
 
-            $mensaje = sfContext::getInstance()->getController()->getPresentationFor('reportesNeg', 'emailReporte');
+                $mensaje = sfContext::getInstance()->getController()->getPresentationFor('reportesNeg', 'emailReporte');
 
-            $email->setCaBodyhtml($mensaje);
+                $email->setCaBodyhtml($mensaje);
 
-            $email->save();
+                $email->save();
+            }
             //$email->send();
 
             $this->responseArray = array("success" => true);
@@ -4800,17 +5152,11 @@ class reportesNegActions extends sfActions {
             $email->setCaSubject("Desbloqueo de Reporte de Negocios : " . $reporte->getCaConsecutivo() . "-" . $reporte->getCaVersion());
             $email->setCaBody($mensaje);
 
-            $proveedor = "";
-            if ($reporte->getCaIdproveedor()) {
-                $values = explode("|", $reporte->getCaIdproveedor());
-                $values1 = explode("|", $reporte->getCaIncoterms());
-                $values2 = explode("|", $reporte->getCaOrdenProv());
-
-                for ($i = 0; $i < count($values); $i++) {
-                    $tercero = Doctrine::getTable("Tercero")->find($values[$i]);
-                    if ($tercero) {
-                        $proveedor .=Utils::replace($tercero->getCaNombre()) . " - " . $values1[$i] . " - " . $values2[$i] . "<br>";
-                    }
+            $proveedores = $reporte->getProveedores();
+            if(count($proveedores)>0){
+                $this->proveedor = "";
+                foreach($proveedores as $prov){                    
+                    $this->proveedor.= Utils::replace($prov->getCaNombre())." - ".$reporte->getOrdenesStr($prov->getCaIdtercero())."<br/>";
                 }
             }
 
@@ -4822,8 +5168,8 @@ class reportesNegActions extends sfActions {
                 <tr><th>Cliente</th><td>" . ($reporte->getCliente()->getCaCompania()) . "</td></tr>
                 <tr><th>Transporte</th><td>" . ($reporte->getCaTransporte()) . "</td></tr>
                 <tr><th>Trayecto</th><td>" . ($reporte->getOrigen()->getCaCiudad()) . "-" . ($reporte->getDestino()->getCaCiudad()) . "</td></tr>
-                <tr><th>Proveedor</th><td>" . ($proveedor) . "</td></tr>
-                    <tr><th class='alignLeft' colspan='2'><br>" . $this->mensaje . "</th></tr>";
+                <tr><th>Proveedor</th><td>" . ($this->proveedor) . "</td></tr>
+                <tr><th class='alignLeft' colspan='2'><br>" . $this->mensaje . "</th></tr>";
 
             $html . "</table></td></tr>
                 </table></div>";

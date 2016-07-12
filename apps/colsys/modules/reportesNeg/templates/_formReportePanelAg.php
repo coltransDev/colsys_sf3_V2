@@ -4,7 +4,9 @@ $cachedir = $config = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.
 $cachetime = 86400;
 $cacheext = 'colsys';
 
-$nprov=count(explode("|", $reporte->getCaIdproveedor() ));
+
+//$nprov=count(explode("|", $reporte->getCaIdproveedor() ));
+$nprov = count($reporte->getProveedores());
 $trafico=$user->getIdtrafico();
 $cachepage = md5("formReporteAG/dep/$dep/impoexpo/$impoexpo/email/$email/nprov-$nprov/rep/".($idreporte>0)."/trafico/$trafico");
 $cachefile = $cachedir.$cachepage.'.'.$cacheext;
@@ -676,6 +678,7 @@ include_component("widgets", "widgetContactoCliente");
        onAfterload:function()
        {
 <?
+            if($issues){
                 foreach( $issues as $issue ){
                     $info = str_replace("\"", "'",str_replace("\n", "<br />",$issue["t_ca_title"].":<br />".$issue["t_ca_info"]));
                     ?>
@@ -683,6 +686,7 @@ include_component("widgets", "widgetContactoCliente");
                     target = $('#<?=$issue["t_ca_field_id"]?>').addClass("help").attr("title",info);
 <?
                 }
+            }
 ?>
                 $('.help').tooltip({track: true, fade: 250, opacity: 1, top: -15, extraClass: "pretty fancy" });
        },

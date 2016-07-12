@@ -34,7 +34,7 @@
         <td ><b>Agente: </b><a href="/ids/formEventosNew?idreporte=<?=$reporte->getCaIdreporte()?>">Eventos</a></td>
         <td <?=($comparar)? (($reporte->compDato("CaIdagente")!=0)?"class='rojo'":"") :""?> ><?=$reporte->getIdsAgente()?$reporte->getIdsAgente()->getIds()->getCaNombre():"Directo"?></td>
         <td ><b>Incoterms</b></td>
-        <td <?=($comparar)? (($reporte->compDato("CaIncoterms")!=0)?"class='rojo'":"") :""?> ><?=$reporte->getCaIncoterms()?></td>
+        <td <?=($comparar)? (($reporte->compDato("IncotermsStr")!=0)?"class='rojo'":"") :""?> ><?=$reporte->getIncotermsStr()?></td>
     </tr>
     <tr>
         <td colspan="6" <?=($comparar)? (($reporte->compDato("CaMercanciaDesc")!=0)?"class='rojo'":"") :""?> ><b>Descripci&oacute;n de la Mercanc&iacute;a:</b><br />

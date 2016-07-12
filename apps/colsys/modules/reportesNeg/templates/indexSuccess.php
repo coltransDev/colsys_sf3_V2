@@ -213,7 +213,7 @@ if(count($grupoReportes)>0)
 <div align="center">
     <table width="800px" border="1" class="tableList alignLeft">
         <tr>
-            <th colspan="7">Pendientes x Aprobar</th>
+            <th colspan="8">Pendientes x Aprobar</th>
         </tr>
         <tr>
             <th width="" scope="col">Consecutivo</th>
@@ -221,7 +221,7 @@ if(count($grupoReportes)>0)
             <th width="" scope="col">Cliente</th>
             <th width="" scope="col">Fecha Envio</th>
             <th width="" scope="col">Usuario Envio</th>
-            <th width="" scope="col" colspan='2'>Opciones</th>
+            <th width="" scope="col" colspan='3'>Opciones</th>
         </tr>
 <?
     foreach($grupoReportes as $r)
@@ -235,6 +235,11 @@ if(count($grupoReportes)>0)
             <td width="" scope="col"><?=$r["ca_usucreado"]?></td>
             <td width="" scope="col"><a href="javascript:desbloquear('<?=$r["ca_idantecedente"]?>')">Desbloquear</a></td>
             <td width="" scope="col"><a href="javascript:rechazar('<?=$r["ca_idantecedente"]?>')">Rechazar</a></td>
+            <td>
+            <a onclick="eliminar('<?=$r["ca_idantecedente"]?>')" href="#">
+                <img width="18" height="18" border="0" src="/images/16x16/delete.gif">
+            </a>
+            </td>
         </tr>
 <?
     }
@@ -373,5 +378,59 @@ if(count($grupoReportesRechazadas)>0)
             );
             }
         }
-    };    
+    };
+    
+    
+    function eliminar(id){
+        idreportetmp=id;
+        Ext.MessageBox.show({
+           title: 'Eliminar Entrega de Reporte',
+           msg: 'por favor coloque el motivo por el que elimina el Reporte de Negocios:',
+           width:300,
+           buttons:{
+              ok     : "Enviar",
+              cancel : "Cancelar"
+           },
+           multiline: true,
+           fn: elimina,
+           animEl: 'eliminar-reporte',
+           modal: true
+        });
+        Ext.MessageBox.buttonText.yes = "Version";
+        //Ext.MessageBox.buttonText.no = "Todas las versiones";
+    }
+
+    var elimina = function(btn, text){
+        if( btn == "ok"){
+            if( text.trim()==""){
+                alert("Debe colocar un motivo");
+            }else{
+                if(btn=="ok")
+                    href='/reportesNeg/rechazarReporte/idantecedente/'+idreportetmp+"/opcion/eliminar";
+                Ext.MessageBox.wait('enviando Notificacion de eliminar', '');
+                Ext.Ajax.request(
+                {
+                    waitMsg: 'Enviando...',
+                    url: href,
+                    params :	{
+                        mensaje: text.trim()
+                    },
+                    failure:function(response,options){
+                        alert( response.responseText );
+                        Ext.Msg.hide();
+                        success = false;
+                        alert("Surgio un problema al tratar de eliminar el reporte")
+                    },
+                    success:function(response,options){
+                        var res = Ext.util.JSON.decode( response.responseText );
+                        if( res.success ){
+                            //alert("Se envio aviso al depto de traficos")
+                            location.href=location.href;
+                        }
+                    }
+                 }
+            );
+            }
+        }
+    };
 </script>

@@ -72,7 +72,7 @@ $agente=null;
     if ($reporte->getCaImpoexpo () == Constantes::IMPO || $reporte->getCaImpoexpo () == Constantes::TRIANGULACION) {
         $pdf->Row(array('Fch.Despacho:',$reporte->getCaFchdespacho () ,'Agente:', $agente->getIds()->getCaNombre(). "-".$sucursalag->getCiudad()->getCaCiudad()." ".$sucursalag->getCaDireccion()  ));
     }else{
-        $pdf->Row ( array ('Fch.Despacho:', $reporte->getCaFchdespacho (), 'Incoterms:', $reporte->getCaIncoterms () ) );
+        $pdf->Row ( array ('Fch.Despacho:', $reporte->getCaFchdespacho (), 'Incoterms:', $reporte->getIncotermsStr() ) );
     }
 }
 
@@ -144,22 +144,24 @@ if(!$repexpo)
 {    
    $repexpo=new RepExpo();
 }
+//$ordenes = $reporte->getOrdenesStr();
+//$terminos = $reporte->getIncotermsStr();
+//$ordenes =  explode("|",$reporte->getCaOrdenProv());
+//$terminos=  explode("|",$reporte->getCaIncoterms());
 
-$ordenes =  explode("|",$reporte->getCaOrdenProv());
-$terminos=  explode("|",$reporte->getCaIncoterms());
+//$idproveedores = explode("|",$reporte->getCaIdproveedor());
+$proveedores = $reporte->getRepProveedor();
 
-$idproveedores = explode("|",$reporte->getCaIdproveedor());
-
-foreach( $idproveedores as $key=>$idprov ){
-    if($idprov=="")
+foreach( $proveedores as $proveedor ){
+    if($proveedor->getCaIdproveedor()=="")
         continue;
     $pdf->Ln(2);
-    $tercero = Doctrine::getTable("Tercero")->find($idprov);
+    $tercero = Doctrine::getTable("Tercero")->find($proveedor->getCaIdproveedor());
     if(!$tercero)
         $tercero=new Tercero();
 
-    $orden = $ordenes[$key];
-    $termino = substr($terminos[$key],0,3);
+    $orden = $proveedor->getCaOrdenProv();
+    $termino = substr($proveedor->getCaIncoterms(),0,3);    
     $pdf->SetWidths(array(25,25,85,25,40));
     $pdf->SetFills(array(1,0,0,0,0,0,0));
     $pdf->SetStyles(array("B","B","","B",""));

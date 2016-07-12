@@ -1,4 +1,5 @@
 <?
+error_reporting(E_ALL);
 $html = $sf_data->getRaw("html");
 ?>
 <script language="javascript">
@@ -91,33 +92,35 @@ $html = $sf_data->getRaw("html");
 		}
 		*/
 		if( $reporte->getCaIdtareaRext() ){
-			$tarea = Doctrine::getTable("NotTarea")->find( $reporte->getCaIdtareaRext() );
+			$tarea = Doctrine::getTable("NotTarea")->find( $reporte->getCaIdtareaRext() );                        
 			$asignacionesTarea  = $tarea->getNotTareaAsignacion();
 			$i=0;
+                        
 			foreach( $asignacionesTarea as $asignacionTarea ){
-					
-				$usuario = Doctrine::getTable("Usuario")->find( ($asignacionTarea->getCaLogin()?$asignacionTarea->getCaLogin():"") );
-                if(!$usuario)
-                    $usuario = new Usuario();
-				?>		
-			<tr>
-				<?
-				if( $i==0 ){
-				?>				
-				<td rowspan="<?=count($asignacionesTarea )?>">Crear reporte al exterior</td>
-				<td rowspan="<?=count($asignacionesTarea )?>"><?=$tarea->getCaFchterminada()?image_tag("16x16/button_ok.gif"):image_tag("16x16/button_cancel.gif")?></td>	
-				<?
-				}
-				?>
-				<td><?
-						echo $usuario->getCaNombre();				
-					?></td>
-				<td><?
-						echo $usuario->getCaEmail();				
-					?></td>
-			</tr>
-		<?
-                $i++;
+                            if(!$asignacionTarea)
+                                continue;
+                            $usuario = Doctrine::getTable("Usuario")->find( ($asignacionTarea->getCaLogin()?$asignacionTarea->getCaLogin():"") );
+                            if(!$usuario)
+                                $usuario = new Usuario();
+                                ?>		
+                                <tr>
+                                <?
+                                if( $i==0 ){
+                                    ?>				
+                                    <td rowspan="<?=count($asignacionesTarea )?>">Crear reporte al exterior</td>
+                                    <td rowspan="<?=count($asignacionesTarea )?>"><?=$tarea->getCaFchterminada()?image_tag("16x16/button_ok.gif"):image_tag("16x16/button_cancel.gif")?></td>	
+                                    <?
+                                }
+                                ?>
+                                <td><?
+                                    echo $usuario->getCaNombre();				
+                                    ?></td>
+                                <td><?
+                                                echo $usuario->getCaEmail();				
+                                        ?></td>
+                                    </tr>
+                            <?
+                            $i++;
             }
 		}
         ?>
