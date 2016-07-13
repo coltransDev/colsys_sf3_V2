@@ -108,6 +108,19 @@ class inoExpoActions extends sfActions {
     }
 
     public function executeValoresPorDefecto(sfWebRequest $request) {
+        $referencia = Doctrine::getTable("InoMaestraExpo")->find($request->getParameter("referencia"));
+        $this->forward404Unless($referencia);
+        
+        $consecutivo = $referencia->getCaConsecutivo();
+
+        $reporte = Doctrine::getTable("Reporte")
+                ->createQuery("r")
+                ->where("r.ca_consecutivo = ?", $consecutivo)
+                ->addWhere("r.ca_fchanulado IS NULL")
+                ->addOrderBy("r.ca_version DESC")
+                ->limit(1)
+                ->fetchOne();
+        
         $data = array();
         if( $request->getParameter("idconfig") ){
             $config = Doctrine::getTable("ColsysConfig")->find( $request->getParameter("idconfig") );
@@ -117,6 +130,9 @@ class inoExpoActions extends sfActions {
             foreach ($values as $value) {
                 $data[$value->getCaValue2()] = utf8_encode($value->getCaValue());
             }
+        }
+        if($reporte->getCaModalidad() == "DIRECTO"){
+            $data['nature_quantity'] = $reporte->getCaMercanciaDesc();
         }
         
         $con = Doctrine_Manager::connection();
@@ -580,6 +596,44 @@ class inoExpoActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
+    public function executeDatosHawbs(sfWebRequest $request) {
+        $id = $request->getParameter("id");
+        
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select ca_childrens from tb_expo_awbtransporte where ca_iddoctransporte = '$id' limit 1";
+        $rs = $con->execute($sql);
+        $expoHawbs = $rs->fetch();
+        $datos = ($expoHawbs['ca_childrens'])?json_decode($expoHawbs['ca_childrens']):array();
+        
+        $this->responseArray = array("success" => true, "root" => $datos, "total" => count($datos));
+        
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeGuardarHawbs(sfWebRequest $request) {
+        $id = $request->getParameter("id");
+        
+        $documento = Doctrine::getTable("ExpoAwbtransporte")
+                ->createQuery("e")
+                ->addWhere("e.ca_iddoctransporte = ?", $this->getRequestParameter("id"))
+                ->fetchOne();
+        $conn = Doctrine::getTable("ExpoAwbtransporte")->getConnection();
+        $conn->beginTransaction();
+        try {
+            if ($documento){
+                $documento->setCaChildrens($request->getParameter("datos"));
+                $documento->save();
+                $conn->commit();
+            }
+            $this->responseArray = array("success" => true);
+        } catch (Exception $e) {
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+        
+        $this->setTemplate("responseTemplate");
+    }
+    
     public function executeValidarGuiaNumero(sfWebRequest $request) {
         $referencia = $request->getParameter("ref");
         $consecutivo = $request->getParameter("datos");

@@ -111,6 +111,7 @@ foreach ($items as $key => $item){
                 cabecera($pdf, $marg, $page, $plantilla, $reporte, $consignatario, $notify, $documento, $referencia, $discharge, $font_size, $liberacion, $borrador);
                 $pdf->SetXY(10, $ejeY = 130);
                 $pdf->MultiCell(50, 4, $segmento, 0, 1);
+                // $nextY = ($pdf->getY()>$nextY)?$pdf->getY():$nextY;
                 $nextY = $pdf->getY();
                 continue;
             }
