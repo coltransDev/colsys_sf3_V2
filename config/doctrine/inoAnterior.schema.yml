@@ -1067,6 +1067,8 @@ ExpoAwbtransporte:
     ca_childrens: string
     ca_fchcreado: timestamp
     ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
     ca_fchliquidado: timestamp
     ca_usuliquidado: string(20)
     ca_fchanulado: timestamp
