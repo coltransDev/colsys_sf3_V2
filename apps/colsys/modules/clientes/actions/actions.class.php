@@ -973,7 +973,7 @@ class clientesActions extends sfActions {
             $defaultEmail = array();
             $usuarios = Doctrine::getTable("Usuario")
                     ->createQuery("u")
-                    ->where("u.ca_cargo = ? ", "Jefe Nacional de Operaciones")
+                    ->whereIn("u.ca_cargo", array("Jefe Nacional de Operaciones","Jefe Dpto. Exportaciones"))
                     ->execute();
             foreach ($usuarios as $usuario) {
                 $defaultEmail[] = $usuario->getCaEmail();
