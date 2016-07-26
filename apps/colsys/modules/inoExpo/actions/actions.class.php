@@ -786,7 +786,7 @@ class inoExpoActions extends sfActions {
             if (isset($datos->kind_packages)) {
                 $expoAwbtransporte->setCaKindPackages($datos->kind_packages);
             }
-            if ($datos->gross_weight) {
+            if ($datos->gross_weight or $datos->gross_weight == 0) {
                 $expoAwbtransporte->setCaGrossWeight($datos->gross_weight);
             }
             if ($datos->gross_unit) {
@@ -795,16 +795,16 @@ class inoExpoActions extends sfActions {
             if ($datos->weight_details) {
                 $expoAwbtransporte->setCaWeightDetails($datos->weight_details);
             }
-            if ($datos->weight_charge) {
+            if ($datos->weight_charge or $datos->weight_charge == 0) {
                 $expoAwbtransporte->setCaWeightCharge($datos->weight_charge);
             }
-            if ($datos->rate_charge) {
+            if ($datos->rate_charge or $datos->rate_charge == 0) {
                 $expoAwbtransporte->setCaRateCharge($datos->rate_charge);
             }
-            if ($datos->due_agent) {
+            if ($datos->due_agent or $datos->due_agent == 0) {
                 $expoAwbtransporte->setCaDueAgent($datos->due_agent);
             }
-            if ($datos->due_carrier) {
+            if ($datos->due_carrier or $datos->due_carrier == 0) {
                 $expoAwbtransporte->setCaDueCarrier($datos->due_carrier);
             }
             if ($datos->delivery_goods) {

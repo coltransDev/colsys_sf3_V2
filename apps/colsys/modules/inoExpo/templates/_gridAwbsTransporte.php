@@ -59,6 +59,8 @@ $referencia = $sf_data->getRaw("referencia");
                 {name: 'charges_code', type: 'string'},
                 {name: 'kind_rate', type: 'string'},
                 {name: 'rate_charge', type: 'string'},
+                {name: 'due_agent', type: 'string'},
+                {name: 'due_carrier', type: 'string'},
                 {name: 'other_charges', type: 'string'},
                 {name: 'delivery_goods', type: 'string'}
             ]
@@ -438,6 +440,26 @@ $referencia = $sf_data->getRaw("referencia");
             }, {
                 text: 'Tarifa',
                 dataIndex: 'rate_charge',
+                editor: {
+                    xtype: 'numberfield',
+                    hideTrigger: true,
+                    decimalPrecision: 2,
+                    keyNavEnabled: false,
+                    mouseWheelEnabled: false
+                }
+            }, {
+                text: 'Due Agent',
+                dataIndex: 'due_agent',
+                editor: {
+                    xtype: 'numberfield',
+                    hideTrigger: true,
+                    decimalPrecision: 2,
+                    keyNavEnabled: false,
+                    mouseWheelEnabled: false
+                }
+            }, {
+                text: 'Due Carrier',
+                dataIndex: 'due_carrier',
                 editor: {
                     xtype: 'numberfield',
                     hideTrigger: true,
@@ -1011,7 +1033,7 @@ $referencia = $sf_data->getRaw("referencia");
                                     win_hijas = new Ext.Window({
                                         id: 'winGuiasHijas',
                                         title: 'Liquidación Guías Hijas',
-                                        width: 900,
+                                        width: 1000,
                                         closeAction: 'close',
                                         items: {
                                             xtype: gridHawbs

@@ -33,7 +33,10 @@ $font_size = 9;
 
 if (!$guiahija){
     $guias[] = array(
+        "charges_code" => $documento->getCaChargesCode(),
         "rate_charge" => $documento->getCaRateCharge(),
+        "due_agent" => $documento->getCaDueAgent(),
+        "due_carrier" => $documento->getCaDueCarrier(),
         "total_charge" => $documento->getCaWeightCharge() * $documento->getCaRateCharge(),
         "gran_total" => $documento->getCaWeightCharge() * $documento->getCaRateCharge(),
         "super_total" => ($documento->getCaWeightCharge() * $documento->getCaRateCharge()) + $documento->getCaDueAgent() + $documento->getCaDueCarrier(),
@@ -55,12 +58,12 @@ if (!$guiahija){
             $guias[$key]["rate_charge"] = "Mínima";
             $guias[$key]["total_charge"] = $guia["rate_charge"];
             $guias[$key]["gran_total"] = $guia["rate_charge"];
-            $guias[$key]["super_total"] = $guia["rate_charge"] + $documento->getCaDueAgent() + $documento->getCaDueCarrier();
+            $guias[$key]["super_total"] = $guia["rate_charge"] + $guia["due_agent"] + $guia["rate_carrier"];
         }else {
-            $guias[$key]["rate_charge"] = $documento->getCaRateCharge();
-            $guias[$key]["total_charge"] = $documento->getCaWeightCharge() * $documento->getCaRateCharge();
-            $guias[$key]["gran_total"] = $documento->getCaWeightCharge() * $documento->getCaRateCharge();
-            $guias[$key]["super_total"] = ($documento->getCaWeightCharge() * $documento->getCaRateCharge()) + $documento->getCaDueAgent() + $documento->getCaDueCarrier();
+            $guias[$key]["rate_charge"] = $guia["rate_charge"];
+            $guias[$key]["total_charge"] = $documento->getCaWeightCharge() * $guia["rate_charge"];
+            $guias[$key]["gran_total"] = $documento->getCaWeightCharge() * $guia["rate_charge"];
+            $guias[$key]["super_total"] = ($documento->getCaWeightCharge() * $guia["rate_charge"]) + $guia["due_agent"] + $guia["due_carrier"];
         }
     }
     $ref_array = explode(".", $documento->getInoMaestraExpo()->getCaReferencia());
@@ -92,7 +95,7 @@ foreach ($guias as $key => $guia){
 
     $pdf->SetFont ( 'Arial', '', $font_size );
     $pdf->SetXY(18, 40 + $marg);
-    if ($documento->getInoMaestraExpo()->getCaModalidad() == "Directo" or $guiahija){
+    if ($reporte->getCaModalidad() == "DIRECTO" or $guiahija){
         $shipper = $reporte->getContacto()->getCliente()->getCaCompania()."\n";
         $shipper.= "Nit: ". number_format($reporte->getContacto()->getCliente()->getCaIdalterno(), 0)."-".$reporte->getContacto()->getCliente()->getCaDigito()."\n";
         $shipper.= $reporte->getContacto()->getCliente()->getDireccion()."\n";
@@ -112,14 +115,41 @@ foreach ($guias as $key => $guia){
     }
 
     $pdf->SetXY(18, 68 + $marg);
-    $consignee = $consignatario->getCaNombre()."\n";
-    $consignee.= $consignatario->getCaDireccion()."\n";
-    $consignee.= "Tels.: ". $consignatario->getCaTelefonos()."\n";
-    $consignee.= $consignatario->getCiudad()->getCaCiudad().", ".$consignatario->getCiudad()->getTrafico()->getCaNombre();
+    if ($reporte->getCaModalidad() == "CONSOLIDADO" and $reporte->getIdsAgente() and !$guiahija){
+        $agente = $reporte->getIdsAgente();
+        $sucursalag=$reporte->getIdsSucursal();
+        if(!$sucursalag)
+            $sucursalag = new $sucursalag();
+        $consignee = $agente->getIds()->getCaNombre()."\n";
+        $consignee.= $sucursalag->getCaDireccion()."\n";
+        $consignee.= "Tels.: ". $sucursalag->getCaTelefonos()."\n";
+        $consignee.= $sucursalag->getCiudad()->getCaCiudad().", ".$sucursalag->getCiudad()->getTrafico()->getCaNombre();
+    } else {
+        $id = "";
+        if ($consignatario->getCaIdentificacion()){
+            $tipo = Doctrine::getTable("IdsTipoIdentificacion")
+                ->createQuery("t")
+                ->leftJoin("t.Trafico tt")
+                ->addOrderBy("t.ca_tipoidentificacion")
+                ->addwhere("t.ca_idtrafico = ?", $consignatario->getCiudad()->getCaIdtrafico())
+                ->limit(1)
+                ->fetchOne();
+            if($tipo){
+                $id.= " ".$tipo->getCaNombre().": ";
+            }else{
+                $id.= "Id: ";
+            }
+            $id.= $consignatario->getCaIdentificacion();
+        }
+        $consignee = $consignatario->getCaNombre().$id."\n";
+        $consignee.= $consignatario->getCaDireccion()."\n";
+        $consignee.= "Tels.: ". $consignatario->getCaTelefonos()."\n";
+        $consignee.= $consignatario->getCiudad()->getCaCiudad().", ".$consignatario->getCiudad()->getTrafico()->getCaNombre();
+    }
     $pdf->MultiCell(100, 4, $consignee, 0, 1);
 
-    $pdf->SetXY(18, 88 + $marg);
-    $agent = strtoupper($empresa->getCaNombre())."\n";
+    $pdf->SetXY(18, 84 + $marg);
+    $agent = "                                              ".strtoupper($empresa->getCaNombre())."\n";
     $agent.= $reporte->getUsuario()->getSucursal()->getCaDireccion()."\n";
     $agent.= "Tels.: ". $reporte->getUsuario()->getSucursal()->getCaTelefono()."\n";
     $agent.= $reporte->getUsuario()->getSucursal()->getCaNombre()."-COLOMBIA";
@@ -128,15 +158,15 @@ foreach ($guias as $key => $guia){
     $pdf->SetXY(113, 90 + $marg);
     $pdf->MultiCell(100, 4, $documento->getCaAccountingInfo(), 0, 1);
 
-    $pdf->Text( 19, 111 + $marg, $config['agent_iata_code']);
-    $pdf->Text( 66, 111 + $marg, $documento->getExpoCarrierUno()->getCaAccount());
-    $pdf->Text( 19, 119 + $marg, $documento->getCaAirportDeparture());
-    $pdf->Text( 19, 127 + $marg, $documento->getCaIddestinoUno());
-    $pdf->Text( 29, 127 + $marg, $documento->getExpoCarrierUno()->getCaCarrier());
-    $pdf->Text( 77, 127 + $marg, $documento->getCaIddestinoDos());
-    $pdf->Text( 87, 127 + $marg, $documento->getExpoCarrierDos()->getCaCodigo());
-    $pdf->Text( 95, 127 + $marg, $documento->getCaIddestinoTrs());
-    $pdf->Text(107, 127 + $marg, $documento->getExpoCarrierTrs()->getCaCodigo());
+    $pdf->Text( 19, 108 + $marg, $config['agent_iata_code']);
+    $pdf->Text( 66, 108 + $marg, $documento->getExpoCarrierUno()->getCaAccount());
+    $pdf->Text( 19, 116 + $marg, $documento->getCaAirportDeparture());
+    $pdf->Text( 19, 124 + $marg, $documento->getCaIddestinoUno());
+    $pdf->Text( 29, 124 + $marg, $documento->getExpoCarrierUno()->getCaCarrier());
+    $pdf->Text( 77, 124 + $marg, $documento->getCaIddestinoDos());
+    $pdf->Text( 87, 124 + $marg, $documento->getExpoCarrierDos()->getCaCodigo());
+    $pdf->Text( 95, 124 + $marg, $documento->getCaIddestinoTrs());
+    $pdf->Text(107, 124 + $marg, $documento->getExpoCarrierTrs()->getCaCodigo());
 
     $tarifas = $reporte->getRepTarifa();
     $currency= array();
@@ -145,23 +175,24 @@ foreach ($guias as $key => $guia){
            $currency[] = $tarifa->getCaCobrarIdm();
         }
     }
-    $pdf->Text(115, 127 + $marg, $currency[0]);
-    $pdf->Text(124, 127 + $marg, $documento->getCaChargesCode());
-    if ($documento->getCaChargesCode() == "PP"){
+    $pdf->Text(115, 124 + $marg, $currency[0]);
+    $pdf->Text(124, 124 + $marg, $guia['charges_code']);
+    if ($guia['charges_code'] == "PP"){
         $x1 = 30; $x2 = 65; $ct = "PREPAID";
-        $pdf->Text(129, 127 + $marg, substr($documento->getCaChargesCode(), 0, 1));
-        $pdf->Text(140, 127 + $marg, substr($documento->getCaChargesCode(), 0, 1));
+        $pdf->Text(129, 124 + $marg, substr($guia['charges_code'], 0, 1));
+        $pdf->Text(140, 124 + $marg, substr($guia['charges_code'], 0, 1));
     }else{
         $x1 = 65; $x2 = 30; $ct = "COLLECT";
-        $pdf->Text(135, 127 + $marg, substr($documento->getCaChargesCode(), 0, 1));
-        $pdf->Text(145, 127 + $marg, substr($documento->getCaChargesCode(), 0, 1));
+        $pdf->Text(135, 124 + $marg, substr($guia['charges_code'], 0, 1));
+        $pdf->Text(145, 124 + $marg, substr($guia['charges_code'], 0, 1));
     }
-    $pdf->Text(160, 127 + $marg, $config['value_carriage']);
-    $pdf->Text(190, 127 + $marg, $config['value_customs']);
+    $pdf->Text(160, 124 + $marg, $config['value_carriage']);
+    $pdf->Text(190, 124 + $marg, $config['value_customs']);
 
-    $pdf->Text( 18, 136 + $marg, $documento->getCaAirportDestination());
-    $pdf->Text(124, 136 + $marg, $config['amount_insurance']);
+    $pdf->Text( 18, 133 + $marg, $documento->getCaAirportDestination());
+    $pdf->Text(124, 133 + $marg, $config['amount_insurance']);
 
+    $marg+= ($plantilla)?4:0;
     $pdf->SetXY(18, 140 + $marg);
     $pdf->MultiCell(100, 4, $documento->getCaHandingInfo(), 0, 1);
 
@@ -172,28 +203,28 @@ foreach ($guias as $key => $guia){
 
     /* BODY */
 
-    $pdf->Text( 21, 185 + $marg, $documento->getCaNumberPackages());
-    $pdf->Text( 34, 185 + $marg, $documento->getCaGrossWeight());
-    $pdf->Text( 47, 185 + $marg, substr($documento->getCaGrossUnit(),0,1));
+    $pdf->Text( 21, 180 + $marg, $documento->getCaNumberPackages());
+    $pdf->Text( 34, 180 + $marg, noCero($documento->getCaGrossWeight()));
+    $pdf->Text( 47, 180 + $marg, substr($documento->getCaGrossUnit(),0,1));
     $pdf->Text( 80, 180 + $marg, $documento->getCaWeightDetails());
-    $pdf->Text( 83, 185 + $marg, noCero($documento->getCaWeightCharge()));
-    $pdf->Text(105, 185 + $marg, noCero($guia['rate_charge']));
-    $pdf->Text(130, 185 + $marg, noCero($guia['total_charge']));
-    $pdf->SetXY(150, 175 + $marg);
+    $pdf->Text( 83, 180 + $marg, noCero($documento->getCaWeightCharge()));
+    $pdf->Text(105, 180 + $marg, noCero($guia['rate_charge']));
+    $pdf->Text(130, 180 + $marg, noCero($guia['total_charge']));
+    $pdf->SetXY(150, 170 + $marg);
     $pdf->MultiCell( 60, 4, $guia['delivery_goods'], 0, 1);
 
-    $pdf->Text( 21, 219 + $marg, noCero($documento->getCaNumberPackages()));
-    $pdf->Text( 34, 219 + $marg, noCero($documento->getCaGrossWeight()));
-    $pdf->Text(135, 219 + $marg, noCero($guia['gran_total']));
+    $pdf->Text( 21, 213 + $marg, noCero($documento->getCaNumberPackages()));
+    $pdf->Text( 34, 213 + $marg, noCero($documento->getCaGrossWeight()));
+    $pdf->Text(130, 213 + $marg, noCero($guia['gran_total']));
 
 
     /* FOOTER */
 
-    $pdf->Text( $x1, 226 + $marg, noCero($guia['gran_total']));
+    $pdf->Text( $x1, 225 + $marg, noCero($guia['gran_total']));
     $pdf->Text( $x2, 225 + $marg, $ct);
-    $pdf->Text( $x1, 252 + $marg, noCero($documento->getCaDueAgent()));
-    $pdf->Text( $x1, 262 + $marg, noCero($documento->getCaDueCarrier()));
-    $pdf->Text( $x1, 279 + $marg, noCero($guia['super_total']));
+    $pdf->Text( $x1, 250 + $marg, noCero($guia['due_agent']));
+    $pdf->Text( $x1, 258 + $marg, noCero($guia['due_carrier']));
+    $pdf->Text( $x1, 275 + $marg, noCero($guia['super_total']));
 
     $pdf->SetXY( 93, 226 + $marg);
     $pdf->MultiCell( 120, 4, $guia['other_charges'], 0, 1);
@@ -201,10 +232,10 @@ foreach ($guias as $key => $guia){
     $pdf->SetXY( 93, 255 + $marg);
     $pdf->MultiCell( 120, 4, $documento->getCaShipperCertifies(), 0, 1);
 
-    $pdf->SetXY( 93, 280 + $marg);
+    $pdf->SetXY( 93, 275 + $marg);
     $ultimoActualido = ($documento->getCaUsuactualizado())?$documento->getCaUsuactualizado():$documento->getCaUsucreado();
-    $executed_on = date("F d \of Y", strtotime($documento->getCaFchdoctransporte()))." - ";
-    $executed_on.= strtoupper($reporte->getUsuario()->getSucursal()->getCaNombre())."-COLOMBIA/$ultimoActualido/";
+    $executed_on = $reporte->getUsuario()->getSucursal()->getCaNombre()."-COLOMBIA ";
+    $executed_on.= date("F d \of Y", strtotime($documento->getCaFchdoctransporte()))."/$ultimoActualido/";
     $executed_on.= strtoupper($documento->getUsuliquidado()->getCaNombre());
     $pdf->MultiCell( 150, 4, $executed_on, 0, 1);
 
