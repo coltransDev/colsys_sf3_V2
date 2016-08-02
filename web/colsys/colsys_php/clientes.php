@@ -106,7 +106,7 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
 
     echo "<TR>";
     $us = & DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-    if (!$us->Open("select u.ca_login, ca_nombre from vi_usuarios u inner join control.tb_usuarios_perfil up on u.ca_login =up.ca_login where up.ca_perfil = 'comercial' and ca_activo = true")) {
+    if (!$us->Open("select u.ca_login, ca_nombre, ca_activo from vi_usuarios u inner join control.tb_usuarios_perfil up on u.ca_login =up.ca_login where up.ca_perfil = 'comercial' order by ca_activo desc, ca_nombre")) {
         echo "<script>alert(\"" . addslashes($us->mErrMsg) . "\");</script>";
         echo "<script>document.location.href = 'repcomisiones.php';</script>";
         exit;
@@ -133,10 +133,17 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
     echo "<TR>";
     echo "  <TD Class=mostrar><B>Vendedor:</B><BR><SELECT NAME='login'>";                 // Llena el cuadro de lista con los valores de la tabla Vendedores
     echo "  <OPTION VALUE=%>Vendedores (Todos)</OPTION>";
+    echo "  <OPTGROUP LABEL='Activos'>";
+    $activo = $us->Value('ca_activo');
     while (!$us->Eof()) {
+        if ($activo != $us->Value('ca_activo')){
+            echo "</OPTGROUP><OPTGROUP LABEL='Inactivos'>";
+            $activo = $us->Value('ca_activo');
+        }
         echo"<OPTION VALUE=" . $us->Value('ca_login') . ">" . $us->Value('ca_nombre') . "</OPTION>";
         $us->MoveNext();
     }
+    echo "  </OPTGROUP>";
     echo "  </SELECT></TD>";
     echo "  <TD Class=listar><B>Tipo:</B><BR><SELECT NAME='tiponit'>";
     $che_mem = "SELECTED";
