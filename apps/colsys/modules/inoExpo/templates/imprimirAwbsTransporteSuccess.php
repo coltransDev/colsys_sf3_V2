@@ -33,6 +33,12 @@ $font_size = 9;
 
 if (!$guiahija){
     $guias[] = array(
+        "number_packages" => $documento->getCaNumberPackages(),
+        "kind_packages" => $documento->getCaKindPackages(),
+        "gross_weight" => $documento->getCaGrossWeight(),
+        "gross_unit" => $documento->getCaGrossUnit(),
+        "weight_charge" => $documento->getCaWeightCharge(),
+        "weight_details" => $documento->getCaWeightDetails(),            
         "charges_code" => $documento->getCaChargesCode(),
         "rate_charge" => $documento->getCaRateCharge(),
         "due_agent" => $documento->getCaDueAgent(),
@@ -68,12 +74,12 @@ if (!$guiahija){
     }
     $ref_array = explode(".", $documento->getInoMaestraExpo()->getCaReferencia());
     $prefijo = $ref_array[0];
-    $consecutivo = $ref_array[1].$ref_array[2].$ref_array[3].$ref_array[4];
+    $consecutivo = $ref_array[1].$ref_array[2].substr($ref_array[3],1,3).$ref_array[4];
     $logotipo = "/srv/www/digitalFile/formatos/logo_coltrans.jpg";
 }
 
 foreach ($guias as $key => $guia){
-    $guia_numero = $prefijo. " " .$consecutivo. (($guiahija)?" ".($key+1):"");
+    $guia_numero = $prefijo. " " .$consecutivo. (($guiahija)?chr(65+$key):"");
 
     $pdf->AddPage ();
     /* HEADER */
@@ -203,18 +209,18 @@ foreach ($guias as $key => $guia){
 
     /* BODY */
 
-    $pdf->Text( 21, 180 + $marg, $documento->getCaNumberPackages());
-    $pdf->Text( 34, 180 + $marg, noCero($documento->getCaGrossWeight()));
-    $pdf->Text( 47, 180 + $marg, substr($documento->getCaGrossUnit(),0,1));
-    $pdf->Text( 80, 180 + $marg, $documento->getCaWeightDetails());
-    $pdf->Text( 83, 180 + $marg, noCero($documento->getCaWeightCharge()));
+    $pdf->Text( 21, 180 + $marg, $guia['number_packages']);
+    $pdf->Text( 34, 180 + $marg, noCero($guia['gross_weight']));
+    $pdf->Text( 47, 180 + $marg, substr($guia['gross_unit'],0,1));
+    $pdf->Text( 80, 176 + $marg, $guia['weight_details']);
+    $pdf->Text( 83, 180 + $marg, noCero($guia['weight_charge']));
     $pdf->Text(105, 180 + $marg, noCero($guia['rate_charge']));
     $pdf->Text(130, 180 + $marg, noCero($guia['total_charge']));
     $pdf->SetXY(150, 170 + $marg);
     $pdf->MultiCell( 60, 4, $guia['delivery_goods'], 0, 1);
 
-    $pdf->Text( 21, 213 + $marg, noCero($documento->getCaNumberPackages()));
-    $pdf->Text( 34, 213 + $marg, noCero($documento->getCaGrossWeight()));
+    $pdf->Text( 21, 213 + $marg, noCero($guia['number_packages']));
+    $pdf->Text( 34, 213 + $marg, noCero($guia['gross_weight']));
     $pdf->Text(130, 213 + $marg, noCero($guia['gran_total']));
 
 
