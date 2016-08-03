@@ -965,16 +965,17 @@ $folder = $reporte->getDirectorioBase();
                                     $filename = $file;
                                     //echo $file;
                                     //$folder = $reporte->getDirectorioBaseDocs($filename);                            
-                                    $imagenes.= '<div style="width:' . $dimVisual . 'px;height:' . $dimVisual . 'px;float: left;margin: 5px;" id="file_' . $j . '">
+                                    $imagenes.= '<div style="width:' . $dimVisual . 'px;height:' . $dimVisual . 'px;float: left;margin: 15px;" id="file_' . $j . '">
                                         <div style="position:relative ">
                                             <div style="position:absolute;" >
                                                 <img style=" vertical-align: middle;" src="/gestDocumental/verArchivo?name=' . base64_encode($file) . '" width="' . $dimVisual . '" height="' . $dimVisual . '" alt="'.basename($filename).'"  title="'.basename($filename).'"   />
+                                                '.basename($filename).'
                                             </div>                                    
                                             <div style="position:absolute;top:0px;right:0px;display:block" >
                                                <input type="checkbox" value="'.base64_encode(basename($filename)) .'" name="attachments[]" '.$option.' class="imgS" />
                                             </div>
-                                    </div>                        
-                                  </div>';
+                                        </div>                        
+                                    </div>';
                                     //echo '<img style=" vertical-align: middle;" src="/gestDocumental/verArchivo?idarchivo=' . base64_encode($folder) . '" width="' . $dimVisual . '" height="' . $dimVisual . '" /><br>';
                                 }else{
                                 ?>

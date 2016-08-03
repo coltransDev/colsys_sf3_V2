@@ -65,10 +65,10 @@ if ($reporte) {
                     $filename = $archivo[count($archivo) - 1];
                     if(Utils::isImage($filename)){
                         $id_base = base64_encode($folderOld . "/" . $filename);
-                        echo '<div style="width:' . $dimVisual . 'px;height:' . $dimVisual . 'px;float: left;margin: 5px;" id="file_' . $j . '">
+                        echo '<div style="width:' . $dimVisual . 'px;height:' . $dimVisual . 'px;float: left;margin: 15px;" id="file_' . $j . '">
                             <div style="position:relative ">
                                 <div style="position:absolute;" >
-                                    <img style=" vertical-align: middle;" src="/gestDocumental/verArchivo?idarchivo=' . base64_encode($folderOld . "/" . $filename) . '" width="' . $dimVisual . '" height="' . $dimVisual . '" />
+                                    <img style=" vertical-align: middle;" src="/gestDocumental/verArchivo?idarchivo=' . base64_encode($folderOld . "/" . $filename) . '" width="' . $dimVisual . '" height="' . $dimVisual . '" />'.$filename.'
                                 </div>
                                 <div style="position:absolute;top:0px;right:0px" >
                                     <img src="/images/16x16/button_cancel.gif" style="cursor: pointer"   onclick="deleteFile(&quot;' . $id_base . '&quot;,&quot;file_' . $j . '&quot;)" />
