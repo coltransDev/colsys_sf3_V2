@@ -935,7 +935,11 @@ $referencia = $sf_data->getRaw("referencia");
                         var form = me.up('form').getForm();
                         var data = form.getFieldValues();
                         store = gridHawbs.getStore();
-                        store.getAt(data['rowIndex']).set(data);
+                        if (data['rowIndex']){
+                            store.getAt(data['rowIndex']).set(data);
+                        }else{
+                            store.insert(store.getCount(), data);
+                        }
                         me.findParentByType('window').close();
                     }
                 }, {
@@ -1029,8 +1033,21 @@ $referencia = $sf_data->getRaw("referencia");
                     tooltip: 'Adicionar un registro',
                     iconCls: 'add',
                     handler: function () {
-                        var record = Ext.create('GuiaHija', {});
-                        this.up("grid").getStore().insert(this.up("grid").getStore().getCount(), record);
+                        var rec = Ext.create('GuiaHija', {});
+                        rec.set('rowIndex', null);
+                        if (win_hija == null) {
+                            win_hija = new Ext.Window({
+                                id: 'winHawbTransporte',
+                                title: 'Liquidación de Guia Hija',
+                                width: 600,
+                                closeAction: 'close',
+                                items: {
+                                    xtype: formHawbLiquidacion
+                                }
+                            })
+                        }
+                        win_hija.down('form').loadRecord(rec);
+                        win_hija.show();
                     }
                 }, {
                     text: 'Recargar',

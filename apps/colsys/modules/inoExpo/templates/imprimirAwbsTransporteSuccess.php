@@ -74,12 +74,13 @@ if (!$guiahija){
     }
     $ref_array = explode(".", $documento->getInoMaestraExpo()->getCaReferencia());
     $prefijo = $ref_array[0];
-    $consecutivo = $ref_array[1].$ref_array[2].substr($ref_array[3],1,3).$ref_array[4];
+    $ref_array[3] = (($guiahija && count($guias)>1)?substr($ref_array[3],1,3):$ref_array[3]); // Si hay más de una guía hija, quita un cero al consecutivo
+    $consecutivo = $ref_array[1].$ref_array[2].$ref_array[3].$ref_array[4];
     $logotipo = "/srv/www/digitalFile/formatos/logo_coltrans.jpg";
 }
 
 foreach ($guias as $key => $guia){
-    $guia_numero = $prefijo. " " .$consecutivo. (($guiahija)?chr(65+$key):"");
+    $guia_numero = $prefijo. " " .$consecutivo. (($guiahija && count($guias)>1)?chr(65+$key):"");
 
     $pdf->AddPage ();
     /* HEADER */
@@ -100,7 +101,7 @@ foreach ($guias as $key => $guia){
     $pdf->MultiCell(100, 4, $guia_numero, 0, 1);
 
     $pdf->SetFont ( 'Arial', '', $font_size );
-    $pdf->SetXY(18, 40 + $marg);
+    $pdf->SetXY(18, 38 + $marg);
     if ($reporte->getCaModalidad() == "DIRECTO" or $guiahija){
         $shipper = $reporte->getContacto()->getCliente()->getCaCompania()."\n";
         $shipper.= "Nit: ". number_format($reporte->getContacto()->getCliente()->getCaIdalterno(), 0)."-".$reporte->getContacto()->getCliente()->getCaDigito()."\n";
@@ -120,7 +121,7 @@ foreach ($guias as $key => $guia){
         $pdf->Image($logotipo, 136, $marg+38, 75, 20 );
     }
 
-    $pdf->SetXY(18, 68 + $marg);
+    $pdf->SetXY(18, 64 + $marg);
     if ($reporte->getCaModalidad() == "CONSOLIDADO" and $reporte->getIdsAgente() and !$guiahija){
         $agente = $reporte->getIdsAgente();
         $sucursalag=$reporte->getIdsSucursal();
@@ -162,7 +163,16 @@ foreach ($guias as $key => $guia){
     $pdf->MultiCell(100, 4, $agent, 0, 1);
 
     $pdf->SetXY(113, 90 + $marg);
-    $pdf->MultiCell(100, 4, $documento->getCaAccountingInfo(), 0, 1);
+    
+    $accountingInfo = $documento->getCaAccountingInfo();
+    if ($reporte->getCaModalidad() == "DIRECTO"){
+        $accountingInfo = str_replace("HAWB", "REF", $accountingInfo);
+    }else if ($reporte->getCaModalidad() == "CONSOLIDADO" and $guiahija){
+        $accountingInfo = str_replace("HAWB", "MAWB", $accountingInfo);
+        $accountingInfo = str_replace($documento->getInoMaestraExpo()->getCaReferencia(), $documento->getExpoCarrierUno()->getCaPrefijo()." ".$documento->getCaConsecutivo(), $accountingInfo);
+    }
+    
+    $pdf->MultiCell(100, 4, $accountingInfo, 0, 1);
 
     $pdf->Text( 19, 108 + $marg, $config['agent_iata_code']);
     $pdf->Text( 66, 108 + $marg, $documento->getExpoCarrierUno()->getCaAccount());
@@ -200,7 +210,7 @@ foreach ($guias as $key => $guia){
 
     $marg+= ($plantilla)?4:0;
     $pdf->SetXY(18, 140 + $marg);
-    $pdf->MultiCell(100, 4, $documento->getCaHandingInfo(), 0, 1);
+    $pdf->MultiCell(190, 4, $documento->getCaHandingInfo(), 0, 1);
 
     $tot_packages = 0;
     $tot_gross = 0;

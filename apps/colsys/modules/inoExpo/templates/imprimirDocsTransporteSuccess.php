@@ -146,7 +146,8 @@ function cabecera(&$pdf, &$marg, &$page, $plantilla, $reporte, $consignatario, $
     $pdf->SetXY(10, 13 + $marg);
     $shipper = $reporte->getContacto()->getCliente()->getCaCompania()."\n";
     $shipper.= $reporte->getContacto()->getCliente()->getDireccion()."\n";
-    $shipper.= $reporte->getContacto()->getCliente()->getCiudad()->getCaCiudad().", ".$reporte->getContacto()->getCliente()->getCiudad()->getTrafico()->getCaNombre()." ".$reporte->getContacto()->getCliente()->getCaZipcode();
+    $shipper.= $reporte->getContacto()->getCliente()->getCiudad()->getCaCiudad().", ".$reporte->getContacto()->getCliente()->getCiudad()->getTrafico()->getCaNombre()." ".$reporte->getContacto()->getCliente()->getCaZipcode()."\n";
+    $shipper.= $reporte->getContacto()->getCliente()->getIds()->getIdsTipoIdentificacion()->getCaNombre()." ".$reporte->getContacto()->getCliente()->getCaIdalterno().($reporte->getContacto()->getCliente()->getCaDigito()?"-".$reporte->getContacto()->getCliente()->getCaDigito():"");
     $pdf->MultiCell(100, 4, $shipper, 0, 1);
 
     $pdf->SetXY(10, 42 + $marg);
