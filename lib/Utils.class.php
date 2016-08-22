@@ -666,6 +666,20 @@ class Utils {
         return array("old" => $old, "new" => $new);
     }
 
+    public static function spreadsheet_cols($cols) {
+        $x = 0;
+        $y = -1;
+        $letters = array();
+        for ($i = 1; $i <= $cols; $i++) {
+            if ($x > 25) {
+                $x = 0;
+                $y++;
+            }
+            $letter = (($y >= 0) ? chr(65 + $y) : "") . chr(65 + $x);
+            $letters[] = $letter;
+            $x++;
+        }
+        return $letters;
+    }
 }
-
 ?>
