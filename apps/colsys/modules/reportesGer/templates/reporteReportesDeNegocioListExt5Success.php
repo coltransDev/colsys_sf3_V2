@@ -6,6 +6,7 @@
  */
 $registros = $sf_data->getRaw("registros");
 $columns = $sf_data->getRaw("columns");
+$params = $sf_data->getRaw("params");
 ?>
 
 <table width="1000" align="center">
@@ -20,6 +21,13 @@ $columns = $sf_data->getRaw("columns");
         fields: [
             {name: 'text', type: 'string'}
         ]
+    });
+
+    Ext.create('Ext.Component', {
+        id: 'appBox',
+        style: {display: 'none'},
+        autoEl: {tag: 'div'},
+        renderTo: Ext.getBody()
     });
 
     Ext.onReady(function () {
@@ -107,6 +115,51 @@ $columns = $sf_data->getRaw("columns");
                 }
             },
             buttons: [{
+                    text: 'Exportar a Excel ',
+                    handler: function () {
+                        Ext.create('Ext.panel.Panel', {
+                            layout: 'fit',
+                            renderTo: Ext.get('appBox'),
+                            items: [{
+                                    xtype: 'component',
+                                    autoEl: {tag: 'iframe', name: 'myIframe'}
+                                }, {
+                                    xtype: 'form', hidden: true,
+                                    listeners: {
+                                        afterrender: function (form) {
+                                            form.getForm().doAction('standardsubmit', {
+                                                target: 'myIframe', method: 'POST',
+                                                url: '<?= url_for("reportesGer/reporteReportesDeNegocioListExt5") ?>',
+                                                params: {
+                                                    anio: '<?=$params["anio"]?>',
+                                                    mes: '<?=$params["mes"]?>',
+                                                    trafico: '<?=$params["trafico"]?>',
+                                                    impoexpo: '<?=$params["impoexpo"]?>',
+                                                    transporte: '<?=$params["transporte"]?>',
+                                                    sucursal: '<?=$params["sucursal"]?>',
+                                                    vendedor: '<?=$params["vendedor"]?>',
+                                                    destino: '<?=$params["destino"]?>',
+                                                    modalidad: '<?=$params["modalidad"]?>',
+                                                    cliente: '<?=$params["cliente"]?>',
+                                                    agente: '<?=$params["agente"]?>',
+                                                    transportista: '<?=$params["transportista"]?>',
+                                                    fchRepIni: '<?=$params["fchRepIni"]?>',
+                                                    fchRepFin: '<?=$params["fchRepFin"]?>',
+                                                    fchEtdIni: '<?=$params["fchEtdIni"]?>',
+                                                    fchEtdFin: '<?=$params["fchEtdFin"]?>',
+                                                    fchCnfIni: '<?=$params["fchCnfIni"]?>',
+                                                    fchCnfFin: '<?=$params["fchCnfFin"]?>',
+                                                    filters: JSON.stringify(<?=$params["filters"]?>),
+                                                    columns: JSON.stringify(<?=$params["columns"]?>),
+                                                    expoExcel: true
+                                                },
+                                            });
+                                        }
+                                    }
+                                }]
+                        });
+                    }
+                }, {
                     text: 'Regresar al Menú',
                     handler: function () {
                         document.location = '<?= url_for('reportesGer/reporteReportesDeNegocioExt5') ?>';

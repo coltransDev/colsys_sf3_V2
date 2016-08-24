@@ -16,7 +16,6 @@ $columnas = $sf_data->getRaw("columnas");
 
 $filtros = array();
 foreach ($columnas['fields'] as $key => $value){
-    // print_r($value);
     if ($columnas['fields'][$key]['groupBy'] === true){
         $filtros['fields'][] = $value;
     }

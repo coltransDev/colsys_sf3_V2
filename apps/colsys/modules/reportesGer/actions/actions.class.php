@@ -2098,26 +2098,29 @@ class reportesGerActions extends sfActions {
     }
     
     public function executeReporteReportesDeNegocioListExt5(sfWebRequest $request) {
-        $anio = $request->getParameter("anio");
-        $mes = $request->getParameter("mes");
-        $trafico = $request->getParameter("trafico");
-        $impoexpo = $request->getParameter("impoexpo");
-        $transporte = $request->getParameter("transporte");
-        $sucursal = $request->getParameter("sucursal");
-        $vendedor = $request->getParameter("vendedor");
-        $destino = $request->getParameter("destino");
-        $modalidad = $request->getParameter("modalidad");
-        $cliente = $request->getParameter("cliente");
-        $agente = $request->getParameter("agente");
-        $transportista = $request->getParameter("transportista");
-        $fchRepIni = $request->getParameter("fchRepIni");
-        $fchRepFin = $request->getParameter("fchRepFin");
-        $fchEtdIni = $request->getParameter("fchEtdIni");
-        $fchEtdFin = $request->getParameter("fchEtdFin");
-        $fchCnfIni = $request->getParameter("fchCnfIni");
-        $fchCnfFin = $request->getParameter("fchCnfFin");
-        $columns = json_decode(utf8_encode($request->getParameter("columns")));
+        $this->params = array();
+        $this->params["anio"] = $anio = $request->getParameter("anio");
+        $this->params["mes"] = $mes = $request->getParameter("mes");
+        $this->params["trafico"] = $trafico = $request->getParameter("trafico");
+        $this->params["impoexpo"] = $impoexpo = $request->getParameter("impoexpo");
+        $this->params["transporte"] = $transporte = $request->getParameter("transporte");
+        $this->params["sucursal"] = $sucursal = $request->getParameter("sucursal");
+        $this->params["vendedor"] = $vendedor = $request->getParameter("vendedor");
+        $this->params["destino"] = $destino = $request->getParameter("destino");
+        $this->params["modalidad"] = $modalidad = $request->getParameter("modalidad");
+        $this->params["cliente"] = $cliente = $request->getParameter("cliente");
+        $this->params["agente"] = $agente = $request->getParameter("agente");
+        $this->params["transportista"] = $transportista = $request->getParameter("transportista");
+        $this->params["fchRepIni"] = $fchRepIni = $request->getParameter("fchRepIni");
+        $this->params["fchRepFin"] = $fchRepFin = $request->getParameter("fchRepFin");
+        $this->params["fchEtdIni"] = $fchEtdIni = $request->getParameter("fchEtdIni");
+        $this->params["fchEtdFin"] = $fchEtdFin = $request->getParameter("fchEtdFin");
+        $this->params["fchCnfIni"] = $fchCnfIni = $request->getParameter("fchCnfIni");
+        $this->params["fchCnfFin"] = $fchCnfFin = $request->getParameter("fchCnfFin");
+        $this->params["filters"] = utf8_encode($request->getParameter("filters"));
+        $this->params["columns"] = utf8_encode($request->getParameter("columns"));
         $filtros = json_decode(utf8_encode($request->getParameter("filters")));
+        $columns = json_decode(utf8_encode($request->getParameter("columns")));
 
         set_time_limit(0);
         $q = Doctrine::getTable("Reporte")
@@ -2385,6 +2388,7 @@ class reportesGerActions extends sfActions {
 
 //        $q->limit(100);
 //        $sql = $q->getSqlQuery();
+//        echo $sql;
 //        die($sql);
 
         $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
@@ -2393,10 +2397,10 @@ class reportesGerActions extends sfActions {
         $tree = new JTree();
         $root = $tree->createNode(".");
         $tree->addFirst($root);
-        
+
         $this->registros = array();
         $con = Doctrine_Manager::connection();
-        foreach ($reportes_rs as $reporte_sc) {
+        foreach ($reportes_rs as $key => $reporte_sc) {
             $reporte = null;
             $sql = "select fun_is_last_version from fun_is_last_version(" . $reporte_sc["rp_ca_idreporte"] . ")";
             $st = $con->execute($sql);
@@ -2406,6 +2410,7 @@ class reportesGerActions extends sfActions {
                 continue;
             }
             if (array_key_exists("rp_mes", $reporte_sc)) {
+                $reportes_rs[$key]["rp_mes"] = Utils::mesLargo($reporte_sc["rp_mes"]);
                 $reporte_sc["rp_mes"] = Utils::mesLargo($reporte_sc["rp_mes"]);
             }
             if (array_key_exists("rp_ca_incoterms", $reporte_sc)) {
@@ -2457,6 +2462,7 @@ class reportesGerActions extends sfActions {
                     "ETD: " => $reporte_sc["rp_ca_fchsalida"],
                     "ETA: " => $reporte_sc["rp_ca_fchllegada"]
                 );
+                $reportes_rs[$key]["status"] = $this->printArray(array_merge($status, $confirma));
                 $reporte_sc["status"] = $this->printArray(array_merge($status, $confirma));
             }
             if ($con_equipos) {
@@ -2468,6 +2474,7 @@ class reportesGerActions extends sfActions {
                 foreach ($repequipos as $equipo) {
                     $equipos[$equipo->getConcepto()->getCaUnidad() . " X "] += $equipo->getCaCantidad();
                 }
+                $reportes_rs[$key]["equipos"] = $this->printArray($equipos);
                 $reporte_sc["equipos"] = $this->printArray($equipos);
             }
             if ($con_tarifas) {
@@ -2479,6 +2486,7 @@ class reportesGerActions extends sfActions {
                 foreach ($reptarifas as $tarifa) {
                     $tarifas[$tarifa->getConcepto()->getCaConcepto().": "] = $tarifa->getCaNetaTar()." / ".$tarifa->getCaReportarTar()." / ".$tarifa->getCaCobrarTar();
                 }
+                $reportes_rs[$key]["tarifas"] = $this->printArray($tarifas);
                 $reporte_sc["tarifas"] = $this->printArray($tarifas);
             }
             $reporte_sc = array_map('utf8_encode', $reporte_sc);
@@ -2497,19 +2505,31 @@ class reportesGerActions extends sfActions {
                 }
             }
             $nodo = $tree->getNode($uid);
-            
+
             // Quita el primer elemento que no es filtro y lo usa para el campo text
-            list($key) = array_keys($reporte_sc);
-            $reporte_sc["text"] = $reporte_sc[$key];
+            list($keys) = array_keys($reporte_sc);
+            $reporte_sc["text"] = $reporte_sc[$keys];
             $reporte_sc["leaf"] = true;
             // $key generalmente va a ser tb.reporte.ca_consecutivo
-            unset($reporte_sc[$key]);
+            unset($reporte_sc[$keys]);
             $nodo->setAttribute("children", $reporte_sc);
         }
+        
+        if ($request->getParameter("expoExcel")){
+            $this->user = $this->getUser();
+            $this->title = "Informe Reporte de Negocios";
+            $this->subject = "Generador de Informes - Exportación de Datos";
+            $this->description = "Módulo para mostras datos en formato de hoja de Excel";
+            $this->spreadsheet = $reportes_rs;
+
+            $this->setLayout(false);
+            $this->setTemplate("reporteReportesDeNegocioExcel");
+        }
+
         // Retira el campo key del cuerpo del informe
         $columns = array();
         foreach ($this->columns as $k => $v){
-            if($v["dataIndex"] != $key){
+            if($v["dataIndex"] != $keys){
                 $columns[] = $v;
             }
         }
