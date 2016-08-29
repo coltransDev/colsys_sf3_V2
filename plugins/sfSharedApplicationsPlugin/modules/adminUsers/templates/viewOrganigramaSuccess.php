@@ -274,20 +274,20 @@
                 var itemConfig = null;
                 orgchartform.dialog({
                     autoOpen: false,
-                    minWidth: 1500,
+                    minWidth: 1200,
                     minHeight: 600,
                     modal: true,
                     title: "GRUPO EMPRESARIAL COLTRANS S.A.S.",
                     buttons: {
-                        "Select": function () {                            
+                       /* "Select": function () {                            
                             
                             var cursorItem = orgchart.orgDiagram("option", "cursorItem");
                             var itemConfig = treeItems[cursorItem];
                             panel.find("[name=message]").empty().append("Selected item title=" + itemConfig.title)
                             
                             jQuery(this).dialog("close");
-                            /*location.href="<?=url_for('adminUser/formUsuario')?>"+"/id/"+itemConfig.id;*/
-                        },
+                            location.href="<?=url_for('adminUser/formUsuario')?>"+"/id/"+itemConfig.id;
+                        },*/
                         Cancel: function () {
                             jQuery(this).dialog("close");
                         }
@@ -333,12 +333,12 @@
                 var itemConfig = null;
                 orgchartform.dialog({
                     autoOpen: false,
-                    minWidth: 1500,
+                    minWidth: 1200,
                     minHeight: 600,
                     modal: true,
                     title: "GRUPO EMPRESARIAL COLTRANS",
                     buttons: {
-                        "Select": function () {
+                        /*"Select": function () {
                             var selectedItems = orgchart.orgDiagram("option", "selectedItems");
                             var message = "";
                             for (var index = 0; index < selectedItems.length; index++) {
@@ -348,9 +348,9 @@
                                 }
                                 message += "<b>'" + itemConfig.id + "'</b>";
                             }
-                            panel.find("[name=message]").empty().append("User selected next items: " + message);
+                            //panel.find("[name=message]").empty().append("User selected next items: " + message);
                             jQuery(this).dialog("close");
-                        },
+                        },*/
                         Cancel: function () {
                             jQuery(this).dialog("close");
                         }
