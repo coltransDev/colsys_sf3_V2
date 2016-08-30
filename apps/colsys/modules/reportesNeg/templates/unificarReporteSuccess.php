@@ -35,7 +35,8 @@ Ext.onReady(function(){
             impoexpo: "<?=$reporte->getCaImpoexpo()?>",
             transporte: "<?=$reporte->getCaTransporte()?>",
             origen: "<?=$reporte->getCaOrigen()?>",
-            destino: "<?=$reporte->getCaDestino()?>"
+            destino: "<?=$reporte->getCaDestino()?>",
+            idcliente: "<?=$reporte->getCliente()->getCaIdcliente()?>"
         },
         reader: new Ext.data.JsonReader({
             root: 'reportes',
