@@ -842,6 +842,49 @@ class reportesNegActions extends sfActions {
                     $errors["ca_mercancia_desc"] = "Debe colocar un texto de descripcion de la mercacia";
                     $texto.="Descripcion de Mercancia<br>";
                 }
+                
+                $prov = "";
+                $incoterms = "";
+                $orden = "";
+                for ($i = 0; $i < 15; $i++) {
+                    if ($request->getParameter("prov" . $i) && $request->getParameter("prov" . $i) != "") {
+                        $prov.=($prov != "") ? "|" : "";
+                        $prov.=$request->getParameter("prov" . $i);
+                    }
+                }
+
+                if ($prov == "" && $reporte->getCaImpoexpo() != Constantes::EXPO) {
+                    $errors["proveedor0"] = "Debe colocar un proveedor";
+                    $texto.="Proveedor<br>";
+                }
+
+                for ($i = 0; $i < 15; $i++) {
+                    if ($request->getParameter("incoterms" . $i) != "" && ($request->getParameter("prov" . $i) != "" || $reporte->getCaImpoexpo() == Constantes::EXPO)) {
+                        $incoterms.=($incoterms != "") ? "|" : "";
+                        $incoterms.=$request->getParameter("incoterms" . $i);
+                    }
+                }
+
+                if ($incoterms) {
+                    //$reporte->setCaIncoterms($incoterms);
+                } else if ($reporte->getCaImpoexpo() != Constantes::EXPO) {
+                    $errors["incoterms0"] = "Debe colocar un incoterm";
+                    $texto.="Incoterms<br>";
+                }
+
+                for ($i = 0; $i < 15; $i++) {
+                    if ($request->getParameter("orden_pro" . $i) && $request->getParameter("prov" . $i) != "") {
+                        $orden.=($orden != "") ? "|" : "";
+                        $orden.=utf8_decode($request->getParameter("orden_pro" . $i));
+                    }
+                }
+                if ($orden) {
+                    //$reporte->setCaOrdenProv($orden);
+                } else if ($reporte->getCaImpoexpo() != Constantes::EXPO) {
+                    $errors["orden_pro0"] = "Debe colocar una orden de proveedor";
+                    $texto.="Orden de Proveedor<br>";
+                }
+                
 
                 /*$prov = "";
                 $incoterms = "";
@@ -1473,7 +1516,7 @@ class reportesNegActions extends sfActions {
             $errors = array();
             $texto = "";
             if ($opcion == "1") {
-                $reporte = $reporte->copiar(1);
+                $reporte = $reporte->copiar(1, "ag");
             } else
                 $reporte->setCaConsecutivo(ReporteTable::siguienteConsecutivo(date("Y"), $this->getRequestParameter("impoexpo"), $this->getRequestParameter("transporte")));
 
@@ -1578,6 +1621,19 @@ class reportesNegActions extends sfActions {
             } else {
                 $errors["orden_clie"] = "Debe colocar un un numero de orden del cliente";
                 $texto.="Orden de cliente <br>";
+            }
+            
+            $prov = "";
+            for ($i = 0; $i < 15; $i++) {
+                if ($request->getParameter("prov" . $i) && $request->getParameter("prov" . $i) != "") {
+                    $prov.=($prov != "") ? "|" : "";
+                    $prov.=$request->getParameter("prov" . $i);
+                }
+            }
+
+            if ($prov == "") {
+                $errors["proveedor0"] = "Debe colocar un proveedor";
+                $texto.="Proveedor <br>";
             }
 
             /*$prov = "";
@@ -2629,18 +2685,16 @@ class reportesNegActions extends sfActions {
                         ->createQuery("rp")
                         ->where("rp.ca_idreporte = ?", $reporte->getCaIdreporte())
                         ->addWhere("rp.ca_idproveedor = ?", $proveedor->getCaIdtercero())
-                        ->limit(1)
                         ->execute();
                     
-                    if ($repProveedor) {
-                        //echo utf8_encode($repProveedor[0]->getCaOrdenProv());
-                        $data["idrepproveedor".$i] = $repProveedor[0]->getCaIdrepproveedor();
+                    foreach($repProveedor as $prov){
+                        $data["idrepproveedor".$i] = $prov->getCaIdrepproveedor();
                         $data["idproveedor" . $i] = $proveedor->getCaIdtercero();
                         $data["proveedor" . $i] = utf8_encode($proveedor->getCaNombre());
-                        $data["incoterms" . $i] = utf8_encode($repProveedor[0]->getCaIncoterms());
-                        $data["orden_pro" . $i] = utf8_encode($repProveedor[0]->getCaOrdenProv());
+                        $data["incoterms" . $i] = utf8_encode($prov->getCaIncoterms());
+                        $data["orden_pro" . $i] = utf8_encode($prov->getCaOrdenProv());
+                        $i++;
                     }
-                    $i++;
                 }
             }else {                
                 if ($reporte->getCaImpoexpo() == Constantes::EXPO) {
@@ -4561,7 +4615,7 @@ class reportesNegActions extends sfActions {
                         ->addWhere("pr.ca_idproveedor = ?", $proveedor2->getCaIdproveedor())
                         ->addWhere("pr.ca_incoterms = ?", $proveedor2->getCaIncoterms());
                 
-                $repProveedor = $q->execute();                
+                $repProveedor = $q->fetchOne();                
                 
                 /*echo count($q);
                 if($repProveedor){
@@ -4572,7 +4626,7 @@ class reportesNegActions extends sfActions {
                 
                 exit();*/
                 
-                if(count($repProveedor)<=0){
+                if(count($q)<=0 || !$repProveedor){
                     $repNew = new RepProveedor();
                     $repNew->setCaIdreporte($reporte->getCaIdreporte());
                     $repNew->setCaIdproveedor($proveedor2->getCaIdproveedor());
@@ -5077,7 +5131,7 @@ class reportesNegActions extends sfActions {
             {
                 $email->addCc($user->getEmail());
 
-                $email->setCaSubject("Rechazo de Envío de reportes " . $reporte->getCaConsecutivo() . " V" . $reporte->getCaVersion());
+                $email->setCaSubject("Reporte NO aceptado # " . $reporte->getCaConsecutivo() . " V" . $reporte->getCaVersion());
                 $email->setCaBody($request->getParameter("mensaje"));
                 $mensaje = Utils::replace($this->getRequestParameter("mensaje")) . "<br />";
                 $this->getRequest()->setParameter('tipo', "INSTRUCCIONES");
