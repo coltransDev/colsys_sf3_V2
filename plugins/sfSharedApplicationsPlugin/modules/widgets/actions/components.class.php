@@ -364,6 +364,7 @@ class widgetsComponents extends sfComponents {
             $this->data[] = array("id" => "2257", "valor" => "Muelles El Bosque S.A.");
             $this->data[] = array("id" => "2261", "valor" => "Soc.Portuaria Reg.Decartagenas.Adeposito");
             $this->data[] = array("id" => "2259", "valor" => "Contecar Tnal C/Nedor.C/Genas.A.Deposito");
+            $this->data[] = array("id" => "3802", "valor" => "SOCIEDAD PORTUARIA  PUERTO BAHIA SA");
         } else if ($this->ciudad == "BUN-0002") {
             $this->data[] = array("id" => "2366", "valor" => "Soc.Port.Regional B/Tura S.A.");
             $this->data[] = array("id" => "2918", "valor" => "SOCIEDAD PORTUARIA TERMINAL DE CONTENEDORES DE BUENAVENTURA S.A. T.C.BUENA S.A.");
@@ -381,6 +382,7 @@ class widgetsComponents extends sfComponents {
             $this->data[] = array("id" => "2918", "valor" => "SOCIEDAD PORTUARIA TERMINAL DE CONTENEDORES DE BUENAVENTURA S.A. T.C.BUENA S.A.");
             $this->data[] = array("id" => "2031", "valor" => "Soc.Port.Regionalde B/Quillas.A.Deposito");
             $this->data[] = array("id" => "2435", "valor" => "SOCIEDAD PORTUARIA REGIONAL DE SANTA MARTA S.A");
+            $this->data[] = array("id" => "3802", "valor" => "SOCIEDAD PORTUARIA  PUERTO BAHIA SA");
         }
     }
 
@@ -443,20 +445,22 @@ class widgetsComponents extends sfComponents {
         $this->data = array();
 
         $q = Doctrine_Query::create()
-                ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, p.ca_transporte, p.ca_activo_impo, p.ca_activo_expo ")
+                ->select("p.ca_idproveedor, p.ca_sigla, p.ca_tipo, id.ca_nombre, p.ca_transporte, p.ca_activo_impo, p.ca_activo_expo ")
                 ->from("IdsProveedor p")
                 ->innerJoin("p.Ids id")
                 ->addOrderBy("id.ca_nombre");
-        $q->addWhere("p.ca_tipo = ? OR p.ca_tipo = ?", array("TRI", "TRN"));
-
-        //$q->addWhere("p.ca_activo = ?", true );
-
+        
+        $q->addWhere("p.ca_tipo = ? OR p.ca_tipo = ? OR p.ca_tipo = ?", array("TRI", "TRN", "OPE"));
         $q->fetchArray();
-//        echo $sql;
+        //echo $q->getSqlQuery();
         $lineas = $q->execute();
 
         $this->data = array();
         foreach ($lineas as $linea) {
+            /* Ticket 35172 Incluir Operadores portuarios en proveedores terrestres.*/
+            if($linea['ca_tipo'] == "OPE")
+                $linea['ca_transporte'] = "Terrestre";
+            
             $this->data[] = array("idlinea" => $linea['ca_idproveedor'],
                 "linea" => utf8_encode(($linea['ca_sigla'] ? $linea['ca_sigla'] . " - " : "") . $linea['Ids']['ca_nombre']),
                 "transporte" => utf8_encode($linea['ca_transporte']),
@@ -464,6 +468,8 @@ class widgetsComponents extends sfComponents {
                 "activo_expo" => $linea['ca_activo_expo']
             );
         }
+        //echo "<pre>";print_r($this->data);echo "</pre>";
+        
     }
 
     public function executeWidgetPais() {
@@ -545,7 +551,8 @@ class widgetsComponents extends sfComponents {
                 "ciudad" => utf8_encode($agente["c_ca_ciudad"]),
                 "direccion" => utf8_encode($agente["s_ca_direccion"]),
                 "tipo" => utf8_encode($agente["a_ca_tipo"]),
-                "tplogistics" => utf8_encode($agente["a_ca_tplogistics"])
+                "tplogistics" => utf8_encode($agente["a_ca_tplogistics"]),
+                "consolcargo" => utf8_encode($agente["a_ca_consolcargo"])
             );
 
             $this->agentes[] = $ag;
@@ -679,10 +686,22 @@ class widgetsComponents extends sfComponents {
         }
     }
 
+    
+     /**
+     * @autor Natalie Puentes
+     * @return     
+     * @param sfRequest $request A request object               
+         * modo :  hace referencia al transporte      
+     */
     public function executeWidgetBodega() {
+        if ($this->modo == Constantes::TERRESTRE) {
+            $modo = constantes::MARITIMO;
+        } else {
+            $modo = $this->modo;
+        }    
+    }
 
-//        $casos=$this->transporte;
-
+    public function executeWidgetOTM() {
         if ($this->modo == Constantes::TERRESTRE) {
             $modo = constantes::MARITIMO;
         } else {
@@ -695,16 +714,15 @@ class widgetsComponents extends sfComponents {
                 ->addOrderBy("b.ca_tipo ASC")
                 ->addOrderBy("b.ca_nombre ASC")
                 ->distinct()
-                ->where("b.ca_transporte like ? and b.ca_nombre<>'-'", "%" . $modo . "%")
+                ->where("b.ca_nombre<>'-' and ca_tipo='Operador Multimodal'")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                 ->execute();
-
 
         foreach ($this->data as $key => $val) {
             $arrTransporte = explode("|", $this->data[$key]["b_ca_transporte"]);
             $this->data[$key]["b_ca_tipo"] = utf8_encode($this->data[$key]["b_ca_tipo"]);
-            $this->data[$key]["b_ca_nombre"] = utf8_encode($this->data[$key]["b_ca_nombre"]." ".$this->data[$key]["b_ca_direccion"]) . "-" . $this->data[$key]["b_ca_tipo"];
-            $this->data[$key]["b_ca_transporte"] = $modo;
+            $this->data[$key]["b_ca_nombre"] = utf8_encode($this->data[$key]["b_ca_nombre"]."-Nit:".$this->data[$key]["b_ca_identificacion"]." ".$this->data[$key]["b_ca_direccion"]) . "-" . $this->data[$key]["b_ca_tipo"];
+            $this->data[$key]["b_ca_transporte"] = utf8_encode(Constantes::MARITIMO);
         }
     }
 
