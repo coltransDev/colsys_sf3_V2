@@ -291,4 +291,21 @@ class HdeskTicket extends BaseHdeskTicket {
         
         return $q->execute();
     }
+    
+    public function setDocumento($tipo, $documento){
+        $q = Doctrine::getTable('HdeskAuditDocuments')
+                ->createQuery('a')
+                ->where('a.ca_idticket = ? and a.ca_tipo_doc = ? and a.ca_numero_doc = ?', array($this->getCaIdticket(),$tipo, $documento))
+                ->execute();
+        
+        if(count($q)< 1){
+            $url = '<a href="/colsys_php/reporteneg.php?id='.$documento.'" target="_blank">Ver Reporte</a>';
+            $doc =  new HdeskAuditDocuments();
+            $doc->setCaIdticket($this->getCaIdticket());
+            $doc->setCaTipoDoc($tipo);
+            $doc->setCaNumeroDoc($documento);
+            $doc->setCaObservaciones($url);
+            $doc->save();
+        }
+    }
 }
