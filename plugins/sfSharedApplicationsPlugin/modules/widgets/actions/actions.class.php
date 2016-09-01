@@ -295,6 +295,13 @@ class widgetsActions extends sfActions {
         if ($request->getParameter("estado") == "activo" && $this->getUser()->getUserId()!="maquinche") {
             $q->addWhere("r.ca_idetapa != ?", "99999");
         }        
+
+        if ($request->getParameter("idcliente")) {
+            $q->leftJoin("r.Contacto cc");
+            $q->leftJoin("cc.Cliente cl");
+            $q->addWhere("cl.ca_idcliente = ?", $request->getParameter("idcliente"));
+        }
+        
         $reportes = $q->fetchArray();
 
         $this->reportes = array();
