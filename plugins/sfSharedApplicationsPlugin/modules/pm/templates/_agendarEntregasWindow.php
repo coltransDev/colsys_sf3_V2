@@ -45,7 +45,7 @@ AgendarEntregasWindow = function( config ) {
                             name: 'dias',
                             id: 'dias',
                             minValue: 1,
-                            maxValue: 50,
+                            maxValue: 100,
                             disabled: false,
                             decimalPrecision: 1,
                             width: 40,
