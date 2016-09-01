@@ -24,6 +24,7 @@ if($impoexpo==Constantes::OTMDTA)
 }
 
 include_component("widgets", "widgetComerciales");
+include_component("widgets", "widgetTicket");
             
 ?>
 <script type="text/javascript">
@@ -38,6 +39,15 @@ include_component("widgets", "widgetComerciales");
                                               valueField:"consecutivo"
                                               });
         this.widgetCotizacion.addListener("select", this.onSelectCotizacion, this );
+        
+        this.widgetTicket = new WidgetTicket({
+                                    fieldLabel: "Tarifa pactada",
+                                    id:"idticket",
+                                    hiddenName: "idticket",
+                                    iddepartament: 11,                                            
+                                    valueField:"idticket"
+                            });
+        
         <?
         if($tipo=="4")
         {
@@ -99,33 +109,37 @@ include_component("widgets", "widgetComerciales");
                             ,
                             this.widgetCotizacion,
                             <?
-                            if($tipo=="4")
-                            {
-                            ?>
-                            this.widgetReferencia,
-                            this.widgetHbls,
-                            {
-                                xtype: "datefield",
-                                fieldLabel: "Fecha de Arribo",
-                                id: "fcharribo",
-                                name: "fcharribo",
-                                format: 'Y-m-d'
-                            },
-                            {
-                                xtype:"textfield",
-                                fieldLabel:"Manifiesto",
-                                name:"manifiesto",
-                                id:"manifiesto",
-                                width:300
-                            },
-                            new WidgetCiudad({fieldLabel: 'Puerto Origen',
-                                                      id: 'porigen',
-                                                      idciudad:"porigen",
-                                                      hiddenName:"pidorigen",
-                                                      tipo:"2",
-                                                      impoexpo:"impoexpo"
-                                                    }),
-                            <?
+                            if($modo== Constantes::MARITIMO){
+                                ?>
+                                this.widgetTicket,
+                                <?
+                            }
+                            if ($tipo == "4") {
+                                ?>
+                                this.widgetReferencia,
+                                this.widgetHbls,
+                                {
+                                    xtype: "datefield",
+                                    fieldLabel: "Fecha de Arribo",
+                                    id: "fcharribo",
+                                    name: "fcharribo",
+                                    format: 'Y-m-d'
+                                },
+                                {
+                                    xtype:"textfield",
+                                    fieldLabel:"Manifiesto",
+                                    name:"manifiesto",
+                                    id:"manifiesto",
+                                    width:300
+                                },
+                                new WidgetCiudad({fieldLabel: 'Puerto Origen',
+                                                          id: 'porigen',
+                                                          idciudad:"porigen",
+                                                          hiddenName:"pidorigen",
+                                                          tipo:"2",
+                                                          impoexpo:"impoexpo"
+                                                        }),
+                                <?
                             }
                             else
                             {

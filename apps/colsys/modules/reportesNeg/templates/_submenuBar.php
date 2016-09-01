@@ -334,6 +334,16 @@ switch ($action) {
             $i++;
         }
         
+        if($reporte->getProperty('idticket'))
+        {
+            $button[$i]["name"] = "Tarifa Pactada";
+            $button[$i]["tooltip"] = "Muestra el ticket asociado al reporte de negocio";
+            $button[$i]["image"] = "22x22/pricing.png";
+            $button[$i]["target"] = '_blank';
+            $button[$i]["onClick"] = "verTarifa('".$reporte->getProperty('idticket')."')";
+            $i++;
+        }
+        
         break;
     case "unificarReporte":
         $button[$i]["name"] = "Volver ";
@@ -910,5 +920,26 @@ switch ($action) {
             }
         }
     };
+    
+    function verTarifa(idticket){
+    
+        Ext.Ajax.request({            
+            url: '<?= url_for("pm/verEmailTicket") ?>',
+            params :	{
+                idticket: idticket
+            },
+            failure:function(response,options){
+                var res = Ext.util.JSON.decode( response.responseText );
+                if(res.err)
+                    Ext.MessageBox.alert("Mensaje",'Se presento un error guardando por favor informe al Depto. de Sistemas<br>'+res.err);
+                else
+                    Ext.MessageBox.alert("Mensaje",'Se produjo un error, vuelva a intentar o informe al Depto. de Sistema<br>'+res.texto);
+            },
+            success:function(response,options){
+                var res = Ext.util.JSON.decode( response.responseText );                    
+                window.open("/email/verEmail/id/"+res.idemail, '_blank');                   
+            }
+        })
+    }
     
 </script>

@@ -813,6 +813,12 @@ class reportesNegActions extends sfActions {
                     $reporte->setCaIdclienteag(null);
                 }
 
+                if ($request->getParameter("idticket")) {
+                    $reporte->setProperty("idticket", $request->getParameter("idticket"));
+                    $ticket = Doctrine::getTable("HdeskTicket")->find($request->getParameter("idticket"));
+                    $ticket->setDocumento('Reporte de Negocios',$reporte->getCaConsecutivo());
+                }
+
                 if ($request->getParameter("idclienteotro")) {
                     $reporte->setCaIdclienteotro($request->getParameter("idclienteotro"));
                 } else {
@@ -2913,6 +2919,9 @@ class reportesNegActions extends sfActions {
             }
             if ($reporte->getCaTiporep() == "2")
                 $data["asunto"] = "Nuevo Reporte AG " . $data["proveedor0"] . " / " . $data["cliente"];
+            if($reporte->getProperty("idticket")){
+                $data["idticket"] = $reporte->getProperty("idticket");
+            }
         }
         $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");
