@@ -17,37 +17,27 @@ WidgetTicket = function( config ){
     
     this.store = new Ext.data.Store({
         proxy: new Ext.data.HttpProxy({
-            url: '<?=url_for("widgets/datosTicket")?>'
-            
+            url: '<?=url_for("widgets/listaTicketsJSON")?>'            
         }),
-        baseParams: {tipo: this.tipo},
+        baseParams: {iddepartament: this.iddepartament},
         reader: new Ext.data.JsonReader({
             root: 'root',
             totalProperty: 'total'
         }, [
-            {name: 'login'},
-            {name: 'nombre'},
-			{name: 'cargo'},
-            {name: 'sucursal'},
-			{name: 'icon'}
-
-
+            {name: 'h_ca_idticket'},
+            {name: 'h_ca_title'},
+            {name: 'h_ca_text'},
+            {name: 'e_idemail'}
         ])
     });
 
     this.resultTpl = new Ext.XTemplate(
-        '<tpl for=".">',
-        '<div class="search-item">',
-            '<div style="float:left; clear:left" class="userthumb" align="left"><img src="{icon}" height="80" /></div>',
-            '<div style="margin-left: 80px; height: 90px"  ><b>{nombre}</b><br /><span>{cargo}</span><br /><span>{sucursal}</span></div>',
-            
-            
-         '</div></tpl>'
+       '<tpl for="."><div class="search-item"><span style="color:green; font-weight: bold;">{h_ca_idticket} ({h_ca_title})</span><br /><span><br />{h_ca_text}</span></div><div><span color:gray;><a href="/email/verEmail?id={e_idemail}" target="_blank">Ver Ticket # {h_ca_idticket}</a></span></div></tpl>'
     );
 
     WidgetTicket.superclass.constructor.call(this, {
-        valueField:'login',
-        displayField:'nombre',
+        valueField:'h_ca_idticket',
+        displayField:'h_ca_idticket',
         typeAhead: false,
         loadingText: 'Buscando...',
         forceSelection: true,

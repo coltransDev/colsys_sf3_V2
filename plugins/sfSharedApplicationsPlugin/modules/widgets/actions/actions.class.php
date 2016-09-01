@@ -1178,8 +1178,54 @@ class widgetsActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
     
+    /**
+     * Retorna un objeto JSON con la información de los tickets asociados a un departamento
+     *
+     * @param sfRequest $request A request object
+         * query : texto digitado para filtrar tickets
+         * iddepartament :  hace referencia al Departamento en Helpdesk
+         * idgroup :  hace referencia al área de HelpDesk
+     */
     
+    public function executeListaTicketsJSON() {
+        $criterio = $this->getRequestParameter("query");
+        $iddepartament = $this->getRequestParameter("iddepartament");
+        $idgroup = $this->getRequestParameter("idgroup");
 
+        $q = Doctrine_Query::create()
+                ->select("h.ca_idticket, h.ca_title, h.ca_text, h.ca_idgroup, MAX(e.ca_idemail) as idemail")
+                ->from('HdeskTicket h')
+                ->innerJoin("h.HdeskGroup g")
+                ->leftJoin("h.Email e")
+                ->addWhere("e.ca_tipo = 'Notificación'");
+
+        if ($iddepartament) {
+            $q->addWhere("g.ca_iddepartament = ? ", $iddepartament);
 }
 
+        if ($idgroup) {
+            $q->addWhere("h.ca_idgroup = ? ", $idgroup);
+        }
+
+        if ($criterio) {            
+            $q->addWhere("(h.ca_idticket = ? or h.ca_title like ?  or h.ca_text like ?) ", array($criterio ,"%" . strtolower($criterio) . "%", "%" . strtolower($criterio) . "%"));
+        }
+        
+        $q->addOrderBy("h.ca_idgroup ASC");        
+        $q->addOrderBy("h.ca_idticket DESC");        
+        $q->groupBy("h.ca_idticket, h.ca_title, h.ca_text, h.ca_idgroup");
+        $q->distinct();        
+        $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);        
+        
+        $tickets = $q->execute();
+
+        foreach ($tickets as $key => $val) {            
+            $tickets[$key]["h_ca_title"] = utf8_encode(str_replace('"', "'", $tickets[$key]["h_ca_title"]));
+            $tickets[$key]["h_ca_text"] = utf8_encode(str_replace("</style", "</style2", str_replace("<style", "<style2", str_replace('"', "'", $tickets[$key]["h_ca_text"]))));            
+        }
+        
+        $this->responseArray = array("success" => true, "total" => count($tickets), "root" => $tickets);
+        $this->setTemplate("responseTemplate");
+    }
+}
 ?>
