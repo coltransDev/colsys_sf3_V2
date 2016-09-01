@@ -181,6 +181,7 @@ class pmActions extends sfActions {
         foreach ($tickets as $key => $val) {
             $tickets[$key]["h_ca_action"] = $tickets[$key]["h_ca_closedat"] ? "Cerrado" : "Abierto";
             $tickets[$key]["g_ca_name"] = utf8_encode($tickets[$key]["g_ca_name"]);
+            $tickets[$key]["h_ca_type"] = utf8_encode($tickets[$key]["h_ca_type"]);
             $tickets[$key]["milestone"] = utf8_encode($tickets[$key]["m_ca_title"] . " " . Utils::fechaMes($tickets[$key]["m_ca_due"]));
             $tickets[$key]["h_ca_title"] = utf8_encode(str_replace('"', "'", $tickets[$key]["h_ca_title"]));
             $tickets[$key]["h_ca_text"] = utf8_encode(str_replace("</style", "</style2", str_replace("<style", "<style2", str_replace('"', "'", $tickets[$key]["h_ca_text"]))));
@@ -1485,7 +1486,7 @@ class pmActions extends sfActions {
             $data["login"] = $ticket->getCaLogin();
             $data["priority"] = $ticket->getCaPriority();
             $data["opened"] = $ticket->getCaOpened();
-            $data["type"] = $ticket->getCaType();
+            $data["type"] = utf8_encode($ticket->getCaType());
             $data["assignedto"] = $ticket->getCaAssignedto();
             $data["action"] = $ticket->getCaAction();
             $data["status"] = $ticket->getCaStatus();
