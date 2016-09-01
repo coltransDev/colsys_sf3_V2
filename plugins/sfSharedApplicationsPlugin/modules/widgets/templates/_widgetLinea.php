@@ -169,7 +169,7 @@ $data = $sf_data->getRaw("data");
                 var list = new Array();
                 var transporte = Ext.getCmp(this.linkTransporte).getValue();
 
-                if (transporte == "<?= Constantes::OTMDTA ?>") {
+                if (transporte == "<?= Constantes::OTMDTA ?>" || transporte == "<?= Constantes::OTMAIR ?>") {
                     transporte = "<?= Constantes::TERRESTRE ?>";
                 }
 
@@ -187,8 +187,13 @@ $data = $sf_data->getRaw("data");
                             if (impoexpo == "<?= Constantes::EXPO ?>" && rec.activo_expo) {
                                 list.push(rec);
                             }
+                            
+                            if (impoexpo == "<?= Constantes::OTMAIR ?>" && (rec.activo_impo || rec.activo_expo)) {
+                                list.push(rec);
+                            }
                         } else {
-                            list.push(rec);
+                            if(rec.activo_impo || rec.activo_expo )
+                                list.push(rec);
                         }
                     }
                 }
