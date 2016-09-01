@@ -196,7 +196,7 @@ PanelPreviewTicket = function( config ){
         });
     }
     
-    if (this.department == "Auditoría" || this.department == 'Marítimo'){        // Habilita la pestaña de importación de documentos, para auditoría
+    if (this.department == "Auditoría" || this.department == 'Marítimo' || this.department == 'Pricing'){        // Habilita la pestaña de importación de documentos, para auditoría
         panel.insert(index, this.docsPanel);
     }
 

@@ -173,7 +173,8 @@ PanelBusquedaTicket = function( config ){
             {name: 'login', type: 'string'},            
             {name: 'title', type: 'string'},
             {name: 'text', type: 'string'},
-            {name: 'color', type: 'string'}
+            {name: 'color', type: 'string'},
+            {name: 'department', type: 'string'}
     ]);
 
     this.store = new Ext.data.GroupingStore({
@@ -261,10 +262,12 @@ Ext.extend(PanelBusquedaTicket, Ext.grid.GridPanel, {
 		if( typeof(record)!="undefined" ){
 
             var idticket = record.data.idticket;
+            var department = record.data.department;
 
             var newComponent = new PanelPreviewTicket({
                                                 closable: true,
                                                 title: 'Ticket # '+idticket,
+                                                department: department,
                                                 idticket: idticket
                                                 //autoHeight: true,
                                                 

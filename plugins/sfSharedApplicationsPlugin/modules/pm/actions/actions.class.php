@@ -1752,18 +1752,15 @@ class pmActions extends sfActions {
                     ->setAttribute(Doctrine_Core::ATTR_QUERY_LIMIT, Doctrine_Core::LIMIT_ROWS);
 
             $q = Doctrine_Query::create()
-                    ->select("r.ca_text, t.ca_text, t.ca_idticket, t.ca_title, r.ca_createdat, r.ca_login, g.ca_name")
+                    ->select("r.ca_text, t.ca_text, t.ca_idticket, t.ca_title, r.ca_createdat, r.ca_login, g.ca_name, d.ca_nombre")
                     ->from("HdeskGroup g")
+                    ->leftJoin("g.Departamento d")
                     ->leftJoin("g.HdeskTicket t")
                     ->leftJoin("t.HdeskResponse r")                    
                     //->limit(100)
                     ->distinct()
                     ->orderBy("r.ca_createdat DESC")
                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-
-
-
-
 
             switch ($option) {
                 case "idticket":
@@ -1891,6 +1888,7 @@ class pmActions extends sfActions {
 
                 $row["login"] = $result["r_ca_login"];
                 $row["group"] = utf8_encode($result["g_ca_name"]);
+                $row["department"] = utf8_encode($result["d_ca_nombre"]);
 
                 $data[] = $row;
 
@@ -1921,7 +1919,6 @@ class pmActions extends sfActions {
                     $row = array();
                     $row["idticket"] = $result["t_ca_idticket"];
                     $row["text"] = utf8_encode("Se abrió el ticket");
-                    $row["idticket"] = $result["t_ca_idticket"];
                     $row["fchevento"] = $result["t_ca_opened"];
                     $row["title"] = utf8_encode($result["t_ca_title"]);
                     $row["login"] = $result["t_ca_login"];
@@ -2386,4 +2383,22 @@ class pmActions extends sfActions {
         }
         $this->setTemplate("responseTemplate");
     }
+    
+    function executeVerEmailTicket($request){
+        
+        $idticket = $request->getParameter("idticket");
+        $this->forward404Unless($idticket);
+        
+        $email = Doctrine::getTable("HdeskTicket")
+                ->createQuery("h")
+                ->select("MAX(ca_idemail) as ca_idemail")
+                ->leftJoin("h.Email e")
+                ->where("h.ca_idticket = ?", $idticket)
+                ->addWhere("e.ca_tipo = 'Notificación'")
+                ->fetchOne();
+        
+        $this->responseArray = array("success" => false, "idemail"=>$email->ca_idemail);
+                
+        $this->setTemplate("responseTemplate");
+    }   
 }
