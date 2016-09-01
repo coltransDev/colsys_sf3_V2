@@ -14,6 +14,7 @@ class Reporte extends BaseReporte {
     private $ultimoStatus = null;
     private $inoClientesSea = null;
     private $proveedoresStr = null;
+    private $incotermsStr = null;
     private $editable = null;
     private $nversiones = null;
     private $ultimaVersion = null;
@@ -200,7 +201,7 @@ class Reporte extends BaseReporte {
      * Author: Andres Botero
      */
 
-    public function getProveedores() {
+    /*public function getProveedores() {
 
         if ($this->getCaImpoexpo() == Constantes::IMPO || $this->getCaImpoexpo() == Constantes::TRIANGULACION || $this->getCaImpoexpo() == Constantes::OTMDTA1 || $this->getCaImpoexpo() == Constantes::OTMDTA) {
             $provId = $this->getCaIdproveedor();
@@ -212,6 +213,62 @@ class Reporte extends BaseReporte {
                                 ->execute();
                 return $proveedores;
             }
+        }
+        return null;
+    }*/
+
+    /*
+     * Retorna un String conteniendo los proovedores del reporte
+     * Author: Andres Botero
+     */
+
+    /*public function getProveedoresStr($dir=false) {
+
+        if ($this->proveedoresStr == null) {
+            $proveedoresStr = "";
+            $proveedores = $this->getProveedores();
+            if ($proveedores) {
+                foreach ($proveedores as $proveedor) {
+                    if ($proveedoresStr) {
+                        $proveedoresStr.=" - ";
+    }
+                    $proveedoresStr.= $proveedor->getCaNombre().(($dir!=false)?"<br>".htmlentities($proveedor->getCaDireccion()):"");
+                }
+            }
+            $this->proveedoresStr = $proveedoresStr;
+        }
+        return $this->proveedoresStr;
+    }*/
+
+    /*
+     * Retorna un array conteniendo los proovedores del reporte
+     * Author: Andres Botero
+     */
+
+    public function getProveedores() {
+
+        if ($this->getCaImpoexpo() == Constantes::IMPO || $this->getCaImpoexpo() == Constantes::TRIANGULACION || $this->getCaImpoexpo() == Constantes::OTMDTA1 || $this->getCaImpoexpo() == Constantes::OTMDTA) {
+            
+            $ids = $this->getRepProveedor();
+            
+            if (count($ids)>0) {
+                $idprov = array();
+                foreach($ids as $id){
+                    $idprov[] = $id->getCaIdproveedor();                    
+                }
+                //print_r($idprov);
+                //ksort($idprov);
+                $proveedores = Doctrine::getTable("Tercero")
+                                ->createQuery("t")
+                                ->select("t.*, rp.*")
+                                ->leftJoin("t.RepProveedor rp")
+                                ->whereIn("t.ca_idtercero", $idprov)
+                                ->addWhere("rp.ca_idreporte = ?", $this->getCaIdreporte())
+                                ->orderBy("rp.ca_idrepproveedor")
+                                ->execute();
+                return $proveedores;            
+            }
+            
         }
         return null;
     }
@@ -237,6 +294,56 @@ class Reporte extends BaseReporte {
             $this->proveedoresStr = $proveedoresStr;
         }
         return $this->proveedoresStr;
+    }
+
+    /*
+     * Retorna un String conteniendo los incoterms del reporte
+     * Author: Andrea Ramírez
+     */
+
+    public function getIncotermsStr($dir=false) {
+
+        if ($this->incotermsStr == null) {
+            $incotermsStr = "";
+            $proveedores = $this->getRepProveedor();
+            
+            if ($proveedores) {
+                foreach ($proveedores as $proveedor) {
+                    if ($incotermsStr) {
+                        $incotermsStr.=" | ";
+                    }
+                    $incotermsStr.= $proveedor->getCaIncoterms().(($dir!=false)?"<br>".htmlentities($proveedor->getCaIncoterms()):"");
+                }
+            }
+            $this->incotermsStr = $incotermsStr;
+        }
+        return $this->incotermsStr;
+    }
+    
+    /*
+     * Retorna un String conteniendo los incoterms del reporte
+     * Author: Andrea Ramírez
+     */
+
+    public function getOrdenesStr($idproveedor=null) {
+
+        $ordenesStr = "";
+        $proveedores = $this->getRepProveedor();
+        
+        foreach($proveedores as $proveedor){            
+            if($idproveedor){
+                if($proveedor->getCaIdproveedor()==$idproveedor){
+                    $ordenesStr.=$proveedor->getCaOrdenProv();
+                    break;
+                } else
+                    continue;
+            }else{
+                if ($ordenesStr)
+                    $ordenesStr.=" | ";                    
+                $ordenesStr.=$proveedor->getCaOrdenProv();
+            }            
+        }
+        return $ordenesStr;
     }
 
     /*
@@ -1179,10 +1286,10 @@ class Reporte extends BaseReporte {
             foreach($archivos as $file){
                 $name = $file->getCaNombre();
                 if($name == $filename){
-                    return str_replace( sfConfig::get('app_digitalFile_root'), "", $file->getCaPath());
-                    exit;
+                        return str_replace( sfConfig::get('app_digitalFile_root'), "", $file->getCaPath());
+                        exit;
+                    }
                 }                    
-            }
         }else
             return null;            
     }
@@ -1193,7 +1300,7 @@ class Reporte extends BaseReporte {
      * @param $opcion 1 indica que es un nuevo reporte 2 indica una nueva version
      */
 
-    public function copiar($opcion) {
+    public function copiar($opcion, $tipo=null) {
         $reporte = $this->copy();
 
         try {
@@ -1260,6 +1367,20 @@ class Reporte extends BaseReporte {
                 if ($gasto->getCaRecargoorigen() == true)
                     $newGasto->setCaRecargoorigen("true");
                 $newGasto->save($conn);
+            }
+
+            if(!$tipo){
+                //Copia los proveedores excepto cuando se copia un ag
+                $proveedores = $this->getRepProveedor();             
+                foreach($proveedores as $proveedor){
+                    $newProveedor = $proveedor->copy();                
+                    $newProveedor->setCaIdreporte($reporte->getCaIdreporte());
+                    $newProveedor->setCaIdproveedor($proveedor->getCaIdproveedor());
+                    $newProveedor->setCaIncoterms($proveedor->getCaIncoterms());
+                    $newProveedor->setCaOrdenProv($proveedor->getCaOrdenProv());
+                    $newProveedor->setCaCargaDisponible($proveedor->getCaCargaDisponible());
+                    $newProveedor->save($conn);                
+                }
             }
 
             $costos = $this->getCostos();
@@ -1418,8 +1539,8 @@ class Reporte extends BaseReporte {
                 $this->setCaIdclienteotro($reporteNew->getCaIdclienteotro());
                 $this->setCaIdagente($reporteNew->getCaIdagente());
                 $this->setCaMercanciaDesc($reporteNew->getCaMercanciaDesc());
-                $this->setCaIdproveedor($reporteNew->getCaIdproveedor());
-                $this->setCaIncoterms($reporteNew->getCaIncoterms());
+                //$this->setCaIdproveedor($reporteNew->getCaIdproveedor());
+                //$this->setCaIncoterms($reporteNew->getCaIncoterms());
 
                 $this->setCaConfirmarClie($reporteNew->getCaConfirmarClie());
 
@@ -1509,6 +1630,22 @@ class Reporte extends BaseReporte {
                     if ($gasto->getCaRecargoorigen() == true)
                         $newGasto->setCaRecargoorigen("true");
                     $newGasto->save($conn);
+                }
+
+                $proveedores = $this->getRepProveedor();
+                foreach ($proveedores as $proveedor) {
+                    $proveedor->delete();
+                }
+                //Copia los proveedores
+                $proveedores = $reporteNew->getRepProveedor();            
+                foreach($proveedores as $proveedor){
+                    $newProveedor = $proveedor->copy();                
+                    $newProveedor->setCaIdreporte($this->getCaIdreporte());
+                    $newProveedor->setCaIdproveedor($proveedor->getCaIdproveedor());
+                    $newProveedor->setCaIncoterms($proveedor->getCaIncoterms());
+                    $newProveedor->setCaOrdenProv(null);
+                    $newProveedor->setCaCargaDisponible(null);
+                    $newProveedor->save($conn);
                 }
 
                 $costos = $this->getCostos();
