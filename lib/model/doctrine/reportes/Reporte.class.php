@@ -1332,6 +1332,7 @@ class Reporte extends BaseReporte {
             $reporte->setProperty("subarancel",$this->getProperty("subarancel"));
             $reporte->setProperty("muelle",$this->getProperty("muelle"));
             $reporte->setProperty("entrega_lugar_arribo",$this->getProperty("entrega_lugar_arribo"));
+            $reporte->setProperty("idticket",($opcion==2?$this->getProperty("idticket"):""));
             $reporte->save($conn);
 
             //Copia los conceptos
@@ -1378,7 +1379,7 @@ class Reporte extends BaseReporte {
                     $newProveedor->setCaIdproveedor($proveedor->getCaIdproveedor());
                     $newProveedor->setCaIncoterms($proveedor->getCaIncoterms());
                     $newProveedor->setCaOrdenProv($proveedor->getCaOrdenProv());
-                    $newProveedor->setCaCargaDisponible($proveedor->getCaCargaDisponible());
+                    $newProveedor->setCaCargaDisponible(($opcion==2?$proveedor->getCaCargaDisponible():""));
                     $newProveedor->save($conn);                
                 }
             }
