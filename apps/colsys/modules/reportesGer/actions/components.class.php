@@ -318,7 +318,7 @@ class reportesGerComponents extends sfComponents
         $columnas[] = array("text" => utf8_encode("Mes"), "sql" => "to_char(ca_fchreporte, 'MM')", "alias" => "rp_mes", "leaf" => true, "default" => true, "groupBy" => true, "iconCls" => 'no-icon');
         $columnas[] = array("text" => utf8_encode("Consecutivo"), "sql" => "rp.ca_consecutivo", "alias" => "rp_ca_consecutivo", "leaf" => true, "default" => true, "groupBy" => false, "iconCls" => 'no-icon');
         $columnas[] = array("text" => utf8_encode("Versión"), "sql" => "rp.ca_version", "alias" => "rp_ca_version", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
-        $columnas[] = array("text" => utf8_encode("Fch.Reporte"), "sql" => "rp.ca_fchreporte", "alias" => "rp_ca_fchreporte", "leaf" => true, "default" => true, "groupBy" => false, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Fch.Reporte"), "sql" => "rp.ca_fchreporte", "alias" => "rp_ca_fchreporte", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
         $columnas[] = array("text" => utf8_encode("Cotización"), "sql" => "rp.ca_idcotizacion", "alias" => "rp_ca_idcotizacion", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
         $columnas[] = array("text" => utf8_encode("Tráfico Org."), "sql" => "org.ca_idtrafico", "alias" => "trg_ca_nombre", "leaf" => true, "default" => true, "groupBy" => true, "iconCls" => 'no-icon');
         $columnas[] = array("text" => utf8_encode("Puerto Org."), "sql" => "rp.ca_origen", "alias" => "org_ca_ciudad", "leaf" => true, "default" => false, "groupBy" => true, "iconCls" => 'no-icon');
@@ -326,7 +326,7 @@ class reportesGerComponents extends sfComponents
         $columnas[] = array("text" => utf8_encode("Puerto Dst."), "sql" => "rp.ca_destino", "alias" => "dst_ca_ciudad", "leaf" => true, "default" => true, "groupBy" => true, "iconCls" => 'no-icon');
         $columnas[] = array("text" => utf8_encode("Impo/Expo"), "sql" => "rp.ca_impoexpo", "alias" => "rp_ca_impoexpo", "leaf" => true, "default" => true, "groupBy" => false, "iconCls" => 'no-icon');
         $columnas[] = array("text" => utf8_encode("Agente"), "sql" => "agt.ca_nombre", "alias" => "agt_ca_nombre", "leaf" => true, "default" => false, "groupBy" => true, "iconCls" => 'no-icon');
-        $columnas[] = array("text" => utf8_encode("Incoterms"), "sql" => "rp.ca_incoterms", "alias" => "rp_ca_incoterms", "leaf" => true, "default" => true, "groupBy" => false, "iconCls" => 'no-icon');
+        $columnas[] = array("text" => utf8_encode("Incoterms"), "sql" => "rp.ca_incoterms", "alias" => "rp_ca_incoterms", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
         $columnas[] = array("text" => utf8_encode("Descripción Mercancía"), "sql" => "rp.ca_mercancia_desc", "alias" => "rp_ca_mercancia_desc", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
         $columnas[] = array("text" => utf8_encode("Transporte"), "sql" => "rp.ca_transporte", "alias" => "rp_ca_transporte", "leaf" => true, "default" => false, "groupBy" => true, "iconCls" => 'no-icon');
         $columnas[] = array("text" => utf8_encode("Modalidad"), "sql" => "rp.ca_modalidad", "alias" => "rp_ca_modalidad", "leaf" => true, "default" => true, "groupBy" => false, "iconCls" => 'no-icon');

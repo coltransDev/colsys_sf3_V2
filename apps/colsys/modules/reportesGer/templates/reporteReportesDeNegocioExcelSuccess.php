@@ -4,6 +4,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+require_once sfConfig::get('app_sourceCode_lib').'vendor/phpexcel1.8/Classes/PHPExcel.php';
+include sfConfig::get('app_sourceCode_lib').'vendor/phpexcel1.8/Classes/PHPExcel/IOFactory.php';
+
 error_reporting(E_ERROR);
 $spreadsheet = $sf_data->getRaw('spreadsheet');
 
@@ -14,7 +17,7 @@ foreach ($columns as $key => $column) {
 $cols = Utils::spreadsheet_cols(count($titulos));
 
 // Initialize the Excel document
-$objPHPExcel = new sfPhpExcel();
+$objPHPExcel = new PHPExcel();
 
 // Set some meta data relative to the document
 $objPHPExcel->getProperties()->setCreator($user);
@@ -65,14 +68,22 @@ $objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
 $name = str_replace(" ", "_", $title)."_".date("Ymd");
 $filename = null;
 if (!$filename) {
-    header("Content-type: application/vnd.ms-excel");
-    header("Content-Disposition: attachment; filename=\"$name.xls\"");
-    header("Expires: 0");
-    header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
-    header("Pragma: public");
-}
-$objWriter->save(str_replace('.php', '.xls', $filename));
+    // Redirect output to a client?s web browser (Excel2007)
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment;filename="'.$name.'.xlsx"');
+    header('Cache-Control: max-age=0');
+    // If you're serving to IE 9, then the following may be needed
+    header('Cache-Control: max-age=1');
 
+    // If you're serving to IE over SSL, then the following may be needed
+    header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+    header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+    header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+    header ('Pragma: public'); // HTTP/1.0
+    
+    $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+    $objWriter->save('php://output');
+}
 if (!$filename) {
    exit;
 }

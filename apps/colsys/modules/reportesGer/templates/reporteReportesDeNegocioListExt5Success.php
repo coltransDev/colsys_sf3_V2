@@ -67,6 +67,22 @@ $params = $sf_data->getRaw("params");
                                     record.commit();
                                 }
                             }
+                            for (var i = 0; i < treeStore.getCount(); i++) {
+                                var record = treeStore.getAt(i);
+                                var cbm = this.allVolumes(treeStore.getNodeById(record.get('id')));
+                                if (record.get('uid')) {
+                                    record.set('volumen', cbm.toFixed(2) + ' M³');
+                                    record.commit();
+                                }
+                            }
+                            for (var i = 0; i < treeStore.getCount(); i++) {
+                                var record = treeStore.getAt(i);
+                                var cbm = this.allWeights(treeStore.getNodeById(record.get('id')));
+                                if (record.get('uid')) {
+                                    record.set('peso', cbm.toFixed(2) + ' Kgs');
+                                    record.commit();
+                                }
+                            }
                         }
 
                     }
@@ -100,6 +116,42 @@ $params = $sf_data->getRaw("params");
                         cnt += this.allContainers(child);
                     }
                     return cnt;
+                },
+                allVolumes: function (node) {    // Suma la columna de Volumenes recursivamente
+                    if (node.childNodes.length < 1) {
+                        var x = 0;
+                        if (node.data.volumen) {
+                            var cmp = node.data.volumen.split(" ");
+                            if (!isNaN(parseFloat(cmp[0]))) {
+                                x = parseFloat(cmp[0]);
+                            }
+                        }
+                        return x;
+                    }
+                    var cbm = 0;
+                    for (var i = 0; i < node.childNodes.length; i++) {
+                        var child = node.childNodes[i];
+                        cbm += this.allVolumes(child);
+                    }
+                    return cbm;
+                },
+                allWeights: function (node) {    // Suma la columna de Pesos recursivamente
+                    if (node.childNodes.length < 1) {
+                        var x = 0;
+                        if (node.data.peso) {
+                            var cmp = node.data.peso.split(" ");
+                            if (!isNaN(parseFloat(cmp[0]))) {
+                                x = parseFloat(cmp[0]);
+                            }
+                        }
+                        return x;
+                    }
+                    var wgh = 0;
+                    for (var i = 0; i < node.childNodes.length; i++) {
+                        var child = node.childNodes[i];
+                        wgh += this.allWeights(child);
+                    }
+                    return wgh;
                 }
             }),
             plugins: [{

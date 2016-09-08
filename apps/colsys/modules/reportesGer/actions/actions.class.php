@@ -2089,10 +2089,10 @@ class reportesGerActions extends sfActions {
         return $respuesta;
     }
 
-    function printArray($arreglo) {
+    function printArray($arreglo, $crlf) {
         $cadena = "";
         foreach($arreglo as $key => $value){
-            $cadena.= "$key $value<br />";
+            $cadena.= "$key $value".$crlf;
         }
         return $cadena;
     }
@@ -2121,6 +2121,7 @@ class reportesGerActions extends sfActions {
         $this->params["columns"] = utf8_encode($request->getParameter("columns"));
         $filtros = json_decode(utf8_encode($request->getParameter("filters")));
         $columns = json_decode(utf8_encode($request->getParameter("columns")));
+        $crlf = $request->getParameter("expoExcel") ? "\n" : "<br />";
 
         set_time_limit(0);
         $q = Doctrine::getTable("Reporte")
@@ -2229,6 +2230,8 @@ class reportesGerActions extends sfActions {
                     $q->addSelect("rp.ca_fchllegada");
                     break;
                 case "equipos":
+                    $this->columns[] = array("text" => "Volumen", "dataIndex" => "volumen");
+                    $this->columns[] = array("text" => "Peso", "dataIndex" => "peso");
                     $con_equipos = true;
                     break;
                 case "tarifas":
@@ -2410,12 +2413,12 @@ class reportesGerActions extends sfActions {
                 continue;
             }
             if (array_key_exists("rp_mes", $reporte_sc)) {
-                $reportes_rs[$key]["rp_mes"] = Utils::mesLargo($reporte_sc["rp_mes"]);
                 $reporte_sc["rp_mes"] = Utils::mesLargo($reporte_sc["rp_mes"]);
             }
             if (array_key_exists("rp_ca_incoterms", $reporte_sc)) {
                 $incoterms = explode("|", $reporte_sc["rp_ca_incoterms"]);
-                $reporte_sc["rp_ca_incoterms"] = implode("<br />", array_unique($incoterms));
+                $reportes_rs[$key]["rp_ca_incoterms"] = implode($crlf, array_unique($incoterms));
+                $reporte_sc["rp_ca_incoterms"] = implode($crlf, array_unique($incoterms));
             }
 
             if ($con_status) {
@@ -2462,8 +2465,8 @@ class reportesGerActions extends sfActions {
                     "ETD: " => $reporte_sc["rp_ca_fchsalida"],
                     "ETA: " => $reporte_sc["rp_ca_fchllegada"]
                 );
-                $reportes_rs[$key]["status"] = $this->printArray(array_merge($status, $confirma));
-                $reporte_sc["status"] = $this->printArray(array_merge($status, $confirma));
+                $reportes_rs[$key]["status"] = $this->printArray(array_merge($status, $confirma), $crlf);
+                $reporte_sc["status"] = $this->printArray(array_merge($status, $confirma), $crlf);
             }
             if ($con_equipos) {
                 $equipos = array();
@@ -2474,8 +2477,16 @@ class reportesGerActions extends sfActions {
                 foreach ($repequipos as $equipo) {
                     $equipos[$equipo->getConcepto()->getCaUnidad() . " X "] += $equipo->getCaCantidad();
                 }
-                $reportes_rs[$key]["equipos"] = $this->printArray($equipos);
-                $reporte_sc["equipos"] = $this->printArray($equipos);
+                $reportes_rs[$key]["equipos"] = $this->printArray($equipos, $crlf);
+                $reporte_sc["equipos"] = $this->printArray($equipos, $crlf);
+                if ($reporte->getCaTransporte() == Constantes::MARITIMO and ($reporte->getCaModalidad() == Constantes::LCL or $reporte->getCaModalidad() == Constantes::COLOADING)){
+                    $reportes_rs[$key]["volumen"] = $reporte->getVolumen();
+                    $reporte_sc["volumen"] = $reporte->getVolumen();
+                }
+                if ($reporte->getCaTransporte() == Constantes::AEREO){
+                    $reportes_rs[$key]["peso"] = $reporte->getPeso();
+                    $reporte_sc["peso"] = $reporte->getPeso();
+                }
             }
             if ($con_tarifas) {
                 $tarifas = array();
@@ -2486,33 +2497,35 @@ class reportesGerActions extends sfActions {
                 foreach ($reptarifas as $tarifa) {
                     $tarifas[$tarifa->getConcepto()->getCaConcepto().": "] = $tarifa->getCaNetaTar()." / ".$tarifa->getCaReportarTar()." / ".$tarifa->getCaCobrarTar();
                 }
-                $reportes_rs[$key]["tarifas"] = $this->printArray($tarifas);
-                $reporte_sc["tarifas"] = $this->printArray($tarifas);
+                $reportes_rs[$key]["tarifas"] = $this->printArray($tarifas, $crlf);
+                $reporte_sc["tarifas"] = $this->printArray($tarifas, $crlf);
             }
             $reporte_sc = array_map('utf8_encode', $reporte_sc);
             
-            $uid = $root;
-            foreach($filtros as $filtro){
-                $value = $reporte_sc[$filtro->alias];
-                unset($reporte_sc[$filtro->alias]);
-                $node_uid = $tree->findValue($uid, $value);
-                if (!$node_uid){
-                    $nodo = $tree->createNode($value);
-                    $tree->addChild($uid, $nodo);
-                    $uid = $nodo;
-                }else{
-                    $uid = $node_uid;
+            if (!$request->getParameter("expoExcel")){
+                $uid = $root;
+                foreach($filtros as $filtro){
+                    $value = $reporte_sc[$filtro->alias];
+                    unset($reporte_sc[$filtro->alias]);
+                    $node_uid = $tree->findValue($uid, $value);
+                    if (!$node_uid){
+                        $nodo = $tree->createNode($value);
+                        $tree->addChild($uid, $nodo);
+                        $uid = $nodo;
+                    }else{
+                        $uid = $node_uid;
+                    }
                 }
-            }
-            $nodo = $tree->getNode($uid);
+                $nodo = $tree->getNode($uid);
 
-            // Quita el primer elemento que no es filtro y lo usa para el campo text
-            list($keys) = array_keys($reporte_sc);
-            $reporte_sc["text"] = $reporte_sc[$keys];
-            $reporte_sc["leaf"] = true;
-            // $key generalmente va a ser tb.reporte.ca_consecutivo
-            unset($reporte_sc[$keys]);
-            $nodo->setAttribute("children", $reporte_sc);
+                // Quita el primer elemento que no es filtro y lo usa para el campo text
+                list($keys) = array_keys($reporte_sc);
+                $reporte_sc["text"] = $reporte_sc[$keys];
+                $reporte_sc["leaf"] = true;
+                // $key generalmente va a ser tb.reporte.ca_consecutivo
+                unset($reporte_sc[$keys]);
+                $nodo->setAttribute("children", $reporte_sc);
+            }
         }
         
         if ($request->getParameter("expoExcel")){
@@ -2521,7 +2534,12 @@ class reportesGerActions extends sfActions {
             $this->subject = "Generador de Informes - Exportación de Datos";
             $this->description = "Módulo para mostras datos en formato de hoja de Excel";
             $this->spreadsheet = $reportes_rs;
-
+            
+            unset($this->columns[0]);   // Quita la columna de Agrupamiento
+            foreach ($filtros as $filtro){  // Agrega la columna de filtro al cuerpo
+                $columna = array("text" => $filtro->titulo, "dataIndex" => $filtro->alias);
+                array_unshift($this->columns, $columna);
+            }
             $this->setLayout(false);
             $this->setTemplate("reporteReportesDeNegocioExcel");
         }
