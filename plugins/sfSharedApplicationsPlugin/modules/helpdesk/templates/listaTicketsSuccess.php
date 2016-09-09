@@ -133,9 +133,9 @@ include_component("pm", "editarTicketWindow", array("nivel" => $nivel));
                     <td><? echo $ticket->getCaAssignedto();?></td>
                     <td>
                         <?
-                        $tarea = $ticket->getNotTarea();
-                        if ($tarea && $tarea->getCaFchterminada()) {
-                            echo Utils::fechaMes(Utils::parseDate($tarea->getCaFchterminada(), "Y-m-d")) . " " . Utils::parseDate($tarea->getCaFchterminada(), "H:i");
+                        //$tarea = $ticket->getNotTarea();
+                        if ($ticket->getNotTarea()->getCaFchterminada()) {
+                            echo Utils::fechaMes(Utils::parseDate($ticket->getNotTarea()->getCaFchterminada(), "Y-m-d")) . " " . Utils::parseDate($ticket->getNotTarea()->getCaFchterminada(), "H:i");
                         } else {
                             echo "&nbsp;";
                             $ticketsSinRespuesta++;

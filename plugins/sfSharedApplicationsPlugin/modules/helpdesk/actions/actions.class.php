@@ -59,10 +59,11 @@ class helpdeskActions extends sfActions {
         $groupby = $request->getParameter("groupby");
 
         $q = Doctrine_Query::create()
-                ->select("h.*")
+                ->select("h.*, t.ca_fchterminada")
                 ->from('HdeskTicket h');
         $q->innerJoin("h.HdeskGroup g");
         $q->leftJoin("h.HdeskTicketUser hu  ");
+                $q->leftJoin("h.NotTarea t");                
         switch ($opcion) {
             case "numero":
                 $q->addWhere("h.ca_idticket = ?", intval($criterio));
