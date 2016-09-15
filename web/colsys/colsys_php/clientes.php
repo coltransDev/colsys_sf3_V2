@@ -654,7 +654,7 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
             echo "      <TABLE WIDTH=100% CELLSPACING=1 CELLPADDING=0 BORDER=0>";
             $z = 0;
             $emails = explode(",", $rs->Value('ca_confirmar'));
-            for ($i = 0; $i < 7; $i++) {
+            for ($i = 0; $i < 8; $i++) {
                 echo "  <TR>";
                 for ($j = 0; $j < 3; $j++) {
                     $cadena = (strlen($emails[$z]) == 0) ? "&nbsp;" : $emails[$z];
@@ -1001,7 +1001,7 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
                 echo "<TR>";
                 $z = 0;
                 $emails = explode(",", $rs->Value('ca_confirmar'));
-                for ($i = 0; $i < 7; $i++) {
+                for ($i = 0; $i < 8; $i++) {
                     echo "  <TR>";
                     for ($j = 0; $j < 3; $j++) {
                         $cadena = (strlen($emails[$z]) == 0) ? "&nbsp;" : $emails[$z];
