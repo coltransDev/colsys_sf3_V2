@@ -1767,7 +1767,7 @@ class clientesActions extends sfActions {
     }
 
    public function executeProcesarRc(sfWebRequest $request) {
-        try {
+        //try {
             $con = Doctrine_Manager::getInstance()->connection();
             $estadisticas = array();
             $folder = "Rc";
@@ -1788,7 +1788,7 @@ class clientesActions extends sfActions {
 
             $sucRec = array("1" => "BOG", "2" => "MDE", "3" => "CLO", "4" => "BAQ", "5" => "DOLARES", "6" => "PEI", "7" => "BUN", "8" => "CTG", "9" => "BUC");
             $sucFacAssoc = array("BOG" => "1", "CLO" => "2", "MDE" => "3", "BAQ" => "4", "PEI" => "5", "BUN" => "7", "ABO" => "1");
-            $sucFac = array("1" => "BOG", "2" => "CLO", "3" => "MDE", "4" => "BAQ", "5" => "PEI", "7" => "PEI");
+            $sucFac = array("1" => "BOG", "2" => "CLO", "3" => "MDE", "4" => "BAQ", "5" => "PEI", "6" => "BOG" ,"8" => "MDE","9" => "CLO","10" => "BAQ"   );
             $sqltmp = "";
             for ($i = 0; $i < count($lines); $i++) {
                 $sql_update = "";
@@ -1804,6 +1804,9 @@ class clientesActions extends sfActions {
 
                 $nrecibo = (int) str_replace("\"", "", $datos[2]);
                 $fecha_pago = Utils::parseDate((int) str_replace("\"", "", $datos[7]));
+                
+                $valor_pago = (float) str_replace("\"", "", $datos[9]);
+                
                 $comienzo_log = "<b>linea</b>=" . $i . ":::<b>Factura</b>=" . $nfact . ":::<b>Recibo</b>=" . $nrecibo . " ::: ";
                 if (count($datos) != 13) {
                     $resultado[$i] = $comienzo_log . "Existen cantidad de campos diferente a los establecidos<br>";
@@ -1871,7 +1874,7 @@ class clientesActions extends sfActions {
                         from " . $tabla . " t,control.tb_usuarios u where (ca_factura ='" . $nfact . "' or ca_factura ='F" . $suc_factura . "-" . $nfact . "' or ca_factura ='F" . $suc_factura . " " . $nfact . "' or ca_factura ='f" . $suc_factura . "-" . $nfact . "' or ca_factura ='f" . $suc_factura . " " . $nfact . "' ) and t.ca_usucreado=u.ca_login and u.ca_idsucursal in ($sucursal) ";
                     //echo  $sql."<br>";
                     $st = $con->execute($sql);
-                    $ref = $st->fetch();                    
+                    $ref = $st->fetch();
 
                     if ($ref) {
                         $set = "";
@@ -1919,18 +1922,94 @@ class clientesActions extends sfActions {
                 }
 
                 if (!$encontro || !$actualizo) {
-                    $resultado[$i].=($resultado[$i] == "") ? $comienzo_log : "";
-                    if (!$encontro) {
-                        $resultado[$i].="FACTURA NO ENCONTRADA";
-                        $estadisticas["no_encontrado"]++;
+                    
+                    $sql = "select t.*,u.ca_idsucursal 
+                        from " . $tabla . " t,control.tb_usuarios u where (ca_factura ='" . $nfact . "' or ca_factura ='F" . $suc_factura . "-" . $nfact . "' or ca_factura ='F" . $suc_factura . " " . $nfact . "' or ca_factura ='f" . $suc_factura . "-" . $nfact . "' or ca_factura ='f" . $suc_factura . " " . $nfact . "' ) and t.ca_usucreado=u.ca_login and u.ca_idsucursal in ($sucursal) ";
+                    $sql="select                         
+                        *
+                        from ino.tb_comprobantes c
+                        inner join ino.tb_tipos_comprobante t ON c.ca_idtipo = t.ca_idtipo
+                        where ( t.ca_tipo||t.ca_comprobante||'-'||ca_consecutivo =UPPER('F{$suc_factura}-{$nfact}') or t.ca_tipo||t.ca_comprobante||' '||ca_consecutivo =UPPER('F{$suc_factura} {$nfact}') ) 
+                        and t.ca_idsucursal in (".$sucursal.") ";
+                        $st = $con->execute($sql);
+                        $ref = $st->fetch();
+                    
+                        if ($ref) {
+                            if($ref["ca_idcomprobante_cruce"]!="")
+                            {
+                                $resultado[$i].="- ino.Comprobantes:: Recibo de caja ya cargado 'No se actualizo',";
+                            }
+                            else
+                            {
+                                //$sql_update.=$set . " where 1=1 $where;";
+                                
+                                $comprobante = Doctrine::getTable("InoComprobante")
+                                    ->createQuery("s")
+                                    ->select("*")                                    
+                                    ->where("ca_idtipo = ? AND ca_consecutivo=? AND ca_idhouse=?",array("12", $pre . " " . $nrecibo , $ref["ca_idhouse"] ) )
+                                    ->fetchOne();
+                                
+                                if(!$comprobante)
+                                {
+                                    $comprobante = new InoComprobante();
+                                    $comprobante->setCaIdtipo(12);
+                                    $comprobante->setCaConsecutivo($pre . " " . $nrecibo );
+                                    $comprobante->setCaFchcomprobante($fecha_pago );
+                                    $comprobante->setCaIdhouse($ref["ca_idhouse"]);
+                                    $comprobante->setCaObservaciones("Ingresado por el proceso de importar RC");
+                                    $comprobante->setCaTcambio("1");
+                                    $comprobante->setCaEstado(InoComprobante::TRANSFERIDO);
+                                    $comprobante->setCaId($ref["ca_id"]);
+                                    $comprobante->setCaValor($valor_pago);
+                                    $comprobante->setCaIdmoneda("COP");
+                                    $comprobante->setCaTcambioUsd("1");
+                                    $comprobante->setCaValor2($valor_pago);
+                                    $comprobante->save();
+                                    //echo $comprobante->getCaIdcomprobante();
+
+                                    $comprobante1 = Doctrine::getTable("InoComprobante")->find($ref["ca_idcomprobante"]);
+                                    $comprobante1->setCaIdcomprobanteCruce($comprobante->getCaIdcomprobante());
+                                    $comprobante1->stopBlaming();
+                                    $comprobante1->save();
+                                    //$st = $con->execute("insert into ino.tb_comprobantes (ca_idtipo,ca_consecutivo,ca_fchcomprobante,ca_id,ca_idhouse,ca_observaciones)");
+                                    $estadisticas["actualizada"]++;
+                                    $resultado[$i] = $comienzo_log . " REGISTRO IMPORTADO";
+                                    $encontro=true;
+                                    $actualizo=true;
+                                }
+                                else
+                                {
+                                    $comprobante1 = Doctrine::getTable("InoComprobante")->find($ref["ca_idcomprobante"]);
+                                    $comprobante1->setCaIdcomprobanteCruce($comprobante->getCaIdcomprobante());
+                                    $comprobante1->stopBlaming();
+                                    $comprobante1->save();
+                                    
+                                    $resultado[$i].=($resultado[$i] == "") ? $comienzo_log : "";
+                                    $resultado[$i].= "InoComprobantes:: Rc de caja existe en colsys  'No se actualizo',";
+                                }
+                                
+                            }
+                        }
+                        
+
+                    if (!$encontro || !$actualizo) { 
+                        $resultado[$i].=($resultado[$i] == "") ? $comienzo_log : "";
+                        if (!$encontro) {
+                            $resultado[$i].="FACTURA NO ENCONTRADA";
+                            $estadisticas["no_encontrado"]++;
+                        }
+                        if (!$actualizo) {
+                            $resultado[$i].="Registro no actualizado";
+                            $estadisticas["no_actualizado"]++;
+                        }
                     }
-                    if (!$actualizo) {
-                        $resultado[$i].="Registro no actualizado";
-                        $estadisticas["no_actualizado"]++;
-                    }
+                    else {
+                    $estadisticas["actualizada"]++;
+                    $resultado[$i] = $comienzo_log . " REGISTRO IMPORTADO";
+                }
+                    
                 } else {
                     $estadisticas["actualizada"]++;
-
                     $resultado[$i] = $comienzo_log . " REGISTRO IMPORTADO";
                 }
             }
@@ -1938,9 +2017,9 @@ class clientesActions extends sfActions {
             //print_r($estadisticas);
             //echo $sqltmp;
             $this->responseArray = array("success" => "true", "resultado" => implode("<br>", $resultado), "estadisticas" => $estadisticas, "sqlimpor" => $sqltmp);
-        } catch (Exception $e) {
+        /*} catch (Exception $e) {
             $this->responseArray = array("success" => "false", "errorInfo" => $e->getTraceAsString());
-        }
+        }*/
         $this->setTemplate("responseTemplate");
     }
 
@@ -3077,5 +3156,7 @@ class clientesActions extends sfActions {
     }
 
 }
+
+
 
 ?>
