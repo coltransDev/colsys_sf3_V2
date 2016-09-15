@@ -192,7 +192,7 @@
     <tr>        
     
         <td valign="top"> 
-            <div align="left"><b>TP Logistics</b></div></td>
+            <div align="left"><b>TP Logistics</b></div><div align="left"><b>Consolcargo</b></div></td>
         <td valign="top">
             <?
             echo $form['tplogistics']->renderError();
@@ -202,6 +202,15 @@
                 $form->setDefault('tplogistics', false );
             }
             echo $form['tplogistics']->render();
+            echo "<br>";
+            echo $form['tplogistics']->renderError();
+            
+            if( $agente ){
+                $form->setDefault('consolcargo', $agente->getCaConsolcargo() );
+            }else{
+                $form->setDefault('consolcargo', false );
+            }
+            echo $form['consolcargo']->render();
             ?>
         </td>
         <td width="16%" valign="top">
@@ -216,7 +225,65 @@
             ?>
              </div>
         </td>
-	</tr>
+    </tr>
+    
+    <tr>        
+    
+        <td valign="top"> 
+            <div align="left"><b>Modalidad</b></div></td>
+        <td valign="top">
+            <?
+            echo $form['modalidad']->renderError();
+            if( $agente ){
+                $form->setDefault('modalidad', $agente->getCaModalidad() );
+            }else{
+                $form->setDefault('modalidad', "" );
+            }
+            echo $form['modalidad']->render();
+            echo "<br>";
+            echo $form['modalidad']->renderError();            
+            
+            ?>
+        </td>
+        <td width="16%" valign="top">
+            <div align="left"><b>Observaciones:</b></div>
+        </td>
+        <td width="26%">
+            <div align="left">
+            <?
+            echo $form['observaciones']->renderError();
+            $form->setDefault('observaciones', $agente->getCaObservaciones() );
+            echo $form['observaciones']->render();
+            ?>
+             </div>
+        </td>
+    </tr>
+    
+    <tr>        
+    
+        <td valign="top"> 
+            <div align="left"><b>Sucursal Compañia</b></div></td>
+        <td valign="top">
+            <?
+            echo $form['sucursal']->renderError();
+            if( $agente ){
+                $form->setDefault('sucursal', $agente->getCaSucursal() );
+            }else{
+                $form->setDefault('sucursal', "" );
+            }
+            echo $form['sucursal']->render();
+            echo "<br>";
+            echo $form['sucursal']->renderError();            
+            
+            ?>
+        </td>
+        <td width="16%" valign="top">
+            
+        </td>
+        <td width="26%">
+            
+        </td>
+    </tr>
     
     <?
 

@@ -27,7 +27,38 @@ echo $form['idsucursal']->render();
 	</tr>
 	<?
 	}
-	?>
+	?>        
+                
+        
+        <tr>
+		<td> <div align="left"><b>Nombre</b></div></td>
+		<td><div align="left">
+            <?
+            
+
+            echo $form['nombre']->renderError();
+            if( $sucursal ){
+                $form->setDefault('nombre', $sucursal->getCaNombre() );
+            }
+            echo $form['nombre']->render();
+            ?>
+
+            </div></td>
+            <td><div align="left"><b>Ciudad</b></div></td>
+		<td><div align="left">
+            <?
+            echo $form['idciudad']->renderError();
+            if( $sucursal ){
+                $form->setDefault('idciudad', $sucursal->getCaIdciudad() );
+            }
+            echo $form['idciudad']->render();
+            ?>
+
+            </div></td>
+		<td><div align="left">&nbsp;</div></td>
+		<td><div align="left">&nbsp;</div></td>
+        </tr>
+        
 	<tr>
 		<td> <div align="left"><b>Direcci&oacute;n</b></div></td>
 		<td><div align="left">
@@ -42,14 +73,14 @@ echo $form['idsucursal']->render();
             ?>
 
             </div></td>
-            <td><div align="left"><b>Ciudad</b></div></td>
+            <td><div align="left"><b>Ciudad Destino</b></div></td>
 		<td><div align="left">
             <?
-            echo $form['idciudad']->renderError();
+            echo $form['idciudaddes']->renderError();
             if( $sucursal ){
-                $form->setDefault('idciudad', $sucursal->getCaIdciudad() );
+                $form->setDefault('idciudaddes', $sucursal->getCaIdciudaddes() );
             }
-            echo $form['idciudad']->render();
+            echo $form['idciudaddes']->render();
             ?>
 
             </div></td>

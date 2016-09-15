@@ -31,15 +31,23 @@ class NuevoAgenteForm extends BaseForm {
         $widgets['activo'] = new sfWidgetFormInputCheckbox();
         
         $widgets['tplogistics'] = new sfWidgetFormInputCheckbox();
+        $widgets['consolcargo'] = new sfWidgetFormInputCheckbox();
         $widgets['infosec'] = new sfWidgetFormTextarea(array(), array("size"=>80, "style"=>"width: 350px; height: 50px;"));
+        
+        $widgets['modalidad'] = new sfWidgetFormInputText(array(), array("size"=>30 ));
+        $widgets['sucursal'] = new sfWidgetFormInputText(array(), array("size"=>80 ));
+        $widgets['observaciones'] = new sfWidgetFormTextarea(array(), array("size"=>80, "style"=>"width: 350px; height: 50px;"));
         
 		$this->setWidgets( $widgets );
 
-        $validator["tipo"] =new sfValidatorString( array('required' => true ),
-														array('required' => 'El tipo es requerido'));
+        $validator["tipo"] =new sfValidatorString( array('required' => true ),array('required' => 'El tipo es requerido'));
         $validator["activo"] =new sfValidatorBoolean( array('required' => false ) );
         $validator["tplogistics"] =new sfValidatorBoolean( array('required' => false ) );
+        $validator["consolcargo"] =new sfValidatorBoolean( array('required' => false ) );
         $validator["infosec"] =new sfValidatorString( array('required' => true ));
+        $validator["modalidad"] =new sfValidatorString( array('required' => false ));
+        $validator["sucursal"] =new sfValidatorString( array('required' => false ));
+        $validator["observaciones"] =new sfValidatorString( array('required' => false ));
         $this->setValidators( $validator );
     }
 }

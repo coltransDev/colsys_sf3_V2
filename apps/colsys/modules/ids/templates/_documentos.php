@@ -84,7 +84,7 @@ $documentos = $sf_data->getRaw( "documentos" );
             ?>
         </td>
         <td>
-           <?=($documento->getCaUbicacion()&&file_exists($documento->getArchivo())?mime_type_icon($documento->getCaUbicacion())." ".link_to($documento->getCaUbicacion(),"ids/verDocumento?iddocumento=".$documento->getCaIddocumento()):"&nbsp;")?>
+            <?=($documento->getCaUbicacion()&&(file_exists($documento->getArchivo()) || file_exists($documento->getArchivo().".gz"))?mime_type_icon($documento->getCaUbicacion())." ".link_to($documento->getCaUbicacion(),"ids/verDocumento?iddocumento=".$documento->getCaIddocumento()):"&nbsp;")?>
         </td> 
         <td>
            <?=$documento->getCaObservaciones()?>

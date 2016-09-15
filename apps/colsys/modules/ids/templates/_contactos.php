@@ -18,12 +18,28 @@
         }
         ?>
         <tr class="row0">
-            <td >
+            <td width="25%" >
                 <div align="left">
-                    <div style="font-size:16px">
-                        <b><?=$sucursal->getCiudad()->getCaCiudad() ?></b>
+                    <?
+                    if($sucursal->getCaNombre()!="")
+                    {
+                    ?>
+                    <div style="font-size:11px">
+                        <b><?=$sucursal->getCaNombre() ?>  </b>
+                    </div>
+                    <? 
+                    }
+                    ?>
+                    <div style="font-size:11px">
+                        <b>  <?=$sucursal->getCiudad()->getCaCiudad() ?>
+                            <?
+                    if($sucursal->getCaIdciudaddes()!="")
+                        echo "- ".$sucursal->getCiudadDestino()->getCaCiudad();
+                    ?>
+                        </b>
                     </div>
                     <?=$sucursal->getCiudad()->getTrafico()->getCaNombre() ?>
+                    
                     <?=$sucursal->getCaPrincipal()?" (Oficina Principal)":""?>
                 </div>
             </td>

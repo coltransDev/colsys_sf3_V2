@@ -256,7 +256,11 @@ class idsActions extends sfActions {
                 $bindValues["tipo"] = $request->getParameter("tipo");
                 $bindValues["activo"] = $request->getParameter("activo");
                 $bindValues["tplogistics"] = $request->getParameter("tplogistics");
+                $bindValues["consolcargo"] = $request->getParameter("consolcargo");
                 $bindValues["infosec"] = $request->getParameter("infosec");
+                $bindValues["modalidad"] = $request->getParameter("modalidad");
+                $bindValues["observaciones"] = $request->getParameter("observaciones");
+                $bindValues["sucursal"] = $request->getParameter("sucursal");
             }
 
             $this->form->bind($bindValues);
@@ -460,11 +464,27 @@ class idsActions extends sfActions {
                     } else {
                         $agente->setCaTplogistics(false);
                     }
+                    
+                    if ($bindValues["consolcargo"]) {
+                        $agente->setCaConsolcargo(true);
+                    } else {
+                        $agente->setCaConsolcargo(false);
+                    }
                     if ($bindValues["infosec"]) {
                         $agente->setCaInfosec($bindValues["infosec"]);
                     }
-
-
+                    
+                    if ($bindValues["modalidad"]) {
+                        $agente->setCaModalidad($bindValues["modalidad"]);
+                    }
+                    
+                    if ($bindValues["observaciones"]) {
+                        $agente->setCaObservaciones($bindValues["observaciones"]);
+                    }
+                    
+                    if ($bindValues["sucursal"]) {
+                        $agente->setCaSucursal($bindValues["sucursal"]);
+                    }
 
                     $agente->save();
                     Utils::deleteCache();
@@ -751,8 +771,10 @@ class idsActions extends sfActions {
         if ($request->isMethod('post')) {
             $bindValues = array();
 
+            $bindValues["nombre"] = $request->getParameter("nombre");
             $bindValues["direccion"] = $request->getParameter("direccion");
             $bindValues["idciudad"] = $request->getParameter("idciudad");
+            $bindValues["idciudaddes"] = $request->getParameter("idciudaddes");
             $bindValues["telefonos"] = $request->getParameter("telefonos");
             $bindValues["fax"] = $request->getParameter("fax");
 
@@ -771,6 +793,12 @@ class idsActions extends sfActions {
                 $sucursal->setCaTelefonos($request->getParameter("telefonos"));
                 $sucursal->setCaIdciudad($request->getParameter("idciudad"));
                 $sucursal->setCaFax($request->getParameter("fax"));
+                
+                if($request->getParameter("idciudaddes")!="")
+                    $sucursal->setCaIdciudaddes($request->getParameter("idciudaddes"));
+                else
+                    $sucursal->setCaIdciudaddes(null);
+                $sucursal->setCaNombre($request->getParameter("nombre"));
 
                 $sucursal->save();
 
@@ -1686,8 +1714,7 @@ class idsActions extends sfActions {
 
         $usuarios = Doctrine::getTable("Usuario")
                 ->createQuery("u")
-                ->innerJoin("u.UsuarioPerfil p")
-                ->where("p.ca_perfil = ? ", "asistente-de-pricing")
+                ->where("u.ca_departamento = ?", "Pricing")
                 ->addWhere("u.ca_activo = ?", true)
                 ->execute();
 
@@ -1704,9 +1731,7 @@ class idsActions extends sfActions {
         }
         $email->setCaSubject("Vencimiento de documentos");
         $email->setCaBodyhtml($contentHTML);
-
         $email->save();
-        //$email->send();
 
         return sfView::NONE;
     }
@@ -2418,7 +2443,11 @@ class idsActions extends sfActions {
                 
         if($estado=="tplogistics"){
             $q->addWhere("ag.ca_tplogistics = ?",true);
-        }        
+        }
+        
+        if($estado=="consolcargo"){
+            $q->addWhere("ag.ca_consolcargo = ?",true);
+        } 
         
         $q->addOrderBy("t.ca_nombre ASC");
         $q->addOrderBy("i.ca_nombre ASC");
@@ -2628,5 +2657,11 @@ class idsActions extends sfActions {
                 ->addOrderBy("e.ca_fchenvio")
                 ->execute();
     }
+    
+  
+    public function executeFormAgentesExt5() {
+        
+    }
+    
+    
 }
-?>

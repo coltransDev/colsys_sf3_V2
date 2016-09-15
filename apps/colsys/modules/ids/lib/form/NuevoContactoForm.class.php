@@ -32,9 +32,9 @@ class NuevoContactoForm extends BaseForm{
 		  'apellido'      => new sfWidgetFormInputText(array(), array("maxlength"=>"60" ,"size"=>"60")),
 		  //'direccion'   => new sfWidgetFormInputText(array(), array("maxlength"=>"100" ,"size"=>"60")),
           'codigoarea'   => new sfWidgetFormInputText(array(), array("maxlength"=>"4" ,"size"=>"10") ),
-		  'telefonos'   => new sfWidgetFormInputText(array(), array("maxlength"=>"30" ,"size"=>"60") ),
-		  'fax'         => new sfWidgetFormInputText(array(), array("maxlength"=>"30" ,"size"=>"60")),
-          'celular'   => new sfWidgetFormInputText(array(), array("maxlength"=>"30" ,"size"=>"60") ),  
+		  'telefonos'   => new sfWidgetFormInputText(array(), array("maxlength"=>"50" ,"size"=>"60") ),
+		  'fax'         => new sfWidgetFormInputText(array(), array("maxlength"=>"50" ,"size"=>"60")),
+          'celular'   => new sfWidgetFormInputText(array(), array("maxlength"=>"50" ,"size"=>"60") ),  
           'skype'   => new sfWidgetFormInputText(array(), array("maxlength"=>"30" ,"size"=>"60") ),  
 		  'email'       => new sfWidgetFormInputText( array(), array("maxlength"=>"50" ,"size"=>"60")),
 		  'impoexpo'     => new sfWidgetFormChoice(array(

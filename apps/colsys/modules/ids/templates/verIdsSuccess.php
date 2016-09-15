@@ -117,9 +117,11 @@ var eliminarAgente = function(){
             <tr>
                 <td valign="top">
                     <div align="left"><b>TPLogistics</b></div>
+                    <div align="left"><b>Consolcargo</b></div>
                </td>
                <td valign="top">                   
                    <div align="left"><?=$agente->getCaTplogistics()?"<span class='rojo'>S&iacute;</span>":"No"?></div>
+                   <div align="left"><?=$agente->getCaConsolcargo()?"<span class='rojo'>S&iacute;</span>":"No"?></div>
                </td>
                <td valign="top">
                     <div align="left"><b>Información de Seguridad</b></div>
@@ -127,6 +129,31 @@ var eliminarAgente = function(){
                <td valign="top">                   
                    <div align="left"><?=$agente->getCaInfosec()?></div>
                </td>   
+               
+            </tr>
+            <tr>
+                <td valign="top">
+                    <div align="left"><b>Modalidad</b></div>                    
+               </td>
+               <td valign="top">                   
+                   <div align="left"><?=$agente->getCaModalidad()?></div>
+               </td>
+               <td valign="top">
+                    <div align="left"><b>Observaciones</b></div>
+               </td>
+               <td valign="top">
+                   <div align="left"><?=$agente->getCaObservaciones()?></div>
+               </td>   
+               
+            </tr>
+            
+            <tr>
+                <td valign="top">
+                    <div align="left"><b>Sucursal Coltrans</b></div>
+               </td>
+               <td valign="top">                   
+                   <div align="left"><?=$agente->getCaSucursal()?></div>
+               </td>
                
             </tr>
             <?

@@ -46,10 +46,14 @@ $pagerLayout->display();
         if( $modo=="agentes"){
         ?>
         <th width="100" scope="col">Opciones</th>
+
+        <th width="350" scope="col">Ciudad</th>
+        <th width="100" scope="col">Modalidad</th>
         <?
         }
         ?>
-        <th width="200" scope="col">Ciudad</th>
+        
+        
         
 	</tr>
 	<?
@@ -72,16 +76,38 @@ $pagerLayout->display();
             <?=$agente->getCaTplogistics()?"<span class='rojo'>Agente TPLogistics</span>":""?>
         </td>
         <?
-        }
+        
         ?>
         <td >
-              <?
-                $sucursales = $ids->getIdsSucursal();
-                foreach( $sucursales as $sucursal ){
-                    echo $sucursal->getCiudad()->getCaCiudad()." ";
-                }
-                ?>
-              </td>
+        <?
+          $sucursales = $ids->getIdsSucursal();
+          foreach( $sucursales as $sucursal ){
+              //$this->sucursal = Doctrine::getTable("IdsSucursal")->find($request->getParameter("idsucursal"));
+              echo "<br>";
+              if($sucursal->getCaNombre())
+                  echo "<b>[</b><span class='rojo'>".$sucursal->getCaNombre()."</span>";
+                  
+              if($sucursal->getCiudadDestino()->getCaCiudad())
+                echo "<span class='azul'>(</span>";
+                  
+              echo $sucursal->getCiudad()->getCaCiudad();
+              if($sucursal->getCiudadDestino()->getCaCiudad())
+              {
+                  echo "-".$sucursal->getCiudadDestino()->getCaCiudad();
+                echo "<span class='azul'>)</span>";
+              }
+              if($sucursal->getCaNombre())
+                  echo "<b>]</b>";
+          }
+          ?>
+        </td>
+        
+        <td>
+           <?=$agente->getCaModalidad()?> 
+        </td>
+<?
+        }
+?>              
       
 	</tr>
 	<?
