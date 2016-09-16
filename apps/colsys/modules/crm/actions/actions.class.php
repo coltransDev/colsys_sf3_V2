@@ -236,6 +236,7 @@ class crmActions extends sfActions {
             $data["nombre"] = utf8_encode($cliente->getCaNombres());
             $data["sexo"] = $cliente->getCaSexo();
             $data["cumpleanos"] = $cliente->getCaCumpleanos();
+            $data["website"] = $cliente->getCaWebsite();
             $data["email"] = $cliente->getCaEmail();
 
 
