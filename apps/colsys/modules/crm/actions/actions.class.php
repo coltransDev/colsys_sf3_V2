@@ -85,7 +85,8 @@ class crmActions extends sfActions {
                 }
                 $ids->setCaNombre( utf8_decode(strtoupper($request->getParameter("compania"))) );
             }
-            $ids->setCaWebsite( $request->getParameter("website") );            
+            $ids->setCaWebsite( $request->getParameter("website") );
+            $cliente->setCaWebsite( $request->getParameter("website") );
             //$cliente->setCaCompania( strtoupper($request->getParameter("compania")) );
             $cliente->setCaSaludo( utf8_decode($request->getParameter("title")) );
             $cliente->setCaPapellido( utf8_decode($request->getParameter("papellido")) );
