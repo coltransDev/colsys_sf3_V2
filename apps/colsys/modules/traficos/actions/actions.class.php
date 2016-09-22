@@ -454,6 +454,11 @@ class traficosActions extends sfActions {
             $bindValues[$name] = $request->getParameter($name);
          }
 
+         $widgetsProv = $this->form->getWidgetsProveedores();
+         foreach ($widgetsProv as $name => $val) {
+            $bindValues['id_'.$name] = $request->getParameter('id_'.$name);
+         }
+
          $bindValues["prog_seguimiento"] = $request->getParameter("prog_seguimiento");
          if ($request->getParameter("prog_seguimiento")) {
             $bindValues["fchseguimiento"] = $request->getParameter("fchseguimiento");
