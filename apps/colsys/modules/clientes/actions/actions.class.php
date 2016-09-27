@@ -1767,7 +1767,7 @@ class clientesActions extends sfActions {
     }
 
    public function executeProcesarRc(sfWebRequest $request) {
-        //try {
+        try {
             $con = Doctrine_Manager::getInstance()->connection();
             $estadisticas = array();
             $folder = "Rc";
@@ -2017,9 +2017,9 @@ class clientesActions extends sfActions {
             //print_r($estadisticas);
             //echo $sqltmp;
             $this->responseArray = array("success" => "true", "resultado" => implode("<br>", $resultado), "estadisticas" => $estadisticas, "sqlimpor" => $sqltmp);
-        /*} catch (Exception $e) {
+        } catch (Exception $e) {
             $this->responseArray = array("success" => "false", "errorInfo" => $e->getTraceAsString());
-        }*/
+        }
         $this->setTemplate("responseTemplate");
     }
 
@@ -3156,7 +3156,5 @@ class clientesActions extends sfActions {
     }
 
 }
-
-
 
 ?>
