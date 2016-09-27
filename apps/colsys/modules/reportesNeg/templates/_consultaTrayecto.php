@@ -31,7 +31,7 @@
     <tr>
         <td ><b>Tipo Envio</b></td>
         <td <?=($comparar)? (($reporte->compDato("CaModalidad")!=0)?"class='rojo'":"") :""?> ><?=$reporte->getCaModalidad()?></td>
-        <td ><b>Agente: </b><a href="/ids/formEventosNew?idreporte=<?=$reporte->getCaIdreporte()?>">Eventos</a></td>
+        <td ><b>Agente: </b><a href="/ids/formEventosNew/idreporte/<?=$reporte->getCaIdreporte()?>/modo/agentes">Eventos</a></td>
         <td <?=($comparar)? (($reporte->compDato("CaIdagente")!=0)?"class='rojo'":"") :""?> ><?=$reporte->getIdsAgente()?$reporte->getIdsAgente()->getIds()->getCaNombre():"Directo"?></td>
         <td ><b>Incoterms</b></td>
         <td <?=($comparar)? (($reporte->compDato("IncotermsStr")!=0)?"class='rojo'":"") :""?> ><?=$reporte->getIncotermsStr()?></td>
