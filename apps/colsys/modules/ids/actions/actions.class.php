@@ -1413,7 +1413,7 @@ class idsActions extends sfActions {
         $q = Doctrine::getTable("IdsCriterio")->createQuery("c")->select("c.*");
 
         $this->idreporte = $request->getParameter("idreporte");
-        if ($this->modo) { //Esta ingresando desde la maestra de proveedores
+        if ($this->modo && $this->idreporte=="") { //Esta ingresando desde la maestra de proveedores
             if ($request->getParameter("idevento")) {
                 $this->ids = $evento->getIds();
                 $q->addWhere("c.ca_impoexpo = ?", $evento->getIdsCriterio()->getCaImpoexpo());
@@ -1536,13 +1536,23 @@ class idsActions extends sfActions {
                 $evento->setCaIdcriterio($bindValues["tipo_evento"]);
                 $evento->save();
                 
-                $usuarios = Doctrine::getTable("Usuario")
+                if ($this->modo == "prov") {
+                   $usuarios = Doctrine::getTable("Usuario")
                         ->createQuery("u")
                         ->innerJoin("u.UsuarioPerfil p")
                         ->where("p.ca_perfil = ? ", "asistente-de-pricing")
                         ->addWhere("u.ca_activo = ?", true)
                         ->execute();
-
+                }
+                else if ($this->modo == "agentes") {
+                    $usuarios = Doctrine::getTable("Usuario")
+                        ->createQuery("u")
+                        ->innerJoin("u.UsuarioPerfil p")
+                        ->where("p.ca_perfil = ? ", "administracion-de-agentes-colsys")
+                        ->addWhere("u.ca_activo = ?", true)
+                        ->execute();
+                    
+                }
                 $email = new Email();
                 $email->setCaUsuenvio($evento->getCaUsucreado());
                 $email->setCaTipo("Eventos");

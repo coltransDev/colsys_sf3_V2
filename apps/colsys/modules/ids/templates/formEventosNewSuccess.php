@@ -56,7 +56,7 @@
             <td width="25%">
                 <b>Proveedor:</b><br />
                 <?
-                if( $modo ){
+                if( $modo && $idreporte==""){
                     echo $ids->getCaNombre();
                 ?>
                 <input type="hidden" name="id" value="<?=$ids->getCaId()?>">
