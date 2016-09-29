@@ -1767,7 +1767,8 @@ class clientesActions extends sfActions {
     }
 
    public function executeProcesarRc(sfWebRequest $request) {
-        try {
+        try 
+        {
             $con = Doctrine_Manager::getInstance()->connection();
             $estadisticas = array();
             $folder = "Rc";
@@ -1871,7 +1872,8 @@ class clientesActions extends sfActions {
                 foreach ($tipos as $tabla) {
                     //$sql="select t.*,u.ca_idsucursal from ".$tabla." t,control.tb_usuarios u where (ca_factura ='".$nfact."' or ca_factura ='F".$suc_factura."-".$nfact."' ) and t.ca_usucreado=u.ca_login and u.ca_idsucursal in ($sucursal) ";
                     $sql = "select t.*,u.ca_idsucursal 
-                        from " . $tabla . " t,control.tb_usuarios u where (ca_factura ='" . $nfact . "' or ca_factura ='F" . $suc_factura . "-" . $nfact . "' or ca_factura ='F" . $suc_factura . " " . $nfact . "' or ca_factura ='f" . $suc_factura . "-" . $nfact . "' or ca_factura ='f" . $suc_factura . " " . $nfact . "' ) and t.ca_usucreado=u.ca_login and u.ca_idsucursal in ($sucursal) ";
+                        from " . $tabla . " t,control.tb_usuarios u "
+                        . "where ca_fchcreado > ".  Utils::addDate(date("Y-m-d"),0,0,-1)." and (ca_factura ='" . $nfact . "' or ca_factura ='F" . $suc_factura . "-" . $nfact . "' or ca_factura ='F" . $suc_factura . " " . $nfact . "' or ca_factura ='f" . $suc_factura . "-" . $nfact . "' or ca_factura ='f" . $suc_factura . " " . $nfact . "' ) and t.ca_usucreado=u.ca_login and u.ca_idsucursal in ($sucursal) ";
                     //echo  $sql."<br>";
                     $st = $con->execute($sql);
                     $ref = $st->fetch();
