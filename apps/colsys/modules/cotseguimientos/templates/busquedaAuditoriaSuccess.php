@@ -2,10 +2,10 @@
 $motivos=$sf_data->getRaw('motivos');
 
 include_component("widgets", "widgetPais");
+include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetImpoexpo");
 include_component("widgets", "widgetTransporte");
 include_component("widgets", "widgetModalidad");
-
 ?>
 <div align="center" >
 <br />
@@ -130,8 +130,16 @@ var tabs = new Ext.FormPanel({
                 id: 'pais',
                 name: 'pais',
                 hiddenName: "idpais",
-               
                 pais:"todos"                                
+            }),
+            new WidgetCiudad(
+            {
+                title: 'Ciudad',
+                fieldLabel: 'Ciudad',
+                id: 'ciudad',
+                name: 'ciudad',
+                hiddenName: "idciudad",
+                impoexpo:"impoexpo"
             }),
             {
                 xtype:          'combo',

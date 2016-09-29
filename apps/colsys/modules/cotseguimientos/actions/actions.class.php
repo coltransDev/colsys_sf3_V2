@@ -468,6 +468,10 @@ class cotseguimientosActions extends sfActions {
         $idpais = $request->getParameter("idpais");
         $pais = $request->getParameter("pais");
         
+        $idciudad = $request->getParameter("idciudad");
+        $ciudad = $request->getParameter("ciudad");
+        
+        
         $idmodalidad = $request->getParameter("idmodalidad");
         $idimpoexpo = $request->getParameter("idimpoexpo");
         $idtransporte = $request->getParameter("idtransporte");        
@@ -522,6 +526,10 @@ class cotseguimientosActions extends sfActions {
         
         if ($idpais) {            
             $sql.= " and t.ca_idtrafico = '$idpais'";            
+        }
+        
+        if ($idciudad) {            
+            $sql.= " and o.ca_idciudad = '$idciudad'";
         }
         
         

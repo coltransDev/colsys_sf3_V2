@@ -61,6 +61,9 @@ $cotizaciones=$sf_data->getRaw('cotizaciones');
                 $sin_trayectos = TRUE;
             }else if(!$cot["ca_etapa_cot"] and !$cot["ca_idproducto"]) {
                 $sin_trayectos = TRUE;
+                $fchSeg = $cot["ca_fchseguimiento_cot"];
+                $lastSeg = $cot["ca_seguimiento_cot"];
+                $etapaSeg = $cot["ca_etapa_cot"];
             }else{
                 $fchSeg = null;
                 $lastSeg = null;
@@ -85,7 +88,7 @@ $cotizaciones=$sf_data->getRaw('cotizaciones');
                     <td><?= $cot["ca_empresa"] ?></td>
                 </tr>                
                 <?
-                $con_sec = $cot["ca_consecutivo"];
+                $con_sec = $cot["ca_consecutivo"];                
             }
             if ($sin_trayectos){
                 continue;
