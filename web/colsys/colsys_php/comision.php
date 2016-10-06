@@ -70,6 +70,7 @@ if (true){
     $pdf->SetAligns(array("L","L","L","L","R","L","C","R","L","C","R","R","C"));
     $sum_vlr = 0;
     $sum_sbr = 0;
+    $elaboro = null;
     while (!$rs->Eof()) {
         $ref_mem = $rs->Value('ca_referencia');
         $com_mem = $rs->Value('ca_compania');
@@ -86,6 +87,7 @@ if (true){
             $pdf->Row(array('','','','','',$rs->Value('ca_factura'),$rs->Value('ca_fchfactura'),number_format($rs->Value('ca_valor'),0),$rs->Value('ca_reccaja'),$rs->Value('ca_porcentaje'),'','',''));
         } while(true);
         $pdf->Ln(1);
+        $elaboro = "Elaboró: ".$rs->Value('ca_usucreado_cmp')." ".$rs->Value('ca_fchcreado_cmp');
     }
     $pdf->SetFont('Arial','B',8);
     $pdf->SetWidths(array(203,18,18,18)); // 169
@@ -112,6 +114,8 @@ if (true){
 		$pdf->MultiCell(0, 4, "www.coltrans.com.co",0,1);
         $us->MoveNext();
        }
+    $pdf->Ln(5);
+    $pdf->MultiCell(0, 4, $elaboro, 0, 1);
     $pdf->Output();
     $pdf->Close();
 }
