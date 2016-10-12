@@ -1067,7 +1067,12 @@ class traficosActions extends sfActions {
          $tarea->setCaObservaciones( $tarea->getCaObservaciones()." terminada:CerrarCaso" );
          $tarea->save();
       }*/
+        if(!$this->getRequestParameter("tipo")){
       $this->redirect("traficos/listaStatus?modo=" . $this->modo . "&reporte=" . $reporte->getCaConsecutivo());
+        }else{
+            $this->responseArray = array("success"=>true, "reporte"=>$reporte->getCaConsecutivo());
+            $this->setTemplate("responseTemplate");          
+   }
    }
 
    /*    * *********************************************************************************

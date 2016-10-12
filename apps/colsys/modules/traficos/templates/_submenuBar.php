@@ -32,6 +32,11 @@ switch($action){
 		$button[4]["image"]="22x22/excel.gif"; 			
 		$button[4]["link"]= "traficos/informeTraficos?modo=".$this->getRequestParameter("modo")."&formato=2&orden=xtrafico&idcliente=".$this->getRequestParameter("idcliente")."&reporte=".$this->getRequestParameter("reporte");
 		
+                $button[5]["name"] = "<p class='div_text'>Habilitar cierre masivo</p><p class='div_text' style='display:none'>Deshabilitar cierre masivo</p>";                
+                $button[5]["tooltip"] = "Habilita el campo para seleccionar los reportes que se deben cerrar(Sacar del tracking)";
+                $button[5]["image"] = "22x22/checkbox.png";
+                $button[5]["onClick"] = "habilitar()";
+                
 		break;
 	case "correoTraficos":
 		$button[2]["name"]="Volver";
@@ -46,14 +51,4 @@ switch($action){
 		$button[2]["image"]="22x22/1leftarrow.gif"; 			
 		$button[2]["link"]= "traficos/listaStatus?modo=".$this->getRequestParameter("modo")."&reporte=".$this->getRequestParameter("reporte");	
 		break;
-	
-
-	
-
-			
-
-			
 }
-
-
-?>

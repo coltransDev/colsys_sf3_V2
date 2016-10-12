@@ -180,12 +180,13 @@ foreach ($reportes as $reporte) {
 
     $proveedoresStr = "";
     $proveedores = $reporte->getProveedores();
-    foreach ($proveedores as $proveedor) {
-        $proveedoresStr .= (count($proveedores) > 1 ? "* " : "") . $proveedor->getCaNombre() . "\n";
+    if($proveedores){
+        foreach ($proveedores as $proveedor) {
+            $proveedoresStr .= (count($proveedores) > 1 ? "* " : "") . $proveedor->getCaNombre() . "\n";
+        }
+
+        $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, utf8_encode($proveedoresStr));
     }
-
-
-    $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, utf8_encode($proveedoresStr));
 
     $origen = $reporte->getOrigen();
     if ($origen) {
