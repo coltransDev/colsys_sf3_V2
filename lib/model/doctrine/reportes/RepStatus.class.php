@@ -168,7 +168,7 @@ class RepStatus extends BaseRepStatus {
 
         $reporte = $this->getReporte();
 
-        $asunto = "";
+        $asunto = "";        
 
         $origen = $reporte->getOrigen()->getCaCiudad();
         $destino = $reporte->getDestino()->getCaCiudad();
@@ -177,19 +177,10 @@ class RepStatus extends BaseRepStatus {
         if ($reporte->getCaImpoexpo() == "Importación" || $reporte->getCaImpoexpo() == "Triangulación") {
             $proveedor = substr($reporte->getProveedoresStr(), 0, 130);
             $asunto .= $proveedor . " / " . $cliente . " [" . $origen . " -> " . $destino . "] " . $reporte->getCaOrdenClie();
-        } else {
+        } else {            
             
             $consignatario = $reporte->getConsignatario();
-            $user = sfContext::getInstance()->getUser();
-            if ($user->getUserId() == "maquinche") {                
-                try {
-                    echo $consignatario . " / " . $cliente . " [" . $origen . " -> " . $destino . "] ";
-                } catch (Exception $e) {
-                    print_r($e);
-                }
-                echo "181";
-                //exit;
-            }
+            
             $asunto .= $consignatario . " / " . $cliente . " [" . $origen . " -> " . $destino . "] ";
         }
         return $asunto;
@@ -217,7 +208,7 @@ class RepStatus extends BaseRepStatus {
 
     public function send(array $addresses = array(), array $cc = array(), array $attachments = array(), $options = array(), $conn = null) {
 
-        $user = sfContext::getInstance()->getUser();
+        $user = sfContext::getInstance()->getUser();        
 
         $email = new Email();
 
@@ -242,7 +233,7 @@ class RepStatus extends BaseRepStatus {
                 $options["from"] = $user1->getProperty("alias") . "@" . $repotm->getCaLiberacion();
             }
         }
-
+        
         if (isset($options["from"]) && $options["from"]) {
             $email->setCaFrom($options["from"]);
         } else {
@@ -271,7 +262,7 @@ class RepStatus extends BaseRepStatus {
                 $email->addCc($recip);
             }
         }
-
+        
         //$reporte = $this->getUltReporte();        
         
         if ($reporte->getEsSeguro()) {
@@ -296,11 +287,11 @@ class RepStatus extends BaseRepStatus {
             $email->addCc($user->getEmail());
             $email->setCaReplyto($user->getEmail());
         }
-
+        
         if ($reporte->getCaImpoexpo() != Constantes::EXPO)
             $asunto = $this->getIntroAsunto();
-
-        if (isset($options["subject"]) && $options["subject"]) {
+        
+        if (isset($options["subject"]) && $options["subject"]) {            
             if ($options["subject"] == "Notificación de Desconsolidación id: " . $reporte->getCaConsecutivo()) {
                 $asunto = "";
             }
