@@ -129,10 +129,10 @@ use_helper("MimeType");
 
         if ($("#divPpal").find("img").length == 0) {
 
-            $('<div/>', {
-                id: 'divPpal',
-                class: 'toolbarbtnWraper'
-            }).appendTo(".toolbar");
+            a = $('<div></div>');
+            a.attr('id','divPpal');
+            a.addClass('toolbarbtnWraper');
+            a.appendTo(".toolbar");                
 
             $('<img/>', {
                 src: '/images/22x22/encrypted.gif',
