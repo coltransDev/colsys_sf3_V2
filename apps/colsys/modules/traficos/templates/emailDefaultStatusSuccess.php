@@ -45,13 +45,13 @@ $modo = $sf_data->getRaw("modo");
                 if ( $user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S." && $reporte->getCaTransporte() == Constantes::MARITIMO && ($status->getCaIdetapa() == "IMETA" || $status->getCaIdetapa() == "IMCPD")) {
                 ?>
                     <td width="170">
-                        <div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/amb-bog20140814.jpg"/></div>
+                        <div style="float:right"><img src="https://www.colsys.com.co/images/publicidad/amb-bog20140814.jpg"/></div>
                     </td>
                 <?
                 } else if ( $user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S." && $reporte->getCaTransporte() == Constantes::AEREO && ($status->getCaIdetapa() == "IACCR" || $status->getCaIdetapa() == "IACAD")) {
                 ?>
                     <td width="170">
-                        <div style="float:right"><img src="https://www.coltrans.com.co/images/publicidad/amb-bog20140814.jpg"/></div>
+                        <div style="float:right"><img src="https://www.colsys.com.co/images/publicidad/amb-bog20140814.jpg"/></div>
                     </td>
                 <?
                 }*/
