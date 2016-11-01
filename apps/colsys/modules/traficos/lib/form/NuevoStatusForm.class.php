@@ -105,6 +105,7 @@ class NuevoStatusForm extends BaseForm {
         $widgets['doctransporte'] = new sfWidgetFormInputText(array(), array("size" => 40, "maxlength" => 50));
         $widgets['docmaster'] = new sfWidgetFormInputText(array(), array("size" => 40, "maxlength" => 100));
         $widgets['idnave'] = new sfWidgetFormInputText(array(), array("size" => 40, "maxlength" => 50));
+        $widgets['bodega_air'] = new sfWidgetFormInputText(array(), array("size" => 40, "maxlength" => 50));
         
         $widgets['un_piezas'] = new sfWidgetFormDoctrineChoice(array(
                     'model' => 'Parametro',
@@ -287,6 +288,8 @@ class NuevoStatusForm extends BaseForm {
                         array('required' => 'Por favor coloque la motonave o el vuelo'));
         $validator['idmuelle'] = new sfValidatorString(array('required' => false),
                         array('required' => 'Por favor coloque el muelle'));
+        $validator['bodega_air'] = new sfValidatorString(array('required' => false),
+                        array('required' => 'Por favor coloque la bodega del aeropuerto'));
         $validator['docmaster'] = new sfValidatorString(array('required' => false),
                         array('required' => 'Por favor coloque el BL'));
         $validator['fchsalida'] = new sfValidatorDate(array('required' => false),
@@ -377,6 +380,10 @@ class NuevoStatusForm extends BaseForm {
             $this->validatorSchema['fchllegada']->setOption('required', true);
             $this->validatorSchema['doctransporte']->setOption('required', true);
             $this->validatorSchema['idnave']->setOption('required', true);
+        }
+        
+        if ($taintedValues["idetapa"] == "IACAD") {            
+            $this->validatorSchema['bodega_air']->setOption('required', true);
         }
 
         $idgxEtapa = TrackingEtapaTable::getIdgXEtapa($taintedValues["idetapa"]);

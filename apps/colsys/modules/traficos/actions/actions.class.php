@@ -483,7 +483,7 @@ class traficosActions extends sfActions {
                }
             }
          }
-
+        $bindValues["bodega_air"] = $request->getParameter("bodega_air");
          $this->form->bind($bindValues);
          if ($this->form->isValid()) {
             $this->executeGuardarStatus($request);
@@ -631,6 +631,9 @@ class traficosActions extends sfActions {
          }
          if ($request->getParameter("idmuelle")) {
             $status->setProperty("muelle", $request->getParameter("idmuelle"));
+         }
+         if ($request->getParameter("bodega_air")) {
+            $status->setProperty("bodega_air", $request->getParameter("bodega_air"));
          }
          if ($request->getParameter("fch_cargadisponible")) {
             $status->setProperty("cargaDisponible", $request->getParameter("fch_cargadisponible"));

@@ -271,6 +271,12 @@ $folder = $reporte->getDirectorioBase();
         } else{
             document.getElementById("prog_seguimiento").disabled = false;
         }
+        
+        if(value== "IACCR" || value== "IACAD"){
+            $("#linea").show();
+        }else{
+            $("#linea").hide();
+        }
 
         <?
         if ($_REQUEST["txtincompleto"] != "") {
@@ -518,6 +524,13 @@ $folder = $reporte->getDirectorioBase();
             <tr>
                 <td colspan="2">
                     <table width="100%" border="0" class="tableList">
+                        <tr id="linea" style="display:none">
+                            <td id="aerolinea" colspan="6">
+                                <div align="left"><b>Aerolínea</b>:<br />
+                                    <?= $reporte->getIdsProveedor()->getIds()->getCaNombre() ?>
+                                </div>
+                            </td>
+                        </tr>
                         <tr>
                             <td width="34%"><div align="left"><b>Origen</b>:<br />
                                 <?= $reporte->getOrigen() ?>
@@ -686,15 +699,26 @@ $folder = $reporte->getDirectorioBase();
                                     echo $form['idnave']->render();
                                     ?>
                                 </div></td>
-                            <td><div align="left"> <? if ($reporte->getCaTransporte() == Constantes::MARITIMO) { ?>
-                                    <b>Muelle</b>:<br />
-                                    <?
-                                    echo $form['idmuelle']->renderError();
-                                    if ($ultStatus) {
-                                        $form->setDefault('idmuelle', $ultStatus->getProperty("muelle"));
-                                    }
-                                    echo $form['idmuelle']->render();  
-                                    } ?>
+                            <td><div align="left"> <? 
+                                    if ($reporte->getCaTransporte() == Constantes::MARITIMO) { ?>
+                                        <b>Muelle</b>:<br />
+                                        <?
+                                        echo $form['idmuelle']->renderError();
+                                        if ($ultStatus) {
+                                            $form->setDefault('idmuelle', $ultStatus->getProperty("muelle"));
+                                        }
+                                        echo $form['idmuelle']->render();  
+                                    }else {
+                                        ?>
+                                        <b>Bodega Aeropuerto</b>:<br />
+                                        <?
+                                        echo $form['bodega_air']->renderError();
+                                        if ($ultStatus) {
+                                            $form->setDefault('bodega_air', $ultStatus->getProperty("bodega_air"));
+                                        }
+                                        echo $form['bodega_air']->render();  
+                                    }       
+                                    ?>
                                 </div></td>
                         </tr>
                         <!--<tr>

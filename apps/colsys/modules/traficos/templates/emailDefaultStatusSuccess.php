@@ -96,11 +96,20 @@ $modo = $sf_data->getRaw("modo");
                 <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Destino:</b></td>
                 <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $reporte->getDestino()->getCaCiudad() ?></td>
                 <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b><?= $etapa->getCaDepartamento() == "Tráficos" ? "Fch. Estimada de Llegada:" : "Fch. Estimada de Llegada:" //ticket #4032 ?></b></td>
-                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="3"><?= $status->getCaFchllegada() ? $status->getCaFchllegada() : "&nbsp;" ?>
+                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $status->getCaFchllegada() ? $status->getCaFchllegada() : "&nbsp;" ?>
                     <? if ($reporte->getCaTransporte() == Constantes::AEREO && $status->getCaFchllegada()) { ?>
                         en la <?= $status->getProperty("jornada") ? $status->getProperty("jornada") : "&nbsp;" ?>
                     <? } ?>
                 </td>
+                <?
+                    if($status->getCaIdetapa()=="IACAD" || $status->getCaIdetapa()=="IACCR"){?>
+                        <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Aerol&iacute;nea - Bodega</b></td>
+                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $reporte->getIdsProveedor()->getIds()->getCaNombre()?> - <?=$status->getProperty("bodega_air")?></td>
+                    <?}else{?>
+                        <td colspan="2">&nbsp;</td>
+                    <?                
+                    }
+                    ?>
             </tr>
             <?
             if ($reporte->getCaContinuacion() != "N/A" && $reporte->getCaImpoexpo() != Constantes::EXPO) {
