@@ -261,8 +261,8 @@ $folder = $reporte->getDirectorioBase();
                 <?
             }
             ?>
-            $("#indicador").show();
-            $("#observaciones").show();
+            //$("#indicador").show();
+            //$("#observaciones").show();
         }
         if (value == "IMETA"){
             document.getElementById("prog_seguimiento").checked = false;
