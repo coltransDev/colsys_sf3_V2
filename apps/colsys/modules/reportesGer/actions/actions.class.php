@@ -154,9 +154,10 @@ class reportesGerActions extends sfActions {
                 $where.=" and r.ca_idagente = '" . $this->idagente . "'";
             }
 
-            if ($this->fecharepinicial && $this->fecharepfinal)
+            if ($this->fecharepinicial && $this->fecharepfinal){
                 $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
-            $where.=" and (r.ca_fchreporte between '" . $this->fecharepinicial . "' and '" . $this->fecharepfinal . "')";
+                $where.=" and (r.ca_fchreporte between '" . $this->fecharepinicial . "' and '" . $this->fecharepfinal . "')";
+            }
 
             if ($this->idsucursalagente) {
                 $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
@@ -763,21 +764,21 @@ class reportesGerActions extends sfActions {
                 $where1.=" and r.ca_idlinea='" . $this->idlinea . "'";
             }
 
-            if ($this->incoterms && count($this->incoterms) > 0) {
+            /* if ($this->incoterms && count($this->incoterms) > 0) {
 
-                $where.=" and (";
-                $where1.=" and (";
-                foreach ($this->incoterms as $key => $inco) {
-                    if ($key > 0) {
-                        $where.=" or ";
-                        $where1.=" or ";
-                    }
-                    $where.=" r.ca_incoterms like '" . $inco . "%'";
-                    $where1.=" r.ca_incoterms like '" . $inco . "%'";
-                }
-                $where.=" )";
-                $where1.=" )";
-            }
+              $where.=" and (";
+              $where1.=" and (";
+              foreach ($this->incoterms as $key => $inco) {
+              if ($key > 0) {
+              $where.=" or ";
+              $where1.=" or ";
+              }
+              $where.=" r.ca_incoterms like '" . $inco . "%'";
+              $where1.=" r.ca_incoterms like '" . $inco . "%'";
+              }
+              $where.=" )";
+              $where1.=" )";
+              } */
 
             if ($this->idcliente)
                 $where.=" and c.ca_idcliente = '" . $this->idcliente . "'";
@@ -902,7 +903,7 @@ class reportesGerActions extends sfActions {
                     $where2 = "WHERE rs.ca_idetapa in ('IMETA','IMETT','IACCR','IMCEM')";
                     break;
                 case 3:
-                    $select1 = ",ca_fchsalida_eta, ca_fchsalida_ccr, (ca_fchsalida_ccr-ca_fchsalida_eta) as ca_diferencia";
+                    $select1 = ",ca_fchsalida_eta, ca_fchsalida_ccr, (ca_fchsalida_eta-ca_fchsalida_ccr) as ca_diferencia";
                     $select2 = ",ca_fchsalida as ca_fchsalida_eta";
                     $select3 = ",ca_fchsalida as ca_fchsalida_ccr";
                     $where1 = "WHERE rs.ca_idetapa in ('IMETA','IMETT','IACAD','IMCEM')";
@@ -949,7 +950,7 @@ class reportesGerActions extends sfActions {
                                                         GROUP BY rp.ca_consecutivo) sf on rs.ca_idstatus = sf.ca_idstatus)  sqa ON v.ca_consecutivo = sqa.ca_consecutivo
                         RIGHT OUTER JOIN (SELECT ca_consecutivo $select3 
                                             FROM tb_repstatus rs 
-                                        RIGHT JOIN (SELECT rp.ca_consecutivo, min(rs.ca_idstatus) as ca_idstatus $select4
+                                        RIGHT JOIN (SELECT rp.ca_consecutivo, max(rs.ca_idstatus) as ca_idstatus $select4
                                                     FROM tb_repstatus rs 
                                                         INNER JOIN tb_reportes rp on rp.ca_idreporte = rs.ca_idreporte
                                                         $join2
@@ -1191,7 +1192,7 @@ class reportesGerActions extends sfActions {
             if ($this->idlinea)
                 $where.=" and rp.ca_idlinea='" . $this->idlinea . "'";
 
-            if ($this->incoterms && count($this->incoterms) > 0) {
+            /*if ($this->incoterms && count($this->incoterms) > 0) {
 
                 $where.=" and (";
                 foreach ($this->incoterms as $key => $inco) {
@@ -1200,7 +1201,7 @@ class reportesGerActions extends sfActions {
                     $where.=" rp.ca_incoterms like '" . $inco . "%'";
                 }
                 $where.=" )";
-            }
+            }*/
 
             if ($this->idcliente)
                 $where.=" and ccl.ca_idcliente = '" . $this->idcliente . "'";
@@ -1246,6 +1247,8 @@ class reportesGerActions extends sfActions {
 
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
+            //echo $sql;
+            //exit;
             $this->resul = $st->fetchAll();
 
             //echo "<pre>";print_r($this->resul);echo "</pre>";
@@ -2091,12 +2094,12 @@ class reportesGerActions extends sfActions {
 
     function printArray($arreglo, $crlf) {
         $cadena = "";
-        foreach($arreglo as $key => $value){
-            $cadena.= "$key $value".$crlf;
+        foreach ($arreglo as $key => $value) {
+            $cadena.= "$key $value" . $crlf;
         }
         return $cadena;
     }
-    
+
     public function executeReporteReportesDeNegocioListExt5(sfWebRequest $request) {
         $this->params = array();
         $this->params["anio"] = $anio = $request->getParameter("anio");
@@ -2134,7 +2137,7 @@ class reportesGerActions extends sfActions {
         $joins = array();
         $this->columns = array();
         $this->columns[] = array("xtype" => "treecolumn", "text" => "Agrupamiento", "flex" => "2", "sortable" => true, "dataIndex" => "text");
-        
+
         foreach ($columns as $column) {
             $is_filter = false;
             foreach ($filtros as $filtro) {
@@ -2142,7 +2145,7 @@ class reportesGerActions extends sfActions {
                     $is_filter = true;
                 }
             }
-            if (!$is_filter){
+            if (!$is_filter) {
                 $this->columns[] = array("text" => $column->titulo, "dataIndex" => $column->alias);
             }
             switch ($column->alias) {
@@ -2303,7 +2306,7 @@ class reportesGerActions extends sfActions {
         if ($fchEtdIni and $fchEtdFin) {
             $q->addWhere("ca_fchsalida BETWEEN ? AND ?", array($fchEtdIni, $fchEtdFin));
         }
-        
+
         $orderBy = "";
         foreach ($filtros as $filtro) {
             switch ($filtro->alias) {
@@ -2337,7 +2340,7 @@ class reportesGerActions extends sfActions {
                         $q->innerJoin("rp.Contacto cto");
                         $q->innerJoin("cto.IdsCliente ids1");
                         $q->innerJoin("ids1.Ids cli");
-                       }
+                    }
                     $orderBy.= "cli.ca_nombre, ";
                     break;
                 case "agt_ca_nombre":
@@ -2479,11 +2482,11 @@ class reportesGerActions extends sfActions {
                 }
                 $reportes_rs[$key]["equipos"] = $this->printArray($equipos, $crlf);
                 $reporte_sc["equipos"] = $this->printArray($equipos, $crlf);
-                if ($reporte->getCaTransporte() == Constantes::MARITIMO and ($reporte->getCaModalidad() == Constantes::LCL or $reporte->getCaModalidad() == Constantes::COLOADING)){
+                if ($reporte->getCaTransporte() == Constantes::MARITIMO and ( $reporte->getCaModalidad() == Constantes::LCL or $reporte->getCaModalidad() == Constantes::COLOADING)) {
                     $reportes_rs[$key]["volumen"] = $reporte->getVolumen();
                     $reporte_sc["volumen"] = $reporte->getVolumen();
                 }
-                if ($reporte->getCaTransporte() == Constantes::AEREO){
+                if ($reporte->getCaTransporte() == Constantes::AEREO) {
                     $reportes_rs[$key]["peso"] = $reporte->getPeso();
                     $reporte_sc["peso"] = $reporte->getPeso();
                 }
@@ -2495,24 +2498,24 @@ class reportesGerActions extends sfActions {
                 }
                 $reptarifas = $reporte->getRepTarifa();
                 foreach ($reptarifas as $tarifa) {
-                    $tarifas[$tarifa->getConcepto()->getCaConcepto().": "] = $tarifa->getCaNetaTar()." / ".$tarifa->getCaReportarTar()." / ".$tarifa->getCaCobrarTar();
+                    $tarifas[$tarifa->getConcepto()->getCaConcepto() . ": "] = $tarifa->getCaNetaTar() . " / " . $tarifa->getCaReportarTar() . " / " . $tarifa->getCaCobrarTar();
                 }
                 $reportes_rs[$key]["tarifas"] = $this->printArray($tarifas, $crlf);
                 $reporte_sc["tarifas"] = $this->printArray($tarifas, $crlf);
             }
             $reporte_sc = array_map('utf8_encode', $reporte_sc);
-            
-            if (!$request->getParameter("expoExcel")){
+
+            if (!$request->getParameter("expoExcel")) {
                 $uid = $root;
-                foreach($filtros as $filtro){
+                foreach ($filtros as $filtro) {
                     $value = $reporte_sc[$filtro->alias];
                     unset($reporte_sc[$filtro->alias]);
                     $node_uid = $tree->findValue($uid, $value);
-                    if (!$node_uid){
+                    if (!$node_uid) {
                         $nodo = $tree->createNode($value);
                         $tree->addChild($uid, $nodo);
                         $uid = $nodo;
-                    }else{
+                    } else {
                         $uid = $node_uid;
                     }
                 }
@@ -2527,16 +2530,16 @@ class reportesGerActions extends sfActions {
                 $nodo->setAttribute("children", $reporte_sc);
             }
         }
-        
-        if ($request->getParameter("expoExcel")){
+
+        if ($request->getParameter("expoExcel")) {
             $this->user = $this->getUser();
             $this->title = "Informe Reporte de Negocios";
             $this->subject = "Generador de Informes - Exportación de Datos";
             $this->description = "Módulo para mostras datos en formato de hoja de Excel";
             $this->spreadsheet = $reportes_rs;
-            
+
             unset($this->columns[0]);   // Quita la columna de Agrupamiento
-            foreach ($filtros as $filtro){  // Agrega la columna de filtro al cuerpo
+            foreach ($filtros as $filtro) {  // Agrega la columna de filtro al cuerpo
                 $columna = array("text" => $filtro->titulo, "dataIndex" => $filtro->alias);
                 array_unshift($this->columns, $columna);
             }
@@ -2546,8 +2549,8 @@ class reportesGerActions extends sfActions {
 
         // Retira el campo key del cuerpo del informe
         $columns = array();
-        foreach ($this->columns as $k => $v){
-            if($v["dataIndex"] != $keys){
+        foreach ($this->columns as $k => $v) {
+            if ($v["dataIndex"] != $keys) {
                 $columns[] = $v;
             }
         }
@@ -2661,7 +2664,14 @@ class reportesGerActions extends sfActions {
                 $vendedores[] = array("id" => $usuario->getCaLogin(), "text" => utf8_encode($usuario->getCaNombre()), "leaf" => true, "checked" => false);
             }
 
-            $this->responseArray = $vendedores;
+           // $this->responseArray = array("success" => true, "root" => $vendedores);
+            $tree = array("text" => "Vendedores",
+                "leaf" => false,
+                "id" => "0",
+                "children" => $vendedores );
+
+            //$this->responseArray = array("success" => true, "root" => $tree);
+            $this->responseArray = $tree;
         }
 
         $this->setTemplate("responseTemplate");
@@ -2692,13 +2702,18 @@ class reportesGerActions extends sfActions {
                     ->execute();
 
 
-            $vendedores[] = array("id" => "%", "text" => "Usuarios (Todos)", "leaf" => true, "checked" => false);
+            $vendedores[] = array("id" => "%", "text" => utf8_encode("Usuarios (Todos)"), "leaf" => true, "checked" => false);
 
             foreach ($usuarios_rs as $usuario) {
-                $vendedores[] = array("id" => $usuario->getCaLogin(), "text" => utf8_encode($usuario->getCaNombre()), "leaf" => true, "checked" => false);
+                $vendedores[] = array("id" => utf8_encode($usuario->getCaLogin()), "text" => utf8_encode($usuario->getCaNombre()), "leaf" => true, "checked" => false);
             }
+            $tree = array("text" => "Operativos",
+                "leaf" => false,
+                "id" => "0",
+                "children" => $vendedores );
 
-            $this->responseArray = $vendedores;
+            //$this->responseArray = array("success" => true, "root" => $tree);
+            $this->responseArray = $tree;
         }
         $this->setTemplate("responseTemplate");
     }
@@ -2731,6 +2746,7 @@ class reportesGerActions extends sfActions {
         if ($mes == "%") {
             $dateInicial = $anio . "-01-01";
             $ultimodia = date("d", mktime(0, 0, 0, 12, 31, $anio));
+            $mes = 12;
         } else {
             $dateInicial = $anio . "-" . $mes . "-01";
             $ultimodia = date("d", (mktime(0, 0, 0, $mes + 1, 1, $anio) - 1));
