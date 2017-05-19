@@ -38,14 +38,12 @@ class noticiasActions extends sfActions {
     public function executeFormNoticia(sfWebRequest $request) {
 
         $this->nivel = $this->getNivel();
-
         if ($this->nivel == 0) {
             $this->forward("adminUsers", "noAccess");
         }
         
+        $this->user = sfContext::getInstance()->getUser();
         $this->form = new NoticiaForm();
-        
-        
         
         $idnoticia = $request->getParameter("idnoticia");
 
@@ -60,6 +58,7 @@ class noticiasActions extends sfActions {
             
             $bindValues = array();
             $bindValues["idnoticia"] = $request->getParameter("idnoticia");
+            $bindValues["idsucursal"] = $request->getParameter("idsucursal");
             $bindValues["title"] = $request->getParameter("title");
             $bindValues["info"] = $request->getParameter("info");
             $bindValues["fchpublicacion"] = $request->getParameter("fchpublicacion");
@@ -70,12 +69,13 @@ class noticiasActions extends sfActions {
             
             if( $this->form->isValid() ){			
 
-                $noticia->setCaCategoria($request->getParameter("categoria"));
+                $noticia->setCaIdsucursal($request->getParameter("idsucursal")?$request->getParameter("idsucursal"):null);
                 $noticia->setCaAsunto($request->getParameter("title"));
                 $noticia->setCaDetalle($request->getParameter("info"));
                 $noticia->setCaFchpublicacion($request->getParameter("fchpublicacion"));
                 $noticia->setCaFcharchivar($request->getParameter("fcharchivar"));             
                 $noticia->setCaIcon($request->getParameter("icon"));
+                $noticia->setCaIdempresa($this->user->getIdempresa());
                 $noticia->save();
                 
                 $this->redirect("homepage/index");

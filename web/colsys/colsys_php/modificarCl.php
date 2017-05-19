@@ -294,7 +294,7 @@
     $img = "";
 
     if ($tmp->Value('ca_propiedades') != "") {
-        if (strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
+        if (strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false || strpos($tmp->Value('ca_propiedades'), "cuentaglobal=1") !== false) {
             $img = '<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />';
         }
     }

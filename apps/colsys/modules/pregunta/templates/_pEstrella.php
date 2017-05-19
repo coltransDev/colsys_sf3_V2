@@ -13,7 +13,7 @@ $numColumnas = 5;
 $numFilas = sizeof($servicios);
 $anchoColumnas = 100 / ($numColumnas + 3);
 
-function getServicio($servicio) {
+/*function getServicio($servicio) {
     $cadena = trim($servicio);
     switch ($cadena) {
         case "Importaciones aéreo":
@@ -37,7 +37,7 @@ function getServicio($servicio) {
         default:
             return 99;
     }
-}
+}*/
 ?>
 
 <table class="cuadricula" border="0" cellspacing="0" cellpadding="3">
@@ -48,8 +48,11 @@ function getServicio($servicio) {
                     <td style="width: <?php echo (3 * $anchoColumnas) + ($anchoColumnas / 2); ?>%;" class="cuadricula-fila cuadricula-leftlabel"><?php echo $servicios[$i] ?>
                     </td>
                     <td style="width: <?php echo $anchoColumnas * 3; ?>%;" class="cuadricula-fila">
-                        <?php for ($j = 1; $j <= $numColumnas; $j++) { ?>
-                            <input type="radio" obligatorio="<?=$pregunta->ca_obligatoria?>" idpregunta="<?=$pregunta->ca_id?>" class="star" id="grupo_<?php echo $pregunta->ca_id; ?>_<?php echo $j; ?>" value="<?php echo $j ?>" name="en<?php echo $i ?><?php echo $pregunta->ca_id ?>grupo<?php echo getServicio($servicios[$i]) ?>">
+                        <?php for ($j = 1; $j <= $numColumnas; $j++) {                            
+                            //echo $servicios[$i];
+                            ?>
+                        
+                            <input type="radio" obligatorio="<?=$pregunta->ca_obligatoria?>" idpregunta="<?=$pregunta->ca_id?>" class="star" id="grupo_<?php echo $pregunta->ca_id; ?>_<?php echo $j; ?>" value="<?php echo $j ?>" name="en<?php echo $i ?><?php echo $pregunta->ca_id ?>grupo<?=$formulario->getNumServicio($servicios[$i])?>">
                         <?php } ?>
                     </td>
                     <?php if ($device == 'desktop') { ?>
@@ -66,7 +69,7 @@ function getServicio($servicio) {
                     </td>
                     <td style="width: <?php echo $anchoColumnas * 3; ?>%;" class="cuadricula-fila">
                         <?php for ($j = 1; $j <= $numColumnas; $j++) { ?>
-                            <input type="radio" obligatorio="<?=$pregunta->ca_obligatoria?>" idpregunta="<?=$pregunta->ca_id?>" class="star" id="grupo_<?php echo $pregunta->ca_id; ?>_<?php echo $j; ?>" value="<?php echo $j ?>" name="en<?php echo $i ?><?php echo $pregunta->ca_id ?>grupo<?php echo getServicio($servicios[$i]) ?>">
+                            <input type="radio" obligatorio="<?=$pregunta->ca_obligatoria?>" idpregunta="<?=$pregunta->ca_id?>" class="star" id="grupo_<?php echo $pregunta->ca_id; ?>_<?php echo $j; ?>" value="<?php echo $j ?>" name="en<?php echo $i ?><?php echo $pregunta->ca_id ?>grupo<?=$formulario->getNumServicio($servicios[$i])?>">
                         <?php } ?>
                     </td>
                     <?php if ($device == 'desktop') { ?>

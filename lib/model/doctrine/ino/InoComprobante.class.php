@@ -32,6 +32,21 @@ class InoComprobante extends BaseInoComprobante
     const ID_DEUDORES = 664;
     const ID_PORPAGAR = 665;
     const ID_UTILIDAD_X_SOBREVENTA = 666;
+    public $iva = null;
+    
+    public function getIva(){
+        if (!$this->iva){
+        $fgenero = ($this->getCaFchgenero()!="")?$this->getCaFchgenero():date("Y-m-d");
+        
+            $parametroContable = Doctrine::getTable("ParamContables")
+                    ->createQuery("p")
+                    ->addWhere("p.ca_fch_fin >= '$fgenero' and p.ca_fch_ini <= '$fgenero'")
+                    ->addWhere("p.ca_idempresa = {$this->getInoTipoComprobante()->getCaIdempresa()}")
+                    ->fetchOne();
+            $this->iva = $parametroContable->getCaPorctarifa();
+        }
+        return $this->iva;
+    }
 
     public function __toString(){
         $tipo = $this->getInoTipoComprobante();
@@ -61,13 +76,40 @@ class InoComprobante extends BaseInoComprobante
         return $total;
     }
     
-    public function anular($iduser)
+    public function anular($iduser,$msg="")
     {
         $this->setCaFchanulado(date("Y-m-d H:i:s"));
         $this->setCaUsuanulado($iduser);
         $this->setCaEstado(self::ANULADO);
+        $this->setProperty("msgAnulado",$msg);
         $this->save();
+    }
+
+    public function getMovimientos(){
         
+        return Doctrine::getTable("InoDetalle")
+                ->createQuery("det")
+                ->select("det.*,s.*,tcomp.ca_ctarteica,cric.ca_rteica")
+                ->innerJoin("det.InoComprobante comp")
+                ->innerJoin("comp.InoTipoComprobante tcomp")                
+                ->leftJoin('det.InoConSiigo s WITH tcomp.ca_idempresa=s.ca_idempresa ')
+                ->leftJoin("tcomp.Ctarteica cric WITH tcomp.ca_idempresa=s.ca_idempresa ")
+                ->addWhere("det.ca_idconcepto IS NOT NULL")
+                ->addWhere("det.ca_idcomprobante = ? ",$this->getCaIdcomprobante()  )
+                ->addOrderBy("s.ca_pt DESC")
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->execute();
+    }
+    
+    public function getContactoCliente(){
+    
+        if($this->getProperty("idcontacto"))
+        {
+            $contacto = Doctrine::getTable("Contacto")->find($this->getProperty("idcontacto"));
+            return $contacto->getCaNombres()." ".$contacto->getCaPapellido()." ".$contacto->getCaSapellido();
+        }
+        else
+            return " ";
     }
     
 }

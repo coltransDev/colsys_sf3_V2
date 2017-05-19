@@ -30,10 +30,11 @@ Ext.define('Ext.colsys.wgCliente', {
         {name: 'preferencias', mapping: 'ca_preferencias'},
         {name: 'coordinador', mapping: 'ca_coordinador'},
         {name: 'diascredito', mapping: 'ca_diascredito'},
-        {name: 'cupo', mapping: 'ca_cupo'}
+        {name: 'cupo', mapping: 'ca_cupo'},
+        {name: 'cuentapago', mapping: 'ca_cuentapago'}
      ],
        proxy: {
-          url: '/widgets/listaClientesJSON',        
+          url: '/widgets/listaClientesJSON',
           type: 'ajax',
           autoLoad: true,
           reader: 

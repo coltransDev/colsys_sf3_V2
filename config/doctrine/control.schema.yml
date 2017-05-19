@@ -55,6 +55,7 @@ Usuario:
     ca_mailpasw: string(40)    
     ca_sexo: string(1)
     ca_fcesantias: integer
+    ca_datos: string
   relations:
     AccesoUsuario:
       local: ca_login
@@ -120,7 +121,7 @@ UsuBrigadas:
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
-    ca_usuactualizado: string    
+    ca_usuactualizado: string
   relations:
     Usuario:
       local: ca_login
@@ -155,6 +156,7 @@ UsuParametros:
     ca_transporte: string    
     ca_modalidad: string
     ca_trafico: string
+    ca_ciudad: string
     ca_idcliente: integer,
     ca_fchcreado: timestamp
     ca_usucreado: string
@@ -182,8 +184,12 @@ UsuParametros:
       foreign: ca_idcliente
       type: one
     Trafico:
-      local: ca_idtrafico
+      local: ca_trafico
       foreign: ca_idtrafico
+      type: one
+    Ciudad:
+      local: ca_ciudad
+      foreign: ca_idciudad
       type: one
 
       
@@ -261,7 +267,7 @@ UsuarioPerfil:
       foreign: ca_login
       type: one
 
-
+  
 AccesoPerfil:
   options:
     symfony:
@@ -271,13 +277,12 @@ AccesoPerfil:
   tableName: control.tb_accesos_perfiles
   columns:
     ca_rutina:
-      type: string(50)
+      type: string
       primary: true
     ca_perfil:
-      type: string(50)
+      type: string
       primary: true
-    ca_acceso:
-      type: string(30)
+    ca_acceso: string
   relations:
     Rutina:
       local: ca_rutina
@@ -287,7 +292,6 @@ AccesoPerfil:
       local: ca_perfil
       foreign: ca_perfil
       type: one
-      foreignAlias: Perfiles
     UsuarioPerfil:
       local: ca_perfil
       foreign: ca_perfil
@@ -307,8 +311,13 @@ AccesoUsuario:
     ca_login:
       type: string(50)
       primary: true
-    ca_acceso:
-      type: string(30)
+    ca_acceso: string
+    ca_denegar: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+      
   relations:
     Rutina:
       local: ca_rutina
@@ -337,6 +346,8 @@ Rutina:
     ca_grupo: string(21)
     ca_icon: string
     ca_aplicacion: string
+    ca_visible: boolean
+    ca_url: string
   relations:
     AccesoPerfil:
       local: ca_rutina
@@ -369,7 +380,7 @@ Departamento:
   relations:
     HdeskGroup:
       local: ca_iddepartamento
-      foreign: ca_iddepartament
+      foreign: ca_iddepartament      
       orderBy: ca_name ASC
       type: many
     Empresa:
@@ -487,6 +498,8 @@ RutinaNivel:
       type: integer
       primary: true
     ca_valor: string
+    ca_idrutina_niveles: int
+    ca_descripcion: string
   relations:
     Rutina:
       local: ca_rutina

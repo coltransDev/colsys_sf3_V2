@@ -60,7 +60,7 @@ echo $status->getCaIntroduccion();
 	</tr>
 	<tr>
 		<td><strong>Producto:</strong></td>
-		<td><?=$reporte->getCaMercanciaDesc()?> <?=($reporte->getCaMciaPeligrosa())?"<br><b>Mercacia Peligrosa</b>":""?></td>
+		<td><?=$reporte->getCaMercanciaDesc()?> <?=($reporte->getCaMciaPeligrosa())?"<br><b>Mercanc&iacute;a Peligrosa</b>":""?></td>
 	</tr>
 	<?
 	if( $reporte->getCaTransporte()==Constantes::MARITIMO ) {

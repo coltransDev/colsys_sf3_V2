@@ -59,8 +59,8 @@ class widgets5Components extends sfComponents {
                               ->execute();
         
         foreach( $empresas as $e ){
-            $this->data[]=array("id"=>$e->getCaIdempresa(),"name"=>$e->getCaNombre());
-        }
+            $this->data[]=array("id"=>$e->getCaIdempresa(),"name"=>utf8_encode($e->getCaNombre()));
+        }        
         
     }
     
@@ -77,7 +77,7 @@ class widgets5Components extends sfComponents {
                 //->innerJoin("s.Ids i")
                 //->innerJoin("s.Empresa e")                
                 ->whereIn("t.ca_tipo", $this->tipoComprobante)
-                ->addwhere("ca_idempresa=?", array($user->getIdempresa()))
+                //->addwhere("ca_idempresa=?", array($user->getIdempresa()))
                 ->addOrderBy("t.ca_tipo, t.ca_comprobante");
 
         $tipos = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
@@ -88,7 +88,7 @@ class widgets5Components extends sfComponents {
             if (!isset($this->empresa)) {
                 //$tipoStr .= $tipo["e_ca_sigla"] . " » ";
             }
-            $tipoStr .= $tipo["t_ca_tipo"] . "-" . str_pad($tipo["t_ca_comprobante"], 2, "0", STR_PAD_LEFT) . " " . $tipo["t_ca_titulo"];
+            $tipoStr .= $tipo["t_ca_tipo"] . "-" . str_pad($tipo["t_ca_comprobante"], 2, "0", STR_PAD_LEFT) . " " . $tipo["t_ca_titulo"]." (".$tipo["t_ca_idempresa"].")";
             $this->data[] = array("id" => $tipo["t_ca_idtipo"], "name" => utf8_encode($tipoStr), "idempresa"=>$tipo["t_ca_idempresa"]);
         }
 
@@ -127,6 +127,23 @@ class widgets5Components extends sfComponents {
         foreach( $deducciones as $d ){
             $this->data[]=array("id"=>$d->getCaIddeduccion(),"name"=>utf8_encode($d->getCaDeduccion()));
         }
+    }
+    
+    public function executeWgMoneda(){
+        $this->data = array();
+
+        $monedas = Doctrine::getTable("Moneda")
+                ->createQuery("m")
+                ->addOrderBy("m.ca_sugerido desc")
+                ->addOrderBy("m.ca_idmoneda")
+                ->execute();
+
+        foreach ($monedas as $moneda) {
+            $this->data[] = array("id" => $moneda->getCaIdmoneda(),  "name" => utf8_encode($moneda->getCaNombre()) ,"sugerido" => $moneda->getCaSugerido());
+        }
+    }
+    
+    public function executeWgAplicacion(){
     }
     
     public function executeWgParametros() {

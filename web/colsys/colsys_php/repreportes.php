@@ -153,6 +153,7 @@ if (!isset($login) and !isset($boton) and !isset($accion)) {
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit;
     }
+    
 
     $condicion = str_replace("(ca_impoexpo = 'Importación' or ca_impoexpo = 'Triangulación')", "ca_impoexpo = 'Exportación'", $condicion);
     $rse = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
@@ -161,10 +162,12 @@ if (!isset($login) and !isset($boton) and !isset($accion)) {
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit;
     }
-
+    //$sql="select * from vi_repreportes $condicion";
+    //echo $sql;
+    
     $condicion = str_replace("ca_impoexpo = 'Exportación'", "ca_impoexpo = 'OTM-DTA'", $condicion);
     $condicion = str_replace("Marítimo", "Terrestre", $condicion);
-    $condicion = str_replace("Aéreo", "Terrestre", $condicion);
+    $condicion = str_replace("Aéreo", "Terrestre", $condicion);       
     $rso = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
     if (!$rso->Open("select * from vi_repreportes_otm $condicion")) {               // Selecciona todos lo registros de la vista Vi_Reportes Importación
         echo "<script>alert(\"" . addslashes($rse->mErrMsg) . "\");</script>";      // Muestra el mensaje de error

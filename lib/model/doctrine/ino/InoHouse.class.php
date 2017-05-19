@@ -23,7 +23,7 @@ class InoHouse extends BaseInoHouse
         if($this->master==null)
             $this->master=$this->getInoMaster();
         
-        $sql="SELECT fun_getcomision('".$this->getCaIdcliente()."', '".$this->master->getCaReferencia()."', 'Coltrans'::text) AS ca_porcentaje";
+        $sql="SELECT fun_getcomision('".$this->getCaIdcliente()."', '".$this->master->getCaReferencia()."', 'Colmas'::text) AS ca_porcentaje";
         $con = Doctrine_Manager::getInstance()->connection();        
         $st = $con->execute($sql);
         $porcentaje = $st->fetchColumn();
@@ -35,8 +35,23 @@ class InoHouse extends BaseInoHouse
         $deduccion=$this->master->getInoViDeduccion()->getCaValor();
         $utilidad=$this->master->getInoViUtilidad()->getCaValor();
         $ino=$ingreso+$utilidad-$costo-$deduccion;
+        //echo "ino:$ino - porce:$porcentaje<br>";
         $comision=($ino * ($porcentaje/100)  );
-        return $comision;
+        //echo $this->getCaIdcliente()."-".$this->master->getCaReferencia()."-".$comision;
+        //$r["comision_ino"]=($r["ino"]*($r["ca_porcentaje"]/100))-$r["comision_cobrada"];
+        $sql="SELECT sum(det.ca_cr) as com
+                FROM ino.tb_comprobantes com,ino.tb_detalles det 
+                WHERE com.ca_idcomprobante=det.ca_idcomprobante and det.ca_idmaster=".$this->getCaIdmaster()." AND 
+                det.ca_idhouse=".$this->getCaIdhouse()." AND com.ca_idtipo IN(11) and det.ca_cr !=0 and ca_fchanulado is  null and ca_usuanulado is  null limit 1";
+        $con = Doctrine_Manager::getInstance()->connection();
+        $st = $con->execute($sql);
+        $refs = $st->fetchAll();
+        $comision_cobrada=0;
+        foreach($refs as $r)
+        {
+            $comision_cobrada+=$r["com"];
+        }        
+        return $comision-$comision_cobrada;
     }
     
     function getCosto()
@@ -62,6 +77,11 @@ class InoHouse extends BaseInoHouse
         if($this->master==null)
             $this->master=$this->getInoMaster();
         return $this->master->getInoViDeduccion()->getCaValor();
+    }
+    
+    function getIno()
+    {
+        return $this->getIngreso()  + $this->getUtilidad() - $this->getCosto() - $this->getDeduccion();       
     }
     
     function getComprobantes()

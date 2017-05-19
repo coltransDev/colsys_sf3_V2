@@ -279,7 +279,7 @@ $cliente = $sf_data->getRaw("cliente");
                                         {boxLabel: 'Oportunidad en el Zarpe/Fecha de Salida', name: 'type_idg', inputValue: 3, <?= $typeidg == 3 ? "checked:'true'" : "" ?>},
                                         {boxLabel: 'Oportunidad en la Llegada', name: 'type_idg', inputValue: 4, <?= $typeidg == 4 ? "checked:'true'" : "" ?>},
                                         {boxLabel: 'Oportunidad en elaboración de factura', name: 'type_idg', inputValue: 5, <?= $typeidg == 5 ? "checked:'true'" : "" ?>},
-                                        {boxLabel: 'Oportunidad en la Desconsolidacion', id:"desconsolidacion", name: 'type_idg', inputValue: 6, <?= $typeidg == 5 ? "checked:'true'" : "" ?>}
+                                        {boxLabel: 'Oportunidad en la Desconsolidacion', id:"desconsolidacion", name: 'type_idg', inputValue: 6, <?= $typeidg == 6 ? "checked:'true'" : "" ?>}
                                     ],
                                     listeners: {
                                         change: function(radiogroup, radio) {                                            

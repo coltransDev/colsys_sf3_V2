@@ -44,7 +44,7 @@ function importar(id,idnew)
                 $destino = $reporte["ca_ciudestino"];
 
                 $proveedorCli = array();
-                $incoterms = array();
+                $incoterms = "";
 
                  if( $reporte["ca_idproveedor"] ){
                     $values = explode("|", $reporte["ca_idproveedor"]);
@@ -82,7 +82,7 @@ function importar(id,idnew)
                         echo "<br>Cerrado";
 
 
-                    if(strpos($reporte["ca_propiedades_cli"], "cuentaglobal=true") !== false)
+                    if(strpos($reporte["ca_propiedades_cli"], "cuentaglobal=true") !== false || strpos($reporte["ca_propiedades_cli"], "cuentaglobal=1") !== false)
                     {
                     ?>
                     <br><img src="/images/CG30.png" title="Cliente de Cuentas Globales" />

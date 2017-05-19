@@ -43,7 +43,7 @@ Ext.define('Colsys.Ino.GridBasic', {
                     url: '/inoF2/datosGridCostos',
                     reader: {
                         type: 'json',
-                        root: 'root',
+                        rootProperty: 'root',
                         totalProperty: 'total'
                     }
                 },        

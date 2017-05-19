@@ -28,7 +28,8 @@ class InoMaster extends BaseInoMaster
                        ->select("SUM(c.ca_valor*c.ca_tcambio)")
                        ->addWhere("m.ca_idmaster = ? ", $this->getCaIdmaster())
                        ->addWhere("t.ca_tipo =?", "F")
-                       ->addWhere("c.ca_estado =?", InoComprobante::TRANSFERIDO)
+		       ->addWhere("c.ca_fchanulado is null")
+                       //->addWhere("c.ca_estado =?", InoComprobante::TRANSFERIDO)
                        ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)        
                        ->execute();
         }
@@ -42,7 +43,8 @@ class InoMaster extends BaseInoMaster
                        ->select("SUM(c.ca_valor*c.ca_tcambio)")
                        ->addWhere("m.ca_idmaster = ? ", $this->getCaIdmaster())
                        ->addWhere("t.ca_tipo =?", "C")
-                       ->addWhere("c.ca_estado =?", InoComprobante::TRANSFERIDO)
+		       ->addWhere("c.ca_fchanulado is null")
+                       //->addWhere("c.ca_estado =?", InoComprobante::TRANSFERIDO)
                        ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)        
                        ->execute();
         }

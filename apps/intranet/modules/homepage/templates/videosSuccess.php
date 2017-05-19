@@ -5,12 +5,8 @@
  * and open the template in the editor.
  */
 ?>
-
-<a href="/intranet/images/video/canales_sensoriales.flv" style="display:block;width:520px;height:330px" id="player"></a>
-<!--<br><br
-<a href="/intranet/images/video/errorcomunicacion.flv" style="display:block;width:520px;height:330px" id="player"></a>
--->
+<h2><?=$video->getCaName()?></h2>
+<a href="<?=  url_for("images/video").$video->getCaPath()?>" style="display:block;width:520px;height:330px" id="player"></a>
 <script>    
     flowplayer("player", "/intranet/js/flowplayer/flowplayer-3.2.7.swf");
-//    flowplayer("player1", "/intranet/js/flowplayer/flowplayer-3.2.7.swf");
 </script>

@@ -99,6 +99,14 @@ class clientesComponents extends sfComponents {
             $this->concliente[] = array("idcontacto" => $contacto->getCaIdcontacto(),
                 "nombre" => utf8_encode(strtoupper($contacto->getNombre())));
         }
+        
+        $sucursales = $cliente->getIds()->getIdsSucursal();
+        $this->succliente = array();
+        foreach ($sucursales as $sucursal) {
+            $this->succliente[] = array("idsucursal" => $sucursal->getCaIdsucursal(),
+                "direccion" => utf8_encode($sucursal->getCaDireccion())
+            );
+        }
     }
     
     public function executeGridParamDocs(sfWebRequest $request){
@@ -116,17 +124,18 @@ class clientesComponents extends sfComponents {
 
     public function executeFormControlFinanciero(sfWebRequest $request) {
         $this->idcliente = $request->getParameter("idcliente");
-        $cliente = Doctrine::getTable("IdsCliente")->find($this->idcliente);
+        $ids = Doctrine::getTable("Ids")->find($this->idcliente);
+        $cliente = $ids->getIdsCliente();
                 
         
-        $this->razonSocial = utf8_encode($cliente->getIds()->getCaNombre());
+        $this->razonSocial = utf8_encode($ids->getCaNombre());
         $anioactual = date("Y");
         $minimo = Doctrine::getTable("Smlv")
-                ->createQuery("d")
-                ->where("d.ca_anno = ?", $anioactual)
+                ->createQuery("s")
+                ->where("s.ca_anno = ?", $anioactual)
                 ->fetchOne();
 
-        $this->minimo = $minimo->getCaSmlv();
+        $this->minimo = ($minimo)?$minimo->getCaSmlv():0;
 
         $aniopasado = date("Y") - 1;
         $anioantepasado = date("Y") - 2;
@@ -166,7 +175,7 @@ class clientesComponents extends sfComponents {
             "altex" => utf8_encode($cliente->getCaAltex()),
             "numempleados" => utf8_encode($cliente->getCaMenosxempleados())
             );
-
+        
         $con = Doctrine_Manager::getInstance()->connection();
         $sql = "select cv.* from control.tb_config_values cv inner join control.tb_config cf on cf.ca_idconfig = cv.ca_idconfig where ca_param = 'CU257'";
         $rs = $con->execute($sql);

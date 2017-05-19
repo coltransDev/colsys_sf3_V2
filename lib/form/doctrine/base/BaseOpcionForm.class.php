@@ -29,7 +29,7 @@ abstract class BaseOpcionForm extends BaseFormDoctrine
     $this->setValidators(array(
       'ca_id'             => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_id', 'required' => false)),
       'ca_idpregunta'     => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('Pregunta'))),
-      'ca_texto'          => new sfValidatorString(array('max_length' => 45)),
+      'ca_texto'          => new sfValidatorString(array('max_length' => 55)),
       'ca_orden'          => new sfValidatorInteger(array('required' => false)),
       'ca_default'        => new sfValidatorBoolean(array('required' => false)),
       'ca_fchcreado'      => new sfValidatorDateTime(array('required' => false)),

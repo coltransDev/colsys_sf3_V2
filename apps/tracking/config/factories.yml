@@ -48,7 +48,7 @@ all:
           prefix: tracksess
           servers:
             localserver:
-              host: 10.192.1.62
+              host: 172.16.1.13
               port: 11211
   routing:
     class: sfPatternRouting

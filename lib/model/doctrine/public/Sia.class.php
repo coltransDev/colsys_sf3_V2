@@ -12,7 +12,5 @@
  */
 class Sia extends BaseSia
 {
-    public function __toString(){
-        return $this->getCaNombre();
-    }
+
 }

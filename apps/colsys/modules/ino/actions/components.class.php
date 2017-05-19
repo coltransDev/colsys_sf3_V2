@@ -37,6 +37,7 @@ class inoComponents extends sfComponents {
      */
 
     public function executeFormHousePanel() {
+        $this->empresa=sfConfig::get('app_branding_name');
         
     }
 
@@ -117,14 +118,14 @@ class inoComponents extends sfComponents {
     public function executeEditCostosWindow() {
         $this->conceptos = Doctrine::getTable("InoConcepto")
                 ->createQuery("c")
-                ->select("ca_idconcepto,ca_concepto, cc.ca_idccosto, cc.ca_centro, cc.ca_subcentro, cc.ca_nombre")
-                ->innerJoin("c.InoParametroFacturacion p")
-                ->innerJoin("p.InoCentroCosto cc")
+                ->select("ca_idconcepto,ca_concepto")
+//                ->innerJoin("c.InoParametroFacturacion p")
+//                ->innerJoin("p.InoCentroCosto cc")
                 //->innerJoin("cc.CentroCosto cp")
                 ->innerJoin("c.InoConceptoModalidad cm")
                 ->innerJoin("cm.Modalidad m")
                 //->addWhere("c.ca_tipo = ? ", Constantes::RECARGO_LOCAL )
-                ->addWhere("p.ca_idcuenta IS NOT NULL")
+//                ->addWhere("p.ca_idcuenta IS NOT NULL")
                 //->addWhere("m.ca_impoexpo LIKE ? ", $impoexpo )
                 //->addWhere("m.ca_transporte LIKE ? ", $this->reporte->getCaTransporte() )
                 ->addOrderBy("c.ca_concepto")

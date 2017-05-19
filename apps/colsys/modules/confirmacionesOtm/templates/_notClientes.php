@@ -10,10 +10,15 @@
 <?
 $dimension = 100;
 foreach ($inoClientes as $inoCliente) {
-    $cliente = $inoCliente->getCliente();
+    //$cliente = $inoCliente->getCliente();
     $reporte = $inoCliente->getReporte();
+    $cliente = $reporte->getCliente();
     $comercial = $reporte->getCaLogin();    
-    $importador = $reporte->getRepOtm()->getImportador()->getCaNombre();    
+    $importador = $reporte->getRepOtm()->getImportador()->getCaNombre();
+    if ($importador)
+        $asunto = $importador . " / " . $cliente->getCaCompania();
+    else
+        $asunto = $cliente->getCaCompania();    
     
     // Archivos que se encuentran en el directorio antiguo
     $folder = date('Y') . DIRECTORY_SEPARATOR . "Referencias/Otm/" . $inoCliente->getInoMaster()->getCaReferencia() . "/" . $inoCliente->getCaDoctransporte() . "/";
@@ -26,22 +31,22 @@ foreach ($inoClientes as $inoCliente) {
             <input type="hidden" id='nombre_cliente_<?= $inoCliente->getOid() ?>' value="<?= $cliente->getCaCompania() ?>" />
         </td>
         <td class="listar" style='font-size: 11px; vertical-align:bottom;'><span class="listar" style="font-size: 11px; vertical-align:bottom"><b>Id Cliente:</b><br />
-            <?= number_format($inoCliente->getCaIdcliente()) ?>
+            <?= number_format($cliente->getCaIdcliente()) ?>
             </span></td>
         <td class="listar" style='font-size: 11px; vertical-align:bottom;' colspan="2">
             <b>Nombre del Cliente:</b> &nbsp;&nbsp;&nbsp;<a href="<?= "/reportesNeg/emailInstruccionesOtm/idreporte/" . $reporte->getCaIdreporte() . "/impoexpo/" . $reporte->getCaImpoexpo() . "/modo/" . $reporte->getCaTransporte() ?>" target="_blank"><img src="/images/22x22/email.gif" title="Enviar Instrucciones" style="vertical-align:middle" ></a><br />
-            <?= Utils::replace($cliente->getCaCompania())?><?=$comercial=="consolcargo"?" / ".$importador:""?>
+            <?=$asunto?>
         </td>
         <td class="listar" >
             <div align="right">
                 <?
                 if ($reporte) {
-                    if ($cliente->getProperty("cuentaglobal") == "true") {
+                    if ($cliente->getProperty("cuentaglobal") == "true" || $cliente->getProperty("cuentaglobal") == 1) {
                         ?>	
                         <img src="/images/CG30.png" title="Cliente de Cuentas Globales" />
                         <?
                     }
-                    if ($cliente->getProperty("consolidar_comunicaciones") == "true") {
+                    if ($cliente->getProperty("consolidar_comunicaciones") == "true" || $cliente->getProperty("consolidar_comunicaciones") == 1) {
                         ?>	
                         <img src="/images/consolidate.png" title="Cliente de Cuadro" />
                         <?

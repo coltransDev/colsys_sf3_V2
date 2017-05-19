@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Soap
  * @subpackage AutoDiscover
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: AutoDiscover.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: AutoDiscover.php 22899 2010-08-24 21:46:26Z alexander $
  */
 
 /**
@@ -92,30 +92,18 @@ class Zend_Soap_AutoDiscover implements Zend_Server_Interface
     protected $_bindingStyle = array('style' => 'rpc', 'transport' => 'http://schemas.xmlsoap.org/soap/http');
 
     /**
-     * Name of the class to handle the WSDL creation.
-     *
-     * @var string
-     */
-    protected $_wsdlClass = 'Zend_Soap_Wsdl';
-
-    /**
      * Constructor
      *
      * @param boolean|string|Zend_Soap_Wsdl_Strategy_Interface $strategy
      * @param string|Zend_Uri $uri
-     * @param string $wsdlClass
      */
-    public function __construct($strategy = true, $uri=null, $wsdlClass=null)
+    public function __construct($strategy = true, $uri=null)
     {
         $this->_reflection = new Zend_Server_Reflection();
         $this->setComplexTypeStrategy($strategy);
 
         if($uri !== null) {
             $this->setUri($uri);
-        }
-
-        if($wsdlClass !== null) {
-            $this->setWsdlClass($wsdlClass);
         }
     }
 
@@ -160,36 +148,6 @@ class Zend_Soap_AutoDiscover implements Zend_Server_Interface
             $this->setUri($uri);
         }
         return $uri;
-    }
-
-    /**
-     * Set the name of the WSDL handling class.
-     *
-     * @see Zend_Soap_Exception
-     * @see Zend_Soap_Exception
-     * @param  string $wsdlClass
-     * @return Zend_Soap_AutoDiscover
-     * @throws Zend_Soap_AutoDiscover_Exception
-     */
-    public function setWsdlClass($wsdlClass)
-    {
-        if (!is_string($wsdlClass) && !is_subclass_of($wsdlClass, 'Zend_Soap_Wsdl')) {
-            require_once "Zend/Soap/AutoDiscover/Exception.php";
-            throw new Zend_Soap_AutoDiscover_Exception("No Zend_Soap_Wsdl subclass given to Zend_Soap_AutoDiscover::setWsdlClass as string.");
-        }
-        $this->_wsdlClass = $wsdlClass;
-
-        return $this;
-    }
-
-    /**
-     * Return the name of the WSDL handling class.
-     *
-     * @return string
-     */
-    public function getWsdlClass()
-    {
-        return $this->_wsdlClass;
     }
 
     /**
@@ -312,7 +270,7 @@ class Zend_Soap_AutoDiscover implements Zend_Server_Interface
     {
         $uri = $this->getUri();
 
-        $wsdl = new $this->_wsdlClass($class, $uri, $this->_strategy);
+        $wsdl = new Zend_Soap_Wsdl($class, $uri, $this->_strategy);
 
         // The wsdl:types element must precede all other elements (WS-I Basic Profile 1.1 R2023)
         $wsdl->addSchemaTypeSection();
@@ -378,10 +336,10 @@ class Zend_Soap_AutoDiscover implements Zend_Server_Interface
     /**
      * Add a function to the WSDL document.
      *
-     * @param Zend_Server_Reflection_Function_Abstract $function function to add
-     * @param Zend_Soap_Wsdl                           $wsdl     WSDL document
-     * @param object                                   $port     wsdl:portType
-     * @param object                                   $binding  wsdl:binding
+     * @param $function Zend_Server_Reflection_Function_Abstract function to add
+     * @param $wsdl Zend_Soap_Wsdl WSDL document
+     * @param $port object wsdl:portType
+     * @param $binding object wsdl:binding
      * @return void
      */
     protected function _addFunctionToWsdl($function, $wsdl, $port, $binding)
@@ -479,11 +437,7 @@ class Zend_Soap_AutoDiscover implements Zend_Server_Interface
         }
 
         // Add the binding operation
-        if($isOneWayMessage == false) {
-            $operation = $wsdl->addBindingOperation($binding, $function->getName(),  $this->_operationBodyStyle, $this->_operationBodyStyle);
-        } else {
-            $operation = $wsdl->addBindingOperation($binding, $function->getName(),  $this->_operationBodyStyle);
-        }
+        $operation = $wsdl->addBindingOperation($binding, $function->getName(),  $this->_operationBodyStyle, $this->_operationBodyStyle);
         $wsdl->addSoapOperation($operation, $uri . '#' .$function->getName());
 
         // Add the function name to the list

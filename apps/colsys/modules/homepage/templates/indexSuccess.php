@@ -49,7 +49,7 @@ $plantillas = $sf_data->getRaw("plantillas");
                                 <li><a href="http://www.coltrans.com.co/intranet" target="blank">Intranet</a></li>
                                 <li><a href="<?=$usuario->getSucursal()->getEmpresa()->getCaTracking()?>" target="blank">Tracking</a></li>
                                 <li><a href="http://www.gerenteslatinos.com/aulavirtualgrupo" target="blank">Aula Virtual</a></li>
-                                <li><a href="https://www.coltrans.com.co/images/publicidad/GoverLAN_Client_Agent_Installer.zip" target="blank">Soporte Remoto</a></li>
+                                <li><a href="https://www.colsys.com.co/images/publicidad/GoverLAN_Client_Agent_Installer.zip" target="blank">Soporte Remoto</a></li>
                             </ul>
                         </div>
                     </div>

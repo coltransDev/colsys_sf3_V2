@@ -170,5 +170,14 @@ function array_avg($array,$precision="2") {
     }else {
         return "ERROR in function array_avg(): this is a not array";
     }
-} 
+}
+
+function hourTosec ($hms) {
+        list($h, $m, $s) = explode (":", $hms);
+        $seconds = 0;
+        $seconds += (intval($h) * 3600);
+        $seconds += (intval($m) * 60);
+        $seconds += (intval($s));
+        return $seconds;        
+}
 ?>

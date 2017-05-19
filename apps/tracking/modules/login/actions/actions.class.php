@@ -107,7 +107,7 @@ class loginActions extends sfActions
 						$email->setCaBodyhtml( $contentHTML );
 						$email->setCaBody( $contentPlain );			
 						$email->save();
-						$email->send();		
+						//$email->send();		
 						
 																			
 						$this->setTemplate("register");

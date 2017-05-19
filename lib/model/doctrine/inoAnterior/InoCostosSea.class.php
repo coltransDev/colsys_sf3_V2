@@ -42,8 +42,7 @@ class InoCostosSea extends BaseInoCostosSea
 
             if(count($costos)>0)
                 return "-3";
-            
-            
+
             $iddeducciones=array(109,110,111,112,113);
             $deduccion=new InoDeduccionesSea();
             
@@ -53,18 +52,17 @@ class InoCostosSea extends BaseInoCostosSea
                                ->addWhere("i.ca_idinocliente = ?  ",  $inoCliente->getCaIdinocliente() )
                                ->andWhereIn("ca_iddeduccion",$iddeducciones)
                                ->fetchOne();
-            
 
             if(count($deduccion)<1 || !$deduccion)
             {
-                $valor2=$comprobante->getCaValor();
+                $valor2=$comprobante->getCaValor2();
             }
             else
             {
                 $valor2=$deduccion->getCaValor();
                 $deduccion->delete($conn);
             }
-            
+
             $inoCostosSea = new InoCostosSea();            
             $costo = Doctrine::getTable("Costo")
                                ->createQuery("c")
@@ -78,24 +76,43 @@ class InoCostosSea extends BaseInoCostosSea
             $inoCostosSea->setCaIdmoneda($comprobante->getCaIdmoneda());
             $inoCostosSea->setCaIdproveedor($idproveedor);
             $inoCostosSea->setCaProveedor("COLOTM-".$comprobante->getInoHouse()->getCliente()->getCaCompania()."-".$comprobante->getInoHouse()->getCaDoctransporte());
-            $inoCostosSea->setCaNeto($comprobante->getCaValor());
+            $inoCostosSea->setCaNeto($comprobante->getCaValor2());
             $inoCostosSea->setCaReferencia($inoMaestraSea->getCaReferencia());
             $inoCostosSea->setCaTcambio($comprobante->getCaTcambio());
             $inoCostosSea->setCaTcambioUsd($comprobante->getCaTcambioUsd());
-            $inoCostosSea->setCaVenta($valor2);            
+            $inoCostosSea->setCaVenta($valor2);
             
             $inoCostosSea->save($conn);
             
             $idinocosto=$inoCostosSea->getCaIdinocostosSea();
             
-            if($valor2!=$comprobante->getCaValor())
+            if($valor2!=$comprobante->getCaValor2())
             {
                 $inoutilidadSea = new InoutilidadSea();
                 $inoutilidadSea->setCaIdinocosto($idinocosto);
                 $inoutilidadSea->setCaIdinocliente($inoCliente->getCaIdinocliente());
-                $inoutilidadSea->setCaValor($valor2-$comprobante->getCaValor());
+                $inoutilidadSea->setCaValor($valor2-$comprobante->getCaValor2());
                 $inoutilidadSea->save($conn);
             }
+            
+            //$inoCliente
+            if( $inoCliente->getCaUsuactualizado()!="")
+                $usua = Doctrine::getTable("Usuario")->find($inoCliente->getCaUsuactualizado());
+            else
+                $usua = Doctrine::getTable("Usuario")->find($inoCliente->getCaUsucreado());
+                    
+            Utils::sendEmail(
+                array(
+                    "from"=>"colsys@coltrans.com.co",
+                    "fromname" => "colsys",
+                    "to"=>$comprobante->getUsuActualizado()->getCaEmail().",".$usua->getCaEmail()."",
+                    "subject"=>"Transferencia de factura de Col Otm",
+                    "body"=>"Transferencia de factura de Col Otm",
+                    "mensaje"=> "Se transfirio la factura  No : ".$comprobante->getCaConsecutivo()." <br>"
+                     ."Ref OTM :".$comprobante->getInoHouse()->getInoMaster()->getCaReferencia()."<br>"                        
+                     ."Ref  Maritima:".$inoMaestraSea->getCaReferencia()."<br>"
+                    )
+                );
             return $inoCostosSea->getOid();            
         }
         catch(Exception $e)
@@ -103,5 +120,4 @@ class InoCostosSea extends BaseInoCostosSea
             throw new Exception("Error : ".$e->getMessage());
         }
     }
-    
 }

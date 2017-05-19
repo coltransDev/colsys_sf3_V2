@@ -243,7 +243,7 @@ Ext.ux.form.SuperBoxSelect = Ext.extend(Ext.ux.form.SuperBoxSelect,Ext.form.Comb
         Ext.ux.form.SuperBoxSelect.superclass.initComponent.call(this);
         if(this.mode === 'remote' && this.store){
         	this.store.on('load', this.onStoreLoad, this);
-        }
+       }
     },
     onRender:function(ct, position) {
     	var h = this.hiddenName;
@@ -277,6 +277,7 @@ Ext.ux.form.SuperBoxSelect = Ext.extend(Ext.ux.form.SuperBoxSelect,Ext.form.Comb
         }
         
         this.setupFormInterception();
+        
     },
     doTransform : function() {
     	var s = Ext.getDom(this.transform), transformValues = [];
@@ -1086,7 +1087,7 @@ Ext.ux.form.SuperBoxSelect = Ext.extend(Ext.ux.form.SuperBoxSelect,Ext.form.Comb
     addItem : function(newItemObject, /*hidden param*/ forcedAdd){
         
         var val = newItemObject[this.valueField];
-
+        
         if(this.disabled) {
             return false;
         }
@@ -1096,6 +1097,7 @@ Ext.ux.form.SuperBoxSelect = Ext.extend(Ext.ux.form.SuperBoxSelect,Ext.form.Comb
         
         //use existing record if found
         var record = this.findRecord(this.valueField, val);
+        
         if (record) {
             this.addRecord(record);
             return;
@@ -1332,7 +1334,7 @@ Ext.ux.form.SuperBoxSelect = Ext.extend(Ext.ux.form.SuperBoxSelect,Ext.form.Comb
         }
         if(this.mode === 'remote') {
         	this.setOriginal = true;
-        }
+        }        
     },
     /**
      * Adds an existing value to the SuperBoxSelect component.
@@ -1351,9 +1353,10 @@ Ext.ux.form.SuperBoxSelect = Ext.extend(Ext.ux.form.SuperBoxSelect,Ext.form.Comb
             value = '' + value;
             values = value.split(this.valueDelimiter); 
         }
-        
-        Ext.each(values,function(val){
+
+        Ext.each(values,function(val){            
             var record = this.findRecord(this.valueField, val);
+            
             if(record){
                 this.addRecord(record);
             }else if(this.mode === 'remote'){
@@ -1377,8 +1380,10 @@ Ext.ux.form.SuperBoxSelect = Ext.extend(Ext.ux.form.SuperBoxSelect,Ext.form.Comb
             this.value = value;
             return;
         }
+        
         this.removeAllItems().resetStore();
         this.remoteLookup = [];
+        
         this.addValue(value);
                 
     },
@@ -1389,6 +1394,7 @@ Ext.ux.form.SuperBoxSelect = Ext.extend(Ext.ux.form.SuperBoxSelect,Ext.form.Comb
      * @param {Array} data An Array of item objects containing the {@link #Ext.ux.form.SuperBoxSelect-displayField}, {@link #Ext.ux.form.SuperBoxSelect-valueField} and {@link #Ext.ux.form.SuperBoxSelect-classField} properties.  
      */
     setValueEx : function(data){
+        
         if(!this.rendered){
             this.value = data;
             return;
@@ -1410,7 +1416,7 @@ Ext.ux.form.SuperBoxSelect = Ext.extend(Ext.ux.form.SuperBoxSelect,Ext.form.Comb
         
         Ext.each(data,function(item){
             this.addItem(item);
-        },this);
+        },this);        
     },
     /**
      * Returns true if the SuperBoxSelect component has a selected item with a value matching the 'val' parameter.
@@ -1428,7 +1434,8 @@ Ext.ux.form.SuperBoxSelect = Ext.extend(Ext.ux.form.SuperBoxSelect,Ext.form.Comb
             }
         },this);
         return has;
-    },
+    },    
+
     onSelect : function(record, index) {
     	if (this.fireEvent('beforeselect', this, record, index) !== false){
             var val = record.data[this.valueField];
@@ -1564,8 +1571,7 @@ Ext.ux.form.SuperBoxSelect = Ext.extend(Ext.ux.form.SuperBoxSelect,Ext.form.Comb
             }
         }
     },
-    onStoreLoad : function(store, records, options){
-        //accomodating for bug in Ext 3.0.0 where options.params are empty
+    onStoreLoad : function(store, records, options){        
         var q = options.params[this.queryParam] || store.baseParams[this.queryParam] || "",
             isValuesQuery = options.params[this.queryValuesIndicator] || store.baseParams[this.queryValuesIndicator];
         
@@ -1721,8 +1727,7 @@ Ext.ux.form.SuperBoxSelectItem = Ext.extend(Ext.ux.form.SuperBoxSelectItem,Ext.C
         this.lnk.un('focus', this.onLnkFocus, this);
         this.lnk.un('blur', this.onLnkBlur, this);
     },
-    onRender : function(ct, position){
-        
+    onRender : function(ct, position){        
         Ext.ux.form.SuperBoxSelectItem.superclass.onRender.call(this, ct, position);
         
         var el = this.el;
@@ -1730,7 +1735,7 @@ Ext.ux.form.SuperBoxSelectItem = Ext.extend(Ext.ux.form.SuperBoxSelectItem,Ext.C
             el.remove();
         }
         
-        this.el = el = ct.createChild({ tag: 'li' }, ct.last());
+        this.el = el = ct.createChild({tag: 'li'}, ct.last());
         el.addClass('x-superboxselect-item');
         
         var btnEl = this.owner.navigateItemsWithTab ? ( Ext.isSafari ? 'button' : 'a') : 'span';

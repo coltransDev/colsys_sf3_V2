@@ -29,7 +29,7 @@ EOF;
 
 	sfContext::createInstance($this->configuration)->dispatch();	
 	
-	echo sfContext::getInstance()->getController()->getPresentationFor( 'formulario', 'envioEmailsColmas');
+	echo sfContext::getInstance()->getController()->getPresentationFor( 'formulario', 'envioEmailsColtrans');
   }
 }
 

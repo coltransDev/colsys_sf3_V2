@@ -8,45 +8,30 @@ comboBoxRenderer = function (combo) {
         return (rec === null ? value : rec.get(combo.displayField));
     };
 };
-comboProveedor = Ext.create('Colsys.Widgets.WgProveedores', {
-    idmaster: this.idmaster,
-    idtransporte: this.idtransporte
-});
-
-comboCosto = Ext.create('Colsys.Widgets.wgConceptos', {
-    costo: 'true',
-    //costo: 'true',
-    idtransporte: this.idtransporte,
-    idimpoexpo: this.idimpoexpo
-});
-
-
-
 
 Ext.define('Colsys.Ino.GridCosto', {
     extend: 'Ext.grid.Panel',
     alias: 'widget.Colsys.Ino.GridCosto',
+    width: 800,
+    height: 450,
+    frame: true,
+    iconCls: 'icon-grid',
     viewConfig: {
         getRowClass: function (record, rowIndex, rowParams, store) {
 
-            if ((record.get('inoventa' + this.up('grid').idmaster)) - (record.get('neto' + this.up('grid').idmaster)) != 0) {
+            if ((record.get('valor' + this.up('grid').idmaster) - record.get('inoventa' + this.up('grid').idmaster)) != 0) {
                 return "row_purple";
             }
         }
     },
-    //width: 400,
-    //height: 200,
-    title: 'Summary Test',
-    style: 'padding: 20px',
+    autoHeight: true,
     features: [{
-            ftype: 'summary'
+            ftype: 'summary',
+            dock: 'bottom'
         }],
     selModel: {
         selType: 'cellmodel'
     },
-    plugins: [
-        new Ext.grid.plugin.CellEditing({clicksToEdit: 1})
-    ],
     listeners: {
         activate: function (ct, position) {
             if (this.load == false || this.load == "undefined" || !this.load)
@@ -60,10 +45,6 @@ Ext.define('Colsys.Ino.GridCosto', {
 
             store = this.store;
             idmaster = this.idmaster;
-            /*comboProveedor.getStore().add(
-             //{"id":data.c_ca_idproveedor, "name":data.i_ca_nombre}
-             {"idlinea":800200969, "linea":"AAAA"}
-             );*/
 
             var obj = null;
             Ext.Ajax.request({
@@ -73,57 +54,41 @@ Ext.define('Colsys.Ino.GridCosto', {
                 },
                 success: function (response, opts) {
                     obj = Ext.decode(response.responseText);
+                    if (obj.root) {
+                        for (i = 0; i < obj.root.length; i++) {
+                            eval("var idlinea=obj.root[i].idproveedor" + idmaster + ";var linea=obj.root[i].proveedor" + idmaster + ";");
+                            Ext.getCmp('comboProveedor' + idmaster).getStore().add(
+                                    {"id": idlinea, "nombre": linea}
+                                    
+                            );
+                            
+                            eval("var nombrecos=obj.root[i].nombrecosto" + idmaster + ";var idcos=obj.root[i].idcosto" + idmaster + ";");
+                            Ext.getCmp('comboCosto' + idmaster).store.add(
+                                    {"id": idcos, "name": nombrecos}
+                            );
+                    
+                        }
+                        
 
-                    for (i = 0; i < obj.root.length; i++)
-                        eval("var idlinea=obj.root[i].idproveedor" + idmaster + ";var linea=obj.root[i].proveedor" + idmaster + ";");
-                    //eval("var linea=obj.root[i].proveedor"+idmaster+";");
-                    comboProveedor.getStore().add(
-                            {"idlinea": idlinea, "linea": linea}
-                    );
-
-
-                    store.loadData(obj.root);
-                    store.commitChanges();
+                        store.loadData(obj.root);
+                        store.commitChanges();
+                        if (store.getCount() > 0) {
+                            Ext.getCmp("costo-" + this.idmaster).getView().focusRow(0);
+                        }
+                    } else {
+                        var r = Ext.create(store.model);
+                        r.set('idmaster' + idmaster, idmaster);
+                    }
 
                 },
                 failure: function (response, opts) {
 
                     Ext.MessageBox.alert("Colsys", "Se presento el siguiente error " + response.status);
-
                 }
             });
-
-
-
-            /*this.store.load({
-             scope: this,
-             callback: function(records, operation, success) {
-             
-             for(i=0;i<records.length;i++)
-             {
-             comboProveedor.getStore().add(
-             //{"id":data.c_ca_idproveedor, "name":data.i_ca_nombre}
-             {"idlinea":records[i].data.c_ca_idproveedor, "linea":records[i].data.i_ca_nombre}
-             );
-             //store.data.items[i].data.idproveedor10018=records[i].data.i_ca_nombre;
-             
-             
-             }
-             
-             for(i=0;i<records.length;i++)
-             {
-             
-             store.data.items[i].set('idproveedor'+idmaster,records[i].data.c_ca_idproveedor);
-             
-             }
-             
-             
-             } 
-             });*/
         },
         beforeedit: function (editor, e, eOpts) {
             var store = this.getStore();
-
             if (e.field == 'tcambio_usd' + this.idmaster) {
                 if (store.data.items[e.rowIdx].get('idmoneda' + this.idmaster) == "USD" || store.data.items[e.rowIdx].get('idmoneda' + this.idmaster) == "COP") {
                     return false;
@@ -132,7 +97,6 @@ Ext.define('Colsys.Ino.GridCosto', {
         },
         blur: function (editor, e, eOpts) {
             var store = this.getStore();
-
             if (e.field == "idmoneda" + this.idmaster) {
                 if (store.data.items[e.rowIdx].get('idmoneda' + this.idmaster) == "USD" || store.data.items[e.rowIdx].get('idmoneda' + this.idmaster) == "COP") {
                     store.data.items[e.rowIdx].set('tcambio_usd' + this.idmaster, "1");
@@ -140,96 +104,64 @@ Ext.define('Colsys.Ino.GridCosto', {
             }
 
             //if (e.field == "neto" + this.idmaster || e.field == "tcambio_usd" + this.idmaster) {
-            store.data.items[e.rowIdx].set('neto_usd' + this.idmaster, (
-                    store.data.items[e.rowIdx].get('neto' + this.idmaster) /
-                    store.data.items[e.rowIdx].get('tcambio_usd' + this.idmaster)
-                    ));
-            // }
 
+            if (store.data.items[e.rowIdx].get('tcambio_usd' + this.idmaster) != 0) {
+                store.data.items[e.rowIdx].set('neto_usd' + this.idmaster, (
+                        store.data.items[e.rowIdx].get('neto' + this.idmaster) /
+                        store.data.items[e.rowIdx].get('tcambio_usd' + this.idmaster)
+                        ));
+            }
 
-
-
-            //if (e.field == "tcambio" + this.idmaster) {
             store.data.items[e.rowIdx].set('valor_pesos' + this.idmaster, (
                     store.data.items[e.rowIdx].get('tcambio' + this.idmaster) *
                     store.data.items[e.rowIdx].get('neto_usd' + this.idmaster)));
-
-            store.data.items[e.rowIdx].set('inoventa' + this.idmaster, (
-                    store.data.items[e.rowIdx].get('venta' + this.idmaster) -
-                    store.data.items[e.rowIdx].get('valor_pesos' + this.idmaster)));
-            //}
-
-            //if (e.field == "concepto" + this.idmaster)
-            //{
-            /*store.data.items[e.rowIdx].set('idcosto' + this.idmaster, e.value);
-             store.data.items[e.rowIdx].set('concepto' + this.idmaster, editor.editors.items[0].field.rawValue);*/
-            //  }
-
-            // if (e.field == "valor_pesos" + this.idmaster || e.field == "ventacop" + this.idmaster) {
             store.data.items[e.rowIdx].set('inoventa' + this.idmaster, (
                     store.data.items[e.rowIdx].get('venta' + this.idmaster) -
                     store.data.items[e.rowIdx].get('valor_pesos' + this.idmaster)));
 
-
-            // }
+            store.data.items[e.rowIdx].set('inoventa' + this.idmaster, (
+                    store.data.items[e.rowIdx].get('venta' + this.idmaster) -
+                    store.data.items[e.rowIdx].get('valor_pesos' + this.idmaster)));
         },
         edit: function (editor, e, eOpts)
         {
             var store = this.getStore();
-
             if (e.field == "idmoneda" + this.idmaster) {
                 if (store.data.items[e.rowIdx].get('idmoneda' + this.idmaster) == "USD" || store.data.items[e.rowIdx].get('idmoneda' + this.idmaster) == "COP") {
                     store.data.items[e.rowIdx].set('tcambio_usd' + this.idmaster, "1");
+                    store.data.items[e.rowIdx].set('tcambio' + this.idmaster, "1");
                 }
             }
 
-            //if (e.field == "neto" + this.idmaster || e.field == "tcambio_usd" + this.idmaster) {
-            store.data.items[e.rowIdx].set('neto_usd' + this.idmaster, (
-                    store.data.items[e.rowIdx].get('neto' + this.idmaster) /
-                    store.data.items[e.rowIdx].get('tcambio_usd' + this.idmaster)
-                    ));
-            // }
+            if (store.data.items[e.rowIdx].get('tcambio_usd' + this.idmaster) != 0) {
+                store.data.items[e.rowIdx].set('neto_usd' + this.idmaster, (
+                        store.data.items[e.rowIdx].get('neto' + this.idmaster) /
+                        store.data.items[e.rowIdx].get('tcambio_usd' + this.idmaster)
+                        ));
+            }
 
 
 
 
 
 
-            //if (e.field == "tcambio" + this.idmaster) {
             store.data.items[e.rowIdx].set('valor_pesos' + this.idmaster, (
                     store.data.items[e.rowIdx].get('tcambio' + this.idmaster) *
                     store.data.items[e.rowIdx].get('neto_usd' + this.idmaster)));
-
-
-
-
-
-            store.data.items[e.rowIdx].set('inoventa' + this.idmaster, (
-                    store.data.items[e.rowIdx].get('venta' + this.idmaster) -
-                    store.data.items[e.rowIdx].get('valor_pesos' + this.idmaster)));
-            //}
-
-            //if (e.field == "concepto" + this.idmaster)
-            //{
-            /*store.data.items[e.rowIdx].set('idcosto' + this.idmaster, e.value);
-             store.data.items[e.rowIdx].set('concepto' + this.idmaster, editor.editors.items[0].field.rawValue);*/
-            //  }
-
-            // if (e.field == "valor_pesos" + this.idmaster || e.field == "ventacop" + this.idmaster) {
             store.data.items[e.rowIdx].set('inoventa' + this.idmaster, (
                     store.data.items[e.rowIdx].get('venta' + this.idmaster) -
                     store.data.items[e.rowIdx].get('valor_pesos' + this.idmaster)));
 
 
-            // }
+            store.data.items[e.rowIdx].set('inoventa' + this.idmaster, (
+                    store.data.items[e.rowIdx].get('venta' + this.idmaster) -
+                    store.data.items[e.rowIdx].get('valor_pesos' + this.idmaster)));
         },
         beforeitemcontextmenu: function (view, record, item, index, e)
         {
             var idmast = this.idmaster;
             e.stopEvent();
             var record = this.store.getAt(index);
-
-
             var menu = new Ext.menu.Menu({
                 items: [
                     {
@@ -247,7 +179,6 @@ Ext.define('Colsys.Ino.GridCosto', {
                                                 },
                                                 success: function (response, opts) {
                                                     var obj = Ext.decode(response.responseText);
-
                                                     if (obj.errorInfo)
                                                     {
                                                         Ext.MessageBox.alert("Colsys", "Se presento un error: ");
@@ -272,8 +203,38 @@ Ext.define('Colsys.Ino.GridCosto', {
                 ]
             }).showAt(e.getXY());
         },
-        beforerender: function (me, eOpts) {
+        afterrender: function (ct, position) {
+            me = this;
+            me.getStore().load({
+                callback: function (records, operation, success) {
+                    respuesta = Ext.JSON.decode(operation._response.responseText);
+                    //Ext.getCmp('comboCosto' + master).store.reload();
+                    for (var i = 0; i < respuesta.root.length; i++) {
+                        var rec = me.getStore().getAt(i);
+                        master = respuesta.root[i].idmaster;
+                      /*  if (master) {
+                            eval("var nombrecos=respuesta.root[i].nombrecosto" + master + ";var idcos=respuesta.root[i].idcosto" + master + ";");
+                            Ext.getCmp('comboCosto' + master).store.add(
+                                    {"id": idcos, "name": nombrecos}
+                            );
 
+                            eval("var idprov=respuesta.root[i].idproveedor" + master + ";var prov=respuesta.root[i].proveedor" + master + ";");
+                            Ext.getCmp('comboProveedor' + master).store.add(
+                                    {"id": idprov, "nombre": prov}
+                            );
+                            Ext.getCmp('comboProveedor' + master).setValue(idprov);
+
+                        }*/
+                    }
+                    //Ext.getCmp('comboProveedor' + master).store.reload();
+
+                    //me.getStore().reload();
+                }
+            });
+
+        },
+        beforerender: function (ct, position) {
+            var me = this;
             this.setHeight(this.up('tabpanel').up('tabpanel').getHeight() - 150);
             this.setWidth(this.up('tabpanel').up('tabpanel').getWidth() - 50);
             this.reconfigure(
@@ -304,7 +265,7 @@ Ext.define('Colsys.Ino.GridCosto', {
                             url: '/inoF2/datosGridCostos',
                             reader: {
                                 type: 'json',
-                                root: 'root',
+                                rootProperty: 'root',
                                 totalProperty: 'total'
                             }
                         },
@@ -326,14 +287,16 @@ Ext.define('Colsys.Ino.GridCosto', {
                             sortable: true,
                             width: 120,
                             tpl: '<span class="x-form-item-label-default">{name}</span>',
-                            editor: {
-                                xtype: comboCosto,
+                            editor: Ext.create('Colsys.Widgets.wgConceptos', {
                                 costo: 'true',
-                                transporte: this.idtransporte,
-                                impoexpo: this.idimpoexpo
-
-                            },
-                            renderer: comboBoxRenderer(comboCosto)
+                                idtransporte: this.idtransporte,
+                                idimpoexpo: this.idimpoexpo,
+                                id: 'comboCosto' + this.idmaster
+                            }),
+                            renderer: comboBoxRenderer(Ext.getCmp('comboCosto' + this.idmaster)),
+                            summaryRenderer: function (value, summaryData, dataIndex) {
+                                return "<span style='font-weight: bold;'> TOTALES</span>";
+                            }
                         },
                         {
                             header: "Factura",
@@ -361,7 +324,7 @@ Ext.define('Colsys.Ino.GridCosto', {
                                         d = "0" + d
                                     }
                                     var m = formattedDate.getMonth();
-                                    m += 1;  // JavaScript months are 0-11
+                                    m += 1; // JavaScript months are 0-11
                                     if (m < 10) {
                                         m = "0" + m;
                                     }
@@ -410,14 +373,11 @@ Ext.define('Colsys.Ino.GridCosto', {
                             width: 80,
                             align: 'right',
                             readOnly: true,
-                            renderer: Ext.util.Format.numberRenderer('0,0.00'),
-                            //summaryType: 'sum',
+                            renderer: Ext.util.Format.numberRenderer('0.0000'),
                             editor: {
-                                xtype: 'numberfield'
+                                xtype: 'numberfield',
+                                decimalPrecision: 4
                             },
-                            /*summaryRenderer: function (value, summaryData, dataIndex) {
-                             return "<span style='font-weight: bold;'> " + Ext.util.Format.usMoney(value) + "</span>";
-                             }*/
                         },
                         {
                             header: "Neta<br>USD",
@@ -437,20 +397,16 @@ Ext.define('Colsys.Ino.GridCosto', {
                             }
                         },
                         {
-                            header: "Cambio<br>" + this.monedalocal,
+                            header: "Cambio<br>",
                             dataIndex: 'tcambio' + this.idmaster,
                             hideable: false,
                             sortable: true,
                             width: 80,
                             align: 'right',
                             renderer: Ext.util.Format.numberRenderer('0,0.00'),
-                            // summaryType: 'sum',
                             editor: {
                                 xtype: 'numberfield'
                             },
-                            /*summaryRenderer: function (value, summaryData, dataIndex) {
-                             return "<span style='font-weight: bold;'> " + Ext.util.Format.usMoney(value) + "</span>";
-                             }*/
                         },
                         {
                             header: "Neto COP",
@@ -503,30 +459,66 @@ Ext.define('Colsys.Ino.GridCosto', {
                             dataIndex: 'idproveedor' + this.idmaster,
                             sortable: true,
                             width: 320,
-                            tpl: '<span class="x-form-item-label-default">{proveedor}</span>',
-                            editor: {
-                                xtype: comboProveedor,
-                                idmaster: this.idmaster,
-                                idtransporte: this.idtransporte
-                            },
-                            renderer: comboBoxRenderer(comboProveedor)
+                            tpl: '<span class="x-form-item-label-default">{nombre}</span>',
+                            editor:
+                                    Ext.create('Colsys.Widgets.WgIdsCostos', {
+                                        idmaster: this.idmaster,
+                                        idtransporte: this.idtransporte,
+                                        id: 'comboProveedor' + this.idmaster,
+                                        displayField: 'nombre',
+                                        valueField: 'id',
+                                        store: Ext.create('Ext.data.Store', {
+                                            fields: [
+                                                {name: 'idalterno'},
+                                                {name: 'nombre'},
+                                                {name: 'id'}
+                                            ],
+                                            proxy: {
+                                                type: 'ajax',
+                                                url: '/widgets5/datosIdsCostos',
+                                                reader: {
+                                                    type: 'json',
+                                                    rootProperty: 'root'
+                                                },
+                                                extraParams: {
+                                                    //tipo: this.tipo
+                                                }
+                                            }
+                                        }),
+                                        listeners: {
+                                            beforerender: function (ct, position) {
+                                                this.getStore().load({
+                                                    params: {
+                                                        tipo: ''
+
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }),
+                            renderer: comboBoxRenderer(Ext.getCmp('comboProveedor' + this.idmaster))
                         },
                         {
                             xtype: 'actioncolumn',
                             width: 50,
                             items: [{
                                     getClass: function (v, meta, rec) {
-                                        if ((rec.data.c_ca_venta - rec.data.c_ca_neto) != 0) {
+
+                                        if (rec.get('inoventa' + this.up('grid').idmaster) != 0) {
                                             return 'import';
                                         }
                                     },
                                     tooltip: 'INO x Sobreventa',
                                     handler: function (grid, rowIndex, colIndex) {
                                         var rec = grid.getStore().getAt(rowIndex);
+                                        store = grid.getStore();
+                                        idmaster = this.up('grid').idmaster;
+                                        combocosto = Ext.getCmp("comboCosto" + idmaster).getStore();
+                                        idcos = combocosto.findRecord("id", rec.get('idcosto' + idmaster));
                                         if (winTercero == null)
                                         {
                                             winTercero = Ext.create('Ext.window.Window', {
-                                                title: 'Edicion de Terceros',
+                                                title: 'Sobreventa ' + idcos.data.name + "   Valor a Igualar: " + rec.get('inoventa' + idmaster),
                                                 height: 200,
                                                 width: 600,
                                                 layout: 'fit',
@@ -534,12 +526,16 @@ Ext.define('Colsys.Ino.GridCosto', {
                                                         {
                                                             xtype: "Colsys.Ino.GridSobreventa",
                                                             idmaster: this.up('grid').idmaster,
-                                                            idinocosto: rec.data.c_ca_idinocosto
+                                                            idinocosto: rec.get('idinocosto' + idmaster)
                                                         },
                                                 listeners: {
                                                     destroy: function (obj, eOpts)
                                                     {
                                                         winTercero = null;
+                                                        store.reload();
+                                                        if (store.getCount() > 0) {
+                                                            Ext.getCmp("costo-" + idmaster).getView().focusRow(0);
+                                                        }
                                                     }
                                                 }
                                             });
@@ -553,35 +549,41 @@ Ext.define('Colsys.Ino.GridCosto', {
                         }
                     ]
                     );
+            tb = new Ext.toolbar.Toolbar();
 
             if (this.permisos.Crear == true) {
 
-                tb = new Ext.toolbar.Toolbar();
+
                 tb.add({
                     text: 'Agregar',
                     iconCls: 'add',
                     handler: function () {
+
 
                         var store = this.up('grid').store;
                         var r = Ext.create(store.model);
                         r.set('idmaster' + this.up('grid').idmaster, this.up('grid').idmaster);
                         store.insert(0, r);
                     }
-                }, {
+                });
+                
+            if (this.permisos.Editar == true)
+            {
+                    
+                tb.add(
+                {
                     text: 'Guardar',
                     iconCls: 'add',
                     handler: function () {
+                        error = 0;
                         var store = this.up('grid').getStore();
                         idmaster = this.up('grid').idmaster;
-
                         var records = store.getModifiedRecords();
                         var str = "";
-
                         var r = Ext.create(store.getModel());
                         fields = new Array();
                         for (i = 0; i < r.fields.length; i++)
                         {
-
                             fields.push(r.fields[i].name.replace(idmaster, ""));
                         }
 
@@ -589,10 +591,8 @@ Ext.define('Colsys.Ino.GridCosto', {
                         changes1 = [];
                         for (var i = 0; i < records.length; i++) {
                             r = records[i];
-
                             records[i].data.id = r.id
                             changes1[i] = records[i].data;
-
                             row = new Object();
                             for (j = 0; j < fields.length; j++)
                             {
@@ -602,40 +602,72 @@ Ext.define('Colsys.Ino.GridCosto', {
                             }
                             row.id = r.id
                             changes[i] = row;
+                            if ((changes[i].idproveedor == "") || (changes[i].idcosto == "")) {
+                                Ext.MessageBox.alert("Error", 'Complete los datos de Costo y Proveedor');
+                                i = records.length;
+                                error = 1;
+                            }
+                            if ((changes[i].fchfactura == "") || (changes[i].factura == "")) {
+                                Ext.MessageBox.alert("Error", 'Complete los datos de Factura');
+                                i = records.length;
+                                error = 1;
+                            }
+                            if ((changes[i].idmoneda == "") || (changes[i].tcambio == "") || (changes[i].tcambio_usd == "")) {
+                                Ext.MessageBox.alert("Error", 'Complete los datos de Moneda y tasas de Cambio');
+                                i = records.length;
+                                error = 1;
+                            }
+
                         }
+                        if (error == 0) {
+                            var str = JSON.stringify(changes);
+                            if (str.length > 5)
+                            {
+                                Ext.Ajax.request({
+                                    url: '/inoF2/guardarGridCosto',
+                                    params: {
+                                        datos: str
+                                    },
+                                    callback: function (options, success, response) {
+                                        var res = Ext.util.JSON.decode(response.responseText);
+                                        if (success) {
+                                            var res = Ext.decode(response.responseText);
+                                            ids = res.ids;
+                                            if (res.ids && res.idinocostos) {
+                                                for (i = 0; i < ids.length; i++) {
+                                                    var rec = store.getById(ids[i]);
+                                                    rec.set(("idinocosto" + idmaster), res.idinocostos[i]);
+                                                    rec.commit();
+                                                    console.log(store);
+                                                }
+                                                Ext.MessageBox.alert("Mensaje", 'Informaci\u00F3n almacenada correctamente<br>');
+                                            }
+                                        } else {
+                                            Ext.MessageBox.alert("Error", 'Error al guardar<br>' + res.errorInfo);
+                                        }
 
 
-                        var str = JSON.stringify(changes);
-                        if (str.length > 5)
-                        {
-                            Ext.Ajax.request({
-                                url: '/inoF2/guardarGridCosto',
-                                params: {
-                                    datos: str
-                                },
-                                callback: function (options, success, response) {
-                                    var res = Ext.util.JSON.decode(response.responseText);
-
-
-                                    if (success) {
-                                        Ext.MessageBox.alert("Mensaje", 'Datos Almacenados Correctamente<br>');
-                                        store.reload();
-                                    } else {
-                                        Ext.MessageBox.alert("Error", 'Error al guardar<br>' + res.errorInfo);
                                     }
-
-
-                                }
-                            });
+                                });
+                            }
                         }
                     }
                 });
-
-                this.addDocked(tb);
             }
 
+            }
 
-            comboCosto.getStore().load({
+            tb.add(
+                    {
+                        text: 'Recargar',
+                        iconCls: 'refresh',
+                        handler: function () {
+                            me.getStore().reload();
+                        }
+                    });
+
+            this.addDocked(tb);
+            Ext.getCmp("comboCosto" + this.idmaster).getStore().reload({
                 params: {
                     costo: 'true',
                     transporte: this.idtransporte,
@@ -643,81 +675,7 @@ Ext.define('Colsys.Ino.GridCosto', {
                 }
             });
 
-        }
 
-    },
-    /*tbar: [{
-     text: 'Agregar',
-     iconCls: 'add',
-     handler: function () {
-     
-     var store = this.up('grid').store;
-     var r = Ext.create(store.model);
-     r.set('idmaster'+this.up('grid').idmaster,this.up('grid').idmaster);
-     store.insert(0, r);
-     }
-     }, {
-     text: 'Guardar',
-     iconCls: 'add',
-     handler: function () {
-     var store = this.up('grid').getStore();
-     idmaster = this.up('grid').idmaster;
-     
-     var records = store.getModifiedRecords();
-     var str="";
-     
-     var r = Ext.create(store.getModel());
-     fields= new Array();
-     for(i=0;i<r.fields.length;i++)
-     {
-     
-     fields.push(r.fields[i].name.replace(idmaster,""));
-     }
-     
-     changes=[];
-     changes1=[];
-     for( var i=0; i< records.length; i++){
-     r = records[i];
-     
-     records[i].data.id=r.id
-     changes1[i]=records[i].data;               
-     
-     row=new Object();
-     for(j=0;j<fields.length;j++)
-     {
-     
-     eval("row."+fields[j]+"=records[i].data."+fields[j]+idmaster+";")
-     
-     }
-     row.id=r.id
-     changes[i]=row;
-     }
-     
-     
-     var str= JSON.stringify(changes);
-     if (str.length > 5)
-     {
-     Ext.Ajax.request({
-     url: '/inoF2/guardarGridCosto',
-     params: {
-     datos: str
-     },
-     callback: function (options, success, response) {
-     var res = Ext.util.JSON.decode(response.responseText);
-     
-     
-     if (success){
-     Ext.MessageBox.alert("Mensaje", 'Datos Almacenados Correctamente<br>');
-     store.reload();
-     }
-     else{
-     Ext.MessageBox.alert("Error", 'Error al guardar<br>'+ res.errorInfo);
-     }
-     
-     
-     }
-     });
-     }
-     }
-     }]*/
+        }
+    }
 });

@@ -14,6 +14,8 @@ include_component("widgets", "widgetTercero");
 include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
 include_component("widgets", "widgetCiudad");
 
+$empresa = $sf_data->getRaw("empresa");
+
 ?>
 <script type="text/javascript">
     Ext.form.Field.prototype.msgTarget = 'side';
@@ -73,7 +75,7 @@ include_component("widgets", "widgetCiudad");
                                             name: "tercero",           
                                             id: "tercero_id",           
                                             hiddenName: "idtercero",                                                   
-                                            allowBlank: false                                            
+                                            allowBlank: <?=($empresa=='TPLogistics')?"true":"false"?>                                            
                                            });
         FormHousePanel.superclass.constructor.call(this, {
             deferredRender:false,

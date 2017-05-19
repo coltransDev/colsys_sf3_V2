@@ -141,8 +141,8 @@ if($opcion){
             $encFchIni = "Fch. Carga con Reserva";
             $encFchEnd = "Fch. de Salida";
             $encIdg = "Oport. Zarpe/Fch. Salida";
-            $dataFchIni = "ca_fchsalida_eta";
-            $dataFchEnd = "ca_fchsalida_ccr";
+            $dataFchIni = "ca_fchsalida_ccr";
+            $dataFchEnd = "ca_fchsalida_eta";
             break;
         case 4:
             $title = $ano_ini."- Oportunidad en la Llegada ";
@@ -284,8 +284,8 @@ if($opcion){
                 <td><?=$r["ca_ciudestino"]?></td>
                 <td><?=$r["proveedor"]?></td>
                 <td><?=$r["nva_modalidad"]?></td>
-                <td><?=$peso?></td>
                 <td><?=$piezas?></td>
+                <td><?=$peso?></td>
                 <td><?=$volumen?></td>
                 <td><?=$r[$dataFchIni]?></td>
                 <td><?=$r[$dataFchEnd]?></td>

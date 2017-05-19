@@ -17,8 +17,9 @@ Ext.define('Ext.colsys.wgModalidad', {
   spExtraParam:'',
   displayField: 'modalidad',
   valueField: 'modalidad',
+  labelWidth: 60,
   store: Ext.create('Ext.data.Store', {
-            fields: ['idmodalidad','modalidad'],
+            fields: ['idmodalidad','modalidad','impoexpo','transporte'],
             proxy: {
                 type: 'ajax',
                 url: '<?=url_for('widgets/datosModalidades')?>',
@@ -61,16 +62,16 @@ Ext.define('Ext.colsys.wgModalidad', {
           trigger1.addClsOnOver('x-form-trigger-over');
           trigger2.addClsOnOver('x-form-trigger-over');
       },
-    onFocus : function( obj, e, eOpts1 )
+    /*onFocus : function( obj, e, eOpts1 )
     {
         
          //var rec = obj.record;
          //alert(rec.toSource());
          //alert(e.field)
-        /*alert(obj.toSource());
+        alert(obj.toSource());
         alert(the1.toSource());
         alert(eOpts1.toSource());
-        */       
+               
         if(this.transporte)
         {
             trans=Ext.getCmp(this.transporte).getValue();          
@@ -85,6 +86,10 @@ Ext.define('Ext.colsys.wgModalidad', {
             }            
             this.trans=trans;
         }
+    },*/
+    onFocus: function( field, newVal, oldVal ){          
+        this.store.filter('transporte', this.transporte, true, true);
+        this.store.filter('impoexpo', this.impoexpo, true, true);
     }
       /*doQuery: function( queryString, forceAll, rawQuery )
       {

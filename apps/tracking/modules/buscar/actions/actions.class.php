@@ -31,7 +31,7 @@ class buscarActions extends sfActions
 
             $query = "
                 SELECT DISTINCT  
-                    max(t.ca_consecutivo),
+                    max(t.ca_consecutivo) as ca_consecutivo,
                     max(t.ca_fchcreado) as ca_fchcreado,
                     ca_transporte, 
                     o.ca_ciudad as origen, 
@@ -76,10 +76,11 @@ class buscarActions extends sfActions
             $query.=" ORDER BY ca_fchcreado DESC ";
 
             $query.=" LIMIT 100 ";
-
+            
             $q = Doctrine_Manager::getInstance()->connection();
             $this->stmt = $q->execute($query);
-
+            $this->resul = $this->stmt->fetchAll();
+            
             $this->setTemplate("buscar");
         }
     }

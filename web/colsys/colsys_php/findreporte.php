@@ -117,7 +117,7 @@ if (!isset($contents) and !isset($boton) and !isset($accion)) {
                     }
                 }
 
-                if (!$rs->Open("select * from vi_reportes $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
+                if (!$rs->Open("select * from vi_reportes3 $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
                     echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'entrada.php';</script>";
                     exit;
@@ -228,14 +228,28 @@ if (!isset($contents) and !isset($boton) and !isset($accion)) {
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
                 }
-                $condicion = "ca_traorigen = '" . $im->Value('ca_traorigen') . "' and ca_ciudestino = '" . $im->Value('ca_ciudestino') . "' and ca_modalidad = '" . $im->Value('ca_modalidad') . "'";
+                $condicion = "ca_traorigen = '" . $im->Value('ca_traorigen') . "' and ca_ciudestino = '" . $im->Value('ca_ciudestino') . "' and rp.ca_modalidad = '" . $im->Value('ca_modalidad') . "'";
                 if (isset($contents) and strlen(trim($contents)) != 0) {
                     if ($opcion == 'ca_consecutivo' or $opcion == 'ca_nombre_cli' or $opcion == 'ca_nombre_pro' or $opcion == 'ca_orden_prov' or $opcion == 'ca_orden_clie' or $opcion == 'ca_nombre' or $opcion == 'ca_idnave' or $opcion == 'ca_doctransporte') {
-                        $condicion.= " and lower($opcion) like lower('%" . $contents . "%')";
+                        if($opcion == 'ca_consecutivo')
+                            $condicion.= " and lower(rp.$opcion) like lower('%" . $contents . "%')";
+                        else
+                            $condicion.= " and lower($opcion) like lower('%" . $contents . "%')";
                     }
                 }
-                $command = "select rp.ca_idreporte, rp.ca_consecutivo, re.ca_referencia, rp.ca_version, rf.ca_idemail, rp.ca_idcliente, rp.ca_idalterno, rp.ca_idclientefac, rp.ca_nombre_cli, rp.ca_idconsignatario, rp.ca_identificacion_con, rp.ca_orden_clie, rp.ca_transporte, rp.ca_modalidad, rp.ca_nombre, rp.ca_ciuorigen, rp.ca_traorigen, rp.ca_ciudestino,";
-                $command.= "  rp.ca_tradestino, rp.ca_fchdespacho, rp.ca_incoterms, rp.ca_idcotizacion, rp.ca_idproveedor, rp.ca_orden_prov, rp.ca_continuacion, rp.ca_continuacion_dest, rp.ca_final_dest, rp.ca_idconsignar, rp.ca_idbodega, rp.ca_login, ra.ca_idemail, ra.ca_idnave, ra.ca_doctransporte, ra.ca_piezas, ra.ca_peso, ra.ca_volumen from vi_reportes rp";
+                /*$command = "select rp.ca_idreporte, rp.ca_consecutivo, re.ca_referencia, rp.ca_version, rf.ca_idemail, rp.ca_idcliente, rp.ca_idalterno, rp.ca_idclientefac, rp.ca_nombre_cli, rp.ca_idconsignatario, rp.ca_identificacion_con, rp.ca_orden_clie, rp.ca_transporte, rp.ca_modalidad, rp.ca_nombre, rp.ca_ciuorigen, rp.ca_traorigen, rp.ca_ciudestino,";
+                $command.= "  rp.ca_tradestino, rp.ca_fchdespacho, rp.ca_incoterms, rp.ca_idcotizacion, rp.ca_idproveedor, rp.ca_orden_prov, rp.ca_continuacion, rp.ca_continuacion_dest, rp.ca_final_dest, rp.ca_idconsignar, rp.ca_idbodega, rp.ca_login, ra.ca_idemail, ra.ca_idnave, ra.ca_doctransporte, ra.ca_piezas, ra.ca_peso, ra.ca_volumen from vi_reportes2 rp";
+                $command.= "  RIGHT JOIN (select ca_consecutivo as ca_consecutivo_f, max(ca_idreporte) as ca_idreporte from tb_reportes where ca_usuanulado IS NULL and ca_transporte in ('Marítimo','Terrestre') group by ca_consecutivo_f) rx ON (rp.ca_idreporte = rx.ca_idreporte)";
+                $command.= "  LEFT JOIN (select srp.ca_consecutivo as ca_consecutivo_r, sic.ca_referencia from tb_reportes srp INNER JOIN tb_inoclientes_sea sic ON srp.ca_idreporte = sic.ca_idreporte) re ON (rp.ca_consecutivo = re.ca_consecutivo_r)";
+                $command.= "  LEFT JOIN (select ca_consecutivo as ca_consecutivo_n from tb_reportes srp INNER JOIN tb_inoclientes_sea sic ON srp.ca_idreporte = sic.ca_idreporte) ns ON (rp.ca_consecutivo = ns.ca_consecutivo_n and ns.ca_consecutivo_n IS NULL)";
+                $command.= "  LEFT JOIN (select rpt.ca_consecutivo as ca_consecutivo_f, max(rpa.ca_idemail) as ca_idemail from tb_reportes rpt, tb_repstatus rpa where rpt.ca_usuanulado IS NULL and rpt.ca_idreporte = rpa.ca_idreporte group by ca_consecutivo_f) rf ON (rp.ca_consecutivo = rf.ca_consecutivo_f)";
+                $command.= "  LEFT JOIN tb_repstatus ra ON (ra.ca_idemail = rf.ca_idemail)";
+                $command.= "  where $condicion order by rp.ca_idreporte DESC";
+                */
+                $command = "select rp.ca_idreporte, rp.ca_consecutivo, re.ca_referencia, rp.ca_version, rf.ca_idemail, rp.ca_idcliente, rp.ca_idalterno, r2.ca_idclientefac, rp.ca_nombre_cli, rp.ca_idconsignatario, rp.ca_identificacion_con, rp.ca_orden_clie, rp.ca_transporte, rp.ca_modalidad, rp.ca_nombre, rp.ca_ciuorigen, rp.ca_traorigen, rp.ca_ciudestino,";
+                $command.= "  rp.ca_tradestino, rp.ca_fchdespacho, rp.ca_idcotizacion, rp.ca_idproveedor, rp.ca_orden_prov, rp.ca_continuacion, "
+                        . "r2.ca_continuacion_dest, rp.ca_incoterms,  r2.ca_idconsignar, r2.ca_idbodega, rp.ca_login, ra.ca_idemail, ra.ca_idnave, ra.ca_doctransporte, ra.ca_piezas, ra.ca_peso, ra.ca_volumen "
+                        . "from vi_reportes2 rp inner join tb_reportes r2 on rp.ca_idreporte = r2.ca_idreporte ";
                 $command.= "  RIGHT JOIN (select ca_consecutivo as ca_consecutivo_f, max(ca_idreporte) as ca_idreporte from tb_reportes where ca_usuanulado IS NULL and ca_transporte in ('Marítimo','Terrestre') group by ca_consecutivo_f) rx ON (rp.ca_idreporte = rx.ca_idreporte)";
                 $command.= "  LEFT JOIN (select srp.ca_consecutivo as ca_consecutivo_r, sic.ca_referencia from tb_reportes srp INNER JOIN tb_inoclientes_sea sic ON srp.ca_idreporte = sic.ca_idreporte) re ON (rp.ca_consecutivo = re.ca_consecutivo_r)";
                 $command.= "  LEFT JOIN (select ca_consecutivo as ca_consecutivo_n from tb_reportes srp INNER JOIN tb_inoclientes_sea sic ON srp.ca_idreporte = sic.ca_idreporte) ns ON (rp.ca_consecutivo = ns.ca_consecutivo_n and ns.ca_consecutivo_n IS NULL)";
@@ -316,10 +330,8 @@ if (!isset($contents) and !isset($boton) and !isset($accion)) {
                    . "      window.parent.elegir_item('continuacion_dest',source.value);";
                 echo "    elemento = window.parent.document.getElementById('continuacion_dest');";
                 echo "    elemento.disabled = habilita;";
-                echo "    if(document.getElementById('continuacion_'+i).value != 'DTA'){";
-                echo "      source = document.getElementById('idbodega_'+i);";
-                echo "      window.parent.elegir_item('idbodega',source.value);";
-                echo "    }";
+                echo "    source = document.getElementById('idbodega_'+i);";
+                echo "    window.parent.elegir_item('idbodega',source.value);";
                 echo "    source = document.getElementById('login_'+i);";
                 echo "    window.parent.elegir_item('login',source.value);";
                 echo "    window.parent.frames.findreporte.style.visibility = \"hidden\";";
@@ -472,7 +484,9 @@ if (!isset($contents) and !isset($boton) and !isset($accion)) {
                     echo "  </TR>";
                     echo "  <TR>";
                     echo "    <TD Class=listar><b>Cont.Viaje: </b><br />" . $rs->Value('ca_continuacion') . "</TD>";
-                    echo "    <TD Class=listar><b>Destino: </b><br />" . (($rs->Value('ca_continuacion') != 'N/A') ? $rs->Value('ca_final_dest') : '') . "</TD>";
+                    //echo "    <TD Class=listar><b>Destino: </b><br />" . (($rs->Value('ca_continuacion') != 'N/A') ? $rs->Value('ca_final_dest') : '') . "</TD>";
+                    echo "    <TD Class=listar><b>Destino: </b><br />" . (($rs->Value('ca_continuacion') != 'N/A') ? $rs->Value('ca_continuacion_dest') : '') . "</TD>";
+                    
                     echo "    <TD Class=invertir><b>Hbl's:</b><br />" . $rs->Value('ca_doctransporte') . "</TD>";
                     echo "    <TD Class=invertir><b>Piezas:</b><br />$piezas</TD>";
                     echo "    <TD Class=invertir><b>Peso:</b><br />$peso</TD>";

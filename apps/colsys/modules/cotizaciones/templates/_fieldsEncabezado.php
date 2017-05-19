@@ -175,6 +175,11 @@ include_component("widgets", "widgetComerciales");
                         {
                             Ext.getCmp("entrada").setValue(Ext.getCmp("entrada"+record.data.name).getValue());
                             Ext.getCmp("anexos").setValue(Ext.getCmp("anexos"+record.data.name).getValue());
+                            if (Ext.getCmp("despedida"+record.data.name)){
+                                Ext.getCmp("despedida").setValue(Ext.getCmp("despedida"+record.data.name).getValue());
+                            }else{
+                                Ext.getCmp("despedida").setValue(Ext.getCmp("despedidaDefault").getValue());
+                            }
                         }
                     },
                     store:          new Ext.data.JsonStore({
@@ -298,6 +303,14 @@ include_component("widgets", "widgetComerciales");
                             id: 'despedida',
                             value: '',
                             allowBlank:false
+                        }, {
+                            xtype: 'hidden',                          
+                            name: 'despedidaDefault',
+                            id: 'despedidaDefault'
+                        }, {
+                            xtype: 'hidden',                          
+                            name: 'despedidaColdepósitos',
+                            id: 'despedidaColdepósitos'
                         }, {
                             xtype: 'textarea',
                             width: 500,
@@ -423,5 +436,4 @@ include_component("widgets", "widgetComerciales");
     Ext.extend(TabFormatoPanel, Ext.Panel, {
 
     });
-
 </script>

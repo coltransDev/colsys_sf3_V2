@@ -16,6 +16,12 @@ prod:
 #      loggers: ~
 
 cli:
+#  controller:
+#    class: sfConsoleController
+#  request:
+#    class: sfConsoleRequest
+#  response:
+#    class: sfConsoleResponse
   controller:
     class: sfFrontWebController
   request:

@@ -68,6 +68,7 @@ require_once("menu.php");
            }
        while($id_temp == $rs->Value('ca_idcliente') and !$rs->Eof()){
           if ($rs->Value('ca_ncompleto_cn') != '') {
+              $linkEmail = "<a href='https://www.colsys.com.co/email/verEmail?id=".substr($rs->Value('ca_pcontactos'),strpos($rs->Value('ca_pcontactos'),'masivas')+8,10)."' target='_blank'>Ver Email</a>";
               echo "<TR>";
               echo "<TD Class=mostrar ROWSPAN=5></TD>";
               echo "<TD Class=mostrar style='font-size: 11px; font-weight:bold;'>".$rs->Value('ca_saludo_cn')."</TD>";
@@ -92,7 +93,7 @@ require_once("menu.php");
               echo "</TR>";
               echo "<TR>";
               echo "<TD Class=mostrar style='vertical-align: top;' COLSPAN=2>Email :<BR>".$rs->Value('ca_email')."&nbsp;</TD>";
-              echo "<TD Class=mostrar style='vertical-align: top;' COLSPAN=2>Observaciones :<BR>".$rs->Value('ca_observaciones')."&nbsp;".(($rs->Value('ca_fijo')=="t")?"<br/><b>Contacto Fijo en Comunicaciones</b>":"")."</TD>";
+              echo "<TD Class=mostrar style='vertical-align: top;' COLSPAN=2>Observaciones :<BR><ul><li>".$rs->Value('ca_observaciones')."&nbsp;</li>".(($rs->Value('ca_fijo')=="t")?"<li><b>Contacto Fijo en Comunicaciones</b></li>":"").((strstr($rs->Value('ca_pcontactos'), "masivas")!='')?'<li>No enviar comunicaciones masivas '.$linkEmail.'</li>':"")."</ul></TD>";
               echo "</TR>";
               $fch_mem = explode("-",$rs->Value('ca_cumpleanos'));
               echo "<TR>";

@@ -73,19 +73,25 @@ class inoReportesComponents extends sfComponents {
         
         $this->comerciales=UsuarioTable::getComerciales();
         
-        $this->sucursales=$sucursales = Doctrine::getTable("Sucursal")
+        $this->sucursales2= Doctrine::getTable("Sucursal")
                 ->createQuery("s")
                 ->select("s.ca_nombre")
                 ->addOrderBy("s.ca_nombre")
-                ->addWhere("s.ca_idempresa=?", $user->getIdempresa())                
+                ->addWhere("s.ca_idempresa=?", $user->getIdempresa())
+                ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                 ->execute();
+        //print_r($this->sucursales);
+        /*foreach($this->sucursales as $k=>$s)
+        {
+            $this->sucursales[$k]->setCaNombre(utf8_decode($s->getCaNombre()));
+        }*/
 
     
     }
     
     public function executeFiltrosEstadisticasOtm(){
    
-        $this->origen = $this->getRequestParameter("origen");
+       $this->origen = $this->getRequestParameter("origen");
         $this->idorigen = $this->getRequestParameter("idorigen");
         $this->destino = $this->getRequestParameter("destino");
         $this->iddestino = $this->getRequestParameter("iddestino");
@@ -96,25 +102,15 @@ class inoReportesComponents extends sfComponents {
         $this->idlinea = $this->getRequestParameter("idlinea");
         $this->vendedor = $this->getRequestParameter("vendedor");
         $this->login = $this->getRequestParameter("login");
-        $this->idcliente = $this->getRequestParameter("idtercero");        
-        $this->idimportador = $this->getRequestParameter("idimportador");
+        $this->idcliente = $this->getRequestParameter("idcliente");
+        $this->cliente = $this->getRequestParameter("cliente");
         $this->opcion = $this->getRequestParameter("opcion");
         
-        $this->fechaInicial = $this->getRequestParameter("fechaInicial");
-        $this->fechaFinal = $this->getRequestParameter("fechaFinal");
+        $this->fechainicial = $this->getRequestParameter("fechaInicial");
+        $this->fechafinal = $this->getRequestParameter("fechaFinal");
         
         $this->nempresa = $this->getRequestParameter("nempresa");
-        $this->tipo = $this->getRequestParameter("tipo");
-        
-        if($this->idcliente){
-            $tercero = Doctrine::getTable("Tercero")->find($this->idcliente);
-            $this->cliente =  $tercero->getCaNombre();
-        }
-        
-        if($this->idimportador){
-            $importador = Doctrine::getTable("Tercero")->find($this->idimportador);
-            $this->importador =  $importador->getCaNombre();
-        }
+        $this->ntipo = $this->getRequestParameter("ntipo");
         
         $response = sfContext::getInstance()->getResponse();
         $response->addJavaScript("extExtras/SuperBoxSelect", 'last');
@@ -134,13 +130,22 @@ class inoReportesComponents extends sfComponents {
         $this->meses[]=array("valor"=>"l-Diciembre"   ,"id"=>12);
         
         $this->anos = array();                
-        $this->anos[]=array("valor"=>"2012"    ,"id"=>2012);
+        for( $i=2011; $i<=date("Y"); $i++ ){
+             $this->anos[]=array("valor"=>"$i"    ,"id"=>$i);
+        }
+        /*$this->anos[]=array("valor"=>"2012"    ,"id"=>2012);
         $this->anos[]=array("valor"=>"2013"    ,"id"=>2013);
-        $this->anos[]=array("valor"=>"2014"    ,"id"=>2014);        
+        $this->anos[]=array("valor"=>"2014"    ,"id"=>2014);*/
         
+        //$this->ano = $this->getRequestParameter("ano");
         $this->nano = $this->getRequestParameter("nano");
         $this->nmes = $this->getRequestParameter("nmes");
     
+    }
+    
+    
+    public function executeGridReporteador(){
+        
     }
     
 }

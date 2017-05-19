@@ -18,7 +18,7 @@ class PreguntaFormFilter extends BasePreguntaFormFilter {
 
         //$this->widgetSchema['ca_tipo'] = new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('ca_idbloque'), 'add_empty' => true),array('readonly'=>'readonly','disabled'=>'disable'));
 
-        $opciones = array(0 => 'n&uacute;mero', 1 => 'texto', 2 => 'email', 3 => 'p&aacute;rrafo', 4 => 'test', 5 => 'casillas de verificaci&oacute;n', 6 => 'lista desplegable', 7 => 'escala', 8 => 'escala con estrellas', 9 => 'cuadr&iacute;cula');
+        $opciones = array(0 => 'n&uacute;mero', 1 => 'texto', 2 => 'email', 3 => 'parrafo', 4 => 'test', 5 => 'casillas de verificaci&oacute;n', 6 => 'lista desplegable', 7 => 'escala', 8 => 'cuadr&iacute;cula');
 
 
 

@@ -7,9 +7,9 @@
                                 <!-- MAIN CONTENT TABLE -->
                                 <table width="100%" border="0" cellspacing="5" cellpadding="0">
                                     <!-- LOGO -->
-                                    <tr><td colspan="3"><table><tr><td width="135"><img src="https://www.coltrans.com.co/images/logo_colsys.gif" width="178" height="30" alt="COLSYS"></td>
+                                    <tr><td colspan="3"><table><tr><td width="135"><img src="https://www.colsys.com.co/images/logo_colsys.gif" width="178" height="30" alt="COLSYS"></td>
                                                     <td><font size="4" face="arial, helvetica, sans-serif" color="#D99324">Comunicaciones Masivas</font></td></tr></table></td></tr>
-                                    <tr><td width="25"><img src="https://www.coltrans.com.co/images/spacer.gif" width="25" height="1" alt=""></td><td colspan="2"><hr noshade size="1"></td></tr>
+                                    <tr><td width="25"><img src="https://www.colsys.com.co/images/spacer.gif" width="25" height="1" alt=""></td><td colspan="2"><hr noshade size="1"></td></tr>
                                     <!-- INTRO -->
                                     <tr>
                                         <td>&nbsp;</td><td>
@@ -27,7 +27,7 @@
                                             <?}?>
                                             Por favor tomar atenta nota de los comentarios del cliente y proceder al respecto si así se requiere.<br /><br />
                                             Cualquier duda o información adicional por favor comunicarse con el Departamento de Sistemas.
-                                        </td><td width="50"><img src="https://www.coltrans.com.co/images/spacer.gif" width="75" height="1" alt=""></td></tr>
+                                        </td><td width="50"><img src="https://www.colsys.com.co/images/spacer.gif" width="75" height="1" alt=""></td></tr>
                                 </table>
                             </td></tr>
                     </table>
@@ -36,6 +36,6 @@
             <tr><td><font size="1" face="arial, helvetica, sans-serif" color="#666666">&copy; Grupo Coltrans</font></td></tr>
         </table>
 
-        <img src="https://www.coltrans.com.co/images/spacer.gif" style="width:1px; height:1px;"/></body>
+        <img src="https://www.colsys.com.co/images/spacer.gif" style="width:1px; height:1px;"/></body>
 </html>
 

@@ -1594,6 +1594,10 @@ class reportesNegActions extends sfActions {
                 $texto.="Cliente <br>";
             }
 
+            if ($request->getParameter("preferencias")) {
+                $reporte->setCaPreferenciasClie($request->getParameter("preferencias"));
+            }
+
             if ($request->getParameter("idagente") && $request->getParameter("idagente") != "") {
                 $reporte->setCaIdagente($request->getParameter("idagente"));
             } else {
@@ -2614,7 +2618,7 @@ class reportesNegActions extends sfActions {
 
             $clienteAg = $reporte->getClienteAg();
             if ($clienteAg) {
-                $data["clienteag"] = $clienteAg->getCaCompania();
+                $data["clienteag"] = utf8_encode($clienteAg->getCaCompania());
                 $data["idclienteag"] = utf8_encode($clienteAg->getCaIdcliente());
             } else {
                 $data["clienteag"] = "";
@@ -2834,8 +2838,10 @@ class reportesNegActions extends sfActions {
             $data["entrega_lugar_arribo"]=$reporte->getProperty("entrega_lugar_arribo");
 
             $data["idrepresentante"] = $reporte->getCaIdrepresentante();
-            $data["representante"] = ($reporte->getRepresentante()) ? $reporte->getRepresentante()->getCaNombre() : "";
-            $data["ca_informar_repr"] = $reporte->getCaInformarRepr();
+            $data["representante"] = ($reporte->getRepresentante()) ? utf8_encode($reporte->getRepresentante()->getCaNombre()) : "";
+            
+            //$data["ca_informar_repr"] = utf8_encode($reporte->getCaInformarRepr());
+            $data["ca_informar_repr"] = ($reporte->getCaInformarRepr() == "Sí" || $reporte->getCaInformarRepr() == "on" ) ? true : false;
 
             $data["entrega_lugar_arribo"] = $reporte->getProperty("entrega_lugar_arribo");
 
@@ -2922,6 +2928,7 @@ class reportesNegActions extends sfActions {
             if($reporte->getProperty("idticket")){
                 $data["idticket"] = $reporte->getProperty("idticket");
             }
+            //echo "<pre>";print_r($data);echo "</pre>";
         }
         $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");
@@ -3794,7 +3801,7 @@ class reportesNegActions extends sfActions {
                 $row["idmoneda"] = $recargo->getCaIdmoneda();
                 $row["aplicacion"] = $recargo->getCaAplicacion();
                 $row["aplicacionminimo"] = $recargo->getCaAplicacionminimo();
-                $row["observaciones"] = $recargo->getCaDetalles();
+                $row["observaciones"] = utf8_encode($recargo->getCaDetalles());
                 $row['tipo'] = "costo";
                 $row['orden'] = "Y-" . utf8_encode($recargo->getCosto()->getCaCosto());
                 $conceptos[] = $row;
@@ -3849,6 +3856,7 @@ class reportesNegActions extends sfActions {
         $row['tipo'] = "costo";
         $row['orden'] = "Z";
         $conceptos[] = $row;
+        //print_r($conceptos);
         $this->responseArray = array("items" => $conceptos, "total" => count($conceptos), "success" => true);
         $this->setTemplate("responseTemplate");
     }
@@ -4336,16 +4344,24 @@ class reportesNegActions extends sfActions {
             $mensaje = Utils::replace($request->getParameter("mensaje")) . "<br />";
             $txt = ($reporte->getCaVersion() == 1) ? "Se Creo el " : "Se modifico el";
 
+            if($reporte->getProperty("idticket")){
+                $ticket = Doctrine::getTable("HdeskTicket")->find($reporte->getProperty("idticket"));
+                $idemail = $ticket->getEmail();                
+            }
+            
+            $filaTicket = $idemail ? "<tr><th>Tarifa Pactada</th><td><a href='https://www.colsys.com.co/email/verEmail/id/".$idemail."' target='_blank'>Ticket ".$reporte->getProperty("idticket")."</a></td></tr>":"";
+            
             $html = "<div>
                 <table class='tableList alignLeft'><tr><td>
                 <table class='tableList alignLeft' width='100%' >
-                <tr><th colspan='2'>" . $txt . " Reporte de Negocios No: <a href='https://www.coltrans.com.co/reportesNeg/verReporte/id/" . $reporte->getCaIdreporte() . "/idantecedente/" . $antecedente->getCaIdantecedente() . "'>" . $reporte->getCaConsecutivo() . "</a></th></tr>
+                <tr><th colspan='2'>" . $txt . " Reporte de Negocios No: <a href='https://www.colsys.com.co/reportesNeg/verReporte/id/" . $reporte->getCaIdreporte() . "/idantecedente/" . $antecedente->getCaIdantecedente() . "'>" . $reporte->getCaConsecutivo() . "</a></th></tr>
                 <tr><th>Cliente</th><td>" . ($reporte->getCliente()->getCaCompania()) . "</td></tr>
                 <tr><th>Transporte</th><td>" . ($reporte->getCaTransporte()) . "</td></tr>
                 <tr><th>Modalidad</th><td>" . ($reporte->getCaModalidad()) . "</td></tr>
                 <tr><th>Trayecto</th><td>" . ($reporte->getOrigen()->getCaCiudad()) . "-" . ($reporte->getDestino()->getCaCiudad()) . "</td></tr>
-                <tr><th>Proveedor</th><td>" . $reporte->getProveedoresStr() . "</td></tr>
-            </table></td></tr></table></div>";
+                <tr><th>Proveedor</th><td>" . $reporte->getProveedoresStr() . "</td></tr>"
+                .$filaTicket.
+            "</table></td></tr></table></div>";
 
             $this->getRequest()->setParameter('tipo', "INSTRUCCIONES");
             $this->getRequest()->setParameter('mensaje', $request->getParameter("mensaje"));
@@ -5227,7 +5243,7 @@ class reportesNegActions extends sfActions {
             $html = "<div>
                 <table class='tableList alignLeft'><tr><td>
                 <table class='tableList alignLeft' width='100%' >
-                <tr><th colspan='2'>" . $txt . " Reporte de Negocios No: <a href='https://www.coltrans.com.co/reportesNeg/verReporte?id=" . $reporte->getCaIdreporte() . "'>" . $reporte->getCaConsecutivo() . "</a></th></tr>                    
+                <tr><th colspan='2'>" . $txt . " Reporte de Negocios No: <a href='https://www.colsys.com.co/reportesNeg/verReporte?id=" . $reporte->getCaIdreporte() . "'>" . $reporte->getCaConsecutivo() . "</a></th></tr>                    
                 <tr><th>Cliente</th><td>" . ($reporte->getCliente()->getCaCompania()) . "</td></tr>
                 <tr><th>Transporte</th><td>" . ($reporte->getCaTransporte()) . "</td></tr>
                 <tr><th>Trayecto</th><td>" . ($reporte->getOrigen()->getCaCiudad()) . "-" . ($reporte->getDestino()->getCaCiudad()) . "</td></tr>

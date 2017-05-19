@@ -4,14 +4,14 @@
         <?php include_http_metas() ?>
         <?php include_metas() ?>
         <?php include_title() ?>
-        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="shortcut icon" href="/intranet.ico" />
         <?php include_stylesheets() ?>
         <?php include_javascripts() ?>
-
-
-
+        
+        
+        
     </head>
-    <body >
+    <body style='font-family: Myriad pro,Arial,Helvetica,sans-serif; font-size: 73.1%;'>
         <div class="main_container">
             <div class="main_wrapper">
             <div class="content_wrapper">
@@ -56,8 +56,10 @@
                         include_component("menu", "submenubar");
                         ?>
                         <br />
+                        <div id="resultado" width="80%"></div>
                         <?php echo $sf_content ?>                            
                     </div>
+                    
 
                     
                 </div>
@@ -69,6 +71,7 @@
 
                     <div class="copyright">
                         <div>Copyright &#169;. Todos los derechos reservados.<br /></div>
+                        colsys@<?= $_SERVER["SERVER_ADDR"] ?>
                         <br />
                     </div>
 

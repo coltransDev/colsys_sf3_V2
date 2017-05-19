@@ -35,7 +35,7 @@ Ext.define('Colsys.Ino.GridHouse', {
             url: '/inoF2/datosGridHouse',
             reader: {
                 type: 'json',
-                root: 'root',
+                rootProperty: 'root',
                 totalProperty: 'total'
             }
         },        
@@ -312,8 +312,7 @@ Ext.define('Colsys.Ino.GridHouse', {
             })
         }
         if(record!=null)
-        {
-            //alert(record.data.toSource());
+        {            
             Ext.getCmp("form-panelH").cargar(record.data.idhouse);            
         }
         constrainedWin2H.show();

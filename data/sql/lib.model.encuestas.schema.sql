@@ -27,4 +27,5 @@ ALTER TABLE encuestas.tb_control_encuesta ADD CONSTRAINT tb_control_encuesta_FK_
 ALTER TABLE encuestas.tb_resultado_encuesta ADD CONSTRAINT tb_resultado_encuesta_FK_1 FOREIGN KEY (ca_idcontrolencuesta) REFERENCES encuestas.tb_control_encuesta(ca_id) NOT DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE encuestas.tb_resultado_encuesta ADD CONSTRAINT tb_resultado_encuesta_FK_2 FOREIGN KEY (ca_idpregunta) REFERENCES encuestas.tb_pregunta(ca_id) NOT DEFERRABLE INITIALLY IMMEDIATE;
 
---CREATE INDEX fki_tb_resultado_encuesta_tb_config_values ON encuestas.tb_resultado_encuesta (ca_idvaluepregunta);
+//CREATE INDEX fki_tb_resultado_encuesta_tb_config_values ON encuestas.tb_resultado_encuesta (ca_idvaluepregunta);
+

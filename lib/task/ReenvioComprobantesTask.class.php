@@ -30,7 +30,9 @@ EOF;
 
         sfContext::createInstance($this->configuration)->dispatch();
         //sfContext::getInstance()->getRequest()->setParameter('login', 'Administrador');
+echo "INICIO";
         echo sfContext::getInstance()->getController()->getPresentationFor('inoF', 'reenvioSiigoConect');
+echo "FIN";
     }
   
   

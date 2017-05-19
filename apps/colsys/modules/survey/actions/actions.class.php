@@ -217,7 +217,7 @@ class surveyActions extends sfActions {
                 $contenido = sfContext::getInstance()->getController()->getPresentationFor('survey', 'emailEvaluacion');
                 $email->setCaBodyhtml($contenido);
                 $email->save($conn);
-                $email->send();
+                //$email->send();
                 $evaluacion->setCaFchnotificacion(date("Y-m-d H:i:s"));
                 $evaluacion->setCaNumnotificacion($evaluacion->getCaNumnotificacion() + 1);
                 $evaluacion->save($conn);

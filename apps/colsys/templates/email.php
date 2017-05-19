@@ -69,35 +69,51 @@
             }
 
             .vigencia{
-            font-size:9px;
-            font-family:Arial, Helvetica, sans-serif;
-        }
+                font-size:9px;
+                font-family:Arial, Helvetica, sans-serif;
+            }
 
-        .htmlContent{
-            font-size:12px;
-            font-family:Arial, Helvetica, sans-serif;
-        }
+            .htmlContent{
+                font-size:12px;
+                font-family:Arial, Helvetica, sans-serif;
+            }
 
-        table.tableList th{
+            table.tableList th{
 
-            border:solid 0.5px #EBEBEB;
-            padding:2px;
-            font-size:11px;
-            font-family:Arial, Helvetica, sans-serif;
-            font-weight:bold;
-            background-color:#F8F8F8;
-        }
+                border:solid 0.5px #EBEBEB;
+                padding:2px;
+                font-size:11px;
+                font-family:Arial, Helvetica, sans-serif;
+                font-weight:bold;
+                background-color:#F8F8F8;
+            }
 
-        table.tableList td{
+            table.tableList td{
 
-            border:solid 1px #EBEBEB;
-            padding:2px;
-            font-size:11px;
-            font-family:Arial, Helvetica, sans-serif;
-            border-collapse:collapse;
+                border:solid 1px #EBEBEB;
+                padding:2px;
+                font-size:11px;
+                font-family:Arial, Helvetica, sans-serif;
+                border-collapse:collapse;
 
 
-        }
+            }
+
+            div.bigbutton {                
+                padding: 8px 14px 10px; /*apply some padding inside the button*/
+                border:2px solid #157FCC; /*required or the default border for the browser will appear*/
+                cursor:pointer; /*forces the cursor to change to a hand when the button is hovered*/
+
+                font-weight:  bold;
+                /*use box-shadow to give the button some depth - see cssdemos.tupence.co.uk/box-shadow.htm#demo7 for more info on this technique*/
+                -webkit-box-shadow: inset 0px 1px 0px #638CC2, 0px 5px 0px 0px #454C76, 0px 10px 5px #999;
+                -moz-box-shadow: inset 0px 1px 0px #638CC2, 0px 5px 0px 0px #454C76, 0px 10px 5px #999;
+                box-shadow: inset 0px 1px 0px #638CC2, 0px 5px 0px 0px #454C76, 0px 10px 5px #999;
+                /*give the corners a small curve*/
+                -moz-border-radius: 10px;
+                -webkit-border-radius: 10px;
+                border-radius: 10px;
+            }        
         </style>
     </head>
     <body>

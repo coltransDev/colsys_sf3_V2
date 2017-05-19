@@ -74,33 +74,30 @@ Ext.define('Colsys.GestDocumental.FormSubirArchivos', {
             text: 'Guardar',
             handler: function () {
                 
-                /*
-                 var idreferencia = this.up('form').idreferencia;
-                 var idmaster = this.up('form').idmaster;
-                 var dcto = Ext.getCmp("documento").rawValue;
-                 
-                 var form = this.up('form').getForm();
-                 if (form.isValid()) {
-                 form.submit({
-                 waitMsg: 'Guardando',
-                 url: '/gestDocumental/subirArchivoTRD',
-                 params: {
-                 ref1: idreferencia
-                 },
-                 success: function (fp, o) {
-                 if (o.result.success) {
-                 msg('Mensaje', 'Archivo Procesado "' + o.result.file + '" en el servidor');
-                 Ext.getCmp("Documentos-"+idmaster).getStore().reload();
-                 } else {
-                 alert("error");
-                 }
-                 }
-                 });
-                 }
-                 
-                 
-                 
-                 */}
+                
+                var idreferencia = this.up('form').idreferencia;
+                var idmaster = this.up('form').idmaster;
+                var dcto = Ext.getCmp("documento").rawValue;                 
+                var form = this.up('form').getForm();
+                
+                if (form.isValid()) {
+                    form.submit({
+                        waitMsg: 'Guardando',
+                        url: '/gestDocumental/subirArchivoTRD',
+                        params: {
+                            ref1: idreferencia
+                        },
+                        success: function (fp, o) {
+                            if (o.result.success) {
+                                msg('Mensaje', 'Archivo Procesado "' + o.result.file + '" en el servidor');
+                                Ext.getCmp("Documentos-"+idmaster).getStore().reload();
+                            } else {
+                                alert("error");
+                            }
+                        }
+                    });
+                }                 
+            }
         }, {
             text: 'Reset',
             handler: function () {

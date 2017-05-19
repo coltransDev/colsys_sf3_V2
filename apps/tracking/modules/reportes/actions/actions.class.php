@@ -241,7 +241,7 @@ class reportesActions extends sfActions
                 $email->setCaBodyhtml( Utils::replace($txt).$linkHtml );
 
                 $email->save();
-                $email->send();
+                //$email->send();
 
                 /*$email->setCaAddress("abotero@coltrans.com.co");
                 $email->setCaCc("abotero@coltrans.com.co");

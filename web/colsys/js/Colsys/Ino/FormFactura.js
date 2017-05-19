@@ -13,36 +13,65 @@ Ext.define('Colsys.Ino.FormFactura', {
             style:"text-align: left",
             labelAlign:'right'
         },
-        
+        listeners: {
+            afterrender : function (me, eOpts ){
+                if(this.ino)
+                    Ext.getCmp("idhouse").getStore().reload();
+            }
+        },
         /*items: [
             
             ],*/
         bbar: [{
             text: 'Guardar',
             handler: function(){
-                var form = this.up('form').getForm();                
-                idmaster=form.owner.idmaster;                
+               
+                var f=this.up('form');
+                var form = f.getForm();                
+                idmaster=form.owner.idmaster;
                 if(form.isValid()){
                     form.submit({
-                        url: '/inoF/guardarFactura',
+                        url: '/inoF2/guardarFactura',
                         waitMsg: 'Guardando',
                         success: function(response,options) {
                             var res = Ext.JSON.decode( options.response.responseText );
                             
-                            var box = Ext.MessageBox.wait('Procesando', 'Generacion de Factura');                            
-                            //Ext.getCmp("grid-facturacion-"+idmaster).getStore().reload();
-                            Ext.getCmp('panel-factura-'+idmaster).getStore().reload();
-                            box.hide();
-                            Ext.getCmp("winFormEdit").hide();
+                            var box = Ext.MessageBox.wait('Procesando', 'Generacion de Factura');
+                            //console.log(f.ino);                            
+                            if(f.ino)
+                            {                                
+                                //Ext.getCmp("grid-facturacion-"+idmaster).getStore().reload();
+                                Ext.getCmp('panel-factura-'+idmaster).getStore().reload();
+                                box.hide();
+                                Ext.getCmp("winFormEdit").close();
+                            }
+                            else
+                            {
+                              
+                                //var store = Ext.getCmp("grid-movimientosComprobantes").getStore();
+                                console.log(Ext.getCmp('id-grid-comprobante'));
+                                Ext.getCmp('id-grid-comprobante').setIdComprobante(res.idcomprobante);
+                                Ext.getCmp('btn-guardar0').click();
+                                box.hide();
+                                //click
+                                //setPressed 
+                            }
                         }
                     });
                 }
             }
+            
+            
+            
         }],        
         onRender: function(ct, position)
-        {    
+        {            
             var me=this;
-            this.add(                
+            console.log(me);
+            this.ino=(!this.ino)?false:this.ino;
+            
+            //alert(this.ino);
+            this.add(
                 {
                     xtype: 'hidden',
                     id:'idcomprobante',
@@ -52,7 +81,7 @@ Ext.define('Colsys.Ino.FormFactura', {
                     xtype: 'hidden',
                     id:'cuentapago',
                     name:'cuentapago'
-                },
+                }
                 /*{
                     xtype: 'textfield',
                     id:'_consecutivo',
@@ -67,60 +96,167 @@ Ext.define('Colsys.Ino.FormFactura', {
                     fieldLabel: 'Fecha',
                     readOnly:true
                 },*/
+                
+                );
+                if(this.ino)
                 {
-                    columnWidth: 0.4,
-                    xtype: 'Colsys.Widgets.wgTipoComprobante',
-                    id:'idtipocomprobante',
-                    name:'idtipocomprobante',
-                    fieldLabel: 'Tipo ',                
-                    allowBlank:false,
-                    listeners:{
-                        select : function( combo, records, idx ){
-                            var me = this.up();
-                            data=records[0].data;
-                            me.getForm().findField('idsucursal').setIdempresa(data.idempresa);
-                        }
-                    }
-                },
-                {
-                    columnWidth: 0.5,
-                    xtype: 'Colsys.Widgets.wgHouse',
-                    id:'idhouse',
-                    name:'idhouse',
-                    fieldLabel: 'House',
-                    queryMode: 'local',
-                    displayField: 'name',
-                    idmaster: this.idmaster,
-                    valueField: 'id',                
-                    allowBlank:false,
-                    width: 400,
-                    listeners:{
-                        select : function( combo, records, idx ){   
-                            var me = this.up();
-                            data=records[0].data;
-                            //alert(data.toSource());
-                            //alert(Ext.getCmp("cliente").getValue())
-                            if(data.idsucursal!="" && data.idsucursal!="null")
-                            {
-                                me.getForm().findField("idsucursal").store.add(
-                                    {"compania":data.cliente+"-"+data.ciudad, "idcliente":data.idcliente,"idsucursal":data.idsucursal,"cuentapago":data.cuentapago,"ciudad":data.ciudad}
-                                );
+                    this.add(
+                    {
+                        columnWidth:1/2.7,
+                        xtype: 'Colsys.Widgets.wgTipoComprobante',
+                        id:'idtipocomprobante',
+                        name:'idtipocomprobante',
+                        fieldLabel: 'Tipo ',                
+                        labelWidth: 50,
+                        allowBlank:false                        
+                    },
+                    {
+                        columnWidth: 0.5,
+                        xtype: 'Colsys.Widgets.wgHouse',
+                        id:'idhouse',
+                        name:'idhouse',
+                        fieldLabel: 'House',
+                        queryMode: 'local',
+                        displayField: 'name',
+                        idmaster: this.idmaster,
+                        valueField: 'id',                
+                        allowBlank:false,
+                        width: 400,
+                        listeners:{
+                            select : function( combo, records, idx ){   
+                                var me = this.up();
+                                data=records.data;
+                                //alert(data.toSource());
+                                //alert(Ext.getCmp("cliente").getValue())
+                                if(data.idsucursal!="" && data.idsucursal!="null")
+                                {
+                                    me.getForm().findField("idsucursal").store.add(
+                                        {"compania":data.cliente+"-"+data.ciudad, "idcliente":data.idcliente,"idsucursal":data.idsucursal,"cuentapago":data.cuentapago,"ciudad":data.ciudad}
+                                    );
+                                    me.getForm().findField("idsucursal").setValue(data.idsucursal);
 
-                                me.getForm().findField("idsucursal").setValue(data.idsucursal);
+                                    me.getForm().findField("bienestrans").setValue(data.mercancia_desc);
+
+                                }
+                                me.getForm().findField("cuentapago").setValue(data.cuentapago);
                             }
-                            me.getForm().findField("cuentapago").setValue(data.cuentapago);
                         }
                     }
-                },
+                    );
+                }
+                else
+                {
+                    this.add(
+                        {
+                            xtype: 'Colsys.Widgets.wgEmpresas',
+                            columnWidth:1/3.9,
+                            fieldLabel: 'Empresa',
+                            //labelWidth: 60,
+                            name: 'empresa',
+                            id: 'idempresa',
+                            //width: 220,
+                            allowBlank: false,
+                            listeners:{
+                                select : function( combo, records, idx ){                            
+                                    var me = this.up();
+                                    //console.log(records.data);
+                                    data=records.data;
+                                    me.getForm().findField('idtipocomprobante').getStore().reload({params:{idempresa:data.id}});
+                                   //me.getForm().findField('idsucursalempresa').getStore().reload({params:{empresa:data.id}});
+                                }
+                            }
+                        },
+
+                        {
+                            columnWidth:1/2.7,
+                            xtype: 'Colsys.Widgets.wgTipoComprobante',
+                            id:'idtipocomprobante',
+                            name:'idtipocomprobante',
+                            fieldLabel: 'Tipo ',                
+                            labelWidth: 50,
+                            allowBlank:false,
+                            listeners:{
+                                select : function( combo, records, idx ){                            
+                                    var me = this.up();
+                                    data=records.data;
+                                    //console.log(data);
+                                    //Ext.getCmp('id-grid-comprobante').setIdSucursal(data.idsucursal);
+                                    me.getForm().findField('idcc').getStore().reload({params:{"idsucursal":data.idsucursal  }});
+                                    //me.getForm().findField('idsucursal').setIdempresa(data.idempresa);
+                                }
+                            }
+                        },
+                        {
+                            xtype: 'Colsys.Widgets.WgCentrocostos',
+                            columnWidth:1/2.7,
+                            fieldLabel: 'Centro de Costos',
+                            name: 'cc',
+                            id: 'idcc',
+                            //width: 220,
+                            allowBlank: false,
+                            listeners:{
+                                select : function( combo, records, idx ){                            
+                                    //var me = this.up();
+                                    //console.log(records.data);
+                                    data=records.data;                            
+                                    //Ext.getCmp('id-grid-comprobante').setIdSucursalgetStore().reload({params:{empresa:data.id}});
+                                    //console.log(Ext.getCmp('id-grid-comprobante'));
+                                    Ext.getCmp('id-grid-comprobante').setIdCc(data.id);
+                                    
+                                    //Ext.getCmp('conceptosfac').setIdCc(data.id);
+                                    
+                                }
+                            }
+                        }
+                    );
+                }
+        
+                this.add(
                 {
                     columnWidth: 0.9,
                     xtype: 'Colsys.Widgets.wgClienteSucursal',
                     fieldLabel: "Cliente",
                     name: "idsucursal",
                     id: "idsucursal",
-                    allowBlank: false                
+                    allowBlank: false,
+                    /*listeners:{
+                                select : function( combo, records, idx ){
+                                    data=records.data;                                    
+                                    //me.getForm().findField('idcontacto').getStore().reload({params:{idcliente:data.idcliente}});
+                                }
+                            }*/
                 },
-                {    
+                {
+                    columnWidth: 0.9,
+                    xtype: 'textfield',
+                    fieldLabel: "Contacto",
+                    name: "idcontacto",
+                    id: "idcontacto",
+                    allowBlank: true
+                }
+                /*{
+                        columnWidth: 0.9,
+                        xtype: 'Colsys.Widgets.WgContactos',
+                        fieldLabel: "Contacto",
+                        name: "idcontacto",
+                        id: "idcontacto",
+                        allowBlank: true                
+                    }*/);
+                
+                /*if(!this.ino)
+                {
+                    this.add(
+                    {
+                        columnWidth: 0.9,
+                        xtype: 'Colsys.Widgets.WgContactos',
+                        fieldLabel: "Contacto",
+                        name: "idcontacto",
+                        id: "idcontacto",
+                        allowBlank: false                
+                    });
+                }*/
+        
+                this.add({    
                     columnWidth: 0.4,
                     xtype: 'numberfield',
                     fieldLabel: 'Tasa de Cambio',

@@ -16,6 +16,7 @@ class usersActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeUsersWS(sfWebRequest $request) {
+        
         ProjectConfiguration::registerZend();   
         if(isset($_GET['wsdl'])) {
             //return the WSDL
@@ -27,8 +28,8 @@ class usersActions extends sfActions {
              
         } else {
             //handle SOAP request
-            //$wsdl_uri = "https://www.coltrans.com.co/ws/users/usersWS?wsdl";
-            $wsdl_uri = "https://10.192.1.62/ws/users/usersWS?wsdl";
+            $wsdl_uri = "https://www.colsys.com.co/ws/users/usersWS?wsdl";
+            //$wsdl_uri = "https://172.16.1.13/ws/users/usersWS?wsdl";
             $soap = new Zend_Soap_Server($wsdl_uri); 
             $options = array('encoding'=>'ISO-8859-1');
             $soap->setOptions($options);

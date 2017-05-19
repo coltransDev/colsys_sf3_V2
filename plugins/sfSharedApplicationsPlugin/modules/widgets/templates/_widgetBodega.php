@@ -4,61 +4,56 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
 $data = $sf_data->getRaw("data");
+$modo = $sf_data->getRaw("modo");
 ?>
-
 <script type="text/javascript">
-
-
 WidgetBodega = function( config ){
     Ext.apply(this, config);
     this.store = new Ext.data.Store({
-				autoLoad : true,
-				reader: new Ext.data.JsonReader(
-					{
-						root: 'root'
-					},
-					Ext.data.Record.create([
-                                            {name: 'b_ca_idbodega'},
-                                            {name: 'b_ca_tipo'},
-                                            {name: 'b_ca_transporte'},
-                                            {name: 'b_ca_nombre'}
-					])
-				),
-				proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$data, "total"=>count($data), "success"=>true) )?> )
-			});
-
+        proxy: new Ext.data.HttpProxy({
+            url: '<?=url_for('widgets/listaBodegas')?>'
+        }),
+        baseParams: {modo:'<?=$modo?>'},
+        reader: new Ext.data.JsonReader(
+		{
+                    root: 'root',
+                    totalProperty: 'totalC'
+		},[
+                {name:'b_ca_idbodega'  },
+                {name:'b_ca_nombre'    },
+                {name:'b_ca_tipo'      },
+                {name:'b_ca_direccion' },
+                {name:'b_ca_transporte'}   
+            ])
+    });
     this.resultTpl = new Ext.XTemplate(
-            '<tpl for="."><div class="search-item"><b>{b_ca_nombre}</b><br /><span>{nombre}  <br />{b_ca_tipo}</span> </div></tpl>'
+        '<tpl for="."><div class="search-item"><b>{b_ca_nombre}</b><br /><span>{nombre}  <br />{b_ca_direccion}</span> </div></tpl>'
     );
-
     WidgetBodega.superclass.constructor.call(this, {
         valueField: 'b_ca_idbodega',
         displayField: 'b_ca_nombre',
         forceSelection: true,
+        minChars:3,
         tpl: this.resultTpl,
         triggerAction: 'all',
-        emptyText:'',
+        emptyText:'Escriba el nombre de la bodega...',
         itemSelector: 'div.search-item',
         selectOnFocus: true,
         lazyRender:true,
-        mode: 'local',
+        submitValue: true,
+        mode: 'remote',
         listClass: 'x-combo-list-small'
     });
 };
-
 Ext.extend(WidgetBodega, Ext.form.ComboBox, {
-	getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
+    getTrigger : Ext.form.TwinTriggerField.prototype.getTrigger,
     initTrigger : Ext.form.TwinTriggerField.prototype.initTrigger,
     trigger1Class : 'x-form-clear-trigger',
     trigger2Class : 'x-form-search-trigger',
     hideTrigger1 : true,
-
-
     initComponent : function() {
         WidgetBodega.superclass.initComponent.call(this);
-
         this.triggerConfig = {
 			tag : 'span',
 			cls : 'x-form-twin-triggers',
@@ -77,7 +72,6 @@ Ext.extend(WidgetBodega, Ext.form.ComboBox, {
 	reset : Ext.form.Field.prototype.reset.createSequence(function() {
 		this.triggers[0].hide();
 	}),
-
 	onViewClick : Ext.form.ComboBox.prototype.onViewClick.createSequence(function() {
 		this.triggers[0].show();
 	}),
@@ -91,6 +85,4 @@ Ext.extend(WidgetBodega, Ext.form.ComboBox, {
 		this.onTriggerClick();
 	}
 });
-
-
 </script>

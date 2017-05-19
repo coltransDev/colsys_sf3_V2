@@ -5,12 +5,12 @@
         <?php include_http_metas() ?>
         <?php include_metas() ?>
         <?php include_title() ?>
-        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="shortcut icon" href="/intranet.ico" />
         <?php include_stylesheets() ?>
         <?php include_javascripts() ?>
         
     </head>
-    <body>
+    <body style='font-family: Myriad pro,Arial,Helvetica,sans-serif; font-size: 73.1%;'>
         <div class="out">
             <div class="wrapper">
                 <div class="int">
@@ -58,10 +58,22 @@
                                 <?include_component('homepage','mainMenu')?>
                             </div>
                             <br />
-                            <div align="center">
-                                <a href="https://www.coltrans.com.co/"><img src="<?=url_for('images/colsys.png')?>" border="none" alt="Colsys" /></a>
-                                <a href="https://www.coltrans.com.co/tracking"><img src="<?=url_for('images/tracking.png')?>" border="none" alt="Colsys" /></a>
-                                <a href="http://www.coltrans.com.co/mail"><img src="<?=url_for('images/webmail.png')?>" border="none" alt="Colsys" /></a>
+                            <div align="center" id="div_accesos">
+                                <br /><br />  
+                                <a href="https://www.colsys.com.co/" class="myButton" style="background-image: url(/intranet/images/colsys2.png); background-repeat: no-repeat;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                                <br /><br />
+                                <a href="http://tracking.opentecnologia.com.co" class="myButton" style="background-image: url(/intranet/images/ColmasTransparente.png); background-repeat: no-repeat;">Tracking</a>                        
+                                <br /><br />
+                                <a href="https://www.colsys.com.co/tracking" class="myButton" style="background-image: url(/intranet/images/ColtransTransparente.png); background-repeat: no-repeat;">Tracking</a>
+                                <br /><br />
+                                <a href="https://accounts.google.com/ServiceLogin?service=mail&continue=https://mail.google.com/mail/#identifier" class="myButton" style="background-image: url(/intranet/images/GmailTransparente.png); background-repeat: no-repeat;">Webmail</a>
+                                <br /><br />
+                                <a href="http://isodoc.coltrans.com.co" class="myButton" style="background-image: url(/intranet/images/iso1.png); background-repeat: no-repeat;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                                <br /><br />
+                                <a href="http://sevenet.coltrans.com.co" class="myButton" style="background-image: url(/intranet/images/sevenet.png); background-repeat: no-repeat;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                                <br /><br />
+                                <a href="http://www.gerenteslatinos.com/aulavirtualgrupo" class="myButton" style="background-image: url(/intranet/images/aula_virtual.png); background-repeat: no-repeat;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>                        
+                                <br /><br />
                             </div>
                         </div>
                         <!--Center Column Start-->
@@ -120,6 +132,7 @@
 
                         <div class="copyright">
                             <div>Copyright &#169; 2010. Todos los derechos reservados.<br /></div>
+                            colsys@<?= $_SERVER["SERVER_ADDR"] ?>
                             <br />
                         </div>
 
@@ -131,3 +144,32 @@
 
     </body>
 </html>
+<script>
+    $( document ).ready(function() {
+        var isIE = /*@cc_on!@*/false || !!document.documentMode;
+        var accesos = '<br/><br/>';
+
+        if(isIE == true){
+            accesos+='<a style="font-weight:600; font-size:20px; line-height:15px; color:#062a7d;" href="https://www.coltrans.com.co/"><b>Colsys</b></a><br/><br/>';
+            accesos+='<a style="font-weight:600; font-size:20px; line-height:15px; color:#062a7d;" href="http://tracking.opentecnologia.com.co"><b>Tracking Colmas</b></a><br/><br/>';
+            accesos+='<a style="font-weight:600; font-size:20px; line-height:15px; color:#062a7d;" href="https://www.coltrans.com.co/tracking"><b>Tracking Coltrans</b></a><br/><br/>';
+            accesos+='<a style="font-weight:600; font-size:20px; line-height:20px; color:#062a7d;" href="https://accounts.google.com/ServiceLogin?service=mail&continue=https://mail.google.com/mail/#identifier"><b>Webmail</b></a><br/><br/>';
+            accesos+='<a style="font-weight:600; font-size:20px; line-height:20px; color:#062a7d;" href="http://isodoc.coltrans.com.co"><b>Isodoc</b></a><br/><br/>';
+            accesos+='<a style="font-weight:600; font-size:20px; line-height:20px; color:#062a7d;" href="http://sevenet.coltrans.com.co"><b>Sevenet</b></a><br/><br/>';
+            accesos+='<a style="font-weight:600; font-size:20px; line-height:20px; color:#062a7d;" href="http://www.gerenteslatinos.com/aulavirtualgrupo"><b>Aula Virtual</b></a><br/><br/>';
+
+            $("#div_accesos").html(accesos);
+        }else{
+            accesos+='<a href="https://www.coltrans.com.co/" class="myButton" style="background-image: url(/intranet/images/colsys2.png); background-repeat: no-repeat;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>';    
+            accesos+='<br/><br/><a href="http://tracking.opentecnologia.com.co" class="myButton" style="background-image: url(/intranet/images/ColmasTransparente.png); background-repeat: no-repeat;">Tracking</a>';
+            accesos+='<br/><br/><a href="https://www.coltrans.com.co/tracking" class="myButton" style="background-image: url(/intranet/images/ColtransTransparente.png); background-repeat: no-repeat;">Tracking</a>';
+            accesos+='<br/><br/><a href="https://accounts.google.com/ServiceLogin?service=mail&continue=https://mail.google.com/mail/#identifier" class="myButton" style="background-image: url(/intranet/images/GmailTransparente.png); background-repeat: no-repeat;">Webmail</a>';
+            accesos+='<br/><br/><a href="http://isodoc.coltrans.com.co" class="myButton" style="background-image: url(/intranet/images/iso1.png); background-repeat: no-repeat;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>';
+            accesos+='<br/><br/><a href="http://sevenet.coltrans.com.co" class="myButton" style="background-image: url(/intranet/images/sevenet.png); background-repeat: no-repeat;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>';
+            accesos+='<br/><br/><a href="http://www.gerenteslatinos.com/aulavirtualgrupo" class="myButton" style="background-image: url(/intranet/images/aula_virtual.png); background-repeat: no-repeat;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>';
+            accesos+='<br/><br/>';
+
+            $("#div_accesos").html(accesos);
+        }
+    })
+</script>

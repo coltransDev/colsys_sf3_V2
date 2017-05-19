@@ -16,9 +16,9 @@
                                                 <table border="0" width="100%" cellpadding="0" cellspacing="5">
 
                                                     <tbody>
-                                                        <tr><td colspan="3"><table><tbody><tr><td width="135"><img src="https://www.coltrans.com.co/images/logo_colsys.gif" alt="COLSYS" height="30" width="178"></td>
+                                                        <tr><td colspan="3"><table><tbody><tr><td width="135"><img src="https://www.colsys.com.co/images/logo_colsys.gif" alt="COLSYS" height="30" width="178"></td>
                                                                             <td><font color="#D99324" face="arial, helvetica, sans-serif" size="4">Sistema de tickets</font></td></tr></tbody></table></td></tr>
-                                                        <tr><td width="25"><img src="https://www.coltrans.com.co/images/spacer.gif" alt="" height="1" width="25"></td><td colspan="2"><hr noshade size="1"></td></tr>
+                                                        <tr><td width="25"><img src="https://www.colsys.com.co/images/spacer.gif" alt="" height="1" width="25"></td><td colspan="2"><hr noshade size="1"></td></tr>
 
                                                         <tr>
                                                             <td> </td><td>
@@ -39,13 +39,13 @@
                                                                     2) Crear en colsys la tarea a los usuarios a quienes se les despachó el correo del nuevo RN, para que una vez se acepte o rechace los RN de por cumplida la tarea y la retire de las pendientes.<br>3) Si el RN es rechazado, se debe crear la tarea a quien generó  RN.<br>
                                                                     4) Cuando en tráficos, cuentas globales, exportaciones acepta el RN se despacharía  correo a los seleccionados o involucrados que deban conocer del inicio del nuevo negocio.<br><br>Los correos deben tener en el tema:<br>* Para importaciones: No. RN, Origen y Nombre cliente <br>
                                                                     * Para Exportaciones: No. RN, via de transporte y nombre cliente.<br><br><br><br><br>                                            </div>
-                                                            </td><td width="50"><img src="https://www.coltrans.com.co/images/spacer.gif" alt="" height="1" width="75"></td></tr>
+                                                            </td><td width="50"><img src="https://www.colsys.com.co/images/spacer.gif" alt="" height="1" width="75"></td></tr>
                                                         <tr><td> </td><td colspan="2"><hr noshade size="1"></td></tr>
 
                                                         <tr>
                                                             <td> </td>
                                                             <td>
-                                                                <img src="https://www.coltrans.com.co/images/spacer.gif" alt="" height="1" width="1">
+                                                                <img src="https://www.colsys.com.co/images/spacer.gif" alt="" height="1" width="1">
                                                                 <p><font color="#000000" face="arial, helvetica, sans-serif"><b>Respuestas</b></font><br>
 
                                                                 </p><div>

@@ -11,7 +11,7 @@ $data = $sf_data->getRaw("data");
 Ext.define('Ext.colsys.wgParametro', {
     extend: 'Ext.form.field.ComboBox',
     alias: 'widget.wParametro',
-    triggerTip: 'Click para limpiar',    
+    triggerTip: 'Click para limpiar',
     store: new Ext.data.Store( {
        fields: ['id','name','caso_uso'],
        data : <?=json_encode($data )?>
@@ -29,7 +29,7 @@ Ext.define('Ext.colsys.wgParametro', {
             return '<tpl for="."><div class="search-item1">{name}</div></tpl>';
         }
     },
-    onFocus: function( field, newVal, oldVal ){          
+    onFocus: function( field, newVal, oldVal ){
         this.store.filter('caso_uso', this.caso_uso, true, true);
     }
 });

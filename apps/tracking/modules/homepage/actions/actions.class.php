@@ -64,7 +64,7 @@ class homepageActions extends sfActions
 		if( $this->getRequestParameter( "idcliente" ) ){
 			$cliente = Doctrine::getTable("Cliente")->find( $this->getRequestParameter( "idcliente" ) );
 			if( $cliente ){
-				$this->getUser()->setClienteActivo( $cliente->getCaIdcliente() );		
+				$this->getUser()->setClienteActivo( $cliente->getCaIdcliente() );
 				$this->redirect( "homepage/index2" );						
 			}	
 		}
@@ -78,6 +78,7 @@ class homepageActions extends sfActions
 		if( !$this->getUser()->getClienteActivo() ){			
 			$this->redirect( "homepage/index");
 		}
+                        $this->idcliente=$this->getUser()->getClienteActivo();
 				
 	}
 	

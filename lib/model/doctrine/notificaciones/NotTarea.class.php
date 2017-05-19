@@ -89,7 +89,7 @@ class NotTarea extends BaseNotTarea
             $texto = "Tiene una tarea vencida sin realizar  \n\nHa superado el tiempo permitido y esta afectando sus indices de gestión<br /><br />" ;
         }
         
-		$texto .= "<a href='https://www.coltrans.com.co/notificaciones/realizarTarea/id/".$this->getCaIdtarea()."'>Haga click aca para realizarla </a> \n\n<br /><br />" ;
+		$texto .= "<a href='https://www.colsys.com.co/notificaciones/realizarTarea/id/".$this->getCaIdtarea()."'>Haga click aca para realizarla </a> \n\n<br /><br />" ;
 		$texto .= "Descripción de la tarea: <br /><b>".$lista->getCaNombre()."</b><br /> ".$lista->getCaDescripcion()." \n\n<br /><br />" ;
 
 		$texto .= "Asignación de la tarea: <br /><br /><table border='0'><tr><th>Nombre</th> <th>Correo electronico</th></tr>";

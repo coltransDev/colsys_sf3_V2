@@ -48,5 +48,11 @@ class menuComponents extends sfComponents {
         else
             $this->trmHoy = "Sin Registrar";
     }
+
+    public function executeLogoHeader() {
+
+        $user = $this->getUser();
+        $this->idempresa = $user->getIdempresa();
+    }
 }
 ?>

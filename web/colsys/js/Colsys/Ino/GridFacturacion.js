@@ -4,20 +4,13 @@
  * and open the template in the editor.
  */
 
-
-var constrainedWin2,winNotCre=null;
-
-
-
-
-
-
+var constrainedWin2,winNotCre=null,winDeducciones =null;
 Ext.define('Colsys.Ino.GridFacturacion', {
     extend: 'Ext.grid.Panel',
     alias: 'widget.Colsys.Ino.GridFacturacion',
     
     features: [{
-            id: 'comprobante12176',
+            id: 'comprobante',
             ftype: 'groupingsummary',
             hideGroupedHeader: true,
             totalSummary: 'fixed',          // Can be: 'fixed', true, false. Default: false
@@ -39,7 +32,7 @@ Ext.define('Colsys.Ino.GridFacturacion', {
     selModel: {
         selType: 'cellmodel'
     },
-    width: 600,
+//    width: 600,
     frame: true,
     
     plugins: [
@@ -87,11 +80,23 @@ Ext.define('Colsys.Ino.GridFacturacion', {
                 store.data.items[e.rowIdx].set('idconcepto'+this.idmaster, e.value);
                 store.data.items[e.rowIdx].set('concepto'+this.idmaster, editor.editors.items[0].field.rawValue);                
             }
+            record= e.record;
+                var records = store.getRange() ;
+                recordLast=records[records.length-1];
+                if( recordLast.get("valor")>0 && recordLast.get("idconcepto")>0) 
+                {
+                        var r = Ext.create(store.getModel());
+                            r.set('comprobante',record.get('comprobante'));
+                            r.set('idcomprobante',record.get('idcomprobante'));
+                            r.set('idhouse',record.get('idhouse'));
+                            r.set('idccosto',record.get('idccosto'));
+                            store.insert(0, r);
+                }
         },        
         beforerender:function(me, opts)
-        {
-            this.setHeight(Ext.getCmp('tab'+this.idmaster).getHeight()-70);        
-            this.setWidth(this.up('tabpanel').up('tabpanel').getWidth()-50);
+        {            
+            this.setHeight(Ext.getCmp('tab'+this.idmaster).getHeight()-130);
+            this.setWidth(this.up('tabpanel').up('tabpanel').getWidth()-80);
             this.reconfigure(
                 Ext.create('Ext.data.Store', {
                      fields: [
@@ -116,7 +121,7 @@ Ext.define('Colsys.Ino.GridFacturacion', {
                          url: '/inoF2/datosFacturas',
                          reader: {
                              type: 'json',
-                             root: 'root'
+                             rootProperty: 'root'
                          }
                      },
                      groupField: 'comprobante'+this.idmaster,
@@ -169,7 +174,7 @@ Ext.define('Colsys.Ino.GridFacturacion', {
                                 record;
                             for (; i < length; ++i) {
                                 record = records[i];
-                                console.log(record.get('valor'+this.idmaster));
+                                
 
                                 if(!isNaN(record.get('valor'+this.idmaster)))
                                 {
@@ -177,7 +182,7 @@ Ext.define('Colsys.Ino.GridFacturacion', {
                                     total += record.get('valor'+this.idmaster);
                                 }
                             }
-                            console.log(total);
+                            
                             return total;
                         }*/
                     },
@@ -191,7 +196,24 @@ Ext.define('Colsys.Ino.GridFacturacion', {
                             xtype: 'htmleditor'
                         },
                         value:''
-                    }
+                    },{
+                            menuDisabled: true,
+                            sortable: false,
+                            xtype: 'actioncolumn',
+                            width: 20,
+                            items: [{
+                                    iconCls: 'import',
+                                    tooltip: 'Deducciones',
+                                    handler: function (grid, rowIndex, colIndex) {
+                                        me = this;
+                                        var store = me.up('grid').getStore();
+                                        var rec = grid.getStore().getAt(rowIndex);
+                                        
+                                        viewGridDed(rec.data.idcomprobante,this.up('grid').idimpoexpo,this.up('grid').idtransporte,this.up('grid').idmaster);
+                                        
+                                    }
+                                }]
+                        }                        
             ]);
         
           
@@ -353,7 +375,7 @@ Ext.define('Colsys.Ino.GridFacturacion', {
                             if(e == 'yes'){
                                var box = Ext.MessageBox.wait('Procesando', 'Eliminando Concepto')
                                Ext.Ajax.request({
-                                   url: '/inoF/EliminarGridFacturacionPanel',
+                                   url: '/inoF2/EliminarGridFacturacionPanel',
                                    params: {                            
                                        iddetalle: record.get('iddetalle')
                                    },
@@ -408,7 +430,7 @@ Ext.define('Colsys.Ino.GridFacturacion', {
                             if(e == 'yes'){
                                var box = Ext.MessageBox.wait('Procesando', 'Generacion de Comprobante')
                                Ext.Ajax.request({
-                                   url: '/inoF/generarFactura" ',
+                                   url: '/inoF2/generarFactura" ',
                                    params: {                            
                                        idcomprobante: record.get('idcomprobante')
                                    },                                    
@@ -446,7 +468,7 @@ Ext.define('Colsys.Ino.GridFacturacion', {
                             if(e == 'yes'){
                                var box = Ext.MessageBox.wait('Procesando', 'Eliminando Comprobante')
                                Ext.Ajax.request({
-                                   url: '/inoF/EliminarGridFacturacionPanel"',
+                                   url: '/inoF2/EliminarGridFacturacionPanel',
                                    params: {                            
                                        idcomprobante: record.get('idcomprobante')
                                    },
@@ -485,7 +507,7 @@ Ext.define('Colsys.Ino.GridFacturacion', {
                             if(e == 'yes'){
                                 var box = Ext.MessageBox.wait('Procesando', 'Anulando Comprobante')
                                 Ext.Ajax.request({
-                                    url: 'inoF/AnularComprobante',
+                                    url: 'inoF2/AnularComprobante',
                                     params: {                            
                                         idcomprobante: record.get('idcomprobante')//,
                                         //modo:'<?//=$modo->getCaIdmodo()?>'
@@ -522,7 +544,7 @@ Ext.define('Colsys.Ino.GridFacturacion', {
                                 if(e == 'yes'){
                                    var box = Ext.MessageBox.wait('Procesando', 'Enviando Comprobantes')
                                    Ext.Ajax.request({
-                                       url: '/inoF/EnviarSiigoConect',
+                                       url: '/inoF2/EnviarSiigoConect',
                                        params: {                            
                                            idcomprobante: record.get('idcomprobante')
                                        },
@@ -530,7 +552,7 @@ Ext.define('Colsys.Ino.GridFacturacion', {
 
                                             var obj = Ext.decode(response.responseText);
 
-                                            alert(obj.toSource());
+                                            //alert(obj.toSource());
                                             if(obj.indincor=="+5" || obj.indincor=="5")
                                             {                                                
                                                 Ext.MessageBox.alert("Colsys", "Se registro correctamente la informacion");
@@ -596,3 +618,26 @@ Ext.define('Colsys.Ino.GridFacturacion', {
           constrainedWin2.show();
     }
 });
+function viewGridDed(idcomprobante,impoexpo,transporte, idmaster) {
+    if (winDeducciones == null) {
+        winDeducciones = new Ext.Window({
+            title: 'Deducciones',
+            width: 650, 
+            id: 'deduccioones' + idmaster,
+            height: 400,
+            items: {
+                xtype: 'Colsys.Ino.GridDeducciones',
+                idtransporte: transporte,
+                idimpoexpo: impoexpo,
+                idcomprobante: idcomprobante,
+                idmaster: idmaster
+            },
+            listeners: {
+                close: function (win, eOpts) {
+                    winDeducciones = null;
+                }
+            }
+        })
+    }
+    winDeducciones.show();
+}

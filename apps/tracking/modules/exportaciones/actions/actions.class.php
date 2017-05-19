@@ -14,9 +14,9 @@ class exportacionesActions extends sfActions
 	* Executes index action
 	*
 	*/
-	public function executeIndex()
+	public function executeIndex($request)
 	{					
-			
+			$this->transporte=$request->getParameter('transporte');            
 	}
 	
 	

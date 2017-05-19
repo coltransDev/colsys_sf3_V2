@@ -15,7 +15,7 @@ class Sucursal extends BaseSucursal
     public static function getGrupoEmpresarial($idsucursal) {
         
         $sucursal = Doctrine::getTable("Sucursal")->find($idsucursal);
-        $grupoColtrans = array(1,2,8);
+        $grupoColtrans = array(1,2,3,5,6,8,11);
         
         if(in_array($sucursal->getCaIdempresa(), $grupoColtrans))
             $idempresa = $grupoColtrans;

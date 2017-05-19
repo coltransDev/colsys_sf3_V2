@@ -38,6 +38,10 @@ class RepOtm extends BaseRepOtm
                 $sql="select ('03-".date("my")."-'||lpad( COALESCE(((max(substring(ca_consecutivo from 9 for 12)::integer)+1)::text),'1'), 4, '0')) consecutivo   from tb_repotm 
                 where substring(ca_consecutivo from 1 for 2)::integer = 3";
 
+            }else if($this->reporte->getCaOrigen()=="STA-0005")
+            {
+                $sql="select ('04-".date("my")."-'||lpad( COALESCE(((max(substring(ca_consecutivo from 9 for 12)::integer)+1)::text),'1'), 4, '0')) consecutivo   from tb_repotm 
+                where substring(ca_consecutivo from 1 for 2)::integer = 4";
             }
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
@@ -55,7 +59,7 @@ class RepOtm extends BaseRepOtm
         {
             
             
-            $sql="select max(ca_cv)+1 consecutivo   from tb_repotm ";
+            $sql="select COALESCE(max(ca_cv),0) consecutivo from tb_repotm ";
             
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
@@ -131,5 +135,4 @@ class RepOtm extends BaseRepOtm
         $this->save();
        
     } */
-    
 }

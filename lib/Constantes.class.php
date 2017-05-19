@@ -22,6 +22,7 @@ class Constantes{
     const TRIANGULACION = "Triangulación";
     const OTMDTA = "OTM-DTA";
     const OTMDTA1 = "OTM/DTA";
+    const OTMAIR = "OTM Aéreo";
     const NACIONALIZACION = "Nacionalización";
     const INTERNO = "INTERNO";
 	
@@ -40,6 +41,7 @@ class Constantes{
     const ADUANALCL = "ADUANA-LCL";
     const COURIER = "COURIER";
     const CONSOLIDADO = "Consolidado";
+    const CONTINUACION = "CONTINUACION";
 
     const FLETE = "Flete";
     const RECARGO_LOCAL = "Recargo Local";

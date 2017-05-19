@@ -1,12 +1,16 @@
 prod:
   .settings:
-    logging_enabled: true
-    no_script_name:           true
+    logging_enabled:        true
+    web_debug:              false
+    cache:                  false
+    no_script_name:         true
+    etag:                   true
+    
 
 dev:
   .settings:
     # E_ALL | E_STRICT = 4095
-    error_reporting:        <?php echo (E_ALL | E_STRICT)."\n" ?>
+    error_reporting:        <?php echo ((E_ALL | E_STRICT) ^ E_NOTICE)."\n" ?>
     logging_enabled:        true
     web_debug:              true
     cache:                  false
@@ -106,6 +110,7 @@ all:
 #
 #    # i18n
 #    default_culture:        en        # Default user culture
+
     enabled_modules:
       - default
       - adminUsers
@@ -113,6 +118,12 @@ all:
       - gestDocumental
       - email
       - menu
-      - fileManager
       - pm
       - helpdesk
+      - widgets
+      - widgets4
+      - reportesNegPlug
+      - widgets5
+      - falabellaAdu2
+      - indicadoresAdu
+

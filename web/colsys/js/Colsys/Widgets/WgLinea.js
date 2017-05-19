@@ -28,12 +28,23 @@ Ext.define('Colsys.Widgets.WgLinea', {
             url: '/widgets5/datosLineas',
             reader: {
                 type: 'json',
-                root: 'root'
+                rootProperty: 'root'
             }
         },
         autoLoad: true
     }),
     qtip:'Listado de lineas',
+    listeners: {
+        beforerender: function (ct, position) {
+            prefijo = this.prefijo;
+            console.log('fasdfsd'+prefijo);
+            if (prefijo) {
+                store = this.getStore();
+                store.proxy.url = prefijo + '/widgets5/datosLineas';
+                store.load();
+            }
+        }
+    },
     labelWidth: 60/*,
     listConfig: {
         loadingText: 'buscando...',

@@ -308,4 +308,17 @@ class HdeskTicket extends BaseHdeskTicket {
             $doc->save();
         }
     }
+    
+    public function getEmail(){
+    
+        $ticket = Doctrine::getTable("HdeskTicket")->find($this->getCaIdticket());
+        
+        $q = Doctrine::getTable("Email")
+                ->createQuery("e")
+                ->select("MAX(ca_idemail) as maxEmail")
+                ->where("e.ca_idcaso = ?", $this->getCaIdticket())
+                ->fetchOne();                               
+        
+        return $q->maxEmail;        
+    }
 }

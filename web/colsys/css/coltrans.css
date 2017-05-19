@@ -597,6 +597,9 @@ a.toolbar:active {
 	background-color:#FAE9DE !important;	
 }
 
+.row_gray{
+	background-color:#E6E6E6 !important;	
+}
 /*
 * Thumbnails
 */
@@ -715,6 +718,14 @@ div.storybox .body {
 	background-image:url('../images/fam/application_form.png') !important;
 }
 
+.link{
+	background-image:url('../images/fam/application_link.png') !important;
+}
+
+.map{
+	background-image:url('../images/fam/map.png') !important;
+}
+
 .folder{
 	background-image:url('../images/fam/folder.png') !important;
 }
@@ -734,7 +745,11 @@ div.storybox .body {
 .refresh {
 	background: url('../images/fam/arrow_refresh.png') no-repeat 0 0 !important;
 }
-        
+
+.falabella {
+	background: url('../images/fam/falabella.png') no-repeat 0 0 !important;
+}
+
 .event-add {
 	background: url('../images/fam/calendar_add.png') no-repeat 0 0 !important;
 }     
@@ -742,6 +757,10 @@ div.storybox .body {
 .note-add {
 	background: url('../images/fam/note_add.png') no-repeat 0 0 !important;
 }     
+
+.pdf {
+	background: url('../images/fam/pdf-small.png') no-repeat 0 0 !important;
+}
 
 .tick {
 	background: url('../images/fam/tick.png') no-repeat 0 0 !important;
@@ -755,12 +774,24 @@ div.storybox .body {
 	background: url('../images/fam/table_go.png') no-repeat 0 0 !important;
 }
 
+.table {
+	background: url('../images/fam/table.png') no-repeat 0 0 !important;
+}
+
 .textfield_add {
 	background: url('../images/fam/textfield_add.png') no-repeat 0 0 !important;
 }
 
 .page_white_edit {
 	background: url('../images/fam/page_white_edit.png') no-repeat 0 0 !important;
+}
+
+.application_form_add {
+	background: url('../images/fam/application_form_add.png') no-repeat 0 0 !important;
+}
+
+.application_form_edit {
+	background: url('../images/fam/application_form_edit.png') no-repeat 0 0 !important;
 }
 
 .page_copy {
@@ -789,6 +820,9 @@ div.storybox .body {
 	background: url('../images/fam/information.png') no-repeat 0 0 !important;
 }
 
+.calendar-today {
+	background: url('../images/fam/calendar-today.png') no-repeat 0 0 !important;
+}
 
 .calendar {
 	background: url('../images/fam/calendar.png') no-repeat 0 0 !important;
@@ -866,6 +900,14 @@ div.storybox .body {
 	color:#676767;
 
 
+}
+
+
+
+
+.csv {
+    padding-left:28px;
+    background:transparent url('../images/24x24/csv.png') no-repeat 0px !important;
 }
 
 
@@ -1264,6 +1306,20 @@ body.ext-ie6 .x-superboxselect-item {margin: 2px 1px 2px 1px; line-height: 1.2em
     background: url("../images/fam/note_edit.png") no-repeat scroll 0 0 transparent !important;
 }
 
-.trm {position: relative; -moz-border-radius: 6px; -webkit-border-radius: 6px; border-radius: 6px; o-border-radius: 6px; khtml-border-radius: 6px; border: 1px solid #CAD8F3; background-color: #157FCC; padding: 0px 3px 0px 3px !important;cursor: pointer;line-height: 24px; color: #FFF }
-.trm:hover{font-weight: bolder}
-
+.trm {
+    position: relative; 
+    -moz-border-radius: 6px; 
+    -webkit-border-radius: 6px; 
+    border-radius: 6px; 
+    o-border-radius: 6px; 
+    khtml-border-radius: 6px; 
+    border: 1px solid #CAD8F3; 
+    background-color: #157FCC; 
+    padding: 0px 3px 0px 3px !important;
+    cursor: pointer;
+    line-height: 24px; 
+    color: #FFF;
+}
+.trm:hover {
+    font-weight: bolder;
+}

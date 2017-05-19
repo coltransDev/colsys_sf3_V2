@@ -16,7 +16,7 @@ Ext.define('Colsys.Widgets.WgImpoexpo', {
                 url: '/widgets5/datosImpoexpo',
                 reader: {
                     type: 'json',
-                    root: 'root'
+                    rootProperty: 'root'
                 }
             },
             autoLoad: true

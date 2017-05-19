@@ -1,5 +1,5 @@
 <? include_component("formulario", "formMenuEstadisticas", array("idFormulario" => $idFormulario)); ?>
-
+<br/>
 <div align="center" id="container" ></div>
 
 <script language="javascript">

@@ -61,7 +61,7 @@ PanelIdg = function( config ){
                 totalProperty: 'total'
             },
             this.record),
-            sortInfo:{field: 'orden', direction: "ASC"}
+            sortInfo:{field: 'departamento', direction: "ASC"}
         });
         
         this.tbar=[
@@ -292,38 +292,39 @@ PanelConfig = function( config ){
                 header: "Sucursal",
                 dataIndex: 'sucursal',
                 width: 63,
-                sortable: true,
+                sortable: true,                
                 editor: new WidgetSucursales()
             },
             {
                 header: "Limite Control",
                 dataIndex: 'lim1',
-                sortable: true,
+                sortable: true,                
                 width: 280,
                 editor: new Ext.form.NumberField({minValue:0})
             },
             {
                 header: "U. Tiempo",
                 dataIndex: "tiempo",
-                sortable: false,
+                sortable: false,                
                 editor : new WidgetParametros({
-                                                id:'tiempo',
-                                                name:'tiempo',
-                                                caso_uso:"CU107",
-                                                width:80,
-                                                idvalor:"valor"
-                                                })
-            },
+                    id:'tiempo',
+                    name:'tiempo',
+                    caso_uso:"CU107",
+                    width:80,
+                    idvalor:"valor"
+                    })
+                },
             {
                 header:"Fecha Inicio",
-                dataIndex:"fechaini",
-                format: 'Y-m-d',
+                dataIndex:"fechaini",  
+                sortable: true,
                 editor : new Ext.form.DateField({format: 'Y-m-d'}),
                 renderer: Ext.util.Format.dateRenderer('Y-m-d')
             },
             {             
-                header:"Fecha Fin",
+                header:"Fecha Fin",                
                 dataIndex:"fechafin",
+                sortable: true,
                 editor : new Ext.form.DateField({format: 'Y-m-d'}),
                 renderer: Ext.util.Format.dateRenderer('Y-m-d')
             }
@@ -349,19 +350,30 @@ PanelConfig = function( config ){
                 totalProperty: 'total'
             },
             this.record),
-            sortInfo:{field: 'orden', direction: "ASC"}
+            sortInfo:{field: 'fechaini', direction: "ASC"}    
         });
         
         this.tbar=[
             {
-				text:'Guardar',
-				iconCls:'disk',
-				handler: this.guardarCambios
-			}
+                text: 'Nuevo Registro',
+                iconCls: 'add',
+                scope: this,
+                handler: this.nuevoRegistro
+            }, {
+                text: 'Recargar',
+                iconCls: 'refresh',
+                scope: this,
+                handler: this.recargar
+            }, {
+                text: 'Guardar',
+                iconCls: 'disk',
+                scope: this,
+                handler: this.guardarCambios
+            }
          ];
 
         PanelConfig.superclass.constructor.call(this, {
-            clicksToEdit: 2,
+            clicksToEdit: 1,
             stripeRows: true,
             autoHeight:true,
             loadMask: {msg:'Cargando...'},            
@@ -371,15 +383,42 @@ PanelConfig = function( config ){
                 forceFit:true,
                 enableRowBody:true,
                 hideGroupedColumn: true
-            }),            
+            }),
             listeners:{
                 rowcontextmenu: this.onRowContextMenu,
                 validateedit: this.onValidateEdit
             }
         });
+        this.getView().getRowClass = this.getRowClass;
+        /*var store = this.store;
+        this.getColumnModel().isCellEditable = function(colIndex, rowIndex) {            
+            var record = store.getAt(rowIndex); 
+            console.log()
+            if(record.data.idreg && new Date(record.data.fechaini).getFullYear() != new Date().getFullYear() ){                
+                return false;                
+            }
+            return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);       
+       }*/
     };
 
     Ext.extend(PanelConfig, Ext.grid.EditorGridPanel, {
+        nuevoRegistro: function () {
+            var recordFile = this.record;
+            var store = this.store;
+            var record = new recordFile({                
+                idreg: this.idreg,
+                idsucursal: '',
+                sucursal: '',
+                lim1: '',
+                fechaini: '',
+                fechafin: '',
+                tiempo: '',
+                orden: ''
+            });
+            records = [];
+            records.push(record);
+            store.insert(0, records);
+        },
         guardarCambios: function(a,b)
         {
             var store = Ext.getCmp('config-idg').store;
@@ -395,6 +434,9 @@ PanelConfig = function( config ){
                 {
                     records[i].data.id=r.id;
                     records[i].data.idreg=r.data.idreg;
+                    if(r.fechaini){
+                        records[i].data.fchini=Ext.util.Format.date(r.fechaini,'Y-m-d');
+                    }
                     changes[i]=records[i].data;
                 }
             }
@@ -439,15 +481,7 @@ PanelConfig = function( config ){
                      }
                 );
             }
-        },
-        recargar: function(){
-            if(this.store.getModifiedRecords().length>0){
-                if(!confirm("Se perderan los cambios no guardados en los recargos locales unicamente, desea continuar?")){
-                    return 0;
-                }
-            }
-            this.store.reload();
-        },
+        },        
         onContextHide: function(){
             if(this.ctxRow){
                 Ext.fly(this.ctxRow).removeClass('x-node-ctx');
@@ -498,7 +532,7 @@ PanelConfig = function( config ){
                                     }
                                 }
                             }
-                        },
+                        }/*,
                         {
                             text: 'Ver Reporte',
                             iconCls: 'page_white_acrobat',
@@ -506,7 +540,7 @@ PanelConfig = function( config ){
                             handler: function(){
                                 window.open("/idg/verReporte/id/"+this.ctxRecord.data.idreporte);
                             }
-                        }
+                        }*/
                     ]
                 });
             }
@@ -532,12 +566,12 @@ PanelConfig = function( config ){
                 
                 var existe = false;
                 recordsConceptos = storeReportes.getRange();
-                for( var j=0; j< recordsConceptos.length&&!existe; j++){
+                /*for( var j=0; j< recordsConceptos.length&&!existe; j++){
                     if(recordsConceptos[j].data.idsucursal==e.value)
                     {
                         existe = true;
                     }
-                }
+                }*/
                 
                 if( !existe ){
                     store.each( function( r ){
@@ -567,9 +601,46 @@ PanelConfig = function( config ){
                     return false;
                 }
             }
-            else if( e.field == "fechaini" || e.field == "fechafin"){
+            /*else if( e.field == "fechaini" || e.field == "fechafin"){
                 e.value=Ext.util.Format.date(e.value, ('Y-m-d'));                
+            }*/
+        },
+        recargar: function () {
+
+            if (this.store.getModifiedRecords().length > 0) {
+                if (!confirm("Se perderan los cambios no guardados en los recargos locales unicamente, desea continuar?")) {
+                    return 0;
+                }
             }
+            this.store.reload();
+        },
+        getRowClass : function(record, rowIndex, p, ds){
+            p.cols = p.cols-1;
+
+            var color;
+            //console.log(new Date(record.data.fechaini).getFullYear());
+            //console.log(new Date().getFullYear());
+            
+            //if(new Date(record.data.fechaini) >= new Date() || new Date(record.data.fechafin) <= new Date()){
+            
+            if( new Date(record.data.fechaini).getFullYear() == new Date().getFullYear() || new Date() <= new Date(record.data.fechafin)){
+                color = "green";
+            }
+                /*color = "blue";
+            }else{            
+                if( record.data.respuesta ){
+                    if( record.data.status_color ){
+                        color = record.data.status_color;
+                    }else{
+                        color = "";
+                    }                    
+
+                }else{
+                    color = "green";
+                }            
+            }*/
+            color = "row_"+color;
+            return this.state[record.id] ? 'x-grid3-row-expanded '+color : 'x-grid3-row-collapsed '+color;
         }
     });
 </script>

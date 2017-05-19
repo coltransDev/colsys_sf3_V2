@@ -12,5 +12,4 @@
  */
 class ConceptoAduana extends BaseConceptoAduana
 {
-
 }

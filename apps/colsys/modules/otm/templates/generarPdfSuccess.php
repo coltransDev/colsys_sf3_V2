@@ -157,6 +157,13 @@ Ext.onReady(function(){
                                         name : 'manifiesto',
                                         id : 'manifiesto',
                                         value: '<?=$datos["manifiesto"]?>'
+                                    },
+                                    {
+                                        xtype:'textfield',
+                                        fieldLabel: 'Placa',
+                                        name : 'placa',
+                                        id : 'placa',
+                                        value: '<?=$datos["placa"]?>'
                                     }
                                 <?
                                 }

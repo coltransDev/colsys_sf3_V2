@@ -358,7 +358,7 @@ class reportesGerActions extends sfActions {
 
             Doctrine_Manager::getInstance()->setCurrentConnection('replica');
             $con = Doctrine_Manager::getInstance()->connection();
-            //echo $sql;
+            echo $sql;
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
         }
@@ -534,15 +534,23 @@ class reportesGerActions extends sfActions {
         $this->iddepartamento = $request->getParameter("iddepartamento");
         $this->idtransporte = $this->getRequestParameter("idtransporte");
         $this->transporte = $this->getRequestParameter("transporte");
-        $this->fechafinal = Utils::addDate(Utils::addDate($ano . "-" . $this->mes . "-01", 0, 1, 0, "Y-m-01"), -1);
-        $this->fechainicial = Utils::addDate(Utils::addDate($this->fechafinal, 1, 0, 0, "Y-m-01"), 0, -3, 0, "Y-m-d");
+        //$this->fechafinal = Utils::addDate(Utils::addDate($ano . "-" . $this->mes . "-01", 0, 0, 0, "Y-m-01"), -1);
+        //$this->fechainicial = Utils::addDate(Utils::addDate($this->fechafinal, 1, 0, 0, "Y-m-01"), 0, 0, 0, "Y-m-d");
 
+        $this->fechafinal = $request->getParameter("fechaFinal");
+        $this->fechainicial = $request->getParameter("fechaInicial");
+
+        $this->fechafinal3 = Utils::addDate(Utils::addDate($ano . "-" . $this->mes . "-01", 0, 0, 0, "Y-m-01"), -1);
+        $this->fechainicial3 = Utils::addDate(Utils::addDate($this->fechafinal3, 1, 0, 0, "Y-m-01"), 0, 0, 0, "Y-m-d");
+        
         $this->fechainicial1 = Utils::addDate($request->getParameter("fechaInicial"), 0, 0, -1);
-        $this->fechafinal1 = Utils::addDate($this->fechafinal, 0, 0, -1);
+        $this->fechafinal1 = Utils::addDate($this->fechafinal3, 0, 0, -1);
 
         $this->fechainicial2 = Utils::addDate($request->getParameter("fechaInicial"), 0, 0, -2);
-        $this->fechafinal2 = Utils::addDate($this->fechafinal, 0, 0, -2);
+        $this->fechafinal2 = Utils::addDate($this->fechafinal3, 0, 0, -2);
 
+        
+        
         if ($this->opcion) {
 
             if ($this->idsucursal) {
@@ -552,15 +560,15 @@ class reportesGerActions extends sfActions {
                     $where .= " and ca_idsucursal='" . $this->idsucursal . "'";
             }
             if ($this->departamento == "Cuentas Globales")
-                $where .= " and ca_idcliente in (select ca_idcliente from vi_clientes_reduc where ca_propiedades like '%cuentaglobal=true%') ";
+                $where .= " and ca_idcliente in (select ca_idcliente from vi_clientes_reduc where (ca_propiedades like '%cuentaglobal=true%' OR ca_propiedades like '%cuentaglobal=1%')) ";
             else if ($this->departamento == "Tráficos")
-                $where .= " and ca_idcliente not in (select ca_idcliente from vi_clientes_reduc where ca_propiedades like '%cuentaglobal=true%') ";
+                $where .= " and ca_idcliente not in (select ca_idcliente from vi_clientes_reduc where (ca_propiedades like '%cuentaglobal=true%' OR ca_propiedades like '%cuentaglobal=1%')) ";
             else if ($this->departamento == "Aéreo")
-                $where .= " and ca_idcliente not in (select ca_idcliente from vi_clientes_reduc where ca_propiedades like '%cuentaglobal=true%') ";
+                $where .= " and ca_idcliente not in (select ca_idcliente from vi_clientes_reduc where (ca_propiedades like '%cuentaglobal=true%' OR ca_propiedades like '%cuentaglobal=1%')) ";
             if ($this->transporte)
                 $where .= " and ca_transporte ='" . $this->transporte . "'";
 
-            $this->nmeses = 3;
+            //$this->nmeses = 3;
             $tra_principal = "'Alemania','Argentina','Belgica','Brasil','Chile','China','España','Estados Unidos','Inglaterra', 'Italia', 'Mexico','Taiwan'";
 
             $sql = "select count(*) as valor,ca_year,ca_mes,ca_traorigen as origen
@@ -611,7 +619,7 @@ class reportesGerActions extends sfActions {
 
             $sql = "select count(*) as valor,ca_traorigen as origen,ca_year 
                     from vi_reportes_estadisticas
-                    where (ca_fchreporte between '" . (Utils::parseDate($this->fechafinal, "Y") . '-01-01') . "' and '" . $this->fechafinal . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal1, "Y") . '-01-01') . "' and '" . $this->fechafinal1 . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal2, "Y") . '-01-01') . "' and '" . $this->fechafinal2 . "') $where and ca_traorigen in ($tra_principal) and ca_ciuorigen!='Shanghai'
+                    where (ca_fchreporte between '" . (Utils::parseDate($this->fechafinal3, "Y") . '-01-01') . "' and '" . $this->fechafinal3 . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal1, "Y") . '-01-01') . "' and '" . $this->fechafinal1 . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal2, "Y") . '-01-01') . "' and '" . $this->fechafinal2 . "') $where and ca_traorigen in ($tra_principal) and ca_ciuorigen!='Shanghai'
                     group by ca_traorigen,ca_year order by 2,3,1";
             $st = $con->execute($sql);
             $this->compara = $st->fetchAll();
@@ -626,7 +634,7 @@ class reportesGerActions extends sfActions {
 
             $sql = "select count(*) as valor,ca_ciuorigen as origen,ca_year 
                     from vi_reportes_estadisticas
-                    where (ca_fchreporte between '" . (Utils::parseDate($this->fechafinal, "Y") . '-01-01') . "' and '" . $this->fechafinal . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal1, "Y") . '-01-01') . "' and '" . $this->fechafinal1 . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal2, "Y") . '-01-01') . "' and '" . $this->fechafinal2 . "') $where and ca_ciuorigen='Shanghai'
+                    where (ca_fchreporte between '" . (Utils::parseDate($this->fechafinal3, "Y") . '-01-01') . "' and '" . $this->fechafinal3 . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal1, "Y") . '-01-01') . "' and '" . $this->fechafinal1 . "' or ca_fchreporte between '" . (Utils::parseDate($this->fechafinal2, "Y") . '-01-01') . "' and '" . $this->fechafinal2 . "') $where and ca_ciuorigen='Shanghai'
                     group by ca_ciuorigen,ca_year order by 2,3,1";
             $st = $con->execute($sql);
             $this->compara = $st->fetchAll();
@@ -680,7 +688,38 @@ class reportesGerActions extends sfActions {
                 $this->totalesCliente[$r["origen"]][$r["ca_year"] . "-" . $r["ca_mes"]]+=$r["valor"];
                 $this->totalesCliente["totales"][$r["ca_year"] . "-" . $r["ca_mes"]]+=$r["valor"];
             }
+            /*CLIENTES X TRANSPORTE*/
+            $sql = "select count(*) as valor,ca_nombre_cli as cliente, ca_transporte
+                    from vi_reportes_estadisticas 
+                    where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "{$ano}-01-01") . "' and '" . $this->fechafinal . "' $where
+                    group by ca_nombre_cli, ca_transporte
+                    order by 2 ,1 desc";
+            $st = $con->execute($sql);
+            $this->clientes = $st->fetchAll();
 
+            $this->gridClientes_t = array();
+            $this->totalesCliente_t = array();
+            foreach ($this->clientes as $r) {
+                $this->gridClientes_t[$r["cliente"]][$r["ca_transporte"]]["totales"] = $r["valor"];
+                $this->totalesCliente_t[$r["cliente"]]["totales"]+=$r["valor"];
+                $this->totalesCliente_t["totales"]["totales"]+=$r["valor"];
+            }
+
+            $sql = "select count(*) as valor,ca_year,ca_mes,ca_transporte ,ca_nombre_cli as cliente
+                    from vi_reportes_estadisticas 
+                    where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "{$ano}-01-01") . "' and '" . $this->fechafinal . "' $where
+                    group by ca_year,ca_mes,ca_transporte,ca_nombre_cli
+                    order by 4,2,3,5";
+
+            $st = $con->execute($sql);
+            $this->clientes = $st->fetchAll();
+
+            foreach ($this->clientes as $r) {
+                $this->gridClientes_t[$r["cliente"]][$r["ca_transporte"]][$r["ca_year"] . "-" . $r["ca_mes"]] = $r["valor"];
+                $this->totalesCliente_t[$r["cliente"]][$r["ca_year"] . "-" . $r["ca_mes"]]+=$r["valor"];
+                $this->totalesCliente_t["totales"][$r["ca_year"] . "-" . $r["ca_mes"]]+=$r["valor"];
+            }
+            
             $sql = "select count(*) as valor,ca_year,ca_mes,ca_login as vendedor
                     from vi_reportes_estadisticas 
                     where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "{$ano}-01-01") . "' and '" . $this->fechafinal . "' $where
@@ -1218,11 +1257,11 @@ class reportesGerActions extends sfActions {
             if ($this->idDepartamento)
                 $where.=" and op.ca_departamento = '" . $this->idDepartamento . "'";
 
-            $sql = "SELECT
+            $sql = "SELECT distinct 
                         rf.ca_ano, rf.ca_mes, rp.ca_idreporte, rp.ca_fchreporte, rp.ca_consecutivo, rx.ca_version, sc.ca_nombre as ca_sucursal,
                         tro.ca_idtrafico, tro.ca_nombre as ca_traorigen, rp.ca_origen, cio.ca_ciudad as ca_ciuorigen, trd.ca_idtrafico, trd.ca_nombre as ca_tradestino, cid.ca_ciudad as ca_ciudestino, rp.ca_transporte,
                         rp.ca_modalidad, rp.ca_impoexpo, ccl.ca_idcliente, ccl.ca_compania, lin.ca_idlinea, lin.ca_nomtransportista, agt.ca_idagente, agt.ca_nombre as ca_nomagente, nn.ca_referencia, nn.ca_cant_negocios,
-                        rf.ca_cant_emails, rf.ca_usuenvio, op.ca_nombre as ca_nomoperativo, op.ca_departamento
+                        rf.ca_cant_emails, rf.ca_usuenvio, op.ca_nombre as ca_nomoperativo, op.ca_departamento, to_number(substr(rp.ca_consecutivo,0,position('-' in rp.ca_consecutivo)),'99999999') as ca_numero_rep
 
                     from tb_reportes rp
                         -- La última versión del reporte
@@ -1243,7 +1282,7 @@ class reportesGerActions extends sfActions {
                         INNER JOIN vi_transporlineas lin ON (rp.ca_idlinea = lin.ca_idlinea)
                         INNER JOIN vi_clientes_reduc ccl ON (ccn.ca_idcliente = ccl.ca_idcliente)
                     $where
-                    order by ca_ano, ca_mes, ca_compania, ca_traorigen, to_number(substr(rp.ca_consecutivo,0,position('-' in rp.ca_consecutivo)),'99999999')";
+                    order by ca_ano, ca_mes, ca_compania, ca_traorigen, ca_numero_rep";
 
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
@@ -1337,20 +1376,54 @@ class reportesGerActions extends sfActions {
 
     public function executeListadoFacturas(sfWebRequest $request) {
 
+        $this->tipo=$request->getParameter("tipo");
         if ($request->isMethod("post")) {
 
             //print_r($request->getParameter("costo"));
+            if($this->tipo=="expo")
+            {
+                    $q = Doctrine::getTable("InoCostoExpo")
+                        ->createQuery("c")
+                        //->select("*,c.ca_neta as ca_neto,c.ca_moneda as ca_idmoneda")
+                        ->innerJoin("c.Costo cs")
+                        ->innerJoin("c.UsuCreado u")                    
+                        ->addWhere("ca_fchfactura >= ?", $request->getParameter("fchInicial"))
+                        ->addWhere("ca_fchfactura <= ?", $request->getParameter("fchFinal"))
 
-            $q = Doctrine::getTable("InoCostosSea")
-                    ->createQuery("c")
-                    ->innerJoin("c.Costo cs")
-                    ->innerJoin("c.UsuCreado u")
-                    ->addWhere("substr(ca_referencia,5,2) like ?", $request->getParameter("sufijo"))
-                    ->addWhere("ca_fchfactura >= ?", $request->getParameter("fchInicial"))
-                    ->addWhere("ca_fchfactura <= ?", $request->getParameter("fchFinal"))
-                    ->addWhere("ca_usucreado like ?", $request->getParameter("login"))
-                    ->setHydrationMode(Doctrine::HYDRATE_ARRAY);
+                        ->setHydrationMode(Doctrine::HYDRATE_ARRAY);            
 
+                    if ($request->getParameter("login")) {
+                        $q->addWhere("ca_usucreado like ?", $request->getParameter("login"));
+                    }
+            }
+            else if($this->tipo=="aereo")
+            {
+                    $q = Doctrine::getTable("InoCostosAir")
+                        ->createQuery("c")
+                        //->select("*,c.ca_neta as ca_neto,c.ca_moneda as ca_idmoneda")
+                        ->innerJoin("c.Costo cs")
+                        //->leftJoin("c.Proveedor p")
+                        ->innerJoin("c.UsuCreado u")                            
+                        ->addWhere("ca_fchfactura >= ?", $request->getParameter("fchInicial"))
+                        ->addWhere("ca_fchfactura <= ?", $request->getParameter("fchFinal"))
+                        ->setHydrationMode(Doctrine::HYDRATE_ARRAY);
+
+                    if ($request->getParameter("login")) {
+                        $q->addWhere("ca_usucreado like ?", $request->getParameter("login"));
+                    }
+            }        
+            else
+            {
+                $q = Doctrine::getTable("InoCostosSea")
+                        ->createQuery("c")                    
+                        ->innerJoin("c.Costo cs")
+                        ->innerJoin("c.UsuCreado u")
+                        ->addWhere("substr(ca_referencia,5,2) like ?", $request->getParameter("sufijo"))
+                        ->addWhere("ca_fchfactura >= ?", $request->getParameter("fchInicial"))
+                        ->addWhere("ca_fchfactura <= ?", $request->getParameter("fchFinal"))
+                        ->addWhere("ca_usucreado like ?", $request->getParameter("login"))
+                        ->setHydrationMode(Doctrine::HYDRATE_ARRAY);
+            }
 
             if ($request->getParameter("proveedor")) {
                 $q->addWhere("UPPER(ca_proveedor) like ?", strtoupper($request->getParameter("proveedor")) . "%");
@@ -1367,8 +1440,11 @@ class reportesGerActions extends sfActions {
                 $q->addWhere("u.ca_idsucursal = ?", $request->getParameter("sucursal"));
             }
 
-            if ($request->getParameter("destino") != "%") {
-                $q->innerJoin("c.InoMaestraSea m");
+            if ($request->getParameter("destino") != "%" && $request->getParameter("destino") != "") {
+                if($this->tipo=="expo")
+                    $q->innerJoin("c.InoMaestraExpo m");
+                else
+                    $q->innerJoin("c.InoMaestraSea m");
                 $q->addWhere("m.ca_destino = ?", $request->getParameter("destino"));
                 $destino = Doctrine::getTable("Ciudad")->find($request->getParameter("destino"));
                 if ($destino) {
@@ -1377,16 +1453,58 @@ class reportesGerActions extends sfActions {
             }
             $this->fchInicial = $request->getParameter("fchInicial");
             $this->fchFinal = $request->getParameter("fchFinal");
+            //echo $q->getSqlQuery();
             $this->costos = $q->execute();
+            //echo "<pre>";print_r($this->costos);echo "</pre>";
 
             $this->setTemplate("listadoFacturasResult");
         } else {
-            $this->costos = Doctrine::getTable("Costo")
+            if($this->tipo=="expo")
+            {
+                $this->costos = Doctrine::getTable("Costo")
+                    ->createQuery("c")
+                    ->where("c.ca_impoexpo = ?  ", array('Exportacion'))
+                    ->OrderBy("c.ca_costo")
+                    ->addOrderBy("c.ca_modalidad")
+                    ->execute();
+                $this->destinos = Doctrine::getTable("Ciudad")
+                    ->createQuery("c")
+                    ->where("c.ca_idtrafico = ?", "CO-057")
+                    //->addWhere("c.ca_puerto in ('Marítimo','Ambos')")
+                    ->orderBy("c.ca_ciudad")
+                    ->execute();
+            }
+            else if($this->tipo=="aereo")
+            {
+                $this->costos = Doctrine::getTable("Costo")
+                    ->createQuery("c")
+                    ->where("c.ca_impoexpo = ? and c.ca_transporte=? ", array(Constantes::IMPO, Constantes::AEREO))
+                    ->OrderBy("c.ca_costo")
+                    ->addOrderBy("c.ca_modalidad")
+                    ->execute();
+                $this->destinos = Doctrine::getTable("Ciudad")
+                    ->createQuery("c")
+                    ->where("c.ca_idtrafico = ?", "CO-057")
+                    ->addWhere("c.ca_puerto in ('Aéreo','Ambos')")
+                    ->orderBy("c.ca_ciudad")
+                    ->execute();
+            }
+            else
+            {
+                $this->costos = Doctrine::getTable("Costo")
                     ->createQuery("c")
                     ->where("c.ca_impoexpo = ? and c.ca_transporte=? ", array(Constantes::IMPO, Constantes::MARITIMO))
                     ->OrderBy("c.ca_costo")
                     ->addOrderBy("c.ca_modalidad")
                     ->execute();
+                
+                $this->destinos = Doctrine::getTable("Ciudad")
+                    ->createQuery("c")
+                    ->where("c.ca_idtrafico = ?", "CO-057")
+                    ->addWhere("c.ca_puerto in ('Marítimo','Ambos')")
+                    ->orderBy("c.ca_ciudad")
+                    ->execute();
+            }
 
             $this->usuarios = Doctrine::getTable("Usuario")
                     ->createQuery("u")
@@ -1400,12 +1518,7 @@ class reportesGerActions extends sfActions {
                     ->addWhere("s.ca_idempresa=?", $this->getUser()->getIdempresa())
                     ->execute();
 
-            $this->destinos = Doctrine::getTable("Ciudad")
-                    ->createQuery("c")
-                    ->where("c.ca_idtrafico = ?", "CO-057")
-                    ->addWhere("c.ca_puerto in ('Marítimo','Ambos')")
-                    ->orderBy("c.ca_ciudad")
-                    ->execute();
+            
         }
     }
 
@@ -2567,6 +2680,7 @@ class reportesGerActions extends sfActions {
     public function executeBusquedaIds(sfWebRequest $request) {
         $query = $request->getParameter("query");
         $tipo = $request->getParameter("tipo");
+        $estado = $request->getParameter("estado");
 
         $q = Doctrine::getTable("Ids")
                 ->createQuery("i");
@@ -2576,6 +2690,11 @@ class reportesGerActions extends sfActions {
             $q->innerJoin("i.IdsAgente ag");
         } else if ($tipo == "Proveedor") {
             $q->innerJoin("i.IdsProveedor pr");
+        }
+        if ($estado == "Activo" && ($tipo == "Agente" || $tipo == "Proveedor")){
+            $q->addWhere("ca_activo = ?", true);
+        }else if ($estado != "Activo" && ($tipo == "Agente" || $tipo == "Proveedor")){
+            $q->addWhere("ca_activo = ?", false);
         }
         $q->addWhere("UPPER(i.ca_nombre) like ?", '%' . strtoupper($query) . '%');
         $q->addOrderBy("i.ca_nombre ASC");
@@ -2789,6 +2908,57 @@ class reportesGerActions extends sfActions {
         $this->dateFinal = $dateFinal;
     }
 
+    public function executeCargasPendientesxLiberar(sfWebRequest $request) {
+        
+        $fecha = date('Y-m-d');
+        $nuevafecha = strtotime ( '-9 day' , strtotime ( $fecha ) ) ;
+        $nuevafecha = date ( 'Y-m-d' , $nuevafecha );
+        
+        //echo $nuevafecha;
+        
+        $sql = "SELECT DISTINCT 
+                    im.ca_referencia,                    
+                    ori.ca_ciudad as origen, 
+                    dest.ca_ciudad as destino, 
+                    im.ca_mbls, ics.ca_hbls, 
+                    ics.ca_compania,
+                    /*( SELECT ca_tiporep
+                    FROM tb_reportes rr
+                    WHERE r.ca_consecutivo::text = rr.ca_consecutivo::text order by ca_version DESC LIMIT 1) AS ca_tiporeporte,*/
+                    (SELECT string_agg(rs.ca_idetapa::text, '|'::text) AS ca_idetapa
+			FROM tb_repstatus rs
+				left join tb_reportes rr ON rs.ca_idreporte = rr.ca_idreporte
+			where r.ca_consecutivo::text = rr.ca_consecutivo::text) as ca_idetapa,
+                    im.ca_modalidad, 
+                    ics.ca_sucursal, 
+                    im.ca_fcharribo, 
+                    ics.ca_fchliberacion, 
+                    im.ca_fchcerrado, 
+                    im.ca_usucerrado, 
+                    ics.ca_continuacion, 
+                    ics.ca_bodega,
+                    r.ca_consecutivo,
+                    array_to_string(ARRAY( SELECT ((tt.ca_idequipo::text)) 
+                                            FROM tb_inoequiposxcliente tt
+                                            WHERE tt.ca_idinocliente = ics.ca_idinocliente), '|'::text) AS ca_contenedores,
+                    ics.ca_fchlibero
+            FROM tb_inomaestra_sea im
+                    LEFT JOIN vi_inoclientes_sea ics ON ics.ca_referencia = im.ca_referencia
+                    LEFT JOIN tb_reportes r ON r.ca_idreporte = ics.ca_idreporte
+                    JOIN tb_ciudades ori ON ori.ca_idciudad = im.ca_origen
+                    JOIN tb_ciudades dest ON dest.ca_idciudad = im.ca_destino                
+            WHERE ics.ca_fchlibero is null 
+                    AND CAST(ca_fcharribo AS DATE) < '$nuevafecha'     
+                    AND SUBSTR(im.ca_referencia,1,3) NOT IN ('700','710','720','800','810','820')
+                    AND ca_estado is not null AND ca_estado != 'R' AND ca_estado != 'A'
+                    AND im.ca_impoexpo <> 'Triangulación'        
+                    AND ca_fcharribo > '2017-01-01'                    
+            ORDER BY dest.ca_ciudad, ca_fcharribo, ca_referencia";
+        //echo $sql;
+        $con = Doctrine_Manager::getInstance()->connection();
+        $st = $con->execute($sql);
+        $this->cargas = $st->fetchAll();
+}
 }
 
 ?>

@@ -6,20 +6,37 @@ cli:
   doctrine:
     class: sfDoctrineDatabase
     param:
-      dsn: 'pgsql:dbname=Coltrans;host=10.192.1.65'
+      dsn: 'pgsql:dbname=Coltrans;host=172.16.1.16'
       username: postgres
-      password: cglti$col91
+      password: V9p0%rRc9$
       encoding: iso8859-1
 
-
-
-all:
+prod:
   doctrine:
     class: sfDoctrineDatabase
     param:
       is_master: true
-      dsn: 'pgsql:dbname=Coltrans;host=10.192.1.65'
+      dsn: 'pgsql:dbname=Coltrans;host=172.16.1.16'
+      username: postgres
+      password: V9p0%rRc9$
+      encoding: iso8859-1
 
-      username: Administrador
-      password: cglti$col91
+coltrans:
+  doctrine:
+    class: sfDoctrineDatabase
+    param:
+      is_master: true
+      dsn: 'pgsql:dbname=Coltrans;host=172.16.1.16'
+      username: postgres
+      password: V9p0%rRc9$
+      encoding: iso8859-1
+
+consolcargo:
+  doctrine:
+    class: sfDoctrineDatabase
+    param:
+      is_master: true
+      dsn: 'pgsql:dbname=Consolcargo;host=172.16.1.16'
+      username: postgres
+      password: V9p0%rRc9$
       encoding: iso8859-1

@@ -82,8 +82,17 @@ class reporteExtComponents extends sfComponents
         }
         //echo $reporte->getCaIdconsignatario();
         if( $reporte->getCaIdconsignatario()){
-
-            $consignatario = Doctrine::getTable("Tercero")->find( $reporte->getCaIdconsignatario() );
+            
+            /*if ($reporte->getProperty("idimportador")!="")
+            {                
+                $consignatario = $reporte->getImportador();
+            }
+            else
+            {                
+                
+            }*/
+            $consignatario = $reporte->getConsignatario();
+            
             $consignatario_final = $consignatario->getCaNombre()." Nit. ".$consignatario->getCaIdentificacion();
             if($reporte->getCaContinuacion()!="OTM")
             {
@@ -129,8 +138,16 @@ class reporteExtComponents extends sfComponents
                 $hijo = $consignatario_final;
             else
             {
-                $cliente = $reporte->getContacto()->getCliente();
-                $hijo = $cliente->getCaCompania().($idtrafico!="PE-051"?" Nit. ".$cliente->getCaIdalterno()."-".$cliente->getCaDigito():"");
+                if ($reporte->getProperty("idimportador")!="")
+                {
+                    $importador=$reporte->getImportador();
+                    $hijo = $importador->getCaNombre().($idtrafico!="PE-051"?" Nit. ".$importador->getCaIdentificacion():"");
+                }   
+                else
+                {
+                    $cliente = $reporte->getContacto()->getCliente();                
+                    $hijo = $cliente->getCaCompania().($idtrafico!="PE-051"?" Nit. ".$cliente->getCaIdalterno()."-".$cliente->getCaDigito():"");
+                }
             }
                 
         }else{

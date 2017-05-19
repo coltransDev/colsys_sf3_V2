@@ -10,18 +10,23 @@
 
 
 <script type="text/javascript">
-   
 
 Ext.define('Ext.colsys.wgLinea', {
-  extend: 'Ext.form.field.ComboBox',
-  alias: 'widget.wLinea',
-  triggerTip: 'Click para limpiar',
-  spObj:'',
-  spForm:'',
-  trans:'',
-  spExtraParam:'',
-  store: Ext.create('Ext.data.Store', {
-            fields: ['idlinea','linea'],
+    extend: 'Ext.form.field.ComboBox',
+    alias: 'widget.wLinea',
+    triggerTip: 'Click para limpiar',
+    spObj:'',
+    spForm:'',
+    trans:'',
+    spExtraParam:'',
+    selectOnFocus: true,
+    enableKeyEvents: true,
+    minChars: 3,
+    displayField: 'linea',
+    valueField: 'idlinea',
+    labelWidth: 50,    
+    store: Ext.create('Ext.data.Store', {
+            fields: ['idlinea','linea','transporte'],
             proxy: {
                 type: 'ajax',
                 url: '<?=url_for('widgets/datosLineas')?>',
@@ -32,8 +37,7 @@ Ext.define('Ext.colsys.wgLinea', {
             },
             autoLoad: false
         }),
-        qtip:'Listado de lineas',
-        labelWidth: 60,
+        qtip:'Listado de lineas',        
         trigger1Class: 'x-form-select-trigger',
         trigger2Class: 'x-form-clear-trigger',
         onRender: function(ct, position){
@@ -64,28 +68,22 @@ Ext.define('Ext.colsys.wgLinea', {
           trigger1.addClsOnOver('x-form-trigger-over');
           trigger2.addClsOnOver('x-form-trigger-over');
       },
-      onFocus : function( obj, the1, eOpts1 )
+      onFocus: function( field, newVal, oldVal ){          
+        this.store.filter('transporte', this.transporte, true, true);
+        //this.store.filter('impoexpo', this.impoexpo, true, true);
+    }
+      /*onFocus : function( obj, the1, eOpts1 )
       {
-          
-          trans=Ext.getCmp(this.transporte).getValue();
+          trans=Ext.getCmp(this.transporte).getValue();          
           if(this.trans!=trans)
           {
-              //alert(1)
               this.store.load({
                 params : {
                     transporte : trans
                 }
             });
-          }
-          /*else
-              alert(2)*/
-          
-          this.trans=trans;
-          //alert(trans);
-      }
-      /*doQuery: function( queryString, forceAll, rawQuery )
-      {
-          
+          }          
+          this.trans=trans;          
       }*/
 });
 </script>

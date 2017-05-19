@@ -11,7 +11,7 @@
 	</tr>
 	<?
 	$i=0;
-	while( $row=$stmt->fetch(PDO::FETCH_ASSOC) ){
+  	foreach($resul as $row){
 		/*if( !$reporte->esUltimaVersion() ){
 			continue;
 		}*/

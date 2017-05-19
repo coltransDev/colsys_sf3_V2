@@ -77,6 +77,7 @@ include_component("widgets", "widgetCiudad");
                 <option value="factura_prov" <?=($criterio=="factura_prov")?"selected":""?>>Factura Proveedor</option>
                 <option value="ca_idnave" <?=($criterio=="ca_idnave")?"selected":""?>>Motonave</option>
                 <option value="ca_observaciones" <?=($criterio=="ca_observaciones")?"selected":""?>>Observaciones</option>
+		<option value="ca_contenedor" <?=($criterio=="ca_contenedor")?"selected":""?>>Contenedor</option>
             </select>
 	    </td>
 		<td width="337" >&nbsp;

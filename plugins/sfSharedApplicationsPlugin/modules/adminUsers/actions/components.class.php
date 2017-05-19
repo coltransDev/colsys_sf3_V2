@@ -27,6 +27,10 @@ class adminUsersComponents extends sfComponents {
 
         
     }
+    
+    public function executeGridUsuarios() {
+        
+    }
 
 }
 

@@ -59,6 +59,10 @@ Ids:
       local: ca_tipoidentificacion
       foreign: ca_tipoidentificacion
       type: one
+    IdsRestrictivas:
+      local: ca_id
+      foreign: ca_id
+      type: many
     
 IdsTipoIdentificacion:  
   options:
@@ -200,17 +204,27 @@ IdsProveedor:
     ca_idproveedor:
       type: integer
       primary: true
-    ca_tipo: string(5)    
+    ca_tipo: string(3)
     ca_critico: boolean
     ca_controladoporsig: boolean
     ca_fchaprobado: timestamp
     ca_usuaprobado: string(20)
     ca_sigla: string(20)
     ca_transporte: string(10)
-    ca_empresa: string    
+    ca_empresa: string(8)
+    ca_activo: boolean
     ca_activo_impo: boolean
     ca_activo_expo: boolean
     ca_contrato_comodato: boolean
+    ca_vetado: boolean
+    ca_antlegales: string(200)
+    ca_antpenales: string(200)
+    ca_antfinancieros: string(200)
+    ca_controladoporsig: integer
+    ca_fchvencimiento: date
+    ca_jefecuenta: string(15)
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string(15)
   relations:
     Ids:
       local: ca_idproveedor
@@ -219,6 +233,11 @@ IdsProveedor:
     IdsTipo:
       local: ca_tipo
       foreign: ca_tipo
+      type: one
+    Usuario:
+      alias: Jefe
+      local: ca_jefecuenta
+      foreign: ca_login
       type: one
 
 IdsEmpresa:
@@ -703,7 +722,6 @@ Documentosxconc:
     ca_perjuridica_reciente: boolean
     ca_perjuridica_activos: boolean
     ca_gran_contribuyente: boolean
-    ca_perjuridica_cincomil: boolean
     ca_persona_natural: boolean
     ca_persona_natural_comerciante: boolean 
     ca_observaciones: text   
@@ -759,4 +777,29 @@ IdsSeguimiento:
     Usuario:
       local: ca_usuario
       foreign: ca_login
+      type: one
+
+IdsRestrictivas:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: ids
+  tableName: ids.tb_restrictivas
+  columns:
+    ca_id:
+      type: integer
+      primary: true
+    ca_fchconsultado:
+      type: timestamp
+      primary: true
+    ca_tipo_consulta: string(20)
+    ca_idrespuesta: string(20)
+    ca_respuesta: integer
+    ca_fchcreado: timestamp
+    ca_usucreado: string(20)
+  relations:
+    Ids:
+      local: ca_id
+      foreign: ca_id
       type: one

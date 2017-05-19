@@ -36,7 +36,7 @@
     include_partial('pregunta/pEscala', array('pregunta' => $pregunta));
     } if ($pregunta->ca_tipo == 8) {
     //cuadrIcula
-    include_partial('pregunta/pEstrella', array('pregunta' => $pregunta, 'servicios' => $servicios));
+    include_partial('pregunta/pEstrella', array('pregunta' => $pregunta, 'servicios' => $servicios, "formulario"=>$formulario));
     }
     if ($pregunta->ca_tipo == 9) {
     //cuadrIcula

@@ -82,6 +82,20 @@ class reporteExtActions extends sfActions
 		
             $this->form = new NuevoReporteForm();	
             $this->form->setContactosAg( $contactosAg );
+            
+            $emailsTraficos=array();
+            if($this->reporte->getIdsAgente()->getCaConsolcargo()=="1")
+            {
+                $emailsTraficos=array('traficos1@consolcargo.com'=>'traficos1@consolcargo.com', 'traficos2@consolcargo.com'=>'traficos2@consolcargo.com');
+                //'traficos1@coltrans.com.co'=>'traficos1@coltrans.com.co', 'traficos2@coltrans.com.co'=>'traficos2@coltrans.com.co',
+            }
+            else
+            {
+                $emailsTraficos=array('traficos1@coltrans.com.co'=>'traficos1@coltrans.com.co', 'traficos2@coltrans.com.co'=>'traficos2@coltrans.com.co');
+            }
+            $this->form->setEmailsTraficos($emailsTraficos); 
+            
+            
             $this->form->configure();
 		
 		/*
@@ -186,12 +200,25 @@ class reporteExtActions extends sfActions
                     //print_r( $_POST );
 
                     if( $request->getParameter("remitente") ){
-                            $email->setCaFrom( $request->getParameter("remitente") );
-                            $email->setCaReplyto( $request->getParameter("remitente") );
+                            $emailUser=$request->getParameter("remitente");
+                            //$email->setCaFrom( $request->getParameter("remitente") );
+                            //$email->setCaReplyto( $request->getParameter("remitente") );
                     }else{
-                            $email->setCaFrom( $user->getEmail() );
-                            $email->setCaReplyto( $user->getEmail() );
+                         if($this->reporte->getIdsAgente()->getCaConsolcargo()=="1")
+                        {
+                            $emailUser=$user->getEmail();
+                            $emailUser=substr($user->getEmail(),0, strpos($user->getEmail(),"@")  )."@consolcargo.com";
+                            //'traficos1@coltrans.com.co'=>'traficos1@coltrans.com.co', 'traficos2@coltrans.com.co'=>'traficos2@coltrans.com.co',
+                        }
+                        else
+                        {
+                            $emailUser=$user->getEmail();
+                        }
+                            
                     }
+                    $email->setCaFrom( $emailUser);
+                    $email->setCaReplyto( $emailUser );
+                    
                     $email->setCaFromname( $user->getNombre() );
 
                     if( $request->getParameter("readreceipt") ){
@@ -214,11 +241,13 @@ class reporteExtActions extends sfActions
                             }
                     }
 
-                    if( $request->getParameter("remitente") ){
+                    /*if( $request->getParameter("remitente") ){
                             $email->addCc( $request->getParameter("remitente"));
                     }else{				
                             $email->addCc( $user->getEmail() );
-                    }
+                    }*/
+                    $email->addCc( $emailUser );
+                    
 
                     $email->setCaSubject( $request->getParameter("asunto") );
                     $email->setCaBodyhtml( $contenido );
@@ -237,7 +266,7 @@ class reporteExtActions extends sfActions
                         $email->save();
                     }
 
-                    $email->send();
+                    //$email->send();
 
                     if( $this->reporte->getCaIdtareaRext() ){
                             $tarea = Doctrine::getTable("NotTarea")->find( $this->reporte->getCaIdtareaRext() );                    

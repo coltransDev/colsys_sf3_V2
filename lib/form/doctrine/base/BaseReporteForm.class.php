@@ -17,7 +17,7 @@ abstract class BaseReporteForm extends BaseFormDoctrine
     $this->setWidgets(array(
       'ca_idreporte'         => new sfWidgetFormInputHidden(),
       'ca_fchreporte'        => new sfWidgetFormDate(),
-      'ca_consecutivo'       => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('Bavaria'), 'add_empty' => true)),
+      'ca_consecutivo'       => new sfWidgetFormTextarea(),
       'ca_version'           => new sfWidgetFormInputText(),
       'ca_idcotizacion'      => new sfWidgetFormTextarea(),
       'ca_idproducto'        => new sfWidgetFormInputText(),
@@ -68,7 +68,6 @@ abstract class BaseReporteForm extends BaseFormDoctrine
       'ca_idseguimiento'     => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('NotTarea'), 'add_empty' => true)),
       'ca_detanulado'        => new sfWidgetFormTextarea(),
       'ca_mcia_peligrosa'    => new sfWidgetFormInputCheckbox(),
-      'ca_idgrupo'           => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('GrupoReporte'), 'add_empty' => true)),
       'ca_fchcreado'         => new sfWidgetFormDateTime(),
       'ca_usucreado'         => new sfWidgetFormTextarea(),
       'ca_fchactualizado'    => new sfWidgetFormDateTime(),
@@ -82,7 +81,7 @@ abstract class BaseReporteForm extends BaseFormDoctrine
     $this->setValidators(array(
       'ca_idreporte'         => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idreporte', 'required' => false)),
       'ca_fchreporte'        => new sfValidatorDate(array('required' => false)),
-      'ca_consecutivo'       => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('Bavaria'), 'required' => false)),
+      'ca_consecutivo'       => new sfValidatorString(array('required' => false)),
       'ca_version'           => new sfValidatorInteger(array('required' => false)),
       'ca_idcotizacion'      => new sfValidatorString(array('required' => false)),
       'ca_idproducto'        => new sfValidatorInteger(array('required' => false)),
@@ -133,7 +132,6 @@ abstract class BaseReporteForm extends BaseFormDoctrine
       'ca_idseguimiento'     => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('NotTarea'), 'required' => false)),
       'ca_detanulado'        => new sfValidatorString(array('required' => false)),
       'ca_mcia_peligrosa'    => new sfValidatorBoolean(array('required' => false)),
-      'ca_idgrupo'           => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('GrupoReporte'), 'required' => false)),
       'ca_fchcreado'         => new sfValidatorDateTime(array('required' => false)),
       'ca_usucreado'         => new sfValidatorString(array('required' => false)),
       'ca_fchactualizado'    => new sfValidatorDateTime(array('required' => false)),

@@ -51,7 +51,7 @@ $reporte_old = $sf_data->getRaw("reporte_old");
                             echo "<br>COL-OTM";
 
 
-                        if(strpos($reporte["ca_propiedades_cli"], "cuentaglobal=true") !== false)
+                        if(strpos($reporte["ca_propiedades_cli"], "cuentaglobal=true") !== false || strpos($reporte["ca_propiedades_cli"], "cuentaglobal=1") !== false)
                         {
                         ?>
                         <br><img src="/images/CG30.png" title="Cliente de Cuentas Globales" />

@@ -18,7 +18,7 @@ Ext.define('Colsys.Widgets.WgIncoterms', {
                 url: '/widgets5/datosIncoterms',
                 reader: {
                     type: 'json',
-                    root: 'root'
+                    rootProperty: 'root'
                 }
             },
             autoLoad: true

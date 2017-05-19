@@ -13,13 +13,13 @@ if($reporte->getCaTiporep()=="4" )
 {    
     $datos["consignatario"]["nombre"]=($repotm->getCaIdimportador()!="")?$repotm->getImportador()->getCaNombre():$cli->getCaCompania();
     $datos["consignatario"]["direccion"]=($repotm->getCaIdimportador()!="")?str_replace("|"," ",$repotm->getImportador()->getCaDireccion()):str_replace("|"," ",$cli->getCaDireccion());
-    $datos["puerto"]=$repotm->getOrigenimp()->getCaCiudad();
+    $datos["puerto"]=$repotm->getOrigenimp()->getCaCiudad();    
     $datos["origen"]=$reporte->getOrigen()->getCaCiudad();
     $datos["destino"]=$reporte->getDestino()->getCaCiudad();    
 
     $datos["peso"]=$repotm->getCaPeso(). " "/*.$repotm->getCaPiezasUn()*/;
     $datos["piezas"]=$repotm->getCaNumpiezas(). " ".$repotm->getCaNumpiezasun();
-    $datos["volumen"]=$repotm->getCaVolumen();    
+    $datos["volumen"]=$repotm->getCaVolumen();
 }
 else
 {
@@ -28,7 +28,7 @@ else
     $datos["destino"]=$reporte->getDestinoCont()->getCaCiudad();    
     $datos["consignatario"]["nombre"]=$cli->getCaCompania();
     $datos["consignatario"]["direccion"]=str_replace("|"," ",$cli->getCaDireccion());
-    
+
     $status = $reporte->getUltimoStatus();
     $peso = explode("|", $status->getCaPeso());
     $piezas = explode("|", $status->getCaPiezas());
@@ -37,8 +37,26 @@ else
     $datos["piezas"]=($piezas[0] ? $piezas[0] : 0). " ". ($piezas[1] ? $piezas[1] : "");
     $datos["volumen"]=$volumen[0] ? $volumen[0] : 0;
 }
+
 //$firmaautorizada=($datos["origen"]=="Cartagena")?"Carlos A. Bola&ntilde;o M.<br>C.C. 73569889 Cartagena":"Santos Mabel Tufi&ntilde;o Palacio <br>C.C. 67006136 Cali ";
 $firmaautorizada=($datos["origen"]=="Cartagena")?"Carlos A. Bola&ntilde;o M.<br>C.C. 73569889 Cartagena":(($datos["origen"]=="Buenaventura")?"Santos Mabel Tufi&ntilde;o Palacio <br>C.C. 67006136 Cali":"Carlos A. Bola&ntilde;o M.<br>C.C. 73569889 Cartagena");
+
+switch($datos["origen"])
+{
+    case "Cartagena":
+    case "Santa Marta":
+        $firmaautorizada="Carlos A. Bola&ntilde;o M.<br>C.C. 73569889 Cartagena";
+    break;
+    case "Buenaventura":
+        $firmaautorizada="Santos Mabel Tufi&ntilde;o Palacio <br>C.C. 67006136 Cali";
+    break;
+    case "Bogotá":
+    case "Bogota":
+    case "Bogotá D.C.":
+        $firmaautorizada="Sandra Lucia Yepes Leon <br>C.C. 52556478 Bogota";        
+    break;
+}
+
 ?>
 
 <table width="100%" border="0" cellspacing="15" cellpadding="0" >
@@ -55,7 +73,7 @@ $firmaautorizada=($datos["origen"]=="Cartagena")?"Carlos A. Bola&ntilde;o M.<br>
                     <td><div style="font-size: 19px;">4.ADDRESS FOR NOTIFICATIONS </div> Direccion para notificacion <br> <?=htmlentities($datos["consignatario"]["nombre"])?> <br> <?=htmlentities($datos["consignatario"]["direccion"])?><br></td>
                 </tr>
                 <tr>
-                    <td><div style="font-size: 19px;">5.PLACE AND DATE OF RECEIPT - CODE </div> Lugar y fecha de recibo - codigo <br> <?=$repotm->getOrigenimp()->getCaCiudad()." ".$repotm->getCaFchdoctransporte()?><br> </td>
+                    <td><div style="font-size: 19px;">5.PLACE AND DATE OF RECEIPT - CODE </div> Lugar y fecha de recibo - codigo <br> <?=$datos["puerto"]." ".$repotm->getCaFchdoctransporte()?><br> </td>
                 </tr>
             </table>
        </td>

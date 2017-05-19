@@ -258,7 +258,50 @@ class pricingComponents extends sfComponents
         $this->typetar = $this->getRequestParameter("typetar");
     }
     
-    public function executePanelPatios(){        
+    public function executePanelPatios(){
+    }
+    
+    public function executeFormActualizacionMasiva(){
+        $this->impoexpo = array();
+        $this->impoexpo[] = utf8_encode(Constantes::IMPO);
+        $this->impoexpo[] = utf8_encode(Constantes::EXPO);
+
+        $this->transportes = array();
+        $this->transportes[] = utf8_encode(Constantes::AEREO);
+        $this->transportes[] = utf8_encode(Constantes::MARITIMO);
+        $this->transportes[] = utf8_encode(Constantes::TERRESTRE);
+        
+        $this->estados = array();
+        $this->estados[] = array("idestado" => 0, "estado" => "Normal");
+        $this->estados[] = array("idestado" => 1, "estado" => "Sugerida");
+        $this->estados[] = array("idestado" => 2, "estado" => "Mantenimiento");
+        $this->estados[] = array("idestado" => 3, "estado" => "Futura");
+        
+        $this->tipoConcepto = array();
+        $this->tipoConcepto[] = "Fletes";
+        $this->tipoConcepto[] = "Recargos";
+        
+        $traficos_rs = Doctrine::getTable("Trafico")
+           ->createQuery("t")
+           ->addWhere("t.ca_idtrafico != '99-999'")
+           ->addOrderBy("t.ca_nombre")
+           ->execute();
+        $this->traficos = array();
+        $this->traficos[] = array("idTrafico" => "%", "trafico" => "Traficos (Todos)");
+        foreach ($traficos_rs as $trafico) {
+             $this->traficos[] = array("idTrafico" => $trafico->getCaIdtrafico(), "trafico" => utf8_encode($trafico->getCaNombre()));
+        }
+        
+        $ciudades_rs = Doctrine::getTable("Ciudad")
+                ->createQuery("c")
+                ->whereIn("c.ca_puerto", array("Aéreo","Marítimo","Ambos"))
+                ->addWhere("c.ca_idciudad != '999-9999'")
+                ->addOrderBy("c.ca_ciudad")
+                ->execute();
+        $this->ciudades = array();
+        foreach ($ciudades_rs as $ciudad) {
+             $this->ciudades[] = array("idCiudad" => $ciudad->getCaIdciudad(), "ciudad" => utf8_encode($ciudad->getCaCiudad()), "puerto" => utf8_encode($ciudad->getCaPuerto()), "idtrafico" => $ciudad->getCaIdtrafico());
+        }
     }
 }
 ?>

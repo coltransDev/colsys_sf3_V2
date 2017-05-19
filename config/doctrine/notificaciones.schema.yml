@@ -12,17 +12,10 @@ Notificacion:
     ca_idemail:
       type: integer
       primary: true
-    ca_tipo:
-      type: integer
-      primary: true
   relations:
     NotTarea:
       local: ca_idtarea
       foreign: ca_idtarea
-      type: one
-    Email:
-      local: ca_idemail
-      foreign: ca_idemail
       type: one
 
 NotTarea:
@@ -85,8 +78,7 @@ NotListaTareas:
       primary: true
       autoincrement: true   
     ca_nombre: string
-    ca_descripcion: string
-    ca_notificar_superior: boolean
+    ca_descripcion: string   
   relations:
     NotTarea:
       local: ca_idlistatarea

@@ -26,16 +26,21 @@ class otmActions extends sfActions
     {
         if(!$this->conReplica)
         {
-            $databaseConf = sfYaml::load(sfConfig::get('sf_config_dir') . '/databases_replica.yml');
-            $confCon=$databaseConf['prod']['doctrine'];            
+            //$databaseConf = sfYaml::load(sfConfig::get('sf_config_dir') . '/databases_replica.yml');
+            
+            /*$confCon=$databaseConf['prod']['doctrine'];            
             $dsn = $confCon['param']['dsn'];        
             $principal =  substr( $dsn, 0,  strpos( $dsn, ";") );            
             $servidor = substr( $dsn,  strlen( $principal )+6 );
             $database = substr( $principal, strpos( $principal, "dbname")+7 );
             $usuarioDb = $confCon['param']['username'];
             $password = $confCon['param']['password'];
-            
+            print_r($confCon);
+            exit;
             $this->conReplica = Doctrine_Manager::connection(new PDO("pgsql:dbname=".$database.";host=".$servidor, $usuarioDb, $password));
+             * 
+             */
+            $this->conReplica = Doctrine_Manager::getInstance()->getConnection('replica');
 
         }
         return $this->conReplica;
@@ -157,7 +162,7 @@ class otmActions extends sfActions
                 order by o.ca_fcharribo desc , 3";
             //echo $sql;
             //$con = Doctrine_Manager::getInstance()->connection();
-            //$con = Doctrine_Manager::connection(new PDO('pgsql:dbname=Coltrans;host=10.192.1.65', 'Administrador', 'V9p0%rRc9$'));
+            //$con = Doctrine_Manager::connection(new PDO('pgsql:dbname=Coltrans;host=172.16.1.16', 'Administrador', 'V9p0%rRc9$'));
             $conn=$this->getConnReplica();
             $st = $conn->execute($sql);
             $rep_coltrans = $st->fetchAll();
@@ -272,7 +277,7 @@ class otmActions extends sfActions
                 //$con = Doctrine_Manager::getInstance()->connection();
                 if($this->opcion)
                 {
-//                $con = Doctrine_Manager::connection(new PDO('pgsql:dbname=Coltrans;host=10.192.1.65', 'Administrador', 'V9p0%rRc9$'));
+//                $con = Doctrine_Manager::connection(new PDO('pgsql:dbname=Coltrans;host=172.16.1.16', 'Administrador', 'V9p0%rRc9$'));
                   $conn=$this->getConnReplica();
         $st = $conn->execute($sql);
         //echo $sql;
@@ -508,6 +513,8 @@ class otmActions extends sfActions
                 $repotm->setProperty("nocomodato", $request->getParameter("nocomodato") );
             if($request->getParameter("manifiesto"))
                 $repotm->setCaManifiesto($request->getParameter("manifiesto"));
+            if($request->getParameter("placa"))
+                $repotm->setProperty("placa", $request->getParameter("placa") );            
             if($request->getParameter("fcharribo"))
                 $repotm->setCaFcharribo($request->getParameter("fcharribo"));
             if($request->getParameter("adudestino"))
@@ -523,6 +530,7 @@ class otmActions extends sfActions
              $this->datos["nofactura"]=$repotm->getProperty("nofactura");
              $this->datos["nocomodato"]=$repotm->getProperty("nocomodato");
              $this->datos["nodestinofinal"]=$repotm->getProperty("nodestinofinal");
+             $this->datos["placa"]=$repotm->getProperty("placa");
              $this->datos["manifiesto"]=$repotm->getCaManifiesto();
              $this->datos["fcharribo"]=$repotm->getCaFcharribo();
              $this->adudestino = $repotm->getProperty("adudestino");
@@ -770,7 +778,24 @@ class otmActions extends sfActions
         $this->reporte = Doctrine::getTable("Reporte")->find( $idreporte );
         $this->forward404Unless( $this->reporte );
         $this->setLayout("email");
-        $this->iduser=$this->getUser()->getUserId();        
+        $this->iduser=$this->getUser()->getUserId();  
+        
+        switch($this->reporte->getOrigen()->getCaCiudad())
+        {
+
+            case "Buenaventura":
+                $representante["cedula"]="67006136";
+                $representante["nombre1"]="SANTOS";
+                $representante["nombre2"]="MABEL";
+                $representante["apellido1"]=utf8_encode("TUFIÑO");
+                $representante["apellido2"]="PALACIOS";
+                $this->setTemplate("pdfOTM1");
+            break;
+            case "Bogotá D.C.":                
+                $this->setTemplate("pdfOTM1");
+            break;
+
+        }        
     }
     
     public function executePdfOTM1(sfWebRequest $request) {

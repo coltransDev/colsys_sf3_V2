@@ -44,7 +44,7 @@ if( count($referencias) ){
 	<br />
 	<br />
 
-	<h3>Usted no ha contratado los servicios de aduana con Colmas SIA Ltda.</h3>
+	<h3>Usted no ha contratado los servicios de aduana con Colmas SAS.</h3>
 	
 	
 	

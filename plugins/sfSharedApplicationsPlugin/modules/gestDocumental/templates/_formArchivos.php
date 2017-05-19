@@ -38,7 +38,7 @@ Ext.define('Ext.colsys.formArchivo', {
                 queryMode: 'local',
                 displayField: 'name',
                 valueField: 'id',
-                linkSerie:'idsserie',
+                linkSerie:'_idsserie',
                 allowBlank:false,
                 width: 400
                 
@@ -86,7 +86,7 @@ Ext.define('Ext.colsys.formArchivo', {
             {
                 this.getForm( ).setValues(
                 {
-                    "_idsserie":data.idserie,
+                    "_idsserie":data.idsserie,
                     "_idarchivo":data.idarchivo,
                     "_nombre":data.nombre,                        
                     "_documento":data.documento,
@@ -95,6 +95,7 @@ Ext.define('Ext.colsys.formArchivo', {
                     "_ref2":data.ref2,
                     "_ref3":data.ref3
                 });
+                //this.getForm().findField("idsserie").idsserie=data.idsserie;
 
             }                
 })

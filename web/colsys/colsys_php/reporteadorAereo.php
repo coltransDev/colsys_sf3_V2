@@ -59,6 +59,9 @@ if (!isset($usuario)) {                                                        /
                 <TR>
                     <TD Class=mostrar><A HREF='/Coltrans/Reportes/RepAuditoriaAction.do?cliente=1'; class='mudacor'>Reporte de Auditoria</A></TD><TD Class=mostrar>Informe sobre Rastros de Auditoría</TD>
                 </TR>
+                <TR>;
+                    <TD Class=mostrar><A HREF='/reportesGer/listadoFacturas/tipo/aereo' class='mudacor'>Elab.Fact. Proveedores</A></TD><TD Class=mostrar>Informe con Fecha de Creación facturas proveedores</TD>
+                </TR>
             </TABLE><BR><BR>
             <TABLE CELLSPACING=10>
                 <TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Terminar' ONCLICK='javascript:document.location.href = "/"'></TH>

@@ -84,10 +84,10 @@ class FormularioForm extends BaseFormularioForm {
             'ca_titulo' => 'Nombre del Formulario (<span class="pregunta-obligatoria-admin">*</span>):',
             'ca_introduccion' => 'Texto introductorio del formulario:',
             'ca_activo' => 'Activo:',
-            'ca_alias' => 'Nombre Interno:',
+            'ca_alias' => 'Nombre para el cliente:',
             /* 'ca_estilo' => 'Estilo:', */
-            'ca_nombre_formato' => 'Nombre del formato:',
-            'ca_color' => 'Color:',
+            'ca_nombre_formato' => 'Nombre del formato:',            
+            'ca_empresa' => 'Empresa:',
             'ca_vigencia_inicial' => 'Vigencia inicial:',
             'ca_vigencia_final' => 'Vigencia final:',
         ));
@@ -120,7 +120,23 @@ class FormularioForm extends BaseFormularioForm {
           )
           ); */
 
-        unset($this['ca_activo'], $this['ca_color'], $this['ca_nombre_formato'], $this['ca_fchcreado'], $this['ca_usucreado'], $this['ca_fchactualizado'], $this['ca_usuactualizado'], $this['ca_token'], $this['ca_bold'], $this['ca_strong']);
+        $opciones = array(1 => 'Colmas', 2 => 'Coltrans', 99 => 'No aplica');
+
+        /* $textoOpciones_tipo = array("texto", 'email', 'párrafo', 'test', 'casillas verificaciOn', 'lista desplegable', 'escala', 'cuadrIcula');
+          $valoresOpciones_tipo = array('0', '1', '2', '3', '4', '5', '6'); */
+
+        //escala necesita recibir los dos valores fronteras y las etiquetas para esos extremos
+        //cuadricula necesita una lista de parametros y los dos valores extremos
+
+        $this->widgetSchema['ca_empresa'] = new sfWidgetFormSelect(
+                        array('choices' => $opciones,
+                            'multiple' => false,
+                            'default' => '0',
+                            'label' => 'Empresa:'));
+
+
+
+        unset($this['ca_activo'], $this['ca_nombre_formato'], $this['ca_fchcreado'], $this['ca_usucreado'], $this['ca_fchactualizado'], $this['ca_usuactualizado'], $this['ca_token'], $this['ca_bold'], $this['ca_strong'], $this['ca_vigencia_inicial'], $this['ca_vigencia_final']);
     }
 
     /**

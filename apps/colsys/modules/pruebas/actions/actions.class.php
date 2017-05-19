@@ -2136,8 +2136,7 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
 
             $gruposArray = array();
             $ldap_server = sfConfig::get("app_ldap_host");
-            //$auth_user = "cn=" . sfConfig::get("app_ldap_user") . ",o=coltrans_bog";
-            $auth_user = sfConfig::get("app_ldap_user") . "@COLTRANS.LOCAL";
+            $auth_user = "cn=" . sfConfig::get("app_ldap_user") . ",o=coltrans_bog";
             $passwd = sfConfig::get("app_ldap_passwd");
 
             if ($connect = ldap_connect($ldap_server)) {
@@ -2182,67 +2181,48 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
     }
 
     public function executeImportarExcel($request) {
-        $file = "/home/abotero/equipos_consolcargo1.csv";
+        $file = "/home/Admin/colotmdepurado.csv";
         $content = file_get_contents($file);
         $lines = explode("\n", $content);
         foreach ($lines as $line) {
             //echo $line.'<br />';
             $dato = explode(";", $line);
-            if ($dato[0] && $dato[0] != "ca_idcategory") {
+            
+            if ($dato[0] && $dato[0] != "idreporte") {                
+                /*$q = Doctrine::getTable("InoMaster")
+                        ->createQuery("m")
+                        ->leftJoin("m.InoHouse h")
+                        ->leftJoin("h.Reporte rp")
+                        ->leftJoin("rp.RepOtm ro")
+                        ->where("m.ca_referencia = ?", $dato[0]);*/
                 
-                //$inv = Doctrine::getTable("InvActivo")->find($dato[0]);
-                //if (!$inv) {
-                    $inv = new InvActivo();
-                    //$inv->setCaLogin($dato[0]);
+                $q = Doctrine::getTable("RepOtm")
+                        ->createQuery("ro")
+                        ->where("ca_idreporte = ?", $dato[0]);
+                
+                $repOtm = $q->fetchOne();
+                  
+                //if(isset($houses)){                    
+                  //  foreach($houses as $house){                        
+                        //$v =  $house->getInoHouse();                        
+                        //foreach($v as $k){
+                            echo " - Id Reporte -".$dato[0]." - Finalizado -".$dato[9]." - Cargue -".$dato[13]." - Salida -".$dato[14]." - Cierre -".$dato[16]."<br/>";
+                            //$repOtm = $k->getReporte()->getRepOtm();
+                            if($dato[9])
+                                $repOtm->setCaFechafinalizacion($dato[9]);
+                            if($dato[13])
+                                $repOtm->setCaFchcargue($dato[13]);
+                            if($dato[14])
+                                $repOtm->setCaFchsalida($dato[14]);
+                            if($dato[16])
+                                $repOtm->setCaFchcierre($dato[16]);
+                            $repOtm->save();
+                        //}
+                    //}
                 //}
-
-                echo "ca_identificador=>".$dato[10]."-".$dato[11]."<br/>";
-                
-                $inv->setCaIdcategory($dato[0]);
-                $inv->setCaMarca($dato[1]);
-                $inv->setCaModelo($dato[2]);
-                $inv->setCaIpaddress($dato[3]);
-                $inv->setCaProcesador($dato[4]);
-                $inv->setCaMemoria($dato[5]);
-                $inv->setCaDisco($dato[6]);
-                $inv->setCaOptica($dato[7]);
-                $inv->setCaSerial($dato[8]);
-                $inv->setCaSo($dato[9]);
-                $inv->setCaIdentificador($dato[10]);
-                $inv->setCaAsignadoa($dato[11]);
-                $inv->setCaSoSerial($dato[12]);
-                $inv->setCaOffice($dato[13]);
-                $inv->setCaOfficeSerial($dato[14]);
-                $inv->setCaIdsucursal($dato[15]);
-                $inv->setCaCantidad($dato[16]);
-
-                $inv->save();
-
-                /*$cargo = Doctrine::getTable("Cargo")->find($dato[0]);
-                if(!$cargo)
-                    $cargo = new Cargo();                
-                
-                $cargo->setCaCargo(utf8_decode($dato[0]));
-                $cargo->setCaActivo($dato[1]);
-                $cargo->setCaManager($dato[2]);
-                $cargo->setCaIdempresa($dato[3]);
-                $cargo->save();
-                
-                /*$departamento = Doctrine::getTable("Departamento")->find($dato[0]);
-                if(!$departamento)
-                    $departamento = new Departamento();                
-                
-                $departamento->setCaNombre(utf8_decode($dato[1]));
-                $departamento->setCaInhelpdesk($dato[2]);
-                $departamento->setCaIdempresa($dato[3]);
-                $departamento->save();*/
-                
             }
         }
-        //echo 'Los datos no coinciden'.'<br />';
-
         $this->setTemplate("blank");
-        //}
     }
 
     public function executeImportarExcel1($request) {
@@ -2398,7 +2378,7 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
         $fecha1 = Utils::addDate(date("Y-m-d"), 0, -3);
         $sql = "SELECT r.ca_idreporte,r.ca_consecutivo,r.ca_version,r.ca_versiones,r.ca_fchllegada,r.ca_fchsalida,ca_ciuorigen,ca_ciudestino,ca_login,ca_nombre_cli,r.ca_usucreado,r.ca_fchcreado,
                 (EXTRACT(EPOCH FROM age(date(r.ca_fchllegada),date(r.ca_fchsalida) ) )/86400 ) dtransito,
-                (EXTRACT(EPOCH FROM age('now()',date(r.ca_fchsalida) ) )/86400) dtransitoactual                
+                (EXTRACT(EPOCH FROM age('now()',date(r.ca_fchsalida) ) )/86400) dtransitoactual
             from vi_reportes2 r
             where r.ca_fchcreado>'" . $fecha . "' and ca_consecutivo not in(
             select ca_consecutivo from tb_reportes r,tb_inoclientes_sea ic where r.ca_fchcreado>'" . $fecha1 . "' and r.ca_idreporte=ic.ca_idreporte
@@ -3846,8 +3826,8 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
                     //$email->setCaAttachment( "tmp/Circular_coltrans.pdf" );
                     $email->setCaBodyhtml($html1.$unsuscribe);
                     $email->setCaTipo($tipo_email);                    
-                    $email->save();
-                    $email->send();
+                    //$email->save();
+                    //$email->send();
                     $emails_Control.=$cliente["ca_email"] . "<br>";
                     //} catch (Exception $e) {
                     //    $emails_Control.="No se pudo enviar " . $cliente["ca_email"] . ": porque : " . $e->getMessage() . "<br>";
@@ -3867,7 +3847,7 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
             //$email->setCaAttachment( "tmp/tracking_colmas.pdf" );
             //$email->setCaBodyhtml($html);
             $email->setCaTipo($tipo_email);
-            $email->save();
+            //$email->save();
         }
 
 
@@ -4114,12 +4094,11 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
 
 
         $service = Zend_Gdata_Calendar::AUTH_SERVICE_NAME;
-        /*        $user="soporte-sistemas@coltrans.com.co";
+                $user="maquincher@coltrans.com.co";
           $pass="80166236";
           $keypass="528a6254afc2a026066fceb0b89e4094";
           $mailpass="pHaonZJtaWc=";
-         * 
-         */
+
         $usuario = new Usuario();
         $pass = $usuario->getDecrypt($mailpass, $keypass);
         //echo $pass;
@@ -4573,6 +4552,11 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
 
     public function executeGappSH(sfWebRequest $request) {
 
+        
+         $apiKey="AIzaSyDRs0Hn1L-HPi1xrOqxENrJ1vzsvjobuvM";
+         exit;
+        
+        
         ProjectConfiguration::registerZend();
         Zend_Loader::loadClass('Zend_Gdata_ClientLogin');
         Zend_Loader::loadClass('Zend_Gdata_Gapps');
@@ -4584,18 +4568,50 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
 
         $pass = '80166236';
         $user = "maquinche@coltrans.com.co";
+        
+        
+        
+        
+$email = 'maquinche@coltrans.com.co';
+$passwd = '80166236';
+
+
+
+$spreadsheetKey = "1mABUDZDOkrsQ_chAq9pgUe2a2uZ0zt6KDd_XbyUXL9c"; //PRUEBA
+        //$spreadsheetKey = "0AvsPc4VeV6fjdHloOFZ6LWxJaDJRWkxLaU5IZjMzYWc"; //TRM
+        //$spreadsheetKey = "0AjxlblsZLJ8tdE4tRWRjWVFOV1BvX3RKb3ZxekpNdlE"; //trm copy
+        //$spreadsheetKey = "1N5iDWW2VKSbzGq2vPPbjCYywfB1GUZmm0gOhhTpL3sQ";//arauco
+
+
+        
+        
+        
         $service = Zend_Gdata_Spreadsheets::AUTH_SERVICE_NAME;
         $client = Zend_Gdata_ClientLogin::getHttpClient($user, $pass, $service);
         $spreadsheetService = new Zend_Gdata_Spreadsheets($client);
         //$feed = $spreadsheetService->getSpreadsheetFeed();
         $spreadsheetKey = "1-rI5Jb8PqlBvZJ9u7SGyVUE-8KYj5L24IUduO_faeTw"; //PRUEBA
-        $spreadsheetKey = "0AvsPc4VeV6fjdHloOFZ6LWxJaDJRWkxLaU5IZjMzYWc"; //TRM
-        $spreadsheetKey = "0AjxlblsZLJ8tdE4tRWRjWVFOV1BvX3RKb3ZxekpNdlE"; //trm copy
+        //$spreadsheetKey = "0AvsPc4VeV6fjdHloOFZ6LWxJaDJRWkxLaU5IZjMzYWc"; //TRM
+        //$spreadsheetKey = "0AjxlblsZLJ8tdE4tRWRjWVFOV1BvX3RKb3ZxekpNdlE"; //trm copy
+        //$spreadsheetKey = "1N5iDWW2VKSbzGq2vPPbjCYywfB1GUZmm0gOhhTpL3sQ";//arauco
         $worksheetId = "1";
 
+try{
+
+        $feed = $spreadsheetService->getSpreadsheetFeed();
+}  catch (Exception $e)    
+{
+    print_r($e->getMessage());
+}
 
 
-        $record = array();
+        
+            /*$query = new Zend_Gdata_Spreadsheets_DocumentQuery();
+    $query->setSpreadsheetKey($spreadsheetKey);
+    $feed = $spreadsheetService->getWorksheetFeed($query);
+    print_r($feed);*/
+
+        /*$record = array();
 
         //$record[0]="A";
         $record["fecha"] = "1/1/2015";
@@ -4606,7 +4622,7 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
 
 
         $insertedListEntry = $spreadsheetService->insertRow($record, $spreadsheetKey, $worksheetId);
-
+*/
 
         //$feed = $spreadsheetService->getSpreadsheetFeed();
         /* $spreads=$spreadsheetService->getSpreadsheets();
@@ -4629,8 +4645,8 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
           echo "$row, $col = $val\n";
           }
          */
-        /* FUNCIONO
-          $query = new Zend_Gdata_Spreadsheets_ListQuery();
+        // FUNCIONO
+          /*$query = new Zend_Gdata_Spreadsheets_ListQuery();
           $query->setSpreadsheetKey($spreadsheetKey);
           $query->setWorksheetId($worksheetId);
           $listFeed = $spreadsheetService->getListFeed($query);
@@ -4703,6 +4719,787 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
         }
         
         $this->setTemplate("blank");
+    }
+  
+    public function executeWse(sfWebRequest $request) {
+        
+        /*$wsdl_uri = "https://10.192.1.62/ws/users/usersWS?wsdl";
+            $soap = new Zend_Soap_Server($wsdl_uri); 
+            $options = array('encoding'=>'ISO-8859-1');
+            $soap->setOptions($options);
+            $soap->setClass('UserSoap');
+            $soap->handle();
+         * 
+         */
+        ProjectConfiguration::registerZend();
+        /*    $client = new Zend_Soap_Client( "https://10.192.1.62/ws/colsys/contactsWS?wsdl", array('encoding'=>'ISO-8859-1', 'soap_version'=>SOAP_1_2 ));        
+            $result = $client->actualiza(
+                array(
+                    a=>"2014",
+                    t=>$tipoComprobante->getCaTipo(),
+                    nt=>$tipoComprobante->getCaComprobante(),
+                    c=>$consecutivo,
+                    d=>$tipoComprobante->getCaIdempresa()));
+         * 
+         */
+        
+        $client = new Zend_Soap_Client( "https://172.16.1.13/ws/colsys/contactsWS", array('encoding'=>'ISO-8859-1', 'soap_version'=>SOAP_1_2 ));
+        $result = $client->math_add(2,5);
+        //print_r($result);
+        /*$client = new Zend_Soap_Client( "https://www.colsys.com.co/ws/colsys/contactsWS?wsdl", array('encoding'=>'ISO-8859-1', 'soap_version'=>SOAP_1_2 ));
+        $result = $client->viewReporte("415412");
+         */ exit;
+//        colsys/contactsWS
+    }
+    
+    
+public function executeFixComprobantes(sfWebRequest $request) {
+    
+        //$conEscritura = Doctrine_Manager::getInstance()->connection();
+
+        /*$sql = "select * from tb_repgastos where ca_idrecargo=61";
+        $st = $con->execute($sql);
+        $rep = $st->fetchAll();*/
+    
+    
+    
+
+        $con = Doctrine_Manager::getInstance()->getConnection('slave');
+        $con->beginTransaction();        
+        
+        $sql="SELECT * from ino.tb_comprobantes where ca_usuanulado is not null";
+        $st = $con->execute($sql);
+        $this->resul = $st->fetchAll();
+        //echo count($this->resul);
+        //echo "<pre>";print_r($this->resul);echo "</pre>";
+        foreach ($this->resul as $r)
+        {
+            //$sql = "update ino.tb_comprobantes set ca_fchanulado=null, ca_usuanulado=null , ca_propiedades=null";
+            //$st = $conEscritura->execute($sql);
+            //$rep = $st->fetchAll();
+            //echo "<pre>";print_r($r);echo "</pre>";
+            $c = Doctrine::getTable("InoComprobante")->find($r["ca_idcomprobante"]);
+            
+            if($c)
+            {
+                $c->stopBlaming();
+                $c->setCaUsuanulado($r["ca_usuanulado"]);
+                $c->setCaFchanulado($r["ca_fchanulado"]);
+                $c->save();
+            }
+            //echo $r["ca_propiedades"]."<br>-------<br>";
+            //echo $c->getCaPropiedades();
+            //echo $c->getCaUsuactualizado();
+            //exit;
+        }
+        echo "finalizo";
+        
+        
+        /*$sql="SELECT brk.DOIIDXXX, brk.DOISFIDX, brk.ADMIDXXX, brk.REGFECXX, brk.REGHORXX, p.PIECIUXX, brk.LINIDXXX, brk.CLIIDXXX, brk.DOCVENXX,
+brk.USRID2XX, p.PIENOMXX, q.docpedxx, items.ITECANXX, items.LIMPBRXX, items.ITENOCXX, dep.DAADESXX, brk.DGEFMCXX, modal.MODDESXX
+FROM TECOLSYSXX.SIAI0200 AS brk
+	INNER JOIN TECOLSYSXX.SIAI0202 AS h ON (brk.DOIIDXXX = h.DOIIDXXX AND brk.DOISFIDX = h.DOISFIDX AND brk.ADMIDXXX = h.ADMIDXXX)
+	INNER JOIN TECOLSYSXX.SIAI0125 AS p ON h.PIEIDXXX = p.PIEIDXXX
+	INNER JOIN TECOLSYSXX.sys00121 AS q ON (brk.DOIIDXXX = q.docidxxx AND brk.DOISFIDX = q.docsufxx AND brk.ADMIDXXX = q.sucidxxx)
+	INNER JOIN TECOLSYSXX.SIAI0205 AS items ON (brk.DOIIDXXX = items.DOIIDXXX AND brk.DOISFIDX = items.DOISFIDX AND brk.ADMIDXXX = items.ADMIDXXX)
+	INNER JOIN TECOLSYSXX.SIAI0110 AS dep ON brk.DAAIDXXX = dep.DAAIDXXX
+	INNER JOIN TECOLSYSXX.SIAI0203 AS sub ON (items.SUBIDXXX = sub.SUBIDXXX AND brk.DOIIDXXX = sub.DOIIDXXX AND brk.DOISFIDX = sub.DOISFIDX AND brk.ADMIDXXX = sub.ADMIDXXX)
+	INNER JOIN TECOLSYSXX.SIAI0121 AS modal ON sub.MODIDXXX = modal.MODIDXXX
+WHERE brk.DOIIDXXX = '21010050425' AND brk.DOISFIDX = '001'";
+        
+        $sql="SELECT brk.DOIIDXXX, brk.DOISFIDX, brk.ADMIDXXX, brk.REGFECXX, brk.REGHORXX, p.PIECIUXX, brk.LINIDXXX, brk.CLIIDXXX, brk.DOCVENXX,
+brk.USRID2XX, p.PIENOMXX, q.docpedxx, items.ITECANXX, items.LIMPBRXX, items.ITENOCXX, dep.DAADESXX, brk.DGEFMCXX, modal.MODDESXX
+FROM TECOLSYSXX.SIAI0200 AS brk	
+WHERE brk.DOIIDXXX = '21010050425' AND brk.DOISFIDX = '001'";
+        $st = $con->execute($sql);
+        $this->resul = $st->fetchAll();
+         * 
+         */
+        //echo "<pre>";print_r($this->resul);echo "</pre>";
+        
+        
+        exit;
+} 
+
+
+ public function executeWscoldepositos(sfWebRequest $request) {
+        
+     ProjectConfiguration::registerZend();
+            $client = new Zend_Soap_Client("http://wms.coldepositos.com.co/suite/webservices/conceptosfacturacion.php?wsdl", array('encoding'=>'ISO-8859-1', 'soap_version'=>SOAP_1_2 ));
+            $result = $client->ConsultarProveedor(
+                array(
+                    punto=>"CZF1",
+                    proveedor=>"LAVASECOMODERNOLTD",
+                    //proveedor=>"",
+                    identificacion=>"",
+                    fecha_inicial=>"2014-08-01",
+                    fecha_final=>"2016-08-31"
+                ));
+            
+            echo "<pre>";
+            print_r($result);
+            echo "</pre>";
+            
+            exit;
+//        colsys/contactsWS
+    }
+    
+   
+    public function executeFilelogpostfix(sfWebRequest $request) {
+        $file = "/home/mail/mail";
+
+        $reportes = array();
+        $lines = file($file);
+        //echo count($lines);
+        $data=array();
+        for ($i = 0; $i < count($lines); $i++) {
+            $lines[$i]=str_replace(array("<",">","  "), array("",""," "), $lines[$i]);
+            $arrData=  explode(" ", $lines[$i]);
+            //echo "<pre>";print_r($arrData);echo "</pre>";
+            if($i>800 && $i<1000)
+            {
+                //echo $lines[$i]."<br>";
+                //echo "<pre>";print_r($arrData);echo "</pre>";
+            }
+            
+            /*if( $arrData[4]!="colsys-n2")
+            {
+                //echo "<pre>";print_r($arrData);echo "</pre>";
+                $data[$arrData[0].$arrData[2]][$arrData[6]][]=$arrData;
+            }*/
+
+            if(strlen($arrData[5])>10 && $arrData[5]!="statistics:")
+            {
+                $data[$arrData[0].$arrData[1]][$arrData[5]][]=$arrData;
+            }
+         
+        }
+        foreach($data as $f=>$d)
+        {
+            foreach($d as $k=>$d1)
+                $send[$f][$d1[2][6]]++;
+        }
+        echo "<pre>";print_r($data);echo "</pre>";
+        //echo count($data);
+        foreach($data as $k=>$d)
+            echo $k.":".count($d)."<br>";
+        
+        //print_r($send);
+        
+        //foreach($send as $k=>$d)
+            //$g=sort($send[$k]);
+            
+        echo "<pre>";print_r($send);echo "</pre>";
+        exit;
+    }
+    
+    
+    public function executeActualizaClientesContable(sfWebRequest $request) {
+  
+        require_once sfConfig::get('app_sourceCode_lib').'vendor/phpexcel1.8/Classes/PHPExcel/Shared/String.php';
+        require_once sfConfig::get('app_sourceCode_lib').'vendor/phpexcel1.8/Classes/PHPExcel/Reader/Excel5.php';
+        require_once sfConfig::get('app_sourceCode_lib').'vendor/phpexcel1.8/Classes/PHPExcel/Shared/OLERead.php';
+        
+        
+        //include sfConfig::get('app_sourceCode_lib').'vendor/phpexcel1.8/Classes/PHPExcel/Autoloader.php';
+        require_once sfConfig::get('app_sourceCode_lib').'vendor/phpexcel1.8/Classes/PHPExcel.php';
+        include sfConfig::get('app_sourceCode_lib').'vendor/phpexcel1.8/Classes/PHPExcel/IOFactory.php';
+        
+        //$directory = "/home/maquinche/Desarrollo/INO 2016/clientes coltrans1.xls";
+        $directory = "/srv/www/terceroscoldepo.xls";
+        //echo PHPEXCEL_ROOT;
+        $objPHPExcel = PHPExcel_IOFactory::load($directory.$fileName);
+        //exit;
+        $hojas=array();
+        foreach($objPHPExcel->getSheetNames() as $s)
+        {
+            $hojas[]=array("name"=>$s);
+        }
+        
+//        print_r($hojas);
+        $ws = $objPHPExcel->getSheetByName("Sheet1");
+        
+        $posicion=array();
+        $posicion['nit']=0;
+        $posicion['tarifareteiva']=35;
+        $posicion['porcreteiva']=36;
+        $posicion['formapago']=41;
+        $posicion['tipo']=43;
+        
+        $array = $ws->toArray();
+        //echo "<pre>";print_r($array[1]);echo "</pre>";
+        //exit;
+        //foreach( $array as $pos=>$row ){
+        /*count($array)*/
+        $begin=0; 
+        $end=count($array)-1;
+        
+        $formasPago=array("1"=>"1305050100","20"=>"2335950000","30"=>"1305100100");
+        $clasificacionCl=array("1"=>"G","3"=>"C","4"=>"S","6"=>"E");
+        for(  $pos=$begin;$pos<$end; $pos++){
+            
+                $row=$array[$pos];
+                
+                if($pos==0 /*|| ($row[$posicion['tipo']]!="1" */ )
+                {
+                    continue;
+                }
+                
+                //($pos==4)
+                {
+                    //echo "<pre>";print_r($row);echo "</pre>";
+                    $viCliente = Doctrine::getTable("Cliente")->findOneBy("ca_idalterno",$row[0]);
+                    if($viCliente)
+                    {
+                        echo $pos ."->".$viCliente->getCaIdcliente()." ".$viCliente->getCaCompania()."-------";
+
+                        $cliente=Doctrine::getTable("IdsCliente")->find( $viCliente->getCaIdcliente() );
+                        if($cliente)
+                        {
+                            /*echo $posicion['tipo']."-".$clasificacionCl[$posicion['tipo']]."<br>";
+                            
+                            echo $formasPago[$posicion['formapago']]."<br>";
+                            
+                            echo $formasPago[$posicion['tarifareteiva']]."<br>";
+                            
+                            echo $formasPago[$posicion['porcreteiva']]."<br>";*/
+
+                            //echo "<pre>";print_r($row);echo "</pre>";
+                            //echo $cliente->getProperty("regimen_contributivo")."--".$cliente->getProperty("cuenta_forma_pago_coltrans")."::::::::";
+                            $cliente->setProperty("regimen_contributivo",$clasificacionCl[$row[$posicion['tipo']]]);
+                            $cliente->setProperty("cuenta_forma_pago_12",$formasPago[$row[$posicion['formapago']]]);
+                            $cliente->setProperty("reteiva_12",$row[$posicion['tarifareteiva']]);
+                            $cliente->setProperty("porcreteiva_12",$row[$posicion['porcreteiva']]);
+                            $cliente->stopBlaming();
+                            $cliente->save();
+                            //echo $cliente->getProperty("regimen_contributivo")."--".$cliente->getProperty("cuenta_forma_pago_coltrans")."<br><br>";
+                           // echo "<br>";
+                            echo "Si Importado: ".$row[0]."(".$viCliente->getCaIdcliente().")"."<br>";
+                            //exit;
+                        }                        
+                    }
+                    else
+                    {
+                        echo "No Importado: ".$row[0]."<br>";
+                    }
+                }
+                
+                //$vicliente = Doctrine::getTable("IdsCliente")->find( $request->getParameter("idcliente") );
+                //ca_idalterno: string(20)
+                
+        }
+
+        $array = $ws->toArray();
+        exit;
+        
+    }
+    
+    public function executeActualizaSucursalPrincipalCliente(sfWebRequest $request) {
+  
+            //$clientes = Doctrine::getTable("IdsCliente")->find( $request->getParameter("idcliente") );
+            
+            $clientes = Doctrine::getTable("Cliente")
+                ->createQuery("c")
+                //->whereNotIn("SELECT ca_id FROM ids.tb_sucursales WHERE c.ca_idcliente=ca_id AND ca_principal=true" )
+                //->limit(100)
+                ->execute();
+            
+            
+            //if($sucursal)
+             //   echo $sucursal->getCaId();
+            //echo count($clientes);
+            
+            foreach ($clientes as $c)
+            {
+                
+                //echo $c->getCaIdcliente()."**".$c->getCaDireccion()."*****".($c->getDireccion())."<br>";
+                /*$sucursal = Doctrine::getTable("IdsSucursal")
+                        >createQuery("s")
+                        ->where("ca_id =? AND ca_principal=true", array($c->getCaIdcliente()))
+                        ->fetchOne();
+                */
+                $sucursal = Doctrine::getTable("IdsSucursal")
+                    ->createQuery("s")
+                    ->select("*")
+                    ->where("ca_id =? AND ca_principal=true", array($c->getCaIdcliente()))                    
+                    ->fetchOne();
+                
+                echo $c->getCaCompania()."-";
+                if($sucursal)
+                {
+                    echo $sucursal->getCaId();
+                    $sucursal->setCaDireccion($c->getDireccion());
+                    $sucursal->setCaTelefonos($c->getCaTelefonos());
+                    $sucursal->setCaFax($c->getCaFax());
+                    $sucursal->setCaIdciudad($c->getCaIdciudad());
+                    $sucursal->save();                    
+                }
+                else {
+                    echo  "NO EXISTE";
+                    $sucursal=new IdsSucursal();
+                    $sucursal->setCaId($c->getCaIdcliente());
+                    $sucursal->setCaPrincipal(true);
+                    $sucursal->setCaDireccion($c->getDireccion());
+                    $sucursal->setCaTelefonos($c->getCaTelefonos());
+                    $sucursal->setCaFax($c->getCaFax());
+                    $sucursal->setCaIdciudad($c->getCaIdciudad());
+                    $sucursal->save();
+                    
+                }
+                echo "<br>";
+                
+            }
+            exit;
+            
+        /*
+        select * 
+        from vi_clientes_reduc c
+        --inner join ids.tb_sucursales s ON c.ca_idcliente = s.ca_id   and ca_principal=true
+        where ca_idcliente not in (select ca_id  from ids.tb_sucursales s where c.ca_idcliente = s.ca_id   and ca_principal=true)             
+         */
+    }
+    
+    
+    
+    public function executeAjusteContable(sfWebRequest $request) {
+
+        
+        require_once sfConfig::get('app_sourceCode_lib').'vendor/phpexcel1.8/Classes/PHPExcel/Shared/String.php';
+        require_once sfConfig::get('app_sourceCode_lib').'vendor/phpexcel1.8/Classes/PHPExcel/Reader/Excel5.php';
+        require_once sfConfig::get('app_sourceCode_lib').'vendor/phpexcel1.8/Classes/PHPExcel/Shared/OLERead.php';
+
+
+        //include sfConfig::get('app_sourceCode_lib').'vendor/phpexcel1.8/Classes/PHPExcel/Autoloader.php';
+        require_once sfConfig::get('app_sourceCode_lib').'vendor/phpexcel1.8/Classes/PHPExcel.php';
+        include sfConfig::get('app_sourceCode_lib').'vendor/phpexcel1.8/Classes/PHPExcel/IOFactory.php';
+
+        //$directory = "/home/maquinche/Desarrollo/INO 2016/clientes coltrans1.xls";
+        $directory = "/srv/www/ajustescoltrans2017.xls";
+        //echo PHPEXCEL_ROOT;
+        $objPHPExcel = PHPExcel_IOFactory::load($directory.$fileName);
+        
+        $conn = Doctrine_Manager::getInstance()->getConnection('master');
+        
+        $comprobante = new InoComprobante();
+        $conn = $comprobante->getTable()->getConnection();
+        $conn->beginTransaction();
+        
+        $comprobante=null;
+        try{
+            
+            
+            $hojas=array();
+            foreach($objPHPExcel->getSheetNames() as $s)
+            {
+                $hojas[]=array("name"=>$s);
+            }
+
+    //        print_r($hojas);
+            $ws = $objPHPExcel->getSheetByName("SALDOS");
+
+            $posicion=array();
+            $posicion['referencia']=0;
+            $posicion['nit']=1;
+            $posicion['valor']=2;
+            $posicion['tipoc']=3;
+            $posicion['notipoc']=4;
+            $posicion['modulo']=5;
+            $posicion['naturaleza']=6;            
+            $posicion['cuenta1']=7;
+            $posicion['cuenta2']=8;
+            $posicion['concepto']=9;
+            
+            $idtipo=array("L10"=>27,"L68"=>28,"L70"=>29,"L65"=>30);//L OTM
+            //$fechaComp=date("Y-m-d");
+            $fechaComp="2017-01-01";
+
+            $nmovimientos=75;
+
+            $array = $ws->toArray();
+            //echo "<pre>";print_r($array[1]);echo "</pre>";
+            //exit;
+            //foreach( $array as $pos=>$row ){
+            /*count($array)*/
+            $begin=0; 
+            $end=count($array);
+
+            $contador=0;
+            $total=0;
+            $lastdbcr="";
+            $idcomprobante=$consecutivo=0;
+            $comprobante=null;
+            $idterceroComp="800024075";
+            for(  $pos=$begin;$pos<$end; $pos++){
+
+                    $row=$array[$pos];
+                    $idtipoComprobante=$idtipo[$row[$posicion['tipoc']].$row[$posicion['notipoc']]];
+                    
+                    if($pos==0 /*|| ($row[$posicion['tipo']]!="1" */ )
+                    {
+                        continue;
+                    }
+
+                    if($contador==$nmovimientos)
+                     {
+                        
+                        $comprobante->setCaConsecutivo($consecutivo);
+                        $comprobante->setCaFchcomprobante($fechaComp);
+                        $comprobante->setCaValor($total);
+                        $comprobante->setCaValor2($total);
+                        $comprobante->setCaUsugenero("Administrador");
+                        $comprobante->setCaFchgenero($fechaComp);
+                        $comprobante->setCaPlazo(0);        
+                        $comprobante->setCaEstado(InoComprobante::TRANSFERIDO);
+                        $comprobante->save($conn);
+                        
+                        $comproSiigo->setTotalDbCont($total);
+                        $comproSiigo->setTotalCrCont($total);
+                        $comproSiigo->save($conn);
+                        
+                        $comprobante=null;
+
+                        //$this->crearComprobante($conn,$idcomprobante,$total);
+                         echo "<br>TOTAL:".$total."<br>";
+                         $total=$contador=0;
+                     }
+                     if( ($lastdbcr!="" && $lastdbcr!=$row[$posicion['naturaleza']]) ||  ($lastidtipoComprobante!="" && $lastidtipoComprobante != $idtipoComprobante))
+                     {
+                         
+                         
+                        $comprobante->setCaConsecutivo($consecutivo);
+                        $comprobante->setCaFchcomprobante(date("Y-m-d"));
+                        $comprobante->setCaValor($total);
+                        $comprobante->setCaValor2($total);
+                        $comprobante->setCaUsugenero("Administrador");
+                        $comprobante->setCaFchgenero($fechaComp);
+                        $comprobante->setCaPlazo(0);        
+                        $comprobante->setCaEstado(InoComprobante::TRANSFERIDO);
+                        $comprobante->save($conn);
+                        
+                        $comproSiigo->setTotalDbCont($total);
+                        $comproSiigo->setTotalCrCont($total);
+                        $comproSiigo->save($conn);
+                        $comprobante=null;
+                         //$this->crearComprobante($conn,$idcomprobante,$total);
+                         echo "<br>TOTAL:".$total."<br>";
+                         $total=$contador=0;
+                     }
+
+                    $contador++;
+                    //echo $contador.":";
+                    //echo str_replace(",","",$row[$posicion['valor']]);
+                    $valoru=str_replace(",","",$row[$posicion['valor']]);
+                    $total+= $valoru;
+                    
+                    if($comprobante==null)
+                    {
+                        $comprobante=null;
+                        $comprobante = new InoComprobante();
+                        $comprobante->setCaIdtipo($idtipoComprobante);
+                        //echo "comprobante:".$row[$posicion['tipoc']].$row[$posicion['notipoc']];
+                        //exit;
+                        
+                        $tipoComprobante = $comprobante->getInoTipoComprobante();
+                        $consecutivo=  intval($tipoComprobante->getCaNumeracionActual())+1;
+                        $tipoComprobante->setCaNumeracionActual($consecutivo);
+                        $tipoComprobante->save($conn);
+
+                        $comprobante->setCaId($idterceroComp);
+                        $comprobante->setCaIdmoneda("COP");
+                        $comprobante->setCaTcambio(1);
+                        $comprobante->save($conn);
+
+                        $idcomprobante= $comprobante->getCaIdcomprobante();
+                        $tipoComprobante = $comprobante->getInoTipoComprobante();
+                        
+                        
+                        $comproSiigo = new SiigoComprobante();                
+                        $comproSiigo->setIdUnegCont($idcomprobante);
+                        $comproSiigo->setCdDocCont($tipoComprobante->getCaTipo());
+                        $comproSiigo->setNuDocsopCont($tipoComprobante->getCaComprobante());
+                        $comproSiigo->setNuCont($consecutivo);
+
+                        $comproSiigo->setTpDocSopCont($tipoComprobante->getCaTipo());
+                        $comproSiigo->setFechaCont($fechaComp);
+                        //$comproSiigo->setFechaCont("2014-02-15");
+                        $comproSiigo->setIdtpoIdapbCont("C");
+
+                        $comproSiigo->setNitApbCont($comprobante->getIds()->getCaIdalterno());
+                        $dv=($comprobante->getIds()->getCaDv()!="" && $comprobante->getIds()->getCaDv()!=null)?$comprobante->getIds()->getCaDv():"0";
+                        $comproSiigo->setDvApbCont($dv);
+
+                        
+                        $comproSiigo->setIdSucCont("0");                        
+                        $comproSiigo->setIndIncorpCont("2");
+                        $comproSiigo->setCodaltUnegCont('1');
+                        $comproSiigo->setCodaltEmpreCont('4');
+                        //$comproSiigo->setCdErrsiigoCont();
+                        $comproSiigo->setIndAnulCont("N");
+                        //$comproSiigo->setArchivo();
+                        //$comproSiigo->setErrorArchivo();
+                        $comproSiigo->save($conn);
+                    }
+
+                    $lastdbcr=$row[$posicion['naturaleza']];
+                    $lastidtipoComprobante=$idtipo[$row[$posicion['tipoc']].$row[$posicion['notipoc']]];
+                    echo "<br>";
+                    $valoru=str_replace(",","",$row[$posicion['valor']]);
+                    
+                    $nat=$row[$posicion['naturaleza']];
+                    /*if($nat=="C")
+                        $nat="D";
+                    else
+                        $nat="C";
+                    */
+                    $valor=$valoru;
+                    $cc="0001";
+                    $scc="001";
+                    $nit=$row[$posicion['nit']];
+                    $referencia=$row[$posicion['referencia']];
+                    $nconcepto=$row[$posicion['concepto']];
+                    
+                    $detComproSiigo=new SiigoDetComprobante();
+                    $detComproSiigo->setIdUnegMovcont($comproSiigo->getIdUnegCont());
+                    $detComproSiigo->setCodDoccontMovcont($tipoComprobante->getCaTipo());
+                    $detComproSiigo->setNumTipDoccontMovcont($tipoComprobante->getCaComprobante());
+                    $detComproSiigo->setNumDoccontMovcont($consecutivo);
+                    
+                    
+                    $detComproSiigo->setCtaMovcont($row[$posicion['cuenta1']]);
+                    $detComproSiigo->setTpIdepcteMovcont("CC");
+                    $detComproSiigo->setSucMovcont("0");
+                    $detComproSiigo->setIdentPcteMovcont($nit);//nit            
+                    $detComproSiigo->setDescripMovcont($nconcepto);//nombre concepto
+                    
+                    $detComproSiigo->setValorMovcont($valor);//valor
+                    $detComproSiigo->setNatuMovcont($nat);//naturaleza C o D
+                    
+                    $detComproSiigo->setVlBaseMovcont(0);//valor Base
+                    $detComproSiigo->setIdCcMovcont("0001");//centro de costo
+                    $detComproSiigo->setIdBodegaMovcont("0001");
+                    //$detComproSiigo->setCodalInvMovcont("0010001000007");
+                    $detComproSiigo->setCodalInvMovcont("0");
+                    $detComproSiigo->setCantInvMovcont("1");
+                    $detComproSiigo->setCodaltDepMovcont("0");
+                    $detComproSiigo->setCodaltBodMovcont("0");
+                    $detComproSiigo->setCodaltUbiMovcont("0");
+                    $detComproSiigo->setCodaltCcMovcont($cc);
+                    $detComproSiigo->setIdAreaMovcont("0");
+                    $detComproSiigo->setCodaltSccMovcont($scc);//??
+                    $detComproSiigo->setTpIdterMovcont("CC");
+                    $detComproSiigo->setIdentTerMovcont($nit);//nit
+                    $detComproSiigo->setTipConCarMovcont($tipoComprobante->getCaTipo());
+                    $detComproSiigo->setComConCarMovcont($tipoComprobante->getCaComprobante());
+                    $detComproSiigo->setNumConCarMovcont($consecutivo);
+                    $detComproSiigo->setVctConCarMovcont(1);
+                    
+                    $fchDocCruce=$fechaComp;
+                    //$detComproSiigo->setFecConMovcont(date("Y-m-d"));
+                    $detComproSiigo->setFecConMovcont($fchDocCruce);
+
+                    $detComproSiigo->setNomTercMovcont("SIIGONECT");//
+                    $detComproSiigo->setConceptoNomMovcont(0);
+                    $detComproSiigo->setVariableAcumMovcont(0);
+                    $detComproSiigo->setNroquinAcumMovcont(0);
+                    $detComproSiigo->setTipModMovhbMovcont($row[$posicion['modulo']]);
+                    $detComproSiigo->setRefMasMovhbMovcont( $referencia);
+                    $detComproSiigo->setNroBlhMovhbMovcont($referencia);
+                    $detComproSiigo->save($conn);
+                    
+                    
+                    
+                    //mov2
+                    //$nat=$row[$posicion['cuenta']];
+                    if($nat=="C")
+                        $nat="D";
+                    else
+                        $nat="C";
+                    
+                    $valor=$valoru;
+                    $cc="0001";
+                    $scc="001";
+                    $nit=$row[$posicion['nit']];
+                    $referencia=$row[$posicion['referencia']];
+                    
+                    
+                              
+                    $detComproSiigo=new SiigoDetComprobante();
+                    $detComproSiigo->setIdUnegMovcont($comproSiigo->getIdUnegCont());
+                    $detComproSiigo->setCodDoccontMovcont($tipoComprobante->getCaTipo());
+                    $detComproSiigo->setNumTipDoccontMovcont($tipoComprobante->getCaComprobante());
+                    $detComproSiigo->setNumDoccontMovcont($consecutivo);
+                    
+                    $detComproSiigo->setCtaMovcont($row[$posicion['cuenta2']]);
+                    $detComproSiigo->setTpIdepcteMovcont("CC");
+                    $detComproSiigo->setSucMovcont("0");
+                    $detComproSiigo->setIdentPcteMovcont($nit);//nit            
+                    $detComproSiigo->setDescripMovcont($nconcepto);//nombre concepto
+
+                    $detComproSiigo->setValorMovcont($valor);//valor
+                    $detComproSiigo->setNatuMovcont($nat);//naturaleza C o D
+                    
+                    $detComproSiigo->setVlBaseMovcont(0);//valor Base
+                    $detComproSiigo->setIdCcMovcont("0001");//centro de costo
+                    $detComproSiigo->setIdBodegaMovcont("0001");
+                    //$detComproSiigo->setCodalInvMovcont("0010001000007");
+                    $detComproSiigo->setCodalInvMovcont("0");
+                    $detComproSiigo->setCantInvMovcont("1");
+                    $detComproSiigo->setCodaltDepMovcont("0");
+                    $detComproSiigo->setCodaltBodMovcont("0");
+                    $detComproSiigo->setCodaltUbiMovcont("0");
+                    $detComproSiigo->setCodaltCcMovcont($cc);
+                    $detComproSiigo->setIdAreaMovcont("0");
+                    $detComproSiigo->setCodaltSccMovcont($scc);//??
+                    $detComproSiigo->setTpIdterMovcont("CC");
+                    $detComproSiigo->setIdentTerMovcont($nit);//nit
+                    $detComproSiigo->setTipConCarMovcont($tipoComprobante->getCaTipo());
+                    $detComproSiigo->setComConCarMovcont($tipoComprobante->getCaComprobante());
+                    $detComproSiigo->setNumConCarMovcont($consecutivo);
+                    $detComproSiigo->setVctConCarMovcont(1);
+                    
+                    $fchDocCruce=$fechaComp;
+                    //$detComproSiigo->setFecConMovcont(date("Y-m-d"));
+                    $detComproSiigo->setFecConMovcont($fchDocCruce);
+
+                    $detComproSiigo->setNomTercMovcont("SIIGONECT");//
+                    $detComproSiigo->setConceptoNomMovcont(0);
+                    $detComproSiigo->setVariableAcumMovcont(0);
+                    $detComproSiigo->setNroquinAcumMovcont(0);
+                    $detComproSiigo->setTipModMovhbMovcont($row[$posicion['modulo']]);
+                    $detComproSiigo->setRefMasMovhbMovcont( $referencia);
+                    $detComproSiigo->setNroBlhMovhbMovcont($referencia);
+                    $detComproSiigo->save($conn);                    
+                    
+            }
+            if($total>0)
+            {
+                
+                $comprobante->setCaConsecutivo($consecutivo);
+                $comprobante->setCaFchcomprobante($fechaComp);
+                $comprobante->setCaValor($total);
+                $comprobante->setCaValor2($total);
+                $comprobante->setCaUsugenero("Administrador");
+                $comprobante->setCaFchgenero($fechaComp);
+                $comprobante->setCaPlazo(0);
+                $comprobante->setCaEstado(InoComprobante::TRANSFERIDO);
+                $comprobante->save($conn);
+                
+                
+                $comproSiigo->setTotalDbCont($total);
+                $comproSiigo->setTotalCrCont($total);
+                $comproSiigo->save($conn);
+                
+                $comprobante=null;
+                //$this->crearComprobante($conn,$idcomprobante,$total);
+                echo "<br>TOTAL:".$total."<br>";
+            }
+        
+            $conn->commit();
+        }
+        catch(Exceptio $e)
+        {
+            print_r($e->getMessage());
+            $conn->rollback();
+        }
+        //$array = $ws->toArray();
+        //echo "<pre>";print_r($array);echo "</pre>";
+        exit;
+        
+    }
+    
+    public function crearComprobante(&$conn , $valor,$idtipo='26')
+    {
+        
+        
+  
+        $tipoComprobante = $comprobante->getInoTipoComprobante();
+        $consecutivo=  intval($tipoComprobante->getCaNumeracionActual())+1;
+        $tipoComprobante->setCaNumeracionActual($consecutivo);
+        $tipoComprobante->save($conn);
+
+        
+        $comprobante->setCaConsecutivo($consecutivo);
+        $comprobante->setCaFchcomprobante(date("Y-m-d"));
+        $comprobante->setCaValor($valor);
+        $comprobante->setCaValor2($valor);
+        $comprobante->setCaUsugenero("Administrador");
+        $comprobante->setCaFchgenero(date("Y-m-d H:i:s"));
+        $comprobante->setCaPlazo(0);        
+        $comprobante->setCaEstado(InoComprobante::TRANSFERIDO);
+        $comprobante->save($conn);
+        
+        
+        
+        
+        $comproSiigo = new SiigoComprobante();                
+        $comproSiigo->setIdUnegCont($idcomprobante);
+        $comproSiigo->setCdDocCont($tipoComprobante->getCaTipo());
+        $comproSiigo->setNuDocsopCont($tipoComprobante->getCaComprobante());
+        $comproSiigo->setNuCont($consecutivo);
+        
+        $comproSiigo->setTpDocSopCont($tipoComprobante->getCaTipo());
+        $comproSiigo->setFechaCont(date("Y-m-d"));
+        //$comproSiigo->setFechaCont("2014-02-15");
+        $comproSiigo->setIdtpoIdapbCont("C");
+
+        $comproSiigo->setNitApbCont($comprobante->getIds()->getCaIdalterno());
+        $dv=($comprobante->getIds()->getCaDv()!="" && $comprobante->getIds()->getCaDv()!=null)?$comprobante->getIds()->getCaDv():"0";
+        $comproSiigo->setDvApbCont($dv);
+        //$comproSiigo->setNitApbCont($house->getCliente()->getCaIdalterno());
+        //$comproSiigo->setDvApbCont($house->getCliente()->getCaDigito());        
+        $comproSiigo->setIdSucCont("0");
+        $comproSiigo->setTotalDbCont($valor);
+        $comproSiigo->setTotalCrCont($valor);
+        $comproSiigo->setIndIncorpCont("2");
+        $comproSiigo->setCodaltUnegCont('1');
+        $comproSiigo->setCodaltEmpreCont('4');
+        //$comproSiigo->setCdErrsiigoCont();
+        $comproSiigo->setIndAnulCont("N");
+        //$comproSiigo->setArchivo();
+        //$comproSiigo->setErrorArchivo();
+        $comproSiigo->save($conn);
+        
+        //return
+        
+    }
+    
+    
+    public function executeWsUsers(sfWebRequest $request) {
+        
+        //phpinfo();
+        //exit;
+        ProjectConfiguration::registerZend();   
+        
+        $config = sfConfig::get("app_soap_adminUsers");
+            $wsdl_uri = $config["wsdl_uri"];
+            
+            
+           
+            $client = new Zend_Soap_Client( $wsdl_uri, array('encoding'=>'ISO-8859-1', 'soap_version'=>SOAP_1_2 ));            
+            $usuario = Doctrine::getTable("Usuario")->find("abotero");
+           
+            //$usuario->setCaExtension("111");
+            $usuario->setCaTeloficina("222");
+            //$error =  $client->updateUser( sfConfig::get("app_soap_secret"),serialize($usuario) );            
+            $error =  $client->getUsers();            
+            
+            print_r($error);
+        
+        
+            exit;
+    }
+    
+    public function executeWsOpen(sfWebRequest $request) {
+            
+        ProjectConfiguration::registerZend();   
+        
+        $config = sfConfig::get("app_soap_open");
+        $wsdl_uri = $config["wsdl_uri"];
+        
+        $client = new Zend_Soap_Client($wsdl_uri, array('encoding'=>'ISO-8859-1', 'soap_version'=>SOAP_1_2 , 'login'=>'coexito', 'password'=>'!@<58kFewsGak2$'));        
+        $result =  $client->verListadoDeclaraciones( '890300225', 'CO9116/17' );          
+        print_r($result);
+        exit;
     }
 }
 ?>

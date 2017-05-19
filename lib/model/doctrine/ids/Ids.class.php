@@ -73,7 +73,6 @@ class Ids extends BaseIds
         
     }
 
-
     public function getIdsProveedor(){
         if( !$this->idsProveedor ){
             $this->idsProveedor = Doctrine::getTable("IdsProveedor")->find($this->getCaId());
@@ -82,4 +81,98 @@ class Ids extends BaseIds
         return $this->idsProveedor;
 
     }
+    
+    public function getConsultaListas( $tipoConsulta ){
+        $username = sfConfig::get("app_sinteParams_username");
+        $password = sfConfig::get("app_sinteParams_password");
+        $percent = sfConfig::get("app_sinteParams_percent");
+
+        ProjectConfiguration::registerZend();
+
+        $client = new Zend_Http_Client();
+
+        $uri = "http://app.sinte.co:16080/WS_COLTRANS/webresources/listas/consultar";
+        $client->setUri($uri);
+
+        $client->setAuth($username, $password, Zend_Http_Client::AUTH_BASIC);
+
+        $client->setParameterGet('tipo_consulta', $tipoConsulta);
+        if ($tipoConsulta == "DOCUMENTO") {
+            $client->setParameterGet('parametro', $this->getCaIdalterno());
+        } else {
+            $client->setParameterGet('parametro', $this->getCaNombre());
+            $client->setParameterGet('pcoincidencia', $percent);
+        }
+        $result = $client->request(Zend_Http_Client::GET);
+
+        $json_response = json_decode($result->getBody());
+
+        $consulta = new IdsRestrictivas();
+        $consulta->setCaId($this->getCaId());
+        $consulta->setCaTipoConsulta($tipoConsulta);
+        $consulta->setCaIdrespuesta($json_response->id);
+        $consulta->setCaRespuesta(($json_response->respuesta)?$json_response->respuesta:null);
+        $consulta->setCaFchconsultado($json_response->fecha);
+        $consulta->save();
+        if ($json_response->respuesta) {        // Si el Nit o Razón Social se encuentra reportado
+            $contentHTML = "<br /><br />
+            ***** ALERTA *****
+            <br />
+            La consulta en Listas Restrictivas generó el siguiente resultado:<br />
+            <table>
+                    <tr>
+                        <td><strong>Nit:</strong></td><td>".$this->getCaIdalterno()."</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Nombre:</strong></td><td>".$this->getCaNombre()."</td>
+                    </tr>
+                    <tr>
+                        <td colspan=\"2\">$nbsp</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tipo Consulta:</strong></td><td>$tipoConsulta</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Resultado:</strong></td><td>$json_response->respuesta</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fecha:</strong></td><td>$json_response->fecha</td>
+                    </tr>
+            </table>
+            <br />
+            Agradecemos tomar las acciones correspondientes e informar a los interesados.";
+            
+            $parametro = Doctrine::getTable("Parametro")->find(array("CU267", 1, "defaultEmails"));
+            if (stripos($parametro->getCaValor2(), ',') !== false) {
+                $defaultEmail = explode(",", $parametro->getCaValor2());
+            } else {
+                $defaultEmail = array($parametro->getCaValor2());
+            }
+            $parametro = Doctrine::getTable("Parametro")->find(array("CU267", 2, "ccEmails"));
+            if (stripos($parametro->getCaValor2(), ',') !== false) {
+                $ccEmails = explode(",", $parametro->getCaValor2());
+            } else {
+                $ccEmails = array($parametro->getCaValor2());
+            }
+            
+            $email = new Email();
+            $email->setCaUsuenvio("Administrador");
+            $email->setCaTipo("ConsultaSinte");
+            $email->setCaFrom("no-reply@coltrans.com.co");
+            $email->setCaFromname("Colsys Notificaciones");
+            reset($defaultEmail);
+            while (list ($clave, $val) = each($defaultEmail)) {
+                $email->addTo($val);
+            }
+            reset($ccEmails);
+            while (list ($clave, $val) = each($ccEmails)) {
+                $email->addCc($val);
+            }
+            $email->setCaSubject("ALERTA! Resultado en Listas Restrictivas " . $this->getCaNombre() . " Id: " . $this->getCaIdalterno());
+            $email->setCaBodyhtml($contentHTML);
+            $email->setCaBody($contentPlain);
+            $email->save();
+        }
+        return $consulta;
+    }    
 }

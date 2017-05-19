@@ -16,13 +16,19 @@ class myDoctrineRecord extends sfDoctrineRecord{
     public function stopBlaming(){
         $this->stopBlaming = true;
     }
-
+  
     public function save(Doctrine_Connection $con = null){
+//	if($con==null)
+//		$con = Doctrine_Manager::getInstance()->getConnection('master');        
+        
         if( !$this->stopBlaming ){
             if ($this->isNew() ){
 
                 if( $this->contains('ca_usucreado') ){
-                    $this->setCaUsucreado(sfContext::getinstance()->getUser()->getUserId());
+                    //if(sfContext::getinstance()->getUser()->getUserId())
+                        $this->setCaUsucreado(sfContext::getinstance()->getUser()->getUserId());
+                    /*else
+                        $this->setCaUsucreado("Administrador");*/
                 }
                 if(  $this->contains('ca_fchcreado') ){
                     $this->setCaFchcreado(date('Y-m-d H:i:s'));
@@ -56,6 +62,9 @@ class myDoctrineRecord extends sfDoctrineRecord{
             $str = "";
 
             foreach( $array as $key=>$value ){
+                if($value == "")
+                    continue;
+                                
                 if(strlen($str)>0){
                     $str.=" ";
                 }
@@ -70,11 +79,13 @@ class myDoctrineRecord extends sfDoctrineRecord{
 	* @author: Andres Botero
 	*/
 	public function getProperty( $param ){
-        if( $this->contains('ca_propiedades') ){
-            $array = sfToolkit::stringToArray( $this->getCaPropiedades() );
-            return isset($array[$param])?$array[$param]:null;
-        }
+		if( $this->contains('ca_propiedades') ){
+		    $array = sfToolkit::stringToArray( $this->getCaPropiedades() );
+		    return isset($array[$param])?$array[$param]:null;
+		}
 	}
+
+
 
     
 

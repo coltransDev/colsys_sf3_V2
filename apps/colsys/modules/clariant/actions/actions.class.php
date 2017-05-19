@@ -846,10 +846,10 @@ class clariantActions extends sfActions {
       $email->AddAttachment($filename3);
 
       $email->save(); //guarda el cuerpo del mensaje
-      $this->error = $email->send();
+      /*$this->error = $email->send();
       if ($this->error) {
          $this->getRequest()->setError("mensaje", "no se ha enviado correctamente");
-      }
+      }*/
    }
 
    /*

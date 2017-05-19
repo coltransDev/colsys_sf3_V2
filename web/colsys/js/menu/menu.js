@@ -35,16 +35,10 @@ function tm(el)
 }
 
 function hideMenu( id ){
-    document.getElementById( id ).style.display="none";
-    //window.setTimeout(closeMenu, 0, id);
-}
-
-function closeMenu( id ){
 	document.getElementById( id ).style.display="none";
 }
 
 
 function showMenu( id ){
-  
 	document.getElementById( id ).style.display="inline";
 }

@@ -12,6 +12,7 @@ $referencia = $sf_data->getRaw("referencia");
     var win_hijas = null;
     var win_hija = null;
     var win_file = null;
+    var win_stick = null;
 
     Ext.onReady(function () {
 
@@ -42,9 +43,11 @@ $referencia = $sf_data->getRaw("referencia");
                 {name: 'gross_unit', type: 'string'},
                 {name: 'weight_charge', type: 'string'},
                 {name: 'weight_details', type: 'string'},
+                {name: 'kind_rate', type: 'string'},
                 {name: 'rate_charge', type: 'string'},
                 {name: 'due_agent', type: 'string'},
                 {name: 'due_carrier', type: 'string'},
+                {name: 'commodity_item', type: 'string'},
                 {name: 'delivery_goods', type: 'string'},
                 {name: 'other_charges', type: 'string'},
                 {name: 'shipper_certifies', type: 'string'},
@@ -116,9 +119,16 @@ $referencia = $sf_data->getRaw("referencia");
             forceSelection: true
         });
 
-        Ext.define('ComboTipoTarifas', {
+        Ext.define('ComboTipoTarifasAwb', {
             extend: 'Ext.form.field.ComboBox',
-            alias: 'widget.combo-tipo-tarifas',
+            alias: 'widget.combo-tipo-tarifas-awb',
+            store: ['Valor Unitario', 'Valor Minimo'],
+            forceSelection: true
+        });
+
+        Ext.define('ComboTipoTarifasHawb', {
+            extend: 'Ext.form.field.ComboBox',
+            alias: 'widget.combo-tipo-tarifas-hawb',
             store: ['Valor Unitario', 'Valor Minimo', 'As Agreed'],
             forceSelection: true
         });
@@ -158,8 +168,9 @@ $referencia = $sf_data->getRaw("referencia");
             defaults: {
                 anchor: '100%',
                 labelWidth: 50,
+                margin: '2 0 0 0',
                 defaultType: 'container',
-                collapsible: false,
+                collapsible: false
             },
             layout: 'column', // arrange fieldsets side by side
             items: [{
@@ -245,19 +256,19 @@ $referencia = $sf_data->getRaw("referencia");
                                     xtype: 'combo-carriers',
                                     fieldLabel: '&nbsp;By Carrier',
                                     name: 'idcarrier_uno',
-                                    labelWidth: 75,
+                                    labelWidth: 68,
                                     anchor: '95%'
                                 }, {
                                     xtype: 'combo-carriers',
                                     fieldLabel: '&nbsp;By Carrier',
                                     name: 'idcarrier_dos',
-                                    labelWidth: 75,
+                                    labelWidth: 68,
                                     anchor: '95%'
                                 }, {
                                     xtype: 'combo-carriers',
                                     fieldLabel: '&nbsp;By Carrier',
                                     name: 'idcarrier_trs',
-                                    labelWidth: 75,
+                                    labelWidth: 68,
                                     anchor: '95%'
                                 }]
                         }]
@@ -317,7 +328,7 @@ $referencia = $sf_data->getRaw("referencia");
                         xtype: 'textareafield',
                         name: 'accounting_info',
                         allowBlank: true,
-                        maxLength: 128,
+                        maxLength: 512,
                         maxLengthText: 'Excede el tamaño permitido'
                     }
                 }, {
@@ -419,8 +430,9 @@ $referencia = $sf_data->getRaw("referencia");
             defaults: {
                 anchor: '100%',
                 labelWidth: 50,
+                margin: '2 0 0 0',
                 defaultType: 'container',
-                collapsible: false,
+                collapsible: false
             },
             layout: 'column', // arrange fieldsets side by side
             items: [{
@@ -485,6 +497,19 @@ $referencia = $sf_data->getRaw("referencia");
                 }, {
                     xtype: 'fieldset',
                     columnWidth: 0.245,
+                    title: 'Commodity Item #',
+                    defaults: {anchor: '100%'},
+                    layout: 'anchor',
+                    items: {
+                        xtype: 'textfield',
+                        name: 'commodity_item',
+                        allowBlank: true,
+                        maxLength: 512,
+                        maxLengthText: 'Excede el tamaño permitido'
+                    }
+                }, {
+                    xtype: 'fieldset',
+                    columnWidth: 0.245,
                     title: 'Chargeable Details',
                     defaults: {anchor: '100%'},
                     layout: 'anchor',
@@ -516,6 +541,18 @@ $referencia = $sf_data->getRaw("referencia");
                                 total.setValue(field.getValue() * rate.getValue());
                             }
                         }
+                    }
+                }, {
+                    xtype: 'fieldset',
+                    columnWidth: 0.245,
+                    title: 'Tipo Tarifa',
+                    defaults: {anchor: '100%'},
+                    layout: 'anchor',
+                    items: {
+                        id: 'kind_rate',
+                        xtype: 'combo-tipo-tarifas-awb',
+                        name: 'kind_rate',
+                        allowBlank: false
                     }
                 }, {
                     xtype: 'fieldset',
@@ -585,7 +622,7 @@ $referencia = $sf_data->getRaw("referencia");
                     }
                 }, {
                     xtype: 'fieldset',
-                    columnWidth: 0.490,
+                    columnWidth: 1,
                     title: 'Nature and Qantity of Goods',
                     defaults: {anchor: '100%'},
                     layout: 'anchor',
@@ -645,6 +682,38 @@ $referencia = $sf_data->getRaw("referencia");
                                     })
                                 }
                                 win_file.show();
+                            }
+                        }, {
+                            text: 'Stickers',
+                            tooltip: 'Generar los Stickers para Impresion',
+                            iconCls: 'page_white_acrobat',
+                            handler: function () {
+                                var id = this.up('form').getForm().getRecord().get('iddoctransporte');
+                                if (win_stick == null) {
+                                    win_stick = new Ext.Window({
+                                        title: 'Vista Preliminar de Stickers',
+                                        height: 600,
+                                        width: 900,
+                                        items: [{
+                                            xtype: 'component',
+                                            itemId: 'panel-sticker-preview',
+                                            autoEl: {
+                                                tag: 'iframe',
+                                                width: '100%',
+                                                height: '100%',
+                                                frameborder: '0',
+                                                scrolling: 'auto',
+                                                src: '<?= url_for('inoExpo/imprimirAwbsStickers') ?>' + '/id/' + id
+                                            }
+                                        }],
+                                        listeners: {
+                                            close: function (panel, eOpts) {
+                                                win_stick = null;
+                                            }
+                                        }
+                                    })
+                                }
+                                win_stick.show();
                             }
                         }, {
                             xtype: 'tbspacer'
@@ -713,8 +782,9 @@ $referencia = $sf_data->getRaw("referencia");
             defaults: {
                 anchor: '100%',
                 labelWidth: 50,
+                margin: '2 0 0 0',
                 defaultType: 'container',
-                collapsible: false,
+                collapsible: false
             },
             layout: 'column', // arrange fieldsets side by side
             items: [{
@@ -740,7 +810,7 @@ $referencia = $sf_data->getRaw("referencia");
                     layout: 'anchor',
                     items: {
                         id: 'kind_rate',
-                        xtype: 'combo-tipo-tarifas',
+                        xtype: 'combo-tipo-tarifas-hawb',
                         name: 'kind_rate',
                         allowBlank: false
                     }
@@ -849,8 +919,8 @@ $referencia = $sf_data->getRaw("referencia");
                         mouseWheelEnabled: false,
                         listeners: {
                             change: function (field) {
-                                weight = Ext.getCmp('weight_charge');
-                                total = Ext.getCmp('total_charge');
+                                weight = Ext.getCmp('aweight_charge');
+                                total = Ext.getCmp('atotal_charge');
                                 total.setValue(field.getValue() * weight.getValue());
                             }
                         }
@@ -901,7 +971,7 @@ $referencia = $sf_data->getRaw("referencia");
                     }
                 }, {
                     xtype: 'fieldset',
-                    columnWidth: 0.490,
+                    columnWidth: 0.630,
                     title: 'Other Charges',
                     defaults: {anchor: '100%'},
                     layout: 'anchor',
@@ -909,13 +979,26 @@ $referencia = $sf_data->getRaw("referencia");
                         xtype: 'textareafield',
                         name: 'other_charges',
                         allowBlank: true,
-                        height: 100,
+                        height: 55,
                         maxLength: 512,
                         maxLengthText: 'Excede el tamaño permitido'
                     }
                 }, {
                     xtype: 'fieldset',
-                    columnWidth: 0.490,
+                    columnWidth: 0.350,
+                    title: 'Commodity Item #',
+                    defaults: {anchor: '100%'},
+                    layout: 'anchor',
+                    items: {
+                        xtype: 'textfield',
+                        name: 'commodity_item',
+                        allowBlank: true,
+                        maxLength: 512,
+                        maxLengthText: 'Excede el tamaño permitido'
+                    }
+                }, {
+                    xtype: 'fieldset',
+                    columnWidth: 1,
                     title: 'Nature and Qantity of Goods',
                     defaults: {anchor: '100%'},
                     layout: 'anchor',
@@ -923,7 +1006,7 @@ $referencia = $sf_data->getRaw("referencia");
                         xtype: 'textareafield',
                         name: 'delivery_goods',
                         allowBlank: true,
-                        height: 65,
+                        height: 55,
                         maxLength: 512,
                         maxLengthText: 'Excede el tamaño permitido'
                     }

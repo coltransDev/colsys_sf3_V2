@@ -38,3 +38,9 @@ all:
 
     login_module:           login   # To be called when a non-authenticated user
     login_action:           index     # Tries to access a secure page
+
+    enabled_modules:
+      - widgets5
+      - falabellaAdu2
+      - indicadoresAdu
+      - gestDocumental

@@ -45,7 +45,7 @@ if (strpos($id, '-') === false){
     }
 }else{
     $cadena_co = "select r1.ca_idreporte from tb_reportes r1, ";
-    $cadena_co.= "(select ca_consecutivo, max(ca_version) as ca_version from tb_reportes where ca_consecutivo = '$id' and ca_usuanulado is null group by ca_consecutivo) r2 ";
+    $cadena_co.= "(select ca_consecutivo, max(ca_version) as ca_version from tb_reportes where ca_consecutivo = '$id' and ca_usuanulado is null and ca_tiporep != 4 group by ca_consecutivo) r2 ";
     $cadena_co.= "where r1.ca_consecutivo = r2.ca_consecutivo and r1.ca_version = r2.ca_version ";
     $condition = "ca_idreporte = ($cadena_co)";
 }
@@ -53,7 +53,7 @@ if (strpos($id, '-') === false){
 if (true){
      $tm =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
 
-     if (!$rs->Open("select * from vi_reportes where $condition")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
+     if (!$rs->Open("select * from vi_reportes2 where $condition")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
          echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
          echo "<script>document.location.href = 'entrada.php';</script>";
          exit; }

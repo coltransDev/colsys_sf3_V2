@@ -73,7 +73,9 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
     echo "      document.getElementById('fchfinal').disabled = true;";
     echo "      document.getElementById('sucursal').disabled = true;";
     echo "	}";
-    echo "}";
+    echo "};";
+    echo "function validarmenuForm(){ if(document.getElementById('criterio').value!=''){ menuform.submit()}else{alert('Por favor digite un valor en la casilla de busqueda')}}";
+
     echo "</script>";
     echo "<script language='javascript' src='javascripts/popcalendar.js'></script>";
     echo "</HEAD>";
@@ -85,14 +87,15 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
         echo "<script>document.location.href = 'repcomisiones.php';</script>";
         exit;
     }
-    echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";             // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
+    
+    echo "<style>@import URL(\"Coltrans.css\");</style>";             // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
     echo "<CENTER>";
     echo "<H3>$titulo</H3>";
-    echo "<FORM METHOD=post NAME='menuform' ACTION='inosea.php' >";
+    echo "<FORM METHOD=post NAME='menuform' ACTION='inosea.php'  >";
     echo "<TABLE WIDTH=450 BORDER=0 CELLSPACING=1 CELLPADDING=5>";
-    echo "<TH COLSPAN=5 style='font-size: 12px; font-weight:bold;'><B>Ingrese un criterio para realizar las busqueda</TH>";
-    echo "<TH><IMG style='cursor:pointer; $level0' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", 0);'>";
-    echo "</TH>";  // Botón para la creación de un Registro Nuevo
+    echo "<tr><th COLSPAN=5 style='font-size: 12px; font-weight:bold;'><B>Ingrese un criterio para realizar las busqueda</TH>";
+    echo "<th><IMG style='cursor:pointer; $level0' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", 0);'>";
+    echo "</th></tr>";  // Botón para la creación de un Registro Nuevo
     echo "<TR>";
     echo "  <TH ROWSPAN=2>&nbsp;</TH>";
     echo "  <TD Class=listar ROWSPAN=2><B>Buscar por:</B><BR><SELECT NAME='opcion' SIZE=7>";
@@ -100,8 +103,8 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
         echo " <OPTION VALUE='" . $val . "'" . (($val == 'ca_referencia') ? " SELECTED" : "") . ">" . $clave;
     }
     echo "  </SELECT></TD>";
-    echo "  <TD Class=listar COLSPAN=3><B>Que contenga la cadena:</B><BR><INPUT TYPE='text' NAME='criterio' VALUE='$cadena' size='60'></TD>";
-    echo "  <TH ROWSPAN=2><INPUT Class=submit TYPE='SUBMIT' NAME='buscar' VALUE='  Buscar  ' ONCLIK='menuform.submit();'></TH>";
+    echo "  <TD Class=listar COLSPAN=3><B>Que contenga la cadena:</B><BR><INPUT TYPE='text' ID='criterio' NAME='criterio' VALUE='$cadena' size='60'></TD>";
+    echo "  <TH ROWSPAN=2><INPUT Class=submit TYPE='BUTTON' NAME='buscar' VALUE='  Buscar  ' onClick='validarmenuForm()'></TH>";
     echo "</TR>";
     echo "<TR>";
     echo "  <TD Class=listar COLSPAN=3>Búsqueda por ETA:  <INPUT TYPE=CHECKBOX NAME='rango' ONCLICK='habilitar();'><TABLE CELLSPACING=1 WIDTH=320>";
@@ -124,7 +127,10 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
     echo "</TR>";
     echo "</TABLE><BR>";
     echo "<BR />";
-    echo "<a href='/antecedentes/listadoReferencias/format/maritimo' style='$level0'>Listado de antecedentes<IMG SRC='./graficos/nuevo.gif' border=0 ALT='Nuevo Servicio'></a>";
+    echo "<a href='/antecedentes/listadoReferencias/format/maritimo' style='$level0'>Listado de antecedentes</a>";
+    echo "<BR />";
+    echo "<BR />";
+    echo "<a href='/reportesGer/cargasPendientesxLiberar'>Cargas Pendientes por Liberar<IMG SRC='./graficos/nuevo.gif' border=0 ALT='Nuevo Servicio'/></a>";
     echo "<BR />";
     echo "<TABLE CELLSPACING=10>";
     echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Terminar' ONCLICK='javascript:document.location.href = \"/\"'></TH>";  // Cancela la operación
@@ -390,8 +396,12 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "function ver_cot(id){";
                 echo "    window.open(\"/cotizaciones/verCotizacion/id/\"+id);"; //toolbar=no, location=no, directories=no, menubar=no
                 echo "}";
+                
                 echo "function subir_hbl(id, hb){
-                    document.location.href = '/gestDocumental/formUploadExt4/ref1/'+id+'/ref2/'+hb+'/idsserie/2';
+                    //document.location.href = '/gestDocumental/formUploadExt4/ref1/'+id+'/ref2/'+hb+'/idsserie/2';
+                     document.getElementById('ref1').value=id;
+                     document.getElementById('ref2').value=hb;
+                     document.getElementById('formtmp').submit();
                 }
                 function subir_hbl_old(id, hb){
                     document.location.href = 'inosea.php?boton=subirHbl\&id='+id+'\&hb='+hb;
@@ -399,7 +409,12 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 ";
                 echo "</script>";
                 echo "</HEAD>";
-                echo "<BODY>";
+                echo "<BODY><form id='formtmp' name='formtmp' method='post' action='/gestDocumental/formUploadExt4'>
+                <input type='hidden' id='ref1' name='ref1'>
+                <input type='hidden' id='ref2' name='ref2'>
+                <input type='hidden' id='idsserie' name='idsserie' value='2'>
+                </form>
+                ";
                 require_once("menu.php");
                 echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";                      // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
                 echo "<CENTER>";
@@ -763,7 +778,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                             $tmp->Open($sql);
                             $img = "";
                             if ($tmp->Value('ca_propiedades') != "") {
-                                if (strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
+                                if (strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false || strpos($tmp->Value('ca_propiedades'), "cuentaglobal=1") !== false) {
                                     $img = '<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />';
                                 }
                             }
@@ -825,13 +840,53 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                               }
                             }
                             */
+                            //style='background-color: #FFCC66 !important;'
+                            
+                            /*$sql="select d.ca_iddestino,a.ca_idarchivo ,d.ca_dispocarga,substr(i.ca_referencia::text, 16, 2)  as ano,m.ca_fchconfirmacion,m.ca_muelle
+                                from tb_inoclientes_sea  i
+                                inner join tb_inomaestra_sea m on m.ca_referencia=i.ca_referencia
+                                inner join tb_dianclientes d ON i.ca_idinocliente=d.ca_idinocliente
+                                left join docs.tb_archivos a ON i.ca_referencia = a.ca_ref1 and i.ca_hbls= a.ca_ref2 and a.ca_iddocumental=19 and ca_fcheliminado is null
+                                where (( d.ca_dispocarga = '16' and d.ca_iddestino is not  null) or d.ca_dispocarga = '21' or 
+                                ( d.ca_dispocarga = '10' and d.ca_coddeposito not in('2031','3625','2261','2259','2257','2366','2192','3857')) or 
+                                ( d.ca_dispocarga = '11' and d.ca_coddeposito not in('2031','3625','2261','2259','2257','2366','2192','3857')) )  and  substr(i.ca_referencia::text, 16, 2)::integer=17 and
+                                d.ca_idinocliente=".$cl->Value('ca_idinocliente');*/
+                            $sql="select m.ca_fchreferencia,d.ca_iddestino,a.ca_idarchivo ,d.ca_dispocarga,substr(i.ca_referencia::text, 16, 2)  as ano,m.ca_fchconfirmacion,m.ca_muelle ,d.ca_responsabilidad
+                                from tb_inoclientes_sea  i
+                                inner join tb_inomaestra_sea m on m.ca_referencia=i.ca_referencia and m.ca_modalidad !='PARTICULARES'
+                                inner join tb_dianclientes d ON i.ca_idinocliente=d.ca_idinocliente
+                                left join docs.tb_archivos a ON i.ca_referencia = a.ca_ref1 and i.ca_hbls= a.ca_ref2 and a.ca_iddocumental=45 and ca_fcheliminado is null
+                                where ( d.ca_dispocarga = '21' or d.ca_responsabilidad='N' )  and  m.ca_fchreferencia >= '2017-02-01' and   d.ca_tipodocviaje='3' and                                
+                                d.ca_idinocliente=".$cl->Value('ca_idinocliente'); 
+                            //echo $sql;
+                            $tmp = & DlRecordset::NewRecordset($conn);                            
+                            $tmp->Open($sql);
+                            $styletmp="";
+                            if($tmp->Value("ano")=="17")
+                            {
+                                if( $tmp->Value("ca_dispocarga")==16 && $tmp->Value("ca_iddestino")!="" && $tmp->Value("ca_idarchivo")=="")
+                                {
+                                    $styletmp="style='background-color: #FFCC66 !important;'";
+                                }
+                                else if(  ($tmp->Value("ca_dispocarga")==21 || $tmp->Value("ca_responsabilidad")=="N")  && $tmp->Value("ca_idarchivo")=="")
+                                    $styletmp="style='background-color: #FFCC66 !important;'";
+                                
+                            }
+
+                            $img = "";
+                            if ($tmp->Value('ca_propiedades') != "") {
+                                if (strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false || strpos($tmp->Value('ca_propiedades'), "cuentaglobal=1") !== false) {
+                                    $img = '<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />';
+                                }
+                            }
+
                             $pdf_coti = $hay_cot ? "<BR /><IMG style='cursor:pointer'src='./graficos/pdf.gif' alt='Genera archivo PFD de la Cotización' border=0 onclick='javascript:ver_cot(\"" . $tm->Value('ca_idcotizacion') . "\")'>" : "";
-                            echo "<TR>";
-                            echo "  <TD Class=listar><B>Reporte Neg.:</B><BR>" . $cl->Value('ca_consecutivo') . " $pdf_icon</TD>";
-                            echo "  <TD Class=listar><B>Cotizacion :</B><BR>" . $tm->Value('ca_consecutivo') . " $pdf_coti</TD>";
-                            echo "  <TD Class=listar COLSPAN=2><B>Proveedor:</B><BR>" . $cl->Value('ca_proveedor') . "</TD>";
-                            echo "  <TD Class=listar><B>Utilidad x Cliente:</B><BR>" . number_format($utl_cbm * $cl->Value('ca_volumen')) . (($cl->Value('ca_vlrutilidad_liq')!=0)?"<BR><B>Utilidad Liquidada:</B><BR />" . number_format($cl->Value('ca_vlrutilidad_liq')):"") ."</TD>";
-                            echo "  <TD Class=listar><B>Docs. Cliente: <IMG style='cursor:pointer;$level0' src='./graficos/fileopen.png' alt='Agregar Copia de Hbl Definitivo' border=0 onclick='javascript:subir_hbl(\"" . str_replace(".","|",$cl->Value('ca_referencia')) . "\",\"" . $cl->Value('ca_hbls') . "\")'>";
+                            echo "<TR >";
+                            echo "  <TD ><B>Reporte Neg.:</B><BR>" . $cl->Value('ca_consecutivo') . " $pdf_icon</TD>";
+                            echo "  <TD ><B>Cotizacion :</B><BR>" . $tm->Value('ca_consecutivo') . " $pdf_coti</TD>";
+                            echo "  <TD  COLSPAN=2><B>Proveedor:</B><BR>" . $cl->Value('ca_proveedor') . "</TD>";
+                            echo "  <TD ><B>Utilidad x Cliente:</B><BR>" . number_format($utl_cbm * $cl->Value('ca_volumen')) . (($cl->Value('ca_vlrutilidad_liq')!=0)?"<BR><B>Utilidad Liquidada:</B><BR />" . number_format($cl->Value('ca_vlrutilidad_liq')):"") ."</TD>";
+                            echo "  <TD $styletmp ><B>Docs. Cliente:".$tmp->Value("contador")." <IMG style='cursor:pointer;$level0' src='./graficos/fileopen.png' alt='Agregar Copia de Hbl Definitivo' border=0 onclick='javascript:subir_hbl(\"" . str_replace(".","|",$cl->Value('ca_referencia')) . "\",\"" . $cl->Value('ca_hbls') . "\")'>";
                             $i = 1;
                             foreach ($docTrans as $docTran) {
                                 echo "<br /><a href='/gestDocumental/verArchivo?folder=" . base64_encode("Referencias/" . $cl->Value('ca_referencia') . "/docTrans/" . $cl->Value('ca_hbls')) . "&idarchivo=" . base64_encode($docTran['basename']) . "'><IMG src='./graficos/image.gif' alt='" . $docTran['filename'] . "' border=0> Doc. " . $i++ . "</img></a>";
@@ -2370,7 +2425,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $img = "";
 
                 if ($tmp->Value('ca_propiedades') != "") {
-                    if (strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
+                    if (strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false || strpos($tmp->Value('ca_propiedades'), "cuentaglobal=1") !== false) {
                         $img = '<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />';
                     }
                 }
@@ -2712,7 +2767,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $img = "";
 
                 if ($tmp->Value('ca_propiedades') != "") {
-                    if (strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
+                    if (strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false || strpos($tmp->Value('ca_propiedades'), "cuentaglobal=1") !== false) {
                         $img = '<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />';
                     }
                 }
@@ -4118,7 +4173,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $img = "";
 
                 if ($tmp->Value('ca_propiedades') != "") {
-                    if (strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
+                    if (strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false || strpos($tmp->Value('ca_propiedades'), "cuentaglobal=1") !== false) {
                         $img = '<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />';
                     }
                 }
@@ -4376,7 +4431,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 $tmp->Open($sql);
                 $img = "";
                 if ($tmp->Value('ca_propiedades') != "") {
-                    if (strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
+                    if (strpos($tmp->Value('ca_propiedades'), "cuentaglobal=true") !== false || strpos($tmp->Value('ca_propiedades'), "cuentaglobal=1") !== false) {
                         $img = '<img src="/images/CG30.png" title="Cliente de Cuentas Globales" />';
                     }
                 }
@@ -4864,7 +4919,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         exit;
                     }
                     
-                    if (!$rp->Open("select * from vi_reportes where ca_consecutivo = '" . $ic->Value("ca_consecutivo") . "' and ca_version = (select max(ca_version) as ca_version from tb_reportes where ca_fchanulado is null and ca_consecutivo = '" . $ic->Value("ca_consecutivo") . "' and ca_tiporep != 4)")) {    // Trae de la Tabla de la Reportes de Negocio última version.
+                    if (!$rp->Open("select * from vi_reportes2 where ca_consecutivo = '" . $ic->Value("ca_consecutivo") . "' and ca_version = (select max(ca_version) as ca_version from tb_reportes where ca_fchanulado is null and ca_consecutivo = '" . $ic->Value("ca_consecutivo") . "' and ca_tiporep != 4)")) {    // Trae de la Tabla de la Reportes de Negocio última version.
                         echo "<script>alert(\"" . addslashes($dm->mErrMsg) . "\");</script>";     // Muestra el mensaje de error
                         echo "<script>document.location.href = 'entrada.php?id=4767';</script>";
                         exit;
@@ -5585,7 +5640,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     $subject = "Aviso Creación OTM DIRECTO - $referencia";
                     $bodyhtml = "Apreciado Compa&ntilde;ero:<br /><br />"
                             . "Favor tener en cuenta que se ha creado para su manejo, la Referencia No. $referencia que corresponde a un OTM DIRECTO con COLOTM.<br/>"
-                            . "<a href=\"https://www.coltrans.com.co/colsys_php/inosea.php?boton=Consultar&id=$referencia\" target=\"_blank\">Ver la Referencia : $referencia</a><br /><br />"
+                            . "<a href=\"https://www.colsys.com.co/colsys_php/inosea.php?boton=Consultar&id=$referencia\" target=\"_blank\">Ver la Referencia : $referencia</a><br /><br />"
                             . "Cordialmente,<br /><br />"
                             . $rs->Value('ca_nombre_rem')."<br />"
                             . $rs->Value('ca_email_rem')."";

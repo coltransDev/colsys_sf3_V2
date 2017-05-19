@@ -6,8 +6,8 @@
         <?php include_title() ?>
         <link rel="shortcut icon" href="/favicon.ico" />
         <?php include_stylesheets() ?>
-        <link rel="stylesheet" type="text/css" media="screen"
-              href="/css/formulario_home.css" />
+        <!--<link rel="stylesheet" type="text/css" media="screen"
+              href="/css/formulario_home.css" />-->
         <?php include_javascripts() ?>
         <meta name="viewport" content="width=device-width, initial-scale=1">
             <script type="text/javascript" src="/js/loginWindow.js"></script>

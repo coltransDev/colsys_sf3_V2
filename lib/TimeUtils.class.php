@@ -86,6 +86,54 @@ class TimeUtils{
             // Return difference
             return $difference * $fact;
         }
+        
+        public static function workDiff1(&$festiv, $startDate, $endDate) {
+            if (strlen($startDate) == 0 or strlen($endDate) == 0) { // Valida si Inicio o Final viene en Blanco
+                return (null);  // Retorna un Null cuando no se puede calcular la diferencia.
+            }
+
+            if ($startDate > $endDate) {
+                $fact = -1;
+                $tempDate = $startDate;
+                $startDate= $endDate;
+                $endDate  = $tempDate;
+            }else {
+                $fact = 1;
+            }
+
+            // echo "$startDate -> $endDate <br />";
+            $difference = 0;
+            $start_Date = $startDate;
+
+            // Parse dates for conversion
+            $startArry = date_parse($start_Date);
+            $endArry = date_parse($endDate);
+
+            // Convert dates to TimeStamp
+            $startDate = mktime(0,0,0,$startArry["month"], $startArry["day"], $startArry["year"]);
+            $endDate = mktime(0,0,0,$endArry["month"], $endArry["day"], $endArry["year"]);
+
+            while ($startDate < $endDate) {
+            // Parse dates for conversion
+                $startArry = date_parse($start_Date);
+
+                // Convert dates to TimeStamp
+                $startDate = mktime(0,0,0,$startArry["month"], $startArry["day"], $startArry["year"]);
+                if (date("N", $startDate)<= 5 and !in_array(date("Y-m-d", $startDate),$festiv)) {		// Evalua si no es fin de semana ni festivo
+                    $difference+=1;
+                }
+            /*    else
+                    $difference-=1;*/
+                $startDate = mktime(0,0,0,$startArry["month"], $startArry["day"]+1, $startArry["year"]);
+                $start_Date = date("Y-m-d", $startDate);
+            }
+             //echo "Diferencia ".$difference * $fact." <br /><br />";
+
+            //$difference = ($difference==0)?0:$difference;
+            // Return difference
+            return $difference * $fact;
+        }
+
 
 
 	/*
@@ -94,6 +142,8 @@ class TimeUtils{
 	*/
     public static function calcDiff(&$festiv, $inicio, $final) {
         $difer = 0;
+        
+        ini_set('max_execution_time', 300);
         
         if ($inicio > $final) {
             $fact = -1;

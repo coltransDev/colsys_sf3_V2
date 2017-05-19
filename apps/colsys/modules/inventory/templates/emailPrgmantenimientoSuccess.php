@@ -7,9 +7,9 @@
 ?>
 <table width="100%" border="0" cellspacing="5" cellpadding="0">
 <!-- LOGO -->
-    <tr><td colspan="3"><table><tr><td width="135"><img src="https://www.coltrans.com.co/images/logo_colsys.gif" width="178" height="30" alt="COLSYS"></td>
+    <tr><td colspan="3"><table><tr><td width="135"><img src="https://www.colsys.com.co/images/logo_colsys.gif" width="178" height="30" alt="COLSYS"></td>
         <td><font size="4" face="arial, helvetica, sans-serif" color="#062A7D"><b>    <?=$idsuc?> -Programación de Mantenimiento: <?=$mesLargo?> de <?=$anoprg?></b></font></td></tr></table></td></tr>
-    <tr><td width="25"><img src="https://www.coltrans.com.co/images/spacer.gif" width="25" height="1" alt=""></td><td colspan="2"><hr noshade size="1"></td></tr>
+    <tr><td width="25"><img src="https://www.colsys.com.co/images/spacer.gif" width="25" height="1" alt=""></td><td colspan="2"><hr noshade size="1"></td></tr>
     <tr>
         <td>&nbsp;</td><td>
             

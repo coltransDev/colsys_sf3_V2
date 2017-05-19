@@ -20,7 +20,7 @@ class noticiasComponents extends sfComponents {
     public function getNivel() {
 
         $app = sfContext::getInstance()->getConfiguration()->getApplication();
-        //   return 5;
+        
         switch ($app) {
             case "colsys":
                 $rutina = self::RUTINA_COLSYS;
@@ -36,29 +36,29 @@ class noticiasComponents extends sfComponents {
             $this->nivel = 0;
         }
 
-        //$this->forward404Unless($this->nivel != -1);
-
         return $this->nivel;
     }
 
-    
-
-    public function executeNoticias() {
+    public function executeNoticias(sfWebRequest $request) {
 
         $this->nivel = $this->getNivel();
+        
+        $usuario = Doctrine::getTable("usuario")->find($this->getUser()->getUserId()?$this->getUser()->getUserId():"Administrador");
+        $grupoEmp = $usuario->getGrupoEmpresarial();
 
         $this->noticias = Doctrine::getTable("Noticia")
-                        ->createQuery("n")
-                        ->where("n.ca_fcharchivar>=?", date("Y-m-d"))
-                        ->addOrderBy("n.ca_fchpublicacion DESC ")
-                        ->execute();
+                ->createQuery("n")
+                ->leftJoin("n.Sucursal s")
+                ->where("n.ca_fchpublicacion <=?", date("Y-m-d"))
+                ->addWhere("n.ca_fcharchivar>=?", date("Y-m-d"))
+                ->andWhereIn("n.ca_idempresa", $grupoEmp)
+                ->addOrderBy("n.ca_fchpublicacion DESC ")
+                ->execute();
+        
+        $this->idsucursal = $this->getUser()->getSucursal();
     }
 
     public function executeSearch() {
 
     }
-        
-    
-
 }
-

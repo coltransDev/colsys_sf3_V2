@@ -2,7 +2,7 @@ Options +FollowSymLinks +ExecCGI
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
-
+  
   # we skip all files with .something
   RewriteCond %{REQUEST_URI} \..+$
   RewriteCond %{REQUEST_URI} !\.html$
@@ -19,6 +19,32 @@ Options +FollowSymLinks +ExecCGI
 
 php_flag register_globals off
 
+
 # big crash from our front web controller
 ErrorDocument 500 "<h2>Application error</h2>symfony applicationfailed to start properly"
+
+
+# compress text, html, javascript, css, xml:
+AddOutputFilterByType DEFLATE text/plain
+AddOutputFilterByType DEFLATE text/html
+AddOutputFilterByType DEFLATE text/xml
+AddOutputFilterByType DEFLATE text/css
+AddOutputFilterByType DEFLATE application/xml
+AddOutputFilterByType DEFLATE application/xhtml+xml
+AddOutputFilterByType DEFLATE application/rss+xml
+AddOutputFilterByType DEFLATE application/javascript
+AddOutputFilterByType DEFLATE application/x-javascript
+
+# Or, compress certain file types by extension:
+<Files *.php>
+SetOutputFilter DEFLATE
+</Files>
+
+<Files *.css>
+SetOutputFilter DEFLATE
+</Files>
+
+<Files *.js>
+SetOutputFilter DEFLATE
+</Files>
 

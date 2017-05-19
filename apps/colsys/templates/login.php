@@ -40,7 +40,7 @@
 
 <div class="footer">	
 	<div class="copyright">
-		<?=sfConfig::get("app_branding_name")?>. Todos los derechos reservados
+		<?=sfConfig::get("app_branding_name")?>. Todos los derechos reservados                
 	</div>
 </div>	
 </body>

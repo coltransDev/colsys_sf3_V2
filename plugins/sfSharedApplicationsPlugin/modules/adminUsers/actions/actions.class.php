@@ -213,7 +213,6 @@ class adminUsersActions extends sfActions {
         $query.= "  order by ca_tiposangre ASC";
         $this->tiposangre = $p->execute($query);
         
-        //print_r($this->grupoEmp);
         $q = Doctrine::getTable("Sucursal")
                 ->createQuery("s")
                 ->select("s.ca_idsucursal")
@@ -314,29 +313,112 @@ class adminUsersActions extends sfActions {
        
     }
     
-    
-
-    public function executeIndex(sfWebRequest $request) {
+    public function executeIndexExt5(sfWebRequest $request) {
         $app = sfContext::getInstance()->getConfiguration()->getApplication();
-
+        
         switch ($app) {
             case "intranet":
-                
-                break;
+                $this->setLayout("layout1col");                
+            break;
         }
         
         $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
         $grupoEmp = $usuario->getGrupoEmpresarial();
+        
+        $editarCargos = UsuarioTable::getUsuariosxPerfilxUsuario("administrar-cargos-intranet", $this->getUser()->getUserId());        
+        $this->permisos = !count($editarCargos)>0?false:true;
+        
+        $this->app = $app;
+    }
+    
+    function executeDatosIndex($request) {
+        $idopcion = ($request->getParameter("node") != "" && $request->getParameter("node") != "root") ? $request->getParameter("node") : "0";
+        $tree = array("text" => "Opciones","leaf" => true,"id" => "1");
+        
+        $nameZ = utf8_encode("Zonas de Evacuación");
+        
+        $zonas = ParametroTable::retrieveByCaso("CU242");
+        
+        foreach($zonas as $zona){
+            $childrenZonas[] = array(
+                "text" => utf8_encode(substr($zona->getCaValor(),0,strpos($zona->getCaValor(),":"))),
+                "leaf" => true,
+                "id" => "z".$zona->getCaIdentificacion(),
+                "descripcion"=> utf8_encode(substr($zona->getCaValor(),strpos($zona->getCaValor(),":")+1,strlen($zona->getCaValor()))),
+                "nzonas"=>count($zonas)
+            );
+        }
+        if($idopcion==0){
+            $childrens[] = array("text" => "Usuarios","leaf" => true,"id" => "10", "iconCls"=> 'fa fa-users');            
+            $childrens[] = array("text" => "Cargos","leaf" => true,"id" => "20", "iconCls"=>"fa fa-briefcase");
+            $childrens[] = array("text" => "Hijos","leaf" => true,"id" => "30", "iconCls"=>"fa fa-child");
+            $childrens[] = array("text" => "Sucursales","leaf" => true,"id" => "40", "iconCls"=>"fa fa-globe");
+            $childrens[] = array("text" => "Departamentos","leaf" => true,"id" => "50", "iconCls"=>"fa fa-building");
+            $childrens[] = array("text" => $nameZ,"leaf" => false,"id" => "60", "iconCls"=>"fa fa-life-ring", "children"=>$childrenZonas);
+        }        
 
-        $this->usuarios = Doctrine::getTable("Usuario")
-                        ->createQuery("u")
-                        ->innerJoin('u.Sucursal s')
-                        ->innerJoin('s.Empresa e')
-                        ->addWhere('e.ca_activo = ?', true)
-                        ->andWhereIn("s.ca_idempresa", $grupoEmp)
-                        ->addOrderBy("u.ca_activo DESC")
-                        ->addOrderBy("u.ca_login")
-                        ->execute();      
+        $tree["children"] = $childrens;
+        
+        $this->responseArray = $tree;
+        $this->setTemplate("responseTemplate");
+    }
+    
+    function executeDatosUsuarios($request) {
+        
+        $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
+        $mostrarInactivos = $request->getParameter("mostrarInactivos");
+        $grupoEmp = $usuario->getGrupoEmpresarial();
+        
+        $q = Doctrine::getTable("Usuario")
+                ->createQuery("u")
+                ->select("u.ca_docidentidad, u.ca_login, u.ca_nombre, u.ca_departamento, u.ca_cargo, s.ca_idsucursal, s.ca_nombre, e.ca_idempresa, e.ca_nombre"
+                        .",u.ca_email, u.ca_extension, u.ca_activo, u.ca_cumpleanos, u.ca_fchingreso, u.ca_nombres, u.ca_apellidos, u.ca_telparticular, ca_telfamiliar"
+                        .",u.ca_movil, u.ca_direccion, m.ca_nombre, u.ca_tiposangre, u.ca_nombrefamiliar, u.ca_parentesco, u.ca_nivestudios, u.ca_estrato, u.ca_donante"    
+                        .",u.ca_enfermedad, u.ca_alergico, u.ca_sexo, (SELECT dd.ca_value FROM ColsysConfigValue dd WHERE ca_idconfig = 218 and ca_ident = u.ca_fcesantias) as fcesantias"
+                        .",(SELECT ec.ca_value FROM ColsysConfigValue ec WHERE ec.ca_idconfig = 239 and ec.ca_ident = ub.ca_ecivil) as ecivil")
+                ->leftJoin('u.Sucursal s')
+                ->leftJoin('s.Empresa e')
+                ->leftJoin('u.Manager m')
+                ->leftJoin('u.UsuBrigadas ub')
+                //->addWhere('u.ca_activo = ?', true)
+                ->andWhereIn("s.ca_idempresa", $grupoEmp)
+                ->andWhere("u.ca_login not in ('web','falabella','Comercial','comercialmed','comercialbaq','auxaduana','comercial-baq','comercial-med','consolcargo')")                
+                ->addOrderBy("u.ca_login ASC");
+        
+        if($mostrarInactivos=="true"){
+            $q->addWhere("u.ca_activo = ?", false);                
+        }else{
+            $q->addWhere("u.ca_activo = ?", true);                
+        }
+        
+        $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+                
+        $debug = $q->getSqlQuery();
+        $usuarios = $q->execute();
+        
+        foreach($usuarios as $key=>$val){
+            $usuarios[$key]["u_ca_nombre"]=utf8_encode($usuarios[$key][utf8_encode("u_ca_nombre")]);
+            $usuarios[$key]["u_ca_departamento"]=utf8_encode($usuarios[$key][utf8_encode("u_ca_departamento")]);
+            $usuarios[$key]["u_ca_cargo"]=utf8_encode($usuarios[$key][utf8_encode("u_ca_cargo")]);
+            $usuarios[$key]["s_ca_nombre"]=utf8_encode($usuarios[$key][utf8_encode("s_ca_nombre")]);
+            $usuarios[$key]["e_ca_nombre"]=utf8_encode($usuarios[$key][utf8_encode("e_ca_nombre")]);            
+            $usuarios[$key]["m_ca_nombre"]=utf8_encode($usuarios[$key][utf8_encode("m_ca_nombre")]);            
+            $usuarios[$key]["u_ca_extension"]=utf8_encode($usuarios[$key][utf8_encode("u_ca_extension")]);
+            $usuarios[$key]["u_ca_nombres"]=utf8_encode($usuarios[$key][utf8_encode("u_ca_nombres")]);
+            $usuarios[$key]["u_ca_apellidos"]=utf8_encode($usuarios[$key][utf8_encode("u_ca_apellidos")]);
+            $usuarios[$key]["u_ca_direccion"]=utf8_encode($usuarios[$key][utf8_encode("u_ca_direccion")]);
+            $usuarios[$key]["u_ca_alergico"]=utf8_encode($usuarios[$key][utf8_encode("u_ca_alergico")]);
+            $usuarios[$key]["u_ca_nombrefamiliar"]=utf8_encode($usuarios[$key][utf8_encode("u_ca_nombrefamiliar")]);
+            $usuarios[$key]["u_ca_parentesco"]=utf8_encode($usuarios[$key][utf8_encode("u_ca_parentesco")]);
+            $usuarios[$key]["u_ca_nivestudios"]=utf8_encode($usuarios[$key][utf8_encode("u_ca_nivestudios")]);
+            $usuarios[$key]["u_ca_enfermedad"]=utf8_encode($usuarios[$key][utf8_encode("u_ca_enfermedad")]);
+            $usuarios[$key]["u_fcesantias"]=utf8_encode($usuarios[$key][utf8_encode("u_fcesantias")]);
+            $usuarios[$key]["u_ecivil"]=utf8_encode($usuarios[$key][utf8_encode("u_ecivil")]);
+        }
+        
+        //echo "<pre>";print_r($usuarios);echo "</pre>";
+        $this->responseArray = array("success" => true, "root" => $usuarios, "total" =>count($usuarios) ,"debug"=>$debug,"idempresa"=>$grupoEmp);
+        $this->setTemplate("responseTemplate");
     }
 
     public function executeGuardarUsuario($request) {
@@ -361,6 +443,7 @@ class adminUsersActions extends sfActions {
                 $this->redirect("adminUsers/noAccess?key=".$new);
             }
             $direccion = $usuario->getCaDireccion();
+            $activo = $usuario->getCaActivo();
         }
         
         if (!($this->nivel == 0 and $request->getParameter("login") == $this->getUser()->getUserId())) {
@@ -629,16 +712,16 @@ class adminUsersActions extends sfActions {
         
         $conn->commit();
         
-        if( $config["updateUser"] ){
-            ProjectConfiguration::registerZend();   
-            $wsdl_uri = $config["wsdl_uri"];            
-            $client = new Zend_Soap_Client( $wsdl_uri, array('encoding'=>'ISO-8859-1'));        
-            $error =  $client->updateUser( sfConfig::get("app_soap_secret"),serialize($usuario) );
-            
-            if( $error ){
-                throw new Exception( $error );                
-            }
-        }
+//        if( $config["updateUser"] ){
+//            ProjectConfiguration::registerZend();   
+//            $wsdl_uri = $config["wsdl_uri"];            
+//            $client = new Zend_Soap_Client( $wsdl_uri, array('encoding'=>'ISO-8859-1'));        
+//            $error =  $client->updateUser( sfConfig::get("app_soap_secret"),serialize($usuario) );
+//            
+//            if( $error ){
+//                throw new Exception( $error );                
+//            }
+//        }
         
         $login = $usuario->getCaLogin();
         $usuario = Doctrine::getTable("Usuario")->find($login);
@@ -731,16 +814,16 @@ class adminUsersActions extends sfActions {
                     $usr_clave->save();
 
                     $config = sfConfig::get("app_soap_adminUsers");
-                    if( $config["updateUser"] ){
-                        ProjectConfiguration::registerZend();   
-                        $wsdl_uri = $config["wsdl_uri"];            
-                        $client = new Zend_Soap_Client( $wsdl_uri, array('encoding'=>'ISO-8859-1'));        
-                        $error =  $client->updateUser( sfConfig::get("app_soap_secret"),serialize($user) );
-
-                        if( $error ){
-                            throw new Exception( $error );                
-                        }
-                    }
+//                    if( $config["updateUser"] ){
+//                        ProjectConfiguration::registerZend();   
+//                        $wsdl_uri = $config["wsdl_uri"];            
+//                        $client = new Zend_Soap_Client( $wsdl_uri, array('encoding'=>'ISO-8859-1'));        
+//                        $error =  $client->updateUser( sfConfig::get("app_soap_secret"),serialize($user) );
+//
+//                        if( $error ){
+//                            throw new Exception( $error );                
+//                        }
+//                    }
 
                     $conn->commit();
                     $this->getUser()->setAttribute('forcechange', false);
@@ -885,8 +968,8 @@ class adminUsersActions extends sfActions {
     }
 
     public function executeListaExtensiones(sfWebRequest $request) {
-        
-        $this->user = Doctrine::getTable('Usuario')->find($request->getParameter('login'));
+         
+       $this->user = Doctrine::getTable('Usuario')->find($request->getParameter('login'));
         $this->nivel = $this->getNivel();
         $criterio = $request->getParameter('criterio');
         $empresa = $request->getParameter('empresa');
@@ -1056,6 +1139,9 @@ class adminUsersActions extends sfActions {
 
     public function executeViewOrganigrama(sfWebRequest $request) {
         
+        $usuario = Doctrine::getTable("usuario")->find($this->getUser()->getUserId());
+        $grupoEmp = $usuario->getGrupoEmpresarial();       
+        
         $this->manager = Doctrine::getTable('Usuario')->find($request->getParameter('login'));
         $this->forward404Unless($this->manager);
 
@@ -1072,9 +1158,9 @@ class adminUsersActions extends sfActions {
                 ->leftJoin("u.Sucursal s")
                 ->leftJoin("s.Empresa e")
                 ->where("u.ca_activo = true")
-                ->andWhere("e.ca_idempresa in (1,2,8,11)")
-                ->andWhere("u.ca_login not in ('web','falabella','Comercial','comercialmed','comercialbaq','auxaduana','comercial-baq','comercial-med')")                                
-                ->orderBy("u.ca_fchingreso");
+                ->andWhereIn("s.ca_idempresa", $grupoEmp)
+                ->andWhere("u.ca_login not in ('web','falabella','Comercial','comercialmed','comercialbaq','auxaduana','comercial-baq','comercial-med','consolcargo','hbingenieria1','hbingenieria2')")
+                ->orderBy("s.ca_nombre, u.ca_cargo");
                 
         $this->usuariosNal = $q->execute();
         $this->presidencia = Doctrine::getTable("Usuario")->find("jraute");
@@ -1238,6 +1324,8 @@ class adminUsersActions extends sfActions {
             $usuario->setCaForcechange(true);
             $usuario->save();
         }
+        
+        $this->setTemplate("responseTemplate");
     }
     
     public function executeEmailIntranet($request) {
@@ -1276,12 +1364,13 @@ class adminUsersActions extends sfActions {
 
         $q = Doctrine::getTable('Usuario')
                 ->createQuery ('u')
+                ->select('u.*')
                 ->innerJoin('u.Sucursal s')
                 ->innerJoin('s.Empresa e')
                 ->where('u.ca_activo = ?', true)
                 ->addWhere('e.ca_idempresa != 4')
-                ->addWhere("CASE WHEN substr((c.ca_fchingreso - 4)::text,6,5) = substr(now()::text,6,5) THEN(CASE WHEN ((date_part('".year."', now()) - date_part('".year."', c.ca_fchingreso))::int) NOT IN (5,0) THEN ((date_part('".year."', now()) - date_part('".year."', c.ca_fchingreso))::int)%5=0 ELSE false END ) ELSE false END")
-                ->orderby('u.ca_fchingreso DESC');
+                ->addWhere("CASE WHEN substr((ca_fchingreso - 4)::text,6,5) = substr(now()::text,6,5) THEN(CASE WHEN ((date_part('".year."', now() + INTERVAL '4' DAY) - date_part('".year."', ca_fchingreso))::int) NOT IN (5,0) THEN ((date_part('".year."', now() + INTERVAL '4' DAY) - date_part('".year."', ca_fchingreso))::int)%5=0 ELSE false END ) ELSE false END")
+                ->orderby('ca_fchingreso DESC');
         
         $usuarios = $q->execute();
         
@@ -1304,7 +1393,42 @@ class adminUsersActions extends sfActions {
     
     public function executeBirthdayEmail(sfWebRequest $request) {
         
-        $usuario = $usuario = Doctrine::getTable("Usuario")->find($request->getParameter("login"));
+        
+        $usuario = Doctrine::getTable("Usuario")->find('Administrador');
+        
+        $grupoEmp = $usuario->getGrupoEmpresarial();
+        
+        $dia = date('N');
+        $inicial = date('m-d',time());
+        $final = $inicial;
+        if($dia>=5)
+            $final = date('m-d',time()+86400 * 2);
+
+        $q = Doctrine::getTable('Usuario')
+                ->createQuery('u')
+                ->innerJoin('u.Sucursal s')
+                ->innerJoin('s.Empresa e')
+                ->where('substring(ca_cumpleanos::text, 6,5) BETWEEN ? AND ?', array($inicial, $final))
+                ->andWhereIn('e.ca_idempresa', $grupoEmp)
+                ->addWhere('ca_activo = ?', true)
+                ->addOrderBy('substring(ca_cumpleanos::text, 6,5)  ASC');
+        
+        $users = $q->execute();
+        
+        if(count($users)>0){
+            if($dia != 6 && $dia != 7){            
+                $asunto = "cumpleanos";            
+                $usuario = new Usuario();
+                $usuario->emailUsuario('Administrador',$asunto,null,null,null,$grupoEmp);
+            }
+        }
+        
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeBirthdayEmailConsol(sfWebRequest $request) {
+        
+        $usuario = Doctrine::getTable("Usuario")->find('consolcargo');
         $grupoEmp = $usuario->getGrupoEmpresarial();
         $dia = date('N');
         $inicial = date('m-d',time());
@@ -1312,21 +1436,22 @@ class adminUsersActions extends sfActions {
         if($dia>=5)
             $final = date('m-d',time()+86400 * 2);
 
-        $users = Doctrine::getTable('Usuario')
-                    ->createQuery('u')
-                    ->innerJoin('u.Sucursal s')
-                    ->innerJoin('s.Empresa e')
-                    ->where('substring(ca_cumpleanos::text, 6,5) BETWEEN ? AND ?', array($inicial,$final))
-                    ->andWhereIn('e.ca_idempresa',$grupoEmp)
-                    ->addWhere('ca_activo = ?', true)
-                    ->addOrderBy('substring(ca_cumpleanos::text, 6,5)  ASC')
-                    ->execute();
+        $q = Doctrine::getTable('Usuario')
+                ->createQuery('u')
+                ->innerJoin('u.Sucursal s')
+                ->innerJoin('s.Empresa e')
+                ->where('substring(ca_cumpleanos::text, 6,5) BETWEEN ? AND ?', array($inicial, $final))
+                ->andWhereIn('e.ca_idempresa', $grupoEmp)
+                ->addWhere('ca_activo = ?', true)
+                ->addOrderBy('substring(ca_cumpleanos::text, 6,5)  ASC');
+
+        $users = $q->execute();
         
         if(count($users)>0){
             if($dia != 6 && $dia != 7){            
                 $asunto = "cumpleanos";            
                 $usuario = new Usuario();
-                $usuario->emailUsuario($request->getParameter("login"),$asunto,null,null,null,$grupoEmp);
+                $usuario->emailUsuario('consolcargo',$asunto,null,null,null,$grupoEmp);
             }
         }
         
@@ -1341,6 +1466,343 @@ class adminUsersActions extends sfActions {
         $asunto = "desvinculacion";
         
         $usuario->emailUsuario($login,$asunto,null,null,null,$grupoEmp);
+    }
+    
+    /*
+     * @Nataly
+     * @return arreglo de cargos por empresa
+     * @param $request 
+        * idempresa: n\FAmero de identificaci\F3n de la empresa
+     */
+    function executeDatosCargos($request) {
+        $empresa = $request->getParameter("idempresa");
+        
+        $q = Doctrine::getTable("Cargo")
+                            ->createQuery("s")
+                            ->select("*")
+                            ->where("s.ca_idempresa = ?",$empresa)
+                            ->addOrderBy( "s.ca_cargo ASC" );                            
+        
+        $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+        
+        $debug = $q->getSqlQuery();
+        $cargos = $q->execute();
+        
+        foreach($cargos as $k=>$c){
+            $cargos[$k]["s_ca_cargo"]=utf8_encode($cargos[$k][utf8_encode("s_ca_cargo")]);
+        }
+        $this->responseArray = array("success" => true, "root" => $cargos, "total" =>count($cargos) ,"debug"=>$debug,"idempresa"=>$empresa);
+        $this->setTemplate("responseTemplate");
+    }
+    /*
+     * @Nataly
+     * @return nuevo Cargo
+     * @param $request 
+        * datos: Json de datos por almacenar
+     */
+    function executeGuardarGridCargos($request) {
+        $datos = $request->getParameter("datos");
+        $datos=  utf8_decode($datos);
+        $cargos = json_decode($datos);
+        $ids = array();
+            foreach($cargos as  $c)
+            {           
+                $cargo = Doctrine::getTable("Cargo")->find($c->s_ca_cargo);
+                if(!$cargo)
+                {
+                    $cargo = new Cargo();
+                    $cargo->setCaCargo($c->ca_cargo);  
+                }
+                $cargo->setCaActivo($c->ca_activo);
+                $cargo->setCaManager($c->ca_manager);
+                $cargo->setCaIdempresa($c->ca_idempresa);            
+                $cargo->save();
+                $ids[] = $c->id;
+            }
+        $this->responseArray = array("errorInfo" => '', "id" => implode(",", $ids), "success" => true);
+        $this->setTemplate("responseTemplate");
+    }
+    
+    function executeEmailVacaciones($request){
+        
+        if($request->getParameter("login")){
+            $this->usuario = Doctrine::getTable("Usuario")->find($request->getParameter("login"));
+            $idempresa = $this->usuario->getSucursal()->getCaIdempresa();
+
+            $this->from = Utils::parseDate($request->getParameter("from"), "d-M-Y");
+            $this->to = Utils::parseDate($request->getParameter("to"), "d-M-Y");
+            $this->returnDate = Utils::parseDate($request->getParameter("returnDate"), "d-M-Y");
+            $this->mensaje = strip_tags($request->getParameter("mensaje"),'<br>');
+            $this->logo = $this->usuario->getLogoHtml($idempresa);
+            
+            if($request->getParameter("encargado1"))
+                $this->encargado1 = Doctrine::getTable("Usuario")->find($request->getParameter("encargado1"));
+            
+            if($request->getParameter("encargado2"))
+                $this->encargado2 = Doctrine::getTable("Usuario")->find($request->getParameter("encargado2"));
+            
+            $this->responseArray = array("success" => true, "mensaje"=>$this->message);
+        }else{
+            $this->responseArray = array("success" => false);
+            
+        }
+        
+        $this->setLayout("none");
+        
+    }
+    
+    function executeGuardarVacaciones(sfWebRequest $request){
+        
+        $usuario = Doctrine::getTable("Usuario")->find($request->getParameter("login"));
+        $grupoEmp = $usuario->getGrupoEmpresarial();
+        $from = Utils::parseDate($request->getParameter("from"), "d-M-Y");
+        $to = Utils::parseDate($request->getParameter("to"), "d-M-Y");
+        $returnDate = Utils::parseDate($request->getParameter("returnDate"), "d-M-Y");
+        $message = strip_tags($request->getParameter("message"),'<br>');
+        
+        $conn = Doctrine::getTable("UsuVacaciones")->getConnection();
+        $conn->beginTransaction();
+        
+        try {            
+            
+            $vacaciones = new UsuVacaciones();
+            $vacaciones->setCaLogin($request->getParameter("login"));
+            $vacaciones->setCaFrom($from);
+            $vacaciones->setCaTo($to);            
+
+            $request->setParameter("login", $request->getParameter("login"));
+            $request->setParameter("from", $from);
+            $request->setParameter("to", $to);
+            $request->setParameter("returnDate", $returnDate);
+            $request->setParameter("mensaje", $message);                
+            $html= sfContext::getInstance()->getController()->getPresentationFor('adminUsers', 'emailVacaciones');
+
+            $vacaciones->setCaBodyhtml($html);
+            $vacaciones->save($conn);
+            
+            $destinatarios = array();
+            $parametros = ParametroTable::retrieveByCaso("CU239");
+            foreach($parametros as $parametro){
+                $remitente[$parametro->getCaIdentificacion()] = $parametro->getCaValor2();
+                $destinatarios[$parametro->getCaIdentificacion()] = $parametro->getCaValor();
+            }
+
+            $email = new Email();
+            $email->setCaUsuenvio($usuario->getCaLogin());
+            $email->setCaTipo("Vacaciones");
+            $email->setCaIdcaso($vacaciones->getCaId());
+            $email->setCaFrom($usuario->getCaEmail());
+            $email->setCaFromname($usuario->getCaNombre());
+            $subject = "VACACIONES: ".$usuario->getCaNombre()." ".$usuario->getSucursal()->getCaNombre()." ".$usuario->getSucursal()->getEmpresa()->getCaNombre();
+            $email->setCaSubject($subject);
+            $email->setCaBodyhtml($html);
+            $email->addCc("alramirez@coltrans.com.co");
+            foreach($grupoEmp as $empresa){
+                if($destinatarios[$empresa]){
+                    if( $destinatarios[$empresa] != "null")
+                        $email->addTo($destinatarios[$empresa]);
+                    else {
+                        //$correos = array();
+                        $correos = $email->getDirectorioCorp($empresa);
+                        foreach($correos as $correo){
+                            $email->addCC($correo);
+                        }
+                        break;
+                    }
+                }
+            }
+            $email->save($conn);
+
+            $this->responseArray = array("success" => true);
+            $conn->commit();
+        
+        } catch (Exception $e) {
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+        }
+        
+        $this->setTemplate("responseTemplate");        
+    }
+    
+    /*
+     * Panel que muestra los usuarios correspondientes al panel de búsqueda
+     * @author: Andres Botero
+     */
+
+    public function executeDatosHijos($request) {
+
+        $sql = "SELECT h.ca_idhijo, h.ca_fchnacimiento, h.ca_nombres, s.ca_nombre as sucursal, e.ca_nombre as empresa,string_agg(u.ca_nombre::text, '|'::text) AS ca_parents, up.ca_idhijo
+                FROM intranet.tb_usuhijos h
+                        LEFT JOIN intranet.tb_usuparents up ON h.ca_idhijo = up.ca_idhijo
+                        LEFT JOIN control.tb_usuarios u ON u.ca_login = up.ca_parent
+                        LEFT JOIN control.tb_sucursales s ON s.ca_idsucursal = u.ca_idsucursal
+                        LEFT JOIN control.tb_empresas e ON e.ca_idempresa = s.ca_idempresa
+                GROUP BY h.ca_idhijo, h.ca_nombres, s.ca_nombre, e.ca_nombre, up.ca_idhijo
+                ORDER BY h.ca_fchnacimiento DESC";
+        
+        $con = Doctrine_Manager::getInstance()->connection();
+        $st = $con->execute($sql);
+        $hijos = $st->fetchAll();
+        
+        $data = array();
+
+        foreach ($hijos as $hijo) {
+            
+            //$birth_date = new DateTime($hijo["ca_fchnacimiento"]);
+            //$current_date = new DateTime();            
+            /*$diff = $birth_date->diff($current_date);
+            $edad_detalle = $diff->y . " años " . $diff->m . " meses " . $diff->d . " día(s)";*/
+            
+            $edad_detalle = TimeUtils::calcularEdad($hijo["ca_fchnacimiento"], date('Y-m-d'), true);
+            
+            $row = array();
+            $row["uh_ca_documento"] = $hijo["ca_documento"];
+            $row["uh_ca_nombres"] = utf8_encode($hijo["ca_nombres"]);
+            $row["uh_ca_fchnacimiento"] = $hijo["ca_fchnacimiento"];
+            $row["edad"] = utf8_encode(TimeUtils::calcularEdad($hijo["ca_fchnacimiento"], date('Y-m-d')));
+            $row["detalle"] = utf8_encode($edad_detalle);
+            $row["padres"] = utf8_encode($hijo["ca_parents"]);
+            $row["s_ca_nombre"] = utf8_encode($hijo["sucursal"]);
+            $row["e_ca_nombre"] = utf8_encode($hijo["empresa"]);
+            
+            $data[] = $row;
+}
+
+        $this->responseArray = array("success" => true, "root" => $data, "debug"=>$sql);
+        $this->setTemplate("responseTemplate");
+    }
+    
+    
+    /*
+     * Panel que muestra los usuarios correspondientes al panel de búsqueda
+     * @author: Andres Botero
+     */
+
+    public function executeDatosUsuariosZonas($request) {
+
+        $this->forward404Unless($request->getParameter("idzona"));
+        //$zona = ParametroTable::retrieveQueryByCaso('CU242', $request->getParameter("idzona"));
+        $idzona = $request->getParameter("idzona");
+
+        $usuarios = Doctrine::getTable("Usuario")
+                ->createQuery("u")
+                ->innerJoin("u.UsuBrigadas ub")                
+                ->addWhere("ub.ca_zona = ?", $idzona)
+                ->addOrderBy("u.ca_departamento, u.ca_nombre")
+                ->execute();
+
+        $data = array();
+
+        foreach ($usuarios as $usuario) {
+            $row = array();
+            $row["login"] = $usuario->getCaLogin();
+            $row["name"] = utf8_encode($usuario->getCaNombre());
+            $row["icon"] = $usuario->getImagenUrl("60x80");
+            $data[] = $row;
+        }
+
+        $this->responseArray = array("success" => true, "root" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+    
+    /**
+     * Agrega un usuario a un ticket para copiarle las comunicaciones o escritbir respuestas
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeEliminarUsuarioZona(sfWebRequest $request) {
+    
+        $this->forward404Unless($request->getParameter("login"));
+        //$zona = ParametroTable::retrieveQueryByCaso('CU242', $request->getParameter("idzona"));
+        $idzona = $request->getParameter("idzona");
+        
+        $usuario = Doctrine::getTable("Usuario")->find($request->getParameter("login"));        
+        
+        if ($usuario) {
+            $brigada = $usuario->getUsuBrigadas();        
+            $brigada->setCaZona(null);
+            $usuario->save();
+            $this->responseArray = array("success" => true, "id" => $request->getParameter("id"));
+        } else {
+            $this->responseArray = array("success" => false);
+        }
+        
+        $this->setTemplate("responseTemplate");
+    }
+    
+    /**
+     * Agrega un usuario a un ticket para copiarle las comunicaciones o escritbir respuestas
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeAgregarUsuarioZona(sfWebRequest $request) {
+       
+        $this->forward404Unless($request->getParameter("login"));
+        $idzona = $request->getParameter("idzona");
+        
+        $usuario = Doctrine::getTable("Usuario")->find($request->getParameter("login"));        
+        
+        if ($usuario) {
+            $brigada = $usuario->getUsuBrigadas();        
+            $brigada->setCaZona($idzona);
+            $usuario->save();
+            $this->responseArray = array("success" => true, "idzona" => $idzona);
+        } else {
+            $this->responseArray = array("success" => false);
+        }
+        
+        $this->setTemplate("responseTemplate");
+    }
+    
+    /**
+     * Agrega un usuario a un ticket para copiarle las comunicaciones o escritbir respuestas
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeGenerarPdfPlanilla(sfWebRequest $request) {
+       
+        $this->forward404Unless($request->getParameter("idzona"));
+        $caso = $request->getParameter("caso");
+        //$idzona = $request->getParameter("idzona");
+        
+        //$caso = "CU264";
+        $brigadista = ParametroTable::retrieveByCaso($caso, null, null);
+        /*$brigadista = '{
+            "Sucursal": [
+                "ABO",
+                "BOG"
+            ],
+            "Brigadista": [
+                "alrammirez",
+                "ygomez"
+            ]
+          }';*/
+        //{"Sucursal": ["ABO","BOG"],"Brigadista": ["alrammirez","ygomez"]}
+
+        $data = array();
+        $jsonArray = json_decode($brigadista[0]->getCaValor2(), true); 
+        
+        /*foreach ($jsonArray as $json){
+            print_r($json["Sucursal"]);
+            
+        }*/
+        $sucursales = $jsonArray["Sucursal"];
+        $brigadistas = $jsonArray["Brigadista"];
+        
+        //$factores = $riesgo->getIdgFactor();
+                if($brigadistas){
+                    foreach($brigadistas as $brigadista){
+                        $data["login[]"][] = utf8_encode($factor->getCaFactor());
+            }
+                }
+        
+        /*echo "jsponArray".$jsonArray;
+        print_r($data);
+        
+        echo "<pre>";print_r($jsonArray);echo "</pre>";        */
+        
+        $this->setTemplate("responseTemplate");
+       
     }
 }
 ?>

@@ -26,6 +26,7 @@ class FormularioFormFilter extends BaseFormularioFormFilter {
             'ca_estilo' => 'Estilo:',
             'ca_nombre_formato' => 'Nombre del formato:',
             'ca_color' => 'Color:',
+            'ca_empresa' => 'Empresa:',
             'ca_fchcreado' =>  'Creado en:',
             'ca_fchactualizado' => 'Actualizado en',
             'ca_vigencia_final' => 'Vigencia Final:',

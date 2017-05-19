@@ -7,7 +7,7 @@
 //include_component("widgets", "widgetTerceroWindow");
 ?>
 <script type="text/javascript">
-Ext.define('Ext.colsys.wgTercero', {
+/*Ext.define('Ext.colsys.wgTercero', {
     extend: 'Ext.form.field.ComboBox',
     alias: 'widget.wTercero',
     store: new Ext.data.Store(
@@ -90,5 +90,79 @@ Ext.define('Ext.colsys.wgTercero', {
         trigger1.addClsOnOver('x-form-trigger-over');
         trigger2.addClsOnOver('x-form-trigger-over');
     }
-});
+});*/
 </script>
+
+
+<?php
+
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+?>
+
+<script type="text/javascript">
+Ext.define('Ext.colsys.wgTercero', {
+    extend: 'Ext.form.field.ComboBox',
+    alias: 'widget.wTercero',
+    store: new Ext.data.Store(
+    {
+       fields: [
+            {name: 'idtercero', mapping: 't_ca_idtercero'},
+            {name: 'nombre', mapping: 't_ca_nombre'},
+            {name: 'ciudad', mapping: 'c_ca_ciudad'},
+            {name: 'pais', mapping: 'p_ca_nombre'},
+            {name: 'direccion', mapping: 't_ca_direccion'},
+            {name: 'contacto', mapping: 't_ca_contacto'},
+            {name: 'idreporte'}
+        ],        
+        proxy: {
+            url: '<?=url_for('widgets/listaTercerosJSON')?>',
+            baseParams: {tipo: this.tipo},
+            type: 'ajax',            
+              //autoLoad: true,
+            reader: 
+            {
+                root: 'terceros',
+                totalProperty: 'totalCount',
+                id: 'id',
+                type: 'json'
+             }
+        },
+        baseParams: {tipo: this.tipo}
+    }),
+     valueField:'idtercero',
+     displayField:'nombre', 
+     typeAhead: false,
+     loadingText: 'buscando...',
+     triggerAction: 'all',     
+     selectOnFocus: true,
+     allowBlank: false,     
+     enableKeyEvents: true,    
+     minChars: 3/*,     
+     listConfig: {
+                loadingText: 'buscando...',
+                emptyText: 'No matching posts found.',                
+                getInnerTpl: function() {
+                    return '<tpl for="."><div class="search-item">',
+                    '<b><span style="font-size:9px">',
+                     '<tpl if="this.oficial(idreporte)">',
+                        '<span class="rojo">{nombre}</span>',
+                    '</tpl>',
+                     '<tpl if="!this.oficial(idreporte)">',
+                        '{nombre}',
+                    '</tpl>',
+                    '</span></b><span style="font-size: 9px"><br />{direccion} {ciudad} - {pais} {contacto}</span>',
+                '</div></tpl>';
+                }
+            },
+        */
+    /*,onRender: function(ct, position){
+        Ext.colsys.wgTercero.superclass.onRender.call(this, ct, position);
+        alert(this.tipo);
+   }*/
+});
+
+</script>
+

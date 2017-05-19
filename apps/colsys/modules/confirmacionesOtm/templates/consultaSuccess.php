@@ -19,7 +19,8 @@ $textos = $sf_data->getRaw("textos");
                 var checkbox = document.getElementById("checkbox_" + oids[i]);
                 if (checkbox.checked) {
                     var numchecked = 0;
-                    var divfijos = document.getElementById("divfijos_" + oids[i]);
+                    //No aplica para Otm, ya que no se deben seleccionar automáticamente los contactos fijos.
+                    /*var divfijos = document.getElementById("divfijos_" + oids[i]);
                     if (divfijos && typeof (divfijos) != "undefined") {
                         var elements = divfijos.getElementsByTagName("input");
                         for (var j = 0; j < elements.length; j++) {
@@ -27,14 +28,15 @@ $textos = $sf_data->getRaw("textos");
                                 numchecked++;
                             }
                         }
-                    }
+                    }*/
 
                     var consolidar_comunicaciones = document.getElementById("consolidar_comunicaciones_" + oids[i]).value;
-                    if (numchecked == 0 && !consolidar_comunicaciones) {
+                    //No aplica para confirmacionesOtm ya que ellos no envian status directamente al cliente (Viene de status otm)
+                    /*if (numchecked == 0 && !consolidar_comunicaciones) {
                         alert("Debe seleccionar al menos un contacto fijo para el cliente: " + document.getElementById("nombre_cliente_" + oids[i]).value);
                         document.location.href = "#oid_" + oids[i];
                         return false;
-                    }
+                    }*/
 
                     valor = $(".tipostatus:checked").val();
                 }
@@ -50,6 +52,35 @@ $textos = $sf_data->getRaw("textos");
                 var currentDate = formatDate(now);
                 var currentHours = formatHours(now);
                 if (checkbox.checked) {
+                    
+                    //eval('var tipo = document.form1.tipo_' + oids[i]);
+                    var tipo = document.getElementById("tipo_"+oids[i]);
+                    var value = tipo.options[tipo.selectedIndex].value;
+                    
+                    if(value=="OTDES"){
+                        var objeto_6 = document.getElementById('fchcargue_' + oids[i]);                        
+                        if(objeto_6.value == ""){
+                            alert("Por favor ingrese la fecha de cargue");
+                            objeto_6.focus();
+                            return false;
+                        }
+                        var objeto_8 = document.getElementById('fchsalidaotm_' + oids[i]);                        
+                        if(objeto_8.value == ""){
+                            alert("Por favor ingrese la fecha de cargue");
+                            objeto_8.focus();
+                            return false;
+                        }
+                    }
+                       
+                    if(value == "99999"){
+                        var objeto_7 = document.getElementById('fchcierreotm_' + oids[i]);
+                        if(objeto_7.value == ""){
+                            alert("Por favor ingrese la fecha de cierre");
+                            objeto_7.focus();
+                            return false;
+                        }
+                    }                        
+
                     if (document.getElementById("divmessage_" + oids[i]).innerHTML == "" && document.getElementById("mensaje_" + oids[i]).value == "") {
                         alert("Por favor coloque un mensaje para el status");
                         document.getElementById("mensaje_" + oids[i]).focus();
@@ -102,25 +133,15 @@ $textos = $sf_data->getRaw("textos");
         }
     }
 
-    function mostrarFchllegada(oid) {
-        eval('var tipo = document.form1.tipo_' + oid);
-        var value = '';
-        for (i = 0; i < tipo.length; i++) {
-            if (tipo[i].checked) {
-                value = tipo[i].value;
-            }
-        }
-
+    function mostrarFchllegada(oid) {        
+        
+        var value = document.getElementById('tipo_' + oid).value;        
+        
         var objeto_1 = document.getElementById('divfchllegada_' + oid);
-        if (value == "IMCOL") {
-            document.getElementById('divmodfchllegada_' + oid).style.display = 'none';
-        } else {
-            document.getElementById('divmodfchllegada_' + oid).style.display = 'inline';
-        }
-
-        if (document.getElementById('modfchllegada_' + oid).checked || value == "IMCOL") {
+        
+        if (document.getElementById('modfchllegada_' + oid).checked || value == "IMCOL") {            
             objeto_1.style.display = 'inline';
-        } else {
+        } else {            
             objeto_1.style.display = 'none';
         }
     }
@@ -129,6 +150,9 @@ $textos = $sf_data->getRaw("textos");
         
         var objeto_2 = document.getElementById('divbodega_' + oid);
         var objeto_5 = document.getElementById('divfchplanilla_' + oid);
+        var objeto_6 = document.getElementById('divfchcargue_' + oid);
+        var objeto_7 = document.getElementById('divfchcierreotm_' + oid);
+        var objeto_8 = document.getElementById('divfchsalidaotm_' + oid);
         
         switch (value){
             <?
@@ -174,9 +198,19 @@ $textos = $sf_data->getRaw("textos");
         }
         if (value == "99999") {
             objeto_5.style.display = 'inline';
+            objeto_7.style.display = 'inline';
         } else {
             objeto_5.style.display = 'none';
+            objeto_7.style.display = 'none';
         }
+        
+        if(value == "OTDES"){
+            objeto_6.style.display = 'inline';
+            objeto_8.style.display = 'inline';
+        }else{
+            objeto_6.style.display = 'none';
+            objeto_8.style.display = 'none';
+        }      
     }
 
     function cambiarTextosOTM(value) {
@@ -371,14 +405,17 @@ $textos = $sf_data->getRaw("textos");
     </table><br />
 </div>
 
-<script language="javascript" type="text/javascript">
-<?
-foreach ($inoClientes as $inoCliente) {
-    ?>
-        mostrar('<?= $inoCliente->getOid() ?>');
-        habilitar('<?= $inoCliente->getOid() ?>');
+<script>    
     <?
-}
-?>
+    foreach ($inoClientes as $inoCliente) {        
+        ?>
+            var tipo = document.getElementById("tipo_"+<?= $inoCliente->getOid() ?>);
+            var value = tipo.options[tipo.selectedIndex].value;   
+            
+            mostrar(value, '<?= $inoCliente->getOid() ?>');
+            habilitar('<?= $inoCliente->getOid() ?>');
+        <?
+    }
+    ?>
     modFcharribo();
 </script>

@@ -34,13 +34,13 @@ foreach ($inoClientes as $inoCliente) {
         <td class="listar" >
             <div align="right">
 <?
-                if ($reporte) {
-                    if ($cliente->getProperty("cuentaglobal") == "true") {
-?>	
+                if ($reporte) {                    
+                    if ($cliente->getProperty("cuentaglobal")) {                        
+?>                      
                         <img src="/images/CG30.png" title="Cliente de Cuentas Globales" />
 <?
                     }
-                    if ($cliente->getProperty("consolidar_comunicaciones") == "true") {
+                    if ($cliente->getProperty("consolidar_comunicaciones")) {
 ?>	
                         <img src="/images/consolidate.png" title="Cliente de Cuadro" />
 <?

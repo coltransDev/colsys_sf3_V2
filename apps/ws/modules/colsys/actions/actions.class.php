@@ -33,7 +33,7 @@ class colsysActions extends sfActions {
             //$wsdl_uri = "https://www.coltrans.com.co/ws/users/usersWS?wsdl";
 //            echo "34";
 //            exit;
-            $wsdl_uri = "https://www.coltrans.com.co/ws/colsys/reportesNegWS?wsdl";
+            $wsdl_uri = "https://www.colsys.com.co/ws/colsys/reportesNegWS?wsdl";
             $soap = new Zend_Soap_Server($wsdl_uri); 
             $options = array('encoding'=>'ISO-8859-1');
             $soap->setOptions($options);
@@ -69,7 +69,7 @@ class colsysActions extends sfActions {
             $autodiscover->setClass('TicketSoap');
             $autodiscover->handle();
         } else {
-            $wsdl_uri = "https://www.coltrans.com.co/ws/colsys/ticketsWS?wsdl";
+            $wsdl_uri = "https://www.colsys.com.co/ws/colsys/ticketsWS?wsdl";
             $soap = new Zend_Soap_Server($wsdl_uri); 
             $options = array('encoding'=>'ISO-8859-1');
             $soap->setOptions($options);
@@ -88,39 +88,131 @@ class colsysActions extends sfActions {
     
     
     /**
+     * Executes Wse action
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeWse(sfWebRequest $request) {
+        
+        /*$wsdl_uri = "https://10.192.1.62/ws/users/usersWS?wsdl";
+            $soap = new Zend_Soap_Server($wsdl_uri); 
+            $options = array('encoding'=>'ISO-8859-1');
+            $soap->setOptions($options);
+            $soap->setClass('UserSoap');
+            $soap->handle();
+         * 
+         */
+        //ProjectConfiguration::registerZend();
+        /*    $client = new Zend_Soap_Client( "https://10.192.1.62/ws/colsys/contactsWS?wsdl", array('encoding'=>'ISO-8859-1', 'soap_version'=>SOAP_1_2 ));        
+            $result = $client->actualiza(
+                array(
+                    a=>"2014",
+                    t=>$tipoComprobante->getCaTipo(),
+                    nt=>$tipoComprobante->getCaComprobante(),
+                    c=>$consecutivo,
+                    d=>$tipoComprobante->getCaIdempresa()));
+         * 
+         */
+        //error_reporting(E_ALL);
+        echo "dddgfsdf";
+       $client = new Zend_Soap_Client( "https://www.colsys.com.co/ws/colsys/contactsWS?wsdl", array('encoding'=>'ISO-8859-1', 'soap_version'=>SOAP_1_2));
+       echo "123456789";
+       //$result = $client->getContacts("fgfgdfgdfg");
+        //print_r($result);
+        /*$client = new Zend_Soap_Client( "https://www.colsys.com.co/ws/colsys/contactsWS?wsdl", array('encoding'=>'ISO-8859-1', 'soap_version'=>SOAP_1_2 ));
+        $result = $client->viewReporte("415412");
+         */
+        
+
+
+
+/*$response = $client->__soapCall('system_soap_connect', array());
+echo '
+'.print_r($response,true).'';
+$session_id = $response->sessid;
+$response = $client->__soapCall('user_soap_login', array('maquinche', 'xxxxxx'));
+echo '
+'.print_r($response,true).'';
+$session_id = $response->sessid;
+if ($session_id) {
+$response = $client->__soapCall('system_soap_get_variable', array('site_info','x'));
+echo '
+'.print_r($response,true).'';
+}
+else {
+ print 'Could not authenticate user';
+}*/
+print "\n";
+
+
+        exit;
+//        colsys/contactsWS
+    }
+    
+    
+    /**
      * Executes contactsWS action
      *
      * @param sfRequest $request A request object
      */
     public function executeContactsWS(sfWebRequest $request) {
+        //echo "dsdsf asdsa d sadsa ";
+        //return "dsdsfasdsa dsa dsad";
         
-        //exit;
+        
         try 
         {
         ProjectConfiguration::registerZend();   
+        
+        
         if(isset($_GET['wsdl'])) {
+            
             //return the WSDL
 //            echo "26";
 //            exit;
             $autodiscover = new Zend_Soap_AutoDiscover();
+            
             $autodiscover->setClass('ContactsSoap');
-            $autodiscover->handle();
+            //$autodiscover->setObject(new ContactsSoap());
+            
+            $autodiscover->handle();            
+            
+            $result=$autodiscover->getContacts("ddd");
+            printr_r($result);
+           // echo "1";
+            //exit;
         } else {
-            $wsdl_uri = "https://www.coltrans.com.co/ws/colsys/contactsWS?wsdl";
-            $soap = new Zend_Soap_Server($wsdl_uri); 
+            //echo "2";
+            //exit;
+            $wsdl_uri = "https://www.colsys.com.co/ws/colsys/contactsWS?wsdl";
+            //$soap = new Zend_Soap_Server($wsdl_uri); 
             $options = array('encoding'=>'ISO-8859-1');
             $soap->setOptions($options);
-            $soap->setClass('ContactsSoap');
-            $soap->handle();
+            //$soap->setClass('ContactsSoap');
+            /*$soap->handle();*/
+            $server = new Zend_Soap_Server($wsdl_uri, $options);
+            $server->setClass('ContactsSoap');
+            //$server->setObject(new ContactsSoap());
+// Bind Class to Soap Server
+            //$server->setClass('MyClass');
+            // Bind already initialized object to Soap Server
+            //$server->setObject(new MyClass());
+            
+            $server->handle();
+            
+            $result=$server->getContacts("ddd");
+            printr_r($result);
         }
-        exit();
+        echo "ddd";
+        //exit();
         return sfView::NONE;
         }
         catch (Exception $e)
         {
             print_r($e->getMessage());
-            exit;
+            //exit;
         }
+        exit();
     }
     
     
@@ -214,6 +306,34 @@ class colsysActions extends sfActions {
         
     }
     
-    
-    
+    /**
+     * Executes index action
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeInformeOpenWS(sfWebRequest $request) {
+        
+        //print_r($_REQUEST);
+        try {
+            ProjectConfiguration::registerZend();   
+            if(isset($_GET['wsdl'])) {
+                $autodiscover = new Zend_Soap_AutoDiscover();                
+                $autodiscover->setClass('InformeOpenSoap');                
+                $autodiscover->handle();
+            } else {                
+                $wsdl_uri = "https://www.colsys.com.co/ws/colsys/InformeOpenWS?wsdl";
+                //$wsdl_uri = "https://10.192.1.70/ws/colsys/InformeOpenWS?wsdl";
+                $soap = new Zend_Soap_Server($wsdl_uri);                 
+                $options = array('encoding'=>'ISO-8859-1');
+                $soap->setOptions($options);
+                $soap->setClass('InformeOpenSoap');
+                $soap->handle();
+            }
+            exit();
+            return sfView::NONE;
+        }catch (Exception $e){
+            print_r($e->getMessage());
+            exit;
+        }
+    }
 }

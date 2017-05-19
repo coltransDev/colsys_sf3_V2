@@ -72,6 +72,7 @@ class PreguntaForm extends BasePreguntaForm {
             'ca_etiquetas_filas' => 'Etiquetas de Filas',
             'ca_ayuda' => 'Texto de ayuda:',
             'ca_idbloque' => 'Bloque de preguntas (<span class="pregunta-obligatoria-admin">*</span>):',
+            'ca_comentarios' => 'Incluir comentarios:',
                 /* 'ca_idbloque' => 'Tipo de servicio:', */
         ));
         $this->validatorSchema['ca_idbloque'] = new sfValidatorString(array(), array('required' => 'Seleccione el bloque', 'invalid' => 'Por favor un nombre de bloque m&aacute;s largo'));

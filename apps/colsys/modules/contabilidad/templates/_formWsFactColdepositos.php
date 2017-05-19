@@ -3,7 +3,7 @@
 include_component("widgets5", "wgCliente");
 ?>
 <script>
- 
+ Ext.Ajax.setTimeout(120000);
 Ext.define('FormWsFactColdepositos', {
     extend: 'Ext.form.Panel',
     title: 'Filtros de búsqueda',
@@ -48,7 +48,8 @@ Ext.define('FormWsFactColdepositos', {
         name:'idcliente',
         fieldLabel: 'Cliente',
         allowBlank:false,
-        readonly:true
+        readonly:true,
+        valueField: 'nit',
     },
     {
         fieldLabel: 'Doc.Transporte',

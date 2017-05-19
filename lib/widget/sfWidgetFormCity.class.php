@@ -102,7 +102,7 @@ EOF
         $js = sprintf(<<<EOF
         <script type="text/javascript">
             $js2
-            $js3            
+            $js3
          </script>
 EOF
 );

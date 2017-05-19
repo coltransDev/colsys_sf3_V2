@@ -1,5 +1,5 @@
 <?php
- 
+error_reporting(E_ALL);
 class DelayedEmailTask extends sfDoctrineBaseTask
 {
   protected function configure()
@@ -27,14 +27,21 @@ EOF;
 	$databaseManager = new sfDatabaseManager($this->configuration);
 	$databaseManager->loadConfiguration();
 		
-	$emails = Doctrine::getTable("Email")
+	$q = Doctrine::getTable("Email")
                         ->createQuery("e")
                         ->addWhere("e.ca_fchenvio IS NULL")
-                        ->addWhere("e.ca_fchcreado <= ? ", date("Y-m-d H:i:s", time()-60))
-                        ->addWhere("e.ca_fchcreado >= ? ", date("Y-m-d H:i:s", time()-86400*3)) // Deja de enviar despues de 3 dias de no haberlo podido enviar
+                        //->addWhere("e.ca_fchcreado <= ? ", date("Y-m-d H:i:s", time()-60))
+                        ->addWhere(" ((e.ca_fchcreado <= ? AND ca_tipo!= ?) OR (e.ca_fchcreado <= ? AND ca_tipo= ?) )",array(date("Y-m-d H:i:s", time()-60),'Envío de cuadro',date("Y-m-d H:i:s", time()-180),'Envío de cuadro')  )
+                        ->addWhere("e.ca_fchcreado >= ? ", date("Y-m-d H:i:s", time()-86400*5)) // Deja de enviar despues de 3 dias de no haberlo podido enviar
+//                        ->addWhere("e.ca_idemail = 3165402")
                         ->addOrderBy("e.ca_fchcreado", "ASC")
-                        ->limit(30)
-                        ->execute();
+                        ->limit(30);
+                        
+//                print_r(array(date("Y-m-d H:i:s", time()-60),'Envío de cuadro',date("Y-m-d H:i:s", time()-180),'Envío de cuadro'));
+//        echo date("Y-m-d H:i:s", time()-86400*5);        
+//        echo $q->getSqlQuery();
+        $emails = $q->execute();
+        //exit();
     //$data = array();
     //Utils::sendEmail($data);
 	foreach( $emails as $email ){

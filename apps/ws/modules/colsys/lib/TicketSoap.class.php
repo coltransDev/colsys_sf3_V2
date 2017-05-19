@@ -90,7 +90,7 @@ class TicketSoap {
                     foreach ($usuarios as $usuario) {
                         $logins[] = $usuario->getCaLogin();
                     }
-                    
+
                     if ($ticket->getCaAssignedto() == $user->getCaLogin() || in_array($user->getCaLogin(), $logins)) {
                         $tarea = $ticket->getTareaIdg();
                         if ($tarea) {
@@ -182,9 +182,9 @@ class TicketSoap {
                     <table width="100%" border="0" cellspacing="15" cellpadding="0" bgcolor="#E1E1E1"><tr><td>
                                 <table width="100%" border="0" cellspacing="15" cellpadding="0" bgcolor="#FFFFFF"><tr><td>
                                             <table width="100%" border="0" cellspacing="5" cellpadding="0">
-                                                <tr><td colspan="3"><table><tr><td width="135"><img src="https://www.coltrans.com.co/images/logo_colsys.gif" width="178" height="30" alt="COLSYS"></td>
+                                                <tr><td colspan="3"><table><tr><td width="135"><img src="https://www.colsys.com.co/images/logo_colsys.gif" width="178" height="30" alt="COLSYS"></td>
                                                                 <td><font size="4" face="arial, helvetica, sans-serif" color="#D99324">Sistema de tickets</font></td></tr></table></td></tr>
-                                                <tr><td width="25"><img src="https://www.coltrans.com.co/images/spacer.gif" width="25" height="1" alt=""></td><td colspan="2"><hr noshade size="1"></td></tr>
+                                                <tr><td width="25"><img src="https://www.colsys.com.co/images/spacer.gif" width="25" height="1" alt=""></td><td colspan="2"><hr noshade size="1"></td></tr>
                                                 <tr>
                                                     <td>&nbsp;</td><td>
                                                         <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Ticket # '.$ticket->getCaIdticket().": ".$ticket->getCaTitle() .'</b></font><br />
@@ -200,12 +200,12 @@ class TicketSoap {
                                                         <div class="entry-even">
                                                         '.$ticket->getCaText().'
                                                         </div>
-                                                    </td><td width="50"><img src="https://www.coltrans.com.co/images/spacer.gif" width="75" height="1" alt=""></td></tr>
+                                                    </td><td width="50"><img src="https://www.colsys.com.co/images/spacer.gif" width="75" height="1" alt=""></td></tr>
                                                 <tr><td>&nbsp;</td><td colspan="2"><hr noshade size="1"></td></tr>
                                                 <tr>
                                                     <td>&nbsp;</td>
                                                     <td>
-                                                        <img src="https://www.coltrans.com.co/images/spacer.gif" width="1" height="1" alt="">
+                                                        <img src="https://www.colsys.com.co/images/spacer.gif" width="1" height="1" alt="">
                                                         <p><font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Respuestas</b></font><br>
                                                         <div class="commentlist">';
 
@@ -273,7 +273,7 @@ class TicketSoap {
                                                 <tr>
                                                     <td>&nbsp;</td>
                                                     <td>
-                                                        <img src="https://www.coltrans.com.co/images/spacer.gif" width="1" height="1" alt="">
+                                                        <img src="https://www.colsys.com.co/images/spacer.gif" width="1" height="1" alt="">
                                                         <p><font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Usuarios</b></font><br>
                                                         <div class="entry-even">
                                                                 <ul style="margin-top: 0;">';
@@ -289,8 +289,8 @@ class TicketSoap {
                                                 
                                                 $htmlVT.='<tr><td>&nbsp;</td><td colspan="2"><hr noshade size="1"></td></tr>
                                                 <tr><td>&nbsp;</td><td>
-                                                        <font size="1" face="arial, helvetica, sans-serif" color="#000000"> Si los links no estan funcionando, copie y pegue esta dirección en el navegador:<br>https://www.coltrans.com.co<?=url_for("/pm/verTicket?id='.$ticket->getCaIdticket().' <br><br> Gracias por utilizar el sistema de tickets!<br><br>Coltrans S.A.S - Colmas Ltda. Agencia de Aduanas Nivel 1<br>
-                                                            <a href="https://www.coltrans.com.co/">http://www.coltrans.com.co/</a>
+                                                        <font size="1" face="arial, helvetica, sans-serif" color="#000000"> Si los links no estan funcionando, copie y pegue esta dirección en el navegador:<br>https://www.colsys.com.co<?=url_for("/pm/verTicket?id='.$ticket->getCaIdticket().' <br><br> Gracias por utilizar el sistema de tickets!<br><br>Coltrans S.A. - Colmas Ltda. Agencia de Aduanas Nivel 1<br>
+                                                            <a href="https://www.colsys.com.co/">http://www.coltrans.com.co/</a>
                                                         </font>
                                                     </td>
                                                     <td>&nbsp;</td>
@@ -299,9 +299,9 @@ class TicketSoap {
                                         </td></tr>
                                 </table>
                             </td></tr>                        
-                        <tr><td><font size="1" face="arial, helvetica, sans-serif" color="#666666">&copy; Coltrans S.A.S. Colmas Ltda. Agencia de Aduanas Nivel 1</font></td></tr>
+                        <tr><td><font size="1" face="arial, helvetica, sans-serif" color="#666666">&copy; Coltrans S.A. Colmas Ltda. Agencia de Aduanas Nivel 1</font></td></tr>
                     </table>
-                    <img src="https://www.coltrans.com.co/images/spacer.gif" style="width:1px; height:1px;"/></body>
+                    <img src="https://www.colsys.com.co/images/spacer.gif" style="width:1px; height:1px;"/></body>
             </html>';
         return $htmlVT;
      }

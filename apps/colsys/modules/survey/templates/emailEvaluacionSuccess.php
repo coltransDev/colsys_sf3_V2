@@ -5,7 +5,7 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
 */
 
-$url = "https://www.coltrans.com.co".url_for("/survey/formEvaluacion?idevaluacion=".$evaluacion->getCaIdevaluacion());
+$url = "https://www.colsys.com.co".url_for("/survey/formEvaluacion?idevaluacion=".$evaluacion->getCaIdevaluacion());
 $ticket = $sf_data->getRaw("ticket");
 ?>
 

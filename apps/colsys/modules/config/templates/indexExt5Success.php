@@ -109,7 +109,21 @@ Ext.onReady(function() {
                                 else if(record.data.id=="3")
                                 {
                                     obj=[new GridBodegas({id:'form-bodegas',name:'form-bodegas',frame:true})];
-                                }                               
+                                }
+                                else if(record.data.id=="4")
+                                {
+                                    obj=[
+                                        {
+                                                    xtype: 'Colsys.General.TreeClasificacion',
+                                                    id: 'id-clasificacion',
+                                                    name: 'id-clasificacion'                                                    
+                                                    //height: 330,
+                                                    //width: 800,
+                                                    //ino:false
+                                                },
+                                        
+                                    ];
+                                }
                                 
                                 tabpanel.add(                                
                                     {

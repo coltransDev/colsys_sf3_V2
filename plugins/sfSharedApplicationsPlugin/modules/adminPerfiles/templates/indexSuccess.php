@@ -2,10 +2,15 @@
 <br />
 <h3>Administraci&oacute;n de Perfiles</h3>
 <br />
+<?
+if($app=="intranet"){
+    if($nivel>=1)
+        echo link_to(image_tag("new.png"), "adminPerfiles/formPerfil")."<br />";
+}?>
 <br />
 
 
-<table class="tableList" width="90%" >
+<table class="tableList" width="100%" >
 <tr >
 		
 	<th width="25%">Perfil</th>
@@ -36,4 +41,5 @@ foreach( $perfiles as $perfil ){
 }
 ?>
 </table>
-</div>
+
+</div><br/>

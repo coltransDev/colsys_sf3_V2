@@ -5,6 +5,9 @@ Ext.define('Colsys.Widgets.wgMoneda', {
   spObj:'',
   spForm:'',  
   spExtraParam:'',
+   queryMode:'local',
+   valueField:'id',
+   displayField:'name',
   store: Ext.create('Ext.data.Store', {
             fields: ['id','name','sugerido'],
             proxy: {
@@ -12,7 +15,7 @@ Ext.define('Colsys.Widgets.wgMoneda', {
                 url: '/widgets5/datosMonedas',
                 reader: {
                     type: 'json',
-                    root: 'root'
+                    rootProperty: 'root'
                 }
             },
             autoLoad: true

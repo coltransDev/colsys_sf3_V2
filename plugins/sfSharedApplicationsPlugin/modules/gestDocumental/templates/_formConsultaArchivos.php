@@ -21,12 +21,78 @@ Ext.define('FormConsultaArchivos', {
 
     // The fields
     defaultType: 'textfield',
-    /*onRender: function(ct, position){
-       
-       FormConsultaArchivos.superclass.onRender.call(this, ct, position);
-   },    */
+    onRender: function(ct, position){
+     
+     tb = new Ext.toolbar.Toolbar({dock: 'bottom'});
+     
+     if(this.Crear)
+     {
+        tb.add({
+           text: 'Guardar',
+           handler: function(){
+               var form = this.up('form').getForm();
 
-    bbar: [{
+               var idreg=this.up('form').idreg;
+               if(form.isValid()){
+                   form.submit({
+                       url: '/gestDocumental/subirArchivoTRD',
+                       waitMsg: 'Guardando',
+                       success: function(fp, o) {
+                           msg('Mensaje', 'Archivo Procesado "' + o.result.file + '" en el servidor');
+                           Ext.getCmp("grid-archivos"+idreg).getStore().load(
+                               {
+                                   params : 
+                                   {
+                                       'ref1' : Ext.getCmp("ref1"+idreg).getValue(),
+                                       'idsserie' : Ext.getCmp("idsserie"+idreg).getValue()
+                                   }
+                               }
+                           );                    }
+                   });
+               }
+           }
+       });
+    }
+    
+    if(this.Consultar)
+    {
+        tb.add({
+            text: 'Buscar',
+            handler: function(){
+                form=this.up('form').getForm();
+                var nombre=form.findField("nombre").getValue();
+                var documento=form.findField("documento").getValue();
+                var ref1=form.findField("ref1").getValue();
+                var ref2=form.findField("ref2").getValue();
+                var ref3=form.findField("ref3").getValue();
+                var idsserie=form.findField("idsserie").getValue();
+                var storeTree=Ext.getCmp("grid-archivos"+this.up('form').idreg).getStore();
+                storeTree.load({
+                    params : {
+                        nombre : nombre,
+                        ref1 : ref1,
+                        ref2 : ref2,
+                        ref3 : ref3,
+                        documento : documento,
+                        idsserie: idsserie
+                    }
+                });
+            }
+        });
+    }
+    tb.add({    
+        text: 'Limpiar',
+        handler: function() {
+            this.up('form').getForm().reset();
+        }
+    });
+     
+     this.addDocked(tb, 'bottom');
+     
+       this.superclass.onRender.call(this, ct, position);
+   }
+
+  /*  bbar: [{
         text: 'Guardar',
         handler: function(){
             var form = this.up('form').getForm();
@@ -90,7 +156,7 @@ Ext.define('FormConsultaArchivos', {
         handler: function() {
             this.up('form').getForm().reset();
         }
-    }]    
+    }]  */  
 });
  
 </script>

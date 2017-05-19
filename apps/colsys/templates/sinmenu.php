@@ -15,7 +15,7 @@
     
     <?php 
     if( (strpos("$sfAction", "Ext4")===false && strpos("$sfAction", "ext4")===false)&& (strpos("$sfAction", "Ext5")===false && strpos("$sfAction", "ext5")===false) && $sfModule."/".$sfAction!="gestDocumental/index")
-    {   
+    {
         include_stylesheets();
         include_javascripts();
     }/*else if (strpos("$sfAction", "Ext5")===true || strpos("$sfAction", "ext5")===true){
@@ -42,6 +42,36 @@
 <?
     }*/else
     {
+        
+        
+        if (strpos("$sfAction", "Ext4") !== false  ) 
+            {
+            ?>
+                <link type="text/css" rel="stylesheet" href="/js/ext4/resources/css/ext-all-neptune.css">
+                <script type="text/javascript" src="/js/ext4/ext-all.js"></script>
+                <script type="text/javascript" src="/js/ext4/ux/multiupload/swfobject.js"></script>
+            <?
+            }else if (strpos("$sfAction", "Ext5") !== false || $sfModule . "/" . $sfAction == "riesgos/index" || $sfModule . "/" . $sfAction == "gestDocumental/index") 
+            {
+               
+               // $stylejs=$_COOKIE["stylejs"];
+                //echo $stylejs;
+                //$stylejs = $user->getDatos("estiloIno");
+                $stylejs="";
+              //  print_r($stylejs);
+                
+                if($stylejs=="")
+                {
+                    $stylejs="/js/ext5/packages/ext-theme-gray/build/resources/ext-theme-gray-all-debug.css";
+                }
+               
+                
+            ?>
+                
+                <link type="text/css" rel="stylesheet" href="<?=$stylejs?>">
+                <script type="text/javascript" src="/js/ext5/ext-all.js"></script>
+            <?
+            }
 ?>
 
 
@@ -53,9 +83,7 @@
 <link rel="stylesheet" type="text/css" media="screen" href="/css/blog.css" />
 
 
-<link type="text/css" rel="stylesheet" href="/js/ext4/resources/css/ext-all-neptune.css">
 
-<script type="text/javascript" src="/js/ext4/ext-all.js"></script>
 <script type="text/javascript" src="/js/ext4/ux/multiupload/swfobject.js"></script>
 
 <script type="text/javascript" src="/js/comunes.js"></script>

@@ -221,7 +221,7 @@ extend: 'Ext.grid.Panel',
                 url: '/inoF2/datosEventosSAEDEX',                
                 reader: {
                     type: 'json',
-                    root: 'root'
+                    rootProperty: 'root'
                 },
                 extraParams:{"referencia":this.idreferencia,'idevento': idevento},
                 filterParam: 'query'

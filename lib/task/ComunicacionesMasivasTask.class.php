@@ -28,7 +28,7 @@ EOF;
 	$databaseManager->loadConfiguration();
 
 	sfContext::createInstance($this->configuration)->dispatch();	
-	sfContext::getInstance()->getRequest()->setParameter("idcomunicado", 12);
+	//sfContext::getInstance()->getRequest()->setParameter("idcomunicado", 18);
 	echo sfContext::getInstance()->getController()->getPresentationFor( 'comunicaciones', 'envioComunicado');
   }
 }

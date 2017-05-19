@@ -19,8 +19,8 @@ Ext.define('Colsys.Ino.FormBusqueda', {
     listeners: {
         beforerender: function () {
 
-
-            if (this.permisos.Crear == true) {
+            //if (this.permisos.Crear == true)
+            {
                 this.addTool({
                     type: 'plus',
                     //iconCls:'add',
@@ -36,9 +36,9 @@ Ext.define('Colsys.Ino.FormBusqueda', {
                                 layout: 'fit',
                                 closeAction: 'hide',
                                 items: [
-                                    {
-                                        xtype: "Colsys.Ino.FormModo"
-                                    }
+                                {
+                                    xtype: "Colsys.Ino.FormModo"
+                                }
                                 ]
                             });
                         }
@@ -60,9 +60,6 @@ Ext.define('Colsys.Ino.FormBusqueda', {
                     xtype: 'textfield',
                     width: '100%',
                     name: 'q',
-                    //triggerCls : Ext.baseCSSPrefix + 'form-search-trigger',
-                    //flex: 1,
-                    //name: 'artikel',
                     allowBlank: true,
                     style: 'margin-left: 5px',
                     triggers: {
@@ -70,30 +67,24 @@ Ext.define('Colsys.Ino.FormBusqueda', {
                             cls: 'x-form-clear-trigger',
                             handler: function () {
                                 this.setValue('');
-
                             }
                         },
                         search: {
                             cls: Ext.baseCSSPrefix + 'form-search-trigger',
                             handler: function () {
 
-                                this.up('form').buscar(this.getValue());
-                                //alert(this.value)
+                                this.up('form').buscar(this.getValue());                                
                             }
                         },
                         searchp: {
                             cls: Ext.baseCSSPrefix + 'form-searchp-trigger',
-                            handler: function () {
-                                //alert(this.value)
+                            handler: function () {                                
                                 Ext.getCmp('bus-avan').setVisible(Ext.getCmp('bus-avan').hidden);
-
                             }
                         }
                     },
                     listeners: {
                         specialkey: function (field, e) {
-                            // e.HOME, e.END, e.PAGE_UP, e.PAGE_DOWN,
-                            // e.TAB, e.ESC, arrow keys: e.LEFT, e.RIGHT, e.UP, e.DOWN
                             if (e.getKey() == e.ENTER) {
                                 this.up('form').buscar(this.getValue());
                             }
@@ -106,33 +97,24 @@ Ext.define('Colsys.Ino.FormBusqueda', {
                     id: 'bus-avan',
                     name: 'bus-avan',
                     hidden: true,
-                    /*headerCls: {
-                     font-size: '8px'
-                     },*/
                     items: [
                         {
                             xtype: 'fieldset',
                             title: 'Fecha Creacion',
-                            //defaultType: 'checkboxfield',
                             layout: 'column',
                             labelWidth: 60,
-                            defaults: {
-                                //anchor: '100%',
+                            defaults: {                                
                                 columnWidth: 1 / 3,
                                 labelAlign: 'right'
                             },
                             items: [
                                 {
-                                    //boxLabel  : 'Anchovies11',
-                                    //labelWidth :35,
                                     xtype: 'datefield',
                                     id: 'fchinicial',
                                     width: 100,
                                     name: 'fchinicial'
                                 },
                                 {
-                                    //boxLabel  : 'Anchoviesss',
-                                    //labelWidth :35,
                                     xtype: 'datefield',
                                     id: 'fchfinal',
                                     name: 'fchfinal',
@@ -209,31 +191,31 @@ Ext.define('Colsys.Ino.FormBusqueda', {
                                 {
                                     boxLabel: 'Factura',
                                     name: 'topping',
-                                    inputValue: 'ca_factura',
+                                    inputValue: 'ca_consecutivo',
                                     id: 'checkbox9',
+                                    name        : 'opciones[]'
+                                },
+                                {
+                                    boxLabel: 'Fac Prov',
+                                    name: 'topping',
+                                    inputValue: 'ca_factura',
+                                    id: 'checkbox10',
                                     name        : 'opciones[]'
                                 }
                             ]
                         }
                     ]
                 }
-
             ],
             buscar: function (valor)
             {
-                //var myMask = new Ext.LoadMask(Ext.getCmp("gind1").el, {useMsg: false});
-                //myMask.show();
-                //console.log(this.getForm());
                 Ext.getCmp("gind1").setLoading(true);
                 var form = this.getForm(); // get the form panel
                 form.submit({
                     url: '/inoF2/datosBusqueda',
                     success: function (form, action) {
-
                         var res = action.result.root;
-
-
-
+                        tipofactura=action.result.tipofacturacion;
                         Ext.getCmp("gind1").getStore().loadData(res);
                         Ext.getCmp("gind1").setLoading(false);
                         //     myMask.hide();
@@ -241,16 +223,9 @@ Ext.define('Colsys.Ino.FormBusqueda', {
                     failure: function (form, action) {
                         Ext.Msg.alert('Failed', action.result.msg);
                         Ext.getCmp("gind1").setLoading(false);
-                        //    myMask.hide();
                     }
                 });
-                /*datos=this.getItems(Ext.getCmp('bus-avan').items.items);
-                 console.log(datos);
-                 
-                 Ext.getCmp("gind1").getStore().reload({
-                 params:{q:valor}
-                 });*/
-            },
+            }
         }
         ),
         {
@@ -260,64 +235,94 @@ Ext.define('Colsys.Ino.FormBusqueda', {
             //floating: true,
             items: [
                 Ext.create('Ext.grid.Panel', {
-                    id: 'gind1',
-                    name: 'gind1',
-                    bufferedRenderer: false,
-                    store: Ext.data.JsonStore({
-                        fields: [
-                            {name: 'm_ca_referencia'},
-                            {name: 'm_ca_idmaster'}
-                        ],
-                        proxy: {
-                            type: 'ajax',
-                            url: '/inoF2/datosBusqueda',
-                            reader: {
-                                type: 'json',
-                                rootProperty: 'root'
-                            }
-                        },
-                        autoLoad: false
-                    }),
-                    columns: [
-                        {
-                            text: "Referencia", width: 150, dataIndex: 'm_ca_referencia', sortable: true,
-                            //xtype: 'templatecolumn',
-                            //,
-                            //tpl: '<a href="javascript:loadRef(\'{ca_referencia}\')">{ca_referencia}</a>'
-                        }
-                    ],
-                    listeners: {
-                        rowdblclick: function (obj, record, tr, rowIndex, e, eOpts)
-                        {
-
-                            tabpanel = Ext.getCmp('tabpanel1');
-                            ref = record.data.m_ca_idmaster;
-                            console.log(record.data);
-                            //alert(ref);
-                            if (!tabpanel.getChildByElement('tab' + ref) && ref != "")
+                        id: 'gind1',
+                        name: 'gind1',
+                        bufferedRenderer: false,
+                        store: Ext.data.JsonStore({
+                            fields: [
+                                {name: 'm_ca_referencia'},
+                                {name: 'm_ca_idmaster'},
+                                {name: 'm_ca_impoexpo'},
+                                {name: 'm_ca_transporte'},
+                                {name: 'm_ca_idticket'},
+                                {name: 'm_ca_fchanulado'}
+                            ],
+                            proxy: {
+                                type: 'ajax',
+                                url: '/inoF2/datosBusqueda',
+                                reader: {
+                                    type: 'json',
+                                    rootProperty: 'root'
+                                }
+                            },
+                            autoLoad: false
+                        }),
+                        columns: [
                             {
-                                tabpanel.add(
-                                        {
-                                            title: record.data.m_ca_referencia,
-                                            id: 'tab' + ref,
-                                            itemId: 'tab' + ref,
-                                            closable: true,
-                                            autoScroll: true,
-                                            items: [new Colsys.Ino.Mainpanel({"idmaster": ref, "idtransporte": record.data.m_ca_transporte, "idimpoexpo": record.data.m_ca_impoexpo, "idreferencia": record.data.m_ca_referencia}),
-                                                {
-                                                    region: 'south',
-                                                    xtype: 'Colsys.Ino.FormCierre',
-                                                    id: 'formCierre' + ref,
-                                                    name: 'formCierre' + ref,
-                                                    idmaster: ref
-                                                }]
-                                        }).show();
+                                text: "Referencia", width: 150, dataIndex: 'm_ca_referencia', sortable: true                                
                             }
-                            tabpanel.setActiveTab('tab' + ref);
-                        }
+                        ],
+                        listeners: {
+                            rowdblclick: function (obj, record, tr, rowIndex, e, eOpts)
+                            {
+                                var tipofac = tipofactura;
+                                tabpanel = Ext.getCmp('tabpanel1');
+                                ref = record.data.m_ca_idmaster;
+                                permisosG=this.up('form').permisosG;
+                                if (!tabpanel.getChildByElement('tab' + ref) && ref != "")
+                                {
+                                    if(record.data.m_ca_impoexpo=="INTERNO")
+                                        tmppermisos=permisosG.terrestre;
+                                    else if(record.data.m_ca_impoexpo=="Exportaci\u00F3n")
+                                        tmppermisos=permisosG.exportacion;
+                                    else if(record.data.m_ca_impoexpo=="Importaci\u00F3n")
+                                    {
+                                        if(record.data.m_ca_transporte=="Mar\u00EDtimo")
+                                            tmppermisos=permisosG.maritimo;
+                                        if(record.data.m_ca_transporte=="A\u00E9reo")
+                                            tmppermisos=permisosG.aereo;
+                                    }
+                                    else if(record.data.m_ca_impoexpo=="OTM-DTA")
+                                        tmppermisos=permisosG.otm;
+                                    
+                                    //alert(tmppermisos.toSource());
+                                    if(record.data.m_ca_fchcerrado)
+                                    {
+                                        tmppermisos.Editar=false;
+                                        tmppermisos.Crear=false;
+                                        tmppermisos.Anular=false;
+                                    }
+                                    
+                                    tabpanel.add(
+                                    {
+                                        title: record.data.m_ca_referencia,
+                                        id: 'tab' + ref,
+                                        itemId: 'tab' + ref,
+                                        closable: true,
+                                        autoScroll: true,
+                                        items: [
+                                            new Colsys.Ino.Mainpanel(
+                                            {
+                                                "idmaster": ref, "idtransporte": record.data.m_ca_transporte, 
+                                                "idimpoexpo": record.data.m_ca_impoexpo, "idreferencia": record.data.m_ca_referencia,
+                                                'permisos': tmppermisos, "tipofacturacion":tipofac, "idticket":record.data.m_ca_idticket,
+                                                "modalidad":record.data.m_ca_modalidad
+                                            }),
+                                            {
+                                                region: 'south',
+                                                xtype: 'Colsys.Ino.FormCierre',
+                                                id: 'formCierre' + ref,
+                                                name: 'formCierre' + ref,
+                                                idmaster: ref,
+                                                'permisos': tmppermisos
+                                            }]
+                                    }).show();
+                                }
+                                tabpanel.setActiveTab('tab' + ref);
+                            }
                     },
-                    height: 350,
-                    split: true
+                height: 350,
+                split: true
                 })
             ]
         }
@@ -356,11 +361,27 @@ Ext.define('Colsys.Ino.FormBusqueda', {
                                     queryMode: 'local',
                                     displayField: 'name',
                                     valueField: 'path'
+                                }, {
+                                    xtype: 'combo',
+                                    width: '100%',
+                                    name: 'user_factuaIno',
+                                    id: 'user_factuaIno',
+                                    fieldLabel: 'Facturacion',
+                                    store: Ext.create('Ext.data.Store',{
+                                        fields:['name'],
+                                        data: [
+                                            {"name": "facturacion1"},
+                                            {"name": "facturacion2"}
+                                        ]
+                                    }),
+                                    queryMode: 'local',
+                                    displayField: 'name',
+                                    valueField: 'name'
                                 }
                             ],
                             url: '/inoF2/guardarPreferencias',
                             buttons: [{
-                                    text: 'guardar',
+                                    text: 'Guardar',
                                     formBind: true, //only enabled once the form is valid
                                     //disabled: true,
                                     handler: function () {
@@ -380,30 +401,6 @@ Ext.define('Colsys.Ino.FormBusqueda', {
                                 }]})
                     ]
                 }).show();
-
             }
         }]
-
 });
-
-function loadRef(ref1)
-{
-    ref = ref1;
-    ref = ref.replace(/\./g, '');
-
-    tabpanel = Ext.getCmp('tabpanel1');
-
-    if (!tabpanel.getChildByElement('tab' + ref) && ref != "")
-    {
-        tabpanel.add(
-                {
-                    title: ref,
-                    id: 'tab' + ref,
-                    itemId: 'tab' + ref,
-                    closable: true,
-                    autoScroll: true,
-                    items: [new Colsys.Ino.Mainpanel({"idmaster": 12176})]
-                }).show();
-    }
-    tabpanel.setActiveTab('tab' + ref);
-}

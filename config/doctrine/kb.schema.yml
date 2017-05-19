@@ -42,8 +42,7 @@ KBCategory:
     ca_parent: integer
     ca_name: string
     ca_order: integer
-    ca_icon: string    
-    ca_main: boolean
+    ca_icon: string
   relations:
     SubCategory:
       local: ca_idcategory
@@ -86,4 +85,3 @@ KBTooltip:
       local: ca_idcategory
       foreign: ca_idcategory
       type: one
-

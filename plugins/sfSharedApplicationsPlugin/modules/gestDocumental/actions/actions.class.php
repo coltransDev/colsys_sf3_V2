@@ -10,6 +10,9 @@
  */
 class gestDocumentalActions extends sfActions {
 
+    
+    
+    const RUTINA_GESDOC = 209;
     /**
      * Executes index action
      *
@@ -515,13 +518,23 @@ class gestDocumentalActions extends sfActions {
     }
 
     function executeDatosSeries($request) {
+        
+        $user = $this->getUser();
+        
+        /*Accesos del usuario*/
+        $permisosRutinas = $user->getControlAcceso(self::RUTINA_GESDOC);
+        
+        //print_r($permisosRutinas);
+        //exit;
         $idpadre = ($request->getParameter("node") != "" && $request->getParameter("node") != "root") ? $request->getParameter("node") : "0";
+        
         $series = Doctrine::getTable("Series")
                 ->createQuery("s")
                 ->select("s.*")
                 ->where("s.ca_idpadre = ? ", $idpadre)
                 ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                 ->execute();
+        
         $tree = array("text" => "Gestion Documental",
             "leaf" => true,
             "id" => "1");
@@ -538,9 +551,17 @@ class gestDocumentalActions extends sfActions {
             } else {
                 $leaf = true;
             }
-            $childrens[] = array("text" => $s["ca_nombre"],
-                "leaf" => $leaf,
-                "id" => $s["ca_idsserie"]);
+            if(in_array($s["ca_nombre"], $permisosRutinas) || $idpadre>0)
+            {
+                $childrens[] = array("text" => $s["ca_nombre"],
+                    "leaf" => $leaf,
+                    "id" => $s["ca_idsserie"],
+                    "Consultar"=>((in_array("Consultar", $permisosRutinas))?true:false),
+                    "Crear"=>((in_array("Crear", $permisosRutinas))?true:false),
+                    "Editar"=>((in_array("Editar", $permisosRutinas))?true:false),
+                    "Anular"=>((in_array("Anular", $permisosRutinas))?true:false)
+                    );
+            }
         }
         $tree["children"] = $childrens;
         $this->responseArray = $tree;
@@ -643,17 +664,7 @@ class gestDocumentalActions extends sfActions {
 
                             $algo = true;
                         } else {
-                            Utils::sendEmail(                                  
-                                    
-                            array(
-                                "from"=>"colsys@coltrans.com.co",
-                                "to"=>"maquinche@coltrans.com.co",
-                                "subject"=>"Error subir archivo",
-                                "body"=>$uploadedFile['error'] . "--". $_SERVER["SERVER_ADDR"]."--".$this->getUser()->getUserId()."--".$request->getUri()."::".print_r($uploadedFile),
-                                "mensaje"=>$uploadedFile['error'] . "--". $_SERVER["SERVER_ADDR"]."--".$this->getUser()->getUserId()."--".$request->getUri()."::".print_r($uploadedFile)
-                                )
-                        );
-                            $this->responseArray = array("error" => "No se pudo mover el archivo ". $uploadedFile["error"], "filename" => $fileName, "folder" => $folder, "success" => false);
+                            $this->responseArray = array("error" => "No se pudo mover el archivo", "filename" => $fileName, "folder" => $folder, "success" => false);
                         }
                     }
                     $nombre = ($nombre != "") ? $nombre : $fileName;
@@ -668,24 +679,14 @@ class gestDocumentalActions extends sfActions {
                         $archivo->setCaRef2($ref2);
                         $archivo->setCaRef3($ref3);
                         $archivo->save();
-                        
-                        $idarchivo = $archivo->getCaIdarchivo();
-                        $this->responseArray = array("id" => base64_encode($fileName), "file" => $fileName, "folder" => $folder, "idarchivo" => $idarchivo, "success" => true);
+                        $this->responseArray = array("id" => base64_encode($fileName), "file" => $fileName, "folder" => $folder, "success" => true);
                     }
                 }
             } else {
                 $this->responseArray = array("success" => false);
             }
         } catch (Exception $e) {
-            Utils::sendEmail(
-                        array(
-                            "from"=>"colsys@coltrans.com.co",
-                            "to"=>"maquinche@coltrans.com.co",
-                            "subject"=>"Error subir archivo",
-                            "body"=>$e->getTraceAsString()."--".$_SERVER["SERVER_ADDR"]
-                            )
-                        );
-            $this->responseArray = array("error" => $e->getTraceAsString(), "success" => false);
+            $this->responseArray = array("error" => $e->getMessage(), "success" => false);
         }
         $this->setTemplate($template);
     }
@@ -783,6 +784,7 @@ class gestDocumentalActions extends sfActions {
     }
 
     public function executeDataFilesTree($request) {
+
         $node = ($request->getParameter("node") != "root" ) ? $request->getParameter("node") : "0";
         $idsserie = $this->getRequestParameter("idsserie");        
         $documento = $request->getParameter("documento");
@@ -804,31 +806,37 @@ class gestDocumentalActions extends sfActions {
                 ->orderBy("ca_ref2 desc,ca_nombre");
 
         if ($nombre != "")
-            $q->addWhere("ca_nombre like ?", "%" .$nombre. "%");
+            $q->addWhere("ca_nombre = ?", $nombre);
 
         if ($documento != "")
             $q->addWhere("ca_iddocumental = ?", $documento);
 
-        if ($ref1 != "")
+        if ($ref1 != ""){
+            if($idsserie != 10)
             $q->addWhere("ca_ref1 like ?", "%" . $ref1 . "%");
+            else
+                $q->addWhere("ca_ref1 = ?", $ref1);
+        }
 
         if ($ref2 != "")
             $q->addWhere("ca_ref2 like ?", "%" . $ref2 . "%");
 
         if ($ref3 != "")
-            $q->addWhere("ca_ref3 like ?", "%" . $ref3 . "%");
+            $q->addWhere("ca_ref2 like ?", "%" . $ref3 . "%");
 
         $tipoDocs = $q->execute();
+        //echo "<pre>";print_r($tipoDocs);echo "</pre>";
         $this->tipoDocs = array();
         foreach ($tipoDocs as $t) {
+            $t["ca_ref2"] = utf8_encode($t["ca_ref2"]);
             if ($t["ca_fcheliminado"])
                 continue;
             if ($t["ca_ref3"] != "")
-                $this->tipoDocs[$t["ca_ref1"]][$t["ca_ref2"]][$t["ca_ref3"]][] = array("idarchivo" => $t["ca_idarchivo"], "documento" => utf8_encode($t["TipoDocumental"]["ca_documento"]), "iddocumental" => $t["ca_iddocumental"], "ref1" => $t["ca_ref1"], "ref2" => $t["ca_ref2"], "ref3" => $t["ca_ref3"], "nombre" => ($t["ca_nombre"] . (($t["ca_fcheliminado"] != "") ? " (Eliminado)" : "" )), "usucreado" => $t["ca_usucreado"], "fchcreado" => $t["ca_fchcreado"], "leaf" => true, "expanded" => true);
+                $this->tipoDocs[$t["ca_ref1"]][$t["ca_ref2"]][$t["ca_ref3"]][] = array("idarchivo" => $t["ca_idarchivo"], "documento" => utf8_encode($t["TipoDocumental"]["ca_documento"]), "iddocumental" => $t["ca_iddocumental"], "ref1" => $t["ca_ref1"], "ref2" => $t["ca_ref2"], "ref3" => $t["ca_ref3"], "nombre" => ($t["ca_nombre"] . (($t["ca_fcheliminado"] != "") ? " (Eliminado)" : "" )), "usucreado" => $t["ca_usucreado"], "fchcreado" => $t["ca_fchcreado"], "leaf" => true, "expanded" => true , "idsserie"=>$t["TipoDocumental"]["ca_idsserie"]);
             else if ($t["ca_ref2"] != "") {
-                $this->tipoDocs[$t["ca_ref1"]][$t["ca_ref2"]][] = array("idarchivo" => $t["ca_idarchivo"], "documento" => utf8_encode($t["TipoDocumental"]["ca_documento"]), "iddocumental" => $t["ca_iddocumental"], "ref1" => $t["ca_ref1"], "ref2" => $t["ca_ref2"], "ref3" => $t["ca_ref3"], "nombre" => ($t["ca_nombre"] . (($t["ca_fcheliminado"] != "") ? " (Eliminado)" : "" )), "usucreado" => $t["ca_usucreado"], "fchcreado" => $t["ca_fchcreado"], "leaf" => true, "expanded" => true);
+                $this->tipoDocs[$t["ca_ref1"]][$t["ca_ref2"]][] = array("idarchivo" => $t["ca_idarchivo"], "documento" => utf8_encode($t["TipoDocumental"]["ca_documento"]), "iddocumental" => $t["ca_iddocumental"], "ref1" => $t["ca_ref1"], "ref2" => $t["ca_ref2"], "ref3" => $t["ca_ref3"], "nombre" => ($t["ca_nombre"] . (($t["ca_fcheliminado"] != "") ? " (Eliminado)" : "" )), "usucreado" => $t["ca_usucreado"], "fchcreado" => $t["ca_fchcreado"], "leaf" => true, "expanded" => true , "idsserie"=>$t["TipoDocumental"]["ca_idsserie"]);
             } else if ($t["ca_ref1"] != "") {
-                $this->tipoDocs[$t["ca_ref1"]][] = array("idarchivo" => $t["ca_idarchivo"], "documento" => utf8_encode($t["TipoDocumental"]["ca_documento"]), "iddocumental" => $t["ca_iddocumental"], "ref1" => $t["ca_ref1"], "ref2" => $t["ca_ref2"], "ref3" => $t["ca_ref3"], "nombre" => ($t["ca_nombre"] . (($t["ca_fcheliminado"] != "") ? " (Eliminado)" : "" )), "usucreado" => $t["ca_usucreado"], "fchcreado" => $t["ca_fchcreado"], "leaf" => true, "expanded" => true);
+                $this->tipoDocs[$t["ca_ref1"]][] = array("idarchivo" => $t["ca_idarchivo"], "documento" => utf8_encode($t["TipoDocumental"]["ca_documento"]), "iddocumental" => $t["ca_iddocumental"], "ref1" => $t["ca_ref1"], "ref2" => $t["ca_ref2"], "ref3" => $t["ca_ref3"], "nombre" => ($t["ca_nombre"] . (($t["ca_fcheliminado"] != "") ? " (Eliminado)" : "" )), "usucreado" => $t["ca_usucreado"], "fchcreado" => $t["ca_fchcreado"], "leaf" => true, "expanded" => true, "idsserie"=>$t["TipoDocumental"]["ca_idsserie"]);
             }
         }
 
@@ -854,12 +862,12 @@ class gestDocumentalActions extends sfActions {
                 $childrens = $this->getChildrensFiles($t);
                 if (count($childrens) > 0) {
                     if (!isset($t["idarchivo"]) && !isset($t["nombre"])) {
-                        $tipoDocs[] = array("idarchivo" => $key, "nombre" => $key, "children" => $childrens, "leaf" => false);
+                        $tipoDocs[] = array("idarchivo" => $key, "nombre" => $key, "children" => $childrens , "idsserie"=>$t["idsserie"], "leaf" => false);
                     } else
-                        $tipoDocs[] = array("idarchivo" => $t["idarchivo"], "documento" => $t["documento"], "iddocumental" => $t["iddocumental"], "ref1" => $t["ref1"], "ref2" => $t["ref2"], "ref3" => $t["ref3"], "nombre" => utf8_encode($t["nombre"]), "usucreado" => $t["usucreado"], "fchcreado" => $t["fchcreado"], "children" => $childrens, "leaf" => false);
+                        $tipoDocs[] = array("idarchivo" => $t["idarchivo"], "documento" => $t["documento"], "iddocumental" => $t["iddocumental"], "ref1" => $t["ref1"], "ref2" => $t["ref2"], "ref3" => $t["ref3"], "nombre" => utf8_encode($t["nombre"]), "usucreado" => $t["usucreado"], "fchcreado" => $t["fchcreado"], "children" => $childrens, "idsserie"=>$t["idsserie"], "leaf" => false);
                 }
                 else {
-                    $tipoDocs[] = array("idarchivo" => $t["idarchivo"], "documento" => $t["documento"], "iddocumental" => $t["iddocumental"], "ref1" => $t["ref1"], "ref2" => $t["ref2"], "ref3" => $t["ref3"], "nombre" => utf8_encode($t["nombre"]), "usucreado" => $t["usucreado"], "fchcreado" => $t["fchcreado"], "leaf" => true);
+                    $tipoDocs[] = array("idarchivo" => $t["idarchivo"], "documento" => $t["documento"], "iddocumental" => $t["iddocumental"], "ref1" => $t["ref1"], "ref2" => $t["ref2"], "ref3" => $t["ref3"], "nombre" => utf8_encode($t["nombre"]), "usucreado" => $t["usucreado"], "fchcreado" => $t["fchcreado"], "idsserie"=>$t["idsserie"], "leaf" => true);
                 }
             }
         }
@@ -907,9 +915,9 @@ class gestDocumentalActions extends sfActions {
             $mail->selectFolder($folder1);
             
             foreach ($mail as $messageNum => $message) {
-                if ($message->hasFlag(Zend_Mail_Storage::FLAG_SEEN)) {
-                    continue;
-                }
+                //if ($message->hasFlag(Zend_Mail_Storage::FLAG_SEEN)) {
+                //    continue;
+                //}
                 
                 $from = $message->from;
                 $part = $message;
@@ -950,15 +958,15 @@ class gestDocumentalActions extends sfActions {
                         //$directory = sfConfig::get('app_digitalFile_root').date("Y").DIRECTORY_SEPARATOR;
                         $mime = explode(";", $part->getHeader('content-type'));
                         $mime = $mime[0];
-                        if($folder1=="DOCUMENTOS" || $folder1=="DOCUMENTOSAEREO" || $folder1=="DOCUMENTOSOTM" || $folder1=="DOCUMENTOSCLIENTES")
-                           $asunto = $message->subject;
+                        if($folder1=="DOCUMENTOS" || $folder1=="DOCUMENTOSAEREO" || $folder1=="DOCUMENTOSOTM" || $folder1=="DOCUMENTOSCLIENTES"|| $folder1=="DOCUMENTOSEXPO" || $folder1=="DOCUMENTOSADU")
+                            $asunto = $message->subject;
                         else
-                            $asunto = $fileName;                        
+                            $asunto = $fileName;
 
                         $ref = array();
                         $data = array();
                         $ref = explode("-",$asunto);
-                        if($ref[1]!="cgar" && $folder1!="DOCUMENTOSCLIENTES")
+                        if($ref[1]!="cgar")
                         {
                             $ref[] = substr($asunto, 0, 13);
                             $ref[] = substr($asunto, 14, 4);
@@ -967,29 +975,12 @@ class gestDocumentalActions extends sfActions {
                             $data["ref1"] = $ref[0];
                         }
                         
-                        if($ref[1]=="cgar" || $folder1=="DOCUMENTOSCLIENTES")
-                        {                            
-                            $sql = "select  ca_id from ids.tb_ids 
-                                where ca_idalterno='" . $ref[0] . "' limit 1";
-                                $con = Doctrine_Manager::getInstance()->connection();
-                                $st = $con->execute($sql);
-                                $resul = $st->fetchAll();
-                                $data["ref1"] = $resul[0]["ca_id"];
-                                if($folder1=="DOCUMENTOSCLIENTES")
-                                {
-                                    $data["ref2"] = str_replace( "/","-",$ref[1]);
-                                    //print_r($data);
-                                    
-                                    //exit;
-                                }
-                        }
-                        
                         if (isset($ref[1])) {
                             if ($ref[1] == "cost" || $ref[1] == "costos") {
                                 $data["ref2"] = "costos";
                             } else if ($ref[1] == "pref" || $ref[1] == "libp") {
                                 $data["ref2"] = "";
-                            } else if($data["ref2"]=="") {
+                            } else {
                                 $sql = "select  ca_hbls from tb_inoclientes_sea 
                                 where ca_referencia='" . $ref[0] . "' and UPPER(substring(ca_hbls from (char_length(ca_hbls)-3) ))= UPPER('" . $ref[1] . "') limit 1";
                                 $con = Doctrine_Manager::getInstance()->connection();
@@ -1005,9 +996,7 @@ class gestDocumentalActions extends sfActions {
                             if($folder1=="DOCUMENTOSOTM")
                                 $data["iddocumental"] = "27";
                             else
-                                $data["iddocumental"] = "8";
-                            //echo $asunto;
-
+                                $data["iddocumental"] = "8";                            
                         }
                         else if ($ref[1] == "pref")
                             $data["iddocumental"] = "6";
@@ -1022,17 +1011,49 @@ class gestDocumentalActions extends sfActions {
                         else if ($ref[1] == "cgar")
                         {
                             $data["iddocumental"] = "30";
-                            //$prepath=date('Y'). DIRECTORY_SEPARATOR;
-                            //$prepath=date('Y'). DIRECTORY_SEPARATOR;
+                            $prepath=date('Y'). DIRECTORY_SEPARATOR;
                             
-                            /*$sql = "select  ca_id from ids.tb_ids 
+                            $sql = "select  ca_id from ids.tb_ids 
                                 where ca_idalterno='" . $ref[0] . "' limit 1";
                                 $con = Doctrine_Manager::getInstance()->connection();
                                 $st = $con->execute($sql);
                                 $resul = $st->fetchAll();
                                 $data["ref1"] = $resul[0]["ca_id"];
-                             *  
-                             */
+                                $data["ref1"] = $ref[0];
+                                
+                        /*      if($debug=="true")
+                                {
+                                    echo $sql."<pre>";
+                                    print_r($data);
+                                    echo "<pre>";
+                                    //echo $asunto."<br>".$fileName;
+                                }
+                         */
+                        }
+                        else if ($ref[1] == "pqr")
+                        {
+                            if($folder1=="DOCUMENTOSCLIENTES")
+                                $data["iddocumental"] = "52";
+                            else if($folder1=="DOCUMENTOSEXPO")
+                                $data["iddocumental"] = "50";
+                            else if($folder1=="DOCUMENTOSADU")
+                                $data["iddocumental"] = "51 ";
+                        }
+                        else if ($ref[1] == "ori")
+                        {
+                            if($folder1=="DOCUMENTOSEXPO")
+                                $data["iddocumental"] = "49";
+                            else if($folder1=="DOCUMENTOSADU")
+                                $data["iddocumental"] = "46 ";
+                        }
+                        else if ($ref[1] == "tra")
+                        {
+                            if($folder1=="DOCUMENTOSEXPO")
+                                $data["iddocumental"] = "48";
+                            else if($folder1=="DOCUMENTOSADU")
+                                $data["iddocumental"] = "47 ";
+                            else if($folder1=="DOCUMENTOSOTM")
+                                $data["iddocumental"] = "28 ";
                         }
                         else
                             $data["iddocumental"] = $request->getParameter("iddocumental");

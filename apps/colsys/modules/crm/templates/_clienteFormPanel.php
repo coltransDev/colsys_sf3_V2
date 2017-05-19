@@ -6,7 +6,7 @@
  */
 
 $saludos = array( "Señor" => "Señor", "Señora" => "Señora", "Doctor" => "Doctor", "Doctora" => "Doctora", "Ingeniero" => "Ingeniero", "Ingeniera" => "Ingeniera", "Arquitecto" => "Arquitecto", "Arquitecta" => "Arquitecta" );
-$letras  = array(" ","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P", "Q", "R", "S","T","V","W","X","Y","Z", "AA","AB","FF");
+$letras  = array(" ","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P", "Q", "R", "S","T","U","V","W","X","Y","Z", "AA","AB","AC","AD","FF");
 $parte_1 = array(" ","Avenida","Autopista","Calle","Carrera","Circular","Diagonal","Transversal","Kilómetro","Via");
 $parte_2 = array(" ","Bis","Sur", "Bis Sur");
 $parte_3 = array(" ","Norte","Sur","Este","Oeste");
@@ -949,6 +949,12 @@ include_component("widgets", "widgetCoordinadoresAduana");
                                         boxLabel: 'Cliente de Cuadro',
                                         name: 'consolidar',
                                         id: 'consolidar'
+                                    },
+                                    {
+                                        fieldLabel: 'Tipo de Cliente',
+                                        boxLabel: 'Coordinación de Embarque',
+                                        name: 'embarque',
+                                        id: 'embarque'
                                     }
                                 ]
                             }

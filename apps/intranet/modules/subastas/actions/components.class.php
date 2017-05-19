@@ -39,13 +39,22 @@ class subastasComponents extends sfComponents {
     
     
     public function executeListaSubastas() {
+        
+        $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId()?$this->getUser()->getUserId():"Administrador");
+        $grupoEmp = $usuario->getGrupoEmpresarial();
+        
         $this->articulos = Doctrine::getTable("SubArticulo")
                      ->createQuery("a") 
+                     ->leftJoin("a.Sucursal s")
                      ->addWhere("a.ca_usucomprador IS NULL")
                      ->addWhere("a.ca_fchvencimiento >= ? ", date("Y-m-d H:i:s"))
+                     ->andWhereIn("a.ca_idempresa",$grupoEmp)  
+                     ->andWhere("s.ca_nombre = ? OR a.ca_idsucursal IS NULL",array($usuario->getSucursal()->getCaNombre()))
                      ->addOrderBy("a.ca_fchcreado DESC")
                      ->limit(5)
                      ->execute();
+        
+        $this->user = $this->getUser();
     }
 
 }

@@ -34,6 +34,7 @@ if($buscar)
         }
         else
         {
+            $("#benviar").attr("disabled", true)
             return true;
         }
     }
@@ -65,7 +66,15 @@ if($buscar)
                     $d=$dat[$i];
                     if(intval($d["comision_ino"])==0 && $casos!="")
                         continue;
-                    $url="/ino/verReferencia/modo/".$d["tipo"]."/idmaster/".$d["ca_idmaster"];
+                    if($casos=="2" || $casos=="3" )
+                    {
+                        if($d["facturas"]=="")
+                            continue;
+                    }
+                    if($casos=="3" && $d["ca_stdcircular"] == "Vencido" && $d["comision_ino"]>0)
+                        continue;
+                        
+                    $url="/inoF/verReferenciaExt4/modo/".$d["tipo"]."/idmaster/".$d["ca_idmaster"];
             ?>
             <tr>
                 <td><a href="<?=$url?>" target="_blank"><?=$d["ca_referencia"]?></a></td>
@@ -89,6 +98,7 @@ if($buscar)
                 $stdcircular = $d["ca_stdcircular"];    // Se basa en el dato calculado por la vista de clientes
                 //$diascircular= TimeUtils::dateDiff($d["ca_fchcircular"],date("Y-m-d"))-366;
                 //$d["comision_ino"]=-1;
+                
                 if($d["ca_usucerrado"]!="" && $d["rccaja"]!="" )
                 {
                     //if($diascircular>0)
@@ -133,7 +143,7 @@ if($buscar)
             }
             ?>
             <tr>
-                <th colspan="17" style="text-align: right" ><input type="submit" value="Cobrar Comisiones"></th>
+                <th colspan="17" style="text-align: right" ><input type="submit" value="Cobrar Comisiones" id="benviar"></th>
             </tr>
             <?
         }
@@ -141,12 +151,8 @@ if($buscar)
 </table>
 </form>
 
-
-
-
 <?
 }
-
 ?>
 
 <?
@@ -154,13 +160,13 @@ if(count($comVendedores)>0)
 {
 ?>
 <table class="tableList" width="600px" border="1" id="mainTable" align="center" >
-    <tr><th>No Comprobante</th><th>Fecha</th></tr>
+    <tr><th>No Comprobante</th><th>Fecha</th><th>Usuario</th></tr>
     
     <?
     foreach($comVendedores as $cv)
     {
     ?>
-    <tr><td><a href="/inoReportes/verPdf/idcomprobante/<?=$cv["ca_idcomprobante"]?>"><?=$cv["ca_consecutivo"]?></a></td><td><?=$cv["ca_fchcomprobante"]?></td></tr>
+    <tr><td><a href="/inoReportes/verPdf/idcomprobante/<?=$cv["ca_idcomprobante"]?>"><?=$cv["ca_consecutivo"]?></a></td><td><?=$cv["ca_fchcomprobante"]?></td><td><?=$cv["ca_usucreado"]?></td></tr>
     <?
     }
     ?>

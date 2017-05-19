@@ -32,32 +32,40 @@ class subastasActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeIndex(sfWebRequest $request) {
+        
+        $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
+        $grupoEmp = $usuario->getGrupoEmpresarial();
+        
         $this->articulos = Doctrine::getTable("SubArticulo")
-                     ->createQuery("a") 
-                     ->addWhere("a.ca_usucomprador IS NULL")
-                     ->addWhere("a.ca_fchvencimiento >= ? ", date("Y-m-d H:i:s"))
-                     ->addOrderBy("a.ca_fchcreado DESC")
-                     ->execute();
+                ->createQuery("a") 
+                ->leftJoin("a.Sucursal s")
+                ->addWhere("a.ca_usucomprador IS NULL")
+                ->addWhere("a.ca_fchvencimiento >= ? ", date("Y-m-d H:i:s"))
+                ->andWhereIn("a.ca_idempresa",$grupoEmp)                     
+                ->addOrderBy("a.ca_fchcreado DESC")
+                ->execute();
         
         
         $this->articulosVendidos = Doctrine::getTable("SubArticulo")
-                     ->createQuery("a") 
-                     ->addWhere("a.ca_usucomprador IS NOT NULL")
-                     ->addWhere("a.ca_usucreado = ? ", $this->getUser()->getuserId())
-                     ->addOrderBy("a.ca_fchcreado DESC")
-                     ->limit(15)
-                     ->execute();
+                ->createQuery("a") 
+                ->addWhere("a.ca_usucomprador IS NOT NULL")
+                ->addWhere("a.ca_usucreado = ? ", $this->getUser()->getuserId())
+                ->addOrderBy("a.ca_fchcreado DESC")
+                //->limit(15)
+                ->execute();
         
         $this->articulosSinOfertas = Doctrine::getTable("SubArticulo")
-                     ->createQuery("a") 
-                     ->addWhere("a.ca_usucomprador IS NULL")
-                     ->addWhere("a.ca_usucreado = ? ", $this->getUser()->getuserId())
-                     ->addWhere("a.ca_fchvencimiento < ? ", date("Y-m-d H:i:s"))
-                     ->addOrderBy("a.ca_fchcreado DESC")
-                     ->limit(15)
-                     ->execute();
+                ->createQuery("a") 
+                ->addWhere("a.ca_usucomprador IS NULL")
+                ->addWhere("a.ca_usucreado = ? ", $this->getUser()->getuserId())
+                ->addWhere("a.ca_fchvencimiento < ? ", date("Y-m-d H:i:s"))
+                ->addOrderBy("a.ca_fchcreado DESC")
+                ->limit(15)
+                ->execute();
         
         $this->nivel = $this->getNivel();
+        $this->user = $this->getUser();
+        
     }
     
     
@@ -91,6 +99,7 @@ class subastasActions extends sfActions {
             $bindValues["idarticulo"] = $request->getParameter("idarticulo");
             $bindValues["titulo"] = $request->getParameter("titulo");
             $bindValues["descripcion"] = $request->getParameter("descripcion");
+            $bindValues["idsucursal"] = $request->getParameter("idsucursal");
             $bindValues["fchinicio"] = $request->getParameter("fchinicio");
             $bindValues["horainicio"] = $request->getParameter("horainicio");
             $bindValues["fchvencimiento"] = $request->getParameter("fchvencimiento");
@@ -99,7 +108,7 @@ class subastasActions extends sfActions {
             $bindValues["incremento"] = $request->getParameter("incremento");
             $bindValues["formapago"] = $request->getParameter("formapago");
             $bindValues["directa"] = $request->getParameter("directa");
-            $bindValues["tope"] = $request->getParameter("tope");
+            $bindValues["tope"] = $request->getParameter("tope");            
             $this->form->bind( $bindValues ); 
 			if( $this->form->isValid() ){					
 				
@@ -141,14 +150,13 @@ class subastasActions extends sfActions {
                 }
                 $articulo->setCaFormapago( $bindValues["formapago"] );
                 $articulo->setCaDirecta( $bindValues["directa"]=="1" );
+                $articulo->setCaIdsucursal( $request->getParameter("idsucursal")?$request->getParameter("idsucursal"):null );
+                $articulo->setCaIdempresa($this->getUser()->getIdempresa() );
                 $articulo->save();
                 
                 $this->redirect("subastas/verArticulo?idarticulo=".$articulo->getCaIdarticulo());                
 			}	
         }
-        
-        
-        
         $this->articulo=$articulo;
         
     }
@@ -239,11 +247,11 @@ class subastasActions extends sfActions {
                                    
         }else{                      
             $valor = Doctrine::getTable("SubOferta")
-                               ->createQuery("o")
-                               ->select("MAX(ca_valor)") 
-                               ->addWhere("o.ca_idarticulo = ? ", $articulo->getCaIdarticulo())
-                               ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
-                               ->execute();   
+                    ->createQuery("o")
+                    ->select("MAX(ca_valor)") 
+                    ->addWhere("o.ca_idarticulo = ? ", $articulo->getCaIdarticulo())
+                    ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                    ->execute();   
             
             if( !$valor ){
                 $valorOferta = $articulo->getCaValor();
@@ -270,12 +278,12 @@ class subastasActions extends sfActions {
             $oferta->save( $conn );
                         
             $ofertas = Doctrine::getTable("SubOferta")
-                               ->createQuery("o") 
-                               ->select("ca_usucreado")
-                               ->addWhere("o.ca_idarticulo = ? ", $articulo->getCaIdarticulo())
-                               ->distinct()
-                               ->setHydrationMode(Doctrine::HYDRATE_SCALAR)                                       
-                               ->execute(); 
+                    ->createQuery("o") 
+                    ->select("ca_usucreado")
+                    ->addWhere("o.ca_idarticulo = ? ", $articulo->getCaIdarticulo())
+                    ->distinct()
+                    ->setHydrationMode(Doctrine::HYDRATE_SCALAR)                                       
+                    ->execute(); 
             
             foreach( $ofertas as $usuoferta ){
                 
@@ -317,11 +325,11 @@ class subastasActions extends sfActions {
 
         foreach ($articulos as $articulo ) {
             $oferta = Doctrine::getTable("SubOferta")
-                               ->createQuery("o")                               
-                               ->addWhere("o.ca_idarticulo = ? ", $articulo->getCaIdarticulo())
-                               ->addOrderBy("o.ca_fchcreado DESC")
-                               ->limit(1)
-                               ->fetchOne();
+                    ->createQuery("o")                               
+                    ->addWhere("o.ca_idarticulo = ? ", $articulo->getCaIdarticulo())
+                    ->addOrderBy("o.ca_fchcreado DESC")
+                    ->limit(1)
+                    ->fetchOne();
             
             
             if( $oferta ){
@@ -348,5 +356,4 @@ class subastasActions extends sfActions {
         
         return sfView::NONE;
     }
-
 }

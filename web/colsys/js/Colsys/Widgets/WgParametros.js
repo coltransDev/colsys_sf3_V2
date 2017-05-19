@@ -19,7 +19,7 @@ Ext.define('Colsys.Widgets.WgParametros', {
                 url: '/widgets5/datosParametros',
                 reader: {
                     type: 'json',
-                    root: 'root'
+                    rootProperty: 'root'
                 }
             },
             autoLoad: false

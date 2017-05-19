@@ -440,6 +440,9 @@ class traficosActions extends sfActions {
          $bindValues["fchrecibo"] = $request->getParameter("fchrecibo");
          $bindValues["horarecibo"] = $request->getParameter("horarecibo");
 
+         $bindValues["fchcargue"] = $request->getParameter("fchcargue");
+         $bindValues["fchcierreotm"] = $request->getParameter("fchcierreotm");
+
          $bindValues["observaciones_idg"] = $request->getParameter("observaciones_idg");
 
          for ($i = 0; $i < NuevoStatusForm::NUM_EQUIPOS; $i++) {
@@ -667,19 +670,29 @@ class traficosActions extends sfActions {
             if($request->getParameter("fchmanifiesto")){
                 $status->setProperty("fchmanifiesto", $request->getParameter("fchmanifiesto"));
             }
-            /*$repotm = $reporte->getRepOtm();
+            $repotm = $reporte->getRepOtm();
 
-            $status->setProperty("valor_fob", $request->getParameter("valor_fob"));
+            //$status->setProperty("valor_fob", $request->getParameter("valor_fob"));
 
             if ($repotm) {
-                if($request->getParameter("manifiesto"))
+                /*if($request->getParameter("manifiesto"))
                     $repotm->setCaManifiesto($request->getParameter("manifiesto"));
                if (is_numeric($request->getParameter("valor_fob")))
                   $repotm->setCaValorfob($request->getParameter("valor_fob"));
 
                $repotm->setProperty("function", "executeGuardarStatus" );
+                $repotm->save($conn);*/
+                if ($request->getParameter("fchcargue")) {
+                    $repotm->setCaFchcargue($request->getParameter("fchcargue"));
+                }
+                if ($request->getParameter("fchcierreotm")) {
+                    $repotm->setCaFchcierre($request->getParameter("fchcierreotm"));
+                }
+                if ($request->getParameter("fchsalidaotm")) {
+                    $repotm->setCaFchsalida($request->getParameter("fchsalidaotm"));
+                }
                $repotm->save($conn);
-            }*/
+            }
          //}
 
         if($reporte->getCliente()->getProperty("idgProveedor")){

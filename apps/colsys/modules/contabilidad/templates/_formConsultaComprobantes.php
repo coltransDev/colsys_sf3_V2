@@ -29,7 +29,6 @@ Ext.define('FormConsultaComprobantes', {
         id: 'fecha_inicial',        
         format: "Y-m-d",
         altFormat: "Y-m-d",
-        
         submitFormat: 'Y-m-d'
     },
     {
@@ -48,17 +47,35 @@ Ext.define('FormConsultaComprobantes', {
     {
         fieldLabel: 'No Referencia',
         name: 'ca_referencia',
-        id: 'ca_referencia'
+        id: 'ca_referencia',
+        listeners: {
+            specialkey: function(field, e){
+                if (e.getKey() == e.ENTER)                                                     
+                    this.up("form").SpecialKey(field, e);                                                    
+            }
+        }
     },
     {
         fieldLabel: 'No Comprobante',
         name: 'no_comprobante',
-        id: 'no_comprobante'
+        id: 'no_comprobante',
+        listeners: {
+            specialkey: function(field, e){
+                if (e.getKey() == e.ENTER)                                                     
+                    this.up("form").SpecialKey(field, e);                                                    
+            }
+        }
     },
     {
         fieldLabel: 'No Comprobante 2',
         name: 'no_comprobante2',
-        id: 'no_comprobante2'
+        id: 'no_comprobante2',
+        listeners: {
+            specialkey: function(field, e){
+                if (e.getKey() == e.ENTER)                                                     
+                    this.up("form").SpecialKey(field, e);                                                    
+            }
+        }
     },
     {
         xtype: 'wTipoComprobante',
@@ -83,10 +100,7 @@ Ext.define('FormConsultaComprobantes', {
         displayField: 'name',
         valueField: 'id'
     })
-    //new Ext.colsys.wgTipoComprobante({fieldLabel: 'Tipo Comprobante',
-    //    name: 'tipo_comprobante'})
     ],
-
     // Reset and Submit buttons
     buttons: [{
         text: 'Limpiar',
@@ -97,19 +111,13 @@ Ext.define('FormConsultaComprobantes', {
         text: 'Buscar',
         //formBind: true, //only enabled once the form is valid
         //disabled: true,
-        handler: function() {
-            /*var form = this.up('form').getForm();
-            if (form.isValid()) {
-                form.submit({
-                    success: function(form, action) {
-                       Ext.Msg.alert('Success', action.result.html);
-                    },
-                    failure: function(form, action) {
-                        Ext.Msg.alert('Failed', action.result.msg);
-                    }
-                });
-            }*/
+        handler: function() {        
+            this.up('form').SpecialKey();
         
+        }
+    }],
+    SpecialKey : function()
+    {
             var fecha_inicial=Ext.getCmp("fecha_inicial").getRawValue();
             var fecha_final=Ext.getCmp("fecha_final").getRawValue();
             var no_comprobante=Ext.getCmp("no_comprobante").getValue();
@@ -130,10 +138,7 @@ Ext.define('FormConsultaComprobantes', {
                     'ca_estado': ca_estado
                 }
             });
-        
-        }
-    }]//,
-    //renderTo: Ext.getBody()
+    }
 });
  
 </script>

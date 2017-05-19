@@ -55,7 +55,7 @@ OTM_LCL: |
 
   Las anteriores tarifas NO Incluyen :
 
-  • Servicio documental, administración de inventario de SPRC $62.900,oo
+  • Servicio documental, administración de inventario de SPRC $71.400,oo
   • Uso de instalaciones portuarias para carga LCL/LCL
   • Cargue del contenedor en el terminal Marítimo
   • Gastos de liberación con la naviera, para embarques directos.
@@ -202,7 +202,7 @@ OTM_FCL: |
 
   Las anteriores tarifas NO Incluyen :
 
-  • Servicio documental, administración de inventario de SPRC $62.900,oo
+  • Servicio documental, administración de inventario de SPRC $71.400,oo
   • Uso de instalaciones portuarias 
   • Cargue del contenedor en el terminal Marítimo
   • Gastos de liberación con la naviera, para embarques directos.
@@ -355,19 +355,7 @@ deposito: |
   9. Forma de pago: De contado, al momento del retiro de la mercancía de nuestras instalaciones.
   10. Es obligación del cliente suministrar previamente al ingreso de la mercancía, todas las indicaciones o instrucciones sobre cuidados especiales o restricciones de la mercancía, que deban ser tenidas en cuenta para su almacenamiento y manipulación.
   11. De conformidad con la legislación nacional (Especialmente: i) Circular 170 de 2002 de la DIAN; ii) Resolucion 285 de 2007 y Resolución 212 de 2009 de la UIAF),  es imperativo para nuestra empresa exigir y mantener actualizados los documentos legales propios de nuestros clientes, quienes a su vez están en la obligación legal de suministrarlos. Por esta razón de cumplimiento legal, dicha información y documentación deberá ser aportada oportunamente a nuestra empresa, y en todo caso el cumplimiento de este requisito será verificado al momento del retiro de las mercancías.
-  12. Para que su carga llegue a nuestras instalaciones, los documentos de transporte deben ser consignados según modo de transporte así:
       
-    Instrucciones de Consignación para carga Aérea:
-    RAZON SOCIAL IMPORTADOR NIT No. XXXXXXXXXX
-    COLDEPOSITOS LOGISTICA S.A.S ZONA FRANCA BOGOTA S.A. NIT No.900.841.486-9
-    Carrera 106 No. 15 A 25 - Interior 11 - Manzana 4 Bodega 4 Bogotá DC - Colombia
-
-    Instrucciones de Consignación para carga Marítima:
-    RAZON SOCIAL IMPORTADOR NIT No. XXXXXXXXXX
-    COLDEPOSITOS LOGISTICA S.A.S ZONA FRANCA BOGOTA S.A. NIT No.900.841.486-9
-    Carrera 106 No. 15 A 25 - Interior 11 - Manzana 4 Bodega 4 Bogotá DC - Colombia
-    RAZON SOCIAL DEL OTM Nit. No. XXXXXXXXXXX - Carga en OTM
-
   Para mayor información, consltar página web: www.coldepositos.com.co
 
 
@@ -398,6 +386,7 @@ seguro: |
   5. DEDUCIBLE: 
       • Despachos con valor superior a $450.000.000.oo tendrán un deducible del 10 % sobre el valor de la pérdida, mínimo 3 SMMLV..
       • La aseguradora no atenderá reclamaciones con valor inferior a 2 SMMLV.  Toda reclamación que supere este monto será atendida por la aseguradora y no aplicará ningún deducible.
+      • Para bienes transportados en condiciones especiales de refrigeración, congelación o calefacción el deducible será del 10 % sobre el valor de la perdida, mínimo $5.000.000.
   6. MERCANCÍAS DE ALTO RIESGO:  Llantas y neumáticos, algodón en pacas, productos biomédicos, teléfonos celulares o equivalentes, juegos de video, instrumentos musicales,  software de videos, pieles, cigarrillos, licores, cervezas, vinos, productos farmacéuticos y veterinarios, vehículos de cualquier clase, incluyendo botes o aviones, incluyendo los movilizados por sus propios medios, repuestos automotores, Material CKD, Zinc, cobre o aluminio, perfumes, colonias y productos similares (incluyendo productos de aseo personal), Electrodomésticos, sus partes, accesorios o repuestos para los mismos, libros e impresos y textos escolares, pinturas, alimentos enlatados, leche en polvo, polipropileno, polietileno y látex en bruto o a granel, equipos de computo y/o componentes o accesorios, calzado, textiles, confecciones y cueros en productos terminados, juguetería, café y sus derivados, papel y/o productos elaborados con pulpa de papel tales como: papel higiénico, servilletas, toallas para cocina, toallas sanitarias, y pañales desechables.
   7. EXCLUSIONES: Se considerarán excluidos los despachos que no cumplan las siguientes condiciones:
     A. Exclusiones por falta de acompañamiento vehicular: será obligatorio el uso de acompañantes vehiculares para los siguientes despachos

@@ -114,7 +114,7 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
     },
     columns: [{
             xtype: 'treecolumn',
-            text: 'nombre',
+            text: 'Nombre',
             flex: 1,
             sortable: true,
             dataIndex: 'nombre',
@@ -303,5 +303,11 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
                     }
                 }]
         }],
+        listeners: {
+                beforerender: function (ct, position) {                    
+                    this.setHeight(this.up('tabpanel').up('tabpanel').getHeight() - 150);
+                    this.setWidth(this.up('tabpanel').up('tabpanel').getWidth() - 50);
+                }            
+        }
 })
 

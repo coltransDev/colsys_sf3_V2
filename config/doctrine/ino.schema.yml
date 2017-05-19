@@ -332,7 +332,7 @@ InoComprobante:
     ca_idtipo: integer    
     ca_consecutivo: string
     ca_fchcomprobante: date
-#    ca_idmaster: integer
+    ca_idmaster: integer
     ca_idhouse: integer
     ca_plazo: integer
     ca_tcambio: decimal
@@ -341,11 +341,18 @@ InoComprobante:
     ca_estado: integer
     ca_valor: float
     ca_valor2: float
+    ca_idsucursal: integer
     ca_idmoneda: string
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
     ca_usuactualizado: string
+    ca_fchanulado: timestamp
+    ca_usuanulado: string
+    ca_propiedades: string
+    ca_fchgenero: timestamp
+    ca_usugenero: string
+    ca_idcomprobante_cruce: integer
   relations:
     Ids:
       local: ca_id
@@ -373,6 +380,22 @@ InoComprobante:
       local: ca_idtipo
       foreign: ca_idtipo
       type: one
+    Moneda:
+      local: ca_idmoneda
+      foreign: ca_idmoneda
+      type: one
+    SiigoComprobante:
+      local: ca_idcomprobante
+      foreign: id_uneg_cont
+      type: one
+    IdsSucursal:
+      local: ca_idsucursal
+      foreign: ca_idsucursal
+      type: one
+    InoMaster:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one
     
 
 InoDetalle:
@@ -390,15 +413,16 @@ InoDetalle:
     ca_idcomprobante: integer
     ca_idcuenta: integer
     ca_idconcepto: integer
-    ca_idccosto: integer
+    #ca_idccosto: integer
     ca_idmaster: integer
     ca_idhouse: integer
     ca_id: integer
     ca_db: decimal
-    ca_cr: decimal    
-    ca_observaciones: timestamp
+    ca_cr: decimal
+    ca_observaciones: string
     ca_fchcreado: timestamp
     ca_usucreado: string
+    ca_valor2: numeric
   relations:
     InoHouse:
       local: ca_idhouse
@@ -433,6 +457,10 @@ InoDetalle:
       local: ca_idmaster
       foreign: ca_idmaster
       type: one
+    InoConSiigo:
+      local: ca_idconcepto
+      foreign: ca_cod
+      type: one
 
 InoConcepto:
   options:
@@ -465,89 +493,6 @@ InoConcepto:
       local: ca_idconcepto
       foreign: ca_idconcepto
       type: many
-    InoParametroFacturacion:
-      local: ca_idconcepto
-      foreign: ca_idconcepto
-      type: many
-    InoParametroCosto:
-      local: ca_idconcepto
-      foreign: ca_idconcepto
-      type: many
-
-InoParametroFacturacion:
-  options:
-    symfony:
-      form: false
-      filter: false
-  generatePath: ino
-  tableName: ino.tb_parametros_facturacion
-  columns:
-    ca_idparametro:
-      type: integer
-      autoincrement: true
-      primary: true
-    ca_idconcepto:
-      type: integer
-    ca_idccosto:
-      type: integer
-    ca_idcuenta: integer
-    ca_ingreso_propio: booolean
-    ca_iva: decimal
-    ca_baseretencion: decimal
-    ca_idcuentaretencion: integer
-    ca_valor: decimal
-    ca_convenios: boolean
-    ca_autoretencion: decimal
-    ca_tipoautoretencion: smallint
-  relations:
-    InoConcepto:
-      local: ca_idconcepto
-      foreign: ca_idconcepto
-      type: one
-    InoCentroCosto:
-      local: ca_idccosto
-      foreign: ca_idccosto
-      type: one
-    InoCuenta:
-      local: ca_idcuenta
-      foreign: ca_idcuenta
-      type: one
-    InoCuentaRetencion:
-      local: ca_idcuentaretencion
-      foreign: ca_idcuenta
-      type: one
-      class: InoCuenta
-
-InoParametroCosto:
-  options:
-    symfony:
-      form: false
-      filter: false
-  generatePath: ino
-  tableName: ino.tb_parametros_costos
-  columns:
-    ca_idparametro:
-      type: integer
-      autoincrement: true
-      primary: true
-    ca_idconcepto:
-      type: integer
-    ca_idccosto:
-      type: integer
-    ca_idcuenta: integer
-  relations:
-    InoConcepto:
-      local: ca_idconcepto
-      foreign: ca_idconcepto
-      type: one
-    InoCentroCosto:
-      local: ca_idccosto
-      foreign: ca_idccosto
-      type: one
-    InoCuenta:
-      local: ca_idcuenta
-      foreign: ca_idcuenta
-      type: one
 
 InoConceptoModalidad:
   options:
@@ -590,6 +535,9 @@ InoCuenta:
     ca_descripcion: string
     ca_naturaleza: string
     ca_moneda: string
+    ca_reteica: numeric
+    ca_idempresa: integer
+  
 
 
 InoTipoComprobante:
@@ -618,16 +566,38 @@ InoTipoComprobante:
     ca_inicial_aut: integer
     ca_final_aut: integer
     ca_activo: boolean
-    ca_idsucursal: integer
-    ca_idcta_cierre: integer
-    ca_idcta_iva: integer
+    ca_idsucursal: string   
     ca_numeracion_actual: integer
+    ca_idempresa: integer
+    ca_ctarteica: numeric
+    ca_ctarteiva: numeric
+    ca_ctaiva: numeric
   relations:
-    IdsSucursal:
+    Sucursal:
       local: ca_idsucursal
       foreign: ca_idsucursal
       type: one
-    
+    Ctarteica:
+      local: ca_ctarteica     
+      foreign: ca_idcuenta     
+      type: one
+      class: InoCuenta
+    Ctarteiva:
+      local: ca_ctarteiva
+      foreign: ca_idcuenta
+      type: one
+      class: InoCuenta
+    Ctaiva:
+      local: ca_ctaiva
+      foreign: ca_idcuenta
+      type: one
+      class: InoCuenta
+    Ctaivaparam:
+      local: ca_ctaiva
+      foreign: ca_cuenta
+      type: many
+      class: ParamContables
+
 InoCentroCosto:
   generatePath: ino
   tableName: ino.tb_ccostos
@@ -639,11 +609,13 @@ InoCentroCosto:
     ca_centro: 
       type: integer
       notnull: true
-    ca_subcentro:
-      type: integer      
-    ca_nombre: 
-      type: string
-      notnull: true
+    ca_subcentro: integer      
+    ca_nombre: string
+    ca_impoexpo: string
+    ca_transporte: string
+    ca_idempresa: integer
+    ca_idsucursal: integer
+    ca_tipmodsiigo: string
 
 
 InoAuditor:
@@ -655,25 +627,16 @@ InoAuditor:
       autoincrement: true
       primary: true
     ca_idmaster: integer
-    ca_idempresa: string
-    ca_tipo : char
-    ca_asunto: string(255)
+    ca_tipo : string
+    ca_asunto: string
     ca_detalle : string
-    ca_valor: decimal
-    ca_moneda: decimal
-    ca_tcambio: decimal
-    ca_idantecedente: integer
-    ca_idtarea: integer 
+    ca_compromisos: string
+    ca_respuesta: string
+    ca_fchcompromiso : date
+    ca_idantecedente: integer           
     ca_estado: char
-    ca_camino: string
-    ca_sucursal: string(50)
-    ca_cc: string
     ca_fchcreado: timestamp
-    ca_usucreado: string(15)
-    ca_fchactualizado: timestamp
-    ca_usuactualizado: string(15)
-    ca_fchcompromiso: timestamp
-    ca_usucompromiso: string(15)
+    ca_usucreado: string
   relations:
     InoMaster:
       local: ca_idmaster
@@ -688,11 +651,6 @@ InoAuditor:
       local: ca_idevento
       foreign: ca_idantecedente
       type: many
-    NotiTarea:
-      local: ca_idtarea
-      foreign: ca_idtarea
-      type: one
-      class: NotTarea  
 
 
 
@@ -745,7 +703,7 @@ InoEquipo:
       primary: true
     ca_idconcepto: integer
     ca_idmaster: integer
-    ca_cantidad: float
+    ca_cantidad: int
     ca_serial: string
     ca_numprecinto: string 
     ca_observaciones: string 
@@ -803,28 +761,13 @@ InoViComprobante:
       type: integer
       primary: true
     ca_referencia: string
-    ca_idhouse: string
     ca_valor: float
-    ca_idtipo: 
-      type: integer
-      primary: true
-    ca_consecutivo: string
-    ca_idcomprobante: 
-      type: integer
-      primary: true
+    ca_idtipo: integer
   relations:
     InoMaster:
       local: ca_idmaster
       foreign: ca_idmaster
       type: one
-    InoHouse:
-      local: ca_idhouse
-      foreign: ca_idhouse
-      type: one
-    InoDetalle:
-      local: ca_idcomprobante
-      foreign: ca_idcomprobante
-      type: many
 
 InoViDeduccion:
   generatePath: ino
@@ -886,4 +829,248 @@ InoViTeus:
     InoMaster:
       local: ca_idmaster
       foreign: ca_idmaster
+      type: one
+
+
+InoConSiigo:
+  generatePath: ino
+  tableName: ino.tb_conceptossiigo
+  columns:
+    ca_idconceptosiigo: 
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_cod:
+    ca_descripcion: string
+    ca_cuenta: string
+    ca_cc: integer
+    ca_scc: integer
+    ca_valor: numeric
+    ca_pt: string
+    ca_iva: string
+    ca_porciva: numeric
+    ca_retfte: string
+    ca_cuentarf: numeric
+    ca_baserf: numeric
+    ca_porcrf: integer
+    ca_mone: integer
+    ca_convenio: string
+    ca_autoret: string
+    ca_basear: numeric
+    ca_tipo: string
+    ca_idempresa: integer
+  relations:    
+    InoCuenta:
+      local: ca_cuenta
+      foreign: ca_idcuenta
+      type: one
+    Empresa:
+      local: ca_idempresa
+      foreign: ca_idempresa
+      type: one        
+
+InoConHomologacion:
+  generatePath: ino
+  tableName: ino.tb_conceptoshomo
+  columns:
+    ca_idconcepto:
+      type: integer
+      primary: true
+    ca_idconceptosiigo:
+      type: integer
+      primary: true
+    ca_idccosto:
+      type: integer
+      primary: true
+    ca_impoexpo: string
+    ca_transporte: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fcheliminado: timestamp
+    ca_usueliminado: string
+  relations:
+    InoCentroCosto:
+      local: ca_idccosto
+      foreign: ca_idccosto
+      type: one
+    InoConcepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one
+    UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    UsuActualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    UsuEliminado:
+      local: ca_usueliminado
+      foreign: ca_login
+      type: one
+      class: Usuario
+      
+      
+      
+InoViRepgenerador:
+  generatePath: ino
+  tableName: ino.vi_repgenerador
+  columns:
+    ca_idmaster: integer
+    ca_idhouse: integer
+    ca_ano: string
+    ca_mes: string
+    ca_sucursal: string
+    ca_compania: string
+    ca_referencia: 
+      type: string
+      primary: true
+    ca_numhijas: integer
+    ca_numpiezas: numeric
+    ca_peso: numeric
+    ca_volumen: numeric
+    ca_traorigen: string
+    ca_origen: string
+    ca_ciuorigen: string
+    ca_tradestino: string
+    ca_destino: string
+    ca_ciudestino: string
+    ca_incoterms: string
+    ca_idproveedor: integer
+    ca_nomlinea: string
+    ca_idagente: integer
+    ca_nomagente: string
+    ca_teus: numeric
+    ca_costosn: numeric
+    ca_costosv: numeric
+    ca_ingresos: numeric
+    ca_deducciones: numeric
+    ca_utilidades: numeric
+    ca_fchcerrado: numeric
+    ca_fchliquidado: numeric
+    ca_observaciones: numeric
+    ca_vendedor: numeric
+    ca_fchanulado: numeric
+    ca_impoexpo: numeric
+    ca_transporte: numeric
+  relations:
+    InoMaster:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one
+    InoHouse:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: many
+    Origen:
+      local: ca_origen
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    Destino:
+      local: ca_destino
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    InoViCosto:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one
+    InoViIngreso:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one
+    InoViComprobante:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one
+    InoViDeduccion:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one
+    InoViUtilidad:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one  
+    InoViUnidadesMaster:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one  
+    InoViTeus:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one
+      
+
+InoViConsComprobante:
+  generatePath: ino
+  tableName: ino.vi_consulta_comprobantes
+  columns:
+    ca_idmaster: integer
+    ca_fchreferencia: date
+    ca_referencia: string
+    ca_transporte: string
+    ca_impoexpo: string
+    ca_modalidad: string
+    ca_origen: string
+    ca_destino: string
+    ca_idcliente: integer
+    ca_doctransporte: string
+    ca_idreporte: integer
+    ca_noreporte: string    
+    ca_idtercero: integer
+    ca_id: integer
+    ca_fchcomprobante: date
+    ca_consecutivo:
+      type: string
+      primary: true
+    ca_idtipo: integer
+    ca_idcomprobante: integer
+    ca_fchgenero: timestamp
+    ca_usugenero: string
+    ca_estado: string
+    ca_idhouse: integer
+    ca_tipo: string
+    ca_comprobante: string
+    ca_idsucursal: string
+    ca_idempresa: integer    
+    ca_titulo: string    
+    ca_ciuorigen: string
+    ca_ciudestino: string
+    ca_empresa: string
+    ca_valor: numeric
+    ca_valor2: numeric
+  relations:
+    InoMaster:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one
+    InoHouse:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: many
+    Origen:
+      local: ca_origen
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    Destino:
+      local: ca_destino
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad    
+    InoComprobante:
+      local: ca_idhouse
+      foreign: ca_idhouse
+      type: many    
+    Ids:
+      local: ca_id
+      foreign: ca_id
+      type: one    
+    Empresa:
+      local: ca_idempresa
+      foreign: ca_idempresa
       type: one

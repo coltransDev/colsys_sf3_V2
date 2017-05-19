@@ -16,10 +16,10 @@ Ext.define('Ext.colsys.wgHouse', {
   spForm:'',  
   spExtraParam:'',
   store: Ext.create('Ext.data.Store', {
-            fields: ['id','name'],
+            fields: ['id','name','idcliente','cliente','class'],
             proxy: {
                 type: 'ajax',
-                url: '<?=url_for('widgets/datosHouse')?>',
+                url: '<?=url_for('widgets4/datosHouse')?>',
                 reader: {
                     type: 'json',
                     root: 'root'
@@ -28,6 +28,17 @@ Ext.define('Ext.colsys.wgHouse', {
             autoLoad: false
         }),
   qtip:'Listado House de la referencia',
+  
+    listConfig: {
+        loadingText: 'buscando...',
+        emptyText: 'No matching posts found.',
+
+        // Custom rendering template for each item
+        getInnerTpl: function() {
+            return '<tpl for="."><div class="{class}"><strong>{name}</strong><br /></div></tpl>';
+        }
+    },
+  
   trigger1Class: 'x-form-select-trigger',
     trigger2Class: 'x-form-clear-trigger',
         onRender: function(ct, position){  

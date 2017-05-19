@@ -140,6 +140,9 @@ class NuevoStatusForm extends BaseForm {
         $widgets['fch_cargadisponible'] = new sfWidgetFormExtDate();
         $widgets['fchrecibo'] = new sfWidgetFormExtDate();
         $widgets['horarecibo'] = new sfWidgetFormTime();
+        $widgets['fchcargue'] = new sfWidgetFormExtDate();
+        $widgets['fchcierreotm'] = new sfWidgetFormExtDate();
+        $widgets['fchsalidaotm'] = new sfWidgetFormExtDate();
 
         //solo para validación
         $widgets['fchhorarecibo'] = new sfWidgetFormInputHidden();
@@ -308,6 +311,10 @@ class NuevoStatusForm extends BaseForm {
         $validator['horarecibo'] = new sfValidatorTime(array('required' => true),
                         array('required' => 'Por favor coloque en la hora que usted recibió este status'));
 
+        $validator['fchcargue'] = new sfValidatorDate(array('required' => false),array('required' => 'Por favor coloque la fecha de cargue'));
+        $validator['fchcierreotm'] = new sfValidatorDate(array('required' => false),array('required' => 'Por favor coloque la fecha de cierre'));
+        $validator['fchsalidaotm'] = new sfValidatorDate(array('required' => false),array('required' => 'Por favor coloque la fecha de salida'));        
+
         $validator['horasalida'] = new sfValidatorTime(array('required' => false));
 
         for ($i = 0; $i < self::NUM_EQUIPOS; $i++) {
@@ -382,10 +389,6 @@ class NuevoStatusForm extends BaseForm {
             $this->validatorSchema['idnave']->setOption('required', true);
         }
         
-        if ($taintedValues["idetapa"] == "IACAD") {            
-            $this->validatorSchema['bodega_air']->setOption('required', true);
-        }
-
         $idgxEtapa = TrackingEtapaTable::getIdgXEtapa($taintedValues["idetapa"]);
         if(!$idgxEtapa){        
             $this->validatorSchema['fchrecibo']->setOption('required', false);

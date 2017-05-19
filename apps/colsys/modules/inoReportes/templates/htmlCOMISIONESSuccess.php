@@ -72,7 +72,7 @@ $usuario = $sf_data->getRaw("usuario");
                     ?>
                     </td>
                     <td>10%</td>
-                    <td><?=Utils::formatNumber(($comision*100)/10)?></td>
+                    <td><?=Utils::formatNumber( ( $d->getCaValor2()!="")?$d->getCaValor2(): (($comision*100)/10))?></td>
                     <td><?=Utils::formatNumber($comision)?></td>
                 </tr>
                 <?

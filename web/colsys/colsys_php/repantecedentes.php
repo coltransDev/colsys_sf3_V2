@@ -151,6 +151,8 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)) {
     
     $sucursal = "su.ca_nombre::text ".((count($sucursal)==1)?"like '$sucursal[0]'":"in ('".implode("','",$sucursal)."')");
     $ciudestino = "c2.ca_ciudad::text ".((count($ciudestino)==1)?"like '$ciudestino[0]'":"in ('".implode("','",$ciudestino)."')");
+    if(in_array(5,$trafico))
+        $trafico[0] = "05";
     $trafico = (isset($trafico))?"substr(im.ca_referencia, 5, 2)::text ".((count($trafico)==1)?"like '$trafico[0]'":"in ('".implode("','",$trafico)."')"):"TRUE";
     $traorigen = "t1.ca_nombre::text ".((count($traorigen)==1)?"like '$traorigen[0]'":"in ('".implode("','",$traorigen)."')");
     $casos = (isset($casos))?$casos:"TRUE";

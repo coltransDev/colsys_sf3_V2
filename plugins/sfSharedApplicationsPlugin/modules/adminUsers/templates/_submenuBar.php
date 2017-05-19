@@ -9,7 +9,7 @@ if( $action!="index" ){
 }
 
 switch($action){        
-	case "index":		
+	case "indexExt5":		
 		$button[1]["name"]="Nuevo";
 		$button[1]["tooltip"]="Crear un nuevo Usuario";
 		$button[1]["image"]="22x22/add_user.gif"; 			

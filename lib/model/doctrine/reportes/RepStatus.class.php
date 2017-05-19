@@ -120,8 +120,13 @@ class RepStatus extends BaseRepStatus {
         if ($txt) {
             $txt.="\n";
         }
+        $etapa = $this->getTrackingEtapa();
 
-        $this->setCaStatus($txt . $status);
+        if ($etapa->getCaIdetapa() == "EECRE") {
+            $this->setCaStatus($status . "<br/><br/>" . $txt); // Ticket 36491            
+        } else {
+            $this->setCaStatus($txt . $status);
+        }
     }
 
     /*
@@ -306,6 +311,14 @@ class RepStatus extends BaseRepStatus {
                 $asunto.= $options["subject"] . " " . $this->getAsunto();
             }
             if ($options["subject"] == "Factura de Contenedores Id.: " . $reporte->getCaConsecutivo()." ") {
+                $asunto = "";
+                $asunto.= $options["subject"] . " " . $this->getAsunto();
+            }
+            if ($options["subject"] == "Certificación de Fletes Id.: " . $reporte->getCaConsecutivo()." ") {
+                $asunto = "";
+                $asunto.= $options["subject"] . " " . $this->getAsunto();
+            }
+            if ($options["subject"] == "Recargos Locales Id.: " . $reporte->getCaConsecutivo()." ") {
                 $asunto = "";
                 $asunto.= $options["subject"] . " " . $this->getAsunto();
             }

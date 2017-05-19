@@ -1,17 +1,18 @@
 <?php
-
 /*
  * (c) Coltrans S.A. - Colmas Ltda.
  * 
  */
 $sucursales = $sf_data->getRaw("sucursales");
 $destinos = $sf_data->getRaw("destinos");
+$tipo = $sf_data->getRaw("tipo");
 use_helper("ExtCalendar");
 ?>
 <div class="content" align="center">
-    <h2>Informe de Facturación Proveedores Mar&iacute;timo</h2>
+    <h2>Informe de Facturación Proveedores </h2>
     <br />
     <form action="<?=url_for("reportesGer/listadoFacturas")?>" method="post" >
+        <input type="hidden" name="tipo" id="tipo" value="<?=$tipo?>">
         <table class="tableList"  width="600px"  >
             <tr>
                 <th colspan="7"> 
@@ -19,6 +20,10 @@ use_helper("ExtCalendar");
                 </th>
             </tr>
             <tr>
+                <?
+                if($tipo!="expo" && $tipo!="aereo")
+                {
+                ?>
                 <td>
                     Sufijo:<br />
                     <select name="sufijo">
@@ -32,6 +37,9 @@ use_helper("ExtCalendar");
                     ?>
                     </select>
                 </td>
+                <?
+                }
+                ?>
                 <td>
                     Fecha Inicial:
                     <?=extDatePicker("fchInicial", date("Y-m-")."01")?>
@@ -39,11 +47,11 @@ use_helper("ExtCalendar");
                 <td>
                     Fecha Final:
                     <?=extDatePicker("fchFinal", date("Y-m-d"))?>
-                </td>                
+                </td>
                 <td>
                     Sucursal:
                     <br />
-                    <select name="sucursal">  
+                    <select name="sucursal">
                         <option value="">Todas</option>
                     <?
                     foreach( $sucursales as $s ){
@@ -68,13 +76,12 @@ use_helper("ExtCalendar");
                     ?>
                     </select>
                 </td>
-                
              </tr>
              <tr>
                 <td colspan="2">
                     Costo:
                     <br />
-                    <select name="costo[]" multiple size="5" >                        
+                    <select name="costo[]" multiple size="5" >
                     <?
                     foreach( $costos as $c ){
                     ?>
@@ -87,13 +94,15 @@ use_helper("ExtCalendar");
                 <td style="vertical-align:top;">
                     Proveedor:<br />
                     <input type="text" name="proveedor" />
-
                 </td>
                 <td style="vertical-align:top;">
                     N&uacute;mero Factura:<br />
                     <input type="text" name="factura" />
-
                 </td>
+                 <?
+                if($tipo!="expo")
+                {
+                ?>
                 <td style="vertical-align:top;">
                     Puerto de descarga:
                     <br />
@@ -108,6 +117,9 @@ use_helper("ExtCalendar");
                     ?>
                     </select>
                 </td>
+                <?
+                }
+                ?>
              </tr>
              <tr>
                 <td colspan="6" align="center">
@@ -124,5 +136,5 @@ use_helper("ExtCalendar");
     </tr>
 </table>
 -->
-    </form>       
+    </form>
 </div>

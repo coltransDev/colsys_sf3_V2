@@ -17,6 +17,9 @@ class homepageComponents extends sfComponents {
     const RUTINA_COLSYS = 99;
     const RUTINA_INTRANET = 99;
 
+    const RUTINA_ADMUSUARIOS_COLSYS = 73;
+    const RUTINA_ADMUSUARIOS_INTRANET = 98;
+
     public function getNivel() {
 
         $app = sfContext::getInstance()->getConfiguration()->getApplication();
@@ -43,6 +46,9 @@ class homepageComponents extends sfComponents {
 
     public function executeBirthday() {
 
+        $usuario = Doctrine::getTable("usuario")->find($this->getUser()->getUserId()?$this->getUser()->getUserId():"Administrador");
+        $grupoEmp = $usuario->getGrupoEmpresarial();
+
         $inicial = date('m-d');
         $final = date('m-d', time() + 86400 * 2);
 
@@ -51,20 +57,24 @@ class homepageComponents extends sfComponents {
                         ->innerJoin('u.Sucursal s')
                         ->innerJoin('s.Empresa e')
                         ->where('substring(ca_cumpleanos::text, 6,5) BETWEEN ? AND ?', array($inicial,$final))
-                        ->addWhere('e.ca_idempresa IN (?,?,?)',array('1','2','8'))
+                        //->addWhere('e.ca_idempresa IN (?,?,?)',array('1','2','8'))
                         ->addWhere('ca_activo = ?', true)
+                        ->andWhereIn("s.ca_idempresa", $grupoEmp)
                         ->addOrderBy('substring(ca_cumpleanos::text, 6,5)  ASC')
                         ->execute();    
     }    
     
     public function executeTiempoColaborador() {
 
+        $usuario = Doctrine::getTable("usuario")->find($this->getUser()->getUserId()?$this->getUser()->getUserId():"Administrador");
+        $grupoEmp = $usuario->getGrupoEmpresarial();
+
          $this->usuarios = Doctrine::getTable('Usuario')
                 ->createQuery ('u')
                 ->innerJoin('u.Sucursal s')
                 ->innerJoin('s.Empresa e')                 
                 ->where('u.ca_activo = ?', true)
-                ->addWhere('e.ca_idempresa != 4')
+                ->andWhereIn("s.ca_idempresa", $grupoEmp)
                 ->addWhere("CASE WHEN substr((c.ca_fchingreso)::text,6,5) = substr(now()::text,6,5) THEN(CASE WHEN ((date_part('".year."', now()) - date_part('".year."', c.ca_fchingreso))::int) NOT IN (5,0) THEN ((date_part('".year."', now()) - date_part('".year."', c.ca_fchingreso))::int)%5=0 ELSE false END ) ELSE false END")
                 ->orderby('u.ca_fchingreso DESC')
                 ->execute();             
@@ -72,17 +82,25 @@ class homepageComponents extends sfComponents {
 
     public function executeMainMenu() {
         
+        $this->user = sfContext::getInstance()->getUser();
+        $this->nivel = $this->getUser()->getNivelAcceso(homepageComponents::RUTINA_ADMUSUARIOS_INTRANET);
+        
     }
 
     public function executeNuevosColaboradores() {
 
+        $usuario = Doctrine::getTable("usuario")->find($this->getUser()->getUserId()?$this->getUser()->getUserId():"Administrador");
+        $grupoEmp = $usuario->getGrupoEmpresarial();
+        
         $final = date('Y-m-d');
         $inicial = date('Y-m-d', time() - 86400 * 30);
 
         $this->usuarios = Doctrine::getTable('Usuario')
                         ->createQuery('u')
+                        ->leftJoin("u.Sucursal s")
                         ->where('ca_fchingreso BETWEEN ? and ?', array($inicial, $final))
                         ->addWhere('ca_activo = ?', true)
+                        ->andWhereIn("s.ca_idempresa", $grupoEmp)
                         ->addOrderBy('ca_fchingreso DESC')
                         ->execute();
     }
@@ -104,7 +122,7 @@ class homepageComponents extends sfComponents {
     }
 
     public function executeSearch() {
-
+        
     }
         
     

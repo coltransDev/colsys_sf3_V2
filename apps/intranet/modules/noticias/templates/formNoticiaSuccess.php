@@ -3,6 +3,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+sfContext::getInstance()->getResponse()->removeStylesheet("/js/ext4/resources/css/ext-all-neptune.css");
+sfContext::getInstance()->getResponse()->removeJavascript("ext4/ext-all.js");
+sfContext::getInstance()->getResponse()->removeJavascript("ext4/ux/multiupload/swfobject.js");
+use_stylesheet('ext/css/ext-all.css');
+use_javascript('ext/adapter/ext/ext-base.js');
+use_javascript('ext/ext-all.js');
+use_javascript('ext/src/locale/ext-lang-es.js');
 
 use_helper("ExtCalendar");
 
@@ -62,6 +69,18 @@ $info = str_replace("</b>", "</strong>", $info);
                          
                     </td>
 		</tr>
+                <tr>
+                    <td colspan="3">
+                        <b >Sucursal:</b><br />
+                        <div align="left">
+                            <?
+                            echo $form['idsucursal']->renderError();
+                            $form->setDefault('idsucursal', $noticia->getCaIdsucursal() );
+                            echo $form['idsucursal']->render();  
+                            ?>
+                        </div>
+                    </td>
+                </tr>
                 <tr>
                     <td colspan="3">
                         <div class="yui-skin-sam">

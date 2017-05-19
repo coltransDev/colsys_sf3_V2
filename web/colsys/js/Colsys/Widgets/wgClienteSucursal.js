@@ -3,7 +3,6 @@ Ext.define('Colsys.Widgets.wgClienteSucursal', {
     alias: 'widget.Colsys.Widgets.wgClienteSucursal',
     store: new Ext.data.Store(
     {
-       //model: 'ClientesModel',       
        fields: [
         {name: 'idsucursal'},
         {name: 'ciudad'},
@@ -11,18 +10,7 @@ Ext.define('Colsys.Widgets.wgClienteSucursal', {
         {name: 'idcliente'},
         {name: 'compania' },
         {name: 'cuentapago'}
-        /*{name: 'cargo', mapping: 'ca_cargo'},			
-        {name: 'vendedor', mapping: 'ca_vendedor'},
-        {name: 'nombre_ven', mapping: 'ca_nombre'},
-        {name: 'listaclinton', mapping: 'ca_listaclinton'},
-        {name: 'fchcircular', mapping: 'ca_fchcircular', type:'int'},
-        {name: 'status', mapping: 'ca_status'},
-        {name: 'confirmar', mapping: 'ca_confirmar'},
-        {name: 'preferencias', mapping: 'ca_preferencias'},
-        {name: 'coordinador', mapping: 'ca_coordinador'},
-        {name: 'diascredito', mapping: 'ca_diascredito'},
-        {name: 'cupo', mapping: 'ca_cupo'},
-        {name: 'cuentapago', mapping: 'ca_cuentapago'}*/
+        
      ],
        proxy: {
           url: '/widgets4/datosClienteSucursal',
@@ -30,7 +18,7 @@ Ext.define('Colsys.Widgets.wgClienteSucursal', {
           autoLoad: true,
           reader: 
           {
-             root: 'root',
+             rootProperty: 'root',
              totalProperty: 'totalCount',
              id: 'id',
              type: 'json'
@@ -53,7 +41,7 @@ Ext.define('Colsys.Widgets.wgClienteSucursal', {
      initComponent: function() {
         var me = this; 
         Ext.applyIf(me, {
-            emptyText: 'Seleccione un concepto',
+            emptyText: 'Seleccione',
             loadingText: 'Loading...',
             store: {type: 'roletemplateslocal'}
         });

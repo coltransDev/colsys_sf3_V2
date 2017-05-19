@@ -7,7 +7,7 @@ $usuariosPerfil = $sf_data->getRaw("usuariosPerfil");
 <br />
 
 <form action="<?=url_for("adminPerfiles/guardarPerfilesUsuario?perfil=".$perfil->getCaPerfil())?>" method="post">
-<table width="65%" border="1" class="tableList" >
+<table width="100%" border="1" class="tableList" >
 	<tr>
 		<th>&nbsp;</th>
 		</tr>
@@ -24,6 +24,7 @@ $usuariosPerfil = $sf_data->getRaw("usuariosPerfil");
 				<th scope="col">Nombre</th>
 				<th scope="col">Cargo</th>
 				<th scope="col">Departamento</th>
+                                <th scope="col">Empresa</th>
 				<th scope="col">Sucursal</th>
 			</tr>
 			
@@ -43,6 +44,7 @@ $usuariosPerfil = $sf_data->getRaw("usuariosPerfil");
 			<td><?=$usuario->getCaNombre()?></td>	
 			<td><?=$usuario->getCaCargo()?></td>
 			<td><?=$usuario->getCaDepartamento()?></td>
+                        <td><?=$usuario->getSucursal()->getEmpresa()->getCaNombre()?></td>
 			<td><?=$usuario->getSucursal()->getCaNombre()?></td>
 		</tr>
 

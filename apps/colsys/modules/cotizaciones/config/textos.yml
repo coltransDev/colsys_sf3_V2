@@ -10,13 +10,97 @@ entrada: 'Nos complace saludarlos, de acuerdo con su amable solicitud a continua
 entradaColmas: 'Nos complace saludarlos y a continuación nos permitimos presentar nuestra oferta para el Servicio de Nacionalización con vigencia a partir del día {inicio} hasta el {final} así:'
 
 entradaColdepositos: |
-  A continuación nos permitimos ofrecer nuestros servicios en logistica y almacenamiento para el manejo de sus mercancias en la ZONA FRANCA DE BOGOTA como USUARIO INDUSTRIAL DE SERVICIOS.
+  Cordial saludo, de acuerdo a nuestra conversación nos permitimos ofrecer los servicios de  GESTION LOGISTICA para el manejo su carga en La ZONA FRANCA DE BOGOTA.
   
-  TARIFAS
+  COLDEPOSITOS LOGISTICA S.A.S está establecido en la ZONA FRANCA DE BOGOTA  y actualmente se encuentra calificado como  USUARIO INDUSTRIAL DE SERVICIOS.
   
-  A continuación relacionamos las TARIFAS ESPECIALES para el manejo de su carga, la cual estará vigente desde la fecha hasta el {final}:
+  Proveemos soluciones logísticas para el manejo de su carga prestando los siguientes servicios: 
+    » Recibo, clasificación, pesaje y paletización.
+    » Registro fotográfico y reporte de ingreso. 
+    » Descargues y Cargues.
+    » Ubicación de carga según productos y condiciones específicas. 
+    » Revisión y verificación de calidad a su solicitud. 
+    » Separación de mercancías y  ejecución de inventarios.
+    » Control de mercancías con WMS y reporte de movimientos y saldos online.
+    » Etiquetados de toda clase según requerimientos normativos y de comercialización.
+    » Maquilados como Armado de combos y otros según necesidades particulares.
+    » Alistamiento de pedidos específicos  según ordenes de sus clientes (Picking )
+    » Re empaques y empaques ( Packing )
+    » Coordinación de transporte para despachos y seguimiento de entregas.
+    » Terminación de Importaciones temporales.
+    » Reexpediciones para el resto del mundo.
+    » Tramites documentales frente a entidades de zona franca.
+    » Otros servicios permitidos según reglamentación vigente.
+
+  Estamos enfocados principalmente a las empresas dedicadas a la importación de productos terminados,  que desean ocuparse de la comercialización de sus productos y tercerizar las labores logísticas y la administración de sus inventarios,  con el fin de contribuir a  mejorar sus resultados y hacer eficiente sus despachos y entregas. La experiencia en servicios logísticos nos acredita como especialistas en manejo de mercancías y administración de inventarios.
+
+  VENTAJAS DE ZONA FRANCA DE BOGOTA:
+  
+    » No hay vencimiento de términos.
+    » Se avanza en tiempos de procesos logísticos para etiquetados y maquilas, que son importantes a la hora de cumplir con los requerimientos de sus clientes,  mientras definen la situación aduanera de sus mercancías.
+    » Se obtienen ahorros en transportes, traslados y manipulaciones porque se prestan todos los servicios en una sola bodega.
+    » Permite tener mejores flujos de caja  al no tener que efectuar pago de impuestos hasta no tener vendidas las mercancías.
+    » Operador Inhouse tiempo completo en la bodega de COLDEPOSITOS.
+
+  UBICACIÓN ESTRATEGICA:
+
+  La ubicación estratégica de la ZONA FRANCA DE BOGOTA, permite efectuar la distribución de las mercancías para sus clientes en Bogotá en menor tiempo que desde otras Zonas Francas y cuando las mismas serán distribuidas vía aérea y/o reexpedidas, la cercanía al aeropuerto facilita el traslado.
+
+  INFRAESTRUCTURA FISICA:
+  
+  Las bodegas de COLDEPOSITOS, se encuentran dotadas de:
+    » Estantería Supercarga.
+    » Espacio de Mezanines para ejecución de servicios logísticos.
+    » Montacargas Eléctrico.
+    » Bascula para recibo y entrega de carga pesada.
+    » Zona de Reconocimiento de mercancías.
+    » Circuito Cerrado de Televisión y sistema de monitoreo de alarmas.
+    » Sistema WMS para administración de inventarios y control de mercancías.
+
+  SISTEMAS: 
+
+  Contamos con un sistema de  administración de almacenes WMS (Warehouse Management System), el cual permite tener la trazabilidad de las cargas en todo momento. 
+
+  El sistema está desarrollado para trabajar todos los movimientos de las mercancías con terminales de radiofrecuencia lo que nos permite ejecución de operaciones de recibo, alistamiento ( Picking ) de mercancías según necesidades particulares de manera eficiente, registro de  lotes y fechas de vencimiento, registro de seriales, ejecución de inventarios  y mantener los inventarios en línea en todo momento para que usted los pueda consultar online. 
+
+  SEGURIDAD: 
+
+  Toda el área de las bodegas cuenta con CCTV (circuito cerrado de televisión) y con un sistema de alarma electrónico y de monitoreo, que reporta a una central cualquier eventualidad ocurrida dentro de las instalaciones. En horas laborales se cuenta con vigilancia contratada que se encarga de controlar los ingresos y retiros de personas y mercancías.  
+
+  SEGUROS: 
+
+  Contamos con póliza de seguros la cual ampara contra: incendio, asonada, huelga, motín, conmoción civil, terremoto y sustracción violenta lo cual garantiza la responsabilidad  y custodia de las mercancías mientras permanecen  en nuestras bodegas. Usted deberá tener sus mercancías aseguradas porque las pólizas actúan por subrogación. 
+
+  TARIFAS:
+      
+  Estas  Tarifas estan separadas según la clase de carga que se maneje, es decir; Carga Aerea , Carga Maritima Suelta ( LCL) y Carga en Contenedor (FCL) y estaran vigentes hasta {final}:
 
 despedida: Esperamos que esta cotización sea de su conveniencia y quedamos a su entera disposición para atender cualquier inquietud adicional.
+
+despedidaColdepositos: |
+  La gestión logística incluye:
+    » Recibo, clasificación, pesaje y paletización.
+    » Registro fotográfico y reporte de ingreso.
+    » Ubicación de carga según productos y condiciones específicas. 
+    » Control de mercancías con WMS y reporte de movimientos y saldos online.
+    » Coordinación de transporte para despachos y seguimiento de entregas.
+    
+  Otros servicios logísticos serán cotizados según necesidades particulares.
+  
+  Para que su carga llegue a nuestras instalaciones, los documentos de transporte deben ser consignados según modo de transporte así:
+      
+      INSTRUCCIONES DE CONSIGNACION PARA CARGA AEREA:
+      RAZON SOCIAL IMPORTADOR NIT No. XXXXXXXXXX
+      COLDEPOSITOS LOGISTICA S.A.S ZONA FRANCA BOGOTA S.A. NIT No.900.841.486-9
+      Carrera 106 No. 15 A 25 ? Interior 11 ? Manzana 4 Bodega 4 Bogotá DC ? Colombia
+      
+      INSTRUCCIONES DE CONSIGNACION PARA CARGA MARITIMA:
+      RAZON SOCIAL IMPORTADOR NIT No. XXXXXXXXXX
+      COLDEPOSITOS LOGISTICA S.A.S ZONA FRANCA BOGOTA S.A. NIT No.900.841.486-9
+      Carrera 106 No. 15 A 25 ? Interior 11 ? Manzana 4 Bodega 4 Bogotá DC ? Colombia
+      RAZON SOCIAL DEL OTM Nit. No. XXXXXXXXXXX ? Carga en OTM
+      
+  Esperamos que esta cotización sea de su conveniencia y quedamos a su entera disposición para atender cualquier inquietud adicional.
 
 anexos: Notas importantes para sus importaciones y/o exportaciones.
 

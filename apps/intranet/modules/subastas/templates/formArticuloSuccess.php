@@ -4,7 +4,13 @@
  * (c) Coltrans S.A. - Colmas Ltda.
  * 
  */
-    
+    sfContext::getInstance()->getResponse()->removeStylesheet("/js/ext4/resources/css/ext-all-neptune.css");
+    sfContext::getInstance()->getResponse()->removeJavascript("ext4/ext-all.js");
+    sfContext::getInstance()->getResponse()->removeJavascript("ext4/ux/multiupload/swfobject.js");
+    use_stylesheet('ext/css/ext-all.css');
+    use_javascript('ext/adapter/ext/ext-base.js');
+    use_javascript('ext/ext-all.js');
+    use_javascript('ext/src/locale/ext-lang-es.js');
 ?>
 
 <div align="center">
@@ -54,7 +60,19 @@
                     echo $form['valor']->render();
                     ?>
                 </td>
-            </tr>  
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <b >Aplica para:</b><br />
+                    <div align="left">
+                        <?
+                        echo $form['idsucursal']->renderError();
+                        $form->setDefault('idsucursal', $articulo->getCaIdsucursal() );
+                        echo $form['idsucursal']->render();  
+                        ?>
+                    </div>
+                </td>
+                </tr>
             <tr>
                 <td>
                     <b>Tipo de Subasta:</b><br />

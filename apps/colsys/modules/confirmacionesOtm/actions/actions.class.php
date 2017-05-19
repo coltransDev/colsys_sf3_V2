@@ -282,30 +282,41 @@ class confirmacionesOtmActions extends sfActions {
             if ($etapa == "99999") {
                 $fchplanilla = $this->getRequestParameter("fchplanilla_" . $oid);
                 $status->setProperty("fchplanilla", Utils::parseDate($fchplanilla));
+                
+                $repotm = $reporte->getRepUltVersion()->getRepOtm();                            
+                $repotm->setCaFchcierre($this->getRequestParameter("fchcierreotm_" . $oid));
+                $repotm->save();
+            }
+            if ($etapa == "OTDES" || $this->getRequestParameter("fchcargue_" . $oid)) {
+                $repotm = $reporte->getRepOtm();                            
+                $repotm->setCaFchcargue($this->getRequestParameter("fchcargue_" . $oid));
+                $repotm->setCaFchsalida($this->getRequestParameter("fchsalidaotm_" . $oid));
+                $repotm->save();
             }
             $status->setCaIdetapa($etapa);
             $mensaje = "\n" . $this->getRequestParameter("mensaje_" . $oid);
                     
             $origen = $reporte->getOrigen()->getCaCiudad();
             $destino = $reporte->getDestino()->getCaCiudad();
-
-            $cliente = $inoCliente->getCliente()->getCaCompania();
-            
+            $cliente = $reporte->getCliente()->getCaCompania();
             $consignatario = $reporte->getConsignatario();
+            //$comercial = $reporte->getCaLogin();
             
-            $proveedor = Doctrine::getTable("Tercero")->find($reporte->getCaIdproveedor());
-        
-            $importador = $reporte->getRepOtm()->getImportador()->getCaNombre(); 
-            $comercial = $reporte->getCaLogin();
+            $importador = $reporte->getRepOtm()->getImportador()->getCaNombre();
+            
+            if ($importador)
+                $options["subject"] = $importador . " / " . $cliente . " [" . $origen . " -> " . $destino . "] " . $reporte->getCaOrdenClie() . "-" . $reporte->getRepOtm()->getCaHbls();
+            else
+                $options["subject"] = $cliente . " [" . $origen . " -> " . $destino . "] " . $reporte->getCaOrdenClie() . "-" . $reporte->getRepOtm()->getCaHbls();
                     
-            if ($comercial == 'consolcargo')
+           /*if ($comercial == 'consolcargo')
                 $options["subject"] = $importador . " / " . $cliente . " [" . $origen . " -> " . $destino . "] " . $reporte->getCaOrdenClie() . "-" . $reporte->getRepOtm()->getCaHbls();
             else{
                 if(!$cliente)
                     $cliente = $importador;                
                 $proveedor = substr($reporte->getProveedoresStr(), 0, 130);                
                 $options["subject"] = $proveedor . " / " . $cliente . " [" . $origen . " -> " . $destino . "] " . $reporte->getCaOrdenClie() . "-" . $reporte->getRepOtm()->getCaHbls();
-            }
+            }*/
             
             $options["modo"] = "otm";
             

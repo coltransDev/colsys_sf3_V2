@@ -10,6 +10,7 @@ include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetLinea");
 include_component("widgets", "widgetPais");
 include_component("widgets", "widgetAgente");
+include_component("widgets", "widgetSucursales");
 
 include_component("widgets", "widgetCiudad");
 
@@ -96,10 +97,10 @@ $meses = $sf_data->getRaw("meses");
                                     value:"",
                                     hiddenValue:""
                                 }),
-                                new WidgetComerciales({fieldLabel: 'Vendedor',
-                                    id: 'vendedor',
-                                    name: 'vendedor',                                    
-                                    hiddenName:"login",                                    
+                                new WidgetSucursales({fieldLabel: 'Sucursal',
+                                    id: 'sucursal',
+                                    name: 'sucursal',
+                                    hiddenName:"idsucursal",                                    
                                     value:"",
                                     hiddenValue:""
                                 })
@@ -149,7 +150,14 @@ $meses = $sf_data->getRaw("meses");
                                     impoexpo: "<?= Constantes::TRIANGULACION ?>",
                                     value:"",
                                     hiddenValue:""
-                                }),                                
+                                }),
+                                new WidgetComerciales({fieldLabel: 'Vendedor',
+                                    id: 'vendedor',
+                                    name: 'vendedor',                                    
+                                    hiddenName:"login",                                    
+                                    value:"",
+                                    hiddenValue:""
+                                }),
                                 {
                                     xtype: "checkbox",
                                     fieldLabel: "Listar todos",

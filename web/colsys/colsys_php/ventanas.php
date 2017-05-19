@@ -2446,7 +2446,7 @@ if (isset($suf) and $suf == 'findDianDeposito') {
     echo "</BODY>";
     echo "</HTML>";
 } else if (isset($opcion) and $opcion == 'Concepto' and isset($i) and isset($id)) {
-    if (!$rs->Open("select ca_transporte, ca_modalidad from vi_reportes where ca_idreporte = $id")) {    // Selecciona todos lo registros de la tabla Reportes
+    if (!$rs->Open("select ca_transporte, ca_modalidad from vi_reportes2 where ca_idreporte = $id")) {    // Selecciona todos lo registros de la tabla Reportes
         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
         //echo "<script>document.location.href = 'entrada.php';</script>";
         exit;
@@ -2698,7 +2698,7 @@ if (isset($suf) and $suf == 'findDianDeposito') {
     echo "</BODY>";
     echo "</HTML>";
 } else if (isset($opcion) and $opcion == 'Rangos' and isset($i) and isset($id)) {
-    if (!$rs->Open("select ca_transporte, ca_modalidad from vi_reportes where ca_idreporte = $id")) {    // Selecciona todos lo registros de la tabla Reportes
+    if (!$rs->Open("select ca_transporte, ca_modalidad from vi_reportes2 where ca_idreporte = $id")) {    // Selecciona todos lo registros de la tabla Reportes
         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit;
@@ -2896,7 +2896,7 @@ if (isset($suf) and $suf == 'findDianDeposito') {
 } else if (isset($opcion) and $opcion == 'Recargos_Org' and isset($i) and isset($id)) {
     $tipos = array("$", "%");
     $aplicaciones = array("Valor Fijo", "Sobre Flete", "Sobre Flete + Recargos", "Unitario x Peso/Volumen", "Unitario x Pieza", "Unitario x BLs/HAWBs");
-    if (!$rs->Open("select ca_transporte, ca_incoterms, ca_modalidad from vi_reportes where ca_idreporte = $id")) {    // Selecciona todos lo registros de la tabla Reportes
+    if (!$rs->Open("select ca_transporte, ca_incoterms, ca_modalidad from vi_reportes2 where ca_idreporte = $id")) {    // Selecciona todos lo registros de la tabla Reportes
         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit;
@@ -3175,7 +3175,7 @@ if (isset($suf) and $suf == 'findDianDeposito') {
 } else if (isset($opcion) and $opcion == 'Recargos_Loc' and isset($i) and isset($id)) {
     $tipos = array("$", "%");
     $aplicaciones = array("Valor Fijo", "Sobre Flete", "Sobre Flete + Recargos", "Unitario x Peso/Volumen", "Unitario x Pieza", "Unitario x BLs/HAWBs");
-    if (!$rs->Open("select ca_transporte, ca_incoterms, ca_modalidad from vi_reportes where ca_idreporte = $id")) {    // Selecciona todos lo registros de la tabla Reportes
+    if (!$rs->Open("select ca_transporte, ca_incoterms, ca_modalidad from vi_reportes2 where ca_idreporte = $id")) {    // Selecciona todos lo registros de la tabla Reportes
         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit;

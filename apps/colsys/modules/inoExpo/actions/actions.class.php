@@ -132,7 +132,7 @@ class inoExpoActions extends sfActions {
             }
         }
         if($reporte->getCaModalidad() == "DIRECTO"){
-            $data['nature_quantity'] = $reporte->getCaMercanciaDesc();
+            $data['nature_quantity'] = utf8_encode($reporte->getCaMercanciaDesc());
         }
         
         $con = Doctrine_Manager::connection();
@@ -213,9 +213,11 @@ class inoExpoActions extends sfActions {
                 "gross_unit" => $documento->getCaGrossUnit(),
                 "weight_charge" => $documento->getCaWeightCharge(),
                 "weight_details" => $documento->getCaWeightDetails(),
+                "kind_rate" => $documento->getCaKindRate(),
                 "rate_charge" => $documento->getCaRateCharge(),
                 "due_agent" => $documento->getCaDueAgent(),
                 "due_carrier" => $documento->getCaDueCarrier(),
+                "commodity_item" => $documento->getCaCommodityItem(),
                 "delivery_goods" => $documento->getCaDeliveryGoods(),
                 "other_charges" => $documento->getCaOtherCharges(),
                 "shipper_certifies" => $documento->getCaShipperCertifies(),
@@ -410,6 +412,61 @@ class inoExpoActions extends sfActions {
         $this->plantilla = ($this->getRequestParameter("plantilla")=='true')?true:false;
         $this->copia = ($this->getRequestParameter("copia")=='true')?true:false;
         $this->guiahija = ($this->getRequestParameter("guiahija")=='true')?true:false;
+    }
+
+    public function executeImprimirAwbsStickers(sfWebRequest $request) {
+        $documento = Doctrine::getTable("ExpoAwbtransporte")
+                ->createQuery("e")
+                ->addWhere("e.ca_iddoctransporte = ?", $this->getRequestParameter("id"))
+                ->fetchOne();
+        $referencia = $documento->getInoMaestraExpo();
+        $this->stickers = array();
+        
+        $prefijo = $documento->getExpoCarrierUno()->getCaPrefijo();
+        $consecutivo = $documento->getCaConsecutivo();
+        if ($documento->getCaIddestinoTrs()){
+            $destination = $documento->getCaIddestinoTrs();
+        }elseif ($documento->getCaIddestinoDos()){
+            $destination = $documento->getCaIddestinoDos();
+        }else{
+            $destination = $documento->getCaIddestinoUno();
+        }
+        
+        $guia_numero = $prefijo. " " .$consecutivo. (($guiahija && count($guias)>1)?chr(65+$key):"");
+        $mawb_pieces = $documento->getCaNumberPackages();
+        
+        if ($documento->getCaChildrens()){
+            $guias = json_decode(html_entity_decode($documento->getCaChildrens()), true);
+            foreach ($guias as $key => $guia){
+                $ref_array = explode(".", $documento->getInoMaestraExpo()->getCaReferencia());
+                $prefijo = $ref_array[0];
+                // $ref_array[3] = ((count($guias)>1)?substr($ref_array[3],1,3):$ref_array[3]); // Si hay más de una guía hija, quita un cero al consecutivo
+                $ref_array[3] = substr($ref_array[3],1,3); // Siempre quitará un dígito al consecutivo para la guía hija
+                $consecutivo = $ref_array[1].$ref_array[2].$ref_array[3].$ref_array[4];
+                $guia_hija = $prefijo. " " .$consecutivo. ((count($guias)>1)?chr(65+$key):"");
+
+                $numero_stickers = $guia['number_packages'];
+                for($i=0; $i< $numero_stickers; $i++){
+                    $this->stickers[] = array(
+                        "guia_numero" => $guia_numero,
+                        "destination" => $destination,
+                        "mawb_pieces" => $mawb_pieces,
+                        "guia_hija" => $guia_hija,
+                        "numero_stickers" => $numero_stickers
+                    );
+                }
+            }
+        }else {
+            for($i=0; $i< $mawb_pieces; $i++){
+                $this->stickers[] = array(
+                    "guia_numero" => $guia_numero,
+                    "destination" => $destination,
+                    "mawb_pieces" => $mawb_pieces,
+                    "guia_hija" => "",
+                    "numero_stickers" => ""
+                );
+            }
+        }
     }
 
     public function executeDatosItemsDocs(sfWebRequest $request) {
@@ -798,6 +855,9 @@ class inoExpoActions extends sfActions {
             if ($datos->weight_charge or $datos->weight_charge == 0) {
                 $expoAwbtransporte->setCaWeightCharge($datos->weight_charge);
             }
+            if ($datos->kind_rate) {
+                $expoAwbtransporte->setCaKindRate($datos->kind_rate);
+            }
             if ($datos->rate_charge or $datos->rate_charge == 0) {
                 $expoAwbtransporte->setCaRateCharge($datos->rate_charge);
             }
@@ -809,6 +869,9 @@ class inoExpoActions extends sfActions {
             }
             if ($datos->delivery_goods) {
                 $expoAwbtransporte->setCaDeliveryGoods($datos->delivery_goods);
+            }
+            if ($datos->commodity_item) {
+                $expoAwbtransporte->setCaCommodityItem($datos->commodity_item);
             }
             if ($datos->other_charges) {
                 $expoAwbtransporte->setCaOtherCharges($datos->other_charges);

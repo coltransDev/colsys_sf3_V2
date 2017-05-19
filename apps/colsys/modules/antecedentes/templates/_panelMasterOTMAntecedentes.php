@@ -206,7 +206,8 @@ include_component("widgets", "widgetCiudad");
                         if(action.result.numref){
                             var numref = action.result.numref;
                             //alert("/ino/verReferencia/modo/5/idmaster/"+numref)
-                            document.location = "/inoF/verReferenciaExt4/modo/5/idmaster/"+numref;
+                            //document.location = "/inoF/verReferenciaExt4/modo/5/idmaster/"+numref;
+                            document.location = "/inoF2/indexExt5/idmaster/"+numref;
                         }
                     },
                     failure:function(form,action){

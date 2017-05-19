@@ -83,14 +83,15 @@ Ext.onReady(function() {
                     itemclick: function(t,record,item,index){                    
                         if(record.data.depth==2)
                         {
-
+                            console.log(record.data);
                             var vport = t.up('viewport'),
                             tabpanel = vport.down('tabpanel');
 
                             if(!tabpanel.getChildByElement('tab'+record.data.id)  && record.data.id!=""){
-
+                                console.log(record.data);
                                 obj=[
                                     new FormConsultaArchivos({id:'form-consulta-archivos'+record.data.id,name:'form-consulta-archivos'+record.data.id,idreg:record.data.id,
+                                        "Consultar":record.data.Consultar,"Crear":record.data.Crear,"Editar":record.data.Editar,"Anular":record.data.Anular,
                                         items:[{
                                             xtype: 'hidden',
                                             id:'idsserie'+record.data.id,
@@ -108,7 +109,13 @@ Ext.onReady(function() {
                                             fieldLabel: 'Nombre',
                                             id:'nombre'+record.data.id,
                                             name:'nombre',
-                                            allowBlank:true
+                                            allowBlank:true,
+                                            listeners: {
+                                                specialkey: function(field, e){
+                                                    if (e.getKey() == e.ENTER)                                                     
+                                                        this.up("form").SpecialKey(field, e);                                                    
+                                                }
+                                            }
                                             
                                         },{
                                             xtype: 'filefield',
@@ -144,25 +151,73 @@ Ext.onReady(function() {
                                             id:'ref1'+record.data.id,
                                             name:'ref1',
                                             value:'<?=$ref1?>',
-                                            allowBlank:false
+                                            allowBlank:false,
+                                            listeners: {
+                                                specialkey: function(field, e){
+                                                    if (e.getKey() == e.ENTER)                                                     
+                                                        this.up("form").SpecialKey(field, e);                                                    
+                                                }
+                                            }
                                         },
                                         {
                                             xtype: 'textfield',
                                             fieldLabel: 'Referencia 2',
                                             id:'ref2'+record.data.id,
                                             name:'ref2',
-                                            value:'<?=$ref2?>'
+                                            value:'<?=$ref2?>',
+                                            listeners: {
+                                                specialkey: function(field, e){
+                                                    if (e.getKey() == e.ENTER)                                                     
+                                                        this.up("form").SpecialKey(field, e);                                                    
+                                                }
+                                            }
                                         },
                                         {
                                             xtype: 'textfield',      
                                             fieldLabel: 'Referencia 3',
                                             id:'ref3'+record.data.id,
                                             name:'ref3',
-                                            value:'<?=$ref3?>'
+                                            value:'<?=$ref3?>',
+                                            listeners: {
+                                                specialkey: function(field, e){
+                                                    if (e.getKey() == e.ENTER)                                                     
+                                                        this.up("form").SpecialKey(field, e);                                                    
+                                                }
+                                            }
                                         }
-                                    ]
+                                    ],
+                                    SpecialKey : function(field, e)
+                                    {
+                                        console.log(this);
+                                        
+                                            form=this.getForm();
+                                            var nombre=form.findField("nombre").getValue();
+                                            var documento=form.findField("documento").getValue();
+                                            var ref1=form.findField("ref1").getValue();
+                                            var ref2=form.findField("ref2").getValue();
+                                            var ref3=form.findField("ref3").getValue();
+                                            var idsserie=form.findField("idsserie").getValue();
+                                            //var idreg=this.up('form').idreg;
+
+                                            //var storeTree=Ext.getCmp("tree-grid-file"+idreg).getStore();
+                                            //alert(this.up('form').id + "--"+this.up('form').idreg)
+                                            var storeTree=Ext.getCmp("grid-archivos"+this.idreg).getStore();
+
+                                            storeTree.load({
+                                                params : {
+                                                    nombre : nombre,
+                                                    ref1 : ref1,
+                                                    ref2 : ref2,
+                                                    ref3 : ref3,
+                                                    documento : documento,
+                                                    idsserie: idsserie
+                                                }
+                                            });
+                                        
+                                
+                                    },   
                                     }),
-                                    new Ext.colsys.treeGridFiles({id:'grid-archivos'+record.data.id,name:'grid-archivos'+record.data.id})
+                                    new Ext.colsys.treeGridFiles({id:'grid-archivos'+record.data.id,name:'grid-archivos'+record.data.id,"Consultar":record.data.Consultar,"Crear":record.data.Crear,"Editar":record.data.Editar,"Anular":record.data.Anular})
                                 ];
                                 
                                 tabpanel.add(                                

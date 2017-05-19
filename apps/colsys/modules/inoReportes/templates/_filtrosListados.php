@@ -2,15 +2,19 @@
 //echo $impoexpo;
 //echo $transporte;
 
-include_component("widgets", "widgetUsuario");
+
 
 $comerciales = $sf_data->getRaw("comerciales");
-$sucursales = $sf_data->getRaw("sucursales");
-
 $comercial = $sf_data->getRaw("comercial");
 $idcomercial = $sf_data->getRaw("idcomercial");
 $sucursal = $sf_data->getRaw("sucursal");
+$sucursales2 = $sf_data->getRaw("sucursales2");
 $idsucursal = $sf_data->getRaw("idsucursal");
+
+
+include_component("widgets", "widgetUsuario");
+//include_component("widgets", "widgetSucursales");
+
 
 //echo $url;
 ?>
@@ -18,7 +22,7 @@ $idsucursal = $sf_data->getRaw("idsucursal");
       <h3>Informe de Comisiones para Vendedores</h3>
 	  <br />
     
-    <form method="post" id="reporteCargaForm" action="#" >
+          <form method="post" id="reporteCargaForm" action="#"  enctype="application/x-www-form-urlencoded" >
       <input type="hidden" name="entrada" value="" />
       <input type="hidden" name="comision" value="1" />
       <table width="600" border="0" cellspacing="1" cellpadding="5" class="tableList">
@@ -61,12 +65,13 @@ $idsucursal = $sf_data->getRaw("idsucursal");
           ?>
           <td class="listar">Año: <br />
             <select name="anio" id="anio">
-                <option value="<?=(date("Y"))?>" selected><?=date("Y")?></option>
+                <option value="" <?=($aa=="")?"selected":""?>>Todos</option>
+                <!--<option value="<?=(date("Y"))?>" <?=($aa==date("Y"))?"selected":""?>><?=date("Y")?></option>-->
                 <?
-                for($i=(date("Y")-1);$i>=(date("Y")-2);$i--)
+                for($i=(date("Y"));$i>=(date("Y")-2);$i--)
                 {
                 ?>
-                <option value="<?=($i)?>"><?=$i?></option>
+                <option value="<?=($i)?>" <?=($aa==$i)?"selected":""?>><?=$i?></option>
                 <?
                 }
                 ?>
@@ -77,13 +82,24 @@ $idsucursal = $sf_data->getRaw("idsucursal");
             {
      ?>
           <td class="listar">Sucursal: <br />
+ 
+
               <select name="sucursal" id="sucursal" onchange="loadUser(this.value)">
                   <option value="" selected>Todas</option>
                 <?
-                foreach($sucursales as $s)
+                foreach($sucursales2 as $s)
                 {
+                    switch($s["ca_nombre"])
+                    {
+                        case "BogotÃ¡ D.C.":
+                          $s["ca_nombre"]="Bogotá D.C.";
+                        break;
+                        case "MedellÃ­n":
+                          $s["ca_nombre"]="Medellín";
+                        break;
+                    }
                 ?>
-                <option value="<?=$s->getCaNombre()?>" <?=($sucursal==$s->getCaNombre())?"selected":""?>> <?=($s->getCaNombre())?> </option>
+                  <option value="<?=  ($s["ca_nombre"])?>" <?=($sucursal==$s["ca_nombre"])?"selected":""?>> <?=$s["ca_nombre"]?> </option>
                 <?
                 }
                 ?>
@@ -141,6 +157,7 @@ $idsucursal = $sf_data->getRaw("idsucursal");
                 <option value="0" <?=($casos=="0")?"selected":""?>>Casos Cerrados</option>
                 <option value="1" <?=($casos=="1")?"selected":""?>>Casos Abiertos</option>
                 <option value="2" <?=($casos=="2")?"selected":""?>>Casos Para comisionar</option>
+                <option value="3" <?=($casos=="3")?"selected":""?>>Casos Para comisionar sin circular</option>
                 <option value="" <?=($casos=="")?"selected":""?>>Todos los Casos</option></select>          
           </td>
         </tr>
@@ -150,7 +167,7 @@ $idsucursal = $sf_data->getRaw("idsucursal");
         <table cellspacing="10">
             <tr>
                 <th>
-                    <input class="submit" type='submit' name='buscar' value='  Buscar  '  />  
+                    <input class="submit" type='submit' name='buscar' value='Buscar'  />  
                 </th>
             </tr>
         </table>

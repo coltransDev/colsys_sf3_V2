@@ -378,6 +378,9 @@ Ext.extend(PanelConsultaCiudades, Ext.tree.TreePanel, {
         fp.getForm().findField("modalidad").disable();
         if( n.attributes.impoexpo=="expo" ){
             fp.getForm().findField("impoexpo").setValue( '<?=Constantes::EXPO?>' );
+        }else if( n.attributes.impoexpo=="inte" ){
+            fp.getForm().findField("impoexpo").setValue( '<?=Constantes::INTERNO?>' );
+            fp.getForm().findField("modalidad").enable();
         }else{
             fp.getForm().findField("impoexpo").setValue( '<?=Constantes::IMPO?>' );
         }

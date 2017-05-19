@@ -28,7 +28,7 @@ Ext.define('Colsys.Widgets.wgStatus', {
             url: '/inoF2/historialStatus',
             reader: {
                 type            : 'json',
-                root            : 'root'
+                rootProperty            : 'root'
             }
         },        
         sorters: [{

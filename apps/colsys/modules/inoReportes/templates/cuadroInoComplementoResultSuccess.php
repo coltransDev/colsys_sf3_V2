@@ -39,7 +39,7 @@ $refs = $sf_data->getRaw("refs");
                   $totales["numrefs"]++;
              ?>
              <tr>
-               <td><?=link_to($r["ca_referencia"], "ino/verReferencia?idmaster=".$r["ca_idmaster"], array("target"=>"_blank"))?></td>
+               <td><?=link_to($r["ca_referencia"], "inoF/verReferenciaExt4?idmaster=".$r["ca_idmaster"], array("target"=>"_blank"))?></td>
                <td><?=$r["Origen"]["ca_ciudad"]?></td>
                <td><?=$r["Destino"]["ca_ciudad"]?></td>
                <td><?=$r["InoHouse"]["0"]["Reporte"]["ca_incoterms"]?></td>

@@ -1,4 +1,4 @@
-<?
+<?php
 include_component("widgets", "widgetTransporte");
 include_component("widgets", "widgetModalidad");
 include_component("widgets", "widgetPais");
@@ -38,12 +38,12 @@ $tit_mem="";
 $tit_cli="";
 ?>
 
-<div align="center" >
+<div id="filtros" align="center">
     <br />
     <h3> Reporte de Carga Operativa </h3>
     <br />
 </div>
-<div align="left" id="container"></div>
+
 <script language="javascript">
     var tabs = new Ext.FormPanel({
         labelWidth: 75,
@@ -281,7 +281,7 @@ $tit_cli="";
 
         }
     });
-    tabs.render("container");
+    tabs.render("filtros");
 </script>
 
 <?

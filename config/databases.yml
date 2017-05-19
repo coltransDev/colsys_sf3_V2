@@ -1,27 +1,155 @@
-dev:
-  doctrine:
-    param:
-      classname: DebugPDO
-#cli:
-#  doctrine:
-#    class: sfDoctrineDatabase
-#    param:
-##     dsn: 'pgsql:dbname=Coltrans;host=10.192.1.127'
-##     username: postgres
-##     password: cglti$col91
-#
-#     dsn: 'pgsql:dbname=Coltrans;host=10.192.1.104'
-#     username: Administrador
-#     password: cglti$col91
-#     encoding: iso8859-1
-
 all:
+  slave:
+    class: sfDoctrineDatabase
+    param:
+     dsn: 'pgsql:dbname=Coltrans;host=172.16.1.12'
+     username: Administrador
+     password: V9p0%rRc9$
+     encoding: iso8859-1
+     classname: DebugPDO
+  master:
+    class: sfDoctrineDatabase
+    param:
+     dsn: 'pgsql:dbname=Coltrans;host=172.16.1.12'
+     username: Administrador
+     password: V9p0%rRc9$
+     encoding: iso8859-1
+     classname: DebugPDO
+  opencomex:
+    class: sfDoctrineDatabase
+    param:
+     dsn: 'mysql:dbname=COLMASXX;host=opencomex4.opentecnologia.com.co;port:3306'
+     username: colsys
+     password: c0l5y5
+     #encoding: iso8859-1
+     #classname: DebugPDO
+  produccion:
+    class: sfDoctrineDatabase
+    param:
+     dsn: 'pgsql:dbname=Coltrans;host=172.16.1.12'
+     username: Administrador
+     password: V9p0%rRc9$
+     encoding: iso8859-1
+     classname: DebugPDO
+  replica:
+    class: sfDoctrineDatabase
+    param:
+     dsn: 'pgsql:dbname=Coltrans;host=172.16.1.16'
+     username: Administrador
+     password: V9p0%rRc9$
+     encoding: iso8859-1
+     classname: DebugPDO
+  testing:
+    class: sfDoctrineDatabase
+    param:
+     dsn: 'pgsql:dbname=Coltrans;host=10.192.1.70'
+     username: Administrador
+     password: V9p0%rRc9$
+     encoding: iso8859-1
+     classname: DebugPDO
   doctrine:
     class: sfDoctrineDatabase
     param:
-      is_master: true
-      dsn: 'pgsql:dbname=Coltrans;host=10.192.1.104'
-#      dsn: 'pgsql:dbname=Coltrans;host=10.192.1.64'
-      username: Administrador
-      password: cglti$col91
-      encoding: iso8859-1
+     dsn: 'pgsql:dbname=Coltrans;host=172.16.1.12'
+     username: Administrador
+     password: V9p0%rRc9$
+     encoding: iso8859-1
+     classname: DebugPDO
+
+dev:
+  doctrine:
+    class: sfDoctrineDatabase
+    param:
+     dsn: 'pgsql:dbname=Coltrans;host=172.16.1.12'
+     username: Administrador
+     password: V9p0%rRc9$
+     encoding: iso8859-1
+     classname: DebugPDO
+  
+cli:
+  doctrine:
+    class: sfDoctrineDatabase
+    param:
+     dsn: 'pgsql:dbname=Coltrans;host=172.16.1.12'
+     username: postgres
+     password: V9p0%rRc9$
+     encoding: iso8859-1
+     classname: DebugPDO
+
+prod:   
+  slave:
+    class: sfDoctrineDatabase
+    param:
+     dsn: 'pgsql:dbname=Coltrans;host=172.16.1.12'
+     username: Administrador
+     password: V9p0%rRc9$
+     encoding: iso8859-1
+     classname: DebugPDO
+  master:
+    class: sfDoctrineDatabase
+    param:
+     dsn: 'pgsql:dbname=Coltrans;host=172.16.1.12'
+     username: Administrador
+     password: V9p0%rRc9$
+     encoding: iso8859-1
+     classname: DebugPDO 
+  doctrine:
+    class: sfDoctrineDatabase
+    param:
+     dsn: 'pgsql:dbname=Coltrans;host=172.16.1.12'
+     username: Administrador
+     password: V9p0%rRc9$
+     encoding: iso8859-1
+     classname: DebugPDO
+
+coltrans:   
+  slave:
+    class: sfDoctrineDatabase
+    param:
+     dsn: 'pgsql:dbname=Coltrans;host=172.16.1.12'
+     username: Administrador
+     password: V9p0%rRc9$
+     encoding: iso8859-1
+     classname: DebugPDO
+  master:
+    class: sfDoctrineDatabase
+    param:
+     dsn: 'pgsql:dbname=Coltrans;host=172.16.1.12'
+     username: Administrador
+     password: V9p0%rRc9$
+     encoding: iso8859-1
+     classname: DebugPDO 
+  doctrine:
+    class: sfDoctrineDatabase
+    param:
+     dsn: 'pgsql:dbname=Coltrans;host=172.16.1.12'
+     username: Administrador
+     password: V9p0%rRc9$
+     encoding: iso8859-1
+     classname: DebugPDO
+
+consolcargo:   
+  slave:
+    class: sfDoctrineDatabase
+    param:
+     dsn: 'pgsql:dbname=Consolcargo;host=172.16.1.12'
+     username: Administrador
+     password: V9p0%rRc9$
+     encoding: iso8859-1
+     classname: DebugPDO
+  master:
+    class: sfDoctrineDatabase
+    param:
+     dsn: 'pgsql:dbname=Consolcargo;host=172.16.1.12'
+     username: Administrador
+     password: V9p0%rRc9$
+     encoding: iso8859-1
+     classname: DebugPDO 
+  doctrine:
+    class: sfDoctrineDatabase
+    param:
+     dsn: 'pgsql:dbname=Consolcargo;host=172.16.1.12'
+     username: Administrador
+     password: V9p0%rRc9$
+     encoding: iso8859-1
+     classname: DebugPDO

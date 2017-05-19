@@ -59,11 +59,6 @@ SurvEvaluacion:
       local: ca_notificar
       foreign: ca_login
       type: one
-    UsuCreado:
-      local: ca_usucreado
-      foreign: ca_login
-      type: one
-      class: Usuario
       
 
 

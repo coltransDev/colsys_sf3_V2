@@ -121,6 +121,29 @@ $folder = $reporte->getDirectorioBase();
             ?>
         }
 
+        if(value=="OTDES"){            
+            if($("#fchcargue_ext_control").val() == ""){
+                alert("Por favor ingrese la fecha de cargue");
+                return 0;
+            }
+            if($("#fchsalidaotm_ext_control").val() == ""){
+                alert("Por favor ingrese la fecha de salida Otm");
+                return 0;
+            }
+        }        
+        <?
+        if ($modo == "otm"){
+            ?>
+            if(value == "99999"){
+                if($("#fchcierreotm_ext_control").val() == ""){
+                    alert("Por favor ingrese la fecha de cierre");
+                    return 0;
+                }
+            }
+            <?
+        }
+        ?>
+
         if (numChecked > 0 || <?= $reporte->getCliente()->getProperty("consolidar_comunicaciones") ? "true" : "false" ?>){
             document.getElementById("form1").submit();
         } else{
@@ -273,10 +296,30 @@ $folder = $reporte->getDirectorioBase();
         }
         
         if(value== "IACCR" || value== "IACAD"){
-            $("#linea").show();
+            $(".linea").show();
         }else{
-            $("#linea").hide();
+            $(".linea").hide();
         }
+
+        if(value == "OTDES"){
+            $("#fchcargue").show();
+            $("#fchsalidaotm").show();
+        }else{
+            $("#fchcargue").hide();
+            $("#fchsalidaotm").hide();
+        }
+
+        <?
+        if ($modo == "otm"){
+            ?>
+            if(value == "99999"){
+                $("#fchcierreotm").show();
+            }else{
+                $("#fchcierreotm").hide();
+            }
+            <?
+        }
+        ?>
 
         <?
         if ($_REQUEST["txtincompleto"] != "") {
@@ -320,8 +363,8 @@ $folder = $reporte->getDirectorioBase();
 
 
 <div class="content" align="center">
-    <div id="button11" name="button11" ></div>
-    <form name="form1" id="form1" action="<?= url_for("traficos/nuevoStatus?modo=" . $modo . "&idreporte=" . $reporte->getCaIdreporte()) ?>" method="post" name="form1" >
+    <div id="button11"></div>
+    <form name="form1" id="form1" action="<?= url_for("traficos/nuevoStatus?modo=" . $modo . "&idreporte=" . $reporte->getCaIdreporte()) ?>" method="post">
         <?
         echo $form['mensaje_dirty']->render();
         echo $form['mensaje_mask']->render();
@@ -524,7 +567,7 @@ $folder = $reporte->getDirectorioBase();
             <tr>
                 <td colspan="2">
                     <table width="100%" border="0" class="tableList">
-                        <tr id="linea" style="display:none">
+                        <tr class="linea" style="display:none">
                             <td id="aerolinea" colspan="6">
                                 <div align="left"><b>Aerolínea</b>:<br />
                                     <?= $reporte->getIdsProveedor()->getIds()->getCaNombre() ?>
@@ -594,16 +637,49 @@ $folder = $reporte->getDirectorioBase();
                                 <td><div align="left"><b>Continuación:</b><br />
                                         <?= $reporte->getCaContinuacion() . " -> " . $reporte->getDestinoCont() ?>				
                                     </div></td>
-                                <td><div align="left"><b><b>Fecha de llegada:</b></b><br />
-                                        <?
-                                        echo $form['fchcontinuacion']->renderError();
-                                        if ($ultStatus) {
-                                            $form->setDefault('fchcontinuacion', $ultStatus->getCaFchcontinuacion());
-                                        }
-                                        echo $form['fchcontinuacion']->render();
-                                        ?>
-                                    </div></td>
-                                <td>&nbsp;</td>
+                                    <td colspan="2">
+                                        <table>
+                                            <tr>
+                                                <td><div align="left"><b><b>Fecha de llegada Otm:</b></b><br />
+                                                        <?
+                                                        echo $form['fchcontinuacion']->renderError();
+                                                        if ($ultStatus) {
+                                                            $form->setDefault('fchcontinuacion', $ultStatus->getCaFchcontinuacion());
+                                                        }
+                                                        echo $form['fchcontinuacion']->render();
+                                                        ?>
+                                                    </div>
+                                                </td>
+                                                <td>                                    
+                                                    <div id="fchcargue" style="display: none" align="left"><b><b>Fecha de Cargue Otm:</b></b><br />
+                                                        <?
+                                                        echo $form['fchcargue']->renderError();
+                                                        $form->setDefault('fchcargue', $reporte->getRepOtm()->getCaFchcargue());                                        
+                                                        echo $form['fchcargue']->render();
+                                                        ?>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div id="fchcierreotm" style="display: none" align="left"><b><b>Fecha de Cierre Otm:</b></b><br />
+                                                        <?
+                                                        echo $form['fchcierreotm']->renderError();
+                                                        $form->setDefault('fchcierreotm', $reporte->getRepOtm()->getCaFchcierre());                                        
+                                                        echo $form['fchcierreotm']->render();
+                                                        ?>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div id="fchsalidaotm" style="display: none" align="left"><b><b>Fecha de Salida Otm:</b></b><br />
+                                                        <?
+                                                        echo $form['fchsalidaotm']->renderError();
+                                                        $form->setDefault('fchsalidaotm', $reporte->getRepOtm()->getCaFchcierre());                                        
+                                                        echo $form['fchsalidaotm']->render();
+                                                        ?>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
                             </tr>
                             <?
                         }
@@ -710,13 +786,17 @@ $folder = $reporte->getDirectorioBase();
                                         echo $form['idmuelle']->render();  
                                     }else {
                                         ?>
-                                        <b>Bodega Aeropuerto</b>:<br />
+                                        <span class="linea">
+                                            <b>Bodega Aeropuerto</b>:<br />
+                                            <?
+                                            echo $form['bodega_air']->renderError();
+                                            if ($ultStatus) {
+                                                $form->setDefault('bodega_air', $ultStatus->getProperty("bodega_air"));
+                                            }
+                                            echo $form['bodega_air']->render();  
+                                            ?>
+                                        </span>    
                                         <?
-                                        echo $form['bodega_air']->renderError();
-                                        if ($ultStatus) {
-                                            $form->setDefault('bodega_air', $ultStatus->getProperty("bodega_air"));
-                                        }
-                                        echo $form['bodega_air']->render();  
                                     }       
                                     ?>
                                 </div></td>

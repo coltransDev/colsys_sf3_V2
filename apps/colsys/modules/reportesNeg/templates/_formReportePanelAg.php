@@ -380,7 +380,16 @@ include_component("widgets", "widgetContactoCliente");
                                     name: 'vendedor',
                                     hiddenName: "idvendedor",
                                     tabIndex:18
-                                    })
+                                    }),
+                        {
+                            xtype:"textarea",
+                            fieldLabel:"Preferencias del cliente",
+                            name:"preferencias",
+                            id:"preferencias",
+                            width:500,
+                            readOnly: true,
+                            grow:true
+                        }
 
                     ]
                 },
@@ -697,6 +706,9 @@ include_component("widgets", "widgetContactoCliente");
 
             Ext.getCmp("vendedor").setValue(record.data.vendedor);
             $("#vendedor").val(record.data.nombre_ven);
+
+            Ext.getCmp("preferencias").setValue(record.data.preferencias);
+            $("#preferencias").val(record.data.preferencias);
 
             store=combo.store;
             j=0;

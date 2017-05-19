@@ -123,7 +123,7 @@ class widgets4Components extends sfComponents {
                 //->innerJoin("s.Ids i")
                 //->innerJoin("s.Empresa e")                
                 ->whereIn("t.ca_tipo", $this->tipoComprobante)
-                ->addwhere("ca_idempresa=?", array($user->getIdempresa()))
+                ->addwhere("ca_idempresa=? AND ca_activo=?", array($user->getIdempresa() , true))
                 ->addOrderBy("t.ca_tipo, t.ca_comprobante");
 
         $tipos = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();

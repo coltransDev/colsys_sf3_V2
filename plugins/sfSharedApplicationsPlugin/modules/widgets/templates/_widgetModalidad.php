@@ -5,7 +5,7 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 $data = $sf_data->getRaw("data");
-//print_r($data);
+
 ?>
 
 <script type="text/javascript">
@@ -56,7 +56,7 @@ Ext.extend(WidgetModalidad, Ext.form.ComboBox, {
             var cmp2 = Ext.getCmp(this.linkImpoexpo);
             var impoexpoVal = this.impoexpo;
             if( cmp2 || impoexpoVal){
-				
+
                 var list = new Array();
                 var transporte = Ext.getCmp(this.linkTransporte).getValue();
                 if( impoexpoVal ){
@@ -64,9 +64,10 @@ Ext.extend(WidgetModalidad, Ext.form.ComboBox, {
                 }else{
                     var impoexpo = Ext.getCmp(this.linkImpoexpo).getValue();
                 }
+
                 if(impoexpo=='<?=constantes::OTMDTA?>' || impoexpo=='<?=constantes::OTMDTA1?>' )
                 {
-                    /*impoexpo='<?=Constantes::IMPO?>'*/
+                    impoexpo='<?=Constantes::OTMDTA?>'
                 }
                 for( k in this.data ){
                     var rec = this.data[k];					
@@ -127,8 +128,5 @@ Ext.extend(WidgetModalidad, Ext.form.ComboBox, {
 	onTrigger2Click : function() {
         this.onTriggerClick();
 	}
-	
 });
-
-	
 </script>

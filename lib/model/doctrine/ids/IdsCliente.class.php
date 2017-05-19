@@ -12,4 +12,24 @@
  */
 class IdsCliente extends BaseIdsCliente
 {
+    public function getDireccion() {
+
+        $direccion = str_replace("|", " ", $this->getCaDireccion());
+
+        if ($this->getCaOficina()) {
+            $direccion.="Oficina " . $this->getCaOficina() . " ";
+        }
+        if ($this->getCaTorre()) {
+            $direccion.="Torre " . $this->getCaTorre() . " ";
+        }
+        if ($this->getCaBloque()) {
+            $direccion.="Bloque " . $this->getCaBloque() . " ";
+        }
+        if ($this->getCaInterior()) {
+            $direccion.="Interior " . $this->getCaInterior() . " ";
+        }
+        $direccion.=$this->getCaComplemento() . " ";
+
+        return $direccion;
+    }
 }

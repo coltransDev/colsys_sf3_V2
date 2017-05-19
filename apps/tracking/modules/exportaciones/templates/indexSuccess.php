@@ -1,13 +1,13 @@
+<?
+$transporte = $sf_data->getRaw("transporte");
+?>
 <div align="center">
-<h3>Exportaciones</h3>
+<h3>Exportaciones <?=$transporte?></h3>
 </div>
 <br />
-
 <?
-include_component("reportes", "listaReportes", array("impoexpo"=>Constantes::EXPO));
+include_component("reportes", "listaReportes", array("impoexpo"=>Constantes::EXPO,"transporte"=>$transporte));
 ?>
-
-
 
 <div align="left" id="leyenda" >
 	<table width="200" border="1" cellspacing="0" cellpadding="0" class="table1">

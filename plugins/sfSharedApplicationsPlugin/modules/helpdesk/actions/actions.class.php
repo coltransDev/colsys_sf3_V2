@@ -153,8 +153,10 @@ class helpdeskActions extends sfActions {
         /*
          * Aplica restricciones de acuerdo al nivel de acceso.
          */
+        
+        
         switch ($nivel) {
-            case 0:
+        /*    case 0:
                 $q->addWhere("(h.ca_login = ? or hu.ca_login = ?)", array($this->getUser()->getUserid(), $this->getUser()->getUserid()));
                 break;
             case 1:
@@ -164,6 +166,23 @@ class helpdeskActions extends sfActions {
                 break;
             case 2:
                 $q->addWhere("(h.ca_login = ? OR g.ca_iddepartament = ? or hu.ca_login = ?)", array($this->getUser()->getUserid(), $this->getUser()->getIddepartamento(), $this->getUser()->getUserid()));
+                break;
+         * 
+         */
+            case 0:
+                //$q->leftJoin("h.HdeskTicketUser hu  ");
+                $q->addWhere("(h.ca_login = ? OR hu.ca_login = ?)", array($this->getUser()->getUserid(), $this->getUser()->getUserid()));
+
+                break;
+            case 1:
+                $q->leftJoin("h.HdeskUserGroup ug "); 
+                //$q->leftJoin("h.HdeskTicketUser hu  ");
+                $q->addWhere("(h.ca_login = ? OR ug.ca_login = ? OR hu.ca_login = ? )", array($this->getUser()->getUserid(), $this->getUser()->getUserid(), $this->getUser()->getUserid()));
+                break;
+            case 2:
+                //$q->leftJoin("h.HdeskGroup g ");
+                //$q->leftJoin("h.HdeskTicketUser hu  ");
+                $q->addWhere("(h.ca_login = ? OR g.ca_iddepartament = ? OR hu.ca_login = ?)", array($this->getUser()->getUserid(), $this->getUser()->getIddepartamento(), $this->getUser()->getUserid()));
                 break;
         }
 
@@ -207,7 +226,7 @@ class helpdeskActions extends sfActions {
                     $q->leftJoin("h.HdeskTicketUser hu  ");*/
                     $q->addWhere("h.ca_idticket = ?", intval($idticket));
 
-        switch ($this->nivel) {
+/*        switch ($this->nivel) {
             case 0:
                 $q->leftJoin("h.HdeskUserGroup ug ");
                 $q->leftJoin("h.HdeskTicketUser hu  ");
@@ -223,7 +242,8 @@ class helpdeskActions extends sfActions {
                 $q->addWhere("(h.ca_login = ? OR g.ca_iddepartament = ? or hu.ca_login = ?)", array($this->getUser()->getUserid(), $this->getUser()->getIddepartamento(), $this->getUser()->getUserid()));
                 break;
         }
-        $this->ticket =$q->fetchOne();         
+        $this->ticket =$q->fetchOne();         */                    ;
+        $this->ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel);
         $this->forward404Unless($this->ticket);
 
         if ($request->getParameter("format") == "email") {
@@ -414,7 +434,7 @@ class helpdeskActions extends sfActions {
             $pass = 'cglti$col91';
             $mail = new Zend_Mail_Storage_Imap(array('host' => 'imap.gmail.com', 'user' => "colsys@coltrans.com.co", 'password' => $pass, 'ssl' => 'SSL'));
             $mail->selectFolder($folder1);
-            echo "Numero de Emails:".count($mail);
+            echo "Numero de Emails:".count($mail);            
             foreach ($mail as  $message) {
                 if ($message->hasFlag(Zend_Mail_Storage::FLAG_SEEN)) {
                     continue;
@@ -472,7 +492,8 @@ class helpdeskActions extends sfActions {
                         $mess.="<br><span style='font-size:9px'><b>response from google app-script</b></span>"; 
 
 
-
+                        echo $mess;
+                        
                         //$request->setParameter("idticket",$idticket);
                         //$request->setParameter("comentario",$mess);
 
@@ -483,6 +504,8 @@ class helpdeskActions extends sfActions {
                         ->addWhere("u.ca_activo = true ")
                         ->limit(1)
                         ->fetchOne();*/
+                        echo $idticket;
+                        echo $from;
                         
                         $q = Doctrine::getTable("Usuario")->createQuery("u")
                             ->select("DISTINCT(u.ca_login) AS ca_login")
@@ -492,8 +515,10 @@ class helpdeskActions extends sfActions {
                             ->addWhere("u.ca_activo = true" )
                             ->addWhere("u.ca_email = '{$from}'" );
                             //->addOrderBy("u.ca_nombre");
-                            //echo $q->getSqlQuery();
-                        $user=$q->fetchOne();
+                            echo $q->getSqlQuery();
+                            
+                            exit;
+                        //$user=$q->fetchOne();
                          
 
                         if(!$user)
@@ -506,7 +531,9 @@ class helpdeskActions extends sfActions {
                         $request->setParameter("idticket",$idticket);
                         $request->setParameter("comentario",$mess);
                         $request->setParameter("iduser",$user->getCaLogin());
-
+                        echo $user->getCaLogin();
+                        exit;
+                                
                         $this->executeGuardarRespuestaTicket($request);
                         
                         

@@ -6,7 +6,7 @@
  */
 include_component("clientes", "formEncuestaVisita");
 ?>
-<table width="900" align="center">
+<table width="1000" align="center">
     <td style="text-align: center">
 <div id="se-form"></div><br>
 </td>

@@ -1,4 +1,4 @@
-<?
+<?php
 
 class Utils {
     /*
@@ -66,11 +66,14 @@ class Utils {
         return date($format, mktime(0, 0, 0, $month, $day, $year));
     }
 
-    public static function transformDate1($fecha) {
+    public static function transformDate1($fecha,$tipo=0) {
         if (!$fecha) {
             return "";
         }
-        list( $day, $month, $year ) = split("/", $fecha);
+        if($tipo==0)
+            list( $day, $month, $year ) = split("/", $fecha);
+        else if($tipo==1)
+            list( $month,$day, $year ) = split("/", $fecha);
         return "$year-$month-$day";
     }
 
@@ -680,6 +683,10 @@ class Utils {
             $x++;
         }
         return $letters;
+    }
+
+    public static function validacionBinaria($acceso_usuario, $acceso_total) {
+        return str_pad( decbin($acceso_usuario) & decbin($acceso_total), 25, "0", STR_PAD_LEFT);
     }
 }
 ?>

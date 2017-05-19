@@ -20,7 +20,7 @@
 </head>
 <body>
 <div class="sfTContainer">
-  <a title="Colsys" href="https://www.coltrans.com.co/"><img alt="Colsys" class="sfTLogo" src="<?php echo $path ?>/images/logo_colsys_big.gif"  /></a>
+  <a title="Colsys" href="https://www.colsys.com.co/"><img alt="Colsys" class="sfTLogo" src="<?php echo $path ?>/images/logo_colsys_big.gif"  /></a>
   <div class="sfTMessageContainer sfTAlert">
     <img alt="page not found" class="sfTMessageIcon" src="<?php echo $path ?>/sf/sf_default/images/icons/tools48.png" height="48" width="48" />
     <div class="sfTMessageWrap">

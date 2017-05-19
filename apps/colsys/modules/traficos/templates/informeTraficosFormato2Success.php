@@ -491,6 +491,15 @@ for ($j=0; $j<count($traficos); $j++)  {
     $objPHPExcel->getActiveSheet()->getStyle('A' . $i)->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
     $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, utf8_encode("Carga entregada"));
     $i++;
+    
+    $objPHPExcel->getActiveSheet()->getStyle('A' . $i)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+    $objPHPExcel->getActiveSheet()->getStyle('A' . $i)->getFill()->getStartColor()->setRGB('9999CC');
+    $objPHPExcel->getActiveSheet()->getStyle('A' . $i)->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+    $objPHPExcel->getActiveSheet()->getStyle('A' . $i)->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+    $objPHPExcel->getActiveSheet()->getStyle('A' . $i)->getBorders()->getLeft()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+    $objPHPExcel->getActiveSheet()->getStyle('A' . $i)->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+    $objPHPExcel->getActiveSheet()->setCellValue('A' . $i, utf8_encode("Carga en tránsito terrestre"));
+    $i++;
 
     $objPHPExcel->getActiveSheet()->getStyle('A' . $i)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
     $objPHPExcel->getActiveSheet()->getStyle('A' . $i)->getFill()->getStartColor()->setRGB('FFCCCC');

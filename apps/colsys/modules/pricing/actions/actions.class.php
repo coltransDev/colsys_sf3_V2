@@ -2135,10 +2135,10 @@ class pricingActions extends sfActions {
                 'linea' => utf8_encode(($trayecto["p_ca_sigla"]?$trayecto["p_ca_sigla"]." - ":"").$trayecto["i_ca_nombre"]),
                 'idlinea' => $trayecto["t_ca_idlinea"],
                 'ttransito' => utf8_encode($trayecto["t_ca_tiempotransito"]),
-                'frecuencia' => $trayecto["t_ca_frecuencia"],
-                'ncontrato' => $trayecto["t_ca_ncontrato"],
+                'frecuencia' => utf8_encode($trayecto["t_ca_frecuencia"]),
+                'ncontrato' => utf8_encode($trayecto["t_ca_ncontrato"]),
                 'activo' => $trayecto["t_ca_activo"],
-                'netnet' => $trayecto["t_ca_netnet"]
+                'netnet' => utf8_encode($trayecto["t_ca_netnet"])
             );
             $data[] = $row;
         }
@@ -2348,7 +2348,7 @@ class pricingActions extends sfActions {
                 $q->addOrderBy("tg.ca_descripcion ASC");
                 $q->addOrderBy("tr.ca_nombre ASC");
                 $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-
+                // echo $q->getSqlQuery();
                 $rows = $q->execute();
                 $this->results = array();
                 $modalidades = array();
@@ -3570,6 +3570,267 @@ class pricingActions extends sfActions {
             }
         }
         //echo "<pre>";print_r($this->grid);echo "</pre>";
+    }
+    
+    
+    /*
+     * Módulo de Actualizaciones Masiva a Tarifario
+     *
+     */
+
+    public function executeActualizacionMasivaExt5(sfWebRequest $request) {
+    }
+
+    /*
+     * Datos para el Grid de Actualizaciones Masiva a Tarifario
+     *
+     */
+
+    public function executeActualizacionMasivaGrid(sfWebRequest $request) {
+        $transporte = json_decode($request->getParameter("transporte"));
+        $modalidad = json_decode($request->getParameter("modalidad"));
+        $impoexpo = json_decode($request->getParameter("impoexpo"));
+        $estado = json_decode($request->getParameter("estado"));
+        $transportistas = json_decode($request->getParameter("transportistas"));
+        $trafico = json_decode($request->getParameter("trafico"));
+        $origen = json_decode($request->getParameter("origen"));
+        $destino = json_decode($request->getParameter("destino"));
+        $tipoConcepto = $request->getParameter("tipoConcepto");
+        $conceptos = json_decode($request->getParameter("conceptos"));
+        
+        $from = "pric.tb_trayectos t ";
+        $columns = "t.ca_idtrayecto, t.ca_idlinea, i.ca_nombre AS ca_proveedor, t.ca_transporte, t.ca_modalidad, t.ca_impoexpo, tfo.ca_nombre as ca_traorigen, tfd.ca_nombre as ca_tradestino, o.ca_ciudad as ca_origen, d.ca_ciudad as ca_destino, ";
+        $joins = "INNER JOIN ids.tb_proveedores p ON p.ca_idproveedor = t.ca_idlinea "
+                . "INNER JOIN ids.tb_ids i ON i.ca_id = ca_idproveedor "
+                . "INNER JOIN tb_ciudades o ON o.ca_idciudad = t.ca_origen "
+                . "INNER JOIN tb_traficos tfo ON tfo.ca_idtrafico = o.ca_idtrafico "
+                . "INNER JOIN tb_ciudades d ON d.ca_idciudad = t.ca_destino "
+                . "INNER JOIN tb_traficos tfd ON tfd.ca_idtrafico = d.ca_idtrafico ";
+        $where = "t.ca_activo IS TRUE and ";
+        $orderBY = "i.ca_nombre";
+        if ( $tipoConcepto == "Fletes" ) {
+            $columns.= "f.ca_consecutivo, f.ca_idconcepto, c.ca_concepto, f.ca_vlrneto, f.ca_vlrsugerido, f.ca_aplicacion, f.ca_estado, f.ca_idmoneda, f.ca_fchinicio, f.ca_fchvencimiento, f.ca_idequipo, e.ca_concepto as ca_equipo, ";
+            $joins.= "LEFT JOIN pric.tb_fletes f ON f.ca_idtrayecto = t.ca_idtrayecto ";
+            $joins.= "INNER JOIN tb_conceptos c ON c.ca_idconcepto = f.ca_idconcepto ";
+            $joins.= "LEFT JOIN tb_conceptos e ON e.ca_idconcepto = f.ca_idequipo ";
+        }else if ( $tipoConcepto == "Recargos" ) {
+            $columns.= "r.ca_consecutivo, r.ca_idconcepto, c.ca_concepto, r.ca_idrecargo, tr.ca_recargo, r.ca_vlrrecargo, r.ca_aplicacion, r.ca_vlrminimo, r.ca_aplicacion_min, r.ca_observaciones, r.ca_idmoneda, r.ca_idrecargo, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_idequipo, e.ca_concepto as ca_equipo, ";
+            $joins.= "LEFT JOIN pric.tb_recargosxconcepto r ON r.ca_idtrayecto = t.ca_idtrayecto ";
+            $joins.= "INNER JOIN tb_conceptos c ON c.ca_idconcepto = r.ca_idconcepto ";
+            $joins.= "LEFT JOIN tb_conceptos e ON e.ca_idconcepto = r.ca_idequipo ";
+            $joins.= "LEFT JOIN tb_tiporecargo tr ON tr.ca_idrecargo = r.ca_idrecargo ";
+        }
+
+        if ( $transporte ) {
+            $where.= "t.ca_transporte in ('" . implode("','", $transporte) . "') and ";
+        }
+        if ( $modalidad ) {
+            $where.= "t.ca_modalidad in ('" . implode("','", $modalidad) . "') and ";
+        }
+        if ( $impoexpo ) {
+            $where.= "t.ca_impoexpo in ('" . implode("','", $impoexpo) . "') and ";
+        }
+        if ( $transportistas ){
+            $where.= "t.ca_idlinea in (" . implode(",", $transportistas) . ") and ";
+        }
+        if ( $trafico ) {
+            if ($impoexpo == Constantes::EXPO) {
+                $where.= "d.ca_idtrafico in ('" . implode("','", $trafico) . "') and ";
+            } else {
+                $where.= "o.ca_idtrafico in ('" . implode("','", $trafico) . "') and ";
+            }
+        }
+        if ( $origen ) {
+            $where.= "t.ca_origen in ('" . implode("','", $origen) . "') and ";
+        }
+        if ( $destino ) {
+            $where.= "t.ca_destino in ('" . implode("','", $destino) . "') and ";
+        }
+
+        if ( $estado ) {
+            if ( $tipoConcepto == "Recargos" ) {
+                $joins.= "LEFT JOIN pric.tb_fletes f ON f.ca_idtrayecto = t.ca_idtrayecto ";
+            }
+            if ( in_array(0, $estado) ) {
+                $estado = array_diff($estado, array(0));
+                if (count($estado) == 0){
+                    $where.= "f.ca_estado is null and ";
+                } else {
+                    $where.= "(f.ca_estado is null or f.ca_estado in ('" . implode("','", $estado) . "')) and ";
+                }
+            } else {
+                $where.= "f.ca_estado in ('" . implode("','", $estado) . "') and ";
+            }
+        }
+        
+        if ( $conceptos ) {
+            if ( $tipoConcepto == "Fletes" ) {
+                $where.= "f.ca_idconcepto in (" . implode(",", $conceptos) . ") and ";
+            }else if ( $tipoConcepto == "Recargos" ) {
+                $where.= "r.ca_idconcepto in (" . implode(",", $conceptos) . ") and ";
+            }
+        }
+        
+        $columns = substr($columns, 0, strlen($columns)-2);
+        $where = substr($where, 0, strlen($where)-4);
+        $sql = "SELECT $columns
+                FROM $from 
+                    $joins
+                WHERE $where
+                ORDER BY $orderBY";
+        //die(utf8_decode($sql));
+        $con = Doctrine_Manager::getInstance()->connection();
+        $st = $con->execute(utf8_decode($sql));
+        $masivas = $st->fetchAll();
+        
+        $data = array();
+        $estados = array(1 => "Sugerida", 2 => "Mantenimiento", 3 => "Futura");
+        foreach ($masivas as $masiva) {
+            if ( $tipoConcepto == "Fletes" ) {
+                $idrecargo = "";
+                $recargo = "";
+                $valor = $masiva["ca_vlrneto"];
+                $valor_sug = $masiva["ca_vlrsugerido"];
+                $aplicacion = $masiva["ca_aplicacion"];
+                $valor_min = 0;
+                $aplicacion_min = "";
+                $observaciones = "";
+                $estado = $masiva["ca_estado"];
+                $idmoneda = $masiva["ca_idmoneda"];
+            } else {
+                $idrecargo = $masiva["ca_idrecargo"];
+                $recargo = $masiva["ca_recargo"];
+                $valor = $masiva["ca_vlrrecargo"];
+                $valor_sug = 0;
+                $aplicacion = $masiva["ca_aplicacion"];
+                $valor_min = $masiva["ca_vlrminimo"];
+                $aplicacion_min = $masiva["ca_aplicacion_min"];
+                $observaciones = $masiva["ca_observaciones"];
+                $estado = null;
+                $idmoneda = $masiva["ca_idmoneda"];
+            }
+            $row = array(
+                'idtrayecto' => $masiva["ca_idtrayecto"],
+                'idconcepto' => $masiva["ca_idconcepto"],
+                'origen' => $masiva["ca_origen"],
+                'destino' => $masiva["ca_destino"],
+                'concepto' => utf8_encode($masiva["ca_concepto"]),
+                'idlinea' => $masiva["ca_idlinea"],
+                'proveedor' => $masiva["ca_proveedor"],
+                'consecutivo' => $masiva["ca_consecutivo"],
+                'idequipo' => $masiva["ca_idequipo"],
+                'equipo' => utf8_encode($masiva["ca_equipo"]),
+                'idrecargo' => $idrecargo,
+                'recargo' => utf8_encode($recargo),
+                'valor' => $valor,
+                'valor_sug' => $valor_sug,
+                'aplicacion' => utf8_encode($aplicacion),
+                'valor_min' => $valor_min,
+                'aplicacion_min' => utf8_encode($aplicacion_min),
+                'observaciones' => utf8_encode($observaciones),
+                'estado' => $estado,
+                'idmoneda' => $idmoneda,
+                'fchinicio' => $masiva["ca_fchinicio"]." 00:00:00", // Se agrega la hora para efectos de la zona horaria
+                'fchvencimiento' => $masiva["ca_fchvencimiento"]." 00:00:00", // Se agrega la hora para efectos de la zona horaria
+                'transporte' => utf8_encode($masiva["ca_transporte"]),
+                'tipoConcepto' => $tipoConcepto
+            );
+            $data[] = $row;
+        }
+        $this->responseArray = array("total" => count($data), "data" => $data, "success" => true);
+        $this->setTemplate("responseTemplate");
+        
+    }
+
+    /*
+     * Datos para el Grid de Actualizaciones Masiva a Tarifario
+     *
+     */
+
+    public function executeActualizacionMasivaGuardar(sfWebRequest $request) {
+        $datos = $request->getParameter("datos");
+        $datos = json_decode($datos);
+        $errorInfo = "";
+        $ids = array();
+        
+        $conn = Doctrine::getTable("PricFlete")->getConnection();
+        $conn->beginTransaction();
+        try {
+            foreach ($datos as $dato) {
+                if ($dato->tipoConcepto == "Fletes"){
+                    $consecutivo = $dato->consecutivo;
+                    
+                    $pricFlete = Doctrine::getTable("PricFlete")
+                        ->createQuery("p")
+                        ->addWhere("p.ca_consecutivo = ?", $consecutivo)
+                        ->fetchOne();
+                    
+                    if ($pricFlete) {
+                        if ($dato->valor){
+                            $pricFlete->setCaVlrneto($dato->valor);
+                        }
+                        if ($dato->valor_sug){
+                            $pricFlete->setCaVlrsugerido($dato->valor_sug);
+                        }
+                        if ($dato->aplicacion){
+                            $pricFlete->setCaAplicacion($dato->aplicacion);
+                        }
+                        if ($dato->estado){
+                            $pricFlete->setCaEstado($dato->estado);
+                        }
+                        if ($dato->idmoneda){
+                            $pricFlete->setCaIdmoneda($dato->idmoneda);
+                        }
+                        if ($dato->fchinicio){
+                            $pricFlete->setCaFchinicio($dato->fchinicio);
+                        }
+                        if ($dato->fchvencimiento){
+                            $pricFlete->setCaFchvencimiento($dato->fchvencimiento);
+                        }
+                        $pricFlete->save();
+                        $ids[] = $dato->id;
+                    }
+                }else if ($dato->tipoConcepto == "Recargos"){
+                    $pricRecargo = Doctrine::getTable("PricRecargoxConcepto")
+                        ->createQuery("r")
+                        ->addWhere("r.ca_consecutivo = ?", $dato->consecutivo)
+                        ->fetchOne();
+                    if ($pricRecargo) {
+                        if ($dato->valor){
+                            $pricRecargo->setCaVlrrecargo($dato->valor);
+                        }
+                        if ($dato->aplicacion){
+                            $pricRecargo->setCaAplicacion($dato->aplicacion);
+                        }
+                        if ($dato->valor_min){
+                            $pricRecargo->setCaVlrminimo($dato->valor_min);
+                        }
+                        if ($dato->aplicacion_min){
+                            $pricRecargo->setCaAplicacionMin($dato->aplicacion_min);
+                        }
+                        if ($dato->observaciones){
+                            $pricRecargo->setCaObservaciones($dato->observaciones);
+                        }
+                        if ($dato->idmoneda){
+                            $pricRecargo->setCaIdmoneda($dato->idmoneda);
+                        }
+                        if ($dato->fchinicio){
+                            $pricRecargo->setCaFchinicio($dato->fchinicio);
+                        }
+                        if ($dato->fchvencimiento){
+                            $pricRecargo->setCaFchvencimiento($dato->fchvencimiento);
+                        }
+                        $pricRecargo->save();
+                        $ids[] = $dato->id;
+                    }
+                } 
+            }
+            $conn->commit();
+            $this->responseArray = array("success" => true,  "errorInfo" => $errorInfo, "id" => implode(",", $ids));
+        } catch (Exception $e) {
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+        $this->setTemplate("responseTemplate");
     }
 }
 ?>

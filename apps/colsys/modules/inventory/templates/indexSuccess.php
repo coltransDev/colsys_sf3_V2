@@ -18,7 +18,7 @@ include_component("inventory", "panelProductos");
 
 include_component("inventory", "nuevoSeguimientoWindow");
 include_component("widgets", "widgetUsuario");
-include_component("inventory", "widgetEquipo");
+include_component("widgets", "widgetEquipo");
 include_component("inventory", "widgetProducto");
 
 include_component("inventory", "nuevaAnotacionWindow");

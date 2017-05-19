@@ -58,8 +58,8 @@ var tabs = new Ext.FormPanel({
                                 items:
                                 [
                                     <?
-                                    if($informe==2)
-                                    {
+                                    /*if($informe==2)
+                                    {*/
                                     ?>
                                     {
                                         xtype:'datefield',
@@ -69,7 +69,7 @@ var tabs = new Ext.FormPanel({
                                         value: '<?=$fechainicial?>'
                                     },
                                      <?
-                                        }
+                                     //   }
                                     ?>
                                     new WidgetSucursales({fieldLabel: 'Sucursal',
                                                         id: 'sucursal',

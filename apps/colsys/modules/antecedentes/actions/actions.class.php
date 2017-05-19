@@ -749,9 +749,9 @@ class antecedentesActions extends sfActions {
         $data["impoexpo"] = utf8_encode($ref->getCaImpoexpo());
         $data["transporte"] = utf8_encode(Constantes::MARITIMO);
         $data["modalidad"] = $ref->getCaModalidad();
-        $data["origen"] = $ref->getOrigen()->getCaCiudad();
+        $data["origen"] = utf8_encode($ref->getOrigen()->getCaCiudad());
         $data["idorigen"] = $ref->getCaOrigen();
-        $data["destino"] = $ref->getDestino()->getCaCiudad();
+        $data["destino"] = utf8_encode($ref->getDestino()->getCaCiudad());
         $data["iddestino"] = $ref->getCaDestino();
         $data["fchsalida"] = $ref->getCaFchembarque();
         $data["fchllegada"] = $ref->getCaFcharribo();
@@ -770,7 +770,7 @@ class antecedentesActions extends sfActions {
         $data["idemisionbl"] = $idemisionbl;
 
         $data["linea"] = $ref->getIdsProveedor()->getIds()->getCaNombre();
-
+        
         $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");
     }
@@ -781,7 +781,7 @@ class antecedentesActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeDatosPanelReportesAntecedentes(sfWebRequest $request) {
-
+        
         $numRef = $request->getParameter("numRef");
         if ($numRef) {
             $q = Doctrine_Query::create()
@@ -795,9 +795,11 @@ class antecedentesActions extends sfActions {
             $reportes = $q->execute();
 
             foreach ($reportes as $key => $val) {
+                $reportes[$key]["ic_ca_proveedor"] = utf8_encode($reportes[$key]["ic_ca_proveedor"]);
+                $reportes[$key]["ic_ca_numorden"] = utf8_encode($reportes[$key]["ic_ca_numorden"]);
                 $reportes[$key]["cl_ca_compania"] = utf8_encode($reportes[$key]["cl_ca_compania"]);
                 $reportes[$key]["ic_ca_hbls"] = utf8_encode($reportes[$key]["ic_ca_hbls"]);
-                $reportes[$key]["orden"] = $reportes[$key]["r_ca_consecutivo"];
+                $reportes[$key]["orden"] = utf8_encode($reportes[$key]["r_ca_consecutivo"]);
                 $reportes[$key]["sel"] = $reportes[$key]["ic_ca_imprimirorigen"];
             }
         } else {
@@ -805,7 +807,7 @@ class antecedentesActions extends sfActions {
         }
 
         $reportes[] = array("r_ca_consecutivo" => "+", "cl_ca_compania" => "", "orden" => "Z");
-
+        
         $this->responseArray = array("success" => true, "total" => count($reportes), "root" => $reportes);
 
         $this->setTemplate("responseTemplate");
@@ -916,12 +918,16 @@ class antecedentesActions extends sfActions {
 
         $con = Doctrine_Manager::getInstance()->connection();
         $st = $con->execute($sql);
-        $this->datos = $st->fetchAll();
-
+        $this->datos = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
+        
         foreach ($this->datos as $k => $d) {
             $this->datos[$k]["ca_bodega"] = utf8_decode($d["ca_bodega"]);
             $this->datos[$k]["muelle"] = utf8_decode($d["muelle"]);
+            $this->datos[$k]["cl_ca_compania"] = utf8_decode($d["cl_ca_compania"]);
         }
+        
+        
+        //echo "<pre>";print_r($this->datos);echo "</pre>";
 
         $this->responseArray = array("success" => true, "total" => count($this->datos), "root" => $this->datos, "sql" => $sql);
         $this->setTemplate("responseTemplate");
@@ -1699,7 +1705,7 @@ class antecedentesActions extends sfActions {
                         $valido = false;
                     }
                     if ($valido)
-                        $reportes[] = array("ca_idreporte" => $tmp->getCaIdreporte(), "ca_consecutivo" => $lines[$i], "doctransporte" => $tmp->getUltimoStatus()->getCaDoctransporte(), "compania" => $tmp->getCliente()->getCaCompania(), "idcliente" => $tmp->getContacto()->getCaIdcliente(), "idcontacto" => $tmp->getCaIdconcliente());
+                        $reportes[] = array("ca_idreporte" => $tmp->getCaIdreporte(), "ca_consecutivo" => $lines[$i], "doctransporte" => $tmp->getUltimoStatus()->getCaDoctransporte(), "compania" => utf8_encode($tmp->getCliente()->getCaCompania()), "idcliente" => $tmp->getContacto()->getCaIdcliente(), "idcontacto" => $tmp->getCaIdconcliente());
                 }
                 else {
                     $resultado.="1.5-linea :" . $i . "->" . $lines[$i] . " :Reporte no encontrado<br>";
@@ -1725,13 +1731,27 @@ class antecedentesActions extends sfActions {
                         $valido = false;
                     }
                     if ($valido)
-                        $reportes[] = array("ca_idreporte" => $tmp->getCaIdreporte(), "ca_consecutivo" => $reporte->getCaConsecutivo(), "doctransporte" => $lines[$i], "compania" => $reporte->getCliente()->getCaCompania(), "idcliente" => $reporte->getContacto()->getCaIdcliente(), "idcontacto" => $reporte->getCaIdconcliente());
+                    { 
+                        //try{
+                            //echo $reporte->getCaConsecutivo()."::".$reporte->getCaIdcontacto()."<BR>";
+                            $reportes[] = array("ca_idreporte" => $tmp->getCaIdreporte(), 
+                                "ca_consecutivo" => $reporte->getCaConsecutivo(), 
+                                "doctransporte" => $lines[$i], 
+                                "compania" => utf8_encode($reporte->getCliente()->getCaCompania()), 
+                                "idcliente" => $reporte->getContacto()->getCaIdcliente(), 
+                                "idcontacto" => $reporte->getCaIdconcliente());
+                        /*}catch(Exception $e){
+                            $resultado.=$lines[$i]. " ".$reporte->getCaConsecutivo();
+                        }*/
+                    }
                 }
                 else {
                     $resultado.="2.5-linea :" . ($i + 1) . "->" . $lines[$i] . " :Hbl no encontrado<br>";
                 }
             }
         }
+        //print_r($resultado);
+        //print_r($reportes);
         $this->responseArray = array("success" => true, "reportes" => $reportes, "resultado" => $resultado);
         $this->setTemplate("responseTemplate");
     }

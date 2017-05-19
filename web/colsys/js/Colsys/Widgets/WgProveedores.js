@@ -12,15 +12,10 @@
 Ext.define('Colsys.Widgets.WgProveedores', {
   extend: 'Ext.form.field.ComboBox',
   alias: 'widget.Colsys.Widgets.WgProveedores',
-  triggerTip: 'Click para limpiar',
-  spObj:'',
-  spForm:'',
-  trans:'',
-  spExtraParam:'',
+  triggerTip: 'Click para limpiar',  
   displayField: 'linea',
   valueField: 'idlinea',
-  queryMode :'local',
-  
+  queryMode :'local',     
   store: Ext.create('Ext.data.Store', {
             fields: ['idlinea','linea'],
             proxy: {
@@ -28,7 +23,7 @@ Ext.define('Colsys.Widgets.WgProveedores', {
                 url: '/widgets5/datosLineas',
                 reader: {
                     type: 'json',
-                    root: 'root'
+                    rootProperty: 'root'
                 },
                 extraParams:{
                     //tipo: this.tipo

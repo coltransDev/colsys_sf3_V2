@@ -953,24 +953,21 @@ class inventoryActions extends sfActions {
 
     public function executeDatosWidgetEquipo($request) {
         
-        $user = $this->getUser();
-        $sucUsuario = Doctrine::getTable("Sucursal")->find($user->getIdsucursal());
-        $grupoEmp = $sucUsuario->getGrupoEmpresarial($user->getIdsucursal());
-        
         $query = "%" . strtoupper($request->getParameter("query")) . "%";
 
-        $equipos = Doctrine_Query::create()
-                ->select("a.ca_identificador, a.ca_idactivo, u.ca_nombre,s.ca_nombre")
+        $q = Doctrine_Query::create()
+                ->select("a.ca_identificador, a.ca_idactivo, u.ca_nombre,s.ca_nombre, e.ca_idempresa")
                 ->from("InvActivo a")
                 ->innerJoin("a.InvCategory c")
                 ->leftJoin("a.Usuario u")
                 ->leftJoin("u.Sucursal s")
+                ->leftJoin("s.Empresa e")
                 ->addWhere("UPPER(a.ca_identificador) LIKE ? OR UPPER(u.ca_nombre) LIKE ? ", array($query, $query))
-                ->addWhere("c.ca_parameter = ?", "Hardware")
-                //->andWhereIn("s.ca_idempresa", $grupoEmp)
+                ->addWhere("c.ca_parameter = ?", "Hardware")                
                 ->addOrderBy("a.ca_identificador")
-                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                ->execute();
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR);                
+
+        $equipos = $q->execute();
 
         foreach ($equipos as $key => $val) {
             $equipos[$key]["s_ca_nombre"] = utf8_encode($equipos[$key]["s_ca_nombre"]);

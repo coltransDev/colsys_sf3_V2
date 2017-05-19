@@ -17,7 +17,7 @@ if( $reporte->getCaTransporte()==Constantes::MARITIMO || $reporte->getCaTranspor
 }
 
 if( $reporte->getCaTransporte()==Constantes::AEREO ){
-    include_component("reporteExt","reporteAereoExtNew", array("reporte"=>$reporte));
+    include_component("reporteExt","reporteAereoExtNew", array("reporte"=>$reporte,"layout"=>$layout,"hbltxt"=>$hbltxt));
 }
 
 ?>

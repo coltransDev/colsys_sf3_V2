@@ -1,7 +1,7 @@
 <?
 $programa = 55;
 
-$titulo = 'Generador de Reportes Gerenciales - Colmas SIA Ltda.';
+$titulo = 'Generador de Reportes Gerenciales - Colmas SAS.';
 require_once("checklogin.php");                                                                 // Captura las variables de la sessión abierta
 if (!isset($usuario)) {                                                        // Verifica si el usuario ya inicio su sessión
     echo "<script>document.location.href = 'entrada.php';</script>";

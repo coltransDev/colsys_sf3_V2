@@ -11,12 +11,23 @@ Ext.define('Colsys.Widgets.WgTransporte', {
                 url: '/widgets5/datosTransporte',
                 reader: {
                     type: 'json',
-                    root: 'root'
+                    rootProperty: 'root'
                 }
             },
             autoLoad: true
    }),
     qtip:'Listado',
+     listeners: {
+        beforerender: function (ct, position) {
+            prefijo = this.prefijo;
+            console.log('fasdfsd'+prefijo);
+            if (prefijo) {
+                store = this.getStore();
+                store.proxy.url = prefijo + '/widgets5/datosTransporte';
+                store.load();
+            }
+        }
+    },
     queryMode: 'local',
     forceSelection:true,
     listConfig: {

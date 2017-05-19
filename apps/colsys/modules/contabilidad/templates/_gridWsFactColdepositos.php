@@ -81,7 +81,7 @@ $permisos = $sf_data->getRaw("permisos");
             {text: "valor Tipo 5",      dataIndex: 'valor_tipo5',        sortable: true},
         ],
         //tbar: botones,        
-        height:500//,
+        height:500,
         /*viewConfig: {
             getRowClass: function(record, rowIndex, rowParams, store) {
                 if (record.get('ca_estado')=='8' ) return 'row_purple';

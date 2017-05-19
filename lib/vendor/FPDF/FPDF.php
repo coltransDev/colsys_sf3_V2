@@ -134,6 +134,8 @@ function FPDF($orientation='P',$unit='mm',$format='A4')
             $format=array(612,900);
         elseif($format=='legal')
             $format=array(612,1008);
+        elseif($format=='sticker')
+            $format=array(795.60,792);
         else
             $this->Error('Unknown page format: '.$format);
         $this->fwPt=$format[0];

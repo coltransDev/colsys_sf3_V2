@@ -13,6 +13,8 @@ class loginValidationFilter extends sfFilter {
             $filterChain->execute();
         } elseif ($module == "clientes" && $action == "cancelarSuscripcion" || $module == "clientes" && $action == "emailCancelarSuscripcion") {
             $filterChain->execute();
+        } elseif ($module == "comunicaciones" && $action == "confirmarAsistencia" || $module == "comunicaciones" && $action == "emailComunicado") {
+            $filterChain->execute();
         } else {
             if ($module == "gestDocumental" && $action == "verArchivo") {
 

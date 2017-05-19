@@ -40,8 +40,6 @@ FalaHeader:
     ca_trans_ship_port: string
     ca_reqd_delivery: date
     ca_orden_comments: string
-    ca_concepto: string
-    ca_documento_tipo: string
     ca_manufacturer_contact: string
     ca_manufacturer_phone: string
     ca_manufacturer_fax: string
@@ -599,3 +597,33 @@ FalaNotaDet:
       foreign: ca_referencia
       foreign: ca_numdocumento
       type: one
+      
+FalaIdg:
+   options:
+     symfony:
+       form: false
+       filter: false
+   generatePath: falabella
+   tableName: tb_falaidg
+   columns:
+     ca_ididg: integer
+     ca_ano:
+        type: integer
+        primary: true
+     ca_via:
+        type: string
+        primary: true
+     ca_periodo:
+        type: integer
+        primary: true     
+     ca_idgrafica:
+        type: integer
+        primary: true
+     ca_idtrafico:
+        type: string
+        primary: true
+     ca_observacion: text
+     ca_usucreado: string(20)
+     ca_fchcreado: timestamp
+     ca_usuactualizado: string(20)
+     ca_fchactualizado: timestamp

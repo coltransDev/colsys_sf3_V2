@@ -170,7 +170,9 @@ class pmActions extends sfActions {
         $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
         //$q->limit(400);
         $tickets = $q->execute();
-
+        
+        
+        
         $parametros = ParametroTable::retrieveByCaso("CU110");
         $status = array();
         foreach ($parametros as $p) {
@@ -181,6 +183,7 @@ class pmActions extends sfActions {
         foreach ($tickets as $key => $val) {
             $tickets[$key]["h_ca_action"] = $tickets[$key]["h_ca_closedat"] ? "Cerrado" : "Abierto";
             $tickets[$key]["g_ca_name"] = utf8_encode($tickets[$key]["g_ca_name"]);
+            $tickets[$key]["h_ca_reportedby"] = utf8_encode($tickets[$key]["h_ca_reportedby"]);
             $tickets[$key]["h_ca_type"] = utf8_encode($tickets[$key]["h_ca_type"]);
             $tickets[$key]["milestone"] = utf8_encode($tickets[$key]["m_ca_title"] . " " . Utils::fechaMes($tickets[$key]["m_ca_due"]));
             $tickets[$key]["h_ca_title"] = utf8_encode(str_replace('"', "'", $tickets[$key]["h_ca_title"]));
@@ -189,11 +192,14 @@ class pmActions extends sfActions {
             $tickets[$key]["folder"] = base64_encode(HdeskProject::FOLDER . DIRECTORY_SEPARATOR . $tickets[$key]["h_ca_idticket"]);
             $tickets[$key]["contact"] = utf8_encode($tickets[$key]["s_ca_nombre"] . " " . $tickets[$key]["u_ca_extension"]);
             $tickets[$key]["u_ca_nombre"] = utf8_encode($tickets[$key]["u_ca_nombre"]);
+	    $tickets[$key]["u_ca_extension"] = utf8_encode($tickets[$key]["u_ca_extension"]);
             $tickets[$key]["s_ca_nombre"] = utf8_encode($tickets[$key]["s_ca_nombre"]);
             $tickets[$key]["status_name"] = isset($status[$tickets[$key]["h_ca_status"]]) ? utf8_encode($status[$tickets[$key]["h_ca_status"]]["nombre"]) : "";
             $tickets[$key]["status_color"] = isset($status[$tickets[$key]["h_ca_status"]]) ? $status[$tickets[$key]["h_ca_status"]]["color"] : "";
         }
 
+	//echo "<pre>";print_r($tickets);echo "</pre>";
+        
         $this->responseArray = array("success" => true, "total" => count($tickets), "root" => $tickets);
 
         $this->setTemplate("responseTemplate");
@@ -345,14 +351,27 @@ class pmActions extends sfActions {
         $conn = Doctrine::getTable("HdeskResponse")->getConnection();
         $conn->beginTransaction();
         try {
-            $this->nivel = $this->getNivel();
+            $user=null;
+            $logFile = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR."colsyslog".DIRECTORY_SEPARATOR. "tickets_error.log";
+            if($request->getParameter("iduser"))
+            {            
+                $user = Doctrine::getTable("Usuario")->find($request->getParameter("iduser"));
+                //echo $user->getNivelAcceso(helpdeskActions::RUTINA);
+            }
+            else
+            {
+                $user = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
+            }
+            $this->nivel = $user->getNivelAcceso(pmActions::RUTINA);
             $idticket = $request->getParameter("idticket");
-            $ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel);
+            $ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel,$user);
             $this->forward404Unless($ticket);
 
             $idissue = $request->getParameter("idissue");
 
-            $user = $this->getUser();
+            
+
+            //$user = $this->getUser();
 
             $respuesta = new HdeskResponse();
             $respuesta->setCaIdticket($request->getParameter("idticket"));
@@ -367,7 +386,7 @@ class pmActions extends sfActions {
                 $issue = Doctrine::getTable("KBIssue")->find($idissue);
                 $this->forward404Unless($issue);
                 $respuesta->setCaIdissue($idissue);
-                $url = "https://www.coltrans.com.co/kbase/viewIssue/idissue/" . $idissue;
+                $url = "https://www.colsys.com.co/kbase/viewIssue/idissue/" . $idissue;
                 $txt = "Adjunto encontrara una soluci&oacute;n al problema reportado.\n<br />";
                 $txt .= "Tambien es posible verlo desde el siguiente vinculo: <br />";
                 $txt .= "<b><a href='$url'>$url</a></b> <br /> <br />";
@@ -377,7 +396,9 @@ class pmActions extends sfActions {
             } else {
                 $respuesta->setCaText(utf8_decode($request->getParameter("respuesta")));
             }
-            $respuesta->setCaLogin($user->getUserId());
+            //$respuesta->setCaLogin($user->getUserId());
+            $respuesta->setCaLogin($user->getCaLogin());
+            
             $respuesta->setCaCreatedat(date("Y-m-d H:i:s"));
             $respuesta->save($conn);
             
@@ -395,7 +416,7 @@ class pmActions extends sfActions {
                     if (!$tarea->getCaFchterminada()) {
                         $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
                         //$tarea->setCaObservaciones(utf8_decode($request->getParameter("motivo")));
-                        $tarea->setCaUsuterminada($this->getUser()->getUserId());
+                        $tarea->setCaUsuterminada($user->getCaLogin());
                         $tarea->save($conn);
                     }
                 }
@@ -409,7 +430,7 @@ class pmActions extends sfActions {
                     ->select("h.ca_login")
                     ->innerJoin("h.Usuario u")
                     ->innerJoin("u.Departamento d")
-                    ->addWhere("d.ca_iddepartamento = ? ", $this->getUser()->getIddepartamento())
+                    ->addWhere("d.ca_iddepartamento = ? ", $user->getDepartamento()->getCaIddepartamento())
                     //->addWhere("h.ca_idgroup = ? ", $ticket->getCaIdgroup())  
                     ->addWhere("u.ca_activo = ? ", true)
                     ->addOrderBy("h.ca_login")
@@ -441,13 +462,13 @@ class pmActions extends sfActions {
                 $logins[] = $usuario->getCaLogin();
             }
 
-            if ($ticket->getCaAssignedto() == $this->getUser()->getUserId() || in_array($this->getUser()->getUserId(), $logins) || in_array($this->getUser()->getUserId(), $loginsDepartamento)) {
+            if ($ticket->getCaAssignedto() == $user->getCaLogin() || in_array($user->getCaLogin(), $logins) || in_array($user->getCaLogin(), $loginsDepartamento)) {
                 $tarea = $ticket->getTareaIdg();
                 if ($tarea) {
                     if (!$tarea->getCaFchterminada()) {
                         $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
                         $tarea->setCaObservaciones(utf8_decode($request->getParameter("motivo")));
-                        $tarea->setCaUsuterminada($this->getUser()->getUserId());
+                        $tarea->setCaUsuterminada($user->getCaLogin());
                         $tarea->save($conn);
                     }
                 }
@@ -485,12 +506,12 @@ class pmActions extends sfActions {
                 $tarea->setCaFchvisible($request->getParameter("fchseguimiento") . " 00:00:00");
                 $tarea->setCaFchvencimiento($request->getParameter("fchseguimiento") . " 23:59:59");
 
-                $tarea->setCaUsucreado($this->getUser()->getUserId());
+                $tarea->setCaUsucreado($user->getCaLogin());
                 $tarea->setCaTitulo($titulo);
                 $tarea->setCaTexto($texto);
                 $tarea->save($conn);
 
-                $tarea->setAsignaciones(array($this->getUser()->getUserId()));
+                $tarea->setAsignaciones(array($user->getCaLogin()));
 
                 $respuesta->setCaIdtarea($tarea->getCaIdtarea());
                 $respuesta->save($conn);
@@ -498,7 +519,7 @@ class pmActions extends sfActions {
 
 
             $email = new Email();
-            $email->setCaUsuenvio($this->getUser()->getUserId());
+            $email->setCaUsuenvio($user->getCaLogin());
             $email->setCaTipo("Notificación");
             $email->setCaIdcaso($ticket->getCaIdticket());
             $email->setCaFrom("no-reply@coltrans.com.co");
@@ -514,7 +535,7 @@ class pmActions extends sfActions {
                 $texto = $txt;
                 $texto .=sfContext::getInstance()->getController()->getPresentationFor('kbase', 'viewIssue');
 
-                $texto = str_replace('src="/', 'src="https://www.coltrans.com.co/', $texto);
+                $texto = str_replace('src="/', 'src="https://www.colsys.com.co/', $texto);
                 //$texto = str_replace('src="/', 'src="https://localhost/',  $texto);
             } else {
                 $texto = sfContext::getInstance()->getController()->getPresentationFor('pm', 'verTicket');
@@ -524,11 +545,11 @@ class pmActions extends sfActions {
 
             if ($ticket->getHdeskGroup()->getCaIddepartament()==4 and $ticket->getCaAssignedto()) {
                 // Si el ticket es puesto por Auditoría, sobreescribe los destinatarios del mensaje
-                // Si el ticket está asignado a algúna persona en particular, no copia a los demas del departamento
-                $logins = array($ticket->getCaLogin(), $this->getUser()->getUserId(), $ticket->getCaAssignedto());
+                // Si el ticket está asignado a algúnaHdeskUserGroup persona en particular, no copia a los demas del departamento
+                $logins = array($ticket->getCaLogin(), $user->getCaLogin(), $ticket->getCaAssignedto());
             }
             foreach ($logins as $login) {
-                if ($this->getUser()->getUserId() != $login) {
+                if ($user->getCaLogin() != $login) {
                     $usuario = Doctrine::getTable("Usuario")->find($login);
                     $email->addTo($usuario->getCaEmail());
                 }
@@ -555,6 +576,7 @@ class pmActions extends sfActions {
         } catch (Exception $e) {
             $conn->rollback();
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+            Utils::writeLog($logFile, date()."-".$msgerror);
         }
         $this->setTemplate("responseTemplate");
     }
@@ -1935,184 +1957,165 @@ class pmActions extends sfActions {
     }
     
     
-    public function executeProcesarRespuestaEmail($request) {
-        $folder1=$request->getParameter("folder");
-        //$debug=$request->getParameter("debug");
-        $debug="true";
-        /*if($debug!="true")
+    
+    public function executeResponseTickets(sfWebRequest $request) {
+        //$folder1=$request->getParameter("folder");
+        $folder1="COLSYS";
+        //$folder1="MAURICIO";
+        $debug=$request->getParameter("debug");
+        $msgerror="";
+        //exit;
+        //try
         {
-            return;
-        }*/
-        try{
             ProjectConfiguration::registerZend();
             Zend_Loader::loadClass('Zend_Gdata_ClientLogin');
             Zend_Loader::loadClass('Zend_Gdata_Gapps');
             $pass = 'cglti$col91';
             $mail = new Zend_Mail_Storage_Imap(array('host' => 'imap.gmail.com', 'user' => "colsys@coltrans.com.co", 'password' => $pass, 'ssl' => 'SSL'));
-            
             $mail->selectFolder($folder1);
+            //$logFile = sfConfig::get('sf_root_dir') . DIRECTORY_SEPARATOR . "log" . DIRECTORY_SEPARATOR . "tickets_error.log";
+            $logFile = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR."colsyslog".DIRECTORY_SEPARATOR. "tickets_error.log";
+            echo "Numero de Emails:".count($mail);            
             
             foreach ($mail as $messageNum => $message) {
                 //if ($message->hasFlag(Zend_Mail_Storage::FLAG_SEEN)) {
-                //    continue;
-                //}                
+                    //continue;
+                //}
                 
-                $from = $message->from;
-                
-                
-                if($debug=="true")
-                        {
-                            echo "<pre>";
-                            print_r($message);
-                            echo "<pre>";
-                        }
-                $part = $message;
-                while ($part->isMultipart()) {
+                //getEncoding
+              
+                try {
                     
-                    for($i=1;$i<=2;$i++)
+                
+                    $from = $message->from;
+                    $part = $message;
+
+
+                    $sender = trim(utf8_encode($message->from));
+                    preg_match('/<(.*?)>/s', $sender, $matches);
+                    $from =$matches[1];
+    //                echo $sender_mail;
+
+                    $ticket_regex = "/#[0-9]+/";
+
+                    preg_match_all($ticket_regex, $message->subject, $matches_ticket);
+                    $idticket=  str_replace("#","",$matches_ticket[0][0]);                
+
+                    $part = $message->getPart(1);
+                    //echo $part->contentType;
+                    if (strtok($part->contentType, ';') == 'text/plain')
                     {
-                        $part = $message->getPart($i);
-                        if($debug=="true")
-                        {
-                            echo "<pre>";
-                            print_r($part);
-                            echo "<pre>";
-                        }
-                        try{
-                            
-                            if($part->getHeader('content-disposition'))
-                            {
-                                $arr=explode(";", $part->getHeader('content-disposition'));
-                                if(trim($arr[0])=="attachment")
-                                {
-                                    $fileName=  str_replace("filename=", "", $arr[1]);
-                                    $fileName=  trim(str_replace('"', '', $fileName));
-                                    break;
-                                }
-                            }
-                                
-                        }
-                        catch(Exception $e)
-                        {
+                        
+                        $mess=$part->getContent();
+
+
+                        /*if (base64_decode($mess, true)) {
+                            //echo "451";
+                            $mess=  base64_decode($mess);
+                        }  */                      
+                        $p=strpos($mess, "Colsys Notificaciones");
+                        $q=0;                        
+                        if($p=="")
+                        {                            
                             continue;
                         }
-                    }                    
-                    /*try {
-                        $path = "";
-                        $fileName = (strlen($fileName)>5)?$fileName:$part->getHeader('content-description');
-                        $attachment = base64_decode($part->getContent());
-                        $size = strlen($attachment);
-                        //$directory = sfConfig::get('app_digitalFile_root').date("Y").DIRECTORY_SEPARATOR;
-                        $mime = explode(";", $part->getHeader('content-type'));
-                        $mime = $mime[0];
-                        if($folder1=="DOCUMENTOS" || $folder1=="DOCUMENTOSAEREO" || $folder1=="DOCUMENTOSOTM")
-                            $asunto = $message->subject;
                         else
-                            $asunto = $fileName;//substr($fileName, 0, strlen($fileName) - 21);
+                            $q=130;
+
+                        $mess= utf8_decode(quoted_printable_decode($mess));
+
+
+
+                        if($p>=0)
+                        {
+                          $p=$p-$q;
+                        }
+                        $mess = substr($mess, 0, $p);//message.substring(p + 1, message); //now get the address  
+                        $mess.="<br><span style='font-size:9px'><b>response from google app-script</b></span>"; 
+
+
+                        echo $mess;
                         
-                        if($debug=="true")
-                        {
-                            //echo $asunto."<br>".$fileName;
-                        }
+                        //$request->setParameter("idticket",$idticket);
+                        //$request->setParameter("comentario",$mess);
+
+                        /*$user = Doctrine::getTable("Usuario")
+                        ->createQuery("u")
+                        ->select("u.ca_login")
+                        ->where("u.ca_email = ? ", $from)
+                        ->addWhere("u.ca_activo = true ")
+                        ->limit(1)
+                        ->fetchOne();*/
+                        echo $idticket;
+                        echo $from;
                         
-                        //echo "::".$asunto."::";
-                        $ref = array();
-                        $ref[] = substr($asunto, 0, 13);
-                        $ref[] = substr($asunto, 14, 4);
-                        //print_r($ref);
-                        $data = array();
-                        $ref[0] = str_replace(".", "", $ref[0]);
-                        $ref[0] = substr($ref[0], 0, 3) . "." . substr($ref[0], 3, 2) . "." . substr($ref[0], 5, 2) . "." . substr($ref[0], 7, 4) . "." . substr($ref[0], 11, 2);
-                        $data["ref1"] = $ref[0];
-                        if (isset($ref[1])) {
-                            if ($ref[1] == "cost") {
-                                $data["ref2"] = "costos";
-                            } else if ($ref[1] == "pref" || $ref[1] == "libp") {
-                                $data["ref2"] = "";
-                            } else {
-                                $sql = "select  ca_hbls from tb_inoclientes_sea 
-                                where ca_referencia='" . $ref[0] . "' and UPPER(substring(ca_hbls from (char_length(ca_hbls)-3) ))= UPPER('" . $ref[1] . "') limit 1";
-                                $con = Doctrine_Manager::getInstance()->connection();
+                        $q = Doctrine::getTable("Usuario")->createQuery("u")
+                            ->select("DISTINCT(u.ca_login) AS ca_login")        
+                            ->where("u.ca_email = '{$from}'" );
+                            //->addOrderBy("u.ca_nombre");
+                            //echo $q->getSqlQuery();
+                            
+                        $user=$q->fetchOne();
 
-                                $st = $con->execute($sql);
-                                $resul = $st->fetchAll();
-                                $data["ref2"] = $resul[0]["ca_hbls"];
-                            }
-                        }
-                        if ($ref[1] == "costos" || $ref[1] == "cost")
-                        {
-                            if($folder1=="DOCUMENTOSOTM")
-                                $data["iddocumental"] = "27";
-                            else
-                                $data["iddocumental"] = "8";
-                        }
-                        else if ($ref[1] == "pref")
-                            $data["iddocumental"] = "6";
-                        else if ($ref[1] == "libp")
-                            $data["iddocumental"] = "17";
-                        else if ($ref[1] == "plar")
-                            $data["iddocumental"] = "19";
-                        else if ($ref[1] == "cert")
-                            $data["iddocumental"] = "25";
-                        else
-                            $data["iddocumental"] = $request->getParameter("iddocumental");
-
-                        if ($data["ref1"])
-                            $path.=$data["ref1"] . DIRECTORY_SEPARATOR;
-                        if ($data["ref2"])
-                            $path.=$data["ref2"] . DIRECTORY_SEPARATOR;
-
-                        //print_r($data);
-                        if($debug=="true")
-                        {
+                        if(!$user){   
+                            Utils::writeLog($logFile, date('Y-m-d H:i:s')." - No se encontró el usuario  para el email ".$from. " del ticket ".$idticket);
+                            continue;
                             //exit;
                         }
-                        $archivo = new Archivos();
-                        $archivo->setCaIddocumental($data["iddocumental"]);
-                        if($folder1=="DOCUMENTOS")
-                            $archivo->setCaNombre($asunto);
-                        else
-                            $archivo->setCaNombre($fileName);
-                        $archivo->setCaRef1($data["ref1"]);
-                        $archivo->setCaRef2($data["ref2"]);
-                        $archivo->setCaMime($mime);
-                        $archivo->setCaSize($size);
-                        $tipDoc = $archivo->getTipoDocumental();
-                        $folder = $tipDoc->getCaDirectorio();
-                        $directory = sfConfig::get('app_digitalFile_root') . date("Y") . DIRECTORY_SEPARATOR . $folder . $path;
-
-                        if (!is_dir($directory)) {
-                            mkdir($directory, 0777, true);
-                        }
-                        chmod($directory, 0777);
-
-                        $archivo->setCaPath($directory . $fileName);
-                        $archivo->save();
-                        $fh = fopen($directory . $fileName, 'w');
-                        fwrite($fh, $attachment);
-                        fclose($fh);
-                    } catch (Excepcion $e) {
-                        echo $e->getMessage();
-                    }*/
+                        //echo $idticket."---".$mess."---".$user->getCaLogin()."<br>";
+                        $request->setParameter("idticket",$idticket);
+                        $request->setParameter("respuesta",$mess);
+                        $request->setParameter("iduser",$user->getCaLogin());
+                        $this->executeGuardarRespuestaTicket($request);
+                        
+                    }
+                } catch (Exception $e) {
+                    
+                    
+                    /*$uniq_id = $mail->getUniqueId($messageNum);
+                    $messageId = $mail->getNumberByUniqueId($uniq_id);
+                    $mail->moveMessage($messageId, $folder1."P");       */
+                    $msgerror.=$message->subject."/:".$e->getTraceAsString()."<br><br>";
+                    
                 }
-                //$uniq_id = $mail->getUniqueId($messageNum);
-                //$messageId = $mail->getNumberByUniqueId($uniq_id);                
-                //$mail->moveMessage($messageId, $folder1."P");                
+                
+                
+                $uniq_id = $mail->getUniqueId($messageNum);
+                $messageId = $mail->getNumberByUniqueId($uniq_id);
+                $mail->moveMessage($messageId, $folder1."P");
+            }
+            /*foreach ($mail as $messageNum => $message) {
+                $uniq_id = $mail->getUniqueId($messageNum);
+                $messageId = $mail->getNumberByUniqueId($uniq_id);
+                $mail->moveMessage($messageId, $folder1."P");   
+            }*/
+            
+            if($msgerror!="")
+            {
+                Utils::sendEmail(
+                    array(
+                        "from"=>"colsys@coltrans.com.co",
+                        "to"=>"admin@coltrans.com.co",
+                        "subject"=>"Error en tickets email",
+                        "body"=>"Error en tickets",
+                        "mensaje"=> $msgerror
+                    )
+                );
+                Utils::writeLog($logFile, date()." - ". $msgerror);
             }
         }
-        catch(Exception $e)
+        /*catch(Exception $e)
         {
             echo $e->getMessage();
-            /*$data=array();
-            $data["from"]="colsys@coltrans.com.co";
-            $data["to"]="maquinche@coltrans.com.co";
-            $data["subject"]="Error procesando correos $folder";
-            $data["mensaje"]=$e->getMessage();
-            Utils::sendEmail($data);
-             */
-        }
+           
+        }*/
         exit;
     }
+    
+    
+    
+    
+    
 
     public function executeNoAccess(sfWebRequest $request) {
          

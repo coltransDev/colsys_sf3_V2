@@ -85,6 +85,26 @@ class Usuario extends BaseUsuario {
         return $resultado;
     }
     
+    public function getFirmaConsolcargo() {
+        //$sucursal = //$this->getSucursal();
+        $sucursal = Doctrine::getTable("Sucursal")->find("CBO"); 
+        $empresa = $sucursal->getEmpresa();
+        $resultado = Utils::replace(strtoupper($this->getCaNombre())) . "\n";
+        $resultado .= $this->getCaCargo() . "\n" . strtoupper($empresa->getCaNombre()) . ".\n";
+        $fax = $sucursal->getCaFax();
+
+        if ($sucursal) {
+            $resultado .= $sucursal->getCaDireccion() . "\n";
+            $resultado .= "Tel.: " . $sucursal->getCaTelefono() . "\n";
+            $resultado .= $fax?"Fax.: " . $sucursal->getCaFax() . "\n":"";
+            if($sucursal->getCaCodpostal()!="")
+                $resultado .= "Cod. Postal: " . $sucursal->getCaCodpostal() . "\n";
+        }
+        $resultado .= $sucursal->getCaNombre() . " - " . $empresa->getTrafico()->getCaNombre(). "\n";
+        $resultado .= "http://" . $empresa->getCaUrl();
+        return $resultado;
+    }
+    
     public function getFirmaOtmHTML($company) {
         $sucursaltmp = $this->getSucursal();
         
@@ -459,7 +479,7 @@ class Usuario extends BaseUsuario {
                 if(isset($recips) && count($recips)>0){
                 foreach ($recips as $recip) {
                     if ($recip->getCaEmail()) {
-                        $email->addTo(str_replace(" ", "", $recip->getCaEmail()));
+                        $email->addTo($recip->getCaEmail());
                     }
                 }
                 }else

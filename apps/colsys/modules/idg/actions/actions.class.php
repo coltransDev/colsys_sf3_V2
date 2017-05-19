@@ -46,15 +46,17 @@ class idgActions extends sfActions
                 ->createQuery("c")
                 ->select("c.ca_idgconfig as idreg ,c.*,s.ca_nombre")
                 ->innerJoin("c.Sucursal s")
-                ->where("c.ca_idg=?",$ca_idg)
-                ->addOrderBy("c.ca_idgconfig")
+                ->where("c.ca_idg=? and ca_fcheliminado IS NULL",$ca_idg)
+                ->addOrderBy("c.ca_fchini")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                 ->execute();
         foreach($rows as $key=>$r)
         {
             $rows[$key]["s_ca_nombre"]=utf8_encode($r["s_ca_nombre"]);
         }
-         $rows[] = array("ca_sucursal" => "+", "ca_lim1" => "", "orden" => "Z");
+         //$rows[] = array("ca_sucursal" => "+", "ca_lim1" => "", "orden" => "Z");
+         
+        //echo "<pre>";print_r($rows);echo "</pre>";
 
         $this->responseArray = array("success" => true, "total" => count($rows), "root" => $rows);
 
@@ -155,9 +157,13 @@ class idgActions extends sfActions
     public function executeEliminarIdgconfig($request)
     {
         try{
+            $user = $this->getUser();
             $idconfig=$request->getParameter("idconfig");
             $config = Doctrine::getTable("IdgConfig")->find( $idconfig );
-            $config->delete();
+            
+            $config->setCaFcheliminado(date("Y-m-d H:i:s"));
+            $config->setCaUsueliminado($user->getUserId());
+            $config->save();
             $this->responseArray = array("success" => true);
        }
        catch(Exception $e)

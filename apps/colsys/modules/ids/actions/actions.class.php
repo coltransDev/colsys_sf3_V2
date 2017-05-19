@@ -422,7 +422,7 @@ class idsActions extends sfActions {
                             $email->setCaFrom($usuario->getCaEmail());
                             $email->setCaReplyto($usuario->getCaEmail());
                             $email->setCaFromname($usuario->getCaNombre());
-                            $email->setCaAddress($proveedor->getUsuario()->getCaEmail());
+                            $email->setCaAddress($proveedor->getJefe()->getCaEmail());
                             $email->addCC($usuario->getCaEmail());
                             $email->setCaSubject("Aprobacion Proveedor - ".$proveedor->getIds()->getCaNombre());
                             sfContext::getInstance()->getRequest()->setParameter("nombre", $proveedor->getIds()->getCaNombre());
@@ -1729,7 +1729,7 @@ class idsActions extends sfActions {
                 ->execute();
 
         $contentHTML = sfContext::getInstance()->getController()->getPresentationFor('ids', 'alertasDocumentos');
-
+        
         $email = new Email();
         $email->setCaUsuenvio("Administrador");
         $email->setCaTipo("Not. Vencimiento");
@@ -1769,6 +1769,8 @@ class idsActions extends sfActions {
         if ($request->getParameter("layout")) {
             $this->setLayout($request->getParameter("layout"));
         }
+        
+        $this->setTemplate("responseTemplate");
     }
 
     public function executeVerificarListaClinton(sfWebRequest $request) {
@@ -2080,7 +2082,8 @@ class idsActions extends sfActions {
                     $resultadosVisita[$documento->getCaId()]["ids"] = $documento->getIds();
                     $resultadosVisita[$documento->getCaId()]["nombre"] = $documento->getIds()->getCaNombre();
                     $resultadosVisita[$documento->getCaId()]["docs"] = array();
-                    $resultadosVisita[$documento->getCaId()]["jefe"] = $documento->getIds()->getIdsProveedor()->getCaJefecuenta();
+                    $resultadosVisita[$documento->getCaId()]["jefe_email"] = $documento->getIds()->getIdsProveedor()->getJefe()->getCaEmail();
+                    $resultadosVisita[$documento->getCaId()]["jefe_activo"] = $documento->getIds()->getIdsProveedor()->getJefe()->getCaActivo();
                 }
 
                 $resultadosVisita[$documento->getCaId()]["docs"][] = $documento;
@@ -2105,8 +2108,15 @@ class idsActions extends sfActions {
                 continue;
             }
 
+            $ids = null;
             foreach ($contactos as $contacto) {
                 $email->addTo($contacto->getCaEmail());
+                if (!$ids){
+                    $ids = $contacto->getIdsSucursal()->getIds();
+                }
+            }
+            if ($ids->getIdsProveedor()->getJefe()) {
+                $email->addCc($ids->getIdsProveedor()->getJefe()->getCaEmail());
             }
             
             $usuarios = Doctrine::getTable("Usuario")
@@ -2154,18 +2164,9 @@ class idsActions extends sfActions {
         
         foreach ($resultadosVisita as $resultadoVisita) {
 
-            $idJefe = $resultadoVisita["jefe"];
-            
-            if (!$idJefe) {
+            if (!$resultadoVisita["jefe_activo"]) {
                 continue;
             }
-            
-            $q = Doctrine::getTable("Usuario")
-                    ->createQuery("u")
-                    ->addWhere("u.ca_login = ?", $idJefe)
-                    ->addWhere("u.ca_activo IS TRUE");
-            
-            $emailJefe = $q->fetchOne();
 
             $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "ids" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "textos.yml";
             $textos = sfYaml::load($config);
@@ -2194,7 +2195,7 @@ class idsActions extends sfActions {
             $email->setCaSubject($textos['asuntoEmail']."-".$resultadoVisita["nombre"]);
             $email->setCaReplyto("pricing@coltrans.com.co");
             
-            $email->addTo($emailJefe->getCaEmail());
+            $email->addTo($resultadoVisita["jefe_email"]);
             $email->setCaBody($msg);
             $email->setCaBodyhtml(Utils::replace($msg));
 
@@ -2673,5 +2674,38 @@ class idsActions extends sfActions {
         
     }
     
-    
+     public function executeWindowConsultaListasExt5($request) {
+        $this->id = $request->getParameter("id");
+        $this->tipoConsulta = $request->getParameter("tipoConsulta");
+        $ids = Doctrine::getTable("Ids")->find($this->id);
+        $this->idalterno = $ids->getCaIdalterno();
+        $this->nombre = $ids->getCaNombre();
+    }
+
+    function executeConsultaWsListaSinte($request) {
+        $id = $request->getParameter("id");
+        $tipoConsulta = ($request->getParameter("tipoConsulta"))?$request->getParameter("tipoConsulta"):"DOCUMENTO";
+
+        $resultado = array();
+        if( $id ){
+            $ids = Doctrine::getTable("Ids")->find($id);
+            if ($ids) {
+                $ids->getConsultaListas($tipoConsulta);
+                
+                $consultas = $ids->getIdsRestrictivas();
+                foreach ($consultas as $consulta){
+                    $resultado[] = array(
+                        "fchconsultado" => $consulta->getCaFchconsultado(),
+                        "tipo_consulta" => $consulta->getCaTipoConsulta(),
+                        "idrespuesta" => $consulta->getCaIdrespuesta(),
+                        "respuesta" => $consulta->getCaRespuesta()
+                    );
+                }
+            }
+        }
+        
+        $this->responseArray = array("success" => true, "root" => $resultado);
+        $this->setTemplate("responseTemplate");
+    }
+   
 }

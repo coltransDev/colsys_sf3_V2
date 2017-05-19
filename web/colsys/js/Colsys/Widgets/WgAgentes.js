@@ -27,7 +27,7 @@ Ext.define('Colsys.Widgets.WgAgentes', {
                 url: '/widgets5/datosAgentes',
                 reader: {
                     type: 'json',
-                    root: 'root'
+                    rootProperty: 'root'
                 }
             },
             autoLoad: true
@@ -38,7 +38,37 @@ Ext.define('Colsys.Widgets.WgAgentes', {
         loadingText: 'buscando...',
         emptyText: 'No existen registros',
         getInnerTpl: function() {
-            return '<tpl for="."><div class="search-item"><b>{nombre} <br> {pais} </div></tpl>';
+            //console.log(tipo);
+            //return '<tpl for="."><div class="search-item"><b>{nombre} <br> {pais} </div></tpl>';
+            
+            return '<tpl for="."><div class="search-item"><b>{nombre} <br> {pais} <br><span style="font-size:9px"><span class="rojo">{tipo}</span></span></div></tpl>';
+            
+             /*return '<tpl for="."><div class="search-item"><b>{nombre}</b><br /><span style="font-size:9px">{pais}</span> <br />',
+                '<span style="font-size:9px">',
+                '<tpl if="this.oficial(tipo)">',
+                '<p>{tipo}</p>',
+                '</tpl>',
+                '<tpl if="!this.oficial(tipo)">',
+                '<p><span class="rojo">{tipo}</span></p>',
+                '</tpl>',
+                '<tpl if="this.tplogistics(tplogistics)">',
+                '<p><span class="rojo">Agente TPLogistics</span></p>',
+                '</tpl>',
+                '<tpl if="this.tplogistics(consolcargo)">',
+                '<p><span class="rojo">Agente Consolcargo</span></p>',
+                '</tpl>',
+                '</span> </div></tpl>'
+        , {
+                    oficial: function (val) {
+                        return val == 'Oficial'
+                    },
+                    tplogistics: function (val) {
+                        return val == true
+                    },
+                    consolcargo: function (val) {
+                        return val == true
+                    }
+                }*/
         }
     },
     

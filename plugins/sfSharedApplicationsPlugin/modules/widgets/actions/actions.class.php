@@ -463,7 +463,7 @@ class widgetsActions extends sfActions {
                 $result = array();
                 $result["ca_idcontacto"] = $row["c_ca_idcontacto"];
                 $result["ca_fijo"] = $row["c_ca_fijo"];
-                $result["ca_email"] = $row["c_ca_email"];
+                $result["ca_email"] = utf8_encode($row["c_ca_email"]);
                 $result["ca_compania"] = utf8_encode($row["cl_ca_compania"]);
                 $result["ca_nombres"] = utf8_encode($row["c_ca_nombres"]);
                 $result["ca_papellido"] = utf8_encode($row["c_ca_papellido"]);
@@ -480,10 +480,10 @@ class widgetsActions extends sfActions {
                 $result["ca_coordinador"] = $row["cl_ca_coordinador"];
                 $result["ca_diascredito"] = $row["lc_ca_diascredito"];
                 $result["ca_cupo"] = $row["lc_ca_cupo"];
-                $result["ca_propiedades"] = $row["cl_ca_propiedades"];
+                $result["ca_propiedades"] = utf8_encode($row["cl_ca_propiedades"]);
                 if(trim($row["cl_ca_propiedades"])!="")
                 {
-                    if(strpos($row["cl_ca_propiedades"], "cuentaglobal=true") !== false)
+                    if(strpos($row["cl_ca_propiedades"], "cuentaglobal=true") !== false || strpos($row["cl_ca_propiedades"], "cuentaglobal=1") !== false)
                     {
                         $result["cg"] = "si";
                     }
@@ -491,6 +491,7 @@ class widgetsActions extends sfActions {
                 $clientes[] = $result;
             }
         }
+        //echo "<pre>";print_r($clientes);echo "</pre>";
         $this->responseArray = array("totalCount" => count($clientes), "clientes" => $clientes);
         $this->setTemplate("responseTemplate");
     }
@@ -503,7 +504,7 @@ class widgetsActions extends sfActions {
                     ->select(" cl.ca_idcliente, cl.ca_compania,cl.ca_tipo,
                                       cl.ca_preferencias, cl.ca_confirmar, cl.ca_vendedor, cl.ca_coordinador,
                                       v.ca_nombre, cl.ca_listaclinton, cl.ca_fchcircular
-                                      ,cl.ca_status, cl.ca_vendedor, lc.ca_cupo, lc.ca_diascredito
+                                      ,cl.ca_status, cl.ca_vendedor, lc.ca_cupo, lc.ca_diascredito,ca_idalterno,ca_digito
                                      ")
                     ->from("Cliente cl")
                     ->leftJoin("cl.LibCliente lc")
@@ -534,6 +535,7 @@ class widgetsActions extends sfActions {
                 $result["ca_coordinador"] = $row["cl_ca_coordinador"];
                 $result["ca_diascredito"] = $row["lc_ca_diascredito"];
                 $result["ca_cupo"] = $row["lc_ca_cupo"];
+                $result["nit"] = ($row["cl_ca_idalterno"]."-".$row["cl_ca_digito"]);
                 $clientes[] = $result;
             }
             $this->responseArray = array("totalCount" => count($clientes), "clientes" => $clientes);
@@ -1045,23 +1047,34 @@ class widgetsActions extends sfActions {
          
          $q = Doctrine::getTable("InoMaestraAdu")
                     ->createQuery("m")
-                    ->select("m.*,o.*,d.*,cl.*")
+                    ->select("m.ca_referencia,m.ca_idcliente,m.ca_piezas,m.ca_peso,m.ca_mercancia,m.ca_vendedor,"
+                            . "o.ca_ciudad,o.ca_idciudad,d.ca_ciudad,d.ca_idciudad,cl.ca_compania")
                     ->leftJoin("m.Origen o")
                     ->leftJoin("m.Destino d")                    
                     ->leftJoin("m.Cliente cl")                    
-                    ->addWhere("m.ca_referencia LIKE ?", $numRef . "%");
+                    ->addWhere("m.ca_referencia LIKE ? AND m.ca_fchcreado>?", array($numRef . "%",Utils::addDate(date("Y-m-d"),0,0,-1)))
+                    ->orderBy("m.ca_fchcreado DESC")
+                    ->limit(30);
          
          $referencias = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->limit(50)->execute();
 
-/*        foreach (referencias as $ref) {
-            $sucursal[] = array(
-                "idsucursal" => $suc["s_ca_idsucursal"],
-                "ciudad" => utf8_encode($suc["c_ca_ciudad"]),
-                "direccion" => utf8_encode($suc["s_ca_direccion"])
-            );
+       foreach ($referencias as $k=>$ref) {
+            
+                //$referencias[$k]["m_ca_referencia"]=$ref["m_ca_referencia"];
+                //$referencias[$k]["m_ca_idcliente"]=$ref["m_ca_idcliente"];
+                //$referencias[$k]["m_ca_piezas"]=$ref["m_ca_piezas"];
+                //$referencias[$k]["m_ca_peso"]=$ref["m_ca_peso"];
+                //$referencias[$k]["m_ca_volumen"]=$ref["m_ca_volumen"];
+                $referencias[$k]["m_ca_mercancia"]=  utf8_encode($ref["m_ca_mercancia"]);
+                //$referencias[$k]["m_ca_vendedor"]=$ref["m_ca_vendedor"];
+                $referencias[$k]["o_ca_ciudad"]=utf8_encode($ref["o_ca_ciudad"]);
+                //$referencias[$k]["o.ca_idciudad"]=$ref["o.ca_idciudad"];
+                $referencias[$k]["d_ca_ciudad"]=utf8_encode($ref["d_ca_ciudad"]);
+                //$referencias[$k]["d_ca_idciudad"]=$ref["d_ca_idciudad"];
+                $referencias[$k]["cl_ca_compania"]=utf8_encode($ref["cl_ca_compania"]);
         }
- * 
- */
+
+         //echo "<pre>";print_r($referencias);echo "</pre>";
         $this->responseArray = array("root" => $referencias, "total" => count($referencias), "success" => true);
         $this->setTemplate("responseTemplate");
     }

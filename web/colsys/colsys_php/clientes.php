@@ -20,7 +20,7 @@ require("checklogin.php");
 
 $titulo = 'Maestra de Clientes Colsys';
 $saludos = array("Señor" => "Señor", "Señora" => "Señora", "Doctor" => "Doctor", "Doctora" => "Doctora", "Ingeniero" => "Ingeniero", "Ingeniera" => "Ingeniera", "Arquitecto" => "Arquitecto", "Arquitecta" => "Arquitecta");
-$letras = array(" ", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S");
+$letras = array(" ", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S","T","U");
 $parte_1 = array(" ", "Avenida", "Autopista", "Calle", "Carrera", "Circular", "Diagonal", "Transversal", "Kilómetro", "Via");
 $parte_2 = array(" ", "Bis", "Sur");
 $parte_3 = array(" ", "Norte", "Sur", "Este", "Oeste");
@@ -37,7 +37,7 @@ $estados = array("Potencial", "Activo", "Vetado");
 $libestados = array("Vigente", "Congelada");
 $sstatus = array("", "Vetado");
 if ($regional == 'CO-057') {
-    $empresas = array("Coltrans", "Colmas");
+    $empresas = array("Coltrans", "Colmas", "Colotm", "Coldepositos");
 } else {
     $empresas = array("Coltrans");
 }
@@ -342,6 +342,7 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
     if ($tiponit != "") {
         $condicion.= " and ca_tipo like '%$tiponit%'";
     }
+    // echo "select * from vi_clientes $condicion";
     if (!$rs->Open("select * from vi_clientes $condicion")) {                  // Selecciona todos lo registros de la tabla Trasportistas
         echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
         //echo "<script>document.location.href = 'clientes.php';</script>";
@@ -391,11 +392,11 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
                     $img = "<a href='clientes.php?boton=Evento&id=" . $rs->Value("ca_idcliente") . "' target='_blank'>Hacer&nbsp;Seguimiento</a>";
                 }
                 if ($campos == "ca_compania") {
-                    if ($rs->Value('ca_propiedades') != "") {
-                        if (strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
+                    if ($rs->Value('ca_propiedades') != "") {                                            
+                        if (strpos($rs->Value('ca_propiedades'), "cuentaglobal=1") !== false || strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
                             $img = '<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
                         }
-                        if (strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false) {
+                        if (strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=1") !== false || strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false) {
                             $img.='<img src="/images/consolidate.png" title="Cliente de Cuadro" width="20" height="20" />';
                         }
                     }
@@ -473,11 +474,11 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
             echo "<TR>";
             echo "<TD Class=titulo style='vertical-align: top;'>$nit_mem</TD>";
             $img = "";
-            if ($rs->Value('ca_propiedades') != "") {
-                if (strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
+            if ($rs->Value('ca_propiedades') != "") {                
+                if (strpos($rs->Value('ca_propiedades'), "cuentaglobal=1") !== false || strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
                     $img = '<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
                 }
-                if (strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false) {
+                if (strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=1") !== false || strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false) {
                     $img.='<img src="/images/consolidate.png" title="Cliente de Cuadro" width="20" height="20" />';
                 }
             }
@@ -527,7 +528,7 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
             echo "<TR>";
             echo "  <TD Class=listar ROWSPAN=10 style='text-align: center; center; $bkground'>";
             echo "    <TABLE>";
-            echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/mandatosyPoderesExt4/id/" . $rs->Value('ca_idcliente') . "\"'><BR><IMG src='graficos/mandato.gif'><BR>Control<br>Mandatos</TD></TR>";
+            echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/mandatosyPoderesExt4/id/" . $rs->Value('ca_idcliente') . "\"'><BR><IMG src='graficos/mandato.gif'><BR>Documentos<br>de Aduana</TD></TR>";
             echo "      <TR><TD style='visibility: $vista_3; text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"Comisión\", " . $rs->Value('ca_idcliente') . ");'><BR><IMG src='graficos/Info.gif'><BR>Porcentaje de Comisión</TD></TR>";
             echo "      <TR><TD style='text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/agaduanaAutorizadoExt4/idcliente/" . $rs->Value('ca_idcliente') . "\"'><BR><IMG src='graficos/pdf.gif'><BR>Ag.Aduana<br />Autorizados</TD></TR>";
             echo "      <TR><TD style='text-align: center; color=blue;' Class=mostrar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/fichaTecnicaExt4/idcliente/" . $rs->Value('ca_idcliente') . "\"'><BR><IMG src='graficos/pdf.gif'><BR>Ficha Tecnica</TD></TR>";
@@ -542,9 +543,9 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
             echo "    <TABLE>";
             echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"concliente.php?id=" . $rs->Value('ca_idcliente') . "\"'><BR><IMG src='graficos/contacto.gif'><BR>Contactos</TD></TR>";
             echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"enccliente.php?id=".$rs->Value('ca_idcliente')."\"'><BR><IMG src='graficos/encuesta.gif'><BR>Visitas<BR>".$rs->Value('ca_fchvisita')."</TD></TR>";
-            echo "      <TR><TD Class=mostrar style='visibility: $vista_3; text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/encuestaVisitaExt4/idcliente/" . $rs->Value('ca_idcliente') . "\"'><BR><IMG src='graficos/encuesta.gif'><BR>Nueva<br />Encuesta</TD></TR>";
-            echo "      <TR><TD Class=mostrar style='visibility: $visible; text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:liberar(" . $rs->Value('ca_idcliente') . ");'><BR><IMG src='graficos/no.gif'><BR>Liberar Cliente</TD></TR>";
+            echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/encuestaVisitaExt4/idcliente/" . $rs->Value('ca_idcliente') . "\"'><BR><IMG src='graficos/encuesta.gif'><BR>Nueva<br />Encuesta</TD></TR>";
             echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='elegir(\"ListaClinton\", " . $rs->Value('ca_idcliente') . ");' style='color=blue;'><BR><IMG src='graficos/vista.gif'><BR>Lista OFAC</TD></TR>";
+            echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:PopupCenter(\"/ids/windowConsultaListasExt5?id=" . $rs->Value('ca_idcliente') . "\",\"Consulta en Listas Restrictivas\",\"900\",\"500\");' style='color=blue;'><BR><IMG src='graficos/vista.gif'><BR>Listas Restrictivas</TD></TR>";
             echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/clavesTracking?id=" . $rs->Value('ca_idcliente') . "\"'><BR><IMG src='graficos/tracking.gif'><BR>Tracking</TD></TR>";
             if ($nivel >= 1)
             echo "      <TR><TD Class=mostrar style='text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/ids/verIds/modo/clientes?id=" . $rs->Value('ca_idcliente') . "\"'><BR><IMG src='graficos/encuesta.gif'><BR>Sucursales</TD></TR>";
@@ -633,12 +634,9 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
             echo "</TR>";
 
             echo "<TR>";
-            echo "  <TD Class=listar style='$bkground' COLSPAN=6><TABLE WIDTH=100% CELLSPACING=1 BORDER=1>";
-            echo "  <TR>";
-            echo "  	 <TD Class=listar COLSPAN=2 style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; $bkground'><B>Actividad Económica:</B><BR>" . $rs->Value('ca_actividad') . "&nbsp;</TD>";
-            echo "    <TD Class=listar COLSPAN=2 style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; $bkground'><B>Preferencias :</B><BR>" . $rs->Value('ca_preferencias') . "&nbsp;</TD>";
-            echo "  </TR>";
-            echo "  </TABLE></TD>";
+            echo "    <TD Class=listar style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; $bkground'><B>Actividad Económica:</B><BR>" . $rs->Value('ca_actividad') . "&nbsp;</TD>";
+            echo "    <TD Class=listar COLSPAN=4 style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; $bkground'><B>Preferencias :</B><BR>" . $rs->Value('ca_preferencias') . "&nbsp;</TD>";
+            echo "    <TD Class=mostrar style='visibility: $visible; text-align: center; color=blue;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:liberar(" . $rs->Value('ca_idcliente') . ");'><BR><IMG src='graficos/no.gif'><BR>Liberar Cliente</TD>";
             echo "</TR>";
 
             echo "<TR>";
@@ -670,13 +668,15 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
             echo "</TR>";
 
             echo "<TR>";
-            echo "  <TD Class=listar COLSPAN=6><TABLE WIDTH=100% CELLSPACING=1 BORDER=1>";
+            echo "  <TD Class=listar COLSPAN=7><TABLE WIDTH=100% CELLSPACING=1 BORDER=1>";
             echo "  <TR>";
             echo "    <TD Class=titulo style='font-family: Arial, Helvetica, sans-serif; font-size: 9px;'>Creado</TD>";
             echo "    <TD Class=titulo style='font-family: Arial, Helvetica, sans-serif; font-size: 9px;'>Actualizado</TD>";
             echo "    <TD Class=titulo style='font-family: Arial, Helvetica, sans-serif; font-size: 9px;'>Financiero</TD>";
             echo "    <TD Class=titulo style='font-family: Arial, Helvetica, sans-serif; font-size: 9px;'>Coltrans</TD>";
             echo "    <TD Class=titulo style='font-family: Arial, Helvetica, sans-serif; font-size: 9px;'>Colmas</TD>";
+            echo "    <TD Class=titulo style='font-family: Arial, Helvetica, sans-serif; font-size: 9px;'>Colotm</TD>";
+            echo "    <TD Class=titulo style='font-family: Arial, Helvetica, sans-serif; font-size: 9px;'>Coldepósitos</TD>";
             echo "  </TR>";
             echo "  <TR>";
             echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>" . $rs->Value('ca_usucreado') . "</TD>";
@@ -684,13 +684,17 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
             echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>" . $rs->Value('ca_usufinanciero') . "</TD>";
             echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>" . $rs->Value('ca_coltrans_std') . "$alerta</TD>";
             echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>" . $rs->Value('ca_colmas_std') . "$alerta</TD>";
+            echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>" . $rs->Value('ca_colotm_std') . "$alerta</TD>";
+            echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>" . $rs->Value('ca_coldepositos_std') . "$alerta</TD>";
             echo "  </TR>";
             echo "  <TR>";
-            echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>" . $rs->Value('ca_fchcreado') . "</TD>";
-            echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>" . $rs->Value('ca_fchactualizado') . "&nbsp;</TD>";
-            echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>" . $rs->Value('ca_fchfinanciero') . "&nbsp;</TD>";
-            echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>" . $rs->Value('ca_coltrans_fch') . "</TD>";
-            echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>" . $rs->Value('ca_colmas_fch') . "</TD>";
+            echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>" . str_replace(" ", "<br />", $rs->Value('ca_fchcreado')) . "</TD>";
+            echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>" . str_replace(" ", "<br />", $rs->Value('ca_fchactualizado')) . "&nbsp;</TD>";
+            echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>" . str_replace(" ", "<br />", $rs->Value('ca_fchfinanciero')) . "&nbsp;</TD>";
+            echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>" . str_replace(" ", "<br />", $rs->Value('ca_coltrans_fch')) . "</TD>";
+            echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>" . str_replace(" ", "<br />", $rs->Value('ca_colmas_fch')) . "</TD>";
+            echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>" . str_replace(" ", "<br />", $rs->Value('ca_colotm_fch')) . "</TD>";
+            echo "    <TD Class=invertir style='font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: center'>" . str_replace(" ", "<br />", $rs->Value('ca_coldepositos_fch')) . "</TD>";
             echo "  </TR>";
             echo "  </TABLE></TD>";
             echo "</TR>";
@@ -988,10 +992,10 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
                 echo "<TR>";
                 $img = "";
                 if ($rs->Value('ca_propiedades') != "") {
-                    if (strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
+                    if (strpos($rs->Value('ca_propiedades'), "cuentaglobal=1") !== false || strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
                         $img = '<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
                     }
-                    if (strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false) {
+                    if (strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=1") !== false || strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false) {
                         $img.='<img src="/images/consolidate.png" title="Cliente de Cuadro" width="20" height="20" />';
                     }
                 }
@@ -1144,10 +1148,10 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
 
                 $img = "";
                 if ($rs->Value('ca_propiedades') != "") {
-                    if (strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
+                    if (strpos($rs->Value('ca_propiedades'), "cuentaglobal=1") !== false || strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
                         $img = '<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
                     }
-                    if (strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false) {
+                    if (strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=1") !== false || strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false) {
                         $img.='<img src="/images/consolidate.png" title="Cliente de Cuadro" width="20" height="20" />';
                     }
                 }
@@ -1241,10 +1245,10 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
                 echo "  <TD Class=mostrar style='vertical-align: top;' ROWSPAN=5>" . number_format($rs->Value('ca_idcliente')) . "-" . $rs->Value('ca_digito') . "</TD>";
                 $img = "";
                 if ($rs->Value('ca_propiedades') != "") {
-                    if (strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
+                    if (strpos($rs->Value('ca_propiedades'), "cuentaglobal=1") !== false || strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
                         $img = '<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
                     }
-                    if (strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false) {
+                    if (strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=1") !== false || strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false) {
                         $img.='<img src="/images/consolidate.png" title="Cliente de Cuadro" width="20" height="20" />';
                     }
                 }
@@ -1339,10 +1343,10 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
                 echo "  <TD Class=mostrar style='vertical-align: top;' ROWSPAN=5>" . number_format($rs->Value('ca_idcliente')) . "-" . $rs->Value('ca_digito') . "</TD>";
                 $img = "";
                 if ($rs->Value('ca_propiedades') != "") {
-                    if (strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
+                    if (strpos($rs->Value('ca_propiedades'), "cuentaglobal=1") !== false || strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
                         $img = '<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
                     }
-                    if (strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false) {
+                    if (strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=1") !== false || strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false) {
                         $img.='<img src="/images/consolidate.png" title="Cliente de Cuadro" width="20" height="20" />';
                     }
                 }
@@ -1445,10 +1449,10 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
                 echo "  <TD Class=mostrar style='vertical-align: top;' ROWSPAN=5>" . number_format($rs->Value('ca_idcliente')) . "-" . $rs->Value('ca_digito') . "</TD>";
                 $img = "";
                 if ($rs->Value('ca_propiedades') != "") {
-                    if (strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
+                    if (strpos($rs->Value('ca_propiedades'), "cuentaglobal=1") !== false || strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
                         $img = '<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
                     }
-                    if (strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false) {
+                    if (strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=1") !== false || strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false) {
                         $img.='<img src="/images/consolidate.png" title="Cliente de Cuadro" width="20" height="20" />';
                     }
                 }
@@ -1535,10 +1539,10 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
                 echo "  <TD Class=captura>Compañia:</TD>";
                 $img = "";
                 if ($rs->Value('ca_propiedades') != "") {
-                    if (strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
+                    if (strpos($rs->Value('ca_propiedades'), "cuentaglobal=1") !== false || strpos($rs->Value('ca_propiedades'), "cuentaglobal=true") !== false) {
                         $img = '<img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />';
                     }
-                    if (strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false) {
+                    if (strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=1") !== false || strpos($rs->Value('ca_propiedades'), "consolidar_comunicaciones=true") !== false) {
                         $img.='<img src="/images/consolidate.png" title="Cliente de Cuadro" width="20" height="20" />';
                     }
                 }
@@ -1843,3 +1847,33 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
     echo "<script>document.location.href = 'clientes.php$cadena';</script>";  // Retorna a la pantalla principal de la opción
 }
 ?>
+<script>
+function PopupCenter(url, title, w, h) {
+    var tipoConsulta = prompt("Que tipo de Consulta desea realizar? Responda con la palabra exacta DOCUMENTO o NOMBRE");
+    switch(tipoConsulta) {
+        case "DOCUMENTO":
+            break;
+        case "NOMBRE":
+            url = url+'\&tipoConsulta=NOMBRE';
+            break;
+        default:
+            return;
+            break;
+    }    
+    // Fixes dual-screen position                         Most browsers      Firefox
+    var dualScreenLeft = window.screenLeft != undefined ? window.screenLeft : screen.left;
+    var dualScreenTop = window.screenTop != undefined ? window.screenTop : screen.top;
+
+    var width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
+    var height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+
+    var left = ((width / 2) - (w / 2)) + dualScreenLeft;
+    var top = ((height / 2) - (h / 2)) + dualScreenTop;
+    var newWindow = window.open(url, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=' + w + ', height=' + h + ', top=' + top + ', left=' + left);
+
+    // Puts focus on the newWindow
+    if (window.focus) {
+        newWindow.focus();
+    }
+}
+</script>

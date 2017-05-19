@@ -27,7 +27,7 @@ class CotRecargo extends BaseCotRecargo
 	*/
 	public function getTextoTarifa(){
 
-		$textoRecargos = ($this->getCaAplicaTar()!='% Sobre Flete'?$this->getCaIdmoneda():"")." ".Utils::formatNumber($this->getCaValorTar(),3)." ".$this->getCaAplicaTar().(($this->getCaValorMin()!=0)?" /Mín.".$this->getCaIdmoneda()." ".Utils::formatNumber($this->getCaValorMin(),3)." ".$this->getCaAplicaMin():"");
+		$textoRecargos = (substr($this->getCaAplicaTar(),0,1)!='%'?$this->getCaIdmoneda():"")." ".Utils::formatNumber($this->getCaValorTar(),3)." ".$this->getCaAplicaTar().(($this->getCaValorMin()!=0)?" /Mín.".$this->getCaIdmoneda()." ".Utils::formatNumber($this->getCaValorMin(),3)." ".$this->getCaAplicaMin():"");
 
 		return $textoRecargos;
 	}

@@ -10,7 +10,7 @@ Ext.define('Colsys.Ino.FormModo', {
     items:[
         {
             xtype:'Colsys.Widgets.WgImpoexpo',
-            fieldLabel: 'impoexpo',
+            fieldLabel: 'Servicio',
             id:'fmImpoexpo',
             name:'fmImpoexpo'
         },
@@ -22,7 +22,7 @@ Ext.define('Colsys.Ino.FormModo', {
         }
     ],
     buttons: [{
-       text: 'guardar',
+       text: 'Guardar',
        formBind: true,
        handler: function() {
         ref='0';
@@ -30,6 +30,22 @@ Ext.define('Colsys.Ino.FormModo', {
 
         if(!tabpanel.getChildByElement('tab'+ref) && ref!="")
         {
+            console.log(permisosG);
+            
+            if(Ext.getCmp('fmImpoexpo').getValue()=="INTERNO")
+                tmppermisos=permisosG.terrestre;
+            else if(Ext.getCmp('fmImpoexpo').getValue()=="Exportaci\u00F3n")
+                tmppermisos=permisosG.exportacion;
+            else if(Ext.getCmp('fmImpoexpo').getValue()=="Importaci\u00F3n")
+            {
+                if(Ext.getCmp('fmTransporte').getValue()=="Mar\u00EDtimo")
+                    tmppermisos=permisosG.maritimo;
+                if(Ext.getCmp('fmTransporte').getValue()=="A\u00E9reo")
+                    tmppermisos=permisosG.aereo;
+            }
+            else if(record.data.m_ca_impoexpo=="OTM-DTA")
+                tmppermisos=permisosG.otm;
+            
             tabpanel.add(
             {
                 title: 'Sin Numero',
@@ -39,7 +55,8 @@ Ext.define('Colsys.Ino.FormModo', {
                 autoScroll: true,
                 items: [new Colsys.Ino.Mainpanel({"idmaster":ref,
                         idtransporte: Ext.getCmp('fmTransporte').getValue(),
-                        idimpoexpo: Ext.getCmp('fmImpoexpo').getValue()
+                        idimpoexpo: Ext.getCmp('fmImpoexpo').getValue(),
+                        permisos:tmppermisos
                     })]
             }).show();
         }

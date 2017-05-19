@@ -54,7 +54,8 @@ class sfWidgetFormExtDate extends sfWidgetFormDate
   public function render($name, $value = null, $attributes = array(), $errors = array())
   {
     $prefix = $this->generateId($name);
-	
+    $disabled = $attributes["disabled"]?$attributes["disabled"]:"false";
+    
     return $this->renderTag('input', array('type' => 'text', 'size' => 10, 'id' => $id = $this->generateId($name).'_ext_control', 'name'=>$name )).
            sprintf(<<<EOF
 <script type="text/javascript">
@@ -63,7 +64,8 @@ class sfWidgetFormExtDate extends sfWidgetFormDate
 				 applyTo: '%s',
 				 value: '%s',
                  width: 100,
-                 format: 'Y-m-d'
+                 format: 'Y-m-d',
+                 disabled: %s
 			});
 			
 			/*
@@ -75,7 +77,8 @@ class sfWidgetFormExtDate extends sfWidgetFormDate
 EOF
       ,
       $id,
-      $value 
+      $value,
+      $disabled
     );
   }
 }

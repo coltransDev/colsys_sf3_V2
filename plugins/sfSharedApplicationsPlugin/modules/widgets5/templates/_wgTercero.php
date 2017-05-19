@@ -13,12 +13,12 @@ Ext.define('mdTercero',{
     extend: 'Ext.data.Model',
     fields: [
         {name: 'idtercero', mapping: 't_ca_idtercero'},
-            {name: 'nombre', mapping: 't_ca_nombre'},
-            {name: 'ciudad', mapping: 'c_ca_ciudad'},
-            {name: 'pais', mapping: 'p_ca_nombre'},
-            {name: 'direccion', mapping: 't_ca_direccion'},
-            {name: 'contacto', mapping: 't_ca_contacto'},
-            {name: 'idreporte'}
+        {name: 'nombre', mapping: 't_ca_nombre'},
+        {name: 'ciudad', mapping: 'c_ca_ciudad'},
+        {name: 'pais', mapping: 'p_ca_nombre'},
+        {name: 'direccion', mapping: 't_ca_direccion'},
+        {name: 'contacto', mapping: 't_ca_contacto'},
+        {name: 'idreporte'}
     ]
 });
 Ext.define('Ext.colsys.wgTercero', {
@@ -39,15 +39,8 @@ Ext.define('Ext.colsys.wgTercero', {
     },
     qtip:'Listado ',
     queryMode: 'remote',
-    valueField:'idtercero',
     displayField:'nombre',
-    minChars: 3/*,
-    listConfig: {
-        loadingText: 'buscando...',
-        emptyText: 'No existen registros',
-        getInnerTpl: function() {
-            return '<tpl for="."><div class="search-item"><strong>{compania}</strong><br /><span><br />{nombre_ven}</span> </div></tpl>';
-        }
-    }*/
+    valueField:'idtercero',    
+    minChars: 3
 });
 </script>

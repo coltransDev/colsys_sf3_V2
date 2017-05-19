@@ -13,7 +13,7 @@ Ext.define('Colsys.Widgets.wgTipoComprobante', {
             url: '/widgets5/datosTipoComprobante',
             reader: {
                 type: 'json',
-                root: 'root'
+                rootProperty: 'root'
             }
         },
         autoLoad: false

@@ -24,6 +24,13 @@ $comites = $sf_data->getRaw("comites");
                 }
                 ?>
             <td width="5" style="border:none; border-bottom: 1px solid #D0D0D0;text-align:right" title="Organigrama"><?=link_to(image_tag("Organigrama.jpg"),"adminUsers/viewOrganigrama?login=".$user->getCaLogin())?></td>
+            <?
+            if($userinicio->getUserId()==$user->getCaLogin()) { 
+                ?>
+                <td width="5" style="border:none; border-bottom: 1px solid #D0D0D0;text-align:right" title="Vacaciones"><img src="/intranet/images/32x32/vacations.png" onclick="formVacaciones()"></td>
+                <?
+            }
+            ?>
         </tr>
         <tr>
             <td width="150">
@@ -142,3 +149,33 @@ $comites = $sf_data->getRaw("comites");
         <br />
     
 </div>
+
+<script>
+    var formVacaciones = function(){
+        Ext.create('Ext.window.Window', {
+            title: 'VACACIONES',
+            height: 600,
+            width: 600,
+            id:'win',
+            layout: 'anchor',
+            maximizable: true,
+            items: {  // Let's put an empty grid in just to illustrate fit layout
+                xtype: 'Colsys.Users.FormVacaciones',
+                border: false,
+                id:'form-vacaciones',
+                name:'form-vacaciones',
+                frame:true,
+                login: "<?=$user->getCaLogin()?>"                
+            }
+        }).show();
+    }
+    
+    Ext.Loader.setConfig({
+        enabled: true,    
+        paths: {            
+            'Ext.ux': '/js/ext5/examples/ux/',            
+            'Ext.ux.exporter':'/js/ext5/examples/ux/exporter/',
+            'Colsys':'/js/Colsys'
+        }
+    });
+</script>

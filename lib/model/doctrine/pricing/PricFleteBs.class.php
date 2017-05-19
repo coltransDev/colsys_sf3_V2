@@ -25,6 +25,9 @@ class PricFleteBs extends BasePricFleteBs
 			case 2:
 				return "pink";
 				break;
+                        case 3:
+				return "green";
+				break;
 			default:
 				return "";
 				break;
@@ -42,6 +45,9 @@ class PricFleteBs extends BasePricFleteBs
 				break;
 			case "pink":
 				$this->setCaEstado(2);
+				break;
+                        case "green":
+				$this->setCaEstado(3);
 				break;
 			default:
 				$this->setCaEstado(null);

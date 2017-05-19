@@ -28,13 +28,14 @@ class confirmacionesOtmComponents extends sfComponents {
                 ->execute();
 
 
-        $this->fijos = Doctrine::getTable("Contacto")
+        /*$this->fijos = Doctrine::getTable("Contacto")
                 ->createQuery("c")
                 ->addWhere("c.ca_idcliente = ?", $this->cliente->getCaIdcliente())
                 ->addWhere("ca_fijo = ?", true)
                 ->addWhere("ca_cargo != ?", 'Extrabajador')
-                ->execute();
+                ->execute();*/
         
+        $this->fijos = $this->reporte->getContacto('1');
         
         /* $this->fijos = array();
           foreach( $fijos as $fijo  ){

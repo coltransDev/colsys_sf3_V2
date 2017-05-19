@@ -34,25 +34,28 @@ if( $nivel>=1 ){
     <?
     if( count($articulos)>0 ){
         foreach( $articulos as $articulo ){
-        ?>
-        <tr>
-            <td>
-                <?=link_to($articulo->getCaTitulo(), "subastas/verArticulo?idarticulo=".$articulo->getCaIdarticulo())?>
-            </td> 
-            <td>
-                <?=Utils::formatNumber($articulo->getCaValor(), "Y-m-d H:i:s")?>
-            </td> 
-            <td>
-                <?=Utils::fechaMes( Utils::parseDate($articulo->getCaFchinicio(), "Y-m-d") )." ".Utils::parseDate($articulo->getCaFchinicio(), "h:i A")?>
-            </td>
-            <td>
-                <?=Utils::fechaMes( Utils::parseDate($articulo->getCaFchvencimiento(), "Y-m-d") )." ".Utils::parseDate($articulo->getCaFchvencimiento(), "h:i A")?>
-            </td>
-            <td>
-                <?=$articulo->getCaDirecta()?"Compra directa":"Subasta normal"?>
-            </td>             
-        </tr>
-        <?
+            $sucArticulo = $articulo->getSucursal()?$articulo->getSucursal()->getCaNombre():"";            
+            if($user->getSucursalNombre() == $sucArticulo || $articulo->getCaIdsucursal()==null || $user->getUserId()==$articulo->getCaUsucreado()){
+                ?>
+                <tr>
+                    <td>
+                        <?=link_to($articulo->getCaTitulo(), "subastas/verArticulo?idarticulo=".$articulo->getCaIdarticulo())?>
+                    </td> 
+                    <td>
+                        <?=Utils::formatNumber($articulo->getCaValor(), "Y-m-d H:i:s")?>
+                    </td> 
+                    <td>
+                        <?=Utils::fechaMes( Utils::parseDate($articulo->getCaFchinicio(), "Y-m-d") )." ".Utils::parseDate($articulo->getCaFchinicio(), "h:i A")?>
+                    </td>
+                    <td>
+                        <?=Utils::fechaMes( Utils::parseDate($articulo->getCaFchvencimiento(), "Y-m-d") )." ".Utils::parseDate($articulo->getCaFchvencimiento(), "h:i A")?>
+                    </td>
+                    <td>
+                        <?=$articulo->getCaDirecta()?"Compra directa":"Subasta normal"?>
+                    </td>             
+                </tr>
+                <?
+            }
         }
     }else{        
     ?>

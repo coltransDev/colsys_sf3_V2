@@ -90,6 +90,18 @@ include_component("widgets", "widgetReporte");
         });
         this.widgetReporte.addListener("select", this.onSelectReporte, this );
         
+        this.widgetModalidad = new WidgetModalidad({fieldLabel: 'Modalidad',
+                                    id: 'modalidad',
+                                    name: 'modalidad',
+                                    linkTransporte: "transporte",
+                                    impoexpo: "<?= Constantes::IMPO ?>",
+                                    allowBlank: false,
+                                    tabIndex:4,
+                                    disabled: !!this.referencia
+                                });
+                                
+        this.widgetModalidad.addListener("select", this.onSelectMod, this );
+        
         FormMasterPanel.superclass.constructor.call(this, {
             deferredRender:false,
             autoHeight:true,
@@ -137,12 +149,12 @@ include_component("widgets", "widgetReporte");
                                     tabIndex:1
                                 }
                             ]
-                        },
+                        }//,
                             
                         /*
                          * =========================Column 2 =========================
                          **/
-                        {
+                        /*{
                             xtype:'fieldset',
                             columnWidth:.5,
                             layout: 'form',
@@ -151,7 +163,7 @@ include_component("widgets", "widgetReporte");
                             items: [
                                 this.widgetReporte
                             ]
-                        }
+                        }*/
                     ]
                 },
                 {
@@ -215,7 +227,10 @@ include_component("widgets", "widgetReporte");
                                 }),
                                 new WidgetLinea({fieldLabel: 'Linea',
                                     linkTransporte: "transporte",
-                                    name: 'linea',
+                                    impoexpo:"<?= Constantes::IMPO ?>",
+                                    activoImpo: true,
+                                    activoExpo: true,
+                                    name: 'linea',  
                                     id: 'linea',
                                     hiddenName: 'idlinea',
                                     hiddenId: "idlinea",
@@ -241,16 +256,23 @@ include_component("widgets", "widgetReporte");
                                     name: 'transporte',
                                     value: this.transporte
                                 },
-                                new WidgetModalidad({fieldLabel: 'Modalidad',
+                                /*new WidgetModalidad({fieldLabel: 'Modalidad',
                                     id: 'modalidad',
                                     name: 'modalidad',
                                     linkTransporte: "transporte",
                                     impoexpo: "<?= Constantes::IMPO ?>",
                                     allowBlank: false,
                                     tabIndex:4,
-                                    disabled: !!this.referencia
-                                }),
-                                
+                                    disabled: !!this.referencia,
+                                    listeners:{
+                                        select:function(field, record, index){                                                                   
+                                            alert(record.data.valor);
+                                            alert("dfasdfasd");
+                                            //adminLinea(record.data.valor);
+                                        }
+                                    }
+                                }),*/
+                                this.widgetModalidad,
                                 new WidgetCiudad({fieldLabel: 'Ciudad Destino',
                                     name: 'destino',
                                     id: 'destino',
@@ -434,7 +456,7 @@ include_component("widgets", "widgetReporte");
                     waitMsg:'Guardando...',
                     waitTitle:'Por favor espere...',
                     params:{idmaster:this.idmaster},
-                    success:function(form,action){
+                    success:function(form,action){                        
                         document.location = "/Coltrans/InoAir/ConsultaReferenciaAction.do?referencia="+action.result.referencia;
                     },
                     failure:function(form,action){
@@ -494,6 +516,21 @@ include_component("widgets", "widgetReporte");
                     Ext.getCmp("linea").lastQuery=res.data.linea;
                 }
             });
+        },
+        onSelectMod: function( combo, record, idx ){            
+            if(Ext.getCmp("impoexpo_fld").getValue()=="Importación"){
+                switch(record.data.modalidad){
+                    case 'COURIER':
+                    case 'PARTICULARES':
+                        Ext.getCmp("linea").allowBlank = true;                    
+                        break;
+                    default: 
+                        Ext.getCmp("linea").allowBlank = false;                    
+                        break;
+                }
+            }else{
+                Ext.getCmp("linea").allowBlank = false;
+            }
         }
     });
 </script>

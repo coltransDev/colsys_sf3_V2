@@ -293,7 +293,7 @@ var eliminarAgente = function(){
                                <div align="left">Jefe Encargado:</div>
                            </td>
                            <td>
-                               <div align="left"><?=$proveedor->getUsuario()->getCaNombre()?></div>
+                               <div align="left"><?=$proveedor->getJefe()->getCaNombre()?></div>
                            </td>
                         </tr>
                     

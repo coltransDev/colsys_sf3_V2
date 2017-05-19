@@ -1,4 +1,3 @@
-
 <script language="javascript" type="text/javascript">
 var verInstruccionesAgente=function(){	
 	//document.body.scroll='no';  
@@ -48,15 +47,29 @@ var crearSeguimiento=function(){
 	
 	<tr>
 		<td valign="top"><div align="left"><b>Remitente:</b>
-			<?		
-			if($user->getEmail()=="traficos1@coltrans.com.co" || $user->getEmail()=="traficos2@coltrans.com.co" ){			
+			<?	
+                                            //echo $reporte->getIdsAgente()->getCaIdagente()."..|".$reporte->getIdsAgente()->getCaConsolcargo()."|..";
+			if($user->getEmail()=="traficos1@coltrans.com.co" || $user->getEmail()=="traficos2@coltrans.com.co"   ){
+                                                    $emailUser=$user->getEmail();
+                                                    if($reporte->getIdsAgente()->getCaConsolcargo()=="1")
+                                                    {
+                                                        $emailUser=substr($user->getEmail(),0, strpos($user->getEmail(),"@")  )."@consolcargo.com";
+                                                    }
+                                                    
+                                                                
 				echo $form['remitente']->renderError(); 	
-				$form->setDefault('remitente', $user->getEmail() ); 			
+				$form->setDefault('remitente', $emailUser );
 				echo $form['remitente']->render();					
 			}else{
-				echo $usuario->getCaNombre()." &lt;".$usuario->getCaEmail()."&gt;";
+                                                    if($reporte->getIdsAgente()->getCaConsolcargo()=="1")
+                                                    {
+                                                        $emailUser=substr($usuario->getCaEmail(),0, strpos($usuario->getCaEmail(),"@")  )."@consolcargo.com";
+                                                    }
+                                                    else{
+                                                        $emailUser=$usuario->getCaEmail();
+                                                    }
+				echo $usuario->getCaNombre()." &lt;".$emailUser."&gt;";
 			}
-			
 			?>	
 		</div></td>
 		<td valign="top"><div align="left">&nbsp;</div></td>
@@ -90,7 +103,7 @@ var crearSeguimiento=function(){
 				echo $form['destinatarios_'.$contacto->getCaIdcontacto() ]->renderError();
 				// $form->setDefault('destinatarios_'.$contacto->getCaIdcontacto() , 1 );
 				 echo $form['destinatarios_'.$contacto->getCaIdcontacto()]->render();
-				 echo $contacto->getNombre()."<br />";
+				 echo $contacto->getNombre()." [".$contacto->getCaEmail()."]<br />";
 			?> 
 				</div> 
 			<?
@@ -193,16 +206,24 @@ var crearSeguimiento=function(){
 			 $notas="";             
 			 $notas.= "Thks+Rgds,\n\n";
              
-             if(  ($reporte->getCaImpoexpo()==Constantes::IMPO || $reporte->getCaImpoexpo()==Constantes::TRIANGULACION) && ($reporte->getCaTransporte()==Constantes::MARITIMO || $reporte->getCaTransporte()==Constantes::AEREO)  )
-             {
-                 $notas.="Sales Representative : ".$reporte->getUsuario()->getCaNombre()."\n\n";
-             }
+                if(  ($reporte->getCaImpoexpo()==Constantes::IMPO || $reporte->getCaImpoexpo()==Constantes::TRIANGULACION) && ($reporte->getCaTransporte()==Constantes::MARITIMO || $reporte->getCaTransporte()==Constantes::AEREO)  )
+                {
+                    $notas.="Sales Representative : ".$reporte->getUsuario()->getCaNombre()."\n\n";
+                }
 			 
-			 $notas .= html_entity_decode($usuario->getFirma());
-			 echo $form['notas']->renderError(); 
-			 $form->setDefault('notas', $notas);
-			 echo $form['notas']->render();
-			 ?>
+                if($reporte->getIdsAgente()->getCaConsolcargo()=="1")
+                {
+                  $notas .= html_entity_decode($usuario->getFirmaConsolcargo());  
+                }
+                else
+                {
+                    $notas .= html_entity_decode($usuario->getFirma());
+                }
+			 
+                echo $form['notas']->renderError(); 
+                $form->setDefault('notas', $notas);
+                echo $form['notas']->render();
+                ?>
 			</div>		</td>
 	</tr>
 	

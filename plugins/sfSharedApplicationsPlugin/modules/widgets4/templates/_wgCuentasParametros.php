@@ -92,5 +92,6 @@ Ext.define('Ext.colsys.wgCuentasParametros', {
             this.store.reload();
         }
     }
+    
 });
 </script>

@@ -38,6 +38,7 @@ class myUser extends sfBasicSecurityUser
 	*/
 	public function signInLDAP( $username )
 	{
+        echo "S1";
 		$user = Doctrine::getTable("Usuario")->find( $username );
 
 		if( $user ){
@@ -74,6 +75,7 @@ class myUser extends sfBasicSecurityUser
 	*/
 	public function signInAlternative( $username )
 	{
+        echo "S2";
 		$user = Doctrine::getTable("Usuario")->find( $username );
 
 		if( $user ){

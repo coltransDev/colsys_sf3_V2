@@ -611,12 +611,16 @@ class inoparametrosActions extends sfActions
 
         //$ccosto = Doctrine::getTable("InoCentroCosto")->find($idccosto);
 
-         $ccosto = Doctrine::getTable("InoCentroCosto")
+         $q = Doctrine::getTable("InoCentroCosto")
                                   ->createQuery("c")
                                   ->addWhere("c.ca_impoexpo = ?", $modo->getCaImpoexpo())
                                   ->addWhere("c.ca_transporte = ?", $modo->getCaTransporte())
-                                  ->addWhere("c.ca_idsucursal = ?", $idsucursal)
-                                  ->fetchOne();
+                                  ->addWhere("c.ca_idsucursal = ?", $idsucursal);
+          
+         //echo $modo->getCaImpoexpo()."-".$modo->getCaTransporte()."-".$idsucursal."<br>";
+        $debug=$q->getSqlQuery();
+        $ccosto=$q->fetchOne();
+         
         if($ccosto)
         {
             $q = Doctrine::getTable("InoConSiigo")
@@ -630,9 +634,9 @@ class inoparametrosActions extends sfActions
             }
             $debug=$q->getSqlQuery();
         }
-//        echo $debug;
+        //echo $debug;
         //echo $ccosto->getCaCentro() ."::". $ccosto->getCaSubcentro() ."::". $ccosto->getCaIdempresa();
-//        exit;
+        //exit;
         $conceptosSiigo=$q->execute();
         $data=$seleccionados=array();
         foreach ($conceptosSiigo as $s)
@@ -724,9 +728,9 @@ class inoparametrosActions extends sfActions
     }
 
     
-    public function executeTrmsExt4( sfWebRequest $request ){
+    public function executeTrmsExt5( sfWebRequest $request ){
         
-        $this->permiso = $this->getUser()->getNivelAcceso(inoparametrosActions::RUTINA_TRM);
+        $this->permiso = $this->getUser()->getNivelAcceso(inoparametrosActions::RUTINA_TRM);        
         if($this->permiso<=0)            
             $this->setLayout("sinmenu");
         
@@ -739,7 +743,8 @@ class inoparametrosActions extends sfActions
         //$q[]=array("ca_fecha"=>date("Y-m-d"),"ca_pesos"=>30,"ca_euro"=>20);
         
         $con = Doctrine_Manager::getInstance()->connection();            
-        $sql = "select ca_fecha,ca_pesos,ca_euro from tb_trms t order by ca_fecha desc";
+        //$sql = "select ca_fecha , ca_pesos, ca_euro from tb_trms t order by ca_fecha desc";
+        $sql = "select ca_fecha , ca_pesos, ca_euro from tb_trms t WHERE ca_fecha > current_date - interval '6' month order by ca_fecha desc";
         $st = $con->execute($sql);
         $trmTmp = $st->fetchAll();
         

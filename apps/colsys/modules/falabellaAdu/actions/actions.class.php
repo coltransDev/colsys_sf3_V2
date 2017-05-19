@@ -1225,10 +1225,10 @@ class falabellaAduActions extends sfActions {
         $email->setCaBody( $this->getRequestParameter("mensaje")."<br />".$content );
 
         $email->save(); //guarda el cuerpo del mensaje
-        $this->error = $email->send();
+        /*$this->error = $email->send();
         if($this->error) {
             $this->getRequest()->setError("mensaje", "no se ha enviado correctamente");
-        }
+        }*/
     }
 
     /*

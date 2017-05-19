@@ -68,7 +68,7 @@ if($opcion){
         <td>
             <?if($mantenimiento->getCaFirmado()==null){
                     ?>
-                    <a href='https://www.coltrans.com.co<?=url_for("inventory/guardarSeguimiento?chkmantenimiento-checkbox=on&recordatorio=si&idactivo=".$idactivo.'&idman='.$idman.'&idsucursal='.$idsucursal.'&mes_man='.$mes_man)?>'><img title="Enviar Recordatorio" alt="Enviar Recordatorio" src="https://www.coltrans.com.co/images/24x24/mailreminder.png" border="0"></a>
+                    <a href='https://www.colsys.com.co<?=url_for("inventory/guardarSeguimiento?chkmantenimiento-checkbox=on&recordatorio=si&idactivo=".$idactivo.'&idman='.$idman.'&idsucursal='.$idsucursal.'&mes_man='.$mes_man)?>'><img title="Enviar Recordatorio" alt="Enviar Recordatorio" src="https://www.colsys.com.co/images/24x24/mailreminder.png" border="0"></a>
                     <?
                 
             }else{

@@ -75,7 +75,7 @@
                             <td width="33%" <?=($comparar)? (($reporte->compDato("CaIdconcliente")!=0)?"class='rojo'":"") :""?> ><b>Nombre:</b> <?=Utils::replace($cliente->getCaCompania())?>
                                 &nbsp;&nbsp;
                             <?
-                                if($cliente->getProperty("cuentaglobal")=="true")
+                                if($cliente->getProperty("cuentaglobal")=="true" || $cliente->getProperty("cuentaglobal")==1)
                                 {
                             ?>	
                                 <img src="/images/CG30.png" title="Cliente de Cuentas Globales" width="20" height="20" />

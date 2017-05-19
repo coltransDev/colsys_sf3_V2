@@ -216,7 +216,6 @@ class confirmacionesActions extends sfActions {
             if ($request->getParameter("fchregistroadu")) {
                 $referencia->setCaFchregistroadu(Utils::parseDate($request->getParameter("fchregistroadu")));
             }
-            $referencia->setCaRegistrocap($request->getParameter("registrocap"));
             $referencia->setCaBandera($request->getParameter("bandera"));
             $referencia->setCaMensaje($request->getParameter("email_body"));
             if ($request->getParameter("fchdesconsolidacion")) {
@@ -334,7 +333,7 @@ class confirmacionesActions extends sfActions {
                         UNION (SELECT DISTINCT(ca_login) FROM control.tb_usuarios WHERE ca_idsucursal in (
                                 SELECT ca_idsucursal FROM control.tb_usuarios WHERE ca_login in (
                                     SELECT ca_vendedor FROM vi_clientes_reduc WHERE ca_idcliente in (
-                                        SELECT ca_idcliente FROM tb_inoclientes_sea WHERE ca_referencia='" . $ca_referencia . "' ) and ca_propiedades like '%cuentaglobal=true%')) and ca_departamento = 'Cuentas Globales' and ca_activo = true))";
+                                        SELECT ca_idcliente FROM tb_inoclientes_sea WHERE ca_referencia='" . $ca_referencia . "' ) and (ca_propiedades like '%cuentaglobal=true%' OR ca_propiedades like '%cuentaglobal=1%'))) and ca_departamento = 'Cuentas Globales' and ca_activo = true))";
 
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
@@ -668,6 +667,20 @@ class confirmacionesActions extends sfActions {
                             $fchplanilla = $this->getRequestParameter("fchplanilla_" . $oid);
                             $status->setProperty("fchplanilla", Utils::parseDate($fchplanilla));
                         }
+                        
+                        if ($etapa == "OTDES" || $this->getRequestParameter("fchcargue_" . $oid)) {
+                            $repotm = $reporte->getRepUltVersion()->getRepOtm();                            
+                            $repotm->setCaFchcargue($this->getRequestParameter("fchcargue_" . $oid));
+                            $repotm->setCaFchsalida($this->getRequestParameter("fchsalidaotm_" . $oid));
+                            $repotm->save();                            
+                        }
+                        
+                        if ($etapa == "99999" || $this->getRequestParameter("fchcierreotm_" . $oid)) {
+                            $repotm = $reporte->getRepUltVersion()->getRepOtm();                            
+                            $repotm->setCaFchcierre($this->getRequestParameter("fchcierreotm_" . $oid));
+                            $repotm->save();                            
+                        }
+                        
                         $status->setCaIdetapa($etapa);
                         break;
                     default:
@@ -712,6 +725,12 @@ class confirmacionesActions extends sfActions {
                                 break;
                             case "cont":
                                 $options["subject"] = "Factura de Contenedores Id.: " . $reporte->getCaConsecutivo()." ";
+                                break;
+                            case "cert":
+                                $options["subject"] = "Certificación de Fletes Id.: " . $reporte->getCaConsecutivo()." ";
+                                break;
+                            case "local":
+                                $options["subject"] = "Recargos Locales Id.: " . $reporte->getCaConsecutivo()." ";
                                 break;
                         }
                     }
@@ -780,7 +799,41 @@ class confirmacionesActions extends sfActions {
         }
         $this->setTemplate("responseTemplate");
     }
+    
+     public function executeCargasTransito($request) {
 
+        $idciudad=$request->getParameter("idciudad");
+        /*$sql="select i.ca_referencia,i.ca_hbls,d.ca_iddestino,a.ca_idarchivo ,d.ca_dispocarga,substr(i.ca_referencia::text, 16, 2)  as ano,m.ca_fchconfirmacion,d.ca_coddeposito,m.ca_muelle,p.ca_valor as ca_disposicion,cl.ca_compania, m.ca_origen, m.ca_destino,cd.ca_ciudad
+	from tb_inoclientes_sea  i 
+	inner join tb_inomaestra_sea m on m.ca_referencia=i.ca_referencia and m.ca_destino='$idciudad'
+	inner join tb_dianclientes d ON i.ca_idinocliente=d.ca_idinocliente 
+	inner join tb_parametros p on d.ca_dispocarga=p.ca_valor2 and ca_casouso = 'CU073' and ca_identificacion=2  
+	inner join vi_clientes_reduc cl ON i.ca_idcliente=cl.ca_idcliente 
+	inner join tb_ciudades cd ON cd.ca_idciudad=m.ca_destino
+	left join docs.tb_archivos a ON i.ca_referencia = a.ca_ref1 and i.ca_hbls= a.ca_ref2 and a.ca_iddocumental=19 and ca_fcheliminado is null 
+	where (( d.ca_dispocarga = '16' and d.ca_iddestino is not  null) or d.ca_dispocarga = '21' or 
+                ( d.ca_dispocarga = '10' and d.ca_coddeposito not in('2031','2424','2347','3625','2261','2259','2257','2366','2192','3857')) or 
+                ( d.ca_dispocarga = '11' and d.ca_coddeposito not in('2031','2424','2347','3625','2261','2259','2257','2366','2192','3857')) ) and 
+                substr(i.ca_referencia::text, 16, 2)::integer=17 
+	and a.ca_idarchivo is null 
+	order by m.ca_destino,d.ca_dispocarga , i.ca_referencia";*/
+        $sql="select i.ca_referencia,i.ca_hbls,d.ca_iddestino,a.ca_idarchivo ,d.ca_dispocarga,substr(i.ca_referencia::text, 16, 2)  as ano,m.ca_fchconfirmacion,d.ca_coddeposito,m.ca_muelle,p.ca_valor as ca_disposicion,cl.ca_compania, m.ca_origen, m.ca_destino,cd.ca_ciudad
+	from tb_inoclientes_sea  i 
+	inner join tb_inomaestra_sea m on m.ca_referencia=i.ca_referencia and m.ca_destino='$idciudad' and m.ca_modalidad !='PARTICULARES'
+	inner join tb_dianclientes d ON i.ca_idinocliente=d.ca_idinocliente 
+	inner join tb_parametros p on d.ca_dispocarga=p.ca_valor2 and ca_casouso = 'CU073' and ca_identificacion=2  
+	inner join vi_clientes_reduc cl ON i.ca_idcliente=cl.ca_idcliente 
+	inner join tb_ciudades cd ON cd.ca_idciudad=m.ca_destino
+	left join docs.tb_archivos a ON i.ca_referencia = a.ca_ref1 and i.ca_hbls= a.ca_ref2 and a.ca_iddocumental=45 and ca_fcheliminado is null 
+	where ( d.ca_dispocarga = '21' or d.ca_responsabilidad='N' ) and 
+                m.ca_fchreferencia >= '2017-02-01'	and a.ca_idarchivo is null and m.ca_fchconfirmacion <= '".date("Y-m-d")."' and d.ca_tipodocviaje='3'
+	order by m.ca_destino,d.ca_dispocarga , i.ca_referencia";
+        
+            $con = Doctrine_Manager::getInstance()->connection();
+            $st = $con->execute($sql);
+            $this->datos = $st->fetchAll();
+            $this->setLayout("email");//ingreso a deposito  ingreso zona franca
+    }
 }
 
 ?>

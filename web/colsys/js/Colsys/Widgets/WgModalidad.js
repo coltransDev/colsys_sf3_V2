@@ -11,32 +11,31 @@
 Ext.define('Colsys.Widgets.WgModalidad', {
   extend: 'Ext.form.field.ComboBox',
   alias: 'widget.Colsys.Widgets.WgModalidad',
-  triggerTip: 'Click para limpiar',
-  spObj:'',
-  spForm:'',
-  trans:'',
-  spExtraParam:'',
+  triggerTip: 'Click para limpiar',  
   displayField: 'modalidad',
-  valueField: 'modalidad',
-  labelWidth: 60,
+  valueField: 'modalidad',  
+  //queryMode:'local',
   store: Ext.create('Ext.data.Store', {
             fields: ['idmodalidad','modalidad','impoexpo','transporte'],
             proxy: {
                 type: 'ajax',
-                url: '/widgets/datosModalidades',
+                url: '/widgets5/datosModalidades',
                 reader: {
                     type: 'json',
-                    root: 'root'
+                    rootProperty: 'root'
                 }
             },
             autoLoad: true
         }),
-        qtip:'Listado de Modalidades',
+        //qtip:'Listado de Modalidades',
     
     onFocus: function( field, newVal, oldVal ){
+        //this.store.reload()
+        //alert("on focus" + this.idmaster + Ext.getCmp('impoexpo_'+this.idmaster).getValue() + Ext.getCmp('transporte'+this.idmaster).getValue());
+        
         this.store.filter([
             {property: 'impoexpo' , value:  Ext.getCmp('impoexpo_'+this.idmaster).getValue()},
             {property: 'transporte' , value:  Ext.getCmp('transporte'+this.idmaster).getValue()}
-        ]);  
+        ]); 
     }
 });

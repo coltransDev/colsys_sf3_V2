@@ -5,6 +5,7 @@ class NuevoReporteForm extends BaseForm{
 	const NUM_CC = 7;
 	
 	private $contactosAg=array();
+                private $emailTraficos=array();
 	
 	public function configure(){
 		
@@ -24,17 +25,17 @@ class NuevoReporteForm extends BaseForm{
 			$widgets["cc_".$i] = new sfWidgetFormInputText(array(), array("size"=>60, "style"=>"margin-bottom:3px"));			
 		}		
 		
-		
-		$widgets['remitente'] = new sfWidgetFormChoice(array(
-															  'choices' => array('traficos1@coltrans.com.co'=>'traficos1@coltrans.com.co', 'traficos2@coltrans.com.co'=>'traficos2@coltrans.com.co'),
-															));
+	
+                                $emailTraficos=$this->getEmailsTraficos( );
+		$widgets['remitente'] = new sfWidgetFormChoice(array( 'choices' => $this->getEmailsTraficos()));
+                                //$widgets['remitente'] = new sfWidgetFormChoice(array( 'choices' => ""));
 										
 		$widgets['asunto'] = new sfWidgetFormInputText(array(), array("size"=>120 ));
 		$widgets['introduccion'] = new sfWidgetFormTextarea(array(), array("rows"=>4, "cols"=>140 ));		
 		$widgets['instrucciones'] = new sfWidgetFormTextarea(array(), array("rows"=>5, "cols"=>140 ));		
 		$widgets['notas'] = new sfWidgetFormTextarea(array(), array("rows"=>4, "cols"=>140 ));				
 		$widgets['archivo'] = new sfWidgetFormInputFile(array(), array("size"=>120 ));
-                $widgets['hbltxt'] = new sfWidgetFormTextarea(array(), array("rows"=>4, "cols"=>140 ));
+                                $widgets['hbltxt'] = new sfWidgetFormTextarea(array(), array("rows"=>4, "cols"=>140 ));
 				
 		
 		
@@ -118,6 +119,14 @@ class NuevoReporteForm extends BaseForm{
 	
 	public function setContactosAg( $c ){
 		$this->contactosAg = $c;			
+	}
+        
+        	public function getEmailsTraficos( ){
+		return $this->emailTraficos;
+	}
+	
+	public function setEmailsTraficos( $c ){
+		$this->emailTraficos = $c;			
 	}
 	
 	

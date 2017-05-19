@@ -368,6 +368,7 @@ class widgetsComponents extends sfComponents {
         } else if ($this->ciudad == "BUN-0002") {
             $this->data[] = array("id" => "2366", "valor" => "Soc.Port.Regional B/Tura S.A.");
             $this->data[] = array("id" => "2918", "valor" => "SOCIEDAD PORTUARIA TERMINAL DE CONTENEDORES DE BUENAVENTURA S.A. T.C.BUENA S.A.");
+            $this->data[] = array("id" => "3857", "valor" => "SOCIEDAD PUERTO INDUSTRIAL AGUADULCE S.A.");
         } else if ($this->ciudad == "BAQ-0005") {
             $this->data[] = array("id" => "2031", "valor" => "Puerto de Barranquilla");
             $this->data[] = array("id" => "2424", "valor" => "Palermo Sociedad Portuaria S.A");
@@ -785,7 +786,7 @@ class widgetsComponents extends sfComponents {
         $this->data = array();
         foreach ($conceptos as $concepto) {
             $this->data[] = array("idconcepto" => $concepto['ca_idconcepto'],
-                "concepto" => $concepto['ca_concepto'],
+                "concepto" => utf8_encode($concepto['ca_concepto']),
                 "transporte" => utf8_encode($concepto['ca_transporte']),
                 "modalidad" => utf8_encode($concepto['ca_modalidad'])
             );
@@ -849,7 +850,9 @@ class widgetsComponents extends sfComponents {
     }
     
     public function executeWidgetEquipo( ){
-
+        $user = $this->getUser();
+        $sucUsuario = Doctrine::getTable("Sucursal")->find($user->getIdsucursal());
+        $this->grupoEmp = $sucUsuario->getGrupoEmpresarial($user->getIdsucursal());
     }
     
     public function executeWidgetCuentaContable( ){

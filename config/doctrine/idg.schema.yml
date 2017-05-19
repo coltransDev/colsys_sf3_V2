@@ -64,6 +64,8 @@ IdgConfig:
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
     ca_fchactualizado: timestamp
+    ca_usueliminado: string(20)
+    ca_fcheliminado: timestamp
   relations:
     Idg:
       local: ca_idg
@@ -104,7 +106,10 @@ IdgProcesos:
       local: ca_idproceso
       foreign: ca_idproceso
       type: many
-
+    Departamento:
+      local: ca_iddepartamento
+      foreign: ca_iddepartamento
+      type: one
 
 IdgRiesgos:
   options:
@@ -118,20 +123,217 @@ IdgRiesgos:
       type: integer
       primary: true
       autoincrement: true
-    ca_idproceso: integer
-    ca_codigo: string(10)    
-    ca_descripcion: string
-    ca_causas: string
-    ca_controles: string
-    ca_operativo: integer
-    ca_legal: integer
-    ca_economico: integer
-    ca_comercial: integer
-    ca_peso: integer
+    ca_idproceso: 
+      type: integer
+      notnull: true
+    ca_codigo: 
+      type: string(10)
+      notnull: true
+    ca_riesgo: string
+    ca_etapa: string
+    ca_potenciador: string
+    ca_controles: string    
     ca_ap: string
     ca_contingencia: string
+    ca_usucreado: string(15)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(15)
+    ca_fchactualizado: timestamp
+    ca_impresion: integer
+    ca_laft: boolean
   relations:
     IdgProcesos:
       local: ca_idproceso
       foreign: ca_idproceso
       type: one
+    IdgFactor:
+      local: ca_idriesgo
+      foreign: ca_idriesgo
+      type: many
+    UsuCreado:
+      class: Usuario
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+    UsuActualizado:
+      class: Usuario
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+
+IdgValoracion:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: idg
+  tableName: idg.tb_valoracion
+  columns:
+    ca_idvaloracion:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idriesgo: integer
+    ca_ano: integer    
+    ca_operativo: integer
+    ca_legal: integer
+    ca_economico: integer
+    ca_comercial: integer
+    ca_peso: integer
+    ca_usucreado: string(15)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(15)
+    ca_fchactualizado: timestamp
+    ca_datos: jsonb
+  relations:
+    IdgRiesgos:
+      local: ca_idriesgo
+      foreign: ca_idriesgo
+      type: one
+    UsuCreado:
+      class: Usuario
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+    UsuActualizado:
+      class: Usuario
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+ 
+IdgEventos:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: idg
+  tableName: idg.tb_eventos
+  columns:
+    ca_idevento:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idriesgo: integer
+    ca_idcausa: integer
+    ca_fchevento: date
+    ca_descripcion: string
+    ca_tipo_doc: string
+    ca_documento:  string
+    ca_idcliente: integer
+    ca_idsucursal: string
+    ca_perdida_tot: decimal
+    ca_perdida_ope: decimal
+    ca_perdida_leg: decimal
+    ca_perdida_eco: decimal
+    ca_perdida_com: decimal
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+    ca_pa: string
+  relations:
+    IdgRiesgos:
+      local: ca_idriesgo
+      foreign: ca_idriesgo
+      type: one
+    IdgCausas:
+      local: ca_idcausa
+      foreign: ca_idcausa
+      type: one    
+    Cliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: one
+    Sucursal:
+      local: ca_idsucursal
+      foreign: ca_idsucursal
+      type: one
+    UsuCreado:
+      class: Usuario
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+    UsuActualizado:
+      class: Usuario
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      
+IdgCausas:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: idg
+  tableName: idg.tb_causas
+  columns:
+    ca_idcausa:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idriesgo: integer
+    ca_causa: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string(15)
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string(15)
+    ca_nueva: boolean
+  relations:
+    IdgRiesgos:
+      local: ca_idriesgo
+      foreign: ca_idriesgo
+      type: one
+    UsuCreado:
+      class: Usuario
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+    UsuActualizado:
+      class: Usuario
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      
+IdgUsuProcesos:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: idg
+  tableName: idg.tb_usuprocesos
+  columns:
+    ca_idproceso:
+      type: integer
+      primary: true
+    ca_login:
+      type: string
+      primary: true  
+  relations:
+    IdgProcesos:
+      local: ca_idproceso
+      foreign: ca_idproceso
+      type: one
+    Usuario:
+      local: ca_login
+      foreign: ca_login
+      type: one
+      
+IdgFactor:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: idg
+  tableName: idg.tb_factores
+  columns:    
+    ca_idriesgo:
+      type: integer
+      primary: true
+    ca_factor:
+      type: string
+      primary: true
+  relations:
+    IdgRiesgos:
+      local: ca_idriesgo
+      foreign: ca_idriesgo
+      type: one    

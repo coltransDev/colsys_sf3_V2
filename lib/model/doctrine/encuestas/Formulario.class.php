@@ -31,7 +31,7 @@ class Formulario extends BaseFormulario {
     public function getQueryFormulario() {
         $q = Doctrine_Query::create()
                 ->from('formulario')
-                ->addWhere('ca_activo = ?',true)
+                ->addWhere('ca_activo = ?', true)
                 ->orderBy('ca_id DESC');
         return $q;
     }
@@ -176,8 +176,56 @@ class Formulario extends BaseFormulario {
             case 7:
                 return "Proceso de Nacionalización en embarques con OTM / DTA";
                 break;
+            case 9:
+                return "Importación Aérea";
+                break;
+            case 10:
+                return "Importación Marítima";
+                break;
+            case 11:
+                return "Exportaciones";
+                break;            
             default:
                 return "no definido / todos los servicio";
+        }
+    }
+    
+    public static function getNumServicio($servicio) {
+        $cadena = trim($servicio);
+        //echo $cadena;
+        switch ($cadena) {
+            case "Importaciones aéreo":
+                return 1;
+                break;
+            case "Importaciones marítimo":
+                return 2;
+                break;
+            case "Exportaciones aéreo":
+                return 3;
+                break;            
+            case "Exportaciones marítimo":
+                return 4;
+                break;
+            case "Proceso de Nacionalización en embarques aéreos":
+                return 5;
+                break;
+            case "Proceso de Nacionalización en embarques marítimos":
+                return 6;
+                break;
+            case "Proceso de Nacionalización en embarques con OTM / DTA":
+                return 7;
+                break;
+            case "Importación Aérea":
+                return 9;
+                break;
+            case "Importación Marítima":
+                return 10;
+                break;
+            case "Exportaciones":
+                return 11;
+                break;
+            default:
+                return 99;
         }
     }
 
@@ -192,18 +240,50 @@ class Formulario extends BaseFormulario {
      * Calcula el número de formularios enviados vía mail
      * @return type
      */
-    public function getNumEncuestasEnviadas() {
-        $con = Doctrine_Manager::getInstance()->connection();
-        $sql = "
-           SELECT count (*) as enviados
-           FROM public.tb_emails
-           WHERE ca_tipo = 'Encuesta'
-           AND ca_usuenvio = 'Administrador'
-           AND ca_address != 'gmartinez@coltrans.com.co'
-           AND ca_fchenvio BETWEEN '".$this->getCaVigenciaInicial()."' and '".$this->getCaVigenciaFinal()."' 
-           AND ca_idcaso = " . $this->getCaId();
-        $st = $con->execute($sql);
-        return $st->fetchAll();
+    public function getNumEncuestasEnviadas($options = array()) {
+        /* $con = Doctrine_Manager::getInstance()->connection();
+          $sql = "
+          SELECT count (*) as enviados
+          FROM public.tb_emails
+          WHERE ca_tipo = 'Encuesta'
+          AND ca_usuenvio = 'Administrador'
+          AND ca_address != 'gmartinez@coltrans.com.co'
+          AND ca_fchenvio BETWEEN '".$this->getCaVigenciaInicial()."' and '".$this->getCaVigenciaFinal()."'
+          AND ca_idcaso = " . $this->getCaId();
+          $st = $con->execute($sql);
+          return $st->fetchAll();
+         */
+        //echo $options["sucursal"];
+        $q = Doctrine::getTable("Email")->createQuery("e")
+                ->select("e.ca_idemail, e.ca_body, e.ca_fchenvio, cc.ca_idcontacto, u.ca_login, u.ca_nombre, c.ca_vendedor, i.ca_nombre, s.ca_idsucursal, s.ca_nombre")
+                ->leftJoin('e.Contacto cc ON cc.ca_idcontacto = e.ca_body::int')
+                ->leftJoin("cc.Cliente c")
+                ->leftJoin("c.Ids i")
+                ->leftJoin("c.Usuario u")
+                ->leftJoin("u.Sucursal s")
+                ->where("e.ca_tipo = ?", 'Encuesta')
+                ->addWhere("e.ca_usuenvio = ?", 'Administrador')
+                ->addWhere("e.ca_address != ?", 'gmartinez@coltrans.com.co')
+                ->addWhere("e.ca_address != ?", 'alramirez@coltrans.com.co')
+                ->addWhere("e.ca_fchenvio BETWEEN ? AND ? AND e.ca_idcaso = ?", array($this->getCaVigenciaInicial(), $this->getCaVigenciaFinal(), $this->getCaId()))
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR);                
+        //->limit(10)
+        //->fetchArray();
+        if (isset($options["sucursal"]) && ($options["sucursal"] != "Todas Las sucursales" && $options["sucursal"] != "Sin asignar")) 
+            $q->addWhere("s.ca_nombre = ?", $options["sucursal"]);
+        else if (isset($options["sucursal"]) && $options["sucursal"] == "Sin asignar")
+            $q->addWhere("s.ca_nombre IS NULL");
+        
+        if (isset($options["login"]) && $options["login"]) 
+            $q->addWhere("u.ca_login = ?", $options["login"]);
+                
+        if (isset($options["idcliente"]) && $options["idcliente"])
+            $q->addWhere("i.ca_id = ?", $options["idcliente"]);        
+        
+        $q->orderBy("s.ca_nombre, i.ca_nombre");
+
+        $encuestas = $q->execute();
+        return $encuestas;
     }
 
     /**
@@ -248,8 +328,8 @@ class Formulario extends BaseFormulario {
             $sql = $sql.=" AND csuc.ca_nombre= '" . $sucursal . "';";
             $order = "AND csuc.ca_nombre";
         }
-            $sql.="ORDER BY ca_compania".$order;
-            
+        $sql.="ORDER BY ca_compania" . $order;
+
         $st = $con->execute($sql);
         $valores = $st->fetchAll();
         //foreach ($valores as $valor):
@@ -316,51 +396,86 @@ class Formulario extends BaseFormulario {
      * @return type
      */
     //public function getnumEncuestasDiligenciadas($sucursal, $pregunta, $servicio, $idrespuesta) {
-    public function getnumEncuestasDiligenciadas($sucursal, $pregunta, $servicio, $id) {
-        $con = Doctrine_Manager::getInstance()->connection();
-        $sql = "
-           SELECT  count(*)
-           FROM encuestas.tb_control_encuesta e ";
+    public function getNumEncuestasDiligenciadas($sucursal, $comercial) {
+        /* $con = Doctrine_Manager::getInstance()->connection();
+          $sql = "
+          SELECT  count(*)
+          FROM encuestas.tb_control_encuesta e ";
 
-        if ($sucursal != '0') {
-            $sql = $sql.="
-            LEFT JOIN public.tb_concliente con on e.ca_id_contestador = con.ca_idcontacto
-            LEFT JOIN public.tb_clientes cl on con.ca_idcliente=cl.ca_idcliente
-            LEFT JOIN control.tb_usuarios cu on cl.ca_vendedor=cu.ca_login
-            LEFT JOIN control.tb_sucursales csuc on cu.ca_idsucursal=csuc.ca_idsucursal";
-        }
-        $sql = $sql.=" WHERE e.ca_idformulario = $id AND e.ca_tipo_contestador = 1";
-        //$sql2 = $sql2.=" WHERE e.ca_idformulario = 5 AND e.ca_tipo_contestador = 1";
-        if ($sucursal != '0') {
-            //$sq2 = $sql.=";";
-            if ($sucursal == 'NA') {
-                $sql = $sql.=" AND csuc.ca_nombre is NULL";
-            } else {
-                $sql = $sql.=" AND csuc.ca_nombre= '" . $sucursal . "';";
-            }
-        }
-        if ($sucursal != '0') {
-            //$st2 = $con->execute($sq2);
-            // $valores=$st2->fetchAll();
-            /* foreach ($valores as $valor):
-              endforeach;
-              $total = $valor['count']; */
-        }
-
-
-        $st = $con->execute($sql);
-        $valores = $st->fetchAll();
-        foreach ($valores as $valor):
-        endforeach;
-        return $valor['count'];
+          if ($sucursal != '0') {
+          $sql = $sql.="
+          LEFT JOIN public.tb_concliente con on e.ca_id_contestador = con.ca_idcontacto
+          LEFT JOIN public.tb_clientes cl on con.ca_idcliente=cl.ca_idcliente
+          LEFT JOIN control.tb_usuarios cu on cl.ca_vendedor=cu.ca_login
+          LEFT JOIN control.tb_sucursales csuc on cu.ca_idsucursal=csuc.ca_idsucursal";
+          }
+          $sql = $sql.=" WHERE e.ca_idformulario = $id AND e.ca_tipo_contestador = 1";
+          //$sql2 = $sql2.=" WHERE e.ca_idformulario = 5 AND e.ca_tipo_contestador = 1";
+          if ($sucursal != '0') {
+          //$sq2 = $sql.=";";
+          if ($sucursal == 'NA') {
+          $sql = $sql.=" AND csuc.ca_nombre is NULL";
+          } else {
+          $sql = $sql.=" AND csuc.ca_nombre= '" . $sucursal . "';";
+          }
+          }
+          if ($sucursal != '0') {
+          //$st2 = $con->execute($sq2);
+          // $valores=$st2->fetchAll();
+          /* foreach ($valores as $valor):
+          endforeach;
+          $total = $valor['count'];
+          }
 
 
-        /*
+          $st = $con->execute($sql);
+          $valores = $st->fetchAll();
+          foreach ($valores as $valor):
+          endforeach;
+          return $valor['count'];
+
+
+          /*
           $q = Doctrine_Query::create()
           ->from('controlEncuesta')
           ->where('ca_idformulario = ?', $this->getCaId())
           ->andWhere('ca_tipo_contestador = ?', 1)
-          ; */
+          ;
+
+         * SELECT i.ca_nombre, u.ca_nombre, s.ca_nombre
+          FROM encuestas.tb_control_encuesta e
+          LEFT JOIN tb_concliente cc on e.ca_id_contestador = cc.ca_idcontacto
+          LEFT JOIN tb_clientes c on cc.ca_idcliente = c.ca_idcliente
+          LEFT JOIN ids.tb_ids i ON i.ca_id = c.ca_idcliente
+          LEFT JOIN control.tb_usuarios u on c.ca_vendedor = u.ca_login
+          LEFT JOIN control.tb_sucursales s on s.ca_idsucursal= u.ca_idsucursal
+          WHERE e.ca_idformulario = 9 AND e.ca_tipo_contestador = 1
+          ORDER BY s.ca_nombre, i.ca_nombre, u.ca_nombre
+         * 
+         *          */
+
+        /* $q = Doctrine::getTable("ControlEncuesta")->createQuery("e")
+          ->select("e.ca_fchcreado, cc.ca_idcontacto, c.ca_vendedor, i.ca_nombre, u.ca_nombre, s.ca_idsucursal, s.ca_nombre")
+          ->leftJoin('e.Contacto cc')
+          ->leftJoin("cc.Cliente c")
+          ->leftJoin("c.Ids i")
+          ->leftJoin("c.Usuario u")
+          ->leftJoin("u.Sucursal s")
+          ->where("e.ca_idformulario = ?", $this->getCaId())
+          ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+          //->limit(10)
+          //->fetchArray();
+          if ($sucursal != "Todas Las sucursales" && $sucursal != "Sin asignar") {
+          $q->addWhere("s.ca_nombre = ?", $sucursal);
+          } else if ($sucursal == "Sin asignar") {
+          $q->addWhere("s.ca_nombre IS NULL");
+          }
+
+          if ($comercial) {
+          $q->addWhere("u.ca_login = ?", $comercial);
+          }
+          $encuestas = $q->execute();
+          return $encuestas; */
     }
 
     public function getnumTotalEncuestasDiligenciadas() {
@@ -397,52 +512,52 @@ class Formulario extends BaseFormulario {
      * @param type $idrespuesta id de la tabla control respuesta. si se recibe este parametro se puede calcular el promedio de esa respuesta.
      * @return type un array con las siguientes posiciones ['count']['sum']['avg'] con valores: total de preguntas, suma del puntaje de todas las preguntas y un promedio de todas las preguntas 
      */
-    public function getPromedio($sucursal, $pregunta, $servicio, $idrespuesta) {
-        $con = Doctrine_Manager::getInstance()->connection();
-        $sql = "
-            select count(cast(re.ca_resultado as int)),sum(cast(re.ca_resultado as int)), avg (cast(re.ca_resultado as int))
-            from ids.tb_ids i
-            inner join tb_clientes cl on cl.ca_idcliente=i.ca_id
-            inner join tb_concliente con on con.ca_idcliente=cl.ca_idcliente
-            right join encuestas.tb_control_encuesta cf on con.ca_idcontacto=cf.ca_id_contestador            
-            left join control.tb_usuarios cu on cl.ca_vendedor=cu.ca_login
-            left join control.tb_sucursales csuc on cu.ca_idsucursal=csuc.ca_idsucursal
-            inner join encuestas.tb_resultado_encuesta re on cf.ca_id=re.ca_idcontrolencuesta
-            inner join encuestas.tb_pregunta p on re.ca_idpregunta = p.ca_id
-            inner join control.tb_config_values cfv on cfv.ca_idconfig=211 and re.ca_servicio=cfv.ca_ident
-            where (cf.ca_tipo_contestador=1)  and (re.ca_resultado = '0' or re.ca_resultado = '1' or re.ca_resultado = '2' or re.ca_resultado = '3' or re.ca_resultado = '4' or re.ca_resultado = '5')
-        ";
-        if ($idrespuesta) {
-            $sql = $sql.="
-            and (cf.ca_id = " . $idrespuesta . ")                
-        ";
-        } else {
-            $sql = $sql.="
-            and (cf.ca_idformulario = " . $this->getCaId() . ")                
-        ";
-        }
+    public function getListaEncuestasDiligenciadas($options = array(), $resultado) {
+        
+        $q = Doctrine::getTable("Ids")->createQuery("i")
+                ->select("i.ca_id, i.ca_nombre, cc.ca_nombres, cc.ca_papellido, cc.ca_email, u.ca_login, u.ca_nombre, s.ca_idsucursal, s.ca_nombre, re.ca_resultado, p.ca_id, p.ca_texto, cf.ca_ident, cf.ca_value, ce.ca_idformulario, ce.ca_id, ce.ca_fchcreado")            
+                ->leftJoin('i.Cliente c')
+                ->leftJoin("c.Contacto cc")
+                ->leftJoin("cc.ControlEncuesta ce")
+                ->leftJoin("c.Usuario u")
+                ->leftJoin("u.Sucursal s")
+                ->leftJoin("ce.ResultadoEncuesta re")
+                ->leftJoin("re.Pregunta p")
+                ->leftJoin("re.ColsysConfigValue cf")
+                ->where("ce.ca_idformulario = ?", $this->getCaId())
+                ->addWhere("cf.ca_idconfig = 211")
+                ->orderBy("p.ca_orden")
+                
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+        
+        if ($resultado == true)
+            //$q->addWhere("re.ca_resultado BETWEEN '0' and '5'");
+            $q->addWhere("textregexeq(trim(ca_resultado),'^[[:digit:]]+(\.[[:digit:]]+)?$') = true");
+        else
+            $q->addWhere("re.ca_resultado != ''");
 
-        if ($sucursal != '0') {
-            if ($sucursal == 'NA') {
-                $sql = $sql.="and (csuc.ca_nombre is null)";
-            } else {
-                $sql = $sql.="and (csuc.ca_nombre ='" . $sucursal . "')";
-            }
-        }
-        if ($pregunta != '0') {
-            $sql = $sql.="and (re.ca_idpregunta ='" . $pregunta . "')";
-        }
-        if ($servicio != '0' && $servicio != null) {
-            $sql = $sql.="and (cfv.ca_value ='" . $servicio->ca_texto . "')";
-        }
-        $sql = $sql.=";";
+        if (isset($options["sucursal"]) && ($options["sucursal"] != "Todas Las sucursales" && $options["sucursal"] != "Sin asignar")) 
+            $q->addWhere("s.ca_nombre = ?", $options["sucursal"]);
+        else if ($options["sucursal"] == "Sin asignar")
+            $q->addWhere("s.ca_nombre IS NULL");        
 
-        /* $sql4 = $sql4.="
-          order by csuc.ca_nombre, cf.ca_id
-          "; */
-        $temp = $con->execute($sql);
+        if (isset($options["login"]) && $options["login"])
+            $q->addWhere("u.ca_login = ?", $options["login"]);
+        
+        if (isset($options["idcliente"]) && $options["idcliente"])
+            $q->addWhere("i.ca_id = ?", $options["idcliente"]);
+        
+        if (isset($options["idservicio"]) && $options["idservicio"])
+            $q->addWhere("cf.ca_ident = ?", $options["idservicio"]);
+        
+        if (isset($options["idpregunta"]) && $options["idpregunta"])
+            $q->addWhere("p.ca_id = ?", $options["idpregunta"]);
+        
+        if (isset($options["idencuesta"]) && $options["idencuesta"])
+            $q->addWhere("ce.ca_id = ?", $options["idencuesta"]);
 
-        return $temp->fetchAll();
+        $encuestas = $q->execute();
+        return $encuestas;
     }
 
     /**
@@ -497,7 +612,7 @@ class Formulario extends BaseFormulario {
      */
     public function getNumEncuestasEnviadasPorSucursal($lista, $sucursal) {
         $cont = 0;
-        foreach ($lista as $valor){
+        foreach ($lista as $valor) {
             if ($sucursal != '0') {
                 if ($sucursal == 'NA') {
                     if ($valor['ca_sucursal'] == '') {
@@ -521,9 +636,9 @@ class Formulario extends BaseFormulario {
      * @param type $empresa a la que se le realizo el envio. 2 para Coltrans, 1 para Colmas
      * @return type
      */
-    public function getListaEncuestasEnviadasPorSucursal($idFormulario,$vigenciaIni,$vigenciaEnd) {
+    public function getListaEncuestasEnviadasPorSucursal($idFormulario, $vigenciaIni, $vigenciaEnd) {
         $con = Doctrine_Manager::getInstance()->connection();
-        
+
         $sql = "
             SELECT cl.ca_compania, cl.ca_sucursal
             FROM tb_emails e
@@ -531,7 +646,7 @@ class Formulario extends BaseFormulario {
                 INNER JOIN vi_clientes cl ON cl.ca_idcliente = cn.ca_idcliente
             WHERE e.ca_tipo = 'Encuesta' and ca_idcaso = $idFormulario and ca_subject != 'Emails enviados' and ca_usuenvio = 'Administrador' 
                 and ca_fchenvio BETWEEN '$vigenciaIni' and '$vigenciaEnd'";
-        
+
         $temp = $con->execute($sql);
         return $temp->fetchAll();
     }
@@ -544,25 +659,25 @@ class Formulario extends BaseFormulario {
      */
     public function getListaEmpresasEnviadasPorSucursal($idFormulario, $sucursal) {
         $con = Doctrine_Manager::getInstance()->connection();
-        
+
         $where = "";
-        
-        if(isset($sucursal)){
+
+        if (isset($sucursal)) {
             if ($sucursal == '0')
                 $where.="";
             elseif ($sucursal == 'NA')
                 $where.= " AND cl.ca_sucursal IS NULL";
             else
-                $where.= " AND cl.ca_sucursal = '$sucursal' ";       
+                $where.= " AND cl.ca_sucursal = '$sucursal' ";
         }
-        
+
         $sql = "SELECT DISTINCT cl.ca_compania, cl.ca_sucursal
                     FROM tb_emails e
                 INNER JOIN tb_concliente cn ON cn.ca_idcontacto::text = e.ca_body
                 INNER JOIN vi_clientes cl ON cl.ca_idcliente = cn.ca_idcliente
                     WHERE e.ca_tipo = 'Encuesta' and ca_idcaso = $idFormulario and ca_subject != 'Emails enviados' and ca_usuenvio = 'Administrador' $where
                 ORDER BY ca_compania";
-        
+
         $temp = $con->execute($sql);
         return $temp->fetchAll();
     }
@@ -575,7 +690,7 @@ class Formulario extends BaseFormulario {
      */
     public function getNumEmpresasEnviadasPorSucursal($lista, $sucursal) {
         $cont = 0;
-        foreach ($lista as $valor){
+        foreach ($lista as $valor) {
             if ($sucursal != '0') {
                 if ($sucursal == 'NA') {
                     if ($valor['ca_sucursal'] == '') {
@@ -658,7 +773,7 @@ class Formulario extends BaseFormulario {
         if ($sucursal == '0') {
             $sucursal = 'Todas Las sucursales';
         }
-        if ($sucursal== 'NA') {
+        if ($sucursal == 'NA') {
             return 'NA';
         }
         $con = Doctrine_Manager::getInstance()->connection();
@@ -681,9 +796,9 @@ class Formulario extends BaseFormulario {
     public function decodeSucursal($idsucursal) {
         if ($idsucursal == '999') {
             return '0';
-        } else if($idsucursal == 'NA'){
+        } else if ($idsucursal == 'NA') {
             return 'NA';
-        }else {
+        } else {
             $con = Doctrine_Manager::getInstance()->connection();
             $sql_con = "
                 SELECT suc.ca_nombre 
@@ -701,7 +816,8 @@ class Formulario extends BaseFormulario {
      * @param type $sucursal el el nombre en texto de la sucursal
      * @return type
      */
-    public function getListaContactosRespuesta($sucursal) {
+    public function getListaContactosRespuesta($options) {
+        //echo $sucursal;
         $con = Doctrine_Manager::getInstance()->connection();
         $sql = "
             select cf.ca_id,cf.ca_id_contestador,i.ca_nombre, con.ca_email,con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, cl.ca_vendedor, cu.ca_nombre as representante, csuc.ca_nombre as sucursal, cf.ca_fchcreado, cu.ca_idsucursal
@@ -713,17 +829,19 @@ class Formulario extends BaseFormulario {
             left join control.tb_sucursales csuc on cu.ca_idsucursal=csuc.ca_idsucursal
             where (cf.ca_idformulario = " . $this->getCaId() . ") and (cf.ca_tipo_contestador=1)";
         //filtrar por pregunta o servicio?
-        if ($sucursal != '0') {
-            if ($sucursal == 'NA') {
-                $sql = $sql.="and (csuc.ca_nombre is null)";
-            } else {
-                $sql = $sql.="and (csuc.ca_nombre ='" . $sucursal . "')";
-            }
+
+        if ($sucursal != "Todas Las sucursales" && $sucursal != "Sin asignar") {
+            $sql = $sql.="and (csuc.ca_nombre ='" . $sucursal . "')";
+        } else if ($sucursal == "Sin asignar") {
+            $sql = $sql.="and (csuc.ca_nombre  IS NULL)";
         }
-        $sql = $sql.=" order by sucursal, i.ca_nombre ASC;";
+        
+        if ($comercial) {
+            $sql = $sql.="and cu.ca_login = '".$comercial."'";
+        }
+        //$sql = $sql.=" order by csuc.ca_nombre, i.ca_nombre ASC;";
         $st = $con->execute($sql);
         return $st->fetchAll();
     }
 
 }
-

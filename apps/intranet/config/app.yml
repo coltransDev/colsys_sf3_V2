@@ -7,11 +7,16 @@ all:
 #    root:  /home/abotero/Desarrollo/digitalFile/
     root:  /srv/www/digitalFile/
   ldap:
-    host: 10.192.1.91
+    host: 172.16.1.22
     auth_enabled: true
     user: colsys
     passwd: $tlco5903Am
-    
+
+  memcache:
+    host: 10.192.1.62
+    port: 11211
+    prefix: colsess 
+
   smtp:
     host: 10.192.1.69
     port: 25

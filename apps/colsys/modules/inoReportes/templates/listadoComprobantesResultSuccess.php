@@ -26,7 +26,7 @@ $comps = $sf_data->getRaw("comps");
         foreach ($comps as $c) {
             ?>
             <tr>
-                <td><?=link_to($c["InoHouse"]["InoMaster"]["ca_referencia"], "ino/verReferencia?idmaster=".$c["InoHouse"]["InoMaster"]["ca_idmaster"], array("target"=>"_blank"))?></td>                
+                <td><?=link_to($c["InoHouse"]["InoMaster"]["ca_referencia"], "inoF/verReferenciaExt4?idmaster=".$c["InoHouse"]["InoMaster"]["ca_idmaster"], array("target"=>"_blank"))?></td>                
                 <td><?= $c["InoHouse"]["InoMaster"]["ca_impoexpo"] ?></td>       
                 <td><?= $c["InoHouse"]["InoMaster"]["ca_transporte"] ?></td>       
                 <td><?= $c["InoHouse"]["InoMaster"]["ca_modalidad"] ?></td>       

@@ -9,7 +9,6 @@ InoMaestraAdu:
     ca_referencia:
       type: string(16)
       primary: true
-      autoincrement: true    
     ca_fchreferencia: date
     ca_origen: string
     ca_destino: string
@@ -37,6 +36,19 @@ InoMaestraAdu:
     ca_analista: string
     ca_trackingcode: string
     ca_aplicaidg: boolean
+    ca_fchlevante: date
+    ca_fchpago: date
+    ca_fchsiga: date
+    ca_fchenttransportador: date
+    ca_fchdespcarga: date
+    ca_fcheta: date
+    ca_fchentrcarpfacturacion: date
+    ca_fchentrfacturacion: date
+    ca_fchfacturacion: date
+    ca_fchmayordoc: date
+    ca_nitems : integer
+    ca_fchmensajeria: date
+    ca_transporte: string
   relations:
     Origen:
       local: ca_origen
@@ -53,6 +65,10 @@ InoMaestraAdu:
       foreign: ca_idcliente
       type: one
     InoIngresosAdu:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: many
+    InoCostosAdu:
       local: ca_referencia
       foreign: ca_referencia
       type: many
@@ -96,6 +112,42 @@ InoIngresosAdu:
     InoMaestraAdu:
       local: ca_referencia
       foreign: ca_referencia
+      type: one
+      
+InoCostosAdu:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_brk_costos
+  columns:
+    ca_referencia:
+      type: string
+      primary: true
+    ca_idcosto:
+      type: integer
+      primary: true
+    ca_factura: string
+    ca_fchfactura: date
+    ca_moneda: string
+    ca_proveedor: string
+    ca_neta: numeric
+    ca_venta: numeric
+    ca_utilidad: numeric
+    ca_tasacambio: float
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    InoMaestraAdu:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: one
+    Costo:
+      local: ca_idcosto
+      foreign: ca_idcosto
       type: one
       
 
@@ -159,3 +211,403 @@ TransporteAdu:
       local: ca_idtransportista
       foreign: ca_idproveedor
       type: one
+      
+      
+      
+AduFalaCabControl:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: aduana
+  tableName: aduana.tb_fal_cab_control
+  columns:
+    ca_id_fal_cab_control:
+      type: integer
+      primary: true
+      autoincrement: true     
+    ca_file: string
+    ca_hoja: string
+    ca_fecha: date
+    ca_muelle: string(10)
+    ca_transporte: string(20)
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    Usucreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    Usuactualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    AduFalaDetControl:
+      local: ca_id_fal_cab_control
+      foreign: ca_id_fal_cab_control
+      type: one
+
+    
+AduFalaDetControl:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: aduana
+  tableName: aduana.tb_fal_det_control
+  columns:
+    ca_id_fal_det_control:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_id_fal_cab_control: integer
+    ca_referencia: string(17)
+    ca_preinspeccion: boolean
+    ca_inspeccion: boolean
+    ca_consolidado: integer
+    ca_contenedor: string
+    ca_tipocontenedor: integer
+    ca_carpeta: string
+    ca_lognet: integer
+    ca_bl: string
+    ca_blimpresion: integer
+    ca_fabricante: string
+    ca_proveedor: string    
+    ca_observaciones: string
+    ca_transportador: integer
+    ca_tipocarga: integer
+    ca_valor: numeric
+    ca_fchcourrier: string
+    ca_fchbl: string
+    ca_factura: string
+    ca_fchfactura: date
+    ca_fchlistempaque: date
+    ca_certfletes: string
+    ca_fchcertfletes: string
+    ca_fchpago: string
+    ca_fchconsinv: string
+    ca_fchrecepcion: string
+    ca_fchdescripciones: string
+    ca_fchlevante: string
+    ca_fchentregatrans: string
+    ca_embarque: int
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    Usucreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    Usuactualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+    AduFalaCabControl:
+      local: ca_id_fal_cab_control
+      foreign: ca_id_fal_cab_control
+      type: one
+    InoCostosAdu:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: one
+
+
+
+
+
+
+#  ca_factura character varying(30),
+#  ca_fchfactura date,
+#  ca_fchlistempaque date,
+#  ca_certfletes character varying(20),
+#  ca_fchcertfletes date,
+#  ca_fchpago date,
+#  ca_fchconsinv date,
+#  ca_fchrecepcion date,
+#  ca_fchdescripciones date,
+#  ca_fchlevante date,
+#  ca_fchentregatrans date,
+#  ca_usucreado character varying(20),
+#  ca_fchcreado timestamp without time zone,
+#  ca_usuactualizado character varying(20),
+#  ca_fchactualizado timestamp without time zone,
+
+AduFalaDetControlAereo:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: aduana
+  tableName: aduana.tb_fal_det_control_aereo
+  columns:
+    ca_id_fal_det_control_aereo:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_id_fal_cab_control: integer
+    ca_fcheta: date
+    ca_referencia: string(17)
+    ca_preinspeccion: boolean
+    ca_inspeccion: boolean
+    ca_paisorigen: string(20)
+    ca_fchconsolidado: date
+    ca_consolidado: integer
+    ca_doctransporte: string(30)   
+    ca_fchdoctransporte: date
+    ca_proveedor: string
+    ca_carpeta: string
+    ca_lognet: integer
+    ca_tipocarga: integer
+    ca_valor: numeric
+    ca_factura: string
+    ca_fchfactura: date
+    ca_fchlistempaque: date
+    ca_certfletes: string
+    ca_fchcertfletes: date
+    ca_fchpago: date
+    ca_fchconsinv: date
+    ca_fchrecepcion: date
+    ca_fchdescripciones: date
+    ca_fchlevante: date
+    ca_fchentregatrans: date
+    ca_atiempo: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    Usucreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    Usuactualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+    AduIndCabControl:
+      local: ca_id_fal_cab_control
+      foreign: ca_id_fal_cab_control
+      type: one
+      
+
+
+AduIndCabControl:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: aduana
+  tableName: aduana.tb_ind_cab_control
+  columns:
+    ca_id_ind_cab_control:
+      type: integer
+      primary: true
+      autoincrement: true     
+    ca_file: string
+    ca_hoja: string
+    ca_fecha: date
+    ca_muelle: string(10)
+    ca_idcliente: numeric
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    Usucreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    Usuactualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    AduIndDetControl:
+      local: ca_id_ind_cab_control
+      foreign: ca_id_ind_cab_control
+      type: one
+
+
+AduIndDetControl:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: aduana
+  tableName: aduana.tb_ind_det_control
+  columns:
+    ca_id_ind_det_control:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_id_ind_cab_control: integer
+    ca_origen: string
+    ca_destino: string
+    ca_hbl: string
+    ca_fcheta: date
+    ca_referencia: string
+    ca_tipodim: string
+    ca_inspeccion: string
+    ca_terminal: string
+    ca_transportadora: string
+    ca_tipocarga: string
+    ca_fchbl: date
+    ca_fchrecibo: date
+    ca_fchaprobacionrim: date
+    ca_fchfletes: date
+    ca_fchinspeccion: date
+    ca_fchpago: date
+    ca_fchlevante: date    
+    ca_fchplanillas: date
+    ca_datos: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    Usucreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    Usuactualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      class: Usuario
+      
+    
+InoNotasAdu:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: aduana
+  tableName: tb_brk_notas
+  columns:
+    ca_id_nota:
+      type: integer
+      primary: true
+      autoincrement: true     
+    ca_referencia: string
+    ca_texto: string
+    ca_usuario: string
+    ca_fchnota: timestamp
+  relations:
+    Usuario:
+      local: ca_usuario
+      foreign: ca_login
+      type: one
+    InoMaestraAdu:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: one
+      
+InoEventoAdu:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: aduana
+  tableName: tb_brk_evento
+  columns:
+    ca_idevento:
+      type: integer
+      primary: true      
+    ca_referencia: 
+      type: string
+      primary: true    
+    ca_realizado: int    
+    ca_usuario: string
+    ca_fchevento: timestamp
+    ca_notas: string
+  relations:
+    Usuario:
+      local: ca_usuario
+      foreign: ca_login
+      type: one
+    InoMaestraAdu:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: one
+
+
+
+AduCabPlantilla:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: aduana
+  tableName: aduana.tb_cab_plantilla
+  columns:
+    ca_id_cab_plantilla:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idcliente: integer
+  relations:
+    Cliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: one      
+    AduDetPlantilla:
+      local: ca_id_cab_plantilla
+      foreign: ca_id_cab_plantilla
+      type: one
+    
+
+AduDetPlantilla:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: aduana
+  tableName: aduana.tb_det_plantilla
+  columns:
+    ca_id_det_plantilla:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_id_cab_plantilla: integer
+    ca_nombre: string
+    ca_nombrejson: string
+    ca_orden: integer
+    ca_tipo: string
+    ca_tamano: integer
+    ca_ubicacion: string
+  relations:
+    AduCabPlantilla:
+      local: ca_id_cab_plantilla
+      foreign: ca_id_cab_plantilla
+      type: one
+      
+AduFechaCierre:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: aduana
+  tableName: aduana.tb_fecha_cierre
+  columns:
+    ca_id_fecha_cierre:
+      type: integer
+      primary: true
+      autoincrement: true  
+    ca_fecha_cierre: date
+    ca_idcliente: integer
+  relations:
+    Cliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: one  
+  

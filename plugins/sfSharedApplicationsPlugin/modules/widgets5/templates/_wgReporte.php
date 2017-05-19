@@ -49,10 +49,7 @@ Ext.define('Ext.colsys.wgReporte', {
         model: 'mdReporte',        
         proxy: {
         type: 'ajax',
-        url: '<?=url_for("widgets/listaReportesJSON")?>',
-        /*extraParams:{
-            impoexpo: this.impoexpo
-        },*/
+        url: '<?=url_for("widgets/listaReportesJSON")?>',        
          reader: {
              type: 'json',
              rootProperty: 'root'

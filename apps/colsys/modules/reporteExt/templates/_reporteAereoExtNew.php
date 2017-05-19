@@ -3,6 +3,7 @@ $master = $sf_data->getRaw("master");
 $notify_h = $sf_data->getRaw("notify_h");
 $notify_m = $sf_data->getRaw("notify_m");
 $hijo = $sf_data->getRaw("hijo");
+$hbltxt = $sf_data->getRaw("hbltxt");
 
 $consignatario_h = $sf_data->getRaw("consignatario_h");
 ?>
@@ -13,7 +14,8 @@ $consignatario_h = $sf_data->getRaw("consignatario_h");
 		</center></td>
 </tr>
 <?
-$ordenes = array_combine(explode("|",$reporte->getCaIdproveedor()), explode("|",$reporte->getCaOrdenProv()) ); 
+//$ordenes = array_combine(explode("|",$reporte->getCaIdproveedor()), explode("|",$reporte->getCaOrdenProv()) ); 
+
  
 $proveedores = $reporte->getProveedores();
 
@@ -48,7 +50,7 @@ foreach( $proveedores as $proveedor ){
 </tr>
 <tr>
 	<td><b>ORDER SUPPLIER :</b></td>
-	<td colspan="3"><?=$ordenes[$proveedor->getCaIdtercero()]?></td>
+	<td colspan="3"><?=$reporte->getOrdenesStr($proveedor->getCaIdtercero())?></td>
 </tr>
 <tr>
 	<td colspan="4">&nbsp;</td>
@@ -63,7 +65,7 @@ $i++;
 </tr>
 <tr>
 	<td><b>INCOTERMS :</b></td>
-	<td colspan="3"><?=$reporte->getCaIncoterms()?></td>
+	<td colspan="3"><?=$reporte->getIncotermsStr()?></td>
 </tr>
 <tr>
 	<td><b>ORIGEN :</b></td>
@@ -135,7 +137,18 @@ if( $idtrafico=="PE-051" ){
 
 <tr>
 	<td><b>CONSIGNED TO:</b></td>
-	<td colspan="3"><?=$hijo?></td>
+	<td colspan="3">
+            <?= ($hbltxt!="")?$hbltxt:$hijo?><br>
+            <?
+            if($layout!="email") 
+            {
+            ?>
+            <textarea id="hbltxt" name="hbltxt" cols="100" rows="4"><?=str_replace("<br />", "\n", $hijo)?></textarea>
+            <?
+            }
+            ?>
+            
+        </td>
 </tr>
 <?
 
@@ -185,7 +198,7 @@ if ( $reporte->getCaContinuacion() != 'N/A' ){
                     <table border="1" cellspacing="0" width="100%">
                         <tr>
 					<?
-                    if( $reporte->getCaImpoexpo()==Constantes::EXPO && $reporte->getCaIncoterms()=="DDP - Delivered Duty Paid" )
+                    if( $reporte->getCaImpoexpo()==Constantes::EXPO && $reporte->getIncotermsStr()=="DDP - Delivered Duty Paid" )
                     {
                         if ($tarifa->getCaNetaTar() > 0){
                         ?>
@@ -227,7 +240,7 @@ if ( $reporte->getCaContinuacion() != 'N/A' ){
                     
                     if($reporte->getCaImpoexpo()==Constantes::EXPO)
                     {
-                        if($reporte->getCaIncoterms()!="DDP - Delivered Duty Paid" )
+                        if($reporte->getIncotermsStr()!="DDP - Delivered Duty Paid" )
                         {
                             if ( $tarifa->getCaCobrarTar() > 0 )
                                 $tar_sell=number_format($tarifa->getCaCobrarTar(),2)." ".$tarifa->getCaCobrarIdm();
@@ -243,7 +256,7 @@ if ( $reporte->getCaContinuacion() != 'N/A' ){
 					<?
         				}
                     
-                        if($reporte->getCaIncoterms()!="DDP - Delivered Duty Paid" )
+                        if($reporte->getIncotermsStr()!="DDP - Delivered Duty Paid" )
                         {
                             if ( $tarifa->getCaCobrarMin() > 0 )
                                 $tar_sell_min=number_format($tarifa->getCaCobrarMin(),2)." ".$tarifa->getCaCobrarTar();

@@ -54,7 +54,7 @@ $operativos = $sf_data->getRaw("operativos");
                 type: 'json',
                 root: 'root'
             }
-        },
+        }
     });
 
     Ext.define('modelVendedor', {
@@ -66,7 +66,7 @@ $operativos = $sf_data->getRaw("operativos");
             {name: 'checked', type: 'string'}
         ]
     });
-    
+
     var storeVendedor = Ext.create('Ext.data.TreeStore', {
         autoLoad: false,
         model: 'modelVendedor',
@@ -79,55 +79,69 @@ $operativos = $sf_data->getRaw("operativos");
             }
         }
     });
-    
+
     Ext.define('ComboVendedores', {
         extend: 'Ext.tree.Panel',
         alias: 'widget.combo-vendedores',
         useArrows: true,
-        autoLoad: false,        
+        enableLocking : false,
+        autoLoad: false,
         id: 'comboVendedoresI',
         valueField: 'id',
         displayField: 'text',
         rootVisible: false,
-        
         store: Ext.create('Ext.data.TreeStore', {
-            
             fields: [
                 {name: 'id', type: 'string'},
                 {name: 'text', type: 'string'},
-                {name: 'leaf', type: 'string'},
-                {name: 'checked', type: 'string'}
+                {name: 'leaf', type: 'boolean'},
+                {name: 'checked', type: 'boolean'}
             ],
             proxy: {
                 type: 'ajax',
                 url: '<?= url_for('reportesGer/datosVendedores') ?>'
-            },
+            }
 
         }),
+        listeners: {
+            
+            beforeitemdblclick: function (me, record, item, index, e, eOpts) {
+                return false;
+            }
+        }
     });
-    
+
+
     Ext.define('ComboOperativos', {
         extend: 'Ext.tree.Panel',
         alias: 'widget.combo-operativos',
         useArrows: true,
+        enableLocking : false,
+        autoLoad: false,
         id: 'comboOperativosI',
         valueField: 'id',
         displayField: 'text',
         rootVisible: false,
         store: Ext.create('Ext.data.TreeStore', {
-            autoLoad: false,
             fields: [
                 {name: 'id', type: 'string'},
                 {name: 'text', type: 'string'},
-                {name: 'leaf', type: 'string'},
-                {name: 'checked', type: 'string'}
+                {name: 'leaf', type: 'boolean'},
+                {name: 'checked', type: 'boolean'}
             ],
             proxy: {
                 type: 'ajax',
                 url: '<?= url_for('reportesGer/datosOperativos') ?>'
             }
+
         }),
-    });    
+        listeners: {
+            
+            beforeitemdblclick: function (me, record, item, index, e, eOpts) {
+                return false;
+            }
+        }
+    });
 
     Ext.define('User', {
         extend: 'Ext.data.Model',
@@ -157,14 +171,14 @@ $operativos = $sf_data->getRaw("operativos");
                     items: [{
                             xtype: 'tbspacer',
                             height: 20,
-                            width: 800,
+                            width: 800
                         }, {
                             fieldLabel: 'Año',
                             xtype: 'combo',
                             store: <?= json_encode($annos) ?>,
                             name: 'anio',
-                            forceSelection:true,
-                            allowBlank:false,
+                            forceSelection: true,
+                            allowBlank: false,
                             width: 120,
                             labelWidth: 50,
                             height: 20
@@ -172,21 +186,21 @@ $operativos = $sf_data->getRaw("operativos");
                             fieldLabel: 'Mes',
                             name: 'mes',
                             xtype: 'combo-meses',
-                            forceSelection:true,
-                            allowBlank:false,
+                            forceSelection: true,
+                            allowBlank: false,
                             width: 150,
                             labelWidth: 50,
                             height: 20
                         }, {
                             xtype: 'tbspacer',
-                            width: 15,
+                            width: 15
                         }, {
                             fieldLabel: 'Sucursal',
                             id: 'sucursal',
                             name: 'sucursal',
                             xtype: 'combo',
-                            forceSelection:true,
-                            allowBlank:true,
+                            forceSelection: true,
+                            allowBlank: true,
                             store: <?= json_encode($sucursales) ?>,
                             width: 195,
                             labelWidth: 70,
@@ -200,15 +214,27 @@ $operativos = $sf_data->getRaw("operativos");
                                                 params: {
                                                     nombresucursal: combo.getValue(),
                                                     verificacion: 1
-                                                }
+                                                },
+                                                /*callback: function (records, operation, success) {
+                                                    respuesta = Ext.JSON.decode(operation._response.responseText);
+                                                    store.setData(respuesta.root);
+                                                }*/
                                             });
+
                                             storeO = Ext.getCmp('comboOperativosI').store;
                                             storeO.load({
                                                 params: {
                                                     nombresucursal: combo.getValue(),
                                                     verificacion: 1
-                                                }
+                                                },
+                                                /*
+                                                 * callback: function (records, operation, success) {
+                                                    respuesta = Ext.JSON.decode(operation._response.responseText);
+                                                   // storeO.setData(respuesta.root);
+                                                    //storeO.setData([{"id":1 , "text": "ddd" , "leaf" : true , "checked" : true}]);
+                                                }*/
                                             });
+
                                         }
                                     }
                                 }
@@ -216,19 +242,18 @@ $operativos = $sf_data->getRaw("operativos");
                         }, {
                             xtype: 'tbspacer',
                             height: 20,
-                            width: 800,
+                            width: 800
                         }, {
                             title: 'Operativos',
                             fieldLabel: 'Operativos',
                             name: 'operativos',
-                            multiSelect: true,
                             xtype: 'combo-operativos',
                             width: 230,
                             labelWidth: 50,
                             height: 290
                         }, {
                             xtype: 'tbspacer',
-                            width: 40,
+                            width: 40
                         }, {
                             title: 'Vendedor',
                             fieldLabel: 'Vendedor',
@@ -251,7 +276,7 @@ $operativos = $sf_data->getRaw("operativos");
                     items: [{
                             xtype: 'tbspacer',
                             height: 180,
-                            width: 800,
+                            width: 800
                         }, {
                             text: 'Buscar',
                             multiSelect: true,
@@ -259,27 +284,26 @@ $operativos = $sf_data->getRaw("operativos");
                             xtype: 'button',
                             width: 190,
                             height: 30,
-                            handler: function() {
+                            handler: function () {
                                 var store = Ext.getCmp('comboVendedoresI').store;
                                 x = 0;
                                 changes = [];
                                 var record0 = store.getAt(0);
-                                
-                                if(record0){
-                                    
-                                    if(record0.data.checked){
+
+                                if (record0) {
+
+                                    if (record0.data.checked) {
                                         for (var i = 0; i < store.getCount(); i++) {
                                             var record = store.getAt(i);
-                                            if (record.isValid()) {                                            
-                                                    changes[x] = record.data;
-                                                    x++;                                            
+                                            if (record.isValid()) {
+                                                changes[x] = record.data;
+                                                x++;
                                             } else {
                                                 Ext.MessageBox.alert("Error", 'La información está incompleta o no es válida.');
                                                 return;
                                             }
                                         }
-                                    }
-                                    else{
+                                    } else {
                                         for (var i = 0; i < store.getCount(); i++) {
                                             var record = store.getAt(i);
                                             if (record.isValid()) {
@@ -295,25 +319,24 @@ $operativos = $sf_data->getRaw("operativos");
                                     }
                                 }
                                 var vendedores = JSON.stringify(changes);
-                            
+
                                 var store2 = Ext.getCmp('comboOperativosI').store;
                                 x = 0;
                                 changes = [];
                                 var record0 = store2.getAt(0);
-                                if(record0){
-                                    if(record0.data.checked){
+                                if (record0) {
+                                    if (record0.data.checked) {
                                         for (var i = 0; i < store2.getCount(); i++) {
                                             var record = store2.getAt(i);
                                             if (record.isValid()) {
-                                                    changes[x] = record.data;
-                                                    x++;
+                                                changes[x] = record.data;
+                                                x++;
                                             } else {
                                                 Ext.MessageBox.alert("Error", 'La información está incompleta o no es válida.');
                                                 return;
                                             }
-                                        }                                    
-                                    }
-                                    else{
+                                        }
+                                    } else {
 
                                         for (var i = 0; i < store2.getCount(); i++) {
                                             var record = store2.getAt(i);
@@ -329,23 +352,23 @@ $operativos = $sf_data->getRaw("operativos");
                                         }
                                     }
                                 }
-                                
+
                                 var operativos = JSON.stringify(changes);
-                                
+
                                 var form = this.up('form').getForm();
-                                
-                                form.doAction('standardsubmit',{ 
+
+                                form.doAction('standardsubmit', {
                                     url: '<?= url_for('reportesGer/reporteElaboracionCotizacionesListExt5') ?>',
-                                    standardSubmit: true, 
-                                    method: 'POST' ,
+                                    standardSubmit: true,
+                                    method: 'POST',
                                     params: {
-                                            vendedores: vendedores ,
-                                            operativos: operativos
-                                        }
+                                        vendedores: vendedores,
+                                        operativos: operativos
+                                    }
                                 });
                             }
                         }]
                 }]
         });
-    })
+    });
 </script>

@@ -10,9 +10,9 @@ if( $parametros ){
 	$parametro = null;
 }
 
-error_reporting( E_ERROR );
-
-$objPHPExcel = new sfPhpExcel();
+//error_reporting( E_ALL );
+require_once sfConfig::get('app_sourceCode_lib').'vendor/phpexcel1.8/Classes/PHPExcel/IOFactory.php';
+$objPHPExcel = new PHPExcel();
 
 // Set properties	
 $objPHPExcel->getProperties()->setCreator("Colsys");
@@ -59,8 +59,6 @@ $objPHPExcel->getActiveSheet()->duplicateStyleArray(
 			),
 			'A2:'.$ultimaCol.'2'
 	);
-
-
 $i=3;
 
 
@@ -172,7 +170,7 @@ foreach( $reportes as $reporte ){
 		$objPHPExcel->getActiveSheet()->setCellValue('C'.$i, utf8_encode($destino->getCaCiudad()));				
 	}
 	
-	$objPHPExcel->getActiveSheet()->setCellValue('D'.$i, utf8_encode(substr($reporte->getCaIncoterms(),0,3)));
+	$objPHPExcel->getActiveSheet()->setCellValue('D'.$i, utf8_encode(substr($reporte->getIncotermsStr(),0,3)));
 	$ets = $reporte->getETS("d.m.y");
 	if( $ets ){
 		$objPHPExcel->getActiveSheet()->setCellValue('E'.$i, $ets);
@@ -504,20 +502,24 @@ $objPHPExcel->setActiveSheetIndex(0);
 
 
 
-$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);		
+//$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
+$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
 // Send HTTP headers to tell the browser what's coming
 
 
 
-if(!$filename){
-	header("Content-type: application/vnd.ms-excel");
-	header("Content-Disposition: attachment; filename=\"".$cliente->getCaCompania().".xls\"");
-	header("Expires: 0");
-	header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
-	header("Pragma: public");
-			
-}	
-$objWriter->save(str_replace('.php', '.xls', $filename ));	
+if (!$filename) {
+    header("Content-type: application/vnd.ms-excel");
+    header("Content-Disposition: attachment; filename=\"" . $cliente->getCaCompania() . ".xls\"");
+    header("Expires: 0");
+    header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
+    header("Pragma: public");
+    $objWriter->save('php://output');
+}
+else
+{
+    $objWriter->save(str_replace('.php', '.xls', $filename));
+}
 		
 if(!$filename){
 	exit;

@@ -21,7 +21,7 @@ $readOnly = $referencia->getReadOnly();
 </div>
 
 
-<div id="general" class="x-display">
+<div id="general" style="display:block">
 
     <table class="tableList" width="100%">
         

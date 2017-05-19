@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 $refs = $sf_data->getRaw("refs");
-$datos = $sf_data->getRaw("datosIno");
+$datosIno = $sf_data->getRaw("datosIno");
 $totales = $sf_data->getRaw("totales");
 //print_r($datos);
 ?>
@@ -32,13 +32,13 @@ if($buscar)
         $vendedorant="";        
         //echo "<pre>";print_r($datos["amartinez"][0]);echo "</pre>";
         $pp=1;
-        if(count($datos)==0)
+        if(count($datosIno)==0)
         {
             echo "<tr><td colspan='17'>No existen registros</td></tr>";
         }
         else
         {
-            foreach($datos as $vendedor=>$dat)
+            foreach($datosIno as $vendedor=>$dat)
             {
                 $totales1=array();
     ?>
@@ -48,8 +48,17 @@ if($buscar)
     <?            
                 for($i=0;$i<count($dat);$i++)
                 {
-                    $d=$dat[$i];                    
-                    $url="/ino/verReferencia/modo/".$d["tipo"]."/idmaster/".$d["ca_idmaster"];
+                    $d=$dat[$i];
+                    if(intval($d["comision_ino"])==0 && $casos!="")
+                        continue;
+                    if($casos=="2" || $casos=="3" )
+                    {
+                        if($d["facturas"]=="")
+                            continue;
+                    }
+                    if($casos=="3" && $d["ca_stdcircular"] == "Vencido" && $d["comision_ino"]>0)
+                        continue;
+                    $url="/inoF/verReferenciaExt4/modo/".$d["tipo"]."/idmaster/".$d["ca_idmaster"];
             ?>
             <tr>
                 <td><a href="<?=$url?>" target="_blank"><?=$d["ca_referencia"]?></a></td>
@@ -61,7 +70,7 @@ if($buscar)
                 <td><?=$d["ca_modalidad"]?></td>
                 <td><?=$d["facturas"]?></td>
                 <td><?=Utils::formatNumber($d["ing_valor"], 0)?></td>
-                <td><?=$d["rcaja"]?></td>
+                <td><?=$d["rccaja"]?></td>
                 <td  ><?=$d["ca_volumen"]?></td>
                 <td><?=Utils::formatNumber($d["ino"], 0)?></td>
                 <td><?=Utils::formatNumber(($d["comision_ino"]), 0)?></td>

@@ -50,14 +50,16 @@ Ext.require([
         alias: 'widget.wTreeGridFile',    
         title: 'Archivos',
         //width: 1000,
-        //height: 300,
+        height: 300,
         //renderTo: "sub-panel",
+        autoHeight:true,
         collapsible: true,
         useArrows: true,
-        rootVisible: false,
+        rootVisible: true,
         store: Ext.create('Ext.data.TreeStore', {
         fields: [
             {name: 'idarchivo',     type: 'string'},
+            {name: 'idsserie',     type: 'string'},            
             {name: 'nombre',     type: 'string'},
             {name: 'documento',     type: 'string'},
             {name: 'iddocumental',     type: 'string'},
@@ -90,28 +92,29 @@ Ext.require([
                 
             },
             listeners: {       
-                        drop: function (node, data, overModel, dropPosition) {   
-                                
-                                
-                                Ext.Ajax.request({
-                                    url: '/gestDocumental/editarArchivo',
-                                    method: 'POST',
-                                    params: {
-                                        "idarchivo" : data.records[0].data.idarchivo,
-                                        "ref" : overModel.raw.idarchivo,
-                                        "depth2" : overModel.data.depth,
-                                        "depth1":data.records[0].data.depth
-                                        
-                                    },
-                                    scope:this,
-                                    success: function(a,b){
-                                        Ext.MessageBox.hide();
-                                    },
-                                    failure: function(){console.log('failure');}
-                                });
-                              
-                        }
-                    }
+                drop: function (node, data, overModel, dropPosition) {   
+
+
+                        Ext.Ajax.request({
+                            url: '/gestDocumental/editarArchivo',
+                            method: 'POST',
+                            params: {
+                                "idarchivo" : data.records[0].data.idarchivo,
+                                "idsserie" : data.records[0].data.idsserie,
+                                "ref" : overModel.raw.idarchivo,
+                                "depth2" : overModel.data.depth,
+                                "depth1":data.records[0].data.depth
+
+                            },
+                            scope:this,
+                            success: function(a,b){
+                                Ext.MessageBox.hide();
+                            },
+                            failure: function(){console.log('failure');}
+                        });
+
+                }
+            }
             ,getRowClass: function(record, rowIndex, rowParams, store){
                 //alert(record.data.toSource());
                 if(record.get("idarchivo")==record.get("nombre"))
@@ -172,117 +175,114 @@ Ext.require([
                 flex: 1,
                 dataIndex: 'fchcreado',
                 sortable: true
-            }, {
-                text: '',
-                width: 20,
-                menuDisabled: true,
-                xtype: 'actioncolumn',
-                tooltip: 'Ver Carpeta',
-                align: 'center',
-                icon: '/images/16x16/edit.gif',
-                renderer: function(value, metaData, record, row, col, store, gridView){                
-                        if(record.get("idarchivo")==record.get("nombre"))
-                        {                            
-                            return "_";
-                        }
-                        else
-                        {
-                            return value;
-                        }
-                      },
-                handler: function(grid, rowIndex, colIndex, actionItem, event, record, row) {
-                    //Ext.Msg.alert(record.data.toSource());
-                                    
-                    if(constrainedWin2==null)
-                    {
-                        constrainedWin2 = Ext.create('Ext.Window', {
-                            title: 'Editar Archivo',
-                            width: 500,
-                            height: 300,
-                            closeAction: 'hide',
-                            x: 120,
-                            y: 120,
-                            id:"winFormEdit",
-                            name:"winFormEdit",
-                            constrainHeader: true,
-                            frame: true,
-                            layout: 'form',
-                            items: [{
-                                xtype:'wFormArchivo',                                
-                                id:'form-panel-file1',
-                                name:'form-panel-file1',
-                                linkWin:"winFormEdit"
-                            }]
-                        })
-                    }
-                    constrainedWin2.show();
-                    //Ext.getCmp("_field-file").hide();
-                    Ext.getCmp("form-panel-file1").cargar(record.data);
-                }
             },
             {
-                text: '',
-                width: 20,
-                menuDisabled: true,
                 xtype: 'actioncolumn',
-                tooltip: 'Ver Carpeta',
-                align: 'center',
-                icon: '/images/16x16/delete_task.png',
-                renderer: function(value, metaData, record, row, col, store, gridView){                
-                        if(record.get("idarchivo")==record.get("nombre"))
-                        {
-                            return "_";
+                width: 50,
+                items: [{
+                        tooltip: 'Editar',
+                        getClass: function (v, meta, record) {
+                            //console.log(this.up());
+                            //console.log(this.up().up());
+                            /*console.log(this.up().up().up());
+                            console.log(this.up().up().up().up());
+                            console.log(this.up().up().up().up().up());
+                            console.log(this.up().up().up().up().up().up());*/
+                            //console.log(this.up("grid"));
+                            //alert(t
+                            //his.up("grid").Editar)
+                        //if (rec.get('inoventa' + this.up('grid').idmaster) != 0) {
+                        //console.log(this.up().up().Editar);
+                            if(this.up().up().Editar && record.get("idarchivo")!=record.get("nombre"))
+                                return 'note-edit';
                         }
-                        else
-                        {
-                            return value;
+                        ,
+                        handler: function (grid, rowIndex, colIndex) {
+                            var record = grid.getStore().getAt(rowIndex);
+                           if(constrainedWin2==null)
+                            {
+                                constrainedWin2 = Ext.create('Ext.Window', {
+                                    title: 'Editar Archivo',
+                                    width: 500,
+                                    height: 300,
+                                    closeAction: 'hide',
+                                    x: 120,
+                                    y: 120,
+                                    id:"winFormEdit",
+                                    name:"winFormEdit",
+                                    constrainHeader: true,
+                                    frame: true,
+                                    layout: 'form',
+                                    items: [{
+                                        xtype:'wFormArchivo',                                
+                                        id:'form-panel-file1',
+                                        name:'form-panel-file1',
+                                        linkWin:"winFormEdit"
+                                    }]
+                                })
+                            }
+                            constrainedWin2.show();
+                            //Ext.getCmp("_field-file").hide();
+                            //alert(record.data.toSource());
+                            Ext.getCmp("form-panel-file1").cargar(record.data);
                         }
-                      },
-                handler: function(grid, rowIndex, colIndex, actionItem, event, record, row) {
-                
-                    //alert(record.data.toSource());
-                    Ext.MessageBox.show({
-                        title: 'Eliminacion de '+record.data.nombre,
-                        msg: 'Por favor ingrese el motivo de la eliminacion:',
-                        width:300,
-                        buttons: Ext.MessageBox.OKCANCEL,
-                        multiline: true,
-                        fn: function (btn, text){
-                        
-                            if( btn == "ok"){
-                                if( text.trim()==""){
-                                    alert("Debe colocar un motivo");
-                                }else{
-                                    if(btn=="ok")
-                                    {
-                                        Ext.MessageBox.wait('Eliminando Archivo', '');
-                                        Ext.Ajax.request({
-                                            url: '/gestDocumental/eliminarArchivo',
-                                            method: 'POST',                
-                                            waitTitle: 'Connecting',
-                                            waitMsg: 'Eliminando Archivo...',                                     
-                                            params: {
-                                                "idarchivo" : record.data.idarchivo,
-                                                "observaciones": text
-                                            },
-                                            scope:this,
-                                            success: function(a,b){
-                                                //Ext.getCmp("tree-grid-file").getStore().reload();
-                                                //Ext.getCmp("tree-grid-file").expandAll();
-                                                //this.up('grid').getStore().reload();
-                                                //this.up('grid').expandAll();
-                                                grid.getStore().reload();
-                                                //grid.expandAll();
-                                                Ext.MessageBox.hide();
-                                            },
-                                            failure: function(){console.log('failure');}
-                                        });
+                    }
+                    ,
+                    {
+                        tooltip: 'Anular',
+                        getClass: function (v, meta, record) {
+                            if(this.up().up().Anular && record.get("idarchivo")!=record.get("nombre"))
+                                return 'delete';
+                        }
+                        ,
+                        handler: function (grid, rowIndex, colIndex) {
+                            var record = grid.getStore().getAt(rowIndex);
+                            Ext.MessageBox.show({
+                                title: 'Eliminacion de '+record.data.nombre,
+                                msg: 'Por favor ingrese el motivo de la eliminacion:',
+                                width:300,
+                                buttons: Ext.MessageBox.OKCANCEL,
+                                multiline: true,
+                                fn: function (btn, text){
+
+                                    if( btn == "ok"){
+                                        if( text.trim()==""){
+                                            alert("Debe colocar un motivo");
+                                        }else{
+                                            if(btn=="ok")
+                                            {
+                                                Ext.MessageBox.wait('Eliminando Archivo', '');
+                                                Ext.Ajax.request({
+                                                    url: '/gestDocumental/eliminarArchivo',
+                                                    method: 'POST',                
+                                                    waitTitle: 'Connecting',
+                                                    waitMsg: 'Eliminando Archivo...',                                     
+                                                    params: {
+                                                        "idarchivo" : record.data.idarchivo,
+                                                        "observaciones": text
+                                                    },
+                                                    scope:this,
+                                                    success: function(a,b){
+                                                        //Ext.getCmp("tree-grid-file").getStore().reload();
+                                                        //Ext.getCmp("tree-grid-file").expandAll();
+                                                        //this.up('grid').getStore().reload();
+                                                        //this.up('grid').expandAll();
+                                                        grid.getStore().reload();
+                                                        //grid.expandAll();
+                                                        Ext.MessageBox.hide();
+                                                    },
+                                                    failure: function(){console.log('failure');}
+                                                });
+                                            }
+                                        }
                                     }
                                 }
-                            }
+                            })
+                    
                         }
-                    })
-                }
+                        
+                    }
+                    ]
             }
         ]
     });    

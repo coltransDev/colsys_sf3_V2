@@ -12,27 +12,5 @@
  */
 class PricRecargoxConcepto extends BasePricRecargoxConcepto
 {
-    /*
-	* Guarda el recargo y determina el # de actualizacion
-	* Author: Andres Botero
-	*/
-    public function save( Doctrine_Connection $con=null){
 
-
-        if( !$con ){
-            $con = $this->getTable()->getConnection();
-        }
-        $con->beginTransaction();
-
-        parent::save($con);
-
-        $sql = "SELECT currval('pric.tb_recargos_id') as next";
-
-        $stmt = $con->execute($sql);
-        $row = $stmt->fetch();
-        $this->setCaConsecutivo($row['next']);
-
-        $con->commit();
-
-    }
 }

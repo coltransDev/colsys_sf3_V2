@@ -25,6 +25,9 @@ class PricFlete extends BasePricFlete
 			case 2:
 				return "pink";
 				break;
+                        case 3:
+				return "green";
+				break;
 			default:
 				return "";
 				break;
@@ -43,6 +46,9 @@ class PricFlete extends BasePricFlete
 			case "pink":
 				$this->setCaEstado(2);
 				break;
+                        case "green":
+				$this->setCaEstado(3);
+				break;
 			default:
 				$this->setCaEstado(null);
 				break;
@@ -54,12 +60,12 @@ class PricFlete extends BasePricFlete
 	* Guarda el recargo y determina el # de actualizacion
 	* Author: Andres Botero
 	*/
-    public function save( Doctrine_Connection $con=null){
+    /*public function save( Doctrine_Connection $con=null){
 
 
         if( !$con ){
             $con = $this->getTable()->getConnection();
-        }
+}
         $con->beginTransaction();
 
         parent::save($con);
@@ -73,6 +79,6 @@ class PricFlete extends BasePricFlete
 
         $con->commit();
 
-    }
+    }*/
 
 }

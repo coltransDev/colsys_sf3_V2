@@ -1,8 +1,6 @@
 <?
 $script = str_replace("/colsys_php/","",$_SERVER["PHP_SELF"]);
 
-
-
 $ro = false;
 
 $roScripts = array("repgerencia.php", 
@@ -40,9 +38,13 @@ if( $script=="comisiones.php" && trim(base64_decode($_REQUEST["accion"]))!="Regi
 }
 
 
-
-
-
+if ($_SERVER['SERVER_NAME'] == 'www.tplogistics.com.pe'){
+    $environment = 'all';
+}else if ($_SERVER['SERVER_NAME'] == 'www.consolcargo.com'){
+    $environment = 'consolcargo';
+}else{
+    $environment = 'coltrans';
+}
 
 
 require( '../../../config/ProjectConfiguration.class.php' );
@@ -56,25 +58,10 @@ if( $ro ){
 
 $databaseConfig = sfYaml::load($config);
 
-/*
-$database = "Coltrans";
-
-$dsn = $databaseConfig['all']['doctrine']['param']['dsn'];
-
-
-$dsn =  substr( $dsn,  strpos( $dsn, "dbname")+7 );
-$principal = substr( $dsn, 0,  strpos( $dsn, ";") );
-$servidor = substr( $dsn,  strlen( $principal )+6 );
-$usuarioDb = $databaseConfig['all']['doctrine']['param']['username'];
-$password = $databaseConfig['all']['doctrine']['param']['password'];
-*/
-
-$dsn = $databaseConfig['prod']['doctrine']['param']['dsn'];
-//	echo "<pre>";print_r($databaseConfig);echo "</pre>";
-//$dsn =  substr( $dsn,  strpos( $dsn, "dbname")+7 );
+$dsn = $databaseConfig[$environment]['doctrine']['param']['dsn'];
 $principal = substr( $dsn, 0,  strpos( $dsn, ";") );
 $servidor = substr( $dsn,  strlen( $principal )+6 );
 $database = substr( $principal, strpos( $principal, "dbname")+7 );
-$usuarioDb = $databaseConfig['prod']['doctrine']['param']['username'];
-$password = $databaseConfig['prod']['doctrine']['param']['password'];
+$usuarioDb = $databaseConfig[$environment]['doctrine']['param']['username'];
+$password = $databaseConfig[$environment]['doctrine']['param']['password'];
 ?>

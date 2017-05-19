@@ -58,11 +58,11 @@ class widgets4Actions extends sfActions {
         $this->data=array();
         foreach($datos as $d)
         {
-            //print_r($d);
+            //echo "<pre>";print_r($d);echo "</pre>";
             
             $this->data[]=array(
-                "id"=>$d["h_ca_idhouse"],"name"=>  ($d["h_ca_doctransporte"]."-".$d["cl_ca_compania"]) , 
-                "idcliente"=>$d["cl_ca_idcliente"], "cliente"=>$d["cl_ca_compania"],
+                "id"=>$d["h_ca_idhouse"],"name"=>utf8_encode ($d["h_ca_doctransporte"]."-".$d["cl_ca_compania"]) , 
+                "idcliente"=>$d["cl_ca_idcliente"], "cliente"=>  utf8_encode($d["cl_ca_compania"]),
                 "class"=>($d["h_ncomprobante"]>0?"":"row_pink")
                 );
         }

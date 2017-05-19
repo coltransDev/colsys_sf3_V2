@@ -13,7 +13,7 @@ Ext.define('Colsys.Widgets.wgEmpresas', {
             url: '/widgets5/datosEmpresas',
             reader: {
                 type: 'json',
-                root: 'root',
+                rootProperty: 'root',
                 totalProperty: 'total'
             }
         }        

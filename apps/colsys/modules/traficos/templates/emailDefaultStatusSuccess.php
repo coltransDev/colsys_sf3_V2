@@ -164,7 +164,7 @@ $modo = $sf_data->getRaw("modo");
             ?>
             <tr>
                 <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Mercanc&iacute;a</b></td>
-                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="5"><?= $reporte->getCaMercanciaDesc() ?> <?= ($reporte->getCaMciaPeligrosa()) ? "<br><b>Mercacia Peligrosa</b>" : "" ?></td>
+                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="5"><?= $reporte->getCaMercanciaDesc() ?> <?= ($reporte->getCaMciaPeligrosa()) ? "<br><b>Mercanc&iacute;a Peligrosa</b>" : "" ?></td>
             </tr>
             <?
             
@@ -356,6 +356,13 @@ $modo = $sf_data->getRaw("modo");
             ?>
         </table>
         <br />
+        <?
+        if($modo!="otm"){
+            ?>
+            <div align="center" class="bigbutton" style="margin-left: 30%; width: 30%; margin-right: 10%;">Para obtener más información de sus cargas, no olvide visitar nuestro tracking <a href="https://www.colsys.com.co/tracking" target="_blank">https://www.colsys.com.co/tracking</a></div>
+            <?
+        }
+        ?>
         <br />
         <?
         /*if ($reporte->getCaTransporte() == Constantes::AEREO && ($status->getCaIdetapa() == "IACAD" || $status->getCaIdetapa() == "IACCR" || $status->getCaIdetapa() == "IACEM" || $status->getCaIdetapa() == "IACDE" || $status->getCaIdetapa() == "IACIM" || $status->getCaIdetapa() == "IACMV" || $status->getCaIdetapa() == "IACTD" ))

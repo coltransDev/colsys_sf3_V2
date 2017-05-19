@@ -1,3 +1,6 @@
+#AddHandler php56 .php
+#Action php56 /cgi-bin/php56.cgi
+
 Options +FollowSymLinks +ExecCGI
 
 <IfModule mod_rewrite.c>

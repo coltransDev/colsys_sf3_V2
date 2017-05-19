@@ -1,17 +1,11 @@
 default:
-  http_metas:
-    content-type: text/html; charset=iso-8859-1 
 
-  metas:
-    title:        Sistema de informacion - <?php echo sfConfig::get("app_branding_name");?> 
-    robots:       index, follow
-    description:  Sistema integrado de informacion <?php echo sfConfig::get("app_branding_name");?> 
-    keywords:     colsys
-    language:     en	
 
   stylesheets:    [coltrans, print: { media: print }, jquery/jquery.tooltip.css, ext/css/ext-all, ext/css/xtheme-gray, menu/menu, blog]
+#  stylesheets:    [coltrans, print: { media: print }, jquery/jquery.tooltip.css, menu/menu, blog]
 
-  javascripts:    [comunes,  jquery/jquery.js, jquery/jquery.tooltip.js, jquery/jquery.dimensions.js ,ext/adapter/ext/ext-base, ext/ext-all-debug, ext/src/locale/ext-lang-es.js , menu/menu, Base64]
+  javascripts:    [comunes,  jquery/jquery.js, jquery/jquery.tooltip.js, jquery/jquery.dimensions.js ,ext/adapter/ext/ext-base, ext/ext-all, ext/src/locale/ext-lang-es.js , menu/menu]
+#  javascripts:    [comunes,  jquery/jquery.js, jquery/jquery.tooltip.js, jquery/jquery.dimensions.js , menu/menu, Base64]
 
   has_layout:     true
   layout:         layout

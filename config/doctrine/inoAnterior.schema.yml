@@ -1059,8 +1059,10 @@ ExpoAwbtransporte:
     ca_weight_charge: float
     ca_weight_details: string(10)
     ca_rate_charge: float
+    ca_kind_rate: string(18)
     ca_due_agent: float
     ca_due_carrier: float
+    ca_commodity_item: string(512)
     ca_delivery_goods: string(512)
     ca_other_charges: string(512)
     ca_shipper_certifies: string(512)

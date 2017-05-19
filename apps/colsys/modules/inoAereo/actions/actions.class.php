@@ -98,7 +98,7 @@ class inoAereoActions extends sfActions
             $ino->setCaFchreferencia($fchreferencia);
             $ino->setCaOrigen($idorigen);
             $ino->setCaDestino($iddestino);
-            $ino->setCaIdlinea($request->getParameter("idlinea"));
+            $ino->setCaIdlinea($request->getParameter("idlinea")?$request->getParameter("idlinea"):0);
             $ino->setCaIdagente($request->getParameter("idagente"));
 
             $ino->setCaMawb($request->getParameter("ca_master"));

@@ -3,20 +3,24 @@ all:
   digitalFile:
     root:  /srv/www/digitalFile/   
 
-#    root:  C:\Desarrollo\digitalFile\
+  sourceCode:
+    plugins:  /srv/www/colsys_sf3/plugins/
+    lib:  /srv/www/colsys_sf3/lib/
 
   branding:
     template: coltrans
     template4: consolcargo
     url: www.coltrans.com.co
-    name: Coltrans S.A.S. - Colmas Ltda.
+    name: Coltrans S.A.S. - Colmas S.A.S.
     name1: Coltrans S.A.S.
-    name2: Colmas Ltda
+    name2: Colmas S.A.S.
     from: serclientebog@coltrans.com.co
     idempresa: 800024075
 
   smtp:
-    host: 10.192.1.63
+    host: 172.16.1.18	
+    host2: smtp-relay.gmail.com
+    host3: consolcargo-com.mail.protection.outlook.com
     port: 25
     security: null   
 
@@ -31,13 +35,14 @@ all:
 
 
   ldap:
-    host: 10.192.1.91
+#    host: 172.16.1.22
+    host: 10.192.1.26
     auth_enabled: true
 #    user: colsys
 #    passwd: $tlco5903Am
 
   memcache:
-    host: 10.192.1.62
+    host: 172.16.1.13
     port: 11211
     prefix: colsess
 
@@ -70,9 +75,19 @@ all:
     secret: srTYudsa%&7dsa!Por#az+zX985>Fm
     adminUsers:
       updateUser: false
-      wsdl_uri: https://www.coltrans.com.co/ws/users/usersWS?wsdl
+      wsdl_uri: https://www.colsys.com.co/ws/users/usersWS?wsdl
 
     gincomex:
       url: http://www.gincomex.biz/pruebas/webservices/servicio.php
       pass: HJDSJHSDUU3313JKIAASSJU12
 
+    siigo:
+      wsdl_uri: http://10.192.1.90:8000/w/WebService1.asmx?wsdl
+
+    open:
+      wsdl_uri: https://www.colsys.com.co/ws/colsys/InformeOpenWS?wsdl
+
+  sinteParams:
+    username: FANNY.GUTIERREZ
+    password: fanny@201610
+    percent: 90

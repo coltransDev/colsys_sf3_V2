@@ -58,7 +58,7 @@ class ArchivosTable extends Doctrine_Table
         return $result;
     }
     
-    public function subirDocumento($attachments,$data){
+    public static function subirDocumento($attachments,$data){
         
         $logFile = sfConfig::get('sf_root_dir') . DIRECTORY_SEPARATOR . "log" . DIRECTORY_SEPARATOR . "docs_error.log";
         
@@ -78,7 +78,7 @@ class ArchivosTable extends Doctrine_Table
         if($data['ref3'])
             $path.=str_replace("/","-",$data['ref3']).DIRECTORY_SEPARATOR;
 
-        $directory = sfConfig::get('app_digitalFile_root').date("Y").DIRECTORY_SEPARATOR.$folder.$path;
+        $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.date("Y").DIRECTORY_SEPARATOR.$folder.$path;
 
         if(!is_dir($directory)){
             mkdir($directory, 0777, true);            

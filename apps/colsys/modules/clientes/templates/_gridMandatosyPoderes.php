@@ -229,7 +229,7 @@ include_component("clientes", "formSubirArchivos");
         // create the grid
         new Ext.grid.GridPanel({
             id: 'gridMandatos',
-            title: 'Control de Mandatos y Poderes<br/><?= $nombre_cliente ?>',
+            title: 'Control Documentos Aduana<br/><?= $nombre_cliente ?>',
             store: storeMandatos,
             renderTo: 'se-form',
             stripeRows: true,
@@ -278,7 +278,7 @@ include_component("clientes", "formSubirArchivos");
                                 if (win_man == null) {
                                     win_man = new Ext.Window({
                                         id: 'winMandatos',
-                                        title: 'Definición Mandato o Poder',
+                                        title: 'Definición Documento Aduana',
                                         width: 800,
                                         height: 380,
                                         closeAction: 'close',
@@ -339,7 +339,7 @@ include_component("clientes", "formSubirArchivos");
                                         if (win_man == null) {
                                             win_man = new Ext.Window({
                                                 id: 'winMandatos',
-                                                title: 'Definición Mandato o Poder',
+                                                title: 'Definición Documento de Aduana',
                                                 width: 800,
                                                 height: 380,
                                                 closeAction: 'close',
@@ -362,7 +362,7 @@ include_component("clientes", "formSubirArchivos");
                                         if (win_doc == null) {
                                             win_doc = new Ext.Window({
                                                 id: 'winTiposMandatos',
-                                                title: 'Definición Tipos de Mandato o Poder',
+                                                title: 'Definición Tipos de Documento de Aduana',
                                                 width: 600,
                                                 height: 425,
                                                 closeAction: 'close',
@@ -375,7 +375,7 @@ include_component("clientes", "formSubirArchivos");
                                     }
                                 }, {
                                     text: 'Archivo Digital',
-                                    tooltip: 'Mandatos y Poderes',
+                                    tooltip: 'Documentos de Aduana',
                                     iconCls: 'note-add',
                                     scope: this,
                                     handler: function () {

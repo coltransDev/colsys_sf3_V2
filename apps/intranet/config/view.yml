@@ -11,10 +11,11 @@ default:
     #keywords:     symfony, project
     #language:     en
     #robots:       index, follow
+  #stylesheets:    [intranet.css, blog, /js/ext4/resources/css/ext-all-neptune.css, font-awesome-4.3.0/css/font-awesome.min.css, jquery/jquery-ui.min.css, jquery/jquery-ui.structure.min.css]
+  stylesheets:    [intranet.css, blog, /js/ext5/packages/ext-theme-crisp/build/resources/ext-theme-crisp-all-debug.css, font-awesome-4.3.0/css/font-awesome.min.css, jquery/jquery-ui.min.css, jquery/jquery-ui.structure.min.css]
 
-  stylesheets:    [intranet.css, ext/css/ext-all, ext/css/xtheme-gray, ext/css/ext-all, ext/css/xtheme-gray,  blog]
-
-  javascripts:    [ext/adapter/ext/ext-base, ext/ext-all-debug, ext/src/locale/ext-lang-es.js]
+  #javascripts:    [ext4/ext-all.js, ext4/ux/multiupload/swfobject.js, comunes.js, jquery/jquery.js, jquery/jquery.tooltip.js, jquery/jquery.dimensions.js]
+  javascripts:    [ext5/ext-all.js, comunes.js, jquery/jquery.js, jquery/jquery.dimensions.js]
 
   has_layout:     true
   layout:         layout

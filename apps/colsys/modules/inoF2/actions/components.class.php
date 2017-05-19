@@ -36,6 +36,5 @@ class inoF2Components extends sfComponents
     public function executeFormMaster() {
         
     }
-	
 }
 ?>

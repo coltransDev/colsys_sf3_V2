@@ -363,6 +363,12 @@ switch($repotm->getIdsProveedor()->getIds()->getCaIdalterno())
     case "805021657"://movitrans sas
         $txt="761";
         break;
+    case "800046457":
+        $txt="642";
+        break;
+    case "800038129":
+        $txt="318";
+        break;    
     default:
         $txt="146";
 }
@@ -381,21 +387,21 @@ $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+20, $y);
 $txt="2";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+46, $y);
 
-$txt="31 DL 014 615";
+$txt="31 DL 015566";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+72, $y);
 
 //casilla 42
-$txt=  number_format("1288700000");
+$txt=  number_format("1378910000");
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+121, $y);
 
 //casilla 43
-$txt=  "2017";
+$txt=  "2019";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+163, $y);
 
 $txt=  "02";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+175, $y);
 
-$txt=  "24";
+$txt=  "25";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+183, $y);
 
 $y=$y+8;
@@ -915,6 +921,12 @@ switch($repotm->getIdsProveedor()->getIds()->getCaIdalterno())
     case "805021657"://movitrans sas
         $txt="761";
         break;
+    case "800046457":
+        $txt="642";
+        break;
+    case "800038129":
+        $txt="318";
+        break;
     default:
         $txt="146";
 }
@@ -933,21 +945,21 @@ $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+20, $y);
 $txt="2";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+46, $y);
 
-$txt="31 DL 014 615";
+$txt="31 DL 015566";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+72, $y);
 
 //casilla 42
-$txt=  number_format("1288700000");
+$txt=  number_format("1378910000");
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+121, $y);
 
 //casilla 43
-$txt=  "2017";
+$txt=  "2019";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+163, $y);
 
 $txt=  "02";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+175, $y);
 
-$txt=  "24";
+$txt=  "25";
 $pdf->MultiCell(500, 10, strtoupper($txt), 0, 'L', 0, 1, $x+183, $y);
 
 

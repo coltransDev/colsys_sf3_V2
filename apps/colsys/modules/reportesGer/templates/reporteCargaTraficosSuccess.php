@@ -443,7 +443,7 @@ if ($opcion) {
             $agen=$r["ca_idagente"];
         }
         ?>
-        <tr><td colspan="10">Totales</td>
+        <tr><td colspan="11">Totales</td>
             <td align="right"><?= $tteus ?></td>
             <td align="right"><?= number_format($tpiezas, 0) ?></td><td align="right"><?= number_format($tpeso, 2) ?></td><td align="right"><?= number_format($tvolumen, 2) ?></td></tr>
 

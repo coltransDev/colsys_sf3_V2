@@ -6,20 +6,24 @@
 all:
   digitalFile:
     root:  /srv/www/digitalFile/
+    
+  sourceCode:
+    plugins:  /srv/www/colsys_sf3/plugins/
+    lib:  /srv/www/colsys_sf3/lib/
 
   branding:
     template: coltrans
-    url: www.coltrans.com.co
-    name: Coltrans S.A.S. - Colmas Ltda.
+    url: www.colsys.com.co
+    name: Coltrans S.A.S. - Colmas S.A.S.
     from: serclientebog@coltrans.com.co
 
   smtp:
-    host: smtp.coltrans.com.co
+    host: 172.16.1.18
     user:  tasas_cambios
     passwd:  tasas_cambios
     port: 25
 #    debugAddress: abotero@coltrans.com.co
     
   ldap:
-    host: 10.192.1.91
+    host: 172.16.1.22
     auth_enabled: true

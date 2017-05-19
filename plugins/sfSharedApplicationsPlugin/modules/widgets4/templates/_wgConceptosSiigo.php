@@ -12,39 +12,38 @@ Ext.define('Ext.colsys.wgConceptosSiigo', {
   alias: 'widget.wConceptosSiigo',
   triggerTip: 'Click para limpiar',
   spObj:'',
+  mode:'local',
   spForm:'',  
   spExtraParam:'',
   displayField: 'name',
   valueField: 'id',
   minChars:3,
-  store: Ext.create('Ext.data.Store', {
-            fields: ['id','name'],
-            proxy: {
-                type: 'ajax',
-                url: '<?=url_for('inoparametros/datosConceptosSiigo')?>',
-                baseParams:{
-                    idccosto:this.idccosto
-                },
-                reader: {
-                    type: 'json',
-                    root: 'root'
-                }
+  listConfig: {
+        loadingText: 'buscando...',
+        emptyText: 'No existen registros',
+        getInnerTpl: function() {
+            return '<tpl for="."><div class="search-item1">{name}</div></tpl>';
+        }
+    },
+    store: Ext.create('Ext.data.Store', {
+        fields: ['id','name'],
+        proxy: {
+            type: 'ajax',
+            url: '<?=url_for('inoparametros/datosConceptosSiigo')?>',
+            baseParams:{
+                modo:this.modo
             },
-            autoLoad: false
-        }),
-  qtip:'Listado de Conceptos',
-  trigger1Class: 'x-form-select-trigger',
+            reader: {
+                type: 'json',
+                root: 'root'
+            }
+        },
+        autoLoad: false
+    }),
+    qtip:'Listado de Conceptos',
+    trigger1Class: 'x-form-select-trigger',
     trigger2Class: 'x-form-clear-trigger',
         onRender: function(ct, position){
-            
-            /*if(this.idccosto>0 )
-            {            
-                this.store.load({
-                    params : {
-                        idccosto: this.idccosto
-                    }
-                });
-            }*/
 
             Ext.colsys.wgConceptosSiigo.superclass.onRender.call(this, ct, position);
             var id = this.getId();
@@ -73,13 +72,12 @@ Ext.define('Ext.colsys.wgConceptosSiigo', {
           trigger1.addClsOnOver('x-form-trigger-over');
           trigger2.addClsOnOver('x-form-trigger-over');
       },
-      initComponent: function() {
-        var me = this;
- 
+    initComponent: function() {
+        var me = this; 
         Ext.applyIf(me, {
-            emptyText: 'Seleccione un Reporte',
+            emptyText: 'Seleccione un concepto',
             loadingText: 'Loading...',
-            store: {type: 'roletemplatesremote'}
+            store: {type: 'roletemplateslocal'}
         });
         me.callParent(arguments);
         me.getStore().on('beforeload', this.beforeTemplateLoad, this);
@@ -87,21 +85,19 @@ Ext.define('Ext.colsys.wgConceptosSiigo', {
  
     beforeTemplateLoad: function(store) {
         store.proxy.extraParams = {
-            idccosto: this.idccosto
+            modo: this.modo,
+            idcomprobante: this.idcomprobante
         }
     },
-    setIdccosto: function(idccosto)
+    setModo: function(modo,idcomprobante)
     {
-        
-        if(this.idccosto!=idccosto)
-        {
-            this.idccosto=idccosto;
-            store.proxy.extraParams = {
-                idccosto: this.idccosto
-            };
-            store.reload();
-        }
+        this.modo=modo; 
+        this.idcomprobante=idcomprobante;
+        /*this.store.proxy.extraParams = {
+            modo: this.modo,
+            idcomprobante: this.idcomprobante
+        };
+        this.store.reload();*/
     }
-    
 });
 </script>

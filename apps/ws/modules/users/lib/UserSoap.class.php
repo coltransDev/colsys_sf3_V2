@@ -24,11 +24,11 @@ class UserSoap {
         if( $secret!=sfConfig::get("app_soap_secret") ){
             return "Remote: La clave no concuerda";     
         }
-        
+        $usuario = unserialize($usuario);
+            $newUsuario = Doctrine::getTable("Usuario")->find( $usuario->getCaLogin() );
         try{
 
-            $usuario = unserialize($usuario);
-            $newUsuario = Doctrine::getTable("Usuario")->find( $usuario->getCaLogin() );
+            
             if( !$newUsuario ){
                 $newUsuario = new Usuario();
                 $newUsuario->setCaLogin( $usuario->getCaLogin());
@@ -61,12 +61,13 @@ class UserSoap {
             $newUsuario->setCaFchactualizado( $usuario->getCaFchactualizado());
             $newUsuario->stopBlaming();
             $newUsuario->save();
+            
 //            $newUsuario->save($con);
 //            $con->commit();
         }catch( Exception $e ){
             return "Remote: ".$e->getMessage()." server:".$_SERVER["SERVER_ADDR"];//." u:".$usuario."-nu:".$newUsuario;
         }
-        return null;
+        return $newUsuario->getCaTeloficina();
     }
     
      /**

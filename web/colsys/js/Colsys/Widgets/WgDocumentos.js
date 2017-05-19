@@ -22,7 +22,7 @@ Ext.define('Colsys.Widgets.WgDocumentos', {
                 url: '/widgets5/datosDocumentos',
                 reader: {
                     type: 'json',
-                    root: 'root'
+                    rootProperty: 'root'
                 }
             },
             autoLoad: false

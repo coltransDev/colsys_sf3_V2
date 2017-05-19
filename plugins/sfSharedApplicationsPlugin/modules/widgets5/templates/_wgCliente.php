@@ -25,7 +25,8 @@ Ext.define('mdCliente',{
         {name: 'coordinador', mapping: 'ca_coordinador'},
         {name: 'diascredito', mapping: 'ca_diascredito'},
         {name: 'cupo', mapping: 'ca_cupo'},
-        {name: 'cuentapago', mapping: 'ca_cuentapago'}
+        {name: 'cuentapago', mapping: 'ca_cuentapago'},
+        {name: 'nit', mapping: 'nit'}
     ]
 });
 Ext.define('Ext.colsys.wgCliente', {

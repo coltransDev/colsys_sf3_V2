@@ -24,7 +24,7 @@ Ext.define('Colsys.Widgets.wgReferencia', {
           type: 'ajax',
           reader: 
           {
-             root: 'root',
+             rootProperty: 'root',
              totalProperty: 'totalCount',
              id: 'id',
              type: 'json'

@@ -476,6 +476,8 @@ class Reporte extends BaseReporte {
      */
 
     public function getEditable($permiso=0, $user=null) {
+        
+        
         if ($permiso < 4 && $this->getCaTiporep()!=4 ) {
             
             if ($this->esUltimaVersion()) {
@@ -493,16 +495,28 @@ class Reporte extends BaseReporte {
                         else
                             $this->editable = true;
                     }
-                    /*$repAntecedentes=$this->getRepAntecedentes();
+                    $repAntecedentes=$this->getRepAntecedentes();
                     if($repAntecedentes)
-                    {
-                        if($repAntecedentes->getCaEstado()!="R")
-                            $this->editable = false;                       
-                    }*/
+                    {                        
+                        if($repAntecedentes->getCaEstado()=="R" || $repAntecedentes->getCaEstado()=="E")
+                        {
+                            $this->editable = false;
+                            //if($this->getCaIdreporte()=="484576")
+                            //echo $repAntecedentes->getCaEstado();
+                        }
+                        /*else
+                            $this->editable = true;*/
+                    }
+                    /*else
+                        $this->editable = true;*/
+                    
                 }
             }
         }else
             $this->editable = true;
+        
+        //if($this->getCaIdreporte()=="484576")
+        //    echo "111".($this->editable)?"true":"false";
         return $this->editable;
     }
 
@@ -1379,7 +1393,7 @@ class Reporte extends BaseReporte {
                     $newProveedor->setCaIdproveedor($proveedor->getCaIdproveedor());
                     $newProveedor->setCaIncoterms($proveedor->getCaIncoterms());
                     $newProveedor->setCaOrdenProv($proveedor->getCaOrdenProv());
-                    $newProveedor->setCaCargaDisponible(($opcion==2?$proveedor->getCaCargaDisponible():""));
+                    $newProveedor->setCaCargaDisponible(($opcion==2?$proveedor->getCaCargaDisponible():null));
                     $newProveedor->save($conn);                
                 }
             }
@@ -1507,6 +1521,13 @@ class Reporte extends BaseReporte {
                         $repOtmNew->setCaMuelle($master->getCaMuelle());
                     }
 
+                    if($opcion==1){
+                        if($repOtmNew->getCaFchcargue()!="")
+                        {
+                            $repOtmNew->setCaFchcargue(null);
+                        }
+                    }
+
                     $repOtmNew->save($conn);
             }
             $conn->commit();
@@ -1524,7 +1545,7 @@ class Reporte extends BaseReporte {
             $conn->beginTransaction();
 
             if ($reporteNew) {
-                $this->setCaFchcreado(date('Y-m-d H:i:s'));
+                //$this->setCaFchcreado(date('Y-m-d H:i:s'));
 
                 $this->setCaOrigen($reporteNew->getCaOrigen());
                 $this->setCaDestino($reporteNew->getCaDestino());
@@ -1583,6 +1604,8 @@ class Reporte extends BaseReporte {
 
                 $this->setCaColmas($reporteNew->getCaColmas());
                 $this->setCaMciaPeligrosa($reporteNew->getCaMciaPeligrosa());
+                
+                $this->setProperty("entrega_lugar_arribo",$reporteNew->getProperty("entrega_lugar_arribo"));
 
                 $this->save($conn);
 

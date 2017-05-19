@@ -38,7 +38,7 @@ WidgetTransporte = function( config ){
         typeAhead: true,
         forceSelection: true,
         triggerAction: 'all',
-        emptyText:'',
+        //emptyText:'',
         selectOnFocus: true,        
         lazyRender:true,
         mode: 'local',

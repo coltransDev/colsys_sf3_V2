@@ -10,6 +10,8 @@
  */
 class configActions extends sfActions {
 
+    
+    const RUTINA_GENERALES = 210;
     /**
      * Executes index action
      *
@@ -68,11 +70,7 @@ class configActions extends sfActions {
         $this->config = $config;
     }
     
-    /**
-     * Executes index action
-     *
-     * @param sfRequest $request A request object
-     */
+
     public function executeFormValue(sfWebRequest $request) {
                 
         if( $request->getParameter("idvalue") ){
@@ -108,16 +106,34 @@ class configActions extends sfActions {
         $this->value = $value;
     }
     
-    
+
+    /**
+     * Executes index action
+     *
+     * @param sfRequest $request A request object
+     */    
     function executeDatosIndex($request) {
         $idopcion = ($request->getParameter("node") != "" && $request->getParameter("node") != "root") ? $request->getParameter("node") : "0";
+        
+        
+        $user = $this->getUser();
+        
+        /*Accesos del usuario*/
+        $permisosRutinas = $user->getControlAcceso(self::RUTINA_GENERALES);
+        
+        
         $tree = array("text" => "Opciones","leaf" => true,"id" => "1");
         
         if($idopcion==0)
         {
-            $childrens[] = array("text" => "Dian Servicios","leaf" => true,"id" => "1");            
-            $childrens[] = array("text" => "No. Radicaci&oacute;n Muisca","leaf" => true,"id" => "2");
-            $childrens[] = array("text" => "Bodegas","leaf" => true,"id" => "3");            
+            if(in_array("Dian Servicios", $permisosRutinas) )
+                $childrens[] = array("text" => "Dian Servicios","leaf" => true,"id" => "1");
+            if(in_array("No. Radicacion Muisca", $permisosRutinas) )
+                $childrens[] = array("text" => "No. Radicacion Muisca","leaf" => true,"id" => "2");
+            if(in_array("Bodegas", $permisosRutinas) )
+                $childrens[] = array("text" => "Bodegas","leaf" => true,"id" => "3");
+            if(in_array("Maestra de clasificacion", $permisosRutinas) )
+                $childrens[] = array("text" => "Maestra de clasificacion","leaf" => true,"id" => "4");
         }
 
         $tree["children"] = $childrens;
@@ -210,4 +226,77 @@ class configActions extends sfActions {
         $this->responseArray = array("errorInfo" => $errorInfo, "id" => implode(",", $ids), "success" => true);
         $this->setTemplate("responseTemplate");
     }
+    
+    
+    
+    function executeDatosClasificacion($request) {
+
+      
+        
+        $idpadre = ($request->getParameter("node") != "" && $request->getParameter("node") != "root") ? $request->getParameter("node") : "0";
+        
+        $tipo = $request->getParameter("tipo");
+        
+
+        $tree = array("text" => "Opciones","leaf" => true,"id" => "-1");        
+        $items=$this->getChildrens($idpadre);
+        
+        $tree["children"] = $items;
+        
+        
+        $this->responseArray = $tree;
+        $this->setTemplate("responseTemplate");        
+    }
+    
+    function getChildrens($idpadre)
+    {
+        $childrens=array();
+        $listado = Doctrine::getTable("MaestraClasificacion")
+                ->createQuery("m")
+                ->select("*")
+                ->addOrderBy( "m.ca_nombre" )
+                ->where("ca_idpadre =? AND ca_estado=?",array($idpadre,'A'))
+                ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                ->execute();        
+        foreach($listado as $l)
+        {
+            $childrens=$this->getChildrens($l["ca_idclasificacion"]);
+            if(count($childrens)>0)
+            {
+                $tree[] = array("text" => utf8_encode($l["ca_nombre"]),"leaf" => false,"idclasificacion" => $l["ca_idclasificacion"],"tipo" => $l["ca_tipo"],"children"=>$childrens);
+            }
+            else
+                $tree[] = array("text" => utf8_encode($l["ca_nombre"]),"leaf" => true,"idclasificacion" => $l["ca_idclasificacion"],"tipo" => $l["ca_tipo"]);
+        }
+        return $tree;
+    }
+    
+    function executeAgregarItemClasificacion($request) {
+
+        $idclasificacion = $request->getParameter("idclasificacion");
+        $nombre = $request->getParameter("nombre");
+        $tipo = $request->getParameter("tipo");
+        $clasificacion= new MaestraClasificacion();
+        $clasificacion->setCaNombre(utf8_decode($nombre));
+        $clasificacion->setCaTipo($tipo);
+        $clasificacion->setCaIdpadre($idclasificacion);
+        $clasificacion->setCaEstado('A');
+        $clasificacion->save();
+        $this->responseArray = array("errorInfo" => $errorInfo, "idclasificacion" => $clasificacion->getCaIdclasificacion(), "tipo" => $clasificacion->getCaTipo(), "success" => true);
+        $this->setTemplate("responseTemplate");
+    }
+    
+    
+    function executeAnularItemClasificacion($request) {
+
+        $idclasificacion = $request->getParameter("idclasificacion");
+        $clasificacion = Doctrine::getTable("MaestraClasificacion")->find( $idclasificacion );
+        $clasificacion->setCaEstado('I');
+        $clasificacion->save();
+        
+        $this->responseArray = array("errorInfo" => $errorInfo,  "success" => true);
+        $this->setTemplate("responseTemplate");
+    }
+    
+
 }

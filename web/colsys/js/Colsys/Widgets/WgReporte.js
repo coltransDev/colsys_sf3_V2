@@ -38,7 +38,9 @@ Ext.define('mdReporte',{
         {name: 'vendedor', mapping: 'usu_ca_login'},
         {name: 'nombreVendedor', mapping: 'usu_ca_nombre'},
         {name: 'coordinador', mapping: 'cl_ca_coordinador'},
-        {name: 'orden_clie', mapping: 'r_ca_orden_clie'}
+        {name: 'orden_clie', mapping: 'r_ca_orden_clie'},
+        {name: 'bodega', mapping: 'r_ca_idbodega'},
+        {name: 'nombrebodega', mapping: 'b_ca_nombre'},
     ]
 });
 Ext.define('Colsys.Widgets.WgReporte', {
@@ -76,16 +78,21 @@ Ext.define('Colsys.Widgets.WgReporte', {
         if (Ext.getCmp("impoexpo"+this.idmaster) && Ext.getCmp(this.idtransporte)){
             impoExpo= Ext.getCmp("impoexpo"+this.idmaster).text;
             transporte=Ext.getCmp(this.idtransporte).getValue();
+            
         }
         else{
             impoExpo = this.idimpoexpo;
             transporte = this.idtransporte;
+            origen = this.origen;
+            destino = this.destino;
         }
         
         
         this.store.proxy.extraParams = {            
             impoexpo: impoExpo,
-            transporte: transporte
+            transporte: transporte,
+            origen: origen,
+            destino: destino
         }
     }
     

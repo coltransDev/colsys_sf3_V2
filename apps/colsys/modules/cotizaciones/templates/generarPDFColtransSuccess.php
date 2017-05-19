@@ -1131,7 +1131,7 @@ if (count($aduanas) > 0) {
 
     $pdf->Ln(4);
     $pdf->SetFont($font, 'B', 9);
-    $pdf->Cell(0, 4, 'COSTOS DE NACIONALIZACION', 0, 1, 'L', 0);
+    $pdf->Cell(0, 4, 'COSTOS DE AGENCIAMIENTO ADUANERO', 0, 1, 'L', 0);
     $pdf->SetFont($font, '', 9);
     $i = 1;
     $linea = "";

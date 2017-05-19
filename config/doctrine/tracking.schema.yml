@@ -49,30 +49,3 @@ TrackingUserLog:
       local: ca_email
       foreign: ca_email
       type: one
-
-
-TrackingPerfil:
-  options:
-    symfony:
-      form: false
-      filter: false
-  generatePath: tracking
-  tableName: tb_tracking_perfil
-  columns:
-    ca_idetapa:
-      type: string
-      primary: true
-    ca_perfil:
-      type: string
-      primary: true
-    ca_tipo:
-      type: string
-      primary: true
-    ca_propiedades: string
-    ca_usucreado: string
-    ca_fchcreado: timestamp
-    ca_usuactualizado: string
-    ca_fchactualizado: timestamp
-      
-  
-    

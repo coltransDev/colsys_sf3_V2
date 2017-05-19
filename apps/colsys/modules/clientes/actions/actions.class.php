@@ -51,8 +51,8 @@ class clientesActions extends sfActions {
         $yml = sfYaml::load($config);
 
 
-        $contentPlain = sprintf($yml['email'], "https://www.coltrans.com.co" . $link, "http://www.coltrans.com.co");
-        $contentHTML = sprintf(Utils::replace($yml['email']), "<a href='https://www.coltrans.com.co" . $link . "'>https://www.coltrans.com.co" . $link . "</a>", "<a href='http://www.coltrans.com.co'>http://www.coltrans.com.co</a>");
+        $contentPlain = sprintf($yml['email'], "https://www.colsys.com.co" . $link, "http://www.colsys.com.co");
+        $contentHTML = sprintf(Utils::replace($yml['email']), "<a href='https://www.colsys.com.co" . $link . "'>https://www.colsys.com.co" . $link . "</a>", "<a href='http://www.colsys.com.co'>http://www.colsys.com.co</a>");
         ;
 
         $from = "serclientebog@coltrans.com.co";
@@ -74,7 +74,7 @@ class clientesActions extends sfActions {
         $email->setCaBodyhtml($contentHTML);
         $email->setCaBody($contentPlain);
         $email->save();
-        $email->send();
+        //$email->send();
     }
 
     /*
@@ -124,7 +124,7 @@ class clientesActions extends sfActions {
     }
 
     /*
-     * Entrada Reporte de Mandatos Clientes
+     * Entrada Reporte de Documentos de Aduana Clientes
      */
 
     public function executeListaControlMandatos() {
@@ -156,64 +156,33 @@ class clientesActions extends sfActions {
     public function executeVencimientoEstado() {
         set_time_limit(0);
 
-        $empresa = 'Coltrans';
-        $stmt = StdClienteTable::vencimientoEstado($empresa, 'Activo', null);
         $fchestado = date('Y-m-d H:i:s');
+        $empresas = array("Coltrans", "Colmas", "Colotm", "Coldepósitos");
 
-        while ($row = $stmt->fetch()) {
-            $stdcliente = new StdCliente();
+        foreach ($empresas as $empresa) {
+            $stmt = StdClienteTable::vencimientoEstado($empresa, 'Activo', null);
 
-            $stdcliente->setCaIdcliente($row["ca_idcliente"]);
-            $stdcliente->setCaEmpresa($empresa);
-            $stdcliente->setCaEstado('Potencial');
-            $stdcliente->setCaFchestado($fchestado);
+            while ($row = $stmt->fetch()) {
+                $stdcliente = new StdCliente();
 
-            $stdcliente->save();
+                $stdcliente->setCaIdcliente($row["ca_idcliente"]);
+                $stdcliente->setCaEmpresa($empresa);
+                $stdcliente->setCaEstado('Potencial');
+                $stdcliente->setCaFchestado($fchestado);
+
+                $stdcliente->save();
+            }
         }
 
-        $empresa = 'Colmas';
-        $stmt = StdClienteTable::vencimientoEstado($empresa, 'Activo', null);
-
-        while ($row = $stmt->fetch()) {
-            $stdcliente = new StdCliente();
-
-            $stdcliente->setCaIdcliente($row["ca_idcliente"]);
-            $stdcliente->setCaEmpresa($empresa);
-            $stdcliente->setCaEstado('Potencial');
-            $stdcliente->setCaFchestado($fchestado);
-
-            $stdcliente->save();
-        }
-        /*
-          $idClientesSinBeneficio = array();
-          $stmt = LibClienteTable::liberacionEstado(null);
-
-          while($row = $stmt->fetch() ) {
-          $idClientesSinBeneficio[] = $row["ca_idcliente"];
-          }
-
-          if ( count($idClientesSinBeneficio) > 0 ){
-          Doctrine_Query::create()
-          ->update()
-          ->from("LibCliente l")
-          ->set("l.ca_observaciones", "'Pierde Beneficios por Cambio de Estado. [Cupo: '||ca_cupo||' Días: '||ca_diascredito||']\n'||l.ca_observaciones" )
-          ->set("ca_cupo", 0)
-          ->set("ca_diascredito", 0)
-          ->set("ca_usuactualizado", "'Administrador'")
-          ->set("ca_fchactualizado", "'$fchestado'")
-          ->whereIn("ca_idcliente", $idClientesSinBeneficio )
-          ->addWhere("ca_diascredito != 0 OR ca_cupo != 0")
-          ->execute();
-          }
-         */
-        $sql = "delete from tb_libcliente where ca_idcliente in ";
-        $sql.= "(";
-        $sql.= "	select lb.ca_idcliente ";
-        $sql.= "	from tb_libcliente lb  ";
-        $sql.= "	       LEFT OUTER JOIN (select st.ca_idcliente, st.ca_estado from tb_stdcliente st INNER JOIN (select sc.ca_idcliente, max(sc.ca_fchestado) as ca_fchestado, sc.ca_empresa from tb_stdcliente sc where ca_empresa = 'Coltrans' group by ca_idcliente, ca_empresa) ul ON (st.ca_idcliente = ul.ca_idcliente and st.ca_fchestado = ul.ca_fchestado and st.ca_empresa = ul.ca_empresa)) as st1 ON (lb.ca_idcliente = st1.ca_idcliente) ";
-        $sql.= "	       LEFT OUTER JOIN (select st.ca_idcliente, st.ca_estado from tb_stdcliente st INNER JOIN (select sc.ca_idcliente, max(sc.ca_fchestado) as ca_fchestado, sc.ca_empresa from tb_stdcliente sc where ca_empresa = 'Colmas' group by ca_idcliente, ca_empresa) ul ON (st.ca_idcliente = ul.ca_idcliente and st.ca_fchestado = ul.ca_fchestado and st.ca_empresa = ul.ca_empresa)) as st2 ON (lb.ca_idcliente = st2.ca_idcliente) ";
-        $sql.= "	where st1.ca_estado = 'Potencial' and st2.ca_estado  = 'Potencial' and (lb.ca_fchgracia is null or lb.ca_fchgracia <= now())";
-        $sql.= ")";
+        $sql = "delete from tb_libcliente where ca_idcliente in ("
+                . "select lb.ca_idcliente "
+                . "	from tb_libcliente lb, public.fun_estado_clientes(lb.ca_idcliente) as est "
+                . "	where ca_coltrans_std = 'Potencial'"
+                . "         and ca_colmas_std = 'Potencial'"
+                . "         and ca_colotm_std = 'Potencial'"
+                . "         and ca_coldepositos_std = 'Potencial'"
+                . "         and (lb.ca_fchgracia is null or lb.ca_fchgracia <= now())"
+                . ")";
 
         $q = Doctrine_Manager::getInstance()->connection();
         $stmt = $q->execute($sql);
@@ -360,7 +329,7 @@ class clientesActions extends sfActions {
         // registro de control > 4622685
 
         set_time_limit(0);              // Estas rutina revisa todos los clientes y verifica si están adecuadamenten clasificados en su estado
-        $empresas = array("Coltrans", "Colmas");
+        $empresas = array("Coltrans", "Colmas", "Colotm", "Coldepósitos");
 
         foreach ($empresas as $empresa) {
             $stmt = ClienteTable::estadoClientes(null, null, $empresa, null, null, null);
@@ -377,9 +346,7 @@ class clientesActions extends sfActions {
                         if ($row1["ca_fchnegocio"] != "") {
                             list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($row1["ca_fchnegocio"], "%d-%d-%d %d:%d:%d");
                             if (($hor == 0 and $min == 0 and $seg == 0) or ( $hor == null and $min == null and $seg == null)) {
-                                $hor = 23;
-                                $min = 59;
-                                $seg = 59;
+                                $hor = 23; $min = 59; $seg = 59;
                             }
                             $fchnegocio = date("Y-m-d H:i:s", mktime($hor, $min, $seg, $mes, $dia, $ano));
                         } else if ($row1["ca_fchnegocio"] == "" and $row["ca_estado"] == "Activo") {
@@ -409,7 +376,6 @@ class clientesActions extends sfActions {
                                 ->andWhere("s.ca_fchestado = ? ", $fchnegocio)
                                 ->fetchOne();
                         if (!$estado) {
-                            echo "aca";
                             $stdcliente = new StdCliente();
                             $stdcliente->setCaIdcliente($row["ca_idcliente"]);
                             $stdcliente->setCaEmpresa($row["ca_empresa"]);
@@ -871,51 +837,55 @@ class clientesActions extends sfActions {
     }
 
     public function executeReporteEstadosEmail() {
-        $parametro = Doctrine::getTable("Parametro")->find(array("CU066", 1, "defaultEmails"));
-        if ($parametro) {
-            if (stripos($parametro->getCaValor2(), ',') !== false) {
-                $defaultEmail = explode(",", $parametro->getCaValor2());
-            } else {
-                $defaultEmail = array($parametro->getCaValor2());
+        $empresas = array("Coltrans", "Colmas", "Colotm", "Coldepósitos");
+
+        foreach ($empresas as $empresa) {
+            $parametro = Doctrine::getTable("Parametro")->find(array("CU066", 1, "defaultEmails"));
+            if ($parametro) {
+                if (stripos($parametro->getCaValor2(), ',') !== false) {
+                    $defaultEmail = explode(",", $parametro->getCaValor2());
+                } else {
+                    $defaultEmail = array($parametro->getCaValor2());
+                }
             }
-        }
-        $parametro = Doctrine::getTable("Parametro")->find(array("CU066", 2, "ccEmails"));
-        if ($parametro) {
-            if (stripos($parametro->getCaValor2(), ',') !== false) {
-                $ccEmails = explode(",", $parametro->getCaValor2());
-            } else {
-                $ccEmails = array($parametro->getCaValor2());
+            $parametro = Doctrine::getTable("Parametro")->find(array("CU066", 2, "ccEmails"));
+            if ($parametro) {
+                if (stripos($parametro->getCaValor2(), ',') !== false) {
+                    $ccEmails = explode(",", $parametro->getCaValor2());
+                } else {
+                    $ccEmails = array($parametro->getCaValor2());
+                }
             }
+            $email = new Email();
+            $email->setCaUsuenvio("Administrador");
+            $email->setCaTipo("EstadosClientes");
+            $email->setCaIdcaso("1");
+            $email->setCaFrom("admin@coltrans.com.co");
+            $email->setCaFromname("Administrador Sistema Colsys");
+            $email->setCaReplyto("admin@coltrans.com.co");
+
+            while (list ($clave, $val) = each($defaultEmail)) {
+                $email->addTo($val);
+            }
+
+            while (list ($clave, $val) = each($ccEmails)) {
+                $email->addCc($val);
+            }
+
+            $inicio = $this->getRequestParameter("fchStart");
+            $final = $this->getRequestParameter("fchEnd");
+            $empresa = $this->getRequestParameter("empresa");
+
+            $this->getRequest()->setParameter("fchStart", $inicio);
+            $this->getRequest()->setParameter("fchEnd", $final);
+            $this->getRequest()->setParameter("empresa", $empresa);
+            $this->getRequest()->setParameter("layout", "email");
+
+            $email->setCaSubject("Cliente con cambio de Estado, periodo:$inicio a $final en $empresa");
+            $email->setCaBodyhtml(sfContext::getInstance()->getController()->getPresentationFor('clientes', 'reporteEstados'));
+
+            $email->save();
         }
-        $email = new Email();
-        $email->setCaUsuenvio("Administrador");
-        $email->setCaTipo("EstadosClientes");
-        $email->setCaIdcaso("1");
-        $email->setCaFrom("admin@coltrans.com.co");
-        $email->setCaFromname("Administrador Sistema Colsys");
-        $email->setCaReplyto("admin@coltrans.com.co");
-
-        while (list ($clave, $val) = each($defaultEmail)) {
-            $email->addTo($val);
-        }
-
-        while (list ($clave, $val) = each($ccEmails)) {
-            $email->addCc($val);
-        }
-
-        $inicio = $this->getRequestParameter("fchStart");
-        $final = $this->getRequestParameter("fchEnd");
-        $empresa = $this->getRequestParameter("empresa");
-
-        $this->getRequest()->setParameter("fchStart", $inicio);
-        $this->getRequest()->setParameter("fchEnd", $final);
-        $this->getRequest()->setParameter("empresa", $empresa);
-        $this->getRequest()->setParameter("layout", "email");
-
-        $email->setCaSubject("Cliente con cambio de Estado, periodo:$inicio a $final en $empresa");
-        $email->setCaBodyhtml(sfContext::getInstance()->getController()->getPresentationFor('clientes', 'reporteEstados'));
-
-        $email->save();
     }
 
     public function executeReporteCartaGarantiaEmail() {
@@ -1077,7 +1047,7 @@ class clientesActions extends sfActions {
 
                 $this->getRequest()->setParameter("layout", "email");
 
-                $email->setCaSubject("Clientes Activos con Vencimiento de Mandatos a : $inicio - $vendedor");
+                $email->setCaSubject("Clientes Activos con Vencimiento de Documentos de Aduana a : $inicio - $vendedor");
 
                 $bodyHtml = sfContext::getInstance()->getController()->getPresentationFor('clientes', 'reporteControlMandatos');
                 if (strpos($bodyHtml, 'Reporte sin Registros') === false) {
@@ -1110,8 +1080,8 @@ class clientesActions extends sfActions {
               $email->addTo( $val );
               } */
 
-            $email->setCaSubject("¡Error en Informe sobre vencimiento Control de Mandatos!");
-            $email->setCaBodyhtml("Caught exception: " . $e->getMessage() . "\n\n" . $e->getTraceAsString() . "\n\n Se ha presentado un error en el proceso que envía correo con el reporte Control de Mandatos por vencer en Maestra de Clientes Activos de COLSYS. Agradecemos confirmar que el Departamento de Sistemas esté enterado de esta falla. Gracias!");
+            $email->setCaSubject("¡Error en Informe sobre vencimiento Control de Documentos de Aduana!");
+            $email->setCaBodyhtml("Caught exception: " . $e->getMessage() . "\n\n" . $e->getTraceAsString() . "\n\n Se ha presentado un error en el proceso que envía correo con el reporte Control de Documentos de Aduana por vencer en Maestra de Clientes Activos de COLSYS. Agradecemos confirmar que el Departamento de Sistemas esté enterado de esta falla. Gracias!");
             $email->save(); //guarda el cuerpo del mensaje
         }
     }
@@ -1796,26 +1766,31 @@ class clientesActions extends sfActions {
                 $datos = explode(",", $lines[$i]);
 
                 $suc_recibo = (int) str_replace("\"", "", $datos[1]);
-                $suc_factura = (int) str_replace("\"", "", $datos[11]);
+                //$suc_factura = (int) str_replace("\"", "", $datos[11]);
+                $suc_factura = (int) str_replace("\"", "", $datos[10]);
 
-                $tipo_comp = str_replace("\"", "", $datos[10]);
+                //$tipo_comp = str_replace("\"", "", $datos[10]);
+                $tipo_comp = str_replace("\"", "", $datos[9]);
 
-                $nfact = (int) str_replace("\"", "", $datos[12]);
+                //$nfact = (int) str_replace("\"", "", $datos[12]);
+                $nfact = (int) str_replace("\"", "", $datos[11]);
+                
                 $pre = str_replace("\"", "", $datos[0]) . ((int) str_replace("\"", "", $datos[1]));
 
                 $nrecibo = (int) str_replace("\"", "", $datos[2]);
-                $fecha_pago = Utils::parseDate((int) str_replace("\"", "", $datos[7]));
+                $fecha_pago = Utils::parseDate((int) str_replace("\"", "", $datos[6]));
                 
-                $valor_pago = (float) str_replace("\"", "", $datos[9]);
+                //$valor_pago = (float) str_replace("\"", "", $datos[9]);
+                $valor_pago = (float) str_replace("\"", "", $datos[8]);
                 
                 $comienzo_log = "<b>linea</b>=" . $i . ":::<b>Factura</b>=" . $nfact . ":::<b>Recibo</b>=" . $nrecibo . " ::: ";
-                if (count($datos) != 13) {
+                if (count($datos) != 12) {
                     $resultado[$i] = $comienzo_log . "Existen cantidad de campos diferente a los establecidos<br>";
                     $estadisticas["formato_incorrecto"]++;
                     continue;
                 }
                 //echo $sucRec[$suc_recibo].'-'.$sucFac[$suc_factura]."<br>";
-                if($suc_recibo!="15" && $suc_recibo!="5" )
+                if( ($suc_recibo!="15" && $suc_recibo!="5" ) && ($suc_factura<6))
                 {
                     if ($sucRec[$suc_recibo] != $sucFac[$suc_factura]) {
                         $resultado[$i] = $comienzo_log . "La sucursal registrada en el recibo es diferente a la de la factura (".$suc_recibo ." :: ".$sucFac[$suc_factura].")";
@@ -1826,7 +1801,7 @@ class clientesActions extends sfActions {
                 //echo $nfact."".$tipo_comp."<br>";
                 if (!$nfact) {
 
-                    $resultado[$i] = $comienzo_log . "No posee No Factura";
+                    $resultado[$i] = $comienzo_log . "No posee No Factura ".$nfact;
                     $estadisticas["sin_factura"]++;
                     continue;
                 }
@@ -1836,7 +1811,8 @@ class clientesActions extends sfActions {
                     continue;
                 }
 
-                if ($datos[2] == "" && $datos[7] == "") {
+                //if ($datos[2] == "" && $datos[7] == "") {
+                if ($datos[2] == "" && $datos[6] == "") {
                     $resultado[$i] = $comienzo_log . "No posee No Recibo de caja ni fecha de pago";
                     $estadisticas["sin_recibo"]++;
                     $estadisticas["sin_fecha"]++;
@@ -1846,7 +1822,8 @@ class clientesActions extends sfActions {
                     $resultado[$i] = $comienzo_log . "No posee No Recibo de caja";
                     $estadisticas["sin_recibo"]++;
                 }
-                if ($datos[7] == "") {
+                //if ($datos[7] == "") {
+                if ($datos[6] == "") {
                     $resultado[$i] = $comienzo_log . "No posee fecha de pago";
                     $estadisticas["sin_fecha"]++;
                 }
@@ -1923,34 +1900,44 @@ class clientesActions extends sfActions {
                       } */
                 }
 
-                if (!$encontro || !$actualizo) {
+                 if (!$encontro || !$actualizo) {
                     
                     $sql = "select t.*,u.ca_idsucursal 
                         from " . $tabla . " t,control.tb_usuarios u where (ca_factura ='" . $nfact . "' or ca_factura ='F" . $suc_factura . "-" . $nfact . "' or ca_factura ='F" . $suc_factura . " " . $nfact . "' or ca_factura ='f" . $suc_factura . "-" . $nfact . "' or ca_factura ='f" . $suc_factura . " " . $nfact . "' ) and t.ca_usucreado=u.ca_login and u.ca_idsucursal in ($sucursal) ";
                     $sql="select                         
                         *
                         from ino.tb_comprobantes c
+                        inner join ino.tb_house h ON c.ca_idhouse = h.ca_idhouse
+                        inner join ino.tb_master m ON m.ca_idmaster = h.ca_idmaster
                         inner join ino.tb_tipos_comprobante t ON c.ca_idtipo = t.ca_idtipo
-                        where ( t.ca_tipo||t.ca_comprobante||'-'||ca_consecutivo =UPPER('F{$suc_factura}-{$nfact}') or t.ca_tipo||t.ca_comprobante||' '||ca_consecutivo =UPPER('F{$suc_factura} {$nfact}') ) 
-                        and t.ca_idsucursal in (".$sucursal.") ";
+                        where ( t.ca_tipo||t.ca_comprobante||'-'||ca_consecutivo =UPPER('F{$suc_factura}-{$nfact}') or t.ca_tipo||t.ca_comprobante||' '||ca_consecutivo =UPPER('F{$suc_factura} {$nfact}') ) ";
+                        //and t.ca_idsucursal in (".$sucursal.") ";
                         $st = $con->execute($sql);
                         $ref = $st->fetch();
                     
-                        if ($ref) {
-                            if($ref["ca_idcomprobante_cruce"]!="")
-                            {
-                                $resultado[$i].="- ino.Comprobantes:: Recibo de caja ya cargado 'No se actualizo',";
+                        
+                    if ($ref) 
+                    {                        
+                        if($ref["ca_idcomprobante_cruce"]!="")
+                        {
+                            $resultado[$i].="- ino.Comprobantes:: Recibo de caja ya cargado 'No se actualizo',";
+                        }
+                        else
+                        {
+                            //$sql_update.=$set . " where 1=1 $where;";
+                            
+                            $patron = '/(2\d\d).(\d\d).(\d\d).(\d\d\d\d).(\d\d)/';
+                            if (preg_match($patron, $ref["ca_doctransporte"])) {
+                              $resultado[$i].="-" . $tabla . ":: Referencia con aduana, no se importa por este medio,";  
                             }
-                            else
-                            {
-                                //$sql_update.=$set . " where 1=1 $where;";
-                                
+                            else{
+                                continue;
                                 $comprobante = Doctrine::getTable("InoComprobante")
                                     ->createQuery("s")
                                     ->select("*")                                    
                                     ->where("ca_idtipo = ? AND ca_consecutivo=? AND ca_idhouse=?",array("12", $pre . " " . $nrecibo , $ref["ca_idhouse"] ) )
                                     ->fetchOne();
-                                
+
                                 if(!$comprobante)
                                 {
                                     $comprobante = new InoComprobante();
@@ -1985,14 +1972,13 @@ class clientesActions extends sfActions {
                                     $comprobante1->setCaIdcomprobanteCruce($comprobante->getCaIdcomprobante());
                                     $comprobante1->stopBlaming();
                                     $comprobante1->save();
-                                    
+
                                     $resultado[$i].=($resultado[$i] == "") ? $comienzo_log : "";
                                     $resultado[$i].= "InoComprobantes:: Rc de caja existe en colsys  'No se actualizo',";
                                 }
-                                
-                            }
+                            }                                
                         }
-                        
+                    }
 
                     if (!$encontro || !$actualizo) { 
                         $resultado[$i].=($resultado[$i] == "") ? $comienzo_log : "";
@@ -2006,10 +1992,9 @@ class clientesActions extends sfActions {
                         }
                     }
                     else {
-                    $estadisticas["actualizada"]++;
-                    $resultado[$i] = $comienzo_log . " REGISTRO IMPORTADO";
-                }
-                    
+                        $estadisticas["actualizada"]++;
+                        $resultado[$i] = $comienzo_log . " REGISTRO IMPORTADO";
+                    }
                 } else {
                     $estadisticas["actualizada"]++;
                     $resultado[$i] = $comienzo_log . " REGISTRO IMPORTADO";
@@ -2383,49 +2368,33 @@ class clientesActions extends sfActions {
         foreach ($encuestas_rs as $encuesta) {
             $data[] = array("idencuesta" => $encuesta["ca_idencuesta"],
                 "idcontacto" => $encuesta["ca_idcontacto"],
+                "idsucursal" => $encuesta["ca_idsucursal"],
                 "idcliente" => utf8_encode($encuesta["ca_idcliente"]),
                 "contacto" => utf8_encode($encuesta["ca_nombres"] . " " . $encuesta["ca_papellido"] . " " . $encuesta["ca_sapellido"]),
                 "fchvisita" => utf8_encode($encuesta["ca_fchvisita"]),
-                "politica_seguridad_salud" => utf8_encode($encuesta["ca_politica_seguridad_salud"]),
-                "mano_obra_infantil" => utf8_encode($encuesta["ca_mano_obra_infantil"]),
-                "peligros_riesgos_identificados" => utf8_encode($encuesta["ca_peligros_riesgos_identificados"]),
-                "peligros_riesgos_identificar" => utf8_encode($encuesta["ca_peligros_riesgos_identificar"]),
-                "riesgos_control" => utf8_encode($encuesta["ca_riesgos_control"]),
-                "requisitos_legales_conocimiento" => utf8_encode($encuesta["ca_requisitos_legales_conocimiento"]),
-                "requisitos_legales_aplicacion" => utf8_encode($encuesta["ca_requisitos_legales_aplicacion"]),
-                "requisitos_legales_detalles" => utf8_encode($encuesta["ca_requisitos_legales_detalles"]),
-                "pago_seguridad_social" => utf8_encode($encuesta["ca_pago_seguridad_social"]),
-                "panorama_riesgos" => utf8_encode($encuesta["ca_panorama_riesgos"]),
-                "respuesta_emergencias" => utf8_encode($encuesta["ca_respuesta_emergencias"]),
-                "numero_personas" => utf8_encode($encuesta["ca_numero_personas"]),
                 "instalaciones_tipo" => utf8_encode($encuesta["ca_instalaciones_tipo"]),
+                "instalaciones_otro" => utf8_encode($encuesta["ca_instalaciones_otro"]),
                 "instalaciones_pertenencia" => utf8_encode($encuesta["ca_instalaciones_pertenencia"]),
                 "instalaciones_uso" => utf8_encode($encuesta["ca_instalaciones_uso"]),
-                "areas_sensibles" => utf8_encode($encuesta["ca_areas_sensibles"]),
-                "areas_autorizadas" => utf8_encode($encuesta["ca_areas_autorizadas"]),
+                "instalaciones_vivienda" => utf8_encode($encuesta["ca_instalaciones_vivienda"]),
+                "instalaciones_condiciones" => utf8_encode($encuesta["ca_instalaciones_condiciones"]),
                 "sistema_seguridad" => utf8_encode($encuesta["ca_sistema_seguridad"]),
+                "sistema_seguridad_otro" => utf8_encode($encuesta["ca_sistema_seguridad_otro"]),
                 "manejo_mercancias" => utf8_encode($encuesta["ca_manejo_mercancias"]),
-                "certificacion" => utf8_encode($encuesta["ca_certificacion"]),
-                "certificacion_detalles" => utf8_encode($encuesta["ca_certificacion_detalles"]),
-                "implementacion_plan" => utf8_encode($encuesta["ca_implementacion_plan"]),
-                "implementacion_plan_detalles" => utf8_encode($encuesta["ca_implementacion_plan_detalles"]),
-                "evaluacion_terceros" => utf8_encode($encuesta["ca_evaluacion_terceros"]),
-                "evaluacion_personal" => utf8_encode($encuesta["ca_evaluacion_personal"]),
-                "programas_capacitacion" => utf8_encode($encuesta["ca_programas_capacitacion"]),
-                "manejo_mercancias_proceso" => utf8_encode($encuesta["ca_manejo_mercancias_proceso"]),
-                "prevencion_lavado_activos" => utf8_encode($encuesta["ca_prevencion_lavado_activos"]),
                 "manejo_mercancias_zona" => utf8_encode($encuesta["ca_manejo_mercancias_zona"]),
                 "manejo_mercancias_detalles" => utf8_encode($encuesta["ca_manejo_mercancias_detalles"]),
+                "manejo_mercancias_procedimiento" => utf8_encode($encuesta["ca_manejo_mercancias_procedimiento"]),
+                "areas_sensibles" => utf8_encode($encuesta["ca_areas_sensibles"]),
                 "control_empleados" => utf8_encode($encuesta["ca_control_empleados"]),
-                "control_empleados_detalles" => utf8_encode($encuesta["ca_control_empleados_detalles"]),
                 "control_visitantes" => utf8_encode($encuesta["ca_control_visitantes"]),
-                "control_visitantes_detalles" => utf8_encode($encuesta["ca_control_visitantes_detalles"]),
-                "seguridad_informatica" => utf8_encode($encuesta["ca_seguridad_informatica"]),
-                "seguridad_informatica_detalles" => utf8_encode($encuesta["ca_seguridad_informatica_detalles"]),
-                "personal_calificado" => utf8_encode($encuesta["ca_personal_calificado"]),
+                "prevencion_lavado_activos" => utf8_encode($encuesta["ca_prevencion_lavado_activos"]),
+                "certificaciones" => utf8_encode($encuesta["ca_certificacion"]),
+                "certificaciones_otro" => utf8_encode($encuesta["ca_certificacion_otro"]),
+                "implementacion_sistema" => utf8_encode($encuesta["ca_implementacion_sistema"]),
+                "implementacion_sistema_detalles" => utf8_encode($encuesta["ca_implementacion_sistema_detalles"]),
+                "recomienda_trabajar" => utf8_encode($encuesta["ca_recomienda_trabajar"]),
                 "observaciones" => utf8_encode($encuesta["ca_observaciones"]),
-                "concepto_seguridad" => utf8_encode($encuesta["ca_concepto_seguridad"]),
-                "recomienda_trabajar" => utf8_encode($encuesta["ca_recomienda_trabajar"])
+                "concepto_seguridad" => utf8_encode($encuesta["ca_concepto_seguridad"])
             );
         }
 
@@ -2465,128 +2434,80 @@ class clientesActions extends sfActions {
             if ($datos->idcontacto) {
                 $encuestaVisita->setCaIdcontacto($datos->idcontacto);
             }
+            if ($datos->idsucursal) {
+                $encuestaVisita->setCaIdsucursal($datos->idsucursal);
+            }
             if ($datos->fchvisita) {
                 $encuestaVisita->setCaFchvisita($datos->fchvisita);
-            }
-            if ($datos->politica_seguridad_salud) {
-                $encuestaVisita->setCaPoliticaSeguridadSalud($datos->politica_seguridad_salud);
-            }
-            if ($datos->mano_obra_infantil) {
-                $encuestaVisita->setCaManoObraInfantil($datos->mano_obra_infantil);
-            }
-            if ($datos->peligros_riesgos_identificados) {
-                $encuestaVisita->setCaPeligrosRiesgosIdentificados($datos->peligros_riesgos_identificados);
-            }
-            if ($datos->peligros_riesgos_identificar) {
-                $encuestaVisita->setCaPeligrosRiesgosIdentificar($datos->peligros_riesgos_identificar);
-            }
-            if ($datos->riesgos_control) {
-                $encuestaVisita->setCaRiesgosControl(utf8_decode($datos->riesgos_control));
-            }
-            if ($datos->requisitos_legales_conocimiento) {
-                $encuestaVisita->setCaRequisitosLegalesConocimiento(utf8_decode($datos->requisitos_legales_conocimiento));
-            }
-            if ($datos->requisitos_legales_aplicacion) {
-                $encuestaVisita->setCaRequisitosLegalesAplicacion(utf8_decode($datos->requisitos_legales_aplicacion));
-            }
-            if ($datos->requisitos_legales_detalles) {
-                $encuestaVisita->setCaRequisitosLegalesDetalles(utf8_decode($datos->requisitos_legales_detalles));
-            }
-            if ($datos->pago_seguridad_social) {
-                $encuestaVisita->setCaPagoSeguridadSocial(utf8_decode($datos->pago_seguridad_social));
-            }
-            if ($datos->panorama_riesgos) {
-                $encuestaVisita->setCaPanoramaRiesgos($datos->panorama_riesgos);
-            }
-            if ($datos->respuesta_emergencias) {
-                $encuestaVisita->setCaRespuestaEmergencias(utf8_decode($datos->respuesta_emergencias));
-            }
-            if ($datos->numero_personas) {
-                $encuestaVisita->setCaNumeroPersonas($datos->numero_personas);
             }
             if ($datos->instalaciones_tipo) {
                 $encuestaVisita->setCaInstalacionesTipo(utf8_decode($datos->instalaciones_tipo));
             }
+            if ($datos->instalaciones_otro) {
+                $encuestaVisita->setCaInstalacionesOtro(utf8_decode($datos->instalaciones_otro));
+            }
             if ($datos->instalaciones_pertenencia) {
-                $encuestaVisita->setCaInstalacionesPertenencia(utf8_decode($datos->instalaciones_pertenencia));
+                $encuestaVisita->setCaInstalacionesPertenencia($datos->instalaciones_pertenencia);
             }
             if ($datos->instalaciones_uso) {
                 $encuestaVisita->setCaInstalacionesUso($datos->instalaciones_uso);
             }
-            if ($datos->areas_sensibles) {
-                $encuestaVisita->setCaAreasSensibles(utf8_decode($datos->areas_sensibles));
+            if ($datos->instalaciones_vivienda) {
+                $encuestaVisita->setCaInstalacionesVivienda($datos->instalaciones_vivienda);
             }
-            if ($datos->areas_autorizadas) {
-                $encuestaVisita->setCaAreasAutorizadas($datos->areas_autorizadas);
+            if ($datos->instalaciones_condiciones) {
+                $encuestaVisita->setCaInstalacionesCondiciones($datos->instalaciones_condiciones);
             }
             if ($datos->sistema_seguridad) {
                 $encuestaVisita->setCaSistemaSeguridad(utf8_decode($datos->sistema_seguridad));
             }
+            if ($datos->sistema_seguridad_otro) {
+                $encuestaVisita->setCaSistemaSeguridadOtro(utf8_decode($datos->sistema_seguridad_otro));
+            }
             if ($datos->manejo_mercancias) {
-                $encuestaVisita->setCaManejoMercancias(utf8_decode($datos->manejo_mercancias));
+                $encuestaVisita->setCaManejoMercancias($datos->manejo_mercancias);
             }
-            if ($datos->certificacion) {
-                $encuestaVisita->setCaCertificacion($datos->certificacion);
+            if ($datos->manejo_mercancias_zona) {
+                $encuestaVisita->setCaManejoMercanciasZona($datos->manejo_mercancias_zona);
             }
-            if ($datos->certificacion_detalles) {
-                $encuestaVisita->setCaCertificacionDetalles(utf8_decode($datos->certificacion_detalles));
+            if ($datos->manejo_mercancias_detalles) {
+                $encuestaVisita->setCaManejoMercanciasDetalles(utf8_decode($datos->manejo_mercancias_detalles));
             }
-            if ($datos->implementacion_plan) {
-                $encuestaVisita->setCaImplementacionPlan($datos->implementacion_plan);
+            if ($datos->manejo_mercancias_procedimiento) {
+                $encuestaVisita->setCaManejoMercanciasProcedimiento(utf8_decode($datos->manejo_mercancias_procedimiento));
             }
-            if ($datos->implementacion_plan_detalles) {
-                $encuestaVisita->setCaImplementacionPlanDetalles($datos->implementacion_plan_detalles);
+            if ($datos->areas_sensibles) {
+                $encuestaVisita->setCaAreasSensibles($datos->areas_sensibles);
             }
-            if ($datos->evaluacion_terceros) {
-                $encuestaVisita->setCaEvaluacionTerceros(utf8_decode($datos->evaluacion_terceros));
+            if ($datos->control_empleados) {
+                $encuestaVisita->setCaControlEmpleados($datos->control_empleados);
             }
-            if ($datos->evaluacion_personal) {
-                $encuestaVisita->setCaEvaluacionPersonal(utf8_decode($datos->evaluacion_personal));
-            }
-            if ($datos->programas_capacitacion) {
-                $encuestaVisita->setCaProgramasCapacitacion($datos->programas_capacitacion);
-            }
-            if ($datos->manejo_mercancias_proceso) {
-                $encuestaVisita->setCaManejoMercanciasProceso(utf8_decode($datos->manejo_mercancias_proceso));
+            if ($datos->control_visitantes) {
+                $encuestaVisita->setCaControlVisitantes($datos->control_visitantes);
             }
             if ($datos->prevencion_lavado_activos) {
                 $encuestaVisita->setCaPrevencionLavadoActivos($datos->prevencion_lavado_activos);
             }
-            if ($datos->manejo_mercancias_zona) {
-                $encuestaVisita->setCaManejoMercanciasZona(utf8_decode($datos->manejo_mercancias_zona));
+            if ($datos->certificacion) {
+                $encuestaVisita->setCaCertificacion($datos->certificacion);
             }
-            if ($datos->manejo_mercancias_detalles) {
-                $encuestaVisita->setCaManejoMercanciasDetalles($datos->manejo_mercancias_detalles);
+            if ($datos->certificacion_otro) {
+                $encuestaVisita->setCaCertificacionOtro($datos->certificacion_otro);
             }
-            if ($datos->control_empleados) {
-                $encuestaVisita->setCaControlEmpleados(utf8_decode($datos->control_empleados));
+            if ($datos->implementacion_sistema) {
+                $encuestaVisita->setCaImplementacionSistema($datos->implementacion_sistema);
             }
-            if ($datos->control_empleados_detalles) {
-                $encuestaVisita->setCaControlEmpleadosDetalles($datos->control_empleados_detalles);
-            }
-            if ($datos->control_visitantes) {
-                $encuestaVisita->setCaControlVisitantes(utf8_decode($datos->control_visitantes));
-            }
-            if ($datos->control_visitantes_detalles) {
-                $encuestaVisita->setCaControlVisitantesDetalles($datos->control_visitantes_detalles);
-            }
-            if ($datos->seguridad_informatica) {
-                $encuestaVisita->setCaSeguridadInformatica(utf8_decode($datos->seguridad_informatica));
-            }
-            if ($datos->seguridad_informatica_detalles) {
-                $encuestaVisita->setCaSeguridadInformaticaDetalles($datos->seguridad_informatica_detalles);
-            }
-            if ($datos->personal_calificado) {
-                $encuestaVisita->setCaPersonalCalificado(utf8_decode($datos->personal_calificado));
-            }
-            if ($datos->observaciones) {
-                $encuestaVisita->setCaObservaciones($datos->observaciones);
-            }
-            if ($datos->concepto_seguridad) {
-                $encuestaVisita->setCaConceptoSeguridad($datos->concepto_seguridad);
+            if ($datos->implementacion_sistema_detalles) {
+                $encuestaVisita->setCaImplementacionSistemaDetalles(utf8_decode($datos->implementacion_sistema_detalles));
             }
             if ($datos->recomienda_trabajar) {
                 $encuestaVisita->setCaRecomiendaTrabajar($datos->recomienda_trabajar);
+            }
+            if ($datos->observaciones) {
+                $encuestaVisita->setCaObservaciones(utf8_decode($datos->observaciones));
+            }
+            if ($datos->concepto_seguridad) {
+                $encuestaVisita->setCaConceptoSeguridad(utf8_decode($datos->concepto_seguridad));
             }
             $encuestaVisita->save();
             $conn->commit();
@@ -2599,6 +2520,22 @@ class clientesActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
+    public function executeImprimirEncuestaVisita(sfWebRequest $request) {
+        $idencuesta = $request->getParameter("id");
+        if ($idencuesta) {
+            $this->encuestaVisita = Doctrine::getTable('EncuestaVisita')->find($idencuesta);
+            $sql = "select ca_coltrans_std, ca_coltrans_fch, ca_colmas_std, ca_colmas_fch, ca_colotm_std, ca_colotm_fch, ca_coldepositos_std, ca_coldepositos_fch "
+                    . "from vi_clientes where ca_idcliente = ".$this->encuestaVisita->getContacto()->getCaIdcliente();
+            
+            $con = Doctrine_Manager::getInstance()->connection();
+            $st = $con->execute($sql);
+            $this->estados = $st->fetchAll()[0];
+        } else {
+            $this->encuestaVisita = new EncuestaVisita();
+        }
+    }
+    
+    
     public function executeControlFinancieroExt4(sfWebRequest $request) {
         
     }
@@ -3155,6 +3092,101 @@ class clientesActions extends sfActions {
         $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
 
         $this->setTemplate("responseTemplate");
+    }
+    
+    
+    public function executeVerificarFobAduana(sfWebRequest $request) {
+        
+        $q=Doctrine::getTable("InoMaestraAdu")
+            ->createQuery("m")   
+             ->select("m.ca_referencia,c.ca_idalterno as idalterno, c.ca_compania as compania,((SELECT bc.ca_activostotales FROM BlcCliente bc WHERE m.ca_idcliente=bc.ca_idcliente ORDER BY bc.ca_anno DESC LIMIT 1)*1000) as activos")
+            ->innerJoin("m.Cliente c")
+            //->leftJoin("c.BlcCliente bc INDEXBY bc.ca_anno")
+            ->where("m.ca_fchcerrado = ? ", date("Y-m-d"));
+            //->where("m.ca_fchcerrado > ? ", "2016-11-30");
+            //    ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+                
+            
+        //echo $q->getSqlQuery();
+            $refs=$q->execute();
+                         //echo "<pre>";print_r($refs);echo "</pre>";
+            
+        if(count($refs)>0)
+        {
+            $con1 = Doctrine_Manager::getInstance()->getConnection('opencomex');
+            
+            $datos="<div>A continuacion se relacionan los clientes y Do que fueron hallados.(valor Fob superior a los activos Totales)</div><table border=1><tr><td>Do</td><td>Cliente</td><td>Valor Activos</td><td>Valor Fob</td>";
+            $c=false;
+            foreach($refs as $r)
+            {
+                $this->do=$r->getCaReferencia();
+                $do=substr($this->do,0,3).substr($this->do,4,2).substr($this->do,7,2).substr($this->do,11,3).substr($this->do,16,1);
+                $sql="Select
+                    distinct(brk.DOIIDXXX)    as ca_referencia,             
+                    brk.DOISFIDX    as ca_version,
+                     
+                    brk.TCATASAX as tcambio
+                    ,   
+                    (brk.TCATASAX*(select sum(items1.LIMFOBXX) from COLMASXX.SIAI0205 AS items1 where brk.DOIIDXXX = items1.DOIIDXXX and brk.DOISFIDX=items1.DOISFIDX )) as valorfob
+                FROM COLMASXX.SIAI0200 AS brk        
+                WHERE            
+                 brk.DOISFIDX='001' and  brk.DOIIDXXX = '$do'";
+//                echo $sql."<br>";
+                $st = $con1->execute($sql);
+                $this->resul = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
+                //echo "$do :: Activos:".$r->activos." --------- Fob:".$this->resul[0]["valorfob"]."<br>";
+                //echo "<pre>";print_r($this->resul);echo "</pre>";
+                if($r->activos!="" && $this->resul[0]["valorfob"]>$r->activos )
+                {
+                    $datos.="<tr><td>$do</td><td>{$r->idalterno}-{$r->compania}</td><td style='text-align:right'>".number_format($r->activos)."</td><td style='text-align:right'>".number_format($this->resul[0]["valorfob"],2)."</td>";
+                    $c=true;
+                }
+                    //$datos[]=array("")echo "<div style='color:red'>".$do."</div><br>";
+            }
+            $datos.="</table>";
+            
+            if($c)
+            {
+                $email = new Email();
+                $email->setCaUsuenvio("Administrador");
+                $email->setCaTipo("NotificacionFOB-Do");
+                $email->setCaIdcaso("1");
+                $email->setCaFrom("colsys@coltrans.com.co");
+                $email->setCaFromname("Administrador Sistema Colsys");            
+
+                $email->addTo("maquinche@coltrans.com.co");
+                $email->addTo("fegutierrez@coltrans.com.co");
+                $email->addTo("lasalazar@coltrans.com.co");
+
+                $email->setCaSubject("Notificacion de Valores Fob superiores a Activos de Clientes ".date("Y-m-d"));
+                //$email->setCaSubject("Notificacion de Valores Fob superiores a Activos de Clientes (2016-12-01 a 2016-12-14)");
+                $email->setCaBodyhtml($datos);
+                $email->save(); //guarda el cuerpo del mensaje
+            }
+            
+        }
+        else
+        {
+            $datos="<div>No se encontraron datos para el dia de hoy</div>";
+            $email = new Email();
+            $email->setCaUsuenvio("Administrador");
+            $email->setCaTipo("NotificacionFOB-Do");
+            $email->setCaIdcaso("1");
+            $email->setCaFrom("colsys@coltrans.com.co");
+            $email->setCaFromname("Administrador Sistema Colsys");            
+
+            $email->addTo("maquinche@coltrans.com.co");
+            $email->addTo("fegutierrez@coltrans.com.co");
+
+            $email->setCaSubject("Notificacion de Valores Fob superiores a Activos de Clientes ".date("Y-m-d"));
+            //$email->setCaSubject("Notificacion de Valores Fob superiores a Activos de Clientes (2016-12-01 a 2016-12-14)");
+            $email->setCaBodyhtml($datos);
+            $email->save(); //guarda el cuerpo del mensaje
+        }
+        exit;
+        
+        
+
     }
 
 }

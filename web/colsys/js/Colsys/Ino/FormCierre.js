@@ -5,27 +5,20 @@
  * @date:  2016-04-21
  */
 
-
-
 Ext.define('Colsys.Ino.FormCierre', {
     extend: 'Ext.form.Panel',
     alias: 'widget.wFormCierre',
     url: '/inoF2/datosCierre',
     bodyPadding: 5,
-//    width: 1140,
     listeners: {
-        render: function (me, eOpts) {
+        render: function(ct, position){
             idmaster = this.idmaster;
-
             this.add({
-                xtype: 'fieldset',
+                //xtype: 'fieldset',
                 autoHeight: true,
-                style: 'display:inline-block;text-align:center',
-//                title: '',
-                hideLabel: true,
-//                width: 1110,
-                collapsible: false,
+               // defaultType:'label',
                 defaults: {
+                    
                     labelWidth: 89,
                     anchor: '98%',
                     layout: {
@@ -33,233 +26,154 @@ Ext.define('Colsys.Ino.FormCierre', {
                         defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
                     }},
                 items: [{
-                        xtype: 'fieldcontainer',
-                        title: ' ',
-//                        width: 930,
-                        height: 40,
-                        collapsible: false,
-                        layout: 'column',
-                        border: 0,
-                        defaults: {
-                            flex: 1,
-                            hideLabel: false
+                    xtype: 'fieldcontainer',
+                    title: ' ',
+                    height: 40,
+                    collapsible: false,
+                    layout: 'column',
+                    border: 0,
+                    defaultType:'label',
+                    defaults: {
+                        flex: 1,
+                        hideLabel: false,
+                        allowBlank: true,
+                        readOnly: true,
+                        width: '23%'
+                    },
+                    items: [{
+                            text: 'Elaborado Por:',
+                            style: 'display:inline-block;text-align:left;font-weight:bold;'
                         },
-                        items: [{
-                                xtype: 'label',
-                                text: 'Elaborado Por:',
-                                style: 'display:inline-block;text-align:left;font-weight:bold;',
-                                allowBlank: true,
-                                width: '23%',
-                                readOnly: true
-                            },
-                            {
-                                xtype: 'label',
-                                text: 'Actualizado Por:',
-                                style: 'display:inline-block;text-align:left;font-weight:bold;',
-                                width: '23%',
-                                readOnly: true
-                            },
-                            {
-                                xtype: 'label',
-                                text: 'Liquidado Por:',
-                                width: '23%',
-                                style: 'display:inline-block;text-align:left;font-weight:bold;',
-                                readOnly: true
-                            },
-                            {
-                                xtype: 'label',
-                                text: 'Cerrado Por:',
-                                style: 'display:inline-block;text-align:left;font-weight:bold;',
-                                width: '23%',
-                                readOnly: true
-                            },
-                            {
-                                xtype: 'tbspacer',
-                                height: 5,
-                                //width: 1200
-                            },
-                            {
-                                xtype: 'label',
-                                text: '',
-                                id: 'creado' + this.idmaster,
-                                style: 'display:inline-block;text-align:left;',
-                                name: 'creado',
-                                width: '23%',
-                                readOnly: true
-                            },
-                            {
-                                xtype: 'label',
-                                text: '',
-                                style: 'display:inline-block;text-align:left;',
-                                id: 'actualizado' + this.idmaster,
-                                name: 'actualizado',
-                                width: '23%',
-                                readOnly: true
-                            },
-                            {
-                                xtype: 'label',
-                                text: '',
-                                style: 'display:inline-block;text-align:left;',
-                                id: 'liquidado' + this.idmaster,
-                                name: 'liquidado',
-                                width: '23%',
-                                readOnly: true
-                            },
-                            {
-                                xtype: 'label',
-                                text: '',
-                                style: 'display:inline-block;text-align:left;',
-                                id: 'cerrado' + this.idmaster,
-                                name: 'cerrado',
-                                width: '23%',
-                                readOnly: true
+                        {
+                            text: 'Actualizado Por:',
+                            style: 'display:inline-block;text-align:left;font-weight:bold;'
+                        },
+                        {                        
+                            text: 'Liquidado Por:',                            
+                            style: 'display:inline-block;text-align:left;font-weight:bold;'
+                        },
+                        {                            
+                            text: 'Cerrado Por:',
+                            style: 'display:inline-block;text-align:left;font-weight:bold;'
+                        },                        
+                        {
+                            id: 'creado' + this.idmaster,
+                            style: 'display:inline-block;text-align:left;',
+                            name: 'creado'
+                        },
+                        {                        
+                            style: 'display:inline-block;text-align:left;',
+                            id: 'actualizado' + this.idmaster,
+                            name: 'actualizado'
+                        },
+                        {
+                            style: 'display:inline-block;text-align:left;',
+                            id: 'liquidado' + this.idmaster,
+                            name: 'liquidado'
+                        },
+                        {
+                            style: 'display:inline-block;text-align:left;',
+                            id: 'cerrado' + this.idmaster,
+                            name: 'cerrado'
+                        },                            
+                        {
+                            xtype: 'button',
+                            text: 'Liquidar',
+                            hidden :true,
+                            id: 'btnLiquidar' + this.idmaster,
+                            width: 100,
+                            handler: function () {
+                                opcion = this.getText();
+                                idmaster = this.up('form').idmaster;
+                                Ext.Ajax.request({
+                                    waitMsg: 'Guardando cambios...',
+                                    url: '/inoF2/LiquidarReferencia',
+                                    params: {
+                                        idmaster: idmaster,
+                                        opcion: opcion
+                                    },
+                                    failure: function (response, options) {
+                                        var res = Ext.util.JSON.decode(response.responseText);
+                                        if (res.errorInfo)
+                                            Ext.MessageBox.alert("Mensaje", 'Error al Liquidar la Referencia');
+                                    },
+                                    success: function (response, options) {
+                                        var res = Ext.decode(response.responseText);
+                                        ids = res.ids;
+                                        if (res.success){
+                                            Ext.MessageBox.alert("Mensaje", 'Datos Almacenados Correctamente<br>');
+                                            if (res.usuarioLiquidado != " ") {
+                                                Ext.getCmp("liquidado" + idmaster).setText(res.usuarioLiquidado);                                                    
+                                                Ext.getCmp("btnLiquidar" + idmaster).setText("Cancelar Liquidacion");
+                                                Ext.getCmp("btnLiquidar" + idmaster).setWidth(150);
+                                                Ext.getCmp("btnCerrar" + idmaster).show();
+                                            } else {
+                                                Ext.getCmp("liquidado" + idmaster).setText("");                                                    
+                                                Ext.getCmp("btnLiquidar" + idmaster).setText("Liquidar");
+                                                Ext.getCmp("btnLiquidar" + idmaster).setWidth(100);
+                                                Ext.getCmp("btnCerrar" + idmaster).hide();
+                                            }
+                                        } else {
+                                            Ext.MessageBox.alert("Mensaje", 'Datos Incompletos<br>');
+                                        }
+                                    }
+                                });
                             }
-                        ]
-                    }]
+                        },
+                        {
+                            xtype: 'button',
+                            text: 'Cerrar',
+                           hidden :true,
+                            width: 100,                                
+                            id: 'btnCerrar' + this.idmaster,
+                            handler: function () {
+                                opcion = this.getText();
+                                idmaster = this.up('form').idmaster;
+
+                                Ext.Ajax.request({
+                                    waitMsg: 'Guardando cambios...',
+                                    url: '/inoF2/CerrarReferencia',
+                                    params: {
+                                        idmaster: idmaster,
+                                        opcion: opcion
+                                    },
+                                    failure: function (response, options) {
+                                        var res = Ext.util.JSON.decode(response.responseText);
+                                        if (res.errorInfo)
+                                            Ext.MessageBox.alert("Mensaje", 'Error al Cerrar la Referencia');
+                                    },
+                                    success: function (response, options) {
+                                        var res = Ext.decode(response.responseText);
+                                        ids = res.ids;
+                                        if (res.success) {
+                                            Ext.MessageBox.alert("Mensaje", 'Datos Almacenados Correctamente<br>');
+                                            if (res.usuarioCerrado != " ") {
+
+                                                Ext.getCmp("cerrado" + idmaster).setText(res.usuarioCerrado);                                                    
+                                                Ext.getCmp("btnCerrar" + idmaster).setText("Abrir");
+                                                Ext.getCmp("btnLiquidar" + idmaster).hide();
+
+                                            } else {
+                                                Ext.getCmp("cerrado" + idmaster).setText(" ");                                                    
+                                                Ext.getCmp("btnLiquidar" + idmaster).show();
+                                                Ext.getCmp("btnLiquidar" + idmaster).setText("Cancelar Liquidacion");
+                                                Ext.getCmp("btnLiquidar" + idmaster).setWidth(150);
+                                                Ext.getCmp("btnCerrar" + idmaster).setText("Cerrar");
+                                            }
+                                        } else {
+                                            Ext.MessageBox.alert("Mensaje", res.errorInfo);
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    ]
+                }]
             }
             );
 
-            // this.add(
-            // {
-            //buttons: [
-            var btnLiquidar = {
-                text: 'Liquidar',
-                id: 'btnLiquidar' + this.idmaster,
-                width: 150,
-                columnWidth: 0.2,
-                handler: function () {
-                    opcion = this.getText();
-                    idmaster = this.up('form').idmaster;
-                    Ext.Ajax.request({
-                        waitMsg: 'Guardando cambios...',
-                        url: '/inoF2/LiquidarReferencia',
-                        params: {
-                            idmaster: idmaster,
-                            opcion: opcion
-                        },
-                        failure: function (response, options) {
-                            var res = Ext.util.JSON.decode(response.responseText);
-                            if (res.errorInfo)
-                                Ext.MessageBox.alert("Mensaje", 'Debe diligenciar completamente el formulario');
-
-                        },
-                        success: function (response, options) {
-                            var res = Ext.decode(response.responseText);
-                            ids = res.ids;
-                            if (res.success) {
-                                Ext.MessageBox.alert("Mensaje", 'Datos Almacenados Correctamente<br>');
-                                if (res.usuarioLiquidado != " ") {
-                                    Ext.getCmp("liquidado" + idmaster).setText(res.usuarioLiquidado);
-                                    if(Ext.getCmp("btnLiquidar" + idmaster)){
-                                        Ext.getCmp("btnLiquidar" + idmaster).setText("Cancelar Liquidacion");
-                                    }
-                                    if(Ext.getCmp("btnCerrar" + idmaster)){
-                                        Ext.getCmp("btnCerrar" + idmaster).show();
-                                    }
-                                } else {
-                                    Ext.getCmp("liquidado" + idmaster).setText(" ");
-                                    if(Ext.getCmp("btnLiquidar" + idmaster)){
-                                        Ext.getCmp("btnLiquidar" + idmaster).setText("Liquidar");
-                                    }
-                                    if(Ext.getCmp("btnCerrar" + idmaster)){
-                                        Ext.getCmp("btnCerrar" + idmaster).hide();
-                                    }
-                                }
-
-                            } else {
-                                Ext.MessageBox.alert("Mensaje", 'Datos Incompletos<br>');
-                            }
-                        }
-                    });
-                }
-            };
-
-            // ]
-            //});
-
-
-            var btnCerrar = {
-                text: 'Cerrar',
-                width: 150,
-                columnWidth: 0.2,
-                id: 'btnCerrar' + this.idmaster,
-                handler: function () {
-                    opcion = this.getText();
-                    idmaster = this.up('form').idmaster;
-
-                    Ext.Ajax.request({
-                        waitMsg: 'Guardando cambios...',
-                        url: '/inoF2/CerrarReferencia',
-                        params: {
-                            idmaster: idmaster,
-                            opcion: opcion
-                        },
-                        failure: function (response, options) {
-                            var res = Ext.util.JSON.decode(response.responseText);
-                            if (res.errorInfo)
-                                Ext.MessageBox.alert("Mensaje", 'Debe diligenciar completamente el formulario');
-
-                        },
-                        success: function (response, options) {
-                            var res = Ext.decode(response.responseText);
-                            ids = res.ids;
-                            if (res.success) {
-                                Ext.MessageBox.alert("Mensaje", 'Datos Almacenados Correctamente<br>');
-                                if (res.usuarioCerrado != " ") {
-
-                                    Ext.getCmp("cerrado" + idmaster).setText(res.usuarioCerrado);
-                                    if(Ext.getCmp("btnCerrar" + idmaster))
-                                        Ext.getCmp("btnCerrar" + idmaster).setText("Abrir");
-                                    if(Ext.getCmp("btnLiquidar" + idmaster))
-                                        Ext.getCmp("btnLiquidar" + idmaster).hide();
-
-                                } else {
-                                    Ext.getCmp("cerrado" + idmaster).setText(" ");
-                                    if(Ext.getCmp("btnLiquidar" + idmaster)){
-                                        Ext.getCmp("btnLiquidar" + idmaster).show();
-                                        Ext.getCmp("btnLiquidar" + idmaster).setText("Cancelar Liquidacion");
-                                    }
-                                    if(Ext.getCmp("btnCerrar" + idmaster)){
-                                        Ext.getCmp("btnCerrar" + idmaster).setText("Cerrar");
-                                    }
-                                }
-
-
-                            } else {
-                                Ext.MessageBox.alert("Mensaje", 'Datos Incompletos<br>');
-                            }
-                        }
-                    });
-                }
-            };
-            if (this.permisos.Liquidar == true && this.permisos.Cerrar == true){
-                
-                var botones = {
-                    buttons: [btnLiquidar, btnCerrar]
-                };
-            }
-            if (this.permisos.Liquidar == true && this.permisos.Cerrar == false){
-                var botones = {
-                    buttons: [btnLiquidar]
-                };
-            }
-            if (this.permisos.Liquidar == false && this.permisos.Cerrar == true){
-                var botones = {
-                    buttons: [btnCerrar]
-                };
-            }
-            if (this.permisos.Liquidar == false && this.permisos.Cerrar == false){
-                var botones = {
-                    buttons: []
-                };
-            }
-            
-            this.add(
-                    botones
-            );
-
-
-            this.getForm().load({
+            var me=this;
+           this.getForm().load({
                 params: {
                     idmaster: idmaster
                 },
@@ -280,27 +194,34 @@ Ext.define('Colsys.Ino.FormCierre', {
 
                     if (res.data.cerrado) {
                         Ext.getCmp("cerrado" + idmaster).setText(res.data.cerrado);
-                    }
+                    }                    
+                    if(me.permisos.Liquidar==true)
+                    {
+                        if (res.data.liquidado!="" && res.data.cerrado==""  ) {
 
-
-
-                    if (Ext.getCmp("liquidado" + idmaster).text != "" && Ext.getCmp("liquidado" + idmaster).text != " ") {
-                        
-                        if(Ext.getCmp("btnLiquidar" + idmaster))
+                            Ext.getCmp("btnLiquidar" + idmaster).show(false);
+                            Ext.getCmp("btnCerrar" + idmaster).show(false);
                             Ext.getCmp("btnLiquidar" + idmaster).setText("Cancelar Liquidacion");
-                    } else {
-                        if(Ext.getCmp("btnCerrar" + idmaster))
-                            Ext.getCmp("btnCerrar" + idmaster).hide();
+                            Ext.getCmp("btnLiquidar" + idmaster).setWidth(150);
+                        } 
+                        else
+                        {
+                            //Ext.getCmp("btnLiquidar" + idmaster).setDisabled(false);
+                            Ext.getCmp("btnLiquidar" + idmaster).show();
+                        }
                     }
                     
-                    if (Ext.getCmp("cerrado" + idmaster).text != "" && Ext.getCmp("cerrado" + idmaster).text != " ") {
-                        if(Ext.getCmp("btnLiquidar" + idmaster))
+                    if(me.permisos.Cerrar==true)
+                    {
+                        if (res.data.cerrado!="") {
+                            Ext.getCmp("btnCerrar" + idmaster).show(false);
                             Ext.getCmp("btnLiquidar" + idmaster).hide();
-                        if(Ext.getCmp("btnCerrar" + idmaster))
                             Ext.getCmp("btnCerrar" + idmaster).setText("Abrir");
+                        }
                     }
                 }
             });
+            this.superclass.onRender.call(this, ct, position);
         }
     }
 })

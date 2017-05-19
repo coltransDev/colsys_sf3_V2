@@ -169,13 +169,13 @@ include_component("widgets", "widgetEquipo");
             
             listeners: {
                 select: function(combo, record, index) {
-                  // Verifica si la opción escogida es Tarifas Internacionales
-                  if(combo.getValue()==25){
-                      <?
-                      $folder = "Tarifario/helpdesk";
-                      $filename = "FORMATO_SOLICITUD_DE_TARIFAS.xls";                      
-                      ?>                      
-                      Ext.getCmp("title").setValue("Solicitud de Tarifas");                      
+                    // Verifica si la opción escogida es Tarifas Internacionales
+                    if(combo.getValue()==25){
+                        <?
+                        $folder = "Tarifario/helpdesk";
+                        $filename = "FORMATO_SOLICITUD_DE_TARIFAS.xls";                      
+                        ?>                      
+                        Ext.getCmp("title").setValue("Solicitud de Tarifas");                      
                       Ext.getCmp("text_id").setValue('<div>Para solicitar tarifas por favor diligencie el presente formulario y adjuntelo al ticket.<br /><a href="../gestDocumental/verArchivo?idarchivo=<?=base64_encode($folder.'/'.$filename)?>" target="_blank"><b> Solicitud de Tarifas</b></a><br /></div>');
                   }
                 }

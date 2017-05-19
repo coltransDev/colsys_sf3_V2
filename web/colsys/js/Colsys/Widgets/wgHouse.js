@@ -12,7 +12,7 @@ Ext.define('Colsys.Widgets.wgHouse', {
             url: '/widgets5/datosHouse',
             reader: {
                 type: 'json',
-                root: 'root'
+                rootProperty: 'root'
             }
         },
         autoLoad: false

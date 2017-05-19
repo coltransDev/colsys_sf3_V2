@@ -330,7 +330,7 @@ class conceptosActions extends sfActions {
             $this->conceptos = array();
             foreach ($conceptos as $concepto) {
                 $row = array("idconcepto" => $concepto->getCaIdconcepto(),
-                    "concepto" => utf8_encode($concepto->getCaConcepto())
+                    "concepto" => utf8_decode($concepto->getCaConcepto())
                 );
                 $this->conceptos[] = $row;
             }

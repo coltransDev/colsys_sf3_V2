@@ -15,6 +15,7 @@ $refs = $sf_data->getRaw("refs");
            <th>Referencia</th>
            <th>Origen</th>
            <th>Destino</th>
+           <th>Modalidad</th>
            <th>Incoterms</th>
            <th >Linea</th>
            <th >Agente</th>
@@ -41,9 +42,10 @@ $refs = $sf_data->getRaw("refs");
                   $totales["numrefs"]++;
              ?>
              <tr>
-               <td><?=link_to($r["ca_referencia"], "ino/verReferencia?idmaster=".$r["ca_idmaster"], array("target"=>"_blank"))?></td>
+                 <td> <a href="/inoF2/indexExt5/idmaster/<?=$r["ca_idmaster"]?>" target='_blank'><?=$r["ca_referencia"]?></a>   </td>
                <td><?=$r["Origen"]["ca_ciudad"]?></td>
                <td><?=$r["Destino"]["ca_ciudad"]?></td>
+               <td><?=$r["ca_modalidad"]?></td>
                <td><?=$r["InoHouse"]["0"]["Reporte"]["ca_incoterms"]?></td>
                <td><?=$r["IdsProveedor"]["Ids"]["ca_nombre"]?></td>
                <td><?=$r["IdsAgente"]["Ids"]["ca_nombre"]?></td>

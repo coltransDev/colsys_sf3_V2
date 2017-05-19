@@ -40,7 +40,7 @@ $j = 0;
                                         <input id="ar_<?= $inoCliente->getOid() ?>_<?= $i ?>" type='hidden' name='ar_<?= $inoCliente->getOid() ?>_<?= $i ?>' value='<?= isset($email) ? $email : "" ?>' size="35" maxlength="50" readonly="true" />
                                     </td>
                                     <td style='border-bottom:0px;'>
-                                        <input id="em_<?= $inoCliente->getOid() ?>_<?= $i ?>" type="checkbox" name='em_<?= $inoCliente->getOid() ?>[]' value='<?= $i ?>'  checked='checked' />
+                                        <input id="em_<?= $inoCliente->getOid() ?>_<?= $i ?>" type="checkbox" name='em_<?= $inoCliente->getOid() ?>[]' value='<?= $i ?>'/>
                                     </td>
                                 </tr>
                                 <?
@@ -101,11 +101,12 @@ $j = 0;
         <td class="listar"><b>ID Proveedor:</b><br /><?= $inoCliente->getCaIdtercero() ?></td>
         <td class="listar" ><b>Proveedor:</b><br /><?= $inoCliente->getTercero()->getCaNombre() ?></td>
         <td class="listar" style='vertical-align:top;' >
-            <div id="divmodfchllegada_<?= $inoCliente->getOid() ?>" style="display:none;">
+            <div id="divmodfchllegada_<?= $inoCliente->getOid() ?>">
                 <input type="checkbox" value="1" name="modfchllegada_<?= $inoCliente->getOid() ?>" id="modfchllegada_<?= $inoCliente->getOid() ?>" onclick="mostrarFchllegada(<?= $inoCliente->getOid() ?>)" />
                 Modificar fecha de llegada:
-                <div id="divfchllegada_<?= $inoCliente->getOid() ?>"> <b>Fecha llegada:</b><br /><? echo extDatePicker('fchllegada_' . $inoCliente->getOid(), date("Y-m-d")); ?></div><br/><br/>
-            </div><br />
+            </div>
+            <br />
+            <div id="divfchllegada_<?= $inoCliente->getOid() ?>"> <b>Fecha llegada:</b><br /><? echo extDatePicker('fchllegada_' . $inoCliente->getOid(), $reporte->getFchLlegadaCont()); ?></div><br/><br/>            
             <div id="divfchplanilla_<?= $inoCliente->getOid() ?>" style="display:none;"> <b>Fecha Planilla:</b><br /><? echo extDatePicker('fchplanilla_' . $inoCliente->getOid(), date("Y-m-d")); ?></div>
         </td>
 
@@ -138,7 +139,7 @@ $j = 0;
                     $i = 0;
                     foreach ($etapas as $etapa) {
                         ?>
-                        <option value='<?= $etapa->getCaIdetapa() ?>' <?= ($i++ == 0) ? 'selected="selected"' : '' ?>>
+                        <option value='<?= $etapa->getCaIdetapa() ?>' <?= ($etapa->getCaIdetapa()==$reporte->getCaIdetapa()) ? 'selected="selected"' : '' ?>>
                             <?= Utils::replace($etapa->getCaEtapa()) ?>
                         </option>
                         <?
@@ -147,23 +148,28 @@ $j = 0;
                 ?>
                     <option value = '00000'>Orden anulado</option>
                     <option value = '99999'>Cierre</option>
-                    <option value = '88888' selected="selected">Status</option>
+                    <option value = '88888'>Status</option>
             </select>
            
             </div>
         </td>
-        <td class="listar" colspan="3" style='vertical-align:top;'><div id="divbodega_<?= $inoCliente->getOid() ?>"> <b>Bodega:</b><br />
+        <td class="listar" colspan="2" style='vertical-align:top;'><div id="divbodega_<?= $inoCliente->getOid() ?>"> <b>Bodega:</b><br />
                 <select name='bodega_<?= $inoCliente->getOid() ?>'>
                     <?
                     foreach ($bodegas as $bodega) {
                         ?>
-                        <option value='<?= $bodega->getCaIdbodega() ?>'>
-                            <?= substr($bodega->getCaNombre(), 0, 65) ?>
+                        <option value='<?= $bodega->getCaIdbodega() ?>' <?=($reporte->getCaIdbodega()==$bodega->getCaIdbodega())?'selected="selected"':''?>>
+                            <?= substr($bodega->getCaNombre(), 0, 40) ?>
                         </option>
                         <?
                     }
                     ?>                    
                 </select></div>
+        </td>
+        <td class="listar" colspan="1">            
+            <div id="divfchcargue_<?= $inoCliente->getOid() ?>" style="display: none;"> <b>Fecha Cargue:</b><br /><?echo extDatePicker('fchcargue_' . $inoCliente->getOid(), $reporte->getRepOtm()->getCaFchcargue());?></div>
+            <div id="divfchcierreotm_<?= $inoCliente->getOid() ?>" style="display:none;"> <b>Fecha Cierre Otm:</b><br /><? echo extDatePicker('fchcierreotm_' . $inoCliente->getOid(), $reporte->getRepUltVersion()->getRepOtm()->getCaFchcierre())?></div>
+            <div id="divfchsalidaotm_<?= $inoCliente->getOid() ?>" style="display:none;"> <b>Fecha Salida Otm:</b><br /><? echo extDatePicker('fchsalidaotm_' . $inoCliente->getOid(), $reporte->getRepUltVersion()->getRepOtm()->getCaFchsalida())?></div>
         </td>
     </tr>
 

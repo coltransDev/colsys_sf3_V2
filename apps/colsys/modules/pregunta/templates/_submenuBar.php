@@ -1,7 +1,7 @@
 <?
 
 $i = 0;
-$permiso = $user->getNivelAcceso("136");
+$permiso = $user->getNivelAcceso("144");
 
 switch ($action) {
 

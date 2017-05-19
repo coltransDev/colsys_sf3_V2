@@ -93,6 +93,61 @@ class usersActions extends sfActions
 		$this->setLayout("login");
 	}
 	
+    public function executePermisosExt5(sfWebRequest $request) {
+        
+    }
+
+    public function executeDatosBusqueda(sfWebRequest $request) {
+        $parametro = $request->getParameter("q");
+        $mayus = strtoupper($parametro);
+
+
+        $sql = "select * from";
+        $sql .= "(";
+        $sql .= "select ca_rutina::varchar(50) as ca_id , ca_opcion as ca_nombre ,'rutina' as ca_tipo,ca_descripcion as ca_comentario from control.tb_rutinas ";
+        $sql .= "UNION select ca_login as ca_id,ca_nombre , 'usuario' as ca_tipo,ca_cargo as ca_comentario  from control.tb_usuarios ";
+        $sql .= "UNION select ca_perfil as ca_id, ca_nombre, 'perfil' as ca_tipo,ca_descripcion as ca_comentario from control.tb_perfiles ";
+        $sql .= ") as data ";
+        $sql .= " WHERE upper (ca_nombre ) like '%$mayus%'";
+        $sql .= " ORDER BY ca_nombre ASC";
+        $q = Doctrine_Manager::getInstance()->connection();
+
+        $stmt = $q->execute($sql);
+
+        $listas = $stmt->fetchAll();
+
+
+        $data = array();
+        foreach ($listas as $lista) {
+            $data[] = array(
+                "id" => utf8_encode($lista["ca_id"]),
+                "ca_nombre" => utf8_encode($lista["ca_nombre"])." (".utf8_encode($lista["ca_tipo"]).")",
+                "ca_tipo" => utf8_encode($lista["ca_tipo"]),
+                "ca_comentario" => utf8_encode($lista["ca_comentario"])
+            );
+        }
+
+        $this->responseArray = array("success" => true, 'root' => $data,"debug"=>$sql);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosGrupo(sfWebRequest $response) {
+        $q = Doctrine::getTable("Rutina")
+                ->createQuery("s")
+                ->select("DISTINCT s.ca_grupo")
+                ->addOrderBy("s.ca_grupo")
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+        $grupos = $q->execute();
+
+        $data = array();
+
+        foreach ($grupos as $grupo) {
+            $data[] = array("grupo" => utf8_encode($grupo["s_ca_grupo"]));
+        }
+        $this->responseArray = array("success" => true, "root" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+
 	/**
 	* Muestra un formulario donde un usuario puede iniciar sesion
 	*
@@ -528,10 +583,598 @@ class usersActions extends sfActions
         $this->setTemplate("responseTemplate");
     }
 
+    public function executeAdminMetodosExt5(sfWebRequest $request) {
+        
+    }
 
-		
+    public function executeDatosRutinaId(sfWebRequest $request) {
+        $idrutina = $request->getParameter("idrutina");
+
+
+        $rutina = Doctrine::getTable("Rutina")->find($idrutina);
+
+
+        $visibilidad = "";
+        if ($rutina->getCaVisible() == true) {
+            $visibilidad = "SI";
+        } else {
+            $visibilidad = "NO";
+        }
+        $data = array();
+
+        $data["ca_rutina"] = $rutina->getCaRutina();
+        $data["ca_opcion"] = utf8_encode($rutina->getCaOpcion());
+        $data["ca_opcion"] = utf8_encode($rutina->getCaOpcion());
+        $data["ca_descripcion"] = utf8_encode($rutina->getCaDescripcion());
+        $data["ca_programa"] = utf8_encode($rutina->getCaPrograma());
+        $data["ca_grupo"] = utf8_encode($rutina->getCaGrupo());
+        $data["ca_icon"] = utf8_encode($rutina->getCaIcon());
+        $data["ca_aplicacion"] = utf8_encode($rutina->getCaAplicacion());
+        $data["ca_url"] = utf8_encode($rutina->getCaUrl());
+        $data["ca_visible"] = $visibilidad;
+
+        $this->responseArray = array("success" => true, "data" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosGridUsuarios(sfWebRequest $request) {
+        $idusuario = $request->getParameter("idusuario");
+        $idrutina = $request->getParameter("idrutina");
+
+        $perfiles = Doctrine::getTable("UsuarioPerfil")
+                ->createQuery("a")
+                ->addWhere("a.ca_login = ?", $idusuario)
+                ->execute();
+
+        $suma = 0;
+        $cadenasuma = "";
+        $arraybinarios = array();
+
+        foreach ($perfiles as $perfil) {
+            $accesoperfil = Doctrine::getTable("AccesoPerfil")
+                    ->createQuery("a")
+                    ->addWhere("a.ca_perfil = ?", $perfil->getCaPerfil())
+                    ->addWhere("a.ca_rutina = ?", $idrutina)
+                    ->fetchOne();
+            if ($accesoperfil) {
+                $arraybinarios[] = decbin($accesoperfil->getCaAcceso());
+            }
+        }
+
+
+        $sql = " select RN.ca_idrutina_niveles as idrutina_niveles, RN.ca_valor as valor ,RN.ca_rutina as rutina,";
+        $sql .= " RN.ca_nivel as nivel, RN.ca_descripcion as descripcion";
+        $sql .= " from control.tb_rutinas_niveles RN where RN.ca_rutina = $idrutina ORDER BY RN.ca_nivel ASC";
+
+        $q = Doctrine_Manager::getInstance()->connection();
+        $stmt = $q->execute($sql);
+        $datos = $stmt->fetchAll();
+
+        $arraybinariosdef = array();
+        foreach ($arraybinarios as $bin) {
+            $resta = count($datos) - strlen($bin);
+            $ceros = "";
+            for ($a = 0; $a < $resta; $a++) {
+                $ceros .= "0";
+            }
+            $arraybinariosdef[] = $ceros . $bin;
+        }
+        $cadenasuma = "";
+
+        if ($arraybinariosdef[0] != null) {
+            $suma = $arraybinariosdef[0];
+        }
+
+        foreach ($arraybinariosdef as $binarios) {
+            $cadenasuma .= $binarios . "|";
+            $suma = $suma | $binarios;
+        }
+        $accesobinario = $suma;
+
+
+
+        $data = array();
+        $i = 0;
+        $cadena = "";
+        $accesobinario = strrev($accesobinario);
+
+
+        $accesousuario = Doctrine::getTable("AccesoUsuario")
+                ->createQuery("a")
+                ->addWhere("a.ca_login = ?", $idusuario)
+                ->addWhere("a.ca_rutina = ?", $idrutina)
+                ->fetchOne();
+
+        $permisosusuario = 0;
+        if ($accesousuario) {
+            $permisosusuario = $accesousuario->getCaAcceso();
+            $denegarusuario = $accesousuario->getCaDenegar();
+        }
+        $permisosusuariobinario = strrev(decbin($permisosusuario));
+        $denegarusuariobinario = strrev(decbin($denegarusuario));
+
+
+        foreach ($datos as $dato) {
+            $valor = substr($accesobinario, $i, 1);
+
+            if (!$valor) {
+                $valor = 0;
+            }
+
+            if ($valor == 0) {
+                $seleccionado = false;
+            } else {
+                $seleccionado = true;
+            }
+
+            $valorusuario = substr($permisosusuariobinario, $i, 1);
+
+            if (!$valorusuario) {
+                $valorusuario = 0;
+            }
+
+            if ($valorusuario == 0) {
+                $permisousuario = false;
+            } else {
+                $permisousuario = true;
+            }
+
+            $valordenegar = substr($denegarusuariobinario, $i, 1);
+
+            if (!$valordenegar) {
+                $valordenegar = 0;
+            }
+
+            if ($valordenegar == 0) {
+                $valordenegar = false;
+            } else {
+                $valordenegar = true;
+            }
+
+            $data [] = array(
+                "ca_rutina" => $dato["rutina"],
+                "ca_nivel" => $dato["nivel"],
+                "ca_idrutina_niveles" => $dato["idrutina_niveles"],
+                "ca_descripcion" => utf8_encode($dato["descripcion"]),
+                "ca_valor" => $dato["valor"],
+                "ca_seleccionado" => $seleccionado,
+                "ca_permisos_usuario" => $permisousuario,
+                "ca_denegar_usuario" => $valordenegar
+            );
+            $i = $i + 1;
+        }
+        $this->responseArray = array("success" => true, "root" => $data, "suma" => $suma);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosRutina(sfWebRequest $request) {
+        $nombre = $request->getParameter("nombre");
+        $nombre = strtolower($nombre);
+        //print_r($nombre);
+
+        $q = Doctrine::getTable("Rutina")
+                ->createQuery("d")
+                ->select("d.*");
+        if ($nombre) {
+            $q->addWhere("lower(d.ca_opcion) like '%$nombre%'");
+        }
+        $rutinas = $q->execute();
+        // print_r($q->getSqlQuery());
+
+        $data = array();
+        foreach ($rutinas as $rutina) {
+
+            $visibilidad = "";
+            if ($rutina->getCaVisible() == true) {
+                $visibilidad = "SI";
+            } else {
+                $visibilidad = "NO";
+            }
+
+            $data[] = array(
+                "ca_rutina" => $rutina->getCaRutina(),
+                "ca_opcion" => utf8_encode($rutina->getCaOpcion()),
+                "ca_descripcion" => utf8_encode($rutina->getCaDescripcion()),
+                "ca_programa" => utf8_encode($rutina->getCaPrograma()),
+                "ca_grupo" => utf8_encode($rutina->getCaGrupo()),
+                "ca_icon" => utf8_encode($rutina->getCaIcon()),
+                "ca_aplicacion" => utf8_encode($rutina->getCaAplicacion()),
+                "ca_url" => utf8_encode($rutina->getCaUrl()),
+                "ca_visible" => $visibilidad
+            );
+        }
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeGuardarUsuarios(sfWebRequest $request) {
+        $idusuario = $request->getParameter("idusuario");
+        $idrutina = $request->getParameter("idrutina");
+
+        $datos = json_decode($request->getParameter("datosGrid"));
+        $total = 0;
+        $i = 0;
+        foreach ($datos as $dato) {
+            $valor = 0;
+            if ($dato->ca_permisos_usuario == true) {
+                $valor = 1;
+            }
+            $total = $total + ($valor * (pow(2, $i)));
+            $i = $i + 1;
+        }
+
+        $totaldenegar = 0;
+        $i = 0;
+
+        foreach ($datos as $dato) {
+            $valor = 0;
+            if ($dato->ca_denegar_usuario == true) {
+                $valor = 1;
+            }
+            $totaldenegar = $totaldenegar + ($valor * (pow(2, $i)));
+            $i = $i + 1;
+        }
+
+        $conn = Doctrine::getTable("AccesoUsuario")->getConnection();
+        $conn->beginTransaction();
+        try {
+            $accesousuario = Doctrine::getTable("AccesoUsuario")
+                    ->createQuery("a")
+                    ->addWhere("a.ca_login = ?", $idusuario)
+                    ->addWhere("a.ca_rutina = ?", $idrutina)
+                    ->fetchOne();
+            if (!$accesousuario) {
+                $accesousuario = new AccesoUsuario();
+                $accesousuario->setCaRutina($idrutina);
+                $accesousuario->setCaLogin($idusuario);
+                //$accesoperfil->setCaUsucreado($this->getUser()->getUserId());
+                //$accesoperfil->setCaFchcreado(date("Y-m-d H:i:s"));
+            }
+            $accesousuario->setCaAcceso($total);
+            $accesousuario->setCaDenegar($totaldenegar);
+            // $accesoperfil->setCaUsuactualizado($this->getUser()->getUserId());
+            //$accesoperfil->setCaFchactualizado(date("Y-m-d H:i:s"));
+            $accesousuario->save();
+            $conn->commit();
+
+            $this->responseArray = array("success" => true, "root" => $total, "total" => count($data));
+        } catch (Exception $e) {
+            $conn->rollBack();
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+        }
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeGuardarPerfiles(sfWebRequest $request) {
+        $idperfil = utf8_decode($request->getParameter("idperfil"));
+        $idrutina = $request->getParameter("idrutina");
+
+        $datos = json_decode($request->getParameter("datosGrid"));
+        $total = 0;
+        $i = 0;
+        foreach ($datos as $dato) {
+            $valor = 0;
+            if ($dato->ca_seleccionado == true) {
+                $valor = 1;
+            }
+            $total = $total + ($valor * (pow(2, $i)));
+            $i = $i + 1;
+        }
+        $conn = Doctrine::getTable("AccesoPerfil")->getConnection();
+        $conn->beginTransaction();
+        try {
+            $accesoperfil = Doctrine::getTable("AccesoPerfil")
+                    ->createQuery("a")
+                    ->addWhere("a.ca_perfil = ?", $idperfil)
+                    ->addWhere("a.ca_rutina = ?", $idrutina)
+                    ->fetchOne();
+            if (!$accesoperfil) {
+                $accesoperfil = new AccesoPerfil();
+                $accesoperfil->setCaRutina($idrutina);
+                $accesoperfil->setCaPerfil($idperfil);
+                //$accesoperfil->setCaUsucreado($this->getUser()->getUserId());
+                //$accesoperfil->setCaFchcreado(date("Y-m-d H:i:s"));
+            }
+            $accesoperfil->setCaAcceso($total);
+            // $accesoperfil->setCaUsuactualizado($this->getUser()->getUserId());
+            //$accesoperfil->setCaFchactualizado(date("Y-m-d H:i:s"));
+            $accesoperfil->save();
+            $conn->commit();
+
+            $this->responseArray = array("success" => true, "root" => $total, "total" => count($data));
+        } catch (Exception $e) {
+            $conn->rollBack();
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+        }
+
+
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosGridPerfiles(sfWebRequest $request) {
+        $idrutina = $request->getParameter("idrutina");
+        
+        $idperfil = utf8_decode($request->getParameter("idperfil"));
+
+
+        $sql = " select RN.ca_idrutina_niveles as idrutina_niveles, RN.ca_valor as valor ,RN.ca_rutina as rutina,";
+        $sql .= " RN.ca_nivel as nivel, RN.ca_descripcion as descripcion";
+        $sql .= " from control.tb_rutinas_niveles RN where RN.ca_rutina = $idrutina ORDER BY RN.ca_nivel ASC";
+
+        $q = Doctrine_Manager::getInstance()->connection();
+        $stmt = $q->execute($sql);
+        $datos = $stmt->fetchAll();
+
+
+
+        $accesoperfil = Doctrine::getTable("AccesoPerfil")
+                ->createQuery("a")
+                ->addWhere("a.ca_perfil = ?", $idperfil)
+                ->addWhere("a.ca_rutina = ?", $idrutina)
+                ->fetchOne();
+
+        if ($accesoperfil) {
+            $acceso = $accesoperfil->getCaAcceso();
+            $accesobinario = decbin($acceso);
+            //print_r($accesobinario);
+        }
+
+        $data = array();
+        $i = 0;
+        $cadena = "";
+        $accesobinario = strrev($accesobinario);
+
+
+
+
+        foreach ($datos as $dato) {
+            $valor = substr($accesobinario, $i, 1);
+
+            if (!$valor) {
+                $valor = 0;
+            }
+
+            if ($valor == 0) {
+                $seleccionado = false;
+            } else {
+                $seleccionado = true;
+            }
+
+            $cadena .= $seleccionado . " | ";
+
+            $data [] = array(
+                "ca_rutina" => $dato["rutina"],
+                "ca_nivel" => $dato["nivel"],
+                "ca_idrutina_niveles" => $dato["idrutina_niveles"],
+                "ca_descripcion" => utf8_encode($dato["descripcion"]),
+                "ca_valor" => $dato["valor"],
+                "ca_seleccionado" => $seleccionado
+            );
+            $i = $i + 1;
+        }
+        $this->responseArray = array("success" => true, "root" => $data, "cadena" => $cadena, "binario" => $accesobinario);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosMetodos(sfWebRequest $request) {
+        $rutina = $request->getParameter("rutina");
+        if ($rutina) {
+            $niveles = Doctrine::getTable("RutinaNivel")
+                    ->createQuery("d")
+                    ->where("d.ca_rutina = ?", $rutina)
+                    ->OrderBy("d.ca_nivel")
+                    ->execute();
+
+            $data = array();
+            foreach ($niveles as $nivel) {
+                $data[] = array("ca_rutina" => utf8_encode($nivel->getCaRutina()),
+                    "ca_nivel" => utf8_encode($nivel->getCaNivel()),
+                    "ca_valor" => utf8_encode($nivel->getCaValor()),
+                    "ca_idrutina_niveles" => utf8_encode($nivel->getCaIdrutinaNiveles()),
+                    "ca_descripcion" => utf8_encode($nivel->getCaDescripcion()),
+                    "seleccionado" => false);
+            }
+            $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
+        } else {
+            $this->responseArray = array("success" => true, "root" => "");
+        }
+
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeAnularMetodo(sfWebRequest $request) {
+        $rutina = $request->getParameter("rutina");
+        $id = $request->getParameter("ca_idrutina_niveles");
+        if ($id) {
+            $RutinaNivel = Doctrine::getTable("RutinaNivel")
+                    ->createQuery("d")
+                    ->where("d.ca_idrutina_niveles = ?", $id)
+                    ->fetchOne();
+            if ($RutinaNivel) {
+                $conn = Doctrine::getTable("AduCliente")->getConnection();
+                $conn->beginTransaction();
+
+                try {
+                    //$metodo->setCaFcheliminado(date("Y-m-d H:i:s"));
+                    //$metodo->setCaUsueliminado($this->getUser()->getUserId());
+                    $RutinaNivel->delete();
+                    $this->responseArray = array("success" => true);
+                    $conn->commit();
+                } catch (Exception $e) {
+                    $conn->rollback();
+                    $this->responseArray = array("success" => false, "responseInfo" => $e->getMessage());
+                }
+            }
+        } else {
+            $this->responseArray = array("success" => true);
+        }
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosRutinaCompleto(sfWebRequest $request) {
+        $rutina = $request->getParameter("rutina");
+
+
+        $q = Doctrine::getTable("Rutina")
+                ->createQuery("d")
+                ->select("d.*");
+        $q->addWhere("d.ca_rutina = ?", $rutina);
+
+        $rutina = $q->fetchOne();
+
+        $data = array();
+
+        if ($rutina) {
+
+            $visibilidad = "";
+            if ($rutina->getCaVisible() == true) {
+                $visibilidad = "SI";
+            } else {
+                $visibilidad = "NO";
+            }
+
+            $data[] = array(
+                "ca_rutina" => $rutina->getCaRutina(),
+                "ca_opcion" => utf8_encode($rutina->getCaOpcion()),
+                "ca_descripcion" => utf8_encode($rutina->getCaDescripcion()),
+                "ca_programa" => utf8_encode($rutina->getCaPrograma()),
+                "ca_grupo" => utf8_encode($rutina->getCaGrupo()),
+                "ca_icon" => utf8_encode($rutina->getCaIcon()),
+                "ca_aplicacion" => utf8_encode($rutina->getCaAplicacion()),
+                "ca_url" => utf8_encode($rutina->getCaUrl()),
+                "ca_visible" => $visibilidad
+            );
+        }
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeGuardarFormRutinas(sfWebRequest $request) {
+        $datos = $request->getParameter("datos");
+        $datos = json_decode($datos);
+        $conn = Doctrine::getTable("AduCliente")->getConnection();
+        $conn->beginTransaction();
+        try {
+            $rutina = Doctrine::getTable("Rutina")
+                    ->createQuery("d")
+                    ->where("d.ca_opcion = ?", $datos->ca_opcion)
+                    ->fetchOne();
+            if(!$rutina){
+                $rutina = new Rutina();
+                $rutina->setCaOpcion(utf8_decode($datos->ca_opcion));
+                $rutina->setCaDescripcion(utf8_decode($datos->ca_descripcion));
+                $rutina->setCaPrograma(utf8_decode($datos->ca_programa));
+                $rutina->setCaGrupo(utf8_decode($datos->ca_grupo));
+                $rutina->setCaUrl(utf8_decode($datos->ca_url));
+                $rutina->setCaIcon(utf8_decode($datos->ca_icon));
+                $rutina->setCaAplicacion(utf8_decode($datos->ca_aplicacion));
+                if ($datos->ca_visible == "SI") {
+                    $rutina->setCaVisible(true);
+                } else {
+                    $rutina->setCaVisible(false);
+                }
+
+                $rutina->save();
+                $conn->commit();
+                $this->responseArray = array("success" => true, "idrutina" => $rutina->getCaRutina() ,"nombre" => $rutina->getCaOpcion());
+            }
+            else{
+                $this->responseArray = array("success" => false, "errorInfo" => "Ya existe una Rutina con este nombre.");
+            }
+        } catch (Exception $e) {
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeGuardarFormMetodos(sfWebRequest $request) {
+        $datos = $request->getParameter("datos");
+        $datos = json_decode($datos);
+        $conn = Doctrine::getTable("AduCliente")->getConnection();
+        $conn->beginTransaction();
+        try {
+            if ($datos->ca_rutina) {
+
+                $rutina = Doctrine::getTable("Rutina")
+                        ->createQuery("d")
+                        ->where("d.ca_rutina = ?", $datos->ca_rutina)
+                        ->fetchOne();
+            } else {
+                $rutina = new Rutina();
+            }
+            $rutina->setCaOpcion(utf8_decode($datos->ca_opcion));
+            $rutina->setCaDescripcion(utf8_decode($datos->ca_descripcion));
+            $rutina->setCaPrograma(utf8_decode($datos->ca_programa));
+            $rutina->setCaGrupo(utf8_decode($datos->ca_grupo));
+            $rutina->setCaUrl(utf8_decode($datos->ca_url));
+            $rutina->setCaIcon(utf8_decode($datos->ca_icon));
+            $rutina->setCaAplicacion(utf8_decode($datos->ca_aplicacion));
+            if ($datos->ca_visible == "SI") {
+                $rutina->setCaVisible(true);
+            } else {
+                $rutina->setCaVisible(false);
+            }
+
+            $rutina->save();
+            $conn->commit();
+            $this->responseArray = array("success" => true, "id" => $ids);
+        } catch (Exception $e) {
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeGuardarMetodos(sfWebRequest $request) {
+        $idrutina = $request->getParameter("rutina");
+        $datosGrid = $request->getParameter("datosGrid");
+        $datosGrid = json_decode($datosGrid);
+
+        $ids = array();
+
+        $conn = Doctrine::getTable("AduCliente")->getConnection();
+        $conn->beginTransaction();
+
+        try {
+            $rutina = Doctrine::getTable("Rutina")
+                    ->createQuery("d")
+                    ->where("d.ca_rutina = ?", $idrutina)
+                    ->fetchOne();
+
+            if ($rutina) {
+
+                foreach ($datosGrid as $record) {
+
+                    if ($record->ca_idrutina_niveles) {
+
+                        $RutinaNivel = Doctrine::getTable("RutinaNivel")
+                                ->createQuery("d")
+                                ->where("d.ca_idrutina_niveles = ?", $record->ca_idrutina_niveles)
+                                ->fetchOne();
+                        if (!$RutinaNivel) {
+                            $RutinaNivel = new RutinaNivel();
+                        }
+                    } else {
+                        $RutinaNivel = new RutinaNivel();
+                    }
+                    $RutinaNivel->setCaRutina(utf8_decode($rutina->getCaRutina()));
+                    $RutinaNivel->setCaNivel(utf8_decode($record->ca_nivel));
+                    $RutinaNivel->setCaDescripcion(utf8_decode($record->ca_descripcion));
+                    $RutinaNivel->setCaValor(utf8_decode($record->ca_valor));
+                    $RutinaNivel->save();
+                    $ids[] = $record->id;
+                }
+            }
+            $conn->commit();
+            $this->responseArray = array("success" => true, "id" => $ids);
+        } catch (Ex $e) {
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+        $this->setTemplate("responseTemplate");
+    }
+
 }
-
-
 
 ?>

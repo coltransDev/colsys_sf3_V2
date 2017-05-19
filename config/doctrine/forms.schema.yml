@@ -3,6 +3,9 @@ options:
   collate: latin1_spanish_ci
   charset: latin1
   type: InnoDB
+  form: true
+  filter: true
+generatePath: forms
 
 Formulario:
   tableName: tb_formulario
@@ -75,14 +78,6 @@ Servicio:
     ca_nombre:
       type: string(45)
 
-tbId:
-  tableName: tb_ids
-  columns:
-    ca_id:
-      type: integer(4)
-      primary: true
-      notnull: true
-      autoincrement: true
 
 Bloque:
   tableName: tb_bloque

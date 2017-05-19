@@ -8,14 +8,15 @@ $fchInicial = $sf_data->getRaw("fchInicial");
 $fchFinal = $sf_data->getRaw("fchFinal");
 $costos = $sf_data->getRaw("costos");
 $destino = $sf_data->getRaw("destino");
+$tipo = $sf_data->getRaw("tipo");
 ?>
 <div class="content" align="center">
-    <h2>Informe de Facturación Proveedores Mar&iacute;timo</h2>
+    <h2>Informe de Facturación Proveedores</h2>
     <br />
     <table width="90%" CELLSPACING="1" class="tableList alignLeft">
      <tr>
        <th class="titulo" COLSPAN="13">
-        <BR/>Informe de Facturaci&oacute;n Mar&iacute;tima
+        <BR/>Informe de Facturaci&oacute;n 
         <BR/>Fecha de Liquidaci&oacute;n desde <?=$fchInicial?> hasta <?=$fchFinal?>
         <?
         if ($destino){
@@ -54,8 +55,12 @@ $destino = $sf_data->getRaw("destino");
        $tot_net = 0;
        $tot_vta = 0;
        foreach( $costos as $c ){
+           $c['ca_idmoneda']= isset($c['ca_idmoneda'])?$c['ca_idmoneda']:$c['ca_moneda'];
+           $c['ca_neto']=isset($c['ca_neto'])?$c['ca_neto']:$c['ca_neta'];
+           $c['ca_tcambio']=isset($c['ca_tcambio'])?$c['ca_tcambio']:$c['ca_trm'];
+           $c['ca_tcambio_usd']=isset($c['ca_tcambio_usd'])?$c['ca_tcambio_usd']:$c['ca_trm_usd'];
        ?>
-         <tr>
+         <tr> 
            <td class="invertir" style='font-weight:bold; background: #F0F0F0'><?=$c['ca_referencia']?></td>
            <td class="valores" style='font-size: 9px; background: #F0F0F0'><?=$c['ca_factura']?></td>
            <td class="valores" style='font-size: 9px; background: #F0F0F0'><?=$c['ca_fchfactura']?></td>
@@ -69,8 +74,7 @@ $destino = $sf_data->getRaw("destino");
            <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="right"><?=Utils::formatNumber($c['ca_venta'])?></div></td>
            <td class="valores" style='font-size: 9px; background: #F0F0F0'><div align="right"><?=Utils::fechaMes($c['ca_fchcreado'])?></div></td>
            <td class="valores" style='font-size: 9px; background: #F0F0F0'><?=$c['ca_usucreado']?></td>
-         </tr>
-       </logic:iterate>
+         </tr>       
     <?
         $tot_net+= round($c['ca_neto']*$c['ca_tcambio']/$c['ca_tcambio_usd']);
         $tot_vta+= $c['ca_venta'];
@@ -87,7 +91,7 @@ $destino = $sf_data->getRaw("destino");
     <br />
     <table CELLSPACING=10>
     <tr>
-      <th><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Regresar' ONCLICK='document.location="<?=url_for("reportesGer/listadoFacturas")?>"'></th>
+      <th><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Regresar' ONCLICK='document.location="<?=url_for("reportesGer/listadoFacturas?tipo=".$tipo)?>"'></th>
     </tr>
     </table>   
 </div>

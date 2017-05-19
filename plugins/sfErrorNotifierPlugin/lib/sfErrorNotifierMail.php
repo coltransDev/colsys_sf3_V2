@@ -47,6 +47,8 @@ class sfErrorNotifierMail {
 
         $this->context = $context;
         $this->data = $data;
+        if($this->data["user_id"]!="")
+            $this->subject=$this->data["user_id"]." ".$this->subject;
         $this->exception = $exception;
     }
 
@@ -105,7 +107,16 @@ class sfErrorNotifierMail {
         $this->addTitle('Additional Data');
         $this->beginTable();
         foreach ($this->data as $key => $value)
-            $this->addRow($key, $value);
+        {
+            if($key=="user_id")
+            {
+                $this->addRow($key."1", $value);
+            }
+            else
+            {
+                $this->addRow($key, $value);
+            }
+        }
         $this->body .= '</table>';
 
 
@@ -243,7 +254,6 @@ class sfErrorNotifierMail {
     }
 
     private function mailer($to, $subject, $body, $headers) {
-
         
         $alternativeMailer = sfConfig::get('app_sfErrorNotifier_mailerMethod');
 
@@ -258,6 +268,5 @@ class sfErrorNotifierMail {
             @mail($to, $subject, $body, $headers);
         }
     }
-
 }
 

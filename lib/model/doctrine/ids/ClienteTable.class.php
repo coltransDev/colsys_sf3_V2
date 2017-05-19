@@ -40,7 +40,7 @@ class ClienteTable extends Doctrine_Table {
             $query.= "and u.ca_sucursal = '$sucursal' ";
         }
         $query.= "order by 7, 6, 5 ";
-
+        
         // echo "<br />".$query."<br />";
         $q = Doctrine_Manager::getInstance()->connection();
         $stmt = $q->execute($query);
@@ -64,15 +64,33 @@ class ClienteTable extends Doctrine_Table {
                 $query.= "  from (select ca_idcliente, ca_fchcreado from tb_inoclientes_sea where ca_fchcreado <= '$fch_fin' UNION select ca_idcliente, ca_fchcreado from tb_inoclientes_air  where ca_fchcreado <= '$fch_fin') fc group by ca_idcliente) neg_tot ON (cl.ca_idcliente = neg_tot.ca_idcliente)";
                 $query.= "LEFT JOIN (select ca_idcliente, count(ca_fchcreado) as ca_numnegocios ";
                 $query.= "  from (select ca_idcliente, ca_fchcreado from tb_inoclientes_sea where ca_fchcreado >= '$fch_ini' and ca_fchcreado <= '$fch_fin' UNION select ca_idcliente, ca_fchcreado from tb_inoclientes_air where ca_fchcreado >= '$fch_ini' and ca_fchcreado <= '$fch_fin') fc group by ca_idcliente) num_neg ON (cl.ca_idcliente = num_neg.ca_idcliente)";
-                //$query.= "LEFT OUTER JOIN (select ca_idcliente, max(ca_fchfactura) as ca_fchfactura from (select ca_idcliente, ca_fchfactura from tb_inoingresos_sea where ca_fchfactura <= '$fch_fin' UNION select ca_idcliente, ca_fchfactura from tb_inoingresos_air where ca_fchfactura <= '$fch_fin') fc group by ca_idcliente) fac_fch ON (cl.ca_idcliente = fac_fch.ca_idcliente) ";
-                //$query.= "LEFT OUTER JOIN (select ca_idcliente, sum(ca_valor) as ca_valor from (select ca_idcliente, ca_valor from tb_inoingresos_sea where ca_fchfactura between '$fch_ini' and '$fch_fin' UNION select ca_idcliente, (ca_valor*ca_tcalaico) as ca_valor from tb_inoingresos_air where ca_fchfactura between '$fch_ini' and '$fch_fin') fc group by ca_idcliente) fac_val ON (cl.ca_idcliente = fac_val.ca_idcliente) ";
-            }else{
-                $query.= "LEFT OUTER JOIN (select ca_idcliente, max(ca_fchcreado) as ca_fchnegocio, count(ca_fchcreado) as ca_totnegocios ";
+            }elseif ($empresa == 'Colmas'){
+                $query.= "LEFT JOIN (select ca_idcliente, max(ca_fchcreado) as ca_fchnegocio, count(ca_fchcreado) as ca_totnegocios ";
                 $query.= "  from (select ca_idcliente, ca_fchcreado from tb_expo_maestra where ca_fchcreado <= '$fch_fin' UNION select ca_idcliente, ca_fchcreado from tb_brk_maestra where ca_fchcreado <= '$fch_fin') fc group by ca_idcliente) neg_tot ON (cl.ca_idcliente = neg_tot.ca_idcliente)";
-                $query.= "LEFT OUTER JOIN (select ca_idcliente, count(ca_fchcreado) as ca_numnegocios ";
+                $query.= "LEFT JOIN (select ca_idcliente, count(ca_fchcreado) as ca_numnegocios ";
                 $query.= "  from (select ca_idcliente, ca_fchcreado from tb_expo_maestra where ca_fchcreado >= '$fch_ini' and ca_fchcreado <= '$fch_fin' UNION select ca_idcliente, ca_fchcreado from tb_brk_maestra where ca_fchcreado >= '$fch_ini' and ca_fchcreado <= '$fch_fin') fc group by ca_idcliente) num_neg ON (cl.ca_idcliente = num_neg.ca_idcliente)";
-                //$query.= "LEFT OUTER JOIN (select ca_idcliente, max(ca_fchfactura) as ca_fchfactura from (select ca_idcliente, ca_fchfactura from tb_brk_ingresos LEFT OUTER JOIN tb_brk_maestra ON tb_brk_ingresos.ca_referencia = tb_brk_maestra.ca_referencia where ca_fchfactura <= '$fch_fin' UNION select ca_idcliente, ca_fchfactura from tb_expo_ingresos where ca_fchfactura <= '$fch_fin') fc group by ca_idcliente) fac_fch ON (cl.ca_idcliente = fac_fch.ca_idcliente) ";
-                //$query.= "LEFT OUTER JOIN (select ca_idcliente, sum(ca_valor) as ca_valor from (select ca_idcliente, (ca_valor*ca_tasacambio) as ca_valor from tb_brk_ingresos LEFT OUTER JOIN tb_brk_maestra ON tb_brk_ingresos.ca_referencia = tb_brk_maestra.ca_referencia where ca_fchfactura between '$fch_ini' and '$fch_fin' UNION select ca_idcliente, (ca_valor*ca_tasacambio) as ca_valor from tb_expo_ingresos where ca_fchfactura between '$fch_ini' and '$fch_fin') fc group by ca_idcliente) fac_val ON (cl.ca_idcliente = fac_val.ca_idcliente) ";
+            } else if ($empresa == 'Colotm') {
+                $query.= "LEFT JOIN (select cm.ca_id as ca_idcliente, max(ca_fchdoctransporte) as ca_fchnegocio, count(hs.ca_doctransporte) as ca_totnegocios "
+                        . " from ino.tb_comprobantes cm "
+                        . " join ino.tb_tipos_comprobante tc on cm.ca_idtipo = tc.ca_idtipo and tc.ca_idempresa = 8 and tc.ca_tipo = 'F' and cm.ca_consecutivo IS NOT NULL and cm.ca_estado IN (5,6) "
+                        . " join ino.tb_house hs on cm.ca_idhouse = hs.ca_idhouse and hs.ca_fchdoctransporte <= '$fch_fin' "
+                        . " group by cm.ca_id) neg_tot ON (cl.ca_idcliente = neg_tot.ca_idcliente) ";
+                $query.= "LEFT JOIN (select cm.ca_id as ca_idcliente, count(hs.ca_doctransporte) as ca_numnegocios "
+                        . " from ino.tb_comprobantes cm "
+                        . " join ino.tb_tipos_comprobante tc on cm.ca_idtipo = tc.ca_idtipo and tc.ca_idempresa = 8 and tc.ca_tipo = 'F' and cm.ca_consecutivo IS NOT NULL and cm.ca_estado IN (5,6) "
+                        . " join ino.tb_house hs on cm.ca_idhouse = hs.ca_idhouse and hs.ca_fchdoctransporte between '$fch_ini' and '$fch_fin' "
+                        . " group by cm.ca_id) num_neg ON (cl.ca_idcliente = num_neg.ca_idcliente) ";
+            } else if ($empresa == 'Coldepósitos') {
+                $query.= "LEFT JOIN (select cc.ca_idcliente, max(tr.ca_fchcreado) as ca_fchnegocio, count(distinct ct.ca_consecutivo) as ca_totnegocios "
+                        . " from tb_cotizaciones ct "
+                        . " join tb_concliente cc on ct.ca_idcontacto = cc.ca_idcontacto and ct.ca_empresa = '$empresa' "
+                        . " join notificaciones.tb_tareas tr on ct.ca_idg_envio_oportuno = tr.ca_idtarea where tr.ca_fchcreado <= '$fch_fin' "
+                        . " group by cc.ca_idcliente) neg_tot ON (cl.ca_idcliente = neg_tot.ca_idcliente) ";
+                $query.= "LEFT JOIN (select cc.ca_idcliente, count(distinct ct.ca_consecutivo) as ca_numnegocios "
+                        . " from tb_cotizaciones ct "
+                        . " join tb_concliente cc on ct.ca_idcontacto = cc.ca_idcontacto and ct.ca_empresa = '$empresa' "
+                        . " join notificaciones.tb_tareas tr on ct.ca_idg_envio_oportuno = tr.ca_idtarea where tr.ca_fchcreado between '$fch_ini' and '$fch_fin' "
+                        . " group by cc.ca_idcliente) num_neg ON (cl.ca_idcliente = num_neg.ca_idcliente) ";
             }
             $query.= "where cl.ca_idcliente = $idcliente";
 
@@ -101,9 +119,15 @@ class ClienteTable extends Doctrine_Table {
         if ($empresa == 'Coltrans') {
             $query.= "  LEFT JOIN (select ca_idcliente, $fun(ca_fchcreado) as ca_fchnegocio from (select ca_idcliente, ca_fchcreado from tb_inoclientes_air where ca_fchcreado between '$fch_ini' and '$fch_fin' UNION select ca_idcliente, ca_fchcreado from tb_inoclientes_sea where ca_fchcreado between '$fch_ini' and '$fch_fin' UNION select ca_idcliente, ca_fchfactura from tb_expo_ingresos where ca_fchfactura between '$fch_ini' and '$fch_fin') fc group by ca_idcliente) neg_fch ON (cl.ca_idcliente = neg_fch.ca_idcliente) ";
             $query.= "  LEFT JOIN (select ca_idcliente, count(ca_idcliente) as ca_numnegocios from (select ca_idcliente from tb_inoclientes_air where to_date(ca_fchcreado::text,'YYYY-MM-DD') between '$fch_ini' and '$fch_fin' UNION select ca_idcliente from tb_inoclientes_sea where to_date(ca_fchcreado::text,'YYYY-MM-DD') between '$fch_ini' and '$fch_fin' UNION select ca_idcliente from tb_expo_ingresos where ca_fchfactura between '$fch_ini' and '$fch_fin') fc group by ca_idcliente) cant_neg ON (cl.ca_idcliente = cant_neg.ca_idcliente) ";
-        } else {
+        } else if ($empresa == 'Colmas') {
             $query.= "  LEFT JOIN (select ca_idcliente, $fun(ca_fchfactura) as ca_fchnegocio from (select ca_idcliente, ca_fchfactura from tb_brk_ingresos LEFT OUTER JOIN tb_brk_maestra ON tb_brk_ingresos.ca_referencia = tb_brk_maestra.ca_referencia where ca_fchfactura between '$fch_ini' and '$fch_fin') fc group by ca_idcliente) fac_fch ON (cl.ca_idcliente = fac_fch.ca_idcliente) ";
             $query.= "  LEFT JOIN (select ca_idcliente, count(ca_factura) as ca_numnegocios from (select ca_idcliente, ca_factura from tb_brk_ingresos LEFT OUTER JOIN tb_brk_maestra ON tb_brk_ingresos.ca_referencia = tb_brk_maestra.ca_referencia where ca_fchfactura between '$fch_ini' and '$fch_fin') fc group by ca_idcliente) cant_neg ON (cl.ca_idcliente = cant_neg.ca_idcliente) ";
+        } else if ($empresa == 'Colotm') {
+            $query.= "  LEFT JOIN (select cm.ca_id as ca_idcliente, $fun(cm.ca_fchcomprobante) as ca_fchnegocio from ino.tb_comprobantes cm join ino.tb_tipos_comprobante tc on cm.ca_idtipo = tc.ca_idtipo and tc.ca_idempresa = 8 and tc.ca_tipo = 'F' and cm.ca_consecutivo IS NOT NULL and cm.ca_estado IN (5,6) join ino.tb_house hs on cm.ca_idhouse = hs.ca_idhouse and hs.ca_fchdoctransporte between '$fch_ini' and '$fch_fin' group by cm.ca_id) fac_fch ON (cl.ca_idcliente = fac_fch.ca_idcliente) ";
+            $query.= "  LEFT JOIN (select cm.ca_id as ca_idcliente, count(hs.ca_doctransporte) as ca_numnegocios from ino.tb_comprobantes cm join ino.tb_tipos_comprobante tc on cm.ca_idtipo = tc.ca_idtipo and tc.ca_idempresa = 8 and tc.ca_tipo = 'F' and cm.ca_consecutivo IS NOT NULL and cm.ca_estado IN (5,6) join ino.tb_house hs on cm.ca_idhouse = hs.ca_idhouse and hs.ca_fchdoctransporte between '$fch_ini' and '$fch_fin' group by cm.ca_id) cant_neg ON (cl.ca_idcliente = cant_neg.ca_idcliente) ";
+        } else if ($empresa == 'Coldepósitos') {
+            $query.= "  LEFT JOIN (select cc.ca_idcliente, $fun(tr.ca_fchcreado) as ca_fchnegocio from tb_cotizaciones ct join tb_concliente cc on ct.ca_idcontacto = cc.ca_idcontacto and ct.ca_empresa = '$empresa' join notificaciones.tb_tareas tr on ct.ca_idg_envio_oportuno = tr.ca_idtarea where tr.ca_fchcreado between '$fch_ini' and '$fch_fin' group by cc.ca_idcliente) fac_fch ON (cl.ca_idcliente = fac_fch.ca_idcliente) ";
+            $query.= "  LEFT JOIN (select cc.ca_idcliente, count(distinct ct.ca_consecutivo) as ca_numnegocios from tb_cotizaciones ct join tb_concliente cc on ct.ca_idcontacto = cc.ca_idcontacto and ct.ca_empresa = '$empresa' join notificaciones.tb_tareas tr on ct.ca_idg_envio_oportuno = tr.ca_idtarea where tr.ca_fchcreado between '$fch_ini' and '$fch_fin' group by cc.ca_idcliente) cant_neg ON (cl.ca_idcliente = cant_neg.ca_idcliente) ";
         }
         $query.= "LEFT JOIN (select std.ca_idcliente, std.ca_fchestado, std.ca_estado, std.ca_empresa from tb_stdcliente std join ( select sc.ca_idcliente, max(sc.ca_fchestado) AS ca_fchestado, sc.ca_empresa from tb_stdcliente sc where sc.ca_empresa::text = '$empresa'::text and sc.ca_fchestado <= '$fch_fin' group by sc.ca_idcliente, sc.ca_empresa) max on std.ca_idcliente = max.ca_idcliente AND std.ca_fchestado = max.ca_fchestado AND std.ca_empresa::text = max.ca_empresa::text) st1 ON cl.ca_idcliente::numeric = st1.ca_idcliente::numeric ";
         $query.= "where cl.ca_idcliente = $idcliente";
@@ -376,13 +400,13 @@ class ClienteTable extends Doctrine_Table {
             $fch_fin = date('Y-m-d H:i:s', mktime(23, 59, 59, $month, $day, $year));
         }
 
-        $query = "SELECT c.ca_idcliente, c.ca_idalterno, ca_digito, c.ca_compania, c.ca_vendedor, c.ca_sucursal, c.ca_fchcreado::date as ca_fchcreado_clie, cot.ca_cotizacion_last, rep.ca_reporte_last, seg.ca_seguimiento_last, eve.ca_evento_max, c.ca_coltrans_std, c.ca_coltrans_fch::date, c.ca_colmas_std, c.ca_colmas_fch::date ";
+        $query = "SELECT c.ca_idcliente, c.ca_idalterno, ca_digito, c.ca_compania, c.ca_vendedor, c.ca_sucursal, c.ca_fchcreado::date as ca_fchcreado_clie, cot.ca_cotizacion_last, rep.ca_reporte_last, seg.ca_seguimiento_last, eve.ca_evento_max, c.ca_coltrans_std, c.ca_coltrans_fch::date, c.ca_colmas_std, c.ca_colmas_fch::date, c.ca_colotm_std, c.ca_colotm_fch::date, c.ca_coldepositos_std, c.ca_coldepositos_fch::date ";
         $query.= "FROM vi_clientes c ";
         $query.= "LEFT JOIN (select cl.ca_idcliente, max(co.ca_fchcreado)::date as ca_cotizacion_last, count(co.ca_idcotizacion) as ca_cotizaciones from tb_cotizaciones co inner join tb_concliente cl on co.ca_idcontacto = cl.ca_idcontacto where co.ca_fchcreado < '$fch_fin' group by cl.ca_idcliente order by cl.ca_idcliente) cot ON c.ca_idcliente = cot.ca_idcliente ";
         $query.= "LEFT JOIN (select cl.ca_idcliente, max(rp.ca_fchreporte)::date as ca_reporte_last, count(rp.ca_idreporte) as ca_reportes from tb_reportes rp inner join tb_concliente cl on rp.ca_idconcliente = cl.ca_idcontacto where rp.ca_fchreporte < '$fch_fin' group by cl.ca_idcliente order by cl.ca_idcliente) rep ON c.ca_idcliente = rep.ca_idcliente ";
         $query.= "LEFT JOIN (select cl.ca_idcliente, max(sg.ca_fchseguimiento)::date as ca_seguimiento_last, count(sg.ca_idseguimiento) as ca_seguimientos_cot from tb_cotseguimientos sg inner join tb_cotproductos pr on sg.ca_idproducto = pr.ca_idproducto inner join tb_cotizaciones ct on ct.ca_idcotizacion = pr.ca_idcotizacion inner join tb_concliente cl on ct.ca_idcontacto = cl.ca_idcontacto where sg.ca_fchseguimiento < '$fch_fin' group by cl.ca_idcliente order by cl.ca_idcliente) seg ON c.ca_idcliente = seg.ca_idcliente ";
         $query.= "LEFT JOIN (select cl.ca_idcliente, max(ev.ca_fchevento)::date as ca_evento_max, count(ev.ca_idevento) as ca_seguimientos_cli from tb_evecliente ev inner join tb_clientes cl on ev.ca_idcliente = cl.ca_idcliente where ev.ca_fchevento < '$fch_fin' group by cl.ca_idcliente order by cl.ca_idcliente) eve ON c.ca_idcliente = eve.ca_idcliente ";
-        $query.= "where c.ca_coltrans_std = '$estado' and c.ca_colmas_std = '$estado' ";
+        $query.= "where c.ca_coltrans_std = '$estado' and c.ca_colmas_std = '$estado' and c.ca_colotm_std = '$estado' and c.ca_coldepositos_std = '$estado' ";
 
         if ($sucursal != null) {
             $query.= "and c.ca_sucursal = '$sucursal' ";

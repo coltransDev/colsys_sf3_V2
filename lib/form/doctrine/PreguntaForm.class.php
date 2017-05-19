@@ -37,7 +37,7 @@ class PreguntaForm extends BasePreguntaForm {
 
         $opciones = array(0 => 'n&uacute;mero', 1 => 'texto', 2 => 'email', 3 => 'p&aacute;rrafo', 4 => 'test', 5 => 'casillas de verificaci&oacute;n', 6 => 'lista desplegable', 7 => 'escala', 8 => 'escala con estrellas', 9 => 'cuadr&iacute;cula');
 
-        /* $textoOpciones_tipo = array("texto", 'email', 'pÃ¡rrafo', 'test', 'casillas verificaciOn', 'lista desplegable', 'escala', 'cuadrIcula');
+        /* $textoOpciones_tipo = array("texto", 'email', 'párrafo', 'test', 'casillas verificaciOn', 'lista desplegable', 'escala', 'cuadrIcula');
           $valoresOpciones_tipo = array('0', '1', '2', '3', '4', '5', '6'); */
 
         //escala necesita recibir los dos valores fronteras y las etiquetas para esos extremos
@@ -72,6 +72,7 @@ class PreguntaForm extends BasePreguntaForm {
             'ca_etiquetas_filas' => 'Etiquetas de Filas',
             'ca_ayuda' => 'Texto de ayuda:',
             'ca_idbloque' => 'Bloque de preguntas (<span class="pregunta-obligatoria-admin">*</span>):',
+            'ca_comentarios' => 'Incluir comentarios:',
                 /* 'ca_idbloque' => 'Tipo de servicio:', */
         ));
         $this->validatorSchema['ca_idbloque'] = new sfValidatorString(array(), array('required' => 'Seleccione el bloque', 'invalid' => 'Por favor un nombre de bloque m&aacute;s largo'));

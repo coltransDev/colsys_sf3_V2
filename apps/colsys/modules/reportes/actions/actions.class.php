@@ -41,7 +41,7 @@ class reportesActions extends sfActions
 		
 		/* Marca como finalizada una tarea */
 						
-		$tareas = Doctrine::getTable("NotTarea")
+		/*$tareas = Doctrine::getTable("NotTarea")
                             ->createQuery("t")
                             ->innerJoin("t.NotTareaAsignacion a")
                             ->innerJoin("t.RepAsignacion r")
@@ -57,7 +57,7 @@ class reportesActions extends sfActions
                 $tarea->setCaObservaciones( $tarea->getCaObservaciones()." terminada:executeVerReporte" );
 				$tarea->save();
 			}
-		}
+		}*/
 			
 		
 		

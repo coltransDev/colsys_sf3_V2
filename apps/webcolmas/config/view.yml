@@ -12,7 +12,7 @@ default:
     #language:     en
     #robots:       index, follow
 
-  stylesheets:    [main.css, pr: { media: print }]
+  stylesheets:    [style.css, pr: { media: print }]
 
   javascripts:    []
 

@@ -336,7 +336,7 @@ if (!isset($boton) and ! isset($buscar)) {
     $array_avg = array();  // Para el calcilo del Promedio General
     $array_pnc = array();  // Para el calculo del Producto no Conforme
     $array_null = array();  // Para el conteo de los Registros que nos pueden calcular
-    $sql = "select cfg.ca_idsucursal, suc.ca_nombre, ca_lim1, ca_tiempo from idg.tb_idg idg inner join idg.tb_config cfg on idg.ca_idg = cfg.ca_idg inner join control.tb_departamentos dep on idg.ca_iddepartamento = dep.ca_iddepartamento left join control.tb_sucursales suc on suc.ca_idsucursal = cfg.ca_idsucursal where dep.ca_nombre = '" . str_replace("_", " ", $departamento) . "' and idg.ca_nombre = '$indicador'";
+    $sql = "select cfg.ca_idsucursal, suc.ca_nombre, ca_lim1, ca_tiempo from idg.tb_idg idg inner join idg.tb_config cfg on idg.ca_idg = cfg.ca_idg inner join control.tb_departamentos dep on idg.ca_iddepartamento = dep.ca_iddepartamento left join control.tb_sucursales suc on suc.ca_idsucursal = cfg.ca_idsucursal where dep.ca_nombre = '" . str_replace("_", " ", $departamento) . "' and idg.ca_nombre = '$indicador' order by cfg.ca_fchcreado asc";
     if (!$tm->Open($sql)) {
         echo "Error 324: $sql";
         //echo "<script>alert(\"" . addslashes($tm->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
@@ -377,7 +377,7 @@ if (!isset($boton) and ! isset($buscar)) {
             $source = "vi_repindicador_sea";
             $subque = " LEFT OUTER JOIN (select to_char(rs.ca_fchllegada,'YYYY') as ca_ano_new, to_char(rs.ca_fchllegada,'MM') as ca_mes_new, rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa in ('IMCPD')) group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
             if ($departamento == "Marítimo") {
-                $subque.= " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_fact, min(rs.ca_fchenvio::date) as ca_fchenvio from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = '88888' and substr(ca_status,1,27) = 'Adjunto enviamos la Factura') group by rp.ca_consecutivo) rs2 ON ($source.ca_consecutivo = rs2.ca_consecutivo_fact) ";
+                $subque.= " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_fact, min(rs.ca_fchenvio::date) as ca_fchenvio from tb_repstatus rs INNER join tb_emails e ON rs.ca_idemail = e.ca_idemail INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = '88888' and (e.ca_subject LIKE '%Factura de%' or e.ca_subject like '%Recargos Locales Id.:%')) group by rp.ca_consecutivo) rs2 ON ($source.ca_consecutivo = rs2.ca_consecutivo_fact) ";
                 $subque.= " RIGHT OUTER JOIN (
                 select c.ca_referencia as ca_referencia_fac, c.ca_idcliente as ca_idcliente_fac, c.ca_hbls as ca_hbls_fac, 
                     i.ca_fchfactura, i.ca_usucreado, i.ca_observaciones 
@@ -415,12 +415,12 @@ if (!isset($boton) and ! isset($buscar)) {
 
         $ind_mem = 4;
         $add_cols = 7;
-    } else if ($indicador == "Oportunidad en el Envio de Comunicaciones") {
+    } else if ($indicador == "Oportunidad en el envío de seguimientos al Cliente" || $indicador == "Oportunidad en el Envio de Comunicaciones") {
         $format_avg = "H:i:s";
         $source = "vi_repindicadores";
         $transporte = "ca_transporte = '$departamento'";
         $impoexpo = "ca_impoexpo = 'Importación'";
-        $sin_etapa = ($departamento == "Marítimo") ? "rs.ca_idetapa != 'IMAGR' and" : "";
+        $sin_etapa = ($departamento == "Marítimo") ? "rs.ca_idetapa != 'IMAGR' and" : "rs.ca_idetapa != 'IAFFL' and";
         $subque = "LEFT OUTER JOIN (select to_char(ca_fchrecibo,'YYYY') as ca_ano_new, to_char(ca_fchrecibo,'MM') as ca_mes_new, ca_ciudad as ca_ciuorigen, ca_consecutivo as ca_consecutivo_sub, ca_fchrecibo, ca_fchenvio, ca_usuenvio, ca_observaciones_idg, te.ca_etapa from tb_repstatus rs RIGHT OUTER JOIN vi_usuarios usr ON rs.ca_usuenvio = usr.ca_login and usr.ca_empresa = 'Coltrans S.A.S.' LEFT OUTER JOIN tb_reportes rp ON ($sin_etapa rp.ca_idreporte = rs.ca_idreporte and rp.$transporte) INNER JOIN tb_ciudades pd ON (rp.ca_origen = pd.ca_idciudad) JOIN tb_tracking_etapas te ON te.ca_idetapa = rs.ca_idetapa where " . str_replace("ca_ano", "to_char(ca_fchrecibo,'YYYY')", $ano) . " and " . str_replace("ca_mes", "to_char(ca_fchrecibo,'MM')", $mes) . " and rs.ca_tipo != 2 order by ca_consecutivo, ca_fchrecibo) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
         $sql = "select ca_fchfestivo from tb_festivos";
         if (!$tm->Open($sql)) {
@@ -489,7 +489,7 @@ if (!isset($boton) and ! isset($buscar)) {
         $tot_cols--;
         $cot_ant = null;
         $campos.= ", to_number(substr(ca_consecutivo,0,position('-' in ca_consecutivo)),'99999999')";
-    } else if ($indicador == "Oportunidad en Confirmación de llegada") {
+    } else if ($indicador == "Oportunidad en confirmación de llegada de la carga al cliente") {
         if ($departamento == 'Aéreo') {
             $tipo = "D";
             $source = "vi_repindicador_air";
@@ -787,7 +787,7 @@ where i.oid in (
 
         $ind_mem = 21;
         $add_cols = 9;
-    } else if ($indicador == "Oportunidad en Comunicaciones Maritimas") {
+    } else if ($indicador == "Oportunidad en el envío de las comunicaciones marítimas") {
         $format_avg = "H:i:s";
         $source = "vi_repindicador_sea";
         $subque = "INNER JOIN (
@@ -797,7 +797,7 @@ where i.oid in (
                                 INNER JOIN tb_reportes rp ON (rp.ca_transporte = 'Marítimo' and rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa IN ('88888','IMDES','IMPLA'))
                                 LEFT JOIN tb_emails e ON rs.ca_idemail = e.ca_idemail
                                 LEFT JOIN control.tb_usuarios u ON rs.ca_usuenvio = u.ca_login
-                    WHERE ca_subject NOT LIKE '%Factura de%' and rs.ca_tipo = 2 and u.ca_departamento NOT IN ('OTM','Operativo')
+                    WHERE (ca_subject NOT LIKE '%Factura de%' or ca_subject NOT LIKE '%Recargos Locales Id.:%') and rs.ca_tipo = 2 and u.ca_departamento NOT IN ('OTM','Operativo')
                     ORDER BY rp.ca_consecutivo, rs.ca_fchenvio ) rs1 ON (vi_repindicador_sea.ca_consecutivo = rs1.ca_consecutivo_conf) ";
         $sql = "select ca_fchfestivo from tb_festivos";
         if (!$tm->Open($sql)) {

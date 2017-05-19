@@ -12,5 +12,28 @@
  */
 class Empresa extends BaseEmpresa
 {
-
+    function getLogoHtml(){
+        
+        switch($this->getCaIdempresa()){
+            case 1:
+                $link = 'http://www.coltrans.com.co/logosoficiales/colmas/ColmasSmall.png';
+                break;
+            case 2:
+                $link = 'http://www.coltrans.com.co/logosoficiales/coltrans/ColtransSmall.png';
+                break;
+            case 4:
+                $link = 'http://www.coltrans.com.co/logosoficiales/consolcargo/ConsolcargoSmall.png';
+                break;
+            case 8:
+                $link = 'http://www.coltrans.com.co/logosoficiales/colotm/logo_colotm.png';
+                break;
+            case 11:
+                $link = 'http://www.coltrans.com.co/logosoficiales/coldepositos/ColdepositosSmall.jpg';
+                break;
+            default:
+                $link = "";
+        }
+        
+        return $link;
+    }
 }

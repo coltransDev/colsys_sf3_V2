@@ -15,9 +15,9 @@ $email_body = $sf_data->getRaw("email_body");
         <!-- MAIN CONTENT TABLE -->
         <table width="100%" border="0" cellspacing="5" cellpadding="0">
             <!-- LOGO -->
-            <tr><td colspan="3"><table><tr><td width="135"><img src="https://www.coltrans.com.co/images/logo_colsys.gif" width="178" height="30" alt="COLSYS"></td>
+            <tr><td colspan="3"><table><tr><td width="135"><img src="https://www.colsys.com.co/images/logo_colsys.gif" width="178" height="30" alt="COLSYS"></td>
                 <td><font size="4" face="arial, helvetica, sans-serif" color="#D99324"><?= $titulo ?><br/><?= (($fchsyga) ? "Fecha finalizaci&oacute;n MUISCA : " . $fchsyga : "") ?></font></td></tr></table></td></tr>
-            <tr><td width="25"><img src="https://www.coltrans.com.co/images/spacer.gif" width="25" height="1" alt=""></td><td colspan="2"><hr noshade size="1"></td></tr>
+            <tr><td width="25"><img src="https://www.colsys.com.co/images/spacer.gif" width="25" height="1" alt=""></td><td colspan="2"><hr noshade size="1"></td></tr>
             <!-- INTRO -->
             <tr>
                 <td>&nbsp;</td><td>
@@ -31,7 +31,7 @@ $email_body = $sf_data->getRaw("email_body");
 
                 <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Reg.Aduanero :</b><?= $referencia->getCaRegistroadu() ?></font><br />
                 <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Fch.Registro :</b><?= $referencia->getCaFchregistroadu() ?></font><br />
-                <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Reg.Capitania :</b><?= $referencia->getCaRegistrocap() ?></font><br /><br />
+                <font size="2" face="arial, helvetica, sans-serif" color="#000000"><br /><br />
 
                 <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Fecha Vaciado :</b><?= $referencia->getCaFchvaciado() ?> - <?= $referencia->getCaHoravaciado() ?></font><br />
                 <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Fecha. Desconsolidacion :</b><?= $referencia->getCaFchdesconsolidacion() ?></font><br />

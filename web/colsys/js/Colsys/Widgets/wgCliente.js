@@ -36,7 +36,7 @@ Ext.define('Colsys.Widgets.wgCliente', {
           autoLoad: true,
           reader: 
           {
-             root: 'clientes',
+             rootProperty: 'clientes',
              totalProperty: 'totalCount',
              id: 'id',
              type: 'json'

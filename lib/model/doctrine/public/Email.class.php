@@ -70,23 +70,72 @@ class Email extends BaseEmail {
         if (!$this->getCaAddress() && !$this->getCaCc()) {
             $user = Doctrine::getTable("Usuario")->find($this->getCaUsuenvio());
             if ($user) {
-                $this->setCaAddress($user->getCaEmail());
+                $this->setCaAddress(trim($user->getCaEmail()));
                 Utils::writeLog($logFile, "email sin destinatarios, se envia al creador");
             } else {
                 Utils::writeLog($logFile, "email sin destinatarios, no se envia a nadie");
             }
         }
         
-        $host=sfConfig::get("app_smtp_host");
-        if($this->getCaUsuenvio()=="maquinche")
+        $authuser=false;
+        $host=sfConfig::get("app_smtp_host");        
+        if (
+                stripos(strtolower($this->getCaFrom()), '@coltrans.com.co') !== false || 
+                stripos(strtolower($this->getCaFrom()), '@colmas.com.co') !== false || 
+                stripos(strtolower($this->getCaFrom()), '@colotm.com') !== false   //||
+                //stripos(strtolower($this->getCaFrom()), '@tplogistics.com.pe') !== false ||
+                //stripos(strtolower($this->getCaFrom()), '@coldepositos.com.co') !== false
+                ) 
         {
             $host=sfConfig::get("app_smtp_host2");
+        }else if (stripos(strtolower($this->getCaFrom()), '@consolcargo.com') !== false)                 
+        {            
+            $host=sfConfig::get("app_smtp_host3");
+            $host=sfConfig::get("app_smtp_host");
+            
+            //$authuser=true;
+        }else
+        {
+            $host=sfConfig::get("app_smtp_host");
         }
+        //$host=sfConfig::get("app_smtp_host");
+        //echo $host."<br>";
 
-        $transport = Swift_SmtpTransport::newInstance($host, sfConfig::get("app_smtp_port"),sfConfig::get("app_smtp_security"));
-        if (sfConfig::get("app_smtp_user")) {
-            $transport->setUsername(sfConfig::get("app_smtp_user"))
-                    ->setPassword(sfConfig::get("app_smtp_passwd"));
+        if(!$authuser)
+        {
+            
+            $transport = Swift_SmtpTransport::newInstance($host, sfConfig::get("app_smtp_port"),sfConfig::get("app_smtp_security"));
+            if (sfConfig::get("app_smtp_user")) {
+                $transport->setUsername(sfConfig::get("app_smtp_user"))
+                        ->setPassword(sfConfig::get("app_smtp_passwd"));
+            }
+        }
+        else
+        {
+            $host="smtp.office365.com";
+            $host=sfConfig::get("app_smtp_host3");
+            $enviar=false;
+            switch($this->getCaFrom())
+            {
+                case "customerotm@consolcargo.com":
+                    $app_smtp_user="customerotm@consolcargo.com";
+                    $app_smtp_passwd="Huwu8155";
+                    $enviar=true;
+                    break;
+                case "operativo-otm@consolcargo.com":
+                    $app_smtp_user="operativo-otm@consolcargo.com";
+                    $app_smtp_passwd="Pamu6745";
+                    $enviar=true;
+                    break;
+            }
+            if($enviar==true)
+            {
+                $transport = Swift_SmtpTransport::newInstance($host, sfConfig::get("app_smtp_port"),sfConfig::get("app_smtp_security"));                
+                $transport->setUsername($app_smtp_user)
+                          ->setPassword($app_smtp_passwd);
+                
+            }
+            
         }
         Swift_Preferences::getInstance()->setCharset('iso-8859-1');
 
@@ -97,9 +146,9 @@ class Email extends BaseEmail {
         $message = Swift_Message::newInstance($this->getCaSubject());
 
         try {
-            $message->setFrom(array($this->getCaFrom() => $this->getCaFromname()));
-            $message->setSender($this->getCaFrom());
-            $message->setReturnPath($this->getCaFrom());
+            $message->setFrom(array(trim($this->getCaFrom()) => $this->getCaFromname()));
+            $message->setSender(trim($this->getCaFrom()));
+            $message->setReturnPath(trim($this->getCaFrom()));
 
         } catch (Exception $e) {
             $event = $logHeader;
@@ -149,7 +198,7 @@ class Email extends BaseEmail {
                     if ($recip) {
                         if (!in_array($recip, $address)) {
                             try {
-                                $message->addCc($recip);
+                                $message->addCc(trim($recip));
                             } catch (Exception $e) {
                                 $event = $logHeader;
                                 $event.= $e->getMessage();
@@ -214,12 +263,14 @@ class Email extends BaseEmail {
             $event.= $e->getMessage();
             Utils::writeLog($logFile, $event);
             $data = array();
-            $data["mensaje"] = $event;
+            
+            $data["subject"] = $e->getMessage();
+            $data["mensaje"] = $e->getTraceAsString();
             Utils::sendEmail($data);
             return false;
         }
 
-        $attachments = $this->getEmailAttachment();
+        /*$attachments = $this->getEmailAttachment();
         foreach ($attachments as $attachment) {
             try {
                 $fp = $attachment->getCaContent();
@@ -236,7 +287,7 @@ class Email extends BaseEmail {
                 Utils::writeLog($logFile, $event);
                 return false;
             }
-        }
+        }*/
 
         $failures = null;
         try {
@@ -291,11 +342,31 @@ class Email extends BaseEmail {
     }
 
     public function getDirectorioBase() {
-        return EmailTable::FOLDER . DIRECTORY_SEPARATOR . $this->getCaIdemail() . DIRECTORY_SEPARATOR;
+        return EmailTable::FOLDER . DIRECTORY_SEPARATOR .date("Y").DIRECTORY_SEPARATOR .$this->getCaIdemail() . DIRECTORY_SEPARATOR;
     }
 
     public function getDirectorio() {
         return sfConfig::get("app_digitalFile_root") . DIRECTORY_SEPARATOR . $this->getDirectorioBase();
+    }
+    
+    public function getDirectorioCorp($idempresa) {
+    
+        $usuarios = Doctrine::getTable("Usuario")
+                ->createQuery("u")
+                ->select("u.ca_email")
+                ->leftJoin("u.Sucursal s")
+                ->addWhere("s.ca_idempresa = ?", $idempresa)
+                ->andWhere("u.ca_activo = TRUE")
+                ->orderby("u.ca_email")
+                ->execute();
+        $correos = array();
+        foreach($usuarios as $usuario){
+            if($usuario->getCaEmail() && $usuario->getCaEmail()!= null){
+                if(!in_array($usuario->getCaEmail(), $correos))
+                    $correos[] = $usuario->getCaEmail();
+            }
+        }
+        return $correos;
     }
     
     

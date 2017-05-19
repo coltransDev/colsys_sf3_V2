@@ -22,7 +22,7 @@ Ext.define('Colsys.Widgets.wgUsuario', {
             type: 'ajax',        
             reader: 
             {
-                root: 'root',
+                rootProperty: 'root',
                 totalProperty: 'total'
             }
         }

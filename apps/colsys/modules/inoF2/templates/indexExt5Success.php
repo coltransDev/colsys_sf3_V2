@@ -1,3 +1,4 @@
+
 <style>
 .x-grid-cell-inner {    
     white-space: pre-line !important;
@@ -16,6 +17,13 @@
 .x-toolbar-spacer-default {
   width: 2px;
   height: 4px !important;
+}
+
+.x-panel-body-default {
+    color: #3e4752;
+    font-family: "Proxima Nova","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 13px !important;
+    font-weight: 300;
 }
 
 
@@ -51,7 +59,8 @@
 }
 
 .x-panel-body-default {
-    background: #ececec none repeat scroll 0 0;
+    /*background: #ececec none repeat scroll 0 0;*/
+    /*background: #fff none repeat scroll 0 0;*/
     border-color: #cecece;
     border-style: solid;
     border-width: 1px;
@@ -63,32 +72,40 @@
 
 
 </style>
+<?
+$permisos=$sf_data->getRaw("permisos");
+
+?>
+<script  src="/js/ckeditor/ckeditor.js" ></script>
 <script>
-    
-var permisos={'Consultar':true,'Crear':true,'Editar':true,'Anular':true,'Cerrar':true,'Liquidar':true,'General':true,'House':true,'Facturacion':true,'Costos':true,'Documentos':true}
+//var permisos={'Consultar':true,'Crear':true,'Editar':true,'Anular':true,'Cerrar':true,'Liquidar':true,'General':true,'House':true,'Facturacion':true,'Costos':true,'Documentos':true}
+var permisosG= Ext.decode('<?=json_encode($permisos)?>');
+//alert(permisosG.toSource());
 Ext.Loader.setConfig({
     enabled: true,
     paths: {
-        'Chart':'../js/ext5/src/',
+        'Chart':'/js/ext5/src/',
         //'Ext.ux.exporter':'../js/ext5/examples/ux/exporter/',
         'Colsys':'/js/Colsys',
-        'Ext.ux':'../js/ext5/examples/ux'
+        'Ext.ux':'/js/ext5/examples/ux'
     }
 });
 
 Ext.require([
-    'Ext.grid.*',
-    'Ext.form.Panel',
+    //'Ext.grid.*',
+    //'Ext.form.Panel',
     'Ext.ux.exporter.Exporter',
     'Ext.ux.Explorer',
+    'Ext.ux.CKeditor'
     /*,
     'Colsys.Ino.FormBusqueda'*/
 ]);
 
 </script>
 <?php
-$permisos = $sf_data->getRaw("permisos");
+//$permisos = $sf_data->getRaw("permisos");
 $modo = $sf_data->getRaw("modo");
+$inoMaster = $sf_data->getRaw("inoMaster");
 //$idmaster=12176;
 include_component("inoF2", "mainPanel");
 ?>
@@ -112,9 +129,9 @@ Ext.onReady(function() {
             {
                 region: 'west',
                 xtype: 'Colsys.Ino.FormBusqueda',
-                'permisos':permisos
-            }
-            ,{
+                'permisosG':permisosG
+            },
+            {
                 region: 'center',
                 xtype: 'tabpanel',
                 id:'tabpanel1',
@@ -132,12 +149,43 @@ Ext.onReady(function() {
             }
         ]
     });
-
-    ref=12176;    
+    
     tabpanel = Ext.getCmp('tabpanel1');
-    numRef='910.10.01.0010.16';
+    <?
+    foreach($inoMaster as $m)
+    {
+?>
+        ref=<?=$m->getCaIdmaster()?>;
+    
+    numRef='<?=$m->getCaReferencia()?>';
     if(!tabpanel.getChildByElement('tab'+ref) && ref!="")
     {
+        impoexpo='<?=$m->getCaImpoexpo()?>';
+        transporte = '<?=$m->getCaTransporte()?>';
+        fchcerrado = '<?=$m->getCaFchcerrado()?>';
+        
+        if(impoexpo=="INTERNO")
+            tmppermisos=permisosG.terrestre;
+        else if(impoexpo=="Exportaci\u00F3n")
+            tmppermisos=permisosG.exportacion;
+        else if(impoexpo=="Importaci\u00F3n")
+        {
+            if(transporte=="Mar\u00EDtimo")
+                tmppermisos=permisosG.maritimo;
+            if(transporte=="A\u00E9reo")
+                tmppermisos=permisosG.aereo;
+        }
+        else if(impoexpo=="OTM-DTA")
+            tmppermisos=permisosG.otm;
+
+        //alert(tmppermisos.toSource());
+        if(fchcerrado!="")
+        {
+            tmppermisos.Editar=false;
+            tmppermisos.Crear=false;
+            tmppermisos.Anular=false;
+        }
+        
         tabpanel.add(
         {
             title: numRef,
@@ -146,14 +194,13 @@ Ext.onReady(function() {
             closable :true,
             autoScroll: true,
             items: [
-                new Colsys.Ino.Mainpanel({
+                new Colsys.Ino.Mainpanel({                    
                     region: 'north',
-                    "idmaster":ref,
-                    "idimpoexpo": 'INTERNO',
-                    "idtransporte":'Terrestre',
+                    "idmaster": ref, "idimpoexpo": impoexpo,
+                    "idtransporte":transporte,
                     'idreferencia':numRef,
-                    'permisos': permisos
-                    
+                    'permisos': tmppermisos, "tipofacturacion":0, "idticket":0,
+                    "modalidad":'<?=$m->getCaModalidad()?>'
                 }),
                {
                     region: 'south',
@@ -161,7 +208,7 @@ Ext.onReady(function() {
                     id: 'formCierre'+ref,
                     name: 'formCierre'+ref,
                     idmaster: ref,
-                    'permisos': permisos,
+                    'permisos': tmppermisos,
                     alignTarget :'bottom'
                     
                 }
@@ -169,6 +216,12 @@ Ext.onReady(function() {
         }).show();
     }
     tabpanel.setActiveTab('tab'+ref);
+        
+<?
+    }
+    ?>
+
+    /*
 
     ref=12143;    
     tabpanel = Ext.getCmp('tabpanel1');
@@ -189,7 +242,7 @@ Ext.onReady(function() {
                     "idimpoexpo": 'OTM-DTA',
                     "idtransporte":'Terrestre',
                     'idreferencia':numRef,
-                    'permisos': permisos
+                    'permisos': permisos.otm
                     
                 }),
                {
@@ -198,7 +251,7 @@ Ext.onReady(function() {
                     id: 'formCierre'+ref,
                     name: 'formCierre'+ref,
                     idmaster: ref,
-                    'permisos': permisos,
+                    'permisos': permisos.otm,
                     alignTarget :'bottom'
                     
                 }
@@ -207,7 +260,7 @@ Ext.onReady(function() {
         }).show();
     }
     tabpanel.setActiveTab('tab'+ref);
-    
+    */
 
     /*function openFile(val){
         var windowpdf = Ext.create('Colsys.Widgets.WgVerPdf', {

@@ -24,14 +24,14 @@ mensajeConfOTMCliente: |
   - Certificación posición arancelaria y/o registro de importación
   - Valor CIF de la mercancía
   
-  Si su mercancía requiere tramite Invima favor enviar original del certificado del proveedor de mercancia apta para el consumo humano+ el registro de importación.
+  Si su mercancía requiere tramite Invima favor enviar original del certificado del proveedor de mercancía apta para el consumo humano+ el registro de importación.
   
   Si los documentos ya han sido enviados, favor omitir este mensaje.
 
   Cualquier información adicional respecto al OTM favor contactar a  
 
 mensajeFacFletes: |
-  Adjunto enviamos la Factura  de la importacion maritima  en referencia, la cual es soporte de certificacion de fletes ante la DIAN.
+  Adjunto enviamos la Factura  de la importación marítima  en referencia, la cual es soporte de certificación de fletes ante la DIAN.
   Cualquier información adicional con gusto será suministrada.
   
 mensajeFacOtm: |
@@ -39,6 +39,12 @@ mensajeFacOtm: |
 
 mensajeFacCont: |
   Adjunto enviamos la Factura de Contenedores.
+  
+mensajeCertFletes: |
+  Adjuntamos certificación de fletes correspondiente a la importación en asunto, la cual se expide únicamente para fines aduaneros.
+  
+mensajeRecLocales: |
+  Nos permitimos adjuntar la factura correspondiente a los recargos locales que aplican para el embarque en referencia.
   
 mensajePlanilla: |
   Nos permitimos informar el número de planilla de envío asignado por la DIAN - Muisca,  con el fin de que prosiga su proceso de nacionalización.

@@ -10,7 +10,7 @@
 
 
 <div class="content" align="center">
-    <form action="<?=url_for("ids/formEventosNew?modo=".$modo)?>" method="post">
+    <form action="/ids/formEventosNew/modo/<?=$modo?><?=($idreporte!="")?"/idreporte/".$idreporte:""?>" method="post">
     <?
     if( !$modo ){
         if( $reporte ){

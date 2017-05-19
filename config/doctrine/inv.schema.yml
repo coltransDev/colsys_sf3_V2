@@ -84,7 +84,6 @@ InvActivo:
     ca_fchactualizado: timestamp
     ca_usuactualizado: string  
     ca_prgmantenimiento: date
-    ca_fchmantenimiento: date
   relations:
     InvCategory:
       local: ca_idcategory
@@ -277,7 +276,6 @@ InvMantenimiento:
     ca_fchfirma: date
     ca_firma: string
     ca_firmado: string
-    ca_fchprgmantenimiento: date
   relations:
     InvActivo:
       local: ca_idactivo

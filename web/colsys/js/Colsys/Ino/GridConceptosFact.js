@@ -8,22 +8,16 @@
 
 
 
-
-
-
-
 Ext.define('Colsys.Ino.GridConceptosFact', {
     extend: 'Ext.grid.Panel',
     alias: 'widget.Colsys.Ino.GridConceptosFact',
-    
-    features: [{
-            id: 'comprobante',
-            ftype: 'summary',
-            hideGroupedHeader: true,
-            totalSummary: 'fixed',          // Can be: 'fixed', true, false. Default: false
-            totalSummaryTopLine: true,      // Default: true
-            totalSummaryColumnLines: true  // Default: false
-        }],
+     width: 840,
+        height: 450,
+     selModel: {
+        selType: 'cellmodel'
+    },
+//    width: 600,
+    frame: true,
     
     store:Ext.create('Ext.data.Store', {
             fields: [
@@ -49,16 +43,24 @@ Ext.define('Colsys.Ino.GridConceptosFact', {
                 //extraParams:{'idcomprobante':this.idcomprobante},
                 reader: {
                     type: 'json',
-                    root: 'root'
+                    rootProperty: 'root'
                 }
             },
-            //groupField: 'comprobante'+this.idcomprobante,
+            groupField: 'comprobante',
             sorters: [{
                 property: 'comprobante',
                 direction: 'ASC'
             }],
             autoLoad: false
        }),
+       features: [{
+            id: 'comprobante',
+            ftype: 'groupingsummary',
+            //hideGroupedHeader: true,
+            totalSummary: 'fixed',          // Can be: 'fixed', true, false. Default: false
+            totalSummaryTopLine: true,      // Default: true
+            totalSummaryColumnLines: true,  // Default: false
+        }],
        columns:[
                 {
                     id: 'comprobante',
@@ -95,11 +97,27 @@ Ext.define('Colsys.Ino.GridConceptosFact', {
                         minValue: 0
                         //,maxValue: 100000
                     },
+                    renderer: function(value, metaData, record, rowIdx, colIdx, store, view) {
+                        return Ext.util.Format.usMoney(record.get('valor') );
+                    },
+                    //dataIndex: 'cost',
+                    summaryType: function(records, values) {
+                        var i = 0,
+                            length = records.length,
+                            total = 0,
+                            record;                    
+                        for (; i < length; ++i) {
+                            record = records[i];
+                            total += record.get('valor');
+                        }                        
+                        return total;
+                    },
+                    summaryRenderer: Ext.util.Format.usMoney
 
-                    summaryRenderer: function(value, summaryData, dataIndex) {
+                    /*summaryRenderer: function(value, summaryData, dataIndex) {
                             return Ext.util.Format.usMoney(value);
                         },
-                    summaryType: 'sum'/*function(records){
+                    summaryType:function(records){
                         var i = 0,
                             length = records.length,
                             total = 0,
@@ -113,106 +131,21 @@ Ext.define('Colsys.Ino.GridConceptosFact', {
                 }
             ],
     
-    onRender: function(ct, position){      
-        /*this.reconfigure(
-                
-            Ext.create('Ext.data.Store', {
-                 fields: [
-                    {name: 'iddetalle'+this.idcomprobante        ,mapping: 'iddetalle'        , type: 'int'},
-                    {name: 'idhouse'+this.idcomprobante          ,mapping: 'idhouse'          , type: 'int'},
-                    {name: 'idcomprobante'+this.idcomprobante    ,mapping: 'idcomprobante'    , type: 'int'},
-                    {name: 'comprobante'+this.idcomprobante      ,mapping: 'comprobante'      , type: 'string'},            
-                    {name: 'fchcomprobante'+this.idcomprobante   ,mapping: 'fchcomprobante'   , type: 'date', dateFormat: 'Y-m-d'},
-                    {name: 'cliente'+this.idcomprobante          ,mapping: 'cliente'          , type: 'string'},
-                    {name: 'doctransporte'+this.idcomprobante    ,mapping: 'doctransporte'    , type: 'string'},
-                    {name: 'idmoneda'+this.idcomprobante         ,mapping: 'idmoneda'         , type: 'int'},
-                    {name: 'moneda'+this.idcomprobante           ,mapping: 'moneda'           , type: 'string'},
-                    {name: 'valor'+this.idcomprobante            ,mapping: 'valor'            , type: 'float'},
-                    {name: 'idconcepto'+this.idcomprobante       ,mapping: 'idconcepto'       , type: 'int'},
-                    {name: 'concepto'+this.idcomprobante         ,mapping: 'concepto'         , type: 'string'},
-                    {name: 'cuentapago'+this.idcomprobante       ,mapping: 'cuentapago'       , type: 'string'},        
-                    {name: 'estado'+this.idcomprobante           ,mapping: 'estado'           , type: 'int'},
-                    {name: 'idccosto'+this.idcomprobante         ,mapping: 'idccosto'         , type: 'int'}
-                 ],      
-                 proxy: {
-                     type: 'ajax',
-                     url: '/inoF2/datosConceptosFact',
-                     extraParams:{'idcomprobante':this.idcomprobante},
-                     reader: {
-                         type: 'json',
-                         root: 'root'
-                     }
-                 },
-                 //groupField: 'comprobante'+this.idcomprobante,
-                 sorters: [{
-                     property: 'comprobante'+this.idcomprobante,
-                     direction: 'ASC'
-                 }],
-                 autoLoad: true
-            }),
-            [
-                {
-                    id: 'comprobante',
-                    //header: 'No factura',
-                    dataIndex: 'comprobante',
-                    flex: 1,
-                    hidden:true
-
-                },
-                {
-                    header: 'Concepto',
-                    dataIndex: 'concepto'+this.idcomprobante,
-                    width: 250,
-                    editor: { xtype:'Colsys.Widgets.wgConceptosSiigo',
-                        id:'combo-conceptos'+this.idcomprobante,
-                        name:'combo-conceptos'+this.idcomprobante,
-                        idtransporte:this.idtransporte,
-                        idimpoexpo:this.idimpoexpo
-                    },
-                    summaryRenderer: function(value, summaryData, dataIndex) {
-                            return "<b>Total</b>";
-                        }
-                },
-                {
-                    header: 'Valor',
-                    dataIndex: 'valor'+this.idcomprobante,
-                    width: 120,
-                    align: 'right',
-                    renderer:Ext.util.Format.usMoney,
-
-                    editor: {
-                        xtype: 'numberfield',
-                        allowBlank: false,
-                        minValue: 0
-                        //,maxValue: 100000
-                    },
-
-                    summaryRenderer: function(value, summaryData, dataIndex) {
-                            return Ext.util.Format.usMoney(value);
-                        },
-                    summaryType: function(records){
-                        var i = 0,
-                            length = records.length,
-                            total = 0,
-                            record;
-                        for (; i < length; ++i) {
-                            record = records[i];
-                            total += record.get('valor');
-                        }
-                        return total;
-                    }
-                }
-            ]);*/
-        
-        /*this.features= [{
-            id: 'comprobante'+this.idcomprobante,
-            ftype: 'grouping',
-            hideGroupedHeader: true,
-            totalSummary: 'fixed',          // Can be: 'fixed', true, false. Default: false
-            totalSummaryTopLine: true,      // Default: true
-            totalSummaryColumnLines: true  // Default: false
-        }]*/
-      if(this.load==false || this.load=="undefined" || !this.load)
+    
+    
+    /*selModel: {
+        selType: 'cellmodel'
+    },*/
+    width: 600,
+    //frame: true,
+    
+    plugins: [
+        new Ext.grid.plugin.CellEditing({clicksToEdit: 1})
+    ],
+    listeners: {
+        /*activate: function(ct, position){
+            
+           if(this.load==false || this.load=="undefined" || !this.load)
            {
 
                 this.store.proxy.extraParams = {
@@ -220,6 +153,23 @@ Ext.define('Colsys.Ino.GridConceptosFact', {
                 }
                 this.store.reload();
                 this.load=true;
+            }
+        },*/   
+        afterrender: function (ct, position) {
+        if(!this.idcomprobante)
+            this.idcomprobante=0;
+        
+      if(this.load==false || this.load=="undefined" || !this.load)
+           {
+               //alert(this.idcomprobante);
+               // if(this.idcomprobante!="")
+                {
+                    this.store.proxy.extraParams = {
+                        idcomprobante: this.idcomprobante
+                    }
+                    this.store.reload();
+                    this.load=true;
+                }
             }
       
 
@@ -230,37 +180,32 @@ Ext.define('Colsys.Ino.GridConceptosFact', {
         text: 'Guardar',
         iconCls: 'add',
         id:'btn-guardar'+this.idcomprobante,
+        hidden:(this.idcomprobante=="0")?true:false,
         handler : function(){
             b=this;
             b.disable();
             //Ext.getCmp('btn-guardar'+this.idcomprobante).disable();
-            //console.log(this.up('grid'));
-            //console.log(this.up('window'));
-            //console.log(this.up('window').up());
-            var store =this.up('grid').getStore();
-            idmaster =this.up('grid').idmaster;
+            var grid=this.up('grid');
+            var store =grid.getStore();
+            idmaster =grid.idmaster;
             
-            //idcomprobante=this.up('grid').idcomprobante;
-            //var r = Ext.create(store.getModel());
-            //console.log(r.fields);
-            //var str= JSON.stringify(r.fields,"");
-            //fields= new Array();
-            //for(i=0;i<r.fields.length;i++)
-            //{
-            //    fields.push(r.fields[i].mapping);
-            //}
-            
-            var records = this.up('grid').getStore().getModifiedRecords();
+            var records = grid.getStore().getModifiedRecords();
             var lenght = records.length;            
             changes=[];
             //changes1=[];
-            for( var i=0; i< lenght; i++){                
+            for( var i=0; i< lenght; i++){
                 r = records[i];
 
                  if( r.data.idconcepto!="" && r.data.valor!="" && r.getChanges())
-                 {                
-                    records[i].data.id=r.id
-                    changes[i]=records[i].data;               
+                 {                    
+                    records[i].data.id=r.id;
+                    if(grid.idcomprobantegrid && grid.idcomprobantegrid!="" && grid.idcomprobantegrid!="undefined")
+                    {                    
+                        records[i].data.idcomprobante=grid.idcomprobantegrid;                      
+                    }
+                    changes[i]=records[i].data;
+                    
+                        
                  }
                 //records[i].data.id=r.id
                 //changes1[i]=records[i].data;               
@@ -268,14 +213,14 @@ Ext.define('Colsys.Ino.GridConceptosFact', {
                 /*row=new Object();
                 for(j=0;j<fields.length;j++)
                 {
-                    //console.log(fields[j]);
+                    
                     eval("row."+fields[j]+"=records[i].data."+fields[j]+";")
-                    //console.log(row);
+                    
                 }
                 row.id=r.id
                 changes[i]=row;*/
             }
-
+            //console.log(changes);
             var str= JSON.stringify(changes);
             if(str.length>5)
             {
@@ -299,14 +244,90 @@ Ext.define('Colsys.Ino.GridConceptosFact', {
                                     rec.commit();                                    
                                 }
                                 alert('Se guardo Correctamente la informacion');
-                                store.reload();                                
                             }
                             if(res.errorInfo!="")
                             {
                                 alert('No fue posible el guardar la fila <br>'+res.errorInfo);
                             }
                             
-                            Ext.getCmp('panel-factura-'+idmaster).getStore().reload();
+                            if(Ext.getCmp('panel-factura-'+idmaster))
+                            {
+                                Ext.getCmp('panel-factura-'+idmaster).getStore().reload();
+                                store.reload();
+                            }
+                            else
+                            {
+                                Ext.Ajax.request({
+                                    url: '/inoF2/generarFactura',
+                                    params: {                            
+                                        "idcomprobante":grid.idcomprobantegrid
+                                    },
+                                    success: function(response, opts) {
+                                        
+                                        var res = Ext.decode(response.responseText);
+                                        alert("Se genero la Factura con el consecutivo No. "+res.consecutivo);
+                                        
+                                        var windowpdf = Ext.create('Colsys.Widgets.WgVerPdf', {
+                                            sorc: "/inocomprobantes/generarComprobantePDF/id/" + grid.idcomprobantegrid
+                                        });
+                                        windowpdf.show();
+                                        
+                                        var tabpanel = Ext.getCmp('tabpanel1');
+                                        tabpanel.getChildByElement('tab5').close();
+                                        
+                                         obj = [/*{xtype: 'Colsys.Contabilidad.FormComprobantes', id: 'form-comprobantes', name: 'form-comprobantes', frame: true}
+                                                    ,
+                                                    {xtype: 'Colsys.Contabilidad.GridMovimientosComprobantes', id: 'grid-movimientosComprobantes', name: 'grid-movimientosComprobantes'}
+                                                */
+                                               {
+                                                    xtype: 'Colsys.Ino.FormFactura',
+                                                    id: 'form-panel' + this.idmaster,
+                                                    name: 'form-panel' + this.idmaster,
+                                                    idmaster: this.idmaster,
+                                                    height: 330,
+                                                    width: 800,
+                                                    ino:false
+                                                },
+                                                {
+                                                    xtype: 'Colsys.Ino.GridConceptosFact',
+                                                    id:'id-grid-comprobante',
+                                                    name:'id-grid-comprobante'
+                                                    /*idcomprobante: idcomprobante,
+                                                    idmaster: idmaster*/
+                                                }
+                                                ];
+                                                
+                                                tabpanel.add(
+                                                    {
+                                                        title: record.data.text,
+                                                        id: 'tab' + record.data.id,
+                                                        itemId: 'tab' + record.data.id,
+                                                        autoScroll: true,
+                                                        items: [
+                                                            {
+                                                                //autoScroll:true,
+                                                                items: [
+                                                                    Ext.create('Ext.panel.Panel', {
+                                                                        //title: 'Registro de Incidente',    
+                                                                        bodyPadding: 10,
+                                                                        //width: 350,
+                                                                        //autoScroll:true,
+                                                                        id: 'tab-form' + record.data.id,
+                                                                        items: obj
+                                                                    })
+                                                                ]
+                                                            }
+                                                        ]
+                                                    }
+                                            ).show();
+                                            tabpanel.setActiveTab('tab' + record.data.id);
+                                    }
+                                });
+                                
+                                /*$request->setParameter("idcomprobante", $idcomprobante);
+                                $request->setParameter("info", $info);
+                                $this->executeEnviarSiigoConect($request);*/
+                            }
                             box.hide();
                             b.enable();
                             
@@ -314,7 +335,6 @@ Ext.define('Colsys.Ino.GridConceptosFact', {
                         failure: function(response, opts) {
                             Ext.MessageBox.alert("Colsys", "Se presento el siguiente error " + response.status);
                             box.hide();
-                            
                             b.enable();
                         }
                     });
@@ -327,60 +347,71 @@ Ext.define('Colsys.Ino.GridConceptosFact', {
     );
 
         this.addDocked(tb);
-        this.superclass.onRender.call(this, ct, position);
+        //this.superclass.onRender.call(this, ct, position);
     },
-    
-    /*selModel: {
-        selType: 'cellmodel'
-    },*/
-    width: 600,
-    //frame: true,
-    
-    plugins: [
-        new Ext.grid.plugin.CellEditing({clicksToEdit: 1})
-    ],
-    listeners: {
-        /*activate: function(ct, position){
-            
-           if(this.load==false || this.load=="undefined" || !this.load)
-           {
-
-                this.store.proxy.extraParams = {
-                    idcomprobante: this.idcomprobante
-                }
-                this.store.reload();
-                this.load=true;
-            }
-        },*/           
         beforeedit: function( plugin, e )
         {            
             var rec = e.record;
-            //console.log(rec);
+            //alert(e.field);
+            //console.log(rec.data);
             
             if(rec.data.estado>0)
                 return false;
             if(e.field=="concepto")
-            {
+            {                
                 //alert(rec.data.toSource());
-                eval("idcom=rec.data.idcomprobante");
-                Ext.getCmp("combo-conceptos").setModo('6',idcom);
+                //alert(this.idcc);
+                //console.log(this.idcc)
+                if(this.idcc=="undefined" || !this.idcc ||this.idcc==""  )
+                {   
+                    
+                    //eval("idcom=rec.data.idcomprobante");
+                    //console.log("dddd")
+                    //console.log(rec.get("idcomprobante"));
+                    //Ext.getCmp("combo-conceptos").setModo('6',idcom);                
+                
+                    Ext.getCmp("combo-conceptos").getStore().reload({params:{"modo":"6", "idcomprobante":rec.get("idcomprobante")  }});
+                }
+                else
+                {
+                    if(this.reloadCombo)
+                    {
+                        Ext.getCmp("combo-conceptos").getStore().reload({params:{"idcc":this.idcc  }});
+                        this.reloadCombo=false;
+                    }
+                }
                 
             }
         },
         edit : function(editor, e, eOpts)
         {
-            //alert(e.value);
-            //var store = Ext.getCmp("grid-facturacion").getStore();
-            //var store = this.up('grid').getStore();
-            var store = this.getStore();
             
-            if(e.field=="concepto")
-            {
-                //alert(editor.editors.items[0].field.rawValue);
-                //alert(e.value);
-                store.data.items[e.rowIdx].set('idconcepto', e.value);
-                store.data.items[e.rowIdx].set('concepto', editor.editors.items[0].field.rawValue);                
-            }
+                var store = this.getStore();
+
+                if(e.field=="concepto")
+                {
+                    //alert(editor.editors.items[0].field.rawValue);
+                    //alert(e.value);
+                    store.data.items[e.rowIdx].set('idconcepto', e.value);
+                    store.data.items[e.rowIdx].set('concepto', editor.editors.items[0].field.rawValue);                
+                }
+            
+                record= e.record;
+                var records = store.getRange() ;
+                recordLast=records[records.length-1];
+                if( recordLast.get("valor")>0 && recordLast.get("idconcepto")>0) 
+                {
+                        var r = Ext.create(store.getModel());
+                            r.set('comprobante',record.get('comprobante'));
+                            r.set('idcomprobante',record.get('idcomprobante'));
+                            r.set('idhouse',record.get('idhouse'));
+                            r.set('idccosto',record.get('idccosto'));
+                            store.insert(0, r);
+                }
+                
+            
+                            
+            
         },
         beforeitemcontextmenu: function(view, record, item, index, e)                                       
         {
@@ -479,7 +510,7 @@ Ext.define('Colsys.Ino.GridConceptosFact', {
             }
             );
             
-            if(record.data.estado<=1   )
+            /*if(record.data.estado<=1   )
             {
                 itemCm.push({
                     text: 'Generar Comprobante',
@@ -492,7 +523,7 @@ Ext.define('Colsys.Ino.GridConceptosFact', {
                             if(e == 'yes'){
                                var box = Ext.MessageBox.wait('Procesando', 'Generacion de Comprobante')
                                Ext.Ajax.request({
-                                   url: '/inoF/generarFactura" ',
+                                   url: '/inoF2/generarFactura" ',
                                    params: {                            
                                        idcomprobante: record.get('idcomprobante')
                                    },                                    
@@ -523,7 +554,7 @@ Ext.define('Colsys.Ino.GridConceptosFact', {
                 }
                 
                 )
-            }
+            }*/
             
             if(record.data.estado==6)
             {
@@ -573,6 +604,28 @@ Ext.define('Colsys.Ino.GridConceptosFact', {
                 items: itemCm
             }).showAt(e.getXY());
         }
+    },
+    setIdCc : function (idcc)
+    {
+        if(this.idcc==idcc)
+            this.reloadCombo=false;
+        else
+            this.reloadCombo=true;
+        this.idcc=idcc;
+        //Ext.getCmp("combo-conceptos").getStore().reload({params:{"idcc":this.idcc  }});
+    },
+    setIdComprobante : function (idcomprobante)
+    {
+        //alert(idcomprobante);
+        this.idcomprobantegrid=idcomprobante;
+            //alert(this.idcomprobantegrid);
+        //Ext.getCmp("combo-conceptos").getStore().reload({params:{"idcc":this.idcc  }});
     }
 
 });
+
+
+
+
+
+

@@ -7,7 +7,6 @@ class InoClientesSeaTable extends Doctrine_Table
      * Lista el número de facturas de un documento de transporte y la persona que las ingreso al sistema.
      * @author Carlos G. López M.
      */
-
     
     public static function facturasPorReporte($referencia, $idcliente, $consecutivo, $usuenvio, $fechainicial, $fechafinal) {
         $user_filter = "";
@@ -37,7 +36,8 @@ class InoClientesSeaTable extends Doctrine_Table
             $stmt = $q->execute($query);
 
             while ($row = $stmt->fetch()) {
-               $result[] = array($row["ca_usucreado"], $row["ca_cant_facturas"], $row["ca_nomoperativo"]); // $row["ca_referencia"], $row["ca_idcliente"], $row["ca_consecutivo"],
+               //$result[] = array($row["ca_usucreado"], $row["ca_cant_facturas"], $row["ca_nomoperativo"]); // $row["ca_referencia"], $row["ca_idcliente"], $row["ca_consecutivo"],
+		$result[] = array($row["ca_usucreado"], $row["ca_cant_facturas"], utf8_encode($row["ca_nomoperativo"])); // $row["ca_referencia"], $row["ca_idcliente"], $row["ca_consecutivo"],
             }
         }
         return $result;

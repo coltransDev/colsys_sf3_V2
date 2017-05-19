@@ -25,48 +25,48 @@ $j = 0;
             <?
             $i = 0;
             if (count($fijos) > 0) {
-?>
+                ?>
                 <div class="box1 qtip" id="divfijos_<?= $inoCliente->getOid() ?>" title="Debe seleccionar al menos un contacto fijo">
                     &nbsp;
                     <b>Contactos fijos</b><br />
                     <table>
-<?
+                        <?
                         //Contactos fijos
                         foreach ($fijos as $fijo) {
                             $email = $fijo->getCaEmail();
                             if ($email) {
                                 $i++;
-?>                        
+                                ?>                        
                                 <tr>
-                                    <td><?echo "" . $fijo->getCaEmail() . "" . ($fijo->getCaCargo() ? " [" . $fijo->getCaCargo() . "]" : "");?>
+                                    <td><? echo "" . $fijo->getCaEmail() . "" . ($fijo->getCaCargo() ? " [" . $fijo->getCaCargo() . "]" : ""); ?>
                                         <input id="ar_<?= $inoCliente->getOid() ?>_<?= $i ?>" type='hidden' name='ar_<?= $inoCliente->getOid() ?>_<?= $i ?>' value='<?= isset($email) ? $email : "" ?>' size="35" maxlength="50" readonly="true" />
                                     </td>
                                     <td>
                                         <input id="em_<?= $inoCliente->getOid() ?>_<?= $i ?>" type="checkbox" name='em_<?= $inoCliente->getOid() ?>[]' value='<?= $i ?>'  checked='checked' />
                                     </td>
                                 </tr>
-<?
+                                <?
                             } else {
-?>
+                                ?>
                                 <tr>
                                     <td colspan="2">
                                         <?= $fijo->getNombre(); ?>
                                         <span class="rojo">Contacto fijo sin e-mail</span>
                                     </td>
                                 </tr>
-<?
+                                <?
                             }
                         }
-?>
+                        ?>
                     </table>
                 </div>
-<?
+                <?
             }
-?>
+            ?>
             <br />
             <div class="box1 qtip" title="Seleccione un contacto">
                 <b>Otros contactos</b><br />
-<?
+                <?
                 //Contactos reporte y maestra cliente
                 $emailsReporte = $reporte ? explode(",", $reporte->getCaConfirmarClie()) : array();
                 $emailsCliente = explode(",", $cliente->getCaConfirmar());
@@ -94,77 +94,82 @@ $j = 0;
                     <br />
                     <?
                 }
-?>
+                ?>
             </div>
         </td>
     </tr>
     <tr>
         <td class="listar"><b>ID Proveedor:</b><br /><?= $inoCliente->getCaIdproveedor() ?></td>
         <td class="listar" colspan="3"><b>Proveedor:</b><br /><?= $inoCliente->getCaProveedor() ?></td>
-<?
+        <?
         if ($inoCliente->getCaPlanilla()) {
-?>
-            <td class="listar"><b>Planilla de Envío:</b><br /><div id="divplanilla_<?= $inoCliente->getOid() ?>"><?= $inoCliente->getCaPlanilla() ?></div></td>
-<?
-        }
-?>
-    </tr>
-<?
-    if ($modo == "otm") {
-?>
-    <tr>
-        <td class="listar">
-            <?
-            //if( $reporte->getCaIdetapa()!='99999' ){
-            $i = 0;
-            foreach ($etapas as $etapa) {
-                ?>
-                <input name='tipo_<?= $inoCliente->getOid() ?>' id='tipo_<?= $inoCliente->getOid() ?>' type='radio' value = '<?= $etapa->getCaIdetapa() ?>' <?= ($i++ == 0) ? 'checked="checked"' : '' ?> onclick="mostrar('<?= $inoCliente->getOid() ?>');" />
-                <?= Utils::replace($etapa->getCaEtapa()) ?>
-                <br />
-                <?
-            }
             ?>
-            <input name='tipo_<?= $inoCliente->getOid() ?>'  id='tipo_<?= $inoCliente->getOid() ?>' type='radio'  value = '00000' onclick="mostrar('<?= $inoCliente->getOid() ?>');" />
-            Orden anulado<br />
-            <input name='tipo_<?= $inoCliente->getOid() ?>'  id='tipo_<?= $inoCliente->getOid() ?>' type='radio'  value = '99999' onclick="mostrar('<?= $inoCliente->getOid() ?>');" />
-            Cierre<br />
-            <input name='tipo_<?= $inoCliente->getOid() ?>' id='tipo_<?= $inoCliente->getOid() ?>' type='radio' value = '88888' checked="checked" onclick="mostrar('<?= $inoCliente->getOid() ?>');" />
-            Status
-        </td>
-        <td class="listar" style='vertical-align:bottom;'><b>Destino OTM:</b><br />
-            <?= $inoCliente->getDestinoCont() ? $inoCliente->getDestinoCont()->getcaCiudad() : "" ?></td>
-        <td class="listar" style='vertical-align:bottom;' colspan="3">
-            <div id="divmodfchllegada_<?= $inoCliente->getOid() ?>">
-                Modificar fecha de llegada:            
-                <input type="checkbox" value="1" name="modfchllegada_<?= $inoCliente->getOid() ?>" id="modfchllegada_<?= $inoCliente->getOid() ?>" onclick="mostrarFchllegada(<?= $inoCliente->getOid() ?>)" />
-            </div>
-            <br />
-            <div id="divfchllegada_<?= $inoCliente->getOid() ?>"> <b>Fecha llegada:</b><br /><?echo extDatePicker('fchllegada_' . $inoCliente->getOid(), date("Y-m-d"));?></div>
-            <div id="divfchplanilla_<?= $inoCliente->getOid() ?>" style="display:none;"> <b>Fecha Planilla:</b><br /><?echo extDatePicker('fchplanilla_' . $inoCliente->getOid(), date("Y-m-d"));?></div>
-        </td>
+            <td class="listar"><b>Planilla de Envío:</b><br /><div id="divplanilla_<?= $inoCliente->getOid() ?>"><?= $inoCliente->getCaPlanilla() ?></div></td>
+            <?
+        }
+        ?>
     </tr>
-    <tr>
-        <td class="listar" colspan="5" style='vertical-align:bottom;'><div id="divbodega_<?= $inoCliente->getOid() ?>"> <b>Bodega:</b><br />
-            <select name='bodega_<?= $inoCliente->getOid() ?>'>
+    <?
+    if ($modo == "otm") {
+        ?>
+        <tr>
+            <td class="listar">
                 <?
-                foreach ($bodegas as $bodega) {
+                //if( $reporte->getCaIdetapa()!='99999' ){
+                $i = 0;
+                foreach ($etapas as $etapa) {
                     ?>
-                    <option value='<?= $bodega->getCaIdbodega() ?>'>
-                        <?= substr($bodega->getCaNombre(), 0, 65) ?>
-                    </option>
+                <input name='tipo_<?= $inoCliente->getOid() ?>' id='tipo_<?= $inoCliente->getOid() ?>' type='radio' value = '<?= $etapa->getCaIdetapa() ?>' <?=$etapa->getCaIdetapa()==$reporte->getCaIdetapa()?'checked':''?> onclick="mostrar('<?= $inoCliente->getOid() ?>');" />
+                    <?= Utils::replace($etapa->getCaEtapa()) ?>
+                    <br />
                     <?
                 }
                 ?>
-            </select></div>
-        </td>
-    </tr>
-    <tr >
-        <td><h1>Indicadores de Gesti&oacute;n:</h1></td>
-        <td><div id="divfchrecibo_<?= $inoCliente->getOid() ?>"> <b>Fecha Recibido Status:</b><br /><?echo extDatePicker('fchrecibido_' . $inoCliente->getOid(), "");?></div></td>
-        <td><div id="divhorarecibo_<?= $inoCliente->getOid() ?>"> <b>Hora:</b><br /><?echo extTimePicker('horarecibido_' . $inoCliente->getOid(), "");?></div></td>        
-    </tr>
-<?
+                <input name='tipo_<?= $inoCliente->getOid() ?>'  id='tipo_<?= $inoCliente->getOid() ?>' type='radio'  value = '00000' onclick="mostrar('<?= $inoCliente->getOid() ?>');" />
+                Orden anulado<br />
+                <input name='tipo_<?= $inoCliente->getOid() ?>'  id='tipo_<?= $inoCliente->getOid() ?>' type='radio'  value = '99999' onclick="mostrar('<?= $inoCliente->getOid() ?>');" />
+                Cierre<br />
+                <input name='tipo_<?= $inoCliente->getOid() ?>' id='tipo_<?= $inoCliente->getOid() ?>' type='radio' value = '88888' onclick="mostrar('<?= $inoCliente->getOid() ?>');" />
+                Status
+            </td>
+            <td class="listar" style='vertical-align:bottom;'><b>Destino OTM:</b><br />
+                <?= $inoCliente->getDestinoCont() ? $inoCliente->getDestinoCont()->getcaCiudad() : "" ?></td>
+            <td class="listar" style='vertical-align:bottom;' colspan="2">
+                <div id="divmodfchllegada_<?= $inoCliente->getOid() ?>">
+                    Modificar fecha de llegada:            
+                    <input type="checkbox" value="1" name="modfchllegada_<?= $inoCliente->getOid() ?>" id="modfchllegada_<?= $inoCliente->getOid() ?>" onclick="mostrarFchllegada(<?= $inoCliente->getOid() ?>)" />
+                </div>
+                <br />
+                <div id="divfchllegada_<?= $inoCliente->getOid() ?>"> <b>Fecha llegada:</b><br /><? echo extDatePicker('fchllegada_' . $inoCliente->getOid(), $reporte->getFchLlegadaCont()); ?></div>
+                <div id="divfchplanilla_<?= $inoCliente->getOid() ?>" style="display:none;"> <b>Fecha Planilla:</b><br /><? echo extDatePicker('fchplanilla_' . $inoCliente->getOid(), date("Y-m-d")); ?></div>
+            </td>            
+            <td class="listar" style="vertical-align:bottom;">            
+                <div id="divfchcargue_<?= $inoCliente->getOid() ?>" style="display:none;"> <b>Fecha Cargue:</b><br /><? echo extDatePicker('fchcargue_' . $inoCliente->getOid(), $reporte->getRepUltVersion()->getRepOtm()->getCaFchcargue())?></div>
+                <div id="divfchcierreotm_<?= $inoCliente->getOid() ?>" style="display:none;"> <b>Fecha Cierre Otm:</b><br /><? echo extDatePicker('fchcierreotm_' . $inoCliente->getOid(), $reporte->getRepUltVersion()->getRepOtm()->getCaFchcierre())?></div>
+                <div id="divfchsalidaotm_<?= $inoCliente->getOid() ?>" style="display:none;"> <b>Fecha Salida Otm:</b><br /><? echo extDatePicker('fchsalidaotm_' . $inoCliente->getOid(), $reporte->getRepUltVersion()->getRepOtm()->getCaFchsalida())?></div>
+            </td>
+        </tr>
+        <tr>
+            <td class="listar" colspan="5" style='vertical-align:bottom;'><div id="divbodega_<?= $inoCliente->getOid() ?>"> <b>Bodega:</b><br />
+                <select name='bodega_<?= $inoCliente->getOid() ?>'>
+                    <?
+                    foreach ($bodegas as $bodega) {
+                        ?>
+                        <option value='<?= $bodega->getCaIdbodega() ?>' <?=($reporte->getCaIdbodega()==$bodega->getCaIdbodega())?'selected="selected"':''?>>
+                            <?= substr($bodega->getCaNombre(), 0, 65) ?>
+                        </option>
+                        <?
+                    }
+                    ?>
+                </select></div>
+            </td>
+        </tr>
+        <tr >
+            <td><h1>Indicadores de Gesti&oacute;n:</h1></td>
+            <td><div id="divfchrecibo_<?= $inoCliente->getOid() ?>"> <b>Fecha Recibido Status:</b><br /><? echo extDatePicker('fchrecibido_' . $inoCliente->getOid(), ""); ?></div></td>
+            <td><div id="divhorarecibo_<?= $inoCliente->getOid() ?>"> <b>Hora:</b><br /><? echo extTimePicker('horarecibido_' . $inoCliente->getOid(), ""); ?></div></td>        
+        </tr>
+        <?
     }
     if ($modo == "otm") {
         $mensaje = "";
@@ -181,7 +186,7 @@ $j = 0;
             $mensaje = "";
         }
     }
-?>
+    ?>
     <tr>
         <td class="listar" colspan="5"><b>Ingrese mensaje exclusivo para este cliente:</b><br />
             <div id="divmessage_<?= $inoCliente->getOid() ?>"></div>
@@ -193,23 +198,22 @@ $j = 0;
         <td class="mostrar">Adjunto para Cliente : </td>
         <td class="mostrar" colspan="4"><input type='file' name='attachment_<?= $inoCliente->getOid() ?>' id='attachment_<?= $inoCliente->getOid() ?>' size="75" /></td>
     </tr>
-<?    
-    if ($modo != "otm")
-    {
-?>        
-    <tr>
-        <td class="mostrar"><h1>Indicadores de Gesti&oacute;n:</h1></td>
-        <td class="mostrar"><div id="divfchrecibo_<?= $inoCliente->getOid() ?>"> <b>Fecha Recibido Status:</b><br /><?echo extDatePicker('fchrecibido_' . $inoCliente->getOid(), "");?></div></td>
-        <td class="mostrar" colspan="3"><div id="divhorarecibo_<?= $inoCliente->getOid() ?>"> <b>Hora:</b><br /><?echo extTimePicker('horarecibido_' . $inoCliente->getOid(), "");?></div></td>        
-    </tr>
-<?
+    <?
+    if ($modo != "otm") {
+        ?>        
+        <tr>
+            <td class="mostrar"><h1>Indicadores de Gesti&oacute;n:</h1></td>
+            <td class="mostrar"><div id="divfchrecibo_<?= $inoCliente->getOid() ?>"> <b>Fecha Recibido Status:</b><br /><? echo extDatePicker('fchrecibido_' . $inoCliente->getOid(), ""); ?></div></td>
+            <td class="mostrar" colspan="3"><div id="divhorarecibo_<?= $inoCliente->getOid() ?>"> <b>Hora:</b><br /><? echo extTimePicker('horarecibido_' . $inoCliente->getOid(), ""); ?></div></td>        
+        </tr>
+        <?
     }
-?>
+    ?>
     <tr>
         <td colspan="9">
-<?
+            <?
             include_component("gestDocumental", "returnFiles", array("idsserie" => "2", "view" => "email1", "ref1" => $numRef, "ref2" => str_replace("|", "/", trim($inoCliente->getCaHbls())), "ref3" => "", "format" => "confirmaciones", "nameInput" => 'files_' . $inoCliente->getOid() . '[]'));
-?>
+            ?>
         </td>
     </tr>
     <tr height="<?= $alto + 20 ?>">
@@ -245,8 +249,8 @@ $j = 0;
 </table>
 <script>
 
-    function deleteFile(file, idtr){
-        if (window.confirm("Realmente desea eliminar este archivo?")){
+    function deleteFile(file, idtr) {
+        if (window.confirm("Realmente desea eliminar este archivo?")) {
             Ext.MessageBox.wait('Guardando, Espere por favor', '---');
             Ext.Ajax.request({
                 waitMsg: 'Guardando cambios...',
@@ -254,14 +258,14 @@ $j = 0;
                 params: {
                     idarchivo: file
                 },
-                failure: function(response, options) {
+                failure: function (response, options) {
                     var res = Ext.util.JSON.decode(response.responseText);
                     if (res.err)
                         Ext.MessageBox.alert("Mensaje", 'Se presento un error guardando por favor informe al Depto. de Sistemas<br>' + res.err);
                     else
                         Ext.MessageBox.alert("Mensaje", 'Se produjo un error, vuelva a intentar o informe al Depto. de Sistema<br>' + res.texto);
                 },
-                success: function(response, options) {
+                success: function (response, options) {
                     var res = Ext.util.JSON.decode(response.responseText);
                     $("#" + idtr).remove();
                     Ext.MessageBox.hide();

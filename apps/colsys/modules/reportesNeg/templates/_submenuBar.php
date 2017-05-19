@@ -334,16 +334,6 @@ switch ($action) {
             $i++;
         }
         
-        if($reporte->getProperty('idticket'))
-        {
-            $button[$i]["name"] = "Tarifa Pactada";
-            $button[$i]["tooltip"] = "Muestra el ticket asociado al reporte de negocio";
-            $button[$i]["image"] = "22x22/pricing.png";
-            $button[$i]["target"] = '_blank';
-            $button[$i]["onClick"] = "verTarifa('".$reporte->getProperty('idticket')."')";
-            $i++;
-        }
-        
         break;
     case "unificarReporte":
         $button[$i]["name"] = "Volver ";
@@ -471,6 +461,53 @@ switch ($action) {
 }
 ?>
 <script>
+    <?
+    if($action == "verReporte"){
+        if($reporte->getProperty('idticket')){
+            ?>
+            Ext.Ajax.request({            
+                url: '<?= url_for("pm/verEmailTicket") ?>',
+                params :	{
+                    idticket: <?=$reporte->getProperty('idticket')?>
+                },
+                failure:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if(res.err)
+                        Ext.MessageBox.alert("Mensaje",'Se presento un error guardando por favor informe al Depto. de Sistemas<br>'+res.err);
+                    else
+                        Ext.MessageBox.alert("Mensaje",'Se produjo un error, vuelva a intentar o informe al Depto. de Sistema<br>'+res.texto);
+                },
+                success:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+
+                    $('<div/>',{
+                        id:'divPpal',
+                        class: 'toolbarbtnWraper'
+                    }).appendTo(".toolbar");
+
+                    $('<a/>',{                    
+                        id: 'enlace',
+                        class: 'toolbarBtn',                    
+                        href: '/email/verEmail/id/'+res.idemail,                    
+                        target: '_blank'                    
+                    }).appendTo("#divPpal");
+
+                    $('<img/>',{                                        
+                        src: '/images/22x22/pricing.png',
+                        width: '18px',
+                        height: '18px'                    
+                    }).appendTo("#enlace");
+
+                    $('<p/>',{                                        
+                        text:'Tarifa Pactada'
+                    }).appendTo("#enlace");
+                }
+            });
+            <?
+        }
+    }
+    ?>
+    
     var idreportetmp;
     function rechazarReporte(){
         Ext.MessageBox.show({
@@ -849,7 +886,9 @@ switch ($action) {
                             alert('Se guardo correctamente el reporte');
                             if(window.confirm('Desea enviar status inmediatamente?'))
                             {
-                                if(res.transporte=='<?=Constantes::AEREO?>')
+                                if(res.impoexpo=='<?=  Constantes::EXPO?>'){
+                                    location.href="/traficos/listaStatus/modo/expo/reporte/"+res.consecutivo;
+                                }else if(res.transporte=='<?=Constantes::AEREO?>')
                                     location.href="/traficos/listaStatus/modo/aereo/reporte/"+res.consecutivo;
                                 else
                                     location.href="/traficos/listaStatus/modo/maritimo/reporte/"+res.consecutivo;

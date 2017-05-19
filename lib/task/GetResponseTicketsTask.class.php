@@ -23,6 +23,6 @@ protected function execute($arguments = array(), $options = array())
 	$databaseManager->loadConfiguration();
 	sfContext::createInstance($this->configuration)->dispatch();  
         
-	echo sfContext::getInstance()->getController()->getPresentationFor( 'helpdesk', 'responseTickets');
+	echo sfContext::getInstance()->getController()->getPresentationFor( 'pm', 'responseTickets');
   }
 }

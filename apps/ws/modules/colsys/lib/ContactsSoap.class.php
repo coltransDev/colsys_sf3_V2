@@ -19,9 +19,9 @@ class ContactsSoap {
      */
     public function getContacts( $key_secret ) {
         
-        if( $key_secret!=sfConfig::get("app_soap_secret") ){
+        /*if( $key_secret!=sfConfig::get("app_soap_secret") ){
             return "Remote: La clave no concuerda";     
-        }
+        }*/
         
         /*$sql="select distinct con.ca_email, c.ca_coltrans_std  , c.ca_colmas_std
 	from vi_clientes c
@@ -37,12 +37,12 @@ class ContactsSoap {
             //order by 2,3 limit $nreg offset $inicio";
             //        echo $sql;
         //Envío Correos Colmas
-        $sql="  SELECT DISTINCT con.ca_email, max(con.ca_idcontacto) as ca_idcontacto, c.ca_idcliente
+        /*$sql="  SELECT DISTINCT con.ca_email, max(con.ca_idcontacto) as ca_idcontacto, c.ca_idcliente
                 FROM vi_clientes c
                     INNER JOIN tb_concliente con ON c.ca_idcliente = con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%' and con.ca_propiedades IS NULL
                 WHERE (c.ca_colmas_std = 'Activo')
                 GROUP BY con.ca_email, c.ca_idcliente
-                ORDER BY ca_idcliente, ca_idcontacto";
+                ORDER BY ca_idcliente, ca_idcontacto";*/
         
         //Envío correos proveedores
         /*$sql="SELECT c.ca_email, c.ca_idcontacto, p.ca_idproveedor as ca_idcliente
@@ -53,16 +53,16 @@ class ContactsSoap {
                 WHERE p.ca_controladoporsig = 5 and (p.ca_activo_impo = true OR p.ca_activo_expo = true) and c.ca_email like '%@%' and c.ca_activo = true   
                 ORDER BY i.ca_nombre OFFSET 223";*/
         //ENVIOO CLIENTES CON OTM 2014
-        /*$sql="SELECT DISTINCT con.ca_email, max(con.ca_idcontacto) as ca_idcontacto, c.ca_idcliente
+        $sql="SELECT DISTINCT con.ca_email, max(con.ca_idcontacto) as ca_idcontacto, c.ca_idcliente
 	from vi_clientes_reduc c
         inner join tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
-        where --(c.ca_coltrans_std = 'Activo'  or c.ca_colmas_std = 'Activo' )  and 
+        where /*(c.ca_coltrans_std = 'Activo'  or c.ca_colmas_std = 'Activo' )  and */
             c.ca_idcliente in 
                 (  SELECT ca_idcliente
                 FROM tb_inoclientes_sea ics			
                 WHERE  ca_continuacion = 'OTM' and SUBSTR(ca_referencia, 16,2)='14' )
 GROUP BY con.ca_email, c.ca_idcliente
-                ORDER BY ca_idcliente, ca_idcontacto";*/
+                ORDER BY ca_idcliente, ca_idcontacto";
         $con = Doctrine_Manager::getInstance()->connection();
         $st = $con->execute($sql);
         $clientes = $st->fetchAll();

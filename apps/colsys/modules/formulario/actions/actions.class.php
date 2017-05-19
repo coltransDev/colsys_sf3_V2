@@ -498,7 +498,8 @@ class formularioActions extends sfActions {
         
         $this->empresas = array();        
         foreach ($empresas as $empresa) {
-            $this->empresas[] = array("title"=> $this->formulario->getCaTitulo(), 
+            $this->empresas[] = array(
+                "title"=> utf8_encode($this->formulario->getCaTitulo()), 
                 "idform" => $this->formulario->getCaId(),
                 "idemail" => $empresa["e_ca_idemail"],
                 "compania" => utf8_encode($empresa["i_ca_nombre"]) , 
@@ -640,40 +641,40 @@ class formularioActions extends sfActions {
     public function executeEnvioEmailsPrueba() {
         $clientes = array();
         
-        $clientes["BANCO DE BOGOTA S.A."]["ca_idcontacto"] = 11124;
-        $clientes["BANCO DE BOGOTA S.A."]["ca_email"] = "svillamizar@coltrans.com.co";
-        
-        /*$clientes["A2 INGENIERIA LTDA."]["ca_idcontacto"] = 14835;
-        $clientes["A2 INGENIERIA LTDA."]["ca_email"] = "maramos@coltrans.com.co";*/
+        /*$clientes["BANCO DE BOGOTA S.A."]["ca_idcontacto"] = 11124;
+        $clientes["BANCO DE BOGOTA S.A."]["ca_email"] = "alramirez@coltrans.com.co";*/
         
         $clientes["ACERSHOES LTDA."]["ca_idcontacto"] = 9143;
-        $clientes["ACERSHOES LTDA."]["ca_email"] = "cazambrano@coltrans.com.co";
+        $clientes["ACERSHOES LTDA."]["ca_email"] = "ampaternina@coltrans.com.co";
         
         $clientes["AGAVAL S.A"]["ca_idcontacto"] = 15571;
-        $clientes["AGAVAL S.A"]["ca_email"] = "mpulido@coltrans.com.co";
-        
-        /*$clientes["AFA MEDICAL WORLD SAS"]["ca_idcontacto"] = 14386;
-        $clientes["AFA MEDICAL WORLD SAS"]["ca_email"] = "mviasus@coltrans.com.co";*/
+        $clientes["AGAVAL S.A"]["ca_email"] = "mviasus@coltrans.com.co";
         
         $clientes["AMAREY NOVAMEDICAL S A"]["ca_idcontacto"] = 1029;
-        $clientes["AMAREY NOVAMEDICAL S A"]["ca_email"] = "pizquierdo@coltrans.com.co";
+        $clientes["AMAREY NOVAMEDICAL S A"]["ca_email"] = "cazambrano@coltrans.com.co";
         
         $clientes["ALLERS S.A."]["ca_idcontacto"] = 11784;
-        $clientes["ALLERS S.A."]["ca_email"] = "claudia.mejia@colmas.com.co";
+        $clientes["ALLERS S.A."]["ca_email"] = "apsanchez@coltrans.com.co";
         
         $clientes["ASCENSORES ANDINO SAS "]["ca_idcontacto"] = 13774;
-        $clientes["ASCENSORES ANDINO SAS "]["ca_email"] = "oviasus@coltrans.com.co";
+        $clientes["ASCENSORES ANDINO SAS "]["ca_email"] = "catherine.hernandez@colmas.com.co";
         
-        /*$clientes["ALPINA PRODUCTOS ALIMENTICIOS S A"]["ca_idcontacto"] = 15056;
-        $clientes["ALPINA PRODUCTOS ALIMENTICIOS S A"]["ca_email"] = "ampaternina@coltrans.com.co";*/
+        $clientes["ALPINA PRODUCTOS ALIMENTICIOS S A"]["ca_idcontacto"] = 15056;
+        $clientes["ALPINA PRODUCTOS ALIMENTICIOS S A"]["ca_email"] = "mramos@coltrans.com.co";
+        
+        /*$clientes["A2 INGENIERIA LTDA."]["ca_idcontacto"] = 14835;
+        $clientes["A2 INGENIERIA LTDA."]["ca_email"] = "maramos@coltrans.com.co"; 
+        
+        $clientes["AFA MEDICAL WORLD SAS"]["ca_idcontacto"] = 14386;
+        $clientes["AFA MEDICAL WORLD SAS"]["ca_email"] = "mviasus@coltrans.com.co";        
         
         $clientes["AVE COLOMBIANA S.A.S"]["ca_idcontacto"] = 649;
         $clientes["AVE COLOMBIANA S.A.S"]["ca_email"] = "olga.mosquera@colmas.com.co";
         
         $clientes["BRILLADORA EL DIAMANTE S.A"]["ca_idcontacto"] = 15529;
-        $clientes["BRILLADORA EL DIAMANTE S.A"]["ca_email"] = "apsanchez@coltrans.com.co";
+        $clientes["BRILLADORA EL DIAMANTE S.A"]["ca_email"] = "apsanchez@coltrans.com.co";*/
         
-        $idformulario = 13;
+        $idformulario = 15;
         
         $formulario = Doctrine::getTable("Formulario")->find($idformulario);        
         $empresa = $formulario->getEmpresa();
@@ -705,7 +706,7 @@ class formularioActions extends sfActions {
             echo $cli["ca_email"] . "<br>";
         }
 
-        $email = new Email();
+        /*$email = new Email();
         $email->setCaUsuenvio("Administrador");
         $email->setCaFrom($formulario->getCaNombreFormato());
         $email->setCaFromname(strtoupper($empresa->getCaNombre()));
@@ -714,7 +715,7 @@ class formularioActions extends sfActions {
         $email->setCaBodyhtml($html . "Emails enviados:<br>" . $emails_Control);
         $email->setCaTipo("Encuesta");
         $email->setCaIdcaso($idformulario);
-        $email->save();
+        $email->save();*/
         echo "enviados";        
        
         $this->setTemplate('envioEmailsPrueba');
@@ -732,23 +733,23 @@ class formularioActions extends sfActions {
 
         $con = Doctrine_Manager::getInstance()->connection();
 
-        $nreg = 120;
+        $nreg = 1;
         $conteo = 0;
         $emails_Control = "";
-        $empresa = "AGENCIA DE ADUANAS COLMAS LTDA Nivel 1";
-        $idformulario = 13;
+        $empresa = $formulario->getEmpresa();
+        $idformulario = 15;
         $asunto = "Dos minutos de su tiempo nos ayuda a prestarle un mejor servicio";
         $emailFrom = "no-response@colmas.com.co";
 
-        /*$sql = "
+        $sql = "
             SELECT c.ca_idcliente,c.ca_compania, con.ca_email,ca_coltrans_std,ca_colmas_std,con.ca_idcontacto
             FROM vi_clientes c
                 INNER join tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
-            WHERE (c.ca_colmas_std = 'Activo') and c.ca_vendedor IS NOT NULL
-            ORDER BY by 2,3 limit $nreg offset $inicio";*/
+            WHERE (c.ca_colmas_std = 'Activo') and c.ca_vendedor IS NOT NULL and ca_vendedor not in ('Administrador','Comercial','comercial-baq','comercial-med')
+            ORDER BY 2,3 limit $nreg offset $inicio";
         
         //Consulta para Reenvio
-        $sql = "
+        /*$sql = "
             SELECT c.ca_idcliente,c.ca_compania, con.ca_email, ca_coltrans_std, ca_colmas_std, con.ca_idcontacto
             FROM vi_clientes c
                     RIGHT JOIN tb_concliente con ON c.ca_idcliente = con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
@@ -834,23 +835,39 @@ class formularioActions extends sfActions {
         $nreg = 120;
         $conteo = 0;
         $emails_Control = "";
-        $idformulario = 12;
+        $idformulario = 15;
 
         /*$sql = "
             SELECT c.ca_idcliente,c.ca_compania, con.ca_email,ca_coltrans_std,ca_colmas_std,con.ca_idcontacto
             FROM vi_clientes c
                 INNER JOIN tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
-            WHERE (c.ca_coltrans_std = 'Activo') and c.ca_vendedor IS NOT NULL and con.ca_cargo != 'Extrabajador'
+            WHERE (c.ca_coltrans_std = 'Activo') and c.ca_vendedor IS NOT NULL and con.ca_cargo != 'Extrabajador' and ca_vendedor not in ('Administrador','Comercial','comercial-baq','comercial-med')
             ORDER BY 2,3 limit $nreg offset $inicio";*/
         
-        //Consulta para Reenvio
-        $sql = "
+        //Consulta para Reenvio Coltrans
+        /*$sql = "
             SELECT c.ca_idcliente,c.ca_compania, con.ca_email,ca_coltrans_std,ca_colmas_std,con.ca_idcontacto, ce.ca_id_contestador
             FROM vi_clientes c
                 INNER JOIN tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
                 LEFT JOIN encuestas.tb_control_encuesta ce ON con.ca_idcontacto=ce.ca_id_contestador and ca_idformulario = ".$idformulario."
-            WHERE (c.ca_coltrans_std = 'Activo') and c.ca_vendedor IS NOT NULL and con.ca_cargo != 'Extrabajador' and ca_id_contestador is null            
-            ORDER BY 2,3 limit $nreg offset $inicio";
+            WHERE (c.ca_coltrans_std = 'Activo') and c.ca_vendedor IS NOT NULL and con.ca_cargo != 'Extrabajador' and ca_id_contestador is null  and ca_vendedor not in ('Administrador','Comercial','comercial-baq','comercial-med')
+            ORDER BY 2,3 limit $nreg offset $inicio";*/
+        
+        
+         //Consulta para Reenvio Colmas
+        $sql = "SELECT c.ca_idcliente,c.ca_compania, con.ca_email, ca_coltrans_std, ca_colmas_std, con.ca_idcontacto
+            FROM vi_clientes c
+                    RIGHT JOIN tb_concliente con ON c.ca_idcliente = con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
+            WHERE NOT EXISTS 
+                (SELECT * FROM encuestas.tb_control_encuesta cf WHERE con.ca_idcontacto = cf.ca_id_contestador and cf.ca_idformulario = $idformulario) 
+                and c.ca_colmas_std = 'Activo' and c.ca_vendedor IS NOT NULL AND (c.ca_tipo  is NULL OR c.ca_tipo LIKE '%Proveedor%') and ca_vendedor not in ('Administrador','Comercial','comercial-baq','comercial-med')
+            ORDER BY 2,3 limit $nreg  offset $inicio";
+        /*
+        $sql = "SELECT c.ca_idcliente,c.ca_compania, con.ca_email,ca_coltrans_std,ca_colmas_std,con.ca_idcontacto
+            FROM vi_clientes c
+                INNER JOIN tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
+            WHERE c.ca_idcliente = 5622
+            ORDER BY 2,3";*/
         
         $st = $con->execute($sql);
         $clientes = $st->fetchAll();
@@ -879,7 +896,7 @@ class formularioActions extends sfActions {
                 $email->setCaTipo("Encuesta");
                 $email->setCaIdcaso($idformulario);
                 $email->save();
-                //$email->send();
+                $email->send();
                 $emails_Control.=$cliente["ca_compania"] . "->" . $cliente["ca_email"] . "<br>";
             } catch (Exception $e) {
                 $emails_Control.="No se pudo enviar " . $cliente["ca_email"] . ": porque : " . $e->getMessage() . "<br>";
@@ -1228,8 +1245,8 @@ class formularioActions extends sfActions {
                 $tarea->setCaUrl('/formulario/resultadoExt4/ca_id/'.$formulario->getCaId().'/idcliente/'.$idcliente.'/idencuesta/'.$idencuesta);
                 $tarea->setCaIdlistatarea(9);
                 $tarea->setCaFchcreado(date("Y-m-d H:i:s"));
-                $tarea->setCaFchvisible(date("Y-m-d H:i:s"));
-                $tarea->setCaFchvencimiento(date("Y-m-d H:i:s"));
+                $tarea->setCaFchvisible($request->getParameter("fchcompromiso"). " 00:00:00");
+                $tarea->setCaFchvencimiento($request->getParameter("fchcompromiso") . " 23:59:59");
                 $tarea->setCaUsucreado($this->getUser()->getUserId());
                 $tarea->setCaTitulo("Seguimiento programado Cliente: ".$cliente->getIds()->getCaNombre());
                 $tarea->setCaTexto("En el seguimiento a ".$formulario->getCaTitulo()." se programó este seguimiento.");

@@ -24,7 +24,7 @@
                 { name: 'ca_codigo', mapping: 's_ca_codigo' },
                 { name: 'ca_tipo', mapping: 's_ca_tipo' }
             ],
-            autoLoad: true,
+            autoLoad: false,
             remoteSort: false,
             proxy: {
                 type: 'ajax',
@@ -48,6 +48,14 @@
                     clicksToEdit: 1
                 })],
         listeners:{
+            render: function(ct, position){                
+                if(this.load==false || this.load=="undefined" || !this.load)
+                {
+                     this.store.reload();
+                     this.load=true;
+                 }
+                this.superclass.onRender.call(this, ct, position);
+             },
             edit : function(editor, e, eOpts)
             {
                 //alert(e.field);

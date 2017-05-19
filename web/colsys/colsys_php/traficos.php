@@ -111,7 +111,7 @@ require_once("menu.php");
              echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";             // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
              echo "<CENTER>";
              echo "<H3>$titulo</H3>";
-             echo "<FORM METHOD=post NAME='adicionar' ACTION='traficos.php' ONSUBMIT='return validar();'>";// Crea una forma con datos vacios
+             echo "<FORM METHOD=post NAME='adicionar' ACTION='traficos.php' ONSUBMIT='return validar();' enctype='multipart/form-data'>";// Crea una forma con datos vacios
              echo "<TABLE CELLSPACING=1>";
              echo "<TH Class=titulo COLSPAN=2>Datos para el nuevo Tráfico</TH>";
              echo "<TR>";
@@ -308,7 +308,28 @@ echo "</BODY>";
 elseif (isset($accion)) {                                                      // Rutina que registra los cambios en la tabla de la base de datos
     switch(trim($accion)) {                                                    // Switch que evalua cual botòn de comando fue pulsado por el usuario
         case 'Guardar': {                                                      // El Botón Guardar fue pulsado
-             if (!copy($bandera, './graficos/'.basename($bandera))) {
+            $uploadedFile = $_FILES["bandera"];
+            $url = '/srv/www/colsys_sf3/web/colsys/colsys_php/graficos/'.$uploadedFile["name"];            
+            if (move_uploaded_file($uploadedFile['tmp_name'], $url)) {
+                $bandera = './graficos/' .$uploadedFile["name"];
+                if (!$rs->Open("insert into tb_traficos (ca_idtrafico, ca_nombre, ca_bandera, ca_idmoneda, ca_cod_dian, ca_idgrupo) values(upper('$id'), '$nombre', '$bandera', '$idmoneda', $cod_dian, $idgrupo)")) {
+                    echo "<script>alert(\"" . addslashes($rs->mErrMsg) . "\");</script>";  // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'traficos.php';</script>";
+                    exit;
+                }
+            } else {
+                $errors = error_get_last();
+                echo "COPY ERROR: " . $errors['type'];
+                echo "<br />\n" . $errors['message'];
+                print("failed to copy $file...<br>\n");
+                echo "<script>alert(\"Falló la Copia del Archivo\");</script>";  // Muestra el mensaje de error
+                echo "<script>document.location.href = 'traficos.php';</script>";
+                exit;
+            }
+            /*if (!copy($bandera, $url)) {
+                 $errors= error_get_last();
+                  echo "COPY ERROR: ".$errors['type'];
+                  echo "<br />\n".$errors['message'];
                   print("failed to copy $file...<br>\n");
                   echo "<script>alert(\"Falló la Copia del Archivo\");</script>";  // Muestra el mensaje de error
                   echo "<script>document.location.href = 'traficos.php';</script>";
@@ -321,7 +342,7 @@ elseif (isset($accion)) {                                                      /
                     echo "<script>document.location.href = 'traficos.php';</script>";
                     exit;
                    }
-                  }
+                  }*/
              break;
              }
         case 'Actualizar': {                                                   // El Botón Actualizar fue pulsado

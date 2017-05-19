@@ -13,9 +13,8 @@
 class IdsAgente extends BaseIdsAgente
 {
     public function __toString(){
-        $ids = $this->getIds();        
-        return $ids->getCaNombre();
+        $ids = $this->getIds();
+        return $ids->getcaNombre();
 
     }
-
 }

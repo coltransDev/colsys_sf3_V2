@@ -9,7 +9,7 @@
             <tr>
                 <td>
                     <div style="float:left">
-                        <img style="height: auto;  max-width: 230px; width: 100%;" border="0" src="https://www.coltrans.com.co/images/pdf/<?=$empresa->getCaLogo()?>" > 
+                        <img style="height: auto;  max-width: 230px; width: 100%;" border="0" src="https://www.colsys.com.co/images/pdf/<?=$empresa->getCaLogo()?>" > 
                     </div>
                 </td>
             </tr>

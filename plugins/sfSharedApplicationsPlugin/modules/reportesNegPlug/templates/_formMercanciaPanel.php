@@ -64,7 +64,7 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047,CU049,C
                             minLength:4
                         }
 						<?
-                        
+                        }
 						if($impoexpo==Constantes::EXPO || $tipo=="4")
 						{
 						?>

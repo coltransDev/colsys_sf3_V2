@@ -60,6 +60,9 @@ require_once("menu.php");
   echo "<TR>";
   echo "  <TD Class=mostrar><A HREF='/Coltrans/Reportes/RepAuditoriaAction.do?cliente=2'; class='mudacor'>Reporte de Auditoria</A></TD><TD Class=mostrar>Informe sobre Rastros de Auditoría</TD>";
   echo "</TR>";
+echo "<TR>";
+echo "  <TD Class=mostrar><A HREF='/reportesGer/listadoFacturas/tipo/expo' class='mudacor'>Elab.Fact. Proveedores</A></TD><TD Class=mostrar>Informe con Fecha de Creación facturas proveedores</TD>";
+echo "</TR>";
   echo "</TABLE><BR><BR>";
 
   echo "<TABLE CELLSPACING=10>";

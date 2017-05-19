@@ -101,7 +101,7 @@ class ReporteTable extends Doctrine_Table {
         }
 
         if ($historial) {
-            $fecha = date("Y-m-d", time() - 86400 * 365);
+            $fecha = date("Y-m-d", time() - (86400 * 365)*2);
         }
         $q->addWhere("r.ca_fchultstatus>=? OR (r.ca_idetapa!= ? AND r.ca_idetapa!= ?) OR r.ca_idetapa IS NULL", array($fecha, "99999", "00000"));
 
@@ -116,7 +116,7 @@ class ReporteTable extends Doctrine_Table {
             case "xtrafico":
                 $q->addOrderBy("to.ca_nombre");
                 $q->addOrderBy("r.ca_modalidad");
-                $q->addOrderBy("r.ca_idproveedor");
+                //$q->addOrderBy("r.ca_idproveedor");
                 $q->addOrderBy("r.ca_orden_clie");
                 $q->addOrderBy("r.ca_consecutivo");
                 $q->addOrderBy("r.ca_version desc");
@@ -124,7 +124,7 @@ class ReporteTable extends Doctrine_Table {
             default:
                 /* $q->leftJoin("r.Proveedor p ON r.ca_idproveedor=p.ca_idtercero");
                   $q->addOrderBy("p.ca_nombre"); */
-                $q->addOrderBy("r.ca_idproveedor");
+                //$q->addOrderBy("r.ca_idproveedor");
                 $q->addOrderBy("r.ca_orden_clie");
 
                 $q->addOrderBy("r.ca_consecutivo");

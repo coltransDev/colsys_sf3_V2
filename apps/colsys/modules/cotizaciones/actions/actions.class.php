@@ -537,14 +537,16 @@ class cotizacionesActions extends sfActions {
                     'contacto' => utf8_encode($contacto["ca_nombres"] . " " . $contacto["ca_papellido"]),
                     'agente' => utf8_encode($contacto["IdsSucursal"]["Ids"]["ca_nombre"] . " » " . $contacto["IdsSucursal"]["Ciudad"]["Trafico"]["ca_nombre"] . " (" . $contacto["IdsSucursal"]["Ids"]["IdsAgente"]["ca_tipo"] . ")"),
                     'cargo' => utf8_encode($contacto["ca_cargo"]),
-                    'telefonos' => $contacto["ca_telefonos"],
+                    'telefonos' => utf8_encode($contacto["ca_telefonos"]),
                     'operacion' => utf8_encode(str_replace("|", " ", $contacto["ca_transporte"])),
                     'ciudad' => utf8_encode($contacto["IdsSucursal"]["Ciudad"]["ca_ciudad"]),
-                    'sugerido' => $contacto["ca_sugerido"]
+                    'sugerido' => utf8_encode($contacto["ca_sugerido"])
                 );
             }
             $incluido[] = $contacto["ca_idcontacto"];
         }
+        
+        //echo "<pre>";print_r($agentes);echo "</pre>";
         $this->responseArray = array("agentes" => $agentes, "total" => count($this->agentes), "success" => true);
         $this->setTemplate("responseTemplate");
     }
@@ -1296,7 +1298,7 @@ class cotizacionesActions extends sfActions {
             $trayecto = "";
             if ($tipo != "OTM-DTA") {
                 if ($linea) {
-                    $lineaStr = $linea->getIds()->getCaNombre();
+                    $lineaStr = utf8_encode($linea->getIds()->getCaNombre());
                     
                     if( $linea->getCaContratoComodato() && $producto->getCaImpoexpo()==Constantes::IMPO ){
                         $lineaStr.=" <span class='rojo'>(Requiere firma Comodato)</span>";
@@ -1307,7 +1309,7 @@ class cotizacionesActions extends sfActions {
 
                 $trayecto = utf8_encode($producto->getCaImpoexpo()) . " " . utf8_encode($producto->getCaTransporte()) . " " . utf8_encode($producto->getCaModalidad()) . " [" . utf8_encode($origen->getCaCiudad()) . " - " . utf8_encode($origen->getTrafico()->getCaNombre() . " » ");
             } else {
-                $trayecto = $producto->getCaProducto() . " " . utf8_encode($producto->getCaModalidad()) . " [" . utf8_encode($origen->getCaCiudad()) . " - " . utf8_encode($origen->getTrafico()->getCaNombre() . " » ");
+                $trayecto = utf8_encode($producto->getCaProducto()) . " " . utf8_encode($producto->getCaModalidad()) . " [" . utf8_encode($origen->getCaCiudad()) . " - " . utf8_encode($origen->getTrafico()->getCaNombre() . " » ");
             }
             if ($escala) {
                 $trayecto .= utf8_encode($escala->getCaCiudad()) . " - " . utf8_encode($escala->getTrafico()->getCaNombre() . " » ");
@@ -1459,6 +1461,8 @@ class cotizacionesActions extends sfActions {
                 $this->productos[] = $row;
             }
         }
+        
+        //echo "<pre>";print_r($this->productos);echo "</pre>";
         $this->responseArray = array("productos" => $this->productos, "total" => count($this->productos));
         $this->setTemplate("responseTemplate");
     }
@@ -2238,7 +2242,6 @@ class cotizacionesActions extends sfActions {
     }
 
     public function executeEliminarGrillaDepositos() {
-        $user_id = $this->getUser()->getUserId();
         $id = $this->getRequestParameter("id");
         if ($this->getRequestParameter("oid")) {
             $deposito = Doctrine::getTable("CotDeposito")->find($this->getRequestParameter("oid"));
@@ -2575,7 +2578,8 @@ class cotizacionesActions extends sfActions {
                 $entradaColdepositos = str_replace("{final}", "31 de Diciembre de " . ($anno + $next), $entradaColdepositos);
                 $data["entradaColdepositos"] = utf8_encode($entradaColdepositos);
 
-                $data["despedida"] = utf8_encode($textos['despedida']);
+                $data["despedida"] = $data["despedidaDefault"] = utf8_encode($textos['despedida']);
+                $data["despedidaColdepositos"] = utf8_encode($textos['despedidaColdepositos']);
                 $data["anexos"] = utf8_encode($textos['anexos']);
                 $data["anexosColtrans"] = utf8_encode($textos['anexos']);
 		$data["anexosColmas"] = utf8_encode($textos['anexosColmas']);
