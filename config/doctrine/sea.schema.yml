@@ -1,0 +1,207 @@
+InoMaestraSea:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: sea
+  tableName: tb_inomaestra_sea
+  columns:
+    ca_referencia:
+      type: string
+      primary: true
+    ca_fchreferencia: date
+    ca_impoexpo: string
+    ca_origen: string
+    ca_destino: string
+    ca_fchembarque: date
+    ca_fcharribo: date
+    ca_modalidad: string
+    ca_idlinea: integer
+    ca_motonave: string
+    ca_ciclo: string
+    ca_mbls: string
+    ca_observaciones: string
+    ca_fchconfirmacion: date
+    ca_horaconfirmacion: time
+    ca_registroadu: string
+    ca_registrocap: string
+    ca_bandera: string
+    ca_fchliberacion: date
+    ca_nroliberacion: string
+    ca_anulado: string
+    ca_mensaje: string
+    ca_fchdesconsolidacion: date
+    ca_mnllegada: string
+    ca_fchregistroadu: date
+    ca_asunto_otm: string
+    ca_mensaje_otm: string
+    ca_fchllegada_otm: date
+    ca_ciudad_otm: string
+    ca_provisional: boolean
+    ca_sitiodevolucion: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+    ca_fchliquidado: timestamp
+    ca_usuliquidado: string
+    ca_fchcerrado: timestamp
+    ca_usucerrado: string
+    ca_fchconfirmado: timestamp
+    ca_usuconfirmado: string
+    ca_fchconfirma_otm: timestamp
+    ca_usuconfirma_otm: string
+  relations:
+    InoClientesSea:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: many
+    InoEquiposSea:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: many
+    IdsProveedor:
+      local: ca_idlinea
+      foreign: ca_idproveedor
+      type: one
+    Reporte:
+      local: ca_idreporte
+      foreign: ca_idreporte
+      type: one
+    Origen:
+      local: ca_origen
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    Destino:
+      local: ca_destino
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    
+
+InoClientesSea:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: sea
+  tableName: tb_inoclientes_sea
+  columns:
+    ca_referencia:
+      type: string
+      primary: true
+    ca_idcliente:
+      type: integer
+      primary: true
+    ca_hbls:
+      type: string
+      primary: true
+    oid: integer
+    ca_idreporte: integer
+    ca_idproveedor: integer
+    ca_proveedor: string
+    ca_numpiezas: decimal
+    ca_peso: decimal
+    ca_volumen: decimal
+    ca_numorden: decimal
+    ca_confirmar: string
+    ca_login: string
+    ca_observaciones: string
+    ca_fchliberacion: date
+    ca_notaliberacion: string
+    ca_mensaje: string
+    ca_continuacion: string
+    ca_continuacion_dest: string
+    ca_idbodega: integer
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+    ca_fchliberado: timestamp
+    ca_usuliberado: string
+  relations:
+     Reporte:
+       local: ca_idreporte
+       foreign: ca_idreporte
+       type: one
+     InoMaestraSea:
+       local: ca_referencia
+       foreign: ca_referencia
+       type: one
+     Cliente:
+       local: ca_idcliente
+       foreign: ca_idcliente
+       type: one
+     Tercero:
+       local: ca_idproveedor
+       foreign: ca_idtercero
+       type: one
+     DestinoCont:
+      local: ca_continuacion_dest
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+
+
+InoEquiposSea:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: sea
+  tableName: tb_inoequipos_sea
+  columns:
+    ca_referencia:
+      type: string
+      primary: true
+    ca_idequipo:
+      type: integer
+      primary: true
+    ca_idconcepto: integer
+    ca_cantidad: integer
+    ca_observaciones: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+     InoMaestraSea:
+       local: ca_referencia
+       foreign: ca_referencia
+       type: one
+     Concepto:
+       local: ca_idconcepto
+       foreign: ca_idconcepto
+       type: one
+
+
+InoContratosSea:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: sea
+  tableName: tb_inocontratos_sea
+  columns:
+    ca_referencia:
+      type: string
+      primary: true
+    ca_idequipo:
+      type: integer
+      primary: true
+    ca_idcontrato: string
+    ca_fchcontrato: date
+    ca_inspeccion_nta: string
+    ca_inspeccion_fch: date
+    ca_observaciones: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+     InoMaestraSea:
+       local: ca_referencia
+       foreign: ca_referencia
+       type: one
+     

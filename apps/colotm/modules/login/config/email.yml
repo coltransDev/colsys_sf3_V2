@@ -1,0 +1,27 @@
+#Recuerde identar correctamente las notas y los correspondientes espacios entre renglones 
+#RECOMENDACION USE NOTEPAD++ PARA EDITAR ESTE ARCHIVO 
+email: |
+  Apreciado Cliente
+  Reciba un cordial saludo. 
+   
+  Recibimos una solicitud de password asociada con esta cuenta de correo electronico, si usted hizo esta solicitud por favor siga las intrucciones a continuacion.
+ 
+  Haga click en el siguiente vinculo donde su clave sera activada:
+ 
+  %s
+  
+  Si al hacer click no funciona por favor copie y pegue la dirección anterior en la barra de direcciones del navegador de internet, una vez este en esta pagina recibira las intrucciones para activar su cuenta. 
+  
+  Por favor tenga en cuenta las siguientes recomendaciones al crear su clave:
+  - Debe contener mínimo 5 caracteres
+  - Su clave solo es conocida por usted.
+  - Su clave debe ser personal e intransferible 
+  
+  Coltrans S.A. nunca solicitara sus claves o su información personal por correo electronico. 
+  
+  Gracias por visitar Coltrans.com.co. 
+  
+  --------------------------------------------------------------
+  Coltrans S.A.
+  %s
+  --------------------------------------------------------------

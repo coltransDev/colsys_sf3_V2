@@ -1,0 +1,16 @@
+fields:
+  clave_ant:
+    required:
+      msg:       Por favor coloque la clave anterior
+  clave:
+    required:
+      msg:       Por favor coloque la nueva clave 
+    sfStringValidator:
+      min:       6
+      min_error: La clave es muy corta, por lomenos debe tener 6 caracteres
+  clave2:
+    required:
+      msg:       Por favor confirme la nueva clave
+    sfCompareValidator:
+      check:    clave
+      compare_error: Las dos claves no concuerdan

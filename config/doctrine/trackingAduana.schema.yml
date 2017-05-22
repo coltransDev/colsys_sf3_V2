@@ -1,0 +1,516 @@
+Cotizacion1:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: trackingAduana
+  tableName: tb_cotizaciones  
+  columns:
+    ca_idcotizacion:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idcontacto: integer
+    ca_consecutivo: string
+    ca_saludo: string
+    ca_asunto: string
+    ca_entrada: string
+    ca_despedida: string
+    ca_anexos: string
+    ca_usuario: string
+    ca_empresa: string
+    ca_fuente: string
+    ca_idg_envio_oportuno: integer
+    ca_etapa: string
+    ca_idtarea: integer
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+    ca_usuanulado: string(20)
+    ca_fchanulado: timestamp
+  relations:
+    Usuario:
+      local: ca_usuario
+      foreign: ca_login
+      type: one
+    Contacto:
+      local: ca_idcontacto
+      foreign: ca_idcontacto
+      type: one
+    NotTarea:
+      local: ca_idg_envio_oportuno
+      foreign: ca_idtarea
+      type: one
+    CotProducto:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: many
+    CotContinuacion:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: many
+    CotSeguro:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: many
+    CotContactoAg:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: many
+    NotTarea:
+      local: ca_idtarea
+      foreign: ca_idtarea
+      type: one
+    CotTrayectoAduana:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: many
+    CotConceptoAduana:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: many
+    CotSeguimiento:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: many
+      orderBy: ca_fchseguimiento DESC
+     
+      
+
+CotProducto1:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: trackingAduana
+  tableName: tb_cotproductos  
+  columns:    
+    ca_idproducto:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idcotizacion: integer     
+    ca_transporte: string
+    ca_modalidad: string
+    ca_origen: string
+    ca_destino: string
+    ca_escala: string
+    ca_impoexpo: string
+    ca_imprimir: string
+    ca_producto: string
+    ca_incoterms: string
+    ca_frecuencia: string
+    ca_tiempotransito: string
+    ca_observaciones: string
+    ca_idlinea: string
+    ca_postularlinea: boolean
+    ca_etapa: string
+    ca_idtarea: integer
+    ca_vigencia: date
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp    
+  relations:
+    Cotizacion:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: one
+    CotOpcion:
+      local: ca_idproducto
+      foreign: ca_idproducto
+      type: many
+    IdsProveedor:
+      local: ca_idlinea
+      foreign: ca_idproveedor
+      type: one
+    NotTarea:
+      local: ca_idtarea
+      foreign: ca_idtarea
+      type: one
+    Origen:
+      local: ca_origen
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    Destino:
+      local: ca_destino
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    CotSeguimiento:
+      local: ca_idproducto
+      foreign: ca_idproducto
+      type: many
+      orderBy: ca_fchseguimiento DESC
+    
+    
+
+CotOpcion1:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: trackingAduana
+  tableName: tb_cotopciones  
+  columns:
+    ca_idopcion:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idproducto:
+      type: integer      
+    ca_idcotizacion: 
+      type: integer      
+    ca_idconcepto: integer
+    ca_valor_tar: decimal
+    ca_aplica_tar: string
+    ca_valor_min: decimal
+    ca_aplica_min: string
+    ca_idmoneda: string
+    ca_observaciones: string
+    ca_consecutivo: integer
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+    ca_idequipo: integer
+  relations:
+    CotProducto:
+      local: ca_idproducto
+      foreign: ca_idproducto
+      type: one
+    Concepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one
+    Equipo:
+      local: ca_idequipo
+      foreign: ca_idconcepto
+      type: one
+      class: Concepto
+
+CotRecargo1:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: trackingAduana
+  tableName: tb_cotrecargos  
+  columns:
+    ca_idcotrecargo:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idcotizacion: integer
+    ca_idproducto: integer
+    ca_idopcion: integer
+    ca_idconcepto: integer      
+    ca_idrecargo: integer      
+    ca_modalidad: string      
+    ca_idrecargo: integer
+    ca_valor_tar: decimal
+    ca_aplica_tar: string
+    ca_valor_min: decimal
+    ca_aplica_min: string
+    ca_idmoneda: string
+    ca_observaciones: string
+    ca_consecutivo: integer
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+    ca_idequipo: integer
+  relations:    
+    Concepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one
+    TipoRecargo:
+      local: ca_idrecargo
+      foreign: ca_idrecargo
+      type: one
+    Equipo:
+      local: ca_idequipo
+      foreign: ca_idconcepto
+      type: one
+      class: Concepto
+
+
+CotContinuacion1:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: trackingAduana
+  tableName: tb_cotcontinuacion  
+  columns:
+    ca_idcontinuacion:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idcotizacion: integer
+    ca_tipo: string
+    ca_modalidad: string
+    ca_origen: string
+    ca_destino: string
+    ca_idconcepto: integer
+    ca_idequipo: integer
+    ca_idmoneda: string
+    ca_frecuencia: string
+    ca_tiempotransito: string
+    ca_observaciones: string
+    ca_valor_tar: decimal
+    ca_valor_min: decimal
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    Cotizacion:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: one
+    Origen:
+      local: ca_origen
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    Destino:
+      local: ca_destino
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    Equipo:
+      local: ca_idequipo
+      foreign: ca_idconcepto
+      type: one
+      class: Concepto
+    Concepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one      
+
+
+CotContactoAg1:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: trackingAduana
+  tableName: tb_cotcontactosag
+  columns:
+    ca_idcontacto:
+      type: string
+      primary: true
+    ca_idcotizacion: 
+       type: integer
+       primary: true
+  relations:
+    Cotizacion:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: one
+    IdsContacto:
+      local: ca_idcontacto
+      foreign: ca_idcontacto
+      type: one
+
+CotSeguro1:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: trackingAduana
+  tableName: tb_cotseguro
+  columns:
+    ca_idseguro:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idcotizacion: integer
+    ca_idmoneda: string
+    ca_prima_tip: string
+    ca_prima_vlr: decimal
+    ca_prima_min: decimal
+    ca_obtencion: decimal
+    ca_observaciones: string
+    ca_transporte: string
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    Cotizacion:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: one
+
+CotSeguimiento1:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: trackingAduana
+  tableName: tb_cotseguimientos
+  columns:
+    ca_idseguimiento:
+      type: integer
+      primary: true
+    ca_fchseguimiento: timestamp
+    ca_idcotizacion: integer
+    ca_idproducto: integer
+    ca_fchseguimiento: timestamp
+    ca_login: string
+    ca_seguimiento: string
+    ca_etapa: string   
+  relations:
+    CotProducto:
+      local: ca_idproducto
+      foreign: ca_idproducto
+      type: one
+    Cotizacion:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: one
+    Usuario:
+      local: ca_login
+      foreign: ca_login
+      type: one
+
+
+#Cotizaciones aduana
+
+CotTrayectoAduana1:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: trackingAduana
+  tableName: cot.tb_trayectos_aduana
+  columns:
+    ca_idtrayecto:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idcotizacion: integer
+    ca_origen: string
+    ca_destino: string
+    ca_producto: string
+    ca_observaciones: string
+    ca_vigencia: date
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    Cotizacion:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: one
+    Origen:
+      local: ca_origen
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    Destino:
+      local: ca_destino
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+
+
+CotConceptoAduana1:
+  options:
+    symfony:
+      form: true
+      filter: false
+  generatePath: trackingAduana
+  tableName: cot.tb_conceptoaduana
+  attributes:
+    export: tables
+  columns:
+    ca_consecutivo:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idconcepto:
+      type: integer
+      notnull: true
+    ca_valor:
+      type: numeric
+      notnull: true
+    ca_aplicacion:
+      type: string
+      notnull: true
+    ca_valorminimo:
+      type: numeric
+      notnull: true
+    ca_parametro:
+      type: string
+      notnull: true
+    ca_aplicacionminimo:
+      type: string
+      notnull: true
+    ca_parametro:
+      type: string
+      notnull: true
+    ca_fchini:
+      type: date
+    ca_fchfin:
+      type: date
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_observaciones:
+      type: string
+      notnull: true
+    ca_idcotizacion: integer
+  relations:
+    Costo:
+      local: ca_idconcepto
+      foreign: ca_idcosto
+      type: one
+    Cotizacion:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: one
+    InoConcepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one
+
+CotRecargosAduana1:
+  options:
+    symfony:
+      form: true
+      filter: false
+  generatePath: trackingAduana
+  tableName: cot.tb_conceptoaduana
+  attributes:
+    export: tables
+  columns:
+    ca_consecutivo:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idpadre:
+      type: integer
+      notnull: true
+    ca_idtrayecto:
+      type: integer
+      notnull: true
+    ca_recargo: string
+    ca_contenedor: string
+    ca_valor: numeric
+    ca_aplicacion: string
+    ca_detalles: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    CotTrayectoAduana:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: many

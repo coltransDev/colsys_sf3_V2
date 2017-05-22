@@ -1,0 +1,718 @@
+/* 
+
+*/
+
+body{
+	background:#FFFFFF;
+	font-family: verdana,arial,helvetica,serif;
+	font-size:9px;
+	margin: 0px;
+	padding: 0px;
+}
+
+.headerleft{
+	float:left;
+	width:auto;
+}
+
+.headerright{
+	height: 26px;
+	float:right;
+	width:auto;
+
+}
+
+.header{
+	display:none;
+
+}
+
+.footer {
+	display:none;
+}
+
+
+input, select, textarea {
+	font-family: verdana,arial,helvetica,serif;
+   	font-size:10px;
+	padding:1px 3px;
+	background:#fff url(../images/text-bg.gif) repeat-x 0 0;
+	border:1px solid #B5B8C8;
+}
+
+
+
+input:focus, select:focus, textarea:focus {
+	border:1px solid #7eadd9;
+}
+
+
+input.button, input.submit, input.reset{
+   border: solid 1px #CCCCBB;
+   padding: 4px;
+}
+
+
+p{
+   font-family: verdana,arial,helvetica,serif;
+   font-size:9px;
+}
+
+
+
+
+img{
+	border: 0px;
+}
+
+
+
+a:link {
+   text-decoration:none;
+   color:#0000FF;
+}
+a:active {
+   text-decoration:none;
+   color:#0000FF;
+}
+a:visited {
+   text-decoration: none;
+   color: #062A7D;
+}
+
+
+form fieldset{
+	border-width:1px;
+	border-style:solid;
+	border-color:#B5B8C8;
+	background-color:#EEEEEE;
+}
+
+#indicator{
+	background:url(../images/ajax-loader.gif);
+	width: 24px;
+	height: 24px;
+}
+
+
+/*
+* Estilos estandar para mostrar informacion en listas mediante una tabla
+*/
+
+/*
+tables
+*/
+
+table.tableList {
+	background-color: #FFFFFF;
+	padding: 0px;
+	border: 1px solid #CCCCCC;
+	border-spacing: 0px;
+	border-collapse: collapse;
+}
+
+table.tableList th {
+	margin: 0px;
+	padding: 6px 4px 2px 4px;
+
+
+
+	/*
+	height: 25px;
+	font-size: 10px;
+	color: #FFFFFF;
+	background: #2E4B66;
+	*/
+	background: transparent url( ../images/layout/panel/white-top-bottom.gif) repeat-x scroll 0 -1px;
+	border:1px solid #D0D0D0;
+	color:#333333;
+
+
+}
+
+/*
+* Colores que puede tomar una fila de acuerdo al status en que se encuentre
+*/
+
+
+
+table.tableList tr.yellow{
+	background-color:#FFFFCC;
+}
+
+table.tableList tr.green{
+	background-color:#CEFFCE;
+}
+
+table.tableList tr.blue{
+	background-color:#CEE7FF;
+}
+
+table.tableList tr.orange{
+	background-color:#FFE4AE;
+}
+
+
+table.tableList tr.purple{
+	background-color:#9999CC;
+}
+
+table.tableList tr.pink{
+	background-color:#FFCCCC;
+}
+
+table.tableList tr.rowt {
+	background-color: #E6E6E6;
+}
+
+table.tableList tr.row0 {
+	background-color: #F5F5F5;
+}
+table.tableList tr.row1 {
+	background-color: #FFF;
+}
+
+table.tableList tr.row2 {
+	background-color: #D2D2D2;
+}
+
+table.tableList tr.row0:hover {
+	background-color: #f1f1f1;
+}
+table.tableList tr.row1:hover {
+	background-color: #f1f1f1;
+}
+
+
+table.tableList td {
+	border-bottom: 1px solid #e5e5e5;
+	padding: 4px;
+	color:#333333;
+}
+
+
+table.tableList td.captura {
+   text-align:left;
+   vertical-align:top;
+   background:#1D3F99;
+   color:#FFFFFF;
+}
+table.tableList td.destacar {
+   text-align:left;
+   background:#FFFFC0;
+   color:#1D3F99;
+   vertical-align:top;
+}
+table.tableList td.divisor {
+   text-align:center;
+   background:#000000;
+   color:#FFFFFF;
+}
+table.tableList td.imprimir {
+   text-align:left;
+   background:#FFFFFF;
+   color:#000000;
+}
+table.tableList td.invertir {
+   text-align:left;
+   background:#D2D2D2;
+   color:#000000;
+
+}
+table.tableList td.listar {
+   text-align:left;
+   background:#F0F0F0;
+   color:#000000;
+}
+table.tableList td.mostrar {
+   text-align: left;
+   background: #F0F0F0;
+   color: #000000;
+}
+table.tableList td.partir {
+   font-weight:bold;
+   text-align:left;
+   vertical-align:top;
+   background:#1D3F99;
+   color:#FFFFFF;
+}
+table.tableList td.periodo {
+   text-align:left;
+   background:#CCCCCC;
+   color:#000000;
+   vertical-align:top;
+}
+table.tableList td.resaltar {
+   text-align:left;
+   background:#9999CC;
+   color:#000000;
+   vertical-align:top;
+}
+table.tableList td.titulo {
+   text-align:center;
+   background:#1D3F99;
+   color:#FFFFFF;
+}
+table.tableList td.valores {
+   text-align: right;
+   vertical-align: top;
+   background: #F0F0F0;
+   color: #000000;
+}
+table.tableList th.imprimir {
+   text-align:center;
+   background:#FFFFFF;
+   color:#000000;
+}
+
+
+.boxText {
+	background-color:#FFFFFF;
+	margin:10px;
+	padding:10px;
+	border:solid #999999 1px;
+}
+
+
+/** cpanel settings **/
+
+#cpanel div.icon {
+	text-align: center;
+	margin-right: 5px;
+	float: left;
+	margin-bottom: 5px;
+}
+
+#cpanel div.icon a {
+	display: block;
+	float: left;
+	border: 1px solid #f0f0f0;
+	height: 97px;
+	width: 108px;
+	color: #666;
+	vertical-align: middle;
+	text-decoration: none;
+}
+
+#cpanel div.icon a:hover {
+	border-left: 1px solid #eee;
+	border-top: 1px solid #eee;
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	background: #f9f9f9;
+	color: #0B55C4;
+}
+
+#cpanel img  { padding: 10px 0; margin: 0 auto; }
+#cpanel span { display: block; text-align: center; font-size:11px; }
+
+
+
+/*
+* Estilos para colocar colores a DIV
+*/
+
+div.grey{
+	background:#F6F6F6;
+}
+
+/*
+* Estilos para la barra de herramientas
+*/
+
+
+.toolbar{
+	display:none;
+
+
+}
+
+.toolbarbtnWraper{
+  float:left;
+  margin-left: 5px;
+  padding: 2px 2px 2px 2px;
+}
+
+.toolbar a.toolbarBtn{
+	padding-left: 4px;
+	padding-right: 4px;
+
+	color: #333333;
+	display: block;
+	font-size:9px;
+	max-width: 100px;
+}
+
+.toolbar a.toolbarBtn:hover{
+	border: 1px solid #CCCCCC;
+
+}
+
+.submenuleft{
+	float:left;
+}
+
+.submenuright{
+	float:right;
+}
+
+
+
+/*
+.toolbar a.toolbar {
+	color: #333333;
+	text-decoration : none;
+	text-align:center;
+	font-size:10px;
+	display: block;
+	border: 1px solid #DDD;
+	width: 80px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
+.toolbar a.toolbar:hover {
+	color : #C64934;
+	border: 1px solid #c24733;
+	background-color: #f1e8e6;
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+.toolbar a.toolbar:active {
+	color : #FF9900;
+}
+
+.toolbar td{
+	vertical-align:top;
+	padding-left: 3px;
+	background-color: #F6F6F6;
+}
+.toolbar tr{
+	border-color: #CCCCBB;
+}
+
+a.toolbar {
+	color : #808080;
+	text-decoration : none;
+}
+a.toolbar:hover {
+	color : #FF6600;
+}
+a.toolbar:active {
+	color : #FF9900;
+}
+*/
+
+
+/*
+* Combos
+*/
+.search-item {
+    font:normal 11px tahoma, arial, helvetica, sans-serif;
+    padding:3px 3px 3px 3px;
+    border:1px solid #fff;
+    border-bottom:1px solid #eeeeee;
+    white-space:normal;
+    color:#555;
+	background:#FFFFFF;
+}
+.search-item h3 {
+    display:block;
+    font:inherit;
+    font-weight:bold;
+    color:#222;
+}
+
+.search-item h3 span {
+    float: right;
+    font-weight:normal;
+    margin-left: 5px;
+    width:100px;
+    display:block;
+    clear:none;
+}
+/*
+* Colores diferentes para las flias de una grilla
+*/
+.row_yellow{
+	background-color: #FFFFCC !important;
+
+}
+.row_pink{
+	background-color: #FFCCCC !important;
+}
+
+/*
+* Thumbnails
+*/
+#file-view .x-panel-body{
+	background: white;
+	font: 11px Arial, Helvetica, sans-serif;
+}
+#file-view .thumb{
+	/*background: #dddddd;*/
+	padding: 3px;
+}
+#file-view .thumb img{
+	height: 32px;
+	width: 40px;
+}
+#file-view .thumb-wrap{
+	float: left;
+	margin: 4px;
+	margin-right: 0;
+	padding: 5px;
+}
+#file-view .thumb-wrap span{
+	display: block;
+	overflow: hidden;
+	text-align: center;
+}
+
+#file-view .x-view-over{
+    border:1px solid #dddddd;
+    background: #efefef url(../../resources/images/default/grid/row-over.gif) repeat-x left top;
+	padding: 4px;
+}
+
+#file-view .x-view-selected{
+	background: #eff5fb url(images/selected.gif) no-repeat right bottom;
+	border:1px solid #99bbe8;
+	padding: 4px;
+}
+#file-view .x-view-selected .thumb{
+	background:transparent;
+}
+
+#file-view .loading-indicator {
+	font-size:11px;
+	background-image:url('../../resources/images/default/grid/loading.gif');
+	background-repeat: no-repeat;
+	background-position: left;
+	padding-left:20px;
+	margin:10px;
+}
+
+
+/*
+* Iconos usados en toolbars
+*/
+
+.add{
+	background-image:url('../images/fam/add.png') !important;
+}
+
+.folder{
+	background-image:url('../images/fam/folder.png') !important;
+}
+
+.delete{
+	background-image:url('../images/fam/delete.png') !important;
+}
+
+.disk{
+	background-image:url('../images/fam/disk.png') !important;
+}
+
+.upload-icon {
+	background: url('../images/fam/image_add.png') no-repeat 0 0 !important;
+}
+
+.refresh {
+	background: url('../images/fam/arrow_refresh.png') no-repeat 0 0 !important;
+}
+
+
+.tick {
+	background: url('../images/fam/tick.png') no-repeat 0 0 !important;
+}
+
+.import {
+	background: url('../images/fam/table_go.png') no-repeat 0 0 !important;
+}
+
+.textfield_add {
+	background: url('../images/fam/textfield_add.png') no-repeat 0 0 !important;
+}
+
+.page_white_edit {
+	background: url('../images/fam/page_white_edit.png') no-repeat 0 0 !important;
+}
+
+.information {
+	background: url('../images/fam/information.png') no-repeat 0 0 !important;
+}
+
+
+
+.x-grid3-td-titulo .topic {
+    padding-left:20px;
+    background:transparent url('../images/16x16/post.gif') no-repeat 0 2px !important;
+}
+
+.x-grid3-td-concepto .recargo {
+    padding-left:20px;
+    background:transparent url('../images/16x16/elbow-end.gif') no-repeat 0 2px !important;
+}
+
+.btnComentarios{
+	padding-left:50px;
+	font-size:9px;
+	color:#676767;
+
+
+}
+
+
+.x-form-file-wrap {
+    position: relative;
+    height: 22px;
+}
+.x-form-file-wrap .x-form-file {
+	position: absolute;
+	right: 0;
+	moz-opacity: 0;
+	filter:alpha(opacity: 0);
+	opacity: 0;
+	z-index: 2;
+    height: 22px;
+}
+.x-form-file-wrap .x-form-file-btn {
+	position: absolute;
+	right: 0;
+	z-index: 1;
+}
+.x-form-file-wrap .x-form-file-text {
+    position: absolute;
+    left: 0;
+    z-index: 3;
+    color: #777;
+}
+
+#panel-noticias-wrap{
+	margin: 10px;
+
+}
+
+
+hr {
+  border: 1px;
+  width: 95%;
+  background-color:#333333;
+  height:1px;
+}
+
+.story{
+	font-size: 11px;
+	text-align:left;
+	font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
+	margin-left: 20px;
+	margin-right: 20px;
+
+}
+
+.story_coment{
+	font-size: 11px;
+	color: #2E4B66;
+	text-align:left;
+	cursor:pointer;
+}
+
+.response_status{
+	background:#ECEFF5;
+	width: 400px;
+	margin-top: 2px;
+	padding: 4px;
+}
+
+body.x-border-layout-ct{
+	background:#FFFFFF;
+}
+
+/*
+Estilos usados en el programa de traficos
+*/
+
+.preview .x-panel-body h4.post-author {
+    font-weight:normal;
+    color:#555;
+    font-size:11px;
+}
+.preview .x-panel-body span.post-date {
+    font-weight:normal;
+    color:#555;
+    float:right;
+    font-size:11px;
+}
+.preview .x-panel-body div.post-data {
+    background:#f1f2f4;
+    padding:5px;
+    border-bottom:1px solid #dadadb;
+}
+
+div.post-info{
+    background:#F9FAFB;
+    padding:5px;
+    border:1px solid #dadadb;
+	margin: 12px,
+}
+
+
+
+.preview .x-panel-body div.post-body {
+    padding:10px;
+}
+
+.x-grid3-row-body p {
+    margin:5px 20px 10px 25px !important;
+    color:#555;
+}
+
+
+.homePanel{
+	padding:0 12px 0 12px;
+	font-size: 9px;
+	color:#666666;
+
+}
+
+.content{
+	margin: 20px;
+}
+
+.rojo{
+	color: #FF0000;
+}
+
+/*
+Errores
+*/
+
+ul.error_list{
+	background-color:#FF0000;
+	color:#FFFFFF;
+}
+
+.error{
+	background-color:#FF0000;
+	color:#FFFFFF;
+}
+
+/*
+
+*/
+.group_expanded{
+	padding: 2px 2px 2px 15px;
+
+	cursor:pointer;
+	background: transparent url(../images/group-expand-sprite.gif) no-repeat scroll 3px -49px;
+}
+
+.group_collapsed{
+	padding: 2px 2px 2px 15px;
+
+	cursor:pointer;
+	background: transparent url(../images/group-expand-sprite.gif) no-repeat scroll 3px 0px;
+
+
+}

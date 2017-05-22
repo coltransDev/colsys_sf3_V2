@@ -1,0 +1,7 @@
+autoload:
+  Mobile:
+    name:      MobileDetect
+    path:      %SF_LIB_DIR%/vendor/MobileDetect
+    recursive: true
+
+

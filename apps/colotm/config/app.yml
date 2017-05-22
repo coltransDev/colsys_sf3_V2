@@ -1,0 +1,25 @@
+# You can find more information about this file on the symfony website:
+# http://www.symfony-project.org/reference/1_4/en/11-App
+
+# default values
+#all:
+all:
+  digitalFile:
+    root:  /srv/www/digitalFile/
+
+  branding:
+    template: coltrans
+    url: www.coltrans.com.co
+    name: Coltrans S.A.S. - Colmas Ltda.
+    from: serclientebog@coltrans.com.co
+
+  smtp:
+    host: smtp.coltrans.com.co
+    user:  tasas_cambios
+    passwd:  tasas_cambios
+    port: 25
+#    debugAddress: abotero@coltrans.com.co
+    
+  ldap:
+    host: 10.192.1.83
+    auth_enabled: true

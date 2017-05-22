@@ -1,0 +1,20 @@
+# You can find more information about this file on the symfony website:
+# http://www.symfony-project.org/reference/1_4/en/13-View
+
+default:
+  http_metas:
+    content-type: text/html
+
+  metas:
+    title:        Tracking OTM 
+    robots:       index, follow
+    description:  sistema de tracking 
+    keywords:     tracking, cargo
+    language:     es
+
+  stylesheets:    [tracking, ext/css/ext-all, ext/css/xtheme-gray]
+
+  javascripts:    [tracking, ext/adapter/ext/ext-base, ext/ext-all, tracking ]
+
+  has_layout:     on
+  layout:         layout
