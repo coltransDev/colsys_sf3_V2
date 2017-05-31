@@ -117,7 +117,7 @@ foreach ($guias as $key => $guia){
     $pdf->SetFont ( 'Arial', '', $font_size );
     $pdf->SetXY(18, 38 + $marg);
     if ($reporte->getCaModalidad() == "DIRECTO" or $guiahija){
-        $shipper = $reporte->getContacto()->getCliente()->getCaCompania()."\n";
+        $shipper = html_entity_decode($reporte->getContacto()->getCliente()->getCaCompania())."\n";
         $shipper.= "Nit: ". number_format($reporte->getContacto()->getCliente()->getCaIdalterno(), 0)."-".$reporte->getContacto()->getCliente()->getCaDigito()."\n";
         $shipper.= $reporte->getContacto()->getCliente()->getDireccion()."\n";
         $shipper.= "Tels.: ". $reporte->getContacto()->getCliente()->getCaTelefonos()."\n";
