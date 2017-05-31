@@ -144,7 +144,7 @@ class comunicacionesActions extends sfActions
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         
         //$idComunicado = $this->getRequestParameter("id");
-        $idComunicado = 26;
+        $idComunicado = 27;
         $conteo = 0;
         $emails_Control = "";
         
@@ -223,7 +223,7 @@ class comunicacionesActions extends sfActions
         /*++++++++ Remite mensaje para aprobación ++++++++++++++++++*/
         /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
         
-        /*$mensaje = "Se remite copia para aprobación.<br/>";        
+        $mensaje = "Se remite copia para aprobación.<br/>";        
         $email = new Email();
         $email->setCaUsuenvio("Administrador");
         $email->setCaFrom($emailFrom);
@@ -235,14 +235,14 @@ class comunicacionesActions extends sfActions
         //$email->setCaAttachment( "tmp/COMUNICADO_DE_PRENSA_TARIFAS_SPRB.pdf" );        
         $email->setCaBodyhtml($mensaje.$html);
         $email->setCaTipo($tipo_email);               
-        $email->save();*/
+        $email->save();
 
 
         /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
         /*++++++++ Remite mensaje Informativo a Colaboradores ++++++*/
         /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
         
-        $mensaje = "Se remite copia a Empleados Grupo Empresarial para información.<br/>";        
+        /*$mensaje = "Se remite copia a Empleados Grupo Empresarial para información.<br/>";        
         //$mensaje = "Se envia mensaje a Gerentes y Jefes de sucursales Colmas y Coltrans.</br>";
         //$mensaje = "Se remite copia a Empleados Colmas para información.";
 
@@ -265,7 +265,7 @@ class comunicacionesActions extends sfActions
         $email->addTo("empleados-nal@coldepositos.com.co");
         $email->setCaBodyhtml($html);
         $email->setCaTipo($tipo_email);
-        $email->save();
+        $email->save();*/
         //$email->send();
         
         
@@ -332,155 +332,155 @@ class comunicacionesActions extends sfActions
         
         
         $data[]=array(
-            "title"=>"1. RESOLUCION 10 DE 2017",
-            "image"=>"https://rauldlacruz.files.wordpress.com/2015/02/ret-iva.jpg",
-            "content"=>'Con Resolución 10 de 2017, la Dirección de Impuestos y Aduanas Nacionales, estableció los códigos para las modalidades de importación, que de acuerdo con la última reforma tributaria quedaron con una tarifa del 16% de IVA,  aplicable a los contratos de construcción e infraestructura para contratos de infraestructura de transporte suscritos por las entidades públicas o estatales.'
-            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/Res010-2017.pdf" target="_blank">Ver Resolución</a>'
+            "title"=>"1. DECRETO 593 DE 2017",
+            "image"=>"http://www.sic.gov.co/sites/default/files/styles/910_x_520/public/tumb/042017/RETIQ_2.png?itok=9De9KiwY ",
+            "content"=>'El Ministerio de Comercio Industria y Turismo, prorrogó la creación de un área para mantener actualizados los inventarios de los reglamentos técnicos y requisitos sanitarios vigentes.'
+            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/Dec593-2017.pdf" target="_blank">Ver Decreto</a>'
             );        
         $data[]=array(
-            "title"=>"2. RESOLUCION 17 DE 2017",
-            "image"=>"http://www.noticosta.com/login/Administrador/insertar/imgGaleria/9c1048_image004.jpg",
-            "content"=>'Con resolución 17 de 2017, la DIAN reglamentó la entrega de las Declaraciones de Importación de confecciones y calzado a los Observadores para que generen alertas sobre posibles operaciones de contrabando y fraude aduanero.'
-                . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/Res017-2017.pdf" target="_blank">Ver Resolución</a>'
-            );        
-        $data[]=array(
-            "title"=>"3. COMUNICADO DIAN",
-            "image"=>"http://www.clipartkid.com/images/90/change-management-kickstarter-checklist-change-management-change-8rUUWT-clipart.jpg",
-            "content"=>'Con ocasión de la implementación de los Sistemas Informaticos aduaneros, que se requieren para la aplicación del Decreto 390 de 2016, la DIAN realizó diagnóstico de los cambios que se realizarán, entre los cuales se encuentran: automatización de trámites que actualmente se realizan en forma manual, ajustes a la plataforma del proceso de importación, inclusión de nuevos operadores de comercio exterior.  Dentro de los servicios informáticos que están conceptualizándose se encuentran: Régimen de Importación y depósito, carga e importaciones, tráfico postal y envios de entrega rápida.'
-            .'<a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/ComunicadoDIAN-Sistemas_Informaticos.pdf" target="_blank">Ver Comunicado</a>'
-            );        
-        $data[]=array(
-            "title"=>"4. CONCEPTO JURIDICO 2252 DE 2017",
-            "image"=>"http://lapatriaenlinea.com/fotos/02_2015/211069_1_12.jpg",
-            "content"=>'Mediante concepto 2252 de 2017 la División de Doctrina de la Dirección de Impuestos y Aduanas Nacionales, aclaró que la constitución y/o renovación de las garantías para el cumplimiento de obligaciones se debe calcular sobre el valor en salarios mínimos legales vigentes en el a?o que se constituye o renueva la garantía.'
-                .'<a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/Concepto2252-2017.pdf" target="_blank">Ver Concepto</a>'
-            );        
-        $data[]=array(
-            "title"=>"5. CIRCULAR COLMAS",
+            "title"=>"2. RESOLUCION 544 DE 2017",
             "image"=>"",
-            "content"=>'Con Circular 002 -2017 COLMAS informa a sus clientes sobre la generación de facturas adicionales que está realizando puerto, cuando el contenedor es devuelto vacío en sus instalaciones.'
-            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/CIRCULAR_COLMAS_02-2017.pdf" target="_blank">Ver Circular</a>'
+            "content"=>'Mediante Resolución 544 de 2017, el Ministerio de Comercio Industria y Turismo, se?aló que las importaciones temporales que requieren vistos buenos, autorizaciones o permisos deberán obtener registro de importación; los productos en condiciones especiales o saldos, deberán presentar licencia de importación; los vehículos que se importen como prototipos o para exhibiciones en ferias no requieren registro ni licencia de importación; cuando se pretenda finalizar importaciones temporales con reexportación en el mismo estado o con importación ordinaria o con franquicia, las mercancías sean consideradas saldo o productos en condiciones especiales de mercado se debe obtener la licencia de importación, salvo que se acredite ante la DIAN que al momento de la importación las mercancías eran nuevas, no consideradas saldo y  por lo tanto no requerirían licencia, o cuando se acredite que se obtuvo el registro o licencia de importación, caso en el cual no se tramitarán nuevamente. Solo se otorga licencia para los vehículos clasificables por las subpartidas 87.05.10.00.00, 87.05.20.00.00, 87.05.40.00.00 y 87.05.90.90.00, que tengan una vida de servicio inferior o igual a 15 a?os y estén concebidos para uso fuera de la red de carreteras; si supera los 15 a?os, se deberá consultar y evaluar por parte del comité con la declaración de importación temporal con la cual ingresaron (solo importación temporal o cuando haya finalizado en una zona franca).'
+                . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/Res544-2017.pdf" target="_blank">Ver Resolución</a>'
             );        
-        /*$data[]=array(
-            "title"=>"6. CONCEPTO JURIDICO 514 DE 2017",
+        $data[]=array(
+            "title"=>"3. RESOLUCION 40259 DE 2017",
+            "image"=>"https://aciemquindio.org/files/noticias/b20140731091230.png",
+            "content"=>'El Ministerio de Minas y Energía, modificó el ANEXO II del Reglamento Técnico de Instalaciones Eléctricas, Retie.'
+            .'<a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/Res40259-2017.pdf" target="_blank">Ver Resolución</a>'
+            );        
+        $data[]=array(
+            "title"=>"4. RESOLUCION 14837 DE 2017",
             "image"=>"",
-            "content"=>'Mediante concepto jurídico 514 la DIAN, indicó los artículos del Decreto 390 de 2016 que no fueron reglamentados entrarán a regir cuando entre en funcionamiento el sistema informático aduanero ajustado a la nueva reglamentación.'
-            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/Concepto514-2017.pdf" target="_blank">Ver Concepto</a>'
+            "content"=>'Con resolución 14837 de 2017, la Superintendencia de Industria y Comercio, se?aló las obligaciones de los organismos de inspección y certificación deben registrar en el aplicativo SICERCO, la información de los certificados de conformidad de los bienes sujetos a reglamento técnico.'
+                .'<a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/Res14837-2017.pdf" target="_blank">Ver Resolución</a>'
+            );        
+        $data[]=array(
+            "title"=>"5. RESOLUCION 1921 DE -2017",
+            "image"=>"",
+            "content"=>'Con resolución 1921 de 2017 la Secretaría de la CAN, modifica el Anexo II de la Resolución 1457  donde se establecen las rutas y plazos autorizados para el tránsito internacional desde el Ecuador.'
+            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/Res1921-2017.pdf" target="_blank">Ver Resolución</a>'
+            );        
+        $data[]=array(
+            "title"=>"6. CIRCULAR 000011 DE 2017",
+            "image"=>"",
+            "content"=>'El Ministerio de Comercio Industria y Turismo, extendió el plazo para el plan piloto para la presentación de estudios de demostración de los Sistemas Especiales de Importación y Exportación.'
+            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/Circular11-2017.pdf" target="_blank">Ver Circular</a>'
+            );
+        $data[]=array(
+            "title"=>"7. CONCEPTO JURIDICO 228 DE 2017",
+            "image"=>"",
+            "content"=>'La DIAN en el concepto jurídico 228 de 2017 recordó que los requisitos para operadores de comercio exterior no han sido reglamentados.'
+            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/Concepto228-2017.pdf" target="_blank">Ver Concepto</a>'
+            );
+        $data[]=array(
+            "title"=>"8. SENTENCIA DEL CONSEJO DE ESTADO 20100078101",
+            "image"=>"",
+            "content"=>'El Consejo de Estado mediante sentencia 20100078101 indicó que para efectos aduaneros los declarantes deben conservar las facturas por el término de 5 a?os.'
+            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/Sentencia20100078101.pdf" target="_blank">Ver Sentencia</a>'
+            );
+        $data[]=array(
+            "title"=>"9. PROYECTO DE DECRETO",
+            "image"=>"",
+            "content"=>'El Ministerio de Hacienda y Crédito Público, publicó proyecto de Decreto que  modifica el decreto 1745 de 2016, aplicable a las importaciones de confecciones y calzado.'
+            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/ProyectoDecreto1745-2016.pdf" target="_blank">Ver Proyecto</a>'            
             );
         /*$data[]=array(
-            "title"=>"7. CERTIFICACION 02 DE 2016",
-            "image"=>"",
-            "content"=>'El Departamento Administrativo Nacional de Estadística certificó los precios promedio de bebidas alcohólicas para el 2017'
-            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/Cert02-2016.pdf" target="_blank">Ver Certificación</a>'
-            );
-        $data[]=array(
-            "title"=>"8. CONCEPTO JURIDICO 33403 DE 2016",
-            "image"=>"http://www.revistazonafranca.com/wp-content/uploads/2012/08/LogoRevistaZonaFranca.png",
-            "content"=>'La División de Doctrina de la DIAN aclaró que la inspección previa aplica para las operaciones de importación realizadas en zona franca.'
-            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/Concepto33403-2016.pdf" target="_blank">Ver Concepto</a>'
-            );
-        $data[]=array(
-            "title"=>"9. CONCEPTO JURIDICO 313 DE 2017",
-            "image"=>"",
-            "content"=>'La DIAN explicó cuáles son los artículos del Decreto 390 de 2016 que se encuentran vigentes de acuerdo con el artículo 674 del se?alado decreto y las resoluciones reglamentarias expedidas a la fecha.'
-            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/Concepto313-2017.pdf" target="_blank">Ver Concepto</a>'            
-            );
-        $data[]=array(
             "title"=>"10. CONCEPTO JURIDICO 36802 DE 2017",
             "image"=>"",
             "content"=>'La DIAN mediante concepto jurídico 36802 de 2017 aclaró que los contenedores se pueden introducir al país como equipo de transporte o como mercancía.'
-            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/Concepto36802-2017.pdf" target="_blank">Ver Concepto</a>'
+            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/Concepto36802-2017.pdf" target="_blank">Ver Concepto</a>'
             );
         $data[]=array(
             "title"=>"11. PROYECTO DE DECRETO MODIFICATORIO 390",
             "image"=>"",
             "content"=>'El proyecto de decreto modificatorio del Decreto 390 fue publicado en la página de la DIAN.   Este proyecto modifica varios artículos del mencionado Decreto.'
-            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/Proyecto390.pdf" target="_blank">Ver Proyecto</a>'
+            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/Proyecto390.pdf" target="_blank">Ver Proyecto</a>'
             );
         $data[]=array(
             "title"=>"12. SENTENCIA 2013-00187",
             "image"=>"http://conorca.com/images/petroleo/Exploracin-petrolera.jpg",
             "content"=>'Mediante Sentencia 2013-00187, el Consejo de Estado se?aló que la exención de arancel en la importación de bienes destinados a la exploración de minas o petróleo, aplica cuando se realice directamente actividades de exploración.'
-            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/Sentencia2013-00187.pdf" target="_blank">Ver Sentencia</a>'
+            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/Sentencia2013-00187.pdf" target="_blank">Ver Sentencia</a>'
             );        
         /*$data[]=array(
             "title"=>"13. CIRCULAR 28 DE 2016",
             "image"=>"",
             "content"=>'El Ministerio de Comercio, Industria y Turismo con la circular 28 de 2016 recuerda la entrada en vigencia del reglamento técnico para jabones y detergentes establecido mediante Resolución 689 de 2016.'
-            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/Circular28-2016.pdf" target="_blank">Ver Circular</a>'
+            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/Circular28-2016.pdf" target="_blank">Ver Circular</a>'
             );
         $data[]=array(
             "title"=>"14. CONCEPTO JURIDICO 963 DE 2016",
             "image"=>"",
             "content"=>'La DIAN con concepto jurídico 963 de 2016 confirmó que el incumplimiento en el pago de los tributos aduaneros y sanciones en el plazo previsto genera la pérdida inmediata de las prerrogativas del UAP.'
-            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/Concepto963-2016.pdf" target="_blank">Ver Concepto</a>'
+            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/Concepto963-2016.pdf" target="_blank">Ver Concepto</a>'
             );
         $data[]=array(
             "title"=>"15. CONCEPTO JURIDICO 23934 DE 2016",
             "image"=>"",
             "content"=>'Mediante concepto jurídico 23934 de 2016, la Oficina Jurídica de la DIAN, informa que el plazo para pagar las cuotas es el día del vencimiento del plazo, si se genera después de esta fecha generará intereses moratorios.'
-            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/Concepto23934-2016.pdf" target="_blank">Ver Concepto</a>'
+            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/Concepto23934-2016.pdf" target="_blank">Ver Concepto</a>'
             );
         /*$data[]=array(
             "title"=>"16. PROYECTO DE NORMA",
             "image"=>"",
             "content"=>'La Dirección de Impuestos y Aduanas Nacionales, expidió el proyecto de norma aplicable a Importadores que quieran obtener la autorización como Operador Económico Autorizado.'
-            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/ProyectoNormaImportadores.pdf" target="_blank">Ver Proyecto</a>'
+            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/ProyectoNormaImportadores.pdf" target="_blank">Ver Proyecto</a>'
             );
         $data[]=array(
             "title"=>"17. RESOLUCION 263 DEL 2016",
             "image"=>"https://www.logismarket.cl/ip/simma-cables-de-acero-cables-de-acero-626615-FGR.jpg",
             "content"=>'En la Resolución 263 del 2016 resolvió no revocar la resolución que impuso derechos antidumping provisionales a las importaciones de torón y cables de acero originarios de China.'            
-            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/Res263-2016.pdf" target="_blank">Ver Resolución</a>'
+            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/Res263-2016.pdf" target="_blank">Ver Resolución</a>'
             );
         
         $data[]=array(
             "title"=>"18. BOLETIN 8 DEL 2016",
             "image"=>"",
             "content"=>'El Banco de la República modifico Circular Reglamentaria Externa 83 del 2000.'
-            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/Boletin8-2016.pdf" target="_blank">Ver Boletín</a>'
+            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/Boletin8-2016.pdf" target="_blank">Ver Boletín</a>'
             );
         
         $data[]=array(
             "title"=>"19. CIRCULAR COLMAS 01 DE 2016",
             "image"=>"http://www.legiscomex.com/BancoMedios/Imagenes/exportacion-cartagena-legiscomex.int.jpg",
             "content"=>'En circular adjunto COLMAS 01 expone los principales cambios y transitorios de la Nueva Reglamentación Aduanera.'
-            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/Circular01-2016.pdf" target="_blank">Ver Circular</a>'
+            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/Circular01-2016.pdf" target="_blank">Ver Circular</a>'
             );
         
         $data[]=array(
             "title"=>"20. CONCEPTO 31929 DE 2015",
             "image"=>"https://claudiacao.files.wordpress.com/2011/05/3333.jpg",
             "content"=>'Mediante Concepto jurídico 31929 del 2015 la DIAN, define varios conceptos establecidos en la Resolución 62 de 2014, relacionados con Contratos de Tecnología, así como recuerda el procedimiento para su registro.'
-            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/Concepto31929.pdf" target="_blank">Ver concepto</a>'
+            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/Concepto31929.pdf" target="_blank">Ver concepto</a>'
             );
         
         $data[]=array(
             "title"=>"21. CIRCULAR 23 DE 2015",
             "image"=>"",
             "content"=>'Con Circular 23 de 2015, el Ministerio de Comercio, Industria y Turismo reitera que en las solicitudes de registro o licencia de importación, es necesario que se diligencie la casilla ?solicitud visto bueno a Entidad?, en esta casilla se deben registrar todos los vistos buenos que requiera el producto de importación, de acuerdo con lo señalado en el Decreto 925 del 2013.'
-               . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/Circular23-2015.pdf" target="_blank">Ver Circular</a>'
+               . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/Circular23-2015.pdf" target="_blank">Ver Circular</a>'
             );
         
         $data[]=array(
             "title"=>"22. CONCEPTO TECNICO 1",
             "image"=>"http://image.slidesharecdn.com/aulasvirtuales-120828171402-phpapp02/95/int-exportaciones-27-728.jpg?cb=1346174200",
             "content"=>'La División de doctrina de la DIAN, aclaró a través del Concepto Técnico 1 del 2015, que no procede el endoso del certificado de origen ni de una factura comercial que contiene declaración de origen.'
-            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/Concepto1.pdf" target="_blank">Ver concepto</a>'
+            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/Concepto1.pdf" target="_blank">Ver concepto</a>'
             );
         
         $data[]=array(
             "title"=>"23. CIRCULAR COLMAS 036",
             "image"=>"",
             "content"=>'La CIRCULAR COLMAS 036, informa sobre los requisitos que serán exigidos para el trámite ante el ANLA a partir del 2 de enero de 2016.'
-            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/Circular036.pdf" target="_blank">Ver comunicado</a>'            
+            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/Circular036.pdf" target="_blank">Ver comunicado</a>'            
             );
         
         $data[]=array(
             "title"=>"24. COMUNICADO PRENSA INVIMA ",
             "image"=>"http://acian.com.co/wp-content/uploads/2014/02/TRAMITES-INVIMA4.png",
             "content"=>'El Comunicado de prensa INVIMA informa el cierre de término para radicar trámites ante el INVIMA. '
-            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201704noticolmas/Comunicado_Prensa_INVIMA.pdf" target="_blank">Ver circular</a>'
+            . ' <a style="color:#0070c0" href="https://www.colsys.com.co/images/publicidad/colmas/201705noticolmas/Comunicado_Prensa_INVIMA.pdf" target="_blank">Ver circular</a>'
             );*/
         
         $this->data=$data;
