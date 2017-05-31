@@ -2083,11 +2083,11 @@ class cotizacionesActions extends sfActions {
                 $aduana->setCaIdconcepto($this->getRequestParameter("idconcepto"));
             }
 
-            if ($this->getRequestParameter("valor")) {
+            if ($this->getRequestParameter("valor")!="" ) {
                 $aduana->setCaValor($this->getRequestParameter("valor"));
             }
 
-            if ($this->getRequestParameter("valorminimo")) {
+            if ($this->getRequestParameter("valorminimo")!="") {
                 $aduana->setCaValorminimo($this->getRequestParameter("valorminimo"));
             }
 
