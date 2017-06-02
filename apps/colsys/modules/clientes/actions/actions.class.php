@@ -3046,7 +3046,7 @@ class clientesActions extends sfActions {
                 ->where("d.ca_anno = ?", $anioactual)
                 ->fetchOne();
 
-        $minimo = $minimol->getCaSmlv();
+        $minimo = ($minimol)?$minimol->getCaSmlv():0;
 
         $data = array();
         foreach ($blcclientes as $blccliente) {
