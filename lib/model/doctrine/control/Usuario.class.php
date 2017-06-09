@@ -428,7 +428,7 @@ class Usuario extends BaseUsuario {
     public function getGrupoEmpresarial() {
         
         $sucursal = Doctrine::getTable("Sucursal")->find($this->getCaIdsucursal());
-        $grupoColtrans = array(1,2,3,5,6,8,11);
+        $grupoColtrans = array(1,2,3,5,6,8,11,12);
         
         if(in_array($sucursal->getCaIdempresa(), $grupoColtrans))
             $idempresa = $grupoColtrans;
