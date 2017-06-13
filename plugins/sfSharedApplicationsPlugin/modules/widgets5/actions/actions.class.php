@@ -835,7 +835,7 @@ class widgets5Actions extends sfActions {
                 ->createQuery("e")
                 ->select("*")
                 ->orderBy("ca_idempresa ASC")
-                ->where("ca_activo=TRUE");
+                ->where("ca_activo=TRUE and ca_pathsiigo !=''");
         $debug = $q->getSqlQuery();
         $datos = $q->execute();
         $a = array();
