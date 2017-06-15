@@ -385,7 +385,7 @@ if(count($grupoReportesRechazadas)>0)
         idreportetmp=id;
         Ext.MessageBox.show({
            title: 'Eliminar Entrega de Reporte',
-           msg: 'por favor coloque el motivo por el que elimina el Reporte de Negocios:',
+           msg: 'Por favor coloque el motivo por el que elimina la Notificación del Reporte de Negocios:',
            width:300,
            buttons:{
               ok     : "Enviar",
