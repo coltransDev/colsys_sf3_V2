@@ -22,9 +22,21 @@ Ext.define('Ext.colsys.wgAgentesAduana', {
     hiddenValue: 'id',
     labelWidth: '100',
     spExtraParam:'',
-    store: new Ext.data.Store( {
+    /*store: new Ext.data.Store( {
         fields: ['id','nombre'],
         data : <?=json_encode($data)?>
+    }),*/
+    store:  Ext.create('Ext.data.Store', {
+            fields: ['id','nombre'],
+            proxy: {
+                type: 'ajax',
+                url: '<?=url_for('widgets4/wgAgentesAduana')?>',
+                reader: {
+                    type: 'json',
+                    root: 'root'
+                }
+            },
+            autoLoad: false
     }),
     
     qtip:'Listado ',
@@ -60,6 +72,16 @@ Ext.define('Ext.colsys.wgAgentesAduana', {
         var trigger2 = Ext.get("trigger2" + id);
         trigger1.addClsOnOver('x-form-trigger-over');
         trigger2.addClsOnOver('x-form-trigger-over');
+    },
+    onFocus: function( field, newVal, oldVal ){          
+        if(this.tipo){               
+            this.store.load({
+                params : {
+                    tipo : this.tipo
+                }
+            });
+
+        }
     }
 });
 </script>

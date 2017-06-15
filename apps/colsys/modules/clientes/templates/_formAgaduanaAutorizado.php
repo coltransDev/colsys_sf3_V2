@@ -96,6 +96,7 @@ include_component("clientes", "formSubirArchivoAgente");
                     width: 200,
                     editor: {
                         xtype: 'wAgentesAduana',
+                        tipo: 'ADU,TRI,TRN,OPE,DEP'
                     },
                 }, {
                     header: 'Fecha Autorización',

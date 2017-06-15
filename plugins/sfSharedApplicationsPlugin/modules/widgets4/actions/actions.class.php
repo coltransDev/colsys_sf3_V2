@@ -161,6 +161,33 @@ class widgets4Actions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
     
+    public function executeWgAgentesAduana() {
+        $tipo = $this->getRequestParameter("tipo");  
+        if($tipo){
+            $todos = explode(",", $tipo);
+            $tipos = "";
+            foreach($todos as $t){
+                $tipos.="'".$t."',";
+            }
+        }
+
+        $where = $tipo?"where p.ca_tipo IN (".substr($tipos,0,-1).")":"";
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select * from ids.tb_proveedores p inner join ids.tb_ids i "
+                . "on (i.ca_id = p.ca_idproveedor) $where";
+        
+        $rs = $con->execute($sql);
+        $this->data = array();
+        $agentes_rs = $rs->fetchAll();
+        foreach ($agentes_rs as $agente) {
+            $this->data[] = array("id" => $agente["ca_idproveedor"],
+                "nombre" => utf8_encode($agente["ca_nombre"]), "tipo"=>$tipo);
+        }
+        
+        $this->responseArray = array("root" => $this->data, "total" => count($this->data), "success" => true);
+        $this->setTemplate("responseTemplate");
+    }
+    
 }
 
 ?>
