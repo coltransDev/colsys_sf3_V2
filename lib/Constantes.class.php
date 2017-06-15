@@ -12,10 +12,12 @@ class Constantes{
     const COLOTM = "COL OTM";
     const TPLOGISTICS = "TPLogistics";
     const COLDEPOSITOS = "Coldepósitos";
+    const COLDEPOSITOS_BN = "Coldepósitos Bodega Nacional";
     const COLTRANS_RAZONSOCIAL = "Coltrans S.A.";
     const COLMAS_RAZONSOCIAL = "Colmas Agente de Aduana Ltda.";
     const COLOTM_RAZONSOCIAL = "Colotm";
     const COLDEPOSITOS_RAZONSOCIAL = "Coldepósitos S.A.S";
+    const COLDEPOSITOS_BN_RAZONSOCIAL = "Coldepósitos Bodega Nacional S.A.S";
 	
     const IMPO = "Importación";
     const EXPO = "Exportación";

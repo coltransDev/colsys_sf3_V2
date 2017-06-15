@@ -191,7 +191,8 @@ include_component("widgets", "widgetComerciales");
                             else{?>
                                {name : '<?=Constantes::COLTRANS?>'},
                                {name : '<?=Constantes::COLMAS?>'},
-                               {name : '<?=Constantes::COLDEPOSITOS?>'}
+                               {name : '<?=Constantes::COLDEPOSITOS?>'},
+                               {name : '<?=Constantes::COLDEPOSITOS_BN?>'}
                             <?
                             }?>                            
                             
