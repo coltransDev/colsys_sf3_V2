@@ -46,7 +46,7 @@ OTM_LCL: |
   Las anteriores tarifas incluyen:
  
   • Tres días libres de bodegajes a partir del arribo de la carga a puerto
-  • Coordinación con el Transporte terrestre Puerto Colombiano ? Destino
+  • Coordinación con el Transporte terrestre Puerto Colombiano Destino
   • Formulario DIAN para continuación de viaje
   • Elaboración y coordinación OTM para continuación de viaje
   • Sellos para el contendor
@@ -193,7 +193,7 @@ OTM_FCL: |
   Las anteriores tarifas incluyen:
  
   • Tres días libres de bodegajes a partir del arribo de la carga a puerto
-  • Coordinación con el Transporte terrestre Puerto Colombiano ? Destino
+  • Coordinación con el Transporte terrestre Puerto Colombiano Destino
   • Formulario DIAN para continuación de viaje
   • Elaboración y coordinación OTM para continuación de viaje
   • Sellos para el contendor
@@ -221,8 +221,8 @@ OTM_FCL: |
   • Stand By del vehículo por demoras ajenas en el descargue $450.000,oo por día
   • Almacenajes en bodega de destino
   • Descargue, vaciado del contenedor en Bodega de destino
-  • Devolución de contenedor ( 7 días para devolver a puerto ? en compensación)
-  • Dropoff ? Depende de la naviera
+  • Devolución de contenedor ( 7 días para devolver a puerto en compensación)
+  • Dropoff Depende de la naviera
   • Demoras de Contenedor
   • Tramite Ica, Dasalud, Invima $190.000,oo (por entidad).
   • Recargo IMO $150,000,oo
@@ -362,72 +362,75 @@ deposito: |
 seguroTitulo: NOTAS DE SEGURO DE TRANSPORTE Y ADMINISTRACION DE RIESGO
 seguro: | 
   Se asegura la carga de importación, exportación, despachos nacionales o urbanos, frente a los riesgos propios del transporte de mercancías.
-  1. EL VALOR ASEGURADO: deberá corresponder al valor real de la carga, es decir, su componente de costos: factura comercial, fletes internacionales, fletes nacionales, tributos aduaneros (el IVA sólo se incluye en el componente de costos cuando éste no es descontable).
+  1. EL VALOR ASEGURADO: deberá corresponder al valor real de la carga, es decir, su componente de costos: factura comercial, fletes internacionales, fletes nacionales, derechos e impuestos a la importación (el IVA sólo se incluye en el componente de costos cuando éste no es descontable).
   Los factores de costos diferentes a los anteriores no se deben considerar como valor asegurado, pero se pueden amparar bajo el rubro de GASTOS ADICIONALES
-  2. TRAYECTO ASEGURADO: Se asegura "bodega-bodega", es decir, desde el momento que el asegurado recibe la carga y asume la responsabilidad sobre ella, hasta su destino final en bodegas. El verdadero alcance de ese trayecto será definido por los términos de negociación INCOTERMS 2010 y el INTERÉS ASEGURABLE existente sobre la carga. Se incluyen las operaciones de cargue y descargue.
-  Se excluyen destinos finales o puertos de origen de los siguientes países: Burma (Myanmar), Cuba, Irán, Irak, Liberia, Corea del Norte, Sudan, Siria, Zimbabwe, y países que eventualmente puedan ser excluidos por las leyes de los EE.UU.
+  2. TRAYECTO ASEGURADO: Se asegura en trayectos de "bodega-bodega", es decir, desde el momento que el asegurado recibe la carga y asume la responsabilidad sobre ella, hasta su destino final en bodegas. El verdadero alcance de ese trayecto será definido por los términos de negociación INCOTERMS 2010 y el INTERÉS ASEGURABLE existente sobre la carga. Se incluyen las operaciones de cargue y descargue.
+  No se amparan transportes que tengan como origen o destino cualesquiera de los siguientes países: Algeria, Cuba, Chad, Libia, Irán, Irak, Corea del Norte, Georgia, Serbia, Montenegro (Ex Yugoslavia), Albania, Croacia, Laos, Libano, Siria, Angola, Somalia, Sudán del Norte, Zaire, Yemen, Pakistán, Afganistan, Golfo Pérsico y Aguas Adyacentes incluyendo Golfo de Omán, y Costas del Mar Rojo, Balcanes (Bosnia, Herzegovina, Bulgaria, Eslovenia, Macedonia, Rumania, Kosovo), Bielorrusia, Burma(Myanmar), Costa De Marfil, Etiopia, República Centroafricana, Liberia, República Democrática Del Congo, Guinea, Nigeria, Zimbawe, Zaire, Sierra Leona, Uzbekistán, Sir Lanka así como países que eventualmente podrán ser excluidos por determinación de leyes de los Estados Unidos de América o bajo sanción de las Naciones Unidas, Unión Europea o Reino Unido.
   3. BIENES EXCLUIDOS: documentos o títulos valores, efectos personales o menaje doméstico, avería particular para maquinaria usada, obras de arte, semovientes, animales en general, carga a granel, azúcar, joyas, dinero en efectivo, monedas, valores y títulos valores, bonos cédulas hipotecarias, estampillas de timbre o correo, cartas, mapas o planos, perecederos que no cumplan con la cláusula de bienes transportados en condiciones especiales de refrigeración, congelación o calefacción.
   4. AMPAROS
-      • Cobertura completa: amparo básico, falta de entrega, avería particular (se excluye para maquinaria o mercancía usada), saqueo (se
+      a. Cobertura completa: amparo básico, falta de entrega, avería particular (se excluye para maquinaria o mercancía usada), saqueo (se
         excluye para maquinaria o mercancía usada), huelga (trayectos interiores). Incluye la cobertura de avería gruesa, terrorismo y guerra.
-      • Amparos adicionales: Lucro cesante, gastos adicionales (hasta un 20 %) y seguro al contenedor deben ser solicitados expresamente
-        por el cliente.
-    NO ESTA AMPARADO:
-      • Toma de muestras por autoridad competente, comiso, embargo, secuestro, retención, aprehensión o en general, cualquier acto de
-        autoridad sobre los bienes asegurados o sobre su medio de transporte.
-      • Vicio propio, combustión espontánea, merma, evaporación o filtración, no originadas en rotura o daño del empaque.
-      • Pérdidas o daños causados como consecuencia de variaciones climatológicas y deterioro por el simple transcurso del tiempo.
-      • Las pérdidas o daños causados por la acción de roedores, comején, gorgojo, polilla u otras plagas.
-      • Fisión, fusión y, en general, cualquier reacción nuclear, emisiones ionizantes, radiación, radioactividad y contaminación radioactiva, sean
-        controlada o no y sean o no, consecuencia de hechos amparados por la póliza.
-      • Errores o faltas en el despacho, o pérdidas y/o daños por envío de bienes en mal estado.
-      • Demoras en la entrega y pérdidas de mercado.
-      • Mal empaque de las mercancías cuando el asegurado tiene el control sobre el mismo.
+      b. Amparos adicionales: Lucro cesante(hasta un 20 %), gastos adicionales (hasta un 20 %) y seguro del contenedor deben ser solicitados expresamente por el cliente.
+      c. No está amparado:
+        • Toma de muestras por autoridad competente, comiso, embargo, secuestro, retención, aprehensión o en general, cualquier acto de
+          autoridad sobre los bienes asegurados o sobre su medio de transporte.
+        • Vicio propio, combustión espontánea, merma, evaporación o filtración, no originadas en rotura o daño del empaque.
+        • Pérdidas o daños causados como consecuencia de variaciones climatológicas y deterioro por el simple transcurso del tiempo.
+        • Las pérdidas o daños causados por la acción de roedores, comején, gorgojo, polilla u otras plagas.
+        • Fisión, fusión y, en general, cualquier reacción nuclear, emisiones ionizantes, radiación, radioactividad y contaminación radioactiva, sean
+          controlada o no y sean o no, consecuencia de hechos amparados por la póliza.
+        • Errores o faltas en el despacho, o pérdidas y/o daños por envío de bienes en mal estado.
+        • Demoras en la entrega y pérdidas de mercado.
+        • Mal empaque de las mercancías cuando el asegurado tiene el control sobre el mismo.
   5. DEDUCIBLE: 
-      • Despachos con valor superior a $450.000.000.oo tendrán un deducible del 10 % sobre el valor de la pérdida, mínimo 3 SMMLV..
-      • La aseguradora no atenderá reclamaciones con valor inferior a 2 SMMLV.  Toda reclamación que supere este monto será atendida por la aseguradora y no aplicará ningún deducible.
-      • Para bienes transportados en condiciones especiales de refrigeración, congelación o calefacción el deducible será del 10 % sobre el valor de la perdida, mínimo $5.000.000.
-  6. MERCANCÍAS DE ALTO RIESGO:  Llantas y neumáticos, algodón en pacas, productos biomédicos, teléfonos celulares o equivalentes, juegos de video, instrumentos musicales,  software de videos, pieles, cigarrillos, licores, cervezas, vinos, productos farmacéuticos y veterinarios, vehículos de cualquier clase, incluyendo botes o aviones, incluyendo los movilizados por sus propios medios, repuestos automotores, Material CKD, Zinc, cobre o aluminio, perfumes, colonias y productos similares (incluyendo productos de aseo personal), Electrodomésticos, sus partes, accesorios o repuestos para los mismos, libros e impresos y textos escolares, pinturas, alimentos enlatados, leche en polvo, polipropileno, polietileno y látex en bruto o a granel, equipos de computo y/o componentes o accesorios, calzado, textiles, confecciones y cueros en productos terminados, juguetería, café y sus derivados, papel y/o productos elaborados con pulpa de papel tales como: papel higiénico, servilletas, toallas para cocina, toallas sanitarias, y pañales desechables.
-  7. EXCLUSIONES: Se considerarán excluidos los despachos que no cumplan las siguientes condiciones:
-    A. Exclusiones por falta de acompañamiento vehicular: será obligatorio el uso de acompañantes vehiculares para los siguientes despachos
-       dentro del territorio nacional:
-        a) Mercancía de alto riesgo: Entre $150.000.000 y $400.000.000, puede ser movilizada con acompañamiento vehicular o utilizar 
-           dispositivo GPS de proveedor legalmente constituido. Mayor a $400.000.000 únicamente con acompañamiento  vehicular.
-        b) Mercancía de bajo riesgo: Entre $500.000.000 y $800.000.000, puede ser movilizada con acompañamiento vehicular o utilizar 
-           dispositivo GPS de proveedor legalmente constituido.  Mayor a $800.000.000 únicamente con acompañamiento  vehicular.
-        c) Mercancía con valor superior a $450.000.000: no podrá transitar en horario de 9:00 pm a 5:00 am, ni domingos y festivos 
-           en carreteras nacionales y/o urbanas.
-        d) Procedimiento para tecnología de consumo masivo: Para los despachos con mercancías de tecnología de consumo masivo con valor
-           asegurado mayor a $450.000.000 deberán transitar bajo el siguiente procedimiento:
-              • El conductor deberá ser mayor de 25 años y no se podrán utilizar conductores y vehículos que no registren mínimo 3  despachos
-                con EL TRANSPORTADOR en el último año, salvo que EL OPERADOR lo autorice expresamente.
-              • Dos (2) vehículos de Acompañamiento vehicular en todo el recorrido.
-              • Camiones o vehículos de transporte de modelo menor a 15 años.
-              • Dispositivo GPS en el Vehículo de transporte, o en la carga, o puerta contenedor.
-        Definición de Escolta: se entiende por escolta vehicular, el vehículo particular o público con personal de empresas especializadas en vigilancia de mercancías en todas sus modalidades, que cumplan con todas las normas técnicas, administrativas y legales para funcionar según su naturaleza, con su respectivo conductor, el cual tiene como obligación acompañar al vehículo que transporta las mercancías durante todo el trayecto, es decir, desde el sitio del despacho hasta su destino final, en orden a cumplir a cabalidad la función de custodia, control y cuidado que su labor profesional les exige.
-
-        La firma que se utilice para el acompañamiento deberá cumplir con los siguientes requisitos:
-          • No ser personal armado.
-          • Viajar en un vehículo diferente
-          • Tener una central de operaciones
-          • Tener acuerdos con Fuerzas Armadas
-          • No hacer parte del transportador
-          • Estar habilitado por la Superintendencia de Vigilancia y Seguridad Privada
-    B. Empresas transportadoras: Estarán excluidos aquellos despachos que se realicen con compañías que no estén legalmente constituidas.
+      a. La aseguradora no atenderá reclamaciones con valor inferior a USD 500 por evento.
+      b. Despachos con valor superior a  USD 500.000 tendrán un deducible del 10 % sobre el valor de la pérdida, mínimo USD 2.000      
+      c. Perecederos, mercancía en condiciones especiales de refrigeración, congelación o calefacción el deducible será del 10 % sobre el valor de la perdida, mínimo USD 1500.
+  6. MERCANCÍAS DE ALTO RIESGO:  Aceros, zinc, cobre en láminas o rollos de alambre, alimentos enlatados, arroz, azúcar de cualquier tipo excluida el azúcar crudo, calzado, cueros, productos de cuero terminados, café de exportación y café pergamino, celulares, partes, aparatos de video, cámaras cigarrillos, tabaco, equipos de cómputo y/o componentes o sus accesorios, electrodomésticos tales como neveras, TV, sonido, harina de pescado, productos biomédicos, juegos de video, software de videos, juguetería, perfumes, colonias y productos similares (incluyendo productos de aseo personal), licores, cervezas, vinos, libros e impresos, textos escolares, pinturas, disolventes, materias primas para pinturas, llantas y neumáticos, máquinas para casinos, juegos de azar, teléfonos celulares o equivalentes, leche en polvo, papel y/o productos elaborados con pulpa de papel tales como papel higiénico, servilletas, toallas para cocina, toallas sanitarias y pañales desechables, pinturas, materias primas, disolventes, polipropileno, polietileno y látex en bruto o a granel, productos farmacéuticos y veterinarios diferentes a la comida para animales, productos químicos incluyendo agroquímicos, fungicidas, insecticidas, abonos y fertilizantes, repuestos automotores, material CKD, cuando vienen armados (no incluye partes para repuestos desarmados), textiles, telas, confecciones, accesorios, vehículos automotores o aviones, vehículos movilizados por sus propios medios.
+  7. PROTOCOLO DE SEGURIDAD:
+    a. Mercancía de alto riesgo:
+      • Entre USD 50.000 y USD 135.000: Dispositivo GPS 
+      • Mayor a USD 135.000 únicamente con acompañamiento vehicular (puede ser sin uso de armas).
+    b. Mercancía de bajo riesgo;
+       Despacho con valor superior a USD 500.000: dispositivo GPS 
+    c. Tecnología de consumo masivo: 
+      • Entre USD 50.000 y USD 135.000: Dispositivo GPS en el vehículo
+      • Entre USD 135.001 y USD 200.000: acompañamiento vehicular de personal de seguridad (puede ser sin uso de armas).
+      • Más de USD 200.000: dos acompañantes en vehículos separados y GPS en la carga.  El conductor deberá ser mayor de 25 años y no se podrán utilizar conductores y vehículos que no registren mínimo 3  despachos con EL TRANSPORTADOR en el último año, camiones o vehículos de transporte de modelo menor a 15 años y el transportador deberá ser reportado previamente a la aseguradora.
+      
+      Definiciones:
+        Tecnología de consumo masivo: computadores personales, portátiles, partes de computadores, impresoras, teléfonos celulares, equipos de comunicación celular y/o Avantel, equipos de sonido como Ipod o similares, cámaras de video, tv o fotografía, televisores, pantallas planas, plasmas o similares.
+        GPS: Servicio de rastreo de las mercancías aseguradas con un dispositivo satelital colocado en la puerta del contenedor, en las mercancías, o en vehículo de transporte. Debe tener seguimiento durante el desarrollo del transporte. El servicio debe ser prestado por empresas constituidas para tal fin.
+        Acompañamientos vehicular: vehiculo el cuál tiene la obligacion de acompañar al vehiculo que transporta las mercancías durante todo el trayecto, es decir, desde el sitio del despacho hasta su destino final.
+            La firma que se utilice para el acompañamiento deberá cumplir con los siguientes requisitos:
+              • No ser personal armado.
+              • Viajar en un vehículo diferente
+              • Tener una central de operaciones
+              • Tener acuerdos con Fuerzas Armadas
+              • No hacer parte del transportador
+              • Estar habilitado por la Superintendencia de Vigilancia y Seguridad Privada
+  8. EXCLUSIONES:
+    a. Por seguridad: La no aplicación del protocolo de seguridad del numeral 7.
+    b. Empresas transportadoras: Estarán excluidos aquellos despachos que se realicen con compañías que no estén legalmente constituidas.
        Las transportadoras deben contar con la siguiente documentación vigente:
        • Resolución del ministerio de transporte
        • Certificado de cámara de comercio
        • Copia de la póliza de transporte
-    C. Subrogación: estarán excluidos los despachos donde EL ASEGURADO renuncie a cualquier forma de subrogación sobre los responsables
+    c. Subrogación: estarán excluidos los despachos donde EL ASEGURADO renuncie a cualquier forma de subrogación sobre los responsables
        de un siniestro.
     Si se realizan despachos sin el cumplimiento de los anteriores requisitos, se considerará como un riesgo excluido y la aseguradora no tendrá
     responsabilidad alguna en caso de siniestro.
-  8. CLAUSULAS ADICIONALES:
-      • La carga debe viajar con su valor declarado al 100% al transportista
-      • Dejar en el documento de transporte constancia de la cantidad, estado y condición de los bienes a su recibo
-      • No pernoctar en carreteras ni en despoblado
-  9. SINIESTRO: debe ser reportado a seguros@coltrans.com.co  a más tardar 36 Horas después de la ocurrencia del mismo.
-  10. DERECHOS SOBRE SALVAMENTO: Cuando el Asegurado sea indemnizado, los bienes salvados o recuperados quedarán de propiedad de la
+  9. CLAUSULAS ADICIONALES:
+    a. La carga debe viajar con su valor declarado al 100% al transportista
+    b. Dejar en el documento de transporte constancia de la cantidad, estado y condición de los bienes a su recibo
+    c. No pernoctar en carreteras ni en despoblado
+  10. SINIESTRO: debe ser reportado a seguros@coltrans.com.co a más tardar 36 horas contadas a partir  del momento que se tiene conocimiento del hecho.
+    Reducción de pérdidas: Es deber del Asegurado sus empleados y agentes en relación con cualquier siniestro recuperable bajo la presente póliza:
+        a. Tomar todas aquellas medidas que sean razonables con el objeto de impedir, evitar o minimizar la pérdida.
+        b. Asegurarse que todos los derechos contra transportadores, o contra cualquier otra persona que, en el curso del transporte asegurado, tenga a cualquier título la custodia de los bienes asegurados o contra cualquier otro tercero, sean adecuadamente preservados y ejercidos.
+    La aseguradora en adición a cualquier pérdida que sea recuperable en virtud del presente contrato de seguro, reembolsarán al Asegurado cualquier gasto en el que incurra adecuada y razonablemente para cumplir con las obligaciones, siempre y cuando la suma entre estos gastos y el valor de la indemnización no supere el valor asegurado.
+    El incumplimiento de las obligaciones del Asegurado previsto en ésta cláusula dará lugar a la reducción o la pérdida del derecho a la indemnización según el caso, en los términos señalados en la ley.
+  11. DERECHOS SOBRE SALVAMENTO: Cuando el Asegurado sea indemnizado, los bienes salvados o recuperados pasarán a ser de propiedad de la
       Compañía de seguros. El Asegurado podrá participar y tendrá la primera opción sobre la venta del salvamento.
 
   Para asegurar las mercancías es necesaria la instrucción por escrito.
@@ -451,7 +454,7 @@ seguroContenedor: |
     Falta de entrega
     Avería particular
     Saqueo
-    Huelga (trayectos interiores) Incluye la cobertura de terrorismo.? Guerra
+    Huelga (trayectos interiores) Incluye la cobertura de terrorismo. Guerra
     Permanencia en bodegas (tránsito) hasta 30 días
     Gastos adicionales hasta $1.000.000 
     Lucro cesante, hasta $1.000.000 
