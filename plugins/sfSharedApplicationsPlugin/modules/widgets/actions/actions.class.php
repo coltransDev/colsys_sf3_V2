@@ -254,7 +254,7 @@ class widgetsActions extends sfActions {
         }
 
         $q = Doctrine_Query::create()
-                ->select("r.ca_consecutivo, r.ca_idreporte, r.ca_version")
+                ->select("r.ca_consecutivo, r.ca_idreporte, r.ca_version, r.ca_transporte")
                 ->from("Reporte r")
                 ->where("UPPER(r.ca_consecutivo) LIKE ?", strtoupper($criterio) . "%")
                 ->addWhere("r.ca_usuanulado IS NULL $wheretmp")
@@ -299,6 +299,7 @@ class widgetsActions extends sfActions {
         if ($request->getParameter("idcliente")) {
             $q->leftJoin("r.Contacto cc");
             $q->leftJoin("cc.Cliente cl");
+            $q->addSelect("cl.ca_idcliente, cc.ca_idcontacto, cl.ca_compania");
             $q->addWhere("cl.ca_idcliente = ?", $request->getParameter("idcliente"));
         }
         
@@ -308,6 +309,8 @@ class widgetsActions extends sfActions {
 
         foreach ($reportes as $reporte) {
 
+            $reporte["ca_transporte"] = utf8_encode($reporte["ca_transporte"]);    
+            $reporte["ca_compania"] = utf8_encode($reporte["Contacto"]["Cliente"]["ca_compania"]);
             $row = $reporte;
 
             if ($request->getParameter("extended")) {
@@ -410,6 +413,7 @@ class widgetsActions extends sfActions {
             }*/
             if($idempresa){
                 $suc[2] = array(1,2,8,11); // Grupo Coltrans, Colmas, Colotm y Coldepositos
+                $suc[1] = array(1,2,8,11); // Grupo Coltrans, Colmas, Colotm y Coldepositos
                 $q->andWhereIn("s.ca_idempresa", ($suc[$idempresa]?$suc[$idempresa]:array($idempresa)));
             }
             $sql=$q->getSqlQuery();
