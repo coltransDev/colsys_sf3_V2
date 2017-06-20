@@ -59,6 +59,8 @@ class gestDocumentalActions extends sfActions {
 
     public function executeSubirArchivo() {
 
+        
+
         sfConfig::set('sf_web_debug', false);
         $folder = base64_decode($this->getRequestParameter("folder"));
         $this->referer = base64_decode($this->getRequestParameter("referer"));
@@ -108,7 +110,7 @@ class gestDocumentalActions extends sfActions {
                     if (move_uploaded_file($uploadedFile['tmp_name'], $directory . $fileName)) {
                         $this->responseArray = array("id" => base64_encode($fileName), "filename" => $fileName, "folder" => $folder, "success" => true);
                     } else {
-                        $this->responseArray = array("error" => "No se pudo mover el archivo", "filename" => $fileName, "folder" => $folder, "success" => false);
+                        $this->responseArray = array("error" => "No se pudo mover el archivo ". ini_get('upload_max_filesize'), ", " , ini_get('post_max_size'), "filename" => $fileName, "folder" => $folder, "success" => false);
                     }
                 }
             } else {
