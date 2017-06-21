@@ -2150,7 +2150,7 @@ class idsActions extends sfActions {
             $email->setCaIdcaso($documento->getCaId());
             $email->setCaFrom("pricing@coltrans.com.co");
             $email->setCaFromname("Pricing & Procurement Coltrans S.A.");
-            $email->setCaSubject($textos['asuntoEmail']);
+            $email->setCaSubject($textos['asuntoEmail']." - ".$ids->getCaNombre());
             $email->setCaReplyto("pricing@coltrans.com.co");
             foreach($usuarios as $usuario){
                 $email->addCc($usuario->getCaEmail());
