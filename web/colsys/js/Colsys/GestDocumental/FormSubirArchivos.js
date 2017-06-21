@@ -31,7 +31,6 @@ Ext.define('Colsys.GestDocumental.FormSubirArchivos', {
     },
     listeners: {
         beforerender: function () {
-
             this.add({
                 xtype: 'textfield',
                 fieldLabel: 'Name',
@@ -65,21 +64,17 @@ Ext.define('Colsys.GestDocumental.FormSubirArchivos', {
                 id: 'ref2',
                 name: 'ref2',
                 allowBlank: true
-            }
-            );
-
+            });
         }
     },
     buttons: [{
             text: 'Guardar',
             handler: function () {
-                
-                
                 var idreferencia = this.up('form').idreferencia;
                 var idmaster = this.up('form').idmaster;
-                var dcto = Ext.getCmp("documento").rawValue;                 
+                var dcto = Ext.getCmp("documento").rawValue;
                 var form = this.up('form').getForm();
-                
+
                 if (form.isValid()) {
                     form.submit({
                         waitMsg: 'Guardando',
@@ -90,13 +85,13 @@ Ext.define('Colsys.GestDocumental.FormSubirArchivos', {
                         success: function (fp, o) {
                             if (o.result.success) {
                                 msg('Mensaje', 'Archivo Procesado "' + o.result.file + '" en el servidor');
-                                Ext.getCmp("Documentos-"+idmaster).getStore().reload();
+                                Ext.getCmp("Documentos-" + idmaster).getStore().reload();
                             } else {
                                 alert("error");
                             }
                         }
                     });
-                }                 
+                }
             }
         }, {
             text: 'Reset',
@@ -116,15 +111,11 @@ Ext.define('formTreeArchivos', {
         anchor: '100%',
         msgTarget: 'side'
     },
-    items: [
-        {
+    items: [{
             xtype: 'wTreeGridFile',
             id: 'tree-grid-file',
             height: 380,
-            name: 'tree-grid-file',
-            title: 'Listado de Archivos'
+            name: 'tree-grid-file'
         }
     ]
 });
-
-
