@@ -56,8 +56,8 @@ if (!isset($boton) and !isset($accion)) {
    echo "<TR>";
    echo "  <TH Class=titulo COLSPAN=6>Maestra de Encuentas por Cliente</TH>";
    echo "</TR>";
-   echo "<TH WIDTH=540 COLSPAN=5>Datos de la Encuesta</TH>";
-   echo "<TH><IMG src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", " . $id . ", 0);'></TH>";  // Botón para la creación de un Registro Nuevo
+   echo "<TH WIDTH=540 COLSPAN=6>Datos de la Encuesta</TH>";
+//    echo "<TH><IMG src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", " . $id . ", 0);'></TH>";  // Botón para la creación de un Registro Nuevo
    $id_temp = 0;
    while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
       if ($rs->Value('ca_idcliente') != $id_temp) {
