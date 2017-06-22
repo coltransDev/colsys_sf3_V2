@@ -113,6 +113,8 @@ IdsSucursal:
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
     ca_fchactualizado: timestamp
+    ca_nombre: string(200)
+    ca_idciudaddes: string(8)
   relations:
     Ids:
       local: ca_id
@@ -122,6 +124,15 @@ IdsSucursal:
       local: ca_idciudad
       foreign: ca_idciudad
       type: one
+    IdsContacto:
+      local: ca_idsucursal
+      foreign: ca_idsucursal
+      type: one
+    CiudadDestino:
+      local: ca_idciudad
+      foreign: ca_idciudaddes
+      type: one
+      class: Ciudad
 
 IdsContacto:
   options:
@@ -204,7 +215,7 @@ IdsProveedor:
     ca_idproveedor:
       type: integer
       primary: true
-    ca_tipo: string(3)
+    ca_tipo: string(5)    
     ca_critico: boolean
     ca_controladoporsig: boolean
     ca_fchaprobado: timestamp
@@ -582,6 +593,26 @@ Cliente:
       foreign: ca_idcliente
       type: many
     LibCliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: one
+    ManCliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: many
+    DocCliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: many
+    BlcCliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: many
+    AduCliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: many
+    FichaTecnica:
       local: ca_idcliente
       foreign: ca_idcliente
       type: one
