@@ -2844,8 +2844,8 @@ class reportesGerActions extends sfActions {
         $sucursal = $request->getParameter("sucursal");
         $vendedores = $request->getParameter("vendedores");
         $operativos = $request->getParameter("operativos");
-        $vendedores = json_decode($vendedores);
-        $operativos = json_decode($operativos);
+        $vendedores = json_decode(utf8_encode($vendedores));
+        $operativos = json_decode(utf8_encode($operativos));
 
         $where = array();
         foreach ($vendedores as $vendedor) {
