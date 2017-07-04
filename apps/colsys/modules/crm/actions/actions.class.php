@@ -49,9 +49,6 @@ class crmActions extends sfActions {
 
         try {
             $nivel = $this->getNivel();
-
-            
-            
             
             $conn = Doctrine::getTable("Cliente")->getConnection();
             $conn->beginTransaction();
@@ -169,7 +166,7 @@ class crmActions extends sfActions {
                 $cliente->setCaListaclinton(null);
             }
 
-            if ($request->getParameter("comentario") and $request->getParameter("comentario") != '') {
+            if ($request->getParameter("comentario")) {
                 $cliente->setCaComentario($request->getParameter("comentario"));
             } else {
                 $cliente->setCaComentario(null);
@@ -186,13 +183,6 @@ class crmActions extends sfActions {
             } else {
                 $cliente->setProperty('consolidar_comunicaciones', "");
             }
-            
-            if ($request->getParameter("embarque") == "on") {
-                $cliente->setProperty('embarque', "|true");
-            } else {
-                $cliente->setProperty('embarque', "");
-            }
-            
             $cliente->setCaPropiedades(str_replace("|", "", $cliente->getCaPropiedades()));
 
             $ids->save($conn);
@@ -237,7 +227,6 @@ class crmActions extends sfActions {
             $data["vendedor"] = $cliente->getCaVendedor();
             $data["coordinador"] = $cliente->getCaCoordinador();
 
-
             $data["title"] = utf8_encode($cliente->getCaSaludo());
             $data["papellido"] = utf8_encode($cliente->getCaPapellido());
             $data["sapellido"] = utf8_encode($cliente->getCaSapellido());
@@ -246,25 +235,22 @@ class crmActions extends sfActions {
             $data["cumpleanos"] = $cliente->getCaCumpleanos();
             $data["email"] = $cliente->getCaEmail();
 
-
             $data["sectoreco"] = utf8_encode($cliente->getCaSectoreco());
             $data["actividad"] = utf8_encode($cliente->getCaActividad());
             $data["status"] = $cliente->getCaStatus();
             $data["calificacion"] = $cliente->getCaCalificacion();
             $data["fchcotratoag"] = $cliente->getCaFchcotratoag();
             $data["entidad"] = $cliente->getCaEntidad();
-            $data["comentario"] = utf8_encode($cliente->getCaComentario());
+            $data["comentario"] = $cliente->getCaComentario();
             $data["leyinsolvencia"] = utf8_encode($cliente->getCaLeyinsolvencia());
             $data["listaclinton"] = utf8_encode($cliente->getCaListaclinton());
             $data["fchacuerdoconf"] = $cliente->getCaFchacuerdoconf();
 
             if ($data["idtrafico"] == "CO-057") {
                 $direccion = explode("|", $cliente->getCaDireccion());
-
                 for ($i = 0; $i < count($direccion); $i++) {
                     $data["dir_" . ($i + 1)] = utf8_encode($direccion[$i]);
                 }
-
                 $data["bloque"] = $cliente->getCaBloque();
                 $data["torre"] = $cliente->getCaTorre();
                 $data["interior"] = $cliente->getCaInterior();
@@ -287,9 +273,7 @@ class crmActions extends sfActions {
             $data["preferencias"] = utf8_encode($cliente->getCaPreferencias());
             $data["global"] = $cliente->getProperty("cuentaglobal");
             $data["consolidar"] = $cliente->getProperty("consolidar_comunicaciones");
-            $data["embarque"] = $cliente->getProperty("idgProveedor");
         }
-        //echo "<pre>";print_r($data);echo "</pre>";
         $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");
     }
@@ -350,9 +334,22 @@ class crmActions extends sfActions {
                 ->addWhere('i.ca_id = ?', $idCliente)
                 ->fetchOne();
 
+//        $encuestaVisita = Doctrine::getTable("EncuestaVisita")
+//                ->createQuery("e")
+//                ->innerJoin("e.Contacto c")
+//                ->addWhere("c.ca_idcliente = ?", $idCliente)
+//                ->orderBy("e.ca_fchvisita DESC")
+//                ->limit(1)
+//                ->fetchOne();
+        
         $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select ca_certificacion, ca_certificacion_otro, ca_implementacion_sistema, ca_implementacion_sistema_detalles from encuestas.tb_encuesta_visita ev "
+                . "inner join public.tb_concliente cc on cc.ca_idcontacto = ev.ca_idcontacto "
+                . "where ca_idcliente = '$idCliente' order by ca_fchvisita desc limit 1";
+        $st = $con->execute($sql);
+        $encuestaVisita = $st->fetch();       
 
-        $sql = "select * from vi_clientes where ca_idcliente =$idCliente;";
+        $sql = "select * from vi_clientes where ca_idcliente = '$idCliente';";
         $st = $con->execute($sql);
         $vista = $st->fetch();
 
@@ -377,9 +374,8 @@ class crmActions extends sfActions {
             $data["ciudad"] = utf8_encode($cliente->getIdsCliente()->getCiudad());
             $data["email"] = utf8_encode($cliente->getIdsCliente()->getCaEmail());
             $data["status"] = utf8_encode($cliente->getIdsCliente()->getCaStatus());
-            $data["calificacion"] = utf8_encode($cliente->getIdsCliente()->getCaCalificacion());
+//            $data["calificacion"] = utf8_encode($cliente->getIdsCliente()->getCaCalificacion());
             $data["sector"] = utf8_encode($cliente->getIdsCliente()->getCaSectoreco());
-//            $data["vendedor"] = utf8_encode($cliente->getIdsCliente()->getCaVendedor()."<br>".$cliente->getIdsCliente()->getCiudad());
             $data["vendedor"] = utf8_encode($cliente->getIdsCliente()->getCaVendedor());
             $data["coordinador"] = utf8_encode($cliente->getIdsCliente()->getCaCoordinador());
             $data["tipoNit"] = utf8_encode($cliente->getIdsCliente()->getCaTipo());
@@ -388,31 +384,53 @@ class crmActions extends sfActions {
             $data["estado_circular"] = utf8_encode($vista["ca_stdcircular"]);
             $data["nivel_riesgo"] = utf8_encode($vista["ca_nvlriesgo"]);
             $data["lista_clinton"] = utf8_encode($vista["ca_listaclinton"]);
+            $data["comentario"] = utf8_encode($vista["ca_comentario"]);
+            $data["ultima_consulta"] = $cliente->getUltimaConsulta();
 //            $data["acuerdo_conf"] = utf8_encode($vista["ca_fchacuerdoconf"]);
 //            $data["contrato_agenc"] = utf8_encode($vista["ca_fchcotratoag"]);
 //            $data["estado_contrato"] = utf8_encode($vista["ca_stdcotratoag"]);
-            $data["super_sociedades"] = utf8_encode($vista["ca_leyinsolvencia"]);
-            $data["comentario"] = utf8_encode($vista["ca_comentario"]);
-            $data["iso"] = utf8_encode($vista["ca_iso"] . " " . $vista["ca_iso_detalles"]);
-            $data["basc"] = utf8_encode($vista["ca_basc"]);
-            $data["otra"] = utf8_encode($vista["ca_otro_cert"]);
-            $data["otra_detalles"] = utf8_encode($vista["ca_otro_detalles"]);
-            $data["auditorias"] = utf8_encode("<b>Creado:</b> " . $vista["ca_usucreado"] . " - " . $vista["ca_fchcreado"] . " " . "<b>Actualizado:</b> " . $vista["ca_usuactualizado"] . " - " . $vista["ca_fchactualizado"] . " " . "<b>Financiero:</b> " . $vista["ca_usufinanciero"] . " - " . $vista["ca_fchfinanciero"] . " ");
+//            $data["super_sociedades"] = utf8_encode($vista["ca_leyinsolvencia"]);
 
-            $data["identificacion"] = utf8_encode($cliente->getIdsTipoIdentificacion()->getCaNombre() . ": " . $cliente->getCaId() . " - " . $cliente->getCaDv());
+//            $data["iso"] = utf8_encode($vista["ca_iso"] . " " . $vista["ca_iso_detalles"]);
+//            $data["basc"] = utf8_encode($vista["ca_basc"]);
+//            $data["otra"] = utf8_encode($vista["ca_otro_cert"]);
+//            $data["otra_detalles"] = utf8_encode($vista["ca_otro_detalles"]);
+            $data["auditorias"] = utf8_encode("<b>Creado:</b> " . $vista["ca_usucreado"] . " - " . $vista["ca_fchcreado"] . "&nbsp;&nbsp;&nbsp;" . "<b>Actualizado:</b> " . $vista["ca_usuactualizado"] . " - " . $vista["ca_fchactualizado"] . "&nbsp;&nbsp;&nbsp;" . "<b>Financiero:</b> " . $vista["ca_usufinanciero"] . " - " . $vista["ca_fchfinanciero"]);
+
+            $data["identificacion"] = utf8_encode($cliente->getIdsTipoIdentificacion()->getCaNombre() . ": " . $cliente->getCaIdalterno() . " - " . $cliente->getCaDv());
             if ($cliente->getCaDv() == null) {
-                $data["identificacion"] = utf8_encode($cliente->getIdsTipoIdentificacion()->getCaNombre() . ": " . $cliente->getCaId());
+                $data["identificacion"] = utf8_encode($cliente->getIdsTipoIdentificacion()->getCaNombre() . ": " . $cliente->getCaIdalterno());
             }
-//            $data["fecha_creado"] = utf8_encode($vista["ca_fchcreado"]);
-//            $data["usuario_creado"] = utf8_encode($vista["ca_usucreado"]);
-//            $data["fecha_actualizado"] = utf8_encode($vista["ca_fchactualizado"]);
-//            $data["usuario_actualizado"] = utf8_encode($vista["ca_usuactualizado"]);
-//            $data["fecha_financiero"] = utf8_encode($vista["ca_fchfinanciero"]);
-//            $data["usuario_financiero"] = utf8_encode($vista["ca_usufinanciero"]);
-            $data["coltrans_fecha"] = utf8_encode($vista["ca_coltrans_fch"]);
-            $data["coltrans_estado"] = utf8_encode($vista["ca_coltrans_std"]);
-            $data["colmas_fecha"] = utf8_encode($vista["ca_colmas_fch"]);
-            $data["colmas_estado"] = utf8_encode($vista["ca_colmas_std"]);
+            
+            $data["certificaciones"] = "Sin Encuesta de Visita";
+            $data["plan_implementa"] = "";
+            $data["estm_implementa"] = "";
+            if (count($encuestaVisita)) {
+                $data["certificaciones"] = str_replace(",",", ",$encuestaVisita["ca_certificacion"]);
+                $data["certificaciones"].= strlen($encuestaVisita["ca_certificacion_otro"])?", ".$encuestaVisita["ca_certificacion_otro"]:"";
+                $data["plan_implementa"] = $encuestaVisita["ca_implementacion_sistema"];
+                $data["estm_implementa"] = $encuestaVisita["ca_implementacion_sistema_detalles"];
+            }
+            $data["fechaconstitucion"] = $cliente->getIdsCliente()->getCaFchconstitucion();
+            $data["tipo_persona"] = utf8_encode($cliente->getIdsCliente()->getTipoPersona());
+            $data["regimen"] = utf8_encode($cliente->getIdsCliente()->getRegimen());
+            $data["uap"] = ($cliente->getIdsCliente()->getCaUap())?utf8_encode("Sí"):"No";
+            $data["altex"] = ($cliente->getIdsCliente()->getCaAltex())?utf8_encode("Sí"):"No";
+            $data["comerciante"] = ($cliente->getIdsCliente()->getCaComerciante())?utf8_encode("Sí"):"No";
+            
+            $data["codigos_ciiu"] = implode(",", array($cliente->getIdsCliente()->getCaCiiuUno(),$cliente->getIdsCliente()->getCaCiiuDos(),$cliente->getIdsCliente()->getCaCiiuTrs(),$cliente->getIdsCliente()->getCaCiiuCtr()));
+            $data["cod_ciiu_uno"] = $cliente->getIdsCliente()->getCaCiiuUno();
+            $data["cod_ciiu_dos"] = $cliente->getIdsCliente()->getCaCiiuDos();
+            $data["cod_ciiu_trs"] = $cliente->getIdsCliente()->getCaCiiuTrs();
+            $data["cod_ciiu_ctr"] = $cliente->getIdsCliente()->getCaCiiuCtr();
+            $data["coltrans_fecha"] = substr($vista["ca_coltrans_fch"], 0, -3);
+            $data["coltrans_estado"] = $vista["ca_coltrans_std"];
+            $data["colmas_fecha"] = substr($vista["ca_colmas_fch"], 0, -3);
+            $data["colmas_estado"] = $vista["ca_colmas_std"];
+            $data["colotm_fecha"] = substr($vista["ca_colotm_fch"], 0, -3);
+            $data["colotm_estado"] = $vista["ca_colotm_std"];
+            $data["coldepositos_fecha"] = substr($vista["ca_coldepositos_fch"], 0, -3);
+            $data["coldepositos_estado"] = $vista["ca_coldepositos_std"];
             $data["coltrans"] = utf8_encode($coltrans);
             $data["colmas"] = utf8_encode($colmas);
             $data["colotm"] = utf8_encode($colotm);
@@ -452,17 +470,85 @@ class crmActions extends sfActions {
     }
 
     public function executeDatosSucursales(sfWebRequest $request) {
-
         $idcliente = $request->getParameter("idcliente");
         if ($idcliente) {
             $sucursales = Doctrine::getTable("IdsSucursal")
                     ->createQuery("i")
                     ->addWhere("i.ca_id = ? and i.ca_usueliminado is null", $idcliente)
                     ->execute();
-            $data = array();
+            
+            $tree = new JTree();
+            $root = $tree->createNode(".");
+            $tree->addFirst($root);
+            $ciudad = null;
+            $i = null;
+            foreach ($sucursales as $sucursal) {
+                $suc_ciudad = utf8_encode($sucursal->getCiudad()->getCaCiudad());
+                if ( $ciudad != $suc_ciudad ){
+                    $i = 0;
+                    $uid = $root;
+                    $eje_raiz = array();
+                    $eje_raiz[] = $suc_ciudad;
+                    
+                    foreach ($eje_raiz as $eje){
+                        $node_uid = $tree->findValue($uid, $eje);
+
+                        if (!$node_uid) {
+                            $nodo = $tree->createNode($eje);
+                            $tree->addChild($uid, $nodo);
+                            $uid = $nodo;
+                        } else {
+                            $uid = $node_uid;
+                        }
+                    }
+                    $nodo = $tree->getNode($uid);
+                    $nodo->setAttribute("expanded", true);
+                    
+                    $ciudad = $suc_ciudad;
+                }
+                $sede_nodo = $tree->createNode(utf8_encode($sucursal->getCaDireccion()));
+                $tree->getNode($sede_nodo)->setAttribute("idsucursal", $sucursal->getCaIdsucursal());
+                $tree->getNode($sede_nodo)->setAttribute("nombre", utf8_encode($sucursal->getCaNombre()));
+                $tree->getNode($sede_nodo)->setAttribute("ciudad", $sucursal->getCaIdciudad());
+                $tree->getNode($sede_nodo)->setAttribute("direccion", utf8_encode($sucursal->getCaDireccion()));
+                $tree->getNode($sede_nodo)->setAttribute("ciudad_destino", $sucursal->getCaIdciudaddes());
+                $tree->getNode($sede_nodo)->setAttribute("telefonos", $sucursal->getCaTelefonos());
+                $tree->getNode($sede_nodo)->setAttribute("fax", $sucursal->getCaFax());
+                $tree->getNode($sede_nodo)->setAttribute("expanded", true);
+                
+                $tree->addChild($uid, $sede_nodo);
+                foreach ($sucursal->getIdsContacto() as $contacto) {
+                    list($mes, $dia) = sscanf($contacto->getCaCumpleanos(), "%d-%d");
+                    $contacto_nodo = $tree->createNode(utf8_encode($contacto->getCaSaludo()." ".$contacto->getNombre()." (".$contacto->getCargo().")"));
+                    $tree->getNode($contacto_nodo)->setAttribute("idcontacto", $contacto->getCaIdcontacto());
+                    $tree->getNode($contacto_nodo)->setAttribute("idsucursal", $contacto->getCaIdsucursal());
+                    $tree->getNode($contacto_nodo)->setAttribute("saludo", utf8_encode($contacto->getCaSaludo()));
+                    $tree->getNode($contacto_nodo)->setAttribute("nombres", utf8_encode($contacto->getCaNombres()));
+                    $tree->getNode($contacto_nodo)->setAttribute("primer_apellido", utf8_encode($contacto->getCaPapellido()));
+                    $tree->getNode($contacto_nodo)->setAttribute("segundo_apellido", utf8_encode($contacto->getCaSapellido()));
+                    $tree->getNode($contacto_nodo)->setAttribute("identificacion", utf8_encode($contacto->getCaIdentificacion()));
+                    $tree->getNode($contacto_nodo)->setAttribute("identificacion_tipo", utf8_encode($contacto->getCaIdentificacionTipo()));
+                    $tree->getNode($contacto_nodo)->setAttribute("cargo", utf8_encode($contacto->getCaCargo()));
+                    $tree->getNode($contacto_nodo)->setAttribute("cargo_general", utf8_encode($contacto->getCaCargoGeneral()));
+                    $tree->getNode($contacto_nodo)->setAttribute("departamento", utf8_encode($contacto->getDepartamento()));
+                    $tree->getNode($contacto_nodo)->setAttribute("mes", $mes);
+                    $tree->getNode($contacto_nodo)->setAttribute("dia", $dia);
+                    $tree->getNode($contacto_nodo)->setAttribute("tipo", utf8_encode($contacto->getCaTipo()));
+                    $tree->getNode($contacto_nodo)->setAttribute("telefono", utf8_encode($contacto->getCaTelefonos()));
+                    $tree->getNode($contacto_nodo)->setAttribute("celular", utf8_encode($contacto->getCaCelular()));
+                    $tree->getNode($contacto_nodo)->setAttribute("correo", utf8_encode($contacto->getCaEmail()));
+                    $tree->getNode($contacto_nodo)->setAttribute("celular", utf8_encode($contacto->getCaCelular()));
+                    $tree->getNode($contacto_nodo)->setAttribute("cumpleanos", utf8_encode($contacto->getCaCumpleanos()));
+                    $tree->getNode($contacto_nodo)->setAttribute("fijo", utf8_encode($contacto->getCaFijo()));
+                    $tree->getNode($contacto_nodo)->setAttribute("observaciones", utf8_encode($contacto->getCaObservaciones()));
+                    
+                    $tree->getNode($contacto_nodo)->setAttribute("leaf", true);
+                    $tree->addChild($sede_nodo, $contacto_nodo);
+                }
+                
+            }
         }
-        $tree = $this->generateTree($sucursales);
-        $this->responseArray = array($tree);
+        $this->responseArray = $tree->getTreeNodes();
         $this->setTemplate("responseTemplate");
     }
 
@@ -477,63 +563,73 @@ class crmActions extends sfActions {
 
     public function getChildrensFiles($sucursales) {
         $data = array();
-
+        $i = 1;
         foreach ($sucursales as $sucursal) {
             $children = array();
-            $children[] = array("text" => utf8_encode($sucursal->getCaTelefonos()), "leaf" => true);
-            $children[] = array("text" => utf8_encode($sucursal->getCaDireccion()), "leaf" => true);
+            // $children[] = array("text" => utf8_encode($sucursal->getCaTelefonos()), "leaf" => true);
+            // $children[] = array("text" => utf8_encode($sucursal->getCaDireccion()), "leaf" => true);
+            $children[] = array("text" => "Sede ".$i++, "leaf" => true);
             $data[] = array("text" => utf8_encode($sucursal->getCiudad()->getCaCiudad()), "idsucursal" => $sucursal->getCaIdsucursal(), "sucursal" => true, "children" => $children, "leaf" => false);
         }
         return $data;
     }
 
     function executeDatosBusqueda($request) {
-        $permisos["aereo"] = array(
-            'Consultar' => true, 'Crear' => true, 'Editar' => true, 'Anular' => true, 'Liquidar' => true, 'Cerrar' => true,
-            'General' => true, 'House' => true, 'Facturacion' => true, 'Costos' => true, 'Documentos' => true
-        );
-        $permisos["maritimo"] = array(
-            'Consultar' => true, 'Crear' => true, 'Editar' => true, 'Anular' => true, 'Liquidar' => true, 'Cerrar' => true,
-            'General' => true, 'House' => true, 'Facturacion' => true, 'Costos' => true, 'Documentos' => true
-        );
-        $permisos["terrestre"] = array(
-            'Consultar' => true, 'Crear' => true, 'Editar' => true, 'Anular' => true, 'Liquidar' => true, 'Cerrar' => true,
-            'General' => true, 'House' => true, 'Facturacion' => true, 'Costos' => true, 'Documentos' => true
-        );
-        $permisos["exportacion"] = array(
-            'Consultar' => true, 'Crear' => true, 'Editar' => true, 'Anular' => true, 'Liquidar' => true, 'Cerrar' => true,
-            'General' => true, 'House' => true, 'Facturacion' => true, 'Costos' => true, 'Documentos' => true
-        );
-        $permisos["otm"] = array(
-            'Consultar' => true, 'Crear' => true, 'Editar' => true, 'Anular' => true, 'Liquidar' => true, 'Cerrar' => true,
-            'General' => true, 'House' => true, 'Facturacion' => true, 'Costos' => true, 'Documentos' => true
-        );
+        // $where = "";
+        $query = strtoupper("%" . $request->getParameter("q") . "%");
 
-        $where = "";
-//        foreach ($request->getParameter("opciones") as $o) {
-//            if ($where != "")
-//                $where .=" OR ";
-//            $where .= $o . " like ?";
-//            $whereq[] = "%" . $request->getParameter("q") . "%";
-//        }
-//        if ($where != "") {
-//            $where = " ($where)";
-//        }
-        /* $clientes = Doctrine::getTable("IdsCliente")
-          ->createQuery("m")
-          ->distinct("ca_idcliente")
-          ->select("ca_papellido, ca_nombres,ca_transporte,ca_impoexpo,ca_idmaster")
-          ->addWhere("" ,)
-          ->orderBy("ca_fchcreado DESC")
-          ->limit(40)
-          ->execute(); */
-        $q = strtoupper("%" . $request->getParameter("q") . "%");
-
-        $clientes = Doctrine::getTable("Ids")
+        $q = Doctrine::getTable("Ids")
                 ->createQuery("i")
                 ->innerJoin("i.IdsCliente id")
-                ->addWhere('i.ca_nombre like ?', $q)
-                ->execute();
+                ->addWhere('i.ca_nombre like ?', $query);
+
+        if ($request->getParameter("estado")) {
+            switch ($request->getParameter("idEmpresa")) {
+                case 1:
+                    $field = "ca_colmas_std";
+                    break;
+                case 8:
+                    $field = "ca_colotm_std";
+                    break;
+                case 11:
+                    $field = "ca_coldepositos_std";
+                    break;
+                default:
+                    $field = "ca_coltrans_std";
+                    break;
+            }
+            $sql = "select ca_idcliente as ca_column from vi_clientes where $field in ('". implode("','", $request->getParameter("estado"))."')";
+            $con = Doctrine_Manager::getInstance()->connection();
+            $stmt = $con->execute($sql);
+
+            if ($stmt){
+                $q->whereIn("ca_idcliente", $stmt->fetchAll(PDO::FETCH_COLUMN));
+            }
+        }
+        if ($request->getParameter("circular")) {
+            $sql = "select ca_idcliente as ca_column from vi_clientes where ca_stdcircular in ('". implode("','", $request->getParameter("circular"))."')";
+            $con = Doctrine_Manager::getInstance()->connection();
+            $stmt = $con->execute($sql);
+
+            if ($stmt){
+                $q->whereIn("ca_idcliente", $stmt->fetchAll(PDO::FETCH_COLUMN));
+            }
+        }
+        if ($request->getParameter("nivel")) {
+            $q->whereIn("ca_nvlriesgo", $request->getParameter("nivel"));
+        }
+        if ($request->getParameter("cumplimiento")) {
+            $q->whereIn("ca_entidad", $request->getParameter("cumplimiento"));
+        }
+        if ($request->getParameter("fchinicial")) {
+            $q->addWhere("ca_fchcreado >= ?", $request->getParameter("fchinicial"));
+        }
+        if ($request->getParameter("fchfinal")) {
+            $q->addWhere("ca_fchcreado <= ?", $request->getParameter("fchfinal"));
+        }
+        $clientes = $q->execute();
+        
+        
 //        $where = "";
 //        $whereq = array();
         //$impo="";
@@ -665,6 +761,7 @@ class crmActions extends sfActions {
             $data["direccion"] = utf8_encode($sucursal->getCaDireccion());
             $data["telefonos"] = utf8_encode($sucursal->getCaTelefonos());
             $data["fax"] = utf8_encode($sucursal->getCaFax());
+            $data["ciudad_destino"] = utf8_encode($sucursal->getCaIdciudaddes());
         }
         $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");
@@ -779,62 +876,78 @@ class crmActions extends sfActions {
     }
 
     public function executeGuardarContacto(sfWebRequest $request) {
-        $idCliente = $request->getParameter("idcliente");
         $idContacto = $request->getParameter("idcontacto");
 
         if ($idContacto) {
-            $contacto = Doctrine::getTable("Contacto")
+            $contacto = Doctrine::getTable("IdsContacto")
                     ->createQuery("i")
-                    ->addWhere('i.ca_idcliente = ?', $idCliente)
                     ->addWhere('i.ca_idcontacto = ?', $idContacto)
                     ->fetchOne();
         } else {
-            $contacto = new Contacto();
+            $contacto = new IdsContacto();
         }
 
         $conn = Doctrine::getTable("Contacto")->getConnection();
         try {
             $conn->beginTransaction();
-            $contacto->setCaIdcliente($idCliente);
-            $contacto->setCaSaludo(utf8_decode($request->getParameter("saludo")));
-            $contacto->setCaNombres(utf8_decode($request->getParameter("nombres")));
-            $contacto->setCaPapellido(utf8_decode($request->getParameter("primer_apellido")));
-            $contacto->setCaSapellido(utf8_decode($request->getParameter("segundo_apellido")));
+            if ($request->getParameter("saludo")) {
+                $contacto->setCaSaludo(utf8_decode($request->getParameter("saludo")));
+            }
+            if ($request->getParameter("nombres")) {
+                $contacto->setCaNombres(utf8_decode($request->getParameter("nombres")));
+            }
+            if ($request->getParameter("primer_apellido")) {
+                $contacto->setCaPapellido(utf8_decode($request->getParameter("primer_apellido")));
+            }
+            if ($request->getParameter("segundo_apellido")) {
+                $contacto->setCaSapellido(utf8_decode($request->getParameter("segundo_apellido")));
+            }
+            if ($request->getParameter("identificacion_tipo")) {
+                $contacto->setCaIdentificacionTipo(utf8_decode($request->getParameter("identificacion_tipo")));
+            }
+            if ($request->getParameter("identificacion")) {
+                $contacto->setCaIdentificacion($request->getParameter("identificacion"));
+            }
             if ($request->getParameter("cargo")) {
                 $contacto->setCaCargo(utf8_decode($request->getParameter("cargo")));
-            } else {
-                $contacto->setCaCargo(utf8_decode($request->getParameter("cargo_def")));
             }
-            $contacto->setCaCargoDef(utf8_decode($request->getParameter("cargo_def")));
-            if ($request->getParameter("tipo_ident")) {
-                $contacto->setCaTipoidentificacion(utf8_decode($request->getParameter("tipo_ident")));
-            } else {
-                $contacto->setCaTipoidentificacion(null);
+            if ($request->getParameter("cargo_general")) {
+                $contacto->setCaCargoGeneral(utf8_decode($request->getParameter("cargo_general")));
             }
-            if ($request->getParameter("num_ident")) {
-                $contacto->setCaNumidentificacion(utf8_decode($request->getParameter("num_ident")));
-            } else {
-                $contacto->setCaNumidentificacion(null);
+            if ($request->getParameter("departamento")) {
+                $contacto->setCaDepartamento(utf8_decode($request->getParameter("departamento")));
             }
-
-            $contacto->setCaDepartamento(utf8_decode($request->getParameter("area")));
-            $contacto->setCaTelefonos(utf8_decode($request->getParameter("telefono")));
-            $contacto->setCaFax(utf8_decode($request->getParameter("fax")));
-            $contacto->setCaEmail(utf8_decode($request->getParameter("correo")));
-            $contacto->setCaObservaciones(utf8_decode($request->getParameter("observaciones")));
-            if ($request->getParameter("not")) {
-                $contacto->setCaFijo(true);
-            } else {
-                $contacto->setCaFijo(false);
+            if ($request->getParameter("mes") and $request->getParameter("dia")) {
+                $contacto->setCaCumpleanos($request->getParameter("mes") . "-" . $request->getParameter("dia"));
             }
-            $contacto->setCaUsuactualizado($this->getUser()->getUserId());
-            $contacto->setCaFchactualizado(date("Y-m-d H:i:s"));
-            $contacto->setCaCumpleanos($request->getParameter("mes") . "-" . $request->getParameter("dia"));
+            if ($request->getParameter("telefono")) {
+                $contacto->setCaTelefonos(utf8_decode($request->getParameter("telefono")));
+            }
+            if ($request->getParameter("celular")) {
+                $contacto->setCaCelular(utf8_decode($request->getParameter("celular")));
+            }
+            if ($request->getParameter("correo")) {
+                $contacto->setCaEmail(utf8_decode($request->getParameter("correo")));
+            }
             if ($request->getParameter("tipo") === 1) {
                 $contacto->setCaTipo($request->getParameter("tipo"));
             } else {
                 $contacto->setCaTipo(0);
             }
+            if ($request->getParameter("idsucursal")) {
+                $contacto->setCaIdsucursal($request->getParameter("idsucursal"));
+            }
+            if ($request->getParameter("fijo")) {
+                $contacto->setCaFijo(true);
+            } else {
+                $contacto->setCaFijo(false);
+            }
+            if ($request->getParameter("observaciones")) {
+                $contacto->setCaObservaciones(utf8_decode($request->getParameter("observaciones")));
+            }
+            $contacto->setCaUsuactualizado($this->getUser()->getUserId());
+            $contacto->setCaFchactualizado(date("Y-m-d H:i:s"));
+            $contacto->getConsultaListas("DOCUMENTO");
 
             $contacto->save();
             $conn->commit();
@@ -1020,6 +1133,7 @@ class crmActions extends sfActions {
                 $data["apellido2"] = utf8_encode($cliente->getCaSapellido());
                 $data["genero"] = utf8_encode($cliente->getCaSexo());
                 $data["cumpleanos"] = utf8_encode($cliente->getCaCumpleanos());
+                $data["idRepresentante"] = utf8_encode($cliente->getCaNumidentificacionRl());
                 $data["actividad"] = utf8_encode($cliente->getCaActividad());
                 $data["sector_economico"] = utf8_encode($cliente->getCaSectoreco());
                 $data["leyinsolvencia"] = utf8_encode($cliente->getCaLeyinsolvencia());
@@ -1031,14 +1145,11 @@ class crmActions extends sfActions {
                 $data["entidad"] = utf8_encode($cliente->getCaEntidad());
                 $data["confidencialidad"] = utf8_encode($cliente->getCaFchacuerdoconf());
 
-                if (strpos($cliente->getCaPropiedades(), 'cuentaglobal=true') !== false || strpos($cliente->getCaPropiedades(), 'cuentaglobal=1') !== false ) {
+                if (strpos($cliente->getCaPropiedades(), 'cuentaglobal=true') !== false) {
                     $data["cuenta_global"] = true;
                 }
-                if (strpos($cliente->getCaPropiedades(), 'consolidar_comunicaciones=true') !== false || strpos($cliente->getCaPropiedades(), 'consolidar_comunicaciones=1') !== false) {
+                if (strpos($cliente->getCaPropiedades(), 'consolidar_comunicaciones=true') !== false) {
                     $data["consolidar"] = true;
-                }
-                if (strpos($cliente->getCaPropiedades(), 'idgProveedor=true') !== false || strpos($cliente->getCaPropiedades(), 'idgProveedor=1') !== false) {
-                    $data["embarque"] = true;
                 }
                 $data["preferencias"] = utf8_encode($cliente->getCaPreferencias());
             }
@@ -1115,6 +1226,7 @@ class crmActions extends sfActions {
             $cliente->setCaPapellido(utf8_decode($request->getParameter("apellido1")));
             $cliente->setCaSapellido(utf8_decode($request->getParameter("apellido2")));
             $cliente->setCaSexo(utf8_decode($request->getParameter("genero")));
+            $cliente->setCaNumidentificacionRl($request->getParameter("idRepresentante"));
             $cliente->setCaCumpleanos(utf8_decode($request->getParameter("cumpleanos")));
             $cliente->setCaActividad(utf8_decode($request->getParameter("actividad")));
             $cliente->setCaSectoreco(utf8_decode($request->getParameter("sector_economico")));
@@ -1139,7 +1251,7 @@ class crmActions extends sfActions {
 
             $propiedades = $cliente->getCaPropiedades();
 
-            if (strpos($propiedades, 'cuentaglobal=true') !== false || strpos($propiedades, 'cuentaglobal=1') !== false) {
+            if (strpos($propiedades, 'cuentaglobal=true') !== false) {
                 if (!$request->getParameter("cuenta_global")) {
                     $propiedades = str_replace('cuentaglobal=true', "", $propiedades);
                 }
@@ -1169,6 +1281,8 @@ class crmActions extends sfActions {
             $cliente->setCaIdcliente($ids->getCaId());
             $cliente->setIds($ids);
             $cliente->save($conn);
+            
+            $ids->getConsultaListas("DOCUMENTO");
 
             $conn->commit();
             $this->responseArray = array("success" => true, "idcliente" => $ids->getCaId() . "", "nombreCliente" => utf8_encode($ids->getCaNombre()));
@@ -1400,267 +1514,149 @@ class crmActions extends sfActions {
 
         $idcliente = $request->getParameter("idcliente");
         if ($idcliente) {
-
             $q = Doctrine_Query::create()
-                    ->select("c.*,EXTRACT(YEAR FROM c.ca_fchcreado),to_number(SUBSTR(c.ca_consecutivo , 1 , (POSITION('-' in c.ca_consecutivo)-1) ),'999999')")
+                    ->select("c.*, to_number(SUBSTR(c.ca_consecutivo, 1 , (POSITION('-' in c.ca_consecutivo)-1) ),'999999')")
                     ->from('Cotizacion c');
             $q->where("c.ca_consecutivo IS NOT NULL ");
-            $q->orderBy("EXTRACT(YEAR FROM c.ca_fchcreado) DESC  ");
+            $q->orderBy("c.ca_empresa");
+            $q->addOrderBy("EXTRACT(YEAR FROM c.ca_fchcreado) DESC  ");
+            $q->addOrderBy("EXTRACT(MONTH FROM c.ca_fchcreado) DESC  ");
             $q->addOrderBy("to_number(SUBSTR(c.ca_consecutivo , 1 , (POSITION('-' in c.ca_consecutivo)-1) ),'999999')  desc");
-            $q->addOrderBy("c.ca_version  desc");
+            $q->addOrderBy("c.ca_version desc");
 
+            $q->innerJoin("c.NotTarea tra");
             $q->innerJoin("c.Contacto con");
-            $q->innerJoin("con.Cliente cl");
-            $q->addWhere("cl.ca_idcliente = ?", $idcliente);
-            $q->limit(20);
-            $resultado = $q->execute();
-
-//            echo $q->getSqlQuery();
-//            exit();
+            $q->addWhere("con.ca_idcliente = ?", $idcliente);
+            $q->limit(50);
+            // echo $q->getSqlQuery();
+            $cotizaciones = $q->execute();
         }
-        $tree = $this->generateTreeCotizaciones($resultado);
-        $this->responseArray = array($tree);
+        
+        $tree = new JTree();
+        $root = $tree->createNode(".");
+        $tree->addFirst($root);
+        foreach ($cotizaciones as $cotizacion) {
+            $uid = $root;
+            $eje_raiz = array();
+            $eje_raiz[] = utf8_encode($cotizacion->getCaEmpresa());
+            $eje_raiz[] = substr($cotizacion->getNotTarea()->getCaFchvisible(),0,4);
+            $eje_raiz[] = Utils::mesLargo(substr($cotizacion->getNotTarea()->getCaFchvisible(),5,2));
+            $eje_raiz[] = $cotizacion->getCaUsuario();
+            
+            foreach ($eje_raiz as $eje){
+                $value = $eje;
+                $node_uid = $tree->findValue($uid, $value);
+
+                if (!$node_uid) {
+                    $nodo = $tree->createNode($value);
+                    $tree->addChild($uid, $nodo);
+                    $uid = $nodo;
+                } else {
+                    $uid = $node_uid;
+                }
+            }
+            $nodo = $tree->getNode($uid);
+            foreach ($cotizacion->getCotProducto() as $producto){
+                $record = array();
+                $record["text"] = $cotizacion->getCaConsecutivo();
+                $record["version"] = $cotizacion->getCaVersion();
+                $record["fchcotizacion"] = substr($cotizacion->getNotTarea()->getCaFchvisible(),0,10);
+                $record["id_cotizacion"] = $cotizacion->getCaIdcotizacion();
+                $record["impoexpo"] = utf8_encode($producto->getCaImpoexpo());
+                $record["transporte"] = utf8_encode($producto->getCaTransporte());
+                $record["modalidad"] = utf8_encode($producto->getCaModalidad());
+                $record["origen"] = utf8_encode($producto->getOrigen()->getCaCiudad());
+                $record["destino"] = utf8_encode($producto->getDestino()->getCaCiudad());
+                $record["producto"] = utf8_encode($producto->getCaProducto());
+                $record["etapa"] = utf8_encode($producto->getCaEtapa());
+                $record["fchterminada"] = utf8_encode($producto->getNotTarea()->getCaFchterminada());
+                $record["usuterminada"] = utf8_encode($producto->getNotTarea()->getCaUsuterminada());
+                $record["cotizacion_link"] = true;
+                
+                $nodo->setAttribute("children", $record);
+            }
+        }
+        
+        $this->responseArray = $tree->getTreeNodes();
         $this->setTemplate("responseTemplate");
     }
 
-    public function generateTreeCotizaciones($q) {
-        $childrens = $this->getChildrensFilesCotizaciones($q);
-        $tree = array("text" => "Cotizaciones",
-            "leaf" => false,
-            "id" => "0",
-            "children" => $childrens);
-        return $tree;
-    }
-
-    public function getChildrensFilesCotizaciones($cotizaciones) {
-        $data = array();
-
-        foreach ($cotizaciones as $cotizacion) {
-            $nombrecompleto = utf8_encode($cotizacion->getContacto()->getCaNombres() . " " . $cotizacion->getContacto()->getCaPapellido());
-
-            $emails = Doctrine::getTable("Email")
-                    ->createQuery("e")
-                    ->where("e.ca_tipo = ? AND e.ca_idcaso = ?", array("Envío de cotización", $cotizacion->getCaIdcotizacion()))
-                    ->addOrderBy("e.ca_fchenvio")
-                    ->execute();
-
-            $tabla = "";
-            $tabla .= '<table class="tbreporte tabla_cotizaciones">';
-            $tabla .= '<tr >';
-            $tabla .= '<td ><span style="font-weight: bold;">Fch.Cotizacion: </span></td>';
-            $tabla .= '<td style="background-color: #F2F2F2;"><span >' . utf8_encode($cotizacion->getCaFchcreado()) . '</span> </td>';
-            $tabla .= '<td ><span style="font-weight: bold;">Contacto: </span></td>';
-            $tabla .= '<td style="background-color: #F2F2F2;"><span >' . utf8_encode($cotizacion->getCaFchcreado()) . '</span> </td>';
-            $tabla .= '<td ><span style="font-weight: bold;">Vendedor: </span></td>';
-            $tabla .= '<td style="background-color: #F2F2F2;"><span >' . utf8_encode($cotizacion->getCaUsuario()) . '</span></td>';
-            $tabla .= '</tr>';
-
-
-            $tabla .= '<tr>';
-            $ban = 0;
-            foreach ($emails as $email) {
-
-                $correos = str_replace(",", "</br>", utf8_encode($email->getCaAddress()));
-                $tabla .= '<td ><span style="font-weight: bold;">Fecha Envio: </span></td>';
-                $tabla .= '<td style="background-color: #F2F2F2;"><span >' . utf8_encode($email->getCaFchenvio()) . '</span></td>';
-                $tabla .= '<td ><span style="font-weight: bold;">Asunto: </span></td>';
-                $tabla .= '<td style="background-color: #F2F2F2;"><span >' . utf8_encode($email->getCaSubject()) . '</span></td>';
-                $tabla .= '<td ><span style="font-weight: bold;">Destinatarios: </span></td>';
-                $tabla .= '<td style="background-color: #F2F2F2;"><span >' . $correos . '</span></td>';
-                $ban = 1;
-            }
-            if ($ban == 0) {
-                $tabla .= '<td ><span style="font-weight: bold;">Fecha Envio: </span></td>';
-                $tabla .= '<td style="background-color: #F2F2F2;"><span > </span></td>';
-                $tabla .= '<td ><span style="font-weight: bold;">Asunto: </span></td>';
-                $tabla .= '<td style="background-color: #F2F2F2;"><span > </span></td>';
-                $tabla .= '<td ><span style="font-weight: bold;">Destinatarios: </span></td>';
-                $tabla .= '<td style="background-color: #F2F2F2;"><span > </span></td>';
-            }
-            $tabla .= '</tr>';
-
-
-            /* $tabla .= ' <tr >';
-              $tabla .= '     <td >';
-              $tabla .= '     <p>' . utf8_encode($cotizacion->getCaFchcreado()) . '<p>';
-              $tabla .= "     </td>";
-              $tabla .= '     <td >';
-              $tabla .= '     <p >' . $nombrecompleto . '<p>';
-              $tabla .= "     </td>";
-              $tabla .= '     <td >';
-              $tabla .= '     <p>' . utf8_encode($cotizacion->getCaUsuario()) . '<p>';
-              $tabla .= "     </td>";
-              $tabla .= " </tr>"; */
-            $tabla .= "</table>";
-
-
-
-            $data[] = array(
-                "text" => utf8_encode('C' . $cotizacion->getCaConsecutivo() . ' V-' . $cotizacion->getCaVersion()),
-                "cotizacion" => $tabla,
-                "id_cotizacion" => $cotizacion->getCaIdcotizacion(),
-                "children" => $this->obtenertrayectos($cotizacion->getCaIdcotizacion()),
-                "leaf" => false,
-                "cotizacion_link" => true
-            );
-        }
-        return $data;
-    }
-
-    public function obtenertrayectos($idcotizacion) {
-        $trayectos = Doctrine::getTable("CotTrayectoAduana")
-                ->createQuery("t")
-                ->addWhere("t.ca_idcotizacion = ?", $idcotizacion)
-                ->execute();
-        $data = array();
-        foreach ($trayectos as $trayecto) {
-            if ($trayecto->getCaEtapa() == "APR")
-                $etapa = "Aprobada";
-            if ($trayecto->getCaEtapa() == "SEG")
-                $etapa = "En Seguimiento<br>Sin seguimientos";
-            if ($trayecto->getCaEtapa() == "NAP")
-                $etapa = " No Aprobada";
-            $tabla = '<p style="font-weight: bold;">Trayectos<p>';
-            $tabla .= '<table class="tbreporte tabla_cotizaciones">';
-            $tabla .= ' <tr >';
-            $tabla .= '     <td >';
-            $tabla .= '     <p>' . utf8_encode($trayecto->getCaImpoexpo() . " » " . $trayecto->getCaTransporte() . " » " . $trayecto->getCaModalidad() . "[" . $trayecto->getCaProducto() . "]") . '<p>';
-            $tabla .= "     </td>";
-            $tabla .= '     <td >';
-            $tabla .= '     <p>' . utf8_encode($trayecto->getOrigen()->getTrafico()->getCaNombre() . " " . $trayecto->getOrigen()->getCaCiudad() . " » " . $trayecto->getDestino()->getTrafico()->getCaNombre() . " " . $trayecto->getDestino()->getCaCiudad()) . '<p>';
-            $tabla .= "     </td>";
-            $tabla .= '     <td >';
-            $tabla .= '     <p>' . utf8_encode($etapa) . '<p>';
-            $tabla .= "     </td>";
-            $tabla .= " </tr>";
-            $tabla .= "</table>";
-
-            $data[] = array("cotizacion" => $tabla,
-                "leaf" => true,
-                "etapa" => $trayecto->getCaEtapa());
-        }
-        return $data;
-    }
 
     public function executeDatosReportes(sfWebRequest $request) {
 
         $idcliente = $request->getParameter("idcliente");
         if ($idcliente) {
-
             $con = Doctrine_Manager::getInstance()->connection();
 
-            $sql = "select * from vi_reportes2 where ca_idcliente = $idcliente limit 20;";
-            $st = $con->execute($sql);
+            $sql = "select *, EXTRACT(YEAR FROM ca_fchcreado) as ca_anno, EXTRACT(MONTH FROM ca_fchcreado) as ca_mes from vi_reportes2 where "
+                    . "ca_idcliente = $idcliente "
+                    . "order by "
+                    . " EXTRACT(YEAR FROM ca_fchcreado) DESC, "
+                    . " EXTRACT(MONTH FROM ca_fchcreado) DESC,"
+                    . " ca_impoexpo, "
+                    . " ca_transporte, "
+                    . " to_number(SUBSTR(ca_consecutivo , 1 , (POSITION('-' in ca_consecutivo)-1) ),'999999')  desc, "
+                    . " ca_version desc "
+                    . "limit 50;";
+            $reportes = $con->execute($sql);
         }
-        $tree = $this->generateTreeReportes($st);
-        $this->responseArray = array($tree);
+        $tree = new JTree();
+        $root = $tree->createNode(".");
+        $tree->addFirst($root);
+        $anno = $mes = $impoexpo = $transporte = null;
+        foreach ($reportes as $reporte) {
+            if ( $anno != $reporte["ca_anno"] || $mes != $reporte["ca_mes"] || $impoexpo != $reporte["ca_impoexpo"] || $transporte != $reporte["ca_transporte"] ){
+                $uid = $root;
+                $eje_raiz = array();
+                $eje_raiz[] = $reporte["ca_anno"];
+                $eje_raiz[] = Utils::mesLargo($reporte["ca_mes"]);
+                $eje_raiz[] = utf8_encode($reporte["ca_impoexpo"]);
+                $eje_raiz[] = utf8_encode($reporte["ca_transporte"]);
+
+                foreach ($eje_raiz as $eje){
+                    $value = $eje;
+                    $node_uid = $tree->findValue($uid, $value);
+
+                    if (!$node_uid) {
+                        $nodo = $tree->createNode($value);
+                        $tree->addChild($uid, $nodo);
+                        $uid = $nodo;
+                    } else {
+                        $uid = $node_uid;
+                    }
+                }
+                $nodo = $tree->getNode($uid);
+                
+                $anno = $reporte["ca_anno"];
+                $mes  = $reporte["ca_mes"];
+                $impoexpo = $reporte["ca_impoexpo"];
+                $transporte = $reporte["ca_transporte"];
+            }
+            
+            $record = array();
+            $record["text"] = $reporte["ca_consecutivo"];
+            $record["version"] = $reporte["ca_version"];
+            $record["fchreporte"] = $reporte["ca_fchreporte"];
+            $record["id_reporte"] = $reporte["ca_idreporte"];
+            $record["modalidad"] = utf8_encode($reporte["ca_modalidad"]);
+            $record["origen"] = utf8_encode($reporte["ca_ciuorigen"]);
+            $record["destino"] = utf8_encode($reporte["ca_ciudestino"]);
+            $record["orden_clie"] = utf8_encode($reporte["ca_orden_clie"]);
+            $record["login"] = utf8_encode($reporte["ca_login"]);
+            $record["colmas"] = utf8_encode($reporte["ca_colmas"]);
+            $record["seguro"] = utf8_encode($reporte["ca_seguro"]);
+            $record["continuacion"] = utf8_encode($reporte["ca_continuacion"]);
+            $record["fchactualizado"] = utf8_encode($reporte["ca_fchactualizado"]);
+            $record["usuactualizado"] = utf8_encode($reporte["ca_usuactualizado"]);
+            $record["reporte_link"] = true;
+
+            $nodo->setAttribute("children", $record);
+        }
+        
+        $this->responseArray = $tree->getTreeNodes();
         $this->setTemplate("responseTemplate");
     }
 
-    public function generateTreeReportes($q) {
-        $childrens = $this->getChildrensFilesReportes($q);
-        $tree = array("text" => "Reportes",
-            "leaf" => false,
-            "id" => "0",
-            "children" => $childrens);
-        return $tree;
-    }
-
-    public function getChildrensFilesReportes($reportes) {
-        $data = array();
-
-        foreach ($reportes as $reporte) {
-            $tabla = '<p>(' . utf8_encode($reporte["ca_transporte"]) . ' ' . utf8_encode($reporte["ca_modalidad"]) . ') - ' . utf8_encode($reporte["ca_nomlinea"]) . '<p>';
-            $tabla .= '<table class="tbreporte tabla_cotizaciones">';
-            $tabla .= '<tr>';
-            $tabla .= '<td ><spam style="font-weight: bold;">Origen:</spam></td>';
-            $tabla .= '<td style="background-color: #F2F2F2;"><spam >' . utf8_encode($reporte["ca_ciuorigen"]) . '</spam></td>';
-            $tabla .= '<td ><spam style="font-weight: bold;">Destino:</spam></td>';
-            $tabla .= '<td style="background-color: #F2F2F2;"><spam>' . utf8_encode($reporte["ca_ciudestino"]) . '</spam></td>';
-            $tabla .= '<td ><spam style="font-weight: bold;">Fch.Despacho:</spam></td>';
-            $tabla .= '<td style="background-color: #F2F2F2;"><spam>' . $reporte["ca_fchdespacho"] . '</spam></td>';
-
-            $tabla .= '</tr>';
-
-            $tabla .= '<tr>';
-            $tabla .= '<td ><spam style="font-weight: bold;">T.Incoterms:</spam></td>';
-            $tabla .= '<td style="background-color: #F2F2F2;"><spam>' . $reporte["ca_incoterms"] . '</spam></td>';
-            $tabla .= '<td ><spam style="font-weight: bold;">Orden:</spam></td>';
-            $tabla .= '<td style="background-color: #F2F2F2;"><spam>' . $reporte["ca_orden_clie"] . '</spam></td>';
-            $tabla .= '<td ><spam style="font-weight: bold;">Cot:</spam></td>';
-            $tabla .= '<td style="background-color: #F2F2F2;"><spam>' . $reporte["ca_idcotizacion"] . '</spam></td>';
-            $tabla .= '</tr>';
-
-            /* $tabla .= ' <tr>';
-              $tabla .= '     <td >';
-              $tabla .= '     <p>' . utf8_encode($reporte["ca_ciuorigen"]) . '<p>';
-              $tabla .= "     </td>";
-              $tabla .= '     <td >';
-              $tabla .= '     ';
-              $tabla .= '     <p >' . utf8_encode($reporte["ca_ciudestino"]) . '<p>';
-              $tabla .= "     </td>";
-              $tabla .= '     <td >';
-              $tabla .= '     <p>' . $reporte["ca_fchdespacho"] . '<p>';
-              $tabla .= "     </td>";
-              $tabla .= '     <td >';
-              $tabla .= '     <p>' . $reporte["ca_incoterms"] . '<p>';
-              $tabla .= "     </td>";
-              $tabla .= '     <td >';
-              $tabla .= '     <p>' . $reporte["ca_orden_clie"] . '<p>';
-              $tabla .= "     </td>";
-              $tabla .= '     <td >';
-              $tabla .= '     <p>' . $reporte["ca_idcotizacion"] . '<p>';
-              $tabla .= "     </td>";
-              $tabla .= " </tr>";
-              $tabla .= "</table>";
-
-              $tabla .= '<table class="tbreporte tabla2">';
-              $tabla .= ' <tr >';
-              $tabla .= '     <td class="cabecera" >';
-              $tabla .= '     <p >Proveedor:<p>';
-              $tabla .= "     </td>";
-              $tabla .= "     <td>";
-              $tabla .= '     <p>' . utf8_encode($reporte["ca_nombre_pro"]) . '<p>';
-              $tabla .= "     </td>";
-              $tabla .= " </tr>";
-              $tabla .= "</table>"; */
-
-            $tabla .= '<table class="tbreporte tabla2">';
-            $tabla .= ' <tr >';
-            $tabla .= '     <td >';
-            $tabla .= '     <spam style="font-weight: bold;">Proveedor: </spam>';
-            $tabla .= "     </td>";
-            $tabla .= '     <td style="background-color: #F2F2F2;">';
-            $tabla .= '     <spam >' . utf8_encode($reporte["ca_nombre_pro"]) . '</spam>';
-            $tabla .= "     </td>";
-            $tabla .= " </tr>";
-            $tabla .= "</table>";
-
-            $tipo = "<br>";
-            if ($reporte["ca_usuanulado"] != "")
-                $tipo = "<br>Anulado";
-            else if ($reporte["ca_usucerrado"] != "")
-                $tipo = "<br>Cerrado";
-
-            if ($reporte["ca_transporte"] == Constantes::AEREO)
-                $class = "aereo";
-            else if ($reporte["ca_transporte"] == Constantes::MARITIMO)
-                $class = "maritimo";
-            else if ($reporte["ca_transporte"] == Constantes::TERRESTRE)
-                $class = "terrestre";
-
-            $data[] = array(
-//                "text" => utf8_encode('<p style="text-align:center;padding:0;margin:-5px">' . $reporte["ca_consecutivo"] . ' V' . $reporte["ca_version"] .$tipo. '</p>'),
-                "text" => utf8_encode($reporte["ca_consecutivo"] . ' V' . $reporte["ca_version"] . $tipo),
-                "reporte" => $tabla,
-                "id_reporte" => $reporte["ca_idreporte"],
-                "imagen" => $class,
-                "leaf" => false,
-                "reporte_link" => true
-            );
-        }
-        return $data;
-    }
 
     public function executeDatosStatus(sfWebRequest $request) {
 ///////////////////////////////////////////////////////
@@ -1711,6 +1707,7 @@ class crmActions extends sfActions {
                 ->addWhere("cl.ca_idcliente = ? ", $idcliente)
                 ->addWhere("r.ca_usuanulado IS NULL ")
                 ->limit(200)
+                ->addOrderBy("ca_idreporte DESC")
                 ->addOrderBy("ca_etapa_actual DESC");
         $resultados = $status->execute();
 
@@ -1761,7 +1758,12 @@ class crmActions extends sfActions {
                 "fechaconstitucion" => utf8_encode($cliente->getCaFchconstitucion()),
                 "regimen" => utf8_encode($cliente->getCaRegimen()),
                 "uap" => utf8_encode($cliente->getCaUap()),
-                "altex" => utf8_encode($cliente->getCaAltex())
+                "altex" => utf8_encode($cliente->getCaAltex()),
+                "comerciante" => utf8_encode($cliente->getCaComerciante()),
+                "cod_ciiu_uno" => $cliente->getCaCiiuUno(),
+                "cod_ciiu_dos" => $cliente->getCaCiiuDos(),
+                "cod_ciiu_trs" => $cliente->getCaCiiuTrs(),
+                "cod_ciiu_ctr" => $cliente->getCaCiiuCtr()
             );
             $this->responseArray = array("success" => true, "data" => $data);
             $this->setTemplate("responseTemplate");
