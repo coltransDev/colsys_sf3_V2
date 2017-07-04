@@ -10,79 +10,78 @@
  * @author     ##NAME## <##EMAIL##>
  * @version    SVN: $Id: Builder.php 5845 2009-06-09 07:36:57Z jwage $
  */
-class Ids extends BaseIds
-{
+class Ids extends BaseIds {
+
     const FOLDER = "ids";
 
     private $idsProveedor = null;
 
-    public function __toString(){
+    public function __toString() {
         return $this->getcaNombre();
     }
+
     /*
-    *
-    */
-    public function getSucursalPrincipal( ){        
+     *
+     */
+
+    public function getSucursalPrincipal() {
         return Doctrine::getTable("IdsSucursal")
-                         ->createQuery("s")
-                         ->where("s.ca_principal = ?", true)
-                         ->addWhere("s.ca_id = ? ", $this->getCaId())
-                         ->fetchOne();
+                        ->createQuery("s")
+                        ->where("s.ca_principal = ?", true)
+                        ->addWhere("s.ca_id = ? ", $this->getCaId())
+                        ->fetchOne();
     }
 
     /*
-    *
-    */
-    public function getDocumento( $idtipo ){
-        
+     *
+     */
+
+    public function getDocumento($idtipo) {
+
         return Doctrine::getTable("IdsDocumento")
-                ->createQuery("d")
-                ->select("d.*")
-                ->where("d.ca_idtipo = ?",$idtipo )
-                ->addWhere("d.ca_id = ?",$this->getCaId() )
-                ->addOrderBy("d.ca_iddocumento DESC")
-                ->fetchOne();
+                        ->createQuery("d")
+                        ->select("d.*")
+                        ->where("d.ca_idtipo = ?", $idtipo)
+                        ->addWhere("d.ca_id = ?", $this->getCaId())
+                        ->addOrderBy("d.ca_iddocumento DESC")
+                        ->fetchOne();
     }
 
+    public function getCalificaciones() {
 
-    public function getCalificaciones( ){       
-        
 
         $result = array();
-        $rows  = Doctrine::getTable("IdsEvaluacion")
+        $rows = Doctrine::getTable("IdsEvaluacion")
                 ->createQuery("ev")
                 ->innerJoin("ev.IdsEvaluacionxCriterio e")
                 ->select("ev.ca_ano, ev.ca_periodo, SUM(e.ca_valor*e.ca_ponderacion )/SUM(e.ca_ponderacion ) as calificacion")
-                ->addWhere("ev.ca_id = ?",$this->getCaId() )
+                ->addWhere("ev.ca_id = ?", $this->getCaId())
                 ->addWhere("(ev.ca_tipo like 'desempeno%' or ev.ca_tipo like 'reevalua%')")
                 // ->orWhere(" ?", )
-                ->addGroupBy("ev.ca_ano, ev.ca_periodo")                
+                ->addGroupBy("ev.ca_ano, ev.ca_periodo")
                 ->addOrderBy("ev.ca_ano, ev.ca_periodo")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                 ->execute();
-        foreach( $rows as $row ){       
-            if( $row["ev_ca_periodo"] ){
+        foreach ($rows as $row) {
+            if ($row["ev_ca_periodo"]) {
                 $per = $row["ev_ca_periodo"];
-            }else{
+            } else {
                 $per = 0;
             }
-            $result[$row["ev_ca_ano"]][ $per ]=round($row["e_calificacion"], 1);
+            $result[$row["ev_ca_ano"]][$per] = round($row["e_calificacion"], 1);
         }
         return $result;
-
-        
     }
 
-    public function getIdsProveedor(){
-        if( !$this->idsProveedor ){
+    public function getIdsProveedor() {
+        if (!$this->idsProveedor) {
             $this->idsProveedor = Doctrine::getTable("IdsProveedor")->find($this->getCaId());
         }
 
         return $this->idsProveedor;
-
     }
-    
-    public function getConsultaListas( $tipoConsulta ){
+
+    public function getConsultaListas($tipoConsulta) {
         $username = sfConfig::get("app_sinteParams_username");
         $password = sfConfig::get("app_sinteParams_password");
         $percent = sfConfig::get("app_sinteParams_percent");
@@ -111,7 +110,7 @@ class Ids extends BaseIds
         $consulta->setCaId($this->getCaId());
         $consulta->setCaTipoConsulta($tipoConsulta);
         $consulta->setCaIdrespuesta($json_response->id);
-        $consulta->setCaRespuesta(($json_response->respuesta)?$json_response->respuesta:null);
+        $consulta->setCaRespuesta(($json_response->respuesta) ? $json_response->respuesta : null);
         $consulta->setCaFchconsultado($json_response->fecha);
         $consulta->save();
         if ($json_response->respuesta) {        // Si el Nit o Razón Social se encuentra reportado
@@ -121,10 +120,10 @@ class Ids extends BaseIds
             La consulta en Listas Restrictivas generó el siguiente resultado:<br />
             <table>
                     <tr>
-                        <td><strong>Nit:</strong></td><td>".$this->getCaIdalterno()."</td>
+                        <td><strong>Nit:</strong></td><td>" . $this->getCaIdalterno() . "</td>
                     </tr>
                     <tr>
-                        <td><strong>Nombre:</strong></td><td>".$this->getCaNombre()."</td>
+                        <td><strong>Nombre:</strong></td><td>" . $this->getCaNombre() . "</td>
                     </tr>
                     <tr>
                         <td colspan=\"2\">$nbsp</td>
@@ -141,7 +140,7 @@ class Ids extends BaseIds
             </table>
             <br />
             Agradecemos tomar las acciones correspondientes e informar a los interesados.";
-            
+
             $parametro = Doctrine::getTable("Parametro")->find(array("CU267", 1, "defaultEmails"));
             if (stripos($parametro->getCaValor2(), ',') !== false) {
                 $defaultEmail = explode(",", $parametro->getCaValor2());
@@ -154,7 +153,7 @@ class Ids extends BaseIds
             } else {
                 $ccEmails = array($parametro->getCaValor2());
             }
-            
+
             $email = new Email();
             $email->setCaUsuenvio("Administrador");
             $email->setCaTipo("ConsultaSinte");
@@ -174,5 +173,20 @@ class Ids extends BaseIds
             $email->save();
         }
         return $consulta;
-    }    
+    }
+
+    public function getUltimaConsulta() {
+        $fecha = null;
+        $idsRestrictivas = Doctrine::getTable("IdsRestrictivas")
+                ->createQuery("r")
+                ->addWhere("r.ca_id = ?", $this->getCaId())
+                ->orderBy("r.ca_fchconsultado DESC")
+                ->limit(1)
+                ->fetchOne();
+        if ($idsRestrictivas) {
+            $fecha = substr($idsRestrictivas->getCaFchconsultado(), 0, -4);
+        }
+        return $fecha;
+    }
+
 }
