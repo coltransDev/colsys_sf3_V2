@@ -10,25 +10,52 @@
  * @author     Your name here
  * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
-class IdsCliente extends BaseIdsCliente
-{
+class IdsCliente extends BaseIdsCliente {
+    /*
+     * Retorna el nombre del Tipo de Persona
+     * @author Carlos G. López M.
+     */
+
+    public function getTipoPersona() {
+        $value = null;
+        $tiposPersona = ParametroTable::retrieveByCaso("CU227", null, null, $this->getCaTipopersona());
+        foreach ($tiposPersona as $tipoPersona) {
+            $value = $tipoPersona->getCaValor();
+        }
+        return $value;
+    }
+
+    /*
+     * Retorna el nombre del Régimen al que pertenece el cliente
+     * @author Carlos G. López M.
+     */
+
+    public function getRegimen() {
+        $value = null;
+        $regimenes = ParametroTable::retrieveByCaso("CU259", null, null, $this->getCaRegimen());
+        foreach ($regimenes as $regimen) {
+            $value = $regimen->getCaValor();
+        }
+        return $value;
+    }
+
     public function getDireccion() {
 
         $direccion = str_replace("|", " ", $this->getCaDireccion());
 
         if ($this->getCaOficina()) {
-            $direccion.="Oficina " . $this->getCaOficina() . " ";
+            $direccion .= "Oficina " . $this->getCaOficina() . " ";
         }
         if ($this->getCaTorre()) {
-            $direccion.="Torre " . $this->getCaTorre() . " ";
+            $direccion .= "Torre " . $this->getCaTorre() . " ";
         }
         if ($this->getCaBloque()) {
-            $direccion.="Bloque " . $this->getCaBloque() . " ";
+            $direccion .= "Bloque " . $this->getCaBloque() . " ";
         }
         if ($this->getCaInterior()) {
-            $direccion.="Interior " . $this->getCaInterior() . " ";
+            $direccion .= "Interior " . $this->getCaInterior() . " ";
         }
-        $direccion.=$this->getCaComplemento() . " ";
+        $direccion .= $this->getCaComplemento() . " ";
 
         return $direccion;
     }
