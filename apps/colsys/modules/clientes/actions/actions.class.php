@@ -192,14 +192,14 @@ class clientesActions extends sfActions {
             $this->setLayout($layout);
         }
     }
-    
-    public function executeDatosEmpresas(sfWebRequest $request){
+
+    public function executeDatosEmpresas(sfWebRequest $request) {
         $empresas = Doctrine::getTable("Empresa")
                 ->createQuery("d")
                 ->execute();
-        $data= array();
-        foreach ($empresas as $empresa){
-            $data[] = array (
+        $data = array();
+        foreach ($empresas as $empresa) {
+            $data[] = array(
                 "id" => $empresa->getCaIdempresa(),
                 "name" => utf8_encode($empresa->getCaNombre())
             );
@@ -346,7 +346,9 @@ class clientesActions extends sfActions {
                         if ($row1["ca_fchnegocio"] != "") {
                             list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($row1["ca_fchnegocio"], "%d-%d-%d %d:%d:%d");
                             if (($hor == 0 and $min == 0 and $seg == 0) or ( $hor == null and $min == null and $seg == null)) {
-                                $hor = 23; $min = 59; $seg = 59;
+                                $hor = 23;
+                                $min = 59;
+                                $seg = 59;
                             }
                             $fchnegocio = date("Y-m-d H:i:s", mktime($hor, $min, $seg, $mes, $dia, $ano));
                         } else if ($row1["ca_fchnegocio"] == "" and $row["ca_estado"] == "Activo") {
@@ -508,17 +510,17 @@ class clientesActions extends sfActions {
                 $fchReferencia = new DateTime($row["ca_fchreferencia"]);
 
                 if ($fchReferencia->format('Y-m-d') <= $corte1) {
-                    $clientesActivos[$row["ca_sucursal"]][$row["ca_vendedor"]][$row["ca_idalterno"]]["ca_periodo_1"]+= 1;
-                    $clientesActivos[$row["ca_sucursal"]][$row["ca_vendedor"]][$row["ca_idalterno"]]["ca_periodo_2"]+= 0;
-                    $clientesActivos[$row["ca_sucursal"]][$row["ca_vendedor"]][$row["ca_idalterno"]]["ca_periodo_3"]+= 0;
+                    $clientesActivos[$row["ca_sucursal"]][$row["ca_vendedor"]][$row["ca_idalterno"]]["ca_periodo_1"] += 1;
+                    $clientesActivos[$row["ca_sucursal"]][$row["ca_vendedor"]][$row["ca_idalterno"]]["ca_periodo_2"] += 0;
+                    $clientesActivos[$row["ca_sucursal"]][$row["ca_vendedor"]][$row["ca_idalterno"]]["ca_periodo_3"] += 0;
                 } elseif ($fchReferencia->format('Y-m-d') <= $corte2) {
-                    $clientesActivos[$row["ca_sucursal"]][$row["ca_vendedor"]][$row["ca_idalterno"]]["ca_periodo_1"]+= 0;
-                    $clientesActivos[$row["ca_sucursal"]][$row["ca_vendedor"]][$row["ca_idalterno"]]["ca_periodo_2"]+= 1;
-                    $clientesActivos[$row["ca_sucursal"]][$row["ca_vendedor"]][$row["ca_idalterno"]]["ca_periodo_3"]+= 0;
+                    $clientesActivos[$row["ca_sucursal"]][$row["ca_vendedor"]][$row["ca_idalterno"]]["ca_periodo_1"] += 0;
+                    $clientesActivos[$row["ca_sucursal"]][$row["ca_vendedor"]][$row["ca_idalterno"]]["ca_periodo_2"] += 1;
+                    $clientesActivos[$row["ca_sucursal"]][$row["ca_vendedor"]][$row["ca_idalterno"]]["ca_periodo_3"] += 0;
                 } else {
-                    $clientesActivos[$row["ca_sucursal"]][$row["ca_vendedor"]][$row["ca_idalterno"]]["ca_periodo_1"]+= 0;
-                    $clientesActivos[$row["ca_sucursal"]][$row["ca_vendedor"]][$row["ca_idalterno"]]["ca_periodo_2"]+= 0;
-                    $clientesActivos[$row["ca_sucursal"]][$row["ca_vendedor"]][$row["ca_idalterno"]]["ca_periodo_3"]+= 1;
+                    $clientesActivos[$row["ca_sucursal"]][$row["ca_vendedor"]][$row["ca_idalterno"]]["ca_periodo_1"] += 0;
+                    $clientesActivos[$row["ca_sucursal"]][$row["ca_vendedor"]][$row["ca_idalterno"]]["ca_periodo_2"] += 0;
+                    $clientesActivos[$row["ca_sucursal"]][$row["ca_vendedor"]][$row["ca_idalterno"]]["ca_periodo_3"] += 1;
                 }
             }
         }
@@ -528,23 +530,23 @@ class clientesActions extends sfActions {
                 foreach ($vendedor as $key_cli => $cliente):
                     $calificacion = "";
                     if ($cliente["ca_periodo_1"] > $cliente["ca_periodo_2"]) {
-                        $calificacion.= "Caida";
+                        $calificacion .= "Caida";
                     } elseif ($cliente["ca_periodo_2"] > $cliente["ca_periodo_1"]) {
-                        $calificacion.= "Incremento";
+                        $calificacion .= "Incremento";
                     } elseif ($cliente["ca_periodo_1"] == 0 and $cliente["ca_periodo_2"] == 0) {
-                        $calificacion.= "Sin Negocios";
+                        $calificacion .= "Sin Negocios";
                     } elseif ($cliente["ca_periodo_2"] == $cliente["ca_periodo_1"]) {
-                        $calificacion.= "Estable";
+                        $calificacion .= "Estable";
                     }
-                    $calificacion.= "/";
+                    $calificacion .= "/";
                     if ($cliente["ca_periodo_2"] > $cliente["ca_periodo_3"]) {
-                        $calificacion.= "Caida";
+                        $calificacion .= "Caida";
                     } elseif ($cliente["ca_periodo_3"] > $cliente["ca_periodo_2"]) {
-                        $calificacion.= "Incremento";
+                        $calificacion .= "Incremento";
                     } elseif ($cliente["ca_periodo_2"] == 0 and $cliente["ca_periodo_3"] == 0) {
-                        $calificacion.= "Sin Negocios";
+                        $calificacion .= "Sin Negocios";
                     } elseif ($cliente["ca_periodo_3"] == $cliente["ca_periodo_2"]) {
-                        $calificacion.= "Estable";
+                        $calificacion .= "Estable";
                     }
                     $clientesActivos[$key_suc][$key_ven][$key_cli]["ca_calificacion"] = $calificacion;
                 endforeach;
@@ -1510,7 +1512,7 @@ class clientesActions extends sfActions {
                                     $sdnIdListObj->setCaUidId($sub_id);
                                     while (list ($clave, $val) = each($arreglo)) {
                                         $campo = "setCa" . ucfirst(strtolower($clave));
-                                        $val = ($campo=="setCaIdnumber"?substr($val,0,40):$val);
+                                        $val = ($campo == "setCaIdnumber" ? substr($val, 0, 40) : $val);
                                         $sdnIdListObj->$campo($val);
                                     }
                                     $sdnIdListObj->save();
@@ -1574,8 +1576,8 @@ class clientesActions extends sfActions {
             while ($row = $stmt->fetch()) {
                 if ($row["ca_vendedor"] !== $ven_mem) {
                     if ($msn_mem != '') {
-                        $msn_mem.= "</table>";
-                        $msn_mem.= "<br / >Fin del Reporte.";
+                        $msn_mem .= "</table>";
+                        $msn_mem .= "<br / >Fin del Reporte.";
                         reset($ccEmails);
                         while (list ($clave, $val) = each($ccEmails)) {
                             $email->addCc($val);
@@ -1622,22 +1624,22 @@ class clientesActions extends sfActions {
                     }
                     $ven_mem = $row["ca_vendedor"];
                     $msn_mem = "El sistema ha encontrado algunas similitudes en su listado de Clientes, comparado con la Lista OFAC del día $nueva_fecha. Favor hacer la respectivas verificaciones y tomar acción en caso de que un cliente haya sido reportado.";
-                    $msn_mem.= "<br />";
-                    $msn_mem.= "<table width='90%' cellspacing='1' border='1'>";
-                    $msn_mem.= "	<tr>";
+                    $msn_mem .= "<br />";
+                    $msn_mem .= "<table width='90%' cellspacing='1' border='1'>";
+                    $msn_mem .= "	<tr>";
                     for ($i = 0; $i < count($tit_mem); $i++) {
-                        $msn_mem.= "	<th>" . $tit_mem[$i] . "</th>";
+                        $msn_mem .= "	<th>" . $tit_mem[$i] . "</th>";
                     }
-                    $msn_mem.= "	</tr>";
+                    $msn_mem .= "	</tr>";
                 }
-                $msn_mem.= "	<tr>";
+                $msn_mem .= "	<tr>";
                 for ($i = 0; $i < count($tit_mem); $i++) {
-                    $msn_mem.= "	<td>" . $row[$tit_mem[$i]] . "</td>";
+                    $msn_mem .= "	<td>" . $row[$tit_mem[$i]] . "</td>";
                 }
-                $msn_mem.= "	</tr>";
+                $msn_mem .= "	</tr>";
             }
-            $msn_mem.= "</table>";
-            $msn_mem.= "<br / >Fin del Reporte.";
+            $msn_mem .= "</table>";
+            $msn_mem .= "<br / >Fin del Reporte.";
 
             reset($ccEmails);
             while (list ($clave, $val) = each($ccEmails)) {
@@ -1718,13 +1720,13 @@ class clientesActions extends sfActions {
 
         $q = Doctrine_Manager::getInstance()->connection();
         $query = "select ic.ca_referencia, ic.ca_idcliente, cl.ca_idalterno, cl.ca_compania, ic.ca_fchliberacion, ic.ca_notaliberacion, ic.ca_fchliberado, ii.ca_factura, ic.ca_hbls, u.ca_nombre, u.ca_sucursal";
-        $query.= "		from tb_inoclientes_sea ic";
-        $query.= "		INNER JOIN vi_clientes_reduc cl ON ic.ca_idcliente = cl.ca_idcliente";
-        $query.= "		INNER JOIN tb_inoingresos_sea ii ON ic.ca_idinocliente = ii.ca_idinocliente ";
-        $query.= "		INNER JOIN vi_usuarios u ON u.ca_login = ic.ca_usuliberado";
-        $query.= "		where ic.ca_fchliberacion IS NOT NULL and ic.ca_fchliberacion BETWEEN '$fchinicial' and '$fchfinal'";
-        $query.= "		and cl.ca_compania='$cliente'";
-        $query.= "      order by ic.ca_fchliberacion DESC";
+        $query .= "		from tb_inoclientes_sea ic";
+        $query .= "		INNER JOIN vi_clientes_reduc cl ON ic.ca_idcliente = cl.ca_idcliente";
+        $query .= "		INNER JOIN tb_inoingresos_sea ii ON ic.ca_idinocliente = ii.ca_idinocliente ";
+        $query .= "		INNER JOIN vi_usuarios u ON u.ca_login = ic.ca_usuliberado";
+        $query .= "		where ic.ca_fchliberacion IS NOT NULL and ic.ca_fchliberacion BETWEEN '$fchinicial' and '$fchfinal'";
+        $query .= "		and cl.ca_compania='$cliente'";
+        $query .= "      order by ic.ca_fchliberacion DESC";
 
         $this->listado = $q->execute($query);
         $this->cliente = $cliente;
@@ -1736,7 +1738,7 @@ class clientesActions extends sfActions {
         
     }
 
-   public function executeProcesarRc(sfWebRequest $request) {
+    public function executeProcesarRc(sfWebRequest $request) {
 //        try 
         {
             $con = Doctrine_Manager::getInstance()->connection();
@@ -1759,7 +1761,7 @@ class clientesActions extends sfActions {
 
             $sucRec = array("1" => "BOG", "2" => "MDE", "3" => "CLO", "4" => "BAQ", "5" => "DOLARES", "6" => "PEI", "7" => "BUN", "8" => "CTG", "9" => "BUC");
             $sucFacAssoc = array("BOG" => "1", "CLO" => "2", "MDE" => "3", "BAQ" => "4", "PEI" => "5", "BUN" => "7", "ABO" => "1");
-            $sucFac = array("1" => "BOG", "2" => "CLO", "3" => "MDE", "4" => "BAQ", "5" => "PEI", "6" => "BOG" ,"8" => "MDE","9" => "CLO","10" => "BAQ"   );
+            $sucFac = array("1" => "BOG", "2" => "CLO", "3" => "MDE", "4" => "BAQ", "5" => "PEI", "6" => "BOG", "8" => "MDE", "9" => "CLO", "10" => "BAQ");
             $sqltmp = "";
             for ($i = 0; $i < count($lines); $i++) {
                 $sql_update = "";
@@ -1774,71 +1776,68 @@ class clientesActions extends sfActions {
 
                 //$nfact = (int) str_replace("\"", "", $datos[12]);
                 $nfact = (int) str_replace("\"", "", $datos[11]);
-                
+
                 $pre = str_replace("\"", "", $datos[0]) . ((int) str_replace("\"", "", $datos[1]));
 
                 $nrecibo = (int) str_replace("\"", "", $datos[2]);
                 $fecha_pago = Utils::parseDate((int) str_replace("\"", "", $datos[6]));
-                
+
                 //$valor_pago = (float) str_replace("\"", "", $datos[9]);
                 $valor_pago = (float) str_replace("\"", "", $datos[8]);
-                
+
                 $comienzo_log = "<b>linea</b>=" . $i . ":::<b>Factura</b>=" . $nfact . ":::<b>Recibo</b>=" . $nrecibo . " ::: ";
                 if (count($datos) != 12) {
                     $resultado[$i] = $comienzo_log . "Existen cantidad de campos diferente a los establecidos<br>";
-                    $estadisticas["formato_incorrecto"]++;
+                    $estadisticas["formato_incorrecto"] ++;
                     continue;
                 }
                 //echo $sucRec[$suc_recibo].'-'.$sucFac[$suc_factura]."<br>";
-                if( ($suc_recibo!="15" && $suc_recibo!="5" ) && ($suc_factura<6))
-                {
+                if (($suc_recibo != "15" && $suc_recibo != "5" ) && ($suc_factura < 6)) {
                     if ($sucRec[$suc_recibo] != $sucFac[$suc_factura]) {
-                        $resultado[$i] = $comienzo_log . "La sucursal registrada en el recibo es diferente a la de la factura (".$suc_recibo ." :: ".$sucFac[$suc_factura].")";
-                        $estadisticas["direfente_sucursal"]++;
+                        $resultado[$i] = $comienzo_log . "La sucursal registrada en el recibo es diferente a la de la factura (" . $suc_recibo . " :: " . $sucFac[$suc_factura] . ")";
+                        $estadisticas["direfente_sucursal"] ++;
                         continue;
                     }
                 }
                 //echo $nfact."".$tipo_comp."<br>";
                 if (!$nfact) {
 
-                    $resultado[$i] = $comienzo_log . "No posee No Factura ".$nfact;
-                    $estadisticas["sin_factura"]++;
+                    $resultado[$i] = $comienzo_log . "No posee No Factura " . $nfact;
+                    $estadisticas["sin_factura"] ++;
                     continue;
                 }
                 if (strcmp($tipo_comp, 'F') != 0) {
                     $resultado[$i] = $comienzo_log . "No posee No Factura " . $tipo_comp . " ";
-                    $estadisticas["sin_factura"]++;
+                    $estadisticas["sin_factura"] ++;
                     continue;
                 }
 
                 //if ($datos[2] == "" && $datos[7] == "") {
                 if ($datos[2] == "" && $datos[6] == "") {
                     $resultado[$i] = $comienzo_log . "No posee No Recibo de caja ni fecha de pago";
-                    $estadisticas["sin_recibo"]++;
-                    $estadisticas["sin_fecha"]++;
+                    $estadisticas["sin_recibo"] ++;
+                    $estadisticas["sin_fecha"] ++;
                     continue;
                 }
                 if ($datos[2] == "") {
                     $resultado[$i] = $comienzo_log . "No posee No Recibo de caja";
-                    $estadisticas["sin_recibo"]++;
+                    $estadisticas["sin_recibo"] ++;
                 }
                 //if ($datos[7] == "") {
                 if ($datos[6] == "") {
                     $resultado[$i] = $comienzo_log . "No posee fecha de pago";
-                    $estadisticas["sin_fecha"]++;
+                    $estadisticas["sin_fecha"] ++;
                 }
 
                 $encontro = false;
                 $actualizo = false;
 
-                if($suc_recibo=="15" || $suc_recibo=="5")
-                {
-                    $sucursal=$this->getUser()->getIdSucursal();
+                if ($suc_recibo == "15" || $suc_recibo == "5") {
+                    $sucursal = $this->getUser()->getIdSucursal();
                     //echo "RECIBO L15".$suc_recibo;
-                }
-                else
+                } else
                     $sucursal = $sucRec[$suc_recibo];
-                
+
                 if ($sucursal == "BOG" || $sucursal == "ABO" || $sucursal == "OBO")
                     $sucursal = "'BOG','ABO','OBO'";
                 else if ($sucursal == "CLO" || $sucursal == "ACL" || $sucursal == "OCL")
@@ -1850,7 +1849,7 @@ class clientesActions extends sfActions {
                     //$sql="select t.*,u.ca_idsucursal from ".$tabla." t,control.tb_usuarios u where (ca_factura ='".$nfact."' or ca_factura ='F".$suc_factura."-".$nfact."' ) and t.ca_usucreado=u.ca_login and u.ca_idsucursal in ($sucursal) ";
                     $sql = "select t.*,u.ca_idsucursal 
                         from " . $tabla . " t,control.tb_usuarios u "
-                        . "where t.ca_fchcreado > '".  Utils::addDate(date("Y-m-d"),0,0,-1)."' and (ca_factura ='" . $nfact . "' or ca_factura ='F" . $suc_factura . "-" . $nfact . "' or ca_factura ='F" . $suc_factura . " " . $nfact . "' or ca_factura ='f" . $suc_factura . "-" . $nfact . "' or ca_factura ='f" . $suc_factura . " " . $nfact . "' ) and t.ca_usucreado=u.ca_login and u.ca_idsucursal in ($sucursal) ";
+                            . "where t.ca_fchcreado > '" . Utils::addDate(date("Y-m-d"), 0, 0, -1) . "' and (ca_factura ='" . $nfact . "' or ca_factura ='F" . $suc_factura . "-" . $nfact . "' or ca_factura ='F" . $suc_factura . " " . $nfact . "' or ca_factura ='f" . $suc_factura . "-" . $nfact . "' or ca_factura ='f" . $suc_factura . " " . $nfact . "' ) and t.ca_usucreado=u.ca_login and u.ca_idsucursal in ($sucursal) ";
                     //echo  $sql."<br>";
                     $st = $con->execute($sql);
                     $ref = $st->fetch();
@@ -1863,29 +1862,29 @@ class clientesActions extends sfActions {
                             if ($ref["ca_reccaja"] == "" || $ref["ca_reccaja"] == "''") {
                                 $set = " ca_reccaja='" . $pre . " " . $nrecibo . "'";
                             } else {
-                                $resultado[$i].=($resultado[$i] == "") ? $comienzo_log : "";
-                                $resultado[$i].="-" . $tabla . ":: Recibo de caja ya cargado 'No se actualizo',";
+                                $resultado[$i] .= ($resultado[$i] == "") ? $comienzo_log : "";
+                                $resultado[$i] .= "-" . $tabla . ":: Recibo de caja ya cargado 'No se actualizo',";
                             }
                         }
 
                         if ($fecha_pago) {
                             if ($ref["ca_fchpago"] == "") {
-                                $set.=($set != "") ? "," : "";
-                                $set.=" ca_fchpago='" . $fecha_pago . "'";
+                                $set .= ($set != "") ? "," : "";
+                                $set .= " ca_fchpago='" . $fecha_pago . "'";
                             } else {
-                                $resultado[$i].=($resultado[$i] == "") ? $comienzo_log : "";
-                                $resultado[$i].=$tabla . ":: Fecha de pago ya cargada 'No se actualizo',";
+                                $resultado[$i] .= ($resultado[$i] == "") ? $comienzo_log : "";
+                                $resultado[$i] .= $tabla . ":: Fecha de pago ya cargada 'No se actualizo',";
                             }
                         }
 
                         if ($set != "") {
                             foreach ($pk[$tabla] as $p) {
-                                $where.= " and $p='" . $ref[$p] . "' ";
+                                $where .= " and $p='" . $ref[$p] . "' ";
                             }
                             //$sql.=$where;
-                            $sql_update.=$set . " where 1=1 $where;";
+                            $sql_update .= $set . " where 1=1 $where;";
                             $st = $con->execute($sql_update);
-                            $sqltmp.=$sql_update . "<br>";
+                            $sqltmp .= $sql_update . "<br>";
                             $actualizo = true;
                         } else {
                             $actualizo = false;
@@ -1900,50 +1899,44 @@ class clientesActions extends sfActions {
                       } */
                 }
 
-                 if (!$encontro || !$actualizo) {
-                    
+                if (!$encontro || !$actualizo) {
+
                     $sql = "select t.*,u.ca_idsucursal 
                         from " . $tabla . " t,control.tb_usuarios u where (ca_factura ='" . $nfact . "' or ca_factura ='F" . $suc_factura . "-" . $nfact . "' or ca_factura ='F" . $suc_factura . " " . $nfact . "' or ca_factura ='f" . $suc_factura . "-" . $nfact . "' or ca_factura ='f" . $suc_factura . " " . $nfact . "' ) and t.ca_usucreado=u.ca_login and u.ca_idsucursal in ($sucursal) ";
-                    $sql="select                         
+                    $sql = "select                         
                         *
                         from ino.tb_comprobantes c
                         inner join ino.tb_house h ON c.ca_idhouse = h.ca_idhouse
                         inner join ino.tb_master m ON m.ca_idmaster = h.ca_idmaster
                         inner join ino.tb_tipos_comprobante t ON c.ca_idtipo = t.ca_idtipo
                         where ( t.ca_tipo||t.ca_comprobante||'-'||ca_consecutivo =UPPER('F{$suc_factura}-{$nfact}') or t.ca_tipo||t.ca_comprobante||' '||ca_consecutivo =UPPER('F{$suc_factura} {$nfact}') ) ";
-                        //and t.ca_idsucursal in (".$sucursal.") ";
-                        $st = $con->execute($sql);
-                        $ref = $st->fetch();
-                    
-                        
-                    if ($ref) 
-                    {                        
-                        if($ref["ca_idcomprobante_cruce"]!="")
-                        {
-                            $resultado[$i].="- ino.Comprobantes:: Recibo de caja ya cargado 'No se actualizo',";
-                        }
-                        else
-                        {
+                    //and t.ca_idsucursal in (".$sucursal.") ";
+                    $st = $con->execute($sql);
+                    $ref = $st->fetch();
+
+
+                    if ($ref) {
+                        if ($ref["ca_idcomprobante_cruce"] != "") {
+                            $resultado[$i] .= "- ino.Comprobantes:: Recibo de caja ya cargado 'No se actualizo',";
+                        } else {
                             //$sql_update.=$set . " where 1=1 $where;";
-                            
+
                             $patron = '/(2\d\d).(\d\d).(\d\d).(\d\d\d\d).(\d\d)/';
                             if (preg_match($patron, $ref["ca_doctransporte"])) {
-                              $resultado[$i].="-" . $tabla . ":: Referencia con aduana, no se importa por este medio,";  
-                            }
-                            else{
+                                $resultado[$i] .= "-" . $tabla . ":: Referencia con aduana, no se importa por este medio,";
+                            } else {
                                 continue;
                                 $comprobante = Doctrine::getTable("InoComprobante")
-                                    ->createQuery("s")
-                                    ->select("*")                                    
-                                    ->where("ca_idtipo = ? AND ca_consecutivo=? AND ca_idhouse=?",array("12", $pre . " " . $nrecibo , $ref["ca_idhouse"] ) )
-                                    ->fetchOne();
+                                        ->createQuery("s")
+                                        ->select("*")
+                                        ->where("ca_idtipo = ? AND ca_consecutivo=? AND ca_idhouse=?", array("12", $pre . " " . $nrecibo, $ref["ca_idhouse"]))
+                                        ->fetchOne();
 
-                                if(!$comprobante)
-                                {
+                                if (!$comprobante) {
                                     $comprobante = new InoComprobante();
                                     $comprobante->setCaIdtipo(12);
-                                    $comprobante->setCaConsecutivo($pre . " " . $nrecibo );
-                                    $comprobante->setCaFchcomprobante($fecha_pago );
+                                    $comprobante->setCaConsecutivo($pre . " " . $nrecibo);
+                                    $comprobante->setCaFchcomprobante($fecha_pago);
                                     $comprobante->setCaIdhouse($ref["ca_idhouse"]);
                                     $comprobante->setCaObservaciones("Ingresado por el proceso de importar RC");
                                     $comprobante->setCaTcambio("1");
@@ -1961,42 +1954,39 @@ class clientesActions extends sfActions {
                                     $comprobante1->stopBlaming();
                                     $comprobante1->save();
                                     //$st = $con->execute("insert into ino.tb_comprobantes (ca_idtipo,ca_consecutivo,ca_fchcomprobante,ca_id,ca_idhouse,ca_observaciones)");
-                                    $estadisticas["actualizada"]++;
+                                    $estadisticas["actualizada"] ++;
                                     $resultado[$i] = $comienzo_log . " REGISTRO IMPORTADO";
-                                    $encontro=true;
-                                    $actualizo=true;
-                                }
-                                else
-                                {
+                                    $encontro = true;
+                                    $actualizo = true;
+                                } else {
                                     $comprobante1 = Doctrine::getTable("InoComprobante")->find($ref["ca_idcomprobante"]);
                                     $comprobante1->setCaIdcomprobanteCruce($comprobante->getCaIdcomprobante());
                                     $comprobante1->stopBlaming();
                                     $comprobante1->save();
 
-                                    $resultado[$i].=($resultado[$i] == "") ? $comienzo_log : "";
-                                    $resultado[$i].= "InoComprobantes:: Rc de caja existe en colsys  'No se actualizo',";
+                                    $resultado[$i] .= ($resultado[$i] == "") ? $comienzo_log : "";
+                                    $resultado[$i] .= "InoComprobantes:: Rc de caja existe en colsys  'No se actualizo',";
                                 }
-                            }                                
+                            }
                         }
                     }
 
-                    if (!$encontro || !$actualizo) { 
-                        $resultado[$i].=($resultado[$i] == "") ? $comienzo_log : "";
+                    if (!$encontro || !$actualizo) {
+                        $resultado[$i] .= ($resultado[$i] == "") ? $comienzo_log : "";
                         if (!$encontro) {
-                            $resultado[$i].="FACTURA NO ENCONTRADA";
-                            $estadisticas["no_encontrado"]++;
+                            $resultado[$i] .= "FACTURA NO ENCONTRADA";
+                            $estadisticas["no_encontrado"] ++;
                         }
                         if (!$actualizo) {
-                            $resultado[$i].="Registro no actualizado";
-                            $estadisticas["no_actualizado"]++;
+                            $resultado[$i] .= "Registro no actualizado";
+                            $estadisticas["no_actualizado"] ++;
                         }
-                    }
-                    else {
-                        $estadisticas["actualizada"]++;
+                    } else {
+                        $estadisticas["actualizada"] ++;
                         $resultado[$i] = $comienzo_log . " REGISTRO IMPORTADO";
                     }
                 } else {
-                    $estadisticas["actualizada"]++;
+                    $estadisticas["actualizada"] ++;
                     $resultado[$i] = $comienzo_log . " REGISTRO IMPORTADO";
                 }
             }
@@ -2005,8 +1995,8 @@ class clientesActions extends sfActions {
             //echo $sqltmp;
             $this->responseArray = array("success" => "true", "resultado" => implode("<br>", $resultado), "estadisticas" => $estadisticas, "sqlimpor" => $sqltmp);
         }/* catch (Exception $e) {
-            $this->responseArray = array("success" => "false", "errorInfo" => $e->getTraceAsString());
-        }*/
+          $this->responseArray = array("success" => "false", "errorInfo" => $e->getTraceAsString());
+          } */
         $this->setTemplate("responseTemplate");
     }
 
@@ -2276,25 +2266,25 @@ class clientesActions extends sfActions {
     public function executeEncuestaVisitaExt4(sfWebRequest $request) {
         
     }
-    
-    public function executeParamDocsExt4(sfWebRequest $request){
+
+    public function executeParamDocsExt4(sfWebRequest $request) {
         
     }
-    
-    public function executeActualizarParamDocs (sfWebRequest $request){
+
+    public function executeActualizarParamDocs(sfWebRequest $request) {
         $grid = json_decode($request->getParameter("datosGrid"));
         $conn = Doctrine::getTable("Documentosxconc")->getConnection();
         $conn->beginTransaction();
-        
-        try{
-        $ids = array(); 
-            foreach($grid as $registro){
-               
+
+        try {
+            $ids = array();
+            foreach ($grid as $registro) {
+
                 $documento = Doctrine::getTable("Documentosxconc")
                         ->createQuery("d")
-                        ->addWhere("d.ca_id = ?",$registro->ca_id)
+                        ->addWhere("d.ca_id = ?", $registro->ca_id)
                         ->fetchOne();
-                if($documento){
+                if ($documento) {
                     $documento->setCaIdtipo($registro->ca_idtipo);
                     $documento->setCaTipo($registro->ca_tipo);
                     $documento->setCaIdempresa($registro->ca_idempresa);
@@ -2310,44 +2300,41 @@ class clientesActions extends sfActions {
                 }
             }
             $conn->commit();
-            $this->responseArray = array("success" => true,"ids" => $ids);
-        
-        }catch(Exception $e){
+            $this->responseArray = array("success" => true, "ids" => $ids);
+        } catch (Exception $e) {
             $conn->rollBack();
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
         $this->setTemplate("responseTemplate");
-    } 
-    
-    public function executeDatosParamDocs(sfWebRequest $request){
+    }
+
+    public function executeDatosParamDocs(sfWebRequest $request) {
         $idempresa = $request->getParameter("idempresa");
-        
+
         $documentos = Doctrine::getTable("Documentosxconc")
-            ->createQuery("d")
-            ->select("d.*, p.ca_tipo as ca_documento")
-            ->innerJoin("d.IdsTipoDocumento p ON p.ca_idtipo = d.ca_idtipo")
-            ->addWhere("d.ca_idempresa = ? ", $idempresa)
-            ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
-            ->execute();
-        
+                ->createQuery("d")
+                ->select("d.*, p.ca_tipo as ca_documento")
+                ->innerJoin("d.IdsTipoDocumento p ON p.ca_idtipo = d.ca_idtipo")
+                ->addWhere("d.ca_idempresa = ? ", $idempresa)
+                ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                ->execute();
+
         $data = array();
-        foreach ($documentos as $documento){
+        foreach ($documentos as $documento) {
             $data[] = array(
-                            'ca_id' => $documento['ca_id'],
-                            'ca_idtipo' =>  $documento['ca_idtipo'],
-                            'ca_tipo' => $documento['ca_tipo'],
-                            'ca_idempresa' => $documento['ca_idempresa'],
-                            'ca_perjuridica' => $documento['ca_perjuridica'],
-                            'ca_perjuridica_reciente' => $documento['ca_perjuridica_reciente'] ,
-                            'ca_perjuridica_activos' => $documento['ca_perjuridica_activos'],
-                            'ca_gran_contribuyente' => $documento['ca_gran_contribuyente'],
-                            'ca_persona_natural' => $documento['ca_persona_natural'],
-                            'ca_persona_natural_comerciante' => $documento['ca_persona_natural_comerciante'],
-                            'ca_perjuridica_5000' => $documento['ca_perjuridica_cincomil'],
-                            'ca_documento' => utf8_encode($documento['ca_documento'])
-                
+                'ca_id' => $documento['ca_id'],
+                'ca_idtipo' => $documento['ca_idtipo'],
+                'ca_tipo' => $documento['ca_tipo'],
+                'ca_idempresa' => $documento['ca_idempresa'],
+                'ca_perjuridica' => $documento['ca_perjuridica'],
+                'ca_perjuridica_reciente' => $documento['ca_perjuridica_reciente'],
+                'ca_perjuridica_activos' => $documento['ca_perjuridica_activos'],
+                'ca_gran_contribuyente' => $documento['ca_gran_contribuyente'],
+                'ca_persona_natural' => $documento['ca_persona_natural'],
+                'ca_persona_natural_comerciante' => $documento['ca_persona_natural_comerciante'],
+                'ca_perjuridica_5000' => $documento['ca_perjuridica_cincomil'],
+                'ca_documento' => utf8_encode($documento['ca_documento'])
             );
-            
         }
         $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
         $this->setTemplate("responseTemplate");
@@ -2525,8 +2512,8 @@ class clientesActions extends sfActions {
         if ($idencuesta) {
             $this->encuestaVisita = Doctrine::getTable('EncuestaVisita')->find($idencuesta);
             $sql = "select ca_coltrans_std, ca_coltrans_fch, ca_colmas_std, ca_colmas_fch, ca_colotm_std, ca_colotm_fch, ca_coldepositos_std, ca_coldepositos_fch "
-                    . "from vi_clientes where ca_idcliente = ".$this->encuestaVisita->getContacto()->getCaIdcliente();
-            
+                    . "from vi_clientes where ca_idcliente = " . $this->encuestaVisita->getContacto()->getCaIdcliente();
+
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
             $this->estados = $st->fetchAll()[0];
@@ -2534,8 +2521,7 @@ class clientesActions extends sfActions {
             $this->encuestaVisita = new EncuestaVisita();
         }
     }
-    
-    
+
     public function executeControlFinancieroExt4(sfWebRequest $request) {
         
     }
@@ -2549,7 +2535,6 @@ class clientesActions extends sfActions {
         $datos = json_decode($datos);
         $nuevo = false;
         $ids = array();
-        $cliente = new IdsCliente();
 
         $con = Doctrine_Manager::getInstance()->connection();
 
@@ -2635,13 +2620,34 @@ class clientesActions extends sfActions {
                 if ($datos->regimen) {
                     $cliente->setCaRegimen($datos->regimen);
                 }
-                $cliente->setCaUap($datos->uap);
-                $cliente->setCaAltex($datos->altex); 
-                $cliente->setCaMenosxempleados($datos->numempleados);
+                if ($datos->uap) {
+                    $cliente->setCaUap($datos->uap);
+                }
+                if ($datos->altex) {
+                    $cliente->setCaAltex($datos->altex);
+                }
+                if ($datos->comerciante) {
+                    $cliente->setCaComerciante($datos->comerciante);
+                }
+                if ($datos->cod_ciiu_uno) {
+                    $cliente->setCaCiiuUno($datos->cod_ciiu_uno);
+                }
+                if ($datos->cod_ciiu_dos) {
+                    $cliente->setCaCiiuDos($datos->cod_ciiu_dos);
+                }
+                if ($datos->cod_ciiu_trs) {
+                    $cliente->setCaCiiuTrs($datos->cod_ciiu_trs);
+                }
+                if ($datos->cod_ciiu_ctr) {
+                    $cliente->setCaCiiuCtr($datos->cod_ciiu_ctr);
+                }
+                if ($datos->numempleados) {
+                    $cliente->setCaMenosxempleados($datos->numempleados);
+                }
                 $cliente->setCaFchfinanciero(date("Y-m-d H:i:s"));
                 $cliente->setCaUsufinanciero($this->getUser()->getUserId());
-                
-                $cliente->save(); 
+
+                $cliente->save();
                 $conn->commit();
 
                 $conect = Doctrine::getTable("Blccliente")->getConnection();
@@ -2696,7 +2702,7 @@ class clientesActions extends sfActions {
         $idcliente = $request->getParameter("idcliente");
         $tipopersona = $request->getParameter("tipo");
         $activostotales = $request->getParameter("activostotales");
-        
+
         $fechconstitucion = $request->getParameter("fechconstitucion");
         $anioactual = date("Y");
         $minimo = Doctrine::getTable('Smlv')->find($anioactual);
@@ -2706,14 +2712,14 @@ class clientesActions extends sfActions {
                 $tipopersona = "ca_perjuridica_activos";
             }
         }
-        
-        if ($tipopersona == "ca_gran_contribuyente_uap"){
+
+        if ($tipopersona == "ca_gran_contribuyente_uap") {
             $tipopersona = "ca_gran_contribuyente";
         }
 
         if ($tipopersona == "ca_perjuridica" || $tipopersona == "ca_gran_contribuyente" || $tipopersona == "ca_perjuridica_activos") {
             $fechahaceunano = date("Y") - 1 . "-" . date("m") . "-" . date("d");
-            if($fechconstitucion){
+            if ($fechconstitucion) {
                 if ($fechahaceunano < $fechconstitucion) {
                     $tipopersona = "ca_perjuridica_reciente";
                 }
@@ -2820,6 +2826,7 @@ class clientesActions extends sfActions {
                             ->createQuery("d")
                             ->where("d.ca_idagaduana = ?", $dato->id_agente)
                             ->addWhere("d.ca_idcliente = ?", $idcliente)
+                            ->addWhere("d.ca_fchanulado IS NULL")
                             ->fetchOne();
 
                     if (!$aducliente) {
@@ -3046,7 +3053,7 @@ class clientesActions extends sfActions {
                 ->where("d.ca_anno = ?", $anioactual)
                 ->fetchOne();
 
-        $minimo = ($minimol)?$minimol->getCaSmlv():0;
+        $minimo = ($minimol) ? $minimol->getCaSmlv() : 0;
 
         $data = array();
         foreach ($blcclientes as $blccliente) {
@@ -3093,35 +3100,30 @@ class clientesActions extends sfActions {
 
         $this->setTemplate("responseTemplate");
     }
-    
-    
+
     public function executeVerificarFobAduana(sfWebRequest $request) {
-        
-        $q=Doctrine::getTable("InoMaestraAdu")
-            ->createQuery("m")   
-             ->select("m.ca_referencia,c.ca_idalterno as idalterno, c.ca_compania as compania,((SELECT bc.ca_activostotales FROM BlcCliente bc WHERE m.ca_idcliente=bc.ca_idcliente ORDER BY bc.ca_anno DESC LIMIT 1)*1000) as activos")
-            ->innerJoin("m.Cliente c")
-            //->leftJoin("c.BlcCliente bc INDEXBY bc.ca_anno")
-            ->where("m.ca_fchcerrado = ? ", date("Y-m-d"));
-            //->where("m.ca_fchcerrado > ? ", "2016-11-30");
-            //    ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-                
-            
+
+        $q = Doctrine::getTable("InoMaestraAdu")
+                ->createQuery("m")
+                ->select("m.ca_referencia,c.ca_idalterno as idalterno, c.ca_compania as compania,((SELECT bc.ca_activostotales FROM BlcCliente bc WHERE m.ca_idcliente=bc.ca_idcliente ORDER BY bc.ca_anno DESC LIMIT 1)*1000) as activos")
+                ->innerJoin("m.Cliente c")
+                //->leftJoin("c.BlcCliente bc INDEXBY bc.ca_anno")
+                ->where("m.ca_fchcerrado = ? ", date("Y-m-d"));
+        //->where("m.ca_fchcerrado > ? ", "2016-11-30");
+        //    ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
         //echo $q->getSqlQuery();
-            $refs=$q->execute();
-                         //echo "<pre>";print_r($refs);echo "</pre>";
-            
-        if(count($refs)>0)
-        {
+        $refs = $q->execute();
+        //echo "<pre>";print_r($refs);echo "</pre>";
+
+        if (count($refs) > 0) {
             $con1 = Doctrine_Manager::getInstance()->getConnection('opencomex');
-            
-            $datos="<div>A continuacion se relacionan los clientes y Do que fueron hallados.(valor Fob superior a los activos Totales)</div><table border=1><tr><td>Do</td><td>Cliente</td><td>Valor Activos</td><td>Valor Fob</td>";
-            $c=false;
-            foreach($refs as $r)
-            {
-                $this->do=$r->getCaReferencia();
-                $do=substr($this->do,0,3).substr($this->do,4,2).substr($this->do,7,2).substr($this->do,11,3).substr($this->do,16,1);
-                $sql="Select
+
+            $datos = "<div>A continuacion se relacionan los clientes y Do que fueron hallados.(valor Fob superior a los activos Totales)</div><table border=1><tr><td>Do</td><td>Cliente</td><td>Valor Activos</td><td>Valor Fob</td>";
+            $c = false;
+            foreach ($refs as $r) {
+                $this->do = $r->getCaReferencia();
+                $do = substr($this->do, 0, 3) . substr($this->do, 4, 2) . substr($this->do, 7, 2) . substr($this->do, 11, 3) . substr($this->do, 16, 1);
+                $sql = "Select
                     distinct(brk.DOIIDXXX)    as ca_referencia,             
                     brk.DOISFIDX    as ca_version,
                      
@@ -3136,57 +3138,49 @@ class clientesActions extends sfActions {
                 $this->resul = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
                 //echo "$do :: Activos:".$r->activos." --------- Fob:".$this->resul[0]["valorfob"]."<br>";
                 //echo "<pre>";print_r($this->resul);echo "</pre>";
-                if($r->activos!="" && $this->resul[0]["valorfob"]>$r->activos )
-                {
-                    $datos.="<tr><td>$do</td><td>{$r->idalterno}-{$r->compania}</td><td style='text-align:right'>".number_format($r->activos)."</td><td style='text-align:right'>".number_format($this->resul[0]["valorfob"],2)."</td>";
-                    $c=true;
+                if ($r->activos != "" && $this->resul[0]["valorfob"] > $r->activos) {
+                    $datos .= "<tr><td>$do</td><td>{$r->idalterno}-{$r->compania}</td><td style='text-align:right'>" . number_format($r->activos) . "</td><td style='text-align:right'>" . number_format($this->resul[0]["valorfob"], 2) . "</td>";
+                    $c = true;
                 }
-                    //$datos[]=array("")echo "<div style='color:red'>".$do."</div><br>";
+                //$datos[]=array("")echo "<div style='color:red'>".$do."</div><br>";
             }
-            $datos.="</table>";
-            
-            if($c)
-            {
+            $datos .= "</table>";
+
+            if ($c) {
                 $email = new Email();
                 $email->setCaUsuenvio("Administrador");
                 $email->setCaTipo("NotificacionFOB-Do");
                 $email->setCaIdcaso("1");
                 $email->setCaFrom("colsys@coltrans.com.co");
-                $email->setCaFromname("Administrador Sistema Colsys");            
+                $email->setCaFromname("Administrador Sistema Colsys");
 
                 $email->addTo("maquinche@coltrans.com.co");
                 $email->addTo("fegutierrez@coltrans.com.co");
                 $email->addTo("lasalazar@coltrans.com.co");
 
-                $email->setCaSubject("Notificacion de Valores Fob superiores a Activos de Clientes ".date("Y-m-d"));
+                $email->setCaSubject("Notificacion de Valores Fob superiores a Activos de Clientes " . date("Y-m-d"));
                 //$email->setCaSubject("Notificacion de Valores Fob superiores a Activos de Clientes (2016-12-01 a 2016-12-14)");
                 $email->setCaBodyhtml($datos);
                 $email->save(); //guarda el cuerpo del mensaje
             }
-            
-        }
-        else
-        {
-            $datos="<div>No se encontraron datos para el dia de hoy</div>";
+        } else {
+            $datos = "<div>No se encontraron datos para el dia de hoy</div>";
             $email = new Email();
             $email->setCaUsuenvio("Administrador");
             $email->setCaTipo("NotificacionFOB-Do");
             $email->setCaIdcaso("1");
             $email->setCaFrom("colsys@coltrans.com.co");
-            $email->setCaFromname("Administrador Sistema Colsys");            
+            $email->setCaFromname("Administrador Sistema Colsys");
 
             $email->addTo("maquinche@coltrans.com.co");
             $email->addTo("fegutierrez@coltrans.com.co");
 
-            $email->setCaSubject("Notificacion de Valores Fob superiores a Activos de Clientes ".date("Y-m-d"));
+            $email->setCaSubject("Notificacion de Valores Fob superiores a Activos de Clientes " . date("Y-m-d"));
             //$email->setCaSubject("Notificacion de Valores Fob superiores a Activos de Clientes (2016-12-01 a 2016-12-14)");
             $email->setCaBodyhtml($datos);
             $email->save(); //guarda el cuerpo del mensaje
         }
         exit;
-        
-        
-
     }
 
 }
