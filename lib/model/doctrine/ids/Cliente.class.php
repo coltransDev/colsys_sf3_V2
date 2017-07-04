@@ -20,7 +20,6 @@ class Cliente extends BaseCliente {
      * Retorna el objeto Usuario de tipo coordinador asociado al reporte
      * @author Andres Botero
      */
-
     public function getCoordinador() {
         $coordinador = Doctrine::getTable("Usuario")->find($this->getCaCoordinador());
         return $coordinador;
