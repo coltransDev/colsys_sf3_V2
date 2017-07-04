@@ -56,6 +56,7 @@ Ext.define('Colsys.GestDocumental.FormSubirArchivos', {
                 queryMode: 'local',
                 displayField: 'name',
                 valueField: 'id',
+                idsserie: this.idsserie,
                 idimpoexpo: this.idimpoexpo,
                 idtransporte: this.idtransporte
             }, {
