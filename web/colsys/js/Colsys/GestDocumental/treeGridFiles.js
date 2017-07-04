@@ -82,6 +82,7 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
                 ref1 = this.up('panel').idreferencia;
                 idtrans = this.up('panel').idtransporte;
                 impo = this.up('panel').idimpoexpo;
+                serie = this.up('panel').idsserie;
 
 
 
@@ -90,7 +91,8 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
                     params: {
                         ref1: ref1,
                         idtransporte: idtrans,
-                        idimpoexpo: impo
+                        idimpoexpo: impo,
+                        idsserie: serie
                     }
                 });
 
@@ -286,7 +288,8 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
                                         idtransporte: idtrans,
                                         idimpoexpo: impo,
                                         idreferencia: ref1,
-                                        idmaster: idmaster
+                                        idmaster: idmaster,
+                                        idsserie: serie
                                     }
                                 ]
                             },
