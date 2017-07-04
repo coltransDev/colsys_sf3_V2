@@ -7,9 +7,74 @@
  * 
  * @package    symfony
  * @subpackage model
- * @author     Your name here
+ * @author     Carlos Gilberto López M.
  * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
-class IdsRestrictivas extends BaseIdsRestrictivas
-{
+class IdsRestrictivas extends BaseIdsRestrictivas {
+
+    public function enviarRespuesta($identificacion = null, $nombre_completo = null) {
+        $identificacion  = $identificacion  ? $identificacion  : $this->getIds()->getCaIdalterno();
+        $nombre_completo = $nombre_completo ? $nombre_completo : $this->getIds()->getCaNombre();
+        
+        if ($this->getCaRespuesta()) {
+            $contentHTML = "<br /><br />
+            ***** ALERTA *****
+            <br />
+            La consulta en Listas Restrictivas generó el siguiente resultado:<br />
+            <table>
+                    <tr>
+                        <td><strong>Nit:</strong></td><td>" . $identificacion . "</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Nombre:</strong></td><td>" . $nombre_completo . "</td>
+                    </tr>
+                    <tr>
+                        <td colspan=\"2\">$nbsp</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tipo Consulta:</strong></td><td>" . $this->getCaTipoConsulta() . "</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Resultado:</strong></td><td>" . $this->getCaRespuesta() . "</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fecha:</strong></td><td>" . $this->getCaFchconsultado() . "</td>
+                    </tr>
+            </table>
+            <br />
+            Agradecemos tomar las acciones correspondientes e informar a los interesados.";
+
+            $parametro = Doctrine::getTable("Parametro")->find(array("CU267", 1, "defaultEmails"));
+            if (stripos($parametro->getCaValor2(), ',') !== false) {
+                $defaultEmail = explode(",", $parametro->getCaValor2());
+            } else {
+                $defaultEmail = array($parametro->getCaValor2());
+            }
+            $parametro = Doctrine::getTable("Parametro")->find(array("CU267", 2, "ccEmails"));
+            if (stripos($parametro->getCaValor2(), ',') !== false) {
+                $ccEmails = explode(",", $parametro->getCaValor2());
+            } else {
+                $ccEmails = array($parametro->getCaValor2());
+            }
+
+            $email = new Email();
+            $email->setCaUsuenvio("Administrador");
+            $email->setCaTipo("ConsultaSinte");
+            $email->setCaFrom("no-reply@coltrans.com.co");
+            $email->setCaFromname("Colsys Notificaciones");
+            reset($defaultEmail);
+            while (list ($clave, $val) = each($defaultEmail)) {
+                $email->addTo($val);
+            }
+            reset($ccEmails);
+            while (list ($clave, $val) = each($ccEmails)) {
+                $email->addCc($val);
+            }
+            $email->setCaSubject("ALERTA! Resultado en Listas Restrictivas " . $nombre_completo . " Id: " . $this->getIds()->getCaIdalterno());
+            $email->setCaBodyhtml($contentHTML);
+            $email->setCaBody($contentPlain);
+            $email->save();
+        }
+    }
+
 }
