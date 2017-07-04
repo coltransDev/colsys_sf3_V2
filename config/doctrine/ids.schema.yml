@@ -98,6 +98,7 @@ IdsSucursal:
       autoincrement: true
     ca_id: integer
     ca_principal: boolean
+    ca_nombre: string(100)
     ca_direccion: string(100)
     ca_oficina: string(15)
     ca_torre: string(15)
@@ -108,6 +109,7 @@ IdsSucursal:
     ca_telefonos: string(30)
     ca_fax: string(30)
     ca_idciudad: string(8)
+    ca_idciudaddes: string(8)
     ca_zipcode: string(20)
     ca_usucreado: string(20)
     ca_fchcreado: timestamp
@@ -167,6 +169,13 @@ IdsContacto:
     ca_codigoarea: string
     ca_skype: string
     ca_celular: string
+    ca_cargo_general: string(50)
+    ca_identificacion: string
+    ca_identificacion_tipo: string
+    ca_cumpleanos: string
+    ca_tipo: string
+    ca_fijo: boolean
+    ca_propiedades: string
     ca_usucreado: string(20)
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
@@ -222,6 +231,7 @@ IdsProveedor:
     ca_usuaprobado: string(20)
     ca_sigla: string(20)
     ca_transporte: string(10)
+    ca_fchconstitucion: date
     ca_empresa: string(8)
     ca_activo: boolean
     ca_activo_impo: boolean
@@ -509,6 +519,59 @@ IdsEvento:
       foreign: ca_id
       type: one
 
+
+IdsAuditoria:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: ids
+  tableName: audit.tb_clientes_audit
+  columns:
+    ca_idaudit:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_operation: string
+    ca_stamp: timestamp
+    ca_userid: string
+    ca_idcliente: integer
+    ca_table_name: string
+    ca_field_name: string
+    ca_value_old: string
+    ca_value_new: string
+
+IdsEventos:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: ids
+  tableName: tb_evecliente
+  columns:
+    ca_idevento:
+     type: integer
+     primary: true
+     autoincrement: true
+    ca_idcliente: integer
+    ca_fchevento: timestamp
+    ca_tipo: string
+    ca_asunto: string
+    ca_detalle: string
+    ca_compromisos: string
+    ca_fchcompromiso: timestamp
+    ca_idantecedente: integer
+    ca_usuario: string
+  relations:
+    IdsCliente:
+     local: ca_idcliente
+     foreign: ca_idcliente
+     type: one
+    Usuario:
+     local: ca_usuario
+     foreign: ca_login
+     type: one
+
 #Hace referencia a una vista  
 #Se cambió por motivos de compatibilidad 
 Cliente:
@@ -687,7 +750,14 @@ IdsCliente:
     ca_regimen: integer
     ca_uap: boolean
     ca_altex: boolean
+    ca_comerciante: boolean
     ca_menosxempleados: boolean
+    ca_ciiu_uno: string(4)
+    ca_ciiu_dos: string(4)
+    ca_ciiu_trs: string(4)
+    ca_ciiu_ctr: string(4)
+    ca_tipoidentificacion_rl: integer
+    ca_numidentificacion_rl: string(20)
   relations:
     Ids:
       local: ca_idcliente
