@@ -57,75 +57,27 @@ class IdsContacto extends BaseIdsContacto {
             $client->setParameterGet('pcoincidencia', $percent);
         }
         $result = $client->request(Zend_Http_Client::GET);
-
         $json_response = json_decode($result->getBody());
+
+        if ($json_response) {
+            $id_response  = $json_response->id;
+            $res_response = ($json_response->respuesta) ? $json_response->respuesta : null;
+            $fch_response = $json_response->fecha;
+        } else {
+            $id_response  = null;
+            $tipoConsulta = ($result->getMessage()) ? $result->getMessage() : null;
+            $res_response = -1; // Indicador de Error
+            $fch_response = date("Y-m-d h:i:s");
+        }
 
         $consulta = new IdsRestrictivas();
         $consulta->setCaId($this->getIdsSucursal()->getIds()->getCaId());
         $consulta->setCaTipoConsulta($tipoConsulta);
-        $consulta->setCaIdrespuesta($json_response->id);
-        $consulta->setCaRespuesta(($json_response->respuesta) ? $json_response->respuesta : null);
-        $consulta->setCaFchconsultado($json_response->fecha);
+        $consulta->setCaIdrespuesta($id_response);
+        $consulta->setCaRespuesta($res_response);
+        $consulta->setCaFchconsultado($fch_response);
         $consulta->save();
-        if ($json_response->respuesta) {        // Si el Nit o Razón Social se encuentra reportado
-            $contentHTML = "<br /><br />
-            ***** ALERTA *****
-            <br />
-            La consulta en Listas Restrictivas generó el siguiente resultado:<br />
-            <table>
-                    <tr>
-                        <td><strong>Nit:</strong></td><td>" . $identificacion . "</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Nombre:</strong></td><td>" . $nombre_completo . "</td>
-                    </tr>
-                    <tr>
-                        <td colspan=\"2\">$nbsp</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Tipo Consulta:</strong></td><td>$tipoConsulta</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Resultado:</strong></td><td>$json_response->respuesta</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Fecha:</strong></td><td>$json_response->fecha</td>
-                    </tr>
-            </table>
-            <br />
-            Agradecemos tomar las acciones correspondientes e informar a los interesados.";
-
-            $parametro = Doctrine::getTable("Parametro")->find(array("CU267", 1, "defaultEmails"));
-            if (stripos($parametro->getCaValor2(), ',') !== false) {
-                $defaultEmail = explode(",", $parametro->getCaValor2());
-            } else {
-                $defaultEmail = array($parametro->getCaValor2());
-            }
-            $parametro = Doctrine::getTable("Parametro")->find(array("CU267", 2, "ccEmails"));
-            if (stripos($parametro->getCaValor2(), ',') !== false) {
-                $ccEmails = explode(",", $parametro->getCaValor2());
-            } else {
-                $ccEmails = array($parametro->getCaValor2());
-            }
-
-            $email = new Email();
-            $email->setCaUsuenvio("Administrador");
-            $email->setCaTipo("ConsultaSinte");
-            $email->setCaFrom("no-reply@coltrans.com.co");
-            $email->setCaFromname("Colsys Notificaciones");
-            reset($defaultEmail);
-            while (list ($clave, $val) = each($defaultEmail)) {
-                $email->addTo($val);
-            }
-            reset($ccEmails);
-            while (list ($clave, $val) = each($ccEmails)) {
-                $email->addCc($val);
-            }
-            $email->setCaSubject("ALERTA! Resultado en Listas Restrictivas " . $nombre_completo . " Id: " . $identificacion);
-            $email->setCaBodyhtml($contentHTML);
-            $email->setCaBody($contentPlain);
-            $email->save();
-        }
+        $consulta->enviarRespuesta($identificacion, $nombre_completo);
         return $consulta;
     }
 
