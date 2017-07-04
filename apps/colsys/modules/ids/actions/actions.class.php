@@ -1800,19 +1800,19 @@ class idsActions extends sfActions {
             $from = "select * from ids.tb_ids ids inner join ids.tb_proveedores p on p.ca_idproveedor = ids.ca_id  where ca_controladoporsig= true";
         }
 
-        $query = "select 	cl.ca_idalterno, cl.ca_nombre, sdnm.*, sdid.*, sdal.* "; //, sdak.*
-        $query.= "		from ( $from ) cl ";
-        $query.= "		LEFT OUTER JOIN tb_sdn sdnm ";
-        $query.= "		ON ( fun_similarpercent(cl.ca_nombre, textcat(case when sdnm.ca_firstname IS NULL then '' else sdnm.ca_firstname end, case when sdnm.ca_lastname IS NULL then '' else sdnm.ca_lastname end)) >90 ) ";
-        $query.= "		LEFT OUTER JOIN tb_sdnid sdid ";
-        $query.= "		ON ( fun_similarpercent(cl.ca_idalterno::text, sdid.ca_idnumber) >90 ) ";
-        $query.= "		LEFT OUTER JOIN tb_sdnaka sdal ";
-        $query.= "		ON ( fun_similarpercent(cl.ca_nombre, textcat(case when sdal.ca_firstname  IS NULL then '' else sdal.ca_firstname end, case when sdal.ca_lastname  IS NULL then '' else sdal.ca_lastname end)) >90 ) ";
-        //$query.= "		LEFT OUTER JOIN tb_sdnaka sdak ";
-        //$query.= "		ON ( fun_similarpercent(cl.ca_nombres||' '||cl.ca_papellido||' '||cl.ca_sapellido, textcat(case when nullvalue(sdak.ca_firstname) then '' else sdak.ca_firstname end, case when nullvalue(sdak.ca_lastname) then '' else sdak.ca_lastname end)) >90 ) ";
-        //$query.= "		LEFT OUTER JOIN tb_ciudades ciu ";
-        //$query.= "		ON (cl.ca_idciudad = ciu.ca_idciudad) ";
-        //$query.= "		where NOT nullvalue(sdnm.ca_uid) or NOT nullvalue(sdid.ca_uid) or NOT nullvalue(sdak.ca_uid) ";
+        $query = "select    cl.ca_idalterno, cl.ca_nombre, sdnm.*, sdid.*, sdal.* "; //, sdak.*
+        $query.= "      from ( $from ) cl ";
+        $query.= "      LEFT OUTER JOIN tb_sdn sdnm ";
+        $query.= "      ON ( fun_similarpercent(cl.ca_nombre, textcat(case when sdnm.ca_firstname IS NULL then '' else sdnm.ca_firstname end, case when sdnm.ca_lastname IS NULL then '' else sdnm.ca_lastname end)) >90 ) ";
+        $query.= "      LEFT OUTER JOIN tb_sdnid sdid ";
+        $query.= "      ON ( fun_similarpercent(cl.ca_idalterno::text, sdid.ca_idnumber) >90 ) ";
+        $query.= "      LEFT OUTER JOIN tb_sdnaka sdal ";
+        $query.= "      ON ( fun_similarpercent(cl.ca_nombre, textcat(case when sdal.ca_firstname  IS NULL then '' else sdal.ca_firstname end, case when sdal.ca_lastname  IS NULL then '' else sdal.ca_lastname end)) >90 ) ";
+        //$query.= "        LEFT OUTER JOIN tb_sdnaka sdak ";
+        //$query.= "        ON ( fun_similarpercent(cl.ca_nombres||' '||cl.ca_papellido||' '||cl.ca_sapellido, textcat(case when nullvalue(sdak.ca_firstname) then '' else sdak.ca_firstname end, case when nullvalue(sdak.ca_lastname) then '' else sdak.ca_lastname end)) >90 ) ";
+        //$query.= "        LEFT OUTER JOIN tb_ciudades ciu ";
+        //$query.= "        ON (cl.ca_idciudad = ciu.ca_idciudad) ";
+        //$query.= "        where NOT nullvalue(sdnm.ca_uid) or NOT nullvalue(sdid.ca_uid) or NOT nullvalue(sdak.ca_uid) ";
         $query.= "     order by cl.ca_nombre";
 
         $stmt = $q->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
@@ -2684,13 +2684,13 @@ class idsActions extends sfActions {
 
     function executeConsultaWsListaSinte($request) {
         $id = $request->getParameter("id");
-        $tipoConsulta = ($request->getParameter("tipoConsulta"))?$request->getParameter("tipoConsulta"):"DOCUMENTO";
+        // $tipoConsulta = ($request->getParameter("tipoConsulta"))?$request->getParameter("tipoConsulta"):"DOCUMENTO";
 
         $resultado = array();
         if( $id ){
             $ids = Doctrine::getTable("Ids")->find($id);
             if ($ids) {
-                $ids->getConsultaListas($tipoConsulta);
+                // $ids->getConsultaListas($tipoConsulta);
                 
                 $consultas = $ids->getIdsRestrictivas();
                 foreach ($consultas as $consulta){
