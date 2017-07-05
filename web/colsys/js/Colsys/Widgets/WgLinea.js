@@ -89,5 +89,23 @@ Ext.define('Colsys.Widgets.WgLinea', {
         else{
             return false;
         }
-    }
+    },
+    tpl: Ext.create('Ext.XTemplate',
+        '<tpl for=".">',
+            '<div class="x-boundlist-item" style="border-bottom:1px solid #f0f0f0;">',
+            '<div><b>{linea}</b></div>',
+            '<div><b>Nit:</b> {idalterno}</div>',
+            '<tpl if="activo_impo == false">',
+            '<div class="rojo">Inactivo Impo</div>',
+            '<tpl elseif="activo_expo == false">',
+            '<div class="rojo">Inactivo Expo</div>',
+            '</tpl>',
+            '</div>',
+        '</tpl>'
+    ),
+   displayTpl: Ext.create('Ext.XTemplate',
+        '<tpl for=".">',
+            '{linea} ({idalterno})',
+        '</tpl>'
+    )
 });
