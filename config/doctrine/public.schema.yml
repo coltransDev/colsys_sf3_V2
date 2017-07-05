@@ -518,6 +518,20 @@ LibCliente:
       foreign: ca_idcliente
       type: one
 
+Trms:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: public
+  tableName: tb_trms
+  columns:
+    ca_fecha:
+      type: date
+      primary: true
+    ca_pesos: numeric
+    ca_euro: numeric
+
 MandatosTipo:
   options:
     symfony:
@@ -748,4 +762,43 @@ FichaTecnica:
     Cliente:
       local: ca_idcliente
       foreign: ca_idcliente
+      type: one
+
+PorcentajesComisiones:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: public
+  tableName: tb_porcentajescomisiones
+  columns:
+    ca_idcliente: 
+      type: integer   
+      primary: true
+      notnull: true
+    ca_inicio:
+      primary: true
+      type: date
+      notnull: true
+    ca_fin:
+      primary: true
+      type: date
+      notnull: true
+    ca_porcentaje: numeric
+    ca_fchcreado: timestamp 
+    ca_usucreado: string(15)
+    ca_empresa: 
+      type: string(20)
+      primary: true
+      notnull: true
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string(20)
+  relations:
+    Cliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: one
+    Usuario:
+      local: ca_usucreado
+      foreign: ca_login
       type: one
