@@ -215,7 +215,7 @@ class crmActions extends sfActions {
         $data["idcliente"] = $ids->getCaId();
         $data["compania"] = utf8_encode($ids->getCaNombre());
         $data["idalterno"] = $ids->getCaIdalterno();
-        $data["tipo_identificacion"] = $ids->getCaTipoidentificacion();
+        $data["tipo_identificacion"] = utf8_encode($ids->getCaTipoidentificacion());
         $data["idalterno_ant"] = $ids->getCaIdalterno();
         $data["tipo_identificacion_ant"] = $ids->getCaTipoidentificacion();
         $data["idtrafico"] = $ids->getIdsTipoIdentificacion()->getCaIdtrafico();
@@ -240,8 +240,8 @@ class crmActions extends sfActions {
             $data["status"] = $cliente->getCaStatus();
             $data["calificacion"] = $cliente->getCaCalificacion();
             $data["fchcotratoag"] = $cliente->getCaFchcotratoag();
-            $data["entidad"] = $cliente->getCaEntidad();
-            $data["comentario"] = $cliente->getCaComentario();
+            $data["entidad"] = utf8_encode($cliente->getCaEntidad());
+            $data["comentario"] = utf8_encode($cliente->getCaComentario());
             $data["leyinsolvencia"] = utf8_encode($cliente->getCaLeyinsolvencia());
             $data["listaclinton"] = utf8_encode($cliente->getCaListaclinton());
             $data["fchacuerdoconf"] = $cliente->getCaFchacuerdoconf();
