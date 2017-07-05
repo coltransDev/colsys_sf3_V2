@@ -68,7 +68,7 @@ class pricingActions extends sfActions {
         if ($this->nivel == -1) {
             $this->forward404();
         }
-
+        
         if ($this->nivel == 0) {
             $this->opcion = "consulta";
         }
@@ -208,7 +208,7 @@ class pricingActions extends sfActions {
 
             if ($timestamp) {
                 $q = Doctrine_Query::create()->from("PricRecargoxConceptoBs r");
-                $q->addWhere("r.ca_fchcreado IN (SELECT rh.ca_fchcreado FROM PricRecargoxConceptoBs rh WHERE rh.ca_fchcreado<= ? AND
+                $q->addWhere("r.ca_fchcreado IN (SELECT rh.ca_fchcreado FROM PricRecargoxConceptoLog rh WHERE rh.ca_fchcreado<= ? AND
                          r.ca_idconcepto = rh.ca_idconcepto AND r.ca_idrecargo = rh.ca_idrecargo AND r.ca_idtrayecto = rh.ca_idtrayecto ORDER BY rh.ca_consecutivo DESC LIMIT 1 )", $fchcorte);
             } else {
                 $q = Doctrine_Query::create()->from("PricRecargoxConcepto r");
@@ -217,6 +217,7 @@ class pricingActions extends sfActions {
             $q->addWhere("r.ca_idtrayecto = ? AND r.ca_idconcepto = ?", array($trayecto["t_ca_idtrayecto"], '9999'));
 
             $q->addOrderBy("t.ca_recargo");
+            $sqlconcepto = $q->getSqlQuery();
             $pricRecargosGen = $q->execute();
 
             if ($pricRecargosGen) {
@@ -264,7 +265,7 @@ class pricingActions extends sfActions {
                 $ultCiudad = $idciudad;
                 if ($timestamp) {
                     $q = Doctrine_Query::create()->from("PricRecargoxCiudadBs r");
-                    $q->addWhere("r.ca_fchcreado IN (SELECT rh.ca_fchcreado FROM PricRecargoxCiudadBs rh WHERE rh.ca_fchcreado<= ?
+                    $q->addWhere("r.ca_fchcreado IN (SELECT rh.ca_fchcreado FROM PricRecargoxCiudadLog rh WHERE rh.ca_fchcreado<= ?
                             AND r.ca_idtrafico = rh.ca_idtrafico AND r.ca_idciudad = rh.ca_idciudad AND r.ca_modalidad = rh.ca_modalidad AND r.ca_impoexpo = rh.ca_impoexpo AND r.ca_idrecargo = rh.ca_idrecargo
                             ORDER BY rh.ca_consecutivo DESC LIMIT 1)", $fchcorte);
                 } else {
@@ -312,7 +313,7 @@ class pricingActions extends sfActions {
                 $ultLinea = $trayecto["t_ca_idlinea"];
                 if ($timestamp) {
                     $q = Doctrine_Query::create()->from("PricRecargoxLineaBs r");
-                    $q->addWhere("r.ca_fchcreado IN (SELECT rh.ca_fchcreado FROM PricRecargoxLineaBs rh WHERE rh.ca_fchcreado<= ?
+                    $q->addWhere("r.ca_fchcreado IN (SELECT rh.ca_fchcreado FROM PricRecargoxLineaLog rh WHERE rh.ca_fchcreado<= ?
                             AND r.ca_idtrafico = rh.ca_idtrafico AND r.ca_idlinea = rh.ca_idlinea AND r.ca_modalidad = rh.ca_modalidad AND r.ca_impoexpo = rh.ca_impoexpo AND r.ca_idrecargo = rh.ca_idrecargo
                              ORDER BY rh.ca_consecutivo DESC LIMIT 1 )", $fchcorte);
                 } else {
@@ -322,6 +323,7 @@ class pricingActions extends sfActions {
                 $q->addWhere("r.ca_idtrafico = ? AND r.ca_idlinea = ? AND r.ca_transporte= ? AND r.ca_modalidad= ? AND r.ca_impoexpo = ?", array($this->trafico->getCaIdtrafico(), $trayecto["t_ca_idlinea"], $trayecto["t_ca_transporte"], $trayecto["t_ca_modalidad"], $trayecto["t_ca_impoexpo"]));
 
                 $q->addOrderBy("t.ca_recargo");
+                $sqllinea=$q->getSqlQuery();
                 $PricRecargoxLinea = $q->execute();
             }
             if ($PricRecargoxLinea) {
@@ -386,7 +388,7 @@ class pricingActions extends sfActions {
                         INNER JOIN tb_conceptos c ON f.ca_idconcepto = c.ca_idconcepto
                         LEFT JOIN tb_conceptos e ON f.ca_idequipo = e.ca_idconcepto  
                         INNER JOIN (SELECT MAX(p2.ca_consecutivo) AS ca_consecutivo,p2.ca_idconcepto
-                                    FROM pric.bs_fletes p2                                         
+                                    FROM pric.log_fletes p2                                         
                                         WHERE  p2.ca_fchcreado <= '".$fchcorte."' AND
                                                p2.ca_idtrayecto = '".$trayecto["t_ca_idtrayecto"]."'
                                         GROUP BY  p2.ca_idconcepto) AS c2 ON c2.ca_consecutivo=f.ca_consecutivo");
@@ -406,6 +408,7 @@ class pricingActions extends sfActions {
             $q->addOrderBy("c.ca_liminferior");
             $q->addOrderBy("c.ca_concepto");
             $pricConceptos = $q->execute();
+            $sqlflete=$q->getSqlQuery();
 
             $groupStyle = array();
             foreach ($pricConceptos as $pricConcepto) {
@@ -579,7 +582,7 @@ class pricingActions extends sfActions {
                     'tipo' => "concepto",
                     'neta' => '',
                     'minima' => '',
-                    'orden' => 'ZZZ'
+                    'orden' => 'ZZZ'    
                 );
                 $data[] = array_merge($baseRow, $row);
             }
@@ -594,14 +597,15 @@ class pricingActions extends sfActions {
         }
         }/*catch(Exception $e){
             print_r($e->getMessage());
-        }*/
+        }*/        
         $this->getUser()->log( "Consulta Tarifario", TRUE );
         $this->responseArray = array(
             'success' => true,
             'total' => count($data),
             'data' => $data,
-            'sql' => $sql
-                
+            'sqlflete' => $sqlflete,
+            'sqllinea' => $sqllinea,
+            'sqlconcepto' => $sqlconcepto
         );
         
         $this->setTemplate("responseTemplate");
@@ -880,6 +884,8 @@ class pricingActions extends sfActions {
                                 ->addWhere("ca_idtrayecto = ?", $idtrayecto)
                                 ->addWhere("ca_idconcepto= ?", $idconcepto)
                                 ->addWhere("ca_idrecargo= ?", $idrecargo);
+                
+                $sqlRecargo = $q->getSqlQuery();
 
                 if ($idequipo) {
                     $q->addWhere("ca_idequipo= ?", $idequipo);
@@ -892,13 +898,13 @@ class pricingActions extends sfActions {
                     $pricRecargo->delete( $conn );
                     $this->responseArray["success"] = true;
                 }else{
-                    $this->responseArray = array("success" => false, "errorInfo" => "No se ha encontrado el recargo o ya se ha eliminado");
+                    $this->responseArray = array("success" => false, "errorInfo" => "No se ha encontrado el recargo o ya se ha eliminado", "sqlRecargo"=>$sqlRecargo);
                 }
             }
             $conn->commit();
         } catch (Exception $e) {
             $conn->rollBack();
-            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()), "sqlRecargo"=>$sqlRecargo);
         }
         $this->setTemplate("responseTemplate");
     }
@@ -2123,6 +2129,7 @@ class pricingActions extends sfActions {
             $q->addWhere("o.ca_idtrafico = ?", $idtrafico);
         }
         $trayectos = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
+        $sql = $q->getSqlQuery();
         $data = array();
         $transportador_id = null;
         foreach ($trayectos as $trayecto) {
@@ -2143,7 +2150,7 @@ class pricingActions extends sfActions {
             $data[] = $row;
         }
         $this->getUser()->log( "Consulta Tarifario", TRUE );
-        $this->responseArray = array("total" => count($data), "data" => $data, "success" => true);
+        $this->responseArray = array("total" => count($data), "data" => $data, "success" => true, "debug"=>$sql);
         $this->setTemplate("responseTemplate");
     }
 

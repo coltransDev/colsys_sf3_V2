@@ -104,13 +104,6 @@ PanelNoticias = function( config ){
                 iconCls:'application_form',  // reference to our css
                 scope: this,
                 handler: this.crearTicket
-            },
-            {
-                text: 'Tarifario ASW',
-                tooltip: 'Ver Tarifas ASW',
-                iconCls:'website',  // reference to our css
-                scope: this,
-                handler: this.verTarifario
             }
         ],
         
