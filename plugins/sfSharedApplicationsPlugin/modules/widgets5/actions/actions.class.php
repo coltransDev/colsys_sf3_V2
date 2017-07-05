@@ -188,7 +188,7 @@ class widgets5Actions extends sfActions {
                 //->innerJoin("s.Ids i")
                 //->innerJoin("s.Empresa e")                
                 ->whereIn("t.ca_tipo", $this->tipoComprobante)
-		->addwhere("ca_idempresa=? and t.ca_activo=?", array($idempresa,true))
+    ->addwhere("ca_idempresa=? and t.ca_activo=?", array($idempresa,true))
                 ->addOrderBy("t.ca_tipo, t.ca_comprobante");
 
         $tipos = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
@@ -889,7 +889,7 @@ class widgets5Actions extends sfActions {
                     ->select("*")
                     ->where("ca_idsserie = ?", $this->idsserie)
                     ->setHydrationMode(Doctrine::HYDRATE_ARRAY);
-
+            
             $tipoDocs = $q->execute();
             $this->tipoDocs = array();
             foreach ($tipoDocs as $t) {
@@ -1652,7 +1652,7 @@ class widgets5Actions extends sfActions {
                         $gridemba[$proovedor]["nocumple"] += 1;
                     }
                 } else {
-                    $gridemba[$proovedor]["nocumple"] += 1;			
+                    $gridemba[$proovedor]["nocumple"] += 1;     
                     $dias = 120;
                 }
 
@@ -2369,13 +2369,13 @@ class widgets5Actions extends sfActions {
             "clienteEmbarque"=>$clienteEmbarque
         );
         $this->setTemplate("responseTemplate");
-    }	
+    } 
 
     public function executeDatosConceptosContenedores(sfWebRequest $request){
-		$transporte = utf8_encode($request->getParameter("idtransporte"));
-		$modalidad = utf8_encode($request->getParameter("idimpoexpo"));
+    $transporte = utf8_encode($request->getParameter("idtransporte"));
+    $modalidad = utf8_encode($request->getParameter("idimpoexpo"));
 
-	        $q = Doctrine_Query::create()
+          $q = Doctrine_Query::create()
                 ->select("c.ca_idconcepto, c.ca_concepto, c.ca_transporte, c.ca_modalidad, c.ca_liminferior")
                 ->from("Concepto c")
                 ->addWhere("c.ca_transporte=?", $transporte)
@@ -2383,21 +2383,21 @@ class widgets5Actions extends sfActions {
                 ->addOrderBy("c.ca_liminferior")
                 ->addOrderBy("c.ca_concepto");
 
-		$q->fetchArray();
+    $q->fetchArray();
 
-		$conceptos = $q->execute();
+    $conceptos = $q->execute();
 
-		$data = array();
-		foreach ($conceptos as $concepto) {
-		    $data[] = array("idconcepto" => $concepto['ca_idconcepto'],
-		        "concepto" => utf8_encode($concepto['ca_concepto']),
-		        "transporte" => utf8_encode($concepto['ca_transporte']),
-		        "modalidad" => utf8_encode($concepto['ca_modalidad'])
-		    );
-		}
-		$this->responseArray = array("success"=> true, "root" => $data);
-		$this->setTemplate("responseTemplate");
-	    }
+    $data = array();
+    foreach ($conceptos as $concepto) {
+        $data[] = array("idconcepto" => $concepto['ca_idconcepto'],
+            "concepto" => utf8_encode($concepto['ca_concepto']),
+            "transporte" => utf8_encode($concepto['ca_transporte']),
+            "modalidad" => utf8_encode($concepto['ca_modalidad'])
+        );
+    }
+    $this->responseArray = array("success"=> true, "root" => $data);
+    $this->setTemplate("responseTemplate");
+      }
             
             
     public function executeDatosContactos(sfWebRequest $request) {
@@ -2952,6 +2952,226 @@ class widgets5Actions extends sfActions {
         }
         $this->setTemplate("responseTemplate");
     }
-}
+    
+    //CRM
+    public function executeDatosTipoSeguimiento(sfWebRequest $request) {
+        $caso = "CU262";
+        $datomod = ParametroTable::retrieveByCaso($caso, null, null, null);
+        $data = array();
+        foreach ($datomod as $dato) {
+            $data[] = array("id" => $dato["ca_identificacion"],
+                "name" => utf8_encode($dato["ca_valor"]));
+        }
 
+        $this->responseArray = array("success" => true, "root" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeSeguimientoAntecesor(sfWebRequest $request) {
+        $idCliente = $request->getParameter("idcliente");
+
+        $seguimientos = Doctrine::getTable("IdsEventos")
+                ->createQuery("i")
+                ->addWhere('i.ca_idcliente = ?', $idCliente)
+                ->addWhere('i.ca_idantecedente = 0')
+                ->execute();
+
+        $data = array();
+        $data[] = array("id" => 0,
+            "name" => utf8_encode("Ninguno - Seguimiento nuevo"));
+        foreach ($seguimientos as $seguimiento) {
+            $data[] = array("id" => $seguimiento["ca_idevento"],
+                "name" => utf8_encode($seguimiento["ca_asunto"]));
+        }
+
+        $this->responseArray = array("success" => true, "root" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosTipoIdentificacion(sfWebRequest $request) {
+        $identificaciones = Doctrine::getTable("IdsTipoIdentificacion")
+                ->createQuery("i")
+                ->execute();
+
+        $data = array();
+        foreach ($identificaciones as $identificacion) {
+            $data[] = array("id" => $identificacion["ca_tipoidentificacion"],
+                "name" => utf8_encode($identificacion["ca_nombre"]),
+                "trafico" => utf8_encode($identificacion["ca_idtrafico"]),
+                "trafico" => utf8_encode($identificacion->getTrafico()->getCaNombre()));
+        }
+
+        $this->responseArray = array("success" => true, "root" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosComerciales(sfWebRequest $request) {
+        $comerciales = UsuarioTable::getComerciales();
+        $data = array();
+        foreach ($comerciales as $comercial) {
+            $data[] = array("login" => $comercial->getCaLogin(),
+                "nombre" => utf8_encode($comercial->getCaNombre())
+            );
+        }
+
+        $this->responseArray = array("success" => true, "root" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosIdsSucursales(sfWebRequest $request) {
+        $idCliente = $request->getParameter("empresa");
+
+        $sucursales = Doctrine::getTable("IdsSucursal")
+            ->createQuery("i")
+            ->addWhere("i.ca_id = ? and i.ca_usueliminado is null", $idCliente)
+            ->execute();
+
+        $data = array();
+        foreach ($sucursales as $sucursal) {
+            $descripcion = ($sucursal->getCaNombre())?$sucursal->getCaNombre():$sucursal->getCaDireccion();
+            $data[] = array("idsucursal" => $sucursal->getCaIdsucursal(),
+                "sucursal" => utf8_encode($descripcion),
+                "ciudad" => utf8_encode($sucursal->getCiudad()->getCaCiudad()),
+                );
+        }
+
+        $this->responseArray = array("success" => true, "root" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosCoordinadoresAduana(sfWebRequest $request) {
+        $usuarios = UsuarioTable::getCoordinadoresAduana();
+        $data = array();
+
+        $data[] = array("login" => '',
+            "nombre" => utf8_encode("Ninguno Asignado")
+        );
+        foreach ($usuarios as $usuario) {
+            $data[] = array("login" => $usuario->getCaLogin(),
+                "nombre" => utf8_encode($usuario->getCaNombre())
+            );
+        }
+
+        $this->responseArray = array("success" => true, "root" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosCombos(sfWebRequest $request) {
+        $tipoCombo = $request->getParameter("tipoCombo");
+
+        $caso = "CU264";
+        $direcciones = ParametroTable::retrieveByCaso($caso, null, null, $tipoCombo);
+
+        $data = array();
+        $jsonArray = json_decode(utf8_encode(html_entity_decode($direcciones[0]->getCaValor2())), true);
+
+        foreach ($jsonArray as $json) {
+            if ($tipoCombo != 8) {
+                $data[] = array("id" => $json["id"],
+                    "nombre" => $json["name"]
+                );
+            } else {
+                $data[] = array("id" => $json["id"],
+                    "nombre" => $json["name"],
+                    "localidad" => $json["localidad"]
+                );
+            }
+        }
+        $this->responseArray = array("success" => true, "root" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosAgentesAduana() {
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select * from ids.tb_proveedores p inner join ids.tb_ids i "
+                . "on (i.ca_id = p.ca_idproveedor) where p.ca_tipo = 'ADU'";
+
+        $rs = $con->execute($sql);
+        $data = array();
+        $agentes_rs = $rs->fetchAll();
+
+        foreach ($agentes_rs as $agente) {
+            $data[] = array("id" => $agente["ca_idproveedor"],
+                "nombre" => utf8_encode($agente["ca_nombre"])
+            );
+        }
+
+        $this->responseArray = array("success" => true, "root" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosCargos(sfWebRequest $request) {
+        $caso = "CU266";
+        $datomod = ParametroTable::retrieveByCaso($caso, null, null, null);
+        $data = array();
+        foreach ($datomod as $dato) {
+            $data[] = array("id" => $dato["ca_identificacion"],
+                "name" => utf8_encode($dato["ca_valor"]),
+                "mostrar" => utf8_encode($dato["ca_valor2"]));
+        }
+
+        $this->responseArray = array("success" => true, "root" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosCodigos(sfWebRequest $request) {
+        $caso = "CU271";
+        $datomod = ParametroTable::retrieveByCaso($caso, null, null, null);
+        $data = array();
+        foreach ($datomod as $dato) {
+            $data[] = array("id" => $dato["ca_identificacion"],
+                "codigo" => utf8_encode($dato["ca_valor"]),
+                "mostrar" => utf8_encode($dato["ca_valor2"]));
+        }
+
+        $this->responseArray = array("success" => true, "root" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosSectorEconomico(sfWebRequest $request) {
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select cv.* from control.tb_config_values cv inner join control.tb_config cf on cf.ca_idconfig = cv.ca_idconfig where ca_param = 'CU257'";
+        $rs = $con->execute($sql);
+        $sectoresfinancieros_rs = $rs->fetchAll();
+        $sectorfinanciero = array();
+        foreach ($sectoresfinancieros_rs as $sector) {
+            $sectorfinanciero[] = array("sector" => utf8_encode($sector["ca_value"]),
+                "id" => utf8_encode($sector["ca_ident"]));
+        }
+
+        $this->responseArray = array("success" => true, "root" => $sectorfinanciero);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosRegimen(sfWebRequest $request) {
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select cv.* from control.tb_config_values cv inner join control.tb_config cf on cf.ca_idconfig = cv.ca_idconfig where ca_param = 'CU259' order by ca_ident";
+        $rs = $con->execute($sql);
+        $regimenes = $rs->fetchAll();
+        $regimenes_arr = array();
+        foreach ($regimenes as $regimen) {
+            $regimenes_arr[] = array("regimen" => utf8_encode($regimen["ca_value"]),
+                "id" => utf8_encode($regimen["ca_ident"]));
+        }
+
+        $this->responseArray = array("success" => true, "root" => $regimenes_arr);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosTipoPersona(sfWebRequest $request) {
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select cv.* from control.tb_config_values cv inner join control.tb_config cf on cf.ca_idconfig = cv.ca_idconfig where ca_param = 'CU227' order by ca_ident";
+        $rs = $con->execute($sql);
+        $tipopersona_rs = $rs->fetchAll();
+        $tipopersona = array();
+        foreach ($tipopersona_rs as $persona) {
+            $tipopersona[] = array("tipo" => utf8_encode($persona["ca_value"]),
+                "id" => utf8_encode($persona["ca_ident"]));
+        }
+
+        $this->responseArray = array("success" => true, "root" => $tipopersona);
+        $this->setTemplate("responseTemplate");
+    }
+    
+}
 ?>
