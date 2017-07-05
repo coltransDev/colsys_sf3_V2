@@ -6,13 +6,13 @@ Ext.define('Colsys.Widgets.WgSucursalesEmpresa', {
     spForm: '',
     spExtraParam: '',
     queryMode: 'local',
-    valueField: 'id',
+    valueField: 'idsucursal',
     displayField: 'sucursal',
     store: Ext.create('Ext.data.Store', {
-        fields: ['id', 'sucursal','idempresa','empresa'],
+        fields: ['idsucursal', 'sucursal', 'ciudad'],
         proxy: {
             type: 'ajax',
-            url: '/widgets5/datosSucursalesEmpresa',
+            url: '/widgets5/datosIdsSucursales',
             reader: {
                 type: 'json',
                 root: 'root'
@@ -22,13 +22,12 @@ Ext.define('Colsys.Widgets.WgSucursalesEmpresa', {
     }),
     qtip: 'Listado ',
     listeners: {
-        beforerender: function(ct, position){
+        beforerender: function (ct, position) {
             empresa = this.empresa;
-            if(this.prefijo){
-                this.store.proxy.url = this.prefijo+'/widgets5/datosSucursalesEmpresa';
+            if (this.prefijo) {
+                this.store.proxy.url = this.prefijo + '/widgets5/datosIdsSucursales';
             }
-            if(empresa){
-                console.log(empresa+'empresa');
+            if (empresa) {
                 this.getStore().load({
                     params: {
                         empresa: empresa
@@ -37,7 +36,4 @@ Ext.define('Colsys.Widgets.WgSucursalesEmpresa', {
             }
         }
     }
-    //labelWidth: 60
-
-
 });
