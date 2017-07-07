@@ -313,9 +313,16 @@ class pricingActions extends sfActions {
                 $ultLinea = $trayecto["t_ca_idlinea"];
                 if ($timestamp) {
                     $q = Doctrine_Query::create()->from("PricRecargoxLineaBs r");
-                    $q->addWhere("r.ca_fchcreado IN (SELECT rh.ca_fchcreado FROM PricRecargoxLineaLog rh WHERE rh.ca_fchcreado<= ?
-                            AND r.ca_idtrafico = rh.ca_idtrafico AND r.ca_idlinea = rh.ca_idlinea AND r.ca_modalidad = rh.ca_modalidad AND r.ca_impoexpo = rh.ca_impoexpo AND r.ca_idrecargo = rh.ca_idrecargo
-                             ORDER BY rh.ca_consecutivo DESC LIMIT 1 )", $fchcorte);
+                    $q->addWhere("r.ca_fchcreado IN (
+                                        SELECT rh.ca_fchcreado 
+                                        FROM PricRecargoxLineaLog rh 
+                                        WHERE rh.ca_fchcreado<= ?
+                                            AND r.ca_idtrafico = rh.ca_idtrafico 
+                                            AND r.ca_idlinea = rh.ca_idlinea 
+                                            AND r.ca_modalidad = rh.ca_modalidad 
+                                            AND r.ca_impoexpo = rh.ca_impoexpo 
+                                            AND r.ca_idrecargo = rh.ca_idrecargo
+                                        ORDER BY rh.ca_consecutivo DESC LIMIT 1 )", $fchcorte);
                 } else {
                     $q = Doctrine_Query::create()->from("PricRecargoxLinea r");
                 }
@@ -1450,7 +1457,8 @@ class pricingActions extends sfActions {
             $q->addOrderBy("r.ca_idlinea");
             $q->addOrderBy("t.ca_recargo");
         
-        }        
+        }      
+        $sqllinea = $q->getSqlQuery();
         $recargos = $q->execute();        
 
         $this->data = array();
@@ -1517,7 +1525,8 @@ class pricingActions extends sfActions {
         $this->responseArray = array(
             'success' => true,
             'total' => count($this->data),
-            'data' => $this->data
+            'data' => $this->data,
+            'sqllinea' => utf8_encode($sqllinea)
         );
         $this->setTemplate("responseTemplate");
     }
