@@ -100,9 +100,10 @@
                     },
                     renderer: function(value, metaData, record, rowIndex, colIndex, store) {
                         var idform = '<?= $formulario->getCaId() ?>';
+                        var cierre = '<?= $formulario->getCaCierre()?>';                        
                         var idencuesta = record.data.idencuesta;
                         var idcliente = record.data.idcliente;
-                        var url = '<?= url_for("formulario/resultadoExt4?ca_id=") ?>' + idform + '/idcliente/'+ idcliente + '/idencuesta/'+ idencuesta;
+                        var url = '<?= url_for("formulario/resultadoExt4?ca_id=") ?>' + idform + '/idcliente/'+ idcliente + '/idencuesta/'+ idencuesta + '/cierre/'+ cierre;
                         return '<a href="' + url + '" target="_blank">' + value + '</a>';
                     },
                 },

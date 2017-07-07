@@ -13,6 +13,9 @@
                 <tr>
                     <th>ID</th>
                     <th>Nombre</th>
+                    <th>Vigencia Inicial</th>
+                    <th>Vigencia Final</th>
+                    <th>Cierre</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -21,6 +24,9 @@
                     <tr>
                         <td><?php echo $formulario->getCaId() ?></td>
                         <td><?php echo html_entity_decode($formulario->getCaTitulo()) ?></td>
+                        <td><?php echo html_entity_decode($formulario->getCaVigenciaInicial()) ?></td>
+                        <td><?php echo html_entity_decode($formulario->getCaVigenciaFinal()) ?></td>
+                        <td><?php echo html_entity_decode($formulario->getCaCierre()) ?></td>
                         <td>
                             <? if ($nivel <= 2) { ?>
                                 <a class="" href="<?php echo url_for('formulario/show?ca_id=' . $formulario->getCaId()) ?>"><img title="Ver Detalle" alt="Ver Detalle" src="/images/formularios/detalle.png"></a>

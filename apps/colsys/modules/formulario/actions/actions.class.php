@@ -1171,6 +1171,7 @@ class formularioActions extends sfActions {
         $options["idencuesta"] = $request->getParameter("idencuesta");
         
         $this->encuestas = $this->formulario->getListaEncuestasDiligenciadas($options, false);
+        $this->cierre = $request->getParameter("cierre");
         
         $this->consolidado = array();        
         $i=1;

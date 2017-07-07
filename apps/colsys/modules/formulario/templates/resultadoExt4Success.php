@@ -173,21 +173,26 @@ Ext.onReady(function() {
         listeners: {            
             afterrender: function(panel) {
                 var bar = panel.tabBar;
-                bar.insert(2, [{
-                    xtype: 'component',
-                    flex: 1
-                }, {
-                    xtype: 'button',
-                    text: 'Nuevo Seguimiento',
-                    handler: function() {
-                        var win = new NuevoSeguimientoWindow(
-                                {idcliente: '<?=$encuestas[0]["i_ca_id"]?>',
-                                 idform: '<?=$encuestas[0]['ce_ca_idformulario']?>',
-                                 idencuesta: '<?=$encuestas[0]['ce_ca_id']?>'
-                                });                        
-                        win.show();
-                    }
-                }]);
+                var fchCierre = new Date('<?=$cierre?>');
+                var fchActual = new Date();
+                
+                if(fchCierre <= fchActual){
+                    bar.insert(2, [{
+                        xtype: 'component',
+                        flex: 1
+                    }, {
+                        xtype: 'button',
+                        text: 'Nuevo Seguimiento',
+                        handler: function() {
+                            var win = new NuevoSeguimientoWindow(
+                                    {idcliente: '<?=$encuestas[0]["i_ca_id"]?>',
+                                     idform: '<?=$encuestas[0]['ce_ca_idformulario']?>',
+                                     idencuesta: '<?=$encuestas[0]['ce_ca_id']?>'
+                                    });                        
+                            win.show();
+                        }
+                    }]);
+                }
             }
         }
     });
