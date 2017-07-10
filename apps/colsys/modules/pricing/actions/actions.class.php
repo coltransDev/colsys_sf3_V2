@@ -3398,13 +3398,15 @@ class pricingActions extends sfActions {
         $this->usuario = $this->getRequestParameter("usuario");
         $this->idtransporte = $this->getRequestParameter("idtransporte");
         $this->transporte = $this->getRequestParameter("transporte");
-        $this->fechaInicial = $request->getParameter("fechaInicial");
-        $this->fechaFinal = $request->getParameter("fechaFinal");
+        $this->fechaInicial = $request->getParameter("fechaInicial")." 00:00:00";
+        $this->fechaFinal = $request->getParameter("fechaFinal"). " 23:59:59";
         $this->typelog = $request->getParameter("typelog");
         $this->typetar = $request->getParameter("typetar");
         
+       // $fchini = date($this->fechaInicial)
+        
         $where = "";
-        $pre = $this->typetar==1?"tb":"log";
+        $pre = $this->typetar==1?"tb":"bs";
         
         if($this->opcion){
             switch($this->typelog){
@@ -3484,7 +3486,7 @@ class pricingActions extends sfActions {
                     break;
             }
             
-            $where.= $this->fechaInicial?"r.ca_fchcreado BETWEEN '".$this->fechaInicial."' and '".$this->fechaFinal."'":"r.ca_fchcreado is not null";
+            $where.= $this->fechaInicial?"COALESCE(r.ca_fchactualizado, r.ca_fchcreado) BETWEEN '".$this->fechaInicial."' and '".$this->fechaFinal."'":"r.ca_fchcreado is not null";
             $where.= $this->impoexpo?" AND $sufijo.ca_impoexpo = '".$this->impoexpo."'":"";
             $where.= $this->transporte?" AND $sufijo.ca_transporte = '".$this->transporte."'":"";
             $where.= $this->modalidad?" AND $sufijo.ca_modalidad = '".$this->modalidad."'":"";
@@ -3513,7 +3515,7 @@ class pricingActions extends sfActions {
             $order.= strpos($select, 'concorder')!=''?"concorder ASC,":"";
             $order.= strpos($select, ' recargo')!=''?"recargo ASC,":"";
             
-            $sql = "SELECT DISTINCT $select $sufijo.ca_impoexpo, $sufijo.ca_transporte, $sufijo.ca_modalidad, to_char(r.ca_fchcreado,'YYYY-MM-DD HH24:MI') as fchcreado, r.ca_usucreado
+            $sql = "SELECT DISTINCT $select $sufijo.ca_impoexpo, $sufijo.ca_transporte, $sufijo.ca_modalidad, COALESCE(to_char(r.ca_fchactualizado,'YYYY-MM-DD HH24:MI'), to_char(r.ca_fchcreado,'YYYY-MM-DD HH24:MI')) as fchcreado, r.ca_usucreado
                     FROM $from 
                         $join
                     WHERE $where
