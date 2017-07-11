@@ -98,7 +98,7 @@ IdsSucursal:
       autoincrement: true
     ca_id: integer
     ca_principal: boolean
-    ca_nombre: string(100)
+    ca_nombre: string(200)
     ca_direccion: string(100)
     ca_oficina: string(15)
     ca_torre: string(15)
@@ -115,8 +115,8 @@ IdsSucursal:
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
     ca_fchactualizado: timestamp
-    ca_nombre: string(200)
-    ca_idciudaddes: string(8)
+    ca_usueliminado: string(20)
+    ca_fcheliminado: timestamp
   relations:
     Ids:
       local: ca_id
@@ -180,8 +180,8 @@ IdsContacto:
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
     ca_fchactualizado: timestamp
-    ca_fcheliminado: timestamp
     ca_usueliminado: string(20)
+    ca_fcheliminado: timestamp
   relations:
     IdsSucursal:
       local: ca_idsucursal
@@ -231,7 +231,6 @@ IdsProveedor:
     ca_usuaprobado: string(20)
     ca_sigla: string(20)
     ca_transporte: string(10)
-    ca_fchconstitucion: date
     ca_empresa: string(8)
     ca_activo: boolean
     ca_activo_impo: boolean
