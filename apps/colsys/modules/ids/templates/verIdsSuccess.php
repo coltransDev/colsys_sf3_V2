@@ -13,7 +13,7 @@ var eliminarAgente = function(){
             waitMsg: 'Eliminando ...',
             url: '<?=url_for("ids/eliminarAgente")?>',
             //Solamente se envian los cambios
-            params :	{
+            params :    {
                 id: <?=$ids->getCaId()?>,
                 modo: '<?=$modo?>' 
             },
@@ -366,8 +366,12 @@ var eliminarAgente = function(){
                           include_component("ids", "grupos", array("ids"=>$ids, "modo"=>$modo, "nivel"=>$nivel ));
                           ?>
                        </div>
-
-
+                      <div class="tab-page">
+                          <h2 class="tab">Bancos</h2>
+                          <?
+                          include_component("ids", "bancos", array("ids"=>$ids, "modo"=>$modo, "nivel"=>$nivel ));
+                          ?>
+                       </div>
                     </div>
 
                 </td>
@@ -386,5 +390,3 @@ var eliminarAgente = function(){
         </tbody>
     </table>
 </div>
-
-

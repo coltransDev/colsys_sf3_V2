@@ -63,6 +63,10 @@ Ids:
       local: ca_id
       foreign: ca_id
       type: many
+    IdsBanco:
+      local: ca_id
+      foreign: ca_id
+      type: many
     
 IdsTipoIdentificacion:  
   options:
@@ -902,4 +906,40 @@ IdsRestrictivas:
     Ids:
       local: ca_id
       foreign: ca_id
+      type: one
+
+IdsBanco:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: ids
+  tableName: ids.tb_bancos
+  columns:
+    ca_idbanco:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_id: integer
+    ca_codigo_entidad: integer
+    ca_tipo_cuenta: string
+    ca_numero_cuenta: string
+    ca_observaciones: string
+    ca_usucreado: string
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    Ids:
+      local: ca_id
+      foreign: ca_id
+      type: one
+    ColsysConfigValue:
+      alias: entidad
+      local: ca_codigo_entidad
+      foreign: ca_idvalue
+      type: one
+    Usuario:
+      local: ca_usuario
+      foreign: ca_login
       type: one
