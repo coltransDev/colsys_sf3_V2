@@ -1301,7 +1301,7 @@ class reportesGerActions extends sfActions {
             $this->fechainicial = $request->getParameter("fechaInicial");
             $this->fechafinal = $request->getParameter("fechaFinal");
 
-            $sql = "select (ca_fchvaciado-ca_fchconfirmacion) as diferencia , ca_referencia, ca_fchcreado,ca_fchvaciado,ca_fchconfirmacion,des.ca_ciudad
+            $sql = "select (ca_fchvaciado-ca_fchconfirmacion) as diferencia , ca_referencia, m.ca_fchcreado, ca_fchvaciado, ca_fchconfirmacion, des.ca_ciudad
                 from tb_inomaestra_sea m
                 inner join tb_ciudades des on m.ca_destino=des.ca_idciudad
                 where m.ca_fcharribo between '" . $this->fechainicial . "' and '" . $this->fechafinal . "' and m.ca_modalidad='LCL' and m.ca_fchconfirmacion is not null            
