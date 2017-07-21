@@ -596,18 +596,19 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                         echo "    <TD Class=listar style='font-weight:bold;'>$sub_tit</TD>";
                         echo "    <TD Class=listar style='font-weight:bold;'>" . formatNumber($val, 2) . "</TD>";
                         echo "    <TD Class=listar style='font-weight:bold;' COLSPAN=4>$clave</TD>";
-                        if ($bot_not) {
-                            echo "    <TD Class=listar style='font-weight:bold;' ROWSPAN=" . count($arr_equ) . "><IMG style='$level0' src='graficos/mail_forward.gif' alt='Notificar Comodatos' onclick='emailComodato( \"" . $rs->Value('ca_referencia') . "\", 0, 0);'></TD>";
-                            $bot_not = false;
-                        }
+//                        if ($bot_not) {
+//                            echo "    <TD Class=listar style='font-weight:bold;' ROWSPAN=" . count($arr_equ) . "><IMG style='$level0' src='graficos/mail_forward.gif' alt='Notificar Comodatos' onclick='emailComodato( \"" . $rs->Value('ca_referencia') . "\", 0, 0);'></TD>";
+//                            $bot_not = false;
+//                        }
+                        echo "    <TD Class=listar style='font-weight:bold;'></TD>";
                         echo "  </TR>";
                         $sub_tit = "";
                     }
-                    echo "  <TR>";
-                    echo "    <TD Class=listar>Sitio de Devolución:</TD>";
-                    echo "    <TD Class=listar COLSPAN=5>" . $co->Value('ca_sitiodevolucion') . "</TD>";
-                    echo "    <TD Class=listar style='font-weight:bold;'><IMG style='$level0' src='graficos/mail_forward.gif' alt='Solicitar Autorización' onclick='emailAutorizacion( \"" . $rs->Value('ca_referencia') . "\", 0, 0);'></TD>";
-                    echo "  </TR>";
+//                    echo "  <TR>";
+//                    echo "    <TD Class=listar>Sitio de Devolución:</TD>";
+//                    echo "    <TD Class=listar COLSPAN=5>" . $co->Value('ca_sitiodevolucion') . "</TD>";
+//                    echo "    <TD Class=listar style='font-weight:bold;'><IMG style='$level0' src='graficos/mail_forward.gif' alt='Solicitar Autorización' onclick='emailAutorizacion( \"" . $rs->Value('ca_referencia') . "\", 0, 0);'></TD>";
+//                    echo "  </TR>";
                     echo "  </TABLE>";
                     echo "  </TD>";
                     echo "</TR>";
@@ -4505,7 +4506,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                 echo "</TABLE></TD></TR>";
 
                 $ad = & DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
-                if (!$ad->Open("SELECT p.ca_idproveedor, i.ca_nombre, p.ca_tipo, p.ca_activo FROM ids.tb_proveedores p JOIN ids.tb_ids i ON p.ca_idproveedor = i.ca_id and p.ca_tipo = 'ADU' ORDER BY i.ca_nombre")) {       // Selecciona todos lo registros de la tabla IDS que corresponden a Agentes de Aduana
+                if (!$ad->Open("SELECT p.ca_idproveedor, i.ca_nombre, p.ca_tipo, p.ca_activo FROM ids.tb_proveedores p JOIN ids.tb_ids i ON p.ca_idproveedor = i.ca_id and p.ca_tipo IN ('ADU','TRI','TRN','OPE','DEP') ORDER BY i.ca_nombre")) {       // Selecciona todos lo registros de la tabla IDS que corresponden a Agentes de Aduana
                     echo "<script>alert(\"" . addslashes($ad->mErrMsg) . "\");</script>";      // Muestra el mensaje de error
                     echo "<script>document.location.href = 'entrada.php?id=4351';</script>";
                     exit;
@@ -5909,7 +5910,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)) {
                     from control.tb_usuarios_perfil up
                     inner join control.tb_usuarios us on us.ca_login = up.ca_login
                     inner join control.tb_sucursales sc on sc.ca_idsucursal=us.ca_idsucursal
-                    where up.ca_perfil ='cordinador-de-otm' and sc.ca_nombre in (
+                    where up.ca_perfil ='cordinador-de-otm' and us.ca_activo = true and sc.ca_nombre in (
                         select distinct(s.ca_nombre)
                             from tb_inoclientes_sea  c
                             inner join tb_reportes r on r.ca_idreporte=c.ca_idreporte
