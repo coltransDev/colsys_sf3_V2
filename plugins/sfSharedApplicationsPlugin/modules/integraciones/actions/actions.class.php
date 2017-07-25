@@ -395,132 +395,172 @@ class integracionesActions extends sfActions {
     
     public function jsonUtilidad($transaccion){
     
-        $reg = Doctrine::getTable("InoMaster")
+        $master = Doctrine::getTable("InoMaster")
                 ->createQuery("c")
                 ->select("*")
                 ->where($transaccion->getIntTipos()->getCaIndice1()."= ?", $transaccion->getCaIndice1())
                 ->fetchOne();
         
+        $ccosto = Doctrine::getTable("InoCentroCosto")->findByDql("ca_impoexpo = ? AND ca_transporte = ?", array($master->getCaImpoexpo(), $master->getCaTransporte()))->getFirst();
+        $linea = json_decode($ccosto->getCaCcostosap(), 1);
+
+        $clientes = array();
+        
         $datos["Usuario"]="Colsys";
         $datos["Password"]="colsys";
-        $datos["Company"]="1"; // Pendiente preguntar
+        $datos["Company"]= $master->getUsuCreado()->getSucursal()->getCaIdempresa(); // Se obtiene de la empresa a la que pertenece el usuario que la creó
         $datos["System"]="2";
         
-        $datos["CodReferencia"] = $reg->getCaReferencia();
-        $datos["Fecha"] = $reg->getCaFchcerrado();
-        $datos["Comentarios"] = $reg->getCaObservaciones();
-        $datos["Linea"] = // Verificar si se debe implementar un listado de líneas para asociarlo con el master
-                
-        $clientes = array();
+        $datos["CodReferencia"] = $master->getCaReferencia();
+        $datos["Fecha"] = $master->getCaFchcerrado();
+        $datos["Comentarios"] = $master->getCaObservaciones();
+        $datos["Linea"] = $linea["idlinea"];// Verificar si se debe implementar un listado de líneas para asociarlo con el master
                 
         //Lineas        
         $lineas = Doctrine::getTable("InoHouse")
                 ->createQuery("h")
                 ->select("*")
-                ->where($transaccion->getIntTipos()->getCaIndice1()."= ?", $reg->getCaIdmaster())
+                ->where("ca_idmaster = ?", $master->getCaIdmaster())
                 ->execute();
+        
+        $distribucionUti = $this->calcularDistribucionxUtilidad($master, $lineas);
+       
+        foreach($lineas as $linea){            
+            if(!in_array($linea->getCaIdcliente(), $clientes)){            
+                $datos["Lineas"][] = array("CodSN"=>"C".$linea->getCaIdcliente(), "PorcUtilidad"=>$distribucionUti[$linea->getCaIdcliente()], "Sucursal"=>$linea->getVendedor()->getCaIdsucursal());
+                $clientes[] = $linea->getCaIdcliente();
+            }
+        }
+        
+        echo "<pre>";print_r($datos)."</pre><br/><br/>";
+        
+        /*$transaccion->setCaEstado("G");
+        $transaccion->setCaDatos(json_encode($datos));
+        $transaccion->save();*/
+        
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function calcularDistribucionxUtilidad($master, $lineas){
+        
+        $clientes = array();
+        $dd = array();
         
         $ingresos = Doctrine::getTable("InoViIngreso")
                 ->createQuery("i")
                 ->select("*")                
-                ->where($transaccion->getIntTipos()->getCaIndice1()."= ?", $reg->getCaIdmaster())
-                ->execute();
-        
-        $costos = Doctrine::getTable("InoCosto")
-                ->createQuery("c")
-                ->select("*")
-                ->leftJoin("c.InoHouse h")
-                ->where($transaccion->getIntTipos()->getCaIndice1()."= ?", $reg->getCaIdmaster())
-                ->execute();
+                ->where("ca_idmaster = ?", $master->getCaIdmaster())
+                ->execute();        
         
         $deducciones = Doctrine::getTable("InoViDeduccion")
                 ->createQuery("d")
                 ->select("*")
-                ->where($transaccion->getIntTipos()->getCaIndice1()."= ?", $reg->getCaIdmaster())
+                ->where("ca_idmaster = ?", $master->getCaIdmaster())
                 ->execute();
         
         foreach($ingresos as $ingreso){
             $ig[$ingreso->getCaIdcliente()]+=$ingreso->getCaValor();
-        }
-        
+        }        
         $tot_ingreso = array_sum($ig);
         
-        foreach($costos as $costo){
-            $idcliente = $costo->getCaIdhouse()?$costo->getInoHouse()->getCaIdcliente():null;
-            if($idcliente){
-                $ct[$idcliente]+=$costo->getCaNeto();
-            }else{
-                $ct["General"]+=$costo->getCaNeto();
-            }
-        }
-        
-        $tot_costo = array_sum($ct);
-        
         foreach($deducciones as $d){
-            $dd[$d->getInoHouse()->getCaIdcliente()]+=$d->getCaValor();
+            $dd[$d->getCaIdcliente()]+=$d->getCaValor();
         }
+        $tot_deducciones = array_sum($dd);
         
         foreach($lineas as $linea){
-            /*$datos["CodSN"] = "C".$linea->getCaIdcliente();
-            $datos["PorcUtilidad"] = "";
-            $datos["Sucursal"] = ""; */            
-            
-            
-            $pv = $reg->getCaTransporte()=="Marítimo"?$linea->getVolumen():$linea->getCaPeso();
-            $peso[$linea->getCaIdcliente()] = $pv;
             if(!in_array($linea->getCaIdcliente(), $clientes))
                 $clientes[] = $linea->getCaIdcliente();
-                }
+            }
         
-        $tot_peso = array_sum($peso);
-        
-        foreach($lineas as $linea){            
-            $pv = $reg->getCaTransporte()=="Marítimo"?$linea->getVolumen():$linea->getCaPeso();
-            $distribucion[$linea->getCaIdcliente()] = round($pv/$tot_peso,2);
-        }
+        $costoxCliente = $this->calcularDistribucionxCostos($master, $lineas);
         
         foreach($clientes as $cliente){            
-            $ct[$cliente]+= $ct["General"]*$distribucion[$cliente];
-            $ut[$cliente] = $ig[$cliente]-$ct[$cliente];
-        
+            $ctxCliente[$cliente]+= $costoxCliente[$cliente];
+            $ut[$cliente] = $ig[$cliente]-($ctxCliente[$cliente]+$dd[$cliente]);        
         }
-        
         $tot_utilidad = array_sum($ut);
         
         foreach($clientes as $cliente){            
             $distribucionUti[$cliente] = round($ut[$cliente]/$tot_utilidad,4);
         }
-       
-        echo "idmaster:".$reg->getCaIdmaster();
-        echo "Referencia: ".$reg->getCaReferencia()."<br/>";
         
-        echo "Ingresos:<br/>";
-        echo "<pre>";print_r($ig)."</pre><br><br>";
-        echo "total Ingreso:". $tot_ingreso."<br><br>";
+        /* IMPRESION DE DATOS PARA VERIFICACION  */        
         
-        echo "Costos:<br/>";
-        echo "<pre>";print_r($ct)."</pre><br><br>";
-        echo "total costo:". $tot_costo."<br><br>";
-        
-        echo "Deducciones:<br/>";
+        echo "<b>Ingresos:</b><br/>";
+        echo "<pre>";print_r($ig)."</pre><br/><br/>";
+        echo "<i>Total Ingresos:</i>". $tot_ingreso."<br/><br/>";
+            
+        echo "<b>Deducciones:</b><br/>";
         echo "<pre>";print_r($dd)."</pre><br><br>";
-        echo "total Ingreso:". $tot_ingreso."<br><br>";
+        echo "<i>Total Deducciones:</i>". $tot_deducciones."<br/><br/>";
         
+        echo "<b>Utilidad:</b>";
+        echo "<pre>";print_r($ut)."</pre><br/><br/>";        
+        echo "<i>Total utilidad:</i>". $tot_utilidad."<br/><br/>";
+                
+        echo "<b>Distribucion x Utilidad:</b>";
+        echo "<pre>";print_r($distribucionUti)."</pre><br/><br/>";
         
-        echo "Peso:";
-        echo "<pre>";print_r($peso)."</pre><br><br>";
-        echo "total peso:".$tot_peso."<br>";
-        
-        echo "Distribución x Peso:";
-        echo "<pre>";print_r($distribucion)."</pre><br><br>";
-        
-        echo "Costo x Cliente:";
-        echo "<pre>";print_r($ct)."</pre><br><br>";
-        echo "Utilidad:";
-        
-        
-        echo "total utilidad:". $tot_utilidad."<br><br>";
+        return $distribucionUti;        
+    }
     
+    public function calcularDistribucionxCostos($master, $lineas){
+        
+        $clientes = array();
+        
+        $costos = Doctrine::getTable("InoCosto")
+                ->createQuery("c")
+                ->select("*")
+                ->leftJoin("c.InoHouse h")
+                ->where("ca_idmaster = ?", $master->getCaIdmaster())
+                ->execute();
+            
+        
+        foreach($costos as $costo){
+            $idcliente = $costo->getCaIdhouse()?$costo->getInoHouse()->getCaIdcliente():null;
+            if($idcliente){
+                $ct[$idcliente]+=$costo->getCaNeto();
+                }else{
+                $ct["General"]+=$costo->getCaNeto();
+                }
+            }
+        $tot_costo = array_sum($ct);
+        
+        foreach($lineas as $linea){            
+            $peso[$linea->getCaIdcliente()]+= $master->getCaTransporte()=="Marítimo"?$linea->getVolumen():$linea->getCaPeso();;
+            if(!in_array($linea->getCaIdcliente(), $clientes))
+                $clientes[] = $linea->getCaIdcliente();
+        }
+        $tot_peso = array_sum($peso);
+        
+        foreach($lineas as $linea){            
+            $distribucion[$linea->getCaIdcliente()] = round($peso[$linea->getCaIdcliente()]/$tot_peso,2);
+        }
+        
+        foreach($clientes as $cliente){            
+            $ctxCliente[$cliente]+= $ct[$cliente]+$ct["General"]*$distribucion[$cliente];
+        }
+        
+        /*IMPRESION DE DATOS PARA VERIFICACION*/
+        echo "<b>Idmaster</b>:".$master->getCaIdmaster()."<br/>";
+        echo "<b>Referencia:</b>".$master->getCaReferencia()."<br/>";
+        
+        echo "<b>Peso:</b>";
+        echo "<pre>";print_r($peso)."</pre><br><br>";
+        echo "<i>Total peso:</i>".$tot_peso."<br/><br/>";
+       
+        echo "<b>Distribución x Peso:</b>";
+        echo "<pre>";print_r($distribucion)."</pre><br/><br/>";
+        
+        echo "<b>Costos x Cliente:</b><br/>";
+        echo "<pre>";print_r($ct)."</pre><br/><br/>";
+        echo "<i>Total costos:</i>". $tot_costo."<br/><br/>";
+        
+        echo "<b>Costo x Cliente + Prorateo de Costo General:</b>";
+        echo "<pre>";print_r($ctxCliente)."</pre><br/><br/>";
+        
+        return $ctxCliente;        
     }
     
     
@@ -547,7 +587,7 @@ class integracionesActions extends sfActions {
         {
             $datos=json_decode($tr->getCaDatos());            
             
-            $result[] = $client->actualiza(
+            $respuesta = $client->actualiza(
                 array(
                     user => $datos->Usuario,
                     pass => $datos->Password,
@@ -555,6 +595,9 @@ class integracionesActions extends sfActions {
                     sistema => $datos->System,
                     jsonDoc => $tr->getCaDatos() 
                 ));
+                $tr->setRespuesta($respuesta);
+                $tr->save();
+                $result[]=$respuesta;
         }
         
 
