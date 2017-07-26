@@ -414,7 +414,7 @@ class integracionesActions extends sfActions {
         $datos["CodReferencia"] = $master->getCaReferencia();
         $datos["Fecha"] = $master->getCaFchcerrado();
         $datos["Comentarios"] = $master->getCaObservaciones();
-        $datos["Linea"] = $linea["idlinea"];// Verificar si se debe implementar un listado de líneas para asociarlo con el master
+        $datos["Linea"] = $linea["idlinea"];
                 
         //Lineas        
         $lineas = Doctrine::getTable("InoHouse")
@@ -428,6 +428,51 @@ class integracionesActions extends sfActions {
         foreach($lineas as $linea){            
             if(!in_array($linea->getCaIdcliente(), $clientes)){            
                 $datos["Lineas"][] = array("CodSN"=>"C".$linea->getCaIdcliente(), "PorcUtilidad"=>$distribucionUti[$linea->getCaIdcliente()], "Sucursal"=>$linea->getVendedor()->getCaIdsucursal());
+                $clientes[] = $linea->getCaIdcliente();
+            }
+        }
+        
+        echo "<pre>";print_r($datos)."</pre><br/><br/>";
+        
+        /*$transaccion->setCaEstado("G");
+        $transaccion->setCaDatos(json_encode($datos));
+        $transaccion->save();*/
+        
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function jsonCostos($transaccion){
+    
+        $master = Doctrine::getTable("InoMaster")
+                ->createQuery("c")
+                ->select("*")
+                ->where($transaccion->getIntTipos()->getCaIndice1()."= ?", $transaccion->getCaIndice1())
+                ->fetchOne();
+        
+        $clientes = array();
+        
+        $datos["Usuario"]="Colsys";
+        $datos["Password"]="colsys";
+        $datos["Company"]= $master->getUsuCreado()->getSucursal()->getCaIdempresa(); // Se obtiene de la empresa a la que pertenece el usuario que la creó
+        $datos["System"]="2";
+        
+        $datos["CodReferencia"] = $master->getCaReferencia();
+        $datos["Fecha"] = $master->getCaFchcerrado();
+        $datos["Comentarios"] = $master->getCaObservaciones();
+                
+        //Lineas        
+        $lineas = Doctrine::getTable("InoHouse")
+                ->createQuery("h")
+                ->select("*")
+                ->where("ca_idmaster = ?", $master->getCaIdmaster())
+                ->execute();
+        
+        $costoxCliente = $this->calcularDistribucionxCostos($master, $lineas);
+        $tot_costos = array_sum($costoxCliente);
+       
+        foreach($lineas as $linea){            
+            if(!in_array($linea->getCaIdcliente(), $clientes)){            
+                $datos["Lineas"][] = array("CodSN"=>"C".$linea->getCaIdcliente(), "PorcParticipa"=>round($costoxCliente[$linea->getCaIdcliente()]/$tot_costos,4));
                 $clientes[] = $linea->getCaIdcliente();
             }
         }
