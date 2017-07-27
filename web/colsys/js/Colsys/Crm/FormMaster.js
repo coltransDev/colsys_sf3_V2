@@ -189,7 +189,7 @@ Ext.define('Colsys.Crm.FormMaster', {
                                 }
                             },
                             items: [{
-                                    
+
                                     xtype: 'fieldcontainer',
                                     msgTarget: 'under',
                                     defaults: {
@@ -203,7 +203,7 @@ Ext.define('Colsys.Crm.FormMaster', {
                                             cls: 'x-display-field',
                                             name: 'tipo_persona',
                                             id: "tipo_persona" + this.idcliente,
-                                            width:  60
+                                            width: 60
                                         },
                                         {xtype: 'displayfield', value: 'Fch.Constituci&oacute;n: ', width: 120, fieldStyle: 'font-weight:bold;'},
                                         {
@@ -239,7 +239,7 @@ Ext.define('Colsys.Crm.FormMaster', {
                                         }
                                     ]
                                 }, {
-                                    
+
                                     xtype: 'fieldcontainer',
                                     msgTarget: 'under',
                                     defaults: {
@@ -561,6 +561,45 @@ Ext.define('Colsys.Crm.FormMaster', {
                     {
                         Ext.Msg.alert("Crm", "Existe una ventana abierta de Clientes<br>Por favor cierrela primero");
                     }
+                },
+                listeners: {
+                    beforerender: function () {
+                        this.setVisible(this.up('form').permisos[2]);
+                    }
+                }
+            }, {
+                text: 'Liberar',
+                tooltip: 'Remover Represntante de Ventas asignado',
+                iconCls: 'delete',
+                id: 'botonLiberar' + me.idcliente,
+                align: 'left',
+                width: 85,
+                handler: function () {
+                    Ext.MessageBox.confirm('Confirmacion', 'esta seguro de Liberar el cliente',
+                            function (e) {
+                                if (e == 'yes') {
+                                    var box = Ext.MessageBox.wait('Procesando', 'Eliminando');
+                                    Ext.Ajax.request({
+                                        url: '/crm/liberarCliente',
+                                        params: {
+                                            idcliente: me.idcliente
+                                        },
+                                        success: function (response, opts) {
+                                            Ext.MessageBox.alert("Colsys", "Cliente Liberado Correctamente");
+                                            Ext.getCmp("vendedor" + me.idcliente).setValue("");
+                                        },
+                                        failure: function (response, opts) {
+                                            Ext.MessageBox.alert("Colsys", "Se presento el siguiente error " + response.status);
+                                            box.hide();
+                                        }
+                                    });
+                                }
+                            });
+                },
+                listeners: {
+                    beforerender: function () {
+                        this.setVisible(this.up('form').permisos[3]);
+                    }
                 }
             }, {
                 text: 'Formatos',
@@ -591,18 +630,18 @@ Ext.define('Colsys.Crm.FormMaster', {
                                                     Ext.create('Colsys.Crm.GridEncuestaVisita',
                                                             {
                                                                 idcliente: me.idcliente,
-                                                                id: 'gridNuevaEncuesta' + me.idcliente
+                                                                id: 'gridNuevaEncuesta' + me.idcliente,
+                                                                permisos: this.up('form').permisos
                                                             })
-                                                ]/*,
-                                                 items: [{
-                                                 xtype: 'Colsys.Crm.GridEncuestaVisita',
-                                                 idcliente: me.idcliente,
-                                                 id: 'gridNuevaEncuesta' + me.idcliente
-                                                 }
-                                                 ]*/
+                                                ]
                                             }).show();
                                 }
                                 tabpanel.setActiveTab('nuevaEncuesta' + me.idcliente);
+                            },
+                            listeners: {
+                                beforerender: function () {
+                                    this.setVisible(this.up('form').permisos[5]);
+                                }
                             }
                         }, {
                             text: 'Mandatos',
@@ -623,13 +662,18 @@ Ext.define('Colsys.Crm.FormMaster', {
                                                 items: [{
                                                         xtype: 'Colsys.Crm.GridControlMandatos',
                                                         idcliente: me.idcliente,
-                                                        id: 'GridControlMandatos' + me.idcliente
+                                                        id: 'GridControlMandatos' + me.idcliente,
+                                                        permisos: this.up('form').permisos
                                                     }
                                                 ]
                                             }).show();
-
                                 }
                                 tabpanel.setActiveTab('ControlMandatos' + me.idcliente);
+                            },
+                            listeners: {
+                                beforerender: function () {
+                                    this.setVisible(this.up('form').permisos[8]);
+                                }
                             }
                         }, {
                             text: 'Ficha Tecnica',
@@ -651,12 +695,18 @@ Ext.define('Colsys.Crm.FormMaster', {
                                                 items: [{
                                                         xtype: 'Colsys.Crm.TabFichaTecnica',
                                                         idcliente: me.idcliente,
-                                                        id: 'tabFichaTecnica' + me.idcliente
+                                                        id: 'tabFichaTecnica' + me.idcliente,
+                                                        permisos: this.up('form').permisos
                                                     }
                                                 ]
                                             }).show();
                                 }
                                 tabpanel.setActiveTab('fichaTecnica' + me.idcliente);
+                            },
+                            listeners: {
+                                beforerender: function () {
+                                    this.setVisible(this.up('form').permisos[12]);
+                                }
                             }
                         }, {
                             text: 'Agentes de Aduana',
@@ -679,6 +729,7 @@ Ext.define('Colsys.Crm.FormMaster', {
                                                         xtype: 'Colsys.Crm.GridAgenteAduana',
                                                         idcliente: me.idcliente,
                                                         id: 'gridagenteAduana' + me.idcliente,
+                                                        permisos: this.up('form').permisos,
                                                         plugins: [Ext.create('Ext.grid.plugin.CellEditing', {
                                                                 clicksToEdit: 1,
                                                                 listeners: {
@@ -720,6 +771,11 @@ Ext.define('Colsys.Crm.FormMaster', {
                                             }).show();
                                 }
                                 tabpanel.setActiveTab('agenteAduana' + me.idcliente);
+                            },
+                            listeners: {
+                                beforerender: function () {
+                                    this.setVisible(this.up('form').permisos[15]);
+                                }
                             }
                         }
                     ]
@@ -813,11 +869,36 @@ Ext.define('Colsys.Crm.FormMaster', {
                                 tabpanel.setActiveTab('Cotizaciones' + me.idcliente);
                             }
                         }, {
+                            text: 'Listas Vinculantes',
+                            tooltip: 'Consulta en Listas Vinculantes',
+                            height: 30,
+                            iconCls: 'tick',
+                            id: 'botonConsultas' + me.idcliente,
+                            handler: function () {
+                                tabpanel = Ext.getCmp('tab-panel-id-indicadores' + me.idcliente);
+                                if (!tabpanel.getChildByElement('Consultas' + me.idcliente)) {
+                                    tabpanel.add(
+                                            {
+                                                title: 'Listas Vinculantes',
+                                                id: 'Consultas' + me.idcliente,
+                                                itemId: 'Consultas' + me.idcliente,
+                                                closable: true,
+                                                closeAction: 'destroy',
+                                                items: [{
+                                                        xtype: 'Colsys.Crm.GridTabVinculantes',
+                                                        idcliente: me.idcliente
+                                                    }
+                                                ]
+                                            }).show();
+                                }
+                                tabpanel.setActiveTab('Cotizaciones' + me.idcliente);
+                            }
+                        }, {
                             text: 'Consulta de Status',
                             tooltip: 'M&oacute;dulo de Status',
                             height: 30,
                             iconCls: 'refresh',
-                            id: 'statusBoton' + me.idcliente,
+                            id: 'botonStatus' + me.idcliente,
                             handler: function () {
                                 tabpanel = Ext.getCmp('tab-panel-id-indicadores' + me.idcliente);
                                 if (!tabpanel.getChildByElement('Status' + me.idcliente)) {
@@ -915,7 +996,6 @@ Ext.define('Colsys.Crm.FormMaster', {
                             iconCls: 'money',
                             id: 'botonPorcentaje' + me.idcliente,
                             handler: function () {
-
                                 tabpanel = Ext.getCmp('tab-panel-id-indicadores' + me.idcliente);
                                 if (!tabpanel.getChildByElement('porcentajeComision' + me.idcliente)) {
                                     tabpanel.add(
@@ -928,40 +1008,18 @@ Ext.define('Colsys.Crm.FormMaster', {
                                                 items: [{
                                                         xtype: 'Colsys.Crm.GridPorcetajeComision',
                                                         idcliente: me.idcliente,
-                                                        id: 'gridPorcetajeComision' + me.idcliente
+                                                        id: 'gridPorcetajeComision' + me.idcliente,
+                                                        permisos: this.up('form').permisos
                                                     }
                                                 ]
                                             }).show();
                                 }
                                 tabpanel.setActiveTab('porcentajeComision' + me.idcliente);
-                            }
-                        }, {
-                            text: 'Liberar Cliente',
-                            tooltip: 'Remover Represntante de Ventas asignado',
-                            height: 30,
-                            iconCls: 'delete',
-                            id: 'botonLiberar' + me.idcliente,
-                            handler: function () {
-                                Ext.MessageBox.confirm('Confirmacion', 'esta seguro de Liberar el cliente',
-                                        function (e) {
-                                            if (e == 'yes') {
-                                                var box = Ext.MessageBox.wait('Procesando', 'Eliminando');
-                                                Ext.Ajax.request({
-                                                    url: '/crm/liberarCliente',
-                                                    params: {
-                                                        idcliente: me.idcliente
-                                                    },
-                                                    success: function (response, opts) {
-                                                        Ext.MessageBox.alert("Colsys", "Cliente Liberado Correctamente");
-                                                        Ext.getCmp("vendedor" + me.idcliente).setValue("");
-                                                    },
-                                                    failure: function (response, opts) {
-                                                        Ext.MessageBox.alert("Colsys", "Se presento el siguiente error " + response.status);
-                                                        box.hide();
-                                                    }
-                                                });
-                                            }
-                                        });
+                            },
+                            listeners: {
+                                beforerender: function () {
+                                    this.setVisible(this.up('form').permisos[19]);
+                                }
                             }
                         }, {
                             text: 'Control Financiero',
@@ -982,12 +1040,18 @@ Ext.define('Colsys.Crm.FormMaster', {
                                                 items: [{
                                                         xtype: 'Colsys.Crm.TabControlFinanciero',
                                                         idcliente: me.idcliente,
-                                                        id: 'tabcontrolFinanciero' + me.idcliente
+                                                        id: 'tabcontrolFinanciero' + me.idcliente,
+                                                        permisos: this.up('form').permisos
                                                     }
                                                 ]
                                             }).show();
                                 }
                                 tabpanel.setActiveTab('controlFinanciero' + me.idcliente);
+                            },
+                            listeners: {
+                                beforerender: function () {
+                                    this.setVisible(this.up('form').permisos[21]);
+                                }
                             }
                         }]
                 }

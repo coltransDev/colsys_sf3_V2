@@ -32,9 +32,9 @@ Ext.define('Colsys.Crm.TabFichaTecnica', {
                         formFAC.info = res.documentacion;
                         formREQ.info = res.documentacion;
                     }
-                    if(res.imprimir == true){
+                    if (res.imprimir == true && me.permisos[14]) {
                         Ext.getCmp("btnImprimir" + me.idcliente).setVisible(true);
-                    }else{
+                    } else {
                         Ext.getCmp("btnImprimir" + me.idcliente).setVisible(false);
                     }
                 },
@@ -43,188 +43,202 @@ Ext.define('Colsys.Crm.TabFichaTecnica', {
                 }
             });
 
-//            tb = new Ext.toolbar.Toolbar();
-//            tb.add({
-//                text: 'Imprimir',
-//                id: 'btnImprimir' + me.idcliente,
-//                tooltip: 'Generar Documento de Transporte',
-//                iconCls: 'page_white_acrobat',
-//                handler: function () {
-//                    //var id = storeItemsDocs.proxy.extraParams.id;
-//                    if (win_file == null) {
-//                        win_file = new Ext.Window({
-//                            title: 'Vista Preliminar del Documento',
-//                            height: 600,
-//                            width: 900,
-//                            items: [{
-//                                    xtype: 'component',
-//                                    itemId: 'panel-document-preview',
-//                                    autoEl: {
-//                                        tag: 'iframe',
-//                                        width: '100%',
-//                                        height: '100%',
-//                                        frameborder: '0',
-//                                        scrolling: 'auto',
-//                                        src: '/clientes/fichaTecnicaPdf/idcliente/' + me.idcliente
-//                                    }
-//                                }],
-//                            listeners: {
-//                                close: function (panel, eOpts) {
-//                                    win_file = null;
-//                                }
-//                            }
-//                        });
-//                    }
-//                    win_file.show();
-//                }
-//            }, {
-//                id: 'bntGuardar' + me.idcliente,
-//                text: 'Guardar',
-//                iconCls: 'disk',
-//                handler: function () {
-//                    var f1 = Ext.getCmp("fchvencimientoPCE" + me.idcliente);
-//                    var f2 = Ext.getCmp("fchvencimientoRCE" + me.idcliente);
-//                    var f3 = Ext.getCmp("vigenciaMS" + me.idcliente);
-//
-//                    me.setActiveTab('Documentacion_ficha' + me.idcliente);
-//                    me.setActiveTab('TransporteInternacional_ficha' + me.idcliente);
-//                    me.setActiveTab('ManejoMercancias_ficha' + me.idcliente);
-//                    me.setActiveTab('ClasificacionRegistros_ficha' + me.idcliente);
-//                    me.setActiveTab('SolicitudFondos_ficha' + me.idcliente);
-//                    me.setActiveTab('Facturacion_ficha' + me.idcliente);
-//                    me.setActiveTab('OtrosContactos_ficha' + me.idcliente);
-//                    me.setActiveTab('Requerimientos_ficha' + me.idcliente);
-//                    me.setActiveTab('Infogeneral_ficha' + me.idcliente);
-//
-//                    var form = Ext.getCmp('formTabInfoGeneralFicha' + me.idcliente).getForm();
-//                    var formDoc = Ext.getCmp('formTabDocumentacionFicha' + me.idcliente).getForm();
-//                    var formMMerc = Ext.getCmp('formTabManejoMercanciasFicha' + me.idcliente).getForm();
-//                    var formCReg = Ext.getCmp('formTabClasifRegFicha' + me.idcliente).getForm();
-//                    var formSoFA = Ext.getCmp('formTabSolicitudFicha' + me.idcliente).getForm();
-//                    var formFAC = Ext.getCmp('formTabFacturacionFicha' + me.idcliente).getForm();
-//                    var formREQ = Ext.getCmp('formTabReqClienteFicha' + me.idcliente).getForm();
-//
-//                    var parte1 = form.getFieldValues();
-//                    var parte2 = formDoc.getFieldValues();
-//                    var parte3 = formMMerc.getFieldValues();
-//                    var parte4 = formCReg.getFieldValues();
-//                    var parte5 = formSoFA.getFieldValues();
-//                    var parte6 = formFAC.getFieldValues();
-//                    var parte7 = formREQ.getFieldValues();
-//
-//                    var string = "{";
-//                    for (var x in parte1) {
-//
-//                        if (x == 'fchvencimientoPCE') {
-//                            string += '"' + x + '":"' + f1.rawValue + '",';
-//                        } else if (x == 'fchvencimientoRCE') {
-//                            string += '"' + x + '":"' + f2.rawValue + '",';
-//                        } else if (x == "vigenciaMS") {
-//                            string += '"' + x + '":"' + f3.rawValue + '",';
-//                        } else {
-//                            if (parte1[x]) {
-//                                string += '"' + x + '":"' + parte1[x] + '",';
-//                            } else {
-//                                string += '"' + x + '":"",';
-//                            }
-//                        }
-//                    }
-//                    for (var x in parte2) {
-//                        if (parte2[x]) {
-//                            string += '"' + x + '":"' + parte2[x] + '",';
-//                        } else {
-//                            string += '"' + x + '":"",';
-//                        }
-//                    }
-//                    for (var x in parte3) {
-//                        if (parte3[x]) {
-//                            string += '"' + x + '":"' + parte3[x] + '",';
-//                        } else {
-//                            string += '"' + x + '":"",';
-//                        }
-//                    }
-//                    for (var x in parte4) {
-//                        if (parte4[x]) {
-//                            string += '"' + x + '":"' + parte4[x] + '",';
-//                        } else {
-//                            string += '"' + x + '":"",';
-//                        }
-//                    }
-//                    for (var x in parte5) {
-//                        if (parte5[x]) {
-//                            string += '"' + x + '":"' + parte5[x] + '",';
-//                        } else {
-//                            string += '"' + x + '":"",';
-//                        }
-//                    }
-//                    for (var x in parte6) {
-//                        if (parte6[x]) {
-//                            string += '"' + x + '":"' + parte6[x] + '",';
-//                        } else {
-//                            string += '"' + x + '":"",';
-//                        }
-//                    }
-//                    for (var x in parte7) {
-//                        if (parte7[x]) {
-//                            string += '"' + x + '":"' + parte7[x] + '",';
-//                        } else {
-//                            string += '"' + x + '":"",';
-//                        }
-//                    }
-//
-//                    string = string.substr(0, string.length - 1);
-//                    string += "}";
-//
-//                    if (form.isValid()) {
-//                        var store = Ext.getCmp('gridTabTransporte' + me.idcliente).getStore();
-//                        x = 0;
-//                        changes = [];
-//                        for (var i = 0; i < store.getCount(); i++) {
-//                            var record = store.getAt(i);
-//                            changes[x] = record.data;
-//                            x++;
-//                        }
-//                        var strGrid = JSON.stringify(changes);
-//
-//                        var store = Ext.getCmp('gridTabContactos' + me.idcliente).getStore();
-//                        x = 0;
-//                        changes = [];
-//                        for (var i = 0; i < store.getCount(); i++) {
-//                            var record = store.getAt(i);
-//                            changes[x] = record.data;
-//                            x++;
-//                        }
-//                        var strGridCO = JSON.stringify(changes);
-//
-//                        Ext.Ajax.request({
-//                            waitMsg: 'Guardando cambios...',
-//                            url: '/clientes/actualizarFichaTecnica',
-//                            params: {
-//                                datos: string,
-//                                datosGrid: strGrid,
-//                                datosGridCO: strGridCO,
-//                                idcliente: me.idcliente
-//                            },
-//                            failure: function (response, options) {
-//                                var res = Ext.util.JSON.decode(response.responseText);
-//                                if (res.errorInfo)
-//                                    Ext.MessageBox.alert("Mensaje", 'Se presento un error guardando por favor informe al Depto. de Sistemas<br>' + res.errorInfo);
-//                                else
-//                                    Ext.MessageBox.alert("Mensaje", 'Se produjo un error, vuelva a intentar o informe al Depto. de Sistema<br>' + res.texto);
-//                            },
-//                            success: function (response, options) {
-//                                var res = Ext.decode(response.responseText);
-//                                ids = res.ids;
-//                                if (res.success) {
-//                                    Ext.MessageBox.alert("Mensaje", 'Ficha almacenada correctamente<br>');
-//                                    Ext.getCmp("btnImprimir" + me.idcliente).setVisible(true);
-//                                }
-//                            }
-//                        });
-//                    }
-//                }
-//            });
-//            this.addDocked(tb);
+            tb = new Ext.toolbar.Toolbar({
+                dock: 'bottom'
+            });
+            tb.add({
+                text: 'Imprimir',
+                id: 'btnImprimir' + me.idcliente,
+                tooltip: 'Generar Documento de Transporte',
+                iconCls: 'page_white_acrobat',
+                handler: function () {
+                    //var id = storeItemsDocs.proxy.extraParams.id;
+                    if (win_file == null) {
+                        win_file = new Ext.Window({
+                            title: 'Vista Preliminar del Documento',
+                            height: 600,
+                            width: 900,
+                            items: [{
+                                    xtype: 'component',
+                                    itemId: 'panel-document-preview',
+                                    autoEl: {
+                                        tag: 'iframe',
+                                        width: '100%',
+                                        height: '100%',
+                                        frameborder: '0',
+                                        scrolling: 'auto',
+                                        src: '/clientes/fichaTecnicaPdf/idcliente/' + me.idcliente
+                                    }
+                                }],
+                            listeners: {
+                                close: function (panel, eOpts) {
+                                    win_file = null;
+                                }
+                            }
+                        });
+                    }
+                    win_file.show();
+                },
+                listeners: {
+                    beforerender: function () {
+                        this.setVisible(me.permisos[14]);
+                    }
+                }
+            }, {
+                id: 'bntGuardar' + me.idcliente,
+                text: 'Guardar',
+                iconCls: 'disk',
+                handler: function () {
+                    var f1 = Ext.getCmp("fchvencimientoPCE" + me.idcliente);
+                    var f2 = Ext.getCmp("fchvencimientoRCE" + me.idcliente);
+                    var f3 = Ext.getCmp("vigenciaMS" + me.idcliente);
+
+                    me.setActiveTab('Documentacion_ficha' + me.idcliente);
+                    me.setActiveTab('TransporteInternacional_ficha' + me.idcliente);
+                    me.setActiveTab('ManejoMercancias_ficha' + me.idcliente);
+                    me.setActiveTab('ClasificacionRegistros_ficha' + me.idcliente);
+                    me.setActiveTab('SolicitudFondos_ficha' + me.idcliente);
+                    me.setActiveTab('Facturacion_ficha' + me.idcliente);
+                    me.setActiveTab('OtrosContactos_ficha' + me.idcliente);
+                    me.setActiveTab('Requerimientos_ficha' + me.idcliente);
+                    me.setActiveTab('Infogeneral_ficha' + me.idcliente);
+
+                    var form = Ext.getCmp('formTabInfoGeneralFicha' + me.idcliente).getForm();
+                    var formDoc = Ext.getCmp('formTabDocumentacionFicha' + me.idcliente).getForm();
+                    var formMMerc = Ext.getCmp('formTabManejoMercanciasFicha' + me.idcliente).getForm();
+                    var formCReg = Ext.getCmp('formTabClasifRegFicha' + me.idcliente).getForm();
+                    var formSoFA = Ext.getCmp('formTabSolicitudFicha' + me.idcliente).getForm();
+                    var formFAC = Ext.getCmp('formTabFacturacionFicha' + me.idcliente).getForm();
+                    var formREQ = Ext.getCmp('formTabReqClienteFicha' + me.idcliente).getForm();
+
+                    var parte1 = form.getFieldValues();
+                    var parte2 = formDoc.getFieldValues();
+                    var parte3 = formMMerc.getFieldValues();
+                    var parte4 = formCReg.getFieldValues();
+                    var parte5 = formSoFA.getFieldValues();
+                    var parte6 = formFAC.getFieldValues();
+                    var parte7 = formREQ.getFieldValues();
+
+                    var string = "{";
+                    for (var x in parte1) {
+
+                        if (x == 'fchvencimientoPCE') {
+                            string += '"' + x + '":"' + f1.rawValue + '",';
+                        } else if (x == 'fchvencimientoRCE') {
+                            string += '"' + x + '":"' + f2.rawValue + '",';
+                        } else if (x == "vigenciaMS") {
+                            string += '"' + x + '":"' + f3.rawValue + '",';
+                        } else {
+                            if (parte1[x]) {
+                                string += '"' + x + '":"' + parte1[x] + '",';
+                            } else {
+                                string += '"' + x + '":"",';
+                            }
+                        }
+                    }
+                    for (var x in parte2) {
+                        if (parte2[x]) {
+                            string += '"' + x + '":"' + parte2[x] + '",';
+                        } else {
+                            string += '"' + x + '":"",';
+                        }
+                    }
+                    for (var x in parte3) {
+                        if (parte3[x]) {
+                            string += '"' + x + '":"' + parte3[x] + '",';
+                        } else {
+                            string += '"' + x + '":"",';
+                        }
+                    }
+                    for (var x in parte4) {
+                        if (parte4[x]) {
+                            string += '"' + x + '":"' + parte4[x] + '",';
+                        } else {
+                            string += '"' + x + '":"",';
+                        }
+                    }
+                    for (var x in parte5) {
+                        if (parte5[x]) {
+                            string += '"' + x + '":"' + parte5[x] + '",';
+                        } else {
+                            string += '"' + x + '":"",';
+                        }
+                    }
+                    for (var x in parte6) {
+                        if (parte6[x]) {
+                            string += '"' + x + '":"' + parte6[x] + '",';
+                        } else {
+                            string += '"' + x + '":"",';
+                        }
+                    }
+                    for (var x in parte7) {
+                        if (parte7[x]) {
+                            string += '"' + x + '":"' + parte7[x] + '",';
+                        } else {
+                            string += '"' + x + '":"",';
+                        }
+                    }
+
+                    string = string.substr(0, string.length - 1);
+                    string += "}";
+
+                    if (form.isValid()) {
+                        var store = Ext.getCmp('gridTabTransporte' + me.idcliente).getStore();
+                        x = 0;
+                        changes = [];
+                        for (var i = 0; i < store.getCount(); i++) {
+                            var record = store.getAt(i);
+                            changes[x] = record.data;
+                            x++;
+                        }
+                        var strGrid = JSON.stringify(changes);
+
+                        var store = Ext.getCmp('gridTabContactos' + me.idcliente).getStore();
+                        x = 0;
+                        changes = [];
+                        for (var i = 0; i < store.getCount(); i++) {
+                            var record = store.getAt(i);
+                            changes[x] = record.data;
+                            x++;
+                        }
+                        var strGridCO = JSON.stringify(changes);
+
+                        Ext.Ajax.request({
+                            waitMsg: 'Guardando cambios...',
+                            url: '/clientes/actualizarFichaTecnica',
+                            params: {
+                                datos: string,
+                                datosGrid: strGrid,
+                                datosGridCO: strGridCO,
+                                idcliente: me.idcliente
+                            },
+                            failure: function (response, options) {
+                                var res = Ext.util.JSON.decode(response.responseText);
+                                if (res.errorInfo)
+                                    Ext.MessageBox.alert("Mensaje", 'Se presento un error guardando por favor informe al Depto. de Sistemas<br>' + res.errorInfo);
+                                else
+                                    Ext.MessageBox.alert("Mensaje", 'Se produjo un error, vuelva a intentar o informe al Depto. de Sistema<br>' + res.texto);
+                            },
+                            success: function (response, options) {
+                                var res = Ext.decode(response.responseText);
+                                ids = res.ids;
+                                if (res.success) {
+                                    Ext.MessageBox.alert("Mensaje", 'Ficha almacenada correctamente<br>');
+                                    if (me.permisos[14]){
+                                        Ext.getCmp("btnImprimir" + me.idcliente).setVisible(true);
+                                    }
+                                }
+                            }
+                        });
+                    }
+                },
+                listeners: {
+                    beforerender: function () {
+                        this.setVisible(me.permisos[13]);
+                    }
+                }
+            });
+            this.addDocked(tb);
 
             //Cargar Store GridTransporte
             Ext.getCmp('gridTabTransporte' + me.idcliente).setStore(Ext.create('Ext.data.Store', {

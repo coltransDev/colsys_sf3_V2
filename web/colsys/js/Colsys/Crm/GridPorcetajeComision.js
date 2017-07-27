@@ -108,6 +108,11 @@ Ext.define('Colsys.Crm.GridPorcetajeComision', {
                     {
                         Ext.Msg.alert("Crm", "Existe una ventana abierta de Porcentaje de comisi&oacute;n<br>Por favor cierrela primero");
                     }
+                },
+                listeners: {
+                    beforerender: function () {
+                        this.setVisible(me.permisos[20]);
+                    }
                 }
             }
             );

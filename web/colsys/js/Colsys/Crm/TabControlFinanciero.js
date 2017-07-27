@@ -21,16 +21,6 @@ Ext.define('Colsys.Crm.TabControlFinanciero', {
                         height: 400
                     }]
             }, {
-                title: 'Listas Vinculantes',
-                id: 'VinculantesControlFinanciero' + me.idcliente,
-                itemId: 'VinculantesControlFinanciero' + me.idcliente,
-                items: [{
-                        xtype: 'Colsys.Crm.GridTabVinculantes',
-                        idcliente: me.idcliente,
-                        id: 'gridTabVinculantes' + me.idcliente,
-                        height: 400
-                    }]
-            }, {
                 title: 'Info. Financiera',
                 id: 'FinancieraControlFinanciero' + me.idcliente,
                 itemId: 'FinancieraControlFinanciero' + me.idcliente,
@@ -38,7 +28,8 @@ Ext.define('Colsys.Crm.TabControlFinanciero', {
                         xtype: 'Colsys.Crm.GridTabInfoFinanciera',
                         idcliente: me.idcliente,
                         id: 'gridTabInfoFinanciera' + me.idcliente,
-                        height: 400
+                        height: 400,
+                        permisos: me.permisos
                     }]
             }, {
                 title: 'Documentos',
@@ -65,14 +56,6 @@ Ext.define('Colsys.Crm.TabControlFinanciero', {
                 iconCls: 'report_edit',
                 handler: function () {
                     me.setActiveTab('GeneralControlFinanciero' + me.idcliente);
-                }
-            });
-            tb.add({
-                id: 'bntVinculantes' + me.idcliente,
-                text: 'Consultas',
-                iconCls: 'tick',
-                handler: function () {
-                    me.setActiveTab('VinculantesControlFinanciero' + me.idcliente);
                 }
             });
             tb.add({
@@ -190,6 +173,11 @@ Ext.define('Colsys.Crm.TabControlFinanciero', {
                             }
                         });
                     }
+                },
+                listeners: {
+                    beforerender: function () {
+                        this.setVisible(me.permisos[23]);
+                    }
                 }
             });
             this.addDocked(tb);
@@ -212,7 +200,7 @@ Ext.define('Colsys.Crm.TabControlFinanciero', {
                     me.setActiveTab('FinancieraControlFinanciero' + me.idcliente);
                     me.setActiveTab('GeneralControlFinanciero' + me.idcliente);
                     Ext.getCmp('tipopersona_tributaria' + me.idcliente).setValue(res.data.tipopersona);
-                    Ext.getCmp('sectoreconomico_tributaria' + me.idcliente).setValue(res.data.sectoreconomico);
+                    // Ext.getCmp('sectoreconomico_tributaria' + me.idcliente).setValue(res.data.sectoreconomico);
                     Ext.getCmp('fechaconstitucion_tributaria' + me.idcliente).setValue(res.data.fechaconstitucion);
                     Ext.getCmp('regimen_tributaria' + me.idcliente).setValue(res.data.regimen);
                     Ext.getCmp('uap_tributaria' + me.idcliente).setValue(res.data.uap);

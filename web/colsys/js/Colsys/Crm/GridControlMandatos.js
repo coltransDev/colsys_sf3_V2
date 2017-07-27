@@ -100,7 +100,6 @@ Ext.define('Colsys.Crm.GridControlMandatos', {
                             xtype: 'actioncolumn',
                             width: 40,
                             items: [{
-                                    iconCls: 'page_white_edit',
                                     tooltip: 'Editar el Registro',
                                     handler: function (grid, rowIndex, colIndex) {
                                         var rec = grid.getStore().getAt(rowIndex);
@@ -130,9 +129,16 @@ Ext.define('Colsys.Crm.GridControlMandatos', {
                                         //win_man.down('form').loadRecord(rec);
                                         //win_man.down('form').treeAvailable(false);
                                         win_man.show();
+                                    },
+                                    isDisabled: function(view, rowIndex, colIndex, item, record) {
+                                        return !me.permisos[10];
+                                    },
+                                    getClass: function(v, meta, rec) {
+                                        if (me.permisos[10]) {
+                                            return 'page_white_edit';
+                                        }
                                     }
                                 }, {
-                                    iconCls: 'delete',
                                     tooltip: 'Eliminar el Registro',
                                     handler: function (grid, rowIndex, colIndex) {
                                         var rec = grid.getStore().getAt(rowIndex);
@@ -163,6 +169,14 @@ Ext.define('Colsys.Crm.GridControlMandatos', {
                                                 });
                                             }
                                         });
+                                    },
+                                    isDisabled: function(view, rowIndex, colIndex, item, record) {
+                                        return !me.permisos[11];
+                                    },
+                                    getClass: function(v, meta, rec) {
+                                        if (me.permisos[11]) {
+                                            return 'delete';
+                                        }
                                     }
                                 }]
                         }
@@ -202,10 +216,12 @@ Ext.define('Colsys.Crm.GridControlMandatos', {
                             }
                         });
                     }
-                    //rec = Ext.create(me.getStore().getModel(), {});
-                    //win_man.up('form').treeAvailable(true);
-                    //win_man.up('form').loadRecord(rec);
                     win_man.show();
+                },
+                listeners: {
+                    beforerender: function () {
+                        this.setVisible(me.permisos[9]);
+                    }
                 }
             }, {
                 text: 'Archivo Digital',

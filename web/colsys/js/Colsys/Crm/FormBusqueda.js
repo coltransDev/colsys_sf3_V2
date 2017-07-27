@@ -18,6 +18,11 @@ Ext.define('Colsys.Crm.FormBusqueda', {
     maxSize: 500,
     listeners: {
         beforerender: function () {
+            me = this;
+            if (!this.permisosG[0]) {
+                Ext.Msg.alert('Alerta', 'Usted no tiene permiso para ingresar a este m&oacute;dulo!');
+                this.setDisabled(true);
+            }
         }
     },
     items: [
@@ -306,33 +311,16 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                     columns: [
                         {
                             text: "Cliente", width: 600, dataIndex: 'nombre', sortable: true
-                                    //xtype: 'templatecolumn',
-                                    //,
-                                    //tpl: '<a href="javascript:loadRef(\'{ca_referencia}\')">{ca_referencia}</a>'
                         }
                     ],
                     listeners: {
                         rowdblclick: function (obj, record, tr, rowIndex, e, eOpts)
                         {
-                            //var tipofac = tipofactura;
                             tabpanel = Ext.getCmp('tabpanel1');
                             ref = record.data.idcliente;
-                            //permisosG=this.up('form').permisosG;
+                            permisosG = this.up('form').permisosG;
                             if (!tabpanel.getChildByElement('tab' + ref) && ref != "")
                             {
-                                //if(record.data.m_ca_impoexpo=="INTERNO")
-                                //    tmppermisos=permisosG.terrestre;
-                                //else if(record.data.m_ca_impoexpo=="Exportaci\u00F3n")
-                                //    tmppermisos=permisosG.exportacion;
-                                //else if(record.data.m_ca_impoexpo=="Importaci\u00F3n")
-                                //{
-                                //if(record.data.m_ca_transporte=="Mar\u00EDtimo")
-                                //    tmppermisos=permisosG.maritimo;
-                                //if(record.data.m_ca_transporte=="A\u00E9reo")
-                                //    tmppermisos=permisosG.aereo;
-                                //}
-                                //else if(record.data.m_ca_impoexpo=="OTM-DTA")
-                                //tmppermisos=permisosG.otm;
                                 tabpanel.add(
                                         {
                                             title: record.data.nombre,
@@ -340,18 +328,12 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                                             itemId: 'tab' + ref,
                                             closable: true,
                                             autoScroll: true,
-                                            items: [
-                                                //new Colsys.Crm.Mainpanel(
-                                                {
+                                            items: [{
                                                     xtype: 'wCRMMainpanel',
                                                     id: ref,
                                                     idcliente: ref,
-                                                    // layout: 'anchor',
-                                                    // anchor: '100% 100%',
-                                                    // width: 1095,
-
-                                                    permisos: ""
-                                                }/*)*/
+                                                    permisos: permisosG
+                                                }
                                             ]
                                         }).show();
                             }
@@ -424,8 +406,7 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                     ]
                 }).show();
             }
-        },
-        {
+        }, {
             type: 'plus',
             tooltip: 'Nuevo Cliente',
             handler: function (event, toolEl, panelHeader) {
@@ -457,6 +438,11 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                     winTercero.show();
                 } else {
                     Ext.Msg.alert("Crm", "Existe una ventana abierta de Clientes<br>Por favor cierrela primero");
+                }
+            },
+            listeners: {
+                beforerender: function () {
+                    this.setVisible(this.up('form').permisosG[1]);
                 }
             }
         }]

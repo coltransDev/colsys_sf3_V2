@@ -130,18 +130,19 @@ Ext.define('Colsys.Crm.GridAgenteAduana', {
                                     xtype: 'actioncolumn',
                                     width: 40,
                                     items: [{
+                                            isDisabled: function(view, rowIndex, colIndex, item, record) {
+                                                if (!record.get('idcliente')) {
+                                                    return true;
+                                                }
+                                            },
                                             getClass: function (v, meta, rec) {
                                                 if (rec.get('idcliente')) {
                                                     return 'import';
-                                                } else {
-                                                    return 'buy-col';
                                                 }
                                             },
                                             getTip: function (v, meta, rec) {
                                                 if (rec.get('idcliente')) {
-                                                    return 'Registro Creado';
-                                                } else {
-                                                    return 'Nuevo registro';
+                                                    return 'Subir Documentos';
                                                 }
                                             },
                                             handler: function (grid, rowIndex, colIndex) {
@@ -233,23 +234,21 @@ Ext.define('Colsys.Crm.GridAgenteAduana', {
                                                 win_arc.show();
                                             }
                                         }, {
-                                            iconCls: 'delete',
+                                            // iconCls: 'delete',
                                             tooltip: 'Eliminar',
                                             id: 'btnAnular',
-                                            disabled: false,
-                                            getClass: function (v, meta, rec) {
-                                                if (rec.get('idcliente')) {
+                                            isDisabled: function(view, rowIndex, colIndex, item, record) {
+                                                return !me.permisos[18];
+                                            },
+                                            getClass: function(v, meta, rec) {
+                                                if (rec.get('idcliente') && me.permisos[18]) {
                                                     return 'delete';
-                                                } else {
-                                                    return 'buy-col';
                                                 }
                                             },
                                             getTip: function (v, meta, rec) {
-                                                if (rec.get('idcliente')) {
-                                                    return 'Registro Creado';
-                                                } else {
-                                                    return 'Nuevo registro';
-                                                }
+                                                if (rec.get('idcliente') && me.permisos[18]) {
+                                                    return 'Eliminar Registro';
+l                                                }
                                             },
                                             handler: function (grid, rowIndex, colIndex) {
                                                 var rec = grid.getStore().getAt(rowIndex);
@@ -293,8 +292,12 @@ Ext.define('Colsys.Crm.GridAgenteAduana', {
                         handler: function () {
                             var store = Ext.getCmp("gridagenteAduana" + me.idcliente).getStore();
                             var r = Ext.create(store.model);
-//                    console.log(r);
                             store.insert(0, r);
+                        },
+                        listeners: {
+                            beforerender: function () {
+                                this.setVisible(me.permisos[16]);
+                            }
                         }
                     }, {
                         text: 'Guardar',
@@ -343,9 +346,13 @@ Ext.define('Colsys.Crm.GridAgenteAduana', {
                                     }
                                 });
                             }
+                        },
+                        listeners: {
+                            beforerender: function () {
+                                this.setVisible(me.permisos[17]);
+                            }
                         }
-                    }
-                    );
+                    });
                     this.addDocked(tb);
                 }
             }

@@ -294,6 +294,11 @@ Ext.define('Colsys.Crm.GridTabInfoFinanciera', {
                         });
                         win_infofinanciera.show();
                     }
+                },
+                listeners: {
+                    beforerender: function () {
+                        this.setVisible(me.permisos[22]);
+                    }
                 }
             });
             this.addDocked(tb);

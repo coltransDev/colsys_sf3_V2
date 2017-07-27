@@ -196,11 +196,12 @@ Ext.define('Colsys.Crm.GridEncuestaVisita', {
                                     }
                                 });
                             }
-//                            rec = Ext.create('EncuestaVisita', {});
-                            //rec = Ext.create(me.getStore().getModel(), {});
-                            //win_encuesta.down('form').loadRecord(rec);
-                            //win_encuesta.down('form').setReadOnlyForAll(false);
                             win_encuesta.show();
+                        },
+                        listeners: {
+                            beforerender: function () {
+                                this.setVisible(me.permisos[6]);
+                            }
                         }
                     },
                     {
