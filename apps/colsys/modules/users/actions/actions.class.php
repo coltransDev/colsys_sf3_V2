@@ -947,7 +947,7 @@ class usersActions extends sfActions
                 "ca_nivel" => $dato["nivel"],
                 "ca_idrutina_niveles" => $dato["idrutina_niveles"],
                 "ca_descripcion" => utf8_encode($dato["descripcion"]),
-                "ca_valor" => $dato["valor"],
+                "ca_valor" => utf8_encode($dato["valor"]),
                 "ca_seleccionado" => $seleccionado
             );
             $i = $i + 1;
