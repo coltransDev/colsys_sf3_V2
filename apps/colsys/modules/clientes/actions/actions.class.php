@@ -667,7 +667,7 @@ class clientesActions extends sfActions {
                      </tr>
                      <tr>
                         <td style=\"text-align: justify\">
-                           Es necesario para <strong>COLTRANS S.A.S.</strong> y/o <strong>AGENCIA DE ADUANAS COLMAS S.A.S. NIVEL 1</strong> dar cumplimiento a la Circular 0170 expedida por la DIAN el 10 de octubre de 2002 y la circular externa 100-000005 de junio 17 de 2014, expedida por la Superintendencia de Sociedades, siendo nuestra obligación como Agentes de Carga Internacional / Agentes de Aduana, crear un banco de datos de nuestros clientes que nos permita establecer un adecuado auto control y gestión del riesgo para la 'Prevención del lavado de Activos y Financiación del Terrorismo' en nuestras operaciones.<br /><br />
+                           Es necesario para <strong>COLTRANS S.A.S.</strong> y/o <strong>AGENCIA DE ADUANAS COLMAS S.A.S. NIVEL 1</strong> dar cumplimiento a la Circular 0170 de 2002, resolución 8571 de 2010 expedidas por la DIAN y a la circular externa 100-000005 de junio 17 de 2014, expedida por la Superintendencia de Sociedades, siendo nuestra obligación como Agentes de Carga Internacional / Agentes de Aduana, crear un banco de datos de nuestros clientes que nos permita establecer un adecuado auto control y gestión del riesgo para la 'Prevención del lavado de Activos y Financiación del Terrorismo' en nuestras operaciones.<br /><br />
                            Por lo anterior, el Representante Comercial que atiende su cuenta, estará retirando de sus instalaciones los siguientes documentos:<br /><br />
                         </td>
                      </tr>
@@ -687,12 +687,12 @@ class clientesActions extends sfActions {
                               <td style=\"text-align: justify\">Certificado de existencia y representación legal en original con vigencia no superior a 30 días.</td>
                             </tr>
                             <tr>
-                              <td style=\"text-align: justify\">Fotocopia del RUT</td>
-                              <td style=\"text-align: justify\">Fotocopia del RUT</td>
+                              <td style=\"text-align: justify\">Fotocopia del RUT Completo, con fecha de expedición del año en el que se actualizan los documentos.</td>
+                              <td style=\"text-align: justify\">Fotocopia del RUT Completo, con fecha de expedición del año en el que se actualizan los documentos.</td>
                             </tr>
                             <tr>
-                              <td style=\"text-align: justify\">Fotocopia c.c. Representante Legal</td>
-                              <td style=\"text-align: justify\">Fotocopia c.c. Representante Legal</td>
+                              <td style=\"text-align: justify\">Fotocopia C.C. Representante Legal</td>
+                              <td style=\"text-align: justify\">Fotocopia C.C. Representante Legal</td>
                             </tr>
                             <tr>
                               <td style=\"text-align: justify\">Balance General</td>
@@ -707,40 +707,32 @@ class clientesActions extends sfActions {
                               <td style=\"text-align: justify\">Notas a los Estados Financieros</td>
                             </tr>
                             <tr>
-                              <td style=\"text-align: justify\">Fotocopia c.c. del Contador</td>
-                              <td style=\"text-align: justify\">Fotocopia c.c. del Contador </td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Fotocopia c.c. del Revisor Fiscal (si aplica*)</td>
-                              <td style=\"text-align: justify\">Fotocopia c.c. del Revisor Fiscal (si aplica*)</td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Fotocopia del certificado ISO</td>
-                              <td style=\"text-align: justify\">Fotocopia del certificado ISO</td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Fotocopia del certificado BASC</td>
-                              <td style=\"text-align: justify\">Fotocopia del certificado BASC</td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Check list documentos entregados, debidamente firmado</td>
-                              <td style=\"text-align: justify\">Check list documentos entregados, debidamente firmado</td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\"></td>
+                              <td style=\"text-align: justify\">Fotocopia de la T.P. o C.C. del Contador</td>
                               <td style=\"text-align: justify\">Certificado de EE.FF emitido por Contador público</td>
                             </tr>
                             <tr>
-                              <td style=\"text-align: justify\"></td>
+                              <td style=\"text-align: justify\">Fotocopia de la T.P. o C.C. del Revisor Fiscal (si aplica*)</td>
                               <td style=\"text-align: justify\">Dictamen de EE.FF emitido por Revisor fiscal (si aplica*)</td>
                             </tr>
                             <tr>
-                              <td style=\"text-align: justify\"></td>
-                              <td style=\"text-align: justify\">Antecedentes Disciplinarios del Contador expedido por la Junta Central Contadores</td>
+                              <td style=\"text-align: justify\">Fotocopia del certificado ISO</td>
+                              <td style=\"text-align: justify\">Fotocopia de la T.P. o C.C. del Contador</td>
+                            </tr>
+                            <tr>
+                              <td style=\"text-align: justify\">Fotocopia del certificado BASC</td>
+                              <td style=\"text-align: justify\">Fotocopia de la T.P. o C.C. del Revisor Fiscal (si aplica*)</td>
+                            </tr>
+                            <tr>
+                              <td style=\"text-align: justify\">Check list documentos entregados, debidamente firmado</td>
+                              <td style=\"text-align: justify\">Fotocopia del certificado ISO</td>
                             </tr>
                             <tr>
                               <td style=\"text-align: justify\"></td>
-                              <td style=\"text-align: justify\">Antecedentes Disciplinarios del Revisor Fiscal expedido por la Junta Central Contadores (si aplica*) </td>
+                              <td style=\"text-align: justify\">Fotocopia del certificado BASC</td>
+                            </tr>
+                            <tr>
+                              <td style=\"text-align: justify\"></td>
+                              <td style=\"text-align: justify\">Check list documentos entregados, debidamente firmado</td>
                             </tr>
                           </table></center>
                         </td>
@@ -748,9 +740,9 @@ class clientesActions extends sfActions {
                      <tr>
                         <td style=\"text-align: justify\">
                            * Empresas que cuenten con más de 5.000 SMMLV de activos están obligados a tener revisor fiscal.<br /><br />
-                           Si usted es Gran Contribuyente, UAP, ALTEX, Agente Diplomático, Entidad del estado, Entidades territoriales, entidad descentralizada, entidad vigilada por la Superfinanciera, esta exceptuado de presentar el balance general, estado de resultados, notas a los estados financieros, certificación de los estados financieros del contador y/o revisor, fotocopia de la cédula del contador y/o revisor y sus respectivos antecedentes.<br /><br />
+                           Si usted es Grancontribuyente, UAP, ALTEX, Agente Diplomático, Entidad del estado, Entidades territoriales, entidad descentralizada, entidad vigilada por la Superfinanciera, esta exceptuado de presentar el balance general, estado de resultados, notas a los estados financieros, certificación de los estados financieros del contador y/o revisor, fotocopia de la cédula del contador y/o revisor y sus respectivos antecedentes.<br /><br />
                            Los Estados Financieros deben estar certificados y dictaminados por Representante Legal y Revisor Fiscal y/o Contador Público con fecha de corte a Dic. 31 del año inmediatamente anterior. Si la compañía se encuentra recientemente constituida, deberá entregar un balance inicial. Si usted es persona natural, deberá entregar copia de la última Declaración de Renta.<br /><br />
-                           Está documentación debe ser actualizada mínimo anualmente y reposará en nuestros archivos con un trato de <strong>ABSOLUTA RESERVA Y CONFIDENCIALIDAD.</strong> El incumplimiento de alguno de los puntos anteriores acarreará una sanción por parte de la DIAN.<br /><br />$renovacion_credito
+                           Está documentación debe ser actualizada mínimo anualmente y reposará en nuestros archivos con un trato de <strong>ABSOLUTA RESERVA Y CONFIDENCIALIDAD.</strong> El incumplimiento de alguno de los puntos anteriores acarreará una sanción por parte de la DIAN.<br /><br />$renovacion_credito
                            <strong>IMPORTANTE:</strong><br />
                            En caso de no tener un Representante Comercial asignado, agradecemos enviar los mismos en original a la atención de Fanny Gutiérrez en la dirección: Cra. 98 No 25G-10 INT 18.<br /><br />
                            Si usted es cliente de Coltrans y Colmas, debe remitir un solo paquete de documentos acogiéndose con la relación de documentos de Colmas.<br /><br />
@@ -768,7 +760,7 @@ class clientesActions extends sfActions {
                 if ($con_credito) {
                     $email->addAttachment("ids/formatos/Solicitud_de_Credito.xls");
                 }
-                $email->addAttachment("ids/formatos/Circular_0170.xls");
+                $email->addAttachment("ids/formatos/Formato_conocimiento_de_cliente.xls");
 
                 $email->save();
             }
