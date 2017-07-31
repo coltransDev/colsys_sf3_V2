@@ -40,6 +40,7 @@ class integracionesActions extends sfActions {
         exit;
     }
     
+    /*OK REVISADO JUL/31/2017*/
     public function jsonReferencias($transaccion) {
         
         $master = Doctrine::getTable("InoMaster")
@@ -53,9 +54,9 @@ class integracionesActions extends sfActions {
         $datos["Password"]="colsys";
         $datos["Company"]="1";
         $datos["System"]="2";
-        $datos["Codigo"]=$master->getCaReferencia();
-        $datos["Nombre"]=$master->getCaImpoexpo()."-".$master->getCaTransporte();
-        $datos["FechaInicio"]=date("yyyy/mm/dd");
+        $datos["PrjCode"]=$master->getCaReferencia();
+        $datos["PrjName"]=$master->getCaImpoexpo()."-".$master->getCaTransporte();
+        $datos["ValidFrom"]=date("yyyy/mm/dd");
         $datos["Estado"]="A";        
         
         $transaccion->setCaEstado("G");
@@ -64,6 +65,7 @@ class integracionesActions extends sfActions {
         
     }
     
+    /*OK REVISADO JUL/31/2017*/
     public function jsonClientes($transaccion) {
         
         $reg = Doctrine::getTable("Cliente")
@@ -76,30 +78,33 @@ class integracionesActions extends sfActions {
         $datos["Password"]="colsys";
         $datos["Company"]="1";
         $datos["System"]="2";
-
-        $datos["Tipo"]="C";
-        $datos["EstadoSN"]="N";
-        $datos["CodSN"]="C".$reg->getCaIdalterno();
-        $datos["NombreSN"]=$reg->getCaCompania();
-        $datos["NombreExtranjero"]=$reg->getCaCompania();
-        $datos["Grupo"]="";
-        $datos["Identificacion"]=$reg->getCaIdalterno();
+        $datos["CardCode"]="C".$reg->getCaIdalterno();
+        $datos["CardName"]=$reg->getCaCompania();
+        $datos["CardFName"]=$reg->getCaCompania(); // Nombre Extranjero
+        $datos["CardType"]="0";  // Tipo SN 0: Cliente 1: Proveedor 2: Lead      
+        $datos["GroupCode"]="";  // Código de grupo de socios de negocio
+        $datos["CreditLimit"]="";
         $datos["Fax"]="";
-        $datos["Telefono"]="";
-        $datos["Email"]="";
-        $datos["CondicionPago"]="";
-        $datos["LimiteCredito"]="";
-        $datos["EmpVenta"]="";
-        $datos["Activo"]="";
+        $datos["Phone1"]="";
+        $datos["GroupNum"]=""; //Condición de pago. Revisar tabla de condiciones de pago
+        $datos["LicTradNum"]=$reg->getCaIdalterno(); //Número de indentificación fiscal
+        $datos["SlpCode"]=""; //Número de empleado de ventas
+        $datos["E_Mail"]="";
+        $datos["frozenFor"]=""; //Activo 0: No 1: Si
+        $datos["DebPayAcct"] = ""; // Pendiente
+        $datos["Estado"]="N"; //Y: SI N: NO
+        $datos["Empleado"] = ""; //Se indica si el socio de negocio es un empleado de venta
         
-        $datos["Direcciones"]=$this->getJsonDirecciones($reg->getIds());        
+        $datos["Direcciones"]=$this->getJsonDireContac($reg->getIds());        
         $datos["Contactos"]=$this->getJsonContatos($reg->getIds());
+        $datos["Bancos"] = $this->JsonBancos($reg);
         
         $transaccion->setCaEstado("G");
         $transaccion->setCaDatos(json_encode($datos));
         $transaccion->save();
     }
     
+     /*OK REVISADO JUL/31/2017*/
     public function jsonAgentes($transaccion) {
         
          $reg = Doctrine::getTable("Ids")
@@ -113,29 +118,33 @@ class integracionesActions extends sfActions {
         $datos["Company"]="1";
         $datos["System"]="2";
 
-        $datos["Tipo"]="P";
-        $datos["EstadoSN"]="N";
-        $datos["CodSN"]="A".$reg->getCaIdalterno();
-        $datos["NombreSN"]=$reg->getCaNombre();
-        $datos["NombreExtranjero"]=$reg->getCaNombre();
-        $datos["Grupo"]="";
-        $datos["Identificacion"]=$reg->getCaIdalterno();
+        $datos["CardCode"]=$reg->getCaIdalterno();        
+        $datos["CardName"]=$reg->getCaNombre();
+        $datos["CardFName"]=$reg->getCaNombre();
+        $datos["CardType"]="1";  // Tipo SN 0: Cliente 1: Proveedor 2: Lead      
+        $datos["GroupCode"]="";
+        $datos["CreditLimit"]="";
         $datos["Fax"]="";
-        $datos["Telefono"]="";
-        $datos["Email"]="";
-        $datos["CondicionPago"]="";
-        $datos["LimiteCredito"]="";
-        $datos["EmpVenta"]="";
-        $datos["Activo"]="";
+        $datos["Phone1"]="";
+        $datos["GroupNum"]=""; //Condición de pago. Revisar tabla de condiciones de pago
+        $datos["LicTradNum"]="A".$reg->getCaIdalterno();
+        $datos["SlpCode"]=""; //Número de empleado de ventas
+        $datos["E_Mail"]="";
+        $datos["frozenFor"]=""; //Activo 0: No 1: Si
+        $datos["DebPayAcct"] = ""; // Pendiente
+        $datos["Estado"]="N";
+        $datos["Empleado"] = ""; //Se indica si el socio de negocio es un empleado de venta
 
         $datos["Direcciones"]=$this->getJsonDireContac($reg);
         $datos["Contactos"]=$this->getJsonContatos($reg);
+        $datos["Bancos"] = $this->JsonBancos($reg);
 
         $transaccion->setCaEstado("G");
         $transaccion->setCaDatos(json_encode($datos));
         $transaccion->save();
     }
     
+    /*OK REVISADO JUL/31/2017*/
     public function jsonProveedores($transaccion) {
         
          $reg = Doctrine::getTable("Ids")
@@ -149,29 +158,33 @@ class integracionesActions extends sfActions {
         $datos["Company"]="1";
         $datos["System"]="2";
 
-        $datos["Tipo"]="P";
-        $datos["EstadoSN"]="N";
-        $datos["CodSN"]="P".$reg->getCaIdalterno();
-        $datos["NombreSN"]=$reg->getCaNombre();
-        $datos["NombreExtranjero"]=$reg->getCaNombre();
-        $datos["Grupo"]="";
-        $datos["Identificacion"]=$reg->getCaIdalterno();
+        $datos["CardCode"]="P".$reg->getCaIdalterno();
+        $datos["CardName"]=$reg->getCaNombre();
+        $datos["CardFName"]=$reg->getCaNombre();
+        $datos["CardType"]="1";  // Tipo SN 0: Cliente 1: Proveedor 2: Lead  
+        $datos["GroupCode"]="";  // Código de grupo de socios de negocio
+        $datos["Estado"]="N"; //Y: SI N: NO
+        $datos["CreditLimit"]="";
         $datos["Fax"]="";
-        $datos["Telefono"]="";
-        $datos["Email"]="";
-        $datos["CondicionPago"]="";
-        $datos["LimiteCredito"]="";
-        $datos["EmpVenta"]="";
-        $datos["Activo"]="";
+        $datos["Phone1"]="";
+        $datos["GroupNum"]=""; //Condición de pago. Revisar tabla de condiciones de pago
+        $datos["LicTradNum"]=$reg->getCaIdalterno(); //Número de indentificación fiscal
+        $datos["SlpCode"]=""; //Número de empleado de ventas
+        $datos["E_Mail"]="";
+        $datos["frozenFor"]=""; //Activo 0: No 1: Si
+        $datos["DebPayAcct"] = ""; // Pendiente
+        $datos["Empleado"] = ""; //Se indica si el socio de negocio es un empleado de venta
 
         $datos["Direcciones"]=$this->getJsonDireContac($reg);
         $datos["Contactos"]=$this->getJsonContatos($reg);
+        $datos["Bancos"] = $this->JsonBancos($reg);
 
         $transaccion->setCaEstado("G");
         $transaccion->setCaDatos(json_encode($datos));
         $transaccion->save();
     }
     
+    /*OK REVISADO JUL/31/2017*/
     public function jsonEmpleados($transaccion) {
         
          $reg = Doctrine::getTable("Usuario")
@@ -185,20 +198,22 @@ class integracionesActions extends sfActions {
         $datos["Company"]="1";
         $datos["System"]="2";
 
-        $datos["Tipo"]="P";
-        $datos["EstadoSN"]="N";
-        $datos["CodSN"]="E".$reg->getCaDocidentidad();
-        $datos["NombreSN"]=$reg->getCaNombre();
-        $datos["NombreExtranjero"]=$reg->getCaNombre();
-        $datos["Grupo"]="";
-        $datos["Identificacion"]=$reg->getCaDocidentidad();
+        $datos["CardCode"]="E".$reg->getCaDocidentidad();
+        $datos["CardName"]=$reg->getCaNombre();
+        $datos["CardFName"]=$reg->getCaNombre();        
+        $datos["CardType"]="1";  // Tipo SN 0: Cliente 1: Proveedor 2: Lead      
+        $datos["GroupCode"]="";  // Código de grupo de socios de negocio
+        $datos["CreditLimit"]="";
         $datos["Fax"]="";
-        $datos["Telefono"]=$reg->getCaTeloficina();
-        $datos["Email"]=$reg->getCaEmail();
-        $datos["CondicionPago"]="";
-        $datos["LimiteCredito"]="";
-        $datos["EmpVenta"]="Y";
-        $datos["Activo"]="";
+        $datos["Phone1"]=$reg->getSucursal()->getCaTelefono();
+        $datos["GroupNum"]=""; //Condición de pago. Revisar tabla de condiciones de pago
+        $datos["LicTradNum"]=$reg->getCaDocidentidad();
+        $datos["SlpCode"]=""; //Número de empleado de ventas
+        $datos["E_Mail"]=$reg->getCaEmail();
+        $datos["frozenFor"]=""; //Activo 0: No 1: Si
+        $datos["DebPayAcct"] = ""; // Pendiente
+        $datos["Estado"]="N"; //Y: SI N: NO
+        $datos["Empleado"] = ""; //Se indica si el socio de negocio es un empleado de venta
 
         //$datos["Direcciones"]=$this->getJsonDireContac($reg);
         //$datos["Contactos"]=$this->getJsonContatos($reg);
@@ -208,24 +223,26 @@ class integracionesActions extends sfActions {
         $transaccion->save();
     }
     
-    
+    /*OK REVISADO JUL/31/2017*/
     public function getJsonDireContac($ids)
     {
         $dir=$contactos=array();
         $suc=$ids->IdsSucursal();
         foreach($suc as  $k=>$s)
         {
-            $dir[$k]["Tipo"]="Colsys";
-            $dir[$k]["EsPrincipal"]=($s->getCaPrincipal()?"Y":"N");
-            $dir[$k]["CodDireccion"]=$s->getCiudad()->getCaCiudad();
-            $dir[$k]["Direccion"]=$s->getCaDireccion();
-            $dir[$k]["CodigoPais"]=$s->getCiudad()->getTrafico()->getCaIdTrafico();
-            $dir[$k]["Municipio"]=$s->getCiudad()->getCaDivipola();
-            $dir[$k]["Telefono"]=$s->getCaTelefonos();
+            $dir[$k]["Address"] = $s->getCiudad()->getCaCiudad();
+            $dir[$k]["AddrType"]="Colsys";
+            $dir[$k]["Street"]=$s->getCaDireccion();
+            $dir[$k]["City"]=$s->getCiudad()->getCaCiudad();
+            $dir[$k]["County"]=$s->getCiudad()->getCaDivipola();
+            $dir[$k]["Country"]=$s->getCiudad()->getTrafico()->getCaIdTrafico();            
+            $dir[$k]["Principal"]=($s->getCaPrincipal()?"Y":"N");            
+            //$dir[$k]["Telefono"]=$s->getCaTelefonos(); // Se eliminó en nuevo documento;
             $contactos=array_merge($contactos,getJsonContactos($s));
         }
     }
     
+    /*OK REVISADO JUL/31/2017*/
     public function getJsonContactos($suc)
     {
         $contactos=array();
@@ -244,18 +261,35 @@ class integracionesActions extends sfActions {
                     $snombre= substr($c->getCaNombres(), $pos, (strlen($c->getCaNombres())-$pos));
                 }
                 //$nombre=
-                $contactos[$k]["IDContacto"]=$c->getCaIdcontacto();
-                $contactos[$k]["Nombre"]=$pnombre; 
-                $contactos[$k]["SegundoNombre"]= $snombre;
-                $contactos[$k]["Apellido"]=$c->getCapapellido(). " ".$c->getCasapellido();
-                $contactos[$k]["Direccion"]=$c->getCaDireccion();
-                $contactos[$k]["Telefono"]=$c->getCaTelefonos();
-                $contactos[$k]["Correo"]=$c->getCaEmail();
-                $contactos[$k]["Cargo"]=$c->getCaCargo();
+                
+                $contactos[$k]["Position"]=$c->getCaCargo();
+                $contactos[$k]["FirstName"]=$pnombre; 
+                $contactos[$k]["MiddleName"]= $snombre;
+                $contactos[$k]["LastName"]=$c->getCapapellido(). " ".$c->getCasapellido();
+                $contactos[$k]["Address"]=$c->getCaDireccion();
+                $contactos[$k]["Tel1"]=$c->getCaTelefonos();
+                $contactos[$k]["E_MailL"]=$c->getCaEmail();
+                //$contactos[$k]["IDContacto"]=$c->getCaIdcontacto(); Se eliminó en nuevo documento
             }
         }
     }
     
+    /*OK REVISADO JUL/31/2017*/
+    public function getJsonBancos($ids)
+    {
+        $bnk = array();
+        $bancos=$ids->IdsBanco();
+        foreach($bancos as $k => $b)
+        {
+            $bnk[$k]["BankCode"] = $b->getCaCodigoEntidad();
+            $bnk[$k]["Account"] = $b->getCaNumeroCuenta();
+            $bnk[$k]["TipoCta"] = $b->getCaTipoCuenta(); // A: Ahorros C: Corriente
+            //$dir[$k]["Telefono"]=$s->getCaTelefonos(); // Se eliminó en nuevo documento;
+            
+        }
+    }
+    
+    /*OK REVISADO JUL/31/2017*/
     public function jsonConceptos($transaccion) {
         
          $reg = Doctrine::getTable("InoMaestraConceptos")
@@ -271,22 +305,16 @@ class integracionesActions extends sfActions {
 
         $datos["ItemCode"]=$reg->getCaIdconcepto();
         $datos["ItemName"]=$reg->getCaCpncepto_esp();
-        $datos["U_SEI_Estado"]="N";
-        $datos["Venta"]=($reg->getCaVenta()=="1" || $reg->getCaVenta()=="true" || $reg->getCaVenta()==true)?"Y":"N";
-        $datos["Compra"]=($reg->getCaCompra()=="1" || $reg->getCaCompra()=="true" || $reg->getCaCompra()==true)?"Y":"N";
-        /*$datos[""]="";
-        $datos[""]="";
-        $datos[""]="";*/
+        $datos["Estado"]="N";
+        $datos["SellItem"]=($reg->getCaVenta()=="1" || $reg->getCaVenta()=="true" || $reg->getCaVenta()==true)?"1":"0";      //Venta
+        $datos["PrchseItem"]=($reg->getCaCompra()=="1" || $reg->getCaCompra()=="true" || $reg->getCaCompra()==true)?"1":"0"; //Compra
         
-
-        //$datos["Direcciones"]=$this->getJsonDireContac($reg);
-        //$datos["Contactos"]=$this->getJsonContatos($reg);
-
         $transaccion->setCaEstado("G");
         $transaccion->setCaDatos(json_encode($datos));
         $transaccion->save();
     }
     
+    /*OK REVISADO JUL/31/2017*/
     public function jsonFacturasV($transaccion){
         
         $reg = Doctrine::getTable("InoComprobante")
@@ -303,16 +331,27 @@ class integracionesActions extends sfActions {
         $datos["Company"]= $tipoComprobante->getCaIdempresa(); // Pendiente definir en tabla de empresas los Id de SAP
         $datos["System"]="2";
         
-        $datos["Tipo"]="V";
+        $datos["TipoDoc"]="V";
         $datos["CodigoDoc"] = $tipoComprobante->getCaTipo();
-        $datos["SerieNum"] = $tipoComprobante->getCaComprobante();
+        $datos["SerieCode"] = $tipoComprobante->getCaComprobante();
         $datos["NumeroInterno"] = $reg->getCaConsecutivo();
-        $datos["CodSN"] = "C";
+        $datos["CardCode"] = "C";
         $datos["DocDate"] = date("Y-m-d");
-        $datos["DocDueDate"] = date('Y-m-d', strtotime($reg->getCaFchComprobante(). ' + '.$reg->getCaPlazo().' days')); // Pendiente asociar el plazo con el asignado al proveedor        
-        $datos["Observaciones"] = $reg->getCaObservaciones();
-        $datos["Moneda"] = $reg->getCaIdmoneda();
-        $datos["TRM"] = $reg->getCaTcambio();
+        $datos["TaxDate"] = date('Y-m-d', strtotime($reg->getCaFchComprobante(). ' + '.$reg->getCaPlazo().' days')); // Pendiente asociar el plazo con el asignado al proveedor
+        $datos["NumAtCard"] = $reg->getInoHouse()->getInoMaster()->getCaReferencia();        
+        $datos["Comments"] = $reg->getCaObservaciones();
+        $datos["SlpCode"] = ""; // Código empleado de ventas        
+        $datos["DocCur"] = $reg->getCaIdmoneda();
+        $datos["DocRate"] = $reg->getCaTcambio();
+        $datos["DocTransporte"] = $reg->getInoMaster()->getCaDoctransporte();
+        $datos["PedCliente"] = $reg->getInoHouse()->getReporte()->getCaOrdenclie();
+        $datos["BienesTransp"] = $reg->getInoHouse()->getReporte()->getCaMercanciaDesc();
+        $datos["Trayecto"] = $reg->getInoHouse()->getOrigen()->getCaCiudad()." - ".$reg->getInoHouse()->getDestino()->getCaCiudad();
+        $datos["Peso"] = $reg->getInoHouse()->getCaPeso();
+        $datos["Piezas"] = $reg->getInoHouse()->getCaPiezas();
+        $datos["Volumen"] = $reg->getInoHouse()->getCaVolumen();
+        $datos["Nave"] = $reg->getInoHouse()->getCaMotonave();
+        $datos["Sucursal"] = $reg->getInoTipoComprobante()->getCaIdsucursal();
         $datos["Destino"] = "";// Pendiente por definir
         
         //Lineas        
@@ -325,14 +364,14 @@ class integracionesActions extends sfActions {
         $ccosto_sap = json_decode($ccostos->getCaCcostosap());
         
         foreach($lineas as $linea){
-            $datos["CodArticulo"] = $linea->getCaIdconcepto();
-            $datos["Cantidad"] = 1;
-            $datos["PrecioUnitario"] = $linea->getCaCr();
-            $datos["Linea"] = $ccosto_sap->idlinea;
-            $datos["Departamento"] = $ccosto_sap->iddepartamento       ;
-            $datos["Area"] = $ccosto_sap->idarea;
-            //$datos["Dimension5"] =
-            $datos["Proyecto"] = $linea->getInoMaster()->getCaReferencia();
+            $datos["ItemCode"] = $linea->getCaIdconcepto();
+            $datos["Quantity"] = 1;
+            $datos["UnitPrice"] = $linea->getCaCr();
+            $datos["OcrCode"] = $reg->getInoTipoComprobante()->getCaIdsucursal(); //Código de la sucursal
+            $datos["OcrCode2"] = $ccosto_sap->idarea; // Código del área
+            $datos["OcrCode3"] = $ccosto_sap->iddepartamento; // Código del departamento
+            $datos["OcrCode4"] = $ccosto_sap->idlinea; // Código de la línea
+            $datos["OcrCode5"] = ""; // Pendiente definir con SAP. Código de la compa?ía            
         }
         
         $transaccion->setCaEstado("G");
@@ -340,6 +379,7 @@ class integracionesActions extends sfActions {
         $transaccion->save();
     }
     
+    /*OK REVISADO JUL/31/2017*/
     public function jsonFacturasC($transaccion){
         
         $reg = Doctrine::getTable("InoComprobante")
@@ -358,14 +398,16 @@ class integracionesActions extends sfActions {
         
         $datos["Tipo"]="C";
         $datos["CodigoDoc"] = "PU";//Factura de proveedores --Leyenda de abreviaturas de tipos de transacción 
-        $datos["SerieNum"] = "#"; // Pendiente definir la serie de SAP
+        $datos["SerieCode"] = "#"; // Pendiente definir la serie de SAP
         $datos["NumeroInterno"] = $reg->getCaConsecutivo();
-        $datos["CodSN"] = "P";
+        $datos["CardCode"] = "P";
         $datos["DocDate"] = now();
-        $datos["DocDueDate"] = date('Y-m-d', strtotime($reg->getCaFchComprobante(). ' + '.$reg->getCaPlazo().' days')); // Pendiente asociar el plazo con el asignado al proveedor        
-        $datos["Observaciones"] = $reg->getCaObservaciones();
-        $datos["Moneda"] = $reg->getCaIdmoneda();
-        $datos["TRM"] = $reg->getCaTcambio();
+        $datos["TaxDate"] = date('Y-m-d', strtotime($reg->getCaFchComprobante(). ' + '.$reg->getCaPlazo().' days')); // Pendiente asociar el plazo con el asignado al proveedor        
+        $datos["NumAtCard"] = "";
+        $datos["SlpCode"] = ""; // Código empleado de ventas
+        $datos["DocCur"] = $reg->getCaIdmoneda();
+        $datos["DocRate"] = $reg->getCaTcambio();
+        $datos["Sucursal"] = $reg->getInoTipoComprobante()->getCaIdsucursal();
         $datos["Destino"] = "";// Pendiente por definir
         
         //Lineas        
@@ -378,13 +420,14 @@ class integracionesActions extends sfActions {
         $ccosto_sap = json_decode($ccostos->getCaCcostosap());
         
         foreach($lineas as $linea){
-            $datos["CodArticulo"] = $linea->getCaIdconcepto();
-            $datos["Cantidad"] = 1;
-            $datos["PrecioUnitario"] = $linea->getCaCr();
-            $datos["Linea"] = $ccosto_sap->idlinea;
-            $datos["Departamento"] = $ccosto_sap->iddepartamento       ;
-            $datos["Area"] = $ccosto_sap->idarea;
-            //$datos["Dimension5"] =
+            $datos["ItemCode"] = $linea->getCaIdconcepto();
+            $datos["Quantity"] = 1;
+            $datos["UnitPrice"] = $linea->getCaCr();
+            $datos["OcrCode"] = $reg->getInoTipoComprobante()->getCaIdsucursal(); //Código de la sucursal
+            $datos["OcrCode2"] = $ccosto_sap->idarea; // Código del área
+            $datos["OcrCode3"] = $ccosto_sap->iddepartamento; // Código del departamento
+            $datos["OcrCode4"] = $ccosto_sap->idlinea; // Código de la línea
+            $datos["OcrCode5"] = ""; // Pendiente definir con SAP. Código de la compa?ía 
             $datos["Proyecto"] = $linea->getInoMaster()->getCaReferencia();
         }
         
@@ -393,6 +436,7 @@ class integracionesActions extends sfActions {
         $transaccion->save();
     }
     
+    /*OK REVISADO JUL/31/2017*/
     public function jsonUtilidad($transaccion){
     
         $master = Doctrine::getTable("InoMaster")
@@ -427,7 +471,7 @@ class integracionesActions extends sfActions {
        
         foreach($lineas as $linea){            
             if(!in_array($linea->getCaIdcliente(), $clientes)){            
-                $datos["Lineas"][] = array("CodSN"=>"C".$linea->getCaIdcliente(), "PorcUtilidad"=>$distribucionUti[$linea->getCaIdcliente()], "Sucursal"=>$linea->getVendedor()->getCaIdsucursal());
+                $datos["Lineas"][] = array("CardCode"=>"C".$linea->getCaIdcliente(), "PorcUtilidad"=>$distribucionUti[$linea->getCaIdcliente()], "Sucursal"=>$linea->getVendedor()->getCaIdsucursal());
                 $clientes[] = $linea->getCaIdcliente();
             }
         }
@@ -441,6 +485,7 @@ class integracionesActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
     
+    /*OK REVISADO JUL/31/2017*/
     public function jsonCostos($transaccion){
     
         $master = Doctrine::getTable("InoMaster")
@@ -472,7 +517,7 @@ class integracionesActions extends sfActions {
        
         foreach($lineas as $linea){            
             if(!in_array($linea->getCaIdcliente(), $clientes)){            
-                $datos["Lineas"][] = array("CodSN"=>"C".$linea->getCaIdcliente(), "PorcParticipa"=>round($costoxCliente[$linea->getCaIdcliente()]/$tot_costos,4));
+                $datos["Lineas"][] = array("CardCode"=>"C".$linea->getCaIdcliente(), "PorcParticipa"=>round($costoxCliente[$linea->getCaIdcliente()]/$tot_costos,4));
                 $clientes[] = $linea->getCaIdcliente();
             }
         }
