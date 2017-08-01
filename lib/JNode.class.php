@@ -169,6 +169,16 @@ class JNode {
     }
 
     /**
+     * JNode::getAttributes()
+     * Author:: Carlos G. López M.
+     * 
+     * @return mixed
+     */
+    public function getAttributes() {
+        return $this->_attribute;
+    }
+    
+    /**
      * JNode::anyChildren()
      * 
      * Checks if there are any children 
