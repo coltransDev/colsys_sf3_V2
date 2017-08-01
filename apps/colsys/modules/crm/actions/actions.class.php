@@ -1740,4 +1740,29 @@ class crmActions extends sfActions {
         }
     }
 
+    public function executePermisosDuenoCuenta(sfWebRequest $request) {
+        $idcliente = $request->getParameter("idcliente");
+        $cliente = Doctrine::getTable("IdsCliente")->find($idcliente);
+       
+        // Permisos propios del Representante de Ventas Dueño de la Cuenta
+        $permisosDueno = array(1, 2, 3, 4, 6, 7, 9, 10, 11, 13, 14, 16, 17, 18);
+        if ($cliente->getCaVendedor() == $this->getUser()->getUserId()) {
+            $user = $this->getUser();
+            $permisosRutinas = $user->getControlAcceso(self::RUTINA_CRM);
+            $tipopermisos = $user->getAccesoTotalRutina(self::RUTINA_CRM);
+
+            $permisos = array();
+            foreach ($tipopermisos as $index => $tp) {
+                if (in_array($tp, $permisosRutinas) or in_array($index, $permisosDueno)) {
+                    $permisos[$index] = true;
+                } else {
+                    $permisos[$index] = false;
+                }
+            }
+        }
+
+        $this->responseArray = array("success" => true, "permisos" => $permisos);
+        $this->setTemplate("responseTemplate");
+    }
+
 }
