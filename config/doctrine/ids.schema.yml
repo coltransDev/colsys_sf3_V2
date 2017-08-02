@@ -133,10 +133,10 @@ IdsSucursal:
     IdsContacto:
       local: ca_idsucursal
       foreign: ca_idsucursal
-      type: one
+      type: many
     CiudadDestino:
-      local: ca_idciudad
-      foreign: ca_idciudaddes
+      local: ca_idciudaddes
+      foreign: ca_idciudad
       type: one
       class: Ciudad
 
