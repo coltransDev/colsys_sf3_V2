@@ -139,6 +139,42 @@ Ext.define('Colsys.Crm.FormContacto', {
                         flex: 1
                     },
                     items: [{
+                            xtype: 'Colsys.Widgets.WgCargos',
+                            fieldLabel: 'Cargo General',
+                            name: 'cargo_general',
+                            id: "cargo_general",
+                            externos: true,
+                            renderer: comboBoxRenderer(this),
+                            listeners: {
+                                select: function (a, record, idx) {
+                                    if (record.data.mostrar == 'TRUE') {
+                                        // Ext.getCmp('fieldsetadicional').setVisible(true);
+                                        Ext.getCmp('identificacion_tipo').enable();
+                                        Ext.getCmp('identificacion').enable();
+                                    } else {
+                                        // Ext.getCmp('fieldsetadicional').setVisible(false);
+                                        Ext.getCmp('identificacion_tipo').disable();
+                                        Ext.getCmp('identificacion').disable();
+                                    }
+                                }
+                            }
+                        }, {
+                            fieldLabel: 'Cargo Espec&iacute;fico',
+                            labelWidth: 115,
+                            name: 'cargo',
+                            id: "cargo"
+                        }]
+                }, {
+                    xtype: 'fieldcontainer',
+                    layout: 'hbox',
+                    combineErrors: true,
+                    defaultType: 'textfield',
+                    defaults: {
+                        labelWidth: 90,
+                        allowBlank: false,
+                        flex: 1
+                    },
+                    items: [{
                             fieldLabel: ' Tipo de ID',
                             id: 'identificacion_tipo',
                             name: 'identificacion_tipo',
@@ -168,49 +204,13 @@ Ext.define('Colsys.Crm.FormContacto', {
                     combineErrors: true,
                     defaultType: 'textfield',
                     defaults: {
-                        labelWidth: 90,
-                        allowBlank: false,
-                        flex: 1
-                    },
-                    items: [{
-                            xtype: 'Colsys.Widgets.WgCargos',
-                            fieldLabel: 'Cargo General',
-                            name: 'cargo_general',
-                            id: "cargo_general",
-                            externos: true,
-                            renderer: comboBoxRenderer(this),
-                            listeners: {
-                                select: function (a, record, idx) {
-                                    if (record.data.mostrar == 'TRUE') {
-                                        Ext.getCmp('fieldsetadicional').setVisible(true);
-                                        Ext.getCmp('tipo_ident').enable();
-                                        Ext.getCmp('num_ident').enable();
-                                    } else {
-                                        Ext.getCmp('fieldsetadicional').setVisible(false);
-                                        Ext.getCmp('tipo_ident').disable();
-                                        Ext.getCmp('num_ident').disable();
-                                    }
-                                }
-                            }
-                        }, {
-                            fieldLabel: 'Cargo Espec&iacute;fico',
-                            labelWidth: 115,
-                            name: 'cargo',
-                            id: "cargo"
-                        }]
-                }, {
-                    xtype: 'fieldcontainer',
-                    layout: 'hbox',
-                    combineErrors: true,
-                    defaultType: 'textfield',
-                    defaults: {
-                        labelWidth: 90,
-                        allowBlank: false
+                        labelWidth: 90
                     },
                     items: [{
                             fieldLabel: '&Aacute;rea o Dpto.',
                             name: 'departamento',
                             id: "departamento",
+                            allowBlank: false,
                             flex: 3
                         }, {
                             fieldLabel: 'Cumplea\u00f1os',
@@ -241,14 +241,14 @@ Ext.define('Colsys.Crm.FormContacto', {
                         flex: 1
                     },
                     items: [{
+                            fieldLabel: 'Telefono',
+                            name: 'telefono',
+                            id: "telefono"
+                        }, {
                             fieldLabel: 'Nro. Celular',
                             name: 'celular',
                             id: "celular",
                             allowBlank: true
-                        }, {
-                            fieldLabel: 'Telefono',
-                            name: 'telefono',
-                            id: "telefono"
                         }]
                 }, {
                     xtype: 'fieldcontainer',
@@ -312,7 +312,6 @@ Ext.define('Colsys.Crm.FormContacto', {
                     defaultType: 'textfield',
                     defaults: {
                         labelWidth: 90,
-                        allowBlank: false,
                         flex: 1
                     },
                     items: [{
