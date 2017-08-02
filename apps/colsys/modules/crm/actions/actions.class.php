@@ -544,13 +544,49 @@ class crmActions extends sfActions {
     }
 
     function executeDatosBusqueda($request) {
-        // $where = "";
-        $query = strtoupper("%" . $request->getParameter("q") . "%");
+        $data = array();
+        
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select i.ca_id from ids.tb_ids i where ca_idalterno like '%" . $request->getParameter("q") . "%'";
+        $rs = $con->execute($sql);
+        $ids = $rs->fetchAll(PDO::FETCH_COLUMN);
+        
+        if (!$ids) {
+            $sql = "select i.ca_id from ids.tb_ids i inner "
+                    . "join public.tb_clientes c on i.ca_id = c.ca_idcliente "
+                    . "join control.tb_usuarios u on c.ca_vendedor = u.ca_login "
+                    . "join control.tb_sucursales s on u.ca_idsucursal = s.ca_idsucursal "
+                    . "where lower(s.ca_nombre) like '%" . strtolower($request->getParameter("q")) . "%'";
+            $rs = $con->execute($sql);
+            $ids = $rs->fetchAll(PDO::FETCH_COLUMN);
+        }
+        
+        if (!$ids) {
+            $sql = "select i.ca_id from ids.tb_ids i where lower(ca_nombre) like '%" . strtolower($request->getParameter("q")) . "%'";
+            $rs = $con->execute($sql);
+            $ids = $rs->fetchAll(PDO::FETCH_COLUMN);
+        }
+        
+        if (!$ids) {
+            $sql = "select i.ca_id from ids.tb_ids i inner "
+                    . "join public.tb_clientes c on i.ca_id = c.ca_idcliente "
+                    . "where lower(c.ca_vendedor) like '%" . strtolower($request->getParameter("q")) . "%'";
+            $rs = $con->execute($sql);
+            $ids = $rs->fetchAll(PDO::FETCH_COLUMN);
+        }
+        
+        if (!$ids) {
+            $sql = "select i.ca_id from ids.tb_ids i inner "
+                    . "join public.tb_clientes c on i.ca_id = c.ca_idcliente "
+                    . "where lower(c.ca_vendedor) like '%" . strtolower($request->getParameter("q")) . "%'";
+            $rs = $con->execute($sql);
+            $ids = $rs->fetchAll(PDO::FETCH_COLUMN);
+        }
 
         $q = Doctrine::getTable("Ids")
                 ->createQuery("i")
                 ->innerJoin("i.IdsCliente id")
-                ->addWhere('i.ca_nombre like ?', $query);
+                ->whereIn('i.ca_id', $ids);
 
         if ($request->getParameter("estado")) {
             switch ($request->getParameter("idEmpresa")) {
@@ -598,67 +634,10 @@ class crmActions extends sfActions {
         }
         $clientes = $q->execute();
 
-
-//        $where = "";
-//        $whereq = array();
-        //$impo="";
-        //$trans="";
-//        $wherePermisos = " (";
-//        if ($permisos["aereo"]["Consultar"]) {
-//            if ($where != "")
-//                $where .=" OR ";
-//            $where .= "(ca_impoexpo = ? AND ca_transporte=? ) ";
-//            $whereq[] = Constantes::IMPO;
-//            $whereq[] = Constantes::AEREO;
-//        }
-//
-//        if ($permisos["maritimo"]["Consultar"]) {
-//            if ($where != "")
-//                $where .=" OR ";
-//            $where .= "(ca_impoexpo = ? AND ca_transporte=? ) ";
-//            $whereq[] = Constantes::IMPO;
-//            $whereq[] = Constantes::MARITIMO;
-//        }
-//
-//        if ($permisos["terrestre"]["Consultar"]) {
-//            if ($where != "")
-//                $where .=" OR ";
-//            $where .= "(ca_impoexpo = ? AND ca_transporte=? ) ";
-//            $whereq[] = Constantes::INTERNO;
-//            $whereq[] = Constantes::TERRESTRE;
-//        }
-//
-//        if ($permisos["exportacion"]["Consultar"]) {
-//            if ($where != "")
-//                $where .=" OR ";
-//            $where .= "(ca_impoexpo = ?  ) ";
-//            $whereq[] = Constantes::EXPO;
-//        }
-//
-//        if ($permisos["otm"]["Consultar"]) {
-//            if ($where != "")
-//                $where .=" OR ";
-//            $where .= "(ca_impoexpo = ? AND ca_transporte=? ) ";
-//            $whereq[] = Constantes::OTMDTA;
-//            $whereq[] = Constantes::TERRESTRE;
-//        }
-//
-//        $wherePermisos.=$where . " )";
-//        $q->addWhere("" . $where, $whereq);
-//        $debug = $q->getSqlQuery();
-//        $datos = $q->execute();
-
-        $data = array();
         foreach ($clientes as $cliente) {
-            //$datos[$k]["m_ca_transporte"] = utf8_encode($datos[$k]["m_ca_transporte"]);
-            //print_r(utf8_decode($k));
             $data[] = array("idcliente" => utf8_encode("" . $cliente->getCaId()),
                 "nombre" => utf8_encode($cliente->getCaNombre()));
-            //print_r( utf8_encode($clientes[$k]));
-            //$datos[$k]["m_ca_impoexpo"] = utf8_encode($datos[$k]["m_ca_impoexpo"]);
         }
-
-
 
         $this->responseArray = array("success" => true, "root" => $data, "total" => count($data), "debug" => $debug);
         $this->setTemplate("responseTemplate");
@@ -1743,7 +1722,7 @@ class crmActions extends sfActions {
     public function executePermisosDuenoCuenta(sfWebRequest $request) {
         $idcliente = $request->getParameter("idcliente");
         $cliente = Doctrine::getTable("IdsCliente")->find($idcliente);
-       
+
         // Permisos propios del Representante de Ventas Dueño de la Cuenta
         $permisosDueno = array(1, 2, 3, 4, 6, 7, 9, 10, 11, 13, 14, 16, 17, 18);
         if ($cliente->getCaVendedor() == $this->getUser()->getUserId()) {
