@@ -19,5 +19,17 @@ Ext.define('Colsys.Widgets.WgCargos', {
         },
         autoLoad: true
     }),
+    listeners: {
+        afterrender: function (ct, position) {
+            if(this.externos!="")
+            {
+                this.store.load({
+                    params: {
+                        externos: this.externos
+                    }
+                });
+            }
+        }
+    },
     qtip: 'Listado '
 });

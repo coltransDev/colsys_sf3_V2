@@ -177,6 +177,7 @@ Ext.define('Colsys.Crm.FormContacto', {
                             fieldLabel: 'Cargo General',
                             name: 'cargo_general',
                             id: "cargo_general",
+                            externos: true,
                             renderer: comboBoxRenderer(this),
                             listeners: {
                                 select: function (a, record, idx) {

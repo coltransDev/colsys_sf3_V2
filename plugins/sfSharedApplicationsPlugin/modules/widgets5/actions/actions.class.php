@@ -3101,7 +3101,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosCargos(sfWebRequest $request) {
-        $caso = "CU266";
+        $caso = $request->getParameter("externos")?"CU265":"CU266";
         $datomod = ParametroTable::retrieveByCaso($caso, null, null, null);
         $data = array();
         foreach ($datomod as $dato) {
