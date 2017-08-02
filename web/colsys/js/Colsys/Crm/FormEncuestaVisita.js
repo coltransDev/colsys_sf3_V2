@@ -18,30 +18,6 @@ function setReadOnlyForAll(form, readOnly) {
     Ext.resumeLayouts();
 };
 
-Ext.define('ComboContactos', {
-    extend: 'Ext.form.field.ComboBox',
-    alias: 'widget.combo-contactos',
-    queryMode: 'local',
-    valueField: 'idcontacto',
-    displayField: 'nombre',
-    store: {
-        fields: [{name: 'idcontacto', type: 'string'}, {name: 'nombre', type: 'string'}],
-        data: []
-    }
-});
-
-Ext.define('ComboSucursales', {
-    extend: 'Ext.form.field.ComboBox',
-    alias: 'widget.combo-sucursales',
-    queryMode: 'local',
-    valueField: 'idsucursal',
-    displayField: 'direccion',
-    store: {
-        fields: [{name: 'idsucursal', type: 'string'}, {name: 'direccion', type: 'string'}],
-        data: []
-    }
-});
-
 var checkBoxInstItems = [
     {boxLabel: 'Local', name: 'instalaciones_tipo', inputValue: 'Local'},
     {boxLabel: 'Oficina', name: 'instalaciones_tipo', inputValue: 'Oficina'},
@@ -246,17 +222,19 @@ Ext.define('Colsys.Crm.FormEncuestaVisita', {
                                     flex: 1
                                 },
                                 items: [{
-                                        xtype: 'combo-contactos',
+                                        xtype: 'Colsys.Widgets.WgContactos',
                                         name: 'idcontacto',
+                                        idcliente: this.idcliente,
                                         forceSelection: true,
                                         allowBlank: false,
                                         editable: false
                                     }, {
+                                        xtype: 'Colsys.Widgets.WgSucursalesEmpresa',
+                                        name: 'idsucursal',
+                                        empresa: this.idcliente,
                                         fieldLabel: 'Suc.',
                                         labelWidth: 30,
-                                        xtype: 'combo-sucursales',
-                                        name: 'idsucursal',
-                                        // forceSelection: true,    /*FIX-ME Habilitar con el nuevo m&oacute;dulo de clientes, para que exija la sucursal*/
+                                        forceSelection: true,    /*FIX-ME Habilitar con el nuevo m&oacute;dulo de clientes, para que exija la sucursal*/
                                         allowBlank: true,
                                         editable: false
                                     }, {
