@@ -1,4 +1,5 @@
 var win_encuesta = null;
+var win_imprimir = null;
 Ext.define('Colsys.Crm.GridEncuestaVisita', {
     extend: 'Ext.grid.Panel',
     alias: 'widget.Colsys.Crm.GridEncuestaVisita',
@@ -103,7 +104,7 @@ Ext.define('Colsys.Crm.GridEncuestaVisita', {
                             menuDisabled: true,
                             sortable: false,
                             xtype: 'actioncolumn',
-                            width: 40,
+                            width: 60,
                             items: [{
                                     iconCls: 'page_white_edit',
                                     tooltip: 'Consultar la Encuesta',
@@ -130,10 +131,40 @@ Ext.define('Colsys.Crm.GridEncuestaVisita', {
                                                 }
                                             });
                                         }
-
-                                        // win_encuesta.down('form').loadRecord(rec);
-                                        //win_encuesta.down('form').setReadOnlyForAll(true);
                                         win_encuesta.show();
+                                    }
+                                }, {
+                                    iconCls: 'page_white_acrobat',
+                                    tooltip: 'Imprimir en PDF',
+                                    handler: function (grid, rowIndex, colIndex) {
+                                        var rec = grid.getStore().getAt(rowIndex);
+                                        if (win_imprimir == null) {
+                                            win_imprimir = new Ext.Window({
+                                                title: 'Vista Preliminar del Documento',
+                                                closeAction: 'close',
+                                                height: 900,
+                                                width: 800,
+                                                y: 40,
+                                                items: [{
+                                                        xtype: 'component',
+                                                        itemId: 'panel-document-preview',
+                                                        autoEl: {
+                                                            tag: 'iframe',
+                                                            width: '100%',
+                                                            height: '100%',
+                                                            frameborder: '0',
+                                                            scrolling: 'auto',
+                                                            src: '/clientes/imprimirEncuestaVisita/id/' + rec.data.idencuesta
+                                                        }
+                                                    }],
+                                                listeners: {
+                                                    close: function (panel, eOpts) {
+                                                        win_imprimir = null;
+                                                    }
+                                                }
+                                            })
+                                        }
+                                        win_imprimir.show();
                                     }
                                 }, {
                                     iconCls: 'delete',

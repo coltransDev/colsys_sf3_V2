@@ -39,7 +39,7 @@ Ext.define('CheckInstalaciones', {
         var checked = itemsChecked.split(",");
         this.items.each(function (checkItem, index, totalCount) {
             if (checked.indexOf(checkItem.boxLabel) != -1) {
-                checkItem.setValue(1);
+                checkItem.setValue(true);
             }
         });
     }
@@ -66,9 +66,9 @@ Ext.define('ComboCondiciones', {
 var checkBoxSeguItems = [
     {boxLabel: 'Alarma', name: 'sistema_seguridad', inputValue: 'Alarma'},
     {boxLabel: 'Biom&eacute;tricos', name: 'sistema_seguridad', inputValue: 'Biom&eacute;tricos'},
-    {boxLabel: 'CCTV', name: 'sistema_seguridad', inputValue: 'CCTV'},
+    {boxLabel: 'Otros', name: 'sistema_seguridad', inputValue: 'Otros'},
     {boxLabel: 'Vigilancia_Privada', name: 'sistema_seguridad', inputValue: 'Vigilancia_Privada'},
-    {boxLabel: 'Todos', name: 'sistema_seguridad', inputValue: 'Todos'},
+    {boxLabel: 'CCTV', name: 'sistema_seguridad', inputValue: 'CCTV'},
     {boxLabel: 'Ninguno', name: 'sistema_seguridad', inputValue: 'Ninguno'}
 ];
 
@@ -82,22 +82,12 @@ Ext.define('CheckSeguridad', {
     items: checkBoxSeguItems,
     listeners: {
         change: function (checkBox, newValue, oldValue, eOpts) {
-            if (Ext.Object.isEmpty(oldValue)) {
-                if (newValue.sistema_seguridad.indexOf('Todos') != -1) {
-                    this.items.each(function (checkItem, index, totalCount) {
-                        if (checkItem.inputValue != 'Ninguno' && checkItem.inputValue != 'Todos') {
-                            checkItem.setValue(1);
-                        } else {
-                            checkItem.setValue(0);
-                        }
-                    });
-                }
-            } else if (!Ext.Object.isEmpty(oldValue)) {
+            if (!Ext.Object.isEmpty(oldValue)) {
                 if (newValue.sistema_seguridad) {
                     if (newValue.sistema_seguridad.indexOf('Ninguno') != -1) {
                         this.items.each(function (checkItem, index, totalCount) {
                             if (checkItem.inputValue != 'Ninguno') {
-                                checkItem.setValue(0);
+                                checkItem.setValue(false);
                             }
                         });
                     }
@@ -109,7 +99,7 @@ Ext.define('CheckSeguridad', {
         var checked = itemsChecked.split(",");
         this.items.each(function (checkItem, index, totalCount) {
             if (checked.indexOf(checkItem.boxLabel) != -1) {
-                checkItem.setValue(1);
+                checkItem.setValue(true);
             }
         });
     }
@@ -152,7 +142,7 @@ Ext.define('CheckCertificaciones', {
                         Ext.getCmp("cert_otro").setDisabled(true);
                         this.items.each(function (checkItem, index, totalCount) {
                             if (checkItem.inputValue != 'NINGUNO') {
-                                checkItem.setValue(0);
+                                checkItem.setValue(false);
                             }
                         });
                     }
@@ -164,7 +154,7 @@ Ext.define('CheckCertificaciones', {
         var checked = itemsChecked.split(",");
         this.items.each(function (checkItem, index, totalCount) {
             if (checked.indexOf(checkItem.boxLabel) != -1) {
-                checkItem.setValue(1);
+                checkItem.setValue(true);
             }
         });
     }
@@ -188,7 +178,14 @@ Ext.define('Colsys.Crm.FormEncuestaVisita', {
                 params: {
                     idencuesta: this.idencuesta
                 },
-                success: function (response, options) {
+                success: function (form, action) {
+                    rec = action.result;
+                    var checkBox = Ext.getCmp("checkboxInst");
+                    checkBox.checkItems(rec.data.instalaciones_tipo);
+                    var checkBox = Ext.getCmp("checkboxSegu");
+                    checkBox.checkItems(rec.data.sistema_seguridad);
+                    var checkBox = Ext.getCmp("checkboxCert");
+                    checkBox.checkItems(rec.data.certificaciones);
                     setReadOnlyForAll(form, true);
                 }
             });
@@ -300,14 +297,15 @@ Ext.define('Colsys.Crm.FormEncuestaVisita', {
                                         labelWidth: 160,
                                         xtype: 'check-seguridad',
                                         forceSelection: true,
-                                        columnWidth: 0.75
+                                        columnWidth: 0.60
                                     }, {
                                         xtype: 'textfield',
-                                        labelWidth: 40,
-                                        fieldLabel: 'Otras',
+                                        labelWidth: 60,
+                                        fieldLabel: '&#191;Cu&aacute;les?',
                                         name: 'sistema_seguridad_otro',
+                                        id: 'sistema_seguridad_otro',
                                         allowBlank: true,
-                                        columnWidth: 0.25
+                                        columnWidth: 0.40
                                     }
                                 ]
                             }, {
@@ -358,7 +356,7 @@ Ext.define('Colsys.Crm.FormEncuestaVisita', {
                                     }, {
                                         xtype: 'textfield',
                                         labelWidth: 70,
-                                        fieldLabel: '&#191;Cuales controles? ',
+                                        fieldLabel: '&#191;Cu&aacute;les controles? ',
                                         name: 'manejo_mercancias_detalles',
                                         columnWidth: 0.50,
                                         allowBlank: true
