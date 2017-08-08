@@ -1022,6 +1022,38 @@ Ext.define('Colsys.Crm.FormMaster', {
                                 }
                             }
                         }, {
+                            text: 'Beneficios Crediticios',
+                            tooltip: 'Beneficios en D&iacute;s y Cupo de Cr&eacute;dito',
+                            height: 30,
+                            iconCls: 'money_dollar',
+                            id: 'botonCredito' + me.idcliente,
+                            handler: function () {
+                                tabpanel = Ext.getCmp('tab-panel-id-indicadores' + me.idcliente);
+                                if (!tabpanel.getChildByElement('beneficioCredito' + me.idcliente)) {
+                                    tabpanel.add(
+                                            {
+                                                title: 'Beneficios Crediticios',
+                                                id: 'beneficioCredito' + me.idcliente,
+                                                itemId: 'beneficioCredito' + me.idcliente,
+                                                closable: true,
+                                                closeAction: 'destroy',
+                                                items: [{
+                                                        xtype: 'Colsys.Crm.GridBeneficioCredito',
+                                                        idcliente: me.idcliente,
+                                                        id: 'gridBeneficioCredito' + me.idcliente,
+                                                        permisos: this.up('form').permisos
+                                                    }
+                                                ]
+                                            }).show();
+                                }
+                                tabpanel.setActiveTab('beneficioCredito' + me.idcliente);
+                            },
+                            listeners: {
+                                beforerender: function () {
+                                    this.setVisible(this.up('form').permisos[25]);
+                                }
+                            }
+                        }, {
                             text: 'Control Financiero',
                             tooltip: 'M&oacute;dulo de Control Financiero',
                             height: 30,

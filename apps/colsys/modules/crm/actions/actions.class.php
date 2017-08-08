@@ -545,12 +545,12 @@ class crmActions extends sfActions {
 
     function executeDatosBusqueda($request) {
         $data = array();
-        
+
         $con = Doctrine_Manager::getInstance()->connection();
         $sql = "select i.ca_id from ids.tb_ids i where ca_idalterno like '%" . $request->getParameter("q") . "%'";
         $rs = $con->execute($sql);
         $ids = $rs->fetchAll(PDO::FETCH_COLUMN);
-        
+
         if (!$ids) {
             $sql = "select i.ca_id from ids.tb_ids i inner "
                     . "join public.tb_clientes c on i.ca_id = c.ca_idcliente "
@@ -560,13 +560,13 @@ class crmActions extends sfActions {
             $rs = $con->execute($sql);
             $ids = $rs->fetchAll(PDO::FETCH_COLUMN);
         }
-        
+
         if (!$ids) {
             $sql = "select i.ca_id from ids.tb_ids i where lower(ca_nombre) like '%" . strtolower($request->getParameter("q")) . "%'";
             $rs = $con->execute($sql);
             $ids = $rs->fetchAll(PDO::FETCH_COLUMN);
         }
-        
+
         if (!$ids) {
             $sql = "select i.ca_id from ids.tb_ids i inner "
                     . "join public.tb_clientes c on i.ca_id = c.ca_idcliente "
@@ -574,7 +574,7 @@ class crmActions extends sfActions {
             $rs = $con->execute($sql);
             $ids = $rs->fetchAll(PDO::FETCH_COLUMN);
         }
-        
+
         if (!$ids) {
             $sql = "select i.ca_id from ids.tb_ids i inner "
                     . "join public.tb_clientes c on i.ca_id = c.ca_idcliente "
@@ -1299,6 +1299,35 @@ class crmActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
+    public function executeDatosBeneficioCredito(sfWebRequest $request) {
+        $idCliente = $request->getParameter("idcliente");
+        try {
+            $beneficiosCredito = Doctrine::getTable("IdsCredito")
+                    ->createQuery("i")
+                    ->addWhere('i.ca_id = ?', $idCliente)
+                    ->addOrderBy("i.ca_idempresa")
+                    ->execute();
+
+            $data = array();
+
+            foreach ($beneficiosCredito as $beneficioCredito) {
+                $data[] = array(
+                    "idempresa" => utf8_encode($beneficioCredito->getCaIdempresa()),
+                    "empresa" => utf8_encode($beneficioCredito->getEmpresa()->getCaNombre()),
+                    "cupo" => utf8_encode($beneficioCredito->getCaCupo()),
+                    "dias" => utf8_encode($beneficioCredito->getCaDias()),
+                    "observaciones" => utf8_encode($beneficioCredito->getCaObservaciones()),
+                    "creacion" => utf8_encode($beneficioCredito->getCaUsucreado() . " - " . $beneficioCredito->getCaFchcreado()),
+                    "ult_modificacion" => utf8_encode($beneficioCredito->getCaUsuactualizado() . " - " . $beneficioCredito->getCaFchactualizado()));
+            }
+
+            $this->responseArray = array("success" => true, "data" => $data);
+        } catch (Exception $e) {
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+        }
+        $this->setTemplate("responseTemplate");
+    }
+
     public function executeGuardarPorcentajeComision(sfWebRequest $request) {
         $idCliente = $request->getParameter("idcliente");
 
@@ -1424,6 +1453,45 @@ class crmActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
+    public function executeGuardarBeneficioCredito(sfWebRequest $request) {
+        $idCliente = $request->getParameter("idcliente");
+        $idEmpresa = $request->getParameter("idempresa");
+
+        $beneficioCredito = Doctrine::getTable("IdsCredito")
+                ->createQuery("i")
+                ->addWhere('i.ca_id = ?', $idCliente)
+                ->addWhere('i.ca_idempresa = ?', $idEmpresa)
+                ->fetchOne();
+
+        if (!$beneficioCredito) {
+            $beneficioCredito = new IdsCredito();
+            $beneficioCredito->setCaId($idCliente);
+            $beneficioCredito->setCaIdempresa($idEmpresa);
+        }
+
+        $con = Doctrine::getTable("IdsCredito")->getConnection();
+        try {
+            $con->beginTransaction();
+            if ($request->getParameter("cupo")) {
+                $beneficioCredito->setCaCupo($request->getParameter("cupo"));
+            }
+            if ($request->getParameter("dias")) {
+                $beneficioCredito->setCaDias($request->getParameter("dias"));
+            }
+            if ($request->getParameter("observaciones")) {
+                $beneficioCredito->setCaObservaciones($request->getParameter("observaciones"));
+            }
+            $beneficioCredito->save();
+            $con->commit();
+            $this->responseArray = array("success" => true);
+        } catch (Exception $e) {
+            $con->rollBack();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_decode($e->getMessage()));
+        }
+
+        $this->setTemplate("responseTemplate");
+    }
+    
     public function executeCargarDatosFichaTecnica(sfWebRequest $request) {
         $idcliente = $request->getParameter("idcliente");
         $fichatecnica = Doctrine::getTable("FichaTecnica")
