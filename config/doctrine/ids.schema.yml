@@ -67,6 +67,10 @@ Ids:
       local: ca_id
       foreign: ca_id
       type: many
+    IdsCredito:
+      local: ca_id
+      foreign: ca_id
+      type: many
     
 IdsTipoIdentificacion:  
   options:
@@ -938,6 +942,41 @@ IdsBanco:
       alias: entidad
       local: ca_codigo_entidad
       foreign: ca_idvalue
+      type: one
+    Usuario:
+      local: ca_usuario
+      foreign: ca_login
+      type: one
+
+IdsCredito:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: ids
+  tableName: ids.tb_creditos
+  columns:
+    ca_idcredito:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_id: integer
+    ca_cupo: integer
+    ca_dias: integer
+    ca_idempresa: integer
+    ca_observaciones: string
+    ca_usucreado: string
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    Ids:
+      local: ca_id
+      foreign: ca_id
+      type: one
+    Empresa:
+      local: ca_idempresa
+      foreign: ca_idempresa
       type: one
     Usuario:
       local: ca_usuario
