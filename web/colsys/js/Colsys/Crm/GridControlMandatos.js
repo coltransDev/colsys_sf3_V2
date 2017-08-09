@@ -115,7 +115,7 @@ Ext.define('Colsys.Crm.GridControlMandatos', {
                                                         id: 'formMandatos',
                                                         idcliente: me.idcliente,
                                                         idtipo: rec.data.idtipo,
-                                                        idciudad: rec.data.idciudad, 
+                                                        idciudad: rec.data.idciudad,
                                                         treeAvailable: false
                                                     }],
                                                 listeners: {
@@ -130,10 +130,10 @@ Ext.define('Colsys.Crm.GridControlMandatos', {
                                         //win_man.down('form').treeAvailable(false);
                                         win_man.show();
                                     },
-                                    isDisabled: function(view, rowIndex, colIndex, item, record) {
+                                    isDisabled: function (view, rowIndex, colIndex, item, record) {
                                         return !me.permisos[10];
                                     },
-                                    getClass: function(v, meta, rec) {
+                                    getClass: function (v, meta, rec) {
                                         if (me.permisos[10]) {
                                             return 'page_white_edit';
                                         }
@@ -142,7 +142,7 @@ Ext.define('Colsys.Crm.GridControlMandatos', {
                                     tooltip: 'Eliminar el Registro',
                                     handler: function (grid, rowIndex, colIndex) {
                                         var rec = grid.getStore().getAt(rowIndex);
-                                        
+
                                         Ext.MessageBox.confirm('Confirmaci&oacute;n de Eliminaci&oacute;n', 'Est&aacute; seguro que desea borrar el registro?', function (choice) {
                                             if (choice == 'yes') {
                                                 Ext.Ajax.request({
@@ -170,10 +170,10 @@ Ext.define('Colsys.Crm.GridControlMandatos', {
                                             }
                                         });
                                     },
-                                    isDisabled: function(view, rowIndex, colIndex, item, record) {
+                                    isDisabled: function (view, rowIndex, colIndex, item, record) {
                                         return !me.permisos[11];
                                     },
-                                    getClass: function(v, meta, rec) {
+                                    getClass: function (v, meta, rec) {
                                         if (me.permisos[11]) {
                                             return 'delete';
                                         }
@@ -210,8 +210,8 @@ Ext.define('Colsys.Crm.GridControlMandatos', {
                                 {
                                     win_man = null;
                                 },
-                                treeAvailable: function (){
-                                    
+                                treeAvailable: function () {
+
                                 }
                             }
                         });
@@ -300,17 +300,13 @@ Ext.define('Colsys.Crm.GridControlMandatos', {
                                         proxy: {
                                             type: 'ajax',
                                             url: '/gestDocumental/dataFilesTree',
-                                            autoLoad: false
-                                        },
-                                        autoLoad: false
-                                    }));
-                                    store = tree.getStore();
-                                    store.load({
-                                        params: {
-                                            ref1: me.idcliente,
-                                            idsserie: 10
+                                            autoLoad: false,
+                                            extraParams: {
+                                                ref1: me.idcliente,
+                                                idsserie: 10
+                                            }
                                         }
-                                    });
+                                    }));
                                 },
                                 destroy: function (obj, eOpts)
                                 {
