@@ -87,6 +87,8 @@ Ext.define('Colsys.Crm.FormContacto', {
                             id: 'saludo',
                             name: 'saludo',
                             tipoCombo: 1,
+                            triggerAction: 'all',
+                            editable: false,
                             allowBlank: true,
                             store: Ext.create('Ext.data.Store', {
                                 fields: ['id', 'nombre'],
@@ -143,6 +145,8 @@ Ext.define('Colsys.Crm.FormContacto', {
                             fieldLabel: 'Cargo General',
                             name: 'cargo_general',
                             id: "cargo_general",
+                            triggerAction: 'all',
+                            editable: false,
                             externos: true,
                             renderer: comboBoxRenderer(this),
                             listeners: {
@@ -191,6 +195,8 @@ Ext.define('Colsys.Crm.FormContacto', {
                                 },
                                 autoLoad: true
                             }),
+                            triggerAction: 'all',
+                            editable: false,
                             renderer: comboBoxRenderer(this)
                         }, {
                             fieldLabel: 'Identificaci&oacute;n',
@@ -219,11 +225,15 @@ Ext.define('Colsys.Crm.FormContacto', {
                             name: 'mes',
                             displayField: 'name',
                             valueField: 'abbr',
+                            triggerAction: 'all',
+                            editable: false,
                             flex: 2
                         }, {
                             xtype: 'numberfield',
                             fieldLabel: 'D&iacute;a',
                             labelWidth: 30,
+                            triggerAction: 'all',
+                            editable: false,
                             maxValue: 31,
                             minValue: 1,
                             name: 'dia',
@@ -272,6 +282,8 @@ Ext.define('Colsys.Crm.FormContacto', {
                             displayField: 'name',
                             valueField: 'abbr',
                             allowBlank: true,
+                            triggerAction: 'all',
+                            editable: false
                         }]
                 }, {
                     xtype: 'fieldcontainer',
@@ -289,7 +301,9 @@ Ext.define('Colsys.Crm.FormContacto', {
                             name: 'idsucursal',
                             id: 'idsucursal',
                             renderer: comboBoxRenderer(this),
-                            empresa: this.idcliente
+                            empresa: this.idcliente,
+                            triggerAction: 'all',
+                            editable: false
                         }, {
                             xtype: 'checkboxgroup',
                             id: 'notificar',
