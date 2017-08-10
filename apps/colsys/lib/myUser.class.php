@@ -107,28 +107,41 @@ class myUser extends sfBasicSecurityUser {
      */
     public function getAccesosRutina($rutina) {
         $permisos = ($this->getAttribute('permisos')?$this->getAttribute('permisos'):array());
+        $permisos = array(); /* FIX-ME Guardar nuevamente los accesos en la sesion*/
         if (!$permisos[$rutina]){
-            $sql = "select sum(nv.ca_acceso) as ca_acceso from ("
-                    . "select distinct us.ca_login, au.ca_rutina, au.ca_acceso"
+            $sql = "select distinct us.ca_login, au.ca_rutina, au.ca_acceso, false as ca_denegar"
+                    . "  from control.tb_usuarios us"
+                    . "  inner join control.tb_accesos_user au on au.ca_login = us.ca_login"
+                    . "  where us.ca_login = '" . $this->getUserId() . "' and au.ca_rutina = $rutina "
+                    . "union "
+                    . "select distinct us.ca_login, au.ca_rutina, au.ca_denegar as ca_acceso, true as ca_denegar"
                     . "  from control.tb_usuarios us"
                     . "  inner join control.tb_accesos_user au on au.ca_login = us.ca_login "
+                    . "  where us.ca_login = '" . $this->getUserId() . "' and au.ca_rutina = $rutina "
                     . "union "
-                    . "select distinct us.ca_login, au.ca_rutina, (au.ca_denegar * -1) as ca_acceso"
-                    . "  from control.tb_usuarios us"
-                    . "  inner join control.tb_accesos_user au on au.ca_login = us.ca_login "
-                    . "union "
-                    . "select distinct us.ca_login, ap.ca_rutina, ap.ca_acceso"
+                    . "select distinct us.ca_login, ap.ca_rutina, ap.ca_acceso, false as ca_denegar"
                     . "  from control.tb_usuarios us"
                     . "  inner join control.tb_usuarios_perfil up on up.ca_login = us.ca_login"
                     . "  inner join control.tb_accesos_perfiles ap on ap.ca_perfil = up.ca_perfil"
-                    . ") as nv where nv.ca_login = '" . $this->getUserId() . "' and nv.ca_rutina = $rutina";
+                    . "  where us.ca_login = '" . $this->getUserId() . "' and ap.ca_rutina = $rutina ";
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
-            $acceso_usuario = $st->fetch();
-            $permisos[$rutina] = $acceso_usuario['ca_acceso'];
+            
+            $acceso_usuario = $st->fetchAll();
+            $acceso_total = 0;
+            foreach ($acceso_usuario as $key => $acceso) {
+                if ($acceso["ca_acceso"] !== 0) {
+                    if ($acceso["ca_denegar"]) {
+                        $acceso_total = $acceso_total & ~$acceso["ca_acceso"];
+                    } else {
+                        $acceso_total = $acceso_total | $acceso["ca_acceso"];
+                    }
+                    
+                }
+            }
+            $permisos[$rutina] = $acceso_total;
             $this->setAttribute('permisos', $permisos);
         }
-        
         return $permisos[$rutina];
     }
 
@@ -456,5 +469,4 @@ class myUser extends sfBasicSecurityUser {
     }
 
 }
-
 ?>

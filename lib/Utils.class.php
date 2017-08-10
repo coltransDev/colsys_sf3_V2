@@ -686,7 +686,7 @@ class Utils {
     }
 
     public static function validacionBinaria($acceso_usuario, $acceso_total) {
-        return str_pad( decbin($acceso_usuario) & decbin($acceso_total), 25, "0", STR_PAD_LEFT);
+        return str_pad( decbin($acceso_usuario) & decbin($acceso_total), 30, "0", STR_PAD_LEFT);
     }
 }
 ?>
