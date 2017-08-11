@@ -1,18 +1,18 @@
-Ext.define('Colsys.Widgets.WgSucursalesEmpresa', {
+Ext.define('Colsys.Widgets.WgSucursalesIds', {
     extend: 'Ext.form.field.ComboBox',
-    alias: 'widget.Colsys.Widgets.WgSucursalesEmpresa',
+    alias: 'widget.Colsys.Widgets.WgSucursalesIds',
     triggerTip: 'Click para limpiar',
     spObj: '',
     spForm: '',
     spExtraParam: '',
     queryMode: 'local',
-    valueField: 'id',
+    valueField: 'idsucursal',
     displayField: 'sucursal',
     store: Ext.create('Ext.data.Store', {
-        fields: ['id', 'sucursal', 'idempresa', 'empresa'],
+        fields: ['idsucursal', 'sucursal', 'ciudad'],
         proxy: {
             type: 'ajax',
-            url: '/widgets5/datosSucursalesEmpresa',
+            url: '/widgets5/datosIdsSucursales',
             reader: {
                 type: 'json',
                 root: 'root'
@@ -25,10 +25,9 @@ Ext.define('Colsys.Widgets.WgSucursalesEmpresa', {
         beforerender: function (ct, position) {
             empresa = this.empresa;
             if (this.prefijo) {
-                this.store.proxy.url = this.prefijo + '/widgets5/datosSucursalesEmpresa';
+                this.store.proxy.url = this.prefijo + '/widgets5/datosIdsSucursales';
             }
             if (empresa) {
-                console.log(empresa + 'empresa');
                 this.getStore().load({
                     params: {
                         empresa: empresa
@@ -37,5 +36,4 @@ Ext.define('Colsys.Widgets.WgSucursalesEmpresa', {
             }
         }
     }
-    //labelWidth: 60
 });
