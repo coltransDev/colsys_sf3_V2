@@ -1457,3 +1457,14 @@ th.subtitulo{
     padding-bottom: 38px;
     background: url('../images/24x24/ico-transp.jpg') no-repeat 0px 0px !important;
 }
+
+.boxLabelTitle {
+    font-weight: bold;
+    font-style: italic;
+    vertical-align: top;
+}
+
+.boxLabel {
+    font-style: italic;
+    text-align: justify;
+}
