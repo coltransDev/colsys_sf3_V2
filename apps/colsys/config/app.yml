@@ -20,7 +20,9 @@ all:
   smtp:
     host: 172.16.1.18	
     host2: smtp-relay.gmail.com
-    host3: consolcargo-com.mail.protection.outlook.com
+    host3: smtp-relay.gmail.com
+#    host3: consolcargo-com.mail.protection.outlook.com
+
     port: 25
     security: null   
 
@@ -88,6 +90,7 @@ all:
       wsdl_uri: https://www.colsys.com.co/ws/colsys/InformeOpenWS?wsdl
 
   sinteParams:
+    url: http://WS_LOCALCHECK.SINTE.CO:8081
     username: FANNY.GUTIERREZ
     password: fanny@201610
     percent: 90
