@@ -28,7 +28,6 @@ Ext.define('Colsys.Widgets.WgSucursalesEmpresa', {
                 this.store.proxy.url = this.prefijo + '/widgets5/datosSucursalesEmpresa';
             }
             if (empresa) {
-                console.log(empresa + 'empresa');
                 this.getStore().load({
                     params: {
                         empresa: empresa
