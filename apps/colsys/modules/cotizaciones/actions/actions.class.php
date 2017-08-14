@@ -1050,26 +1050,38 @@ class cotizacionesActions extends sfActions {
             $cotizacion->save();
             $tarea = $cotizacion->getNotTarea();
             if ($tarea) {
-                $tarea->delete();
+                // Error por eliminación del registro de la Tarea, no entiendo xq se hizo así para luego tratar de buscar el registro y actualizar el campo texto.
+                // $tarea->delete();
+                $texto = "Debe enviar esta cotizacion por email o colocar la fecha de presentación para cumplir esta tarea.<br />";
+
+                $productos = Doctrine::getTable("CotProducto")
+                                ->createQuery("p")
+                                ->where("p.ca_idcotizacion = ?", $cotizacion->getCaIdcotizacion())
+                                ->execute();
+                foreach ($productos as $producto) {
+                    $texto.=$producto->getCaImpoexpo() . " " . $producto->getCaModalidad() . " " . $producto->getOrigen() . " - " . $producto->getDestino() . "<br />";
+                }
+
+                $tarea->setCaTexto($texto);
+                $tarea->save();
             }
         }
 
-        $tarea = $cotizacion->getTareaIDGEnvioOportuno();
-        if ($tarea) {
-            $texto = "Debe enviar esta cotizacion por email o colocar la fecha de presentación para cumplir esta tarea.<br />";
-
-            $productos = Doctrine::getTable("CotProducto")
-                            ->createQuery("p")
-                            ->where("p.ca_idcotizacion = ?", $cotizacion->getCaIdcotizacion())
-                            ->execute();
-            foreach ($productos as $producto) {
-                $texto.=$producto->getCaImpoexpo() . " " . $producto->getCaModalidad() . " " . $producto->getOrigen() . " - " . $producto->getDestino() . "<br />";
-            }
-
-            $tarea->setCaTexto($texto);
-            $tarea->save();
-        }
-
+//        $tarea = $cotizacion->getTareaIDGEnvioOportuno();
+//        if ($tarea) {
+//            $texto = "Debe enviar esta cotizacion por email o colocar la fecha de presentación para cumplir esta tarea.<br />";
+//
+//            $productos = Doctrine::getTable("CotProducto")
+//                            ->createQuery("p")
+//                            ->where("p.ca_idcotizacion = ?", $cotizacion->getCaIdcotizacion())
+//                            ->execute();
+//            foreach ($productos as $producto) {
+//                $texto.=$producto->getCaImpoexpo() . " " . $producto->getCaModalidad() . " " . $producto->getOrigen() . " - " . $producto->getDestino() . "<br />";
+//            }
+//
+//            $tarea->setCaTexto($texto);
+//            $tarea->save();
+//        }
 
         $this->responseArray = array("success" => true);
         $this->setTemplate("responseTemplate");
