@@ -376,10 +376,10 @@ class crmActions extends sfActions {
             $data["plan_implementa"] = "";
             $data["estm_implementa"] = "";
             if (count($encuestaVisita)) {
-                $data["certificaciones"] = str_replace(",", ", ", $encuestaVisita["ca_certificacion"]);
-                $data["certificaciones"] .= strlen($encuestaVisita["ca_certificacion_otro"]) ? ", " . $encuestaVisita["ca_certificacion_otro"] : "";
-                $data["plan_implementa"] = $encuestaVisita["ca_implementacion_sistema"];
-                $data["estm_implementa"] = $encuestaVisita["ca_implementacion_sistema_detalles"];
+                $data["certificaciones"] = str_replace(",", ", ", utf8_encode($encuestaVisita["ca_certificacion"]));
+                $data["certificaciones"] .= strlen($encuestaVisita["ca_certificacion_otro"]) ? ", " . utf8_encode($encuestaVisita["ca_certificacion_otro"]) : "";
+                $data["plan_implementa"] = utf8_encode($encuestaVisita["ca_implementacion_sistema"]);
+                $data["estm_implementa"] = utf8_encode($encuestaVisita["ca_implementacion_sistema_detalles"]);
             }
             $data["fechaconstitucion"] = $cliente->getIdsCliente()->getCaFchconstitucion();
             $data["tipo_persona"] = utf8_encode($cliente->getIdsCliente()->getTipoPersona());
@@ -408,6 +408,7 @@ class crmActions extends sfActions {
             $data["actividad_economica"] = utf8_encode($vista["ca_actividad"]);
             $data["preferencias"] = utf8_encode($vista["ca_preferencias"]);
         }
+        
         $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");
     }
@@ -769,12 +770,11 @@ class crmActions extends sfActions {
     }
 
     public function executeCargarContacto(sfWebRequest $request) {
-        $idCliente = $request->getParameter("idcliente");
         $idContacto = $request->getParameter("idcontacto");
-        if ($idCliente && $idContacto) {
-            $contacto = Doctrine::getTable("Contacto")
+        if ($idContacto) {
+            $contacto = Doctrine::getTable("IdsContacto")
                     ->createQuery("i")
-                    ->addWhere('i.ca_idcliente = ?', $idCliente)
+                    // ->addWhere('i.ca_idcliente = ?', $idCliente)
                     ->addWhere('i.ca_idcontacto = ?', $idContacto)
                     ->fetchOne();
             $data = array();
@@ -784,16 +784,17 @@ class crmActions extends sfActions {
                 $data["primer_apellido"] = utf8_encode($contacto->getCaPapellido());
                 $data["segundo_apellido"] = utf8_encode($contacto->getCaSapellido());
                 $data["cargo"] = utf8_encode($contacto->getCaCargo());
-                $data["cargo_def"] = utf8_encode($contacto->getCaCargoDef());
-                if ($contacto->getCaTipoidentificacion() == 0) {
-                    $data["tipo_ident"] = "";
+                $data["cargo_general"] = utf8_encode($contacto->getCaCargoGeneral());
+                if ($contacto->getCaIdentificacionTipo() == 0) {
+                    $data["identificacion_tipo"] = "";
                 } else {
-                    $data["tipo_ident"] = utf8_encode($contacto->getCaTipoidentificacion());
+                    $data["identificacion_tipo"] = utf8_encode($contacto->getCaIdentificacionTipo());
                 }
-                $data["num_ident"] = utf8_encode($contacto->getCaNumidentificacion());
-                $data["area"] = utf8_encode($contacto->getCaDepartamento());
+                $data["identificacion"] = utf8_encode($contacto->getCaIdentificacion());
+                $data["departamento"] = utf8_encode($contacto->getCaDepartamento());
                 $data["telefono"] = utf8_encode($contacto->getCaTelefonos());
-                $data["fax"] = utf8_encode($contacto->getCaFax());
+                $data["celular"] = utf8_encode($contacto->getCaCelular());
+                $data["idsucursal"] = utf8_encode($contacto->getCaIdsucursal());
                 $cumpleanos = explode("-", utf8_encode($contacto->getCaCumpleanos()));
                 $data["mes"] = $cumpleanos[0];
                 $data["dia"] = $cumpleanos[1];
@@ -812,7 +813,7 @@ class crmActions extends sfActions {
             }
 
             $caso = "CU265";
-            $cargodef = ParametroTable::retrieveByCaso($caso, $contacto->getCaCargoDef(), null, null);
+            $cargodef = ParametroTable::retrieveByCaso($caso, $contacto->getCaCargoGeneral(), null, null);
             $mostrar = ($cargodef[0]->getCaValor2());
 
             $this->responseArray = array("success" => true, "data" => $data, "mostrar" => $mostrar);
@@ -825,7 +826,7 @@ class crmActions extends sfActions {
 
     public function executeGuardarContacto(sfWebRequest $request) {
         $idContacto = $request->getParameter("idcontacto");
-
+        
         if ($idContacto) {
             $contacto = Doctrine::getTable("IdsContacto")
                     ->createQuery("i")
@@ -834,21 +835,43 @@ class crmActions extends sfActions {
         } else {
             $contacto = new IdsContacto();
         }
+        
+        $sucursal = Doctrine::getTable("IdsSucursal")
+                ->createQuery("i")
+                ->addWhere('i.ca_idsucursal = ?', $request->getParameter("idsucursal"))
+                ->fetchOne();
+
+        $concliente = Doctrine::getTable("Contacto")
+                ->createQuery("c")
+                ->addWhere('c.ca_idcliente = ?', $sucursal->getCaId())
+                ->addWhere('trim(lower(c.ca_nombres)) = ?', trim(strtolower($request->getParameter("nombres"))))
+                ->addWhere('trim(lower(c.ca_papellido)) = ?', trim(strtolower($request->getParameter("primer_apellido"))))
+                ->fetchOne();
+        if (!$concliente){
+            $concliente = new Contacto();
+            $concliente->setCaIdcliente($sucursal->getCaId());
+        }
 
         $conn = Doctrine::getTable("Contacto")->getConnection();
         try {
             $conn->beginTransaction();
             if ($request->getParameter("saludo")) {
                 $contacto->setCaSaludo(utf8_decode($request->getParameter("saludo")));
+                $concliente->setCaSaludo(utf8_decode($request->getParameter("saludo")));
             }
             if ($request->getParameter("nombres")) {
                 $contacto->setCaNombres(utf8_decode($request->getParameter("nombres")));
+                $concliente->setCaNombres(utf8_decode($request->getParameter("nombres")));
             }
             if ($request->getParameter("primer_apellido")) {
                 $contacto->setCaPapellido(utf8_decode($request->getParameter("primer_apellido")));
+                $concliente->setCaPapellido(utf8_decode($request->getParameter("primer_apellido")));
             }
             if ($request->getParameter("segundo_apellido")) {
                 $contacto->setCaSapellido(utf8_decode($request->getParameter("segundo_apellido")));
+                $concliente->setCaSapellido(utf8_decode($request->getParameter("segundo_apellido")));
+            }else{
+                $concliente->setCaSapellido('');
             }
             if ($request->getParameter("identificacion_tipo")) {
                 $contacto->setCaIdentificacionTipo(utf8_decode($request->getParameter("identificacion_tipo")));
@@ -858,24 +881,29 @@ class crmActions extends sfActions {
             }
             if ($request->getParameter("cargo")) {
                 $contacto->setCaCargo(utf8_decode($request->getParameter("cargo")));
+                $concliente->setCaCargo(utf8_decode($request->getParameter("cargo")));
             }
             if ($request->getParameter("cargo_general")) {
                 $contacto->setCaCargoGeneral(utf8_decode($request->getParameter("cargo_general")));
             }
             if ($request->getParameter("departamento")) {
                 $contacto->setCaDepartamento(utf8_decode($request->getParameter("departamento")));
+                $concliente->setCaDepartamento(utf8_decode($request->getParameter("departamento")));
             }
             if ($request->getParameter("mes") and $request->getParameter("dia")) {
                 $contacto->setCaCumpleanos($request->getParameter("mes") . "-" . $request->getParameter("dia"));
             }
             if ($request->getParameter("telefono")) {
                 $contacto->setCaTelefonos(utf8_decode($request->getParameter("telefono")));
+                $concliente->setCaTelefonos(utf8_decode($request->getParameter("telefono")));
+                $concliente->setCaFax('');
             }
             if ($request->getParameter("celular")) {
                 $contacto->setCaCelular(utf8_decode($request->getParameter("celular")));
             }
             if ($request->getParameter("correo")) {
                 $contacto->setCaEmail(utf8_decode($request->getParameter("correo")));
+                $concliente->setCaEmail(utf8_decode($request->getParameter("correo")));
             }
             if ($request->getParameter("tipo") === 1) {
                 $contacto->setCaTipo($request->getParameter("tipo"));
@@ -887,17 +915,21 @@ class crmActions extends sfActions {
             }
             if ($request->getParameter("fijo")) {
                 $contacto->setCaFijo(true);
+                $concliente->setCaFijo(true);
             } else {
                 $contacto->setCaFijo(false);
+                $concliente->setCaFijo(false);
             }
             if ($request->getParameter("observaciones")) {
                 $contacto->setCaObservaciones(utf8_decode($request->getParameter("observaciones")));
+                $concliente->setCaObservaciones(utf8_decode($request->getParameter("observaciones")));
             }
             $contacto->setCaUsuactualizado($this->getUser()->getUserId());
             $contacto->setCaFchactualizado(date("Y-m-d H:i:s"));
             $contacto->getConsultaListas("DOCUMENTO");
 
             $contacto->save();
+            $concliente->save();
             $conn->commit();
             $this->responseArray = array("success" => true);
         } catch (Exception $e) {
@@ -1807,7 +1839,7 @@ class crmActions extends sfActions {
                 }
             }
         }
-
+        
         $this->responseArray = array("success" => true, "permisos" => $permisos);
         $this->setTemplate("responseTemplate");
     }

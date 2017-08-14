@@ -16,7 +16,8 @@ function setReadOnlyForAll(form, readOnly) {
         Ext.getCmp('bntGuardar').setVisible(true);
 
     Ext.resumeLayouts();
-};
+}
+;
 
 var checkBoxInstItems = [
     {boxLabel: 'Local', name: 'instalaciones_tipo', inputValue: 'Local'},
@@ -32,7 +33,7 @@ Ext.define('CheckInstalaciones', {
     extend: 'Ext.form.CheckboxGroup',
     alias: 'widget.check-instalaciones',
     xtype: 'checkboxgroup',
-    columns: 3,
+    columns: 6,
     vertical: false,
     items: checkBoxInstItems,
     checkItems: function (itemsChecked) {
@@ -169,7 +170,6 @@ Ext.define('ComboSiNo', {
 Ext.define('Colsys.Crm.FormEncuestaVisita', {
     extend: 'Ext.form.Panel',
     alias: 'widget.Colsys.Crm.FormEncuestaVisita',
-    height: 570,
     listeners: {
         afterrender: function (ct, position) {
             form = this.getForm();
@@ -192,68 +192,70 @@ Ext.define('Colsys.Crm.FormEncuestaVisita', {
         },
         beforerender: function (me, eOpts) {
             this.add({
-                xtype: 'tabpanel',
-                items: [{
-                        title: 'Informaci&oacute;n General',
-                        xtype: 'panel',
-                        bodyPadding: 4,
+                xtype: 'panel',
+                bodyPadding: 4,
+                defaults: {
+                    anchor: '100%',
+                    labelWidth: 60
+                },
+                fieldDefaults: {
+                    anchor: '100%'
+                },
+                layout: {
+                    type: 'vbox',
+                    align: 'stretch'
+                },
+                items: [
+                    {
+                        xtype: 'fieldcontainer',
+                        fieldLabel: 'Contacto',
+                        combineErrors: true,
+                        msgTarget: 'side',
+                        layout: 'hbox',
                         defaults: {
-                            anchor: '100%',
-                            labelWidth: 60
-                        },
-                        fieldDefaults: {
-                            anchor: '100%'
-                        },
-                        layout: {
-                            type: 'vbox',
-                            align: 'stretch'
+                            allowBlank: false,
+                            flex: 1
                         },
                         items: [{
-                                xtype: 'fieldcontainer',
-                                fieldLabel: 'Contacto',
-                                combineErrors: true,
-                                msgTarget: 'side',
-                                layout: 'hbox',
-                                defaults: {
-                                    allowBlank: false,
-                                    flex: 1
-                                },
-                                items: [{
-                                        xtype: 'Colsys.Widgets.WgContactos',
-                                        name: 'idcontacto',
-                                        idcliente: this.idcliente,
-                                        forceSelection: true,
-                                        allowBlank: false,
-                                        editable: false
-                                    }, {
-                                        xtype: 'Colsys.Widgets.WgSucursalesEmpresa',
-                                        name: 'idsucursal',
-                                        empresa: this.idcliente,
-                                        fieldLabel: 'Suc.',
-                                        labelWidth: 30,
-                                        forceSelection: true,    /*FIX-ME Habilitar con el nuevo m&oacute;dulo de clientes, para que exija la sucursal*/
-                                        allowBlank: true,
-                                        editable: false
-                                    }, {
-                                        fieldLabel: 'Fecha Visita',
-                                        labelWidth: 80,
-                                        xtype: 'datefield',
-                                        name: 'fchvisita'
-                                    }
-                                ]
+                                xtype: 'Colsys.Widgets.WgContactos',
+                                name: 'idcontacto',
+                                idcliente: this.idcliente,
+                                forceSelection: true,
+                                allowBlank: false,
+                                editable: false
                             }, {
-                                xtype: 'fieldset',
-                                title: 'Infraestructura',
-                                collapsible: false,
-                                defaults: {
-                                    anchor: '100%',
-                                    margin: '1 2 0 2',
-                                    allowBlank: false
-                                },
+                                xtype: 'Colsys.Widgets.WgSucursalesIds',
+                                name: 'idsucursal',
+                                empresa: this.idcliente,
+                                fieldLabel: 'Suc.',
+                                labelWidth: 30,
+                                forceSelection: true, /*FIX-ME Habilitar con el nuevo m&oacute;dulo de clientes, para que exija la sucursal*/
+                                allowBlank: true,
+                                editable: false
+                            }, {
+                                fieldLabel: 'Fecha Visita',
+                                labelWidth: 80,
+                                xtype: 'datefield',
+                                name: 'fchvisita'
+                            }
+                        ]
+                    }, {
+                        xtype: 'fieldset',
+                        title: 'Infraestructura',
+                        collapsible: false,
+                        defaults: {
+                            anchor: '100%',
+                            margin: '1 2 0 2',
+                            allowBlank: false
+                        },
+                        layout: 'column',
+                        items: [{
+                                xtype: 'container',
                                 layout: 'column',
+                                columnWidth: 1,
                                 items: [{
                                         fieldLabel: '&#191;Tipo de instalaciones?',
-                                        labelWidth: 145,
+                                        labelWidth: 143,
                                         xtype: 'check-instalaciones',
                                         forceSelection: true,
                                         columnWidth: 0.72
@@ -264,35 +266,50 @@ Ext.define('Colsys.Crm.FormEncuestaVisita', {
                                         name: 'instalaciones_otro',
                                         allowBlank: true,
                                         columnWidth: 0.28
+                                    }]
+                            }, {
+                                xtype: 'container',
+                                layout: 'column',
+                                columnWidth: 0.48,
+                                items: [{
+                                        fieldLabel: '&#191;Es al mismo tiempo lugar de Vivienda?',
+                                        labelWidth: 130,
+                                        xtype: 'combo-si-no',
+                                        forceSelection: true,
+                                        name: 'instalaciones_vivienda',
+                                        columnWidth: 0.5
                                     }, {
                                         fieldLabel: '&#191;Uso de las instalaciones?',
-                                        labelWidth: 170,
+                                        labelWidth: 90,
                                         xtype: 'combo-uso',
                                         forceSelection: true,
                                         name: 'instalaciones_uso',
                                         columnWidth: 0.5
-                                    }, {
+                                    }]
+                            }, {
+                                xtype: 'container',
+                                layout: 'column',
+                                columnWidth: 0.52,
+                                items: [{
                                         fieldLabel: '&#191;Tipo de pertenencia?',
-                                        labelWidth: 150,
+                                        labelWidth: 90,
                                         xtype: 'combo-pertenencia',
                                         forceSelection: true,
                                         name: 'instalaciones_pertenencia',
                                         columnWidth: 0.5
                                     }, {
-                                        fieldLabel: '&#191;Es al mismo tiempo lugar de Vivienda?',
-                                        labelWidth: 170,
-                                        xtype: 'combo-si-no',
-                                        forceSelection: true,
-                                        name: 'instalaciones_vivienda',
-                                        columnWidth: 0.45
-                                    }, {
                                         fieldLabel: '&#191;Condiciones f&iacute;sicas acorde con el objeto social?',
-                                        labelWidth: 230,
+                                        labelWidth: 170,
                                         xtype: 'combo-condiciones',
                                         forceSelection: true,
                                         name: 'instalaciones_condiciones',
-                                        columnWidth: 0.55
-                                    }, {
+                                        columnWidth: 0.5
+                                    }]
+                            }, {
+                                xtype: 'container',
+                                layout: 'column',
+                                columnWidth: 1,
+                                items: [{
                                         fieldLabel: '&#191;Cuenta con sistemas de seguridad y/o Vigilancia?',
                                         labelWidth: 160,
                                         xtype: 'check-seguridad',
@@ -303,174 +320,153 @@ Ext.define('Colsys.Crm.FormEncuestaVisita', {
                                         labelWidth: 60,
                                         fieldLabel: '&#191;Cu&aacute;les?',
                                         name: 'sistema_seguridad_otro',
-                                        id: 'sistema_seguridad_otro',
                                         allowBlank: true,
                                         columnWidth: 0.40
-                                    }
-                                ]
+                                    }]
+                            }]
+                    }, {
+                        xtype: 'fieldset',
+                        title: 'Seguridad',
+                        collapsible: false,
+                        defaults: {
+                            anchor: '100%',
+                            margin: '1 2 0 2',
+                            allowBlank: false
+                        },
+                        layout: 'column',
+                        items: [{
+                                fieldLabel: '&#191;Tiene control para el ingreso y/o salida de empleados?',
+                                labelWidth: 200,
+                                xtype: 'combo-si-no',
+                                forceSelection: true,
+                                name: 'control_empleados',
+                                columnWidth: 0.32
                             }, {
-                                xtype: 'fieldset',
-                                title: 'Seguridad',
-                                collapsible: false,
-                                defaults: {
-                                    anchor: '100%',
-                                    margin: '1 2 0 2',
-                                    allowBlank: false
-                                },
-                                layout: 'column',
-                                items: [{
-                                        fieldLabel: '&#191;Tiene control para el ingreso y/o salida de empleados?',
-                                        labelWidth: 250,
-                                        xtype: 'combo-si-no',
-                                        forceSelection: true,
-                                        name: 'control_empleados',
-                                        columnWidth: 0.50
-                                    }, {
-                                        fieldLabel: '&#191;Tiene control para el ingreso y/o salida de visitantes?',
-                                        labelWidth: 250,
-                                        xtype: 'combo-si-no',
-                                        forceSelection: true,
-                                        name: 'control_visitantes',
-                                        columnWidth: 0.50
-                                    }, {
-                                        fieldLabel: '&#191;Se realiza cargue y/o descargue de mercanc&iacute;a dentro de las instalaciones?',
-                                        labelWidth: 250,
-                                        xtype: 'combo-si-no',
-                                        forceSelection: true,
-                                        name: 'manejo_mercancias',
-                                        columnWidth: 0.50
-                                    }, {
-                                        fieldLabel: '&#191;Cuenta con un procedimiento para cargue y/o descargue de la mercanc&iacute;a?',
-                                        labelWidth: 250,
-                                        xtype: 'combo-si-no',
-                                        forceSelection: true,
-                                        name: 'manejo_mercancias_procedimiento',
-                                        columnWidth: 0.50
-                                    }, {
-                                        fieldLabel: '&#191;Tiene controles de acceso a la zona de cargue y descargue de mercancias?',
-                                        labelWidth: 250,
-                                        xtype: 'combo-si-no',
-                                        forceSelection: true,
-                                        name: 'manejo_mercancias_zona',
-                                        columnWidth: 0.50
-                                    }, {
-                                        xtype: 'textfield',
-                                        labelWidth: 70,
-                                        fieldLabel: '&#191;Cu&aacute;les controles? ',
-                                        name: 'manejo_mercancias_detalles',
-                                        columnWidth: 0.50,
-                                        allowBlank: true
-                                    }, {
-                                        fieldLabel: '&#191;Dispone de un plano de &aacute;reas sensibles?',
-                                        labelWidth: 130,
-                                        xtype: 'combo-si-no',
-                                        forceSelection: true,
-                                        name: 'areas_sensibles',
-                                        columnWidth: 0.30
-                                    }, {
-                                        fieldLabel: '&#191;Tiene un procedimiento documentado para la prevenci&oacute;n del lavado de activos y financiaci&oacute;n del terrorismo?',
-                                        labelWidth: 340,
-                                        xtype: 'combo-si-no',
-                                        forceSelection: true,
-                                        name: 'prevencion_lavado_activos',
-                                        columnWidth: 0.70
-                                    }, {
-                                        fieldLabel: '&#191;Cuenta con certificaci&oacute;n en sistemas de calidad?',
-                                        labelWidth: 150,
-                                        xtype: 'check-certificaciones',
-                                        columnWidth: 0.79
-                                    }, {
-                                        id: 'cert_otro',
-                                        xtype: 'textfield',
-                                        name: 'certificacion_otro',
-                                        allowBlank: false,
-                                        disabled: true,
-                                        columnWidth: 0.21
-                                    }, {
-                                        fieldLabel: '&#191;Tiene planeado implementar un sistema de calidad y/o seguridad?',
-                                        labelWidth: 210,
-                                        xtype: 'combo-si-no',
-                                        forceSelection: true,
-                                        name: 'implementacion_sistema',
-                                        columnWidth: 0.40
-                                    }, {
-                                        fieldLabel: '&#191;Cu&aacute;l y Cuando?',
-                                        labelWidth: 60,
-                                        xtype: 'textfield',
-                                        maxLength: 128,
-                                        allowBlank: true,
-                                        name: 'implementacion_sistema_detalles',
-                                        columnWidth: 0.60
-                                    }
-                                ]
+                                fieldLabel: '&#191;Tiene control para el ingreso y/o salida de visitantes?',
+                                labelWidth: 200,
+                                xtype: 'combo-si-no',
+                                forceSelection: true,
+                                name: 'control_visitantes',
+                                columnWidth: 0.32
+                            }, {
+                                fieldLabel: '&#191;Se realiza cargue y/o descargue de mercanc&iacute;a dentro de las instalaciones?',
+                                labelWidth: 233,
+                                xtype: 'combo-si-no',
+                                forceSelection: true,
+                                name: 'manejo_mercancias',
+                                columnWidth: 0.36
+                            }, {
+                                fieldLabel: '&#191;Cuenta con un procedimiento para cargue y/o descargue de mercanc&iacute;a?',
+                                labelWidth: 220,
+                                xtype: 'combo-si-no',
+                                forceSelection: true,
+                                name: 'manejo_mercancias_procedimiento',
+                                columnWidth: 0.33
+                            }, {
+                                fieldLabel: '&#191;Dispone de un plano de &aacute;reas sensibles?',
+                                labelWidth: 130,
+                                xtype: 'combo-si-no',
+                                forceSelection: true,
+                                name: 'areas_sensibles',
+                                columnWidth: 0.22
+                            }, {
+                                fieldLabel: '&#191;Tiene un procedimiento documentado para prevenci&oacute;n del lavado de activos y financiaci&oacute;n del terrorismo?',
+                                labelWidth: 325,
+                                xtype: 'combo-si-no',
+                                forceSelection: true,
+                                name: 'prevencion_lavado_activos',
+                                columnWidth: 0.45
+                            }, {
+                                fieldLabel: '&#191;Tiene controles de acceso a la zona de cargue y descargue de mercancias?',
+                                labelWidth: 240,
+                                xtype: 'combo-si-no',
+                                forceSelection: true,
+                                name: 'manejo_mercancias_zona',
+                                columnWidth: 0.38
+                            }, {
+                                xtype: 'textfield',
+                                labelWidth: 70,
+                                fieldLabel: '&#191;Cu&aacute;les controles? ',
+                                name: 'manejo_mercancias_detalles',
+                                columnWidth: 0.62,
+                                allowBlank: true
+                            }, {
+                                fieldLabel: '&#191;Cuenta con certificaci&oacute;n en sistemas de calidad?',
+                                labelWidth: 150,
+                                xtype: 'check-certificaciones',
+                                columnWidth: 0.70
+                            }, {
+                                id: 'cert_otro',
+                                xtype: 'textfield',
+                                name: 'certificacion_otro',
+                                allowBlank: false,
+                                disabled: true,
+                                columnWidth: 0.30
+                            }, {
+                                fieldLabel: '&#191;Tiene planeado implementar un sistema de calidad y/o seguridad?',
+                                labelWidth: 400,
+                                xtype: 'combo-si-no',
+                                forceSelection: true,
+                                name: 'implementacion_sistema',
+                                columnWidth: 0.55
+                            }, {
+                                fieldLabel: '&#191;Cu&aacute;l y Cuando?',
+                                labelWidth: 110,
+                                xtype: 'textfield',
+                                maxLength: 128,
+                                allowBlank: true,
+                                name: 'implementacion_sistema_detalles',
+                                columnWidth: 0.45
                             }
                         ]
                     }, {
-                        title: 'Recomendaci&oacute;n',
-                        xtype: 'panel',
-                        bodyPadding: 4,
-                        defaults: {
-                            anchor: '100%',
-                            labelWidth: 60
-                        },
-                        fieldDefaults: {
-                            anchor: '100%'
-                        },
-                        layout: {
-                            type: 'vbox',
-                            align: 'stretch'
-                        },
+                        xtype: 'container',
+                        layout: 'column',
                         items: [{
-                                xtype: 'container',
+                                xtype: 'fieldset',
+                                title: '-',
                                 collapsible: false,
-                                defaults: {
-                                    anchor: '100%',
-                                    margin: '1 2 0 2',
-                                    allowBlank: false
-                                },
-                                layout: 'column',
-                                items: [{
-                                        fieldLabel: '&#191;Recomienda trabajar con el cliente?',
-                                        labelWidth: 220,
-                                        xtype: 'combo-si-no',
-                                        forceSelection: true,
-                                        name: 'recomienda_trabajar',
-                                        columnWidth: 0.40
-                                    }, {
-                                        xtype: 'displayfield',
-                                        columnWidth: 0.60
-                                    }, {
-                                        xtype: 'fieldset',
-                                        title: 'Concepto de seguridad',
-                                        collapsible: false,
-                                        anchor: '100%',
-                                        margin: '1 2 0 2',
-                                        columnWidth: 0.495,
-                                        items: {
-                                            xtype: 'textareafield',
-                                            width: 343,
-                                            height: 55,
-                                            name: 'concepto_seguridad',
-                                            allowBlank: false
-                                        }
-                                    }, {
-                                        xtype: 'fieldset',
-                                        title: 'Observaciones',
-                                        collapsible: false,
-                                        anchor: '100%',
-                                        margin: '1 2 0 2',
-                                        columnWidth: 0.495,
-                                        items: {
-                                            xtype: 'textareafield',
-                                            name: 'observaciones',
-                                            width: 343,
-                                            height: 55,
-                                            allowBlank: false
-                                        }
-                                    }
-                                ]
-                            }]
-                    }],
+                                margin: '1 2 0 2',
+                                columnWidth: 0.26,
+                                items: {
+                                    fieldLabel: '&#191;Recomienda trabajar con el cliente?',
+                                    labelWidth: 140,
+                                    xtype: 'combo-si-no',
+                                    forceSelection: true,
+                                    allowBlank: false,
+                                    name: 'recomienda_trabajar',
+                                    anchor: '100%'
+                                }
+                            }, {
+                                xtype: 'fieldset',
+                                title: 'Concepto de seguridad',
+                                collapsible: false,
+                                anchor: '100%',
+                                margin: '1 2 0 2',
+                                columnWidth: 0.37,
+                                items: {
+                                    xtype: 'textareafield',
+                                    name: 'concepto_seguridad',
+                                    allowBlank: false,
+                                    anchor: '100%'
+                                }
+                            }, {
+                                xtype: 'fieldset',
+                                title: 'Observaciones',
+                                collapsible: false,
+                                anchor: '100%',
+                                margin: '1 2 0 2',
+                                columnWidth: 0.37,
+                                items: {
+                                    xtype: 'textareafield',
+                                    name: 'observaciones',
+                                    allowBlank: false,
+                                    anchor: '100%'
+                                }
+                            }
+                        ]
+                    }
+                ],
                 setReadOnlyForAll: function (readOnly) {
                     Ext.suspendLayouts();
                     this.getForm().getFields().each(function (field) {
@@ -492,11 +488,13 @@ Ext.define('Colsys.Crm.FormEncuestaVisita', {
                             xtype: 'label',
                             text: 'Importante',
                             maxWidth: 70,
+                            height: 50,
                             cls: 'boxLabelTitle'
                         }, {
                             xtype: 'label',
-                            text: 'Si el cliente tiene bodegas y/o planta de producci&oacute;n para el manejo de la carga en un lugar diferente al de esta visita, se debe realizar la visita de verificaci&oacute;n a dichas instalaciones.',
-                            maxWidth: 430,
+                            text: 'Si el cliente tiene bodegas y/o planta de producci\u00f3n para el manejo de la carga en un lugar diferente al de esta visita, se debe realizar la visita de verificaci\u00f3n a dichas instalaciones.',
+                            maxWidth: 650,
+                            height: 50,
                             cls: 'boxLabel'
                         }, '->', {
                             id: 'bntGuardar',
@@ -506,6 +504,42 @@ Ext.define('Colsys.Crm.FormEncuestaVisita', {
                                 var me = this;
                                 var form = me.up('form').getForm();
                                 var data = form.getFieldValues();
+
+                                if (!data.instalaciones_tipo || data.instalaciones_tipo.length == 0) {
+                                    Ext.MessageBox.alert("Mensaje", 'Seleccione por lo menos un tipo de instalaci&oacute;n!');
+                                    return;
+                                }
+                                var inst = [];
+                                for (var i = 0; i < data.instalaciones_tipo.length; i++) {
+                                    if (data.instalaciones_tipo[i]) {
+                                        inst.push(checkBoxInstItems[i].inputValue);
+                                    }
+                                }
+                                data.instalaciones_tipo = inst.toString();
+
+                                if (!data.sistema_seguridad || data.sistema_seguridad.length == 0) {
+                                    Ext.MessageBox.alert("Mensaje", 'Seleccione por lo menos un sistema de seguridad!');
+                                    return;
+                                }
+                                var segu = [];
+                                for (var i = 0; i < data.sistema_seguridad.length; i++) {
+                                    if (data.sistema_seguridad[i]) {
+                                        segu.push(checkBoxSeguItems[i].inputValue);
+                                    }
+                                }
+                                data.sistema_seguridad = segu.toString();
+
+                                if (!data.certificacion || data.certificacion.length == 0) {
+                                    Ext.MessageBox.alert("Mensaje", 'Seleccione por lo menos una opci&oacute;n de certificado!');
+                                    return;
+                                }
+                                var cert = [];
+                                for (var i = 0; i < data.certificacion.length; i++) {
+                                    if (data.certificacion[i]) {
+                                        cert.push(checkBoxCertItems[i].inputValue);
+                                    }
+                                }
+                                data.certificacion = cert.toString();
                                 var str = JSON.stringify(data);
 
                                 if (form.isValid()) {

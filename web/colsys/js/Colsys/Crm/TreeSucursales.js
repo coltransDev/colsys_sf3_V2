@@ -97,6 +97,9 @@ Ext.define('Colsys.Crm.TreeSucursales', {
             xtype: 'actioncolumn',
             width: 45,
             items: [{
+//                    isDisabled: function(view, rowIndex, colIndex, item, record) {
+//                        return !me.permisos[2];
+//                    },
                     getClass: function (v, meta, rec) {
                         if (!rec.get('idsucursal') && !rec.get('idcontacto')) {
                             return null;
@@ -152,7 +155,8 @@ Ext.define('Colsys.Crm.TreeSucursales', {
                                     items: {
                                         xtype: "Colsys.Crm.FormContacto",
                                         // idsucursal: this.up('panel').idsucursal,
-                                        // idcliente: this.up('panel').idcliente
+                                        idcliente: this.up('panel').idcliente,
+                                        idcontacto: rec.get('idcontacto')
                                     },
                                     listeners: {
                                         destroy: function (obj, eOpts) {
@@ -179,10 +183,41 @@ Ext.define('Colsys.Crm.TreeSucursales', {
                         }
                     },
                     handler: function (grid, rowIndex, colIndex) {
-                        var rec = grid.getStore().getAt(rowIndex),
-                                action = (rec.get('change') < 0 ? 'Hold' : 'Buy');
-
-                        Ext.Msg.alert(action, action + ' ' + rec.get('company'));
+                        var rec = grid.getStore().getAt(rowIndex);
+                        Ext.MessageBox.confirm('Confirmaci&oacute;n de Eliminaci&oacute;n', 'Est&aacute; seguro que desea anular el registro?', function (choice) {
+                            var url = null;
+                            var idrecord = null;
+                            if (rec.get('idsucursal')) {
+                                url = '/crm/eliminarSucursal';
+                                idrecord = rec.get('idsucursal');
+                            }else if (rec.get('idcontacto')){
+                                url = '/crm/eliminarContacto';
+                                idrecord = rec.get('idcontacto');
+                            }
+                            if (choice == 'yes') {
+                                Ext.Ajax.request({
+                                    waitMsg: 'Eliminado...',
+                                    url: url,
+                                    params: {
+                                        idcliente: idrecord,
+                                        idsucursal: idrecord
+                                    },
+                                    failure: function (response, options) {
+                                        Ext.MessageBox.alert("Mensaje", 'Se presento un error Eliminando el registro.<br>' + response.errorInfo);
+                                        success = false;
+                                    },
+                                    success: function (response, options) {
+                                        var res = Ext.JSON.decode(response.responseText);
+                                        if (res.success) {
+                                            store = grid.getStore();
+                                            store.reload();
+                                        } else {
+                                            Ext.MessageBox.alert("Mensaje", 'Se presento un error guardando los registros.<br>' + res.responseInfo);
+                                        }
+                                    }
+                                });
+                            }
+                        });
                     }
                 }]
         }
@@ -219,6 +254,11 @@ Ext.define('Colsys.Crm.TreeSucursales', {
                     } else {
                         Ext.Msg.alert("Crm", "Existe una ventana abierta de Sucursal<br>Por favor cierrela primero");
                     }
+                },
+                listeners: {
+                    beforerender: function () {
+                        this.setVisible(me.permisos[1]);
+                    }
                 }
             });
             tb.add({
@@ -238,8 +278,7 @@ Ext.define('Colsys.Crm.TreeSucursales', {
                             name: "winFormEdit",
                             items: {
                                 xtype: "Colsys.Crm.FormContacto",
-                                // idsucursal: this.up('panel').idsucursal,
-                                // idcliente: this.up('panel').idcliente
+                                idcliente: me.idcliente
                             },
                             listeners: {
                                 destroy: function (obj, eOpts) {
@@ -251,6 +290,18 @@ Ext.define('Colsys.Crm.TreeSucursales', {
                     } else {
                         Ext.Msg.alert("Crm", "Existe una ventana abierta de Contactos<br>Por favor cierrela primero");
                     }
+                },
+                listeners: {
+                    beforerender: function () {
+                        this.setVisible(me.permisos[1]);
+                    }
+                }
+            });
+            tb.add({
+                text: 'Refrescar',
+                iconCls: 'refresh',
+                handler: function () {
+                    me.getStore().reload();
                 }
             });
             me.addDocked(tb);

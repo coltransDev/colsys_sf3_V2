@@ -28,6 +28,7 @@ Ext.define('Colsys.Crm.PanelContactos', {
                     }
                 }),
                 idcliente: this.idcliente,
+                permisos: this.permisos,
                 autoHeight: true,
                 autoScroll: true
             };

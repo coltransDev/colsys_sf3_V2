@@ -114,8 +114,8 @@ Ext.define('Colsys.Crm.GridEncuestaVisita', {
                                             win_encuesta = new Ext.Window({
                                                 id: 'winEncuestaVisita',
                                                 title: 'Encuesta de Visita',
-                                                width: 750,
-                                                height: 610,
+                                                width: 900,
+                                                height: 570,
                                                 closeAction: 'destroy',
                                                 listeners: {
                                                     destroy: function (obj, eOpts)
@@ -200,52 +200,49 @@ Ext.define('Colsys.Crm.GridEncuestaVisita', {
                     ]);
 
             tb = new Ext.toolbar.Toolbar();
-            tb.add(
-                    {
-                        text: 'Adicionar',
-                        tooltip: 'Adicionar un registro',
-                        iconCls: 'add',
-                        scope: this,
-                        handler: function () {
-                            if (win_encuesta == null) {
-                                win_encuesta = new Ext.Window({
-                                    id: 'winEncuestaVisita',
-                                    title: 'Encuesta de Visita',
-                                    width: 750,
-                                    height: 610,
-                                    closeAction: 'destroy',
-                                    listeners: {
-                                        destroy: function (obj, eOpts)
-                                        {
-                                            win_encuesta = null;
-                                        }
-                                    },
-                                    items: {
-                                        xtype: 'Colsys.Crm.FormEncuestaVisita',
-                                        id: 'formEncuestaVisita',
-                                        idcliente: me.idcliente
-                                    }
-                                });
+            tb.add({
+                text: 'Adicionar',
+                tooltip: 'Adicionar un registro',
+                iconCls: 'add',
+                scope: this,
+                handler: function () {
+                    if (win_encuesta == null) {
+                        win_encuesta = new Ext.Window({
+                            id: 'winEncuestaVisita',
+                            title: 'Encuesta de Visita',
+                            width: 900,
+                            height: 570,
+                            closeAction: 'destroy',
+                            listeners: {
+                                destroy: function (obj, eOpts)
+                                {
+                                    win_encuesta = null;
+                                }
+                            },
+                            items: {
+                                xtype: 'Colsys.Crm.FormEncuestaVisita',
+                                id: 'formEncuestaVisita',
+                                idcliente: me.idcliente
                             }
-                            win_encuesta.show();
-                        },
-                        listeners: {
-                            beforerender: function () {
-                                this.setVisible(me.permisos[6]);
-                            }
-                        }
-                    },
-                    {
-                        text: 'Encuesta Anterior',
-                        tooltip: 'Ir al formato de Encuesta anterior',
-                        iconCls: 'page_white_edit',
-                        scope: this,
-                        handler: function () {
-                            var win = window.open("/colsys_php/enccliente.php?id=" + me.idcliente, '_blank');
-                            win.focus();
-                        }
+                        });
                     }
-            );
+                    win_encuesta.show();
+                },
+                listeners: {
+                    beforerender: function () {
+                        this.setVisible(me.permisos[6]);
+                    }
+                }
+            }, {
+                text: 'Encuesta Anterior',
+                tooltip: 'Ir al formato de Encuesta anterior',
+                iconCls: 'page_white_edit',
+                scope: this,
+                handler: function () {
+                    var win = window.open("/colsys_php/enccliente.php?id=" + me.idcliente, '_blank');
+                    win.focus();
+                }
+            });
             this.addDocked(tb);
             bbar = new Ext.PagingToolbar({
                 dock: 'bottom',

@@ -834,23 +834,20 @@ Ext.define('Colsys.Crm.FormClienteMaster', {
 
                                         if (idcliente == null) {
                                             tabpanel = Ext.getCmp('tabpanel1');
-
-                                            tabpanel.add(
-                                                    {
-                                                        title: nombreCliente,
-                                                        id: 'tab' + ref,
-                                                        itemId: 'tab' + ref,
-                                                        closable: true,
-                                                        autoScroll: true,
-                                                        items: [
-                                                            new Colsys.Crm.Mainpanel(
-                                                                    {
-                                                                        id: ref,
-                                                                        idcliente: ref,
-                                                                        permisos: ""
-                                                                    })
-                                                        ]
-                                                    }).show();
+                                            tabpanel.add({
+                                                title: nombreCliente,
+                                                id: 'tab' + ref,
+                                                itemId: 'tab' + ref,
+                                                closable: true,
+                                                autoScroll: true,
+                                                items: [
+                                                    new Colsys.Crm.Mainpanel({
+                                                        id: ref,
+                                                        idcliente: ref,
+                                                        permisos: ""
+                                                    })
+                                                ]
+                                            }).show();
 
                                             tabpanel.setActiveTab('tab' + ref);
                                         }

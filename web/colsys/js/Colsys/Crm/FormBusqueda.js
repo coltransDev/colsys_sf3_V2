@@ -314,28 +314,24 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                         }
                     ],
                     listeners: {
-                        rowdblclick: function (obj, record, tr, rowIndex, e, eOpts)
-                        {
+                        rowdblclick: function (obj, record, tr, rowIndex, e, eOpts) {
                             tabpanel = Ext.getCmp('tabpanel1');
                             ref = record.data.idcliente;
-                            permisosG = this.up('form').permisosG;
-                            if (!tabpanel.getChildByElement('tab' + ref) && ref != "")
-                            {
-                                tabpanel.add(
-                                        {
-                                            title: record.data.nombre,
-                                            id: 'tab' + ref,
-                                            itemId: 'tab' + ref,
-                                            closable: true,
-                                            autoScroll: true,
-                                            items: [{
-                                                    xtype: 'wCRMMainpanel',
-                                                    id: ref,
-                                                    idcliente: ref,
-                                                    permisos: permisosG
-                                                }
-                                            ]
-                                        }).show();
+                            if (!tabpanel.getChildByElement('tab' + ref) && ref != "") {
+                                tabpanel.add({
+                                    title: record.data.nombre,
+                                    id: 'tab' + ref,
+                                    itemId: 'tab' + ref,
+                                    closable: true,
+                                    autoScroll: true,
+                                    items: [{
+                                            xtype: 'wCRMMainpanel',
+                                            id: ref,
+                                            idcliente: ref,
+                                            permisos: this.up('form').permisosG
+                                        }
+                                    ]
+                                }).show();
                             }
                             tabpanel.setActiveTab('tab' + ref);
                         }
