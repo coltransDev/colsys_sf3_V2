@@ -34,6 +34,7 @@ class IdsContacto extends BaseIdsContacto {
     }
 
     public function getConsultaListas($tipoConsulta) {
+        $url = sfConfig::get("app_sinteParams_url");
         $username = sfConfig::get("app_sinteParams_username");
         $password = sfConfig::get("app_sinteParams_password");
         $percent = sfConfig::get("app_sinteParams_percent");
@@ -42,7 +43,8 @@ class IdsContacto extends BaseIdsContacto {
 
         $client = new Zend_Http_Client();
 
-        $uri = "http://app.sinte.co:16080/WS_COLTRANS/webresources/listas/consultar";
+        // $uri = "http://app.sinte.co:8081:16080/WS_COLTRANS/webresources/listas/consultar";
+        $uri = $url."/WS_COLTRANS/webresources/listas/consultar";
         $client->setUri($uri);
 
         $client->setAuth($username, $password, Zend_Http_Client::AUTH_BASIC);
