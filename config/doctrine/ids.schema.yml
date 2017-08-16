@@ -22,6 +22,7 @@ Ids:
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
     ca_fchactualizado: timestamp    
+    ca_datos: string
   relations:
     IdsSucursal:
       local: ca_id
