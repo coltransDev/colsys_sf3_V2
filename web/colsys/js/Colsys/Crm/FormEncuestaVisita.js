@@ -270,7 +270,7 @@ Ext.define('Colsys.Crm.FormEncuestaVisita', {
                             }, {
                                 xtype: 'container',
                                 layout: 'column',
-                                columnWidth: 0.48,
+                                columnWidth: 0.47,
                                 items: [{
                                         fieldLabel: '&#191;Es al mismo tiempo lugar de Vivienda?',
                                         labelWidth: 130,
@@ -289,21 +289,21 @@ Ext.define('Colsys.Crm.FormEncuestaVisita', {
                             }, {
                                 xtype: 'container',
                                 layout: 'column',
-                                columnWidth: 0.52,
+                                columnWidth: 0.53,
                                 items: [{
                                         fieldLabel: '&#191;Tipo de pertenencia?',
-                                        labelWidth: 90,
+                                        labelWidth: 80,
                                         xtype: 'combo-pertenencia',
                                         forceSelection: true,
                                         name: 'instalaciones_pertenencia',
-                                        columnWidth: 0.5
+                                        columnWidth: 0.40
                                     }, {
                                         fieldLabel: '&#191;Condiciones f&iacute;sicas acorde con el objeto social?',
                                         labelWidth: 170,
                                         xtype: 'combo-condiciones',
                                         forceSelection: true,
                                         name: 'instalaciones_condiciones',
-                                        columnWidth: 0.5
+                                        columnWidth: 0.60
                                     }]
                             }, {
                                 xtype: 'container',
@@ -505,41 +505,29 @@ Ext.define('Colsys.Crm.FormEncuestaVisita', {
                                 var form = me.up('form').getForm();
                                 var data = form.getFieldValues();
 
-                                if (!data.instalaciones_tipo || data.instalaciones_tipo.length == 0) {
+                                if (!data.instalaciones_tipo || data.instalaciones_tipo.length < 1) {
                                     Ext.MessageBox.alert("Mensaje", 'Seleccione por lo menos un tipo de instalaci&oacute;n!');
                                     return;
                                 }
-                                var inst = [];
-                                for (var i = 0; i < data.instalaciones_tipo.length; i++) {
-                                    if (data.instalaciones_tipo[i]) {
-                                        inst.push(checkBoxInstItems[i].inputValue);
-                                    }
+                                if (typeof data.instalaciones_tipo !== "string") {
+                                    data.instalaciones_tipo = data.instalaciones_tipo.toString();
                                 }
-                                data.instalaciones_tipo = inst.toString();
 
-                                if (!data.sistema_seguridad || data.sistema_seguridad.length == 0) {
+                                if (!data.sistema_seguridad || data.sistema_seguridad.length < 1) {
                                     Ext.MessageBox.alert("Mensaje", 'Seleccione por lo menos un sistema de seguridad!');
                                     return;
                                 }
-                                var segu = [];
-                                for (var i = 0; i < data.sistema_seguridad.length; i++) {
-                                    if (data.sistema_seguridad[i]) {
-                                        segu.push(checkBoxSeguItems[i].inputValue);
-                                    }
+                                if (typeof data.sistema_seguridad !== "string") {
+                                    data.sistema_seguridad = data.sistema_seguridad.toString();
                                 }
-                                data.sistema_seguridad = segu.toString();
 
-                                if (!data.certificacion || data.certificacion.length == 0) {
+                                if (!data.certificacion || data.certificacion.length < 1) {
                                     Ext.MessageBox.alert("Mensaje", 'Seleccione por lo menos una opci&oacute;n de certificado!');
                                     return;
                                 }
-                                var cert = [];
-                                for (var i = 0; i < data.certificacion.length; i++) {
-                                    if (data.certificacion[i]) {
-                                        cert.push(checkBoxCertItems[i].inputValue);
-                                    }
+                                if (typeof data.certificacion !== "string") {
+                                    data.certificacion = data.certificacion.toString();
                                 }
-                                data.certificacion = cert.toString();
                                 var str = JSON.stringify(data);
 
                                 if (form.isValid()) {
