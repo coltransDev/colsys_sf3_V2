@@ -53,6 +53,7 @@ InoMaster:
     ca_fchmaster : date
     ca_idnave : string
     ca_motivoanulado: string
+    ca_datos: string
   relations:
     InoHouse:
       local: ca_idmaster
@@ -129,6 +130,10 @@ InoMaster:
       local: ca_idmaster
       foreign: ca_idmaster
       type: one 
+    InoMasterSea:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one
 
 
 
@@ -223,6 +228,10 @@ InoHouse:
       foreign: ca_login
       type: one
       class: Usuario
+    InoHouseSea:
+      local: ca_idhouse
+      foreign: ca_idhouse
+      type: one
 
 
 InoCosto:
@@ -352,7 +361,9 @@ InoComprobante:
     ca_propiedades: string
     ca_fchgenero: timestamp
     ca_usugenero: string
+    ca_propiedades: string
     ca_idcomprobante_cruce: integer
+    ca_idccosto: integer
   relations:
     Ids:
       local: ca_id
@@ -391,10 +402,6 @@ InoComprobante:
     IdsSucursal:
       local: ca_idsucursal
       foreign: ca_idsucursal
-      type: one
-    InoMaster:
-      local: ca_idmaster
-      foreign: ca_idmaster
       type: one
     
 
@@ -461,6 +468,10 @@ InoDetalle:
       local: ca_idconcepto
       foreign: ca_cod
       type: one
+    InoMaestraConceptos:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one
 
 InoConcepto:
   options:
@@ -525,18 +536,20 @@ InoCuenta:
       form: false
       filter: false
   generatePath: ino
-  tableName: ino.tb_cuentas
+  tableName: contabilidad.tb_cuentas
   columns:
     ca_idcuenta:
-      type: integer
-      autoincrement: true
+      type: integer      
+      primary: true
+    ca_idempresa: 
+      type: integer      
       primary: true
     ca_cuenta: string
     ca_descripcion: string
     ca_naturaleza: string
     ca_moneda: string
     ca_reteica: numeric
-    ca_idempresa: integer
+    
   
 
 
@@ -566,7 +579,7 @@ InoTipoComprobante:
     ca_inicial_aut: integer
     ca_final_aut: integer
     ca_activo: boolean
-    ca_idsucursal: string   
+    ca_idsucursal: string    
     ca_numeracion_actual: integer
     ca_idempresa: integer
     ca_ctarteica: numeric
@@ -578,8 +591,8 @@ InoTipoComprobante:
       foreign: ca_idsucursal
       type: one
     Ctarteica:
-      local: ca_ctarteica     
-      foreign: ca_idcuenta     
+      local: ca_ctarteica      
+      foreign: ca_idcuenta      
       type: one
       class: InoCuenta
     Ctarteiva:
@@ -587,16 +600,12 @@ InoTipoComprobante:
       foreign: ca_idcuenta
       type: one
       class: InoCuenta
-    Ctaiva:
-      local: ca_ctaiva
-      foreign: ca_idcuenta
-      type: one
-      class: InoCuenta
-    Ctaivaparam:
+    ParamContables:
       local: ca_ctaiva
       foreign: ca_cuenta
-      type: many
-      class: ParamContables
+      
+      
+      
 
 InoCentroCosto:
   generatePath: ino
@@ -666,6 +675,11 @@ Modo:
     ca_impoexpo: string
     ca_transporte : string
     ca_rutina : integer    
+  relations:
+    Serie:
+      local: ca_idmodo
+      foreign: ca_idmodo
+      type: one
     
 InoDeduccion:
   generatePath: ino
@@ -707,6 +721,7 @@ InoEquipo:
     ca_serial: string
     ca_numprecinto: string 
     ca_observaciones: string 
+    ca_idvehiculo: int
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
@@ -834,7 +849,7 @@ InoViTeus:
 
 InoConSiigo:
   generatePath: ino
-  tableName: ino.tb_conceptossiigo
+  tableName: contabilidad.tb_conceptossiigo
   columns:
     ca_idconceptosiigo: 
       type: integer
@@ -1043,6 +1058,8 @@ InoViConsComprobante:
     ca_empresa: string
     ca_valor: numeric
     ca_valor2: numeric
+    ca_idfacturado: integer
+    ca_nomfacturado: string
   relations:
     InoMaster:
       local: ca_idmaster
@@ -1073,4 +1090,201 @@ InoViConsComprobante:
     Empresa:
       local: ca_idempresa
       foreign: ca_idempresa
+      type: one
+      
+      
+InoViBusqueda:
+  generatePath: ino
+  tableName: ino.vi_busqueda
+  columns:
+    ca_referencia: string
+    ca_idmaster: integer
+    ca_transporte: string    
+    ca_impoexpo: string
+    ca_modalidad: string
+    ca_origen: string
+    ca_destino: string
+    ca_idlinea: integer
+    ca_master: string
+    ca_fchcreado: date    
+    ca_doctransporte: string
+    ca_idcliente: integer
+    ca_vendedor: string
+    ca_compania: string
+    ca_idagente: integer
+    ca_nomagente: string
+    ca_idproveedor: integer
+    ca_nomlinea: string
+    ca_fchcomprobante: date
+    ca_consecutivo: string
+    ca_idtipo: integer
+    ca_idcomprobante: integer
+    ca_ciuorigen: string
+    ca_ciudestino: string
+    ca_fchcerrado: date    
+    ca_factura: string
+  relations:
+    InoMaster:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one
+    InoHouse:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: many
+    Origen:
+      local: ca_origen
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    Destino:
+      local: ca_destino
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad    
+    InoComprobante:
+      local: ca_idhouse
+      foreign: ca_idhouse
+      type: many    
+    Ids:
+      local: ca_id
+      foreign: ca_id
+      type: one
+    
+    
+ExpoTracking:
+  generatePath: public
+  tableName: public.tb_expo_tracking
+  columns:
+    ca_referencia:
+        type: string(17)
+        primary: true
+    ca_idevento:
+        type: integer
+        primary: true
+    ca_usuario:
+        type: string(20)
+    ca_realizado:
+        type: integer
+    ca_fchevento:  
+        type: date
+  relations:
+    UsuCreado:
+      local: ca_usuario
+      foreign: ca_login
+      type: one
+      class: Usuario
+      
+ExpoAedex:
+    generatePath: public
+    tableName: tb_expo_aedex
+    columns:
+      ca_referencia:
+        type: string(17)
+        primary: true
+      ca_idevento:
+        type: integer
+        primary: true
+      ca_iddocumento:
+        type: string(20)
+        primary: true
+      ca_fecharem:
+        type: date
+      ca_fechadoc:  
+        type: date
+        primary: true
+        
+        
+InoMaestraConceptos:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: ino
+  tableName: ino.tb_maestra_conceptos  
+  columns:
+    ca_idconcepto:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_concepto_esp: string
+    ca_concepto_eng: string
+    ca_compra: boolean
+    ca_venta: boolean
+    ca_importacion: boolean
+    ca_exportacion: boolean
+    ca_aereo: boolean
+    ca_maritimo: boolean
+    ca_terrestre_interno: boolean
+    ca_otm: boolean
+    ca_contenedor: boolean
+    ca_terrestre_nacional: boolean
+    ca_depositos: boolean
+    ca_origen: boolean
+    ca_general: boolean
+    ca_destino: boolean
+    ca_contiguo: boolean
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+    
+    
+InoMasterSea:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: ino
+  tableName: ino.tb_master_sea
+  columns:
+    ca_idmaster:
+      type: integer
+      primary: true
+    ca_fchdesconsolidacion: date
+    ca_fchconfirmacion: date
+    ca_horaconfirmacion: time
+    ca_fchconfirmado: timestamp
+    ca_usuconfirmado: string
+    ca_fchvaciado: date
+    ca_horavaciado: time
+    ca_fchmuisca: timestamp
+    ca_usumuisca: string
+    ca_fchfinmuisca: date
+    ca_carpeta: boolean
+    ca_estado: string  
+    ca_fchenvio: timestamp
+    ca_datos: string
+    ca_datosmuisca: string
+    ca_fchrecibido: timestamp    
+  relations:
+    InoMaster:
+      local: ca_idmaster
+      foreign: ca_idmaster
+      type: one
+    
+    
+InoHouseSea:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: ino
+  tableName: ino.tb_house_sea
+  columns:
+    ca_idhouse:
+      type: integer
+      primary: true
+    ca_fchliberacion: date
+    ca_fchliberado: timestamp
+    ca_fchlibero: timestamp
+    ca_continuacion: string(10)
+    ca_continuacion_dest: string(8)
+    ca_imprimirorigen : boolean
+    ca_datos: string
+    ca_datosmuisca: string
+  relations:
+    InoHouse:
+      local: ca_idhouse
+      foreign: ca_idhouse
       type: one
