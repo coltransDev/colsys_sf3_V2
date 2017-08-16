@@ -983,3 +983,42 @@ IdsCredito:
       local: ca_usuario
       foreign: ca_login
       type: one
+
+
+IdsEstadoSap:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: ids
+  tableName: ids.tb_estados_sap
+  columns:
+    ca_id: 
+      type: integer
+      primary: true
+    ca_tipo: 
+      type: string
+      primary: true
+    ca_idempresa:
+      type: integer
+      primary: true
+    ca_estado: boolean
+    ca_ususap: string
+    ca_fchsap: timestamp
+    ca_usucreado: string
+    ca_fchcreado: timestamp    
+  relations:
+    Ids:
+      local: ca_id
+      foreign: ca_id
+      type: one
+    Empresa:
+      local: ca_idempresa
+      foreign: ca_idempresa
+      type: one
+    Usucreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+        
