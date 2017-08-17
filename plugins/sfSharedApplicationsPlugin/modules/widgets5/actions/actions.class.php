@@ -2989,9 +2989,12 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosTipoIdentificacion(sfWebRequest $request) {
-        $identificaciones = Doctrine::getTable("IdsTipoIdentificacion")
-                ->createQuery("i")
-                ->execute();
+        $q = Doctrine::getTable("IdsTipoIdentificacion")
+                ->createQuery("i");
+        if ($request->getParameter("idtrafico")) {
+            $q->addWhere('ca_idtrafico = ?', $request->getParameter("idtrafico"));
+        }
+        $identificaciones =  $q->execute();
 
         $data = array();
         foreach ($identificaciones as $identificacion) {
