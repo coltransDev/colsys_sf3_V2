@@ -183,23 +183,31 @@ Ext.define('Colsys.Crm.TreeSucursales', {
                         }
                     },
                     handler: function (grid, rowIndex, colIndex) {
+                        var det = null;
                         var rec = grid.getStore().getAt(rowIndex);
-                        Ext.MessageBox.confirm('Confirmaci&oacute;n de Eliminaci&oacute;n', 'Est&aacute; seguro que desea anular el registro?', function (choice) {
+                        
+                        if (rec.get('idcontacto')) {
+                            det = 'el Contacto ';
+                        } else if (rec.get('idsucursal')) {
+                            det = 'la Sucursal ';
+                        }
+                        det+= rec.get('text');
+                        Ext.MessageBox.confirm('Confirmaci&oacute;n de Eliminaci&oacute;n', 'Est&aacute; seguro que desea anular ' + det + '?', function (choice) {
                             var url = null;
                             var idrecord = null;
-                            if (rec.get('idsucursal')) {
-                                url = '/crm/eliminarSucursal';
-                                idrecord = rec.get('idsucursal');
-                            }else if (rec.get('idcontacto')){
+                            if (rec.get('idcontacto')) {
                                 url = '/crm/eliminarContacto';
                                 idrecord = rec.get('idcontacto');
+                            } else if (rec.get('idsucursal')) {
+                                url = '/crm/eliminarSucursal';
+                                idrecord = rec.get('idsucursal');
                             }
                             if (choice == 'yes') {
                                 Ext.Ajax.request({
                                     waitMsg: 'Eliminado...',
                                     url: url,
                                     params: {
-                                        idcliente: idrecord,
+                                        idcontacto: idrecord,
                                         idsucursal: idrecord
                                     },
                                     failure: function (response, options) {

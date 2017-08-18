@@ -408,7 +408,7 @@ class crmActions extends sfActions {
             $data["actividad_economica"] = utf8_encode($vista["ca_actividad"]);
             $data["preferencias"] = utf8_encode($vista["ca_preferencias"]);
         }
-        
+
         $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");
     }
@@ -489,6 +489,9 @@ class crmActions extends sfActions {
 
                 $tree->addChild($uid, $sede_nodo);
                 foreach ($sucursal->getIdsContacto() as $contacto) {
+                    if ($contacto->getCaUsueliminado()) {
+                        continue;
+                    }
                     list($mes, $dia) = sscanf($contacto->getCaCumpleanos(), "%d-%d");
                     $contacto_nodo = $tree->createNode(utf8_encode($contacto->getCaSaludo() . " " . $contacto->getNombre() . " (" . $contacto->getCargo() . ")"));
                     $tree->getNode($contacto_nodo)->setAttribute("idcontacto", $contacto->getCaIdcontacto());
@@ -800,9 +803,9 @@ class crmActions extends sfActions {
                 $data["dia"] = $cumpleanos[1];
                 $data["correo"] = utf8_encode($contacto->getCaEmail());
                 if ($contacto->getCaFijo()) {
-                    $data["not"] = true;
+                    $data["fijo"] = true;
                 } else {
-                    $data["not"] = false;
+                    $data["fijo"] = false;
                 }
                 if (utf8_encode($contacto->getCaTipo()) == 1) {
                     $data["tipo"] = utf8_encode($contacto->getCaTipo());
@@ -826,7 +829,7 @@ class crmActions extends sfActions {
 
     public function executeGuardarContacto(sfWebRequest $request) {
         $idContacto = $request->getParameter("idcontacto");
-        
+
         if ($idContacto) {
             $contacto = Doctrine::getTable("IdsContacto")
                     ->createQuery("i")
@@ -835,7 +838,7 @@ class crmActions extends sfActions {
         } else {
             $contacto = new IdsContacto();
         }
-        
+
         $sucursal = Doctrine::getTable("IdsSucursal")
                 ->createQuery("i")
                 ->addWhere('i.ca_idsucursal = ?', $request->getParameter("idsucursal"))
@@ -847,7 +850,7 @@ class crmActions extends sfActions {
                 ->addWhere('trim(lower(c.ca_nombres)) = ?', trim(strtolower($request->getParameter("nombres"))))
                 ->addWhere('trim(lower(c.ca_papellido)) = ?', trim(strtolower($request->getParameter("primer_apellido"))))
                 ->fetchOne();
-        if (!$concliente){
+        if (!$concliente) {
             $concliente = new Contacto();
             $concliente->setCaIdcliente($sucursal->getCaId());
         }
@@ -870,7 +873,7 @@ class crmActions extends sfActions {
             if ($request->getParameter("segundo_apellido")) {
                 $contacto->setCaSapellido(utf8_decode($request->getParameter("segundo_apellido")));
                 $concliente->setCaSapellido(utf8_decode($request->getParameter("segundo_apellido")));
-            }else{
+            } else {
                 $concliente->setCaSapellido('');
             }
             if ($request->getParameter("identificacion_tipo")) {
@@ -913,12 +916,14 @@ class crmActions extends sfActions {
             if ($request->getParameter("idsucursal")) {
                 $contacto->setCaIdsucursal($request->getParameter("idsucursal"));
             }
-            if ($request->getParameter("fijo")) {
-                $contacto->setCaFijo(true);
-                $concliente->setCaFijo(true);
-            } else {
-                $contacto->setCaFijo(false);
-                $concliente->setCaFijo(false);
+            if ($request->getParameter("fijo") !== null) {
+                if ($request->getParameter("fijo")) {
+                    $contacto->setCaFijo(true);
+                    $concliente->setCaFijo(true);
+                } else {
+                    $contacto->setCaFijo(false);
+                    $concliente->setCaFijo(false);
+                }
             }
             if ($request->getParameter("observaciones")) {
                 $contacto->setCaObservaciones(utf8_decode($request->getParameter("observaciones")));
@@ -926,7 +931,7 @@ class crmActions extends sfActions {
             }
             $contacto->setCaUsuactualizado($this->getUser()->getUserId());
             $contacto->setCaFchactualizado(date("Y-m-d H:i:s"));
-            $contacto->getConsultaListas("DOCUMENTO");
+            // $contacto->getConsultaListas("DOCUMENTO");
 
             $contacto->save();
             $concliente->save();
@@ -942,12 +947,35 @@ class crmActions extends sfActions {
     public function executeEliminarContacto(sfWebRequest $request) {
         $idContacto = $request->getParameter("idcontacto");
 
-        $contacto = Doctrine::getTable("Contacto")->find($idContacto);
-
+        $contacto = Doctrine::getTable("IdsContacto")->find($idContacto);
         try {
             $contacto->setCaCargo("Extrabajador");
             $contacto->setCaDepartamento("Extrabajador");
+            $contacto->setCaTelefonos("Extrabajador");
+            $contacto->setCaCelular("Extrabajador");
+            $contacto->setCaEmail("Extrabajador");
+            $contacto->setCaActivo(false);
+            $contacto->setCaFijo(false);
+            $contacto->setCaUsueliminado($this->getUser());
+            $contacto->setCaFcheliminado(date("Y-m-d h:i:s"));
             $contacto->save();
+
+            $concliente = Doctrine::getTable("Contacto")
+                    ->createQuery("c")
+                    ->addWhere('c.ca_idcliente = ?', $contacto->getIdsSucursal()->getCaId())
+                    ->addWhere('trim(lower(c.ca_nombres)) = ?', trim(strtolower($contacto->getCaNombres())))
+                    ->addWhere('trim(lower(c.ca_papellido)) = ?', trim(strtolower($contacto->getCaPapellido())))
+                    ->fetchOne();
+            if ($concliente) {
+                $concliente->setCaCargo("Extrabajador");
+                $concliente->setCaDepartamento("Extrabajador");
+                $concliente->setCaTelefonos("Extrabajador");
+                $concliente->setCaFax("Extrabajador");
+                $concliente->setCaEmail("Extrabajador");
+                $concliente->setCaFijo(false);
+                $concliente->save();
+            }
+
             $this->responseArray = array("success" => true);
         } catch (Exception $e) {
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
@@ -1113,6 +1141,7 @@ class crmActions extends sfActions {
                 $data["apellido2"] = utf8_encode($cliente->getCaSapellido());
                 $data["genero"] = utf8_encode($cliente->getCaSexo());
                 $data["cumpleanos"] = utf8_encode($cliente->getCaCumpleanos());
+                $data["tpRepresentante"] = utf8_encode($cliente->getCaTipoidentificacionRl());
                 $data["idRepresentante"] = utf8_encode($cliente->getCaNumidentificacionRl());
                 $data["actividad"] = utf8_encode($cliente->getCaActividad());
                 $data["sector_economico"] = utf8_encode($cliente->getCaSectoreco());
@@ -1206,6 +1235,7 @@ class crmActions extends sfActions {
             $cliente->setCaPapellido(utf8_decode($request->getParameter("apellido1")));
             $cliente->setCaSapellido(utf8_decode($request->getParameter("apellido2")));
             $cliente->setCaSexo(utf8_decode($request->getParameter("genero")));
+            $cliente->setCaTipoidentificacionRl($request->getParameter("tpRepresentante"));
             $cliente->setCaNumidentificacionRl($request->getParameter("idRepresentante"));
             $cliente->setCaCumpleanos(utf8_decode($request->getParameter("cumpleanos")));
             $cliente->setCaActividad(utf8_decode($request->getParameter("actividad")));
@@ -1262,7 +1292,7 @@ class crmActions extends sfActions {
             $cliente->setIds($ids);
             $cliente->save($conn);
 
-            $ids->getConsultaListas("DOCUMENTO");
+            //$ids->getConsultaListas("DOCUMENTO");
 
             $conn->commit();
             $this->responseArray = array("success" => true, "idcliente" => $ids->getCaId() . "", "nombreCliente" => utf8_encode($ids->getCaNombre()));
@@ -1523,7 +1553,7 @@ class crmActions extends sfActions {
 
         $this->setTemplate("responseTemplate");
     }
-    
+
     public function executeCargarDatosFichaTecnica(sfWebRequest $request) {
         $idcliente = $request->getParameter("idcliente");
         $fichatecnica = Doctrine::getTable("FichaTecnica")
@@ -1825,7 +1855,7 @@ class crmActions extends sfActions {
 
         // Permisos propios del Representante de Ventas Dueño de la Cuenta
         $permisosDueno = array(1, 2, 3, 4, 6, 7, 9, 10, 11, 13, 14, 16, 17, 18);
-        if ($cliente->getCaVendedor() == $this->getUser()->getUserId()) {
+        if ($cliente->getCaVendedor() == $this->getUser()->getUserId() or ( $cliente->getCaVendedor() == '' and UsuarioTable::getUsuariosxPerfilxUsuario('comercial', $this->getUser()->getUserId()))) {
             $user = $this->getUser();
             $permisosRutinas = $user->getControlAcceso(self::RUTINA_CRM);
             $tipopermisos = $user->getAccesoTotalRutina(self::RUTINA_CRM);
@@ -1839,7 +1869,7 @@ class crmActions extends sfActions {
                 }
             }
         }
-        
+
         $this->responseArray = array("success" => true, "permisos" => $permisos);
         $this->setTemplate("responseTemplate");
     }

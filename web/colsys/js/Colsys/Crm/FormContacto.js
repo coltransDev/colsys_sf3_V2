@@ -211,6 +211,7 @@ Ext.define('Colsys.Crm.FormContacto', {
                             }, {
                                 fieldLabel: 'Cargo Espec&iacute;fico',
                                 labelWidth: 115,
+                                maxLength: 40,
                                 name: 'cargo',
                                 id: "cargo"
                             }]

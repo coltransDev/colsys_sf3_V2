@@ -531,36 +531,21 @@ Ext.define('Colsys.Crm.FormClienteMaster', {
                                                 xtype: 'textfield',
                                                 id: 'nombre',
                                                 name: 'nombre',
-                                                flex: 1,
+                                                flex: 3
                                             }, {
                                                 fieldLabel: '1er Apellido',
                                                 xtype: 'textfield',
                                                 id: 'apellido1',
                                                 name: 'apellido1',
-                                                flex: 1
+                                                labelWidth: 85,
+                                                flex: 2
                                             }, {
                                                 fieldLabel: '2do Apellido',
                                                 xtype: 'textfield',
                                                 id: 'apellido2',
                                                 name: 'apellido2',
-                                                flex: 1
-                                            }]
-                                    }, {
-                                        xtype: 'container',
-                                        layout: 'hbox',
-                                        combineErrors: true,
-                                        defaultType: 'textfield',
-                                        items: [{
-                                                fieldLabel: 'Identificaci&oacute;n',
-                                                xtype: 'numberfield',
-                                                id: 'idRepresentante',
-                                                name: 'idRepresentante',
-                                                flex: 1,
-                                                allowNegative: false,
-                                                allowBlank: false,
-                                                hideTrigger: true,
-                                                keyNavEnabled: false,
-                                                mouseWheelEnabled: false
+                                                labelWidth: 85,
+                                                flex: 2
                                             }, {
                                                 fieldLabel: 'Titulo',
                                                 xtype: 'Colsys.Widgets.WgFormCliente',
@@ -568,7 +553,7 @@ Ext.define('Colsys.Crm.FormClienteMaster', {
                                                 name: 'titulo',
                                                 labelWidth: 50,
                                                 tipoCombo: 1,
-                                                flex: 1,
+                                                flex: 2,
                                                 store: Ext.create('Ext.data.Store', {
                                                     fields: ['id', 'nombre'],
                                                     proxy: {
@@ -582,6 +567,49 @@ Ext.define('Colsys.Crm.FormClienteMaster', {
                                                     autoLoad: true
                                                 }),
                                                 renderer: comboBoxRenderer(this)
+                                            }]
+                                    }, {
+                                        xtype: 'container',
+                                        layout: 'hbox',
+                                        combineErrors: true,
+                                        defaultType: 'textfield',
+                                        items: [{
+                                                fieldLabel: ' Tipo de ID',
+                                                id: 'tpRepresentante',
+                                                name: 'tpRepresentante',
+                                                xtype: 'Colsys.Widgets.WgTipoIdentificacion',
+                                                store: Ext.create('Ext.data.Store', {
+                                                    fields: ['id', 'name', 'trafico'],
+                                                    proxy: {
+                                                        type: 'ajax',
+                                                        url: '/widgets5/datosTipoIdentificacion',
+                                                        reader: {
+                                                            type: 'json',
+                                                            root: 'root'
+                                                        },
+                                                        extraParams: {
+                                                            idtrafico: 'CO-057'
+                                                        }
+                                                    },
+                                                    autoLoad: true
+                                                }),
+                                                triggerAction: 'all',
+                                                editable: false,
+                                                allowBlank: false,
+                                                renderer: comboBoxRenderer(this)
+                                            }, {
+                                                fieldLabel: 'Identificaci&oacute;n',
+                                                xtype: 'textfield',
+                                                id: 'idRepresentante',
+                                                name: 'idRepresentante',
+                                                flex: 1,
+                                                allowNegative: false,
+                                                allowBlank: false,
+                                                hideTrigger: true,
+                                                keyNavEnabled: false,
+                                                mouseWheelEnabled: false,
+                                                regex: /^[-\A-Z\s0-9]*$/,
+                                                regexText: 'Solo se aceptan n\u00FAmeros, rayas y letras en may\u00FAcula'
                                             }, {
                                                 fieldLabel: 'Genero',
                                                 xtype: 'Colsys.Widgets.WgFormCliente',
@@ -603,14 +631,6 @@ Ext.define('Colsys.Crm.FormClienteMaster', {
                                                     autoLoad: true
                                                 }),
                                                 renderer: comboBoxRenderer(this)
-                                            }, {
-                                                fieldLabel: 'Cumplea\u00f1os',
-                                                xtype: 'datefield',
-                                                id: 'cumpleanos',
-                                                name: 'cumpleanos',
-                                                format: 'Y-m-d',
-                                                submitFormat: 'Y-m-d',
-                                                flex: 1
                                             }]
                                     }]
                             }, {
