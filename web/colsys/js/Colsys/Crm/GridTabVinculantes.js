@@ -17,6 +17,7 @@ Ext.define('Colsys.Crm.GridTabVinculantes', {
                         fields: [
                             {name: 'fchconsultado', type: 'string', mapping: 'fchconsultado'},
                             {name: 'tipo_consulta', type: 'string', mapping: 'tipo_consulta'},
+                            {name: 'parametro', type: 'string', mapping: 'parametro'},
                             {name: 'idrespuesta', type: 'string', mapping: 'idrespuesta'},
                             {name: 'respuesta', type: 'string', mapping: 'respuesta'}
                         ],
@@ -40,10 +41,14 @@ Ext.define('Colsys.Crm.GridTabVinculantes', {
                             dataIndex: 'tipo_consulta',
                             flex: 1
                         }, {
-                            header: "Id. Respusta",
+                            header: "Parametro",
+                            dataIndex: 'parametro',
+                            flex: 1
+                        }, {
+                            header: "Id. Respuesta",
                             dataIndex: 'idrespuesta'
                         }, {
-                            header: "Respusta",
+                            header: "Respuesta",
                             dataIndex: 'respuesta'
                         }
                     ]);

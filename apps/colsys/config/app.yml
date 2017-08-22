@@ -44,7 +44,8 @@ all:
 #    passwd: $tlco5903Am
 
   memcache:
-    host: 172.16.1.13
+#    host: 172.16.1.13
+    host: 10.194.4.10
     port: 11211
     prefix: colsess
 
@@ -90,7 +91,8 @@ all:
       wsdl_uri: https://www.colsys.com.co/ws/colsys/InformeOpenWS?wsdl
 
   sinteParams:
-    url: http://WS_LOCALCHECK.SINTE.CO:8081
+    server: http://54.174.227.40:8081
     username: FANNY.GUTIERREZ
-    password: fanny@201610
+    password: Coltrans01
+    #password: fanny@201610
     percent: 90

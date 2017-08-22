@@ -2748,6 +2748,7 @@ class idsActions extends sfActions {
                     $resultado[] = array(
                         "fchconsultado" => $consulta->getCaFchconsultado(),
                         "tipo_consulta" => $consulta->getCaTipoConsulta(),
+                        "parametro" => $consulta->getCaParametro(),
                         "idrespuesta" => $consulta->getCaIdrespuesta(),
                         "respuesta" => $consulta->getCaRespuesta()
                     );

@@ -931,7 +931,7 @@ class crmActions extends sfActions {
             }
             $contacto->setCaUsuactualizado($this->getUser()->getUserId());
             $contacto->setCaFchactualizado(date("Y-m-d H:i:s"));
-            // $contacto->getConsultaListas("DOCUMENTO");
+            $contacto->getConsultaListas("DOCUMENTO");
 
             $contacto->save();
             $concliente->save();
@@ -1292,7 +1292,7 @@ class crmActions extends sfActions {
             $cliente->setIds($ids);
             $cliente->save($conn);
 
-            //$ids->getConsultaListas("DOCUMENTO");
+            $ids->getConsultaListas("DOCUMENTO");
 
             $conn->commit();
             $this->responseArray = array("success" => true, "idcliente" => $ids->getCaId() . "", "nombreCliente" => utf8_encode($ids->getCaNombre()));
