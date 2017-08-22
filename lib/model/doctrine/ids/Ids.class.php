@@ -82,7 +82,7 @@ class Ids extends BaseIds {
     }
 
     public function getConsultaListas($tipoConsulta) {
-        $url = sfConfig::get("app_sinteParams_url");
+        $server = sfConfig::get("app_sinteParams_server");
         $username = sfConfig::get("app_sinteParams_username");
         $password = sfConfig::get("app_sinteParams_password");
         $percent = sfConfig::get("app_sinteParams_percent");
@@ -91,16 +91,18 @@ class Ids extends BaseIds {
 
         $client = new Zend_Http_Client();
 
-        $uri = $url."/WS_COLTRANS/webresources/listas/consultar";
+        $uri = $server."/WS_COLTRANS/webresources/listas/consultar";
         $client->setUri($uri);
 
         $client->setAuth($username, $password, Zend_Http_Client::AUTH_BASIC);
 
         $client->setParameterGet('tipo_consulta', $tipoConsulta);
         if ($tipoConsulta == "DOCUMENTO") {
-            $client->setParameterGet('parametro', $this->getCaIdalterno());
+            $parametro = $this->getCaIdalterno();
+            $client->setParameterGet('parametro', $parametro);
         } else {
-            $client->setParameterGet('parametro', $this->getCaNombre());
+            $parametro = $this->getCaNombre();
+            $client->setParameterGet('parametro', $parametro);
             $client->setParameterGet('pcoincidencia', $percent);
         }
         $result = $client->request(Zend_Http_Client::GET);
@@ -120,6 +122,7 @@ class Ids extends BaseIds {
         $consulta = new IdsRestrictivas();
         $consulta->setCaId($this->getCaId());
         $consulta->setCaTipoConsulta($tipoConsulta);
+        $consulta->setCaParametro($parametro);
         $consulta->setCaIdrespuesta($id_response);
         $consulta->setCaRespuesta($res_response);
         $consulta->setCaFchconsultado($fch_response);

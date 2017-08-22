@@ -34,7 +34,7 @@ class IdsContacto extends BaseIdsContacto {
     }
 
     public function getConsultaListas($tipoConsulta) {
-        $url = sfConfig::get("app_sinteParams_url");
+        $server = sfConfig::get("app_sinteParams_server");
         $username = sfConfig::get("app_sinteParams_username");
         $password = sfConfig::get("app_sinteParams_password");
         $percent = sfConfig::get("app_sinteParams_percent");
@@ -43,19 +43,20 @@ class IdsContacto extends BaseIdsContacto {
 
         $client = new Zend_Http_Client();
 
-        // $uri = "http://app.sinte.co:8081:16080/WS_COLTRANS/webresources/listas/consultar";
-        $uri = $url."/WS_COLTRANS/webresources/listas/consultar";
+        $uri = $server."/WS_COLTRANS/webresources/listas/consultar";
         $client->setUri($uri);
 
         $client->setAuth($username, $password, Zend_Http_Client::AUTH_BASIC);
 
         $client->setParameterGet('tipo_consulta', $tipoConsulta);
         $identificacion = $this->getCaIdentificacion();
-        $nombre_completo = trim($this->getCaNombres())." ".trim($this->getCaPapellido()).(($this->getCaSapellido())?$this->getCaSapellido():"");
+        $nombre_completo = trim($this->getCaNombres())." ".trim($this->getCaPapellido()).(($this->getCaSapellido())?" ".$this->getCaSapellido():"");
         if ($tipoConsulta == "DOCUMENTO") {
-            $client->setParameterGet('parametro', $this->getCaIdentificacion());
+            $parametro = $this->getCaIdentificacion();
+            $client->setParameterGet('parametro', $parametro);
         } else {
-            $client->setParameterGet('parametro', $nombre_completo);
+            $parametro = $nombre_completo;
+            $client->setParameterGet('parametro', $parametro);
             $client->setParameterGet('pcoincidencia', $percent);
         }
         $result = $client->request(Zend_Http_Client::GET);
@@ -75,6 +76,7 @@ class IdsContacto extends BaseIdsContacto {
         $consulta = new IdsRestrictivas();
         $consulta->setCaId($this->getIdsSucursal()->getIds()->getCaId());
         $consulta->setCaTipoConsulta($tipoConsulta);
+        $consulta->setCaParametro($parametro);
         $consulta->setCaIdrespuesta($id_response);
         $consulta->setCaRespuesta($res_response);
         $consulta->setCaFchconsultado($fch_response);
