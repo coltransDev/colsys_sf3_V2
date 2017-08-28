@@ -423,11 +423,11 @@ Empresa:
     ca_activo: boolean
     ca_idtrafico : string
     ca_url : string
-    ca_id : integer
-    ca_pathsiigo: string
+    ca_id : integer    
     ca_logo: string
     ca_tracking: string
     ca_coddian: smallint
+    ca_idsap: smallint
   relations:
     Trafico:
       local: ca_idtrafico
