@@ -22,42 +22,8 @@ class inoF2Actions extends sfActions {
 
     public function executeIndexExt5(sfWebRequest $request) {
 
-        //$response = sfContext::getInstance()->getResponse();
-        //$response->addJavaScript("extExtras/FileUploadField",'last');
-
-        /*$this->modo = Doctrine::getTable("Modo")
-                ->createQuery("m")
-                ->addWhere("m.ca_impoexpo = 'INTERNO'")
-                ->addWhere("m.ca_transporte = 'Terrestre'")
-                ->fetchOne();
-*/
-        //var permisos={'Consultar':true,'Crear':true,'Editar':true,'Anular':true,'Cerrar':true,'Liquidar':true,'General':true,'House':true,'Facturacion':true,'Costos':true,'Documentos':true}
-        /* $this->permisos=array(
-          'Consultar'=>true,'Crear'=>true,'Editar'=>true,'Anular'=>true,'Cerrar'=>true,'Liquidar'=>true,
-          'General'=>true,'House'=>true,'Facturacion'=>true,'Costos'=>true,'Documentos'=>true);
-         *
-         */
         $this->permisos = array();
-        /*$this->permisos["aereo"] = array(
-            'Consultar' => true, 'Crear' => true, 'Editar' => true, 'Anular' => true, 'Liquidar' => true, 'Cerrar' => true,
-            'General' => true, 'House' => true, 'Facturacion' => true, 'Costos' => true, 'Documentos' => true
-        );
-        $this->permisos["maritimo"] = array(
-            'Consultar' => true, 'Crear' => true, 'Editar' => true, 'Anular' => true, 'Liquidar' => true, 'Cerrar' => true,
-            'General' => true, 'House' => true, 'Facturacion' => true, 'Costos' => true, 'Documentos' => true
-        );
-        $this->permisos["terrestre"] = array(
-            'Consultar' => true, 'Crear' => true, 'Editar' => true, 'Anular' => true, 'Liquidar' => true, 'Cerrar' => true,
-            'General' => true, 'House' => true, 'Facturacion' => true, 'Costos' => true, 'Documentos' => true
-        );
-        $this->permisos["exportacion"] = array(
-            'Consultar' => true, 'Crear' => true, 'Editar' => true, 'Anular' => true, 'Liquidar' => true, 'Cerrar' => true,
-            'General' => true, 'House' => true, 'Facturacion' => true, 'Costos' => true, 'Documentos' => true
-        );
-        $this->permisos["otm"] = array(
-            'Consultar' => true, 'Crear' => true, 'Editar' => true, 'Anular' => true, 'Liquidar' => true, 'Cerrar' => true,
-            'General' => true, 'House' => true, 'Facturacion' => true, 'Costos' => true, 'Documentos' => true
-        );*/
+
         $user = $this->getUser();
         
         $permisosRutinas["aereo"] = $user->getControlAcceso(self::RUTINA_AEREO);        
@@ -76,51 +42,14 @@ class inoF2Actions extends sfActions {
                 $this->permisos[$k][$index]=isset($permisosRutinas[$k][$tp])?true:false;
             }            
         }
-        
-        //print_r($this->permisos);
-        //exit;
-        //echo json_encode($this->permisos);
+
         $this->inoMaster = Doctrine::getTable("InoMaster")
                 ->createQuery("m")
                 ->addWhere("m.ca_idmaster = ?", array($request->getParameter("idmaster")))                
                 ->execute();
         
-        
-        
     }
 
-    /* function executeDatosIndex($request) {
-      $idproceso = ($request->getParameter("node") != "" && $request->getParameter("node") != "root") ? $request->getParameter("node") : "0";
-      $tree = array("text" => "Proceso/Riesgo","leaf" => true,"id" => "1");
-
-      if($idproceso==0)
-      {
-
-      $childrens1=array();
-
-      if($this->permisos["maestras"])
-      {
-      $childrens1[] = array("text" => "Cuentas Contables","leaf" => true,"id" => "1");
-      $childrens1[] = array("text" => "Conceptos","leaf" => true,"id" => "2");
-      $childrens[] = array("text" => utf8_encode("Administración"),"leaf" =>false,"children"=>$childrens1);
-      }
-      $childrens1=array();
-      $childrens1[] = array("text" => "Consulta","leaf" => true,"id" => "3");
-      //$childrens1[] = array("text" => "Conceptos","leaf" => true,"id" => "2");
-
-      $childrens[] = array("text" => "Comprobantes","leaf" =>false,"children"=>$childrens1);
-
-      $childrens1=array();
-      $childrens1[] = array("text" => utf8_encode("Facturación"),"leaf" => true,"id" => "4");
-      $childrens[] = array("text" => "Coldepositos","leaf" =>false,"children"=>$childrens1);
-
-      }
-
-      $tree["children"] = $childrens;
-
-      $this->responseArray = $tree;
-      $this->setTemplate("responseTemplate");
-      } */
 
     function executeDatosBusqueda($request) {
 
@@ -208,6 +137,7 @@ class inoF2Actions extends sfActions {
             $whereq[] = Constantes::OTMDTA;
             $whereq[] = Constantes::TERRESTRE;
         }
+        
 
         $wherePermisos.=$where . " )";
         $q->addWhere("" . $where, $whereq);
@@ -241,10 +171,10 @@ class inoF2Actions extends sfActions {
 
     public function executeGuardarPreferencias(sfWebRequest $request) {
 
-        //error_reporting(E_ALL);
+        error_reporting(0);
         $style = $request->getParameter("user_style");
         $user_factuaIno = $request->getParameter("user_factuaIno");
-
+        
 
         $usuario = Doctrine::getTable("Usuario")
                 ->createQuery("u")
@@ -265,19 +195,20 @@ class inoF2Actions extends sfActions {
         $datos = json_encode($datos);
         $conn = Doctrine::getTable("Usuario")->getConnection();
         $conn->beginTransaction();
-        try {
+        //try {
 
             $usuario->setCaDatos($datos);
-
             $usuario->save();
             $conn->commit();
 
             $this->getUser()->setDatos($datos);
+            //echo $this->getUser()->getDatos("estiloIno");            
+        //exit;
             $this->responseArray = array("success" => "true", "style" => $style);
-        } catch (Exception $e) {
+        /*} catch (Exception $e) {
             $conn->rollback();
             $this->responseArray = array("success" => "false", "style" => $style);
-        }
+        }*/
         $this->setTemplate("responseTemplate");
     }
 
@@ -324,6 +255,38 @@ class inoF2Actions extends sfActions {
             if (count($comprobantes) < 1) {
                 $row["color"] = "pink";
             }
+
+            $inoHouseSea=$inoHouse->getInoHouseSea();
+
+            $datos= json_decode($inoHouseSea->getCaDatos(),true);
+            
+            $row["continuacion"] = $inoHouseSea->getCaContinuacion();
+            $row["destinofinal"] = $inoHouseSea->getCaContinuacionDest();
+            //print_r($datos);
+            //exit;
+            $inoEquipos = Doctrine::getTable("InoEquipo")
+                ->createQuery("e")
+                ->select("e.* ")                
+                ->where("e.ca_idmaster = ?", $idmaster)
+                ->addOrderBy("e.ca_idequipo")
+                ->execute();
+            $equipos=array();
+            foreach($inoEquipos as $e)
+            {
+                $piezas="";
+                $kilos="";
+                foreach($datos["equipos"] as $de)
+                {
+                    if($de["idconcepto"]==$e->getCaIdconcepto())
+                    {
+                        $piezas=$de["piezas"];
+                        $kilos=$de["kilos"];
+                        continue;
+                    }
+                }
+                $equipos[]=array("sel"=>true ,"idequipo"=>$e->getCaIdequipo(),"idconcepto"=>$e->getConcepto()->getCaIdconcepto(),"concepto"=>$e->getConcepto()->getCaConcepto(),"serial"=>$e->getCaSerial(),"numprecinto"=>$e->getCaNumprecinto(),"piezas"=>$piezas,"kilos"=>$kilos);
+            }
+            $row["equipos"]=$equipos;
             $data[] = $row;
         }
 
@@ -464,24 +427,14 @@ class inoF2Actions extends sfActions {
                 ->innerJoin("c.InoComprobante comp")
                 ->innerJoin("comp.Ids ids")
                 ->innerJoin("ids.IdsCliente cl")
-//                        ->innerJoin("comp.InoHouse h")                        
                 ->innerJoin("c.Cliente clH")
                 ->innerJoin("comp.InoTipoComprobante tcomp")
-                //->leftJoin("comp.InoDetalle det WITH det.ca_idconcepto is not null AND ( (ca_cr>0 AND tcomp.ca_tipo='F') or (ca_db>0 AND tcomp.ca_tipo<>'F' ) )")
                 ->leftJoin("comp.Ids fact")
                 ->leftJoin("tcomp.Ctarteica cric WITH tcomp.ca_idempresa=cric.ca_idempresa ")
-                //->leftJoin("comp.Ctarteiva criv")
-                //->leftJoin("comp.Ctaiva ci")
-                //->innerJoin("tcomp.InoCentroCosto ccosto")
-                //->leftJoin("comp.Moneda m")
-                //->leftJoin('det.InoConSiigo s WITH tcomp.ca_idempresa=s.ca_idempresa ')
                 ->where("c.ca_idmaster = $idmaster  ")
                 ->addOrderBy("tcomp.ca_tipo,tcomp.ca_comprobante")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
 
-//        echo $this->idmaster."<br>";
-        //echo $q->getSqlQuery();
-        //exit;
         $datos = $q->execute();
         $this->data = array();
 
@@ -513,9 +466,6 @@ class inoF2Actions extends sfActions {
                 else
                     $cuenta_forma_pago = '';
             }
-//$consecutivo.=" - ".utf8_encode($d["ids_ca_nombre"])." - ".$d["c_ca_doctransporte"];
-            //print_r($d);
-            //exit;
             $rc = "";
             if ($d["comp_ca_idcomprobante_cruce"] != "" && $d["comp_ca_idcomprobante_cruce"] != null) {
                 $idcomp = $d["comp_ca_idcomprobante_cruce"];
@@ -584,34 +534,7 @@ class inoF2Actions extends sfActions {
         $this->responseArray = array("success" => true, "root" => $this->data);
         $this->setTemplate("responseTemplate");
     }
-
-    /* public function executeDatosGridCostosPanel(sfWebRequest $request) {
-      $idmaster = $request->getParameter("idmaster");
-      $this->forward404Unless($idmaster);
-
-      $costos = Doctrine::getTable("InoCosto")
-      ->createQuery("c")
-      ->select("c.ca_idinocosto, c.ca_idmaster, c.ca_neto, c.ca_venta, c.ca_factura,
-      c.ca_tcambio, c.ca_tcambio_usd, c.ca_idcosto, p.ca_sigla, i.ca_nombre,
-      c.ca_idmoneda, cs.ca_concepto,c.ca_fchfactura,c.ca_idproveedor ")
-      ->innerJoin("c.InoConcepto cs")
-      ->innerJoin("c.Ids i")
-      ->where("c.ca_idmaster = ?", $idmaster)
-      ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-      ->execute();
-
-      foreach ($costos as $key => $val) {
-      $costos[$key]["i_ca_nombre"] = utf8_encode($costos[$key]["i_ca_nombre"]);
-      $costos[$key]["cs_ca_concepto"] = utf8_encode($costos[$key]["cs_ca_concepto"]);
-      $costos[$key]["orden"] = utf8_encode($costos[$key]["ca_idinocosto"]);
-      }
-
-      //$costos[]["cs_ca_concepto"]="+";
-      //$costos[]["orden"]="z";
-
-      $this->responseArray = array("success" => true, "root" => $costos, "total" => count($costos));
-      $this->setTemplate("responseTemplate");
-      } */
+    
 
     /**
      * @autor ?
@@ -953,16 +876,6 @@ class inoF2Actions extends sfActions {
             $house = Doctrine::getTable("InoHouse")->find($idhouse);
 
 
-            /* $inotimpocomprobante = Doctrine::getTable("InoTipoComprobante")->find($idtipocomprobante);
-              $consecutivo = intval($inotimpocomprobante->getCaNumeracionActual()) + 1;
-              $inotimpocomprobante->setCaNumeracionActual($consecutivo);
-              $inotimpocomprobante->save($conn);
-
-
-              $comprobante->setCaConsecutivo($consecutivo);
-              $comprobante->setCaFchcomprobante(date("Y-m-d")); */
-            //$idcliente = ($request->getParameter("idclienteF")!="")?$request->getParameter("idclienteF"):$house->getCliente()->getCaIdcliente();
-
             $comprobante->setCaIdsucursal($idsucursal);
 
             $comprobante->setCaId($sucursal->getIds()->getCaId());
@@ -971,35 +884,29 @@ class inoF2Actions extends sfActions {
             $comprobante->setCaIdmoneda($request->getParameter("idmoneda"));
             $comprobante->setCaTcambio($request->getParameter("tcambio"));
             
-            $comprobante->setCaIdccosto($request->getParameter("cc"));
-
-
-            //$comprobante->setCaPlazo($request->getParameter("plazo"));
-            //$comprobante->setCaObservaciones($request->getParameter("observaciones"));
-
             $comprobante->setProperty("bienestrans", $request->getParameter("bienestrans"));
             $comprobante->setProperty("detalle", $request->getParameter("detalle"));
             $comprobante->setProperty("anexos", $request->getParameter("anexos"));
             $comprobante->setProperty("idcontacto", $request->getParameter("idcontacto"));
-
-            //$comprobante->save();
+            
+            
+            $ccosto = Doctrine::getTable("InoCentroCosto")
+                ->createQuery("c")
+                ->select("*")
+                ->where('ca_impoexpo = ? and ca_transporte = ? and ca_idsucursal=?' ,  array( $comprobante->getInoHouse()->getInoMaster()->getCaImpoexpo(), $comprobante->getInoHouse()->getInoMaster()->getCaTransporte() , $comprobante->getInoTipoComprobante()->getCaIdsucursal() ))
+                ->fetchOne();
+            
+            $comprobante->setCaIdccosto($ccosto->getCaIdccosto());
             $comprobante->save($conn);
 
-            /*if ($idcliente_old != $idcliente) {
-                $detalles = $comprobante->getInoDetalle();
-                foreach ($detalles as $d) {
-                    $d->setCaId($idcliente);
-                    $d->save($conn);
-                }
-            }*/
 
             $conn->commit();
 
             $this->responseArray = array("success" => "true","idcomprobante"=>$comprobante->getCaIdcomprobante());
-       /* } catch (Exception $e) {
-            $conn->rollback();
-            $this->responseArray = array("success" => "false", "errorInfo" => $e->getMessage());
-        }*/
+       // } catch (Exception $e) {
+           // $conn->rollback();
+          //  $this->responseArray = array("success" => "false", "errorInfo" => $e->getMessage());
+        //}
         $this->setTemplate("responseTemplate");
     }
 
@@ -1049,27 +956,25 @@ class inoF2Actions extends sfActions {
             }
             $conn->commit();
             $this->responseArray = array("errorInfo" => "", "id" => implode(",", $ids), "idreg" => implode(",", $ids_reg), "success" => true);
-       /* } catch (Exception $e) {
+       // } catch (Exception $e) {
 
-            $errorInfo.=$e->getMessage() . "<br>";
-            $this->responseArray = array("errorInfo" => $errorInfo, "success" => false);
+        //    $errorInfo.=$e->getMessage() . "<br>";
+        //    $this->responseArray = array("errorInfo" => $errorInfo, "success" => false);
             //echo $e->getMessage();
-        }*/
-
-
+        //}
         $this->setTemplate("responseTemplate");
     }
     public function executeEliminarGridFacturacion(sfWebRequest $request){
         $datos = $request->getParameter("datos");
         $datos = json_decode($datos);
-        
+
         try{
             $conn = Doctrine::getTable("InoDetalle")->getConnection();
             $conn->beginTransaction();
             foreach ($datos as $dato){
                 $inoDetalle = Doctrine::getTable("InoDetalle")
                         ->createQuery("i")
-                        ->addWhere("i.ca_idconcepto = ? and i.ca_idcomprobante = ?", array($dato->idconcepto, $dato->idcomprobante))
+                        ->addWhere("i.ca_idetalle = ? ", array($dato->iddetalle))
                         ->fetchOne();
                 if ($inoDetalle){
                     $inoDetalle->delete();
@@ -1140,34 +1045,17 @@ class inoF2Actions extends sfActions {
                 $inoUtilidad->setCaValor($t->valor);
                 $inoUtilidad->save($conn);
 
-                /* $inoDetalle = Doctrine::getTable("InoDetalle")->find($t->iddetalle);
-                  if(!$inoDetalle)
-                  $inoDetalle = new InoDetalle();
-
-                  $inoDetalle->setCaIdcomprobante( $t->idcomprobante );
-                  if($tipoComprobante->getCaTipo()=="C")
-                  $inoDetalle->setCaDb( $t->valor );
-                  else
-                  $inoDetalle->setCaCr( $t->valor );
-                  $inoDetalle->setCaIdconcepto( $t->idconcepto );
-                  $inoDetalle->setCaId( $comprobante->getCaId() );
-                  $inoDetalle->save( $conn );
-                 * 
-                 */
-
                 $ids[] = $t->id;
-                //$inoUtilidad->getCaIdutilidad()
                 $ids_reg[] = $inoUtilidad->getCaIdutilidad();
-                //$valor+=$t->valor;            
             }
 
             $conn->commit();
         }
-        /* catch(Exception $e)
-          {
-          $errorInfo.=$e->getMessage()."<br>";
-          //echo $e->getMessage();
-          } */
+        // catch(Exception $e)
+        //  {
+        //  $errorInfo.=$e->getMessage()."<br>";
+        //echo $e->getMessage();
+        //  } 
 
         $this->responseArray = array("errorInfo" => $errorInfo, "id" => implode(",", $ids), "idreg" => implode(",", $ids_reg), "success" => true);
         $this->setTemplate("responseTemplate");
@@ -1438,8 +1326,8 @@ class inoF2Actions extends sfActions {
         }
         $this->setTemplate("responseTemplate");
     }
-
-   public function executeDatosConceptosFact(sfWebRequest $request) {
+ 
+    public function executeDatosConceptosFact(sfWebRequest $request) {
         $this->data = array();
         if($request->getParameter("idcomprobante")>0)
         {
@@ -1450,31 +1338,22 @@ class inoF2Actions extends sfActions {
                     ->select("c.ca_idhouse,  c.ca_idcliente ,c.ca_doctransporte, 
                             ids.ca_nombre , ids.ca_idalterno ,  ids.ca_dv,cl.ca_propiedades, 
                             comp.ca_idcomprobante, comp.ca_consecutivo,comp.ca_fchcomprobante,comp.ca_idmoneda,comp.ca_usugenero,comp.ca_fchgenero,
-                            m.ca_nombre,s.ca_descripcion,det.ca_iddetalle,comp.ca_estado,tcomp.ca_tipo,tcomp.ca_comprobante,tcomp.ca_idempresa,
-                            clH.ca_idcliente,clH.ca_compania,cric.ca_rteica,det.*")
+                            m.ca_nombre,s.ca_concepto_esp,det.ca_iddetalle,comp.ca_estado,tcomp.ca_tipo,tcomp.ca_comprobante,tcomp.ca_idempresa,
+                            clH.ca_idcliente,clH.ca_compania,det.*")
                     ->innerJoin("c.InoComprobante comp")
                     ->innerJoin("comp.Ids ids")
                     ->innerJoin("ids.IdsCliente cl")
-    //                        ->innerJoin("comp.InoHouse h")                        
                     ->innerJoin("c.Cliente clH")
                     ->innerJoin("comp.InoTipoComprobante tcomp")
                     ->leftJoin("comp.InoDetalle det WITH det.ca_idconcepto is not null AND ( (ca_cr>0 AND tcomp.ca_tipo='F') or (ca_db>0 AND tcomp.ca_tipo<>'F' ) )")
                     ->leftJoin("comp.Ids fact")
-                    ->leftJoin("tcomp.Ctarteica cric WITH tcomp.ca_idempresa=cric.ca_idempresa ")
-                    //->leftJoin("comp.Ctarteiva criv")
-                    //->leftJoin("comp.Ctaiva ci")                
-                    //->innerJoin("tcomp.InoCentroCosto ccosto")
                     ->leftJoin("comp.Moneda m")
-                    ->leftJoin('det.InoConSiigo s WITH tcomp.ca_idempresa=s.ca_idempresa ')
+                    ->leftJoin('det.InoMaestraConceptos s  ')
                     ->where("comp.ca_idcomprobante = $idcomprobante  ")
                     ->addOrderBy("tcomp.ca_tipo,tcomp.ca_comprobante")
                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
 
-    //        echo $this->idmaster."<br>";
-            //echo $q->getSqlQuery();
-            //exit;
             $datos = $q->execute();
-            
 
             foreach ($datos as $d) {
                 $consecutivo = ($d["tcomp_ca_tipo"] == "F") ? "FACTURA " : (($d["tcomp_ca_tipo"] == "C") ? "<span class='row_yellow'>NOTA CREDITO</span>" : "");
@@ -1490,14 +1369,11 @@ class inoF2Actions extends sfActions {
 
                 $class = "";
                 if ($d["comp_ca_estado"] == "5") {
-                    $class = "row_green";
-                    //$consecutivo="<span class='row_green'>$consecutivo</span>";
+                    $class = "row_green";                  
                 } else if ($d["comp_ca_estado"] == "6") {
                     $class = "row_pink";
-                    //$consecutivo="<span class='row_pink'>$consecutivo</span>";
                 } else if ($d["comp_ca_estado"] == "8") {
                     $class = "row_purple";
-                    //$consecutivo="<span class='row_purple'>$consecutivo</span>";
                 }
                 $cuenta_forma_pago = "";
                 if ($d["cl_ca_propiedades"]) {
@@ -1515,10 +1391,9 @@ class inoF2Actions extends sfActions {
                     "comprobante" => $consecutivo, "fchcomprobante" => $d["comp_ca_fchcomprobante"],
                     "cliente" => $d["cl_ca_nombre"], "doctransporte" => $d["c_ca_doctransporte"],
                     "idmoneda" => $d["comp_ca_idmoneda"], "moneda" => $d["m_ca_nombre"],
-                    "valor" => ($d["det_ca_cr"] > 0 ? $d["det_ca_cr"] : $d["det_ca_db"]),
-                    /* "valor"=>$d["det_ca_cr"] , */
+                    "valor" => ($d["det_ca_cr"] > 0 ? $d["det_ca_cr"] : $d["det_ca_db"]),                    
                     "idconcepto" => $d["det_ca_idconcepto"],
-                    "concepto" => utf8_encode($d["det_ca_idconcepto"] . "-" . $d["s_ca_descripcion"]),
+                    "concepto" => utf8_encode($d["det_ca_idconcepto"] . "-" . $d["s_ca_concepto_esp"]),
                     "iddetalle" => $d["det_ca_iddetalle"], "estado" => $d["comp_ca_estado"],
                     "cuentapago" => $cuenta_forma_pago, "idccosto" => $d["tcomp_ca_idccosto"],
                     "class" => $class
@@ -1540,11 +1415,9 @@ class inoF2Actions extends sfActions {
                     "cuentapago" => " ",
                     "class" => " "
                 );
-               // print_r($this->data);
                 $sql="";
         }
-        //print_r($this->data);
-        //echo $consecutivo;
+        
         $this->responseArray = array("success" => true, "root" => $this->data, "total" => count($this->data), "debug" => $sql);
         $this->setTemplate("responseTemplate");
     }
@@ -1585,489 +1458,41 @@ class inoF2Actions extends sfActions {
 
     
     
-    public function executeGenerarFactura(sfWebRequest $request) {
+    public function executeGenerarComprobante(sfWebRequest $request) {
         $idcomprobante = $request->getParameter("idcomprobante");
         $ncomprobante = $request->getParameter("ncomprobante");
         $errorInfo= $info = "";
         $ids = array();
 
         $inoDetalle = new InoDetalle();
-        $conn = $inoDetalle->getTable()->getConnection();
 
-        $conn->beginTransaction();
-        $house=null;
-        $total=0;
-        $impuestos=array();
-        $retfte=array();
-        $autoret=0;
-        //try
+        $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);        
+        $transout= new IntTransaccionesOut();                
+        $idinttipo=7;
+        switch($comprobante->getInoTipoComprobante()->getCaTipo())
         {
-            $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
-            $tipoComprobante = $comprobante->getInoTipoComprobante();
-            if(trim($ncomprobante)!="")
-            {
-                $consecutivo=  $ncomprobante;
-            }
-            else{
-                $consecutivo=  intval($tipoComprobante->getCaNumeracionActual())+1;
-                $tipoComprobante->setCaNumeracionActual($consecutivo);
-                $tipoComprobante->save($conn);
-            }
-            
-            $regContributivo=$comprobante->getIds()->getIdsCliente()->getProperty('regimen_contributivo');
-
-            $house = Doctrine::getTable("InoHouse")->find($comprobante->getCaIdhouse());
-            /*if(!$house)
-            {
-                echo "dd";
-                exit;
-            }*/
-
-            $movs = Doctrine::getTable("InoDetalle")
-                ->createQuery("det")
-                ->select("det.*,s.*,tcomp.ca_ctarteica,cric.ca_rteica")
-                ->innerJoin("det.InoComprobante comp")
-                ->innerJoin("comp.InoTipoComprobante tcomp")
-                //->innerJoin("tcomp.InoCentroCosto ccosto")
-                ->leftJoin('det.InoConSiigo s WITH tcomp.ca_idempresa=s.ca_idempresa ')
-                ->leftJoin("tcomp.Ctarteica cric WITH tcomp.ca_idempresa=cric.ca_idempresa ")
-                ->addWhere("det.ca_idconcepto IS NOT NULL")
-                ->addWhere("det.ca_idcomprobante = ? ",$idcomprobante  )
-                ->addOrderBy("s.ca_pt DESC")
-                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                ->execute();
-            /*echo Doctrine::getTable("InoDetalle")
-                ->createQuery("det")
-                ->select("det.*,s.*,tcomp.ca_ctarteica,cric.ca_rteica")
-                ->innerJoin("det.InoComprobante comp")
-                ->innerJoin("comp.InoTipoComprobante tcomp")
-                //->innerJoin("tcomp.InoCentroCosto ccosto")
-                ->leftJoin('det.InoConSiigo s WITH tcomp.ca_idempresa=s.ca_idempresa ')
-                ->leftJoin("tcomp.Ctarteica cric WITH tcomp.ca_idempresa=cric.ca_idempresa ")
-                ->addWhere("det.ca_idconcepto IS NOT NULL")
-                ->addWhere("det.ca_idcomprobante = ? ",$idcomprobante  )
-                ->addOrderBy("s.ca_pt DESC")
-                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                ->getSqlQuery();
-            echo $idcomprobante."<br>";*/
-            
-            foreach ($movs as $m) {
-                if($tipoComprobante->getCaTipo()=="C")
-                    $valortmp=($m["det_ca_db"]*$comprobante->getCaTcambio());
-                else
-                    $valortmp=($m["det_ca_cr"]*$comprobante->getCaTcambio());
-
-                if($m["s_ca_idconceptosiigo"]>0)
-                {
-                    //echo "1611-";
-                    if($m["s_ca_iva"]=="S")
-                    {
-                        $ctaiva = $tipoComprobante->getCaCtaiva();//ParametroTable::retrieveByCaso("CU232",$tipoComprobante->getCaCtaiva());
-                        //echo "1615-";
-                        if($ctaiva!="")
-                        {
-                            //$cuentaImp = $q1[0];
-                            $valoriva=round($valortmp * ($m["s_ca_porciva"]/100));
-                            $impuestos[$ctaiva]+=$valoriva;
-                            //echo "1621($ctaiva)-";
-                            //reteiva
-                            if($regContributivo=="G" )//gran contribuyente 
-                            {
-                                /*$q1 = ParametroTable::retrieveByCaso("CU251",null,null,$tipoComprobante->getCaIdempresa()."4");
-                                if($q1[0])
-                                {
-                                    $impuestos[$q1[0]->getCaValor()] += round(  ($valoriva * 15)/100);
-                                }*/
-                                //echo "1630-";
-                                $ctarteiva = $tipoComprobante->getCaCtarteiva();//ParametroTable::retrieveByCaso("CU232",$tipoComprobante->getCaCtaiva());
-                                if($ctarteiva!="")
-                                {
-                                    //echo "1634($ctarteiva)-";
-                                    $impuestos[$ctarteiva] += round(  ($valoriva * 15)/100);
-                                }                                
-                                
-                            }
-                        }
-                    }
-                    //echo "s_ca_autoret:".$m["s_ca_autoret"]."<br>basear:".$valortmp."|".($m["s_ca_basear"]*$comprobante->getCaTcambio())."<br>";
-                    if($m["s_ca_autoret"]=="S" && $valortmp>=($m["s_ca_basear"]*$comprobante->getCaTcambio()))
-                    {
-                        //echo "1644-";
-                        $autoret+=round($valortmp * (4/100));
-                        //$valortmp=0;
-                        //continue;
-                    }
-                    //RETEICA
-                    //echo "regContributivo:".$regContributivo."<br>s_ca_pt:".($m["s_ca_pt"])."<br>";
-                    if($regContributivo=="G" && $m["s_ca_pt"]=="P")//gran contribuyente e ingresos propios
-                    {
-                        //echo "1653({$m["tcomp_ca_ctarteica"]})-";
-                        $impuestos[$m["tcomp_ca_ctarteica"]]+=round($valortmp * ($m["cric_ca_rteica"]/100));
-                    }                    
-                }                
-                $total+=$valortmp;
-                //echo "<br>";
-            }
-
-            $totalsinimpuestos=$total;
-            
-            //print_r($impuestos);
-            
-            //$conn->rollback();
-            //exit;
-            foreach($impuestos as $cuenta=>$s)
-            {
-                $inoDetalle = new InoDetalle();
-                $inoDetalle->setCaIdcomprobante( $idcomprobante );                
-                if($tipoComprobante->getCaTipo()=="C")
-                {
-                    $inoDetalle->setCaDb( $s );
-                    $total+=$s;
-                }
-                else
-                {
-                    if( substr($cuenta,0,1)=="2")
-                    {
-                        $inoDetalle->setCaCr( $s );
-                        $total+=$s;
-                    }
-                    else if( substr($cuenta,0,1)=="1")
-                    {
-                        $inoDetalle->setCaDb( $s );
-                        $total-=$s;
-                    }
-                }
-                $inoDetalle->setCaIdcuenta( $cuenta );            
-                $inoDetalle->setCaId( $comprobante->getIds()->getCaId() );
-                $inoDetalle->save( $conn );                
-            }
-
-            //cuenta cruce
-            $inoDetalle = new InoDetalle();
-            $inoDetalle->setCaIdcomprobante( $idcomprobante );
-            if($tipoComprobante->getCaTipo()=="C")
-                $inoDetalle->setCaCr( $total );
-            else
-                $inoDetalle->setCaDb( $total/$comprobante->getCaTcambio() );
-
-            switch($tipoComprobante->getCaIdempresa())
-            {
-                case 2:
-                    $cuenta_pago="cuenta_forma_pago_coltrans";
-                    break;
-                case 8:
-                    $cuenta_pago="cuenta_forma_pago_colotm";
-                    break;
-                default :
-                    $cuenta_pago="cuenta_forma_pago_".$tipoComprobante->getCaIdempresa();
-            }
-            //$cuenta_pago=($tipoComprobante->getCaIdempresa()=="2")?"cuenta_forma_pago_coltrans":"cuenta_forma_pago_colotm";
-            $inoDetalle->setCaIdcuenta( $comprobante->getIds()->getIdsCliente()->getProperty($cuenta_pago) );
-            //$inoDetalle->setCaId( $house->getCliente()->getCaIdcliente() );
-            $inoDetalle->setCaId( $comprobante->getIds()->getCaId() );
-            $inoDetalle->save( $conn );
-            
-            
-            if($autoret>0)
-            {
-                $q1 = ParametroTable::retrieveByCaso("CU251",null,null,$tipoComprobante->getCaIdempresa()."1");
-                
-                if($q1[0])
-                {
-                    $inoDetalle = new InoDetalle();
-                    $inoDetalle->setCaIdcomprobante( $idcomprobante );                
-                    $inoDetalle->setCaDb( $autoret );                    
-                    $inoDetalle->setCaIdcuenta( $q1[0]->getCaValor() );
-                    $inoDetalle->setCaId( $comprobante->getIds()->getCaId() );
-                    $inoDetalle->save( $conn );
-                    //echo "<pre>";echo($q1[0]->getCaValor2());echo "</pre>";
-                }
-                
-                $q1 = ParametroTable::retrieveByCaso("CU251",null,null,$tipoComprobante->getCaIdempresa()."2");                
-                if($q1[0])
-                {
-                    $inoDetalle = new InoDetalle();
-                    $inoDetalle->setCaIdcomprobante( $idcomprobante );
-                    $inoDetalle->setCaCr( $autoret );
-                    $inoDetalle->setCaIdcuenta( $q1[0]->getCaValor() );
-                    $inoDetalle->setCaId( $comprobante->getIds()->getCaId() );
-                    $inoDetalle->save( $conn );
-                    //echo "<pre>";echo( $q1[0]->getCaValor2());echo "</pre>";
-                }                
-                $total+=$autoret;
-                //$inoDetalle->setCaCr( $autoret );
-            }
-
-            /***********TABLAS SIIGO**************/
-            if($tipoComprobante->getCaTipo()=="F")
-            {
-            //CABECERA COMPROBANTE
-                $comproSiigo = new SiigoComprobante();                
-                $comproSiigo->setIdUnegCont($idcomprobante);
-                $comproSiigo->setCdDocCont($tipoComprobante->getCaTipo());
-                $comproSiigo->setNuDocsopCont($tipoComprobante->getCaComprobante());
-                $comproSiigo->setNuCont($consecutivo);        
-                $comproSiigo->setTpDocSopCont($tipoComprobante->getCaTipo());
-                $comproSiigo->setFechaCont(date("Y-m-d"));
-                //$comproSiigo->setFechaCont("2014-02-15");
-                $comproSiigo->setIdtpoIdapbCont("C");
-
-                $comproSiigo->setNitApbCont($comprobante->getIds()->getCaIdalterno());
-                $dv=($comprobante->getIds()->getCaDv()!="" && $comprobante->getIds()->getCaDv()!=null)?$comprobante->getIds()->getCaDv():"0";
-                $comproSiigo->setDvApbCont($dv);
-                //$comproSiigo->setNitApbCont($house->getCliente()->getCaIdalterno());
-                //$comproSiigo->setDvApbCont($house->getCliente()->getCaDigito());        
-                $comproSiigo->setIdSucCont("0");
-                //$comproSiigo->setTotalDbCont($total*$comprobante->getCaTcambio());
-                //$comproSiigo->setTotalCrCont($total*$comprobante->getCaTcambio());
-                $comproSiigo->setTotalDbCont($total);
-                $comproSiigo->setTotalCrCont($total);
-                $comproSiigo->setIndIncorpCont("2");
-                $comproSiigo->setCodaltUnegCont('1');
-                $comproSiigo->setCodaltEmpreCont('4');
-                //$comproSiigo->setCdErrsiigoCont();
-                $comproSiigo->setIndAnulCont("N");
-                //$comproSiigo->setArchivo();
-                //$comproSiigo->setErrorArchivo();
-                $comproSiigo->save($conn);
-
-                $q = Doctrine::getTable("InoDetalle")
-                    ->createQuery("det")
-                    ->select("det.*,s.*,ids.ca_nombre , ids.ca_idalterno ,  ids.ca_dv")            
-                    ->innerJoin("det.InoComprobante comp")
-                    ->innerJoin("comp.Ids ids")
-                    ->innerJoin("comp.InoTipoComprobante tcomp")
-                    //->innerJoin("tcomp.InoCentroCosto ccosto")
-                    ->leftJoin('det.InoConSiigo s WITH tcomp.ca_idempresa=s.ca_idempresa ')            
-                    ->addWhere("det.ca_idcomprobante = ? ",$idcomprobante  )
-                    ->addOrderBy("s.ca_pt DESC")
-                    ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-                $movs=$q->execute();
-                /*echo "<pre>";print_r($movs);echo "</pre>";
-                $conn->rollback();
-                exit;*/
-
-                if($comprobante->getCaIdccosto()=="")
-                {
-                    $ccosto = Doctrine::getTable("InoCentroCosto")
-                                  ->createQuery("c")
-                                  ->addWhere("c.ca_impoexpo = ?", $comprobante->getInoHouse()->getInoMaster()->getCaImpoexpo())
-                                  ->addWhere("c.ca_transporte = ?", $comprobante->getInoHouse()->getInoMaster()->getCaTransporte())
-                                  ->addWhere("c.ca_idsucursal = ?", $comprobante->getInoTipoComprobante()->getCaIdsucursal())                                  
-                                  ->fetchOne();
-                }
-                else
-                {
-                    $ccosto = Doctrine::getTable("InoCentroCosto")->find($comprobante->getCaIdccosto());
-                }
-                // $this->getUser()->getSucursal()
-
-
-
-                /*echo "<pre>";print_r($movs);echo "</pre>";
-                $conn->rollback();
-                exit;*/
-                foreach ($movs as $m) {
-                    //$conSiigo = $m->getInoConSiigo();  
-                    if($m["det_ca_idcuenta"]!="")
-                    {
-                        $cuenta=$m["det_ca_idcuenta"];
-                        $cc="0001";
-                        $scc="001";
-                        $nconcepto="Proceso Automatico Siigoconect";
-                        //echo "1::";
-                    }
-                    else
-                    {
-                        $cuenta=$m["s_ca_cuenta"];
-                        //$cod=$conSiigo->getCaCod();
-                        $cc=  "000".$m["s_ca_cc"];
-                        $scc="00".$m["s_ca_scc"];
-                        $nconcepto=$m["s_ca_descripcion"];
-                    }
-                    if($cuenta=="")
-                    {
-                       // echo $m->getCaIddetalle();
-                        //exit();
-                    }
-
-                    $detComproSiigo=new SiigoDetComprobante();
-                    $detComproSiigo->setIdUnegMovcont($comproSiigo->getIdUnegCont());
-                    $detComproSiigo->setCodDoccontMovcont($tipoComprobante->getCaTipo());
-                    $detComproSiigo->setNumTipDoccontMovcont($tipoComprobante->getCaComprobante());
-                    $detComproSiigo->setNumDoccontMovcont($consecutivo);
-                    $detComproSiigo->setCtaMovcont($cuenta);
-                    $detComproSiigo->setTpIdepcteMovcont("CC");
-                    $detComproSiigo->setSucMovcont("0");
-                    $detComproSiigo->setIdentPcteMovcont($m["ids_ca_idalterno"]);//nit            
-                    $detComproSiigo->setDescripMovcont($nconcepto);//nombre concepto
-                    if($m["det_ca_cr"]>0)
-                    {
-                        $valor=$m["det_ca_cr"];
-                        $nat="C";
-                    }
-                    else
-                    {
-                        $valor=$m["det_ca_db"];
-                        $nat="D";
-                    }
-                    $detComproSiigo->setValorMovcont(round($valor*$comprobante->getCaTcambio(),2) );//valor
-                    $detComproSiigo->setNatuMovcont($nat);//naturaleza C o D
-                    $detComproSiigo->setVlBaseMovcont(0);//valor Base
-                    $detComproSiigo->setIdCcMovcont("0001");//centro de costo
-                    $detComproSiigo->setIdBodegaMovcont("0001");
-                    //$detComproSiigo->setCodalInvMovcont("0010001000007");
-                    $detComproSiigo->setCodalInvMovcont("0");
-                    $detComproSiigo->setCantInvMovcont("1");
-                    $detComproSiigo->setCodaltDepMovcont("0");
-                    $detComproSiigo->setCodaltBodMovcont("0");
-                    $detComproSiigo->setCodaltUbiMovcont("0");
-                    $detComproSiigo->setCodaltCcMovcont($cc);
-                    $detComproSiigo->setIdAreaMovcont("0");
-                    $detComproSiigo->setCodaltSccMovcont($scc);//??
-                    $detComproSiigo->setTpIdterMovcont("CC");
-                    $detComproSiigo->setIdentTerMovcont($m["ids_ca_idalterno"]);//nit
-                    $detComproSiigo->setTipConCarMovcont($tipoComprobante->getCaTipo());
-                    $detComproSiigo->setComConCarMovcont($tipoComprobante->getCaComprobante());
-                    $detComproSiigo->setNumConCarMovcont($consecutivo);
-                    $detComproSiigo->setVctConCarMovcont(1);
-                    if($tipoComprobante->getCaTipo()=="F")
-                    {  
-                        $fechComprobante=Utils::parseDate(($comprobante->getCaFchcomprobante()=="")?date("Y-m-d"):$comprobante->getCaFchcomprobante(), "Y-m-d");
-                        if( !$comprobante->getIds()->getIdsCliente()->getLibCliente()->getCaDiascredito() ||$comprobante->getIds()->getIdsCliente()->getLibCliente()->getCaDiascredito()=="" || $comprobante->getIds()->getIdsCliente()->getLibCliente()->getCaDiascredito()<0 || $comprobante->getIds()->getIdsCliente()->getLibCliente()->getCaDiascredito()=="0" )
-                        {
-                            $dcredito=0;
-                            $fchDocCruce=date("Y-m-d");
-                        }
-                        else
-                            $dcredito=$comprobante->getIds()->getIdsCliente()->getLibCliente()->getCaDiascredito();
-                        
-                        if($dcredito>0)
-                            $fchDocCruce=Utils::agregarDias($fechComprobante, $dcredito,  "Y-m-d");
-                        else
-                            $fchDocCruce=date("Y-m-d");
-                    }
-                    else
-                    {
-                        $fchDocCruce=date("Y-m-d");
-                        $dcredito=0;
-                    }
-                    
-                    if($fchDocCruce=="1999-12-30")
-                    {
-                        $fchDocCruce=date("Y-m-d");
-                        $dcredito=0;
-                    }
-                    //$detComproSiigo->setFecConMovcont(date("Y-m-d"));
-                    $detComproSiigo->setFecConMovcont($fchDocCruce);
-
-                    $detComproSiigo->setNomTercMovcont("SIIGONECT");//
-                    $detComproSiigo->setConceptoNomMovcont(0);
-                    $detComproSiigo->setVariableAcumMovcont(0);
-                    $detComproSiigo->setNroquinAcumMovcont(0);
-                    $detComproSiigo->setTipModMovhbMovcont($ccosto->getCaTipmodsiigo());
-                    $detComproSiigo->setRefMasMovhbMovcont( str_replace(".", "",  ($house)?$house->getInoMaster()->getCaReferencia() : ""  ));
-                    $detComproSiigo->setNroBlhMovhbMovcont(  ($house)?$house->getCaDoctransporte():"" );
-                    $detComproSiigo->save($conn);
-                }
-            }
-            //$autoret
-            /*************************/
-
-    /*        ProjectConfiguration::registerZend();
-
-            $client = new Zend_Soap_Client( "http://10.192.1.97:8000/WebService2/Service1.asmx?wsdl", array('encoding'=>'ISO-8859-1', 'soap_version'=>SOAP_1_2 ));
-            $result = $client->actualiza(array(a=>"2014",t=>$tipoComprobante->getCaTipo(),nt=>$tipoComprobante->getCaComprobante(),c=>$consecutivo));
-
-            $comproSiigo->refresh();
-            $indincor=$comproSiigo->getIndIncorpCont();
-
-            if($indincor=="+6" || $indincor=="6")
-            {
-                $comprobante->setCaEstado(InoComprobante::ERROR_TRANSFERIDO);
-            }
-            else if($indincor=="+5" || $indincor=="5")
-            {
-                $comprobante->setCaEstado(InoComprobante::TRANSFERIDO);
-            }*/
-            $comprobante->setCaConsecutivo($consecutivo);
-            $comprobante->setCaFchcomprobante(date("Y-m-d"));
-            $comprobante->setCaValor($totalsinimpuestos);
-            $comprobante->setCaValor2($total);
-            $comprobante->setCaUsugenero($this->getUser()->getUserId());
-            $comprobante->setCaFchgenero(date("Y-m-d H:i:s"));
-            $comprobante->setCaPlazo($dcredito);
-
-            //$comprobante->setCaEstado(InoComprobante::TRANSFERIDO);
-            if($tipoComprobante->getCaTipo()=="C")
-                $comprobante->setCaEstado(InoComprobante::TRANSFERIDO);
-            
-            $comprobante->save($conn);
-
-            if( $tipoComprobante->getCaTipo()=="F" && $comprobante->getCaId()=="800024075" && $tipoComprobante->getCaIdempresa()=="8"  )
-            {
-                $resultadoCosto=InoCostosSea::setCosto($comprobante,$conn);
-                //echo $resultadoCosto;
-                if($resultadoCosto<0)
-                {
-                    switch ($resultadoCosto)
-                    {
-                        case "-1":
-                            $info="error:$resultadoCosto -> HBL: NO ENCONTRADO";
-                            break;
-                        case "-2":
-                            $info="error:$resultadoCosto -> REFERENCIA MARITIMA CERRADA";
-                            break;
-                        case "-3":
-                            $info="error:$resultadoCosto -> REFERENCIA MARITIMA YA POSEE COSTO INGRESADO";
-                            break;
-                        case "-4":
-                            $info="error:$resultadoCosto -> NO SE ENCONTRO LA DEDUCCION EN EL CASO MARITIMO";
-                            break;
-                    }
-
-                    Utils::sendEmail(
-                        array(
-                            "from"=>"colsys@coltrans.com.co",
-                            "fromname" => "colsys",
-                            "to"=>$this->getUser()->getEmail().",gerencia@colotm.com",
-                            "subject"=>"Error al enviar costo a ref maritima",
-                            "body"=>"Error al enviar costo a ref maritima",
-                            "mensaje"=> "No fue posible pasar el costo :$info<br>"
-                                        ."Ref :".$house->getInoMaster()->getCaReferencia()."<br>"
-                                        ."Comprobante:".$consecutivo."<br>"
-                            )
-                        );
-                }
-            }
-            $conn->commit();
-
-            if($tipoComprobante->getCaTipo()=="F")
-            {
-                /*$request->setParameter("idcomprobante", $idcomprobante);
-                $request->setParameter("info", $info);
-                $this->executeEnviarSiigoConect($request);
-                 * 
-                 */
-                try{
-                    $this->EnviarSiigoConect($idcomprobante);
-                }catch(Exception $e) 
-                {
-                    
-                }
-            }
-            
-            
-            $success=true;
+            case "F":
+                $idinttipo=7;
+                break;
+            case "C":
+                $idinttipo=13;
+                break;
         }
-        /*catch(Exception $e)
+        $idtransaccion= IntTransaccionesOut::procesarTransacciones($idinttipo, $idcomprobante);
+        
+        if($idtransaccion>0)
         {
-            $errorInfo=$e->getMessage();
-            $conn->rollback();
-            $success=false;
-        }*/
-
-        $this->responseArray = array("errorInfo" => $errorInfo,"info" => $info, "id" => implode(",", $ids), "idreg" => implode(",", $ids_reg), "success" => $success,"consecutivo"=>$consecutivo ,"indincor"=>$indincor,"wsdl"=>$result );
+            try{
+            $resul=IntTransaccionesOut::enviarWs($idtransaccion);
+            $success=true;
+            }catch(Exception $e)
+            {
+                $resul=$e->getTraceAsString();
+                $success=false;
+            }
+        }
+        
+        $this->responseArray = array("success" => $success,"resul"=>$resul  );
         $this->setTemplate("responseTemplate");
     }
     
@@ -2136,8 +1561,23 @@ class inoF2Actions extends sfActions {
         try {
             $idcomprobante = $request->getParameter("idcomprobante");
             $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
+            
+            
+            $transout= new IntTransaccionesOut();        
+            $this->getRequest()->setParameter('idtipo', "10");
+            $this->getRequest()->setParameter('indice1', $idcomprobante);
 
-            $comprobante->anular($this->getUser()->getUserId());
+            $idtransaccion=sfContext::getInstance()->getController()->getPresentationFor('integraciones', 'procesarTransacciones');
+            if($idtransaccion>0)
+            {
+                $resul=integracionesActions::enviarWs($idtransaccion);            
+                if($resul=="Ok")
+                {
+                    $comprobante->anular($this->getUser()->getUserId());
+                }
+            }
+
+            
             //InoComprobante::TRANSFERIDO;
             $this->responseArray = array("success" => "true", "errorInfo" => "");
         } catch (Exception $e) {
@@ -2182,12 +1622,11 @@ class inoF2Actions extends sfActions {
         $houses = json_decode($datos);
         $idshouse = array();
         $ids = array();
-        try {
+        //try {
             foreach ($houses as $c) {
 
                 if ($c->idhouse) {
                     $house = Doctrine::getTable("InoHouse")->find($c->idhouse);
-
                     $this->forward404Unless($house);
                 } else {
                     $house = new InoHouse();
@@ -2209,15 +1648,31 @@ class inoF2Actions extends sfActions {
                     $house->setCaVolumen($c->volumen);
                     if($c->idbodega>0)
                         $house->setCaIdbodega($c->idbodega);
+                    
+                    //echo "<pre>";print_r($c->equipos);echo "</pre>";
+                    $houseSea=$house->getInoHouseSea();
+                    if($houseSea->count()<1)
+                        $houseSea=new InoHouseSea();
+                    $datos=json_decode($houseSea->getCaDatos());
+                    //$equipos=$c->equipos;
+                    $datos->equipos=$c->equipos;
+                    $houseSea->setCaDatos(json_encode($datos));
+                    
+                    $houseSea->setCaContinuacion($c->continuacion);
+                    $houseSea->setCaContinuacionDest($c->destinofinal);
+                    
+                    
+                    $house->setInoHouseSea($houseSea);
+                    
                     $house->save();
                     $ids[] = $c->null;
                 }
                 $idshouse[] = $house->getCaIdhouse();
             }
             $this->responseArray = array("errorInfo" => '', "id" => implode(",", $ids), "idhouse" => implode(",", $idshouse), "success" => true);
-        } catch (Exception $e) {
+        /*} catch (Exception $e) {
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
-        }
+        }*/
 
         $this->setTemplate("responseTemplate");
     }
@@ -2568,7 +2023,7 @@ class inoF2Actions extends sfActions {
             $iddetalle = $request->getParameter("iddetalle");
 
             $obj = null;
-            if ($idcomprobante > 0) {
+            if ($idcomprobante !="" && $idcomprobante > 0) {
                 $obj = Doctrine::getTable("InoComprobante")->find($idcomprobante);
                 $c = $obj->getCaIdcomprobante();
             } else if ($iddetalle > 0) {
@@ -2751,7 +2206,8 @@ class inoF2Actions extends sfActions {
         $contenedores = $request->getParameter("gridContenedores");
         $contenedores = json_decode($contenedores);
 
-        try {
+        //try 
+        {
             $ids = array();
             $idequipos = array();
             foreach ($contenedores as $contenedor) {
@@ -2763,7 +2219,8 @@ class inoF2Actions extends sfActions {
                     $equipo = Doctrine::getTable("InoEquipo")->find($contenedor->idequipo);
                 }
                 $equipo->setCaIdconcepto($contenedor->idconcepto);
-                $equipo->setCaIdvehiculo($contenedor->idvehiculo);
+                if($contenedor->idvehiculo!="")
+                    $equipo->setCaIdvehiculo($contenedor->idvehiculo);
                 $equipo->setCaSerial(utf8_decode($contenedor->serial));
                 $equipo->setCaIdmaster($request->getParameter("idmaster"));
                 $equipo->setCaNumprecinto(utf8_decode($contenedor->precinto));
@@ -2778,9 +2235,9 @@ class inoF2Actions extends sfActions {
             }
 
             $this->responseArray = array("success" => true, "ids" => $ids, "idequipos" => $idequipos);
-        } catch (Exception $e) {
+        } /*catch (Exception $e) {
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
-        }
+        }*/
         $this->setTemplate("responseTemplate");
     }
 
