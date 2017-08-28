@@ -350,6 +350,7 @@ TipoRecargo:
     ca_tipo: string
     ca_transporte: string
     ca_incoterms: string
+    ca_aplicaciones: string
     ca_fcheliminado: timestamp
     ca_usueliminado: string
 #    ca_impoexpo: string
@@ -802,3 +803,21 @@ PorcentajesComisiones:
       local: ca_usucreado
       foreign: ca_login
       type: one
+
+DianReservado:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: public
+  tableName: tb_dianreservados
+  columns:
+    ca_numero_resv: 
+      type: integer   
+      primary: true
+      notnull: true
+    ca_anno: numeric
+    ca_numenvio: numeric
+    ca_fchreservado: timestamp
+    ca_usureservado: string(20)
+  
