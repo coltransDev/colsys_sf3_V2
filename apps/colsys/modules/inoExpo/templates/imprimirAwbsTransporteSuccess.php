@@ -136,7 +136,30 @@ foreach ($guias as $key => $guia){
     }
 
     $pdf->SetXY(18, 62 + $marg);
-    if ($reporte->getCaModalidad() == "CONSOLIDADO" and $reporte->getIdsAgente() and !$guiahija){
+    if ($reporte->getCaModalidad() == "CONSOLIDADO" and $reporte->getCaIdconsignarmaster() and !$guiahija){
+        $tercero = Doctrine::getTable("Tercero")->find($reporte->getCaIdconsignarmaster());
+        $id = "";
+        if ($tercero->getCaIdentificacion()){
+            $tipo = Doctrine::getTable("IdsTipoIdentificacion")
+                ->createQuery("t")
+                ->leftJoin("t.Trafico tt")
+                ->addOrderBy("t.ca_tipoidentificacion")
+                ->addwhere("t.ca_idtrafico = ?", $tercero->getCiudad()->getCaIdtrafico())
+                ->limit(1)
+                ->fetchOne();
+            if($tipo){
+                $id.= " ".$tipo->getCaNombre().": ";
+            }else{
+                $id.= "Id: ";
+            }
+            $id.= $tercero->getCaIdentificacion();
+        }
+        $consignee = $tercero->getCaNombre().$id."\n";
+        $consignee.= $tercero->getCaDireccion()."\n";
+        $consignee.= "Cnt.: ".$tercero->getCaContacto()."\n";
+        $consignee.= "Tels.: ". $tercero->getCaTelefonos()."\n";
+        $consignee.= $tercero->getCiudad()->getCaCiudad().", ".$tercero->getCiudad()->getTrafico()->getCaNombre();
+    } else if ($reporte->getCaModalidad() == "CONSOLIDADO" and $reporte->getIdsAgente() and !$guiahija){
         $agente = $reporte->getIdsAgente();
         $sucursalag=$reporte->getIdsSucursal();
         if(!$sucursalag)
