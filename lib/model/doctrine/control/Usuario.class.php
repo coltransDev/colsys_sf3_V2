@@ -548,4 +548,8 @@ class Usuario extends BaseUsuario {
         $email->setCaBodyhtml($texto);
         $email->save();        
     }
+    
+    public function getCaApellidos() {
+        return $this->getCaPapellido().' '.$this->getCaSapellido();        
+    }
 }
