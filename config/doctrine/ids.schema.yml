@@ -72,6 +72,10 @@ Ids:
       local: ca_id
       foreign: ca_id
       type: many
+    IdsEstadoSap:
+      local: ca_id
+      foreign: ca_id
+      type: one
     
 IdsTipoIdentificacion:  
   options:
@@ -212,6 +216,7 @@ IdsAgente:
     ca_activo: boolean
     ca_tplogistics: boolean
     ca_infosec: string
+    ca_idclasificacion: integer
   relations:
     Ids:
       local: ca_idagente
@@ -220,6 +225,10 @@ IdsAgente:
     IdsTipo:
       local: ca_tipo
       foreign: ca_tipo
+      type: one
+    MaestraClasificacion:
+      local: ca_idclasificacion
+      foreign: ca_idclasificacion
       type: one
 
 IdsProveedor:
@@ -250,6 +259,7 @@ IdsProveedor:
     ca_antpenales: string(200)
     ca_antfinancieros: string(200)
     ca_controladoporsig: integer
+    ca_idclasificacion: integer
     ca_fchvencimiento: date
     ca_jefecuenta: string(15)
     ca_fchactualizado: timestamp
@@ -267,6 +277,10 @@ IdsProveedor:
       alias: Jefe
       local: ca_jefecuenta
       foreign: ca_login
+      type: one
+    MaestraClasificacion:
+      local: ca_idclasificacion
+      foreign: ca_idclasificacion
       type: one
 
 IdsEmpresa:
@@ -766,6 +780,7 @@ IdsCliente:
     ca_ciiu_ctr: string(4)
     ca_tipoidentificacion_rl: integer
     ca_numidentificacion_rl: string(20)
+    ca_idclasificacion: integer
   relations:
     Ids:
       local: ca_idcliente
@@ -810,6 +825,10 @@ IdsCliente:
     FichaTecnica:
       local: ca_idcliente
       foreign: ca_idcliente
+      type: one
+    MaestraClasificacion:
+      local: ca_idclasificacion
+      foreign: ca_idclasificacion
       type: one
 
 Documentosxconc:
@@ -984,7 +1003,6 @@ IdsCredito:
       foreign: ca_login
       type: one
 
-
 IdsEstadoSap:
   options:
     symfony:
@@ -1021,4 +1039,3 @@ IdsEstadoSap:
       foreign: ca_login
       type: one
       class: Usuario
-        

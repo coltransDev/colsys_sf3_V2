@@ -350,7 +350,6 @@ TipoRecargo:
     ca_tipo: string
     ca_transporte: string
     ca_incoterms: string
-    ca_aplicaciones: string
     ca_fcheliminado: timestamp
     ca_usueliminado: string
 #    ca_impoexpo: string
@@ -821,3 +820,32 @@ DianReservado:
     ca_fchreservado: timestamp
     ca_usureservado: string(20)
   
+MaestraClasificacion:
+  options:
+    symfony:
+      form: false
+      filter: flase
+  generatePath: public
+  tableName: tb_maestra_clasificacion
+  columns:
+    ca_idclasificacion:
+      type: integer
+      notnull: true
+      primary: true
+      autoincrement: true
+    ca_idpadre: integer
+    ca_nombre: string
+    ca_tipo: string
+    ca_datos: string
+    ca_estado: string
+  relations:
+    ClasificacionPadre:
+      local: ca_idclasificacion
+      foreign: ca_idpadre
+      type: one
+      class: MaestraClasificacion
+    ClasificacionHijos:
+      local: ca_idpadre
+      foreign: ca_idclasificacion
+      type: one
+      class: MaestraClasificacion
