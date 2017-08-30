@@ -219,7 +219,7 @@ IdsAgente:
     ca_consolcargo: boolean
     ca_modalidad: string(20)
     ca_observaciones: text
-    ca_modalidad: string(80)
+    ca_sucursal: string(80)
     ca_idclasificacion: integer
   relations:
     Ids:
