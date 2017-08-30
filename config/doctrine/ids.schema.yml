@@ -216,6 +216,10 @@ IdsAgente:
     ca_activo: boolean
     ca_tplogistics: boolean
     ca_infosec: string
+    ca_consolcargo: boolean
+    ca_modalidad: string(20)
+    ca_observaciones: text
+    ca_modalidad: string(80)
     ca_idclasificacion: integer
   relations:
     Ids:
