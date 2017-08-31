@@ -6,9 +6,19 @@
         //bodyPadding: 10,
 //    "idmaster":12176,
         autoHeight: true,
-        onRender: function (ct, position) {
-
+        onRender: function (ct, position) {            
             tabs = new Array();
+            //alert(this.permisos.toSource());
+            /*tabs.push({
+                    xtype: 'Colsys.Pruebas.WgRowWidget',
+                    title: "General ",
+                    id: "form-prueba" + this.idmaster,
+                    name: "form-prueba-" + this.idmaster,
+                    idmaster: this.idmaster,
+                    idtransporte: this.idtransporte,
+                    idimpoexpo: this.idimpoexpo,
+                    permisos: this.permisos
+                });*/
             
             if (this.permisos.General == true) {
                 tabs.push({
@@ -25,7 +35,7 @@
             //console.log(this.modalidad);
             //if (this.modalidad == "FCL") {
 
-            if (this.idtransporte != "A\u00E9reo") {	
+            if (this.idtransporte != "A\u00E9reo") {    
                 tabs.push({
                     xtype: 'Colsys.Ino.GridContenedores',
                     title: "Equipos ",
@@ -49,6 +59,7 @@
                                 idmaster: this.idmaster,
                                 idtransporte: this.idtransporte,
                                 idimpoexpo: this.idimpoexpo,
+                                idmodalidad: this.modalidad,
                                 permisos: this.permisos
                             });
                 }
@@ -215,6 +226,19 @@
                     title: "Auditoria",
                     id: "auditoria-" + this.idmaster,
                     name: "auditoria-" + this.idmaster,
+                    idticket: this.idticket,
+                    idmaster: this.idmaster,
+                    idtransporte: this.idtransporte,
+                    idimpoexpo: this.idimpoexpo,
+                    idreferencia: this.idreferencia,
+                    permisos: this.permisos
+                });
+
+                tabs.push({
+                    xtype: 'Colsys.Ino.PanelRadicacion',
+                    title: "Radicacion",
+                    id: "radicacion-" + this.idmaster,
+                    name: "radicacion-" + this.idmaster,
                     idticket: this.idticket,
                     idmaster: this.idmaster,
                     idtransporte: this.idtransporte,
