@@ -142,6 +142,8 @@ class widgets5Actions extends sfActions {
 
         $this->idmaster = $request->getParameter("idmaster");
 
+        //echo "idmaster".$request->getParameter("idmaster");
+
         $q = Doctrine::getTable("InoHouse")
                 ->createQuery("h")
                 ->select("h.ca_idhouse,h.ca_doctransporte,cl.ca_idcliente,cl.ca_compania,r.ca_mercancia_desc,m.ca_impoexpo,m.ca_transporte,
@@ -175,10 +177,13 @@ class widgets5Actions extends sfActions {
 
     public function executeDatosTipoComprobante($request) {
         $user = $this->getUser();
-//        $this->tipoComprobante;
+        $this->tipoComprobante = $request->getParameter("tipo")?explode(",",$request->getParameter("tipo")):null;
+        $aplicacion = $request->getParameter("app");
+        
         if (count($this->tipoComprobante) < 1) {
             $this->tipoComprobante = array('F', 'C');
         }
+        
         $idempresa=($request->getParameter("idempresa")!="")?$request->getParameter("idempresa"):$user->getIdempresa();
                 
         $q = Doctrine::getTable("InoTipoComprobante")
@@ -191,6 +196,10 @@ class widgets5Actions extends sfActions {
     ->addwhere("ca_idempresa=? and t.ca_activo=?", array($idempresa,true))
                 ->addOrderBy("t.ca_tipo, t.ca_comprobante");
 
+        if($aplicacion){
+            $q->addWhere("t.ca_aplicacion = ?", $aplicacion);
+        }
+
         $tipos = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
 
         $this->data = array();
@@ -199,7 +208,7 @@ class widgets5Actions extends sfActions {
             $tipoStr .= $tipo["t_ca_tipo"] . "-" . str_pad($tipo["t_ca_comprobante"], 2, "0", STR_PAD_LEFT) . " " . $tipo["t_ca_titulo"];
             $this->data[] = array("id" => $tipo["t_ca_idtipo"], "name" => utf8_encode($tipoStr), "idempresa" => $tipo["t_ca_idempresa"], "idsucursal" => $tipo["t_ca_idsucursal"]);
         }
-        $this->responseArray = array("root" => $this->data, "total" => count($this->data), "success" => true, "debug" => $sql);
+        $this->responseArray = array("root" => $this->data, "total" => count($this->data), "success" => true, "debug" => $q->getSqlQuery());
         $this->setTemplate("responseTemplate");
     }
 
@@ -835,7 +844,7 @@ class widgets5Actions extends sfActions {
                 ->createQuery("e")
                 ->select("*")
                 ->orderBy("ca_idempresa ASC")
-                ->where("ca_activo=TRUE and ca_pathsiigo !=''");
+                ->where("ca_activo=TRUE and ca_idsap IS NOT NULL");
         $debug = $q->getSqlQuery();
         $datos = $q->execute();
         $a = array();
@@ -901,6 +910,150 @@ class widgets5Actions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
+   /*  public function executeListaReportesJSON() {
+        $criterio = $this->getRequestParameter("query");
+
+        if ($criterio) {
+
+            $transporte = utf8_decode($this->getRequestParameter("transporte"));
+            $impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
+            $openedOnly = $this->getRequestParameter("openedOnly");
+            $origen = utf8_decode($this->getRequestParameter("origen"));
+            $traorigen = Doctrine::getTable("Ciudad")->find($origen);
+            if ($traorigen){
+                $traficoorigen = $traorigen->getCaIdtrafico();
+                $ciudadesportrafico = Doctrine::getTable("Ciudad")
+                    ->createQuery("c")
+                    ->addWhere("c.ca_idtrafico = ?" , $traficoorigen)
+                    ->execute();
+                $arrayciudades = array();
+                foreach ($ciudadesportrafico as $ciudad) {
+                    $arrayciudades[] = "'".utf8_encode($ciudad->getCaIdciudad())."'";
+                }
+                $ciudades = implode(",", $arrayciudades);
+            }
+            $destino = utf8_decode($this->getRequestParameter("destino"));
+
+            $q = Doctrine::getTable("Reporte")
+                    ->createQuery("r")
+                    ->select("r.ca_idreporte, b.ca_nombre, r.ca_idbodega, r.ca_consecutivo,r.ca_version ,r.ca_origen,r.ca_destino,o.ca_ciudad, d.ca_ciudad, o.ca_idciudad, d.ca_idciudad,o.ca_idtrafico, d.ca_idtrafico, r.ca_mercancia_desc,
+                                    r.ca_idlinea, r.ca_impoexpo, r.ca_transporte, r.ca_modalidad, r.ca_incoterms, con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, con.ca_cargo
+                                    ,cl.ca_idcliente, cl.ca_compania, cl.ca_preferencias, cl.ca_confirmar, cl.ca_coordinador, usu.ca_login, usu.ca_nombre, r.ca_orden_clie")
+                    ->leftJoin("r.Bodega b")
+                    ->leftJoin("r.Origen o")
+                    ->leftJoin("r.Destino d")
+                    ->leftJoin("r.Contacto con")
+                    ->leftJoin("con.Cliente cl")
+                    ->leftJoin("cl.LibCliente libcli")
+                    ->leftJoin("r.Usuario usu")
+                    ->addWhere("r.ca_consecutivo LIKE ?", $criterio . "%")
+                    ->addWhere("r.ca_usuanulado IS NULL");
+            if ($transporte != "") {
+                $q->addWhere("r.ca_transporte = ?", $transporte);
+            }
+
+            if ($impoexpo != "") {
+                if ($impoexpo == Constantes::IMPO) {
+                    $q->addWhere("(r.ca_impoexpo = ? OR r.ca_impoexpo = ?)", array($impoexpo, Constantes::TRIANGULACION));
+                } else {
+                    $q->addWhere("r.ca_impoexpo = ?", $impoexpo);
+                }
+            }
+            if ($openedOnly) {
+                $q->addWhere("r.ca_idetapa != ?", "99999");
+            }
+
+            if ($transporte != "OTM-DTA") {
+                if ($origen != "") {
+                    $q->addWhere("r.ca_origen in ($ciudades) ");
+                }
+                if ($destino != "") {
+                    $q->addWhere("r.ca_destino = ? ", $destino);
+                }
+            }
+
+            $q->addOrderBy("to_number(SUBSTR(r.ca_consecutivo , 1 , (POSITION('-' in r.ca_consecutivo)-1) ),'999999')  desc");
+            $q->addOrderBy("r.ca_version  desc");
+            //$q->orderBy("r.ca_fchcreado desc");
+
+
+            $reportes = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->limit(50)->execute();
+
+            foreach ($reportes as $key => $val) {
+                if ($transporte != "OTM-DTA") {
+                    $reportes[$key]["d_ca_ciudad"] = utf8_encode($reportes[$key]["r_ca_destino"]);
+                    $reportes[$key]["o_ca_ciudad"] = utf8_encode($reportes[$key]["r_ca_origen"]);
+                } else {
+                    $reportes[$key]["d_ca_ciudad"] = utf8_encode($reportes[$key]["d_ca_ciudad"]);
+                    $reportes[$key]["o_ca_ciudad"] = utf8_encode($reportes[$key]["o_ca_ciudad"]);
+                }
+                $reportes[$key]["r_ca_idbodega"] = utf8_encode($reportes[$key]["r_ca_idbodega"]);
+                $reportes[$key]["b_ca_nombrebodega"] = utf8_encode($reportes[$key]["b_ca_nombre"]);
+                $reportes[$key]["b_ca_nombre"] = utf8_encode($reportes[$key]["b_ca_nombre"]);
+                $reportes[$key]["o_ca_ciudad"] = utf8_encode($reportes[$key]["o_ca_ciudad"]);
+                $reportes[$key]["d_ca_ciudad"] = utf8_encode($reportes[$key]["d_ca_ciudad"]);
+                $reportes[$key]["r_ca_mercancia_desc"] = utf8_encode($reportes[$key]["r_ca_mercancia_desc"]);
+                $reportes[$key]["r_ca_impoexpo"] = utf8_encode($reportes[$key]["r_ca_impoexpo"]);
+                $reportes[$key]["r_ca_transporte"] = utf8_encode($reportes[$key]["r_ca_transporte"]);
+                $reportes[$key]["cl_ca_compania"] = utf8_encode($reportes[$key]["cl_ca_compania"]);
+                $reportes[$key]["con_ca_idcontacto"] = utf8_encode($reportes[$key]["con_ca_idcontacto"]);
+                $reportes[$key]["con_ca_nombres"] = utf8_encode($reportes[$key]["con_ca_nombres"]);
+                $reportes[$key]["con_ca_papellido"] = utf8_encode($reportes[$key]["con_ca_papellido"]);
+                $reportes[$key]["con_ca_sapellido"] = utf8_encode($reportes[$key]["con_ca_sapellido"]);
+                $reportes[$key]["con_ca_cargo"] = utf8_encode($reportes[$key]["con_ca_cargo"]);
+                $reportes[$key]["cl_ca_preferencias"] = utf8_encode($reportes[$key]["cl_ca_preferencias"]);
+                $reportes[$key]["usu_ca_nombre"] = isset($reportes[$key]["usu_ca_nombre"]) ? utf8_encode($reportes[$key]["usu_ca_nombre"]) : "";
+
+                $reportes[$key]["r_ca_modalidad"] = utf8_encode($reportes[$key]["r_ca_modalidad"]);
+                $reportes[$key]["r_ca_orden_clie"] = utf8_encode($reportes[$key]["r_ca_orden_clie"]);
+
+                $reportes[$key]["r_ca_idlinea"] = utf8_encode($reportes[$key]["r_ca_idlinea"]); 
+
+
+                if ($reportes[$key]["r_ca_idlinea"] != "") {
+                    $q = Doctrine_Query::create()
+                            ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, p.ca_transporte ")
+                            ->from("IdsProveedor p")
+                            ->innerJoin("p.Ids id")
+                            ->addOrderBy("id.ca_nombre");
+                    $q->addWhere("p.ca_idproveedor=?", $reportes[$key]["r_ca_idlinea"]);
+                    $lineas = $q->execute();
+                    if (count($lineas) > 0) {
+                        $reportes[$key]["p_ca_linea"] = utf8_encode(($lineas[0]['ca_sigla'] ? $lineas[0]['ca_sigla'] . " - " : "") . utf8_encode($lineas[0]['Ids']['ca_nombre']));
+                    }
+                }
+
+                $reporte = Doctrine::getTable("Reporte")->find($val["r_ca_idreporte"]);
+                if ($reporte) {
+                    $provId = $reporte->getProveedores();
+                    //print_r($provId);
+                    if ($provId) {
+                        $reportes[$key]["ca_tercero"] = utf8_encode($provId[0]->getCaNombre());
+                        $reportes[$key]["ca_idtercero"] = $provId[0]->getCaIdtercero();
+                    }
+                    $reportes[$key]["cl_ca_confirmar"] = utf8_encode($reportes[$key]["cl_ca_confirmar"]);
+
+                    //$reporte = Doctrine::getTable("Reporte")->find( $val["r_ca_idreporte"]);
+                    $repstatus = $reporte->getUltimoStatus();
+
+                    if ($repstatus) {
+                        $reportes[$key]["ca_peso"] = $repstatus->getCaPeso();
+                        $reportes[$key]["ca_piezas"] = $repstatus->getCaPiezas();
+                        $reportes[$key]["ca_volumen"] = $repstatus->getCaVolumen();
+                        $reportes[$key]["ca_doctransporte"] = $repstatus->getCaDoctransporte();
+                    }
+                }
+
+                $reportes[$key]["cl_ca_confirmar"] = utf8_encode($reportes[$key]["cl_ca_confirmar"]);
+            }
+            
+            $this->responseArray = array("root" => $reportes, "total" => count($reportes), "success" => true, "tra"=> $ciudades);
+        } else {
+            $this->responseArray = array("root" => array(), "total" => 0, "success" => true);
+        }
+        //print_r($reportes);        
+        $this->setTemplate("responseTemplate");
+    }*/
     public function executeListaReportesJSON() {
         $criterio = $this->getRequestParameter("query");
 
@@ -2372,7 +2525,7 @@ class widgets5Actions extends sfActions {
     } 
 
     public function executeDatosConceptosContenedores(sfWebRequest $request){
-    $transporte = utf8_encode($request->getParameter("idtransporte"));
+    $transporte = utf8_decode($request->getParameter("idtransporte"));
     $modalidad = utf8_encode($request->getParameter("idimpoexpo"));
 
           $q = Doctrine_Query::create()
@@ -2382,7 +2535,7 @@ class widgets5Actions extends sfActions {
                 ->addWhere("c.ca_modalidad=?", Constantes::FCL)
                 ->addOrderBy("c.ca_liminferior")
                 ->addOrderBy("c.ca_concepto");
-
+          //echo $transporte." ";
     $q->fetchArray();
 
     $conceptos = $q->execute();
@@ -2953,58 +3106,52 @@ class widgets5Actions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
     
-    //CRM
-    public function executeDatosTipoSeguimiento(sfWebRequest $request) {
-        $caso = "CU262";
-        $datomod = ParametroTable::retrieveByCaso($caso, null, null, null);
-        $data = array();
-        foreach ($datomod as $dato) {
-            $data[] = array("id" => $dato["ca_identificacion"],
-                "name" => utf8_encode($dato["ca_valor"]));
+    public function executeDatosComboListaReferencias(sfWebRequest $request){
+
+        $criterio = $this->getRequestParameter("query");
+        $impoexpo = utf8_decode($request->getParameter("impoexpo"));
+        $idtransporte = utf8_decode($request->getParameter("idtransporte"));
+
+        if ($criterio) {
+            $q = Doctrine::getTable("InoMaster")
+                    ->createQuery("m")
+                    ->leftJoin("m.Origen o")
+                    ->leftJoin("m.Destino d")
+                    ->addWhere("m.ca_referencia LIKE ?", $criterio . "%")
+                    ->orderBy("m.ca_idmaster DESC")
+                    ->limit(50)
+                    ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+
+            if($idtransporte){
+                $q->addWhere("m.ca_transporte = ?", $idtransporte);
         }
 
-        $this->responseArray = array("success" => true, "root" => $data);
-        $this->setTemplate("responseTemplate");
+            if($impoexpo){
+                $q->addWhere("m.ca_impoexpo = ?", $impoexpo);
     }
 
-    public function executeSeguimientoAntecesor(sfWebRequest $request) {
-        $idCliente = $request->getParameter("idcliente");
+            $debug = $q->getSqlQuery();
+            $refs = $q->execute();
 
-        $seguimientos = Doctrine::getTable("IdsEventos")
-                ->createQuery("i")
-                ->addWhere('i.ca_idcliente = ?', $idCliente)
-                ->addWhere('i.ca_idantecedente = 0')
-                ->execute();
-
-        $data = array();
-        $data[] = array("id" => 0,
-            "name" => utf8_encode("Ninguno - Seguimiento nuevo"));
-        foreach ($seguimientos as $seguimiento) {
-            $data[] = array("id" => $seguimiento["ca_idevento"],
-                "name" => utf8_encode($seguimiento["ca_asunto"]));
+            foreach ($refs as $k => $c) {
+                $refs[$k]["m_ca_impoexpo"] = utf8_encode($refs[$k]["m_ca_impoexpo"]);
+                $refs[$k]["m_ca_transporte"] = utf8_encode($refs[$k]["m_ca_transporte"]);
+                $refs[$k]["o_ca_ciudad"] = utf8_encode($refs[$k]["o_ca_ciudad"]);
+                $refs[$k]["o_ca_puerto"] = utf8_encode($refs[$k]["o_ca_puerto"]);
+                $refs[$k]["d_ca_ciudad"] = utf8_encode($refs[$k]["d_ca_ciudad"]);
+                $refs[$k]["d_ca_puerto"] = utf8_encode($refs[$k]["d_ca_puerto"]);
+                $refs[$k]["m_ca_master"] = utf8_encode($refs[$k]["m_ca_master"]);            
+                $refs[$k]["m_ca_observaciones"] = utf8_encode($refs[$k]["m_ca_observaciones"]);
+                $refs[$k]["m_ca_motonave"] = utf8_encode($refs[$k]["m_ca_motonave"]);
+                $refs[$k]["m_ca_motivoanulado"] = utf8_encode($refs[$k]["m_ca_motivoanulado"]);
+                $refs[$k]["m_ca_datos"] = utf8_encode($refs[$k]["m_ca_datos"]);
+            }
+            
+            //echo "<pre>";print_r($refs);echo "</pre>";
+            $this->responseArray = array("success" => true, "root" => $refs, "total" => count($refs), "debug" => $debug);        
+        }else {
+            $this->responseArray = array("root" => array(), "total" => 0, "success" => true);
         }
-
-        $this->responseArray = array("success" => true, "root" => $data);
-        $this->setTemplate("responseTemplate");
-    }
-
-    public function executeDatosTipoIdentificacion(sfWebRequest $request) {
-        $q = Doctrine::getTable("IdsTipoIdentificacion")
-                ->createQuery("i");
-        if ($request->getParameter("idtrafico")) {
-            $q->addWhere('ca_idtrafico = ?', $request->getParameter("idtrafico"));
-        }
-        $identificaciones =  $q->execute();
-
-        $data = array();
-        foreach ($identificaciones as $identificacion) {
-            $data[] = array("id" => $identificacion["ca_tipoidentificacion"],
-                "name" => utf8_encode($identificacion["ca_nombre"]),
-                "trafico" => utf8_encode($identificacion["ca_idtrafico"]),
-                "trafico" => utf8_encode($identificacion->getTrafico()->getCaNombre()));
-        }
-
-        $this->responseArray = array("success" => true, "root" => $data);
         $this->setTemplate("responseTemplate");
     }
 
@@ -3104,7 +3251,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosCargos(sfWebRequest $request) {
-        $caso = $request->getParameter("externos")?"CU265":"CU266";
+        $caso = "CU266";
         $datomod = ParametroTable::retrieveByCaso($caso, null, null, null);
         $data = array();
         foreach ($datomod as $dato) {
@@ -3176,5 +3323,49 @@ class widgets5Actions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
     
+    /**
+     * @autor JFNARIÑO
+     * @return un objeto JSON con los datos de modalidades filtradas por impoexpo y/o transporte
+     * @param sfRequest $request A request 
+     *               transporte : tipo de transporte (areo. maritimo, terrestre)
+     *         impoexpo : tipo impoexpo (importación, exportación, entre otros)
+     *              
+     * @date:  2016-03-28
+     */
+    public function executeDatosMuelles() {
+        $transport_parameter = utf8_decode($this->getRequestParameter("transporte"));
+        $impoexpo_parameter = utf8_decode($this->getRequestParameter("impoexpo"));
+
+        $q = Doctrine::getTable("Modalidad")
+                ->createQuery("m");
+
+        if ($impoexpo_parameter) {
+            $q->where(" m.ca_impoexpo = ? ", $impoexpo_parameter);
+}
+
+        if ($transport_parameter) {
+            $q->addWhere("m.ca_transporte = ? ", $transport_parameter);
+        }
+
+        $q->addOrderBy("m.ca_impoexpo ASC");
+        $q->addOrderBy("m.ca_transporte ASC");
+        $q->addOrderBy("m.ca_modalidad ASC");
+
+        $transportes = $q->execute();
+
+        $modalidades = array();
+
+        foreach ($transportes as $transporte) {
+            $row = array("idmodalidad" => utf8_encode($transporte->getCaIdmodalidad()),
+                "impoexpo" => utf8_encode($transporte->getCaImpoexpo()),
+                "transporte" => utf8_encode($transporte->getCaTransporte()),
+                "modalidad" => utf8_encode($transporte->getCaModalidad()));
+            $modalidades[] = $row;
+        }
+
+
+        $this->responseArray = array("root" => $modalidades, "total" => count($modalidades), "success" => true);
+        $this->setTemplate("responseTemplate");
+    }
 }
 ?>
