@@ -12,7 +12,7 @@ class widgets5Actions extends sfActions {
 
     public function executeDatosAplicacionJSON($request) {
         $transporte = $this->getRequestParameter("transporte");
-        
+
         $this->data = array();
 
         $aplicaciones = ParametroTable::retrieveByCaso("CU064", null, $transporte);
@@ -20,7 +20,7 @@ class widgets5Actions extends sfActions {
         foreach ($aplicaciones as $aplicacion) {
             $this->data[] = array("aplicacion" => utf8_encode($aplicacion->getCaValor()));
         }
-        
+
         $this->responseArray = array("root" => $this->data, "total" => count($this->data), "success" => true);
         $this->setTemplate("responseTemplate");
     }
@@ -66,6 +66,7 @@ class widgets5Actions extends sfActions {
         $this->responseArray = array("root" => $bodegas, "total" => count($bodegas), "success" => true);
         $this->setTemplate("responseTemplate");
     }
+
     /*
      * @param 
      * query     : dato ingresado para filtrar usuarios
@@ -131,6 +132,7 @@ class widgets5Actions extends sfActions {
         }
         $this->setTemplate("responseTemplate");
     }
+
     /**
      * @autor mauricio Quinche
      * @return un objeto JSON con la información de los house de la referencia
@@ -141,8 +143,6 @@ class widgets5Actions extends sfActions {
     public function executeDatosHouse($request) {
 
         $this->idmaster = $request->getParameter("idmaster");
-
-        //echo "idmaster".$request->getParameter("idmaster");
 
         $q = Doctrine::getTable("InoHouse")
                 ->createQuery("h")
@@ -177,15 +177,15 @@ class widgets5Actions extends sfActions {
 
     public function executeDatosTipoComprobante($request) {
         $user = $this->getUser();
-        $this->tipoComprobante = $request->getParameter("tipo")?explode(",",$request->getParameter("tipo")):null;
+        $this->tipoComprobante = $request->getParameter("tipo") ? explode(",", $request->getParameter("tipo")) : null;
         $aplicacion = $request->getParameter("app");
-        
+
         if (count($this->tipoComprobante) < 1) {
             $this->tipoComprobante = array('F', 'C');
         }
-        
-        $idempresa=($request->getParameter("idempresa")!="")?$request->getParameter("idempresa"):$user->getIdempresa();
-                
+
+        $idempresa = ($request->getParameter("idempresa") != "") ? $request->getParameter("idempresa") : $user->getIdempresa();
+
         $q = Doctrine::getTable("InoTipoComprobante")
                 ->createQuery("t")
                 ->select("t.ca_idtipo, t.ca_tipo, t.ca_comprobante, t.ca_titulo, t.ca_idempresa,t.ca_idsucursal")
@@ -193,10 +193,10 @@ class widgets5Actions extends sfActions {
                 //->innerJoin("s.Ids i")
                 //->innerJoin("s.Empresa e")                
                 ->whereIn("t.ca_tipo", $this->tipoComprobante)
-    ->addwhere("ca_idempresa=? and t.ca_activo=?", array($idempresa,true))
+                ->addwhere("ca_idempresa=? and t.ca_activo=?", array($idempresa, true))
                 ->addOrderBy("t.ca_tipo, t.ca_comprobante");
 
-        if($aplicacion){
+        if ($aplicacion) {
             $q->addWhere("t.ca_aplicacion = ?", $aplicacion);
         }
 
@@ -512,15 +512,13 @@ class widgets5Actions extends sfActions {
         $idsucursal = $request->getParameter("idsucursal");
         $idcc = $request->getParameter("idcc");
 
-        if($idcc=="")
-        {            
-            if($idsucursal=="")
-            {
-                
-                if ($request->getParameter("transporte") != "" && $request->getParameter("impoexpo") != "") {                    
+        if ($idcc == "") {
+            if ($idsucursal == "") {
+
+                if ($request->getParameter("transporte") != "" && $request->getParameter("impoexpo") != "") {
                     $transporte = utf8_decode($request->getParameter("transporte"));
                     $impoexpo = utf8_decode($request->getParameter("impoexpo"));
-                } else {                    
+                } else {
                     $modo = Doctrine::getTable("Modo")->find($request->getParameter("modo"));
                     $transporte = $modo->getCaTransporte();
                     $impoexpo = $modo->getCaImpoexpo();
@@ -545,21 +543,21 @@ class widgets5Actions extends sfActions {
 
         $q = Doctrine::getTable("InoCentroCosto")
                 ->createQuery("c");
-                //->where("c.ca_idsucursal = ?", $idsucursal);
+        //->where("c.ca_idsucursal = ?", $idsucursal);
 
-        if($idcc!="")
+        if ($idcc != "")
             $q->addWhere("c.ca_idccosto = ?", $idcc);
-        
-        if($idsucursal!="")
-            $q->addWhere("c.ca_idsucursal = ?", $idsucursal);
-        
-        if($impoexpo!="")
-            $q->addWhere("c.ca_impoexpo = ?", $impoexpo);
-        if($impoexpo!="")
-            $q->addWhere("c.ca_transporte = ?", $transporte);
-        $ccosto=$q->fetchOne();
 
-        
+        if ($idsucursal != "")
+            $q->addWhere("c.ca_idsucursal = ?", $idsucursal);
+
+        if ($impoexpo != "")
+            $q->addWhere("c.ca_impoexpo = ?", $impoexpo);
+        if ($impoexpo != "")
+            $q->addWhere("c.ca_transporte = ?", $transporte);
+        $ccosto = $q->fetchOne();
+
+
         //echo $q->getSqlQuery();
         //echo $idcomprobante;exit;
         if ($ccosto) {
@@ -696,7 +694,7 @@ class widgets5Actions extends sfActions {
                 ->createQuery("c")
                 ->innerJoin("c.InoConceptoModalidad cm")
                 ->innerJoin("cm.Modalidad m")
-                ->addWhere("c.ca_costo = ? ", ($costo=="true"))
+                ->addWhere("c.ca_costo = ? ", ($costo == "true"))
                 ->addWhere("m.ca_impoexpo = ? ", $impoexpo)
                 ->addWhere("m.ca_transporte = ? ", $transporte)
                 ->addWhere("c.ca_fcheliminado is  null and m.ca_fcheliminado is  null ")
@@ -844,7 +842,7 @@ class widgets5Actions extends sfActions {
                 ->createQuery("e")
                 ->select("*")
                 ->orderBy("ca_idempresa ASC")
-                ->where("ca_activo=TRUE and ca_idsap IS NOT NULL");
+                ->where("ca_activo=TRUE and ca_pathsiigo !=''");
         $debug = $q->getSqlQuery();
         $datos = $q->execute();
         $a = array();
@@ -898,7 +896,7 @@ class widgets5Actions extends sfActions {
                     ->select("*")
                     ->where("ca_idsserie = ?", $this->idsserie)
                     ->setHydrationMode(Doctrine::HYDRATE_ARRAY);
-            
+
             $tipoDocs = $q->execute();
             $this->tipoDocs = array();
             foreach ($tipoDocs as $t) {
@@ -910,150 +908,6 @@ class widgets5Actions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
-   /*  public function executeListaReportesJSON() {
-        $criterio = $this->getRequestParameter("query");
-
-        if ($criterio) {
-
-            $transporte = utf8_decode($this->getRequestParameter("transporte"));
-            $impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
-            $openedOnly = $this->getRequestParameter("openedOnly");
-            $origen = utf8_decode($this->getRequestParameter("origen"));
-            $traorigen = Doctrine::getTable("Ciudad")->find($origen);
-            if ($traorigen){
-                $traficoorigen = $traorigen->getCaIdtrafico();
-                $ciudadesportrafico = Doctrine::getTable("Ciudad")
-                    ->createQuery("c")
-                    ->addWhere("c.ca_idtrafico = ?" , $traficoorigen)
-                    ->execute();
-                $arrayciudades = array();
-                foreach ($ciudadesportrafico as $ciudad) {
-                    $arrayciudades[] = "'".utf8_encode($ciudad->getCaIdciudad())."'";
-                }
-                $ciudades = implode(",", $arrayciudades);
-            }
-            $destino = utf8_decode($this->getRequestParameter("destino"));
-
-            $q = Doctrine::getTable("Reporte")
-                    ->createQuery("r")
-                    ->select("r.ca_idreporte, b.ca_nombre, r.ca_idbodega, r.ca_consecutivo,r.ca_version ,r.ca_origen,r.ca_destino,o.ca_ciudad, d.ca_ciudad, o.ca_idciudad, d.ca_idciudad,o.ca_idtrafico, d.ca_idtrafico, r.ca_mercancia_desc,
-                                    r.ca_idlinea, r.ca_impoexpo, r.ca_transporte, r.ca_modalidad, r.ca_incoterms, con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, con.ca_cargo
-                                    ,cl.ca_idcliente, cl.ca_compania, cl.ca_preferencias, cl.ca_confirmar, cl.ca_coordinador, usu.ca_login, usu.ca_nombre, r.ca_orden_clie")
-                    ->leftJoin("r.Bodega b")
-                    ->leftJoin("r.Origen o")
-                    ->leftJoin("r.Destino d")
-                    ->leftJoin("r.Contacto con")
-                    ->leftJoin("con.Cliente cl")
-                    ->leftJoin("cl.LibCliente libcli")
-                    ->leftJoin("r.Usuario usu")
-                    ->addWhere("r.ca_consecutivo LIKE ?", $criterio . "%")
-                    ->addWhere("r.ca_usuanulado IS NULL");
-            if ($transporte != "") {
-                $q->addWhere("r.ca_transporte = ?", $transporte);
-            }
-
-            if ($impoexpo != "") {
-                if ($impoexpo == Constantes::IMPO) {
-                    $q->addWhere("(r.ca_impoexpo = ? OR r.ca_impoexpo = ?)", array($impoexpo, Constantes::TRIANGULACION));
-                } else {
-                    $q->addWhere("r.ca_impoexpo = ?", $impoexpo);
-                }
-            }
-            if ($openedOnly) {
-                $q->addWhere("r.ca_idetapa != ?", "99999");
-            }
-
-            if ($transporte != "OTM-DTA") {
-                if ($origen != "") {
-                    $q->addWhere("r.ca_origen in ($ciudades) ");
-                }
-                if ($destino != "") {
-                    $q->addWhere("r.ca_destino = ? ", $destino);
-                }
-            }
-
-            $q->addOrderBy("to_number(SUBSTR(r.ca_consecutivo , 1 , (POSITION('-' in r.ca_consecutivo)-1) ),'999999')  desc");
-            $q->addOrderBy("r.ca_version  desc");
-            //$q->orderBy("r.ca_fchcreado desc");
-
-
-            $reportes = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->limit(50)->execute();
-
-            foreach ($reportes as $key => $val) {
-                if ($transporte != "OTM-DTA") {
-                    $reportes[$key]["d_ca_ciudad"] = utf8_encode($reportes[$key]["r_ca_destino"]);
-                    $reportes[$key]["o_ca_ciudad"] = utf8_encode($reportes[$key]["r_ca_origen"]);
-                } else {
-                    $reportes[$key]["d_ca_ciudad"] = utf8_encode($reportes[$key]["d_ca_ciudad"]);
-                    $reportes[$key]["o_ca_ciudad"] = utf8_encode($reportes[$key]["o_ca_ciudad"]);
-                }
-                $reportes[$key]["r_ca_idbodega"] = utf8_encode($reportes[$key]["r_ca_idbodega"]);
-                $reportes[$key]["b_ca_nombrebodega"] = utf8_encode($reportes[$key]["b_ca_nombre"]);
-                $reportes[$key]["b_ca_nombre"] = utf8_encode($reportes[$key]["b_ca_nombre"]);
-                $reportes[$key]["o_ca_ciudad"] = utf8_encode($reportes[$key]["o_ca_ciudad"]);
-                $reportes[$key]["d_ca_ciudad"] = utf8_encode($reportes[$key]["d_ca_ciudad"]);
-                $reportes[$key]["r_ca_mercancia_desc"] = utf8_encode($reportes[$key]["r_ca_mercancia_desc"]);
-                $reportes[$key]["r_ca_impoexpo"] = utf8_encode($reportes[$key]["r_ca_impoexpo"]);
-                $reportes[$key]["r_ca_transporte"] = utf8_encode($reportes[$key]["r_ca_transporte"]);
-                $reportes[$key]["cl_ca_compania"] = utf8_encode($reportes[$key]["cl_ca_compania"]);
-                $reportes[$key]["con_ca_idcontacto"] = utf8_encode($reportes[$key]["con_ca_idcontacto"]);
-                $reportes[$key]["con_ca_nombres"] = utf8_encode($reportes[$key]["con_ca_nombres"]);
-                $reportes[$key]["con_ca_papellido"] = utf8_encode($reportes[$key]["con_ca_papellido"]);
-                $reportes[$key]["con_ca_sapellido"] = utf8_encode($reportes[$key]["con_ca_sapellido"]);
-                $reportes[$key]["con_ca_cargo"] = utf8_encode($reportes[$key]["con_ca_cargo"]);
-                $reportes[$key]["cl_ca_preferencias"] = utf8_encode($reportes[$key]["cl_ca_preferencias"]);
-                $reportes[$key]["usu_ca_nombre"] = isset($reportes[$key]["usu_ca_nombre"]) ? utf8_encode($reportes[$key]["usu_ca_nombre"]) : "";
-
-                $reportes[$key]["r_ca_modalidad"] = utf8_encode($reportes[$key]["r_ca_modalidad"]);
-                $reportes[$key]["r_ca_orden_clie"] = utf8_encode($reportes[$key]["r_ca_orden_clie"]);
-
-                $reportes[$key]["r_ca_idlinea"] = utf8_encode($reportes[$key]["r_ca_idlinea"]); 
-
-
-                if ($reportes[$key]["r_ca_idlinea"] != "") {
-                    $q = Doctrine_Query::create()
-                            ->select("p.ca_idproveedor, p.ca_sigla, id.ca_nombre, p.ca_transporte ")
-                            ->from("IdsProveedor p")
-                            ->innerJoin("p.Ids id")
-                            ->addOrderBy("id.ca_nombre");
-                    $q->addWhere("p.ca_idproveedor=?", $reportes[$key]["r_ca_idlinea"]);
-                    $lineas = $q->execute();
-                    if (count($lineas) > 0) {
-                        $reportes[$key]["p_ca_linea"] = utf8_encode(($lineas[0]['ca_sigla'] ? $lineas[0]['ca_sigla'] . " - " : "") . utf8_encode($lineas[0]['Ids']['ca_nombre']));
-                    }
-                }
-
-                $reporte = Doctrine::getTable("Reporte")->find($val["r_ca_idreporte"]);
-                if ($reporte) {
-                    $provId = $reporte->getProveedores();
-                    //print_r($provId);
-                    if ($provId) {
-                        $reportes[$key]["ca_tercero"] = utf8_encode($provId[0]->getCaNombre());
-                        $reportes[$key]["ca_idtercero"] = $provId[0]->getCaIdtercero();
-                    }
-                    $reportes[$key]["cl_ca_confirmar"] = utf8_encode($reportes[$key]["cl_ca_confirmar"]);
-
-                    //$reporte = Doctrine::getTable("Reporte")->find( $val["r_ca_idreporte"]);
-                    $repstatus = $reporte->getUltimoStatus();
-
-                    if ($repstatus) {
-                        $reportes[$key]["ca_peso"] = $repstatus->getCaPeso();
-                        $reportes[$key]["ca_piezas"] = $repstatus->getCaPiezas();
-                        $reportes[$key]["ca_volumen"] = $repstatus->getCaVolumen();
-                        $reportes[$key]["ca_doctransporte"] = $repstatus->getCaDoctransporte();
-                    }
-                }
-
-                $reportes[$key]["cl_ca_confirmar"] = utf8_encode($reportes[$key]["cl_ca_confirmar"]);
-            }
-            
-            $this->responseArray = array("root" => $reportes, "total" => count($reportes), "success" => true, "tra"=> $ciudades);
-        } else {
-            $this->responseArray = array("root" => array(), "total" => 0, "success" => true);
-        }
-        //print_r($reportes);        
-        $this->setTemplate("responseTemplate");
-    }*/
     public function executeListaReportesJSON() {
         $criterio = $this->getRequestParameter("query");
 
@@ -1064,15 +918,15 @@ class widgets5Actions extends sfActions {
             $openedOnly = $this->getRequestParameter("openedOnly");
             $origen = utf8_decode($this->getRequestParameter("origen"));
             $traorigen = Doctrine::getTable("Ciudad")->find($origen);
-            if ($traorigen){
+            if ($traorigen) {
                 $traficoorigen = $traorigen->getCaIdtrafico();
                 $ciudadesportrafico = Doctrine::getTable("Ciudad")
-                    ->createQuery("c")
-                    ->addWhere("c.ca_idtrafico = ?" , $traficoorigen)
-                    ->execute();
+                        ->createQuery("c")
+                        ->addWhere("c.ca_idtrafico = ?", $traficoorigen)
+                        ->execute();
                 $arrayciudades = array();
                 foreach ($ciudadesportrafico as $ciudad) {
-                    $arrayciudades[] = "'".utf8_encode($ciudad->getCaIdciudad())."'";
+                    $arrayciudades[] = "'" . utf8_encode($ciudad->getCaIdciudad()) . "'";
                 }
                 $ciudades = implode(",", $arrayciudades);
             }
@@ -1151,7 +1005,7 @@ class widgets5Actions extends sfActions {
                 $reportes[$key]["r_ca_modalidad"] = utf8_encode($reportes[$key]["r_ca_modalidad"]);
                 $reportes[$key]["r_ca_orden_clie"] = utf8_encode($reportes[$key]["r_ca_orden_clie"]);
 
-                $reportes[$key]["r_ca_idlinea"] = utf8_encode($reportes[$key]["r_ca_idlinea"]); 
+                $reportes[$key]["r_ca_idlinea"] = utf8_encode($reportes[$key]["r_ca_idlinea"]);
 
 
                 if ($reportes[$key]["r_ca_idlinea"] != "") {
@@ -1190,11 +1044,11 @@ class widgets5Actions extends sfActions {
 
                 $reportes[$key]["cl_ca_confirmar"] = utf8_encode($reportes[$key]["cl_ca_confirmar"]);
             }
-            /*echo "<pre>";
-            print_r($reportes);
-            print_r($ciudades);
-            echo "</pre>";*/
-            $this->responseArray = array("root" => $reportes, "total" => count($reportes), "success" => true, "tra"=> $ciudades);
+            /* echo "<pre>";
+              print_r($reportes);
+              print_r($ciudades);
+              echo "</pre>"; */
+            $this->responseArray = array("root" => $reportes, "total" => count($reportes), "success" => true, "tra" => $ciudades);
         } else {
             $this->responseArray = array("root" => array(), "total" => 0, "success" => true);
         }
@@ -1452,8 +1306,8 @@ class widgets5Actions extends sfActions {
 
     public function executeDatosCentrocostos(sfWebRequest $request) {
         $data = array();
-        
-        $idsucursal=$request->getParameter("idsucursal");
+
+        $idsucursal = $request->getParameter("idsucursal");
         //if($idsucursal=="")
         {
             if ($request->getParameter("listartodos") == true) {
@@ -1464,14 +1318,14 @@ class widgets5Actions extends sfActions {
             if ($request->getParameter("listartodos") == false) {
                 $ccostos = Doctrine::getTable("InoCentroCosto")
                         ->createQuery("c")
-                        ->addWhere("c.ca_idsucursal = ?",  ( ($idsucursal=="")?$this->getUser()->getSucursal():$idsucursal )   )
+                        ->addWhere("c.ca_idsucursal = ?", ( ($idsucursal == "") ? $this->getUser()->getSucursal() : $idsucursal))
                         ->execute();
             }
         }
-        /*else
-        {
-            
-        }*/
+        /* else
+          {
+
+          } */
 
         foreach ($ccostos as $costo) {
             $data[] = array("id" => utf8_encode($costo->getCaIdccosto()),
@@ -1589,9 +1443,9 @@ class widgets5Actions extends sfActions {
                 ->createQuery("i")
                 ->addWhere("i.ca_id = ?", $cliente)
                 ->fetchOne();
-        
-        $clienteEmbarque = $idscliente->getIdsCliente()->getProperty("idgProveedor");        
-        
+
+        $clienteEmbarque = $idscliente->getIdsCliente()->getProperty("idgProveedor");
+
         if ($idscliente) {
 
             $grupo = $idscliente->getCaIdgrupo();
@@ -1613,7 +1467,7 @@ class widgets5Actions extends sfActions {
             $listaclientes = implode(",", $clientes);
 
             //echo $listaclientes;
-            
+
             $filtros = json_decode($request->getParameter("filtro"));
             $transporte = $filtros->transporte;
 
@@ -1625,9 +1479,9 @@ class widgets5Actions extends sfActions {
 
             $nombreorigen = Doctrine::getTable("Ciudad")->find($ciudadorigen);
             $nombredest = Doctrine::getTable("Ciudad")->find($ciudaddestino);
-            
+
             //////////////////////////////////COORDINACION DE EMBARQUE /////////////////////////////////////////////////////
-            
+
             $sql = "
                 SELECT i.*, t.ca_nombre as proveedor, r.ca_carga_disponible as carga_disponible 
                 FROM vi_indicadores i 
@@ -1741,20 +1595,18 @@ class widgets5Actions extends sfActions {
                 $idtrafico = $indicador["ca_idtrafico"];
                 $idorigen = $indicador["ca_idorigen"];
                 $iddestino = $indicador["ca_iddestino"];
-                
-                
-                /** PRUEBA NO 5609348560**/
 
-                
+
+                /** PRUEBA NO 5609348560* */
                 $fllegadacd = $indicador["ca_fchllegada_cd"];
-                
-                 $sql1 = Doctrine::getTable("Idgclientes")
+
+                $sql1 = Doctrine::getTable("Idgclientes")
                         ->createQuery("i")
-                        ->addWhere("i.ca_traorigen = ?",$idtrafico)
-                        ->addWhere("i.ca_ciudestino = ?",'999-9999')
-                        ->addWhere("i.ca_tradestino = ?",'999-9999') 
-                        ->addWhere("i.ca_periodo_inicial  < ?",$fllegadacd) 
-                        ->addWhere("i.ca_periodo_final > ?",$fllegadacd) 
+                        ->addWhere("i.ca_traorigen = ?", $idtrafico)
+                        ->addWhere("i.ca_ciudestino = ?", '999-9999')
+                        ->addWhere("i.ca_tradestino = ?", '999-9999')
+                        ->addWhere("i.ca_periodo_inicial  < ?", $fllegadacd)
+                        ->addWhere("i.ca_periodo_final > ?", $fllegadacd)
                         ->fetchOne();
 
 
@@ -1766,17 +1618,17 @@ class widgets5Actions extends sfActions {
                     $d = "SIN META";
                 }
 
-                
+
                 $sql2 = Doctrine::getTable("IdgClientes")
                         ->createQuery("i")
                         ->addWhere("(i.ca_traorigen like '$idtrafico' AND i.ca_ciuorigen like '$idorigen' AND i.ca_ciudestino like '$iddestino' AND i.ca_transportista like ' ' ) OR (i.ca_traorigen = '$idtrafico' AND i.ca_ciuorigen = '$idorigen' AND i.ca_ciudestino = '999-9999' AND i.ca_transportista like ' ') OR (i.ca_traorigen = '$idtrafico' AND i.ca_ciuorigen = '999-9999' AND i.ca_ciudestino = '$iddestino' AND i.ca_transportista like ' ') AND i.ca_periodo_inicial < '$fllegadacd' AND i.ca_periodo_final > '$fllegadacd'")
                         ->fetchOne();
-                
+
                 if ($sql2) {
-                   
+
                     $jsonsql2 = json_decode($sql2->getCaIndicador());
                     $d = $jsonsql2->coordinacion;
-                    
+
                     $r = "segunda opcion";
                 }
 
@@ -1784,15 +1636,15 @@ class widgets5Actions extends sfActions {
 
                 $datacoord[$proovedor]['negocios'] += 1;
                 $gridemba[$proovedor]["proovedor"] = $proovedor;
-                $cumpleco = 0; 
-                
+                $cumpleco = 0;
+
                 if ($indicador["carga_disponible"] != "") {
                     $dias = (strtotime($indicador["carga_disponible"]) - strtotime($indicador["ca_fchllegada_cd"])) / 86400;
                     $dias = abs($dias);
                     $dias = floor($dias);
-                    
-                    if ($d != "SIN META"){
-                        if ($dias <= $d ) {
+
+                    if ($d != "SIN META") {
+                        if ($dias <= $d) {
 
                             $datacoord[$proovedor]["cumple"] += 1;
 
@@ -1801,17 +1653,17 @@ class widgets5Actions extends sfActions {
                         } else {
                             $gridemba[$proovedor]["nocumple"] += 1;
                         }
-                    }else{
+                    } else {
                         $gridemba[$proovedor]["nocumple"] += 1;
                     }
                 } else {
-                    $gridemba[$proovedor]["nocumple"] += 1;     
+                    $gridemba[$proovedor]["nocumple"] += 1;
                     $dias = 120;
                 }
 
                 $reporteneg = Doctrine::getTable("Reporte")->find($indicador["ca_idreporte"]);
-                    
-                if ($reporteneg){
+
+                if ($reporteneg) {
                     $obscord = $reporteneg->getProperty("idg1");
                 }
 
@@ -1827,7 +1679,7 @@ class widgets5Actions extends sfActions {
                     "destino" => utf8_encode($indicador["ca_ciudestino"]),
                     "proveedor" => $proovedor,
                     "modalidad" => utf8_encode($indicador["modalidad"]),
-                     "ciu" => utf8_encode($indicador["ca_ciuorigen"]),
+                    "ciu" => utf8_encode($indicador["ca_ciuorigen"]),
                     "piezas" => utf8_encode($piezas[0]),
                     "peso" => utf8_encode($peso[0]),
                     "volumen" => floatval($volumen[0]),
@@ -1912,10 +1764,10 @@ class widgets5Actions extends sfActions {
             $pes = "-";
 
             foreach ($indicadores as $indicador) {
-                
+
                 $proovedor = utf8_encode($indicador["proveedores"]);
-                /*if (!in_array($proovedor, $proovedores))
-                    $proovedores[] = $proovedor;*/
+                /* if (!in_array($proovedor, $proovedores))
+                  $proovedores[] = $proovedor; */
 
                 $mes = Utils::getMonth(substr($indicador["ca_fchllegada_cd"], 5, 2));
                 $trafico = utf8_encode($indicador["ca_traorigen"]);
@@ -1943,15 +1795,15 @@ class widgets5Actions extends sfActions {
 
                 $piezas = explode("|", $indicador["ca_piezas"]);
 
-                if ($indicador["modalidad"] == "LCL"){
+                if ($indicador["modalidad"] == "LCL") {
                     $gridvolumen[$mes]["mes"] = $mes;
                     $gridvolumen[$mes]["volumen"] += floatval($volumen[0]);
                     $datag1[$mes][$trafico] += floatval($volumen[0]);
                 }
-                if ($indicador["modalidad"] == "FCL"){
+                if ($indicador["modalidad"] == "FCL") {
                     $gridvolumenFCL[$mes]["mes"] = $mes;
                     $gridvolumenFCL[$mes]["volumen"] += $indicador["ca_teus"];
-                    $datag1fcl[$mes][$trafico] += $indicador["ca_teus"];                    
+                    $datag1fcl[$mes][$trafico] += $indicador["ca_teus"];
                 }
 
                 $sqltt = "";
@@ -1986,15 +1838,15 @@ class widgets5Actions extends sfActions {
                 $idorigen = $indicador["ca_idorigen"];
                 $iddestino = $indicador["ca_iddestino"];
 
-                
+
                 $sql1 = "SELECT ca_idtrafico, ca_idciudad, ca_iddestino,  ca_tiempotransito conteo, ca_coord_embarque coordembarque "
                         . "FROM tb_entrega_antecedentes "
                         . "WHERE ca_idtrafico = '$idtrafico' AND ca_idciudad = '999-9999' AND ca_iddestino = '999-9999'";
 
                 $st = $con->execute($sql1);
                 $sqlCE = $st->fetchAll();
-                
-                
+
+
 
                 if (count($sqlCE) > 0) {
                     $t = $sqlCE[0]["conteo"];
@@ -2016,43 +1868,43 @@ class widgets5Actions extends sfActions {
                     $t = $sqlCE2[0]["conteo"];
                     $r = "segunda opcion";
                 }
-                
-                
-                
-                /*$idcliente = $indicador["ca_idcliente"];
-                $idgTT = Doctrine::getTable("IdgClientes")
-                        ->createQuery("i")
-                        ->addWhere("i.ca_transporte like ?", $transporte)
-                        ->addWhere("i.ca_traorigen like ?", $idtrafico)
-                        ->addWhere("i.ca_ciudestino like ?", $iddestino)
-                        ->addWhere("i.ca_transportista like ?", $indicador["idlinea"])
-                        ->addWhere("i.ca_idcliente like ?", $idcliente)
-                        ->addWhere("i.ca_periodo_inicial < ?", $indicador["ca_fchllegada_cd"])
-                        ->addWhere("i.ca_periodo_final > ?", $indicador["ca_fchllegada_cd"])
-                        ->fetchOne();
-                if ($idgTT){
-                    $jsonTT = json_decode($idgTT->getCaIndicador());
-                    $metaTT = $jsonTT->tiempotransito;
-                }
-                else{
-                    $idgTT = Doctrine::getTable("IdgClientes")
-                        ->createQuery("i")
-                        ->addWhere("i.ca_transporte like ?", $transporte)
-                        ->addWhere("i.ca_traorigen like ?", $idtrafico)
-                        ->addWhere("i.ca_ciudestino like ?", $iddestino)
-                        ->addWhere("i.ca_transportista like ?", $indicador["idlinea"])
-                        ->addWhere("i.ca_periodo_inicial < ?", $indicador["ca_fchllegada_cd"])
-                        ->addWhere("i.ca_periodo_final > ?", $indicador["ca_fchllegada_cd"])
-                        ->fetchOne();
-                    if ($idgTT){
-                        $jsonTT = json_decode($idgTT->getCaIndicador());
-                        $metaTT = $jsonTT->tiempotransito;
-                    }
-                    else{
-                        $metaTT  = "SIN META";
-                    }
-                }*/
-  
+
+
+
+                /* $idcliente = $indicador["ca_idcliente"];
+                  $idgTT = Doctrine::getTable("IdgClientes")
+                  ->createQuery("i")
+                  ->addWhere("i.ca_transporte like ?", $transporte)
+                  ->addWhere("i.ca_traorigen like ?", $idtrafico)
+                  ->addWhere("i.ca_ciudestino like ?", $iddestino)
+                  ->addWhere("i.ca_transportista like ?", $indicador["idlinea"])
+                  ->addWhere("i.ca_idcliente like ?", $idcliente)
+                  ->addWhere("i.ca_periodo_inicial < ?", $indicador["ca_fchllegada_cd"])
+                  ->addWhere("i.ca_periodo_final > ?", $indicador["ca_fchllegada_cd"])
+                  ->fetchOne();
+                  if ($idgTT){
+                  $jsonTT = json_decode($idgTT->getCaIndicador());
+                  $metaTT = $jsonTT->tiempotransito;
+                  }
+                  else{
+                  $idgTT = Doctrine::getTable("IdgClientes")
+                  ->createQuery("i")
+                  ->addWhere("i.ca_transporte like ?", $transporte)
+                  ->addWhere("i.ca_traorigen like ?", $idtrafico)
+                  ->addWhere("i.ca_ciudestino like ?", $iddestino)
+                  ->addWhere("i.ca_transportista like ?", $indicador["idlinea"])
+                  ->addWhere("i.ca_periodo_inicial < ?", $indicador["ca_fchllegada_cd"])
+                  ->addWhere("i.ca_periodo_final > ?", $indicador["ca_fchllegada_cd"])
+                  ->fetchOne();
+                  if ($idgTT){
+                  $jsonTT = json_decode($idgTT->getCaIndicador());
+                  $metaTT = $jsonTT->tiempotransito;
+                  }
+                  else{
+                  $metaTT  = "SIN META";
+                  }
+                  } */
+
                 $idcliente = $indicador["ca_idcliente"];
                 $q = Doctrine::getTable("IdgClientes")
                         ->createQuery("i")
@@ -2063,70 +1915,67 @@ class widgets5Actions extends sfActions {
                         //->addWhere("i.ca_transportista like ?", $indicador["idlinea"])
                         ->addWhere("i.ca_idcliente like ?", $idcliente)
                         ->addWhere("i.ca_periodo_inicial < ?", $indicador["ca_fchllegada_cd"])
-                        ->addWhere("i.ca_periodo_final > ?", $indicador["ca_fchllegada_cd"]);                
-                
+                        ->addWhere("i.ca_periodo_final > ?", $indicador["ca_fchllegada_cd"]);
+
                 //echo $q->getSqlQuery();
                 $idgTT = $q->fetchOne();
-                
-                        //->fetchOne();
-                if ($idgTT){
+
+                //->fetchOne();
+                if ($idgTT) {
                     $jsonTT = json_decode($idgTT->getCaIndicador());
                     $metaTT = $jsonTT->tiempotransito;
-                }else{
+                } else {
                     $q1 = Doctrine::getTable("IdgClientes")
-                        ->createQuery("i")
-                        ->addWhere("i.ca_transporte like ?", $transporte)
-                        ->addWhere("i.ca_traorigen like ?", $idtrafico)
+                            ->createQuery("i")
+                            ->addWhere("i.ca_transporte like ?", $transporte)
+                            ->addWhere("i.ca_traorigen like ?", $idtrafico)
 //                        ->addWhere("i.ca_ciuorigen like ?", $idorigen)
-                        ->addWhere("i.ca_ciudestino like ?", $iddestino)
-                        ->addWhere("i.ca_transportista like ?", $indicador["idlinea"])
-                        ->addWhere("i.ca_periodo_inicial < ?", $indicador["ca_fchllegada_cd"])
-                        ->addWhere("i.ca_periodo_final > ?", $indicador["ca_fchllegada_cd"]);
-                    
+                            ->addWhere("i.ca_ciudestino like ?", $iddestino)
+                            ->addWhere("i.ca_transportista like ?", $indicador["idlinea"])
+                            ->addWhere("i.ca_periodo_inicial < ?", $indicador["ca_fchllegada_cd"])
+                            ->addWhere("i.ca_periodo_final > ?", $indicador["ca_fchllegada_cd"]);
+
                     //echo $q1->getSqlQuery();
                     $idgTT = $q1->fetchOne();
-                            //->fetchOne();
-                    if ($idgTT){
+                    //->fetchOne();
+                    if ($idgTT) {
                         $jsonTT = json_decode($idgTT->getCaIndicador());
                         $metaTT = $jsonTT->tiempotransito;
-                    }
-                    else{
+                    } else {
                         $q2 = Doctrine::getTable("IdgClientes")
-                        ->createQuery("i")
-                        ->addWhere("i.ca_transporte like ?", $transporte)
-                        ->addWhere("i.ca_traorigen like ?", $idtrafico)
+                                ->createQuery("i")
+                                ->addWhere("i.ca_transporte like ?", $transporte)
+                                ->addWhere("i.ca_traorigen like ?", $idtrafico)
 //                        ->addWhere("i.ca_ciuorigen like ?", $idorigen)
-                        ->addWhere("i.ca_ciudestino like ?", $iddestino)
-                        //->addWhere("i.ca_transportista like ?", $indicador["idlinea"])
-                        ->addWhere("i.ca_periodo_inicial < ?", $indicador["ca_fchllegada_cd"])
-                        ->addWhere("i.ca_periodo_final > ?", $indicador["ca_fchllegada_cd"]);
-                    
+                                ->addWhere("i.ca_ciudestino like ?", $iddestino)
+                                //->addWhere("i.ca_transportista like ?", $indicador["idlinea"])
+                                ->addWhere("i.ca_periodo_inicial < ?", $indicador["ca_fchllegada_cd"])
+                                ->addWhere("i.ca_periodo_final > ?", $indicador["ca_fchllegada_cd"]);
+
                         //echo $q1->getSqlQuery();
                         $idgTT = $q2->fetchOne();
-                        if ($idgTT){
+                        if ($idgTT) {
                             $jsonTT = json_decode($idgTT->getCaIndicador());
                             $metaTT = $jsonTT->tiempotransito;
-                        }
-                        else{
-                            $metaTT = "SIN META";                    
+                        } else {
+                            $metaTT = "SIN META";
                         }
                     }
-                }  
-                
+                }
+
                 if (!$datagtr[$mes]["porcentaje"]) {
                     $datagtr[$mes]["porcentaje"] = 0;
                 }
                 $gridtransito[$mes]["mes"] = $mes;
-                
-                if ($indicador["ca_fchllegada_cd"] != "" && $indicador["ca_fchsalida_eta"] != ""){
+
+                if ($indicador["ca_fchllegada_cd"] != "" && $indicador["ca_fchsalida_eta"] != "") {
                     $indicador["t_transito"] = (strtotime($indicador["ca_fchllegada_cd"]) - strtotime($indicador["ca_fchsalida_eta"])) / 86400;
-                }
-                else{
+                } else {
                     $indicador["t_transito"] = 0;
                 }
 
 //echo 'meta'.$metaTT.'indicadorTT'.$indicador["t_transito"]."---";
-                if ( $metaTT  != "SIN META"){
+                if ($metaTT != "SIN META") {
                     if ($indicador["t_transito"] <= $metaTT) {
                         $cumplett = 1;
                         $datagtr[$mes]["cumplel"] += 1;
@@ -2135,31 +1984,28 @@ class widgets5Actions extends sfActions {
                         $gridtransito[$mes]["nocumple"] += 1;
                         $cumplett = 0;
                     }
-                    
-                }
-                else{
+                } else {
                     $gridtransito[$mes]["nocumple"] += 1;
                     $cumplett = 0;
                 }
 //echo "cumplett".$cumplett;
-                
+
                 $datagtr[$mes]["totall"] += 1;
 
                 $datazarpe[$mes]["negocios"] += 1;
                 $datazarpe[$mes]["name"] = $mes;
                 $gridzarpe[$mes]["mes"] = $mes;
-                
-                
+
+
                 /**//**//**//**//**//**//**//**//**//**/
                 $restazarpe = (strtotime($indicador["ca_fchsalida_eta"]) - strtotime($indicador["ca_fchsalida_ccr"])) / 86400;
-                
-                if ($restazarpe > 1){
+
+                if ($restazarpe > 1) {
                     $indicador["cump_zarpe"] = 0;
-                }
-                else{
+                } else {
                     $indicador["cump_zarpe"] = 1;
                 }
-                
+
                 //$indicador["cump_zarpe"] = $indicador["ca_fchsalida_eta"]." - ".$indicador["ca_fchsalida_cd"];
 
                 if ($indicador["cump_zarpe"] == 1) {
@@ -2174,13 +2020,12 @@ class widgets5Actions extends sfActions {
                 $datallegada[$mes]["name"] = $mes;
 
                 $gridllegada[$mes]["mes"] = $mes;
-                
+
                 $restallegada = (strtotime($indicador["ca_fchllegada_cd"]) - strtotime($indicador["ca_fchllegada_eta"])) / 86400;
-                
-                if ($restallegada > 1){
+
+                if ($restallegada > 1) {
                     $indicador["cump_llegada"] = 0;
-                }
-                else{
+                } else {
                     $indicador["cump_llegada"] = 1;
                 }
                 if ($indicador["cump_llegada"] == 1) {
@@ -2199,17 +2044,16 @@ class widgets5Actions extends sfActions {
                 $anio = explode("-", $filtros->fecha_inicio);
                 $anio = $anio[0];
                 $festivos = TimeUtils::getFestivos($anio);
-                if($indicador["ca_fchllegada_cd"]==$indicador["ca_fchfactura"]){
+                if ($indicador["ca_fchllegada_cd"] == $indicador["ca_fchfactura"]) {
                     $diffFchAsn = 0;
-                }else{
-                $diffFchAsn = TimeUtils::workDiff($festivos, $indicador["ca_fchllegada_cd"], $indicador["ca_fchfactura"]);
+                } else {
+                    $diffFchAsn = TimeUtils::workDiff($festivos, $indicador["ca_fchllegada_cd"], $indicador["ca_fchfactura"]);
                 }
 
                 //Notas: Para a?reo son 2 d?as despu?s que llega la carga.(Facturacion)
-                if ($transporte == Constantes::AEREO){
-                    $meta = 2;                    
-                }
-                else{
+                if ($transporte == Constantes::AEREO) {
+                    $meta = 2;
+                } else {
                     $idcliente = $indicador["ca_idcliente"];
                     $idgclienteFact = Doctrine::getTable("IdgClientes")
                             ->createQuery("i")
@@ -2219,36 +2063,34 @@ class widgets5Actions extends sfActions {
                             ->addWhere("i.ca_periodo_inicial < ?", $indicador["ca_fchllegada_cd"])
                             ->addWhere("i.ca_periodo_final > ?", $indicador["ca_fchllegada_cd"])
                             ->fetchOne();
-                    if ($idgclienteFact){
+                    if ($idgclienteFact) {
                         $jsonf = json_decode($idgclienteFact->getCaIndicador());
                         $meta = $jsonf->idgfacturacion;
-                    }
-                    else{
+                    } else {
                         $meta = 0; // Maximo el mismo día que llega la carga
                     }
                 }
 
                 if ($diffFchAsn <= $meta) {
-                        $cf = 1;
-                        $datafacturacion[$mes]["cumplimientollegada"] += 1;
-                        $gridfacturacion[$mes]["cumple"] += 1;
-                    } else {
-                        $cf = 0;
-                        $gridfacturacion[$mes]["nocumple"] += 1;
-                    }
-                    $datafacturacion[$mes]["porcentaje"] = round(($datafacturacion[$mes]["cumplimientollegada"] * 100) / $datafacturacion[$mes]["negocios"]);
+                    $cf = 1;
+                    $datafacturacion[$mes]["cumplimientollegada"] += 1;
+                    $gridfacturacion[$mes]["cumple"] += 1;
+                } else {
+                    $cf = 0;
+                    $gridfacturacion[$mes]["nocumple"] += 1;
+                }
+                $datafacturacion[$mes]["porcentaje"] = round(($datafacturacion[$mes]["cumplimientollegada"] * 100) / $datafacturacion[$mes]["negocios"]);
 
                 $metav = 0;
                 if ($indicador["modalidad"] == "LCL" || $indicador["mod"] == "COLOADING") {
-                    
-                    if ($indicador["mod"] == "COLOADING"){
+
+                    if ($indicador["mod"] == "COLOADING") {
                         $metav = 3;
-                    }
-                    else{                        
+                    } else {
                         $caso = "CU268";
                         $muelle = ParametroTable::retrieveByCaso($caso, null, null, $indicador["idmuelle"]);
-                        if ($muelle){
-                            $nombremuelle = $muelle[0]["ca_valor"];                            
+                        if ($muelle) {
+                            $nombremuelle = $muelle[0]["ca_valor"];
                         }
                         $idgclienteVac = Doctrine::getTable("IdgClientes")
                                 ->createQuery("i")
@@ -2258,33 +2100,30 @@ class widgets5Actions extends sfActions {
                                 ->addWhere("i.ca_periodo_final > ?", $indicador["ca_fchllegada_cd"])
                                 ->addWhere("i.ca_muelle like ?", $indicador["idmuelle"])
                                 ->fetchOne();
-                        if($idgclienteVac){
+                        if ($idgclienteVac) {
                             $jsonv = json_decode($idgclienteVac->getCaIndicador());
                             $metav = $jsonv->idgvaciado;
-                        }
-                        else{
+                        } else {
                             $metav = 2;
-                        }                        
+                        }
                     }
-                    
-                    $datavaciado[$mes]["negocios"] += 1; 
+
+                    $datavaciado[$mes]["negocios"] += 1;
                     $datavaciado[$mes]["name"] = $mes;
                     $gridvaciado[$mes]["mes"] = $mes;
-                    
-                    if ($indicador["ca_fchvaciado"] == "" || $indicador["ca_fchllegada_cd"] == ""){
+
+                    if ($indicador["ca_fchvaciado"] == "" || $indicador["ca_fchllegada_cd"] == "") {
                         $restavaciado = 0;
-                    }
-                    else{
+                    } else {
                         $restavaciado = (strtotime($indicador["ca_fchvaciado"]) - strtotime($indicador["ca_fchllegada_cd"])) / 86400;
                     }
 
-                    if ($restavaciado <= $metav){
+                    if ($restavaciado <= $metav) {
                         $indicador["cump_vaciado"] = 1;
-                    }
-                    else{
+                    } else {
                         $indicador["cump_vaciado"] = 0;
                     }
-                    
+
                     if ($indicador["cump_vaciado"] == 1) {
                         $datavaciado[$mes]["cumplimientollegada"] += 1;
                         $gridvaciado[$mes]["cumple"] += 1;
@@ -2297,27 +2136,24 @@ class widgets5Actions extends sfActions {
                 $cumplevaciado = "0";
                 if ($indicador["modalidad"] == "LCL" && $indicador["cump_vaciado"] != "")
                     $cumplevaciado = "1";
-                
-                                   
+
+
                 $reporteneg = Doctrine::getTable("Reporte")->find($indicador["ca_idreporte"]);
-                    
-                if ($reporteneg){
+
+                if ($reporteneg) {
                     $obstt = $reporteneg->getProperty("idg2");
                     $obszarpe = $reporteneg->getProperty("idg3");
                     $obsllegada = $reporteneg->getProperty("idg4");
                     $obsfactura = $reporteneg->getProperty("idg5");
                     $obsdesconsolidacion = $reporteneg->getProperty("idg6");
-                    
                 }
-                
+
                 $gridindicadores[] = array(
                     "obstt" => utf8_encode($obstt),
                     "obszarpe" => utf8_encode($obszarpe),
                     "obsllegada" => utf8_encode($obsllegada),
                     "obsfactura" => utf8_encode($obsfactura),
                     "obsdesconsolidacion" => utf8_encode($obsdesconsolidacion),
-                    
-                    
                     "anio" => utf8_encode($indicador["ca_ano"]),
                     "mes" => utf8_encode($mes),
                     "reporte" => utf8_encode($indicador["ca_idreporte"]),
@@ -2331,7 +2167,7 @@ class widgets5Actions extends sfActions {
                     "modalidad" => utf8_encode($indicador["modalidad"]),
                     "piezas" => utf8_encode($piezas[0]),
                     "peso" => utf8_encode($peso[0]),
-                    "muelle"=>  utf8_encode($nombremuelle),
+                    "muelle" => utf8_encode($nombremuelle),
                     "volumen" => floatval($volumen[0]),
                     "teus" => utf8_encode($indicador["ca_teus"]),
                     "proveedor" => $proovedor,
@@ -2369,19 +2205,18 @@ class widgets5Actions extends sfActions {
 
             foreach ($datag1 as $mes => $gridTrafico) {
                 foreach ($serieTraf as $trafico) {
-                
-                   
-                        if ($gridTrafico[$trafico]) {
-                            $data5[$mes]["name"] = $mes;
-                            $data5[$mes][$trafico] = $gridTrafico[$trafico];
-                        } else {
-                            $data5[$mes]["name"] = $mes;
-                            $data5[$mes][$trafico] = null;
-                        }
-                    
+
+
+                    if ($gridTrafico[$trafico]) {
+                        $data5[$mes]["name"] = $mes;
+                        $data5[$mes][$trafico] = $gridTrafico[$trafico];
+                    } else {
+                        $data5[$mes]["name"] = $mes;
+                        $data5[$mes][$trafico] = null;
+                    }
                 }
             }
-            
+
             foreach ($datag1fcl as $mes => $gridTrafico) {
                 foreach ($serieTraf as $trafico) {
                     if ($gridTrafico[$trafico]) {
@@ -2481,18 +2316,18 @@ class widgets5Actions extends sfActions {
             foreach ($gridvolumen as $vl => $datosvl) {
                 $datosvolumen[] = $datosvl;
             }
-            
+
             $datosvolumenFCL = array();
             foreach ($gridvolumenFCL as $vl => $datosvl) {
                 $datosvolumenFCL[] = $datosvl;
             }
-            
+
             $datospie = array();
             foreach ($gridpie as $dp => $datosp) {
                 $datospie[] = $datosp;
             }
         }
-        
+
         $this->responseArray = array(
             "success" => true,
             "root" => $data4,
@@ -2519,40 +2354,39 @@ class widgets5Actions extends sfActions {
             "proveedores" => $proovedores,
             "coordembarque" => $coorembarque,
             "gridembarque" => $gridembarque,
-            "clienteEmbarque"=>$clienteEmbarque
+            "clienteEmbarque" => $clienteEmbarque
         );
         $this->setTemplate("responseTemplate");
-    } 
+    }
 
-    public function executeDatosConceptosContenedores(sfWebRequest $request){
-    $transporte = utf8_decode($request->getParameter("idtransporte"));
-    $modalidad = utf8_encode($request->getParameter("idimpoexpo"));
+    public function executeDatosConceptosContenedores(sfWebRequest $request) {
+        $transporte = utf8_encode($request->getParameter("idtransporte"));
+        $modalidad = utf8_encode($request->getParameter("idimpoexpo"));
 
-          $q = Doctrine_Query::create()
+        $q = Doctrine_Query::create()
                 ->select("c.ca_idconcepto, c.ca_concepto, c.ca_transporte, c.ca_modalidad, c.ca_liminferior")
                 ->from("Concepto c")
                 ->addWhere("c.ca_transporte=?", $transporte)
                 ->addWhere("c.ca_modalidad=?", Constantes::FCL)
                 ->addOrderBy("c.ca_liminferior")
                 ->addOrderBy("c.ca_concepto");
-          //echo $transporte." ";
-    $q->fetchArray();
 
-    $conceptos = $q->execute();
+        $q->fetchArray();
 
-    $data = array();
-    foreach ($conceptos as $concepto) {
-        $data[] = array("idconcepto" => $concepto['ca_idconcepto'],
-            "concepto" => utf8_encode($concepto['ca_concepto']),
-            "transporte" => utf8_encode($concepto['ca_transporte']),
-            "modalidad" => utf8_encode($concepto['ca_modalidad'])
-        );
+        $conceptos = $q->execute();
+
+        $data = array();
+        foreach ($conceptos as $concepto) {
+            $data[] = array("idconcepto" => $concepto['ca_idconcepto'],
+                "concepto" => utf8_encode($concepto['ca_concepto']),
+                "transporte" => utf8_encode($concepto['ca_transporte']),
+                "modalidad" => utf8_encode($concepto['ca_modalidad'])
+            );
+        }
+        $this->responseArray = array("success" => true, "root" => $data);
+        $this->setTemplate("responseTemplate");
     }
-    $this->responseArray = array("success"=> true, "root" => $data);
-    $this->setTemplate("responseTemplate");
-      }
-            
-            
+
     public function executeDatosContactos(sfWebRequest $request) {
         $idcliente = $request->getParameter("idcliente");
 
@@ -2576,7 +2410,7 @@ class widgets5Actions extends sfActions {
                 ->createQuery("i")
                 ->addWhere("i.ca_id = ?", $cliente)
                 ->fetchOne();
-        
+
         if ($idscliente) {
             $grupo = $idscliente->getCaIdgrupo();
             if ($grupo != "") {
@@ -2636,10 +2470,10 @@ class widgets5Actions extends sfActions {
                     $data[] = $trafico;
             }
             $this->responseArray = array("paises" => $data, "success" => true);
-        }else{
-            $this->responseArray = array("success" => false, "errorInfo"=>"No existe");
+        }else {
+            $this->responseArray = array("success" => false, "errorInfo" => "No existe");
         }
-        $this->setTemplate("responseTemplate");        
+        $this->setTemplate("responseTemplate");
     }
 
     public function executeDatosParametrizacionIdgClientes(sfWebRequest $request) {
@@ -2659,76 +2493,76 @@ class widgets5Actions extends sfActions {
             $nombreciudadorigen = "";
             $categoria = "";
             $idcategoria = "";
-            
+
             $indicadores = json_decode($idg->getCaIndicador());
-            if ($idg->getCaIdcliente() != " "){
+            if ($idg->getCaIdcliente() != " ") {
                 $cliente = Doctrine::getTable("Ids")->find($idg->getCaIdcliente());
-                if ($cliente){
+                if ($cliente) {
                     $nombrecliente = $cliente->getCaNombre();
                 }
             }
-            if ($idg->getCaTransportista() != " "){
+            if ($idg->getCaTransportista() != " ") {
                 $transportista = Doctrine::getTable("IdsProveedor")->find($idg->getCaTransportista());
-                if ($transportista){
+                if ($transportista) {
                     $nombretransportista = $transportista->getIds()->getCaNombre();
                 }
             }
-            if ($idg->getCaTradestino() != " "){
+            if ($idg->getCaTradestino() != " ") {
                 $traficodestino = Doctrine::getTable("Trafico")->find($idg->getCaTradestino());
-                if ($traficodestino){
+                if ($traficodestino) {
                     $nombretraficodestino = $traficodestino->getCaNombre();
                 }
             }
-             if ($idg->getCaTraorigen() != " "){
+            if ($idg->getCaTraorigen() != " ") {
                 $traficoorigen = Doctrine::getTable("Trafico")->find($idg->getCaTraorigen());
-                if ($traficoorigen){
+                if ($traficoorigen) {
                     $nombretraficoorigen = $traficoorigen->getCaNombre();
                 }
             }
-            if ($idg->getCaCiudestino() != " "){
+            if ($idg->getCaCiudestino() != " ") {
                 $ciudaddestino = Doctrine::getTable("Ciudad")->find($idg->getCaCiudestino());
-                if ($ciudaddestino){
+                if ($ciudaddestino) {
                     $nombreciudaddestino = $ciudaddestino->getCaCiudad();
                 }
             }
-            if ($idg->getCaCiuorigen() != " "){
+            if ($idg->getCaCiuorigen() != " ") {
                 $ciudadorigen = Doctrine::getTable("Ciudad")->find($idg->getCaCiuorigen());
-                if ($ciudadorigen){
+                if ($ciudadorigen) {
                     $nombreciudadorigen = $ciudadorigen->getCaCiudad();
                 }
             }
-            if ($idg->getCaMuelle() != " "){
+            if ($idg->getCaMuelle() != " ") {
                 $caso = "CU268";
                 $muelle = ParametroTable::retrieveByCaso($caso, null, null, $idg->getCaMuelle());
-                if ($muelle){
+                if ($muelle) {
                     $nombremuelle = $muelle[0]["ca_valor"];
                     $idmuelle = $muelle[0]["ca_identificacion"];
                 }
             }
-            
+
             $days = 0;
 
-            if ($indicadores->idgvaciado && $indicadores->idgvaciado != ""){
+            if ($indicadores->idgvaciado && $indicadores->idgvaciado != "") {
                 $categoria = "Vaciado";
                 $idcategoria = 1;
                 $days = $indicadores->idgvaciado;
             }
-            if ($indicadores->idgfacturacion && $indicadores->idgfacturacion != ""){
+            if ($indicadores->idgfacturacion && $indicadores->idgfacturacion != "") {
                 $categoria = "Facturacion";
                 $idcategoria = 2;
                 $days = $indicadores->idgfacturacion;
             }
-            if ($indicadores->tiempotransito && $indicadores->tiempotransito != ""){
+            if ($indicadores->tiempotransito && $indicadores->tiempotransito != "") {
                 $categoria = "Tiempo de Transito";
                 $idcategoria = 3;
                 $days = $indicadores->tiempotransito;
             }
-            if ($indicadores->coordinacion && $indicadores->coordinacion != ""){
+            if ($indicadores->coordinacion && $indicadores->coordinacion != "") {
                 $categoria = "Coord. de Embarque";
                 $idcategoria = 4;
                 $days = $indicadores->coordinacion;
             }
-            
+
             $data[] = array(
                 "consecutivo" => utf8_encode($idg->getCaConsecutivo()),
                 "transporte" => utf8_encode($idg->getCaTransporte()),
@@ -2750,9 +2584,7 @@ class widgets5Actions extends sfActions {
                 "idcategoria" => utf8_encode($idcategoria),
                 "idciudestino" => utf8_encode($idg->getCaCiudestino()),
                 "dias" => utf8_encode($days)
-                
             );
-            
         }
         $this->responseArray = array("success" => true, "root" => $data);
         $this->setTemplate("responseTemplate");
@@ -2770,7 +2602,7 @@ class widgets5Actions extends sfActions {
         $muelle = ($request->getParameter("muelle") && $request->getParameter("muelle") != "") ? utf8_decode($request->getParameter("muelle")) : " ";
         $ciudadorigen = ($request->getParameter("ciudadorigen") && $request->getParameter("ciudadorigen") != "") ? utf8_decode($request->getParameter("ciudadorigen")) : " ";
         $traficodestino = " ";
-        if ($destino != " "){
+        if ($destino != " ") {
             $trafico = Doctrine::getTable("Ciudad")->find($destino);
             $traficodestino = $trafico->getCaIdtrafico();
         }
@@ -2792,26 +2624,25 @@ class widgets5Actions extends sfActions {
                 foreach ($idgClientes as $idgCliente) {
                     $finicIDG = strtotime($idgCliente->getCaPeriodoInicial());
                     $ffinIDG = strtotime($idgCliente->getCaPeriodoFinal());
-                    
-                    $todaslasfechas[] = date('Y-m-d',$finicIDG);
-                    while ($finicIDG < $ffinIDG){
+
+                    $todaslasfechas[] = date('Y-m-d', $finicIDG);
+                    while ($finicIDG < $ffinIDG) {
                         $finicIDG += 86400; // add 24 hours
-                        $todaslasfechas[] = date('Y-m-d',$finicIDG);
+                        $todaslasfechas[] = date('Y-m-d', $finicIDG);
                     }
                 }
                 $finiForm = $periodo_inicial;
                 $ffinForm = $periodo_final;
-                
-                for($i = 0; $i < count($todaslasfechas); $i++ ){
-                    if (( $finiForm == $todaslasfechas[$i]) || ( $ffinForm == $todaslasfechas[$i])){
+
+                for ($i = 0; $i < count($todaslasfechas); $i++) {
+                    if (( $finiForm == $todaslasfechas[$i]) || ( $ffinForm == $todaslasfechas[$i])) {
                         $error = 1;
                     }
                 }
-                
-                if ($error == 1){
-                    $this->responseArray = array("success" => false , "messagge" => "Ya existe un campo similar en este periodo");
-                }
-                else{
+
+                if ($error == 1) {
+                    $this->responseArray = array("success" => false, "messagge" => "Ya existe un campo similar en este periodo");
+                } else {
                     $idgCliente = new Idgclientes();
                     $idgCliente->setCaTransporte($transporte);
                     $idgCliente->setCaTraorigen($origen);
@@ -2829,7 +2660,6 @@ class widgets5Actions extends sfActions {
                     $idgCliente->save();
                     $this->responseArray = array("success" => true);
                 }
-                
             } else {
                 $idgCliente = new Idgclientes();
                 $idgCliente->setCaTransporte($transporte);
@@ -2849,7 +2679,7 @@ class widgets5Actions extends sfActions {
                 $this->responseArray = array("success" => true);
             }
         }
-        if($tipo == "facturacion"){
+        if ($tipo == "facturacion") {
             $dias = $request->getParameter("dias");
             $idgClientes = Doctrine::getTable("IdgClientes")
                     ->createQuery("i")
@@ -2861,32 +2691,31 @@ class widgets5Actions extends sfActions {
                     ->addWhere("i.ca_muelle like ?", $muelle)
                     ->addWhere("i.ca_tradestino like ? ", $traficodestino)
                     ->addWhere("i.ca_ciuorigen like ? ", $ciudadorigen)
-                      ->execute();
-                    if (count($idgClientes) > 0) {
-                        $todaslasfechas = array();
-                        foreach ($idgClientes as $idgCliente) {
-                            $finicIDG = strtotime($idgCliente->getCaPeriodoInicial());
-                            $ffinIDG = strtotime($idgCliente->getCaPeriodoFinal());
+                    ->execute();
+            if (count($idgClientes) > 0) {
+                $todaslasfechas = array();
+                foreach ($idgClientes as $idgCliente) {
+                    $finicIDG = strtotime($idgCliente->getCaPeriodoInicial());
+                    $ffinIDG = strtotime($idgCliente->getCaPeriodoFinal());
 
-                            $todaslasfechas[] = date('Y-m-d',$finicIDG);
-                            while ($finicIDG < $ffinIDG){
-                                $finicIDG += 86400; // add 24 hours
-                                $todaslasfechas[] = date('Y-m-d',$finicIDG);
-                            }
-                        }
-                        $finiForm = $periodo_inicial;
-                        $ffinForm = $periodo_final;
+                    $todaslasfechas[] = date('Y-m-d', $finicIDG);
+                    while ($finicIDG < $ffinIDG) {
+                        $finicIDG += 86400; // add 24 hours
+                        $todaslasfechas[] = date('Y-m-d', $finicIDG);
+                    }
+                }
+                $finiForm = $periodo_inicial;
+                $ffinForm = $periodo_final;
 
-                        for($i = 0; $i < count($todaslasfechas); $i++ ){
-                            if (( $finiForm == $todaslasfechas[$i]) || ( $ffinForm == $todaslasfechas[$i])){
-                                $error = 1;
-                            }
-                        }
-                
-                        if ($error == 1){
-                            $this->responseArray = array("success" => false , "messagge" => "Ya existe un campo similar en este periodo");
-                        }
-                else{
+                for ($i = 0; $i < count($todaslasfechas); $i++) {
+                    if (( $finiForm == $todaslasfechas[$i]) || ( $ffinForm == $todaslasfechas[$i])) {
+                        $error = 1;
+                    }
+                }
+
+                if ($error == 1) {
+                    $this->responseArray = array("success" => false, "messagge" => "Ya existe un campo similar en este periodo");
+                } else {
                     $idgCliente = new Idgclientes();
                     $idgCliente->setCaTransporte($transporte);
                     $idgCliente->setCaTraorigen($origen);
@@ -2923,7 +2752,7 @@ class widgets5Actions extends sfActions {
                 $this->responseArray = array("success" => true);
             }
         }
-        if($tipo == "tiempotransito"){
+        if ($tipo == "tiempotransito") {
             $dias = $request->getParameter("dias");
             $idgClientes = Doctrine::getTable("IdgClientes")
                     ->createQuery("i")
@@ -2935,32 +2764,31 @@ class widgets5Actions extends sfActions {
                     ->addWhere("i.ca_muelle like ?", $muelle)
                     ->addWhere("i.ca_tradestino like ? ", $traficodestino)
                     ->addWhere("i.ca_ciuorigen like ? ", $ciudadorigen)
-                     ->execute();
+                    ->execute();
             if (count($idgClientes) > 0) {
-                        $todaslasfechas = array();
-                        foreach ($idgClientes as $idgCliente) {
-                            $finicIDG = strtotime($idgCliente->getCaPeriodoInicial());
-                            $ffinIDG = strtotime($idgCliente->getCaPeriodoFinal());
+                $todaslasfechas = array();
+                foreach ($idgClientes as $idgCliente) {
+                    $finicIDG = strtotime($idgCliente->getCaPeriodoInicial());
+                    $ffinIDG = strtotime($idgCliente->getCaPeriodoFinal());
 
-                            $todaslasfechas[] = date('Y-m-d',$finicIDG);
-                            while ($finicIDG < $ffinIDG){
-                                $finicIDG += 86400; // add 24 hours
-                                $todaslasfechas[] = date('Y-m-d',$finicIDG);
-                            }
-                        }
-                        $finiForm = $periodo_inicial;
-                        $ffinForm = $periodo_final;
+                    $todaslasfechas[] = date('Y-m-d', $finicIDG);
+                    while ($finicIDG < $ffinIDG) {
+                        $finicIDG += 86400; // add 24 hours
+                        $todaslasfechas[] = date('Y-m-d', $finicIDG);
+                    }
+                }
+                $finiForm = $periodo_inicial;
+                $ffinForm = $periodo_final;
 
-                        for($i = 0; $i < count($todaslasfechas); $i++ ){
-                            if (( $finiForm == $todaslasfechas[$i]) || ( $ffinForm == $todaslasfechas[$i])){
-                                $error = 1;
-                            }
-                        }
-                
-                        if ($error == 1){
-                            $this->responseArray = array("success" => false , "messagge" => "Ya existe un campo similar en este periodo");
-                        }
-                else{
+                for ($i = 0; $i < count($todaslasfechas); $i++) {
+                    if (( $finiForm == $todaslasfechas[$i]) || ( $ffinForm == $todaslasfechas[$i])) {
+                        $error = 1;
+                    }
+                }
+
+                if ($error == 1) {
+                    $this->responseArray = array("success" => false, "messagge" => "Ya existe un campo similar en este periodo");
+                } else {
                     $idgCliente = new Idgclientes();
                     $idgCliente->setCaTransporte($transporte);
                     $idgCliente->setCatraorigen($origen);
@@ -2997,7 +2825,7 @@ class widgets5Actions extends sfActions {
                 $this->responseArray = array("success" => true);
             }
         }
-        if ( $tipo == "coordinacion"){
+        if ($tipo == "coordinacion") {
             $dias = $request->getParameter("dias");
             $idgClientes = Doctrine::getTable("IdgClientes")
                     ->createQuery("i")
@@ -3010,35 +2838,34 @@ class widgets5Actions extends sfActions {
                     ->addWhere("i.ca_tradestino like ? ", $traficodestino)
                     ->addWhere("i.ca_ciuorigen like ? ", $ciudadorigen)
                     ->execute();
-            
-           // print_r(count($idgClientes));
-           // exit;
-            
+
+            // print_r(count($idgClientes));
+            // exit;
+
             if (count($idgClientes) > 0) {
-                        $todaslasfechas = array();
-                        foreach ($idgClientes as $idgCliente) {
-                            $finicIDG = strtotime($idgCliente->getCaPeriodoInicial());
-                            $ffinIDG = strtotime($idgCliente->getCaPeriodoFinal());
+                $todaslasfechas = array();
+                foreach ($idgClientes as $idgCliente) {
+                    $finicIDG = strtotime($idgCliente->getCaPeriodoInicial());
+                    $ffinIDG = strtotime($idgCliente->getCaPeriodoFinal());
 
-                            $todaslasfechas[] = date('Y-m-d',$finicIDG);
-                            while ($finicIDG < $ffinIDG){
-                                $finicIDG += 86400; // add 24 hours
-                                $todaslasfechas[] = date('Y-m-d',$finicIDG);
-                            }
-                        }
-                        $finiForm = $periodo_inicial;
-                        $ffinForm = $periodo_final;
+                    $todaslasfechas[] = date('Y-m-d', $finicIDG);
+                    while ($finicIDG < $ffinIDG) {
+                        $finicIDG += 86400; // add 24 hours
+                        $todaslasfechas[] = date('Y-m-d', $finicIDG);
+                    }
+                }
+                $finiForm = $periodo_inicial;
+                $ffinForm = $periodo_final;
 
-                        for($i = 0; $i < count($todaslasfechas); $i++ ){
-                            if (( $finiForm == $todaslasfechas[$i]) || ( $ffinForm == $todaslasfechas[$i])){
-                                $error = 1;
-                            }
-                        }
-                
-                        if ($error == 1){
-                            $this->responseArray = array("success" => false , "messagge" => "Ya existe un campo similar en este periodo");
-                        }
-                else{
+                for ($i = 0; $i < count($todaslasfechas); $i++) {
+                    if (( $finiForm == $todaslasfechas[$i]) || ( $ffinForm == $todaslasfechas[$i])) {
+                        $error = 1;
+                    }
+                }
+
+                if ($error == 1) {
+                    $this->responseArray = array("success" => false, "messagge" => "Ya existe un campo similar en este periodo");
+                } else {
                     $idgCliente = new Idgclientes();
                     $idgCliente->setCaTransporte($transporte);
                     $idgCliente->setCaTraorigen($origen);
@@ -3078,35 +2905,33 @@ class widgets5Actions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
-    public function executeEliminarParametroIdgClientes(sfWebRequest $request){
+    public function executeEliminarParametroIdgClientes(sfWebRequest $request) {
         $consecutivo = $request->getParameter("consecutivo");
         $idgCliente = Doctrine::getTable("IdgClientes")->find($consecutivo);
-        if ($idgCliente){
+        if ($idgCliente) {
             $idgCliente->delete();
             $this->responseArray = array("success" => true);
-        }
-        else{
-            $this->responseArray = array("success" => false , "responseInfo" => "Error al eliminar");
+        } else {
+            $this->responseArray = array("success" => false, "responseInfo" => "Error al eliminar");
         }
         $this->setTemplate("responseTemplate");
     }
 
-    public function executeGuardarObservacionesIdg(sfWebRequest $request){
+    public function executeGuardarObservacionesIdg(sfWebRequest $request) {
         $idreporte = $request->getParameter("idreporte");
         $reporte = Doctrine::getTable("Reporte")->find($idreporte);
-        if ($reporte){
-            $tipoidg = "idg".$request->getParameter("tipoidg");
+        if ($reporte) {
+            $tipoidg = "idg" . $request->getParameter("tipoidg");
             $reporte->setProperty($tipoidg, utf8_decode($this->getRequestParameter("observ")));
             $reporte->save();
             $this->responseArray = array("success" => true);
-        }
-        else {
-            $this->responseArray = array("success" => false ,"errorInfo" => "Imposible almacenar");
+        } else {
+            $this->responseArray = array("success" => false, "errorInfo" => "Imposible almacenar");
         }
         $this->setTemplate("responseTemplate");
     }
-    
-    public function executeDatosComboListaReferencias(sfWebRequest $request){
+
+    public function executeDatosComboListaReferencias(sfWebRequest $request) {
 
         $criterio = $this->getRequestParameter("query");
         $impoexpo = utf8_decode($request->getParameter("impoexpo"));
@@ -3122,13 +2947,13 @@ class widgets5Actions extends sfActions {
                     ->limit(50)
                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
 
-            if($idtransporte){
+            if ($idtransporte) {
                 $q->addWhere("m.ca_transporte = ?", $idtransporte);
-        }
+            }
 
-            if($impoexpo){
+            if ($impoexpo) {
                 $q->addWhere("m.ca_impoexpo = ?", $impoexpo);
-    }
+            }
 
             $debug = $q->getSqlQuery();
             $refs = $q->execute();
@@ -3140,16 +2965,16 @@ class widgets5Actions extends sfActions {
                 $refs[$k]["o_ca_puerto"] = utf8_encode($refs[$k]["o_ca_puerto"]);
                 $refs[$k]["d_ca_ciudad"] = utf8_encode($refs[$k]["d_ca_ciudad"]);
                 $refs[$k]["d_ca_puerto"] = utf8_encode($refs[$k]["d_ca_puerto"]);
-                $refs[$k]["m_ca_master"] = utf8_encode($refs[$k]["m_ca_master"]);            
+                $refs[$k]["m_ca_master"] = utf8_encode($refs[$k]["m_ca_master"]);
                 $refs[$k]["m_ca_observaciones"] = utf8_encode($refs[$k]["m_ca_observaciones"]);
                 $refs[$k]["m_ca_motonave"] = utf8_encode($refs[$k]["m_ca_motonave"]);
                 $refs[$k]["m_ca_motivoanulado"] = utf8_encode($refs[$k]["m_ca_motivoanulado"]);
                 $refs[$k]["m_ca_datos"] = utf8_encode($refs[$k]["m_ca_datos"]);
             }
-            
+
             //echo "<pre>";print_r($refs);echo "</pre>";
-            $this->responseArray = array("success" => true, "root" => $refs, "total" => count($refs), "debug" => $debug);        
-        }else {
+            $this->responseArray = array("success" => true, "root" => $refs, "total" => count($refs), "debug" => $debug);
+        } else {
             $this->responseArray = array("root" => array(), "total" => 0, "success" => true);
         }
         $this->setTemplate("responseTemplate");
@@ -3172,17 +2997,17 @@ class widgets5Actions extends sfActions {
         $idCliente = $request->getParameter("empresa");
 
         $sucursales = Doctrine::getTable("IdsSucursal")
-            ->createQuery("i")
-            ->addWhere("i.ca_id = ? and i.ca_usueliminado is null", $idCliente)
-            ->execute();
+                ->createQuery("i")
+                ->addWhere("i.ca_id = ? and i.ca_usueliminado is null", $idCliente)
+                ->execute();
 
         $data = array();
         foreach ($sucursales as $sucursal) {
-            $descripcion = ($sucursal->getCaNombre())?$sucursal->getCaNombre():$sucursal->getCaDireccion();
+            $descripcion = ($sucursal->getCaNombre()) ? $sucursal->getCaNombre() : $sucursal->getCaDireccion();
             $data[] = array("idsucursal" => $sucursal->getCaIdsucursal(),
                 "sucursal" => utf8_encode($descripcion),
                 "ciudad" => utf8_encode($sucursal->getCiudad()->getCaCiudad()),
-                );
+            );
         }
 
         $this->responseArray = array("success" => true, "root" => $data);
@@ -3251,7 +3076,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosCargos(sfWebRequest $request) {
-        $caso = "CU266";
+        $caso = $request->getParameter("externos") ? "CU265" : "CU266";
         $datomod = ParametroTable::retrieveByCaso($caso, null, null, null);
         $data = array();
         foreach ($datomod as $dato) {
@@ -3272,6 +3097,60 @@ class widgets5Actions extends sfActions {
             $data[] = array("id" => $dato["ca_identificacion"],
                 "codigo" => utf8_encode($dato["ca_valor"]),
                 "mostrar" => utf8_encode($dato["ca_valor2"]));
+        }
+
+        $this->responseArray = array("success" => true, "root" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosTipoSeguimiento(sfWebRequest $request) {
+        $caso = "CU262";
+        $datomod = ParametroTable::retrieveByCaso($caso, null, null, null);
+        $data = array();
+        foreach ($datomod as $dato) {
+            $data[] = array("id" => $dato["ca_identificacion"],
+                "name" => utf8_encode($dato["ca_valor"]));
+        }
+
+        $this->responseArray = array("success" => true, "root" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeSeguimientoAntecesor(sfWebRequest $request) {
+        $idCliente = $request->getParameter("idcliente");
+
+        $seguimientos = Doctrine::getTable("IdsEventos")
+                ->createQuery("i")
+                ->addWhere('i.ca_idcliente = ?', $idCliente)
+                ->addWhere('i.ca_idantecedente = 0')
+                ->execute();
+
+        $data = array();
+        $data[] = array("id" => 0,
+            "name" => utf8_encode("Ninguno - Seguimiento nuevo"));
+        foreach ($seguimientos as $seguimiento) {
+            $data[] = array("id" => $seguimiento["ca_idevento"],
+                "name" => utf8_encode($seguimiento["ca_asunto"]));
+        }
+
+        $this->responseArray = array("success" => true, "root" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosTipoIdentificacion(sfWebRequest $request) {
+        $q = Doctrine::getTable("IdsTipoIdentificacion")
+                ->createQuery("i");
+        if ($request->getParameter("idtrafico")) {
+            $q->addWhere('ca_idtrafico = ?', $request->getParameter("idtrafico"));
+        }
+        $identificaciones = $q->execute();
+
+        $data = array();
+        foreach ($identificaciones as $identificacion) {
+            $data[] = array("id" => $identificacion["ca_tipoidentificacion"],
+                "name" => utf8_encode($identificacion["ca_nombre"]),
+                "trafico" => utf8_encode($identificacion["ca_idtrafico"]),
+                "trafico" => utf8_encode($identificacion->getTrafico()->getCaNombre()));
         }
 
         $this->responseArray = array("success" => true, "root" => $data);
@@ -3322,7 +3201,23 @@ class widgets5Actions extends sfActions {
         $this->responseArray = array("success" => true, "root" => $tipopersona);
         $this->setTemplate("responseTemplate");
     }
-    
+
+    public function executeDatosCombosRadicacion(sfWebRequest $request) {
+        $tipoCombo = $request->getParameter("tipoCombo");
+
+        $caso = "CU073";
+        $items = ParametroTable::retrieveByCaso($caso, null, null, $tipoCombo);
+
+        $data = array();
+        foreach ($items as $item) {
+            $data[] = array("nombre" => utf8_encode($item->getCaValor()),
+                "valor" => utf8_encode($item->getCaValor2())
+            );
+        }
+        $this->responseArray = array("success" => true, "root" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+
     /**
      * @autor JFNARIÑO
      * @return un objeto JSON con los datos de modalidades filtradas por impoexpo y/o transporte
@@ -3341,7 +3236,7 @@ class widgets5Actions extends sfActions {
 
         if ($impoexpo_parameter) {
             $q->where(" m.ca_impoexpo = ? ", $impoexpo_parameter);
-}
+        }
 
         if ($transport_parameter) {
             $q->addWhere("m.ca_transporte = ? ", $transport_parameter);
@@ -3367,5 +3262,7 @@ class widgets5Actions extends sfActions {
         $this->responseArray = array("root" => $modalidades, "total" => count($modalidades), "success" => true);
         $this->setTemplate("responseTemplate");
     }
+
 }
+
 ?>
