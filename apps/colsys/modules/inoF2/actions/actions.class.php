@@ -1,10 +1,10 @@
 <?php
 
 /**
- * gestDocumental actions.
+ * InoF2 actions.
  *
  * @package    colsys
- * @subpackage gestDocumental
+ * @subpackage InoF2
  * @author     Your name here
  * @version    SVN: $Id: actions.class.php 2692 2006-11-15 21:03:55Z fabien $
  */
@@ -25,60 +25,54 @@ class inoF2Actions extends sfActions {
         $this->permisos = array();
 
         $user = $this->getUser();
-        
-        $permisosRutinas["aereo"] = $user->getControlAcceso(self::RUTINA_AEREO);        
+
+        $permisosRutinas["aereo"] = $user->getControlAcceso(self::RUTINA_AEREO);
         $permisosRutinas["maritimo"] = $user->getControlAcceso(self::RUTINA_MARITIMO);
-        
+
         $permisosRutinas["terrestre"] = $user->getControlAcceso(self::RUTINA_TERRESTRE);
         $permisosRutinas["exportacion"] = $user->getControlAcceso(self::RUTINA_EXPORTACION);
         $permisosRutinas["otm"] = $user->getControlAcceso(self::RUTINA_OTM);
 
-        $tipopermisos=array('Consultar'=>0, 'Crear'=>1, 'Editar'=>2, 'Anular'=>3, 'Liquidar'=>4, 'Cerrar'=>5,'Abrir'=>6, 'General'=>7, 'House'=>8, 'Facturacion'=>9, 'Costos'=>10, 'Documentos'=>11);
+        $tipopermisos = array('Consultar' => 0, 'Crear' => 1, 'Editar' => 2, 'Anular' => 3, 'Liquidar' => 4, 'Cerrar' => 5, 'Abrir' => 6, 'General' => 7, 'House' => 8, 'Facturacion' => 9, 'Costos' => 10, 'Documentos' => 11);
 
-        foreach($permisosRutinas as $k=>$p)
-        {
-            foreach($tipopermisos as $index=>$tp)
-            {
-                $this->permisos[$k][$index]=isset($permisosRutinas[$k][$tp])?true:false;
-            }            
+        foreach ($permisosRutinas as $k => $p) {
+            foreach ($tipopermisos as $index => $tp) {
+                $this->permisos[$k][$index] = isset($permisosRutinas[$k][$tp]) ? true : false;
+            }
         }
 
         $this->inoMaster = Doctrine::getTable("InoMaster")
                 ->createQuery("m")
-                ->addWhere("m.ca_idmaster = ?", array($request->getParameter("idmaster")))                
+                ->addWhere("m.ca_idmaster = ?", array($request->getParameter("idmaster")))
                 ->execute();
-        
     }
-
 
     function executeDatosBusqueda($request) {
 
-        
+
         $user = $this->getUser();
-        
-        /*Accesos del usuario*/
-        $permisosRutinas["aereo"] = $user->getControlAcceso(self::RUTINA_AEREO);        
+
+        /* Accesos del usuario */
+        $permisosRutinas["aereo"] = $user->getControlAcceso(self::RUTINA_AEREO);
         $permisosRutinas["maritimo"] = $user->getControlAcceso(self::RUTINA_MARITIMO);
-        
+
         $permisosRutinas["terrestre"] = $user->getControlAcceso(self::RUTINA_TERRESTRE);
         $permisosRutinas["exportacion"] = $user->getControlAcceso(self::RUTINA_EXPORTACION);
         $permisosRutinas["otm"] = $user->getControlAcceso(self::RUTINA_OTM);
 
-        $tipopermisos=array('Consultar'=>0, 'Crear'=>1, 'Editar'=>2, 'Anular'=>3, 'Liquidar'=>4, 'Cerrar'=>5,'Abrir'=>6, 'General'=>7, 'House'=>8, 'Facturacion'=>9, 'Costos'=>10, 'Documentos'=>11);
+        $tipopermisos = array('Consultar' => 0, 'Crear' => 1, 'Editar' => 2, 'Anular' => 3, 'Liquidar' => 4, 'Cerrar' => 5, 'Abrir' => 6, 'General' => 7, 'House' => 8, 'Facturacion' => 9, 'Costos' => 10, 'Documentos' => 11);
 
-        foreach($permisosRutinas as $k=>$p)
-        {
-            foreach($tipopermisos as $index=>$tp)
-            {
+        foreach ($permisosRutinas as $k => $p) {
+            foreach ($tipopermisos as $index => $tp) {
                 //$permisos[$k][$index]=$permisosRutinas[$k][$tp];
-                $permisos[$k][$index]=isset($permisosRutinas[$k][$tp])?true:false;
-            }            
+                $permisos[$k][$index] = isset($permisosRutinas[$k][$tp]) ? true : false;
+            }
         }
 
         $where = "";
         foreach ($request->getParameter("opciones") as $o) {
             if ($where != "")
-                $where .=" OR ";
+                $where .= " OR ";
             $where .= $o . " like ?";
             $whereq[] = "%" . $request->getParameter("q") . "%";
         }
@@ -100,7 +94,7 @@ class inoF2Actions extends sfActions {
         $wherePermisos = " (";
         if ($permisos["aereo"]["Consultar"]) {
             if ($where != "")
-                $where .=" OR ";
+                $where .= " OR ";
             $where .= "(ca_impoexpo = ? AND ca_transporte=? ) ";
             $whereq[] = Constantes::IMPO;
             $whereq[] = Constantes::AEREO;
@@ -108,7 +102,7 @@ class inoF2Actions extends sfActions {
 
         if ($permisos["maritimo"]["Consultar"]) {
             if ($where != "")
-                $where .=" OR ";
+                $where .= " OR ";
             $where .= "(ca_impoexpo = ? AND ca_transporte=? ) ";
             $whereq[] = Constantes::IMPO;
             $whereq[] = Constantes::MARITIMO;
@@ -117,7 +111,7 @@ class inoF2Actions extends sfActions {
         if ($permisos["terrestre"]["Consultar"]) {
             //echo "ss";
             if ($where != "")
-                $where .=" OR ";
+                $where .= " OR ";
             $where .= "(ca_impoexpo = ? AND ca_transporte=? ) ";
             $whereq[] = Constantes::INTERNO;
             $whereq[] = Constantes::TERRESTRE;
@@ -125,21 +119,21 @@ class inoF2Actions extends sfActions {
 
         if ($permisos["exportacion"]["Consultar"]) {
             if ($where != "")
-                $where .=" OR ";
+                $where .= " OR ";
             $where .= "(ca_impoexpo = ?  ) ";
             $whereq[] = Constantes::EXPO;
         }
 
         if ($permisos["otm"]["Consultar"]) {
             if ($where != "")
-                $where .=" OR ";
+                $where .= " OR ";
             $where .= "(ca_impoexpo = ? AND ca_transporte=? ) ";
             $whereq[] = Constantes::OTMDTA;
             $whereq[] = Constantes::TERRESTRE;
         }
-        
 
-        $wherePermisos.=$where . " )";
+
+        $wherePermisos .= $where . " )";
         $q->addWhere("" . $where, $whereq);
 
         $debug = utf8_encode($q->getSqlQuery());
@@ -171,10 +165,10 @@ class inoF2Actions extends sfActions {
 
     public function executeGuardarPreferencias(sfWebRequest $request) {
 
-        error_reporting(0);
+        //error_reporting(E_ALL);
         $style = $request->getParameter("user_style");
         $user_factuaIno = $request->getParameter("user_factuaIno");
-        
+
 
         $usuario = Doctrine::getTable("Usuario")
                 ->createQuery("u")
@@ -195,20 +189,18 @@ class inoF2Actions extends sfActions {
         $datos = json_encode($datos);
         $conn = Doctrine::getTable("Usuario")->getConnection();
         $conn->beginTransaction();
-        //try {
+        try {
 
             $usuario->setCaDatos($datos);
             $usuario->save();
             $conn->commit();
 
             $this->getUser()->setDatos($datos);
-            //echo $this->getUser()->getDatos("estiloIno");            
-        //exit;
             $this->responseArray = array("success" => "true", "style" => $style);
-        /*} catch (Exception $e) {
+        } catch (Exception $e) {
             $conn->rollback();
             $this->responseArray = array("success" => "false", "style" => $style);
-        }*/
+        }
         $this->setTemplate("responseTemplate");
     }
 
@@ -256,37 +248,34 @@ class inoF2Actions extends sfActions {
                 $row["color"] = "pink";
             }
 
-            $inoHouseSea=$inoHouse->getInoHouseSea();
+            $inoHouseSea = $inoHouse->getInoHouseSea();
 
-            $datos= json_decode($inoHouseSea->getCaDatos(),true);
-            
+            $datos = json_decode($inoHouseSea->getCaDatos(), true);
+
             $row["continuacion"] = $inoHouseSea->getCaContinuacion();
             $row["destinofinal"] = $inoHouseSea->getCaContinuacionDest();
             //print_r($datos);
             //exit;
             $inoEquipos = Doctrine::getTable("InoEquipo")
-                ->createQuery("e")
-                ->select("e.* ")                
-                ->where("e.ca_idmaster = ?", $idmaster)
-                ->addOrderBy("e.ca_idequipo")
-                ->execute();
-            $equipos=array();
-            foreach($inoEquipos as $e)
-            {
-                $piezas="";
-                $kilos="";
-                foreach($datos["equipos"] as $de)
-                {
-                    if($de["idconcepto"]==$e->getCaIdconcepto())
-                    {
-                        $piezas=$de["piezas"];
-                        $kilos=$de["kilos"];
+                    ->createQuery("e")
+                    ->select("e.* ")
+                    ->where("e.ca_idmaster = ?", $idmaster)
+                    ->addOrderBy("e.ca_idequipo")
+                    ->execute();
+            $equipos = array();
+            foreach ($inoEquipos as $e) {
+                $piezas = "";
+                $kilos = "";
+                foreach ($datos["equipos"] as $de) {
+                    if ($de["idconcepto"] == $e->getCaIdconcepto()) {
+                        $piezas = $de["piezas"];
+                        $kilos = $de["kilos"];
                         continue;
                     }
                 }
-                $equipos[]=array("sel"=>true ,"idequipo"=>$e->getCaIdequipo(),"idconcepto"=>$e->getConcepto()->getCaIdconcepto(),"concepto"=>$e->getConcepto()->getCaConcepto(),"serial"=>$e->getCaSerial(),"numprecinto"=>$e->getCaNumprecinto(),"piezas"=>$piezas,"kilos"=>$kilos);
+                $equipos[] = array("sel" => true, "idequipo" => $e->getCaIdequipo(), "idconcepto" => $e->getConcepto()->getCaIdconcepto(), "concepto" => $e->getConcepto()->getCaConcepto(), "serial" => $e->getCaSerial(), "numprecinto" => $e->getCaNumprecinto(), "piezas" => $piezas, "kilos" => $kilos);
             }
-            $row["equipos"]=$equipos;
+            $row["equipos"] = $equipos;
             $data[] = $row;
         }
 
@@ -364,15 +353,15 @@ class inoF2Actions extends sfActions {
 
         foreach ($datos as $d) {
             $consecutivo = ($d["tcomp_ca_tipo"] == "F") ? "FACTURA " : (($d["tcomp_ca_tipo"] == "C") ? "<span class=row_yellow>NOTA CREDITO</span>" : "");
-            $consecutivo.=($d["comp_ca_consecutivo"] == "") ? " Sin Generar - " . $d["comp_ca_idcomprobante"] : $d["tcomp_ca_tipo"] . "" . $d["tcomp_ca_comprobante"] . "-" . $d["comp_ca_consecutivo"];
-            $consecutivo.=" - " . utf8_encode($d["ids_ca_nombre"]) . " - " . $d["c_ca_doctransporte"];
+            $consecutivo .= ($d["comp_ca_consecutivo"] == "") ? " Sin Generar - " . $d["comp_ca_idcomprobante"] : $d["tcomp_ca_tipo"] . "" . $d["tcomp_ca_comprobante"] . "-" . $d["comp_ca_consecutivo"];
+            $consecutivo .= " - " . utf8_encode($d["ids_ca_nombre"]) . " - " . $d["c_ca_doctransporte"];
 
             if ($d["clH_ca_compania"] != $d["ids_ca_nombre"])
-                $consecutivo.= " - " . utf8_encode($d["clH_ca_compania"]);
+                $consecutivo .= " - " . utf8_encode($d["clH_ca_compania"]);
 
 
             if ($d["comp_ca_fchgenero"] != "" && $d["comp_ca_usugenero"] != "")
-                $consecutivo.= "({$d["comp_ca_usugenero"]}-{$d["comp_ca_fchgenero"]})";
+                $consecutivo .= "({$d["comp_ca_usugenero"]}-{$d["comp_ca_fchgenero"]})";
 
             if ($d["comp_ca_estado"] == "5") {
                 $consecutivo = "<span class='row_green'>$consecutivo</span>";
@@ -440,13 +429,13 @@ class inoF2Actions extends sfActions {
 
         foreach ($datos as $d) {
             $consecutivo = ($d["tcomp_ca_tipo"] == "F") ? "FACTURA " : (($d["tcomp_ca_tipo"] == "C") ? "<span class=row_yellow>NOTA CREDITO</span>" : "");
-            $consecutivo.=($d["comp_ca_consecutivo"] == "") ? " Sin Gen. " . $d["comp_ca_idcomprobante"] : $d["tcomp_ca_tipo"] . "" . $d["tcomp_ca_comprobante"] . "-" . $d["comp_ca_consecutivo"];
+            $consecutivo .= ($d["comp_ca_consecutivo"] == "") ? " Sin Gen. " . $d["comp_ca_idcomprobante"] : $d["tcomp_ca_tipo"] . "" . $d["tcomp_ca_comprobante"] . "-" . $d["comp_ca_consecutivo"];
             $file = ($d["tcomp_ca_tipo"] == "F" && $d["comp_ca_consecutivo"] != "") ? "/inocomprobantes/generarComprobantePDF/id/" . $d["comp_ca_idcomprobante"] : "";
             $file = "/inocomprobantes/generarComprobantePDF/id/" . $d["comp_ca_idcomprobante"];
 
             $house = $d["c_ca_doctransporte"];
             if ($d["clH_ca_compania"] != $d["ids_ca_nombre"])
-                $house.= " - " . utf8_encode($d["clH_ca_compania"]);
+                $house .= " - " . utf8_encode($d["clH_ca_compania"]);
 
             $class = "";
             if ($d["comp_ca_estado"] == "5")
@@ -477,7 +466,7 @@ class inoF2Actions extends sfActions {
             }
 
 
-            $valor = ($d["comp_ca_valor"] != "") ? $d["comp_ca_valor"] : (($d["c_ca_valor3"]>=$d["c_ca_valor4"])?$d["c_ca_valor3"]:$d["c_ca_valor4"]);
+            $valor = ($d["comp_ca_valor"] != "") ? $d["comp_ca_valor"] : (($d["c_ca_valor3"] >= $d["c_ca_valor4"]) ? $d["c_ca_valor3"] : $d["c_ca_valor4"]);
             $this->data[] = array(
                 "tipocomprobante" => $d["tcomp_ca_tipo"],
                 "titulohouse" => "House", "titulotaza" => "Valor x tasa cambio", "titulocambio" => "Tasa de cambio",
@@ -534,7 +523,6 @@ class inoF2Actions extends sfActions {
         $this->responseArray = array("success" => true, "root" => $this->data);
         $this->setTemplate("responseTemplate");
     }
-    
 
     /**
      * @autor ?
@@ -851,61 +839,61 @@ class inoF2Actions extends sfActions {
 
     public function executeGuardarFactura(sfWebRequest $request) {
         //try {
-            $idcomprobante = $request->getParameter("idcomprobante");
-            $idtipocomprobante = $request->getParameter("idtipocomprobante");
+        $idcomprobante = $request->getParameter("idcomprobante");
+        $idtipocomprobante = $request->getParameter("idtipocomprobante");
 
-            $idsucursal = $request->getParameter("idsucursal");
+        $idsucursal = $request->getParameter("idsucursal");
 
-            $sucursal = Doctrine::getTable("IdsSucursal")->find($idsucursal);
+        $sucursal = Doctrine::getTable("IdsSucursal")->find($idsucursal);
 
-            if ($idcomprobante) {
-                $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
-                /* $comprobante = new InoComprobante();
-                  $comprobante->getInoDetalle() */
-                $this->forward404Unless($comprobante);
-                $idcliente_old = $comprobante->getCaId();
-            } else {
-                $comprobante = new InoComprobante();
-            }
-            $comprobante->setCaIdtipo($idtipocomprobante);
+        if ($idcomprobante) {
+            $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
+            /* $comprobante = new InoComprobante();
+              $comprobante->getInoDetalle() */
+            $this->forward404Unless($comprobante);
+            $idcliente_old = $comprobante->getCaId();
+        } else {
+            $comprobante = new InoComprobante();
+        }
+        $comprobante->setCaIdtipo($idtipocomprobante);
 
-            $conn = $comprobante->getTable()->getConnection();
-            $conn->beginTransaction();
+        $conn = $comprobante->getTable()->getConnection();
+        $conn->beginTransaction();
 
-            $idhouse = $request->getParameter("idhouse");
-            $house = Doctrine::getTable("InoHouse")->find($idhouse);
+        $idhouse = $request->getParameter("idhouse");
+        $house = Doctrine::getTable("InoHouse")->find($idhouse);
 
 
-            $comprobante->setCaIdsucursal($idsucursal);
+        $comprobante->setCaIdsucursal($idsucursal);
 
-            $comprobante->setCaId($sucursal->getIds()->getCaId());
-            $comprobante->setCaIdhouse($idhouse);
-            //$comprobante->setCaValor( $valor );
-            $comprobante->setCaIdmoneda($request->getParameter("idmoneda"));
-            $comprobante->setCaTcambio($request->getParameter("tcambio"));
-            
-            $comprobante->setProperty("bienestrans", $request->getParameter("bienestrans"));
-            $comprobante->setProperty("detalle", $request->getParameter("detalle"));
-            $comprobante->setProperty("anexos", $request->getParameter("anexos"));
-            $comprobante->setProperty("idcontacto", $request->getParameter("idcontacto"));
-            
-            
-            $ccosto = Doctrine::getTable("InoCentroCosto")
+        $comprobante->setCaId($sucursal->getIds()->getCaId());
+        $comprobante->setCaIdhouse($idhouse);
+        //$comprobante->setCaValor( $valor );
+        $comprobante->setCaIdmoneda($request->getParameter("idmoneda"));
+        $comprobante->setCaTcambio($request->getParameter("tcambio"));
+
+        $comprobante->setProperty("bienestrans", $request->getParameter("bienestrans"));
+        $comprobante->setProperty("detalle", $request->getParameter("detalle"));
+        $comprobante->setProperty("anexos", $request->getParameter("anexos"));
+        $comprobante->setProperty("idcontacto", $request->getParameter("idcontacto"));
+
+
+        $ccosto = Doctrine::getTable("InoCentroCosto")
                 ->createQuery("c")
                 ->select("*")
-                ->where('ca_impoexpo = ? and ca_transporte = ? and ca_idsucursal=?' ,  array( $comprobante->getInoHouse()->getInoMaster()->getCaImpoexpo(), $comprobante->getInoHouse()->getInoMaster()->getCaTransporte() , $comprobante->getInoTipoComprobante()->getCaIdsucursal() ))
+                ->where('ca_impoexpo = ? and ca_transporte = ? and ca_idsucursal=?', array($comprobante->getInoHouse()->getInoMaster()->getCaImpoexpo(), $comprobante->getInoHouse()->getInoMaster()->getCaTransporte(), $comprobante->getInoTipoComprobante()->getCaIdsucursal()))
                 ->fetchOne();
-            
-            $comprobante->setCaIdccosto($ccosto->getCaIdccosto());
-            $comprobante->save($conn);
+
+        $comprobante->setCaIdccosto($ccosto->getCaIdccosto());
+        $comprobante->save($conn);
 
 
-            $conn->commit();
+        $conn->commit();
 
-            $this->responseArray = array("success" => "true","idcomprobante"=>$comprobante->getCaIdcomprobante());
-       // } catch (Exception $e) {
-           // $conn->rollback();
-          //  $this->responseArray = array("success" => "false", "errorInfo" => $e->getMessage());
+        $this->responseArray = array("success" => "true", "idcomprobante" => $comprobante->getCaIdcomprobante());
+        // } catch (Exception $e) {
+        // $conn->rollback();
+        //  $this->responseArray = array("success" => "false", "errorInfo" => $e->getMessage());
         //}
         $this->setTemplate("responseTemplate");
     }
@@ -923,71 +911,71 @@ class inoF2Actions extends sfActions {
         $conn->beginTransaction();
 
         //try {
-            $comprobante = $tipoComprobante = null;
-            $total = 0;
-            $impuestos = array();
-            $idcomprobante = 0;
-            foreach ($datos_det as $t) {
-                if ($t->concepto == "" || $t->valor == "")
-                    continue;
-                if ($comprobante == null) {
-                    $comprobante = Doctrine::getTable("InoComprobante")->find($t->idcomprobante);
-                    $this->forward404Unless($comprobante);
-                    $idcomprobante = $t->idcomprobante;
-                    $tipoComprobante = $comprobante->getInoTipoComprobante();
-                }
-
-                $inoDetalle = Doctrine::getTable("InoDetalle")->find($t->iddetalle);
-                if (!$inoDetalle)
-                    $inoDetalle = new InoDetalle();
-
-                $inoDetalle->setCaIdcomprobante($t->idcomprobante);
-                if ($tipoComprobante->getCaTipo() == "C")
-                    $inoDetalle->setCaDb($t->valor);
-                else
-                    $inoDetalle->setCaCr($t->valor);
-                $inoDetalle->setCaIdconcepto(is_numeric($t->concepto)?$t->concepto:$t->idconcepto );
-                $inoDetalle->setCaId($comprobante->getCaId());
-                $inoDetalle->save($conn);
-
-                $ids[] = $t->id;
-                $ids_reg[] = $inoDetalle->getCaIddetalle();
-                $valor+=$t->valor;
+        $comprobante = $tipoComprobante = null;
+        $total = 0;
+        $impuestos = array();
+        $idcomprobante = 0;
+        foreach ($datos_det as $t) {
+            if ($t->concepto == "" || $t->valor == "")
+                continue;
+            if ($comprobante == null) {
+                $comprobante = Doctrine::getTable("InoComprobante")->find($t->idcomprobante);
+                $this->forward404Unless($comprobante);
+                $idcomprobante = $t->idcomprobante;
+                $tipoComprobante = $comprobante->getInoTipoComprobante();
             }
-            $conn->commit();
-            $this->responseArray = array("errorInfo" => "", "id" => implode(",", $ids), "idreg" => implode(",", $ids_reg), "success" => true);
-       // } catch (Exception $e) {
 
+            $inoDetalle = Doctrine::getTable("InoDetalle")->find($t->iddetalle);
+            if (!$inoDetalle)
+                $inoDetalle = new InoDetalle();
+
+            $inoDetalle->setCaIdcomprobante($t->idcomprobante);
+            if ($tipoComprobante->getCaTipo() == "C")
+                $inoDetalle->setCaDb($t->valor);
+            else
+                $inoDetalle->setCaCr($t->valor);
+            $inoDetalle->setCaIdconcepto(is_numeric($t->concepto) ? $t->concepto : $t->idconcepto );
+            $inoDetalle->setCaId($comprobante->getCaId());
+            $inoDetalle->save($conn);
+
+            $ids[] = $t->id;
+            $ids_reg[] = $inoDetalle->getCaIddetalle();
+            $valor += $t->valor;
+        }
+        $conn->commit();
+        $this->responseArray = array("errorInfo" => "", "id" => implode(",", $ids), "idreg" => implode(",", $ids_reg), "success" => true);
+        // } catch (Exception $e) {
         //    $errorInfo.=$e->getMessage() . "<br>";
         //    $this->responseArray = array("errorInfo" => $errorInfo, "success" => false);
-            //echo $e->getMessage();
+        //echo $e->getMessage();
         //}
         $this->setTemplate("responseTemplate");
     }
-    public function executeEliminarGridFacturacion(sfWebRequest $request){
+
+    public function executeEliminarGridFacturacion(sfWebRequest $request) {
         $datos = $request->getParameter("datos");
         $datos = json_decode($datos);
 
-        try{
+        try {
             $conn = Doctrine::getTable("InoDetalle")->getConnection();
             $conn->beginTransaction();
-            foreach ($datos as $dato){
+            foreach ($datos as $dato) {
                 $inoDetalle = Doctrine::getTable("InoDetalle")
                         ->createQuery("i")
                         ->addWhere("i.ca_idetalle = ? ", array($dato->iddetalle))
                         ->fetchOne();
-                if ($inoDetalle){
+                if ($inoDetalle) {
                     $inoDetalle->delete();
                 }
             }
             $conn->commit();
             $this->responseArray = array("errorInfo" => "error", "success" => true);
-        }catch(Exception $e){
+        } catch (Exception $e) {
             $conn->rollback();
             $this->responseArray = array("errorInfo" => "error", "success" => false);
         }
-        
-        
+
+
         $this->setTemplate("responseTemplate");
     }
 
@@ -1270,8 +1258,7 @@ class inoF2Actions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
-    
-      public function executeEliminarGridHouse(sfWebRequest $request) {
+    public function executeEliminarGridHouse(sfWebRequest $request) {
 
         $this->forward404Unless($request->getParameter("idhouse"));
         $idhouse = $request->getParameter("idhouse");
@@ -1280,12 +1267,13 @@ class inoF2Actions extends sfActions {
 
         try {
             $inoHouse->delete();
-            $this->responseArray = array("success" => true ,"errorInfo" =>"");
+            $this->responseArray = array("success" => true, "errorInfo" => "");
         } catch (Exception $e) {
             $this->responseArray = array("success" => true, "errorInfo" => $e->getMessage());
         }
         $this->setTemplate("responseTemplate");
     }
+
     /**
      * @autor Felipe Nari?o
      * @return retorna success cuando se elimina correctamente la informaci?n
@@ -1326,11 +1314,10 @@ class inoF2Actions extends sfActions {
         }
         $this->setTemplate("responseTemplate");
     }
- 
+
     public function executeDatosConceptosFact(sfWebRequest $request) {
         $this->data = array();
-        if($request->getParameter("idcomprobante")>0)
-        {
+        if ($request->getParameter("idcomprobante") > 0) {
             $idcomprobante = $request->getParameter("idcomprobante");
             $this->forward404Unless($idcomprobante);
             $q = Doctrine::getTable("InoHouse")
@@ -1357,19 +1344,19 @@ class inoF2Actions extends sfActions {
 
             foreach ($datos as $d) {
                 $consecutivo = ($d["tcomp_ca_tipo"] == "F") ? "FACTURA " : (($d["tcomp_ca_tipo"] == "C") ? "<span class='row_yellow'>NOTA CREDITO</span>" : "");
-                $consecutivo.=($d["comp_ca_consecutivo"] == "") ? " Sin Generar - " . $d["comp_ca_idcomprobante"] : $d["tcomp_ca_tipo"] . "" . $d["tcomp_ca_comprobante"] . "-" . $d["comp_ca_consecutivo"];
-                $consecutivo.=" - " . utf8_encode($d["ids_ca_nombre"]) . " - " . $d["c_ca_doctransporte"];
+                $consecutivo .= ($d["comp_ca_consecutivo"] == "") ? " Sin Generar - " . $d["comp_ca_idcomprobante"] : $d["tcomp_ca_tipo"] . "" . $d["tcomp_ca_comprobante"] . "-" . $d["comp_ca_consecutivo"];
+                $consecutivo .= " - " . utf8_encode($d["ids_ca_nombre"]) . " - " . $d["c_ca_doctransporte"];
 
                 if ($d["clH_ca_compania"] != $d["ids_ca_nombre"])
-                    $consecutivo.= " - " . utf8_encode($d["clH_ca_compania"]);
+                    $consecutivo .= " - " . utf8_encode($d["clH_ca_compania"]);
 
 
                 if ($d["comp_ca_fchgenero"] != "" && $d["comp_ca_usugenero"] != "")
-                    $consecutivo.= "({$d["comp_ca_usugenero"]}-{$d["comp_ca_fchgenero"]})";
+                    $consecutivo .= "({$d["comp_ca_usugenero"]}-{$d["comp_ca_fchgenero"]})";
 
                 $class = "";
                 if ($d["comp_ca_estado"] == "5") {
-                    $class = "row_green";                  
+                    $class = "row_green";
                 } else if ($d["comp_ca_estado"] == "6") {
                     $class = "row_pink";
                 } else if ($d["comp_ca_estado"] == "8") {
@@ -1391,7 +1378,7 @@ class inoF2Actions extends sfActions {
                     "comprobante" => $consecutivo, "fchcomprobante" => $d["comp_ca_fchcomprobante"],
                     "cliente" => $d["cl_ca_nombre"], "doctransporte" => $d["c_ca_doctransporte"],
                     "idmoneda" => $d["comp_ca_idmoneda"], "moneda" => $d["m_ca_nombre"],
-                    "valor" => ($d["det_ca_cr"] > 0 ? $d["det_ca_cr"] : $d["det_ca_db"]),                    
+                    "valor" => ($d["det_ca_cr"] > 0 ? $d["det_ca_cr"] : $d["det_ca_db"]),
                     "idconcepto" => $d["det_ca_idconcepto"],
                     "concepto" => utf8_encode($d["det_ca_idconcepto"] . "-" . $d["s_ca_concepto_esp"]),
                     "iddetalle" => $d["det_ca_iddetalle"], "estado" => $d["comp_ca_estado"],
@@ -1399,25 +1386,24 @@ class inoF2Actions extends sfActions {
                     "class" => $class
                 );
             }
-            $sql=$q->getSqlQuery();
+            $sql = $q->getSqlQuery();
         }
-        else
-        {            
-                $this->data[] = array(
-                    "idhouse" => " ",
-                    "comprobante" => " ",
-                    "cliente" => " ",
-                    "idmoneda" => " ",
-                    "valor" => " ",
-                    "idconcepto" => " ",
-                    "concepto" => " ",
-                    "iddetalle" => " ",
-                    "cuentapago" => " ",
-                    "class" => " "
-                );
-                $sql="";
+        else {
+            $this->data[] = array(
+                "idhouse" => " ",
+                "comprobante" => " ",
+                "cliente" => " ",
+                "idmoneda" => " ",
+                "valor" => " ",
+                "idconcepto" => " ",
+                "concepto" => " ",
+                "iddetalle" => " ",
+                "cuentapago" => " ",
+                "class" => " "
+            );
+            $sql = "";
         }
-        
+
         $this->responseArray = array("success" => true, "root" => $this->data, "total" => count($this->data), "debug" => $sql);
         $this->setTemplate("responseTemplate");
     }
@@ -1456,47 +1442,41 @@ class inoF2Actions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
-    
-    
     public function executeGenerarComprobante(sfWebRequest $request) {
         $idcomprobante = $request->getParameter("idcomprobante");
         $ncomprobante = $request->getParameter("ncomprobante");
-        $errorInfo= $info = "";
+        $errorInfo = $info = "";
         $ids = array();
 
         $inoDetalle = new InoDetalle();
 
-        $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);        
-        $transout= new IntTransaccionesOut();                
-        $idinttipo=7;
-        switch($comprobante->getInoTipoComprobante()->getCaTipo())
-        {
+        $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
+        $transout = new IntTransaccionesOut();
+        $idinttipo = 7;
+        switch ($comprobante->getInoTipoComprobante()->getCaTipo()) {
             case "F":
-                $idinttipo=7;
+                $idinttipo = 7;
                 break;
             case "C":
-                $idinttipo=13;
+                $idinttipo = 13;
                 break;
         }
-        $idtransaccion= IntTransaccionesOut::procesarTransacciones($idinttipo, $idcomprobante);
-        
-        if($idtransaccion>0)
-        {
-            try{
-            $resul=IntTransaccionesOut::enviarWs($idtransaccion);
-            $success=true;
-            }catch(Exception $e)
-            {
-                $resul=$e->getTraceAsString();
-                $success=false;
+        $idtransaccion = IntTransaccionesOut::procesarTransacciones($idinttipo, $idcomprobante);
+
+        if ($idtransaccion > 0) {
+            try {
+                $resul = IntTransaccionesOut::enviarWs($idtransaccion);
+                $success = true;
+            } catch (Exception $e) {
+                $resul = $e->getTraceAsString();
+                $success = false;
             }
         }
-        
-        $this->responseArray = array("success" => $success,"resul"=>$resul  );
+
+        $this->responseArray = array("success" => $success, "resul" => $resul);
         $this->setTemplate("responseTemplate");
     }
-    
-    
+
     public function EnviarSiigoConect($idcomprobante) {
 
         //$idcomprobante = $request->getParameter("idcomprobante");
@@ -1512,8 +1492,8 @@ class inoF2Actions extends sfActions {
 
         //$client = new Zend_Soap_Client( "http://10.192.1.97:8000/WebService2/Service1.asmx?wsdl", array('encoding'=>'ISO-8859-1', 'soap_version'=>SOAP_1_2 ));        ///WebService2/Service1.asmx/HelloWorld
         $config = sfConfig::get('app_soap_siigo');
-        
-        
+
+
         //temporal, quitar cuando se ponga en produccion.
         $client = new Zend_Soap_Client($config["wsdl_uri"], array('encoding' => 'ISO-8859-1', 'soap_version' => SOAP_1_2));
         $result = $client->actualiza(
@@ -1523,10 +1503,10 @@ class inoF2Actions extends sfActions {
                     nt => $tipoComprobante->getCaComprobante(),
                     c => $consecutivo,
                     d => $tipoComprobante->getCaIdempresa()));
-        
+
 
         $comproSiigo = Doctrine::getTable("SiigoComprobante")->find($idcomprobante);
-        
+
         $indincor = $comproSiigo->getIndIncorpCont();
         $errorsiigo = $comproSiigo->getCdErrsiigoCont();
 
@@ -1545,13 +1525,12 @@ class inoF2Actions extends sfActions {
         //$this->setTemplate("responseTemplate");
     }
 
-
     public function executeEnviarSiigoConect(sfWebRequest $request) {
 
         $idcomprobante = $request->getParameter("idcomprobante");
-        
-        $this->responseArray=$this->EnviarSiigoConect($idcomprobante);
-        
+
+        $this->responseArray = $this->EnviarSiigoConect($idcomprobante);
+
 
         //$this->responseArray = array("success" => true, "consecutivo" => $consecutivo, "indincor" => $indincor, "wsdl" => $result, "info" => $info);
         $this->setTemplate("responseTemplate");
@@ -1561,23 +1540,21 @@ class inoF2Actions extends sfActions {
         try {
             $idcomprobante = $request->getParameter("idcomprobante");
             $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
-            
-            
-            $transout= new IntTransaccionesOut();        
+
+
+            $transout = new IntTransaccionesOut();
             $this->getRequest()->setParameter('idtipo', "10");
             $this->getRequest()->setParameter('indice1', $idcomprobante);
 
-            $idtransaccion=sfContext::getInstance()->getController()->getPresentationFor('integraciones', 'procesarTransacciones');
-            if($idtransaccion>0)
-            {
-                $resul=integracionesActions::enviarWs($idtransaccion);            
-                if($resul=="Ok")
-                {
+            $idtransaccion = sfContext::getInstance()->getController()->getPresentationFor('integraciones', 'procesarTransacciones');
+            if ($idtransaccion > 0) {
+                $resul = integracionesActions::enviarWs($idtransaccion);
+                if ($resul == "Ok") {
                     $comprobante->anular($this->getUser()->getUserId());
                 }
             }
 
-            
+
             //InoComprobante::TRANSFERIDO;
             $this->responseArray = array("success" => "true", "errorInfo" => "");
         } catch (Exception $e) {
@@ -1623,56 +1600,56 @@ class inoF2Actions extends sfActions {
         $idshouse = array();
         $ids = array();
         //try {
-            foreach ($houses as $c) {
+        foreach ($houses as $c) {
 
-                if ($c->idhouse) {
-                    $house = Doctrine::getTable("InoHouse")->find($c->idhouse);
-                    $this->forward404Unless($house);
-                } else {
-                    $house = new InoHouse();
-                    $house->setCaIdmaster($c->idmaster);
-                }
-                if ($c->idreporte != "") {
-                    $house->setCaIdreporte($c->idreporte);
-                }
-
-                if ((!$c->doctransporte == "") && (!$c->idcliente == "")) {
-                    $house->setCaDoctransporte($c->doctransporte);
-                    $house->setCaIdtercero($c->idtercero);
-                    $house->setCaTercero(utf8_encode($c->tercero));
-                    $house->setCaIdcliente($c->idcliente);
-                    $house->setCaVendedor($c->vendedor);
-                    $house->setCaNumorden($c->numorden);
-                    $house->setCaNumpiezas($c->numpiezas);
-                    $house->setCaPeso($c->peso);
-                    $house->setCaVolumen($c->volumen);
-                    if($c->idbodega>0)
-                        $house->setCaIdbodega($c->idbodega);
-                    
-                    //echo "<pre>";print_r($c->equipos);echo "</pre>";
-                    $houseSea=$house->getInoHouseSea();
-                    if($houseSea->count()<1)
-                        $houseSea=new InoHouseSea();
-                    $datos=json_decode($houseSea->getCaDatos());
-                    //$equipos=$c->equipos;
-                    $datos->equipos=$c->equipos;
-                    $houseSea->setCaDatos(json_encode($datos));
-                    
-                    $houseSea->setCaContinuacion($c->continuacion);
-                    $houseSea->setCaContinuacionDest($c->destinofinal);
-                    
-                    
-                    $house->setInoHouseSea($houseSea);
-                    
-                    $house->save();
-                    $ids[] = $c->null;
-                }
-                $idshouse[] = $house->getCaIdhouse();
+            if ($c->idhouse) {
+                $house = Doctrine::getTable("InoHouse")->find($c->idhouse);
+                $this->forward404Unless($house);
+            } else {
+                $house = new InoHouse();
+                $house->setCaIdmaster($c->idmaster);
             }
-            $this->responseArray = array("errorInfo" => '', "id" => implode(",", $ids), "idhouse" => implode(",", $idshouse), "success" => true);
-        /*} catch (Exception $e) {
-            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
-        }*/
+            if ($c->idreporte != "") {
+                $house->setCaIdreporte($c->idreporte);
+            }
+
+            if ((!$c->doctransporte == "") && (!$c->idcliente == "")) {
+                $house->setCaDoctransporte($c->doctransporte);
+                $house->setCaIdtercero($c->idtercero);
+                $house->setCaTercero(utf8_encode($c->tercero));
+                $house->setCaIdcliente($c->idcliente);
+                $house->setCaVendedor($c->vendedor);
+                $house->setCaNumorden($c->numorden);
+                $house->setCaNumpiezas($c->numpiezas);
+                $house->setCaPeso($c->peso);
+                $house->setCaVolumen($c->volumen);
+                if ($c->idbodega > 0)
+                    $house->setCaIdbodega($c->idbodega);
+
+                //echo "<pre>";print_r($c->equipos);echo "</pre>";
+                $houseSea = $house->getInoHouseSea();
+                if ($houseSea->count() < 1)
+                    $houseSea = new InoHouseSea();
+                $datos = json_decode($houseSea->getCaDatos());
+                //$equipos=$c->equipos;
+                $datos->equipos = $c->equipos;
+                $houseSea->setCaDatos(json_encode($datos));
+
+                $houseSea->setCaContinuacion($c->continuacion);
+                $houseSea->setCaContinuacionDest($c->destinofinal);
+
+
+                $house->setInoHouseSea($houseSea);
+
+                $house->save();
+                $ids[] = $c->null;
+            }
+            $idshouse[] = $house->getCaIdhouse();
+        }
+        $this->responseArray = array("errorInfo" => '', "id" => implode(",", $ids), "idhouse" => implode(",", $idshouse), "success" => true);
+        /* } catch (Exception $e) {
+          $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+          } */
 
         $this->setTemplate("responseTemplate");
     }
@@ -1730,8 +1707,7 @@ class inoF2Actions extends sfActions {
             $ino = Doctrine::getTable("InoMaster")->find($idmaster);
             if ($opcion == "Cerrar") {
 
-                if($ino->getCaImpoexpo()!=Constantes::INTERNO && $ino->getCaImpoexpo()!=Constantes::OTMDTA)
-                {
+                if ($ino->getCaImpoexpo() != Constantes::INTERNO && $ino->getCaImpoexpo() != Constantes::OTMDTA) {
                     $piezasMaster = $ino->getCaPiezas();
                     $pesoMaster = $ino->getCaPeso();
                     $volumenMaster = $ino->getCaVolumen();
@@ -1762,15 +1738,14 @@ class inoF2Actions extends sfActions {
                     } else {
                         $this->responseArray = array("success" => false, "errorInfo" => "Los valores De Piezas, peso y volumen no coinciden");
                     }
-                }else
-                {
-                        $ino->setCaUsucerrado($this->getUser()->getUserId());
-                        $ino->setCaFchcerrado(date("Y-m-d H:i:s"));
-                        $this->getUser()->log("Cerrar INO F2", false, array("url" => $idmaster));
+                } else {
+                    $ino->setCaUsucerrado($this->getUser()->getUserId());
+                    $ino->setCaFchcerrado(date("Y-m-d H:i:s"));
+                    $this->getUser()->log("Cerrar INO F2", false, array("url" => $idmaster));
 
-                        $ino->save();
-                        $conn->commit();
-                        $this->responseArray = array("success" => true, "usuarioCerrado" => ($ino->getCaUsucerrado() . " " . $ino->getCaFchcerrado()));
+                    $ino->save();
+                    $conn->commit();
+                    $this->responseArray = array("success" => true, "usuarioCerrado" => ($ino->getCaUsucerrado() . " " . $ino->getCaFchcerrado()));
                 }
             } else {
                 $ino->setCaUsucerrado(null);
@@ -2023,7 +1998,7 @@ class inoF2Actions extends sfActions {
             $iddetalle = $request->getParameter("iddetalle");
 
             $obj = null;
-            if ($idcomprobante !="" && $idcomprobante > 0) {
+            if ($idcomprobante != "" && $idcomprobante > 0) {
                 $obj = Doctrine::getTable("InoComprobante")->find($idcomprobante);
                 $c = $obj->getCaIdcomprobante();
             } else if ($iddetalle > 0) {
@@ -2219,7 +2194,7 @@ class inoF2Actions extends sfActions {
                     $equipo = Doctrine::getTable("InoEquipo")->find($contenedor->idequipo);
                 }
                 $equipo->setCaIdconcepto($contenedor->idconcepto);
-                if($contenedor->idvehiculo!="")
+                if ($contenedor->idvehiculo != "")
                     $equipo->setCaIdvehiculo($contenedor->idvehiculo);
                 $equipo->setCaSerial(utf8_decode($contenedor->serial));
                 $equipo->setCaIdmaster($request->getParameter("idmaster"));
@@ -2235,9 +2210,9 @@ class inoF2Actions extends sfActions {
             }
 
             $this->responseArray = array("success" => true, "ids" => $ids, "idequipos" => $idequipos);
-        } /*catch (Exception $e) {
-            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
-        }*/
+        } /* catch (Exception $e) {
+          $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+          } */
         $this->setTemplate("responseTemplate");
     }
 
@@ -2249,7 +2224,7 @@ class inoF2Actions extends sfActions {
                 ->execute();
         $data = array();
         foreach ($equipos as $equipo) {
-            $data[] = array("idequipo" => $equipo->getCaIdequipo(),                
+            $data[] = array("idequipo" => $equipo->getCaIdequipo(),
                 "idconcepto" => $equipo->getCaIdconcepto(),
                 "idvehiculo" => $equipo->getCaIdvehiculo(),
                 "serial" => $equipo->getCaSerial(),
@@ -2383,7 +2358,7 @@ class inoF2Actions extends sfActions {
                     );
                 }
             }
-            
+
             $recargos = Doctrine::getTable("RepGasto")
                     ->createQuery("t")
                     ->innerJoin("t.TipoRecargo tr")
@@ -2409,6 +2384,900 @@ class inoF2Actions extends sfActions {
 
         $this->responseArray = array("success" => true, "root" => $data);
         $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosDianDepositos($request) {
+        $con = Doctrine_Manager::getInstance()->connection();
+
+        $sql = "select ca_codigo, ca_nombre from tb_diandepositos where lower(ca_codigo||' '||ca_nombre) like '%" . strtolower($request->getParameter("q")) . "%' ";
+        $rs = $con->execute($sql);
+        $depositos = $rs->fetchAll();
+
+        $data = array();
+        foreach ($depositos as $deposito) {
+            $data[] = array(
+                "codigo" => $deposito["ca_codigo"],
+                "nombre" => $deposito["ca_codigo"] . " " . utf8_encode($deposito["ca_nombre"])
+            );
+        }
+
+        $this->responseArray = array("root" => $data, "total" => count($data), "success" => true);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosTransportistas($request) {
+        $con = Doctrine_Manager::getInstance()->connection();
+
+        $sql = "select ca_idtransportista, ca_nombre from vi_transportistas where ca_idtransportista in (select ca_valor::text from tb_parametros where ca_casouso = 'CU073' and ca_identificacion = 10) and lower(ca_nombre) like '%" . strtolower($request->getParameter("q")) . "%' order by ca_nombre";   // and ca_valor2 like '%" . $rs->Value("ca_destino") . "%'" . "
+
+        $rs = $con->execute($sql);
+        $transportistas = $rs->fetchAll();
+
+        $data = array();
+        foreach ($transportistas as $transportista) {
+            $data[] = array(
+                "idtransportista" => $transportista["ca_idtransportista"],
+                "nombre" => utf8_encode($transportista["ca_nombre"])
+            );
+        }
+
+        $this->responseArray = array("root" => $data, "total" => count($data), "success" => true);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeCargarMasterRadicacion($request) {
+        $idmaster = $request->getParameter("idmaster");
+        try {
+            $inoMaster = Doctrine::getTable("InoMaster")->find($idmaster);
+            $data = array();
+            if ($inoMaster) {
+                $inoMasterSea = $inoMaster->getInoMasterSea();
+                $data = json_decode($inoMasterSea->getCaDatosmuisca());
+                $data->fchinicial = substr($data->fchinicial, 0, 10);
+                $data->fchfinal = substr($data->fchfinal, 0, 10);
+                $data->fchmuisca = $inoMasterSea->getCaFchmuisca();
+                $data->usumuisca = $inoMasterSea->getCaUsumuisca();
+                $data->fchradicado = null;
+                $data->usuradicado = null;
+                $data->radicacion = null;
+            }
+            $this->responseArray = array("data" => $data, "total" => count($data), "success" => true);
+        } catch (Exception $e) {
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+        }
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosHouseRadicacion($request) {
+        $idmaster = $request->getParameter("idmaster");
+        try {
+            $inoMaster = Doctrine::getTable("InoMaster")->find($idmaster);
+
+            if ($inoMaster) {
+                $inoHouses = $inoMaster->getInoHouse();
+                $data = array();
+                foreach ($inoHouses as $inoHouse) {
+                    $inoHouseSea = $inoHouse->getInoHouseSea();
+                    $campos = array(
+                        "idhouse" => $inoHouse->getCaIdhouse(),
+                        "doctransporte" => $inoHouse->getCaDoctransporte()
+                    );
+                    if ($inoHouseSea->getCaDatosmuisca()) {
+                        $rec = json_decode($inoHouseSea->getCaDatosmuisca());
+                        $rec->idhouse = $inoHouse->getCaIdhouse();
+                        $rec->doctransporte = $inoHouse->getCaDoctransporte();
+                        $data[] = $rec;
+                    } else {
+                        $data[] = $campos;
+                    }
+                }
+            }
+            $this->responseArray = array("root" => $data, "total" => count($data), "success" => true);
+        } catch (Exception $e) {
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+        }
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeCargarHouseRadicacion($request) {
+        $idhouse = $request->getParameter("idhouse");
+        try {
+            $inoHouse = Doctrine::getTable("InoHouse")->find($idhouse);
+            $data = array();
+            if ($inoHouse) {
+                $inoHouseSea = $inoHouse->getInoHouseSea();
+                if ($inoHouseSea->getCaDatosmuisca()) {
+                    $data = json_decode($inoHouseSea->getCaDatosmuisca());
+                }
+            }
+            $this->responseArray = array("data" => $data, "total" => count($data), "success" => true);
+        } catch (Exception $e) {
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+        }
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeGuardarMasterRadicacion($request) {
+        $idmaster = $request->getParameter("idmaster");
+        $this->forward404Unless($idmaster);
+        $datos = $request->getParameter("datos");
+
+        $conn = Doctrine::getTable("InoMaster")->getConnection();
+
+        if ($idmaster != "0") {
+            $inoMaster = Doctrine::getTable("InoMaster")->find($idmaster);
+
+            $this->forward404Unless($inoMaster);
+            try {
+                $conn->beginTransaction();
+                $inoMasterSea = $inoMaster->getInoMasterSea();
+
+                $inoMasterSea->setCaDatosmuisca($datos);
+                $inoMasterSea->save();
+                $conn->commit();
+                $this->responseArray = array("success" => true);
+            } catch (Exception $e) {
+                $conn->rollBack();
+                $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+            }
+            $this->setTemplate("responseTemplate");
+        }
+    }
+
+    public function executeGuardarHouseRadicacion($request) {
+        $idhouse = $request->getParameter("idhouse");
+        $datos = $request->getParameter("datos");
+
+        $conn = Doctrine::getTable("InoMaster")->getConnection();
+
+        if ($idhouse != "0") {
+            $inoHouse = Doctrine::getTable("InoHouse")->find($idhouse);
+
+            $this->forward404Unless($inoHouse);
+            try {
+                $conn->beginTransaction();
+                $inoHouseSea = $inoHouse->getInoHouseSea();
+
+                $inoHouseSea->setCaDatosmuisca($datos);
+                $inoHouseSea->save();
+                $conn->commit();
+                $this->responseArray = array("success" => true);
+            } catch (Exception $e) {
+                $conn->rollBack();
+                $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+            }
+            $this->setTemplate("responseTemplate");
+        }
+    }
+
+    public function executeEliminarHouseRadicacion($request) {
+        $idhouse = $request->getParameter("idhouse");
+
+        $conn = Doctrine::getTable("InoMaster")->getConnection();
+
+        if ($idhouse != "0") {
+            $inoHouse = Doctrine::getTable("InoHouse")->find($idhouse);
+
+            $this->forward404Unless($inoHouse);
+            try {
+                $conn->beginTransaction();
+                $inoHouseSea = $inoHouse->getInoHouseSea();
+
+                $inoHouseSea->setCaDatosmuisca(null);
+                $inoHouseSea->save();
+                $conn->commit();
+                $this->responseArray = array("success" => true);
+            } catch (Exception $e) {
+                $conn->rollBack();
+                $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+            }
+            $this->setTemplate("responseTemplate");
+        }
+    }
+
+    public function executeDigitacionRadicacionOk($request) {
+        $idmaster = $request->getParameter("idmaster");
+        $this->forward404Unless($idmaster);
+
+        $conn = Doctrine::getTable("InoMaster")->getConnection();
+
+        if ($idmaster != "0") {
+            $inoMaster = Doctrine::getTable("InoMaster")->find($idmaster);
+
+            $this->forward404Unless($inoMaster);
+            try {
+                $user = $this->getUser();
+                $conn->beginTransaction();
+                $inoMasterSea = $inoMaster->getInoMasterSea();
+
+                $inoMasterSea->setCaFchmuisca(date("Y-m-d H:i:s"));
+                $inoMasterSea->setCaUsumuisca($user->getUserId());
+                $inoMasterSea->save();
+
+                $email = new Email();
+                $email->setCaUsuenvio($user->getUserId());
+                $email->setCaTipo("Ok Digitación Muisca");
+                $email->setCaFrom($user->getEmail());
+                $email->setCaReplyto($user->getEmail());
+                $email->setCaFromname($user->getNombre());
+                $email->setCaSubject("Digitación Muisca OK - Ref.:" . $inoMaster->getCaReferencia());
+
+                $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "login" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "email.yml";
+                $yml = sfYaml::load($config);
+                $contentPlain = sprintf($yml['email'], "https://" . sfConfig::get("app_branding_url"), "http://" . sfConfig::get("app_branding_url"));
+
+                $contentHTML = "<html><head></head><body>";
+                $contentHTML .= "Apreciados Compañeros:<br /><br />";
+                $contentHTML .= "La presente con el fin de informar que las casillas Muisca en Colsys han sido totalmente diligenciadas y ustedes pueden proceder a generar el xml dejandolo en la bandeja de la DIAN comprobando su recibo exitoso en los tiempos de la Aduana, adjunto a la referencia encontrará el (los) Hbl`(s ) y Mbl amparados en dicha referencia.<br /><br />";
+                $contentHTML .= "<br />";
+                $contentHTML .= "TENER PRESENTE LA FECHA DE LLEGADA DE LA MERCANCÍA SUMINISTRADA EN EL EMAIL, O LA DADA POR LA PAGINA WEB DEL TERMINAL MARÍTIMO EN MOTONAVES ANUNCIADAS O PREVISTA A SU ARRIBO.<br /><br />";
+                $contentHTML .= "DESPUÉS DE LA PRESENTACIÓN FÍSICA EN PUERTO DEL ORIGINAL DEL HBL ENTREGAR EL MBL SIN VALOR DE FLETES AL AGENTE DE ADUANA, SI EL CLIENTE GOZA DE FIRMA DE CONTRATO DE COMODATO , FAVOR PROCEDER A LA CONSECUCIÓN DEL PAZ Y SALVO DEL CONTENEDOR MÁXIMO EL MISMO DÍA DE LLEGADA DEL BUQUE.<br /><br />";
+                $contentHTML .= "Quedamos pendientes,<br /><br />";
+                $contentHTML .= Doctrine::getTable("Usuario")->find($user->getUserId())->getFirmaHTML() . "<br />";
+                $contentHTML .= "</body></html>";
+
+
+                $ciudad = ($inoMaster->getCaDestino() == "STA-0005") ? "BAQ-0005" : $inoMaster->getCaDestino();
+                $con = Doctrine_Manager::getInstance()->connection();
+                $sql = "select up.ca_login, us.ca_email, us.ca_sucursal from control.tb_usuarios_perfil up";
+                $sql .= "  inner join vi_usuarios us on us.ca_login = up.ca_login";
+                $sql .= "  where us.ca_sucursal = '$ciudad' and up.ca_perfil like '%asistente-marítimo-puerto%' and us.ca_activo = true";
+                $usuarios = $con->execute($sql);
+                foreach ($usuarios as $usuario) {
+                    $email->addTo($usuario["ca_email"]);
+                }
+                $sql = "select us.ca_email "
+                        . "from control.tb_usuarios_perfil up "
+                        . "inner join control.tb_usuarios us on us.ca_login = up.ca_login "
+                        . "inner join control.tb_sucursales sc on sc.ca_idsucursal=us.ca_idsucursal "
+                        . "where up.ca_perfil ='cordinador-de-otm' and us.ca_activo = true and sc.ca_nombre in ( "
+                        . "select distinct(sc.ca_nombre) "
+                        . " from ino.tb_house_sea hs "
+                        . "     inner join ino.tb_house hh on hh.ca_idhouse = hs.ca_idhouse "
+                        . "     inner join tb_reportes rp on rp.ca_idreporte=hh.ca_idreporte "
+                        . "     inner join control.tb_usuarios us on rp.ca_usucreado=us.ca_login "
+                        . "     inner join control.tb_sucursales sc on sc.ca_idsucursal=us.ca_idsucursal "
+                        . " where hh.ca_idmaster = '" . $idmaster . "' and hs.ca_continuacion <> 'N/A') ";
+                $usuarios = $con->execute($sql);
+                foreach ($usuarios as $usuario) {
+                    $email->addTo($usuario["ca_email"]);
+                }
+                $email->setCaBodyhtml($contentHTML);
+                $email->setCaBody($contentPlain);
+                $email->save();
+
+                $conn->commit();
+                $this->responseArray = array("success" => true);
+            } catch (Exception $e) {
+                $conn->rollBack();
+                $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+            }
+            $this->setTemplate("responseTemplate");
+        }
+    }
+
+    public function executeGeneracionArchivoXml($request) {
+        $idmaster = $request->getParameter("idmaster");
+        $this->forward404Unless($idmaster);
+
+        $NumEnvio = 10000; /* FIX-ME Hay que capturar este dato */
+
+        $conn = Doctrine::getTable("InoMaster")->getConnection();
+
+        if ($idmaster != "0") {
+            $inoMaster = Doctrine::getTable("InoMaster")->find($idmaster);
+
+            $this->forward404Unless($inoMaster);
+            try {
+                $inoMasterSea = $inoMaster->getInoMasterSea();
+                $parametros = ParametroTable::retrieveByCaso("CU073", null, null, null);
+
+                if ($inoMasterSea->getCaDatosmuisca()) {
+                    $master = json_decode($inoMasterSea->getCaDatosmuisca());
+
+                    $dianReservado = Doctrine::getTable("DianReservado")->find($master->iddocactual);
+
+                    if (!$dianReservado or $master->ca_numenvio != $NumEnvio) {
+                        $iddocactual = DianReservadoTable::retrieveLastAvailable($master->numenvio, $master->fchtrans);
+                        $master->iddocactual = $iddocactual;
+                        $master->numenvio = $NumEnvio;
+                        $master->fchenvio = date("Y-m-d H:i:s");
+                        $master->usuenvio = $this->getUser()->getUserId();
+                    } else {
+                        $iddocactual = $dianReservado->getCaNumeroResv();
+                    }
+
+                    if (!$iddocactual) {
+                        /* Error no hay números de reserva disponibles */
+                    }
+                } else {
+                    /* Error no hay información para Muisca */
+                }
+
+                // Set the content type to be XML, so that the browser will   recognise it as XML.
+                header("content-type: application/xml; charset=ISO-8859-1");
+
+                // "Create" the document.
+                $xml = new DOMDocument("1.0", "ISO-8859-1");
+
+                // Se Crear el elemento mas
+                $xml_mas = $xml->createElement("mas");
+                $xml_mas->setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "xsi:noNamespaceSchemaLocation", "../xsd/1166.xsd");
+
+                // Se Crear el elemento Cab
+                $xml_cab = $xml->createElement("Cab");
+
+                // Se Crear el elemento pal66
+                $xml_pal66 = $xml->createElement("pal66");
+
+                $FecEnvio = time();
+                $ValorTotal = 0;
+                $vlrfob = 0;
+                $vlrflete = 0;
+                $CantReg = 0;
+
+                $xml_NumEnvio = $xml->createElement("NumEnvio", $NumEnvio);
+
+                // Registra atributos del Elemento pal66
+                if ($master->codconcepto == 3 or $master->codconcepto == 4) {
+                    $xml_pal66->setAttribute("ftra", $master->fchtrans);
+                }
+                $xml_pal66->setAttribute("ideDoc", $iddocactual);
+                if ($master->iddocanterior != "") {
+                    $xml_pal66->setAttribute("nfan", $master->iddocanterior);
+                }
+                $ValorTotal += $master->tipodocviaje;  /* ¿Porqué suma un capo TipoDocViaje? */
+                $CantReg += 1;
+                $xml_pal66->setAttribute("tdv", $master->tipodocviaje);
+                $xml_pal66->setAttribute("cope", ($inoMaster->getCaImpoExpo() == "Importación") ? 1 : (($inoMaster->getCaImpoExpo() == "Exportación") ? 2 : 0));
+                $xml_pal66->setAttribute("calo", 1);
+                $xml_pal66->setAttribute("cres", 3);
+                $xml_pal66->setAttribute("cadm", $master->codadministracion);
+                $xml_pal66->setAttribute("dica", $master->dispocarga);
+
+                $arribo_array = array();
+                foreach ($parametros as $parametro) {
+                    if ($parametro["ca_identificacion"] == 9 and $parametro["ca_valor"] == $inoMaster->getCaDestino()) {
+                        $arribo_array = explode("|", $parametro["ca_valor2"]);
+                        break;
+                    }
+                }
+                $xml_pal66->setAttribute("cdde", $arribo_array[0]);
+                $xml_pal66->setAttribute("ccd", $arribo_array[1]);
+                $xml_pal66->setAttribute("cpa", $arribo_array[2]);
+
+                if ($master->dispocarga != "21" and strlen($master->coddeposito) != 0) {
+                    $xml_pal66->setAttribute("cdep", $master->coddeposito);
+                }
+
+                $xml_pal66->setAttribute("ndv", $inoMaster->getCaMaster());
+                $xml_pal66->setAttribute("fdv", $inoMaster->getCaFchmaster());
+
+                $xml_pal66->setAttribute("cdhi", count($inoMaster->getInoHouse()));
+
+                $mod_trans = "";
+                foreach ($parametros as $parametro) {
+                    if ($parametro["ca_identificacion"] == 3 and $parametro["ca_valor"] == 'Marítimo') {
+                        $mod_trans = $parametro["ca_valor2"];
+                        break;
+                    }
+                }
+                $xml_pal66->setAttribute("mtr", $mod_trans);
+
+                if ($master->iddoctrasbordo != "") {
+                    $xml_pal66->setAttribute("ftrb", $master->iddoctrasbordo);
+                }
+
+                // =========================== Proveedor de Transporte ===========================
+                $ids = Doctrine::getTable("Ids")->find($master->idtransportista);
+
+                $xml_pal66->setAttribute("doc1", 31);
+                $xml_pal66->setAttribute("nid1", $ids->getCaIdalterno());
+                $xml_pal66->setAttribute("dv1", $ids->getCaDv());
+
+                // =========================== Remitente = Agente en el Exterior ===========================
+                $inoHouses = $inoMaster->getInoHouse();
+                foreach ($inoHouse as $inoHouse) {      // Toma el Agente de uno de los reportes
+                    $agente = $inoHouse->getReporte()->getIdsAgente()->getIds();
+                    break;
+                }
+                $xml_pal66->setAttribute("doc2", 43);
+                $xml_pal66->setAttribute("raz2", utf8_encode($agente->getCaNombre()));
+
+                // =========================== Consignatario ===========================
+                $xml_pal66->setAttribute("doc3", 31);
+                $xml_pal66->setAttribute("nid3", 800024075);
+                $xml_pal66->setAttribute("dv3", 8);
+
+                $xml_pal66->setAttribute("dir3", "CRA 98 NO 25 G 10 INT 18");
+                $xml_pal66->setAttribute("cde3", "11");
+                $xml_pal66->setAttribute("ccd3", "001");
+
+                // =========================== Características de la Operación ===========================
+                $xml_pal66->setAttribute("cond", $master->idcondiciones);
+                $xml_pal66->setAttribute("rtr", $master->responsabilidad);
+                $xml_pal66->setAttribute("tneg", $master->tiponegociacion);
+                $xml_pal66->setAttribute("tcar", $master->tipocarga);
+                $xml_pal66->setAttribute("pre", $master->precursores);
+
+                $num_equipos = 0;       // Calcula el número de equipos de la referencia
+                $equipos = $inoMaster->getInoEquipo();
+                foreach ($equipos as $equipo) {
+                    if ($equipo->getCaIdconcepto() != 9) {
+                        $num_equipos++;
+                    }
+                }
+                $xml_pal66->setAttribute("ntc", $num_equipos);
+
+                // =========================== Elementos Hijos ===========================
+                $ntb = 0;  // Número Total Bultos
+                $tpb = 0;  // Total Peso Bruto
+                $unidades_carga = array();
+
+                foreach ($inoHouses as $inoHouse) {      // Lee todos los Houses de la Referencia
+                    $inoHouseSea = $inoHouse->getInoHouseSea();
+                    // Se Crear el elemento hijo
+                    $xml_hijo = $xml->createElement("hijo");
+                    $hijo = json_decode($inoHouseSea->getCaDatosmuisca());
+
+                    $dianReservado = Doctrine::getTable("DianReservado")->find($hijo->iddocactual);
+
+                    if (!$dianReservado or $hijo->ca_numenvio != $NumEnvio) {
+                        $iddocactual = DianReservadoTable::retrieveLastAvailable($hijo->numenvio, $hijo->fchtrans);
+                        $hijo->iddocactual = $iddocactual;
+                        $inoHouseSea->setCaDatosmuisca(json_encode($hijo));
+                        $inoHouseSea->save();
+                    } else {
+                        $iddocactual = $dianReservado->getCaNumeroResv();
+                    }
+
+                    if (!$iddocactual) {
+                        /* Error no hay números de reserva disponibles */
+                    }
+                    if ($hijo->iddocanterior != "") {
+                        $xml_hijo->setAttribute("hnfa", $hijo->iddocanterior);
+                    }
+
+                    $xml_hijo->setAttribute("hdca", $hijo->dispocarga);
+                    $destino = ($inoHouseSea->getCaContinuacion() == "N/A") ? $inoMaster->getCaDestino() : $inoHouseSea->getCaContinuacionDest();
+                    $destino = (strlen($hijo->iddestino) != 0) ? $hijo->iddestino : $destino;
+
+                    $arribo_array = array();
+                    foreach ($parametros as $parametro) {
+                        if ($parametro["ca_identificacion"] == 9 and $parametro["ca_valor"] == $destino) {
+                            $arribo_array = explode("|", $parametro["ca_valor2"]);
+                            break;
+                        }
+                    }
+                    $xml_hijo->setAttribute("hdpt", $arribo_array[0]);
+                    $xml_hijo->setAttribute("hciu", $arribo_array[1]);
+                    if ($inoHouseSea->getCaContinuacion() != "TRANSBORDO") {
+                        $xml_hijo->setAttribute("hpa", $arribo_array[2]);
+                        if ($hijo->dispocarga != "21") {
+                            $xml_hijo->setAttribute("hdep", $hijo->coddeposito);
+                        }
+                    } else {
+                        $transbordo = Doctrine::getTable("Ciudad")->find($destino);
+                        $xml_hijo->setAttribute("hpa", substr($transbordo->getCaIdtrafico(), 0, 2));
+                    }
+                    $xml_hijo->setAttribute("tdv2", $hijo->tipodocviaje);
+                    $xml_hijo->setAttribute("hijo", $inoHouse->getCaDoctransporte());
+                    $xml_hijo->setAttribute("hfe", $inoHouse->getCaFchdoctransporte());
+
+                    $reporte = $inoHouse->getReporte()->getUltVersion();
+
+                    // =========================== Remitente ===========================
+                    $xml_hijo->setAttribute("hdo2", 43);
+                    if ($reporte->getProveedores()) {
+                        $xml_hijo->setAttribute("hrs2", utf8_encode($reporte->getProveedoresStr(false)));
+                    } else {
+                        $xml_hijo->setAttribute("hrs2", utf8_encode($reporte->getIdsAgente()->getCaNombre()));
+                    }
+
+                    // =========================== Destinatario ===========================
+
+                    if ($inoHouseSea->getCaContinuacion() and $reporte->getBodega()->getCaIdentificacion()) {
+                        /* Error el Identificación de la Bodega, cuando hay continuación de viaje */
+                    } else if ($inoHouseSea->getCaContinuacion() == "DTA" and $reporte->getBodega()->getCaIdentificacion()) {
+                        $nit = explode("-", $reporte->getBodega()->getCaIdentificacion());
+                        $xml_hijo->setAttribute("hdo3", 31);
+                        $xml_hijo->setAttribute("hni3", $nit[0]);
+                        $xml_hijo->setAttribute("hdv3", $nit[1]);
+                    } else if ($inoHouseSea->getCaContinuacion() == "OTM") {
+                        if ($reporte->getBodega()->getCaIdentificacion()) {
+                            $nit = explode("-", $reporte->getBodega()->getCaIdentificacion());
+                            $xml_hijo->setAttribute("hdo3", 31);
+                            $xml_hijo->setAttribute("hni3", $nit[0]);
+                            $xml_hijo->setAttribute("hdv3", $nit[1]);
+                        } else {
+                            if ($reporte->getConsignatario()) {
+                                // Debe trae la información del Operador Multimodal de la Tabla Transportistas.
+                                $cadena = str_replace(array(",", "."), "", $reporte->getConsignatario()->getCaIdentificacion());
+                                $nit = substr($cadena, strpos($cadena, "Nit") + 3);
+                                $nit = explode("-", $nit);
+                            } else {
+                                /* Error el Identificación del Consignatario, ciando hay un OTM */
+                            }
+
+                            if (!$hijo->sinidentificacion) {
+                                $xml_hijo->setAttribute("hdo3", 31);
+                                $xml_hijo->setAttribute("hni3", $nit[0]);
+                                $xml_hijo->setAttribute("hdv3", $nit[1]);
+
+                                $arribo_array = array();
+                                foreach ($parametros as $parametro) {
+                                    if ($parametro["ca_identificacion"] == 9 and $parametro["ca_valor"] == $reporte->getConsignatario()->getCaIdciudad()) {
+                                        $arribo_array = explode("|", $parametro["ca_valor2"]);
+                                        break;
+                                    }
+                                }
+                                if (strlen($arribo_array[0]) != 0) {
+                                    $xml_hijo->setAttribute("hde3", $arribo_array[0]);
+                                }
+                                if (strlen($arribo_array[1]) != 0) {
+                                    $xml_hijo->setAttribute("hci3", $arribo_array[1]);
+                                }
+                            } else {
+                                $xml_hijo->setAttribute("hdo3", 43);
+                                $xml_hijo->setAttribute("hrs3", utf8_encode($reporte->getConsignatario()->getCaNombre()));
+                                $xml_hijo->setAttribute("hdir", utf8_encode(substr($reporte->getConsignatario()->getCaDireccion(), 0, 48)));
+
+                                $arribo_array = array();
+                                foreach ($parametros as $parametro) {
+                                    if ($parametro["ca_identificacion"] == 9 and $parametro["ca_valor"] == $reporte->getConsignatario()->getCaIdciudad()) {
+                                        $arribo_array = explode("|", $parametro["ca_valor2"]);
+                                        break;
+                                    }
+                                }
+                                if (strlen($arribo_array[0]) != 0) {
+                                    $xml_hijo->setAttribute("hde3", $arribo_array[0]);
+                                }
+                                if (strlen($arribo_array[1]) != 0) {
+                                    $xml_hijo->setAttribute("hci3", $arribo_array[1]);
+                                }
+                            }
+                        }
+                    } else if ($reporte->getConsignatario()) {
+                        if (!$hijo->sinidentificacion) {        // Trae la información del Consignatario del Reporte de Negocios
+                            $cadena = str_replace(array(",", "."), "", $reporte->getConsignatario()->getCaIdentificacion());
+                            $idconsignatario = substr($cadena, strpos($cadena, "Nit") + 3);
+                            $idconsignatario = explode("-", $nit);
+
+                            $xml_hijo->setAttribute("hdo3", 31);
+                            $idconsignatario = explode("-", str_replace(array(",", "."), "", $reporte->getConsignatario()->getCaIdentificacion()));
+                            $xml_hijo->setAttribute("hni3", $idconsignatario[0]);
+                            $xml_hijo->setAttribute("hdv3", $idconsignatario[1]);
+
+                            $arribo_array = array();
+                            $cu->MoveFirst();
+                            while (!$cu->Eof()) {
+                                if ($cu->Value('ca_identificacion') == 9 and $cu->Value('ca_valor') == $reporte->getConsignatario()->getCaIdciudad()) {
+                                    $arribo_array = explode("|", $parametro["ca_valor2"]);
+                                    break;
+                                }
+                                $cu->MoveNext();
+                            }
+                            if (strlen($arribo_array[0]) != 0) {
+                                $xml_hijo->setAttribute("hde3", $arribo_array[0]);
+                            }
+                            if (strlen($arribo_array[1]) != 0) {
+                                $xml_hijo->setAttribute("hci3", $arribo_array[1]);
+                            }
+                        } else {
+                            $xml_hijo->setAttribute("hdo3", 43);
+                            $xml_hijo->setAttribute("hrs3", utf8_encode($reporte->getConsignatario()->getCaNombre()));
+                            $xml_hijo->setAttribute("hdir", utf8_encode(substr($reporte->getConsignatario()->getCaDireccion(), 0, 48)));
+
+                            $arribo_array = array();
+                            foreach ($parametros as $parametro) {
+                                if ($parametro["ca_identificacion"] == 9 and $parametro["ca_valor"] == $reporte->getConsignatario()->getCaIdciudad()) {
+                                    $arribo_array = explode("|", $parametro["ca_valor2"]);
+                                    break;
+                                }
+                            }
+                            if (strlen($arribo_array[0]) != 0) {
+                                $xml_hijo->setAttribute("hde3", $arribo_array[0]);
+                            }
+                            if (strlen($arribo_array[1]) != 0) {
+                                $xml_hijo->setAttribute("hci3", $arribo_array[1]);
+                            }
+                        }
+                    } else {
+                        if (!$hijo->sinidentificacion) {        // Trae la información del Cliente del Reporte de Negocios
+                            $xml_hijo->setAttribute("hdo3", 31);
+                            $xml_hijo->setAttribute("hni3", $reporte->getCliente()->getIds()->getCaIdalterno());
+                            $xml_hijo->setAttribute("hdv3", $reporte->getCliente()->getIds()->getCaDv());
+
+                            $arribo_array = array();
+                            foreach ($parametros as $parametro) {
+                                if ($parametro["ca_identificacion"] == 9 and $parametro["ca_valor"] == $reporte->getCliente()->getCaIdciudad()) {
+                                    $arribo_array = explode("|", $parametro["ca_valor2"]);
+                                    break;
+                                }
+                            }
+                            if (strlen($arribo_array[0]) != 0) {
+                                $xml_hijo->setAttribute("hde3", $arribo_array[0]);
+                            }
+                            if (strlen($arribo_array[1]) != 0) {
+                                $xml_hijo->setAttribute("hci3", $arribo_array[1]);
+                            }
+                        } else {
+                            $xml_hijo->setAttribute("hdo3", 43);
+                            $xml_hijo->setAttribute("hrs3", utf8_encode($reporte->getCliente()->getIds()->getCaNombre()));
+                            $xml_hijo->setAttribute("hdir", utf8_encode(substr($reporte->getCliente()->getCaDireccion(), 0, 48)));
+
+                            $arribo_array = array();
+                            foreach ($parametros as $parametro) {
+                                if ($parametro["ca_identificacion"] == 9 and $parametro["ca_valor"] == $reporte->getCliente()->getCaIdciudad()) {
+                                    $arribo_array = explode("|", $parametro["ca_valor2"]);
+                                    break;
+                                }
+                            }
+                            if (strlen($arribo_array[0]) != 0) {
+                                $xml_hijo->setAttribute("hde3", $arribo_array[0]);
+                            }
+                            if (strlen($arribo_array[1]) != 0) {
+                                $xml_hijo->setAttribute("hci3", $arribo_array[1]);
+                            }
+                        }
+                    }
+
+                    // =========================== Carga Peligrosa ===========================
+                    // =========================== Información de la Carga ===========================
+                    $xml_hijo->setAttribute("hcon", $hijo->idcondiciones);
+                    $xml_hijo->setAttribute("hrt", $hijo->responsabilidad);
+                    $xml_hijo->setAttribute("htn", $hijo->tiponegociacion);
+                    $xml_hijo->setAttribute("htc", $hijo->tipocarga);
+                    $xml_hijo->setAttribute("hpre", $hijo->precursores);
+
+                    $xml_hijo->setAttribute("hmon", $hijo->vlrfob);
+                    $xml_hijo->setAttribute("hvf", $hijo->vlrflete);
+
+                    $vlrfob += $hijo->vlrfob;
+                    $vlrflete += $hijo->vlrflete;
+
+                    $datos_carga = json_decode($inoHouseSea->getCaDatos());
+                    $contenedores = $datos_carga->equipos;
+
+                    if ($hijo->tipocarga == 2) {
+                        $num_cont = count($contenedores);
+                        $xml_hijo->setAttribute("htco", $num_cont);
+                    } else {
+                        $xml_hijo->setAttribute("htco", 0);
+                    }
+
+                    $xml_hijo->setAttribute("htb", $inoHouse->getCaNumpiezas());
+                    $xml_hijo->setAttribute("htpb", round($inoHouse->getCaPeso(), 2));
+                    $xml_hijo->setAttribute("htvo", 0);
+                    $ntb += $inoHouse->getCaNumpiezas();  // Número Total Bultos
+                    $tpb += round($inoHouse->getCaPeso(), 2);  // Total Peso Bruto
+
+                    $xml_hijo->setAttribute("hcpe", substr($reporte->getOrigen()->getCaIdtrafico(), 0, 2));
+                    $xml_hijo->setAttribute("hcle", substr($reporte->getOrigen()->getCaIdtrafico(), 0, 2) . substr($reporte->getCaOrigen(), 0, 3));
+                    $xml_hijo->setAttribute("ideDoc", $hijo->iddocactual);
+
+                    $grp = 0;
+                    $sub_ps = 0;
+                    $sub_pz = 0;
+                    $sub_cn = 0;
+
+                    $array_cont = array();
+                    foreach ($inoMaster->getInoEquipo() as $equipo) {
+                        $first = true;
+                        foreach ($contenedores as $contenedor) {
+                            if ($equipo->getCaIdequipo() != $contenedor->idequipo) {
+                                continue;
+                            }
+                            if ($first) {
+                                // Se Crear el elemento h167
+                                $xml_h167 = $xml->createElement("h167");
+
+                                if ($hijo->iddocanterior != "") {
+                                    $xml_h167->setAttribute("fa67", $hijo->iddocanterior);
+                                }
+                                $xml_h167->setAttribute("cont", $hijo->tipocarga);
+                                $xml_h167->setAttribute("tun", 2);
+                                $xml_h167->setAttribute("idu", str_replace("-", "", $contenedor->idequipo));
+
+                                $tipoContenedor = Doctrine::getTable("Concepto")->find($contenedor->idconcepto);
+                                if ($tipoContenedor) {
+                                    $tam_equipo = (strpos($tipoContenedor->getCaConcepto(), 'High Cube') !== false) ? 2 : (($tipoContenedor->getCaLiminferior() == 20) ? 1 : (($tipoContenedor->getCaLiminferior() == 40) ? 3 : 4));
+                                    $xml_h167->setAttribute("tam", $tam_equipo);
+                                    $tip_equipo = (strpos($contenedor->concepto, 'Flat Rack') !== false) ? 2 : ((strpos($contenedor->concepto, 'Open Top') !== false) ? 3 : ((strpos($contenedor->concepto, 'Collapsible') !== false) ? 4 : ((strpos($contenedor->concepto, 'Platform') !== false) ? 5 : ((strpos($contenedor->concepto, 'Tank') !== false) ? 6 : ((strpos($contenedor->concepto, 'Reefer') !== false) ? 8 : 1)))));
+                                    $xml_h167->setAttribute("teq", $tip_equipo);
+                                    $xml_h167->setAttribute("npr", $contenedor->numprecinto);
+                                } else {
+                                    /* Error en la Definición del Tipo de Contenedor */
+                                }
+                                $first = false;
+                            }
+
+                            $grp++;
+                            $sub_ps += $contenedor->kilos;
+                            $sub_pz += $contenedor->piezas;
+                            $sub_cn += 1;
+
+                            // Se Crear el elemento h267
+                            $xml_h267 = $xml->createElement("h267");
+                            $xml_h267->setAttribute("grp", $grp);
+                            $xml_h267->setAttribute("bul", $contenedor->piezas);
+                            $xml_h267->setAttribute("peso", $contenedor->kilos);
+
+                            // Se Crear el elemento item
+                            $sql = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, ca_mcia_peligrosa, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs "
+                                    . "     LEFT OUTER JOIN tb_reportes rp ON (rp.ca_fchanulado is null and rs.ca_idreporte = rp.ca_idreporte) "
+                                    . "     LEFT OUTER JOIN tb_parametros pr ON (pr.ca_casouso = 'CU047' and (string_to_array(ca_piezas,'|'))[2] = pr.ca_valor) "
+                                    . "where rp.ca_consecutivo = '" . $reporte->getCaConsecutivo() . "' and ca_idemail is not null order by ca_idemail DESC limit 1 ";
+                            $repstatus = $conn->execute($sql);
+                            foreach ($repstatus as $status) {
+                                $mercancia_peli = ($reporte->getCaMciaPeligrosa()) ? "S" : "N";
+                                $mercancia_desc = (strlen($hijo->mercancia_desc) != 0) ? $hijo->mercancia_desc : $reporte->getCaMercanciaDesc();
+                                $mercancia_desc = utf8_encode(substr($mercancia_desc, 0, 200));
+                            }
+
+                            $xml_item = $xml->createElement("item");
+                            $item = 1;
+                            $xml_item->setAttribute("item", $item);
+                            $xml_item->setAttribute("cemb", ($reporte->getCaCodembalaje() == "" ? "PK" : $reporte->getCaCodembalaje()));
+                            $xml_item->setAttribute("idg", $mercancia_desc);
+                            $xml_item->setAttribute("mpel", $mercancia_peli);
+                            $xml_h267->appendChild($xml_item);
+                            $xml_h167->appendChild($xml_h267);
+
+                            $array_cont[] = str_replace("-", "", $ie->Value("ca_idequipo"));
+                        }
+                        // Se Crear el elemento contenedor
+                        if ($master->tipodocviaje == 10) {
+                            foreach ($array_cont as $cont) {
+                                $xml_contenedor = $xml->createElement("contenedor");
+                                $xml_contenedor->setAttribute("contp", $cont);
+                                $xml_h167->appendChild($xml_contenedor);
+                            }
+                        }
+                    }
+                    $xml_h167->setAttribute("vpb", $sub_ps);
+                    $xml_h167->setAttribute("nbul", $sub_pz);
+                    $xml_h167->setAttribute("vol1", 0);
+                    $xml_h167->setAttribute("nreg", $sub_cn);
+                    $xml_hijo->appendChild($xml_h167);
+
+                    $xml_pal66->appendChild($xml_hijo);
+                }
+
+                $grp = 0;
+                $sub_ps = 0;
+                $sub_pz = 0;
+                $sub_cn = 0;
+
+                $array_cont = array();
+                foreach ($inoMaster->getInoEquipo() as $equipo) { // Lee todos los Houses de la Referencia
+                    // Se Crear el elemento h167
+                    $xml_h167 = $xml->createElement("h167");
+
+                    if ($hijo->iddocanterior != "") {
+                        $xml_h167->setAttribute("fa67", $master->iddocanterior);
+                    }
+                    $xml_h167->setAttribute("cont", $master->tipocarga);
+                    $xml_h167->setAttribute("tun", 2);
+                    $xml_h167->setAttribute("idu", str_replace("-", "", $contenedor->idequipo));
+
+                    $tipoContenedor = Doctrine::getTable("Concepto")->find($contenedor->idconcepto);
+                    if ($tipoContenedor) {
+                        $tam_equipo = (strpos($tipoContenedor->getCaConcepto(), 'High Cube') !== false) ? 2 : (($tipoContenedor->getCaLiminferior() == 20) ? 1 : (($tipoContenedor->getCaLiminferior() == 40) ? 3 : 4));
+                        $xml_h167->setAttribute("tam", $tam_equipo);
+                        $tip_equipo = (strpos($contenedor->concepto, 'Flat Rack') !== false) ? 2 : ((strpos($contenedor->concepto, 'Open Top') !== false) ? 3 : ((strpos($contenedor->concepto, 'Collapsible') !== false) ? 4 : ((strpos($contenedor->concepto, 'Platform') !== false) ? 5 : ((strpos($contenedor->concepto, 'Tank') !== false) ? 6 : ((strpos($contenedor->concepto, 'Reefer') !== false) ? 8 : 1)))));
+                        $xml_h167->setAttribute("teq", $tip_equipo);
+                        $xml_h167->setAttribute("npr", $contenedor->numprecinto);
+                    } else {
+                        /* Error en la Definición del Tipo de Contenedor */
+                    }
+
+                    foreach ($inoHouses as $inoHouse) {      // Lee todos los Houses de la Referencia
+                        $inoHouseSea = $inoHouse->getInoHouseSea();
+                        $datos_carga = json_decode($inoHouseSea->getCaDatos());
+                        $contenedores = $datos_carga->equipos;
+                        foreach ($contenedores as $contenedor) {
+                            if ($equipo->getCaIdequipo() != $contenedor->idequipo) {
+                                continue;
+                            }
+
+                            $grp++;
+                            $sub_ps += $contenedor->kilos;
+                            $sub_pz += $contenedor->piezas;
+                            $sub_cn += 1;
+
+                            // Se Crear el elemento h267
+                            $xml_h267 = $xml->createElement("h267");
+                            $xml_h267->setAttribute("grp", $grp);
+                            $xml_h267->setAttribute("bul", $contenedor->piezas);
+                            $xml_h267->setAttribute("peso", $contenedor->kilos);
+
+                            // Se Crear el elemento item
+                            $sql = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, ca_mcia_peligrosa, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs "
+                                    . "     LEFT OUTER JOIN tb_reportes rp ON (rp.ca_fchanulado is null and rs.ca_idreporte = rp.ca_idreporte) "
+                                    . "     LEFT OUTER JOIN tb_parametros pr ON (pr.ca_casouso = 'CU047' and (string_to_array(ca_piezas,'|'))[2] = pr.ca_valor) "
+                                    . "where rp.ca_consecutivo = '" . $reporte->getCaConsecutivo() . "' and ca_idemail is not null order by ca_idemail DESC limit 1 ";
+                            $repstatus = $conn->execute($sql);
+                            foreach ($repstatus as $status) {
+                                $mercancia_peli = ($reporte->getCaMciaPeligrosa()) ? "S" : "N";
+                                $mercancia_desc = (strlen($hijo->mercancia_desc) != 0) ? $hijo->mercancia_desc : $reporte->getCaMercanciaDesc();
+                                $mercancia_desc = utf8_encode(substr($mercancia_desc, 0, 200));
+                            }
+
+                            $xml_item = $xml->createElement("item");
+                            $item = 1;
+                            $xml_item->setAttribute("item", $item);
+                            $xml_item->setAttribute("cemb", ($reporte->getCaCodembalaje() == "" ? "PK" : $reporte->getCaCodembalaje()));
+                            $xml_item->setAttribute("idg", $mercancia_desc);
+                            $xml_item->setAttribute("mpel", $mercancia_peli);
+                            $xml_h267->appendChild($xml_item);
+                            $xml_h167->appendChild($xml_h267);
+                        }
+                    }
+                    $xml_h167->setAttribute("vpb", $sub_ps);
+                    $xml_h167->setAttribute("nbul", $sub_pz);
+                    $xml_h167->setAttribute("nreg", $sub_cn);
+
+                    $xml_pal66->appendChild($xml_h167);
+                }
+                $xml_pal66->setAttribute("cmon", $vlrfob);      // Valor FOB USD
+                $xml_pal66->setAttribute("vfle", $vlrflete);  // Valor Fletes USD
+                $xml_pal66->setAttribute("ntb", $ntb);
+                $xml_pal66->setAttribute("tpb", $tpb);
+
+                $xml_pal66->setAttribute("pemb", substr($inoMaster->getOrigen()->getCaIdtrafico(), 0, 2));
+                $xml_pal66->setAttribute("lemb", substr($inoMaster->getOrigen()->getCaIdtrafico(), 0, 2) . substr($inoMaster->getCaOrigen(), 0, 3));
+                $xml_pal66->setAttribute("cpt", $master->codconcepto);
+
+                // Sub Elementos del Cab
+                $xml_Ano = $xml->createElement("Ano", substr($master->fchtrans, 0, 4));
+                $xml_CodCpt = $xml->createElement("CodCpt", $master->codconcepto);
+                $xml_Formato = $xml->createElement("Formato", "1166");
+                $xml_Version = $xml->createElement("Version", "7");
+                $xml_FecEnvio = $xml->createElement("FecEnvio", date("Y-m-d", $FecEnvio) . "T" . date("H:i:s", $FecEnvio));
+                $xml_FecInicial = $xml->createElement("FecInicial", $master->fchinicial);
+                $xml_FecFinal = $xml->createElement("FecFinal", $master->fchfinal);
+                $xml_ValorTotal = $xml->createElement("ValorTotal", $ValorTotal);
+                $xml_CantReg = $xml->createElement("CantReg", $CantReg);
+
+                // Adiciona Elementos a Cab
+                $xml_cab->appendChild($xml_Ano);
+                $xml_cab->appendChild($xml_CodCpt);
+                $xml_cab->appendChild($xml_Formato);
+                $xml_cab->appendChild($xml_Version);
+                $xml_cab->appendChild($xml_NumEnvio);
+                $xml_cab->appendChild($xml_FecEnvio);
+                $xml_cab->appendChild($xml_FecInicial);
+                $xml_cab->appendChild($xml_FecFinal);
+                $xml_cab->appendChild($xml_ValorTotal);
+                $xml_cab->appendChild($xml_CantReg);
+
+                $xml_mas->appendChild($xml_cab);
+                $xml_mas->appendChild($xml_pal66);
+                $xml->appendChild($xml_mas);
+
+                /* AL final Actualiza el Json de DianMaestra */
+                $inoMasterSea->setCaDatosmuisca(json_encode($master));
+                $inoMasterSea->save();
+
+                // Valida contra el Esquema
+                if (!$xml->schemaValidate('./xsd/1166.xsd')) {
+                    $errors = libxml_get_errors();
+                    foreach ($errors as $error) {
+                        echo display_xml_error($error, $xml);
+                    }
+                    // print $xml->saveXML();
+                    // libxml_display_errors();
+                    // print '<b>La Generación del XML no ha pasado la primera prueba. A continuación se listan los errores.</b>';
+                }
+                $filename = "Dmuisca_" . substr($xml_CodCpt->nodeValue + 100, 1, 2) . substr($xml_Formato->nodeValue + 100000, 1, 5) . substr($xml_Version->nodeValue + 100, 1, 2) . $xml_Ano->nodeValue . substr($xml_NumEnvio->nodeValue + 100000000, 1, 8) . ".xml";
+                header("content-disposition: attachment; filename=" . $filename);
+                print $xml->saveXML();
+            } catch (Exception $e) {
+                $conn->rollBack();
+                $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+            }
+        }
     }
 
 }
