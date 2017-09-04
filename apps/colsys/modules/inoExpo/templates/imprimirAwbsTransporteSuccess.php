@@ -136,8 +136,8 @@ foreach ($guias as $key => $guia){
     }
 
     $pdf->SetXY(18, 62 + $marg);
-    if ($reporte->getCaModalidad() == "CONSOLIDADO" and $reporte->getCaIdconsignarmaster() and !$guiahija){
-        $tercero = Doctrine::getTable("Tercero")->find($reporte->getCaIdconsignarmaster());
+    $tercero = Doctrine::getTable("Tercero")->find($reporte->getCaIdconsignarmaster());
+    if ($reporte->getCaModalidad() == "CONSOLIDADO" and $tercero and !$guiahija){
         $id = "";
         if ($tercero->getCaIdentificacion()){
             $tipo = Doctrine::getTable("IdsTipoIdentificacion")
