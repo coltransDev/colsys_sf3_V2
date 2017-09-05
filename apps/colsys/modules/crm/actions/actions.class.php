@@ -709,6 +709,7 @@ class crmActions extends sfActions {
 
         $data = array();
         if ($sucursal) {
+            $data["nombre"] = utf8_encode($sucursal->getCaNombre());
             $data["ciudad"] = utf8_encode($sucursal->getCiudad()->getCaIdciudad());
             $data["direccion"] = utf8_encode($sucursal->getCaDireccion());
             $data["telefonos"] = utf8_encode($sucursal->getCaTelefonos());
@@ -736,12 +737,21 @@ class crmActions extends sfActions {
         $conn = Doctrine::getTable("IdsSucursal")->getConnection();
         try {
             $conn->beginTransaction();
-
-            $sucursal->setCaIdciudad($request->getParameter("ciudad"));
-            $sucursal->setCaDireccion($request->getParameter("direccion"));
-            $sucursal->setCaTelefonos($request->getParameter("telefonos"));
-            $sucursal->setCaFax($request->getParameter("fax"));
-
+            if ($request->getParameter("nombre")) {
+                $sucursal->setCaNombre(utf8_decode($request->getParameter("nombre")));
+            }
+            if ($request->getParameter("ciudad")) {
+                $sucursal->setCaIdciudad(utf8_decode($request->getParameter("ciudad")));
+            }
+            if ($request->getParameter("direccion")) {
+                $sucursal->setCaDireccion(utf8_decode($request->getParameter("direccion")));
+            }
+            if ($request->getParameter("telefonos")) {
+                $sucursal->setCaTelefonos(utf8_decode($request->getParameter("telefonos")));
+            }
+            if ($request->getParameter("fax")) {
+                $sucursal->setCaFax(utf8_decode($request->getParameter("fax")));
+            }
             $sucursal->save();
             $conn->commit();
             $this->responseArray = array("success" => true);
@@ -931,7 +941,9 @@ class crmActions extends sfActions {
             }
             $contacto->setCaUsuactualizado($this->getUser()->getUserId());
             $contacto->setCaFchactualizado(date("Y-m-d H:i:s"));
-            $contacto->getConsultaListas("DOCUMENTO");
+            if ($request->getParameter("identificacion_tipo") and $request->getParameter("identificacion")){    // Realiza Consulta solo para Cargos Específicos marcados en Parámetros
+                $contacto->getConsultaListas("DOCUMENTO");
+            }
 
             $contacto->save();
             $concliente->save();
@@ -1112,29 +1124,36 @@ class crmActions extends sfActions {
                 $data["cliente"] = utf8_encode($cliente->getIds()->getCaNombre());
                 $data["comercial"] = utf8_encode($cliente->getCaVendedor());
                 $data["coord_aduana"] = utf8_encode($cliente->getCaCoordinador());
-                $direccion = explode("|", utf8_encode($cliente->getCaDireccion()));
-                $data["direccion1"] = $direccion[0];
-                $data["direccion2"] = $direccion[1];
-                $data["direccion3"] = $direccion[2];
-                $data["direccion4"] = $direccion[3];
-                $data["direccion5"] = $direccion[4];
-                $data["direccion6"] = $direccion[5];
-                $data["direccion7"] = $direccion[6];
-                $data["direccion8"] = $direccion[7];
-                $data["direccion9"] = $direccion[8];
-                $data["direccion10"] = $direccion[9];
-                $data["oficina"] = utf8_encode($cliente->getCaOficina());
-                $data["torre"] = utf8_encode($cliente->getCaTorre());
-                $data["bloque"] = utf8_encode($cliente->getCaBloque());
-                $data["interior"] = utf8_encode($cliente->getCaInterior());
-                $data["complemento"] = utf8_encode($cliente->getCaComplemento());
-                $data["localidad"] = utf8_encode($cliente->getCaLocalidad());
-                $data["codigo_postal"] = utf8_encode($cliente->getCaZipcode());
-                $data["ciudad"] = utf8_encode($cliente->getCaIdciudad());
-                $data["telefono"] = utf8_encode($cliente->getCaTelefonos());
-                $data["fax"] = utf8_encode($cliente->getCaFax());
-                $data["e_mail"] = utf8_encode($cliente->getCaEmail());
-                $data["website"] = utf8_encode($cliente->getCaWebsite());
+                if ($cliente->getIds()->getIdsTipoIdentificacion()->getCaIdtrafico() == 'CO-057') {
+                    $direccion = explode("|", utf8_encode($cliente->getCaDireccion()));
+                    $data["direccion1"] = $direccion[0];
+                    $data["direccion2"] = $direccion[1];
+                    $data["direccion3"] = $direccion[2];
+                    $data["direccion4"] = $direccion[3];
+                    $data["direccion5"] = $direccion[4];
+                    $data["direccion6"] = $direccion[5];
+                    $data["direccion7"] = $direccion[6];
+                    $data["direccion8"] = $direccion[7];
+                    $data["direccion9"] = $direccion[8];
+                    $data["direccion10"] = $direccion[9];
+                    $data["oficina"] = utf8_encode($cliente->getCaOficina());
+                    $data["torre"] = utf8_encode($cliente->getCaTorre());
+                    $data["bloque"] = utf8_encode($cliente->getCaBloque());
+                    $data["interior"] = utf8_encode($cliente->getCaInterior());
+                    $data["complemento"] = utf8_encode($cliente->getCaComplemento());
+                    $data["localidad"] = utf8_encode($cliente->getCaLocalidad());
+                    $data["codigo_postal"] = utf8_encode($cliente->getCaZipcode());
+                    $data["ciudad"] = utf8_encode($cliente->getCaIdciudad());
+                    $data["telefono"] = utf8_encode($cliente->getCaTelefonos());
+                    $data["fax"] = utf8_encode($cliente->getCaFax());
+                    $data["e_mail"] = utf8_encode($cliente->getCaEmail());
+                    $data["website"] = utf8_encode($cliente->getCaWebsite());
+                } else {
+                    $direccion = explode("|", utf8_encode($cliente->getCaDireccion()));
+                    $data["direccion0"] = $direccion[0];
+                    $data["localidad2"] = utf8_encode($cliente->getCaLocalidad());
+                    $data["ciudad2"] = utf8_encode($cliente->getCaIdciudad());
+                }
                 $data["titulo"] = utf8_encode($cliente->getCaSaludo());
                 $data["nombre"] = utf8_encode($cliente->getCaNombres());
                 $data["apellido1"] = utf8_encode($cliente->getCaPapellido());
@@ -1219,13 +1238,14 @@ class crmActions extends sfActions {
                 $cliente->setCaInterior($request->getParameter("interior"));
                 $cliente->setCaComplemento(utf8_decode($request->getParameter("complemento")));
                 $cliente->setCaLocalidad(utf8_decode($request->getParameter("localidad")));
+                $cliente->setCaIdciudad(utf8_decode($request->getParameter("ciudad")));
             } else {
-                $cliente->setCaDireccion(utf8_decode($request->getParameter("dir_ot")));
-                $cliente->setCaLocalidad(utf8_decode($request->getParameter("localidad_ot")));
+                $cliente->setCaDireccion(utf8_decode($request->getParameter("direccion0")));
+                $cliente->setCaLocalidad(utf8_decode($request->getParameter("localidad2")));
+                $cliente->setCaIdciudad(utf8_decode($request->getParameter("ciudad2")));
             }
 
             $cliente->setCaZipcode(utf8_decode($request->getParameter("codigo_postal")));
-            $cliente->setCaIdciudad(utf8_decode($request->getParameter("ciudad")));
             $cliente->setCaTelefonos(utf8_decode($request->getParameter("telefono")));
             $cliente->setCaFax(utf8_decode($request->getParameter("fax")));
             $cliente->setCaEmail(utf8_decode($request->getParameter("e_mail")));

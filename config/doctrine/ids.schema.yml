@@ -926,6 +926,7 @@ IdsRestrictivas:
       type: timestamp
       primary: true
     ca_tipo_consulta: string(20)
+    ca_parametro: string(20)
     ca_idrespuesta: string(20)
     ca_respuesta: integer
     ca_fchcreado: timestamp
