@@ -1,19 +1,6 @@
-/*
- * @autor Nataly Puentes
- * Gestor de Houses
- * @params: 
- *       idimpoexpo  : texto con informacion de impoexpo 
- *       idtransporte: texto con modo de transporte
- * @date:  2016-03-31
- */
-var constrainedWin2H = null;
-var comboCliente = null;
-var comboVendedor = null;
 var comboReporte = null;
-var comboReferencia = null;
-var comboBoxRenderer = null;
-var fileButton = null;
-var tipo = "Proveedor";
+
+
 Ext.define('Colsys.Ino.GridHouse', {
     extend: 'Ext.grid.Panel',
     alias: 'widget.Colsys.Ino.GridHouse',
@@ -22,6 +9,7 @@ Ext.define('Colsys.Ino.GridHouse', {
     sortableColumns: false,
     enableColumnMove: false,
     autoScroll: true,
+    bodegas:null,
     viewConfig: {
         getRowClass: function (record, rowIndex, rowParams, store) {
             return "row_" + record.get("color");
@@ -35,261 +23,83 @@ Ext.define('Colsys.Ino.GridHouse', {
         selType: 'cellmodel'
     },
     frame: true,
-    plugins: {
+    /*plugins: {
         ptype: 'cellediting',
         clicksToEdit: 1
-    },
+    },*/
+    plugins: [
+        {
+        ptype: 'cellediting',
+        clicksToEdit: 1
+    }
+        ,{
+        ptype: 'rowwidget',
+        widget:  {
+            xtype: 'grid',
+            //autoLoad: true,
+            bind: {
+                store: '{record.equipos}',
+                //title: 'Orders for {record.id}'
+            },
+             plugins: 
+                    {
+                    ptype: 'cellediting',
+                    clicksToEdit: 1
+                },
+            columns: [
+                {
+                text: 'Sel',
+                xtype: 'checkcolumn',
+                dataIndex: 'sel',
+                width: 1
+                },
+                {
+                    xtype:'hidden',
+                    text: 'Equipo',
+                    dataIndex: 'equipo',
+                    width: 75
+                },
+                {
+                    //xtype:'hidden',
+                    text: 'IdConcepto',
+                    dataIndex: 'idconcepto',
+                    width: 1
+                },
+                {
+                    text: 'Concepto',
+                    dataIndex: 'concepto',
+                    width: 120
+                }, {
+                text: 'Serial',
+                dataIndex: 'serial',                
+                width: 75                
+                }, {
+                    dataIndex: 'numprecinto',
+                    width: 120,
+                    text: 'Precinto'
+                }, 
+                {
+                    text: 'Piezas',
+                    dataIndex: 'piezas',                
+                    width: 80,
+                    align: 'right',editor: {xtype: "textfield"}
+                },
+                {
+                    text: 'Kilos',
+                    dataIndex: 'kilos',
+                    width: 80,
+                    align: 'right',editor: {xtype: "textfield"}
+                }
+            ]
+        }
+    }],
     onRender: function (ct, position)
     {
-        comboBoxRenderer = function (combo) {
-            return function (value) {
-                var idx = combo.store.find(combo.valueField, value);
-                var rec = combo.store.getAt(idx);
-                return (rec === null ? value : rec.get(combo.displayField));
-            };
-        };
-        me = this;
-        this.reconfigure(
-                Ext.create('Ext.data.Store', {
-                    id: "storeGridHouse",
-                    fields:
-                            [
-                                {name: 'idmaster' + this.idmaster, type: 'integer', mapping: 'idmaster'},
-                                {name: 'idhouse' + this.idmaster, type: 'integer', mapping: 'idhouse'},
-                                {name: 'doctransporte' + this.idmaster, type: 'string', mapping: 'doctransporte'},
-                                {name: 'fchdoctransporte' + this.idmaster, type: 'date', mapping: 'fchdoctransporte', dateFormat: 'Y-m-d'},
-                                {name: 'idcliente' + this.idmaster, type: 'integer', mapping: 'idcliente'},
-                                {name: 'nombrecliente' + this.idmaster, type: 'string', mapping: 'cliente'},
-                                {name: 'bodega' + this.idmaster, type: 'string', mapping: 'idbodega'},
-                                {name: 'nombrebodega' + this.idmaster, type: 'string', mapping: 'nombre'},
-                                {name: 'tercero' + this.idmaster, type: 'string', mapping: 'tercero'},
-                                {name: 'vendedor' + this.idmaster, type: 'string', mapping: 'vendedor'},
-                                {name: 'idtercero' + this.idmaster, type: 'integer', mapping: 'idtercero'},
-                                {name: 'idreporte' + this.idmaster, type: 'integer', mapping: 'idreporte'},
-                                {name: 'reporte' + this.idmaster, type: 'string', mapping: 'reporte'},
-                                {name: 'numpiezas' + this.idmaster, type: 'integer', mapping: 'numpiezas'},
-                                {name: 'peso' + this.idmaster, type: 'float', mapping: 'peso'},
-                                {name: 'volumen' + this.idmaster, type: 'float', mapping: 'volumen'},
-                                {name: 'numorden' + this.idmaster, type: 'string', mapping: 'numorden'},
-                                {name: 'color' + this.idmaster, type: 'string', mapping: 'color'}
-                            ],
-                    proxy: {
-                        type: 'ajax',
-                        url: '/inoF2/datosGridHouse',
-                        baseParams: {
-                            impoexpo: 'impoexpo'
-                        },
-                        reader: {
-                            type: 'json',
-                            rootProperty: 'root',
-                            totalProperty: 'total',
-                            modo: 'modo'
-                        }
-                    },
-                    sorters: [{
-                            property: 'doctransporte',
-                            direction: 'ASC'
-                        }],
-                    autoLoad: false
-                }),
-                columns =
-                [
-                    {
-                        header: "idhouse",
-                        hidden: true,
-                        hideable: false,
-                        dataIndex: "idhouse" + this.idmaster
-                    },
-                    {
-                        header: "master" + this.idmaster,
-                        hidden: true,
-                        hideable: false,
-                        dataIndex: "idmaster" + this.idmaster
-                    },
-                    {
-                        header: "Idcliente",
-                        hidden: true,
-                        hideable: false,
-                        dataIndex: 'idcliente' + this.idmaster,
-                        sortable: true,
-                        width: 100
-                    },
-                    {
-                        header: "idreporte",
-                        hidden: true,
-                        dataIndex: 'idreporte' + this.idmaster,
-                        sortable: true,
-                        hideable: false,
-                        width: 100
-                    },
-                    {
-                        header: "Piezas",
-                        dataIndex: 'numpiezas' + this.idmaster,
-                        hideable: false,
-                        align: 'right',
-                        sortable: false,
-                        width: 80,
-                        editor: {xtype: "numberfield"},
-                        renderer: Ext.util.Format.numberRenderer('0,0.00'),
-                        summaryType: 'sum',
-                        summaryRenderer: function (value, summaryData, dataIndex) {
-                                return "<span style='font-weight: bold;'> " + value + "</span>";
-                            }
-                    },
-                    {
-                        header: "Peso",
-                        dataIndex: 'peso' + this.idmaster,
-                        hideable: false,
-                        sortable: true,
-                        align: 'right',
-                        width: 80,                        
-                        editor: {
-                            xtype: "numberfield",
-                            decimalPrecision: 2
-                        },
-                        renderer: Ext.util.Format.numberRenderer('0,0.00'),
-                        summaryType: 'sum',
-                        summaryRenderer: function (value, summaryData, dataIndex) {                            
-                                return "<span style='font-weight: bold;'> " + value + "</span>";
-                            }
-                    },
-                    {
-                        header: "Volumen",
-                        dataIndex: 'volumen' + this.idmaster,
-                        hideable: false,
-                        width: 80,
-                        align: 'right',
-                        sortable: true,
-                        editor: {
-                            xtype: "numberfield",
-                            decimalPrecision: 2
-                        },
-                        renderer: Ext.util.Format.numberRenderer('0,0.00'),
-                        summaryType: 'sum',
-                        summaryRenderer: function (value, summaryData, dataIndex) {
-                                return "<span style='font-weight: bold;'> " + value + "</span>";
-                            }
-                    },
-                    /* {
-                     header: "nombrebodega",
-                     hidden: true,
-                     hideable: false,
-                     dataIndex: 'nombrebodega' + this.idmaster,
-                     sortable: true,
-                     width: 100,
-                     
-                     },*/
-                    {
-                        header: "bodega",
-                        hidden: true,
-                        hideable: false,
-                        dataIndex: 'bodega' + this.idmaster,
-                        sortable: true,
-                        width: 100,
-                    },
-                    {
-                        header: "Bodega",
-                        dataIndex: "nombrebodega" + this.idmaster,
-                        hideable: false,
-                        width: 250,
-                        editor: Ext.create('Colsys.Widgets.WgBodega', {
-                            id: 'bodega' + this.idmaster,
-                            valueField: 'idbodega',
-                            displayField: 'nombre',
-                            listeners:
-                                    {
-                                        select: function (a, record, idx)
-                                        {
-                                            var selected = this.up('grid').getSelectionModel().getSelection()[0];
-                                            var row = this.up('grid').store.indexOf(selected);
-                                            var store = this.up('grid').getStore();
-                                            store.data.items[row].set('bodega' + this.up('grid').idmaster, record.data.idbodega);
-                                        }
-                                    },
-                        }),
-                        renderer: comboBoxRenderer(Ext.getCmp('bodega' + this.idmaster))
-                    },
-                    {
-                        header: "Cliente",
-                        dataIndex: "nombrecliente" + this.idmaster,
-                        hideable: false,
-                        width: 250,
-                        editor: Ext.create('Colsys.Widgets.WgClientes', {
-                            id: "nombrecliente" + this.idmaster,
-                            displayField: 'compania',
-                            valueField: 'idcliente',
-                            listeners:
-                                    {
-                                        select: function (a, record, idx)
-                                        {
-                                            var selected = this.up('grid').getSelectionModel().getSelection()[0];
-                                            var row = this.up('grid').store.indexOf(selected);
-                                            var store = this.up('grid').getStore();
-                                            store.data.items[row].set('idcliente' + this.up('grid').idmaster, record.data.ca_idcliente);
-                                            store.data.items[row].set('vendedor' + this.up('grid').idmaster, record.data.ca_vendedor);
-                                        }
-                                    }
-
-                        }),
-                        renderer: comboBoxRenderer(Ext.getCmp('nombrecliente' + this.idmaster))
-                    },
-                    {
-                        header: "IdProveedor",
-                        dataIndex: 'idtercero' + this.idmaster,
-                        hidden: true,
-                        hideable: false,
-                        width: 50
-
-                    },
-                    {
-                        header: "Proveedor",
-                        dataIndex: 'tercero' + this.idmaster,
-                        hideable: false,
-                        width: 120,
-                        sortable: true,
-                        //id:'proveedor'+this.idmaster,
-                        editor: Ext.create('Colsys.Widgets.wgTercero', {
-                            id: 'prov' + this.idmaster,
-                            displayField: 'nombre',
-                            valueField: 'idtercero',
-                            listeners:
-                                    {
-                                        select: function (a, record, idx)
-                                        {
-                                            var selected = this.up('grid').getSelectionModel().getSelection()[0];
-                                            var row = this.up('grid').store.indexOf(selected);
-                                            var store = this.up('grid').getStore();
-
-                                            store.data.items[row].set('idtercero' + this.up('grid').idmaster, record.data.t_ca_idtercero);
-                                        }
-                                    }
-                        }),
-                        renderer: comboBoxRenderer(Ext.getCmp('prov' + this.idmaster))
-                    },
-                    {
-                        header: "Vendedor",
-                        dataIndex: 'vendedor' + this.idmaster,
-                        hideable: false,
-                        sortable: true,
-                        width: 160,
-                        editor: Ext.create('Colsys.Widgets.wgUsuario', {
-                            id: "vendedor" + this.idmaster
-                        }),
-                        renderer: comboBoxRenderer(Ext.getCmp('vendedor' + this.idmaster))
-
-                    },
-                    {
-                        header: "Orden",
-                        hideable: false,
-                        dataIndex: "numorden" + this.idmaster,
-                        editor: {xtype: "textfield"}
-                    }
-
-                ]
-                );
-        var orden = [];
-        var house =
-                {
+        me = this;        
+        columnas= new Array();
+        
+        if (this.idimpoexpo == "INTERNO" && this.idtransporte == "Terrestre") {
+            columns.push({
                     header: "Doc. Transporte",
                     hideable: false,
                     id: "doctransporte" + this.idmaster,
@@ -317,9 +127,10 @@ Ext.define('Colsys.Ino.GridHouse', {
                                 }
                     }),
                     renderer: comboBoxRenderer(Ext.getCmp('comboReferencia' + this.idmaster))
-                };
-        var reporte =
-                {
+                });
+        } else
+        {
+            columnas.push({
                     header: "Reporte",
                     dataIndex: 'reporte' + this.idmaster,
                     sortable: true,
@@ -407,48 +218,304 @@ Ext.define('Colsys.Ino.GridHouse', {
                                         }
                             }),
                     renderer: comboBoxRenderer(Ext.getCmp('comboReporte' + this.idmaster))
-                };
-        /*var proveedor =
-         {
-         header: "Proveedor",
-         dataIndex: 'tercero' + this.idmaster,
-         hideable: false,
-         width: 120,
-         sortable: true,
-         //id:'proveedor'+this.idmaster,
-         editor: Ext.create('Colsys.Widgets.wgTercero', {
-         id: 'prov' + this.idmaster,
-         displayField: 'nombre',
-         valueField: 'idtercero',
-         listeners:
-         {
-         select: function (a, record, idx)
-         {
-         var selected = this.up('grid').getSelectionModel().getSelection()[0];
-         var row = this.up('grid').store.indexOf(selected);
-         var store = this.up('grid').getStore();
-         store.data.items[row].set('idtercero' + this.up('grid').idmaster, record.data.t_ca_idtercero);
-         }
-         }
-         }),
-         renderer: comboBoxRenderer(Ext.getCmp('prov' + this.idmaster))
-         };*/
-        /*var idproveedor =
-         {
-         header: "IdProveedor",
-         dataIndex: 'idtercero' + this.idmaster,
-         hidden: true,
-         width: 50
-         
-         }*/
+                }, {
+                header: "Doc. Transporte",
+                hideable: false,
+                id: "doctransporte" + this.idmaster,
+                dataIndex: 'doctransporte' + this.idmaster,
+                width: 125,
+                sortable: true,
+                editor: {xtype: "textfield"}
+            }/*, proveedor, idproveedor*/);
+        }
+        columnas.push(
+                    {
+                        header: "Piezas",
+                        dataIndex: 'numpiezas' + this.idmaster,
+                        hideable: false,
+                        align: 'right',
+                        sortable: false,
+                        width: 80,
+                        editor: {xtype: "numberfield"},
+                        renderer: Ext.util.Format.numberRenderer('0,0.00'),
+                        summaryType: 'sum',
+                        summaryRenderer: function (value, summaryData, dataIndex) {
+                                return "<span style='font-weight: bold;'> " + value + "</span>";
+                            }
+                    },
+                    {
+                        header: "Peso",
+                        dataIndex: 'peso' + this.idmaster,
+                        hideable: false,
+                        sortable: true,
+                        align: 'right',
+                        width: 80,                        
+                        editor: {
+                            xtype: "numberfield",
+                            decimalPrecision: 2
+                        },
+                        renderer: Ext.util.Format.numberRenderer('0,0.00'),
+                        summaryType: 'sum',
+                        summaryRenderer: function (value, summaryData, dataIndex) {                            
+                                return "<span style='font-weight: bold;'> " + value + "</span>";
+                            }
+                    },
+                    {
+                        header: "Volumen",
+                        dataIndex: 'volumen' + this.idmaster,
+                        hideable: false,
+                        width: 80,
+                        align: 'right',
+                        sortable: true,
+                        editor: {
+                            xtype: "numberfield",
+                            decimalPrecision: 2
+                        },
+                        renderer: Ext.util.Format.numberRenderer('0,0.00'),
+                        summaryType: 'sum',
+                        summaryRenderer: function (value, summaryData, dataIndex) {
+                                return "<span style='font-weight: bold;'> " + value + "</span>";
+                            }
+                    });
+                    
+                                        
+        if (this.idimpoexpo == "Importaci\u00F3n" && this.idtransporte == "Mar\u00EDtimo") {
+            columnas.push(
+                    {
+                            header: "Continuacion",
+                            dataIndex: 'continuacion' + me.idmaster,
+                            //width: 150,
+                            editor: Ext.create('Colsys.Widgets.WgParametros', {                                
+                                //style: 'display:inline-block;text-align:center;font-weight:bold;',
+                                caso_uso: 'CU274',
+                                id: 'continuacion' + me.idmaster,
+                                valueField: 'name',                                
+                            }),
+                            renderer: comboBoxRenderer(Ext.getCmp('continuacion' + this.idmaster))
+                        },
+            /*{
+                header: "Continuacion",
+                dataIndex: "continuacion" + this.idmaster,
+                width: 50,
+                editor:
+                        Ext.create('Colsys.Widgets.wgTipoContinuacion', {
+                    valueField: 'continuacion',
+                    displayField: 'continuacion'                    
+                })                
+             },*/
+            {
+                header: "Operador",
+                dataIndex: "bodega" + me.idmaster,                        
+                width: 250,
+                editor:Ext.create('Colsys.Widgets.WgBodega', {
+                    xtype:'Colsys.Widgets.WgBodega',
+                    id: 'bodega' + me.idmaster,
+                    name: 'bodega' + me.idmaster,
+                    valueField: 'idbodega',
+                    displayField: 'nombre',
+                    listeners:
+                            {
+                                select: function (a, record, idx)
+                                {
+//                                            console.log(me.bodegas);
+                                    var selected = this.up('grid').getSelectionModel().getSelection()[0];
+                                    var row = this.up('grid').store.indexOf(selected);
+                                    var store = this.up('grid').getStore();
+                                    store.data.items[row].set('bodega' + this.up('grid').idmaster, record.data.idbodega);
+                                }
+                            }
+                }),
+                renderer: comboBoxRenderer(Ext.getCmp('bodega' + me.idmaster))
+            },
+            {
+                header: "Destino",
+                dataIndex: "destinofinal" + this.idmaster,
+                width: 120,
+                editor:Ext.create('Colsys.Widgets.WgCiudades2', {
+                            //xtype: 'Colsys.Widgets.WgCiudades2',                            
+                            tipo: 'destino',
+                            idimpoexpo: 'Importaci\u00F3n',
+                            id: 'iddestinocontinuacion' + me.idmaster,
+                            name: 'iddestinocontinuacion' + me.idmaster,
+                            style: 'display:inline-block;text-align:center;font-weight:bold;',                            
+                            store: Ext.create('Ext.data.Store', {
+                                fields: ['idciudad', 'ciudad', 'idtrafico', 'trafico', 'ciudad_trafico'],
+                                proxy: {
+                                    type: 'ajax',
+                                    url: '/widgets5/datosCiudades',
+                                    reader: {
+                                        type: 'json',
+                                        rootProperty: 'root'
+                                    }
+                                },
+                                autoLoad: true
+                            })
+                        }),
+                renderer: comboBoxRenderer(Ext.getCmp('iddestinocontinuacion' + me.idmaster))
+            }
+            );
+        }
+        else{
+            columnas.push(
+            {
+                header: "Bodega",
+                dataIndex: "bodega" + this.idmaster,                        
+                width: 250,
+                editor:Ext.create('Colsys.Widgets.WgBodega', {
+                    xtype:'Colsys.Widgets.WgBodega',
+                    id: 'bodega' + me.idmaster,
+                    name: 'bodega' + me.idmaster,
+                    valueField: 'idbodega',
+                    displayField: 'nombre',
+                    listeners:
+                            {
+                                select: function (a, record, idx)
+                                {
+//                                            console.log(me.bodegas);
+                                    var selected = this.up('grid').getSelectionModel().getSelection()[0];
+                                    var row = this.up('grid').store.indexOf(selected);
+                                    var store = this.up('grid').getStore();
+                                    store.data.items[row].set('bodega' + this.up('grid').idmaster, record.data.idbodega);
+                                }
+                            }
+                }),
+                renderer: comboBoxRenderer(Ext.getCmp('bodega' + this.idmaster))
+            });
+            
+        }
+            columnas.push(
+                    {
+                        header: "Cliente",
+                        dataIndex: "idcliente" + this.idmaster,
+                        hideable: false,
+                        width: 250,
+                        editor: Ext.create('Colsys.Widgets.WgClientes', {
+                            id: "nombrecliente" + this.idmaster,
+                            displayField: 'compania',
+                            valueField: 'idcliente',
+                            listeners:
+                                    {
+                                        select: function (a, record, idx)
+                                        {
+                                            var selected = this.up('grid').getSelectionModel().getSelection()[0];
+                                            var row = this.up('grid').store.indexOf(selected);
+                                            var store = this.up('grid').getStore();
+                                            store.data.items[row].set('idcliente' + this.up('grid').idmaster, record.data.ca_idcliente);
+                                            store.data.items[row].set('vendedor' + this.up('grid').idmaster, record.data.ca_vendedor);
+                                        }
+                                    }
+
+                        }),
+                        renderer: comboBoxRenderer(Ext.getCmp('nombrecliente' + this.idmaster))
+                    },
+                    {
+                        header: "Proveedor",
+                        dataIndex: 'tercero' + this.idmaster,
+                        hideable: false,
+                        width: 120,
+                        sortable: true,
+                        //id:'proveedor'+this.idmaster,
+                        editor: Ext.create('Colsys.Widgets.wgTercero', {
+                            id: 'prov' + this.idmaster,
+                            displayField: 'nombre',
+                            valueField: 'idtercero',
+                            listeners:
+                                    {
+                                        select: function (a, record, idx)
+                                        {
+                                            var selected = this.up('grid').getSelectionModel().getSelection()[0];
+                                            var row = this.up('grid').store.indexOf(selected);
+                                            var store = this.up('grid').getStore();
+
+                                            store.data.items[row].set('idtercero' + this.up('grid').idmaster, record.data.t_ca_idtercero);
+                                        }
+                                    }
+                        }),
+                        renderer: comboBoxRenderer(Ext.getCmp('prov' + this.idmaster))
+                    },
+                    {
+                        header: "Vendedor",
+                        dataIndex: 'vendedor' + this.idmaster,
+                        hideable: false,
+                        sortable: true,
+                        width: 160,
+                        editor: Ext.create('Colsys.Widgets.wgUsuario', {
+                            id: "vendedor" + this.idmaster
+                        }),
+                        renderer: comboBoxRenderer(Ext.getCmp('vendedor' + this.idmaster))
+                    },
+                    {
+                        header: "Orden",
+                        hideable: false,
+                        dataIndex: "numorden" + this.idmaster,
+                        editor: {xtype: "textfield"}
+                    }
+                    );                    
+
+        this.reconfigure(
+                Ext.create('Ext.data.Store', {
+                    id: "storeGridHouse",
+                    fields:
+                            [
+                                {name: 'idmaster' + this.idmaster, type: 'integer', mapping: 'idmaster'},
+                                {name: 'idhouse' + this.idmaster, type: 'integer', mapping: 'idhouse'},
+                                {name: 'doctransporte' + this.idmaster, type: 'string', mapping: 'doctransporte'},
+                                {name: 'fchdoctransporte' + this.idmaster, type: 'date', mapping: 'fchdoctransporte', dateFormat: 'Y-m-d'},
+                                {name: 'idcliente' + this.idmaster, type: 'integer', mapping: 'idcliente'},
+                                {name: 'nombrecliente' + this.idmaster, type: 'string', mapping: 'cliente'},
+                                {name: 'bodega' + this.idmaster, type: 'string', mapping: 'idbodega'},                                
+                                {name: 'nombrebodega' + this.idmaster, type: 'string', mapping: 'nombre'},
+                                {name: 'continuacion' + this.idmaster, type: 'string', mapping: 'continuacion'},
+                                {name: 'destinofinal' + this.idmaster, type: 'string', mapping: 'destinofinal'},
+                                {name: 'tercero' + this.idmaster, type: 'string', mapping: 'tercero'},
+                                {name: 'vendedor' + this.idmaster, type: 'string', mapping: 'vendedor'},
+                                {name: 'idtercero' + this.idmaster, type: 'integer', mapping: 'idtercero'},
+                                {name: 'idreporte' + this.idmaster, type: 'integer', mapping: 'idreporte'},
+                                {name: 'reporte' + this.idmaster, type: 'string', mapping: 'reporte'},
+                                {name: 'numpiezas' + this.idmaster, type: 'integer', mapping: 'numpiezas'},
+                                {name: 'peso' + this.idmaster, type: 'float', mapping: 'peso'},
+                                {name: 'volumen' + this.idmaster, type: 'float', mapping: 'volumen'},
+                                {name: 'numorden' + this.idmaster, type: 'string', mapping: 'numorden'},
+                                {name: 'color' + this.idmaster, type: 'string', mapping: 'color'}//,
+                                //{name: 'equipos' + this.idmaster, type: 'string', mapping: 'equipos'}
+                            ],
+                    proxy: {
+                        type: 'ajax',
+                        url: '/inoF2/datosGridHouse',
+                        baseParams: {
+                            impoexpo: 'impoexpo'
+                        },
+                        reader: {
+                            type: 'json',
+                            rootProperty: 'root',
+                            totalProperty: 'total',
+                            modo: 'modo'
+                        }
+                    },
+                    sorters: [{
+                            property: 'doctransporte',
+                            direction: 'ASC'
+                        }],
+                    autoLoad: false
+                }),
+                columnas
+                );
+
         var guardar = {
             text: 'Guardar',
             iconCls: 'add',
             width: 80,
             handler: function () {
-
                 idmaster = this.up('grid').idmaster;
                 var store = this.up('grid').getStore();
+                //var records = this.up('grid').getStore().getRange();
+                //console.log(records);
+                /*for(i=0;i<records.length;i++)
+                {
+                    console.log(records[i].data);
+                }*/
+                
+                
                 var model = Ext.create(store.getModel());
                 var columnsName = [];
                 var fieldsName = [];
@@ -458,17 +525,31 @@ Ext.define('Colsys.Ino.GridHouse', {
                     columnsName.push(field.mapping);
                     fieldsName.push(field.name);
                 };
+                
                 var filtrerRows = function (rowModel, index, array) {
-
+                    //console.log("1");
+                    //console.log(rowModel);
+                    //console.log("2");
+                    //console.log(index);
+                    //console.log("3");
+                    //console.log(array);
                     var row = new Object();
                     var lenght1 = fieldsName.length;
                     for (var i = 0; i < lenght1; i++) {
                         row[columnsName[i]] = rowModel.data[fieldsName[i]];
                     }
+                    row["id"]=rowModel.data.id;
+                    row["equipos"]=rowModel.data.equipos;
                     rows.push(row);
                 };
                 model.fields.forEach(filtrerfields);
-                store.getModifiedRecords().forEach(filtrerRows);
+                /*console.log(columnsName);
+                console.log(fieldsName);
+                console.log(filtrerfields)*/
+//                store.getModifiedRecords().forEach(filtrerRows);
+                store.getRange().forEach(filtrerRows);
+                //console.log(rows);
+                
                 var rowJson = JSON.stringify(rows);
                 if (rowJson.length > 5)
                 {
@@ -482,7 +563,6 @@ Ext.define('Colsys.Ino.GridHouse', {
                             var res = Ext.decode(response.responseText);
                             if (res.id && res.success)
                             {
-
                                 id = res.id.split(",");
                                 idhou = res.idhouse.split(",");
                                 for (i = 0; i < id.length; i++)
@@ -492,14 +572,11 @@ Ext.define('Colsys.Ino.GridHouse', {
                                     rec.set(("idhouse" + idmaster), idhou[i]);
                                     rec.commit();
                                 }
-
                                 Ext.Msg.alert('Mensaje', "Se guardo Correctamente los datos del House");
                             }
                             if (res.errorInfo != "" && res.errorInfo != "null")
                             {
-
                                 Ext.MessageBox.alert("Mensaje", 'No fue posible el guardar los datos del House <br>' + res.errorInfo);
-
                             }
                         },
                         failure: function (response, opts)
@@ -512,6 +589,8 @@ Ext.define('Colsys.Ino.GridHouse', {
             }
         };
         tb = new Ext.toolbar.Toolbar({dock: 'top'});
+        //console.log("bodegas:")
+        //console.log(this.bodegas);
         if (this.permisos.Crear == true) {
             tb.add(
                     {
@@ -541,23 +620,7 @@ Ext.define('Colsys.Ino.GridHouse', {
                         me.up('grid').getStore().reload();
                     }
                 });
-        this.addDocked(tb, 'top');
-        if (this.idimpoexpo == "INTERNO" && this.idtransporte == "Terrestre") {
-            orden.push(house);
-        } else
-        {
-            orden.push(reporte, {
-                header: "Doc. Transporte",
-                hideable: false,
-                id: "doctransporte" + this.idmaster,
-                dataIndex: 'doctransporte' + this.idmaster,
-                width: 125,
-                sortable: true,
-                editor: {xtype: "textfield"}
-            }/*, proveedor, idproveedor*/);
-        }
-        ;
-        this.reconfigure(orden.concat(columns));
+        this.addDocked(tb, 'top');        
         this.superclass.onRender.call(this, ct, position);
     },
     listeners:
@@ -580,32 +643,43 @@ Ext.define('Colsys.Ino.GridHouse', {
                             callback: function (records, operation, success) {
                                 for (i = 0; i < records.length; i++) {
                                     rec = records[i];
-                                    Ext.getCmp("bodega" + idmaster).store.add(
-                                            {"idbodega": rec.data.bodega, "nombre": rec.data.nombrebodega, 'tipo': '', 'transporte': '',
-                                                'identificacion': '', 'direccion': ''}
-                                    );
-                                    rec.set(("nombrebodega" + idmaster), rec.data.nombrebodega);
-                                    rec.set(("bodega" + idmaster), rec.data.bodega);
+                                    //console.log(Ext.ComponentQuery.query("#bodega" + idmaster));
+                                    if( Ext.ComponentManager.get("bodega" + idmaster))
+                                    {
+                                        Ext.getCmp("bodega" + idmaster).store.add(
+                                                {"idbodega": rec.data.bodega, "nombre": rec.data.nombrebodega, 'tipo': '', 'transporte': '',
+                                                    'identificacion': '', 'direccion': ''}
+                                        );
+                                        rec.set(("nombrebodega" + idmaster), rec.data.nombrebodega);
+                                        rec.set(("bodega" + idmaster), rec.data.bodega);
+                                    }
 
 
-                                    Ext.getCmp("nombrecliente" + idmaster).store.add(
-                                            {"idcliente": rec.data.idcliente, "compania": rec.data.cliente}
-                                    );
-                                    rec.set(("nombrecliente" + idmaster), rec.data.cliente);
-                                    rec.set(("idcliente" + idmaster), rec.data.idcliente);
+                                    if( Ext.ComponentManager.get("nombrecliente" + idmaster))
+                                    {
+                                        Ext.getCmp("nombrecliente" + idmaster).store.add(
+                                                {"idcliente": rec.data.idcliente, "compania": rec.data.cliente}
+                                        );
+                                        rec.set(("nombrecliente" + idmaster), rec.data.cliente);
+                                        rec.set(("idcliente" + idmaster), rec.data.idcliente);
+                                    }
 
                                     rec.commit();
                                 }
-
-
                             }
                         });
                         this.load = true;
-
                     }
                 },
                 beforeitemcontextmenu: function (view, record, item, index, e)
                 {
+                    me=this;
+                    //console.log(Ext.getCmp('tab'+this.idmaster).title);
+                    //console.log(this);
+                    //console.log(record.data.doctransporte);
+                    /*console.log(this.up());
+                    console.log(this.up().up());
+                    console.log(this.up('grid'));*/
                     e.stopEvent();
                     eliminar = null;
                     if (this.permisos.Anular) {
@@ -699,9 +773,51 @@ Ext.define('Colsys.Ino.GridHouse', {
                                     }).show();
                                 }
                             },
-                            eliminar
+                            eliminar,
+                            {
+                                text: 'Subir Documento',
+                                iconCls: 'file',
+                                scope: this,
+                                handler: function () {
+                                   
+                                    winformsubirarchivos = new Ext.Window({
+                                    title: 'Documentos',
+                                    width: 535,
+                                    height: 185,
+                                    closeAction: 'destroy',
+                                    items: {
+                                        autoScroll: true,
+                                        items: [
+                                            {
+                                                xtype: 'Colsys.GestDocumental.FormSubirArchivos',
+                                                id: 'formsubir',
+                                                name: 'form-subir-arch',
+                                                idtransporte: me.idtransporte,
+                                                idimpoexpo: me.idimpoexpo,
+                                                idreferencia: Ext.getCmp('tab'+this.idmaster).title,
+                                                ref2: record.data.doctransporte,
+                                                idmaster: me.idmaster,
+                                                //idsserie: serie
+                                            }
+                                        ]
+                                    },
+                                    listeners: {
+                                        beforeshow: function (eOpts) {
+                                        },
+                                        close: function (win, eOpts) {
+
+                                            winformsubirarchivos = null;
+                                        }
+                                    }
+                                })
+                                winformsubirarchivos.show();
+                                }
+                            }
+                            
                         ]
                     }).showAt(e.getXY());
                 }
             }
 });
+
+

@@ -767,6 +767,24 @@ Ext.define('Colsys.Ino.FormMaster', {
             });
         }
         idmastrer=this.idmaster;
+        if (this.idimpoexpo == "Importaci\u00F3n" && this.idtransporte == "Mar\u00EDtimo")
+        {
+            tb.add({
+                xtype: 'button',
+                text: '@ Coloader',
+                //iconCls: 'delete',
+                width: 150,
+                handler: function () {
+                    var windowpdf = Ext.create('Colsys.Widgets.WgVerPdf', {
+                            sorc: "/antecedentes/emailColoader/idmaster/"+idmastrer,
+                            height: 600,
+                            width: 1000,
+                        });
+                        windowpdf.show();
+                }
+            });
+        }
+        
         if (this.idimpoexpo == "OTM-DTA" && this.idtransporte == "Terrestre")
         {
             tb.add({
@@ -782,6 +800,7 @@ Ext.define('Colsys.Ino.FormMaster', {
                 }
             });
         }
+        
         this.addDocked(tb, 'bottom');
 
         Ext.getCmp("tipovehiculo" + this.idmaster).getStore().load({

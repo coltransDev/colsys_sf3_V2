@@ -40,7 +40,9 @@ class InoMasterTable extends Doctrine_Table
                         $referencia[0] .= '30';
                     }
 
-                    $parametros = ParametroTable::retrieveByCaso("CU010", $origen);
+                    $p_origen= Doctrine::getTable("Ciudad")->find( $origen );
+                    $parametros = ParametroTable::retrieveByCaso("CU010", $p_origen->getTrafico()->getCaIdtrafico());
+                    
 
                     if( count( $parametros)>0 ){
                         $parametro = $parametros[0];

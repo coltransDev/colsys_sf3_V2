@@ -99,4 +99,23 @@ class InoMaster extends BaseInoMaster
         return $this->getCaFchliquidado()||$this->getCaFchcerrado()||$this->getCaFchanulado();
     }
     
+    public function existeReporteOtm(){
+        $houses = $this->getInoHouse();
+        foreach ($houses as $house) {
+            if($house->getInoHouseSea()->getCaContinuacion()){
+                return true;
+}
+        }
+        return false;
+    }
+    
+    public function getTarea1207($datosMaster){        
+        $idTarea = $datosMaster["idtarea"];
+        if(!$idTarea){ 
+            if($this->existeReporteOtm()){
+                return true;
+            }
+        }
+        return false;
+    }
 }

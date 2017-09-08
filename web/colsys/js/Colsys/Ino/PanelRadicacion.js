@@ -1,19 +1,23 @@
 // Form de Consulta Principal de Sucursal
 
 Ext.define('Colsys.Ino.PanelRadicacion', {
-    extend: 'Ext.panel.Panel',
+    extend: 'Ext.form.Panel',
     alias: 'widget.Colsys.Ino.PanelRadicacion',
     defaults: {
         bodyStyle: 'padding:4px',
         labelWidth: 100
     },
     listeners: {
+        beforerender: function (ct, position) {
+            this.setHeight(this.up('tabpanel').up('tabpanel').getHeight() - 150);
+            this.setWidth(this.up('tabpanel').up('tabpanel').getWidth() - 50);
+        },
         render: function (me, eOpts) {
 
             var panelRadicacion = {
-                layout: {
+                /*layout: {
                     type: 'vbox'
-                },
+                },*/
                 items: [
                     {
                         idmaster: this.idmaster,
@@ -37,5 +41,3 @@ Ext.define('Colsys.Ino.PanelRadicacion', {
 
     }
 });
-
-

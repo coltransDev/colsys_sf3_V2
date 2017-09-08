@@ -226,12 +226,16 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
                             xtype: 'datefield',
                             fieldLabel: 'Fch.Inicial',
                             name: 'fchinicial',
+                            format: 'Y-m-d',
+                            submitFormat: 'Y-m-d',
                             flex: 1,
                             allowBlank: false
                         }, {
                             xtype: 'datefield',
                             fieldLabel: 'Fch.Final',
                             name: 'fchfinal',
+                            format: 'Y-m-d',
+                            submitFormat: 'Y-m-d',
                             flex: 1,
                             allowBlank: false
                         }]
@@ -373,7 +377,7 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
             var me = this;
             tb = new Ext.toolbar.Toolbar();
             tb.add({
-                text: 'Guardar Cabecera',
+                text: 'Guardar',
                 tooltip: 'Guardar Informaci\u00F3n del Master',
                 iconCls: 'add',
                 scope: this,
@@ -381,6 +385,9 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
                     var form = this.getForm();
                     if (form.isValid()) {
                         var data = form.getFieldValues();
+                        data["fchtrans"] = Ext.Date.format(new Date(), 'Y-m-d');
+                        data["fchinicio"] = Ext.Date.format(new Date(data["fchinicio"]), 'Y-m-d');
+                        data["fchfinal"] = Ext.Date.format(new Date(data["fchfinal"]), 'Y-m-d');
                         data["deposito"] = Ext.getCmp("coddeposito").getRawValue();
                         data["transportista"] = Ext.getCmp("idtransportista").getRawValue();
 
@@ -394,7 +401,6 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
                             },
                             waitMsg: 'Guardando',
                             success: function (response, options) {
-                                Ext.getCmp("winFormEdit").destroy();
                                 Ext.Msg.alert("Contacto", "Datos almacenados correctamente");
                             },
                             failure: function (form, action) {
@@ -432,7 +438,7 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
                                     if (res.success) {
                                         Ext.Msg.alert("Radicaciones", "Mensaje de Notificaci\u00F3n Enviado - Digitaci\u00F3n Muisca Ok ");
                                     } else {
-                                        Ext.MessageBox.alert("Mensaje", 'Se presento un error notificando Digitaci\u00F3n OK<br>' + res.responseInfo);
+                                        Ext.MessageBox.alert("Mensaje", 'Se presento un error notificando Digitaci\u00F3n OK<br>' + res.errorInfo);
                                     }
                                 }
                             });
@@ -460,10 +466,12 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
                                     idmaster: me.idmaster
                                 },
                                 failure: function (response, options) {
+                                    console.log(response);
                                     Ext.MessageBox.alert("Mensaje", 'Se presento un error generando el archivo XML<br>' + response.errorInfo);
                                     success = false;
                                 },
                                 success: function (response, options) {
+                                    console.log(response);
                                     var res = Ext.JSON.decode(response.responseText);
                                     if (res.success) {
                                         // Ext.Msg.alert("Radicaciones", "Mensaje de Notificaci\u00F3n Enviado - Digitaci\u00F3n Muisca Ok ");

@@ -5,7 +5,7 @@ Ext.define('Colsys.Ino.GridHouseRadicacion', {
     alias: 'widget.Colsys.Ino.GridHouseRadicacion',
     id: 'GridHouseRadicacion',
     name: 'GridHouseRadicacion',
-    width: 1200,
+    width: '100%',
     listeners: {
         afterrender: function (ct, position) {
             var me = this;
@@ -76,7 +76,7 @@ Ext.define('Colsys.Ino.GridHouseRadicacion', {
                             dataIndex: 'tipodocumento',
                             width: 130
                         }, {
-                            header: 'Cod.43',
+                            header: 'C43',
                             dataIndex: 'sinidentificacion',
                             width: 50
                         }, {
@@ -84,13 +84,17 @@ Ext.define('Colsys.Ino.GridHouseRadicacion', {
                             dataIndex: 'negociacion',
                             width: 90
                         }, {
-                            header: 'Dst.DTA/OTM',
-                            dataIndex: 'carga',
-                            width: 90
+                            header: 'Dep\u00F3sito',
+                            dataIndex: 'deposito',
+                            flex: 1
                         }, {
                             header: 'Descripci\u00F3n Mcia.',
                             dataIndex: 'mercancia_desc',
                             flex: 1
+                        }, {
+                            header: 'Dst.DTA/OTM',
+                            dataIndex: 'carga',
+                            width: 150
                         }, {
                             menuDisabled: true,
                             sortable: false,

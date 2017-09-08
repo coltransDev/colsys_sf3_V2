@@ -292,7 +292,7 @@ Ext.define('Colsys.Ino.FormHouseRadicacion', {
             data["disposicion"] = Ext.getCmp("dispocarga").getRawValue();
             data["tipodocumento"] = Ext.getCmp("tipodocviaje").getRawValue();
             data["deposito"] = Ext.getCmp("coddepositoh").getRawValue();
-            data["negociacion"] = Ext.getCmp("coddepositoh").getRawValue();
+            data["negociacion"] = Ext.getCmp("tiponegociacion").getRawValue();
             var str = JSON.stringify(data);
 
             if (form.isValid()) {
