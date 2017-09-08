@@ -586,19 +586,19 @@ a.toolbar:active {
 }
 
 .row_purple{
-    background-color:#9999CC !important;    
+    background-color:#9999CC !important;	
 }
 
 .row_orange{
-    background-color:#FFCC66 !important;    
+    background-color:#FFCC66 !important;	
 }
 
 .row_apricot{
-    background-color:#FAE9DE !important;    
+    background-color:#FAE9DE !important;	
 }
 
 .row_gray{
-    background-color:#E6E6E6 !important;    
+    background-color:#E6E6E6 !important;	
 }
 /*
 * Thumbnails
@@ -802,6 +802,7 @@ div.storybox .body {
     background: url('../images/fam/page_copy.png') no-repeat 0 0 !important;
 }
 
+
 .graph{
     background-image:url('../images/fam/bricks.png') !important;
 }
@@ -846,6 +847,50 @@ div.storybox .body {
     background: url('../images/fam/accept.png') no-repeat 0 0 !important;
 }
 
+.preview {
+    background: url('../images/fam/zoom.png') no-repeat 0 0 !important;
+}
+
+.llegada {
+    background: url('../images/fam/arrival.png') no-repeat 0 0 !important;
+}
+
+.status {
+    background: url('../images/fam/status.png') no-repeat 0 0 !important;
+}
+
+.ffletes {
+    background: url('../images/fam/invoice.png') no-repeat 0 0 !important;
+}
+
+.fotm {
+    background: url('../images/fam/invoice.png') no-repeat 0 0 !important;
+}
+
+.fcontenedores {
+    background: url('../images/fam/invoice.png') no-repeat 0 0 !important;
+}
+
+.contenedores {
+    background: url('../images/fam/container.png') no-repeat 0 0 !important;
+}
+
+.desconsolidacion {
+    background: url('../images/fam/desconsolidation.png') no-repeat 0 0 !important;
+}
+
+.planilla {
+    background: url('../images/fam/dian.png') no-repeat 0 0 !important;
+}
+
+.dian {
+    background: url('../images/fam/muisca.png') no-repeat 0 0 !important;
+}
+
+.global{
+    background: url('../images/CG30.png') no-repeat 0 0 !important;
+}
+
 .building {
     background: url('../images/fam/building.png') no-repeat 0 0 !important;
 }
@@ -883,6 +928,7 @@ div.storybox .body {
 .page_white_params{
     background: url('../images/fam/basket_put.png') no-repeat 0 0 !important;
 }
+
 
 .page_white_acrobat{
     background: url('../images/fam/page_white_acrobat.png') no-repeat 0 0 !important;
@@ -955,7 +1001,13 @@ div.storybox .body {
 }
 
 
+.calculator{
+    background-image:url('../images/fam/calculator.png') !important;
+}
 
+.camion{
+    background-image:url('../images/fam/lorry.png') !important;
+}
 
 
 .topic {
@@ -1402,11 +1454,8 @@ body.ext-ie6 .x-superboxselect-item {margin: 2px 1px 2px 1px; line-height: 1.2em
 
 table#tarifa{
     width:90%; 
-    background-color: #FFFFFF;
-    border: 1px solid #D0D0D0;
-    border-spacing: 1px;
-    border-collapse: separate;
-    padding:2px;
+    background-color: #FFFFFF; 
+
 }
 table#tarifa th { 
     margin: 0px;
@@ -1416,7 +1465,7 @@ table#tarifa th {
 }
 
 table#tarifa td { 
-    text-align: left;        
+    text-align: center;        
 }
 
 th.subtitulo{
@@ -1467,4 +1516,13 @@ th.subtitulo{
 .boxLabel {
     font-style: italic;
     text-align: justify;
+}
+
+.recibocaja td{
+    width: 100%;
+    margin: auto;
+}
+
+.icon-grid {
+    background-image: url(../images/icons/fam/grid.png);
 }
