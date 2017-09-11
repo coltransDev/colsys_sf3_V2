@@ -1304,8 +1304,6 @@ class crmActions extends sfActions {
             $cliente->setCaPropiedades(utf8_decode($propiedades));
             $cliente->setCaPreferencias(utf8_decode($request->getParameter("preferencias")));
 
-            //$cliente->save();
-
             $ids->save($conn);
             $cliente->setCaIdgrupo($ids->getCaId());
             $cliente->setCaIdcliente($ids->getCaId());
