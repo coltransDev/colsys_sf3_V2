@@ -1,8 +1,6 @@
 /*
 
 */
-
-
 body{
     background:#FFFFFF;
     font-family: verdana,arial,helvetica,serif;
@@ -1471,6 +1469,7 @@ table#tarifa td {
 th.subtitulo{
     font-size: 10px;
     font-family: verdana,arial,helvetica,serif;
+    text-align: center;    
 }
 
 .tabla2 tr td {
