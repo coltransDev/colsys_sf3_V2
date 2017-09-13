@@ -324,7 +324,7 @@ class clientesActions extends sfActions {
 
         exit();
     }
-
+    
     public function executeVerificaEstados($request) {
         // registro de control > 4622685
 
@@ -633,7 +633,7 @@ class clientesActions extends sfActions {
                 $email->setCaFromname($comercial->getCaNombre());
                 $email->setCaReplyto($comercial->getCaEmail());
                 $email->addCc($comercial->getCaEmail());
-                $coordinador = Doctrine::getTable("Usuario")       // Compia el mensaje a las personas de la sucursal con el perfil control alertas
+                $coordinador = Doctrine::getTable("Usuario")       // Compia el mensaje al coordinador asigando al cliente
                         ->createQuery("u")
                         ->where("u.ca_login = ? ", $cliente->getCaCoordinador())
                         ->fetchOne();
@@ -760,6 +760,7 @@ class clientesActions extends sfActions {
                 if ($con_credito) {
                     $email->addAttachment("ids/formatos/Solicitud_de_Credito.xls");
                 }
+                $email->addAttachment("ids/formatos/Check List Circular 0170.pdf");
                 $email->addAttachment("ids/formatos/Formato_conocimiento_de_cliente.xls");
 
                 $email->save();
