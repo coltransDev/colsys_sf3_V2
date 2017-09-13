@@ -12,7 +12,7 @@ class DelayedEmailTask extends sfDoctrineBaseTask {
 The [delayedEmailTask|INFO] task does things.
 Call it with:
 
-  [php symfony circularClientes|INFO]
+  [php symfony delayedEmailTask|INFO]
 EOF;
         // add arguments here, like the following:
         //$this->addArgument('application', sfCommandArgument::REQUIRED, 'The application name');
