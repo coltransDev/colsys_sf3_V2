@@ -760,7 +760,7 @@ class clientesActions extends sfActions {
                 if ($con_credito) {
                     $email->addAttachment("ids/formatos/Solicitud_de_Credito.xls");
                 }
-                $email->addAttachment("ids/formatos/Check List Circular 0170.pdf");
+                $email->addAttachment("ids/formatos/Check_List_Circular_0170.pdf");
                 $email->addAttachment("ids/formatos/Formato_conocimiento_de_cliente.xls");
 
                 $email->save();
