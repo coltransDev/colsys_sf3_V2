@@ -142,7 +142,7 @@ class reportesGerActions extends sfActions {
                     foreach ($this->incoterms as $key => $inco) {
                         if ($key > 0)
                             $where.=" or ";
-                        $where.=" r.ca_incoterms like '" . $inco . "%'";
+                        $where.=" vpr.ca_incoterms like '" . $inco . "%'";
                     }
                     $where.=" )";
                 }
@@ -169,7 +169,7 @@ class reportesGerActions extends sfActions {
                 $joinclientes = "JOIN tb_concliente cc ON cc.ca_idcontacto=r.ca_idconcliente";
                 $where.=" and cc.ca_idcliente = '" . $this->idcliente . "'";
             }
-
+            $joinreportes.= "JOIN vi_repproveedores vpr ON r.ca_idreporte = vpr.ca_idreporte ";
             if ($this->ntipo > 0)
                 $where.=" and m.ca_tipo='" . $this->ntipo . "'";
 
@@ -177,7 +177,7 @@ class reportesGerActions extends sfActions {
             $sql = "SELECT tt.ca_liminferior,m.ca_referencia, tt.ca_concepto,tt.ca_idconcepto, r.ca_fchreporte, m.ca_fchembarque, m.ca_fcharribo, m.ca_fchreferencia, 
                         m.ca_origen, ori.ca_ciudad AS ori_ca_ciudad, m.ca_destino, des.ca_ciudad AS des_ca_ciudad, tra_ori.ca_idtrafico AS ori_ca_idtrafico, 
                         tra_ori.ca_nombre AS ori_ca_nombre, tra_des.ca_idtrafico AS des_ca_idtrafico, tra_des.ca_nombre AS des_ca_nombre, 
-                        m.ca_modalidad, m.ca_idlinea, ids.ca_nombre,ids1.ca_nombre as agente,r.ca_idreporte,r.ca_incoterms,r.ca_idagente,
+                        m.ca_modalidad, m.ca_idlinea, ids.ca_nombre,ids1.ca_nombre as agente,r.ca_idreporte,vpr.ca_incoterms,r.ca_idagente,
                         (( SELECT sum(t.ca_liminferior) AS sum
                             FROM tb_inoequipos_sea eq
                                 JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto
@@ -207,12 +207,12 @@ class reportesGerActions extends sfActions {
                         JOIN tb_traficos tra_des ON tra_des.ca_idtrafico = des.ca_idtrafico
                     WHERE date_part('year', m.ca_fchreferencia) > (date_part('year', m.ca_fchreferencia) - 2)  
                         $where
-                    GROUP BY tt.ca_liminferior,m.ca_referencia, tt.ca_concepto, tt.ca_idconcepto ,m.ca_fchembarque, m.ca_fcharribo, m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad , m.ca_destino, des.ca_ciudad , tra_ori.ca_idtrafico , tra_ori.ca_nombre , tra_des.ca_idtrafico , tra_des.ca_nombre , m.ca_modalidad, m.ca_idlinea, ids.ca_nombre,ids1.ca_nombre,r.ca_idreporte,r.ca_incoterms,r.ca_idagente,
+                    GROUP BY tt.ca_liminferior,m.ca_referencia, tt.ca_concepto, tt.ca_idconcepto ,m.ca_fchembarque, m.ca_fcharribo, m.ca_fchreferencia, m.ca_origen, ori.ca_ciudad , m.ca_destino, des.ca_ciudad , tra_ori.ca_idtrafico , tra_ori.ca_nombre , tra_des.ca_idtrafico , tra_des.ca_nombre , m.ca_modalidad, m.ca_idlinea, ids.ca_nombre,ids1.ca_nombre,r.ca_idreporte,vpr.ca_incoterms,r.ca_idagente,
                             (( SELECT sum(t.ca_liminferior) AS sum FROM tb_inoequipos_sea eq JOIN tb_conceptos t ON eq.ca_idconcepto = t.ca_idconcepto
                                 WHERE eq.ca_referencia = m.ca_referencia AND eq.ca_idconcepto = tt.ca_idconcepto)) / 20 , 
                             ( SELECT count(*) AS count FROM tb_inoequipos_sea eq
                                 WHERE eq.ca_referencia = m.ca_referencia AND eq.ca_idconcepto = tt.ca_idconcepto)
-                    ORDER BY m.ca_fchreferencia, r.ca_incoterms ,r.ca_idagente";
+                    ORDER BY m.ca_fchreferencia, vpr.ca_incoterms ,r.ca_idagente";
             $con = Doctrine_Manager::getInstance()->connection();
 
             $st = $con->execute($sql);
