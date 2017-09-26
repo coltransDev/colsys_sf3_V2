@@ -2256,6 +2256,84 @@ class clientesActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
+    public function executeDatosContratoComodato(sfWebRequest $request) {
+        $comodatos = Doctrine::getTable("ComCliente")
+                ->createQuery("c")
+                ->addWhere("c.ca_idcliente = ?", $this->getRequestParameter("id"))
+                ->execute();
+        $data = array();
+
+        foreach ($comodatos as $comodato) {
+            $data[] = array("idcliente" => $comodato->getCaIdcliente(),
+                "fchfirmado" => $comodato->getCaFchfirmado()." 23:59:59",
+                "fchvencimiento" => $comodato->getCaFchvencimiento()." 23:59:59"
+            );
+        }
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
+
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeGuardarContratoComodato(sfWebRequest $request) {
+        $datos = $request->getParameter("datos");
+        $datos = json_decode($datos);
+        $ids = $ids_reg = array();
+
+        $conn = Doctrine::getTable("ComCliente")->getConnection();
+        $conn->beginTransaction();
+        try {
+            foreach ($datos as $dato) {
+                $comodato = Doctrine::getTable("ComCliente")
+                        ->createQuery("c")
+                        ->addWhere("c.ca_idcliente = ?", $request->getParameter("idcliente"))
+                        ->addWhere("c.ca_fchfirmado = ?", $dato->fchfirmado)
+                        ->fetchOne();
+                if (!$comodato) {
+                    $comodato = new ComCliente();
+                    $comodato->setCaIdcliente($request->getParameter("idcliente"));
+                    if ($dato->fchfirmado) {
+                        $comodato->setCaFchfirmado($dato->fchfirmado);
+                    }
+                }
+                if ($dato->fchvencimiento) {
+                    $comodato->setCaFchvencimiento($dato->fchvencimiento);
+                }
+                $comodato->save();
+                $ids[] = $dato->id;
+            }
+            $conn->commit();
+            $this->responseArray = array("success" => true, "ids" => $ids, "idcliente" => $comodato->getCaIdcliente());
+        } catch (Exception $e) {
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeEliminarContratoComodato(sfWebRequest $request) {
+        $conn = Doctrine::getTable("ComCliente")->getConnection();
+        $conn->beginTransaction();
+        try {
+            $comodato = Doctrine::getTable("ComCliente")
+                    ->createQuery("c")
+                    ->addWhere("c.ca_idcliente = ?", $request->getParameter("idcliente"))
+                    ->addWhere("c.ca_fchfirmado = ?", $request->getParameter("fchfirmado"))
+                    ->addWhere("c.ca_fchvencimiento = ?", $request->getParameter("fchvencimiento"))
+                    ->fetchOne();
+            if ($comodato) {
+                $comodato->delete();
+            }
+            $conn->commit();
+            $this->responseArray = array("success" => true, "idcliente" => $request->getParameter("idcliente"));
+        } catch (Exception $e) {
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+
+        $this->setTemplate("responseTemplate");
+    }
+
     public function executeEncuestaVisitaExt4(sfWebRequest $request) {
         
     }

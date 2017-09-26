@@ -117,5 +117,4 @@ Ext.define('Colsys.Crm.FormSucursal', {
             }
         }
     }
-
 });

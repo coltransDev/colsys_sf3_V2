@@ -84,11 +84,16 @@ Ext.define('Colsys.Crm.FormClienteMaster', {
                                                         } else {
                                                             Ext.getCmp('idalterno_id').disable();
                                                         }
-
                                                         if (record.data.trafico == 'Colombia') {
+                                                            Ext.getCmp('ciudad').enable(false);
+                                                            Ext.getCmp('ciudad2').disable(true);
+                                                            Ext.getCmp('direccion0').disable(true);
                                                             Ext.getCmp('fieldsetdireccion2').setVisible(true);
                                                             Ext.getCmp('fieldsetdireccion1').setVisible(false);
                                                         } else {
+                                                            Ext.getCmp('ciudad').disable(true);
+                                                            Ext.getCmp('ciudad2').enable(true);
+                                                            Ext.getCmp('direccion0').enable(true);
                                                             Ext.getCmp('fieldsetdireccion1').setVisible(true);
                                                             Ext.getCmp('fieldsetdireccion2').setVisible(false);
                                                         }
@@ -200,7 +205,6 @@ Ext.define('Colsys.Crm.FormClienteMaster', {
                                 },
                                 fieldDefaults: {
                                     labelAlign: 'right',
-                                    labelWidth: 95,
                                     margin: '0, 0, 5, 0'
                                 },
                                 items: {
@@ -212,13 +216,26 @@ Ext.define('Colsys.Crm.FormClienteMaster', {
                                             fieldLabel: 'Direcci&oacute;n',
                                             xtype: 'textfield',
                                             id: 'direccion0',
+                                            labelWidth: 95,
+                                            allowBlank: false,
                                             name: 'direccion0',
                                             flex: 2
                                         }, {
                                             fieldLabel: 'Localidad',
                                             xtype: 'textfield',
                                             id: 'localidad2',
+                                            labelWidth: 65,
                                             name: 'localidad2',
+                                            flex: 1
+                                        }, {
+                                            fieldLabel: 'Ciudad',
+                                            xtype: 'Colsys.Widgets.WgCiudades2',
+                                            labelWidth: 55,
+                                            id: 'ciudad2',
+                                            name: 'ciudad2',
+                                            clientes: true,
+                                            renderer: comboBoxRenderer(this),
+                                            allowBlank: false,
                                             flex: 1
                                         }]
                                 }
@@ -531,13 +548,17 @@ Ext.define('Colsys.Crm.FormClienteMaster', {
                                                 xtype: 'textfield',
                                                 id: 'nombre',
                                                 name: 'nombre',
+                                                allowBlank: false,
+                                                maxLength: 30,
                                                 flex: 3
                                             }, {
                                                 fieldLabel: '1er Apellido',
                                                 xtype: 'textfield',
                                                 id: 'apellido1',
                                                 name: 'apellido1',
+                                                allowBlank: false,
                                                 labelWidth: 85,
+                                                maxLength: 15,
                                                 flex: 2
                                             }, {
                                                 fieldLabel: '2do Apellido',
@@ -545,12 +566,14 @@ Ext.define('Colsys.Crm.FormClienteMaster', {
                                                 id: 'apellido2',
                                                 name: 'apellido2',
                                                 labelWidth: 85,
+                                                maxLength: 15,
                                                 flex: 2
                                             }, {
                                                 fieldLabel: 'Titulo',
                                                 xtype: 'Colsys.Widgets.WgFormCliente',
                                                 id: 'titulo',
                                                 name: 'titulo',
+                                                allowBlank: false,
                                                 labelWidth: 50,
                                                 tipoCombo: 1,
                                                 flex: 2,
@@ -772,7 +795,7 @@ Ext.define('Colsys.Crm.FormClienteMaster', {
                                 height: 243,
                                 autoScroll: true,
                                 defaults: {
-                                    bodyStyle: 'padding:4px',
+                                    bodyStyle: 'padding:4px'
                                 },
                                 items: [
                                     {
@@ -816,6 +839,10 @@ Ext.define('Colsys.Crm.FormClienteMaster', {
                         handler: function () {
                             var idcliente = this.up('form').idcliente;
                             var form = this.up('form').getForm();
+//                            var invalidFields = this.up('form').query("field{isValid()==false}"); //Lista los campos que no pasan la validación
+//                            for (i = 0; i < invalidFields.length; i++) {
+//                                console.log(invalidFields[i].name);
+//                            }
 
                             if (form.isValid()) {
                                 form.submit({
@@ -843,13 +870,13 @@ Ext.define('Colsys.Crm.FormClienteMaster', {
                                                     Ext.getCmp('form-master-' + idcliente).setTitle(res.data.identificacion);
                                                 }
                                             });
-                                            formMasInfo = Ext.getCmp("Actividad" + idcliente).getForm();
-                                            formMasInfo.load({
-                                                url: '/crm/datosCliente',
-                                                params: {
-                                                    idcliente: idcliente
-                                                }
-                                            });
+//                                            formMasInfo = Ext.getCmp("Actividad" + idcliente).getForm();
+//                                            formMasInfo.load({
+//                                                url: '/crm/datosCliente',
+//                                                params: {
+//                                                    idcliente: idcliente
+//                                                }
+//                                            });
                                         }
 
                                         if (idcliente == null) {
@@ -929,9 +956,17 @@ Ext.define('Colsys.Crm.FormClienteMaster', {
                                 }
                                 //Habilitar campos direccion segun pais
                                 if (rec.data.trafico == 'Colombia') {
+                                    Ext.getCmp('ciudad').enable(false);
+                                    Ext.getCmp('ciudad2').disable(true);
+                                    Ext.getCmp('direccion0').disable(true);
                                     Ext.getCmp('fieldsetdireccion2').setVisible(true);
+                                    Ext.getCmp('fieldsetdireccion1').setVisible(false);
                                 } else {
+                                    Ext.getCmp('ciudad').disable(true);
+                                    Ext.getCmp('ciudad2').enable(true);
+                                    Ext.getCmp('direccion0').enable(true);
                                     Ext.getCmp('fieldsetdireccion1').setVisible(true);
+                                    Ext.getCmp('fieldsetdireccion2').setVisible(false);
                                 }
                             }
                             idalternoInicial = Ext.getCmp("idalterno_id").value;
