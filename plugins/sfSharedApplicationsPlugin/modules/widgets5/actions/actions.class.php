@@ -842,7 +842,7 @@ class widgets5Actions extends sfActions {
                 ->createQuery("e")
                 ->select("*")
                 ->orderBy("ca_idempresa ASC")
-                ->where("ca_activo=TRUE and ca_pathsiigo !=''");
+                ->where("ca_activo=TRUE and ca_idsap IS NOT NULL");
         $debug = $q->getSqlQuery();
         $datos = $q->execute();
         $a = array();
@@ -2171,6 +2171,7 @@ class widgets5Actions extends sfActions {
                     "volumen" => floatval($volumen[0]),
                     "teus" => utf8_encode($indicador["ca_teus"]),
                     "proveedor" => $proovedor,
+                    "factura" => utf8_encode($indicador["ca_factura"]),
                     "fch_salida" => utf8_encode($indicador["ca_fchsalida_cd"]),
                     "fch_llegada" => utf8_encode($indicador["ca_fchllegada_cd"]),
                     "fch_zarpe" => utf8_encode($indicador["ca_fchsalida_ccr"]),
@@ -2360,9 +2361,8 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosConceptosContenedores(sfWebRequest $request) {
-        $transporte = utf8_encode($request->getParameter("idtransporte"));
-        $modalidad = utf8_encode($request->getParameter("idimpoexpo"));
-
+        $transporte = utf8_decode($request->getParameter("idtransporte"));
+        
         $q = Doctrine_Query::create()
                 ->select("c.ca_idconcepto, c.ca_concepto, c.ca_transporte, c.ca_modalidad, c.ca_liminferior")
                 ->from("Concepto c")
@@ -2386,7 +2386,7 @@ class widgets5Actions extends sfActions {
         $this->responseArray = array("success" => true, "root" => $data);
         $this->setTemplate("responseTemplate");
     }
-
+    
     public function executeDatosContactos(sfWebRequest $request) {
         $idcliente = $request->getParameter("idcliente");
 
@@ -2937,7 +2937,7 @@ class widgets5Actions extends sfActions {
         $impoexpo = utf8_decode($request->getParameter("impoexpo"));
         $idtransporte = utf8_decode($request->getParameter("idtransporte"));
 
-        if ($criterio) {
+        try{
             $q = Doctrine::getTable("InoMaster")
                     ->createQuery("m")
                     ->leftJoin("m.Origen o")
@@ -2974,8 +2974,8 @@ class widgets5Actions extends sfActions {
 
             //echo "<pre>";print_r($refs);echo "</pre>";
             $this->responseArray = array("success" => true, "root" => $refs, "total" => count($refs), "debug" => $debug);
-        } else {
-            $this->responseArray = array("root" => array(), "total" => 0, "success" => true);
+        } catch(Exception $e) {
+            $this->responseArray = array("root" => array(), "total" => 0, "success" => false, "errorInfo"=>$e->getMessage());
         }
         $this->setTemplate("responseTemplate");
     }
@@ -3066,7 +3066,7 @@ class widgets5Actions extends sfActions {
         $agentes_rs = $rs->fetchAll();
 
         foreach ($agentes_rs as $agente) {
-            $data[] = array("id" => $agente["ca_idproveedor"],
+            $data[] = array("id" => $agente["ca_idproveedor"], "idalterno"=> utf8_encode($agente["ca_idalterno"]),
                 "nombre" => utf8_encode($agente["ca_nombre"])
             );
         }
@@ -3263,6 +3263,37 @@ class widgets5Actions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
-}
+    public function executeDatosProveedorSucursal($request) {
+        $query = $request->getParameter("query");
+        $idempresa = $request->getParameter("idempresa");
 
+        $q = Doctrine_Query::create()
+                ->select("c.ca_ciudad,s.ca_direccion,s.ca_idsucursal,s.ca_id,ids.ca_nombre,cl.ca_propiedades, ids.ca_idalterno")
+                ->from("IdsSucursal s")
+                ->innerJoin("s.Ciudad c")
+                ->innerJoin("s.Ids ids")
+                ->leftJoin("ids.IdsProveedor p")
+                ->leftJoin("ids.IdsAgente a")
+                ->where("UPPER(ids.ca_nombre) like ?", "%" . strtoupper($query) . "%")
+                ->addOrderBy("c.ca_ciudad")
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+        $debug = $q->getSqlQuery();
+        $sucursales = $q->execute();
+        $sucursal = array();
+        //print_r($sucursales);
+        foreach ($sucursales as $suc) {
+            $sucursal[] = array(
+                "idsucursal" => $suc["s_ca_idsucursal"],
+                "ciudad" => utf8_encode($suc["c_ca_ciudad"]),
+                "direccion" => utf8_encode($suc["s_ca_direccion"]),
+                "id" => $suc["s_ca_id"],
+                "idalterno" => $suc["ids_ca_idalterno"],
+                "compania" => utf8_encode($suc["ids_ca_nombre"] /* . "-" . $suc["c_ca_ciudad"] */) /* ,
+                      "cuentapago"=>$cuenta_forma_pago */
+            );
+        }
+        $this->responseArray = array("root" => $sucursal, "total" => count($sucursal), "success" => true, "debug" => $debug);
+        $this->setTemplate("responseTemplate");
+    }
+}
 ?>

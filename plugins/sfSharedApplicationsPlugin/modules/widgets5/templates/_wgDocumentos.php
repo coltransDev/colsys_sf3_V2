@@ -47,12 +47,7 @@ Ext.define('wgDocumentos', {
         wgDocumentos.superclass.onRender.call(this, ct, position);            
     },*/
     onFocus: function( field, newVal, oldVal ){
-        if(this.linkSerie)
-        {
-            if(Ext.getCmp(this.linkSerie))
-                this.idsserie=Ext.getCmp(this.linkSerie).getValue();
-        }
-            
+        //alert( this.idsserie);
         this.store.filter('idsserie', this.idsserie, true, true);
     }
 });
