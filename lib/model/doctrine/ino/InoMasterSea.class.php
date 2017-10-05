@@ -21,7 +21,7 @@ class InoMasterSea extends BaseInoMasterSea {
 
             $conn->beginTransaction();
             if ($this->getCaDatosmuisca()) {
-                $master = json_decode($this->getCaDatosmuisca());
+                $master = json_decode(utf8_encode($this->getCaDatosmuisca()));
 
                 $dianReservado = Doctrine::getTable("DianReservado")->find($master->iddocactual);
 
@@ -120,7 +120,10 @@ class InoMasterSea extends BaseInoMasterSea {
             }
 
             // =========================== Proveedor de Transporte ===========================
-            $ids = Doctrine::getTable("Ids")->find($master->idtransportista);
+            $ids = Doctrine::getTable("Ids")
+                    ->createQuery("i")
+                    ->addWhere("i.ca_idalterno = ?", $master->idtransportista)
+                    ->fetchOne();
 
             $xml_pal66->setAttribute("doc1", 31);
             $xml_pal66->setAttribute("nid1", $ids->getCaIdalterno());
@@ -169,13 +172,13 @@ class InoMasterSea extends BaseInoMasterSea {
                 $inoHouseSea = $inoHouse->getInoHouseSea();
                 // Se Crear el elemento hijo
                 $xml_hijo = $xml->createElement("hijo");
-                $hijo = json_decode($inoHouseSea->getCaDatosmuisca());
+                $hijo = json_decode(utf8_encode($inoHouseSea->getCaDatosmuisca()));
 
                 $dianReservado = Doctrine::getTable("DianReservado")->find($hijo->iddocactual);
 
                 if (!$dianReservado or $hijo->ca_numenvio != $NumEnvio) {
                     if (!$hijo->fchtrans) {
-                        $event = "Error - Hay una incosistencia en información para Muisca en House: ".$inoHouse->getCaDoctransporte();
+                        $event = "Error - Hay una incosistencia en información para Muisca en House: " . $inoHouse->getCaDoctransporte();
                         throw new Exception($event);
                     }
                     $hijo->iddocactual = $iddocactual;
@@ -196,7 +199,7 @@ class InoMasterSea extends BaseInoMasterSea {
                 }
 
                 $xml_hijo->setAttribute("hdca", $hijo->dispocarga);
-                $destino = ($inoHouseSea->getCaContinuacion() == "N/A") ? $inoMaster->getCaDestino() : $inoHouseSea->getCaContinuacionDest();
+                $destino = (!$inoHouseSea->getCaContinuacion()) ? $inoMaster->getCaDestino() : $inoHouseSea->getCaContinuacionDest();
                 $destino = (strlen($hijo->iddestino) != 0) ? $hijo->iddestino : $destino;
 
                 $arribo_array = array();
@@ -233,8 +236,8 @@ class InoMasterSea extends BaseInoMasterSea {
 
                 // =========================== Destinatario ===========================
 
-                if ($inoHouseSea->getCaContinuacion() and !$reporte->getBodega()->getCaIdentificacion()) {
-                    $event = "Error - En Identificación de la Bodega, cuando hay continuación de viaje, House: ".$inoHouse->getCaDoctransporte();
+                if ($inoHouseSea->getCaContinuacion() and ! $reporte->getBodega()->getCaIdentificacion()) {
+                    $event = "Error - En Identificación de la Bodega, cuando hay continuación de viaje, House: " . $inoHouse->getCaDoctransporte();
                     throw new Exception($event);
                 } else if ($inoHouseSea->getCaContinuacion() == "DTA" and $reporte->getBodega()->getCaIdentificacion()) {
                     $nit = explode("-", $reporte->getBodega()->getCaIdentificacion());
@@ -254,7 +257,7 @@ class InoMasterSea extends BaseInoMasterSea {
                             $nit = substr($cadena, strpos($cadena, "Nit") + 3);
                             $nit = explode("-", $nit);
                         } else {
-                            $event = "Error - En Identificación del Consignatario cuando hay un OTM, House: ".$inoHouse->getCaDoctransporte();
+                            $event = "Error - En Identificación del Consignatario cuando hay un OTM, House: " . $inoHouse->getCaDoctransporte();
                             throw new Exception($event);
                         }
 
@@ -471,8 +474,8 @@ class InoMasterSea extends BaseInoMasterSea {
                         $repstatus = $conn->execute($sql);
                         foreach ($repstatus as $status) {
                             $mercancia_peli = ($status["ca_mcia_peligrosa"]) ? "S" : "N";
-                            $mercancia_desc = (strlen($hijo->mercancia_desc) != 0) ? $hijo->mercancia_desc : $status["ca_mcia_peligrosa"];
-                            $mercancia_desc = utf8_encode(substr($mercancia_desc, 0, 200));
+                            $mercancia_desc = (strlen($hijo->mercancia_desc) != 0) ? $hijo->mercancia_desc : $status["ca_mercancia_desc"];
+                            $mercancia_desc = substr($mercancia_desc, 0, 200);
                         }
                         $xml_item = $xml->createElement("item");
                         $item = 1;
@@ -483,7 +486,7 @@ class InoMasterSea extends BaseInoMasterSea {
                         $xml_h267->appendChild($xml_item);
                         $xml_h167->appendChild($xml_h267);
 
-                        $array_cont[] = str_replace("-", "", $contenedor->idequipo);
+                        $array_cont[] = str_replace("-", "", $contenedor->serial);
                     }
                     // Se Crear el elemento contenedor
                     if ($master->tipodocviaje == 10) {
@@ -518,7 +521,7 @@ class InoMasterSea extends BaseInoMasterSea {
                 }
                 $xml_h167->setAttribute("cont", $master->tipocarga);
                 $xml_h167->setAttribute("tun", 2);
-                $xml_h167->setAttribute("idu", str_replace("-", "", $contenedor->idequipo));
+                $xml_h167->setAttribute("idu", str_replace("-", "", $contenedor->serial));
 
                 $tipoContenedor = Doctrine::getTable("Concepto")->find($contenedor->idconcepto);
                 if ($tipoContenedor) {
@@ -533,8 +536,10 @@ class InoMasterSea extends BaseInoMasterSea {
                 }
 
                 foreach ($inoHouses as $inoHouse) {      // Lee todos los Houses de la Referencia
+                    $reporte = $inoHouse->getReporte()->getRepUltVersion();
                     $inoHouseSea = $inoHouse->getInoHouseSea();
                     $datos_carga = json_decode($inoHouseSea->getCaDatos());
+                    $hijo = json_decode($inoHouseSea->getCaDatosmuisca());
                     $contenedores = $datos_carga->equipos;
                     foreach ($contenedores as $contenedor) {
                         if ($equipo->getCaIdequipo() != $contenedor->idequipo) {
@@ -560,8 +565,8 @@ class InoMasterSea extends BaseInoMasterSea {
                         $repstatus = $conn->execute($sql);
                         foreach ($repstatus as $status) {
                             $mercancia_peli = ($reporte->getCaMciaPeligrosa()) ? "S" : "N";
-                            $mercancia_desc = (strlen($hijo->mercancia_desc) != 0) ? $hijo->mercancia_desc : $status["ca_mcia_peligrosa"];
-                            $mercancia_desc = utf8_encode(substr($mercancia_desc, 0, 200));
+                            $mercancia_desc = (strlen($hijo->mercancia_desc) != 0) ? $hijo->mercancia_desc : $status["ca_mercancia_desc"];
+                            $mercancia_desc = substr($mercancia_desc, 0, 200);
                         }
 
                         $xml_item = $xml->createElement("item");
@@ -615,7 +620,7 @@ class InoMasterSea extends BaseInoMasterSea {
             $xml_mas->appendChild($xml_cab);
             $xml_mas->appendChild($xml_pal66);
             $xml->appendChild($xml_mas);
-            
+
             /* AL final Actualiza el Json de DianMaestra */
             $this->setCaDatosmuisca(json_encode($master));
             $this->save();
@@ -627,7 +632,7 @@ class InoMasterSea extends BaseInoMasterSea {
                 foreach ($errors as $error) {
                     $event .= display_xml_error($error, $xml) . "<br />";
                 }
-                if ($event){
+                if ($event) {
                     throw new Exception($event);
                 }
             }
@@ -635,7 +640,7 @@ class InoMasterSea extends BaseInoMasterSea {
             $conn->rollBack();
             return array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
         }
-        return $xml->saveXML();
+        return array("success" => true, "Ano" => $xml_Ano->nodeValue, "CodCpt" => $xml_CodCpt->nodeValue, "Formato" => $xml_Formato->nodeValue, "NumEnvio" => $xml_NumEnvio->nodeValue, "outXML" => $xml->saveXML());
     }
 
 }
