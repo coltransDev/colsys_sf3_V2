@@ -776,6 +776,7 @@ IdsCliente:
     ca_regimen: integer
     ca_uap: boolean
     ca_altex: boolean
+    ca_oea: boolean
     ca_comerciante: boolean
     ca_menosxempleados: boolean
     ca_ciiu_uno: string(4)
@@ -926,7 +927,6 @@ IdsRestrictivas:
       type: timestamp
       primary: true
     ca_tipo_consulta: string(20)
-    ca_parametro: string(20)
     ca_idrespuesta: string(20)
     ca_respuesta: integer
     ca_fchcreado: timestamp
