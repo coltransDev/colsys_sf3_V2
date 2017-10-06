@@ -1,4 +1,5 @@
 var win_comodato = null;
+var contextMenu = Ext.create('Ext.menu.Menu');
 
 comboBoxRenderer = function (combo) {
     return function (value) {
@@ -99,69 +100,8 @@ Ext.define('Colsys.Ino.GridContenedores', {
                 menuDisabled: true,
                 sortable: false,
                 xtype: 'actioncolumn',
-                width: 40,
-                items: [{
-                        iconCls: 'report_edit',
-                        tooltip: 'Contrato de Comodato',
-                        handler: function (grid, rowIndex, colIndex) {
-                            var rec = grid.getStore().getAt(rowIndex);
-                            if (win_comodato == null) {
-                                win_comodato = new Ext.Window({
-                                    id: 'winControlComodato',
-                                    title: 'Control Comodatos',
-                                    width: 800,
-                                    height: 310,
-                                    closeAction: 'destroy',
-                                    listeners: {
-                                        destroy: function (obj, eOpts)
-                                        {
-                                            win_comodato = null;
-                                        }
-                                    },
-                                    items: {
-                                        xtype: 'Colsys.Ino.FormControlComodato',
-                                        id: 'formControlComodato',
-                                        idequipo: rec.get("idequipo")
-                                    }
-                                });
-                            }
-                            win_comodato.show();
-                        }
-                    }, {
-                        iconCls: 'delete',
-                        tooltip: 'Anular la Encuesta',
-                        handler: function (grid, rowIndex, colIndex) {
-                            me = this;
-                            var store = me.up('grid').getStore();
-
-                            var rec = grid.getStore().getAt(rowIndex);
-                            idequipo = rec.data.idequipo;
-                            Ext.MessageBox.confirm('Confirmaci&oacute;n de Eliminaci&oacute;n', 'Est&aacute; seguro que desea anular el registro?', function (choice) {
-                                if (choice == 'yes') {
-                                    Ext.Ajax.request({
-                                        waitMsg: 'Eliminando...',
-                                        url: '/inoF2/eliminarContenedor',
-                                        params: {
-                                            idequipo: idequipo,
-                                        },
-                                        failure: function (response, options) {
-                                            Ext.MessageBox.alert("Mensaje", 'Se presento un error Eliminando el registro.<br>' + response.errorInfo);
-                                            success = false;
-                                        },
-                                        success: function (response, options) {
-                                            var res = Ext.JSON.decode(response.responseText);
-                                            if (res.success) {
-                                                store.reload();
-                                            } else {
-                                                Ext.MessageBox.alert("Mensaje", 'Se presento un error guardando los registros.<br>' + res.responseInfo);
-                                            }
-                                        }
-                                    });
-                                }
-                            });
-
-                        }
-                    }]
+                width: 20,
+                items: {}
             });
 
             this.reconfigure(
@@ -292,8 +232,84 @@ Ext.define('Colsys.Ino.GridContenedores', {
                     idmaster: this.idmaster
                 }
             });
-
-
+        }
+    },
+    viewConfig: {
+        stripeRows: true,
+        listeners: {
+            beforeitemcontextmenu: function (view, record, item, index, e) {
+                contextMenu.removeAll();
+                permisos = this.up('grid').permisos;
+                if (permisos.Comodatos) {
+                    var comodato = Ext.create('Ext.menu.Item', {
+                        text: 'Comodato',
+                        iconCls: 'report_edit',
+                        tooltip: 'Contrato de Comodato',
+                        handler: function (item, e) {
+                            if (win_comodato == null) {
+                                win_comodato = new Ext.Window({
+                                    id: 'winControlComodato',
+                                    title: 'Control Comodatos',
+                                    width: 800,
+                                    height: 310,
+                                    closeAction: 'destroy',
+                                    listeners: {
+                                        destroy: function (obj, eOpts)
+                                        {
+                                            win_comodato = null;
+                                        }
+                                    },
+                                    items: {
+                                        xtype: 'Colsys.Ino.FormControlComodato',
+                                        id: 'formControlComodato',
+                                        idequipo: record.get("idequipo")
+                                    }
+                                });
+                            }
+                            win_comodato.show();
+                        }
+                    });
+                    contextMenu.add(comodato);
+                }
+                if (permisos.Anular) {
+                    var eliminar = Ext.create('Ext.menu.Item', {
+                        text: 'Eliminar',
+                        iconCls: 'delete',
+                        tooltip: 'Eliminar el Equipo',
+                        handler: function (grid, rowIndex, colIndex) {
+                            Ext.MessageBox.confirm('Confirmaci&oacute;n de Eliminaci&oacute;n', 'Est&aacute; seguro que desea anular el registro?', function (choice) {
+                                if (choice == 'yes') {
+                                    Ext.Ajax.request({
+                                        waitMsg: 'Eliminando...',
+                                        url: '/inoF2/eliminarContenedor',
+                                        params: {
+                                            idequipo: record.get("idequipo"),
+                                        },
+                                        failure: function (response, options) {
+                                            Ext.MessageBox.alert("Mensaje", 'Se presento un error Eliminando el registro.<br>' + response.errorInfo);
+                                            success = false;
+                                        },
+                                        success: function (response, options) {
+                                            var res = Ext.JSON.decode(response.responseText);
+                                            if (res.success) {
+                                                store.reload();
+                                            } else {
+                                                Ext.MessageBox.alert("Mensaje", 'Se presento un error guardando los registros.<br>' + res.responseInfo);
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                    contextMenu.add(eliminar);
+                }
+            },
+            itemcontextmenu: function (view, rec, node, index, e) {
+                e.stopEvent();
+                contextMenu.showAt(e.getXY());
+                return false;
+            }
         }
     }
 });

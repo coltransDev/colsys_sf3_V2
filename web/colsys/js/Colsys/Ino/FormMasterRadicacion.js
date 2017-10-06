@@ -1,3 +1,31 @@
+var win_generacion = null;
+
+function setReadOnlyForAll(readOnly, digitar, reversar, generar) {
+    form = Ext.getCmp('FormMasterRadicacion');
+    Ext.suspendLayouts();
+    form.getForm().getFields().each(function (field) {
+        field.setReadOnly(readOnly);
+    });
+    //console.log(form.permisos);
+    if (form.permisos.MuiscaEd)
+        Ext.getCmp('bntGuardar').setVisible(!readOnly);
+    else
+        Ext.getCmp('bntGuardar').setVisible(false);
+    if (form.permisos.MuiscaDig)
+        Ext.getCmp('bntDigitar').setVisible(!digitar);
+    else
+        Ext.getCmp('bntDigitar').setVisible(false);
+    if (form.permisos.MuiscaRev)
+        Ext.getCmp('bntReversar').setVisible(reversar);
+    else
+        Ext.getCmp('bntReversar').setVisible(false);
+    if (form.permisos.GenerarXml)
+        Ext.getCmp('bntGenerar').setVisible(generar);
+    else
+        Ext.getCmp('bntGenerar').setVisible(false);
+    Ext.resumeLayouts();
+};
+
 Ext.define('Depositos', {
     extend: 'Ext.form.field.ComboBox',
     alias: 'widget.combo-depositos',
@@ -357,6 +385,10 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
                     idmaster: me.idmaster
                 },
                 success: function (response, options) {
+                    var editar = true;
+                    var digitar = true;
+                    var reversar = false;
+                    var generar = false;
                     var res = Ext.JSON.decode(options.response.responseText);
                     Ext.getCmp("coddeposito").store.add(
                             {"codigo": res.data.coddeposito, "nombre": res.data.deposito}
@@ -367,6 +399,16 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
                             {"idtransportista": res.data.idtransportista, "nombre": res.data.transportista}
                     );
                     Ext.getCmp("idtransportista").setValue(res.data.idtransportista);
+                    if (res.data.fchmuisca == null) {
+                        editar = false;
+                        digitar = false;
+                    } else {
+                        reversar = true;
+                    }
+                    if (me.permisos.GenerarXml) {
+                        generar = true;
+                    }
+                    setReadOnlyForAll(editar, digitar, reversar, generar);
                 },
                 failure: function (form, action) {
                     Ext.Msg.alert("Master Radicacion", "Error cargando los datos " + action.result.errorInfo + "</ br>");
@@ -377,6 +419,7 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
             var me = this;
             tb = new Ext.toolbar.Toolbar();
             tb.add({
+                id: 'bntGuardar',
                 text: 'Guardar',
                 tooltip: 'Guardar Informaci\u00F3n del Master',
                 iconCls: 'add',
@@ -386,7 +429,7 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
                     if (form.isValid()) {
                         var data = form.getFieldValues();
                         data["fchtrans"] = Ext.Date.format(new Date(), 'Y-m-d');
-                        data["fchinicio"] = Ext.Date.format(new Date(data["fchinicio"]), 'Y-m-d');
+                        data["fchinicial"] = Ext.Date.format(new Date(data["fchinicial"]), 'Y-m-d');
                         data["fchfinal"] = Ext.Date.format(new Date(data["fchfinal"]), 'Y-m-d');
                         data["deposito"] = Ext.getCmp("coddeposito").getRawValue();
                         data["transportista"] = Ext.getCmp("idtransportista").getRawValue();
@@ -411,11 +454,12 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
                 },
                 listeners: {
                     beforerender: function () {
-                        // this.setVisible(me.permisos[9]);
+                        this.setVisible(me.permisos.MuiscaEd);
                     }
                 }
             });
             tb.add({
+                id: 'bntDigitar',
                 text: 'Digitaci\u00F3n Muisca OK',
                 tooltip: 'Confirma la finalizaci\u00F3n de la Digitaci\u00F3n',
                 iconCls: 'tick',
@@ -447,36 +491,35 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
                 },
                 listeners: {
                     beforerender: function () {
-                        // this.setVisible(me.permisos[9]);
+                        this.setVisible(me.permisos.MuiscaDig);
                     }
                 }
             });
             tb.add({
-                text: 'Generar XML',
-                tooltip: 'Genera Archivo XML para Radicar',
-                iconCls: 'note-add',
+                id: 'bntReversar',
+                text: 'Reversar Digitaci\u00F3n',
+                tooltip: 'Confirma la reverci\u00F3n de la Digitaci\u00F3n',
+                iconCls: 'error',
                 scope: this,
                 handler: function () {
-                    Ext.MessageBox.confirm('Generaci&oacute;n Archivo XML', 'Desea generar el Archivo XML?', function (choice) {
+                    Ext.MessageBox.confirm('Reversar Digitaci&oacute;n Muisca', 'Desea reversar la Digitaci&oacute;n Muisca?', function (choice) {
                         if (choice == 'yes') {
                             Ext.Ajax.request({
                                 waitMsg: 'Enviando Mensajes...',
-                                url: '/inoF2/generacionArchivoXml',
+                                url: '/inoF2/reversarDigitacionOk',
                                 params: {
                                     idmaster: me.idmaster
                                 },
                                 failure: function (response, options) {
-                                    console.log(response);
-                                    Ext.MessageBox.alert("Mensaje", 'Se presento un error generando el archivo XML<br>' + response.errorInfo);
+                                    Ext.MessageBox.alert("Mensaje", 'Se presento un error notificando Digitaci\u00F3n OK<br>' + response.errorInfo);
                                     success = false;
                                 },
                                 success: function (response, options) {
-                                    console.log(response);
                                     var res = Ext.JSON.decode(response.responseText);
                                     if (res.success) {
-                                        // Ext.Msg.alert("Radicaciones", "Mensaje de Notificaci\u00F3n Enviado - Digitaci\u00F3n Muisca Ok ");
+                                        Ext.Msg.alert("Radicaciones", "Mensaje de Notificaci\u00F3n Enviado - Digitaci\u00F3n Muisca Ok ");
                                     } else {
-                                        Ext.MessageBox.alert("Mensaje", 'Se presento un error generando el archivo XML<br>' + res.responseInfo);
+                                        Ext.MessageBox.alert("Mensaje", 'Se presento un error notificando Digitaci\u00F3n OK<br>' + res.errorInfo);
                                     }
                                 }
                             });
@@ -485,7 +528,41 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
                 },
                 listeners: {
                     beforerender: function () {
-                        // this.setVisible(me.permisos[9]);
+                        this.setVisible(me.permisos.MuiscaRev);
+                    }
+                }
+            });
+            tb.add({
+                id: 'bntGenerar',
+                text: 'Generar XML',
+                tooltip: 'Genera Archivo XML para Radicar',
+                iconCls: 'note-add',
+                scope: this,
+                handler: function () {
+                    if (win_generacion == null) {
+                        win_generacion = new Ext.Window({
+                            id: 'winGenerarXml',
+                            title: 'Generar Xml',
+                            width: 400,
+                            height: 160,
+                            closeAction: 'destroy',
+                            listeners: {
+                                destroy: function (obj, eOpts)
+                                {
+                                    win_generacion = null;
+                                }
+                            },
+                            items: {
+                                xtype: 'Colsys.Ino.FormGenerarXml',
+                                idmaster: me.idmaster
+                            }
+                        });
+                    }
+                    win_generacion.show();
+                },
+                listeners: {
+                    beforerender: function () {
+                        this.setVisible(me.permisos.GenerarXml);
                     }
                 }
             });

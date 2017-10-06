@@ -186,6 +186,25 @@ Ext.define('Colsys.Ino.FormHouseRadicacion', {
                         labelWidth: 90
                     },
                     items: [{
+                            xtype: 'Colsys.Widgets.WgFormRadicacion',
+                            fieldLabel: 'Tipo Carga',
+                            name: 'tipocarga',
+                            flex: 1,
+                            allowBlank: false,
+                            tipoCombo: 6,
+                            store: Ext.create('Ext.data.Store', {
+                                fields: ['nombre', 'valor'],
+                                proxy: {
+                                    type: 'ajax',
+                                    url: '/widgets5/datosCombosRadicacion',
+                                    reader: {
+                                        type: 'json',
+                                        root: 'root'
+                                    }
+                                },
+                                autoLoad: true
+                            })
+                        }, {
                             fieldLabel: 'Valor FOB',
                             name: 'vlrfob',
                             flex: 1,
@@ -197,11 +216,10 @@ Ext.define('Colsys.Ino.FormHouseRadicacion', {
                             allowBlank: false
                         }, {
                             xtype: 'Colsys.Widgets.WgFormRadicacion',
-                            fieldLabel: 'Administraci\u00F3n',
-                            name: 'codadministracion',
+                            fieldLabel: 'Dst.DTA/OTM',
+                            name: 'iddestino',
                             labelWidth: 95,
                             flex: 1,
-                            allowBlank: false,
                             tipoCombo: 1,
                             store: Ext.create('Ext.data.Store', {
                                 fields: ['nombre', 'valor'],
@@ -289,6 +307,7 @@ Ext.define('Colsys.Ino.FormHouseRadicacion', {
             var me = this;
             var form = this.up('form').getForm();
             var data = form.getFieldValues();
+            data["fchtrans"] = Ext.Date.format(new Date(), 'Y-m-d');
             data["disposicion"] = Ext.getCmp("dispocarga").getRawValue();
             data["tipodocumento"] = Ext.getCmp("tipodocviaje").getRawValue();
             data["deposito"] = Ext.getCmp("coddepositoh").getRawValue();

@@ -103,6 +103,9 @@ Ext.define('Colsys.Ino.GridHouseRadicacion', {
                             items: [{
                                     iconCls: 'page_white_edit',
                                     tooltip: 'Editar Radicaci\u00F3n House',
+                                    isDisabled: function(view, rowIndex, colIndex, item, record) {
+                                        return !me.permisos.MuiscaEd;
+                                    },
                                     handler: function (grid, rowIndex, colIndex) {
                                         var rec = grid.getStore().getAt(rowIndex);
                                         if (win_house == null) {
@@ -131,6 +134,9 @@ Ext.define('Colsys.Ino.GridHouseRadicacion', {
                                 }, {
                                     iconCls: 'delete',
                                     tooltip: 'Eliminar Datos de Radicaci\u00F3n',
+                                    isDisabled: function(view, rowIndex, colIndex, item, record) {
+                                        return !me.permisos.MuiscaEd;
+                                    },
                                     handler: function (grid, rowIndex, colIndex) {
                                         var rec = grid.getStore().getAt(rowIndex);
                                         Ext.MessageBox.confirm('Confirmaci&oacute;n de Eliminaci&oacute;n', 'Est&aacute; seguro que desea eliminar los datos?', function (choice) {
