@@ -73,7 +73,6 @@ Ext.define('Colsys.Ino.FormGenerarXml', {
                     });
                     setTimeout(function () {
                         Ext.MessageBox.hide();
-                        Ext.example.msg('Hecho', 'Archivo Generado!');
                     }, 8000);
                 }
             }
