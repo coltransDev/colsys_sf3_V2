@@ -74,7 +74,7 @@ $permisos=$sf_data->getRaw("permisos");
     
 //var permisos={'Consultar':true,'Crear':true,'Editar':true,'Anular':true,'Cerrar':true,'Liquidar':true,'General':true,'House':true,'Facturacion':true,'Costos':true,'Documentos':true}
 var permisosG= Ext.decode('<?=json_encode($permisos)?>');
-
+alert(permisosG);
 Ext.Loader.setConfig({
     enabled: true,
     paths: {

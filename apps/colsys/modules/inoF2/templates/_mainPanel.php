@@ -29,7 +29,8 @@
                     idmaster: this.idmaster,
                     idtransporte: this.idtransporte,
                     idimpoexpo: this.idimpoexpo,
-                    permisos: this.permisos
+                    permisos: this.permisos,
+                    iconCls: 'application_form'
                 });
             }
             //console.log(this.modalidad);
@@ -44,7 +45,8 @@
                     idmaster: this.idmaster,
                     idtransporte: this.idtransporte,
                     idimpoexpo: this.idimpoexpo,
-                    permisos: this.permisos
+                    permisos: this.permisos,
+                    iconCls:'camion'
                 });
             }
             if (!isNaN(this.idmaster) && this.idmaster > 0)
@@ -60,7 +62,8 @@
                                 idtransporte: this.idtransporte,
                                 idimpoexpo: this.idimpoexpo,
                                 idmodalidad: this.modalidad,
-                                permisos: this.permisos
+                                permisos: this.permisos,
+                                iconCls:'table'
                             });
                 }
                 /*if(this.permisos.Facturacion == true){
@@ -101,6 +104,21 @@
                  });
                  }
                  }*/
+                 
+                 if (this.idtransporte == "<?= Constantes::MARITIMO ?>" && this.permisos.Muisca == true) {    /* FIX-ME Permisos para Radicación*/
+                    tabs.push({
+                        xtype: 'Colsys.Ino.PanelRadicacion',
+                        title: "Radicacion",
+                        id: "radicacion-" + this.idmaster,
+                        name: "radicacion-" + this.idmaster,                    
+                        idmaster: this.idmaster,
+                        idtransporte: this.idtransporte,
+                        idimpoexpo: this.idimpoexpo,
+                        idreferencia: this.idreferencia,
+                        permisos: this.permisos,
+                        iconCls:'dian'
+                    });
+                 }
                 // if (this.tipofacturacion == "facturacion2" || this.tipofacturacion == null) 
                 {
                     if (this.permisos.Facturacion == true) {
@@ -114,7 +132,8 @@
                             idimpoexpo: this.idimpoexpo,
                             permisos: this.permisos,
                             autoScroll: true,
-                            autoHeight: true
+                            autoHeight: true,
+                            iconCls:'money_dollar'
                         });
                     }
                 }
@@ -129,9 +148,10 @@
                         idtransporte: this.idtransporte,
                         idimpoexpo: this.idimpoexpo,
                         permisos: this.permisos,
-                        plugins: [
+                        /*plugins: [
                             new Ext.grid.plugin.CellEditing({clicksToEdit: 1})
-                        ],
+                        ],*/
+                        iconCls: 'icon-grid'
                     });
                 }
 
@@ -165,6 +185,7 @@
                         idtransporte: this.idtransporte,
                         idimpoexpo: this.idimpoexpo,
                         permisos: this.permisos,
+                        iconCls:'folder',
                         treeStore: 'documentosIno',
                         listeners: {
                             beforerender: function (ct, position) {
@@ -218,7 +239,8 @@
                     idtransporte: this.idtransporte,
                     idimpoexpo: this.idimpoexpo,
                     idreferencia: this.idreferencia,
-                    permisos: this.permisos
+                    permisos: this.permisos,
+                    iconCls:'calculator'
                 });
 
                 tabs.push({
@@ -231,20 +253,8 @@
                     idtransporte: this.idtransporte,
                     idimpoexpo: this.idimpoexpo,
                     idreferencia: this.idreferencia,
-                    permisos: this.permisos
-                });
-
-                tabs.push({
-                    xtype: 'Colsys.Ino.PanelRadicacion',
-                    title: "Radicacion",
-                    id: "radicacion-" + this.idmaster,
-                    name: "radicacion-" + this.idmaster,
-                    idticket: this.idticket,
-                    idmaster: this.idmaster,
-                    idtransporte: this.idtransporte,
-                    idimpoexpo: this.idimpoexpo,
-                    idreferencia: this.idreferencia,
-                    permisos: this.permisos
+                    permisos: this.permisos,
+                    iconCls:'page_white_magnify'
                 });
 
             }

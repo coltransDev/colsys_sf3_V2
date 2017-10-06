@@ -80,14 +80,14 @@ $permisos=$sf_data->getRaw("permisos");
 <script>
 //var permisos={'Consultar':true,'Crear':true,'Editar':true,'Anular':true,'Cerrar':true,'Liquidar':true,'General':true,'House':true,'Facturacion':true,'Costos':true,'Documentos':true}
 var permisosG= Ext.decode('<?=json_encode($permisos)?>');
-//alert(permisosG.toSource());
+//alert(permisosG.maritimo.toSource());
 Ext.Loader.setConfig({
     enabled: true,
     paths: {
         'Chart':'/js/ext5/src/',
         //'Ext.ux.exporter':'../js/ext5/examples/ux/exporter/',
         'Colsys':'/js/Colsys',
-        'Ext.ux':'/js/ext5/examples/ux'
+        'Ext.ux':'/js/ext5/examples/ux'        
     }
 });
 
