@@ -143,7 +143,7 @@ Ext.define('Colsys.Crm.TabControlFinanciero', {
 
                         Ext.Ajax.request({
                             waitMsg: 'Guardando cambios...',
-                            url: '/clientes/actualizarControlFinanciero',
+                            url: '/crm/actualizarControlFinanciero',
                             params: {
                                 datos: string,
                                 datosGrid: strGrid,
@@ -263,7 +263,7 @@ Ext.define('Colsys.Crm.TabControlFinanciero', {
                 ],
                 proxy: {
                     type: 'ajax',
-                    url: '/clientes/datosControlFinanciero',
+                    url: '/crm/datosControlFinanciero',
                     reader: {
                         type: 'json',
                         root: 'root'

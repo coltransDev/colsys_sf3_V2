@@ -63,6 +63,7 @@ Ext.define('Colsys.Crm.FormContacto', {
             handler: function () {
                 var form = this.up('form').getForm();
                 // var idcontacto = form.idcontacto;
+                // console.log(Ext.getCmp('fijo'));
 
                 if (form.isValid()) {
                     form.submit({
@@ -91,6 +92,11 @@ Ext.define('Colsys.Crm.FormContacto', {
                 },
                 success: function (response, options) {
                     res = Ext.JSON.decode(options.response.responseText);
+                    if (res.data.tipo_cliente == "Usuario") {
+                        Ext.getCmp('departamento').disable();
+                    } else {
+                        Ext.getCmp('departamento').enable();
+                    }
                     if (res.mostrar == 'TRUE') {
                         Ext.getCmp('identificacion_tipo').enable();
                         Ext.getCmp('identificacion').enable();
@@ -117,6 +123,10 @@ Ext.define('Colsys.Crm.FormContacto', {
                         id: 'idcontacto',
                         name: 'idcontacto',
                         value: this.idcontacto
+                    }, {
+                        xtype: 'hiddenfield',
+                        id: 'tipo_cliente',
+                        name: 'tipo_cliente'
                     }, {
                         xtype: 'fieldcontainer',
                         layout: 'hbox',
@@ -352,19 +362,13 @@ Ext.define('Colsys.Crm.FormContacto', {
                                 triggerAction: 'all',
                                 editable: false
                             }, {
-                                xtype: 'checkboxgroup',
-                                id: 'notificar',
+                                xtype: 'checkboxfield',
                                 fieldLabel: 'Contacto Fijo de Mensajes',
-                                labelWidth: 170,
-                                name: 'notificar',
-                                allowBlank: true,
-                                items: [{
-                                        boxLabel: '',
-                                        name: 'fijo',
-                                        id: 'fijo',
-                                        inputValue: true
-                                    }
-                                ]
+                                labelWidth: 175,
+                                name: 'fijo',
+                                id: 'fijo' + me.idcliente,
+                                inputValue: true,
+                                uncheckedValue: false
                             }]
                     }, {
                         xtype: 'fieldcontainer',

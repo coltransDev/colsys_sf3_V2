@@ -234,6 +234,14 @@ Ext.define('Colsys.Crm.FormMaster', {
                                     name: 'altex',
                                     id: "altex" + this.idcliente,
                                     width: 40
+                                },
+                                {xtype: 'displayfield', value: 'OEA: ', width: 40, fieldStyle: 'font-weight:bold;'},
+                                {
+                                    xtype: 'displayfield',
+                                    cls: 'x-display-field',
+                                    name: 'oea',
+                                    id: "oea" + this.idcliente,
+                                    width: 40
                                 }
                             ]
                         }, {

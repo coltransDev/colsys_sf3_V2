@@ -129,6 +129,11 @@ Ext.define('Colsys.Crm.FormTabGeneralControlFinanciero', {
                                         boxLabel: '',
                                         name: 'altex',
                                         id: 'altex_tributaria' + me.idcliente
+                                    }, {
+                                        fieldLabel: 'OEA',
+                                        boxLabel: '',
+                                        name: 'oea',
+                                        id: 'oea_tributaria' + me.idcliente
                                     }]
                             }]
                     }, {

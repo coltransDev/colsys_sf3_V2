@@ -21,26 +21,8 @@ Ext.define('Colsys.Crm.TreeSucursales', {
                     }
                 });
             }
-//          ,  itemclick: function (record, item, index, e, eOpts) {
-//                rec = this.getStore().getAt(e);
-//                if (rec.data.leaf == false && rec.data.idsucursal != null) {
-//                    idcliente = this.up('panel').idcliente;
-//                    Ext.getCmp('Contactos' + idcliente).idsucursal = rec.data.idsucursal;
-//                    Ext.getCmp('Contactos' + idcliente).getStore().load({
-//                        params: {
-//                            idsucursal: rec.data.idsucursal,
-//                            idcliente: idcliente
-//                        }
-//                    });
-//                    Ext.getCmp('nuevocontacto' + idcliente).setVisible(true);
-//                }
-//            }
 
         }
-//      ,  getRowClass: function (record, rowIndex, rowParams, store) {
-//            if (record.get("idarchivo") == record.get("nombre"))
-//                return 'row_green';
-//        }
     },
     columns: [{
             xtype: 'treecolumn',

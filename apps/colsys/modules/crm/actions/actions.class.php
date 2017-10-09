@@ -386,6 +386,7 @@ class crmActions extends sfActions {
             $data["regimen"] = utf8_encode($cliente->getIdsCliente()->getRegimen());
             $data["uap"] = ($cliente->getIdsCliente()->getCaUap()) ? utf8_encode("Sí") : "No";
             $data["altex"] = ($cliente->getIdsCliente()->getCaAltex()) ? utf8_encode("Sí") : "No";
+            $data["oea"] = ($cliente->getIdsCliente()->getCaOea()) ? utf8_encode("Sí") : "No";
             $data["comerciante"] = ($cliente->getIdsCliente()->getCaComerciante()) ? utf8_encode("Sí") : "No";
 
             $data["codigos_ciiu"] = implode(",", array($cliente->getIdsCliente()->getCaCiiuUno(), $cliente->getIdsCliente()->getCaCiiuDos(), $cliente->getIdsCliente()->getCaCiiuTrs(), $cliente->getIdsCliente()->getCaCiiuCtr()));
@@ -823,6 +824,7 @@ class crmActions extends sfActions {
                     $data["tipo"] = "";
                 }
                 $data["observaciones"] = utf8_encode($contacto->getCaObservaciones());
+                $data["tipo_cliente"] = $contacto->getIdsSucursal()->getIds()->getIdsCliente()->getCaTipo();
             }
 
             $caso = "CU265";
@@ -839,6 +841,7 @@ class crmActions extends sfActions {
 
     public function executeGuardarContacto(sfWebRequest $request) {
         $idContacto = $request->getParameter("idcontacto");
+        $contacto_fijo = $request->getParameter("fijo");
 
         if ($idContacto) {
             $contacto = Doctrine::getTable("IdsContacto")
@@ -926,14 +929,9 @@ class crmActions extends sfActions {
             if ($request->getParameter("idsucursal")) {
                 $contacto->setCaIdsucursal($request->getParameter("idsucursal"));
             }
-            if ($request->getParameter("fijo") !== null) {
-                if ($request->getParameter("fijo")) {
-                    $contacto->setCaFijo(true);
-                    $concliente->setCaFijo(true);
-                } else {
-                    $contacto->setCaFijo(false);
-                    $concliente->setCaFijo(false);
-                }
+            if (isset($contacto_fijo)) {
+                $contacto->setCaFijo($contacto_fijo);
+                $concliente->setCaFijo($contacto_fijo);
             }
             if ($request->getParameter("observaciones")) {
                 $contacto->setCaObservaciones(utf8_decode($request->getParameter("observaciones")));
@@ -1853,6 +1851,7 @@ class crmActions extends sfActions {
                 "regimen" => utf8_encode($cliente->getCaRegimen()),
                 "uap" => utf8_encode($cliente->getCaUap()),
                 "altex" => utf8_encode($cliente->getCaAltex()),
+                "oea" => utf8_encode($cliente->getCaOea()),
                 "comerciante" => utf8_encode($cliente->getCaComerciante()),
                 "cod_ciiu_uno" => $cliente->getCaCiiuUno(),
                 "cod_ciiu_dos" => $cliente->getCaCiiuDos(),
@@ -1865,6 +1864,260 @@ class crmActions extends sfActions {
             $this->responseArray = array("success" => true, "data" => "");
             $this->setTemplate("responseTemplate");
         }
+    }
+
+    public function executeDatosControlFinanciero(sfWebRequest $request) {
+        $idcliente = $request->getParameter("idcliente");
+        $tipopersona = $request->getParameter("tipo");
+        $activostotales = $request->getParameter("activostotales");
+
+        $fechconstitucion = $request->getParameter("fechconstitucion");
+        $anioactual = date("Y");
+        $minimo = Doctrine::getTable('Smlv')->find($anioactual);
+
+        if ($minimo && $tipopersona != "ca_gran_contribuyente_uap") {
+            if (($activostotales / $minimo->getCaSmlv()) < 500) {
+                $tipopersona = "ca_perjuridica_activos";
+            }
+        }
+
+        if ($tipopersona == "ca_gran_contribuyente_uap") {
+            $tipopersona = "ca_gran_contribuyente";
+        }
+
+        if ($tipopersona == "ca_perjuridica" || $tipopersona == "ca_gran_contribuyente" || $tipopersona == "ca_perjuridica_activos") {
+            $fechahaceunano = date("Y") - 1 . "-" . date("m") . "-" . date("d");
+            if ($fechconstitucion) {
+                if ($fechahaceunano < $fechconstitucion) {
+                    $tipopersona = "ca_perjuridica_reciente";
+                }
+            }
+        }
+
+        $data = array();
+        if ($tipopersona) {
+            $con = Doctrine_Manager::getInstance()->connection();
+            $sql = "select distinct tpd.ca_idtipo as a, tpd.ca_tipo as ca_tipo, tpd.ca_equivalentea, ";
+            $sql .= " dc.ca_fchdocumento as ca_fchdocumento, dc.ca_observaciones as ca_observaciones ";
+            $sql .= " from tb_doccliente dc ";
+            $sql .= " inner join ids.tb_documentosxconc dxc ON (dxc.ca_id = dc.ca_idtipo and dc.ca_idcliente = $idcliente) ";
+            $sql .= "right join ids.tb_tipodocumentos tpd ON (tpd.ca_idtipo = dxc.ca_idtipo) ";
+            $sql .= " where tpd.ca_equivalentea = 25 ";
+            $sql .= "order by tpd.ca_idtipo";
+
+            $rs = $con->execute($sql);
+            $control_rs = $rs->fetchAll();
+            foreach ($control_rs as $control) {
+                $seleccionado = false;
+                if ($control["ca_fchdocumento"]) {
+                    $seleccionado = true;
+                }
+                $data[] = array(
+                    "idtipo" => $control["a"],
+                    "iddocumento" => /* $control["ca_iddocumento"] */"",
+                    "empresa" => /* $control["ca_nombre"] */"",
+                    "documento" => utf8_encode($control["ca_tipo"]),
+                    "fch_vigencia" => /* $control["ca_fchvigencia"] */"",
+                    "fch_documento" => $control["ca_fchdocumento"],
+                    "seleccionado" => $seleccionado,
+                    "observaciones" => utf8_encode($control["ca_observaciones"])
+                );
+            }
+        }
+
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
+
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeActualizarControlFinanciero(sfWebRequest $request) {
+        $datos = $request->getParameter("datos");
+        $datosGrid = $request->getParameter("datosGrid");
+        $datosGrid = json_decode($datosGrid);
+        $datosGridFinanciera = $request->getParameter("datosGridFinanciera");
+        $datosGridFinanciera = json_decode($datosGridFinanciera);
+        $datos = json_decode($datos);
+        $nuevo = false;
+        $ids = array();
+
+        $con = Doctrine_Manager::getInstance()->connection();
+
+        $idcliente = $datos->idcliente;
+        $conn = Doctrine::getTable("IdsCliente")->getConnection();
+        $cliente = Doctrine::getTable('IdsCliente')->find($idcliente);
+
+        if ($cliente) {
+            $conn->beginTransaction();
+            try {
+                foreach ($datosGrid as $datoGrid) {
+                    $documentosxConc = Doctrine::getTable("Documentosxconc")
+                            ->createQuery("d")
+                            ->addWhere("d.ca_idtipo = ?", $datoGrid->idtipo)
+                            ->execute();
+                    foreach ($documentosxConc as $documentoxConc) {
+                        $doccliente = Doctrine::getTable("Doccliente")
+                                ->createQuery("d")
+                                ->addWhere("d.ca_idtipo = ?", $documentoxConc->getCaId())
+                                ->addWhere("d.ca_idcliente = ?", $idcliente)
+                                ->fetchOne();
+                        if (!$doccliente) {
+                            $doccliente = new Doccliente();
+                            $doccliente->setCaIdcliente($idcliente);
+                            $doccliente->setCaIdtipo($documentoxConc->getCaId());
+                        }
+                        if ($datoGrid->fch_documento) {
+                            $doccliente->setCaFchdocumento($datoGrid->fch_documento);
+                        }
+                        if ($datoGrid->observaciones) {
+                            $doccliente->setCaObservaciones(utf8_decode($datoGrid->observaciones));
+                        }
+                        $doccliente->save();
+                        $ids[] = $datoGrid->id;
+                        $borrado[] = $documentoxConc->getCaId();
+                    }
+                }
+
+                if (!empty($borrado)) {
+                    $sql = "delete from tb_doccliente where ca_idcliente = $idcliente and ca_idtipo not in (" . implode(",", $borrado) . ")";
+                    $rs = $con->execute($sql);
+                }
+
+                if ($datos->fchcircular) {
+                    $cliente->setCaFchcircular($datos->fchcircular);
+                }
+                if ($datos->nvlriesgo) {
+                    $cliente->setCaNvlriesgo(utf8_decode($datos->nvlriesgo));
+                }
+                if ($datos->leyinsolvencia) {
+                    $cliente->setCaLeyinsolvencia(utf8_decode($datos->leyinsolvencia));
+                }
+                if ($datos->comentario) {
+                    $cliente->setCaComentario(utf8_decode($datos->comentario));
+                }
+                if ($datos->listaclinton) {
+                    $cliente->setCaListaclinton(utf8_decode($datos->listaclinton));
+                }
+                if ($datos->iso) {
+                    $cliente->setCaIso(utf8_decode($datos->iso));
+                }
+                if ($datos->iso_detalles) {
+                    $cliente->setCaIsoDetalles(utf8_decode($datos->iso_detalles));
+                }
+                if ($datos->basc) {
+                    $cliente->setCaBasc(utf8_decode($datos->basc));
+                }
+                if ($datos->otro_cert) {
+                    $cliente->setCaOtroCert(utf8_decode($datos->otro_cert));
+                }
+                if ($datos->otro_detalles) {
+                    $cliente->setCaOtroDetalles(utf8_decode($datos->otro_detalles));
+                }
+                if ($datos->tipopersona) {
+                    $cliente->setCaTipopersona(utf8_decode($datos->tipopersona));
+                }
+                if ($datos->sectoreconomico) {
+                    $cliente->setCaSector(utf8_decode($datos->sectoreconomico));
+                }
+                if ($datos->fechaconstitucion) {
+                    $cliente->setCaFchconstitucion(utf8_decode($datos->fechaconstitucion));
+                }
+                if ($datos->regimen) {
+                    $cliente->setCaRegimen($datos->regimen);
+                }
+                if ($datos->tipo) {
+                    $cliente->setCaTipo($datos->tipo);
+                }
+                if (isset($datos->uap)) {
+                    if ($datos->uap)
+                        $cliente->setCaUap($datos->uap);
+                    else
+                        $cliente->setCaUap(false);
+                }       
+                if (isset($datos->altex)) {
+                    if ($datos->altex)
+                        $cliente->setCaAltex($datos->altex);
+                    else
+                        $cliente->setCaAltex(false);
+                }
+                if (isset($datos->oea)) {
+                    if ($datos->oea)
+                        $cliente->setCaOea($datos->oea);
+                    else
+                        $cliente->setCaOea(false);
+                }
+                if (isset($datos->comerciante)) {
+                    if ($datos->comerciante)
+                        $cliente->setCaComerciante($datos->comerciante);
+                    else
+                        $cliente->setCaComerciante(false);
+                }
+                if ($datos->cod_ciiu_uno) {
+                    $cliente->setCaCiiuUno($datos->cod_ciiu_uno);
+                }
+                if ($datos->cod_ciiu_dos) {
+                    $cliente->setCaCiiuDos($datos->cod_ciiu_dos);
+                }
+                if ($datos->cod_ciiu_trs) {
+                    $cliente->setCaCiiuTrs($datos->cod_ciiu_trs);
+                }
+                if ($datos->cod_ciiu_ctr) {
+                    $cliente->setCaCiiuCtr($datos->cod_ciiu_ctr);
+                }
+                if ($datos->numempleados) {
+                    $cliente->setCaMenosxempleados($datos->numempleados);
+                }
+                $cliente->setCaFchfinanciero(date("Y-m-d H:i:s"));
+                $cliente->setCaUsufinanciero($this->getUser()->getUserId());
+
+                $cliente->save();
+                $conn->commit();
+
+                $conect = Doctrine::getTable("Blccliente")->getConnection();
+                $conect->beginTransaction();
+
+                foreach ($datosGridFinanciera as $datoGridFinanciera) {
+                    $blccliente = Doctrine::getTable("Blccliente")
+                            ->createQuery("d")
+                            ->where("d.ca_idcliente = ?", $idcliente)
+                            ->addWhere("d.ca_anno = ?", $datoGridFinanciera->ca_anno)
+                            ->fetchOne();
+
+                    if ($blccliente) {
+                        if ($datoGridFinanciera->ca_activostotales) {
+                            $blccliente->setCaActivostotales($datoGridFinanciera->ca_activostotales);
+                        }
+                        if ($datoGridFinanciera->ca_activoscorrientes) {
+                            $blccliente->setCaActivoscorrientes($datoGridFinanciera->ca_activoscorrientes);
+                        }
+                        if ($datoGridFinanciera->ca_pasivostotales) {
+                            $blccliente->setCaPasivostotales($datoGridFinanciera->ca_pasivostotales);
+                        }
+                        if ($datoGridFinanciera->ca_pasivoscorrientes) {
+                            $blccliente->setCaPasivoscorrientes($datoGridFinanciera->ca_pasivoscorrientes);
+                        }
+                        if ($datoGridFinanciera->ca_inventarios) {
+                            $blccliente->setCaInventarios($datoGridFinanciera->ca_inventarios);
+                        }
+                        if ($datoGridFinanciera->ca_patrimonios) {
+                            $blccliente->setCaPatrimonios($datoGridFinanciera->ca_patrimonios);
+                        }
+                        if ($datoGridFinanciera->ca_utilidades) {
+                            $blccliente->setCaUtilidades($datoGridFinanciera->ca_utilidades);
+                        }
+                        if ($datoGridFinanciera->ca_ventas) {
+                            $blccliente->setCaVentas($datoGridFinanciera->ca_ventas);
+                        }
+                        $blccliente->save();
+                    }
+                }
+                $conect->commit();
+                $this->responseArray = array("success" => true, "ids" => $ids);
+            } catch (Exception $e) {
+                $conn->rollback();
+                $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+            }
+        }
+        $this->setTemplate("responseTemplate");
     }
 
     public function executePermisosDuenoCuenta(sfWebRequest $request) {
