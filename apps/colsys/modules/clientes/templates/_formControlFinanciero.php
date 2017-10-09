@@ -73,7 +73,7 @@ $hoy = $sf_data->getRaw("hoy");
         model: 'ControlFinanciero',
         proxy: {
             type: 'ajax',
-            url: '<?= url_for('clientes/datosControlFinanciero') ?>',
+            url: '<?= url_for('crm/datosControlFinanciero') ?>',
             reader: {
                 type: 'json',
                 root: 'root'
@@ -1176,7 +1176,7 @@ $hoy = $sf_data->getRaw("hoy");
 
                             Ext.Ajax.request({
                                 waitMsg: 'Guardando cambios...',
-                                url: '<?= url_for('clientes/actualizarControlFinanciero') ?>',
+                                url: '<?= url_for('crm/actualizarControlFinanciero') ?>',
                                 params: {
                                     datos: str,
                                     datosGrid: strGrid,
