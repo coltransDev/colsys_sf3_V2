@@ -834,6 +834,13 @@ class crmActions extends sfActions {
             $this->responseArray = array("success" => true, "data" => $data, "mostrar" => $mostrar);
             $this->setTemplate("responseTemplate");
         } else {
+            $idCliente = $request->getParameter("idcliente");
+            $ids = Doctrine::getTable("Ids")
+                ->createQuery("i")
+                ->addWhere('i.ca_id = ?', $idCliente)
+                ->fetchOne();
+            $data["tipo_cliente"] = $ids->getIdsCliente()->getCaTipo();
+            
             $this->responseArray = array("success" => true, "data" => $data);
             $this->setTemplate("responseTemplate");
         }
