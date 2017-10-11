@@ -231,7 +231,7 @@ InoHouse:
     InoHouseSea:
       local: ca_idhouse
       foreign: ca_idhouse
-      type: one
+      type: one    
 
 
 InoCosto:
@@ -264,11 +264,7 @@ InoCosto:
     ca_tcambiov_usd: float
     ca_idmonedav: string(3)
     ca_idhouse: integer
-  relations:
-     InoConcepto:
-       local: ca_idcosto
-       foreign: ca_idconcepto
-       type: one
+  relations:     
      Ids:
        local: ca_idproveedor
        foreign: ca_id
@@ -375,6 +371,7 @@ InoComprobante:
     ca_idcomprobante_cruce: integer
     ca_idccosto: integer
     ca_docentry: integer
+    ca_datos: string
   relations:
     Ids:
       local: ca_id
@@ -418,6 +415,12 @@ InoComprobante:
       local: ca_idccosto
       foreign: ca_idccosto
       type: one
+    InoComprobanteCruce:
+      local: ca_idcomprobante_cruce
+      foreign: ca_idcomprobante
+      class: InoComprobante
+      type: one
+    
     
 
 InoDetalle:
@@ -573,71 +576,6 @@ InoCuenta:
     ca_reteica: numeric
     
   
-InoMaestraConceptos:
-  options:
-    symfony:
-      form: false
-      filter: false
-  generatePath: ino
-  tableName: ino.tb_maestra_conceptos  
-  columns:
-    ca_idconcepto:
-      type: integer
-      primary: true
-      autoincrement: true
-    ca_concepto_esp:
-      type: integer
-      notnull: true
-    ca_concepto_eng:
-      type: integer
-      notnull: true
-    ca_compra:
-      type: boolean
-      notnull: true
-    ca_venta:
-      type: boolean
-      notnull: true
-    ca_importacion:
-      type: boolean
-      notnull: true
-    ca_exportacion:
-      type: boolean
-      notnull: true
-    ca_aereo:
-      type: boolean
-      notnull: true
-    ca_maritimo:
-      type: boolean
-      notnull: true  
-    ca_terrestre_interno:
-      type: boolean
-      notnull: true
-    ca_otm:
-      type: boolean
-      notnull: true
-    ca_contenedor:
-      type: boolean
-      notnull: true
-    ca_terrestre_nacional:
-      type: boolean
-      notnull: true
-    ca_depositos:
-      type: boolean
-      notnull: true
-    ca_origen:
-      type: boolean
-      notnull: true
-    ca_general:
-      type: boolean
-      notnull: true
-    ca_destino:
-      type: boolean
-      notnull: true
-    ca_contiguo: boolean
-    ca_fchcreado: timestamp
-    ca_usucreado: string
-    ca_fchactualizado: timestamp
-    ca_usuactualizado: string
 
 
 InoTipoComprobante:
@@ -662,7 +600,7 @@ InoTipoComprobante:
     ca_mensaje: string
     ca_noautorizacion: string
     ca_fchautorizacion: date
-    ca_prefijo_aut: string
+    ca_prefijo_sap: string
     ca_inicial_aut: integer
     ca_final_aut: integer
     ca_activo: boolean
@@ -1291,40 +1229,7 @@ ExpoAedex:
         primary: true
         
         
-InoMaestraConceptos:
-  options:
-    symfony:
-      form: false
-      filter: false
-  generatePath: ino
-  tableName: ino.tb_maestra_conceptos  
-  columns:
-    ca_idconcepto:
-      type: integer
-      primary: true
-      autoincrement: true
-    ca_concepto_esp: string
-    ca_concepto_eng: string
-    ca_compra: boolean
-    ca_venta: boolean
-    ca_importacion: boolean
-    ca_exportacion: boolean
-    ca_aereo: boolean
-    ca_maritimo: boolean
-    ca_terrestre_interno: boolean
-    ca_otm: boolean
-    ca_contenedor: boolean
-    ca_terrestre_nacional: boolean
-    ca_depositos: boolean
-    ca_origen: boolean
-    ca_general: boolean
-    ca_destino: boolean
-    ca_contiguo: boolean
-    ca_fchcreado: timestamp
-    ca_usucreado: string
-    ca_fchactualizado: timestamp
-    ca_usuactualizado: string
-    
+   
     
 InoMasterSea:
   options:
@@ -1358,6 +1263,10 @@ InoMasterSea:
     InoMaster:
       local: ca_idmaster
       foreign: ca_idmaster
+      type: one
+    InoDianDepositos:
+      local: ca_idmuelle
+      foreign: ca_codigo
       type: one
     
     
