@@ -555,6 +555,12 @@ class crmActions extends sfActions {
         $sql = "select i.ca_id from ids.tb_ids i where ca_idalterno like '%" . $request->getParameter("q") . "%'";
         $rs = $con->execute($sql);
         $ids = $rs->fetchAll(PDO::FETCH_COLUMN);
+        
+        if (!$ids) {
+            $sql = "select i.ca_id from ids.tb_ids i where lower(ca_nombre) like '%" . strtolower($request->getParameter("q")) . "%'";
+            $rs = $con->execute($sql);
+            $ids = $rs->fetchAll(PDO::FETCH_COLUMN);
+        }
 
         if (!$ids) {
             $sql = "select i.ca_id from ids.tb_ids i inner "
@@ -562,12 +568,6 @@ class crmActions extends sfActions {
                     . "join control.tb_usuarios u on c.ca_vendedor = u.ca_login "
                     . "join control.tb_sucursales s on u.ca_idsucursal = s.ca_idsucursal "
                     . "where lower(s.ca_nombre) like '%" . strtolower($request->getParameter("q")) . "%'";
-            $rs = $con->execute($sql);
-            $ids = $rs->fetchAll(PDO::FETCH_COLUMN);
-        }
-
-        if (!$ids) {
-            $sql = "select i.ca_id from ids.tb_ids i where lower(ca_nombre) like '%" . strtolower($request->getParameter("q")) . "%'";
             $rs = $con->execute($sql);
             $ids = $rs->fetchAll(PDO::FETCH_COLUMN);
         }
@@ -644,7 +644,7 @@ class crmActions extends sfActions {
                 "nombre" => utf8_encode($cliente->getCaNombre()));
         }
 
-        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data), "debug" => $debug);
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data), "debug" => $debug, "query" => $query);
         $this->setTemplate("responseTemplate");
     }
 
