@@ -47,8 +47,16 @@ Ext.define('Colsys.Ino.FormGenerarXml', {
                 var me = this;
                 var form = this.up('form').getForm();
                 var data = form.getFieldValues();
+                var idmaster = this.up('form').idmaster;
 
                 if (form.isValid()) {
+                    Ext.create('Ext.Component', {
+                        id: 'appBox',
+                        style: {display: 'none'},
+                        autoEl: {tag: 'div'},
+                        renderTo: Ext.getBody()
+                    });
+
                     new Ext.create('Ext.form.Panel', {
                         items: {
                             xtype: 'component',
@@ -57,8 +65,9 @@ Ext.define('Colsys.Ino.FormGenerarXml', {
                                 tag: 'iframe'
                             }
                         },
-                        renderTo: Ext.getBody()
+                        renderTo: Ext.get('appBox')
                     });
+
                 }
             },
             listeners: {

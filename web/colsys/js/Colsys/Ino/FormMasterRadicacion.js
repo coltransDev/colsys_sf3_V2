@@ -1,7 +1,6 @@
 var win_generacion = null;
 
-function setReadOnlyForAll(readOnly, digitar, reversar, generar) {
-    form = Ext.getCmp('FormMasterRadicacion');
+function setReadOnlyForAll(form, readOnly, digitar, reversar, generar) {
     Ext.suspendLayouts();
     form.getForm().getFields().each(function (field) {
         field.setReadOnly(readOnly);
@@ -205,7 +204,7 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
                             name: 'coddeposito',
                             id: 'coddeposito',
                             flex: 3,
-                            allowBlank: false
+                            allowBlank: true
                         }]
                 }, {
                     xtype: 'container',
@@ -408,7 +407,7 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
                     if (me.permisos.GenerarXml) {
                         generar = true;
                     }
-                    setReadOnlyForAll(editar, digitar, reversar, generar);
+                    setReadOnlyForAll(me, editar, digitar, reversar, generar);
                 },
                 failure: function (form, action) {
                     Ext.Msg.alert("Master Radicacion", "Error cargando los datos " + action.result.errorInfo + "</ br>");

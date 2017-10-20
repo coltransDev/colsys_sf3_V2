@@ -3,8 +3,8 @@ var win_house = null;
 Ext.define('Colsys.Ino.GridHouseRadicacion', {
     extend: 'Ext.grid.Panel',
     alias: 'widget.Colsys.Ino.GridHouseRadicacion',
-    id: 'GridHouseRadicacion',
-    name: 'GridHouseRadicacion',
+    id: 'GridHouseRadicacion'+this.idmaster,
+    name: 'GridHouseRadicacion'+this.idmaster,
     width: '100%',
     listeners: {
         afterrender: function (ct, position) {
@@ -18,8 +18,12 @@ Ext.define('Colsys.Ino.GridHouseRadicacion', {
                 emptyMsg: "No hay registros"
             });
             me.addDocked(bbar);
+            me.setHeight(this.up('container').getHeight());
         },
-
+        render: function (ct, position) {
+            var me = this;
+            me.setHeight(me.up('container').getHeight());
+        },
         beforerender: function (ct, position) {
             var me = this;
             this.reconfigure(

@@ -13,20 +13,23 @@ Ext.define('Colsys.Ino.PanelRadicacion', {
             this.setWidth(this.up('tabpanel').up('tabpanel').getWidth() - 50);
         },
         render: function (me, eOpts) {
-            
+
             var panelRadicacion = {
                 /*layout: {
-                    type: 'vbox'
-                },*/
-                items: [
-                    {
+                 type: 'vbox'
+                 },*/
+                items: [{
+//                        id: 'formMasterRadicacion_'+this.idmaster,
                         idmaster: this.idmaster,
                         permisos: this.permisos,
                         xtype: 'Colsys.Ino.FormMasterRadicacion'
                     }, {
+//                        id: 'gridHouseRadicacion_'+this.idmaster,
                         idmaster: this.idmaster,
                         permisos: this.permisos,
-                        xtype: 'Colsys.Ino.GridHouseRadicacion'
+                        xtype: 'Colsys.Ino.GridHouseRadicacion',
+                        height: 390,
+                        autoScroll: true
                     }
                 ],
                 autoHeight: true,

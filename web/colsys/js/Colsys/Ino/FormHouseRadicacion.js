@@ -23,8 +23,8 @@ Ext.define('Depositos', {
 Ext.define('Colsys.Ino.FormHouseRadicacion', {
     extend: 'Ext.form.Panel',
     alias: 'widget.Colsys.Ino.FormHouseRadicacion',
-    id: 'FormHouseRadicacion',
-    name: 'FormHouseRadicacion',
+    id: 'FormHouseRadicacion'+this.idmaster,
+    name: 'FormHouseRadicacion'+this.idmaster,
     autoHeight: true,
     autoScroll: false,
     border: false,
@@ -248,7 +248,7 @@ Ext.define('Colsys.Ino.FormHouseRadicacion', {
                             name: 'coddeposito',
                             id: 'coddepositoh',
                             flex: 1,
-                            allowBlank: false
+                            allowBlank: true
                         }]
                 }]
             ,

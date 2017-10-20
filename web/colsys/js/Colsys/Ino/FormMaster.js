@@ -12,6 +12,38 @@ Ext.define('ComboSiNo', {
     store: ['Si', 'No']
 });
 
+if (this.idtransporte == "Mar\u00EDtimo") {
+    Ext.define('FchDocumento', {
+        extend: 'Ext.form.field.Date',
+        alias: 'widget.fch-documento',
+        fieldLabel: 'Fch.Documento',
+        allowBlank: false,
+        name: 'ca_fchmaster',
+        id: 'ca_fchmaster' + this.idmaster,
+        style: 'display:inline-block;text-align:center;font-weight:bold;',
+        labelWidth: 100,
+        format: "Y-m-d",
+        altFormat: "Y-m-d",
+        submitFormat: 'Y-m-d',
+        width: 300
+    });
+} else {
+    Ext.define('FchDocumento', {
+        extend: 'Ext.toolbar.Spacer',
+        alias: 'widget.fch-documento',
+        height: 10,
+        columnWidth: 1
+    });
+}
+
+comboBoxRenderer = function (combo) {
+    return function (value) {
+        var idx = combo.store.find(combo.valueField, value);
+        var rec = combo.store.getAt(idx);
+        return (rec === null ? value : rec.get(combo.displayField));
+    };
+};
+
 Ext.define('Colsys.Ino.FormMaster', {
     extend: 'Ext.form.Panel',
     alias: 'widget.Colsys.Ino.FormMaster',
@@ -308,8 +340,7 @@ Ext.define('Colsys.Ino.FormMaster', {
                             width: 300,
                             idmaster: this.idmaster,
                             idtransporte: 'transporte' + this.idmaster
-                        },
-                        {
+                        }, {
                             xtype: 'tbspacer',
                             height: 10,
                             columnWidth: 1
@@ -351,8 +382,7 @@ Ext.define('Colsys.Ino.FormMaster', {
                         columnWidth: 0.5,
                         bodyStyle: 'padding:4px'
                     },
-                    items: [
-                        {
+                    items: [{
                             xtype: 'textfield',
                             fieldLabel: 'Master',
                             id: 'ca_master' + this.idmaster,
@@ -362,8 +392,24 @@ Ext.define('Colsys.Ino.FormMaster', {
                             maxLengthText: 'Tama\u00F1o m\u00E1ximo 30',
                             readOnly: false,
                             width: 300
-                        },
-                        {
+                        }, {
+                            xtype: 'datefield',
+                            fieldLabel: 'Fch.Documento',
+                            allowBlank: false,
+                            id: 'fchmaster' + this.idmaster,
+                            name: 'ca_fchmaster',
+                            style: 'display:inline-block;text-align:center;font-weight:bold;',
+                            labelWidth: 100,
+                            format: "Y-m-d",
+                            altFormat: "Y-m-d",
+                            submitFormat: 'Y-m-d',
+                            width: 300,
+                            hidden: true
+                        }, {
+                            xtype: 'tbspacer',
+                            height: 10,
+                            columnWidth: 1
+                        }, {
                             xtype: 'numberfield',
                             fieldLabel: 'Piezas',
                             id: 'piezas' + this.idmaster,
@@ -372,14 +418,25 @@ Ext.define('Colsys.Ino.FormMaster', {
                             maxValue: 999999999,
                             maxLengthText: 'Tama\u00F1o m\u00E1ximo 999999999',
                             style: 'display:inline-block;text-align:center;font-weight:bold;',
+                            labelWidth: 200,
+                            width: 300
+                        }, {
+                            xtype: 'datefield',
+                            fieldLabel: 'Fecha Preaviso',
+                            id: 'fch_salida' + this.idmaster,
+                            allowBlank: false,
+                            name: 'ca_fchsalida',
+                            style: 'display:inline-block;text-align:center;font-weight:bold;',
                             labelWidth: 100,
+                            format: "Y-m-d",
+                            altFormat: "Y-m-d",
+                            submitFormat: 'Y-m-d',
                             width: 300
                         }, {
                             xtype: 'tbspacer',
                             height: 10,
                             columnWidth: 1
-                        },
-                        {
+                        }, {
                             xtype: 'numberfield',
                             fieldLabel: 'Peso',
                             id: 'peso' + this.idmaster,
@@ -390,34 +447,6 @@ Ext.define('Colsys.Ino.FormMaster', {
                             maxValue: 999999999.99,
                             maxLengthText: 'Tama\u00F1o m\u00E1ximo 999999999.99',
                             width: 300
-                        }, {
-                            xtype: 'numberfield',
-                            fieldLabel: 'Volumen',
-                            minValue: 0,
-                            maxValue: 999999999,
-                            maxLengthText: 'Tama\u00F1o m\u00E1ximo 999999999',
-                            id: 'volumen' + this.idmaster,
-                            name: 'ca_volumen',
-                            style: 'display:inline-block;text-align:center;font-weight:bold;',
-                            labelWidth: 100,
-                            width: 300
-                        }, {
-                            xtype: 'tbspacer',
-                            height: 10,
-                            columnWidth: 1
-                        }, {
-                            xtype: 'datefield',
-                            fieldLabel: 'Fecha Preaviso',
-                            id: 'fch_salida' + this.idmaster,
-                            allowBlank: false,
-                            name: 'ca_fchsalida',
-                            style: 'display:inline-block;text-align:center;font-weight:bold;',
-                            labelWidth: 200,
-                            format: "Y-m-d",
-                            altFormat: "Y-m-d",
-                            submitFormat: 'Y-m-d',
-                            width: 300
-                            
                         }, {
                             xtype: 'datefield',
                             fieldLabel: 'Fecha Llegada',
@@ -435,6 +464,17 @@ Ext.define('Colsys.Ino.FormMaster', {
                             height: 10,
                             columnWidth: 1
                         }, {
+                            xtype: 'numberfield',
+                            fieldLabel: 'Volumen',
+                            minValue: 0,
+                            maxValue: 999999999,
+                            maxLengthText: 'Tama\u00F1o m\u00E1ximo 999999999',
+                            id: 'volumen' + this.idmaster,
+                            name: 'ca_volumen',
+                            style: 'display:inline-block;text-align:center;font-weight:bold;',
+                            labelWidth: 200,
+                            width: 300
+                        }, {
                             xtype: 'Colsys.Widgets.WgParametros',
                             id: 'tipovehiculo' + this.idmaster,
                             fieldLabel: 'Tipo Vehiculo',
@@ -442,27 +482,34 @@ Ext.define('Colsys.Ino.FormMaster', {
                             caso_uso: 'CU020',
                             name: 'tipovehiculo',
                             width: 300,
-                            labelWidth: 200,
+                            labelWidth: 100,
                             hidden: true
+                        }, {
+                            xtype: 'tbspacer',
+                            height: 10,
+                            columnWidth: 1
                         }
                     ]}
         );
         if (this.idtransporte == "Terrestre") {
             Ext.getCmp('tipovehiculo' + this.idmaster).hidden = false;
         }
+        if (this.idtransporte == "Mar\u00EDtimo") {
+            Ext.getCmp('fchmaster' + this.idmaster).hidden = false;
+        }
         if (this.idimpoexpo == "Exportaci\u00F3n") {
             var formattedDate = new Date();
-                        var d = formattedDate.getDate();
-                        if (d < 10) {
-                            d = "0" + d;
-                        }
-                        var m = formattedDate.getMonth();
-                        m += 1;
-                        if (m < 10) {
-                            m = "0" + m;
-                        }
-                        var y = formattedDate.getFullYear();
-                        var fch = y + "-" + m + "-" + d;
+            var d = formattedDate.getDate();
+            if (d < 10) {
+                d = "0" + d;
+            }
+            var m = formattedDate.getMonth();
+            m += 1;
+            if (m < 10) {
+                m = "0" + m;
+            }
+            var y = formattedDate.getFullYear();
+            var fch = y + "-" + m + "-" + d;
             if (Ext.getCmp('fch_salida' + this.idmaster)) {
                 if (Ext.getCmp("fch_salida" + this.idmaster).getValue() == "" ||
                         Ext.getCmp("fch_salida" + this.idmaster).getValue() == null) {
@@ -470,7 +517,7 @@ Ext.define('Colsys.Ino.FormMaster', {
                     Ext.getCmp('ca_fchllegada' + this.idmaster).setValue(fch);
                     Ext.getCmp('fch_salida' + this.idmaster).setVisible(false);
                     Ext.getCmp('ca_fchllegada' + this.idmaster).setVisible(false);
-                     Ext.getCmp('ca_fchllegada' + this.idmaster).allowBlank = true;
+                    Ext.getCmp('ca_fchllegada' + this.idmaster).allowBlank = true;
                 }
             }
 
@@ -659,7 +706,7 @@ Ext.define('Colsys.Ino.FormMaster', {
         tb = new Ext.toolbar.Toolbar({dock: 'top'});
         if (this.permisos.Editar == true)
         {
-            
+
             tb.add({
                 xtype: 'button',
                 text: 'Guardar',
@@ -766,7 +813,7 @@ Ext.define('Colsys.Ino.FormMaster', {
                 }
             });
         }
-        idmastrer=this.idmaster;
+        idmastrer = this.idmaster;
         if (this.idimpoexpo == "Importaci\u00F3n" && this.idtransporte == "Mar\u00EDtimo")
         {
             tb.add({
@@ -776,15 +823,15 @@ Ext.define('Colsys.Ino.FormMaster', {
                 width: 150,
                 handler: function () {
                     var windowpdf = Ext.create('Colsys.Widgets.WgVerPdf', {
-                            sorc: "/antecedentes/emailColoader/idmaster/"+idmastrer,
-                            height: 600,
-                            width: 1000,
-                        });
-                        windowpdf.show();
+                        sorc: "/antecedentes/emailColoader/idmaster/" + idmastrer,
+                        height: 600,
+                        width: 1000,
+                    });
+                    windowpdf.show();
                 }
             });
         }
-        
+
         if (this.idimpoexpo == "OTM-DTA" && this.idtransporte == "Terrestre")
         {
             tb.add({
@@ -794,13 +841,13 @@ Ext.define('Colsys.Ino.FormMaster', {
                 width: 150,
                 handler: function () {
                     var windowpdf = Ext.create('Colsys.Widgets.WgVerPdf', {
-                            sorc: "/inoF/instruccionesOtm/modo/5/idmaster/"+idmastrer
-                        });
-                        windowpdf.show();
+                        sorc: "/inoF/instruccionesOtm/modo/5/idmaster/" + idmastrer
+                    });
+                    windowpdf.show();
                 }
             });
         }
-        
+
         this.addDocked(tb, 'bottom');
 
         Ext.getCmp("tipovehiculo" + this.idmaster).getStore().load({
@@ -817,10 +864,6 @@ Ext.define('Colsys.Ino.FormMaster', {
         beforerender: function (ct, position) {
             this.setHeight(this.up('tabpanel').up('tabpanel').getHeight() - 150);
             this.setWidth(this.up('tabpanel').up('tabpanel').getWidth() - 50);
-
-
-
-
         },
         render: function (ct, position) {
             var idmasterr = this.idmaster;
