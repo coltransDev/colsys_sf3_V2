@@ -1266,8 +1266,8 @@ class idsActions extends sfActions {
 
                 if (substr($numreferencia, 0, 1) == "1") {
                     $referencia = Doctrine::getTable("InoMaestraAir")->find($numreferencia);
-
-                    $linea = $referencia->getCaIdlinea();
+                    
+                    $linea = $referencia->getCaIdlinea();                    
 
                     $this->url = "/Coltrans/InoAir/ConsultaReferenciaAction.do?referencia=" . $numreferencia;
 

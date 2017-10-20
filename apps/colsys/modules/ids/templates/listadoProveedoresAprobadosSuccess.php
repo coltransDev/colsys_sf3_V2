@@ -35,6 +35,7 @@ if($type){
     <table border="1" class="tableList" width="90%">
     <thead>
         <tr>
+            <th rowspan="2">Identificaci&oacute;n</th>
             <th rowspan="2">Nombre</th>
             <th rowspan="2">Fch. Aprobaci&oacute;n</th>
             <th rowspan="2">Estado Impo</th>
@@ -77,9 +78,9 @@ if($type){
             if( $ultTipo!=$proveedor->getCaTipo() ){
                 $ultTipo=$proveedor->getCaTipo();
                 $tipo = $proveedor->getIdsTipo();
-            ?>
+            ?>            
             <tr class="row0">
-                <td  colspan="<?=12+$numYears?>"><div align="left"><b><?=$tipo->getCaNombre()?></b></div></td>
+                <td  colspan="<?=13+$numYears?>"><div align="left"><b><?=$tipo->getCaNombre()?></b></div></td>
             </tr>
             <?
             }
@@ -89,12 +90,13 @@ if($type){
 
             ?>
             <tr class="row0">
-                <td  colspan="<?=12+$numYears?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div align="left"><?=$proveedor->getCaTransporte()?$proveedor->getCaTransporte():"Sin definir"?></div></td>
+                <td  colspan="<?=13+$numYears?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div align="left"><?=$proveedor->getCaTransporte()?$proveedor->getCaTransporte():"Sin definir"?></div></td>
             </tr>
             <?
             }
         ?>
         <tr>
+            <td><div align="left"><?=$ids->getCaIdalterno()?link_to($ids->getCaIdalterno(), "ids/verIds?modo=prov&id=".$ids->getCaId()):null?></div></td>
             <td><div align="left"><?=link_to($ids->getCaNombre(), "ids/verIds?modo=prov&id=".$ids->getCaId())?></div></td>
             <td><div align="left"><?=$proveedor->getCaFchaprobado()?Utils::fechaMes($proveedor->getCaFchaprobado()):"<span class='rojo'><b>No Aprobado</b></span>"?></div></td>
             <td><div align="left"><?=$proveedor->getCaActivoImpo()?"Activo":"<span class='rojo'>Inactivo</span>"?></div></td>
