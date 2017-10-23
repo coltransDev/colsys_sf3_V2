@@ -154,7 +154,12 @@ var eliminarAgente = function(){
                <td valign="top">                   
                    <div align="left"><?=$agente->getCaSucursal()?></div>
                </td>
-               
+               <td>
+                   <div align="left"><b>Grupo</b></div>
+               </td>
+               <td valign="top">                   
+                   <div align="left"><?=$agente->getMaestraClasificacion()->getCaNombre()?></div>
+               </td>
             </tr>
             <?
             }
@@ -203,10 +208,10 @@ var eliminarAgente = function(){
                                <div align="left"><?=$proveedor->getCaSigla()?></div>
                            </td>
                            <td>
-                               <div align="left"><b>Transporte</b></div>
+                               <div align="left"><b>Grupo</b>&nbsp;&nbsp;<?=$proveedor->getMaestraClasificacion()->getCaNombre()?></div>
                            </td>
                            <td>
-                               <div align="left"><?=$proveedor->getCaTransporte()?></div>
+                               <div align="left"><b>Transporte</b>&nbsp;&nbsp;<?=$proveedor->getCaTransporte()?></div>
                            </td>
                         </tr>
                         <?

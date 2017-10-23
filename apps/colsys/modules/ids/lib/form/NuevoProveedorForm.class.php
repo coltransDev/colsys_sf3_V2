@@ -55,6 +55,20 @@ class NuevoProveedorForm extends BaseForm {
                 "Agencia" => "Agencia"
         )));
 
+        $q = Doctrine::getTable("MaestraClasificacion")
+                        ->createQuery("mc")
+                        ->select('mc.ca_idclasificacion, mc.ca_nombre')
+                        ->orWhere('mc.ca_tipo = ?', 'proveedor')
+                        ->addOrderBy("mc.ca_nombre");
+        
+        $widgets['idclasificacion'] = new sfWidgetFormDoctrineChoice(array('model' => 'Clasificacion', 
+            'add_empty' => false, 
+            'query' => $q,
+            'method' => "getCaNombre",
+            'key_method' => "getCaIdclasificacion",
+            'add_empty'=> true));
+        
+        
         $widgets['empresa'] = new sfWidgetFormChoice(array('choices' => array("Todas" => "Todas",
                 Constantes::COLTRANS => Constantes::COLTRANS,
                 Constantes::COLMAS => Constantes::COLMAS,
@@ -111,6 +125,7 @@ class NuevoProveedorForm extends BaseForm {
         $validator["sigla"] = new sfValidatorString(array('required' => false));
 
         $validator["empresa"] = new sfValidatorString(array('required' => false));
+        $validator["idclasificacion"] = new sfValidatorString(array('required' => true));
         $validator["jefecuenta"] = new sfValidatorString(array('required' => false));
 
         $validator["contrato_comodato"] = new sfValidatorBoolean(array('required' => false));

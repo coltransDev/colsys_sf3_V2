@@ -277,12 +277,23 @@
             
             ?>
         </td>
+        
+            
         <td width="16%" valign="top">
-            
+            <div align="left"><b>Grupo:</b></div></td>
+        <td width="26%"><div align="left">
+            <?
+            echo $form['idclasificacion']->renderError();
+            if( $proveedor ){
+                $form->setDefault('idclasificacion', $proveedor->getCaIdclasificacion() );
+            }
+            echo $form['idclasificacion']->render();
+            ?>
+            </div>
         </td>
-        <td width="26%">
-            
-        </td>
+
+        
+        
     </tr>
     
     <?
@@ -372,10 +383,18 @@
             ?>
             </div>
         </td>
-        <td> &nbsp;</td>
-		<td colspan="3">
-               &nbsp;
+        <td><div align="left"><b>Grupo:</b></div></td>
+        <td colspan="3"><div align="left">
+            <?
+            echo $form['idclasificacion']->renderError();
+            if( $proveedor ){
+                $form->setDefault('idclasificacion', $proveedor->getCaIdclasificacion() );
+            }
+            echo $form['idclasificacion']->render();
+            ?>
+            </div>
         </td>
+        
 	</tr>
     <?
     }

@@ -241,6 +241,7 @@ class idsActions extends sfActions {
                 $bindValues["vetado"] = $request->getParameter("vetado");
                 $bindValues["contrato_comodato"] = $request->getParameter("contrato_comodato");
                 $bindValues["empresa"] = $request->getParameter("empresa");
+                $bindValues["idclasificacion"] = $request->getParameter("idclasificacion");
                 $bindValues["ant_legales"] = $request->getParameter("ant_legales");
                 $bindValues["ant_penales"] = $request->getParameter("ant_penales");
                 $bindValues["ant_financieros"] = $request->getParameter("ant_financieros");
@@ -258,6 +259,7 @@ class idsActions extends sfActions {
                 $bindValues["tplogistics"] = $request->getParameter("tplogistics");
                 $bindValues["consolcargo"] = $request->getParameter("consolcargo");
                 $bindValues["infosec"] = $request->getParameter("infosec");
+                $bindValues["idclasificacion"] = $request->getParameter("idclasificacion");
                 $bindValues["modalidad"] = $request->getParameter("modalidad");
                 $bindValues["observaciones"] = $request->getParameter("observaciones");
                 $bindValues["sucursal"] = $request->getParameter("sucursal");
@@ -335,6 +337,12 @@ class idsActions extends sfActions {
                         $proveedor->setCaEmpresa($bindValues["empresa"]);
                     } else {
                         $proveedor->setCaEmpresa(null);
+                    }
+
+                    if ($bindValues["idclasificacion"]) {
+                        $proveedor->setCaIdclasificacion($bindValues["idclasificacion"]);
+                    } else {
+                        $proveedor->setCaIdclasificacion(null);
                     }
 
                     if ($bindValues["ant_legales"]) {
@@ -473,7 +481,11 @@ class idsActions extends sfActions {
                     if ($bindValues["infosec"]) {
                         $agente->setCaInfosec($bindValues["infosec"]);
                     }
-
+                    if ($bindValues["idclasificacion"]) {
+                        $agente->setCaIdclasificacion($bindValues["idclasificacion"]);
+                    } else {
+                        $agente->setCaIdclasificacion(null);
+                    }
                     if ($bindValues["modalidad"]) {
                         $agente->setCaModalidad($bindValues["modalidad"]);
                     }
