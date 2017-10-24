@@ -260,6 +260,7 @@ include_component("clientes", "formSubirArchivoAgente");
                                     handler: function () {
                                         var store = Ext.getCmp("gridAgaduanaAutorizado").getStore();
                                         var r = Ext.create(store.model);
+                                        console.log(r);
                                         store.insert(0, r);
                                     }
                                 }, {

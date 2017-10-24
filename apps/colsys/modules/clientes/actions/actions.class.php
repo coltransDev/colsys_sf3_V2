@@ -650,8 +650,8 @@ class clientesActions extends sfActions {
                 $siguiente_mes = mktime(0, 0, 0, $month + 1, 5, $year);
                 $siguiente_mes = $mes_esp[date("m", $siguiente_mes)] . " " . date("d", $siguiente_mes) . " de " . date("Y", $siguiente_mes);
 
-                $con_credito = $cliente->getLibCliente()->getCaDiascredito();
-                $renovacion_credito = ($con_credito) ? "Así mismo solicitamos diligenciar y adjuntar (con firma en original), el formulario de solicitud de crédito el cual permitirá renovar las condiciones crediticias que su compañía tiene con nuestro grupo empresarial.<br /><br />" : "";
+                // $con_credito = $cliente->getLibCliente()->getCaDiascredito();
+                // $renovacion_credito = ($con_credito) ? "Así mismo solicitamos diligenciar y adjuntar (con firma en original), el formulario de solicitud de crédito el cual permitirá renovar las condiciones crediticias que su compañía tiene con nuestro grupo empresarial.<br /><br />" : "";
 
                 $bodyHtml = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
                   <table style=\"width: 100%\">
@@ -757,9 +757,9 @@ class clientesActions extends sfActions {
                   </table>";
 
                 $email->setCaBodyhtml($bodyHtml);
-                if ($con_credito) {
-                    $email->addAttachment("ids/formatos/Solicitud_de_Credito.xls");
-                }
+                // if ($con_credito) {
+                    // $email->addAttachment("ids/formatos/Solicitud_de_Credito.xls");
+                // }
                 $email->addAttachment("ids/formatos/Check_List_Circular_0170.pdf");
                 $email->addAttachment("ids/formatos/Formato_conocimiento_de_cliente.xls");
 
@@ -1903,6 +1903,7 @@ class clientesActions extends sfActions {
                         inner join ino.tb_master m ON m.ca_idmaster = h.ca_idmaster
                         inner join ino.tb_tipos_comprobante t ON c.ca_idtipo = t.ca_idtipo
                         where ( t.ca_tipo||t.ca_comprobante||'-'||ca_consecutivo =UPPER('F{$suc_factura}-{$nfact}') or t.ca_tipo||t.ca_comprobante||' '||ca_consecutivo =UPPER('F{$suc_factura} {$nfact}') ) ";
+                        //echo $sql."<br>";
                     //and t.ca_idsucursal in (".$sucursal.") ";
                     $st = $con->execute($sql);
                     $ref = $st->fetch();
@@ -1917,8 +1918,7 @@ class clientesActions extends sfActions {
                             $patron = '/(2\d\d).(\d\d).(\d\d).(\d\d\d\d).(\d\d)/';
                             if (preg_match($patron, $ref["ca_doctransporte"])) {
                                 $resultado[$i] .= "-" . $tabla . ":: Referencia con aduana, no se importa por este medio,";
-                            } else {
-                                continue;
+                            } else {                                
                                 $comprobante = Doctrine::getTable("InoComprobante")
                                         ->createQuery("s")
                                         ->select("*")
@@ -1952,10 +1952,10 @@ class clientesActions extends sfActions {
                                     $encontro = true;
                                     $actualizo = true;
                                 } else {
-                                    $comprobante1 = Doctrine::getTable("InoComprobante")->find($ref["ca_idcomprobante"]);
+                                    /*$comprobante1 = Doctrine::getTable("InoComprobante")->find($ref["ca_idcomprobante"]);
                                     $comprobante1->setCaIdcomprobanteCruce($comprobante->getCaIdcomprobante());
                                     $comprobante1->stopBlaming();
-                                    $comprobante1->save();
+                                    $comprobante1->save();*/
 
                                     $resultado[$i] .= ($resultado[$i] == "") ? $comienzo_log : "";
                                     $resultado[$i] .= "InoComprobantes:: Rc de caja existe en colsys  'No se actualizo',";
