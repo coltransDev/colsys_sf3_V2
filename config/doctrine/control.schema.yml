@@ -377,6 +377,7 @@ Departamento:
     ca_nombre: string(30)
     ca_inhelpdesk: boolean
     ca_idempresa: string
+    ca_idsap: integer
   relations:
     HdeskGroup:
       local: ca_iddepartamento
