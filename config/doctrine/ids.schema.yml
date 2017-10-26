@@ -988,6 +988,7 @@ IdsCredito:
     ca_id: integer
     ca_cupo: integer
     ca_dias: integer
+    ca_tipo: string(1)
     ca_idempresa: integer
     ca_observaciones: string
     ca_usucreado: string
