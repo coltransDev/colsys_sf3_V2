@@ -174,6 +174,53 @@ class widgets5Actions extends sfActions {
         $this->responseArray = array("root" => $this->data, "total" => count($this->data), "success" => true, "debug" => $sql);
         $this->setTemplate("responseTemplate");
     }
+    
+    public function executeDatosAnticipo($request) {
+
+        $this->idmaster = $request->getParameter("idmaster");
+        $this->idcomprobante = $request->getParameter("idcomprobante");
+        $this->idcliente = $request->getParameter("idcliente");
+
+        /*$q = Doctrine::getTable("InoComprobante")
+                ->createQuery("comp")
+                ->select("*,
+                        (SELECT COUNT(*) FROM inoComprobante c WHERE c.ca_datos->>'idanticipo'=comp.ca_idcomprobante) as ncomprobante")                
+                ->innerJoin("comp.InoTipoComprobante tc WITH tc.ca_tipo='A' and tc.ca_aplicacion=1")                                
+                ->where("comp.ca_idmaster = ?", $this->idmaster)
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+
+        $sql = $q->getSqlQuery();
+        $datos = $q->execute();
+         * 
+         */
+        $sql="SELECT comp.ca_idcomprobante,comp.ca_consecutivo FROM ino.tb_comprobantes comp WHERE comp.ca_idmaster = ". $this->idmaster
+                ." AND comp.ca_idcomprobante NOT IN 
+                 (SELECT (c.ca_datos->>'idanticipo')::integer FROM ino.tb_comprobantes c
+                 inner join ino.tb_house h ON h.ca_idhouse=c.ca_idhouse
+			WHERE h.ca_idmaster = comp.ca_idmaster AND (c.ca_datos->>'idanticipo')::integer>0)";
+        $sql="SELECT comp.ca_idcomprobante,comp.ca_consecutivo,comp.ca_valor,ca_tcambio FROM ino.tb_comprobantes comp WHERE comp.ca_idmaster = ". $this->idmaster."  
+                 AND comp.ca_fchanulado IS null AND comp.ca_id='".$this->idcliente."' AND comp.ca_idcomprobante::text NOT IN 
+                 (SELECT jsonb_array_elements_text(c.ca_datos->'idanticipo') FROM ino.tb_comprobantes c
+                 inner join ino.tb_house h ON h.ca_idhouse=c.ca_idhouse
+			WHERE h.ca_idmaster = comp.ca_idmaster AND c.ca_idcomprobante != ".$this->idcomprobante." )";
+        
+            $conn = Doctrine_Manager::getInstance()->getConnection('master');
+            $st = $conn->execute($sql);
+            $datos = $st->fetchAll();
+        
+        
+        $this->data = array();
+        foreach ($datos as $d) {            
+            $this->data[] = array(
+                "id" => $d["ca_idcomprobante"], "name" => $d["ca_consecutivo"]." (".$d["ca_valor"]." Trm:".$d["ca_tcambio"].")"
+            );
+        }
+        //$txt="Anticipo ".$anticipo->getInoTipoComprobante()->getCaPrefijoSap()."-".$anticipo->getInoTipoComprobante()->getCaComprobante()." ". $anticipo->getCaConsecutivo()." :: ".number_format($anticipo->getCaValor(), 2, ",", ".")." (TRM : ".$anticipo->getCaTcambio().")";
+
+        $this->responseArray = array("root" => $this->data, "total" => count($this->data), "success" => true, "debug" => $sql);
+        $this->setTemplate("responseTemplate");
+    }
+
 
     public function executeDatosTipoComprobante($request) {
         $user = $this->getUser();
@@ -437,40 +484,34 @@ class widgets5Actions extends sfActions {
 
 
         $q = Doctrine_Query::create()
-                ->select("c.ca_ciudad,s.ca_direccion,s.ca_idsucursal,s.ca_id,ids.ca_nombre,cl.ca_propiedades")
+                ->select("c.ca_ciudad,s.ca_direccion,s.ca_idsucursal,s.ca_id,ids.ca_nombre")
                 ->from("IdsSucursal s")
                 ->innerJoin("s.Ciudad c")
                 ->innerJoin("s.Ids ids")
                 ->innerJoin("ids.IdsCliente cl")
+                //->innerJoin("cl.IdsEstadoSap e ON e.ca_tipo=? AND e.ca_activo=?",array('C',true))
                 ->where("UPPER(ids.ca_nombre) like ?", "%" . strtoupper($query) . "%")
+                ->andWhere("ids.ca_id IN (SELECT ca_id FROM IdsEstadoSap e WHERE e.ca_id=ids.ca_id AND e.ca_tipo='C' AND e.ca_activo=true AND ca_idempresa='{$idempresa}' )")
                 ->addOrderBy("c.ca_ciudad")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+        $sql = $q->getSqlQuery();
 
         $sucursales = $q->execute();
         $sucursal = array();
         //print_r($sucursales);
         foreach ($sucursales as $suc) {
 
-            if ($suc["cl_ca_propiedades"]) {
-                $idempresa = ($idempresa == "") ? $suc["tcomp_ca_idempresa"] : $idempresa;
-                $array = sfToolkit::stringToArray($suc["cl_ca_propiedades"]);
-                if ($idempresa == "2") {
-                    $cuenta_forma_pago = isset($array["cuenta_forma_pago_coltrans"]) ? $array["cuenta_forma_pago_coltrans"] : '';
-                } else if ($idempresa == "8")
-                    $cuenta_forma_pago = isset($array["cuenta_forma_pago_colotm"]) ? $array["cuenta_forma_pago_colotm"] : '';
-                else
-                    $cuenta_forma_pago = '';
-            }
+            $idempresa = ($idempresa == "") ? $suc["tcomp_ca_idempresa"] : $idempresa;
+            
             $sucursal[] = array(
                 "idsucursal" => $suc["s_ca_idsucursal"],
                 "ciudad" => utf8_encode($suc["c_ca_ciudad"]),
                 "direccion" => utf8_encode($suc["s_ca_direccion"]),
                 "idcliente" => $suc["s_ca_id"],
-                "compania" => utf8_encode($suc["ids_ca_nombre"] . "-" . $suc["c_ca_ciudad"]),
-                "cuentapago" => $cuenta_forma_pago
+                "compania" => utf8_encode($suc["ids_ca_nombre"] . "-" . $suc["c_ca_ciudad"])
             );
         }
-        $this->responseArray = array("root" => $sucursal, "total" => count($sucursal), "success" => true);
+        $this->responseArray = array("root" => $sucursal, "total" => count($sucursal), "success" => true, "debug"=>$sql);
         $this->setTemplate("responseTemplate");
     }
 
@@ -2942,7 +2983,7 @@ class widgets5Actions extends sfActions {
                     ->createQuery("m")
                     ->leftJoin("m.Origen o")
                     ->leftJoin("m.Destino d")
-                    ->addWhere("m.ca_referencia LIKE ?", $criterio . "%")
+                    ->addWhere("m.ca_referencia LIKE ? AND m.ca_usuanulado IS NULL", $criterio . "%")
                     ->orderBy("m.ca_idmaster DESC")
                     ->limit(50)
                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
@@ -3275,7 +3316,9 @@ class widgets5Actions extends sfActions {
                 ->leftJoin("ids.IdsProveedor p")
                 ->leftJoin("ids.IdsAgente a")
                 ->where("UPPER(ids.ca_nombre) like ?", "%" . strtoupper($query) . "%")
-                ->addOrderBy("c.ca_ciudad")
+                ->addWhere("s.ca_usueliminado IS NULL")
+                ->andWhere("ids.ca_id IN (SELECT ca_id FROM IdsEstadoSap e WHERE e.ca_id=ids.ca_id AND e.ca_tipo IN ('A','P') AND e.ca_activo=true AND ca_idempresa='{$idempresa}' )")
+                ->addOrderBy("ids.ca_nombre, c.ca_ciudad")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
         $debug = $q->getSqlQuery();
         $sucursales = $q->execute();
@@ -3286,14 +3329,15 @@ class widgets5Actions extends sfActions {
                 "idsucursal" => $suc["s_ca_idsucursal"],
                 "ciudad" => utf8_encode($suc["c_ca_ciudad"]),
                 "direccion" => utf8_encode($suc["s_ca_direccion"]),
-                "id" => $suc["s_ca_id"],
+                "id" => $suc["s_ca_id"]."-". $suc["s_ca_idsucursal"],
                 "idalterno" => $suc["ids_ca_idalterno"],
-                "compania" => utf8_encode($suc["ids_ca_nombre"] /* . "-" . $suc["c_ca_ciudad"] */) /* ,
+                "compania" => utf8_encode($suc["ids_ca_nombre"]) /* ,
                       "cuentapago"=>$cuenta_forma_pago */
             );
         }
         $this->responseArray = array("root" => $sucursal, "total" => count($sucursal), "success" => true, "debug" => $debug);
         $this->setTemplate("responseTemplate");
     }
+||||||| .r5670
 }
 ?>
