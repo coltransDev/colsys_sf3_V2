@@ -53,9 +53,9 @@ function importar(id,idnew)
                         $tercero = Doctrine::getTable("Tercero")->find($values[$i]);
                         $proveedorCli[] = $tercero->getCaNombre().' - '.$orden[$i];                    
                     }
-
-                    $incoterms = $reporte["ca_incoterms"];
                 }
+                
+                $incoterms = $reporte["ca_incoterms"];
             ?>
             <tr style="<?=($consecutivo==$reporte["ca_consecutivo"])?"":"border-top: 3px solid #A0A0A0" ?>">
                 <td rowspan="2">
