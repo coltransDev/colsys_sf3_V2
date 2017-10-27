@@ -3338,6 +3338,5 @@ class widgets5Actions extends sfActions {
         $this->responseArray = array("root" => $sucursal, "total" => count($sucursal), "success" => true, "debug" => $debug);
         $this->setTemplate("responseTemplate");
     }
-||||||| .r5670
 }
 ?>
