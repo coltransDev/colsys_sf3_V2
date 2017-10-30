@@ -54,7 +54,7 @@ require_once("menu.php");
     echo "<TH>ID Cliente</TH>";
     echo "<TH COLSPAN=4>Nombre del Contacto</TH>";
     $visible = ($rs->Value('ca_vendedor')== $usuario or $rs->Value('ca_vendedor')=='' or $nivel >= 2)?'visible':'hidden';
-    echo "<TH><IMG style='visibility: $visible;' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", ".$id.", 0);'></TH>";  // Botón para la creación de un Registro Nuevo
+    echo "<TH></TH>";  // Botón para la creación de un Registro Nuevo
     $id_temp = 0;
     while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
        if ($rs->Value('ca_idcliente') != $id_temp) {
@@ -74,8 +74,8 @@ require_once("menu.php");
               echo "<TD Class=mostrar style='font-size: 11px; font-weight:bold;'>".$rs->Value('ca_saludo_cn')."</TD>";
               echo "<TD Class=mostrar style='font-size: 11px; font-weight:bold;' COLSPAN=3>".$rs->Value('ca_ncompleto_cn')."</TD>";
               echo "<TD WIDTH=44 Class=mostrar>";                                              // Botones para hacer Mantenimiento a la Tabla
-              echo "  <IMG style='visibility: $visible;' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Modificar\", ".$id.", ".$rs->Value('ca_idcontacto').");'>";
-              echo "  <IMG style='visibility: $visible;' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"Eliminar\", ".$id.", ".$rs->Value('ca_idcontacto').");'>";
+              // echo "  <IMG style='visibility: $visible;' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Modificar\", ".$id.", ".$rs->Value('ca_idcontacto').");'>";
+              // echo "  <IMG style='visibility: $visible;' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"Eliminar\", ".$id.", ".$rs->Value('ca_idcontacto').");'>";
               echo "</TD>";
               echo "</TR>";
               echo "<TR>";

@@ -90,7 +90,7 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
     echo "<FORM METHOD=post NAME='menuform' ACTION='clientes.php' >";
     echo "<TABLE WIDTH=450 BORDER=0 CELLSPACING=1 CELLPADDING=5>";
     echo "<TH COLSPAN=4 style='font-size: 12px; font-weight:bold;'><B>Ingrese un criterio para realizar las busqueda</TH>";
-    echo "<TH><IMG src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", 0);'></TH>";  // Botón para la creación de un Registro Nuevo
+    echo "<TH></TH>";  // Botón para la creación de un Registro Nuevo
     echo "<TR>";
     echo "  <TH ROWSPAN=5>&nbsp;</TH>";
     echo "  <TD Class=listar ROWSPAN=3><B>Buscar por:</B><BR><SELECT NAME='modalidad' SIZE=8>";
@@ -455,7 +455,7 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
         echo "</TR>";
         echo "<TH>ID</TH>";
         echo "<TH COLSPAN=4>Nombre de Cliente</TH>";
-        echo "<TH><IMG src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", 0);'></TH>";  // Botón para la creación de un Registro Nuevo
+        echo "<TH></TH>";  // Botón para la creación de un Registro Nuevo
         while (!$rs->Eof() and ! $rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
             $vista_1 = ($nivel >= 3) ? 'visible' : 'hidden'; // Habilita la opción para dar liberación automática
             $vista_3 = ($nivel >= 3) ? 'visible' : 'hidden'; // Habilita la opción para definir porcentaje de comisión
@@ -484,8 +484,8 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
             }
             echo "<TD Class=titulo COLSPAN=4 style='font-size: 12px; font-weight:bold; text-align:left;'>" . $rs->Value('ca_compania') . " $img</TD>";
             echo "  <TD Class=titulo style='vertical-align: top; text-align: center;'>";                                            // Botones para hacer Mantenimiento a la Tabla
-            echo "    <IMG style='visibility: $visible;' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Modificar\", " . $rs->Value('ca_idcliente') . ");'>";
-            echo "    <IMG style='visibility: $visible;' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"Eliminar\", " . $rs->Value('ca_idcliente') . ");'>";
+            // echo "    <IMG style='visibility: $visible;' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Modificar\", " . $rs->Value('ca_idcliente') . ");'>";
+            // echo "    <IMG style='visibility: $visible;' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"Eliminar\", " . $rs->Value('ca_idcliente') . ");'>";
             echo "  </TD>";
             echo "</TR>";
 
@@ -642,7 +642,7 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
             echo "<TR>";
             echo "  <TD Class=mostrar style='$bkground' COLSPAN=5><b>Libreta de Direcciones del Cliente:</b> <!--<IMG SRC='./graficos/nuevo.gif' border=0 ALT='Opción de mantenimiento a libreta de direcciones por cliente!'> --></TD>";
             echo "  <TD Class=invertir style='vertical-align: top; text-align: center;'>";                                            // Botones para hacer Mantenimiento a la Tabla
-            echo "    <IMG style='visibility: $visible;' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Libreta\", " . $rs->Value('ca_idcliente') . ");'>";
+            //echo "    <IMG style='visibility: $visible;' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Libreta\", " . $rs->Value('ca_idcliente') . ");'>";
             echo "  </TD>";
             echo "</TR>";
             echo "<TR>";
@@ -837,7 +837,7 @@ if (!isset($criterio) and ! isset($boton) and ! isset($accion)) {
                 echo "<TH>Asunto</TH>";
                 echo "<TH>Detalle</TH>";
                 echo "<TH>Compromisos</TH>";
-                echo "<TH><IMG src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Evento\", " . $rs->Value('ca_idcliente') . ");'></TH>";  // Botón para la creación de un Registro Nuevo
+                echo "<TH></TH>";  // Botón para la creación de un Registro Nuevo
             }
             $eve_ant = 0;
             while (!$tm->Eof()) {
