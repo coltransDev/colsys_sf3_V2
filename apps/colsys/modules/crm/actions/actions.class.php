@@ -1566,6 +1566,7 @@ class crmActions extends sfActions {
             if ($request->getParameter("observaciones")) {
                 $beneficioCredito->setCaObservaciones($request->getParameter("observaciones"));
             }
+            $beneficioCredito->setCaTipo("C");
             $beneficioCredito->save();
             $con->commit();
             $this->responseArray = array("success" => true);
