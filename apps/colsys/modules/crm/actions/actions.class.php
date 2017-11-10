@@ -280,8 +280,7 @@ class crmActions extends sfActions {
         
     }
 
-    public function executeIndexExt5() {
-
+    public function executeIndexExt5(sfWebRequest $request) {
         $this->permisos = array();
 
         $user = $this->getUser();
@@ -290,6 +289,14 @@ class crmActions extends sfActions {
         $tipopermisos = $user->getAccesoTotalRutina(self::RUTINA_CRM);
         foreach ($tipopermisos as $index => $tp) {
             $this->permisos[$index] = in_array($tp, $permisosRutinas) ? true : false;
+        }
+        
+        if ($request->getParameter("idcliente")) {
+            $cliente = Doctrine::getTable("IdsCliente")->find($request->getParameter("idcliente"));
+            if ($cliente){
+                $this->idcliente = $cliente->getCaIdcliente();
+                $this->nombre = utf8_encode($cliente->getIds()->getCaNombre());
+            }
         }
     }
 
@@ -946,7 +953,7 @@ class crmActions extends sfActions {
             }
             $contacto->setCaUsuactualizado($this->getUser()->getUserId());
             $contacto->setCaFchactualizado(date("Y-m-d H:i:s"));
-            if ($request->getParameter("identificacion_tipo") and $request->getParameter("identificacion")){    // Realiza Consulta solo para Cargos Específicos marcados en Parámetros
+            if ($request->getParameter("identificacion_tipo") and $request->getParameter("identificacion") and $this->getUser()->getIdtrafico() != "PE-051"){    // Realiza Consulta solo para Cargos Específicos marcados en Parámetros
                 $contacto->getConsultaListas("DOCUMENTO");
             }
 
@@ -1096,14 +1103,33 @@ class crmActions extends sfActions {
             $tipo = utf8_encode($datomod[($posicion - 1)]->getCaValor());
             $evento->setCaTipo(utf8_decode($tipo));
             if ($request->getParameter("asunto") != "")
-                $evento->setCaAsunto($request->getParameter("asunto"));
-            $evento->setCaDetalle($request->getParameter("detalle"));
-            $evento->setCaCompromisos($request->getParameter("compromisos"));
+                $evento->setCaAsunto(utf8_decode($request->getParameter("asunto")));
+            $evento->setCaDetalle(utf8_decode($request->getParameter("detalle")));
+            $evento->setCaCompromisos(utf8_decode($request->getParameter("compromisos")));
             $evento->setCaFchcompromiso($request->getParameter("fecha"));
             $evento->setCaIdantecedente($request->getParameter("seguimiento_antecesor"));
             $evento->setCaUsuario($this->getUser()->getUserId());
 
             $evento->save();
+            
+            list($ano, $mes, $dia) = sscanf($evento->getCaFchcompromiso(), "%d-%d-%d");
+            $fchVencimiento = date('Y-m-d H:i:s', mktime(23, 59, 59, $mes, $dia, $ano));
+            $tarea = new NotTarea();
+            $tarea->setCaUrl("/crm/indexExt5/idcliente/$idCliente");
+            $tarea->setCaIdlistatarea(9);
+            $tarea->setCaFchcreado($evento->getCaFchevento());
+            $tarea->setCaFchvisible($evento->getCaFchcompromiso());
+            $tarea->setCaFchvencimiento($fchVencimiento);
+            $tarea->setCaUsucreado($this->getUser()->getUserId());
+            $tarea->setCaTitulo($evento->getCaAsunto()." - ".$evento->getCaFchevento());
+            $tarea->setCaTexto($evento->getCaDetalle());
+            $tarea->save();
+            
+            $asignacion = new NotTareaAsignacion();
+            $asignacion->setCaIdtarea($tarea->getCaIdtarea());
+            $asignacion->setCaLogin($tarea->getCaUsucreado());
+            $asignacion->save();
+
             $con->commit();
             $this->responseArray = array("success" => true);
         } catch (Exception $e) {
@@ -1208,8 +1234,9 @@ class crmActions extends sfActions {
                     ->addWhere('i.ca_id = ?', $idCliente)
                     ->fetchOne();
         } else {
-            $cliente = new IdsCliente();
             $ids = new Ids();
+            $cliente = new IdsCliente();
+            $sucursal = new IdsSucursal();
             $cliente->setCaIdgrupo($request->getParameter("idalterno_id"));
         }
 
@@ -1315,7 +1342,20 @@ class crmActions extends sfActions {
             $cliente->setIds($ids);
             $cliente->save($conn);
 
-            $ids->getConsultaListas("DOCUMENTO");
+            if ($this->getUser()->getIdtrafico() != "PE-051") {
+                $ids->getConsultaListas("DOCUMENTO");
+            }
+            
+            if ($sucursal) {      /*Crea la Sucursal Principal Automáticamente*/
+                $sucursal->setCaId($ids->getCaId());
+                $sucursal->setCaNombre("Domicilio Principal");
+                $sucursal->setCaPrincipal(true);
+                $sucursal->setCaIdciudad($cliente->getCaIdciudad());
+                $sucursal->setCaDireccion(trim($cliente->getDireccion()));
+                $sucursal->setCaTelefonos($cliente->getCaTelefonos());
+                $sucursal->setCaFax($cliente->getCaFax());
+                $sucursal->save();
+            }
 
             $conn->commit();
             $this->responseArray = array("success" => true, "idcliente" => $ids->getCaId() . "", "nombreCliente" => utf8_encode($ids->getCaNombre()));

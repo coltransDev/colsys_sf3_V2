@@ -101,6 +101,12 @@ Ext.define('Colsys.Crm.GridSeguimientosClientes', {
                         Ext.Msg.alert("Crm", "Existe una ventana abierta de Seguimientos<br>Por favor cierrela primero");
                     }
                 }
+            }, {
+                text: 'Recargar',
+                iconCls: 'refresh',
+                handler: function () {
+                    me.getStore().reload();
+                }
             });
             this.addDocked(tb);
         }

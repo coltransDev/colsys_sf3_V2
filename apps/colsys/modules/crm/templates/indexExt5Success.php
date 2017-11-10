@@ -101,6 +101,8 @@
 
 <?
 $permisos=$sf_data->getRaw("permisos");
+$idcliente=$sf_data->getRaw("idcliente");
+$nombre=$sf_data->getRaw("nombre");
 ?>
 <script  src="/js/ckeditor/ckeditor.js" ></script>
 <script>
@@ -108,22 +110,10 @@ $permisos=$sf_data->getRaw("permisos");
     Ext.Loader.setConfig({
         enabled: true,
         paths: {
-            'Chart': '../js/ext5/src/',
-            //'Ext.ux.exporter':'../js/ext5/examples/ux/exporter/',
             'Colsys': '/js/Colsys',
             'Ext.ux': '../js/ext5/examples/ux'
         }
     });
-
-    Ext.require([
-        //'Ext.grid.*',
-        //'Ext.form.Panel',
-        'Ext.ux.exporter.Exporter',
-        'Ext.ux.Explorer'
-                /*,
-                 'Colsys.Ino.FormBusqueda'*/
-    ]);
-
 </script>
 <?php
 include_component("crm", "mainPanel");
@@ -168,7 +158,33 @@ include_component("crm", "mainPanel");
                         display: 'none'
                     }
                 }
-            ]
+            ],
+            listeners: {
+                afterrender: function (obj, eOpts) {
+                    var id = eval('<?=$idcliente?>');
+                    if (id !== null){
+                        tabpanel = Ext.getCmp('tabpanel1');
+                        ref = '<?=$idcliente?>';
+                        if (!tabpanel.getChildByElement('tab' + ref) && ref != "") {
+                            tabpanel.add({
+                                title: '<?=$nombre?>',
+                                id: 'tab' + ref,
+                                itemId: 'tab' + ref,
+                                closable: true,
+                                autoScroll: true,
+                                items: [{
+                                        xtype: 'wCRMMainpanel',
+                                        id: ref,
+                                        idcliente: ref,
+                                        permisos: permisosG
+                                    }
+                                ]
+                            }).show();
+                        }
+                        tabpanel.setActiveTab('tab' + ref);
+                    }
+                }
+            }
         });
     });
 

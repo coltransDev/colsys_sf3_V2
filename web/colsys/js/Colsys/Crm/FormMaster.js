@@ -17,7 +17,7 @@ Ext.define('Colsys.Crm.FormMaster', {
         render: function (me, eOpts) {
             this.add([{
                     xtype: 'fieldset',
-                    title: 'Datos Basicos',
+                    title: 'Datos Basicos [Id: '+this.idcliente+']',
                     defaults: {
                         layout: {
                             type: 'hbox',
@@ -706,7 +706,6 @@ Ext.define('Colsys.Crm.FormMaster', {
                             },
                             listeners: {
                                 beforerender: function () {
-                                    console.log(this.up('form').permisos);
                                     this.setVisible(this.up('form').permisos[29]);
                                 }
                             }
