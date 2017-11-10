@@ -652,6 +652,7 @@ class clientesActions extends sfActions {
 
                 // $con_credito = $cliente->getLibCliente()->getCaDiascredito();
                 // $renovacion_credito = ($con_credito) ? "Así mismo solicitamos diligenciar y adjuntar (con firma en original), el formulario de solicitud de crédito el cual permitirá renovar las condiciones crediticias que su compañía tiene con nuestro grupo empresarial.<br /><br />" : "";
+                $renovacion_credito = "";
 
                 $bodyHtml = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
                   <table style=\"width: 100%\">
