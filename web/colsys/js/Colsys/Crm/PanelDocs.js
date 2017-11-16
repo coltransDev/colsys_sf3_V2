@@ -9,13 +9,12 @@ Ext.define('Colsys.Crm.PanelDocs', {
             this.add(Ext.create('Colsys.GestDocumental.treeGridFiles', {
                 title: null,
                 region: 'north', // center region is required, no width/height specified
-                idcliente: me.idcliente,
-                id: 'tree-grid-file-docs' + me.idcliente,
+                id: 'Documentos-' + me.idcliente,
                 layout: 'fit',
                 collapsible: false,
                 idsserie: 9,
                 habilitarToolbar: true,
-                ref1: me.idcliente,
+                idreferencia: me.idcliente,
                 treeStore: 'Docs',
                 margins: '5 5 5 5'
             }));
@@ -23,8 +22,8 @@ Ext.define('Colsys.Crm.PanelDocs', {
 //        beforeShow: function (win, e) {
         afterrender: function (me, eOpts) {
             var me = this;
-            tree = Ext.getCmp("tree-grid-file-docs" + me.idcliente);
-
+            tree = Ext.getCmp("Documentos-" + me.idcliente); //tree-grid-file-docs
+            
             tree.setStore(Ext.create('Ext.data.TreeStore', {
                 fields: [
                     {name: 'idarchivo', type: 'string'},
@@ -41,21 +40,18 @@ Ext.define('Colsys.Crm.PanelDocs', {
                 proxy: {
                     type: 'ajax',
                     url: '/gestDocumental/dataFilesTree',
-                    autoLoad: false
+                    autoLoad: false,
+                    extraParams: {
+                        ref1: me.idcliente,
+                        idsserie: 9
+                    }
                 },
-                autoLoad: false
+                autoLoad: true
             }));
 
-            store = tree.getStore();
-            store.load({
-                params: {
-                    ref1: me.idcliente,
-                    idsserie: 9
-                }
-            });
+            // store = tree.getStore();
+            // store.load();
         }
 
     }
 });
-
-

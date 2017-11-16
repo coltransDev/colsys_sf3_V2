@@ -67,6 +67,7 @@ Ext.define('FormConsultaArchivos', {
                 var ref3=form.findField("ref3").getValue();
                 var idsserie=form.findField("idsserie").getValue();
                 var storeTree=Ext.getCmp("grid-archivos"+this.up('form').idreg).getStore();
+                Ext.Ajax.setTimeout(120000);
                 storeTree.load({
                     params : {
                         nombre : nombre,

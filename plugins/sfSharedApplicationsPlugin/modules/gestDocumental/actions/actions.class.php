@@ -841,7 +841,7 @@ class gestDocumentalActions extends sfActions {
                 $this->tipoDocs[$t["ca_ref1"]][] = array("idarchivo" => $t["ca_idarchivo"], "documento" => utf8_encode($t["TipoDocumental"]["ca_documento"]), "iddocumental" => $t["ca_iddocumental"], "ref1" => $t["ca_ref1"], "ref2" => $t["ca_ref2"], "ref3" => $t["ca_ref3"], "nombre" => ($t["ca_nombre"] . (($t["ca_fcheliminado"] != "") ? " (Eliminado)" : "" )), "usucreado" => $t["ca_usucreado"], "fchcreado" => $t["ca_fchcreado"], "leaf" => true, "expanded" => true, "idsserie"=>$t["TipoDocumental"]["ca_idsserie"]);
             }
         }
-
+        
         $tree = $this->generateTree($this->tipoDocs);
         $this->responseArray = $tree;
         $this->setTemplate("responseTemplate");

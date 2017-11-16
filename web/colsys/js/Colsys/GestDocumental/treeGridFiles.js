@@ -269,9 +269,11 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
                     iconCls: 'add',
                     scope: this,
                     handler: function () {
-
-                        idmaster = this.idmaster;
-
+                        if (this.idmaster) {
+                            id = this.idmaster;
+                        } else if (this.idcliente) {
+                            id = this.idcliente;
+                        }
 
                         winformsubirarchivos = new Ext.Window({
                             title: 'Documentos',
@@ -288,7 +290,7 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
                                         idtransporte: idtrans,
                                         idimpoexpo: impo,
                                         idreferencia: ref1,
-                                        idmaster: idmaster,
+                                        idmaster: id,
                                         idsserie: serie
                                     }
                                 ]
@@ -301,8 +303,14 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
                                     winformsubirarchivos = null;
                                 }
                             }
-                        })
+                        });
                         winformsubirarchivos.show();
+                    }
+                }, {
+                    text: 'Refrescar',
+                    iconCls: 'refresh',
+                    handler: function () {
+                        this.up().up().getStore().reload();
                     }
                 }]
         }],
