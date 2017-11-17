@@ -1,3 +1,11 @@
+comboBoxRenderer = function (combo) {
+    return function (value) {
+        var idx = combo.store.find(combo.valueField, value);
+        var rec = combo.store.getAt(idx);
+        return (rec === null ? value : rec.get(combo.displayField));
+    };
+};
+
 Ext.define('Colsys.Crm.FormBeneficioCredito', {
     extend: 'Ext.form.Panel',
     alias: 'widget.Colsys.Crm.FormBeneficioCredito',
@@ -23,11 +31,6 @@ Ext.define('Colsys.Crm.FormBeneficioCredito', {
 
                 if (form.isValid()) {
 
-                    if (data.inicio >= data.fin) {
-                        Ext.MessageBox.alert("Error", 'Error en la fechas de vigencia del Documento');
-                        return;
-                    }
-
                     form.submit({
                         url: '/crm/guardarBeneficioCredito',
                         waitMsg: 'Guardando',
@@ -36,11 +39,11 @@ Ext.define('Colsys.Crm.FormBeneficioCredito', {
                         },
                         success: function (response, options) {
                             Ext.getCmp("winFormEdit").destroy();
-                            Ext.Msg.alert("Porcentaje de comisi&oacute;n", "Datos almacenados correctamente");
-                            Ext.getCmp("gridPorcetajeComision" + idcliente).getStore().reload();
+                            Ext.Msg.alert("Beneficios Crediticios", "Datos almacenados correctamente");
+                            Ext.getCmp("gridBeneficioCredito" + idcliente).getStore().reload();
                         },
                         failure: function (form, action) {
-                            Ext.Msg.alert("Porcentaje de comisi&oacute;n", "Error en guardar " + action.result.errorInfo + "</ br>");
+                            Ext.Msg.alert("Beneficios Crediticios", "Error en guardar " + action.result.errorInfo + "</ br>");
                         }
                     });
                 }
@@ -61,6 +64,9 @@ Ext.define('Colsys.Crm.FormBeneficioCredito', {
                     allowBlank: false
                 },
                 items: [{
+                        xtype: 'hiddenfield',
+                        name: 'idcredito'
+                    }, {
                         xtype: 'tbspacer',
                         height: 25,
                         columnWidth: 1
@@ -98,6 +104,7 @@ Ext.define('Colsys.Crm.FormBeneficioCredito', {
                         fieldLabel: 'Empresa',
                         name: 'idempresa',
                         id: "idempresa",
+                        renderer: comboBoxRenderer(this),
                         columnWidth: 1
                     }, {
                         xtype: 'tbspacer',
@@ -110,7 +117,18 @@ Ext.define('Colsys.Crm.FormBeneficioCredito', {
                         id: "observaciones",
                         columnWidth: 1
                     }
-                ]});
+                ]
+            });
+            
+            if (me.idcredito) {
+                form = me.getForm();
+                form.load({
+                    url: '/crm/datosUnBeneficioCredito',
+                    params: {
+                        idCredito: me.idcredito
+                    }
+                });
+            }
         }
     }
 
