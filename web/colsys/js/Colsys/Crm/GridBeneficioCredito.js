@@ -104,7 +104,6 @@ Ext.define('Colsys.Crm.GridBeneficioCredito', {
                                         }
                                     }
                                 }, {
-                                    iconCls: 'delete',
                                     tooltip: 'Eliminar Beneficio',
                                     handler: function (grid, rowIndex, colIndex) {
                                         var rec = grid.getStore().getAt(rowIndex);
@@ -131,6 +130,14 @@ Ext.define('Colsys.Crm.GridBeneficioCredito', {
                                                 });
                                             }
                                         });
+                                    },
+                                    isDisabled: function (view, rowIndex, colIndex, item, record) {
+                                        return !me.permisos[28];
+                                    },
+                                    getClass: function (v, meta, rec) {
+                                        if (me.permisos[28]) {
+                                            return 'delete';
+                                        }
                                     }
                                 }]
                         }
