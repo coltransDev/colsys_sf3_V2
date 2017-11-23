@@ -155,7 +155,7 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
                             fieldLabel: 'Dispo.Carga',
                             name: 'dispocarga',
                             flex: 1,
-                            allowBlank: false,
+                            allowBlank: true,
                             tipoCombo: 2,
                             store: Ext.create('Ext.data.Store', {
                                 fields: ['nombre', 'valor'],
