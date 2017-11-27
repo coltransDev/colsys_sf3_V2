@@ -81,6 +81,18 @@
         padding-left: 5px;
     }
 
+    .x-status-line-a{
+        background-color: #F2F2F2;
+        margin: 0px 0px 0 0;
+        padding-left: 1px;
+    }
+
+    .x-status-line-b{
+        background-color: #FFFFFF;
+        margin: 0px 0px 0 0;
+        padding-left: 1px;
+    }
+
     .verticaltab {    
         .x-tab-wrap{
             position: absolute;

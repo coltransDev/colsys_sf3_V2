@@ -312,15 +312,41 @@ class crmActions extends sfActions {
                 ->addWhere('i.ca_id = ?', $idCliente)
                 ->fetchOne();
 
-//        $encuestaVisita = Doctrine::getTable("EncuestaVisita")
-//                ->createQuery("e")
-//                ->innerJoin("e.Contacto c")
-//                ->addWhere("c.ca_idcliente = ?", $idCliente)
-//                ->orderBy("e.ca_fchvisita DESC")
-//                ->limit(1)
-//                ->fetchOne();
-
         $con = Doctrine_Manager::getInstance()->connection();
+        
+        $empresas =Doctrine::getTable("Empresa")
+            ->createQuery("e")
+            ->select("e.ca_url")
+            ->whereIn("e.ca_idempresa", array(1, 2, 8, 11))
+//            ->addWhere("e.ca_idsap is not null")
+//            ->orderBy("e.ca_coddian, e.ca_idsap")
+            ->orderBy("e.ca_coddian")
+            ->execute();
+
+        $idsCredito = Doctrine::getTable("IdsCredito")
+            ->createQuery("i")
+            ->addWhere('i.ca_id = ?', $idCliente)
+            ->addWhere('i.ca_tipo = ?', "C")
+            ->addOrderBy("i.ca_idempresa")
+            ->execute();
+        $beneficios = array();
+        foreach ($idsCredito as $credito) {
+            $dominio = explode(".", $credito->getEmpresa()->getCaUrl())[1];
+            $beneficios[$dominio] = array("cupo" => $credito->getCaCupo(), "dias" => $credito->getCaDias());
+        }
+
+//        $idsEstadoSap = Doctrine::getTable("IdsEstadoSap")
+//            ->createQuery("i")
+//            ->addWhere('i.ca_id = ?', $idCliente)
+//            ->addWhere('i.ca_tipo = ?', "C")
+//            ->addOrderBy("i.ca_idempresa")
+//            ->execute();
+//        $estadoSap = array();
+//        foreach ($idsEstadoSap as $estado) {
+//            $dominio = explode(".", $estado->getEmpresa()->getCaUrl())[1];
+//            $estadoSap[$dominio] = ($estado->getCaActivo()?"Activo":"Inactivo");
+//        }
+
         $sql = "select ca_certificacion, ca_certificacion_otro, ca_implementacion_sistema, ca_implementacion_sistema_detalles from encuestas.tb_encuesta_visita ev "
                 . "inner join public.tb_concliente cc on cc.ca_idcontacto = ev.ca_idcontacto "
                 . "where ca_idcliente = '$idCliente' order by ca_fchvisita desc limit 1";
@@ -335,10 +361,10 @@ class crmActions extends sfActions {
         $st = $con->execute($sql);
         $funcion = $st->fetch();
         $arraycumplimiento = explode("|", $funcion["fun_estado_documentos"]);
-        $coltrans = $arraycumplimiento[0];
-        $colmas = $arraycumplimiento[1];
-        $colotm = $arraycumplimiento[2];
-        $coldepositos = $arraycumplimiento[3];
+        $coltrans_0170 = $arraycumplimiento[0];
+        $colmas_0170 = $arraycumplimiento[1];
+        $colotm_0170 = $arraycumplimiento[2];
+        $coldepositos_0170 = $arraycumplimiento[3];
 
         $data = array();
         if ($cliente) {
@@ -352,7 +378,6 @@ class crmActions extends sfActions {
             $data["ciudad"] = utf8_encode($cliente->getIdsCliente()->getCiudad());
             $data["email"] = utf8_encode($cliente->getIdsCliente()->getCaEmail());
             $data["status"] = utf8_encode($cliente->getIdsCliente()->getCaStatus());
-//            $data["calificacion"] = utf8_encode($cliente->getIdsCliente()->getCaCalificacion());
             $data["sector"] = utf8_encode($cliente->getIdsCliente()->getCaSectoreco());
             $data["vendedor"] = utf8_encode($cliente->getIdsCliente()->getCaVendedor());
             $data["coordinador"] = utf8_encode($cliente->getIdsCliente()->getCaCoordinador());
@@ -364,14 +389,6 @@ class crmActions extends sfActions {
             $data["lista_clinton"] = utf8_encode($vista["ca_listaclinton"]);
             $data["comentario"] = utf8_encode($vista["ca_comentario"]);
             $data["ultima_consulta"] = $cliente->getUltimaConsulta();
-//            $data["acuerdo_conf"] = utf8_encode($vista["ca_fchacuerdoconf"]);
-//            $data["contrato_agenc"] = utf8_encode($vista["ca_fchcotratoag"]);
-//            $data["estado_contrato"] = utf8_encode($vista["ca_stdcotratoag"]);
-//            $data["super_sociedades"] = utf8_encode($vista["ca_leyinsolvencia"]);
-//            $data["iso"] = utf8_encode($vista["ca_iso"] . " " . $vista["ca_iso_detalles"]);
-//            $data["basc"] = utf8_encode($vista["ca_basc"]);
-//            $data["otra"] = utf8_encode($vista["ca_otro_cert"]);
-//            $data["otra_detalles"] = utf8_encode($vista["ca_otro_detalles"]);
             $data["auditorias"] = utf8_encode("<b>Creado:</b> " . $vista["ca_usucreado"] . " - " . $vista["ca_fchcreado"] . "&nbsp;&nbsp;&nbsp;" . "<b>Actualizado:</b> " . $vista["ca_usuactualizado"] . " - " . $vista["ca_fchactualizado"] . "&nbsp;&nbsp;&nbsp;" . "<b>Financiero:</b> " . $vista["ca_usufinanciero"] . " - " . $vista["ca_fchfinanciero"]);
 
             $data["identificacion"] = utf8_encode($cliente->getIdsTipoIdentificacion()->getCaNombre() . ": " . $cliente->getCaIdalterno() . " - " . $cliente->getCaDv());
@@ -401,18 +418,31 @@ class crmActions extends sfActions {
             $data["cod_ciiu_dos"] = $cliente->getIdsCliente()->getCaCiiuDos();
             $data["cod_ciiu_trs"] = $cliente->getIdsCliente()->getCaCiiuTrs();
             $data["cod_ciiu_ctr"] = $cliente->getIdsCliente()->getCaCiiuCtr();
-            $data["coltrans_fecha"] = substr($vista["ca_coltrans_fch"], 0, -3);
-            $data["coltrans_estado"] = $vista["ca_coltrans_std"];
-            $data["colmas_fecha"] = substr($vista["ca_colmas_fch"], 0, -3);
-            $data["colmas_estado"] = $vista["ca_colmas_std"];
-            $data["colotm_fecha"] = substr($vista["ca_colotm_fch"], 0, -3);
-            $data["colotm_estado"] = $vista["ca_colotm_std"];
-            $data["coldepositos_fecha"] = substr($vista["ca_coldepositos_fch"], 0, -3);
-            $data["coldepositos_estado"] = $vista["ca_coldepositos_std"];
-            $data["coltrans"] = utf8_encode($coltrans);
-            $data["colmas"] = utf8_encode($colmas);
-            $data["colotm"] = utf8_encode($colotm);
-            $data["coldepositos"] = utf8_encode($coldepositos);
+            
+            $situacion = array();
+            $situacion[] = array("type"=>"displayfield", "value"=>"Empresa");
+            $situacion[] = array("type"=>"displayfield", "value"=>"Estado");
+            $situacion[] = array("type"=>"displayfield", "value"=>"Fecha");
+            $situacion[] = array("type"=>"displayfield", "value"=>"Docs.0170");
+            $situacion[] = array("type"=>"displayfield", "value"=>"Cupo Cred.");
+            $situacion[] = array("type"=>"displayfield", "value"=>utf8_encode("Días Cred."));
+//            $situacion[] = array("type"=>"displayfield", "value"=>"Estado SAP");
+            
+            foreach ($empresas as $empresa) {
+                $dominio = explode(".", $empresa->getCaUrl())[1];
+                $circular = $dominio."_0170";
+                $situacion[] = array("type"=>"displayfield", "value"=>ucfirst($dominio));
+                $situacion[] = array("type"=>"displayfield", "value"=>$vista["ca_".$dominio."_std"]);
+                $situacion[] = array("type"=>"displayfield", "value"=>substr($vista["ca_".$dominio."_fch"], 0, -3));
+                $situacion[] = array("type"=>"displayfield", "value"=>($$circular));
+                $situacion[] = array("type"=>"displayfield", "value"=> number_format ( $beneficios[$dominio]["cupo"]), 0);
+                $situacion[] = array("type"=>"displayfield", "value"=>$beneficios[$dominio]["dias"]);
+//                $situacion[] = array("type"=>"displayfield", "value"=>(($estadoSap[$dominio])?($estadoSap[$dominio]):"Sin"));
+            }
+            
+            $data["situacion"] = $situacion;
+            $data["situa_col"] = 6;
+            
             $data["actividad_economica"] = utf8_encode($vista["ca_actividad"]);
             $data["preferencias"] = utf8_encode($vista["ca_preferencias"]);
         }
@@ -1234,7 +1264,13 @@ class crmActions extends sfActions {
                     ->addWhere('i.ca_id = ?', $idCliente)
                     ->fetchOne();
         } else {
-            $ids = new Ids();
+            $ids = Doctrine::getTable("Ids")
+                    ->createQuery("i")
+                    ->addWhere('i.ca_idalterno = ?', $request->getParameter("idalterno_id"))
+                    ->fetchOne();
+            if (!$ids) {
+                $ids = new Ids();
+            }
             $cliente = new IdsCliente();
             $sucursal = new IdsSucursal();
             $cliente->setCaIdgrupo($request->getParameter("idalterno_id"));
@@ -1370,6 +1406,7 @@ class crmActions extends sfActions {
     public function executeValidarNITExistente(sfWebRequest $request) {
         $ids = Doctrine::getTable("Ids")
                 ->createQuery("i")
+                ->innerJoin("i.IdsCliente c")
                 ->addWhere('i.ca_idalterno = ?', $request->getParameter("idalterno"))
                 ->fetchOne();
 

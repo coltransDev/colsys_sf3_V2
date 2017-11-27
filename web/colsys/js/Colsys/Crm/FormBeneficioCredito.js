@@ -88,7 +88,7 @@ Ext.define('Colsys.Crm.FormBeneficioCredito', {
                         columnWidth: 1
                     }, {
                         xtype: 'numberfield',
-                        fieldLabel: 'D&iacute;s de Cr&eacute;dito',
+                        fieldLabel: 'D&iacute;as de Cr&eacute;dito',
                         name: 'dias',
                         id: "dias",
                         columnWidth: 0.5,
