@@ -17,7 +17,7 @@ Ext.define('Colsys.Crm.FormMaster', {
         render: function (me, eOpts) {
             this.add([{
                     xtype: 'fieldset',
-                    title: 'Datos Basicos [Id: ' + this.idcliente + ']',
+                    title: 'Datos Basicos [Id: '+this.idcliente+']',
                     defaults: {
                         layout: {
                             type: 'hbox',
@@ -347,68 +347,165 @@ Ext.define('Colsys.Crm.FormMaster', {
                         }
                     ]
                 }, {
+                    xtype: 'fieldset',
+                    title: 'Preferencias',
+                    columnWidth: 0.8,
+                    style: 'background: #F2F2F2;',
+                    items: [
+                        {
+                            xtype: 'fieldcontainer',
+                            msgTarget: 'under',
+                            defaults: {
+                                hideLabel: true,
+                                autoHeight: true,
+                                readOnly: true
+                            },
+                            items: [
+                                {
+                                    xtype: 'displayfield',
+                                    cls: 'x-display-field',
+                                    name: 'preferencias',
+                                    style: 'height: 100px;',
+                                    id: "preferencias" + this.idcliente
+                                }
+                            ]
+                        }
+                    ]
+                }, {
                     xtype: 'fieldcontainer',
                     msgTarget: 'under',
-                    layout: 'column',
+                    layout: 'hbox',
                     defaults: {
                         hideLabel: true,
-                        readOnly: true
+                        readOnly: true,
+                        title: '',
+                        style: 'background: #F2F2F2;',
+                        height: 45
                     },
                     items: [{
                             xtype: 'fieldset',
-                            title: 'Preferencias',
-                            style: 'background: #F2F2F2;',
-                            columnWidth: 0.5,
-                            height: 162,
+                            id: 'fieldset_coltrans' + this.idcliente,
                             items: [{
                                     xtype: 'fieldcontainer',
                                     msgTarget: 'under',
                                     defaults: {
                                         hideLabel: true,
-                                        autoHeight: true,
                                         readOnly: true
                                     },
                                     items: [{
                                             xtype: 'displayfield',
                                             cls: 'x-display-field',
-                                            name: 'preferencias',
-                                            style: 'height: 100px;',
-                                            id: "preferencias" + this.idcliente
+                                            name: 'coltrans_fecha',
+                                            id: "coltrans_fecha" + this.idcliente
                                         }
                                     ]
                                 }
                             ]
                         }, {
                             xtype: 'fieldset',
-                            id: "fieldset_situacion" + this.idcliente,
-                            style: 'background: #F2F2F2;',
-                            columnWidth: 0.5,
-                            items: {
-                                xtype: 'panel',
-                                layout: 'column',
-                                id: "situacion" + this.idcliente,
-                                buildForm: function (fields, numCols) {
-                                    style = true;
-                                    me = this;
-                                    colW = 1/numCols;
-                                    
-                                    Ext.Array.forEach(fields, function (field) {
-                                        i++;
-                                        var formField = {
-                                            xtype: field.type,
-                                            cls: (style)?'x-status-line-a':'x-status-line-b',
-                                            label: field.name,
-                                            name: field.id,
-                                            value: field.value,
-                                            columnWidth: colW
-                                        };
-                                        if ((i % numCols) == 0) {
-                                            style = !style;
+                            id: 'fieldset_colmas' + this.idcliente,
+                            items: [{
+                                    xtype: 'fieldcontainer',
+                                    msgTarget: 'under',
+                                    defaults: {
+                                        hideLabel: true,
+                                        readOnly: true
+                                    },
+                                    items: [{
+                                            xtype: 'displayfield',
+                                            cls: 'x-display-field',
+                                            name: 'colmas_fecha',
+                                            id: "colmas_fecha" + this.idcliente
                                         }
-                                        me.add(formField);
-                                    });
+                                    ]
                                 }
-                            }
+                            ]
+                        }, {
+                            xtype: 'fieldset',
+                            id: 'fieldset_colotm' + this.idcliente,
+                            items: [{
+                                    xtype: 'fieldcontainer',
+                                    msgTarget: 'under',
+                                    defaults: {
+                                        hideLabel: true,
+                                        readOnly: true
+                                    },
+                                    items: [{
+                                            xtype: 'displayfield',
+                                            cls: 'x-display-field',
+                                            name: 'colotm_fecha',
+                                            id: "colotm_fecha" + this.idcliente
+                                        }
+                                    ]
+                                }
+                            ]
+                        }, {
+                            xtype: 'fieldset',
+                            id: 'fieldset_coldepositos' + this.idcliente,
+                            items: [{
+                                    xtype: 'fieldcontainer',
+                                    msgTarget: 'under',
+                                    defaults: {
+                                        hideLabel: true,
+                                        readOnly: true
+                                    },
+                                    items: [{
+                                            xtype: 'displayfield',
+                                            cls: 'x-display-field',
+                                            name: 'coldepositos_fecha',
+                                            id: "coldepositos_fecha" + this.idcliente
+                                        }
+                                    ]
+                                }
+                            ]
+                        }, {
+                            xtype: 'fieldset',
+                            id: 'fieldset_circular_0170' + this.idcliente,
+                            flex: 1,
+                            items: [{
+                                    xtype: 'fieldcontainer',
+                                    msgTarget: 'under',
+                                    layout: 'hbox',
+                                    defaults: {
+                                        hideLabel: true,
+                                        readOnly: true
+                                    },
+                                    items: [
+                                        {xtype: 'displayfield', value: 'Coltrans: ', id: "labelColtrans" + this.idcliente, fieldStyle: 'font-weight:bold;'},
+                                        {
+                                            xtype: 'displayfield',
+                                            cls: 'x-display-field',
+                                            name: 'coltrans',
+                                            flex: 1,
+                                            id: "coltrans" + this.idcliente
+                                        },
+                                        {xtype: 'displayfield', value: 'Colmas: ', id: "labelColmas" + this.idcliente, fieldStyle: 'font-weight:bold;'},
+                                        {
+                                            xtype: 'displayfield',
+                                            cls: 'x-display-field',
+                                            name: 'colmas',
+                                            flex: 1,
+                                            id: "colmas" + this.idcliente
+                                        },
+                                        {xtype: 'displayfield', value: 'ColOTM: ', id: "labelColOTM" + this.idcliente, fieldStyle: 'font-weight:bold;'},
+                                        {
+                                            xtype: 'displayfield',
+                                            cls: 'x-display-field',
+                                            name: 'colotm',
+                                            flex: 1,
+                                            id: "colotm" + this.idcliente
+                                        },
+                                        {xtype: 'displayfield', value: 'ColDep&oacute;sitos: ', id: "labelColdepositos" + this.idcliente, fieldStyle: 'font-weight:bold;'},
+                                        {
+                                            xtype: 'displayfield',
+                                            cls: 'x-display-field',
+                                            name: 'coldepositos',
+                                            flex: 1,
+                                            id: "coldepositos" + this.idcliente
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ]
                 }, {
@@ -1050,12 +1147,12 @@ Ext.define('Colsys.Crm.FormMaster', {
                 },
                 success: function (response, options) {
                     res = Ext.JSON.decode(options.response.responseText);
+                    Ext.getCmp('fieldset_coltrans' + idcliente).setTitle('<b>Coltrans:</b> ' + res.data.coltrans_estado);
+                    Ext.getCmp('fieldset_colmas' + idcliente).setTitle('<b>Colmas:</b> ' + res.data.colmas_estado);
+                    Ext.getCmp('fieldset_colotm' + idcliente).setTitle('<b>Colotm:</b> ' + res.data.colotm_estado);
+                    Ext.getCmp('fieldset_coldepositos' + idcliente).setTitle('<b>Coldepositos:</b> ' + res.data.coldepositos_estado);
+                    Ext.getCmp('fieldset_circular_0170' + idcliente).setTitle('<b>Circular 0170:</b> ' + res.data.circular + ' - <b>Estado:</b> ' + res.data.estado_circular);
                     Ext.getCmp('form-master-' + idcliente).setTitle(res.data.identificacion);
-                    Ext.getCmp('fieldset_situacion' + idcliente).setTitle('<b>Circular 0170:</b> ' + res.data.circular + ' - <b>Estado:</b> ' + res.data.estado_circular);
-                    
-                    formSituacion = Ext.getCmp('situacion' + idcliente);
-                    formSituacion.buildForm(res.data.situacion, res.data.situa_col);
-                    
                 }
             });
         }
