@@ -318,9 +318,7 @@ class crmActions extends sfActions {
             ->createQuery("e")
             ->select("e.ca_url")
             ->whereIn("e.ca_idempresa", array(1, 2, 8, 11))
-//            ->addWhere("e.ca_idsap is not null")
-//            ->orderBy("e.ca_coddian, e.ca_idsap")
-            ->orderBy("e.ca_coddian")
+            ->orderBy("e.ca_coddian, e.ca_idsap")
             ->execute();
 
         $idsCredito = Doctrine::getTable("IdsCredito")
@@ -335,17 +333,17 @@ class crmActions extends sfActions {
             $beneficios[$dominio] = array("cupo" => $credito->getCaCupo(), "dias" => $credito->getCaDias());
         }
 
-//        $idsEstadoSap = Doctrine::getTable("IdsEstadoSap")
-//            ->createQuery("i")
-//            ->addWhere('i.ca_id = ?', $idCliente)
-//            ->addWhere('i.ca_tipo = ?', "C")
-//            ->addOrderBy("i.ca_idempresa")
-//            ->execute();
-//        $estadoSap = array();
-//        foreach ($idsEstadoSap as $estado) {
-//            $dominio = explode(".", $estado->getEmpresa()->getCaUrl())[1];
-//            $estadoSap[$dominio] = ($estado->getCaActivo()?"Activo":"Inactivo");
-//        }
+        $idsEstadoSap = Doctrine::getTable("IdsEstadoSap")
+            ->createQuery("i")
+            ->addWhere('i.ca_id = ?', $idCliente)
+            ->addWhere('i.ca_tipo = ?', "C")
+            ->addOrderBy("i.ca_idempresa")
+            ->execute();
+        $estadoSap = array();
+        foreach ($idsEstadoSap as $estado) {
+            $dominio = explode(".", $estado->getEmpresa()->getCaUrl())[1];
+            $estadoSap[$dominio] = ($estado->getCaActivo()?"Activo":"Inactivo");
+        }
 
         $sql = "select ca_certificacion, ca_certificacion_otro, ca_implementacion_sistema, ca_implementacion_sistema_detalles from encuestas.tb_encuesta_visita ev "
                 . "inner join public.tb_concliente cc on cc.ca_idcontacto = ev.ca_idcontacto "
@@ -426,7 +424,7 @@ class crmActions extends sfActions {
             $situacion[] = array("type"=>"displayfield", "value"=>"Docs.0170");
             $situacion[] = array("type"=>"displayfield", "value"=>"Cupo Cred.");
             $situacion[] = array("type"=>"displayfield", "value"=>utf8_encode("Días Cred."));
-//            $situacion[] = array("type"=>"displayfield", "value"=>"Estado SAP");
+            $situacion[] = array("type"=>"displayfield", "value"=>"Estado SAP");
             
             foreach ($empresas as $empresa) {
                 $dominio = explode(".", $empresa->getCaUrl())[1];
@@ -437,11 +435,12 @@ class crmActions extends sfActions {
                 $situacion[] = array("type"=>"displayfield", "value"=>($$circular));
                 $situacion[] = array("type"=>"displayfield", "value"=> number_format ( $beneficios[$dominio]["cupo"]), 0);
                 $situacion[] = array("type"=>"displayfield", "value"=>$beneficios[$dominio]["dias"]);
-//                $situacion[] = array("type"=>"displayfield", "value"=>(($estadoSap[$dominio])?($estadoSap[$dominio]):"Sin"));
+                $situacion[] = array("type"=>"displayfield", "value"=>(($estadoSap[$dominio])?($estadoSap[$dominio]):"Sin"));
             }
             
             $data["situacion"] = $situacion;
-            $data["situa_col"] = 6;
+            $data["situa_col"] = 7;
+            $data["estadoSap"] = (count($estadoSap) != 0)?true:false;
             
             $data["actividad_economica"] = utf8_encode($vista["ca_actividad"]);
             $data["preferencias"] = utf8_encode($vista["ca_preferencias"]);
