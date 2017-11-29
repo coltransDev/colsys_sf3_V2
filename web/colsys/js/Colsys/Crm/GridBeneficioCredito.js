@@ -20,6 +20,7 @@ Ext.define('Colsys.Crm.GridBeneficioCredito', {
             this.reconfigure(
                     store = Ext.create('Ext.data.Store', {
                         fields: [
+                            {name: 'idcliente', mapping: 'idcliente'},
                             {name: 'idempresa', mapping: 'idempresa'},
                             {name: 'empresa', mapping: 'empresa'},
                             {name: 'cupo', mapping: 'cupo'},
@@ -83,6 +84,7 @@ Ext.define('Colsys.Crm.GridBeneficioCredito', {
                                                 items: [{
                                                         xtype: 'Colsys.Crm.FormBeneficioCredito',
                                                         id: 'winFormEdit',
+                                                        idcliente: rec.data.idcliente,
                                                         idcredito: rec.data.idcredito
                                                     }],
                                                 listeners: {

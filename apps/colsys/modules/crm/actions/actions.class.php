@@ -1585,6 +1585,26 @@ class crmActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
+    public function executeBeneficiosEmpresas(sfWebRequest $request) {
+        $idCliente = $request->getParameter("idcliente");
+        $estados = Doctrine::getTable("IdsEstadoSap")
+                    ->createQuery("i")
+                    ->addWhere('i.ca_tipo = ?', 'C')
+                    ->addWhere('i.ca_id = ?', $idCliente)
+                    ->addWhere('i.ca_activo = ?', true)
+                    ->execute();
+
+        $data = array();
+        foreach( $estados as $estado ){
+            if ($estado->getEmpresa()->getCaIdsap()) {
+                $data[]=array("id"=>$estado->getCaIdempresa(),"name"=>utf8_encode($estado->getEmpresa()->getCaNombre()));
+            }
+            
+        }
+        $this->responseArray = $data;
+        $this->setTemplate("responseTemplate");
+    }
+
     public function executeDatosBeneficioCredito(sfWebRequest $request) {
         $idCliente = $request->getParameter("idcliente");
         try {
@@ -1598,6 +1618,7 @@ class crmActions extends sfActions {
 
             foreach ($beneficiosCredito as $beneficioCredito) {
                 $data[] = array(
+                    "idcliente" => utf8_encode($beneficioCredito->getCaId()),
                     "idcredito" => utf8_encode($beneficioCredito->getCaIdcredito()),
                     "idempresa" => utf8_encode($beneficioCredito->getCaIdempresa()),
                     "empresa" => utf8_encode($beneficioCredito->getEmpresa()->getCaNombre()),
