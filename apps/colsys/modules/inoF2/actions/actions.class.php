@@ -2989,7 +2989,7 @@ class inoF2Actions extends sfActions {
                 $contentHTML .= "</body></html>";
 
 
-                $ciudad = ($inoMaster->getCaDestino() == "STA-0005") ? "BAQ-0005" : $inoMaster->getCaDestino();
+                $ciudad = ($inoMaster->getCaDestino() == "STA-0005") ? "Barranquilla" : $inoMaster->getDestino()->getCaCiudad();
                 $con = Doctrine_Manager::getInstance()->connection();
                 $sql = "select up.ca_login, us.ca_email, us.ca_sucursal from control.tb_usuarios_perfil up";
                 $sql .= "  inner join vi_usuarios us on us.ca_login = up.ca_login";
