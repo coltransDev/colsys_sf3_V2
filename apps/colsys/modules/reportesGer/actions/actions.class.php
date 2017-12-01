@@ -2964,7 +2964,123 @@ class reportesGerActions extends sfActions {
         $con = Doctrine_Manager::getInstance()->connection();
         $st = $con->execute($sql);
         $this->cargas = $st->fetchAll();
-}
-}
+    }
+    
+    /**
+     * Módulo de entrada al Informe de Referencias Procesadas
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeReporteReferenciasProcesadasExt5(sfWebRequest $request) {
+        
+    }
 
+    public function executeReporteReferenciasProcesadasListExt5(sfWebRequest $request) {
+        $impoexpo = $request->getParameter("impoexpo");
+        $transporte = $request->getParameter("transporte");
+        
+        $this->anios = $request->getParameter("anio");
+        $this->meses = $request->getParameter("mes");
+        $this->sufijos = $request->getParameter("sufijo");
+        
+        $this->traficos = $request->getParameter("trafico");
+        $this->sucursales = $request->getParameter("sucursal");
+        $this->destinos = $request->getParameter("destino");
+        
+        /* Sub-Consulta de Referencias*/
+        $anios = array();
+        foreach (explode(",", $this->anios) as $anio) {
+            $anios[] = "'".substr($anio, 2, 2)."'";
+        }
+        $sql = "select ca_referencia from ino.tb_master where "
+                . "substr(ca_referencia, 16, 2) in (" . implode(",", $anios) . ") ";
+        
+        if ($this->meses != "%") {
+            $meses = array();
+            foreach (explode(",", $this->meses) as $mes) {
+                $meses[] = "'".$mes."'";
+            }
+            $sql.= "and substr(ca_referencia, 8, 2) in (" . implode(",", $meses) . ") ";
+        }
+
+        if ($this->sufijos != "Sufijos (Todos)") {
+            $sufijos = array();
+            foreach (explode(",", $this->sufijos) as $sufijo) {
+                $sufijos[] = "'".substr($sufijo+100, 1, 2)."'";
+            }
+            $sql.= "and substr(ca_referencia, 4, 2) in (" . implode(",", $sufijos) . ") ";
+        }
+        
+        $q = Doctrine_Manager::getInstance()->connection();
+        $stmt = $q->execute($sql);
+        $rs = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        
+        $q = Doctrine::getTable("InoMaster")
+            ->createQuery("m")
+            ->addWhere("m.ca_impoexpo = ?", utf8_decode($impoexpo))
+            ->addWhere("m.ca_transporte = ?", utf8_decode($transporte))
+            ->whereIn ("m.ca_referencia", $rs);
+        
+        if ($this->traficos != '%') {
+            $q->innerJoin("m.Origen o WITH o.ca_idciudad = m.ca_origen");
+            $q->whereIn("o.ca_idtrafico", implode(",", $this->traficos));
+        }
+        
+        if ($this->destinos != '%') {
+            $q->whereIn("m.ca_destino", implode(",", $this->destinos));
+        }
+        $inoMasters = $q->execute();
+        
+        $data = array();
+        foreach ($inoMasters as $inoMaster) {
+            $row = array();
+            $row["idmaster"] = $inoMaster->getCaIdmaster();
+            $row["referencia"] = $inoMaster->getCaReferencia();
+            $row["std_cerrado"] = ($inoMaster->getCerrado())?"Cerrado":"Abierto";
+            $row["fchllegada"] = $inoMaster->getCaFchllegada();
+            $row["doctransporte"] = utf8_encode($inoMaster->getCaMaster());
+            
+            $row["radicacionMuisca"] = "";
+            if ($inoMaster->getInoMasterSea()) {
+                $row["fchmuisca"] = $inoMaster->getInoMasterSea()->getCaFchmuisca();
+                $row["usumuisca"] = $inoMaster->getInoMasterSea()->getCaUsumuisca();
+            }
+            
+            $row["observaciones"] = utf8_encode($inoMaster->getCaObservaciones());
+            
+            $startArry = date_parse(date('Y-m-d H:i:s'));
+            $endArry = date_parse($inoMaster->getCaFchllegada()." 00:00:00");
+            
+            $tstamp_actual = mktime($startArry[hour], $startArry[minute], $startArry[second], $startArry[month], $startArry[day], $startArry[year]);
+            $tstamp_fcharribo = mktime($endArry[hour], $endArry[minute], $endArry[second], $endArry[month], $endArry[day], $endArry[year]);
+            
+            $master = json_decode($inoMaster->getInoMasterSea()->getCaDatosmuisca());
+            $festivos = TimeUtils::getFestivos(date("Y"));
+            if ($tstamp_actual > $tstamp_fcharribo and !$master->iddocactual){
+                $row["color"] = "rowVencido";
+            } else {
+                $dif_mem = workDiff($festivos, date('Y-m-d'), $inoMaster->getCaFchllegada());
+                if ($dif_mem > 2){
+                    $row["color"] = "rowVerde";
+                } else {
+                    $dif_mem = calc_dif($festivos, $tstamp_actual, $tstamp_fcharribo);
+                    $dif_hou = date_parse($dif_mem);
+                    
+                    if ($dif_hou[hour] > 8 and !$master->iddocactual){
+                        $row["color"] = "rowAmarillo";
+                    }else if ($dif_hou[hour] <= 8 and !$master->iddocactual){
+                        $row["color"] = "rowRojo";
+                    }else{
+                        $row["color"] = "rowOk";
+                    }
+                }
+	   }
+           $data[] = $row;
+        }
+
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
+
+        $this->setTemplate("responseTemplate");
+    }
+}
 ?>

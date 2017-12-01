@@ -342,5 +342,72 @@ class reportesGerComponents extends sfComponents
         $this->columnas = array("fields" => $columnas);
         
     }    
+    
+    public function executeFormReporteReferenciasProcesadas(sfWebRequest $request){
+        $this->annos = array();
+        for ($i = (date("Y")); $i >= (date("Y") - 5); $i--) {
+            $this->annos[] = $i;
+        }
+
+        // "%" => "Todos los Meses", 
+        $this->meses = array();
+        $this->meses[] = array("idmes" => "%", "nommes" => "Meses (Todos)");
+        $this->meses[] = array("idmes" => "01", "nommes" => "Enero");
+        $this->meses[] = array("idmes" => "02", "nommes" => "Febrero");
+        $this->meses[] = array("idmes" => "03", "nommes" => "Marzo");
+        $this->meses[] = array("idmes" => "04", "nommes" => "Abril");
+        $this->meses[] = array("idmes" => "05", "nommes" => "Mayo");
+        $this->meses[] = array("idmes" => "06", "nommes" => "Junio");
+        $this->meses[] = array("idmes" => "07", "nommes" => "Julio");
+        $this->meses[] = array("idmes" => "08", "nommes" => "Agosto");
+        $this->meses[] = array("idmes" => "09", "nommes" => "Septiembre");
+        $this->meses[] = array("idmes" => "10", "nommes" => "Octubre");
+        $this->meses[] = array("idmes" => "11", "nommes" => "Noviembre");
+        $this->meses[] = array("idmes" => "12", "nommes" => "Diciembre");
+        
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select distinct ca_identificacion from tb_parametros where ca_casouso = 'CU010' and ca_identificacion > 0";
+        $rs = $con->execute($sql);
+        $sufijos_rs = $rs->fetchAll();
+        $this->sufijos = array();
+        $this->sufijos[] = "Sufijos (Todos)";
+        foreach ($sufijos_rs as $sufijo) {
+            $this->sufijos[] = utf8_encode($sufijo["ca_identificacion"]);
+        }
+
+        $traficos_rs = Doctrine::getTable("Trafico")
+           ->createQuery("t")
+           ->addWhere("t.ca_idtrafico != '99-999'")
+           ->addOrderBy("t.ca_nombre")
+           ->execute();
+        $this->traficos = array();
+        $this->traficos[] = array("idTrafico" => "%", "trafico" => "Traficos (Todos)");
+        foreach ($traficos_rs as $trafico) {
+             $this->traficos[] = array("idTrafico" => $trafico->getCaIdtrafico(), "trafico" => utf8_encode($trafico->getCaNombre()));
+        }
+        
+        $ciudades_rs = Doctrine::getTable("Ciudad")
+           ->createQuery("c")
+           ->addWhere("c.ca_idtrafico = 'CO-057'")
+           ->WhereIn("c.ca_puerto", array("Marítimo", "Ambos"))
+           ->addOrderBy("c.ca_ciudad")
+           ->execute();
+        $this->ciudades = array();
+        $this->ciudades[] = array("idCiudad" => "%", "ciudad" => "Destinos (Todos)");
+        foreach ($ciudades_rs as $ciudad) {
+             $this->ciudades[] = array("idCiudad" => $ciudad->getCaIdciudad(), "ciudad" => utf8_encode($ciudad->getCaCiudad()));
+        }
+
+        $sql = "select DISTINCT ca_nombre as ca_sucursal from control.tb_sucursales where ca_idempresa = 2 and ca_idsucursal != '999' order by ca_sucursal";
+        $rs = $con->execute($sql);
+        $sucursales_rs = $rs->fetchAll();
+        $this->sucursales = array();
+        $this->sucursales[] = "Sucursales (Todas)";
+        foreach ($sucursales_rs as $sucursal) {
+            $this->sucursales[] = utf8_encode($sucursal["ca_sucursal"]);
+        }
+        
+    }    
+    
 }
 ?>
