@@ -271,11 +271,14 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                 form.submit({
                     url: '/crm/datosBusqueda',
                     success: function (form, action) {
-                        var res = action.result.root;
-                        tipofactura = action.result.tipofacturacion;
-                        Ext.getCmp("gind1").getStore().loadData(res);
+                        if (action.result.total == 0){
+                            Ext.Msg.alert('Consulta sin Resultados', 'No se encontraron registros coincidentes!');
+                        } else {
+                            var res = action.result.root;
+                            Ext.getCmp("gind1").getStore().loadData(res);
+                            // myMask.hide();
+                        }
                         Ext.getCmp("gind1").setLoading(false);
-                        //     myMask.hide();
                     },
                     failure: function (form, action) {
                         Ext.Msg.alert('Failed', action.result.msg);

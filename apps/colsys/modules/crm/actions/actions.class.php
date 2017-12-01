@@ -626,8 +626,11 @@ class crmActions extends sfActions {
 
         $q = Doctrine::getTable("Ids")
                 ->createQuery("i")
-                ->innerJoin("i.IdsCliente id")
-                ->whereIn('i.ca_id', $ids);
+                ->innerJoin("i.IdsCliente id");
+        
+        if (count($ids) > 0) {
+            $q->whereIn('i.ca_id', $ids);
+        }
 
         if ($request->getParameter("estado")) {
             switch ($request->getParameter("idEmpresa")) {
@@ -673,11 +676,14 @@ class crmActions extends sfActions {
         if ($request->getParameter("fchfinal")) {
             $q->addWhere("ca_fchcreado <= ?", $request->getParameter("fchfinal"));
         }
-        $clientes = $q->execute();
-
+        
+        $clientes = array();
+        if (count($q->getDqlPart("where")) > 0) {
+            $clientes = $q->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+        }
         foreach ($clientes as $cliente) {
-            $data[] = array("idcliente" => utf8_encode("" . $cliente->getCaId()),
-                "nombre" => utf8_encode($cliente->getCaNombre()));
+            $data[] = array("idcliente" => utf8_encode("" . $cliente['ca_id']),
+                "nombre" => utf8_encode($cliente['ca_nombre']));
         }
 
         $this->responseArray = array("success" => true, "root" => $data, "total" => count($data), "debug" => $debug, "query" => $query);
