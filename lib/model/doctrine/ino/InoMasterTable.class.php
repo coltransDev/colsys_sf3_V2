@@ -2,13 +2,10 @@
 
 class InoMasterTable extends Doctrine_Table
 {
-    public static function getNumReferencia( $impoexpo, $transporte, $modalidad, $origen, $destino, $mes, $ano  ){
+    public static function getNumReferencia( $impoexpo, $transporte, $modalidad, $origen, $destino, $mes, $ano,$idempresa="2"  ){
 
-        
-        $referencia = array();
-        
-        $empresa=sfConfig::get('app_branding_name');
-        
+        $referencia = array();        
+        $empresa=sfConfig::get('app_branding_name');        
         
         if($empresa!='TPLogistics')
         {
@@ -40,8 +37,11 @@ class InoMasterTable extends Doctrine_Table
                         $referencia[0] .= '30';
                     }
 
+                    //echo $origen;
                     $p_origen= Doctrine::getTable("Ciudad")->find( $origen );
                     $parametros = ParametroTable::retrieveByCaso("CU010", $p_origen->getTrafico()->getCaIdtrafico());
+                    //$parametros = ParametroTable::retrieveByCaso("CU010", $origen);
+                    
                     
 
                     if( count( $parametros)>0 ){
@@ -95,7 +95,7 @@ class InoMasterTable extends Doctrine_Table
                 {
                     $referencia[1]=$c_transporte[0]->getCaIdentificacion();
                 }
-            }else if( $impoexpo == Constantes::OTMDTA ){
+            }else if( $impoexpo == Constantes::OTMDTA && $idempresa=="8" ){
                 $referencia[0] = '7';
 
                 $parametros = ParametroTable::retrieveByCaso("CU010", $origen);
@@ -117,6 +117,45 @@ class InoMasterTable extends Doctrine_Table
                 }else{
                     $referencia[1] = '00';
                 }
+            }
+            else if( $impoexpo == Constantes::OTMDTA && $idempresa=="2" ){
+                $referencia[0] = '490';                
+
+                /*if( $modalidad == "FCL" ){
+                    $referencia[1] = '40';
+                }elseif( $modalidad == "LCL" ){
+                    $referencia[1] = '50';
+                }elseif( $modalidad == "COLOADING" ){
+                    $referencia[1] = '60';                
+                }elseif( $modalidad == "DIRECTO" ){
+                    $referencia[1] = '80';
+                }else{
+                    $referencia[1] = '00';
+                }*/
+                $referencia[0]= substr($referencia[0], 0,-1);
+                $parametros = ParametroTable::retrieveByCaso("CU010", $origen);
+                
+                if( count( $parametros)>0 ){
+                    $parametro = $parametros[0];
+                    //echo $parametro->getCaValor2();
+                    $referencia[0] .= substr($parametro->getCaValor2(),0,1);
+                }else{
+                    $referencia[0] .= '0';
+                }
+                
+                if( $modalidad == "FCL" ){
+                    $referencia[1] = '40';
+                }elseif( $modalidad == "LCL" ){
+                    $referencia[1] = '50';
+                }elseif( $modalidad == "COLOADING" ){
+                    $referencia[1] = '60';                
+                }elseif( $modalidad == "DIRECTO" ){
+                    $referencia[1] = '80';
+                }else{
+                    $referencia[1] = '00';
+                }
+                
+                
             }
             else  if( $impoexpo == Constantes::INTERNO ){
                 $referencia[0] = '9';

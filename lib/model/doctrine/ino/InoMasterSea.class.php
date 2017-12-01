@@ -21,7 +21,7 @@ class InoMasterSea extends BaseInoMasterSea {
 
             $conn->beginTransaction();
             if ($this->getCaDatosmuisca()) {
-                $master = json_decode(utf8_encode($this->getCaDatosmuisca()));
+                $master = json_decode($this->getCaDatosmuisca());
 
                 $dianReservado = Doctrine::getTable("DianReservado")->find($master->iddocactual);
 
@@ -50,7 +50,8 @@ class InoMasterSea extends BaseInoMasterSea {
 
             // "Create" the document.
             $xml = new DOMDocument("1.0", "ISO-8859-1");
-
+            // we want a nice output
+            // $xml->formatOutput = true;
             // Se Crear el elemento mas
             $xml_mas = $xml->createElement("mas");
             $xml_mas->setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "xsi:noNamespaceSchemaLocation", "../xsd/1166.xsd");
@@ -120,10 +121,7 @@ class InoMasterSea extends BaseInoMasterSea {
             }
 
             // =========================== Proveedor de Transporte ===========================
-            $ids = Doctrine::getTable("Ids")
-                    ->createQuery("i")
-                    ->addWhere("i.ca_idalterno = ?", $master->idtransportista)
-                    ->fetchOne();
+            $ids = Doctrine::getTable("Ids")->findOneBy("ca_idalterno", $master->idtransportista);
 
             $xml_pal66->setAttribute("doc1", 31);
             $xml_pal66->setAttribute("nid1", $ids->getCaIdalterno());
@@ -199,7 +197,7 @@ class InoMasterSea extends BaseInoMasterSea {
                 }
 
                 $xml_hijo->setAttribute("hdca", $hijo->dispocarga);
-                $destino = (!$inoHouseSea->getCaContinuacion()) ? $inoMaster->getCaDestino() : $inoHouseSea->getCaContinuacionDest();
+                $destino = ($inoHouseSea->getCaContinuacion() == "N/A") ? $inoMaster->getCaDestino() : $inoHouseSea->getCaContinuacionDest();
                 $destino = (strlen($hijo->iddestino) != 0) ? $hijo->iddestino : $destino;
 
                 $arribo_array = array();
@@ -214,7 +212,13 @@ class InoMasterSea extends BaseInoMasterSea {
                 if ($inoHouseSea->getCaContinuacion() != "TRANSBORDO") {
                     $xml_hijo->setAttribute("hpa", $arribo_array[2]);
                     if ($hijo->dispocarga != "21") {
-                        $xml_hijo->setAttribute("hdep", $hijo->coddeposito);
+                        if ($hijo->coddeposito) {
+                            $xml_hijo->setAttribute("hdep", $hijo->coddeposito);
+                        } else {
+                            $event = "Error - Debe definir un código de depósito en House: " . $inoHouse->getCaDoctransporte();
+                            throw new Exception($event);
+                        }
+                        
                     }
                 } else {
                     $transbordo = Doctrine::getTable("Ciudad")->find($destino);
@@ -236,7 +240,7 @@ class InoMasterSea extends BaseInoMasterSea {
 
                 // =========================== Destinatario ===========================
 
-                if ($inoHouseSea->getCaContinuacion() and ! $reporte->getBodega()->getCaIdentificacion()) {
+                if ($inoHouseSea->getCaContinuacion() and $inoHouseSea->getCaContinuacion() != 'N/A' and ! $reporte->getBodega()->getCaIdentificacion()) {
                     $event = "Error - En Identificación de la Bodega, cuando hay continuación de viaje, House: " . $inoHouse->getCaDoctransporte();
                     throw new Exception($event);
                 } else if ($inoHouseSea->getCaContinuacion() == "DTA" and $reporte->getBodega()->getCaIdentificacion()) {
@@ -311,13 +315,11 @@ class InoMasterSea extends BaseInoMasterSea {
                         $xml_hijo->setAttribute("hdv3", $idconsignatario[1]);
 
                         $arribo_array = array();
-                        $cu->MoveFirst();
-                        while (!$cu->Eof()) {
-                            if ($cu->Value('ca_identificacion') == 9 and $cu->Value('ca_valor') == $reporte->getConsignatario()->getCaIdciudad()) {
+                        foreach ($parametros as $parametro) {
+                            if ($parametro["ca_identificacion"] == 9 and $parametro["ca_valor"] == $reporte->getConsignatario()->getCaIdciudad()) {
                                 $arribo_array = explode("|", $parametro["ca_valor2"]);
                                 break;
                             }
-                            $cu->MoveNext();
                         }
                         if (strlen($arribo_array[0]) != 0) {
                             $xml_hijo->setAttribute("hde3", $arribo_array[0]);
@@ -350,19 +352,19 @@ class InoMasterSea extends BaseInoMasterSea {
                         $xml_hijo->setAttribute("hni3", $reporte->getCliente()->getIds()->getCaIdalterno());
                         $xml_hijo->setAttribute("hdv3", $reporte->getCliente()->getIds()->getCaDv());
 
-                        $arribo_array = array();
-                        foreach ($parametros as $parametro) {
-                            if ($parametro["ca_identificacion"] == 9 and $parametro["ca_valor"] == $reporte->getCliente()->getCaIdciudad()) {
-                                $arribo_array = explode("|", $parametro["ca_valor2"]);
-                                break;
-                            }
-                        }
-                        if (strlen($arribo_array[0]) != 0) {
-                            $xml_hijo->setAttribute("hde3", $arribo_array[0]);
-                        }
-                        if (strlen($arribo_array[1]) != 0) {
-                            $xml_hijo->setAttribute("hci3", $arribo_array[1]);
-                        }
+//                        $arribo_array = array();
+//                        foreach ($parametros as $parametro) {
+//                            if ($parametro["ca_identificacion"] == 9 and $parametro["ca_valor"] == $reporte->getCliente()->getCaIdciudad()) {
+//                                $arribo_array = explode("|", $parametro["ca_valor2"]);
+//                                break;
+//                            }
+//                        }
+//                        if (strlen($arribo_array[0]) != 0) {
+//                            $xml_hijo->setAttribute("hde3", $arribo_array[0]);
+//                        }
+//                        if (strlen($arribo_array[1]) != 0) {
+//                            $xml_hijo->setAttribute("hci3", $arribo_array[1]);
+//                        }
                     } else {
                         $xml_hijo->setAttribute("hdo3", 43);
                         $xml_hijo->setAttribute("hrs3", utf8_encode($reporte->getCliente()->getIds()->getCaNombre()));
@@ -438,21 +440,21 @@ class InoMasterSea extends BaseInoMasterSea {
                                 $xml_h167->setAttribute("fa67", $hijo->iddocanterior);
                             }
                             $xml_h167->setAttribute("cont", $hijo->tipocarga);
-                            $xml_h167->setAttribute("tun", 2);
-                            $xml_h167->setAttribute("idu", str_replace("-", "", $contenedor->idequipo));
+//                            $xml_h167->setAttribute("tun", 2);
+//                            $xml_h167->setAttribute("idu", str_replace("-", "", $contenedor->serial));
 
-                            $tipoContenedor = Doctrine::getTable("Concepto")->find($contenedor->idconcepto);
-                            if ($tipoContenedor) {
-                                $tam_equipo = (strpos($tipoContenedor->getCaConcepto(), 'High Cube') !== false) ? 2 : (($tipoContenedor->getCaLiminferior() == 20) ? 1 : (($tipoContenedor->getCaLiminferior() == 40) ? 3 : 4));
-                                $xml_h167->setAttribute("tam", $tam_equipo);
-                                $tip_equipo = (strpos($contenedor->concepto, 'Flat Rack') !== false) ? 2 : ((strpos($contenedor->concepto, 'Open Top') !== false) ? 3 : ((strpos($contenedor->concepto, 'Collapsible') !== false) ? 4 : ((strpos($contenedor->concepto, 'Platform') !== false) ? 5 : ((strpos($contenedor->concepto, 'Tank') !== false) ? 6 : ((strpos($contenedor->concepto, 'Reefer') !== false) ? 8 : 1)))));
-                                $xml_h167->setAttribute("teq", $tip_equipo);
-                                $xml_h167->setAttribute("npr", $contenedor->numprecinto);
-                            } else {
-                                $event = "Error - En la Definición del Tipo de Contenedor.";
-                                throw new Exception($event);
-                            }
-                            $first = false;
+//                            $tipoContenedor = Doctrine::getTable("Concepto")->find($contenedor->idconcepto);
+//                            if ($tipoContenedor) {
+//                                $tam_equipo = (strpos($tipoContenedor->getCaConcepto(), 'High Cube') !== false) ? 2 : (($tipoContenedor->getCaLiminferior() == 20) ? 1 : (($tipoContenedor->getCaLiminferior() == 40) ? 3 : 4));
+//                                $xml_h167->setAttribute("tam", $tam_equipo);
+//                                $tip_equipo = (strpos($contenedor->concepto, 'Flat Rack') !== false) ? 2 : ((strpos($contenedor->concepto, 'Open Top') !== false) ? 3 : ((strpos($contenedor->concepto, 'Collapsible') !== false) ? 4 : ((strpos($contenedor->concepto, 'Platform') !== false) ? 5 : ((strpos($contenedor->concepto, 'Tank') !== false) ? 6 : ((strpos($contenedor->concepto, 'Reefer') !== false) ? 8 : 1)))));
+//                                $xml_h167->setAttribute("teq", $tip_equipo);
+//                                $xml_h167->setAttribute("npr", $contenedor->numprecinto);
+//                            } else {
+//                                $event = "Error - En la Definición del Tipo de Contenedor.";
+//                                throw new Exception($event);
+//                            }
+//                            $first = false;
                         }
 
                         $grp++;
@@ -497,12 +499,13 @@ class InoMasterSea extends BaseInoMasterSea {
                         }
                     }
                 }
-                $xml_h167->setAttribute("vpb", $sub_ps);
-                $xml_h167->setAttribute("nbul", $sub_pz);
-                $xml_h167->setAttribute("vol1", 0);
-                $xml_h167->setAttribute("nreg", $sub_cn);
-                $xml_hijo->appendChild($xml_h167);
-
+                if (isset($first)) {
+                    $xml_h167->setAttribute("vpb", $sub_ps);
+                    $xml_h167->setAttribute("nbul", $sub_pz);
+                    $xml_h167->setAttribute("vol1", 0);
+                    $xml_h167->setAttribute("nreg", $sub_cn);
+                    $xml_hijo->appendChild($xml_h167);
+                }
                 $xml_pal66->appendChild($xml_hijo);
             }
 
@@ -538,8 +541,8 @@ class InoMasterSea extends BaseInoMasterSea {
                 foreach ($inoHouses as $inoHouse) {      // Lee todos los Houses de la Referencia
                     $reporte = $inoHouse->getReporte()->getRepUltVersion();
                     $inoHouseSea = $inoHouse->getInoHouseSea();
+                    $hijo = json_decode(utf8_encode($inoHouseSea->getCaDatosmuisca()));
                     $datos_carga = json_decode($inoHouseSea->getCaDatos());
-                    $hijo = json_decode($inoHouseSea->getCaDatosmuisca());
                     $contenedores = $datos_carga->equipos;
                     foreach ($contenedores as $contenedor) {
                         if ($equipo->getCaIdequipo() != $contenedor->idequipo) {
@@ -640,7 +643,7 @@ class InoMasterSea extends BaseInoMasterSea {
             $conn->rollBack();
             return array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
         }
-        return array("success" => true, "Ano" => $xml_Ano->nodeValue, "CodCpt" => $xml_CodCpt->nodeValue, "Formato" => $xml_Formato->nodeValue, "NumEnvio" => $xml_NumEnvio->nodeValue, "outXML" => $xml->saveXML());
+        return $xml->saveXML();
     }
 
 }

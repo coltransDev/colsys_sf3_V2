@@ -18,6 +18,9 @@ class InoMaster extends BaseInoMaster
     private $vlrCosto = null;
     private $vlrSobreventa = null;
     
+    private $emails;
+    private  $countemails;
+    
     public function getVlrFacturado(){
         if( $this->vlrFacturado===null ){
             $this->vlrFacturado = Doctrine::getTable("InoComprobante")
@@ -99,23 +102,80 @@ class InoMaster extends BaseInoMaster
         return $this->getCaFchliquidado()||$this->getCaFchcerrado()||$this->getCaFchanulado();
     }
     
-    public function existeReporteOtm(){
-        $houses = $this->getInoHouse();
-        foreach ($houses as $house) {
-            if($house->getInoHouseSea()->getCaContinuacion()){
-                return true;
-}
-        }
-        return false;
+    
+    public function getCaTipo(){
+        
     }
     
-    public function getTarea1207($datosMaster){        
-        $idTarea = $datosMaster["idtarea"];
-        if(!$idTarea){ 
-            if($this->existeReporteOtm()){
-                return true;
-            }
-        }
-        return false;
+    public function getCaEmisionbl(){
+        
     }
+    
+    public function getLiquidado(){
+        return ($this->getCaFchliquidado())?TRUE:FALSE;
+    }
+    
+    public function getCerrado(){
+        return ($this->getCaFchcerrado())?TRUE:FALSE;
+    }
+    
+    public function getAnulado(){
+        return ($this->getCaFchanulado())?TRUE:FALSE;
+    }
+    
+    
+    public function getEmails() {
+     
+        $q = Doctrine::getTable("Email")
+                        ->createQuery("e")
+                        ->addWhere("ca_tipo=? and ca_idcaso = ?", array('Antecedentes', $this->getCaIdmaster() ) )
+                        ->addOrderBy("e.ca_idemail DESC");
+          
+        $this->emails= $q->execute();        
+        $this->countemails=count($this->emails);        
+        return $this->emails;
+    }
+    
+    public function getCountEmails() {
+        if(!$this->countemails)
+        {
+            $this->countemails = Doctrine::getTable("Email")
+                        ->createQuery("e")
+                        ->select("count(*) as nreg")
+                        ->addWhere("ca_tipo=? and ca_idcaso= ?", array('Antecedentes', $$this->getCaIdmaster() ))
+                        ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                        ->execute();
+        }
+        return $this->countemails;
+    }
+
+    public function getUltEmail() {
+        if(!$this->emails)
+            $this->getEmails();
+        if($this->countemails>0)
+            $email=$this->emails[0];
+        else
+            $email=null;
+        return $email;
+    }
+    
+    static public function getUltEmailR($referencia) {
+ 
+        $email = Doctrine::getTable("Email")
+                        ->createQuery("e")
+                        ->select("ca_subject")
+                        ->addWhere("ca_tipo=? and ca_idcaso =?", array('Antecedentes', $referencia ))
+                        ->addOrderBy("e.ca_idemail DESC")                        
+                        //->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                        ->fetchOne();
+                //print_r($email);
+        return $email;
+    }
+    
+    public function getDatosMasterSea() {
+        $masterSea = $this->getInoMasterSea();
+        $datosMaster = json_decode(utf8_encode($masterSea->getCaDatos()),1);
+        return $datosMaster;
+    }
+    
 }
