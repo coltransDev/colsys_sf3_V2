@@ -59,7 +59,13 @@ Ext.define('Colsys.Ino.GridHouseRadicacion', {
                             url: '/inoF2/datosHouseRadicacion',
                             reader: {
                                 type: 'json',
-                                root: 'root'
+                                transform: {
+                                    fn: function (data) {
+                                        me.setDisabled(!data.editable);
+                                        return data.root;
+                                    },
+                                    scope: this
+                                }
                             },
                             extraParams: {
                                 idmaster: me.idmaster
