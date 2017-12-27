@@ -123,9 +123,16 @@ $nombre=$sf_data->getRaw("nombre");
         enabled: true,
         paths: {
             'Colsys': '/js/Colsys',
-            'Ext.ux': '../js/ext5/examples/ux'
+            'Ext.ux': '../js/ext5/examples/ux',
+            'Ext.ux.exporter': '/js/ext5/examples/ux/exporter'
         }
     });
+    
+    Ext.require([
+        'Ext.ux.exporter.Exporter',
+        'Ext.ux.Explorer'
+    ]);
+
 </script>
 <?php
 include_component("crm", "mainPanel");

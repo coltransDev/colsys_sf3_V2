@@ -12,8 +12,55 @@
  */
 class IdsRestrictivas extends BaseIdsRestrictivas {
 
+    public function getConsultaListas($tipoConsulta, $parametro) {
+        $server = sfConfig::get("app_sinteParams_server");
+        $username = sfConfig::get("app_sinteParams_username");
+        $password = sfConfig::get("app_sinteParams_password");
+        $percent = sfConfig::get("app_sinteParams_percent");
+
+        ProjectConfiguration::registerZend();
+
+        $client = new Zend_Http_Client();
+
+        $uri = $server . "/WS_COLTRANS/webresources/listas/consultar";
+        $client->setUri($uri);
+
+        $client->setAuth($username, $password, Zend_Http_Client::AUTH_BASIC);
+
+        $client->setParameterGet('tipo_consulta', $tipoConsulta);
+        if ($tipoConsulta == "DOCUMENTO") {
+            $client->setParameterGet('parametro', $parametro);
+        } else {
+            $client->setParameterGet('parametro', $parametro);
+            $client->setParameterGet('pcoincidencia', $percent);
+        }
+        $result = $client->request(Zend_Http_Client::GET);
+        $json_response = json_decode($result->getBody());
+
+        if ($json_response) {
+            $id_response = $json_response->id;
+            $res_response = ($json_response->respuesta) ? $json_response->respuesta : null;
+            $fch_response = $json_response->fecha;
+        } else {
+            $id_response = ($result->getMessage()) ? $result->getMessage() : null;
+            $res_response = -1; // Indicador de Error
+            $fch_response = date("Y-m-d h:i:s");
+        }
+
+        $consulta = new IdsRestrictivas();
+        $consulta->setCaId($this->getCaId());
+        $consulta->setCaTipoConsulta($tipoConsulta);
+        $consulta->setCaParametro($parametro);
+        $consulta->setCaIdrespuesta($id_response);
+        $consulta->setCaRespuesta($res_response);
+        $consulta->setCaFchconsultado($fch_response);
+        $consulta->save();
+        $consulta->enviarRespuesta();
+        return $consulta;
+    }
+
     public function enviarRespuesta($identificacion = null, $nombre_completo = null) {
-        $identificacion  = $identificacion  ? $identificacion  : $this->getIds()->getCaIdalterno();
+        $identificacion = $identificacion ? $identificacion : $this->getIds()->getCaIdalterno();
         $nombre_completo = $nombre_completo ? $nombre_completo : $this->getIds()->getCaNombre();
         
         if ($this->getCaRespuesta()) {

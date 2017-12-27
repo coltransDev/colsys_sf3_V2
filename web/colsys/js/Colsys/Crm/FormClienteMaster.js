@@ -124,6 +124,10 @@ Ext.define('Colsys.Crm.FormClienteMaster', {
                                                                     res = Ext.JSON.decode(options.response.responseText);
                                                                     Ext.MessageBox.alert('Mensaje', res.data);
                                                                     Ext.getCmp('idalterno_id').setValue("");
+                                                                },
+                                                                failure: function (response, options) {
+                                                                    res = Ext.JSON.decode(options.response.responseText);
+                                                                    Ext.getCmp('representante_fs').setVisible(!res.agente);
                                                                 }
                                                             });
                                                         }
@@ -527,6 +531,7 @@ Ext.define('Colsys.Crm.FormClienteMaster', {
                                     }
                                 ]
                             }, {
+                                id: 'representante_fs',
                                 xtype: 'fieldset',
                                 title: 'Representante Legal',
                                 defaults: {

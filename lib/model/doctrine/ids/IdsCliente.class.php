@@ -59,4 +59,56 @@ class IdsCliente extends BaseIdsCliente {
 
         return $direccion;
     }
+
+    public function getEstadoCliente() {
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select fun_estado_clientes(" . $this->getCaIdcliente() . ")";
+        $st = $con->execute($sql);
+        $estado = str_replace('"', '', $st->fetchColumn());
+
+        return explode(",", substr($estado, 1, strlen($estado)-1));
+}
+
+    public function getEstadoCircular() {
+        $estado = null;
+        if ($this->getCaTipo() != null) {
+            $estado = 'Vigente';
+        } else {
+            if ($this->getCaFchcircular() == null) {
+                $estado = 'Sin';
+            } else {
+                list($year, $month, $day) = sscanf($this->getCaFchcircular(), "%d-%d-%d");
+                $vencimiento = date('Y-m-d h:i:s', mktime(0, 0, 0, $month, $day, $year+1));
+                if ($vencimiento < date('Y-m-d')) {
+                    $estado = 'Vencido';
+                } else {
+                    $estado = 'Vigente';
+                }
+            }
+        }
+        return $estado;
+    }
+
+    public function getEstadoCartaGarantia() {
+        $estado = array();
+        $cartasGarantia = Doctrine::getTable("ComCliente")->findBy("ca_idcliente", $this->getCaIdcliente());
+        foreach ($cartasGarantia as $cartaGarantia) {
+            $estado['firmado'] = $cartaGarantia->getCaFchfirmado();
+            $estado['vencimiento'] = $vencimiento = $cartaGarantia->getCaFchvencimiento();
+            if ($vencimiento < date('Y-m-d')) {
+                $estado['estado'] = 'Vencido';
+            } else {
+                $estado['estado'] = 'Vigente';
+            }
+        }
+        return $estado;
+    }
+
+    public function getFechaEncuesta($fecha = 'NULL') {
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select fun_enccliente(" . $this->getCaIdcliente() . ", $fecha::date) AS ca_fchvisita";
+        $st = $con->execute($sql);
+        $encuesta = $st->fetch();
+        return $encuesta["ca_fchvisita"];
+    }
 }

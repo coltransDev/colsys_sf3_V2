@@ -80,7 +80,7 @@ class crmActions extends sfActions {
                     }
                     $ids->setCaTipoidentificacion($request->getParameter("tipo_identificacion"));
                 }
-                $ids->setCaNombre(utf8_decode(strtoupper($request->getParameter("compania"))));
+                $ids->setCaNombre(utf8_decode(strtoupper(preg_replace('/ +/', ' ', $request->getParameter("compania")))));
             }
             $ids->setCaWebsite($request->getParameter("website"));
             //$cliente->setCaCompania( strtoupper($request->getParameter("compania")) );
@@ -584,9 +584,7 @@ class crmActions extends sfActions {
         return $data;
     }
 
-    function executeDatosBusqueda($request) {
-        $data = array();
-
+    function realizarBusqueda($request) {
         $con = Doctrine_Manager::getInstance()->connection();
         $sql = "select i.ca_id from ids.tb_ids i where ca_idalterno like '%" . $request->getParameter("q") . "%'";
         $rs = $con->execute($sql);
@@ -679,11 +677,73 @@ class crmActions extends sfActions {
         
         $clientes = array();
         if (count($q->getDqlPart("where")) > 0) {
+            if ($request->getParameter('action') == "datosBusqueda") {
             $clientes = $q->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+            } else if ($request->getParameter('action') == "listarBusqueda") {
+                $clientes = $q->execute();
         }
+            
+        }
+        
+        return $clientes;
+    }
+    
+    function executeDatosBusqueda($request) {
+        $data = array();
+        $clientes = $this->realizarBusqueda($request);
+
         foreach ($clientes as $cliente) {
             $data[] = array("idcliente" => utf8_encode("" . $cliente['ca_id']),
                 "nombre" => utf8_encode($cliente['ca_nombre']));
+        }
+
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data), "debug" => $debug, "query" => $query);
+        $this->setTemplate("responseTemplate");
+    }
+
+    function executeListarBusqueda($request) {
+        $data = array();
+        $clientes = $this->realizarBusqueda($request);
+        
+        foreach ($clientes as $cliente) {
+            $cartaGarantia = $cliente->getIdsCliente()->getEstadoCartaGarantia();
+            $estadoCliente = $cliente->getIdsCliente()->getEstadoCliente();
+            
+            $data[] = array("idcliente" => utf8_encode($cliente->getCaId()),
+                "idalterno" => utf8_encode($cliente->getCaIdalterno()),
+                "nombre" => utf8_encode($cliente->getCaNombre()),
+                "direccion" => utf8_encode($cliente->getIdsCliente()->getDireccion()),
+                "telefono" => utf8_encode($cliente->getIdsCliente()->getCaTelefonos()),
+                "fax" => utf8_encode($cliente->getIdsCliente()->getCaFax()),
+                "ciudad" => utf8_encode($cliente->getIdsCliente()->getCiudad()->getCaCiudad()),
+                "vendedor" => utf8_encode($cliente->getIdsCliente()->getCaVendedor()),
+                "sucursal" => utf8_encode($cliente->getIdsCliente()->getUsuario()->getSucursal()->getCaNombre()),
+                "coordinador" => $cliente->getIdsCliente()->getCaCoordinador(),
+                "tipoPersona" => utf8_encode($cliente->getIdsCliente()->getTipoPersona()),
+                "regimen" => utf8_encode($cliente->getIdsCliente()->getRegimen()),
+                "circular0170_fch" => $cliente->getIdsCliente()->getCaFchcircular(),
+                "circular0170_std" => $cliente->getIdsCliente()->getEstadoCircular(),
+                "cartaGarantia_fch" => $cartaGarantia["firmado"],
+                "cartaGarantia_vnc" => $cartaGarantia["vencimiento"],
+                "cartaGarantia_std" => $cartaGarantia["estado"],
+                "ultima_encuesta" => $cliente->getIdsCliente()->getFechaEncuesta(),
+                "fecha_constitucion" => $cliente->getIdsCliente()->getCaFchconstitucion(),
+                "fecha_acuerdo_conf" => $cliente->getIdsCliente()->getCaFchacuerdoconf(),
+                "nivel_riesgo" => utf8_encode($cliente->getIdsCliente()->getCaNvlriesgo()),
+                "listaOFAC" => utf8_encode($cliente->getIdsCliente()->getCaListaclinton()),
+                "uap" => utf8_encode($cliente->getIdsCliente()->getCaUap() ? "Sí" : "No"),
+                "altex" => utf8_encode($cliente->getIdsCliente()->getCaAltex() ? "Sí" : "No"),
+                "oea" => utf8_encode($cliente->getIdsCliente()->getCaOea() ? "Sí" : "No"),
+                "comerciante" => utf8_encode($cliente->getIdsCliente()->getCaComerciante() ? "Sí" : "No"),
+                "coltrans_std" => $estadoCliente[1],
+                "coltrans_fch" => $estadoCliente[2],
+                "colmas_std" => $estadoCliente[3],
+                "colmas_fch" => $estadoCliente[4],
+                "colotm_std" => $estadoCliente[5],
+                "colotm_fch" => $estadoCliente[6],
+                "coldepositos_std" => $estadoCliente[7],
+                "coldepositos_fch" => $estadoCliente[8]
+            );
         }
 
         $this->responseArray = array("success" => true, "root" => $data, "total" => count($data), "debug" => $debug, "query" => $query);
@@ -1415,10 +1475,18 @@ class crmActions extends sfActions {
                 ->addWhere('i.ca_idalterno = ?', $request->getParameter("idalterno"))
                 ->fetchOne();
 
+        $agente = null;
         if ($ids) {
-            $this->responseArray = array("success" => true, "data" => utf8_encode("El número de NIT ya se encuentra registrado en la base de datos."));
+            $this->responseArray = array("success" => true, "data" => utf8_encode("El número de NIT ya se encuentra registrado en la base de datos."), "agente" => $agente);
         } else {
-            $this->responseArray = array("success" => true, "data" => "");
+            // $agente = ($ids->getIdsAgente())?true:false; /* Valida si se está creando un Agente como Cliente */
+            $agente = Doctrine::getTable("Ids")
+                ->createQuery("i")
+                ->innerJoin("i.IdsAgente a")
+                ->addWhere('i.ca_idalterno = ?', $request->getParameter("idalterno"))
+                ->fetchOne();
+            
+            $this->responseArray = array("success" => true, "data" => "", "agente" => ($agente)?true:false);
         }
         $this->setTemplate("responseTemplate");
     }
@@ -2179,8 +2247,11 @@ class crmActions extends sfActions {
                 if ($datos->regimen) {
                     $cliente->setCaRegimen($datos->regimen);
                 }
-                if ($datos->tipo) {
+                if (isset($datos->tipo)) {
+                    if ($datos->tipo)
                     $cliente->setCaTipo($datos->tipo);
+                    else
+                        $cliente->setCaTipo(null);
                 }
                 if (isset($datos->uap)) {
                     if ($datos->uap)

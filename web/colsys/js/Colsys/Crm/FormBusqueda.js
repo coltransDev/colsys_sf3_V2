@@ -54,6 +54,14 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                                 //alert(this.value)
                             }
                         },
+                        print: {
+                            cls: 'x-form-date-trigger',
+                            handler: function () {
+
+                                this.up('form').listar(this.getValue());
+                                //alert(this.value)
+                            }
+                        },
                         searchp: {
                             cls: Ext.baseCSSPrefix + 'form-searchp-trigger',
                             handler: function () {
@@ -277,6 +285,49 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                             var res = action.result.root;
                             Ext.getCmp("gind1").getStore().loadData(res);
                             // myMask.hide();
+                        }
+                        Ext.getCmp("gind1").setLoading(false);
+                    },
+                    failure: function (form, action) {
+                        Ext.Msg.alert('Failed', action.result.msg);
+                        Ext.getCmp("gind1").setLoading(false);
+                    }
+                });
+            },
+            listar: function (valor) {
+                var form = this.getForm(); // get the form panel
+                form.submit({
+                    url: '/crm/listarBusqueda',
+                    waitMsg: 'Cargando Reporte...',
+                    success: function (form, action) {
+                        if (action.result.total == 0){
+                            Ext.Msg.alert('Consulta sin Resultados', 'No se encontraron registros coincidentes!');
+                        } else {
+                            var res = action.result.root;
+                            
+                            tabpanel = Ext.getCmp('tabpanel1');
+                            if (!tabpanel.getChildByElement('tab_reporte')) {
+                                tabpanel.add({
+                                    title: 'Reporte de Clientes',
+                                    id: 'tab_reporte',
+                                    itemId: 'tab_reporte',
+                                    closable: true,
+                                    autoScroll: true,
+                                    items: [{
+                                            id: 'grid_reporte',
+                                            xtype: 'Colsys.Crm.GridListarClientes',
+//                                            listeners: {
+//                                                afterrender: function (ct, position) {
+//                                                    this.getStore().loadData(res);
+//                                                }
+//                                            }
+                                        }
+                                    ]
+                                }).show();
+                            }
+                            tabpanel.setActiveTab('tab_reporte');
+                            gridReporte = Ext.getCmp("grid_reporte");
+                            gridReporte.getStore().loadData(res);
                         }
                         Ext.getCmp("gind1").setLoading(false);
                     },

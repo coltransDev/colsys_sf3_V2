@@ -70,27 +70,7 @@
 </table>
 
 <script>   
-Ext.Loader.setConfig({
-    enabled: true,
-    paths: {
-        //'Ext.ux.exporter':'../js/ext5/examples/ux/exporter/',
-        'Colsys':'/js/Colsys',
-        'Ext.ux':'../js/ext5/examples/ux'
-    }
-});
-
-Ext.require([
-    //'Ext.grid.*',
-    //'Ext.form.Panel',
-    'Ext.ux.exporter.Exporter',
-    'Ext.ux.Explorer'
-    /*,
-    'Colsys.Ino.FormBusqueda'*/
-]);
-
-
 Ext.onReady(function(){
-    
     
     var filterPanel = Ext.create('Ext.panel.Panel', {
         renderTo: 'idPrincipal',
