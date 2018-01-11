@@ -341,7 +341,7 @@ Ext.define('Colsys.Crm.FormMaster', {
                             xtype: 'fieldset',
                             title: 'Preferencias',
                             style: 'background: #F2F2F2;',
-                            columnWidth: 0.5,
+                            columnWidth: 0.45,
                             height: 162,
                             items: [{
                                     xtype: 'fieldcontainer',
@@ -365,7 +365,7 @@ Ext.define('Colsys.Crm.FormMaster', {
                             xtype: 'fieldset',
                             id: "fieldset_situacion" + this.idcliente,
                             style: 'background: #F2F2F2;',
-                            columnWidth: 0.5,
+                            columnWidth: 0.55,
                             items: {
                                 xtype: 'panel',
                                 layout: 'column',
@@ -940,28 +940,24 @@ Ext.define('Colsys.Crm.FormMaster', {
                             iconCls: 'money_dollar',
                             id: 'botonCredito' + me.idcliente,
                             handler: function () {
-                                if (this.up('form').estadoSap) {
-                                    tabpanel = Ext.getCmp('tab-panel-id-indicadores' + me.idcliente);
-                                    if (!tabpanel.getChildByElement('beneficioCredito' + me.idcliente)) {
-                                        tabpanel.add({
-                                            title: 'Beneficios Crediticios',
-                                            id: 'beneficioCredito' + me.idcliente,
-                                            itemId: 'beneficioCredito' + me.idcliente,
-                                            closable: true,
-                                            closeAction: 'destroy',
-                                            items: [{
-                                                    xtype: 'Colsys.Crm.GridBeneficioCredito',
-                                                    idcliente: me.idcliente,
-                                                    id: 'gridBeneficioCredito' + me.idcliente,
-                                                    permisos: this.up('form').permisos
-                                                }
-                                            ]
-                                        }).show();
-                                    }
-                                    tabpanel.setActiveTab('beneficioCredito' + me.idcliente);
-                                } else {
-                                    Ext.MessageBox.alert("Error", 'No se puede otorgar beneficios a un cliente que no est\u00E1 activo en SAP BO ');
+                                tabpanel = Ext.getCmp('tab-panel-id-indicadores' + me.idcliente);
+                                if (!tabpanel.getChildByElement('beneficioCredito' + me.idcliente)) {
+                                    tabpanel.add({
+                                        title: 'Beneficios Crediticios',
+                                        id: 'beneficioCredito' + me.idcliente,
+                                        itemId: 'beneficioCredito' + me.idcliente,
+                                        closable: true,
+                                        closeAction: 'destroy',
+                                        items: [{
+                                                xtype: 'Colsys.Crm.GridBeneficioCredito',
+                                                idcliente: me.idcliente,
+                                                id: 'gridBeneficioCredito' + me.idcliente,
+                                                permisos: this.up('form').permisos
+                                            }
+                                        ]
+                                    }).show();
                                 }
+                                tabpanel.setActiveTab('beneficioCredito' + me.idcliente);
                             },
                             listeners: {
                                 beforerender: function () {
@@ -1038,9 +1034,7 @@ Ext.define('Colsys.Crm.FormMaster', {
                 },
                 success: function (response, options) {
                     res = Ext.JSON.decode(options.response.responseText);
-                    form = Ext.getCmp('form-master-' + idcliente);
-                    form.setTitle(res.data.identificacion);
-                    form.estadoSap = res.data.estadoSap;
+                    Ext.getCmp('form-master-' + idcliente).setTitle(res.data.identificacion);
                     Ext.getCmp('fieldset_situacion' + idcliente).setTitle('<b>Circular 0170:</b> ' + res.data.circular + ' - <b>Estado:</b> ' + res.data.estado_circular);
                     
                     formSituacion = Ext.getCmp('form_situacion' + idcliente);

@@ -23,6 +23,7 @@ Ext.define('Colsys.Crm.GridSeguimientosClientes', {
             this.reconfigure(
                     store = Ext.create('Ext.data.Store', {
                         fields: [
+                            {name: 'usuario', type: 'string', mapping: 'usuario'},
                             {name: 'fecha', type: 'string', mapping: 'fecha'},
                             {name: 'tipo', type: 'string', mapping: 'tipo'},
                             {name: 'asunto', type: 'string', mapping: 'asunto'},
@@ -40,6 +41,11 @@ Ext.define('Colsys.Crm.GridSeguimientosClientes', {
                         }
                     }),
                     [
+                        {
+                            header: "Usuario",
+                            dataIndex: 'usuario',
+                            width: 130
+                        },
                         {
                             header: "Fecha",
                             dataIndex: 'fecha',
