@@ -341,22 +341,23 @@ Ext.define('Colsys.Crm.FormMaster', {
                             xtype: 'fieldset',
                             title: 'Preferencias',
                             style: 'background: #F2F2F2;',
-                            columnWidth: 0.45,
+                            columnWidth: 0.40,
                             height: 162,
                             items: [{
                                     xtype: 'fieldcontainer',
                                     msgTarget: 'under',
                                     defaults: {
                                         hideLabel: true,
-                                        autoHeight: true,
                                         readOnly: true
                                     },
+                                    layout: 'hbox',
                                     items: [{
-                                            xtype: 'displayfield',
+                                            xtype: 'textareafield',
                                             cls: 'x-display-field',
                                             name: 'preferencias',
-                                            style: 'height: 100px;',
-                                            id: "preferencias" + this.idcliente
+                                            id: "preferencias" + this.idcliente,
+                                            height: 140,
+                                            flex: 1
                                         }
                                     ]
                                 }
@@ -365,7 +366,7 @@ Ext.define('Colsys.Crm.FormMaster', {
                             xtype: 'fieldset',
                             id: "fieldset_situacion" + this.idcliente,
                             style: 'background: #F2F2F2;',
-                            columnWidth: 0.55,
+                            columnWidth: 0.60,
                             items: {
                                 xtype: 'panel',
                                 layout: 'column',
@@ -380,7 +381,7 @@ Ext.define('Colsys.Crm.FormMaster', {
                                         var formField = {
                                             xtype: field.type,
                                             cls: (style)?'x-status-line-a':'x-status-line-b',
-                                            fieldStyle: 'font-size:10px;',
+                                            fieldStyle: 'font-size:9.5px;',
                                             label: field.name,
                                             name: field.id,
                                             value: field.value,
