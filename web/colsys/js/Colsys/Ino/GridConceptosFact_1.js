@@ -273,11 +273,62 @@ Ext.define('Colsys.Ino.GridConceptosFact', {
                     this.view.refresh();
                     this.getSelectionModel().setCurrentPosition({row: store.getCount(), column: 1});
 
-                   
+                    /*  var editPlugin = this.editingPlugin;
+                     editor = editPlugin.getEditor();
+                     curCol = editPlugin.context.colIdx;
+                     currentField = editor.getEditor(curCol);
+                     nextField = editor.getEditor(curCol + 1);*/
+                    /*if (currentField) {
+                     // ensure the combo is collapsed when the field is blurred
+                     currentField.triggerBlur();
+                     }
+                     if (nextField) {
+                     nextField.focus();
+                     }*/
+                    /*var grid = this.view;
+                     selModel = grid.getSelectionModel();
+                     selModel.setPosition({row: editor.context.rowIdx, column: 2}, false);
+                     var pos = selModel.getPosition();
+                     grid.focusCell(pos);*/
 
                 }
             }
-        },        
+            /*if (e.field == "valor") {
+             var grid = this.view;
+             selModel = grid.getSelectionModel();
+             selModel.setPosition({row: (editor.context.rowIdx) + 1, column: 1}, false);
+             var pos = selModel.getPosition();
+             grid.focusCell(pos);
+             }*/
+
+
+
+        },
+        /* blur: function (editor, e, eOpts)
+         {
+        
+         var store = this.getStore();
+        
+         if (e.field == "concepto"){
+         var grid = this.view;
+         selModel = grid.getSelectionModel();
+         selModel.setPosition({row: editor.context.rowIdx, column: 2}, false);
+         var pos = selModel.getPosition();
+         grid.focusCell(pos);
+        
+        
+         }
+         if (e.field == "valor") {
+         var grid = this.view;
+         selModel = grid.getSelectionModel();
+         selModel.setPosition({row: (editor.context.rowIdx) + 1, column: 1}, false);
+         var pos = selModel.getPosition();
+         grid.focusCell(pos);
+         }
+        
+        
+        
+         },*/
         beforerender: function (ct, position) {
             this.reconfigure(
                     store = Ext.create('Ext.data.Store', {

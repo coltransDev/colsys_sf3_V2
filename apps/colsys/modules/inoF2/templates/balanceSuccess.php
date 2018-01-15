@@ -12,19 +12,19 @@
         <td><b>Ingresos Netos Clientes:</b></td>  
         <td><div align="right"><?=$monedaLocal." ".Utils::formatNumber($referencia->getVlrFacturado())?>&nbsp;</div></td>  
     </tr>
-    <tr><td><b>Peso Total en Kilos:</b></td>  
+    <tr><td><b>Peso Total :</b></td>  
         <td><div align="right"><?=Utils::formatNumber($referencia->getCaPeso())?>&nbsp;</div></td>  
         <td><b>Menos Deducciones:</b></td>  
         <td><div align="right"><?=$monedaLocal." ".Utils::formatNumber($referencia->getVlrDeducciones())?>&nbsp;</td>
     </tr>
     <tr>
-        <td><b>Volumen Total CBM:</b></td>
+        <td><b>Volumen Total:</b></td>
         <td><div align="right"><?=Utils::formatNumber($referencia->getCaVolumen())?>&nbsp;</div></td>
         <td><b>Costo Neto Embarque:</b></td>
         <td><div align="right"><?=$monedaLocal." ".Utils::formatNumber($referencia->getVlrCosto())?>&nbsp;</div></td>
     </tr>
     <tr>
-        <td><b>Total Hbl's Registradas:</b></td>
+        <td><b>Total Docs. transporte Registradas:</b></td>
         <td><div align="right"><?=count( $referencia->getInoHouse())?>&nbsp;</div></td>
         <td><b>INO x Sobreventa:</b></td>
         <td><div align="right"><?=$monedaLocal." ".Utils::formatNumber($referencia->getVlrSobreventa())?>&nbsp;</div></td>
@@ -39,7 +39,7 @@
      <tr >
         <td colspan="2" rowspan="2">&nbsp;</td>
            
-        <td class="listar b">INO Consolidado (Sin sobreventa):</td>  
+        <td class="listar b">INO Consolidado :</td>  
         <td class="listar b" ><div align="right"><?=$monedaLocal." ".Utils::formatNumber($inoConsolidado)?>&nbsp;</div></td>
     </tr>    
     <tr>         

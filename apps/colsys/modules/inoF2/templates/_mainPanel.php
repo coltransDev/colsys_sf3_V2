@@ -6,20 +6,20 @@
         //bodyPadding: 10,
 //    "idmaster":12176,
         autoHeight: true,
-        onRender: function (ct, position) {            
+        onRender: function (ct, position) {
             tabs = new Array();
             //alert(this.permisos.toSource());
             /*tabs.push({
-                    xtype: 'Colsys.Pruebas.WgRowWidget',
-                    title: "General ",
-                    id: "form-prueba" + this.idmaster,
-                    name: "form-prueba-" + this.idmaster,
-                    idmaster: this.idmaster,
-                    idtransporte: this.idtransporte,
-                    idimpoexpo: this.idimpoexpo,
-                    permisos: this.permisos
-                });*/
-            
+             xtype: 'Colsys.Pruebas.WgRowWidget',
+             title: "General ",
+             id: "form-prueba" + this.idmaster,
+             name: "form-prueba-" + this.idmaster,
+             idmaster: this.idmaster,
+             idtransporte: this.idtransporte,
+             idimpoexpo: this.idimpoexpo,
+             permisos: this.permisos
+             });*/
+
             if (this.permisos.General == true) {
                 tabs.push({
                     xtype: 'Colsys.Ino.FormMaster',
@@ -30,27 +30,30 @@
                     idtransporte: this.idtransporte,
                     idimpoexpo: this.idimpoexpo,
                     permisos: this.permisos,
-                    iconCls: 'application_form'
+                    idempresa: this.idempresa,
+                    iconCls: 'application_form',
+                    idmodalidad: this.modalidad
                 });
             }
             //console.log(this.modalidad);
             //if (this.modalidad == "FCL") {
 
-            if (this.idtransporte != "A\u00E9reo") {    
-                tabs.push({
-                    xtype: 'Colsys.Ino.GridContenedores',
-                    title: "Equipos ",
-                    id: "contenderores-" + this.idmaster,
-                    name: "contenderores-" + this.idmaster,
-                    idmaster: this.idmaster,
-                    idtransporte: this.idtransporte,
-                    idimpoexpo: this.idimpoexpo,
-                    permisos: this.permisos,
-                    iconCls:'camion'
-                });
-            }
+
             if (!isNaN(this.idmaster) && this.idmaster > 0)
             {
+                if (this.idtransporte != "A\u00E9reo") {
+                    tabs.push({
+                        xtype: 'Colsys.Ino.GridContenedores',
+                        title: "Equipos ",
+                        id: "contenderores-" + this.idmaster,
+                        name: "contenderores-" + this.idmaster,
+                        idmaster: this.idmaster,
+                        idtransporte: this.idtransporte,
+                        idimpoexpo: this.idimpoexpo,
+                        permisos: this.permisos,
+                        iconCls: 'camion'
+                    });
+                }
                 if (this.permisos.House == true) {
                     tabs.push(
                             {
@@ -63,7 +66,7 @@
                                 idimpoexpo: this.idimpoexpo,
                                 idmodalidad: this.modalidad,
                                 permisos: this.permisos,
-                                iconCls:'table'
+                                iconCls: 'table'
                             });
                 }
                 /*if(this.permisos.Facturacion == true){
@@ -104,27 +107,27 @@
                  });
                  }
                  }*/
-                 
-                 if (this.idtransporte == "<?= Constantes::MARITIMO ?>" && this.permisos.Muisca == true) {    /* FIX-ME Permisos para Radicación*/
+
+                if (this.idtransporte == "<?= Constantes::MARITIMO ?>" && this.permisos.Muisca == true) {    /* FIX-ME Permisos para Radicación*/
                     tabs.push({
                         xtype: 'Colsys.Ino.PanelRadicacion',
                         title: "Radicacion",
                         id: "radicacion-" + this.idmaster,
-                        name: "radicacion-" + this.idmaster,                    
+                        name: "radicacion-" + this.idmaster,
                         idmaster: this.idmaster,
                         idtransporte: this.idtransporte,
                         idimpoexpo: this.idimpoexpo,
                         idreferencia: this.idreferencia,
                         permisos: this.permisos,
-                        iconCls:'dian'
+                        iconCls: 'dian'
                     });
-                 }
+                }
                 // if (this.tipofacturacion == "facturacion2" || this.tipofacturacion == null) 
                 {
                     if (this.permisos.Facturacion == true) {
                         tabs.push({
                             xtype: 'Colsys.Ino.PanelFacturacion',
-                            title: "Facturacion",
+                            title: "Ingresos",
                             id: "panel-facturacion-" + this.idmaster,
                             name: "panel-facturacion-" + this.idmaster,
                             idmaster: this.idmaster,
@@ -133,7 +136,8 @@
                             permisos: this.permisos,
                             autoScroll: true,
                             autoHeight: true,
-                            iconCls:'money_dollar'
+                            iconCls: 'money_dollar',
+                            ino: true
                         });
                     }
                 }
@@ -149,8 +153,8 @@
                         idimpoexpo: this.idimpoexpo,
                         permisos: this.permisos,
                         /*plugins: [
-                            new Ext.grid.plugin.CellEditing({clicksToEdit: 1})
-                        ],*/
+                         new Ext.grid.plugin.CellEditing({clicksToEdit: 1})
+                         ],*/
                         iconCls: 'icon-grid'
                     });
                 }
@@ -170,10 +174,46 @@
                         plugins: [
                             new Ext.grid.plugin.CellEditing({clicksToEdit: 1})
                         ],
+                        iconCls: 'event-add'
+                    });
+
+                    var tipoDoc = '';
+                    if (this.idtransporte == "<?= Constantes::AEREO ?>") {
+                        tipoDoc = 'Gu\u00EDas';
+                        tipoGrid = 'Colsys.Ino.GridAwbsTransporte';
+                    } else if (this.idtransporte == "<?= Constantes::MARITIMO ?>") {
+                        tipoDoc = 'Hbls';
+                        // tipoGrid = 'Colsys.Ino.GridDocsTransporte';
+                        tipoGrid = 'panel' /*FIX-ME Módulo de Impresion Hbls de Exportaciones*/
+                    }
+                    tabs.push({
+                        xtype: tipoGrid,
+                        title: tipoDoc,
+                        id: "Impresion-" + this.idmaster,
+                        name: "Impresion-" + this.idmaster,
+                        idmaster: this.idmaster,
+                        idtransporte: this.idtransporte,
+                        idimpoexpo: this.idimpoexpo,
+                        idreferencia: this.idreferencia,
+                        permisos: this.permisos,
+                        iconCls: 'report-add'
                     });
                 }
 
-                if (this.permisos.Documentos == true) {                    
+                tabs.push({
+                    xtype: 'Colsys.Ino.PanelBalance',
+                    title: "Balance",
+                    id: "balance-" + this.idmaster,
+                    name: "balance-" + this.idmaster,
+                    idmaster: this.idmaster,
+                    idtransporte: this.idtransporte,
+                    idimpoexpo: this.idimpoexpo,
+                    idreferencia: this.idreferencia,
+                    permisos: this.permisos,
+                    iconCls: 'calculator'
+                });
+
+                if (this.permisos.Documentos == true) {
 
                     tabs.push({
                         xtype: 'Colsys.GestDocumental.treeGridFiles',
@@ -185,7 +225,7 @@
                         idtransporte: this.idtransporte,
                         idimpoexpo: this.idimpoexpo,
                         permisos: this.permisos,
-                        iconCls:'folder',
+                        iconCls: 'folder',
                         treeStore: 'documentosIno',
                         listeners: {
                             beforerender: function (ct, position) {
@@ -231,19 +271,6 @@
                 }
 
                 tabs.push({
-                    xtype: 'Colsys.Ino.PanelBalance',
-                    title: "Balance",
-                    id: "balance-" + this.idmaster,
-                    name: "balance-" + this.idmaster,
-                    idmaster: this.idmaster,
-                    idtransporte: this.idtransporte,
-                    idimpoexpo: this.idimpoexpo,
-                    idreferencia: this.idreferencia,
-                    permisos: this.permisos,
-                    iconCls:'calculator'
-                });
-
-                tabs.push({
                     xtype: 'Colsys.Ino.PanelAuditoria',
                     title: "Auditoria",
                     id: "auditoria-" + this.idmaster,
@@ -254,9 +281,8 @@
                     idimpoexpo: this.idimpoexpo,
                     idreferencia: this.idreferencia,
                     permisos: this.permisos,
-                    iconCls:'page_white_magnify'
+                    iconCls: 'page_white_magnify'
                 });
-
             }
             this.add(
                     {

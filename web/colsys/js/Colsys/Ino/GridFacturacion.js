@@ -216,8 +216,8 @@ Ext.define('Colsys.Ino.GridFacturacion', {
                         }                        
             ]);
         
-          
-            if(this.permisos.Crear == true){
+          //console.log(this.estado);
+            if(this.permisos.Crear == true ){
 
             tb = new Ext.toolbar.Toolbar();
             tb.add(
@@ -410,7 +410,7 @@ Ext.define('Colsys.Ino.GridFacturacion', {
                     //alert(record.data.toSource());
                     //window.open("/inocomprobantes/generarComprobantePDF/id/"+record.get('idcomprobante'))
                     var windowpdf = Ext.create('Colsys.Widgets.WgVerPdf', {
-                        sorc: "/inocomprobantes/generarComprobantePDF/id/"+record.get('idcomprobante')
+                        sorc: "/inocomprobantes/genComprobantePDF/id/"+record.get('idcomprobante')+"/sap/1"
                     });
                     windowpdf.show();
                 }
@@ -584,6 +584,7 @@ Ext.define('Colsys.Ino.GridFacturacion', {
     {
         //console.log(record);
         //alert(tipo);
+        //console.log(this.idmaster)
         
         if(constrainedWin2==null)
         {
@@ -603,7 +604,9 @@ Ext.define('Colsys.Ino.GridFacturacion', {
                     xtype:'Colsys.Ino.FormFactura',
                     id:'form-panel'+this.idmaster,
                     name:'form-panel'+this.idmaster,
-                    idmaster: this.idmaster
+                    idmaster: this.idmaster,
+                    idcomprobante:(record!=null)?record.data.idcomprobante:"0",
+                    ino:(record!=null)?true:false
                 }]
             })
         }

@@ -28,7 +28,10 @@ extend: 'Ext.grid.Panel',
             }
         }],
         plugins: [
-            new Ext.grid.plugin.CellEditing({clicksToEdit: 1})
+            {
+                ptype : 'cellediting',
+                clicksToEdit: 1
+            }
         ],
         buttons:[{
             text: 'Guardar',

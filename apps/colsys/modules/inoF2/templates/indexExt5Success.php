@@ -116,9 +116,7 @@ include_component("inoF2", "mainPanel");
 <script>
 
 Ext.onReady(function() {
-    Ext.tip.QuickTipManager.init();
-    
-    //var permisos={'Consultar':true,'Crear':true,'Editar':true,'Anular':true,'General':true,'House':true,'Facturacion':true,'Costos':true,'Documentos':true}
+    Ext.tip.QuickTipManager.init();    
     
 
     Ext.create("Ext.container.Viewport",{
@@ -136,7 +134,19 @@ Ext.onReady(function() {
                 xtype: 'tabpanel',
                 id:'tabpanel1',
                 name:'tabpanel1',
-                activeTab: 0
+                activeTab: 0,
+                agregar: function (datos,obj)
+                {
+                    this.add(
+                    {
+                        title: datos.title,
+                        id: datos.id,
+                        itemId: datos.id,
+                        closable: true,
+                        autoScroll: true,
+                        items: obj
+                    }).show();
+                }
             },
             {
                 region: 'north',
@@ -147,7 +157,8 @@ Ext.onReady(function() {
                     display: 'none'
                 }
             }
-        ]
+        ]       
+        
     });
     
     tabpanel = Ext.getCmp('tabpanel1');
@@ -163,6 +174,8 @@ Ext.onReady(function() {
         impoexpo='<?=$m->getCaImpoexpo()?>';
         transporte = '<?=$m->getCaTransporte()?>';
         fchcerrado = '<?=$m->getCaFchcerrado()?>';
+        fchanulado = '<?=$m->getCaFchanulado()?>';
+        fchliquidado = '<?=$m->getCaFchliquidado()?>';
         
         if(impoexpo=="INTERNO")
             tmppermisos=permisosG.terrestre;
@@ -179,7 +192,7 @@ Ext.onReady(function() {
             tmppermisos=permisosG.otm;
 
         //alert(tmppermisos.toSource());
-        if(fchcerrado!="")
+        if(fchcerrado!="" || fchanulado!="" || fchliquidado!="")
         {
             tmppermisos.Editar=false;
             tmppermisos.Crear=false;

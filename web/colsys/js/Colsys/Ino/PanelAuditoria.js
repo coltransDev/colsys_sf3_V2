@@ -18,6 +18,10 @@ Ext.define('Colsys.Ino.PanelAuditoria', {
     height: 500,
     //items: [],
     listeners: {
+        beforerender: function (ct, position) {
+            this.setHeight(this.up('tabpanel').up('tabpanel').getHeight() - 150);
+            this.setWidth(this.up('tabpanel').up('tabpanel').getWidth() - 50);
+        },
         render: function (me, eOpts) {
             
             var detailsPanel = {

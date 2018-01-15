@@ -33,15 +33,19 @@ class inoF2Actions extends sfActions {
         $permisosRutinas["exportacion"] = $user->getControlAcceso(self::RUTINA_EXPORTACION);
         $permisosRutinas["otm"] = $user->getControlAcceso(self::RUTINA_OTM);
 
-        $tipopermisos = array('Consultar' => 0, 'Crear' => 1, 'Editar' => 2, 'Anular' => 3, 'Liquidar' => 4, 'Cerrar' => 5, 'Abrir' => 6, 'General' => 7, 'House' => 8, 'Facturacion' => 9, 'Costos' => 10, 'Documentos' => 11, 'Muisca' => 12, 'MuiscaEd' => 13, 'MuiscaDig' => 14, 'MuiscaRev' => 15, 'GenerarXml' => 16, 'DarLiberacion' => 17, 'RevLiberacion' => 18, 'LiberacionPto' => 19, 'Comodatos' => 20);
+        $tipopermisos = 
+                array(
+                    'Consultar' => 0, 'Crear' => 1, 'Editar' => 2, 'Anular' => 3, 'Liquidar' => 4, 'Cerrar' => 5, 'Abrir' => 6, 
+                    'General' => 7, 'House' => 8, 'Facturacion' => 9, 'Costos' => 10, 'Documentos' => 11,'NotasCredito' => 12,  
+                    'MuiscaEd' => 13, 'MuiscaDig' => 14, 'MuiscaRev' => 15, 'GenerarXml' => 16, 'DarLiberacion' => 17, 
+                    'RevLiberacion' => 18, 'LiberacionPto' => 19, 'Comodatos' => 20,'Muisca' => 21);
 
         foreach ($permisosRutinas as $k => $p) {
             foreach ($tipopermisos as $index => $tp) {
                 $this->permisos[$k][$index] = isset($permisosRutinas[$k][$tp]) ? true : false;
             }
         }
-        //echo $request->getParameter("idmaster");
-        
+
         if($request->getParameter("idmaster"))
         {
             $this->inoMaster = Doctrine::getTable("InoMaster")
@@ -81,8 +85,8 @@ class inoF2Actions extends sfActions {
             
             if($o!="ca_consecutivo")
             {
-                $where .= $o . " like ?";
-                $whereq[] = "%" . $request->getParameter("q") . "%";
+                $where .= strtoupper($o) . " like ?";
+                $whereq[] = "%" . strtoupper($request->getParameter("q")) . "%";
             }
             else
             {
@@ -536,7 +540,7 @@ class inoF2Actions extends sfActions {
                 $valor = ($d["comp_ca_valor"] != "") ? $d["comp_ca_valor"] : (($d["comp_ca_valor3"] >= $d["comp_ca_valor4"]) ? $d["comp_ca_valor3"] : $d["comp_ca_valor4"]);
             $this->data[] = array(
                 "tipocomprobante" => $d["tcomp_ca_tipo"],
-                "titulohouse" => "House", "titulotaza" => "Valor x tasa cambio", "titulocambio" => "Tasa de cambio",
+                "titulohouse" => "House", "titulotaza" => "Valor Pesos", "titulocambio" => "TRM",
                 "idempresa"=>$d["tcomp_ca_idempresa"],"empresa"=>utf8_encode($d["emp_ca_nombre"]),
                 "idhouse" => $d["c_ca_idhouse"], "idcomprobante" => $d["comp_ca_idcomprobante"], "docentry" => $d["comp_ca_docentry"],
                 "comprobante" => $consecutivo, "fchcomprobante" => $d["comp_ca_fchcomprobante"],
@@ -608,7 +612,8 @@ class inoF2Actions extends sfActions {
         $errors = array();
         $conn = Doctrine::getTable("InoMaster")->getConnection();        
         $conn->beginTransaction();
-        try {
+        //try 
+        {
 
             $idmaster = $request->getParameter("idmaster");
             $tipo = ($request->getParameter("tipo") == "") ? "full" : $request->getParameter("tipo");
@@ -632,7 +637,7 @@ class inoF2Actions extends sfActions {
                 
                 $q = Doctrine::getTable("InoMaster")
                         ->createQuery("m")
-                        ->addWhere("m.ca_master = ?", $request->getParameter("ca_master"));
+                        ->addWhere("m.ca_master = ? AND ca_usuanulado is null", $request->getParameter("ca_master"));
 
                 if ($idmaster) {
                     $q->addWhere("m.ca_idmaster != ?", $idmaster);
@@ -643,9 +648,6 @@ class inoF2Actions extends sfActions {
                     $error = "El numero de master ya se incluyo en la referencia " . $m->getCaReferencia();
                 }
             }
-            
-            //$error = "ññ:".$request->getParameter("idempresa");
-            
 
             if ($error == "") {
 
@@ -663,6 +665,10 @@ class inoF2Actions extends sfActions {
                             $mmRef = "01";
                             $aaRef = $aaRef + 1;
                         }
+                    }
+                    if($impoexpo== Constantes::EXPO)
+                    {
+                        $idorigen=$this->getUser()->getIdciudad();
                     }
                     $numRef = InoMasterTable::getNumReferencia($impoexpo, $transporte, $modalidad, $idorigen, $iddestino, $mmRef, $aaRef,$idempresa);
 
@@ -709,7 +715,7 @@ class inoF2Actions extends sfActions {
                     $datos = json_encode($datos);
                     $ino->setCaDatos($datos);
                 }
-                if (($impoexpo == "INTERNO" || $impoexpo == "OTM-DTA") && $transporte == "Terrestre") {//terrestre y empoexpo interno -> modo 6
+                if ( (($impoexpo == Constantes::INTERNO || $impoexpo == Constantes::OTMDTA) && $transporte == Constantes::TERRESTRE) || ($impoexpo==Constantes::EXPO && $transporte == Constantes::MARITIMO ) ) {
                     if ($numRef != "")
                         $ino->setCaMaster($numRef);
                 } else {
@@ -784,11 +790,11 @@ class inoF2Actions extends sfActions {
                 $this->responseArray = array("success" => false, "errorInfo" => $error);
                 $this->setTemplate("responseTemplate");
             }
-        } catch (Exception $e) {
+        } /*catch (Exception $e) {
 
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
             $this->setTemplate("responseTemplate");
-        }
+        }*/
     }
 
     /**
@@ -1220,7 +1226,7 @@ class inoF2Actions extends sfActions {
         $idmaster = $request->getParameter("idmaster");
         $conn = Doctrine::getTable("IdsCliente")->getConnection();
         $conn->beginTransaction();
-
+        
         try {
             
             $facturas = Doctrine::getTable("InoHouse")
@@ -1232,12 +1238,17 @@ class inoF2Actions extends sfActions {
                         ->innerJoin("comp.Ids fact")
                         ->where("c.ca_idmaster = ? and comp.ca_fchanulado is null and comp.ca_usuanulado is null and comp.ca_estado=5 ", $idmaster)
                         ->execute();
+
             if(count($facturas)>0)
+            {
                 $errorInfo="La referencia no se puede eliminar porque ya posee ".count($facturas)." comprobante(s) creado(s)";
+                $this->responseArray = array("success" => false, "errorinfo"=>$errorInfo);
+            }
             else
             {
+                
                 $ino = Doctrine::getTable("InoMaster")->find($idmaster);
-                if ($ino) {
+                if ($ino) {                
                     $ino->setCaFchanulado(date("Y-m-d H:i:s"));
                     $ino->setCaUsuanulado($this->getUser()->getUserId());                
                     $ino->setCaMotivoanulado($request->getParameter("motivo"));
@@ -1250,6 +1261,9 @@ class inoF2Actions extends sfActions {
             $conn->rollback();
             $this->responseArray = array("success" => false, "error" => $e->getMessage());
         }
+        
+
+        
         $this->setTemplate("responseTemplate");
     }
 
@@ -1310,6 +1324,7 @@ class inoF2Actions extends sfActions {
      *      idevento: entero identificador del evento del cual se buscan los eventos SAE y DEX
      * @date:  2016-03-28
      */
+    
     public function executeDatosEventosSAEDEX(sfWebRequest $request) {
         $referencia = $request->getParameter("referencia");
         $idevento = $request->getParameter("idevento");
@@ -1587,17 +1602,32 @@ class inoF2Actions extends sfActions {
     }
 
     public function executeGenerarComprobante(sfWebRequest $request) {
-        $idcomprobante = $request->getParameter("idcomprobante");
-        $ncomprobante = $request->getParameter("ncomprobante");
+        
+        $idcomprobante = $request->getParameter("idcomprobante");        
         $errorInfo = $info = "";
         $ids = array();
-
-        $inoDetalle = new InoDetalle();
-
-        $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
+        $comprobantes = Doctrine::getTable("InoComprobante")
+                ->createQuery("m")
+                ->whereIn("m.ca_idcomprobante", json_decode($idcomprobante))
+                //->addWhere("m.ca_idmaster = ?", array($request->getParameter("idmaster")))
+                ->execute();
+        
+        foreach($comprobantes as $comprobante)
+        {
+            $resul[]=$this->generarComprobante($comprobante,$success);
+        }
+        if(count($resul)==1)
+            $resul=$resul[0];
+        $this->responseArray = array("success" => $success, "resul" => $resul,"count"=>count($comprobantes));
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function generarComprobante($comprobante,&$success)
+    {
+        //$comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
         $idsCreditos=$comprobante->getIds()->getIdsCredito();
         $plazo=0;
-
+        
         foreach($idsCreditos as $idsc)
         {
             if($idsc->getCaIdempresa()==$comprobante->getInoTipoComprobante()->getCaIdempresa())
@@ -1605,6 +1635,7 @@ class inoF2Actions extends sfActions {
         }
         
         $comprobante->setCaPlazo($plazo);
+        
         $comprobante->save();
         
         $transout = new IntTransaccionesOut();
@@ -1619,31 +1650,26 @@ class inoF2Actions extends sfActions {
             case "P":
                 $idinttipo = 8;
                 break;
+            case "D":
+                $idinttipo = 20;
+                break;
         }
-        $idtransaccion = IntTransaccionesOut::procesarTransacciones($idinttipo, $idcomprobante);
-        //echo $idtransaccion;
-        //exit;
-        if ($idtransaccion!="" && $idtransaccion > 0) {            
-         //   try {                
+        $idtransaccion = IntTransaccionesOut::procesarTransacciones($idinttipo, $comprobante->getCaIdcomprobante());
+        
+        if ($idtransaccion!="" && $idtransaccion > 0) {
+         //   try {
                 $resul = IntTransaccionesOut::enviarWs($idtransaccion,$this->getUser()->getUserId());
                 $resul=$resul[0];
-                //print_r($resul);
                 $success = true;
-           /* } catch (Exception $e) {         
-                $resul = $e->getTraceAsString();
-                $success = false;
-            }*/            
         }
         else
         {
             $success = false;
             $resul= $idtransaccion;
         }
-
-        $this->responseArray = array("success" => $success, "resul" => $resul);
-        $this->setTemplate("responseTemplate");
+        return $resul;
     }
-
+    
     
 
     public function executeAnularComprobante(sfWebRequest $request) {
@@ -1742,6 +1768,7 @@ class inoF2Actions extends sfActions {
         $houses = json_decode($datos);
         $idshouse = array();
         $ids = array();
+        $errorInfo="";
         //try {
         foreach ($houses as $c) {
 
@@ -1787,10 +1814,15 @@ class inoF2Actions extends sfActions {
 
                 $house->save();
                 $ids[] = $c->null;
+                $idshouse[] = $house->getCaIdhouse();
             }
-            $idshouse[] = $house->getCaIdhouse();
+            else
+            {
+                $errorInfo="Por favor llenar los datos de cliente y/o documento de transporte<br>";
+            }
+            
         }
-        $this->responseArray = array("errorInfo" => '', "id" => implode(",", $ids), "idhouse" => implode(",", $idshouse), "success" => true);
+        $this->responseArray = array("errorInfo" => $errorInfo, "id" => implode(",", $ids), "idhouse" => implode(",", $idshouse), "success" => true);
         /* } catch (Exception $e) {
           $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
           } */
@@ -1814,17 +1846,32 @@ class inoF2Actions extends sfActions {
         $conn->beginTransaction();
 
         try {
-            $ino = Doctrine::getTable("InoMaster")->find($idmaster);
-            if ($opcion == "Liquidar") {
-                $ino->setCaUsuliquidado($this->getUser()->getUserId());
-                $ino->setCaFchliquidado(date("Y-m-d H:i:s"));
-            } else {
-                $ino->setCaUsuliquidado(null);
-                $ino->setCaFchliquidado(null);
+            $facturas = Doctrine::getTable("InoHouse")
+                        ->createQuery("c")
+                        ->select("c.*")      
+                        ->innerJoin("c.Cliente cl")
+                        ->innerJoin("c.InoComprobante comp")
+                        ->leftJoin("comp.InoTipoComprobante tcomp")
+                        ->innerJoin("comp.Ids fact")
+                        ->where("c.ca_idmaster = ? and comp.ca_fchanulado is null and comp.ca_usuanulado is null and comp.ca_estado=5 ", $idmaster)
+                        ->execute();
+            if(count($facturas)>0)
+            {
+                $ino = Doctrine::getTable("InoMaster")->find($idmaster);
+                if ($opcion == "Liquidar") {
+                    $ino->setCaUsuliquidado($this->getUser()->getUserId());
+                    $ino->setCaFchliquidado(date("Y-m-d H:i:s"));
+                } else {
+                    $ino->setCaUsuliquidado(null);
+                    $ino->setCaFchliquidado(null);
+                }
+                $ino->save();
+                $conn->commit();
+                $this->responseArray = array("success" => true, "usuarioLiquidado" => ($ino->getCaUsuliquidado() . " " . $ino->getCaFchliquidado()));
             }
-            $ino->save();
-            $conn->commit();
-            $this->responseArray = array("success" => true, "usuarioLiquidado" => ($ino->getCaUsuliquidado() . " " . $ino->getCaFchliquidado()));
+            else{
+                $this->responseArray = array("success" => false, "errorInfo" => "No es posible Liquidar porque no posee ingresos.");
+            }
         } catch (Exception $e) {
             $conn->rollBack();
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
@@ -2245,19 +2292,20 @@ class inoF2Actions extends sfActions {
             $idinocostos = array();
             foreach ($datos as $dato) {
                 $costo = Doctrine::getTable("InoCosto")->find($dato->idinocosto);
-                if($dato->venta>0)
+                if(is_numeric($dato->venta))
                 {
                     $costo->setCaVenta($dato->venta);
                     $costo->save($conn);
                 }
                 
                 foreach ($dato->sobreventas as $t) {
-                    //print_r($t);
+                    
                     if (($t->doctransporte == "" || $t->doctransporte == "null") ||
                             ($t->idhouse == "" || $t->idhouse == "null") ||
-                            ($t->valor == "" || $t->valor == "null")
-                    )
+                            ( !is_numeric($t->valor))
+                    )                                           
                         continue;
+                    
                     if ($t->idutilidad == "null" || $t->idutilidad == "") {
                         $inoUtilidad = new InoUtilidad();
                         $inoUtilidad->setCaIdhouse($t->idhouse);
@@ -2268,6 +2316,7 @@ class inoF2Actions extends sfActions {
                     }
 
                     $inoUtilidad->setCaValor($t->valor);
+                    //echo $t->valor."<br>";
                     $inoUtilidad->save($conn);
 
                     /*$ids[] = $t->id;
@@ -2431,10 +2480,10 @@ class inoF2Actions extends sfActions {
     public function executeGuardarDeducciones(sfWebRequest $request) {
 
         $idcomprobante = $request->getParameter("idcomprobante");
-        $comprobante = Doctrine::getTable("InoComprobante")
+        /*$comprobante = Doctrine::getTable("InoComprobante")
                 ->createQuery("c")
                 ->addWhere("c.ca_idcomprobante = ?", $idcomprobante)
-                ->fetchOne();
+                ->fetchOne();*/
         $totalDed = 0;
         $deducciones = json_decode($request->getParameter("gridDeducciones"));
         $conn = Doctrine::getTable("InoComprobante")->getConnection();
@@ -2452,7 +2501,9 @@ class inoF2Actions extends sfActions {
                             $inoDeduccion->setCaIddeduccion($d->iddeduccion);
                         }
                         $inoDeduccion->setCaNeto($d->neto);
-                        $inoDeduccion->setCaTcambio($comprobante->getCaTcambio());
+                        $inoDeduccion->setCaObservaciones($d->observaciones);
+                        //$inoDeduccion->setCaTcambio($comprobante->getCaTcambio());
+                        $inoDeduccion->setCaTcambio(1);
                         $inoDeduccion->save($conn);
                         $ids[] = $d->id;
                     }
@@ -2479,7 +2530,8 @@ class inoF2Actions extends sfActions {
             $data[] = array("iddeduccion" => $deduccion->getCaIddeduccion(),
                 "neto" => $deduccion->getCaNeto(),
                 "tcambio" => $deduccion->getCaTcambio(),
-                "valor" => ($deduccion->getCaNeto() * $deduccion->getCaTcambio()));
+                "observaciones" => $deduccion->getCaObservaciones() );
+                //"valor" => ($deduccion->getCaNeto() * $deduccion->getCaTcambio()));
         }
         $this->responseArray = array("success" => true, "root" => $data);
         $this->setTemplate("responseTemplate");
@@ -2682,14 +2734,17 @@ class inoF2Actions extends sfActions {
                         ->addWhere("r.ca_idreporte = ? and ca_idconcepto = ?", array($tarifa->getCaIdreporte(), $tarifa->getCaIdconcepto()))
                         ->execute();
                 foreach ($repgastos as $repgasto) {
-                    $data[] = array("idconcepto" => utf8_encode($repgasto->getConcepto()->getCaIdconcepto()),
-                        "concepto" => utf8_encode($repgasto->getTipoRecargo()->getCaRecargo()),
-                        "idpadre" => $repgasto->getTipoRecargo()->getCaIdpadre(),
-                        "aplicacion" => utf8_encode($repgasto->getCaAplicacion()),
-                        "moneda" => utf8_encode($repgasto->getCaIdmoneda()),
-                        "cobrar" => $repgasto->getCaCobrarTar(),
-                        "agrupador" => utf8_encode($tarifa->getConcepto()->getCaConcepto())
-                    );
+                    //if($repgasto->getInoConcepto()->getCaIdpadre()>0)
+                    {
+                        $data[] = array("idconcepto" => utf8_encode($repgasto->getInoConcepto()->getCaIdconcepto()),
+                            "concepto" => utf8_encode($repgasto->getTipoRecargo()->getCaRecargo()),
+                            "idpadre" => $repgasto->getInoConcepto()->getCaIdpadre(),
+                            "aplicacion" => utf8_encode($repgasto->getCaAplicacion()),
+                            "moneda" => utf8_encode($repgasto->getCaIdmoneda()),
+                            "cobrar" => $repgasto->getCaCobrarTar(),
+                            "agrupador" => utf8_encode($tarifa->getConcepto()->getCaConcepto())
+                        );
+                    }
                 }
             }
 
@@ -2700,18 +2755,21 @@ class inoF2Actions extends sfActions {
                     ->addWhere("(t.ca_tiporecargo = ? or t.ca_tiporecargo is null ) and t.ca_idreporte = ? and t.ca_idconcepto = ? and t.ca_recargoorigen='true'", array($tipo, $house->getReporte()->getCaIdreporte(), 9999))
                     ->orderBy("t.ca_fchcreado ASC")
                     ->execute();
-            //if($tipo=="1")        
+            //if($tipo=="1")
             {
                 if (count($recargos) > 0) {
                     foreach ($recargos as $recargo) {
-                        $data[] = array("idconcepto" => utf8_encode($recargo->getConcepto()->getCaIdconcepto()),
-                            "concepto" => utf8_encode($recargo->getTipoRecargo()->getCaRecargo()),
-                            "idpadre" => $recargo->getConcepto()->getCaIdpadre(),
-                            "aplicacion" => utf8_encode($recargo->getCaAplicacion()),
-                            "moneda" => utf8_encode($recargo->getCaIdmoneda()),
-                            "cobrar" => $recargo->getCaCobrarTar(),
-                            "agrupador" => utf8_encode("Recargo general del trayecto")
-                        );
+                        //if($recargo->getInoConcepto()->getCaIdpadre()>0)
+                        {
+                            $data[] = array("idconcepto" => utf8_encode($recargo->getInoConcepto()->getCaIdconcepto()),
+                                "concepto" => utf8_encode($recargo->getTipoRecargo()->getCaRecargo()),
+                                "idpadre" => $recargo->getTipoRecargo()->getCaIdpadre(),
+                                "aplicacion" => utf8_encode($recargo->getCaAplicacion()),
+                                "moneda" => utf8_encode($recargo->getCaIdmoneda()),
+                                "cobrar" => $recargo->getCaCobrarTar(),
+                                "agrupador" => utf8_encode("Recargo general del trayecto")
+                            );
+                        }
                     }
                 }
             }
@@ -3271,45 +3329,511 @@ class inoF2Actions extends sfActions {
         $conn = Doctrine_Manager::getInstance()->getConnection('master');
         $conn->beginTransaction();
         
-        $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
-        $newComprobante=$comprobante->copy(true);
         
-        $newComprobante->setCaConsecutivo(null);
-        $newComprobante->setCaFchcomprobante(null);
+        $comprobantes = Doctrine::getTable("InoComprobante")
+                ->createQuery("m")
+                ->whereIn("m.ca_idcomprobante", json_decode($idcomprobante))
+                //->addWhere("m.ca_idmaster = ?", array($request->getParameter("idmaster")))
+                ->execute();
         
-        $newComprobante->setCaFchcreado(null);
-        $newComprobante->setCaUsucreado(null);
-        $newComprobante->setCaFchactualizado(null);
-        $newComprobante->setCaUsuactualizado(null);
-        $newComprobante->setCaFchgenero(null);
-        $newComprobante->setCaUsugenero(null);
-        $newComprobante->setCaFchanulado(null);
-        $newComprobante->setCaUsuanulado(null);
-        $newComprobante->setCaEstado(0);
-        $newComprobante->setCaValor(null);
-        $newComprobante->setCaValor2(null);
-        $newComprobante->setCaPropiedades(null);
-        $newComprobante->setCaIdcomprobanteCruce(null);
-        $newComprobante->setCaDatos(null);        
-        $newComprobante->save($conn);
-        
-        $newDetalle = new InoDetalle();
-        //$detalles->copy(true);
-        $detalles= $comprobante->getInoDetalle();
-        
-        foreach( $detalles as $d)
+        foreach($comprobantes as $comprobante)
         {
-            $newDetalle = $d->copy();
-            $newDetalle->setCaIdcomprobante($newComprobante->getCaIdcomprobante());
-            
-            $newDetalle->setCaFchcreado(null);
-            $newDetalle->setCaUsucreado(null);
-            $newDetalle->save($conn);
+        //$comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
+            $newComprobante=$comprobante->copy(true);
+
+            $newComprobante->setCaConsecutivo(null);
+            $newComprobante->setCaFchcomprobante(null);
+
+            $newComprobante->setCaFchcreado(null);
+            $newComprobante->setCaUsucreado(null);
+            $newComprobante->setCaFchactualizado(null);
+            $newComprobante->setCaUsuactualizado(null);
+            $newComprobante->setCaFchgenero(null);
+            $newComprobante->setCaUsugenero(null);
+            $newComprobante->setCaFchanulado(null);
+            $newComprobante->setCaUsuanulado(null);
+            $newComprobante->setCaEstado(0);
+            $newComprobante->setCaValor(null);
+            $newComprobante->setCaValor2(null);
+            $newComprobante->setCaPropiedades(null);
+            $newComprobante->setCaIdcomprobanteCruce(null);
+            $newComprobante->setCaDatos(null);        
+            $newComprobante->save($conn);
+
+            $newDetalle = new InoDetalle();
+            //$detalles->copy(true);
+            $detalles= $comprobante->getInoDetalle();
+
+            foreach( $detalles as $d)
+            {
+                $newDetalle = $d->copy();
+                $newDetalle->setCaIdcomprobante($newComprobante->getCaIdcomprobante());
+
+                $newDetalle->setCaFchcreado(null);
+                $newDetalle->setCaUsucreado(null);
+                $newDetalle->save($conn);
+            }
         }
-        
         $conn->commit();
         $this->responseArray = array("success" => "true", "idcomprobante" => $newComprobante->getCaIdcomprobante());        
         $this->setTemplate("responseTemplate");
     }
+    
+    public function executeEnviarSap(sfWebRequest $request) {
+        
+        
+        $idcomprobante = $request->getParameter("idcomprobante");
+        
+        $conn = Doctrine_Manager::getInstance()->getConnection('master');
+        $conn->beginTransaction();        
+        
+        $comprobantes = Doctrine::getTable("InoComprobante")
+                ->createQuery("m")
+                ->whereIn("m.ca_idcomprobante", json_decode($idcomprobante))
+                //->addWhere("m.ca_idmaster = ?", array($request->getParameter("idmaster")))
+                ->execute();
+        
+        $q = Doctrine::getTable("IntTransaccionesOut")
+                            ->createQuery("tr")
+                            ->select("*")          
+                            ->where("tr.ca_estado!=? and tr.ca_datos is not null", array("P"))
+                            ->limit(1);
+        /*foreach($comprobantes as $c)
+        {
+            $idtransaccion
+        }*/
+        
+        $respuesta=IntTransaccionesOut::enviarWs($idtransaccion);
+        //$reporte=IntTransaccionesOut::reporteErrores();
+        //exit;
+        $this->responseArray = array("respuesta" => $respuesta, "success" => true);        
+        $this->setTemplate("responseTemplate");
+        
+    }
 
+    public function executeValidarGuiaNumero(sfWebRequest $request) {
+        $referencia = $request->getParameter("ref");
+        $consecutivo = $request->getParameter("datos");
+        
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select ca_referencia from tb_expo_awbtransporte where ca_consecutivo = '$consecutivo' limit 1";
+        $rs = $con->execute($sql);
+        $expoAwbtransporte = $rs->fetch();
+        
+        if (!$expoAwbtransporte['ca_referencia']){
+            $this->responseArray = array("success" => true, "valid" => true);
+        }else{
+            $this->responseArray = array("success" => true, "valid" => false, "errorInfo" => utf8_encode("Número de guía usado en Referencia ".$expoAwbtransporte['ca_referencia']));
+}
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosCarriers(sfWebRequest $request) {
+        $query = strtolower($this->getRequestParameter("query"));
+        $data = array();
+        if ($query) {
+            $carriers = Doctrine::getTable("ExpoCarrier")
+                ->createQuery("c")
+                ->addWhere("lower(c.ca_carrier) like '%$query%'")
+                //->getSQLQuery();
+                ->execute();
+            
+            foreach ($carriers as $carrier) {
+                $data[] = array("idcarrier" => $carrier->getCaIdcarrier(), "carrier" => utf8_encode($carrier->getCaCarrier()));
+            }
+        }
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
+
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeValoresPorDefecto(sfWebRequest $request) {
+        if ($request->getParameter("idhouse")) {
+            $house = Doctrine::getTable("InoHouse")->find($request->getParameter("idhouse"));
+            $reporte = Doctrine::getTable("Reporte")
+                    ->createQuery("r")
+                    ->where("r.ca_consecutivo = ?", $house->getReporte()->getCaConsecutivo())
+                    ->addWhere("r.ca_fchanulado IS NULL")
+                    ->addOrderBy("r.ca_version DESC")
+                    ->limit(1)
+                    ->fetchOne();
+            if($reporte->getCaModalidad() == "DIRECTO"){
+                $data['nature_quantity'] = utf8_encode($reporte->getCaMercanciaDesc());
+            }
+        }
+        
+        $data = array();
+        if( $request->getParameter("idconfig") ){
+            $config = Doctrine::getTable("ColsysConfig")->find( $request->getParameter("idconfig") );
+            $this->forward404Unless($config);
+            
+            $values = $config->getColsysConfigValue();
+            foreach ($values as $value) {
+                $data[$value->getCaValue2()] = utf8_encode($value->getCaValue());
+            }
+        }
+        
+        $con = Doctrine_Manager::connection();
+        $sql = "select ca_fecha,ca_pesos,ca_euro from tb_trms t order by ca_fecha desc limit 1";
+        $trm = $con->fetchArray($sql);
+        
+        $data['accounting_info'] = "T.C.$ ".number_format($trm[1], 2)."\nHAWB: ".$request->getParameter("referencia");
+        $this->responseArray = array("success" => true, "data" => $data);
+
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosAwbsTransporte(sfWebRequest $request) {
+        $idmaster = $this->getRequestParameter("idmaster");
+        $documentos = Doctrine::getTable("ExpoAwbtransporte")
+                ->createQuery("e")
+                ->addWhere("e.ca_idmaster = ?", $idmaster)
+                ->execute();
+        $data = array();
+
+        foreach ($documentos as $documento) {
+            $data[] = array("iddoctransporte" => $documento->getCaIddoctransporte(),
+                "referencia" => $documento->getCaReferencia(),
+                "iddestino_uno" => $documento->getCaIddestinoUno(),
+                "idcarrier_uno" => $documento->getCaIdcarrierUno(),
+                "carrier_uno" => $documento->getExpoCarrierUno()->getCaCarrier(),
+                "iddestino_dos" => $documento->getCaIddestinoDos(),
+                "idcarrier_dos" => $documento->getCaIdcarrierDos(),
+                "carrier_dos" => $documento->getExpoCarrierDos()->getCaCarrier(),
+                "iddestino_trs" => $documento->getCaIddestinoTrs(),
+                "idcarrier_trs" => $documento->getCaIdcarrierTrs(),
+                "carrier_trs" => $documento->getExpoCarrierTrs()->getCaCarrier(),
+                "consecutivo" => $documento->getCaConsecutivo(),
+                "fchdoctransporte" => $documento->getCaFchdoctransporte(),
+                "charges_code" => $documento->getCaChargesCode(),
+                "airport_departure" => $documento->getCaAirportDeparture(),
+                "airport_destination" => $documento->getCaAirportDestination(),
+                "accounting_info" => utf8_encode($documento->getCaAccountingInfo()),
+                "handing_info" => utf8_encode($documento->getCaHandingInfo()),
+                "number_packages" => $documento->getCaNumberPackages(),
+                "kind_packages" => $documento->getCaKindPackages(),
+                "gross_weight" => $documento->getCaGrossWeight(),
+                "gross_unit" => $documento->getCaGrossUnit(),
+                "weight_charge" => $documento->getCaWeightCharge(),
+                "weight_details" => $documento->getCaWeightDetails(),
+                "kind_rate" => $documento->getCaKindRate(),
+                "rate_charge" => $documento->getCaRateCharge(),
+                "due_agent" => $documento->getCaDueAgent(),
+                "due_carrier" => $documento->getCaDueCarrier(),
+                "commodity_item" => $documento->getCaCommodityItem(),
+                "delivery_goods" => $documento->getCaDeliveryGoods(),
+                "other_charges" => $documento->getCaOtherCharges(),
+                "shipper_certifies" => $documento->getCaShipperCertifies(),
+                "childrens" => $documento->getCaChildrens(),
+                "fchliquidado" => $documento->getCaFchliquidado(),
+                "usuliquidado" => $documento->getCaUsuliquidado()
+            );
+        }
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
+
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeGuardarAwbsTransporte(sfWebRequest $request) {
+        $idmaster = $request->getParameter("id");
+        $datos = $request->getParameter("datos");
+        $datos = json_decode($datos);
+
+        $conn = Doctrine::getTable("ExpoAwbtransporte")->getConnection();
+        $conn->beginTransaction();
+        try {
+            if (!$datos->iddoctransporte) {
+                $expoAwbtransporte = new ExpoAwbtransporte();
+                $expoAwbtransporte->setCaIdmaster($idmaster);
+            } else {
+                $expoAwbtransporte = Doctrine::getTable("ExpoAwbtransporte")
+                        ->createQuery("d")
+                        ->addWhere("d.ca_iddoctransporte = ?", $datos->iddoctransporte)
+                        ->fetchOne();
+            }
+
+            if ($datos->consecutivo) {
+                $expoDocNumbers = Doctrine::getTable('ExpoDocNumbers')->find($datos->consecutivo);
+                if ($expoDocNumbers) {
+                    $expoDocNumbers->setCaReferencia($referencia);
+                    $expoDocNumbers->save();
+                }
+                $expoAwbtransporte->setCaConsecutivo($datos->consecutivo);
+            }
+
+            if ($datos->fchdoctransporte) {
+                $expoAwbtransporte->setCaFchdoctransporte($datos->fchdoctransporte);
+            }
+            if ($datos->iddestino_uno) {
+                $expoAwbtransporte->setCaIddestinoUno($datos->iddestino_uno);
+            }
+            if ($datos->idcarrier_uno) {
+                $expoAwbtransporte->setCaIdcarrierUno($datos->idcarrier_uno);
+            }
+            if ($datos->iddestino_dos) {
+                $expoAwbtransporte->setCaIddestinoDos($datos->iddestino_dos);
+            }
+            if ($datos->idcarrier_dos) {
+                $expoAwbtransporte->setCaIdcarrierDos($datos->idcarrier_dos);
+            }
+            if ($datos->iddestino_trs) {
+                $expoAwbtransporte->setCaIddestinoTrs($datos->iddestino_trs);
+            }
+            if ($datos->idcarrier_trs) {
+                $expoAwbtransporte->setCaIdcarrierTrs($datos->idcarrier_trs);
+            }
+            if ($datos->charges_code) {
+                $expoAwbtransporte->setCaChargesCode($datos->charges_code);
+            }
+            if ($datos->airport_departure) {
+                $expoAwbtransporte->setCaAirportDeparture($datos->airport_departure);
+            }
+            if ($datos->airport_destination) {
+                $expoAwbtransporte->setCaAirportDestination($datos->airport_destination);
+            }
+            if ($datos->accounting_info) {
+                $expoAwbtransporte->setCaAccountingInfo(utf8_decode($datos->accounting_info));
+            }
+            if ($datos->handing_info) {
+                $expoAwbtransporte->setCaHandingInfo(utf8_decode($datos->handing_info));
+            }
+            if ($datos->shipper_certifies) {
+                $expoAwbtransporte->setCaShipperCertifies(utf8_decode($datos->shipper_certifies));
+            }
+            $expoAwbtransporte->save();
+            $conn->commit();
+
+            $this->responseArray = array("success" => true);
+        } catch (Exception $e) {
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+
+        $this->setTemplate("responseTemplate");
+    }
+ 
+     public function executeEliminarAwbsTransporte(sfWebRequest $request) {
+        $iddoctransporte = $request->getParameter("id");
+
+        $conn = Doctrine::getTable("ExpoAwbtransporte")->getConnection();
+        $conn->beginTransaction();
+        try {
+            if ($iddoctransporte) {
+                $expoAwbtransporte = Doctrine::getTable("ExpoAwbtransporte")
+                        ->createQuery("d")
+                        ->addWhere("d.ca_iddoctransporte = ?", $iddoctransporte)
+                        ->fetchOne();
+                if ($expoAwbtransporte) {
+                    $expoAwbtransporte->delete();
+                }
+            }
+            
+            $conn->commit();
+
+            $this->responseArray = array("success" => true);
+        } catch (Exception $e) {
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+
+        $this->setTemplate("responseTemplate");
+    }   
+    
+    public function executeGuardarLiquidDocs(sfWebRequest $request) {
+        $referencia = $request->getParameter("id");
+        $datos = $request->getParameter("datos");
+        $datos = json_decode($datos);
+
+        $conn = Doctrine::getTable("ExpoAwbtransporte")->getConnection();
+        $conn->beginTransaction();
+        try {
+            if ($datos->iddoctransporte) {
+                $expoAwbtransporte = Doctrine::getTable("ExpoAwbtransporte")
+                        ->createQuery("d")
+                        ->addWhere("d.ca_iddoctransporte = ?", $datos->iddoctransporte)
+                        ->fetchOne();
+            }
+            if (isset($datos->number_packages)) {
+                $expoAwbtransporte->setCaNumberPackages($datos->number_packages);
+            }
+            if (isset($datos->kind_packages)) {
+                $expoAwbtransporte->setCaKindPackages($datos->kind_packages);
+            }
+            if ($datos->gross_weight or $datos->gross_weight == 0) {
+                $expoAwbtransporte->setCaGrossWeight($datos->gross_weight);
+            }
+            if ($datos->gross_unit) {
+                $expoAwbtransporte->setCaGrossUnit($datos->gross_unit);
+            }
+            if ($datos->weight_details) {
+                $expoAwbtransporte->setCaWeightDetails($datos->weight_details);
+            }
+            if ($datos->weight_charge or $datos->weight_charge == 0) {
+                $expoAwbtransporte->setCaWeightCharge($datos->weight_charge);
+            }
+            if ($datos->kind_rate) {
+                $expoAwbtransporte->setCaKindRate($datos->kind_rate);
+            }
+            if ($datos->rate_charge or $datos->rate_charge == 0) {
+                $expoAwbtransporte->setCaRateCharge($datos->rate_charge);
+            }
+            if ($datos->due_agent or $datos->due_agent == 0) {
+                $expoAwbtransporte->setCaDueAgent($datos->due_agent);
+            }
+            if ($datos->due_carrier or $datos->due_carrier == 0) {
+                $expoAwbtransporte->setCaDueCarrier($datos->due_carrier);
+            }
+            if ($datos->delivery_goods) {
+                $expoAwbtransporte->setCaDeliveryGoods($datos->delivery_goods);
+            }
+            if ($datos->commodity_item) {
+                $expoAwbtransporte->setCaCommodityItem($datos->commodity_item);
+            }
+            if ($datos->other_charges) {
+                $expoAwbtransporte->setCaOtherCharges($datos->other_charges);
+            }
+            $expoAwbtransporte->setCaUsuliquidado($this->getUser()->getUserId());
+            $expoAwbtransporte->setCaFchliquidado(date("Y-m-d H:i:s"));
+            $expoAwbtransporte->save();
+
+            $conn->commit();
+            $this->responseArray = array("success" => true);
+        } catch (Exception $e) {
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeImprimirAwbsTransporte(sfWebRequest $request) {
+        $this->documento = Doctrine::getTable("ExpoAwbtransporte")
+                ->createQuery("e")
+                ->addWhere("e.ca_iddoctransporte = ?", $this->getRequestParameter("id"))
+                ->fetchOne();
+        $this->master = $this->documento->getInoMaster();
+        $houses = $this->master->getInoHouse();
+        foreach ($houses as $house) {
+            $consecutivo = $house->getReporte()->getCaConsecutivo();
+            break;
+        }
+
+        $this->reporte = Doctrine::getTable("Reporte")
+                ->createQuery("r")
+                ->where("r.ca_consecutivo = ?", $consecutivo)
+                ->addWhere("r.ca_fchanulado IS NULL")
+                ->addOrderBy("r.ca_version DESC")
+                ->limit(1)
+                ->fetchOne();
+        $this->empresa = Doctrine::getTable("Empresa")->find(2); // Localiza la empresa Coltrans
+        
+        $config = Doctrine::getTable("ColsysConfig")->find( 260 );
+        $values = $config->getColsysConfigValue();
+        $this->config = array();
+        foreach ($values as $value) {
+            $this->config[$value->getCaValue2()] = utf8_encode($value->getCaValue());
+        }
+        
+        $this->consignatario = Doctrine::getTable("Tercero")->find($this->reporte->getCaIdconsignatario());
+        $this->notify = Doctrine::getTable("Tercero")->find($this->reporte->getCaIdnotify());
+        $this->usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
+        $this->borrador = ($this->getRequestParameter("borrador")=='true')?true:false;
+        $this->plantilla = ($this->getRequestParameter("plantilla")=='true')?true:false;
+        $this->copia = ($this->getRequestParameter("copia")=='true')?true:false;
+        $this->guiahija = ($this->getRequestParameter("guiahija")=='true')?true:false;
+    }
+
+    public function executeImprimirAwbsStickers(sfWebRequest $request) {
+        $documento = Doctrine::getTable("ExpoAwbtransporte")
+                ->createQuery("e")
+                ->addWhere("e.ca_iddoctransporte = ?", $this->getRequestParameter("id"))
+                ->fetchOne();
+        $referencia = $documento->getInoMaestraExpo();
+        $this->stickers = array();
+        
+        $prefijo = $documento->getExpoCarrierUno()->getCaPrefijo();
+        $consecutivo = $documento->getCaConsecutivo();
+        if ($documento->getCaIddestinoTrs()){
+            $destination = $documento->getCaIddestinoTrs();
+        }elseif ($documento->getCaIddestinoDos()){
+            $destination = $documento->getCaIddestinoDos();
+        }else{
+            $destination = $documento->getCaIddestinoUno();
+        }
+        
+        $guia_numero = $prefijo. " " .$consecutivo. (($guiahija && count($guias)>1)?chr(65+$key):"");
+        $mawb_pieces = $documento->getCaNumberPackages();
+        
+        if ($documento->getCaChildrens()){
+            $guias = json_decode(html_entity_decode($documento->getCaChildrens()), true);
+            foreach ($guias as $key => $guia){
+                $ref_array = explode(".", $documento->getInoMaestraExpo()->getCaReferencia());
+                $prefijo = $ref_array[0];
+                // $ref_array[3] = ((count($guias)>1)?substr($ref_array[3],1,3):$ref_array[3]); // Si hay más de una guía hija, quita un cero al consecutivo
+                $ref_array[3] = substr($ref_array[3],1,3); // Siempre quitará un dígito al consecutivo para la guía hija
+                $consecutivo = $ref_array[1].$ref_array[2].$ref_array[3].$ref_array[4];
+                $guia_hija = $prefijo. " " .$consecutivo. ((count($guias)>1)?chr(65+$key):"");
+
+                $numero_stickers = $guia['number_packages'];
+                for($i=0; $i< $numero_stickers; $i++){
+                    $this->stickers[] = array(
+                        "guia_numero" => $guia_numero,
+                        "destination" => $destination,
+                        "mawb_pieces" => $mawb_pieces,
+                        "guia_hija" => $guia_hija,
+                        "numero_stickers" => $numero_stickers
+                    );
+                }
+            }
+        }else {
+            for($i=0; $i< $mawb_pieces; $i++){
+                $this->stickers[] = array(
+                    "guia_numero" => $guia_numero,
+                    "destination" => $destination,
+                    "mawb_pieces" => $mawb_pieces,
+                    "guia_hija" => "",
+                    "numero_stickers" => ""
+                );
+            }
+        }
+    }
+
+    public function executeDatosHawbs(sfWebRequest $request) {
+        $id = $request->getParameter("id");
+        
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select ca_childrens from tb_expo_awbtransporte where ca_iddoctransporte = '$id' limit 1";
+        $rs = $con->execute($sql);
+        $expoHawbs = $rs->fetch();
+        $datos = ($expoHawbs['ca_childrens'])?json_decode($expoHawbs['ca_childrens']):array();
+        
+        $this->responseArray = array("success" => true, "root" => $datos, "total" => count($datos));
+        
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeGuardarHawbs(sfWebRequest $request) {
+        $id = $request->getParameter("id");
+        
+        $documento = Doctrine::getTable("ExpoAwbtransporte")
+                ->createQuery("e")
+                ->addWhere("e.ca_iddoctransporte = ?", $this->getRequestParameter("id"))
+                ->fetchOne();
+        $conn = Doctrine::getTable("ExpoAwbtransporte")->getConnection();
+        $conn->beginTransaction();
+        try {
+            if ($documento){
+                $documento->setCaChildrens($request->getParameter("datos"));
+                $documento->save();
+                $conn->commit();
+            }
+            $this->responseArray = array("success" => true);
+        } catch (Exception $e) {
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+        
+        $this->setTemplate("responseTemplate");
+    }
+   
 }

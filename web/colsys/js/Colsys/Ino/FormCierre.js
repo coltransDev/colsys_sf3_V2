@@ -114,7 +114,7 @@ Ext.define('Colsys.Ino.FormCierre', {
                                                 Ext.getCmp("btnCerrar" + idmaster).hide();
                                             }
                                         } else {
-                                            Ext.MessageBox.alert("Mensaje", 'Datos Incompletos<br>');
+                                            Ext.MessageBox.alert("Mensaje", 'Datos Incompletos<br>'+res.errorInfo);
                                         }
                                     }
                                 });
@@ -161,7 +161,7 @@ Ext.define('Colsys.Ino.FormCierre', {
                                                 Ext.getCmp("btnCerrar" + idmaster).setText("Cerrar");
                                             }
                                         } else {
-                                            Ext.MessageBox.alert("Mensaje", res.errorInfo);
+                                            Ext.MessageBox.alert("Mensaje", 'Datos Incompletos<br>');
                                         }
                                     }
                                 });

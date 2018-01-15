@@ -237,7 +237,6 @@ Ext.define('Colsys.Ino.FormHouseRadicacion', {
                 }, {
                     xtype: 'container',
                     layout: 'hbox',
-                    defaultType: 'textfield',
                     margin: '0 0 5 0',
                     defaults: {
                         labelWidth: 90
@@ -247,6 +246,23 @@ Ext.define('Colsys.Ino.FormHouseRadicacion', {
                             fieldLabel: 'Dep\u00F3sito',
                             name: 'coddeposito',
                             id: 'coddepositoh',
+                            flex: 1,
+                            allowBlank: true
+                        }]
+                }, {
+                    xtype: 'container',
+                    layout: 'hbox',
+                    margin: '0 0 5 0',
+                    defaults: {
+                        labelWidth: 90
+                    },
+                    items: [{
+                            xtype: 'textfield',
+                            fieldLabel: 'Bodega',
+                            name: 'bodega',
+                            id: 'bodega',
+                            disabled: true,
+                            disabledCls: 'x-form-field',
                             flex: 1,
                             allowBlank: true
                         }]
@@ -307,6 +323,7 @@ Ext.define('Colsys.Ino.FormHouseRadicacion', {
             var me = this;
             var form = this.up('form').getForm();
             var data = form.getFieldValues();
+            var idmaster = this.up('form').idmaster;
             data["fchtrans"] = Ext.Date.format(new Date(), 'Y-m-d');
             data["disposicion"] = Ext.getCmp("dispocarga").getRawValue();
             data["tipodocumento"] = Ext.getCmp("tipodocviaje").getRawValue();
@@ -325,7 +342,7 @@ Ext.define('Colsys.Ino.FormHouseRadicacion', {
                     success: function (response, options) {
                         Ext.getCmp("winHouseRadicacion").destroy();
                         Ext.Msg.alert("Radicaciones", "Datos almacenados correctamente");
-                        Ext.getCmp("GridHouseRadicacion").getStore().reload();
+                        Ext.getCmp("GridHouseRadicacion"+idmaster).getStore().reload();
                     },
                     failure: function (form, action) {
                         Ext.Msg.alert("Contacto", "Error en guardar " + action.result.errorInfo + "</ br>");

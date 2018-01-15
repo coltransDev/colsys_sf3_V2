@@ -7,7 +7,7 @@ Ext.define('Colsys.Ino.GridHouse', {
     alias: 'widget.Colsys.Ino.GridHouse',
     id: "gridhouse",
     height: 400,
-    sortableColumns: false,
+    //sortableColumns: false,
     enableColumnMove: false,
     autoScroll: true,
     bodegas: null,
@@ -85,7 +85,7 @@ Ext.define('Colsys.Ino.GridHouse', {
         columnas = new Array();
 
         if (this.idimpoexpo == "INTERNO" && this.idtransporte == "Terrestre") {
-            columns.push({
+            columnas.push({
                 header: "Doc. Transporte",
                 hideable: false,
                 id: "doctransporte" + this.idmaster,
@@ -133,8 +133,8 @@ Ext.define('Colsys.Ino.GridHouse', {
                             valueField: 'idreporte',
                             idimpoexpo: this.idimpoexpo,
                             idtransporte: this.idtransporte,
-                            origen: Ext.getCmp("idorigen" + this.idmaster).value,
-                            destino: Ext.getCmp("iddestino" + this.idmaster).value,
+                            origen: Ext.getCmp("idorigen" + this.idmaster).getValue(),
+                            destino: Ext.getCmp("iddestino" + this.idmaster).getValue(),
                             id: "comboReporte" + this.idmaster,
                             listeners: {
                                 select: function (a, record, idx) {
@@ -165,9 +165,7 @@ Ext.define('Colsys.Ino.GridHouse', {
                                             Ext.MessageBox.confirm('Confirmaci&oacute;n', 'Est&aacute; seguro que desea sobrescribir el Registro?', function (choice) {
                                                 if (choice == 'yes') {
                                                     store.data.items[row].set('doctransporte' + idmaster, record.data.ca_doctransporte);
-                                                    store.data.items[row].set('idreporte' + idmaster, record.data.idreporte);
-                                                    store.data.items[row].set('tercero' + idmaster, record.data.ca_tercero);
-                                                    store.data.items[row].set('idtercero' + idmaster, record.data.ca_idtercero);
+                                                    store.data.items[row].set('idreporte' + idmaster, record.data.idreporte);                                                    
                                                     store.data.items[row].set('vendedor' + idmaster, record.data.usu_ca_login);
                                                     store.data.items[row].set('nombrecliente' + idmaster, record.data.compania);
                                                     store.data.items[row].set('idcliente' + idmaster, record.data.cl_ca_idcliente);
@@ -178,13 +176,13 @@ Ext.define('Colsys.Ino.GridHouse', {
                                                     store.data.items[row].set('bodega' + idmaster, record.data.bodega);
                                                     store.data.items[row].set('nombrebodega' + idmaster, record.data.nombrebodega);
                                                     store.data.items[row].set('numorden' + idmaster, record.data.r_ca_orden_clie);
+                                                    store.data.items[row].set('tercero' + idmaster, record.data.ca_tercero);
+                                                    store.data.items[row].set('idtercero' + idmaster, record.data.ca_idtercero);
                                                 }
                                             });
                                         } else {
                                             store.data.items[row].set('doctransporte' + idmaster, record.data.ca_doctransporte);
-                                            store.data.items[row].set('idreporte' + idmaster, record.data.idreporte);
-                                            store.data.items[row].set('tercero' + idmaster, record.data.ca_tercero);
-                                            store.data.items[row].set('idtercero' + idmaster, record.data.ca_idtercero);
+                                            store.data.items[row].set('idreporte' + idmaster, record.data.idreporte);                                            
                                             store.data.items[row].set('vendedor' + idmaster, record.data.usu_ca_login);
                                             store.data.items[row].set('nombrecliente' + idmaster, record.data.compania);
                                             store.data.items[row].set('idcliente' + idmaster, record.data.cl_ca_idcliente);
@@ -195,6 +193,8 @@ Ext.define('Colsys.Ino.GridHouse', {
                                             store.data.items[row].set('bodega' + idmaster, record.data.bodega);
                                             store.data.items[row].set('nombrebodega' + idmaster, record.data.nombrebodega);
                                             store.data.items[row].set('numorden' + idmaster, record.data.r_ca_orden_clie);
+                                            store.data.items[row].set('tercero' + idmaster, record.data.ca_tercero);
+                                            store.data.items[row].set('idtercero' + idmaster, record.data.ca_idtercero);
                                         }
                                     }
                                 }
@@ -392,31 +392,37 @@ Ext.define('Colsys.Ino.GridHouse', {
 
             }),
             renderer: comboBoxRenderer(Ext.getCmp('nombrecliente' + this.idmaster))
-        }, {
-            header: "Proveedor",
-            dataIndex: 'tercero' + this.idmaster,
-            hideable: false,
-            width: 120,
-            sortable: true,
-            //id:'proveedor'+this.idmaster,
-            editor: Ext.create('Colsys.Widgets.wgTercero', {
-                id: 'prov' + this.idmaster,
-                displayField: 'nombre',
-                valueField: 'idtercero',
-                listeners:
-                        {
-                            select: function (a, record, idx)
+        });
+        
+        if (me.idimpoexpo != "Exportaci\u00F3n")
+        {
+            columnas.push({
+                header: "Proveedor",
+                dataIndex: 'tercero' + this.idmaster,
+                hideable: false,
+                width: 120,
+                sortable: true,
+                //id:'proveedor'+this.idmaster,
+                editor: Ext.create('Colsys.Widgets.wgTercero', {
+                    id: 'prov' + this.idmaster,
+                    displayField: 'nombre',
+                    valueField: 'idtercero',
+                    listeners:
                             {
-                                var selected = this.up('grid').getSelectionModel().getSelection()[0];
-                                var row = this.up('grid').store.indexOf(selected);
-                                var store = this.up('grid').getStore();
+                                select: function (a, record, idx)
+                                {
+                                    var selected = this.up('grid').getSelectionModel().getSelection()[0];
+                                    var row = this.up('grid').store.indexOf(selected);
+                                    var store = this.up('grid').getStore();
 
-                                store.data.items[row].set('idtercero' + this.up('grid').idmaster, record.data.t_ca_idtercero);
+                                    store.data.items[row].set('idtercero' + this.up('grid').idmaster, record.data.t_ca_idtercero);
+                                }
                             }
-                        }
-            }),
-            renderer: comboBoxRenderer(Ext.getCmp('prov' + this.idmaster))
-        }, {
+                }),
+                renderer: comboBoxRenderer(Ext.getCmp('prov' + this.idmaster))
+            });
+        }
+        columnas.push( {
             header: "Vendedor",
             dataIndex: 'vendedor' + this.idmaster,
             hideable: false,

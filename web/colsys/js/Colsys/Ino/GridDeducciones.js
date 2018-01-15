@@ -10,7 +10,10 @@ Ext.define('Colsys.Ino.GridDeducciones', {
     extend: 'Ext.grid.Panel',
     alias: 'widget.Colsys.Ino.GridDeducciones',
     plugins: [
-        new Ext.grid.plugin.CellEditing({clicksToEdit: 1})
+        {
+            ptype : 'cellediting',
+            clicksToEdit: 1
+        }
     ],
     width: 640,
     //id: 'gridrespuestas' + this.idmaster,
@@ -72,7 +75,7 @@ Ext.define('Colsys.Ino.GridDeducciones', {
                             renderer: comboBoxRenderer(Ext.getCmp('combodeduccion'))
                         },
                         {
-                            header: "Neto",
+                            header: "Valor",
                             dataIndex: 'neto',
                             width: 158,
                             editor: {
@@ -80,25 +83,34 @@ Ext.define('Colsys.Ino.GridDeducciones', {
                                 
                             }
                         },
-                        {
+                         {
+                            header: "Observaciones",
+                            dataIndex: 'observaciones',
+                            width: 158,
+                            editor: {
+                                xtype: 'textfield'
+                                
+                            }
+                        },
+                        /*{
                             header: "Valor",
                             dataIndex: 'valor',
                             width: 158,
                             readOnly: true
-                        }, {
+                        },*/ {
                             menuDisabled: true,
                             sortable: false,
                             xtype: 'actioncolumn',
                             width: 20,
                             items: [{
                                     iconCls: 'delete',
-                                    tooltip: 'Anular la Encuesta',
+                                    tooltip: 'Eliminar deduccion',
                                     handler: function (grid, rowIndex, colIndex) {
                                         me = this;
                                         var store = me.up('grid').getStore();
                                         idcomprobante = me.up('grid').idcomprobante;
                                         var rec = grid.getStore().getAt(rowIndex);
-                                        Ext.MessageBox.confirm('Confirmación de Eliminación', 'Está seguro que desea anular el registro?', function (choice) {
+                                        Ext.MessageBox.confirm('Confirmación de Eliminación', 'Est&aacute; seguro que desea anular el registro?', function (choice) {
                                             if (choice == 'yes') {
                                                 Ext.Ajax.request({
                                                     waitMsg: 'Eliminado...',

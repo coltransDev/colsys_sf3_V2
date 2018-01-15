@@ -36,7 +36,7 @@ Ext.define('Colsys.Ino.GridEvento', {
     listeners: {
         activate: function (ct, position) {
             casouso = Ext.getCmp("ca_modalidad" + this.idmaster).getValue();
-            console.log(Ext.getCmp("ca_modalidad" + this.idmaster));
+            //console.log(Ext.getCmp("ca_modalidad" + this.idmaster));
             this.getStore().load({
                 params: {
                     caso_uso: casouso,
@@ -146,7 +146,7 @@ Ext.define('Colsys.Ino.GridEvento', {
                                 }
                             },
                             editor: {
-                                xtype: 'datefield'
+                                xtype: 'datefield',readOnly: true,format:'Y-m-d'
                             }
                         }, {
                             header: "tipoespecial",

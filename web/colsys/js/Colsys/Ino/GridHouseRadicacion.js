@@ -36,6 +36,7 @@ Ext.define('Colsys.Ino.GridHouseRadicacion', {
                             {name: 'disposicion', type: 'string'},
                             {name: 'coddeposito', type: 'string'},
                             {name: 'deposito', type: 'string'},
+                            {name: 'bodega', type: 'string'},
                             {name: 'tipodocviaje', type: 'string'},
                             {name: 'tipodocumento', type: 'string'},
                             {name: 'idcondiciones', type: 'string'},
@@ -96,7 +97,13 @@ Ext.define('Colsys.Ino.GridHouseRadicacion', {
                         }, {
                             header: 'Dep\u00F3sito',
                             dataIndex: 'deposito',
-                            flex: 1
+                            flex: 1,
+                            renderer: function (value, metaData, record, rowIdx, colIdx, store) {
+                                if (record.get('bodega') != '') {
+                                    metaData.tdAttr = 'data-qtip="Bodega: ' + record.get('bodega') + '"';
+                                }
+                                return value;
+                            }
                         }, {
                             header: 'Descripci\u00F3n Mcia.',
                             dataIndex: 'mercancia_desc',
@@ -123,7 +130,7 @@ Ext.define('Colsys.Ino.GridHouseRadicacion', {
                                                 id: 'winHouseRadicacion',
                                                 title: 'Radicacion House',
                                                 width: 900,
-                                                height: 380,
+                                                height: 410,
                                                 closeAction: 'destroy',
                                                 listeners: {
                                                     destroy: function (obj, eOpts)
@@ -134,6 +141,7 @@ Ext.define('Colsys.Ino.GridHouseRadicacion', {
                                                 items: {
                                                     xtype: 'Colsys.Ino.FormHouseRadicacion',
                                                     id: 'formHouseRadicacion',
+                                                    idmaster: me.idmaster,
                                                     idhouse: rec.get("idhouse"),
                                                     doctransporte: rec.get("doctransporte")
                                                 }
