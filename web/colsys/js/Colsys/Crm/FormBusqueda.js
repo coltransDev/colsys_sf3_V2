@@ -120,6 +120,41 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                                     xtype: 'Colsys.Widgets.wgEmpresas',
                                     id: 'idEmpresa',
                                     name: 'idEmpresa',
+                                    flex: 1,
+                                    listeners: {
+                                        change: function (combo, newValue, oldValue, eOpts) {
+                                            idSucursal = Ext.getCmp('idSucursal');
+                                            idSucursal.getStore().getProxy().setExtraParam('empresa', newValue);
+                                            idSucursal.getStore().load();
+                                        }
+                                    }
+                                }
+                            ]
+                        }, {
+                            xtype: 'label',
+                            text: 'Sucursal'
+                        }, {
+                            xtype: 'fieldcontainer',
+                            msgTarget: 'side',
+                            layout: 'hbox',
+                            items: [{
+                                    xtype: 'Colsys.Widgets.WgSucursalesEmpresa',
+                                    id: 'idSucursal',
+                                    name: 'idSucursal',
+                                    flex: 1
+                                }
+                            ]
+                        }, {
+                            xtype: 'label',
+                            text: 'Vendedor'
+                        }, {
+                            xtype: 'fieldcontainer',
+                            msgTarget: 'side',
+                            layout: 'hbox',
+                            items: [{
+                                    xtype: 'Colsys.Widgets.WgComerciales',
+                                    id: 'loginVendedor',
+                                    name: 'loginVendedor',
                                     flex: 1
                                 }
                             ]
@@ -227,43 +262,75 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                     collapsible: true,
                     hidden: true,
                     items: [{
-                            id: 'chkBuscarEn',
-                            xtype: 'checkboxgroup',
-                            vertical: false,
-                            columns: 3,
+                            xtype: 'fieldcontainer',
+                            defaultType: 'radiofield',
+                            defaults: {
+                                flex: 1
+                            },
+                            layout: 'hbox',
                             items: [
                                 {
-                                    boxLabel: 'Clientes',
-                                    name: 'buscarEn[]',
-                                    inputValue: 'ca_idcliente'
-                                }, {
-                                    boxLabel: 'Vendedor',
-                                    name: 'buscarEn[]',
-                                    inputValue: 'ca_vendedor'
-                                }, {
-                                    boxLabel: 'Referencia',
-                                    name: 'buscarEn[]',
-                                    inputValue: 'ca_referencia'
-                                }, {
-                                    boxLabel: 'Master',
-                                    name: 'buscarEn[]',
-                                    inputValue: 'ca_master'
-                                }, {
-                                    boxLabel: 'Hbl/Hawb',
-                                    name: 'buscarEn[]',
-                                    inputValue: 'ca_doctransporte'
-                                }, {
-                                    boxLabel: 'Factura',
-                                    name: 'buscarEn[]',
-                                    inputValue: 'ca_factura'
-                                }, {
-                                    boxLabel: 'R.Negocio',
-                                    name: 'buscarEn[]',
-                                    inputValue: 'ca_reporte'
+                                    boxLabel: 'MisClientes',
+                                    name: 'buscarEn',
+                                    inputValue: 'misClientes',
+                                    id: 'radio1',
+                                    widthcolumnWidth: 0.33
                                 }, {
                                     boxLabel: 'Cotizacion',
-                                    name: 'buscarEn[]',
-                                    inputValue: 'ca_cotizacion'
+                                    name: 'buscarEn',
+                                    inputValue: 'cotizaciones',
+                                    id: 'radio2',
+                                    widthcolumnWidth: 0.33
+                                }
+                            ]
+                                }, {
+                            xtype: 'fieldcontainer',
+                            defaultType: 'radiofield',
+                            defaults: {
+                                flex: 1
+                            },
+                            layout: 'hbox',
+                            items: [
+                                {
+                                    boxLabel: 'R.Negocio',
+                                    name: 'buscarEn',
+                                    inputValue: 'reportes',
+                                    id: 'radio3',
+                                    widthcolumnWidth: 0.33
+                                }, {
+                                    boxLabel: 'Hbl/Hawb',
+                                    name: 'buscarEn',
+                                    inputValue: 'doctransporte',
+                                    id: 'radio4',
+                                    widthcolumnWidth: 0.33
+                                }
+                            ]
+                        }, {
+                            xtype: 'fieldcontainer',
+                            defaultType: 'radiofield',
+                            defaults: {
+                                flex: 1
+                            },
+                            layout: 'hbox',
+                            items: [
+                                {
+                                    boxLabel: 'Referencia',
+                                    name: 'buscarEn',
+                                    inputValue: 'referencias',
+                                    id: 'radio5',
+                                    widthcolumnWidth: 0.33
+                                }, {
+                                    boxLabel: 'Master',
+                                    name: 'buscarEn',
+                                    inputValue: 'masters',
+                                    id: 'radio6',
+                                    widthcolumnWidth: 0.33
+                                }, {
+                                    boxLabel: 'Factura',
+                                    name: 'buscarEn',
+                                    inputValue: 'facturas',
+                                    id: 'radio7',
+                                    widthcolumnWidth: 0.33
                                 }
                             ]
                         }
@@ -278,8 +345,9 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                 var form = this.getForm(); // get the form panel
                 form.submit({
                     url: '/crm/datosBusqueda',
+                    waitMsg: 'Realizando B\u00FAsqueda...',
                     success: function (form, action) {
-                        if (action.result.total == 0){
+                        if (action.result.total == 0) {
                             Ext.Msg.alert('Consulta sin Resultados', 'No se encontraron registros coincidentes!');
                         } else {
                             var res = action.result.root;
@@ -300,7 +368,7 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                     url: '/crm/listarBusqueda',
                     waitMsg: 'Cargando Reporte...',
                     success: function (form, action) {
-                        if (action.result.total == 0){
+                        if (action.result.total == 0) {
                             Ext.Msg.alert('Consulta sin Resultados', 'No se encontraron registros coincidentes!');
                         } else {
                             var res = action.result.root;
@@ -321,7 +389,7 @@ Ext.define('Colsys.Crm.FormBusqueda', {
 //                                                    this.getStore().loadData(res);
 //                                                }
 //                                            }
-                                        }
+            }
                                     ]
                                 }).show();
                             }

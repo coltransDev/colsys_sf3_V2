@@ -85,12 +85,18 @@ Ext.define('Colsys.Crm.FormClienteMaster', {
                                                             Ext.getCmp('idalterno_id').disable();
                                                         }
                                                         if (record.data.trafico == 'Colombia') {
+                                                            var field = Ext.getCmp('idalterno_id');
+                                                            field.maskRe = /[0-9]/;
+
                                                             Ext.getCmp('ciudad').enable(false);
                                                             Ext.getCmp('ciudad2').disable(true);
                                                             Ext.getCmp('direccion0').disable(true);
                                                             Ext.getCmp('fieldsetdireccion2').setVisible(true);
                                                             Ext.getCmp('fieldsetdireccion1').setVisible(false);
                                                         } else {
+                                                            var field = Ext.getCmp('idalterno_id');
+                                                            field.maskRe = /[a-zA-Z0-9 -]/;
+
                                                             Ext.getCmp('ciudad').disable(true);
                                                             Ext.getCmp('ciudad2').enable(true);
                                                             Ext.getCmp('direccion0').enable(true);
@@ -101,15 +107,12 @@ Ext.define('Colsys.Crm.FormClienteMaster', {
                                                     }
                                                 }
                                             }, {
-                                                xtype: 'numberfield',
+                                                xtype: 'textfield',
                                                 fieldLabel: 'Identificacion',
                                                 name: 'idalterno_id',
                                                 id: 'idalterno_id',
-                                                allowNegative: false,
+                                                maskRe: /[0-9.]/,
                                                 allowBlank: false,
-                                                hideTrigger: true,
-                                                keyNavEnabled: false,
-                                                mouseWheelEnabled: false,
                                                 listeners: {
                                                     blur: function (meBlur, e, eOpts) {
                                                         //alert('Inicial: ' + idalternoInicial + " - Actual: " + Ext.getCmp('idalterno_id').value)
@@ -542,6 +545,15 @@ Ext.define('Colsys.Crm.FormClienteMaster', {
                                     labelAlign: 'right',
                                     labelWidth: 95,
                                     margin: '0, 0, 5, 0'
+                                },
+                                listeners: {
+                                    hide: function (fieldset, e) {
+                                        var fields = fieldset.query();
+                                        for (var i = 0; i < fields.length; i++)
+                                            if (fields[i].id == 'nombre' || fields[i].id == 'apellido1' || fields[i].id == 'titulo' || fields[i].id == 'tpRepresentante' || fields[i].id == 'idRepresentante') {
+                                                fields[i].allowBlank = fieldset.isHidden();
+                                            }
+                                    }
                                 },
                                 items: [{
                                         xtype: 'container',
