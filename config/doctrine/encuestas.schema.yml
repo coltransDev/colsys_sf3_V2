@@ -309,6 +309,9 @@ EncuestaVisita:
     ca_idcontacto:
       type: integer(4)
       notnull: true
+    ca_idsucursal:
+      type: integer(4)
+      notnull: true
     ca_fchvisita:
       type: date  
     ca_instalaciones_tipo:
@@ -398,6 +401,11 @@ EncuestaVisita:
       foreignAlias: tb_concliente
       type: one
       class: Contacto
+    IdsSucursal:
+      local: ca_idsucursal
+      foreign: ca_idsucursal
+      type: one
+      class: IdsSucursal
     UsuCreado:
       local: ca_usucreado
       foreign: ca_login

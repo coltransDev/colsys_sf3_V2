@@ -304,14 +304,51 @@ Contacto:
     ca_email: string
     ca_observaciones: string
     ca_fijo: boolean
-    ca_fchcreado: string
-    ca_fchcreado: string
+    ca_propiedades: string
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+    ca_usuhabeasdata: string(20)
+    ca_fchhabeasdata: timestamp
   relations:
     Cliente:
       local: ca_idcliente
       foreign: ca_idcliente
       type: one
-
+    ControlEncuesta:
+      local: ca_idcontacto
+      foreign: ca_id_contestador
+      type: one
+    Envio:
+      local: ca_idcontacto
+      foreign: ca_idcontacto
+      type: many
+    Cotizacion:
+      local: ca_idcontacto
+      foreign: ca_idcontacto
+      type: many
+    EncuestaVisita:
+      local: ca_idcontacto
+      foreign: ca_idcontacto
+      type: many
+    IdsCliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: one
+    Reporte:
+      local: ca_idcontacto
+      foreign: ca_idcontacto
+      type: many
+    TrackingUser:
+      local: ca_idcontacto
+      foreign: ca_idcontacto
+      type: many
+    Cotizacion1:
+      local: ca_idcontacto
+      foreign: ca_idcontacto
+      type: many
+        
 
 Concepto:
   options:
@@ -598,6 +635,36 @@ ManCliente:
     Archivos:
       local: ca_idarchivo
       foreign: ca_idarchivo
+      type: one
+    UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+
+ComCliente:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: public
+  tableName: tb_comcliente
+  columns:
+    ca_idcliente:
+      type: integer
+      primary: true
+    ca_fchfirmado:
+      type: date
+      primary: true
+    ca_fchvencimiento: date
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchanulado: timestamp
+    ca_usuanulado: string
+  relations:
+    Cliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
       type: one
     UsuCreado:
       local: ca_usucreado

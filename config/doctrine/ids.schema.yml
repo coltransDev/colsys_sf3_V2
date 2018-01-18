@@ -195,11 +195,25 @@ IdsContacto:
     ca_fchactualizado: timestamp
     ca_usueliminado: string(20)
     ca_fcheliminado: timestamp
+    ca_usuhabeasdata: string(20)
+    ca_fchhabeasdata: timestamp
   relations:
     IdsSucursal:
       local: ca_idsucursal
       foreign: ca_idsucursal
       type: one
+    Envio:
+      local: ca_idcontacto
+      foreign: ca_idcontacto
+      type: many
+    CotContactoAg:
+      local: ca_idcontacto
+      foreign: ca_idcontacto
+      type: many
+    CotContactoAg1:
+      local: ca_idcontacto
+      foreign: ca_idcontacto
+      type: many
       
 IdsAgente:
   options:
@@ -927,7 +941,6 @@ IdsRestrictivas:
       type: timestamp
       primary: true
     ca_tipo_consulta: string(20)
-    ca_parametro: string(255)
     ca_idrespuesta: string(20)
     ca_respuesta: integer
     ca_fchcreado: timestamp
@@ -1027,7 +1040,7 @@ IdsEstadoSap:
     ca_idempresa:
       type: integer
       primary: true
-    ca_estado: boolean
+    ca_activo: boolean
     ca_ususap: string
     ca_fchsap: timestamp
     ca_usucreado: string

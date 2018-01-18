@@ -551,7 +551,11 @@ class crmActions extends sfActions {
                     $tree->getNode($contacto_nodo)->setAttribute("cumpleanos", utf8_encode($contacto->getCaCumpleanos()));
                     $tree->getNode($contacto_nodo)->setAttribute("fijo", utf8_encode($contacto->getCaFijo()));
                     $tree->getNode($contacto_nodo)->setAttribute("observaciones", utf8_encode($contacto->getCaObservaciones()));
-
+                    if ($contacto->getCaFchhabeasdata()) {
+                        $tree->getNode($contacto_nodo)->setAttribute("qtip", utf8_encode("Habeas Data: ".$contacto->getCaUsuhabeasdata()."<br />".$contacto->getCaFchhabeasdata()));
+                    }else if ($contacto->getCaFcheliminado()) {
+                        $tree->getNode($contacto_nodo)->setAttribute("qtip", utf8_encode("Eliminado: ".$contacto->getCaUsueliminado()."<br />".$contacto->getCaFcheliminado()));
+                    }
                     $tree->getNode($contacto_nodo)->setAttribute("leaf", true);
                     $tree->addChild($sede_nodo, $contacto_nodo);
                 }
@@ -1080,18 +1084,24 @@ class crmActions extends sfActions {
 
     public function executeEliminarContacto(sfWebRequest $request) {
         $idContacto = $request->getParameter("idcontacto");
+        $detalle = $request->getParameter("detalle");
 
         $contacto = Doctrine::getTable("IdsContacto")->find($idContacto);
         try {
-            $contacto->setCaCargo("Extrabajador");
-            $contacto->setCaDepartamento("Extrabajador");
-            $contacto->setCaTelefonos("Extrabajador");
-            $contacto->setCaCelular("Extrabajador");
-            $contacto->setCaEmail("Extrabajador");
+            $contacto->setCaCargo($detalle);
+            $contacto->setCaDepartamento($detalle);
+            $contacto->setCaTelefonos($detalle);
+            $contacto->setCaCelular($detalle);
+            $contacto->setCaEmail($detalle);
             $contacto->setCaActivo(false);
             $contacto->setCaFijo(false);
-            $contacto->setCaUsueliminado($this->getUser());
-            $contacto->setCaFcheliminado(date("Y-m-d h:i:s"));
+            if ($detalle == "Extrabajador") {
+                $contacto->setCaUsueliminado($this->getUser());
+                $contacto->setCaFcheliminado(date("Y-m-d h:i:s"));
+            } else {
+                $contacto->setCaUsuhabeasdata($this->getUser());
+                $contacto->setCaFchhabeasdata(date("Y-m-d h:i:s"));
+            }
             $contacto->save();
 
             $concliente = Doctrine::getTable("Contacto")
@@ -1101,12 +1111,16 @@ class crmActions extends sfActions {
                     ->addWhere('trim(lower(c.ca_papellido)) = ?', trim(strtolower($contacto->getCaPapellido())))
                     ->fetchOne();
             if ($concliente) {
-                $concliente->setCaCargo("Extrabajador");
-                $concliente->setCaDepartamento("Extrabajador");
-                $concliente->setCaTelefonos("Extrabajador");
-                $concliente->setCaFax("Extrabajador");
-                $concliente->setCaEmail("Extrabajador");
+                $concliente->setCaCargo($detalle);
+                $concliente->setCaDepartamento($detalle);
+                $concliente->setCaTelefonos($detalle);
+                $concliente->setCaFax($detalle);
+                $concliente->setCaEmail($detalle);
                 $concliente->setCaFijo(false);
+                if ($detalle != "Extrabajador") {
+                    $contacto->setCaUsuhabeasdata($this->getUser());
+                    $contacto->setCaFchhabeasdata(date("Y-m-d h:i:s"));
+                }
                 $concliente->save();
             }
 

@@ -81,7 +81,7 @@ Ext.define('Colsys.Crm.GridContactos', {
                             menuDisabled: true,
                             sortable: false,
                             xtype: 'actioncolumn',
-                            width: 40,
+                            width: 55,
                             items: [{
                                     iconCls: 'page_white_edit',
                                     tooltip: 'Editar el Registro',
@@ -137,6 +137,42 @@ Ext.define('Colsys.Crm.GridContactos', {
                                                                 } else
                                                                 {
                                                                     Ext.MessageBox.alert("Colsys", "Registro Eliminado Correctamente");
+                                                                    store.reload();
+                                                                }
+                                                                box.hide();
+                                                            },
+                                                            failure: function (response, opts) {
+                                                                Ext.MessageBox.alert("Colsys", "Se presento el siguiente error " + response.status);
+                                                                box.hide();
+                                                                store.reload();
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                    }
+                                }, {
+                                    iconCls: 'error',
+                                    tooltip: 'Habeas Data',
+                                    handler: function (grid, rowIndex, colIndex) {
+                                        var rec = grid.getStore().getAt(rowIndex);
+                                        store = grid.getStore();
+                                        Ext.MessageBox.confirm('Confirmacion', "El Contacto no ser\u00E1 eliminado y en su lugar, la información personal y los datos de contacto ser\u00E1n sustituidos por un comentario.",
+                                                function (e) {
+                                                    if (e == 'yes') {
+                                                        var box = Ext.MessageBox.wait('Procesando', 'Habeas Data')
+                                                        Ext.Ajax.request({
+                                                            url: '/crm/habeasDataContacto',
+                                                            params: {
+                                                                idcontacto: rec.data.idcontacto
+                                                            },
+                                                            success: function (response, opts) {
+                                                                var obj = Ext.decode(response.responseText);
+                                                                if (obj.errorInfo)
+                                                                {
+                                                                    Ext.MessageBox.alert("Colsys", "Se presento un error: ");
+                                                                } else
+                                                                {
+                                                                    Ext.MessageBox.alert("Colsys", "Registro Procesado Correctamente");
                                                                     store.reload();
                                                                 }
                                                                 box.hide();
