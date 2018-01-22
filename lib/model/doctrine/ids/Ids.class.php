@@ -149,7 +149,7 @@ class Ids extends BaseIds {
                 ->limit(1)
                 ->fetchOne();
         if ($idsRestrictivas) {
-            $fecha = substr($idsRestrictivas->getCaFchconsultado(), 0, -4);
+            $fecha = substr($idsRestrictivas->getCaFchconsultado(), 0, 19);
         }
         return $fecha;
     }
