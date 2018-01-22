@@ -109,9 +109,10 @@ class Ids extends BaseIds {
         $json_response = json_decode($result->getBody());
 
         if ($json_response) {
+            list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($json_response->fecha, "%d-%d-%dT%d:%d:%dZ");
             $id_response  = $json_response->id;
             $res_response = ($json_response->respuesta) ? $json_response->respuesta : null;
-            $fch_response = $json_response->fecha;
+            $fch_response = date("Y-m-d H:i:s", mktime($hor-5, $min, $seg, $mes, $dia, $ano));
         } else {
             $id_response  = ($result->getMessage()) ? $result->getMessage() : null;
             $res_response = -1; // Indicador de Error
@@ -129,12 +130,12 @@ class Ids extends BaseIds {
         $consulta->enviarRespuesta();
 
         if ($this->getIdsCliente()) {   /* Consulta en Listas del Representante Legal del Cliente */
-        if ($tipoConsulta == "DOCUMENTO") {
+            if ($tipoConsulta == "DOCUMENTO") {
                 $consulta->getConsultaListas($tipoConsulta, $this->getIdsCliente()->getCaNumidentificacionRl());
-        } else {
+            } else {
                 $nombre_rl = trim($this->getIdsCliente()->getCaNombres()." ".$this->getIdsCliente()->getCaPapellido()." ".$this->getIdsCliente()->getCaSapellido());
                 $consulta->getConsultaListas($tipoConsulta, $nombre_rl);
-        }
+            }
         }
         return $consulta;
     }

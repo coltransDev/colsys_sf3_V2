@@ -38,13 +38,14 @@ class IdsRestrictivas extends BaseIdsRestrictivas {
         $json_response = json_decode($result->getBody());
 
         if ($json_response) {
+            list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($json_response->fecha, "%d-%d-%dT%d:%d:%dZ");
             $id_response = $json_response->id;
             $res_response = ($json_response->respuesta) ? $json_response->respuesta : null;
-            $fch_response = $json_response->fecha;
+            $fch_response = date("Y-m-d H:i:s", mktime($hor-5, $min, $seg, $mes, $dia, $ano));
         } else {
             $id_response = ($result->getMessage()) ? $result->getMessage() : null;
             $res_response = -1; // Indicador de Error
-            $fch_response = date("Y-m-d h:i:s");
+            $fch_response = date("Y-m-d H:i:s");
         }
 
         $consulta = new IdsRestrictivas();
