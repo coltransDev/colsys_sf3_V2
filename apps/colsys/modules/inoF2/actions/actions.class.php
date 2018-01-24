@@ -2823,28 +2823,39 @@ class inoF2Actions extends sfActions {
         try {
             $data = array();
             $inoMaster = Doctrine::getTable("InoMaster")->find($idmaster);
-            $inoMasterSea = $inoMaster->getInoMasterSea();
-            if ($inoMasterSea) {
-                if ($inoMasterSea->getCaDatosmuisca()) {
-                    $data = json_decode($inoMasterSea->getCaDatosmuisca());
-                    $data->fchinicial = substr($data->fchinicial, 0, 10);
-                    $data->fchfinal = substr($data->fchfinal, 0, 10);
-                    $data->fchmuisca = $inoMasterSea->getCaFchmuisca();
-                    $data->usumuisca = $inoMasterSea->getCaUsumuisca();
-                    $data->fchradicado = null;
-                    $data->usuradicado = null;
-                    $data->radicacion = null;
-                } else {
-                    $data['codconcepto'] = 1;
-                    $data['tipodocviaje'] = 10;
-                    $data['precursores'] = 'N';
-                    $data['idcondiciones'] = 1;
-                    $data['responsabilidad'] = 'S';
-                    $data['fchinicial'] = date("Y-m-d", mktime(0,0,0,1,1,date("Y")));
-                    $data['fchfinal'] = date("Y-m-d", mktime(0,0,0,12,31,date("Y")));
+            if ($inoMaster) {
+                $radicable = true;
+                $inoHouses = $inoMaster->getInoHouse();
+                foreach ($inoHouses as $inoHouse) {
+                    $inoHouseSea = $inoHouse->getInoHouseSea();
+                    if (!$inoHouseSea->getCaDatosmuisca()) {
+                        $radicable = false;
+                    }
+                }
+                $inoMasterSea = $inoMaster->getInoMasterSea();
+                if ($inoMasterSea) {
+                    if ($inoMasterSea->getCaDatosmuisca()) {
+                        $data = json_decode($inoMasterSea->getCaDatosmuisca());
+                        $data->fchinicial = substr($data->fchinicial, 0, 10);
+                        $data->fchfinal = substr($data->fchfinal, 0, 10);
+                        $data->fchmuisca = $inoMasterSea->getCaFchmuisca();
+                        $data->usumuisca = $inoMasterSea->getCaUsumuisca();
+                        $data->fchradicado = null;
+                        $data->usuradicado = null;
+                        $data->radicacion = null;
+                    } else {
+                        $data['codconcepto'] = 1;
+                        $data['tipodocviaje'] = 10;
+                        $data['dispocarga'] = 21;
+                        $data['precursores'] = 'N';
+                        $data['idcondiciones'] = 1;
+                        $data['responsabilidad'] = 'S';
+                        $data['fchinicial'] = date("Y-m-d", mktime(0,0,0,1,1,date("Y")));
+                        $data['fchfinal'] = date("Y-m-d", mktime(0,0,0,12,31,date("Y")));
+                    }
                 }
             }
-            $this->responseArray = array("data" => $data, "total" => count($data), "success" => true);
+            $this->responseArray = array("data" => $data, "total" => count($data), "radicable" => $radicable, "success" => true);
         } catch (Exception $e) {
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
@@ -2938,6 +2949,7 @@ class inoF2Actions extends sfActions {
                 if ($inoHouseSea->getCaDatosmuisca()) {
                     $data = json_decode(utf8_encode($inoHouseSea->getCaDatosmuisca()));
                 } else {
+                    $data['dispocarga'] = 21;
                     $data['tipodocviaje'] = 3;
                     $data['precursores'] = 'N';
                     $data['idcondiciones'] = 1;

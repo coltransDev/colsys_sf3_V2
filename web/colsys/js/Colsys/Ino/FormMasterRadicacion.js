@@ -2,28 +2,39 @@ var win_generacion = null;
 
 function setReadOnlyForAll(form, readOnly, digitar, reversar, generar) {
     Ext.suspendLayouts();
+    var grid = form.up('form').down('grid');
+    var columns = grid.getColumns();
     form.getForm().getFields().each(function (field) {
         field.setReadOnly(readOnly);
     });
-    //console.log(form.permisos);
-    if (form.permisos.MuiscaEd)
-        Ext.getCmp('bntGuardar').setVisible(!readOnly);
-    else
-        Ext.getCmp('bntGuardar').setVisible(false);
+
+    if (form.permisos.MuiscaEd) {
+        Ext.getCmp('bntGuardar' + form.idmaster).setDisabled(readOnly);
+        Ext.getCmp('bntVerifica' + form.idmaster).setDisabled(readOnly);
+        columns[columns.length-1].setHidden(readOnly);
+    } else {
+        Ext.getCmp('bntGuardar' + form.idmaster).setDisabled(true);
+        Ext.getCmp('bntVerifica' + form.idmaster).setDisabled(true);
+        columns[columns.length-1].setHidden(true);
+    }
     if (form.permisos.MuiscaDig)
-        Ext.getCmp('bntDigitar').setVisible(!digitar);
+        Ext.getCmp('bntDigitar' + form.idmaster).setDisabled(digitar);
     else
-        Ext.getCmp('bntDigitar').setVisible(false);
+        Ext.getCmp('bntDigitar' + form.idmaster).setDisabled(true);
     if (form.permisos.MuiscaRev)
-        Ext.getCmp('bntReversar').setVisible(reversar);
+        Ext.getCmp('bntReversar' + form.idmaster).setDisabled(reversar);
     else
-        Ext.getCmp('bntReversar').setVisible(false);
+        Ext.getCmp('bntReversar' + form.idmaster).setDisabled(true);
     if (form.permisos.GenerarXml)
-        Ext.getCmp('bntGenerar').setVisible(generar);
+        Ext.getCmp('bntGenerar' + form.idmaster).setDisabled(generar);
     else
-        Ext.getCmp('bntGenerar').setVisible(false);
+        Ext.getCmp('bntGenerar' + form.idmaster).setDisabled(true);
+    
+    
+                    
     Ext.resumeLayouts();
-};
+}
+;
 
 Ext.define('Depositos', {
     extend: 'Ext.form.field.ComboBox',
@@ -72,8 +83,6 @@ Ext.define('Transportista', {
 Ext.define('Colsys.Ino.FormMasterRadicacion', {
     extend: 'Ext.form.Panel',
     alias: 'widget.Colsys.Ino.FormMasterRadicacion',
-    id: 'FormMasterRadicacion',
-    name: 'FormMasterRadicacion',
     autoHeight: true,
     autoScroll: false,
     border: false,
@@ -83,342 +92,351 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
         labelWidth: 95,
         msgTarget: 'qtip'
     },
-    items: [{
-            xtype: 'fieldset',
-            title: 'Informaci\u00F3n para Muisca',
-            defaultType: 'textfield',
-            margin: '0 0 5 0',
-            layout: 'anchor',
-            defaults: {
-                anchor: '100%'
+    loadData: function () {
+        me = this;
+        me.load({
+            url: '/inoF2/cargarMasterRadicacion',
+            params: {
+                idmaster: this.idmaster
             },
-            items: [{
-                    xtype: 'container',
-                    layout: 'hbox',
-                    defaultType: 'textfield',
-                    margin: '0 0 5 0',
-                    items: [{
-                            xtype: 'Colsys.Widgets.WgFormRadicacion',
-                            fieldLabel: 'Concepto',
-                            name: 'codconcepto',
-                            id: 'codconcepto',
-                            flex: 2,
-                            allowBlank: false,
-                            tipoCombo: 0,
-                            store: Ext.create('Ext.data.Store', {
-                                fields: ['nombre', 'valor'],
-                                proxy: {
-                                    type: 'ajax',
-                                    url: '/widgets5/datosCombosRadicacion',
-                                    reader: {
-                                        type: 'json',
-                                        root: 'root'
-                                    }
-                                },
-                                autoLoad: true
-                            })
-                        }, {
-                            fieldLabel: 'Form.Anterior',
-                            name: 'iddocanterior',
-                            flex: 1
-                        }, {
-                            fieldLabel: 'Doc.Transbordo',
-                            name: 'iddoctrasbordo',
-                            flex: 1
-                        }]
-                }, {
-                    xtype: 'container',
-                    layout: 'hbox',
-                    defaultType: 'textfield',
-                    margin: '0 0 5 0',
-                    items: [{
-                            xtype: 'Colsys.Widgets.WgFormRadicacion',
-                            fieldLabel: 'Tipo Doc.Viaje',
-                            name: 'tipodocviaje',
-                            flex: 1,
-                            allowBlank: false,
-                            tipoCombo: 7,
-                            store: Ext.create('Ext.data.Store', {
-                                fields: ['nombre', 'valor'],
-                                proxy: {
-                                    type: 'ajax',
-                                    url: '/widgets5/datosCombosRadicacion',
-                                    reader: {
-                                        type: 'json',
-                                        root: 'root'
-                                    }
-                                },
-                                autoLoad: true
-                            })
-                        }, {
-                            xtype: 'Colsys.Widgets.WgFormRadicacion',
-                            fieldLabel: 'Dispo.Carga',
-                            name: 'dispocarga',
-                            flex: 1,
-                            allowBlank: true,
-                            tipoCombo: 2,
-                            store: Ext.create('Ext.data.Store', {
-                                fields: ['nombre', 'valor'],
-                                proxy: {
-                                    type: 'ajax',
-                                    url: '/widgets5/datosCombosRadicacion',
-                                    reader: {
-                                        type: 'json',
-                                        root: 'root'
-                                    }
-                                },
-                                autoLoad: true
-                            })
-                        }]
-                }, {
-                    xtype: 'container',
-                    layout: 'hbox',
-                    defaultType: 'textfield',
-                    margin: '0 0 5 0',
-                    defaults: {
-                        labelWidth: 75
-                    },
-                    items: [{
-                            xtype: 'Colsys.Widgets.WgFormRadicacion',
-                            fieldLabel: 'Administraci\u00F3n',
-                            name: 'codadministracion',
-                            labelWidth: 95,
-                            flex: 2,
-                            allowBlank: false,
-                            tipoCombo: 1,
-                            store: Ext.create('Ext.data.Store', {
-                                fields: ['nombre', 'valor'],
-                                proxy: {
-                                    type: 'ajax',
-                                    url: '/widgets5/datosCombosRadicacion',
-                                    reader: {
-                                        type: 'json',
-                                        root: 'root'
-                                    }
-                                },
-                                autoLoad: true
-                            })
-                        }, {
-                            xtype: 'combo-depositos',
-                            fieldLabel: 'Dep\u00F3sito',
-                            name: 'coddeposito',
-                            id: 'coddeposito',
-                            flex: 3,
-                            allowBlank: true
-                        }]
-                }, {
-                    xtype: 'container',
-                    layout: 'hbox',
-                    defaultType: 'textfield',
-                    margin: '0 0 5 0',
-                    items: [{
-                            xtype: 'Colsys.Widgets.WgFormRadicacion',
-                            fieldLabel: 'Tipo Carga',
-                            name: 'tipocarga',
-                            flex: 1,
-                            allowBlank: false,
-                            tipoCombo: 6,
-                            store: Ext.create('Ext.data.Store', {
-                                fields: ['nombre', 'valor'],
-                                proxy: {
-                                    type: 'ajax',
-                                    url: '/widgets5/datosCombosRadicacion',
-                                    reader: {
-                                        type: 'json',
-                                        root: 'root'
-                                    }
-                                },
-                                autoLoad: true
-                            })
-                        }, {
-                            xtype: 'Colsys.Widgets.WgFormRadicacion',
-                            fieldLabel: 'Negociaci\u00F3n',
-                            name: 'tiponegociacion',
-                            flex: 1,
-                            allowBlank: false,
-                            tipoCombo: 5,
-                            store: Ext.create('Ext.data.Store', {
-                                fields: ['nombre', 'valor'],
-                                proxy: {
-                                    type: 'ajax',
-                                    url: '/widgets5/datosCombosRadicacion',
-                                    reader: {
-                                        type: 'json',
-                                        root: 'root'
-                                    }
-                                },
-                                autoLoad: true
-                            })
-                        }, {
-                            xtype: 'datefield',
-                            fieldLabel: 'Fch.Inicial',
-                            name: 'fchinicial',
-                            format: 'Y-m-d',
-                            submitFormat: 'Y-m-d',
-                            flex: 1,
-                            allowBlank: false
-                        }, {
-                            xtype: 'datefield',
-                            fieldLabel: 'Fch.Final',
-                            name: 'fchfinal',
-                            format: 'Y-m-d',
-                            submitFormat: 'Y-m-d',
-                            flex: 1,
-                            allowBlank: false
-                        }]
-                }, {
-                    xtype: 'container',
-                    layout: 'hbox',
-                    defaultType: 'textfield',
-                    margin: '0 0 5 0',
-                    items: [{
-                            xtype: 'combo-transportistas',
-                            fieldLabel: 'Transportista',
-                            name: 'idtransportista',
-                            id: 'idtransportista',
-                            flex: 1,
-                            allowBlank: false
-                        }, {
-                            xtype: 'Colsys.Widgets.WgFormRadicacion',
-                            fieldLabel: 'Precursores',
-                            name: 'precursores',
-                            width: 165,
-                            allowBlank: false,
-                            tipoCombo: 11,
-                            store: Ext.create('Ext.data.Store', {
-                                fields: ['nombre', 'valor'],
-                                proxy: {
-                                    type: 'ajax',
-                                    url: '/widgets5/datosCombosRadicacion',
-                                    reader: {
-                                        type: 'json',
-                                        root: 'root'
-                                    }
-                                },
-                                autoLoad: true
-                            })
-                        }, {
-                            xtype: 'Colsys.Widgets.WgFormRadicacion',
-                            fieldLabel: 'Condiciones',
-                            name: 'idcondiciones',
-                            width: 210,
-                            allowBlank: false,
-                            tipoCombo: 4,
-                            store: Ext.create('Ext.data.Store', {
-                                fields: ['nombre', 'valor'],
-                                proxy: {
-                                    type: 'ajax',
-                                    url: '/widgets5/datosCombosRadicacion',
-                                    reader: {
-                                        type: 'json',
-                                        root: 'root'
-                                    }
-                                },
-                                autoLoad: true
-                            })
-                        }, {
-                            xtype: 'Colsys.Widgets.WgFormRadicacion',
-                            fieldLabel: 'Resp.Transp.',
-                            name: 'responsabilidad',
-                            width: 165,
-                            allowBlank: false,
-                            tipoCombo: 11,
-                            store: Ext.create('Ext.data.Store', {
-                                fields: ['nombre', 'valor'],
-                                proxy: {
-                                    type: 'ajax',
-                                    url: '/widgets5/datosCombosRadicacion',
-                                    reader: {
-                                        type: 'json',
-                                        root: 'root'
-                                    }
-                                },
-                                autoLoad: true
-                            })
-                        }]
-                }, {
-                    xtype: 'container',
-                    layout: 'hbox',
-                    defaultType: 'textfield',
-                    margin: '0 0 5 0',
-                    items: [{
-                            fieldLabel: 'Digitaci\u00F3n OK',
-                            name: 'usumuisca',
-                            readOnly: true,
-                            flex: 1
-                        }, {
-                            fieldLabel: 'Fecha',
-                            name: 'fchmuisca',
-                            readOnly: true,
-                            labelWidth: 50,
-                            flex: 1
-                        }, {
-                            fieldLabel: 'Radicaci\u00F3n',
-                            name: 'usuradicado',
-                            readOnly: true,
-                            labelWidth: 75,
-                            flex: 1
-                        }, {
-                            fieldLabel: 'Fecha',
-                            name: 'fchradicado',
-                            readOnly: true,
-                            labelWidth: 50,
-                            flex: 1
-                        }, {
-                            fieldLabel: 'Radicaci\u00F3n',
-                            name: 'radicacion',
-                            readOnly: true,
-                            labelWidth: 75,
-                            flex: 1
-                        }]
-                }]
-        }
-    ],
-    listeners: {
-        afterrender: function (me, eOpts) {
-            form = this.getForm();
+            success: function (response, options) {
+                var editar = false;  //setDisabled
+                var digitar = true;  //setDisabled
+                var reversar = true; //setDisabled
+                var generar = true;  //setDisabled
+                var res = Ext.JSON.decode(options.response.responseText);
+                Ext.getCmp("coddeposito" + me.idmaster).store.add(
+                        {"codigo": res.data.coddeposito, "nombre": res.data.deposito}
+                );
+                Ext.getCmp("coddeposito" + me.idmaster).setValue(res.data.coddeposito);
 
-            form.load({
-                url: '/inoF2/cargarMasterRadicacion',
-                params: {
-                    idmaster: me.idmaster
-                },
-                success: function (response, options) {
-                    var editar = true;
-                    var digitar = true;
-                    var reversar = false;
-                    var generar = false;
-                    var res = Ext.JSON.decode(options.response.responseText);
-                    Ext.getCmp("coddeposito").store.add(
-                            {"codigo": res.data.coddeposito, "nombre": res.data.deposito}
-                    );
-                    Ext.getCmp("coddeposito").setValue(res.data.coddeposito);
-
-                    Ext.getCmp("idtransportista").store.add(
-                            {"idtransportista": res.data.idtransportista, "nombre": res.data.transportista}
-                    );
-                    Ext.getCmp("idtransportista").setValue(res.data.idtransportista);
-                    if (res.data.fchmuisca == null) {
-                        editar = false;
-                        digitar = false;
-                    } else {
-                        reversar = true;
-                    }
-                    if (me.permisos.GenerarXml) {
-                        generar = true;
-                    }
-                    setReadOnlyForAll(me, editar, digitar, reversar, generar);
-                },
-                failure: function (form, action) {
-                    Ext.Msg.alert("Master Radicacion", "Error cargando los datos " + action.result.errorInfo + "</ br>");
+                Ext.getCmp("idtransportista" + me.idmaster).store.add(
+                        {"idtransportista": res.data.idtransportista, "nombre": res.data.transportista}
+                );
+                Ext.getCmp("idtransportista" + me.idmaster).setValue(res.data.idtransportista);
+                if (me.permisos.MuiscaEd && res.data.fchmuisca != null) {
+                    editar = true;    //setDisabled
+                    reversar = false; //setDisabled
                 }
+                if (me.permisos.MuiscaDig && res.radicable && res.data.fchmuisca == null) {
+                    digitar = false;  //setDisabled
+                }
+                if (me.permisos.MuiscaRev && res.data.fchmuisca != null) {
+                    reversar = false; //setDisabled
+                }
+                if (me.permisos.GenerarXml && res.data.fchmuisca != null && res.radicable) {
+                    generar = false; //setDisabled
+                }
+                setReadOnlyForAll(me, editar, digitar, reversar, generar);
+            },
+            failure: function (form, action) {
+                Ext.Msg.alert("Master Radicacion", "Error cargando los datos " + action.result.errorInfo + "</ br>");
+            }
+        });
+    },
+    listeners: {
+        render: function (me) {
+            me.add({
+                xtype: 'fieldset',
+                title: 'Informaci\u00F3n para Muisca',
+                defaultType: 'textfield',
+                margin: '0 0 5 0',
+                layout: 'anchor',
+                defaults: {
+                    anchor: '100%'
+                },
+                items: [{
+                        xtype: 'container',
+                        layout: 'hbox',
+                        defaultType: 'textfield',
+                        margin: '0 0 5 0',
+                        items: [{
+                                id: 'codconcepto' + me.idmaster,
+                                xtype: 'Colsys.Widgets.WgFormRadicacion',
+                                fieldLabel: 'Concepto',
+                                name: 'codconcepto',
+                                flex: 2,
+                                allowBlank: false,
+                                tipoCombo: 0,
+                                store: Ext.create('Ext.data.Store', {
+                                    fields: ['nombre', 'valor'],
+                                    proxy: {
+                                        type: 'ajax',
+                                        url: '/widgets5/datosCombosRadicacion',
+                                        reader: {
+                                            type: 'json',
+                                            root: 'root'
+                                        }
+                                    },
+                                    autoLoad: true
+                                })
+                            }, {
+                                fieldLabel: 'Form.Anterior',
+                                name: 'iddocanterior',
+                                flex: 1
+                            }, {
+                                fieldLabel: 'Doc.Transbordo',
+                                name: 'iddoctrasbordo',
+                                flex: 1
+                            }]
+                    }, {
+                        xtype: 'container',
+                        layout: 'hbox',
+                        defaultType: 'textfield',
+                        margin: '0 0 5 0',
+                        items: [{
+                                xtype: 'Colsys.Widgets.WgFormRadicacion',
+                                fieldLabel: 'Tipo Doc.Viaje',
+                                name: 'tipodocviaje',
+                                flex: 1,
+                                allowBlank: false,
+                                tipoCombo: 7,
+                                store: Ext.create('Ext.data.Store', {
+                                    fields: ['nombre', 'valor'],
+                                    proxy: {
+                                        type: 'ajax',
+                                        url: '/widgets5/datosCombosRadicacion',
+                                        reader: {
+                                            type: 'json',
+                                            root: 'root'
+                                        }
+                                    },
+                                    autoLoad: true
+                                })
+                            }, {
+                                xtype: 'Colsys.Widgets.WgFormRadicacion',
+                                fieldLabel: 'Dispo.Carga',
+                                name: 'dispocarga',
+                                flex: 1,
+                                allowBlank: true,
+                                tipoCombo: 2,
+                                store: Ext.create('Ext.data.Store', {
+                                    fields: ['nombre', 'valor'],
+                                    proxy: {
+                                        type: 'ajax',
+                                        url: '/widgets5/datosCombosRadicacion',
+                                        reader: {
+                                            type: 'json',
+                                            root: 'root'
+                                        }
+                                    },
+                                    autoLoad: true
+                                })
+                            }]
+                    }, {
+                        xtype: 'container',
+                        layout: 'hbox',
+                        defaultType: 'textfield',
+                        margin: '0 0 5 0',
+                        defaults: {
+                            labelWidth: 75
+                        },
+                        items: [{
+                                id: 'codadministracion' + me.idmaster,
+                                xtype: 'Colsys.Widgets.WgFormRadicacion',
+                                fieldLabel: 'Administraci\u00F3n',
+                                name: 'codadministracion',
+                                labelWidth: 95,
+                                flex: 2,
+                                allowBlank: false,
+                                tipoCombo: 1,
+                                store: Ext.create('Ext.data.Store', {
+                                    fields: ['nombre', 'valor'],
+                                    proxy: {
+                                        type: 'ajax',
+                                        url: '/widgets5/datosCombosRadicacion',
+                                        reader: {
+                                            type: 'json',
+                                            root: 'root'
+                                        }
+                                    },
+                                    autoLoad: true
+                                })
+                            }, {
+                                id: 'coddeposito' + me.idmaster,
+                                xtype: 'combo-depositos',
+                                fieldLabel: 'Dep\u00F3sito',
+                                name: 'coddeposito',
+                                flex: 3,
+                                allowBlank: true
+                            }]
+                    }, {
+                        xtype: 'container',
+                        layout: 'hbox',
+                        defaultType: 'textfield',
+                        margin: '0 0 5 0',
+                        items: [{
+                                xtype: 'Colsys.Widgets.WgFormRadicacion',
+                                fieldLabel: 'Tipo Carga',
+                                name: 'tipocarga',
+                                flex: 1,
+                                allowBlank: false,
+                                tipoCombo: 6,
+                                store: Ext.create('Ext.data.Store', {
+                                    fields: ['nombre', 'valor'],
+                                    proxy: {
+                                        type: 'ajax',
+                                        url: '/widgets5/datosCombosRadicacion',
+                                        reader: {
+                                            type: 'json',
+                                            root: 'root'
+                                        }
+                                    },
+                                    autoLoad: true
+                                })
+                            }, {
+                                xtype: 'Colsys.Widgets.WgFormRadicacion',
+                                fieldLabel: 'Negociaci\u00F3n',
+                                name: 'tiponegociacion',
+                                flex: 1,
+                                allowBlank: false,
+                                tipoCombo: 5,
+                                store: Ext.create('Ext.data.Store', {
+                                    fields: ['nombre', 'valor'],
+                                    proxy: {
+                                        type: 'ajax',
+                                        url: '/widgets5/datosCombosRadicacion',
+                                        reader: {
+                                            type: 'json',
+                                            root: 'root'
+                                        }
+                                    },
+                                    autoLoad: true
+                                })
+                            }, {
+                                xtype: 'datefield',
+                                fieldLabel: 'Fch.Inicial',
+                                name: 'fchinicial',
+                                format: 'Y-m-d',
+                                submitFormat: 'Y-m-d',
+                                flex: 1,
+                                allowBlank: false
+                            }, {
+                                xtype: 'datefield',
+                                fieldLabel: 'Fch.Final',
+                                name: 'fchfinal',
+                                format: 'Y-m-d',
+                                submitFormat: 'Y-m-d',
+                                flex: 1,
+                                allowBlank: false
+                            }]
+                    }, {
+                        xtype: 'container',
+                        layout: 'hbox',
+                        defaultType: 'textfield',
+                        margin: '0 0 5 0',
+                        items: [{
+                                id: 'idtransportista' + me.idmaster,
+                                xtype: 'combo-transportistas',
+                                fieldLabel: 'Transportista',
+                                name: 'idtransportista',
+                                flex: 1,
+                                allowBlank: false
+                            }, {
+                                xtype: 'Colsys.Widgets.WgFormRadicacion',
+                                fieldLabel: 'Precursores',
+                                name: 'precursores',
+                                width: 165,
+                                allowBlank: false,
+                                tipoCombo: 11,
+                                store: Ext.create('Ext.data.Store', {
+                                    fields: ['nombre', 'valor'],
+                                    proxy: {
+                                        type: 'ajax',
+                                        url: '/widgets5/datosCombosRadicacion',
+                                        reader: {
+                                            type: 'json',
+                                            root: 'root'
+                                        }
+                                    },
+                                    autoLoad: true
+                                })
+                            }, {
+                                xtype: 'Colsys.Widgets.WgFormRadicacion',
+                                fieldLabel: 'Condiciones',
+                                name: 'idcondiciones',
+                                width: 210,
+                                allowBlank: false,
+                                tipoCombo: 4,
+                                store: Ext.create('Ext.data.Store', {
+                                    fields: ['nombre', 'valor'],
+                                    proxy: {
+                                        type: 'ajax',
+                                        url: '/widgets5/datosCombosRadicacion',
+                                        reader: {
+                                            type: 'json',
+                                            root: 'root'
+                                        }
+                                    },
+                                    autoLoad: true
+                                })
+                            }, {
+                                xtype: 'Colsys.Widgets.WgFormRadicacion',
+                                fieldLabel: 'Resp.Transp.',
+                                name: 'responsabilidad',
+                                width: 165,
+                                allowBlank: false,
+                                tipoCombo: 11,
+                                store: Ext.create('Ext.data.Store', {
+                                    fields: ['nombre', 'valor'],
+                                    proxy: {
+                                        type: 'ajax',
+                                        url: '/widgets5/datosCombosRadicacion',
+                                        reader: {
+                                            type: 'json',
+                                            root: 'root'
+                                        }
+                                    },
+                                    autoLoad: true
+                                })
+                            }]
+                    }, {
+                        xtype: 'container',
+                        layout: 'hbox',
+                        defaultType: 'textfield',
+                        margin: '0 0 5 0',
+                        items: [{
+                                fieldLabel: 'Digitaci\u00F3n OK',
+                                name: 'usumuisca',
+                                readOnly: true,
+                                flex: 1
+                            }, {
+                                fieldLabel: 'Fecha',
+                                name: 'fchmuisca',
+                                readOnly: true,
+                                labelWidth: 50,
+                                flex: 1
+                            }, {
+                                fieldLabel: 'Radicaci\u00F3n',
+                                name: 'usuradicado',
+                                readOnly: true,
+                                labelWidth: 75,
+                                flex: 1
+                            }, {
+                                fieldLabel: 'Fecha',
+                                name: 'fchradicado',
+                                readOnly: true,
+                                labelWidth: 50,
+                                flex: 1
+                            }, {
+                                fieldLabel: 'Radicaci\u00F3n',
+                                name: 'radicacion',
+                                readOnly: true,
+                                labelWidth: 75,
+                                flex: 1
+                            }]
+                    }]
             });
+        },
+        afterrender: function (me, eOpts) {
+            me.loadData();
         },
         beforerender: function (ct, position) {
             var me = this;
             tb = new Ext.toolbar.Toolbar();
+
             tb.add({
-                id: 'bntGuardar',
+                id: 'bntGuardar' + me.idmaster,
                 text: 'Guardar',
                 tooltip: 'Guardar Informaci\u00F3n del Master',
                 iconCls: 'add',
@@ -430,8 +448,8 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
                         data["fchtrans"] = Ext.Date.format(new Date(), 'Y-m-d');
                         data["fchinicial"] = Ext.Date.format(new Date(data["fchinicial"]), 'Y-m-d');
                         data["fchfinal"] = Ext.Date.format(new Date(data["fchfinal"]), 'Y-m-d');
-                        data["deposito"] = Ext.getCmp("coddeposito").getRawValue();
-                        data["transportista"] = Ext.getCmp("idtransportista").getRawValue();
+                        data["deposito"] = Ext.getCmp("coddeposito" + me.idmaster).getRawValue();
+                        data["transportista"] = Ext.getCmp("idtransportista" + me.idmaster).getRawValue();
 
                         var str = JSON.stringify(data);
 
@@ -444,6 +462,7 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
                             waitMsg: 'Guardando',
                             success: function (response, options) {
                                 Ext.Msg.alert("Contacto", "Datos almacenados correctamente");
+                                me.up('form').down('grid').getStore().reload();
                             },
                             failure: function (form, action) {
                                 Ext.Msg.alert("Master Radicacion", "Error en guardar " + action.result.errorInfo + "</ br>");
@@ -458,7 +477,20 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
                 }
             });
             tb.add({
-                id: 'bntDigitar',
+                id: 'bntVerifica' + me.idmaster,
+                text: 'Verificar',
+                tooltip: 'Verificar Informaci\u00F3n',
+                iconCls: 'refresh',
+                scope: this,
+                handler: function () {
+                    this.loadData();
+                    
+                    var grid = this.up('form').down('grid');
+                    grid.getStore().reload();
+                }
+            });
+            tb.add({
+                id: 'bntDigitar' + me.idmaster,
                 text: 'Digitaci\u00F3n Muisca OK',
                 tooltip: 'Confirma la finalizaci\u00F3n de la Digitaci\u00F3n',
                 iconCls: 'tick',
@@ -480,6 +512,7 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
                                     var res = Ext.JSON.decode(response.responseText);
                                     if (res.success) {
                                         Ext.Msg.alert("Radicaciones", "Mensaje de Notificaci\u00F3n Enviado - Digitaci\u00F3n Muisca Ok ");
+                                        me.loadData();
                                     } else {
                                         Ext.MessageBox.alert("Mensaje", 'Se presento un error notificando Digitaci\u00F3n OK<br>' + res.errorInfo);
                                     }
@@ -495,7 +528,7 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
                 }
             });
             tb.add({
-                id: 'bntReversar',
+                id: 'bntReversar' + me.idmaster,
                 text: 'Reversar Digitaci\u00F3n',
                 tooltip: 'Confirma la reverci\u00F3n de la Digitaci\u00F3n',
                 iconCls: 'error',
@@ -517,6 +550,7 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
                                     var res = Ext.JSON.decode(response.responseText);
                                     if (res.success) {
                                         Ext.Msg.alert("Radicaciones", "Mensaje de Notificaci\u00F3n Enviado - Digitaci\u00F3n Muisca Ok ");
+                                        me.loadData();
                                     } else {
                                         Ext.MessageBox.alert("Mensaje", 'Se presento un error notificando Digitaci\u00F3n OK<br>' + res.errorInfo);
                                     }
@@ -532,7 +566,7 @@ Ext.define('Colsys.Ino.FormMasterRadicacion', {
                 }
             });
             tb.add({
-                id: 'bntGenerar',
+                id: 'bntGenerar' + me.idmaster,
                 text: 'Generar XML',
                 tooltip: 'Genera Archivo XML para Radicar',
                 iconCls: 'note-add',

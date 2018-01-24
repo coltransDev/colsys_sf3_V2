@@ -35,9 +35,6 @@
                     idmodalidad: this.modalidad
                 });
             }
-            //console.log(this.modalidad);
-            //if (this.modalidad == "FCL") {
-
 
             if (!isNaN(this.idmaster) && this.idmaster > 0)
             {

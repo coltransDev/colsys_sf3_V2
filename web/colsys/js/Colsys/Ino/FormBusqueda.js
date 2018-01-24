@@ -18,7 +18,7 @@ Ext.define('Colsys.Ino.FormBusqueda', {
     maxSize: 500,
     listeners: {
         beforerender: function () {
-
+            
             //if (this.permisos.Crear == true)
             {
                 this.addTool({
@@ -253,7 +253,6 @@ Ext.define('Colsys.Ino.FormBusqueda', {
                         getRowClass: function (record, rowIndex, rowParams, store) {
                                                         
                             if (record.get('m_ca_fchanulado') !="" && record.get('m_ca_fchanulado') !="null" &&  record.get('m_ca_fchanulado') !=null) {
-                                console.log(record.data);
                                 return "row_purple";
                             }
                         }
@@ -287,13 +286,15 @@ Ext.define('Colsys.Ino.FormBusqueda', {
                     listeners: {
                         rowdblclick: function (obj, record, tr, rowIndex, e, eOpts)
                         {
+                            permisosG = this.up('form').permisosG;
                             var tipofac = tipofactura;
                             tabpanel = Ext.getCmp('tabpanel1');
                             ref = record.data.m_ca_idmaster;
                             
-                            
                             if (!tabpanel.getChildByElement('tab' + ref) && ref != "")
                             {
+                                var tmppermisos = null;
+                                
                                 if(record.data.m_ca_impoexpo=="INTERNO")
                                     tmppermisos=permisosG.terrestre;
                                 else if(record.data.m_ca_impoexpo=="Exportaci\u00F3n")
@@ -302,8 +303,6 @@ Ext.define('Colsys.Ino.FormBusqueda', {
                                 {
                                     if(record.data.m_ca_transporte=="Mar\u00EDtimo")
                                     {
-                                        //alert("ss");
-                                        //alert(permisosG.maritimo.toSource())
                                         tmppermisos=permisosG.maritimo;
                                     }
                                     if(record.data.m_ca_transporte=="A\u00E9reo")
@@ -311,10 +310,10 @@ Ext.define('Colsys.Ino.FormBusqueda', {
                                 }
                                 else if(record.data.m_ca_impoexpo=="OTM-DTA")
                                     tmppermisos=permisosG.otm;
+                                else{
+                                    tmppermisos=null;
+                                }
 
-                                //alert(tmppermisos.toSource());
-                                //alert(record.data.toSource());
-                                
                                 if(record.data.m_ca_fchcerrado)
                                 {
                                     tmppermisos.Editar=false;
@@ -326,12 +325,11 @@ Ext.define('Colsys.Ino.FormBusqueda', {
                                     tmppermisos.Crear=false;
                                     tmppermisos.Anular=false;
                                 }
-                                
                                 datos={"title":record.data.m_ca_referencia,"id":'tab' + ref};
                                 obj=[
                                         new Colsys.Ino.Mainpanel(
                                         {
-                                            "idmaster": ref, "idtransporte": record.data.m_ca_transporte, 
+                                            "idmaster": ref, "idtransporte": record.data.m_ca_transporte,
                                             "idimpoexpo": record.data.m_ca_impoexpo, "idreferencia": record.data.m_ca_referencia,
                                             'permisos': tmppermisos, "tipofacturacion":tipofac, "idticket":record.data.m_ca_idticket,
                                             "modalidad":record.data.m_ca_modalidad

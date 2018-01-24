@@ -3,8 +3,6 @@ var win_house = null;
 Ext.define('Colsys.Ino.GridHouseRadicacion', {
     extend: 'Ext.grid.Panel',
     alias: 'widget.Colsys.Ino.GridHouseRadicacion',
-    id: 'GridHouseRadicacion'+this.idmaster,
-    name: 'GridHouseRadicacion'+this.idmaster,
     width: '100%',
     listeners: {
         afterrender: function (ct, position) {
@@ -120,7 +118,7 @@ Ext.define('Colsys.Ino.GridHouseRadicacion', {
                             items: [{
                                     iconCls: 'page_white_edit',
                                     tooltip: 'Editar Radicaci\u00F3n House',
-                                    isDisabled: function(view, rowIndex, colIndex, item, record) {
+                                    isDisabled: function (view, rowIndex, colIndex, item, record) {
                                         return !me.permisos.MuiscaEd;
                                     },
                                     handler: function (grid, rowIndex, colIndex) {
@@ -152,7 +150,7 @@ Ext.define('Colsys.Ino.GridHouseRadicacion', {
                                 }, {
                                     iconCls: 'delete',
                                     tooltip: 'Eliminar Datos de Radicaci\u00F3n',
-                                    isDisabled: function(view, rowIndex, colIndex, item, record) {
+                                    isDisabled: function (view, rowIndex, colIndex, item, record) {
                                         return !me.permisos.MuiscaEd;
                                     },
                                     handler: function (grid, rowIndex, colIndex) {
@@ -184,44 +182,6 @@ Ext.define('Colsys.Ino.GridHouseRadicacion', {
                                 }]
                         }
                     ]);
-//            tb = new Ext.toolbar.Toolbar();
-//            tb.add({
-//                text: 'Adicionar',
-//                tooltip: 'Adicionar un registro',
-//                iconCls: 'add',
-//                scope: this,
-//                handler: function () {
-//                    if (win_house == null) {
-//                        win_house = new Ext.Window({
-//                            id: 'winMandatos',
-//                            title: 'Informaci\u00F3n para Muisca',
-//                            width: 800,
-//                            height: 380,
-//                            closeAction: 'destroy',
-//                            items: [{
-//                                    xtype: 'Colsys.Ino.FormHouseRadicacion',
-//                                    id: 'formHouseRadicacion',
-//                                    // idcliente: me.idcliente
-//                                    cabecera: 'Nuevo Registro'
-//                                }],
-//                            listeners: {
-//                                destroy: function (obj, eOpts)
-//                                {
-//                                    win_house = null;
-//                                }
-//                            }
-//                        });
-//                    }
-//                    win_house.show();
-//                },
-//                listeners: {
-//                    beforerender: function () {
-//                        // this.setVisible(me.permisos[9]);
-//                    }
-//                }
-//            }
-//            );
-//            this.addDocked(tb);
         }
     }
 });

@@ -19,15 +19,13 @@ Ext.define('Colsys.Ino.PanelRadicacion', {
                  type: 'vbox'
                  },*/
                 items: [{
-//                        id: 'formMasterRadicacion_'+this.idmaster,
+                        xtype: 'Colsys.Ino.FormMasterRadicacion',
                         idmaster: this.idmaster,
-                        permisos: this.permisos,
-                        xtype: 'Colsys.Ino.FormMasterRadicacion'
+                        permisos: this.permisos
                     }, {
-//                        id: 'gridHouseRadicacion_'+this.idmaster,
+                        xtype: 'Colsys.Ino.GridHouseRadicacion',
                         idmaster: this.idmaster,
                         permisos: this.permisos,
-                        xtype: 'Colsys.Ino.GridHouseRadicacion',
                         height: 390,
                         autoScroll: true
                     }
@@ -37,7 +35,7 @@ Ext.define('Colsys.Ino.PanelRadicacion', {
             };
 
             this.add({
-                id: 'layout-browserm' + this.idcliente,
+                id: 'layout-radicacionp' + this.idmaster,
                 items: [panelRadicacion]
             });
         }

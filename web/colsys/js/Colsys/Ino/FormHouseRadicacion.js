@@ -321,7 +321,7 @@ Ext.define('Colsys.Ino.FormHouseRadicacion', {
         formBind: true,
         handler: function () {
             var me = this;
-            var form = this.up('form').getForm();
+            var form = me.up('form').getForm();
             var data = form.getFieldValues();
             var idmaster = this.up('form').idmaster;
             data["fchtrans"] = Ext.Date.format(new Date(), 'Y-m-d');
@@ -342,7 +342,7 @@ Ext.define('Colsys.Ino.FormHouseRadicacion', {
                     success: function (response, options) {
                         Ext.getCmp("winHouseRadicacion").destroy();
                         Ext.Msg.alert("Radicaciones", "Datos almacenados correctamente");
-                        Ext.getCmp("GridHouseRadicacion"+idmaster).getStore().reload();
+                        Ext.getCmp("radicacion-"+idmaster).down('grid').getStore().reload();
                     },
                     failure: function (form, action) {
                         Ext.Msg.alert("Contacto", "Error en guardar " + action.result.errorInfo + "</ br>");
