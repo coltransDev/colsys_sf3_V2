@@ -213,6 +213,7 @@ Ext.define('Colsys.Ino.FormBusqueda', {
                     name: 'opciones',
                     html:'<div style:"padding:20px"><a href="/antecedentes/listadoReferencias/format/maritimo" target="_blank">Antecedentes</a></div>\n\
                           <div style:"padding:20px"><a href="/reportesGer/cargasPendientesxLiberar/new" target="_blank">Cargas Pendientes x Liberar</a></div>\n\
+                          <div style:"padding:20px"><a href="/reportesGer/informeAerolineasExpoExt5" target="_blank">Informe Aeolineas Expo</a></div>\n\
                           <div style:"padding:20px"><a href="/contabilidad/indexExt5" target="_blank">M&oacute;dulo Contabilidad</a></div>'
                     
                 }

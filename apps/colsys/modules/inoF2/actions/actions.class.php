@@ -2949,14 +2949,23 @@ class inoF2Actions extends sfActions {
                 if ($inoHouseSea->getCaDatosmuisca()) {
                     $data = json_decode(utf8_encode($inoHouseSea->getCaDatosmuisca()));
                 } else {
+                    $con = Doctrine_Manager::getInstance()->connection();
+                    $bodega = $inoHouse->getReporte()->getRepUltVersion()->getBodega();
+                    $sql = "select ca_razonsocial from tb_dianservicios "
+                            . "where ca_identificacion =  '" . $bodega->getCaIdentificacion() . "'";
+                    $rs = $con->execute($sql);
+                    $razonsocial = $rs->fetchAll(PDO::FETCH_COLUMN);
+
                     $data['dispocarga'] = 21;
                     $data['tipodocviaje'] = 3;
                     $data['precursores'] = 'N';
+                    $data['tipocarga'] = 1;
                     $data['idcondiciones'] = 1;
                     $data['responsabilidad'] = 'S';
                     $data['vlrfob'] = 0;
                     $data['vlrflete'] = 0;
                     $data['mercancia_desc'] = utf8_encode($inoHouse->getReporte()->getRepUltVersion()->getCaMercanciaDesc());
+                    $data['bodega'] = utf8_encode($razonsocial[0]);
                 }
             }
             $this->responseArray = array("data" => $data, "total" => count($data), "success" => true);
