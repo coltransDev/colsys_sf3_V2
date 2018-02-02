@@ -218,7 +218,6 @@ class InoMasterSea extends BaseInoMasterSea {
                             $event = "Error - Debe definir un código de depósito en House: " . $inoHouse->getCaDoctransporte();
                             throw new Exception($event);
                         }
-                        
                     }
                 } else {
                     $transbordo = Doctrine::getTable("Ciudad")->find($destino);
@@ -425,9 +424,10 @@ class InoMasterSea extends BaseInoMasterSea {
                 $sub_pz = 0;
                 $sub_cn = 0;
 
+                $first = true;
                 $array_cont = array();
                 foreach ($inoMaster->getInoEquipo() as $equipo) {
-                    $first = true;
+                    $item = 1;
                     foreach ($contenedores as $contenedor) {
                         if ($equipo->getCaIdequipo() != $contenedor->idequipo) {
                             continue;
@@ -440,21 +440,7 @@ class InoMasterSea extends BaseInoMasterSea {
                                 $xml_h167->setAttribute("fa67", $hijo->iddocanterior);
                             }
                             $xml_h167->setAttribute("cont", $hijo->tipocarga);
-//                            $xml_h167->setAttribute("tun", 2);
-//                            $xml_h167->setAttribute("idu", str_replace("-", "", $contenedor->serial));
-
-//                            $tipoContenedor = Doctrine::getTable("Concepto")->find($contenedor->idconcepto);
-//                            if ($tipoContenedor) {
-//                                $tam_equipo = (strpos($tipoContenedor->getCaConcepto(), 'High Cube') !== false) ? 2 : (($tipoContenedor->getCaLiminferior() == 20) ? 1 : (($tipoContenedor->getCaLiminferior() == 40) ? 3 : 4));
-//                                $xml_h167->setAttribute("tam", $tam_equipo);
-//                                $tip_equipo = (strpos($contenedor->concepto, 'Flat Rack') !== false) ? 2 : ((strpos($contenedor->concepto, 'Open Top') !== false) ? 3 : ((strpos($contenedor->concepto, 'Collapsible') !== false) ? 4 : ((strpos($contenedor->concepto, 'Platform') !== false) ? 5 : ((strpos($contenedor->concepto, 'Tank') !== false) ? 6 : ((strpos($contenedor->concepto, 'Reefer') !== false) ? 8 : 1)))));
-//                                $xml_h167->setAttribute("teq", $tip_equipo);
-//                                $xml_h167->setAttribute("npr", $contenedor->numprecinto);
-//                            } else {
-//                                $event = "Error - En la Definición del Tipo de Contenedor.";
-//                                throw new Exception($event);
-//                            }
-//                            $first = false;
+                            $first = false;
                         }
 
                         $grp++;
@@ -480,16 +466,23 @@ class InoMasterSea extends BaseInoMasterSea {
                             $mercancia_desc = substr($mercancia_desc, 0, 200);
                         }
                         $xml_item = $xml->createElement("item");
-                        $item = 1;
-                        $xml_item->setAttribute("item", $item);
+                        $xml_item->setAttribute("item", $item++);
                         $xml_item->setAttribute("cemb", ($status["ca_codembalaje"] == "" ? "PK" : $status["ca_codembalaje"]));
-                        $xml_item->setAttribute("idg", $mercancia_desc);
+                        $xml_item->setAttribute("idg",  $mercancia_desc);
                         $xml_item->setAttribute("mpel", $mercancia_peli);
                         $xml_h267->appendChild($xml_item);
                         $xml_h167->appendChild($xml_h267);
 
                         $array_cont[] = str_replace("-", "", $contenedor->serial);
                     }
+                }
+                if (isset($first)) {
+                    $xml_h167->setAttribute("vpb", $sub_ps);
+                    $xml_h167->setAttribute("nbul", $sub_pz);
+                    $xml_h167->setAttribute("vol1", 0);
+                    $xml_h167->setAttribute("nreg", $sub_cn);
+                    $xml_hijo->appendChild($xml_h167);
+                    
                     // Se Crear el elemento contenedor
                     if ($master->tipodocviaje == 10) {
                         foreach ($array_cont as $cont) {
@@ -499,94 +492,95 @@ class InoMasterSea extends BaseInoMasterSea {
                         }
                     }
                 }
-                if (isset($first)) {
-                    $xml_h167->setAttribute("vpb", $sub_ps);
-                    $xml_h167->setAttribute("nbul", $sub_pz);
-                    $xml_h167->setAttribute("vol1", 0);
-                    $xml_h167->setAttribute("nreg", $sub_cn);
-                    $xml_hijo->appendChild($xml_h167);
-                }
                 $xml_pal66->appendChild($xml_hijo);
             }
 
             $grp = 0;
-            $sub_ps = 0;
-            $sub_pz = 0;
-            $sub_cn = 0;
 
             $array_cont = array();
             foreach ($inoMaster->getInoEquipo() as $equipo) { // Lee todos los Houses de la Referencia
-                // Se Crear el elemento h167
-                $xml_h167 = $xml->createElement("h167");
-
-                if ($hijo->iddocanterior != "") {
-                    $xml_h167->setAttribute("fa67", $master->iddocanterior);
-                }
-                $xml_h167->setAttribute("cont", $master->tipocarga);
-                $xml_h167->setAttribute("tun", 2);
-                $xml_h167->setAttribute("idu", str_replace("-", "", $contenedor->serial));
-
-                $tipoContenedor = Doctrine::getTable("Concepto")->find($contenedor->idconcepto);
-                if ($tipoContenedor) {
-                    $tam_equipo = (strpos($tipoContenedor->getCaConcepto(), 'High Cube') !== false) ? 2 : (($tipoContenedor->getCaLiminferior() == 20) ? 1 : (($tipoContenedor->getCaLiminferior() == 40) ? 3 : 4));
-                    $xml_h167->setAttribute("tam", $tam_equipo);
-                    $tip_equipo = (strpos($contenedor->concepto, 'Flat Rack') !== false) ? 2 : ((strpos($contenedor->concepto, 'Open Top') !== false) ? 3 : ((strpos($contenedor->concepto, 'Collapsible') !== false) ? 4 : ((strpos($contenedor->concepto, 'Platform') !== false) ? 5 : ((strpos($contenedor->concepto, 'Tank') !== false) ? 6 : ((strpos($contenedor->concepto, 'Reefer') !== false) ? 8 : 1)))));
-                    $xml_h167->setAttribute("teq", $tip_equipo);
-                    $xml_h167->setAttribute("npr", $contenedor->numprecinto);
-                } else {
-                    $event = "Error - En la Definición del Tipo de Contenedor.";
-                    throw new Exception($event);
-                }
-
-                foreach ($inoHouses as $inoHouse) {      // Lee todos los Houses de la Referencia
-                    $reporte = $inoHouse->getReporte()->getRepUltVersion();
-                    $inoHouseSea = $inoHouse->getInoHouseSea();
-                    $hijo = json_decode(utf8_encode($inoHouseSea->getCaDatosmuisca()));
-                    $datos_carga = json_decode($inoHouseSea->getCaDatos());
-                    $contenedores = $datos_carga->equipos;
-                    foreach ($contenedores as $contenedor) {
-                        if ($equipo->getCaIdequipo() != $contenedor->idequipo) {
-                            continue;
-                        }
-
-                        $grp++;
-                        $sub_ps += $contenedor->kilos;
-                        $sub_pz += $contenedor->piezas;
-                        $sub_cn += 1;
-
-                        // Se Crear el elemento h267
-                        $xml_h267 = $xml->createElement("h267");
-                        $xml_h267->setAttribute("grp", $grp);
-                        $xml_h267->setAttribute("bul", $contenedor->piezas);
-                        $xml_h267->setAttribute("peso", $contenedor->kilos);
-
-                        // Se Crear el elemento item
-                        $sql = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, ca_mcia_peligrosa, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs "
-                                . "     LEFT OUTER JOIN tb_reportes rp ON (rp.ca_fchanulado is null and rs.ca_idreporte = rp.ca_idreporte) "
-                                . "     LEFT OUTER JOIN tb_parametros pr ON (pr.ca_casouso = 'CU047' and (string_to_array(ca_piezas,'|'))[2] = pr.ca_valor) "
-                                . "where rp.ca_consecutivo = '" . $reporte->getCaConsecutivo() . "' and ca_idemail is not null order by ca_idemail DESC limit 1 ";
-                        $repstatus = $conn->execute($sql);
-                        foreach ($repstatus as $status) {
-                            $mercancia_peli = ($reporte->getCaMciaPeligrosa()) ? "S" : "N";
-                            $mercancia_desc = (strlen($hijo->mercancia_desc) != 0) ? $hijo->mercancia_desc : $status["ca_mercancia_desc"];
-                            $mercancia_desc = substr($mercancia_desc, 0, 200);
-                        }
-
-                        $xml_item = $xml->createElement("item");
-                        $item = 1;
-                        $xml_item->setAttribute("item", $item);
-                        $xml_item->setAttribute("cemb", ($status["ca_codembalaje"] == "" ? "PK" : $status["ca_codembalaje"]));
-                        $xml_item->setAttribute("idg", $mercancia_desc);
-                        $xml_item->setAttribute("mpel", $mercancia_peli);
-                        $xml_h267->appendChild($xml_item);
-                        $xml_h167->appendChild($xml_h267);
+                foreach ($contenedores as $contenedor) {
+                    if ($equipo->getCaIdequipo() != $contenedor->idequipo) {
+                        continue;
                     }
-                }
-                $xml_h167->setAttribute("vpb", $sub_ps);
-                $xml_h167->setAttribute("nbul", $sub_pz);
-                $xml_h167->setAttribute("nreg", $sub_cn);
+                    $sub_ps = 0;
+                    $sub_pz = 0;
+                    $sub_cn = 0;
 
-                $xml_pal66->appendChild($xml_h167);
+                    // Se Crear el elemento h167
+                    $xml_h167 = $xml->createElement("h167");
+
+                    if ($hijo->iddocanterior != "") {
+                        $xml_h167->setAttribute("fa67", $master->iddocanterior);
+                    }
+                    $xml_h167->setAttribute("cont", $master->tipocarga);
+                    $xml_h167->setAttribute("idu", str_replace("-", "", $contenedor->serial));
+
+                    $tipoContenedor = Doctrine::getTable("Concepto")->find($contenedor->idconcepto);
+                    if ($tipoContenedor) {
+                        if ($master->tipocarga == 2) {
+                            $xml_h167->setAttribute("tun", 2);
+                            $tam_equipo = (strpos($tipoContenedor->getCaConcepto(), 'High Cube') !== false) ? 2 : (($tipoContenedor->getCaLiminferior() == 20) ? 1 : (($tipoContenedor->getCaLiminferior() == 40) ? 3 : 4));
+                            $xml_h167->setAttribute("tam", $tam_equipo);
+                            $tip_equipo = (strpos($contenedor->concepto, 'Flat Rack') !== false) ? 2 : ((strpos($contenedor->concepto, 'Open Top') !== false) ? 3 : ((strpos($contenedor->concepto, 'Collapsible') !== false) ? 4 : ((strpos($contenedor->concepto, 'Platform') !== false) ? 5 : ((strpos($contenedor->concepto, 'Tank') !== false) ? 6 : ((strpos($contenedor->concepto, 'Reefer') !== false) ? 8 : 1)))));
+                            $xml_h167->setAttribute("teq", $tip_equipo);
+                            $xml_h167->setAttribute("npr", $contenedor->numprecinto);
+                        }
+                    } else {
+                        $event = "Error - En la Definición del Tipo de Contenedor.";
+                        throw new Exception($event);
+                    }
+
+                    foreach ($inoHouses as $inoHouse) {      // Lee todos los Houses de la Referencia
+                        $reporte = $inoHouse->getReporte()->getRepUltVersion();
+                        $inoHouseSea = $inoHouse->getInoHouseSea();
+                        $hijo = json_decode(utf8_encode($inoHouseSea->getCaDatosmuisca()));
+                        $datos_carga = json_decode($inoHouseSea->getCaDatos());
+                        $contenedores = $datos_carga->equipos;
+                        foreach ($contenedores as $contenedor) {
+                            if ($equipo->getCaIdequipo() != $contenedor->idequipo) {
+                                continue;
+                            }
+
+                            $grp++;
+                            $sub_ps += $contenedor->kilos;
+                            $sub_pz += $contenedor->piezas;
+                            $sub_cn += 1;
+
+                            // Se Crear el elemento h267
+                            $xml_h267 = $xml->createElement("h267");
+                            $xml_h267->setAttribute("grp", $grp);
+                            $xml_h267->setAttribute("bul", $contenedor->piezas);
+                            $xml_h267->setAttribute("peso", $contenedor->kilos);
+
+                            // Se Crear el elemento item
+                            $sql = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, ca_mcia_peligrosa, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs "
+                                    . "     LEFT OUTER JOIN tb_reportes rp ON (rp.ca_fchanulado is null and rs.ca_idreporte = rp.ca_idreporte) "
+                                    . "     LEFT OUTER JOIN tb_parametros pr ON (pr.ca_casouso = 'CU047' and (string_to_array(ca_piezas,'|'))[2] = pr.ca_valor) "
+                                    . "where rp.ca_consecutivo = '" . $reporte->getCaConsecutivo() . "' and ca_idemail is not null order by ca_idemail DESC limit 1 ";
+                            $repstatus = $conn->execute($sql);
+                            foreach ($repstatus as $status) {
+                                $mercancia_peli = ($reporte->getCaMciaPeligrosa()) ? "S" : "N";
+                                $mercancia_desc = (strlen($hijo->mercancia_desc) != 0) ? $hijo->mercancia_desc : $status["ca_mercancia_desc"];
+                                $mercancia_desc = substr($mercancia_desc, 0, 200);
+                            }
+
+                            $xml_item = $xml->createElement("item");
+                            $item = 1;
+                            $xml_item->setAttribute("item", $item);
+                            $xml_item->setAttribute("cemb", ($status["ca_codembalaje"] == "" ? "PK" : $status["ca_codembalaje"]));
+                            $xml_item->setAttribute("idg", $mercancia_desc);
+                            $xml_item->setAttribute("mpel", $mercancia_peli);
+                            $xml_h267->appendChild($xml_item);
+                            $xml_h167->appendChild($xml_h267);
+                        }
+                    }
+                    $xml_h167->setAttribute("vpb", $sub_ps);
+                    $xml_h167->setAttribute("nbul", $sub_pz);
+                    $xml_h167->setAttribute("nreg", $sub_cn);
+
+                    $xml_pal66->appendChild($xml_h167);
+                }
             }
             $xml_pal66->setAttribute("cmon", $vlrfob);      // Valor FOB USD
             $xml_pal66->setAttribute("vfle", $vlrflete);  // Valor Fletes USD
