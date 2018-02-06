@@ -10,6 +10,8 @@
  */
 class integracionesActions extends sfActions {
 
+    //const userSap="manager";
+    //const passSap="9876";
 
     public function executeIndex(sfWebRequest $request) {
         
@@ -18,7 +20,8 @@ class integracionesActions extends sfActions {
     public function executeProcesarTransacciones(sfWebRequest $request) {
         
         
-        $q = Doctrine::getTable("IntTransaccionesOut")
+        $idtransaccion=IntTransaccionesOut::procesarTransacciones($request->getParameter("idtipo"), $request->getParameter("indice1"), $request->getParameter("indice2"));
+       /* $q = Doctrine::getTable("IntTransaccionesOut")
                             ->createQuery("tr")
                             ->select("*")
                             ->innerJoin("tr.IntTipos s")
@@ -28,676 +31,219 @@ class integracionesActions extends sfActions {
         {
             $q->addWhere("tr.ca_idtipo = ? and ca_indice1=?", array($request->getParameter("idtipo"),$request->getParameter("indice1")));
         }
+        //echo $request->getParameter("idtipo")."<br>";
+        //echo $request->getParameter("indice1")."<br>";
+        //echo $q->getSqlQuery();
+        //exit;
         $transacciones =$q->execute();
         
         foreach($transacciones as $tr)
         {            
+            
             eval("\$this->json".$tr->getIntTipos()->getCaNombre()."(\$tr);");
             $idtransaccion=$tr->getCaIdtransaccion();
-        }
-        echo $idtransaccion;
-        return $idtransaccion;
-        exit;
-    }
-    
-    /*OK REVISADO JUL/31/2017*/
-    public function jsonReferencias($transaccion) {
-        
-        $master = Doctrine::getTable("InoMaster")
-                          ->createQuery("m")
-                          ->select("*")
-                          ->where($transaccion->getIntTipos()->getCaIndice1()." = ?", $transaccion->getCaindice1())
-                          ->execute();
-        
-        
-        $datos["Usuario"]="Colsys";
-        $datos["Password"]="colsys";
-        $datos["Company"]="1";
-        $datos["System"]="2";
-        $datos["PrjCode"]=$master->getCaReferencia();
-        $datos["PrjName"]=$master->getCaImpoexpo()."-".$master->getCaTransporte();
-        $datos["ValidFrom"]=date("yyyy/mm/dd");
-        $datos["Estado"]="A";        
-        
-        $transaccion->setCaEstado("G");
-        $transaccion->setCaDatos(json_encode($datos));
-        $transaccion->save();
-        
-    }
-    
-    /*OK REVISADO JUL/31/2017*/
-    public function jsonClientes($transaccion) {
-        
-        $reg = Doctrine::getTable("Cliente")
-                          ->createQuery("c")
-                          ->select("*")
-                          ->where($transaccion->getIntTipos()->getCaIndice1()." = ?", $transaccion->getCaindice1())
-                          ->execute();
-
-        $datos["Usuario"]="Colsys";
-        $datos["Password"]="colsys";
-        $datos["Company"]="1";
-        $datos["System"]="2";
-        $datos["CardCode"]="C".$reg->getCaIdalterno();
-        $datos["CardName"]=$reg->getCaCompania();
-        $datos["CardFName"]=$reg->getCaCompania(); // Nombre Extranjero
-        $datos["CardType"]="0";  // Tipo SN 0: Cliente 1: Proveedor 2: Lead      
-        $datos["GroupCode"]="";  // Código de grupo de socios de negocio
-        $datos["CreditLimit"]="";
-        $datos["Fax"]="";
-        $datos["Phone1"]="";
-        $datos["GroupNum"]=""; //Condición de pago. Revisar tabla de condiciones de pago
-        $datos["LicTradNum"]=$reg->getCaIdalterno(); //Número de indentificación fiscal
-        $datos["SlpCode"]=""; //Número de empleado de ventas
-        $datos["E_Mail"]="";
-        $datos["frozenFor"]=""; //Activo 0: No 1: Si
-        $datos["DebPayAcct"] = ""; // Pendiente
-        $datos["Estado"]="N"; //Y: SI N: NO
-        $datos["Empleado"] = ""; //Se indica si el socio de negocio es un empleado de venta
-        
-        $datos["Direcciones"]=$this->getJsonDireContac($reg->getIds());        
-        $datos["Contactos"]=$this->getJsonContatos($reg->getIds());
-        $datos["Bancos"] = $this->JsonBancos($reg);
-        
-        $transaccion->setCaEstado("G");
-        $transaccion->setCaDatos(json_encode($datos));
-        $transaccion->save();
-    }
-    
-     /*OK REVISADO JUL/31/2017*/
-    public function jsonAgentes($transaccion) {
-        
-         $reg = Doctrine::getTable("Ids")
-                          ->createQuery("i")
-                          ->select("*")
-                          ->where($transaccion->getIntTipos()->getCaIndice1()." = ?", $transaccion->getCaindice1())
-                          ->fetchOne();
-
-        $datos["Usuario"]="Colsys";
-        $datos["Password"]="colsys";
-        $datos["Company"]="1";
-        $datos["System"]="2";
-
-        $datos["CardCode"]=$reg->getCaIdalterno();        
-        $datos["CardName"]=$reg->getCaNombre();
-        $datos["CardFName"]=$reg->getCaNombre();
-        $datos["CardType"]="1";  // Tipo SN 0: Cliente 1: Proveedor 2: Lead      
-        $datos["GroupCode"]="";
-        $datos["CreditLimit"]="";
-        $datos["Fax"]="";
-        $datos["Phone1"]="";
-        $datos["GroupNum"]=""; //Condición de pago. Revisar tabla de condiciones de pago
-        $datos["LicTradNum"]="A".$reg->getCaIdalterno();
-        $datos["SlpCode"]=""; //Número de empleado de ventas
-        $datos["E_Mail"]="";
-        $datos["frozenFor"]=""; //Activo 0: No 1: Si
-        $datos["DebPayAcct"] = ""; // Pendiente
-        $datos["Estado"]="N";
-        $datos["Empleado"] = ""; //Se indica si el socio de negocio es un empleado de venta
-
-        $datos["Direcciones"]=$this->getJsonDireContac($reg);
-        $datos["Contactos"]=$this->getJsonContatos($reg);
-        $datos["Bancos"] = $this->JsonBancos($reg);
-
-        $transaccion->setCaEstado("G");
-        $transaccion->setCaDatos(json_encode($datos));
-        $transaccion->save();
-    }
-    
-    /*OK REVISADO JUL/31/2017*/
-    public function jsonProveedores($transaccion) {
-        
-         $reg = Doctrine::getTable("Ids")
-                          ->createQuery("i")
-                          ->select("*")
-                          ->where($transaccion->getIntTipos()->getCaIndice1()." = ?", $transaccion->getCaindice1())
-                          ->fetchOne();
-
-        $datos["Usuario"]="Colsys";
-        $datos["Password"]="colsys";
-        $datos["Company"]="1";
-        $datos["System"]="2";
-
-        $datos["CardCode"]="P".$reg->getCaIdalterno();
-        $datos["CardName"]=$reg->getCaNombre();
-        $datos["CardFName"]=$reg->getCaNombre();
-        $datos["CardType"]="1";  // Tipo SN 0: Cliente 1: Proveedor 2: Lead  
-        $datos["GroupCode"]="";  // Código de grupo de socios de negocio
-        $datos["Estado"]="N"; //Y: SI N: NO
-        $datos["CreditLimit"]="";
-        $datos["Fax"]="";
-        $datos["Phone1"]="";
-        $datos["GroupNum"]=""; //Condición de pago. Revisar tabla de condiciones de pago
-        $datos["LicTradNum"]=$reg->getCaIdalterno(); //Número de indentificación fiscal
-        $datos["SlpCode"]=""; //Número de empleado de ventas
-        $datos["E_Mail"]="";
-        $datos["frozenFor"]=""; //Activo 0: No 1: Si
-        $datos["DebPayAcct"] = ""; // Pendiente
-        $datos["Empleado"] = ""; //Se indica si el socio de negocio es un empleado de venta
-
-        $datos["Direcciones"]=$this->getJsonDireContac($reg);
-        $datos["Contactos"]=$this->getJsonContatos($reg);
-        $datos["Bancos"] = $this->JsonBancos($reg);
-
-        $transaccion->setCaEstado("G");
-        $transaccion->setCaDatos(json_encode($datos));
-        $transaccion->save();
-    }
-    
-    /*OK REVISADO JUL/31/2017*/
-    public function jsonEmpleados($transaccion) {
-        
-         $reg = Doctrine::getTable("Usuario")
-                          ->createQuery("u")
-                          ->select("*")
-                          ->where($transaccion->getIntTipos()->getCaIndice1()." = ?", $transaccion->getCaindice1())
-                          ->fetchOne();
-
-        $datos["Usuario"]="Colsys";
-        $datos["Password"]="colsys";
-        $datos["Company"]="1";
-        $datos["System"]="2";
-
-        $datos["CardCode"]="E".$reg->getCaDocidentidad();
-        $datos["CardName"]=$reg->getCaNombre();
-        $datos["CardFName"]=$reg->getCaNombre();        
-        $datos["CardType"]="1";  // Tipo SN 0: Cliente 1: Proveedor 2: Lead      
-        $datos["GroupCode"]="";  // Código de grupo de socios de negocio
-        $datos["CreditLimit"]="";
-        $datos["Fax"]="";
-        $datos["Phone1"]=$reg->getSucursal()->getCaTelefono();
-        $datos["GroupNum"]=""; //Condición de pago. Revisar tabla de condiciones de pago
-        $datos["LicTradNum"]=$reg->getCaDocidentidad();
-        $datos["SlpCode"]=""; //Número de empleado de ventas
-        $datos["E_Mail"]=$reg->getCaEmail();
-        $datos["frozenFor"]=""; //Activo 0: No 1: Si
-        $datos["DebPayAcct"] = ""; // Pendiente
-        $datos["Estado"]="N"; //Y: SI N: NO
-        $datos["Empleado"] = ""; //Se indica si el socio de negocio es un empleado de venta
-
-        //$datos["Direcciones"]=$this->getJsonDireContac($reg);
-        //$datos["Contactos"]=$this->getJsonContatos($reg);
-
-        $transaccion->setCaEstado("G");
-        $transaccion->setCaDatos(json_encode($datos));
-        $transaccion->save();
-    }
-    
-    /*OK REVISADO JUL/31/2017*/
-    public function getJsonDireContac($ids)
-    {
-        $dir=$contactos=array();
-        $suc=$ids->IdsSucursal();
-        foreach($suc as  $k=>$s)
-        {
-            $dir[$k]["Address"] = $s->getCiudad()->getCaCiudad();
-            $dir[$k]["AddrType"]="Colsys";
-            $dir[$k]["Street"]=$s->getCaDireccion();
-            $dir[$k]["City"]=$s->getCiudad()->getCaCiudad();
-            $dir[$k]["County"]=$s->getCiudad()->getCaDivipola();
-            $dir[$k]["Country"]=$s->getCiudad()->getTrafico()->getCaIdTrafico();            
-            $dir[$k]["Principal"]=($s->getCaPrincipal()?"Y":"N");            
-            //$dir[$k]["Telefono"]=$s->getCaTelefonos(); // Se eliminó en nuevo documento;
-            $contactos=array_merge($contactos,getJsonContactos($s));
-        }
-    }
-    
-    /*OK REVISADO JUL/31/2017*/
-    public function getJsonContactos($suc)
-    {
-        $contactos=array();
-        $con=$ids->IdsContacto();
-        foreach($con as  $k=>$c)
-        {
-            if($c->getCaActivo())
-            {
-                /*ca_nombres: string(60)
-    ca_papellido: string(60)
-    ca_sapellido: string(60)*/
-                $pos=strpos($c->getCaNombres(), " ");
-                if($pos>0)
-                {
-                    $pnombre= substr($c->getCaNombres(), 0,$pos-1);
-                    $snombre= substr($c->getCaNombres(), $pos, (strlen($c->getCaNombres())-$pos));
-                }
-                //$nombre=
-                
-                $contactos[$k]["Position"]=$c->getCaCargo();
-                $contactos[$k]["FirstName"]=$pnombre; 
-                $contactos[$k]["MiddleName"]= $snombre;
-                $contactos[$k]["LastName"]=$c->getCapapellido(). " ".$c->getCasapellido();
-                $contactos[$k]["Address"]=$c->getCaDireccion();
-                $contactos[$k]["Tel1"]=$c->getCaTelefonos();
-                $contactos[$k]["E_MailL"]=$c->getCaEmail();
-                //$contactos[$k]["IDContacto"]=$c->getCaIdcontacto(); Se eliminó en nuevo documento
-            }
-        }
-    }
-    
-    /*OK REVISADO JUL/31/2017*/
-    public function getJsonBancos($ids)
-    {
-        $bnk = array();
-        $bancos=$ids->IdsBanco();
-        foreach($bancos as $k => $b)
-        {
-            $bnk[$k]["BankCode"] = $b->getCaCodigoEntidad();
-            $bnk[$k]["Account"] = $b->getCaNumeroCuenta();
-            $bnk[$k]["TipoCta"] = $b->getCaTipoCuenta(); // A: Ahorros C: Corriente
-            //$dir[$k]["Telefono"]=$s->getCaTelefonos(); // Se eliminó en nuevo documento;
-            
-        }
-    }
-    
-    /*OK REVISADO JUL/31/2017*/
-    public function jsonConceptos($transaccion) {
-        
-         $reg = Doctrine::getTable("InoMaestraConceptos")
-                          ->createQuery("u")
-                          ->select("*")
-                          ->where($transaccion->getIntTipos()->getCaIndice1()." = ?", $transaccion->getCaindice1())
-                          ->fetchOne();
-
-        $datos["Usuario"]="Colsys";
-        $datos["Password"]="colsys";
-        $datos["Company"]="1";
-        $datos["System"]="2";
-
-        $datos["ItemCode"]=$reg->getCaIdconcepto();
-        $datos["ItemName"]=$reg->getCaCpncepto_esp();
-        $datos["Estado"]="N";
-        $datos["SellItem"]=($reg->getCaVenta()=="1" || $reg->getCaVenta()=="true" || $reg->getCaVenta()==true)?"1":"0";      //Venta
-        $datos["PrchseItem"]=($reg->getCaCompra()=="1" || $reg->getCaCompra()=="true" || $reg->getCaCompra()==true)?"1":"0"; //Compra
-        
-        $transaccion->setCaEstado("G");
-        $transaccion->setCaDatos(json_encode($datos));
-        $transaccion->save();
-    }
-    
-    /*OK REVISADO JUL/31/2017*/
-    public function jsonFacturasV($transaccion){
-        
-        $reg = Doctrine::getTable("InoComprobante")
-                ->createQuery("c")
-                ->select("*")
-                ->where($transaccion->getIntTipos()->getIndice1()."= ?", $transaccion->getCaIndice1())
-                ->fetchOne();
-        
-        $tipoComprobante = Doctrine::getTable("InoTipoComprobante")->find($reg->getCaIdtipo());
-        $ccostos = Doctrine::getTable("InoCentroCosto")->find($reg->getCaIdccosto());
-        
-        $datos["Usuario"]="Colsys";
-        $datos["Password"]="colsys";
-        $datos["Company"]= $tipoComprobante->getCaIdempresa(); // Pendiente definir en tabla de empresas los Id de SAP
-        $datos["System"]="2";
-        
-        $datos["TipoDoc"]="V";
-        $datos["CodigoDoc"] = $tipoComprobante->getCaTipo();
-        $datos["SerieCode"] = $tipoComprobante->getCaComprobante();
-        $datos["NumeroInterno"] = $reg->getCaConsecutivo();
-        $datos["CardCode"] = "C";
-        $datos["DocDate"] = date("Y-m-d");
-        $datos["TaxDate"] = date('Y-m-d', strtotime($reg->getCaFchComprobante(). ' + '.$reg->getCaPlazo().' days')); // Pendiente asociar el plazo con el asignado al proveedor
-        $datos["NumAtCard"] = $reg->getInoHouse()->getInoMaster()->getCaReferencia();        
-        $datos["Comments"] = $reg->getCaObservaciones();
-        $datos["SlpCode"] = ""; // Código empleado de ventas        
-        $datos["DocCur"] = $reg->getCaIdmoneda();
-        $datos["DocRate"] = $reg->getCaTcambio();
-        $datos["DocTransporte"] = $reg->getInoMaster()->getCaDoctransporte();
-        $datos["PedCliente"] = $reg->getInoHouse()->getReporte()->getCaOrdenclie();
-        $datos["BienesTransp"] = $reg->getInoHouse()->getReporte()->getCaMercanciaDesc();
-        $datos["Trayecto"] = $reg->getInoHouse()->getOrigen()->getCaCiudad()." - ".$reg->getInoHouse()->getDestino()->getCaCiudad();
-        $datos["Peso"] = $reg->getInoHouse()->getCaPeso();
-        $datos["Piezas"] = $reg->getInoHouse()->getCaPiezas();
-        $datos["Volumen"] = $reg->getInoHouse()->getCaVolumen();
-        $datos["Nave"] = $reg->getInoHouse()->getCaMotonave();
-        $datos["Sucursal"] = $reg->getInoTipoComprobante()->getCaIdsucursal();
-        $datos["Destino"] = "";// Pendiente por definir
-        
-        //Lineas        
-        $lineas = Doctrine::getTable("InoDetalle")
-                ->createQuery("d")
-                ->select("*")
-                ->where($transaccion->getIntTipos()->getIndice1()."= ?", $reg->getCaIdcomprobante())
-                ->execute();
-        
-        $ccosto_sap = json_decode($ccostos->getCaCcostosap());
-        
-        foreach($lineas as $linea){
-            $datos["ItemCode"] = $linea->getCaIdconcepto();
-            $datos["Quantity"] = 1;
-            $datos["UnitPrice"] = $linea->getCaCr();
-            $datos["OcrCode"] = $reg->getInoTipoComprobante()->getCaIdsucursal(); //Código de la sucursal
-            $datos["OcrCode2"] = $ccosto_sap->idarea; // Código del área
-            $datos["OcrCode3"] = $ccosto_sap->iddepartamento; // Código del departamento
-            $datos["OcrCode4"] = $ccosto_sap->idlinea; // Código de la línea
-            $datos["OcrCode5"] = ""; // Pendiente definir con SAP. Código de la compa?ía            
-        }
-        
-        $transaccion->setCaEstado("G");
-        $transaccion->setCaDatos(json_encode($datos));
-        $transaccion->save();
-    }
-    
-    /*OK REVISADO JUL/31/2017*/
-    public function jsonFacturasC($transaccion){
-        
-        $reg = Doctrine::getTable("InoComprobante")
-                ->createQuery("c")
-                ->select("*")
-                ->where($transaccion->getIntTipos()->getIndice1()."= ?", $transaccion->getCaIndice1())
-                ->fetchOne();
-        
-        $tipoComprobante = Doctrine::getTable("InoTipoComprobante")->find($reg->getCaIdtipo());
-        $ccostos = Doctrine::getTable("InoCentroCosto")->find($reg->getCaIdccosto());
-        
-        $datos["Usuario"]="Colsys";
-        $datos["Password"]="colsys";
-        $datos["Company"]= $tipoComprobante->getCaIdempresa(); // Pendiente definir en tabla de empresas los Id de SAP
-        $datos["System"]="2";
-        
-        $datos["Tipo"]="C";
-        $datos["CodigoDoc"] = "PU";//Factura de proveedores --Leyenda de abreviaturas de tipos de transacción 
-        $datos["SerieCode"] = "#"; // Pendiente definir la serie de SAP
-        $datos["NumeroInterno"] = $reg->getCaConsecutivo();
-        $datos["CardCode"] = "P";
-        $datos["DocDate"] = now();
-        $datos["TaxDate"] = date('Y-m-d', strtotime($reg->getCaFchComprobante(). ' + '.$reg->getCaPlazo().' days')); // Pendiente asociar el plazo con el asignado al proveedor        
-        $datos["NumAtCard"] = "";
-        $datos["SlpCode"] = ""; // Código empleado de ventas
-        $datos["DocCur"] = $reg->getCaIdmoneda();
-        $datos["DocRate"] = $reg->getCaTcambio();
-        $datos["Sucursal"] = $reg->getInoTipoComprobante()->getCaIdsucursal();
-        $datos["Destino"] = "";// Pendiente por definir
-        
-        //Lineas        
-        $lineas = Doctrine::getTable("InoDetalle")
-                ->createQuery("d")
-                ->select("*")
-                ->where($transaccion->getIntTipos()->getIndice1()."= ?", $reg->getCaIdcomprobante())
-                ->execute();
-        
-        $ccosto_sap = json_decode($ccostos->getCaCcostosap());
-        
-        foreach($lineas as $linea){
-            $datos["ItemCode"] = $linea->getCaIdconcepto();
-            $datos["Quantity"] = 1;
-            $datos["UnitPrice"] = $linea->getCaCr();
-            $datos["OcrCode"] = $reg->getInoTipoComprobante()->getCaIdsucursal(); //Código de la sucursal
-            $datos["OcrCode2"] = $ccosto_sap->idarea; // Código del área
-            $datos["OcrCode3"] = $ccosto_sap->iddepartamento; // Código del departamento
-            $datos["OcrCode4"] = $ccosto_sap->idlinea; // Código de la línea
-            $datos["OcrCode5"] = ""; // Pendiente definir con SAP. Código de la compa?ía 
-            $datos["Proyecto"] = $linea->getInoMaster()->getCaReferencia();
-        }
-        
-        $transaccion->setCaEstado("G");
-        $transaccion->setCaDatos(json_encode($datos));
-        $transaccion->save();
-    }
-    
-    /*OK REVISADO JUL/31/2017*/
-    public function jsonUtilidad($transaccion){
-    
-        $master = Doctrine::getTable("InoMaster")
-                ->createQuery("c")
-                ->select("*")
-                ->where($transaccion->getIntTipos()->getCaIndice1()."= ?", $transaccion->getCaIndice1())
-                ->fetchOne();
-        
-        $ccosto = Doctrine::getTable("InoCentroCosto")->findByDql("ca_impoexpo = ? AND ca_transporte = ?", array($master->getCaImpoexpo(), $master->getCaTransporte()))->getFirst();
-        $linea = json_decode($ccosto->getCaCcostosap(), 1);
-
-        $clientes = array();
-        
-        $datos["Usuario"]="Colsys";
-        $datos["Password"]="colsys";
-        $datos["Company"]= $master->getUsuCreado()->getSucursal()->getCaIdempresa(); // Se obtiene de la empresa a la que pertenece el usuario que la creó
-        $datos["System"]="2";
-        
-        $datos["CodReferencia"] = $master->getCaReferencia();
-        $datos["Fecha"] = $master->getCaFchcerrado();
-        $datos["Comentarios"] = $master->getCaObservaciones();
-        $datos["Linea"] = $linea["idlinea"];
-                
-        //Lineas        
-        $lineas = Doctrine::getTable("InoHouse")
-                ->createQuery("h")
-                ->select("*")
-                ->where("ca_idmaster = ?", $master->getCaIdmaster())
-                ->execute();
-        
-        $distribucionUti = $this->calcularDistribucionxUtilidad($master, $lineas);
-       
-        foreach($lineas as $linea){            
-            if(!in_array($linea->getCaIdcliente(), $clientes)){            
-                $datos["Lineas"][] = array("CardCode"=>"C".$linea->getCaIdcliente(), "PorcUtilidad"=>$distribucionUti[$linea->getCaIdcliente()], "Sucursal"=>$linea->getVendedor()->getCaIdsucursal());
-                $clientes[] = $linea->getCaIdcliente();
-            }
-        }
-        
-        echo "<pre>";print_r($datos)."</pre><br/><br/>";
-        
-        /*$transaccion->setCaEstado("G");
-        $transaccion->setCaDatos(json_encode($datos));
-        $transaccion->save();*/
-        
+        }*/
+//        echo $idtransaccion;
+        $this->responseArray = array("success"=> true ,"idtransaccion" => $idtransaccion );
         $this->setTemplate("responseTemplate");
-    }
-    
-    /*OK REVISADO JUL/31/2017*/
-    public function jsonCostos($transaccion){
-    
-        $master = Doctrine::getTable("InoMaster")
-                ->createQuery("c")
-                ->select("*")
-                ->where($transaccion->getIntTipos()->getCaIndice1()."= ?", $transaccion->getCaIndice1())
-                ->fetchOne();
         
-        $clientes = array();
+        //return $idtransaccion;
         
-        $datos["Usuario"]="Colsys";
-        $datos["Password"]="colsys";
-        $datos["Company"]= $master->getUsuCreado()->getSucursal()->getCaIdempresa(); // Se obtiene de la empresa a la que pertenece el usuario que la creó
-        $datos["System"]="2";
-        
-        $datos["CodReferencia"] = $master->getCaReferencia();
-        $datos["Fecha"] = $master->getCaFchcerrado();
-        $datos["Comentarios"] = $master->getCaObservaciones();
-                
-        //Lineas        
-        $lineas = Doctrine::getTable("InoHouse")
-                ->createQuery("h")
-                ->select("*")
-                ->where("ca_idmaster = ?", $master->getCaIdmaster())
-                ->execute();
-        
-        $costoxCliente = $this->calcularDistribucionxCostos($master, $lineas);
-        $tot_costos = array_sum($costoxCliente);
-       
-        foreach($lineas as $linea){            
-            if(!in_array($linea->getCaIdcliente(), $clientes)){            
-                $datos["Lineas"][] = array("CardCode"=>"C".$linea->getCaIdcliente(), "PorcParticipa"=>round($costoxCliente[$linea->getCaIdcliente()]/$tot_costos,4));
-                $clientes[] = $linea->getCaIdcliente();
-            }
-        }
-        
-        echo "<pre>";print_r($datos)."</pre><br/><br/>";
-        
-        /*$transaccion->setCaEstado("G");
-        $transaccion->setCaDatos(json_encode($datos));
-        $transaccion->save();*/
-        
-        $this->setTemplate("responseTemplate");
-    }
-    
-    public function calcularDistribucionxUtilidad($master, $lineas){
-        
-        $clientes = array();
-        $dd = array();
-        
-        $ingresos = Doctrine::getTable("InoViIngreso")
-                ->createQuery("i")
-                ->select("*")                
-                ->where("ca_idmaster = ?", $master->getCaIdmaster())
-                ->execute();        
-        
-        $deducciones = Doctrine::getTable("InoViDeduccion")
-                ->createQuery("d")
-                ->select("*")
-                ->where("ca_idmaster = ?", $master->getCaIdmaster())
-                ->execute();
-        
-        foreach($ingresos as $ingreso){
-            $ig[$ingreso->getCaIdcliente()]+=$ingreso->getCaValor();
-        }        
-        $tot_ingreso = array_sum($ig);
-        
-        foreach($deducciones as $d){
-            $dd[$d->getCaIdcliente()]+=$d->getCaValor();
-        }
-        $tot_deducciones = array_sum($dd);
-        
-        foreach($lineas as $linea){
-            if(!in_array($linea->getCaIdcliente(), $clientes))
-                $clientes[] = $linea->getCaIdcliente();
-            }
-        
-        $costoxCliente = $this->calcularDistribucionxCostos($master, $lineas);
-        
-        foreach($clientes as $cliente){            
-            $ctxCliente[$cliente]+= $costoxCliente[$cliente];
-            $ut[$cliente] = $ig[$cliente]-($ctxCliente[$cliente]+$dd[$cliente]);        
-        }
-        $tot_utilidad = array_sum($ut);
-        
-        foreach($clientes as $cliente){            
-            $distribucionUti[$cliente] = round($ut[$cliente]/$tot_utilidad,4);
-        }
-        
-        /* IMPRESION DE DATOS PARA VERIFICACION  */        
-        
-        echo "<b>Ingresos:</b><br/>";
-        echo "<pre>";print_r($ig)."</pre><br/><br/>";
-        echo "<i>Total Ingresos:</i>". $tot_ingreso."<br/><br/>";
-            
-        echo "<b>Deducciones:</b><br/>";
-        echo "<pre>";print_r($dd)."</pre><br><br>";
-        echo "<i>Total Deducciones:</i>". $tot_deducciones."<br/><br/>";
-        
-        echo "<b>Utilidad:</b>";
-        echo "<pre>";print_r($ut)."</pre><br/><br/>";        
-        echo "<i>Total utilidad:</i>". $tot_utilidad."<br/><br/>";
-                
-        echo "<b>Distribucion x Utilidad:</b>";
-        echo "<pre>";print_r($distribucionUti)."</pre><br/><br/>";
-        
-        return $distribucionUti;        
-    }
-    
-    public function calcularDistribucionxCostos($master, $lineas){
-        
-        $clientes = array();
-        
-        $costos = Doctrine::getTable("InoCosto")
-                ->createQuery("c")
-                ->select("*")
-                ->leftJoin("c.InoHouse h")
-                ->where("ca_idmaster = ?", $master->getCaIdmaster())
-                ->execute();
-            
-        
-        foreach($costos as $costo){
-            $idcliente = $costo->getCaIdhouse()?$costo->getInoHouse()->getCaIdcliente():null;
-            if($idcliente){
-                $ct[$idcliente]+=$costo->getCaNeto();
-                }else{
-                $ct["General"]+=$costo->getCaNeto();
-                }
-            }
-        $tot_costo = array_sum($ct);
-        
-        foreach($lineas as $linea){            
-            $peso[$linea->getCaIdcliente()]+= $master->getCaTransporte()=="Marítimo"?$linea->getVolumen():$linea->getCaPeso();;
-            if(!in_array($linea->getCaIdcliente(), $clientes))
-                $clientes[] = $linea->getCaIdcliente();
-        }
-        $tot_peso = array_sum($peso);
-        
-        foreach($lineas as $linea){            
-            $distribucion[$linea->getCaIdcliente()] = round($peso[$linea->getCaIdcliente()]/$tot_peso,2);
-        }
-        
-        foreach($clientes as $cliente){            
-            $ctxCliente[$cliente]+= $ct[$cliente]+$ct["General"]*$distribucion[$cliente];
-        }
-        
-        /*IMPRESION DE DATOS PARA VERIFICACION*/
-        echo "<b>Idmaster</b>:".$master->getCaIdmaster()."<br/>";
-        echo "<b>Referencia:</b>".$master->getCaReferencia()."<br/>";
-        
-        echo "<b>Peso:</b>";
-        echo "<pre>";print_r($peso)."</pre><br><br>";
-        echo "<i>Total peso:</i>".$tot_peso."<br/><br/>";
-       
-        echo "<b>Distribución x Peso:</b>";
-        echo "<pre>";print_r($distribucion)."</pre><br/><br/>";
-        
-        echo "<b>Costos x Cliente:</b><br/>";
-        echo "<pre>";print_r($ct)."</pre><br/><br/>";
-        echo "<i>Total costos:</i>". $tot_costo."<br/><br/>";
-        
-        echo "<b>Costo x Cliente + Prorateo de Costo General:</b>";
-        echo "<pre>";print_r($ctxCliente)."</pre><br/><br/>";
-        
-        return $ctxCliente;        
-    }
-    
-    
-    public static function enviarWs($idtransaccion='') {
-
-        
-        ProjectConfiguration::registerZend();        
-        $config = sfConfig::get('app_soap_sap');
-        $client = new Zend_Soap_Client($config["wsdl_uri"], array('encoding' => 'ISO-8859-1', 'soap_version' => SOAP_1_2));
-        
-        $transacciones = Doctrine::getTable("IntTransaccionesOut")
-                            ->createQuery("tr")
-                            ->select("*")
-                            ->innerJoin("tr.IntTipos s")
-                            ->where("tr.ca_estado=? and tr.ca_datos is not null", "G");
-        
-        if($idtransaccion>0)
-            $q->addWhere("tr.ca_idtransaccion =? ", $idtransaccion );
-        
-        $transacciones=$q->execute();
-        
-        $result=array();
-        foreach($transacciones as $tr)
-        {
-            $datos=json_decode($tr->getCaDatos());            
-            
-            $respuesta = $client->actualiza(
-                array(
-                    user => $datos->Usuario,
-                    pass => $datos->Password,
-                    compania => $datos->Company,
-                    sistema => $datos->System,
-                    jsonDoc => $tr->getCaDatos() 
-                ));
-                $tr->setRespuesta($respuesta);
-                $tr->save();
-                $result[]=$respuesta;
-        }
-        
-
-        return $result;//array("success" => true, "consecutivo" => $consecutivo, "indincor" => $indincor, "wsdl" => $result, "info" => $info);
-        //$this->responseArray = array("success" => true, "consecutivo" => $consecutivo, "indincor" => $indincor, "wsdl" => $result, "info" => $info);
+        //$this->responseArray = array("id" => "1", "success" => $success);
         //$this->setTemplate("responseTemplate");
+        
     }
     
     
     
     
+    
+    public function executeEnviarSap(sfWebRequest $request) {
+        //echo $request->getParameter("idtransaccion");
+        //$resul=IntTransaccionesOut::enviarWs($idtransaccion);   
+        $respuesta=IntTransaccionesOut::enviarWs($request->getParameter("idtransaccion"));
+        //$reporte=IntTransaccionesOut::reporteErrores();
+        //exit;
+        $this->responseArray = array("respuesta" => $respuesta, "success" => true);        
+        $this->setTemplate("responseTemplate");
+        
+    }
+    
+    public function executeGetDocument(sfWebRequest $request) {
+        //echo "dd";
+        //$resul=IntTransaccionesOut::enviarWs($idtransaccion);            
+        $respuesta=IntTransaccionesOut::getDocuments($request->getParameter("idtransaccion"));
+        //exit;
+        $this->responseArray = array("respuesta" => $respuesta, "success" => true);        
+        $this->setTemplate("responseTemplate");
+        
+    }
+    
+    function executeDatosTransaccionesOut($request) {
+        
+        $q = Doctrine::getTable("IntTransaccionesOut")
+                ->createQuery("it")
+                ->leftJoin("it.IntTipos t")
+                ->orderBy("ca_idtransaccion DESC")                
+                ->limit(500);
+        
+        if($request->getParameter("idtipo")){
+            $q->addWhere("it.ca_idtipo = ?", $request->getParameter("idtipo"));
+        }
+                //->addWhere("ca_idtransaccion > ? OR ca_idtransaccion < ?",array(1170, 1168))
+        $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+        
+        $debug = $q->getSqlQuery();
+        
+        $transacciones = $q->execute();
+        
+        foreach ($transacciones as $k => $c) {
+            $transacciones[$k]["it_ca_datos"] = utf8_encode($transacciones[$k]["it_ca_datos"]);
+            $transacciones[$k]["it_ca_respuesta"] = utf8_encode($transacciones[$k]["it_ca_respuesta"]);
+            $transacciones[$k]["tipo"] = utf8_encode($transacciones[$k]["it_ca_idtipo"])." - ". utf8_encode($transacciones[$k]["t_ca_nombre"]);
+            
+            switch($transacciones[$k]["it_ca_estado"]){
+                case "A":
+                    $transacciones[$k]["estado_valor"] = "Abierto";
+                    break;
+                case "G":
+                    $transacciones[$k]["estado_valor"] = "Generado";
+                    break;
+                case "P":
+                    $transacciones[$k]["estado_valor"] = "Procesado";
+                    break;
+                case "E":
+                    $transacciones[$k]["estado_valor"] = "Errado";
+                    break;
+                case "R":
+                    $transacciones[$k]["estado_valor"] = "Reprogramado";
+                    break;
+            }
+        }
+        
+        //print_r($transacciones);
+        
+        $this->responseArray = array("success" => true, "root" => $transacciones, "total" => count($transacciones), "debug" => $debug);
+        
+        $this->setTemplate("responseTemplate");
+        
+    }
+    
+    function executeDatosTransaccionesIn($request) {
+        
+        $q = Doctrine::getTable("IntTransaccionesIn")
+                ->createQuery("it")
+                ->orderBy("ca_idtransaccion DESC")
+                //->limit(200)
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+        
+        $debug = $q->getSqlQuery();
+        
+        $transacciones = $q->execute();
+        
+        
+        foreach ($transacciones as $k => $c) {
+            $transacciones[$k]["it_ca_datos"] = utf8_encode($transacciones[$k]["it_ca_datos"]);
+            $transacciones[$k]["it_ca_respuesta"] = utf8_encode($transacciones[$k]["it_ca_respuesta"]);
+            
+            switch($transacciones[$k]["it_ca_tipo"]){
+                case 1:
+                    $transacciones[$k]["it_ca_tipodet"] = "Factura de Compra";
+                    break;
+                case 2:
+                    $transacciones[$k]["it_ca_tipodet"] = utf8_encode("Cancelación de comprobantes");
+                    break;
+                case 3:
+                    $transacciones[$k]["it_ca_tipodet"] = utf8_encode("Pagos Recibidos");
+                    break;
+                case 4:
+                    $transacciones[$k]["it_ca_tipodet"] = utf8_encode("Activación Cliente");
+                    break;
+                case 5:
+                    $transacciones[$k]["it_ca_tipodet"] = utf8_encode("Activación Conceptos");
+                    break;
+            }
+        }
+        
+        
+        
+        //print_r($transacciones);
+        
+        $this->responseArray = array("success" => true, "root" => $transacciones, "total" => count($transacciones), "debug" => $debug);
+        
+        $this->setTemplate("responseTemplate");
+        
+    }
+    
+    function executeEnviarColsys($request) {
+        
+        ProjectConfiguration::registerZend();  
+       
+        $config = sfConfig::get("app_soap_sap");
+        $wsdl_uri = "http://190.85.222.218/ws/sap/IntegracionSapWS?wsdl";               
+        $client = new Zend_Soap_Client($wsdl_uri, array('encoding'=>'ISO-8859-1', 'soap_version'=>SOAP_1_2 , 'login'=>'seidor', 'password'=>'=Ye7zdT5u8$SDt#V'));       
+       
+        $json = $request->getParameter("datos");
+        $tipo = $request->getParameter("tipo");
+        $compania = $request->getParameter("compania");
+        
+        $result =  $client->tipoSolicitud( $compania, '9011', $tipo, $json);
+        $this->responseArray = array("success" => true, "root" => $result, "total" => count($result), "debug" => "Json=>".$json." Tipo=>".$tipo." Compania=>".$compania);
+        
+        $this->setTemplate("responseTemplate");        
+    }
+    
+    function executeGuardarTransaccionesOut($request) {
+        
+        
+        $datos = json_decode($request->getParameter("datos"));
+        //print_r($datos->idtransaccion);
+        //print_r($datos[0]->idtransaccion);
+        
+        
+        try{
+            $ids = array();
+            
+            $idtransaccion = $datos->idtransaccion;
+            $transaccion = Doctrine::getTable("IntTransaccionesOut")->find($idtransaccion);
+
+            if($transaccion){
+                if($datos->estado_valor)
+                    $transaccion->setCaEstado($datos->estado_valor);
+                if($datos->tipo)
+                    $transaccion->setCaIdtipo($datos->tipo);
+                if($datos->indice2)
+                    $transaccion->setCaIndice2($datos->indice2);
+                $transaccion->save();                
+            }
+            array_push($ids, $datos->id);
+            
+            
+            $this->responseArray = array("success" => true, "root" => $transaccion->getCaIdtransaccion(), "ids"=>$ids);
+        }catch(Exception $e){
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()) );
+        }
+        
+        $this->setTemplate("responseTemplate");
+    }
+    
+    function executeDatosTipos($request) {
+    
+        $q = Doctrine::getTable("IntTipos")
+                ->createQuery("t")                
+                ->orderBy("ca_idtipo ASC")
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+        
+        $debug = $q->getSqlQuery();        
+        $tipos = $q->execute();
+        
+        foreach ($tipos as $k => $c) {
+            $tipos[$k]["tipo"] = $tipos[$k]["t_ca_idtipo"]." - ".utf8_encode($tipos[$k]["t_ca_nombre"]);
+        }
+ 
+        $this->responseArray = array("success" => true, "root" => $tipos, "total" => count($tipos), "debug" => $debug);
+        
+        $this->setTemplate("responseTemplate");        
+    }
     
 }
