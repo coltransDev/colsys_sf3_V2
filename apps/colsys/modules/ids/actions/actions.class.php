@@ -518,6 +518,11 @@ class idsActions extends sfActions {
                 $sucursal->save();
 
                 $this->redirect("ids/verIds?modo=" . $this->modo . "&id=" . $ids->getCaId());
+            } else {
+                foreach ($this->form as $key => $field) {
+                    $message = $field->renderError();
+                    if ($message) echo 'Error with field ', $key, ':', $message;
+                  }
             }
         }
 

@@ -55,19 +55,30 @@ class NuevoProveedorForm extends BaseForm {
                 "Agencia" => "Agencia"
         )));
 
-        $q = Doctrine::getTable("MaestraClasificacion")
+        $root = Doctrine::getTable("MaestraClasificacion")
                         ->createQuery("mc")
                         ->select('mc.ca_idclasificacion, mc.ca_nombre')
-                        ->orWhere('mc.ca_tipo = ?', 'proveedor')
-                        ->addOrderBy("mc.ca_nombre");
+                        ->addWhere('mc.ca_tipo = ?', 'proveedor')
+                        ->addWhere('mc.ca_estado = ?', 'A')
+                        ->addWhere('mc.ca_idpadre = ?', 0)
+                        ->addOrderBy("mc.ca_nombre")
+                        ->fetchOne();
         
-        $widgets['idclasificacion'] = new sfWidgetFormDoctrineChoice(array('model' => 'Clasificacion', 
-            'add_empty' => false, 
-            'query' => $q,
-            'method' => "getCaNombre",
-            'key_method' => "getCaIdclasificacion",
-            'add_empty'=> true));
-        
+        $tree = array();
+        $childs = $root->getChilds();
+        foreach ($childs as $child) {
+            $subarray = array();
+            $branchs  = $child->getChilds();
+            foreach ($branchs as $branch) {
+                $subBrns = $branch->getChilds();
+                foreach ($subBrns as $subBrn) {
+                    $subarray[$subBrn->getCaIdclasificacion()] = $subBrn->getCaNombre();
+                }
+                $tree[$child->getCaNombre() . ' - ' . $branch->getCaNombre()] = $subarray;
+            }
+            
+        }
+        $widgets['idclasificacion'] = new sfWidgetFormChoice(array('choices' => $tree));
         
         $widgets['empresa'] = new sfWidgetFormChoice(array('choices' => array("Todas" => "Todas",
                 Constantes::COLTRANS => Constantes::COLTRANS,
@@ -125,7 +136,7 @@ class NuevoProveedorForm extends BaseForm {
         $validator["sigla"] = new sfValidatorString(array('required' => false));
 
         $validator["empresa"] = new sfValidatorString(array('required' => false));
-        $validator["idclasificacion"] = new sfValidatorString(array('required' => true));
+        $validator["idclasificacion"] = new sfValidatorString(array('required' => false));
         $validator["jefecuenta"] = new sfValidatorString(array('required' => false));
 
         $validator["contrato_comodato"] = new sfValidatorBoolean(array('required' => false));

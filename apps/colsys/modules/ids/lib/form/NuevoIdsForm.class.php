@@ -41,7 +41,7 @@ class NuevoIdsForm extends BaseForm{
 
         $validator["website"] =new sfValidatorString( array('required' => false, "max_length"=>200 ));
 
-        $validator["idgrupo"] =new sfValidatorInteger( array('required' => false ));
+        $validator["idgrupo"] =new sfValidatorInteger( array('required' => false ) );
         
         $this->setValidators( $validator );
 				

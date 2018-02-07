@@ -248,8 +248,8 @@ if($type){
 
         <tr class="row0" >
 
-            <td colspan="9"><b>Promedio</b></td>
-            <?
+            <td colspan="10"><b>Promedio</b></td>
+            <?            
             for( $year=$initialYear;$year<=$actualYear; $year++ ){
                 if( $year<2011){
                     ?>

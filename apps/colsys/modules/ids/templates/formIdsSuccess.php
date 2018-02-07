@@ -262,7 +262,7 @@
     <tr>        
     
         <td valign="top"> 
-            <div align="left"><b>Sucursal Compañia</b></div></td>
+            <div align="left"><b>Sucursal Compañ&iacute;a</b></div></td>
         <td valign="top">
             <?
             echo $form['sucursal']->renderError();
@@ -280,14 +280,16 @@
         
             
         <td width="16%" valign="top">
-            <div align="left"><b>Grupo:</b></div></td>
+            <div align="left"><b>Clasificaci&oacute;n:</b></div></td>
         <td width="26%"><div align="left">
             <?
             echo $form['idclasificacion']->renderError();
-            if( $proveedor ){
-                $form->setDefault('idclasificacion', $proveedor->getCaIdclasificacion() );
+            if( $agente ){
+                $form->setDefault('idclasificacion', $agente->getCaIdclasificacion() );
             }
             echo $form['idclasificacion']->render();
+            echo "<br>";
+            echo $form['idclasificacion']->renderError();            
             ?>
             </div>
         </td>
@@ -383,12 +385,13 @@
             ?>
             </div>
         </td>
-        <td><div align="left"><b>Grupo:</b></div></td>
+        <td><div align="left"><b>Clasificaci&oacute;n:</b></div></td>
         <td colspan="3"><div align="left">
             <?
             echo $form['idclasificacion']->renderError();
             if( $proveedor ){
                 $form->setDefault('idclasificacion', $proveedor->getCaIdclasificacion() );
+                $form->getValidator('idclasificacion')->setOption('required', true);
             }
             echo $form['idclasificacion']->render();
             ?>
