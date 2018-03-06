@@ -480,7 +480,7 @@ class cotseguimientosActions extends sfActions {
             $this->sucursal = Doctrine::getTable("Sucursal")->find($idsucursal)->getCaNombre();
         }
 
-        $sql = "select c.ca_idcotizacion as ca_cotizacion_id, c.ca_consecutivo, c.ca_version, ids.ca_nombre as ca_compania, cc.ca_nombres, cc.ca_papellido, cc.ca_sapellido, c.ca_fchcreado, c.ca_etapa, c.ca_empresa, p.ca_idproducto, p.ca_etapa, o.ca_ciudad as ca_origen, d.ca_ciudad as ca_destino, u.ca_nombre as ca_usuario, s.ca_nombre as ca_sucursal, seg.*, seg2.* ";
+        $sql = "select c.ca_idcotizacion as ca_cotizacion_id, c.ca_consecutivo, c.ca_version, ids.ca_nombre as ca_compania, cc.ca_nombres, cc.ca_papellido, cc.ca_sapellido, c.ca_fchcreado, c.ca_etapa, c.ca_empresa, p.ca_idproducto, p.ca_etapa, p.ca_modalidad, p.ca_incoterms, o.ca_ciudad as ca_origen, d.ca_ciudad as ca_destino, u.ca_nombre as ca_usuario, s.ca_nombre as ca_sucursal, seg.*, seg2.* ";
         $sql.= " from tb_cotizaciones c ";
         $sql.= "    LEFT JOIN tb_cotproductos p ON c.ca_idcotizacion = p.ca_idcotizacion";
         $sql.= "    LEFT JOIN tb_ciudades o ON p.ca_origen = o.ca_idciudad ";
@@ -496,7 +496,7 @@ class cotseguimientosActions extends sfActions {
         $sql.= "    and c.ca_fchcreado BETWEEN '" . $this->fechaInicial . "' AND '" . $this->fechaFinal . "'";
 
         if ($idsucursal) {
-            $sql.= " and u.ca_idsucursal = '" . $idsucursal . "'";
+            $sql.= " and s.ca_nombre = '" . $this->sucursal . "'";
         }
 
         if ($cliente) {
@@ -547,7 +547,7 @@ class cotseguimientosActions extends sfActions {
         //and seg2.ca_seguimiento_pro='Tarifa NO competitiva'
 
         $sql.= " order by c.ca_consecutivo DESC, c.ca_version DESC, seg.ca_fchseguimiento_cot DESC";
-        // die($sql);
+       // die($sql);
 
         /*$databaseConf = sfYaml::load(sfConfig::get('sf_config_dir') . '/databases_replica.yml');
         $dsn = explode(";", $databaseConf ['prod']['doctrine']['param']['dsn']);        

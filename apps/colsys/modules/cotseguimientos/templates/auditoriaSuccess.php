@@ -42,6 +42,8 @@ $cotizaciones=$sf_data->getRaw('cotizaciones');
             <th scope="col">Sucursal</th>
             <th scope="col">Origen</th>
             <th scope="col">Destino</th>
+            <th scope="col">Modalidad</th>
+            <th scope="col">Incoterms</th>
             <th scope="col">Fecha Ultimo Seguimiento</th>
             <th scope="col">Ultimo Seguimiento</th>
             <th scope="col">Etapa</th>
@@ -52,15 +54,12 @@ $cotizaciones=$sf_data->getRaw('cotizaciones');
         $total2 = 0;
         $con_sec = null;
         foreach ($cotizaciones as $cotizacion) {
-            $sin_trayectos = FALSE;
             $cot = $cotizacion;
             if ($cot["ca_etapa_cot"] and !$cot["ca_idproducto"]){
                 $fchSeg = $cot["ca_fchseguimiento_cot"];
                 $lastSeg = $cot["ca_seguimiento_cot"];
                 $etapaSeg = $cot["ca_etapa_cot"];
-                $sin_trayectos = TRUE;
             }else if(!$cot["ca_etapa_cot"] and !$cot["ca_idproducto"]) {
-                $sin_trayectos = TRUE;
                 $fchSeg = $cot["ca_fchseguimiento_cot"];
                 $lastSeg = $cot["ca_seguimiento_cot"];
                 $etapaSeg = $cot["ca_etapa_cot"];
@@ -82,6 +81,8 @@ $cotizaciones=$sf_data->getRaw('cotizaciones');
                     <td> <?= ($cot["ca_sucursal"]) ?></td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
                     <td><?= $fchSeg ? Utils::fechaMes($fchSeg) : "&nbsp;" ?></td>
                     <td><?= $lastSeg ? utf8_decode($lastSeg) : "&nbsp;" ?></td>
                     <td><?= ($cot["ca_etapa_cot"] and !$cot["ca_idproducto"])? $estados[$cot["ca_etapa_cot"]] : "&nbsp;" ?></td>
@@ -90,9 +91,6 @@ $cotizaciones=$sf_data->getRaw('cotizaciones');
                 <?
                 $con_sec = $cot["ca_consecutivo"];                
             }
-            if ($sin_trayectos){
-                continue;
-            }
             $fchSeg = $cot["ca_fchseguimiento_pro"];
             $lastSeg = $cot["ca_seguimiento_pro"];
             $etapaSeg = $cot["ca_etapa_pro"];
@@ -100,8 +98,10 @@ $cotizaciones=$sf_data->getRaw('cotizaciones');
             <tr >
                 <td colspan="5">                            
                     &nbsp;</td>
-                <td ><?= utf8_decode($cot["ca_origen"]) ?></td>
-                <td ><?= utf8_decode($cot["ca_destino"]) ?></td>
+                <td ><?= $cot["ca_origen"] ?></td>
+                <td ><?= $cot["ca_destino"] ?></td>
+                <td ><?= $cot["ca_modalidad"] ?></td>
+                <td ><?= $cot["ca_incoterms"] ?></td>
                 <td><?= $fchSeg ? Utils::fechaMes($fchSeg): "&nbsp;" ?></td>
                 <td><?= $lastSeg ? utf8_decode($lastSeg)  : "&nbsp;" ?></td>
                 <td><?= $etapaSeg ? $estados[$etapaSeg] : "&nbsp;" ?></td>
