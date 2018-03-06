@@ -154,14 +154,20 @@ Ext.define('Colsys.Crm.FormTabDocumentacionFicha', {
                                                 xtype: 'tbspacer',
                                                 height: 30
                                             }, {
-                                                xtype: 'textareafield',
+                                                xtype: 'htmleditor',
                                                 hideLabel: false,
                                                 fieldLabel: 'Otras Instrucciones',
                                                 labelAlign: 'left',
                                                 labelWidth: 200,
                                                 name: 'instrucciones_detalle',
                                                 id: 'instrucciones_detalle' + me.idcliente,
-                                                width: 650
+                                                width: 650,
+                                                height: 100,
+                                                listeners: {
+                                                    initialize: function(field, e) {
+                                                        field.getToolbar().hide();
+                                                    }
+                                                }
                                             }]
                                     }]
                             }]

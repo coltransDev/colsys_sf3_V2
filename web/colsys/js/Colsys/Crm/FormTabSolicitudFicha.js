@@ -137,13 +137,18 @@ Ext.define('Colsys.Crm.FormTabSolicitudFicha', {
                                                 height: 20,
                                                 columnWidth: 1
                                             }, {
-                                                xtype: 'textareafield',
+                                                xtype: 'htmleditor',
                                                 name: 'bancosSF',
                                                 height: 50,
                                                 width: 500,
                                                 fieldLabel: 'Bancos',
                                                 labelWidth: 150,
-                                                columnWidth: 1
+                                                columnWidth: 1,
+                                                listeners: {
+                                                    initialize: function(field, e) {
+                                                        field.getToolbar().hide();
+                                                    }
+                                                }
                                             }, {
                                                 xtype: 'tbspacer',
                                                 height: 20,

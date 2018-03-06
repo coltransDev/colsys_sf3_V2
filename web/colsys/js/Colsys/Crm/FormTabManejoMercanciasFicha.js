@@ -139,12 +139,18 @@ Ext.define('Colsys.Crm.FormTabManejoMercanciasFicha', {
                                                 xtype: 'tbspacer',
                                                 height: 10
                                             }, {
-                                                xtype: 'textareafield',
+                                                xtype: 'htmleditor',
                                                 name: 'averiasMM',
                                                 id: 'averiasMM' + me.idcliente,
                                                 fieldLabel: 'Procedimiento / inconsistencias, aver&iacute;as o faltantes',
                                                 width: 400,
-                                                labelWidth: 150
+                                                labelWidth: 150,
+                                                height: 90,
+                                                listeners: {
+                                                    initialize: function(field, e) {
+                                                        field.getToolbar().hide();
+                                                    }
+                                                }
                                             }]
                                     }]
                             }, {
@@ -258,12 +264,18 @@ Ext.define('Colsys.Crm.FormTabManejoMercanciasFicha', {
                                                 fieldLabel: 'Horario de recibo de mercanc&iacute;a en planta o bodega',
                                                 labelWidth: 150
                                             }, {
-                                                xtype: 'textareafield',
+                                                xtype: 'htmleditor',
                                                 name: 'instrucciones_especialesMM',
                                                 id: 'instrucciones_especialesMM' + me.idcliente,
                                                 width: 500,
                                                 fieldLabel: 'Instrucciones especiales',
-                                                labelWidth: 150
+                                                labelWidth: 150,
+                                                height: 85,
+                                                listeners: {
+                                                    initialize: function(field, e) {
+                                                        field.getToolbar().hide();
+                                                    }
+                                                }
                                             }]
                                     }]
                             }]

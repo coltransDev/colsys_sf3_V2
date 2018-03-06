@@ -65,10 +65,10 @@ Ext.define('Colsys.Crm.FormClienteMaster', {
                                                 renderer: comboBoxRenderer(this),
                                                 listeners: {
                                                     select: function (a, record, idx) {
-                                                        if (record.data.name != 'NIT') {
-                                                            Ext.getCmp('dv_id').disable();
-                                                        } else {
+                                                        if (record.data.name == 'NIT' && record.data.trafico == 'Colombia') {
                                                             Ext.getCmp('dv_id').enable();
+                                                        } else {
+                                                            Ext.getCmp('dv_id').disable();
                                                         }
                                                         store = Ext.getCmp('ciudad').getStore();
                                                         rec = record.data.trafico;
@@ -96,6 +96,8 @@ Ext.define('Colsys.Crm.FormClienteMaster', {
                                                         } else {
                                                             var field = Ext.getCmp('idalterno_id');
                                                             field.maskRe = /[a-zA-Z0-9 -]/;
+                                                            // regex: /^[-\A-Z\s0-9]*$/,
+                                                            // regexText: 'Solo se aceptan n\u00FAmeros, rayas y letras en may\u00FAcula'
 
                                                             Ext.getCmp('ciudad').disable(true);
                                                             Ext.getCmp('ciudad2').enable(true);

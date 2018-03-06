@@ -29,6 +29,7 @@ Ext.define('Colsys.Crm.GridListarClientes', {
                             {name: 'nombre', type: 'string', mapping: 'nombre'},
                             {name: 'direccion', type: 'string', mapping: 'direccion'},
                             {name: 'telefono', type: 'string', mapping: 'telefono'},
+                            {name: 'correo', type: 'string', mapping: 'correo'},
                             {name: 'fax', type: 'string', mapping: 'fax'},
                             {name: 'ciudad', type: 'string', mapping: 'ciudad'},
                             {name: 'vendedor', type: 'string', mapping: 'vendedor'},
@@ -83,6 +84,9 @@ Ext.define('Colsys.Crm.GridListarClientes', {
                             header: "Tel\u00E9fono",
                             dataIndex: 'telefono',
                             width: 100
+                        }, {
+                            header: "Correo",
+                            dataIndex: 'correo'
                         }, {
                             header: "Fax",
                             dataIndex: 'fax'

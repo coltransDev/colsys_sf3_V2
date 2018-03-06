@@ -166,7 +166,7 @@ Ext.define('Colsys.Crm.GridAgenteAduana', {
                                                                         title: 'Listado de Archivos',
                                                                         height: 270,
                                                                         idsserie: 11,
-                                                                        ref1: me.idcliente,
+                                                                        idreferencia: me.idcliente,
                                                                         treeStore: 'agenteAduana',
                                                                         idcliente: me.idcliente,
                                                                         habilitarToolbar: false

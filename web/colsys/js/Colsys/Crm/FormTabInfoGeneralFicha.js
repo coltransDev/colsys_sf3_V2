@@ -61,7 +61,7 @@ Ext.define('Colsys.Crm.FormTabInfoGeneralFicha', {
                                         hideLabel: false,
                                         label: 'Condiciones Especiales',
                                         combineErrors: true,
-                                        height: 360,
+                                        height: 350,
                                         msgTarget: 'under',
                                         layout: 'column',
                                         defaults: {
@@ -176,7 +176,7 @@ Ext.define('Colsys.Crm.FormTabInfoGeneralFicha', {
                                                                 name: 'cierreCE',
                                                                 width: 220
                                                             }, {
-                                                                xtype: 'textareafield',
+                                                                xtype: 'htmleditor',
                                                                 id: 'bancoCE'+ me.idcliente,
                                                                 hideLabel: false,
                                                                 labelAlign: 'left',
@@ -184,7 +184,12 @@ Ext.define('Colsys.Crm.FormTabInfoGeneralFicha', {
                                                                 labelWidth: 90,
                                                                 name: 'bancoCE',
                                                                 width: 420,
-                                                                height: 50
+                                                                height: 50,
+                                                                listeners: {
+                                                                    initialize: function(field, e) {
+                                                                        field.getToolbar().hide();
+                                                                    }
+                                                                }
                                                             }]
                                                     }]
                                             }, {
@@ -192,7 +197,7 @@ Ext.define('Colsys.Crm.FormTabInfoGeneralFicha', {
                                                 title: 'Seguro',
                                                 id: 'fieldsetSeguro_ficha' + me.idcliente,
                                                 width: 450,
-                                                height: 120,
+                                                height: 130,
                                                 collapsible: false,
                                                 items: [{
                                                         xtype: 'fieldcontainer',
@@ -249,7 +254,7 @@ Ext.define('Colsys.Crm.FormTabInfoGeneralFicha', {
                                                                 labelAlign: 'left',
                                                                 fieldLabel: 'Cotizaci&oacute;n de seguro',
                                                                 width: 250,
-                                                                labelWidth: 100
+                                                                labelWidth: 150
                                                             }]
                                                     }]
                                             }]
@@ -272,7 +277,7 @@ Ext.define('Colsys.Crm.FormTabInfoGeneralFicha', {
                                         id: 'fieldcontainerDer_ficha' + me.idcliente,
                                         hideLabel: true,
                                         combineErrors: true,
-                                        height: 360,
+                                        height: 350,
                                         msgTarget: 'under',
                                         layout: 'column',
                                         defaults: {
@@ -284,7 +289,7 @@ Ext.define('Colsys.Crm.FormTabInfoGeneralFicha', {
                                                 id: 'fieldsetObservaciones_ficha' + me.idcliente,
                                                 title: 'Observaciones Generales',
                                                 width: 450,
-                                                height: 400,
+                                                height: 355,
                                                 collapsible: false,
                                                 items: [{
                                                         xtype: 'fieldcontainer',
@@ -300,15 +305,18 @@ Ext.define('Colsys.Crm.FormTabInfoGeneralFicha', {
                                                             hideLabel: false
                                                         },
                                                         items: [{
-                                                                xtype: 'textareafield',
+                                                                xtype: 'htmleditor',
                                                                 id: 'observaciones_generales' + me.idcliente,
                                                                 hideLabel: false,
                                                                 labelAlign: 'left',
-                                                                fieldLabel: 'Observaciones',
-                                                                labelWidth: 90,
                                                                 name: 'observaciones_generales',
-                                                                width: 400,
-                                                                height: 300
+                                                                width: '95%',
+                                                                height: 360,
+                                                                listeners: {
+                                                                    initialize: function(field, e) {
+                                                                        field.getToolbar().hide();
+                                                                    }
+                                                                }
                                                             }]
                                                     }]
                                             }

@@ -121,11 +121,11 @@ $nombre=$sf_data->getRaw("nombre");
     var permisosG = Ext.decode('<?= json_encode($permisos) ?>');
     Ext.Loader.setConfig({
         enabled: true,
-        // disableCaching: false,  /*FIX-ME REvisar el problema de la actualizacion de javascript en navegadores */
+        disableCaching: true,  /*FIX-ME REvisar el problema de la actualizacion de javascript en navegadores */
         paths: {
             'Colsys': '/js/Colsys',
-            'Ext.ux': '../js/ext5/examples/ux',
-            'Ext.ux.exporter':'../js/ext5/examples/ux/exporter/'
+            'Ext.ux': '/js/ext5/examples/ux',
+            'Ext.ux.exporter':'/js/ext5/examples/ux/exporter/'
         }
     });
     

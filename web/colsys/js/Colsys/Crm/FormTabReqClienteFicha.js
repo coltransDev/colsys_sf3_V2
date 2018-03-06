@@ -75,13 +75,18 @@ Ext.define('Colsys.Crm.FormTabReqClienteFicha', {
                                                 width: 250,
                                                 labelWidth: 150
                                             }, {
-                                                xtype: 'textareafield',
+                                                xtype: 'htmleditor',
                                                 name: 'informesRE',
                                                 id: 'informesRE' + me.idcliente,
                                                 width: 500,
                                                 height: 55,
                                                 fieldLabel: 'Otros informes',
-                                                labelWidth: 150
+                                                labelWidth: 150,
+                                                listeners: {
+                                                    initialize: function(field, e) {
+                                                        field.getToolbar().hide();
+                                                    }
+                                                }
                                             }, {
                                                 xtype: 'combo-declaraciones',
                                                 name: 'declaracionesRE',

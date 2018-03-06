@@ -7,19 +7,18 @@ Ext.define('Colsys.Crm.FormTabClasifRegFicha', {
             this.add({
                 xtype: 'fieldset',
                 id: 'fieldsetClasifReg_ficha' + me.idcliente,
-                hideLabel: true,
                 width: 980,
                 collapsible: false,
                 layout: 'hbox',
                 items: [{
                         xtype: 'fieldset',
                         id: 'fieldsetClasifRegIzq_ficha' + me.idcliente,
-                        hideLabel: true,
-                        width: 490,
+                        title: 'Clasificacion Arancelaria',
+                        width: 475,
                         collapsible: false,
                         defaults: {
                             labelWidth: 89,
-                            anchor: '90%',
+                            anchor: '100%',
                             layout: {
                                 type: 'column',
                                 defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
@@ -27,8 +26,6 @@ Ext.define('Colsys.Crm.FormTabClasifRegFicha', {
                         items: [{
                                 xtype: 'fieldcontainer',
                                 id: 'fieldcontainerClasifRegIzq_ficha' + me.idcliente,
-                                hideLabel: false,
-                                label: 'Clasificacion Arancelaria',
                                 combineErrors: true,
                                 height: 360,
                                 msgTarget: 'under',
@@ -38,23 +35,27 @@ Ext.define('Colsys.Crm.FormTabClasifRegFicha', {
                                     hideLabel: false
                                 },
                                 items: [{
-                                        xtype: 'textareafield',
+                                        xtype: 'htmleditor',
                                         name: 'clasificacionCR',
                                         id: 'clasificacionCR' + me.idcliente,
-                                        fieldLabel: 'Clasificacion Arancelaria',
-                                        width: 400,
+                                        width: '100%',
                                         height: 350,
-                                        labelWidth: 150
+                                        listeners: {
+                                            initialize: function(field, e) {
+                                                field.getToolbar().hide();
+                                            }
+                                        }
                                     }]
                             }]
                     }, {
+                        xtype: 'fieldset',
                         id: 'fieldsetClasifRegDer_ficha' + me.idcliente,
-                        hideLabel: true,
-                        width: 490,
+                        title: 'Registros de importacion',
+                        width: 480,
                         collapsible: false,
                         defaults: {
                             labelWidth: 89,
-                            anchor: '90%',
+                            anchor: '100%',
                             layout: {
                                 type: 'column',
                                 defaultMargins: {top: 0, right: 0, bottom: 0, left: 0}
@@ -62,7 +63,6 @@ Ext.define('Colsys.Crm.FormTabClasifRegFicha', {
                         items: [{
                                 xtype: 'fieldcontainer',
                                 id: 'fieldcontainerClasifRegDer_ficha' + me.idcliente,
-                                hideLabel: true,
                                 combineErrors: true,
                                 height: 360,
                                 msgTarget: 'under',
@@ -72,13 +72,16 @@ Ext.define('Colsys.Crm.FormTabClasifRegFicha', {
                                     hideLabel: false
                                 },
                                 items: [{
-                                        xtype: 'textareafield',
+                                        xtype: 'htmleditor',
                                         name: 'registrosCR',
                                         id: 'registrosCR' + me.idcliente,
-                                        width: 400,
-                                        fieldLabel: 'Registros de importacion',
+                                        width: '100%',
                                         height: 350,
-                                        labelWidth: 150
+                                        listeners: {
+                                            initialize: function(field, e) {
+                                                field.getToolbar().hide();
+                                            }
+                                        }
                                     }]
                             }]
                     }]
