@@ -318,33 +318,10 @@ class crmActions extends sfActions {
             ->createQuery("e")
             ->select("e.ca_url")
             ->whereIn("e.ca_idempresa", array(1, 2, 8, 11))
-            ->addWhere("e.ca_idsap is not null")
-            ->orderBy("e.ca_coddian, e.ca_idsap")
+//            ->addWhere("e.ca_idsap is not null")
+//            ->orderBy("e.ca_coddian, e.ca_idsap")
+            ->orderBy("e.ca_coddian")
             ->execute();
-
-        $idsCredito = Doctrine::getTable("IdsCredito")
-            ->createQuery("i")
-            ->addWhere('i.ca_id = ?', $idCliente)
-            ->addWhere('i.ca_tipo = ?', "C")
-            ->addOrderBy("i.ca_idempresa")
-            ->execute();
-        $beneficios = array();
-        foreach ($idsCredito as $credito) {
-            $dominio = explode(".", $credito->getEmpresa()->getCaUrl())[1];
-            $beneficios[$dominio] = array("cupo" => $credito->getCaCupo(), "dias" => $credito->getCaDias());
-        }
-
-        $idsEstadoSap = Doctrine::getTable("IdsEstadoSap")
-                ->createQuery("i")
-                ->addWhere('i.ca_id = ?', $idCliente)
-                ->addWhere('i.ca_tipo = ?', "C")
-                ->addOrderBy("i.ca_idempresa")
-                ->execute();
-        $estadoSap = array();
-        foreach ($idsEstadoSap as $estado) {
-            $dominio = explode(".", $estado->getEmpresa()->getCaUrl())[1];
-            $estadoSap[$dominio] = ($estado->getCaActivo() ? "Activo" : "Inactivo");
-        }
 
         $sql = "select ca_certificacion, ca_certificacion_otro, ca_implementacion_sistema, ca_implementacion_sistema_detalles from encuestas.tb_encuesta_visita ev "
                 . "inner join public.tb_concliente cc on cc.ca_idcontacto = ev.ca_idcontacto "
@@ -356,18 +333,12 @@ class crmActions extends sfActions {
         $st = $con->execute($sql);
         $vista = $st->fetch();
 
-        $sql = "select * from fun_estado_documentos($idCliente);";
-        $st = $con->execute($sql);
-        $funcion = $st->fetch();
-        $arraycumplimiento = explode("|", $funcion["fun_estado_documentos"]);
-        $coltrans_0170 = $arraycumplimiento[0];
-        $colmas_0170 = $arraycumplimiento[1];
-        $colotm_0170 = $arraycumplimiento[2];
-        $coldepositos_0170 = $arraycumplimiento[3];
-
         $data = array();
         if ($cliente) {
             $data["nombre"] = utf8_encode($cliente->getCaNombre());
+            $data["saludo_rl"] = utf8_encode($cliente->getIdsCliente()->getCaSaludo());
+            $data["representa_legal"] = utf8_encode($cliente->getIdsCliente()->getRepresentanteLegal());
+            $data["identificacion_rl"] = utf8_encode($cliente->getIdsCliente()->getIdRepresentanteLegal());
             $data["website"] = utf8_encode($cliente->getCaWebsite());
             $data["direccion"] = utf8_encode($cliente->getIdsCliente()->getDireccion());
             $data["telefonos"] = utf8_encode($cliente->getIdsCliente()->getCaTelefonos());
@@ -381,12 +352,13 @@ class crmActions extends sfActions {
             $data["coordinador"] = utf8_encode($cliente->getIdsCliente()->getCaCoordinador());
             $data["tipoNit"] = utf8_encode($cliente->getIdsCliente()->getCaTipo());
             $data["entidad"] = utf8_encode($cliente->getIdsCliente()->getCaEntidad());
+            $data["lista_clinton"] = utf8_encode($cliente->getIdsCliente()->getCaListaclinton());
+            $data["ultima_consulta"] = $cliente->getUltimaConsulta();
+            $data["ley_insolvencia"] = utf8_encode($cliente->getIdsCliente()->getCaLeyinsolvencia());
+            $data["comentario"] = utf8_encode($cliente->getIdsCliente()->getCaComentario());
             $data["circular"] = utf8_encode($vista["ca_fchcircular"]);
             $data["estado_circular"] = utf8_encode($vista["ca_stdcircular"]);
-            $data["nivel_riesgo"] = utf8_encode($vista["ca_nvlriesgo"]);
-            $data["lista_clinton"] = utf8_encode($vista["ca_listaclinton"]);
-            $data["comentario"] = utf8_encode($vista["ca_comentario"]);
-            $data["ultima_consulta"] = $cliente->getUltimaConsulta();
+            $data["nivel_riesgo"] = utf8_encode($cliente->getIdsCliente()->getCaNvlriesgo());
             $data["auditorias"] = utf8_encode("<b>Creado:</b> " . $vista["ca_usucreado"] . " - " . $vista["ca_fchcreado"] . "&nbsp;&nbsp;&nbsp;" . "<b>Actualizado:</b> " . $vista["ca_usuactualizado"] . " - " . $vista["ca_fchactualizado"] . "&nbsp;&nbsp;&nbsp;" . "<b>Financiero:</b> " . $vista["ca_usufinanciero"] . " - " . $vista["ca_fchfinanciero"]);
 
             $data["identificacion"] = utf8_encode($cliente->getIdsTipoIdentificacion()->getCaNombre() . ": " . $cliente->getCaIdalterno() . " - " . $cliente->getCaDv());
@@ -410,6 +382,8 @@ class crmActions extends sfActions {
             $data["altex"] = ($cliente->getIdsCliente()->getCaAltex()) ? utf8_encode("Sí") : "No";
             $data["oea"] = ($cliente->getIdsCliente()->getCaOea()) ? utf8_encode("Sí") : "No";
             $data["comerciante"] = ($cliente->getIdsCliente()->getCaComerciante()) ? utf8_encode("Sí") : "No";
+            $data["cuenta_global"] = (strpos($cliente->getIdsCliente()->getCaPropiedades(), 'cuentaglobal=true') !== false) ? utf8_encode("Sí") : "No";
+            $data["consolidar"] = (strpos($cliente->getIdsCliente()->getCaPropiedades(), 'consolidar_comunicaciones=true') !== false) ? utf8_encode("Sí") : "No";
 
             $data["codigos_ciiu"] = implode(",", array($cliente->getIdsCliente()->getCaCiiuUno(), $cliente->getIdsCliente()->getCaCiiuDos(), $cliente->getIdsCliente()->getCaCiiuTrs(), $cliente->getIdsCliente()->getCaCiiuCtr()));
             $data["cod_ciiu_uno"] = $cliente->getIdsCliente()->getCaCiiuUno();
@@ -424,23 +398,21 @@ class crmActions extends sfActions {
             $situacion[] = array("type" => "displayfield", "value" => "Docs.0170");
             $situacion[] = array("type" => "displayfield", "value" => "Cupo Cred.");
             $situacion[] = array("type" => "displayfield", "value" => utf8_encode("Días Cred."));
-            $situacion[] = array("type" => "displayfield", "value" => "Estado SAP");
+//            $situacion[] = array("type"=>"displayfield", "value"=>"Estado SAP");
             
             foreach ($empresas as $empresa) {
                 $dominio = explode(".", $empresa->getCaUrl())[1];
-                $circular = $dominio . "_0170";
                 $situacion[] = array("type" => "displayfield", "value" => ucfirst($dominio));
                 $situacion[] = array("type" => "displayfield", "value" => $vista["ca_" . $dominio . "_std"]);
                 $situacion[] = array("type" => "displayfield", "value" => substr($vista["ca_" . $dominio . "_fch"], 0, -3));
-                $situacion[] = array("type" => "displayfield", "value" => ($$circular));
-                $situacion[] = array("type" => "displayfield", "value" => number_format($beneficios[$dominio]["cupo"]), 0);
-                $situacion[] = array("type" => "displayfield", "value" => $beneficios[$dominio]["dias"]);
-                $situacion[] = array("type" => "displayfield", "value" => (($estadoSap[$dominio]) ? ($estadoSap[$dominio]) : "Sin"));
+                $situacion[] = array("type" => "displayfield", "value" => $vista["ca_" . $dominio . "_170"]);
+                $situacion[] = array("type" => "displayfield", "value" => number_format($vista["ca_" . $dominio . "_cupo"]), 0);
+                $situacion[] = array("type" => "displayfield", "value" => $vista["ca_" . $dominio . "_dias"]);
+//                $situacion[] = array("type" => "displayfield", "value" => $vista["ca_" . $dominio . "_sap"]);
             }
             
             $data["situacion"] = $situacion;
-            $data["situa_col"] = 7;
-            $data["estadoSap"] = (count($estadoSap) != 0) ? true : false;
+            $data["situa_col"] = 6;
             
             $data["actividad_economica"] = utf8_encode($vista["ca_actividad"]);
             $data["preferencias"] = utf8_encode($vista["ca_preferencias"]);
@@ -552,11 +524,7 @@ class crmActions extends sfActions {
                     $tree->getNode($contacto_nodo)->setAttribute("cumpleanos", utf8_encode($contacto->getCaCumpleanos()));
                     $tree->getNode($contacto_nodo)->setAttribute("fijo", utf8_encode($contacto->getCaFijo()));
                     $tree->getNode($contacto_nodo)->setAttribute("observaciones", utf8_encode($contacto->getCaObservaciones()));
-                    if ($contacto->getCaFchhabeasdata()) {
-                        $tree->getNode($contacto_nodo)->setAttribute("qtip", utf8_encode("Habeas Data: ".$contacto->getCaUsuhabeasdata()."<br />".$contacto->getCaFchhabeasdata()));
-                    }else if ($contacto->getCaFcheliminado()) {
-                        $tree->getNode($contacto_nodo)->setAttribute("qtip", utf8_encode("Eliminado: ".$contacto->getCaUsueliminado()."<br />".$contacto->getCaFcheliminado()));
-                    }
+
                     $tree->getNode($contacto_nodo)->setAttribute("leaf", true);
                     $tree->addChild($sede_nodo, $contacto_nodo);
                 }
@@ -742,6 +710,7 @@ class crmActions extends sfActions {
                 "nombre" => utf8_encode($cliente->getCaNombre()),
                 "direccion" => utf8_encode($cliente->getIdsCliente()->getDireccion()),
                 "telefono" => utf8_encode($cliente->getIdsCliente()->getCaTelefonos()),
+                "correo" => utf8_encode($cliente->getIdsCliente()->getCaEmail()),
                 "fax" => utf8_encode($cliente->getIdsCliente()->getCaFax()),
                 "ciudad" => utf8_encode($cliente->getIdsCliente()->getCiudad()->getCaCiudad()),
                 "vendedor" => utf8_encode($cliente->getIdsCliente()->getCaVendedor()),
@@ -1093,24 +1062,18 @@ class crmActions extends sfActions {
 
     public function executeEliminarContacto(sfWebRequest $request) {
         $idContacto = $request->getParameter("idcontacto");
-        $detalle = $request->getParameter("detalle");
 
         $contacto = Doctrine::getTable("IdsContacto")->find($idContacto);
         try {
-            $contacto->setCaCargo($detalle);
-            $contacto->setCaDepartamento($detalle);
-            $contacto->setCaTelefonos($detalle);
-            $contacto->setCaCelular($detalle);
-            $contacto->setCaEmail($detalle);
+            $contacto->setCaCargo("Extrabajador");
+            $contacto->setCaDepartamento("Extrabajador");
+            $contacto->setCaTelefonos("Extrabajador");
+            $contacto->setCaCelular("Extrabajador");
+            $contacto->setCaEmail("Extrabajador");
             $contacto->setCaActivo(false);
             $contacto->setCaFijo(false);
-            if ($detalle == "Extrabajador") {
             $contacto->setCaUsueliminado($this->getUser());
             $contacto->setCaFcheliminado(date("Y-m-d h:i:s"));
-            } else {
-                $contacto->setCaUsuhabeasdata($this->getUser());
-                $contacto->setCaFchhabeasdata(date("Y-m-d h:i:s"));
-            }
             $contacto->save();
 
             $concliente = Doctrine::getTable("Contacto")
@@ -1120,16 +1083,12 @@ class crmActions extends sfActions {
                     ->addWhere('trim(lower(c.ca_papellido)) = ?', trim(strtolower($contacto->getCaPapellido())))
                     ->fetchOne();
             if ($concliente) {
-                $concliente->setCaCargo($detalle);
-                $concliente->setCaDepartamento($detalle);
-                $concliente->setCaTelefonos($detalle);
-                $concliente->setCaFax($detalle);
-                $concliente->setCaEmail($detalle);
+                $concliente->setCaCargo("Extrabajador");
+                $concliente->setCaDepartamento("Extrabajador");
+                $concliente->setCaTelefonos("Extrabajador");
+                $concliente->setCaFax("Extrabajador");
+                $concliente->setCaEmail("Extrabajador");
                 $concliente->setCaFijo(false);
-                if ($detalle != "Extrabajador") {
-                    $contacto->setCaUsuhabeasdata($this->getUser());
-                    $contacto->setCaFchhabeasdata(date("Y-m-d h:i:s"));
-                }
                 $concliente->save();
             }
 
@@ -2257,8 +2216,8 @@ class crmActions extends sfActions {
                 if ($datos->comentario) {
                     $cliente->setCaComentario(utf8_decode($datos->comentario));
                 }
-                if ($datos->listaclinton) {
-                    $cliente->setCaListaclinton(utf8_decode($datos->listaclinton));
+                if ($datos->lista_clinton) {
+                    $cliente->setCaListaclinton(utf8_decode($datos->lista_clinton));
                 }
                 if ($datos->iso) {
                     $cliente->setCaIso(utf8_decode($datos->iso));

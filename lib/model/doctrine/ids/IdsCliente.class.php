@@ -26,6 +26,32 @@ class IdsCliente extends BaseIdsCliente {
     }
 
     /*
+     * Retorna el nombre del Representante Legal
+     * @author Carlos G. López M.
+     */
+
+    public function getRepresentanteLegal() {
+        $value = null;
+        $value = $this->getCaNombres() . " " . $this->getCaPapellido() . " "  . ($this->getCaSapellido()?$this->getCaSapellido():"");
+        return $value;
+    }
+
+
+    /*
+     * Retorna la identificacion del Representante Legal
+     * @author Carlos G. López M.
+     */
+
+    public function getIdRepresentanteLegal() {
+        $value = null;
+        $tipo = Doctrine::getTable("IdsTipoIdentificacion")->find($this->getCaTipoidentificacionRl());
+        if ($tipo) {
+            $value = $tipo->getCaNombre() . ": " . (is_numeric($this->getCaNumidentificacionRl())?number_format($this->getCaNumidentificacionRl()):$this->getCaNumidentificacionRl());
+        }
+        return $value;
+    }
+
+    /*
      * Retorna el nombre del Régimen al que pertenece el cliente
      * @author Carlos G. López M.
      */
@@ -67,7 +93,7 @@ class IdsCliente extends BaseIdsCliente {
         $estado = str_replace('"', '', $st->fetchColumn());
 
         return explode(",", substr($estado, 1, strlen($estado)-1));
-}
+    }
 
     public function getEstadoCircular() {
         $estado = null;

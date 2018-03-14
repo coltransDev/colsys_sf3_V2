@@ -77,11 +77,11 @@ Ext.define('Colsys.Crm.TreeSucursales', {
         }, {
             text: 'Act',
             xtype: 'actioncolumn',
-            width: 60,
+            width: 45,
             items: [{
-                    isDisabled: function(view, rowIndex, colIndex, item, record) {
-                        return !me.permisos[2];
-                    },
+//                    isDisabled: function(view, rowIndex, colIndex, item, record) {
+//                        return !me.permisos[2];
+//                    },
                     getClass: function (v, meta, rec) {
                         if (!rec.get('idsucursal') && !rec.get('idcontacto')) {
                             return null;
@@ -154,9 +154,6 @@ Ext.define('Colsys.Crm.TreeSucursales', {
                         }
                     }
                 }, {
-                    isDisabled: function(view, rowIndex, colIndex, item, record) {
-                        return !me.permisos[3];
-                    },
                     getClass: function (v, meta, rec) {
                         if (rec.get('idsucursal') || rec.get('idcontacto')) {
                             return 'delete';
@@ -177,17 +174,15 @@ Ext.define('Colsys.Crm.TreeSucursales', {
                             det = 'la Sucursal ';
                         }
                         det+= rec.get('text');
-                        Ext.MessageBox.confirm('Confirmaci&oacute;n de Eliminaci\u00F3n', 'Est\u00E1 seguro que desea eliminar ' + det + '?', function (choice) {
+                        Ext.MessageBox.confirm('Confirmaci&oacute;n de Eliminaci&oacute;n', 'Est&aacute; seguro que desea anular ' + det + '?', function (choice) {
                             var url = null;
                             var idrecord = null;
                             if (rec.get('idcontacto')) {
                                 url = '/crm/eliminarContacto';
                                 idrecord = rec.get('idcontacto');
-                                detalle = 'Extrabajador';
                             } else if (rec.get('idsucursal')) {
                                 url = '/crm/eliminarSucursal';
                                 idrecord = rec.get('idsucursal');
-                                detalle = null;
                             }
                             if (choice == 'yes') {
                                 Ext.Ajax.request({
@@ -195,115 +190,10 @@ Ext.define('Colsys.Crm.TreeSucursales', {
                                     url: url,
                                     params: {
                                         idcontacto: idrecord,
-                                        idsucursal: idrecord,
-                                        detalle: detalle
+                                        idsucursal: idrecord
                                     },
                                     failure: function (response, options) {
                                         Ext.MessageBox.alert("Mensaje", 'Se presento un error Eliminando el registro.<br>' + response.errorInfo);
-                                        success = false;
-                                    },
-                                    success: function (response, options) {
-                                        var res = Ext.JSON.decode(response.responseText);
-                                        if (res.success) {
-                                            store = grid.getStore();
-                                            store.reload();
-                                        } else {
-                                            Ext.MessageBox.alert("Mensaje", 'Se presento un error guardando los registros.<br>' + res.responseInfo);
-                                        }
-                                    }
-                                });
-                            }
-                        });
-                    }
-                }, {
-                    isDisabled: function(view, rowIndex, colIndex, item, record) {
-                        return !me.permisos[33];
-                    },
-                    getClass: function (v, meta, rec) {
-                        if (rec.get('idcontacto')) {
-                            return 'error';
-                        }
-                    },
-                    getTip: function (v, meta, rec) {
-                        if (rec.get('idcontacto')) {
-                            return 'Habeas Data';
-                        }
-                    },
-                    handler: function (grid, rowIndex, colIndex) {
-                        var det = null;
-                        var rec = grid.getStore().getAt(rowIndex);
-                        
-                        Ext.MessageBox.confirm('Confirmacion', "El Contacto no ser\u00E1 eliminado y en su lugar, la informaci\u00F3n personal y los datos de contacto ser\u00E1n sustituidos por un comentario.", function (choice) {
-                            var url = null;
-                            var idrecord = null;
-                            if (rec.get('idcontacto')) {
-                                url = '/crm/eliminarContacto';
-                                idrecord = rec.get('idcontacto');
-                                detalle = 'Habeas Data';
-                            }
-                            if (choice == 'yes') {
-                                Ext.Ajax.request({
-                                    waitMsg: 'Registrando...',
-                                    url: url,
-                                    params: {
-                                        idcontacto: idrecord,
-                                        idsucursal: idrecord,
-                                        detalle: detalle
-                                    },
-                                    failure: function (response, options) {
-                                        Ext.MessageBox.alert("Mensaje", 'Se presento un error Registrando el Habeas Data del Contacto.<br>' + response.errorInfo);
-                                        success = false;
-                                    },
-                                    success: function (response, options) {
-                                        var res = Ext.JSON.decode(response.responseText);
-                                        if (res.success) {
-                                            store = grid.getStore();
-                                            store.reload();
-                                        } else {
-                                            Ext.MessageBox.alert("Mensaje", 'Se presento un error guardando los registros.<br>' + res.responseInfo);
-                                        }
-                                    }
-                                });
-                            }
-                        });
-                    }
-                }, {
-                    isDisabled: function(view, rowIndex, colIndex, item, record) {
-                        return !me.permisos[33];
-                    },
-                    getClass: function (v, meta, rec) {
-                        if (rec.get('idcontacto')) {
-                            return 'error';
-                        }
-                    },
-                    getTip: function (v, meta, rec) {
-                        if (rec.get('idcontacto')) {
-                            return 'Habeas Data';
-                        }
-                    },
-                    handler: function (grid, rowIndex, colIndex) {
-                        var det = null;
-                        var rec = grid.getStore().getAt(rowIndex);
-                        
-                        Ext.MessageBox.confirm('Confirmacion', "El Contacto no ser\u00E1 eliminado y en su lugar, la informaci\u00F3n personal y los datos de contacto ser\u00E1n sustituidos por un comentario.", function (choice) {
-                            var url = null;
-                            var idrecord = null;
-                            if (rec.get('idcontacto')) {
-                                url = '/crm/eliminarContacto';
-                                idrecord = rec.get('idcontacto');
-                                detalle = 'Habeas Data';
-                            }
-                            if (choice == 'yes') {
-                                Ext.Ajax.request({
-                                    waitMsg: 'Registrando...',
-                                    url: url,
-                                    params: {
-                                        idcontacto: idrecord,
-                                        idsucursal: idrecord,
-                                        detalle: detalle
-                                    },
-                                    failure: function (response, options) {
-                                        Ext.MessageBox.alert("Mensaje", 'Se presento un error Registrando el Habeas Data del Contacto.<br>' + response.errorInfo);
                                         success = false;
                                     },
                                     success: function (response, options) {

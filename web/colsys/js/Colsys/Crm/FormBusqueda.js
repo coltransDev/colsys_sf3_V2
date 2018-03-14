@@ -283,7 +283,7 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                                     widthcolumnWidth: 0.33
                                 }
                             ]
-                                }, {
+                        }, {
                             xtype: 'fieldcontainer',
                             defaultType: 'radiofield',
                             defaults: {
@@ -305,7 +305,7 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                                     widthcolumnWidth: 0.33
                                 }
                             ]
-                        }, {
+                                }, {
                             xtype: 'fieldcontainer',
                             defaultType: 'radiofield',
                             defaults: {
@@ -389,7 +389,7 @@ Ext.define('Colsys.Crm.FormBusqueda', {
 //                                                    this.getStore().loadData(res);
 //                                                }
 //                                            }
-            }
+                                        }
                                     ]
                                 }).show();
                             }

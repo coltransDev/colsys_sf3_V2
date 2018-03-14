@@ -82,6 +82,7 @@ class Ids extends BaseIds {
     }
 
     public function getConsultaListas($tipoConsulta) {
+        return (new IdsRestrictivas());
         $server = sfConfig::get("app_sinteParams_server");
         $username = sfConfig::get("app_sinteParams_username");
         $password = sfConfig::get("app_sinteParams_password");

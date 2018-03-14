@@ -32,6 +32,40 @@ Ext.define('Colsys.Crm.FormMaster', {
                                 readOnly: true
                             },
                             items: [
+                                {xtype: 'displayfield', value: 'Rep.Legal: ', width: 90, fieldStyle: 'font-weight:bold;'},
+                                {
+                                    xtype: 'displayfield',
+                                    cls: 'x-display-field',
+                                    name: 'representa_legal',
+                                    id: "representa_legal" + this.idcliente,
+                                    flex: 1,
+                                    border: false
+                                },
+                                {xtype: 'displayfield', value: 'identificaci&oacute;n: ', width: 95, fieldStyle: 'font-weight:bold;'},
+                                {
+                                    xtype: 'displayfield',
+                                    cls: 'x-display-field',
+                                    name: 'identificacion_rl',
+                                    id: "identificacion_rl" + this.idcliente,
+                                    flex: 1
+                                },
+                                {xtype: 'displayfield', value: 'Tipo de Cl.: ', width: 75, fieldStyle: 'font-weight:bold;'},
+                                {
+                                    xtype: 'displayfield',
+                                    cls: 'x-display-field',
+                                    name: 'tipoNit',
+                                    id: "tipoNit" + this.idcliente,
+                                    flex: 1
+                                }
+                            ]
+                        }, {
+                            xtype: 'fieldcontainer',
+                            msgTarget: 'under',
+                            defaults: {
+                                hideLabel: true,
+                                readOnly: true
+                            },
+                            items: [
                                 {xtype: 'displayfield', value: 'Direcci&oacute;n: ', width: 90, fieldStyle: 'font-weight:bold;'},
                                 {
                                     xtype: 'displayfield',
@@ -49,13 +83,45 @@ Ext.define('Colsys.Crm.FormMaster', {
                                     id: "telefonos" + this.idcliente,
                                     flex: 1
                                 },
-                                {xtype: 'displayfield', value: 'Fax: ', width: 75, fieldStyle: 'font-weight:bold;'},
+                                {xtype: 'displayfield', value: 'Ciudad: ', width: 75, fieldStyle: 'font-weight:bold;'},
                                 {
                                     xtype: 'displayfield',
                                     cls: 'x-display-field',
-                                    fieldLabel: '',
-                                    name: 'fax',
-                                    id: "fax" + this.idcliente,
+                                    name: 'ciudad',
+                                    id: "ciudad" + this.idcliente,
+                                    flex: 1
+                                }
+                            ]
+                        }, {
+                            xtype: 'fieldcontainer',
+                            msgTarget: 'under',
+                            defaults: {
+                                hideLabel: true,
+                                readOnly: true
+                            },
+                            items: [
+                                {xtype: 'displayfield', value: 'Entidad: ', width: 90, fieldStyle: 'font-weight:bold;'},
+                                {
+                                    xtype: 'displayfield',
+                                    cls: 'x-display-field',
+                                    name: 'entidad',
+                                    id: "entidad" + this.idcliente,
+                                    flex: 1
+                                },
+                                {xtype: 'displayfield', value: 'Status: ', width: 95, fieldStyle: 'font-weight:bold;'},
+                                {
+                                    xtype: 'displayfield',
+                                    cls: 'x-display-field',
+                                    name: 'status',
+                                    id: "status" + this.idcliente,
+                                    flex: 1
+                                },
+                                {xtype: 'displayfield', value: 'Coord.Adu.: ', width: 75, fieldStyle: 'font-weight:bold;'},
+                                {
+                                    xtype: 'displayfield',
+                                    cls: 'x-display-field',
+                                    name: 'coordinador',
+                                    id: "coordinador" + this.idcliente,
                                     flex: 1
                                 }
                             ]
@@ -83,78 +149,12 @@ Ext.define('Colsys.Crm.FormMaster', {
                                     id: "email" + this.idcliente,
                                     flex: 1
                                 },
-                                {xtype: 'displayfield', value: 'Tipo NIT: ', width: 75, fieldStyle: 'font-weight:bold;'},
-                                {
-                                    xtype: 'displayfield',
-                                    cls: 'x-display-field',
-                                    name: 'tipoNit',
-                                    id: "tipoNit" + this.idcliente,
-                                    flex: 1
-                                }
-                            ]
-                        }, {
-                            xtype: 'fieldcontainer',
-                            msgTarget: 'under',
-                            defaults: {
-                                hideLabel: true,
-                                readOnly: true
-                            },
-                            items: [
-                                {xtype: 'displayfield', value: 'Ciudad: ', width: 90, fieldStyle: 'font-weight:bold;'},
-                                {
-                                    xtype: 'displayfield',
-                                    cls: 'x-display-field',
-                                    name: 'ciudad',
-                                    id: "ciudad" + this.idcliente,
-                                    flex: 1
-                                },
-                                {xtype: 'displayfield', value: 'Localidad: ', width: 95, fieldStyle: 'font-weight:bold;'},
-                                {
-                                    xtype: 'displayfield',
-                                    cls: 'x-display-field',
-                                    name: 'localidad',
-                                    id: "localidad" + this.idcliente,
-                                    flex: 1
-                                },
-                                {xtype: 'displayfield', value: 'Entidad: ', width: 75, fieldStyle: 'font-weight:bold;'},
-                                {
-                                    xtype: 'displayfield',
-                                    cls: 'x-display-field',
-                                    name: 'entidad',
-                                    id: "entidad" + this.idcliente,
-                                    flex: 1
-                                },
-                            ]
-                        }, {
-                            xtype: 'fieldcontainer',
-                            msgTarget: 'under',
-                            defaults: {
-                                hideLabel: true,
-                                readOnly: true
-                            },
-                            items: [
-                                {xtype: 'displayfield', value: 'Vendedor: ', width: 90, fieldStyle: 'font-weight:bold;'},
+                                {xtype: 'displayfield', value: 'Vendedor: ', width: 75, fieldStyle: 'font-weight:bold;'},
                                 {
                                     xtype: 'displayfield',
                                     cls: 'x-display-field',
                                     name: 'vendedor',
                                     id: "vendedor" + this.idcliente,
-                                    flex: 1
-                                },
-                                {xtype: 'displayfield', value: 'Coord.Aduana: ', width: 95, fieldStyle: 'font-weight:bold;'},
-                                {
-                                    xtype: 'displayfield',
-                                    cls: 'x-display-field',
-                                    name: 'coordinador',
-                                    id: "coordinador" + this.idcliente,
-                                    flex: 1
-                                },
-                                {xtype: 'displayfield', value: 'Status: ', width: 75, fieldStyle: 'font-weight:bold;'},
-                                {
-                                    xtype: 'displayfield',
-                                    cls: 'x-display-field',
-                                    name: 'status',
-                                    id: "status" + this.idcliente,
                                     flex: 1
                                 }
                             ]
@@ -201,6 +201,22 @@ Ext.define('Colsys.Crm.FormMaster', {
                                     name: 'regimen',
                                     id: "regimen" + this.idcliente,
                                     flex: 1
+                                },
+                                {xtype: 'displayfield', value: 'Cta.Global: ', width: 70, fieldStyle: 'font-weight:bold;'},
+                                {
+                                    xtype: 'displayfield',
+                                    cls: 'x-display-field',
+                                    name: 'cuenta_global',
+                                    id: "cuenta_global" + this.idcliente,
+                                    width: 40
+                                },
+                                {xtype: 'displayfield', value: 'Cl.Cuadro: ', width: 70, fieldStyle: 'font-weight:bold;'},
+                                {
+                                    xtype: 'displayfield',
+                                    cls: 'x-display-field',
+                                    name: 'consolidar',
+                                    id: "consolidar" + this.idcliente,
+                                    width: 40
                                 },
                                 {xtype: 'displayfield', value: 'UAP: ', width: 40, fieldStyle: 'font-weight:bold;'},
                                 {
@@ -256,7 +272,7 @@ Ext.define('Colsys.Crm.FormMaster', {
                                 {
                                     xtype: 'displayfield',
                                     cls: 'x-display-field',
-                                    name: 'codigo_ciiu_1',
+                                    name: 'codigos_ciiu',
                                     id: "codigos_ciiu" + this.idcliente,
                                     flex: 1
                                 }
@@ -284,6 +300,14 @@ Ext.define('Colsys.Crm.FormMaster', {
                                     name: 'ultima_consulta',
                                     id: "ultima_consulta" + this.idcliente,
                                     width: 140
+                                },
+                                {xtype: 'displayfield', value: 'Ley de Insolvencia: ', width: 130, fieldStyle: 'font-weight:bold;'},
+                                {
+                                    xtype: 'displayfield',
+                                    cls: 'x-display-field',
+                                    name: 'ley_insolvencia',
+                                    id: "ley_insolvencia" + this.idcliente,
+                                    width: 40
                                 },
                                 {xtype: 'displayfield', value: 'Comentario: ', width: 90, fieldStyle: 'font-weight:bold;'},
                                 {
@@ -941,28 +965,24 @@ Ext.define('Colsys.Crm.FormMaster', {
                             iconCls: 'money_dollar',
                             id: 'botonCredito' + me.idcliente,
                             handler: function () {
-                                if (this.up('form').estadoSap) {
-                                    tabpanel = Ext.getCmp('tab-panel-id-indicadores' + me.idcliente);
-                                    if (!tabpanel.getChildByElement('beneficioCredito' + me.idcliente)) {
-                                        tabpanel.add({
-                                            title: 'Beneficios Crediticios',
-                                            id: 'beneficioCredito' + me.idcliente,
-                                            itemId: 'beneficioCredito' + me.idcliente,
-                                            closable: true,
-                                            closeAction: 'destroy',
-                                            items: [{
-                                                    xtype: 'Colsys.Crm.GridBeneficioCredito',
-                                                    idcliente: me.idcliente,
-                                                    id: 'gridBeneficioCredito' + me.idcliente,
-                                                    permisos: this.up('form').permisos
-                                                }
-                                            ]
-                                        }).show();
-                                    }
-                                    tabpanel.setActiveTab('beneficioCredito' + me.idcliente);
-                                } else {
-                                    Ext.MessageBox.alert("Error", 'No se puede otorgar beneficios a un cliente que no est\u00E1 activo en SAP BO ');
+                                tabpanel = Ext.getCmp('tab-panel-id-indicadores' + me.idcliente);
+                                if (!tabpanel.getChildByElement('beneficioCredito' + me.idcliente)) {
+                                    tabpanel.add({
+                                        title: 'Beneficios Crediticios',
+                                        id: 'beneficioCredito' + me.idcliente,
+                                        itemId: 'beneficioCredito' + me.idcliente,
+                                        closable: true,
+                                        closeAction: 'destroy',
+                                        items: [{
+                                                xtype: 'Colsys.Crm.GridBeneficioCredito',
+                                                idcliente: me.idcliente,
+                                                id: 'gridBeneficioCredito' + me.idcliente,
+                                                permisos: this.up('form').permisos
+                                            }
+                                        ]
+                                    }).show();
                                 }
+                                tabpanel.setActiveTab('beneficioCredito' + me.idcliente);
                             },
                             listeners: {
                                 beforerender: function () {
@@ -1039,9 +1059,7 @@ Ext.define('Colsys.Crm.FormMaster', {
                 },
                 success: function (response, options) {
                     res = Ext.JSON.decode(options.response.responseText);
-                    form = Ext.getCmp('form-master-' + idcliente);
-                    form.setTitle(res.data.identificacion);
-                    form.estadoSap = res.data.estadoSap;
+                    Ext.getCmp('form-master-' + idcliente).setTitle(res.data.identificacion);
                     Ext.getCmp('fieldset_situacion' + idcliente).setTitle('<b>Circular 0170:</b> ' + res.data.circular + ' - <b>Estado:</b> ' + res.data.estado_circular);
                     
                     formSituacion = Ext.getCmp('form_situacion' + idcliente);

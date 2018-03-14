@@ -104,23 +104,8 @@ Ext.define('Colsys.Crm.FormBeneficioCredito', {
                         fieldLabel: 'Empresa',
                         name: 'idempresa',
                         id: "idempresa",
-                        columnWidth: 1,
-                        store: Ext.create('Ext.data.Store', {
-                            fields: ['id', 'nombre'],
-                            proxy: {
-                                type: 'ajax',
-                                url: '/crm/beneficiosEmpresas',
-                                reader: {
-                                    type: 'json',
-                                    root: 'root'
-                                },
-                                extraParams: {
-                                    idcliente: me.idcliente
-                                }
-                            },
-                            autoLoad: true
-                        }),
-                        renderer: comboBoxRenderer(this)
+                        renderer: comboBoxRenderer(this),
+                        columnWidth: 1
                     }, {
                         xtype: 'tbspacer',
                         height: 25,
