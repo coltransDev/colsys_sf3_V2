@@ -745,7 +745,7 @@ class clientesActions extends sfActions {
                            Los Estados Financieros deben estar certificados y dictaminados por Representante Legal y Revisor Fiscal y/o Contador Público con fecha de corte a Dic. 31 del año inmediatamente anterior. Si la compañía se encuentra recientemente constituida, deberá entregar un balance inicial. Si usted es persona natural, deberá entregar copia de la última Declaración de Renta.<br /><br />
                            Está documentación debe ser actualizada mínimo anualmente y reposará en nuestros archivos con un trato de <strong>ABSOLUTA RESERVA Y CONFIDENCIALIDAD.</strong> El incumplimiento de alguno de los puntos anteriores acarreará una sanción por parte de la DIAN.<br /><br />$renovacion_credito
                            <strong>IMPORTANTE:</strong><br />
-                           En caso de no tener un Representante Comercial asignado, agradecemos enviar los mismos en original a la atención de Fanny Gutiérrez en la dirección: Cra. 98 No 25G-10 INT 18.<br /><br />
+                           En caso de no tener un Representante Comercial asignado, agradecemos enviar los mismos en original a la atención de Área de Cumplimiento en la dirección: Cra. 98 No 25G-10 INT 18, Bogotá D.C.<br /><br />
                            Si usted es cliente de Coltrans y Colmas, debe remitir un solo paquete de documentos acogiéndose con la relación de documentos de Colmas.<br /><br />
                            Cordialmente,<br /><br /><br />
                            <strong>
@@ -2791,7 +2791,7 @@ class clientesActions extends sfActions {
 
     public function executeActualizarFichaTecnica(sfWebRequest $request) {
         $datos = $request->getParameter("datos");
-
+        
         $datosGrilla = $request->getParameter("datosGrid");
         $datosGridCO = $request->getParameter("datosGridCO");
         $idcliente = $request->getParameter("idcliente");
@@ -2817,8 +2817,6 @@ class clientesActions extends sfActions {
             $conn->rollback();
             $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
         }
-
-        $this->responseArray = array("success" => true);
 
         $this->setTemplate("responseTemplate");
     }
@@ -3068,6 +3066,74 @@ class clientesActions extends sfActions {
             $email->save(); //guarda el cuerpo del mensaje
         }
         exit;
+    }
+
+    public function executeEventosCotizaciones(sfWebRequest $request) {
+        $seguimientos = Doctrine::getTable("IdsEventos")
+                ->createQuery("i")
+                ->where('i.ca_tipo = ?', 'Cotización')
+                ->addWhere('date_part(\'YEAR\', i.ca_fchevento) = ?', 2018)
+                ->addOrderBy("i.ca_fchevento DESC")
+                //->limit(10000)
+                ->execute();
+            
+        echo "<table border='1'>";
+        foreach ($seguimientos as $seguimiento) {
+            
+            $idcliente = $seguimiento->getCaIdcliente();
+            $consecutivo = explode(" ", $seguimiento->getCaAsunto());
+            $cotizacion = Doctrine::gettable("Cotizacion")->findOneBy("ca_consecutivo", $consecutivo[0]);
+            if ($cotizacion) {
+                if ( $idcliente == $cotizacion->getCliente()->getCaIdcliente() ){
+                    continue;
+                }
+
+                echo "<tr>";
+                    echo "<td>".$consecutivo[0] . "</td><td>" . $idcliente . "</td><td>" . $cotizacion->getCliente()->getCaIdcliente() . "</td>";
+                echo "</tr>";
+
+                $seguimiento->setCaIdcliente($cotizacion->getCliente()->getCaIdcliente());
+                $seguimiento->save();
+            }
+        }
+        echo "</table>";
+        
+        die("Fin");
+    }
+
+    public function executeEventosReportes(sfWebRequest $request) {
+        $seguimientos = Doctrine::getTable("IdsEventos")
+                ->createQuery("i")
+                ->where('i.ca_tipo = ?', 'Reporte de Negocio')
+                ->addWhere('date_part(\'YEAR\', i.ca_fchevento) = ?', 2018)
+                ->addOrderBy("i.ca_fchevento DESC")
+                ->limit(10000)
+                ->execute();
+            
+        echo "<table border='1'>";
+        foreach ($seguimientos as $seguimiento) {
+            
+            $idcliente = $seguimiento->getCaIdcliente();
+            $consecutivo = explode(" ", $seguimiento->getCaAsunto());
+            $reporte = Doctrine::gettable("Reporte")->findOneBy("ca_consecutivo", $consecutivo[4]);
+            if ($reporte) {
+                // echo $reporte->getCaIdcontacto();
+                $contacto = Doctrine::gettable("Contacto")->find($reporte->getCaIdconcliente());
+                if ( $idcliente == $contacto->getCaIdcliente() ){
+                    continue;
+                }
+
+                echo "<tr>";
+                    echo "<td>".$consecutivo[4] . "</td><td>" . $idcliente . "</td><td>" . $reporte->getCliente()->getCaIdcliente() . "</td><td>" . $contacto->getCaIdcliente() . "</td>";
+                echo "</tr>";
+
+                $seguimiento->setCaIdcliente($reporte->getCliente()->getCaIdcliente());
+                $seguimiento->save();
+            }
+        }
+        echo "</table>";
+        
+        die("Fin");
     }
 
 }
