@@ -99,7 +99,8 @@ $data = $sf_data->getRaw("data");
                 var activo_impo = this.activoImpo;
                 var activo_expo = this.activoExpo;
                 
-                if (nomimpoexpo == "<?= Constantes::IMPO ?>") {                    
+                if (nomimpoexpo == "<?= Constantes::IMPO ?>") {
+                    console.log("103");
                     if (activo_impo) {
                         this.store.filterBy(function (record, id) {                            
                             if (record.get("activo_impo") == activo_impo) {                                
@@ -113,7 +114,8 @@ $data = $sf_data->getRaw("data");
                                 return false;
                         });
                     }
-                } else if (nomimpoexpo == "<?= Constantes::EXPO ?>") {                    
+                } else if (nomimpoexpo == "<?= Constantes::EXPO ?>") {
+                    console.log("118");
                     if (activo_expo) {
                         this.store.filterBy(function (record, id) {
                             if (record.get("activo_expo") == activo_expo) {                                
@@ -128,7 +130,7 @@ $data = $sf_data->getRaw("data");
                         });
                     }
                 } else {
-                    if (activo_impo || activo_expo) {
+                    if (activo_impo || activo_expo) {                        
                         this.store.filterBy(function (record, id) {
                             if (record.get("activo_impo") == activo_impo || record.get("activo_expo") == activo_expo) {                                
                                 var str = record.get("linea");
@@ -140,7 +142,7 @@ $data = $sf_data->getRaw("data");
                             } else
                                 return false;
                         });
-                    } else {
+                    } else {                        
                         this.store.filterBy(function (record, id) {                            
                             var str = record.get("linea");
                             var txt = new RegExp(q, "ig");

@@ -448,10 +448,9 @@ class widgetsActions extends sfActions {
                                       c.ca_papellido, c.ca_sapellido, c.ca_cargo,c.ca_fijo,c.ca_email,
                                       cl.ca_preferencias, cl.ca_confirmar, cl.ca_vendedor, cl.ca_coordinador,
                                       v.ca_nombre, cl.ca_listaclinton, cl.ca_fchcircular,cl.ca_preferencias
-                                      ,cl.ca_status, cl.ca_vendedor, lc.ca_cupo, lc.ca_diascredito,cl.ca_propiedades")
+                                      ,cl.ca_status, cl.ca_vendedor,cl.ca_propiedades")
                     ->from("Contacto c")
                     ->innerJoin("c.Cliente cl")
-                    ->leftJoin("cl.LibCliente lc")
                     ->leftJoin("cl.Usuario v")
                     ->where("UPPER(cl.ca_compania) like ? and c.ca_cargo!='Extrabajador'", "%" . strtoupper($criterio) . "%")
                     ->addOrderBy("cl.ca_compania ASC")
@@ -464,6 +463,16 @@ class widgetsActions extends sfActions {
             }
             $rows=$q->execute();
             foreach ($rows as $row) {
+                $credito = Doctrine::getTable("IdsCredito")
+                        ->createQuery("c")
+                        ->addWhere("c.ca_id = ? and c.ca_idempresa = ?  ", array($row["cl_ca_idcliente"], 2)) // Créditos para Coltrans
+                        ->fetchOne();
+                $cupo = 0;
+                $dias = 0;
+                if ($credito) {
+                    $cupo = $credito->getCaCupo();
+                    $dias = $credito->getCaDias();
+                }
                 $result = array();
                 $result["ca_idcontacto"] = $row["c_ca_idcontacto"];
                 $result["ca_fijo"] = $row["c_ca_fijo"];
@@ -482,8 +491,8 @@ class widgetsActions extends sfActions {
                 $result["ca_status"] = $row["cl_ca_status"];
                 $result["ca_vendedor"] = $row["cl_ca_vendedor"];
                 $result["ca_coordinador"] = $row["cl_ca_coordinador"];
-                $result["ca_diascredito"] = $row["lc_ca_diascredito"];
-                $result["ca_cupo"] = $row["lc_ca_cupo"];
+                $result["ca_diascredito"] = $dias;
+                $result["ca_cupo"] = $cupo;
                 $result["ca_propiedades"] = utf8_encode($row["cl_ca_propiedades"]);
                 if(trim($row["cl_ca_propiedades"])!="")
                 {
@@ -1208,14 +1217,27 @@ class widgetsActions extends sfActions {
         $criterio = $this->getRequestParameter("query");
         $iddepartament = $this->getRequestParameter("iddepartament");
         $idgroup = $this->getRequestParameter("idgroup");
+        $tipo = $this->getRequestParameter("tipo");
 
         $q = Doctrine_Query::create()
-                ->select("h.ca_idticket, h.ca_title, h.ca_text, h.ca_idgroup, MAX(e.ca_idemail) as idemail")
+                ->select("h.ca_idticket, h.ca_title, h.ca_text, h.ca_idgroup")
                 ->from('HdeskTicket h')
-                ->innerJoin("h.HdeskGroup g")
-                ->leftJoin("h.Email e")
-                ->addWhere("e.ca_tipo = 'Notificación'");
+                ->innerJoin("h.HdeskGroup g");
 
+        if($tipo==="rn"){
+            $q->addSelect("MAX(e.ca_idemail) as idemail");
+            $q->leftJoin("h.Email e");
+            $q->addWhere("e.ca_tipo = 'Notificación'");       
+        }
+        
+        if($tipo==="ino"){            
+            $idmaster = $this->getRequestParameter("idmaster");
+            $master = Doctrine::getTable("InoMaster")->find($idmaster);
+            
+            $q->leftJoin("h.HdeskAuditDocuments a");
+            $q->addWhere("a.ca_numero_doc = ?", $master->getCaReferencia());
+        }
+        
         if ($iddepartament) {
             $q->addWhere("g.ca_iddepartament = ? ", $iddepartament);
 }
@@ -1230,10 +1252,11 @@ class widgetsActions extends sfActions {
         
         $q->addOrderBy("h.ca_idgroup ASC");        
         $q->addOrderBy("h.ca_idticket DESC");        
-        $q->groupBy("h.ca_idticket, h.ca_title, h.ca_text, h.ca_idgroup");
-        $q->distinct();        
+        $q->groupBy("h.ca_idticket, h.ca_title, h.ca_text, h.ca_idgroup");        
+        $q->distinct();                
         $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);        
         
+        $debug = utf8_encode($q->getSqlQuery());        
         $tickets = $q->execute();
 
         foreach ($tickets as $key => $val) {            
@@ -1241,7 +1264,7 @@ class widgetsActions extends sfActions {
             $tickets[$key]["h_ca_text"] = utf8_encode(str_replace("</style", "</style2", str_replace("<style", "<style2", str_replace('"', "'", $tickets[$key]["h_ca_text"]))));            
         }
         
-        $this->responseArray = array("success" => true, "total" => count($tickets), "root" => $tickets);
+        $this->responseArray = array("success" => true, "total" => count($tickets), "root" => $tickets, "debug"=>$debug);
         $this->setTemplate("responseTemplate");
     }
 }
