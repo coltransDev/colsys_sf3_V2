@@ -105,7 +105,18 @@ class JTree {
         $node = $this->getNode($uid);
         
         foreach ($node->getChildren() as $children) {
-            $childrens[] = array("uid" => $uid, "text" => $this->getValue($children).$count, "expanded" => true, "children" => $this->getTreeChildren($children));
+            $attrib = array();
+            $child = $this->getNode($children);
+            foreach ($child->getAttributes() as $key => $value) {
+                $attrib[$key] = array_pop($value);
+            }
+            $attrib["uid"] = $uid;
+            $attrib["text"] = $this->getValue($children).$count;
+            $attrib["expanded"] = true;
+            $attrib["children"] = $this->getTreeChildren($children);
+            $childrens[] = $attrib;
+                    
+            // $childrens[] = array("uid" => $uid, "text" => $this->getValue($children).$count, "expanded" => true, "children" => $this->getTreeChildren($children));
         }
         if (count($childrens)){
             return $childrens;
