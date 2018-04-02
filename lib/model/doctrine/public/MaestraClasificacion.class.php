@@ -10,6 +10,18 @@
  * @author     Your name here
  * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
-class MaestraClasificacion extends BaseMaestraClasificacion
-{
+class MaestraClasificacion extends BaseMaestraClasificacion {
+
+    public function getChilds() {
+
+        $childs = Doctrine::getTable("MaestraClasificacion")
+                ->createQuery("mc")
+                ->addWhere('mc.ca_idpadre = ?', $this->getCaIdclasificacion())
+                ->addWhere('mc.ca_estado = ?', 'A')
+                ->addOrderBy("mc.ca_nombre")
+                ->execute();
+
+        return $childs;
+    }
+
 }

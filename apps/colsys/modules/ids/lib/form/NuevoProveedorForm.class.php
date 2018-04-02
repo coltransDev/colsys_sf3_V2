@@ -25,7 +25,7 @@ class NuevoProveedorForm extends BaseForm {
         if($empresa=='TPLogistics')
             $idempresa[]=array(7,0,0);
         else
-            $idempresa = array(1,2,8);
+            $idempresa = array(1,2,8,11);
 
         $q = Doctrine_Query::create()
                 ->from("IdsTipo t")
@@ -67,16 +67,16 @@ class NuevoProveedorForm extends BaseForm {
         $tree = array();
         $childs = $root->getChilds();
         foreach ($childs as $child) {
-            $subarray = array();
             $branchs  = $child->getChilds();
             foreach ($branchs as $branch) {
+                $subarray = array();
                 $subBrns = $branch->getChilds();
                 foreach ($subBrns as $subBrn) {
                     $subarray[$subBrn->getCaIdclasificacion()] = $subBrn->getCaNombre();
                 }
                 $tree[$child->getCaNombre() . ' - ' . $branch->getCaNombre()] = $subarray;
             }
-            
+        
         }
         $widgets['idclasificacion'] = new sfWidgetFormChoice(array('choices' => $tree));
         
@@ -98,7 +98,7 @@ class NuevoProveedorForm extends BaseForm {
                         ->innerJoin('u.Cargo c')
                         ->innerJoin('c.Empresa e')
                         ->addWhere('u.ca_activo = ?', true)
-                        ->addWhere('e.ca_idempresa IN (?,?,?)', $idempresa)
+                        ->addWhere('e.ca_idempresa IN (?,?,?,?)', $idempresa)
                         ->addWhere('c.ca_manager= ?', true)
                         ->orWhere('u.ca_departamento = ?', 'Pricing')
                         ->addOrderBy("u.ca_nombre");
