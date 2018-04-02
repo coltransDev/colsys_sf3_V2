@@ -103,7 +103,7 @@ foreach ($columnas['fields'] as $key => $value){
     Ext.Loader.setConfig({
         enabled: true,
         paths: {
-            'Ext.ux': '../js/ext5/examples/ux/',
+            'Ext.ux': '/js/ext5/examples/ux/'
         }
     });
 

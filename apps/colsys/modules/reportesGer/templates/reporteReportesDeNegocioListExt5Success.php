@@ -4,9 +4,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-$registros = $sf_data->getRaw("registros");
 $columns = $sf_data->getRaw("columns");
-$params = $sf_data->getRaw("params");
+$registros = $sf_data->getRaw("registros");
+$expor_data = $sf_data->getRaw("expor_data");
+$expor_cols = $sf_data->getRaw("expor_cols");
 ?>
 
 <table width="1000" align="center">
@@ -16,6 +17,19 @@ $params = $sf_data->getRaw("params");
 </table>
 
 <script type="text/javascript">
+    Ext.Loader.setConfig({
+        enabled: true,
+        paths: {
+            'Ext.ux': '/js/ext5/examples/ux/',
+            'Ext.ux.exporter': '/js/ext5/examples/ux/exporter/'
+        }
+    });
+
+    Ext.require([
+        'Ext.ux.exporter.Exporter',
+        'Ext.ux.Explorer'
+    ]);
+
     Ext.define('ModelReport', {
         extend: 'Ext.data.TreeModel',
         fields: [
@@ -33,6 +47,7 @@ $params = $sf_data->getRaw("params");
     Ext.onReady(function () {
 
         Ext.create('Ext.tree.Panel', {
+            id: 'treeReport',
             title: 'Informe sobre Reportes de Negocio',
             rootVisible: false,
             store: new Ext.data.TreeStore({
@@ -167,48 +182,37 @@ $params = $sf_data->getRaw("params");
                 }
             },
             buttons: [{
+                    xtype: 'exporterbutton',
                     text: 'Exportar a Excel ',
-                    handler: function () {
-                        Ext.create('Ext.panel.Panel', {
-                            layout: 'fit',
-                            renderTo: Ext.get('appBox'),
-                            items: [{
-                                    xtype: 'component',
-                                    autoEl: {tag: 'iframe', name: 'myIframe'}
-                                }, {
-                                    xtype: 'form', hidden: true,
-                                    listeners: {
-                                        afterrender: function (form) {
-                                            form.getForm().doAction('standardsubmit', {
-                                                target: 'myIframe', method: 'POST',
-                                                url: '<?= url_for("reportesGer/reporteReportesDeNegocioListExt5") ?>',
-                                                params: {
-                                                    anio: '<?=$params["anio"]?>',
-                                                    mes: '<?=$params["mes"]?>',
-                                                    trafico: '<?=$params["trafico"]?>',
-                                                    impoexpo: '<?=$params["impoexpo"]?>',
-                                                    transporte: '<?=$params["transporte"]?>',
-                                                    sucursal: '<?=$params["sucursal"]?>',
-                                                    vendedor: '<?=$params["vendedor"]?>',
-                                                    destino: '<?=$params["destino"]?>',
-                                                    modalidad: '<?=$params["modalidad"]?>',
-                                                    cliente: '<?=$params["cliente"]?>',
-                                                    agente: '<?=$params["agente"]?>',
-                                                    transportista: '<?=$params["transportista"]?>',
-                                                    fchRepIni: '<?=$params["fchRepIni"]?>',
-                                                    fchRepFin: '<?=$params["fchRepFin"]?>',
-                                                    fchEtdIni: '<?=$params["fchEtdIni"]?>',
-                                                    fchEtdFin: '<?=$params["fchEtdFin"]?>',
-                                                    fchCnfIni: '<?=$params["fchCnfIni"]?>',
-                                                    fchCnfFin: '<?=$params["fchCnfFin"]?>',
-                                                    filters: JSON.stringify(<?=$params["filters"]?>),
-                                                    columns: JSON.stringify(<?=$params["columns"]?>),
-                                                    expoExcel: true
-                                                },
-                                            });
-                                        }
-                                    }
-                                }]
+                    iconCls: 'csv',
+                    format: 'excel',
+                    listeners: {
+                        beforerender: function (button, e, eOpts) {
+                            Ext.define('ModelExport', {
+                                extend: 'Ext.data.Model',
+                                fields: <?= json_encode($expor_cols) ?>
+                            });
+
+                            store = new Ext.data.Store({
+                                model: 'ModelExport',
+                                data: <?= json_encode($expor_data) ?>
+                            });
+                            button.store = store;
+                        }
+                    },
+                    traverse: function (node) {
+                        me = this;
+                        // do something with node
+                        if (node.hasChildNodes()) {
+                            if (node.get('text') != 'Root') {
+                                // console.log(node.get('text'));
+                            }
+                        } else {
+                            console.log(node.data);
+                        }
+
+                        node.eachChild(function (child) {
+                            me.traverse(child); // handle the child recursively
                         });
                     }
                 }, {
