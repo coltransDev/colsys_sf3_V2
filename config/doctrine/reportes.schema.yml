@@ -234,6 +234,10 @@ Reporte:
       local: ca_idreporte
       foreign: ca_idreporte
       type: one
+    RepProveedores:
+      local: ca_idreporte
+      foreign: ca_idreporte
+      type: one
     Bavaria:
       local: ca_consecutivo
       foreign: ca_consecutivo
@@ -1042,3 +1046,27 @@ RepProveedor:
       local: ca_idproveedor
       foreign: ca_idtercero
       type: one
+
+RepProveedores:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: reportes
+  tableName: vi_repproveedores
+  attributes:
+    export: tables
+  columns:
+    ca_idreporte:
+      type: integer
+      primary: true
+    ca_incoterms: string,
+    ca_idproveedor: integer,
+    ca_orden_prov: string,
+    proveedores: string
+  relations:
+    Reporte:
+      local: ca_idreporte
+      foreign: ca_idreporte
+      type: one
+      

@@ -54,7 +54,7 @@ class reportesGerActions extends sfActions {
             $this->pais_origen = "";
             if ($origenes) {
                 foreach ($origenes as $origen) {
-                    $this->pais_origen.= ( $this->pais_origen != "") ? "," . $origen->getCaIdtrafico() : $origen->getCaIdtrafico();
+                    $this->pais_origen .= ( $this->pais_origen != "") ? "," . $origen->getCaIdtrafico() : $origen->getCaIdtrafico();
                 }
             }
             if ($this->pais_origen == "") {
@@ -102,84 +102,84 @@ class reportesGerActions extends sfActions {
         if ($this->opcion) {
 
             if ($this->idmodalidad)
-                $where.=" and m.ca_modalidad='" . $this->idmodalidad . "'";
+                $where .= " and m.ca_modalidad='" . $this->idmodalidad . "'";
 
             if ($this->fechainicial && $this->fechafinal)
-                $where.=" and (m.ca_fchreferencia between '" . $this->fechainicial . "' and '" . $this->fechafinal . "')";
+                $where .= " and (m.ca_fchreferencia between '" . $this->fechainicial . "' and '" . $this->fechafinal . "')";
             if ($this->fechaembinicial && $this->fechaembfinal)
-                $where.=" and (m.ca_fchembarque between '" . $this->fechaembinicial . "' and '" . $this->fechaembfinal . "')";
+                $where .= " and (m.ca_fchembarque between '" . $this->fechaembinicial . "' and '" . $this->fechaembfinal . "')";
             if ($this->fechaarrinicial && $this->fechaarrfinal)
-                $where.=" and (m.ca_fcharribo between '" . $this->fechaarrinicial . "' and '" . $this->fechaarrfinal . "')";
+                $where .= " and (m.ca_fcharribo between '" . $this->fechaarrinicial . "' and '" . $this->fechaarrfinal . "')";
 
             if ($this->idpais_origen)
-                $where.=" and ori.ca_idtrafico='" . $this->idpais_origen . "'";
+                $where .= " and ori.ca_idtrafico='" . $this->idpais_origen . "'";
             else if ($this->nivel == "1") {
                 $paises = "";
                 $pais_origen = explode(",", $this->pais_origen);
                 foreach ($pais_origen as $pais) {
-                    $paises.= ( $paises != "") ? "," . "'" . $pais . "'" : "'" . $pais . "'";
+                    $paises .= ( $paises != "") ? "," . "'" . $pais . "'" : "'" . $pais . "'";
                 }
-                $where.=" and ori.ca_idtrafico in (" . $paises . ")";
+                $where .= " and ori.ca_idtrafico in (" . $paises . ")";
             }
             if ($this->idorigen)
-                $where.=" and m.ca_origen='" . $this->idorigen . "'";
+                $where .= " and m.ca_origen='" . $this->idorigen . "'";
             if ($this->idpais_destino)
-                $where.=" and des.ca_idtrafico='" . $this->idpais_destino . "'";
+                $where .= " and des.ca_idtrafico='" . $this->idpais_destino . "'";
             if ($this->iddestino)
-                $where.=" and m.ca_destino='" . $this->iddestino . "'";
+                $where .= " and m.ca_destino='" . $this->iddestino . "'";
             if ($this->idlinea)
-                $where.=" and m.ca_idlinea='" . $this->idlinea . "'";
+                $where .= " and m.ca_idlinea='" . $this->idlinea . "'";
             if (!$this->proyectos)
-                $where.=" and m.ca_modalidad NOT IN ('PROYECTOS','PARTICULARES') and m.ca_impoexpo <> 'OTM/DTA'";
+                $where .= " and m.ca_modalidad NOT IN ('PROYECTOS','PARTICULARES') and m.ca_impoexpo <> 'OTM/DTA'";
             else
-                $where.=" and m.ca_modalidad NOT IN ('PARTICULARES') and m.ca_impoexpo <> 'OTM/DTA'";
+                $where .= " and m.ca_modalidad NOT IN ('PARTICULARES') and m.ca_impoexpo <> 'OTM/DTA'";
 
             $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
             $joinclientes = "";
             if ($this->incoterms && count($this->incoterms) > 0) {
                 if (implode("", $this->incoterms) != "") {
-                    $where.=" and (";
+                    $where .= " and (";
                     foreach ($this->incoterms as $key => $inco) {
                         if ($key > 0)
-                            $where.=" or ";
-                        $where.=" vpr.ca_incoterms like '" . $inco . "%'";
+                            $where .= " or ";
+                        $where .= " vpr.ca_incoterms like '" . $inco . "%'";
                     }
-                    $where.=" )";
+                    $where .= " )";
                 }
                 $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
             }
 
             if ($this->idagente) {
                 $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
-                $where.=" and r.ca_idagente = '" . $this->idagente . "'";
+                $where .= " and r.ca_idagente = '" . $this->idagente . "'";
             }
 
-            if ($this->fecharepinicial && $this->fecharepfinal){
+            if ($this->fecharepinicial && $this->fecharepfinal) {
                 $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
-                $where.=" and (r.ca_fchreporte between '" . $this->fecharepinicial . "' and '" . $this->fecharepfinal . "')";
+                $where .= " and (r.ca_fchreporte between '" . $this->fecharepinicial . "' and '" . $this->fecharepfinal . "')";
             }
 
             if ($this->idsucursalagente) {
                 $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
-                $where.=" and r.ca_idsucursalagente = '" . $this->idsucursalagente . "'";
+                $where .= " and r.ca_idsucursalagente = '" . $this->idsucursalagente . "'";
             }
 
             if ($this->idcliente) {
                 $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
                 $joinclientes = "JOIN tb_concliente cc ON cc.ca_idcontacto=r.ca_idconcliente";
-                $where.=" and cc.ca_idcliente = '" . $this->idcliente . "'";
+                $where .= " and cc.ca_idcliente = '" . $this->idcliente . "'";
             }
-            $joinreportes.= "JOIN vi_repproveedores vpr ON r.ca_idreporte = vpr.ca_idreporte ";
+            $joinreportes .= "JOIN vi_repproveedores vpr ON r.ca_idreporte = vpr.ca_idreporte ";
             if ($this->ntipo > 0)
-                $where.=" and m.ca_tipo='" . $this->ntipo . "'";
+                $where .= " and m.ca_tipo='" . $this->ntipo . "'";
 
-/*
- *                      Nov-09-2017  Se delimita la sub-consulta solo a la referencia y el id de reporte y no se tiene en cuenta ni el Incoterm ni el Agente
-                        ( SELECT sum(ca_peso) AS count FROM tb_inoclientes_sea ics WHERE ics.ca_referencia::text = m.ca_referencia::text and ics.ca_idreporte in (select tr.ca_idreporte from tb_inoclientes_sea tics,tb_reportes tr where tics.ca_idreporte=tr.ca_idreporte and ca_referencia=m.ca_referencia and tr.ca_incoterms=r.ca_incoterms and r.ca_idagente=tr.ca_idagente ) ) AS peso, 
-                        ( SELECT sum(ca_numpiezas) AS count FROM tb_inoclientes_sea ics WHERE ics.ca_referencia::text = m.ca_referencia::text and ics.ca_idreporte in (select tr.ca_idreporte from tb_inoclientes_sea tics,tb_reportes tr where tics.ca_idreporte=tr.ca_idreporte and ca_referencia=m.ca_referencia and tr.ca_incoterms=r.ca_incoterms and r.ca_idagente=tr.ca_idagente ) ) AS piezas, 
-                        ( SELECT sum(ca_volumen) AS count FROM tb_inoclientes_sea ics WHERE ics.ca_referencia::text = m.ca_referencia::text and ics.ca_idreporte in (select tr.ca_idreporte from tb_inoclientes_sea tics,tb_reportes tr where tics.ca_idreporte=tr.ca_idreporte and ca_referencia=m.ca_referencia and tr.ca_incoterms=r.ca_incoterms and r.ca_idagente=tr.ca_idagente ) ) AS volumen
+            /*
+             *                      Nov-09-2017  Se delimita la sub-consulta solo a la referencia y el id de reporte y no se tiene en cuenta ni el Incoterm ni el Agente
+              ( SELECT sum(ca_peso) AS count FROM tb_inoclientes_sea ics WHERE ics.ca_referencia::text = m.ca_referencia::text and ics.ca_idreporte in (select tr.ca_idreporte from tb_inoclientes_sea tics,tb_reportes tr where tics.ca_idreporte=tr.ca_idreporte and ca_referencia=m.ca_referencia and tr.ca_incoterms=r.ca_incoterms and r.ca_idagente=tr.ca_idagente ) ) AS peso,
+              ( SELECT sum(ca_numpiezas) AS count FROM tb_inoclientes_sea ics WHERE ics.ca_referencia::text = m.ca_referencia::text and ics.ca_idreporte in (select tr.ca_idreporte from tb_inoclientes_sea tics,tb_reportes tr where tics.ca_idreporte=tr.ca_idreporte and ca_referencia=m.ca_referencia and tr.ca_incoterms=r.ca_incoterms and r.ca_idagente=tr.ca_idagente ) ) AS piezas,
+              ( SELECT sum(ca_volumen) AS count FROM tb_inoclientes_sea ics WHERE ics.ca_referencia::text = m.ca_referencia::text and ics.ca_idreporte in (select tr.ca_idreporte from tb_inoclientes_sea tics,tb_reportes tr where tics.ca_idreporte=tr.ca_idreporte and ca_referencia=m.ca_referencia and tr.ca_incoterms=r.ca_incoterms and r.ca_idagente=tr.ca_idagente ) ) AS volumen
 
- */
+             */
             $sql = "SELECT tt.ca_liminferior,m.ca_referencia, tt.ca_concepto,tt.ca_idconcepto, r.ca_fchreporte, m.ca_fchembarque, m.ca_fcharribo, m.ca_fchreferencia, 
                         m.ca_origen, ori.ca_ciudad AS ori_ca_ciudad, m.ca_destino, des.ca_ciudad AS des_ca_ciudad, tra_ori.ca_idtrafico AS ori_ca_idtrafico, 
                         tra_ori.ca_nombre AS ori_ca_nombre, tra_des.ca_idtrafico AS des_ca_idtrafico, tra_des.ca_nombre AS des_ca_nombre, 
@@ -270,65 +270,65 @@ class reportesGerActions extends sfActions {
         if ($this->opcion) {
 
             if ($this->idmodalidad)
-                $where.=" and m.ca_modalidad='" . $this->idmodalidad . "'";
+                $where .= " and m.ca_modalidad='" . $this->idmodalidad . "'";
             if ($this->fechainicial && $this->fechafinal)
-                $where.=" and (m.ca_fchreferencia between '" . $this->fechainicial . "' and '" . $this->fechafinal . "')";
+                $where .= " and (m.ca_fchreferencia between '" . $this->fechainicial . "' and '" . $this->fechafinal . "')";
             if ($this->fechaembinicial && $this->fechaembfinal)
-                $where.=" and (m.ca_fchsalida between '" . $this->fechaembinicial . "' and '" . $this->fechaembfinal . "')";
+                $where .= " and (m.ca_fchsalida between '" . $this->fechaembinicial . "' and '" . $this->fechaembfinal . "')";
             if ($this->fechaarrinicial && $this->fechaarrfinal)
-                $where.=" and (m.ca_fchllegada between '" . $this->fechaarrinicial . "' and '" . $this->fechaarrfinal . "')";
+                $where .= " and (m.ca_fchllegada between '" . $this->fechaarrinicial . "' and '" . $this->fechaarrfinal . "')";
             if ($this->idpais_origen)
-                $where.=" and ori.ca_idtrafico='" . $this->idpais_origen . "'";
+                $where .= " and ori.ca_idtrafico='" . $this->idpais_origen . "'";
             else if ($this->nivel == "1") {
                 $paises = "";
                 $pais_origen = explode(",", $this->pais_origen);
                 foreach ($pais_origen as $pais) {
-                    $paises.= ( $paises != "") ? "," . "'" . $pais . "'" : "'" . $pais . "'";
+                    $paises .= ( $paises != "") ? "," . "'" . $pais . "'" : "'" . $pais . "'";
                 }
-                $where.=" and ori.ca_idtrafico in (" . $paises . ")";
+                $where .= " and ori.ca_idtrafico in (" . $paises . ")";
             }
             if ($this->idorigen)
-                $where.=" and m.ca_origen='" . $this->idorigen . "'";
+                $where .= " and m.ca_origen='" . $this->idorigen . "'";
             if ($this->idpais_destino)
-                $where.=" and des.ca_idtrafico='" . $this->idpais_destino . "'";
+                $where .= " and des.ca_idtrafico='" . $this->idpais_destino . "'";
             if ($this->iddestino)
-                $where.=" and m.ca_destino='" . $this->iddestino . "'";
+                $where .= " and m.ca_destino='" . $this->iddestino . "'";
             if ($this->idlinea)
-                $where.=" and m.ca_idlinea='" . $this->idlinea . "'";
+                $where .= " and m.ca_idlinea='" . $this->idlinea . "'";
             if ($this->impoexpo)
-                $where.=" and m.ca_impoexpo='" . $this->impoexpo . "'";
+                $where .= " and m.ca_impoexpo='" . $this->impoexpo . "'";
             if (!$this->proyectos)
-                $where.=" and m.ca_modalidad NOT IN ('PROYECTOS','PARTICULARES') and m.ca_impoexpo <> 'OTM/DTA'";
+                $where .= " and m.ca_modalidad NOT IN ('PROYECTOS','PARTICULARES') and m.ca_impoexpo <> 'OTM/DTA'";
             else
-                $where.=" and m.ca_modalidad NOT IN ('PARTICULARES') and m.ca_impoexpo <> 'OTM/DTA'";
+                $where .= " and m.ca_modalidad NOT IN ('PARTICULARES') and m.ca_impoexpo <> 'OTM/DTA'";
 
             $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
             $joinclientes = "";
             if ($this->incoterms && count($this->incoterms) > 0) {
-                $where.=" and (";
+                $where .= " and (";
                 foreach ($this->incoterms as $key => $inco) {
                     if ($key > 0)
-                        $where.=" or ";
-                    $where.=" r.ca_incoterms like '" . $inco . "%'";
+                        $where .= " or ";
+                    $where .= " r.ca_incoterms like '" . $inco . "%'";
                 }
-                $where.=" )";
+                $where .= " )";
                 $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
             }
 
             if ($this->idagente) {
                 $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
-                $where.=" and r.ca_idagente = '" . $this->idagente . "'";
+                $where .= " and r.ca_idagente = '" . $this->idagente . "'";
             }
 
             if ($this->idsucursalagente) {
                 $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
-                $where.=" and r.ca_idsucursalagente = '" . $this->idsucursalagente . "'";
+                $where .= " and r.ca_idsucursalagente = '" . $this->idsucursalagente . "'";
             }
 
             if ($this->idcliente) {
                 $joinreportes = "JOIN tb_reportes r ON c.ca_idreporte = r.ca_idreporte ";
                 $joinclientes = "JOIN tb_concliente cc ON cc.ca_idcontacto=r.ca_idconcliente";
-                $where.=" and cc.ca_idcliente = '" . $this->idcliente . "'";
+                $where .= " and cc.ca_idcliente = '" . $this->idcliente . "'";
             }
 
             $sql = "SELECT tt.ca_liminferior,m.ca_referencia, tt.ca_concepto,tt.ca_idconcepto, m.ca_fchsalida, m.ca_fchllegada, 
@@ -408,12 +408,12 @@ class reportesGerActions extends sfActions {
         if ($this->opcion) {
 
             if ($this->year != "")
-                $where.=" and ca_ano in ('" . ($this->year) . "','" . ($this->year - 1) . "')";
+                $where .= " and ca_ano in ('" . ($this->year) . "','" . ($this->year - 1) . "')";
 
             if (count($this->nmes) > 0) {
                 $this->nmes = array_diff($this->nmes, array(""));
                 if ($this->nmes[0] != "")
-                    $where.=" and ca_mes::integer in (" . (implode(",", $this->nmes)) . ")";
+                    $where .= " and ca_mes::integer in (" . (implode(",", $this->nmes)) . ")";
             }
             $sql = "select ca_ano, ca_trafico, ca_traorigen, ca_ciudestino, sum(ca_volumen) as ca_volumen, sum(ca_20pies) as ca_20pies, sum(ca_40pies) as ca_40pies, 
                 sum(ca_teus) as ca_teus from vi_inotrafico_lcl where 1=1  $where group by ca_ano, ca_trafico, ca_traorigen, ca_ciudestino order by ca_ano, ca_traorigen, ca_ciudestino";
@@ -548,15 +548,15 @@ class reportesGerActions extends sfActions {
 
         $this->fechafinal3 = Utils::addDate(Utils::addDate($ano . "-" . $this->mes . "-01", 0, 0, 0, "Y-m-01"), -1);
         $this->fechainicial3 = Utils::addDate(Utils::addDate($this->fechafinal3, 1, 0, 0, "Y-m-01"), 0, 0, 0, "Y-m-d");
-        
+
         $this->fechainicial1 = Utils::addDate($request->getParameter("fechaInicial"), 0, 0, -1);
         $this->fechafinal1 = Utils::addDate($this->fechafinal3, 0, 0, -1);
 
         $this->fechainicial2 = Utils::addDate($request->getParameter("fechaInicial"), 0, 0, -2);
         $this->fechafinal2 = Utils::addDate($this->fechafinal3, 0, 0, -2);
 
-        
-        
+
+
         if ($this->opcion) {
 
             if ($this->idsucursal) {
@@ -592,7 +592,7 @@ class reportesGerActions extends sfActions {
             $this->totales = array();
             foreach ($this->resul as $r) {
                 $this->grid[$r["origen"]][$r["ca_year"] . "-" . $r["ca_mes"]] = $r["valor"];
-                $this->totales[$r["ca_year"] . "-" . $r["ca_mes"]]+=$r["valor"];
+                $this->totales[$r["ca_year"] . "-" . $r["ca_mes"]] += $r["valor"];
             }
 
             $sql = "select count(*) as valor,ca_year,ca_mes,ca_ciuorigen as origen
@@ -605,7 +605,7 @@ class reportesGerActions extends sfActions {
             $origen = "";
             foreach ($this->resul as $r) {
                 $this->grid[$r["origen"]][$r["ca_year"] . "-" . $r["ca_mes"]] = $r["valor"];
-                $this->totales[$r["ca_year"] . "-" . $r["ca_mes"]]+=$r["valor"];
+                $this->totales[$r["ca_year"] . "-" . $r["ca_mes"]] += $r["valor"];
             }
 
             $sql = "select count(*) as valor,ca_year,ca_mes,ca_traorigen as origen
@@ -620,7 +620,7 @@ class reportesGerActions extends sfActions {
             $this->totales = array();
             foreach ($this->resul as $r) {
                 $this->grid_s[$r["origen"]][$r["ca_year"] . "-" . $r["ca_mes"]] = $r["valor"];
-                $this->totales_s[$r["ca_year"] . "-" . $r["ca_mes"]]+=$r["valor"];
+                $this->totales_s[$r["ca_year"] . "-" . $r["ca_mes"]] += $r["valor"];
             }
 
             $sql = "select count(*) as valor,ca_traorigen as origen,ca_year 
@@ -635,7 +635,7 @@ class reportesGerActions extends sfActions {
 
             foreach ($this->compara as $r) {
                 $this->gridCompara[$r["origen"]][$r["ca_year"]] = $r["valor"];
-                $this->totalesCompara[$r["ca_year"]]+=$r["valor"];
+                $this->totalesCompara[$r["ca_year"]] += $r["valor"];
             }
 
             $sql = "select count(*) as valor,ca_ciuorigen as origen,ca_year 
@@ -647,7 +647,7 @@ class reportesGerActions extends sfActions {
 
             foreach ($this->compara as $r) {
                 $this->gridCompara[$r["origen"]][$r["ca_year"]] = $r["valor"];
-                $this->totalesCompara[$r["ca_year"]]+=$r["valor"];
+                $this->totalesCompara[$r["ca_year"]] += $r["valor"];
             }
 
             $sql = "select count(*) as valor,ca_traorigen as origen,ca_year 
@@ -661,7 +661,7 @@ class reportesGerActions extends sfActions {
             $this->totalesCompara_s = array();
             foreach ($this->compara as $r) {
                 $this->gridCompara_s[$r["origen"]][$r["ca_year"]] = $r["valor"];
-                $this->totalesCompara_s[$r["ca_year"]]+=$r["valor"];
+                $this->totalesCompara_s[$r["ca_year"]] += $r["valor"];
             }
 
             $sql = "select count(*) as valor,ca_traorigen as origen,ca_nombre_cli as cliente
@@ -676,8 +676,8 @@ class reportesGerActions extends sfActions {
             $this->totalesCliente = array();
             foreach ($this->clientes as $r) {
                 $this->gridClientes[$r["origen"]][$r["cliente"]]["totales"] = $r["valor"];
-                $this->totalesCliente[$r["origen"]]["totales"]+=$r["valor"];
-                $this->totalesCliente["totales"]["totales"]+=$r["valor"];
+                $this->totalesCliente[$r["origen"]]["totales"] += $r["valor"];
+                $this->totalesCliente["totales"]["totales"] += $r["valor"];
             }
 
             $sql = "select count(*) as valor,ca_year,ca_mes,ca_traorigen as origen ,ca_nombre_cli as cliente
@@ -691,10 +691,10 @@ class reportesGerActions extends sfActions {
 
             foreach ($this->clientes as $r) {
                 $this->gridClientes[$r["origen"]][$r["cliente"]][$r["ca_year"] . "-" . $r["ca_mes"]] = $r["valor"];
-                $this->totalesCliente[$r["origen"]][$r["ca_year"] . "-" . $r["ca_mes"]]+=$r["valor"];
-                $this->totalesCliente["totales"][$r["ca_year"] . "-" . $r["ca_mes"]]+=$r["valor"];
+                $this->totalesCliente[$r["origen"]][$r["ca_year"] . "-" . $r["ca_mes"]] += $r["valor"];
+                $this->totalesCliente["totales"][$r["ca_year"] . "-" . $r["ca_mes"]] += $r["valor"];
             }
-            /*CLIENTES X TRANSPORTE*/
+            /* CLIENTES X TRANSPORTE */
             $sql = "select count(*) as valor,ca_nombre_cli as cliente, ca_transporte
                     from vi_reportes_estadisticas 
                     where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "{$ano}-01-01") . "' and '" . $this->fechafinal . "' $where
@@ -707,8 +707,8 @@ class reportesGerActions extends sfActions {
             $this->totalesCliente_t = array();
             foreach ($this->clientes as $r) {
                 $this->gridClientes_t[$r["cliente"]][$r["ca_transporte"]]["totales"] = $r["valor"];
-                $this->totalesCliente_t[$r["cliente"]]["totales"]+=$r["valor"];
-                $this->totalesCliente_t["totales"]["totales"]+=$r["valor"];
+                $this->totalesCliente_t[$r["cliente"]]["totales"] += $r["valor"];
+                $this->totalesCliente_t["totales"]["totales"] += $r["valor"];
             }
 
             $sql = "select count(*) as valor,ca_year,ca_mes,ca_transporte ,ca_nombre_cli as cliente
@@ -722,10 +722,10 @@ class reportesGerActions extends sfActions {
 
             foreach ($this->clientes as $r) {
                 $this->gridClientes_t[$r["cliente"]][$r["ca_transporte"]][$r["ca_year"] . "-" . $r["ca_mes"]] = $r["valor"];
-                $this->totalesCliente_t[$r["cliente"]][$r["ca_year"] . "-" . $r["ca_mes"]]+=$r["valor"];
-                $this->totalesCliente_t["totales"][$r["ca_year"] . "-" . $r["ca_mes"]]+=$r["valor"];
+                $this->totalesCliente_t[$r["cliente"]][$r["ca_year"] . "-" . $r["ca_mes"]] += $r["valor"];
+                $this->totalesCliente_t["totales"][$r["ca_year"] . "-" . $r["ca_mes"]] += $r["valor"];
             }
-            
+
             $sql = "select count(*) as valor,ca_year,ca_mes,ca_login as vendedor
                     from vi_reportes_estadisticas 
                     where ca_fchreporte between '" . Utils::parseDate($this->fechainicial, "{$ano}-01-01") . "' and '" . $this->fechafinal . "' $where
@@ -740,9 +740,9 @@ class reportesGerActions extends sfActions {
             $this->totalesVendedores = array();
             foreach ($this->clientes as $r) {
                 $this->gridVendedores[$r["vendedor"]][$r["ca_year"] . "-" . $r["ca_mes"]] = $r["valor"];
-                $this->gridVendedores[$r["vendedor"]]["totales"]+=$r["valor"];
-                $this->totalesVendedores[$r["ca_year"] . "-" . $r["ca_mes"]]+=$r["valor"];
-                $this->totalesVendedores["totales"]+=$r["valor"];
+                $this->gridVendedores[$r["vendedor"]]["totales"] += $r["valor"];
+                $this->totalesVendedores[$r["ca_year"] . "-" . $r["ca_mes"]] += $r["valor"];
+                $this->totalesVendedores["totales"] += $r["valor"];
             }
 
             $this->fechainicial2 = (Utils::parseDate($this->fechafinal, "Y") . '-01-01');
@@ -776,7 +776,7 @@ class reportesGerActions extends sfActions {
         $this->idcliente = $request->getParameter("idcliente");
         $this->sucursal = $request->getParameter("sucursal");
         $where = "";
-        $where1.="and ca_version=( SELECT max(rr.ca_version) AS max
+        $where1 .= "and ca_version=( SELECT max(rr.ca_version) AS max
            FROM tb_reportes rr
           WHERE r.ca_consecutivo::text = rr.ca_consecutivo::text) ";
 
@@ -784,29 +784,29 @@ class reportesGerActions extends sfActions {
 
             if ($this->idmodalidad) {
                 if ($this->idmodalidad == "LCL") {
-                    $where.=" and m.ca_modalidad in ('" . $this->idmodalidad . "','" . Constantes::COLOADING . "')";
-                    $where1.=" and r.ca_modalidad in ('" . $this->idmodalidad . "','" . Constantes::COLOADING . "')";
+                    $where .= " and m.ca_modalidad in ('" . $this->idmodalidad . "','" . Constantes::COLOADING . "')";
+                    $where1 .= " and r.ca_modalidad in ('" . $this->idmodalidad . "','" . Constantes::COLOADING . "')";
                 } else {
-                    $where.=" and m.ca_modalidad='" . $this->idmodalidad . "'";
-                    $where1.=" and r.ca_modalidad='" . $this->idmodalidad . "'";
+                    $where .= " and m.ca_modalidad='" . $this->idmodalidad . "'";
+                    $where1 .= " and r.ca_modalidad='" . $this->idmodalidad . "'";
                 }
             }
 
             if ($this->fechaarrinicial && $this->fechaarrfinal) {
-                $where.=" and (m.ca_fcharribo between '" . $this->fechaarrinicial . "' and '" . $this->fechaarrfinal . "')";
-                $where1.=" and (o.ca_fcharribo between '" . $this->fechaarrinicial . "' and '" . $this->fechaarrfinal . "')";
+                $where .= " and (m.ca_fcharribo between '" . $this->fechaarrinicial . "' and '" . $this->fechaarrfinal . "')";
+                $where1 .= " and (o.ca_fcharribo between '" . $this->fechaarrinicial . "' and '" . $this->fechaarrfinal . "')";
             }
             if ($this->idorigen) {
-                $where.=" and m.ca_destino='" . $this->idorigen . "'";
-                $where1.=" and r.ca_origen='" . $this->idorigen . "'";
+                $where .= " and m.ca_destino='" . $this->idorigen . "'";
+                $where1 .= " and r.ca_origen='" . $this->idorigen . "'";
             }
             if ($this->iddestino) {
-                $where.=" and r.ca_continuacion_dest='" . $this->iddestino . "'";
-                $where1.=" and r.ca_destino='" . $this->iddestino . "'";
+                $where .= " and r.ca_continuacion_dest='" . $this->iddestino . "'";
+                $where1 .= " and r.ca_destino='" . $this->iddestino . "'";
             }
             if ($this->idlinea) {
-                $where.=" and m.ca_idlinea='" . $this->idlinea . "'";
-                $where1.=" and r.ca_idlinea='" . $this->idlinea . "'";
+                $where .= " and m.ca_idlinea='" . $this->idlinea . "'";
+                $where1 .= " and r.ca_idlinea='" . $this->idlinea . "'";
             }
 
             /* if ($this->incoterms && count($this->incoterms) > 0) {
@@ -826,11 +826,11 @@ class reportesGerActions extends sfActions {
               } */
 
             if ($this->idcliente)
-                $where.=" and c.ca_idcliente = '" . $this->idcliente . "'";
+                $where .= " and c.ca_idcliente = '" . $this->idcliente . "'";
 
             if ($this->sucursal) {
-                $where.=" and u.ca_sucursal = '" . $this->sucursal . "'";
-                $where1.=" and u.ca_sucursal = '" . $this->sucursal . "'";
+                $where .= " and u.ca_sucursal = '" . $this->sucursal . "'";
+                $where1 .= " and u.ca_sucursal = '" . $this->sucursal . "'";
             }
 
             $sql = "SELECT m.ca_referencia, cl.ca_compania, u.ca_sucursal, c.ca_hbls, r.ca_consecutivo, r.ca_seguro, 
@@ -976,10 +976,10 @@ class reportesGerActions extends sfActions {
                     break;
             }
 
-            $wherePpal.= $this->transporte ? "AND v.ca_transporte IN ('" . $this->transporte . "')" : "";
-            $wherePpal.= $this->pais_origen ? "AND v.ca_traorigen= '" . $this->pais_origen . "'" : "";
-            $wherePpal.= $this->corigen ? "AND v.ca_ciuorigen = '" . $this->corigen . "'" : "";
-            $wherePpal.= $this->cdestino ? "AND v.ca_ciudestino = '" . $this->cdestino . "'" : "";
+            $wherePpal .= $this->transporte ? "AND v.ca_transporte IN ('" . $this->transporte . "')" : "";
+            $wherePpal .= $this->pais_origen ? "AND v.ca_traorigen= '" . $this->pais_origen . "'" : "";
+            $wherePpal .= $this->corigen ? "AND v.ca_ciuorigen = '" . $this->corigen . "'" : "";
+            $wherePpal .= $this->cdestino ? "AND v.ca_ciudestino = '" . $this->cdestino . "'" : "";
 
             $sql = "SELECT DISTINCT sqa.ca_ano1, sqa.ca_mes1, v.ca_consecutivo, v.ca_orden_clie as ca_orden, date(v.ca_fchcreado) as ca_fchcreado, v.ca_idreporte, v.ca_traorigen, v.ca_ciuorigen, v.ca_ciudestino,v.ca_modalidad,v.ca_transporte, v.ca_nombre as proveedor, v.ca_propiedades, 
                             (CASE WHEN v.ca_modalidad = 'COLOADING' THEN 'LCL' ELSE v.ca_modalidad END) as nva_modalidad,  sqa.ca_fchllegada, sqa.ca_peso, sqa.ca_piezas as ca_piezas, sqa.ca_volumen, sqa.ca_doctransporte
@@ -1055,10 +1055,10 @@ class reportesGerActions extends sfActions {
                         $this->grid[$r["ca_ano1"]][$r["nva_modalidad"]][(int) ($r["ca_mes1"])]["diferencia"] = 1;
                     }
                 }
-                $this->grid[$r["ca_ano1"]][$r["nva_modalidad"]][(int) ($r["ca_mes1"])]["diferencia"]+=$r[$this->dataIdg];
+                $this->grid[$r["ca_ano1"]][$r["nva_modalidad"]][(int) ($r["ca_mes1"])]["diferencia"] += $r[$this->dataIdg];
 
                 list($peso, $medida) = explode("|", $r["ca_peso"]);
-                $this->grid[$r["ca_ano1"]][$r["nva_modalidad"]][(int) ($r["ca_mes1"])]["peso"]+=$peso;
+                $this->grid[$r["ca_ano1"]][$r["nva_modalidad"]][(int) ($r["ca_mes1"])]["peso"] += $peso;
             }
             //echo "<pre>";print_r($this->grid);echo "</pre>";
         }
@@ -1208,7 +1208,7 @@ class reportesGerActions extends sfActions {
 
         if ($this->opcion) {
             if ($this->idmodalidad)
-                $where.=" and rp.ca_modalidad='" . $this->idmodalidad . "'";
+                $where .= " and rp.ca_modalidad='" . $this->idmodalidad . "'";
             if ($this->fechainicial && $this->fechafinal) {
                 list($ano, $mes, $dia) = sscanf($this->fechainicial, "%d-%d-%d");
                 $fechainicial = date("Y-m-d H:i:s", mktime(0, 0, 0, $mes, $dia, $ano));
@@ -1223,45 +1223,45 @@ class reportesGerActions extends sfActions {
                 $filtroTipoInforme = "RIGHT JOIN (select rpt.ca_consecutivo, substr(rpa.ca_fchenvio::text,1,4) as ca_ano, substr(rpa.ca_fchenvio::text,6,2) as ca_mes, rpa.ca_usuenvio, count(rpa.ca_idemail) as ca_cant_emails from tb_emails rpa, tb_reportes rpt where rpa.ca_tipo like '%Reporte Negocios AG%' and rpa.ca_fchenvio between '$fechainicial' and '$fechafinal' and rpt.ca_idreporte = rpa.ca_idcaso group by ca_ano, ca_mes, ca_consecutivo, ca_usuenvio) rf ON (rp.ca_consecutivo = rf.ca_consecutivo) ";
             } else if ($this->tipoInforme == "Negocios nuevos") {
                 if ($this->fechainicial && $this->fechafinal)
-                    $where.=" and (rp.ca_fchreporte between '" . $this->fechainicial . "' and '" . $this->fechafinal . "')";
+                    $where .= " and (rp.ca_fchreporte between '" . $this->fechainicial . "' and '" . $this->fechafinal . "')";
                 $filtroTipoInforme = "INNER JOIN (select rpt.ca_consecutivo, substr(rpt.ca_fchreporte::text,1,4) as ca_ano, substr(rpt.ca_fchreporte::text,6,2) as ca_mes, rps.ca_usuenvio, count(rps.ca_idemail) as ca_cant_emails from tb_repstatus rps, tb_reportes rpt where rpt.ca_idreporte = rps.ca_idreporte group by ca_ano, ca_mes, ca_consecutivo, ca_usuenvio) rf ON (rp.ca_consecutivo = rf.ca_consecutivo)";
             }
             if ($this->idpais_origen)
-                $where.=" and tro.ca_idtrafico='" . $this->idpais_origen . "'";
+                $where .= " and tro.ca_idtrafico='" . $this->idpais_origen . "'";
             if ($this->idorigen)
-                $where.=" and rp.ca_origen='" . $this->idorigen . "'";
+                $where .= " and rp.ca_origen='" . $this->idorigen . "'";
             if ($this->idpais_destino)
-                $where.=" and trd.ca_idtrafico='" . $this->idpais_destino . "'";
+                $where .= " and trd.ca_idtrafico='" . $this->idpais_destino . "'";
             if ($this->iddestino)
-                $where.=" and rp.ca_destino='" . $this->iddestino . "'";
+                $where .= " and rp.ca_destino='" . $this->iddestino . "'";
             if ($this->idlinea)
-                $where.=" and rp.ca_idlinea='" . $this->idlinea . "'";
+                $where .= " and rp.ca_idlinea='" . $this->idlinea . "'";
 
-            /*if ($this->incoterms && count($this->incoterms) > 0) {
+            /* if ($this->incoterms && count($this->incoterms) > 0) {
 
-                $where.=" and (";
-                foreach ($this->incoterms as $key => $inco) {
-                    if ($key > 0)
-                        $where.=" or ";
-                    $where.=" rp.ca_incoterms like '" . $inco . "%'";
-                }
-                $where.=" )";
-            }*/
+              $where.=" and (";
+              foreach ($this->incoterms as $key => $inco) {
+              if ($key > 0)
+              $where.=" or ";
+              $where.=" rp.ca_incoterms like '" . $inco . "%'";
+              }
+              $where.=" )";
+              } */
 
             if ($this->idcliente)
-                $where.=" and ccl.ca_idcliente = '" . $this->idcliente . "'";
+                $where .= " and ccl.ca_idcliente = '" . $this->idcliente . "'";
 
             if ($this->idagente)
-                $where.=" and agt.ca_idagente = '" . $this->idcliente . "'";
+                $where .= " and agt.ca_idagente = '" . $this->idcliente . "'";
 
             if ($this->sucursal)
-                $where.=" and sc.ca_nombre = (select ca_nombre from control.tb_sucursales where ca_idsucursal = '" . $this->sucursal . "')";
+                $where .= " and sc.ca_nombre = (select ca_nombre from control.tb_sucursales where ca_idsucursal = '" . $this->sucursal . "')";
 
             if ($this->usuenvio)
-                $where.=" and rf.ca_usuenvio = '" . $this->usuenvio . "'";
+                $where .= " and rf.ca_usuenvio = '" . $this->usuenvio . "'";
 
             if ($this->idDepartamento)
-                $where.=" and op.ca_departamento = '" . $this->idDepartamento . "'";
+                $where .= " and op.ca_departamento = '" . $this->idDepartamento . "'";
 
             $sql = "SELECT distinct 
                         rf.ca_ano, rf.ca_mes, rp.ca_idreporte, rp.ca_fchreporte, rp.ca_consecutivo, rx.ca_version, sc.ca_nombre as ca_sucursal,
@@ -1341,27 +1341,27 @@ class reportesGerActions extends sfActions {
                 if ($this->tipo == 0) {
                     $join = "INNER JOIN tb_inoingresos_sea ic ON t.ca_idinocliente = ic.ca_idinocliente ";
                     if ($this->vendedor) {
-                        $where.= " and t.ca_login ='" . $this->vendedor . "'  ";
+                        $where .= " and t.ca_login ='" . $this->vendedor . "'  ";
                     }
                 } elseif ($this->tipo == 1) {
                     $join = "INNER JOIN tb_inoingresos_air ic ON t.ca_referencia = ic.ca_referencia and t.ca_idcliente = ic.ca_idcliente and t.ca_hawb = ic.ca_hawb ";
                     if ($this->vendedor) {
-                        $where.= " and t.ca_loginvendedor ='" . $this->vendedor . "'  ";
+                        $where .= " and t.ca_loginvendedor ='" . $this->vendedor . "'  ";
                     }
                 } elseif ($this->tipo == 2) {
                     $join = "INNER JOIN tb_expo_ingresos ic ON t.ca_referencia = ic.ca_referencia and t.ca_idcliente = ic.ca_idcliente  ";
                     if ($this->vendedor) {
-                        $where.= " and ic.ca_loginvendedor ='" . $this->vendedor . "'  ";
+                        $where .= " and ic.ca_loginvendedor ='" . $this->vendedor . "'  ";
                     }
                 } else if ($this->tipo == 3) {
                     $join = "INNER JOIN tb_brk_ingresos ic on t.ca_referencia = ic.ca_referencia ";
                     if ($this->vendedor) {
-                        $where.= " and t.ca_vendedor ='" . $this->vendedor . "'  ";
+                        $where .= " and t.ca_vendedor ='" . $this->vendedor . "'  ";
                     }
                 }
 
                 if ($this->sucursal) {
-                    $where.= "and s.ca_nombre ='" . $this->sucursal . "'  ";
+                    $where .= "and s.ca_nombre ='" . $this->sucursal . "'  ";
                 }
                 /* if ($this->vendedor) {
                   $where.= " u.ca_login ='" . $this->vendedor . "' and ";
@@ -1382,46 +1382,40 @@ class reportesGerActions extends sfActions {
 
     public function executeListadoFacturas(sfWebRequest $request) {
 
-        $this->tipo=$request->getParameter("tipo");
+        $this->tipo = $request->getParameter("tipo");
         if ($request->isMethod("post")) {
 
             //print_r($request->getParameter("costo"));
-            if($this->tipo=="expo")
-            {
-                    $q = Doctrine::getTable("InoCostoExpo")
+            if ($this->tipo == "expo") {
+                $q = Doctrine::getTable("InoCostoExpo")
                         ->createQuery("c")
                         //->select("*,c.ca_neta as ca_neto,c.ca_moneda as ca_idmoneda")
                         ->innerJoin("c.Costo cs")
-                        ->innerJoin("c.UsuCreado u")                    
-                        ->addWhere("ca_fchfactura >= ?", $request->getParameter("fchInicial"))
-                        ->addWhere("ca_fchfactura <= ?", $request->getParameter("fchFinal"))
-
-                        ->setHydrationMode(Doctrine::HYDRATE_ARRAY);            
-
-                    if ($request->getParameter("login")) {
-                        $q->addWhere("ca_usucreado like ?", $request->getParameter("login"));
-                    }
-            }
-            else if($this->tipo=="aereo")
-            {
-                    $q = Doctrine::getTable("InoCostosAir")
-                        ->createQuery("c")
-                        //->select("*,c.ca_neta as ca_neto,c.ca_moneda as ca_idmoneda")
-                        ->innerJoin("c.Costo cs")
-                        //->leftJoin("c.Proveedor p")
-                        ->innerJoin("c.UsuCreado u")                            
+                        ->innerJoin("c.UsuCreado u")
                         ->addWhere("ca_fchfactura >= ?", $request->getParameter("fchInicial"))
                         ->addWhere("ca_fchfactura <= ?", $request->getParameter("fchFinal"))
                         ->setHydrationMode(Doctrine::HYDRATE_ARRAY);
 
-                    if ($request->getParameter("login")) {
-                        $q->addWhere("ca_usucreado like ?", $request->getParameter("login"));
-                    }
-            }        
-            else
-            {
+                if ($request->getParameter("login")) {
+                    $q->addWhere("ca_usucreado like ?", $request->getParameter("login"));
+                }
+            } else if ($this->tipo == "aereo") {
+                $q = Doctrine::getTable("InoCostosAir")
+                        ->createQuery("c")
+                        //->select("*,c.ca_neta as ca_neto,c.ca_moneda as ca_idmoneda")
+                        ->innerJoin("c.Costo cs")
+                        //->leftJoin("c.Proveedor p")
+                        ->innerJoin("c.UsuCreado u")
+                        ->addWhere("ca_fchfactura >= ?", $request->getParameter("fchInicial"))
+                        ->addWhere("ca_fchfactura <= ?", $request->getParameter("fchFinal"))
+                        ->setHydrationMode(Doctrine::HYDRATE_ARRAY);
+
+                if ($request->getParameter("login")) {
+                    $q->addWhere("ca_usucreado like ?", $request->getParameter("login"));
+                }
+            } else {
                 $q = Doctrine::getTable("InoCostosSea")
-                        ->createQuery("c")                    
+                        ->createQuery("c")
                         ->innerJoin("c.Costo cs")
                         ->innerJoin("c.UsuCreado u")
                         ->addWhere("substr(ca_referencia,5,2) like ?", $request->getParameter("sufijo"))
@@ -1447,7 +1441,7 @@ class reportesGerActions extends sfActions {
             }
 
             if ($request->getParameter("destino") != "%" && $request->getParameter("destino") != "") {
-                if($this->tipo=="expo")
+                if ($this->tipo == "expo")
                     $q->innerJoin("c.InoMaestraExpo m");
                 else
                     $q->innerJoin("c.InoMaestraSea m");
@@ -1465,51 +1459,46 @@ class reportesGerActions extends sfActions {
 
             $this->setTemplate("listadoFacturasResult");
         } else {
-            if($this->tipo=="expo")
-            {
+            if ($this->tipo == "expo") {
                 $this->costos = Doctrine::getTable("Costo")
-                    ->createQuery("c")
-                    ->where("c.ca_impoexpo = ?  ", array('Exportacion'))
-                    ->OrderBy("c.ca_costo")
-                    ->addOrderBy("c.ca_modalidad")
-                    ->execute();
+                        ->createQuery("c")
+                        ->where("c.ca_impoexpo = ?  ", array('Exportacion'))
+                        ->OrderBy("c.ca_costo")
+                        ->addOrderBy("c.ca_modalidad")
+                        ->execute();
                 $this->destinos = Doctrine::getTable("Ciudad")
-                    ->createQuery("c")
-                    ->where("c.ca_idtrafico = ?", "CO-057")
-                    //->addWhere("c.ca_puerto in ('Marítimo','Ambos')")
-                    ->orderBy("c.ca_ciudad")
-                    ->execute();
-            }
-            else if($this->tipo=="aereo")
-            {
+                        ->createQuery("c")
+                        ->where("c.ca_idtrafico = ?", "CO-057")
+                        //->addWhere("c.ca_puerto in ('Marítimo','Ambos')")
+                        ->orderBy("c.ca_ciudad")
+                        ->execute();
+            } else if ($this->tipo == "aereo") {
                 $this->costos = Doctrine::getTable("Costo")
-                    ->createQuery("c")
-                    ->where("c.ca_impoexpo = ? and c.ca_transporte=? ", array(Constantes::IMPO, Constantes::AEREO))
-                    ->OrderBy("c.ca_costo")
-                    ->addOrderBy("c.ca_modalidad")
-                    ->execute();
+                        ->createQuery("c")
+                        ->where("c.ca_impoexpo = ? and c.ca_transporte=? ", array(Constantes::IMPO, Constantes::AEREO))
+                        ->OrderBy("c.ca_costo")
+                        ->addOrderBy("c.ca_modalidad")
+                        ->execute();
                 $this->destinos = Doctrine::getTable("Ciudad")
-                    ->createQuery("c")
-                    ->where("c.ca_idtrafico = ?", "CO-057")
-                    ->addWhere("c.ca_puerto in ('Aéreo','Ambos')")
-                    ->orderBy("c.ca_ciudad")
-                    ->execute();
-            }
-            else
-            {
+                        ->createQuery("c")
+                        ->where("c.ca_idtrafico = ?", "CO-057")
+                        ->addWhere("c.ca_puerto in ('Aéreo','Ambos')")
+                        ->orderBy("c.ca_ciudad")
+                        ->execute();
+            } else {
                 $this->costos = Doctrine::getTable("Costo")
-                    ->createQuery("c")
-                    ->where("c.ca_impoexpo = ? and c.ca_transporte=? ", array(Constantes::IMPO, Constantes::MARITIMO))
-                    ->OrderBy("c.ca_costo")
-                    ->addOrderBy("c.ca_modalidad")
-                    ->execute();
-                
+                        ->createQuery("c")
+                        ->where("c.ca_impoexpo = ? and c.ca_transporte=? ", array(Constantes::IMPO, Constantes::MARITIMO))
+                        ->OrderBy("c.ca_costo")
+                        ->addOrderBy("c.ca_modalidad")
+                        ->execute();
+
                 $this->destinos = Doctrine::getTable("Ciudad")
-                    ->createQuery("c")
-                    ->where("c.ca_idtrafico = ?", "CO-057")
-                    ->addWhere("c.ca_puerto in ('Marítimo','Ambos')")
-                    ->orderBy("c.ca_ciudad")
-                    ->execute();
+                        ->createQuery("c")
+                        ->where("c.ca_idtrafico = ?", "CO-057")
+                        ->addWhere("c.ca_puerto in ('Marítimo','Ambos')")
+                        ->orderBy("c.ca_ciudad")
+                        ->execute();
             }
 
             $this->usuarios = Doctrine::getTable("Usuario")
@@ -1523,8 +1512,6 @@ class reportesGerActions extends sfActions {
                     ->addOrderBy("s.ca_nombre")
                     ->addWhere("s.ca_idempresa=?", $this->getUser()->getIdempresa())
                     ->execute();
-
-            
         }
     }
 
@@ -1667,63 +1654,63 @@ class reportesGerActions extends sfActions {
             }
 
             if ($this->aa) {
-                $where.= "and SUBSTR(a.ca_referencia,16,2) IN ('" . ($this->aa % 100) . "')";
+                $where .= "and SUBSTR(a.ca_referencia,16,2) IN ('" . ($this->aa % 100) . "')";
             }
 
             if ($mm) {
                 if (count($mm) > 0) {
                     $mes = "";
                     for ($i = 0; $i < count($mm); $i++) {
-                        $mes.= "'" . $mm[$i] . "',";
+                        $mes .= "'" . $mm[$i] . "',";
                     }
                     if (strpos($mes, 'Todos los meses') != true)
-                        $where.= " and SUBSTR(a.ca_referencia,8,2) IN (" . substr($mes, 0, -1) . ")";
+                        $where .= " and SUBSTR(a.ca_referencia,8,2) IN (" . substr($mes, 0, -1) . ")";
                 }
             }
 
             if ($this->transporte != "Todos")
-                $where.= " and a.ca_via ='" . $this->transporte . "'";
+                $where .= " and a.ca_via ='" . $this->transporte . "'";
 
             if ($this->idmodalidad && $this->transporte == "Maritimo")
-                $where.=" and em.ca_modalidad='" . $this->idmodalidad . "'";
+                $where .= " and em.ca_modalidad='" . $this->idmodalidad . "'";
 
             if ($this->ciu_origen)
-                $where.=" and a.ca_origen='" . $this->ciu_origen . "'";
+                $where .= " and a.ca_origen='" . $this->ciu_origen . "'";
 
             if ($this->idpais_destino)
-                $where.=" and tra_des.ca_idtrafico='" . $this->idpais_destino . "'";
+                $where .= " and tra_des.ca_idtrafico='" . $this->idpais_destino . "'";
 
             if ($this->idagente)
-                $where.=" and a.ca_idagente='" . $this->idagente . "'";
+                $where .= " and a.ca_idagente='" . $this->idagente . "'";
 
             if ($this->idlinea) {
                 if ($this->transporte == "Maritimo") {
-                    $where.=" and em.ca_idnaviera='" . $this->idlinea . "'";
+                    $where .= " and em.ca_idnaviera='" . $this->idlinea . "'";
                 } else if ($this->transporte == "Aereo") {
-                    $where.=" and ea.ca_idaerolinea='" . $this->idlinea . "'";
+                    $where .= " and ea.ca_idaerolinea='" . $this->idlinea . "'";
                 }
             }
 
             if ($this->sucursal) {
                 if ($this->sucursal != "999")
-                    $where.=" and s.ca_nombre='" . $this->idSucursal . "'";
+                    $where .= " and s.ca_nombre='" . $this->idSucursal . "'";
             }
 
             if ($this->idcliente)
-                $where.=" and a.ca_idcliente='" . $this->idcliente . "'";
+                $where .= " and a.ca_idcliente='" . $this->idcliente . "'";
 
             if ($this->login)
-                $where.=" and u.ca_login='" . $this->login . "'";
+                $where .= " and u.ca_login='" . $this->login . "'";
 
             if ($this->estado) {
                 if ($this->estado == "Abierto")
-                    $where.=" and a.ca_fchcerrado IS NULL";
+                    $where .= " and a.ca_fchcerrado IS NULL";
                 else if ($this->estado == "Cerrado")
-                    $where.=" and a.ca_fchcerrado IS NOT NULL";
+                    $where .= " and a.ca_fchcerrado IS NOT NULL";
                 else if ($this->estado == "Sin Facturar")
-                    $where.=" and ei.ca_loginvendedor IS NULL";
+                    $where .= " and ei.ca_loginvendedor IS NULL";
                 else {
-                    $where.=" and q.ca_consecutivo IS NOT NULL";
+                    $where .= " and q.ca_consecutivo IS NOT NULL";
                     $select = ", q.ca_consecutivo as ca_anulado";
                     $join = "LEFT JOIN (
                             SELECT max(r.ca_consecutivo) as ca_consecutivo
@@ -1826,37 +1813,37 @@ class reportesGerActions extends sfActions {
 
                 $this->grid[($r["total_negocios"])][($r["sucursal"])][($r["mes"])] ++;
                 $this->origen[($r["via"])][($r["sucursal"])][($r["mes"])]["total_negocios"] ++;
-                $this->origen[($r["via"])][($r["sucursal"])][($r["mes"])]["peso"]+=$r["peso"];
-                $this->origen[($r["via"])][($r["sucursal"])][($r["mes"])]["ino"]+=$r["ca_ino"];
+                $this->origen[($r["via"])][($r["sucursal"])][($r["mes"])]["peso"] += $r["peso"];
+                $this->origen[($r["via"])][($r["sucursal"])][($r["mes"])]["ino"] += $r["ca_ino"];
 
                 $this->trafico[$r["ciuorigen"]][$r["tradestino"]][$r["mes"]] ++;
 
                 foreach ($tipo_transporte as $key => $val_trans) {
                     if ($val_trans == $r["via"])
-                        $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]][$r["via"]]+=$r["ca_ino"];
+                        $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]][$r["via"]] += $r["ca_ino"];
                     else
                         $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]][$val_trans] = $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]][$val_trans] ? $this->cliente[$r["sucursal"]][$r["cliente"]][$r["mes"]][$val_trans] : null;
                 }
 
-                $this->resumen[($r["sucursal"])][($r["mes"])]["peso"]+=$r["peso"];
-                $this->resumen[($r["sucursal"])][($r["mes"])]["volumen"]+=$r["peso_volumen"];
-                $this->resumen[($r["sucursal"])][($r["mes"])]["teus"]+=$r["teus"];
+                $this->resumen[($r["sucursal"])][($r["mes"])]["peso"] += $r["peso"];
+                $this->resumen[($r["sucursal"])][($r["mes"])]["volumen"] += $r["peso_volumen"];
+                $this->resumen[($r["sucursal"])][($r["mes"])]["teus"] += $r["teus"];
 
                 $this->traficos[$r["via"]][$r["ciuorigen"]][$r["tradestino"]][$r["mes"]] ++;
 
 
                 if ($r["via"] == "Maritimo") {
                     $this->sea[$r["modalidad"]][$r["naviera"]][$r["mes"]]["casos"] ++;
-                    $this->sea[$r["modalidad"]][$r["naviera"]][$r["mes"]]["peso"]+=$r["peso"];
-                    $this->sea[$r["modalidad"]][$r["naviera"]][$r["mes"]]["volumen"]+=$r["peso_volumen"];
-                    $this->sea[$r["modalidad"]][$r["naviera"]][$r["mes"]]["teus"]+=$r["teus"];
+                    $this->sea[$r["modalidad"]][$r["naviera"]][$r["mes"]]["peso"] += $r["peso"];
+                    $this->sea[$r["modalidad"]][$r["naviera"]][$r["mes"]]["volumen"] += $r["peso_volumen"];
+                    $this->sea[$r["modalidad"]][$r["naviera"]][$r["mes"]]["teus"] += $r["teus"];
                 } else if ($r["via"] == "Aereo") {
                     $this->air[$r["aerolinea"]][$r["mes"]]["casos"] ++;
-                    $this->air[$r["aerolinea"]][$r["mes"]]["peso"]+=$r["peso"];
-                    $this->air[$r["aerolinea"]][$r["mes"]]["volumen"]+=$r["peso_volumen"];
+                    $this->air[$r["aerolinea"]][$r["mes"]]["peso"] += $r["peso"];
+                    $this->air[$r["aerolinea"]][$r["mes"]]["volumen"] += $r["peso_volumen"];
                 }
 
-                $this->vendedores[$r["comercial"]][$r["via"]][$r["cliente"]][$r["mes"]]+=$r["ca_ino"];
+                $this->vendedores[$r["comercial"]][$r["via"]][$r["cliente"]][$r["mes"]] += $r["ca_ino"];
             }
             ksort($this->tipo);
         }
@@ -1879,16 +1866,16 @@ class reportesGerActions extends sfActions {
 
         $andWhere = "";
         if ($this->pais_origen) {
-            $andWhere.= " and im.ca_traorigen = '" . $this->pais_origen . "'";
+            $andWhere .= " and im.ca_traorigen = '" . $this->pais_origen . "'";
         }
         if ($this->destino) {
-            $andWhere.= " and im.ca_ciudestino = '" . $this->destino . "'";
+            $andWhere .= " and im.ca_ciudestino = '" . $this->destino . "'";
         }
         if ($this->idlinea) {
-            $andWhere.= " and im.ca_idlinea = '" . $this->idlinea . "'";
+            $andWhere .= " and im.ca_idlinea = '" . $this->idlinea . "'";
         }
         if ($this->idmodalidad) {
-            $andWhere.= " and im.ca_modalidad = '" . $this->idmodalidad . "'";
+            $andWhere .= " and im.ca_modalidad = '" . $this->idmodalidad . "'";
         }
 
         if ($this->opcion) {
@@ -1946,27 +1933,27 @@ class reportesGerActions extends sfActions {
                 if (count($mm) > 0) {
                     $mes = "";
                     for ($i = 0; $i < count($mm); $i++) {
-                        $mes.= "'" . $mm[$i] . "',";
+                        $mes .= "'" . $mm[$i] . "',";
                     }
                     if (strpos($mes, 'Todos los meses') != true)
-                        $andWhere.= " and ca_mes IN (" . substr($mes, 0, -1) . ")";
+                        $andWhere .= " and ca_mes IN (" . substr($mes, 0, -1) . ")";
                 }
             }
             if ($this->pais_origen) {
-                $andWhere.= " and ca_traorigen = '" . $this->pais_origen . "'";
+                $andWhere .= " and ca_traorigen = '" . $this->pais_origen . "'";
             }
             if ($this->ciuorigen) {
-                $andWhere.= " and ca_ciuorigen = '" . $this->ciuorigen . "'";
+                $andWhere .= " and ca_ciuorigen = '" . $this->ciuorigen . "'";
             }
             if ($this->idcliente) {
-                $andWhere.=" and ca_compania like '%" . $this->cliente . "%'";
+                $andWhere .= " and ca_compania like '%" . $this->cliente . "%'";
             }
             if ($this->idsucursal) {
                 if ($this->idsucursal != "999")
-                    $andWhere.=" and ca_sucursal like '%" . $this->sucursal . "%'";
+                    $andWhere .= " and ca_sucursal like '%" . $this->sucursal . "%'";
             }
             if ($this->estado) {
-                $andWhere.= " and ca_estado = '" . $this->estado . "'";
+                $andWhere .= " and ca_estado = '" . $this->estado . "'";
             }
 
             $sql = "SELECT ca_sucursal, ca_ano, ca_mes, ca_traorigen, ca_ciuorigen, (CASE WHEN rg.ca_modalidad = 'COLOADING' THEN 'LCL' ELSE rg.ca_modalidad END) as ca_modalidad, ca_referencia, ca_hbls, ca_compania, ca_cbm, ca_teus, ca_estado, r.ca_idproveedor, tr1.ca_nombre AS ca_nombre_pro "
@@ -1988,13 +1975,13 @@ class reportesGerActions extends sfActions {
             foreach ($this->resul as $r) {
 
                 if ($r["ca_modalidad"] == "FCL") {
-                    $this->fcl[$r["ca_sucursal"]][$r["ca_estado"]][$r["ca_traorigen"]][$r["ca_ciuorigen"]][$r["ca_compania"]]["teus"]+=$r["ca_teus"];
+                    $this->fcl[$r["ca_sucursal"]][$r["ca_estado"]][$r["ca_traorigen"]][$r["ca_ciuorigen"]][$r["ca_compania"]]["teus"] += $r["ca_teus"];
                     $this->fcl[$r["ca_sucursal"]][$r["ca_estado"]][$r["ca_traorigen"]][$r["ca_ciuorigen"]][$r["ca_compania"]]["hbls"] ++;
                 }
 
                 if ($r["ca_modalidad"] == "LCL") {
                     $this->lcl[$r["ca_sucursal"]][$r["ca_estado"]][$r["ca_traorigen"]][$r["ca_ciuorigen"]][$r["ca_compania"]]["hbls"] ++;
-                    $this->lcl[$r["ca_sucursal"]][$r["ca_estado"]][$r["ca_traorigen"]][$r["ca_ciuorigen"]][$r["ca_compania"]]["cbm"]+=$r["ca_cbm"];
+                    $this->lcl[$r["ca_sucursal"]][$r["ca_estado"]][$r["ca_traorigen"]][$r["ca_ciuorigen"]][$r["ca_compania"]]["cbm"] += $r["ca_cbm"];
                 }
             }
         }
@@ -2105,19 +2092,19 @@ class reportesGerActions extends sfActions {
         $condicion = "ca_ano::text||'-'||ca_mes::text in ('$meses')";
 
         if ($sucursal != "Todas Las sucursales") {
-            $condicion.= " and ca_sucursal = '$sucursal' ";
+            $condicion .= " and ca_sucursal = '$sucursal' ";
         }
 
         if ($usuario != "%") {
-            $condicion.= " and ca_login like '$usuario' ";
+            $condicion .= " and ca_login like '$usuario' ";
         }
 
         if ($circular != "%") {
-            $condicion.= " and ca_stdcircular = '$circular' ";
+            $condicion .= " and ca_stdcircular = '$circular' ";
         }
 
         if ($casos != "%") {
-            $condicion.= " and ca_estado = '$casos' ";
+            $condicion .= " and ca_estado = '$casos' ";
         }
 
         $columnas = "ca_oid, ca_idinocliente, ca_referencia, ca_compania, ca_hbls, ca_incoterms, ca_factura, ca_fchfactura, ca_valor, ca_reccaja, ca_fchpago, ca_vlrcomisiones, ca_sbrcomisiones, ca_estado, ca_fchcerrado, ca_facturacion_r, ca_deduccion_r, ca_utilidad_r, ca_volumen_r, ca_vlrutilidad_liq, ca_volumen, ca_porcentaje, ca_sbrcomision, ca_stdcircular, ca_login, ca_sucursal";
@@ -2214,7 +2201,7 @@ class reportesGerActions extends sfActions {
     function printArray($arreglo, $crlf) {
         $cadena = "";
         foreach ($arreglo as $key => $value) {
-            $cadena.= "$key $value" . $crlf;
+            $cadena .= "$key $value" . $crlf;
         }
         return $cadena;
     }
@@ -2331,6 +2318,12 @@ class reportesGerActions extends sfActions {
                     }
                     $q->addSelect($column->sql);
                     break;
+                case "rprv_ca_incoterms":
+                    if (!$this->validaEstadoArreglo($joins, "RepProveedores")) {
+                        $q->innerJoin("rp.RepProveedores rprv");
+                    }
+                    $q->addSelect($column->sql);
+                    break;
                 case "usr_ca_nombre":
                     if (!$this->validaEstadoArreglo($joins, "Vendedor")) {
                         $q->innerJoin("rp.Usuario usr");
@@ -2437,21 +2430,21 @@ class reportesGerActions extends sfActions {
                         $q->addSelect("trg.ca_nombre");
                         $q->innerJoin("org.Trafico trg");
                     }
-                    $orderBy.= "trg.ca_nombre, ";
+                    $orderBy .= "trg.ca_nombre, ";
                     break;
                 case "org_ca_ciudad":
                     if (!$this->validaEstadoArreglo($joins, "Origen")) {
                         $q->addSelect("org.ca_ciudad");
                         $q->innerJoin("rp.Origen org");
                     }
-                    $orderBy.= "org.ca_ciudad, ";
+                    $orderBy .= "org.ca_ciudad, ";
                     break;
                 case "dst_ca_nombre":
                     if (!$this->validaEstadoArreglo($joins, "Destino")) {
                         $q->addSelect("tds.ca_nombre");
                         $q->innerJoin("rp.Destino dst");
                     }
-                    $orderBy.= "dst.ca_ciudad, ";
+                    $orderBy .= "dst.ca_ciudad, ";
                     break;
                 case "cli_ca_nombre":
                     if (!$this->validaEstadoArreglo($joins, "Contacto")) {
@@ -2460,7 +2453,7 @@ class reportesGerActions extends sfActions {
                         $q->innerJoin("cto.IdsCliente ids1");
                         $q->innerJoin("ids1.Ids cli");
                     }
-                    $orderBy.= "cli.ca_nombre, ";
+                    $orderBy .= "cli.ca_nombre, ";
                     break;
                 case "agt_ca_nombre":
                     if (!$this->validaEstadoArreglo($joins, "Agente")) {
@@ -2468,7 +2461,7 @@ class reportesGerActions extends sfActions {
                         $q->innerJoin("rp.IdsAgente ids2");
                         $q->innerJoin("ids2.Ids agt");
                     }
-                    $orderBy.= "agt.ca_nombre, ";
+                    $orderBy .= "agt.ca_nombre, ";
                     break;
                 case "prv_ca_nombre":
                     if (!$this->validaEstadoArreglo($joins, "Proveedor")) {
@@ -2476,14 +2469,14 @@ class reportesGerActions extends sfActions {
                         $q->innerJoin("rp.IdsProveedor ids3");
                         $q->innerJoin("ids3.Ids prv");
                     }
-                    $orderBy.= "prv.ca_nombre, ";
+                    $orderBy .= "prv.ca_nombre, ";
                     break;
                 case "usr_ca_nombre":
                     if (!$this->validaEstadoArreglo($joins, "Vendedor")) {
                         $q->addSelect("usr.ca_nombre");
                         $q->innerJoin("rp.Usuario usr");
                     }
-                    $orderBy.= "usr.ca_nombre, ";
+                    $orderBy .= "usr.ca_nombre, ";
                     break;
                 case "suc_ca_nombre":
                     if (!$this->validaEstadoArreglo($joins, "Vendedor")) {
@@ -2493,29 +2486,29 @@ class reportesGerActions extends sfActions {
                         $q->addSelect("suc.ca_nombre");
                         $q->innerJoin("usr.Sucursal suc");
                     }
-                    $orderBy.= "suc.ca_nombre, ";
+                    $orderBy .= "suc.ca_nombre, ";
                     break;
                 case "rp_ca_usucreado":
                     $q->addSelect("rp.ca_usucreado");
-                    $orderBy.= "rp.ca_usucreado, ";
+                    $orderBy .= "rp.ca_usucreado, ";
                     break;
                 case "rp_ca_transporte":
                     $q->addSelect("rp.ca_transporte");
-                    $orderBy.= "rp.ca_transporte, ";
+                    $orderBy .= "rp.ca_transporte, ";
                     break;
                 default:
-                    $orderBy.= $filtro->sql . ", ";
+                    $orderBy .= $filtro->sql . ", ";
                     break;
             }
         }
         $orderBy = substr($orderBy, 0, -2);
         $q->addOrderBy($orderBy);
 
-//        $q->limit(100);
-//        $sql = $q->getSqlQuery();
-//        echo $sql;
-//        die($sql);
-        
+        // $q->limit(100);
+        // $sql = $q->getSqlQuery();
+        // echo $sql;
+        // die($sql);
+
         $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
         $reportes_rs = $q->execute();
 
@@ -2539,10 +2532,9 @@ class reportesGerActions extends sfActions {
             if (array_key_exists("rp_mes", $reporte_sc)) {
                 $reporte_sc["rp_mes"] = Utils::mesLargo($reporte_sc["rp_mes"]);
             }
-            if (array_key_exists("rp_ca_incoterms", $reporte_sc)) {
-                $incoterms = explode("|", $reporte_sc["rp_ca_incoterms"]);
-                $reportes_rs[$key]["rp_ca_incoterms"] = implode("<br />", array_unique($incoterms));
-                $reporte_sc["rp_ca_incoterms"] = implode("<br />", array_unique($incoterms));
+            if (array_key_exists("rprv_ca_incoterms", $reporte_sc)) {
+                $incoterms = explode("|", $reporte_sc["rprv_ca_incoterms"]);
+                $reporte_sc["rprv_ca_incoterms"] = implode("<br />", array_unique($incoterms));
             }
 
             if ($con_status) {
@@ -2589,7 +2581,6 @@ class reportesGerActions extends sfActions {
                     "ETD: " => $reporte_sc["rp_ca_fchsalida"],
                     "ETA: " => $reporte_sc["rp_ca_fchllegada"]
                 );
-                $reportes_rs[$key]["status"] = $this->printArray(array_merge($status, $confirma), "<br />");
                 $reporte_sc["status"] = $this->printArray(array_merge($status, $confirma), "<br />");
             }
             if ($con_equipos) {
@@ -2601,20 +2592,15 @@ class reportesGerActions extends sfActions {
                 foreach ($repequipos as $equipo) {
                     $equipos[$equipo->getConcepto()->getCaUnidad() . " X "] += $equipo->getCaCantidad();
                 }
-                $reportes_rs[$key]["equipos"] = $this->printArray($equipos, "<br />");
                 $reporte_sc["equipos"] = $this->printArray($equipos, "<br />");
                 if ($reporte->getCaTransporte() == Constantes::MARITIMO and ( $reporte->getCaModalidad() == Constantes::LCL or $reporte->getCaModalidad() == Constantes::COLOADING)) {
-                    $reportes_rs[$key]["volumen"] = str_replace("M&sup3;", "M3", $reporte->getVolumen());
                     $reporte_sc["volumen"] = str_replace("M&sup3;", "M3", $reporte->getVolumen());
                 } else {
-                    $reportes_rs[$key]["volumen"] = 0;
                     $reporte_sc["volumen"] = 0;
                 }
                 if ($reporte->getCaTransporte() == Constantes::AEREO) {
-                    $reportes_rs[$key]["peso"] = $reporte->getPeso();
                     $reporte_sc["peso"] = $reporte->getPeso();
                 } else {
-                    $reportes_rs[$key]["peso"] = 0;
                     $reporte_sc["peso"] = 0;
                 }
             }
@@ -2627,7 +2613,6 @@ class reportesGerActions extends sfActions {
                 foreach ($reptarifas as $tarifa) {
                     $tarifas[$tarifa->getConcepto()->getCaConcepto() . ": "] = $tarifa->getCaNetaTar() . " / " . $tarifa->getCaReportarTar() . " / " . $tarifa->getCaCobrarTar();
                 }
-                $reportes_rs[$key]["tarifas"] = $this->printArray($tarifas, "<br />");
                 $reporte_sc["tarifas"] = $this->printArray($tarifas, "<br />");
             }
             $reporte_sc = array_map('utf8_encode', $reporte_sc);
@@ -2665,7 +2650,7 @@ class reportesGerActions extends sfActions {
                 $this->expor_cols[] = array("title" => $column["text"], "name" => $column["dataIndex"], "xtype" => "string");
             }
         }
-        
+
         // Retira el campo key del cuerpo del informe
         $columns = array();
         foreach ($this->columns as $k => $v) {
@@ -2697,9 +2682,9 @@ class reportesGerActions extends sfActions {
         } else if ($tipo == "Proveedor") {
             $q->innerJoin("i.IdsProveedor pr");
         }
-        if ($estado == "Activo" && ($tipo == "Agente" || $tipo == "Proveedor")){
+        if ($estado == "Activo" && ($tipo == "Agente" || $tipo == "Proveedor")) {
             $q->addWhere("ca_activo = ?", true);
-        }else if ($estado != "Activo" && ($tipo == "Agente" || $tipo == "Proveedor")){
+        } else if ($estado != "Activo" && ($tipo == "Agente" || $tipo == "Proveedor")) {
             $q->addWhere("ca_activo = ?", false);
         }
         $q->addWhere("UPPER(i.ca_nombre) like ?", '%' . strtoupper($query) . '%');
@@ -2789,11 +2774,11 @@ class reportesGerActions extends sfActions {
                 $vendedores[] = array("id" => $usuario->getCaLogin(), "text" => utf8_encode($usuario->getCaNombre()), "leaf" => true, "checked" => false);
             }
 
-           // $this->responseArray = array("success" => true, "root" => $vendedores);
+            // $this->responseArray = array("success" => true, "root" => $vendedores);
             $tree = array("text" => "Vendedores",
                 "leaf" => false,
                 "id" => "0",
-                "children" => $vendedores );
+                "children" => $vendedores);
 
             //$this->responseArray = array("success" => true, "root" => $tree);
             $this->responseArray = $tree;
@@ -2835,7 +2820,7 @@ class reportesGerActions extends sfActions {
             $tree = array("text" => "Operativos",
                 "leaf" => false,
                 "id" => "0",
-                "children" => $vendedores );
+                "children" => $vendedores);
 
             //$this->responseArray = array("success" => true, "root" => $tree);
             $this->responseArray = $tree;
@@ -2880,12 +2865,12 @@ class reportesGerActions extends sfActions {
         $dateFinal = $anio . "-" . $mes . "-" . $ultimodia;
 
         $sql = "select tr.ca_fchcreado  , cc.ca_idalterno, cc.ca_digito, ";
-        $sql.= "cc.ca_compania, cc.ca_ncompleto_cn, cc.ca_cargo, ct.ca_consecutivo,tr.ca_usucreado ";
-        $sql.= "from tb_cotizaciones ct ";
-        $sql.= "inner join vi_concliente cc on cc.ca_idcontacto = ct.ca_idcontacto ";
-        $sql.= "inner join notificaciones.tb_tareas tr on tr.ca_idtarea = ct.ca_idg_envio_oportuno ";
-        $sql.= "where " . $whereUsuarios;
-        $sql.= "tr.ca_fchcreado between '" . $dateInicial . "' and '" . $dateFinal . "'";
+        $sql .= "cc.ca_compania, cc.ca_ncompleto_cn, cc.ca_cargo, ct.ca_consecutivo,tr.ca_usucreado ";
+        $sql .= "from tb_cotizaciones ct ";
+        $sql .= "inner join vi_concliente cc on cc.ca_idcontacto = ct.ca_idcontacto ";
+        $sql .= "inner join notificaciones.tb_tareas tr on tr.ca_idtarea = ct.ca_idg_envio_oportuno ";
+        $sql .= "where " . $whereUsuarios;
+        $sql .= "tr.ca_fchcreado between '" . $dateInicial . "' and '" . $dateFinal . "'";
 
         $q = Doctrine_Manager::getInstance()->connection();
         $stmt = $q->execute($sql);
@@ -2915,13 +2900,13 @@ class reportesGerActions extends sfActions {
     }
 
     public function executeCargasPendientesxLiberar(sfWebRequest $request) {
-        
+
         $fecha = date('Y-m-d');
-        $nuevafecha = strtotime ( '-9 day' , strtotime ( $fecha ) ) ;
-        $nuevafecha = date ( 'Y-m-d' , $nuevafecha );
-        
+        $nuevafecha = strtotime('-9 day', strtotime($fecha));
+        $nuevafecha = date('Y-m-d', $nuevafecha);
+
         //echo $nuevafecha;
-        
+
         $sql = "SELECT DISTINCT 
                     im.ca_referencia,                    
                     ori.ca_ciudad as origen, 
@@ -2964,7 +2949,7 @@ class reportesGerActions extends sfActions {
         $con = Doctrine_Manager::getInstance()->connection();
         $st = $con->execute($sql);
         $this->cargas = $st->fetchAll();
-}
+    }
 }
 
 ?>
