@@ -1252,8 +1252,8 @@ class widgetsActions extends sfActions {
         
         $q->addOrderBy("h.ca_idgroup ASC");        
         $q->addOrderBy("h.ca_idticket DESC");        
-        $q->groupBy("h.ca_idticket, h.ca_title, h.ca_text, h.ca_idgroup");        
-        $q->distinct();                
+        $q->groupBy("h.ca_idticket, h.ca_title, h.ca_text, h.ca_idgroup");
+        $q->distinct();        
         $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);        
         
         $debug = utf8_encode($q->getSqlQuery());        
