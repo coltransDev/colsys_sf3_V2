@@ -668,7 +668,7 @@ class clientesActions extends sfActions {
                      </tr>
                      <tr>
                         <td style=\"text-align: justify\">
-                           Es necesario para <strong>COLTRANS S.A.S.</strong> y/o <strong>AGENCIA DE ADUANAS COLMAS S.A.S. NIVEL 1</strong> dar cumplimiento a la Circular 0170 de 2002, resolución 8571 de 2010 expedidas por la DIAN y a la circular externa 100-000005 de junio 17 de 2014, expedida por la Superintendencia de Sociedades, siendo nuestra obligación como Agentes de Carga Internacional / Agentes de Aduana, crear un banco de datos de nuestros clientes que nos permita establecer un adecuado auto control y gestión del riesgo para la 'Prevención del lavado de Activos y Financiación del Terrorismo' en nuestras operaciones.<br /><br />
+                           Es necesario para <strong>COLTRANS S.A.S.</strong> y/o <strong>AGENCIA DE ADUANAS COLMAS S.A.S. NIVEL 1</strong> dar cumplimiento a la Circular 0170 de 2002, resolución 8571 de 2010 expedidas por la DIAN y a la circular externa 100-000005 de junio 17 de 2014, expedida por la Superintendencia de Sociedades, siendo nuestra obligación como Agentes de Carga Internacional / Agentes de Aduana, crear un banco de datos de nuestros clientes que nos permita establecer un adecuado auto control y gestión del riesgo para la 'Prevención del lavado de Activos y Financiación del Terrorismo' en nuestras operaciones.<br /><br />
                            Por lo anterior, el Representante Comercial que atiende su cuenta, estará retirando de sus instalaciones los siguientes documentos:<br /><br />
                         </td>
                      </tr>
@@ -741,15 +741,16 @@ class clientesActions extends sfActions {
                      <tr>
                         <td style=\"text-align: justify\">
                            * Empresas que cuenten con más de 5.000 SMMLV de activos están obligados a tener revisor fiscal.<br /><br />
-                           Si usted es Grancontribuyente, UAP, ALTEX, Agente Diplomático, Entidad del estado, Entidades territoriales, entidad descentralizada, entidad vigilada por la Superfinanciera, esta exceptuado de presentar el balance general, estado de resultados, notas a los estados financieros, certificación de los estados financieros del contador y/o revisor, fotocopia de la cédula del contador y/o revisor y sus respectivos antecedentes.<br /><br />
-                           Los Estados Financieros deben estar certificados y dictaminados por Representante Legal y Revisor Fiscal y/o Contador Público con fecha de corte a Dic. 31 del año inmediatamente anterior. Si la compañía se encuentra recientemente constituida, deberá entregar un balance inicial. Si usted es persona natural, deberá entregar copia de la última Declaración de Renta.<br /><br />
-                           Está documentación debe ser actualizada mínimo anualmente y reposará en nuestros archivos con un trato de <strong>ABSOLUTA RESERVA Y CONFIDENCIALIDAD.</strong> El incumplimiento de alguno de los puntos anteriores acarreará una sanción por parte de la DIAN.<br /><br />$renovacion_credito
+                           * Si usted es un cliente que realiza exportaciones, adicional a los documentos solicitados en la tabla anterior, debe anexar una Referencia Comercial, Certificación de cuenta bancaria y acuerdo de seguridad debidamente firmado. (El acuerdo de seguridad lo encuentra adjunto a este correo o lo puede descargar de la página web <a href=\"http://www.coltrans.com.co\">www.coltrans.com.co</a>).<br /><br />
+                           * Los Estados Financieros deben estar certificados y dictaminados por Representante Legal y Revisor Fiscal y/o Contador Público con fecha de corte a Dic. 31 del año inmediatamente anterior. Si la compañía se encuentra recientemente constituida, deberá entregar un balance inicial. Si usted es persona natural, deberá entregar copia de la última Declaración de Renta.<br /><br />
+                           * Si usted es Grancontribuyente, UAP, ALTEX, Agente Diplomático, Entidad del estado, Entidades territoriales, entidad descentralizada, entidad vigilada por la Superfinanciera, esta exceptuado de presentar el balance general, estado de resultados, notas a los estados financieros, certificación de los estados financieros del contador y/o revisor, fotocopia de la cédula del contador y/o revisor y sus respectivos antecedentes.<br /><br />
+                           Está documentación debe ser actualizada mínimo anualmente y reposará en nuestros archivos con un trato de <strong>ABSOLUTA RESERVA Y CONFIDENCIALIDAD.</strong> El incumplimiento de alguno de los puntos anteriores acarreará una sanción por parte de la DIAN.<br /><br />$renovacion_credito
                            <strong>IMPORTANTE:</strong><br />
                            En caso de no tener un Representante Comercial asignado, agradecemos enviar los mismos en original a la atención de Área de Cumplimiento en la dirección: Cra. 98 No 25G-10 INT 18, Bogotá D.C.<br /><br />
                            Si usted es cliente de Coltrans y Colmas, debe remitir un solo paquete de documentos acogiéndose con la relación de documentos de Colmas.<br /><br />
                            Cordialmente,<br /><br /><br />
                            <strong>
-                              DEPARTAMENTO  COMERCIAL<br />
+                              DEPARTAMENTO COMERCIAL<br />
                               COLTRANS S.A.S./<br />
                               AGENCIA DE ADUANAS COLMAS S.A.S. NIVEL 1
                            </strong>
@@ -763,6 +764,7 @@ class clientesActions extends sfActions {
                 // }
                 $email->addAttachment("ids/formatos/Check_List_Circular_0170.pdf");
                 $email->addAttachment("ids/formatos/Formato_conocimiento_de_cliente.xls");
+                $email->addAttachment("ids/formatos/Acuerdo_de_Seguridad.pdf");
 
                 $email->save();
             }
@@ -2779,13 +2781,15 @@ class clientesActions extends sfActions {
 
     public function executeDatosContactosFichaTecnica(sfWebrequest $request) {
         $idcliente = $request->getParameter("idcliente");
-        $fichatecnica = new FichaTecnica();
         $fichatecnica = Doctrine::getTable("FichaTecnica")
                 ->createQuery("d")
                 ->where("d.ca_idcliente = ?", $idcliente)
                 ->fetchOne();
-
-        $this->responseArray = array("success" => true, "root" => json_decode(utf8_encode($fichatecnica->getCaContactos())));
+        $contactos = "";
+        if ($fichatecnica) {
+            $contactos = utf8_encode($fichatecnica->getCaContactos());
+        }
+        $this->responseArray = array("success" => true, "root" => json_decode ($contactos));
         $this->setTemplate("responseTemplate");
     }
 
@@ -3105,7 +3109,7 @@ class clientesActions extends sfActions {
         $seguimientos = Doctrine::getTable("IdsEventos")
                 ->createQuery("i")
                 ->where('i.ca_tipo = ?', 'Reporte de Negocio')
-                ->addWhere('date_part(\'YEAR\', i.ca_fchevento) = ?', 2018)
+                ->addWhere('date_part(\'YEAR\', i.ca_fchevento) = ?', 2017)
                 ->addOrderBy("i.ca_fchevento DESC")
                 ->limit(10000)
                 ->execute();
