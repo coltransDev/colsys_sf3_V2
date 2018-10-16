@@ -177,7 +177,7 @@ Ext.define('Colsys.Contabilidad.FormComprobantes', {
                                 Ext.getCmp("anticipo").setVisible(false);
                                 Ext.getCmp("refer").setVisible(false);
                                 
-                                Ext.getCmp("refer").allowBlank = false;
+                                
                             }
                             Ext.getCmp("refer").setValue("");
                         }
