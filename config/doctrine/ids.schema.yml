@@ -195,8 +195,6 @@ IdsContacto:
     ca_fchactualizado: timestamp
     ca_usueliminado: string(20)
     ca_fcheliminado: timestamp
-    ca_usuhabeasdata: string(20)
-    ca_fchhabeasdata: timestamp
   relations:
     IdsSucursal:
       local: ca_idsucursal
@@ -272,10 +270,7 @@ IdsProveedor:
     ca_activo_impo: boolean
     ca_activo_expo: boolean
     ca_contrato_comodato: boolean
-    ca_vetado: boolean
-    ca_antlegales: string(200)
-    ca_antpenales: string(200)
-    ca_antfinancieros: string(200)
+    ca_vetado: boolean    
     ca_controladoporsig: integer
     ca_idclasificacion: integer
     ca_fchvencimiento: date
@@ -1002,7 +997,6 @@ IdsCredito:
     ca_id: integer
     ca_cupo: integer
     ca_dias: integer
-    ca_tipo: string(1)
     ca_idempresa: integer
     ca_observaciones: string
     ca_usucreado: string
@@ -1040,7 +1034,7 @@ IdsEstadoSap:
     ca_idempresa:
       type: integer
       primary: true
-    ca_activo: boolean
+    ca_estado: boolean
     ca_ususap: string
     ca_fchsap: timestamp
     ca_usucreado: string
