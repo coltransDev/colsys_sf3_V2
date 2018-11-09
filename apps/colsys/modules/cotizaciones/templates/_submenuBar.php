@@ -70,6 +70,14 @@ switch($action){
 		$button[$i]["confirm"]= "Esta seguro que desea anular esta cotización? ";
 		$i++;
 		
+                $button[$i]["name"]="Evento Riesgo";
+                $button[$i]["tooltip"]="Crea un nuevo evento en la maestra de riesgos";
+                $button[$i]["image"]="22x22/register.png"; 		
+                $button[$i]["id"]="btnevento";
+                $button[$i]["onClick"]= "nuevoEvento()";
+                //$button[$i]["link"]= "cotizaciones/copiarCotizacion?idcotizacion=".$this->getRequestParameter("id");
+                $i++;
+		
 		break;	
 
 	case "consultaCotizacion":		
@@ -121,5 +129,9 @@ function nuevaVersion(){
         $("#btnversion").attr("onClick", "");    
         location.href="/cotizaciones/copiarCotizacion?idcotizacion=<?=$this->getRequestParameter("id")?>&nv=true";
     }
+}
+
+function nuevoEvento(){
+    window.open("/riesgos/nuevoEventoExt5/idproceso/3/idtipo/1/documento/<?=$this->getRequestParameter("id")?>");    
 }
 </script>
