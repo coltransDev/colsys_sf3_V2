@@ -288,7 +288,7 @@ switch ($action) {
         $button[$i]["name"] = "Notificar";
         $button[$i]["tooltip"] = "Envia una notificación a las personas relacionadas en el reporte para que lo revisen";
         $button[$i]["image"] = "22x22/email.gif";
-        $button[$i]["link"] = "/reportesNeg/enviarNotificacion/idreporte/" . $this->getRequestParameter("id") . "/token/" . md5(time());
+        $button[$i]["link"] = "/reportesNeg/enviarNotificacion/impoexpo/".$impoexpo."/idreporte/" . $this->getRequestParameter("id") . "/token/" . md5(time());
         $i++;
 
         if(($reporte->getCaUsuanulado()==$user->getUserId()) || $permiso > 2 )
@@ -323,6 +323,14 @@ switch ($action) {
         $button[$i]["tooltip"] = "Lista de todas las versiones del reporte de negocios";
         $button[$i]["image"] = "22x22/5days.gif";
         $button[$i]["link"] = "/reportesNeg/listaVersiones/consecutivo/" . $reporte->getCaConsecutivo();
+        $i++;
+        
+        $button[$i]["name"]="Evento Riesgo";
+        $button[$i]["tooltip"]="Crea un nuevo evento en la maestra de riesgos";
+        $button[$i]["image"]="22x22/register.png"; 		
+        $button[$i]["id"]="btnevento";
+        $button[$i]["onClick"]= "nuevoEvento()";
+        //$button[$i]["link"]= "cotizaciones/copiarCotizacion?idcotizacion=".$this->getRequestParameter("id");
         $i++;
         
         if($reporte->getCaVersion()>1)
@@ -979,6 +987,10 @@ switch ($action) {
                 window.open("/email/verEmail/id/"+res.idemail, '_blank');                   
             }
         })
+    }
+    
+    function nuevoEvento(){
+        window.open("/riesgos/nuevoEventoExt5/idproceso/3/idtipo/2/documento/<?=$this->getRequestParameter("id") ?>");    
     }
     
 </script>
