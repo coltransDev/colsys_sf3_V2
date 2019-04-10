@@ -33,6 +33,7 @@ class InoComprobante extends BaseInoComprobante
     const ID_PORPAGAR = 665;
     const ID_UTILIDAD_X_SOBREVENTA = 666;
     public $iva = null;
+    private $vlrDeducciones;
     
     public function getIva(){
         if (!$this->iva){
@@ -76,13 +77,27 @@ class InoComprobante extends BaseInoComprobante
         return $total;
     }
     
-    public function anular($iduser,$msg="")
+    public function anular($iduser,$msg="",$conn=null, $origen)
     {
+        if($this->getCaIdhouse()>0)
+        {
+            if($this->getInoHouse()->getInoMaster()->getCaFchliquidado()!="")
+            {
+                 return false;
+            }
+                
+        }
+        
         $this->setCaFchanulado(date("Y-m-d H:i:s"));
         $this->setCaUsuanulado($iduser);
         $this->setCaEstado(self::ANULADO);
-        $this->setProperty("msgAnulado",$msg);
+        $this->setProperty("msgAnulado",$msg);        
+
+        if($iduser=="sap")
+            $this->stopBlaming();
         $this->save();
+        
+        return true;
     }
 
     public function getMovimientos(){
@@ -112,4 +127,236 @@ class InoComprobante extends BaseInoComprobante
             return " ";
     }
     
+    public function eliminarVinculados($iduser,$conn=null, $origen){
+        switch ($this->getInoTipoComprobante()->getCaTipo()) {
+            case "P"://factura porveedores
+                $error = $this->eliminarCostos($iduser, $conn, $origen);
+                break;
+            case "D":
+                $datosjson=json_decode(utf8_encode($this->getCaDatos()));
+                if($datosjson->collect=="on")
+                {                    
+                    $q=Doctrine::getTable("InoComprobante")
+                    ->createQuery("c")
+                    ->update()
+                    ->set("c.ca_usuanulado", "'" . $iduser . "'")
+                    ->set("c.ca_fchanulado", "'" . date("Y-m-d H:i:s") . "'")   
+                    ->set("c.ca_estado", "8")
+                    ->where("ca_consecutivo = ? and ca_idtipo = ? ", array( "C-".$this->getCaConsecutivo(), "99"));                    
+                    $q->execute();
+                }
+                //else
+                {
+                    $error = $this->eliminarCostos($iduser, $conn, $origen);
+                }
+                break;
+            case "R"://pago recibido
+                $error = $this->eliminarDocCruce($iduser, $conn, $origen);
+                break;
+            case "A"://Anticipo
+                $error = $this->eliminarAnticipo();
+                break;
+        }
+        return $error;
+    }
+    
+    public function eliminarCostos($usuanulado, $conn, $origen){
+        $costos = Doctrine::getTable("InoCosto")->findBy("ca_idcomprobante", $this->getCaIdcomprobante());
+        $mensaje = "Anulado desde SAP por " . $usuanulado;
+        
+        if ($costos) {
+            $errorInfo = "";
+            foreach ($costos as $costo) {
+                
+                $datosCosto = json_decode($costo->getCaDatos());                
+                $datosCosto->msganulado = $datosCosto->msganulado?" | " .$mensaje:$mensaje;
+                $datosCosto->origen = $_SERVER['DOCUMENT_ROOT'];
+
+                $costo->setCaFchanulado(date("Y-m-d H:i:s"));
+                $costo->setCaUsuanulado("sap");
+                $costo->setCaDatos(json_encode($datosCosto));
+                $costo->stopBlaming();
+                $costo->save();
+                
+                $utilidades = $costo->getInoUtilidad();
+                
+                if($utilidades){                    
+                    foreach($utilidades as $ut){
+                        $datosUti = json_decode($ut->getCaDatos());                
+                        $datosUti->msganulado = $datosUti->msganulado?" | " .$mensaje:$mensaje;
+                        
+                        $ut->setCaFchanulado(date("Y-m-d H:i:s"));
+                        $ut->setCaUsuanulado("sap");
+                        $ut->setCaDatos(json_encode($datosUti));
+                            $ut->stopBlaming();
+                        $ut->save();
+                    }
+                }
+            }
+        } else {
+            $errorInfo = "El comprobante " . $this->getCaIdcomprobante() . " no tiene costos asociados";
+        }
+        
+        return $errorInfo;
+    }
+    
+    public function eliminarDocCruce($usuanulado, $conn){
+        
+        $compCruce = Doctrine::getTable("InoComprobante")
+                        ->createQuery("cc")
+                        ->where("ca_idcomprobante_cruce = ?", $this->getCaIdcomprobante())
+                        ->execute();
+        
+        if($compCruce)
+        {
+            foreach ($compCruce as $c){
+                $c->setCaIdcomprobanteCruce(null);
+                $c->setCaObservaciones($c->getCaObservaciones()." | "."Anulado Documento Cruce Id:".$this->getCaIdcomprobante()." desde SAP por ". $usuanulado);
+                $c->stopBlaming();
+                $c->save();   
+            }
+            
+            //$conn->commit();
+            
+        }
+        else
+        {
+            $errorRef[]="No existe Documento Cruce del Pago recibido No ".$this->getCaConsecutivo(). " Idcomprobante=>". $this->getCaIdcomprobante();
+        }
+        
+        if(count($errorRef)>0){
+            $errorInfo = implode(",", $errorRef);
+        }else{
+            $errorInfo = "";
+        }
+        
+        return $errorInfo;        
+    }
+    
+    public function eliminarAnticipo(){
+        
+        try{
+            $sql="SELECT c.ca_idcomprobante,c.ca_datos FROM ino.tb_comprobantes c        
+                WHERE  c.ca_datos->'idanticipo' @> '[\"{$this->getCaIdcomprobante()}\"]'::jsonb";
+            $conn = Doctrine_Manager::getInstance()->getConnection('master');
+            $st = $conn->execute($sql);
+            $datos = $st->fetchAll();            
+            if(count($datos)>0)
+            {
+                $datos=$datos[0];
+                
+                $factura = Doctrine::getTable("InoComprobante")->find($datos["ca_idcomprobante"]);
+                if($factura)
+                {
+                    $datosJson=json_decode($factura->getCaDatos());
+                    $errorRef[]=$datosJson->iva;
+                    $anticipoJson=array();
+                    foreach($datosJson->idanticipo as $k=>$a)
+                    {                        
+                        {
+                            
+                            if($a==$this->getCaIdcomprobante())
+                            {
+                                //$anticipoJson["idanticipo"][]=$a;
+                                //$errorRef[]="<br>aa::".$a."<br>";
+                                $datosJson->idanticipo[$k]=null;
+                            }
+                        }
+                    }                    
+                    $datosJ = json_encode($datosJson);
+
+                    $errorRef[]=$datosJ;
+                    $factura->setCaDatos($datosJ);
+                    $factura->stopBlaming();
+                    $factura->save();
+                }
+                else
+                {
+                    $errorRef[]="El Anticipo no tiene facturas relacionadas";
+                }
+            }
+        } catch (exception $e)
+        {
+            $errorRef[]=$e->getMessage();
+        }
+        
+        if(count($errorRef)>0){
+        $errorInfo = implode(",", $errorRef);
+        }else{
+            $errorInfo = "";
+        }
+        
+        return $errorInfo;
+    }
+    
+    public function getVlrDeducciones() {
+        if ($this->vlrDeducciones === null) {
+            $q = Doctrine::getTable("InoDeduccion")
+                    ->createQuery("d")
+                    ->innerJoin("d.InoComprobante c")                    
+                    ->select("SUM(d.ca_neto*d.ca_tcambio)")
+                    ->addWhere("d.ca_idcomprobante = ?", $this->getCaIdcomprobante())
+                    ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR);
+            $this->vlrDeducciones = $q->execute();
+        }
+        return $this->vlrDeducciones;
+    }
+    
+    public function calcularIdg(array $ops){        
+        
+        $idempresa = $this->getInoTipoComprobante()->getSucursal()->getCaIdempresa();
+        
+        if($idempresa != 11 && $idempresa != 12){
+            $options = array();
+            
+            $fecha = Utils::parseDate($ops["fecha"], 'Y-m-d');
+            $options["fecha"] = $fecha;
+            $options["sigla"] = "OFC";
+            
+            $idhouse = $this->getCaIdhouse()?$this->getCaIdhouse():0;
+                
+            if($idhouse >0){
+                $house = Doctrine::getTable("InoHouse")->find($idhouse);
+                $master = Doctrine::getTable("InoMaster")->find($house->getCaIdmaster());                
+                
+                if($master->getCaTransporte() == Constantes::AEREO && $house->getInoHouseSea()->getCaContinuacion() == "CABOTAJE"){                    
+                    $reporte = $house->getReporte();
+                    $fchllegada = $reporte->getFchLlegadaCont();                    
+                }else
+                $fchllegada = $master->getCaFchllegada();                    
+
+                $options["impoexpo"] = $master->getCaImpoexpo();
+                $options["transporte"] = $master->getCaTransporte();                
+
+                if($house->getCliente()->getCaVendedor() != null && $house->getCliente()->getCaVendedor() != "")
+                    $options["idsucursal"] = $house->getCliente()->getUsuario()->getSucursal()->getCaIdsucursal();
+                else
+                    $options["idsucursal"] = $house->getUsuCreado()->getSucursal()->getCaIdsucursal();
+                
+                $idg = IdgTable::getNuevoIndicador($options);
+                
+                if(is_object($idg)){
+                    $num_dias = intval($idg->getCaLim1());
+
+                    $festivos = TimeUtils::getFestivos();
+                    $dif_mem = TimeUtils::workDiff($festivos, $fchllegada, $fecha);//     workDiff($festivos, $fch_llegada, $fecha);
+                    if ($dif_mem > $num_dias) {                    
+                        $cumple = 0;
+                    }else{                    
+                        $cumple = 1;
+                    }
+                    return array("val"=>$dif_mem, "estado"=>$cumple);                                            
+                }                
+            }
+        }        
+        return array("val"=>null, "estado"=>-1);        
+    }
+    
+    public function getFchVencimiento() {
+        $fch_comprobante = new DateTime($this->getCaFchcomprobante());
+	if ($this->getCaPlazo()) {
+	    $fch_comprobante->add(new DateInterval('P'.$this->getCaPlazo().'D'));
+	}
+        return $fch_comprobante->format('Y-m-d');
+    }
 }
