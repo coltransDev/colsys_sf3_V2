@@ -87,17 +87,25 @@ class InoComprobante extends BaseInoComprobante
             }
                 
         }
+                
+            
+        //$datos=json_decode($this->getCaDatos());
+        //$datos->idanticipo="";
         
         $this->setCaFchanulado(date("Y-m-d H:i:s"));
         $this->setCaUsuanulado($iduser);
         $this->setCaEstado(self::ANULADO);
-        $this->setProperty("msgAnulado",$msg);        
+        $this->setProperty("msgAnulado",$msg);
+        //$this->setCaDatos(json_encode($datos));
 
         if($iduser=="sap")
             $this->stopBlaming();
         $this->save();
         
         return true;
+        /*}catch (Exception $e) {
+            return $e->getMessage();
+        }*/
     }
 
     public function getMovimientos(){
@@ -240,19 +248,23 @@ class InoComprobante extends BaseInoComprobante
                 WHERE  c.ca_datos->'idanticipo' @> '[\"{$this->getCaIdcomprobante()}\"]'::jsonb";
             $conn = Doctrine_Manager::getInstance()->getConnection('master');
             $st = $conn->execute($sql);
-            $datos = $st->fetchAll();            
+            $datos = $st->fetchAll();
+            //$errorRef[]= $datos;
             if(count($datos)>0)
             {
                 $datos=$datos[0];
                 
+                //$errorRef[]=$datos["ca_idcomprobante"];                
                 $factura = Doctrine::getTable("InoComprobante")->find($datos["ca_idcomprobante"]);
                 if($factura)
                 {
+                    //$errorRef[]=$factura->getCaDatos();
                     $datosJson=json_decode($factura->getCaDatos());
                     $errorRef[]=$datosJson->iva;
                     $anticipoJson=array();
                     foreach($datosJson->idanticipo as $k=>$a)
                     {                        
+                        //if($a>0)
                         {
                             
                             if($a==$this->getCaIdcomprobante())
@@ -262,9 +274,19 @@ class InoComprobante extends BaseInoComprobante
                                 $datosJson->idanticipo[$k]=null;
                             }
                         }
-                    }                    
+                    }
+                    //$datosJ = json_decode($anticipoJson);
+                    //$datosJson->idanticipo=$datosJ->idanticipo;
+                    
+                    //$errorRef[]=json_encode($datosJ);
+                    
+                    //$errorRef[]=$datosJ;
+                    
+                    //$datosJson->idanticipo=$anticipoJson;
+                    //$errorRef[]=$factura->getCaIdcomprobante()."::::".$datosJson->idanticipo;                    
                     $datosJ = json_encode($datosJson);
 
+                    //$errorRef[]=json_decode($datosJson);
                     $errorRef[]=$datosJ;
                     $factura->setCaDatos($datosJ);
                     $factura->stopBlaming();
@@ -333,9 +355,13 @@ class InoComprobante extends BaseInoComprobante
                 else
                     $options["idsucursal"] = $house->getUsuCreado()->getSucursal()->getCaIdsucursal();
                 
+                //print_r($options);
+                
                 $idg = IdgTable::getNuevoIndicador($options);
                 
                 if(is_object($idg)){
+                    //echo "Lim1".$idg->getCaLim1();
+                    //exit();
                     $num_dias = intval($idg->getCaLim1());
 
                     $festivos = TimeUtils::getFestivos();
@@ -359,4 +385,5 @@ class InoComprobante extends BaseInoComprobante
 	}
         return $fch_comprobante->format('Y-m-d');
     }
+
 }
