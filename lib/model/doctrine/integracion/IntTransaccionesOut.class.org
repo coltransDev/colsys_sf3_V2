@@ -134,7 +134,7 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
             return null;
         
         
-        $datosjson=json_decode(utf8_encode($reg->getCaDatos()));
+        $datosjson=json_decode(utf8_decode($reg->getCaDatos()));
         
         $tipoComprobante = Doctrine::getTable("InoTipoComprobante")->find($reg->getCaIdtipo());
         $ccostos = Doctrine::getTable("InoCentroCosto")->find($reg->getCaIdccosto());
@@ -174,7 +174,7 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
         $datos["BienesTransp"] = utf8_encode(substr($reg->getProperty("bienestrans"),0,49)); 
         $datos["Trayecto"] = utf8_encode($reg->getInoHouse()->getInoMaster()->getOrigen()->getCaCiudad()." - ".$reg->getInoHouse()->getInoMaster()->getDestino()->getCaCiudad());
         $datos["Anexos"] = utf8_encode(substr($reg->getProperty("anexos"),0,100));
-        $datos["Detalle"] = utf8_encode(substr($reg->getProperty("detalle"),0,99));
+        $datos["Detalle"] = utf8_encode($reg->getProperty("detalle"));
         $datos["Peso"] = ($reg->getCaIdhouse()>0)?($reg->getInoHouse()->getInoMaster()->getCaPeso()!=""?$reg->getInoHouse()->getInoMaster()->getCaPeso() :"0" ):(($datosjson->ca_peso!="")?$datosjson->ca_peso:0);
         $datos["Piezas"] = ($reg->getCaIdhouse()>0)?($reg->getInoHouse()->getInoMaster()->getCaPiezas()!=""?$reg->getInoHouse()->getInoMaster()->getCaPiezas() :"0" ):(($datosjson->ca_piezas!="")?$datosjson->ca_piezas:0);
         $datos["Volumen"] = ($reg->getCaIdhouse()>0)?($reg->getInoHouse()->getInoMaster()->getCaVolumen()!=""?$reg->getInoHouse()->getInoMaster()->getCaVolumen() :"0" ):(($datosjson->ca_volumen!="")?$datosjson->ca_volumen:0);
@@ -183,9 +183,9 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
         //$datos["Destino"] = $tipoComprobante->getSucursal()->getCaIdsap();// "";// Pendiente por definir
         
         if($reg->getInoHouse()->getInoMaster()->getOrigen()->getCaCiudad()=="Cartagena" || $reg->getInoHouse()->getInoMaster()->getDestino()->getCaCiudad()=="Cartagena")
-            $datos["Destino"] = "8P";
+            $datos["Destino"] = "8";
         else if($reg->getInoHouse()->getInoMaster()->getOrigen()->getCaCiudad()=="Buenaventura" || $reg->getInoHouse()->getInoMaster()->getDestino()->getCaCiudad()=="Buenaventura")
-            $datos["Destino"] = "6P";// "";// Pendiente por definir
+            $datos["Destino"] = "6";// "";// Pendiente por definir
         else
             $datos["Destino"] = $tipoComprobante->getSucursal()->getCaIdsap();// "";// Pendiente por definir
         
@@ -199,7 +199,7 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
             exit;
         }*/
             
-        foreach($datosjson->idanticipo as $a)
+        foreach($datosJson->idanticipo as $a)
         {
             if($a>0)
             {
@@ -209,22 +209,6 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
                 }
             }
         }
-        
-        /*if($this->getCaIndice1()=="109003")
-        {
-            echo $reg->getCaDatos();
-            echo "<br>";
-            
-            //$datosjson=json_decode(($reg->getCaDatos()),true);
-            //$datosJson=json_decode(($reg->getCaDatos()));
-            
-            echo "<pre>";
-            print_r($datosjson);
-            
-            print_r($datos);
-            echo "</pre>";
-            exit;
-        }*/
 
         if($reg->getInoComprobanteCruce())
         {
@@ -302,12 +286,12 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
         
         //$datos["Destino"] = $reg->getInoTipoComprobante()->getSucursal()->getCaIdsap();// Pendiente por definir
         if($reg->getInoHouse()->getInoMaster()->getOrigen()->getCaCiudad()=="Cartagena")
-            $datos["Destino"] = "8P";
+            $datos["Destino"] = "8";
         else if($reg->getInoHouse()->getInoMaster()->getOrigen()->getCaCiudad()=="Buenaventura")
-            $datos["Destino"] = "6P";// "";// Pendiente por definir
+            $datos["Destino"] = "6";// "";// Pendiente por definir
         else
             $datos["Destino"] = $tipoComprobante->getSucursal()->getCaIdsap();// "";// Pendiente por definir
-
+        
         $datos["Comments"]="";
         
         //Lineas        //TODO 
@@ -389,7 +373,7 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
             return null;
         
         $estado= "C";
-        if($master->getCaFchliquidado()=="")
+        if($master->getCaFchcerrado()=="")
             $estado= "A";
         /*if($master->getCaFchliquidado()!="")
             $estado= "L";*/
@@ -562,8 +546,6 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
 
         if(!$reg)
             return null;
-        
-        echo $this->getIntTipos()->getCaIndice1()."<br/>";
          
         $datos["User"]=self::userSap;
         $datos["Password"]=self::passSap;
@@ -632,8 +614,8 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
         $datos["Company"]= $reg->getCargo()->getCaVentas()===true?$empresa->getCaPathsap():$reg->getSucursal()->getEmpresa()->getCaPathsap();
         $datos["System"]="2";
         $datos["CardCode"]="E".$reg->getCaDocidentidad();
-        $datos["CardName"]=utf8_encode(substr($reg->getCaApellidos()." ". $reg->getCaNombres(),0,99));
-        $datos["CardFName"]=utf8_encode(substr($reg->getCaApellidos()." ". $reg->getCaNombres(),0,99));
+        $datos["CardName"]=utf8_encode(substr($reg->getCaNombre(),0,99));
+        $datos["CardFName"]=utf8_encode(substr($reg->getCaNombre(),0,99));
         $datos["CardType"]="1";  // Tipo SN 0: Cliente 1: Proveedor 2: Lead      
         $datos["GroupCode"]="144";  // Código de grupo de socios de negocio
         $datos["CreditLimit"]="0";
@@ -809,7 +791,7 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
         
         $datos["CodReferencia"] = $master->getCaReferencia();
         $datos["Fecha"] = date('Y/m/d');
-        $datos["Comentarios"] = "";//substr(htmlentities($master->getCaObservaciones()),0,99);
+        $datos["Comentarios"] = substr(htmlentities($master->getCaObservaciones()),0,99);
         $datos["Linea"] = $linea["idlinea"];
          
         //Lineas        
@@ -831,11 +813,11 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
         $con1 = Doctrine_Manager::getInstance()->getConnection('master');
         
         $sql="
-            SELECT DISTINCT h.ca_idcliente as ca_idcliente, i.ca_idalterno as ca_id, c.ca_idsucursal as ca_idsucursal, i.ca_dv as ca_dv, h.ca_peso as ca_peso, h.ca_volumen as ca_volumen, h.ca_idhouse as ca_idhouse
+            SELECT DISTINCT h.ca_idcliente as ca_idcliente, i.ca_idalterno as ca_id,  h.ca_peso as ca_peso, h.ca_volumen as ca_volumen, h.ca_idhouse as ca_idhouse
             FROM ino.tb_house h
                     INNER JOIN ino.vi_consulta_comprobantes c ON c.ca_idhouse = h.ca_idhouse
                     INNER JOIN ids.tb_ids i ON i.ca_id = c.ca_id
-            WHERE c.ca_estado = 5 AND c.ca_idmaster = ".$master->getCaIdmaster();
+            WHERE c.ca_idmaster = ".$master->getCaIdmaster();
         $st = $con1->execute($sql);
         $lineas = $st->fetchAll();
         
@@ -844,13 +826,9 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
         $clientes = array();
         
         foreach($lineas as $linea){            
-            $cardcode=$linea["ca_id"];
-            if(($linea["ca_dv"]>-1))
-                $cardcode.="-".$linea["ca_dv"];
             if(!in_array($linea["ca_id"], $clientes)){
-                //$cliente = Doctrine::getTable("Cliente")->findBy("ca_idalterno", $linea["ca_id"])->getFirst();
-                $sucursal = Doctrine::getTable("Sucursal")->find($linea["ca_idsucursal"]);
-                $datos["Lineas"][] = array("CardCode"=>$cardcode, "PorcUtilidad"=>$distribucionUti[$linea["ca_id"]], "Sucursal"=>$sucursal->getCaIdsap());
+                $cliente = Doctrine::getTable("Cliente")->findBy("ca_idalterno", $linea["ca_id"])->getFirst();
+                $datos["Lineas"][] = array("CardCode"=>$linea["ca_id"], "PorcUtilidad"=>$distribucionUti[$linea["ca_id"]], "Sucursal"=>$cliente->getUsuario()->getSucursal()->getCaIdsap());
                 $clientes[] = $linea["ca_id"];
             }
         }
@@ -870,59 +848,34 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
         if(!$master)
             return null;
         
-        $datosJson = json_decode($master->getCaDatos());
-        if($datosJson->idempresa && $datosJson->idempresa>0)
-            $company=$datosJson->idempresa;
-        else
-            $company=2;
-        
-        $empresa = Doctrine::getTable("Empresa")->find($company);
-        
         $clientes = array();
         
         $datos["User"]=self::userSap;
         $datos["Password"]=self::passSap;
-        $datos["Company"]= $empresa->getCaPathsap(); // Se obtiene de la empresa a la que pertenece el usuario que la creó
+        $datos["Company"]= $master->getUsuCreado()->getSucursal()->getEmpresa()->getCaPathsap(); // Se obtiene de la empresa a la que pertenece el usuario que la creó
         $datos["System"]="2";
         
         $datos["CodReferencia"] = $master->getCaReferencia();
         $datos["Fecha"] = date('Y/m/d');
-        $datos["Comentarios"] = "";//substr(htmlentities($master->getCaObservaciones()),0,99);
+        $datos["Comentarios"] = substr(htmlentities($master->getCaObservaciones()),0,99);
                 
-        $con1 = Doctrine_Manager::getInstance()->getConnection('master');
-        
-        $sql = "
-            SELECT ca_idalterno as ca_id, i.ca_dv as ca_dv, sum(ca_peso) as ca_peso, sum(ca_volumen) as ca_volumen
-            FROM ino.vi_ingresos ing
-                LEFT JOIN ids.tb_ids i ON ing.ca_idcliente = i.ca_id
-                INNER JOIN ino.tb_house h ON h.ca_idhouse = ing.ca_idhouse
-            WHERE ing.ca_idmaster = ".$master->getCaIdmaster().
-            "GROUP BY ca_idalterno, ca_dv";
-        $st = $con1->execute($sql);
-        $lineas = $st->fetchAll();        
         //Lineas        
-//        $lineas = Doctrine::getTable("InoHouse")
-//                ->createQuery("h")
-//                ->select("*")
-//                ->where("ca_idmaster = ?", $master->getCaIdmaster())
-//                ->execute();
+        $lineas = Doctrine::getTable("InoHouse")
+                ->createQuery("h")
+                ->select("*")
+                ->where("ca_idmaster = ?", $master->getCaIdmaster())
+                ->execute();
         
-        $costoxCliente = $this->calcularDistribucionxCostos2($master, $lineas);
-        
-        //$tot_costos = array_sum($costoxCliente);
-        
-        //if ($tot_costos <> 0) {
-            foreach($lineas as $linea){
-                $cardcode=$linea["ca_id"];
-                if(($linea["ca_dv"]>-1))
-                    $cardcode.="-".$linea["ca_dv"];
-                if(!in_array($linea["ca_id"], $clientes)){            
-                    $datos["Lineas"][] = array("CardCode"=>$cardcode, "PorcParticipa"=>$costoxCliente[$linea["ca_id"]]);
-                    $clientes[] = $linea["ca_id"];
+        $costoxCliente = $this->calcularDistribucionxCostos($master, $lineas);
+        $tot_costos = array_sum($costoxCliente);
+        if ($tot_costos <> 0) {
+            foreach($lineas as $linea){            
+                if(!in_array($linea->getCaIdcliente(), $clientes)){            
+                    $datos["Lineas"][] = array("CardCode"=>"C".$linea->getCliente()->getCaIdalterno(), "PorcParticipa"=>round($costoxCliente[$linea->getCaIdcliente()]/$tot_costos*100,0));
+                    $clientes[] = $linea->getCaIdcliente();
                 }
             }
-        //}
-            
+        }
         return $datos;
     }
     
@@ -997,49 +950,39 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
         if(count($lineas) > 1){ // Las referencias con un solo house omiten el prorrateo
             foreach($lineas as $linea){            
                 $house = Doctrine::getTable("InoHouse")->find($linea["ca_idhouse"]);
-                if($house->getCaVolumen() > 0)
-                    $utHouse = $house->getUtilidadPorHouse();            
-                
+                $utHouse = $house->getUtilidadPorHouse();            
                 if(!$utHouse)
                     $utHouse = $house->getIno();
-                echo "Utilidad Idhouse->".$linea["ca_idhouse"].": ".$utHouse;
                 $utcliente[$linea["ca_id"]]+=$utcliente[$linea["ca_id"]]?$utcliente[$linea["ca_id"]]+$utHouse:$utHouse;
             }
 
             $tot_utilidad = array_sum($utcliente);
-            
-            if($tot_utilidad != 0) {
-            
-                echo "Nueva Utilidad<br/>";
-                echo "<pre>";print_r($utcliente);echo "</pre>";
-                echo "Total Utilidad".array_sum($utcliente)."<br/>";
 
-                foreach($utcliente as $key => $val){
-                    $distribucionUti[$key] = round(($utcliente[$key]*100)/$tot_utilidad,0);
+    //        echo "Nueva Utilidad<br/>";
+    //        echo "<pre>";print_r($utcliente);echo "</pre>";
+    //        echo "Total Utilidad".array_sum($utcliente)."<br/>";
+
+            foreach($utcliente as $key => $val){
+                $distribucionUti[$key] = round(($utcliente[$key]*100)/$tot_utilidad,0);
+            }
+
+            /*echo "Utilidad Porcentaje<br/>";
+            echo "<pre>";print_r($distribucionUti);echo "</pre>";
+            echo "Total Utilidad Porcentaje".array_sum($distribucionUti)."<br/>";*/
+
+            $tot_utilidad2 = array_sum($distribucionUti);        
+            $diff = $tot_utilidad2-100;
+
+            if($diff!==0){
+                $max = max($distribucionUti);
+
+                foreach($distribucionUti as $key=>$val){
+                    if($distribucionUti[$key]==$max)
+                        $id = $key;
                 }
 
-                /*echo "Utilidad Porcentaje<br/>";
-                echo "<pre>";print_r($distribucionUti);echo "</pre>";
-                echo "Total Utilidad Porcentaje".array_sum($distribucionUti)."<br/>";*/
-
-                $tot_utilidad2 = array_sum($distribucionUti);        
-                $diff = $tot_utilidad2-100;
-
-                if($diff!==0){
-                    $max = max($distribucionUti);
-
-                    foreach($distribucionUti as $key=>$val){
-                        if($distribucionUti[$key]==$max)
-                            $id = $key;
-                    }
-
-                    $distribucionUti[$id] = $distribucionUti[$id] - $diff;
-                    $total_utilidad_ajustada = array_sum($distribucionUti);
-                }
-            }else{
-                foreach($utcliente as $key => $val){
-                    $distribucionUti[$key] = 0;
-                }
+                $distribucionUti[$id] = $distribucionUti[$id] - $diff;
+                $total_utilidad_ajustada = array_sum($distribucionUti);
             }
         }else{
             $distribucionUti[$lineas[0]["ca_id"]] = 100;
@@ -1091,89 +1034,6 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
         return $ctxCliente;        
     }
     
-    public function calcularDistribucionxCostos2($master, $lineas){
-        
-        $con1 = Doctrine_Manager::getInstance()->getConnection('master');
-        $sql="
-            SELECT DISTINCT (c.ca_idhouse) as ca_idhouse, i.ca_idalterno as ca_idcliente, ct.ca_neto as ca_neto, ct.ca_tcambio
-            FROM ino.tb_costos ct
-                LEFT JOIN ino.tb_house h ON h.ca_idhouse = ct.ca_idhouse
-                left JOIN ino.vi_consulta_comprobantes c ON h.ca_idhouse = c.ca_idhouse AND c.ca_estado = 5
-                LEFT JOIN ids.tb_ids i ON c.ca_id = i.ca_id
-            WHERE ct.ca_fchanulado IS NULL AND ct.ca_idmaster = ".$master->getCaIdmaster();
-        $st = $con1->execute($sql);
-        $costos = $st->fetchAll();        
-        
-        $ct = array();        
-        
-        if(count($lineas)>1){
-            foreach($costos as $costo){
-
-                $idhouse = $costo["ca_idhouse"];
-
-                if($idhouse){
-                    //echo "->".$idhouse."<-<br/>";
-                    $house = Doctrine::getTable("InoHouse")->find($idhouse);            
-                    $ctHouse = $house->getCostoPorHouse();
-                    //echo "CostoxHouse=".$ctHouse."<br/>";
-                    $ct[$costo["ca_idcliente"]]+=$costo["ca_neto"]*$costo["ca_tcambio"];
-                }else{            
-                    $ct["General"]+=$costo["ca_neto"]*$costo["ca_tcambio"];
-                }            
-            }
-
-            $tot_costo = array_sum($ct);
-            $clientes = array();
-
-            foreach($lineas as $linea){            
-                $peso[$linea["ca_id"]]+= $master->getCaTransporte()=="Marítimo"?$linea["ca_volumen"]:$linea["ca_peso"];
-                if(!in_array($linea["ca_id"], $clientes))
-                    $clientes[] = $linea["ca_id"];
-            }
-            $tot_peso = array_sum($peso);
-
-            if ( $tot_peso <> 0 ) {
-                foreach($lineas as $linea){            
-                    $distribucion[$linea["ca_id"]] = round($peso[$linea["ca_id"]]/$tot_peso*100,2);
-                }
-
-                foreach($clientes as $cliente){            
-                    $ctxCliente[$cliente]+= round($ct[$cliente]+($ct["General"]*$distribucion[$cliente]/100));
-                }            
-
-            }
-
-            $tot_costos = array_sum($ctxCliente);
-
-            foreach($lineas as $linea){            
-                $ctxPorcxCliente[$linea["ca_id"]] = round($ctxCliente[$linea["ca_id"]]/$tot_costos*100,0);                
-            }
-
-            // Ajuste a la Utilidad para que sume 100
-            $tot_utilidad2 = array_sum($ctxPorcxCliente);        
-            $diff = $tot_utilidad2-100;
-
-            if($diff!==0){
-                $max = max($ctxPorcxCliente);
-
-                foreach($ctxPorcxCliente as $key=>$val){
-                    if($ctxPorcxCliente[$key]==$max)
-                        $id = $key;
-                }
-
-                $ctxPorcxCliente[$id] = $ctxPorcxCliente[$id] - $diff;
-                $total_utilidad_ajustada = array_sum($ctxPorcxCliente);
-            }
-        }else{
-            foreach($lineas as $linea){
-                $ctxPorcxCliente[$linea["ca_id"]] = 100;
-            }  
-        }
-        
-        return $ctxPorcxCliente;
-        
-    }
-    
      /*OK REVISADO JUL/31/2017*/
     public function jsonNotasCredito(){
     
@@ -1222,7 +1082,7 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
         $datos["NumAtCard"] = "";        
         $datos["Comments"] = ($reg->getCaObservaciones()!="")?$reg->getCaObservaciones():"";
         //$datos["SlpCode"] = ""; // Código empleado de ventas        
-        $datos["SlpCode"] = ($reg->getIds()->getIdsCliente()->getUsuario()->getCaDocidentidad()!="")?$reg->getIds()->getIdsCliente()->getUsuario()->getCaDocidentidad():"-1";
+        $datos["SlpCode"] = $reg->getInoHouse()->getVendedor()->getCaDocidentidad();//"-1"; // Código empleado de ventas        
         $datos["DocCur"] = $reg->getCaIdmoneda();
         $datos["DocRate"] = $reg->getCaTcambio();
         //$datos["PrjCode"] = $reg->getInoHouse()->getInoMaster()->getCaReferencia();
@@ -1259,46 +1119,39 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
          return  $datos;
     }
     
-    public static function enviarWs($idtransaccion='',$user='',$reenvio='no') {
+    public static function enviarWs($idtransaccion='',$user='') {
         
         ProjectConfiguration::registerZend();        
         $config = sfConfig::get('app_soap_sap');
         
         $client = new Zend_Soap_Client($config["wsdl_uri"], array('encoding' => 'ISO-8859-1', 'soap_version' => SOAP_1_2));
         
-        if($reenvio=="si")
-        {
-            $q = Doctrine::getTable("IntTransaccionesOut")
-                ->createQuery("tr")
-                ->select("*")          
-                ->where("tr.ca_estado=? and tr.ca_datos is not null and tr.ca_fchcreado>?", array("E",Utils::addDate(date("Y-m-d"), "-1")))
-                ->addWhere("ca_idtipo NOT IN (7,8,13,20,10)  ")
-                ->orderBy("ca_idtransaccion ASC")
-                //->addWhere("ca_idtipo = 1")
-
-                //->addWhere("tr.ca_idtransaccion>2415 ")
-                ->limit(100);
-            
-            echo Utils::addDate(date("Y-m-d"), "-1");
-            echo $q->getSqlQuery();
-        }
-        else
-        {
-            $q = Doctrine::getTable("IntTransaccionesOut")
-                ->createQuery("tr")
-                ->select("*")          
-                ->where("tr.ca_estado=? and tr.ca_datos is not null ", array("G"))
-                ->orderBy("ca_idtransaccion ASC")
-                ->limit(100);
-        }
+        $q = Doctrine::getTable("IntTransaccionesOut")
+                            ->createQuery("tr")
+                            ->select("*")          
+                            ->where("tr.ca_estado=? and tr.ca_datos is not null", array("G"))
+                            ->orderBy("ca_idtransaccion ASC")
+                            //->addWhere("ca_idtipo = 1")
+                
+                            //->addWhere("tr.ca_idtransaccion>2415 ")
+                            ->limit(100);
+        
         if($idtransaccion && $idtransaccion>0)
         {
+            //echo json_decode($idtransaccion)."<br>";
             $q->whereIn("tr.ca_idtransaccion", json_decode($idtransaccion));
         }
+        /*else
+        {
+            $q->addWhere("tr.ca_idtipo=2");
+        }*/
         
-        $transacciones=$q->execute();
+        //echo $q->getSqlQuery()."<br>";
+        //exit;
+        $transacciones=$q->execute();    
         
-        
+        //echo "No:".count($transacciones)."<br>";
+        //exit;
         $result=array();
         if(count($transacciones)>0){            
             foreach($transacciones as $tr)
@@ -1306,6 +1159,8 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
                 $respuesta="";
                 try{                
                     eval("\$respuesta = \$client->".$tr->getIntTipos()->getCaMetodo()." ( array('jsonDoc' => \$tr->getCaDatos()  ));");
+                    //sleep(2);
+                    //print_r($respuesta);//echo "860:".$respuesta."<br/>";
                     $estado="P";
                     $obj=null;
                     foreach($respuesta as $r)
@@ -1319,12 +1174,21 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
                     $estado="E";
                 }            
                 $respuesta1=json_decode($obj);
+                //print_r($respuesta1);
+                //exit;
+                //echo "Id:".$tr->getCaIndice1()."<br>";
                 $respuestaString=json_encode($respuesta1);
                 $mensaje_duplicado = strpos(trim($respuesta1->Message),"Ya existe un documento con el numero interno");
                 $mensaje_cancelado = strpos(trim($respuesta1->Message),"Document is already cancelled - Object reference not set to an instance of an object");
 
+
+
+                //echo "909";
+                //echo $mensaje_duplicado;
+                //exit;
                 if( ($respuesta1->Status=="0" && $tr->getCaIndice1()!="0") || ($respuesta1->Status=="1" && ($mensaje_duplicado !== false||$mensaje_cancelado!== false ) ))
                 {
+                    //echo "897";
                     switch($tr->getIntTipos()->getCaIdtipo())
                     {
                         case 13:
@@ -1390,18 +1254,6 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
                             $datosjson->autoretencion=$resComp->AutoRetencion;
                             $datosjson->idtransaccion=$tr->getCaIdtransaccion();                        
 
-                            $options["fecha"] = $resComp->DocDate;
-                            $idg = $comp->calcularIdg($options);
-
-                            $idgVal = $idg["val"];
-                            $idgEst = $idg["estado"];                            
-
-                            $datosjson->idg->OFC->valor = $idgVal;
-                            $datosjson->idg->OFC->estado = $idgEst;
-                            if($idgEst==0){
-                                $datosjson->idg->OFC->idexclusion = 0;
-                            }
-
                             $comp->setCaDocentry($respuesta1->DocEntry);
                             $conse=ltrim($resComp->CodigoDoc,"0");
                             $comp->setCaConsecutivo($conse);
@@ -1425,7 +1277,6 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
                         break;
                         case 8:                    
                         {
-                            sleep(2);
                             $con = Doctrine_Manager::getInstance()->getConnection('master');
                             $sq="SELECT c.ca_idcomprobante
                                 FROM ino.tb_costos c
@@ -1498,37 +1349,23 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
                         break;
                         case 20:                    
                         {
-                            
-                            $comprobante=null;                        
-                            $q = Doctrine::getTable("InoComprobante")
-                                    ->createQuery("i")
-                                    ->select("*")
-                                    ->where("ca_idcomprobante=? ",array($tr->getCaIndice1() ));
-                            $comps=$q->execute();                        
-                            if(count($comps)<1)
-                                continue;
-                            $comprobante=$comps[0];                            
-                            $datosjson=json_decode(utf8_encode($comprobante->getCaDatos()));
-                            
-                                                        
-                            
                             $con = Doctrine_Manager::getInstance()->getConnection('master');
                             $sq="SELECT c.ca_idcomprobante
                                 FROM ino.tb_costos c
                                 WHERE c.ca_idcomprobante =". $tr->getCaIndice1()." LIMIT 1";
                             $st = $con->execute($sq);
-                            $comprobantePr = $st->fetchAll();
-
+                            $comprobante = $st->fetchAll();
+                            
                             //Se valida si ya existe el comprobante para no registrar los datos de costos nuevamente!
                             //exit;
-                            if(count($comprobantePr) <= 0){
+                            if(count($comprobante) <= 0){
                                 $con1 = Doctrine_Manager::getInstance()->getConnection('master');
                                 $sql="UPDATE ino.tb_comprobantes SET ca_estado=5, ca_docentry='".$respuesta1->DocEntry."',ca_fchgenero='".date("Y-m-d H:i:s")."' , ca_usugenero='{$user}'
                                     where ca_idcomprobante='".$tr->getCaIndice1()."'";
                                 $st = $con1->execute($sql);
 
                                 // Los costos solo aplican para Coltrans y ColOtm
-                                if($respuesta1->Company == 'COLTRANS_PROD' || $respuesta1->Company == 'COLTRANS_PRUEBA' || $respuesta1->Company == 'COLOTM_PROD'){
+                                if($respuesta1->Company == 'COLTRANS_PROD' || $respuesta1->Company == 'COLOTM_PROD'){
 
                                     $con1 = Doctrine_Manager::getInstance()->getConnection('master');
                                     $sql1="SELECT d.ca_idmaster, d.ca_idconcepto, c.ca_consecutivo, c.ca_fchcomprobante, c.ca_id, c.ca_idmoneda, c.ca_tcambio, d.ca_db, c.ca_idcomprobante, d.ca_idhouse
@@ -1550,69 +1387,13 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
                                     }
                                 }   
                             }
-                            
-                            
-                            if($datosjson->collect=="on")
-                            {
-                                $con1 = Doctrine_Manager::getInstance()->getConnection('master');
-                                $sql="UPDATE ino.tb_comprobantes SET ca_estado=5, ca_docentry='".$respuesta1->DocEntry."',ca_fchgenero='".date("Y-m-d H:i:s")."' , ca_usugenero='{$user}'
-                                    where ca_idcomprobante='".$tr->getCaIndice1()."'";
-                                $st = $con1->execute($sql);
-
-                                if($comprobante->getInoTipoComprobante()->getCaIdempresa()=="2" || $comprobante->getInoTipoComprobante()->getCaIdempresa()=="8" ){
-
-                                    $con1 = Doctrine_Manager::getInstance()->getConnection('master');
-                                    $sql1="SELECT d.ca_idmaster, d.ca_idconcepto, d.ca_cr,d.ca_db,d.ca_idhouse
-                                        FROM ino.tb_detalles d
-                                                INNER JOIN ino.tb_comprobantes c ON d.ca_idcomprobante = c.ca_idcomprobante
-                                        WHERE d.ca_idcomprobante =".$tr->getCaIndice1();
-                                    $st = $con1->execute($sql1);
-                                    $detalles = $st->fetchAll();
-
-                                    $detalles= $comprobante->getInoDetalle();
-                                    $data= array();                                        
-                                    foreach($detalles as $d){
-                                        $valor="0";
-                                        $data[$d["ca_idmaster"]]["valor"]+=$valor;
-                                        $data[$d["ca_idmaster"]]["concepto"]+=$d["ca_idconcepto"];
-                                        $data[$d["ca_idmaster"]]["idhouse"]+=$d["ca_idhouse"];
-                                    }
-
-                                    foreach($data as $ref=>$d)
-                                    {
-                                        $sql1="INSERT INTO ino.tb_comprobantes                                                 
-                                                (
-                                                    ca_idtipo, ca_consecutivo, ca_fchcomprobante, ca_id, 
-                                                    ca_observaciones ,
-                                                    ca_fchcreado, ca_usucreado, ca_tcambio, ca_estado,
-                                                    ca_valor, ca_idmoneda, ca_valor2, ca_idsucursal,
-                                                    ca_fchgenero, ca_usugenero, ca_idmaster,
-                                                    ca_idhouse,
-                                                    ca_idcomprobante_cruce
-                                                )
-                                                values(
-                                                    '99','C-".$comprobante->getCaConsecutivo()."','".$comprobante->getCaFchcomprobante()."','".$comprobante->getCaId()."',
-                                                    'Generado Automaticamente desde la NC ".$comprobante->getCaConsecutivo()."-".$comprobante->getCaIdmaster()." : ".$d["concepto"]."',
-                                                    '".$comprobante->getCaFchcreado()."','".$comprobante->getCaUsucreado()."','".$comprobante->getCaTcambio()."','5',
-                                                    '".$d["valor"]."', '".$comprobante->getCaIdmoneda()."', '".$d["valor"]."', '".$comprobante->getCaIdsucursal()."',
-                                                    '".date("Y-m-d H:i:s")."', '".$comprobante->getCaUsugenero()."', '".$ref."',
-                                                    '".$d["idhouse"]."', '".$comprobante->getCaIdcomprobante()."'
-                                                )";
-
-                                        $st = $con1->execute($sql1);
-                                    }
-                                }
-                            }
-                            
-
                         }
                     }
-                    
                 }
                 else
                 {
-                    if($respuesta1->Status=="1")
-                        $estado="E";
+                    //echo "1062";
+                    $estado="E";
                 }
                 $tr->setCaEstado($estado);
                 $tr->setCaFchenvio(date("Y-m-d H:i:s"));
@@ -1832,17 +1613,10 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
         $datos["Series"] = $tipoComprobante->getCaComprobante();
         $datos["NumeroInterno"] = $reg->getCaIdcomprobante();
         //$datos["CardCode"] = $reg->getIds()->getCaIdalterno();//$tipoDoc=="RV"?"C".$reg->getIds()->getCaIdalterno():"P".$reg->getIds()->getCaIdalterno();
-        //$datos["CardCode"] = $reg->getIds()->getCaIdalterno().(($reg->getIds()->getCaDv()!="")?"-".$reg->getIds()->getCaDv():"");
-        $cardcode=$reg->getIds()->getCaIdalterno();
-        if(($reg->getIds()->getCaDv()>-1))
-            $cardcode.="-".$reg->getIds()->getCaDv();
-         //(($reg->getIds()->getCaDv()!="")?"-".$reg->getIds()->getCaDv():"");
-        $datos["CardCode"] = $cardcode;
-        
-        
-        $datos["DocDate"] = date("Y/m/d",strtotime($reg->getCaFchcomprobante()));//date("Y/m/d");
+        $datos["CardCode"] = $reg->getIds()->getCaIdalterno().(($reg->getIds()->getCaDv()!="")?"-".$reg->getIds()->getCaDv():"");
+        $datos["DocDate"] = date("Y/m/d");
         //$datos["DocDueDate"] = date("Y/m/d");
-        $datos["TaxDate"] = date("Y/m/d",strtotime($reg->getCaFchcomprobante()));//date("Y/m/d");
+        $datos["TaxDate"] = date("Y/m/d");
         if($reg->getCaPlazo()<1)
             $plazo=0;
         $datos["DocDueDate"] = date('Y/m/d', strtotime($reg->getCaFchcomprobante(). ' + '.($plazo).' days')); // Pendiente asociar el plazo con el asignado al proveedor
@@ -1878,4 +1652,4 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
          return  $datos;
     }
 
-}||||||| .r0
+}
