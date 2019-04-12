@@ -17,6 +17,7 @@ class RepStatus extends BaseRepStatus {
     const IDG_MARITIMO = 5;
     const IDG_AEREO = 4;
     const IDG_CONF_LLEGADA = 7;
+    const IDG_STATUS_MARITIMO = 35;
 
     /*
      * Retorna la etapa del status
@@ -192,18 +193,21 @@ class RepStatus extends BaseRepStatus {
     }
 
     public function getUltReporte() {
-        $rep = $this->getReporte();
-        if ($rep) {
+        //$rep = $this->getReporte();
+        //if ($rep) {
             $rep = Doctrine::getTable("Reporte")
-                    ->createQuery("r")
-                    ->select("r.*")
-                    ->where("r.ca_consecutivo = ?", $rep->getCaConsecutivo())
-                    ->addWhere("r.ca_usuanulado IS NULL")
-                    ->orderBy("r.ca_version DESC")
-                    ->limit("1")
-                    ->fetchOne();
-        }
-
+                ->createQuery("r")
+                ->select("r.*")
+                ->where("r.ca_consecutivo = ?", $this->getReporte()->getCaConsecutivo())
+                ->addWhere("r.ca_usuanulado IS NULL")
+                ->orderBy("r.ca_version DESC")
+                //->limit("1")
+                ->execute();
+        //}
+        if(count($rep)>0)
+            $rep=$rep[0];
+        else
+            return null;
         return $rep;
     }
 
@@ -393,6 +397,8 @@ class RepStatus extends BaseRepStatus {
                 if (count($perfiles) > 0) {
                     $email->addCc("coordinacion@coldepositos.com.co");
                     $email->addCc("operaciones@coldepositos.com.co");
+                    $email->addCc("operaciones1@coldepositos.com.co");
+                    $email->addCc("operaciones2@coldepositos.com.co");
                     
 
                     /*
@@ -435,19 +441,27 @@ class RepStatus extends BaseRepStatus {
                 }
 
                 $perfiles = array();
-
                 if (($reporte->getCaTransporte() == constantes::MARITIMO && $reporte->getCaImpoexpo() == constantes::IMPO) && $reporte->getCaContinuacion() != "OTM") {
                     if ($reporte->getCaDeclaracionant() == "true" || $reporte->getCaDeclaracionant() == "TRUE" || $reporte->getCaDeclaracionant() == "1" || $reporte->getCaDeclaracionant() == 1)
-                        $perfiles = array("Jefe de Aduanas Puerto", "Coordinador Control Riesgo Aduana");
+                    {
+                        //$perfiles = array("Jefe de Aduanas Puerto", "Coordinador Control Riesgo Aduana");
+                        $perfiles = array("Jefe de Aduanas Puerto");
+                        $email->addCc("coordinador-control-riesgo1@colmas.com.co");//ticket 68545 
+                    }
                     else
                         $perfiles = $etapa->getPerfilxTipo('ADUANA-PUERTO');
                 }
                 else if (($reporte->getCaTransporte() == constantes::AEREO && $reporte->getCaImpoexpo() == constantes::IMPO) || $reporte->getCaContinuacion() == "OTM") {
                     if ($reporte->getCaDeclaracionant() == "true" || $reporte->getCaDeclaracionant() == "TRUE" || $reporte->getCaDeclaracionant() == "1" || $reporte->getCaDeclaracionant() == 1)
-                        $perfiles = array("Jefe Dpto. Aduana", "Coordinador Control Riesgo Aduana");
+                    {
+                        //$perfiles = array("Jefe Dpto. Aduana", "Coordinador Control Riesgo Aduana");
+                        $perfiles = array("Jefe Dpto. Aduana" );
+                        $email->addCc("coordinador-control-riesgo2@colmas.com.co ");//ticket 68545
+                    }
                     else
                         $perfiles = $etapa->getPerfilxTipo('ADUANA-AEREO');
-                }
+                }                
+               
                 if (count($perfiles) > 0) {
                     $suc = $user->getSucursal();
                     if ($suc == "ABG" || $suc == "BGA" || $suc == "PEI") {
@@ -496,6 +510,8 @@ class RepStatus extends BaseRepStatus {
         }
         if(isset($options["modo"]) && $options["modo"])
             sfContext::getInstance()->getRequest()->setParameter("modo", $options["modo"]);
+        if(isset($options["nuevo"]) && $options["nuevo"])
+            sfContext::getInstance()->getRequest()->setParameter("nuevo", true);
         sfContext::getInstance()->getRequest()->setParameter("idstatus", $this->getCaIdstatus());
         $email->setCaBodyhtml(sfContext::getInstance()->getController()->getPresentationFor('traficos', 'verStatus'));
         $email->save($conn);
@@ -505,15 +521,26 @@ class RepStatus extends BaseRepStatus {
     }
 
     public static function retrieveByHbl($hbl) {
-
-        $hbl = Doctrine::getTable("RepStatus")
+        //echo $hbl;
+        
+        /*$q = Doctrine::getTable("Usuario")
+                                ->createQuery("c")
+                                ->select("c.ca_email")
+                                ->innerJoin("c.Sucursal s")
+                                ->where("s.ca_nombre = ?", array($sucursal->getCaNombre()))
+                                ->addWhere("c.ca_activo = ?", true)
+                                ->andWhereIn("c.ca_cargo", $perfiles);             */
+        $q = Doctrine::getTable("RepStatus")
                 ->createQuery("s")
+                ->select("s.*")                
                 ->where("s.ca_doctransporte = ?", $hbl)
-                ->addOrderBy("s.ca_idstatus DESC")
-                ->limit(1)
-                ->fetchOne();
-
-        return $hbl;
+                ->addOrderBy("s.ca_idstatus DESC");
+                //->limit(1);
+        //echo $q->getSqlQuery()." ".$hbl."<br>";
+        $hbls=$q->execute();
+//        echo count($hbls);
+        
+        return $hbls;
     }
 
 }
