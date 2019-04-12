@@ -10,172 +10,426 @@
  * @author     Your name here
  * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
-class InoMaster extends BaseInoMaster
-{
+class InoMaster extends BaseInoMaster {
+
     private $vlrFacturado = null;
     private $vlrNotasCredito = null;
     private $vlrDeducciones = null;
     private $vlrCosto = null;
     private $vlrSobreventa = null;
-    
+    private $kilos20Pies = null;
+    private $kilos40Pies = null;
+    private $teusTotal = null;
     private $emails;
-    private  $countemails;
-    
-    public function getVlrFacturado(){
-        if( $this->vlrFacturado===null ){
-            $this->vlrFacturado = Doctrine::getTable("InoComprobante")
-                       ->createQuery("c")
-                       ->innerJoin("c.InoHouse h")
-                       ->innerJoin("c.InoTipoComprobante t")
-                       ->innerJoin("h.InoMaster m")
-                       ->select("SUM(c.ca_valor*c.ca_tcambio)")
-                       ->addWhere("m.ca_idmaster = ? ", $this->getCaIdmaster())
-                       ->addWhere("t.ca_tipo =?", "F")
-		       ->addWhere("c.ca_fchanulado is null")
-                       //->addWhere("c.ca_estado =?", InoComprobante::TRANSFERIDO)
-                       ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)        
-                       ->execute();
+    private $countemails;
+
+    public function getKilos20Pies() {
+        if ($this->kilos20Pies === null) {
+            $inoHouses = $this->getInoHouse();
+            
+            foreach ($inoHouses as $inoHouse) {
+                $datos = json_decode(utf8_encode($inoHouse->getInoHouseSea()->getCaDatos()));
+                if ($datos->equipos) {
+                    foreach ($datos->equipos as $de) {
+                        $contenedor = Doctrine::getTable("Concepto")->find($de->idconcepto);
+                        if ($contenedor->getCaLiminferior() == 20) {
+                            $this->kilos20Pies+= $de->kilos;
+                        }
+                    }
+                }
+            }
         }
-        
-        if( $this->vlrNotasCredito===null ){
-            $this->vlrNotasCredito = Doctrine::getTable("InoComprobante")
-                       ->createQuery("c")
-                       ->innerJoin("c.InoHouse h")
-                       ->innerJoin("c.InoTipoComprobante t")
-                       ->innerJoin("h.InoMaster m")
-                       ->select("SUM(c.ca_valor*c.ca_tcambio)")
-                       ->addWhere("m.ca_idmaster = ? ", $this->getCaIdmaster())
-                       ->addWhere("t.ca_tipo =?", "C")
-		       ->addWhere("c.ca_fchanulado is null")
-                       //->addWhere("c.ca_estado =?", InoComprobante::TRANSFERIDO)
-                       ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)        
-                       ->execute();
-        }
-        return $this->vlrFacturado-$this->vlrNotasCredito;
+        return $this->kilos20Pies;
     }
 
-    public function getVlrDeducciones(){
-        if( $this->vlrDeducciones===null ){
-             $q= Doctrine::getTable("InoDeduccion")
-                       ->createQuery("d")
-                       ->innerJoin("d.InoComprobante c")
-                       ->innerJoin("c.InoHouse h")
-                       ->innerJoin("h.InoMaster m")
-                       ->select("SUM(d.ca_neto*d.ca_tcambio)")
-                       ->addWhere("m.ca_idmaster = ?", $this->getCaIdmaster())
-                       ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR);
-            $this->vlrDeducciones=$q->execute();
+    public function getKilos40Pies() {
+        if ($this->kilos40Pies === null) {
+            $inoHouses = $this->getInoHouse();
             
+            foreach ($inoHouses as $inoHouse) {
+                $datos = json_decode(utf8_encode($inoHouse->getInoHouseSea()->getCaDatos()));
+                if ($datos->equipos) {
+                    foreach ($datos->equipos as $de) {
+                        $contenedor = Doctrine::getTable("Concepto")->find($de->idconcepto);
+                        if ($contenedor->getCaLiminferior() != 20) {
+                            $this->kilos40Pies+= $de->kilos;
+                        }
+                    }
+                }
+            }
+        }
+        return $this->kilos40Pies;
+    }
+
+    public function getTeusTotal() {
+        if ($this->teusTotal === null) {
+            $equipos = $this->getInoEquipo();
+            foreach ($equipos as $equipo) {
+                if ($equipo->getConcepto()->getCaModalidad() == "FCL") {
+                    $this->teusTotal += round($equipo->getConcepto()->getCaLiminferior() / 20, 0);
+                }
+            }
+        }
+        return $this->teusTotal;
+    }
+
+    public function getVlrFacturado() {
+        if ($this->vlrFacturado === null) {
+            $this->vlrFacturado = Doctrine::getTable("InoComprobante")
+                    ->createQuery("c")
+                    ->innerJoin("c.InoHouse h")
+                    ->innerJoin("c.InoTipoComprobante t")
+                    ->innerJoin("h.InoMaster m")
+                    ->select("SUM(c.ca_valor*c.ca_tcambio)")
+                    ->addWhere("m.ca_idmaster = ? ", $this->getCaIdmaster())
+                    ->addWhere("t.ca_tipo =?", "F")
+                    ->addWhere("c.ca_fchanulado is null")
+                    //->addWhere("c.ca_estado =?", InoComprobante::TRANSFERIDO)
+                    ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                    ->execute();
+        }
+
+        if ($this->vlrNotasCredito === null) {
+            $this->vlrNotasCredito = Doctrine::getTable("InoComprobante")
+                    ->createQuery("c")
+                    ->innerJoin("c.InoHouse h")
+                    ->innerJoin("c.InoTipoComprobante t")
+                    ->innerJoin("h.InoMaster m")
+                    ->select("SUM(c.ca_valor*c.ca_tcambio)")
+                    ->addWhere("m.ca_idmaster = ? ", $this->getCaIdmaster())
+                    ->addWhere("t.ca_tipo =?", "C")
+                    ->addWhere("c.ca_fchanulado is null")
+                    //->addWhere("c.ca_estado =?", InoComprobante::TRANSFERIDO)
+                    ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                    ->execute();
+        }
+        return $this->vlrFacturado - $this->vlrNotasCredito;
+    }
+
+    public function getVlrDeducciones() {
+        if ($this->vlrDeducciones === null) {
+            $q = Doctrine::getTable("InoDeduccion")
+                    ->createQuery("d")
+                    ->innerJoin("d.InoComprobante c")
+                    ->innerJoin("c.InoHouse h")
+                    ->innerJoin("h.InoMaster m")
+                    ->select("SUM(d.ca_neto*d.ca_tcambio)")
+                    ->addWhere("m.ca_idmaster = ?", $this->getCaIdmaster())
+                    ->addWhere("c.ca_estado = ?", 5)
+                    ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR);
+            $this->vlrDeducciones = $q->execute();
         }
         return $this->vlrDeducciones;
     }
-    
-    
-    public function getVlrCosto(){
-        if( $this->vlrCosto===null ){
+
+    public function getVlrCosto() {
+        if ($this->vlrCosto === null) {
             $this->vlrCosto = Doctrine::getTable("InoCosto")
-                       ->createQuery("c")                       
-                       ->innerJoin("c.InoMaster m")
-                       ->select("SUM(c.ca_neto*c.ca_tcambio/ca_tcambio_usd)")
-                       ->addWhere("m.ca_idmaster = ?", $this->getCaIdmaster())
-                       ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)        
-                       ->execute();
+                    ->createQuery("c")
+                    ->innerJoin("c.InoMaster m")
+                    ->select("SUM(c.ca_neto*c.ca_tcambio/ca_tcambio_usd)")
+                    ->addWhere("m.ca_idmaster = ? AND c.ca_fchanulado IS NULL", $this->getCaIdmaster())
+                    ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                    ->execute();
         }
         return $this->vlrCosto;
     }
-    
-    public function getVlrSobreventa(){
-        if( $this->vlrSobreventa===null ){
+
+    public function getVlrSobreventa() {
+        if ($this->vlrSobreventa === null) {
             $this->vlrSobreventa = Doctrine::getTable("InoUtilidad")
-                       ->createQuery("u")                       
-                       ->innerJoin("u.InoCosto c") 
-                       ->innerJoin("c.InoMaster m")
-                       ->select("SUM(u.ca_valor)")
-                       ->addWhere("m.ca_idmaster = ?", $this->getCaIdmaster())
-                       ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)        
-                       ->execute();
+                    ->createQuery("u")
+                    ->innerJoin("u.InoCosto c WITH c.ca_fchanulado IS NULL")
+                    ->innerJoin("c.InoMaster m")
+                    ->select("SUM(u.ca_valor)")
+                    ->addWhere("m.ca_idmaster = ?", $this->getCaIdmaster())
+                    ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                    ->execute();
         }
         return $this->vlrSobreventa;
     }
-    
-    public function getReadOnly(){
-        return $this->getCaFchliquidado()||$this->getCaFchcerrado()||$this->getCaFchanulado();
+
+    public function getDetSobreventa() {
+        $detalles = array();
+        if ($this->getCaTransporte() == Constantes::MARITIMO) {
+            $sql = "select CASE WHEN mc.ca_idconcepto = 164 THEN 'OTM'::text "
+                    . "ELSE "
+                    . "     CASE WHEN mc.ca_contenedor = true THEN 'Contenedores'::text "
+                    . "         ELSE"
+                    . "     'Otros'::text"
+                    . "     END "
+                    . "END as ca_tipo, sum(iu.ca_valor) as ca_valor "
+                    . "from ino.tb_utilidad iu inner join ino.tb_costos ic on ic.ca_idinocosto = iu.ca_idinocosto AND ic.ca_fchanulado IS NULL"
+                    . " inner join ino.tb_maestra_conceptos mc on mc.ca_idconcepto = ic.ca_idcosto"
+                    . " where iu.ca_idhouse in "
+                    . "     (select ca_idhouse from ino.tb_house where ca_idmaster = " . $this->getCaIdmaster() . ") "
+                    . "GROUP BY 1;";
+
+            $con = Doctrine_Manager::getInstance()->connection();
+            $st = $con->execute($sql);
+            $detalles = (array) $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
+        }
+        return $detalles;
     }
-    
-    
-    public function getCaTipo(){
+
+    public function getReadOnly() {
+        return $this->getCaFchliquidado() || $this->getCaFchcerrado() || $this->getCaFchanulado();
+    }
+
+    public function getCaTipo() {
         
     }
-    
-    public function getCaEmisionbl(){
+
+    public function getCaEmisionbl() {
         
     }
-    
-    public function getLiquidado(){
-        return ($this->getCaFchliquidado())?TRUE:FALSE;
+
+    public function getLiquidado() {
+        return ($this->getCaFchliquidado()) ? TRUE : FALSE;
     }
-    
-    public function getCerrado(){
-        return ($this->getCaFchcerrado())?TRUE:FALSE;
+
+    public function getCerrado() {
+        return ($this->getCaFchcerrado()) ? TRUE : FALSE;
     }
-    
-    public function getAnulado(){
-        return ($this->getCaFchanulado())?TRUE:FALSE;
+
+    public function getAnulado() {
+        return ($this->getCaFchanulado()) ? TRUE : FALSE;
     }
-    
-    
+
     public function getEmails() {
-     
+
         $q = Doctrine::getTable("Email")
-                        ->createQuery("e")
-                        ->addWhere("ca_tipo=? and ca_idcaso = ?", array('Antecedentes', $this->getCaIdmaster() ) )
-                        ->addOrderBy("e.ca_idemail DESC");
-          
-        $this->emails= $q->execute();        
-        $this->countemails=count($this->emails);        
+                ->createQuery("e")
+                ->addWhere("ca_tipo=? and ca_idcaso = ?", array('Antecedentes', $this->getCaIdmaster()))
+                ->addOrderBy("e.ca_idemail DESC");
+
+        $this->emails = $q->execute();
+        $this->countemails = count($this->emails);
         return $this->emails;
     }
-    
+
     public function getCountEmails() {
-        if(!$this->countemails)
-        {
+        if (!$this->countemails) {
             $this->countemails = Doctrine::getTable("Email")
-                        ->createQuery("e")
-                        ->select("count(*) as nreg")
-                        ->addWhere("ca_tipo=? and ca_idcaso= ?", array('Antecedentes', $$this->getCaIdmaster() ))
-                        ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
-                        ->execute();
+                    ->createQuery("e")
+                    ->select("count(*) as nreg")
+                    ->addWhere("ca_tipo=? and ca_idcaso= ?", array('Antecedentes', $$this->getCaIdmaster()))
+                    ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                    ->execute();
         }
         return $this->countemails;
     }
 
     public function getUltEmail() {
-        if(!$this->emails)
+        if (!$this->emails)
             $this->getEmails();
-        if($this->countemails>0)
-            $email=$this->emails[0];
+        if ($this->countemails > 0)
+            $email = $this->emails[0];
         else
-            $email=null;
+            $email = null;
         return $email;
     }
-    
+
     static public function getUltEmailR($referencia) {
- 
+
         $email = Doctrine::getTable("Email")
-                        ->createQuery("e")
-                        ->select("ca_subject")
-                        ->addWhere("ca_tipo=? and ca_idcaso =?", array('Antecedentes', $referencia ))
-                        ->addOrderBy("e.ca_idemail DESC")                        
-                        //->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                        ->fetchOne();
-                //print_r($email);
+                ->createQuery("e")
+                ->select("ca_subject")
+                ->addWhere("ca_tipo=? and ca_idcaso =?", array('Antecedentes', $referencia))
+                ->addOrderBy("e.ca_idemail DESC")
+                //->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->fetchOne();
+        //print_r($email);
         return $email;
     }
-    
+
     public function getDatosMasterSea() {
         $masterSea = $this->getInoMasterSea();
-        $datosMaster = json_decode(utf8_encode($masterSea->getCaDatos()),1);
+        $datosMaster = json_decode(utf8_encode($masterSea->getCaDatos()), 1);
         return $datosMaster;
     }
-    
+
+    public function existeReporteOtm() {
+        $houses = $this->getInoHouse();
+        foreach ($houses as $house) {
+            if ($house->getInoHouseSea()->getCaContinuacion() != "N/A" && $house->getInoHouseSea()->getCaContinuacion() != "") {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function getTarea1207($datosMaster) {
+        $idTarea = $datosMaster["idtarea"];
+        if (!$idTarea) {
+            if ($this->existeReporteOtm()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function getCargaTotal() {
+        $houses = $this->getInoHouse();
+        $carga = 0;
+        foreach ($houses as $house) {
+            if ($this->getCaTransporte() == Constantes::AEREO) {
+                $carga += $house->getCaPeso();
+            } else {
+                $carga += $house->getCaVolumen();
+            }
+        }
+        return $carga;
+    }
+
+    public function generarComisiones() {
+        $datosMaster = json_decode(utf8_encode($this->getCaDatos()), 1);
+        if ($this->getCaImpoexpo() !== Constantes::OTMDTA || ($this->getCaImpoexpo() == Constantes::OTMDTA && $datosMaster['idempresa'] == 2)) {  // $this->getCaImpoexpo() !== Constantes::INTERNO &&  && $this->getCaTransporte() !== Constantes::TERRESTRE
+            $houses = $this->getInoHouse();
+            foreach ($houses as $house) { /* Lee todos los houses de la referencia */
+                if ($house->getUtilidadPorHouse()) {
+                    if ((($this->getCaImpoexpo() == Constantes::IMPO || $this->getCaImpoexpo() == Constantes::TRIANGULACION) && $this->getCaTransporte() == Constantes::MARITIMO) || $this->getCaImpoexpo() == Constantes::EXPO) {
+                        $this->causarComision(null, $house, $house->getUtilidadPorHouse());     /* Causa la utilidad general del caso para Impo Marítimo */
+                    }
+                    if ($this->getCaImpoexpo() != Constantes::INTERNO && ($this->getCaTransporte() == Constantes::TERRESTRE || $this->getCaImpoexpo() == Constantes::OTMDTA)) {
+                        $this->causarComision(null, $house, $house->getUtilidadPorHouse());     /* Causa la utilidad general para los OTM DIRECTOS */
+                    }
+                } else {
+                    $this->causarComision(null, $house, $house->getIno());      /* Causa la utilidad general del caso para diferentes a Impo Aéreo */
+                }
+                $individual = 0;     /* Remiendo para Causar Comisiones de INO Ver. Terrestre */
+                $utilidades = $house->getInoUtilidad();
+                foreach ($utilidades as $utilidad) { /* Causa la utilidad individual para Impo Aéreo, Terrestre Interno y sobreventas de Impo Marítimo */
+                    if (!$utilidad->getCaUsuanulado()) {
+                        $this->causarComision($utilidad->getCaIdutilidad(), $house, $utilidad->getCaValor());
+                        $individual += $utilidad->getCaValor();
+                    } else {
+                        $conn = Doctrine::getTable("InoComision")->getConnection();
+                        $sql = "delete from ino.tb_comisiones where ca_consecutivo IS NULL and ca_idutilidad = " . $utilidad->getCaIdutilidad();
+                        $stmt = $conn->execute($sql);
+                        $sql = "select sum(ca_comision) as ca_comision from ino.tb_comisiones where ca_idutilidad = " . $utilidad->getCaIdutilidad();
+                        $stmt = $conn->execute($sql);
+                        $comision = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                        if ($comision[0] <> 0) {
+                            /* Valida si el ingreso individual fue anulado y realizar el ajuste */
+                            $reversion = new InoComision();
+                            $reversion->setCaIdhouse($utilidad->getCaIdhouse());
+                            $reversion->setCaIdutilidad($utilidad->getCaIdutilidad());
+                            $reversion->setCaValor($utilidad->getCaValor());
+                            $reversion->setCaComision(-$comision[0]);
+                            $reversion->setCaVendedor($house->getCaVendedor());
+                            $reversion->save();
+                        }
+                    }
+                }
+                if ($this->getCaImpoexpo() == Constantes::INTERNO && ($house->getUtilidadPorHouse() - $individual) != 0) {
+                    /* Solo aplica para Terrestre Interno, causa comision si hay diferencia entre ingreso individual e ingreso general*/
+                    $this->causarComision(null, $house, $house->getUtilidadPorHouse() - $individual);
+                }
+            }
+        }
+        return true;
+    }
+
+    public function causarComision($idutilidad, &$house, $utilidad) {
+        // $conn = Doctrine_Manager::getInstance()->connection();
+        $porcentaje = 10;   /* FIX-ME - Comisión por defecto */
+
+        $q = Doctrine::getTable("InoComision")
+                ->createQuery("c")
+                ->addWhere("c.ca_idhouse = ? ", $house->getCaIdhouse());
+        if ($idutilidad) {
+            $q->addWhere("c.ca_idutilidad = ?", $idutilidad);
+        } else {
+            $q->addWhere("c.ca_idutilidad IS NULL");
+        }
+        $comision = $q->fetchOne(); // Busca si hay un registro correpondiente a esta comision
+
+        $vlr_comision = round($utilidad * $porcentaje / 100, 0);
+        // $conn->beginTransaction();
+        // try {
+            if ($comision) {    // Si lo encuentra, significa que hubo una causacion previa que puede o no, estar paga
+                $tot_pagado = InoComisionTable::getTotalPagado($house->getCaIdhouse(), $idutilidad);    // Determina cuanto se ha pagado en comprobantes por esta comision
+
+                $diferencia = $vlr_comision - $tot_pagado;  // Calcula diferencia entre lo que se ha pagado en comprobantes y lo que corresponde a la comision
+                if ($comision->getCaVendedor() != $house->getCaVendedor()) {   // Detecta un cambio de Vendedor
+                    if ($comision->getCaConsecutivo()) {    // Si ya se generó el comprobante, crea un nuevos registros
+                        $reversion = new InoComision();
+                        $reversion->setCaIdhouse($comision->getCaIdhouse());
+                        $reversion->setCaIdutilidad($idutilidad);
+                        $reversion->setCaValor($utilidad);
+                        $reversion->setCaComision(-$vlr_comision);
+                        $reversion->setCaVendedor($comision->getCaVendedor());
+                        $reversion->save();
+
+                        $ajuste = clone $reversion;
+                        $ajuste->setCaComision($vlr_comision);
+                        $ajuste->setCaVendedor($house->getCaVendedor());
+                        $ajuste->save();
+                    } else {
+                        $comision->setCaComision($vlr_comision);
+                        $comision->setCaVendedor($house->getCaVendedor());
+                        $comision->save();
+                    }
+                    // $conn->commit();
+                    return;
+                } else if ($diferencia) {   // Detecta diferencia entre lo pagado en comprobantes y el valor actual de comisión
+                    $q = Doctrine::getTable("InoComision")  // Valida si ya hay un ajuste sin comprobante para ese house y ese concepto
+                            ->createQuery("c")
+                            ->addWhere("c.ca_idhouse = ?", $house->getCaIdhouse())
+                            ->addWhere("c.ca_consecutivo IS NULL");
+                    if ($idutilidad) {
+                        $q->addWhere("c.ca_idutilidad = ?", $idutilidad);
+                    } else {
+                        $q->addWhere("c.ca_idutilidad IS NULL");
+                    }
+                    $comision = $q->fetchOne();     // Localiza si hay un registro de la causacion sin consecutivo para ajustar, en su defecto crea uno nuevo para el ajuste
+
+                    if (!$comision) {    // Si ya se generó el comprobante, crea un nuevo registro
+                        $comision = new InoComision();
+                    }
+                    $vlr_comision = $diferencia;
+                } else {
+                    $q = Doctrine::getTable("InoComision")  // Valida si ya hay un ajuste sin comprobante para ese house y ese concepto
+                            ->createQuery("c")
+                            ->addWhere("c.ca_idhouse = ?", $house->getCaIdhouse())
+                            ->addWhere("c.ca_consecutivo IS NULL");
+                    if ($idutilidad) {
+                        $q->addWhere("c.ca_idutilidad = ?", $idutilidad);
+                    } else {
+                        $q->addWhere("c.ca_idutilidad IS NULL");
+                    }
+                    $comision = $q->fetchOne();
+
+                    if ($comision) {    // Elimina cualquier causacion si comprobante ya que no hay diferencia entre la comision y el total pagado
+                        $comision->delete();
+                        // $conn->commit();
+                    }
+                    return;              // Al no haber diferencia, no realiza ningun ajuste
+                }
+            } else {
+                $comision = new InoComision();
+            }
+            
+            if ($vlr_comision != 0 and $comision->getCaComision() != $vlr_comision) {
+                /*
+                if ($house->getCaIdhouse() == 47629) {
+                    echo "<pre>";
+                    print_r(array("Idcomision" => $comision->getCaIdcomision(), "CaComision" => $comision->getCaComision(), "House" => $house->getCaIdhouse(), "idutilidad" => $idutilidad, "utilidad" => $utilidad, "vlr_comision" => $vlr_comision, "tot_pagado" => $tot_pagado, "diferencia" => $diferencia));
+                    echo "</pre>";
+                }*/
+                $comision->setCaIdhouse($house->getCaIdhouse());
+                $comision->setCaIdutilidad($idutilidad);
+                $comision->setCaValor($utilidad);
+                $comision->setCaComision($vlr_comision);
+                $comision->setCaVendedor($house->getCaVendedor());
+                $comision->save();
+                // $conn->commit();
+            }
+        // } catch (Exception $e) {
+            // print_r($e->getMessage());
+            // $conn->rollback();
+        // }
+    }
+
 }
