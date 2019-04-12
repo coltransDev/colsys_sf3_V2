@@ -476,8 +476,6 @@ class Reporte extends BaseReporte {
      */
 
     public function getEditable($permiso=0, $user=null) {
-        
-        
         if ($permiso < 4 && $this->getCaTiporep()!=4 ) {
             
             if ($this->esUltimaVersion()) {
@@ -495,28 +493,16 @@ class Reporte extends BaseReporte {
                         else
                             $this->editable = true;
                     }
-                    $repAntecedentes=$this->getRepAntecedentes();
+                    /*$repAntecedentes=$this->getRepAntecedentes();
                     if($repAntecedentes)
-                    {                        
-                        if($repAntecedentes->getCaEstado()=="R" || $repAntecedentes->getCaEstado()=="E")
-                        {
-                            $this->editable = false;
-                            //if($this->getCaIdreporte()=="484576")
-                            //echo $repAntecedentes->getCaEstado();
-                        }
-                        /*else
-                            $this->editable = true;*/
-                    }
-                    /*else
-                        $this->editable = true;*/
-                    
+                    {
+                        if($repAntecedentes->getCaEstado()!="R")
+                            $this->editable = false;                       
+                    }*/
                 }
             }
         }else
             $this->editable = true;
-        
-        //if($this->getCaIdreporte()=="484576")
-        //    echo "111".($this->editable)?"true":"false";
         return $this->editable;
     }
 
@@ -963,11 +949,16 @@ class Reporte extends BaseReporte {
 
     public function getNumReferencia() {
         if ($this->getCaImpoexpo() == "Importación" && $this->getCaTransporte() == "Marítimo") {
+            $inoclientesSea = $this->getInoHouse()->getFirst();
+            if ($inoclientesSea) {
+                return $inoclientesSea->getInoMaster()->getCaReferencia();
+            }else{
             $inoclientesSea = $this->getInoClientesSea();
             if ($inoclientesSea) {
                 return $inoclientesSea->getCaReferencia();
             }
         }
+    }
     }
 
     /*
@@ -1086,9 +1077,18 @@ class Reporte extends BaseReporte {
                 $tipo = 'Rep.AéreoExterior';
             }
 
-            return Doctrine::getTable("Email")
+//            return Doctrine::getTable("Email")
+//                    ->createQuery("e")
+//                    ->select("e.*")
+//                    ->innerJoin("e.Reporte r")
+//                    ->where("r.ca_consecutivo = ?", $this->getCaConsecutivo())
+//                    ->addWhere("e.ca_tipo = ? ", $tipo)
+//                    ->addOrderBy("e.ca_fchenvio DESC")
+//                    ->execute();
+            
+            return Doctrine::getTable("EmailRepExt")
                     ->createQuery("e")
-                    ->select("e.*")
+                    ->select("e.ca_usuenvio, e.ca_fchenvio")
                     ->innerJoin("e.Reporte r")
                     ->where("r.ca_consecutivo = ?", $this->getCaConsecutivo())
                     ->addWhere("e.ca_tipo = ? ", $tipo)
@@ -1155,6 +1155,25 @@ class Reporte extends BaseReporte {
     }
 
     /*
+     * Retorna true si el reporte en su primera versión fue AG
+     * Author: Carlos G. López
+     */
+
+    public function getFueAG() {
+        $reporte =  Doctrine::getTable("Reporte")
+                        ->createQuery("r")
+                        ->select("r.ca_idreporte")
+                        ->where("r.ca_consecutivo = ? AND r.ca_version = ? AND r.ca_tiporep = ?", array($this->getCaConsecutivo(), 1, 2))
+                        ->limit(1)
+                        ->fetchOne();        
+        if ($reporte) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /*
      * Retorna la cadena que indica a quien se consigna el HBL
      * Author: Andres Botero
      */
@@ -1201,18 +1220,18 @@ class Reporte extends BaseReporte {
 
         $global = $this->getCliente()->getProperty("cuentaglobal");
         if ($this->getCaImpoexpo() == Constantes::IMPO || $this->getCaImpoexpo() == Constantes::OTMDTA1 ) {
-            if ($global) {
+            if ($global=="2") {
                 $q->addWhere("p.ca_perfil = ?", "cuentas-globales");
             } else {
                 $consolidar = $this->getCliente()->getProperty("consolidar_comunicaciones");
                 if($consolidar)
                 {
-                    $q->addWhere("p.ca_perfil = ? or p.ca_perfil = ?", array("operativo-traficos","operativo-aereo"));
+                    $q->addWhere("p.ca_perfil = ? or p.ca_perfil = ? or p.ca_perfil = ?", array("operativo-traficos","operativo-aereo","asistente-servicio-al-cliente-maritimo-colsys"));
                 }
                 else
                 {
                     if ($this->getCaTransporte() == Constantes::MARITIMO) {
-                        $q->addWhere("p.ca_perfil = ?", "operativo-traficos");
+                        $q->addWhere("(p.ca_perfil = ? or p.ca_perfil = ?)", array("operativo-traficos","asistente-servicio-al-cliente-maritimo-colsys"));
                     } else {
                         $q->addWhere("p.ca_perfil = ?", "operativo-aereo");
                     }
@@ -1232,13 +1251,13 @@ class Reporte extends BaseReporte {
                 $consolidar = $this->getCliente()->getProperty("consolidar_comunicaciones");
                 if($consolidar)
                 {                    
-                    $q->addWhere("((p.ca_perfil = ? or p.ca_perfil = ?) and s.ca_nombre = ?) or p.ca_perfil=?", array("operativo-traficos","operativo-aereo",$usuario->getSucursal()->getCaNombre(),"operativo-expo"));
+                    $q->addWhere("((p.ca_perfil = ? or p.ca_perfil = ? or p.ca_perfil = ?) and s.ca_nombre = ?) or p.ca_perfil=?", array("operativo-traficos","operativo-aereo","asistente-servicio-al-cliente-maritimo-colsys",$usuario->getSucursal()->getCaNombre(),"operativo-expo"));
                 }
                 else
                 {
                     if ($this->getCaTransporte() == Constantes::MARITIMO) {
                         //$q->addWhere("(p.ca_perfil = ? and u.ca_idsucursal = ?) or p.ca_perfil=?", array("operativo-traficos",$usuario->getCaIdsucursal(),"operativo-expo"));
-                        $q->addWhere("(p.ca_perfil = ? and s.ca_nombre = ?) or p.ca_perfil=?", array("operativo-traficos",$usuario->getSucursal()->getCaNombre(),"operativo-expo"));
+                        $q->addWhere("((p.ca_perfil = ? or p.ca_perfil = ?) and s.ca_nombre = ?) or p.ca_perfil=?", array("operativo-traficos","asistente-servicio-al-cliente-maritimo-colsys",$usuario->getSucursal()->getCaNombre(),"operativo-expo"));
                     } else {
                         //$q->addWhere("(p.ca_perfil = ? and u.ca_idsucursal = ?) or p.ca_perfil=?", array("operativo-aereo",$usuario->getCaIdsucursal(),"operativo-expo"));
                         $q->addWhere("(p.ca_perfil = ? and s.ca_nombre = ?) or p.ca_perfil=?", array("operativo-aereo",$usuario->getSucursal()->getCaNombre(),"operativo-expo"));
@@ -1329,6 +1348,7 @@ class Reporte extends BaseReporte {
                 $reporte->setCaFchreporte(date("Y-m-d"));
                 $reporte->setCaFchdespacho(date("Y-m-d"));
                 $reporte->setCaIdtareaAntecedente(null);
+                $reporte->setCaIdtareaRext(null);
             }
 
             if ($opcion == 2) {
