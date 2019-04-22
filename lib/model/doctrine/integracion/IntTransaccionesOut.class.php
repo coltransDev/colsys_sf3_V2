@@ -173,6 +173,7 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
         $datos["PedCliente"] = utf8_encode(substr($reg->getInoHouse()->getReporte()->getCaOrdenClie(),0,10));
         $datos["BienesTransp"] = utf8_encode(substr($reg->getProperty("bienestrans"),0,49)); 
         $datos["Trayecto"] = utf8_encode($reg->getInoHouse()->getInoMaster()->getOrigen()->getCaCiudad()." - ".$reg->getInoHouse()->getInoMaster()->getDestino()->getCaCiudad());
+        $datos["TextoFactura"] = $datosjson->txttrm ? $datosjson->txttrm: "";
         $datos["Anexos"] = utf8_encode(substr($reg->getProperty("anexos"),0,100));
         $datos["Detalle"] = utf8_encode(substr($reg->getProperty("detalle"),0,99));
         $datos["Peso"] = ($reg->getCaIdhouse()>0)?($reg->getInoHouse()->getInoMaster()->getCaPeso()!=""?$reg->getInoHouse()->getInoMaster()->getCaPeso() :"0" ):(($datosjson->ca_peso!="")?$datosjson->ca_peso:0);
@@ -1878,4 +1879,4 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
          return  $datos;
     }
 
-}||||||| .r0
+}
