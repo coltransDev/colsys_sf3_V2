@@ -5609,4 +5609,134 @@ class inoF2Actions extends sfActions {
         
     }
    
+    public function executePruebaComisionDetalles(sfWebRequest $request) {
+        set_time_limit(0);
+        $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
+        $q = Doctrine::getTable("InoComision")
+                ->createQuery("c")
+                ->innerJoin("c.InoHouse h")
+                ->innerJoin("h.InoMaster m")
+                ->addWhere("c.ca_consecutivo IS NOT NULL")
+                ->addWhere("m.ca_fchreferencia between ? and ?", array("2019-01-01", "2019-03-31"));
+        $comprobantes = $q->execute();
+        
+        echo "<table border=1>";
+        $datos = array();
+        foreach ($comprobantes as $comprobante) {
+            if (!$comprobante->getCaIdutilidad()) {
+                $concepto = "Ingreso General";
+            } else {
+                $concepto = "Verificar Concepto";
+                if( intval(substr($comprobante->getInoHouse()->getInoMaster()->getCaReferencia(),7,2 ))  < 6 && intval(substr($comprobante->getInoHouse()->getInoMaster()->getCaReferencia(),15,2 ))  <= 18 ) 
+                {
+                    $costo = Doctrine::getTable("InoConcepto")->find($comprobante->getInoUtilidad()->getInoCosto()->getCaIdcosto());
+                    if ($costo) {
+                        $concepto = utf8_encode($costo->getCaConcepto());
+                    }
+                }
+                else 
+                {
+                    $costo = Doctrine::getTable("InoMaestraConceptos")->find($comprobante->getInoUtilidad()->getInoCosto()->getCaIdcosto());
+                    if ($costo) {
+                        $concepto = utf8_encode($costo->getCaConceptoEsp());
+                    }
+                }
+            }
+            $incoterms = explode(" - ", $comprobante->getInoHouse()->getReporte()->getIncotermsStr());
+            $stdcircular = $comprobante->getInoHouse()->getCliente()->getCaStdcircular();
+            $pagosRecibidos = array();
+            
+            $num_facs = array();
+            $datosMaster = json_decode($comprobante->getInoHouse()->getInoMaster()->getCaDatos());
+            $facturaUnica = $datosMaster->facturaUnica;     // Valida si la refencia tiene multiples houses y una sola factura
+            if ($facturaUnica) {
+                $con = Doctrine_Manager::getInstance()->connection();
+                $sql = "select h1.ca_idhouse from ino.tb_house h1 inner join ino.tb_house h2 on h1.ca_idmaster = h2.ca_idmaster and h2.ca_idhouse = " . $comprobante->getCaIdhouse();
+                
+                $stmt = $con->execute($sql);
+                $rs = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                $facturas = Doctrine::getTable("InoComprobante")
+                    ->createQuery("c")
+                    ->innerJoin("c.InoHouse h")
+                    ->innerJoin("h.InoMaster m")
+                    ->whereIn("h.ca_idhouse", $rs)
+                    ->addWhere("h.ca_idcliente = ?", $comprobante->getInoHouse()->getCaIdcliente())
+                    ->addWhere("c.ca_usuanulado IS NULL")
+                    ->execute();
+            } else {
+                $facturas = $comprobante->getInoHouse()->getInoComprobante();
+            }
+            foreach ($facturas as $factura) {
+                if ($factura->getCaUsuanulado()) {
+                    continue;
+                }
+                if ($factura->getInoTipoComprobante()->getCaTipo() == 'F') {
+                    $num_facs[] = $factura->getCaConsecutivo();
+                }
+                if ($factura->getInoTipoComprobante()->getCaTipo() != 'F') {
+                    continue;
+                } else if (!$factura->getCaIdcomprobanteCruce()) {
+                    continue;
+                }
+                
+                $comprPago = Doctrine::getTable("InoComprobante")
+                    ->createQuery("c")
+                    ->addWhere("c.ca_idcomprobante = ?", $factura->getCaIdcomprobanteCruce())
+                    ->addWhere("c.ca_usuanulado IS NULL")
+                    ->fetchOne();
+                
+                if ($comprPago) {
+                    $pagosRecibidos[] = $comprPago->getCaConsecutivo() . " - " . $comprPago->getCaFchcomprobante();
+                }
+            }
+            $crucescomp = null;
+
+            if (count($pagosRecibidos) >= count($num_facs)){
+                $crucescomp = implode(", ", $pagosRecibidos);
+            }
+            $num_facs = implode(", ", $num_facs);
+            $is_new = true;
+            if ($comprobante->getInoHouse()->getInoMaster()->getCaImpoexpo() == Constantes::IMPO && $comprobante->getInoHouse()->getInoMaster()->getCaTransporte() == Constantes::AEREO) {
+                foreach ($datos as $key => $dato) {
+                    if ($dato["idhouse"] == $comprobante->getCaIdhouse()) {
+                        $datos[$key]["concepto"] = "Ingreso Individual";
+                        $datos[$key]["utilidad"]+= $comprobante->getCaValor();
+                        $datos[$key]["comision"]+= $comprobante->getCaComision();
+                        $is_new = false;
+                        break;
+                    }
+                }
+            }
+            if ($is_new) {
+                echo "<tr>";
+                    echo "<td>".$comprobante->getCaConsecutivo()."</td>";
+                    echo "<td>".$comprobante->getCaIdcomision()."</td>";
+                    echo "<td>".$comprobante->getInoHouse()->getInoMaster()->getCaImpoexpo() . ' - ' . $comprobante->getInoHouse()->getInoMaster()->getCaTransporte()."</td>";
+                    echo "<td>".$comprobante->getInoHouse()->getInoMaster()->getCaIdmaster()."</td>";
+                    echo "<td>".$comprobante->getCaIdhouse()."</td>";
+                    echo "<td>".$comprobante->getInoHouse()->getInoMaster()->getCaReferencia()."</td>";
+                    echo "<td>".$comprobante->getInoHouse()->getCaDoctransporte()."</td>";
+                    echo "<td>".$comprobante->getInoHouse()->getCliente()->getCaCompania()."</td>";
+                    echo "<td>".$comprobante->getInoHouse()->getReporte()->getCaConsecutivo()."</td>";
+                    echo "<td>".$incoterms[0]."</td>";
+                    echo "<td>".$concepto."</td>";
+                    echo "<td>".$comprobante->getVendedor()->getSucursal()->getCaNombre()."</td>";
+                    echo "<td>".$comprobante->getCaVendedor()."</td>";
+                    echo "<td>".$comprobante->getCaValor()."</td>";
+                    echo "<td>".$comprobante->getCaComision()."</td>";
+                    echo "<td>".$num_facs."</td>";
+                    echo "<td>".$crucescomp."</td>";
+                    echo "<td>".($comprobante->getCaUsuactualizado()?$comprobante->getCaUsuactualizado():$comprobante->getCaUsucreado())."</td>";
+                    echo "<td>".($comprobante->getCaUsuactualizado()?$comprobante->getCaFchactualizado():$comprobante->getCaFchcreado())."</td>";
+                    echo "<td>".$comprobante->getCaUsuliquidado()."</td>";
+                    echo "<td>".$comprobante->getCaFchliquidado()."</td>";
+                    echo "<td>".$stdcircular."</td>";
+                echo "</tr>";
+            }
+        }
+        echo "</table>";
+        die();
+        //$this->responseArray = array("success" => true, "root" => $datos, "total" => count($datos));
+        $this->setTemplate("responseTemplate");
+    }
 }
