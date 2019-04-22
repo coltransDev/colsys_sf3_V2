@@ -17,6 +17,8 @@ class InoHouse extends BaseInoHouse
     private $facturas=null;
     private $rc=null;
     private $comisiones=null;
+    private $docs=null;
+    private $deducciones=null;
     
     function calculateFee()
     {
@@ -79,6 +81,7 @@ class InoHouse extends BaseInoHouse
         return $this->master->getInoViDeduccion()->getCaValor();
     }
     
+    
     function getIno()
     {
         return $this->getIngreso()  + $this->getUtilidad() - $this->getCosto() - $this->getDeduccion();       
@@ -125,4 +128,216 @@ class InoHouse extends BaseInoHouse
         return $this->comisiones;
     }
     
+    function getDocs($tipo="")
+    {
+        if($this->docs==null)
+        {
+            $sql="SELECT *
+                    FROM docs.tb_archivos a where a.ca_ref1 = '".$this->getInoMaster()->getCaReferencia()."' and a.ca_ref2='".$this->getCaDoctransporte()."' and ca_fcheliminado is null ";
+            if($tipo!="")
+                $sql.=" and a.ca_iddocumental=".$tipo;
+            $con = Doctrine_Manager::getInstance()->connection();
+            $st = $con->execute($sql);
+            $this->docs = $st->fetchAll();
+        }
+        return $this->docs;
+    }
+    //left join docs.tb_archivos a ON i.ca_referencia = a.ca_ref1 and i.ca_hbls= a.ca_ref2 and a.ca_iddocumental=45 and ca_fcheliminado is null
+    
+    function getTercerosFacturacion() {
+        $terceros = array();
+        $comprobantes = $this->getInoComprobante();
+        foreach ($comprobantes as $comprobante) {
+            if ($comprobante->getCaFchanulado())
+                    continue;
+            if (!in_array($comprobante->getCaIdtipo(), array("11", "12"))) {
+                if (!in_array($comprobante->getIds()->getCaNombre(), $terceros)) {
+                    $terceros[] = $comprobante->getIds()->getCaNombre();
+                }
+            }
+        }
+        return implode(",", $terceros);
+    }
+    
+    function getIngresoPorHouse() {
+        $valor = 0;
+        $this->deducciones = 0;
+        $comprobantes = $this->getInoComprobante();
+        foreach ($comprobantes as $comprobante) {
+            if ($comprobante->getCaFchanulado())
+                    continue;
+            if (!in_array($comprobante->getCaIdtipo(), array("11", "12"))) {
+                if ($comprobante->getInoTipoComprobante()->getCaTipo() == "C") {
+                    $valor-= round($comprobante->getCaValor() * $comprobante->getCaTcambio(), 0);
+                } else {
+                    $valor+= round($comprobante->getCaValor() * $comprobante->getCaTcambio(), 0);
+                }
+                $deducciones = $comprobante->getInoDeduccion();
+                foreach ($deducciones as $deduccion) {
+                    $this->deducciones+= round($deduccion->getCaNeto() * $deduccion->getCaTcambio(), 0);
+                }
+            }
+        }
+        return $valor;
+    }
+    
+    function getCostoPorHouse() {
+        $master = $this->getInoMaster();
+        $costos = $master->getInoCosto();
+        $valor = 0;
+        if ($master->getCaTransporte() == Constantes::MARITIMO || $master->getCaImpoexpo() == Constantes::OTMDTA) {
+            $volumen_total = $master->getCargaTotal();
+            foreach ($costos as $costo) {
+                if ($costo->getCaFchanulado())
+                    continue;
+                $valor+= round($costo->getCaNeto() * $costo->getCaTcambio(), 0);
+            }
+            $valor = round(($valor / $volumen_total) * $this->getCaVolumen(), 0);
+        } else if (in_array ($master->getCaImpoexpo(), array(Constantes::INTERNO))) {
+            $prorrateo = $this->getIngresoPorHouse()/$master->getVlrFacturado();
+            foreach ($costos as $costo) {
+                if ($costo->getCaFchanulado())
+                    continue;
+                $valor+= round($costo->getCaNeto() * $costo->getCaTcambio(), 0);
+            }
+            $valor = round($valor * $prorrateo, 2);
+        } else if (in_array ($master->getCaImpoexpo(), array(Constantes::EXPO))) {
+            foreach ($costos as $costo) {
+                if ($costo->getCaFchanulado())
+                    continue;
+                $valor+= round($costo->getCaNeto() * $costo->getCaTcambio(), 0);
+            }
+        } else if ($master->getCaTransporte() == Constantes::AEREO || $master->getCaImpoexpo() == Constantes::IMPO) {
+            foreach ($costos as $costo) {
+                if ($costo->getCaIdhouse() != $this->getCaIdhouse() || $costo->getCaFchanulado())
+                    continue;
+                $valor+= round($costo->getCaNeto() * $costo->getCaTcambio(), 0);
+            }
+        } else {
+            foreach ($costos as $costo) {
+                if ($costo->getCaIdmaster() == $master->getCaIdmaster()) {
+                    if ($costo->getCaFchanulado())
+                        continue;
+                    $costo_total = round($costo->getCaNeto() * $costo->getCaTcambio(), 2);     // Calcula el costo neto del concepto por house, a partir de la proporción de la utilidad
+                    $inoUtilidad = $costo->getInoUtilidad();
+                    if ($costo->getCaVenta()-$costo_total == 0) {
+                        $volumen_total = $master->getCargaTotal();
+                        $valor+= round(($costo_total / $volumen_total) * $this->getCaVolumen(), 0);
+                    } else {
+                        foreach ($inoUtilidad as $utilidad) {
+                            $valor+= round($costo_total * ($utilidad->getCaValor() / ($costo->getCaVenta()-$costo_total)), 0);
+                        }
+                    }
+                }
+            }
+        }
+        return $valor;
+    }
+    
+    function getDeduccionPorHouse() {
+        if ($this->deducciones == null) {
+            $this->getIngresoPorHouse();    // Este método calcula las deducciones y las guarda en la variable privada
+        }
+        return $this->deducciones;
+    }
+    
+    function get20PorHouse() {
+        $numero = 0;
+        if ($this->getInoHouseSea()) {
+            $datos = json_decode(utf8_encode($this->getInoHouseSea()->getCaDatos()));
+            
+            $num_total = 0;
+            $kls_house = 0;
+            $inoEquipos = $this->getInoMaster()->getInoEquipo();
+            foreach ($inoEquipos as $equipo) {
+                if ($equipo->getConcepto()->getCaModalidad() != "FCL" || $equipo->getConcepto()->getCaLiminferior() != 20) {
+                    continue;
+                }
+                $num_total+= 1;
+                if ($datos->equipos) {
+                    foreach ($datos->equipos as $de) {
+                        if ($equipo->getCaIdequipo() == $de->idequipo) {
+                            $kls_house+= $de->kilos;
+                            continue;
+                        }
+                    }
+                }
+            }
+            $kls_total = $this->getInoMaster()->getKilos20Pies();
+//            if ($this->getCaIdhouse() == 54606) {
+//                echo "(($kls_house / $kls_total) * $num_total, 2)";
+//                echo "<br />";
+//            }
+            
+            $numero = round(($kls_house / $kls_total) * $num_total, 2);
+        }
+        return $numero;
+    }
+    
+    function get40PorHouse() {
+        $numero = 0;
+        if ($this->getInoHouseSea()) {
+            $datos = json_decode(utf8_encode($this->getInoHouseSea()->getCaDatos()));
+            
+            $num_total = 0;
+            $kls_house = 0;
+            $inoEquipos = $this->getInoMaster()->getInoEquipo();
+            foreach ($inoEquipos as $equipo) {
+                if ($equipo->getConcepto()->getCaModalidad() != "FCL" || $equipo->getConcepto()->getCaLiminferior() == 20) {
+                    continue;
+                }
+                $num_total+= 1;
+                if ($datos->equipos) {
+                    foreach ($datos->equipos as $de) {
+                        if ($equipo->getCaIdequipo() == $de->idequipo) {
+                            $kls_house+= $de->kilos;
+                            continue;
+                        }
+                    }
+                }
+            }
+            $kls_total = $this->getInoMaster()->getKilos40Pies();
+//            if ($this->getCaIdhouse() == 54606) {
+//                echo "(($kls_house / $kls_total) * $num_total, 2)";
+//                die();
+//            }
+            
+            $numero = round(($kls_house / $kls_total) * $num_total, 2);
+        }
+        return $numero;
+    }
+    
+    function getTeusPorHouse() {
+        $teusTotal = $this->getInoMaster()->getTeusTotal();
+        $factor = $this->getCaVolumen()/$this->getInoMaster()->getCaVolumen();
+        $teus = round($teusTotal * $factor, 2);
+        return $teus;
+    }
+    
+    function getUtilidadPorSobreventa() {
+        $sql = "select sum(ca_valor) as ca_utilidad from ino.tb_utilidad where ca_fchanulado IS NULL and ca_idhouse = ".$this->getCaIdhouse();
+        $con = Doctrine_Manager::getInstance()->connection();
+        $st = $con->execute($sql);
+        $house = $st->fetch();
+        return $house["ca_utilidad"];
+    }
+    
+    function getUtilidadPorHouse() {
+        $master = $this->getInoMaster();
+        $utilidad = 0;
+        if ($master->getCaTransporte() == Constantes::MARITIMO || $master->getCaImpoexpo() == Constantes::OTMDTA) {
+            $volumen_total = $master->getCargaTotal();
+            $ingGeneral = $master->getVlrFacturado()-$master->getVlrCosto()-$master->getVlrDeducciones()-$master->getVlrSobreventa();
+            $utilidad = $ingGeneral / $volumen_total * $this->getCaVolumen();
+            
+        } else if (in_array ($master->getCaImpoexpo(), array(Constantes::INTERNO))) {
+            $utilidad = $this->getIngresoPorHouse() - $this->getCostoPorHouse() - $this->getDeduccionPorHouse();
+            
+        } else if (in_array ($master->getCaImpoexpo(), array(Constantes::EXPO, Constantes::OTMDTA))) {
+            $utilidad = $this->getIngreso() + $this->getUtilidad() - $this->getCosto() - $this->getDeduccion();
+        } else {
+            $utilidad = $this->getUtilidadPorSobreventa();
+        }
+        return round($utilidad, 0);
+    }
 }
