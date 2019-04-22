@@ -29,9 +29,15 @@ class idgActions extends sfActions
         {
             $rows[$key]["d_ca_nombre"]=utf8_encode($r["d_ca_nombre"]);
             $rows[$key]["i_ca_nombre"]=utf8_encode($r["i_ca_nombre"]);
+            $rows[$key]["i_ca_impoexpo"]=utf8_encode($r["i_ca_impoexpo"]);
+            $rows[$key]["i_ca_transporte"]=utf8_encode($r["i_ca_transporte"]);            
+            $rows[$key]["i_ca_datos"]=utf8_encode($r["i_ca_datos"]);            
         }
         
          $rows[] = array("ca_departamento" => "+", "ca_nombre" => "", "orden" => "Z");
+         
+         //print_r($rows);
+         //exit();
 
         $this->responseArray = array("success" => true, "total" => count($rows), "root" => $rows);
 
@@ -173,5 +179,107 @@ class idgActions extends sfActions
        $this->setTemplate("responseTemplate");
         
     }
+    
+    public function executeCalcularNuevoIdg($request){
+        
+        print_r(json_decode($request->getParameter("idcomprobante"),1));
+        exit();
+        try{
+            $idcomprobante = $request->getParameter("idcomprobante");
+            $tipo = $request->getParameter("tipo");
+            
+            
+            $options = array();                        
+            $options["idg_sigla"] = $request->getParameter("idg");
+            $options["fecha"] = date("Y-m-d");;            
+            $options["impoexpo"] = NULL;
+            $options["transporte"] = NULL;
+            
+            if($idcomprobante){                
+                //$comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
+                $comprobantes = Doctrine::getTable("InoComprobante")
+                    ->createQuery("m")
+                    ->whereIn("m.ca_idcomprobante", json_decode($idcomprobante))                    
+                    ->execute();                
+                
+                $idhouse = $comprobante->getCaIdhouse()?$comprobante->getCaIdhouse():0;
+                
+                if($idhouse >0){
+                    $house = Doctrine::getTable("InoHouse")->find($idhouse);
+                    $master = Doctrine::getTable("InoMaster")->find($house->getCaIdmaster());
+                    $idcliente = $house->getCliente()->getCaIdcliente();
+                    
+                    $options["impoexpo"] = $master->getCaImpoexpo();
+                    $options["transporte"] = $master->getCaTransporte();
+                    
+                    $fecha = $comprobante->getCaFchcomprobante();
+                    $fchllegada = $master->getCaFchllegada();                    
+                    
+                    if($house->getCliente()->getCaVendedor() != null && $house->getCliente()->getCaVendedor() != "")
+                        $idsucursal = $house->getCliente()->getUsuario()->getSucursal()->getCaIdsucursal();
+                    else
+                        $idsucursal = $house->getUsuCreado()->getSucursal()->getCaIdsucursal();
+                }else{
+                    if($tipo == "calculo")
+                        $this->responseArray = array("success" => true, "txt"=>"No requiere calculo de indicador");
+                    else if($tipo == "ino")
+                        return array("val"=>0, "estado"=>-1);
+}
+                
+            }
+            
+            //echo 'Idg:'.$idg.' Sigla:'.$sigla.' Fecha:'.$fecha.' Vendedor:'.$vendedor.' Idcliente:'.$idcliente.' Idsucursal:'.$idsucursal.' Impoexpo:'.$impoexpo.' Transporte'.$transporte;
+            //exit();
+            
+            $idg = IdgTable::getNuevoIndicador($options);
+            
+            
+              
+            if(is_a($object, $idg)){            
+                $options = array();
+                $num_dias = intval($idg->getCaLim1());
+
+                $festivos = Doctrine::getTable("Festivo")->createQuery("f")->select("ca_fchfestivo")->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();                
+                $dif_mem = TimeUtils::workDiff($festivos, $fchllegada, $fecha);//     workDiff($festivos, $fch_llegada, $fecha);
+                if ($dif_mem > $num_dias) {                    
+                    $cumple = 0;
+                }else{                    
+                    $cumple = 1;
+                }
+                
+                $options["idg_sigla"] = $idg_sigla;
+                $options["estado"] = $cumple;
+                $options["indicador"] = $num_dias;
+                $options["key"] = $idcomprobante;
+                $options["value"] = $idcomprobante;
+                $options["tabla"] = "InoComprobante";                
+                
+                if($tipo == "calculo"){
+                    $registro = IdgTable::registrarIdg($options);
+                    
+                    if($registro["success"]){
+                        $txt = "Indicador registrado correctamente: ".$num_dias;
+                    }else{
+                        $txt = "Error al registrar indicador: ".$registro["errorInfo"];
+                    }                    
+                    $this->responseArray = array("success" => true, "dif_mem"=>$dif_mem, "num_dias"=>$num_dias, "txt"=>$txt, "consecutivo"=>$registro["consecutivo"]);
+                }else if($tipo == "ino"){
+                    return array("val"=>$dif_mem, "estado"=>$cumple);
+                }
+            }else{
+                if($tipo == "calculo")
+                    $this->responseArray = array("success" => false, "txt"=> utf8_encode ($idg));
+                else if($tipo == "ino")
+                    return array("val"=>0, "estado"=>-1);
+            }
+        }catch(Exception $e){
+            if($tipo == "calculo")
+                $this->responseArray = array("success" => false,"errorInfo"=>$e->getMessage());
+            else if($tipo == "ino")
+                return array("val"=>0, "estado"=>-1);
+        }
+        $this->setTemplate("responseTemplate");
+    }
+    
     
 }
