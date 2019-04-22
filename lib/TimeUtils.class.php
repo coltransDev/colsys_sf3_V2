@@ -139,6 +139,73 @@ class TimeUtils{
         return($difer*$fact);
     }
 
+    /*
+	* Retorna la diferencia en segundos entre dos fechas, horas hábiles excluyendo fines de
+        * semana y festivos y tiene en cuenta el horario de las sucursales
+	*/
+    public static function calcDiffParams(&$festiv, $inicio, $final, $entrada = "08:00:00", $salida = "17:00:00") {
+        $difer = 0;
+        $start = $inicio;
+        list($hhe, $mme, $sse) = sscanf($entrada,"%d:%d:%d");
+        list($hhs, $mms, $sss) = sscanf($salida, "%d:%d:%d");
+
+        if ($inicio == mktime(0,0,0,11,30,1999) or $final == mktime(0,0,0,11,30,1999)) { // Valida si Inicio o Final viene en Blanco
+            return (null);  // Retorna un Null cuando no se puede calcular la diferencia.
+        }
+//        echo date("Y-m-d H:i", $start)." - ".date("Y-m-d H:i:s", $final)."<br/>";
+        while (date("Y-m-d H:i", $start) < date("Y-m-d H:i", $final)) {     // Si festiv es NULL no descuenta Fines de Semana ni festivos
+            list($ano, $mes, $dia, $hor, $min, $seg) = sscanf(date("Y-m-d H:i:s", $start), "%d-%d-%d %d:%d:%d");
+
+            if (!is_null($festiv) and date("N", $start)> 5) {               // Evalua si es un fin de semana
+                $start = mktime($hhe,$mme,$sse,$mes,$dia+1,$ano);
+                continue;
+            }else if (!is_null($festiv) and in_array(date("Y-m-d", $start),$festiv)) {  // Evalua si es un día festivo
+                $start = mktime($hhe,$mme,$sse,$mes,$dia+1,$ano);
+                continue;
+            }else if (!is_null($festiv) and $start < mktime($hhe,$mme,$sse,$mes,$dia,$ano)) {             // Evalua si es antes de las 8:00 am
+                $start = mktime($hhe,$mme,$sse,$mes,$dia,$ano);
+                continue;
+            }else if (!is_null($festiv) and $start >= mktime($hhs,$mms,$sss,$mes,$dia,$ano)) {            // Evalua si es después de las 5:00 pm
+                $start = mktime($hhe,$mme,$sse,$mes,$dia+1,$ano);
+                continue;
+            }else if ((is_null($festiv) and date("Y-m-d H:i:s", $start+3600) < date("Y-m-d H:i:s", $final)) or (date("Y-m-d H:i:s", $start+3600) < date("Y-m-d H:i:s", $final) and date("Y-m-d H:i:s", $start+3600) <= date("Y-m-d H:i:s", mktime($hhs,$mms,$sss,$mes,$dia,$ano)))) {
+                $difer+=3600;                                               // Evalua la posibilidad de incrementos de una hora sin sobrepasar las 5:00pm
+                $start+=3600;
+                continue;
+            }else {
+                $difer+=60;
+                $start+=60;
+            }
+//             echo date("Y-m-d H:i:s", $start)." -> ".TimeUtils::tiempoSegundos($difer)."<BR/>";
+        }
+//         echo "------------- <br /><br />";
+        return(TimeUtils::tiempoSegundos($difer));
+        //return $difer;
+    }
+    
+    /*Retorna los segundos de una hora determinada*/
+    public static function hourTosec ($hms) {
+        list($h, $m, $s) = explode (":", $hms);
+        $seconds = 0;
+        $seconds += (intval($h) * 3600);
+        $seconds += (intval($m) * 60);
+        $seconds += (intval($s));
+        return $seconds;        
+    }
+    
+    public static function secToHour($tiempo_en_segundos) {
+        $horas = floor($tiempo_en_segundos / 3600);
+        $horas = $horas < 10 ? '0'.$horas : $horas;
+        
+        $minutos = floor(($tiempo_en_segundos - ($horas * 3600)) / 60);
+        $minutos = $minutos < 10 ? '0'.$minutos : $minutos;
+        
+        $segundos = $tiempo_en_segundos - ($horas * 3600) - ($minutos * 60);
+        $segundos = $segundos < 10 ? '0'.$segundos : $segundos;
+
+        return $horas . ':' . $minutos . ":" . $segundos;
+    }
+
 
     /**
 	* Convierte el numero de segundos en dias, horas, minutos y segundos
@@ -318,9 +385,13 @@ class TimeUtils{
         try
         {
             $a=0;
+            $keys="";
+            $valor="";
             if(is_array($array)) {
-                foreach($array as $value):
+                foreach($array as $key => $value):
                     if(!is_numeric($value)) {
+                        $keys.=$key."-";
+                        $valor.=$value."-";
                         $a++;
                     }
                 endforeach;
@@ -328,7 +399,7 @@ class TimeUtils{
                     $cuantos=count($array);
                     return round(array_sum($array)/$cuantos,$precision);
                 }else {
-                    return "ERROR in function array_avg(): the array contains one or more non-numeric values";
+                    return "ERROR in function array_avg(): the array contains one or more non-numeric values. Keys:".$keys." valor:".$valor;
                 }
             }else {
                 return "ERROR in function array_avg(): this is a not array";
