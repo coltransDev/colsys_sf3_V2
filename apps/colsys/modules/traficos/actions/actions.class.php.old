@@ -313,7 +313,7 @@ class traficosActions extends sfActions {
       }
 
       if ($this->modo != "otm")
-         $q->addWhere(" (t.ca_departamento = ? OR t.ca_departamento = ?) OR t.ca_departamento IS NULL", array("Tráficos","Servicio al Cliente Marítimo"));
+         $q->addWhere("t.ca_departamento = ? OR t.ca_departamento IS NULL", "Tráficos");
       $q->addWhere("t.ca_usueliminado is NULL");
       $q->addOrderBy("t.ca_orden");
       $this->form->setQueryIdEtapa($q);
@@ -353,7 +353,7 @@ class traficosActions extends sfActions {
         ->from('InoDianDepositos id')
         ->where("id.ca_codigo IN (SELECT p.ca_identificacion FROM Parametro p where ca_casouso = 'CU230' and ca_valor = '". $reporte->getCaDestino()."')");
       
-      $this->form->setQueryMuelles($muelles);
+      $this->form->setQueryMuelles($muelles);  
       
       $q = Doctrine_Query::create()->from("Concepto c")->where("c.ca_modalidad = ? ", "FCL");
       
@@ -367,7 +367,7 @@ class traficosActions extends sfActions {
 
       $proveedores = $reporte->getRepProveedor();      
       $this->form->setWidgetsProveedores($proveedores);
-      
+
       $this->form->configure();
       /*
        * Fin de la configuración

@@ -6,7 +6,7 @@ include_component("gestDocumental", "widgetUploadImages");
 </tr>
 
 <?
-$dimension = 640;
+$dimension = 1855;
 $dimVisual = 50;
 $i = 0;
 $j = 0;

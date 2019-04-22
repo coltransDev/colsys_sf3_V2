@@ -25,7 +25,7 @@ $objPHPExcel = new PHPExcel();
 
 // Set properties	
 $objPHPExcel->getProperties()->setCreator("Colsys");
-$objPHPExcel->getProperties()->setLastModifiedBy("Dpto de Servicio al Cliente");//TODO, verificar sucursales y aereo
+$objPHPExcel->getProperties()->setLastModifiedBy("Dpto de Traficos");
 $objPHPExcel->getProperties()->setTitle("Cuadro de transito de cargas");
 $objPHPExcel->getProperties()->setSubject("Cuadro de transito de cargas");
 $objPHPExcel->getProperties()->setDescription("Cuadro de transito de cargas.");

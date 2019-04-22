@@ -411,7 +411,7 @@ $folder = $reporte->getDirectorioBase();
             <tr>
                 <td valign="top"><div align="left"><b>Remitente:</b>
                 <?
-                if ($user->getEmail() == "sercliente-mar1@coltrans.com.co" || $user->getEmail() == "sercliente-mar2@coltrans.com.co" || $user->getEmail() == "sercliente-mar3@coltrans.com.co" || $user->getEmail() == "sercliente-mar4@coltrans.com.co" || $user->getEmail() == "sercliente-mar5@coltrans.com.co" || $user->getEmail() == "maquinche@coltrans.com.co") {
+                if ($user->getEmail() == "traficos1@coltrans.com.co" || $user->getEmail() == "traficos2@coltrans.com.co" || $user->getEmail() == "maquinche@coltrans.com.co") {
                     echo $form['remitente']->renderError();
                     $form->setDefault('remitente', $user->getEmail());
                     echo $form['remitente']->render();

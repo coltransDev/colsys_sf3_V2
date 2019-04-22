@@ -40,7 +40,7 @@ $modo = $sf_data->getRaw("modo");
                     ?>
                     <br /><br />
                     <?= $status->getCaIntroduccion() ?>
-                </td>                
+                </td>
                 <?
 //                if ($user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S.") {
 //                ?>
@@ -50,19 +50,19 @@ $modo = $sf_data->getRaw("modo");
                 //<?
 //                }
                 ?>
-                <?                            
-                //if ( $user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S.") {
-                    ?>
-                    <!--    <td>
-                            <div style="float:right"><a href="http://congreso.fitac.net/" target="_blank" title="Congreso Fitac 2017"><img src="http://www.coltrans.com.co/logosoficiales/coltrans/Coltrans-Encuentro-Nacional.jpg" width="500"/></a></div>
-                        </td> -->
-                    <?
-                /*} else if ( $user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S." && $reporte->getCaTransporte() == Constantes::AEREO && ($status->getCaIdetapa() == "IACCR" || $status->getCaIdetapa() == "IACAD")) {
+                <?/*
+                if ( $user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S." && $reporte->getCaTransporte() == Constantes::MARITIMO && ($status->getCaIdetapa() == "IMETA" || $status->getCaIdetapa() == "IMCPD")) {
                 ?>
                     <td width="170">
                         <div style="float:right"><img src="https://www.colsys.com.co/images/publicidad/amb-bog20140814.jpg"/></div>
-                    </td> 
-                    <?
+                    </td>
+                <?
+                } else if ( $user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S." && $reporte->getCaTransporte() == Constantes::AEREO && ($status->getCaIdetapa() == "IACCR" || $status->getCaIdetapa() == "IACAD")) {
+                ?>
+                    <td width="170">
+                        <div style="float:right"><img src="https://www.colsys.com.co/images/publicidad/amb-bog20140814.jpg"/></div>
+                    </td>
+                <?
                 }*/
                 ?>
         </table><br /><br />
@@ -112,8 +112,8 @@ $modo = $sf_data->getRaw("modo");
                 </td>
                 <?
                     if($status->getCaIdetapa()=="IACAD" || $status->getCaIdetapa()=="IACCR"){?>
-                        <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Aerol&iacute;nea y/o Bodega</b></td>
-                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?=$status->getProperty("bodega_air")?></td>
+                        <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Aerol&iacute;nea - Bodega</b></td>
+                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $reporte->getIdsProveedor()->getIds()->getCaNombre()?> - <?=$status->getProperty("bodega_air")?></td>
                     <?}else{?>
                         <td colspan="2">&nbsp;</td>
                     <?                
@@ -182,19 +182,20 @@ $modo = $sf_data->getRaw("modo");
                 $muelle = $depositos->getCaNombre();
             }
             
-            $inoCliente = $reporte->getInoClientesSea();
-            if ($inoCliente) {
-                $fchfinmuisca = $inoCliente->getInoMaestraSea()->getCaFchfinmuisca();
-                $fchfinvaciado = $inoCliente->getInoMaestraSea()->getCaFchvaciado();
-                if ($inoCliente->getInoMaestraSea()->getCaMuelle() != "")
-                    $muelle = $inoCliente->getInoMaestraSea()->getCaMuelle() . "-" . $inoCliente->getInoMaestraSea()->getInoDianDepositos()->getCaNombre();
+            $house = $reporte->getInoHouse()->getFirst();            
+            $master = $house->getInoMaster();
+            if ($house) {
+                $fchfinmuisca = $master->getInoMasterSea()->getCaFchfinmuisca();
+                $fchfinvaciado = $master->getInoMasterSea()->getCaFchvaciado();
+                if ($master->getInoMasterSea()->getCaIdmuelle() != "")
+                    $muelle = $master->getInoMasterSea()->getCaIdmuelle() . "-" . $master->getInoMasterSea()->getInoDianDepositos()->getCaNombre();
                 else
                     $muelle = $status->getProperty("muelle")?$status->getProperty("muelle"):"";
                 
                 ?>
                 <tr>
                     <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Referencia</b></td>
-                    <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $inoCliente->getCaReferencia() ?></td>
+                    <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $master->getCaReferencia() ?></td>
 
                     <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Fecha Finalizaci&oacute;n MUISCA</b></td>
                     <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $fchfinmuisca ?></td>
@@ -270,9 +271,9 @@ $modo = $sf_data->getRaw("modo");
             }
 
             if ($reporte->getCaModalidad() == "FCL") {
-                if ($inoCliente) {
-                    $referencia = $inoCliente->getInoMaestraSea();
-                    $equipos = $referencia->getInoEquiposSea();
+                /*if ($house) {
+                    $master = $house->getInoMaster();
+                    $equipos = $master->getInoEquipo();
                     ?>
                     <tr>
                         <td colspan="6">
@@ -282,8 +283,8 @@ $modo = $sf_data->getRaw("modo");
                                 </tr>
                                 <tr>
                                     <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Concepto</th>
-                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Cantidad</th>
-                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">ID Equipo</th>
+                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Num. Contenedor</th>
+                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Sello</th>
                                     <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Observaciones</th>
                                 </tr>
                                 <?
@@ -291,8 +292,8 @@ $modo = $sf_data->getRaw("modo");
                                     ?>
                                     <tr>
                                         <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getConcepto()->getCaConcepto() ?></td>
-                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getCaCantidad() ?></td>
-                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getCaIdequipo() ?></td>
+                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getCaSerial() ?></td>
+                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getCaNumprecinto() ?></td>
                                         <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getCaObservaciones() ? $equipo->getCaObservaciones() : "&nbsp;" ?></td>
                                     </tr>
                                     <?
@@ -302,7 +303,7 @@ $modo = $sf_data->getRaw("modo");
                         </td>
                     </tr>
                     <?
-                } else {
+                } else {*/
                     $equipos = $reporte->getRepEquipos();
                     if (count($equipos) > 0) {
                         ?>
@@ -350,7 +351,7 @@ $modo = $sf_data->getRaw("modo");
                         </tr>
                         <?
                     }
-                }
+//                }
             }
             $statusList = $reporte->getRepStatus();
             if (count($statusList) > 0) {

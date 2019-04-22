@@ -26,6 +26,7 @@ class traficosComponents extends sfComponents
 			}
 			
 			$this->reportesExt = $this->reporte->getReporteExterior();
+//                        $this->reportesExt = null;
             
             /*Muestra información adicional para generacion de IDG*/
             $parametros = ParametroTable::retrieveByCaso("CU103", null, null, $this->reporte->getCliente()->getCaIdgrupo() );
@@ -43,8 +44,10 @@ class traficosComponents extends sfComponents
 	* @author: Andres Botero
 	*/
 	public function executeVerArchivosReporte(){
+//            $this->files = null;
             $this->files=$this->reporte->getFiles(array(),array('*.jpeg*','*.jpg*','*.png*','*.gif*','*.JPEG*','*.JPG*','*.PNG*','*.GIF*'));
             $this->archivos=$this->reporte->getFilesGestDoc();
+//            $this->archivos = null;
             $this->user = $this->getUser();
 	}
 	
