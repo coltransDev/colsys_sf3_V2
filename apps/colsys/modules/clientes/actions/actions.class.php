@@ -15,7 +15,7 @@ class clientesActions extends sfActions {
      */
 
     public function executeClavesTracking() {
-        $this->cliente = Doctrine::getTable("Cliente")->find($this->getRequestParameter("id"));
+        $this->cliente = Doctrine::getTable("IdsCliente")->find($this->getRequestParameter("id"));
         $this->forward404Unless($this->cliente);
     }
 
@@ -212,7 +212,7 @@ class clientesActions extends sfActions {
         set_time_limit(0);
         $inicio = $this->getRequestParameter("fchStart");
         $final = $this->getRequestParameter("fchEnd");
-        $empresa = $this->getRequestParameter("empresa");
+        $idempresa = $this->getRequestParameter("idempresa");
         $estado = $this->getRequestParameter("estado");
         $sucursal = $this->getRequestParameter("sucursal");
         $simulacion = $this->getRequestParameter("simulacion");
@@ -220,16 +220,16 @@ class clientesActions extends sfActions {
         $this->clientesEstados = array();
 
         list($year, $month, $day) = sscanf($inicio, "%d-%d-%d");
-        $inicio = date('Y-m-d h:i:s', mktime(0, 0, 0, $month, $day, $year));
+        $inicio = date('Y-m-d H:i:s', mktime(0, 0, 0, $month, $day, $year));
         // Para efectos de la simulacion recalcula la fecha inicial del periodo donde se analiza el estado anterior.
-        $inisim = ($simulacion == 'sin') ? null : (($simulacion == 'uno') ? date('Y-m-d h:i:s', mktime(0, 0, 0, $month, $day, $year - 1)) : date('Y-m-d h:i:s', mktime(0, 0, 0, $month, $day, $year - 2)));
-        $ultimo = date('Y-m-d h:i:s', mktime(23, 59, 59, $month, $day - 1, $year));
+        $inisim = ($simulacion == 'sin') ? null : (($simulacion == 'uno') ? date('Y-m-d H:i:s', mktime(0, 0, 0, $month, $day, $year - 1)) : date('Y-m-d H:i:s', mktime(0, 0, 0, $month, $day, $year - 2)));
+        $ultimo = date('Y-m-d H:i:s', mktime(23, 59, 59, $month, $day - 1, $year));
 
         list($year, $month, $day) = sscanf($final, "%d-%d-%d");
-        $final = date('Y-m-d h:i:s', mktime(23, 59, 59, $month, $day, $year));
+        $final = date('Y-m-d H:i:s', mktime(23, 59, 59, $month, $day, $year));
 
-        $stmt = ClienteTable::estadoClientes($inicio, $final, $empresa, null, $estado, $sucursal);
-        $ante = ClienteTable::estadoClientes($inisim, $ultimo, $empresa, null, "Potencial", $sucursal);
+        $stmt = ClienteTable::estadoClientes($inicio, $final, $idempresa, null, $estado, $sucursal);
+        $ante = ClienteTable::estadoClientes($inisim, $ultimo, $idempresa, null, "Potencial", $sucursal);
 
         while ($row = $stmt->fetch()) {
             $anterior = array();
@@ -238,14 +238,14 @@ class clientesActions extends sfActions {
 
             list($year, $month, $day, $hour, $mins, $secn) = sscanf($row["ca_fchestado"], "%d-%d-%d %d:%d:%d");
 
-            $sb = ClienteTable::estadoClientes(null, date('Y-m-d H:i:s', mktime($hour, $mins, $secn - 1, $month, $day, $year)), $empresa, $row["ca_idcliente"], null, null);
+            $sb = ClienteTable::estadoClientes(null, date('Y-m-d H:i:s', mktime($hour, $mins, $secn - 1, $month, $day, $year)), $idempresa, $row["ca_idcliente"], null, null);
             while ($row1 = $sb->fetch()) {
                 $anterior = array('ca_fchestado_ant' => $row1["ca_fchestado"],
                     'ca_estado_ant' => $row1["ca_estado"]
                 );
             }
 
-            $sb = ClienteTable::negociosClientes($inicio, $final, $empresa, $row["ca_idcliente"]);
+            $sb = ClienteTable::negociosClientes($inicio, $final, $idempresa, $row["ca_idcliente"]);
             while ($row2 = $sb->fetch()) {
                 $negocios = $row2;
             }
@@ -258,7 +258,7 @@ class clientesActions extends sfActions {
         while ($row = $ante->fetch()) {      // Calcula el número de Clientes Potenciales al inicio del periodo
             $i++;
         }
-        $this->empresa = $empresa;
+        $this->idempresa = $idempresa;
         $this->poblacion = $i;
         $this->inicio = $inicio;
         $this->final = $final;
@@ -644,7 +644,7 @@ class clientesActions extends sfActions {
                 $sucursal_obj = $comercial->getSucursal();
                 $direccion_suc = $sucursal_obj->getCaDireccion() . " " . $sucursal_obj->getCaNombre();
 
-                $email->setCaSubject("Vencimiento de Circular 0170 Coltrans S.A.S. " . $cliente->getCaCompania());
+                $email->setCaSubject( ((date("d")==1)?"":"RECORDATORIO - ")."Vencimiento de Circular 0170 Coltrans S.A.S. " . $cliente->getCaCompania());
 
                 $mes_esp = array("01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre");
                 $siguiente_mes = mktime(0, 0, 0, $month + 1, 5, $year);
@@ -652,12 +652,13 @@ class clientesActions extends sfActions {
 
                 // $con_credito = $cliente->getLibCliente()->getCaDiascredito();
                 // $renovacion_credito = ($con_credito) ? "Así mismo solicitamos diligenciar y adjuntar (con firma en original), el formulario de solicitud de crédito el cual permitirá renovar las condiciones crediticias que su compañía tiene con nuestro grupo empresarial.<br /><br />" : "";
-                $renovacion_credito = "";
+                // $renovacion_credito = "";
+                $caso_omiso = (date("d"))==1?"":"<strong>Si a la fecha usted ya envió la anterior documentación, favor hacer caso omiso al presente mensaje.<strong>";
 
                 $bodyHtml = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
-                  <table style=\"width: 100%\">
+                     <table style=\"width: 100%\">
                      <tr>
-                        <td style=\"text-align: center; font-weight: bold\">
+                        <td style=\"text-align:center; font-weight: bold\">
                            DOCUMENTOS IDENTIFICACIÓN CLIENTES
                         </td>
                      </tr>
@@ -676,78 +677,150 @@ class clientesActions extends sfActions {
                         <td style=\"text-align: justify\"><center>
                           <table style=\"width: 800px;\" border=1px>
                             <tr>
-                              <td style=\"text-align: center; font-weight: bold\">SI ES CLIENTE DE COLTRANS</td>
-                              <td style=\"text-align: center; font-weight: bold\">SI ES CLIENTE DE COLMAS</td>
+                              <td style=\"background-color:#002060; color:#FFFFFF; text-align: center; font-weight: bold\">DOCUMENTOS PARA ACTUALIZACIÓN Y NUEVOS CLIENTES</td>
+                              <td style=\"background-color:#002060; color:#FFFFFF; text-align: center; font-weight: bold\">Persona Jurídica</td>
+                              <td style=\"background-color:#002060; color:#FFFFFF; text-align: center; font-weight: bold\">Persona Natural comerciante</td>
+                              <td style=\"background-color:#002060; color:#FFFFFF; text-align: center; font-weight: bold\">Persona Natural</td>
                             </tr>
                             <tr>
                               <td style=\"text-align: justify\">Formato de conocimiento de cliente -Circular 170, debidamente diligenciado y firmado en original por el Representante Legal o la persona facultada según certificado de existencia y representación legal.</td>
-                              <td style=\"text-align: justify\">Formato de conocimiento de cliente -Circular 170, debidamente diligenciado y firmado en original por el Representante Legal o la persona facultada según certificado de existencia y representación legal.</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\">X</td>
                             </tr>
                             <tr>
                               <td style=\"text-align: justify\">Certificado de existencia y representación legal en original con vigencia no superior a 30 días.</td>
-                              <td style=\"text-align: justify\">Certificado de existencia y representación legal en original con vigencia no superior a 30 días.</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\"></td>
+                              <td style=\"text-align: center\"></td>
                             </tr>
                             <tr>
-                              <td style=\"text-align: justify\">Fotocopia del RUT Completo, con fecha de expedición del año en el que se actualizan los documentos.</td>
-                              <td style=\"text-align: justify\">Fotocopia del RUT Completo, con fecha de expedición del año en el que se actualizan los documentos.</td>
+                              <td style=\"text-align: justify\">Certificado de Matricula mercantil con vigencia no superior a 30 días.</td>
+                              <td style=\"text-align: center\"></td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\"></td>
                             </tr>
                             <tr>
-                              <td style=\"text-align: justify\">Fotocopia C.C. Representante Legal</td>
-                              <td style=\"text-align: justify\">Fotocopia C.C. Representante Legal</td>
+                              <td style=\"text-align: justify\">Fotocopia del RUT Habilitado como Exportador y/o Importador, y obligado aduanero. Con <strong>fecha de generación</strong> del año en que se diligencia el Formato de conocimiento de cliente -Circular 170.</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\">X</td>
                             </tr>
                             <tr>
-                              <td style=\"text-align: justify\">Balance General</td>
-                              <td style=\"text-align: justify\">Balance General</td>
+                              <td style=\"text-align: justify\">Fotocopia C.C. Representante Legal ampliada al 150%</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\">X</td>
+                            </tr>
+                            <tr>
+                              <td style=\"text-align: justify\">Declaración de renta</td>
+                              <td style=\"text-align: center\"></td>
+                              <td style=\"text-align: center\"></td>
+                              <td style=\"text-align: center\">X</td>
+                            </tr>
+                            <tr>
+                              <td style=\"text-align: justify\">Estado de Situación Financiera  o Balance General o <strong>Inicial</strong> <strong style=\"color:#b92201;\">Nota 1</strong></td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\"></td>
                             </tr>
                             <tr>
                               <td style=\"text-align: justify\">Estado de Resultados</td>
-                              <td style=\"text-align: justify\">Estado de Resultados</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\"></td>
                             </tr>
                             <tr>
                               <td style=\"text-align: justify\">Notas a los Estados Financieros</td>
-                              <td style=\"text-align: justify\">Notas a los Estados Financieros</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\"></td>
                             </tr>
                             <tr>
-                              <td style=\"text-align: justify\">Fotocopia de la T.P. o C.C. del Contador</td>
+                              <td style=\"text-align: justify\">Fotocopia de la T.P. o C.C. del Contador ampliada al 150%</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\"></td>
+                            </tr>
+                            <tr>
+                              <td style=\"text-align: justify\">Fotocopia de la T.P. o C.C. del Revisor Fiscal ampliada al 150% (si aplica*) <strong style=\"color:#b92201;\">Nota 2</strong>.</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\"></td>
+                              <td style=\"text-align: center\"></td>
+                            </tr>
+                            <tr>
+                              <td style=\"text-align: justify\">Certificación bancaria del año en que se diligencia el formato de circular 0170, la cual debe responder a los datos diligenciados en formato.</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\">X</td>
+                            </tr>
+                            <tr>
+                              <td style=\"text-align: justify\">Fotocopia del certificado ISO (Si se tiene)</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\"></td>
+                              <td style=\"text-align: center\"></td>
+                            </tr>
+                            <tr>
+                              <td style=\"text-align: justify\">Fotocopia del certificado BASC (Si se tiene)</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\"></td>
+                              <td style=\"text-align: center\"></td>
+                            </tr>
+                            <tr>
+                              <td style=\"text-align: justify\">Check list documentos entregados, debidamente firmado y con fecha</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\">X</td>
+                            </tr>
+                            <tr>
+                              <td style=\"background-color:#002060; color:#FFFFFF; text-align:justify; font-weight:bold;\" colspan=\"4\">Si es cliente de COLMAS S.A.S debe anexar los siguientes documentos adicionales</td>
+                            </tr>
+                            <tr>
                               <td style=\"text-align: justify\">Certificado de EE.FF emitido por Contador público</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\"></td>
                             </tr>
                             <tr>
-                              <td style=\"text-align: justify\">Fotocopia de la T.P. o C.C. del Revisor Fiscal (si aplica*)</td>
-                              <td style=\"text-align: justify\">Dictamen de EE.FF emitido por Revisor fiscal (si aplica*)</td>
+                              <td style=\"text-align: justify\">Dictamen de EE.FF emitido por Revisor fiscal (si aplica*) <strong style=\"color:#b92201;\">Nota 2</strong></td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\"></td>
+                              <td style=\"text-align: center\"></td>
                             </tr>
                             <tr>
-                              <td style=\"text-align: justify\">Fotocopia del certificado ISO</td>
-                              <td style=\"text-align: justify\">Fotocopia de la T.P. o C.C. del Contador</td>
+                              <td style=\"background-color:#002060; color:#FFFFFF; text-align:justify; font-weight:bold;\" colspan=\"4\">Si requiere los servicios de EXPORTACIONES debe anexar los siguientes documentos adicionales</td>
                             </tr>
                             <tr>
-                              <td style=\"text-align: justify\">Fotocopia del certificado BASC</td>
-                              <td style=\"text-align: justify\">Fotocopia de la T.P. o C.C. del Revisor Fiscal (si aplica*)</td>
+                              <td style=\"text-align: justify\">Acuerdos de seguridad debidamente diligenciado y firmado en original por el Representante Legal, <strong style=\"color:#b92201;\">Nota 7</strong></td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\">X</td>
                             </tr>
                             <tr>
-                              <td style=\"text-align: justify\">Check list documentos entregados, debidamente firmado</td>
-                              <td style=\"text-align: justify\">Fotocopia del certificado ISO</td>
+                              <td style=\"text-align: justify\">Referencia comercial del año en que se diligencia el Formato de conocimiento de cliente -Circular 170, NO superior a 10 meses.</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\">X</td>
                             </tr>
                             <tr>
-                              <td style=\"text-align: justify\"></td>
-                              <td style=\"text-align: justify\">Fotocopia del certificado BASC</td>
+                              <td style=\"background-color:#002060; color:#FFFFFF; text-align:justify;\" colspan=\"4\">
+                                <strong style=\"color:#b92201;\">Nota 1:</strong> Balance Inicial, aplica cuando una empresa tiene menos de 12 meses de constituido.<br />
+                                <strong style=\"color:#b92201;\">Nota 2:</strong> Empresas que cuenten con más de 5.000 SMMLV de activos y/o cuyos ingresos brutos durante el año inmediatamente anterior sean o excedan al equivalente a tres mil 3.000 SMMLV, están obligados a tener revisor fiscal.<br />
+                                <strong style=\"color:#b92201;\">Nota 3:</strong> Si es cliente Gran contribuyente, UAP, ALTEX, o entidad vigilada por la Superfinanciera y <strong>TIENE CRÉDITO CON COLTRANS o COLMAS, DEBE ENTREGAR ESTADOS FINANCIEROS</strong>.<br />
+                                <strong style=\"color:#b92201;\">Nota 4:</strong> Los Estados Financieros deben estar certificados y dictaminados por Representante Legal y Revisor Fiscal y/o Contador Público con <strong>fecha de corte a Dic. 31 del año inmediatamente anterior</strong>.<br />
+                                <strong style=\"color:#b92201;\">Nota 5:</strong> Si usted es Gran contribuyente, UAP, ALTEX, Agente Diplomático, Entidad del estado, Entidades territoriales, entidad descentralizada, entidad vigilada por la Superfinanciera, y <strong><u>NO</u> TIENE CREDITO CON COLTRANS o COLMAS</strong> esta exceptuado de presentar el balance general, estado de resultados, notas a los estados financieros, certificación de los estados financieros del contador y/o revisor, fotocopia de la cédula o T.P del contador y/o revisor.<br />
+                                <strong style=\"color:#b92201;\">Nota 6:</strong> Está documentación debe ser actualizada mínimo <strong>ANUALMENTE</strong> y reposará en nuestros archivos con un trato de <strong>ABSOLUTA RESERVA Y CONFIDENCIALIDAD</strong>. El incumplimiento de alguno de los puntos anteriores acarreará una sanción por parte de la DIAN.<br />
+                                <strong style=\"color:#b92201;\">Nota 7:</strong> Si requiere los servicios de Agencia de carga anexar acuerdo de seguridad COLTRANS y si requiere desaduanamiento anexar acuerdo de seguridad COLMAS<br /><br />
+                              </td>
                             </tr>
-                            <tr>
-                              <td style=\"text-align: justify\"></td>
-                              <td style=\"text-align: justify\">Check list documentos entregados, debidamente firmado</td>
-                            </tr>
+
                           </table></center>
                         </td>
                      </tr>
                      <tr>
-                        <td style=\"text-align: justify\">
-                           * Empresas que cuenten con más de 5.000 SMMLV de activos están obligados a tener revisor fiscal.<br /><br />
-                           * Si usted es un cliente que realiza exportaciones, adicional a los documentos solicitados en la tabla anterior, debe anexar una Referencia Comercial, Certificación de cuenta bancaria y acuerdo de seguridad debidamente firmado. (El acuerdo de seguridad lo encuentra adjunto a este correo o lo puede descargar de la página web <a href=\"http://www.coltrans.com.co\">www.coltrans.com.co</a>).<br /><br />
-                           * Los Estados Financieros deben estar certificados y dictaminados por Representante Legal y Revisor Fiscal y/o Contador Público con fecha de corte a Dic. 31 del año inmediatamente anterior. Si la compañía se encuentra recientemente constituida, deberá entregar un balance inicial. Si usted es persona natural, deberá entregar copia de la última Declaración de Renta.<br /><br />
-                           * Si usted es Grancontribuyente, UAP, ALTEX, Agente Diplomático, Entidad del estado, Entidades territoriales, entidad descentralizada, entidad vigilada por la Superfinanciera, esta exceptuado de presentar el balance general, estado de resultados, notas a los estados financieros, certificación de los estados financieros del contador y/o revisor, fotocopia de la cédula del contador y/o revisor y sus respectivos antecedentes.<br /><br />
-                           Está documentación debe ser actualizada mínimo anualmente y reposará en nuestros archivos con un trato de <strong>ABSOLUTA RESERVA Y CONFIDENCIALIDAD.</strong> El incumplimiento de alguno de los puntos anteriores acarreará una sanción por parte de la DIAN.<br /><br />$renovacion_credito
+                        <td style=\"text-align: justify\"><br />
                            <strong>IMPORTANTE:</strong><br />
-                           En caso de no tener un Representante Comercial asignado, agradecemos enviar los mismos en original a la atención de Área de Cumplimiento en la dirección: Cra. 98 No 25G-10 INT 18, Bogotá D.C.<br /><br />
-                           Si usted es cliente de Coltrans y Colmas, debe remitir un solo paquete de documentos acogiéndose con la relación de documentos de Colmas.<br /><br />
+                           En caso de no tener un Representante Comercial asignado, agradecemos enviar los mismos en original a la atención de <strong>Área de Cumplimiento</strong> en la dirección: Cra. 98 No 25G-10 INT 18, Bogotá D.C. $caso_omiso<br /><br />
                            Cordialmente,<br /><br /><br />
                            <strong>
                               DEPARTAMENTO COMERCIAL<br />
@@ -763,8 +836,9 @@ class clientesActions extends sfActions {
                     // $email->addAttachment("ids/formatos/Solicitud_de_Credito.xls");
                 // }
                 $email->addAttachment("ids/formatos/Check_List_Circular_0170.pdf");
-                $email->addAttachment("ids/formatos/Formato_conocimiento_de_cliente.xls");
-                $email->addAttachment("ids/formatos/Acuerdo_de_Seguridad.pdf");
+                $email->addAttachment("ids/formatos/Formato_conocimiento_de_cliente.pdf");
+                $email->addAttachment("ids/formatos/Acuerdo_de_Seguridad_Coltrans.pdf");
+                $email->addAttachment("ids/formatos/Acuerdo_de_Seguridad_Colmas.pdf");
 
                 $email->save();
             }
@@ -1250,6 +1324,7 @@ class clientesActions extends sfActions {
                         ->innerJoin("u.Sucursal s")
                         ->where("s.ca_nombre = ? ", $comercial->getSucursal()->getCaNombre())
                         ->addWhere("p.ca_perfil in ('control-alertas-clientes-colsys', 'control-alertas-aduana-colsys')")
+                        ->addWhere("u.ca_activo = ?", true)
                         ->execute();
                 foreach ($usuarios as $usuario) {
                     $email->addCc($usuario->getCaEmail());
@@ -1734,7 +1809,236 @@ class clientesActions extends sfActions {
         
     }
 
+    
     public function executeProcesarRc(sfWebRequest $request) {
+        
+        
+        require_once sfConfig::get('app_sourceCode_lib') . 'vendor/phpexcel1.8/Classes/PHPExcel/Shared/String.php';
+        require_once sfConfig::get('app_sourceCode_lib') . 'vendor/phpexcel1.8/Classes/PHPExcel/Reader/Excel5.php';
+        require_once sfConfig::get('app_sourceCode_lib') . 'vendor/phpexcel1.8/Classes/PHPExcel/Shared/OLERead.php';
+        //include sfConfig::get('app_sourceCode_lib').'vendor/phpexcel1.8/Classes/PHPExcel/Autoloader.php';
+        require_once sfConfig::get('app_sourceCode_lib') . 'vendor/phpexcel1.8/Classes/PHPExcel.php';
+        include sfConfig::get('app_sourceCode_lib') . 'vendor/phpexcel1.8/Classes/PHPExcel/IOFactory.php';
+        
+        
+        $con = Doctrine_Manager::getInstance()->connection();
+        $estadisticas = array();
+        $folder = "Rc";
+        $file = sfConfig::get('app_digitalFile_root') . $folder . DIRECTORY_SEPARATOR . $request->getParameter("archivo");
+        
+        
+        $objPHPExcel = PHPExcel_IOFactory::load($file);
+        
+        $resultado = array();
+            $resultado1 = array();
+            $tipos = array("tb_inoingresos_sea", "tb_inoingresos_air", "tb_expo_ingresos", "tb_brk_ingresos");
+            $pk = array("tb_inoingresos_sea" => explode(",", "ca_idinoingreso"),
+                "tb_inoingresos_air" => explode(",", "ca_referencia,ca_idcliente,ca_hawb,ca_factura"),
+                "tb_expo_ingresos" => explode(",", "ca_referencia,ca_idcliente,ca_documento,ca_factura"),
+                "tb_brk_ingresos" => explode(",", "ca_referencia,ca_factura"));
+            $sql_update = "";
+            
+            $sucRec = array("1" => "BOG", "2" => "MDE", "3" => "CLO", "4" => "BAQ", "5" => "DOLARES", "6" => "PEI", "7" => "BUN", "8" => "CTG", "9" => "BUC");
+            $sucFacAssoc = array("BOG" => "1", "CLO" => "2", "MDE" => "3", "BAQ" => "4", "PEI" => "5", "BUN" => "7", "ABO" => "1");
+            $sucFac = array("1" => "BOG", "2" => "CLO", "3" => "MDE", "4" => "BAQ", "5" => "PEI", "6" => "BOG", "8" => "MDE", "9" => "CLO", "10" => "BAQ");
+            $sqltmp = "";
+        
+        
+        $hojas = array();
+        foreach ($objPHPExcel->getSheetNames() as $s) {
+            //$hojas[] = array("name" => $s);            
+            $ws = $objPHPExcel->getSheetByName($s);
+            
+            $array = $ws->toArray();
+            
+            
+            
+
+            $begin = 1;
+            $end = count($array) ;
+            $total = $end;
+            //echo "<pre>";print_r($array);echo "</pre>";
+            //echo "cantidad:" . $end . "<br>";
+            for ($pos = $begin; $pos < $end; $pos++) {
+                $row = $array[$pos];
+                $arrcomprobante= explode("-",$row[0]);
+                $ncomprobante=$arrcomprobante[0].ltrim($arrcomprobante[1],"0")."-".ltrim($arrcomprobante[2],"0");
+                $fecha_pago=$row[4];
+                $nrecibo=trim($row[2]);
+                $valor_pago=trim($row[6]);
+                $actualizo = false;
+                $encontro = false;
+                foreach ($tipos as $tabla) {
+
+                    $sql = "select t.*
+                        from " . $tabla . " t "
+                            . "where t.ca_fchcreado > '" . Utils::addDate(date("Y-m-d"), 0, -6, 0) . "' and "
+                            . "(ca_factura ='" . $ncomprobante . "'  )  ";
+                    //$sqltmp .= $sql . "<br>";
+                    $st = $con->execute($sql);                    
+                    $refs = $st->fetchAll();
+                    
+                    foreach($refs as $ref)
+                    {                        
+                        if ($ref) {
+                            //echo "$ncomprobante:$tabla.<br>";
+                            $set = "";
+                            $sql_update = "update " . $tabla . " set ";
+                            $where = "";
+                            if ($ncomprobante!="") {
+                                if ($ref["ca_reccaja"] == "" || $ref["ca_reccaja"] == "''") {
+                                    $set = " ca_reccaja='" . $nrecibo . "'";
+                                } else {
+                                    $resultado[$i] .= ($resultado[$i] == "") ? $comienzo_log : "";
+                                    $resultado[$i] .= "-" . $tabla . ":: Recibo de caja ya cargado 'No se actualizo',";
+                                }
+                            }
+
+                            if ($fecha_pago) {
+                                if ($ref["ca_fchpago"] == "") {
+                                    $set .= ($set != "") ? "," : "";
+                                    $set .= " ca_fchpago='" . $fecha_pago . "'";
+                                } else {
+                                    $resultado[$i] .= ($resultado[$i] == "") ? $comienzo_log : "";
+                                    $resultado[$i] .= $tabla . ":: Fecha de pago ya cargada 'No se actualizo',";
+                                }
+                            }
+
+                            if ($set != "") {
+                                foreach ($pk[$tabla] as $p) {
+                                    $where .= " and $p='" . $ref[$p] . "' ";
+                                }
+                                
+                                $sql_update .= $set . " where 1=1 $where;";
+                                $st = $con->execute($sql_update);
+                                $sqltmp .= $sql_update . "<br>";
+                                $actualizo = true;
+                            } else {
+                                //$actualizo = false;
+                            }
+
+                            $encontro = true;
+                        }
+                    }
+                    /*else
+                    {
+                        $resultado[$i].=($resultado[$i]=="")?$comienzo_log:"";
+                        $resultado[$i].=$tabla.":: factura NO ENCONTRADA --";
+                    } */
+                }
+                
+                
+                if (!$encontro || !$actualizo) {
+
+                    
+                    $sql = "select                         
+                        *
+                        from ino.tb_comprobantes c
+                        inner join ino.tb_house h ON c.ca_idhouse = h.ca_idhouse
+                        inner join ino.tb_master m ON m.ca_idmaster = h.ca_idmaster
+                        inner join ino.tb_tipos_comprobante t ON c.ca_idtipo = t.ca_idtipo
+                        where ( t.ca_tipo||t.ca_comprobante||'-'||ca_consecutivo =UPPER('{$ncomprobante}')  ) and c.ca_fchcreado<'2018-06-01' ";
+                        //echo $sql."<br>";
+                    //and t.ca_idsucursal in (".$sucursal.") ";
+                    $st = $con->execute($sql);
+                    $refs = $st->fetchAll();
+
+
+                    foreach($refs as $ref)
+                    {
+                        //print_r($ref);
+                        
+                        //exit;
+                        if ($ref) {
+                            if ($ref["ca_idcomprobante_cruce"] != "") {
+                                $resultado[$i] .= "- ino.Comprobantes:: Recibo de caja ya cargado 'No se actualizo',";
+                            } else {
+                                //$sql_update.=$set . " where 1=1 $where;";
+
+                                $patron = '/(2\d\d).(\d\d).(\d\d).(\d\d\d\d).(\d\d)/';
+                                if (preg_match($patron, $ref["ca_doctransporte"])) {
+                                    $resultado[$i] .= "-" . $tabla . ":: Referencia con aduana, no se importa por este medio,";
+                                } else {                                
+                                    $comprobante = Doctrine::getTable("InoComprobante")
+                                            ->createQuery("s")
+                                            ->select("*")
+                                            ->where("ca_idtipo = ? AND ca_consecutivo=? AND ca_idhouse=?", array("12", $pre . " " . $nrecibo, $ref["ca_idhouse"]))
+                                            ->fetchOne();
+
+                                    if (!$comprobante) {
+                                        $comprobante = new InoComprobante();
+                                        $comprobante->setCaIdtipo(12);
+                                        $comprobante->setCaConsecutivo($pre . " " . $nrecibo);
+                                        $comprobante->setCaFchcomprobante($fecha_pago);
+                                        $comprobante->setCaIdhouse($ref["ca_idhouse"]);
+                                        $comprobante->setCaObservaciones("Ingresado por el proceso de importar RC");
+                                        $comprobante->setCaTcambio("1");
+                                        $comprobante->setCaEstado(InoComprobante::TRANSFERIDO);
+                                        $comprobante->setCaId($ref["ca_id"]);
+                                        $comprobante->setCaValor($valor_pago);
+                                        $comprobante->setCaIdmoneda("COP");
+                                        //$comprobante->setCaTcambioUsd("1");
+                                        $comprobante->setCaValor2($valor_pago);
+                                        $comprobante->save();
+                                        //echo $comprobante->getCaIdcomprobante();
+
+                                        $comprobante1 = Doctrine::getTable("InoComprobante")->find($ref["ca_idcomprobante"]);
+                                        
+                                        $comprobante1->setCaIdcomprobanteCruce($comprobante->getCaIdcomprobante());
+                                        $comprobante1->stopBlaming();
+                                        $comprobante1->save();
+                                        //$st = $con->execute("insert into ino.tb_comprobantes (ca_idtipo,ca_consecutivo,ca_fchcomprobante,ca_id,ca_idhouse,ca_observaciones)");
+                                        $estadisticas["actualizada"] ++;
+                                        $resultado[$i] = $comienzo_log . " REGISTRO IMPORTADO";
+                                        $encontro = true;
+                                        $actualizo = true;
+                                    } else {
+                                        /*$comprobante1 = Doctrine::getTable("InoComprobante")->find($ref["ca_idcomprobante"]);
+                                        $comprobante1->setCaIdcomprobanteCruce($comprobante->getCaIdcomprobante());
+                                        $comprobante1->stopBlaming();
+                                        $comprobante1->save();*/
+
+                                        $resultado[$i] .= ($resultado[$i] == "") ? $comienzo_log : "";
+                                        $resultado[$i] .= "InoComprobantes:: Rc de caja existe en colsys  'No se actualizo',";
+                                    }
+                                }
+                            }
+                        }
+
+                        if (!$encontro || !$actualizo) {
+                            $resultado[$i] .= ($resultado[$i] == "") ? $comienzo_log : "";
+                            if (!$encontro) {
+                                $resultado[$i] .= "FACTURA NO ENCONTRADA";
+                                $estadisticas["no_encontrado"] ++;
+                            }
+                            if (!$actualizo) {
+                                $resultado[$i] .= "Registro no actualizado";
+                                $estadisticas["no_actualizado"] ++;
+                            }
+                        } else {
+                            $estadisticas["actualizada"] ++;
+                            $resultado[$i] = $comienzo_log . " REGISTRO IMPORTADO";
+                        }
+                    }
+                } else {
+                    $estadisticas["actualizada"] ++;
+                    $resultado[$i] = $comienzo_log . " REGISTRO IMPORTADO";
+                }
+                
+                
+            }
+            
+            $estadisticas["total"] = $total;
+            //echo "<pre>";print_r($array);echo "</pre>";
+        }
+        //echo $sqltmp;
+        $this->responseArray = array("success" => "true", "resultado" => implode("<br>", $resultado), "estadisticas" => $estadisticas, "sqlimpor" => $sqltmp);        
+        $this->setTemplate("responseTemplate");
+        
+        
+        
+    }
+    public function executeProcesarRc1(sfWebRequest $request) {
 //        try 
         {
             $con = Doctrine_Manager::getInstance()->connection();
@@ -1788,7 +2092,7 @@ class clientesActions extends sfActions {
                     continue;
                 }
                 //echo $sucRec[$suc_recibo].'-'.$sucFac[$suc_factura]."<br>";
-                if (($suc_recibo != "15" && $suc_recibo != "5" ) && ($suc_factura < 6)) {
+                if (($suc_recibo != "15" && $suc_recibo != "5" ) && ($suc_factura < 5)) {
                     if ($sucRec[$suc_recibo] != $sucFac[$suc_factura]) {
                         $resultado[$i] = $comienzo_log . "La sucursal registrada en el recibo es diferente a la de la factura (" . $suc_recibo . " :: " . $sucFac[$suc_factura] . ")";
                         $estadisticas["direfente_sucursal"] ++;
@@ -1798,30 +2102,30 @@ class clientesActions extends sfActions {
                 //echo $nfact."".$tipo_comp."<br>";
                 if (!$nfact) {
 
-                    $resultado[$i] = $comienzo_log . "No posee No Factura " . $nfact;
+                    $resultado[$i] = $comienzo_log . "(1801)No posee No Factura " . $nfact;                    
                     $estadisticas["sin_factura"] ++;
                     continue;
                 }
                 if (strcmp($tipo_comp, 'F') != 0) {
-                    $resultado[$i] = $comienzo_log . "No posee No Factura " . $tipo_comp . " ";
+                    $resultado[$i] = $comienzo_log . "(1806)Esto no es una factura para procesar es : " . $tipo_comp . " ";
                     $estadisticas["sin_factura"] ++;
                     continue;
                 }
 
                 //if ($datos[2] == "" && $datos[7] == "") {
                 if ($datos[2] == "" && $datos[6] == "") {
-                    $resultado[$i] = $comienzo_log . "No posee No Recibo de caja ni fecha de pago";
+                    $resultado[$i] = $comienzo_log . "(1814)No posee No Recibo de caja ni fecha de pago";
                     $estadisticas["sin_recibo"] ++;
                     $estadisticas["sin_fecha"] ++;
                     continue;
                 }
                 if ($datos[2] == "") {
-                    $resultado[$i] = $comienzo_log . "No posee No Recibo de caja";
+                    $resultado[$i] = $comienzo_log . "(1819)No posee No Recibo de caja";
                     $estadisticas["sin_recibo"] ++;
                 }
                 //if ($datos[7] == "") {
                 if ($datos[6] == "") {
-                    $resultado[$i] = $comienzo_log . "No posee fecha de pago";
+                    $resultado[$i] = $comienzo_log . "(1824)No posee fecha de pago";
                     $estadisticas["sin_fecha"] ++;
                 }
 
@@ -1834,8 +2138,8 @@ class clientesActions extends sfActions {
                 } else
                     $sucursal = $sucRec[$suc_recibo];
 
-                if ($sucursal == "BOG" || $sucursal == "ABO" || $sucursal == "OBO")
-                    $sucursal = "'BOG','ABO','OBO'";
+                if ($sucursal == "BOG" || $sucursal == "ABO" || $sucursal == "OBO" || $sucursal == "PEI" || $sucursal == "OPE" || $sucursal == "APE")
+                    $sucursal = "'BOG','ABO','OBO','PEI','OPE','APE'";
                 else if ($sucursal == "CLO" || $sucursal == "ACL" || $sucursal == "OCL")
                     $sucursal = "'CLO','ACL','OCL'";
                 else
@@ -1848,45 +2152,49 @@ class clientesActions extends sfActions {
                             . "where t.ca_fchcreado > '" . Utils::addDate(date("Y-m-d"), 0, 0, -1) . "' and (ca_factura ='" . $nfact . "' or ca_factura ='F" . $suc_factura . "-" . $nfact . "' or ca_factura ='F" . $suc_factura . " " . $nfact . "' or ca_factura ='f" . $suc_factura . "-" . $nfact . "' or ca_factura ='f" . $suc_factura . " " . $nfact . "' ) and t.ca_usucreado=u.ca_login and u.ca_idsucursal in ($sucursal) ";
                     //echo  $sql."<br>";
                     $st = $con->execute($sql);
-                    $ref = $st->fetch();
+                    //$ref = $st->fetch();
+                    $refs = $st->fetchAll();
+                    $actualizo = false;
+                    foreach($refs as $ref)
+                    {
+                        if ($ref) {
+                            $set = "";
+                            $sql_update = "update " . $tabla . " set ";
+                            $where = "";
+                            if ($nrecibo) {
+                                if ($ref["ca_reccaja"] == "" || $ref["ca_reccaja"] == "''") {
+                                    $set = " ca_reccaja='" . $pre . " " . $nrecibo . "'";
+                                } else {
+                                    $resultado[$i] .= ($resultado[$i] == "") ? $comienzo_log : "";
+                                    $resultado[$i] .= "-" . $tabla . ":: Recibo de caja ya cargado 'No se actualizo',";
+                                }
+                            }
 
-                    if ($ref) {
-                        $set = "";
-                        $sql_update = "update " . $tabla . " set ";
-                        $where = "";
-                        if ($nrecibo) {
-                            if ($ref["ca_reccaja"] == "" || $ref["ca_reccaja"] == "''") {
-                                $set = " ca_reccaja='" . $pre . " " . $nrecibo . "'";
+                            if ($fecha_pago) {
+                                if ($ref["ca_fchpago"] == "") {
+                                    $set .= ($set != "") ? "," : "";
+                                    $set .= " ca_fchpago='" . $fecha_pago . "'";
+                                } else {
+                                    $resultado[$i] .= ($resultado[$i] == "") ? $comienzo_log : "";
+                                    $resultado[$i] .= $tabla . ":: Fecha de pago ya cargada 'No se actualizo',";
+                                }
+                            }
+
+                            if ($set != "") {
+                                foreach ($pk[$tabla] as $p) {
+                                    $where .= " and $p='" . $ref[$p] . "' ";
+                                }
+                                //$sql.=$where;
+                                $sql_update .= $set . " where 1=1 $where;";
+                                $st = $con->execute($sql_update);
+                                $sqltmp .= $sql_update . "<br>";
+                                $actualizo = true;
                             } else {
-                                $resultado[$i] .= ($resultado[$i] == "") ? $comienzo_log : "";
-                                $resultado[$i] .= "-" . $tabla . ":: Recibo de caja ya cargado 'No se actualizo',";
+                                //$actualizo = false;
                             }
-                        }
 
-                        if ($fecha_pago) {
-                            if ($ref["ca_fchpago"] == "") {
-                                $set .= ($set != "") ? "," : "";
-                                $set .= " ca_fchpago='" . $fecha_pago . "'";
-                            } else {
-                                $resultado[$i] .= ($resultado[$i] == "") ? $comienzo_log : "";
-                                $resultado[$i] .= $tabla . ":: Fecha de pago ya cargada 'No se actualizo',";
-                            }
+                            $encontro = true;
                         }
-
-                        if ($set != "") {
-                            foreach ($pk[$tabla] as $p) {
-                                $where .= " and $p='" . $ref[$p] . "' ";
-                            }
-                            //$sql.=$where;
-                            $sql_update .= $set . " where 1=1 $where;";
-                            $st = $con->execute($sql_update);
-                            $sqltmp .= $sql_update . "<br>";
-                            $actualizo = true;
-                        } else {
-                            $actualizo = false;
-                        }
-
-                        $encontro = true;
                     }
                     /* else
                       {
@@ -1909,77 +2217,80 @@ class clientesActions extends sfActions {
                         //echo $sql."<br>";
                     //and t.ca_idsucursal in (".$sucursal.") ";
                     $st = $con->execute($sql);
-                    $ref = $st->fetch();
+                    $refs = $st->fetchAll();
 
 
-                    if ($ref) {
-                        if ($ref["ca_idcomprobante_cruce"] != "") {
-                            $resultado[$i] .= "- ino.Comprobantes:: Recibo de caja ya cargado 'No se actualizo',";
-                        } else {
-                            //$sql_update.=$set . " where 1=1 $where;";
+                    foreach($refs as $ref)
+                    {
+                        if ($ref) {
+                            if ($ref["ca_idcomprobante_cruce"] != "") {
+                                $resultado[$i] .= "- ino.Comprobantes:: Recibo de caja ya cargado 'No se actualizo',";
+                            } else {
+                                //$sql_update.=$set . " where 1=1 $where;";
 
-                            $patron = '/(2\d\d).(\d\d).(\d\d).(\d\d\d\d).(\d\d)/';
-                            if (preg_match($patron, $ref["ca_doctransporte"])) {
-                                $resultado[$i] .= "-" . $tabla . ":: Referencia con aduana, no se importa por este medio,";
-                            } else {                                
-                                $comprobante = Doctrine::getTable("InoComprobante")
-                                        ->createQuery("s")
-                                        ->select("*")
-                                        ->where("ca_idtipo = ? AND ca_consecutivo=? AND ca_idhouse=?", array("12", $pre . " " . $nrecibo, $ref["ca_idhouse"]))
-                                        ->fetchOne();
+                                $patron = '/(2\d\d).(\d\d).(\d\d).(\d\d\d\d).(\d\d)/';
+                                if (preg_match($patron, $ref["ca_doctransporte"])) {
+                                    $resultado[$i] .= "-" . $tabla . ":: Referencia con aduana, no se importa por este medio,";
+                                } else {                                
+                                    $comprobante = Doctrine::getTable("InoComprobante")
+                                            ->createQuery("s")
+                                            ->select("*")
+                                            ->where("ca_idtipo = ? AND ca_consecutivo=? AND ca_idhouse=?", array("12", $pre . " " . $nrecibo, $ref["ca_idhouse"]))
+                                            ->fetchOne();
 
-                                if (!$comprobante) {
-                                    $comprobante = new InoComprobante();
-                                    $comprobante->setCaIdtipo(12);
-                                    $comprobante->setCaConsecutivo($pre . " " . $nrecibo);
-                                    $comprobante->setCaFchcomprobante($fecha_pago);
-                                    $comprobante->setCaIdhouse($ref["ca_idhouse"]);
-                                    $comprobante->setCaObservaciones("Ingresado por el proceso de importar RC");
-                                    $comprobante->setCaTcambio("1");
-                                    $comprobante->setCaEstado(InoComprobante::TRANSFERIDO);
-                                    $comprobante->setCaId($ref["ca_id"]);
-                                    $comprobante->setCaValor($valor_pago);
-                                    $comprobante->setCaIdmoneda("COP");
-                                    $comprobante->setCaTcambioUsd("1");
-                                    $comprobante->setCaValor2($valor_pago);
-                                    $comprobante->save();
-                                    //echo $comprobante->getCaIdcomprobante();
+                                    if (!$comprobante) {
+                                        $comprobante = new InoComprobante();
+                                        $comprobante->setCaIdtipo(12);
+                                        $comprobante->setCaConsecutivo($pre . " " . $nrecibo);
+                                        $comprobante->setCaFchcomprobante($fecha_pago);
+                                        $comprobante->setCaIdhouse($ref["ca_idhouse"]);
+                                        $comprobante->setCaObservaciones("Ingresado por el proceso de importar RC");
+                                        $comprobante->setCaTcambio("1");
+                                        $comprobante->setCaEstado(InoComprobante::TRANSFERIDO);
+                                        $comprobante->setCaId($ref["ca_id"]);
+                                        $comprobante->setCaValor($valor_pago);
+                                        $comprobante->setCaIdmoneda("COP");
+                                        //$comprobante->setCaTcambioUsd("1");
+                                        $comprobante->setCaValor2($valor_pago);
+                                        $comprobante->save();
+                                        //echo $comprobante->getCaIdcomprobante();
 
-                                    $comprobante1 = Doctrine::getTable("InoComprobante")->find($ref["ca_idcomprobante"]);
-                                    $comprobante1->setCaIdcomprobanteCruce($comprobante->getCaIdcomprobante());
-                                    $comprobante1->stopBlaming();
-                                    $comprobante1->save();
-                                    //$st = $con->execute("insert into ino.tb_comprobantes (ca_idtipo,ca_consecutivo,ca_fchcomprobante,ca_id,ca_idhouse,ca_observaciones)");
-                                    $estadisticas["actualizada"] ++;
-                                    $resultado[$i] = $comienzo_log . " REGISTRO IMPORTADO";
-                                    $encontro = true;
-                                    $actualizo = true;
-                                } else {
-                                    /*$comprobante1 = Doctrine::getTable("InoComprobante")->find($ref["ca_idcomprobante"]);
-                                    $comprobante1->setCaIdcomprobanteCruce($comprobante->getCaIdcomprobante());
-                                    $comprobante1->stopBlaming();
-                                    $comprobante1->save();*/
+                                        $comprobante1 = Doctrine::getTable("InoComprobante")->find($ref["ca_idcomprobante"]);
+                                        $comprobante1->setCaIdcomprobanteCruce($comprobante->getCaIdcomprobante());
+                                        $comprobante1->stopBlaming();
+                                        $comprobante1->save();
+                                        //$st = $con->execute("insert into ino.tb_comprobantes (ca_idtipo,ca_consecutivo,ca_fchcomprobante,ca_id,ca_idhouse,ca_observaciones)");
+                                        $estadisticas["actualizada"] ++;
+                                        $resultado[$i] = $comienzo_log . " REGISTRO IMPORTADO";
+                                        $encontro = true;
+                                        $actualizo = true;
+                                    } else {
+                                        /*$comprobante1 = Doctrine::getTable("InoComprobante")->find($ref["ca_idcomprobante"]);
+                                        $comprobante1->setCaIdcomprobanteCruce($comprobante->getCaIdcomprobante());
+                                        $comprobante1->stopBlaming();
+                                        $comprobante1->save();*/
 
-                                    $resultado[$i] .= ($resultado[$i] == "") ? $comienzo_log : "";
-                                    $resultado[$i] .= "InoComprobantes:: Rc de caja existe en colsys  'No se actualizo',";
+                                        $resultado[$i] .= ($resultado[$i] == "") ? $comienzo_log : "";
+                                        $resultado[$i] .= "InoComprobantes:: Rc de caja existe en colsys  'No se actualizo',";
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    if (!$encontro || !$actualizo) {
-                        $resultado[$i] .= ($resultado[$i] == "") ? $comienzo_log : "";
-                        if (!$encontro) {
-                            $resultado[$i] .= "FACTURA NO ENCONTRADA";
-                            $estadisticas["no_encontrado"] ++;
+                        if (!$encontro || !$actualizo) {
+                            $resultado[$i] .= ($resultado[$i] == "") ? $comienzo_log : "";
+                            if (!$encontro) {
+                                $resultado[$i] .= "FACTURA NO ENCONTRADA";
+                                $estadisticas["no_encontrado"] ++;
+                            }
+                            if (!$actualizo) {
+                                $resultado[$i] .= "Registro no actualizado";
+                                $estadisticas["no_actualizado"] ++;
+                            }
+                        } else {
+                            $estadisticas["actualizada"] ++;
+                            $resultado[$i] = $comienzo_log . " REGISTRO IMPORTADO";
                         }
-                        if (!$actualizo) {
-                            $resultado[$i] .= "Registro no actualizado";
-                            $estadisticas["no_actualizado"] ++;
-                        }
-                    } else {
-                        $estadisticas["actualizada"] ++;
-                        $resultado[$i] = $comienzo_log . " REGISTRO IMPORTADO";
                     }
                 } else {
                     $estadisticas["actualizada"] ++;
@@ -2013,21 +2324,18 @@ class clientesActions extends sfActions {
                     $email = new Email();
                     $email->setCaUsuenvio("Administrador");
                     $email->setCaTipo("Not. Masivas");
-                    $email->setCaFrom($this->contacto->getCaEmail());
+                    $email->setCaFrom("no-reply@coltrans.com.co");
                     $email->setCaReplyto($this->contacto->getCaEmail());
                     $email->setCaFromname($this->contacto->getCaNombres() . " " . $this->contacto->getCaPapellido() . " " . $this->contacto->getCaSapellido());
                     $email->addTo($this->cliente->getUsuario()->getCaEmail());
-                    //$email->addTo('alramirez@coltrans.com.co');
                     $email->addCc('alramirez@coltrans.com.co');
                     $email->setCaSubject("Solicitud Desactivación Comunicaciones Masivas");
                     sfContext::getInstance()->getRequest()->setParameter("idcontacto", $idcontacto);
                     sfContext::getInstance()->getRequest()->setParameter("idcliente", $this->contacto->getCaIdcliente());
                     sfContext::getInstance()->getRequest()->setParameter("comentarios", $comentarios);
                     sfContext::getInstance()->getRequest()->setParameter("masiva", $masiva);
-
                     $email->setCaBodyhtml(sfContext::getInstance()->getController()->getPresentationFor('clientes', 'emailCancelarSuscripcion'));
                     $email->save();
-
                     if ($masiva) {
                         $this->contacto->setProperty("masivas", $email->getCaIdemail());
                         $this->contacto->save();
@@ -2035,7 +2343,6 @@ class clientesActions extends sfActions {
                 }
             }
         }
-
         $this->setLayout('formulario');
     }
 
@@ -2641,9 +2948,74 @@ class clientesActions extends sfActions {
 
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
-            $this->estados = $st->fetchAll()[0];
+            $this->estados = $st->fetchAll();
+            $this->estados=$this->estados[0];
         } else {
             $this->encuestaVisita = new EncuestaVisita();
+        }
+    }
+
+    public function executeCorregirEncuestaVisita(sfWebRequest $request) {
+        $encuestas = Doctrine::getTable("EncuestaVisita")
+                ->createQuery("e")
+                ->addWhere("e.ca_fchvisita >= ? ", '2018-05-01')
+                ->execute();
+        $instalaciones = array('Local', 'Oficina', 'Bodega', 'Casa', 'Apartamento', 'Planta/Producci&oacute;n');
+        $seguridades = array('Alarma', 'Biom&eacute;tricos', 'Otros', 'Vigilancia_Privada', 'CCTV', 'Ninguno');
+        $certificaciones = array('ISO_9001', 'ISO_14001', 'ISO_18001', 'ISO_28000', 'BASC', 'C-PAT', 'OEA', 'NINGUNO', 'OTRA');
+        
+        foreach ($encuestas as $encuesta) {
+            $flag = null;
+            
+            $instalacionesTipo = explode(",", $encuesta->getCaInstalacionesTipo());
+            if (in_array("true", $instalacionesTipo) || in_array("false", $instalacionesTipo)) {
+                $correccion = array();
+                foreach ($instalacionesTipo as $key => $tipo) {
+                    if ($tipo == "true") {
+                        $correccion[] = $instalaciones[$key];
+                    }
+                }
+                $encuesta->setCaInstalacionesTipo(implode(",", $correccion));
+                $encuesta->save();
+                echo "<br /><br /><br />".$encuesta->getCaIdencuesta()." -> ".$encuesta->getCaIdcontacto()."<br />";
+                print_r(implode(",", $correccion));
+                $flag = "UNO";
+            }
+
+            $sistemaSeguridad = explode(",", $encuesta->getCaSistemaSeguridad());
+            if (in_array("true", $sistemaSeguridad) || in_array("false", $sistemaSeguridad)) {
+                $correccion = array();
+                foreach ($sistemaSeguridad as $key => $sistema) {
+                    if ($sistema == "true") {
+                        $correccion[] = $seguridades[$key];
+                    }
+                }
+                $encuesta->setCaSistemaSeguridad(implode(",", $correccion));
+                $encuesta->save();
+                echo "<br /><br /><br />".$encuesta->getCaIdencuesta()." -> ".$encuesta->getCaIdcontacto()."<br />";
+                print_r(implode(",", $correccion));
+                $flag = "DOS";
+            }
+
+            $certificacion = explode(",", $encuesta->getCaCertificacion());
+            if (in_array("true", $certificacion) || in_array("false", $certificacion)) {
+                $correccion = array();
+                foreach ($certificacion as $key => $certifica) {
+                    if ($certifica == "true") {
+                        $correccion[] = $certificaciones[$key];
+                    }
+                }
+                $encuesta->setCaCertificacion(implode(",", $correccion));
+                $encuesta->save();
+                echo "<br /><br /><br />".$encuesta->getCaIdencuesta()." -> ".$encuesta->getCaIdcontacto()."<br />";
+                print_r(implode(",", $correccion));
+                $flag = "TRE";
+            }
+
+            
+            if ($flag)  {
+                print_r("<br />");
+            }
         }
     }
 
@@ -2997,11 +3369,24 @@ class clientesActions extends sfActions {
                 ->select("m.ca_referencia,c.ca_idalterno as idalterno, c.ca_compania as compania,((SELECT bc.ca_activostotales FROM BlcCliente bc WHERE m.ca_idcliente=bc.ca_idcliente ORDER BY bc.ca_anno DESC LIMIT 1)*1000) as activos")
                 ->innerJoin("m.Cliente c")
                 //->leftJoin("c.BlcCliente bc INDEXBY bc.ca_anno")
-                ->where("m.ca_fchcerrado = ? ", date("Y-m-d"));
-        //->where("m.ca_fchcerrado > ? ", "2016-11-30");
+                //->where("m.ca_fchcerrado = ? ", date("Y-m-d"));
+                //->where("m.ca_referencia=?","200.30.03.0020.18");
+        ->where("m.ca_fchcerrado > ? ", "2018-01-01");
         //    ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
         //echo $q->getSqlQuery();
+        
         $refs = $q->execute();
+        $arrDos=array();
+        $strDos="";
+/*        foreach ($refs as $r) {
+                $this->do = $r->getCaReferencia();
+                $do = substr($this->do, 0, 3) . substr($this->do, 4, 2) . substr($this->do, 7, 2) . substr($this->do, 11, 3) . substr($this->do, 16, 1);
+                $arrDos[]=$do;
+                if($strDos!="");
+                    $strDos.=",";
+                $strDos.="'".$do."'";
+        }
+*/
         //echo "<pre>";print_r($refs);echo "</pre>";
 
         if (count($refs) > 0) {
@@ -3022,18 +3407,23 @@ class clientesActions extends sfActions {
                 FROM COLMASXX.SIAI0200 AS brk        
                 WHERE            
                  brk.DOISFIDX='001' and  brk.DOIIDXXX = '$do'";
-//                echo $sql."<br>";
+                
                 $st = $con1->execute($sql);
                 $this->resul = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
                 //echo "$do :: Activos:".$r->activos." --------- Fob:".$this->resul[0]["valorfob"]."<br>";
                 //echo "<pre>";print_r($this->resul);echo "</pre>";
-                if ($r->activos != "" && $this->resul[0]["valorfob"] > $r->activos) {
+
+                if ($r->activos != "" && floatval($this->resul[0]["valorfob"]) > floatval($r->activos) ) {
+                    echo floatval($this->resul[0]["valorfob"])."--". floatval($r->activos);
                     $datos .= "<tr><td>$do</td><td>{$r->idalterno}-{$r->compania}</td><td style='text-align:right'>" . number_format($r->activos) . "</td><td style='text-align:right'>" . number_format($this->resul[0]["valorfob"], 2) . "</td>";
                     $c = true;
                 }
                 //$datos[]=array("")echo "<div style='color:red'>".$do."</div><br>";
             }
             $datos .= "</table>";
+            
+                //echo $datos;//floatval($this->resul[0]["valorfob"])."--". floatval($r->activos);
+                //exit;
 
             if ($c) {
                 $email = new Email();
@@ -3043,8 +3433,8 @@ class clientesActions extends sfActions {
                 $email->setCaFrom("colsys@coltrans.com.co");
                 $email->setCaFromname("Administrador Sistema Colsys");
 
-                $email->addTo("maquinche@coltrans.com.co");
-                $email->addTo("fegutierrez@coltrans.com.co");
+                //$email->addTo("maquinche@coltrans.com.co");
+                $email->addTo("avaron@coltrans.com.co");
                 $email->addTo("lasalazar@coltrans.com.co");
 
                 $email->setCaSubject("Notificacion de Valores Fob superiores a Activos de Clientes " . date("Y-m-d"));
@@ -3109,7 +3499,7 @@ class clientesActions extends sfActions {
         $seguimientos = Doctrine::getTable("IdsEventos")
                 ->createQuery("i")
                 ->where('i.ca_tipo = ?', 'Reporte de Negocio')
-                ->addWhere('date_part(\'YEAR\', i.ca_fchevento) = ?', 2017)
+                ->addWhere('date_part(\'YEAR\', i.ca_fchevento) = ?', 2018)
                 ->addOrderBy("i.ca_fchevento DESC")
                 ->limit(10000)
                 ->execute();
@@ -3139,7 +3529,57 @@ class clientesActions extends sfActions {
         
         die("Fin");
     }
+    
+    /**
+     * Construye la nueva tabla de estados en clientes
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeNuevoEstadosClientes(sfWebRequest $request) {
+        // https://172.16.1.13/reportesGer/nuevoEstadosClientes
+        set_time_limit(0);
+        $idcliente = $request->getParameter("idcliente");
+        $con = Doctrine_Manager::getInstance()->connection();
+        $empresas = array(1, 2, 8, 11, 12);
+        // $sql = "delete from ids.tb_clientes_estados";
+        // $con->execute($sql);
+
+        if ($idcliente) {
+            $sql = "select DISTINCT ca_idcliente, ca_fchcreado from tb_clientes where ca_idcliente = " . $idcliente;
+        } else {
+            /*
+            $sql = "select DISTINCT ca_idcliente, ca_fchcreado from tb_clientes "
+                    . " where ca_idcliente > (select max(ca_idcliente) as ca_idcliente from ids.tb_clientes_estados)"
+                    . " order by ca_idcliente";
+             * 
+             */
+            $sql = "select distinct ca_indice1 as ca_idcliente from integracion.tb_transaccionesout where ca_indice1 is not null and ca_idtipo = 2";
+        }
+        $i = 0;
+        $rs = $con->execute($sql);
+        $clientes_rs = $rs->fetchAll();
+        echo "<table border=1>";
+        foreach ($clientes_rs as $cliente) {
+            echo "<tr>";
+            echo "  <td>" . $i++ . "</td>";
+            echo "  <td>" . $cliente["ca_idcliente"] . "</td>";
+            foreach ($empresas as $empresa) {
+                echo "  <td>" . $empresa . "</td>";
+                
+                /* Ejecuta Procedimiento Almacenado */
+                $sql = "select ids.fun_clientes_estados(" . $cliente["ca_idcliente"] . ", " . $empresa . ");" ;
+                $rs = $con->execute($sql);
+            }
+            echo "</tr>";
+//            if (($i%100) == 0) {
+//                echo date('h:i:s') . "\n";
+//                sleep(60);
+//                echo date('h:i:s') . "\n";
+//            }
+        }
+        echo "</table>";
+        exit;
+    }
 
 }
-
 ?>
