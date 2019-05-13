@@ -633,16 +633,29 @@ class inoF2Actions extends sfActions {
             }
             
             if($d["comp_ca_estado"] == 5){
+                $comprobante = Doctrine::getTable("InoComprobante")->find($d["comp_ca_idcomprobante"]);
+                $idg = $comprobante->getResultadoIndicador();
                 
-                $idgestado = $datosJson->idg->OFC->estado;
-                $idgvalor = $datosJson->idg->OFC->valor;                
+                $idgestado = -1;
+                
+                if($idg["sucess"] == true){
+                    $idgestado = $idg["datos"]["estado"];
+                    $idgvalor = $idg["datos"]["valor"];                
                 if($idgestado == 0){                    
-                    $idexclusion = $datosJson->idg->OFC->idexclusion;
-                    if($idexclusion && $idexclusion > 0){
-                        $obs = ParametroTable::retrieveByCaso("CU275",null,null,$idexclusion)->getFirst();
-                        $exclusion = utf8_encode($obs->getCaValor());
+                        $idexclusion = $idg["datos"]["idexclusion"];
+                        $exclusion = $idg["datos"]["exclusion"]; 
                     }
+                    
                 }
+//                $idgestado = $datosJson->idg->OFC->estado;
+//                $idgvalor = $datosJson->idg->OFC->valor;                
+//                if($idgestado == 0){                    
+//                    $idexclusion = $datosJson->idg->OFC->idexclusion;
+//                    if($idexclusion && $idexclusion > 0){
+//                        $obs = ParametroTable::retrieveByCaso("CU275",null,null,$idexclusion)->getFirst();
+//                        $exclusion = utf8_encode($obs->getCaValor());
+//                    }
+//                }
             }
             
             if ($d["comp_ca_idcomprobante_cruce"] != "" && $d["comp_ca_idcomprobante_cruce"] != null) {
@@ -847,10 +860,10 @@ class inoF2Actions extends sfActions {
                 if ($request->getParameter("agente")) {
                     $ino->setCaIdagente($request->getParameter("agente"));
                 }
-                if ($impoexpo == "OTM-DTA") {
+                if ($impoexpo == Constantes::OTMDTA || ($impoexpo == Constantes::INTERNO && $transporte== Constantes::TERRESTRE)) {
                     $datos = json_decode($ino->getCaDatos());
                     $datos->tipovehiculo = $tipovehiculo;
-                    if($idempresa!="")
+                    if($idempresa!="" && $impoexpo == Constantes::OTMDTA)
                         $datos->idempresa = $idempresa;
                     $datos = json_encode($datos);
                     $ino->setCaDatos($datos);
@@ -4862,6 +4875,7 @@ class inoF2Actions extends sfActions {
     }
 
     public function executeDatosGridComisionDetalles(sfWebRequest $request) {
+        set_time_limit(0);
         $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
         if ($request->getParameter("consecutivo")) {    // Modo Consulta de detalles de un Comprobante
             $comprobantes = Doctrine::getTable("InoComision")->findBy("ca_consecutivo", $request->getParameter("consecutivo"));
@@ -4923,6 +4937,7 @@ class inoF2Actions extends sfActions {
         }
         
         $datos = array();
+        $con = Doctrine_Manager::getInstance()->connection();
         foreach ($comprobantes as $comprobante) {
             if (!$comprobante->getCaIdutilidad()) {
                 $concepto = "Ingreso General";
@@ -4930,16 +4945,20 @@ class inoF2Actions extends sfActions {
                 $concepto = "Verificar Concepto";
                 if( intval(substr($comprobante->getInoHouse()->getInoMaster()->getCaReferencia(),7,2 ))  < 6 && intval(substr($comprobante->getInoHouse()->getInoMaster()->getCaReferencia(),15,2 ))  <= 18 ) 
                 {
-                    $costo = Doctrine::getTable("InoConcepto")->find($comprobante->getInoUtilidad()->getInoCosto()->getCaIdcosto());
-                    if ($costo) {
-                        $concepto = utf8_encode($costo->getCaConcepto());
+                    $sql = "select c.ca_concepto from ino.tb_conceptos c where c.ca_idconcepto = ".$comprobante->getInoUtilidad()->getInoCosto()->getCaIdcosto();
+                    $st = $con->execute($sql);
+                    $costo = $st->fetch();
+                    if (count($costo)) {
+                        $concepto = utf8_encode($costo["ca_concepto"]);
                     }
                 }
                 else 
                 {
-                    $costo = Doctrine::getTable("InoMaestraConceptos")->find($comprobante->getInoUtilidad()->getInoCosto()->getCaIdcosto());
-                    if ($costo) {
-                        $concepto = utf8_encode($costo->getCaConceptoEsp());
+                    $sql = "select c.ca_concepto_esp from ino.tb_maestra_conceptos c where c.ca_idconcepto = ".$comprobante->getInoUtilidad()->getInoCosto()->getCaIdcosto();
+                    $st = $con->execute($sql);
+                    $costo = $st->fetch();
+                    if (count($costo)) {
+                        $concepto = utf8_encode($costo["ca_concepto_esp"]);
                     }
                 }
             }
@@ -4954,7 +4973,6 @@ class inoF2Actions extends sfActions {
             $datosMaster = json_decode($comprobante->getInoHouse()->getInoMaster()->getCaDatos());
             $facturaUnica = $datosMaster->facturaUnica;     // Valida si la refencia tiene multiples houses y una sola factura
             if ($facturaUnica) {
-                $con = Doctrine_Manager::getInstance()->connection();
                 $sql = "select h1.ca_idhouse from ino.tb_house h1 inner join ino.tb_house h2 on h1.ca_idmaster = h2.ca_idmaster and h2.ca_idhouse = " . $comprobante->getCaIdhouse();
                 
                 $stmt = $con->execute($sql);
@@ -4983,14 +5001,11 @@ class inoF2Actions extends sfActions {
                     continue;
                 }
                 
-                $comprPago = Doctrine::getTable("InoComprobante")
-                    ->createQuery("c")
-                    ->addWhere("c.ca_idcomprobante = ?", $factura->getCaIdcomprobanteCruce())
-                    ->addWhere("c.ca_usuanulado IS NULL")
-                    ->fetchOne();
-                
-                if ($comprPago) {
-                    $pagosRecibidos[] = $comprPago->getCaConsecutivo() . " - " . $comprPago->getCaFchcomprobante();
+                $sql = "select c.ca_consecutivo, c.ca_fchcomprobante from ino.tb_comprobantes c where c.ca_idcomprobante = ".$factura->getCaIdcomprobanteCruce()." and c.ca_usuanulado IS NULL";
+                $st = $con->execute($sql);
+                $comprPago = $st->fetch();
+                if (count($comprPago)) {
+                    $pagosRecibidos[] = $comprPago["ca_consecutivo"] . " - " . $comprPago["ca_fchcomprobante"];
                 }
             }
             $crucescomp = null;
@@ -5556,7 +5571,6 @@ class inoF2Actions extends sfActions {
     public function executeRegistrarObservacionIdg(sfWebRequest $request){
         
         $idcomprobante = $request->getParameter("idcomprobante");
-        //$tipo = $request->getParameter("tipo");
         $idg_sigla = $request->getParameter("idg");
         $idexclusion = $request->getParameter("id");
         
@@ -5568,20 +5582,23 @@ class inoF2Actions extends sfActions {
         try {        
             if($comprobante){
 
-                $datos = json_decode(utf8_encode($comprobante->getCaDatos()),1);
-                $datos["idg"]["OFC"]["idexclusion"] = intval($idexclusion);
-                //echo "<pre>";print_r($datos);echo "</pre>";
-                //exit;
-                $comprobante->setCaDatos(json_encode($datos));
-                $comprobante->save($conn);
-                $conn->commit();
+                $datos = array();
+                $idg = $comprobante->getIdg();
                 
+                $registro = Doctrine::getTable("InoIndicadores")->find($idg["datos"]["id"]);
+                
+                if($registro){
+                    $registro->setCaIdexclusion($idexclusion);
+                    $registro->save($conn);
+                $conn->commit();
                 $this->responseArray = array("success" => true, "consecutivo" => $comprobante->getCaConsecutivo(), "errorInfo"=>"");
+            }else               
+                    $this->responseArray = array("success" => false, "errorInfo" => "No existe el indicador solicitado");
             }else               
                 $this->responseArray = array("success" => false, "errorInfo" => "No existe el comprobante: ".$idcomprobante);
         } catch (Exception $e) {
             $conn->rollback();
-            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());                
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));                
         }
         $this->setTemplate("responseTemplate");
     }    
