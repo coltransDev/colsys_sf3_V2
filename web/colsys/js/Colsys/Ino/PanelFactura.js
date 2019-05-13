@@ -40,14 +40,16 @@ Ext.define('Colsys.Ino.PanelFactura', {
                 '</table>',
                 '<table width="100%"><tr><td id="detalle{idcomprobante}"><div class="font8 gris">[{idcomprobante} - {docentry}]</div></td>',
                 '<tpl if="this.factGenerada(estado)">',                
-                '<tpl if="this.cumpleIdg(idgestado)">',
+                '<tpl if="idgestado == 1">',
+                '<td><p align="right"><img src="/images/16x16/button_ok.gif" title="Oportunidad en la Facturacion: {idgvalor}"/></p></td>',
+                '<tpl elseif="idgestado == 0">',
                 '<tpl if="this.obsIdg(idexclusion)">',
                 '<td><p align="right"><img src="/images/16x16/alert_disabled.png" title="Oportunidad en la Facturacion: {idgvalor}\nObservacion: {exclusion}" /></p></td>',                
                 '<tpl else>',
                 '<td><p align="right"><a href="javascript:winIdgFact(\'{idcomprobante}\',\'' + this.idimpoexpo + '\',\'' + this.idtransporte + '\',\'' + this.idmaster + '\')"  id="alert_nocumple"><img src="/images/16x16/alert.png" title="Oportunidad en la Facturacion: {idgvalor}" /></a></p></td>',                
-                '</tpl>', 
-                '<tpl else>',
-                '<td><p align="right"><img src="/images/16x16/button_ok.gif" title="Oportunidad en la Facturacion: {idgvalor}"/></p></td>',
+                '</tpl>',
+                '<tpl elseif="idgestado == -1">',
+                '<td><p align="right"></p></td>',                
                 '</tpl>',                
                 '</tpl>',
                 '</tr></table>',
@@ -63,9 +65,11 @@ Ext.define('Colsys.Ino.PanelFactura', {
                         return file;
                     },                    
                     cumpleIdg: function(val){
-                        if(val==0)
+                        if(val==1)
                             return true;
-                        else
+                        else if(val == -1)
+                            return false;
+                        else if(val == 0)
                             return false;
                     },
                     obsIdg: function(val){
