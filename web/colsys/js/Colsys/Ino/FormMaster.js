@@ -6,27 +6,17 @@
  modalidad, origen, destino, proveedor, agente, peso,piezas,
  volumen, fecha praviso, fecha llegada, fecha salida.
  */
-Ext.define('ComboSiNo', {
+Ext.define('ComboIdg', {
     extend: 'Ext.form.field.ComboBox',
-    alias: 'widget.combo-si-no',
-    store: ['Si', 'No']
+    alias: 'widget.combo-idg',
+    store: ['SI', 'NO', 'COLLECT','FACTURA AL AGENTE']
 });
-
-/*comboBoxRenderer = function (combo) {
- return function (value) {
- var idx = combo.store.find(combo.valueField, value);
- 
- var rec = combo.store.getAt(idx);
- return (rec === null ? value : rec.get(combo.displayField));
- };
- };*/
 
 Ext.define('Colsys.Ino.FormMaster', {
     extend: 'Ext.form.Panel',
     alias: 'widget.Colsys.Ino.FormMaster',
     title: 'SISTEMA INO',
-    bodyPadding: 5,
-    //width: 1000,
+    bodyPadding: 5,    
     autoScroll: true,
     layout: 'column',
     defaults: {
@@ -45,9 +35,6 @@ Ext.define('Colsys.Ino.FormMaster', {
             textProveedor = "Naviera";
             textFechapreaviso = "Fecha Zarpe";
         }
-
-
-
         this.add(
                 {
                     xtype: 'fieldset',
@@ -63,153 +50,96 @@ Ext.define('Colsys.Ino.FormMaster', {
                         bodyStyle: 'padding:4px'
                     },
                     items: [{
-                            xtype: 'hidden',
-                            id: 'master' + this.idmaster,
-                            name: 'idmaster',
-                            value: this.idmaster
-                        }, {
-                            xtype: 'hidden',
-                            id: 'impoexpo_' + this.idmaster,
-                            name: 'impoexpo',
-                            value: this.idimpoexpo
-                        }, /*{
-                         xtype: 'datefield',
-                         fieldLabel: 'Fecha Registro',
-                         style: 'display:inline-block;text-align:center;font-weight:bold;',
-                         labelWidth: 200,
-                         allowBlank: false,
-                         name: 'fchreferencia',
-                         format: "Y-m-d",
-                         altFormat: "Y-m-d",
-                         submitFormat: 'Y-m-d'
-                         },*/
-                        {
-                            xtype: 'Colsys.Widgets.WgReporte',
-                            fieldLabel: 'Reporte',
-                            labelWidth: 100,
-                            style: 'display:inline-block;text-align:center;font-weight:bold;padding-left:60px;',
-                            name: 'idreporte',
-                            id: 'reporte' + this.idmaster,
-                            //idtransporte: 'transporte' + this.idmaster,
-                            //idimpoexpo: 'impoexpo' + this.idmaster,
-                            idtransporte: this.idtransporte,
-                            idimpoexpo: this.idimpoexpo,
-                            idmaster: this.idmaster,
-                            hidden: (this.idmaster > 0) ? true : false,
-                            tabIndex: 1,
-                            listeners: {
-                                select: function (combo, records, eOpts) {
-                                    var idmaster = this.idmaster;
-                                    form = Ext.getCmp('form-master-' + this.idmaster);
-                                    var idreporte = records.data.idreporte;
-                                    Ext.Ajax.request({
-                                        url: '/widgets5/datosReporteCarga',
-                                        params: {
-                                            idreporte: idreporte
-                                        },
-                                        success: function (response, options) {
-                                            var res = Ext.util.JSON.decode(response.responseText);
+                        xtype: 'hidden',
+                        id: 'master' + this.idmaster,
+                        name: 'idmaster',
+                        value: this.idmaster
+                    }, {
+                        xtype: 'hidden',
+                        id: 'impoexpo_' + this.idmaster,
+                        name: 'impoexpo',
+                        value: this.idimpoexpo
+                    },
+                    {
+                        xtype: 'Colsys.Widgets.WgReporte',
+                        fieldLabel: 'Reporte',
+                        labelWidth: 100,
+                        style: 'display:inline-block;text-align:center;font-weight:bold;padding-left:60px;',
+                        name: 'idreporte',
+                        id: 'reporte' + this.idmaster,                            
+                        idtransporte: this.idtransporte,
+                        idimpoexpo: this.idimpoexpo,
+                        idmaster: this.idmaster,
+                        hidden: (this.idmaster > 0) ? true : false,
+                        tabIndex: 1,
+                        listeners: {
+                            select: function (combo, records, eOpts) {
+                                var idmaster = this.idmaster;
+                                form = Ext.getCmp('form-master-' + this.idmaster);
+                                var idreporte = records.data.idreporte;
+                                Ext.Ajax.request({
+                                    url: '/widgets5/datosReporteCarga',
+                                    params: {
+                                        idreporte: idreporte
+                                    },
+                                    success: function (response, options) {
+                                        var res = Ext.util.JSON.decode(response.responseText);
 
-                                            /*if (Ext.getCmp('ca_consignatario' + idmaster)) {
-                                             if (Ext.getCmp("ca_consignatario" + idmaster).getValue() == "" ||
-                                             Ext.getCmp("ca_consignatario" + idmaster).getValue() == null) {
-                                             Ext.getCmp('ca_consignatario' + idmaster).setValue(res.data.ca_consignatario);
-                                             }
-                                             }
-                                             if (Ext.getCmp('contacto' + idmaster)) {
-                                             if (Ext.getCmp("contacto" + idmaster).getValue() == "" ||
-                                             Ext.getCmp("contacto" + idmaster).getValue() == null) {
-                                             Ext.getCmp('contacto' + idmaster).setValue(res.data.contacto);
-                                             }
-                                             }
-                                             if (Ext.getCmp('cliente' + idmaster)) {
-                                             if (Ext.getCmp("cliente" + idmaster).getValue() == null ||
-                                             Ext.getCmp("cliente" + idmaster).getValue() == "") {
-                                             
-                                             Ext.getCmp("cliente" + idmaster).store.add(
-                                             {"idcliente": res.data.idcliente, "compania": res.data.cliente}
-                                             );
-                                             
-                                             Ext.getCmp("cliente" + idmaster).setValue(res.data.idcliente);
-                                             }
-                                             }*/
-                                            if (Ext.getCmp("piezas" + idmaster).getValue() == "" ||
-                                                    Ext.getCmp("piezas" + idmaster).getValue() == null) {
-                                                Ext.getCmp("piezas" + idmaster).setValue(res.data.ca_piezas);
-                                            }
-                                            if (Ext.getCmp("volumen" + idmaster).getValue() == "" ||
-                                                    Ext.getCmp("volumen" + idmaster).getValue() == null) {
-                                                Ext.getCmp("volumen" + idmaster).setValue(res.data.ca_volumen);
-                                            }
-                                            if (Ext.getCmp("peso" + idmaster).getValue() == "" ||
-                                                    Ext.getCmp("peso" + idmaster).getValue() == null) {
-                                                Ext.getCmp("peso" + idmaster).setValue(res.data.ca_peso);
-                                            }
-                                            if (Ext.getCmp("fch_salida" + idmaster).getValue() == null ||
-                                                    Ext.getCmp("fch_salida" + idmaster).getValue() == "") {
-                                                Ext.getCmp("fch_salida" + idmaster).setValue(res.data.ca_fchsalida);
-                                            }
-                                            if (Ext.getCmp("tipovehiculo" + idmaster).getValue() == null ||
-                                                    Ext.getCmp("tipovehiculo" + idmaster).getValue() == "") {
-                                                Ext.getCmp("tipovehiculo" + idmaster).setValue(res.data.tipovehiculo);
-                                            }
-                                            if (Ext.getCmp("modalidad" + idmaster).getValue() == null ||
-                                                    Ext.getCmp("modalidad" + idmaster).getValue() == "") {
-                                                Ext.getCmp("modalidad" + idmaster).setValue(res.data.modalidad);
-                                            }
-
-
-                                            if (Ext.getCmp("ca_fchllegada" + idmaster).getValue() == null ||
-                                                    Ext.getCmp("ca_fchllegada" + idmaster).getValue() == "") {
-                                                Ext.getCmp("ca_fchllegada" + idmaster).setValue(res.data.ca_fchllegada);
-                                            }
-
-                                            if (Ext.getCmp("idorigen" + idmaster).getValue() == null ||
-                                                    Ext.getCmp("idorigen" + idmaster).getValue() == "") {
-                                                Ext.getCmp("idorigen" + idmaster).setValue(res.data.origen);
-                                            }
-
-                                            if (Ext.getCmp("iddestino" + idmaster).getValue() == null ||
-                                                    Ext.getCmp("iddestino" + idmaster).getValue() == "") {
-                                                Ext.getCmp("iddestino" + idmaster).setValue(res.data.destino);
-                                            }
-                                            if (Ext.getCmp("agente" + idmaster).getValue() == null ||
-                                                    Ext.getCmp("agente" + idmaster).getValue() == "") {
-                                                Ext.getCmp("agente" + idmaster).setValue(res.data.idagente);
-                                            }
-
-
-                                            if (Ext.getCmp("proveedor" + idmaster).getValue() == null ||
-                                                    Ext.getCmp("proveedor" + idmaster).getValue() == "") {
-
-                                                Ext.getCmp("proveedor" + idmaster).store.add(
-                                                        {"idlinea": res.data.idlinea, "linea": res.data.linea}
-                                                );
-
-                                                Ext.getCmp("proveedor" + idmaster).setValue(res.data.idlinea);
-                                            }
-                                            if (Ext.getCmp("ca_modalidad" + idmaster).getValue() == null ||
-                                                    Ext.getCmp("ca_modalidad" + idmaster).getValue() == "") {
-
-                                                Ext.getCmp("ca_modalidad" + idmaster).store.add(
-                                                        {"id": res.data.id_modalidad, "name": res.data.ca_modalidad}
-                                                );
-
-                                                Ext.getCmp("ca_modalidad" + idmaster).setValue(res.data.id_modalidad);
-                                            }
-
-                                            if (Ext.getCmp("ca_descripcion" + idmaster).getValue() == "" ||
-                                                    Ext.getCmp("ca_descripcion" + idmaster).getValue() == null) {
-                                                Ext.getCmp("ca_descripcion" + idmaster).setValue(res.data.ca_descripcion);
-                                            }
-
-
+                                        if (Ext.getCmp("piezas" + idmaster).getValue() == "" || Ext.getCmp("piezas" + idmaster).getValue() == null) {
+                                            Ext.getCmp("piezas" + idmaster).setValue(res.data.ca_piezas);
                                         }
-                                    });
-                                }
-                            }
+                                        if (Ext.getCmp("volumen" + idmaster).getValue() == "" || Ext.getCmp("volumen" + idmaster).getValue() == null) {
+                                            Ext.getCmp("volumen" + idmaster).setValue(res.data.ca_volumen);
+                                        }
+                                        if (Ext.getCmp("peso" + idmaster).getValue() == "" || Ext.getCmp("peso" + idmaster).getValue() == null) {
+                                            Ext.getCmp("peso" + idmaster).setValue(res.data.ca_peso);
+                                        }
+                                        if (Ext.getCmp("fch_salida" + idmaster).getValue() == null || Ext.getCmp("fch_salida" + idmaster).getValue() == "") {
+                                            Ext.getCmp("fch_salida" + idmaster).setValue(res.data.ca_fchsalida);
+                                        }
+                                        if (Ext.getCmp("tipovehiculo" + idmaster).getValue() == null || Ext.getCmp("tipovehiculo" + idmaster).getValue() == "") {
+                                            Ext.getCmp("tipovehiculo" + idmaster).setValue(res.data.tipovehiculo);
+                                        }
+                                        if (Ext.getCmp("modalidad" + idmaster).getValue() == null || Ext.getCmp("modalidad" + idmaster).getValue() == "") {
+                                            Ext.getCmp("modalidad" + idmaster).setValue(res.data.modalidad);
+                                        }
 
-                        }]
+                                        if (Ext.getCmp("ca_fchllegada" + idmaster).getValue() == null || Ext.getCmp("ca_fchllegada" + idmaster).getValue() == "") {
+                                            Ext.getCmp("ca_fchllegada" + idmaster).setValue(res.data.ca_fchllegada);
+                                        }
+
+                                        if (Ext.getCmp("idorigen" + idmaster).getValue() == null || Ext.getCmp("idorigen" + idmaster).getValue() == "") {
+                                            Ext.getCmp("idorigen" + idmaster).setValue(res.data.origen);
+                                        }
+
+                                        if (Ext.getCmp("iddestino" + idmaster).getValue() == null || Ext.getCmp("iddestino" + idmaster).getValue() == "") {
+                                            Ext.getCmp("iddestino" + idmaster).setValue(res.data.destino);
+                                        }
+                                        if (Ext.getCmp("agente" + idmaster).getValue() == null || Ext.getCmp("agente" + idmaster).getValue() == "") {
+                                            Ext.getCmp("agente" + idmaster).setValue(res.data.idagente);
+                                        }
+
+                                        if (Ext.getCmp("proveedor" + idmaster).getValue() == null || Ext.getCmp("proveedor" + idmaster).getValue() == "") {
+                                            Ext.getCmp("proveedor" + idmaster).store.add(
+                                                {"idlinea": res.data.idlinea, "linea": res.data.linea}
+                                            );
+                                            Ext.getCmp("proveedor" + idmaster).setValue(res.data.idlinea);
+                                        }
+                                        if (Ext.getCmp("ca_modalidad" + idmaster).getValue() == null || Ext.getCmp("ca_modalidad" + idmaster).getValue() == "") {
+                                            Ext.getCmp("ca_modalidad" + idmaster).store.add(
+                                                {"id": res.data.id_modalidad, "name": res.data.ca_modalidad}
+                                            );
+                                            Ext.getCmp("ca_modalidad" + idmaster).setValue(res.data.id_modalidad);
+                                        }
+
+                                        if (Ext.getCmp("ca_descripcion" + idmaster).getValue() == "" || Ext.getCmp("ca_descripcion" + idmaster).getValue() == null) {
+                                            Ext.getCmp("ca_descripcion" + idmaster).setValue(res.data.ca_descripcion);
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }]
                 },
                 {
                     xtype: 'fieldset',
@@ -283,10 +213,8 @@ Ext.define('Colsys.Ino.FormMaster', {
                             width: 300,
                             idmaster: this.idmaster,
                             tabIndex: 2
-                        },
-                        //{
-                        Ext.create('Colsys.Widgets.WgCiudades2', {
-                            //xtype: 'Colsys.Widgets.WgCiudades2',
+                        },                        
+                        Ext.create('Colsys.Widgets.WgCiudades2', {                            
                             fieldLabel: 'Origen',
                             tipo: 'origen',
                             idimpoexpo: this.idimpoexpo,
@@ -311,16 +239,12 @@ Ext.define('Colsys.Ino.FormMaster', {
                                 autoLoad: true
                             })
                         }),
-                        //},
-                        ,
-                                {
-                                    xtype: 'tbspacer',
-                                    height: 10,
-                                    columnWidth: 1
-                                },
-                        //{
-                        Ext.create('Colsys.Widgets.WgCiudades2', {
-                            //xtype: 'Colsys.Widgets.WgCiudades2',
+                        {
+                            xtype: 'tbspacer',
+                            height: 10,
+                            columnWidth: 1
+                        },                        
+                        Ext.create('Colsys.Widgets.WgCiudades2', {                            
                             fieldLabel: 'Destino',
                             forceSelection: true,
                             tipo: 'destino',
@@ -344,9 +268,7 @@ Ext.define('Colsys.Ino.FormMaster', {
                                 },
                                 autoLoad: true
                             })
-                        })
-                                //}, 
-                                ,
+                        }),
                         {
                             xtype: 'Colsys.Widgets.WgLinea',
                             fieldLabel: textProveedor,
@@ -402,8 +324,7 @@ Ext.define('Colsys.Ino.FormMaster', {
                 {
                     xtype: 'fieldset',
                     title: 'Informaci&oacute;n del trayecto',
-                    autoHeight: true,
-                    //height: 500,
+                    autoHeight: true,                    
                     columnWidth: 1,
                     layout: 'column',
                     columns: 2,
@@ -424,8 +345,7 @@ Ext.define('Colsys.Ino.FormMaster', {
                             tabIndex: 8
                         }, {
                             xtype: 'datefield',
-                            fieldLabel: 'Fch.Documento',
-                            //allowBlank: false,
+                            fieldLabel: 'Fch.Documento',                            
                             id: 'fchmaster' + this.idmaster,
                             name: 'ca_fchmaster',
                             style: 'display:inline-block;text-align:center;font-weight:bold;',
@@ -562,13 +482,9 @@ Ext.define('Colsys.Ino.FormMaster', {
             var y = formattedDate.getFullYear();
             var fch = y + "-" + m + "-" + d;
             if (Ext.getCmp('fch_salida' + this.idmaster)) {
-                if (Ext.getCmp("fch_salida" + this.idmaster).getValue() == "" ||
-                        Ext.getCmp("fch_salida" + this.idmaster).getValue() == null) {
+                if (Ext.getCmp("fch_salida" + this.idmaster).getValue() == "" || Ext.getCmp("fch_salida" + this.idmaster).getValue() == null) {
                     Ext.getCmp('fch_salida' + this.idmaster).setValue(fch);
-                    Ext.getCmp('ca_fchllegada' + this.idmaster).setValue(fch);
-                    //Ext.getCmp('fch_salida' + this.idmaster).setVisible(false);
-                    //Ext.getCmp('ca_fchllegada' + this.idmaster).setVisible(false);
-                    //Ext.getCmp('ca_fchllegada' + this.idmaster).allowBlank = true;
+                    Ext.getCmp('ca_fchllegada' + this.idmaster).setValue(fch);                    
                 }
             }
 
@@ -597,8 +513,7 @@ Ext.define('Colsys.Ino.FormMaster', {
                         caso_uso: 'CU011'
                     },
                     Ext.create('Colsys.Widgets.WgProveedores', {
-                        fieldLabel: 'Agencia de Aduana',
-                        //forceSelection: true,
+                        fieldLabel: 'Agencia de Aduana',                        
                         name: 'idlinea',
                         tipo: 'ADU',
                         id: 'agenciaad' + this.idmaster,
@@ -609,56 +524,12 @@ Ext.define('Colsys.Ino.FormMaster', {
                         idmaster: this.idmaster,
                         idtransporte: 'transporte' + this.idmaster
                     }),
-                    //xtype: 'Colsys.Widgets.WgProveedores',
-
-
-
-                    /*{
-                     xtype: 'tbspacer',
-                     height: 10,
-                     columnWidth: 1
-                     }, {
-                     xtype: 'textfield',
-                     fieldLabel: 'Contacto',
-                     id: 'contacto' + this.idmaster,
-                     name: 'ca_contacto',
-                     style: 'display:inline-block;text-align:center;font-weight:bold;',
-                     labelWidth: 200,
-                     width: 300
-                     }, {
-                     xtype: 'Colsys.Widgets.WgIncoterms',
-                     fieldLabel: 'INCOTERMS',
-                     forceSelection: true,
-                     allowBlank: false,
-                     name: 'ca_incoterms',
-                     style: 'display:inline-block;text-align:center;font-weight:bold;',
-                     labelWidth: 100,
-                     width: 300
-                     }, {
-                     xtype: 'tbspacer',
-                     height: 10,
-                     columnWidth: 1
-                     }, {
-                     xtype: 'textfield',
-                     fieldLabel: 'Nombre Consignatario',
-                     name: 'ca_consignatario',
-                     id: 'ca_consignatario' + this.idmaster,
-                     style: 'display:inline-block;text-align:center;font-weight:bold;',
-                     labelWidth: 200,
-                     width: 300
-                     }, {
-                     xtype: 'textfield',
-                     fieldLabel: 'Direcci&oacute;n Consignatario ',
-                     name: 'ca_direccion',
-                     style: 'display:inline-block;text-align:center;font-weight:bold;',
-                     labelWidth: 100,
-                     width: 300
-                     }, */{
+                    {
                         xtype: 'tbspacer',
                         height: 10,
                         columnWidth: 1
-                    }, {
-                        xtype: 'combo-si-no',
+                    }, 
+                    Ext.create('ComboIdg',{
                         fieldLabel: 'Aplica IDG',
                         forceSelection: true,
                         name: 'aplicaidg',
@@ -667,15 +538,7 @@ Ext.define('Colsys.Ino.FormMaster', {
                         labelWidth: 200,
                         value: 'SI',
                         width: 300
-                    }, /*{
-                     xtype: 'Colsys.Widgets.WgClientes',
-                     fieldLabel: 'Cliente',
-                     name: 'cliente',
-                     id: 'cliente' + this.idmaster,
-                     style: 'display:inline-block;text-align:center;font-weight:bold;',
-                     labelWidth: 100,
-                     width: 300
-                     },*/ {
+                    }),{
                         xtype: 'tbspacer',
                         height: 10,
                         columnWidth: 1
@@ -775,12 +638,9 @@ Ext.define('Colsys.Ino.FormMaster', {
                                 {
                                     var idmas = action.result.idmaster;
                                     var tabpanel = Ext.getCmp('tabpanel1');
-                                    //tabpanel = Ext.getCmp('tabpanel1');
+                                    
                                     ref = idmas;
-                                    /*numRef = action.result.idreferencia;
-                                     idimpo = action.result.idimpoexpo;
-                                     idtrans = action.result.idtransporte;*/
-
+                                    
                                     if (action.result.idimpoexpo == "INTERNO")
                                         tmppermisos = permisosG.terrestre;
                                     else if (action.result.idimpoexpo == "Exportaci\u00F3n")
@@ -795,37 +655,32 @@ Ext.define('Colsys.Ino.FormMaster', {
                                     } else if (action.result.idimpoexpo == "OTM-DTA")
                                         tmppermisos = permisosG.otm;
 
-                                    //console.log(tmppermisos);
-                                    //return;
                                     tabpanel.getChildByElement('tab0').close();
 
                                     if (!tabpanel.getChildByElement('tab' + ref) && ref != "")
                                     {
-                                        tabpanel.add(
+                                        tabpanel.add({
+                                            title: action.result.idreferencia,
+                                            id: 'tab' + ref,
+                                            itemId: 'tab' + ref,
+                                            closable: true,
+                                            autoScroll: true,
+                                            items: [
+                                                new Colsys.Ino.Mainpanel({
+                                                    "idmaster": action.result.idmaster, "idtransporte": action.result.idtransporte,
+                                                    "idimpoexpo": action.result.idimpoexpo, "idreferencia": action.result.idmaster,
+                                                    'permisos': tmppermisos, "tipofacturacion": 2, "idticket": "-1", "modalidad": action.result.modalidad
+                                                }),
                                                 {
-                                                    title: action.result.idreferencia,
-                                                    id: 'tab' + ref,
-                                                    itemId: 'tab' + ref,
-                                                    closable: true,
-                                                    autoScroll: true,
-                                                    items: [
-                                                        new Colsys.Ino.Mainpanel(
-                                                                {
-                                                                    "idmaster": action.result.idmaster, "idtransporte": action.result.idtransporte,
-                                                                    "idimpoexpo": action.result.idimpoexpo, "idreferencia": action.result.idmaster,
-                                                                    'permisos': tmppermisos, "tipofacturacion": 2, "idticket": "-1", "modalidad": action.result.modalidad
-                                                                }),
-                                                        {
-                                                            region: 'south',
-                                                            xtype: 'Colsys.Ino.FormCierre',
-                                                            id: 'formCierre' + ref,
-                                                            name: 'formCierre' + ref,
-                                                            idmaster: ref,
-                                                            'permisos': tmppermisos
-                                                        }
-                                                        /*{xtype:'Colsys.Ino.Mainpanel',"idmaster": ref, "idimpoexpo": idimpo, "idtransporte": idtrans, 'idreferencia': numRef,'permisos': tmppermisos}*/
-                                                    ]
-                                                }).show();
+                                                    region: 'south',
+                                                    xtype: 'Colsys.Ino.FormCierre',
+                                                    id: 'formCierre' + ref,
+                                                    name: 'formCierre' + ref,
+                                                    idmaster: ref,
+                                                    'permisos': tmppermisos
+                                                }                                                        
+                                            ]
+                                        }).show();
                                     }
                                     tabpanel.setActiveTab('tab' + ref);
                                 }
@@ -861,17 +716,14 @@ Ext.define('Colsys.Ino.FormMaster', {
             });
         }
         idmastrer = this.idmaster;
-        //console.log(this.idmodalidad);
-        //console.log(this.idtransporte);
-        //console.log(this.idimpoexpo);
+        
         if (this.idimpoexpo == "Importaci\u00F3n" && this.idtransporte == "Mar\u00EDtimo" && this.idmodalidad == "COLOADING")
         {
             tb.add({
                 xtype: 'button',
                 text: '@ Coloader',
                 id: "bcoloader" + idmastrer,
-                name: "bcoloader" + idmastrer,
-                //iconCls: 'delete',
+                name: "bcoloader" + idmastrer,                
                 width: 150,
                 handler: function () {
                     var windowpdf = Ext.create('Colsys.Widgets.WgVerPdf', {
@@ -903,8 +755,7 @@ Ext.define('Colsys.Ino.FormMaster', {
         {
             tb.add({
                 xtype: 'button',
-                text: 'Instrucciones',
-                //iconCls: 'delete',
+                text: 'Instrucciones',                
                 width: 150,
                 handler: function () {
                     var windowpdf = Ext.create('Colsys.Widgets.WgVerPdf', {
@@ -929,10 +780,7 @@ Ext.define('Colsys.Ino.FormMaster', {
             text: 'Eventos',
             iconCls: 'user',
             handler: function () {
-
-
                 openFile("/ids/formEventos?idmaster=" + idmastrer)
-
             }
         });
 
@@ -967,25 +815,6 @@ Ext.define('Colsys.Ino.FormMaster', {
                     });
                 }
 
-                /*Ext.getCmp("idorigen" + idmasterr).store.load({
-                 params: {
-                 tipo: Ext.getCmp("idorigen" + idmasterr).tipo,
-                 impoexpo: Ext.getCmp("idorigen" + idmasterr).idimpoexpo
-                 },
-                 callback: function (records, operation, success) {
-                 console.log("carga de origen");
-                 }
-                 });
-                 Ext.getCmp("iddestino" + idmasterr).store.reload({
-                 params: {
-                 tipo: Ext.getCmp("iddestino" + idmasterr).tipo,
-                 impoexpo: Ext.getCmp("iddestino" + idmasterr).idimpoexpo
-                 },
-                 callback: function (records, operation, success) {
-                 console.log(Ext.getCmp("idorigen" + idmasterr).store);
-                 }
-                 });*/
-
                 var store = Ext.getCmp('modalidad' + this.idmaster).getStore();
                 store.proxy.extraParams = {
                     idmaster: this.idmaster
@@ -995,42 +824,23 @@ Ext.define('Colsys.Ino.FormMaster', {
                     url: '/inoF2/datosMaster',
                     params: {"idmaster": this.idmaster},
                     success: function (response, options) {
-                        ///////////////////////////////////////////////////
-
-
-
-                        //////////////////////////////////////////////////
+                        
                         res = Ext.JSON.decode(options.response.responseText);
-                        //console.log(Ext.getCmp('finformacion' + idmasterr));
-                        Ext.getCmp('finformacion' + idmasterr).setTitle("Informaci&oacute;n del trayecto [" + res.data.referencia + "," + idmasterr + "]");
-                        //Ext.getCmp('general' + idmaster).setValue(Ext.getCmp('general' + idmasterr).getValue() + "["+idmasterr+","+res.data.referencia +"]");                        
+                        
+                        Ext.getCmp('finformacion' + idmasterr).setTitle("Informaci&oacute;n del trayecto [" + res.data.referencia + "," + idmasterr + "]");                        
                         Ext.getCmp("modalidad" + idmasterr).readOnly = res.data.modalidadnoeditable;
                         Ext.getCmp("idorigen" + idmasterr).readOnly = res.data.origennoeditable;
                         Ext.getCmp("iddestino" + idmasterr).readOnly = res.data.destinonoeditable;
 
-                        //Ext.getCmp("bcoloader" + idmasterr).hidden=true;
-
-                        /*if (Ext.getCmp("agente" + idmasterr)) {
-                         Ext.getCmp("agente" + idmasterr).store.add(
-                         {"idagente": res.data.idagente, "nombre": res.data.nombre}
-                         );
-                         Ext.getCmp("agente" + idmasterr).setValue(res.data.idagente);
-                         $('#agente' + idmasterr + '-inputEl').val(res.data.nombre);
-                         }*/
                         Ext.getCmp("agente" + idmasterr).store.reload({
                             params: {
                                 transporte: idtransporte,
                             },
                             callback: function (records, operation, success) {
                                 Ext.getCmp("agente" + idmasterr).store.add(
-                                        {"idagente": res.data.idagente, "nombre": res.data.nombre}
+                                    {"idagente": res.data.idagente, "nombre": res.data.nombre}
                                 );
-                                Ext.getCmp("agente" + idmasterr).setValue(res.data.idagente);
-                                /*------*/
-
-                                //Ext.getCmp("ca_modalidad" + idmasterr).store.add(
-                                //     {"id": res.data.id_modalidad, "name": res.data.ca_modalidad}
-                                //);
+                                Ext.getCmp("agente" + idmasterr).setValue(res.data.idagente);                                
                                 Ext.getCmp("modalidad" + idmasterr).setValue(res.data.modalidad);
                             }
                         });
@@ -1043,8 +853,7 @@ Ext.define('Colsys.Ino.FormMaster', {
                                 Ext.getCmp("proveedor" + idmasterr).store.add(
                                         {"idlinea": res.data.proveedor, "linea": res.data.linea}
                                 );
-                                Ext.getCmp("proveedor" + idmasterr).setValue(res.data.proveedor);
-                                //$('#proveedor' + idmasterr + '-inputEl').val(res.data.linea);
+                                Ext.getCmp("proveedor" + idmasterr).setValue(res.data.proveedor);                                
                             }
                         });
 
@@ -1053,8 +862,7 @@ Ext.define('Colsys.Ino.FormMaster', {
                             Ext.getCmp("ca_modalidad" + idmasterr).store.add(
                                     {"id": res.data.id_modalidad, "name": res.data.ca_modalidad}
                             );
-                            Ext.getCmp("ca_modalidad" + idmasterr).setValue(res.data.id_modalidad);
-                            //$('#ca_modalidad' + idmasterr + '-inputEl').val(res.data.ca_modalidad);
+                            Ext.getCmp("ca_modalidad" + idmasterr).setValue(res.data.id_modalidad);                            
                         }
                         if (Ext.getCmp("agenciaad" + idmasterr)) {
                             Ext.getCmp("agenciaad" + idmasterr).getStore().reload({
@@ -1077,8 +885,7 @@ Ext.define('Colsys.Ino.FormMaster', {
                             Ext.getCmp("idorigen" + idmasterr).store.add(
                                     {"idciudad": res.data.idorigen, "ciudad": res.data.origen}
                             );
-                            Ext.getCmp("idorigen" + idmasterr).setValue(res.data.idorigen);
-                            //$('#idorigen' + idmasterr + '-inputEl').val(res.data.origen);
+                            Ext.getCmp("idorigen" + idmasterr).setValue(res.data.idorigen);                            
                         }
 
                         if (Ext.getCmp("iddestino" + idmasterr)) {
@@ -1088,19 +895,6 @@ Ext.define('Colsys.Ino.FormMaster', {
                             Ext.getCmp("iddestino" + idmasterr).setValue(res.data.iddestino);
                             $('#iddestino' + idmasterr + '-inputEl').val(res.data.destino);
                         }
-                        /*if (res.data.impoexpo == "Exportaci\u00f3n") {
-                         //if (Ext.getCmp("cliente" + idmasterr))
-                         {
-                         Ext.getCmp("cliente" + idmasterr).store.add(
-                         {"idcliente": res.data.ca_idcliente, "compania": res.data.ca_compania}
-                         );
-                         Ext.getCmp("cliente" + idmasterr).setValue(res.data.ca_idcliente);
-                         $('#cliente' + idmasterr + '-inputEl').val(res.data.ca_compania);
-                         }
-                         }*/
-
-                        //if (Ext.getCmp("proveedor" + idmasterr)) 
-
                     }
                 });
                 this.load1 = true;
@@ -1113,11 +907,7 @@ function anularReferencia(id) {
         title: 'Anulacion de Referencia',
         msg: 'Ingrese el motivo de anulacion de la referencia:',
         width: 500,
-        buttons: Ext.MessageBox.OKCANCEL,
-        /*buttons:{
-         ok     : "Enviar",
-         cancel : "Cancelar"
-         },*/
+        buttons: Ext.MessageBox.OKCANCEL,        
         multiline: true,
         fn: anulacion,
         animEl: 'anular-ref',
@@ -1156,24 +946,21 @@ var anulacion = function (btn, text) {
                             numRef = res.idreferenca;
                             tabpanel = Ext.getCmp('tabpanel1');
                             tabpanel.getChildByElement('tab' + ref).close();
-                            //   if (!tabpanel.getChildByElement('tab' + ref) && ref != "")
-                            {
-                                tabpanel.add(
-                                        {
-                                            title: numRef,
-                                            id: 'tab' + ref,
-                                            itemId: 'tab' + ref,
-                                            closable: true,
-                                            autoScroll: true,
-                                            items: [new Colsys.Ino.Mainpanel({
-                                                    "idmaster": ref,
-                                                    "idimpoexpo": idimpoex,
-                                                    "idtransporte": idtranspo,
-                                                    'idreferencia': numRef,
-                                                    "permisos": perms
-                                                })]
-                                        }).show();
-                            }
+                            tabpanel.add({
+                                title: numRef,
+                                id: 'tab' + ref,
+                                itemId: 'tab' + ref,
+                                closable: true,
+                                autoScroll: true,
+                                items: [new Colsys.Ino.Mainpanel({
+                                        "idmaster": ref,
+                                        "idimpoexpo": idimpoex,
+                                        "idtransporte": idtranspo,
+                                        'idreferencia': numRef,
+                                        "permisos": perms
+                                    })]
+                            }).show();
+                            
                             tabpanel.setActiveTab('tab' + ref);
                             Ext.MessageBox.alert("Mensaje", 'Datos Anulados Correctamente<br>');
 
@@ -1183,7 +970,6 @@ var anulacion = function (btn, text) {
                     }
                 });
             }
-
         }
     }
 };
