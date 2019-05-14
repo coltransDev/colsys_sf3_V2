@@ -33,10 +33,28 @@ use_helper("MimeType");
             } else {
                 $nombreArchivo = $file->getCaNombre();
             }
+            $tagIdg = '<p></p>';
+                                
+            $tipodoc = $file->getTipoDocumental();                                
+            
+            if(strpos($tipodoc->getCaDocumento(), "Factura") !== false){                   
+                $iddoc = $file->getCaIddocumental();                
+                $idcomprobante = $idcomprobantes[$file->getCaIdarchivo()];
+                
+                if($idcomprobante){                
+                    $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
+                    $idg = $comprobante->getResultadoIndicador();
+
+                    if($idg["sucess"] == true){
+                        $tagIdg = utf8_decode($idg["tag"]); 
+                    }
+                }
+            }
+                    
             ?>
             <li>
                 <?= mime_type_icon(basename($nombreArchivo)) ?> 
-                <a href="<?= url_for("traficos/fileViewer?idreporte=" . $reporte->getCaIdreporte() . "&gestDoc=true&file=" . base64_encode(basename($nombreArchivo))) ?>" target="_blank"><?= basename($nombreArchivo) ?></a>
+                <a href="<?= url_for("traficos/fileViewer?idreporte=" . $reporte->getCaIdreporte() . "&gestDoc=true&file=" . base64_encode(basename($nombreArchivo))) ?>" target="_blank"><?= basename($nombreArchivo) ?></a>&nbsp;<?=$tagIdg?>
             </li>
             <?
             echo "</li>";

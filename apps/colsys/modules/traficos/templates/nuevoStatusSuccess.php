@@ -131,6 +131,20 @@ $folder = $reporte->getDirectorioBase();
                 return 0;
             }
         }        
+        if(value=="IAFFL" || value=="EEFFL"){             
+            var factura = false;
+            $('.imgS').each(function(i, obj) {                
+                if(obj.checked){
+                    if(obj.getAttribute('iddoc') != null){                        
+                        factura = true;
+                    }
+                }                
+            });
+            if(!factura){
+               alert("Por favor seleccione al menos una factura registrada en Gestión Documental");
+                return 0; 
+            }
+        }
         <?
         if ($modo == "otm"){
             ?>
@@ -305,6 +319,14 @@ $folder = $reporte->getDirectorioBase();
             $(".linea").show();
         }else{
             $(".linea").hide();
+        }
+
+        if(value== "IAFFL" || value== "EEFFL" || value== "EEETD"){
+            $("#observaciones").show();
+            $("#exclusiones").show();
+        }else{
+            $("#observaciones").show();
+            $("#exclusiones").hide();
         }
 
         if(value == "OTDES"){
@@ -1128,15 +1150,15 @@ $folder = $reporte->getDirectorioBase();
                                                 <img style=" vertical-align: middle;" src="/gestDocumental/verArchivo?idarchivo=' . base64_encode($folder) . '" width="' . $dimVisual . '" height="' . $dimVisual . '" alt="'.$filename.'"  title="'.$filename.'"   />
                                             </div>                                    
                                             <div style="position:absolute;top:0px;right:0px;display:block" >
-                                               <input type="checkbox" value="'.base64_encode(basename($filename)) .'" name="attachments1[]" '.$option.' class="imgS" />
+                                               <input type="checkbox" value="'.base64_encode(basename($filename)) .'" name="attachments1[]" '.$option.' class="imgS"/>
                                             </div>
                                     </div>                        
                                   </div>';
                                     //echo '<img style=" vertical-align: middle;" src="/gestDocumental/verArchivo?idarchivo=' . base64_encode($folder) . '" width="' . $dimVisual . '" height="' . $dimVisual . '" /><br>';
                                 }else
                                 {
-                                    ?><input type="checkbox" name="attachments1[]" value="<?= base64_encode(basename($filename)) ?>"  <?= $option ?> class="imgS" /><?
-                                    echo mime_type_icon(basename($filename)) . " " . link_to(basename($filename), url_for("traficos/fileViewer?idreporte=" . $reporte->getCaIdreporte() . "&gestDoc=true&file=" . base64_encode(basename($filename))), array("target" => "blank")) . "<br />";
+                                    ?><input type="checkbox" name="attachments1[]" value="<?= base64_encode(basename($filename)) ?>"  <?= $option ?> class="imgS" iddoc="<?=$iddoc?>" /><?
+                                    echo mime_type_icon(basename($filename)) . " " . link_to(basename($filename), url_for("traficos/fileViewer?idreporte=" . $reporte->getCaIdreporte() . "&gestDoc=true&file=" . base64_encode(basename($filename))), array("target" => "blank")) ."<br />";
                                 }
                                 //include_component("gestDocumental", "returnFiles",array("idsserie"=>"2","view"=>"email1","ref1"=>$reporte->getInoClientesSea()->getCaReferencia(),"ref2"=>$reporte->getInoClientesSea()->getCaHbls(),"ref3"=>"","format"=>"coloader")); 
                             }
@@ -1171,6 +1193,15 @@ $folder = $reporte->getDirectorioBase();
                         <?
                         echo $form['observaciones_idg']->renderError();
                         echo $form['observaciones_idg']->render();
+                        ?>
+                    </div></td>
+
+            </tr>
+            <tr id="exclusiones">
+                <td colspan="2"><div align="left"><b>Exclusiones IDG (Justificaci&oacute;n Demoras):</b><br />
+                        <?
+                        echo $form['exclusiones_idg']->renderError();
+                        echo $form['exclusiones_idg']->render();
                         ?>
                     </div></td>
 

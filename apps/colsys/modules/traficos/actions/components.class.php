@@ -47,7 +47,16 @@ class traficosComponents extends sfComponents
 //            $this->files = null;
             $this->files=$this->reporte->getFiles(array(),array('*.jpeg*','*.jpg*','*.png*','*.gif*','*.JPEG*','*.JPG*','*.PNG*','*.GIF*'));
             $this->archivos=$this->reporte->getFilesGestDoc();
-//            $this->archivos = null;
+            
+            $idcomprobantes = array();
+            foreach($this->archivos as $file){
+                $tipodoc = $file->getTipoDocumental();                                
+                if(strpos($tipodoc->getCaDocumento(), "Factura")>=0){                
+                    $datos = json_decode(utf8_encode($file->getCaDatos()));                
+                    $idcomprobantes[$file->getCaIdarchivo()] = $datos->idcomprobante;
+                }
+            }
+            $this->idcomprobantes = $idcomprobantes;
             $this->user = $this->getUser();
 	}
 	
