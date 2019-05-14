@@ -11,6 +11,7 @@
 class widgets5Actions extends sfActions {
 
     public function executeDatosAplicacionJSON($request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $transporte = $this->getRequestParameter("transporte");
 
         $this->data = array();
@@ -26,7 +27,9 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeListaBodegasJSON($request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $criterio = strtoupper($this->getRequestParameter("query"));
+        $idbodega = $this->getRequestParameter("idbodega");
 
         if ($this->modo == Constantes::TERRESTRE) {
             $modo = constantes::MARITIMO;
@@ -40,11 +43,15 @@ class widgets5Actions extends sfActions {
                 ->addOrderBy("b.ca_tipo ASC")
                 ->addOrderBy("b.ca_nombre ASC")
                 ->distinct()
-                ->where("b.ca_transporte like ? and b.ca_nombre<>'-' and ca_tipo!='Operador Multimodal'", "%" . $modo . "%")
+                ->where("b.ca_transporte like ? and b.ca_nombre<>'-'", "%" . $modo . "%")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
         if ($criterio != "") {
             $q->addWhere("UPPER(ca_nombre) like ?", "%$criterio%");
         }
+        if($idbodega){
+            $q->addWhere("ca_idbodega = ?", $idbodega);
+        }
+        $debug = $q->getSqlQuery();
         $this->data = $q->execute();
 
         $bodegas = array();
@@ -52,7 +59,7 @@ class widgets5Actions extends sfActions {
             $bodegas[] = array(
                 "idbodega" => $val["b_ca_idbodega"],
                 "tipo" => utf8_encode($val["b_ca_tipo"]),
-                "transporte" => $modo/* utf8_encode($val["b_ca_transporte"]) */,
+                //"transporte" => $modo/* utf8_encode($val["b_ca_transporte"]) */,
                 "nombre" => utf8_encode($val["b_ca_nombre"]),
                 "identificacion" => utf8_encode($val["b_ca_identificacion"]),
                 "direccion" => utf8_encode($val["b_ca_direccion"])
@@ -63,7 +70,7 @@ class widgets5Actions extends sfActions {
             //$this->data[$key]["b_ca_transporte"] = ($modo);
         }
 
-        $this->responseArray = array("root" => $bodegas, "total" => count($bodegas), "success" => true);
+        $this->responseArray = array("root" => $bodegas, "total" => count($bodegas), "success" => true, "debug"=>$debug);
         $this->setTemplate("responseTemplate");
     }
 
@@ -75,6 +82,7 @@ class widgets5Actions extends sfActions {
      */
 
     public function executeDatosComboUsuario() {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $criterio = $this->getRequestParameter("query");
         $ciudad = utf8_decode($this->getRequestParameter("ciudad"));
         $perfil = utf8_decode($this->getRequestParameter("perfil"));
@@ -141,42 +149,82 @@ class widgets5Actions extends sfActions {
      * idmaster : id de la referencia         
      */
     public function executeDatosHouse($request) {
-
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $this->idmaster = $request->getParameter("idmaster");
+        $this->idempresa = $request->getParameter("idempresa");
 
         $q = Doctrine::getTable("InoHouse")
                 ->createQuery("h")
                 ->select("h.ca_idhouse,h.ca_doctransporte,cl.ca_idcliente,cl.ca_compania,r.ca_mercancia_desc,m.ca_impoexpo,m.ca_transporte,
-                        (SELECT COUNT(*) FROM inoComprobante c WHERE c.ca_idhouse=h.ca_idhouse) as ncomprobante")
+                        (SELECT COUNT(*) FROM inoComprobante c WHERE c.ca_idhouse=h.ca_idhouse) as ncomprobante,rvp.ca_orden_prov,r.ca_orden_clie")
                 ->innerJoin("h.InoMaster m")
                 ->innerJoin("h.Cliente cl")
                 ->leftJoin("h.Reporte r")
+                ->leftJoin("r.RepProveedores rvp") 
                 ->where("h.ca_idmaster = ?", $this->idmaster)
+//                ->andWhere("cl.ca_idcliente IN (SELECT ca_id FROM IdsEstadoSap e WHERE e.ca_id=cl.ca_idcliente AND e.ca_tipo='C' AND e.ca_activo=true AND ca_idempresa='{$this->idempresa}' ) ")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
 
         $sql = $q->getSqlQuery();
         $datos = $q->execute();
         $this->data = array();
         foreach ($datos as $d) {
-            //print_r($d);
+            
             if ($d["m_ca_impoexpo"] == Constantes::IMPO && $d["m_ca_transporte"] == Constantes::AEREO)
                 $mercancia_desc = utf8_encode($d["r_ca_mercancia_desc"]);
+            else if ($d["m_ca_impoexpo"] == Constantes::IMPO && $d["m_ca_transporte"] == Constantes::MARITIMO)
+                $mercancia_desc = utf8_encode($d["rvp_ca_orden_prov"]." ".$d["r_ca_orden_clie"]." ".$d["r_ca_mercancia_desc"]);
             else
                 $mercancia_desc = "";
+            
+            $plazo="";
+            if($this->idempresa!="")
+            {
+                $sucursal = Doctrine::getTable("IdsSucursal")
+                    ->createQuery("s")
+                    ->select("*")
+                    ->where("ca_id =? AND ca_principal=true", array($d["cl_ca_idcliente"]))                    
+                    ->andWhere("ca_id IN (SELECT ca_id FROM IdsEstadoSap e WHERE e.ca_id=s.ca_id AND e.ca_tipo='C' AND e.ca_activo=true AND ca_idempresa='{$this->idempresa}' ) ")
+                    ->fetchOne();
+                //print_r($d);
+                $idsucursal="";
+                if($sucursal)
+                {
+                    $idsucursal=$sucursal->getCaIdsucursal();
+                    $ciudad=utf8_encode($sucursal->getCiudad()->getCaCiudad());
+                }
+                
+                $credito = Doctrine_Query::create()
+                    ->select("c.*")
+                    ->from("IdsCredito c")                
+                    ->where("ca_id = ? AND ca_idempresa=?", array($d["cl_ca_idcliente"],$this->idempresa) )
+                    ->fetchOne();
+                
+                if($credito)                    
+                    $plazo=$credito->getCaDias();
+            }
+            
             $this->data[] = array(
-                "id" => $d["h_ca_idhouse"], "name" => utf8_encode($d["h_ca_doctransporte"] . "-" . $d["cl_ca_compania"]),
+                "id" => $d["h_ca_idhouse"], "name" => utf8_encode($d["h_ca_doctransporte"] . "-" . utf8_encode($d["cl_ca_compania"])),
                 "idcliente" => $d["cl_ca_idcliente"], "cliente" => utf8_encode($d["cl_ca_compania"]),
-                "mercancia_desc" => utf8_encode($mercancia_desc),
-                "class" => ($d["h_ncomprobante"] > 0 ? "" : "row_pink")
+                "mercancia_desc" => utf8_encode(substr($mercancia_desc,0,65)),
+                "ca_orden_prov"=>utf8_encode($d["r_ca_orden_prov"]),"ca_orden_clie"=>utf8_encode($d["r_ca_orden_prov"]),
+                "idsucursal"=>$idsucursal,"ciudad"=>utf8_encode($ciudad),
+                "txttrm"=>utf8_encode("Para embarques marítimos, la factura debe ser liquidada y pagada tomando la tasa de cambio más alta entre la tasa de cambio del día de pago más $30 pesos "
+                        . "y la tasa de cambio mencionada en la factura; en caso de pagar la factura con la menor de las tasas, se generará una factura adicional por diferencia en "
+                        . "tipo de cambio.  Para conocer la TRM del día de pago puede comunicarse con nuestro PBX seleccionando la opción 1"),
+                "plazo"=>$plazo,
+                "class" => ($d["r_"] > 0 ? "" : "row_pink")
             );
-        }
-
+        }        
+        //echo "<pre>";print_r($this->data);echo "</pre>";
+        //exit;
         $this->responseArray = array("root" => $this->data, "total" => count($this->data), "success" => true, "debug" => $sql);
         $this->setTemplate("responseTemplate");
     }
     
     public function executeDatosAnticipo($request) {
-
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $this->idmaster = $request->getParameter("idmaster");
         $this->idcomprobante = $request->getParameter("idcomprobante");
         $this->idcliente = $request->getParameter("idcliente");
@@ -223,20 +271,32 @@ class widgets5Actions extends sfActions {
 
 
     public function executeDatosTipoComprobante($request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $user = $this->getUser();
         $this->tipoComprobante = $request->getParameter("tipo") ? explode(",", $request->getParameter("tipo")) : null;
         $aplicacion = $request->getParameter("app");
+        $idmaster = $request->getParameter("idmaster");        
+        $puerto = $request->getParameter("puerto");
+        $origen = $request->getParameter("origen");
 
         if (count($this->tipoComprobante) < 1) {
             $this->tipoComprobante = array('F', 'C');
         }
-
-        $idempresa = ($request->getParameter("idempresa") != "") ? $request->getParameter("idempresa") : $user->getIdempresa();
+        $impoexpo="";
+        if($idmaster>0)
+        {
+            $master = Doctrine::getTable("InoMaster")->find($idmaster);
+            $datos = json_decode($master->getCaDatos());
+            $idempresa=$datos->idempresa;
+            $transporte=$master->getCaTransporte();
+        }
+        if($idempresa=="" && $origen!="consulta")
+            $idempresa = ($request->getParameter("idempresa") != "") ? $request->getParameter("idempresa") : $user->getIdempresa();
 
         $q = Doctrine::getTable("InoTipoComprobante")
                 ->createQuery("t")
-                ->select("t.ca_idtipo, t.ca_tipo, t.ca_comprobante, t.ca_titulo, t.ca_idempresa,t.ca_idsucursal")
-                //->innerJoin("t.IdsSucursal s")
+                ->select("t.ca_idtipo, t.ca_tipo, t.ca_comprobante, t.ca_titulo, t.ca_idempresa,t.ca_idsucursal,s.ca_direccion,s.ca_telefono,s.ca_datos")
+                //->innerJoin("t.Sucursal s")
                 //->innerJoin("s.Ids i")
                 //->innerJoin("s.Empresa e")                
                 ->whereIn("t.ca_tipo", $this->tipoComprobante)
@@ -248,12 +308,45 @@ class widgets5Actions extends sfActions {
         }
 
         $tipos = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
-
+        
         $this->data = array();
-        foreach ($tipos as $tipo) {
+        //echo $impoexpo;
+        if($transporte==Constantes::MARITIMO)
+        {
+            $sql="SELECT  * FROM control.tb_sucursales s
+                 
+		WHERE s.ca_idempresa = ".$idempresa." and s.ca_datos->>'idciudad' ='{$puerto}' ";
+        
+            $conn = Doctrine_Manager::getInstance()->getConnection('master');
+            $st = $conn->execute($sql);
+            $datosSucursal = $st->fetchAll();
+            if(count($datosSucursal)>0)
+            {
+                $datos=json_decode($datosSucursal[0]["ca_datos"]);
+                $detalle=$datos->contacto." ".utf8_encode($datosSucursal[0]["ca_direccion"])." ".utf8_encode($datosSucursal[0]["ca_telefono"]);
+            }
+            else
+            {
+                $detalle="";
+            }
+            
+            /*$datos=json_decode($tipo["s_ca_datos"]);
+            ,"contacto"=>$contacto,"direccion"=> utf8_encode($tipo["s_ca_direccion"]),
+                "telefono"=>utf8_encode($tipo["s_ca_telefono"])
+             * 
+             */
+            //echo "<pre>";print_r($datosSucursal);echo "</pre>";
+            
+        }
+        
+        foreach ($tipos as $tipo) {            
+            $contacto=$datos->contacto;
             $tipoStr = "";
             $tipoStr .= $tipo["t_ca_tipo"] . "-" . str_pad($tipo["t_ca_comprobante"], 2, "0", STR_PAD_LEFT) . " " . $tipo["t_ca_titulo"];
-            $this->data[] = array("id" => $tipo["t_ca_idtipo"], "name" => utf8_encode($tipoStr), "idempresa" => $tipo["t_ca_idempresa"], "idsucursal" => $tipo["t_ca_idsucursal"]);
+            $this->data[] = array(
+                "id" => $tipo["t_ca_idtipo"], "name" => utf8_encode($tipoStr),"tipo" => $tipo["t_ca_tipo"], "idempresa" => $tipo["t_ca_idempresa"],  
+                "idsucursal" => $tipo["t_ca_idsucursal"],"detalle"=>$detalle
+                );
         }
         $this->responseArray = array("root" => $this->data, "total" => count($this->data), "success" => true, "debug" => $q->getSqlQuery());
         $this->setTemplate("responseTemplate");
@@ -268,6 +361,7 @@ class widgets5Actions extends sfActions {
      * @date:  2016-03-28
      */
     public function executeDatosCiudades(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $data = array();
         $query = $request->getParameter("query");
 
@@ -313,7 +407,7 @@ class widgets5Actions extends sfActions {
      * @date:  2016-03-28
      */
     public function executeDatosLineas($request) {
-
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $transporte = utf8_decode($request->getParameter("transporte"));
         $query = utf8_decode($request->getParameter("query"));
         $tipo = utf8_decode($request->getParameter("tipo"));
@@ -333,7 +427,7 @@ class widgets5Actions extends sfActions {
         if ($tipo) {
             $q->addWhere(" p.ca_tipo = ?", $tipo);
         } else {
-            $q->addWhere("p.ca_tipo = ? OR p.ca_tipo = ?", array("TRI", "TRN"));
+            $q->addWhere("p.ca_tipo = ? OR p.ca_tipo = ? OR p.ca_tipo = ?", array("TRI", "TRN", "OPE"));
         }
         if ($transporte && !$tipo) {
             $q->addWhere("p.ca_transporte = ?", $transporte);
@@ -341,7 +435,7 @@ class widgets5Actions extends sfActions {
 
         if ($query) {
             $q->addWhere("id.ca_nombre like ?", $query . "%");
-        }
+        }   
 
         if ($request->getParameter("noaprob") != "true") {
             
@@ -378,6 +472,7 @@ class widgets5Actions extends sfActions {
      * @date:  2016-03-28
      */
     public function executeDatosAgentes(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $origen = $request->getParameter("origen");
         $destino = $request->getParameter("destino");
         $impoexpo = utf8_decode($request->getParameter("impoExpo"));
@@ -440,6 +535,7 @@ class widgets5Actions extends sfActions {
      * @date:  2016-03-28
      */
     public function executeDatosParametros(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $data = array();
 
         $casos = explode(",", $request->getParameter("caso_uso"));
@@ -460,6 +556,7 @@ class widgets5Actions extends sfActions {
      * @date:  2016-03-28
      */
     public function executeDatosIncoterms(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $incoterms = ParametroTable::retrieveByCaso("CU062");
 
         $data = array();
@@ -479,6 +576,7 @@ class widgets5Actions extends sfActions {
      *  * query : Nombre de la empresa
      */
     public function executeDatosClienteSucursal($request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $query = $request->getParameter("query");
         $idempresa = $request->getParameter("idempresa");
 
@@ -490,25 +588,38 @@ class widgets5Actions extends sfActions {
                 ->innerJoin("s.Ids ids")
                 ->innerJoin("ids.IdsCliente cl")
                 //->innerJoin("cl.IdsEstadoSap e ON e.ca_tipo=? AND e.ca_activo=?",array('C',true))
-                ->where("UPPER(ids.ca_nombre) like ?", "%" . strtoupper($query) . "%")
-                ->andWhere("ids.ca_id IN (SELECT ca_id FROM IdsEstadoSap e WHERE e.ca_id=ids.ca_id AND e.ca_tipo='C' AND e.ca_activo=true AND ca_idempresa='{$idempresa}' )")
+                ->where("UPPER(ids.ca_nombre) like ? and s.ca_usueliminado is null", "%" . strtoupper($query) . "%")
+                ->andWhere("ids.ca_id IN (SELECT ca_id FROM IdsEstadoSap e WHERE e.ca_id=ids.ca_id AND e.ca_tipo='C' AND e.ca_activo=true AND ca_idempresa='{$idempresa}' ) ")
                 ->addOrderBy("c.ca_ciudad")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
         $sql = $q->getSqlQuery();
 
         $sucursales = $q->execute();
         $sucursal = array();
-        //print_r($sucursales);
+        //print_r($sucursales);        
         foreach ($sucursales as $suc) {
 
             $idempresa = ($idempresa == "") ? $suc["tcomp_ca_idempresa"] : $idempresa;
             
+            
+            $credito = Doctrine_Query::create()
+                ->select("c.*")
+                ->from("IdsCredito c")                
+                ->where("ca_id = ? AND ca_idempresa=?", array($suc["s_ca_id"],$idempresa) )
+                ->fetchOne();
+            $plazo="";
+            if($credito)                    
+                $plazo=$credito->getCaDias();
+            
+            
+                        
             $sucursal[] = array(
                 "idsucursal" => $suc["s_ca_idsucursal"],
                 "ciudad" => utf8_encode($suc["c_ca_ciudad"]),
                 "direccion" => utf8_encode($suc["s_ca_direccion"]),
                 "idcliente" => $suc["s_ca_id"],
-                "compania" => utf8_encode($suc["ids_ca_nombre"] . "-" . $suc["c_ca_ciudad"])
+                "compania" => utf8_encode($suc["ids_ca_nombre"] . "-" . $suc["c_ca_ciudad"]),
+                "plazo"=>$plazo
             );
         }
         $this->responseArray = array("root" => $sucursal, "total" => count($sucursal), "success" => true, "debug"=>$sql);
@@ -523,6 +634,7 @@ class widgets5Actions extends sfActions {
 
      */
     public function executeDatosMonedas($request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
 
         $this->data = array();
 
@@ -547,6 +659,7 @@ class widgets5Actions extends sfActions {
 
      */
     public function executeDatosConceptosSiigo(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
 
         $idconcepto = $request->getParameter("idconcepto");
         $idccosto = $request->getParameter("idccosto");
@@ -649,6 +762,7 @@ class widgets5Actions extends sfActions {
 
      */
     public function executeDatosTransporte(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $data = array();
         $data[] = array("valor" => utf8_encode(Constantes::AEREO));
         $data[] = array("valor" => utf8_encode(Constantes::MARITIMO));
@@ -666,6 +780,7 @@ class widgets5Actions extends sfActions {
      * @date:  2016-03-28
      */
     public function executeDatosReporteCarga(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
 
         $data = array();
         $reporte = Doctrine::getTable("Reporte")->find($request->getParameter("idreporte"));
@@ -673,14 +788,14 @@ class widgets5Actions extends sfActions {
         $prov = $reporte->getProveedores();
         if (count($prov) > 0) {
             $data["idproveedor"] = $prov[0]->getCaIdtercero();
-            $data["proveedor"] = $prov[0]->getCaNombre();
+            $data["proveedor"] = utf8_encode($prov[0]->getCaNombre());
         }
 
         $data["origen"] = $reporte->getDocTransporte();
 
         $data["impoexpo"] = utf8_encode($reporte->getCaImpoexpo());
         $data["transporte"] = utf8_encode($reporte->getCaTransporte());
-        $data["modalidad"] = $reporte->getCaModalidad();
+        $data["modalidad"] = utf8_encode($reporte->getCaModalidad());
         $data["origen"] = $reporte->getCaOrigen();
         $data["destino"] = $reporte->getCaDestino();
         $data["idlinea"] = $reporte->getCaIdlinea();
@@ -689,31 +804,62 @@ class widgets5Actions extends sfActions {
         $data["idagente"] = $reporte->getCaIdagente();
         $data["ca_fchsalida"] = $reporte->getEts();
         $data["ca_fchllegada"] = $reporte->getEta();
-        $data["ca_master"] = $reporte->getCaDocmaster();
+        $data["ca_master"] = utf8_encode($reporte->getCaDocmaster());
 
-        $repstatus = $reporte->getUltimoStatus();
+        
 
-        if ($repstatus) {
-            if ($repstatus->getCaPeso()) {
-                $peso = explode("|", $repstatus->getCaPeso());
-                $data["ca_peso"] = $peso[0];
+        if($reporte->getCaImpoexpo()==Constantes::EXPO)
+        {
+            $repExpo= $reporte->getRepExpo();
+            
+            $peso = explode("|", $repExpo->getCaPeso());
+            $data["ca_peso"] = $peso[0];
+            
+            $piezas = explode("|", $repExpo->getCaPiezas());
+            $data["ca_piezas"] = $piezas[0];
+            
+            $volumen = explode("|", $repExpo->getCaVolumen());
+            $data["ca_volumen"] = $volumen[0];
+            
+            $caso = "CU011";
+            $datomod = ParametroTable::retrieveByCaso($caso, null, null, $repExpo->getCaTipoexpo());
+
+            $data["id_modalidad"] = $repExpo->getCaTipoexpo();
+            if ($repExpo->getCaTipoexpo()) {
+                $data["ca_modalidad"] = utf8_encode($datomod[0]->getCaValor());
             }
-            if ($repstatus->getCaPiezas()) {
-                $piezas = explode("|", $repstatus->getCaPiezas());
-                $data["ca_piezas"] = $piezas[0];
-            }
-            if ($repstatus->getCaVolumen()) {
-                $volumen = explode("|", $repstatus->getCaVolumen());
-                $data["ca_volumen"] = $volumen[0];
-            }
-            $data["ca_docmaster"] = $repstatus->getCaDocmaster();
+            $data["ca_descripcion"] = utf8_encode($reporte->getCaMercanciaDesc());
+            /*$data["ca_idlinea"]=$repExpo->getCaIdsia();
+            $proveedor = Doctrine::getTable("IdsProveedor")->find(utf8_encode($repExpo->getCaIdsia()));
+            $data["ca_linea"]=utf8_encode($proveedor->getIds()->getCaNombre());*/
         }
+        else 
+        {
+            $repstatus = $reporte->getUltimoStatus();
+            if ($repstatus) {
+                if ($repstatus->getCaPeso()) {
+                    $peso = explode("|", $repstatus->getCaPeso());
+                    $data["ca_peso"] = $peso[0];
+                }
+                if ($repstatus->getCaPiezas()) {
+                    $piezas = explode("|", $repstatus->getCaPiezas());
+                    $data["ca_piezas"] = $piezas[0];
+                }
+                if ($repstatus->getCaVolumen()) {
+                    $volumen = explode("|", $repstatus->getCaVolumen());
+                    $data["ca_volumen"] = $volumen[0];
+                }
+                $data["ca_docmaster"] = utf8_encode($repstatus->getCaDocmaster());
+            }
+        }
+        //echo "<pre>";print_r($data);echo "</pre>";
 
         $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");
     }
 
     public function executeDatosImpoexpo(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $data = array();
         $data[] = array("valor" => utf8_encode(Constantes::IMPO));
         $data[] = array("valor" => utf8_encode(Constantes::TRIANGULACION));
@@ -725,6 +871,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosConceptos(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
 
 
         $impoexpo = utf8_decode($request->getParameter("impoexpo"));
@@ -779,6 +926,7 @@ class widgets5Actions extends sfActions {
      * @date:  2016-03-28
      */
     public function executeDatosModalidades() {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $transport_parameter = utf8_decode($this->getRequestParameter("transporte"));
         $impoexpo_parameter = utf8_decode($this->getRequestParameter("impoexpo"));
 
@@ -825,6 +973,7 @@ class widgets5Actions extends sfActions {
      * @date:  2016-03-28
      */
     public function executeListaClientesJSON() {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $criterio = utf8_decode($this->getRequestParameter("query"));
         $tipo = $this->getRequestParameter("tipo");
         if ($criterio) {
@@ -878,13 +1027,20 @@ class widgets5Actions extends sfActions {
      * @date:  2016-03-31
      */
 
-    public function executeDatosEmpresas() {
+    public function executeDatosEmpresas($request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $q = Doctrine::getTable("Empresa")
                 ->createQuery("e")
                 ->select("*")
                 ->orderBy("ca_idempresa ASC")
                 ->where("ca_activo=TRUE and ca_idsap IS NOT NULL");
+        
+        
+        if($request->getParameter("idempresa"))
+            $q->addWhere ($request->getParameter("idempresa"));
+        
         $debug = $q->getSqlQuery();
+        
         $datos = $q->execute();
         $a = array();
         foreach ($datos as $k => $d) {
@@ -907,6 +1063,7 @@ class widgets5Actions extends sfActions {
      * @date:  2016-03-28
      */
     public function executeDatosDocumentos($request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
 
         $this->idsserie = $request->getParameter("idsserie");
         $idimpoexpo = utf8_decode($request->getParameter("idimpoexpo"));
@@ -949,9 +1106,32 @@ class widgets5Actions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
-    public function executeListaReportesJSON() {
-        $criterio = $this->getRequestParameter("query");
+    
+    public function executeDatosTiposDoc(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
+        $tipos_docs_rs = Doctrine::getTable("IdsTipoDocumento")
+                ->createQuery("t")
+                ->select("*")
+                ->orderBy("ca_tipo ASC")
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->execute();
+        
+        $tipos_docs = array();
+        foreach ($tipos_docs_rs as $tipo_doc) {
+            $row = array('idtipo' => $tipo_doc["t_ca_idtipo"], "tipo" => utf8_encode($tipo_doc["t_ca_tipo"]));
+            $tipos_docs[] = $row;
+        }
 
+        $this->responseArray = array("root" => $tipos_docs, "total" => count($tipos_docs), "success" => true);
+        $this->setTemplate("responseTemplate");
+    }
+    
+    
+    
+    public function executeListaReportesJSON() {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
+        $criterio = $this->getRequestParameter("query");
+ 
         if ($criterio) {
 
             $transporte = utf8_decode($this->getRequestParameter("transporte"));
@@ -976,8 +1156,8 @@ class widgets5Actions extends sfActions {
             $q = Doctrine::getTable("Reporte")
                     ->createQuery("r")
                     ->select("r.ca_idreporte, b.ca_nombre, r.ca_idbodega, r.ca_consecutivo,r.ca_version ,r.ca_origen,r.ca_destino,o.ca_ciudad, d.ca_ciudad, o.ca_idciudad, d.ca_idciudad,o.ca_idtrafico, d.ca_idtrafico, r.ca_mercancia_desc,
-                                    r.ca_idlinea, r.ca_impoexpo, r.ca_transporte, r.ca_modalidad, r.ca_incoterms, con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, con.ca_cargo
-                                    ,cl.ca_idcliente, cl.ca_compania, cl.ca_preferencias, cl.ca_confirmar, cl.ca_coordinador, usu.ca_login, usu.ca_nombre, r.ca_orden_clie")
+                                    r.ca_idlinea, r.ca_impoexpo, r.ca_transporte, r.ca_modalidad, con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, con.ca_cargo
+                                    ,cl.ca_idcliente, cl.ca_compania, cl.ca_preferencias, cl.ca_confirmar, cl.ca_coordinador, usu.ca_login, usu.ca_nombre, r.ca_orden_clie, r.ca_continuacion")
                     ->leftJoin("r.Bodega b")
                     ->leftJoin("r.Origen o")
                     ->leftJoin("r.Destino d")
@@ -1002,7 +1182,7 @@ class widgets5Actions extends sfActions {
                 $q->addWhere("r.ca_idetapa != ?", "99999");
             }
 
-            if ($transporte != "OTM-DTA") {
+            if ($transporte != Constantes::OTMDTA && ($transporte != Constantes::AEREO && $impoexpo!= Constantes::IMPO) ) {
                 if ($origen != "") {
                     $q->addWhere("r.ca_origen in ($ciudades) ");
                 }
@@ -1013,10 +1193,12 @@ class widgets5Actions extends sfActions {
 
             $q->addOrderBy("to_number(SUBSTR(r.ca_consecutivo , 1 , (POSITION('-' in r.ca_consecutivo)-1) ),'999999')  desc");
             $q->addOrderBy("r.ca_version  desc");
-            //$q->orderBy("r.ca_fchcreado desc");
 
-
+            $debug = $q->getSqlQuery();    
             $reportes = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->limit(50)->execute();
+//	    echo $impoexpo." ".$transporte." ".$criterio;
+//            echo $q->getSqlQuery();
+//echo count($reportes);
 
             foreach ($reportes as $key => $val) {
                 if ($transporte != "OTM-DTA") {
@@ -1083,17 +1265,33 @@ class widgets5Actions extends sfActions {
                     }
                 }
 
-                $reportes[$key]["cl_ca_confirmar"] = utf8_encode($reportes[$key]["cl_ca_confirmar"]);
+                
+                
+                if($reporte->getCaContinuacion()=="OTM" and $reporte->getCaIdconsignatario()>4)
+                {                    
+                    $consig=$reporte->getConsignatario();
+                    //echo $consig->getCaIdentificacion();
+                    //$bodega = Doctrine::getTable("Bodega")->findBy("ca_identificacion",$consig->getCaIdentificacion());
+                    
+                    $bodega = Doctrine::getTable("Bodega")
+                    ->createQuery("b")
+                    ->select("b.*")                    
+                    ->where("b.ca_transporte = 'Marítimo' and b.ca_tipo = 'Operador Multimodal' and b.ca_identificacion=?", $consig->getCaIdentificacion())
+                    ->fetchOne();
+
+                    if($bodega)
+                    {
+                        $reportes[$key]["r_ca_idbodega"] = utf8_encode($bodega->getCaIdbodega());
+                        $reportes[$key]["b_ca_nombre"] = utf8_encode($bodega->getcaNombre());
+                    }
+                }
             }
-            /* echo "<pre>";
-              print_r($reportes);
-              print_r($ciudades);
-              echo "</pre>"; */
-            $this->responseArray = array("root" => $reportes, "total" => count($reportes), "success" => true, "tra" => $ciudades);
+
+            $this->responseArray = array("root" => $reportes, "total" => count($reportes), "success" => true, "tra" => $ciudades, "debug"=>$debug);
         } else {
             $this->responseArray = array("root" => array(), "total" => 0, "success" => true);
         }
-        //print_r($reportes);        
+//echo "<pre>";print_r($reportes);echo "</pre>";
         $this->setTemplate("responseTemplate");
     }
 
@@ -1105,6 +1303,7 @@ class widgets5Actions extends sfActions {
      */
 
     public function executeListaReferencias($request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $numRef = $request->getParameter("query");
 
         $q = Doctrine::getTable("InoMaestraAdu")
@@ -1139,6 +1338,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeListaTercerosJSON() {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $criterio = utf8_decode($this->getRequestParameter("query"));
         $tipo = $this->getRequestParameter("tipo");
 
@@ -1215,6 +1415,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosDeduccion(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $data = array();
 
         $master = Doctrine::getTable("InoMaster")->find($request->getParameter("idmaster"));
@@ -1230,25 +1431,35 @@ class widgets5Actions extends sfActions {
                 ->addWhere("c.ca_modalidad = ?", $master->getCaModalidad())
                 ->addOrderBy("ca_concepto");
         $q->fetchArray();
+        $debug = $q->getSqlQuery();
         $conceptos = $q->execute();
         foreach ($conceptos as $concepto) {
             $data[] = array("idconcepto" => $concepto['ca_idconcepto'],
                 "concepto" => utf8_encode($concepto['ca_concepto'])
             );
         }
-        $this->responseArray = array("root" => $data, "total" => count($data), "success" => true, "modalidad" => $master->getCaModalidad());
+        $this->responseArray = array("root" => $data, "total" => count($data), "success" => true, "modalidad" => $master->getCaModalidad(), "debug"=>$debug);
         $this->setTemplate("responseTemplate");
     }
 
     public function executeDatosTipocomprobanteC(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $tipos = Doctrine::getTable("InoTipoComprobante")
                 ->createQuery("t")
-                ->addWhere("t.ca_idempresa = ?", $this->getUser()->getIdempresa())
+                //->addWhere("t.ca_idempresa = ?", $this->getUser()->getIdempresa())
                 ->execute();
         $data = array();
         foreach ($tipos as $tipo) {
-            $data[] = array("id" => $tipo->getCaIdtipo(),
-                "comprobante" => utf8_encode($tipo->getCaTipo() . $tipo->getCaComprobante()));
+            $aplicacion = $tipo->getCaAplicacion()===1?"Sap":"Siigo";
+            $empresa = $tipo->getEmpresa()->getCaNombre();
+            $data[] = array(
+                "id" => $tipo->getCaIdtipo(),
+                "comprobante" => utf8_encode($tipo->getCaTipo() . $tipo->getCaComprobante()), 
+                //"titulo"=>utf8_encode($tipo->getCaTipo() . $tipo->getCaComprobante()." ".$tipo->getCaTitulo()."-".$aplicacion."-".$empresa),
+                "titulo"=>utf8_encode($tipo->getCaTipo() . $tipo->getCaComprobante()." ".$tipo->getCaTitulo()),
+                "empresa"=> utf8_encode($empresa),
+                "aplicacion"=>$aplicacion,
+                "activo"=>$tipo->getCaActivo()?true:false);
         }
         $this->responseArray = array("success" => true, "root" => $data);
         $this->setTemplate("responseTemplate");
@@ -1287,6 +1498,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosFacturas(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $tipo = $request->getParameter("tipo");
         if ($request->getParameter("query") != "") {
             $q = '%' . $request->getParameter("query") . '%';
@@ -1346,41 +1558,40 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosCentrocostos(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $data = array();
 
-        $idsucursal = $request->getParameter("idsucursal");
-        //if($idsucursal=="")
-        {
+        $idempresa = $request->getParameter("idempresa");
+        
             if ($request->getParameter("listartodos") == true) {
-                $ccostos = Doctrine::getTable("InoCentroCosto")
+            $q = Doctrine::getTable("InoCentroCosto")
+                    ->createQuery("c");                    
+        } else if ($request->getParameter("listartodos") == false) {
+            $q = Doctrine::getTable("InoCentroCosto")
                         ->createQuery("c")
-                        ->execute();
+                    ->addWhere("c.ca_idempresa = ?", ( ($idempresa == "") ? $this->getUser()->getSucursal() : $idempresa));                    
             }
-            if ($request->getParameter("listartodos") == false) {
-                $ccostos = Doctrine::getTable("InoCentroCosto")
-                        ->createQuery("c")
-                        ->addWhere("c.ca_idsucursal = ?", ( ($idsucursal == "") ? $this->getUser()->getSucursal() : $idsucursal))
-                        ->execute();
-            }
-        }
-        /* else
-          {
 
-          } */
+        $q->addWhere("ca_idccosto > 99");
+        $q->orderBy("ca_nombre");
+        $ccostos = $q->execute();
 
         foreach ($ccostos as $costo) {
             $data[] = array("id" => utf8_encode($costo->getCaIdccosto()),
-                "value" => utf8_encode("CC : " . $costo->getCaCentro() . " SCC : " . $costo->getCaIdccosto()),
+                "nombre" => utf8_encode($costo->getCaNombre()),
                 "centro" => utf8_encode($costo->getCaCentro()),
                 "subcentro" => utf8_encode($costo->getCaSubcentro()),
                 "sucursal" => utf8_encode($costo->getCaIdsucursal()),
-                "transporte" => utf8_encode($costo->getCaNombre()));
+                "impoexpo" => utf8_encode($costo->getCaImpoexpo()),
+                "transporte" => utf8_encode($costo->getCaTransporte()));
         }
+        
         $this->responseArray = array("success" => true, "root" => $data);
         $this->setTemplate("responseTemplate");
     }
 
     public function executeDatosIds($request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $query = $request->getParameter("query");
         $ids = Doctrine::getTable("Ids")
                 ->createQuery("i")
@@ -1399,6 +1610,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosIdsCostos(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $query = $request->getParameter("query");
         if ($query && $query != "") {
             $query = strtoupper("%" . $query . "%");
@@ -1416,6 +1628,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosSucursalesEmpresa(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $empresa = $request->getParameter("empresa");
         $sucursales = Doctrine::getTable("Sucursal")
                 ->createQuery("s")
@@ -1433,6 +1646,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosCiudadesCol(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $ciudades = Doctrine::getTable("Ciudad")
                 ->createQuery("c")
                 ->addWhere("ca_idtrafico = 'CO-057'")
@@ -1447,6 +1661,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosCiudadesTrafico(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $trafico = $request->getParameter("trafico");
 
         $q = Doctrine::getTable("Ciudad")
@@ -1465,6 +1680,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosTraficos(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $traficos = Doctrine::getTable("Trafico")
                 ->createQuery("t")
                 ->execute();
@@ -1476,7 +1692,8 @@ class widgets5Actions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
-    public function executeDatosGraficasIndicadores(sfWebRequest $request) {
+        public function executeDatosGraficasIndicadores(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         //$cliente = $this->getUser()->getClienteActivo();
         $cliente = json_decode($request->getParameter("cliente"));
 
@@ -1489,18 +1706,18 @@ class widgets5Actions extends sfActions {
 
         if ($idscliente) {
 
-            $grupo = $idscliente->getCaIdgrupo();
-            if ($grupo != "") {
+            //$grupo = $idscliente->getCaIdgrupo();
+            //if ($grupo != "") {
                 $miembrosgrupo = Doctrine::getTable("IdsCliente")
                         ->createQuery("i")
-                        ->addWhere("i.ca_idgrupo = ?", $grupo)
+                        ->addWhere("i.ca_idgrupo = ?", $idscliente->getCaId())
                         ->execute();
                 $clientes = array();
                 foreach ($miembrosgrupo as $miembrogrupo) {
                     $clientes[] = $miembrogrupo->getCaIdcliente();
                 }
-            }
-            $clientes[] = $cliente;
+            //}
+            //$clientes[] = $cliente;
 
             for ($i = 0; $i < count($clientes); $i++) {
                 $clientes[$i] = $clientes[$i];
@@ -1545,7 +1762,10 @@ class widgets5Actions extends sfActions {
             if ($origen != "")
                 $sql .= " and i.ca_idtrafico = '$origen'";
 
+            $sql .=" ORDER BY i.ca_fchllegada_cd";
 
+            //echo $sql;
+            
             $con = Doctrine_Manager::getInstance()->connection();
             $st = $con->execute($sql);
 
@@ -1745,15 +1965,53 @@ class widgets5Actions extends sfActions {
 
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            /* $sql = "select i.*, t.ca_nombre as proveedor, r.ca_carga_disponible as carga_disponible from vi_indicadores i 
-              LEFT JOIN tb_repproveedores r ON (i.ca_idreporte = r.ca_idreporte)
-              LEFT JOIN tb_terceros t ON (t.ca_idtercero = r.ca_idproveedor) WHERE i.ca_transporte = '$transporte' AND i.ca_idalterno IN ($listaclientes)"; */
-            $sql = "select i.*, r.proveedores from vi_indicadores i LEFT JOIN vi_repproveedores r ON (i.ca_idreporte = r.ca_idreporte) WHERE i.ca_transporte = '$transporte' AND i.ca_idcliente IN ($listaclientes)";
-
+            if ($transporte == "Marítimo") {
+                $join = "
+                    LEFT JOIN (
+                        SELECT rp_1.ca_consecutivo, id_1.ca_id AS ca_idlinea, id_1.ca_nombre::text AS ca_linea
+                        FROM tb_reportes rp_1
+                          JOIN tb_inoclientes_sea ic ON rp_1.ca_idreporte = ic.ca_idreporte
+                          JOIN tb_inomaestra_sea im ON im.ca_referencia::text = ic.ca_referencia::text
+                          JOIN ids.tb_ids id_1 ON id_1.ca_id = im.ca_idlinea) sea ON sea.ca_consecutivo = i.ca_consecutivo";
+            } else {
+                $join = "
+                    LEFT JOIN (
+                        SELECT rp_1.ca_consecutivo, max(id_1.ca_nombre::text) AS ca_linea, max(id_1.ca_id )AS ca_idlinea
+                        FROM tb_reportes rp_1
+                            JOIN tb_inoclientes_air ic ON rp_1.ca_consecutivo::text = ic.ca_idreporte::text
+                            JOIN tb_inomaestra_air im ON im.ca_referencia::text = ic.ca_referencia::text
+                            JOIN ids.tb_ids id_1 ON id_1.ca_id = im.ca_idlinea
+                        GROUP BY rp_1.ca_consecutivo) air ON air.ca_consecutivo = i.ca_consecutivo";
+            }
+            //$sql = "select i.*, r.ca_proveedores, ca_idlinea, ca_linea from vi_indicadores i LEFT JOIN vi_repproveedores r ON (i.ca_idreporte = r.ca_idreporte) $join WHERE i.ca_transporte = '$transporte' AND i.ca_idcliente IN ($listaclientes)";
+            
+            $sql = "
+                SELECT i.*, r.ca_proveedores, r.ca_incoterms, sq.ca_fchsalida AS ca_fchsalida_ccr, CASE WHEN ca_idlinea is not null THEN ca_idlinea ELSE nvaidlinea END AS ca_idlinea, CASE WHEN ca_linea is not null THEN ca_linea ELSE nvalinea END AS ca_linea
+                FROM vi_indicadores i 
+                    LEFT JOIN vi_repproveedores r ON (i.ca_idreporte = r.ca_idreporte) 
+                    $join
+                    LEFT JOIN (
+                        SELECT rp_1.ca_consecutivo, id_1.ca_id AS nvaidlinea, id_1.ca_nombre::text AS nvalinea
+                        FROM tb_reportes rp_1 
+                                JOIN ino.tb_house h ON rp_1.ca_idreporte = h.ca_idreporte 
+                                JOIN ino.tb_master m ON m.ca_idmaster::text = h.ca_idmaster::text 
+                                JOIN ids.tb_ids id_1 ON id_1.ca_id = m.ca_idlinea) nvoino ON nvoino.ca_consecutivo = i.ca_consecutivo
+                    LEFT JOIN (
+                        SELECT sta.ca_fchsalida, sf.ca_consecutivo
+                        FROM tb_repstatus sta
+                            RIGHT JOIN ( 
+                                SELECT p.ca_consecutivo, max(sta_1.ca_idstatus) AS ca_idstatus
+                                FROM tb_repstatus sta_1
+                                        JOIN tb_reportes p ON p.ca_idreporte = sta_1.ca_idreporte
+                                WHERE sta_1.ca_idetapa = ANY (ARRAY['IMCCR'::bpchar, 'IACCR'::bpchar])
+                                GROUP BY p.ca_consecutivo) sf ON sta.ca_idstatus = sf.ca_idstatus) sq ON sq.ca_consecutivo::text = i.ca_consecutivo::text                    
+            WHERE i.ca_transporte = '$transporte' AND i.ca_idcliente IN ($listaclientes)";
+            
+            //echo $sql;
             if ($filtros->fecha_inicio && $filtros->fecha_fin) {
                 $sql .= " AND i.ca_fchllegada_cd BETWEEN '$filtros->fecha_inicio' AND '$filtros->fecha_fin' ";
             }
-
+            
             if ($nombreorigen) {
                 $nombreorigen = $nombreorigen->getCaCiudad();
                 $sql .= " and i.ca_ciuorigen= '$nombreorigen'";
@@ -1765,6 +2023,7 @@ class widgets5Actions extends sfActions {
             if ($origen != "")
                 $sql .= " and i.ca_idtrafico = '$origen'";
 
+            $sql .=" ORDER BY i.ca_fchllegada_cd";
             //print_r($sql);
 
             $con = Doctrine_Manager::getInstance()->connection();
@@ -1803,10 +2062,13 @@ class widgets5Actions extends sfActions {
             $gridembarque = array();
             $gridvolumenFCL = array();
             $pes = "-";
-
+            
+            //echo count($indicadores);
+            //echo "<pre>";print_r($indicadores);echo "</pre>";
+            //exit();
             foreach ($indicadores as $indicador) {
 
-                $proovedor = utf8_encode($indicador["proveedores"]);
+                $proovedor = utf8_encode($indicador["ca_proveedores"]);
                 /* if (!in_array($proovedor, $proovedores))
                   $proovedores[] = $proovedor; */
 
@@ -2202,8 +2464,9 @@ class widgets5Actions extends sfActions {
                     "orden" => utf8_encode($indicador["ca_orden_clie"]),
                     "doctransporte" => utf8_encode($indicador["ca_doctransporte"]),
                     "traorigen" => utf8_encode($indicador["ca_traorigen"]),
+                    "ciuorigen" => utf8_encode($indicador["ca_ciuorigen"]),
                     "destino" => utf8_encode($indicador["ca_ciudestino"]),
-                    "line" => utf8_encode($indicador["linea"]),
+                    "line" => utf8_encode($indicador["ca_linea"]),
                     "cido" => utf8_encode($indicador["ca_ciuorigen"]),
                     "modalidad" => utf8_encode($indicador["modalidad"]),
                     "piezas" => utf8_encode($piezas[0]),
@@ -2212,6 +2475,7 @@ class widgets5Actions extends sfActions {
                     "volumen" => floatval($volumen[0]),
                     "teus" => utf8_encode($indicador["ca_teus"]),
                     "proveedor" => $proovedor,
+                    "incoterms" => utf8_encode($indicador["ca_incoterms"]),
                     "factura" => utf8_encode($indicador["ca_factura"]),
                     "fch_salida" => utf8_encode($indicador["ca_fchsalida_cd"]),
                     "fch_llegada" => utf8_encode($indicador["ca_fchllegada_cd"]),
@@ -2402,18 +2666,37 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosConceptosContenedores(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $transporte = utf8_decode($request->getParameter("idtransporte"));
+        $modalidad = $request->getParameter("modalidad");
+        $tipo = $request->getParameter("tipo");
         
         $q = Doctrine_Query::create()
                 ->select("c.ca_idconcepto, c.ca_concepto, c.ca_transporte, c.ca_modalidad, c.ca_liminferior")
                 ->from("Concepto c")
                 ->addWhere("c.ca_transporte=?", $transporte)
-                ->addWhere("c.ca_modalidad=?", Constantes::FCL)
                 ->addOrderBy("c.ca_liminferior")
                 ->addOrderBy("c.ca_concepto");
 
+        if($tipo === "ino" && $transporte == Constantes::MARITIMO){
+            if($modalidad==Constantes::LCL)
+                $q->addWhere("c.ca_modalidad=?", Constantes::FCL);
+            else if($modalidad== Constantes::COLOADING)
+                    $q->addWhere("c.ca_idconcepto=?", 209 ); // TM/3
+            else
+                $q->addWhere("c.ca_modalidad=?", $modalidad);            
+            
+        }else if ($tipo === "ino" && $transporte == Constantes::TERRESTRE){
+            if($modalidad=="DIRECTO")
+                $q->addWhere("c.ca_modalidad=?", Constantes::FCL);
+            else
+                $q->addWhere("c.ca_modalidad=?", $modalidad);
+        }else
+            $q->addWhere("c.ca_modalidad=?", $modalidad);
+        
         $q->fetchArray();
 
+        $debug = $q->getSqlQuery();
         $conceptos = $q->execute();
 
         $data = array();
@@ -2424,11 +2707,12 @@ class widgets5Actions extends sfActions {
                 "modalidad" => utf8_encode($concepto['ca_modalidad'])
             );
         }
-        $this->responseArray = array("success" => true, "root" => $data);
+        $this->responseArray = array("success" => true, "root" => $data, "debug"=>$debug);
         $this->setTemplate("responseTemplate");
     }
     
     public function executeDatosContactos(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $idcliente = $request->getParameter("idcliente");
 
         $cliente = Doctrine::getTable("Cliente")->find($idcliente);
@@ -2445,6 +2729,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executePaisesGraficasIndicadores(sfWebRequest $request) {
+        
         $cliente = json_decode($request->getParameter("cliente"));
 
         $idscliente = Doctrine::getTable("Ids")
@@ -2518,6 +2803,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosParametrizacionIdgClientes(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $idgs = Doctrine::getTable("Idgclientes")
                 ->createQuery("i")
                 //->addWhere("t.ca_aplicacion = ? ", "Proveedores")
@@ -2632,6 +2918,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeGuardarIdgCliente(sfWebRequest $request) {
+        
         $tipo = $request->getParameter("tipo");
         $transporte = ($request->getParameter("transporte") && $request->getParameter("transporte") != "") ? utf8_decode($request->getParameter("transporte")) : " ";
         $origen = ($request->getParameter("origen") && $request->getParameter("origen") != "") ? utf8_decode($request->getParameter("origen")) : " ";
@@ -2973,23 +3260,24 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosComboListaReferencias(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
 
         $criterio = $this->getRequestParameter("query");
         $impoexpo = utf8_decode($request->getParameter("impoexpo"));
-        $idtransporte = utf8_decode($request->getParameter("idtransporte"));
+        $transporte = utf8_decode($request->getParameter("transporte"));
 
         try{
             $q = Doctrine::getTable("InoMaster")
                     ->createQuery("m")
                     ->leftJoin("m.Origen o")
                     ->leftJoin("m.Destino d")
-                    ->addWhere("m.ca_referencia LIKE ? AND m.ca_usuanulado IS NULL", $criterio . "%")
+                    ->addWhere("m.ca_referencia LIKE ? AND m.ca_usuanulado IS NULL AND m.ca_usuliquidado IS NULL AND m.ca_usucerrado IS NULL", $criterio . "%")
                     ->orderBy("m.ca_idmaster DESC")
                     ->limit(50)
                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
 
-            if ($idtransporte) {
-                $q->addWhere("m.ca_transporte = ?", $idtransporte);
+            if ($transporte) {
+                $q->addWhere("m.ca_transporte = ?", $transporte);
             }
 
             if ($impoexpo) {
@@ -3022,6 +3310,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosComerciales(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $comerciales = UsuarioTable::getComerciales();
         $data = array();
         foreach ($comerciales as $comercial) {
@@ -3035,6 +3324,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosIdsSucursales(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $idCliente = $request->getParameter("empresa");
 
         $sucursales = Doctrine::getTable("IdsSucursal")
@@ -3056,6 +3346,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosCoordinadoresAduana(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $usuarios = UsuarioTable::getCoordinadoresAduana();
         $data = array();
 
@@ -3073,6 +3364,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosCombos(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $tipoCombo = $request->getParameter("tipoCombo");
 
         $caso = "CU264";
@@ -3098,6 +3390,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosAgentesAduana() {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $con = Doctrine_Manager::getInstance()->connection();
         $sql = "select * from ids.tb_proveedores p inner join ids.tb_ids i "
                 . "on (i.ca_id = p.ca_idproveedor) where p.ca_tipo = 'ADU'";
@@ -3117,6 +3410,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosCargos(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $caso = $request->getParameter("externos") ? "CU265" : "CU266";
         $datomod = ParametroTable::retrieveByCaso($caso, null, null, null);
         $data = array();
@@ -3131,6 +3425,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosCodigos(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $caso = "CU271";
         $datomod = ParametroTable::retrieveByCaso($caso, null, null, null);
         $data = array();
@@ -3145,6 +3440,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosTipoSeguimiento(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $caso = "CU262";
         $datomod = ParametroTable::retrieveByCaso($caso, null, null, null);
         $data = array();
@@ -3158,6 +3454,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeSeguimientoAntecesor(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $idCliente = $request->getParameter("idcliente");
 
         $seguimientos = Doctrine::getTable("IdsEventos")
@@ -3179,8 +3476,10 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosTipoIdentificacion(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $q = Doctrine::getTable("IdsTipoIdentificacion")
-                ->createQuery("i");
+                ->createQuery("i")
+                ->where("i.ca_nombre <> ?", "Consecutivo Colsys");
         if ($request->getParameter("idtrafico")) {
             $q->addWhere('ca_idtrafico = ?', $request->getParameter("idtrafico"));
         }
@@ -3190,7 +3489,7 @@ class widgets5Actions extends sfActions {
         foreach ($identificaciones as $identificacion) {
             $data[] = array("id" => $identificacion["ca_tipoidentificacion"],
                 "name" => utf8_encode($identificacion["ca_nombre"]),
-                "trafico" => utf8_encode($identificacion["ca_idtrafico"]),
+                "idtrafico" => utf8_encode($identificacion["ca_idtrafico"]),
                 "trafico" => utf8_encode($identificacion->getTrafico()->getCaNombre()));
         }
 
@@ -3199,6 +3498,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosSectorEconomico(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $con = Doctrine_Manager::getInstance()->connection();
         $sql = "select cv.* from control.tb_config_values cv inner join control.tb_config cf on cf.ca_idconfig = cv.ca_idconfig where ca_param = 'CU257'";
         $rs = $con->execute($sql);
@@ -3214,6 +3514,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosRegimen(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $con = Doctrine_Manager::getInstance()->connection();
         $sql = "select cv.* from control.tb_config_values cv inner join control.tb_config cf on cf.ca_idconfig = cv.ca_idconfig where ca_param = 'CU259' order by ca_ident";
         $rs = $con->execute($sql);
@@ -3229,6 +3530,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosTipoPersona(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $con = Doctrine_Manager::getInstance()->connection();
         $sql = "select cv.* from control.tb_config_values cv inner join control.tb_config cf on cf.ca_idconfig = cv.ca_idconfig where ca_param = 'CU227' order by ca_ident";
         $rs = $con->execute($sql);
@@ -3244,6 +3546,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosCombosRadicacion(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $tipoCombo = $request->getParameter("tipoCombo");
 
         $caso = "CU073";
@@ -3269,6 +3572,7 @@ class widgets5Actions extends sfActions {
      * @date:  2016-03-28
      */
     public function executeDatosMuelles() {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $transport_parameter = utf8_decode($this->getRequestParameter("transporte"));
         $impoexpo_parameter = utf8_decode($this->getRequestParameter("impoexpo"));
 
@@ -3305,6 +3609,7 @@ class widgets5Actions extends sfActions {
     }
 
     public function executeDatosProveedorSucursal($request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $query = $request->getParameter("query");
         $idempresa = $request->getParameter("idempresa");
 
@@ -3317,6 +3622,7 @@ class widgets5Actions extends sfActions {
                 ->leftJoin("ids.IdsAgente a")
                 ->where("UPPER(ids.ca_nombre) like ?", "%" . strtoupper($query) . "%")
                 ->addWhere("s.ca_usueliminado IS NULL")
+                ->addWhere("p.ca_activo_impo = ? OR p.ca_activo_expo = ? OR a.ca_activo = ?",array(true,true,true))                
                 ->andWhere("ids.ca_id IN (SELECT ca_id FROM IdsEstadoSap e WHERE e.ca_id=ids.ca_id AND e.ca_tipo IN ('A','P') AND e.ca_activo=true AND ca_idempresa='{$idempresa}' )")
                 ->addOrderBy("ids.ca_nombre, c.ca_ciudad")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
@@ -3336,6 +3642,116 @@ class widgets5Actions extends sfActions {
             );
         }
         $this->responseArray = array("root" => $sucursal, "total" => count($sucursal), "success" => true, "debug" => $debug);
+        $this->setTemplate("responseTemplate");
+    }
+    
+    /**
+     * @autor alramirez
+     * @return un objeto JSON con los items de exclusiones Idg
+
+     * @param sfRequest $request A request 
+     *        caso_uso: identificador de caso de uso.
+     *       
+     * @date:  2018-02-08
+     */
+    public function executeDatosExclusionesIdg(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
+        
+        $impoexpo = utf8_decode(utf8_decode($request->getParameter("impoexpo")));
+        $transporte = utf8_decode(utf8_decode($request->getParameter("transporte")));
+        
+        //echo "impoexpo".utf8_decode($impoexpo);
+        //echo "transporte".utf8_encode($transporte);;
+        
+        //echo "impoexpo".$impoexpo;
+        //echo "transporte".$transporte;
+        $id = $request->getParameter("id");
+        $caso = "CU275";
+        if(!$id){
+        $datos = ParametroTable::retrieveByCaso($caso);
+        
+        $data = array();
+        $data2 = array();
+        $data3 = array();
+        
+        foreach($datos as $d){            
+            $dato = $d->getCaValor2();            
+            $data2[$d->getCaIdentificacion()][$d->getCaValor()] = $dato;
+            
+}
+        //echo "<pre>";print_r($data2);echo "</pre>";
+        
+        foreach($data2 as $key => $gridVal){            
+            foreach($gridVal as $observacion => $val){
+                //echo utf8_decode($val)."<br/>";
+                $manage = (array) json_decode(utf8_decode($val));
+                
+                //echo "<pre>";print_r($manage);echo "</pre>";
+                //echo $impoexpo."<br/>";
+                $data3[] = $manage;
+                if(in_array($impoexpo, $manage["impoexpo"]) && in_array($transporte, $manage["transporte"])){
+                    //$data[$key] = $observacion;
+                    $data[] = array("id"=>$key, "name"=>  utf8_encode($observacion));
+                    //echo $key."esta";
+                }
+            }
+        }
+        }else{
+            $dato = ParametroTable::retrieveByCaso($caso,null,null,$id)->getFirst();
+            $data[] = array("id"=>$dato->getCaIdentificacion(), "name"=>  utf8_encode($dato->getCaValor()));
+        }
+        /*echo "data3";
+        echo "<pre>";print_r($data3);echo "</pre>";
+        /*echo "data";
+        echo "<pre>";print_r($data);echo "</pre>";*/
+        
+        $this->responseArray = array("root" => $data, "total" => count($data), "success" => true);
+        $this->setTemplate("responseTemplate");
+    }
+    
+    /**
+     * @autor alramirez
+     * @return un objeto JSON con las etapas de los status
+
+     * @param sfRequest $request A request 
+     *        caso_uso: identificador de caso de uso.
+     *       
+     * @date:  2018-02-08
+     */
+    public function executeDatosTrackingEtapa(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
+        
+        $transporte = $request->getParameter("transporte");
+        $impoexpo = $request->getParameter("impoexpo");        
+        $departamento = $request->getParameter("departamento");
+        $tipo = $request->getParameter("tipo");
+        
+        $q = Doctrine::getTable("TrackingEtapa")
+                      ->createQuery("t")                                            
+                      ->where("t.ca_usueliminado IS NULL")
+                      ->orderBy("ca_orden");                      
+        
+        if($transporte)
+            $q->andWhere("t.ca_transporte = ?", $transporte);
+        if($impoexpo)
+            $q->addWhere("t.ca_impoexpo = ?", $impoexpo);
+        if($departamento)
+            $q->addWhere("t.ca_departamento = ?", $departamento);            
+        
+        $etapas = $q->execute();
+                
+        $data=array();
+        foreach($etapas as $e){
+            $data[]=array("id"=>$e->getCaIdetapa(),"nombre"=>utf8_encode($e->getCaEtapa()),"impoexpo"=>utf8_encode($e->getCaImpoexpo()),"departamento"=>utf8_encode($e->getCaDepartamento()),"transporte"=>utf8_encode($e->getCaTransporte()), "mensaje_default"=>utf8_encode($e->getCaMessageDefault()), "mensaje"=>utf8_encode($e->getCaMessage()));
+}
+        
+        if($tipo === "Status"){
+            $data[]=array("id"=>"00000","nombre"=>utf8_encode("Orden Anulada"));
+            $data[]=array("id"=>"88888","nombre"=>utf8_encode("Status"));
+            $data[]=array("id"=>"99999","nombre"=>utf8_encode("Cierre"));
+        }
+        
+        $this->responseArray = array("root" => $data, "total" => count($data), "success" => true);
         $this->setTemplate("responseTemplate");
     }
 }
