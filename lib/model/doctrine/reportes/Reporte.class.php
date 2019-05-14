@@ -948,17 +948,30 @@ class Reporte extends BaseReporte {
      */
 
     public function getNumReferencia() {
-        if ($this->getCaImpoexpo() == "Importación" && $this->getCaTransporte() == "Marítimo") {
-            $inoclientesSea = $this->getInoHouse()->getFirst();
-            if ($inoclientesSea) {
-                return $inoclientesSea->getInoMaster()->getCaReferencia();
-            }else{
-            $inoclientesSea = $this->getInoClientesSea();
-            if ($inoclientesSea) {
-                return $inoclientesSea->getCaReferencia();
+
+        $inoCliente = Doctrine::getTable("InoHouse")
+                ->createQuery("h")
+                ->leftJoin("h.Reporte r")
+                ->where("r.ca_consecutivo = ?", $this->getCaConsecutivo())
+                ->orderBy("r.ca_idreporte DESC")
+                ->fetchOne();
+
+        if ($inoCliente) {
+            return $inoCliente->getInoMaster()->getCaReferencia();
+        } else {
+            if ($this->getCaImpoexpo() == Constantes::IMPO && $this->getCaTransporte() == Constantes::MARITIMO) {
+                $inoclientesSea = $this->getInoClientesSea();
+                if ($inoclientesSea) {
+                    return $inoclientesSea->getCaReferencia();
+                }
+            }
+            if ($this->getCaImpoexpo() == Constantes::IMPO && $this->getCaTransporte() == constantes::AEREO) {
+                $inoclientesAir = $this->getInoClientesAir();
+                if ($inoclientesAir) {
+                    return $inoclientesAir->getCaReferencia();
+                }
             }
         }
-    }
     }
 
     /*
@@ -1032,10 +1045,21 @@ class Reporte extends BaseReporte {
             return sfFinder::type('file')->maxDepth(0)->in($directory);
     }
 
+    /*
+     * Retorna los archivos asociados a la referencia en la TRD
+     * @author: Andrea Ramírez
+     */
     public function getFilesGestDoc() {
         
         $referencia = $this->getNumReferencia();
-        $hbl = $this -> getDoctransporte();
+        $hbl = $this->getDoctransporte();
+        
+        if(!$hbl && $referencia){
+            $inoCliente = $this->getInoHouse()->getFirst();
+            if ($inoCliente) {            
+                $hbl = $inoCliente->getCaDoctransporte();
+            }
+        }
         
         $archivos = array();
         
@@ -1325,6 +1349,60 @@ class Reporte extends BaseReporte {
                 }                    
         }else
             return null;            
+    }
+
+    /*
+     * Retorna si existe el archivo con el nombre buscado
+     * @author: Andrea Ramírez
+     * @param string    $filename Nombre del archivo buscado
+     */
+    public function getArchivo($filename) {
+        
+        $archivos = $this->getFilesGestDoc();
+            
+        if($archivos){
+            foreach($archivos as $file){
+                
+                $name = $file->getCaNombre();
+                if($name == $filename){
+                        return $file;
+                        exit;
+                    }
+                }                    
+        }else
+            return null;
+    }
+    
+    /*
+     * Devuelve las exclusiones de un Indicador teniendo en cuenta el transporte y el tipo impoexpo
+     * @author Andrea Ramírez
+     */    
+    public function getExclusiones() {
+        
+        $impoexpo = utf8_decode($this->getCaImpoexpo());
+        $transporte = utf8_decode($this->getCaTransporte());
+        
+        $datos = ParametroTable::retrieveByCaso("CU275");
+        
+        $data = array();
+        $data2 = array();
+        
+        foreach($datos as $d){            
+            $dato = $d->getCaValor2();            
+            $data2[$d->getCaIdentificacion()][$d->getCaValor()] = $dato;
+            
+        }
+        
+        $data[null] = null;
+        foreach($data2 as $key => $gridVal){            
+            foreach($gridVal as $observacion => $val){                
+                $manage = (array) json_decode(utf8_decode($val));
+                if(in_array($impoexpo, $manage["impoexpo"]) && in_array($transporte, $manage["transporte"])){                    
+                    $data[$key] = $observacion;
+                }
+            }
+        }
+        return $data;
     }
 
     /*
@@ -1877,8 +1955,20 @@ class Reporte extends BaseReporte {
         }
         
     } 
-    /*public function save(Doctrine_Connection $con = null) {
-        if($this->preInsert($event))
-        parent::save($con);        
-    }*/
+    
+    /*
+     * Retorna los status a terceros relacionados con el reporte
+     * Author: Andrea Ramírez
+     */
+
+    public function getStatusTerceros() {
+        return Doctrine::getTable("EmailStaTer")
+                ->createQuery("e")
+                ->select("e.ca_usuenvio, e.ca_fchenvio")
+                ->innerJoin("e.Reporte r")
+                ->where("r.ca_consecutivo = ?", $this->getCaConsecutivo())
+                ->addWhere("e.ca_tipo = ? ", "Status Terceros")
+                ->addOrderBy("e.ca_fchenvio DESC")
+                ->execute(); 
+    }
 }
