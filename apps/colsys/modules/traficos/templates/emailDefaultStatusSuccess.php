@@ -12,6 +12,7 @@ $modo = $sf_data->getRaw("modo");
     $reporte = $status->getReporte();
     $cliente = $reporte->getCliente();  
     $comercial = $reporte->getCaLogin();    
+    $house = $reporte->getInoHouse()->getFirst(); 
     
     ?>
     <div align="center"><h3><?= ($etapa && $etapa->getCaTitle()) ? $etapa->getCaTitle() : "SEGUIMIENTO DE CARGA" ?></h3></div>
@@ -47,17 +48,17 @@ $modo = $sf_data->getRaw("modo");
 <!--                    <td width="300">
                         <div style="float:right"><a href="http://www.coltrans.com.co/logosoficiales/coltrans/fitac2_2018.jpg" target="_blank"><img src="http://www.coltrans.com.co/logosoficiales/coltrans/fitac2_2018.jpg" width="300" /></a></div>
                     </td>-->
-                //<?
+                <?
 //                }
                 ?>
-                <?                            
-                //if ( $user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S.") {
+                <?/*
+                if ( $user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S." && $reporte->getCaTransporte() == Constantes::MARITIMO && ($status->getCaIdetapa() == "IMETA" || $status->getCaIdetapa() == "IMCPD")) {
                     ?>
-                    <!--    <td>
-                            <div style="float:right"><a href="http://congreso.fitac.net/" target="_blank" title="Congreso Fitac 2017"><img src="http://www.coltrans.com.co/logosoficiales/coltrans/Coltrans-Encuentro-Nacional.jpg" width="500"/></a></div>
-                        </td> -->
+                    <td width="170">
+                        <div style="float:right"><img src="https://www.colsys.com.co/images/publicidad/amb-bog20140814.jpg"/></div>
+                    </td>
                     <?
-                /*} else if ( $user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S." && $reporte->getCaTransporte() == Constantes::AEREO && ($status->getCaIdetapa() == "IACCR" || $status->getCaIdetapa() == "IACAD")) {
+                } else if ( $user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S." && $reporte->getCaTransporte() == Constantes::AEREO && ($status->getCaIdetapa() == "IACCR" || $status->getCaIdetapa() == "IACAD")) {
                 ?>
                     <td width="170">
                         <div style="float:right"><img src="https://www.colsys.com.co/images/publicidad/amb-bog20140814.jpg"/></div>
@@ -112,8 +113,8 @@ $modo = $sf_data->getRaw("modo");
                 </td>
                 <?
                     if($status->getCaIdetapa()=="IACAD" || $status->getCaIdetapa()=="IACCR"){?>
-                        <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Aerol&iacute;nea y/o Bodega</b></td>
-                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?=$status->getProperty("bodega_air")?></td>
+                        <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Aerol&iacute;nea - Bodega</b></td>
+                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $reporte->getIdsProveedor()->getIds()->getCaNombre()?> - <?=$status->getProperty("bodega_air")?></td>
                     <?}else{?>
                         <td colspan="2">&nbsp;</td>
                     <?                
@@ -182,27 +183,31 @@ $modo = $sf_data->getRaw("modo");
                 $muelle = $depositos->getCaNombre();
             }
             
-            $inoCliente = $reporte->getInoClientesSea();
-            if ($inoCliente) {
-                $fchfinmuisca = $inoCliente->getInoMaestraSea()->getCaFchfinmuisca();
-                $fchfinvaciado = $inoCliente->getInoMaestraSea()->getCaFchvaciado();
-                if ($inoCliente->getInoMaestraSea()->getCaMuelle() != "")
-                    $muelle = $inoCliente->getInoMaestraSea()->getCaMuelle() . "-" . $inoCliente->getInoMaestraSea()->getInoDianDepositos()->getCaNombre();
-                else
-                    $muelle = $status->getProperty("muelle")?$status->getProperty("muelle"):"";
-                
-                ?>
-                <tr>
-                    <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Referencia</b></td>
-                    <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $inoCliente->getCaReferencia() ?></td>
+                       
+            
+            if ($house) {
+                $master = $house->getInoMaster();
+                if($master->getCaReferencia() != null){
+                    $fchfinmuisca = $master->getInoMasterSea()->getCaFchfinmuisca();
+                    $fchfinvaciado = $master->getInoMasterSea()->getCaFchvaciado();
+                    if ($master->getInoMasterSea()->getCaIdmuelle() != "")
+                        $muelle = $master->getInoMasterSea()->getCaIdmuelle() . "-" . $master->getInoMasterSea()->getInoDianDepositos()->getCaNombre();
+                    else
+                        $muelle = $status->getProperty("muelle")?$status->getProperty("muelle"):"";
 
-                    <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Fecha Finalizaci&oacute;n MUISCA</b></td>
-                    <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $fchfinmuisca ?></td>
+                    ?>
+                    <tr>
+                        <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Referencia</b></td>
+                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $master->getCaReferencia() ?></td>
 
-                    <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Fecha Finalizaci&oacute;n Vaciado</b></td>
-                    <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $fchfinvaciado ?></td>        
-                </tr>
+                        <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Fecha Finalizaci&oacute;n MUISCA</b></td>
+                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $fchfinmuisca ?></td>
+
+                        <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Fecha Finalizaci&oacute;n Vaciado</b></td>
+                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $fchfinvaciado ?></td>        
+                    </tr>
                 <?
+                }
             }
             if ($muelle != "") {
                 ?>
@@ -270,38 +275,54 @@ $modo = $sf_data->getRaw("modo");
             }
 
             if ($reporte->getCaModalidad() == "FCL") {
-                if ($inoCliente) {
-                    $referencia = $inoCliente->getInoMaestraSea();
-                    $equipos = $referencia->getInoEquiposSea();
-                    ?>
-                    <tr>
-                        <td colspan="6">
-                            <table width="100%" cellspacing="0" border="1" class="tableList">
-                                <tr>
-                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="4">Relación de Contenedores</th>
-                                </tr>
-                                <tr>
-                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Concepto</th>
-                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Cantidad</th>
-                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">ID Equipo</th>
-                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Observaciones</th>
-                                </tr>
-                                <?
-                                foreach ($equipos as $equipo) {
-                                    ?>
+                if ($house) {
+                    $houseSea = $house->getInoHouseSea();                    
+                    $datosHouSea = json_decode(utf8_encode($houseSea->getCaDatos()),1);
+                    
+                    $equipos = $datosHouSea["equipos"];
+                    //echo "<pre>";print_r($datosHouSea);echo "</pre>";
+                    
+                    if (count($equipos)>0){
+                        ?>
+                        <tr>
+                            <td colspan="6">
+                                <table width="100%" cellspacing="0" border="1" class="tableList">
                                     <tr>
-                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getConcepto()->getCaConcepto() ?></td>
-                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getCaCantidad() ?></td>
-                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getCaIdequipo() ?></td>
-                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getCaObservaciones() ? $equipo->getCaObservaciones() : "&nbsp;" ?></td>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="5">Relación de Contenedores</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Concepto</th>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Num. Contenedor</th>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Sello</th>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Kilos</th>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Piezas</th>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Fechas de Entrega</th>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Patio Entrega</th>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Observaciones</th>
                                     </tr>
                                     <?
-                                }
-                                ?>
-                            </table>
-                        </td>
-                    </tr>
-                    <?
+                                    foreach ($equipos as $key => $equipo) {
+                                        $inoequipo = Doctrine::getTable("InoEquipo")->find($equipo["idequipo"]);
+                                        $datosEquipo = json_decode(utf8_encode($inoequipo->getCaDatos()),1);
+                                        ?>
+                                        <tr>
+                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["concepto"] ?></td>
+                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["serial"] ?></td>
+                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["numprecinto"]?></td>
+                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["kilos"]?></td>
+                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["piezas"]?></td>
+                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Entrega Comodato:</b><?= $datosEquipo["fecha_entrega"]?><br/><b>Días Libres:</b><?= $datosEquipo["dias_libres"]?><br/><b>L&iacute;m. Devoluci&oacute;n:</b><?= $datosEquipo["limite_devolucion"]?><br/></td>
+                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $datosEquipo["patio"]?></td>
+                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $datosEquipo["observaciones"]?></td>
+                                        </tr>
+                                        <?
+                                    }
+                                    ?>
+                                </table>
+                            </td>
+                        </tr>
+                        <?
+                    }
                 } else {
                     $equipos = $reporte->getRepEquipos();
                     if (count($equipos) > 0) {
@@ -352,6 +373,28 @@ $modo = $sf_data->getRaw("modo");
                     }
                 }
             }
+            //print_r($status->getEtapasEvaluacion());
+            if(in_array($status->getCaIdetapa(), $status->getEtapasEvaluacion())){
+                ?>
+                <tr>
+                    <td colspan="6">
+                        <div align="center" style="margin-left: 30%; width: 30%; margin-right: 10%;">
+                            <table width="100%"><tr><td>
+                            <p align="justify">
+
+                                <img src="/images/32x32/evaluacion.png" />
+
+                            </p>
+                            </td><td>
+                            <p align="left" style="font-size: 16px;">                                                       
+                                <a href="https://www.colsys.com.co/formulario/indexExt5/id/MjE=/co/MjYyNjM=/tipo/2/cl/<?= base64_encode($cliente->getCaIdcliente())?>/idstatus/<?= base64_encode($status->getCaIdstatus())?>" target="_blank"><b>Es un buen momento para evaluar nuestro servicio !</b></a>
+                            </p>
+                            </td></tr></table>
+                        </div>
+                    </td>
+                </tr>
+                <?
+            }
             $statusList = $reporte->getRepStatus();
             if (count($statusList) > 0) {
                 ?>
@@ -368,7 +411,7 @@ $modo = $sf_data->getRaw("modo");
         <?
         if($modo!="otm"){
             ?>
-            <div align="center" class="bigbutton" style="margin-left: 30%; width: 30%; margin-right: 10%;">Para obtener más información de sus cargas, no olvide visitar nuestro tracking <a href="https://www.colsys.com.co/tracking" target="_blank">https://www.colsys.com.co/tracking</a></div>
+            <div align="center" class="bigbutton" style="margin-left: 30%; width: 30%; margin-right: 10%;">Para obtener más información de sus cargas, no olvide visitar nuestro tracking <a href="https://www.colsys.com.co/tracking" target="_blank">https://www.colsys.com.co/tracking</a></div>        
             <?
         }
         ?>

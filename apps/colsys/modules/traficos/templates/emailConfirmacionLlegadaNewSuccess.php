@@ -26,11 +26,11 @@ $muelle = ParametroTable::retrieveByCaso("CU268", null, null,$master->getInoMast
             </td>            
             <?
 //            if ($user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S.") {
-//                ?>
+                ?>
 <!--                <td width="300">
                     <div style="float:right"><a href="http://www.coltrans.com.co/logosoficiales/coltrans/fitac2_2018.jpg" target="_blank"><img src="http://www.coltrans.com.co/logosoficiales/coltrans/fitac2_2018.jpg" width="300" /></a></div>
                 </td>-->
-                //<?
+                <?
 //            }
             ?>
         </tr>
@@ -116,65 +116,132 @@ $muelle = ParametroTable::retrieveByCaso("CU268", null, null,$master->getInoMast
             }
 
             if ($master->getCaModalidad() == "FCL") {
-                //$equipos = $master->getInoEquipo();
-                $equipos = $reporte->getRepEquipos();
-                if (count($equipos) > 0) {
+                if ($house) {
+                    $houseSea = $house->getInoHouseSea();
+                    $datosHouSea = json_decode($houseSea->getCaDatos(),1);
+                    $equipos = $datosHouSea["equipos"];
+                    
                     ?>
-<!--                    <tr>
+                    <tr>
                         <td colspan="6">
-                            <table width="100%" cellspacing="1" border="1" class="tableList">
+                            <table width="100%" cellspacing="0" border="1" class="tableList">
                                 <tr>
-                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="4">Relación de Contenedores</th>
+                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="5">Relación de Contenedores</th>
                                 </tr>
                                 <tr>
                                     <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Concepto</th>
                                     <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Num. Contenedor</th>
                                     <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Sello</th>
+                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Kilos</th>
+                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Piezas</th>
+                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Fechas de Entrega</th>
+                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Patio Entrega</th>
                                     <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Observaciones</th>
                                 </tr>
                                 <?
-                                foreach ($equipos as $equipo) {
+                                foreach ($equipos as $key => $equipo) {
+                                    $inoequipo = Doctrine::getTable("InoEquipo")->find($equipo["idequipo"]);
+                                    $datosEquipo = json_decode(utf8_encode($inoequipo->getCaDatos()),1);
                                     ?>
                                     <tr>
-                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?//= $equipo->getConcepto()->getCaConcepto() ?></td>
-                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?//= $equipo->getCaSerial() ?></td>
-                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?//= $equipo->getCaNumprecinto() ?></td>
-                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?//= $equipo->getCaObservaciones() ? $equipo->getCaObservaciones() : "&nbsp;" ?></td>
+                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["concepto"] ?></td>
+                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["serial"] ?></td>
+                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["numprecinto"]?></td>
+                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["kilos"]?></td>
+                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["piezas"]?></td>
+                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Entrega Comodato:</b><?= $datosEquipo["fecha_entrega"]?><br/><b>Días Libres:</b><?= $datosEquipo["dias_libres"]?><br/><b>L&iacute;m. Devoluci&oacute;n:</b><?= $datosEquipo["limite_devolucion"]?><br/></td>
+                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $datosEquipo["patio"]?></td>
+                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $datosEquipo["observaciones"]?></td>
                                     </tr>
                                     <?
                                 }
-                                ?>
-                            </table></td>
-                    </tr>-->
-                    <tr>
-                        <td colspan="6">
-                            <table width="100%" cellspacing="0" border="1" class="tableList">
-                                <tr>
-                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="4">Relación de Contenedores</th>
-                                </tr>
-                                <tr>
-                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Concepto</th>
-                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Cantidad</th>
-                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">No.Contenedor</th>
-                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Observaciones</th>
-                                </tr>
-                                <?
-                                foreach ($equipos as $equipo) {
-                                    ?>
-                                    <tr>
-                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getConcepto()->getCaConcepto() ?></td>
-                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getCaCantidad() ?></td>
-                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getCaIdequipo() ?></td>                                            
-                                        <td><?= $equipo->getCaObservaciones() ? $equipo->getCaObservaciones() : "&nbsp;" ?></td>
-                                    </tr>
-                                    <?
-                                }   
                                 ?>
                             </table>
                         </td>
                     </tr>
                     <?
+                } else {
+                    $equipos = $reporte->getRepEquipos();
+                    if (count($equipos) > 0) {
+                        ?>
+    <!--                    <tr>
+                            <td colspan="6">
+                                <table width="100%" cellspacing="1" border="1" class="tableList">
+                                    <tr>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="4">Relación de Contenedores</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Concepto</th>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Num. Contenedor</th>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Sello</th>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Observaciones</th>
+                                    </tr>
+                                    <?
+                                    foreach ($equipos as $equipo) {
+                                        ?>
+                                        <tr>
+                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?//= $equipo->getConcepto()->getCaConcepto() ?></td>
+                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?//= $equipo->getCaSerial() ?></td>
+                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?//= $equipo->getCaNumprecinto() ?></td>
+                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?//= $equipo->getCaObservaciones() ? $equipo->getCaObservaciones() : "&nbsp;" ?></td>
+                                        </tr>
+                                        <?
+                                    }
+                                    ?>
+                                </table></td>
+                        </tr>-->
+                        <tr>
+                            <td colspan="6">
+                                <table width="100%" cellspacing="0" border="1" class="tableList">
+                                    <tr>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="4">Relación de Contenedores</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Concepto</th>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Cantidad</th>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">No.Contenedor</th>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Observaciones</th>
+                                    </tr>
+                                    <?
+                                    foreach ($equipos as $equipo) {
+                                        ?>
+                                        <tr>
+                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getConcepto()->getCaConcepto() ?></td>
+                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getCaCantidad() ?></td>
+                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getCaIdequipo() ?></td>                                            
+                                            <td><?= $equipo->getCaObservaciones() ? $equipo->getCaObservaciones() : "&nbsp;" ?></td>
+                                        </tr>
+                                        <?
+                                    }   
+                                    ?>
+                                </table>
+                            </td>
+                        </tr>
+                        <?
+                    }
                 }
+            }
+            $idetapa = $status->getCaIdetapa();
+            if(in_array($idetapa, $status->getEtapasEvaluacion())){
+                ?>
+                <tr>
+                    <td colspan="6">
+                        <div align="center" style="margin-left: 30%; width: 30%; margin-right: 10%;">
+                            <table width="100%"><tr><td>
+                            <p align="justify">
+
+                                <img src="/images/32x32/evaluacion.png" />
+
+                            </p>
+                            </td><td>
+                            <p align="left" style="font-size: 16px;">                                                       
+                                <a href="https://www.colsys.com.co/formulario/indexExt5/id/MjE=/co/MjYyNjM=/tipo/2/cl/<?= base64_encode($cliente->getCaIdcliente())?>/idstatus/<?= base64_encode($status->getCaIdstatus())?>" target="_blank"><b>Es un buen momento para evaluar nuestro servicio!</b></a>
+                            </p>
+                            </td></tr></table>
+                        </div>
+                    </td>
+                </tr>
+                <?
             }
         } else {
             if ($house->getCaNumorden()) {
