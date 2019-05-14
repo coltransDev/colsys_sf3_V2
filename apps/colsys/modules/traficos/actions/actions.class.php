@@ -368,6 +368,8 @@ class traficosActions extends sfActions {
       $proveedores = $reporte->getRepProveedor();      
       $this->form->setWidgetsProveedores($proveedores);
       
+      $exclusiones = $reporte->getExclusiones();
+      $this->form->setQueryExclusiones($exclusiones);
       $this->form->configure();
       /*
        * Fin de la configuración
@@ -451,6 +453,7 @@ class traficosActions extends sfActions {
          $bindValues["fchcierreotm"] = $request->getParameter("fchcierreotm");
 
          $bindValues["observaciones_idg"] = $request->getParameter("observaciones_idg");
+         $bindValues["exclusiones_idg"] = $request->getParameter("exclusiones_idg");
 
          for ($i = 0; $i < NuevoStatusForm::NUM_EQUIPOS; $i++) {
             $bindValues["equipos_tipo_" . $i] = $request->getParameter("equipos_tipo_" . $i);
@@ -494,6 +497,78 @@ class traficosActions extends sfActions {
             }
          }
         $bindValues["bodega_air"] = $request->getParameter("bodega_air");
+        
+        if ($request->getParameter("attachments1")) {
+            foreach ($request->getParameter("attachments1") as $attachment) {
+               $att[] = $reporte->getDirectorioBaseDocs(base64_decode($attachment));               
+               if($request->getParameter("idetapa") == "IAFFL" || $request->getParameter("idetapa") == "EEFFL"){                   
+                    $file = $reporte->getArchivo(base64_decode($attachment));                    
+                    $datosFile = json_decode($file->getCaDatos());
+                    if($datosFile->idcomprobante){
+                        $conn = Doctrine::getConnectionByTableName("InoIndicadores");
+                        $conn->beginTransaction();
+                        $idcomprobante = $datosFile->idcomprobante;
+
+                        $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
+                        
+                        if($comprobante->getRequiereIdg()){
+                            $options["fecha"] = date("Y-m-d");                            
+                            $options["idexclusion"] = $request->getParameter("exclusiones_idg");                            
+                            $options["observaciones"] = $request->getParameter("observaciones_idg");
+                            $idg = $comprobante->generarIdg($options, $conn);
+                            
+                            $bindValues["idgfactura"] = $idg;
+                            if($bindValues["idgfactura"]["cumplio"]!="No"){                            
+                                $conn->commit();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        if($request->getParameter("idetapa") == "EEETD"){            
+            $house = Doctrine::getTable("InoHouse")
+                        ->createQuery("h")
+                        ->innerJoin("h.Reporte r")
+                        ->where("ca_consecutivo = ?", $reporte->getCaConsecutivo())
+                        ->fetchOne();  
+            
+            if($house){
+                /*Verifica si es collect*/
+                if($house->getInoMaster()->getRequiereIdg($request->getParameter("idetapa"))){
+                    
+                    $conn = Doctrine::getConnectionByTableName("InoIndicadores");
+                    $conn->beginTransaction();
+                    
+                    $master = $house->getInoMaster();
+                    
+                    $options["fecha"] = date("Y-m-d");  
+                    $options["sigla"] = "OFC";
+                    $options["idcaso"] = $reporte->getCaConsecutivo();
+                    $options["idexclusion"] = $request->getParameter("exclusiones_idg");
+                    $options["observaciones"] = $request->getParameter("observaciones_idg");
+                    $options["idetapa"] = $request->getParameter("idetapa");
+                    
+                    $infoeventos = $master->getInfoEventos();
+                    $options["eventos"] = $infoeventos["tb_eventos"];
+                    $options["fchini"] = $master->getFchUltimoEvento();
+                    if($options["fchini"] == null)
+                        $cumple =  array("cumplio"=>"No", "mensaje"=>"La referencia no tiene eventos creados. No es posible calcular el indicador");                                
+                    $options["fchend"] = date("Y-m-d H:i:s");
+                    
+                    $idgConfig = $house->getIdgxHouse($options);
+                    $calculo = $idgConfig->calcularIndicador($options);        
+                    $cumple = $idgConfig->evaluarIndicador($calculo["estado"], $calculo["val"], $options, $conn);
+                    
+                    $bindValues["idgcollect"] = $cumple;
+                    if($bindValues["idgcollect"]["cumplio"]!="No"){                            
+                        $conn->commit();
+                    }
+                }
+            }
+        }    
+        
          $this->form->bind($bindValues);
          if ($this->form->isValid()) {
             $this->executeGuardarStatus($request);
