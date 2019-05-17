@@ -14,30 +14,14 @@
 <div class='azul b'>POSIBLES CAUSAS O VULNERABILIDADES ACTUALES</div>
 <div>
     <?
-    $causas = $riesgo->getIdgCausas();
-    $i=1;
-    foreach($causas as $causa){
-        /*$end_ts = $causa->getMaxFchCreado($riesgo->getCaIdriesgo());
-        list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($end_ts, "%d-%d-%d %d:%d:%d");
         
-        $start_ts = date("Y-m-d H:i:s",mktime($hor,$min,$seg,$mes,$dia-1,$ano));        
-        $user_ts = $causa->getCaFchcreado();
-        
-        if($user_ts == $end_ts){     
-            $color = "red";
-        }else{
+        $causas = $riesgo->getIdgCausas();
+        foreach($causas as $causa){
             $color = "black";
-        }
-        echo "<span style='color:".$color.";'>".$i.") ".html_entity_decode($causa->getCaCausa())."</span><br/>";*/
-        if($causa->getCaNueva()){
-            $color = "red";
-        }else{
-            $color = "black";
-        }
-        echo "<span style='color:".$color.";'>".html_entity_decode($causa->getCaCausa())."</span><br/>";
-        
-        $i++;        
-    }            
+            if($causa->getCaNueva())
+                $color = "red";
+            echo "<span style='color:$color;'>".$causa->getCaOrden().". ".html_entity_decode($causa->getCaCausa())."</span><br/>";
+        }            
     ?>
 </div><br>
 <div class='azul b'>CONTROLES ACTUALES</div>

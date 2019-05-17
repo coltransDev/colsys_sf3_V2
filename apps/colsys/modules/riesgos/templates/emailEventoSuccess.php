@@ -14,8 +14,8 @@
                                 <tr>
                                     <td>&nbsp;</td><td>
                                         <div style="background-color:#F6F6F6;border-color:#CCCCCC;border-style:dotted;border-width:1px;margin:12px 0 0;padding:12px 12px 24px;font-size: 12px;font-family: arial, helvetica, sans-serif;">
-                                            <b>Riesgo:</b><?=$evento->getIdgRiesgos()->getCaCodigo()."-".$evento->getIdgRiesgos()->getCaRiesgo()."<br/>"?>
-                                            <b>Evento:</b><?=strip_tags($evento->getCaDescripcion(),'<br/><b><br>')."<br/>"?>
+                                            <b>Riesgo:</b><?=$nriesgo?><br/>
+                                            <b>Evento:</b><?=$descripcion?><br/>
                                             <b>PA:</b><?=$evento->getCaPa()."<br/>"?>
                                             <b>Documento:</b><?=$evento->getCaDocumento()."<br/>"?>
                                             <b>Cliente:</b><?=$evento->getCliente()->getIds()->getCaNombre()."<br/>"?>

@@ -5,6 +5,8 @@ $user = $sf_data->getRaw("user");
 $val = $sf_data->getRaw("val");
 $nriesgo = $sf_data->getRaw("nriesgo");
 $triesgos = $sf_data->getRaw("triesgos");
+$tipo = $sf_data->getRaw("tipo");
+$version = $sf_data->getRaw("version");
 
 $operativo = $sf_data->getRaw("operativo");
 $legal = $sf_data->getRaw("legal");
@@ -27,12 +29,22 @@ $comercial = $sf_data->getRaw("comercial");
                                                     </table></td></tr>
                 </table>
             </th>
-            <th colspan="7" align="cenTER"><h1>EVALUACION DE RIESGOS: PROCESO <?= strtoupper($proceso->getCaNombre()) ?></h1></th>
-        </tr>
+            <?if($tipo=="repos"){
+                $repos = '<span style="color:blue">Ver. '.$version->getCaVersion().'</span><br><span style="color:blue; font-size:18px;">Usuario: '.$version->getCaUsucreado().' Fecha: '.$version->getCaFchcreado().'</span>';
+                $observaciones = '<tr><th colspan="8" align="left" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3; font-size:18px; color: blue; border:1px solid #D0D0D0;">Notas de la versión:<br>'.$version->getCaObservaciones().'</th></tr>'; 
+            }else{
+                $repos = "";
+                $observaciones = "";
+            }
+            ?>
+            <th colspan="7" align="cenTER"><h1>EVALUACION DE RIESGOS: PROCESO <?= strtoupper($proceso->getCaNombre()) ?>&nbsp;<?=$repos?></h1></th>
+        </tr>        
         <tr>
             <th colspan="8" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;	border:1px solid #D0D0D0;">RIESGO: <span style="font-weight: bold;"><?=$riesgo->getCaCodigo()?></span></th>
         </tr> 
+        <?=$observaciones?>
     <?
+        
         $uno = true;        
         //foreach ($riesgos as $riesgo) {
             
@@ -61,7 +73,7 @@ $comercial = $sf_data->getRaw("comercial");
             </tr>
             <tr>
                 <!--<td rowspan="<?=$rowspan?>"><h3><?= html_entity_decode($riesgo->getCaCodigo()) ?></h3></td>-->
-                <td colspan="1" rowspan="8" style="font-size:25px;">                                                                
+                <td colspan="1" rowspan="8" style="font-size:25px; vertical-align:top;">                                                                
                         <b><i>RIESGO:</i></b><br><?= strip_tags(html_entity_decode($riesgo->getCaRiesgo()),'<font><br>') ?><br><br>
                         <b><i>FACTOR GENERADOR:</i></b><br>
                         <?
@@ -73,23 +85,21 @@ $comercial = $sf_data->getRaw("comercial");
                         <b><i>ETAPA DEL PROCESO:</i></b><br><?= html_entity_decode($riesgo->getCaEtapa()) ?><br><br>
                         <b><i>FACTOR POTENCIADOR ENTORNO (normativos, sociales, etc):</i></b><br><?= html_entity_decode($riesgo->getCaPotenciador()) ?><br>                    
                 </td>
-                <td colspan="1" rowspan="8" style="font-size:25px;">
+                <td colspan="1" rowspan="8" style="font-size:25px; vertical-align:top;">
                     <?
                         $causas = $riesgo->getIdgCausas();                        
                         foreach($causas as $causa){
-                            
+                            $color = "black";
                             if($causa->getCaNueva()){
                                 $color = "red";
-                            }else{
-                                $color = "black";
                             }
                             ?>
-                            <span style="color:<?=$color?>"><?=html_entity_decode($causa->getCaCausa())?></span><br/>
+                            <span style="color:<?=$color?>"><?=$causa->getCaOrden()?>.&nbsp;<?=html_entity_decode($causa->getCaCausa())?></span><br/>
                             <?                                    
                         }        
                     ?>                    
                 </td>
-                <td rowspan="8" colspan="1" style="font-size:25px;"><?= strip_tags(html_entity_decode($riesgo->getCaControles()),'<font><div><br>') ?></td>                <?
+                <td rowspan="8" colspan="1" style="font-size:25px; vertical-align:top;"><?= strip_tags(html_entity_decode($riesgo->getCaControles()),'<font><div><br>') ?></td>                <?
                 
                 if($val){
                 $impacto = (($val->getCaOperativo()*10*0.01)+($val->getCaLegal()*30*0.01)+($val->getCaEconomico()*40*0.01)+($val->getCaComercial()*20*0.01));
