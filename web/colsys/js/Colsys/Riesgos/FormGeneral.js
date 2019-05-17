@@ -25,7 +25,7 @@ Ext.define('Colsys.Riesgos.FormGeneral', {
                 },
                 {
                     xtype:'checkboxfield',
-                    fieldLabel: 'Aplica LAFT',
+                    fieldLabel: 'Aplica LA/FT-FPADM',
                     id:'ca_laft',
                     name:'ca_laft'
                 },
@@ -121,7 +121,8 @@ Ext.define('Colsys.Riesgos.FormGeneral', {
                                 enableSourceEdit: false          
                             })
                         ]
-                    },{
+                    },
+                    {
                         title:'Causas',                                                
                         id:'tab-cau',
                         name:'tab-cau',                        
@@ -130,9 +131,11 @@ Ext.define('Colsys.Riesgos.FormGeneral', {
                                 id: 'gridCausas',
                                 name: 'gridCausas',
                                 iconCls: 'icon-grid',                                
-                                plugins: [
-                                    new Ext.grid.plugin.CellEditing({clicksToEdit: 1})
-                                ],
+                                plugins: [{
+                                    ptype : 'cellediting',
+                                    clicksToEdit: 1,
+                                    id: 'myplugin'
+                                }],
                                 store: Ext.create('Ext.data.Store', {
                                     fields: [
                                         {name: 'id',     type: 'integer'},
@@ -152,13 +155,13 @@ Ext.define('Colsys.Riesgos.FormGeneral', {
                                         }
                                     },        
                                     sorters: [{
-                                        property: 'id',
+                                        property: 'valor',
                                         direction: 'ASC'
                                     }],
                                     autoLoad: true
                                 }),
                                 columns: [
-                                    {xtype: 'hidden', dataIndex: 'id'},        
+                                    {dataIndex: 'id', hidden: true},        
                                     {header: "Causa", dataIndex: 'valor', flex:1, editor: {xtype: 'textareafield'}},
                                     {header: "Nueva", xtype:"checkcolumn", dataIndex: 'nueva', editor: {xtype: 'checkboxfield'}}
                                 ],
@@ -192,9 +195,10 @@ Ext.define('Colsys.Riesgos.FormGeneral', {
                         name:'tab-gen',                        
                         items:[]
                     }]
-                });
+                }
+            );
             
-            tb = new Ext.toolbar.Toolbar();
+            tb = Ext.create('Ext.toolbar.Toolbar', {});
             tb.add({
                 xtype: 'button',
                 text: 'Guardar',
@@ -254,7 +258,7 @@ Ext.define('Colsys.Riesgos.FormGeneral', {
                                                 itemId:'tab-'+indice,                                        
                                                 closable: true,
                                                 items:[                                            
-                                                    new Ext.tab.Panel({
+                                                    Ext.create('Ext.tab.Panel', {
                                                         bodyPadding: 5,
                                                         autoScroll:true,                                                
                                                         items: [{

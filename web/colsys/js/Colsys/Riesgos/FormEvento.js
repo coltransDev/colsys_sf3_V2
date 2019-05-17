@@ -1,21 +1,58 @@
 Ext.define('Colsys.Riesgos.FormEvento', {
     extend: 'Ext.form.Panel',
     alias: 'widget.Colsys.Riesgos.FormEvento',
-    bodyPadding: 5,
-    autoScroll: true,    
+    controller: 'form-evento',
+    bodyPadding: 10,
+    autoScroll: true,
+    frame: true,
     defaults: {        
         bodyStyle:'padding:4px',
         labelWidth:100
     },
+    fieldDefaults: {
+        labelAlign: 'right',
+        labelWidth: 90,
+        msgTarget: Ext.supports.Touch ? 'side' : 'qtip'
+    },
     url: '/riesgos/guardarFormEvento',
-    listeners: {
-        
+    tbar: [{ 
+        xtype: 'button', 
+        text: 'Guardar',
+        iconCls: 'disk',
+        handler: 'onSaveForm'        
+    }],
+    listeners: {        
         render: function (me, eOpts) {
             
             this.add(
                 {xtype: 'hidden', id: 'idevento', name: 'idevento', value: this.idevento},
                 {xtype: 'hidden', id: 'idriesgo', name: 'idriesgo', value: this.idriesgo},
                 {xtype: 'hidden', id: 'nuevo', name: 'nuevo', value: this.nuevo},
+                {
+                xtype: 'container',
+                id:'form-container',
+                layout: {
+                    type: 'vbox',
+                    pack: 'start',
+                    align: 'stretch'
+                },                                
+                style: {
+                    border : '1px solid #cfcfcf', 
+                    padding: '10px'
+                },
+                //defaultType: 'fieldset',
+                defaults:{
+                    layout: 'anchor',
+                    labelWidth: 200,
+                    //collapsible: true,
+                    //collapsed: expandir,                    
+                    anchor: '90%',                    
+                    /*style: {
+                        background: '#F6F6F6',
+                        padding: '10px'                        
+                    }*/
+                },
+                items:[
                 {                   
                     xtype: 'datefield',
                     fieldLabel: 'Fch. Evento',
@@ -29,19 +66,21 @@ Ext.define('Colsys.Riesgos.FormEvento', {
                     submitFormat: 'Y-m-d'
                 },
                 {
-                    xtype: 'htmleditor',
+                    xtype: 'textareafield',
                     fieldLabel: 'Descripci\u00F3n',
                     id: 'descripcion',
                     name: 'descripcion',
-                    anchor: '90%',
+                    grow: true,
+                    anchor: '90%',                    
                     allowBlank: false
                 },
                 Ext.create('Ext.form.ComboBox', {
                     fieldLabel: 'Causa',
-                    id: 'idcausa',
-                    name: 'idcausa',
+                    id: 'causa',
+                    name: 'ncausa[]',                    
+                    multiSelect: true,
                     store: Ext.create('Ext.data.Store', {
-                            fields: ['valor'],
+                            fields: ['id','orden','causa'],
                             proxy: {
                                 type: 'ajax',
                                 url: '/riesgos/datosCausas',
@@ -55,7 +94,7 @@ Ext.define('Colsys.Riesgos.FormEvento', {
                              },
                              autoLoad: true
                         }),                    
-                    displayField: 'valor',
+                    displayField: 'causa',
                     valueField: 'id',                    
                     qtip:'Listado',
                     anchor: '90%',
@@ -65,7 +104,7 @@ Ext.define('Colsys.Riesgos.FormEvento', {
                         loadingText: 'buscando...',
                         emptyText: 'No existen registros',
                         getInnerTpl: function() {
-                            return '<tpl for="."><div class="search-item1">{valor}</div></tpl>';
+                            return '<tpl for="."><div class="search-item1">{orden}. {causa}</div></tpl>';
                         }
                     }
                 }),
@@ -80,8 +119,7 @@ Ext.define('Colsys.Riesgos.FormEvento', {
                     caso_uso: 'CU054',
                     fieldLabel: 'Tipo Doc.',                    
                     id:'tipodoc',
-                    name:'tipodoc',
-                    allowBlank: false
+                    name:'tipodoc'
                 },
                 {
                     xtype: 'textfield',                
@@ -126,51 +164,51 @@ Ext.define('Colsys.Riesgos.FormEvento', {
                     fieldLabel: 'P\u00E9rd. Comercial',
                     id: 'perdida_com',
                     name: 'perdida_com'
-                })
+                }]})
                 
                 
             
-            tb = new Ext.toolbar.Toolbar();
-            tb.add({
-                xtype: 'button',
-                text: 'Guardar',
-                height: 30,
-                iconCls: 'disk',
-                handler: function () {                    
-                    var form = this.up('form');
-                    var idriesgo = form.idriesgo;
-                    var nuevo = form.nuevo;
-
-                    if (form.isValid()) {                
-                        form.submit({                            
-                            success: function(form, action) { 
-                                if(nuevo){                                                                        
-                                    Ext.MessageBox.alert("Mensaje", 'El evento se ha guardado \u00E9xitosamente.<br/><a href="https://www.colsys.com.co/email/verEmail/id/'+action.result.idemail+'" target="_blank">Ver Email</a>');
-                                    location.href="/riesgos/indexExt5";
-                                }else{
-                                    Ext.getCmp('winEvento').close();                                
-                                    Ext.MessageBox.alert("Mensaje", 'El evento se ha guardado \u00E9xitosamente.<br/><a href="https://10.192.1.70/email/verEmail/id/'+action.result.idemail+'" target="_blank">Ver Email</a>');
-                                    Ext.getCmp('grid-eve'+idriesgo).getStore().reload();                                
-                                }
-                            },
-                            failure: function(form, action) {
-                                /*Ext.Msg.alert('Failed', action.result.msg);*/
-                            }
-                        });
-                    }else{
-                        Ext.MessageBox.alert("Mensaje", 'Por favor complete todos los campos!');
-                    }
-                }
-            },{
-                xtype: 'button',
-                text: 'Cerrar',
-                height: 30,
-                iconCls: 'close',
-                handler: function () {                                        
-                    Ext.getCmp('winEvento').close(); 
-                }
-            });
-            this.addDocked(tb);
+//            tb = new Ext.toolbar.Toolbar();
+//            tb.add({
+//                xtype: 'button',
+//                text: 'Guardar',
+//                height: 30,
+//                iconCls: 'disk',
+//                handler: function () {                    
+//                    var form = this.up('form');
+//                    var idriesgo = form.idriesgo;
+//                    var nuevo = form.nuevo;
+//
+//                    if (form.isValid()) {                
+//                        form.submit({                            
+//                            success: function(form, action) { 
+//                                if(nuevo){                                                                        
+//                                    Ext.MessageBox.alert("Mensaje", 'El evento se ha guardado \u00E9xitosamente.<br/><a href="https://www.colsys.com.co/email/verEmail/id/'+action.result.idemail+'" target="_blank">Ver Email</a>');
+//                                    location.href="/riesgos/indexExt5";
+//                                }else{
+//                                    Ext.getCmp('winEvento').close();                                
+//                                    Ext.MessageBox.alert("Mensaje", 'El evento se ha guardado \u00E9xitosamente.<br/><a href="https://10.192.1.70/email/verEmail/id/'+action.result.idemail+'" target="_blank">Ver Email</a>');
+//                                    Ext.getCmp('grid-eve'+idriesgo).getStore().reload();                                
+//                                }
+//                            },
+//                            failure: function(form, action) {
+//                                /*Ext.Msg.alert('Failed', action.result.msg);*/
+//                            }
+//                        });
+//                    }else{
+//                        Ext.MessageBox.alert("Mensaje", 'Por favor complete todos los campos!');
+//                    }
+//                }
+//            },{
+//                xtype: 'button',
+//                text: 'Cerrar',
+//                height: 30,
+//                iconCls: 'close',
+//                handler: function () {                                        
+//                    Ext.getCmp('winEvento').close(); 
+//                }
+//            });
+//            this.addDocked(tb);
         }
     },
     cargar: function(idriesgo, idevento){        
@@ -193,7 +231,7 @@ Ext.define('Colsys.Riesgos.FormEvento', {
                 Ext.getCmp("idevento").setValue(res.data.idevento);
                 Ext.getCmp("idsucursal").setValue(res.data.idsucursal);
                 
-                Ext.getCmp("idcausa").getStore().add({id:res.data.idcausa, valor:res.data.causa});
+                //Ext.getCmp("idcausa").getStore().add({id:res.data.idcausa, valor:res.data.causa});
             },
             failure: function(){
                 alert("Los datos no han cargado correctamente!");
@@ -212,6 +250,7 @@ Ext.define('Colsys.Riesgos.FormEvento', {
                 documento: data['documento'],
                 idcliente: data['idcliente'],
                 idsucursal: data['idsucursal'],
+                descripcion: data['descripcion'],
                 nuevo: true                
             },
             success: function (response, options) {
@@ -225,11 +264,52 @@ Ext.define('Colsys.Riesgos.FormEvento', {
                 Ext.getCmp("idevento").setValue(res.data.idevento);
                 Ext.getCmp("idsucursal").setValue(res.data.idsucursal);
                 
-                Ext.getCmp("idcausa").getStore().add({id:res.data.idcausa, valor:res.data.causa});
+                //Ext.getCmp("idcausa").getStore().add({id:res.data.idcausa, valor:res.data.causa});
             },
             failure: function(){
                 alert("Los datos no han cargado correctamente!");
             }            
         });
     }
-})
+});
+
+Ext.define('Colsys.view.form.FormEventoController', {
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.form-evento',
+    onSaveForm: function(t,eOpts){
+        var form = t.up('form');
+        var idriesgo = form.idriesgo;
+        
+       var nuevo = form.nuevo;
+       
+       var data = form.getForm().getValues();
+        var str = JSON.stringify(data);
+        
+        console.log(data);
+        console.log(str);
+
+        if (form.isValid()) {                
+            form.submit({
+                params: {
+                    datos: str
+                },
+                success: function(form, action) { 
+                    if(nuevo){                                                                        
+                        Ext.MessageBox.alert("Mensaje", 'El evento se ha guardado \u00E9xitosamente.<br/><a href="https://www.colsys.com.co/email/verEmail/id/'+action.result.idemail+'" target="_blank">Ver Email</a>');
+                        location.href="/riesgos/indexExt5";
+                    }else{
+                        Ext.getCmp('winEvento').close();                                
+                        Ext.MessageBox.alert("Mensaje", 'El evento se ha guardado \u00E9xitosamente.<br/><a href="https://10.192.1.70/email/verEmail/id/'+action.result.idemail+'" target="_blank">Ver Email</a>');
+                        Ext.getCmp('grid-eve'+idriesgo).getStore().reload();                                
+                    }
+                },
+                failure: function(form, action) {
+                    /*Ext.Msg.alert('Failed', action.result.msg);*/
+                }
+            });
+        }else{
+            Ext.MessageBox.alert("Mensaje", 'Por favor complete todos los campos!');
+        }
+        
+    }
+});

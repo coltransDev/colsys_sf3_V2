@@ -43,7 +43,11 @@ Ext.define('Colsys.Riesgos.GridValoracion', {
     frame: true,    
     selModel: {
         selType: 'cellmodel'
-    },    
+    },
+    //headerBorders: false,
+    viewConfig: {
+        enableTextSelection: true
+    },
     listeners: {
         activate: function(ct, position){
            if(this.load==false || this.load=="undefined" || !this.load){
@@ -60,14 +64,15 @@ Ext.define('Colsys.Riesgos.GridValoracion', {
             var idriesgo = this.idriesgo;
             var permisos = this.permisos;
             
-            if(this.permisos === true){
+            //if(this.permisos === true){
                 tbar = [{
                     xtype: 'toolbar',
                     dock: 'top',
-                    id: 'bar-val-'+idriesgo,                
+                    id: 'bar-val-'+idriesgo,                                    
                     items: [{
                         text: 'Agregar',
                         iconCls: 'add',
+                        disabled: !permisos,
                         handler : function(){
                             var store = this.up("grid").getStore();
                             var r = Ext.create(store.getModel());            
@@ -76,6 +81,7 @@ Ext.define('Colsys.Riesgos.GridValoracion', {
                     },{
                         text: 'Guardar',
                         iconCls: 'disk',
+                        disabled: !permisos,
                         handler : function(){
                             error = 0;
                             var store = this.up('grid').getStore();
@@ -140,7 +146,7 @@ Ext.define('Colsys.Riesgos.GridValoracion', {
                     },
                     {
                         text: 'Recargar',
-                        iconCls: 'refresh',
+                        iconCls: 'refresh',                        
                         handler: function () {
                             this.up("grid").getStore().reload();
                         }
@@ -175,39 +181,41 @@ Ext.define('Colsys.Riesgos.GridValoracion', {
                     }]
                 }];
                 this.addDocked(tbar);
-            }
+            //}
         },
         beforeitemcontextmenu: function(view, record, item, index, e){
             e.stopEvent();
             var idriesgo = this.idriesgo;
             var idval = eval('record.data.idvaloracion'+idriesgo);
-            var record = this.store.getAt(index);            
-            var menu = new Ext.menu.Menu({
-                items: [
-                    {
-                        text: 'Impacto',
-                        iconCls: 'application_form',
-                        handler: function() {
-                            Ext.create('Ext.window.Window', {
-                                title: 'Datos Generales Impacto',
-                                height: 280,
-                                width: 400,
-                                id: 'winImpacto',
-                                layout: 'fit',
-                                items: [  // Let's put an empty grid in just to illustrate fit layout
-                                    Ext.create('Colsys.Riesgos.FormImpacto', {
-                                        id: 'impacto' + idval,
-                                        name: 'impacto' + idval,
-                                        idriesgo: idriesgo,
-                                        idval: idval
-                                    })
-                                ]
-                            }).show();                            
-                            Ext.getCmp("impacto"+idval).cargar(idval);
+            
+            if(idval){
+                var menu = new Ext.menu.Menu({
+                    items: [
+                        {
+                            text: 'Impacto',
+                            iconCls: 'application_form',
+                            handler: function() {
+                                Ext.create('Ext.window.Window', {
+                                    title: 'Datos Generales Impacto',
+                                    height: 280,
+                                    width: 400,
+                                    id: 'winImpacto',
+                                    layout: 'fit',
+                                    items: [  // Let's put an empty grid in just to illustrate fit layout
+                                        Ext.create('Colsys.Riesgos.FormImpacto', {
+                                            id: 'impacto' + idval,
+                                            name: 'impacto' + idval,
+                                            idriesgo: idriesgo,
+                                            idval: idval
+                                        })
+                                    ]
+                                }).show();                            
+                                Ext.getCmp("impacto"+idval).cargar(idval);
+                            }
                         }
-                    }
-                ]
-            }).showAt(e.getXY());
+                    ]
+                }).showAt(e.getXY());
+            }
         },
         beforerender: function(ct, position){
             this.reconfigure(
@@ -277,7 +285,9 @@ Ext.define('Colsys.Riesgos.GridValoracion', {
                     sortable: true,
                     flex: 1,
                     editor: {
-                        xtype: 'numberfield'
+                        xtype: 'numberfield',
+                        minValue: 1,
+                        maxValue: 5
                     }
                 },
                 {
@@ -287,7 +297,10 @@ Ext.define('Colsys.Riesgos.GridValoracion', {
                     sortable: true,
                     flex: 1,
                     editor: {
-                        xtype: 'numberfield'
+                        xtype: 'numberfield',
+                        minValue: 1,
+                        maxValue: 20,
+                        validator: this.validarEscala
                     }
                 },
                 {
@@ -297,7 +310,10 @@ Ext.define('Colsys.Riesgos.GridValoracion', {
                     sortable: true,
                     flex: 1,
                     editor: {
-                        xtype: 'numberfield'
+                        xtype: 'numberfield',
+                        minValue: 1,
+                        maxValue: 20,
+                        validator: this.validarEscala
                     }
                 },
                 {
@@ -307,7 +323,10 @@ Ext.define('Colsys.Riesgos.GridValoracion', {
                     sortable: true,
                     flex: 1,
                     editor: {
-                        xtype: 'numberfield'
+                        xtype: 'numberfield',
+                        minValue: 1,
+                        maxValue: 20,
+                        validator: this.validarEscala
                     }
                 },
                 {
@@ -318,7 +337,10 @@ Ext.define('Colsys.Riesgos.GridValoracion', {
                     flex: 1,
                     align: 'left',
                     editor: {
-                        xtype: 'numberfield'
+                        xtype: 'numberfield',
+                        minValue: 1,
+                        maxValue: 20,
+                        validator: this.validarEscala
                     }
                 },        
                 {
@@ -351,5 +373,12 @@ Ext.define('Colsys.Riesgos.GridValoracion', {
                 }
             ])
         }
+    },
+    validarEscala: function(val){            
+        if(val == 1 || val%5 == 0){
+            return true;
+        }else{
+            return "El valor debe ser una escala v\u00e1lida";
+        }            
     }
 });
