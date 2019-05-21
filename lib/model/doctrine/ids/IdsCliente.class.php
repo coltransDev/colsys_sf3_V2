@@ -18,9 +18,11 @@ class IdsCliente extends BaseIdsCliente {
 
     public function getTipoPersona() {
         $value = null;
-        $tiposPersona = ParametroTable::retrieveByCaso("CU227", null, null, $this->getCaTipopersona());
-        foreach ($tiposPersona as $tipoPersona) {
-            $value = $tipoPersona->getCaValor();
+        if($this->getCaTipopersona()!=null || $this->getCaTipopersona()!=""){
+            $tiposPersona = ParametroTable::retrieveByCaso("CU227", null, null, $this->getCaTipopersona());
+            foreach ($tiposPersona as $tipoPersona) {
+                $value = $tipoPersona->getCaValor();
+            }
         }
         return $value;
     }
@@ -58,11 +60,26 @@ class IdsCliente extends BaseIdsCliente {
 
     public function getRegimen() {
         $value = null;
-        $regimenes = ParametroTable::retrieveByCaso("CU259", null, null, $this->getCaRegimen());
-        foreach ($regimenes as $regimen) {
-            $value = $regimen->getCaValor();
+        if($this->getCaRegimen()!=null || $this->getCaRegimen()!=""){
+            $regimenes = ParametroTable::retrieveByCaso("CU259", null, null, $this->getCaRegimen());
+            foreach ($regimenes as $regimen) {
+                $value = $regimen->getCaValor();
+            }
         }
         return $value;
+    }
+
+    /*
+     * Retorna un arreglo con las personas de Servicio al Cliente asignadas
+     * @author Carlos G. López M.
+     */
+
+    public function getCoorServCliente() {
+        $query.= "select array_agg(distinct ca_idusuario) as ca_idusuario from control.tb_usu_parametros where ca_idcliente = ".$this->getCaIdcliente();
+        $q = Doctrine_Manager::getInstance()->connection();
+        $stmt = $q->execute($query);
+        $idusuarios = explode(",", str_replace(array("{","}"),"",$stmt->fetch()[0]));
+        return $idusuarios;
     }
 
     public function getDireccion() {
