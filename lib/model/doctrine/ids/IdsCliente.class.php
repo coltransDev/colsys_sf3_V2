@@ -75,10 +75,10 @@ class IdsCliente extends BaseIdsCliente {
      */
 
     public function getCoorServCliente() {
-        $query.= "select array_agg(distinct ca_idusuario) as ca_idusuario from control.tb_usu_parametros where ca_idcliente = ".$this->getCaIdcliente();
+        $query.= "select array_agg(distinct ca_nombre) as ca_idusuario from control.tb_usu_parametros p INNER JOIN control.tb_usuarios u ON u.ca_login = p.ca_idusuario where ca_idcliente = ".$this->getCaIdcliente();
         $q = Doctrine_Manager::getInstance()->connection();
         $stmt = $q->execute($query);
-        $idusuarios = explode(",", str_replace(array("{","}"),"",$stmt->fetch()[0]));
+        $idusuarios = explode(",", str_replace(array('{','}','"'),'',$stmt->fetch()[0]));
         return $idusuarios;
     }
 
