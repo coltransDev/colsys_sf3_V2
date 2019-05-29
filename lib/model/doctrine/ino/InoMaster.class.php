@@ -413,7 +413,7 @@ class InoMaster extends BaseInoMaster {
             
             if ($vlr_comision != 0 and $comision->getCaComision() != $vlr_comision) {
                 /*
-                if ($house->getCaIdhouse() == 47629) {
+                if ($house->getCaIdhouse() == 57148) {
                     echo "<pre>";
                     print_r(array("Idcomision" => $comision->getCaIdcomision(), "CaComision" => $comision->getCaComision(), "House" => $house->getCaIdhouse(), "idutilidad" => $idutilidad, "utilidad" => $utilidad, "vlr_comision" => $vlr_comision, "tot_pagado" => $tot_pagado, "diferencia" => $diferencia));
                     echo "</pre>";
@@ -432,4 +432,112 @@ class InoMaster extends BaseInoMaster {
         // }
     }
 
+    public function getFchUltimoEvento(){        
+        
+        $datosMaster = json_decode($this->getCaDatos());            
+        $eventos = $this->getInfoEventos();
+
+        $ult_mem = $eventos["ult_mem"];
+        $sae_mem = $eventos["sae_mem"];
+        $rad_mem = $eventos["rad_mem"];
+
+        $nomsia = $datosMaster->agencia == "83003960"?$datosMaster->agencia:null;
+        if ($nomsia) {
+            $matriz_eventos["intervalo_1"]['Rec.Último Documento'] = $ult_mem;
+            $matriz_eventos["intervalo_1"]['SAE'] = $sae_mem;
+        } else {
+            if (!is_null($sae_mem) and $nom_sia == '830003960' and $tip_tra == 'Marítimo') {
+                $matriz_eventos["intervalo_1"]['SAE'] = $sae_mem;
+            } else {
+                $matriz_eventos["intervalo_1"]['Rec.Último Documento'] = $ult_mem;
+}
+            $matriz_eventos["intervalo_1"]['Radicación Documento de Transporte'] = $rad_mem;
+        }                               
+//        print_r($eventos)."<br/>";
+//        print_r($matriz_eventos);
+//        exit();
+        return $matriz_eventos["intervalo_1"]['Rec.Último Documento']!=null?$matriz_eventos["intervalo_1"]['Rec.Último Documento']:null;                
+        
+    }
+    
+    public function getInfoEventos(){
+        
+        $conn = Doctrine_Manager::getInstance()->getConnection('master');
+        $sql = "
+            SELECT ext.ca_referencia as ca_referencia, ext.ca_idevento as ca_idevento, ca_fchevento, ca_usuario , pre.ca_valor, ca_fechadoc
+            FROM tb_expo_tracking  ext
+                LEFT OUTER JOIN (
+                    SELECT DISTINCT ca_referencia as ca_referencia_aed, ca_idevento, min(ca_fechadoc) as ca_fechadoc 
+                    FROM tb_expo_aedex group by ca_referencia, ca_idevento) aed ON (aed.ca_referencia_aed = ext.ca_referencia and aed.ca_idevento = ext.ca_idevento)
+                INNER JOIN (select ca_referencia, (ca_datos->>'modalidad')::int as ca_tipoexpo from ino.tb_master) reg ON reg.ca_referencia = ext.ca_referencia
+                INNER JOIN tb_parametros prm ON (prm.ca_casouso = 'CU011' and reg.ca_tipoexpo = prm.ca_identificacion)  
+                INNER JOIN tb_parametros pre ON (pre.ca_casouso = prm.ca_valor2 and pre.ca_identificacion = ext.ca_idevento)
+            WHERE ca_realizado = 1 and ext.ca_referencia = '".$this->getCaReferencia()."'";
+
+        $st = $conn->execute($sql);
+        $eventos = $st->fetchAll();
+
+        $no_docs = ["SAE", "DEX", "Cancelación Póliza Seguro", "Radicación Documento de Transporte", "Recibo de Soportes desde Puerto"];
+
+        $rad_mem = null;
+        $sae_mem = null;
+        $ult_mem = null;
+
+        $tbeventos = "<table>";
+        foreach($eventos as $evento){
+            if(!in_array($evento['ca_valor'], $no_docs))
+                $ult_mem = $evento["ca_fchevento"];                        
+
+            $tbeventos.= "<tr>";
+            $tbeventos.= "  <td style='font-size: 9px;'>" . utf8_encode($evento['ca_valor']) . "</td>";
+            $tbeventos.= "  <td style='font-size: 9px;'>" . $evento['ca_usuario'] . "</td>";
+            $ult_mem = (!in_array($evento['ca_valor'], $no_docs) and $evento['ca_fchevento'] > $ult_mem) ? $evento['ca_fchevento'] : $ult_mem;
+            if ($evento['ca_valor'] == 'Radicación Documento de Transporte') {
+                $fch_tmp = $rad_mem = $evento['ca_fchevento'];
+            } else if ($evento['ca_valor'] == 'SAE') {
+                $fch_tmp = $sae_mem = $evento['ca_fechadoc'];
+            } else {
+                $fch_tmp = $evento['ca_fchevento'];
+            }
+            $tbeventos.= "  <td style='font-size: 9px;'>$fch_tmp</td>";
+            $tbeventos.= "</tr>";
+        }
+        $tbeventos.= "  </table>";
+        
+        return array("ult_mem"=>$ult_mem, "sae_mem"=>$sae_mem, "rad_mem"=>$rad_mem, "tb_eventos"=>$tbeventos);
+    }
+    
+    public function getRequiereIdg($idetapa){
+        
+        $datos = json_decode(utf8_encode($this->getCaDatos()));
+        
+        if($this->getCaImpoexpo() == Constantes::EXPO){
+            switch($datos->idg){
+                case "SI":
+                case "Si":                    
+                case "FACTURA AL AGENTE":
+                    if($idetapa=="EEETD")
+                        return false;
+                    else
+                        return true;
+                    break;
+                case "COLLECT":
+                    if($idetapa=="EEETD")
+                        return true;
+                    else
+                        return false;
+                    break;
+                case "NO":
+                    return false;
+                    break;
+                case "":
+                    return true;
+                    break;
+            }
+        } else if($this->getCaImpoexpo() == Constantes::TRIANGULACION) {
+            return false;
+        } else{
+            return true;
+        }
+    }
 }
