@@ -62,6 +62,9 @@ $granTotal = 0;
             }
             ?>
             <th>
+                Empresa
+            </th>
+            <th>
                 Sucursal
             </th>
             <?
@@ -126,11 +129,11 @@ $granTotal = 0;
         if( $lastCat!=$activo->getcaIdcategory() ){
             
             if( $lastCat!==null ){
-            ?>            
-            <tr class="row0">
-                <td colspan="<?=$cols?>"><div align="right"><b>Total: <?=$cant?></b></div></td>
-            </tr>
-            <?   
+                ?>            
+                <tr class="row0">
+                    <td colspan="<?=$cols?>"><div align="right"><b>Total: <?=$cant?></b></div></td>
+                </tr>
+                <?   
                 $granTotal+=$cant;
             }
             $lastCat=$activo->getcaIdcategory();
@@ -185,7 +188,10 @@ $granTotal = 0;
             }
             ?>
             <td>
-                <?=$activo->getSucursal()?$activo->getSucursal()->getCaNombre():"&nbsp;"?>
+                <?=$activo->getUsuario()?$activo->getUsuario()->getSucursal()->getEmpresa()->getCaNombre():"&nbsp;"?>
+            </td>
+            <td>
+                <?=$activo->getUsuario()?$activo->getUsuario()->getSucursal()->getCaNombre():"&nbsp;"?>
             </td>
             <?
             if( $param=="Software" ){
