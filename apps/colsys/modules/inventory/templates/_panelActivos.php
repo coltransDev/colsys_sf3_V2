@@ -35,6 +35,13 @@
                 hidden: this.parameter!="Otro"                
             },
             {
+                header: "Tipo",
+                dataIndex: 'tipo',
+                //hideable: false,
+                sortable: true,
+                width: 100
+            },
+            {
                 header: "Marca",
                 dataIndex: 'marca',
                 //hideable: false,
@@ -151,6 +158,7 @@
             {name: 'asignadoaNombre', type: 'string'},
             {name: 'idsucursal', type: 'string'},
             {name: 'prgmantenimiento', type: 'date', dateFormat:'Y-m-d'},
+            {name: 'tipo', type: 'string'},
             {name: 'folder', type: 'string'},
             {name: 'deleted', type: 'boolean'},
             {name: 'cantidad', type: 'integer'},

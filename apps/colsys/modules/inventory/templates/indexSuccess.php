@@ -22,6 +22,7 @@ include_component("widgets", "widgetEquipo");
 include_component("inventory", "widgetProducto");
 
 include_component("inventory", "nuevaAnotacionWindow");
+include_component("widgets", "widgetParametros",array("caso_uso"=>"CU279"));
 
 
 $suc = $sf_data->getRaw( "suc" );

@@ -138,6 +138,11 @@ class inventoryActions extends sfActions {
             $row["so_office"] = utf8_encode($activo->getCaOffice());
             $row["so_office_serial"] = utf8_encode($activo->getCaOfficeSerial());
             $row["prgmantenimiento"] = $activo->getCaPrgmantenimiento();
+            if($activo->getCaIdtipo() > 0){
+                $c = ParametroTable::retrieveQueryByCaso("CU279", null, null, $activo->getCaIdtipo());
+                $tipo = $c->fetchOne();
+                $row["tipo"] = utf8_encode($tipo->getCaValor());            
+            }
             $row["idsucursal"] = $activo->getCaIdsucursal();
             $row["cantidad"] = $activo->getCaCantidad();
             $row["detalle"] = utf8_encode($activo->getCaDetalle());
@@ -193,6 +198,12 @@ class inventoryActions extends sfActions {
         $data["observaciones"] = utf8_encode($activo->getCaObservaciones());
         $data["software"] = utf8_encode($activo->getCaSoftware());
         $data["prgmantenimiento"] = $activo->getCaPrgmantenimiento();
+        if($activo->getCaIdtipo()>0){
+            $data["ntipo"] = $activo->getCaIdtipo();
+            $c = ParametroTable::retrieveQueryByCaso("CU279", null, null, $activo->getCaIdtipo());
+            $tipo = $c->fetchOne();        
+            $data["tipo"] = utf8_encode($tipo->getCaValor());
+        }
         $data["cantidad"] = $activo->getCaCantidad();
         $data["detalle"] = utf8_encode($activo->getCaDetalle());
         $data["fchbaja"] = $activo->getCaFchbaja();
@@ -330,6 +341,12 @@ class inventoryActions extends sfActions {
                 $activo->setCaPrgmantenimiento($request->getParameter("prgmantenimiento"));
             } else {
                 $activo->setCaPrgmantenimiento(null);
+            }
+
+            if ($request->getParameter("ntipo")) {
+                $activo->setCaIdtipo($request->getParameter("ntipo"));
+            } else {
+                $activo->setCaIdtipo(null);
             }
 
             if ($request->getParameter("detalle")) {

@@ -124,7 +124,16 @@ $office_types = $sf_data->getRaw("office_types");*/
                                         fieldLabel: 'Version',
                                         name: 'version',
                                         allowBlank: true
-                                    }
+                                    },
+                                     new WidgetParametros({
+                                        id:'tipo',
+                                        name:'tipo',
+                                        hiddenName:'ntipo',
+                                        fieldLabel: "Tipo",
+                                        caso_uso:"CU279",
+                                        width:200,
+                                        idvalor:"id"
+                                    }),
                                 ]
                             },{
                                 columnWidth:.4,
@@ -388,6 +397,9 @@ $office_types = $sf_data->getRaw("office_types");*/
                         var fld = Ext.getCmp("asignadoa_id");
                         fld.setRawValue(this.res.data.asignadoaNombre);
                         fld.hiddenField.value = this.res.data.asignadoa;
+                        
+                        Ext.getCmp("tipo").setValue(res.data.ntipo);
+                        $("#tipo").attr("value",res.data.tipo);
                     }
 
                 });                
