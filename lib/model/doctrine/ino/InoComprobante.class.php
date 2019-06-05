@@ -88,24 +88,16 @@ class InoComprobante extends BaseInoComprobante
                 
         }
                 
-            
-        //$datos=json_decode($this->getCaDatos());
-        //$datos->idanticipo="";
-        
         $this->setCaFchanulado(date("Y-m-d H:i:s"));
         $this->setCaUsuanulado($iduser);
         $this->setCaEstado(self::ANULADO);
         $this->setProperty("msgAnulado",$msg);
-        //$this->setCaDatos(json_encode($datos));
 
         if($iduser=="sap")
             $this->stopBlaming();
         $this->save();
         
         return true;
-        /*}catch (Exception $e) {
-            return $e->getMessage();
-        }*/
     }
 
     public function getMovimientos(){
@@ -249,44 +241,27 @@ class InoComprobante extends BaseInoComprobante
             $conn = Doctrine_Manager::getInstance()->getConnection('master');
             $st = $conn->execute($sql);
             $datos = $st->fetchAll();
-            //$errorRef[]= $datos;
             if(count($datos)>0)
             {
                 $datos=$datos[0];
                 
-                //$errorRef[]=$datos["ca_idcomprobante"];                
                 $factura = Doctrine::getTable("InoComprobante")->find($datos["ca_idcomprobante"]);
                 if($factura)
                 {
-                    //$errorRef[]=$factura->getCaDatos();
                     $datosJson=json_decode($factura->getCaDatos());
                     $errorRef[]=$datosJson->iva;
                     $anticipoJson=array();
                     foreach($datosJson->idanticipo as $k=>$a)
                     {                        
-                        //if($a>0)
                         {
-                            
                             if($a==$this->getCaIdcomprobante())
                             {
-                                //$anticipoJson["idanticipo"][]=$a;
-                                //$errorRef[]="<br>aa::".$a."<br>";
                                 $datosJson->idanticipo[$k]=null;
                             }
                         }
                     }
-                    //$datosJ = json_decode($anticipoJson);
-                    //$datosJson->idanticipo=$datosJ->idanticipo;
-                    
-                    //$errorRef[]=json_encode($datosJ);
-                    
-                    //$errorRef[]=$datosJ;
-                    
-                    //$datosJson->idanticipo=$anticipoJson;
-                    //$errorRef[]=$factura->getCaIdcomprobante()."::::".$datosJson->idanticipo;                    
                     $datosJ = json_encode($datosJson);
 
-                    //$errorRef[]=json_decode($datosJson);
                     $errorRef[]=$datosJ;
                     $factura->setCaDatos($datosJ);
                     $factura->stopBlaming();
@@ -343,9 +318,9 @@ class InoComprobante extends BaseInoComprobante
                 
                 if($master->getCaTransporte() == Constantes::AEREO && $house->getInoHouseSea()->getCaContinuacion() == "CABOTAJE"){                    
                     $reporte = $house->getReporte();
-                    $fchllegada = $reporte->getFchLlegadaCont();                    
+                    $options["fchini"] = $reporte->getFchLlegadaCont();                    
                 }else
-                $fchllegada = $master->getCaFchllegada();                    
+                $options["fchini"] = $master->getCaFchllegada();                    
 
                 $options["impoexpo"] = $master->getCaImpoexpo();
                 $options["transporte"] = $master->getCaTransporte();                
@@ -355,17 +330,23 @@ class InoComprobante extends BaseInoComprobante
                 else
                     $options["idsucursal"] = $house->getUsuCreado()->getSucursal()->getCaIdsucursal();
                 
-                //print_r($options);
+                if($master->getCaImpoexpo() == Constantes::EXPO){                    
+                    $options["fchini"] = $master->getFchUltimoEvento();
+                    if($options["fchini"] == null)
+                        return array("cumplio"=>"No", "mensaje"=>"La referencia no tiene eventos creados. No es posible calcular el indicador");
+                    $infoeventos = $master->getInfoEventos();
+                    $options["eventos"] = $infoeventos["tb_eventos"];
+                    if($master->getCaTransporte() == Constantes::MARITIMO)
+                        $options["modalidad"] = $master->getCaModalidad();
+                }
                 
                 $idg = IdgTable::getNuevoIndicador($options);
                 
                 if(is_object($idg)){
-                    //echo "Lim1".$idg->getCaLim1();
-                    //exit();
                     $num_dias = intval($idg->getCaLim1());
 
                     $festivos = TimeUtils::getFestivos();
-                    $dif_mem = TimeUtils::workDiff($festivos, $fchllegada, $fecha);//     workDiff($festivos, $fch_llegada, $fecha);
+                    $dif_mem = TimeUtils::workDiff($festivos, $options["fchini"], $fecha);//     workDiff($festivos, $fch_llegada, $fecha);
                     if ($dif_mem > $num_dias) {                    
                         $cumple = 0;
                     }else{                    
@@ -385,5 +366,91 @@ class InoComprobante extends BaseInoComprobante
 	}
         return $fch_comprobante->format('Y-m-d');
     }
+    
+    public function getRequiereIdg(){
+        
+        $house = $this->getInoHouse();
+        if($house){                        
+            return $house->getInoMaster()->getRequiereIdg();
+        }
+        else
+            return false;
+    }
 
+    public function generarIdg($options, $conn){        
+        
+        $house = $this->getInoHouse();
+        $master = $house->getInoMaster();
+        
+        $options["fecha"] = $options["fchend"] = Utils::parseDate($options["fecha"], 'Y-m-d');                
+        $options["sigla"] = "OFC";
+        $options["idcaso"] = $this->getCaIdcomprobante();
+        $options["doctransporte"] = $house->getCaDoctransporte();              
+        
+        if($house->getInoMaster()->getCaTransporte() == Constantes::AEREO && $house->getInoHouseSea()->getCaContinuacion() == "CABOTAJE"){                                    
+            $options["fchini"] = $house->getReporte()->getFchLlegadaCont();                    
+        }else
+            $options["fchini"] = $house->getInoMaster()->getCaFchllegada();
+
+        if($house->getInoMaster()->getCaImpoexpo() == Constantes::EXPO){
+            $infoeventos = $master->getInfoEventos();
+            $options["eventos"] = $infoeventos["tb_eventos"];
+            $options["fchini"] = $master->getFchUltimoEvento();
+            if($options["fchini"] == null)
+                return array("cumplio"=>"No", "mensaje"=>"La referencia no tiene eventos creados. No es posible calcular el indicador");                                
+        }
+
+        $idgConfig = $house->getIdgxHouse($options);
+        $calculo = $idgConfig->calcularIndicador($options);        
+        $cumple = $idgConfig->evaluarIndicador($calculo["estado"], $calculo["val"], $options, $conn);         
+        
+        return $cumple;
+        
+        
+    }
+    
+    public function getResultadoIndicador() {
+        
+        $indicador = Doctrine::getTable("InoIndicadores")->findByDql("ca_tipo = ? AND ca_idcaso = ?", array(1, $this->getCaIdcomprobante()))->getFirst();
+        
+        if($indicador){
+            $datos = json_decode($indicador->getCaDatos());
+            if($indicador->getCaEstado() == 0){                    
+                $idexclusion = $indicador->getCaIdexclusion();
+                if($idexclusion && $idexclusion > 0){
+                    $obs = ParametroTable::retrieveByCaso("CU275",null,null,$idexclusion)->getFirst();
+                    $exclusion = utf8_encode($obs->getCaValor());
+                }
+            }
+            
+            switch ($indicador->getCaEstado()) {
+                case 0:
+                    if (strlen($datos->observaciones) < 1 && strlen($idexclusion) < 1) {
+                        $tagIdg = '<img src="/images/16x16/alert.png" title="Oportunidad en la Facturacion: '.$indicador->getCaIdg().'"/>';                                
+                    } else {                                
+                        $tagIdg = '<img src="/images/16x16/alert_disabled.png" title="Oportunidad en la Facturacion: '.$indicador->getCaIdg().'&#013;Observacion: '.$exclusion.'"/>';
+                    }
+                    break;
+                case 1;
+                    $tagIdg = '<img src="/images/16x16/button_ok.gif" title="Oportunidad en la Facturacion: '.$indicador->getCaIdg().'"/>';                            
+                    break;
+            }
+            
+            $datos = array(
+                "id"=>$indicador->getCaId(), 
+                "idg"=>$indicador->getCaIdindicador(), 
+                "valor"=>$indicador->getCaIdg(), 
+                "estado"=>$indicador->getCaEstado(), 
+                "idexclusion"=>$idexclusion, 
+                "exclusion"=>$exclusion, 
+                "observaciones"=>$datos->observaciones
+            );
+                    
+            $tag = $tagIdg;
+                    
+            return array("sucess"=>true, "datos"=>$datos, "tag"=>$tag);
+        }else{
+            return array("sucess"=>false);
+        }
+    }
 }
