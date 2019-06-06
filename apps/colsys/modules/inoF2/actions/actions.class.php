@@ -698,6 +698,9 @@ class inoF2Actions extends sfActions {
                 "exclusion"=> $exclusion,
                 "idgestado"=> $idgestado,
                 "idgvalor"=> $idgvalor,
+                "idcliente"=> $comprobante?$comprobante->getIds()->getCaId():null,
+                "idagente"=> $comprobante?$comprobante->getInoHouse()->getInoMaster()->getIdsAgente()->getCaIdagente():null,
+                "idproveedor"=> $comprobante?$comprobante->getInoHouse()->getInoMaster()->getIdsProveedor()->getCaIdproveedor():null,
                 "plazo"=>$d["comp_ca_plazo"],
                 "tooltip" => "Generado:({$d["comp_ca_usugenero"]}-{$d["comp_ca_fchgenero"]})",
                 "do" => $datosJson->do
@@ -835,8 +838,8 @@ class inoF2Actions extends sfActions {
 
                 if ($impoexpo == Constantes::EXPO) {
                     $datos = array("modalidad" => $request->getParameter("ca_modalidad"),
-                        "agencia" => $request->getParameter("idlinea"),
-                        "idlinea" => $request->getParameter("idlinea"),
+                        "agencia" => $request->getParameter("agenciaad"),
+                        "idlinea" => $request->getParameter("agenciaad"),
                         "incoterms" => $request->getParameter("ca_incoterms"),
                         "consignatario" => $request->getParameter("ca_consignatario"),
                         "direccion" => $request->getParameter("ca_direccion"),
@@ -1013,7 +1016,7 @@ class inoF2Actions extends sfActions {
                 $data["cartaporte"] = utf8_encode($datos->cartaporte);
                 $data["ca_descripcion"] = utf8_encode($datos->descripcion);
                 $data["ca_consignatario"] = utf8_encode($datos->consignatario);
-                $data["idlinea"] = utf8_encode($datos->idlinea);
+                $data["idagencia"] = utf8_encode($datos->idlinea);
                 if (is_numeric($datos->idlinea)) {
                     $agencia = Doctrine::getTable("Ids")->find(utf8_encode($datos->idlinea));
                     if($agencia)
