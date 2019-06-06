@@ -416,12 +416,20 @@ class clientesActions extends sfActions {
         $this->inicio = $inicio;
         $this->final = $final;
         $this->clientesCartaGarantia = array();
+        $this->clientesVenCartaGarantia = array();
         list($year, $month, $day) = sscanf($final, "%d-%d-%d");
 
         // Lista los Clientes a los cuales se les vence la Carta de Garantía en el siguiente mes
         $stmt = ClienteTable::cartaGarantiaClientes($inicio, $final, $sucursal, $vendedor);
         while ($row = $stmt->fetch()) {
             $this->clientesCartaGarantia[] = $row;
+        }
+
+        $final = $inicio;
+        $inicio = date('Y-m-d', mktime(0, 0, 0, $month, 0, 1900)); //$year - 5
+        $stmt = ClienteTable::cartaGarantiaClientes($inicio, $final, $sucursal, $vendedor);
+        while ($row = $stmt->fetch()) {
+            $this->clientesVenCartaGarantia[] = $row;
         }
 
         $layout = $this->getRequestParameter("layout");
@@ -669,7 +677,7 @@ class clientesActions extends sfActions {
                      </tr>
                      <tr>
                         <td style=\"text-align: justify\">
-                           Es necesario para <strong>COLTRANS S.A.S.</strong> y/o <strong>AGENCIA DE ADUANAS COLMAS S.A.S. NIVEL 1</strong> dar cumplimiento a la Circular 0170 de 2002, resolución 8571 de 2010 expedidas por la DIAN y a la circular externa 100-000005 de junio 17 de 2014, expedida por la Superintendencia de Sociedades, siendo nuestra obligación como Agentes de Carga Internacional / Agentes de Aduana, crear un banco de datos de nuestros clientes que nos permita establecer un adecuado auto control y gestión del riesgo para la 'Prevención del lavado de Activos y Financiación del Terrorismo' en nuestras operaciones.<br /><br />
+                           Es necesario para <strong>COLTRANS S.A.S.</strong> y/o <strong>AGENCIA DE ADUANAS COLMAS S.A.S. NIVEL 1</strong> dar cumplimiento a la Circular 0170 de 2002, resolución 8571 de 2010 expedidas por la DIAN y a la circular externa 100-000005 de junio 17 de 2014, expedida por la Superintendencia de Sociedades, siendo nuestra obligación como Agentes de Carga Internacional / Agentes de Aduana, crear un banco de datos de nuestros clientes que nos permita establecer un adecuado auto control y gestión del riesgo para la 'prevención del lavado de activos, financiación del terrorismo, y financiación de la proliferación de armas de destrucción masiva' en nuestras operaciones.<br /><br />
                            Por lo anterior, el Representante Comercial que atiende su cuenta, estará retirando de sus instalaciones los siguientes documentos:<br /><br />
                         </td>
                      </tr>
@@ -683,7 +691,7 @@ class clientesActions extends sfActions {
                               <td style=\"background-color:#002060; color:#FFFFFF; text-align: center; font-weight: bold\">Persona Natural</td>
                             </tr>
                             <tr>
-                              <td style=\"text-align: justify\">Formato de conocimiento de cliente -Circular 170, debidamente diligenciado y firmado en original por el Representante Legal o la persona facultada según certificado de existencia y representación legal.</td>
+                              <td style=\"text-align: justify\">Formato de identificación y conocimiento de cliente, debidamente diligenciado y firmado en original por el Representante Legal o la persona facultada según certificado de existencia y representación legal.</td>
                               <td style=\"text-align: center\">X</td>
                               <td style=\"text-align: center\">X</td>
                               <td style=\"text-align: center\">X</td>
@@ -698,10 +706,10 @@ class clientesActions extends sfActions {
                               <td style=\"text-align: justify\">Certificado de Matricula mercantil con vigencia no superior a 30 días.</td>
                               <td style=\"text-align: center\"></td>
                               <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\"></td>
+                              <td style=\"text-align: center\">X</td>
                             </tr>
                             <tr>
-                              <td style=\"text-align: justify\">Fotocopia del RUT Habilitado como Exportador y/o Importador, y obligado aduanero. Con <strong>fecha de generación</strong> del año en que se diligencia el Formato de conocimiento de cliente -Circular 170.</td>
+                              <td style=\"text-align: justify\">Fotocopia del <strong>RUT COMPLETO</strong> Habilitado como Exportador y/o Importador, y obligado aduanero. Con <strong>fecha de generación</strong> del año en que se diligencia el Formato de conocimiento de cliente -Circular 170.</td>
                               <td style=\"text-align: center\">X</td>
                               <td style=\"text-align: center\">X</td>
                               <td style=\"text-align: center\">X</td>
@@ -719,33 +727,15 @@ class clientesActions extends sfActions {
                               <td style=\"text-align: center\">X</td>
                             </tr>
                             <tr>
-                              <td style=\"text-align: justify\">Estado de Situación Financiera  o Balance General o <strong>Inicial</strong> <strong style=\"color:#b92201;\">Nota 1</strong></td>
+                              <td style=\"text-align: justify\">ESTADOS FINANCIEROS: Estado de Situación Financiera  o Balance General o <strong>Inicial</strong> <strong style=\"color:#b92201;\">Nota 1</strong>, y Estado de resultados debidamente firmados por representante legal, contador y revisor fiscal* (si aplica*) <strong style=\"color:#b92201;\">Nota 2</strong>, con sus respectivas Notas a los estados financieros, con fecha de corte a Dic. 31 del año inmediatamente anterior.</td>
                               <td style=\"text-align: center\">X</td>
                               <td style=\"text-align: center\">X</td>
                               <td style=\"text-align: center\"></td>
                             </tr>
                             <tr>
-                              <td style=\"text-align: justify\">Estado de Resultados</td>
+                              <td style=\"text-align: justify\">Fotocopia de la T.P. o C.C. del Contador y Revisor Fiscal* ampliada al 150% (si aplica*) <strong style=\"color:#b92201;\">Nota 2</strong>.</td>
                               <td style=\"text-align: center\">X</td>
                               <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\"></td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Notas a los Estados Financieros</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\"></td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Fotocopia de la T.P. o C.C. del Contador ampliada al 150%</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\"></td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Fotocopia de la T.P. o C.C. del Revisor Fiscal ampliada al 150% (si aplica*) <strong style=\"color:#b92201;\">Nota 2</strong>.</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\"></td>
                               <td style=\"text-align: center\"></td>
                             </tr>
                             <tr>
@@ -755,25 +745,31 @@ class clientesActions extends sfActions {
                               <td style=\"text-align: center\">X</td>
                             </tr>
                             <tr>
-                              <td style=\"text-align: justify\">Fotocopia del certificado ISO (Si se tiene)</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\"></td>
-                              <td style=\"text-align: center\"></td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Fotocopia del certificado BASC (Si se tiene)</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\"></td>
-                              <td style=\"text-align: center\"></td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Check list documentos entregados, debidamente firmado y con fecha</td>
+                              <td style=\"text-align: justify\">Referencia comercial del año en que se diligencia el Formato de conocimiento del cliente - Circular 0170, no superior a 10 meses</td>
                               <td style=\"text-align: center\">X</td>
                               <td style=\"text-align: center\">X</td>
                               <td style=\"text-align: center\">X</td>
                             </tr>
                             <tr>
-                              <td style=\"background-color:#002060; color:#FFFFFF; text-align:justify; font-weight:bold;\" colspan=\"4\">Si es cliente de COLMAS S.A.S debe anexar los siguientes documentos adicionales</td>
+                              <td style=\"text-align: justify\">Resolución como operador económico autorizado (OEA) (si se tiene)</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\"></td>
+                              <td style=\"text-align: center\"></td>
+                            </tr>
+                            <tr>
+                              <td style=\"text-align: justify\">Acuerdos de seguridad debidamente diligenciado y firmado en original por el Representante Legal, <strong style=\"color:#b92201;\">Nota 7</strong></td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\">X</td>
+                            </tr>
+                            <tr>
+                              <td style=\"text-align: justify\">Fotocopia del certificado ISO y BASC (Si se tiene)</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\">X</td>
+                              <td style=\"text-align: center\"></td>
+                            </tr>
+                            <tr>
+                                <td style=\"background-color:#002060; color:#FFFFFF; text-align:justify;\" colspan=\"4\">Si es cliente de COLMAS S.A.S debe anexar los siguientes documentos adicionales</td>
                             </tr>
                             <tr>
                               <td style=\"text-align: justify\">Certificado de EE.FF emitido por Contador público</td>
@@ -788,23 +784,14 @@ class clientesActions extends sfActions {
                               <td style=\"text-align: center\"></td>
                             </tr>
                             <tr>
-                              <td style=\"background-color:#002060; color:#FFFFFF; text-align:justify; font-weight:bold;\" colspan=\"4\">Si requiere los servicios de EXPORTACIONES debe anexar los siguientes documentos adicionales</td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Acuerdos de seguridad debidamente diligenciado y firmado en original por el Representante Legal, <strong style=\"color:#b92201;\">Nota 7</strong></td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\">X</td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Referencia comercial del año en que se diligencia el Formato de conocimiento de cliente -Circular 170, NO superior a 10 meses.</td>
+                              <td style=\"text-align: justify\">Manifestación suscrita de requisitos mínimos de seguridad OEA </td>
                               <td style=\"text-align: center\">X</td>
                               <td style=\"text-align: center\">X</td>
                               <td style=\"text-align: center\">X</td>
                             </tr>
                             <tr>
                               <td style=\"background-color:#002060; color:#FFFFFF; text-align:justify;\" colspan=\"4\">
-                                <strong style=\"color:#b92201;\">Nota 1:</strong> Balance Inicial, aplica cuando una empresa tiene menos de 12 meses de constituido.<br />
+                                <strong style=\"color:#b92201;\">Nota 1:</strong> Balance Inicial, aplica cuando se trate de compañías constituidas en el mismo año en que se realiza el proceso de vinculación.<br />
                                 <strong style=\"color:#b92201;\">Nota 2:</strong> Empresas que cuenten con más de 5.000 SMMLV de activos y/o cuyos ingresos brutos durante el año inmediatamente anterior sean o excedan al equivalente a tres mil 3.000 SMMLV, están obligados a tener revisor fiscal.<br />
                                 <strong style=\"color:#b92201;\">Nota 3:</strong> Si es cliente Gran contribuyente, UAP, ALTEX, o entidad vigilada por la Superfinanciera y <strong>TIENE CRÉDITO CON COLTRANS o COLMAS, DEBE ENTREGAR ESTADOS FINANCIEROS</strong>.<br />
                                 <strong style=\"color:#b92201;\">Nota 4:</strong> Los Estados Financieros deben estar certificados y dictaminados por Representante Legal y Revisor Fiscal y/o Contador Público con <strong>fecha de corte a Dic. 31 del año inmediatamente anterior</strong>.<br />
@@ -835,8 +822,9 @@ class clientesActions extends sfActions {
                 // if ($con_credito) {
                     // $email->addAttachment("ids/formatos/Solicitud_de_Credito.xls");
                 // }
-                $email->addAttachment("ids/formatos/Check_List_Circular_0170.pdf");
-                $email->addAttachment("ids/formatos/Formato_conocimiento_de_cliente.pdf");
+                // $email->addAttachment("ids/formatos/Check_List_Circular_0170.pdf");
+                $email->addAttachment("ids/formatos/Manifestacion_suscrita_de_requisitos_minimos_de_seguridad.doc");
+                $email->addAttachment("ids/formatos/Formato_conocimiento_de_cliente.xls");
                 $email->addAttachment("ids/formatos/Acuerdo_de_Seguridad_Coltrans.pdf");
                 $email->addAttachment("ids/formatos/Acuerdo_de_Seguridad_Colmas.pdf");
 
