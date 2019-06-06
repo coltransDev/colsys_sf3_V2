@@ -156,7 +156,6 @@ Ext.define('Colsys.Ino.PanelFactura', {
 
                 if (record.data.estado <= 1)
                 {
-
                     itemCm.push(
                             {
                                 text: 'Editar',
@@ -261,8 +260,6 @@ Ext.define('Colsys.Ino.PanelFactura', {
                                             })
                                 }
                             }
-
-
                     );
                 } else if (record.data.estado == 5)
                 {
@@ -272,12 +269,29 @@ Ext.define('Colsys.Ino.PanelFactura', {
                         itemCm.push(
                                 {
                                     text: 'Crear Nota Credito',
+                                    iconCls: 'application_form_edit',
                                     handler: function () {
                                         me.ventanaFac(record, me, record.data.docentry);
                                     }
                                 });
                     }
 
+                    if(record.data.idcliente == record.data.idproveedor || record.data.idcliente == record.data.idagente)
+                    {
+                        itemCm.push({
+                            text: 'Enviar Factura',
+                            iconCls: 'email',
+                            handler: function () {
+                                var windowpdf = Ext.create('Colsys.Widgets.WgVerPdf', {                                            
+                                    id: 'window-envio-factura-'+record.data.idcomprobante,
+                                    width: 900,
+                                    title: 'Env\u00edo Factura '+ record.data.cliente,
+                                    sorc: "/status/verEmailTerceros?id="+record.data.idcliente+"&idcomprobante="+record.data.idcomprobante
+                                });
+                                windowpdf.show();
+                            }
+                        });
+                    }
                 }
 
                 if (record.data.cliente == 'AGENCIA DE ADUANAS COLMAS SAS NIVEL 1')
