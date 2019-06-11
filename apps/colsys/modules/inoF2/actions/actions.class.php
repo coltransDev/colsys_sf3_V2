@@ -5572,36 +5572,59 @@ class inoF2Actions extends sfActions {
     }
 
     public function executeRegistrarObservacionIdg(sfWebRequest $request){
-        
-        $idcomprobante = $request->getParameter("idcomprobante");
-        $idg_sigla = $request->getParameter("idg");
-        $idexclusion = $request->getParameter("id");
-        
-        $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
-        
+       
         $conn = Doctrine::getTable("InoComprobante")->getConnection();
         $conn->beginTransaction();
-        
-        try {        
-            if($comprobante){
 
-                $datos = array();
-                $idg = $comprobante->getIdg();
-                
-                $registro = Doctrine::getTable("InoIndicadores")->find($idg["datos"]["id"]);
-                
-                if($registro){
-                    $registro->setCaIdexclusion($idexclusion);
-                    $registro->save($conn);
-                $conn->commit();
-                $this->responseArray = array("success" => true, "consecutivo" => $comprobante->getCaConsecutivo(), "errorInfo"=>"");
-            }else               
-                    $this->responseArray = array("success" => false, "errorInfo" => "No existe el indicador solicitado");
-            }else               
-                $this->responseArray = array("success" => false, "errorInfo" => "No existe el comprobante: ".$idcomprobante);
+        $datos = json_decode($request->getParameter("datos"));
+        $error = 0;
+
+        try {
+            if (count($datos) > 0) {
+                foreach ($datos as $dt) {
+                    if ($dt->id) {
+                        $registro = Doctrine::getTable("InoIndicadores")->find($dt->id);
+                    } else {
+                        $idcomprobante = $dt->idcomprobante;
+                        $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
+                        if ($comprobante) {
+                            $registro = $comprobante->getInoIndicadores();
+                        } else {
+                            $error++;
+                            $mensaje = "No existe el comprobante: " . $idcomprobante;                            
+                        }
+                    }
+
+                    if ($registro) {
+                        $datos = json_decode(utf8_encode($registro->getCaDatos()));
+                        if ($dt->observaciones)
+                            $datos->observaciones = $dt->observaciones;
+                        else
+                            $datos->observaciones = null;
+
+                        $registro->setCaIdexclusion($dt->idexclusion);
+                        $registro->setCaDatos(json_encode($datos));
+                        $registro->save($conn);
+                        
+                    }else {
+                        $error++;
+                        $mensaje = "No existe el indicador solicitado";  
+                    }
+                }
+                if($error >0){
+                    $conn->rollback();
+                    $this->responseArray = array("success" => true, "consecutivo" => $registro->getCaIdcaso(), "errorInfo" => utf8_encode($mensaje));                    
+                }else{
+                    $conn->commit();
+                    $this->responseArray = array("success" => true, "consecutivo" => $registro->getCaIdcaso(), "errorInfo" => "");
+                }
+            } else {
+                $conn->rollback();
+                $this->responseArray = array("success" => false, "errorInfo" => "No existen datos para guardar");
+            }
         } catch (Exception $e) {
             $conn->rollback();
-            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));                
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
         }
         $this->setTemplate("responseTemplate");
     }    
