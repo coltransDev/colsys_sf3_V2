@@ -236,6 +236,9 @@ class adminUsersActions extends sfActions {
         $this->zonas = ParametroTable::retrieveByCaso('CU242',null,$suc);
         $this->sexo = array("F","M");
         
+        $datos = json_decode(utf8_encode($this->usuario->getCaDatos()));
+        $this->subc = $datos->subcontratado;
+        
         $response = sfContext::getInstance()->getResponse();
         $response->addJavaScript("tabpane/tabpane", 'last');
         $response->addStylesheet("tabpane/luna/tab", 'last');
@@ -375,7 +378,7 @@ class adminUsersActions extends sfActions {
                         .",u.ca_email, u.ca_extension, u.ca_activo, u.ca_cumpleanos, u.ca_fchingreso, u.ca_nombres, (u.ca_papellido ||' '|| u.ca_sapellido) as ca_apellidos, u.ca_telparticular, ca_telfamiliar"
                         .",u.ca_movil, u.ca_direccion, m.ca_nombre, u.ca_tiposangre, u.ca_nombrefamiliar, u.ca_parentesco, u.ca_nivestudios, u.ca_estrato, u.ca_donante"    
                         .",u.ca_enfermedad, u.ca_alergico, u.ca_sexo, (SELECT dd.ca_value FROM ColsysConfigValue dd WHERE ca_idconfig = 218 and ca_ident = u.ca_fcesantias) as fcesantias"
-                        .",(SELECT ec.ca_value FROM ColsysConfigValue ec WHERE ec.ca_idconfig = 239 and ec.ca_ident = ub.ca_ecivil) as ecivil, u.ca_fchcreado, u.ca_fchactualizado")
+                        .",(SELECT ec.ca_value FROM ColsysConfigValue ec WHERE ec.ca_idconfig = 239 and ec.ca_ident = ub.ca_ecivil) as ecivil, u.ca_datos->'subcontratado' as ca_subcontratado, u.ca_fchcreado, u.ca_fchactualizado")
                 ->leftJoin('u.Sucursal s')
                 ->leftJoin('s.Empresa e')
                 ->leftJoin('u.Manager m')
@@ -434,6 +437,7 @@ class adminUsersActions extends sfActions {
         $grupoEmp = $user->getGrupoEmpresarial();
        
         $usuario = Doctrine::getTable("Usuario")->find($request->getParameter("login"));
+        $datos = json_decode(utf8_encode($usuario->getCaDatos()));
         $new = $request->getParameter("key");
         $this->nivel = $this->getNivel();
        
@@ -478,6 +482,14 @@ class adminUsersActions extends sfActions {
         if ($request->getParameter("idsucursal")) {
             $usuario->setCaIdsucursal($request->getParameter("idsucursal"));
         }
+        
+        if($request->getParameter("subcontrato")){
+            $datos->subcontratado = true;            
+        }else{
+            $datos->subcontratado = false;            
+        }
+        
+        $usuario->setCaDatos(json_encode($datos));
 
         if ($request->getParameter("email")) {
             $usuario->setCaEmail($request->getParameter("email"));
@@ -1228,7 +1240,11 @@ class adminUsersActions extends sfActions {
             if($this->user->getUsuBrigadas()->getCaComites() && strrpos($this->user->getUsuBrigadas()->getCaComites(), "|"))
                 $this->comites = explode("|",$this->user->getUsuBrigadas()->getCaComites());
             else
-                $this->comites[] = $this->user->getUsuBrigadas()->getCaComites();
+                $this->comites[] = $this->user->getUsuBrigadas()->getCaComites();            
+            
+            $this->vacaciones = $this->user->getEnVacaciones(); 
+            $datos = json_decode(utf8_encode($this->user->getCaDatos()));
+            $this->subc = $datos->subcontratado;
             
             $this->responseArray = array("success" => true, "login" => $this->user->getCaLogin());            
         }
@@ -1908,6 +1924,20 @@ class adminUsersActions extends sfActions {
         }catch (Exception $e){
             $conn->rollback();
             $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+        $this->setTemplate("responseTemplate");   
+    }
+    
+    public function executeInfoVacaciones(sfWebRequest $request) {
+        $login = $request->getParameter("login");
+        $usuario = Doctrine::getTable("Usuario")->find($login);
+        
+        if($usuario->getEnVacaciones()){
+            $vacaciones = $usuario->getEnVacaciones();
+            
+            $this->responseArray = array("success"=> true, "html"=>utf8_encode($vacaciones->getCaBodyhtml()), "id"=>$vacaciones->getCaId());
+        }else{
+            $this->responseArray = array("success"=> false);
         }
         $this->setTemplate("responseTemplate");   
     }

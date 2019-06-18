@@ -277,12 +277,25 @@ $jefes = $sf_data->getRaw("jefes");
                                 <td>&nbsp;</td>
                                 <td width="40%">
                                     <div align="left">
-                                        <b>Apellidos</b>
+                                        <b>Primer Apellido</b>
                                     </div>
                                 </td>
                                 <td>
                                     <div align="left">
-                                        <input type="text" size="30" name="apellidos" <?if($nivel==0){?>disabled="disabled"<?}?> value="<?=$usuario->getCaApellidos()?>" />
+                                        <input type="text" size="30" name="papellido" <?if($nivel==0){?>disabled="disabled"<?}?> value="<?=$usuario->getCaPapellido()?>" />
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="row0">
+                                <td>&nbsp;</td>
+                                <td width="40%">
+                                    <div align="left">
+                                        <b>Segundo Apellido</b>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div align="left">
+                                        <input type="text" size="30" name="sapellido" <?if($nivel==0){?>disabled="disabled"<?}?> value="<?=$usuario->getCaSapellido()?>" />
                                     </div>
                                 </td>
                             </tr>
@@ -319,6 +332,23 @@ $jefes = $sf_data->getRaw("jefes");
                                             }
                                             ?>
                                         </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="row0">
+                                <td>&nbsp;</td>
+                                <td width="40%">
+                                    <div align="left">
+                                        <b>Subcontratado</b>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div align="left">                                        
+                                        <?
+                                        //echo $subc;
+                                        
+                                        ?>
+                                        <input type="checkbox" name="subcontrato" id="subcontrato"  <?=($subc==true || $subc==1)?'checked':''?>/>                                         
                                     </div>
                                 </td>
                             </tr>
@@ -477,7 +507,7 @@ $jefes = $sf_data->getRaw("jefes");
                                 </td>
                                 <td>
                                     <div align="left">
-                                        <input type="text" name="docidentidad" onkeypress="return validarSiNumero(event)" value="<?=$usuario->getCaDocidentidad()?>" />
+                                        <input type="text" name="docidentidad" onkeypress="return validarSiNumero(event)" value="<?=$usuario->getCaDocidentidad()?>" required />
                                     </div>
                                 </td>
                             </tr>

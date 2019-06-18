@@ -5,6 +5,15 @@ $comites = $sf_data->getRaw("comites");
 <div class="content" align="center" id="resultado">
     <?if($user){?>
     <table width="100%"  class="tableList" >
+        <?
+        if($vacaciones){
+            ?>
+        <tr bgcolor="#CD5C5C">
+            <td colspan="10" style="color: white; font-weight:  bold;">Colaborador en Vacaciones. <a onclick="infoVacaciones()">Ver mensaje</a></td>
+            </tr>
+            <?
+        }        
+        ?>
         <tr>
             <td style="border:none; border-bottom: 1px solid #D0D0D0;text-align:left" <?if(($userinicio->getUserId()==$user->getCaLogin()) or $nivel>=1){?>colspan="3"<?}else{?>colspan="2"<?}?> scope="col">Perfil del usuario</td>
             <td></td>
@@ -84,7 +93,7 @@ $comites = $sf_data->getRaw("comites");
                 <td align="left">Nombre Completo:</td><td align="left"><b><?=($user->getCaNombres())?> <?=($user->getCaApellidos())?></b></td>
             </tr>
             <tr>
-                <td align="left">Empresa:</td><td align="left"><b><?=($user->getSucursal()->getEmpresa()->getCaNombre())?></b></td>
+                <td align="left">Empresa:</td><td align="left"><b><?=($user->getSucursal()->getEmpresa()->getCaNombre())?></b><?=$subc?" (Subcontratado)":null?></td>
             </tr>
             <tr>
                 <td align="left">Tel. Oficina:</td><td align="left"><b><?=($user->getSucursal()->getCaTelefono().' Ext. '.$user->getCaExtension())?></b></td>
@@ -212,4 +221,42 @@ $comites = $sf_data->getRaw("comites");
     }
     
     
+    
+    var infoVacaciones = function(mensaje){
+        console.log(Object(mensaje));
+        Ext.create('Ext.window.Window', {
+            title: 'Mensaje de Vacaciones',
+            id: 'info-vacaciones',
+            height: 620,
+            width: 600,
+            id:'win',
+            layout: 'anchor',
+            html: 'Mensaje de vacaciones',
+            listeners:{
+                beforerender: function(t, eOpts){
+                    var me = t;
+                    Ext.Ajax.request({
+                        url: '/intranet/adminUsers/infoVacaciones',
+                        params: {
+                            login : '<?=$user->getCaLogin()?>'                                      
+                        },                                
+                        method: 'POST',
+                        waitTitle: 'Connecting',
+                        waitMsg: 'Cargando Archivo...',
+                        scope: me,
+                        success: function (response, options) { 
+                            var res = Ext.decode(response.responseText);                            
+                            var html = res.html;                                    
+                            me.update(html);                                    
+                        },
+                        failure: function () {
+                           console.log('failure');
+                        }
+                    });
+                }
+            }
+        }).show();
+    }
+    
+        
 </script>
