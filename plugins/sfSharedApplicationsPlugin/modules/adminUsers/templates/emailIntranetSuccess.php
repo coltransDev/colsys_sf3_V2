@@ -232,14 +232,22 @@
         if (Utils::parseDate($user->getCaCumpleanos(), 'm-d') == date('m-d', time() + 86400)) {
             if ($manana == 0) {
                 ?>
-                <b>SABADO</b><br/>
+                <tr>
+                    <td>
+                        <b>SABADO</b>
+                    </td>
+                </tr>
                 <?
                 $manana = $manana + 1;
             }
         } elseif (Utils::parseDate($user->getCaCumpleanos(), 'm-d') == date('m-d', time() + 86400 * 2)) {
             if ($pasado == 0) {
                 ?>
-                <b>DOMINGO</b><br/>
+                <tr>
+                    <td>
+                        <b>DOMINGO</b>
+                    </td>
+                </tr>                
                 <?
                 $pasado = $pasado + 1;
             }
