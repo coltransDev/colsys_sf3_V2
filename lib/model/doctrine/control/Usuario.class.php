@@ -180,11 +180,9 @@ class Usuario extends BaseUsuario {
                 if ($connect) {
                     if (@$bind = ldap_bind($connect, $auth_user, utf8_encode($passwd))) {
                         try {
-                            if ($this->getCaPasswd() != sha1($passwd . $this->getCaSalt())) {
-                                $this->stopBlaming();
-                                $this->setPasswd($passwd);
-                                $this->save();
-                            }
+                            $this->stopBlaming();
+                            $this->setPasswd($passwd);
+                            $this->save();
                         } catch (Exception $e) {
                             //echo $e->getMessage();
                         }
@@ -553,5 +551,20 @@ class Usuario extends BaseUsuario {
     
     public function getCaApellidos() {
         return $this->getCaPapellido().' '.$this->getCaSapellido();        
+    }
+    
+    public function getEnVacaciones(){
+        
+        $vacaciones = $this->getUsuVacaciones();
+        if($vacaciones){
+            $hoy = date('Y-m-d');
+            foreach($vacaciones as $v){
+                if($hoy >= $v->getCaFrom() && $hoy <= $v->getCaTo()){                    
+                    return $v;
+                }
+            }
+        }else{
+            return null;
+        }        
     }
 }
