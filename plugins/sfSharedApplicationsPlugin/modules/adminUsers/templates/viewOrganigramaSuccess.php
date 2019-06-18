@@ -21,6 +21,7 @@
     <link href="../../../css/primitives.latest.css" media="screen" rel="stylesheet" type="text/css" />
 
     <script type='text/javascript'>//<![CDATA[ 
+        var m_timer = null;
         $(window).load(function () {
             var panel = jQuery("#panel");
             var orgchartform = panel.find("[name=orgchartform]");
@@ -35,8 +36,8 @@
                     description: "<?=$presidencia->getCaCargo()?>",
                     image: "<?=$presidencia->getImagenUrl()?>",
                     email: "<?=$presidencia->getSucursal()->getCaNombre()?>",
-                    groupTitle: "<?=$presidencia->getCaDepartamento()?>",
-                    groupTitleColor: primitives.common.Colors.Gray,
+                    //groupTitle: "<?=$presidencia->getCaDepartamento()?>",
+                    //groupTitleColor: primitives.common.Colors.Gray,
                     templateName: "contactTemplate"                    
                 })
             ];
@@ -56,9 +57,9 @@
                     if(count($usuario->getSubordinado())>0){
                         ?>,
                         //email: "<?=$usuario->getCaEmail()?>",                        
-                        groupTitle: "<?=$usuario->getCaDepartamento()?>",
-                        groupTitleColor: primitives.common.Colors.Gray,
-                        itemTitleColor: primitives.common.Colors.RoyalBlue,
+                        //groupTitle: "<?=$usuario->getCaDepartamento()?>",
+                        //groupTitleColor: primitives.common.Colors.Gray,
+                        //itemTitleColor: primitives.common.Colors.RoyalBlue,
                         templateName: "contactTemplate"
                         <?
                     }
@@ -102,7 +103,7 @@
                 //var contactTemplateCheckbox = jQuery("#contactTemplate").prop("checked");
 
                 var buttons = [];
-                buttons.push(new primitives.orgdiagram.ButtonConfig("properties", "ui-icon-gear", "Info"));
+                //buttons.push(new primitives.orgdiagram.ButtonConfig("properties", "ui-icon-gear", "Info"));
                 /*buttons.push(new primitives.orgdiagram.ButtonConfig("properties", "ui-icon-gear", "Info"));
                 buttons.push(new primitives.orgdiagram.ButtonConfig("add", "ui-icon-person", "Add"));*/
 
@@ -195,24 +196,24 @@
                 var result = new primitives.orgdiagram.TemplateConfig();
                 result.name = "contactTemplate";
 
-                result.itemSize = new primitives.common.Size(220, 90);
+                result.itemSize = new primitives.common.Size(90, 120);
                 result.minimizedItemSize = new primitives.common.Size(4, 4);
                 result.minimizedItemCornerRadius = 2;
                 result.highlightPadding = new primitives.common.Thickness(2, 2, 2, 2);
 
 
                 var itemTemplate = jQuery(
-                              '<div class="bp-item bp-corner-all bt-item-frame">'
+                              '<div class="bp-item bp-corner-all bt-item-frame">'/*
                                     + '<div name="titleBackground" class="bp-item bp-corner-all bp-title-frame" style="top: 2px; left: 2px; width: 216px; height: 20px;">'
                                             + '<div name="title" class="bp-item bp-title" style="top: 3px; left: 6px; width: 208px; height: 18px;">'
                                             + '</div>'
-                                    + '</div>'
-                                    + '<div class="bp-item bp-photo-frame" style="top: 26px; left: 2px; width: 50px; height: 60px;">'
+                                    + '</div>'*/
+                                    + '<div class="bp-item bp-photo-frame" style="top: 3px; left: 22px; width: 50px; height: 60px;">'
                                             + '<img name="photo" style="height: 60px; width:50px;" />'
-                                    + '</div>'
+                                    + '</div>'/*
                                     + '<div name="phone" class="bp-item" style="top: 26px; left: 56px; width: 162px; height: 18px; font-size: 12px;"></div>'
-                    + '<div class="bp-item" style="top: 44px; left: 56px; width: 162px; height: 18px; font-size: 12px;"><a name="email" href="" target="_top"></a></div>'
-                                    + '<div name="description" class="bp-item" style="top: 62px; left: 56px; width: 162px; height: 36px; font-size: 10px;"></div>'
+                    + '<div class="bp-item" style="top: 44px; left: 56px; width: 162px; height: 18px; font-size: 12px;"><a name="email" href="" target="_top"></a></div>'*/
+                                    + '<div name="description" class="bp-item" style="top: 73px; left: 3px; width: 90px; height: 39px; font-size: 10px;"></div>'
                             + '</div>'
                             ).css({
                                 width: result.itemSize.width + "px",
@@ -227,22 +228,22 @@
             var result = new primitives.orgdiagram.TemplateConfig();
             result.name = "regularTemplate";
 
-            result.itemSize = new primitives.common.Size(200, 120);
+            result.itemSize = new primitives.common.Size(90, 120);
             result.minimizedItemSize = new primitives.common.Size(4, 4);
             result.highlightPadding = new primitives.common.Thickness(2, 2, 2, 2);
 
 
             var itemTemplate = jQuery(
-              '<div class="bp-item bp-corner-all bt-item-frame">'
+              '<div class="bp-item bp-corner-all bt-item-frame">'/*
                 + '<div name="titleBackground" class="bp-item bp-corner-all bp-title-frame" style="top: 2px; left: 2px; width: 176px; height: 18px; overflow: hidden; text-align:center;">'
                     + '<div name="title" class="bp-item bp-title" style="top: 2px; left: 2px; width: 172px; height: 14px; font-size: 12px; overflow: hidden;">'
                     + '</div>'
-                + '</div>'
-                + '<div class="bp-item bp-photo-frame" style="top: 22px; left: 2px; width: 50px; height: 60px; overflow: hidden;">'
+                + '</div>'*/
+                + '<div class="bp-item bp-photo-frame" style="top: 3px; left: 22px; width: 50px; height: 60px; overflow: hidden;">'
                     + '<img name="photo" style="height:60px; width:50px;" />'
-                + '</div>'
-                + '<div class="bp-item" style="top: 22px; left: 56px; width: 118px; height: 20px; font-size: 11px;"><a name="email" href="" target="_top"></a></div>'
-                + '<div name="description" class="bp-item" style="top: 37px; left: 56px; width: 118px; height: 39px; font-size: 11px; overflow: hidden;"></div>'
+                + '</div>'/*
+                + '<div class="bp-item" style="top: 22px; left: 56px; width: 118px; height: 20px; font-size: 11px;"><a name="email" href="" target="_top"></a></div>'*/
+                + '<div name="description" class="bp-item" style="top: 73px; left: 3px; width: 90px; height: 39px; font-size: 9px; overflow: hidden;"></div>'
             + '</div>'
             ).css({
                 width: result.itemSize.width + "px",
@@ -310,7 +311,7 @@
                         options.cursorItem = 0;
                         options.buttonsPanelSize = 48;
                         options.pageFitMode = 1;
-                        options.minimalVisibility = 2;
+                        options.minimalVisibility = 1;
                         options.graphicsType = primitives.common.GraphicsType.Auto;
                         options.hasSelectorCheckbox = primitives.common.Enabled.False;
                         options.hasButtons = primitives.common.Enabled.True;
@@ -326,6 +327,10 @@
                         orgchart.orgDiagram("update", primitives.orgdiagram.UpdateMode.Recreate);
                     }
                 }).dialog("open");
+                
+                $(window).resize(function () {
+                    onWindowResize();
+                });
             })
 
             /* Check multiple items */
@@ -388,9 +393,21 @@
                         
                         orgchart.orgDiagram("update", primitives.orgdiagram.UpdateMode.Recreate);
                     }
-                }).dialog("open");
+                }).dialog("open").resizable();
             })
-        });//]]>  
+        });//]]> 
+        
+        
+
+        function ResizePlaceholder() {
+            var bodyWidth = $(window).width() - 40
+            var bodyHeight = $(window).height() - 20
+            jQuery("#orgdiagram").css(
+            {
+                "width": bodyWidth + "px",
+                "height": bodyHeight + "px"
+            });
+        }
 
     </script>
 </head>
