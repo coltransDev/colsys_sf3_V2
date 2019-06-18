@@ -30,6 +30,11 @@ $comites = $sf_data->getRaw("comites");
                 <td width="5" style="border:none; border-bottom: 1px solid #D0D0D0;text-align:right" title="Vacaciones"><img src="/intranet/images/32x32/vacations.png" onclick="formVacaciones()"></td>
                 <?
             }
+            if($userinicio->getUserId()==$user->getCaLogin()) { 
+                ?>
+                <td width="5" style="border:none; border-bottom: 1px solid #D0D0D0;text-align:right" title="Hijos"><img src="/intranet/images/32x32/children.png" onclick="formHijos()"></td>
+                <?
+            }
             ?>
         </tr>
         <tr>
@@ -150,7 +155,23 @@ $comites = $sf_data->getRaw("comites");
     
 </div>
 
-<script>
+<script>   
+    
+    
+    Ext.Loader.setConfig({
+        enabled: true,    
+        paths: {
+            'Ext.ux': '/intranet/js/ext5/examples/ux/',
+            'Ext.ux.exporter':'/intranet/js/ext5/examples/ux/exporter/',
+            'Colsys':'/js/Colsys'
+        }
+    });
+    
+    Ext.require([        
+        'Ext.ux.form.SearchField',
+        'Ext.ux.exporter.Exporter'
+    ]);
+    
     var formVacaciones = function(){
         Ext.create('Ext.window.Window', {
             title: 'VACACIONES',
@@ -170,12 +191,25 @@ $comites = $sf_data->getRaw("comites");
         }).show();
     }
     
-    Ext.Loader.setConfig({
-        enabled: true,    
-        paths: {            
-            'Ext.ux': '/js/ext5/examples/ux/',            
-            'Ext.ux.exporter':'/js/ext5/examples/ux/exporter/',
-            'Colsys':'/js/Colsys'
-        }
-    });
+    var formHijos = function(){
+        Ext.create('Ext.window.Window', {
+            title: 'Hijos',
+            height: 300,
+            width: 600,
+            id:'win',
+            layout: 'anchor',
+            maximizable: true,
+            items: {  // Let's put an empty grid in just to illustrate fit layout
+                xtype: 'Colsys.Users.GridHijos',
+                border: false,
+                id:'grid-hijos',
+                name:'grid-hijos',
+                frame:true,
+                app: 'intranet',
+                login: "<?=$user->getCaLogin()?>"                
+            }
+        }).show();
+    }
+    
+    
 </script>
