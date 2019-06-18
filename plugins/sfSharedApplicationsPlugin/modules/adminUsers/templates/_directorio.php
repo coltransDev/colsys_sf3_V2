@@ -6,7 +6,7 @@
         <div align='left'>Para llamar desde <b>Bogotá</b> a <br>
             <ul>
                 <li><b>Barranquilla: </b>804 + 55 + Ext.</li>
-                <li><b>Buenaventura: </b>804 + 33  + Ext.</li>
+                <li><b>Buenaventura: </b>804 + 34  + Ext.</li>
                 <li><b>Bucaramanga: </b>804 + 77 + Ext.</li>
                 <li><b>Cali: </b>804 + Ext. </li>
                 <li><b>Cartagena: </b>804 + 99  + Ext.</li>
@@ -23,7 +23,7 @@
             <ul>
                 <li><b>Barranquilla: </b>55 + Ext.</li>
                 <li><b>Bogotá: </b>11 + Ext. + Ext.</li>
-                <li><b>Buenaventura: </b>33 + Ext.</li>
+                <li><b>Buenaventura: </b>34 + Ext.</li>
                 <li><b>Bucaramanga: </b>77 + Ext.</li>
                 <li><b>Cartagena: </b>99 + Ext.</li>
                 <li><b>Medellín: </b>44 + Ext. + Ext.</li>
@@ -39,7 +39,7 @@
             <ul>
                 <li><b>Barranquilla: </b>804 + 55 + Ext.</li>
                 <li><b>Bogotá: </b>804 + 11 + Ext. + Ext.</li>
-                <li><b>Buenaventura: </b>804 + 33 + Ext.</li>
+                <li><b>Buenaventura: </b>804 + 34 + Ext.</li>
                 <li><b>Bucaramanga: </b>804 + 77 + Ext.</li>
                 <li><b>Cali: </b>804 + Ext.</li>
                 <li><b>Cartagena: </b>804 + 99  + Ext.</li>
@@ -54,7 +54,7 @@
         <div align='left'>Para llamar desde <b>Barranquilla</b> a <br>
             <ul>
                 <li><b>Bogotá: </b>7+ 11 + Ext. + Ext.</li>
-                <li><b>Buenaventura: </b>7+ 33 + Ext.</li>
+                <li><b>Buenaventura: </b>7+ 34 + Ext.</li>
                 <li><b>Bucaramanga: </b>7+ 77 + Ext.</li>
                 <li><b>Cali: </b>7+ Ext.</li>
                 <li><b>Cartagena: </b>7+ 99 + Ext.</li>
@@ -86,7 +86,7 @@
         <div align='left'>Para llamar desde <b>Cartagena</b> a <br>
             <ul>
                 <li><b>Bogotá: </b>7+ 11 + Ext. + Ext.</li>
-                <li><b>Buenaventura: </b>7+ 33 + Ext.</li>
+                <li><b>Buenaventura: </b>7+ 34 + Ext.</li>
                 <li><b>Bucaramanga: </b>7+ 77 + Ext.</li>
                 <li><b>Cali: </b>7+ Ext.</li>
                 <li><b>Cartagena: </b>7+ 99 + Ext.</li>
@@ -103,7 +103,7 @@
             <ul>
                 <li><b>Bogotá: </b>86+ 11 + Ext. + Ext.</li>
                 <li><b>Barranquilla: </b>86+ 55 + Ext.</li>
-                <li><b>Buenaventura: </b>86+ 33 + Ext.</li>
+                <li><b>Buenaventura: </b>86+ 34 + Ext.</li>
                 <li><b>Bucaramanga: </b>86 +77 + Ext.</li>
                 <li><b>Cali: </b>86+ Ext.</li>
                 <li><b>Cartagena: </b>86+ 99 + Ext.</li>
@@ -119,7 +119,7 @@
             <ul>
                 <li><b>Bogotá: </b>11 + Ext. + Ext.</li>
                 <li><b>Barranquilla: </b>55 + Ext.</li>
-                <li><b>Buenaventura: </b>33 + Ext.</li>
+                <li><b>Buenaventura: </b>34 + Ext.</li>
                 <li><b>Cali: </b>Ext. Directamente</li>
                 <li><b>Cartagena: </b>99 + Ext.</li>
                 <li><b>Medellín: </b>44 + Ext. + Ext.</li>
