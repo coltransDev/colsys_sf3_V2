@@ -37,7 +37,8 @@ Ext.define('Colsys.Users.GridUsuarios',{
             { name: 'ca_alergico',      type: 'boolean',    mapping: 'u_ca_alergico' },
             { name: 'ca_sexo',          type: 'string',     mapping: 'u_ca_sexo' },
             { name: 'ca_fcesantias',    type: 'string',     mapping: 'u_fcesantias'},
-            { name: 'ca_ecivil',        type: 'string',     mapping: 'u_ecivil' }
+            { name: 'ca_ecivil',        type: 'string',     mapping: 'u_ecivil' },
+            { name: 'ca_subcontratado', type: 'boolean',    mapping: 'u_ca_subcontratado' }
         ],
         autoLoad: false,
         autoDestroy: true,
@@ -116,7 +117,8 @@ Ext.define('Colsys.Users.GridUsuarios',{
         {text: "Al\u00E9rgico",     dataIndex: 'ca_alergico',       sortable: true, width:50,  hidden: true, trueText: 'Si', falseText: 'No', xtype:"booleancolumn"},
         {text: "Sexo",              dataIndex: 'ca_sexo',           sortable: true, width:50,  hidden: true},
         {text: "Fondo Cesant\u00EDas",dataIndex: 'ca_fcesantias',   sortable: true, width:240, hidden: true},
-        {text: "Estado Civil",      dataIndex: 'ca_ecivil',         sortable: true, width:240, hidden: true}
+        {text: "Estado Civil",      dataIndex: 'ca_ecivil',         sortable: true, width:240, hidden: true},
+        {xtype: 'booleancolumn', text: 'Subcontratado', trueText: 'S\u00ed', falseText: 'No', dataIndex: 'ca_subcontratado', sortable: true, width:50, hidden: true}
     ],
     plugins: 'gridfilters',
     viewConfig: {
