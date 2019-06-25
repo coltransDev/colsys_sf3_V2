@@ -153,6 +153,7 @@ class widgetsActions extends sfActions {
                 ->createQuery("m");
 
         if ($impoexpo_parameter) {
+            $impoexpo_parameter = ($impoexpo_parameter == Constantes::COLOTM)?Constantes::OTMDTA:$impoexpo_parameter;
             $q->where(" m.ca_impoexpo = ? ", $impoexpo_parameter);
         }
 
@@ -222,6 +223,9 @@ class widgetsActions extends sfActions {
      */
 
     public function executeDatosComboReportes($request) {
+        
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
+        
         $criterio = $request->getParameter("query");
 
 
@@ -240,17 +244,15 @@ class widgetsActions extends sfActions {
 
         if ($this->getRequestParameter("impoexpo") == Constantes::IMPO || utf8_decode($this->getRequestParameter("impoexpo")) == Constantes::IMPO) {
             $impoexpo = constantes::IMPO;
-        }
-
-        if ($this->getRequestParameter("impoexpo") == Constantes::EXPO || utf8_decode($this->getRequestParameter("impoexpo")) == Constantes::EXPO) {
+        }else if ($this->getRequestParameter("impoexpo") == Constantes::EXPO || utf8_decode($this->getRequestParameter("impoexpo")) == Constantes::EXPO) {
             $impoexpo = constantes::EXPO;
-        }
-
-        if ($this->getRequestParameter("impoexpo") == Constantes::TRIANGULACION || utf8_decode($this->getRequestParameter("impoexpo")) == Constantes::TRIANGULACION) {
+        }else if ($this->getRequestParameter("impoexpo") == Constantes::TRIANGULACION || utf8_decode($this->getRequestParameter("impoexpo")) == Constantes::TRIANGULACION) {
             $impoexpo = constantes::TRIANGULACION;
-        }
-        if ($this->getRequestParameter("impoexpo") == Constantes::OTMDTA || utf8_decode($this->getRequestParameter("impoexpo")) == Constantes::OTMDTA) {
+        }else if ($this->getRequestParameter("impoexpo") == Constantes::OTMDTA || utf8_decode($this->getRequestParameter("impoexpo")) == Constantes::OTMDTA) {
             $impoexpo = constantes::OTMDTA;
+        }else
+        {
+            $impoexpo = $this->getRequestParameter("impoexpo");
         }
 
         $q = Doctrine_Query::create()
@@ -258,7 +260,9 @@ class widgetsActions extends sfActions {
                 ->from("Reporte r")
                 ->where("UPPER(r.ca_consecutivo) LIKE ?", strtoupper($criterio) . "%")
                 ->addWhere("r.ca_usuanulado IS NULL $wheretmp")
-                ->addWhere("r.ca_version = (SELECT MAX(r2.ca_version) FROM Reporte r2 WHERE r2.ca_consecutivo = r.ca_consecutivo AND ca_usuanulado IS NULL $wheretmp ) ")
+                //->addWhere("r.ca_version = (SELECT MAX(r2.ca_version) FROM Reporte r2 WHERE r2.ca_consecutivo = r.ca_consecutivo AND ca_usuanulado IS NULL $wheretmp ) ")
+                ->addWhere("r.ca_version = (SELECT (r2.ca_version) FROM Reporte r2 WHERE r2.ca_consecutivo = r.ca_consecutivo AND ca_usuanulado IS NULL order by r2.ca_version DESC limit 1 ) ")
+                ->addWhere("r.ca_fchcreado> ?", Utils::addDate(date("Y-m-d"), 0, 0, -2))
                 ->addOrderBy("r.ca_fchcreado DESC")
                 ->limit(20);
 
@@ -302,18 +306,22 @@ class widgetsActions extends sfActions {
             $q->addSelect("cl.ca_idcliente, cc.ca_idcontacto, cl.ca_compania");
             $q->addWhere("cl.ca_idcliente = ?", $request->getParameter("idcliente"));
         }
-        
+        $sql=$q->getSqlQuery();
         $reportes = $q->fetchArray();
 
         $this->reportes = array();
 
-        foreach ($reportes as $reporte) {
+        foreach ($reportes as $k => $reporte) {
 
+//            $reporte["ca_transporte"] = utf8_encode($reporte["ca_transporte"]);    
+//            $reporte["ca_compania"] = utf8_encode($reporte["Contacto"]["Cliente"]["ca_compania"]);
             $reporte["ca_transporte"] = utf8_encode($reporte["ca_transporte"]);    
-            $reporte["ca_compania"] = utf8_encode($reporte["Contacto"]["Cliente"]["ca_compania"]);
+            
+            $reporte["Contacto"]["Cliente"]["ca_compania"] = utf8_encode($reporte["Contacto"]["Cliente"]["ca_compania"]);
             $row = $reporte;
 
             if ($request->getParameter("extended")) {
+                
                 $q = Doctrine::getTable("RepStatus")
                         ->createQuery("s")
                         ->select("s.ca_piezas, s.ca_peso, s.ca_volumen, s.ca_doctransporte, s.ca_idnave")
@@ -330,10 +338,11 @@ class widgetsActions extends sfActions {
             }
 
             $this->reportes[] = $row;
-        }
-
-
-        $this->responseArray = array("totalCount" => count($this->reportes), "reportes" => $this->reportes,"debug"=>$q->getSqlQuery());
+        }        
+//        echo ("<pre>");
+//        print_r($this->reportes);
+//        echo ("</pre>");
+        $this->responseArray = array("totalCount" => count($this->reportes), "reportes" => $this->reportes, "debug"=>$q->getSqlQuery(), "conexion"=>$conexion);
         $this->setTemplate("responseTemplate");
 
         $this->setLayout("none");
@@ -412,8 +421,8 @@ class widgetsActions extends sfActions {
                 $q->andWhereIn("s.ca_idempresa", ($suc[$idempresa]?$suc[$idempresa]:array($idempresa)));
             }*/
             if($idempresa){
-                $suc[2] = array(1,2,8,11); // Grupo Coltrans, Colmas, Colotm y Coldepositos
-                $suc[1] = array(1,2,8,11); // Grupo Coltrans, Colmas, Colotm y Coldepositos
+                $suc[2] = array(1,2,8,11,12); // Grupo Coltrans, Colmas, Colotm y Coldepositos
+                $suc[1] = array(1,2,8,11,12); // Grupo Coltrans, Colmas, Colotm y Coldepositos
                 $q->andWhereIn("s.ca_idempresa", ($suc[$idempresa]?$suc[$idempresa]:array($idempresa)));
             }
             $sql=$q->getSqlQuery();
@@ -457,6 +466,8 @@ class widgetsActions extends sfActions {
                     ->addOrderBy("c.ca_nombres ASC")
                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                     ->limit(40);
+            
+            $debug = $q->getSqlQuery();
             if($tipo)
             {
                 $q->addWhere("ca_tipo=?",$tipo);
@@ -505,7 +516,7 @@ class widgetsActions extends sfActions {
             }
         }
         //echo "<pre>";print_r($clientes);echo "</pre>";
-        $this->responseArray = array("totalCount" => count($clientes), "clientes" => $clientes);
+        $this->responseArray = array("totalCount" => count($clientes), "clientes" => $clientes, "debug"=>$debug);
         $this->setTemplate("responseTemplate");
     }
 
@@ -1220,7 +1231,7 @@ class widgetsActions extends sfActions {
         $tipo = $this->getRequestParameter("tipo");
 
         $q = Doctrine_Query::create()
-                ->select("h.ca_idticket, h.ca_title, h.ca_text, h.ca_idgroup")
+                ->select("h.ca_idticket, h.ca_title, h.ca_text, h.ca_idgroup, h.ca_status")
                 ->from('HdeskTicket h')
                 ->innerJoin("h.HdeskGroup g");
 
@@ -1259,9 +1270,18 @@ class widgetsActions extends sfActions {
         $debug = utf8_encode($q->getSqlQuery());        
         $tickets = $q->execute();
 
+        $parametros = ParametroTable::retrieveByCaso("CU110");
+        $status = array();        
+        foreach ($parametros as $p) {
+            $status[$p->getCaIdentificacion()] = array("nombre" => $p->getCaValor(), "color" => $p->getCaValor2());
+        }        
+
         foreach ($tickets as $key => $val) {            
             $tickets[$key]["h_ca_title"] = utf8_encode(str_replace('"', "'", $tickets[$key]["h_ca_title"]));
             $tickets[$key]["h_ca_text"] = utf8_encode(str_replace("</style", "</style2", str_replace("<style", "<style2", str_replace('"', "'", $tickets[$key]["h_ca_text"]))));            
+            $tickets[$key]["h_ca_hallazgo"] = "Hallazgo # ".$tickets[$key]["h_ca_idticket"].": ".utf8_encode(str_replace('"', "'", $tickets[$key]["h_ca_title"]));
+            $tickets[$key]["status_name"] = isset($status[$tickets[$key]["h_ca_status"]]) ? utf8_encode($status[$tickets[$key]["h_ca_status"]]["nombre"]) : "";
+            $tickets[$key]["status_color"] = isset($status[$tickets[$key]["h_ca_status"]]) ? $status[$tickets[$key]["h_ca_status"]]["color"] : "";
         }
         
         $this->responseArray = array("success" => true, "total" => count($tickets), "root" => $tickets, "debug"=>$debug);
