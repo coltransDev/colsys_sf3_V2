@@ -47,7 +47,7 @@ class inoF2Actions extends sfActions {
                     'Consultar' => 0, 'Crear' => 1, 'Editar' => 2, 'Anular' => 3, 'Liquidar' => 4, 'Cerrar' => 5, 'Abrir' => 6, 
                     'General' => 7, 'House' => 8, 'Facturacion' => 9, 'Costos' => 10, 'Documentos' => 11,'NotasCredito' => 12,  
                     'MuiscaEd' => 13, 'MuiscaDig' => 14, 'MuiscaRev' => 15, 'GenerarXml' => 16, 'DarLiberacion' => 17, 
-                    'RevLiberacion' => 18, 'LiberacionPto' => 19, 'Comodatos' => 20,'Muisca' => 21,'Balance' => 22);
+                    'RevLiberacion' => 18, 'LiberacionPto' => 19, 'Comodatos' => 20,'Muisca' => 21,'Balance' => 22, 'Auditoria' => 23);
 
         foreach ($permisosRutinas as $k => $p) {
             foreach ($tipopermisos as $index => $tp) {
@@ -90,7 +90,7 @@ class inoF2Actions extends sfActions {
                     'Consultar' => 0, 'Crear' => 1, 'Editar' => 2, 'Anular' => 3, 'Liquidar' => 4, 'Cerrar' => 5, 'Abrir' => 6, 
                     'General' => 7, 'House' => 8, 'Facturacion' => 9, 'Costos' => 10, 'Documentos' => 11,'NotasCredito' => 12,  
                     'MuiscaEd' => 13, 'MuiscaDig' => 14, 'MuiscaRev' => 15, 'GenerarXml' => 16, 'DarLiberacion' => 17, 
-                    'RevLiberacion' => 18, 'LiberacionPto' => 19, 'Comodatos' => 20,'Muisca' => 21,'Balance' => 22);
+                    'RevLiberacion' => 18, 'LiberacionPto' => 19, 'Comodatos' => 20,'Muisca' => 21,'Balance' => 22, 'Auditoria' => 23);
         //print_r($permisosRutinas["aereo"]);
         foreach ($permisosRutinas as $k => $p) {
             foreach ($tipopermisos as $index => $tp) {
@@ -5781,5 +5781,14 @@ class inoF2Actions extends sfActions {
         die();
         //$this->responseArray = array("success" => true, "root" => $datos, "total" => count($datos));
         $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeGetUsuarioAutenticado(){
+        
+        $userId = $this->getUser()->getUserId();
+        $nombre = $this->getUser()->getNombre();
+        $this->responseArray = array("success" => true, "login"=>$userId, "nombre"=> utf8_encode($nombre));
+        $this->setTemplate("responseTemplate");
+        
     }
 }
