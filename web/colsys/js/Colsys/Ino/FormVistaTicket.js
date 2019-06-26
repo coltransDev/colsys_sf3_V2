@@ -1,4 +1,3 @@
-
 Ext.define('ModelRutina', {
     extend: 'Ext.data.Model',
     fields: [
@@ -32,167 +31,114 @@ Ext.define('Colsys.Ino.FormVistaTicket', {
     extend: 'Ext.form.Panel',
     alias: 'widget.Colsys.Ino.FormVistaTicket',
     bodyPadding: 5,
-    title: 'Administraci&oacute;n de M&eacute;todos',
-    //store: storeRutina,
-    width: 1150,
-    height: 340,
+    autoWidth: true,
+    autoHeigth: true,
     listeners: {
         render: function (me, eOpts) {
+            var me = this;
             this.add(
-                    [{
-                            xtype: 'tbspacer',
-                            width: 100
-                        }, {
-                            xtype: 'fieldset',
-                            width: 330,
-                            height: 295,
-                            collapsible: false,
+                [{
+                    xtype: 'tbspacer',
+                    width: 100
+                }, {
+                xtype: 'fieldset',
+                autoHeigth: true,
+                collapsible: false,
+                items: [{
+                    xtype: 'fieldcontainer',
+                    hideLabel: true,
+                    combineErrors: true,                    
+                    msgTarget: 'under',
+                    layout: 'column',
+                    defaults: {
+                        columnWidth: 0.5,
+                        labelWidth: 65,
+                        hideLabel: false
+                    },
+                    items: [{
+                        xtype: 'displayfield',
+                        name: 'ca_titulo',
+                        fieldStyle: 'font-weight:bold;font-size:11px;height:10px;',
+                        id: 'ca_titulo'+ me.idmaster,
+                        columnWidth: 1
+                    }, {
+                        xtype: 'displayfield',
+                        name: 'ca_reportado',
+                        fieldStyle: 'font-weight:lighter;font-size:10px;;height:15  px;',
+                        id: 'ca_reportado'+ me.idmaster,
+                        columnWidth: 1
+                    }, {
+                        xtype: 'displayfield',
+                        fieldLabel: '<span style="font-weight:bold;width: 20px ;font-size:10px;padding-right:40px">Contacto</span>',
+                        fieldStyle: 'font-weight:lighter;font-size:10px;height:10px;',
+                        name: 'ca_contacto',
+                        id: 'ca_contacto'+ me.idmaster
+                    }, {
+                        xtype: 'displayfield',
+                        fieldLabel: '<span style="font-weight:bold;width: 20px ;font-size:10px;padding-right:40px">Fecha</span>',
+                        fieldStyle: 'font-weight:lighter;font-size:10px;height:10px;',
+                        name: 'ca_fecha',
+                        id: 'ca_fecha'+ me.idmaster
+                    },{
+                        xtype: 'displayfield',
+                        name: 'ca_asignado',
+                        fieldLabel: '<span style="font-weight:bold;width: 20px ;font-size:10px;">Asignado a</span>',
+                        fieldStyle: 'font-weight:lighter;font-size:10px;height:10px;',
+                        id: 'ca_asignado'+ me.idmaster
+                    }, {
+                        xtype: 'displayfield',
+                        fieldLabel: '<span style="font-weight:bold;width: 20px ;font-size:10px;">Proceso</span>',
+                        name: 'ca_area',
+                        fieldStyle: 'font-weight:lighter;font-size:10px;height:10px;',
+                        id: 'ca_area'+ me.idmaster
+                    }, {
+                        xtype: 'displayfield',
+                        fieldLabel: '<span style="font-weight:bold;width: 20px ;font-size:10px;">Tema</span>',
+                        name: 'ca_proyecto',
+                        id: 'ca_proyecto'+ me.idmaster,
+                        fieldStyle: 'font-weight:lighter;font-size:10px;height:10px;'
+                    }, {
+                        xtype: 'displayfield',
+                        fieldLabel: '<span style="font-weight:bold;width: 20px ;font-size:10px;">Status</span>',
+                        name: 'ca_status',
+                        fieldStyle: 'font-weight:lighter;font-size:10px;height:10px;',
+                        id: 'ca_status'+ me.idmaster
+                    }, {
+                        xtype: 'displayfield',
+                        fieldLabel: '<span style="font-weight:bold;width: 20px ;font-size:10px;">Hallazgo</span>',
+                        name: 'ca_tipo',
+                        fieldStyle: 'font-weight:lighter;font-size:10px;height:10px;',
+                        id: 'ca_tipo'+ me.idmaster
+                    }, {
+                        xtype: 'displayfield',
+                        fieldLabel: '<span style="font-weight:bold;width: 20px ;font-size:10px;">Estado</span>',
+                        name: 'ca_estado',
+                        fieldStyle: 'font-weight:lighter;font-size:10px;height:10px;',
+                        id: 'ca_estado'+ me.idmaster
+                    }, {
+                        xtype: 'fieldset',
+                        columnWidth: 1,
+                        collapsible: false,
+                        items: [{
+                            xtype: 'fieldcontainer',
+                            hideLabel: true,
+                            combineErrors: true,
+                            msgTarget: 'under',
+                            layout: 'column',
+                            defaults: {
+                                hideLabel: false
+                            },
                             items: [{
-                                    xtype: 'fieldcontainer',
-                                    hideLabel: true,
-                                    combineErrors: true,
-                                    height: 45,
-                                    msgTarget: 'under',
-                                    layout: 'column',
-                                    defaults: {
-                                        flex: 2,
-                                        hideLabel: false
-                                    },
-                                    items: [{
-                                            xtype: 'tbspacer',
-                                            height: 1,
-                                            width: 320
-                                        }, {
-                                            xtype: 'displayfield',
-                                            name: 'ca_titulo',
-                                            fieldStyle: 'font-weight:bold;font-size:11px;height:10px;',
-                                            id: 'ca_titulo',
-                                            width: 310,
-                                            height: 1
-                                        }, {
-                                            xtype: 'displayfield',
-                                            name: 'ca_reportado',
-                                            fieldStyle: 'font-weight:lighter;font-size:10px;;height:15  px;',
-                                            id: 'ca_reportado',
-                                            width: 310
-                                        }, {
-                                            xtype: 'displayfield',
-                                            fieldLabel: '<span style="font-weight:bold;width: 20px ;font-size:10px;padding-right:40px">Contacto</span>',
-                                            labelWidth: 65,
-                                            fieldStyle: 'font-weight:lighter;font-size:10px;height:10px;',
-                                            name: 'ca_contacto',
-                                            id: 'ca_contacto',
-                                            width: 320,
-                                        }, {
-                                            xtype: 'tbspacer',
-                                            height: 1,
-                                            width: 320,
-                                        }, {
-                                            xtype: 'displayfield',
-                                            name: 'ca_asignado',
-                                            fieldLabel: '<span style="font-weight:bold;width: 20px ;font-size:10px;">Asignado a</span>',
-                                            labelWidth: 65,
-                                            fieldStyle: 'font-weight:lighter;font-size:10px;height:10px;',
-                                            id: 'ca_asignado',
-                                            width: 150,
-                                        }, {
-                                            xtype: 'displayfield',
-                                            fieldLabel: '<span style="font-weight:bold;width: 20px ;font-size:10px;">Area</span>',
-                                            name: 'ca_area',
-                                            labelWidth: 55,
-                                            fieldStyle: 'font-weight:lighter;font-size:10px;height:10px;',
-                                            id: 'ca_area',
-                                            width: 150,
-                                        }, {
-                                            xtype: 'tbspacer',
-                                            height: 1,
-                                            width: 320,
-                                        }, , {
-                                            xtype: 'displayfield',
-                                            fieldLabel: '<span style="font-weight:bold;width: 20px ;font-size:10px;">Proyecto</span>',
-                                            name: 'ca_proyecto',
-                                            id: 'ca_proyecto',
-                                            labelWidth: 65,
-                                            fieldStyle: 'font-weight:lighter;font-size:10px;height:10px;',
-                                            width: 150,
-                                        }, {
-                                            xtype: 'displayfield',
-                                            fieldLabel: '<span style="font-weight:bold;width: 20px ;font-size:10px;">Prioridad</span>',
-                                            name: 'ca_prioridad',
-                                            labelWidth: 55,
-                                            fieldStyle: 'font-weight:lighter;font-size:10px;height:10px;',
-                                            id: 'ca_prioridad',
-                                            width: 150,
-                                        }, {
-                                            xtype: 'tbspacer',
-                                            height: 1,
-                                            width: 330,
-                                        }, {
-                                            xtype: 'displayfield',
-                                            fieldLabel: '<span style="font-weight:bold;width: 20px ;font-size:10px;">Tipo</span>',
-                                            name: 'ca_tipo',
-                                            labelWidth: 65,
-                                            fieldStyle: 'font-weight:lighter;font-size:10px;height:10px;',
-                                            id: 'ca_tipo',
-                                            width: 150,
-                                        }, {
-                                            xtype: 'displayfield',
-                                            fieldLabel: '<span style="font-weight:bold;width: 20px ;font-size:10px;">Estado</span>',
-                                            name: 'ca_estado',
-                                            labelWidth: 55,
-                                            fieldStyle: 'font-weight:lighter;font-size:10px;height:10px;',
-                                            id: 'ca_estado',
-                                            width: 150
-                                        }, {
-                                            xtype: 'tbspacer',
-                                            height: 1,
-                                            width: 330
-                                        }, {
-                                            xtype: 'fieldset',
-                                            width: 300,
-                                            height: 150,
-                                            collapsible: false,
-                                            items: [{
-                                                    xtype: 'fieldcontainer',
-                                                    hideLabel: true,
-                                                    combineErrors: true,
-                                                    height: 45,
-                                                    msgTarget: 'under',
-                                                    layout: 'column',
-                                                    defaults: {
-                                                        flex: 2,
-                                                        hideLabel: false
-                                                    },
-                                                    items: [{
-                                                            xtype: 'displayfield',
-                                                            hideLabel: true,
-                                                            name: 'ca_descripcion',
-                                                            fieldStyle: 'font-weight:lighter;font-size:10px;',
-                                                            id: 'ca_descripcion',
-                                                            width: 298
-                                                        }]
-                                                }]
-                                        }]
-                                }]
-                        }]);
-
-            var f = this.getForm();
-            f.load({
-                url: '/inoF2/datosVistapreviaTicket',
-                params: {
-                    idticket : this.idticket
-                },
-                success: function () {
-                }
-            });
-        },
-        afterrender: function (me, eOpts) {
-
-            // Ext.getCmp("ca_titulo").text = f.data.ca_titulo;
+                                xtype: 'displayfield',
+                                hideLabel: true,
+                                name: 'ca_descripcion',
+                                fieldStyle: 'font-weight:lighter;font-size:10px;',
+                                id: 'ca_descripcion'+ me.idmaster
+                            }]
+                        }]
+                    }]
+                }]
+            }]);
         }
     }
 });
-
-
-
-

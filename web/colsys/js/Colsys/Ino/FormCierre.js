@@ -1,25 +1,15 @@
 
-/**
- * @autor Felipe Nariño 
- * @return Formulario para Cerrar y Liquidar en INOF2
- * @date:  2016-04-21
- */
-
 Ext.define('Colsys.Ino.FormCierre', {
     extend: 'Ext.form.Panel',
     alias: 'widget.wFormCierre',
     url: '/inoF2/datosCierre',
-    bodyPadding: 5,
+    bodyPadding: 1,
     listeners: {
         render: function(ct, position){
             idmaster = this.idmaster;
             this.add({
-                //xtype: 'fieldset',
-                autoHeight: true,
-               // defaultType:'label',
+                autoHeight: true,               
                 defaults: {
-                    
-                    labelWidth: 89,
                     anchor: '98%',
                     layout: {
                         type: 'column',
@@ -28,8 +18,8 @@ Ext.define('Colsys.Ino.FormCierre', {
                 items: [{
                     xtype: 'fieldcontainer',
                     title: ' ',
-                    height: 40,
-                    collapsible: false,
+                    height: 45,
+                    collapsible: true,
                     layout: 'column',
                     border: 0,
                     defaultType:'label',
@@ -38,41 +28,26 @@ Ext.define('Colsys.Ino.FormCierre', {
                         hideLabel: false,
                         allowBlank: true,
                         readOnly: true,
-                        width: '23%'
+                        width: '15%'
                     },
-                    items: [{
-                            text: 'Elaborado Por:',
-                            style: 'display:inline-block;text-align:left;font-weight:bold;'
-                        },
-                        {
-                            text: 'Actualizado Por:',
-                            style: 'display:inline-block;text-align:left;font-weight:bold;'
-                        },
-                        {                        
-                            text: 'Liquidado Por:',                            
-                            style: 'display:inline-block;text-align:left;font-weight:bold;'
-                        },
-                        {                            
-                            text: 'Cerrado Por:',
-                            style: 'display:inline-block;text-align:left;font-weight:bold;'
-                        },                        
+                    items: [                        
                         {
                             id: 'creado' + this.idmaster,
-                            style: 'display:inline-block;text-align:left;',
+                            style: 'display:inline-block;text-align:left;font-size: 10px',
                             name: 'creado'
                         },
                         {                        
-                            style: 'display:inline-block;text-align:left;',
+                            style: 'display:inline-block;text-align:left;font-size: 10px',
                             id: 'actualizado' + this.idmaster,
                             name: 'actualizado'
                         },
                         {
-                            style: 'display:inline-block;text-align:left;',
+                            style: 'display:inline-block;text-align:left;font-size: 10px',
                             id: 'liquidado' + this.idmaster,
                             name: 'liquidado'
                         },
                         {
-                            style: 'display:inline-block;text-align:left;',
+                            style: 'display:inline-block;text-align:left;font-size: 10px',
                             id: 'cerrado' + this.idmaster,
                             name: 'cerrado'
                         },                            
@@ -84,7 +59,8 @@ Ext.define('Colsys.Ino.FormCierre', {
                             width: 100,
                             handler: function () {
                                 opcion = this.getText();
-                                idmaster = this.up('form').idmaster;
+                                form=this.up('form');
+                                idmaster = form.idmaster;
                                 Ext.Ajax.request({
                                     waitMsg: 'Guardando cambios...',
                                     url: '/inoF2/LiquidarReferencia',
@@ -100,20 +76,24 @@ Ext.define('Colsys.Ino.FormCierre', {
                                     success: function (response, options) {
                                         var res = Ext.decode(response.responseText);
                                         ids = res.ids;
-                                        if (res.success){
+                                        if (res.success){                                            
                                             Ext.MessageBox.alert("Mensaje", 'Datos Almacenados Correctamente<br>');
-                                            if (res.usuarioLiquidado != " ") {
-                                                Ext.getCmp("liquidado" + idmaster).setText(res.usuarioLiquidado);                                                    
-                                                Ext.getCmp("btnLiquidar" + idmaster).setText("Cancelar Liquidacion");
-                                                Ext.getCmp("btnLiquidar" + idmaster).setWidth(150);
-                                                Ext.getCmp("btnCerrar" + idmaster).show();
-                                            } else {
-                                                Ext.getCmp("liquidado" + idmaster).setText("");                                                    
-                                                Ext.getCmp("btnLiquidar" + idmaster).setText("Liquidar");
-                                                Ext.getCmp("btnLiquidar" + idmaster).setWidth(100);
-                                                Ext.getCmp("btnCerrar" + idmaster).hide();
+                                            
+                                            var tabpanel = Ext.getCmp('tabpanel1');
+                                            ref=idmaster;
+                                            
+                                            tabpanel.getChildByElement('tab'+ref).close();                                            
+                                            
+                                            if (!tabpanel.getChildByElement('tab' + ref) && ref != "")
+                                            {
+                                                
+                                                res.datos.idmaster=ref;
+                                                datos={"title":res.datos.referencia,"id":'tab' + ref,'datos':res.datos};
+                                                tabpanel.agregar(datos);
                                             }
-                                        } else {
+                                            tabpanel.setActiveTab('tab' + ref);
+                                            
+                                        } else {                                            
                                             Ext.MessageBox.alert("Mensaje", 'Datos Incompletos<br>'+res.errorInfo);
                                         }
                                     }
@@ -124,11 +104,13 @@ Ext.define('Colsys.Ino.FormCierre', {
                             xtype: 'button',
                             text: 'Cerrar',
                            hidden :true,
-                            width: 100,                                
+                            width: 70,                                
                             id: 'btnCerrar' + this.idmaster,
                             handler: function () {
+                                var me = this;
                                 opcion = this.getText();
                                 idmaster = this.up('form').idmaster;
+                                me.setDisabled(true);
 
                                 Ext.Ajax.request({
                                     waitMsg: 'Guardando cambios...',
@@ -143,28 +125,57 @@ Ext.define('Colsys.Ino.FormCierre', {
                                             Ext.MessageBox.alert("Mensaje", 'Error al Cerrar la Referencia');
                                     },
                                     success: function (response, options) {
-                                        var res = Ext.decode(response.responseText);
-                                        ids = res.ids;
+                                        var res = Ext.decode(response.responseText);                                        
                                         if (res.success) {
                                             Ext.MessageBox.alert("Mensaje", 'Datos Almacenados Correctamente<br>');
-                                            if (res.usuarioCerrado != " ") {
-
-                                                Ext.getCmp("cerrado" + idmaster).setText(res.usuarioCerrado);                                                    
-                                                Ext.getCmp("btnCerrar" + idmaster).setText("Abrir");
-                                                Ext.getCmp("btnLiquidar" + idmaster).hide();
-
-                                            } else {
-                                                Ext.getCmp("cerrado" + idmaster).setText(" ");                                                    
-                                                Ext.getCmp("btnLiquidar" + idmaster).show();
-                                                Ext.getCmp("btnLiquidar" + idmaster).setText("Cancelar Liquidacion");
-                                                Ext.getCmp("btnLiquidar" + idmaster).setWidth(150);
-                                                Ext.getCmp("btnCerrar" + idmaster).setText("Cerrar");
+                                            
+                                            var tabpanel = Ext.getCmp('tabpanel1');
+                                            ref=idmaster;
+                                            
+                                            tabpanel.getChildByElement('tab'+ref).close();                                            
+                                            
+                                            if (!tabpanel.getChildByElement('tab' + ref) && ref != "")
+                                            {
+                                                res.datos.idmaster=ref;
+                                                datos={"title":res.datos.referencia,"id":'tab' + ref,'datos':res.datos};
+                                                tabpanel.agregar(datos);
                                             }
+                                            tabpanel.setActiveTab('tab' + ref);
+                                            me.setDisabled(false);
                                         } else {
-                                            Ext.MessageBox.alert("Mensaje", 'Datos Incompletos<br>');
+                                            Ext.MessageBox.alert("Mensaje", 'Datos Incompletos<br>'+res.errorInfo);
                                         }
                                     }
                                 });
+                            }
+                        },
+                        {
+                            xtype: 'button',
+                            text: '',
+                            iconCls: 'building',                            
+                            id: 'btnHistorial' + this.idmaster,
+                            width: 30,
+                            handler: function () {
+                                idmaster = this.up('form').idmaster;
+                                var windowpdf = Ext.create('Colsys.Widgets.WgVerPdf', {
+                                    sorc: '/inoF2/verHistorialRef/idmaster/'+idmaster
+                                });
+                                windowpdf.show();
+                            }
+                        },
+                        {
+                            xtype: 'button',
+                            text: '',                            
+                            id: 'btnSap' + this.idmaster,
+                            width: 60,
+                            height:24,
+                            html: '<img src="/images/icons/sap.jpg"/>',
+                            handler: function () {
+                                idmaster = this.up('form').idmaster;
+                                var windowpdf = Ext.create('Colsys.Widgets.WgVerPdf', {
+                                    sorc: '/inoF2/verCompSAP/idmaster/'+idmaster
+                                });
+                                windowpdf.show();
                             }
                         }
                     ]
@@ -194,34 +205,79 @@ Ext.define('Colsys.Ino.FormCierre', {
 
                     if (res.data.cerrado) {
                         Ext.getCmp("cerrado" + idmaster).setText(res.data.cerrado);
-                    }                    
-                    if(me.permisos.Liquidar==true)
-                    {
-                        if (res.data.liquidado!="" && res.data.cerrado==""  ) {
-
-                            Ext.getCmp("btnLiquidar" + idmaster).show(false);
-                            Ext.getCmp("btnCerrar" + idmaster).show(false);
-                            Ext.getCmp("btnLiquidar" + idmaster).setText("Cancelar Liquidacion");
-                            Ext.getCmp("btnLiquidar" + idmaster).setWidth(150);
-                        } 
-                        else
-                        {
-                            //Ext.getCmp("btnLiquidar" + idmaster).setDisabled(false);
-                            Ext.getCmp("btnLiquidar" + idmaster).show();
-                        }
                     }
                     
+
                     if(me.permisos.Cerrar==true)
                     {
-                        if (res.data.cerrado!="") {
-                            Ext.getCmp("btnCerrar" + idmaster).show(false);
-                            Ext.getCmp("btnLiquidar" + idmaster).hide();
+                        if (res.data.cerrado=="") {
+                            
+                            Ext.getCmp("btnCerrar" + idmaster).setText("Cerrar");
+                            Ext.getCmp("btnCerrar" + idmaster).show();
+//                            Ext.getCmp("btnCerrar" + idmaster).show(false);
+//                            Ext.getCmp("btnLiquidar" + idmaster).hide();
+//                            Ext.getCmp("btnCerrar" + idmaster).hide();
+                            //Ext.getCmp("btnCerrar" + idmaster).setText("Abrir");
+                        }
+                    }
+                    if(me.permisos.Abrir==true)
+                    {
+                        Ext.getCmp("btnCerrar" + idmaster).show();
+                        if (res.data.liquidado!="" && res.data.cerrado==""  ) {
+                            
+                            Ext.getCmp("btnCerrar" + idmaster).setText("Cerrar");
+                        }
+                        else if (res.data.liquidado=="" && res.data.cerrado==""  ) {                        
+                            
+                            Ext.getCmp("btnCerrar" + idmaster).hide();
+                        }
+                        else{
+                            
                             Ext.getCmp("btnCerrar" + idmaster).setText("Abrir");
                         }
+                    }
+                    if(res.data.cerrado!=""){
+                        var referencia = Ext.getCmp('tab' + idmaster).title;
+                        var formCierre = Ext.getCmp("formCierre"+idmaster).down("fieldcontainer");                        
+                        formCierre.add({
+                            xtype: 'button',
+                            text: '',
+                            tooltip:'Solicitud apertura de referencia',
+                            iconCls: 'open',                            
+                            id: 'btnApertura' + this.idmaster,
+                            width: 30,
+                            handler: function () {
+                                idmaster = formCierre.up('form').idmaster;
+                                Ext.create('Ext.window.Window', {
+                                        title: 'Solicitud Apertura de Referencia',
+                                        id: 'window-apertura-'+idmaster,
+                                        width: 500,
+                                        items: [  // Let's put an empty grid in just to illustrate fit layout
+                                            Ext.create('Colsys.Ino.FormAuditoria', {
+                                                id:'form-apertura-'+idmaster,
+                                                idmaster: idmaster,
+                                                idreferencia: referencia,
+                                                tipo: 'apertura',
+                                                listeners:{
+                                                    beforerender: function(ct, position){
+                                                        this.getForm().findField("type").setValue("Apertura referencia");
+                                                        this.getForm().findField("type").hidden = true;
+                                                        this.getForm().findField("status").hidden = true;
+                                                        this.getForm().findField("comboHouse").hidden = true;
+                                                        this.getForm().findField("assignedto").allowBlank = true;
+                                                        this.getForm().findField("assignedto").hidden = true;                                                        
+                                                        this.getForm().findField("reportedby").hidden = true;
+                                                    }
+                                                }
+                                            })
+                                        ]
+                                }).show();
+                            }
+                        })
                     }
                 }
             });
             this.superclass.onRender.call(this, ct, position);
         }
     }
-})
+});
