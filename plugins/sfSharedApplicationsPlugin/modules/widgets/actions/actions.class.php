@@ -1230,61 +1230,66 @@ class widgetsActions extends sfActions {
         $idgroup = $this->getRequestParameter("idgroup");
         $tipo = $this->getRequestParameter("tipo");
 
-        $q = Doctrine_Query::create()
-                ->select("h.ca_idticket, h.ca_title, h.ca_text, h.ca_idgroup, h.ca_status")
-                ->from('HdeskTicket h')
-                ->innerJoin("h.HdeskGroup g");
+        try{
+            $q = Doctrine_Query::create()
+                    ->select("h.ca_idticket, h.ca_title, h.ca_text, h.ca_idgroup, h.ca_status")
+                    ->from('HdeskTicket h')
+                    ->innerJoin("h.HdeskGroup g");
 
-        if($tipo==="rn"){
-            $q->addSelect("MAX(e.ca_idemail) as idemail");
-            $q->leftJoin("h.Email e");
-            $q->addWhere("e.ca_tipo = 'Notificación'");       
-        }
-        
-        if($tipo==="ino"){            
-            $idmaster = $this->getRequestParameter("idmaster");
-            $master = Doctrine::getTable("InoMaster")->find($idmaster);
-            
-            $q->leftJoin("h.HdeskAuditDocuments a");
-            $q->addWhere("a.ca_numero_doc = ?", $master->getCaReferencia());
-        }
-        
-        if ($iddepartament) {
-            $q->addWhere("g.ca_iddepartament = ? ", $iddepartament);
-}
+            if($tipo==="rn"){
+                $q->addSelect("MAX(e.ca_idemail) as idemail");
+                $q->leftJoin("h.Email e");
+                $q->addWhere("e.ca_tipo = 'Notificación'");       
+            }
 
-        if ($idgroup) {
-            $q->addWhere("h.ca_idgroup = ? ", $idgroup);
-        }
+            if($tipo==="ino"){            
+                $idmaster = $this->getRequestParameter("idmaster");
+                $master = Doctrine::getTable("InoMaster")->find($idmaster);
 
-        if ($criterio) {            
-            $q->addWhere("(h.ca_idticket = ? or h.ca_title like ?  or h.ca_text like ?) ", array($criterio ,"%" . strtolower($criterio) . "%", "%" . strtolower($criterio) . "%"));
-        }
-        
-        $q->addOrderBy("h.ca_idgroup ASC");        
-        $q->addOrderBy("h.ca_idticket DESC");        
-        $q->groupBy("h.ca_idticket, h.ca_title, h.ca_text, h.ca_idgroup");
-        $q->distinct();        
-        $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);        
-        
-        $debug = utf8_encode($q->getSqlQuery());        
-        $tickets = $q->execute();
+                $q->leftJoin("h.HdeskAuditDocuments a");
+                $q->addWhere("a.ca_numero_doc = ?", $master->getCaReferencia());
+            }
 
-        $parametros = ParametroTable::retrieveByCaso("CU110");
-        $status = array();        
-        foreach ($parametros as $p) {
-            $status[$p->getCaIdentificacion()] = array("nombre" => $p->getCaValor(), "color" => $p->getCaValor2());
-        }        
+            if ($iddepartament) {
+                $q->addWhere("g.ca_iddepartament = ? ", $iddepartament);
+    }
 
-        foreach ($tickets as $key => $val) {            
-            $tickets[$key]["h_ca_title"] = utf8_encode(str_replace('"', "'", $tickets[$key]["h_ca_title"]));
-            $tickets[$key]["h_ca_text"] = utf8_encode(str_replace("</style", "</style2", str_replace("<style", "<style2", str_replace('"', "'", $tickets[$key]["h_ca_text"]))));            
-            $tickets[$key]["h_ca_hallazgo"] = "Hallazgo # ".$tickets[$key]["h_ca_idticket"].": ".utf8_encode(str_replace('"', "'", $tickets[$key]["h_ca_title"]));
-            $tickets[$key]["status_name"] = isset($status[$tickets[$key]["h_ca_status"]]) ? utf8_encode($status[$tickets[$key]["h_ca_status"]]["nombre"]) : "";
-            $tickets[$key]["status_color"] = isset($status[$tickets[$key]["h_ca_status"]]) ? $status[$tickets[$key]["h_ca_status"]]["color"] : "";
+            if ($idgroup) {
+                $q->addWhere("h.ca_idgroup = ? ", $idgroup);
+            }
+
+            if ($criterio) {            
+                $q->addWhere("(h.ca_idticket = ? or h.ca_title like ?  or h.ca_text like ?) ", array($criterio ,"%" . strtolower($criterio) . "%", "%" . strtolower($criterio) . "%"));
+            }
+
+            $q->addOrderBy("h.ca_idgroup ASC");        
+            $q->addOrderBy("h.ca_idticket DESC");        
+            $q->groupBy("h.ca_idticket, h.ca_title, h.ca_text, h.ca_idgroup");
+            $q->distinct();        
+            $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);        
+
+            $debug = utf8_encode($q->getSqlQuery());        
+            $tickets = $q->execute();
+
+            $parametros = ParametroTable::retrieveByCaso("CU110");
+            $status = array();        
+            foreach ($parametros as $p) {
+                $status[$p->getCaIdentificacion()] = array("nombre" => $p->getCaValor(), "color" => $p->getCaValor2());
+            }        
+
+            foreach ($tickets as $key => $val) {            
+                $tickets[$key]["h_ca_title"] = utf8_encode(str_replace('"', "'", $tickets[$key]["h_ca_title"]));
+                $tickets[$key]["h_ca_text"] = utf8_encode(str_replace("</style", "</style2", str_replace("<style", "<style2", str_replace('"', "'", $tickets[$key]["h_ca_text"]))));            
+                $tickets[$key]["h_ca_hallazgo"] = "Hallazgo # ".$tickets[$key]["h_ca_idticket"].": ".$tickets[$key]["h_ca_title"];
+                $tickets[$key]["status_name"] = isset($status[$tickets[$key]["h_ca_status"]]) ? utf8_encode($status[$tickets[$key]["h_ca_status"]]["nombre"]) : "";
+                $tickets[$key]["status_color"] = isset($status[$tickets[$key]["h_ca_status"]]) ? $status[$tickets[$key]["h_ca_status"]]["color"] : "";
+                $tickets[$key]["usuauditoria"] = HdeskTicketTable::retrieveIdTicket($tickets[$key]["h_ca_idticket"],2)?true:false;
+            }
+
+            $this->responseArray = array("success" => true, "total" => count($tickets), "root" => $tickets, "debug"=>$debug);
+        }catch(Exception $e){
+            $this->responseArray = array("success" => false, "mensaje"=> utf8_encode($e->getMessage()));
         }
-        
-        $this->responseArray = array("success" => true, "total" => count($tickets), "root" => $tickets, "debug"=>$debug);
         $this->setTemplate("responseTemplate");
     }
 }
