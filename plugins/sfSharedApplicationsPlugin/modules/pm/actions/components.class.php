@@ -188,10 +188,9 @@ class pmComponents extends sfComponents {
      */
 
     public function executeEditarTicketPropiedadesPanel() {
-
         $response = sfContext::getInstance()->getResponse();
         $response->addJavaScript("extExtras/FileUploadField", 'last');
-
+        
         $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
         $this->grupoEmp = $usuario->getGrupoEmpresarial();
 
@@ -245,6 +244,8 @@ class pmComponents extends sfComponents {
                 $this->empresas[] = $row;
             }
         }
+        
+        $this->unidades = ParametroTable::retrieveByCaso("CU078");
     }
 
     /*
@@ -289,6 +290,18 @@ class pmComponents extends sfComponents {
         foreach ($params as $p) {
             $row = array("status" => $p->getCaIdentificacion(), "valor" => utf8_encode($p->getCaValor()));
             $this->status[] = $row;
+        }
+        
+        $conceptos = Doctrine::getTable("Concepto")
+                        ->createQuery("c")
+                        ->where("c.ca_transporte = ? AND c.ca_modalidad = ?", array(Constantes::MARITIMO, Constantes::FCL))
+                        ->addOrderBy("c.ca_liminferior")
+                        ->addOrderBy("c.ca_concepto")
+                        ->execute();  
+        
+        $this->conceptos = array();
+        foreach($conceptos as $concepto){
+            $this->conceptos[] = array("idconcepto"=>$concepto->getCaIdconcepto(), "concepto"=>$concepto->getCaConcepto());
         }
     }
 
@@ -422,6 +435,49 @@ class pmComponents extends sfComponents {
 
     public function executePanelAgenda() {
         
+    }
+    
+    /*
+     * Muestra grid con Agenda de Entregas
+     * @author: Andrea Ramírez
+     */
+
+    public function executeWidgetParams() {
+        
+    }
+    
+    /*
+     * Muestra grid con Agenda de Entregas
+     * @author: Andrea Ramírez
+     */
+
+    public function executeGridRespuestaTrayectos() {
+        
+        $idticket = $this->getRequestParameter("idticket");
+        
+        $this->idequipos = array();
+        
+        if($idticket){
+            $ticket = Doctrine::getTable("HdeskTicket")->find($idticket);            
+            $datos = json_decode($ticket->getCaDatos(),1);
+            
+            $ncontenedores = $datos["solicitud"]["ncontenedores"];                    
+            
+            if($ncontenedores>0){
+                for($i=0; $i<$ncontenedores; $i++){
+                    $this->idequipos[] = $datos["solicitud"]["fcl"]["idequipo"];
+                }
+            }
+        }
+        
+        $this->conceptos = Doctrine::getTable("Concepto")
+                        ->createQuery("c")
+                        ->where("c.ca_transporte = ? AND c.ca_modalidad = ?", array(Constantes::MARITIMO, Constantes::FCL))
+                        ->addOrderBy("c.ca_liminferior")
+                        ->addOrderBy("c.ca_concepto")
+                        ->execute();
+        
+        $this->aplicaciones = ParametroTable::retrieveByCaso("CU064", null, Constantes::MARITIMO);
     }
 }
 ?>

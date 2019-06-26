@@ -7,9 +7,6 @@
 
 include_component("pm", "editarTicketPropiedadesPanel");
 
-include_component("pm", "gridRespuestaTrayectos");
-include_component("pricing", "panelRecargosPorCiudad");
-
 $data = $sf_data->getRaw("data");
 $status = $sf_data->getRaw("status");
 ?>
@@ -19,8 +16,8 @@ $status = $sf_data->getRaw("status");
     }
 </style>
 <script type="text/javascript">
-    NuevaRespuestaWindow = function (config) {
-        Ext.apply(this, config);
+    PanelRespuestaTarifa = function (config) {
+        /*Ext.apply(this, config);
         this.ctxRecord = null;
 
         this.resultTpl = new Ext.XTemplate(
@@ -122,22 +119,7 @@ $status = $sf_data->getRaw("status");
             items: [
                 this.comboEtapas
             ]
-        }
-        
-        this.checkTarifas = {
-            columnWidth: .5,
-            layout: 'form',
-            xtype: 'fieldset',
-            id: 'field_tarifas',
-            name: 'field_tarifas',                                                    
-            items: [
-                new Ext.form.Checkbox ({
-                    //fieldLabel: 'Incluir en el mensaje las tarifas cotizadas',
-                    boxLabel: 'Incluir en el mensaje las tarifas cotizadas',
-                    id: "check_tarifas"            
-                })
-            ]
-        }
+        }*/
 
         this.subpanel = new Ext.FormPanel({
             id: "respuesta-ticket-panel",
@@ -157,7 +139,6 @@ $status = $sf_data->getRaw("status");
                 {
                     xtype: 'htmleditor',
                     name: 'respuesta',
-                    id: 'respuesta',
                     hideLabel: true,
                     height: 300,
                     anchor: '100%',
@@ -252,15 +233,6 @@ $status = $sf_data->getRaw("status");
                     }]
                 }]
         })
-        
-        this.gridTarifa = new GridRespuestaTrayectos({
-            id: 'gridTarifa',
-            impoexpo: '<?=Constantes::IMPO?>',
-            transporte: '<?=Constantes::MARITIMO?>',
-            modalidad: '<?=Constantes::FCL?>',
-            idtrafico: '99-999',
-            idticket: this.idticket
-        })
 
         this.buttons = [
             {
@@ -277,7 +249,7 @@ $status = $sf_data->getRaw("status");
 
         this.tbar = [this.combo];
 
-        if (this.idgroup == 2) { //02- Área  de Desarrollos
+        /*if (this.idgroup == 2) {
             Ext.getCmp('info').add(this.etapas);
             this.tbar.push({
                 text:' '
@@ -286,26 +258,20 @@ $status = $sf_data->getRaw("status");
                 text:'Agendar Entregas',
                 handler: this.crearEntregas
             });
-        }
-        
-        if (this.idgroup === 25) { // 02- Tarifas Tpte Internacional                        
-            this.subpanel.insert(0, this.gridTarifa);
-            Ext.getCmp('info').add(this.checkTarifas);            
-        }
+        } */   
 
         NuevaRespuestaWindow.superclass.constructor.call(this, {
-            title: 'Nueva respuesta Ticket# ' + this.idticket,
-            id: "nueva-respuesta-ticket",
+            title: 'Nueva respuesta Tarifa Internacional Ticket# ' + this.idticket,
+            id: "nueva-respuesta-tarifa-ticket",
             autoHeight: true,
-            //height: 400,
             width: 800,
-            resizable: true,
+            resizable: false,
             plain: true,
             y: 100,
             autoScroll: true,
             closeAction: 'close',
             buttons: this.buttons,
-            items: [this.subpanel],
+            items: this.subpanel,
             tbar:this.tbar,
             listeners: {
                 afterrender: this.onAfterRender
@@ -314,7 +280,7 @@ $status = $sf_data->getRaw("status");
     }
 
     Ext.extend(NuevaRespuestaWindow, Ext.Window, {
-        enviarRespuesta: function () {
+        /*enviarRespuesta: function () {
             Ext.getCmp("button-send").disable();
             
             var panel = Ext.getCmp("respuesta-ticket-panel");
@@ -413,6 +379,6 @@ $status = $sf_data->getRaw("status");
                 })
             }
             win.show(this);            
-        }
+        }*/
     });
 </script>

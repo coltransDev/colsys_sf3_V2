@@ -22,7 +22,9 @@
                 <?
             }
             ?>
-            <?= str_replace("\n", "<br />", $response->getCaText()) ?>
+            <?//= str_replace("\n", "<br />", $response->getCaText()) ?>
+                <!-- -->
+            <?= $ticket->getCaIdgroup()!=25?str_replace("\n", "<br />", $response->getCaText()):$response->getCaText() ?>
             <?
             $subResponses = $response->getResponse();
             foreach ($subResponses as $subResponse) {

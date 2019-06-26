@@ -141,11 +141,7 @@ Ext.onReady(function(){
             items: [
                 new PanelConsulta({
                         title: "Tickets"
-                    }),
-                /*new PanelCategorias({
-                        title: "Base Conocimiento"
-                    })*/
-
+                    })
             ]
         },
         // in this instance the TabPanel is not wrapped by another panel
@@ -318,7 +314,8 @@ Ext.onReady(function(){
             var newComponent = new PanelPreviewTicket({
                 closable: true,
                 title: 'Ticket # <?=$idticket?>',
-                idticket: <?=$idticket?>
+                idticket: <?=$idticket?>,
+                idgroup: <?=$idgroup?>
             });
             Ext.getCmp('tab-panel').add(newComponent);
             Ext.getCmp('tab-panel').setActiveTab(newComponent);

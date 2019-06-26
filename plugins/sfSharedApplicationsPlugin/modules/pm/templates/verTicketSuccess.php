@@ -16,7 +16,7 @@ $ticket = $sf_data->getRaw("ticket");
                         <!-- INTRO -->
                         <tr>
                             <td>&nbsp;</td><td>
-                                <? $es_auditoria = ($ticket->getHdeskGroup()->getCaIddepartament() == 4) ? TRUE : FALSE; ?>
+                                <? $es_auditoria = ($ticket->getHdeskGroup()->getCaIddepartament() === 4) ? TRUE : FALSE; ?>
                                 <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Ticket # <?= $ticket->getCaIdticket() . ": " . $ticket->getCaTitle() ?></b></font><br />
                                 <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b><?= ($es_auditoria) ? "Proceso:" : "&Aacute;rea:"; ?></b> <?= $ticket->getHdeskGroup() ? $ticket->getHdeskGroup()->getCaName() : "" ?></font><br />
                                 <font size="2" face="arial, helvetica, sans-serif" color="#000000"><b>Reportado por:</b> <?= $ticket->getUsuario() ? $ticket->getUsuario()->getCaNombre() : $ticket->getCaLogin() ?> <?= $ticket->getCaReportedby() ? " por " . $ticket->getCaReportedby() : "" ?></font><br />

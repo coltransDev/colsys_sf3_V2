@@ -196,8 +196,34 @@ PanelPreviewTicket = function( config ){
         });
     }
     
+    
     if (this.department == "Auditoría" || this.department == 'Marítimo' || this.department == 'Pricing'){        // Habilita la pestaña de importación de documentos, para auditoría
         panel.insert(index, this.docsPanel);
+    }
+    
+    if (this.idgroup == 25){        // Tarifas de transportes internacional    
+        var bar = this.responses.getTopToolbar();        
+        bar.addItem({
+            id:'proveedor-'+idcomponent,
+            text: 'Generar Cot. Proveedor',
+            iconCls: 'email',
+            disabled:true,
+            handler : this.proveedor,
+            scope: this
+        })
+    }
+    
+    var grupoSistemas = [1,2,3,21,22,23];
+    
+    if (grupoSistemas.indexOf(parseInt(this.idgroup)) >= 0){        // Areas de Sistemas relacionas con riesgos    
+        var bar = this.responses.getTopToolbar();        
+        bar.addItem({
+            id:'evento-'+idcomponent,
+            text: 'Evento Riesgo',
+            iconCls: 'register',
+            handler : this.evento,
+            scope: this
+        })
     }
 
 };
@@ -258,6 +284,51 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
                                            opener: this.responses.id } );
        win.show();
 
+    },
+    
+    proveedor: function( record ){
+       
+       /*var win = new BusquedaIssueWindow( {idticket: this.idticket,
+                                           opener: this.responses.id } );
+       win.show();*/
+        var idticket = this.idticket;
+        
+        Ext.IframeWindow = Ext.extend(Ext.Window, {            
+            onRender: function() {
+                this.bodyCfg = {
+                    tag: 'iframe',
+                    src: this.src,
+                    cls: this.bodyCls,
+                    style: {
+                        border: '0px none'
+                    }
+                };
+                Ext.IframeWindow.superclass.onRender.apply(this, arguments);
+            }
+        });
+
+        var w = new Ext.IframeWindow({
+            id:'win-proveedor-'+idticket,
+            width:780,
+            height:480,
+            closeAction: 'destroy',            
+            title:"Pricing: Solicitud de tarifas a proveedor",
+            //src:"pm/generarTarifasPDF?idticket="+idticket+"&tipo=externo"
+            src: "/pm/verSolicitudProveedor?idticket="+idticket,
+            buttons: [{
+                text: 'Cerrar',
+                handler: function(){
+                    var win = Ext.getCmp("win-proveedor-"+idticket);
+                    win.close();
+                },
+                scope: this
+            }]            
+        });
+        w.show();        
+    },
+    evento: function( record ){
+        var idticket = this.idticket;
+        window.open("/riesgos/nuevoEventoExt5/idproceso/8/idtipo/14/documento/"+idticket);       
     },
 
     loadRecord: function( record ){
@@ -338,6 +409,12 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
         if(this.action == "Abierto"){
             items.get('response-'+idcomponent).enable();
             items.get('kb-'+idcomponent).enable();
+            if(items.get('proveedor-'+idcomponent))
+                items.get('proveedor-'+idcomponent).enable();
+        }else{
+            /*Deshabilita la opción de Insertar o Eliminar un adjunto cuando el ticket está cerrado*/
+            this.filePanel.topToolbar.getComponent(0).disable();
+            this.filePanel.topToolbar.getComponent(2).disable();
         }
         this.usersPanel.wgUsuario.enable();
     },

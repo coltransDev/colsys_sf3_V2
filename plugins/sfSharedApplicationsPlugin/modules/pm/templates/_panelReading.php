@@ -36,6 +36,7 @@ PanelReading = function( config ){
    
     this.previewTicketPanel = new PanelPreviewTicket({idcomponent:idcomponent,
             idgrid: idGrid,
+            idgroup: this.idgroup,
             department: this.department,
             region: 'south',
             deferredRender: false,
