@@ -512,17 +512,17 @@ Ext.define('Colsys.Ino.FormMaster', {
                         width: 300,
                         caso_uso: 'CU011'
                     },
-                    Ext.create('Colsys.Widgets.WgProveedores', {
+                    Ext.create('Colsys.Widgets.WgAgentesAduana', {
                         fieldLabel: 'Agencia de Aduana',                        
-                        name: 'idlinea',
-                        tipo: 'ADU',
+                        forceSelection: true,
                         id: 'agenciaad' + this.idmaster,
+                        name: 'agenciaad',
                         style: 'display:inline-block;text-align:center;font-weight:bold;',
                         labelWidth: 150,
-                        width: 300,
-                        allowBlank: false,
+                        width: 600,
                         idmaster: this.idmaster,
-                        idtransporte: 'transporte' + this.idmaster
+                        idtransporte: 'transporte' + this.idmaster,
+                        allowBlank: false
                     }),
                     {
                         xtype: 'tbspacer',
@@ -729,7 +729,7 @@ Ext.define('Colsys.Ino.FormMaster', {
                     var windowpdf = Ext.create('Colsys.Widgets.WgVerPdf', {
                         sorc: "/antecedentes/emailColoader/idmaster/" + idmastrer,
                         height: 600,
-                        width: 1000,
+                        width: 1000
                     });
                     windowpdf.show();
                 }
@@ -775,22 +775,26 @@ Ext.define('Colsys.Ino.FormMaster', {
                 }
             });
         }
+        
+        if (this.idtransporte == "Terrestre")
+        {
+            Ext.getCmp("tipovehiculo" + this.idmaster).getStore().load({
+                params: {
+                    caso_uso: 'CU020'
+                }
+            });
+        }
 
         tb.add({
             text: 'Eventos',
             iconCls: 'user',
             handler: function () {
-                openFile("/ids/formEventos?idmaster=" + idmastrer)
+                openFile("/ids/formEventos?idmaster=" + idmastrer);
             }
         });
 
         this.addDocked(tb, 'bottom');
-
-        Ext.getCmp("tipovehiculo" + this.idmaster).getStore().load({
-            params: {
-                caso_uso: 'CU020'
-            }
-        });
+        
         Colsys.Ino.FormMaster.superclass.onRender.call(this, ct, position);
     },
     items: [
@@ -807,18 +811,10 @@ Ext.define('Colsys.Ino.FormMaster', {
 
             if (this.load1 == false || this.load1 == "undefined" || !this.load1)
             {
-                if (Ext.getCmp("agenciaad" + idmasterr)) {
-                    Ext.getCmp("agenciaad" + idmasterr).getStore().reload({
-                        params: {
-                            tipo: "ADU"
-                        }
-                    });
-                }
-
                 var store = Ext.getCmp('modalidad' + this.idmaster).getStore();
                 store.proxy.extraParams = {
                     idmaster: this.idmaster
-                }
+                };
                 store.reload();
                 this.form.load({
                     url: '/inoF2/datosMaster',
@@ -834,7 +830,7 @@ Ext.define('Colsys.Ino.FormMaster', {
 
                         Ext.getCmp("agente" + idmasterr).store.reload({
                             params: {
-                                transporte: idtransporte,
+                                transporte: idtransporte
                             },
                             callback: function (records, operation, success) {
                                 Ext.getCmp("agente" + idmasterr).store.add(
@@ -872,10 +868,9 @@ Ext.define('Colsys.Ino.FormMaster', {
                                 callback: function (records, operation, success) {
                                     if (Ext.getCmp("agenciaad" + idmasterr)) {
                                         Ext.getCmp("agenciaad" + idmasterr).store.add(
-                                                {"idlinea": res.data.idlinea, "linea": res.data.agencia}
+                                                {"idagencia": res.data.idagencia, "nombre": res.data.agencia}
                                         );
-                                        Ext.getCmp("agenciaad" + idmasterr).setValue(res.data.idlinea);
-                                        $('#agenciaad' + idmasterr + '-inputEl').val(res.data.agencia);
+                                        Ext.getCmp("agenciaad" + idmasterr).setValue(res.data.idagencia);
                                     }
                                 }
                             });
