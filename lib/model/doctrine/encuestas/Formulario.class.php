@@ -29,9 +29,12 @@ class Formulario extends BaseFormulario {
      * @return <type> 
      */
     public function getQueryFormulario() {
+        $ano = date('Y')-3;
+        
         $q = Doctrine_Query::create()
                 ->from('formulario')
                 ->addWhere('ca_activo = ?', true)
+                ->addWhere('date_part(\'YEAR\', ca_vigencia_inicial) >= ?', $ano)
                 ->orderBy('ca_id DESC');
         return $q;
     }
@@ -240,7 +243,7 @@ class Formulario extends BaseFormulario {
      * Calcula el número de formularios enviados vía mail
      * @return type
      */
-    public function getNumEncuestasEnviadas($options = array()) {
+    public function getNumEncuestasEnviadas1($options = array()) {
         /* $con = Doctrine_Manager::getInstance()->connection();
           $sql = "
           SELECT count (*) as enviados
@@ -281,7 +284,58 @@ class Formulario extends BaseFormulario {
             $q->addWhere("i.ca_id = ?", $options["idcliente"]);        
         
         $q->orderBy("s.ca_nombre, i.ca_nombre");
+//        echo $q->getSqlQuery();
+//        exit();
+        $encuestas = $q->execute();
+        return $encuestas;
+    }
 
+    public function getNumEncuestasEnviadas2($options = array()) {
+        /* $con = Doctrine_Manager::getInstance()->connection();
+          $sql = "
+          SELECT count (*) as enviados
+          FROM public.tb_emails
+          WHERE ca_tipo = 'Encuesta'
+          AND ca_usuenvio = 'Administrador'
+          AND ca_address != 'gmartinez@coltrans.com.co'
+          AND ca_fchenvio BETWEEN '".$this->getCaVigenciaInicial()."' and '".$this->getCaVigenciaFinal()."'
+          AND ca_idcaso = " . $this->getCaId();
+          $st = $con->execute($sql);
+          return $st->fetchAll();
+         */
+        //echo $options["sucursal"];
+        $q = Doctrine::getTable("RepStatus")->createQuery("rs")
+                ->select("rs.ca_idemail, rs.ca_fchenvio, cc.ca_idcontacto, u.ca_login, u.ca_nombre, c.ca_vendedor, i.ca_nombre, s.ca_idsucursal, s.ca_nombre")
+                ->innerJoin("rs.Reporte r")
+                ->innerJoin("r.Contacto cc")
+                ->innerJoin("cc.Cliente c")
+                ->innerJoin("c.Ids i")
+                ->leftJoin("c.Usuario u")
+                ->leftJoin("u.Sucursal s")
+                ->innerJoin("rs.ColsysConfigValue cf")
+                //->innerJoin("control.tb_config_values cfv on cfv.ca_idconfig=278 and rs.ca_idetapa=cfv.ca_value")
+                //->inner join control.tb_config_values cfv on cfv.ca_idconfig=211 and re.ca_servicio=cfv.ca_ident 
+                ->where("cf.ca_idconfig = 278")
+                //->where("rs.ca_idetapa in ('EEETD','IMCPD','IAFFL')")                
+                ->addWhere("rs.ca_fchenvio BETWEEN ? AND ?", array($this->getCaVigenciaInicial(), $this->getCaVigenciaFinal()))
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR);                
+        //->limit(10)
+        //->fetchArray();
+        if (isset($options["sucursal"]) && ($options["sucursal"] != "Todas Las sucursales" && $options["sucursal"] != "Sin asignar")) 
+            $q->addWhere("s.ca_nombre = ?", $options["sucursal"]);
+        else if (isset($options["sucursal"]) && $options["sucursal"] == "Sin asignar")
+            $q->addWhere("s.ca_nombre IS NULL");
+        
+        if (isset($options["login"]) && $options["login"]) 
+            $q->addWhere("u.ca_login = ?", $options["login"]);
+                
+        if (isset($options["idcliente"]) && $options["idcliente"])
+            $q->addWhere("i.ca_id = ?", $options["idcliente"]);        
+        
+        $q->orderBy("s.ca_nombre, i.ca_nombre");
+//        print_r($options);
+//        echo $q->getSqlQuery();
+//        exit();
         $encuestas = $q->execute();
         return $encuestas;
     }
@@ -512,7 +566,7 @@ class Formulario extends BaseFormulario {
      * @param type $idrespuesta id de la tabla control respuesta. si se recibe este parametro se puede calcular el promedio de esa respuesta.
      * @return type un array con las siguientes posiciones ['count']['sum']['avg'] con valores: total de preguntas, suma del puntaje de todas las preguntas y un promedio de todas las preguntas 
      */
-    public function getListaEncuestasDiligenciadas($options = array(), $resultado) {
+    public function getListaEncuestasDiligenciadas1($options = array(), $resultado) {
         
         $q = Doctrine::getTable("Ids")->createQuery("i")
                 ->select("i.ca_id, i.ca_nombre, cc.ca_nombres, cc.ca_papellido, cc.ca_email, u.ca_login, u.ca_nombre, s.ca_idsucursal, s.ca_nombre, re.ca_resultado, p.ca_id, p.ca_texto, cf.ca_ident, cf.ca_value, ce.ca_idformulario, ce.ca_id, ce.ca_fchcreado")            
@@ -555,7 +609,67 @@ class Formulario extends BaseFormulario {
         
         if (isset($options["idencuesta"]) && $options["idencuesta"])
             $q->addWhere("ce.ca_id = ?", $options["idencuesta"]);
+        
+//        echo $q->getSqlQuery();
+//        exit();
+        $encuestas = $q->execute();
+        return $encuestas;
+    }
+    
+    /**
+     * Calcula la calificación promedio de una encuesta
+     * @param type $sucursal '0' para todas, 'NA' para no asignada
+     * @param type $pregunta id de la pregunta. '0' para todas
+     * @param type $servicio Objeto de la clase Opcion creado a partir del parametro de servicio recibido. '0' para todas
+     * @param type $idrespuesta id de la tabla control respuesta. si se recibe este parametro se puede calcular el promedio de esa respuesta.
+     * @return type un array con las siguientes posiciones ['count']['sum']['avg'] con valores: total de preguntas, suma del puntaje de todas las preguntas y un promedio de todas las preguntas 
+     */
+    public function getListaEncuestasDiligenciadas2($options = array(), $resultado) {
+        
+        $q = Doctrine::getTable("Ids")->createQuery("i")
+                ->select("i.ca_id, i.ca_nombre, u.ca_login, u.ca_nombre, s.ca_idsucursal, s.ca_nombre, re.ca_resultado, p.ca_id, p.ca_texto, cf.ca_ident, cf.ca_value, ce.ca_idformulario, ce.ca_id, ce.ca_fchcreado")            
+                ->leftJoin('i.Cliente c')
+                //->leftJoin("c.Contacto cc")
+                ->leftJoin("c.ViControlEncuesta ce")
+                ->leftJoin("c.Usuario u")
+                ->leftJoin("u.Sucursal s")
+                ->leftJoin("ce.ResultadoEncuesta re")
+                ->leftJoin("re.Pregunta p")
+                ->leftJoin("re.ColsysConfigValue cf")
+                ->where("ce.ca_idformulario = ?", $this->getCaId())
+                ->addWhere("cf.ca_idconfig = 211")
+                ->orderBy("p.ca_orden")
+                
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+        
+        if ($resultado == true)
+            //$q->addWhere("re.ca_resultado BETWEEN '0' and '5'");
+            $q->addWhere("textregexeq(trim(ca_resultado),'^[[:digit:]]+(\.[[:digit:]]+)?$') = true");
+        else
+            $q->addWhere("re.ca_resultado != ''");
 
+        if (isset($options["sucursal"]) && ($options["sucursal"] != "Todas Las sucursales" && $options["sucursal"] != "Sin asignar")) 
+            $q->addWhere("s.ca_nombre = ?", $options["sucursal"]);
+        else if ($options["sucursal"] == "Sin asignar")
+            $q->addWhere("s.ca_nombre IS NULL");        
+
+        if (isset($options["login"]) && $options["login"])
+            $q->addWhere("u.ca_login = ?", $options["login"]);
+        
+        if (isset($options["idcliente"]) && $options["idcliente"])
+            $q->addWhere("i.ca_id = ?", $options["idcliente"]);
+        
+        if (isset($options["idservicio"]) && $options["idservicio"])
+            $q->addWhere("cf.ca_ident = ?", $options["idservicio"]);
+        
+        if (isset($options["idpregunta"]) && $options["idpregunta"])
+            $q->addWhere("p.ca_id = ?", $options["idpregunta"]);
+        
+        if (isset($options["idencuesta"]) && $options["idencuesta"])
+            $q->addWhere("ce.ca_id = ?", $options["idencuesta"]);
+        
+//        echo $q->getSqlQuery();
+//        exit();
         $encuestas = $q->execute();
         return $encuestas;
     }
