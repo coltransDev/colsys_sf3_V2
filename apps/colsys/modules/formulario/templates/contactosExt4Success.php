@@ -1,3 +1,4 @@
+<div style="margin-bottom:15px; margin-top: 15px;" align="center"><b><?= html_entity_decode($formulario->getCaMedicion())?></b></div>
 <div id="grid" style="margin-bottom:15px; margin-top: 15px;" align="center"></div>
 <script>
     Ext.define('Listado', {

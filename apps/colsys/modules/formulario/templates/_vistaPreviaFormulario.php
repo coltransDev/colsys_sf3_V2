@@ -3,7 +3,7 @@
         <? if ($formulario->ca_empresa == 1) { ?>
             <img class="logo-topmenu" src="/images/logos/colmas.png" alt="Colmas SA" />    
         <? } else { ?>
-            <img class="logo-topmenu" src="/images/logos/coltrans.png" alt="Coltrans SA" />
+            <img class="logo-topmenu" src="http://www.coltrans.com.co/logosoficiales/coltrans/Coltrans30anos_medium.jpg" alt="Coltrans SA" />
         <? } ?>
 
         <h1><?=$formulario->getCaAlias() ?></h1>
@@ -40,14 +40,14 @@ function validarFormulario(){
             
             pregunta.style.color='#E42C2C';
             //alert(el.attributes["idpregunta"].value);
-            //var tipo = $("input[type='radio']");
+            //var tipo = $("input[type='radio']");            
             var tipo = el.type;
             
             if(tipo=="radio"){
-                if(el.checked==true){
-                    eval( "Campos."+el.name+" = 'true';" );
-                    pregunta.style.color='#000000';
-                }
+                if(el.checked==true){                    
+                    eval( "Campos."+el.name+" = 'true';" );                    
+                    pregunta.style.color='#000000';                                       
+                }                    
             }
             
             if(tipo=="select-one"){

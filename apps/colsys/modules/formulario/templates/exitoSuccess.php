@@ -2,7 +2,7 @@
     <? if ($formulario->ca_empresa == 1) { ?>
         <img class="logo-topmenu" src="/images/logos/colmas.png" alt="Colmas SA" />    
     <? } else { ?>
-        <img class="logo-topmenu" src="/images/logos/coltrans.png" alt="Coltrans SA" />
+        <img class="logo-topmenu" src="http://www.coltrans.com.co/logosoficiales/coltrans/Coltrans30anos_medium.jpg" alt="Coltrans SA" />
     <? } ?>
 </div>
 <div class="resultado">

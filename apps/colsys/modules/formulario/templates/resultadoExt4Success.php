@@ -1,6 +1,8 @@
 <?
 $encuestas = $sf_data->getRaw("encuestas");
+$cierre = $sf_data->getRaw("cierre");
 include_component("formulario", "nuevoSeguimientoWindow");
+//echo "cierre".$cierre;
 
 ?>
 <style type="text/css">
@@ -174,9 +176,10 @@ Ext.onReady(function() {
             afterrender: function(panel) {
                 var bar = panel.tabBar;
                 var fchCierre = new Date('<?=$cierre?>');
+                var fchCierreSeguimientos = new Date(fchCierre.setDate(fchCierre.getDate() + 30));                
                 var fchActual = new Date();
                 
-                if(fchCierre <= fchActual){
+                if(fchActual <= fchCierreSeguimientos){
                     bar.insert(2, [{
                         xtype: 'component',
                         flex: 1

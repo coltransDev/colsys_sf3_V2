@@ -3,7 +3,7 @@
     <!--<p class="nombre-formato"><? //php echo $formulario->ca_nombre_formato                  ?></p>
     <p class="fecha-formato"><? //php echo $formulario->ca_nombre_formato                  ?></p>-->
     <div class="formulario-cabecera">
-        <img class="logo-topmenu" src="/images/logos/coltrans.png" alt="Coltrans SA" />
+        <img class="logo-topmenu" src="http://www.coltrans.com.co/logosoficiales/coltrans/Coltrans30anos_medium.jpg" alt="Coltrans SA" />
         <h1><?php echo $formulario->ca_titulo ?></h1>
         <div class="intro-formulario"><?php echo html_entity_decode($formulario->ca_introduccion) ?></div>
     </div>
