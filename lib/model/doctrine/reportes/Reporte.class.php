@@ -111,34 +111,43 @@ class Reporte extends BaseReporte {
     public function getCliente($opciontmp=null) {
         if(!$this->cliente)
         {
-            if($this->getCaTiporep()==4 && ($this->getRepOtm()->getCaIdimportador()!="" || $this->getRepOtm()->getCaIdcliente()!="" ) )
-            {
-                $this->cliente = new Cliente();
-                $idt=($opciontmp=="continuacion")?$this->getRepOtm()->getCaIdimportador():(($this->getRepOtm()->getCaIdcliente()!="")?$this->getRepOtm()->getCaIdcliente():$this->getRepOtm()->getCaIdimportador());
-                $tercero=Doctrine::getTable("Tercero")->find($idt);
-                if($tercero)
+            if($opciontmp != "tracking"){
+                if($this->getCaTiporep()==4 && ($this->getRepOtm()->getCaIdimportador()!="" || $this->getRepOtm()->getCaIdcliente()!="" ))
                 {
-                    $this->cliente->setCaIdcliente($tercero->getCaIdtercero());
-                    list($nit,$digito)=  explode("-",$tercero->getCaIdentificacion() );
-                    $this->cliente->setCaIdalterno(trim($nit));
-                    $this->cliente->setCaDigito(trim($digito));
-                    $this->cliente->setCaCompania($tercero->getCaNombre());
-                    $this->cliente->setCaEmail($tercero->getCaEmail());
-                    $this->cliente->setCaTelefonos($tercero->getCaTelefonos());
-                    $this->cliente->setCaFax($tercero->getCaFax());
-                    $this->cliente->setCaIdciudad($tercero->getCaIdciudad());
-                    $this->cliente->setCaPropiedades($tercero->getCaPropiedades());
-                    $this->cliente->setProperty("tipopersona",$tercero->getCaTipopersona());
+                    $this->cliente = new Cliente();
+                    $idt=($opciontmp=="continuacion")?$this->getRepOtm()->getCaIdimportador():(($this->getRepOtm()->getCaIdcliente()!="")?$this->getRepOtm()->getCaIdcliente():$this->getRepOtm()->getCaIdimportador());
+                    $tercero=Doctrine::getTable("Tercero")->find($idt);
+                    if($tercero)
+                    {
+                        $this->cliente->setCaIdcliente($tercero->getCaIdtercero());
+                        list($nit,$digito)=  explode("-",$tercero->getCaIdentificacion() );
+                        $this->cliente->setCaIdalterno(trim($nit));
+                        $this->cliente->setCaDigito(trim($digito));
+                        $this->cliente->setCaCompania($tercero->getCaNombre());
+                        $this->cliente->setCaEmail($tercero->getCaEmail());
+                        $this->cliente->setCaTelefonos($tercero->getCaTelefonos());
+                        $this->cliente->setCaFax($tercero->getCaFax());
+                        $this->cliente->setCaIdciudad($tercero->getCaIdciudad());
+                        $this->cliente->setCaPropiedades($tercero->getCaPropiedades());
+                        $this->cliente->setProperty("tipopersona",$tercero->getCaTipopersona());
+                    }
                 }
-            }
-            else
-            {
+                else
+                {
+                    $this->cliente=Doctrine::getTable("Cliente")
+                        ->createQuery("cl")
+                        ->innerJoin("cl.Contacto c")
+                        ->where("c.ca_idcontacto = ?", $this->getCaIdconcliente())
+                        ->distinct()
+                        ->fetchOne();
+                }
+            }else{
                 $this->cliente=Doctrine::getTable("Cliente")
-                    ->createQuery("cl")
-                    ->innerJoin("cl.Contacto c")
-                    ->where("c.ca_idcontacto = ?", $this->getCaIdconcliente())
-                    ->distinct()
-                    ->fetchOne();
+                        ->createQuery("cl")
+                        ->innerJoin("cl.Contacto c")
+                        ->where("c.ca_idcontacto = ?", $this->getCaIdconcliente())
+                        ->distinct()
+                        ->fetchOne();
             }
         }
         return $this->cliente;
@@ -353,11 +362,7 @@ class Reporte extends BaseReporte {
 
     public function getInoClientesSea() {
         if (!$this->inoClientesSea) {
-            $this->inoClientesSea = Doctrine::getTable("InoClientesSea")
-                            ->createQuery("c")
-                            ->innerJoin("c.Reporte r")
-                            ->where("r.ca_consecutivo = ?", $this->getCaConsecutivo())
-                            ->fetchOne();
+            $this->inoClientesSea = $this->getInoHouse()->getFirst();
         }
         return $this->inoClientesSea;
     }
@@ -952,8 +957,10 @@ class Reporte extends BaseReporte {
         $inoCliente = Doctrine::getTable("InoHouse")
                 ->createQuery("h")
                 ->leftJoin("h.Reporte r")
+                ->innerJoin("h.InoMaster m")
                 ->where("r.ca_consecutivo = ?", $this->getCaConsecutivo())
-                ->orderBy("r.ca_idreporte DESC")
+                ->addWhere("m.ca_transporte = ?", $this->getCaTransporte())
+                ->orderBy("r.ca_idreporte DESC, h.ca_idhouse DESC")
                 ->fetchOne();
 
         if ($inoCliente) {

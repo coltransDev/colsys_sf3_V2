@@ -273,10 +273,11 @@ for ($j=0; $j<count($traficos); $j++)  {
         $inoClientesSea = $reporte->getInoClientesSea();
 
         if($inoClientesSea){
-            $inoMaestraSea = $inoClientesSea->getInoMaestraSea();
-            $objPHPExcel->getActiveSheet()->setCellValue('T' . $i, $inoMaestraSea->getCaBandera());
-            $objPHPExcel->getActiveSheet()->setCellValue('U' . $i, $inoMaestraSea->getCaRegistroadu()." ");
-            $objPHPExcel->getActiveSheet()->setCellValue('V' . $i, $inoMaestraSea->getCaFchregistroadu());
+            $inoMaestraSea = $inoClientesSea->getInoMaster();
+            $datosMaster = $inoMaestraSea->getDatosMasterSea();
+            $objPHPExcel->getActiveSheet()->setCellValue('T' . $i, isset($datosMaster['bandera'])?utf8_encode($datosMaster['bandera']):null);
+            $objPHPExcel->getActiveSheet()->setCellValue('U' . $i, isset($datosMaster['registroadu'])?utf8_encode($datosMaster['registroadu']):null);
+            $objPHPExcel->getActiveSheet()->setCellValue('V' . $i, isset($datosMaster['fchregistroadu'])?utf8_encode($datosMaster['fchregistroadu']):null);
         }
 
         if ($parametros) {
