@@ -259,9 +259,12 @@ class pmActions extends sfActions {
         if ($request->getParameter("format") == "email") {
             $this->setLayout("none");
         } else {
-            $this->redirect("pm/index?idticket=" . $idticket);
+            if ($this->nivel > 0 && $this->app != "intranet") {
+                $this->redirect("pm/index?idticket=" . $idticket);
+            }else{
+                $this->redirect("helpdesk/verTicket?id=" . $idticket);
+            }            
         }
-
 
         $this->loginsGrupo = array();
         $usuarios = Doctrine::getTable("HdeskUserGroup")->createQuery("ug")
