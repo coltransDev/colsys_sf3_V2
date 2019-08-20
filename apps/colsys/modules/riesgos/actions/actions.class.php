@@ -381,23 +381,28 @@ class riesgosActions extends sfActions {
     }
     
     public function executeDatosGridEventos(sfWebRequest $request) {
-        $idriesgo = $request->getParameter("idriesgo");
-        $this->forward404Unless($idriesgo);
+        $idriesgo = $request->getParameter("idriesgo");        
         
         $data = array();
         if(!$request->getParameter("nuevo")){
-            $eventos = Doctrine::getTable("IdgEventos")
+            $q = Doctrine::getTable("IdgEventos")
                     ->createQuery("e")
                     ->select("e.*")        
-                    ->where("e.ca_idriesgo = ?", $idriesgo)
-                    ->addOrderBy("e.ca_fchevento")
-                    ->execute();
+                    ->addOrderBy("e.ca_fchevento");
+            
+            if($idriesgo > 0){
+                $q->where("e.ca_idriesgo = ?", $idriesgo);
+            }
+            $debug = $q->getSqlQuery();
+            
+            $eventos = $q->execute();
             
             foreach ($eventos as $evento) {
                 
                 $row = array();
                 $causa = "";
-                
+                $row["proceso"]     = utf8_encode($evento->getIdgRiesgos()->getIdgProcesos()->getCaNombre());
+                $row["riesgo"]      = utf8_encode($evento->getIdgRiesgos()->getCaRiesgo());
                 $row["idevento"]    = $evento->getCaIdevento();           
                 $row["fchevento"]   = $evento->getCaFchevento();
                 $row["descripcion"] = utf8_encode($evento->getCaDescripcion());
@@ -416,8 +421,6 @@ class riesgosActions extends sfActions {
                 $row["perdida_tot"] = $evento->getCaPerdidaTot();
                 $row["fchcreado"]   = $evento->getCaFchcreado();
                 $row["usucreado"]   = $evento->getCaUsucreado();
-//                if($evento->getCaIdcausa())
-//                    $row["causa"]      = utf8_encode($evento->getIdgCausas()->getCaCausa());
                 
                 $eventosCausas = Doctrine::getTable("IdgEventoCausa")->findBy("ca_idevento", $evento->getCaIdevento());
                 
@@ -434,7 +437,7 @@ class riesgosActions extends sfActions {
         if (count($data) < 1)
             $data[]["idriesgo" . $idriesgo] = $idriesgo;
         
-        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data), "neventos" => count($eventos));
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data), "neventos" => count($eventos), "debug"=>$debug);
         $this->setTemplate("responseTemplate");
     }
     
@@ -528,6 +531,7 @@ class riesgosActions extends sfActions {
         $idriesgo = $request->getParameter("idriesgo");
         $datos = json_decode($request->getParameter("datos"), true);        
         $ncausa = $datos["ncausa[]"]?$datos["ncausa[]"]:[];
+        $nuevo = false;
         
         $this->forward404Unless($idriesgo);
         try{
@@ -538,6 +542,7 @@ class riesgosActions extends sfActions {
                 $evento = Doctrine::getTable("IdgEventos")->find($request->getParameter("idevento"));
             }else{
                 $evento = new IdgEventos();
+                $nuevo = true;
             }
             if($request->getParameter("idriesgo")){
                 $evento->setCaIdriesgo($idriesgo);
@@ -617,44 +622,46 @@ class riesgosActions extends sfActions {
             $proceso = $riesgo->getIdgProcesos();            
             $sucevento = Doctrine::getTable("Sucursal")->find($request->getParameter("idsucursal"));
             
-            
-            $email = new Email();
-            $email->setCaUsuenvio($this->getUser()->getUserId());
-            $email->setCaTipo("Riesgos");
-            $email->setCaIdcaso($evento->getCaIdevento());
-            $email->setCaFrom("no-reply@coltrans.com.co");
-            $email->setCaFromname("Colsys Notificaciones");
-            $email->setCaSubject("NUEVO EVENTO REPORTADO: ".  strtoupper($proceso->getCaNombre()));
-            
-            $request->setParameter("proceso", $proceso->getCaNombre());
-            $request->setParameter("idevento", $evento->getCaIdevento());
-            $request->setParameter("format", "email");
-            
-            $texto = sfContext::getInstance()->getController()->getPresentationFor('riesgos', 'emailEvento');
-            $email->setCaBodyhtml($texto);
-            
-            $usuprocesos = Doctrine::getTable("IdgUsuProcesos")->findBy("ca_idproceso", $proceso->getCaIdproceso());
-            $admons = UsuarioTable::getUsuariosxPerfil("admon-riesgos-colsys");
-                    
-            foreach($usuprocesos as $user){                
-                $logins[] = $user->getCaLogin();
-            }
-            foreach ($admons as $a) {
-                $logins[] = $a->getCaLogin();                
-            }
-//            print_r($logins);
-            foreach ($logins as $login) {                
-                $usuario = Doctrine::getTable("Usuario")->find($login);
-                if(!in_array($usuario->getCaEmail(), $logins)){
-                    if($usuario->getSucursal()->getCaNombre() == $sucevento->getCaNombre()){
-                        if($usuario->getCaActivo())
-                            $email->addTo($usuario->getCaEmail());
+            /*Ticket 74239*/
+            if($nuevo){
+                $email = new Email();
+                $email->setCaUsuenvio($this->getUser()->getUserId());
+                $email->setCaTipo("Riesgos");
+                $email->setCaIdcaso($evento->getCaIdevento());
+                $email->setCaFrom("no-reply@coltrans.com.co");
+                $email->setCaFromname("Colsys Notificaciones");
+                $email->setCaSubject("NUEVO EVENTO REPORTADO: ".  strtoupper($proceso->getCaNombre()));
+
+                $request->setParameter("proceso", $proceso->getCaNombre());
+                $request->setParameter("idevento", $evento->getCaIdevento());
+                $request->setParameter("format", "email");
+
+                $texto = sfContext::getInstance()->getController()->getPresentationFor('riesgos', 'emailEvento');
+                $email->setCaBodyhtml($texto);
+
+                $usuprocesos = Doctrine::getTable("IdgUsuProcesos")->findBy("ca_idproceso", $proceso->getCaIdproceso());
+                $admons = UsuarioTable::getUsuariosxPerfil("admon-riesgos-colsys");
+
+                foreach($usuprocesos as $user){                
+                    $logins[] = $user->getCaLogin();
+                }
+                foreach ($admons as $a) {
+                    $logins[] = $a->getCaLogin();                
+                }
+    //            print_r($logins);
+                foreach ($logins as $login) {                
+                    $usuario = Doctrine::getTable("Usuario")->find($login);
+                    if(!in_array($usuario->getCaEmail(), $logins)){
+                        if($usuario->getSucursal()->getCaNombre() == $sucevento->getCaNombre()){
+                            if($usuario->getCaActivo())
+                                $email->addTo($usuario->getCaEmail());
+                        }
                     }
                 }
+
+                $email->addCC($this->getUser()->getEmail());
+                $email->save($conn);
             }
-            
-            $email->addCC($this->getUser()->getEmail());
-            $email->save($conn);
             
             $conn->commit();
             $this->responseArray = array("success"=>true,"text" => "Riesgos", "expanded" => true, "idevento" => $evento->getCaIdevento(), "idemail" => $email->getCaIdemail());
