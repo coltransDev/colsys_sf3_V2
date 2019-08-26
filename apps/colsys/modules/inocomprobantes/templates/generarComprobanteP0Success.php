@@ -5,11 +5,6 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
-header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-header("Last-Modified: " . gmdate("D, d M Y H:i:s") . "GMT");
-header("Cache-Control: no-cache, must-revalidate");
-header("Pragma: no-cache");
-
 $comprobante = $sf_data->getRaw("comprobante");
 $tipo = $comprobante->getInoTipoComprobante();
 $idsSucursal = $tipo->getIdsSucursal();
@@ -68,7 +63,7 @@ $pdf->SetXY($x+$marginHeader,$y);
 $pdf->Cell(0, 4, $idsSucursal->getCaDireccion(),0,1, "L");
 $y+=$space;
 $pdf->SetXY($x+$marginHeader,$y);
-$pdf->Cell(0, 4, "PBX2: ".$idsSucursal->getCaTelefonos(),0,1, "L");
+$pdf->Cell(0, 4, "PBX: ".$idsSucursal->getCaTelefonos(),0,1, "L");
 $y+=$space;
 $pdf->SetXY($x+$marginHeader,$y);
 $pdf->Cell(0, 4, "FAX: ".$idsSucursal->getCaFax(),0,1, "L");
@@ -285,3 +280,8 @@ if( !$filename ){ //Para evitar que salga la barra de depuracion
 
 
 ?>
+
+
+
+
+

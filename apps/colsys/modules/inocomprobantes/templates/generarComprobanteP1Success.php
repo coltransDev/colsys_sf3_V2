@@ -1,9 +1,6 @@
 <?php
 
-header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-header("Last-Modified: " . gmdate("D, d M Y H:i:s") . "GMT");
-header("Cache-Control: no-cache, must-revalidate");
-header("Pragma: no-cache");
+
 
 /*
  *  This file is part of the Colsys Project.
@@ -219,9 +216,9 @@ $aumentox=15;
         $x=$pdf->GetX()-10;
         $y=$pdf->GetY();
 
-        //echo $comprobante->getCaIdcomprobante();
-        //echo $comprobante->getCaEstado();
-        //exit;
+//        echo $comprobante->getCaIdcomprobante();
+//        echo $comprobante->getCaEstado();
+//        exit;
         if( $comprobante->getCaEstado()==0){
 
             $pdf->SetTextColor(224,224,224);
@@ -263,7 +260,7 @@ $aumentox=15;
         $pdf->SetXY($x+$marginHeader,$y);
         $pdf->Cell(0, 4, "Nit. ".Utils::formatNumber($ids->getCaIdalterno(),0,"",".")."-".$ids->getCaDv() ,0,1, "L");
 
-        //$y+=$space;
+        $y+=$space;
         
         
         
@@ -281,18 +278,16 @@ $aumentox=15;
 
         $y+=$space;
         $pdf->SetXY($x+$marginHeader,$y);
-        $pdf->Cell(0, 4, "PBX: ".$sucursal->getCaTelefono()." ".$sucursal->getCaFax(),0,1, "L");
+        $pdf->Cell(0, 4, "PBX: ".$sucursal->getCaTelefono(),0,1, "L");
 
-        /*$y+=$space;
-        $pdf->SetXY($x+$marginHeader,$y);
-        $pdf->Cell(0, 4, "FAX: ".$sucursal->getCaFax(),0,1, "L");
-        */
-
-        $datostmp= json_decode($sucursal->getCaDatos());
-        
         $y+=$space;
         $pdf->SetXY($x+$marginHeader,$y);
-        $pdf->Cell(0, 4, "E-mail: ".($datostmp->emailFactura!="")?$datostmp->emailFactura:$sucursal->getCaEmail(),0,1, "L"); //.$idsSucursal->getCaEmail()
+        $pdf->Cell(0, 4, "FAX: ".$sucursal->getCaFax(),0,1, "L");
+
+
+        $y+=$space;
+        $pdf->SetXY($x+$marginHeader,$y);
+        $pdf->Cell(0, 4, "E-mail: ".$sucursal->getCaEmail(),0,1, "L"); //.$idsSucursal->getCaEmail()
 
         $y+=$space;
         $pdf->SetXY($x+$marginHeader,$y);
@@ -302,9 +297,6 @@ $aumentox=15;
         $y+=$space;
         $pdf->SetXY($x+$marginHeader,$y);
         $pdf->Cell(0, 4, "No somos grandes contribuyentes ",0,1, "L");
-        $y+=$space;
-        $pdf->SetXY($x+$marginHeader,$y);
-        $pdf->Cell(0, 4, "IVA Regimen Común ",0,1, "L");
 
         $y+=$space;
         $pdf->SetXY($x+$marginHeader,$y);
@@ -313,29 +305,9 @@ $aumentox=15;
         $y+=$space;
         $pdf->SetXY($x+$marginHeader,$y);
         $pdf->Cell(0, 4, "transacciones con el régimen simplificado.",0,1, "L");
-        
-        $datostmp = ParametroTable::retrieveByCaso("CU234",$sucursal->getCaIdempresa());
-        foreach ($datostmp as $d) {
-            $datosMensajes[$d->getCaIdentificacion()]=$d->getCaValor2();
-        }
-        //echo "<pre>";print_r($datosMensajes);echo "</pre>";
-        //exit;
-        if(isset($datosMensajes[$sucursal->getCaIdempresa()."5"]))
-        {            
-            $y+=$space;
-            $pdf->SetXY($x+$marginHeader,$y);
-            $pdf->Cell(0, 4, $datosMensajes[$sucursal->getCaIdempresa()."5"],0,1, "L");
-/*            $pdf->SetRightMargin(55);            
-            //$pdf->Rect($x,$y,140,6);            
-            $pdf->Rect($x,$y,140+$aumentox,(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."1"])/100))*3);
-            $pdf->SetXY($x+2,$y);
-            //$pdf->MultiCell(0, 2, $datosMensajes[$sucursal->getCaIdempresa()."1"] ,0,1, "J");
-            $pdf->MultiCell(0, 3, $datosMensajes[$sucursal->getCaIdempresa()."1"] );
-            $y+=(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."1"])/100))*3;*/
-        }
 
 
-        $y+=5;
+        $y+=6;
         $pdf->SetXY($x+$marginHeader,$y);
         $pdf->Cell(0, 4, strtoupper($tipo->getCaTitulo())." ". $comprobante->getCaConsecutivo()/*str_pad($comprobante->getCaConsecutivo(), 14, "0", STR_PAD_LEFT)*/,0,1, "L");
 
@@ -343,9 +315,9 @@ $aumentox=15;
         $pdf->Image(sfConfig::get('sf_web_dir').DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'pdf'.DIRECTORY_SEPARATOR.$sucursal->getEmpresa()->getCaLogo(), $x, 12, 70, 15);
 
         $y+=6;
-
-        
-        //Encabezado
+//
+//        
+//        //Encabezado
         $pdf->Rect($x,$y,175+$aumentox,20);
         $pdf->line($x+100+$aumentox,$y+10,$x+175+$aumentox,$y+10);
         $pdf->line($x+100+$aumentox,$y,$x+100+$aumentox,$y+20);
@@ -370,15 +342,31 @@ $aumentox=15;
         $pdf->SetXY($x+2,$y);        
         $pdf->Cell(0, 4, "ATENCION: " . $comprobante->getProperty("idcontacto")   ,0,1, "L");
 
-        //[TODO] REEMPLAZAR POR LOS VALORES
         $pdf->SetXY($x+105+$aumentox,$y);
-        $pdf->Cell(0, 4, Utils::parseDate($comprobante->getCaFchcomprobante(), "Y/m/d")  ,0,1, "L");
+        $fechComprobante=Utils::parseDate(($comprobante->getCaFchcomprobante()=="")?date("Y-m-d"):$comprobante->getCaFchcomprobante(), "Y-m-d");
+        $pdf->Cell(0, 4,  $fechComprobante ,0,1, "L");
         $pdf->SetXY($x+135+$aumentox,$y);
-        $plazo=($comprobante->getCaPlazo()>0)?$comprobante->getCaPlazo(): ($comprobante->getIds()->getIdsCliente()->getLibCliente()->getCaDiascredito()>0)?$comprobante->getIds()->getIdsCliente()->getLibCliente()->getCaDiascredito():0;
+        
+        if( !$comprobante->getIds()->getIdsCliente()->getLibCliente()->getCaDiascredito() ||$comprobante->getIds()->getIdsCliente()->getLibCliente()->getCaDiascredito()=="" || $comprobante->getIds()->getIdsCliente()->getLibCliente()->getCaDiascredito()<0 || $comprobante->getIds()->getIdsCliente()->getLibCliente()->getCaDiascredito()=="0" )
+        {
+            $dcredito=0;
+            $fchDocCruce=date("Y-m-d");
+        }
+        else
+            $dcredito=$comprobante->getIds()->getIdsCliente()->getLibCliente()->getCaDiascredito();
 
-        $pdf->Cell(0, 4, $comprobante->getIds()->getIdsCliente()->getLibCliente()->getCaDiascredito()  ,0,1, "L");
+        if($dcredito>0)
+            $fchDocCruce=Utils::agregarDias($fechComprobante , $dcredito,  "Y-m-d");
+        else
+            $fchDocCruce=date("Y-m-d");
+        
+        //$plazo=($comprobante->getCaPlazo()>0)?$comprobante->getCaPlazo(): ($comprobante->getIds()->getIdsCliente()->getLibCliente()->getCaDiascredito()>0)?$comprobante->getIds()->getIdsCliente()->getLibCliente()->getCaDiascredito():0;
+
+        $pdf->Cell(0, 4, $dcredito  ,0,1, "L");
         $pdf->SetXY($x+152+$aumentox,$y);
-        $pdf->Cell(0, 4, Utils::agregarDias($comprobante->getCaFchcomprobante(), $plazo,  "Y/m/d")   ,0,1, "L");
+        
+        
+        $pdf->Cell(0, 4, $fchDocCruce   ,0,1, "L");
 
         $y+=5;
         $pdf->SetXY($x+103+$aumentox,$y);
@@ -388,7 +376,7 @@ $aumentox=15;
         $y-=5;
         $y+=$space;
         $pdf->SetXY($x+2,$y);
-        //$suc_cli=$comprobante->getIds()->getSucursalPrincipal();
+        $suc_cli=$comprobante->getIds()->getSucursalPrincipal();
         if($comprobante->getCaIdsucursal()=="")
         {
             $suc_cli=$comprobante->getIds()->getIdsCliente();
@@ -415,7 +403,7 @@ $aumentox=15;
         $y+=$space;
         $pdf->SetXY($x+2,$y);
         $pdf->Cell(0, 4, "CIUDAD: ".$suc_cli->getCiudad()->getCaCiudad()  ,0,1, "L");
-        $pdf->SetXY($x+40+$aumentox,$y);
+        $pdf->SetXY($x+60+$aumentox,$y);
         $pdf->Cell(0, 4, "TELEFONO: ".$suc_cli->getCaTelefonos()  ,0,1, "L");
 
         $y+=$space;
@@ -434,103 +422,103 @@ $aumentox=15;
 
         $y+=6;
 
-        $pdf->Rect($x,$y,175+$aumentox,23);
-        $y+=$space;
-
-        if($sucursal->getEmpresa()->getCaIdempresa()=="12")        
-            $txt="BIENES : ";        
-        else
-            $txt="BIENES TRANS. : ";
-        
-        $pdf->SetXY($x+2,$y);
-        $pdf->Cell(0, 4, $txt. utf8_decode($comprobante->getProperty("bienestrans"))  ,0,1, "L");
-        
-        $pdf->SetXY($x+135+$aumentox,$y);        
-        if($sucursal->getEmpresa()->getCaIdempresa()=="12")        
-            $txt="";        
-        else
-            $txt="SERVICIO : ".$inoMaestra->getCaTransporte();
-        
-        $pdf->Cell(0, 4, $txt   ,0,1, "L"); //$inoMaestra->getCaTransporte()
-
-        $y+=$space;
-        $pdf->SetXY($x+2,$y);
-        $pdf->Cell(0, 4, "DETALLE  : ". $comprobante->getProperty("detalle")/*$comprobante->getCaObservaciones()*/  ,0,1, "L");
-
-        $y+=$space;
-        $pdf->SetXY($x+2,$y);
-        
-        if($sucursal->getEmpresa()->getCaIdempresa()=="12")        
-            $txt="";        
-        else
-        {
-            if($inoMaestra->getCaTransporte()==Constantes::AEREO)
-                $txt="HAWB  : ".$inoCliente->getCaDoctransporte();    
-            else
-                $txt="BL Hijo  : ".$inoCliente->getCaDoctransporte();
-        }
-        
-        $pdf->Cell(0, 4, $txt  ,0,1, "L");
-
-        
-        
-        
-        
-        if($sucursal->getEmpresa()->getCaIdempresa()=="12" || ($inoMaestra->getCaTransporte()==Constantes::AEREO && $inoMaestra->getCaImpoexpo() == Constantes::IMPO ))
-            $txt="";
-        else
-        {
-            $y+=$space;
-            $pdf->SetXY($x+2,$y);
-            $txt="Nave  : ";
-            $pdf->Cell(0, 4, $txt  ,0,1, "L"); //.$inoCliente->getCaIdnave()
-        }
-        
-
-        //$pdf->SetXY($x+60,$y);
-        
-        $y+=$space;
-        $pdf->SetXY($x+2,$y);
-        
-        if($sucursal->getEmpresa()->getCaIdempresa()=="12")        
-            $txt="";        
-        else
-            $txt="Piezas  : ";
-        $pdf->Cell(0, 4, $txt.$inoCliente->getCaNumpiezas()  ,0,1, "L");
-
-        $pdf->SetXY($x+40,$y);
-        if($sucursal->getEmpresa()->getCaIdempresa()=="12")        
-            $txt="";        
-        else
-            $txt="Peso  : ";
-        $pdf->Cell(0, 4, $txt.$inoCliente->getCaPeso()  ,0,1, "L");
-
-        $pdf->SetXY($x+70,$y);
-        if($sucursal->getEmpresa()->getCaIdempresa()=="12")        
-            $txt="";        
-        else
-            $txt="CMB  : ".$inoCliente->getCaVolumen();        
-        $pdf->Cell(0, 4, $txt  ,0,1, "L");
-
-        $y+=$space;
-        $pdf->SetXY($x+2,$y);
-        
-        if($sucursal->getEmpresa()->getCaIdempresa()=="12")        
-            $txt="";        
-        else
-            $txt="Trayecto  : ".($inoMaestra->getOrigen()->getCaCiudad()." , ".$inoMaestra->getOrigen()->getTrafico()->getCaNombre()."  -  ".$inoMaestra->getDestino()->getCaCiudad()." - ".$inoMaestra->getDestino()->getTrafico()->getCaNombre());
-        $pdf->Cell(0, 4, $txt   ,0,1, "L"); //
-
-        $y+=$space;
-        $pdf->SetXY($x+10,$y);
-        $pdf->Cell(0, 4, ""/*"Para embarques marítimos, la factura debe ser liquidada a la TRM del día de pago mas $30 siempre y cuando esta nos sea inferior"*/  ,0,1, "L");
-        $y+=$space;
-        $pdf->SetXY($x+10,$y);
-        $pdf->Cell(0, 4, "" /*"a la tasa de emisión de esta factura.  También puede consultar la tasa de cambio para pago de sus facturas, llamando a nuestro"*/  ,0,1, "L");
-        //$y+=$space;
-        //$pdf->SetXY($x+10,$y);
-        //$pdf->Cell(0, 4, "" /*"PBX 4239300 Opción 1."*/  ,0,1, "L");
-
+//        $pdf->Rect($x,$y,175+$aumentox,23);
+//        $y+=$space;
+//
+//        if($sucursal->getEmpresa()->getCaIdempresa()=="12")        
+//            $txt="BIENES : ";        
+//        else
+//            $txt="BIENES TRANS. : ";
+//        
+//        $pdf->SetXY($x+2,$y);
+//        $pdf->Cell(0, 4, $txt. utf8_decode($comprobante->getProperty("bienestrans"))  ,0,1, "L");
+//        
+//        $pdf->SetXY($x+135+$aumentox,$y);        
+//        if($sucursal->getEmpresa()->getCaIdempresa()=="12")        
+//            $txt="";        
+//        else
+//            $txt="SERVICIO : ".$inoMaestra->getCaTransporte();
+//        
+//        $pdf->Cell(0, 4, $txt   ,0,1, "L"); //$inoMaestra->getCaTransporte()
+//
+//        $y+=$space;
+//        $pdf->SetXY($x+2,$y);
+//        $pdf->Cell(0, 4, "DETALLE  : ". $comprobante->getProperty("detalle")/*$comprobante->getCaObservaciones()*/  ,0,1, "L");
+//
+//        $y+=$space;
+//        $pdf->SetXY($x+2,$y);
+//        
+//        if($sucursal->getEmpresa()->getCaIdempresa()=="12")        
+//            $txt="";        
+//        else
+//        {
+//            if($inoMaestra->getCaTransporte()==Constantes::AEREO)
+//                $txt="HAWB  : ".$inoCliente->getCaDoctransporte();    
+//            else
+//                $txt="BL Hijo  : ".$inoCliente->getCaDoctransporte();
+//        }
+//        
+//        $pdf->Cell(0, 4, $txt  ,0,1, "L");
+//
+//        
+//        
+//        
+//        
+//        if($sucursal->getEmpresa()->getCaIdempresa()=="12" || ($inoMaestra->getCaTransporte()==Constantes::AEREO && $inoMaestra->getCaImpoexpo() == Constantes::IMPO ))
+//            $txt="";
+//        else
+//        {
+//            $y+=$space;
+//            $pdf->SetXY($x+2,$y);
+//            $txt="Nave  : ";
+//            $pdf->Cell(0, 4, $txt  ,0,1, "L"); //.$inoCliente->getCaIdnave()
+//        }
+//        
+//
+//        //$pdf->SetXY($x+60,$y);
+//        
+//        $y+=$space;
+//        $pdf->SetXY($x+2,$y);
+//        
+//        if($sucursal->getEmpresa()->getCaIdempresa()=="12")        
+//            $txt="";        
+//        else
+//            $txt="Piezas  : ";
+//        $pdf->Cell(0, 4, $txt.$inoCliente->getCaNumpiezas()  ,0,1, "L");
+//
+//        $pdf->SetXY($x+40,$y);
+//        if($sucursal->getEmpresa()->getCaIdempresa()=="12")        
+//            $txt="";        
+//        else
+//            $txt="Peso  : ";
+//        $pdf->Cell(0, 4, $txt.$inoCliente->getCaPeso()  ,0,1, "L");
+//
+//        $pdf->SetXY($x+70,$y);
+//        if($sucursal->getEmpresa()->getCaIdempresa()=="12")        
+//            $txt="";        
+//        else
+//            $txt="CMB  : ".$inoCliente->getCaVolumen();        
+//        $pdf->Cell(0, 4, $txt  ,0,1, "L");
+//
+//        $y+=$space;
+//        $pdf->SetXY($x+2,$y);
+//        
+//        if($sucursal->getEmpresa()->getCaIdempresa()=="12")        
+//            $txt="";        
+//        else
+//            $txt="Trayecto  : ".($inoMaestra->getOrigen()->getCaCiudad()." , ".$inoMaestra->getOrigen()->getTrafico()->getCaNombre()."  -  ".$inoMaestra->getDestino()->getCaCiudad()." - ".$inoMaestra->getDestino()->getTrafico()->getCaNombre());
+//        $pdf->Cell(0, 4, $txt   ,0,1, "L"); //
+//
+//        $y+=$space;
+//        $pdf->SetXY($x+10,$y);
+//        $pdf->Cell(0, 4, ""/*"Para embarques marítimos, la factura debe ser liquidada a la TRM del día de pago mas $30 siempre y cuando esta nos sea inferior"*/  ,0,1, "L");
+//        $y+=$space;
+//        $pdf->SetXY($x+10,$y);
+//        $pdf->Cell(0, 4, "" /*"a la tasa de emisión de esta factura.  También puede consultar la tasa de cambio para pago de sus facturas, llamando a nuestro"*/  ,0,1, "L");
+//        //$y+=$space;
+//        //$pdf->SetXY($x+10,$y);
+//        //$pdf->Cell(0, 4, "" /*"PBX 4239300 Opción 1."*/  ,0,1, "L");
+//
         //Detalles
         $y+=6;
 
@@ -540,6 +528,7 @@ $aumentox=15;
 
         //tres lineas v
         $pdf->line($x+20,$y,$x+20,$y+100);
+        $pdf->line($x+105,$y,$x+105,$y+100);
         if($comprobante->getCaIdmoneda()!="COP")
             $pdf->line($x+125+$aumentox,$y,$x+125+$aumentox,$y+100);
         $pdf->line($x+150+$aumentox,$y,$x+150+$aumentox,$y+100);
@@ -552,8 +541,10 @@ $aumentox=15;
 
         $pdf->SetXY($x+5,$y);
         $pdf->Cell(0, 4, "CÓDIGO"  ,0,1, "L");
-        $pdf->SetXY($x+60,$y);
+        $pdf->SetXY($x+50,$y);
         $pdf->Cell(0, 4, "D E S C R I P C I Ó N"  ,0,1, "L");
+        $pdf->SetXY($x+110,$y);
+        $pdf->Cell(0, 4, "REFERENCIA"  ,0,1, "L");
         $pdf->SetXY($x+130+$aumentox,$y);
         if($comprobante->getCaIdmoneda()!="COP")
             $pdf->Cell(0, 4, "VALOR ".$comprobante->getCaIdmoneda()  ,0,1, "L");
@@ -579,48 +570,48 @@ $aumentox=15;
         $tcambio=$comprobante->getCaTcambio();
         foreach( $transacciones[$comprobante->getCaIdcomprobante()] as $t ){
 
-            if( $lastIngresoPropio!=$t["s_ca_pt"]   ){
-                $pdf->SetXY($x+22,$y+$k+$space);
-                if( $t["s_ca_pt"]=="P" ){
-                    $pdf->Cell(0, 4, "INGRESOS  PROPIOS" ,0,1, "L");
-                    $k+=($space/2);
-                }else if( $t["s_ca_pt"]=="T" ){
-                    $pdf->Cell(0, 4, "INGRESOS PARA TERCEROS" ,0,1, "L");
-                    $k+=($space/2);
-                }
-                if($subtotales>0)
-                {
-                    
-                    
-                    $pdf->SetXY($x+102.5+$aumentox,$y+$k);
-                    $pdf->Cell(0, 4, "SUBTOTAL...." ,0,1, "L");
-                    
-                    if($comprobante->getCaIdmoneda()!="COP")
-                    {
-                        $pdf->SetXY($x,$y+$k);
-                        $pdf->Cell(162, 4, number_format(($subtotales1), 2, ",", ".")  ,0,1, "R");
-                    }
-                    
-                    $pdf->SetXY($x+$aumentox,$y+$k);
-                    $pdf->Cell(175, 4, number_format($subtotales, 2, ",", ".")  ,0,1, "R");
-                    $k+=$space;
-                    $totales["local"]+=$subtotales;
-                    $subtotales=$subtotales1=0;
-                }
+//            if( $lastIngresoPropio!=$t["s_ca_pt"]   ){
+//                $pdf->SetXY($x+22,$y+$k+$space);
+//                if( $t["s_ca_pt"]=="P" ){
+//                    $pdf->Cell(0, 4, "INGRESOS  PROPIOS" ,0,1, "L");
+//                    $k+=($space/2);
+//                }else if( $t["s_ca_pt"]=="T" ){
+//                    $pdf->Cell(0, 4, "INGRESOS PARA TERCEROS" ,0,1, "L");
+//                    $k+=($space/2);
+//                }
+//                if($subtotales>0)
+//                {
+//                    
+//                    
+//                    $pdf->SetXY($x+102.5+$aumentox,$y+$k);
+//                    $pdf->Cell(0, 4, "SUBTOTAL...." ,0,1, "L");
+//                    
+//                    if($comprobante->getCaIdmoneda()!="COP")
+//                    {
+//                        $pdf->SetXY($x,$y+$k);
+//                        $pdf->Cell(162, 4, number_format(($subtotales1), 2, ",", ".")  ,0,1, "R");
+//                    }
+//                    
+//                    $pdf->SetXY($x+$aumentox,$y+$k);
+//                    $pdf->Cell(175, 4, number_format($subtotales, 2, ",", ".")  ,0,1, "R");
+//                    $k+=$space;
+//                    $totales["local"]+=$subtotales;
+//                    $subtotales=$subtotales1=0;
+//                }
                 
-                $k+=$space+$space;
-            }
-            $lastIngresoPropio=$t["s_ca_pt"];  
-
-
+                //$k+=$space+$space;
+//            }
+//            $lastIngresoPropio=$t["s_ca_pt"];  
+//
+//
             $pdf->SetXY($x+5,$y+$k);
-            $pdf->Cell(0, 4,$t["s_ca_cod"] ,0,1, "L");
+            $pdf->Cell(0, 4,$t["mc_ca_idconcepto"] ,0,1, "L");
             $pdf->SetXY($x+25,$y+$k);
 
-            $pdf->Cell(0, 4, strtoupper($t["s_ca_descripcion"] ),0,1, "L");
+            $pdf->Cell(0, 4, strtoupper($t["mc_ca_concepto_esp"] ),0,1, "L");
 
-            //$pdf->SetXY($x+130,$y+$k);
-            //$pdf->Cell(0, 4, $transaccion->getCaCr() ,0,1, "L");
+            $pdf->SetXY($x+107.5,$y+$k);
+            $pdf->Cell(0, 4, $t["im_ca_referencia"] ,0,1, "L");
 
             if($comprobante->getCaIdmoneda()!="COP")
             {
@@ -633,29 +624,30 @@ $aumentox=15;
             //$totales["local"]+=$t["det_ca_cr"]*$tcambio;
             $k+=$space+1;
             
-            if($regContributivo=="G" && $t["s_ca_pt"]=="P")//gran contribuyente e ingresos propios
-            {
-                //$q1 = ParametroTable::retrieveByCaso("CU251",null,null,$tipoComprobante->getCaIdempresa()."2");
-                
-                $impuestos["reteica"]+=round(($t["det_ca_cr"]*$tcambio)* ($t["cric_ca_rteica"]/100));
-                //echo round($t["det_ca_cr"] ."----". ($t["cric_ca_reteica"]));
-                //print_r($t);
-                //exit;
-            }
-            //echo "<pre>";print_r($t);echo "</pre>";
-            //    exit;
+//            if($regContributivo=="G" && $t["s_ca_pt"]=="P")//gran contribuyente e ingresos propios
+//            {
+//                //$q1 = ParametroTable::retrieveByCaso("CU251",null,null,$tipoComprobante->getCaIdempresa()."2");
+//                
+//                $impuestos["reteica"]+=round(($t["det_ca_cr"]*$tcambio)* ($t["cric_ca_rteica"]/100));
+//                //echo round($t["det_ca_cr"] ."----". ($t["cric_ca_reteica"]));
+//                //print_r($t);
+//                //exit;
+//            }
+//            //echo "<pre>";print_r($t);echo "</pre>";
+//            //    exit;
             $t["s_ca_porciva"]= $comprobante->getIva();
             if($t["s_ca_iva"]=="S")
                 $impuestos["iva"]+=round(($t["det_ca_cr"]*$tcambio)* ($t["s_ca_porciva"]/100));
             $subtotales+=($t["det_ca_cr"]*$tcambio);
             $subtotales1+=$t["det_ca_cr"];
-            //$totales["mext"]+=$t["det_ca_cr"];
+//            //$totales["mext"]+=$t["det_ca_cr"];
         }
 
         
 
         if($subtotales>0)
         {
+            $k+=$space;
             $pdf->SetXY($x+102.5+$aumentox,$y+$k);
             $pdf->Cell(0, 4, "SUBTOTAL...." ,0,1, "L");
             
@@ -695,52 +687,51 @@ $aumentox=15;
             $k+=$space+1;
             
             
-            
-        if($regContributivo=="G")
-        {
-            if($impuestos["iva"]>0)
-            {
-                $impuestos["reteiva"]=(($impuestos["iva"]*15)/100);
-                $pdf->SetXY($x+99+$aumentox,$y+$k);
-                $pdf->Cell(0, 4, "RTE.I.V.A ...." ,0,1, "L");
-                
-                if($comprobante->getCaIdmoneda()!="COP")
-                {
-                    $pdf->SetXY($x+$aumentox,$y+$k);
-                    $pdf->Cell(147, 4, number_format($impuestos["reteiva"]/$tcambio, 2, ",", ".")  ,0,1, "R");      
-                }
-                
-                $pdf->SetXY($x+$aumentox,$y+$k);
-                $pdf->Cell(175, 4, number_format( $impuestos["reteiva"]  , 2, ",", ".")  ,0,1, "R");    
-                $k+=$space+1;
-
-            }
-
-            if($impuestos["reteica"]>0)
-            {
-                $pdf->SetXY($x+99+$aumentox,$y+$k);
-                $pdf->Cell(0, 4, "RTE.I.C.A ...." ,0,1, "L");
-                
-                if($comprobante->getCaIdmoneda()!="COP")
-                {
-                    $pdf->SetXY($x+$aumentox,$y+$k);
-                    $pdf->Cell(147, 4, number_format($impuestos["reteica"]/$tcambio, 2, ",", ".")  ,0,1, "R");      
-                }
-                
-                $pdf->SetXY($x+$aumentox,$y+$k);
-                $pdf->Cell(175, 4, number_format($impuestos["reteica"], 2, ",", ".")  ,0,1, "R");    
-                $k+=$space;
-                $k+=$space;
-            }
-        }
-
+//            
+//        if($regContributivo=="G")
+//        {
+//            if($impuestos["iva"]>0)
+//            {
+//                $impuestos["reteiva"]=(($impuestos["iva"]*15)/100);
+//                $pdf->SetXY($x+99+$aumentox,$y+$k);
+//                $pdf->Cell(0, 4, "RTE.I.V.A ...." ,0,1, "L");
+//                
+//                if($comprobante->getCaIdmoneda()!="COP")
+//                {
+//                    $pdf->SetXY($x+$aumentox,$y+$k);
+//                    $pdf->Cell(147, 4, number_format($impuestos["reteiva"]/$tcambio, 2, ",", ".")  ,0,1, "R");      
+//                }
+//                
+//                $pdf->SetXY($x+$aumentox,$y+$k);
+//                $pdf->Cell(175, 4, number_format( $impuestos["reteiva"]  , 2, ",", ".")  ,0,1, "R");    
+//                $k+=$space+1;
+//
+//            }
+//
+//            if($impuestos["reteica"]>0)
+//            {
+//                $pdf->SetXY($x+99+$aumentox,$y+$k);
+//                $pdf->Cell(0, 4, "RTE.I.C.A ...." ,0,1, "L");
+//                
+//                if($comprobante->getCaIdmoneda()!="COP")
+//                {
+//                    $pdf->SetXY($x+$aumentox,$y+$k);
+//                    $pdf->Cell(147, 4, number_format($impuestos["reteica"]/$tcambio, 2, ",", ".")  ,0,1, "R");      
+//                }
+//                
+//                $pdf->SetXY($x+$aumentox,$y+$k);
+//                $pdf->Cell(175, 4, number_format($impuestos["reteica"], 2, ",", ".")  ,0,1, "R");    
+//                $k+=$space;
+//                $k+=$space;
+//            }
+//        }
+//
         $pdf->SetXY($x + 98, $y + $k);
         
-        $k+=$space;
         if($comprobante->getCaIdmoneda()!="COP")
-            $pdf->line($x + 125+$aumentox, $y + $k, $x + 150+$aumentox, $y + $k);
-        
-        $pdf->line($x + 150+$aumentox, $y + $k, $x + 175+$aumentox, $y + $k);
+           // $pdf->line($x + 125+$aumentox, $y + $k, $x + 150+$aumentox, $y + $k);
+        $k+=$space;
+        //$pdf->line($x + 150+$aumentox, $y + $k, $x + 175+$aumentox, $y + $k);
         $k+=$space;
 
         $pdf->SetXY($x+93.6+$aumentox,$y+$k);
@@ -774,7 +765,7 @@ $aumentox=15;
         if($sucursal->getEmpresa()->getCaIdempresa()=="12")        
             $txt="OBSERVACIONES:\n".$comprobante->getProperty("anexos");
         else
-            $txt="ANEXOS:\n".$comprobante->getProperty("anexos");
+            $txt="OBSERVACIONES:\n".$comprobante->getCaObservaciones();
         
         $pdf->MultiCell(0, 4, $txt ,0,1, "C");
         $pdf->SetFont($font, '', 6);
@@ -784,85 +775,85 @@ $aumentox=15;
         $pdf->SetXY($x+5,$y);
         $pdf->MultiCell(0, 4, $tipo->getCaMensaje() ,0,1, "C");
 
-
-        $y+=15;
-        $pdf->SetXY($x+12,$y);
-        $datostmp= json_decode($tipo->getCaDatos());
-        //print_r($datostmp);
-        //exit;
-        $pdf->Cell(0, 3, "Numeración según Resolución DIAN ".$tipo->getCaNoautorizacion()."  ".Utils::parseDate($tipo->getCaFchautorizacion(),"Y/m/d")." ".$tipo->getCaInicialAut()." AL ".$tipo->getCaFinalAut()." FACTURA POR COMPUTADOR. ".$datostmp->vigencia  ,0,1, "L"); 
-
-        $y+=4;
-        
-
-        /*if(isset($datosMensajes[3]))
-        {
-            $y+=7;
-            $pdf->Rect($x,$y,140,6);
-            $pdf->SetXY($x+5,$y);
-            $pdf->MultiCell(0, 2, $datosMensajes[3] ,0,1, "J");
-        }*/
-        
-        if(isset($datosMensajes[$sucursal->getCaIdempresa()."1"]))
-        {
-            $pdf->SetRightMargin(55);            
-            //$pdf->Rect($x,$y,140,6);
-            $pdf->Rect($x,$y,140+$aumentox,(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."1"])/100))*3);
-            $pdf->SetXY($x+2,$y);
-            $pdf->MultiCell(0, 2, $datosMensajes[$sucursal->getCaIdempresa()."1"] ,0,1, "J");
-            $pdf->MultiCell(0, 3, ""/*$datosMensajes[$sucursal->getCaIdempresa()."1"]*/ );
-            $y+=(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."1"])/100))*3;
-        }
-        if(isset($datosMensajes[$sucursal->getCaIdempresa()."2"]))
-        {
-            //$pdf->Rect($x,$y,140,21);
-            $pdf->Rect($x,$y,140+$aumentox,(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."2"])/100))*3);
-            $pdf->SetXY($x+2,$y);
-            $pdf->MultiCell(0, 3, $datosMensajes[$sucursal->getCaIdempresa()."2"] );
-            $y+=(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."2"])/100))*3;
-        }
-
-
-        if(isset($datosMensajes[$sucursal->getCaIdempresa()."3"]))
-        {
-            
-            $pdf->Rect($x,$y,140+$aumentox,(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."3"])/100))*3);
-            $pdf->SetXY($x+2,$y);
-            $pdf->MultiCell(0, 3, $datosMensajes[$sucursal->getCaIdempresa()."3"] );
-            $y+=(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."3"])/100))*3;
-        }
-        
-        if(isset($datosMensajes[$sucursal->getCaIdempresa()."4"]))
-        {
-            
-            $pdf->Rect($x,$y,140+$aumentox,(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."4"])/100))*4);
-            $pdf->SetXY($x+2,$y);
-            $pdf->MultiCell(0, 3, $datosMensajes[$sucursal->getCaIdempresa()."4"]  );
-        }
-
-        $pdf->SetRightMargin(12);
-
-        $y-=26;
-        $pdf->SetXY($x+140+$aumentox,$y);
-        $pdf->Cell(0, 4, "___________________________"  ,0,1, "L");
-        $y+=3;
-        $pdf->SetXY($x+142+$aumentox,$y);
-        $pdf->Cell(0, 4, $sucursal->getEmpresa()->getCaNombre()  ,0,1, "L");
-
-
-        $y+=13;
-        $pdf->SetXY($x+140+$aumentox,$y);
-        $pdf->Cell(0, 4, "___________________________"  ,0,1, "L");
-        $y+=3;
-        $pdf->SetXY($x+148+$aumentox,$y);
-        $pdf->Cell(0, 4, "FIRMA RECIBIDO "  ,0,1, "L");
-        
-        $y+=7;
-        $pdf->SetXY($x+140+$aumentox,$y);
-        $pdf->Cell(0, 4, "___________________________"  ,0,1, "L");
-        $y+=3;
-        $pdf->SetXY($x+148+$aumentox,$y);
-        $pdf->Cell(0, 4, "FECHA RECIBIDO "  ,0,1, "L");
+//
+//        $y+=15;
+//        $pdf->SetXY($x+30,$y);
+//        $pdf->Cell(0, 3, "Numeración según Resolución DIAN ".$tipo->getCaNoautorizacion()."  ".Utils::parseDate($tipo->getCaFchautorizacion(),"Y/m/d")." ".$tipo->getCaInicialAut()." AL ".$tipo->getCaFinalAut()." FACTURA POR COMPUTADOR."  ,0,1, "L");
+//
+//        $datostmp = ParametroTable::retrieveByCaso("CU234",$sucursal->getCaIdempresa());
+//        foreach ($datostmp as $d) {
+//            $datosMensajes[$d->getCaIdentificacion()]=$d->getCaValor2();
+//        }
+//
+//        $y+=4;
+//        if(isset($datosMensajes[$sucursal->getCaIdempresa()."1"]))
+//        {
+//            $pdf->SetRightMargin(55);            
+//            //$pdf->Rect($x,$y,140,6);            
+//            $pdf->Rect($x,$y,140+$aumentox,(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."1"])/100))*3);
+//            $pdf->SetXY($x+2,$y);
+//            //$pdf->MultiCell(0, 2, $datosMensajes[$sucursal->getCaIdempresa()."1"] ,0,1, "J");
+//            $pdf->MultiCell(0, 3, $datosMensajes[$sucursal->getCaIdempresa()."1"] );
+//            $y+=(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."1"])/100))*3;
+//        }
+//
+//        /*if(isset($datosMensajes[3]))
+//        {
+//            $y+=7;
+//            $pdf->Rect($x,$y,140,6);
+//            $pdf->SetXY($x+5,$y);
+//            $pdf->MultiCell(0, 2, $datosMensajes[3] ,0,1, "J");
+//        }*/
+//        if(isset($datosMensajes[$sucursal->getCaIdempresa()."2"]))
+//        {
+//            //$pdf->Rect($x,$y,140,21);
+//            $pdf->Rect($x,$y,140+$aumentox,(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."2"])/100))*3);
+//            $pdf->SetXY($x+2,$y);
+//            $pdf->MultiCell(0, 3, $datosMensajes[$sucursal->getCaIdempresa()."2"] );
+//            $y+=(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."2"])/100))*3;
+//        }
+//
+//
+//        if(isset($datosMensajes[$sucursal->getCaIdempresa()."3"]))
+//        {
+//            
+//            $pdf->Rect($x,$y,140+$aumentox,(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."3"])/100))*3);
+//            $pdf->SetXY($x+2,$y);
+//            $pdf->MultiCell(0, 3, $datosMensajes[$sucursal->getCaIdempresa()."3"] );
+//            $y+=(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."3"])/100))*3;
+//        }
+//        
+//        if(isset($datosMensajes[$sucursal->getCaIdempresa()."4"]))
+//        {
+//            
+//            $pdf->Rect($x,$y,140+$aumentox,(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."4"])/100))*4);
+//            $pdf->SetXY($x+2,$y);
+//            $pdf->MultiCell(0, 3, $datosMensajes[$sucursal->getCaIdempresa()."4"]  );
+//        }
+//
+//        $pdf->SetRightMargin(12);
+//
+//        $y-=26;
+//        $pdf->SetXY($x+140+$aumentox,$y);
+//        $pdf->Cell(0, 4, "___________________________"  ,0,1, "L");
+//        $y+=3;
+//        $pdf->SetXY($x+142+$aumentox,$y);
+//        $pdf->Cell(0, 4, $sucursal->getEmpresa()->getCaNombre()  ,0,1, "L");
+//
+//
+//        $y+=13;
+//        $pdf->SetXY($x+140+$aumentox,$y);
+//        $pdf->Cell(0, 4, "___________________________"  ,0,1, "L");
+//        $y+=3;    
+//        $pdf->SetXY($x+148+$aumentox,$y);
+//        $pdf->Cell(0, 4, "FIRMA RECIBIDO "  ,0,1, "L");
+//        
+//        $y+=7;
+//        $pdf->SetXY($x+140+$aumentox,$y);
+//        $pdf->Cell(0, 4, "___________________________"  ,0,1, "L");
+//        $y+=3;
+//        $pdf->SetXY($x+148+$aumentox,$y);
+//        $pdf->Cell(0, 4, "FECHA RECIBIDO "  ,0,1, "L");
         
         
         
@@ -872,6 +863,4 @@ $pdf->Output ( $filename );
 if( !$filename ){ //Para evitar que salga la barra de depuracion
 	exit();
 }
-
-
 ?>

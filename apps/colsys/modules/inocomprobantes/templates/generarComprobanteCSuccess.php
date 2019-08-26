@@ -237,14 +237,20 @@ $space = 2;
 
 
 $pdf->SetXY($x+$marginHeader,$y);
-$pdf->Cell(0, 4, $sucursal->getEmpresa()->getCaNombre(),0,1, "L");
-$y+=$space;
+
 
 
 $pdf->SetXY($x+$marginHeader,$y);
-$pdf->Cell(0, 4, "Nit. ".Utils::formatNumber($ids->getCaIdalterno(),0,"",".")."-".$ids->getCaDv() ,0,1, "L");
+
+
 
 $y+=$space;
+$y+=$space;
+$y+=$space;
+$y+=$space;
+$y+=$space;
+$y+=$space;
+/*
 $pdf->SetXY($x+$marginHeader,$y);
 $pdf->Cell(0, 4, $sucursal->getCaDireccion(),0,1, "L");
 
@@ -259,9 +265,9 @@ $pdf->Cell(0, 4, "FAX: ".$sucursal->getCaFax(),0,1, "L");
 
 $y+=$space;
 $pdf->SetXY($x+$marginHeader,$y);
-$pdf->Cell(0, 4, "E-mail: ".$sucursal->getCaEmail(),0,1, "L"); //.$idsSucursal->getCaEmail()
+$pdf->Cell(0, 4, "E-mail: ".$sucursal->getCaEmail(),0,1, "L"); //.$idsSucursal->getCaEmail()*/
 
-$y+=$space;
+/*$y+=$space;
 $pdf->SetXY($x+$marginHeader,$y);
 $pdf->Cell(0, 4, $sucursal->getCaNombre().", ".$sucursal->getEmpresa()->getTrafico()->getCaNombre() ,0,1, "L");
 
@@ -276,13 +282,20 @@ $pdf->Cell(0, 4, "Agentes de retención de IVA con ",0,1, "L");
 
 $y+=$space;
 $pdf->SetXY($x+$marginHeader,$y);
-$pdf->Cell(0, 4, "transacciones con el régimen simplificado.",0,1, "L");
+$pdf->Cell(0, 4, "transacciones con el régimen simplificado.",0,1, "L");*/
 
 
-$y+=6;
-$pdf->SetXY($x+$marginHeader,$y);
-$pdf->Cell(0, 4, strtoupper($tipo->getCaTitulo())." NO ". $comprobante->getCaConsecutivo()/*str_pad($comprobante->getCaConsecutivo(), 14, "0", STR_PAD_LEFT)*/,0,1, "L");
+$y+=15;
+$pdf->SetXY($x,$y);
 
+$pdf->Cell(0, 4, $sucursal->getEmpresa()->getCaNombre(),0,1, "L");
+
+$pdf->SetXY($x + 60,$y);
+$pdf->Cell(0, 4, "Nit. ".Utils::formatNumber($ids->getCaIdalterno(),0,"",".")."-".$ids->getCaDv() ,0,1, "L");
+
+$pdf->SetXY($x + 100,$y);
+//$pdf->Cell(0, 4, strtoupper($tipo->getCaTitulo())." NO ". $comprobante->getCaConsecutivo()/*str_pad($comprobante->getCaConsecutivo(), 14, "0", STR_PAD_LEFT)*/,0,1, "L");
+$pdf->Cell(0, 4, strtoupper($tipo->getCaTitulo())." NO ". "No. 001-00000011740",0,1, "L");
 
 $pdf->Image(sfConfig::get('sf_web_dir').DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'pdf'.DIRECTORY_SEPARATOR.$sucursal->getEmpresa()->getCaLogo(), 18, 12, 70, 15, 'JPG');
 
@@ -290,15 +303,15 @@ $y+=6;
 
 
 //Encabezado
-$pdf->Rect($x,$y,175,20);
-$pdf->line($x+100,$y+10,$x+175,$y+10);
-$pdf->line($x+100,$y,$x+100,$y+20);
-$pdf->line($x+130,$y,$x+130,$y+20);
-$pdf->line($x+145,$y,$x+145,$y+10);
+$pdf->Rect($x,$y,175,12);
+//$pdf->line($x+100,$y+10,$x+175,$y+10);
+//$pdf->line($x+100,$y,$x+100,$y+20);
+//$pdf->line($x+130,$y,$x+130,$y+20);
+//$pdf->line($x+145,$y,$x+145,$y+10);
 
 
 $pdf->SetXY($x+105,$y);
-$pdf->Cell(0, 4, "FECHA FACTURA"  ,0,1, "L");
+//$pdf->Cell(0, 4, "FECHA FACTURA"  ,0,1, "L");
 
 //$pdf->SetXY($x+133,$y);
 //$pdf->Cell(0, 4, "PLAZO"  ,0,1, "L");
@@ -309,23 +322,17 @@ $pdf->Cell(0, 4, "FECHA FACTURA"  ,0,1, "L");
 $y+=$space;
 $pdf->SetXY($x+10,$y);
 $pdf->Cell(0, 4, "SEÑORES: ". $comprobante->getIds()->getCaNombre() ,0,1, "L");
+
+$pdf->SetXY($x+75,$y);
+$pdf->Cell(0, 4, "NIT: ".$comprobante->getCaId()."-".$comprobante->getIds()->getCaDv()  ,0,1, "L");
+
+$pdf->SetXY($x+120,$y);
+$pdf->Cell(0, 4, "Fecha: ". Utils::parseDate($comprobante->getCaFchcomprobante(), "Y/m/d")  ,0,1, "L");
+
+
 $y+=$space;
 $pdf->SetXY($x+10,$y);
-$pdf->Cell(0, 4, "ATENCION: "  ,0,1, "L");
-
-//[TODO] REEMPLAZAR POR LOS VALORES
-$pdf->SetXY($x+105,$y);
-$pdf->Cell(0, 4, Utils::parseDate($comprobante->getCaFchcomprobante(), "Y/m/d")  ,0,1, "L");
-
-//$pdf->SetXY($x+135,$y);
-//$plazo=($comprobante->getCaPlazo()>0)?$comprobante->getCaPlazo(): ($comprobante->getIds()->getIdsCliente()->getLibCliente()->getCaDiascredito()>0)?$comprobante->getIds()->getIdsCliente()->getLibCliente()->getCaDiascredito():0;
-
-//$pdf->Cell(0, 4, $comprobante->getIds()->getIdsCliente()->getLibCliente()->getCaDiascredito()  ,0,1, "L");
-//$pdf->SetXY($x+152,$y);
-//$pdf->Cell(0, 4, Utils::agregarDias($comprobante->getCaFchcomprobante(), $plazo,  "Y/m/d")   ,0,1, "L");
-
-$y+=6;
-$pdf->SetXY($x+10,$y);
+//$pdf->Cell(0, 4, "ATENCION: "  ,0,1, "L");
 $suc_cli=$comprobante->getIds()->getSucursalPrincipal();
 if(!$suc_cli)
 {
@@ -339,74 +346,107 @@ else
 }
 
 $pdf->Cell(0, 4, "DIRECCIÓN: ". utf8_decode($direccion)  ,0,1, "L");
+$pdf->SetXY($x+120,$y);
 
-$pdf->SetXY($x+105,$y);
-$pdf->Cell(0, 4, "TASA DE CAMBIO ". $comprobante->getCaTcambio() ,0,1, "L");
-$pdf->SetXY($x+148,$y);
-$pdf->Cell(0, 4, "No. REF. "  ,0,1, "L");
-
-$y+=$space;
-$pdf->SetXY($x+10,$y);
-$pdf->Cell(0, 4, "CIUDAD: ".$suc_cli->getCiudad()->getCaCiudad()  ,0,1, "L");
-$pdf->SetXY($x+60,$y);
 $pdf->Cell(0, 4, "TELEFONO: ".$suc_cli->getCaTelefonos()  ,0,1, "L");
-
 $y+=$space;
 $pdf->SetXY($x+10,$y);
-$pdf->Cell(0, 4, "NIT: ".$comprobante->getCaId()."-".$comprobante->getIds()->getCaDv()  ,0,1, "L");
-$pdf->SetXY($x+60,$y);
+
+$pdf->Cell(0, 4, "CIUDAD: ".$suc_cli->getCiudad()->getCaCiudad()  ,0,1, "L");
+
+$pdf->SetXY($x+75,$y);
 $pdf->Cell(0, 4, "VENDEDOR: ".$inoCliente->getCaVendedor()  ,0,1, "L");
 
+/*$y += 3 * $space;
 
-$pdf->SetXY($x+110,$y);
-$pdf->Cell(0, 4, Utils::formatNumber($comprobante->getCaTcambio(), 2, ".", ",")  ,0,1, "L");
-$pdf->SetXY($x+143,$y);
-$pdf->Cell(0, 4, $inoMaestra->getCaReferencia()  ,0,1, "L");
+$pdf->Rect($x,$y,175,12);*/
 
-$y+=8;
+$y+=6;
+$pdf->Rect($x,$y,175,15);
+$pdf->SetXY($x+10,$y+5);
+$pdf->MultiCell(0, 4, $tipo->getCaMensaje() ,0,1, "C");
 
-$pdf->Rect($x,$y,175,23);
-$y+=$space;
+//[TODO] REEMPLAZAR POR LOS VALORES
+//$pdf->SetXY($x+180,$y+50);
 
+
+//$pdf->SetXY($x+135,$y);
+//$plazo=($comprobante->getCaPlazo()>0)?$comprobante->getCaPlazo(): ($comprobante->getIds()->getIdsCliente()->getLibCliente()->getCaDiascredito()>0)?$comprobante->getIds()->getIdsCliente()->getLibCliente()->getCaDiascredito():0;
+
+//$pdf->Cell(0, 4, $comprobante->getIds()->getIdsCliente()->getLibCliente()->getCaDiascredito()  ,0,1, "L");
+//$pdf->SetXY($x+152,$y);
+//$pdf->Cell(0, 4, Utils::agregarDias($comprobante->getCaFchcomprobante(), $plazo,  "Y/m/d")   ,0,1, "L");
+
+$y+=1;
 $pdf->SetXY($x+10,$y);
-$pdf->Cell(0, 4, "BIENES TRANS. : ". $comprobante->getProperty("bienestrans")  ,0,1, "L");
-$pdf->SetXY($x+135,$y);
-$pdf->Cell(0, 4, "SERVICIO : ".$inoMaestra->getCaTransporte()  ,0,1, "L"); //$inoMaestra->getCaTransporte()
+
+
+/*$pdf->SetXY($x+105,$y);
+$pdf->Cell(0, 4, "TASA DE CAMBIO ". $comprobante->getCaTcambio() ,0,1, "L");
+$pdf->SetXY($x+148,$y);
+$pdf->Cell(0, 4, "No. REF. "  ,0,1, "L");*/
 
 $y+=$space;
 $pdf->SetXY($x+10,$y);
-$pdf->Cell(0, 4, "DETALLE  : ". $comprobante->getProperty("detalle")/*$comprobante->getCaObservaciones()*/  ,0,1, "L");
-
-$y+=$space;
-$pdf->SetXY($x+10,$y);
-$pdf->Cell(0, 4, "BL Hijo  : ".$inoCliente->getCaDoctransporte()  ,0,1, "L");
-
-$y+=$space;
-$pdf->SetXY($x+10,$y);
-$pdf->Cell(0, 4, "Nave  : "  ,0,1, "L"); //.$inoCliente->getCaIdnave()
 
 $pdf->SetXY($x+60,$y);
-$pdf->Cell(0, 4, "Piezas  : ".$inoCliente->getCaNumpiezas()  ,0,1, "L");
 
-$pdf->SetXY($x+90,$y);
-$pdf->Cell(0, 4, "Peso  : ".$inoCliente->getCaPeso()  ,0,1, "L");
-
-$pdf->SetXY($x+120,$y);
-$pdf->Cell(0, 4, "CMB  : ".$inoCliente->getCaVolumen()  ,0,1, "L");
 
 $y+=$space;
 $pdf->SetXY($x+10,$y);
-$pdf->Cell(0, 4, "Trayecto  : ".($inoMaestra->getOrigen()->getCaCiudad()." , ".$inoMaestra->getOrigen()->getTrafico()->getCaNombre()."  -  ".$inoMaestra->getDestino()->getCaCiudad()." - ".$inoMaestra->getDestino()->getTrafico()->getCaNombre())  ,0,1, "L"); //
 
-$y+=$space;
-$pdf->SetXY($x+10,$y);
-$pdf->Cell(0, 4, ""/*"Para embarques marítimos, la factura debe ser liquidada a la TRM del día de pago mas $30 siempre y cuando esta nos sea inferior"*/  ,0,1, "L");
-$y+=$space;
-$pdf->SetXY($x+10,$y);
-$pdf->Cell(0, 4, "" /*"a la tasa de emisión de esta factura.  También puede consultar la tasa de cambio para pago de sus facturas, llamando a nuestro"*/  ,0,1, "L");
-$y+=$space;
-$pdf->SetXY($x+10,$y);
-$pdf->Cell(0, 4, "" /*"PBX 4239300 Opción 1."*/  ,0,1, "L");
+
+
+
+/*$pdf->SetXY($x+110,$y);
+$pdf->Cell(0, 4, Utils::formatNumber($comprobante->getCaTcambio(), 2, ".", ",")  ,0,1, "L");
+$pdf->SetXY($x+143,$y);
+$pdf->Cell(0, 4, $inoMaestra->getCaReferencia()  ,0,1, "L");*/
+
+//$y+=8;
+
+//$pdf->Rect($x,$y,175,23);
+//$y+=$space;
+
+//$pdf->SetXY($x+10,$y);
+//$pdf->Cell(0, 4, "BIENES TRANS. : ". $comprobante->getProperty("bienestrans")  ,0,1, "L");
+//$pdf->SetXY($x+135,$y);
+//$pdf->Cell(0, 4, "SERVICIO : ".$inoMaestra->getCaTransporte()  ,0,1, "L"); //$inoMaestra->getCaTransporte()
+
+//$y+=$space;
+//$pdf->SetXY($x+10,$y);
+//$pdf->Cell(0, 4, "DETALLE  : ". $comprobante->getProperty("detalle")/*$comprobante->getCaObservaciones()*/  ,0,1, "L");
+
+//$y+=$space;
+//$pdf->SetXY($x+10,$y);
+//$pdf->Cell(0, 4, "BL Hijo  : ".$inoCliente->getCaDoctransporte()  ,0,1, "L");
+
+//$y+=$space;
+//$pdf->SetXY($x+10,$y);
+//$pdf->Cell(0, 4, "Nave  : "  ,0,1, "L"); //.$inoCliente->getCaIdnave()
+
+//$pdf->SetXY($x+60,$y);
+//$pdf->Cell(0, 4, "Piezas  : ".$inoCliente->getCaNumpiezas()  ,0,1, "L");
+
+//$pdf->SetXY($x+90,$y);
+//$pdf->Cell(0, 4, "Peso  : ".$inoCliente->getCaPeso()  ,0,1, "L");
+
+//$pdf->SetXY($x+120,$y);
+//$pdf->Cell(0, 4, "CMB  : ".$inoCliente->getCaVolumen()  ,0,1, "L");
+
+//$y+=$space;
+//$pdf->SetXY($x+10,$y);
+//$pdf->Cell(0, 4, "Trayecto  : ".($inoMaestra->getOrigen()->getCaCiudad()." , ".$inoMaestra->getOrigen()->getTrafico()->getCaNombre()."  -  ".$inoMaestra->getDestino()->getCaCiudad()." - ".$inoMaestra->getDestino()->getTrafico()->getCaNombre())  ,0,1, "L"); //
+
+//$y+=$space;
+//$pdf->SetXY($x+10,$y);
+//$pdf->Cell(0, 4, ""/*"Para embarques marítimos, la factura debe ser liquidada a la TRM del día de pago mas $30 siempre y cuando esta nos sea inferior"*/  ,0,1, "L");
+//$y+=$space;
+//$pdf->SetXY($x+10,$y);
+//$pdf->Cell(0, 4, "" /*"a la tasa de emisión de esta factura.  También puede consultar la tasa de cambio para pago de sus facturas, llamando a nuestro"*/  ,0,1, "L");
+//$y+=$space;
+//$pdf->SetXY($x+10,$y);
+//$pdf->Cell(0, 4, "" /*"PBX 4239300 Opción 1."*/  ,0,1, "L");
 
 
 //Detalles
@@ -524,38 +564,41 @@ $k+=$space;
 
 
 
-$y+=100+$space;
+$y+=100;
+$pdf->line($x+60,$y+1,$x+60,$y+19);
 
-$pdf->Rect($x,$y,175,10);
-$pdf->SetXY($x+5,$y);
 
-$pdf->MultiCell(0, 4, "SON:\n     ". strtoupper(num2letras($totales+$impuestos , false )) . " M/CTE" ,0,1, "C");
+$pdf->Rect($x,$y+1,175,18);
+$pdf->SetXY($x,$y+2);
+$pdf->Cell(0, 4, "Elaboró: " ,0,1, "L");
+$pdf->SetXY($x+62,$y+2);
+$pdf->Cell(0, 4, "Aceptada Firma   NIT: " ,0,1, "L");
+
+
+/*$pdf->MultiCell(0, 4, "SON:\n     ". strtoupper(num2letras($totales+$impuestos , false )) . " M/CTE" ,0,1, "C");
 
 $y+=10;
 $pdf->Rect($x,$y,175,10);
 $pdf->SetXY($x+5,$y);
-$pdf->MultiCell(0, 4, "ANEXOS:\n".$comprobante->getProperty("anexos") ,0,1, "C");
+$pdf->MultiCell(0, 4, "ANEXOS:\n".$comprobante->getProperty("anexos") ,0,1, "C");*/
 
-$y+=10;
-$pdf->Rect($x,$y,175,15);
-$pdf->SetXY($x+10,$y);
-$pdf->MultiCell(0, 4, $tipo->getCaMensaje() ,0,1, "C");
+
 
 
 $y+=15;
 /*$pdf->SetXY($x+30,$y);
 $pdf->Cell(0, 3, "Numeración según Resolución DIAN ".$tipo->getCaNoautorizacion()."  ".Utils::parseDate($tipo->getCaFchautorizacion(),"Y/m/d")." ".$tipo->getCaInicialAut()." AL ".$tipo->getCaFinalAut()." FACTURA POR COMPUTADOR."  ,0,1, "L");
 */
-$datostmp = ParametroTable::retrieveByCaso("CU234",$sucursal->getCaIdempresa());
+/*$datostmp = ParametroTable::retrieveByCaso("CU234",$sucursal->getCaIdempresa());
 foreach ($datostmp as $d) {
     $datosMensajes[]=$d->getCaValor2();
-}
+}*/
 
 //$pdf->SetRightMargin(55);
-$y+=4;
+/*$y+=4;
 $pdf->Rect($x,$y,140,6);
 $pdf->SetXY($x+5,$y);
-$pdf->MultiCell(0, 2, (isset($datosMensajes[0])?$datosMensajes[0]:"") ,0,1, "J");
+$pdf->MultiCell(0, 2, (isset($datosMensajes[0])?$datosMensajes[0]:"") ,0,1, "J");*/
 
 if(isset($datosMensajes[3]))
 {
@@ -588,7 +631,7 @@ $pdf->SetXY($x+148,$y);
 $pdf->Cell(0, 4, $sucursal->getEmpresa()->getCaNombre()  ,0,1, "L");
 */
 
-$y+=10;
+/*$y+=10;
 $pdf->SetXY($x+20,$y);
 $pdf->Cell(0, 4, "___________________________"  ,0,1, "L");
 
@@ -602,7 +645,7 @@ $pdf->Cell(0, 4, "ELABORO "  ,0,1, "L");
 
 
 $pdf->SetXY($x+138,$y);
-$pdf->Cell(0, 4, "FIRMA RECIBIDO "  ,0,1, "L");
+$pdf->Cell(0, 4, "FIRMA RECIBIDO "  ,0,1, "L");*/
 
 $pdf->Output ( $filename );
 if( !$filename ){ //Para evitar que salga la barra de depuracion

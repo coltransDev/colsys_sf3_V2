@@ -261,16 +261,12 @@ foreach($comprobantes as $comprobante)
 
     $y+=$space;
     $pdf->SetXY($x+$marginHeader,$y);
+    $pdf->Cell(0, 4, "Regimen común ",0,1, "L");
+    
+    $y+=$space;
+    $pdf->SetXY($x+$marginHeader,$y);
     $pdf->Cell(0, 4, "No somos grandes contribuyentes ",0,1, "L");
-
-    $y+=$space;
-    $pdf->SetXY($x+$marginHeader,$y);
-    $pdf->Cell(0, 4, "Agentes de retención de IVA con ",0,1, "L");
-
-    $y+=$space;
-    $pdf->SetXY($x+$marginHeader,$y);
-    $pdf->Cell(0, 4, "transacciones con el régimen simplificado.",0,1, "L");
-
+    
     $datostmp = ParametroTable::retrieveByCaso("CU234",$sucursal->getCaIdempresa());
     foreach ($datostmp as $d) {
         $datosMensajes[$d->getCaIdentificacion()]=$d->getCaValor2();
@@ -283,7 +279,30 @@ foreach($comprobantes as $comprobante)
         $pdf->Cell(0, 4, $datosMensajes[$sucursal->getCaIdempresa()."5"],0,1, "L");
     }
 
-    $y+=6;
+    if($sucursal->getCaIdempresa()=="2" || $sucursal->getCaIdempresa()=="8")
+    {
+        $y+=$space;
+        $pdf->SetXY($x+$marginHeader,$y);
+        $pdf->Cell(0, 4, "Agentes de retención de IVA ",0,1, "L");        
+        $y+=$space;
+        $pdf->SetXY($x+$marginHeader,$y);        
+        $pdf->Cell(0, 4, "Articulo 437-2 Num. 7 Prov.C.I.",0,1, "L");   
+        $y+=$space;
+        $pdf->SetXY($x+$marginHeader,$y);
+        $pdf->Cell(0, 4, "Num. 9 Regimen-Simple ",0,1, "L");        
+    }
+    else
+    {
+        $y+=$space;
+        $pdf->SetXY($x+$marginHeader,$y);
+        $pdf->Cell(0, 4, "Agentes de retención de IVA ",0,1, "L");        
+        $pdf->Cell(0, 4, "",0,1, "L");
+        $y+=$space;
+        $pdf->SetXY($x+$marginHeader,$y);        
+        $pdf->Cell(0, 4, "Articulo 437-2 Num. 9 Regimen-Simple",0,1, "L");        
+    }
+
+    $y+=$space;
     $pdf->SetXY($x+$marginHeader,$y);
     $pdf->Cell(0, 4, strtoupper($tipo->getCaTitulo())." ". $comprobante->getCaConsecutivo()/*str_pad($comprobante->getCaConsecutivo(), 14, "0", STR_PAD_LEFT)*/,0,1, "L");
 
@@ -398,7 +417,7 @@ foreach($comprobantes as $comprobante)
     $pdf->SetXY($x+2,$y);
     $pdf->Cell(0, 4, $txt. utf8_decode($comprobante->getProperty("bienestrans"))  ,0,1, "L");
 
-    $pdf->SetXY($x+135+$aumentox,$y);        
+    $pdf->SetXY($x+130+$aumentox,$y);        
     $txt="SERVICIO : ". $comprobante->getInoCentroCosto()->getCaNombre();
 
     $pdf->Cell(0, 4, $txt   ,0,1, "L"); //$inoMaestra->getCaTransporte()
@@ -414,11 +433,11 @@ foreach($comprobantes as $comprobante)
         $txt="Doc. Transp.  : ".$datos->ca_doctransporte;
     else
     {
-        if($inoMaestra->getCaTransporte()==Constantes::AEREO)
+        /*if($inoMaestra->getCaTransporte()==Constantes::AEREO)
             $txt="HAWB  : ".$inoCliente->getCaDoctransporte();    
         else if($inoMaestra->getCaTransporte()==Constantes::MARITIMO)
             $txt="BL Hijo  : ".$inoCliente->getCaDoctransporte();
-        else
+        else*/
             $txt="Doc. Transp.  : ".($inoCliente->getCaDoctransporte()!=""?$inoCliente->getCaDoctransporte():$datos->ca_doctransporte);
     }
 
@@ -788,7 +807,7 @@ foreach($comprobantes as $comprobante)
     $txt=round(($totales["mext"]+(( $datos->iva-$datos->rteica-$datos->rteiva-$datos->rtefuente))-$vanticipo),2);
     if($tipoImpresion=="P")
     {
-        $txt= round( ($totales["local"]+(( $datos->iva-$datos->rteica-$datos->rteiva-$datos->rtefuente)*$tcambio)-$vanticipoCop),2);
+        $txt= round( ($totales["local"]+(( $datos->iva-$datos->rteica-$datos->rteiva-$datos->rtefuente)*$tcambio)-$vanticipoCop),0);
     }
     $pdf->MultiCell(0, 4, "SON: ". strtoupper(num2letras(number_format($txt, 2, '.', '') , false, true )) ." ".($tipoImpresion=="P"?"PESOS":$comprobante->getCaIdmoneda()) . (($comprobante->getCaIdmoneda()=="COP" || $tipoImpresion=="P")?" M/CTE":"") ,0,1, "C");
     $space = 2;
@@ -867,12 +886,12 @@ foreach($comprobantes as $comprobante)
     }
     $pdf->SetXY($x+140+$aumentox,$y);
     $pdf->Cell(0, 4, "___________________________"  ,0,1, "L");
-    $y+=3;
+    $y+=2;
     $pdf->SetXY($x+142+$aumentox,$y);
     $pdf->Cell(0, 4, $sucursal->getEmpresa()->getCaNombre()  ,0,1, "L");
 
 
-    $y+=15;
+    $y+=14;
     $pdf->SetXY($x+140+$aumentox,$y);
     $pdf->Cell(0, 4, "___________________________"  ,0,1, "L");
     $y+=3;
@@ -888,11 +907,23 @@ foreach($comprobantes as $comprobante)
 }
 
 $digref= substr($ca_referencia, 0,1);
-if($trd=="1" && $comprobante->getCaEstado()=="5" && ( $digref=="4"||$digref=="5" || $digref=="6" || $digref=="8" ) )
+if($trd=="1" && $comprobante->getCaEstado()=="5" && ( $digref=="4"||$digref=="5" || $digref=="6" || $digref=="8" || $digref=="1" || $digref=="3" ) )
 {
-    $tipDoc = Doctrine::getTable("TipoDocumental")->find("7");
     $ref1=$inoMaestra->getCaReferencia();
     $ref2=$inoCliente->getCaDoctransporte();
+    $impoexpo = $inoMaestra->getCaImpoexpo();    
+    $datosMaster = json_decode($inoMaestra->getCaDatos());
+    $transporte = $inoMaestra->getCaTransporte();
+    
+    if((($impoexpo == Constantes::IMPO || $impoexpo == Constantes::TRIANGULACION) && $transporte== Constantes::MARITIMO) || ($impoexpo == Constantes::OTMDTA && $transporte == Constantes::TERRESTRE && $datosMaster->idempresa == 2))
+        $iddoc = 7;
+    else if(($impoexpo == Constantes::IMPO || $impoexpo == Constantes::TRIANGULACION) && $transporte == Constantes::AEREO)
+        $iddoc = 58;
+    else if($impoexpo == Constantes::EXPO)
+        $iddoc = 59;        
+        
+    $tipDoc = Doctrine::getTable("TipoDocumental")->find($iddoc);
+    
     $path="";
     $folder = $tipDoc->getCaDirectorio();
     if ($ref1)
@@ -916,8 +947,11 @@ if($trd=="1" && $comprobante->getCaEstado()=="5" && ( $digref=="4"||$digref=="5"
 
     if(! file_exists($directory . $fileName) )
     {
+        $datos = array();
+        $datos["idcomprobante"] = $comprobante->getCaIdcomprobante();
+        
         $archivo = new Archivos();
-        $archivo->setCaIddocumental("7");
+        $archivo->setCaIddocumental($iddoc);
         $archivo->setCaNombre($fileName);
         $archivo->setCaMime($mime);
         $archivo->setCaSize($size);
@@ -926,11 +960,16 @@ if($trd=="1" && $comprobante->getCaEstado()=="5" && ( $digref=="4"||$digref=="5"
         $archivo->setCaRef2($inoCliente->getCaDoctransporte());
         if($comprobante->getCaEstado()==8)
             $archivo->setCaRef3("Anulado");
-
+        $archivo->setCaDatos(json_encode($datos));
         $archivo->save();
 
         $filename= $directory . $fileName;
         $pdf->Output ( $filename );
+    }
+    else
+    {
+        $filename= $directory . $fileName;
+        $pdf->Output ( $filename );        
     }
 }
 $filename="";

@@ -5,172 +5,170 @@ header("Last-Modified: " . gmdate("D, d M Y H:i:s") . "GMT");
 header("Cache-Control: no-cache, must-revalidate");
 header("Pragma: no-cache");
 
-/*
- *  This file is part of the Colsys Project.
- *
- *  (c) Coltrans S.A. - Colmas Ltda.
- */
-function num2letras($num, $fem = true, $dec = true) {
-
-   $num=(int)$num;
-   $matuni[2]  = "dos";
-   $matuni[3]  = "tres";
-   $matuni[4]  = "cuatro";
-   $matuni[5]  = "cinco";
-   $matuni[6]  = "seis";
-   $matuni[7]  = "siete";
-   $matuni[8]  = "ocho";
-   $matuni[9]  = "nueve";
-   $matuni[10] = "diez";
-   $matuni[11] = "once";
-   $matuni[12] = "doce";
-   $matuni[13] = "trece";
-   $matuni[14] = "catorce";
-   $matuni[15] = "quince";
-   $matuni[16] = "dieciseis";
-   $matuni[17] = "diecisiete";
-   $matuni[18] = "dieciocho";
-   $matuni[19] = "diecinueve";
-   $matuni[20] = "veinte";
-   $matunisub[2] = "dos";
-   $matunisub[3] = "tres";
-   $matunisub[4] = "cuatro";
-   $matunisub[5] = "quin";
-   $matunisub[6] = "seis";
-   $matunisub[7] = "sete";
-   $matunisub[8] = "ocho";
-   $matunisub[9] = "nove";
-
-   $matdec[2] = "veint";
-   $matdec[3] = "treinta";
-   $matdec[4] = "cuarenta";
-   $matdec[5] = "cincuenta";
-   $matdec[6] = "sesenta";
-   $matdec[7] = "setenta";
-   $matdec[8] = "ochenta";
-   $matdec[9] = "noventa";
-   $matsub[3]  = 'mill';
-   $matsub[5]  = 'bill';
-   $matsub[7]  = 'mill';
-   $matsub[9]  = 'trill';
-   $matsub[11] = 'mill';
-   $matsub[13] = 'bill';
-   $matsub[15] = 'mill';
-   $matmil[4]  = 'millones';
-   $matmil[6]  = 'billones';
-   $matmil[7]  = 'de billones';
-   $matmil[8]  = 'millones de billones';
-   $matmil[10] = 'trillones';
-   $matmil[11] = 'de trillones';
-   $matmil[12] = 'millones de trillones';
-   $matmil[13] = 'de trillones';
-   $matmil[14] = 'billones de trillones';
-   $matmil[15] = 'de billones de trillones';
-   $matmil[16] = 'millones de billones de trillones';
-
-   $num = trim((string)@$num);
-   if ($num[0] == '-') {
-      $neg = 'menos ';
-      $num = substr($num, 1);
-   }else
-      $neg = '';
-   while ($num[0] == '0') $num = substr($num, 1);
-   if ($num[0] < '1' or $num[0] > 9) $num = '0' . $num;
-   $zeros = true;
-   $punt = false;
-   $ent = '';
-   $fra = '';
-    for ($c = 0; $c < strlen($num); $c++) {
-        $n = $num[$c];
-        if (! (strpos(".,'''", $n) === false)) {
-            if ($punt) break;
-            else{
-                $punt = true;
-                continue;
-            }
-        }elseif (! (strpos('0123456789', $n) === false)) {
-            if ($punt) {
-                if ($n != '0') $zeros = false;
-                $fra .= $n;
-            }else
-                $ent .= $n;
-        }else
-            break;
-    }
-    $ent = '     ' . $ent;
-    if ($dec and $fra and ! $zeros) {
-        $fin = ' coma';
-        for ($n = 0; $n < strlen($fra); $n++) {
-            if (($s = $fra[$n]) == '0')
-                $fin .= ' cero';
-            elseif ($s == '1')
-                $fin .= $fem ? ' una' : ' un';
-            else
-                $fin .= ' ' . $matuni[$s];
-        }
-    }else
-        $fin = '';
-    if ((int)$ent === 0) return 'Cero ' . $fin;
-    $tex = '';
-    $sub = 0;
-    $mils = 0;
-    $neutro = false;
-    while ( ($num = substr($ent, -3)) != '   ') {
-        $ent = substr($ent, 0, -3);
-        if (++$sub < 3 and $fem) {
-            $matuni[1] = 'una';
-            $subcent = 'as';
-        }else{
-            $matuni[1] = $neutro ? 'un' : 'uno';
-            $subcent = 'os';
-        }
-        $t = '';
-        $n2 = substr($num, 1);
-        if ($n2 == '00') {
-        }elseif ($n2 < 21)
-            $t = ' ' . $matuni[(int)$n2];
-        elseif ($n2 < 30) {
-            $n3 = $num[2];
-            if ($n3 != 0) $t = 'i' . $matuni[$n3];
-            $n2 = $num[1];
-            $t = ' ' . $matdec[$n2] . $t;
-        }else{
-            $n3 = $num[2];
-            if ($n3 != 0) $t = ' y ' . $matuni[$n3];
-            $n2 = $num[1];
-            $t = ' ' . $matdec[$n2] . $t;
-        }
-        $n = $num[0];
-        if ($n == 1) {
-            $t = ' ciento' . $t;
-        }elseif ($n == 5){
-            $t = ' ' . $matunisub[$n] . 'ient' . $subcent . $t;
-        }elseif ($n != 0){
-            $t = ' ' . $matunisub[$n] . 'cient' . $subcent . $t;
-        }
-        if ($sub == 1) {
-        }elseif (! isset($matsub[$sub])) {
-            if ($num == 1) {
-                $t = ' mil';
-            }elseif ($num > 1){
-                $t .= ' mil';
-            }
-        }elseif ($num == 1) {
-            $t .= ' ' . $matsub[$sub] . 'ón';
-        }elseif ($num > 1){
-            $t .= ' ' . $matsub[$sub] . 'ones';
-        }
-        if ($num == '000') $mils ++;
-        elseif ($mils != 0) {
-            if (isset($matmil[$sub])) $t .= ' ' . $matmil[$sub];
-            $mils = 0;
-        }
-        $neutro = true;
-        $tex = $t . $tex;
-   }
-   $tex = $neg . substr($tex, 1) . $fin;
-   return ucfirst($tex);
-}
+function num2letras($num, $fem = false, $dec = true) { 
+    
+   $matuni[2]  = "dos"; 
+   $matuni[3]  = "tres"; 
+   $matuni[4]  = "cuatro"; 
+   $matuni[5]  = "cinco"; 
+   $matuni[6]  = "seis"; 
+   $matuni[7]  = "siete"; 
+   $matuni[8]  = "ocho"; 
+   $matuni[9]  = "nueve"; 
+   $matuni[10] = "diez"; 
+   $matuni[11] = "once"; 
+   $matuni[12] = "doce"; 
+   $matuni[13] = "trece"; 
+   $matuni[14] = "catorce"; 
+   $matuni[15] = "quince"; 
+   $matuni[16] = "dieciseis"; 
+   $matuni[17] = "diecisiete"; 
+   $matuni[18] = "dieciocho"; 
+   $matuni[19] = "diecinueve"; 
+   $matuni[20] = "veinte"; 
+   $matunisub[2] = "dos"; 
+   $matunisub[3] = "tres"; 
+   $matunisub[4] = "cuatro"; 
+   $matunisub[5] = "quin"; 
+   $matunisub[6] = "seis"; 
+   $matunisub[7] = "sete"; 
+   $matunisub[8] = "ocho"; 
+   $matunisub[9] = "nove"; 
+   $matdec[2] = "veint"; 
+   $matdec[3] = "treinta"; 
+   $matdec[4] = "cuarenta"; 
+   $matdec[5] = "cincuenta"; 
+   $matdec[6] = "sesenta"; 
+   $matdec[7] = "setenta"; 
+   $matdec[8] = "ochenta"; 
+   $matdec[9] = "noventa"; 
+   $matsub[3]  = 'mill'; 
+   $matsub[5]  = 'bill'; 
+   $matsub[7]  = 'mill'; 
+   $matsub[9]  = 'trill'; 
+   $matsub[11] = 'mill'; 
+   $matsub[13] = 'bill'; 
+   $matsub[15] = 'mill'; 
+   $matmil[4]  = 'millones'; 
+   $matmil[6]  = 'billones'; 
+   $matmil[7]  = 'de billones'; 
+   $matmil[8]  = 'millones de billones'; 
+   $matmil[10] = 'trillones'; 
+   $matmil[11] = 'de trillones'; 
+   $matmil[12] = 'millones de trillones'; 
+   $matmil[13] = 'de trillones'; 
+   $matmil[14] = 'billones de trillones'; 
+   $matmil[15] = 'de billones de trillones'; 
+   $matmil[16] = 'millones de billones de trillones'; 
+   
+   //Zi hack
+   $float=explode('.',$num);
+   $num=$float[0];
+   $num = trim((string)@$num); 
+   if ($num[0] == '-') { 
+      $neg = 'menos '; 
+      $num = substr($num, 1); 
+   }else 
+      $neg = ''; 
+   while ($num[0] == '0') $num = substr($num, 1); 
+   if ($num[0] < '1' or $num[0] > 9) $num = '0' . $num; 
+   $zeros = true; 
+   $punt = false; 
+   $ent = ''; 
+   $fra = ''; 
+   for ($c = 0; $c < strlen($num); $c++) { 
+      $n = $num[$c]; 
+      if (! (strpos(".,'''", $n) === false)) { 
+         if ($punt) break; 
+         else{ 
+            $punt = true; 
+            continue; 
+         } 
+      }elseif (! (strpos('0123456789', $n) === false)) { 
+         if ($punt) { 
+            if ($n != '0') $zeros = false; 
+            $fra .= $n; 
+         }else 
+            $ent .= $n; 
+      }else 
+         break; 
+   } 
+   $ent = '     ' . $ent; 
+   if ($dec and $fra and ! $zeros) { 
+      $fin = ' coma'; 
+      for ($n = 0; $n < strlen($fra); $n++) { 
+         if (($s = $fra[$n]) == '0') 
+            $fin .= ' cero'; 
+         elseif ($s == '1') 
+            $fin .= $fem ? ' una' : ' un'; 
+         else 
+            $fin .= ' ' . $matuni[$s]; 
+      } 
+   }else 
+      $fin = ''; 
+   if ((int)$ent === 0) return 'Cero ' . $fin; 
+   $tex = ''; 
+   $sub = 0; 
+   $mils = 0; 
+   $neutro = false; 
+   while ( ($num = substr($ent, -3)) != '   ') { 
+      $ent = substr($ent, 0, -3); 
+      if (++$sub < 3 and $fem) { 
+         $matuni[1] = 'una'; 
+         $subcent = 'as'; 
+      }else{ 
+         $matuni[1] = $neutro ? 'un' : 'uno'; 
+         $subcent = 'os'; 
+      } 
+      $t = ''; 
+      $n2 = substr($num, 1); 
+      if ($n2 == '00') { 
+      }elseif ($n2 < 21) 
+         $t = ' ' . $matuni[(int)$n2]; 
+      elseif ($n2 < 30) { 
+         $n3 = $num[2]; 
+         if ($n3 != 0) $t = 'i' . $matuni[$n3]; 
+         $n2 = $num[1]; 
+         $t = ' ' . $matdec[$n2] . $t; 
+      }else{ 
+         $n3 = $num[2]; 
+         if ($n3 != 0) $t = ' y ' . $matuni[$n3]; 
+         $n2 = $num[1]; 
+         $t = ' ' . $matdec[$n2] . $t; 
+      } 
+      $n = $num[0]; 
+      if ($n == 1) { 
+         $t = ' ciento' . $t; 
+      }elseif ($n == 5){ 
+         $t = ' ' . $matunisub[$n] . 'ient' . $subcent . $t; 
+      }elseif ($n != 0){ 
+         $t = ' ' . $matunisub[$n] . 'cient' . $subcent . $t; 
+      } 
+      if ($sub == 1) { 
+      }elseif (! isset($matsub[$sub])) { 
+         if ($num == 1) { 
+            $t = ' mil'; 
+         }elseif ($num > 1){ 
+            $t .= ' mil'; 
+         } 
+      }elseif ($num == 1) { 
+         $t .= ' ' . $matsub[$sub] . '?n'; 
+      }elseif ($num > 1){ 
+         $t .= ' ' . $matsub[$sub] . 'ones'; 
+      }   
+      if ($num == '000') $mils ++; 
+      elseif ($mils != 0) { 
+         if (isset($matmil[$sub])) $t .= ' ' . $matmil[$sub]; 
+         $mils = 0; 
+      } 
+      $neutro = true; 
+      $tex = $t . $tex; 
+   } 
+   $tex = $neg . substr($tex, 1) . $fin; 
+   //Zi hack --> return ucfirst($tex);
+   $end_num=ucfirst($tex).(($float[1]!="")?' con '.num2letras($float[1])." centavos":"");
+   return $end_num; 
+} 
 
 
 
@@ -196,10 +194,10 @@ $pdf->SetWidths(1);
 
 $comprobantes = $sf_data->getRaw("comprobantes");
 $transacciones = $sf_data->getRaw("transacciones");
-
+echo "dfasdfasd";
+exit;
 
 $aumentox=15;
-
 
     foreach($comprobantes as $comprobante)
     {
@@ -263,10 +261,6 @@ $aumentox=15;
         $pdf->SetXY($x+$marginHeader,$y);
         $pdf->Cell(0, 4, "Nit. ".Utils::formatNumber($ids->getCaIdalterno(),0,"",".")."-".$ids->getCaDv() ,0,1, "L");
 
-        //$y+=$space;
-        
-        
-        
         
         $dir= explode("  ", $sucursal->getCaDireccion());
 
@@ -281,18 +275,16 @@ $aumentox=15;
 
         $y+=$space;
         $pdf->SetXY($x+$marginHeader,$y);
-        $pdf->Cell(0, 4, "PBX: ".$sucursal->getCaTelefono()." ".$sucursal->getCaFax(),0,1, "L");
+        $pdf->Cell(0, 4, "PBX: ".$sucursal->getCaTelefono(),0,1, "L");
 
-        /*$y+=$space;
-        $pdf->SetXY($x+$marginHeader,$y);
-        $pdf->Cell(0, 4, "FAX: ".$sucursal->getCaFax(),0,1, "L");
-        */
-
-        $datostmp= json_decode($sucursal->getCaDatos());
-        
         $y+=$space;
         $pdf->SetXY($x+$marginHeader,$y);
-        $pdf->Cell(0, 4, "E-mail: ".($datostmp->emailFactura!="")?$datostmp->emailFactura:$sucursal->getCaEmail(),0,1, "L"); //.$idsSucursal->getCaEmail()
+        $pdf->Cell(0, 4, "FAX: ".$sucursal->getCaFax(),0,1, "L");
+
+
+        $y+=$space;
+        $pdf->SetXY($x+$marginHeader,$y);
+        $pdf->Cell(0, 4, "E-mail: ".$sucursal->getCaEmail(),0,1, "L"); //.$idsSucursal->getCaEmail()
 
         $y+=$space;
         $pdf->SetXY($x+$marginHeader,$y);
@@ -302,9 +294,6 @@ $aumentox=15;
         $y+=$space;
         $pdf->SetXY($x+$marginHeader,$y);
         $pdf->Cell(0, 4, "No somos grandes contribuyentes ",0,1, "L");
-        $y+=$space;
-        $pdf->SetXY($x+$marginHeader,$y);
-        $pdf->Cell(0, 4, "IVA Regimen Común ",0,1, "L");
 
         $y+=$space;
         $pdf->SetXY($x+$marginHeader,$y);
@@ -313,29 +302,9 @@ $aumentox=15;
         $y+=$space;
         $pdf->SetXY($x+$marginHeader,$y);
         $pdf->Cell(0, 4, "transacciones con el régimen simplificado.",0,1, "L");
-        
-        $datostmp = ParametroTable::retrieveByCaso("CU234",$sucursal->getCaIdempresa());
-        foreach ($datostmp as $d) {
-            $datosMensajes[$d->getCaIdentificacion()]=$d->getCaValor2();
-        }
-        //echo "<pre>";print_r($datosMensajes);echo "</pre>";
-        //exit;
-        if(isset($datosMensajes[$sucursal->getCaIdempresa()."5"]))
-        {            
-            $y+=$space;
-            $pdf->SetXY($x+$marginHeader,$y);
-            $pdf->Cell(0, 4, $datosMensajes[$sucursal->getCaIdempresa()."5"],0,1, "L");
-/*            $pdf->SetRightMargin(55);            
-            //$pdf->Rect($x,$y,140,6);            
-            $pdf->Rect($x,$y,140+$aumentox,(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."1"])/100))*3);
-            $pdf->SetXY($x+2,$y);
-            //$pdf->MultiCell(0, 2, $datosMensajes[$sucursal->getCaIdempresa()."1"] ,0,1, "J");
-            $pdf->MultiCell(0, 3, $datosMensajes[$sucursal->getCaIdempresa()."1"] );
-            $y+=(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."1"])/100))*3;*/
-        }
 
 
-        $y+=5;
+        $y+=6;
         $pdf->SetXY($x+$marginHeader,$y);
         $pdf->Cell(0, 4, strtoupper($tipo->getCaTitulo())." ". $comprobante->getCaConsecutivo()/*str_pad($comprobante->getCaConsecutivo(), 14, "0", STR_PAD_LEFT)*/,0,1, "L");
 
@@ -415,17 +384,12 @@ $aumentox=15;
         $y+=$space;
         $pdf->SetXY($x+2,$y);
         $pdf->Cell(0, 4, "CIUDAD: ".$suc_cli->getCiudad()->getCaCiudad()  ,0,1, "L");
-        $pdf->SetXY($x+40+$aumentox,$y);
+        $pdf->SetXY($x+20+$aumentox,$y);
         $pdf->Cell(0, 4, "TELEFONO: ".$suc_cli->getCaTelefonos()  ,0,1, "L");
 
         $y+=$space;
         $pdf->SetXY($x+2,$y);
         $pdf->Cell(0, 4, "NIT: ".$comprobante->getIds()->getCaIdalterno()."-".$comprobante->getIds()->getCaDv()  ,0,1, "L");
-
-        /*
-        $pdf->SetXY($x+60,$y);
-        $pdf->Cell(0, 4, "VENDEDOR: ".$inoCliente->getCaVendedor()  ,0,1, "L");
-        */
 
         $pdf->SetXY($x+107+$aumentox,$y);
         $pdf->Cell(0, 4, Utils::formatNumber($comprobante->getCaTcambio(), 2, ".", ",")  ,0,1, "L");
@@ -471,10 +435,6 @@ $aumentox=15;
         }
         
         $pdf->Cell(0, 4, $txt  ,0,1, "L");
-
-        
-        
-        
         
         if($sucursal->getEmpresa()->getCaIdempresa()=="12" || ($inoMaestra->getCaTransporte()==Constantes::AEREO && $inoMaestra->getCaImpoexpo() == Constantes::IMPO ))
             $txt="";
@@ -527,11 +487,7 @@ $aumentox=15;
         $y+=$space;
         $pdf->SetXY($x+10,$y);
         $pdf->Cell(0, 4, "" /*"a la tasa de emisión de esta factura.  También puede consultar la tasa de cambio para pago de sus facturas, llamando a nuestro"*/  ,0,1, "L");
-        //$y+=$space;
-        //$pdf->SetXY($x+10,$y);
-        //$pdf->Cell(0, 4, "" /*"PBX 4239300 Opción 1."*/  ,0,1, "L");
 
-        //Detalles
         $y+=6;
 
         $pdf->Rect($x,$y,175+$aumentox,100);
@@ -540,7 +496,7 @@ $aumentox=15;
 
         //tres lineas v
         $pdf->line($x+20,$y,$x+20,$y+100);
-        if($comprobante->getCaIdmoneda()!="COP")
+        if($comprobante->getCaIdmoneda()!="COP" && $tipoImpresion=="EP")
             $pdf->line($x+125+$aumentox,$y,$x+125+$aumentox,$y+100);
         $pdf->line($x+150+$aumentox,$y,$x+150+$aumentox,$y+100);
 
@@ -554,13 +510,17 @@ $aumentox=15;
         $pdf->Cell(0, 4, "CÓDIGO"  ,0,1, "L");
         $pdf->SetXY($x+60,$y);
         $pdf->Cell(0, 4, "D E S C R I P C I Ó N"  ,0,1, "L");
-        $pdf->SetXY($x+130+$aumentox,$y);
-        if($comprobante->getCaIdmoneda()!="COP")
+        $pdf->SetXY($x+130+$aumentox,$y);        
+        $txt="PESOS";
+        if($comprobante->getCaIdmoneda()!="COP" && $tipoImpresion=="EP")
             $pdf->Cell(0, 4, "VALOR ".$comprobante->getCaIdmoneda()  ,0,1, "L");
-            //$pdf->Cell(0, 4, "VALOR DOLAR"  ,0,1, "L");
+        else if($tipoImpresion=="E")
+            $txt=$comprobante->getCaIdmoneda();            
+                
+        
             
         $pdf->SetXY($x+152+$aumentox,$y);
-        $pdf->Cell(0, 4, "VALOR PESOS"  ,0,1, "L");
+        $pdf->Cell(0, 4, "VALOR $txt"  ,0,1, "L");
 
         //Imprime Transacciones
 
@@ -573,36 +533,48 @@ $aumentox=15;
 
         $k = 5;
 
-        $totales["local"]=$totales["mext"]=$subtotales=$impuestos["iva"]=$impuestos["reteiva"]=$impuestos["reteica"]=0;
+        $totales["local"]=$totales["mext"]=$subtotales=0;
         
+
         //$pdf->Cell(0, 4, "NREG:".count($transacciones) ,0,1, "L");
         $tcambio=$comprobante->getCaTcambio();
         foreach( $transacciones[$comprobante->getCaIdcomprobante()] as $t ){
-
-            if( $lastIngresoPropio!=$t["s_ca_pt"]   ){
+            
+            if( substr($lastIngresoPropio,0,2)!=substr($t["det_ca_idcuenta"],0,2) )
+            {
                 $pdf->SetXY($x+22,$y+$k+$space);
-                if( $t["s_ca_pt"]=="P" ){
+                if( substr($t["det_ca_idcuenta"],0,2)=="41" ){
                     $pdf->Cell(0, 4, "INGRESOS  PROPIOS" ,0,1, "L");
                     $k+=($space/2);
-                }else if( $t["s_ca_pt"]=="T" ){
+                }
+                if( substr($t["det_ca_idcuenta"],0,2)=="28" ){
                     $pdf->Cell(0, 4, "INGRESOS PARA TERCEROS" ,0,1, "L");
                     $k+=($space/2);
                 }
                 if($subtotales>0)
-                {
-                    
-                    
+                {                    
                     $pdf->SetXY($x+102.5+$aumentox,$y+$k);
                     $pdf->Cell(0, 4, "SUBTOTAL...." ,0,1, "L");
+                    $txt=$subtotales;
                     
-                    if($comprobante->getCaIdmoneda()!="COP")
+                    if($comprobante->getCaIdmoneda()!="COP" && $tipoImpresion=="EP")
                     {
                         $pdf->SetXY($x,$y+$k);
-                        $pdf->Cell(162, 4, number_format(($subtotales1), 2, ",", ".")  ,0,1, "R");
+                        $pdf->Cell(165, 4, number_format(($subtotales1), 2, ",", ".")  ,0,1, "R");
+                        $txt=number_format(round($subtotales), 0, ",", ".");
+                        
                     }
-                    
+                    else if($tipoImpresion=="E")
+                    {
+                        $txt=number_format(round($subtotales1,2), 2, ",", ".");                    
+                    }
+                    else 
+                    {
+                        $txt=number_format(round($subtotales), 0, ",", ".");                    
+                    }
+
                     $pdf->SetXY($x+$aumentox,$y+$k);
-                    $pdf->Cell(175, 4, number_format($subtotales, 2, ",", ".")  ,0,1, "R");
+                    $pdf->Cell(175, 4, $txt  ,0,1, "R");
                     $k+=$space;
                     $totales["local"]+=$subtotales;
                     $subtotales=$subtotales1=0;
@@ -610,63 +582,65 @@ $aumentox=15;
                 
                 $k+=$space+$space;
             }
-            $lastIngresoPropio=$t["s_ca_pt"];  
+            $lastIngresoPropio=$t["det_ca_idcuenta"];
 
 
             $pdf->SetXY($x+5,$y+$k);
-            $pdf->Cell(0, 4,$t["s_ca_cod"] ,0,1, "L");
+            $pdf->Cell(0, 4,$t["s_ca_idconcepto"] ,0,1, "L");
             $pdf->SetXY($x+25,$y+$k);
-
-            $pdf->Cell(0, 4, strtoupper($t["s_ca_descripcion"] ),0,1, "L");
-
+            
+            
+            $pdf->Cell(0, 4, strtoupper($t["s_ca_concepto_".$idioma] ),0,1, "L");
+            
             //$pdf->SetXY($x+130,$y+$k);
             //$pdf->Cell(0, 4, $transaccion->getCaCr() ,0,1, "L");
-
-            if($comprobante->getCaIdmoneda()!="COP")
+            $txt=$t["det_ca_cr"]*$tcambio;
+            if($comprobante->getCaIdmoneda()!="COP" && $tipoImpresion=="EP")
             {
                 $pdf->SetXY($x+$aumentox,$y+$k);
-                $pdf->Cell(147, 4, number_format(($t["det_ca_cr"]), 2, ",", ".")  ,0,1, "R");
-                $totales[$comprobante->getCaIdmoneda()]+=$t["det_ca_cr"];
+                $pdf->Cell(150, 4, number_format($t["det_ca_cr"], 2, ",", ".")  ,0,1, "R");
+                $txt=number_format(($txt), 0, ",", ".");
+                $totales["mext"]+=$t["det_ca_cr"];
             }
-            $pdf->SetXY($x+$aumentox,$y+$k);
-            $pdf->Cell(175, 4, number_format(($t["det_ca_cr"]*$tcambio), 2, ",", ".")  ,0,1, "R");
-            //$totales["local"]+=$t["det_ca_cr"]*$tcambio;
-            $k+=$space+1;
-            
-            if($regContributivo=="G" && $t["s_ca_pt"]=="P")//gran contribuyente e ingresos propios
+            else if($tipoImpresion=="E")
             {
-                //$q1 = ParametroTable::retrieveByCaso("CU251",null,null,$tipoComprobante->getCaIdempresa()."2");
-                
-                $impuestos["reteica"]+=round(($t["det_ca_cr"]*$tcambio)* ($t["cric_ca_rteica"]/100));
-                //echo round($t["det_ca_cr"] ."----". ($t["cric_ca_reteica"]));
-                //print_r($t);
-                //exit;
+                $txt=number_format(($t["det_ca_cr"]), 2, ",", ".");                
+                $totales["mext"]+=$t["det_ca_cr"];
             }
-            //echo "<pre>";print_r($t);echo "</pre>";
-            //    exit;
-            $t["s_ca_porciva"]= $comprobante->getIva();
-            if($t["s_ca_iva"]=="S")
-                $impuestos["iva"]+=round(($t["det_ca_cr"]*$tcambio)* ($t["s_ca_porciva"]/100));
-            $subtotales+=($t["det_ca_cr"]*$tcambio);
-            $subtotales1+=$t["det_ca_cr"];
-            //$totales["mext"]+=$t["det_ca_cr"];
-        }
+            else
+                $txt=number_format(($txt), 0, ",", ".");
+            echo "fasdasd".$txt;
+            $pdf->SetXY($x+$aumentox,$y+$k);
+            $pdf->Cell(175, 4, $txt  ,0,1, "R");
+            $k+=$space+1;
 
-        
+            $subtotales+=round($t["det_ca_cr"]*$tcambio);
+            $subtotales1+= $t["det_ca_cr"];
+        }
 
         if($subtotales>0)
         {
             $pdf->SetXY($x+102.5+$aumentox,$y+$k);
             $pdf->Cell(0, 4, "SUBTOTAL...." ,0,1, "L");
             
-            if($comprobante->getCaIdmoneda()!="COP")
+            $txt=$subtotales;
+            if($comprobante->getCaIdmoneda()!="COP" && $tipoImpresion=="EP")
             {
                 $pdf->SetXY($x,$y+$k);
-                $pdf->Cell(162, 4, number_format(($subtotales1), 2, ",", ".")  ,0,1, "R");
+                $pdf->Cell(165, 4, number_format(($subtotales1), 2, ",", ".")  ,0,1, "R");
+                $txt=number_format(round($subtotales), 0, ",", ".");
+            }
+            else if($tipoImpresion=="E")
+            {                
+                $txt=number_format(round($subtotales1,2), 2, ",", ".");
+            }
+            else 
+            {
+                $txt=number_format(round($txt), 0, ",", ".");
             }
             
             $pdf->SetXY($x+$aumentox,$y+$k);
-            $pdf->Cell(175, 4, number_format($subtotales, 2, ",", ".")  ,0,1, "R");
+            $pdf->Cell(175, 4, $txt  ,0,1, "R");
             $k+=$space+3;
             $totales["local"]+=$subtotales;
         }
@@ -674,70 +648,176 @@ $aumentox=15;
         $k+=$space;
         $pdf->SetXY($x+106.3+$aumentox,$y+$k);
         $pdf->Cell(0, 4, "TOTAL ...." ,0,1, "L");
-        if($comprobante->getCaIdmoneda()!="COP")
+        $txt=$totales["local"];
+        if($comprobante->getCaIdmoneda()!="COP" && $tipoImpresion=="EP")
         {
             $pdf->SetXY($x+$aumentox,$y+$k);
-            $pdf->Cell(147, 4, number_format( $totales[$comprobante->getCaIdmoneda()] , 2, ",", ".")  ,0,1, "R");
-        }
+            $pdf->Cell(150, 4, number_format( $totales["mext"] , 2, ",", ".")  ,0,1, "R");
+            $txt=number_format( round($totales["local"]) , 0, ",", ".");        
+        }else if($tipoImpresion=="E")
+            $txt=number_format( round($totales["mext"],2) , 2, ",", ".");        
+        else
+            $txt=number_format( round($totales["local"]) , 0, ",", ".");
+            
+        
         $pdf->SetXY($x+$aumentox,$y+$k);
-        $pdf->Cell(175, 4, number_format( $totales["local"] , 2, ",", ".")  ,0,1, "R");
+        $pdf->Cell(175, 4, $txt  ,0,1, "R");
         $k+=$space+1;
 
         $pdf->SetXY($x+106.3+$aumentox,$y+$k);
-            $pdf->Cell(0, 4, "I.V.A ...." ,0,1, "L");
-            if($comprobante->getCaIdmoneda()!="COP")
-            {
-                $pdf->SetXY($x+$aumentox,$y+$k);
-                $pdf->Cell(147, 4, number_format($impuestos["iva"]/$tcambio, 2, ",", ".")  ,0,1, "R");      
-            }
+        $pdf->Cell(0, 4, "I.V.A ...." ,0,1, "L");
+
+        //print_r($datos);
+        //exit;
+        $txt=$datos->iva*$tcambio;
+        if($comprobante->getCaIdmoneda()!="COP" && $tipoImpresion=="EP")
+        {        
             $pdf->SetXY($x+$aumentox,$y+$k);
-            $pdf->Cell(175, 4, number_format($impuestos["iva"], 2, ",", ".")  ,0,1, "R");    
-            $k+=$space+1;
+            $pdf->Cell(150, 4, number_format($datos->iva, 2, ",", ".")  ,0,1, "R");
+            $txt=number_format(round($txt), 0, ",", ".");
+        }
+        else if($tipoImpresion=="E")
+            $txt=number_format(round($datos->iva,2), 2, ",", ".");
+        else
+            $txt=number_format(round($txt), 0, ",", ".");
+        
+        $pdf->SetXY($x+$aumentox,$y+$k);
+        $pdf->Cell(175, 4, $txt  ,0,1, "R");    
+        $k+=$space+1;
             
             
             
-        if($regContributivo=="G")
+        //if($regContributivo=="G")
         {
-            if($impuestos["iva"]>0)
-            {
-                $impuestos["reteiva"]=(($impuestos["iva"]*15)/100);
+            if($datos->rteiva>0 && $datos->rteiva!="") 
+            {                
                 $pdf->SetXY($x+99+$aumentox,$y+$k);
-                $pdf->Cell(0, 4, "RTE.I.V.A ...." ,0,1, "L");
-                
-                if($comprobante->getCaIdmoneda()!="COP")
+                $pdf->Cell(0, 4, "RTE.I.V.A ....".$datos->rteiva ,0,1, "L");
+                $txt=$datos->rteiva*$tcambio;
+                if($comprobante->getCaIdmoneda()!="COP" && $tipoImpresion=="EP")
                 {
                     $pdf->SetXY($x+$aumentox,$y+$k);
-                    $pdf->Cell(147, 4, number_format($impuestos["reteiva"]/$tcambio, 2, ",", ".")  ,0,1, "R");      
+                    $pdf->Cell(150, 4, number_format($datos->rteiva, 2, ",", ".")  ,0,1, "R");
+                    $txt=number_format( round($txt) , 0, ",", ".");
                 }
+                else if($tipoImpresion=="E")
+                    $txt=number_format( round($datos->rteiva,2) , 2, ",", ".");
+                else
+                    $txt=number_format( round($txt) , 0, ",", ".");
                 
                 $pdf->SetXY($x+$aumentox,$y+$k);
-                $pdf->Cell(175, 4, number_format( $impuestos["reteiva"]  , 2, ",", ".")  ,0,1, "R");    
+                $pdf->Cell(175, 4, $txt  ,0,1, "R");    
                 $k+=$space+1;
 
             }
 
-            if($impuestos["reteica"]>0)
+            if($datos->rteica>0)
             {
                 $pdf->SetXY($x+99+$aumentox,$y+$k);
                 $pdf->Cell(0, 4, "RTE.I.C.A ...." ,0,1, "L");
+                $txt=$datos->rteica*$tcambio;
+                if($comprobante->getCaIdmoneda()!="COP" && $tipoImpresion=="EP")
+                {
+                    $pdf->SetXY($x+$aumentox,$y+$k);
+                    $pdf->Cell(150, 4, number_format($datos->rteica, 2, ",", ".")  ,0,1, "R");
+                    $txt=number_format( round($txt) , 0, ",", ".");
+                }
+                else if($tipoImpresion=="E")                    
+                    $txt=number_format( round($datos->rteica,2) , 2, ",", ".");
+                else
+                    $txt=number_format( round($txt) , 0, ",", ".");
+                
+                $pdf->SetXY($x+$aumentox,$y+$k);
+                $pdf->Cell(175, 4, $txt  ,0,1, "R");    
+                $k+=$space;
+                $k+=$space;
+            }
+            
+            $datos->rtefuente=$datos->rtefuente-$datos->autoretencion;
+            
+            if( $datos->rtefuente > 0 )
+            {
+                $pdf->SetXY($x+99+$aumentox,$y+$k);
+                $pdf->Cell(0, 4, "RTEFUENTE ...." ,0,1, "L");
+                $txt=$datos->rtefuente*$tcambio;
+                if($comprobante->getCaIdmoneda()!="COP" && $tipoImpresion=="EP")
+                {
+                    $pdf->SetXY($x+$aumentox,$y+$k);
+                    $pdf->Cell(150, 4, number_format($datos->rtefuente, 2, ",", ".")  ,0,1, "R");
+                    $txt=number_format( round($txt) , 0, ",", ".");
+                }
+                else if($tipoImpresion=="E")                    
+                    $txt=number_format( round($datos->rtefuente,2) , 2, ",", ".");
+                else
+                    $txt=number_format( round($txt) , 0, ",", ".");
+                
+                $pdf->SetXY($x+$aumentox,$y+$k);
+                $pdf->Cell(175, 4, $txt  ,0,1, "R");    
+                $k+=$space;
+                $k+=$space;
+            }
+ 
+            
+            $txtAnticipo="";
+            foreach($datos->idanticipo as $a)
+            {
+                if($a>0)
+                {
+                    $anticipo = Doctrine::getTable("InoComprobante")->find($a);
+                    if($anticipo)
+                    {
+                        $txtAnticipo.=$anticipo->getInoTipoComprobante()->getCaPrefijoSap().$anticipo->getInoTipoComprobante()->getCaComprobante()."-". $anticipo->getCaConsecutivo()." ".$anticipo->getCaValor()." ".$anticipo->getCaIdmoneda().(($anticipo->getCaIdmoneda()!="COP")?"(TRM:".$anticipo->getCaTcambio().")":"")."--";
+                        $arrAnticipos[$anticipo->getCaIdcomprobante()]["valor"]=$anticipo->getCaValor();
+                        $arrAnticipos[$anticipo->getCaIdcomprobante()]["trm"]=$anticipo->getCaTcambio();
+                        $arrAnticipos[$anticipo->getCaIdcomprobante()]["moneda"]=$anticipo->getCaIdmoneda();
+                    }
+                }
+            }
+            
+            if($txtAnticipo!="")
+            {
+                
+                //$anticipo = Doctrine::getTable("InoComprobante")->find($datos->idanticipo);
+                $pdf->SetFont($font,'',6);
+                $pdf->SetXY($x+7+$aumentox,$y+$k);
+                //$txt=$anticipo->getInoTipoComprobante()->getCaPrefijoSap()."-".$anticipo->getInoTipoComprobante()->getCaComprobante()." ". $anticipo->getCaConsecutivo()." (TRM : ".$anticipo->getCaTcambio().")";
+                $pdf->Cell(0, 4, $txtAnticipo ,0,1, "L");
+                $pdf->SetFont($font,'',8);
+
+                $pdf->SetXY($x+102+$aumentox,$y+$k);
+                $pdf->Cell(0, 4, "ANTICIPO ...." ,0,1, "L");
                 
                 if($comprobante->getCaIdmoneda()!="COP")
                 {
                     $pdf->SetXY($x+$aumentox,$y+$k);
-                    $pdf->Cell(147, 4, number_format($impuestos["reteica"]/$tcambio, 2, ",", ".")  ,0,1, "R");      
+                    //$vanticipo=$anticipo->getCaValor();
+                    //if($anticipo->getCaIdmoneda()=="COP")
+                    {
+                        foreach($arrAnticipos as $a)
+                        {
+                            if($a["moneda"]=="COP")
+                                $vanticipo+=($a["valor"]/$comprobante->getCaTcambio());
+                            else
+                                $vanticipo+=$a["valor"];
+                        }
+                    }
+                    $pdf->Cell(150, 4, number_format($vanticipo, 2, ",", ".")  ,0,1, "R");
                 }
                 
                 $pdf->SetXY($x+$aumentox,$y+$k);
-                $pdf->Cell(175, 4, number_format($impuestos["reteica"], 2, ",", ".")  ,0,1, "R");    
+                foreach($arrAnticipos as $a)
+                {
+                    $vanticipoCop+=($a["valor"]*$a["trm"]);
+                }
+                $pdf->Cell(175, 4, number_format(round($vanticipoCop), 0, ",", ".")  ,0,1, "R");
                 $k+=$space;
                 $k+=$space;
             }
         }
 
         $pdf->SetXY($x + 98, $y + $k);
-        
         $k+=$space;
-        if($comprobante->getCaIdmoneda()!="COP")
+        if($comprobante->getCaIdmoneda()!="COP" && $tipoImpresion=="EP")
             $pdf->line($x + 125+$aumentox, $y + $k, $x + 150+$aumentox, $y + $k);
         
         $pdf->line($x + 150+$aumentox, $y + $k, $x + 175+$aumentox, $y + $k);
@@ -746,32 +826,40 @@ $aumentox=15;
         $pdf->SetXY($x+93.6+$aumentox,$y+$k);
         $pdf->Cell(0, 4, "TOTAL A PAGAR...." ,0,1, "L");
         
-        if($comprobante->getCaIdmoneda()!="COP")
+        $txt=($totales["local"]+ (($datos->iva-$datos->rteica-$datos->rteiva-$datos->rtefuente)*$tcambio))-$vanticipoCop;
+        if($comprobante->getCaIdmoneda()!="COP" && $tipoImpresion=="EP")
         {
             $pdf->SetXY($x+$aumentox,$y+$k);
-            $pdf->Cell(147, 4, number_format($totales[$comprobante->getCaIdmoneda()]+(($impuestos["iva"]-$impuestos["reteiva"]-$impuestos["reteica"])/$tcambio) , 2, ",", ".")  ,0,1, "R");
+            $pdf->Cell(150, 4, number_format($totales["mext"]+(( $datos->iva-$datos->rteica-$datos->rteiva-$datos->rtefuente))-$vanticipo , 2, ",", ".")  ,0,1, "R");
+            $txt=number_format( round($txt) , 0, ",", ".");
         }
+        else if($tipoImpresion=="E")
+            $txt=number_format( round($totales["mext"]+(( $datos->iva-$datos->rteica-$datos->rteiva-$datos->rtefuente))-$vanticipo,2) , 2, ",", ".");
+            
+        else
+            $txt=number_format( round($txt) , 0, ",", ".");
         
         $pdf->SetXY($x+$aumentox,$y+$k);
-        $pdf->Cell(175, 4, number_format($totales["local"]+$impuestos["iva"]-$impuestos["reteiva"]-$impuestos["reteica"] , 2, ",", ".")  ,0,1, "R");
+        $pdf->Cell(175, 4, $txt  ,0,1, "R");
         $k+=$space;
-
-
 
         $y+=100+$space;
 
         $pdf->Rect($x,$y,175+$aumentox,10);
-        $pdf->SetXY($x+5,$y);
-//echo number_format($totales+$impuestos , 0, ".", "");
-//exit;
-        $pdf->MultiCell(0, 4, "SON:\n     ". strtoupper(num2letras(round($totales["local"]+$impuestos["iva"]-$impuestos["reteiva"]-$impuestos["reteica"]) , false )) . " M/CTE" ,0,1, "C");
+        $pdf->SetXY($x+4,$y-1);
 
+        $txt=round(($totales["mext"]+(( $datos->iva-$datos->rteica-$datos->rteiva-$datos->rtefuente))-$vanticipo),2);
+        if($tipoImpresion=="P")
+            $txt= round( ($totales["local"]+(( $datos->iva-$datos->rteica-$datos->rteiva-$datos->rtefuente)*$tcambio)-$vanticipoCop),2);
+
+        $pdf->MultiCell(0, 4, "SON: ". strtoupper(num2letras($txt , false, true )) ." ".($tipoImpresion=="P"?"PESOS":$comprobante->getCaIdmoneda()) . (($comprobante->getCaIdmoneda()=="COP" || $tipoImpresion=="P")?" M/CTE":"") ,0,1, "C");
+        
         $space = 2;
         $y+=10;
         $pdf->Rect($x,$y,175+$aumentox,10);
         $pdf->SetXY($x+5,$y);
-        
-        if($sucursal->getEmpresa()->getCaIdempresa()=="12")        
+
+        if($sucursal->getEmpresa()->getCaIdempresa()=="12")
             $txt="OBSERVACIONES:\n".$comprobante->getProperty("anexos");
         else
             $txt="ANEXOS:\n".$comprobante->getProperty("anexos");
@@ -784,33 +872,22 @@ $aumentox=15;
         $pdf->SetXY($x+5,$y);
         $pdf->MultiCell(0, 4, $tipo->getCaMensaje() ,0,1, "C");
 
-
         $y+=15;
-        $pdf->SetXY($x+12,$y);
-        $datostmp= json_decode($tipo->getCaDatos());
-        //print_r($datostmp);
-        //exit;
-        $pdf->Cell(0, 3, "Numeración según Resolución DIAN ".$tipo->getCaNoautorizacion()."  ".Utils::parseDate($tipo->getCaFchautorizacion(),"Y/m/d")." ".$tipo->getCaInicialAut()." AL ".$tipo->getCaFinalAut()." FACTURA POR COMPUTADOR. ".$datostmp->vigencia  ,0,1, "L"); 
+        $pdf->SetXY($x+30,$y);
+        $pdf->Cell(0, 3, "Numeración según Resolución DIAN ".$tipo->getCaNoautorizacion()."  ".Utils::parseDate($tipo->getCaFchautorizacion(),"Y/m/d")." ".$tipo->getCaInicialAut()." AL ".$tipo->getCaFinalAut()." FACTURA POR COMPUTADOR."  ,0,1, "L");
+
+        $datostmp = ParametroTable::retrieveByCaso("CU234",$sucursal->getCaIdempresa());
+        foreach ($datostmp as $d) {
+            $datosMensajes[$d->getCaIdentificacion()]=$d->getCaValor2();
+        }
 
         $y+=4;
-        
-
-        /*if(isset($datosMensajes[3]))
-        {
-            $y+=7;
-            $pdf->Rect($x,$y,140,6);
-            $pdf->SetXY($x+5,$y);
-            $pdf->MultiCell(0, 2, $datosMensajes[3] ,0,1, "J");
-        }*/
-        
         if(isset($datosMensajes[$sucursal->getCaIdempresa()."1"]))
         {
-            $pdf->SetRightMargin(55);            
-            //$pdf->Rect($x,$y,140,6);
+            $pdf->SetRightMargin(55);
             $pdf->Rect($x,$y,140+$aumentox,(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."1"])/100))*3);
             $pdf->SetXY($x+2,$y);
-            $pdf->MultiCell(0, 2, $datosMensajes[$sucursal->getCaIdempresa()."1"] ,0,1, "J");
-            $pdf->MultiCell(0, 3, ""/*$datosMensajes[$sucursal->getCaIdempresa()."1"]*/ );
+            $pdf->MultiCell(0, 3, $datosMensajes[$sucursal->getCaIdempresa()."1"] );
             $y+=(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."1"])/100))*3;
         }
         if(isset($datosMensajes[$sucursal->getCaIdempresa()."2"]))
@@ -821,11 +898,8 @@ $aumentox=15;
             $pdf->MultiCell(0, 3, $datosMensajes[$sucursal->getCaIdempresa()."2"] );
             $y+=(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."2"])/100))*3;
         }
-
-
         if(isset($datosMensajes[$sucursal->getCaIdempresa()."3"]))
         {
-            
             $pdf->Rect($x,$y,140+$aumentox,(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."3"])/100))*3);
             $pdf->SetXY($x+2,$y);
             $pdf->MultiCell(0, 3, $datosMensajes[$sucursal->getCaIdempresa()."3"] );
@@ -834,7 +908,6 @@ $aumentox=15;
         
         if(isset($datosMensajes[$sucursal->getCaIdempresa()."4"]))
         {
-            
             $pdf->Rect($x,$y,140+$aumentox,(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."4"])/100))*4);
             $pdf->SetXY($x+2,$y);
             $pdf->MultiCell(0, 3, $datosMensajes[$sucursal->getCaIdempresa()."4"]  );
@@ -863,9 +936,6 @@ $aumentox=15;
         $y+=3;
         $pdf->SetXY($x+148+$aumentox,$y);
         $pdf->Cell(0, 4, "FECHA RECIBIDO "  ,0,1, "L");
-        
-        
-        
     }
 
 $pdf->Output ( $filename );
