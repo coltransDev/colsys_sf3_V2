@@ -59,6 +59,7 @@ class inoF2Actions extends sfActions {
         {
             $this->inoMaster = Doctrine::getTable("InoMaster")
                 ->createQuery("m")
+                ->select("m.ca_idmaster,m.ca_referencia,m.ca_impoexpo,m.ca_transporte,m.ca_fchcerrado,m.ca_fchanulado,m.ca_fchliquidado,m.ca_modalidad")
                 ->whereIn("m.ca_idmaster", json_decode($request->getParameter("idmaster")))
                 //->addWhere("m.ca_idmaster = ?", array($request->getParameter("idmaster")))
                 ->execute();
@@ -81,6 +82,7 @@ class inoF2Actions extends sfActions {
         
         $usuario = Doctrine::getTable("Usuario")
                 ->createQuery("u")
+                ->select("ca_login,ca_datos")
                 ->addWhere("u.ca_login = ?", $this->getUser()->getUserId())
                 ->fetchOne();
         $datosusuario = json_decode($usuario->getCaDatos());
@@ -241,6 +243,7 @@ class inoF2Actions extends sfActions {
 
             $ticket = Doctrine::getTable("HdeskAuditDocuments")
                     ->createQuery("t")
+                    ->select("ca_idticket")
                     ->addWhere("t.ca_numero_doc = ?", $datos[$k]["m_ca_referencia"])
                     ->fetchOne();
             if ($ticket) {
@@ -261,6 +264,7 @@ class inoF2Actions extends sfActions {
 
         $usuario = Doctrine::getTable("Usuario")
                 ->createQuery("u")
+                ->select("ca_login,ca_datos")
                 ->addWhere("u.ca_login = ?", $this->getUser()->getUserId())
                 ->fetchOne();
         $datos = json_decode($usuario->getCaDatos());
@@ -297,11 +301,11 @@ class inoF2Actions extends sfActions {
         $this->forward404Unless($idmaster);
         $inoHouses = Doctrine::getTable("InoHouse")
                 ->createQuery("c")
-                ->select("c.*, cl.*")
+                ->select("c.*")
                 //->innerJoin("c.Ids cl")
-                ->innerJoin("c.Cliente cl")
+                //->innerJoin("c.Cliente cl")
                 ->where("c.ca_idmaster = ?", $idmaster)
-                ->addOrderBy("cl.ca_compania")
+                ->addOrderBy("c.ca_doctransporte")
                 ->execute();
 
         $data = array();
@@ -368,7 +372,7 @@ class inoF2Actions extends sfActions {
             //exit;
             $inoEquipos = Doctrine::getTable("InoEquipo")
                     ->createQuery("e")
-                    ->select("e.* ")
+                    ->select("e.ca_idequipo,ca_idconcepto,ca_serial,ca_numprecinto,ca_idmaster ")
                     ->where("e.ca_idmaster = ?", $idmaster)
                     ->addOrderBy("e.ca_idequipo")
                     ->execute();
@@ -1037,6 +1041,7 @@ class inoF2Actions extends sfActions {
                 $data["fchreferencia"] = utf8_encode($ino->getCaFchreferencia());
                 $data["idorigen"] = utf8_encode($ino->getCaOrigen());
                 $ciudadorigen = Doctrine::getTable('Ciudad')->createQuery('c')
+                        ->select("ca_idciudad,ca_ciudad")
                         ->innerJoin('c.Trafico t')
                         ->addWhere('c.ca_idciudad = ?', $ino->getCaOrigen())
                         ->fetchOne();
@@ -1052,6 +1057,7 @@ class inoF2Actions extends sfActions {
 
                 $data["iddestino"] = utf8_encode($ino->getCaDestino());
                 $ciudadestino = Doctrine::getTable('Ciudad')->createQuery('c')
+                        ->select("ca_idciudad,ca_ciudad")
                         ->innerJoin('c.Trafico t')
                         ->addWhere('c.ca_idciudad = ?', $ino->getCaDestino())
                         ->fetchOne();
@@ -1199,18 +1205,13 @@ class inoF2Actions extends sfActions {
                 {
                     $ccosto = Doctrine::getTable("InoCentroCosto")
                         ->createQuery("c")
-                        ->select("*")
+                        ->select("ca_idccosto")
                         ->where('ca_impoexpo = ? and ca_transporte = ? and ca_idsucursal is null and ca_idempresa = ?', array($comprobante->getInoHouse()->getInoMaster()->getCaImpoexpo(), $comprobante->getInoHouse()->getInoMaster()->getCaTransporte(), $comprobante->getInoTipoComprobante()->getCaIdempresa()))
                         ->fetchOne();
                     $cc=$ccosto->getCaIdccosto();
                 }
-                $comprobante->setCaIdccosto($cc);           
-
-
-
+                $comprobante->setCaIdccosto($cc);
                 $comprobante->save($conn);
-               
-               
 
                 $conn->commit();
                 $this->responseArray = array("success" => "true", "idcomprobante" => $comprobante->getCaIdcomprobante());
@@ -1290,6 +1291,7 @@ class inoF2Actions extends sfActions {
             foreach ($datos as $dato) {
                 $inoDetalle = Doctrine::getTable("InoDetalle")
                         ->createQuery("i")
+                        ->select("ca_iddetalle")
                         ->addWhere("i.ca_iddetalle = ? ", array($dato->iddetalle))
                         ->fetchOne();
                 if ($inoDetalle) {
@@ -1434,6 +1436,7 @@ class inoF2Actions extends sfActions {
 
                 $documentos = Doctrine::getTable("ExpoAedex")
                         ->createQuery("m")
+                        ->select("ca_iddocumento,ca_fechadoc")
                         ->addWhere("m.ca_referencia = ? and ca_idevento = ?", array($referencia, $evento["ca_idevento"]))
                         ->execute();
 
@@ -1464,11 +1467,11 @@ class inoF2Actions extends sfActions {
 
             $facturas = Doctrine::getTable("InoHouse")
                         ->createQuery("c")
-                        ->select("c.*")      
-                        ->innerJoin("c.Cliente cl")
+                        ->select("c.ca_idhouse, c.ca_idmaster, comp.ca_idcomprobante")      
+                        //->innerJoin("c.Cliente cl")
                         ->innerJoin("c.InoComprobante comp")
-                        ->leftJoin("comp.InoTipoComprobante tcomp")
-                        ->innerJoin("comp.Ids fact")
+                        //->leftJoin("comp.InoTipoComprobante tcomp")
+                        //->innerJoin("comp.Ids fact")
                         ->where("c.ca_idmaster = ? and comp.ca_fchanulado is null and comp.ca_usuanulado is null and comp.ca_estado=5 ", $idmaster)
                         ->execute();
 
@@ -1597,6 +1600,7 @@ class inoF2Actions extends sfActions {
         $idevento = $request->getParameter("idevento");
         $eventos = Doctrine::getTable("ExpoAedex")
                 ->createQuery("m")
+                ->select("ca_iddocumento,ca_fechadoc,ca_fecharem")
                 ->addWhere("ca_idevento = ? and m.ca_referencia = ? ", array($idevento, $referencia))
                 ->execute();
         $datos = array();
@@ -1690,6 +1694,7 @@ class inoF2Actions extends sfActions {
         try {
             $eventoDEX = Doctrine::getTable("ExpoAedex")
                     ->createQuery("m")
+                    ->select("ca_iddocumento")
                     ->addWhere("m.ca_referencia = ? and m.ca_fechadoc = ? and m.ca_iddocumento = ? and ca_idevento = ? ", array($referencia, $fecha, $documento, $idevento))
                     ->fetchOne();
             if ($eventoDEX) {
@@ -1856,6 +1861,7 @@ class inoF2Actions extends sfActions {
            
                 $anticipos = Doctrine::getTable("InoComprobante")
                     ->createQuery("m")
+                        ->select("ca_idcomprobante,ca_consecutivo")
                     ->whereIn("m.ca_idcomprobante", $nanticipos)
                     ->execute();
 
@@ -1906,7 +1912,7 @@ class inoF2Actions extends sfActions {
         $errorInfo = $info =  $file = "";
         $ids = array();
         $comprobantes = Doctrine::getTable("InoComprobante")
-                ->createQuery("m")
+                ->createQuery("m")                
                 ->whereIn("m.ca_idcomprobante", json_decode($idcomprobante))
                 //->addWhere("m.ca_idmaster = ?", array($request->getParameter("idmaster")))
                 ->execute();
@@ -2270,10 +2276,10 @@ class inoF2Actions extends sfActions {
             $facturas = Doctrine::getTable("InoHouse")
                         ->createQuery("c")
                         ->select("c.*")
-                        ->innerJoin("c.Cliente cl")
+                        //->innerJoin("c.Cliente cl")
                         ->innerJoin("c.InoComprobante comp")
-                        ->leftJoin("comp.InoTipoComprobante tcomp")
-                        ->innerJoin("comp.Ids fact")
+                        //->leftJoin("comp.InoTipoComprobante tcomp")
+                        //->innerJoin("comp.Ids fact")
                         ->where("c.ca_idmaster = ? and comp.ca_fchanulado is null and comp.ca_usuanulado is null and comp.ca_estado in (5) ", $idmaster)
                         ->execute();
             
@@ -2347,10 +2353,10 @@ class inoF2Actions extends sfActions {
                 $facturas = Doctrine::getTable("InoHouse")
                         ->createQuery("c")
                         ->select("c.*")
-                        ->innerJoin("c.Cliente cl")
+                        //->innerJoin("c.Cliente cl")
                         ->innerJoin("c.InoComprobante comp")
-                        ->leftJoin("comp.InoTipoComprobante tcomp")
-                        ->innerJoin("comp.Ids fact")
+                        //->leftJoin("comp.InoTipoComprobante tcomp")
+                        //->innerJoin("comp.Ids fact")
                         ->where("c.ca_idmaster = ? and comp.ca_fchanulado is null and comp.ca_usuanulado is null and comp.ca_estado in (5) ", $idmaster)
                         ->execute();
             
@@ -2367,6 +2373,7 @@ class inoF2Actions extends sfActions {
 
                         $houses = Doctrine::getTable("InoHouse")
                                 ->createQuery("h")
+                                ->select("ca_idmaster,ca_idhouse,ca_peso,ca_numpiezas,ca_volumen")
                                 ->addWhere("ca_idmaster = ?", $idmaster)
                                 ->execute();
                         $totalpiezashouse = 0;
@@ -2491,127 +2498,7 @@ class inoF2Actions extends sfActions {
         }
     }
 
-    /**
-     * @autor Felipe Nari?o
-     * eliminar costos
-     * @return un objeto JSON con la variable succes representando exito o falla en la transaccion
-     * @param sfRequest $request A request 
-     *        idinocosto : identificador de costo a eliminar
-
-     * @date:  2016-04-25
-     */
-//    public function executeEliminarCosto(sfWebRequest $request) {
-//
-//        $idinocosto = $request->getParameter("idinocosto");
-//        $inoCosto = Doctrine::getTable("InoCosto")->find($idinocosto);
-//        $this->forward404Unless($inoCosto);
-//
-//        try {
-//            $inoCosto->delete();
-//            $this->responseArray = array("success" => true);
-//        } catch (Exception $e) {
-//            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
-//        }
-//
-//        $this->setTemplate("responseTemplate");
-//    }
-
-    /**
-     * @autor Felipe Nari?o
-     * Cargar los costos en una grilla, correspondientes a un idmaster
-     * @return un objeto JSON con los datos de la grilla de costos
-     * @param sfRequest $request A request 
-     *       idmaster
-
-     * @date:  2016-04-25
-     */
-    /*public function executeDatosGridCostos(sfWebRequest $request) {
-        $idmaster = $request->getParameter("idmaster");
-        $this->forward404Unless($idmaster);
-
-        $costos = Doctrine::getTable("InoCosto")
-                ->createQuery("c")
-                ->select("c.ca_idinocosto, c.ca_idmaster, c.ca_neto, c.ca_venta, c.ca_factura,c.ca_fchfactura,
-                                  c.ca_tcambio, c.ca_tcambio_usd, c.ca_idcosto, p.ca_sigla, i.ca_nombre,
-                                  c.ca_idmoneda, c.ca_fchfactura,c.ca_idproveedor,c.ca_idcomprobante ")
-                //->innerJoin("c.InoConcepto cs")
-                ->innerJoin("c.Ids i")
-                ->where("c.ca_idmaster = ?", $idmaster)
-                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                ->execute();
-
-
-        foreach ($costos as $key => $val) {
-            $data = array();
-
-            $utils = Doctrine::getTable("InoHouse")
-                    ->createQuery("h")
-                    ->select("h.ca_doctransporte,u.ca_idutilidad,h.ca_idhouse,c.ca_idinocosto,u.ca_valor")
-                    ->innerJoin("h.InoMaster m WITH h.ca_idmaster=m.ca_idmaster")
-                    ->innerJoin("m.InoCosto c WITH c.ca_idinocosto=?", $costos[$key]["c_ca_idinocosto"])
-                    ->leftJoin("h.InoUtilidad u WITH u.ca_idinocosto=?", $costos[$key]["c_ca_idinocosto"])
-                    ->where("h.ca_idmaster = ?", $idmaster)
-                    ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                    ->execute();
-
-            $data["idmaster"] = $costos[$key]["c_ca_idmaster"];
-            $data["idmaster" . $data["idmaster"]] = $costos[$key]["c_ca_idmaster"];
-            $data["idinocosto" . $data["idmaster"]] = $costos[$key]["c_ca_idinocosto"];
-            $data["idcosto" . $data["idmaster"]] = $costos[$key]["c_ca_idcosto"];
-            if($costos[$key]["c_ca_idcomprobante"]>0)
-            {
-                $concepto = Doctrine::getTable("InoMaestraConceptos")->find($costos[$key]["c_ca_idcosto"]);
-                $nomcomcepto=($concepto) ? (utf8_encode($concepto->getCaConceptoEsp())) : "";
-            }
-            else
-            {
-                $concepto = Doctrine::getTable("InoConcepto")->find($costos[$key]["c_ca_idcosto"]);
-                $nomcomcepto=($concepto) ? (utf8_encode($concepto->getCaConcepto())) : "";
-            }
-            
-            
-            $data["nombrecosto" . $data["idmaster"]] = "::".$nomcomcepto;
-            $data["idproveedor" . $data["idmaster"]] = utf8_encode($costos[$key]["c_ca_idproveedor"]);
-            $data["proveedor" . $data["idmaster"]] = utf8_encode($costos[$key]["i_ca_nombre"]);
-            $data["factura" . $data["idmaster"]] = $costos[$key]["c_ca_factura"];
-            $data["fchfactura" . $data["idmaster"]] = $costos[$key]["c_ca_fchfactura"];
-            $data["idmoneda" . $data["idmaster"]] = $costos[$key]["c_ca_idmoneda"];
-            $data["neto" . $data["idmaster"]] = $costos[$key]["c_ca_neto"];
-            $data["venta" . $data["idmaster"]] = $costos[$key]["c_ca_venta"];
-            $data["tcambio" . $data["idmaster"]] = $costos[$key]["c_ca_tcambio"];
-            $data["tcambio_usd" . $data["idmaster"]] = $costos[$key]["c_ca_tcambio_usd"];
-            if ($data["tcambio_usd" . $data["idmaster"]] != 0) {
-                $data["neto_usd" . $data["idmaster"]] = $costos[$key]["c_ca_neto"] / $data["tcambio_usd" . $data["idmaster"]];
-            } else {
-                $data["neto_usd" . $data["idmaster"]] = 0;
-            }
-            $data["valor_pesos" . $data["idmaster"]] = $data["tcambio" . $data["idmaster"]] * $data["neto_usd" . $data["idmaster"]];
-            $data["utilidad" . $data["idmaster"]] = $costos[$key]["utilidad"];
-
-
-            $valor = 0;
-            foreach ($utils as $util => $va) {
-                $valor = $valor + $utils[$util]["u_ca_valor"];
-            }
-            $data["valor" . $data["idmaster"]] = $valor;
-            $valor = 0;
-            $data["inoventa" . $data["idmaster"]] = $data["venta" . $data["idmaster"]] - $data["valor_pesos" . $data["idmaster"]];
-
-            $data["ventacop" . $data["idmaster"]] = $costos[$key][""];
-
-
-            $data["orden" . $data["idmaster"]] = utf8_encode($costos[$key]["ca_idinocosto"]);
-            $data["idcomprobante" . $data["idcomprobante"]] = $costos[$key]["c_ca_idcomprobante"];
-
-            $root[] = $data;
-        }
-        if (count($root) < 1)
-            $root[]["idmaster" . $idmaster] = $idmaster;
-
-
-        $this->responseArray = array("success" => true, "root" => $root, "total" => count($root));
-        $this->setTemplate("responseTemplate");
-    }*/
+   
     
     public function executeDatosGridCostos(sfWebRequest $request) {
         Doctrine_Manager::getInstance()->setCurrentConnection('replica');
@@ -2727,20 +2614,9 @@ class inoF2Actions extends sfActions {
                 $utils[$k]["util"]=$data["inoventa"];
             }
             
-            
-            /*foreach ($utils as $util => $va) {
-                $valor = $valor + $utils[$util]["u_ca_valor"];
-            }*/
+           
             $data["valor"] = $valor;
-            /*$util = Doctrine::getTable("InoHouse")
-                ->createQuery("h")
-                ->select("h.ca_doctransporte AS doctransporte,u.ca_idutilidad AS idutilidad,h.ca_idhouse AS idhouse ,c.ca_idinocosto AS inocosto,u.ca_valor AS valor")
-                ->innerJoin("h.InoMaster m WITH h.ca_idmaster=m.ca_idmaster")
-                ->innerJoin("m.InoCosto c WITH c.ca_idinocosto=?", $idinocosto)
-                ->leftJoin("h.InoUtilidad u WITH u.ca_idinocosto=?", $idinocosto)
-                ->where("h.ca_idmaster = ?", $idmaster)
-                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                ->execute();*/
+            
             $data["sobreventas"] = $utils;
             //echo "<pre>";print_r($data);echo "</pre>";
             $root[] = $data;
@@ -2753,61 +2629,7 @@ class inoF2Actions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
-    /**
-     * @autor Felipe Nari?o
-     * guardar costos
-     * @return un objeto JSON con la variable succes representando exito o falla en la transaccion
-     * @param sfRequest $request A request 
-     *        datos: JSON con la grilla de todos los costos a almacenar
-
-     * @date:  2016-04-25
-     */
-    /*public function executeGuardarGridCosto(sfWebRequest $request) {
-
-
-        $datos = $request->getParameter("datos");
-        $datos = json_decode($datos);
-
-        $conn = Doctrine::getTable("InoCosto")->getConnection();
-        $conn->beginTransaction();
-
-        try {
-            $ids = array();
-            $idinocostos = array();
-            foreach ($datos as $dato) {
-                $costo = Doctrine::getTable("InoCosto")->find($dato->idinocosto);
-
-                if (!$costo) {
-                    $costo = new InoCosto();
-                }
-                $costo->setCaIdmaster($dato->idmaster);
-                if ($dato->idcosto) {
-
-                    $costo->setCaIdcosto($dato->idcosto);
-                }
-                $costo->setCaFactura($dato->factura);
-                $costo->setCaFchfactura($dato->fchfactura);
-                $costo->setCaIdproveedor($dato->idproveedor);
-                $costo->setCaIdmoneda($dato->idmoneda);
-                $costo->setCaTcambio($dato->tcambio);
-                $costo->setCaTcambioUsd($dato->tcambio_usd);
-                $costo->setCaNeto($dato->neto);
-                $costo->setCaVenta($dato->venta);
-                $costo->setCaFchactualizado(date("Y-m-d H:i:s"));
-                $costo->setCaUsuactualizado($this->getUser()->getUserId());
-
-                $costo->save();
-                $ids[] = $dato->id;
-                $idinocostos[] = $costo->getCaIdinocosto();
-            }
-            $conn->commit();
-            $this->responseArray = array("success" => true, "ids" => $ids, "idinocostos" => $idinocostos);
-        } catch (Exception $e) {
-            $conn->rollBack();
-            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
-        }
-        $this->setTemplate("responseTemplate");
-    }*/
+   
     
     
     public function executeGuardarGridCosto(sfWebRequest $request) {
@@ -2884,6 +2706,7 @@ class inoF2Actions extends sfActions {
 
         $proveedor = Doctrine::getTable("Tercero")
                 ->createQuery("t")
+                ->select("ca_nombre,ca_identificacion,ca_direccion,ca_telefono,ca_fax,ca_email,ca_contacto,ca_idciudad")
                 ->addWhere("t.ca_idtercero = ?", $idproveedor)
                 ->fetchOne();
 
@@ -2897,7 +2720,7 @@ class inoF2Actions extends sfActions {
                 "fax" => $proveedor->getCaFax(),
                 "email" => $proveedor->getCaEmail(),
                 "contacto" => $proveedor->getCaContacto(),
-                "ciudad" => $proveedor->getCaIdCiudad()
+                "ciudad" => $proveedor->getCaIdciudad()
                     //"nombreciudad"=>$proveedor->getCiudad()->getCaNombre();
             );
         }
@@ -2951,6 +2774,7 @@ class inoF2Actions extends sfActions {
 
         $ticket = Doctrine::getTable("HdeskTicket")
                 ->createQuery("t")
+                ->select("*")
                 ->addWhere("ca_idticket = ?", $numeroTicket)
                 ->fetchOne();
         
@@ -2986,6 +2810,7 @@ class inoF2Actions extends sfActions {
         $numeroTicket = $request->getParameter("idticket");
         $respuestas = Doctrine::getTable("HdeskResponse")
                 ->createQuery("t")
+                ->select("ca_idticket,ca_text")
                 ->addWhere("ca_idticket = ?", $numeroTicket)
                 ->addOrderBy("ca_createdat")
                 ->execute();
@@ -3080,6 +2905,7 @@ class inoF2Actions extends sfActions {
         $idcomprobante = $request->getParameter("idcomprobante");
         $deducciones = Doctrine::getTable("InoDeduccion")
                 ->createQuery("d")
+                ->select("ca_iddeduccion,ca_neto,ca_tcambio,ca_observaciones")
                 ->addWhere("ca_idcomprobante = ?", $idcomprobante)
                 ->execute();
         $data = array();
@@ -3103,6 +2929,7 @@ class inoF2Actions extends sfActions {
             $conn->beginTransaction();
             $deduccion = Doctrine::getTable("InoDeduccion")
                     ->createQuery("d")
+                    ->select("ca_iddeduccion,ca_idcomprobante")
                     ->addWhere("d.ca_iddeduccion = ? and d.ca_idcomprobante = ?", array($iddeduccion, $idcomprobante))
                     ->fetchOne();
             if ($deduccion) {
@@ -3172,6 +2999,7 @@ class inoF2Actions extends sfActions {
         $idmaster = $request->getParameter("idmaster");
         $equipos = Doctrine::getTable("InoEquipo")
                 ->createQuery("e")
+                ->select("*")
                 ->addWhere("e.ca_idmaster = ?", $idmaster)
                 ->execute();
         $data = array();
@@ -3293,6 +3121,7 @@ class inoF2Actions extends sfActions {
 
             $tarifas = Doctrine::getTable("RepTarifa")
                     ->createQuery("t")
+                    ->select("ca_idreporte,ca_idconcepto")
                     ->where("t.ca_idreporte = ? and t.ca_idconcepto!=9999 ", $house->getReporte()->getCaIdreporte())
                     ->orderBy("t.ca_fchcreado ASC")
                     ->execute();
@@ -3320,6 +3149,7 @@ class inoF2Actions extends sfActions {
 
             $recargos = Doctrine::getTable("RepGasto")
                     ->createQuery("t")
+                    ->select("ca_aplicacion,ca_idmoneda,ca_cobrar_tar")
                     ->innerJoin("t.TipoRecargo tr")
                     ->where("t.ca_idreporte = ?", $house->getReporte()->getCaIdreporte())
                     ->addWhere("(t.ca_tiporecargo = ? or t.ca_tiporecargo is null ) and t.ca_idreporte = ? and t.ca_idconcepto = ? and t.ca_recargoorigen='true'", array($tipo, $house->getReporte()->getCaIdreporte(), 9999))
@@ -4048,6 +3878,7 @@ class inoF2Actions extends sfActions {
         
         $comprobantes = Doctrine::getTable("InoComprobante")
                 ->createQuery("m")
+                ->select("*")
                 ->whereIn("m.ca_idcomprobante", json_decode($idcomprobante))
                 //->addWhere("m.ca_idmaster = ?", array($request->getParameter("idmaster")))
                 ->execute();
@@ -4104,7 +3935,7 @@ class inoF2Actions extends sfActions {
     public function executeEnviarSap(sfWebRequest $request) {
         
         
-        $idcomprobante = $request->getParameter("idcomprobante");
+        /*$idcomprobante = $request->getParameter("idcomprobante");
         
         $conn = Doctrine_Manager::getInstance()->getConnection('master');
         $conn->beginTransaction();        
@@ -4120,16 +3951,18 @@ class inoF2Actions extends sfActions {
                             ->select("*")          
                             ->where("tr.ca_estado!=? and tr.ca_datos is not null", array("P"))
                             ->limit(1);
-        /*foreach($comprobantes as $c)
-        {
-            $idtransaccion
-        }*/
+        //foreach($comprobantes as $c)
+        //{
+        //    $idtransaccion
+        //}
         
         $respuesta=IntTransaccionesOut::enviarWs($idtransaccion);
         //$reporte=IntTransaccionesOut::reporteErrores();
         //exit;
         $this->responseArray = array("respuesta" => $respuesta, "success" => true);        
         $this->setTemplate("responseTemplate");
+         * 
+         */
         
     }
 
@@ -4158,6 +3991,7 @@ class inoF2Actions extends sfActions {
         if ($query) {
             $carriers = Doctrine::getTable("ExpoCarrier")
                 ->createQuery("c")
+                    ->select("ca_idcarrier,ca_carrier")
                 ->addWhere("lower(c.ca_carrier) like '%$query%'")
                 //->getSQLQuery();
                 ->execute();
@@ -4188,6 +4022,7 @@ class inoF2Actions extends sfActions {
             $house = Doctrine::getTable("InoHouse")->findOneBy('ca_idmaster', $request->getParameter("idmaster"));
             $reporte = Doctrine::getTable("Reporte")
                     ->createQuery("r")
+                    ->select("ca_mercancia_desc,ca_modalidad")
                     ->where("r.ca_consecutivo = ?", $house->getReporte()->getCaConsecutivo())
                     ->addWhere("r.ca_fchanulado IS NULL")
                     ->addOrderBy("r.ca_version DESC")
@@ -4347,6 +4182,7 @@ class inoF2Actions extends sfActions {
             if ($iddoctransporte) {
                 $expoAwbtransporte = Doctrine::getTable("ExpoAwbtransporte")
                         ->createQuery("d")
+                        ->select("ca_iddoctransporte")
                         ->addWhere("d.ca_iddoctransporte = ?", $iddoctransporte)
                         ->fetchOne();
                 if ($expoAwbtransporte) {
@@ -4447,6 +4283,7 @@ class inoF2Actions extends sfActions {
 
         $this->reporte = Doctrine::getTable("Reporte")
                 ->createQuery("r")
+                ->select("ca_idconsignatario,ca_idnotify")
                 ->where("r.ca_consecutivo = ?", $consecutivo)
                 ->addWhere("r.ca_fchanulado IS NULL")
                 ->addOrderBy("r.ca_version DESC")
@@ -4546,6 +4383,7 @@ class inoF2Actions extends sfActions {
         
         $documento = Doctrine::getTable("ExpoAwbtransporte")
                 ->createQuery("e")
+                ->select("ca_childrens")
                 ->addWhere("e.ca_iddoctransporte = ?", $this->getRequestParameter("id"))
                 ->fetchOne();
         $conn = Doctrine::getTable("ExpoAwbtransporte")->getConnection();
@@ -4652,65 +4490,7 @@ class inoF2Actions extends sfActions {
     }
     
     
-    /*public function EnviarSiigoConect($idcomprobante) {
-
-        //$idcomprobante = $request->getParameter("idcomprobante");
-        $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
-        $comproSiigo = Doctrine::getTable("SiigoComprobante")->find($idcomprobante);
-        $consecutivo = $comprobante->getCaConsecutivo();
-        $comprobante->setCaEstado(InoComprobante::ERROR_TRANSFERIDO);
-        $comprobante->save($conn);
-
-        $tipoComprobante = $comprobante->getInoTipoComprobante();
-
-        ProjectConfiguration::registerZend();
-
-        //$client = new Zend_Soap_Client( "http://10.192.1.97:8000/WebService2/Service1.asmx?wsdl", array('encoding'=>'ISO-8859-1', 'soap_version'=>SOAP_1_2 ));        ///WebService2/Service1.asmx/HelloWorld
-        $config = sfConfig::get('app_soap_siigo');
-        
-        
-        //temporal, quitar cuando se ponga en produccion.
-        $client = new Zend_Soap_Client($config["wsdl_uri"], array('encoding' => 'ISO-8859-1', 'soap_version' => SOAP_1_2));
-        $result = $client->actualiza(
-                array(
-                    a => date("Y", strtotime($comproSiigo->getFechaCont())),
-                    t => $tipoComprobante->getCaTipo(),
-                    nt => $tipoComprobante->getCaComprobante(),
-                    c => $consecutivo,
-                    d => $tipoComprobante->getCaIdempresa()));
-        
-
-        $comproSiigo = Doctrine::getTable("SiigoComprobante")->find($idcomprobante);
-        
-        $indincor = $comproSiigo->getIndIncorpCont();
-        $errorsiigo = $comproSiigo->getCdErrsiigoCont();
-
-        if (($indincor == "+6" || $indincor == "6") && $errorsiigo == "26") {
-            //$comprobante->setCaEstado(InoComprobante::ERROR_TRANSFERIDO);
-            //$comprobante->save($conn);
-            $comprobante->setCaEstado(InoComprobante::TRANSFERIDO);
-            $comprobante->save($conn);
-        } else if ($indincor == "+5" || $indincor == "5") {
-            $comprobante->setCaEstado(InoComprobante::TRANSFERIDO);
-            $comprobante->save($conn);
-        }
-
-        return array("success" => true, "consecutivo" => $consecutivo, "indincor" => $indincor, "wsdl" => $result, "info" => $info);
-        //$this->responseArray = array("success" => true, "consecutivo" => $consecutivo, "indincor" => $indincor, "wsdl" => $result, "info" => $info);
-        //$this->setTemplate("responseTemplate");
-    }*/
-
-
-    /*public function executeEnviarSiigoConect(sfWebRequest $request) {
-
-        $idcomprobante = $request->getParameter("idcomprobante");
-        
-        $this->responseArray=$this->EnviarSiigoConect($idcomprobante);
-        
-
-        //$this->responseArray = array("success" => true, "consecutivo" => $consecutivo, "indincor" => $indincor, "wsdl" => $result, "info" => $info);
-        $this->setTemplate("responseTemplate");
-    }*/
+    
     
     public function executeGenerarComisiones(sfWebRequest $request) {
         $idmaster = $request->getParameter("idmaster");
@@ -4719,10 +4499,7 @@ class inoF2Actions extends sfActions {
         
         $conn = Doctrine_Manager::getInstance()->connection();
         if ($idmaster) {
-//            $sql = "delete from ino.tb_comisiones ic where ic.ca_idhouse in ("
-//                    . " select distinct ca_idhouse from ino.tb_house where ca_idmaster = $idmaster"
-//                    . ")";
-//            $rs = $conn->execute($sql);
+
             $inoMaster = Doctrine::getTable("InoMaster")->find($idmaster);
             if ($inoMaster) {
                 $inoMaster->generarComisiones();
@@ -4780,6 +4557,7 @@ class inoF2Actions extends sfActions {
         
         $usuarios_rs = Doctrine::getTable("Usuario")
            ->createQuery("u")
+           ->select("ca_login,ca_nombre")
            ->innerJoin("u.Sucursal s")
            ->addWhere("u.ca_departamento='Comercial' or u.ca_cargo='Representante de Ventas'")
            ->orderBy("u.ca_login")
@@ -4902,6 +4680,7 @@ class inoF2Actions extends sfActions {
             if ($exclusion) {   // Exclusión por Meta
                 $houses = Doctrine::getTable("InoHouse")
                         ->createQuery("h")
+                        ->select("h.ca_idhouse, m.ca_idmaster")
                         ->innerJoin("h.InoMaster m")
                         ->addWhere("h.ca_vendedor = ?", $vendedor)
                         ->addWhere("m.ca_referencia like ?", $referencia)
@@ -4982,8 +4761,9 @@ class inoF2Actions extends sfActions {
                 $rs = $stmt->fetchAll(PDO::FETCH_COLUMN);
                 $facturas = Doctrine::getTable("InoComprobante")
                     ->createQuery("c")
+                    ->select("ca_consecutivo,ca_idcomprobante_cruce")
                     ->innerJoin("c.InoHouse h")
-                    ->innerJoin("h.InoMaster m")
+                    //->innerJoin("h.InoMaster m")
                     ->whereIn("h.ca_idhouse", $rs)
                     ->addWhere("h.ca_idcliente = ?", $comprobante->getInoHouse()->getCaIdcliente())
                     ->addWhere("c.ca_usuanulado IS NULL")
@@ -5141,6 +4921,7 @@ class inoF2Actions extends sfActions {
                 $consecutivo = $novedad->consecutivo;
                 $comisiones = Doctrine::getTable("InoComision")
                         ->createQuery("c")
+                        ->select("ca_comision,ca_fchimpreso,ca_usuimpreso,ca_vendedor")
                         ->addWhere("c.ca_consecutivo = ?", $consecutivo)
                         ->execute();
                 $valor_parcial = 0;
@@ -5266,6 +5047,7 @@ class inoF2Actions extends sfActions {
         set_time_limit(0);
         $comprobantes = Doctrine::getTable("InoComision")
                 ->createQuery("c")
+                ->select("c.*")
                 ->innerJoin("c.InoHouse h")
                 ->innerJoin("h.InoMaster m")
                 ->addWhere("c.ca_consecutivo IS NULL")
@@ -5307,6 +5089,7 @@ class inoF2Actions extends sfActions {
                 }
                 $comprPago = Doctrine::getTable("InoComprobante")
                     ->createQuery("c")
+                    ->select("ca_idcomprobante,ca_consecutivo,ca_fchcomprobante,ca_idcomprobante_cruce")
                     ->addWhere("c.ca_idcomprobante = ?", $factura->getCaIdcomprobanteCruce())
                     ->addWhere("c.ca_usuanulado IS NULL")
                     ->fetchOne();
@@ -5398,6 +5181,7 @@ class inoF2Actions extends sfActions {
         $vendedor = (!$idVendedor) ? $this->getUser()->getUserId() : $idVendedor;
         $houses = Doctrine::getTable("InoHouse")
                 ->createQuery("h")
+                ->select("h.*")
                 ->innerJoin("h.InoMaster m")
                 ->addWhere("h.ca_vendedor = ?", $vendedor)
                 ->addWhere("m.ca_fchcerrado IS NULL")
@@ -5431,6 +5215,7 @@ class inoF2Actions extends sfActions {
 
         $comprobantes = Doctrine::getTable("InoComision")
                 ->createQuery("c")
+                ->select("c.*")
                 ->innerJoin("c.InoHouse h")
                 ->innerJoin("h.InoMaster m")
                 ->addWhere("c.ca_consecutivo IS NULL")
@@ -5479,6 +5264,7 @@ class inoF2Actions extends sfActions {
         if ($request->getParameter("consecutivo")) {
             $comprobantes = Doctrine::getTable("InoComision")
                     ->createQuery("c")
+                    ->select("c.*")
                     ->innerJoin("c.InoHouse h")
                     ->innerJoin("h.InoMaster m")
                     ->addWhere("ca_consecutivo = ?", $request->getParameter("consecutivo"))
@@ -5657,6 +5443,7 @@ class inoF2Actions extends sfActions {
         $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
         $q = Doctrine::getTable("InoComision")
                 ->createQuery("c")
+                ->select("c.*")
                 ->innerJoin("c.InoHouse h")
                 ->innerJoin("h.InoMaster m")
                 ->addWhere("c.ca_consecutivo IS NOT NULL")
@@ -5700,6 +5487,7 @@ class inoF2Actions extends sfActions {
                 $rs = $stmt->fetchAll(PDO::FETCH_COLUMN);
                 $facturas = Doctrine::getTable("InoComprobante")
                     ->createQuery("c")
+                    ->select("c.*")
                     ->innerJoin("c.InoHouse h")
                     ->innerJoin("h.InoMaster m")
                     ->whereIn("h.ca_idhouse", $rs)
@@ -5724,6 +5512,7 @@ class inoF2Actions extends sfActions {
                 
                 $comprPago = Doctrine::getTable("InoComprobante")
                     ->createQuery("c")
+                    ->select("ca_idcomprobante_cruce,ca_consecutivo,ca_fchcomprobante")
                     ->addWhere("c.ca_idcomprobante = ?", $factura->getCaIdcomprobanteCruce())
                     ->addWhere("c.ca_usuanulado IS NULL")
                     ->fetchOne();
