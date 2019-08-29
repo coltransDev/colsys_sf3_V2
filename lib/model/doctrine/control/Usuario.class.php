@@ -25,6 +25,7 @@ class Usuario extends BaseUsuario {
 
         $acceso = Doctrine::getTable("AccesoUsuario")
                         ->createQuery("a")
+                        ->select("a.ca_acceso")
                         ->where('a.ca_login = ?', $this->getCaLogin())
                         ->addWhere('a.ca_rutina = ?', $rutina)
                         ->addOrderBy('a.ca_acceso DESC')
@@ -35,6 +36,7 @@ class Usuario extends BaseUsuario {
         } else {
             $acceso = Doctrine::getTable("AccesoPerfil")
                             ->createQuery("a")
+                            ->select("a.ca_acceso")
                             ->innerJoin("a.Perfil p")
                             ->innerJoin("p.UsuarioPerfil up")
                             ->where('up.ca_login = ?', $this->getCaLogin())
@@ -63,7 +65,8 @@ class Usuario extends BaseUsuario {
             $resultado .= "Cod. Postal: " . $sucursal->getCaCodpostal() . "<br />";
         }
         $resultado .= Utils::replace($sucursal->getCaNombre()) . "-" . $empresa->getTrafico()->getCaNombre() . "<br />";
-        $resultado .= "<a href=\"http://" . $empresa->getCaUrl() . "\">" . $empresa->getCaUrl() . "</a>";
+        $resultado .= "<a href=\"http://" . $empresa->getCaUrl() . "\">" . $empresa->getCaUrl() . "</a><br />";
+        // $resultado .= '<img src="http://www.coltrans.com.co/logosoficiales/coltrans/Coltrans30anos_small.jpg" alt="Coltrans 30 a?os" />' ;
         return $resultado;
     }
 
@@ -81,7 +84,8 @@ class Usuario extends BaseUsuario {
             $resultado .= "Cod. Postal: " . $sucursal->getCaCodpostal() . "\n";
         }
         $resultado .= $sucursal->getCaNombre() . " - " . $empresa->getTrafico()->getCaNombre();
-        $resultado .= "http://" . $empresa->getCaUrl();
+        $resultado .= "http://" . $empresa->getCaUrl()."\n";
+        // $resultado .= '<img src="http://www.coltrans.com.co/logosoficiales/coltrans/Coltrans30anos_small.jpg" alt="Coltrans 30 a?os" />' ;
         return $resultado;
     }
     
@@ -180,9 +184,11 @@ class Usuario extends BaseUsuario {
                 if ($connect) {
                     if (@$bind = ldap_bind($connect, $auth_user, utf8_encode($passwd))) {
                         try {
-                            $this->stopBlaming();
-                            $this->setPasswd($passwd);
-                            $this->save();
+                            if ($this->getCaPasswd() != sha1($passwd . $this->getCaSalt())) {
+                                $this->stopBlaming();
+                                $this->setPasswd($passwd);
+                                $this->save();
+                            }
                         } catch (Exception $e) {
                             //echo $e->getMessage();
                         }
@@ -371,7 +377,12 @@ class Usuario extends BaseUsuario {
     }
     
     public function getCaSucursal(){
-        $suc = Doctrine::getTable("Sucursal")->find($this->getCaIdsucursal());  
+        //$suc = Doctrine::getTable("Sucursal")->find($this->getCaIdsucursal()); 
+        $suc = Doctrine::getTable("Sucursal")
+            ->createQuery("s")
+            ->select("ca_nombre")
+            ->where("s.ca_idsucursal = ?", $this->getCaIdsucursal())
+            ->fetchOne();
         if( $suc ){
             return $suc->getCaNombre();
         }
@@ -427,7 +438,13 @@ class Usuario extends BaseUsuario {
     
     public function getGrupoEmpresarial() {
         
-        $sucursal = Doctrine::getTable("Sucursal")->find($this->getCaIdsucursal());
+        //$sucursal = Doctrine::getTable("Sucursal")->find($this->getCaIdsucursal());
+        $sucursal = Doctrine::getTable("Sucursal")
+            ->createQuery("s")
+            ->select("ca_idempresa,ca_idsucursal")
+            ->where("s.ca_idsucursal = ?", $this->getCaIdsucursal())
+            ->fetchOne();
+        
         $grupoColtrans = array(1,2,3,5,6,8,11,12);
         
         if(in_array($sucursal->getCaIdempresa(), $grupoColtrans))
@@ -440,8 +457,20 @@ class Usuario extends BaseUsuario {
     
     public function emailUsuario($login,$asunto,$direccion,$tiempoCumplido,$fchingreso, $grupoEmp = array()){
         
-        $user = Doctrine::getTable('Usuario')->find(sfContext::getInstance()->getUser()->getUserId());
-        $usuario = Doctrine::getTable("Usuario")->find($login);
+        //$user = Doctrine::getTable('Usuario')->find(sfContext::getInstance()->getUser()->getUserId());
+        $user = Doctrine::getTable("Usuario")
+            ->createQuery("u")
+            ->select("ca_login, ca_email,ca_nombre")
+            ->where("u.ca_login = ?", sfContext::getInstance()->getUser()->getUserId())
+            ->fetchOne();
+        
+        //$usuario = Doctrine::getTable("Usuario")->find($login);
+        $usuario = Doctrine::getTable("Usuario")
+            ->createQuery("u")
+            ->select("ca_login, ca_email,ca_nombre")
+            ->where("u.ca_login = ?", $login)
+            ->fetchOne();
+        
         $idempresa = $usuario->getSucursal()->getEmpresa()->getCaIdempresa();             
         //if($idempresa == 1 || $idempresa == 2 || $idempresa == 8){
         $logo = $usuario->getLogoHtml($idempresa);        
@@ -469,6 +498,7 @@ class Usuario extends BaseUsuario {
 
                 $recips = Doctrine::getTable("Usuario")
                         ->createQuery('u')
+                        ->select('u.ca_login, u.ca_email')
                         ->leftJoin('u.UsuarioPerfil up')
                         ->leftJoin('u.Sucursal s')                        
                         ->andWhere('up.ca_perfil = ?','notificaciones-talento-humano-colsys')
@@ -492,6 +522,28 @@ class Usuario extends BaseUsuario {
             case "desvinculacion":
                 $subject = 'Desvinculación Colaborador '.strtoupper($usuario->getSucursal()->getEmpresa()->getCaNombre())." ".$usuario->getSucursal()->getCaNombre();
                 $tipo = "Desvinculacion";
+                
+                /*Ticket # 74696 Solicitud que solo se envie a los jefes la notificación*/
+                $recips = Doctrine::getTable("Usuario")
+                        ->createQuery('u')
+                        ->select('u.ca_login, u.ca_email')                        
+                        ->innerJoin('u.Sucursal s')
+                        ->innerJoin('u.Cargo cg')
+                        ->andWhere('cg.ca_manager = ?', true)                        
+                        ->andWhere('u.ca_activo = ?',true)
+                        ->andWhereIn('s.ca_idempresa',$grupoEmp)                        
+                        ->andWhereNotIn('s.ca_idempresa', array(3,6)) // No incluir HB Ingenieria y Coltrans Miami
+                        ->orderBy("s.ca_idempresa, s.ca_idsucursal")
+                        ->execute();
+                if(isset($recips) && count($recips)>0){
+                    foreach ($recips as $recip) {
+                        if ($recip->getCaEmail()) {
+                            $email->addTo($recip->getCaEmail());
+                        }
+                    }
+                }else
+                    $email->addTo($remitente[$idempresa]);
+                
                 break;
             case "reconocimiento":
                 $subject = 'Reconocimiento Especial: '.$usuario->getCaNombre()." ".strtoupper($usuario->getSucursal()->getEmpresa()->getCaNombre())." ".$usuario->getSucursal()->getCaNombre();
@@ -514,7 +566,7 @@ class Usuario extends BaseUsuario {
         $email->setCaTipo($tipo);
         $email->setCaSubject($subject);
 
-        if($asunto=="ingreso" || $asunto == "desvinculacion" || $asunto == "cumpleanos"){
+        if($asunto=="ingreso" || $asunto == "cumpleanos"){
             //$email->setCaAddress("empleados-nal@coltrans.com.co");
             //$email->addTo("colmasnal@colmas.com.co");
             //$email->addTo("colotmnal@colotm.com");
