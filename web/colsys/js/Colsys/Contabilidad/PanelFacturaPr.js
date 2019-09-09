@@ -11,6 +11,7 @@ Ext.define('Colsys.Contabilidad.PanelFacturaPr', {
     tpl: '',
     onRender: function (ct, position) {
         me=this;
+        console.log(me.idpanel);
         
         this.tpl = new Ext.XTemplate(
                 '<html>',
@@ -103,11 +104,11 @@ Ext.define('Colsys.Contabilidad.PanelFacturaPr', {
     listeners: {
         beforeitemcontextmenu: function (obj, record, item, index, e, eOpts){
 
-            var me = this.up();            
+            var me = this.up();
             e.stopEvent();
             var store = this.getStore();
             itemCm = new Array();
-            
+            //console.log(record.data)
             if (record.data.tipocomprobante == "P" || record.data.tipocomprobante == "D") {
                 if (record.data.estado <= 1){
                     itemCm.push(
@@ -175,7 +176,6 @@ Ext.define('Colsys.Contabilidad.PanelFacturaPr', {
                                                     },
                                                     success: function (response, opts) {
                                                         
-                                                        
                                                         var obj = Ext.decode(response.responseText);                                                        
                                                         obj=obj.resul;                                                        
                                                         box.hide();
@@ -229,7 +229,7 @@ Ext.define('Colsys.Contabilidad.PanelFacturaPr', {
                                                             {
                                                                 store.reload();
                                                             }*/
-                                                            obj=obj.resul;                                                            
+                                                            obj=obj.resul;
                                                             
                                                             if (obj.Status != "0")
                                                             {
@@ -329,7 +329,10 @@ Ext.define('Colsys.Contabilidad.PanelFacturaPr', {
 
 function viewGridFacPr(idcomprobante, comprobante, transporte, impoexpo, estado, idempresa,idpanel,collect){
     
-    
+    console.log(idpanel);
+    //console.log("idempresa"+idempresa);    
+    //console.log("transporte"+transporte);
+    //console.log("impoexpo"+impoexpo);
     if (myWindowFacturaPr === null){
         myWindowFacturaPr = Ext.create('Ext.window.Window', {
             title: 'Conceptos de ' + comprobante,
