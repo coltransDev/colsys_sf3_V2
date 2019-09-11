@@ -213,7 +213,10 @@ class InoComprobante extends BaseInoComprobante
                 $c->setCaIdcomprobanteCruce(null);
                 $c->setCaObservaciones($c->getCaObservaciones()." | "."Anulado Documento Cruce Id:".$this->getCaIdcomprobante()." desde SAP por ". $usuanulado);
                 $c->stopBlaming();
-                $c->save();   
+                $c->save();
+                $this->setCaConsecutivo($this->getCaConsecutivo()."-ANULADO");
+                $this->setCaEstado("8");
+                $this->save();
             }
             
             //$conn->commit();
@@ -452,5 +455,18 @@ class InoComprobante extends BaseInoComprobante
         }else{
             return array("sucess"=>false);
         }
+    }
+    
+    public function getInoIndicadores(){
+        
+        $tipo = 1;
+        
+        return Doctrine::getTable("InoIndicadores")
+                ->createQuery("i")
+                ->where("ca_tipo = ?", $tipo)
+                ->addWhere("ca_idcaso = '".$this->getCaIdcomprobante()."'")
+                ->orderBy("ca_id DESC")
+                ->fetchOne();
+        
     }
 }
