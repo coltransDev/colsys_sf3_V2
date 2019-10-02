@@ -1142,6 +1142,9 @@ include_component("pricing", "panelTrayectoWindow");
             width:600,
             height:400,
             title:"Vista Previa Tarifas Cotizadas",
+            bodyStyle: {
+                backgroundColor: 'white'
+            },
             //src:"pm/generarTarifasPDF?idticket="+idticket+"&tipo=externo"
             src: "/pm/crearRespuestaTarifasHtml?idticket="+idticket
         })

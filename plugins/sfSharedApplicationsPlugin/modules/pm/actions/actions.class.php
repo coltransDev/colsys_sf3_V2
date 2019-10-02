@@ -3139,7 +3139,7 @@ class pmActions extends sfActions {
         
         $this->ticket = $ticket;
         
-        $this->setLayout("minimal");
+        $this->setLayout("none");
     }
     
     function executeRecargarData($request){
