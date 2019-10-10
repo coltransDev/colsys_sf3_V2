@@ -249,32 +249,11 @@ class idgsistemasActions extends sfActions {
                 case 1:
                     $select = $innerJoin = "";
                     if(in_array(25, $this->narea)){ // Transporte Terrestre Internacional
-                        $select = " ,pricing.ca_traorigen,pricing.ca_ciuorigen,pricing.ca_tradestino,pricing.ca_ciudestino,CASE WHEN trim(both '\"' from (tk.ca_datos->'solicitud'->'checkbox'->'fcl-checkbox')::text) = 'on' THEN 'Sí' ELSE NULL END AS FCL,
-                            CASE WHEN trim(both '\"' from (tk.ca_datos->'solicitud'->'checkbox'->'lcl-checkbox')::text) = 'on' THEN 'Sí' ELSE NULL END AS LCL,
-                            CASE WHEN trim(both '\"' from (tk.ca_datos->'solicitud'->'trayecto'->'destino'->'transporte'->0)::text) = 'cy' THEN 'Puerto (CY-Container Yard)'
-                                 WHEN trim(both '\"' from (tk.ca_datos->'solicitud'->'trayecto'->'destino'->'transporte'->0)::text) = 'sd' THEN 'Puerta (SD-Store Door)' ELSE NULL END AS tipodestino";
+                        $select = " ,pricing.ca_traorigen,pricing.ca_ciuorigen,pricing.ca_tradestino,pricing.ca_ciudestino,pricing.fcl,
+                            pricing.lcl, pricing.tipodestino, pricing.exw";
                         
                         $innerJoin = "
-                            INNER JOIN (
-                                SELECT 
-                                elem->>'idtrayecto' as idtrayecto, 
-                                tori.ca_idtrafico as idtraorigen, 
-                                tori.ca_nombre as ca_traorigen, 
-                                origen.ca_idciudad as ca_idorigen, 
-                                origen.ca_ciudad as ca_ciuorigen, 
-                                tdest.ca_idtrafico as idtradestino, 
-                                tdest.ca_nombre as ca_tradestino, 
-                                destino.ca_idciudad as ca_iddestino, 
-                                destino.ca_ciudad as ca_ciudestino,
-                                tk.ca_idticket
-                                FROM helpdesk.tb_tickets tk, jsonb_array_elements(tk.ca_datos->'solicitud'->'trayecto'->'ruta') AS elem
-                                    LEFT JOIN tb_ciudades origen ON origen.ca_idciudad = elem->>'idorigen'
-                                    LEFT JOIN tb_ciudades destino ON destino.ca_idciudad = elem->>'iddestino'
-                                    LEFT JOIN tb_traficos tori ON tori.ca_idtrafico = origen.ca_idtrafico
-                                    LEFT JOIN tb_traficos tdest ON tdest.ca_idtrafico = destino.ca_idtrafico
-                                WHERE tk.ca_datos is not null
-                                ORDER BY elem->>'idtrayecto'
-                            ) as pricing on pricing.ca_idticket = tk.ca_idticket";
+                            INNER JOIN helpdesk.vi_tkpricing as pricing on pricing.ca_idticket = tk.ca_idticket";
 ;                   }
                     $sql = "SELECT date_part('month',tk.ca_opened) as mes, tk.ca_idticket, tk.ca_title, tk.ca_type, tk.ca_assignedto,
                             to_char( nt.ca_fchcreado, 'YYYY-MM-DD') as fechacreado,to_char( nt.ca_fchcreado, 'HH24:MI:SS') as horacreado,
@@ -325,7 +304,7 @@ class idgsistemasActions extends sfActions {
             }
             //print($sql);
             $st = $con->execute($sql);
-            $this->idgsistemas = $st->fetchAll();
+            $this->idgsistemas = $st->fetchAll();            
         }
     }
 
