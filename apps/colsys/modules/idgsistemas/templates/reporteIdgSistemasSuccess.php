@@ -12,6 +12,11 @@ $totales = array();
 $total_ing = 0;
 $promedio_ing = 0;
 $festivos = TimeUtils::getFestivos();
+$narea = $sf_data->getRaw("narea");
+$colspan = 15;
+if (in_array(25, $narea)) {     
+    $colspan = 22;
+}
 ?>
 <div align="center" >
     <br />
@@ -29,12 +34,15 @@ if (!$idgsistemas) {
     ?>
     <table width="80%" border="1" class="tableList" align="center">
         <tr>
-            <th colspan="13" style="text-align: center"><b><? echo $type_est == 1 ? "IDG DPTO " . strtoupper($departamento->getCaNombre()) ." ".date("Y-m-d") : ($type_est == 2 ? "ESTADISTICA TICKETS CERRADOS " . date("Y-m-d") : "ESTADISTICA TICKETS ABIERTOS " . date("Y-m-d"));?></b></th>
+            <th colspan="<?=$colspan?>" style="text-align: center"><b><? echo $type_est == 1 ? "IDG DPTO " . strtoupper($departamento->getCaNombre()) ." ".date("Y-m-d") : ($type_est == 2 ? "ESTADISTICA TICKETS CERRADOS " . date("Y-m-d") : "ESTADISTICA TICKETS ABIERTOS " . date("Y-m-d"));?></b></th>
         </tr>
         <tr>
             <th scope="col" style=" text-align: center"><b>Mes</b></th>
-            <th scope="col" style=" text-align: center"><b>No. Ticket</b></th>
+            <th scope="col" style=" text-align: center"><b>No. Ticket</b></th>            
             <th scope="col" style=" text-align: center"><b>Titulo</b></th>
+            <? if ($type_est == 1) { ?>
+                <th scope="col" style=" text-align: center"><b>Tipo</b></th>
+            <?}?>
             <th scope="col" style=" text-align: center"><b>Usuario Asignado</b></th>
             <th scope="col" style=" text-align: center"><b>Fecha Creado</b></th>
             <th scope="col" style=" text-align: center"><b>Hora Creado</b></th>
@@ -42,12 +50,24 @@ if (!$idgsistemas) {
             <th scope="col" style=" text-align: center"><b><? echo $type_est == 1 ? "Hora Respuesta" : ($type_est == 2 ? "Hora Cierre" : "Hora Ult. Seg."); ?></b></th>
             <th scope="col" style=" text-align: center;width: 110px"><b>Grupo</b></th>
             <th scope="col" style=" text-align: center"><b>Reportado por</b></th>
+            <th scope="col" style=" text-align: center"><b>Sucursal</b></th>
+            <th scope="col" style=" text-align: center"><b>Empresa</b></th>
             <th scope="col" style=" text-align: center"><b><? echo $type_est == 1 ? "Cálculo IDG" : ($type_est == 2 ? "Cerrado" : "Abierto"); ?></b></th>
             <? if ($type_est == 3) { ?>
                 <th scope="col" style=" text-align: center"><b>Sin seguimiento hace:</b></th>
                 <th scope="col" style=" text-align: center"><b>Porcentaje</b></th>
             <? } ?>
                 <? if ($type_est == 1) { ?><th scope="col"style=" text-align: center"><b>Observaciones</b></th><? } ?>
+                
+            <? if (in_array(25, $narea)) { ?>
+                <th scope="col" style=" text-align: center"><b>Tra. Origen</b></th>
+                <th scope="col" style=" text-align: center"><b>Ciu. Origen</b></th>
+                <th scope="col" style=" text-align: center"><b>Tra. Destino</b></th>
+                <th scope="col" style=" text-align: center"><b>Ciu. Destino</b></th>
+                <th scope="col" style=" text-align: center"><b>Fcl</b></th>
+                <th scope="col" style=" text-align: center"><b>Lcl</b></th>
+                <th scope="col" style=" text-align: center"><b>Tipo destino</b></th>
+            <?}?>
         </tr>
         <?
         foreach ($idgsistemas as $idgsistema) {
@@ -128,6 +148,9 @@ if (!$idgsistemas) {
                 <td><?= $idgsistema["mes"] ?></td>
                 <td><a href="<?= url_for("helpdesk/verTicket?id=" . $idgsistema["ca_idticket"]) ?>" target="_blank"><?= $idgsistema["ca_idticket"] ?></a></td>
                 <td><?= $idgsistema["ca_title"] ?></td>
+                <? if ($type_est == 1) { ?>
+                    <td scope="col" style=" text-align: center"><?= $idgsistema["ca_type"] ?></td>
+                <?}?>
                 <td><?= $idgsistema["ca_assignedto"] ?></td>
                 <td><?= $idgsistema["fechacreado"] ?></td>
                 <td><?= $idgsistema["horacreado"] ?></td>
@@ -135,12 +158,26 @@ if (!$idgsistemas) {
                 <td><? echo $type_est == 1 ? $idgsistema["horaterminada"] : ($type_est == 2 ? $idgsistema["close_hou"] : $idgsistema["ult_hou"]); ?></td>
                 <td><?= $idgsistema["ca_name"] ?></td>
                 <td><?= $idgsistema["ca_login"] ?></td>
+                <td><?= $idgsistema["ca_nombre"] ?></td>
+                <td><?= $idgsistema["empresa"] ?></td>
                 <td style=" text-align: right"><font color="<? echo $calculo_hms > $lcs ? "red" : ($calculo_hms < $lci ? "orange" : "black") ?>"><?= $calculo_hms ?></font></td>
                 <? if ($type_est == 3) { ?>
                     <td style=" text-align: right; width: 60px "><?= $calculoultsg_hms ?></td>
                     <td><?= $idgsistema["ca_percentage"] ?></td>
                 <? } ?>
-                <? if ($type_est == 1) { ?><td><?= $idgsistema["ca_observaciones"] ?></td><? } ?>
+                <? if ($type_est == 1) { ?><td><?= $idgsistema["ca_observaciones"] ?></td>
+                
+                    <? if (in_array(25, $narea)) { ?>
+                        <td><?= $idgsistema["ca_traorigen"] ?></td>
+                        <td><?= $idgsistema["ca_ciuorigen"] ?></td>
+                        <td><?= $idgsistema["ca_tradestino"] ?></td>
+                        <td><?= $idgsistema["ca_ciudestino"] ?></td>
+                        <td><?= $idgsistema["fcl"] ?></td>
+                        <td><?= $idgsistema["lcl"] ?></td>
+                        <td><?= $idgsistema["tipodestino"] ?></td>                    
+                    <?}?>
+                <? } ?>
+                
 
             </tr>
             <?

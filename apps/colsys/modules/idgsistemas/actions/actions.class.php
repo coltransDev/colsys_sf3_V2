@@ -217,8 +217,8 @@ class idgsistemasActions extends sfActions {
 
         $this->idgsistemas = "";
         $type_est = $this->type_est;
-        $porcentaje = $this->porcentaje;
-
+        $porcentaje = $this->porcentaje;        
+        
         if (is_array($this->narea) && array_sum($this->narea) > 0) {
             
             $sql_grupo = "";
@@ -247,13 +247,46 @@ class idgsistemasActions extends sfActions {
             $con = Doctrine_Manager::getInstance()->connection();
             switch ($type_est) {
                 case 1:
-                    $sql = "SELECT date_part('month',tk.ca_opened) as mes, tk.ca_idticket, tk.ca_title, tk.ca_assignedto,
+                    $select = $innerJoin = "";
+                    if(in_array(25, $this->narea)){ // Transporte Terrestre Internacional
+                        $select = " ,pricing.ca_traorigen,pricing.ca_ciuorigen,pricing.ca_tradestino,pricing.ca_ciudestino,CASE WHEN trim(both '\"' from (tk.ca_datos->'solicitud'->'checkbox'->'fcl-checkbox')::text) = 'on' THEN 'Sí' ELSE NULL END AS FCL,
+                            CASE WHEN trim(both '\"' from (tk.ca_datos->'solicitud'->'checkbox'->'lcl-checkbox')::text) = 'on' THEN 'Sí' ELSE NULL END AS LCL,
+                            CASE WHEN trim(both '\"' from (tk.ca_datos->'solicitud'->'trayecto'->'destino'->'transporte'->0)::text) = 'cy' THEN 'Puerto (CY-Container Yard)'
+                                 WHEN trim(both '\"' from (tk.ca_datos->'solicitud'->'trayecto'->'destino'->'transporte'->0)::text) = 'sd' THEN 'Puerta (SD-Store Door)' ELSE NULL END AS tipodestino";
+                        
+                        $innerJoin = "
+                            INNER JOIN (
+                                SELECT 
+                                elem->>'idtrayecto' as idtrayecto, 
+                                tori.ca_idtrafico as idtraorigen, 
+                                tori.ca_nombre as ca_traorigen, 
+                                origen.ca_idciudad as ca_idorigen, 
+                                origen.ca_ciudad as ca_ciuorigen, 
+                                tdest.ca_idtrafico as idtradestino, 
+                                tdest.ca_nombre as ca_tradestino, 
+                                destino.ca_idciudad as ca_iddestino, 
+                                destino.ca_ciudad as ca_ciudestino,
+                                tk.ca_idticket
+                                FROM helpdesk.tb_tickets tk, jsonb_array_elements(tk.ca_datos->'solicitud'->'trayecto'->'ruta') AS elem
+                                    LEFT JOIN tb_ciudades origen ON origen.ca_idciudad = elem->>'idorigen'
+                                    LEFT JOIN tb_ciudades destino ON destino.ca_idciudad = elem->>'iddestino'
+                                    LEFT JOIN tb_traficos tori ON tori.ca_idtrafico = origen.ca_idtrafico
+                                    LEFT JOIN tb_traficos tdest ON tdest.ca_idtrafico = destino.ca_idtrafico
+                                WHERE tk.ca_datos is not null
+                                ORDER BY elem->>'idtrayecto'
+                            ) as pricing on pricing.ca_idticket = tk.ca_idticket";
+;                   }
+                    $sql = "SELECT date_part('month',tk.ca_opened) as mes, tk.ca_idticket, tk.ca_title, tk.ca_type, tk.ca_assignedto,
                             to_char( nt.ca_fchcreado, 'YYYY-MM-DD') as fechacreado,to_char( nt.ca_fchcreado, 'HH24:MI:SS') as horacreado,
                             to_char( nt.ca_fchterminada, 'YYYY-MM-DD') as fechaterminada, to_char( nt.ca_fchterminada, 'HH24:MI:SS') as horaterminada,
-                            gr.ca_name, tk.ca_login, nt.ca_observaciones, nt.ca_fchcreado, nt.ca_fchterminada
+                                gr.ca_name, tk.ca_login, nt.ca_observaciones, nt.ca_fchcreado, nt.ca_fchterminada, s.ca_nombre, e.ca_nombre as empresa $select
                         FROM helpdesk.tb_tickets tk
                             LEFT OUTER JOIN helpdesk.tb_groups gr ON (tk.ca_idgroup = gr.ca_idgroup)
                             LEFT OUTER JOIN notificaciones.tb_tareas nt ON nt.ca_idtarea = tk.ca_idtarea
+                            INNER JOIN control.tb_usuarios u ON u.ca_login = tk.ca_login
+                            INNER JOIN control.tb_sucursales s ON s.ca_idsucursal = u.ca_idsucursal
+                            INNER JOIN control.tb_empresas e ON s.ca_idempresa = e.ca_idempresa
+                            $innerJoin
                         WHERE to_char( nt.ca_fchcreado, 'YYYY-MM-DD') BETWEEN '" . $this->fechaInicial . "' AND '" . $this->fechaFinal . "' AND gr.ca_iddepartament = $iddepartamento $sql_grupo $assigned
                         ORDER BY tk.ca_opened, tk.ca_idticket";
                     break;
@@ -261,9 +294,12 @@ class idgsistemasActions extends sfActions {
                     $sql = "SELECT date_part('month',tk.ca_opened) as mes,tk.ca_idticket, tk.ca_title, tk.ca_assignedto,
                             to_char( tk.ca_opened, 'YYYY-MM-DD') as fechacreado, to_char( tk.ca_opened, 'HH24:MI:SS') as horacreado,
                             to_char(tk.ca_closedat, 'YYYY-MM-DD') as close_fch, to_char(tk.ca_closedat, 'HH24:MI:SS') as close_hou,
-                            gr.ca_name, tk.ca_login, tk.ca_opened as ca_fchcreado, tk.ca_closedat as fch_close
+                            gr.ca_name, tk.ca_login, tk.ca_opened as ca_fchcreado, tk.ca_closedat as fch_close, s.ca_nombre, e.ca_nombre as empresa
                         FROM helpdesk.tb_tickets tk
-                                LEFT OUTER JOIN helpdesk.tb_groups gr ON (tk.ca_idgroup = gr.ca_idgroup)
+                            LEFT OUTER JOIN helpdesk.tb_groups gr ON (tk.ca_idgroup = gr.ca_idgroup)
+                            INNER JOIN control.tb_usuarios u ON u.ca_login = tk.ca_login
+                            INNER JOIN control.tb_sucursales s ON s.ca_idsucursal = u.ca_idsucursal
+                            INNER JOIN control.tb_empresas e ON s.ca_idempresa = e.ca_idempresa
                         WHERE tk.ca_closedat IS NOT NULL and to_char(tk.ca_closedat, 'YYYY-MM-DD') BETWEEN '" . $this->fechaInicial . "' AND '" . $this->fechaFinal . "' AND gr.ca_iddepartament = $iddepartamento $sql_grupo $assigned
                         ORDER BY tk.ca_idticket";
                     break;
@@ -273,17 +309,21 @@ class idgsistemasActions extends sfActions {
                             SELECT date_part('month',tk.ca_opened) as mes,tk.ca_idticket, tk.ca_title, tk.ca_assignedto,
                                 to_char( tk.ca_opened, 'YYYY-MM-DD') as fechacreado, to_char( tk.ca_opened, 'HH24:MI:SS') as horacreado,
                                 to_char(MAX(rs.ca_createdat), 'YYYY-MM-DD') as ult_fch, to_char(MAX(rs.ca_createdat), 'HH24:MI:SS') as ult_hou,
-                                gr.ca_iddepartament, gr.ca_name, tk.ca_login, tk.ca_opened as ca_fchcreado, MAX(rs.ca_createdat) as fch_ultseg, tk.ca_percentage
+                                gr.ca_iddepartament, gr.ca_name, tk.ca_login, tk.ca_opened as ca_fchcreado, MAX(rs.ca_createdat) as fch_ultseg, tk.ca_percentage, s.ca_nombre, e.ca_nombre as empresa
                             FROM helpdesk.tb_tickets tk
                                 INNER JOIN helpdesk.tb_responses rs ON tk.ca_idticket=rs.ca_idticket
                                 LEFT OUTER JOIN helpdesk.tb_groups gr ON (tk.ca_idgroup = gr.ca_idgroup)
+                                INNER JOIN control.tb_usuarios u ON u.ca_login = tk.ca_login
+                                INNER JOIN control.tb_sucursales s ON s.ca_idsucursal = u.ca_idsucursal
+                                INNER JOIN control.tb_empresas e ON s.ca_idempresa = e.ca_idempresa
                             WHERE tk.ca_closedat IS NULL $sql_grupo $assigned
-                            GROUP BY tk.ca_opened, tk.ca_idticket, tk.ca_title, tk.ca_assignedto, fechacreado, horacreado, tk.ca_login, gr.ca_iddepartament, gr.ca_name, tk.ca_percentage
+                            GROUP BY tk.ca_opened, tk.ca_idticket, tk.ca_title, tk.ca_assignedto, fechacreado, horacreado, tk.ca_login, gr.ca_iddepartament, gr.ca_name, tk.ca_percentage,s.ca_nombre, e.ca_nombre
                             ORDER BY tk.ca_idticket
                              ) as consulta
                         WHERE ult_fch <= '" . $this->fechaUltSeg . "' AND consulta.ca_iddepartament = $iddepartamento AND ca_percentage<='" . $porcentaje . "'";
                     break;
             }
+            //print($sql);
             $st = $con->execute($sql);
             $this->idgsistemas = $st->fetchAll();
         }
