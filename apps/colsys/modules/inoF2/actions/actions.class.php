@@ -584,7 +584,7 @@ class inoF2Actions extends sfActions {
             }
             else
             {
-                $q->addWhere("comp.ca_usucreado = ?  AND comp.ca_consecutivo IS NULL AND comp.ca_estado = ?",array($this->getUser()->getUserId(),0));
+                $q->addWhere("comp.ca_usucreado = ?  AND comp.ca_consecutivo IS NULL AND comp.ca_estado in (?,?)",array($this->getUser()->getUserId(),0,6));
             }
         }
         $debug=$q->getSqlQuery();
@@ -607,7 +607,7 @@ class inoF2Actions extends sfActions {
             if ($d["comp_ca_estado"] == "5")
                 $class = "row_green";
             else if ($d["comp_ca_estado"] == "6")
-                $class = "row_pink";
+                $class = "row_yellow";
             else if ($d["comp_ca_estado"] == "8")
                 $class = "row_purple";
 
@@ -1947,36 +1947,15 @@ class inoF2Actions extends sfActions {
             $comprobante->setCaPlazo($plazo);
             $comprobante->save();
         }
-        /*if($comprobante->getCaIdcomprobante()==147922)
-        {
-            echo $plazo;
-            exit;
-        }*/
-        //exit;
-        /*else
-            $plazo=$comprobante->getCaPlazo($plazo);*/
         
-        $transout = new IntTransaccionesOut();
-        $idinttipo = 7;
-        $file="";
-        switch ($comprobante->getInoTipoComprobante()->getCaTipo()) {
-            case "F":
-                $idinttipo = 7;                
-                break;
-            case "C":
-                $idinttipo = 13;
-                break;
-            case "P":
-                $idinttipo = 8;
-                break;
-            case "D":
-                $idinttipo = 20;
-                break;
+        if($comprobante->getCaEstado()==0){
+            $comprobante->setCaEstado(6);
+            $comprobante->save();
         }
-        $idtransaccion = IntTransaccionesOut::procesarTransacciones($idinttipo, $comprobante->getCaIdcomprobante());
+
+        $idtransaccion = $comprobante->getIdtransaccion();
         
         if ($idtransaccion!="" && $idtransaccion > 0) {
-         //   try {
                 $resul = IntTransaccionesOut::enviarWs($idtransaccion,$this->getUser()->getUserId());
                 $resul=$resul[0];
                 $success = true;
@@ -1989,8 +1968,30 @@ class inoF2Actions extends sfActions {
         return $resul;
     }
     
+     public function executeVerificarComprobante(sfWebRequest $request) {
     
+        $idcomprobante = $request->getParameter("idcomprobante");        
 
+        try{
+            $comprobante = Doctrine::getTable("InoComprobante")
+                ->createQuery("m")                
+                ->where("m.ca_idcomprobante = ?", $idcomprobante)  
+                ->fetchOne();
+   
+            $idtransaccion = $comprobante->getIdtransaccion();
+
+            $verificacion = IntTransaccionesOut::verificarWs($comprobante, $idtransaccion,$this->getUser()->getUserId());
+            
+            if($verificacion["success"])
+                $file = "/inocomprobantes/generarComprobantePDF/id/" . $comprobante->getCaIdcomprobante()."/sap/1";
+            
+        
+            $this->responseArray = array("success" => $verificacion["success"], "resul"=>$verificacion["resul"], "file"=>$file, "idmoneda"=>$comprobante->getCaIdmoneda(), "errorInfo"=>$verificacion["errorInfo"]);
+        }catch(Exception $e){
+            $this->responseArray = array("success" => "false", "errorInfo"=> utf8_encode($e->getMessage()));
+        }
+        $this->setTemplate("responseTemplate");
+    }
    
     public function executeAnularComprobante(sfWebRequest $request) {
         //$conn = Doctrine::getTable("InoMaster")->getConnection();
@@ -4878,6 +4879,8 @@ class inoF2Actions extends sfActions {
             $fch_con->sub(new DateInterval('P1D'));
         }
         $habilitado = false;
+        //$fchs_ok[] = date('Y-m-d', mktime(0,0,0,3,21,2019));
+        $fchs_ok[] = date('Y-m-d', mktime(0,0,0,10,24,2019));
         if ($usuario->getCaDepartamento() == 'Auditoría' || in_array(date('Y-m-d'), $fchs_ok)) {    //, mktime(0,0,0,3,21,2019)
             $habilitado = true;
         }
