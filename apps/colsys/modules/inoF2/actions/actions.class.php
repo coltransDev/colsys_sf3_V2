@@ -3024,15 +3024,33 @@ class inoF2Actions extends sfActions {
         $conn = Doctrine::getTable("InoEquipo")->getConnection();
         try {
             $conn->beginTransaction();
+            
+            Doctrine_Manager::getInstance()->setCurrentConnection('master');
+            $con = Doctrine_Manager::getInstance()->connection();
+
             $equipo = Doctrine::getTable("InoEquipo")->find($idequipo);
-            if ($equipo) {
+            
+            $sql = "
+                SELECT ca_idequipo FROM ino.tb_equipos WHERE ca_idequipo in (
+                    SELECT (jsonb_array_elements(ca_datos->'equipos')->'idequipo')::text::integer
+                    FROM ino.tb_house_sea hs
+                        INNER JOIN ino.tb_house h ON h.ca_idhouse = hs.ca_idhouse
+                    WHERE ca_idmaster = ".$equipo->getCaIdmaster().") and ca_idequipo = $idequipo";
+        
+            $rs = $con->execute($sql);
+            $eqs = $rs->fetchAll();
+                        
+            if (count($eqs)<=0) {
                 $equipo->delete();
                 $conn->commit();
+                $this->responseArray = array("success" => true);
+            }else{
+                $this->responseArray = array("success" => false, "errorInfo" => utf8_encode("Este contenedor no puede ser eliminado, ya tiene información ingresada en el House"));
             }
-            $this->responseArray = array("success" => true);
+            
         } catch (Exception $e) {
             $conn->rollBack();
-            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()), "debug"=>$sql);
         }
         $this->setTemplate("responseTemplate");
     }
