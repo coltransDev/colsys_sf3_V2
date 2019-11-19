@@ -359,7 +359,7 @@ class inoF2Actions extends sfActions {
                 if($inoHouse->getReporte()->getConsignatario())
                 {
                     $consignatario = $inoHouse->getReporte()->getConsignatario();
-                    $row["operador"] = $consignatario->getCaNombre() . " Id. " . $consignatario->getCaIdentificacion();
+                    $row["operador"] = utf8_encode($consignatario->getCaNombre()) . " Id. " . $consignatario->getCaIdentificacion();
                 }else
                 {
                     $row["operador"]="";
@@ -395,9 +395,13 @@ class inoF2Actions extends sfActions {
             $row["equipos"] = $equipos;
             $data[] = $row;
         }
-//        if($idmaster=="27265")
+        if($idmaster=="55857"){            
+//            //$row["equipos"] = array();
+//            //$data[] = $row;
 //            print_r($data);
-
+//            echo json_encode($data);
+//            exit;
+        }
         $this->responseArray = array("success" => true, "root" => $data, "total" => count($data), "ncomprobantes" => count($comprobantes));
 
         $this->setTemplate("responseTemplate");
@@ -3023,31 +3027,58 @@ class inoF2Actions extends sfActions {
         $idequipo = $request->getParameter("idequipo");
         $conn = Doctrine::getTable("InoEquipo")->getConnection();
         try {
-            $conn->beginTransaction();
-            
-            Doctrine_Manager::getInstance()->setCurrentConnection('master');
-            $con = Doctrine_Manager::getInstance()->connection();
+            $conn->beginTransaction();            
 
             $equipo = Doctrine::getTable("InoEquipo")->find($idequipo);
+            $ms = Doctrine::getTable("InoMasterSea")->find($equipo->getCaIdmaster());
             
-            $sql = "
-                SELECT ca_idequipo FROM ino.tb_equipos WHERE ca_idequipo in (
-                    SELECT (jsonb_array_elements(ca_datos->'equipos')->'idequipo')::text::integer
-                    FROM ino.tb_house_sea hs
-                        INNER JOIN ino.tb_house h ON h.ca_idhouse = hs.ca_idhouse
-                    WHERE ca_idmaster = ".$equipo->getCaIdmaster().") and ca_idequipo = $idequipo";
-        
-            $rs = $con->execute($sql);
-            $eqs = $rs->fetchAll();
-                        
-            if (count($eqs)<=0) {
-                $equipo->delete();
-                $conn->commit();
-                $this->responseArray = array("success" => true);
+            if($ms->getCaFchmuisca() == null && $ms->getCaUsumuisca() == null){
+                
+                Doctrine_Manager::getInstance()->setCurrentConnection('master');
+                $con = Doctrine_Manager::getInstance()->connection();
+                $sql = "
+                    SELECT ca_idequipo FROM ino.tb_equipos WHERE ca_idequipo in (
+                        SELECT (jsonb_array_elements(ca_datos->'equipos')->'idequipo')::text::integer
+                        FROM ino.tb_house_sea hs
+                            INNER JOIN ino.tb_house h ON h.ca_idhouse = hs.ca_idhouse
+                        WHERE ca_idmaster = ".$equipo->getCaIdmaster().") and ca_idequipo = $idequipo";
+
+                $rs = $con->execute($sql);
+                $eqs = $rs->fetchAll();
+
+                if (count($eqs)<=0) {
+                    $equipo->delete($conn);
+                }else{
+                    $houses = Doctrine::getTable("InoHouse")->findBy("ca_idmaster", $equipo->getCaIdmaster());
+
+                    foreach($houses as $house){
+                        $hs = Doctrine::getTable("InoHouseSea")->find($house->getCaIdhouse());
+                        $datos = json_decode(utf8_encode($hs->getCaDatos()),1);
+
+                        $sql = "
+                            SELECT ca_idhouse, array_to_json(array_agg(equipos)) as datos_equipo
+                            FROM ino.tb_house_sea, jsonb_array_elements(ca_datos->'equipos') as equipos	
+                            WHERE ca_idhouse = ".$hs->getCaIdhouse()." and (equipos->'idequipo')::text::int <> ".$idequipo."
+                            GROUP BY 1";
+
+                        $rs = $con->execute($sql);
+                        $rs = $rs->fetchAll();
+
+                        $datos["equipos"] = json_decode($rs[0]["datos_equipo"],1);
+
+                        $hs->setCaDatos(json_encode($datos));
+                        $hs->save($conn);
+
+                        $equipo->delete($conn);
+                    }
+
+                    $conn->commit();
+                    $this->responseArray = array("success" => true, "msg" => utf8_encode("Favor tener en cuenta que se ha eliminado el contenedor para todos los efectos en House"));                
+                }
             }else{
-                $this->responseArray = array("success" => false, "errorInfo" => utf8_encode("Este contenedor no puede ser eliminado, ya tiene información ingresada en el House"));
-            }
-            
+                $conn->rollBack();
+                $this->responseArray = array("success" => false, "errorInfo" => utf8_encode("No se puede eliminar el contenedor dado que ésta referencia ya ha sido radicada.!"));
+            }       
         } catch (Exception $e) {
             $conn->rollBack();
             $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()), "debug"=>$sql);
