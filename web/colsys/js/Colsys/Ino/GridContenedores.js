@@ -1,20 +1,15 @@
 var win_comodato = null;
 var contextMenu = Ext.create('Ext.menu.Menu');
 
-comboBoxRenderer = function (combo) {
-    return function (value) {
 
-        var idx = combo.store.find(combo.valueField, value);
-        var rec = combo.store.getAt(idx);
-        return (rec === null ? value : rec.get(combo.displayField));
-    };
-};
 
 Ext.define('Colsys.Ino.GridContenedores', {
     extend: 'Ext.grid.Panel',
     alias: 'widget.Colsys.Ino.GridContenedores',
-    plugins: [
-        new Ext.grid.plugin.CellEditing({clicksToEdit: 1})
+    plugins: [{
+            ptype: 'cellediting',
+            clicksToEdit: 1
+        }
     ],
     width: 640,
     height: 500,
@@ -24,15 +19,84 @@ Ext.define('Colsys.Ino.GridContenedores', {
             this.setWidth(this.up('tabpanel').up('tabpanel').getWidth() - 50);
         },
         afterrender: function (ct, position) {
+            idmaster=this.idmaster;
             this.getStore().reload({
                 params: {
                     idmaster: this.idmaster
+                },
+                callback: function (records, operation, success) {
+                    
+                    for (i = 0; i < records.length; i++) {
+                        rec = records[i];
+                        //console.log(rec.data);
+
+                        if (Ext.ComponentManager.get("conceptocontenedores" + idmaster))
+                        {
+                            Ext.getCmp("conceptocontenedores" + idmaster).setValue(rec.data.idconcepto);                            
+                        }
+                    }
+                    //store.commitChanges();
                 }
             });
+            if (this.idimpoexpo == "Importaci\u00F3n" && this.idtransporte == "Mar\u00EDtimo") {
+                me = this;
+                Ext.Ajax.request({
+                    url: '/inoF2/datosComodato',
+                    params: {
+                        idmaster: this.idmaster
+                    },
+                    success: function (response, opts) {
+                        var res = Ext.decode(response.responseText);
+                        
+                        if (res.root.length>0 && res.success) {
+                            var lib = res.root;
+                            view = me.getView();
+                            view.tip = Ext.create('Ext.tip.ToolTip', {
+                                target: view.el,
+                                delegate: view.itemSelector,
+                                trackMouse: true,
+                                renderTo: Ext.getBody(),
+                                listeners: {
+                                    beforeshow: function updateTipBody(tip) {
+                                        var tipGridView = tip.target.component;
+                                        var record = tipGridView.getRecord(tip.triggerElement);
+                                        console.log(record);
+                                        var html="";
+                                        
+                                        html = "<table>";
+                                        html+= "<tr>";
+                                        html+= "    <td colspan= '2'>Patio: " + lib[record.get('idequipo')]["patio"] + "</td>";
+                                        html+= "</tr>";
+                                        html+= "<tr>";
+                                        html+= "    <td>D\u00EDas Libres: " + lib[record.get('idequipo')]["dias_libres"] + "</td>";
+                                        html+= "    <td>L\u00EDmite Dev.: " + lib[record.get('idequipo')]["limite_devolucion"] + "</td>";
+                                        html+= "</tr>";
+                                        html+= "<tr>";
+                                        html+= "    <td>Entrega Comodato: " + lib[record.get('idequipo')]["fecha_entrega"] + "</td>";
+                                        html+= "    <td>Fecha Devolucion: " + lib[record.get('idequipo')]["devolucion_fch"] + "</td>";
+                                        html+= "</tr>";
+                                        html+= "<tr>";
+                                        html+= "    <td colspan= '2'>Observaciones: " + lib[record.get('idequipo')]["observaciones"] + "</td>";
+                                        html+= "</tr>";
+                                        html+= "</table>";
+                                        tip.update(html);
+
+                                    }
+                                }
+                            });
+                        }
+                    },
+                    failure: function (response, opts) {
+                        Ext.MessageBox.alert("Colsys", "Se presento el siguiente error " + response.status);
+                        box.hide();
+                    }
+                });
+            }
         },
         render: function (ct, position) {
+            me = this;
             columns = new Array();
-            //console.log(this.idtransporte);
+            //console.log(this.idmodalidad);
             if (this.idtransporte == "Terrestre" && this.idimpoexpo == "INTERNO") {
                 columns.push({
                     header: "Vehiculo",
@@ -55,13 +119,16 @@ Ext.define('Colsys.Ino.GridContenedores', {
                 hidden: true
             }, {
                 header: "Concepto",
-                dataIndex: 'idconcepto' + this.idmaster,
+                dataIndex: 'concepto' + this.idmaster,
                 width: 150,
                 editor: Ext.create('Colsys.Widgets.wgConceptosContenedores', {
                     id: 'conceptocontenedores' + this.idmaster,
+                    name: 'conceptocontenedores' + this.idmaster,
                     idmaster: this.idmaster,
                     idtransporte: this.idtransporte,
-                    idimpoexpo: this.idimpoexpo
+                    idimpoexpo: this.idimpoexpo,
+                    idmodalidad: this.idmodalidad,
+                    tipo: "ino"
                 }),
                 renderer: comboBoxRenderer(Ext.getCmp('conceptocontenedores' + this.idmaster))
             }, {
@@ -70,18 +137,19 @@ Ext.define('Colsys.Ino.GridContenedores', {
                 width: 90,
                 editor: {
                     xtype: 'numberfield'
-                }
+                },
+                hidden: this.idmodalidad==="FCL"?true:false
             }, {
-                header: "Serial",
+                header: "N\u00FAmero del Contenedor",
                 dataIndex: 'serial' + this.idmaster,
                 width: 158,
                 editor: {
                     xtype: 'textfield',
-                    maxLength: 12,
-                    maxLengthText: 'Tama\u00F1o m\u00E1ximo 12'
-                }
+                    maxLength: 11,
+                    maxLengthText: 'Tama\u00F1o m\u00E1ximo 11'
+                }                
             }, {
-                header: "Precinto",
+                header: "Sello",
                 dataIndex: 'precinto' + this.idmaster,
                 width: 158,
                 editor: {
@@ -100,8 +168,74 @@ Ext.define('Colsys.Ino.GridContenedores', {
                 menuDisabled: true,
                 sortable: false,
                 xtype: 'actioncolumn',
-                width: 20,
-                items: {}
+                width: 41,
+                items: [{
+                    iconCls: 'report_edit',
+                    tooltip: 'Comodato',
+                    isDisabled: function (view, rowIndex, colIndex, item, record) {
+                        return !me.permisos.Comodatos;
+                    },
+                    handler: function (grid, rowIndex, colIndex) {
+                        var store = grid.getStore();
+                        var record = store.getAt(rowIndex);
+
+                        if (win_comodato == null) {
+                            win_comodato = new Ext.Window({
+                                id: 'winControlComodato',
+                                title: 'Control Comodatos',
+                                width: 800,
+                                height: 310,
+                                closeAction: 'destroy',
+                                listeners: {
+                                    destroy: function (obj, eOpts)
+                                    {
+                                        win_comodato = null;
+                                    }
+                                },
+                                items: {
+                                    xtype: 'Colsys.Ino.FormControlComodato',
+                                    id: 'formControlComodato',
+                                    idequipo: record.get("idequipo")
+                                }
+                            });
+                        }
+                        win_comodato.show();
+                    }                        
+                }, {
+                    iconCls: 'delete',
+                    tooltip: 'Eliminar el Equipo',
+                    isDisabled: function (view, rowIndex, colIndex, item, record) {
+                        return !me.permisos.Anular;
+                    },
+                    handler: function (grid, rowIndex, colIndex) {
+                        var store = grid.getStore();
+                        var record = store.getAt(rowIndex);
+                        
+                        Ext.MessageBox.confirm('Confirmaci&oacute;n de Eliminaci&oacute;n', 'Est&aacute; seguro que desea anular el registro?', function (choice) {
+                            if (choice == 'yes') {
+                                Ext.Ajax.request({
+                                    waitMsg: 'Eliminando...',
+                                    url: '/inoF2/eliminarContenedor',
+                                    params: {
+                                        idequipo: record.get("idequipo"),
+                                    },
+                                    failure: function (response, options) {
+                                        Ext.MessageBox.alert("Mensaje", 'Se presento un error Eliminando el registro.<br>' + response.errorInfo);
+                                        success = false;
+                                    },
+                                    success: function (response, options) {
+                                        var res = Ext.JSON.decode(response.responseText);
+                                        if (res.success) {
+                                            store.reload();
+                                        } else {
+                                            Ext.MessageBox.alert("Mensaje", 'Error eliminando el registro.<br>' + res.errorInfo);
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }                        
+                }]
             });
 
             this.reconfigure(
@@ -110,7 +244,8 @@ Ext.define('Colsys.Ino.GridContenedores', {
                         fields: [
                             {name: 'idvehiculo' + this.idmaster, type: 'string', mapping: 'idvehiculo'},
                             {name: 'idequipo' + this.idmaster, type: 'string', mapping: 'idequipo'},
-                            {name: 'idconcepto' + this.idmaster, type: 'string', mapping: 'idconcepto'},
+                            {name: 'idconcepto' + this.idmaster, type: 'integer', mapping: 'idconcepto'},
+                            {name: 'concepto' + this.idmaster, type: 'string', mapping: 'concepto'},
                             {name: 'serial' + this.idmaster, type: 'string', mapping: 'serial'},
                             {name: 'precinto' + this.idmaster, type: 'string', mapping: 'precinto'},
                             {name: 'observaciones' + this.idmaster, type: 'string', mapping: 'observaciones'},
@@ -178,7 +313,7 @@ Ext.define('Colsys.Ino.GridContenedores', {
                             row.id = r.id
                             changes[i] = row;
                         }
-
+                        
                         var gridContenedores = JSON.stringify(changes);
 
                         Ext.Ajax.request({
@@ -292,6 +427,7 @@ Ext.define('Colsys.Ino.GridContenedores', {
                                         success: function (response, options) {
                                             var res = Ext.JSON.decode(response.responseText);
                                             if (res.success) {
+                                                Ext.MessageBox.alert("Mensaje", 'Contenedor eliminado correctamente.<br>' + res.msg);
                                                 store.reload();
                                             } else {
                                                 Ext.MessageBox.alert("Mensaje", 'Se presento un error guardando los registros.<br>' + res.responseInfo);
