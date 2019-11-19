@@ -441,27 +441,36 @@ class RepStatus extends BaseRepStatus {
                 }
 
                 $perfiles = array();
-                if (($reporte->getCaTransporte() == constantes::MARITIMO && $reporte->getCaImpoexpo() == constantes::IMPO) && $reporte->getCaContinuacion() != "OTM") {
+                $perfiles1 = array();
+                if (($reporte->getCaTransporte() == constantes::MARITIMO && $reporte->getCaImpoexpo() == constantes::IMPO)) {
                     if ($reporte->getCaDeclaracionant() == "true" || $reporte->getCaDeclaracionant() == "TRUE" || $reporte->getCaDeclaracionant() == "1" || $reporte->getCaDeclaracionant() == 1)
                     {
                         //$perfiles = array("Jefe de Aduanas Puerto", "Coordinador Control Riesgo Aduana");
                         $perfiles = array("Jefe de Aduanas Puerto");
-                        $email->addCc("coordinador-control-riesgo1@colmas.com.co");//ticket 68545 
+                        $perfiles1 = array("coordinador-control-riesgo-aduana-maritimo-colsys");
+                        //$email->addCc("coordinador-control-riesgo1@colmas.com.co");//ticket 68545 
                     }
                     else
+                    {
                         $perfiles = $etapa->getPerfilxTipo('ADUANA-PUERTO');
+                        $perfiles1 = $etapa->getPerfilxTipo('ADUANA-PUERTO-CR');
+                    }
                 }
-                else if (($reporte->getCaTransporte() == constantes::AEREO && $reporte->getCaImpoexpo() == constantes::IMPO) || $reporte->getCaContinuacion() == "OTM") {
+                else if (($reporte->getCaTransporte() == constantes::AEREO && $reporte->getCaImpoexpo() == constantes::IMPO)) {
                     if ($reporte->getCaDeclaracionant() == "true" || $reporte->getCaDeclaracionant() == "TRUE" || $reporte->getCaDeclaracionant() == "1" || $reporte->getCaDeclaracionant() == 1)
                     {
                         //$perfiles = array("Jefe Dpto. Aduana", "Coordinador Control Riesgo Aduana");
-                        $perfiles = array("Jefe Dpto. Aduana" );
-                        $email->addCc("coordinador-control-riesgo2@colmas.com.co ");//ticket 68545
+                        $perfiles = array("Jefe Dpto. Aduana"  );
+                        $perfiles1 = array("coordinador-control-riesgo-aduana-aereo-colsys" );                        
+                        //$email->addCc("coordinador-control-riesgo2@colmas.com.co ");//ticket 68545
                     }
                     else
+                    {
                         $perfiles = $etapa->getPerfilxTipo('ADUANA-AEREO');
-                }                
-               
+                        $perfiles1 = $etapa->getPerfilxTipo('ADUANA-AEREO-CR');
+                    }                
+                }
+
                 if (count($perfiles) > 0) {
                     $suc = $user->getSucursal();
                     if ($suc == "ABG" || $suc == "BGA" || $suc == "PEI") {
@@ -473,21 +482,47 @@ class RepStatus extends BaseRepStatus {
                     if (!$sucursal)
                         $sucursal = new Sucursal();
 
-                    //echo $cargo.'--Coordinador Control Riesgo Aduana---'.$sucursal->getCaNombre();
-                    {
-                        $q = Doctrine::getTable("Usuario")
-                                ->createQuery("c")
-                                ->select("c.ca_email")
-                                ->innerJoin("c.Sucursal s")
-                                ->where("s.ca_nombre = ?", array($sucursal->getCaNombre()))
-                                ->addWhere("c.ca_activo = ?", true)
-                                ->andWhereIn("c.ca_cargo", $perfiles);                                
-                        $jef_adu = $q->execute();
-                        foreach ($jef_adu as $j) {
-                            $email->addCc($j->getCaEmail());
-                        }
+                    $q = Doctrine::getTable("Usuario")
+                            ->createQuery("c")
+                            ->select("c.ca_email")
+                            ->innerJoin("c.Sucursal s")
+                            ->where("s.ca_nombre = ?", array($sucursal->getCaNombre()))
+                            ->addWhere("c.ca_activo = ?", true)
+                            ->andWhereIn("c.ca_cargo", $perfiles);                                
+                    $jef_adu = $q->execute();
+                    foreach ($jef_adu as $j) {
+                        $email->addCc($j->getCaEmail());
                     }
                 }
+                
+                if (count($perfiles1) > 0) {
+                    $suc = $user->getSucursal();
+                    if ($suc == "ABG" || $suc == "BGA" || $suc == "PEI") {
+                   /*     if ($suc == "BGA")
+                            $cargo1 = 'Sin cargo';*/
+                        $suc = "BOG";
+                    }
+                    $sucursal = Doctrine::getTable("Sucursal")->find($suc);
+                    if (!$sucursal)
+                        $sucursal = new Sucursal();
+
+
+                    
+                    $q = Doctrine::getTable("Usuario")
+                            ->createQuery("c")
+                            ->select("c.ca_email")
+                            ->innerJoin("c.Sucursal s")
+                            ->innerJoin("c.UsuarioPerfil up")
+                            ->where("s.ca_nombre = ?", array($sucursal->getCaNombre()))
+                            ->addWhere("c.ca_activo = ?", true)
+                            ->andWhereIn("up.ca_perfil", $perfiles1);
+
+                    $control_riesgo = $q->execute();
+                    foreach ($control_riesgo as $j) {
+                        $email->addCc($j->getCaEmail());
+                    }
+
+                }                
             }
         }
         if ($reporte->getCaDeclaracionant() == "true" || $reporte->getCaDeclaracionant() == "TRUE" || $reporte->getCaDeclaracionant() == "1" || $reporte->getCaDeclaracionant() == 1) {
@@ -543,4 +578,37 @@ class RepStatus extends BaseRepStatus {
         return $hbls;
     }
 
+    public function getEtapasEvaluacion(){
+        
+        $impoexpo = $this->getReporte()->getCaImpoexpo();
+        $transporte = $this->getReporte()->getCaTransporte();
+        
+        $caso = "CU277";
+        $datos = ParametroTable::retrieveByCaso($caso);
+
+        $etapas = array();
+        $data2 = array();
+        $data3 = array();
+
+        foreach($datos as $d){            
+            $dato = $d->getCaValor2();            
+            $data2[$d->getCaIdentificacion()][$d->getCaValor()] = $dato;
+
+}
+
+        foreach($data2 as $key => $gridVal){            
+            foreach($gridVal as $idetapa => $val){
+                $manage = (array) json_decode(utf8_encode($val));                
+                $data3[] = $manage;
+                //print_r($manage);
+                if(in_array(utf8_encode($impoexpo), $manage["impoexpo"]) && in_array(utf8_encode($transporte), $manage["transporte"])){
+                    $etapas[] = $idetapa;
+                }
+            }
+        }
+//        print_r($data2);
+        //print_r($manage);
+        ///print_r($etapas);
+        return $etapas;
+    }    
 }
