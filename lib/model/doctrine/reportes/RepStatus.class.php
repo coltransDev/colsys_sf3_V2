@@ -445,10 +445,7 @@ class RepStatus extends BaseRepStatus {
                 if (($reporte->getCaTransporte() == constantes::MARITIMO && $reporte->getCaImpoexpo() == constantes::IMPO)) {
                     if ($reporte->getCaDeclaracionant() == "true" || $reporte->getCaDeclaracionant() == "TRUE" || $reporte->getCaDeclaracionant() == "1" || $reporte->getCaDeclaracionant() == 1)
                     {
-                        //$perfiles = array("Jefe de Aduanas Puerto", "Coordinador Control Riesgo Aduana");
-                        $perfiles = array("Jefe de Aduanas Puerto");
-                        $perfiles1 = array("coordinador-control-riesgo-aduana-maritimo-colsys");
-                        //$email->addCc("coordinador-control-riesgo1@colmas.com.co");//ticket 68545 
+                        $perfiles = array("Jefe de Aduanas Puerto", "Coordinador Control Riesgo Aduana");                        
                     }
                     else
                     {
@@ -459,10 +456,7 @@ class RepStatus extends BaseRepStatus {
                 else if (($reporte->getCaTransporte() == constantes::AEREO && $reporte->getCaImpoexpo() == constantes::IMPO)) {
                     if ($reporte->getCaDeclaracionant() == "true" || $reporte->getCaDeclaracionant() == "TRUE" || $reporte->getCaDeclaracionant() == "1" || $reporte->getCaDeclaracionant() == 1)
                     {
-                        //$perfiles = array("Jefe Dpto. Aduana", "Coordinador Control Riesgo Aduana");
-                        $perfiles = array("Jefe Dpto. Aduana"  );
-                        $perfiles1 = array("coordinador-control-riesgo-aduana-aereo-colsys" );                        
-                        //$email->addCc("coordinador-control-riesgo2@colmas.com.co ");//ticket 68545
+                        $perfiles = array("Jefe Dpto. Aduana", "Coordinador Control Riesgo Aduana");                        
                     }
                     else
                     {
@@ -521,7 +515,6 @@ class RepStatus extends BaseRepStatus {
                     foreach ($control_riesgo as $j) {
                         $email->addCc($j->getCaEmail());
                     }
-
                 }                
             }
         }
