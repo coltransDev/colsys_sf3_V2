@@ -3074,6 +3074,7 @@ class inoF2Actions extends sfActions {
 
                     $conn->commit();
                     $this->responseArray = array("success" => true, "msg" => utf8_encode("Favor tener en cuenta que se ha eliminado el contenedor para todos los efectos en House"));                
+
                 }
             }else{
                 $conn->rollBack();
@@ -3658,15 +3659,16 @@ class inoF2Actions extends sfActions {
             $inoEquipo = Doctrine::getTable("InoEquipo")->find($idequipo);
             $data = array();
             if ($inoEquipo) {
+                $fchArribo  = $inoEquipo->getInoMaster()->getCaFchllegada();
                 if ($inoEquipo->getCaDatos()) {
                     $data = json_decode($inoEquipo->getCaDatos());
-                } else {
-                    $fchArribo  = $inoEquipo->getInoMaster()->getCaFchllegada();
+                    $data->fecha_arribo = $fchArribo;
+                } else {                    
                     $fchEntrega = date('Y-m-d');
                     $data = array("fecha_entrega" => $fchEntrega, "fecha_arribo" => $fchArribo);
                 }
             }
-            $this->responseArray = array("data" => $data, "total" => count($data), "success" => true);
+            $this->responseArray = array("data" => $data, "total" => count($data), "success" => true, "msg"=>utf8_encode("Los cargos se han cargado correctamente. Si la fecha de llegada cambió, no olvide guardar nuevamente los datos."));
         } catch (Exception $e) {
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
