@@ -1,10 +1,24 @@
+var tpl = new Ext.create('Ext.XTemplate',
+        '<tpl for=".">',
+        '<tpl for="ciudad" if="this.shouldShowHeader(ciudad)"><div class="group-header">{[this.showHeader(values.ciudad)]}</div></tpl>',
+        '<div class="x-boundlist-item"><strong>{nombre}</strong> - {direccion}</div>',
+        '</tpl>', {
+            shouldShowHeader: function (ciudad) {
+                return this.currentGroup !== ciudad;
+            },
+            showHeader: function (ciudad) {
+                this.currentGroup = ciudad;
+                return ciudad;
+            }
+        });
+
 Ext.define('Patios', {
     extend: 'Ext.form.field.ComboBox',
     alias: 'widget.combo-patios',
     displayField: 'nombre',
     valueField: 'idpatio',
     store: Ext.create('Ext.data.Store', {
-        fields: ['idpatio', 'nombre'],
+        fields: ['ciudad', 'idpatio', 'nombre', 'direccion'],
         proxy: {
             type: 'ajax',
             url: '/inoF2/datosPatiosDevolucion',
@@ -13,8 +27,15 @@ Ext.define('Patios', {
                 root: 'root'
             }
         },
+        listConfig: {
+            cls: 'grouped-list'
+        },
         autoLoad: false
     }),
+    listConfig: {
+        cls: 'grouped-list'
+    },
+    tpl: tpl,
     queryParam: 'q',
     queryMode: 'remote',
     forceSelection: true
@@ -52,14 +73,14 @@ Ext.define('Colsys.Ino.FormControlComodato', {
                     },
                     items: [{
                             xtype: 'datefield',
-                            fieldLabel: 'Fch.Entrega',
-                            name: 'entrega_comodato',
-                            id: 'entrega_comodato',
+                            fieldLabel: 'Fecha Arribo',
+                            name: 'fecha_arribo',
+                            id: 'fecha_arribo',
                             format: 'Y-m-d',
                             submitFormat: 'Y-m-d',
-                            allowBlank: false,
+                            readOnly: true,
                             listeners: {
-                                change: function ( me, newValue, oldValue, eOpts ){
+                                change: function (me, newValue, oldValue, eOpts) {
                                     me.up('form').calculaLimite();
                                 }
                             }
@@ -76,7 +97,7 @@ Ext.define('Colsys.Ino.FormControlComodato', {
                             keyNavEnabled: false,
                             mouseWheelEnabled: false,
                             listeners: {
-                                change: function ( me, newValue, oldValue, eOpts ){
+                                change: function (me, newValue, oldValue, eOpts) {
                                     me.up('form').calculaLimite();
                                 }
                             }
@@ -91,9 +112,9 @@ Ext.define('Colsys.Ino.FormControlComodato', {
                             readOnly: true
                         }, {
                             xtype: 'datefield',
-                            fieldLabel: 'Fch.Inspecci\u00F3n',
-                            name: 'inspeccion_fch',
-                            id: 'inspeccion_fch',
+                            fieldLabel: 'Entrg.Comodato',
+                            name: 'fecha_entrega',
+                            id: 'fecha_entrega',
                             format: 'Y-m-d',
                             submitFormat: 'Y-m-d'
                         }
@@ -141,29 +162,32 @@ Ext.define('Colsys.Ino.FormControlComodato', {
 
         }
     ],
-    calculaLimite: function() {
-        fecha = Ext.getCmp("entrega_comodato").getValue();
+    calculaLimite: function () {
+        fecha = Ext.getCmp("fecha_arribo").getValue();
         dias = Ext.getCmp("dias_libres").getValue();
         if (fecha && dias) {
-            var dt = Ext.Date.add(new Date(fecha), Ext.Date.DAY, dias);
+            var dt = Ext.Date.add(new Date(fecha), Ext.Date.DAY, dias - 1);
             Ext.getCmp("limite_devolucion").setValue(Ext.Date.format(dt, 'Y-m-d'));
         }
     },
     listeners: {
         afterrender: function (me, eOpts) {
             form = this.getForm();
-            
+            var me = this;
+
             form.load({
                 url: '/inoF2/cargarControlMandato',
                 params: {
                     idequipo: me.idequipo
                 },
                 success: function (response, options) {
-                    var res = Ext.JSON.decode(options.response.responseText);
+                    var res = Ext.JSON.decode(options.response.responseText);                    
+                    me.calculaLimite();
                     Ext.getCmp("idpatio").store.add(
                             {"idpatio": res.data.idpatio, "nombre": res.data.patio}
                     );
                     Ext.getCmp("idpatio").setValue(res.data.idpatio);
+                    Ext.Msg.alert("Control de Mandatos", res.msg);
                 },
                 failure: function (form, action) {
                     Ext.Msg.alert("Control de Mandatos", "Error cargando los datos " + action.result.errorInfo + "</ br>");
@@ -178,13 +202,18 @@ Ext.define('Colsys.Ino.FormControlComodato', {
                 var me = this;
                 var form = this.up('form').getForm();
                 var data = form.getFieldValues();
-                data["entrega_comodato"] = Ext.Date.format(new Date(Ext.getCmp("entrega_comodato").getValue()), 'Y-m-d');
+                data["fecha_arribo"] = Ext.Date.format(new Date(Ext.getCmp("fecha_arribo").getValue()), 'Y-m-d');
                 data["limite_devolucion"] = Ext.Date.format(new Date(Ext.getCmp("limite_devolucion").getValue()), 'Y-m-d');
-                if (Ext.getCmp("inspeccion_fch")) {
-                    data["inspeccion_fch"] = Ext.Date.format(new Date(Ext.getCmp("inspeccion_fch").getValue()), 'Y-m-d');
+                if (Ext.getCmp("fecha_entrega").getValue()) {
+                    data["fecha_entrega"] = Ext.Date.format(new Date(Ext.getCmp("fecha_entrega").getValue()), 'Y-m-d');
+                } else {
+                    data["fecha_entrega"] = null;
                 }
-                if (Ext.getCmp("devolucion_fch")) {
+                    
+                if (Ext.getCmp("devolucion_fch").getValue()) {
                     data["devolucion_fch"] = Ext.Date.format(new Date(Ext.getCmp("devolucion_fch").getValue()), 'Y-m-d');
+                } else {
+                    data["devolucion_fch"] = null;
                 }
                 data["patio"] = Ext.getCmp("idpatio").getRawValue();
                 var str = JSON.stringify(data);
