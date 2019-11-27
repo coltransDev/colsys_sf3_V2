@@ -278,7 +278,7 @@ class idgsistemasActions extends sfActions {
                             LEFT JOIN ( SELECT res.ca_idticket, res.ca_createdat
                                 FROM helpdesk.tb_responses res
                                   INNER JOIN ( 
-                                     SELECT rp.ca_idticket, max(rp.ca_idresponse) AS ca_idresponse
+                                     SELECT rp.ca_idticket, min(rp.ca_idresponse) AS ca_idresponse
                                      FROM helpdesk.tb_responses rp                     
                                      WHERE rp.ca_idstatus = $this->idetapa2
                                      GROUP BY rp.ca_idticket) sta ON res.ca_idresponse = sta.ca_idresponse) idgsta2 ON idgsta2.ca_idticket = tk.ca_idticket";
