@@ -2807,7 +2807,8 @@ class pmActions extends sfActions {
         $this->idemail = $email->getCaIdemail();
         $respuesta = "Se ha generado solicitud de cotización al proveedor para la tarifa requerida. <a href='/email/verEmail?id=".$email->getCaIdemail()."' target='_blank'>Ver Email</a>";
         $request->setParameter("idticket", $ticket->getCaIdticket());
-        $request->setParameter("respuesta", $respuesta);                    
+        $request->setParameter("respuesta", $respuesta);
+        $request->setParameter("status", 11); // Solicitud del proveedor
         $suc = $this->executeGuardarRespuestaTicket($request);
         
         $this->setTemplate("enviarSolicitudEmail");
