@@ -12,6 +12,8 @@ include_component("pricing", "panelRecargosPorCiudad");
 
 $data = $sf_data->getRaw("data");
 $status = $sf_data->getRaw("status");
+//$conceptos = $sf_data->getRaw("conceptos");
+//echo "<pre>";print_r( $conceptos);echo "</pre>";
 ?>
 <style>
     .x-menu-list {       
@@ -226,26 +228,29 @@ $status = $sf_data->getRaw("status");
                                     value: '',
                                     id: 'status_id',
                                     lazyRender: false,
-                                    allowBlank: true,
+                                    allowBlank: false,
                                     displayField: 'valor',
                                     valueField: 'status',
                                     hiddenName: 'status',
                                     listClass: 'x-combo-list-small',
                                     mode: 'local',
-                                    store: new Ext.data.Store({
-                                        autoLoad: true,
-                                        proxy: new Ext.data.MemoryProxy(this.dataStatus),
-                                        reader: new Ext.data.JsonReader(
-                                                {
-                                                    root: 'root',
-                                                    totalProperty: 'total',
-                                                    successProperty: 'success'
-                                                },
-                                                Ext.data.Record.create([
-                                                    {name: 'status'},
-                                                    {name: 'valor'}
-                                                ])
-                                                )
+                                    store : new Ext.data.Store({
+                                        autoLoad : true,
+                                        url: '<?=url_for("pm/datosStatus")?>',
+                                        baseParams: {
+                                            idticket: this.idticket,
+                                            idgrupo: this.idgroup
+                                        },
+                                        reader: new Ext.data.JsonReader({                                                
+                                                root: 'root',
+                                                totalProperty: 'total',
+                                                successProperty: 'success'
+                                            },
+                                            Ext.data.Record.create([
+                                                {name: 'status'},
+                                                {name: 'valor'}
+                                            ])
+                                        )
                                     })
                                 })
                             ]
@@ -323,6 +328,7 @@ $status = $sf_data->getRaw("status");
             var win = this;
 
             var opener = this.opener;
+            console.log(form.isValid());
 
             if (form.isValid()) {
                 if (!this.respuesta && this.vencimiento <= new Date()) {
@@ -356,6 +362,7 @@ $status = $sf_data->getRaw("status");
                     }//end failure block
                 });
             } else {
+                Ext.getCmp("button-send").enable();
                 Ext.MessageBox.alert('Sistema de Tickets:', '¡Por favor complete los campos subrayados!');
             }
 

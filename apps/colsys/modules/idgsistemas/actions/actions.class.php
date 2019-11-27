@@ -214,10 +214,14 @@ class idgsistemasActions extends sfActions {
         $opcion = $request->getParameter("opcion");
 
         $checkboxOpenTicket = $request->getParameter("checkboxOpenTicket");
+        $this->checkboxStatus = $request->getParameter("checkboxStatus");
+        $this->idetapa1 = $request->getParameter("status1");
+        $this->idetapa2 = $request->getParameter("status2");
 
         $this->idgsistemas = "";
         $type_est = $this->type_est;
         $porcentaje = $this->porcentaje;        
+        $checkboxStatus = $this->checkboxStatus;
         
         if (is_array($this->narea) && array_sum($this->narea) > 0) {
             
@@ -246,14 +250,38 @@ class idgsistemasActions extends sfActions {
 
             $con = Doctrine_Manager::getInstance()->connection();
             switch ($type_est) {
-                case 1:
-                    $select = $innerJoin = "";
+                case 1: // Indicadores de Gestión
+                    $select = $innerJoin = $leftJoin = "";
                     if(in_array(25, $this->narea)){ // Transporte Terrestre Internacional
                         $select = " ,pricing.ca_traorigen,pricing.ca_ciuorigen,pricing.ca_tradestino,pricing.ca_ciudestino,pricing.fcl,
                             pricing.lcl, pricing.tipodestino, pricing.exw";
                         
                         $innerJoin = "
                             INNER JOIN helpdesk.vi_tkpricing as pricing on pricing.ca_idticket = tk.ca_idticket";
+                    }
+                    if($checkboxStatus == "on"){
+                        $q1 = ParametroTable::retrieveByCaso("CU110", null, null, $this->idetapa1);
+                        $q2 = ParametroTable::retrieveByCaso("CU110", null, null, $this->idetapa2);
+                        
+                        $this->etapa1 = $q1[0]->getCaValor();
+                        $this->etapa2 = $q2[0]->getCaValor();                        
+                        
+                        $select = " ,idgsta1.ca_createdat as ca_status1, idgsta2.ca_createdat as ca_status2";
+                        $leftJoin = "
+                            LEFT JOIN ( SELECT res.ca_idticket, res.ca_createdat
+                                FROM helpdesk.tb_responses res
+                                  INNER JOIN ( 
+                                     SELECT rp.ca_idticket, min(rp.ca_idresponse) AS ca_idresponse
+                                     FROM helpdesk.tb_responses rp                     
+                                             WHERE rp.ca_idstatus = $this->idetapa1 
+                                     GROUP BY rp.ca_idticket) sta ON res.ca_idresponse = sta.ca_idresponse) idgsta1 ON idgsta1.ca_idticket = tk.ca_idticket
+                            LEFT JOIN ( SELECT res.ca_idticket, res.ca_createdat
+                                FROM helpdesk.tb_responses res
+                                  INNER JOIN ( 
+                                     SELECT rp.ca_idticket, max(rp.ca_idresponse) AS ca_idresponse
+                                     FROM helpdesk.tb_responses rp                     
+                                     WHERE rp.ca_idstatus = $this->idetapa2
+                                     GROUP BY rp.ca_idticket) sta ON res.ca_idresponse = sta.ca_idresponse) idgsta2 ON idgsta2.ca_idticket = tk.ca_idticket";
                     }
                     $sql = "SELECT date_part('month',tk.ca_opened) as mes, tk.ca_idticket, tk.ca_title, tk.ca_type, tk.ca_assignedto,
                             to_char( nt.ca_fchcreado, 'YYYY-MM-DD') as fechacreado,to_char( nt.ca_fchcreado, 'HH24:MI:SS') as horacreado,
@@ -266,10 +294,11 @@ class idgsistemasActions extends sfActions {
                             INNER JOIN control.tb_sucursales s ON s.ca_idsucursal = u.ca_idsucursal
                             INNER JOIN control.tb_empresas e ON s.ca_idempresa = e.ca_idempresa
                             $innerJoin
+                            $leftJoin
                         WHERE to_char( nt.ca_fchcreado, 'YYYY-MM-DD') BETWEEN '" . $this->fechaInicial . "' AND '" . $this->fechaFinal . "' AND gr.ca_iddepartament = $iddepartamento $sql_grupo $assigned
                         ORDER BY tk.ca_opened, tk.ca_idticket";
                     break;
-                case 2:
+                case 2: // Tickets Cerrados
                     $sql = "SELECT date_part('month',tk.ca_opened) as mes,tk.ca_idticket, tk.ca_title, tk.ca_assignedto,
                             to_char( tk.ca_opened, 'YYYY-MM-DD') as fechacreado, to_char( tk.ca_opened, 'HH24:MI:SS') as horacreado,
                             to_char(tk.ca_closedat, 'YYYY-MM-DD') as close_fch, to_char(tk.ca_closedat, 'HH24:MI:SS') as close_hou,
@@ -282,7 +311,7 @@ class idgsistemasActions extends sfActions {
                         WHERE tk.ca_closedat IS NOT NULL and to_char(tk.ca_closedat, 'YYYY-MM-DD') BETWEEN '" . $this->fechaInicial . "' AND '" . $this->fechaFinal . "' AND gr.ca_iddepartament = $iddepartamento $sql_grupo $assigned
                         ORDER BY tk.ca_idticket";
                     break;
-                case 3:
+                case 3: // Tickets Abiertos
                     $sql = "SELECT *
                         FROM (
                             SELECT date_part('month',tk.ca_opened) as mes,tk.ca_idticket, tk.ca_title, tk.ca_assignedto,

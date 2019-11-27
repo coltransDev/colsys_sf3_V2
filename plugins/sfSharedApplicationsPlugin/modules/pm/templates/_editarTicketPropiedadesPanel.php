@@ -318,13 +318,10 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
             hiddenName: 'status',
             listClass: 'x-combo-list-small',
             mode: 'local',
-
-            store : new Ext.data.Store({                
-                autoLoad : true ,
-                proxy: new Ext.data.MemoryProxy( this.dataStatus ),
-                reader: new Ext.data.JsonReader(
-                {
-
+            store : new Ext.data.Store({
+                autoLoad : false ,
+                url: '<?=url_for("pm/datosStatus")?>',
+                reader: new Ext.data.JsonReader({                    
                     root: 'root',
                     totalProperty: 'total',
                     successProperty: 'success'
@@ -333,10 +330,10 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                     {name: 'status'},
                     {name: 'valor'}
                 ])
-            )
+                )
             })
         });
-
+        
         this.asignaciones = new Ext.form.ComboBox({
             fieldLabel: 'Asignado a',
             typeAhead: true,
@@ -1802,6 +1799,12 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                 idgrupo: idgrupo
             };
             assignedto.store.load();
+            
+            milestone = Ext.getCmp('milestone_id');
+            milestone.store.baseParams = {
+                idgrupo: idgrupo
+            };
+            milestone.store.load();
 
             proyecto = Ext.getCmp('proyecto_id');
             proyecto.setValue("");

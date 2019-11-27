@@ -66,6 +66,77 @@ if(is_array($narea)){
                 url: '<?=  url_for("idgsistemas/datosAreas")?>'
         });
 
+        this.milestones1 = new Ext.form.ComboBox({
+            alias: 'widget.wStatus',
+            fieldLabel: 'Status Inicial',
+            typeAhead: true,
+            forceSelection: true,
+            triggerAction: 'all',
+            emptyText:'',
+            selectOnFocus: true,
+            value: '<?=$etapa1?$etapa1:''?>',
+            hiddenValue: '<?=$idetapa1?$idetapa1:''?>',
+            width: 150,
+            id: 'milestone_id1',
+            lazyRender:true,
+            allowBlank: true,
+            displayField: 'valor',
+            valueField: 'status',
+            hiddenName: 'status1',
+            listClass: 'x-combo-list-small',
+            mode: 'local',
+            store : new Ext.data.Store({
+                autoLoad : false ,
+                url: '<?=url_for("pm/datosStatus")?>',
+                reader: new Ext.data.JsonReader({                        
+                        root: 'root',
+                        totalProperty: 'total',
+                        successProperty: 'success'
+                    },
+                    Ext.data.Record.create([
+                        {name: 'status'},
+                        {name: 'valor'}
+                    ])
+                )
+            })
+        });
+        
+        this.milestones2 = new Ext.form.ComboBox({
+            alias: 'widget.wStatus',
+            fieldLabel: 'Status Final',
+            typeAhead: true,
+            forceSelection: true,
+            triggerAction: 'all',
+            emptyText:'',
+            selectOnFocus: true,
+            value: '<?=$etapa2?$etapa2:''?>',
+            hiddenValue: '<?=$idetapa2?$idetapa2:''?>',
+            width: 150,
+            id: 'milestone_id2',
+            lazyRender:true,
+            allowBlank: true,
+            displayField: 'valor',
+            valueField: 'status',
+            hiddenName: 'status2',
+            listClass: 'x-combo-list-small',
+            mode: 'local',
+            store : new Ext.data.Store({
+                autoLoad : false ,
+                url: '<?=url_for("pm/datosStatus")?>',
+                reader: new Ext.data.JsonReader(
+                    {                        
+                        root: 'root',
+                        totalProperty: 'total',
+                        successProperty: 'success'
+                    },
+                    Ext.data.Record.create([
+                        {name: 'status'},
+                        {name: 'valor'}
+                    ])
+                )
+            })
+        });
+
         FormIndicadoresGestionPanel.superclass.constructor.call(this, {
             activeTab:0,
             title:'Estadísticas Help Desk',
@@ -208,12 +279,12 @@ if(is_array($narea)){
                     id: 'panel_area',
                     items :[
                         {
+                            xtype:'superboxselect',
                             allowBlank:true,
                             msgTarget: 'under',
                             allowAddNewData: true,
                             value:'<?=$arrayAreas?implode(",", $arrayAreas):""?>',
                             id: 'area_id',
-                            xtype:'superboxselect',
                             fieldLabel: '',
                             emptyText: '',
                             resizable: true,
@@ -228,6 +299,22 @@ if(is_array($narea)){
                             triggerAction: 'all',
                             minChars: 1,
                             hiddenName: 'narea[]',
+                            listeners:{
+                                additem: function(t, newItem, filtered){
+                                    /* Para habilitar el cálculo x Status sólo se puede elegir 1 área*/                                    
+                                    var idgrupo = newItem;
+                                    if(this.getCount()>1 || this.getCount()<0){           
+                                        Ext.getCmp("fieldset-status").setDisabled(true); 
+                                        Ext.getCmp("fieldset-status").collapse();
+                                        Ext.getCmp("fieldset-status").hide();                                        
+                                    }else{
+                                        console.log("322");
+                                        Ext.getCmp("fieldset-status").setDisabled(false);                                                                                
+                                        Ext.getCmp("fieldset-status").show();
+                                        Ext.getCmp("fieldset-status").idgrupo = idgrupo;
+                                    }
+                                }                        
+                            }
                         }
                     ]
                 },
@@ -314,44 +401,98 @@ if(is_array($narea)){
                         layout:'form',
                         border:false
                     },
-                    items:[{
-                            //columnWidth:.3,
-                            items: [
-                                {
-                                    xtype:'timefield',
-                                    name: 'lcs',
-                                    id: 'lcs',
-                                    value: '',
-                                    width: 95,
-                                    format: 'H:i:s',
-                                    fieldLabel: "  LC Superior"
-                                }]
+                    items:[
+                        {
+                            items: [{
+                                xtype:'timefield',
+                                name: 'lcs',
+                                id: 'lcs',
+                                value: '<?=$lcs?$lcs:""?>',
+                                width: 95,
+                                format: 'H:i:s',
+                                fieldLabel: "  LC Superior"
+                            }]
                         },
                         {
-
-                            items: [
-                                {
-                                    xtype:'timefield',
-                                    name: 'lc',
-                                    id: 'lc',
-                                    value: '',
-                                    width: 95,
-                                    format: 'H:i:s',
-                                    fieldLabel: " LC (Opcional)"
-                                }]
+                            items: [{
+                                xtype:'timefield',
+                                name: 'lc',
+                                id: 'lc',
+                                value: '',
+                                width: 95,
+                                format: 'H:i:s',
+                                fieldLabel: " LC (Opcional)"
+                            }]
                         },
                         {
-                            items: [
-                                {
-                                    xtype:'timefield',
-                                    name: 'lci',
-                                    id: 'lci',
-                                    value: '',
-                                    width: 95,
-                                    format: 'H:i:s',
-                                    fieldLabel: "  LC (Opcional)"
-                                }]
+                            items: [{
+                                xtype:'timefield',
+                                name: 'lci',
+                                id: 'lci',
+                                value: '',
+                                width: 95,
+                                format: 'H:i:s',
+                                fieldLabel: "  LC (Opcional)"
+                            }]
                         }]
+                },
+                {
+                    xtype:'fieldset',
+                    checkboxToggle:true,
+                    title: 'x Status',
+                    autoHeight:true,
+                    width: 630,
+                    idgrupo: '<?=$narea[0]?$narea[0]:""?>',
+                    id:"fieldset-status",
+                    layout:'column',
+                    labelWidth: 0.1,
+                    columns: 1,
+                    collapsed: true,
+                    checkboxName: "checkboxStatus",
+                    defaults:{
+                        xtype:'fieldset',
+                        columnWidth:0.5,
+                        layout:'form',
+                        border:false
+                    },
+                    items:[{                        
+                        items: [
+                            this.milestones1
+                        ]
+                    },
+                    {
+                        items: [
+                            this.milestones2
+                        ]
+                    }],
+                    listeners:{
+                        expand: function(p){
+                            
+                            Ext.getCmp('milestone_id1').allowBlank = false;
+                            Ext.getCmp('milestone_id2').allowBlank = false;
+                            
+                            milestone = Ext.getCmp('milestone_id1');
+                            milestone.store.baseParams = {
+                                idgrupo: this.idgrupo
+                            };
+                            milestone.store.load();
+
+                            milestone = Ext.getCmp('milestone_id2');
+                            milestone.store.baseParams = {
+                                idgrupo: this.idgrupo
+                            };
+                            milestone.store.load();                            
+                        },
+                        collapse: function(p){
+                            Ext.getCmp('milestone_id1').allowBlank = true;
+                            Ext.getCmp('milestone_id2').allowBlank = true;
+                        },
+                        render: function(){
+                            if('<?=$checkboxStatus?>'=="on"){                                
+                                this.toggleCollapse(false);
+                            }                            
+                        }
+                    }
                 }]
         });
 

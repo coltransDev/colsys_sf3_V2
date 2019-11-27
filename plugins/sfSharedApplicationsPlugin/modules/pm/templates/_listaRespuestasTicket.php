@@ -21,6 +21,13 @@
                 <br />
                 <?
             }
+            if($response->getCaIdstatus()){
+                $status = ParametroTable::retrieveByCaso("CU110", NULL, NULL, $response->getCaIdstatus());
+                ?>
+                <b>Status:</b> <?=$status[0]->getCaValor()?>
+                <br />                
+                <?
+            }
             ?>
             <?//= str_replace("\n", "<br />", $response->getCaText()) ?>
                 <!-- -->

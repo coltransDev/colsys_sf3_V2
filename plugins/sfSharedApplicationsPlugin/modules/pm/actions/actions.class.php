@@ -607,6 +607,8 @@ class pmActions extends sfActions {
             if ($request->getParameter("status") !== null) {
                 $ticket->setCaStatus(intval($request->getParameter("status")));
                 $ticket->save($conn);
+                $respuesta->setCaIdstatus(intval($request->getParameter("status")));
+                $respuesta->save($conn);
             }
 
             $conn->commit();
@@ -1292,10 +1294,23 @@ class pmActions extends sfActions {
      */
     public function executeDatosStatus(sfWebRequest $request) {
         
-        $params = ParametroTable::retrieveByCaso("CU110");
-        foreach ($params as $p) {
-            $row = array("status" => utf8_encode($p->getCaIdentificacion()), "valor" => utf8_encode($p->getCaValor()));
-            $status[] = $row;
+        $idgrupo = $request->getParameter("idgrupo");
+        $statusArray = array();
+
+        if ($idgrupo) {
+                $statuss = Doctrine::getTable("HdeskStatusGroup")
+                        ->createQuery("sg")
+                        ->select("sg.ca_idgroup, sg.ca_idstatus, p.ca_identificacion, p.ca_valor")
+                        ->innerJoin("sg.Parametro p")
+                        ->where("p.ca_casouso = 'CU110' AND sg.ca_idgroup = ?", $idgrupo)
+                        ->addOrderBy("p.ca_valor")
+                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                        ->execute();
+
+                foreach ($statuss as $s) {
+                    $row = array("status" => $s["p_ca_identificacion"], "valor" => utf8_encode($s["p_ca_valor"]));
+                $status[] = $row;
+            }
         }
 
         $this->responseArray = array("root" => $status, "success" => true);

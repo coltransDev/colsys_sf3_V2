@@ -16,6 +16,7 @@ class idgsistemasComponents extends sfComponents {
         $response->addJavaScript("extExtras/SuperBoxSelect", 'last'); 
         
         $this->narea = $this->getRequestParameter("narea");
+        $this->checkboxStatus = $this->getRequestParameter("checkboxStatus");        
         $this->fechaInicial = $this->getRequestParameter("fechaInicial");
         $this->fechaFinal = $this->getRequestParameter("fechaFinal");
         $this->type_est = $this->getRequestParameter("type_est");

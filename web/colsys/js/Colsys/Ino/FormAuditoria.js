@@ -104,8 +104,14 @@ Ext.define('Colsys.Ino.FormAuditoria', {
                             }
                         });
                         
-                        Ext.getCmp('combo-status-'+me.idmaster).getStore().reload();                        
-                    }                  
+                        comboStatus = Ext.getCmp('combo-status-'+me.idmaster);
+                        
+                        comboStatus.getStore().load({
+                            params: {
+                                idgrupo: combo.getValue()
+                            }                  
+                        });                        
+                }
                 }
             }); 
             

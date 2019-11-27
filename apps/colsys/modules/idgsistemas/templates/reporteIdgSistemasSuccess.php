@@ -3,7 +3,8 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-include_component("idgsistemas", "formIndicadoresGestionPanel");
+
+include_component("idgsistemas", "formIndicadoresGestionPanel",array("idetapa1"=>$idetapa1, "idetapa2"=>$idetapa2, "etapa1"=>$etapa1, "etapa2"=>$etapa2, "lcs"=>$lcs));
 
 $array = array();
 $cuantos_lcs = 0;
@@ -16,6 +17,9 @@ $narea = $sf_data->getRaw("narea");
 $colspan = 15;
 if (in_array(25, $narea)) {     
     $colspan = 22;
+}
+if($checkboxStatus== "on"){
+    $colspan+=3;
 }
 ?>
 <div align="center" >
@@ -53,6 +57,11 @@ if (!$idgsistemas) {
             <th scope="col" style=" text-align: center"><b>Sucursal</b></th>
             <th scope="col" style=" text-align: center"><b>Empresa</b></th>
             <th scope="col" style=" text-align: center"><b><? echo $type_est == 1 ? "Cálculo IDG" : ($type_est == 2 ? "Cerrado" : "Abierto"); ?></b></th>
+            <?if($checkboxStatus== "on"){?>
+                <th scope="col" style=" text-align: center"><b>Etapa Inicial<br/>(<?=$etapa1?>)</b></th>
+                <th scope="col" style=" text-align: center"><b>Etapa Final<br/>(<?=$etapa2?>)</b></th>
+                <th scope="col" style=" text-align: center"><b>Idg x Etapas</b></th>
+            <?}?>
             <? if ($type_est == 3) { ?>
                 <th scope="col" style=" text-align: center"><b>Sin seguimiento hace:</b></th>
                 <th scope="col" style=" text-align: center"><b>Porcentaje</b></th>
@@ -106,6 +115,21 @@ if (!$idgsistemas) {
                         $calculo_seg = '28800';
                     } elseif ($calculo_seg == 0) {
                         $calculo_seg = '60';
+                    }
+                    if($checkboxStatus== "on"){
+                        if($idgsistema["ca_status1"] != null && $idgsistema["ca_status2"] != null){
+                            list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($idgsistema["ca_status1"], "%d-%d-%d %d:%d:%d");
+                            $etapaini = mktime($hor, $min, $seg, $mes, $dia, $ano);
+
+                            list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($idgsistema["ca_status2"], "%d-%d-%d %d:%d:%d");
+                            $etapafin = mktime($hor, $min, $seg, $mes, $dia, $ano);
+                            
+                            $calculo_etapas = TimeUtils::calcDiff($festivos, $etapaini, $etapafin);
+                            $calculo_etapa_hms = TimeUtils::tiempoSegundos($calculo_etapas);
+                            
+                        }else{
+                            $calculo_etapa_hms = null;
+                        }
                     }
                     break;
                 case 2:
@@ -161,6 +185,11 @@ if (!$idgsistemas) {
                 <td><?= $idgsistema["ca_nombre"] ?></td>
                 <td><?= $idgsistema["empresa"] ?></td>
                 <td style=" text-align: right"><font color="<? echo $calculo_hms > $lcs ? "red" : ($calculo_hms < $lci ? "orange" : "black") ?>"><?= $calculo_hms ?></font></td>
+                <?if($checkboxStatus== "on"){?>
+                    <td><?=$idgsistema["ca_status1"]?></td>
+                    <td><?=$idgsistema["ca_status2"]?></td>                    
+                    <td style=" text-align: right"><font color="<? echo $calculo_etapa_hms > $lcs ? "red" : ($calculo_etapa_hms < $lci ? "orange" : "black") ?>"><?= $calculo_etapa_hms ?></font></td>
+                <?}?>
                 <? if ($type_est == 3) { ?>
                     <td style=" text-align: right; width: 60px "><?= $calculoultsg_hms ?></td>
                     <td><?= $idgsistema["ca_percentage"] ?></td>
