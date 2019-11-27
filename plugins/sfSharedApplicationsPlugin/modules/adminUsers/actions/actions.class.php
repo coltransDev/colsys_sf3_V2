@@ -437,7 +437,7 @@ class adminUsersActions extends sfActions {
         $grupoEmp = $user->getGrupoEmpresarial();
        
         $usuario = Doctrine::getTable("Usuario")->find($request->getParameter("login"));
-        $datos = json_decode(utf8_encode($usuario->getCaDatos()));
+        
         $new = $request->getParameter("key");
         $this->nivel = $this->getNivel();
        
@@ -466,7 +466,7 @@ class adminUsersActions extends sfActions {
                 $usuario->setCaLogin(strtolower($request->getParameter("login")));
             }
         }
-        
+        $datos = json_decode(utf8_encode($usuario->getCaDatos()));
         if ($request->getParameter("nombre")) {
             $usuario->setCaNombre(ucwords(strtolower($request->getParameter("nombre"))));
         }
@@ -1493,6 +1493,11 @@ class adminUsersActions extends sfActions {
         $grupoEmp = $usuario->getGrupoEmpresarial();
         $asunto = "desvinculacion";
         
+        /*Ticket # 78517: Ajuste en la intranet para desavtivar usuario automáticamente*/
+        
+        $usuario->getCaActivo(false);
+        $usuario->save();
+        
         $usuario->emailUsuario($login,$asunto,null,null,null,$grupoEmp);
     }
     
@@ -1672,7 +1677,7 @@ class adminUsersActions extends sfActions {
         
         $addWhere = "";        
         if($login){
-            $addWhere.= "AND up.ca_parent = $login";
+            $addWhere.= " AND up.ca_parent = $login";
         }
             
         $sql = "SELECT h.ca_idhijo, h.ca_documento, h.ca_nombres, h.ca_fchnacimiento, s.ca_nombre as sucursal, e.ca_nombre as empresa,string_agg(u.ca_nombre::text, '|'::text) AS ca_parents, up.ca_idhijo, string_agg(up.ca_parent::text, '|'::text) AS ca_idparents
@@ -1681,6 +1686,7 @@ class adminUsersActions extends sfActions {
                         LEFT JOIN control.tb_usuarios u ON u.ca_login = up.ca_parent
                         LEFT JOIN control.tb_sucursales s ON s.ca_idsucursal = u.ca_idsucursal
                         LEFT JOIN control.tb_empresas e ON e.ca_idempresa = s.ca_idempresa
+                WHERE u.ca_activo = TRUE
                 $addWhere
                 GROUP BY h.ca_idhijo, h.ca_nombres, s.ca_nombre, e.ca_nombre, up.ca_idhijo
                 ORDER BY h.ca_fchnacimiento DESC";
