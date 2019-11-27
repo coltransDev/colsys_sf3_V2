@@ -1495,7 +1495,7 @@ class adminUsersActions extends sfActions {
         
         /*Ticket # 78517: Ajuste en la intranet para desavtivar usuario automáticamente*/
         
-        $usuario->getCaActivo(false);
+        $usuario->setCaActivo(false);
         $usuario->save();
         
         $usuario->emailUsuario($login,$asunto,null,null,null,$grupoEmp);
