@@ -14,7 +14,7 @@ $total_ing = 0;
 $promedio_ing = 0;
 $festivos = TimeUtils::getFestivos();
 $narea = $sf_data->getRaw("narea");
-$colspan = 15;
+$colspan = 16;
 if (in_array(25, $narea)) {     
     $colspan = 22;
 }
@@ -46,6 +46,7 @@ if (!$idgsistemas) {
             <th scope="col" style=" text-align: center"><b>Titulo</b></th>
             <? if ($type_est == 1) { ?>
                 <th scope="col" style=" text-align: center"><b>Tipo</b></th>
+                <th scope="col" style=" text-align: center"><b>Estado</b></th>
             <?}?>
             <th scope="col" style=" text-align: center"><b>Usuario Asignado</b></th>
             <th scope="col" style=" text-align: center"><b>Fecha Creado</b></th>
@@ -79,6 +80,7 @@ if (!$idgsistemas) {
             <?}?>
         </tr>
         <?
+        $estados = $tipos = array();
         foreach ($idgsistemas as $idgsistema) {
             //Cálculo de horas laborales
 
@@ -167,6 +169,13 @@ if (!$idgsistemas) {
             }
             $totales[$idgsistema["ca_assignedto"]]["total_tickets"] ++;
             $totales[$idgsistema["ca_assignedto"]]["prom_tiempo"]+=$calculo_seg;
+            
+            //Calculo de Tickes Abiertos / Cerrados
+            $estados[$idgsistema["ca_estado"]]+=1;
+            
+            //Calculo de Tipos
+            $tipos[$idgsistema["ca_type"]]+=1;
+            
             ?>
             <tr>
                 <td><?= $idgsistema["mes"] ?></td>
@@ -174,6 +183,7 @@ if (!$idgsistemas) {
                 <td><?= $idgsistema["ca_title"] ?></td>
                 <? if ($type_est == 1) { ?>
                     <td scope="col" style=" text-align: center"><?= $idgsistema["ca_type"] ?></td>
+                    <td scope="col" style=" text-align: center"><?= $idgsistema["ca_estado"] ?></td>
                 <?}?>
                 <td><?= $idgsistema["ca_assignedto"] ?></td>
                 <td><?= $idgsistema["fechacreado"] ?></td>
@@ -211,6 +221,7 @@ if (!$idgsistemas) {
             </tr>
             <?
         }
+        
         $promedio_seg = TimeUtils::array_avg($array);
         $promedio_hms = TimeUtils::tiempoSegundos($promedio_seg);
         $porcentaje_lcs = @round($cuantos_lcs * 100 / $cuantos, 2);
@@ -280,6 +291,54 @@ if (!$idgsistemas) {
             </tr>
             <?
         }
+        ?>
+    </table>
+    <br />
+    <br />
+    <table class="tableList" align="center" width="20%" border="1">
+        <tr>
+            <th colspan="4" style="text-align: center"><b>ESTADISTICA POR ESTADO</b></th>
+        </tr>
+        <tr>
+            <th style="text-align: center"><b>Estado del Ticket</b></th>
+            <th style="text-align: center"><b>No. Casos</b></th>
+            <th style="text-align: center"><b>Porcentaje</b></th>
+        </tr>
+        <?  
+        ksort($estados);
+        foreach ($estados as $key => $val) {
+            ?>            
+            <tr>
+                <th><b><?= $key ?></b></th>
+                <td align="center"><?=$val?></td>
+                <td align="center"><?=round(($val*100)/array_sum($estados))?>%</td>                                
+            </tr>
+            <?
+        }
+        ?>
+    </table>
+    <br />
+    <br />
+    <table class="tableList" align="center" width="20%" border="1">
+        <tr>
+            <th colspan="4" style="text-align: center"><b>ESTADISTICA POR TIPO</b></th>
+        </tr>
+        <tr>
+            <th style="text-align: center"><b>Estado del Ticket</b></th>
+            <th style="text-align: center"><b>No. Casos</b></th>
+            <th style="text-align: center"><b>Porcentaje</b></th>
+        </tr>
+        <?
+        ksort($tipos);        
+        foreach ($tipos as $key => $val) {
+            ?>            
+            <tr>
+                <th><b><?= $key ?></b></th>
+                <td align="center"><?=$val?></td>
+                <td align="center"><?=round((($val*100)/array_sum($estados)),1)?>%</td>                
+            </tr>
+            <?
+        }   
         ?>
     </table>
     <?
