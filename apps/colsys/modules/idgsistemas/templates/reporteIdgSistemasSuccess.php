@@ -16,7 +16,7 @@ $festivos = TimeUtils::getFestivos();
 $narea = $sf_data->getRaw("narea");
 $colspan = 16;
 if (in_array(25, $narea)) {     
-    $colspan = 22;
+    $colspan+=7;
 }
 if($checkboxStatus== "on"){
     $colspan+=3;
