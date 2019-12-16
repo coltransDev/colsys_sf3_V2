@@ -9,6 +9,7 @@ class NuevoStatusForm extends BaseForm {
     private $queryPeso = null;
     private $queryVolumen = null;
     private $queryMuelles = null;
+    private $queryExclusiones = null;
     private $queryJornadas = null;
     private $queryConcepto = null;
     private $destinatarios = array();
@@ -152,6 +153,13 @@ class NuevoStatusForm extends BaseForm {
         //solo para validación
         $widgets['fchhorarecibo'] = new sfWidgetFormInputHidden();
 
+        $vehiculos = ParametroTable::retrieveByCaso( "CU020" );
+        
+        $choices = array();
+        foreach( $vehiculos as $v ){
+            $choices[$v->getCaIdentificacion()] = $v->getCaValor();
+        }
+        
         for ($i = 0; $i < self::NUM_EQUIPOS; $i++) {
             $widgets["equipos_tipo_" . $i] = new sfWidgetFormDoctrineChoice(array(
                         'model' => 'Concepto',
@@ -161,6 +169,11 @@ class NuevoStatusForm extends BaseForm {
                         'query' => $this->queryConcepto,
                         "add_empty" => true
                     ));
+
+            $widgets["equipos_idvehiculo_" . $i] = new sfWidgetFormChoice(array( 'choices' => $choices ));
+            $widgets["equipos_placa_" . $i] = new sfWidgetFormInputText(array(), array("size" => 10, "style" => "margin-bottom:3px"));
+            
+            
             $widgets["equipos_serial_" . $i] = new sfWidgetFormInputText(array(), array("size" => 14, "style" => "margin-bottom:3px"));
             $widgets["equipos_cant_" . $i] = new sfWidgetFormInputText(array(), array("size" => 5, "style" => "margin-bottom:3px"));
         }
@@ -186,6 +199,7 @@ class NuevoStatusForm extends BaseForm {
         }
 
         $widgets['observaciones_idg'] = new sfWidgetFormInputText(array(), array("size" => 120));
+        $widgets['exclusiones_idg'] = new sfWidgetFormChoice(array('choices' => $this->queryExclusiones));
 
         //Seguimientos		
         $widgets["prog_seguimiento"] = new sfWidgetFormInputCheckbox(array(), array("onClick" => "crearSeguimiento()"));
@@ -211,6 +225,8 @@ class NuevoStatusForm extends BaseForm {
         $widgets['fchactual'] = new sfWidgetFormInputText(array());
 
         $widgets['manifiesto'] = new sfWidgetFormInputText(array(), array("size" => 70));
+        $widgets['idgfactura'] = new sfWidgetFormInputHidden();
+        $widgets['idgcollect'] = new sfWidgetFormInputHidden();
         $widgets["fchmanifiesto"] = new sfWidgetFormExtDate();
         $widgets['valor_fob'] = new sfWidgetFormInputText(array(), array("size" => 60));
 
@@ -324,6 +340,8 @@ class NuevoStatusForm extends BaseForm {
 
         for ($i = 0; $i < self::NUM_EQUIPOS; $i++) {
             $validator["equipos_tipo_" . $i] = new sfValidatorString(array('required' => false));
+            $validator["equipos_idvehiculo_" . $i] = new sfValidatorString(array('required' => false));
+            $validator["equipos_placa_" . $i] = new sfValidatorString(array('required' => false));
             $validator["equipos_serial_" . $i] = new sfValidatorString(array('required' => false));
             $validator["equipos_cant_" . $i] = new sfValidatorNumber(array('required' => false, "min" => 0),
                             array('invalid' => 'No valido'));
@@ -348,6 +366,7 @@ class NuevoStatusForm extends BaseForm {
                         array('required' => 'Por favor coloque un texto para el seguimiento'));
 
         $validator['observaciones_idg'] = new sfValidatorString(array('required' => false));
+        $validator['exclusiones_idg'] = new sfValidatorString(array('required' => false));
 
         $validator['ca_inspeccion_fisica'] = new sfValidatorBoolean(array('required' => false));
 
@@ -360,6 +379,8 @@ class NuevoStatusForm extends BaseForm {
                         array('invalid' => 'Required'));
         $validator["valor_fob"] = new sfValidatorString(array('required' => false),
                         array('invalid' => 'Required'));
+        $validator['idgfactura'] = new sfValidatorString(array('required' => false));        
+        $validator['idgcollect'] = new sfValidatorString(array('required' => false));        
 
         //echo isset($validator['fchdoctransporte'])."<br />";															
         $this->setValidators($validator);
@@ -408,7 +429,34 @@ class NuevoStatusForm extends BaseForm {
         if ($taintedValues["rep_incompleto"]) {
             //$this->validatorSchema['contactos_0']->setOption('required', true);            
         }
+        /*IDG ENVIO FACTURAS*/
 
+        $idg = $taintedValues["idgfactura"];
+        
+        if($idg){
+            if ($idg["cumplio"] == "No" && (!$taintedValues["exclusiones_idg"] && !$taintedValues["observaciones_idg"] )  ) {                                
+                if($idg["cumplio"] == "No" && $taintedValues["observaciones_idg"])
+                    $taintedValues["observaciones_idg"] = null;
+                $this->validatorSchema['observaciones_idg'] = new sfValidatorString(array('required' => true), array('required' => $idg["mensaje"]));                
+                $this->validatorSchema['exclusiones_idg'] = new sfValidatorString(array('required' => false), array('required' => "Selecciona una exclusión si aplica"));
+            }
+        }
+        
+        /*IDG EXPO - COLLECT*/
+        if($taintedValues["idetapa"] == "EEETD"){
+            $idgcollect = $taintedValues["idgcollect"];
+
+            if($idgcollect){
+                if ($idgcollect["cumplio"] == "No" && (!$idgcollect["exclusiones_idg"] && !$idgcollect["observaciones_idg"] )  ) {                                
+                    if($idgcollect["cumplio"] == "No" && $taintedValues["observaciones_idg"])
+                        $taintedValues["observaciones_idg"] = null;
+                    $this->validatorSchema['observaciones_idg'] = new sfValidatorString(array('required' => true), array('required' => $idgcollect["mensaje"]));                
+                    $this->validatorSchema['exclusiones_idg'] = new sfValidatorString(array('required' => false), array('required' => "Selecciona una exclusión si aplica"));
+                }
+            }
+        }
+        
+        /*IDG TRADICIONAL*/
         $horaRecibo = $taintedValues["horarecibo"];
 
         if (!$horaRecibo['minute']) {
@@ -470,6 +518,10 @@ class NuevoStatusForm extends BaseForm {
     
     public function setQueryMuelles($c) {
         $this->queryMuelles = $c;
+    }
+    
+    public function setQueryExclusiones($c) {
+        $this->queryExclusiones = $c;
     }
     
     public function setQueryJornadas($c) {
