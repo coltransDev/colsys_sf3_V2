@@ -17,7 +17,8 @@ class traficosComponents extends sfComponents
 	public function executeInfoReporte(){		
 		$this->modo = $this->getRequestParameter("modo");
 		
-		if( $this->reporte->getCaImpoexpo()==Constantes::IMPO || $this->reporte->getCaImpoexpo()==Constantes::TRIANGULACION  ){
+		//if( $this->reporte->getCaImpoexpo()==Constantes::IMPO || $this->reporte->getCaImpoexpo()==Constantes::TRIANGULACION  )
+                {
 			//Reportes al exterior			
 			if( $this->reporte->getCaTransporte()==Constantes::MARITIMO ){
 				$tipo = 'Rep.MarítimoExterior';
@@ -56,7 +57,21 @@ class traficosComponents extends sfComponents
                     $idcomprobantes[$file->getCaIdarchivo()] = $datos->idcomprobante;
                 }
             }
+            
+            //echo count($this->archivos)."<br>";
+            $this->archivos2= $this->reporte->getFilesGestDoc(2);
+            //echo count($this->archivos);
+            
+            foreach($this->archivos2 as $file){
+                $tipodoc = $file->getTipoDocumental();                                
+                if(strpos($tipodoc->getCaDocumento(), "Factura")>=0){                
+                    $datos = json_decode(utf8_encode($file->getCaDatos()));                
+                    $idcomprobantes2[$file->getCaIdarchivo()] = $datos->idcomprobante;
+                }
+            }
+            
             $this->idcomprobantes = $idcomprobantes;
+            $this->idcomprobantes2 = $idcomprobantes2;
             $this->user = $this->getUser();
 	}
 	

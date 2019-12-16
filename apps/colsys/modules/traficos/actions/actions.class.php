@@ -14,6 +14,7 @@ class traficosActions extends sfActions {
    const RUTINA_AEREO = "79";
    const RUTINA_EXPO = "80";
    const RUTINA_OTM = "113";
+   const RUTINA_TERRESTRE = "223";
 
    /*    * *********************************************************************************
     * Pagina inicial y consulta de reportes
@@ -24,6 +25,81 @@ class traficosActions extends sfActions {
     * @author: Andres Botero
     */
    public function executeIndex() {
+      $this->modo = $this->getRequestParameter("modo");
+      if (!$this->modo) {
+         $this->forward("traficos", "seleccionModo");
+      }
+
+      if ($this->modo == "maritimo") {
+         $this->nivel = $this->getUser()->getNivelAcceso(traficosActions::RUTINA_MARITIMO);
+
+         $this->impoexpo = Constantes::IMPO;
+         $this->transporte = Constantes::MARITIMO;
+      }
+      if ($this->modo == "aereo") {
+         $this->nivel = $this->getUser()->getNivelAcceso(traficosActions::RUTINA_AEREO);
+         $this->impoexpo = Constantes::IMPO;
+         $this->transporte = Constantes::AEREO;
+      }
+      if ($this->modo == "expo") {
+         $this->nivel = $this->getUser()->getNivelAcceso(traficosActions::RUTINA_EXPO);
+         $this->impoexpo = Constantes::EXPO;
+         $this->transporte = null;
+      }
+      if ($this->modo == "otm") {
+         $this->nivel = $this->getUser()->getNivelAcceso(traficosActions::RUTINA_OTM);
+         $this->impoexpo = Constantes::OTMDTA;
+         $this->transporte = constantes::TERRESTRE;
+      }
+      if ($this->modo == "terrestre") {
+         $this->nivel = "2";
+         $this->impoexpo = Constantes::INTERNO;
+         $this->transporte = constantes::TERRESTRE;
+      }
+      if ($this->nivel == -1) {
+         $this->forward404();
+      }
+   }
+
+   
+   public function executeIndex1() {
+      $this->modo = $this->getRequestParameter("modo");
+      if (!$this->modo) {
+         $this->forward("traficos", "seleccionModo");
+      }
+
+      if ($this->modo == "maritimo") {
+         $this->nivel = $this->getUser()->getNivelAcceso(traficosActions::RUTINA_MARITIMO);
+
+         $this->impoexpo = Constantes::IMPO;
+         $this->transporte = Constantes::MARITIMO;
+      }
+      if ($this->modo == "aereo") {
+         $this->nivel = $this->getUser()->getNivelAcceso(traficosActions::RUTINA_AEREO);
+         $this->impoexpo = Constantes::IMPO;
+         $this->transporte = Constantes::AEREO;
+      }
+      if ($this->modo == "expo") {
+         $this->nivel = $this->getUser()->getNivelAcceso(traficosActions::RUTINA_EXPO);
+         $this->impoexpo = Constantes::EXPO;
+         $this->transporte = null;
+      }
+      if ($this->modo == "otm") {
+         $this->nivel = $this->getUser()->getNivelAcceso(traficosActions::RUTINA_OTM);
+         $this->impoexpo = Constantes::OTMDTA;
+         $this->transporte = constantes::TERRESTRE;
+      }
+      if ($this->modo == "terrestre") {
+         $this->nivel = "2";
+         $this->impoexpo = Constantes::INTERNO;
+         $this->transporte = constantes::TERRESTRE;
+      }
+      if ($this->nivel == -1) {
+         $this->forward404();
+      }
+   }
+   
+   public function executeIndexExt5() {
       $this->modo = $this->getRequestParameter("modo");
       if (!$this->modo) {
          $this->forward("traficos", "seleccionModo");
@@ -124,6 +200,10 @@ class traficosActions extends sfActions {
 
          $this->nivel = $this->getUser()->getNivelAcceso(traficosActions::RUTINA_OTM);
       }
+      if ($this->modo == "terrestre") {
+         $this->nivel = $this->getUser()->getNivelAcceso(traficosActions::RUTINA_TERRESTRE);
+      }
+
       if ($this->nivel == -1) {
          $this->forward404();
       }
@@ -170,6 +250,9 @@ class traficosActions extends sfActions {
             break;
          case "otm":
             $this->reportes = ReporteTable::getReportesActivos($this->cliente->getCaIdcliente());
+            break;
+        case "terrestre":
+            $this->reportes = ReporteTable::getReportesActivos($this->cliente->getCaIdcliente(), Constantes::INTERNO, Constantes::TERRESTRE);
             break;
       }
       /*
@@ -253,6 +336,11 @@ class traficosActions extends sfActions {
       if ($this->modo == "otm") {
          $this->nivel = $this->getUser()->getNivelAcceso(traficosActions::RUTINA_OTM);
       }
+      
+    if ($this->modo == "terrestre") {
+        $this->nivel = $this->getUser()->getNivelAcceso(traficosActions::RUTINA_TERRESTRE);
+        $this->nivel=1;//TODO verificar permisos
+    }
       if ($this->nivel < 1) {
          $this->forward404();
       }
@@ -299,7 +387,12 @@ class traficosActions extends sfActions {
          $q->addWhere("t.ca_departamento = ? OR t.ca_impoexpo IS NULL", Constantes::OTMDTA1);
       } else if ($reporte->getCaImpoexpo() == Constantes::TRIANGULACION) {
          $q->addWhere("t.ca_impoexpo = ? OR t.ca_impoexpo IS NULL", Constantes::IMPO);
-      } else {
+      }
+      else if ($this->modo == "terrestre") {
+//            $q->addWhere("t.ca_impoexpo = ? OR t.ca_impoexpo IS NULL", Constantes::OTMDTA);
+         $q->addWhere("t.ca_impoexpo = ? AND t.ca_transporte = ?", array(Constantes::INTERNO,Constantes::TERRESTRE));
+      }
+      else {
          $q->addWhere("t.ca_impoexpo = ? OR t.ca_impoexpo IS NULL", $reporte->getCaImpoexpo());
       }
 
@@ -312,8 +405,11 @@ class traficosActions extends sfActions {
          $q->addWhere("t.ca_transporte = ? OR t.ca_transporte IS NULL", $reporte->getCaTransporte());
       }
 
-      if ($this->modo != "otm")
-         $q->addWhere(" (t.ca_departamento = ? OR t.ca_departamento = ?) OR t.ca_departamento IS NULL", array("Tráficos","Servicio al Cliente Marítimo"));
+
+      if ($this->modo != "otm" && $this->modo != "terrestre")
+         $q->addWhere("t.ca_departamento = ? OR t.ca_departamento IS NULL", "Tráficos");
+      else if($this->modo == "terrestre")
+          $q->orWhere("t.ca_idetapa = ? OR t.ca_idetapa = ?",array('88888','99999'));
       $q->addWhere("t.ca_usueliminado is NULL");
       $q->addOrderBy("t.ca_orden");
       $this->form->setQueryIdEtapa($q);
@@ -521,6 +617,8 @@ class traficosActions extends sfActions {
                             if($bindValues["idgfactura"]["cumplio"]!="No"){                            
                                 $conn->commit();
                             }
+                        }else{
+                            $conn->rollback();
                         }
                     }
                 }
@@ -618,6 +716,7 @@ class traficosActions extends sfActions {
       //Busca los archivos del reporte y de Gestión Documental
       $this->files = $this->reporte->getFiles();      
       $this->archivos = $this->reporte->getFilesGestDoc();
+      $this->archivos2 = $this->reporte->getFilesGestDoc(2);
 
       $this->usuario = Doctrine::getTable("Usuario")->find($this->getuser()->getUserId());
 
@@ -796,19 +895,26 @@ class traficosActions extends sfActions {
             $equipo->delete($conn);
          }
 
-         for ($i = 0; $i < NuevoStatusForm::NUM_EQUIPOS; $i++) {
+        for ($i = 0; $i < NuevoStatusForm::NUM_EQUIPOS; $i++) {
 
             if ($request->getParameter("equipos_tipo_" . $i) && $request->getParameter("equipos_cant_" . $i)) {
-               $repequipo = new RepEquipo();
-               $repequipo->setCaIdreporte($reporte->getCaIdreporte());
-               $repequipo->setCaIdconcepto($request->getParameter("equipos_tipo_" . $i));
-               $repequipo->setCaCantidad($request->getParameter("equipos_cant_" . $i));
-               if ($reporte->getCaImpoexpo() == Constantes::EXPO or $reporte->getCaImpoexpo() == Constantes::IMPO) {
-                  $repequipo->setCaIdequipo($request->getParameter("equipos_serial_" . $i));
-               }
-               $repequipo->save($conn);
+                $repequipo = new RepEquipo();
+                $repequipo->setCaIdreporte($reporte->getCaIdreporte());
+                if ($reporte->getCaTiporep()=="5") {
+                    $repequipo->setCaIdvehiculo($request->getParameter("equipos_idvehiculo_" . $i)); 
+                    $repequipo->setDatosJson("placa", $request->getParameter("equipos_placa_" . $i) );
+                }
+
+                $repequipo->setCaIdconcepto($request->getParameter("equipos_tipo_" . $i)); 
+                $repequipo->setCaCantidad($request->getParameter("equipos_cant_" . $i));
+                if ($reporte->getCaImpoexpo() == Constantes::EXPO || $reporte->getCaImpoexpo() == Constantes::IMPO || $reporte->getCaTiporep()=="5" ) 
+                {                    
+                    if($request->getParameter("equipos_serial_" . $i)!="")
+                        $repequipo->setCaIdequipo($request->getParameter("equipos_serial_" . $i));
+                }
+                $repequipo->save($conn);
             }
-         }
+        }
 
 
          $parametros = ParametroTable::retrieveByCaso("CU059", null, null, $reporte->getCliente()->getCaIdgrupo());
@@ -1152,7 +1258,6 @@ class traficosActions extends sfActions {
          $conn->rollBack();
          throw $e;
       }
-
       $this->redirect("traficos/listaStatus?modo=" . $this->modo . "&reporte=" . $reporte->getCaConsecutivo());
    }
 
@@ -1519,6 +1624,7 @@ class traficosActions extends sfActions {
       }
 
       $this->etapa = $etapa;
+      $this->plantilla = $this->getTemplate(); 
 
       $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "traficos" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "textos.yml";
       $this->textos = sfYaml::load($config);
