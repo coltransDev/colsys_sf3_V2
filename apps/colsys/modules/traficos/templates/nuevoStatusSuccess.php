@@ -163,6 +163,8 @@ $folder = $reporte->getDirectorioBase();
         } else{
             if (<?= ($reporte->getCaTiporep() == 4) ? "true" : "false" ?>)
                 document.getElementById("form1").submit();
+            else if (<?= ($reporte->getCaTiporep() == 5) ? "true" : "false" ?>)
+                document.getElementById("form1").submit();
             else
                 alert("debe seleccionar al menos un contacto fijo.");
         }
@@ -468,7 +470,7 @@ $folder = $reporte->getDirectorioBase();
                             <b>Destinatarios:</b><br />
                             <?
                             $destinatarios = $form->getDestinatarios();
-                            for ($i = 0; $i < count($destinatarios); $i++) {
+                            for ($i = 0; $i < count($destinatarios); $i++) {                                
                                 /*PA1477*/
                                 $contacto = Doctrine::getTable("Contacto")->findByDql("ca_email = ? AND ca_idcliente = ?", array($destinatarios[$i], $reporte->getCliente()->getCaIdcliente()))->getFirst();                        
                                 $cargo = $contacto?"&nbsp[".$contacto->getCaCargo()."]":null;
@@ -567,6 +569,11 @@ $folder = $reporte->getDirectorioBase();
                 else
                     $asunto .= $cliente . " [" . $origen . " -> " . $destino . "] " . $reporte->getCaOrdenClie() . "-" . $reporte->getRepOtm()->getCaHbls();
             }
+            else if ($reporte->getCaTiporep() == "5") {                
+                
+                $asunto .= "Status Id.: " .$reporte->getCaConsecutivo() ." / ". $reporte->getDatosJson("do")." / ". $cliente." / ".$reporte->getCaOrdenClie();
+                        
+            }
             else if ($reporte->getCaImpoexpo() == Constantes::IMPO || $reporte->getCaImpoexpo() == Constantes::TRIANGULACION) {
                 $proveedor = substr($reporte->getProveedoresStr(), 0, 130);
                 $asunto .= $proveedor . " / " . $cliente . " [" . $origen . " -> " . $destino . "] " . $reporte->getCaOrdenClie();
@@ -664,7 +671,7 @@ $folder = $reporte->getDirectorioBase();
                             <td>&nbsp;</td>
                         </tr>
                         <?
-                        if ($reporte->getCaImpoexpo() != Constantes::EXPO && ($reporte->getCaContinuacion() != "N/A" && $reporte->getCaContinuacion() != "TRANSBORDO")) {
+                        if ($reporte->getCaImpoexpo() != Constantes::EXPO && $reporte->getCaImpoexpo() != Constantes::INTERNO && ($reporte->getCaContinuacion() != "N/A" && $reporte->getCaContinuacion() != "TRANSBORDO")) {
                             ?>
                             <tr>
                                 <td><div align="left"><b>Continuación:</b><br />
@@ -673,6 +680,7 @@ $folder = $reporte->getDirectorioBase();
                                     <td colspan="2">
                                         <table>
                                             <tr>
+                                            
                                                 <td><div align="left"><b><b>Fecha de llegada Otm:</b></b><br />
                                                         <?
                                                         echo $form['fchcontinuacion']->renderError();
@@ -727,7 +735,12 @@ $folder = $reporte->getDirectorioBase();
                                     if ($reporte->getCaTiporep() == "4") {
                                         $piezas = $reporte->getRepOtm()->getCaNumpiezas();
                                         $piezasTipo = $reporte->getRepOtm()->getCaNumpiezasun();
-                                    } else {
+                                    } 
+                                    else if ($reporte->getCaTiporep() == "5") {
+                                        $piezas=$reporte->getDatosJson("ca_piezas");
+                                        $piezasTipo = "Piezas";
+                                    }
+                                    else {
                                         if ($ultStatus && $ultStatus->getCaPiezas()) {
                                             $piezasArr = explode("|", $ultStatus->getCaPiezas());
                                             $piezas = $piezasArr[0];
@@ -749,7 +762,12 @@ $folder = $reporte->getDirectorioBase();
                                     if ($reporte->getCaTiporep() == "4") {
                                         $peso = $reporte->getRepOtm()->getCaPeso();
                                         $pesoTipo = $reporte->getRepOtm()->getCaPesoun();
-                                    } else {
+                                    } 
+                                    else if ($reporte->getCaTiporep() == "5") {                                        
+                                        $peso = $reporte->getDatosJson("ca_peso");
+                                        $pesoTipo = "Kilos";
+                                    }
+                                    else {
                                         if ($ultStatus && $ultStatus->getCaPeso()) {
                                             $pesoArr = explode("|", $ultStatus->getCaPeso());
                                             $peso = $pesoArr[0];
@@ -770,7 +788,12 @@ $folder = $reporte->getDirectorioBase();
                                     if ($reporte->getCaTiporep() == "4") {
                                         $vol = $reporte->getRepOtm()->getCaVolumen();
                                         $volTipo = $reporte->getRepOtm()->getCaVolumenun();
-                                    } else {
+                                    } 
+                                    else if ($reporte->getCaTiporep() == "5") {                                        
+                                        $vol = $reporte->getDatosJson("ca_volumen");
+                                        $volTipo = "M&sup3;";
+                                    }
+                                    else {
                                         if ($ultStatus && $ultStatus->getCaVolumen()) {
                                             $volArr = explode("|", $ultStatus->getCaVolumen());
                                             $vol = $volArr[0];
@@ -786,12 +809,16 @@ $folder = $reporte->getDirectorioBase();
                                 </div></td>
                         </tr>
                         <tr>
-                            <td><div align="left"><b><?= ($reporte->getCaTransporte() == Constantes::MARITIMO) ? "HBL:" : "HAWB:" ?></b><br />
+                            <td><div align="left"><b><?= ($reporte->getCaTransporte() == Constantes::MARITIMO) ? "HBL:" : (($reporte->getCaTransporte() == Constantes::AEREO)?"HAWB:":"Doc. Trans.") ?></b><br />
                                     <?
                                     echo $form['doctransporte']->renderError();
                                     if ($reporte->getCaTiporep() == "4") {
                                         $form->setDefault('doctransporte', $reporte->getRepOtm()->getCaHbls());
-                                    } else {
+                                    }
+                                    else if ($reporte->getCaTiporep() == "5") {
+                                        $form->setDefault('doctransporte', $reporte->getDatosJson("ca_doc_transporte"));
+                                    }                                    
+                                    else {
                                         if ($ultStatus) {
                                             $form->setDefault('doctransporte', $ultStatus->getCaDoctransporte());
                                         }
@@ -913,13 +940,21 @@ $folder = $reporte->getDirectorioBase();
                                     <table  width="100%" border="1" class="tableList">
                                         <tbody>
                                             <tr>
+                                        <?
+                                        if ($reporte->getCaTiporep() == "5") {                                                                                    
+                                        ?>    
+                                                <th>Vehiculo</th>
+                                                <th>Placa</th>
+                                        <?
+                                        }
+                                        ?>
                                                 <th width="34%">Tipo</th>
                                         <?
                                         if ($reporte->getCaImpoexpo() == Constantes::EXPO) {
                                             ?>
                                                     <th width="21%">Serial</th>
                                             <?
-                                        } else if ($reporte->getCaImpoexpo() == Constantes::IMPO) {
+                                        } else if ($reporte->getCaImpoexpo() == Constantes::IMPO || $reporte->getCaImpoexpo() == Constantes::INTERNO) {
                                             ?>
                                                     <th width="21%">No.Contenedor</th>
                                             <?
@@ -938,6 +973,33 @@ $folder = $reporte->getDirectorioBase();
                                         }
                                         ?>
                                                 <tr>
+                                        <?
+                                        if ($reporte->getCaTiporep() == "5") {                                                                                
+                                        ?>    
+                                                    <td>
+                                                    <?
+                                                    echo $form['equipos_idvehiculo_' . $i]->renderError();
+                                                    if ($repequipo) {
+                                                        $form->setDefault('equipos_idvehiculo_' . $i, $repequipo->getCaIdvehiculo());
+                                                    }
+                                                    echo $form['equipos_idvehiculo_' . $i]
+                                                            ->render();
+                                                    ?>
+                                                                                            
+                                                    </td>
+                                                    
+                                                    <td>
+                                                    <?
+                                                    echo $form['equipos_placa_' . $i]->renderError();
+                                                    if ($repequipo) {
+                                                        $form->setDefault('equipos_placa_' . $i,  $repequipo->getDatosJson("placa"));
+                                                    }
+                                                    echo $form['equipos_placa_' . $i]->render();
+                                                    ?>
+                                                    </td>
+                                        <?
+                                        }
+                                        ?>
                                                     <td>
                                                     <?
                                                     echo $form['equipos_tipo_' . $i]->renderError();
@@ -947,7 +1009,7 @@ $folder = $reporte->getDirectorioBase();
                                                     echo $form['equipos_tipo_' . $i]->render();
                                                     ?>								</td>
                                                     <?
-                                                    if ($reporte->getCaImpoexpo() == Constantes::EXPO or $reporte->getCaImpoexpo() == Constantes::IMPO) {
+                                                    if ($reporte->getCaImpoexpo() == Constantes::EXPO || $reporte->getCaImpoexpo() == Constantes::IMPO || $reporte->getCaImpoexpo() == Constantes::INTERNO) {
                                                         ?>
                                                         <td>
                                                         <?
@@ -1159,6 +1221,47 @@ $folder = $reporte->getDirectorioBase();
                                 {
                                     ?><input type="checkbox" name="attachments1[]" value="<?= base64_encode(basename($filename)) ?>"  <?= $option ?> class="imgS" iddoc="<?=$iddoc?>" /><?
                                     echo mime_type_icon(basename($filename)) . " " . link_to(basename($filename), url_for("traficos/fileViewer?idreporte=" . $reporte->getCaIdreporte() . "&gestDoc=true&file=" . base64_encode(basename($filename))), array("target" => "blank")) ."<br />";
+                                }
+                                //include_component("gestDocumental", "returnFiles",array("idsserie"=>"2","view"=>"email1","ref1"=>$reporte->getInoClientesSea()->getCaReferencia(),"ref2"=>$reporte->getInoClientesSea()->getCaHbls(),"ref3"=>"","format"=>"coloader")); 
+                            }
+                        }
+                        if (count($archivos2) > 0) {
+                            //$imagenes="";
+                            foreach ($archivos2 as $file) {
+                                $filename = $file->getCaNombre();
+                                if (array_search(base64_encode(basename($filename)), $att) !== false) {
+                                    $option = 'checked="checked"';
+                                } else {
+                                    $option = '';
+                                }
+                                ?>
+                                
+                                
+                                <?
+                                if(Utils::isImage($file->getCaNombre())){
+                                    $dimension = 640;
+                                    $dimVisual = 50;
+                                    $i = 0;
+                                    $j = 0;
+                                    
+                                    $filename = $file->getCaNombre();
+                                    $folder = $reporte->getDirectorioBaseDocs($filename);                            
+                                    $imagenes.= '<div style="width:' . $dimVisual . 'px;height:' . $dimVisual . 'px;float: left;margin: 5px;" id="file_' . $j . '">
+                                        <div style="position:relative ">
+                                            <div style="position:absolute;" >
+                                                <img style=" vertical-align: middle;" src="/gestDocumental/verArchivo?idarchivo=' . base64_encode($folder) . '" width="' . $dimVisual . '" height="' . $dimVisual . '" alt="'.$filename.'"  title="'.$filename.'"   />
+                                            </div>                                    
+                                            <div style="position:absolute;top:0px;right:0px;display:block" >
+                                               <input type="checkbox" value="'.base64_encode(basename($filename)) .'" name="attachments1[]" '.$option.' class="imgS"/>
+                                            </div>
+                                    </div>                        
+                                  </div>';
+                                    //echo '<img style=" vertical-align: middle;" src="/gestDocumental/verArchivo?idarchivo=' . base64_encode($folder) . '" width="' . $dimVisual . '" height="' . $dimVisual . '" /><br>';
+                                }else
+                                {
+                                    ?><input type="checkbox" name="attachments1[]" value="<?= base64_encode(basename($filename)) ?>"  <?= $option ?> class="imgS" iddoc="<?=$iddoc?>" /><?
+                                    echo mime_type_icon(basename($filename)) . " " . 
+                                            link_to(basename($filename), url_for("gestDocumental/verArchivo?id_archivo=" . $file->getCaIdarchivo() ), array("target" => "blank")) ."<br />";
                                 }
                                 //include_component("gestDocumental", "returnFiles",array("idsserie"=>"2","view"=>"email1","ref1"=>$reporte->getInoClientesSea()->getCaReferencia(),"ref2"=>$reporte->getInoClientesSea()->getCaHbls(),"ref3"=>"","format"=>"coloader")); 
                             }

@@ -28,11 +28,19 @@ $muelle = ParametroTable::retrieveByCaso("CU268", null, null,$master->getInoMast
 //            if ($user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S.") {
                 ?>
 <!--                <td width="300">
-                    <div style="float:right"><a href="http://www.coltrans.com.co/logosoficiales/coltrans/fitac2_2018.jpg" target="_blank"><img src="http://www.coltrans.com.co/logosoficiales/coltrans/fitac2_2018.jpg" width="300" /></a></div>
+                    <div style="float:right"><a href="https://www.coltrans.com.co/logosoficiales/coltrans/fitac2_2018.jpg" target="_blank"><img src="https://www.coltrans.com.co/logosoficiales/coltrans/fitac2_2018.jpg" width="300" /></a></div>
                 </td>-->
                 <?
 //            }
-            ?>
+//            $etapas = array("IAPIN","IAAGR","IACCR","IAETA","IMAGR","IMCAG","IMETA","IMCPD","EERDC","EERCN","EEETD","EEFFL","TTRPL","TTDES","TTCOL");
+//            if (in_array($status->getCaIdetapa(), $etapas)) {
+                ?>
+<!--                <td width="170">
+                    <div style="float:right"><a href="https://www.micentroempresarial.com/clientescoltrans" target="_blank"><img src="https://www.colsys.com.co/images/publicidad/Inv_Decreto_Aduanero.jpg" width="500"/></a></div>
+                </td>-->
+                <?
+//            }
+//            ?>
         </tr>
     </table><br /><br />
 
@@ -121,45 +129,56 @@ $muelle = ParametroTable::retrieveByCaso("CU268", null, null,$master->getInoMast
                     $datosHouSea = json_decode($houseSea->getCaDatos(),1);
                     $equipos = $datosHouSea["equipos"];
                     
-                    ?>
-                    <tr>
-                        <td colspan="6">
-                            <table width="100%" cellspacing="0" border="1" class="tableList">
-                                <tr>
-                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="5">Relación de Contenedores</th>
-                                </tr>
-                                <tr>
-                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Concepto</th>
-                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Num. Contenedor</th>
-                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Sello</th>
-                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Kilos</th>
-                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Piezas</th>
-                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Fechas de Entrega</th>
-                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Patio Entrega</th>
-                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Observaciones</th>
-                                </tr>
-                                <?
-                                foreach ($equipos as $key => $equipo) {
-                                    $inoequipo = Doctrine::getTable("InoEquipo")->find($equipo["idequipo"]);
-                                    $datosEquipo = json_decode(utf8_encode($inoequipo->getCaDatos()),1);
-                                    ?>
+                    if (count($equipos)>0){
+                        ?>
+                        <tr>
+                            <td colspan="6">
+                                <table width="100%" cellspacing="0" border="1" class="tableList">
                                     <tr>
-                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["concepto"] ?></td>
-                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["serial"] ?></td>
-                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["numprecinto"]?></td>
-                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["kilos"]?></td>
-                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["piezas"]?></td>
-                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Entrega Comodato:</b><?= $datosEquipo["fecha_entrega"]?><br/><b>Días Libres:</b><?= $datosEquipo["dias_libres"]?><br/><b>L&iacute;m. Devoluci&oacute;n:</b><?= $datosEquipo["limite_devolucion"]?><br/></td>
-                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $datosEquipo["patio"]?></td>
-                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $datosEquipo["observaciones"]?></td>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="5">Relación de Contenedores</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Concepto</th>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Num. Contenedor</th>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Sello</th>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Kilos</th>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Piezas</th>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Fechas de Entrega</th>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Patio Entrega</th>
+                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Observaciones</th>
                                     </tr>
                                     <?
-                                }
-                                ?>
-                            </table>
-                        </td>
-                    </tr>
-                    <?
+                                    foreach ($equipos as $key => $equipo) {
+                                        $inoequipo = Doctrine::getTable("InoEquipo")->find($equipo["idequipo"]);
+                                        if($inoequipo){
+                                            $datosEquipo = $inoequipo->getCaDatos()?json_decode(utf8_encode($inoequipo->getCaDatos()),1):null;
+                                            ?>
+                                            <tr>
+                                                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["concepto"] ?></td>
+                                                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["serial"] ?></td>
+                                                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["numprecinto"]?></td>
+                                                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["kilos"]?></td>
+                                                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["piezas"]?></td>
+                                                <?  if ($datosEquipo) { ?>
+                                                    <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Entrega Comodato:</b><?= $datosEquipo["fecha_entrega"] ?><br/><b>Días Libres:</b><?= $datosEquipo["dias_libres"] ?><br/><b>L&iacute;m. Devoluci&oacute;n:</b><?= $datosEquipo["limite_devolucion"] ?><br/></td>
+                                                    <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $datosEquipo["patio"] ?></td>
+                                                    <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $datosEquipo["observaciones"] ?></td>
+                                                <?  } else {
+                                                    ?>
+                                                    <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                                                    <?                                                 
+                                                    }
+                                                ?>
+                                            </tr>
+                                        <?
+                                        }
+                                    }
+                                    ?>
+                                </table>
+                            </td>
+                        </tr>
+                        <?
+                    }                    
                 } else {
                     $equipos = $reporte->getRepEquipos();
                     if (count($equipos) > 0) {
@@ -350,4 +369,6 @@ $muelle = ParametroTable::retrieveByCaso("CU268", null, null,$master->getInoMast
     else
         echo $user->getFirmaHTML();
     ?>
+    <br/>
+    <div style="font-size: 7px;font-family: Arial,Helvetica,sans-serif;">Realizado con plantilla <?=$plantilla?></div>
 </div>

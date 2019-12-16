@@ -48,6 +48,13 @@ if( $reporte->getCaUsuanulado() ){
                         <b>Relación de Contenedores:</b><br />
                         <table width="100%" cellspacing="0" border="1" class="tableList">
                             <tr>
+                                <?
+                                if ($reporte->getCaTiporep() == "5") {                                
+                                ?>    
+                                        <th>Vehiculo</th>
+                                <?
+                                }
+                                ?>
                                 <th>Concepto</th>
                                 <th>Cantidad</th>
                                 <?
@@ -63,6 +70,21 @@ if( $reporte->getCaUsuanulado() ){
                         foreach( $equipos as $equipo ){
                             ?>
                             <tr>
+                                <?
+                                if ($reporte->getCaTiporep() == "5") {
+                                ?>    
+                                <td><?                                    
+                                    $veh = ParametroTable::retrieveByCaso("CU020",null,null,$equipo->getCaIdvehiculo());
+                                    if(count($veh)>0)
+                                    {            
+                                        echo $veh[0]->getCaValor();
+                                    }
+                                ?>
+                                </td>
+                                <?
+                                }
+                                ?>
+                                
                                 <td><?=$equipo->getConcepto()->getCaConcepto()?></td>
                                 <td><?=$equipo->getCaCantidad()?></td>
                                 <?
@@ -130,7 +152,7 @@ if( $reporte->getCaUsuanulado() ){
                     <?
                 }
             }
-            if( $reporte->getCaImpoexpo()==Constantes::IMPO || $reporte->getCaImpoexpo()==Constantes::TRIANGULACION ){
+            if( $reporte->getCaImpoexpo()==Constantes::IMPO || $reporte->getCaImpoexpo()==Constantes::EXPO || $reporte->getCaImpoexpo()==Constantes::TRIANGULACION ){
                 ?>
                 <div class="post-info" align="left">
                     <b>Reportes al exterior</b><br />	
@@ -155,6 +177,29 @@ if( $reporte->getCaUsuanulado() ){
                 </div>
                 <?
             }
+            $statusTer = $reporte->getStatusTerceros();            
+            if( count($statusTer) > 0 ){
+            ?>
+                <div class="post-info" align="left">
+                    <b>Status a Terceros</b><br />	
+                    <?
+                    if( $statusTer ){
+                        foreach( $statusTer as $statust ){
+                                $txt = 	$statust->getCaUsuenvio()." ".$statust->getCaFchenvio();
+                        ?>
+                        <a href='#' onClick='window.open("<?=url_for("email/verEmail?id=".$statust->getCaIdemail())?>")' ><b><?=$txt?></b></a>
+                        <br />
+                        <?=$statust->getCaSubject()?>
+                        <br /><br />
+                        <?	
+                        }
+                    }else{
+                        echo "No se han creado status a terceros<br />";
+                    }
+                    ?>
+                </div>
+                <?
+            }
             ?>
         </td>
         <td width="46%" valign="top">
@@ -166,7 +211,8 @@ if( $reporte->getCaUsuanulado() ){
                     ?>
                 </div><br />
                 <?
-                if( $nivel>0 && !$reporte->getCaUsuanulado() ){
+                
+                if( ($nivel>0 && !$reporte->getCaUsuanulado() ) || $reporte->getCaImpoexpo()== Constantes::INTERNO ){
                     if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
                         echo link_to(image_tag("22x22/edit_add.gif")." Aviso" ,"traficos/nuevoStatus?idreporte=".$reporte->getCaIdreporte()."&modo=".$modo."&tipo=aviso&token=".md5(time()));
                     }

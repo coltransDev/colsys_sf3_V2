@@ -15,7 +15,7 @@ use_helper("MimeType");
             <?= mime_type_icon(basename($file)) ?> 
             <a href="<?= url_for("traficos/fileViewer?idreporte=" . $reporte->getCaIdreporte() . "&file=" . base64_encode(basename($file))) ?>" target="_blank"><?= basename($nombreArchivo) ?></a>
             <?
-            if ($nivel > 0) {
+            if ($nivel > 0 || $reporte->getCaTiporep()=="5") {
                 ?>
                 <a href="#" onclick="eliminarArchivos('<?= $reporte->getCaIdreporte() ?>', '<?= base64_encode(basename($file)) ?>')"><?= image_tag("16x16/delete.gif") ?></a>
                 <?
@@ -25,45 +25,82 @@ use_helper("MimeType");
         <?
         echo "</li>";
     }
-    foreach ($archivos as $file) {
-        if (!Utils::isImage($file->getCaNombre())) {
-            //$fileIdx = $user->addFile( $file );
-            if (substr($file, -3, 3) == ".gz") {
-                $nombreArchivo = substr($file->getCaNombre(), 0, strlen($file->getCaNombre()) - 3);
-            } else {
-                $nombreArchivo = $file->getCaNombre();
-            }
-            $tagIdg = '<p></p>';
-                                
-            $tipodoc = $file->getTipoDocumental();                                
-            
-            if(strpos($tipodoc->getCaDocumento(), "Factura") !== false){                   
-                $iddoc = $file->getCaIddocumental();                
-                $idcomprobante = $idcomprobantes[$file->getCaIdarchivo()];
-                
-                if($idcomprobante){                
-                    $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
-                    $idg = $comprobante->getResultadoIndicador();
+        foreach ($archivos as $file) {
+            if (!Utils::isImage($file->getCaNombre())) {
+                //$fileIdx = $user->addFile( $file );
+                if (substr($file, -3, 3) == ".gz") {
+                    $nombreArchivo = substr($file->getCaNombre(), 0, strlen($file->getCaNombre()) - 3);
+                } else {
+                    $nombreArchivo = $file->getCaNombre();
+                }
+                $tagIdg = '<p></p>';
 
-                    if($idg["sucess"] == true){
-                        $tagIdg = utf8_decode($idg["tag"]); 
+                $tipodoc = $file->getTipoDocumental();                                
+
+                if(strpos($tipodoc->getCaDocumento(), "Factura") !== false){                   
+                    $iddoc = $file->getCaIddocumental();                
+                    $idcomprobante = $idcomprobantes[$file->getCaIdarchivo()];
+
+                    if($idcomprobante){                
+                        $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
+                        $idg = $comprobante->getResultadoIndicador();
+
+                        if($idg["sucess"] == true){
+                            $tagIdg = utf8_decode($idg["tag"]); 
+                        }
                     }
                 }
+
+                ?>
+                <li>
+                    <?= mime_type_icon(basename($nombreArchivo)) ?> 
+                    <a href="<?= url_for("traficos/fileViewer?idreporte=" . $reporte->getCaIdreporte() . "&gestDoc=true&file=" . base64_encode(basename($nombreArchivo))) ?>" target="_blank"><?= basename($nombreArchivo) ?></a>&nbsp;<?=$tagIdg?>
+                </li>
+                <?
+                echo "</li>";
             }
-                    
-            ?>
-            <li>
-                <?= mime_type_icon(basename($nombreArchivo)) ?> 
-                <a href="<?= url_for("traficos/fileViewer?idreporte=" . $reporte->getCaIdreporte() . "&gestDoc=true&file=" . base64_encode(basename($nombreArchivo))) ?>" target="_blank"><?= basename($nombreArchivo) ?></a>&nbsp;<?=$tagIdg?>
-            </li>
-            <?
-            echo "</li>";
         }
-    }
+        
+        foreach ($archivos2 as $file) {
+            if (!Utils::isImage($file->getCaNombre())) {
+                //$fileIdx = $user->addFile( $file );
+                if (substr($file, -3, 3) == ".gz") {
+                    $nombreArchivo = substr($file->getCaNombre(), 0, strlen($file->getCaNombre()) - 3);
+                } else {
+                    $nombreArchivo = $file->getCaNombre();
+                }
+                $tagIdg = '<p></p>';
+
+                $tipodoc = $file->getTipoDocumental();                                
+
+                if(strpos($tipodoc->getCaDocumento(), "Factura") !== false){                   
+                    $iddoc = $file->getCaIddocumental();                
+                    $idcomprobante = $idcomprobantes2[$file->getCaIdarchivo()];
+
+                    if($idcomprobante){                
+                        $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
+                        $idg = $comprobante->getResultadoIndicador();
+
+                        if($idg["sucess"] == true){
+                            $tagIdg = utf8_decode($idg["tag"]); 
+                        }
+                    }
+                }
+
+                ?>
+                <li>
+                    <?= mime_type_icon(basename($nombreArchivo)) ?>                     
+                    <a href="/gestDocumental/verArchivo?id_archivo=<?=$file->getCaIdarchivo()?>"  target="_blank"><?= basename($nombreArchivo) ?></a>&nbsp;<?=$tagIdg?>
+                    
+                </li>
+                <?
+                echo "</li>";
+            }
+        }
     ?>
 </ul>
 <?
-if ($nivel > 0) {
+if ($nivel > 0 || $reporte->getCaTiporep()=="5") {
     ?>
     <div class="box1" style="margin: 3px;">
         <form action="<?= url_for("traficos/cargarArchivo") ?>"  target="uploadFrame" enctype="multipart/form-data" method="post" >

@@ -46,25 +46,26 @@ $modo = $sf_data->getRaw("modo");
 //                if ($user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S.") {
 //                ?>
 <!--                    <td width="300">
-                        <div style="float:right"><a href="http://www.coltrans.com.co/logosoficiales/coltrans/fitac2_2018.jpg" target="_blank"><img src="http://www.coltrans.com.co/logosoficiales/coltrans/fitac2_2018.jpg" width="300" /></a></div>
+                        <div style="float:right"><a href="https://www.coltrans.com.co/logosoficiales/coltrans/fitac2_2018.jpg" target="_blank"><img src="https://www.coltrans.com.co/logosoficiales/coltrans/fitac2_2018.jpg" width="300" /></a></div>
                     </td>-->
-                //<?
+                <?
 //                }
                 ?>
-                <?/*
-                if ( $user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S." && $reporte->getCaTransporte() == Constantes::MARITIMO && ($status->getCaIdetapa() == "IMETA" || $status->getCaIdetapa() == "IMCPD")) {
-                ?>
-                    <td width="170">
-                        <div style="float:right"><img src="https://www.colsys.com.co/images/publicidad/amb-bog20140814.jpg"/></div>
-                    </td>
                 <?
-                } else if ( $user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S." && $reporte->getCaTransporte() == Constantes::AEREO && ($status->getCaIdetapa() == "IACCR" || $status->getCaIdetapa() == "IACAD")) {
+//                $etapas = array("IAPIN","IAAGR","IACCR","IAETA","IMAGR","IMCAG","IMETA","IMCPD","EERDC","EERCN","EEETD","EEFFL","TTRPL","TTDES","TTCOL");
+//                if (in_array($status->getCaIdetapa(), $etapas)) {
                 ?>
-                    <td width="170">
-                        <div style="float:right"><img src="https://www.colsys.com.co/images/publicidad/amb-bog20140814.jpg"/></div>
-                    </td>
+<!--                    <td width="170">
+                        <div style="float:right"><a href="https://www.micentroempresarial.com/clientescoltrans" target="_blank"><img src="https://www.colsys.com.co/images/publicidad/Inv_Decreto_Aduanero.jpg" width="500"/></a></div>
+                    </td>-->
                 <?
-                }*/
+//                }/* else if ( $user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S." && $reporte->getCaTransporte() == Constantes::AEREO && ($status->getCaIdetapa() == "IACCR" || $status->getCaIdetapa() == "IACAD")) {
+                ?>
+<!--                    <td width="170">
+                        <div style="float:right"><img src="https://www.colsys.com.co/images/publicidad/amb-bog20140814.jpg"/></div>
+                    </td>-->
+                <?
+//                }
                 ?>
         </table><br /><br />
         
@@ -301,19 +302,28 @@ $modo = $sf_data->getRaw("modo");
                                     <?
                                     foreach ($equipos as $key => $equipo) {
                                         $inoequipo = Doctrine::getTable("InoEquipo")->find($equipo["idequipo"]);
-                                        $datosEquipo = json_decode(utf8_encode($inoequipo->getCaDatos()),1);
-                                        ?>
-                                        <tr>
-                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["concepto"] ?></td>
-                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["serial"] ?></td>
-                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["numprecinto"]?></td>
-                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["kilos"]?></td>
-                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["piezas"]?></td>
-                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Entrega Comodato:</b><?= $datosEquipo["fecha_entrega"]?><br/><b>Días Libres:</b><?= $datosEquipo["dias_libres"]?><br/><b>L&iacute;m. Devoluci&oacute;n:</b><?= $datosEquipo["limite_devolucion"]?><br/></td>
-                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $datosEquipo["patio"]?></td>
-                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $datosEquipo["observaciones"]?></td>
-                                        </tr>
-                                        <?
+                                        if($inoequipo){
+                                            $datosEquipo = $inoequipo->getCaDatos()?json_decode(utf8_encode($inoequipo->getCaDatos()),1):null;
+                                            ?>
+                                            <tr>
+                                                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["concepto"] ?></td>
+                                                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["serial"] ?></td>
+                                                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["numprecinto"]?></td>
+                                                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["kilos"]?></td>
+                                                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["piezas"]?></td>
+                                                    <?  if ($datosEquipo) { ?>
+                                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Entrega Comodato:</b><?= $datosEquipo["fecha_entrega"] ?><br/><b>Días Libres:</b><?= $datosEquipo["dias_libres"] ?><br/><b>L&iacute;m. Devoluci&oacute;n:</b><?= $datosEquipo["limite_devolucion"] ?><br/></td>
+                                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $datosEquipo["patio"] ?></td>
+                                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $datosEquipo["observaciones"] ?></td>
+                                                    <?  } else {
+                                                        ?>
+                                                        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                                                        <?                                                 
+                                                        }
+                                                    ?>
+                                            </tr>
+                                            <?
+                                        }
                                     }
                                     ?>
                                 </table>
@@ -369,7 +379,12 @@ $modo = $sf_data->getRaw("modo");
                         </tr>
                         <?
                     }
-            }
+                }
+//                if($status->getCaIdetapa() == "IMCNT" && $master->getCaIdlinea() == 4){ // Si la naviera es CMA CGM COLOMBIA S.A.S Ticket # 72411
+                    ?>
+                    <!--<tr><td colspan="6"><a href="https://www.colsys.com.co/images/uploads/Circular_cierre_patio_sprc.pdf" target="_blank"><b>Mensaje importante: CIERRE PATIO EN EL TERMINAL SPRC</b></a></td></tr>-->
+                    <?
+//                }
             }
             if(in_array($status->getCaIdetapa(), $status->getEtapasEvaluacion())){
                 ?>

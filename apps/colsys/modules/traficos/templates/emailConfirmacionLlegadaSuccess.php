@@ -21,11 +21,19 @@ $cliente = $inoCliente->getCliente();
 //            if ($user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S.") {
 //                ?>
 <!--                <td width="300">
-                    <div style="float:right"><a href="http://www.coltrans.com.co/logosoficiales/coltrans/fitac2_2018.jpg" target="_blank"><img src="http://www.coltrans.com.co/logosoficiales/coltrans/fitac2_2018.jpg" width="300" /></a></div>
+                    <div style="float:right"><a href="https://www.coltrans.com.co/logosoficiales/coltrans/fitac2_2018.jpg" target="_blank"><img src="https://www.coltrans.com.co/logosoficiales/coltrans/fitac2_2018.jpg" width="300" /></a></div>
                 </td>-->
                 //<?
 //            }
-            ?>
+//            $etapas = array("IAPIN","IAAGR","IACCR","IAETA","IMAGR","IMCAG","IMETA","IMCPD","EERDC","EERCN","EEETD","EEFFL","TTRPL","TTDES","TTCOL");
+//            if (in_array($status->getCaIdetapa(), $etapas)) {
+//                ?>
+<!--                <td width="170">
+                    <div style="float:right"><a href="https://www.micentroempresarial.com/clientescoltrans" target="_blank"><img src="https://www.colsys.com.co/images/publicidad/Inv_Decreto_Aduanero.jpg" width="500"/></a></div>
+                </td>-->
+                <?
+//            }
+//            ?>
         </tr>
     </table><br /><br />
 
@@ -249,4 +257,6 @@ $cliente = $inoCliente->getCliente();
     else
         echo $user->getFirmaHTML();
     ?>
+    <br/>
+    <div style="font-size: 7px;font-family: Arial,Helvetica,sans-serif;">Realizado con plantilla <?=$plantilla?></div>
 </div>
