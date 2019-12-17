@@ -15,7 +15,9 @@ $traficos = json_encode($sf_data->getRaw("traficos"));
 </table>
 <style>
     .x-hidden-node {display: none !important;}
-    
+    .x-grid-cell-inner {    
+        white-space: pre-line !important;
+    }    
 </style>
 <script>
  

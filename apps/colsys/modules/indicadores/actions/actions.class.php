@@ -98,6 +98,8 @@ class indicadoresActions extends sfActions{
                 "cls" => $cls,
                 "iconCls" => 'x-fa fa-home',
                 "idg" => $indicador->getCaIdg(),
+                "impoexpo" => utf8_encode($indicador->getCaImpoexpo()),
+                "transporte" => utf8_encode($indicador->getCaTransporte()),
                 "datos" => json_decode(utf8_encode($indicador->getCaDatos()),1)
             );            
         }
@@ -139,7 +141,7 @@ class indicadoresActions extends sfActions{
                 
         switch($idg){
             case 7: //Oportunidad en confirmación de llegada de la carga al cliente            
-                $q = Doctrine::getTable("InoViIndicadores")                
+                $q = Doctrine::getTable("InoViIndicadoresSea")                
                     ->createQuery("v")
                     ->select("*")                
                     ->andWhereIn("ca_ano", $arrayAno)
@@ -150,15 +152,37 @@ class indicadoresActions extends sfActions{
                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
                 break;
             case 35: //Oportunidad en el envío de las comunicaciones marítimas
-                $q = Doctrine::getTable("InoViIndicadores")                
+                $q = Doctrine::getTable("InoViIndicadoresSea")                
                     ->createQuery("v")
                     ->select("*")                
                     ->andWhereIn("ca_ano", $arrayAno)
                     ->andWhereIn("ca_mes", $arrayMes)
                     ->andWhere("ca_idindicador = ?", intval($idg))
                     ->andWhere("ca_idetapa IN (?,?,?)", array('88888','IMPLA','IMDES'))
-                    ->orderBy("ca_mes ASC")
+                    ->orderBy("ca_mes ASC, ca_referencia ASC")
                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR);                
+                break;
+            case 37: // Oportunidad en la exportación aérea. Coltrans - Colmas
+            case 38: // Oportunidad en la exportación marítimo FCL. Coltrans - Colmas
+            case 39: // Oportunidad en la exportación marítimo LCL. Coltrans - Colmas
+                $q = Doctrine::getTable("InoViIndicadoresExp")                
+                    ->createQuery("v")
+                    ->select("*")                
+                    ->andWhereIn("ca_ano", $arrayAno)
+                    ->andWhereIn("ca_mes", $arrayMes)
+                    ->orderBy("ca_mes ASC")
+                    ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+                
+                $exclusiones = array(
+                    "Facturación al Agente", 
+                    "Facturacion al Agente",                     
+                    "Cierre contable clientes",
+                    "Cierre contable de Clientes",
+                    "Cierre contable de Clientes",
+                    "Exclusión Temporal",
+                    "Rollover"
+                );
+                $filtroUsuario = "ca_usuenvio";
                 break;
             case 12://Oportunidad en la Facturación Marítima
             case 13://Oportunidad en la Facturación Aérea
@@ -203,6 +227,10 @@ class indicadoresActions extends sfActions{
             $q->addWhere("ca_transporte = ?", $indicador->getCaTransporte());
         }
         
+        if($indicador->getCaModalidad()){
+            $q->addWhere("ca_modalidad = ?", $indicador->getCaModalidad());
+        }
+        
         if($arraySucursal[0] != null){
             $opts["sucursal"] = utf8_encode($sucursales);
             $q->andWhereIn("ca_sucursal", $arraySucursal);
@@ -214,8 +242,11 @@ class indicadoresActions extends sfActions{
         }
         
         if($cliente){
-            $opts["cliente"] = cliente;
-            $q->addWhere("ca_idcliente_fac = '".$cliente."'");
+            $opts["cliente"] = $cliente;
+            if($idg==7 || $idg==35){                
+                $q->addWhere("ca_id = '".$cliente."'");
+            }else            
+                $q->addWhere("ca_idcliente_fac = '".$cliente."'");
         }
         
         if($usuario){
@@ -223,27 +254,28 @@ class indicadoresActions extends sfActions{
             $q->addWhere("ca_usuenvio = ?", $usuario);
         }
         
-//        $q->limit(10);
-        
         $debug = $q->getSqlQuery();        
-//        echo $debug;
-//        exit();
         $registros = $q->execute();
         $contador = 0;
-
+        
         if(count($registros)>0){            
             foreach($registros as $d){
                 
                 $color = "";
+                $excluir = false;
                 
                 $us = $d["v_ca_usuario"]?$d["v_ca_usuario"]:"Administrador";
                 $userreg = Doctrine::getTable("Usuario")->find($us);                
                 $options["idsucursal"] =  $userreg->getCaIdsucursal();
+                $options["modalidad"] =  $d["v_ca_modalidad"];
                 
                 $ano = $d["v_ca_ano"];
                 $mes = $d["v_ca_mes"];
                 $compania = utf8_encode($d["v_ca_compania"]);
                 $observaciones = $d["v_ca_observaciones"];
+                
+//                echo $d["v_ca_fchenvio"]."<br/>";
+                                
                 
                 switch($idg){
                     case 7://Oportunidad en confirmación de llegada de la carga al cliente (Marítimo)
@@ -272,6 +304,31 @@ class indicadoresActions extends sfActions{
                         $idgest = $d["v_ca_idgest"];    
                         $dataGrafica[] = array($d["v_ca_usuenvio_seg"] => array($mes => TimeUtils::hourTosec($idgval)));
                         break;
+                    case 37:
+                    case 38:                    
+                    case 39:
+                        
+                        $master = Doctrine::getTable("InoMaster")->find($d["v_ca_idmaster"]);
+                        if(count($master->getFacturasIngreso())== 0){
+                            $excluir = true;
+                            $d["v_ca_observaciones"] ="Esta referencia aún no tiene facturas de ingreso";
+                        }
+                        
+                        if($d["v_ca_fchenvio"])
+                            $options["fecha"] = Utils::parseDate($d["v_ca_fchenvio"], 'Y-m-d');
+                        
+                        if($d["v_ca_aplicaidg"] == "NO"){
+                            $excluir = true;
+                        }
+                        //$diff = $indicador->getDifference($options);
+                        $idgval = $d["v_ca_idgval"];  
+                        $idgest = $d["v_ca_idgest"];    
+                        $dataGrafica[] = array($d["v_ca_usuenvio_seg"] => array($mes => TimeUtils::hourTosec($idgval)));
+                        break;
+//                    case 39:
+//                        if($d["v_ca_fchrecibo"])
+//                            $options["fecha"] = Utils::parseDate($d["v_ca_fchrecibo"], 'Y-m-d');
+//                        break;
                     case 12://Oportunidad en la Facturación Marítima
                     case 13://Oportunidad en la Facturación Aérea
                         $compania = utf8_encode($d["v_ca_compania_fact"]);                       
@@ -288,7 +345,7 @@ class indicadoresActions extends sfActions{
                         break;
                 }
                 
-                if (in_array(trim($d["v_ca_exclusion"]), $exclusiones)) {
+                if (in_array(trim($d["v_ca_exclusion"]), $exclusiones) || $excluir) {
                     $array_avg[] = 0;   
                 }else{
                     if($datos["tipodiff"]=="d"){
@@ -299,7 +356,7 @@ class indicadoresActions extends sfActions{
                     }
                 }
                 
-                if (in_array(trim($d["v_ca_exclusion"]), $exclusiones)) {
+                if (in_array(trim($d["v_ca_exclusion"]), $exclusiones) || $excluir) {
                     $idgval = null;
                     $color = "purple";
                     $array_null[] = $idgval;
@@ -310,8 +367,12 @@ class indicadoresActions extends sfActions{
                 } else{
                     $avg[$mes][] = $idgval;
                 }
+                
+                //echo $d["v_ca_eventos"]."<br/>";
+                
 
                 $row = array();
+                $row["ca_id"] = $d["v_ca_id"];
                 $row["ca_consecutivo"] = $d["v_ca_consecutivo"];
                 $row["ca_version"] = $d["v_ca_version"];
                 $row["ca_ano"] = $ano;
@@ -328,11 +389,14 @@ class indicadoresActions extends sfActions{
                 $row["ca_idmaster"] = $d["v_ca_idmaster"];
                 $row["ca_referencia"] = $d["v_ca_referencia"];
                 $row["ca_continuacion"] = $d["v_ca_continuacion"];
+                $row["ca_aplicaidg"] = utf8_encode($d["v_ca_aplicaidg"]);
+                $row["ca_agaduana"] = utf8_encode($d["v_ca_agaduana"]);
+                $row["ca_eventos"] = utf8_encode($d["v_ca_eventos"]);
                 $row["ca_fchllegada"] = $d["v_ca_fchllegada"];
                 $row["ca_fchconfirmacion"] = $d["v_ca_fchconfirmacion"];
                 $row["ca_fchfactura"] = $d["v_ca_fchfactura"];
-                $row["ca_fchrecibo"] = $d["v_ca_fchrecibo"];
-                $row["ca_fchenvio"] = $d["v_ca_fchenvio"];
+                $row["ca_fchrecibo"] = $datos["tipodiff"]=="h"?$d["v_ca_fchrecibo"]: Utils::parseDate($d["v_ca_fchrecibo"], "Y-m-d");
+                $row["ca_fchenvio"] = $datos["tipodiff"]=="h"?$d["v_ca_fchenvio"]: Utils::parseDate($d["v_ca_fchenvio"], "Y-m-d");
                 $row["ca_usuenvio"] = $d["v_ca_usuenvio"];
 //                $row["ca_fchconf_lleg"] = $d["v_ca_fchconf_lleg"];
 //                $row["ca_usuenvio_lleg"] = $d["v_ca_usuenvio_lleg"];
@@ -342,7 +406,8 @@ class indicadoresActions extends sfActions{
 //                $row["ca_fchenvio_seg"] = $d["v_ca_fchenvio_seg"];
 //                $row["ca_usuenvio_seg"] = $d["v_ca_usuenvio_seg"];
 //                $row["ca_observaciones_seg"] = utf8_encode($d["v_ca_observaciones_seg"]);
-                $row["ca_exclusion"] = $d["v_ca_observaciones"]?(utf8_encode($d["v_ca_exclusion"])?utf8_encode($d["v_ca_exclusion"]).'. '.$d["v_ca_observaciones"]:$d["v_ca_observaciones"]):utf8_encode($d["v_ca_exclusion"]);
+                $row["ca_exclusion"] = utf8_encode($d["v_ca_exclusion"])?utf8_encode($d["v_ca_exclusion"]):null;
+                $row["ca_observaciones"] = $d["v_ca_observaciones"]?utf8_encode($d["v_ca_observaciones"]):null;                
                 $row["ca_idetapa"] = utf8_encode($d["v_ca_idetapa"]);
                 $row["ca_etapa"] = utf8_encode($d["v_ca_etapa"]);
                 $row["ca_idgval"] = $idgval;
@@ -352,7 +417,14 @@ class indicadoresActions extends sfActions{
             }
 //            echo "<pre>";print_r($options);echo "</pre>";
 //            exit();
+            if(!$options["fecha"]){
+                $options["fecha"] = Utils::parseDate(date($ano."-".$mes."-01"), 'Y-m-d');
+            }
+//            print_r($options);
+//            exit();
             $infoIdg = IdgTable::getNuevoIndicador($options);            
+            //$idgObj = Doctrine::getTable("idg")->find($idg);
+            
             
             /*Resumen de datos*/
             if ($datos["tipodiff"] == "d") {
@@ -493,9 +565,9 @@ class indicadoresActions extends sfActions{
         $registros = $pdf["registros"];
         $summary = $pdf["summary"];
         $html = $pdf["html"];
-        $datos = $pdf["datos"];
+        $datosIdg = $pdf["datos"];
         
-        $headers = $datos["headers"];    
+        $headers = $datosIdg["headers"];        
         $keysdata = array();
         
         $arreglo = ["pnc_count","pnc_perc","avg_count","avg_perc", "exc_count","exc_perc", "lim_sup","sucursal"];
@@ -514,7 +586,13 @@ class indicadoresActions extends sfActions{
         
         ob_start();
         ini_set('display_errors', 'on');
-        $pdf = new TCPDF("L", PDF_UNIT, "LEGAL", true, 'UTF-8', false);
+        
+        $format = "LEGAL";
+        if($indicador->getCaIdg()==37){
+            $format = 'TABLOID';
+        }
+        
+        $pdf = new TCPDF("L", PDF_UNIT, $datosIdg["formatpdf"], true, 'UTF-8', false);
 
         // set document information
         $pdf->SetCreator(PDF_CREATOR);
@@ -542,6 +620,10 @@ class indicadoresActions extends sfActions{
         // ------------------TITULO---------------------------------------
         // set font
         $pdf->SetFont('helvetica', 'B', 20);
+//        $width = $pdf->pixelsToUnits(1000); 
+//        $height = $pdf->pixelsToUnits(300);
+//
+//        $resolution= array($width, $height);
         // add a page
         $pdf->AddPage();
         $pdf->Write(0, $titulo, '', 0, 'C', true, 0, false, false, 0);
@@ -553,19 +635,31 @@ class indicadoresActions extends sfActions{
         $pdf->SetLineWidth(0.3);
         $pdf->SetFont('', 'B');
         
-        //$w = array(18, 7, 8, 7, 20, 20, 20, 18, 10, 50, 26, 10, 20, 20, 32, 18,30,8);
-            
+        $nreg = 1;
+        $wnreg = 8;  // Ancho del registro #
+        $htitle = 7; // Altura de la fila de título
+        $hpage = 0;  // Altura total x cada página
+        $page = 1;
+        $regHtml = [];
+        
+        $pdf->Cell($wnreg, $htitle, '#', 1, 0, 'C', 1);
         foreach($headers as $key => $val){            
-            $keysdata[] = $val["dataIndex"];
-            $w[] = $val["wpdf"];
-            $pdf->Cell($w[$key], 7, $val["header"], 1, 0, 'C', 1);
+            $keysdata[] = $val["dataIndex"];            
+            $w[] = $val["wpdf"];            
+            if($val["html"]){
+                array_push($regHtml, $val["dataIndex"]);
+            }
+            $pdf->Cell($w[$key], $htitle, $val["header"], 1, 0, 'C', 1);
         }
         $pdf->Ln();        
         $pdf->SetFont('');
          
-//        echo "<pre>";print_r($registros);echo "</pre>";
+//        echo "<pre>";print_r($regHtml);echo "</pre>";
+//        exit();
          
         foreach($registros as $key => $val){
+            $i=0;            
+            $h = 12; // Altura de cada fila            
             switch($val["ca_color"]){
                 case "pink":
                     $pdf->SetFillColor(255, 192, 203);
@@ -578,16 +672,34 @@ class indicadoresActions extends sfActions{
                     break;
             }            
             
-            $i=0;
-            foreach($val as $dataIndex => $valor){                
-                if(in_array($dataIndex, $keysdata)){                    
-//                    echo $val[$dataIndex]."<br>";
-                    $pdf->Cell($w[$i], 6, $val[$dataIndex], 'LR', 0, 'L', 1);
-                    $i++;
+            foreach ($regHtml as $k => $campo) {
+                if ($val[$campo] != null) {
+                    $numlines = $pdf->getNumLines($val[$campo], $w[$i]);
+                    $htemp = $numlines / 2;
+                    if ($htemp > $h)
+                        $h = $htemp;
                 }
             }
-            $pdf->Ln();;
+
+            $pdf->MultiCell($wnreg, $h, $nreg, 'LRTB', 'L', true, 0,   '', '', true, 0, false, true, 10, 'T', true);
+            foreach($val as $dataIndex => $valor){                  
+                if(in_array($dataIndex, $keysdata)){
+                    if(in_array($dataIndex, $regHtml))                        
+                        $pdf->MultiCell($w[$i], $h, $val[$dataIndex], 'LRTB', 'L', true, 0, '', '', true, 0, true, true, 10, 'T', true);                        
+                    else
+                        $pdf->MultiCell($w[$i], $h, $val[$dataIndex], 'LRTB', 'L', true, 0, '', '', true, 0, false, true, 10, 'T', true);
+                    $i++;                    
+                }                
+            }
+            $hpage += $h;
+            $nreg++;
+            $pdf->Ln();
             
+            if (($hpage > $datosIdg["hPageIni"] && $page == 1) || $hpage > $datosIdg["hPages"]) {
+                $pdf->AddPage();
+                $hpage = 0;
+                $page++;
+            }
         }
         $pdf->Cell(array_sum($w), 0, '', 'T');
         $pdf->Ln();;
