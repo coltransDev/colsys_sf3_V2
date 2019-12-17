@@ -22,7 +22,7 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
     title: 'Archivos',
     collapsible: true,
     useArrows: true,
-    rootVisible: false,
+    rootVisible: true,
     store: Ext.create('Ext.data.TreeStore', {
         fields: [
             {name: 'idarchivo', type: 'string'},
@@ -78,14 +78,12 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
             },
             afterRender: function () {
 
-
-                ref1 = this.up('panel').idreferencia;
+                console.log(this.up('panel'));
+                console.log(this);
+                ref1 = (this.up('panel').idreferencia!=""?this.up('panel').idreferencia:this.idreporte);
                 idtrans = this.up('panel').idtransporte;
                 impo = this.up('panel').idimpoexpo;
                 serie = this.up('panel').idsserie;
-
-
-
 
                 this.store.load({
                     params: {
@@ -163,6 +161,7 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
             handler: function (grid, rowIndex, colIndex, actionItem, event, record, row) {
                 idtra = this.up('panel').idtransporte;
                 impoe = this.up('panel').idimpoexpo;
+                var idpadre  = this.up().up().id;
                 var idmast = this.up('panel').idmaster;
                 if (record.lastChild == null) {
 
@@ -184,7 +183,8 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
                                     xtype: 'Colsys.GestDocumental.FormArchivos',
                                     idimpoexpo: impoe,
                                     idtransporte: idtra,
-                                    idmaster: idmast,
+                                    idmaster: idmast,      
+                                    idpadre: idpadre,
                                     id: 'form-panel-file1',
                                     name: 'form-panel-file1',
                                     linkWin: "winFormEdit"
