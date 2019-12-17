@@ -51,6 +51,14 @@ class Reporte extends BaseReporte {
                 $this->getCliente();
             if(!$this->cliente)
                     $this->cliente=new Tercero();
+            if($tipo=='1') {
+                return  Doctrine::getTable("Contacto")
+                    ->createQuery("c")
+                    ->addWhere("c.ca_idcliente = ?", $this->cliente->getCaIdcliente() )
+                    ->addWhere("ca_cargo != ?", 'Extrabajador')
+                    ->addWhere("ca_fijo = ?", TRUE)
+                    ->execute();
+            }
             $contacto=new Contacto();
             $contacto->setCaEmail($this->cliente->getCaEmail());
             $contacto->setCaNombres($this->cliente->getCaCompania());
@@ -70,12 +78,12 @@ class Reporte extends BaseReporte {
                 return Doctrine::getTable("Contacto")->find($this->getCaIdconcliente());
             else if($tipo=='1'){//CONTACTO FIJO
                 if(!$this->cliente)
-                     $this->getCliente();   
+                     $this->getCliente();
                 return  Doctrine::getTable("Contacto")
                                        ->createQuery("c")
                                        ->addWhere("c.ca_idcliente = ?", $this->cliente->getCaIdcliente() )
                                        ->addWhere("ca_cargo != ?", 'Extrabajador')
-                                       ->addWhere("ca_fijo = ?", true)
+                                       ->addWhere("ca_fijo = ?", TRUE)
                                        ->execute();
             }else if($tipo=='3'){//CONTACTO Internos coltrans
                 $contac=array();
@@ -362,7 +370,11 @@ class Reporte extends BaseReporte {
 
     public function getInoClientesSea() {
         if (!$this->inoClientesSea) {
-            $this->inoClientesSea = $this->getInoHouse()->getFirst();
+            $this->inoClientesSea = Doctrine::getTable("InoClientesSea")
+                            ->createQuery("c")
+                            ->innerJoin("c.Reporte r")
+                            ->where("r.ca_consecutivo = ?", $this->getCaConsecutivo())
+                            ->fetchOne();
         }
         return $this->inoClientesSea;
     }
@@ -538,12 +550,25 @@ class Reporte extends BaseReporte {
      */
 
     public function getRepEquipos() {
-        return Doctrine::getTable("RepEquipo")
+        
+        if($this->getCaTiporep()!="5")
+        {
+            return Doctrine::getTable("RepEquipo")
                 ->createQuery("e")
                 ->select("e.*")
                 ->innerJoin("e.Reporte r")
                 ->where("r.ca_consecutivo = ? ", $this->getCaConsecutivo())
                 ->execute();
+        }
+        else
+        {
+            return Doctrine::getTable("RepEquipo")
+                ->createQuery("e")
+                ->select("e.*")
+                ->innerJoin("e.Reporte r")
+                ->where("r.ca_idreporte = ? ", $this->getCaIdreporte() )
+                ->execute();
+        }
     }
 
     /*
@@ -647,12 +672,23 @@ class Reporte extends BaseReporte {
     }
 
     public function getRepTarifa($tipo='1') {
-        $q = Doctrine::getTable("RepTarifa")
+        if($this->getCaTiporep()!="5")
+        {
+            $q = Doctrine::getTable("RepTarifa")
                 ->createQuery("t")
                 ->innerJoin("t.Concepto c")
                 ->where("t.ca_idreporte = ? and t.ca_idconcepto!=9999 and ca_tipo = ? ", array($this->getCaIdreporte(),$tipo))
                 ->orderBy("to_char(t.ca_idconcepto, '999')")
                 ->execute();
+        }
+        else
+        {
+            $q = Doctrine::getTable("RepTarifa")
+                ->createQuery("t")                
+                ->where("t.ca_idreporte = ? and t.ca_idconcepto!=9999 and ca_tipo = ? ", array($this->getCaIdreporte(),$tipo))
+                ->orderBy("to_char(t.ca_idconcepto, '999')")
+                ->execute();
+        }
         return $q;
     }
 
@@ -890,11 +926,23 @@ class Reporte extends BaseReporte {
      */
 
     public function getPiezas() {
-        $status = $this->getUltimoStatus();
-        if ($status) {
-            return str_replace("|", " ", $status->getCaPiezas());
+        if ($this->getCaTiporep() == "4") {
+            $piezas = $this->getRepOtm()->getCaNumpiezas();
+            $piezasTipo = $this->getRepOtm()->getCaNumpiezasun();
+            return $piezas." ".$piezasTipo;
+        } 
+        else if ($this->getCaTiporep() == "5") {
+            $piezas=$this->getDatosJson("ca_piezas");
+            $piezasTipo = "Piezas";
+            return $piezas." ".$piezasTipo;
         }
-        return null;
+        else {
+            $status = $this->getUltimoStatus();
+            if ($status) {
+                return str_replace("|", " ", $status->getCaPiezas());
+            }
+            return null;
+        }
     }
 
     /*
@@ -904,11 +952,24 @@ class Reporte extends BaseReporte {
      */
 
     public function getPeso() {
-        $status = $this->getUltimoStatus();
-        if ($status) {
-            return str_replace("|", " ", $status->getCaPeso());
+        
+        if ($this->getCaTiporep() == "4") {
+            $peso = $this->getRepOtm()->getCaPeso();
+            $pesoTipo = $this->getRepOtm()->getCaPesoun();
+            return $peso." ".$pesoTipo;
+        } 
+        else if ($this->getCaTiporep() == "5") {                                        
+            $peso = $this->getDatosJson("ca_peso");
+            $pesoTipo = "Kilos";
+            return $peso." ".$pesoTipo;
         }
-        return null;
+        else {
+            $status = $this->getUltimoStatus();
+            if ($status) {
+                return str_replace("|", " ", $status->getCaPeso());
+            }
+            return null;
+        }
     }
 
     /*
@@ -918,11 +979,24 @@ class Reporte extends BaseReporte {
      */
 
     public function getVolumen() {
-        $status = $this->getUltimoStatus();
-        if ($status) {
-            return str_replace("|", " ", $status->getCaVolumen());
+        if ($this->getCaTiporep() == "4") {
+            $vol = $this->getRepOtm()->getCaVolumen();
+            $volTipo = $this->getRepOtm()->getCaVolumenun();
+            return $vol." ".$volTipo;
+        } 
+        else if ($this->getCaTiporep() == "5") {                                        
+            $vol = $this->getDatosJson("ca_volumen");
+            $volTipo = "M&sup3;";
+            return $vol." ".$volTipo;
         }
-        return null;
+        else {
+        
+            $status = $this->getUltimoStatus();
+            if ($status) {
+                return str_replace("|", " ", $status->getCaVolumen());
+            }
+            return null;
+        }
     }
 
     /*
@@ -932,11 +1006,21 @@ class Reporte extends BaseReporte {
      */
 
     public function getDoctransporte() {
-        $status = $this->getUltimoStatus();
-        if ($status) {
-            return $status->getCaDoctransporte();
+        
+        if ($this->getCaTiporep() == "4") {
+            return $this->getRepOtm()->getCaHbls();
         }
-        return null;
+        else if ($this->getCaTiporep() == "5") {
+            return $this->getDatosJson("ca_doc_transporte");
+            
+        }                                    
+        else {
+            $status = $this->getUltimoStatus();
+            if ($status) {
+                return $status->getCaDoctransporte();
+            }
+            return null;
+        }
     }
     
     public function getCaDocmaster() {
@@ -954,19 +1038,20 @@ class Reporte extends BaseReporte {
 
     public function getNumReferencia() {
 
-        $inoCliente = Doctrine::getTable("InoHouse")
+        $inoCliente = Doctrine::getTable("InoHouse")                
                 ->createQuery("h")
-                ->leftJoin("h.Reporte r")
-                ->innerJoin("h.InoMaster m")
+                ->select("h.ca_idreporte")
+                ->leftJoin("h.Reporte r")                
                 ->where("r.ca_consecutivo = ?", $this->getCaConsecutivo())
-                ->addWhere("m.ca_transporte = ?", $this->getCaTransporte())
-                ->orderBy("r.ca_idreporte DESC, h.ca_idhouse DESC")
+                ->addWhere("r.ca_transporte = ?", $this->getCaTransporte()) // Para diferencias las referencias cuando hay OTM
+                //->orderBy("r.ca_idreporte DESC, h.ca_idhouse DESC")
                 ->fetchOne();
 
         if ($inoCliente) {
             return $inoCliente->getInoMaster()->getCaReferencia();
         } else {
-            if ($this->getCaImpoexpo() == Constantes::IMPO && $this->getCaTransporte() == Constantes::MARITIMO) {
+            return "Informacion No disponible";
+            /*if ($this->getCaImpoexpo() == Constantes::IMPO && $this->getCaTransporte() == Constantes::MARITIMO) {
                 $inoclientesSea = $this->getInoClientesSea();
                 if ($inoclientesSea) {
                     return $inoclientesSea->getCaReferencia();
@@ -977,7 +1062,7 @@ class Reporte extends BaseReporte {
                 if ($inoclientesAir) {
                     return $inoclientesAir->getCaReferencia();
                 }
-            }
+            }*/
         }
     }
 
@@ -1056,9 +1141,9 @@ class Reporte extends BaseReporte {
      * Retorna los archivos asociados a la referencia en la TRD
      * @author: Andrea Ramírez
      */
-    public function getFilesGestDoc() {
+    public function getFilesGestDoc($t=1) {
         
-        $referencia = $this->getNumReferencia();
+        $referencia = $this->getNumReferencia();        
         $hbl = $this->getDoctransporte();
         
         if(!$hbl && $referencia){
@@ -1068,15 +1153,25 @@ class Reporte extends BaseReporte {
             }
         }
         
-        $archivos = array();
+        $archivos=$archivos1 = array();
         
         if($referencia){
             
-            $data = array();
-            $data["ref1"] = $referencia;
-            $data["ref2"] = $hbl;
-            $archivos = ArchivosTable::getArchivosActivos($data);            
-        }        
+            if($t==1)
+            {
+                $data = array();
+                $data["ref1"] = $referencia;
+                $data["ref2"] = $hbl;                
+                $archivos = ArchivosTable::getArchivosActivos($data);
+            }
+        }
+        if($t==2)
+        {
+            $data = array();            
+            $data["ref1"] = $this->getCaConsecutivo();        
+            $archivos = ArchivosTable::getArchivosActivos($data);
+            
+        }
         return $archivos;
     }
 
@@ -1100,7 +1195,8 @@ class Reporte extends BaseReporte {
      */
 
     public function getReporteExterior() {
-        if ($this->getCaImpoexpo() == Constantes::IMPO || $this->getCaImpoexpo() == Constantes::TRIANGULACION) {
+        //if ($this->getCaImpoexpo() == Constantes::IMPO || $this->getCaImpoexpo() == Constantes::TRIANGULACION) 
+        {
             //Reportes al exterior
             if ($this->getCaTransporte() == Constantes::MARITIMO || $this->getCaTransporte() == Constantes::TERRESTRE) {
                 $tipo = 'Rep.MarítimoExterior';
@@ -1238,7 +1334,7 @@ class Reporte extends BaseReporte {
      * Retorna los usuarios de operativos traficos
      */
 
-    public function getUsuariosOperativos() {
+    public function getUsuariosOperativos($tipo="") {
         $usuario=new Usuario();
         
         $usuario = Doctrine::getTable("Usuario")->find($this->getCaUsucreado());
@@ -1292,12 +1388,21 @@ class Reporte extends BaseReporte {
                     } else {
                         //$q->addWhere("(p.ca_perfil = ? and u.ca_idsucursal = ?) or p.ca_perfil=?", array("operativo-aereo",$usuario->getCaIdsucursal(),"operativo-expo"));
                         $q->addWhere("(p.ca_perfil = ? and s.ca_nombre = ?) or p.ca_perfil=?", array("operativo-aereo",$usuario->getSucursal()->getCaNombre(),"operativo-expo"));
-                        
                     }
                 }
             }
             //$q->addWhere("u.ca_idsucursal = ?", $usuario->getCaIdsucursal());
         }
+        else if ( $tipo=="aduana" ) {
+            $q->addWhere("p.ca_perfil = ? ", array("coordinador-de-servicio-al-cliente-aduana") );
+            $q->orderBy("p.ca_perfil " );        
+        }
+        else if ( $this->getCaImpoexpo() == Constantes::INTERNO ) {
+            $q->addWhere("p.ca_perfil = ?  ", array("ino-terrestre-colsys") );
+            $q->orderBy("p.ca_perfil " );        
+        }
+        
+        //echo $this->getCaImpoexpo();
         //echo $q->getSqlQuery();
         return $q->execute();
     }
@@ -1440,6 +1545,8 @@ class Reporte extends BaseReporte {
                 $reporte->setCaVersion($this->numVersiones() + 1);                
             }
 
+            $reporte->setCaUsuanulado(null);
+            $reporte->setCaFchanulado(null);
             $reporte->setCaDetanulado(null);
             $reporte->setCaFchcreado(null);
             $reporte->setCaUsucreado(null);
@@ -1488,6 +1595,50 @@ class Reporte extends BaseReporte {
                     $newGasto->setCaRecargoorigen("true");
                 $newGasto->save($conn);
             }
+            
+            
+            //$itrs = $this->getRepItr();
+            
+            if ($this->getCaTiporep() == "5") {
+                $itrs = Doctrine::getTable("RepItr")
+                    ->createQuery("e")
+                    ->addWhere("e.ca_idreporte = ?", $this->getCaIdreporte())
+                    ->execute();
+
+    
+                foreach ($itrs as $itr) {
+                    $newItr = new RepItr();
+
+                    $newItr->setCaIdreporte($reporte->getCaIdreporte());
+                    $newItr->setCaIdvehiculo($itr->getCaIdvehiculo());
+                    $newItr->setCaPlaca( $itr->getCaPlaca() );
+                    $newItr->setCaPiezas( $itr->getCaPiezas() );
+                    $newItr->setCaIdembalaje( $itr->getCaIdembalaje() );
+                    $newItr->setCaPeso( $itr->getCaPeso() );
+                    $newItr->setCaVolumen( $itr->getCaVolumen() );
+                    $newItr->setCaDireccion( $itr->getCaDireccion() );
+                    $newItr->setCaObservaciones( $itr->getCaObservaciones() );
+
+                    $newItr->save($conn);
+                }
+            
+                $equipos = $this->getRepEquipo();
+    
+                foreach ($equipos as $equipo) {                
+
+                    $newEquipo = new RepEquipo();
+                    $newEquipo->setCaIdconcepto($equipo->getCaIdconcepto());
+                    $newEquipo->setCaIdvehiculo($equipo->getCaIdvehiculo());
+                    $newEquipo->setCaIdequipo($equipo->getCaIdequipo());
+                    $newEquipo->setCaIdreporte($reporte->getCaIdreporte());
+                    $newEquipo->setCaObservaciones($equipo->getCaObservaciones());
+                    $newEquipo->setCaCantidad($equipo->getCaCantidad());
+                    $newEquipo->setCaDatos($equipo->getCaDatos());
+                    $newEquipo->save($conn);
+
+                }
+            }
+            
 
             if(!$tipo){
                 //Copia los proveedores excepto cuando se copia un ag
@@ -1977,5 +2128,24 @@ class Reporte extends BaseReporte {
                 ->addWhere("e.ca_tipo = ? ", "Status Terceros")
                 ->addOrderBy("e.ca_fchenvio DESC")
                 ->execute(); 
+    }
+    
+    public function finTareaAntecedentes(){
+        
+        $reportes = Doctrine::getTable("Reporte")
+                ->createQuery("r")
+                ->select("ca_idreporte, ca_consecutivo")
+                ->where("ca_consecutivo = ?", $this->getCaConsecutivo())
+                ->execute();
+        
+        foreach($reportes as $reporte){
+            if ($reporte->getCaIdtareaAntecedente()) {
+                $tarea = $reporte->getNotTareaAntecedente();
+                if ($tarea && !$tarea->getCaFchterminada()) {
+                    $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
+                    $tarea->save();
+                }
+            }
+        }
     }
 }
