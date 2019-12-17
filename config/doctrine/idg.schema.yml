@@ -17,6 +17,14 @@ Idg:
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
     ca_fchactualizado: timestamp
+    ca_impoexpo: string(15)
+    ca_transporte: string(15)
+    ca_sigla: string(3)
+    ca_idproceso: integer
+    ca_datos: string
+    ca_activo: boolean
+    ca_modalidad: string(15)
+    ca_idempresa: integer
   relations:
     IdgConfig:
       local: ca_idg
@@ -36,6 +44,10 @@ Idg:
       foreign: ca_login
       type: one
       class: Usuario
+    IdgProcesos:
+       local: ca_idproceso
+       foreign: ca_idproceso
+       type: one
     
 IdgConfig:
   options:
@@ -141,6 +153,7 @@ IdgRiesgos:
     ca_fchactualizado: timestamp
     ca_impresion: integer
     ca_laft: boolean
+    ca_activo: boolean
   relations:
     IdgProcesos:
       local: ca_idproceso
@@ -258,6 +271,10 @@ IdgEventos:
       local: ca_usuactualizado
       foreign: ca_login
       type: one
+    IdgEventoCausa:
+      local: ca_idevento
+      foreign: ca_idevento
+      type: many
       
 IdgCausas:
   options:
@@ -278,6 +295,7 @@ IdgCausas:
     ca_fchactualizado: timestamp
     ca_usuactualizado: string(15)
     ca_nueva: boolean
+    ca_orden: integer
   relations:
     IdgRiesgos:
       local: ca_idriesgo
@@ -337,3 +355,111 @@ IdgFactor:
       local: ca_idriesgo
       foreign: ca_idriesgo
       type: one    
+      
+IdgEventoCausa:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: idg
+  tableName: idg.tb_eventos_causas
+  columns:    
+    ca_idevento:
+      type: integer
+      primary: true
+    ca_idcausa:
+      type: integer
+      primary: true
+  relations:
+      IdgEventos:
+        local: ca_idevento
+        foreign: ca_idevento
+        type: one
+      IdgCausas:
+        local: ca_idcausa
+        foreign: ca_idcausa
+        type: many  
+
+IdgVersion:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: idg
+  tableName: idg.tb_versiones
+  columns:    
+    ca_id:
+      type: integer
+      primary: true
+    ca_version: integer
+    ca_idproceso: integer
+    ca_nombre: string
+    ca_observaciones: text
+    ca_fchcreado: timestamp
+    ca_usucreado: string(15)
+    ca_fcheliminado: timestamp
+    ca_usueliminado: string(15)      
+  relations:
+      IdgProcesos:
+        local: ca_idproceso
+        foreign: ca_idproceso
+        type: one
+      UsuCreado:
+        class: Usuario
+        local: ca_usucreado
+        foreign: ca_login
+        type: one
+      UsuEliminado:
+        class: Usuario
+        local: ca_usueliminado
+        foreign: ca_login
+        type: one
+
+IdgArchivo:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: idg
+  tableName: idg.tb_archivos
+  columns:    
+    ca_idarchivo:
+      type: integer
+      primary: true
+    ca_idg: integer
+    ca_ano: string
+    ca_periodo: string
+    ca_nombre: string
+    ca_path: string
+    ca_observaciones: text
+    ca_fchcreado: timestamp
+    ca_usucreado: string(15)
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string(15)
+    ca_fcheliminado: timestamp
+    ca_usueliminado: string(15)      
+    ca_idsucursal: string(3)
+  relations:
+      Idg:
+        local: ca_idg
+        foreign: ca_idg
+        type: one
+      UsuCreado:
+        class: Usuario
+        local: ca_usucreado
+        foreign: ca_login
+        type: one
+      UsuActualizado:
+        class: Usuario
+        local: ca_usuactualizado
+        foreign: ca_login
+        type: one
+      UsuEliminado:
+        class: Usuario
+        local: ca_usueliminado
+        foreign: ca_login
+        type: one
+      Sucursal:
+        local: ca_idsucursal
+        foreign: ca_idsucursal
+        type: one        
