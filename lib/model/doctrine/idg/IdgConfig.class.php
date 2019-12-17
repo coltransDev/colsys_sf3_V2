@@ -10,6 +10,193 @@
  * @author     Your name here
  * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
-class IdgConfig extends BaseIdgConfig
-{
+class IdgConfig extends BaseIdgConfig {
+    
+    /*
+     * Retorna 0 No cumple, 1 cumple de acuerdo a los parámetros establecidos 
+     * @author: Andrea Ramírez     
+     * @param string    $tipodiff - "H:i:s" : El indicador se mide en horas, "d": El indicador se mide en días
+     *
+     * @return int - 0: No cumple, 1:Cumple
+     */ 
+    public function getCumple($tipodiff, $dif_mem, $num_dias){
+        
+        switch($tipodiff){
+            case "H:i:s":
+                list($hor, $min, $seg) = sscanf($dif_mem, "%d:%d:%d");
+                $dif_sec = ($hor * 3600) + ($min * 60) + $seg;                
+                $dif_mem = $dif_sec;
+                $num_dias = $num_dias*60*60;
+                break;            
+        }
+        
+        if ($dif_mem > $num_dias) {                    
+            return 0;
+        }else{                    
+            return 1;
+        }
+    }
+    
+    /*
+     * Obtiene la diferencia de dos fechas en horas o días dependiendo de las opciones
+     * @author: Andrea Ramírez     
+     * @param array    $options - Arreglo con las variables para el cálculo del indicador: tipodiff, fecha, idg, sigla, impoexpo, transporte, modalidad     
+     *
+     * @return array - Arreglo con val=> Valor del Indicador y Estado: 0 No cumple, 1 Cumple, -1 No existe
+     */
+
+    public function getDifference(array $options) {
+        $user = sfContext::getInstance()->getUser();
+
+        $num_dias = intval($this->getCaLim1());
+        $festivos = TimeUtils::getFestivos();        
+
+        if ($options["tipodiff"] == "H:i:s") {
+
+            list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($options["fchini"], "%d-%d-%d %d:%d:%d");
+            $inicio = mktime($hor, $min, $seg, $mes, $dia, $ano);
+            list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($options["fchend"], "%d-%d-%d %d:%d:%d");
+            $final = mktime($hor, $min, $seg, $mes, $dia, $ano);
+
+            if ($this->getCaIdsucursal() == 999) {
+                $idsucursal = $user->getIdSucursal();
+            } else {
+                $idsucursal = $this->getCaIdsucursal();
+            }
+            $sucursal = Doctrine::getTable("Sucursal")->find($idsucursal);
+
+            $dif_mem = TimeUtils::calcDiffParams($festivos, $inicio, $final, $sucursal->getCaEntrada(), $sucursal->getCaSalida());
+        } else {
+            $dif_mem = TimeUtils::workDiff($festivos, $options["fchini"], $options["fchend"]);
+        }
+
+        $cumple = $this->getCumple($options["tipodiff"], $dif_mem, $num_dias);
+
+        return array("val" => $dif_mem, "estado" => $cumple);
+    }
+
+    /*
+     * Realiza el cálculo del Indicador de acuerdo a los parámetros dados
+     * @author: Andrea Ramírez     
+     * @param array    $options - Arreglo con las variables para el cálculo del indicador: tipo, tipodiff, sigla, fecha, idg, sigla, impoexpo, transporte, modalidad     
+     *
+     * @return array $row - Arreglo con las variables "cumplio" => Si,No,Justifico, "idcaso" => Caso referido, Ej. Idcomprobante, RN, Referencia, 
+     *              "resultado" => Array con registro del Indicador id: Id del indicador registrado, error: Mensaje si el indicador no fué registrado
+     */
+
+    public function calcularIndicador($options) {
+        $datos = json_decode(utf8_encode($this->getIdg()->getCaDatos()), 1);
+
+        $options["tipodiff"] = $datos["tipodiff"];
+        $diff = $this->getDifference($options);
+//        print_r($diff);
+//        exit();
+        return $diff;
+    }
+
+    public function evaluarIndicador($estado, $valor, $options, $conn = null) {
+
+        $observaciones = $options["observaciones"];
+        $idexclusion = $options["idexclusion"];
+        $mensaje = null;
+
+        switch ($estado) {
+            case 0:
+                if (strlen($observaciones) < 1 && strlen($idexclusion) < 1) {
+                    $cumple = "No";
+                    $mensaje = utf8_encode("De acuerdo al IDG del Doc. Transporte #".$options["doctransporte"]." está fuera del tiempo de oportunidad, favor diligenciar la casilla de justificación que se ha habilitado y seleccione una exclusión si aplica.")."<br/>";                    
+                } else {                    
+                    $cumple = "Justifico";
+                }
+                break;
+            case 1;
+                $cumple = "Si";                
+                break;
+        }
+        
+        if($cumple != "No"){
+            $registro = $this->registrarIndicador($estado, $valor, $options, $conn);
+            
+            if(!$registro["success"]){
+                return array("cumplio"=>"No", "mensaje"=>$registro["error"]);
+            }
+        }
+        
+        return array("cumplio"=>$cumple, "mensaje"=>$mensaje);
+
+    }
+
+    /*
+     * Registra el indicador en la tabla tb_indicadores
+     * @author: Andrea Ramírez     
+     * @param array    $options - Arreglo con las variables para el cálculo del indicador: tipo, tipodiff, sigla, fecha, idg, sigla, impoexpo, transporte, modalidad     
+     *
+     * @return array success y mensaje
+     */
+    
+    public function registrarIndicador($estado, $valor, $options, $conn = null) {        
+        
+        
+        $datos = json_decode(utf8_encode($this->getIdg()->getCaDatos()), 1);
+        $user = sfContext::getInstance()->getUser();
+        
+        $fecha = $options["fecha"];
+        $idcaso = $options["idcaso"];
+        $fchini = $options["fchini"];
+        $fchend = $options["fchend"];
+        $idetapa = $options["idetapa"]?$options["idetapa"]:$datos["idetapa"];
+        $idexclusion = $options["idexclusion"];
+        $observaciones = $options["observaciones"];
+        $eventos = $options["eventos"];
+        
+        try {
+            if(!$conn){
+                $conn = Doctrine::getTable("InoIndicadores")->getConnection();
+                $conn->beginTransaction();
+                $commit = true;
+            }
+            $registro = Doctrine::getTable("InoIndicadores")->findByDql("ca_idindicador = ? AND ca_idcaso = ? AND ca_idetapa = ?", array($this->getIdg()->getCaIdg(), $idcaso, $idetapa));
+
+            if (count($registro) > 0) {
+                $existe = true;
+            }
+
+            if (!$existe && (($estado == 0 && strlen($observaciones) > 0) || ($estado == 0 && strlen($idexclusion) > 0) || $estado == 1)) {
+
+                $data = array();
+                if ($observaciones)
+                    $data["observaciones"] = utf8_encode($observaciones);
+
+                if ($eventos) {
+                    $data["eventos"] = $eventos;
+                }
+
+                $ind = new InoIndicadores();
+                $ind->setCaTipo($datos["tipo"]);
+                $ind->setCaIdcaso($idcaso);
+                $ind->setCaFecha($fecha);
+                $ind->setCaIdindicador($this->getIdg()->getCaIdg());
+                $ind->setCaFchinicial($fchini);
+                $ind->setCaFchfinal($fchend);
+                $ind->setCaIdg($valor);
+                $ind->setCaIdexclusion($idexclusion?$idexclusion:null);
+                $ind->setCaEstado($estado);
+                $ind->setCaUsuario($user->getUserId());
+                $ind->setCaDatos(json_encode($data));
+                $ind->setCaIdetapa($idetapa);
+                $ind->save($conn);
+                
+                if($commit){
+                    $conn->commit();
+                }
+
+                return array("success" => true);
+            } else {
+                return array("success" => true, "error" => "Ya existe un indicador registrado. Idindicador:".$this->getIdg()->getCaIdg()." Idcaso:".$idcaso." Idetapa:".$datos["idetapa"]);
+            }
+        } catch (Exception $e) {
+            $conn->rollback();
+            return array("success" => false, "error" => utf8_encode($e->getMessage()));
+        }
+    }
 }
