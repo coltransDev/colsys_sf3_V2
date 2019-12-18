@@ -39,8 +39,121 @@ class falabellaAdu2Actions extends sfActions {
          */
     }
     
-
     
+    public function getFestivos()
+    {
+        $festivos1=array();
+        $festivos1[]="2016-01-25";
+        $festivos1[]="2016-01-26";
+        $festivos1[]="2016-01-27";
+        $festivos1[]="2016-01-28";
+        $festivos1[]="2016-01-29";
+
+        $festivos1[]="2016-02-23";
+        $festivos1[]="2016-02-24";
+        $festivos1[]="2016-02-25";
+        $festivos1[]="2016-02-26";
+        $festivos1[]="2016-02-29";
+        
+        $festivos1[]="2016-03-23";
+        $festivos1[]="2016-03-24";
+        $festivos1[]="2016-03-25";
+        $festivos1[]="2016-03-28";
+        $festivos1[]="2016-03-29";
+        $festivos1[]="2016-03-30";
+        $festivos1[]="2016-03-31";
+        
+        $festivos1[]="2016-04-25";
+        $festivos1[]="2016-04-26";
+        $festivos1[]="2016-04-27";
+        $festivos1[]="2016-04-28";
+        $festivos1[]="2016-04-29";
+        
+        $festivos1[]="2016-05-24";
+        $festivos1[]="2016-05-25";
+        $festivos1[]="2016-05-26";
+        $festivos1[]="2016-05-27";
+        $festivos1[]="2016-05-30";        
+        $festivos1[]="2016-05-31";
+        
+        $festivos1[]="2016-06-24";
+        $festivos1[]="2016-06-27";
+        $festivos1[]="2016-06-28";
+        $festivos1[]="2016-06-29";
+        $festivos1[]="2016-06-30";
+        //$festivos1[]="2016-05-31";
+
+
+        $festivos1[]="2016-07-25";
+        $festivos1[]="2016-07-26";
+        $festivos1[]="2016-07-27";
+        $festivos1[]="2016-07-28";
+        $festivos1[]="2016-07-29";
+
+
+        $festivos1[]="2016-08-25";
+        $festivos1[]="2016-08-26";
+        $festivos1[]="2016-08-29";
+        $festivos1[]="2016-08-30";
+        $festivos1[]="2016-08-31";
+
+
+        $festivos1[]="2016-09-26";
+        $festivos1[]="2016-09-27";
+        $festivos1[]="2016-09-28";
+        $festivos1[]="2016-09-29";
+        $festivos1[]="2016-09-30";
+
+
+        $festivos1[]="2016-10-25";
+        $festivos1[]="2016-10-26";
+        $festivos1[]="2016-10-27";
+        $festivos1[]="2016-10-28";
+        $festivos1[]="2016-10-31";
+        
+        $festivos1[]="2016-11-24";
+        $festivos1[]="2016-11-25";
+        $festivos1[]="2016-11-28";
+        $festivos1[]="2016-11-29";
+        $festivos1[]="2016-11-30";
+
+        $festivos1[]="2016-12-16";
+        $festivos1[]="2016-12-19";
+        $festivos1[]="2016-12-20";
+        $festivos1[]="2016-12-21";
+        $festivos1[]="2016-12-22";
+        $festivos1[]="2016-12-23";
+        $festivos1[]="2016-12-26";
+        $festivos1[]="2016-12-27";
+        $festivos1[]="2016-12-28";
+        $festivos1[]="2016-12-29";
+        $festivos1[]="2016-12-30";
+        
+        $festivos1[]="2017-03-27";
+        $festivos1[]="2017-03-28";
+        $festivos1[]="2017-03-29";
+        $festivos1[]="2017-03-30";        
+        $festivos1[]="2017-03-31";
+        
+        $festivos1[]="2018-02-22";
+        $festivos1[]="2018-02-23";        
+        $festivos1[]="2018-02-26";
+        $festivos1[]="2018-02-27";
+        $festivos1[]="2018-02-28";
+        
+        $festivos1[]="2018-03-22";
+        $festivos1[]="2018-03-23";        
+        $festivos1[]="2018-03-26";
+        $festivos1[]="2018-03-27";
+        $festivos1[]="2018-03-28";
+        
+        return $festivos1;
+    }
+
+
+
+
+
     public function executeActualizarfechasdo(sfWebRequest $request)
     {
 //210.10.07.0032.16
@@ -49,7 +162,7 @@ class falabellaAdu2Actions extends sfActions {
 
             $sql="SELECT 
             distinct(brk.DOIIDXXX)    as ca_referencia,             
-                      
+            brk.DOIAFARE as ca_reconocimiento,
             
             brk.DOIMYDOC    as ca_fchmayordoc,
             brk.DOIMYLEV    as ca_fchlevante,
@@ -62,7 +175,9 @@ class falabellaAdu2Actions extends sfActions {
             brk.DOIFENFA    as ca_fchentrfacturacion,
             brk.DOIFENTR    as ca_fchfacturacion,
             brk.DOIFENME    as ca_fchmensajeria,
-            q.docmtrxx      as ca_transporte
+            q.docmtrxx      as ca_transporte,
+            (SELECT count(*) FROM COLMASXX.SIAI0206 WHERE DOIIDXXX=brk.DOIIDXXX AND DOISFIDX=brk.DOISFIDX AND LIMTLEVX = 'FISICO' ) as nfisico,
+            (SELECT count(*) FROM COLMASXX.SIAI0206 WHERE DOIIDXXX=brk.DOIIDXXX AND DOISFIDX=brk.DOISFIDX AND LIMTLEVX = 'AUTOMATICO' ) as nautomatico
             /*, (SELECT COUNT(*) FROM COLMASXX.SIAI0205 AS items WHERE brk.DOIIDXXX = items.DOIIDXXX and brk.DOISFIDX=items.DOISFIDX )    as ca_nitems                   */
             
             FROM COLMASXX.SIAI0200 AS brk            
@@ -91,15 +206,15 @@ class falabellaAdu2Actions extends sfActions {
 
             $ref = Doctrine::getTable("InoMaestraAdu")->find($caReferencia);
 
-            if($datos["ca_transporte"]=="MARITIMO")
-                $datos["ca_transporte"]=  Constantes::MARITIMO;
+            if($datos["ca_transporte"]=="MARITIMO" || "MarÃ­timo")
+                $datos["ca_transporte"]= Constantes::MARITIMO;
             else if($datos["ca_transporte"]=="AEREO")
-                $datos["ca_transporte"]=  Constantes::AEREO;
+                $datos["ca_transporte"]= Constantes::AEREO;
             else
                 $datos["ca_transporte"]=  "";
 
             if($ref)
-            {                    
+            {
                 if($datos["ca_fchlevante"]!="" && $datos["ca_fchlevante"]!="0000-00-00")
                     $ref->setCaFchlevante($datos["ca_fchlevante"]);
 
@@ -139,6 +254,13 @@ class falabellaAdu2Actions extends sfActions {
 
                 if($datos["ca_transporte"]!="" )
                     $ref->setCaTransporte($datos["ca_transporte"]);
+                
+                //if($datos["ca_transporte"]!="" )
+                 //$ref->setCaReconocimiento($datos["ca_reconocimiento"]);
+                 $ref->setCaReconocimiento(trim($datos["ca_reconocimiento"]));
+                 
+                 $datosJson=array("nautomatico"=>$datos["nautomatico"],"nfisico"=>$datos["nfisico"]);
+                 $ref->setCaDatos(json_encode($datosJson));
 
                 /*if($datos["ca_nitems"]!="" )
                     $ref->setCaNitems($datos["ca_nitems"]);*/
@@ -161,6 +283,8 @@ class falabellaAdu2Actions extends sfActions {
 
     public function executeTaskImportarDo(sfWebRequest $request)
     {
+        
+            $debug="false";
             $con = Doctrine_Manager::getInstance()->getConnection('opencomex');
             $con1 = Doctrine_Manager::getInstance()->getConnection('master');
 
@@ -189,7 +313,8 @@ class falabellaAdu2Actions extends sfActions {
             
             
             $sql="SELECT 
-            distinct(brk.DOIIDXXX)    as ca_referencia,             
+            distinct(brk.DOIIDXXX)    as ca_referencia,
+            brk.DOIAFARE as ca_reconocimiento,
             brk.DOISFIDX    as ca_version,
             brk.REGFECXX    as ca_fchcreado, 
             brk.REGHORXX    as ca_hracreado, 
@@ -226,9 +351,7 @@ class falabellaAdu2Actions extends sfActions {
             brk.DOIFENME    as ca_fchmensajeria,            
             (SELECT count(*) FROM COLMASXX.SIAI0205 AS items1 WHERE brk.DOIIDXXX = items1.DOIIDXXX and brk.DOISFIDX=items1.DOISFIDX ) as ca_nitems,
             
-            brk.REGMODXX    as ca_actualizado,
-            
-            
+            brk.REGMODXX    as ca_actualizado,            
             h.REGFECXX      as ca_fchcreadoh, 
             h.REGHORXX    	as ca_hracreadoh,  
             h.REGMODXX    	as ca_actualizadoh,
@@ -274,7 +397,8 @@ FROM COLMASXX.SIAI0200 AS brk
             
             
             $sql="SELECT 
-            distinct(brk.DOIIDXXX)    as ca_referencia,             
+            distinct(brk.DOIIDXXX)    as ca_referencia,    
+            brk.DOIAFARE as ca_reconocimiento,
             brk.DOISFIDX    as ca_version,
             brk.REGFECXX    as ca_fchcreado, 
             brk.REGHORXX    as ca_hracreado, 
@@ -310,6 +434,8 @@ FROM COLMASXX.SIAI0200 AS brk
             brk.DOIFENTR    as ca_fchfacturacion,
             brk.DOIFENME    as ca_fchmensajeria,            
             (SELECT count(*) FROM COLMASXX.SIAI0205 AS items1 WHERE brk.DOIIDXXX = items1.DOIIDXXX and brk.DOISFIDX=items1.DOISFIDX ) as ca_nitems,
+            (SELECT count(*) FROM COLMASXX.SIAI0206 WHERE DOIIDXXX=brk.DOIIDXXX AND DOISFIDX=brk.DOISFIDX AND LIMTLEVX = 'FISICO' ) as nfisico,
+            (SELECT count(*) FROM COLMASXX.SIAI0206 WHERE DOIIDXXX=brk.DOIIDXXX AND DOISFIDX=brk.DOISFIDX AND LIMTLEVX = 'AUTOMATICO' ) as nautomatico,
             
             brk.REGMODXX    as ca_actualizado,
             
@@ -347,13 +473,18 @@ FROM COLMASXX.SIAI0200 AS brk
                 (items.REGFECXX>='".Utils::addDate($fechafil, $ndias)."' or items.REGMODXX >='".Utils::addDate($fechafil, $ndias)."')
             or
                 (sub.REGFECXX>='".Utils::addDate($fechafil, $ndias)."' or sub.REGMODXX >='".Utils::addDate($fechafil, $ndias)."')
+             or
+                (q.regstamp>='".Utils::addDate($fechafil, $ndias)."' )
               or
                 brk.DOIFENTR>='".Utils::addDate($fechafil, $ndias)."' or  brk.DOIFENME>='".Utils::addDate($fechafil, $ndias)."'
             )
              and  brk.REGESTXX ='ACTIVO'            
-             and brk.DOISFIDX='001'             
-            /*and brk.DOIIDXXX = '22070080316' and brk.DOISFIDX='001'*/
+             and brk.DOISFIDX='001'                  
+            /*and brk.DOIIDXXX = '21010060657' and brk.DOISFIDX='001'*/
             /*and brk.DOIIDXXX = '22070060316' and brk.DOISFIDX='001'*/";
+/*210.10.06.0065.17
+210.10.06.0047.17
+200.10.02.0093.17*/
 
             //where brk.REGFECXX>'2015-10-08' order by 1,2,3,4";//WHERE brk.DOIIDXXX = '22070091425' ";//WHERE brk.DOIIDXXX = '21010050425' AND brk.DOISFIDX = '001'";        //22070091425        
             $st = $con->execute($sql);
@@ -366,254 +497,285 @@ FROM COLMASXX.SIAI0200 AS brk
         foreach($this->resul as $k=>$r)
         {
             
+            
             $caReferecnia=substr($r["ca_referencia"],0,3).".".substr($r["ca_referencia"],3,2).".".substr($r["ca_referencia"],5,2).".0"
                 .substr($r["ca_referencia"],7,3).".1".substr($r["ca_referencia"],10,1);
             
             echo $caReferecnia."<br>";
             $ref = Doctrine::getTable("InoMaestraAdu")->find($caReferecnia);
             $this->resul[$k]["ca_referencia1"]=$caReferecnia;
-            
-            if($ref)
-            {            
-                if($ref->getCaFchcerrado()!="")
+            try{
+                if($ref)
+                {            
+                    if($ref->getCaFchcerrado()!="")
+                    {
+                        $noimportado[]=$caReferecnia." Cerrada ---> ".$ref->getCliente()->getCaIdalterno()."-".$ref->getCliente()->getCaDigito()."  ".$ref->getCliente()->getCaCompania();
+                        continue;
+                    }
+                }
+                else
+                {  
+                    //continue;
+                    //echo "---";
+                }
+
+                $sql="select c.*,fun_similarpercent('".$r["ca_origen"]."',c.ca_ciudad ) from tb_ciudades c
+                where fun_similarpercent('".$r["ca_origen"]."',c.ca_ciudad )>60";
+
+                $st = $con1->execute($sql);
+                $ciu_simil = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
+                if(count($ciu_simil)>0)
                 {
-                    
-                    $noimportado[]=$caReferecnia." Cerrada ---> ".$ref->getCliente()->getCaIdalterno()."-".$ref->getCliente()->getCaDigito()."  ".$ref->getCliente()->getCaCompania();
+                    //echo "120";
+                    $this->resul[$k]["ca_idorigen1"]=$ciu_simil[0]["ca_idciudad"];
+                    $this->resul[$k]["ca_origen1"]=$ciu_simil[0]["ca_ciudad"];
+                    $this->resul[$k]["ca_traforigen1"]=$ciu_simil[0]["ca_idtrafico"];
+                }
+                else
+                {
+                    $this->resul[$k]["ca_idorigen1"]="DRZ-0513";
+                    $this->resul[$k]["ca_origen1"]="Durres";
+                    $this->resul[$k]["ca_traforigen1"]="AL-355";
+                }
+
+                $sql="select c.*,fun_similarpercent('".$r["ca_destino"]."',c.ca_idciudad ) from tb_ciudades c
+                where fun_similarpercent('".$r["ca_destino"]."',c.ca_idciudad )>60";
+
+                $st = $con1->execute($sql);
+                $ciu_simil = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
+                if(count($ciu_simil)>0)
+                {
+
+                    $this->resul[$k]["ca_iddestino1"]=$ciu_simil[0]["ca_idciudad"];
+                    $this->resul[$k]["ca_destino1"]=$ciu_simil[0]["ca_ciudad"];
+                    $this->resul[$k]["ca_trafdestino1"]=$ciu_simil[0]["ca_idtrafico"];
+                }
+                else
+                {
+
+                    $this->resul[$k]["ca_iddestino1"]="DRZ-0513";
+                    $this->resul[$k]["ca_destino1"]="Durres";
+                    $this->resul[$k]["ca_trafdestino1"]="AL-355";
+                }
+
+                $sql="select c.* from vi_concliente c
+                where UPPER(ca_idalterno) = '".trim($this->resul[$k]["ca_idcliente"])."' and ca_fijo=true  limit 1";
+                
+                $sql = "
+SELECT i.ca_id as ca_idcliente, i.ca_nombre as ca_compania, (((cn.ca_nombres::text || ' '::text) || cn.ca_papellido::text) || ' '::text) || cn.ca_sapellido::text AS ca_ncompleto_cn, cn.ca_email,ca_vendedor
+FROM ids.tb_ids i
+INNER JOIN tb_clientes c ON c.ca_idcliente = i.ca_id
+INNER JOIN ids.tb_sucursales s ON s.ca_id = i.ca_id
+INNER JOIN ids.tb_contactos cn ON cn.ca_idsucursal = s.ca_idsucursal
+WHERE UPPER(ca_idalterno) = '".trim($this->resul[$k]["ca_idcliente"])."' and ca_fijo=true limit 1";
+                $st = $con1->execute($sql);
+                //echo $sql;
+                $tmp_simil = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
+                if(count($tmp_simil)>0)
+                {
+                    $this->resul[$k]["ca_compania"]=$tmp_simil[0]["ca_compania"];
+                    $this->resul[$k]["ca_nombrecontacto"]=$tmp_simil[0]["ca_ncompleto_cn"];
+                    $this->resul[$k]["ca_emailcontacto"]=$tmp_simil[0]["ca_email"];
+                    $this->resul[$k]["ca_idcliente1"]=$tmp_simil[0]["ca_idcliente"]; 
+
+                    $this->resul[$k]["ca_vendedor"]=$tmp_simil[0]["ca_vendedor"];
+                }
+                else
+                {
+                    /*$this->resul[$k]["ca_compania"]="<span class='rojo'>No Registrado en Colsys</span>";
+                    $this->resul[$k]["ca_nombrecontacto"]="<span class='rojo'>No Registrado en Colsys</span>";
+                    $this->resul[$k]["ca_emailcontacto"]="<span class='rojo'>No Registrado en Colsys</span>";*/
+                    //$noimportado[]=$caReferecnia." ---> ".$ref->getCliente()->getCaIdalterno()."-".$ref->getCliente()->getCaDigito()."  ".$ref->getCliente()->getCaCompania();
+                    $noimportado[]=$caReferecnia." ---> Cliente no encontrado  ".$this->resul[$k]["ca_idcliente"];
                     continue;
                 }
-            }
-            else
-            {  
-                //continue;
-                //echo "---";
-            }
 
-            $sql="select c.*,fun_similarpercent('".$r["ca_origen"]."',c.ca_ciudad ) from tb_ciudades c
-            where fun_similarpercent('".$r["ca_origen"]."',c.ca_ciudad )>60";
 
-            $st = $con1->execute($sql);
-            $ciu_simil = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
-            if(count($ciu_simil)>0)
-            {
-                //echo "120";
-                $this->resul[$k]["ca_idorigen1"]=$ciu_simil[0]["ca_idciudad"];
-                $this->resul[$k]["ca_origen1"]=$ciu_simil[0]["ca_ciudad"];
-                $this->resul[$k]["ca_traforigen1"]=$ciu_simil[0]["ca_idtrafico"];
-            }
-            else
-            {
-                $this->resul[$k]["ca_idorigen1"]="DRZ-0513";
-                $this->resul[$k]["ca_origen1"]="Durres";
-                $this->resul[$k]["ca_traforigen1"]="AL-355";
-            }
-
-            $sql="select c.*,fun_similarpercent('".$r["ca_destino"]."',c.ca_idciudad ) from tb_ciudades c
-            where fun_similarpercent('".$r["ca_destino"]."',c.ca_idciudad )>60";
-
-            $st = $con1->execute($sql);
-            $ciu_simil = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
-            if(count($ciu_simil)>0)
-            {
-                
-                $this->resul[$k]["ca_iddestino1"]=$ciu_simil[0]["ca_idciudad"];
-                $this->resul[$k]["ca_destino1"]=$ciu_simil[0]["ca_ciudad"];
-                $this->resul[$k]["ca_trafdestino1"]=$ciu_simil[0]["ca_idtrafico"];
-            }
-            else
-            {
-               
-                $this->resul[$k]["ca_iddestino1"]="DRZ-0513";
-                $this->resul[$k]["ca_destino1"]="Durres";
-                $this->resul[$k]["ca_trafdestino1"]="AL-355";
-            }
-
-            $sql="select c.* from vi_concliente c
-            where UPPER(ca_idalterno) = '".trim($this->resul[$k]["ca_idcliente"])."' and ca_fijo=true  limit 1";
-            $st = $con1->execute($sql);
-            //echo $sql;
-            $tmp_simil = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
-            if(count($tmp_simil)>0)
-            {
-                $this->resul[$k]["ca_compania"]=$tmp_simil[0]["ca_compania"];
-                $this->resul[$k]["ca_nombrecontacto"]=$tmp_simil[0]["ca_ncompleto_cn"];
-                $this->resul[$k]["ca_emailcontacto"]=$tmp_simil[0]["ca_email"];
-                $this->resul[$k]["ca_idcliente1"]=$tmp_simil[0]["ca_idcliente"]; 
-                
-                $this->resul[$k]["ca_vendedor"]=$tmp_simil[0]["ca_vendedor"];
-            }
-            else
-            {
-                /*$this->resul[$k]["ca_compania"]="<span class='rojo'>No Registrado en Colsys</span>";
-                $this->resul[$k]["ca_nombrecontacto"]="<span class='rojo'>No Registrado en Colsys</span>";
-                $this->resul[$k]["ca_emailcontacto"]="<span class='rojo'>No Registrado en Colsys</span>";*/
-                //$noimportado[]=$caReferecnia." ---> ".$ref->getCliente()->getCaIdalterno()."-".$ref->getCliente()->getCaDigito()."  ".$ref->getCliente()->getCaCompania();
-                $noimportado[]=$caReferecnia." ---> Cliente no encontrado  ".$this->resul[$k]["ca_idcliente"];
-                continue;
-            }
-            
-            
-            $sql="select u.ca_login from control.tb_usuarios u
-            where ca_docidentidad = '".$this->resul[$k]["ca_idanalista"]."'";
-            $st = $con1->execute($sql);
-            $tmp_simil = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
-            if(count($tmp_simil)>0)
-            {
-                $this->resul[$k]["ca_analista"]=$tmp_simil[0]["ca_login"];
-            }
-            else
-            {
-                //$this->resul[$k]["ca_analista"]="<span class='rojo'>No Registrado en Colsys</span>";
-                $noimportado[]=$caReferecnia." ---> Analista no encontrado ".$ref->getCliente()->getCaIdalterno()."-".$ref->getCliente()->getCaDigito()."  ".$ref->getCliente()->getCaCompania();
-                continue;
-            }
-            
-            
-            if($this->resul[$k]["ca_vendedor"]=="")
-            {
+                if($this->resul[$k]["ca_idanalista"]=="")
+                {
+                    $noimportado[]=$caReferecnia." ---> Do sin id de analista  ";
+                    continue;
+                }
                 $sql="select u.ca_login from control.tb_usuarios u
-                where ca_docidentidad = '".$this->resul[$k]["ca_idvendedor"]."'";            
+                where ca_docidentidad = '".$this->resul[$k]["ca_idanalista"]."'";
                 $st = $con1->execute($sql);
                 $tmp_simil = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
                 if(count($tmp_simil)>0)
                 {
-
-                        $this->resul[$k]["ca_vendedor"]=$tmp_simil[0]["ca_login"];
+                    $this->resul[$k]["ca_analista"]=$tmp_simil[0]["ca_login"];
                 }
                 else
                 {
-                    $noimportado[]=$caReferecnia." ---> Vendedor no identificado ".$this->resul[$k]["ca_idvendedor"];
+                    //$this->resul[$k]["ca_analista"]="<span class='rojo'>No Registrado en Colsys</span>";
+                    $noimportado[]=$caReferecnia." ---> Analista no encontrado ".$this->resul[$k]["ca_idanalista"];
                     continue;
-                    //$this->resul[$k]["ca_vendedor"]="<span class='rojo'>No Registrado en Colsys</span>";
                 }
-            }
-            
-            
-            $sql="select u.ca_login from control.tb_usuarios u
-            where ca_docidentidad = '".$this->resul[$k]["ca_idcoordinador"]."'";
-            $st = $con1->execute($sql);
-            $tmp_simil = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
-            if(count($tmp_simil)>0)
-            {
-                $this->resul[$k]["ca_coordinador"]=$tmp_simil[0]["ca_login"];
-            }
-            else
-            {
-                /*if($ref->getCliente())
-                    $noimportado[]=$caReferecnia." ---> ".$ref->getCliente()->getCaIdalterno()."-".$ref->getCliente()->getCaDigito()."  ".$ref->getCliente()->getCaCompania();
-                else*/
-                    $noimportado[]=$caReferecnia." ---> coordinador no encontrado";
-                
-                continue;
-                //$this->resul[$k]["ca_coordinador"]="<span class='rojo'>No Registrado en Colsys</span>";
-            }
-            
-            //MODALIDAD ADUANA
-            $sql="select *,fun_similarpercent('IMPORTACION ORDINARIA',v.ca_value ) 
-            from control.tb_config_values v
-            inner join control.tb_config c ON c.ca_idconfig=v.ca_idconfig and ca_param='CU025'
-            where fun_similarpercent('".$this->resul[$k]["ca_modalidad"]."',v.ca_value ) >60
-            order by ca_ident
-            limit 1";
-            $st = $con1->execute($sql);
-            $tmp_simil = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
-            if(count($tmp_simil)>0)
-            {
-                $this->resul[$k]["ca_modalidad1"]=$tmp_simil[0]["ca_ident"];
-            }
-            else
-            {
-                $this->resul[$k]["ca_modalidad1"]="1";
-            }
-            
-            if($this->resul[$k]["ca_transporte"]=="MARITIMO")
-                $this->resul[$k]["ca_transporte"]=  Constantes::MARITIMO;
-            else if($this->resul[$k]["ca_transporte"]=="AEREO")
-                $this->resul[$k]["ca_transporte"]=  Constantes::AEREO;
-            else
-                $this->resul[$k]["ca_transporte"]=  Constantes::MARITIMO;
-            
-            if($this->resul[$k]["ca_proveedor"]=="")
-                $this->resul[$k]["ca_proveedor"]="Sin Proveedor";
-            
-            if($this->resul[$k]["ca_peso"]=="")
-                $this->resul[$k]["ca_peso"]="0";
-            
-            if($this->resul[$k]["ca_piezas"]=="")
-                $this->resul[$k]["ca_piezas"]="0";
-            
-            if($this->resul[$k]["ca_mercancia"]=="")
-                $this->resul[$k]["ca_mercancia"]="Sin Mercancia";
-            
-            if($this->resul[$k]["ca_deposito"]=="")
-                $this->resul[$k]["ca_deposito"]="Sin Deposito";
-            
-            if($this->resul[$k]["ca_fcharribo"]=="0000-00-00")
-                $this->resul[$k]["ca_fcharribo"]=date("Y-m-d");
-            
-                
-            $sql="select * from tb_costos c
-            where ca_impoexpo = 'Aduanas' and ca_transporte='{$this->resul[$k]["ca_transporte"]}' and ca_conceptoopen IS NOT NULL ";
-            //echo $sql;
-            $st = $con1->execute($sql);
-            $tmp_simil = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
-            
-            $this->resul[$k]["ca_transporte"]=  utf8_encode($this->resul[$k]["ca_transporte"]);
 
-            $this->costos=$tmp_simil;
-            $this->costos1= array();
-            foreach($this->costos as $l=>$c)
-            {
-                $arrCos=explode("|",$c["ca_conceptoopen"]);
-                foreach($arrCos as $tmpc  )
+
+                if($this->resul[$k]["ca_vendedor"]=="")
                 {
-                    //echo $tmpc;
-                    if(trim($tmpc)!="")
-                        $costos1[$tmpc]=$l;
+
+                    if($this->resul[$k]["ca_idvendedor"]=="")
+                    {
+                        $noimportado[]=$caReferecnia." ---> Do sin id de vendedor  ";
+                        continue;
+                    }
+                    $sql="select u.ca_login from control.tb_usuarios u
+                    where ca_docidentidad = '".$this->resul[$k]["ca_idvendedor"]."'";
+                    $st = $con1->execute($sql);
+                    $tmp_simil = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
+                    if(count($tmp_simil)>0)
+                    {
+
+                            $this->resul[$k]["ca_vendedor"]=$tmp_simil[0]["ca_login"];
+                    }
+                    else
+                    {
+                        $noimportado[]=$caReferecnia." ---> Vendedor no identificado ".$this->resul[$k]["ca_idvendedor"];
+                        continue;
+                        //$this->resul[$k]["ca_vendedor"]="<span class='rojo'>No Registrado en Colsys</span>";
+                    }
                 }
+
+
+                if($this->resul[$k]["ca_idcoordinador"]=="")
+                {
+                    $noimportado[]=$caReferecnia." ---> Do sin id de coordinador  ";
+                    continue;
+                }
+                $sql="select u.ca_login from control.tb_usuarios u
+                where ca_docidentidad = '".$this->resul[$k]["ca_idcoordinador"]."'";
+                $st = $con1->execute($sql);
+                $tmp_simil = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
+                if(count($tmp_simil)>0)
+                {
+                    $this->resul[$k]["ca_coordinador"]=$tmp_simil[0]["ca_login"];
+                }
+                else
+                {
+                    /*if($ref->getCliente())
+                        $noimportado[]=$caReferecnia." ---> ".$ref->getCliente()->getCaIdalterno()."-".$ref->getCliente()->getCaDigito()."  ".$ref->getCliente()->getCaCompania();
+                    else*/
+                        $noimportado[]=$caReferecnia." ---> coordinador no encontrado";
+
+                    continue;
+                    //$this->resul[$k]["ca_coordinador"]="<span class='rojo'>No Registrado en Colsys</span>";
+                }
+
+                //MODALIDAD ADUANA
+                $sql="select *,fun_similarpercent('IMPORTACION ORDINARIA',v.ca_value ) 
+                from control.tb_config_values v
+                inner join control.tb_config c ON c.ca_idconfig=v.ca_idconfig and ca_param='CU025'
+                where fun_similarpercent('".$this->resul[$k]["ca_modalidad"]."',v.ca_value ) >60
+                order by ca_ident
+                limit 1";
+                $st = $con1->execute($sql);
+                $tmp_simil = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
+                if(count($tmp_simil)>0)
+                {
+                    $this->resul[$k]["ca_modalidad1"]=$tmp_simil[0]["ca_ident"];
+                }
+                else
+                {
+                    $this->resul[$k]["ca_modalidad1"]="1";
+                }
+
+                if($this->resul[$k]["ca_transporte"]=="MARITIMO" || $this->resul[$k]["ca_transporte"]==utf8_encode("MARITIMO") ||  $this->resul[$k]["ca_transporte"]==utf8_decode("MARITIMO") )
+                    $this->resul[$k]["ca_transporte"]=  (Constantes::MARITIMO);
+                else if($this->resul[$k]["ca_transporte"]=="AEREO" || $this->resul[$k]["ca_transporte"]==utf8_encode("AEREO") ||  $this->resul[$k]["ca_transporte"]==utf8_decode("AEREO"))
+                    $this->resul[$k]["ca_transporte"]=   (Constantes::AEREO);
+                else
+                    $this->resul[$k]["ca_transporte"]=   (Constantes::MARITIMO);
+                
+                $this->resul[$k]["ca_reconocimiento"]=trim($this->resul[$k]["ca_reconocimiento"]);
+
+                if($this->resul[$k]["ca_proveedor"]=="")
+                    $this->resul[$k]["ca_proveedor"]="Sin Proveedor";
+
+                if($this->resul[$k]["ca_peso"]=="")
+                    $this->resul[$k]["ca_peso"]="0";
+
+                if($this->resul[$k]["ca_piezas"]=="")
+                    $this->resul[$k]["ca_piezas"]="0";
+
+                if($this->resul[$k]["ca_mercancia"]=="")
+                    $this->resul[$k]["ca_mercancia"]="Sin Mercancia";
+
+                if($this->resul[$k]["ca_deposito"]=="")
+                    $this->resul[$k]["ca_deposito"]="Sin Deposito";
+
+                if($this->resul[$k]["ca_fcharribo"]=="0000-00-00")
+                    $this->resul[$k]["ca_fcharribo"]=date("Y-m-d");
+
+
+                $sql="select * from tb_costos c
+                where ca_impoexpo = 'Aduanas' and ca_transporte='{$this->resul[$k]["ca_transporte"]}' and ca_conceptoopen IS NOT NULL ";
+                //echo $sql;
+                $st = $con1->execute($sql);
+                $tmp_simil = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
+
+                $this->resul[$k]["ca_transporte"]=  utf8_encode($this->resul[$k]["ca_transporte"]);
+
+                $this->costos=$tmp_simil;
+                $this->costos1= array();
+                foreach($this->costos as $l=>$c)
+                {
+                    $arrCos=explode("|",$c["ca_conceptoopen"]);
+                    foreach($arrCos as $tmpc  )
+                    {
+                        //echo $tmpc;
+                        if(trim($tmpc)!="")
+                            $costos1[$tmpc]=$l;
+                    }
+                }
+
+                         /*--------------------------------------------------------------------------------------------------------------------------------------------------*/
+                $year=date('Y');
+                $yearold=$year-1;
+                $sql="SELECT * from COLMASXX.fcoc$yearold where COMIDXXX='F' and comfpxxx like '%{$r['ca_referencia']}%' and regestxx='ACTIVO'"
+                    . " UNION "
+                    . " SELECT * from COLMASXX.fcoc$year where COMIDXXX='F' and comfpxxx like '%{$r['ca_referencia']}%' and regestxx='ACTIVO'";
+                //$sql="SELECT * from COLMASXX.fcoc2015 where COMIDXXX='F' and regstamp>'2015-10-07 '";
+
+
+
+                $st = $con->execute($sql);
+                $this->resul[$k]["facturacion"] = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
+
+
+
+                if($debug=="true")
+                {
+                    echo "FACTURACION<pre>";print_r($this->resul[$k]["facturacion"]);echo "</pre>";
+                }
+
+                //echo "----------------------------------------------------------------------";
+
+                //$sql="SELECT * FROM COLMASXX.fcod2015 where (COMIDXXX='F' or (COMIDXXX='P' and comcodxx='004')) and DOCIDXXX like '%{$this->do}%'";
+                $sql="SELECT * FROM COLMASXX.fcod$yearold where (COMIDXXX='F' or ( COMIDXXX='P' and comcodxx='004' and comfacxx ='') or ( COMIDXXX='P' and comcodxx='020' and ctoidxxx='2815050025' ) ) and DOCIDXXX like '%{$r['ca_referencia']}%' and regestxx='ACTIVO'"
+                . " UNION SELECT * FROM COLMASXX.fcod$year where (COMIDXXX='F' or ( COMIDXXX='P' and comcodxx='004' and comfacxx ='') or ( COMIDXXX='P' and comcodxx='020' and ctoidxxx='2815050025' ) ) and DOCIDXXX like '%{$r['ca_referencia']}%' and regestxx='ACTIVO' order by comseqxx";
+                //$sql="SELECT * FROM COLMASXX.fcod2015 where DOCIDXXX like '%{$this->do}%'";
+                //$sql="SELECT * FROM COLMASXX.fcod2015 where regstamp>'2015-10-07'";
+
+
+                $st = $con->execute($sql);
+                $this->resul[$k]["propios"] = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
+
+
+                if($debug=="true")
+                {
+                    echo "PROPIOS:<pre>";print_r($this->resul[$k]["propios"]);echo "</pre>";
+                }
+                
+                
+    /*--------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+                $importado[]= $this->guardarDo($ref , $this->resul[$k] )." ---> ".$this->resul[$k]["ca_idcliente"]."-  ".$this->resul[$k]["ca_compania"];            
+                $this->guardarFacturacion($ref,$this->resul[$k], $costos1,$this->costos,$con1);
+             
+                } catch (Exception $e) {
+                    echo $caReferecnia. " ".$e->getMessage();
             }
-            
-                     /*--------------------------------------------------------------------------------------------------------------------------------------------------*/
-            $year=date('Y');
-            $yearold=$year-1;
-            $sql="SELECT * from COLMASXX.fcoc$yearold where COMIDXXX='F' and comfpxxx like '%{$r['ca_referencia']}%' and regestxx='ACTIVO'"
-                . " UNION "
-                . " SELECT * from COLMASXX.fcoc$year where COMIDXXX='F' and comfpxxx like '%{$r['ca_referencia']}%' and regestxx='ACTIVO'";
-            //$sql="SELECT * from COLMASXX.fcoc2015 where COMIDXXX='F' and regstamp>'2015-10-07 '";
-
-
-
-            $st = $con->execute($sql);
-            $this->resul[$k]["facturacion"] = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
-
-
-
-            if($debug=="true")
-            {
-                echo "FACTURACION<pre>";print_r($this->resul[$k]["facturacion"]);echo "</pre>";
-            }
-
-            //echo "----------------------------------------------------------------------";
-
-            //$sql="SELECT * FROM COLMASXX.fcod2015 where (COMIDXXX='F' or (COMIDXXX='P' and comcodxx='004')) and DOCIDXXX like '%{$this->do}%'";
-            $sql="SELECT * FROM COLMASXX.fcod$yearold where (COMIDXXX='F' or ( COMIDXXX='P' and comcodxx='004' and comfacxx ='') or ( COMIDXXX='P' and comcodxx='020' and ctoidxxx='2815050025' ) ) and DOCIDXXX like '%{$r['ca_referencia']}%' and regestxx='ACTIVO'"
-            . " UNION SELECT * FROM COLMASXX.fcod$year where (COMIDXXX='F' or ( COMIDXXX='P' and comcodxx='004' and comfacxx ='') or ( COMIDXXX='P' and comcodxx='020' and ctoidxxx='2815050025' ) ) and DOCIDXXX like '%{$r['ca_referencia']}%' and regestxx='ACTIVO' order by comseqxx";
-            //$sql="SELECT * FROM COLMASXX.fcod2015 where DOCIDXXX like '%{$this->do}%'";
-            //$sql="SELECT * FROM COLMASXX.fcod2015 where regstamp>'2015-10-07'";
-
-
-            $st = $con->execute($sql);
-            $this->resul[$k]["propios"] = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
-
-
-            if($debug=="true")
-            {
-                echo "PROPIOS:<pre>";print_r($this->resul[$k]["propios"]);echo "</pre>";
-            }
-            
-/*--------------------------------------------------------------------------------------------------------------------------------------------------*/
-
-            $importado[]= $this->guardarDo($ref , $this->resul[$k] )." ---> ".$this->resul[$k]["ca_idcliente"]."-  ".$this->resul[$k]["ca_compania"];            
-            $this->guardarFacturacion($ref,$this->resul[$k], $costos1,$this->costos,$con1);
            
         }
 
@@ -623,14 +785,7 @@ FROM COLMASXX.SIAI0200 AS brk
         //"to" => "maquinche@coltrans.com.co,leonardo.sandoval@colmas.com.co,coordinadorpto-1@colmas.com.co,coordinadorbog-4@colmas.com.co",
         if(count($importado)>0 || count($noimportado)>0)
         {
-            /*$parametro = Doctrine::getTable("Parametro")->find(array("CU067", 3, "defaultEmails"));
-                if ($parametro) {
-                    if (stripos($parametro->getCaValor2(), ',') !== false) {
-                        $defaultEmail = explode(",", $parametro->getCaValor2());
-                    } else {
-                        $defaultEmail = array($parametro->getCaValor2());
-                    }
-                }*/
+           
 
             $email = ParametroTable::retrieveByCaso("CU067", null, null,3);
 
@@ -703,10 +858,6 @@ FROM COLMASXX.SIAI0200 AS brk
            
         }
         
-        
-
-        
-        
          if($datos["ca_fchlevante"]!="" && $datos["ca_fchlevante"]!="0000-00-00")
                 $ref->setCaFchlevante($datos["ca_fchlevante"]);
             
@@ -741,11 +892,21 @@ FROM COLMASXX.SIAI0200 AS brk
             if($datos["ca_fchmensajeria"]!="" && $datos["ca_fchmensajeria"]!="0000-00-00")
                 $ref->setCaFchmensajeria($datos["ca_fchmensajeria"]);
             
+            
             if($datos["ca_nitems"]!="" )
                 $ref->setCaNitems($datos["ca_nitems"]);
             
+            //if($datos["ca_nitems"]!="" )
+            
+            //$ref->setCaDatos($datos["ca_nitems"]);
+            //echo $datos["ca_transporte"];
+            
             if($datos["ca_transporte"]!="" )
-                $ref->setCaTransporte($datos["ca_transporte"]);
+                $ref->setCaTransporte(utf8_decode ($datos["ca_transporte"]));
+            
+            $datosJson=array("nautomatico"=>$datos["nautomatico"],"nfisico"=>$datos["nfisico"]);
+            $ref->setCaDatos(json_encode($datosJson));
+            
             
             $ref->stopBlaming();
             
@@ -1097,18 +1258,18 @@ FROM COLMASXX.SIAI0200 AS brk
                     $st = $con1->execute($sql);
                     $tmp_usu = $st->fetchColumn();
                     
-                    if( $datos["ca_destino1"]!=$tmp_usu)                    
-                    //if(substr($datos["ca_referencia1"],0,3)=="210" || substr($datos["ca_referencia1"],0,3)=="220")
+                    //if( $datos["ca_destino1"]!=$tmp_usu)
+                    if(substr($datos["ca_referencia1"],0,3)=="210" || substr($datos["ca_referencia1"],0,3)=="220")
                         $costo->setCaUtilidad( ($valor-110000) );
-                }
-                else if($idc==328||  $idc==463 ||  $idc==232 ||  $idc==461 ||  $idc==498 ||  $idc==499 ||  $idc==566 ||  $idc==567  ||  $idc==555 ||  $idc==220  )////328-463: manejo de archivo||232-461:Incorporación Siglo XXI|| 498-499:Administracion del riesgo || 498-499:In House ||555-220 Valor Poliza
-                {
+                }   
+                else if($idc==328||  $idc==463 ||  $idc==232 ||  $idc==461 ||  $idc==498 ||  $idc==499 ||  $idc==566 ||  $idc==567  ||  $idc==555 ||  $idc==220 || $idc==275  )////328-463: manejo de archivo||232-461:Incorporación Siglo XXI|| 498-499:Administracion del riesgo || 498-499:In House ||555-220 Valor Poliza || 275 Seguro y Administración de Riesgo
+                {                    
                     $costo->setCaUtilidad( 0 );
                 }
                 else if($idc==554 || $idc ==219  )//cotizacion seguro
                 {
-                    $costo->setCaUtilidad( $valor-8120 );//8120
-                    $costo->setCaNeta(8120);
+                    $costo->setCaUtilidad( $valor-8330 );//8120
+                    $costo->setCaNeta(8330);
                 }
                 else if($idc==200 || $idc ==569  )//sellos de seguridad
                 {
@@ -1118,7 +1279,7 @@ FROM COLMASXX.SIAI0200 AS brk
                     if($datos["ca_idcliente"]=="900017447")//cliente falabella
                     {
                         $valorV=5000;
-                        $valorP=2250;
+                        $valorP=2678;
                         $nP=$valor/$valorV;
                         
                         $costo->setCaUtilidad( $valor-($valorP*$nP) );
@@ -1126,8 +1287,8 @@ FROM COLMASXX.SIAI0200 AS brk
                     }
                     else
                     {
-                        $costo->setCaUtilidad( $valor-2250 );//8120
-                        $costo->setCaNeta(2250);
+                        $costo->setCaUtilidad( $valor-2678 );//8120
+                        $costo->setCaNeta(2678);
                     }
                     
                 }
@@ -1255,10 +1416,14 @@ FROM COLMASXX.SIAI0200 AS brk
                     $ref->setCaFchmensajeria($request->getParameter("ca_fchmensajeria"));
 
         if($request->getParameter("ca_nitems")!="" )
-            $ref->setCaNitems($datos["ca_nitems"]);
+            $ref->setCaNitems($request->getParameter("ca_nitems"));
+        
+        $datosJson=array("nautomatico"=>$request->getParameter("nautomatico"),"nfisico"=>$request->getParameter("nfisico"));
+        $ref->setCaDatos(json_encode($datosJson));
         
         
-        $ref->setCaTransporte($request->getParameter("ca_transporte"));
+        $ref->setCaTransporte($request->getParameter("ca_transporte"));        
+        $ref->setCaReconocimiento(trim($request->getParameter("ca_reconocimiento")));
         
         
 
@@ -1394,15 +1559,15 @@ FROM COLMASXX.SIAI0200 AS brk
                      */
                     if(substr($do,0,3)=="210" || substr($do,0,3)=="220")
                         $costo->setCaUtilidad( ($valor-110000) );
-                }
-                else if($idc==328||  $idc==463 ||  $idc==232 ||  $idc==461 ||  $idc==498 ||  $idc==499 ||  $idc==566 ||  $idc==567  ||  $idc==555 ||  $idc==220  )////328-463: manejo de archivo||232-461:Incorporación Siglo XXI|| 498-499:Administracion del riesgo || 498-499:In House ||555-220 Valor Poliza
+                }                
+                else if($idc==328||  $idc==463 ||  $idc==232 ||  $idc==461 ||  $idc==498 ||  $idc==499 ||  $idc==566 ||  $idc==567  ||  $idc==555 ||  $idc==220 || $idc==275  )////328-463: manejo de archivo||232-461:Incorporación Siglo XXI|| 498-499:Administracion del riesgo || 498-499:In House ||555-220 Valor Poliza || 275 Seguro y Administración de Riesgo
                 {
                     $costo->setCaUtilidad( 0 );
                 }
                 else if($idc==554 || $idc ==219  )//cotizacion seguro
                 {
-                    $costo->setCaUtilidad( $valor-8120 );//8120
-                    $costo->setCaNeta(8120);
+                    $costo->setCaUtilidad( $valor-8330 );//8120
+                    $costo->setCaNeta(8330);
                 }
                 else if($idc==200 || $idc ==569  )//sellos de seguridad
                 {
@@ -1412,7 +1577,7 @@ FROM COLMASXX.SIAI0200 AS brk
                     if($request->getParameter("ca_idcliente")=="900017447")//cliente falabella
                     {
                         $valorV=5000;
-                        $valorP=2250;
+                        $valorP=2678;
                         $nP=$valor/$valorV;
                         
                         $costo->setCaUtilidad( $valor-($valorP*$nP) );
@@ -1421,8 +1586,8 @@ FROM COLMASXX.SIAI0200 AS brk
                     }
                     else
                     {
-                        $costo->setCaUtilidad( $valor-2250 );//8120
-                        $costo->setCaNeta(2250);
+                        $costo->setCaUtilidad( $valor-2678 );//8120
+                        $costo->setCaNeta(2678);
                     }                    
                 }
                 
@@ -1542,6 +1707,7 @@ FROM COLMASXX.SIAI0200 AS brk
         
         $sql="SELECT 
             distinct(brk.DOIIDXXX)    as ca_referencia, 
+            brk.DOIAFARE as ca_reconocimiento,
             brk.DOISFIDX    as ca_version,
             brk.REGFECXX    as ca_fchcreado, 
             brk.REGHORXX    as ca_hracreado, 
@@ -1573,7 +1739,9 @@ FROM COLMASXX.SIAI0200 AS brk
             brk.DOIFENFA    as ca_fchentrfacturacion,
             brk.DOIFENTR    as ca_fchfacturacion,
             brk.DOIFENME    as ca_fchmensajeria,
-            (SELECT count(*) FROM COLMASXX.SIAI0205 AS items1 WHERE brk.DOIIDXXX = items1.DOIIDXXX and brk.DOISFIDX=items1.DOISFIDX ) as ca_nitems
+            (SELECT count(*) FROM COLMASXX.SIAI0205 AS items1 WHERE brk.DOIIDXXX = items1.DOIIDXXX and brk.DOISFIDX=items1.DOISFIDX ) as ca_nitems,
+            (SELECT count(*) FROM COLMASXX.SIAI0206 WHERE DOIIDXXX=brk.DOIIDXXX AND DOISFIDX=brk.DOISFIDX AND LIMTLEVX = 'FISICO' ) as nfisico,
+            (SELECT count(*) FROM COLMASXX.SIAI0206 WHERE DOIIDXXX=brk.DOIIDXXX AND DOISFIDX=brk.DOISFIDX AND LIMTLEVX = 'AUTOMATICO' ) as nautomatico
             
 FROM COLMASXX.SIAI0200 AS brk
         left JOIN COLMASXX.SIAI0202 AS h ON (brk.DOIIDXXX = h.DOIIDXXX AND brk.DOISFIDX = h.DOISFIDX AND brk.ADMIDXXX = h.ADMIDXXX)
@@ -1587,6 +1755,11 @@ FROM COLMASXX.SIAI0200 AS brk
         //where brk.REGFECXX>'2015-10-08' order by 1,2,3,4";//WHERE brk.DOIIDXXX = '22070091425' ";//WHERE brk.DOIIDXXX = '21010050425' AND brk.DOISFIDX = '001'";        //22070091425        
         $st = $con->execute($sql);
         $this->resul = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
+        
+        /*echo "<pre>";
+        print_r($this->resul);
+        echo "</pre>";
+            exit;*/
         
         if($debug=="true")
         {
@@ -1679,6 +1852,17 @@ FROM COLMASXX.SIAI0200 AS brk
             
             $sql="select c.* from vi_concliente c
             where UPPER(ca_idalterno) = '".trim($this->resul[$k]["ca_idcliente"])."' and ca_fijo=true  limit 1";
+            
+            // $sql="select c.* from vi_concliente c
+// where UPPER(ca_idalterno) = '".trim($this->resul[$k]["ca_idcliente"])."' and ca_fijo=true limit 1";
+$sql = "
+SELECT i.ca_id as ca_idcliente, i.ca_nombre as ca_compania, (((cn.ca_nombres::text || ' '::text) || cn.ca_papellido::text) || ' '::text) || cn.ca_sapellido::text AS ca_ncompleto_cn, cn.ca_email,ca_vendedor
+FROM ids.tb_ids i
+INNER JOIN tb_clientes c ON c.ca_idcliente = i.ca_id
+INNER JOIN ids.tb_sucursales s ON s.ca_id = i.ca_id
+INNER JOIN ids.tb_contactos cn ON cn.ca_idsucursal = s.ca_idsucursal
+WHERE UPPER(ca_idalterno) = '".trim($this->resul[$k]["ca_idcliente"])."' and ca_fijo=true limit 1";
+            
             $st = $con1->execute($sql);
             //echo $sql;
             $tmp_simil = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
@@ -1929,65 +2113,71 @@ FROM COLMASXX.SIAI0200 AS brk
             $file = $_FILES["archivo"];
             //print_r($file);
             //exit;
-            if($file["tmp_name"])
-            {                
-                $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . "falaadu" . DIRECTORY_SEPARATOR;
+            try{
                 
-                $fileName = $file['name'];
-                $existe=true;
-                $con=0;
-
-                while($existe)
-                {
-                    $con++;
-                    //$fileNametmp=
-                    $pos= stripos($fileName, "(");
-                    if($pos>0)
-                        $fileNametmp= substr($fileName,0,$pos);
-                    else
-                    {
-                        $pos= stripos($fileName, ".");
-                        $fileNametmp=substr($fileName,0,$pos);
-                    }
-                        
-                    if(file_exists($directory . $fileName))
-                    {
-                        while(file_exists($directory . $fileName."(".$cont.")"))
-                        {
-                            $con++;
-                        }
-                        $info = pathinfo($directory.$fileName);
-                        $fileName=$fileNametmp."(".$con.")". ".".$info['extension'];
-                    }
-                    else
-                        $existe=false;
-                }
-
-                //echo $directory . $fileName;
-                if (move_uploaded_file($file['tmp_name'], $directory . $fileName)) {
-                    
-                    //$objReader = new PHPExcel_Reader_Excel5();
-                    //$objPHPExcel = $objReader->load($directory . $fileName);
+            
+                if($file["tmp_name"])
+                {                
                     $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . "falaadu" . DIRECTORY_SEPARATOR;
-                    //echo PHPEXCEL_ROOT;
-                    $objPHPExcel = PHPExcel_IOFactory::load($directory.$fileName);
-                    //exit;
-                    $hojas=array();
-                    foreach($objPHPExcel->getSheetNames() as $s)
+
+                    $fileName = $file['name'];
+                    $existe=true;
+                    $con=0;
+
+                    while($existe)
                     {
-                        $hojas[]=array("name"=>$s);
+                        $con++;
+                        //$fileNametmp=
+                        $pos= stripos($fileName, "(");
+                        if($pos>0)
+                            $fileNametmp= substr($fileName,0,$pos);
+                        else
+                        {
+                            $pos= stripos($fileName, ".");
+                            $fileNametmp=substr($fileName,0,$pos);
+                        }
+
+                        if(file_exists($directory . $fileName))
+                        {
+                            while(file_exists($directory . $fileName."(".$cont.")"))
+                            {
+                                $con++;
+                            }
+                            $info = pathinfo($directory.$fileName);
+                            $fileName=$fileNametmp."(".$con.")". ".".$info['extension'];
+                        }
+                        else
+                            $existe=false;
                     }
-                    
-                    $this->responseArray = array("id" => base64_encode($fileName), "fileName" => $fileName, "fecha" => $fecha, "hojas"=>$hojas ,"success" => true);
-                    
-                    
-                } else {
-                    $this->responseArray = array("error" => "No se pudo mover el archivo", "filename" => $fileName, "folder" => $folder, "success" => false);
+
+                    //echo $directory . $fileName;
+                    if (move_uploaded_file($file['tmp_name'], $directory . $fileName)) {
+
+                        //$objReader = new PHPExcel_Reader_Excel5();
+                        //$objPHPExcel = $objReader->load($directory . $fileName);
+                        $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . "falaadu" . DIRECTORY_SEPARATOR;
+                        //echo PHPEXCEL_ROOT;
+                        $objPHPExcel = PHPExcel_IOFactory::load($directory.$fileName);
+                        //exit;
+                        $hojas=array();
+                        foreach($objPHPExcel->getSheetNames() as $s)
+                        {
+                            $hojas[]=array("name"=>$s);
+                        }
+
+                        $this->responseArray = array("id" => base64_encode($fileName), "fileName" => $fileName, "fecha" => $fecha, "hojas"=>$hojas ,"success" => true);
+
+
+                    } else {
+                        $this->responseArray = array("error" => "No se pudo mover el archivo", "filename" => $fileName, "folder" => $folder, "success" => false);
+                    }
                 }
-            }
-            else
-            {
-                $fileName=$request->getParameter("fileName");
+                else
+                {
+                    $fileName=$request->getParameter("fileName");
+                }
+            } catch (Exception $e) {
+                $this->responseArray = array("error" => $e->getMessage(), "filename" => $fileName, "folder" => $folder, "success" => false);
             }
         }    
         
@@ -2062,7 +2252,27 @@ FROM COLMASXX.SIAI0200 AS brk
                         "CaFchlevante"=>30,
                         "CaFchentregatrans"=>31,
                         "CaEmbarque"=>32,
-                        "CaInspeccion"=>33
+                        "CaInspeccion"=>33,
+                        "naviera"=>34,
+                        "fchconsolidado"=>35,
+                        "demoraoc"=>36,
+                        "demoraotrodoc"=>37,
+                        "fchdemoraotrodoc"=>38,
+                        "descripcionmindemora"=>39,
+                        "razondemora"=>40,
+                        "terminal"=>41,
+                        "problemasbl"=>42,
+                        "problemasfactura"=>43,
+                        "provetiquetado"=>44,
+                        "fchetiqueta1"=>45,
+                        "fchetiqueta2"=>46,
+                        "registro"=>47,
+                        "certorigen"=>48,
+                        "requiereotrodoc"=>49,
+                        "docextra"=>50,
+                        "fchregistro"=>51,
+                        "fchcertorigen"=>52,
+                        "fchextradoc"=>53
                         );
                 }
                 if( $pos < 14){
@@ -2115,7 +2325,7 @@ FROM COLMASXX.SIAI0200 AS brk
 
                     $this->tmp = ParametroTable::retrieveByCaso("CU249", $row[$columnas["CaTransportador"]]);
                     if(count($this->tmp)<1)
-                    {                    
+                    {
                         ParametroTable::saveCaso( "CU249", $row[$columnas["CaTransportador"]] );
                         $this->tmp = ParametroTable::retrieveByCaso("CU249", $row[$columnas["CaTransportador"]]);
                     }
@@ -2135,12 +2345,11 @@ FROM COLMASXX.SIAI0200 AS brk
                     if(!is_numeric($row[$columnas["CaEmbarque"]]))
                         $row[$columnas["CaEmbarque"]]="0";
 
-
-
                     $row[$columnas["CaValor"]]=str_replace(",","",$row[$columnas["CaValor"]]);
 
 
-
+                    $datos=array();
+                    
                     //$det->setArray($array);
                     foreach($columnas as $k=>$c)
                     {
@@ -2148,11 +2357,22 @@ FROM COLMASXX.SIAI0200 AS brk
                         {
                             $row[$c]=Utils::transformDate1( trim($row[$c]) , 1 );
                         }*/
-                        eval("\$det->set".$k."(\$row[\$c]);");
+                        if($row[$c]!="N/A")
+                        {
+                            if(strpos($k, "Ca")!== false)
+                            {
+                                eval("\$det->set".$k."(\$row[\$c]);");
+                            }
+                            else
+                                $datos[$k]=utf8_encode($row[$c]);
+                        }    
+                        
                         //echo("\$det->set".$k."('{$row[$c]}');");echo "<br>";
                     }
-
-
+                    
+                    $datos["linea"]=substr($row[$columnas["CaCarpeta"]],12,3);
+                    $det->setCaDatos(json_encode($datos));
+                    //print_r($datos);
                     $det->save($conn);
 
                 }
@@ -2216,33 +2436,52 @@ FROM COLMASXX.SIAI0200 AS brk
                         "CaFcheta"=>1,
                         "CaFchingresodep"=>2,                        
                         "CaReferencia"=>3,
-                        "CaPreinspeccion"=>4,                        
+                        "CaPreinspeccion"=>4,
                         "CaPaisorigen"=>5,
                         "CaFchconsolidado"=>6,
                         "CaConsolidado"=>7,
-                        "CaDoctransporte"=>8,
-                        "CaCarpeta"=>9,
-                        "CaProveedor"=>10,
-                        "CaLognet"=>11,
-                        "CaTipocarga"=>12,
-                        "CaValor"=>13,
-                        "CaFchdoctransporte"=>14,
-                        "CaFactura"=>15,
-                        "CaFchfactura"=>16,
-                        "CaFchlistempaque"=>17,
-                        "CaCertfletes"=>18,
-                        "CaFchcertfletes"=>19,
-                        "CaFchpago"=>20,
-                        "CaFchconsinv"=>24,
-                        "CaFchrecepcion"=>25,
-                        "CaFchdescripciones"=>26,
-                        "CaAtiempo"=>27,
-                        "CaFchlevante"=>28,
-                        "CaFchentregatrans"=>29,
-                        "CaInspeccion" => 31
+                        "CaDoctransporte"=>9,
+                        "CaCarpeta"=>10,
+                        "CaProveedor"=>11,
+                        "CaLognet"=>12,
+                        "transportador"=>13,
+                        "CaTipocarga"=>14,
+                        "CaValor"=>15,
+                        "CaFchdoctransporte"=>16,
+                        "CaFactura"=>17,
+                        "CaFchfactura"=>18,
+                        "CaFchlistempaque"=>19,
+                        "CaCertfletes"=>20,
+                        "CaFchcertfletes"=>21,
+                        "CaFchpago"=>22,
+                        "CaFchconsinv"=>26,
+                        "CaFchrecepcion"=>27,
+                        "CaFchdescripciones"=>28,
+                        "CaAtiempo"=>29,
+                        "CaFchlevante"=>30,
+                        "CaFchentregatrans"=>31,
+                        "CaInspeccion" => 33,
+                        "demoraoc"=>36,
+                        "etadm"=>37,                        
+                        "descripcionmindemora"=>38,
+                        "razondemora"=>39,
+                        "terminal"=>40,
+                        "problemasbl"=>41,
+                        "problemasfactura"=>42,
+                        "provetiquetado"=>43,
+                        "fchetiqueta1"=>44,
+                        "fchetiqueta2"=>45,
+                        "registro"=>46,
+                        "certorigen"=>47,
+                        "requiereotrodoc"=>48,
+                        "docextra"=>49,
+                        "fchregistro"=>50,
+                        "fchcertorigen"=>51,
+                        "fchextradoc"=>52
+                        
                         );
                 }
-                if( $pos < 13){
+                if( $pos < 8){
                     continue;
                 }
                 else{
@@ -2298,15 +2537,32 @@ FROM COLMASXX.SIAI0200 AS brk
 
                     $row[$columnas["CaValor"]]=str_replace(",","",$row[$columnas["CaValor"]]);
 
+                    
+                    $datos=array();
+                    
+                    //$det->setArray($array);
                     foreach($columnas as $k=>$c)
                     {
                         /*if(strpos($k, "fch")!==false)
                         {
                             $row[$c]=Utils::transformDate1( trim($row[$c]) , 1 );
                         }*/
-                        eval("\$det->set".$k."(\$row[\$c]);");                        
-                    }
-                    //echo $cab->getCaIdFalCabControl()."<br>";
+                        if($row[$c]!="N/A")
+                        {
+                            if(strpos($k, "Ca")!== false)
+                            {
+                                eval("\$det->set".$k."(\$row[\$c]);");
+                            }
+                            else
+                                $datos[$k]=utf8_encode($row[$c]);
+                        }    
+                        
+                        //echo("\$det->set".$k."('{$row[$c]}');");echo "<br>";
+                    }                    
+                    
+                    $det->setCaDatos(json_encode($datos));
+                    
+                    
                     $det->save($conn);
                     
                     
@@ -2323,6 +2579,7 @@ FROM COLMASXX.SIAI0200 AS brk
         catch(Exception $e)
         {
            $error=$e->getmessage();
+           echo $error;
             $success=false;
         }
         //exit;
@@ -2408,9 +2665,7 @@ FROM COLMASXX.SIAI0200 AS brk
             
             $this->tmp = ParametroTable::retrieveByCaso("CU248", null,null,$c["c_ca_blimpresion"]);
             $datos[$k]["c_ca_blimpresion"]=(!$this->tmp[0]->getCaValor2()?$this->tmp[0]->getCaValor():$this->tmp[0]->getCaValor2());
-            
-            
-               
+
             $this->tmp = ParametroTable::retrieveByCaso("CU249", null,null,$c["c_ca_transportador"]);
             $datos[$k]["c_ca_transportador"]=(!$this->tmp[0]->getCaValor2()?$this->tmp[0]->getCaValor():$this->tmp[0]->getCaValor2());
             
@@ -2586,6 +2841,24 @@ FROM COLMASXX.SIAI0200 AS brk
         
         
         
+        /*$festivos1[]="2016-01-25";
+        $festivos1[]="2016-01-26";
+        $festivos1[]="2016-01-27";
+        $festivos1[]="2016-01-28";
+        $festivos1[]="2016-01-29";*/
+
+        $festivos1[]="2018-02-22";
+        $festivos1[]="2018-02-23";        
+        $festivos1[]="2018-02-26";
+        $festivos1[]="2018-02-27";
+        $festivos1[]="2018-02-28";
+        
+        $festivos1[]="2018-03-22";
+        $festivos1[]="2018-03-23";        
+        $festivos1[]="2018-03-26";
+        $festivos1[]="2018-03-27";
+        $festivos1[]="2018-03-28";
+        
 
         foreach($datos as $k=>$c)
         {
@@ -2725,28 +2998,26 @@ FROM COLMASXX.SIAI0200 AS brk
         
     }
     
+
     public function executeDatosIndAereo( sfWebRequest $request  )
     {
+        set_time_limit(3000);
+        ini_set('max_execution_time', 3000);
+        
         $fecha1 = $request->getParameter("fecha1");
         $fecha2 = $request->getParameter("fecha2");
         
         $eta1 = $request->getParameter("eta1");
         $eta2 = $request->getParameter("eta2");
-        
-        /*$q = Doctrine::getTable("InoMaestraAdu")
-                            ->createQuery("c")
-                            ->select("c.*")                            
-                            ->where("ca_idcliente = ? and  ca_transporte=? ",  array("900017447", Constantes::AEREO) )//nit cliente falabella
-                            ->setHydrationMode(Doctrine::HYDRATE_SCALAR);*/
            
         $q = Doctrine::getTable("AduFalaDetControlAereo")
-                            ->createQuery("c")
-                            ->select("c.*")
-                            //->innerJoin("c.AduFalaCabControl f")
-                             //->where("ca_fchlevante BETWEEN ? AND ?  ",  array($fecha1,$fecha2) )
-                            ->addOrderBy( "c.ca_id_fal_det_control_aereo " )
-                            ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-
+            ->createQuery("c")
+            ->select("c.*,m.ca_fchdespcarga,m.ca_fchfacturacion,m.ca_datos")
+            ->innerJoin("c.InoMaestraAdu m")
+            //->innerJoin("c.AduFalaCabControl f")
+             //->where("ca_fchlevante BETWEEN ? AND ?  ",  array($fecha1,$fecha2) )
+            ->addOrderBy( "c.ca_id_fal_det_control_aereo " )
+            ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
 
         if($fecha1!="" && $fecha2!="")
         {
@@ -2758,127 +3029,93 @@ FROM COLMASXX.SIAI0200 AS brk
             $q->addWhere("ca_fcheta BETWEEN ? AND ?  ",  array($eta1,$eta2) );
         }
         
-        $datos=$q->execute();
-        //echo $q->getSqlQuery();
-        //print_r($datos);
+        $datos=$q->execute();        
         
         $festivos = TimeUtils::getFestivos(date("Y"));
 
-        //print_r($festivos);
-        $festivos1=$festivos;
-        $festivos1[]="2016-01-25";
-        $festivos1[]="2016-01-26";
-        $festivos1[]="2016-01-27";
-        $festivos1[]="2016-01-28";
-        $festivos1[]="2016-01-29";
-
-        $festivos1[]="2016-02-23";
-        $festivos1[]="2016-02-24";
-        $festivos1[]="2016-02-25";
-        $festivos1[]="2016-02-26";
-        $festivos1[]="2016-02-29";
+        $festivos1=array_merge($festivos,$this->getFestivos());
         
-        $festivos1[]="2016-03-23";
-        $festivos1[]="2016-03-24";
-        $festivos1[]="2016-03-25";
-        $festivos1[]="2016-03-28";
-        $festivos1[]="2016-03-29";
-        $festivos1[]="2016-03-30";
-        $festivos1[]="2016-03-31";
+        $indicador["total"]=0;
+        $consolidado = array();
+        $carpetas=$guias=array();
+        $sum_diashab=0;
+        $prom_diashab=0;
+        $sum_diaseta=0;
+        $prom_diaseta=0;
         
-        $festivos1[]="2016-04-25";
-        $festivos1[]="2016-04-26";
-        $festivos1[]="2016-04-27";
-        $festivos1[]="2016-04-28";
-        $festivos1[]="2016-04-29";
+        //$indicadores=array();
+        $noConsolinsp=array();
+        $noGuiaspreinsp=array();
+        $noGuiasinsp=array();
+        $fechasprom=array();
+        $dos=array();
+        $diasetax=array();
+        $bls_declara=array();
         
-        $festivos1[]="2016-05-24";
-        $festivos1[]="2016-05-25";
-        $festivos1[]="2016-05-26";
-        $festivos1[]="2016-05-27";
-        $festivos1[]="2016-05-30";        
-        $festivos1[]="2016-05-31";
+        $tra = ParametroTable::retrieveByCaso("CU249");
+        foreach ($tra as $t)
+        {
+            $transportadores[$t->getCaIdentificacion()]=$t->getCaValor();
+        }
+
+        $demorasDocNew["tipo"]["Guia"]=0;
+        $demorasDocNew["tipo"]["Factura"]=0;
+        $demorasDocNew["tipo"]["Flete"]=0;
+        $demorasDocNew["tipo"]["OC"]=0;
+        $demorasDocNew["tipo"]["Otro"]=0;
+        $demorasDocNew["total"]=0;
         
-        $festivos1[]="2016-06-24";
-        $festivos1[]="2016-06-27";
-        $festivos1[]="2016-06-28";
-        $festivos1[]="2016-06-29";
-        $festivos1[]="2016-06-30";
-        //$festivos1[]="2016-05-31";
-
-
-        $festivos1[]="2016-07-25";
-        $festivos1[]="2016-07-26";
-        $festivos1[]="2016-07-27";
-        $festivos1[]="2016-07-28";
-        $festivos1[]="2016-07-29";
-
-
-        $festivos1[]="2016-08-25";
-        $festivos1[]="2016-08-26";
-        $festivos1[]="2016-08-29";
-        $festivos1[]="2016-08-30";
-        $festivos1[]="2016-08-31";
-
-
-        $festivos1[]="2016-09-26";
-        $festivos1[]="2016-09-27";
-        $festivos1[]="2016-09-28";
-        $festivos1[]="2016-09-29";
-        $festivos1[]="2016-09-30";
-
-
-        $festivos1[]="2016-10-25";
-        $festivos1[]="2016-10-26";
-        $festivos1[]="2016-10-27";
-        $festivos1[]="2016-10-28";
-        $festivos1[]="2016-10-31";
-        
-        $festivos1[]="2016-11-24";
-        $festivos1[]="2016-11-25";
-        $festivos1[]="2016-11-28";
-        $festivos1[]="2016-11-29";
-        $festivos1[]="2016-11-30";
-
-        $festivos1[]="2016-12-16";
-        $festivos1[]="2016-12-19";
-        $festivos1[]="2016-12-20";
-        $festivos1[]="2016-12-21";
-        $festivos1[]="2016-12-22";
-        $festivos1[]="2016-12-23";
-        $festivos1[]="2016-12-26";
-        $festivos1[]="2016-12-27";
-        $festivos1[]="2016-12-28";
-        $festivos1[]="2016-12-29";
-        $festivos1[]="2016-12-30";
-        
-        $festivos1[]="2017-03-27";
-        $festivos1[]="2017-03-28";
-        $festivos1[]="2017-03-29";
-        $festivos1[]="2017-03-30";        
-        $festivos1[]="2017-03-31";
-        
-        
-    $indicador["indicador1"]["nocumple"]["valor"]=0;
-    $indicador["indicador2"]["nocumple"]["valor"]=0;
-    $indicador["indicador3"]["nocumple"]["valor"]=0;
-    //$indicador["indicador4"]["nocumple"]["valor"]=0;
-    $indicador["total"]=0;
-    $consolidado = array();
-            
         foreach($datos as $k=>$c)
         {
+            $datosJson= json_decode($c["c_ca_datos"]);
+            $datosJsonMaster= json_decode($c["m_ca_datos"]);
             
-            //echo "<pre>";print_r($c);echo "</pre>";
-            //exit;
+            $datos[$k]["terminal"]=utf8_encode($datosJson->terminal);
+            
+            $datos[$k]["razondemora"]=utf8_encode($datosJson->razondemora);
+            
+            $carpetas[]=1;
+            $guias[$c["c_ca_doctransporte"]]=1;
             $datos[$k]["c_ca_transporte"]=utf8_encode($datos[$k]["c_ca_transporte"]);
-            $datos[$k]["demoradocs"]=floor(TimeUtils::dateDiff($c["c_ca_fcheta"],$c["c_ca_fchrecepcion"]))-1;
-            //$datos[$k]["demoradocs"]=floor(TimeUtils::dateDiff($c["c_ca_fchingresodep"],$c["c_ca_fchrecepcion"]))-1;
+            $datos[$k]["demoradocs"]=floor(TimeUtils::dateDiff($c["c_ca_fchingresodep"],$c["c_ca_fchrecepcion"]))-1;
             
             $datos[$k]["descripciones"]=floor(TimeUtils::dateDiff($c["c_ca_fcheta"],$c["c_ca_fchdescripciones"]));
-            
+            $datos[$k]["demoradescmin"]=$datos[$k]["descripciones"];
+
             $datos[$k]["etadeposito"]=floor(TimeUtils::dateDiff($c["c_ca_fcheta"],$c["c_ca_fchingresodep"]));
             $datos[$k]["etaconsolida"]=floor(TimeUtils::dateDiff($c["c_ca_fcheta"],$c["c_ca_fchconsolidado"]));
+            $datos[$k]["etalevante"]=floor(TimeUtils::dateDiff($c["c_ca_fcheta"],$c["c_ca_fchlevante"]));
+            if($c["m_ca_fchdespcarga"]!="" && $c["m_ca_fchfacturacion"]!="")
+            {
+                $datos[$k]["diaspromfact"]=(TimeUtils::workDiff($festivos1,$c["m_ca_fchdespcarga"],$c["m_ca_fchfacturacion"]));
+                if(!in_array($c["c_ca_referencia"],$dos))
+                {
+                    $fechasprom["facturacion"]["cantidad"]++;
+                    $fechasprom["facturacion"]["suma"]+=$datos[$k]["diaspromfact"];
+                }
+            }
+            
+            
+            $fechasprom["etalevante"]["cantidad"]++;
+            $fechasprom["etalevante"]["suma"]+=$datos[$k]["etalevante"];
+            $datos[$k]["linea"]=($datosJson->linea?$datosJson->linea:substr($datos[$k]["c_ca_carpeta"],12,3));
+            
+            $datos[$k]["problemabl"]=(($datosJson->problemasbl!="")?$datosJson->problemasbl:"Ok");            
+            $datos[$k]["problemafactura"]=(($datosJson->problemasfactura!="")?$datosJson->problemasfactura:"Ok");
+            $datos[$k]["descripcionmindemora"]=$datosJson->descripcionmindemora;
+            $transportador=$datosJson->transportador;
+            
+            $datos[$k]["fcheta"]=$c["c_ca_fcheta"];
+            
+            $datos[$k]["Guia"]="";
+            $datos[$k]["Factura"]="";
+            $datos[$k]["Flete"]="";
+            $datos[$k]["OC"]="";
+            $datos[$k]["Otro"]="";
+                    
+           
+            
+            
             //$datos[$k]["descripciones"]=floor(TimeUtils::dateDiff($c["c_ca_fcheta"],$c["c_ca_fchdescipciones"]));
             
             if($c["c_ca_fchlevante"]=="")
@@ -2886,10 +3123,36 @@ FROM COLMASXX.SIAI0200 AS brk
                 $datos[$k]["nacionalizacion"]=0;
                 $datos[$k]["optimizacion"]=0;
             }
-             else{
-                $datos[$k]["nacionalizacion"]=floor( TimeUtils::workDiff($festivos1,$c["c_ca_fcheta"],$c["c_ca_fchlevante"]) );
+             else{                    
+                $datos[$k]["etalevante"]=floor(TimeUtils::dateDiff($c["c_ca_fcheta"],$c["c_ca_fchlevante"]));
+                $datos[$k]["nacionalizacion"]=floor( TimeUtils::workDiff($festivos1,$c["c_ca_fchingresodep"],$c["c_ca_fchlevante"]) );
                 //$datos[$k]["nacionalizacion"]=floor( TimeUtils::workDiff($festivos1,$c["c_ca_fchingresodep"],$c["c_ca_fchlevante"]) );
                 $datos[$k]["optimizacion"]=floor(TimeUtils::dateDiff($c["c_ca_fchrecepcion"],$c["c_ca_fchlevante"]));
+                
+                $fechamaxotro=$datosJson->fchextradoc;                
+                switch(Utils::compararFechas($fechamaxotro, $datosJson->fchregistro))
+                {
+                    case "0":
+                    case "1":
+                        $fechamaxotro=$fechamaxotro;
+                        //echo "1<br>";
+                    break;
+                    case "-1":
+                        $fechamaxotro=$datosJson->fchregistro;
+                    break;
+                }
+                switch(Utils::compararFechas($fechamaxotro, $datosJson->fchcertorigen))
+                {
+                    case "0":
+                    case "1":
+                        $fechatmp=$fechamaxotro;
+                    break;
+                    case "-1":
+                        $fechamaxotro=$datosJson->fchcertorigen;
+                    break;
+                }
+                
+                
                 $fechatmp=$c["c_ca_fchdescripciones"];
                 switch(Utils::compararFechas($c["c_ca_fchdescripciones"], $c["c_ca_fchrecepcion"]))
                 {
@@ -2916,6 +3179,7 @@ FROM COLMASXX.SIAI0200 AS brk
                     break;
                 }
                 
+
                 switch(Utils::compararFechas($fechatmp, $c["c_ca_fchconsolidado"]))
                 {
                     case "0":
@@ -2927,56 +3191,197 @@ FROM COLMASXX.SIAI0200 AS brk
                         $fechatmp=$c["c_ca_fchconsolidado"];
                     break;
                 }
+                
+                switch(Utils::compararFechas($fechatmp, $fechamaxotro))
+                {
+                    case "0":
+                    case "1":
+                        $fechatmp=$fechatmp;
+                        //echo "1<br>";
+                    break;
+                    case "-1":
+                        $fechatmp=$fechamaxotro;
+                    break;
+                }
+                
 
                     
                 
                 //$datos[$k]["nacionalizacion"]=floor( TimeUtils::workDiff($festivos1,$c["c_ca_fcheta"],$c["c_ca_fchlevante"]) );
-                $datos[$k]["optimizacion"]=floor(TimeUtils::workDiff($festivos1,$fechatmp,$c["c_ca_fchlevante"]));
+                $datos[$k]["optimizacion"]=floor(TimeUtils::workDiff($festivos1,$fechatmp,$c["c_ca_fchlevante"]));//se cambio registro ticket 42743
+                //$datos[$k]["optimizacion"]=floor(TimeUtils::workDiff($festivos1,$c["c_ca_fchingresodep"],$c["c_ca_fchlevante"]));
                 
+                $datos[$k]["diasnaleta"]=TimeUtils::dateDiff($c["c_ca_fchingresodep"],$c["c_ca_fchlevante"]);
+                $sum_diaseta+=$datos[$k]["diasnaleta"];
+                $no_diaseta++;
+
+                if(Utils::compararFechas($c["c_ca_fchconsinv"],$fechatmp)==1)
+                {
+                    $fechatmp=$c["c_ca_fchconsinv"];
+                }
+
+                $datos[$k]["diasnalhab"]=(TimeUtils::workDiff($festivos,$fechatmp,$c["c_ca_fchlevante"]));
+                $sum_diashab+=$datos[$k]["diasnalhab"];
+                $no_diashab++;
+                
+                $datos[$k]["demGuia"]=floor(TimeUtils::dateDiff($c["c_ca_fcheta"],$c["c_ca_fchdoctransporte"]));
+                $datos[$k]["demFactura"]=floor(TimeUtils::dateDiff($c["c_ca_fcheta"],$c["c_ca_fchfactura"]));
+                $datos[$k]["demFlete"]=floor(TimeUtils::dateDiff($c["c_ca_fcheta"],$c["c_ca_fchcertfletes"]));
+                $datos[$k]["demOC"]=floor(TimeUtils::dateDiff($c["c_ca_fcheta"],$c["c_ca_fchconsolidado"]));
+                $datos[$k]["demOtro"]=floor(TimeUtils::dateDiff($c["c_ca_fcheta"],$fechamaxotro));
+                    
+                $dem=array("Guia"=>$datos[$k]["demGuia"],"Factura"=>$datos[$k]["demFactura"],"Flete"=>$datos[$k]["demFlete"],"OC"=>$datos[$k]["demOC"],"Otro"=>$datos[$k]["demOtro"]);
+
+
+                $datos[$k]["numerodoc"]="";
+                /*if($datosJson->demoraoc=="SI")
+                {
+                    $datos[$k]["demTipoDoc"]="OC";
+                    $datos[$k]["demTipoDoc1"]="OC";
+                    $datos[$k]["diasdemora"]="N/A";
+                    $datos[$k]["demOC"]=1;
+                    $demorasDocNew["tipo"]["OC"]++ ;
+                    $demorasDocNew["total"]++;
+                }
+                else*/ 
+                /*if($datosJson->demoraotrodoc!="" && $datosJson->demoraotrodoc!="N/A")
+                {
+                    $datos[$k]["demTipoDoc"]="Otro";
+                    $datos[$k]["demOtro"]=1;
+                    $datos[$k]["demTipoDoc1"]=$datosJson->demoraotrodoc;
+                    $datos[$k]["diasdemora"]=$datos[$k]["demFlete"]=floor(TimeUtils::dateDiff($c["c_ca_fcheta"],$datosJson->fchdemoraotrodoc));
+                    $demorasDocNew["tipo"]["Otro"]++ ;
+                    $demorasDocNew["total"]++;
+                }
+                else*/
+                {
+                    asort($dem);
+                    foreach($dem as $key=>$d)
+                    {
+                        if($d>0)
+                        {
+                            $datos[$k]["demTipoDoc"]=$key;
+                            $datos[$k]["demTipoDoc1"]=$key;
+                            $datos[$k]["diasdemora"]=$d;
+                            switch($key)
+                            {
+                                case "Guia":
+                                    if($d>1)
+                                    {
+                                        $tdoc=$datos[$k]["c_ca_doctransporte"];
+                                        $demorasDocNew["tipo"]["Guia"]++ ;
+                                        $demorasDocNew["total"]++;
+                                    }
+                                break;
+                                case "Factura":
+                                    $tdoc=$datos[$k]["c_ca_factura"];
+                                    $demorasDocNew["tipo"]["Factura"]++ ;
+                                    $demorasDocNew["total"]++;
+                                break;
+                                case "Flete":
+                                    if($d>1)
+                                    {
+                                        $tdoc=$datos[$k]["c_ca_certfletes"];
+                                        $demorasDocNew["tipo"]["Flete"]++ ;
+                                        $demorasDocNew["total"]++;
+                                    }
+                                break;
+                                case "OC":
+                                    $tdoc="N/A";
+                                    $demorasDocNew["tipo"]["OC"]++ ;
+                                    $demorasDocNew["total"]++;
+                                break;
+                                case "Otro":
+                                    $tdoc="N/A";
+                                    $demorasDocNew["tipo"]["Otro"]++ ;
+                                    $demorasDocNew["total"]++;
+                                break;
+                            }
+                            $datos[$k]["numerodoc"]=$tdoc;
+                        }
+                        else
+                        {
+                            $datos[$k]["demTipoDoc"]="OK";
+                            $datos[$k]["demTipoDoc1"]="OK";
+                            $datos[$k]["diasdemora"]=0;
+                        }                            
+                    }
+                }
+                /*if( $datos[$k]["demTipoDoc"]!="OK")
+                {
+
+                    $demorasDocNew["tipo"][$datos[$k]["demTipoDoc"]]++ ;
+                    $demorasDocNew["total"]++;
+                }*/
+                
+                $diasetax["linea"][$c["c_ca_consolidado"]]["total"]++;                    
+                $diasetax["linea"][$c["c_ca_consolidado"]]["suma"]+=$datos[$k]["etalevante"];
+                $diasetax["muelle"][$datos[$k]["terminal"]]["total"]++;
+                $diasetax["muelle"][$datos[$k]["terminal"]]["suma"]+=$datos[$k]["etalevante"];
             }
-            /*$tmp=$datos[$k]["demoradocs"];
-            $datos[$k]["demoradocs"]=$datos[$k]["nacionalizacion"];
-            $datos[$k]["nacionalizacion"]=$tmp;*/
             
-             if($datos[$k]["demoradocs"]>1)
+            
+             if($datos[$k]["demoradocs"]>2)
             {
-                $indicador["indicador1"]["nocumple"]["valor"]++;
-                $datos[$k]["indicador1"]="No cumple";
+                $indicador["indicador1"]["general"]["nocumple"]["valor"]++;
+                $datos[$k]["indicador1"]["general"]="No cumple";
+                
+                $indicador["indicador1"]["terminal"][$datos[$k]["terminal"]]["nocumple"]["valor"]++;
+                $datos[$k]["indicador1"]["terminal"][$datos[$k]["terminal"]]="No cumple";
                 //$indicador["documentos"]["muelle"][$datos[$k]["f_ca_muelle"]]["nocumple"]++;
             }
             else
             {
-                $indicador["indicador1"]["cumple"]["valor"]++;
-                $datos[$k]["indicador1"]="Cumple";
+                $indicador["indicador1"]["general"]["cumple"]["valor"]++;
+                $datos[$k]["indicador1"]["general"]="Cumple";
+                $indicador["indicador1"]["terminal"][$datos[$k]["terminal"]]["cumple"]["valor"]++;
+                $datos[$k]["indicador1"]["terminal"][$datos[$k]["terminal"]]="Cumple";
             }
                 
             
+            //echo $datos[$k]["descripciones"];
             if($datos[$k]["descripciones"]>1)
             {
-                $indicador["indicador2"]["nocumple"]["valor"]++;
-                $datos[$k]["indicador2"]="No cumple";
-                //$indicador["documentos"]["muelle"][$datos[$k]["f_ca_muelle"]]["nocumple"]++;
+                $indicador["indicador2"]["general"]["nocumple"]["valor"]++;
+                $datos[$k]["indicador2"]["general"]="No cumple";
+                
+                $indicador["indicador2"]["linea"][$datos[$k]["linea"]]["nocumple"]["valor"]++;
+                $indicador["indicador2"]["linea"][$datos[$k]["linea"]]["diasdemora"]+=$datos[$k]["descripciones"];
+                $indicador["indicador2"]["linea"][$datos[$k]["linea"]]["totaldemora"]++;                
             }
             else
             {
-                $indicador["indicador2"]["cumple"]["valor"]++;
-                $datos[$k]["indicador2"]="Cumple";
-            }            
+                $indicador["indicador2"]["general"]["cumple"]["valor"]++;
+                $datos[$k]["indicador2"]["general"]="Cumple";
+                $indicador["indicador2"]["linea"][$datos[$k]["linea"]]["cumple"]["valor"]++;                                
+            }
+            $indicador["indicador2"]["linea"][$datos[$k]["linea"]]["dias"]++;
+            $indicador["indicador2"]["linea"][$datos[$k]["linea"]]["total"]++;
+            $indicador["indicador1"]["terminal"][$datos[$k]["terminal"]]["total"]++;
+            //echo "3256<br>";
+            
+            
             
             
             if($datos[$k]["c_ca_atiempo"]=="No" || $datos[$k]["c_ca_atiempo"]=="false" || $datos[$k]["c_ca_atiempo"]=="NO" )
             {
-                if($datos[$k]["optimizacion"]>2)
+                if($datos[$k]["optimizacion"]>3)
                 {
-                    $consolidado[$datos[$k]["c_ca_consolidado"]]="nocumple";
-                    $datos[$k]["indicador3"]="No cumple";
+                    //$consolidado[$datos[$k]["c_ca_consolidado"]]="nocumple";
+                    $consolidado[$datos[$k]["c_ca_consolidado"]]["A"]="nocumple";
+                    $consolidado[$datos[$k]["c_ca_consolidado"]]["B"]=$datos[$k]["terminal"];
+                    $datos[$k]["indicador3"]["general"]="No cumple";
+                    $datos[$k]["indicador3"]["terminal"][$datos[$k]["terminal"]]="No cumple";
                 }
                 else
                 {
                     if($consolidado[$datos[$k]["c_ca_consolidado"]]=="")
                     {
-                        $consolidado[$datos[$k]["c_ca_consolidado"]]="cumple";
-                        $datos[$k]["indicador3"]="Cumple";
+                        //$consolidado[$datos[$k]["c_ca_consolidado"]]="cumple";
+                        $consolidado[$datos[$k]["c_ca_consolidado"]]["A"]="cumple";
+                        $consolidado[$datos[$k]["c_ca_consolidado"]]["B"]=$datos[$k]["terminal"];
+                        $datos[$k]["indicador3"]["general"]="Cumple";
+                        $datos[$k]["indicador3"]["terminal"][$datos[$k]["terminal"]]="Cumple";
                     }
                 }
             }
@@ -2984,75 +3389,219 @@ FROM COLMASXX.SIAI0200 AS brk
             {
                 if($datos[$k]["optimizacion"]>5)
                 {
-                    $consolidado[$datos[$k]["c_ca_consolidado"]]="nocumple";
-                    $datos[$k]["indicador3"]="No cumple";
+                    $consolidado[$datos[$k]["c_ca_consolidado"]]["A"]="nocumple";
+                    $consolidado[$datos[$k]["c_ca_consolidado"]]["B"]=$datos[$k]["terminal"];
+                    $datos[$k]["indicador3"]["general"]="No cumple";
+                    $datos[$k]["indicador3"]["terminal"][$datos[$k]["terminal"]]="No cumple";
+                    
                 }
                 else
                 {
                     if($consolidado[$datos[$k]["c_ca_consolidado"]]=="")
                     {
-                        $consolidado[$datos[$k]["c_ca_consolidado"]]="cumple";
-                        $datos[$k]["indicador3"]="Cumple";
+                        //$consolidado[$datos[$k]["c_ca_consolidado"]]="cumple";
+                        $consolidado[$datos[$k]["c_ca_consolidado"]]["A"]="cumple";
+                        $consolidado[$datos[$k]["c_ca_consolidado"]]["B"]=$datos[$k]["terminal"];
+                        $datos[$k]["indicador3"]["general"]="Cumple";
+                        $datos[$k]["indicador3"]["terminal"][$datos[$k]["terminal"]]="Cumple";
                     }
-                }                
+                }
+            }
+
+            //$indicadores[$c["c_ca_consolidado"]][]
+            if($c["c_ca_preinspeccion"]=="true" || $c["c_ca_preinspeccion"]==true)
+            {
+                $noConsolinsp[$c["c_ca_doctransporte"]]=1;
+                $noGuiaspreinsp[$c["c_ca_doctransporte"]]=1;//preinspeccion
             }
             
-            $datos[$k]["linea"]=substr($datos[$k]["c_ca_carpeta"],12,3);
+            if($c["c_ca_inspeccion"]=="true" || $c["c_ca_inspeccion"]==true)
+            {
+                $noGuiasinsp[$c["c_ca_doctransporte"]]=1;//
+                //$noConsolinsp[$c["c_ca_doctransporte"]]=1;
+                //$noGuiasinsp[$c["c_ca_doctransporte"]]=1;
+            }
+            
+            
+            
+            //$indicador["contenedor"][($c["c_ca_preinspeccion"]==true?"Si":"No")][$c["c_ca_contenedor"]]++;
+            
+            $datos[$k]["linea"]=($datosJson->linea?$datosJson->linea:substr($datos[$k]["c_ca_carpeta"],12,3));//substr($datos[$k]["c_ca_carpeta"],12,3);
             $indicador["indicador4"][$datos[$k]["linea"]]["total"]++;
             $indicador["indicador4"][$datos[$k]["linea"]]["cantidad"]+=$datos[$k]["etadeposito"];
             
             $indicador["indicador5"][$datos[$k]["linea"]]["total"]++;
             $indicador["indicador5"][$datos[$k]["linea"]]["cantidad"]+=$datos[$k]["etaconsolida"];
+            
+            $indicador["indicador6"][$datos[$k]["linea"]]["total"]++;
+            $indicador["indicador6"][$datos[$k]["linea"]]["cantidad"]+=$datos[$k]["etalevante"];
 //=array("total"=>,"cantidad"=>)
+            
+            $problemabl[$datos[$k]["problemabl"]]++;
+            $problemafactura[$datos[$k]["problemafactura"]]++;
+            
+            $transp[utf8_encode($transportador)][$c["c_ca_consolidado"]]++;
+            
+            if(!in_array($c["c_ca_referencia"],$bls_declara))
+            {
+                $bls_declara[]=$c["c_ca_referencia"];
+                $declara["fisico"]+=$datosJsonMaster->nfisico;            
+                $declara["automatico"]+=$datosJsonMaster->nautomatico;
+            }
+            
+            if($datosJson->provetiquetado!="" && $datosJson->provetiquetado!="N/A" )
+            {
+                $datos[$k]["etiqueta"]="S";
+                $datos[$k]["provetiqueta"]= utf8_encode($datosJson->provetiquetado);
+                $datos[$k]["fechaetiqueta1"]=$datosJson->fchetiqueta1;
+                $datos[$k]["fechaetiqueta2"]=$datosJson->fchetiqueta2;
+                $datos[$k]["diasetiqueta"]=floor(TimeUtils::dateDiff($datosJson->fchetiqueta1,$datosJson->fchetiqueta2));
+
+                $diasetax["provetiqueta"][$datos[$k]["provetiqueta"]]["total"]++;
+                $diasetax["provetiqueta"][$datos[$k]["provetiqueta"]]["suma"]+=$datos[$k]["diasetiqueta"];
+            }
+            else
+                $datos[$k]["etiqueta"]="N";
+            
+            
+            $indicador["tipocontenedor"][$datos[$k]["terminal"]][$c["c_ca_doctransporte"]][]=1;
+
+
 
             $indicador["total"]++;
         }
-
-        $indicador["indicador1"]["cumple"]["%"]= ($indicador["indicador1"]["cumple"]["valor"] * 100 )/$indicador["total"];
-        $indicador["indicador1"]["nocumple"]["%"]= ($indicador["indicador1"]["nocumple"]["valor"] * 100 )/$indicador["total"];
         
-        $indicador["indicador2"]["cumple"]["%"]= ($indicador["indicador2"]["cumple"]["valor"] * 100 )/$indicador["total"];
-        $indicador["indicador2"]["nocumple"]["%"]= ($indicador["indicador2"]["nocumple"]["valor"] * 100 )/$indicador["total"];
+        $totaldeclaraciones=$declara["fisico"]+$declara["automatico"];
+        foreach($declara as $k=>$t)
+        {
+            $declaraciones[]=array("indicador"=>$k,"total"=>$t);
+            $declaracionesgrid[]=array("tipo"=>$k,"no_contdecla"=>$t,"por_contdecla"=>round( ( ($t/$totaldeclaraciones)*100),1));
+        }
+        
+        
+        $contenedores=array();
+        
+        /*foreach($transp as $k=>$t)
+        {
+            $totalContenedores+=count($t);
+        }*/
+        foreach($transp as $k=>$t)
+        {
+            $transporte[]=array("indicador"=>$k,"total"=>count($t));
+            $transportegrid[]=array("transportador"=>$k,"no_consprov"=>count($t),"por_consprov"=>round( ( (count($t)/count($consolidado))*100),1));
+        }
+        
+        
+        
+        
 
+        $indicador["indicador1"]["general"]["cumple"]["%"]= ($indicador["indicador1"]["general"]["cumple"]["valor"] * 100 )/$indicador["total"];
+        $indicador["indicador1"]["general"]["nocumple"]["%"]= ($indicador["indicador1"]["general"]["nocumple"]["valor"] * 100 )/$indicador["total"];
+        
+        $indicador["indicador2"]["general"]["cumple"]["%"]= ($indicador["indicador2"]["general"]["cumple"]["valor"] * 100 )/$indicador["total"];
+        $indicador["indicador2"]["general"]["nocumple"]["%"]= ($indicador["indicador2"]["general"]["nocumple"]["valor"] * 100 )/$indicador["total"];
+
+        
+
+        
         foreach($consolidado as $k=>$c)
         {
-            if($c=="nocumple")
-                $indicador["indicador3"]["nocumple"]["valor"]++;
-            else if($c=="cumple")
-                $indicador["indicador3"]["cumple"]["valor"]++;
+            if($c["A"]=="nocumple")
+            {
+                $indicador["indicador3"]["general"]["nocumple"]["valor"]++;
+                $indicador["indicador3"]["terminal"][$c["B"]]["nocumple"]["valor"]++;
+            }
+            else if($c["A"]=="cumple")
+            {
+                $indicador["indicador3"]["general"]["cumple"]["valor"]++;
+                $indicador["indicador3"]["terminal"][$c["B"]]["cumple"]["valor"]++;
+            }
+            $indicador["indicador3"]["terminal"][$c["B"]]["total"]++;
         }
         
-        $indicador["indicador3"]["cumple"]["%"]= ($indicador["indicador3"]["cumple"]["valor"] * 100 )/count($consolidado);
-        $indicador["indicador3"]["nocumple"]["%"]= ($indicador["indicador3"]["nocumple"]["valor"] * 100 )/count($consolidado);
+        //print_r($indicador["indicador3"]);
+        //exit;
+        $indicador["indicador3"]["general"]["cumple"]["%"]= ($indicador["indicador3"]["general"]["cumple"]["valor"] * 100 )/count($consolidado);
+        $indicador["indicador3"]["general"]["nocumple"]["%"]= ($indicador["indicador3"]["general"]["nocumple"]["valor"] * 100 )/count($consolidado);
         //echo "<pre>";print_r($indicador["indicador3"]);echo "</pre>";
         
-        $indicador1[]=array("indicador"=>"REFERENCIAS CON DEMORA","total"=>$indicador["indicador1"]["nocumple"]["valor"]);
-        $indicador1[]=array("indicador"=>"REFERENCIAS CONFORMES","total"=> ($indicador["total"]-$indicador["indicador1"]["nocumple"]["valor"]));
+        $indicador1[]=array("indicador"=>"REFERENCIAS CON DEMORA","total"=>$indicador["indicador1"]["general"]["nocumple"]["valor"]);
+        $indicador1[]=array("indicador"=>"REFERENCIAS CONFORMES","total"=> ($indicador["total"]-$indicador["indicador1"]["general"]["nocumple"]["valor"]));
         
-        //foreach($indicador1 as $k =>$d)
+        /*//foreach($indicador1 as $k =>$d)
         {
             $indicador1grid[]=array("total_carpeta"=>$indicador["total"],"total_demora"=>(is_null($indicador["indicador1"]["nocumple"]["valor"])?"0":$indicador["indicador1"]["nocumple"]["valor"]),"por_demora"=>round( $indicador["indicador1"]["nocumple"]["%"],1 ));
-        }
-        
-        
-        $indicador2[]=array("indicador"=>"REFERENCIAS CON DEMORA","total"=>$indicador["indicador2"]["nocumple"]["valor"]);
-        $indicador2[]=array("indicador"=>"REFERENCIAS CONFORMES","total"=> ($indicador["total"]-$indicador["indicador2"]["nocumple"]["valor"]));
-        
-        //foreach($indicador2 as $k =>$d)
+        }*/
+        foreach($indicador["indicador1"]["terminal"] as $k =>$d)
         {
-            $indicador2grid[]=array("total_carpeta"=>$indicador["total"],"total_demora"=>(is_null($indicador["indicador2"]["nocumple"]["valor"])?"0":$indicador["indicador2"]["nocumple"]["valor"]),"por_demora"=>round( $indicador["indicador2"]["nocumple"]["%"],1 ));
+            $indicador1grid[]=array(
+                "terminal"=>$k,
+                "total_carpeta"=>$d["total"],
+                "total_demora"=>(is_null($d["nocumple"]["valor"])?"0":$d["nocumple"]["valor"]),
+                "por_demora"=>round( ((is_null($d["nocumple"]["valor"])?"0":$d["nocumple"]["valor"])*100)/ $indicador["total"],2 ) );
         }
         
-        $indicador3[]=array("indicador"=>"CONSOLIDADOS CON DEMORA","total"=>$indicador["indicador3"]["nocumple"]["valor"]);
-        $indicador3[]=array("indicador"=>"CONSOLIDADOS CONFORMES","total"=> (count($consolidado)-$indicador["indicador3"]["nocumple"]["valor"]));
+        
+        foreach($demorasDocNew["tipo"] as $k=>$dd)
+        {
+            if($k=="OK")
+                continue;
+            $demoras[] = array("tipo" => $k, "demora" => $dd);
+            
+            $demorasgrid[] = array(
+            "demora" => $k,
+            "cantidad" => $dd,
+            "por_contenedor" => round(($dd/$demorasDocNew["total"])*100,1)
+            );
+        }        
+        
+        
+        
+        $indicador2[]=array("indicador"=>"REFERENCIAS CON DEMORA","total"=>$indicador["indicador2"]["general"]["nocumple"]["valor"]);
+        $indicador2[]=array("indicador"=>"REFERENCIAS CONFORMES","total"=> ($indicador["total"]-$indicador["indicador2"]["general"]["nocumple"]["valor"]));
+        
+        /*foreach($indicador2 as $k =>$d)
+        {
+            $indicador2grid[]=array("total_carpeta"=>$indicador["total"],"total_demora"=>(is_null($indicador["indicador2"]["general"]["nocumple"]["valor"])?"0":$indicador["indicador2"]["general"]["nocumple"]["valor"]),"por_demora"=>round( $indicador["indicador2"]["general"]["nocumple"]["%"],1 ));
+        }*/
+        
+        
+        foreach($indicador["indicador2"]["linea"] as $k =>$d)
+        {
+            
+            $indicador2grid[]=array(
+                "terminal"=>$k,
+                "total_carpeta"=>$d["total"],
+                "total_demora"=>(is_null($d["nocumple"]["valor"])?"0":$d["nocumple"]["valor"]),
+                "por_demora"=>round( ((is_null($d["nocumple"]["valor"])?"0":$d["nocumple"]["valor"])*100)/ $indicador["total"],2 ) );
+            
+            
+            $demoraslinea[] = array("tipo" => $k, "linea" => round($d["diasdemora"]/$d["totaldemora"],2));
+        }
+        
+        //print_r($indicador2grid);
+        //    exit;
+
+        $indicador3[]=array("indicador"=>"CONSOLIDADOS CON DEMORA","total"=>$indicador["indicador3"]["general"]["nocumple"]["valor"]);
+        $indicador3[]=array("indicador"=>"CONSOLIDADOS CONFORMES","total"=> (count($consolidado)-$indicador["indicador3"]["general"]["nocumple"]["valor"]));
         //$indicador3[]=array("indicador"=>"CONSOLIDADOS CON DEMORA","total"=>23);
         //$indicador3[]=array("indicador"=>"CONSOLIDADOS CONFORMES","total"=> 49);
         //49 23
         //echo "<pre>";print_r($indicador3);echo "</pre>";
-        foreach($indicador3 as $k =>$d)
+        /*//foreach($indicador3 as $k =>$d)
         {
             $indicador3grid[]=array("total_carpeta"=>count($consolidado),"total_demora"=>(is_null($indicador["indicador3"]["nocumple"]["valor"])?"0":$indicador["indicador3"]["nocumple"]["valor"]),"por_demora"=>round( $indicador["indicador3"]["nocumple"]["%"],1 ));
+        }*/
+        foreach($indicador["indicador3"]["terminal"] as $k =>$d)
+        {
+            $indicador3grid[]=array(
+                "terminal"=>$k,
+                "total_carpeta"=>$d["total"],
+                "total_demora"=>(is_null($d["nocumple"]["valor"])?"0":$d["nocumple"]["valor"]),
+                "por_demora"=>round( ((is_null($d["nocumple"]["valor"])?"0":$d["nocumple"]["valor"])*100)/ count($consolidado),2 ) );
         }
+        //print_r($indicador["indicador3"]);
+        //exit;
         //$indicador3grid[]=array("total_carpeta"=>count($consolidado),"total_demora"=>23,"por_demora"=>round( (23/71)*100,1 ));
 
 
@@ -3075,42 +3624,167 @@ FROM COLMASXX.SIAI0200 AS brk
         {
             $i4=$indicador["indicador4"][$lin];
             $i5=$indicador["indicador5"][$lin];
+            $i6=$indicador["indicador6"][$lin];
             
-            $indicador4[]=array("tipo"=>$lin,"Deposito"=> round($i4["cantidad"]/$i4["total"]),"Consolidado"=>round($i5["cantidad"]/$i5["total"]));
+            $indicador4[]=array("tipo"=>$lin,"Deposito"=> round($i4["cantidad"]/$i4["total"]),"Consolidado"=>round($i5["cantidad"]/$i5["total"]),"Levante"=>round($i6["cantidad"]/$i5["total"]));
             
-            $indicador4grid[]=array("Linea"=>$lin,"Deposito"=>round($i4["cantidad"]/$i4["total"]),"Consolidado"=>round($i5["cantidad"]/$i5["total"]));
+            $indicador4grid[]=array("Linea"=>$lin,"Deposito"=>round($i4["cantidad"]/$i4["total"]),"Consolidado"=>round($i5["cantidad"]/$i5["total"]),"Levante"=>round($i6["cantidad"]/$i6["total"]));
         }
-        //$indicador4[]=array("");
-        /*$contenedores[]=array("tipo"=>"Contenedores","SPRBUN"=>count($indicador["contenedor"]["SPRBUN"]),"TCBUEN"=>count($indicador["contenedor"]["TCBUEN"]));
-        $contenedores[]=array("tipo"=>"Teus","SPRBUN"=>
-                (count($indicador["tipocontenedor"]["SPRBUN"]["20"])+(count($indicador["tipocontenedor"]["SPRBUN"]["40"])*2)),
-                "TCBUEN"=>(count($indicador["tipocontenedor"]["TCBUEN"]["20"])+(count($indicador["tipocontenedor"]["TCBUEN"]["40"])*2)));
-        */
         
-        /*
-        $contenedoresgrid[]=array(
-            "terminal"=>'TCBUEN',
-            "contenedor"=>count($indicador["contenedor"]["TCBUEN"]),
-            "por_contenedor"=>round((count($indicador["contenedor"]["TCBUEN"])*100)/(count($indicador["contenedor"]["SPRBUN"])+count($indicador["contenedor"]["TCBUEN"]))),
-            "teus"=>(count($indicador["tipocontenedor"]["TCBUEN"]["20"])+(count($indicador["tipocontenedor"]["TCBUEN"]["40"])*2)),
-            "por_teus"=>round((( count($indicador["tipocontenedor"]["TCBUEN"]["20"]) +( count($indicador["tipocontenedor"]["TCBUEN"]["40"])*2))*100)/((count($indicador["tipocontenedor"]["TCBUEN"]["20"])+(count($indicador["tipocontenedor"]["TCBUEN"]["40"])*2))+(count($indicador["tipocontenedor"]["SPRBUN"]["20"])+(count($indicador["tipocontenedor"]["SPRBUN"]["40"])*2))))
-            );
+        
+        foreach($diasetax["muelle"] as $k =>$d)
+        {
+            
+            //$diasetax["muelle"][$datosJson["linea"]]["suma"]+=$datos[$k]["diasnaleta"];
+            $etalevante[] = array("tipo" => $k, "terminal" => is_null($d["suma"]/$d["total"])?"0":round($d["suma"]/$d["total"],2));
+            $etalevantegrid[]=array("terminal"=>$k,"dias"=>(is_null($d["suma"]/$d["total"])?"0":round($d["suma"]/$d["total"],2)));
+        }
+         
+        foreach($diasetax["linea"] as $k =>$d)
+        {
+            $etalevantelinea[] = array("tipo" => $k, "linea" => (is_null($d["suma"]/$d["total"])?"0": round($d["suma"]/$d["total"],2) ));
+            $etalevantelineagrid[]=array("linea"=>$k,"dias"=>(is_null($d["suma"]/$d["total"])? "0" : round($d["suma"]/$d["total"],2) ));
+            //$descripcionesgrid[]=array("terminal"=>$k,"total_carpeta"=>$d["total"],"total_demora"=>(is_null($d["nocumple"])?"0":$d["nocumple"]),"por_demora"=>round( ($d["nocumple"]*100)/$d["total"],2 ));
+        }
+        
+        foreach($diasetax["provetiqueta"] as $k =>$d)
+        {
+            $etiquetaProv[] = array("tipo" => $k, "proveedor" => (is_null($d["suma"]/$d["total"])?"0": round($d["suma"]/$d["total"],2) ));
+        }
+        
+        foreach($problemabl as $k =>$d)
+        {
+            $problemasbl[] = array("tipo" => $k, "problema" => $d );
+            $problemasblgrid[]=array("problema"=>$k,"cantidad"=>$d,"por"=>round( ($d/count($carpetas))*100,2 ));
+        }
+        
+        foreach($problemafactura as $k =>$d)
+        {
+            $problemasfactura[] = array("tipo" => $k, "problema" => $d);
+            $problemasfacturagrid[]=array("problema"=>$k,"cantidad"=>$d,"por"=>round( ($d/count($carpetas))*100,2 ));
+        }
+        
+        /*foreach($transp as $k=>$t)
+        {
+            $totalContenedores+=count($t);
+        }
+        foreach($transp as $k=>$t)
+        {
+            $transporte[]=array("indicador"=>$k,"total"=>count($t));
+            $transportegrid[]=array("transportador"=>$k,"no_contprov"=>count($t),"por_contprov"=>round( ( (count($t)/$totalContenedores)*100),1));
+        }*/
+        
+       /* $totaldeclaraciones=$declara["fisico"]+$declara["automatico"];
+        foreach($declara as $k=>$t)
+        {
+            $declaraciones[]=array("indicador"=>$k,"total"=>$t);
+        }*/
+        
+        /*foreach($indicador["tipocontenedor"] as $bodega=>$guias1)
+        {
+            $contenedoresA[$puert]=count($indicador["contenedor"][$puert]);
+            
+        }
+        $contenedores[]= array_merge(array("tipo"=>"Bodega"),$contenedoresA);
          * 
          */
-
+        
+        foreach($indicador["tipocontenedor"] as $bodega=>$guias1)
+        {
+            $contenedoresgrid[]=array(
+            "bodega"=>$bodega,
+            "doc_transporte"=>count($guias1),
+            "por_doc_transporte"=>round((count($guias1)*100)/count($guias))
+            );
+            
+            $contenedores[]= array("tipo" => $bodega, "bodega" => round(count($guias1),2));
+            //$demoraslinea[] = array("tipo" => $k, "linea" => round($d["total"]/$d["dias"],2));
+            
+        }
         
         
+        $prom_diashab=$sum_diashab/$no_diashab;
+        $prom_diaseta=$sum_diaseta/$no_diaseta;
+        
+        $sum["prom_diashab"]["total"]=$prom_diashab;
+        $sum["prom_diashab"]["sum_diashab"]=$sum_diashab;
+        $sum["prom_diashab"]["no_diashab"]=$no_diashab;
+                
+        $sum["prom_diaseta"]["total"]=$prom_diaseta;
+        $sum["prom_diaseta"]["sum_diaseta"]=$sum_diaseta;
+        $sum["prom_diaseta"]["no_diaseta"]=$no_diaseta;
 
-        $this->responseArray = array("success" => true, "datos" => $datos,"indicador"=>$indicador, "indicador1"=>$indicador1,"indicador1grid"=>$indicador1grid, "indicador2"=>$indicador2,"indicador2grid"=>$indicador2grid,"indicador3"=>$indicador3,"indicador3grid"=>$indicador3grid,"indicador4"=>$indicador4,"indicador4grid"=>$indicador4grid,"consolidado"=>$consolidado/*,"encabezados"=>$htmlencabezado,"debug"=>$debug*/);
-        //$this->responseArray = array("success" => true, "datos" => $datos);        
+        //print_r($fechasprom);
+        //exit;
+        $fechasprom["etalevante"]["promedio"]=round( ($fechasprom["etalevante"]["suma"] / $fechasprom["etalevante"]["cantidad"]) ,2);
+        $fechasprom["facturacion"]["promedio"]=round( ($fechasprom["facturacion"]["suma"]/$fechasprom["facturacion"]["cantidad"]) ,2);
+        //print_r($noGuiaspreinsp);
+        //exit;
+        $htmlencabezado='<table align="center">'
+                
+                . '<tr >'
+                . '     <th class="x-column-header x-column-header-inner">1. Total Consolidados Manejados</th>'
+                . '     <td class="x-grid-cell x-grid-cell-inner">'.count($consolidado).'</td>'
+                . '</tr>'
+                . '<tr >'
+                . '     <th class="x-column-header x-column-header-inner">2. Total Gu&iacute;as con Inspecci&oacute;n previa</th>'
+                . '     <td class="x-grid-cell x-grid-cell-inner">'.count($noGuiaspreinsp).'</td>'
+                . '</tr>'
+                . '<tr >'
+                . '     <th class="x-column-header x-column-header-inner">3. Total Gu&iacute;as Manejadas</th>'
+                . '     <td class="x-grid-cell x-grid-cell-inner">'.count($guias).'</td>'
+                . '</tr>'
+                . '<tr >'
+                . '     <th class="x-column-header x-column-header-inner">4. Total Gu&iacute;as aforadas DIAN</th>'
+                . '     <td class="x-grid-cell x-grid-cell-inner"><a href="javascript:datosBl(\'Aereo\')">'.count($noGuiasinsp).'</a></td>'
+                . '</tr>'
+                . '<tr >'
+                . '     <th class="x-column-header x-column-header-inner">5. Total Carpetas</th>'
+                . '     <td class="x-grid-cell x-grid-cell-inner">'.count($carpetas).'</td>'
+                . '</tr>'
+                . '<tr >'
+                . '     <th class="x-column-header x-column-header-inner">6. D&iacute;as promedio ETA - LEVANTE</th>'
+                . '     <td class="x-grid-cell x-grid-cell-inner">'.$fechasprom["etalevante"]["promedio"].'</td>'
+                . '</tr>'
+                . '<tr >'
+                . '     <th class="x-column-header x-column-header-inner">7. Promedios d&iacute;as de Facturaci&oacute;n</th>'
+                . '     <td class="x-grid-cell x-grid-cell-inner">'.$fechasprom["facturacion"]["promedio"].'</td>'
+                . '</tr>'
+                . '</table>';
+        
+        
+        $this->responseArray = array("success" => true, "datos" => $datos,"indicador"=>$indicador, 
+            "indicador1"=>$indicador1,"indicador1grid"=>$indicador1grid, "indicador2"=>$indicador2,"indicador2grid"=>$indicador2grid,"indicador3"=>$indicador3,
+            "indicador3grid"=>$indicador3grid,            
+            //"indicador4"=>$indicador4,"indicador4grid"=>$indicador4grid,
+            "demoras" => $demoras, "demorasgrid" => $demorasgrid, "demoraslinea" => $demoraslinea,
+            "consolidado"=>$consolidado,"encabezados"=>$htmlencabezado,
+            "etalevante"=>$etalevante,"etalevantegrid"=>$etalevantegrid,
+            "etalevantelinea"=>$etalevantelinea,"etalevantelineagrid"=>$etalevantelineagrid,
+            "contenedores"=>$contenedores,"contenedoresgrid"=>$contenedoresgrid,
+            "problemasbl"=>$problemasbl,"problemasblgrid"=>$problemasblgrid,
+            "problemasfactura"=>$problemasfactura,"problemasfacturagrid"=>$problemasfacturagrid,
+            "etiquetaProv"=>$etiquetaProv,            
+            "transporte" => $transporte, "transportegrid" => $transportegrid,
+            "declaraciones" => $declaraciones, "declaracionesgrid" => $declaracionesgrid
+            /*"debug"=>$debug*/);
+        //print_r($this->responseArray);
+        //$this->responseArray = array("success" => true, "datos" => $datos);  
+        //print_r($this->responseArray);
         $this->setTemplate("responseTemplate");
     }
     
     
-    public function executeDatosPie( sfWebRequest $request  ){
+    public function executeDatosPie( sfWebRequest $request  ){ 
 
         set_time_limit(3000);
         ini_set('max_execution_time', 3000);
+        
+        
+        $festivos = TimeUtils::getFestivos(date("Y"));
+
+        $festivos1=array_merge($festivos,$this->getFestivos());
+
         try{
 
         $datos=array();
@@ -3122,12 +3796,13 @@ FROM COLMASXX.SIAI0200 AS brk
         $eta2 = $request->getParameter("eta2");
         
         $q = Doctrine::getTable("AduFalaDetControl")
-                            ->createQuery("c")
-                            ->select("c.*,f.ca_fecha,f.ca_muelle")
-                            ->innerJoin("c.AduFalaCabControl f")
-                             //->where("ca_fchlevante BETWEEN ? AND ?  ",  array($fecha1,$fecha2) )
-                            ->addOrderBy( "c.ca_id_fal_det_control " )
-                            ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+                ->createQuery("c")                
+                ->select("c.*,f.ca_fecha,f.ca_muelle,m.ca_datos,m.ca_fchdespcarga,m.ca_fchfacturacion")
+                ->innerJoin("c.AduFalaCabControl f")
+                ->innerJoin("c.InoMaestraAdu m")
+                 //->where("ca_fchlevante BETWEEN ? AND ?  ",  array($fecha1,$fecha2) )
+                ->addOrderBy( "c.ca_id_fal_det_control " )
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
         
         if($fecha1!="" && $fecha2!="")
         {
@@ -3147,35 +3822,87 @@ FROM COLMASXX.SIAI0200 AS brk
         $sum_diaseta=0;
         $prom_diaseta=0;
         $consolidadosnc=array();
+        $diasetax=array();
         
+        $tra = ParametroTable::retrieveByCaso("CU249");
+        foreach ($tra as $t)
+        {
+            $transportador[$t->getCaIdentificacion()]=$t->getCaValor();
+        }
         
+        $demorasDocNew["tipo"]["Bl"]=0;
+        $demorasDocNew["tipo"]["Factura"]=0;
+        $demorasDocNew["tipo"]["Flete"]=0;
+        $demorasDocNew["tipo"]["OC"]=0;
+        $demorasDocNew["tipo"]["Otro"]=0;
+        $demorasDocNew["total"]=0;
+        $totalprobbl=0;
         foreach($datos as $k=>$c)
         {
+            $datosJson= json_decode($datos[$k]["c_ca_datos"]);
+            $datosJsonMaster= json_decode($datos[$k]["m_ca_datos"]);
+
+            $lineaP=($datosJson->linea)?$datosJson->linea:substr($c["c_ca_carpeta"],12,3);
+
+            $muelleP=($datosJson->terminal!="")?str_replace(' ', '', $datosJson->terminal):$c["f_ca_muelle"];            
+
+            $datos[$k]["problemabl"]=(($datosJson->problemasbl!="")?$datosJson->problemasbl:"Ok");            
+            $datos[$k]["problemafactura"]=(($datosJson->problemasfactura!="")?$datosJson->problemasfactura:"Ok");
             
+            $datos[$k]["descripcionmindemora"]=$datosJson->descripcionmindemora;
+            $datos[$k]["naviera"]=$datosJson->naviera;
+
             $this->tmp = ParametroTable::retrieveByCaso("CU247", null,null,$c["c_ca_lognet"]);
             $datos[$k]["c_ca_lognet"]=(!$this->tmp[0]->getCaValor2()?$this->tmp[0]->getCaValor():$this->tmp[0]->getCaValor2());
-            
-            
+
             $this->tmp = ParametroTable::retrieveByCaso("CU248", null,null,$c["c_ca_blimpresion"]);
             $datos[$k]["c_ca_blimpresion"]=(!$this->tmp[0]->getCaValor2()?$this->tmp[0]->getCaValor():$this->tmp[0]->getCaValor2());
-            
-               
+
             $this->tmp = ParametroTable::retrieveByCaso("CU249", null,null,$c["c_ca_transportador"]);
             $datos[$k]["c_ca_transportador"]=(!$this->tmp[0]->getCaValor2()?$this->tmp[0]->getCaValor():$this->tmp[0]->getCaValor2());
-            
+
             $this->tmp = ParametroTable::retrieveByCaso("CU250", null,null,$c["c_ca_tipocarga"]);
             $datos[$k]["c_ca_tipocarga"]=(!$this->tmp[0]->getCaValor2()?$this->tmp[0]->getCaValor():$this->tmp[0]->getCaValor2());
+
+            $datosJson->provetiquetado=trim($datosJson->provetiquetado);            
+       
+            $datos[$k]["linea"]=$lineaP;
+            $datos[$k]["muelle"]=$muelleP;
+            $datos[$k]["terminal"]=$muelleP;
+            $datos[$k]["razondemora"]=utf8_encode($datosJson->razondemora);
             
-            $datos[$k]["linea"]=substr($datos[$k]["c_ca_carpeta"],12,3);
+            $datos[$k]["fcheta"]=$c["f_ca_fcheta"];
+            
             if($c["f_ca_fecha"]!="")
             {
                 if($c["c_ca_fchrecepcion"]!="")
                     $datos[$k]["demoradocs"]=floor(TimeUtils::dateDiff($c["f_ca_fecha"],$c["c_ca_fchrecepcion"]));
-                    //$datos[$k]["demoradocs"]=Utils::diffDays($c["f_ca_fecha"],$c["c_ca_fchrecepcion"]);
-                
-                
-                //$datos[$k]["diasbl"]=floor(TimeUtils::dateDiff1($c["f_ca_fecha"],$c["c_ca_fchbl"]));
+                    
                 $datos[$k]["diasbl"]=$c["c_ca_inspeccion"];
+                
+                
+                $fechamaxotro=$datosJson->fchextradoc;                
+                switch(Utils::compararFechas($fechamaxotro, $datosJson->fchregistro))
+                {
+                    case "0":
+                    case "1":
+                        $fechamaxotro=$fechamaxotro;
+                        //echo "1<br>";
+                    break;
+                    case "-1":
+                        $fechamaxotro=$datosJson->fchregistro;
+                    break;
+                }
+                switch(Utils::compararFechas($fechamaxotro, $datosJson->fchcertorigen))
+                {
+                    case "0":
+                    case "1":
+                        $fechatmp=$fechamaxotro;
+                    break;
+                    case "-1":
+                        $fechamaxotro=$datosJson->fchcertorigen;
+                    break;
+                }
                 
                 
                 if($c["c_ca_fchdescripciones"]!="" || $c["c_ca_fchrecepcion"]!="")
@@ -3186,19 +3913,15 @@ FROM COLMASXX.SIAI0200 AS brk
                         case "0":
                         case "1":
                             $fechatmp=$c["c_ca_fchdescripciones"];
-                            //echo "1<br>";
                         break;
                         case "-1":
                             $fechatmp=$c["c_ca_fchrecepcion"];
-                            //echo "2<br>";
                         break;
                     }
 
                     if(Utils::compararFechas($fechatmp,$c["f_ca_fecha"])==1)
                     {
                         $datos[$k]["atiempo"]= "No";
-                    //    $indicador["descripciones"]["nocumple"]++;
-                    //      $indicador["descripciones"]["muelle"][$datos[$k]["f_ca_muelle"]]["nocumple"]++;
                     }
                     else
                         $datos[$k]["atiempo"]= "Si";
@@ -3208,41 +3931,169 @@ FROM COLMASXX.SIAI0200 AS brk
                     {
                         $datos[$k]["atiempodm"]= "No";
                         $indicador["descripciones"]["nocumple"]++;
-                        $indicador["descripciones"]["muelle"][$datos[$k]["f_ca_muelle"]]["nocumple"]++;
-                        $indicador["descripciones"]["linea"][$datos[$k]["linea"]]["nocumple"]++;
+                        $indicador["descripciones"]["muelle"][$muelleP]["nocumple"]++;
+                        $indicador["descripciones"]["linea"][$lineaP]["nocumple"]++;
+                        
+                        $indicador["descripciones"]["linea"][$lineaP]["diasdemora"]+=$datos[$k]["demoradescmin"];
+                        $indicador["descripciones"]["linea"][$lineaP]["totaldemora"]++;
                     }
                     else
                         $datos[$k]["atiempodm"]= "Si";
 
-                    $indicador["descripciones"]["linea"][substr($datos[$k]["c_ca_carpeta"],12,3) ]["total"]++;
-                    $indicador["descripciones"]["muelle"][$datos[$k]["f_ca_muelle"]]["total"]++;
+                    $indicador["descripciones"]["linea"][$lineaP ]["dias"]+=$datos[$k]["demoradescmin"];                    
+                    $indicador["descripciones"]["linea"][$lineaP ]["total"]++;
+                    $indicador["descripciones"]["muelle"][$muelleP]["total"]++;
                 }
-
+                
                 if($c["c_ca_fchlevante"]!="")
                 {
                     $datos[$k]["diasnaleta"]=TimeUtils::dateDiff($c["f_ca_fecha"],$c["c_ca_fchlevante"]);
                     $sum_diaseta+=$datos[$k]["diasnaleta"];
+                    $diasetax["linea"][$c["c_ca_consolidado"]]["total"]++;                    
+                    $diasetax["linea"][$c["c_ca_consolidado"]]["suma"]+=$datos[$k]["diasnaleta"];
+                    $diasetax["muelle"][$muelleP]["total"]++;
+                    $diasetax["muelle"][$muelleP]["suma"]+=$datos[$k]["diasnaleta"];
+                    
                     $no_diaseta++;
 
                     if(Utils::compararFechas($c["c_ca_fchconsinv"],$fechatmp)==1)
                     {
                         $fechatmp=$c["c_ca_fchconsinv"];
                     }
+                    
+                    switch(Utils::compararFechas($fechatmp, $fechamaxotro))
+                    {
+                        case "0":
+                        case "1":
+                            $fechatmp=$fechatmp;
+                            //echo "1<br>";
+                        break;
+                        case "-1":
+                            $fechatmp=$fechamaxotro;
+                        break;
+                    }
+                    
 
                     $datos[$k]["diasnalhab"]=(TimeUtils::workDiff($festivos,$fechatmp,$c["c_ca_fchlevante"]));
                     $sum_diashab+=$datos[$k]["diasnalhab"];
                     $no_diashab++;
-                    //$datos[$k]["diasnalhab"]++;
+                    
+                    $datos[$k]["demBl"]=floor(TimeUtils::dateDiff($c["f_ca_fecha"],$c["c_ca_fchbl"]));
+                    $datos[$k]["demFactura"]=floor(TimeUtils::dateDiff($c["f_ca_fecha"],$c["c_ca_fchfactura"]));
+                    $datos[$k]["demFlete"]=floor(TimeUtils::dateDiff($c["f_ca_fecha"],$c["c_ca_fchcertfletes"]));
+                    
+                    $datos[$k]["demOC"]=floor(TimeUtils::dateDiff($c["f_ca_fcheta"],$datosJson->fchconsolidado));
+                    $datos[$k]["demOtro"]=floor(TimeUtils::dateDiff($c["f_ca_fcheta"],$fechamaxotro));
+                    
+                    
+                    
+                    
+                    //$dem=array("Bl"=>$datos[$k]["demBl"],"Factura"=>$datos[$k]["demFactura"],"Flete"=>$datos[$k]["demFlete"]);
+                    $dem=array("Bl"=>$datos[$k]["demBl"],"Factura"=>$datos[$k]["demFactura"],"Flete"=>$datos[$k]["demFlete"],"OC"=>$datos[$k]["demOC"],"Otro"=>$datos[$k]["demOtro"]);
+                    
+                    
+                    $datos[$k]["numerodoc"]="";
+                    /*if($datosJson->demoraoc=="SI")
+                    {
+                        $datos[$k]["demTipoDoc"]="OC";
+                        $datos[$k]["demTipoDoc1"]="OC";
+                        $datos[$k]["diasdemora"]="N/A";
+                    }
+                    else if($datosJson->demoraotrodoc!="" && $datosJson->demoraotrodoc!="N/A")
+                    {
+                        $datos[$k]["demTipoDoc"]="Otro";
+                        $datos[$k]["demTipoDoc1"]=$datosJson->demoraotrodoc;
+                        $datos[$k]["diasdemora"]=$datos[$k]["demFlete"]=floor(TimeUtils::dateDiff($c["f_ca_fecha"],$datosJson->fchdemoraotrodoc));;
+                    }
+                    else
+                     * 
+                     */                    
+                    {
+                        asort($dem);
+                        foreach($dem as $key=>$d)
+                        {
+                            if($d>0)
+                            {
+                                $datos[$k]["demTipoDoc"]=$key;
+                                $datos[$k]["demTipoDoc1"]=$key;
+                                $datos[$k]["diasdemora"]=$d;
+                                switch($key)
+                                {
+                                    case "Bl":                                        
+                                        $tdoc=$c["c_ca_bl"];
+                                        $demorasDocNew["tipo"]["Bl"]++ ;
+                                        $demorasDocNew["total"]++;
+                                    break;
+                                    case "Factura":
+                                        $tdoc=$c["c_ca_factura"];                                        
+                                        $demorasDocNew["tipo"]["Factura"]++ ;
+                                        $demorasDocNew["total"]++;
+                                    break;
+                                    case "Flete":                                        
+                                        $tdoc=$c["c_ca_certfletes"];
+                                        $demorasDocNew["tipo"]["Flete"]++ ;
+                                        $demorasDocNew["total"]++;                                        
+                                    break;
+                                    case "OC":
+                                        $tdoc="N/A";
+                                        $demorasDocNew["tipo"]["OC"]++ ;
+                                        $demorasDocNew["total"]++;
+                                    break;
+                                    case "Otro":
+                                        $tdoc="N/A";
+                                        $demorasDocNew["tipo"]["Otro"]++ ;
+                                        $demorasDocNew["total"]++;
+                                    break;
+                                }
+                                $datos[$k]["numerodoc"]=$tdoc;
+                            }
+                            else
+                            {
+                                $datos[$k]["demTipoDoc"]="OK";
+                                $datos[$k]["demTipoDoc1"]="OK";
+                                $datos[$k]["diasdemora"]=0;
+                            }
+                        }
+                    }
+                    
+                    
+                    
+                    /*if( $datos[$k]["demTipoDoc"]!="OK")
+                    {
+                        $demorasDocNew["tipo"][$datos[$k]["demTipoDoc"]]++ ;
+                        $demorasDocNew["total"]++;
+                    }*/
                 }
-            }
+                
+                if($c["m_ca_fchdespcarga"]!="" && $c["m_ca_fchfacturacion"]!="" )
+                {
+                    $datos[$k]["diaspromfact"]=(TimeUtils::workDiff($festivos1,$c["m_ca_fchdespcarga"],$c["m_ca_fchfacturacion"]));                    
+                    $diasetax["promfact"][$c["c_ca_referencia"]]["total"]="1";
+                    $diasetax["promfact"][$c["c_ca_referencia"]]["suma"]=$datos[$k]["diaspromfact"];
+                }
+                
+                if($datosJson->provetiquetado!="" && $datosJson->provetiquetado!="N/A" )
+                {
+                    $datos[$k]["etiqueta"]="S";
+                    $datos[$k]["provetiqueta"]= utf8_encode($datosJson->provetiquetado);
+                    $datos[$k]["fechaetiqueta1"]=$datosJson->fchetiqueta1;
+                    $datos[$k]["fechaetiqueta2"]=$datosJson->fchetiqueta2;
+                    $datos[$k]["diasetiqueta"]=floor(TimeUtils::dateDiff($datosJson->fchetiqueta1,$datosJson->fchetiqueta2));
+                    
+                    $diasetax["provetiqueta"][$datos[$k]["provetiqueta"]]["total"]++;
+                    $diasetax["provetiqueta"][$datos[$k]["provetiqueta"]]["suma"]+=$datos[$k]["diasetiqueta"];
+                }
+                else
+                    $datos[$k]["etiqueta"]="N";
+            }    
             if(!$consolidados[$datos[$k]["c_ca_consolidado"]])
             {
                 $consolidados[$datos[$k]["c_ca_consolidado"]]="nocumple";
                 //$consolidadosnc[]=$datos[$k]["c_ca_consolidado"];                
-            }            
+            }
             
             $indicador["nacionalizacion"]["nocumple"][$datos[$k]["c_ca_consolidado"]]["valor"] = $indicador["nacionalizacion"]["cumple"][$datos[$k]["c_ca_consolidado"]]["valor"]?$indicador["nacionalizacion"]["cumple"][$datos[$k]["c_ca_consolidado"]]["valor"]:0;
-            $containers[$datos[$k]["f_ca_muelle"]][$datos[$k]["c_ca_consolidado"]] = $containers[$datos[$k]["f_ca_muelle"]][$datos[$k]["c_ca_consolidado"]]?$containers[$datos[$k]["f_ca_muelle"]][$datos[$k]["c_ca_consolidado"]]:"nocumple";
+            $containers[$muelleP][$datos[$k]["c_ca_consolidado"]] = $containers[$muelleP][$datos[$k]["c_ca_consolidado"]]?$containers[$muelleP][$datos[$k]["c_ca_consolidado"]]:"nocumple";
             
             if( $datos[$k]["c_ca_preinspeccion"]=="true" || $datos[$k]["c_ca_preinspeccion"]=="1" || $datos[$k]["c_ca_inspeccion"]=="true" || $datos[$k]["c_ca_inspeccion"]=="1")
             {
@@ -3254,9 +4105,9 @@ FROM COLMASXX.SIAI0200 AS brk
                 else
                 {
                     $indicador["nacionalizacion"]["cumple"][$datos[$k]["c_ca_consolidado"]]["valor"]++;
-                    $indicador["nacionalizacion"]["cumple"][$datos[$k]["c_ca_consolidado"]][$datos[$k]["f_ca_muelle"]]=1;
+                    $indicador["nacionalizacion"]["cumple"][$datos[$k]["c_ca_consolidado"]][$muelleP]=1;
                     $consolidados[$datos[$k]["c_ca_consolidado"]]="cumple";
-                    $containers[$datos[$k]["f_ca_muelle"]][$datos[$k]["c_ca_consolidado"]] = "cumple";
+                    $containers[$muelleP][$datos[$k]["c_ca_consolidado"]] = "cumple";
                 }
             }
             else{
@@ -3268,49 +4119,70 @@ FROM COLMASXX.SIAI0200 AS brk
                 else
                 {
                     $indicador["nacionalizacion"]["cumple"][$datos[$k]["c_ca_consolidado"]]["valor"]++;
-                    $indicador["nacionalizacion"]["cumple"][$datos[$k]["c_ca_consolidado"]][$datos[$k]["f_ca_muelle"]]=1;
+                    $indicador["nacionalizacion"]["cumple"][$datos[$k]["c_ca_consolidado"]][$muelleP]=1;
                     $consolidados[$datos[$k]["c_ca_consolidado"]]="cumple";
-                    $containers[$datos[$k]["f_ca_muelle"]][$datos[$k]["c_ca_consolidado"]] = "cumple";
+                    $containers[$muelleP][$datos[$k]["c_ca_consolidado"]] = "cumple";
                 }
             }
 
             $cumplimiento = array_count_values($consolidados);
             
-            foreach ($containers as $muelle =>$val) {             
-                $count_values[$muelle] = array_count_values($val);                
-            }            
+            foreach ($containers as $mue =>$val) {             
+                $count_values[$mue] = array_count_values($val);                
+            }
             
             if($datos[$k]["demoradocs"]>1)
             {
                 $indicador["documentos"]["nocumple"]++;
-                $indicador["documentos"]["muelle"][$datos[$k]["f_ca_muelle"]]["nocumple"]++;
+                $indicador["documentos"]["muelle"][$muelleP]["nocumple"]++;
             }
-            $indicador["documentos"]["muelle"][$datos[$k]["f_ca_muelle"]]["total"]++;
+            $indicador["documentos"]["muelle"][$muelleP]["total"]++;
             
             if($datos[$k]["diasbl"])
             {
                 $datos[$k]["demorabl"]="Si";
                 $indicador["demorabl"]["nocumple"]++;
-                $indicador["demorabl"]["muelle"][$datos[$k]["f_ca_muelle"]]["nocumple"]++;
+                $indicador["demorabl"]["muelle"][$muelleP]["nocumple"]++;
                 
-                $indicador["demorabl2"][$datos[$k]["f_ca_muelle"]]["nocumple"][$datos[$k]["c_ca_bl"]]=1;
+                $indicador["demorabl2"][$muelleP]["nocumple"][$datos[$k]["c_ca_bl"]]=1;
                 
             }
             else
             {
                 $datos[$k]["demorabl"]="No";
-                $indicador["demorabl2"][$datos[$k]["f_ca_muelle"]]["cumple"][$datos[$k]["c_ca_bl"]]=1;
+                $indicador["demorabl2"][$muelleP]["cumple"][$datos[$k]["c_ca_bl"]]=1;
             }
             
-            $indicador["demorabl2"][$datos[$k]["f_ca_muelle"]]["total"][$datos[$k]["c_ca_bl"]]=1;
+            $indicador["demorabl2"][$muelleP]["total"][$datos[$k]["c_ca_bl"]]=1;
             
-            $indicador["demorabl"]["muelle"][$datos[$k]["f_ca_muelle"]]["total"]++;
+            $indicador["demorabl"]["muelle"][$muelleP]["total"]++;
             
-            $indicador["contenedor"][$c["f_ca_muelle"]][$c["c_ca_contenedor"]]++;
-            $indicador["tipocontenedor"][$c["f_ca_muelle"]][$c["c_ca_tipocontenedor"]][$c["c_ca_contenedor"]][]=1;
+            $indicador["contenedor"][$muelleP][$c["c_ca_contenedor"]]++;
+            //$indicador["contenedor"]["total"]++;
+            $indicador["contenedor"][($c["c_ca_preinspeccion"]==true?"Si":"No")][$c["c_ca_contenedor"]]++;
+            if($c["c_ca_inspeccion"]==true)
+                $indicador["bls"][$c["c_ca_bl"]]++;
+            $indicador["tipocontenedor"][$muelleP][$c["c_ca_tipocontenedor"]][$c["c_ca_contenedor"]][]=1;
+
+            $problemabl[$datos[$k]["problemabl"]]++;
+            $problemafactura[$datos[$k]["problemafactura"]]++;
+            
+            $transp[utf8_encode($transportador[$c["c_ca_transportador"]])][$c["c_ca_contenedor"]]++;
+            if(!in_array($c["c_ca_referencia"],$bls_declara))
+            {
+                $bls_declara[]=$c["c_ca_referencia"];
+                $declara["fisico"]+=$datosJsonMaster->nfisico;            
+                $declara["automatico"]+=$datosJsonMaster->nautomatico;
+            }
+            
+            $this->tmp = ParametroTable::retrieveByCaso("CU249", null,null,$c["c_ca_transportador"]);
+            $datos[$k]["c_ca_transportador"]=(!$this->tmp[0]->getCaValor2()?$this->tmp[0]->getCaValor():$this->tmp[0]->getCaValor2());
                             
             $indicador["total"]++;
         }
+        
+        //echo "<pre>";print_r($demorasDocNew);echo "</pre>";
+        //exit;
         
         foreach($consolidados as $k=>$c)
         {
@@ -3344,10 +4216,11 @@ FROM COLMASXX.SIAI0200 AS brk
         $documentos[]=array("indicador"=>"CARPETAS CON DEMORA","total"=>$indicador["documentos"]["nocumple"]);
         $documentos[]=array("indicador"=>"CARPETAS CONFORME","total"=> ($indicador["total"]-$indicador["documentos"]["nocumple"]));
         
-        foreach($indicador["documentos"]["muelle"] as $k =>$d)
+        
+        foreach($indicador["documentos"]["muelle"] as $key =>$d)
         {
             $encabezados["carpetas"]+=$d["total"];
-            $documentosgrid[]=array("terminal"=>$k,"total_carpeta"=>$d["total"],"total_demora"=>  (is_null($d["nocumple"])?"0":$d["nocumple"]),"por_demora"=>round( ($d["nocumple"]*100)/$d["total"],2 ),"tipo"=>"documentos");
+            $documentosgrid[]=array("terminal"=>$key,"total_carpeta"=>$d["total"],"total_demora"=>  (is_null($d["nocumple"])?"0":$d["nocumple"]),"por_demora"=>round( ($d["nocumple"]*100)/$d["total"],2 ),"tipo"=>"documentos");
         }
 
         $descripciones[]=array("indicador"=>"MERCANCIA CON DEMORA","total"=>$indicador["descripciones"]["nocumple"]);
@@ -3360,8 +4233,15 @@ FROM COLMASXX.SIAI0200 AS brk
         }*/
         foreach($indicador["descripciones"]["linea"] as $k =>$d)
         {
-            $descripcionesgrid[]=array("terminal"=>$k,"total_carpeta"=>$d["total"],"total_demora"=>(is_null($d["nocumple"])?"0":$d["nocumple"]),"por_demora"=>round( ($d["nocumple"]*100)/$d["total"],2 ));
-        }
+            $descripcionesgrid[]=array(
+                "terminal"=>$k,
+                "total_carpeta"=>$d["total"],
+                "total_demora"=>(is_null($d["nocumple"])?"0":$d["nocumple"]),
+                "por_demora"=>round( ($d["nocumple"]*100)/$d["total"],2 ));
+            
+            $demoraslinea[] = array("tipo" => $k, "linea" => round($d["diasdemora"]/$d["totaldemora"],2));
+            
+        } 
         
         /*$nacionalizacion[]=array("indicador"=>"CONS CON DEMORA","total"=>count($indicador["nacionalizacion"]["nocumple"]));
         $nacionalizacion[]=array("indicador"=>"CONS CONFORME","total"=> count($indicador["nacionalizacion"]["cumple"]));*/
@@ -3384,22 +4264,64 @@ FROM COLMASXX.SIAI0200 AS brk
         foreach($nal_puertos as $k =>$d)
         {
             $nacionalizaciongrid[]=array("terminal"=>$k,"total_carpeta"=>($count_values[$k]["cumple"]+$count_values[$k]["nocumple"]),"total_demora"=>(is_null($count_values[$k]["nocumple"])?"0":$count_values[$k]["nocumple"]),"por_demora"=>round( ($count_values[$k]["nocumple"]*100)/($count_values[$k]["cumple"]+$count_values[$k]["nocumple"]),2 ));
-        }        
+        }
             
         $contenedores=array();
         
+        foreach($transp as $k=>$t)
+        {
+            $totalContenedores+=count($t);
+        }
+        foreach($transp as $k=>$t)
+        {
+            $transporte[]=array("indicador"=>$k,"total"=>count($t));
+            $transportegrid[]=array("transportador"=>$k,"no_contprov"=>count($t),"por_contprov"=>round( ( (count($t)/$totalContenedores)*100),1));
+        }
         
         
-        $contenedores[]=array("tipo"=>"Contenedores","SPRBUN"=>count($indicador["contenedor"]["SPRBUN"]),"TCBUEN"=>count($indicador["contenedor"]["TCBUEN"]));
+        $totaldeclaraciones=$declara["fisico"]+$declara["automatico"];
+        foreach($declara as $k=>$t)
+        {
+            $declaraciones[]=array("indicador"=>$k,"total"=>$t);
+            $declaracionesgrid[]=array("tipo"=>$k,"no_contdecla"=>$t,"por_contdecla"=>round( ( ($t/$totaldeclaraciones)*100),1));
+        }
+        
+        foreach($indicador["tipocontenedor"] as $puert=>$conte)
+        {
+            $contenedoresA[$puert]=count($indicador["contenedor"][$puert]);
+            $teusA[$puert]=count($indicador["tipocontenedor"][$puert]);
+        }
+
+        $contenedores[]= array_merge(array("tipo"=>"Contenedores"),$contenedoresA);
+        $contenedores[]= array_merge(array("tipo"=>"Teus"),$teusA);
+        /*$contenedores[]=array("tipo"=>"Contenedores","SPRBUN"=>count($indicador["contenedor"]["SPRBUN"]),"TCBUEN"=>count($indicador["contenedor"]["TCBUEN"]));
         $contenedores[]=array("tipo"=>"Teus","SPRBUN"=>
                 (count($indicador["tipocontenedor"]["SPRBUN"]["20"])+(count($indicador["tipocontenedor"]["SPRBUN"]["40"])*2)),
                 "TCBUEN"=>(count($indicador["tipocontenedor"]["TCBUEN"]["20"])+(count($indicador["tipocontenedor"]["TCBUEN"]["40"])*2)));
+        */
         
-        $contenedoresgrid[]=array(
+        foreach($indicador["tipocontenedor"] as $puert=>$conte)
+        {
+            $totalteus+=( count($conte["20"]) +(count($conte["40"]) *2));
+            $totalconte+=count($indicador["contenedor"][$puert]);
+        }
+        
+        
+        foreach($indicador["tipocontenedor"] as $puert=>$conte)
+        {
+            $contenedoresgrid[]=array(
+            "terminal"=>$puert,
+            "contenedor"=>count($indicador["contenedor"][$puert]),
+            "por_contenedor"=>round((count($indicador["contenedor"][$puert])*100)/$totalconte),
+            "teus"=>(count($conte["20"])+(count($conte["40"])*2)),
+            "por_teus"=>round((( count($conte["20"]) +( count($conte["40"])*2))*100)/$totalteus)
+            );
+        }
+        /*$contenedoresgrid[]=array(
                 "terminal"=>'SPRBUN',
                 "contenedor"=>count($indicador["contenedor"]["SPRBUN"]),
                 "por_contenedor"=>round((count($indicador["contenedor"]["SPRBUN"])*100)/(count($indicador["contenedor"]["SPRBUN"])+count($indicador["contenedor"]["TCBUEN"]))),
-                "teus"=>( count($indicador["tipocontenedor"]["SPRBUN"]["20"]) +(count($indicador["tipocontenedor"]["SPRBUN"]["40"]) *2)),
+                "teus"=>$totalteus,
                 "por_teus"=>round(((count($indicador["tipocontenedor"]["SPRBUN"]["20"])+(count($indicador["tipocontenedor"]["SPRBUN"]["40"])*2))*100)/((count($indicador["tipocontenedor"]["TCBUEN"]["20"])+(count($indicador["tipocontenedor"]["TCBUEN"]["40"])*2))+(count($indicador["tipocontenedor"]["SPRBUN"]["20"])+(count($indicador["tipocontenedor"]["SPRBUN"]["40"])*2))))
             );
         $contenedoresgrid[]=array(
@@ -3407,23 +4329,81 @@ FROM COLMASXX.SIAI0200 AS brk
             "contenedor"=>count($indicador["contenedor"]["TCBUEN"]),
             "por_contenedor"=>round((count($indicador["contenedor"]["TCBUEN"])*100)/(count($indicador["contenedor"]["SPRBUN"])+count($indicador["contenedor"]["TCBUEN"]))),
             "teus"=>(count($indicador["tipocontenedor"]["TCBUEN"]["20"])+(count($indicador["tipocontenedor"]["TCBUEN"]["40"])*2)),
-            "por_teus"=>round((( count($indicador["tipocontenedor"]["TCBUEN"]["20"]) +( count($indicador["tipocontenedor"]["TCBUEN"]["40"])*2))*100)/((count($indicador["tipocontenedor"]["TCBUEN"]["20"])+(count($indicador["tipocontenedor"]["TCBUEN"]["40"])*2))+(count($indicador["tipocontenedor"]["SPRBUN"]["20"])+(count($indicador["tipocontenedor"]["SPRBUN"]["40"])*2))))
+            "por_teus"=>round((( count($indicador["tipocontenedor"]["TCBUEN"]["20"]) +( count($indicador["tipocontenedor"]["TCBUEN"]["40"])*2))*100)/$totalteus)
             );
-        
-        
-        /*$bls[]=array("indicador"=>"BL CON INSPECCION","total"=>$indicador["demorabl"]["nocumple"]);
-        $bls[]=array("indicador"=>"BL AUTOMATICA","total"=> ($indicador["total"]-$indicador["demorabl"]["nocumple"]));
-        
-        foreach($indicador["demorabl"]["muelle"] as $k =>$d)
+        */
+        //print_r($demorasDocNew);
+        foreach($demorasDocNew["tipo"] as $k=>$dd)
         {
-            $blsgrid[]=array("terminal"=>$k,"total_carpeta"=>count($d["total"]),"total_demora"=>(is_null($d["nocumple"])?"0":$d["nocumple"]),"por_demora"=>round( ($d["nocumple"]*100)/$d["total"],2 ));
+            if($k=="OK")
+                continue;
+            $demoras[] = array("tipo" => $k, "demora" => $dd);
+            
+            $demorasgrid[] = array(
+            "demora" => $k,
+            "cantidad" => $dd,
+            "por_contenedor" => round(($dd/$demorasDocNew["total"])*100,1)
+        );
         }
         
         
-        $bls[]=array("indicador"=>"BL CON INSPECCION","total"=>$indicador["demorabl"]["nocumple"]);
-        $bls[]=array("indicador"=>"BL AUTOMATICA","total"=> ($indicador["total"]-$indicador["demorabl"]["nocumple"]));        
-         * 
-         */
+        /*foreach($indicador["descripciones"]["linea"] as $k =>$d)
+        {
+            $demoraslinea[] = array("tipo" => $k, "linea" => round($d["total"]/$d["dias"],2));
+            //$demoraslinea[] = array("tipo" => $k, "linea" => $d["nocumple"]);
+            //$descripcionesgrid[]=array("terminal"=>$k,"total_carpeta"=>$d["total"],"total_demora"=>(is_null($d["nocumple"])?"0":$d["nocumple"]),"por_demora"=>round( ($d["nocumple"]*100)/$d["total"],2 ));
+        }*/
+        //print_r($demoraslinea);
+        //exit;
+       
+        foreach($diasetax["muelle"] as $k =>$d)
+        {
+            
+            //$diasetax["muelle"][$datosJson["linea"]]["suma"]+=$datos[$k]["diasnaleta"];
+            $etalevante[] = array("tipo" => $k, "terminal" => is_null($d["suma"]/$d["total"])?"0":round($d["suma"]/$d["total"],2));
+            $etalevantegrid[]=array("terminal"=>$k,"dias"=>(is_null($d["suma"]/$d["total"])?"0":round($d["suma"]/$d["total"],2)));
+        }
+         
+        foreach($diasetax["linea"] as $k =>$d)
+        {
+            $etalevantelinea[] = array("tipo" => $k, "linea" => (is_null($d["suma"]/$d["total"])?"0": round($d["suma"]/$d["total"],2) ));
+            $etalevantelineagrid[]=array("linea"=>$k,"dias"=>(is_null($d["suma"]/$d["total"])? "0" : round($d["suma"]/$d["total"],2) ));
+            //$descripcionesgrid[]=array("terminal"=>$k,"total_carpeta"=>$d["total"],"total_demora"=>(is_null($d["nocumple"])?"0":$d["nocumple"]),"por_demora"=>round( ($d["nocumple"]*100)/$d["total"],2 ));
+        }
+        //print_r($diasetax["provetiqueta"]);
+        
+        foreach($diasetax["provetiqueta"] as $k =>$d)
+        {
+            $etiquetaProv[] = array("tipo" => $k, "proveedor" => (is_null($d["suma"]/$d["total"])?"0": round($d["suma"]/$d["total"],2) ));
+        }
+        
+        
+        /*foreach($diasetax["provetiqueta"] as $k =>$d)
+        {
+            $etiquetaProv[] = array("tipo" => $k, "proveedor" => (is_null($d["suma"]/$d["total"])?"0": round($d["suma"]/$d["total"],2) ));
+        }*/
+        
+        
+        foreach($diasetax["promfact"] as $k =>$d)
+        {
+            $suma += $d["suma"];
+        }
+        $encabezados["diaspromfact"]=round($suma/count($diasetax["promfact"]),2) ;
+        
+        //print_r($problemabl);
+        //exit;
+        foreach($problemabl as $k =>$d)
+        {
+            $problemasbl[] = array("tipo" => $k, "problema" => $d );
+            $problemasblgrid[]=array("problema"=>$k,"cantidad"=>$d,"por"=>round( ($d/$encabezados["carpetas"])*100,2 ));            
+        }
+        
+        foreach($problemafactura as $k =>$d)
+        {
+            $problemasfactura[] = array("tipo" => $k, "problema" => $d);
+            $problemasfacturagrid[]=array("problema"=>$k,"cantidad"=>$d,"por"=>round( ($d/$encabezados["carpetas"])*100,2 ));
+        }
+
         $totalbl=0;
         $totaldemorabl=0;
         foreach($indicador["demorabl2"] as $k =>$d)
@@ -3439,17 +4419,64 @@ FROM COLMASXX.SIAI0200 AS brk
         
         $encabezados["bls"]=$totalbl;
         //$encabezados["carpetas"]=0;
-        $encabezados["contenedores"]=count($indicador["contenedor"]["SPRBUN"])+count($indicador["contenedor"]["TCBUEN"]);
-        $encabezados["teus"]=(count($indicador["tipocontenedor"]["TCBUEN"]["20"])+(count($indicador["tipocontenedor"]["TCBUEN"]["40"])*2))+(count($indicador["tipocontenedor"]["SPRBUN"]["20"])+(count($indicador["tipocontenedor"]["SPRBUN"]["40"])*2));
+        $encabezados["contenedores"]=$totalconte;//count($indicador["contenedor"]["SPRBUN"])+count($indicador["contenedor"]["TCBUEN"]);
+        
+        $encabezados["teus"]=$totalteus;(count($indicador["tipocontenedor"]["TCBUEN"]["20"])+(count($indicador["tipocontenedor"]["TCBUEN"]["40"])*2))+(count($indicador["tipocontenedor"]["SPRBUN"]["20"])+(count($indicador["tipocontenedor"]["SPRBUN"]["40"])*2));
         
         $htmlencabezado='<table align="center">'
                 . '<tr >'
-                . '     <th class="x-column-header x-column-header-inner">Total Contenedores</th>'
+                . '     <td class="x-column-header x-column-header-inner">1. Total Contenedores manejados</td>'
                 . '     <td class="x-grid-cell x-grid-cell-inner">'.$encabezados["contenedores"].'</td>'
+                . '</tr>'
+                . '<tr >'
+                . '     <td class="x-column-header x-column-header-inner">2. Total Contenedores con inspecci&oacute;n previa.</td>'
+                . '     <td class="x-grid-cell x-grid-cell-inner">'.count($indicador["contenedor"]["Si"]).'</td>'
+                . '</tr>'
+                . '<tr >'
+                . '     <td class="x-column-header x-column-header-inner">3. Total de Teus</td>'
+                . '     <td class="x-grid-cell x-grid-cell-inner">'.$totalteus.'</td>'
+                . '</tr>'
+                
+                . '<tr >'
+                . '     <td class="x-column-header x-column-header-inner">4. Total Bls</td>'
+                . '     <td class="x-grid-cell x-grid-cell-inner">'.$encabezados["bls"].'</td>'
+                . '</tr>'
+                
+                . '<tr >'
+                . '     <td class="x-column-header x-column-header-inner">5. Total Bls Aforo DIAN</td>'
+                . '     <td class="x-grid-cell x-grid-cell-inner"><a href="javascript:datosBl()">'.( (count($indicador["bls"])>0)? count($indicador["bls"]):"0").'</a></td>'
+                . '</tr>'
+                . '<tr>'                
+                . '     <td class="x-column-header x-column-header-inner">6. Total Carpetas</td>'
+                . '     <td class="x-grid-cell x-grid-cell-inner">'.$encabezados["carpetas"].'</td>'                
+                . '</tr>'
+                . '<tr>'                
+                . '     <td class="x-column-header x-column-header-inner">7. Promedio ETA-LEVANTE</td>'
+                . '     <td class="x-grid-cell x-grid-cell-inner">'.round($sum["prom_diaseta"]["total"],2).'</td>'
+                . '</tr>'
+                . '<tr>'                
+                . '     <td class="x-column-header x-column-header-inner">8. Promedio dias de Facturacion</td>'
+                . '     <td class="x-grid-cell x-grid-cell-inner">'.$encabezados["diaspromfact"].'</td>'                
+                . '</tr>'
+                . '</table>';
+                
+                /*. '     <th class="x-column-header x-column-header-inner">Contenedores Recono.</th>'
+                . '     <td class="x-grid-cell x-grid-cell-inner">'.count($indicador["contenedor"]["Si"]).'</td>'
                 . '     <th class="x-column-header x-column-header-inner">Cantidad BL</th>'
                 . '     <td class="x-grid-cell x-grid-cell-inner">'.$encabezados["bls"].'</td>'
                 . '</tr>'
                 . '<tr>'
+                . '     <th class="x-column-header x-column-header-inner">Total Teus</th>'
+                . '     <td class="x-grid-cell x-grid-cell-inner">'.$totalteus.'</td>'
+                . '     <th class="x-column-header x-column-header-inner">Bl`s manejados</th>'
+                . '     <td class="x-grid-cell x-grid-cell-inner">'.$totalbl.'</td>'
+                . '     <th class="x-column-header x-column-header-inner">Bl`s  inspeccionados</th>'
+                
+                . '     <td class="x-grid-cell x-grid-cell-inner"><a href="javascript:datosBl()">'.(isset($indicador["bls"]["Si"])?$indicador["bls"]["Si"]:"0").'</a></td>'
+                . '</tr>'
+                . '<tr>'
+                . '     <th class="x-column-header x-column-header-inner">Total Teus</th>'
+                . '     <td class="x-grid-cell x-grid-cell-inner">'.$totalteus.'</td>'
                 . '     <th class="x-column-header x-column-header-inner">Total Carpetas</th>'
                 . '     <td class="x-grid-cell x-grid-cell-inner">'.$encabezados["carpetas"].'</td>'
                 . '     <th class="x-column-header x-column-header-inner">Cantidad Teus</th>'
@@ -3461,14 +4488,30 @@ FROM COLMASXX.SIAI0200 AS brk
                 . '     <th class="x-column-header x-column-header-inner">Promedio Dias Eta</th>'
                 . '     <td class="x-grid-cell x-grid-cell-inner">'.round($sum["prom_diaseta"]["total"],2).'</td>'
                 . '</tr>'
-                . '</table>';
+                . '</table>';*/
         }
         catch(Exception $e)
         {
             $errorInfo=$e->getMessage();
         }
-        $this->responseArray = array("success" => true,"sum"=>$sum, "datos" => $datos,"encabezados"=>$htmlencabezado,"indicador"=>$indicador, "consolidados"=>$consolidados,"documentos"=>$documentos,"documentosgrid"=>$documentosgrid , "descripciones"=>$descripciones,"descripcionesgrid"=>$descripcionesgrid,"nacionalizacion"=>$nacionalizacion,"nacionalizaciongrid"=>$nacionalizaciongrid,"contenedores"=>$contenedores,"contenedoresgrid"=>$contenedoresgrid,"bls"=>$bls,"blsgrid"=>$blsgrid, "total" => count($datos),"prom_diashab"=>$prom_diashab,"prom_diaseta"=>$prom_diaseta,"debug"=>$debug,"error"=>$errorInfo);
+        $this->responseArray = array("success" => true,"sum"=>$sum, "datos" => $datos,"encabezados"=>$htmlencabezado,"indicador"=>$indicador, 
+            "consolidados"=>$consolidados,"documentos"=>$documentos,"documentosgrid"=>$documentosgrid , 
+            "descripciones"=>$descripciones,"descripcionesgrid"=>$descripcionesgrid,"nacionalizacion"=>$nacionalizacion,"nacionalizaciongrid"=>$nacionalizaciongrid,
+            "contenedores"=>$contenedores,"contenedoresgrid"=>$contenedoresgrid,
+            "demoras" => $demoras, "demorasgrid" => $demorasgrid, "demoraslinea" => $demoraslinea,
+            "etalevante"=>$etalevante,"etalevantegrid"=>$etalevantegrid,
+            "etalevantelinea"=>$etalevantelinea,"etalevantelineagrid"=>$etalevantelineagrid,
+            "problemasbl"=>$problemasbl,"problemasblgrid"=>$problemasblgrid,
+            "problemasfactura"=>$problemasfactura,"problemasfacturagrid"=>$problemasfacturagrid,
+            "etiquetaProv"=>$etiquetaProv,            
+            "transporte" => $transporte, "transportegrid" => $transportegrid,
+            "declaraciones" => $declaraciones, "declaracionesgrid" => $declaracionesgrid,
+        
+        "bls"=>$bls,"blsgrid"=>$blsgrid, "total" => count($datos),"prom_diashab"=>$prom_diashab,"prom_diaseta"=>$prom_diaseta,"debug"=>$debug,"error"=>$errorInfo);
         //$this->responseArray = array("success" => true, "indicador"=>$indicador, "muelles"=>$count_values, "consolidados"=>$consolidados,"containers"=>$containers,"nacionalizaciongrid"=>$nacionalizaciongrid);
+        /*echo "<pre>";
+        print_r($this->responseArray);
+        echo "</pre>";*/
         $this->setTemplate("responseTemplate");
     }
     
@@ -3621,7 +4664,255 @@ $q = Doctrine::getTable("InoMaestraAdu")
         $this->setTemplate("responseTemplate");
     }
     
+    public function executeDatosIdgcolmas(sfWebRequest $request)
+    {
+        $tipo = $request->getParameter("tipo");
+        $fecha1 = $request->getParameter("fecha1");
+        $fecha2 = $request->getParameter("fecha2");
+        
+        $eta1 = $request->getParameter("eta1");
+        $eta2 = $request->getParameter("eta2");
+
+        
+        $con = Doctrine_Manager::getInstance()->getConnection('master');
+$q = Doctrine::getTable("InoMaestraAdu")
+                            ->createQuery("m")
+                            //->select("c.*,t.ca_factura") 
+                            ->distinct()
+                            ->select("DISTINCT(m.ca_referencia),dt.ca_consolidado,m.ca_analista ,m.ca_fchlevante,m.ca_fchenttransportador,m.ca_fchentrcarpfacturacion")
+                            ->leftJoin("m.AduFalaDetControl dt")
+                            ->where("ca_idcliente = ?  ",  array("900017447") )//nit cliente falabella                            
+                            ->addOrderBy( "m.ca_referencia,dt.ca_consolidado " )
+                            ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+
+
+
+
+        if($fecha1!="" && $fecha2!="")
+        {
+            //$q->addWhere("ca_fchlevante BETWEEN ? AND ?  ",  array($fecha1,$fecha2) );
+            $where=" and t.ca_fchlevante BETWEEN '$fecha1' AND '$fecha2'";
+        }
+        
+        if($eta1!="" && $eta2!="")
+        {
+            //$q->addWhere("ca_fcheta BETWEEN ? AND ?  ",  array($eta1,$eta2) );
+            $where.=" and t.ca_fcheta BETWEEN '$eta1' AND '$eta2'";
+        }
+        
+        $sql="SELECT distinct(t.ca_referencia) AS ca_referencia, t.ca_analista , t.ca_fchlevante , t.ca_fchenttransportador, t.ca_fchentrcarpfacturacion , 
+            coalesce(a.ca_consolidado,b.ca_consolidado) AS ca_consolidado,t.ca_fcheta, coalesce(a.ca_fchdescripciones,b.ca_fchdescripciones) AS ca_fchdescripciones, 
+            t.ca_fchsiga, t.ca_fchmayordoc,t.ca_analista,t.ca_fchpago
+
+        FROM tb_brk_maestra t 
+        LEFT JOIN aduana.tb_fal_det_control a ON t.ca_referencia = a.ca_referencia 
+        LEFT JOIN aduana.tb_fal_det_control_aereo b ON t.ca_referencia = b.ca_referencia 
+        WHERE
+            (t.ca_idcliente = '900017447'   $where)
+        ORDER BY t.ca_referencia,coalesce(a.ca_consolidado,b.ca_consolidado)";
+
+        /*$q = Doctrine::getTable("AduFalaDetControl")
+                            ->createQuery("c")
+                            ->select("c.ca_referencia,ic.ca_idcosto, ic.ca_neta, ic.ca_venta,cos.ca_costo")
+                            ->innerJoin("c.AduFalaCabControl f")
+                            ->innerJoin("c.InoCostosAdu ic")
+                            ->innerJoin("ic.Costo cos")
+                            ->addOrderBy( "c.ca_referencia,ic.ca_idcosto " )
+                            ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+        
+                if($fecha1!="" && $fecha2!="")
+        {
+            $q->addWhere("ca_fchlevante BETWEEN ? AND ?  ",  array($fecha1,$fecha2) );
+        }
+        
+        if($eta1!="" && $eta2!="")
+        {
+            $q->addWhere("f.ca_fecha BETWEEN ? AND ?  ",  array($eta1,$eta2) );
+        }*/
+
+//        $debug=$q->getSqlQuery();
+//        $datos=$q->execute();
+
+        $debug=$sql;
+        $st = $con->execute($sql);
+        $datos = $st->fetchAll(Doctrine_Core::FETCH_ASSOC);
+        //echo "<pre>";print_r($datos);echo "</pre>";
+        $columnas=array();
+        $columnas["zreferencia"]=array("name"=>"Do","dataindex"=>"zreferencia","summaryType"=>'count');
+        $columnas["zconsolidado"]=array("name"=>"Consolidado","dataindex"=>"zconsolidado","summaryType"=>'count',"type"=>"string");
+        $columnas["zcoordinador"]=array("name"=>"Coordinador","dataindex"=>"zcoordinador","summaryType"=>'');
+        $columnas["zdoccompletos"]=array("name"=>"Doc completos","dataindex"=>"zdoccompletos","summaryType"=>'');
+        $columnas["zfchlevante"]=array("name"=>"Levante","dataindex"=>"zfchlevante","summaryType"=>'');
+        $columnas["zfchenttransportador"]=array("name"=>"Entrega Mercancia","dataindex"=>"zfchenttransportador","summaryType"=>'');
+        $columnas["zfchentrcarpfacturacion"]=array("name"=>"Ent Carpeta a Fact","dataindex"=>"zfchentrcarpfacturacion","summaryType"=>'');
+        $columnas["zfchpago"]=array("name"=>"Pago","dataindex"=>"zfchpago","summaryType"=>'');
+        $datosJ=array();
+        foreach($datos as $d)
+        {
+            
+            $fechatmp=$d["ca_fchdescripciones"];
+            
+            switch(Utils::compararFechas($fechatmp, $d["ca_fcheta"]))
+            {               
+                case "-1":
+                    $fechatmp=$d["ca_fcheta"];
+                break;
+            }
+            
+            switch(Utils::compararFechas($fechatmp, $d["ca_fchsiga"]))
+            {
+                case "-1":
+                    $fechatmp=$d["ca_fchsiga"];
+                break;
+            }
+            
+            switch(Utils::compararFechas($fechatmp, $d["ca_fchmayordoc"]))
+            {                
+                case "-1":
+                    $fechatmp=$d["ca_fchmayordoc"];
+                break;
+            }
+            //$fechatmp=$c["ca_fchdescripciones"];
+            /*switch(Utils::compararFechas($fechatmp, $d["ca_fchdescripciones"]))
+            {                
+                case "-1":
+                    $fechatmp=$c["ca_fchdescripciones"];
+                break;
+            }*/
+            
+            $datosJ[]=array(
+                "zreferencia"=>$d["ca_referencia"],
+                "zconsolidado"=>$d["ca_consolidado"],
+                "zcoordinador"=>$d["ca_analista"],
+                "zdoccompletos"=>$fechatmp,                 
+                "zfchlevante"=>$d["ca_fchlevante"],
+                "zfchenttransportador"=>$d["ca_fchenttransportador"],
+                "zfchentrcarpfacturacion"=>$d["ca_fchentrcarpfacturacion"],
+                "zfchpago"=>$d["ca_fchpago"]
+                    );
+            /*$datosJson[$d["m_ca_referencia"]][$d["dt_ca_consolidado"]]=array(
+                "consolidado"=>$d["dt_ca_consolidado"],
+                "coordinador"=>$d["m_ca_coordinador"],
+                "fchlevante"=>$d["m_ca_fchlevante"],
+                "fchenttransportador"=>$d["m_ca_fchenttransportador"],
+                "fchentrcarpfacturacion"=>$d["m_ca_fchentrcarpfacturacion"]
+                    );*/
+            /*if(!isset($columnas[$d["dt_ca_consolidado"]]))
+            {
+                $columnas["z".$d["ic_ca_idcosto"]]=array("name"=>utf8_encode($d["cos_ca_costo"]),"dataindex"=>"z".$d["ic_ca_idcosto"],"summaryType"=>'sum');
+            }*/
+        }
+        //$columnas["zpropio"]=array("name"=>"Propio","dataindex"=>"zpropio","summaryType"=>'sum');
+        //$columnas["ztercero"]=array("name"=>"Tercero","dataindex"=>"ztercero","summaryType"=>'sum');
+        //echo "<pre>";print_r($columnas);echo "</pre>";
+        
+        
+        /*foreach($datosJson as $r=>$d)
+        {
+            $costo=null;            
+            $costo["zreferencia"]=$r;
+            foreach($d as $c)
+            {                
+                    $costo["z".$c["costo"]]=round(($c["neta"]!="")?$c["neta"]:"0");
+            }
+            //echo "<pre>";print_r($costo);echo "</pre>";
+            $datos[]=$costo;
+        }*/
+        
+        //echo "<pre>";print_r($columnas);echo "</pre>";
+
+        $this->responseArray = array("success" => true, "datos" => $datosJ, "columnas" =>$columnas ,"total" => count($datosJ),"debug"=>$debug);
+        //$this->responseArray = array("success" => true, "indicador"=>$indicador, "muelles"=>$count_values, "consolidados"=>$consolidados,"containers"=>$containers,"nacionalizaciongrid"=>$nacionalizaciongrid);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeRefAduanaExpoExt5(sfWebRequest $request)
+    {
     
+    }
     
+    public function executeGuardarReferenciaAduana(sfWebRequest $request)
+    {
+        $conn = Doctrine::getTable("InoMaestraAdu")->getConnection();        
+        $conn->beginTransaction();
+        //try 
+//        {
+
+            $idreferencia = $request->getParameter("comboReferencia");
+            
+            $referencia = Doctrine::getTable("InoMaestraAdu")->find($idreferencia);
+            
+            if($referencia){
+                
+                $datos = json_decode(utf8_encode($referencia->getCaDatos()));
+                $idreporte = $request->getParameter("comboReporte");                
+                $reporte = Doctrine::getTable("Reporte")->find($idreporte);                
+                
+                if($reporte->getCaConsecutivo() != $datos->consecutivo){
+                    $q = new Doctrine_RawSql();
+
+                    $q->select("{adu.ca_referencia}");
+                    $q->from("tb_brk_maestra adu
+                            inner join (
+                                SELECT ca_referencia, case when count(ca_datos->'idreporte') >0 then true else false end
+                                from tb_brk_maestra
+                                where (ca_datos->'consecutivo')::text = '\"".$reporte->getCaConsecutivo()."\"' group by ca_referencia) v ON v.ca_referencia = adu.ca_referencia");
+
+                    $q->limit(1);
+                    $q->addComponent('adu', 'InoMaestraAdu adu');
+
+    //                echo $q->getSqlQuery();
+    //                exit;
+    //                
+                    $refs = $q->execute();
+}
+                
+                if(count($refs) == 0){                
+                    
+                    $datos->idagencia = $request->getParameter("agenciaad");
+                    $datos->aplicaidg = $request->getParameter("aplicaidg");
+                    $datos->modalidad = $request->getParameter("ca_modalidad");
+                    $datos->idreporte = $idreporte;
+                    $datos->consecutivo = $reporte->getCaConsecutivo();
+                    $referencia->setCaTransporte(utf8_decode($request->getParameter("fmTransporte")));
+                    $referencia->setCaDatos(json_encode($datos));
+                    $referencia->save($conn);
+                    $conn->commit();
+                    $this->responseArray = array("success"=>true, "msg"=>utf8_decode("Los datos de la referencia han sido guardados correctamente"));
+                }else{
+                    $this->responseArray = array("success"=>false, "msg"=> utf8_encode("No es posible guardar. El reporte ya fué usado en otra referencia. ".$refs[0]->getCaReferencia()));
+                }
+            }else{
+                $this->responseArray = array("success"=>false, "msg"=> utf8_encode("No se encontró la referencia seleccionada"));
+            }
+            
+            
+//        }catch(Exception $e){
+//            $this->responseArray = array("success"=>false, "errorInfo"=> utf8_encode($e->getMessage()));
+//        }
+        $this->setTemplate("responseTemplate");
+    }
+    
+//    public function executeDatosReferenciaAduana(sfWebRequest $request)
+//    {   
+//        $idreferencia = $request->getParameter("idreferencia");
+//        $referencia = Doctrine::getTable("InoMaestraAdu")->find($idreferencia);
+//        
+//        $datos = json_decode(utf8_encode($referencia->getCaDatos()));
+//        $data["idagencia"] = $datos->idagencia;
+//        $data["aplicaidg"] = $datos->aplicaidg;
+//        $data["id_modalidad"] = $datos->modalidad;
+//        if ($datos->modalidad) {
+//            $data["ca_modalidad"] = utf8_encode($datomod[0]->getCaValor());
+//        } 
+//        if (is_numeric($datos->idlinea)) {
+//            $agencia = Doctrine::getTable("Ids")->find(utf8_encode($datos->idlinea));
+//            if($agencia)
+//                $data["agencia"] = utf8_encode($agencia->getCaNombre());
+//        }
+//        
+//        $this->responseArray = array("success" => true, "data" => $data);
+//        $this->setTemplate("responseTemplate");
+//    }
     
 }
