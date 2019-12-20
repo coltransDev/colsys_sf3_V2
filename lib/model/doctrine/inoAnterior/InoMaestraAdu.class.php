@@ -12,4 +12,75 @@
  */
 class InoMaestraAdu extends BaseInoMaestraAdu
 {
+    
+    public function getRequiereIdgAduana($idetapa){
+        
+        $datos = json_decode(utf8_encode($this->getCaDatos()));
+        
+        if($datos->impoexpo == Constantes::EXPO){
+            switch($datos->idg){
+                case "SI":
+                case "Si":                    
+                case "FACTURA AL AGENTE":
+                    if($idetapa=="EEETD")
+                        return false;
+                    else
+                        return true;
+                    break;
+                case "COLLECT":
+                    if($idetapa=="EEETD")
+                        return true;
+                    else
+                        return false;
+                    break;
+                case "NO":
+                    return false;
+                    break;
+                case "":
+                    return true;
+                    break;
+            }
+        } else if($datos->impoexpo == Constantes::TRIANGULACION) {
+            return false;
+        } else{
+            return true;
+        }
+    }
+    
+    public function generarIdg($options, $conn){        
+        
+        $datos = json_decode($this->getCaDatos());
+        $options["fecha"] = $options["fchend"] = Utils::parseDate($options["fecha"], 'Y-m-d');                
+        $options["idcaso"] = $datos->consecutivo;
+        
+        if($datos->impoexpo == Constantes::EXPO){
+        
+            $master = new InoMaster();
+            $master->setCaReferencia($this->getCaReferencia());
+            
+            $infoeventos = $master->getInfoEventos($datos->impoexpo);
+            
+            $options["impoexpo"] = $datos->impoexpo;
+            $options["eventos"] = $infoeventos["tb_eventos"];
+            $options["fchini"] = $master->getFchUltimoEvento($datos->impoexpo);
+            
+            if($options["fchini"] == null)
+                return array("cumplio"=>"No", "mensaje"=>"La referencia no tiene eventos creados. No es posible calcular el indicador");                                
+        }
+
+        $idgConfig = $this->getIdgAduana($options);        
+        $calculo = $idgConfig->calcularIndicador($options);        
+        $cumple = $idgConfig->evaluarIndicador($calculo["estado"], $calculo["val"], $options, $conn);
+        
+        return $cumple;
+    }
+    
+    function getIdgAduana($options){
+        
+        $options["fecha"] = Utils::parseDate($options["fecha"], 'Y-m-d');                
+        $options["idsucursal"] = $this->getUsuario()->getSucursal()->getCaIdsucursal();
+        $options["idempresa"] = Constantes::IDCOLMAS;
+        
+        return IdgTable::getNuevoIndicador($options);        
+    }
 }
