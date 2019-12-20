@@ -1050,20 +1050,14 @@ class Reporte extends BaseReporte {
         if ($inoCliente) {
             return $inoCliente->getInoMaster()->getCaReferencia();
         } else {
-            return "Informacion No disponible";
-            /*if ($this->getCaImpoexpo() == Constantes::IMPO && $this->getCaTransporte() == Constantes::MARITIMO) {
-                $inoclientesSea = $this->getInoClientesSea();
-                if ($inoclientesSea) {
-                    return $inoclientesSea->getCaReferencia();
+            if($this->getRepExpo()){
+                if($this->getRepExpo()->getEsAduana()){
+                    return $this->getRepExpo()->getReferenciaAduana();
                 }
             }
-            if ($this->getCaImpoexpo() == Constantes::IMPO && $this->getCaTransporte() == constantes::AEREO) {
-                $inoclientesAir = $this->getInoClientesAir();
-                if ($inoclientesAir) {
-                    return $inoclientesAir->getCaReferencia();
-                }
-            }*/
         }
+        
+        return "Información no disponible";
     }
 
     /*
@@ -1169,6 +1163,14 @@ class Reporte extends BaseReporte {
         {
             $data = array();            
             $data["ref1"] = $this->getCaConsecutivo();        
+            $archivos = ArchivosTable::getArchivosActivos($data);
+            
+        }
+        if($t==3)
+        {
+            $data = array();            
+            $data["ref1"] = $this->getRepExpo()->getReferenciaAduana();        
+            $data["ref2"] = "Colmas";        
             $archivos = ArchivosTable::getArchivosActivos($data);
             
         }
@@ -1448,8 +1450,12 @@ class Reporte extends BaseReporte {
     }
 
     public function getDirectorioBaseDocs($filename) {
+        $t = 1;
         
-        $archivos = $this->getFilesGestDoc();
+        if($this->getRepExpo()->getEsAduana() && $this->getRepExpo()->getReferenciaAduana()){
+            $t=3;
+        }
+        $archivos = $this->getFilesGestDoc($t);
             
         if($archivos){
             foreach($archivos as $file){
@@ -1470,8 +1476,14 @@ class Reporte extends BaseReporte {
      */
     public function getArchivo($filename) {
         
-        $archivos = $this->getFilesGestDoc();
+        $t = 1;
             
+        if($this->getRepExpo()->getEsAduana() && $this->getRepExpo()->getReferenciaAduana()){
+            $t = 3;
+        }
+        
+        $archivos = $this->getFilesGestDoc($t);
+        
         if($archivos){
             foreach($archivos as $file){
                 
