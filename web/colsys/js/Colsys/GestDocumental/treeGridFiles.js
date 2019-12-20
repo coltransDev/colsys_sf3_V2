@@ -273,6 +273,9 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
                             id = this.idmaster;
                         } else if (this.idcliente) {
                             id = this.idcliente;
+                        }else
+                        {
+                            id="0";
                         }
 
                         winformsubirarchivos = new Ext.Window({
