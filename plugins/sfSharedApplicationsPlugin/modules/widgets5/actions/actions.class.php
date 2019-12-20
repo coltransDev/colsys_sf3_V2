@@ -3911,6 +3911,7 @@ class widgets5Actions extends sfActions {
                 $refs[$k]["d_ca_puerto"] = utf8_encode($refs[$k]["d_ca_puerto"]);                
                 $refs[$k]["m_ca_observaciones"] = utf8_encode($refs[$k]["m_ca_observaciones"]);                
                 $refs[$k]["id_modalidad"] = $datos->modalidad;   
+                $refs[$k]["m_ca_datos"] = json_encode(utf8_encode($refs[$k]["m_ca_datos"]));
                 
                 $caso = "CU011";
                 $datomod = ParametroTable::retrieveByCaso($caso, null, null, $datos->modalidad);
@@ -3919,13 +3920,13 @@ class widgets5Actions extends sfActions {
                 if ($datos->modalidad) {
                     $refs[$k]["ca_modalidad"] = utf8_encode($datomod[0]->getCaValor());
                 } 
-                $refs[$k]["idagencia"] = utf8_encode($datos->idagencia);
-                if (is_numeric($datos->idagencia)) {
-                    $agencia = Doctrine::getTable("Ids")->find($datos->idagencia);
+                $refs[$k]["idagencia"] = utf8_encode($datos->agencia);
+                if (is_numeric($datos->agencia)) {
+                    $agencia = Doctrine::getTable("Ids")->find($datos->agencia);
                     if($agencia)
                         $refs[$k]["agencia"] = utf8_encode($agencia->getCaNombre());
                 }
-                $refs[$k]["aplicaidg"] = utf8_encode($datos->aplicaidg);
+                $refs[$k]["aplicaidg"] = utf8_encode($datos->idg);
                 $refs[$k]["idreporte"] = utf8_encode($datos->idreporte);
                 $refs[$k]["consecutivo"] = utf8_encode($datos->consecutivo);
                 
