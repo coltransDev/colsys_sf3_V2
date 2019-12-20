@@ -32,6 +32,8 @@ class IdgTable extends Doctrine_Table {
         $sigla = $options["sigla"];
         $impoexpo = $options["impoexpo"];
         $transporte = $options["transporte"];
+        $modalidad = $options["modalidad"];
+        $idempresa = $options["idempresa"];
         
         try {
             $q = Doctrine::getTable("IdgConfig")
@@ -57,7 +59,14 @@ class IdgTable extends Doctrine_Table {
                 $q->addWhere("i.ca_impoexpo = '$impoexpo'");                
                 if($transporte){
                     $q->addWhere("i.ca_transporte = '$transporte' OR ca_transporte is NULL");
+                    if($modalidad){
+                        $q->addWhere("i.ca_modalidad = '$modalidad' OR ca_modalidad is NULL");
+                    }
                 }
+            }
+        
+            if($idempresa){
+                $q->addWhere("i.ca_idempresa = ?", $idempresa);
             }
         
             $q->limit(1);                   
@@ -67,39 +76,6 @@ class IdgTable extends Doctrine_Table {
             
         } catch (Exception $exc) {
             return($exc->getMessage());
-        }
-    }
-    
-    static public function registrarIdg(array $options){
-        
-        $registro = Doctrine::getTable($options["tabla"])->find($options["value"]);
-        
-        $conn = Doctrine::getTable("InoComprobante")->getConnection();
-        $conn->beginTransaction();
-        
-        try {
-            $datos = json_decode(utf8_encode($registro->getCaDatos()),1);
-            $sigla = $options["idg_sigla"];            
-            $idgEst = $options["estado"];
-            $idgVal = $options["indicador"];
-            
-            $datos["idg"][$sigla]["valor"] = $idgVal;
-            $datos["idg"][$sigla]["estado"] = $idgEst;
-            if($idgEst==0){
-                $datos["idg"][$sigla]["idexclusion"] = 0;
-            }
-
-            $datosJson = json_encode($datos);            
-            $registro->setCaDatos($datosJson);
-            $registro->save($conn);
-            
-            $conn->commit();
-            
-            return array("success" => true, "consecutivo" => $registro->getCaConsecutivo(), "errorInfo"=>"");            
-            
-        } catch (Exception $ex) {
-            $conn->rollback();
-            return array("success" => false, "consecutivo" => $registro->getCaConsecutivo(), "errorInfo"=>$ex->getMessage());            
         }
     }
 }
