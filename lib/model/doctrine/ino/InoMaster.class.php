@@ -229,6 +229,25 @@ class InoMaster extends BaseInoMaster {
             $email = null;
         return $email;
     }
+    
+    public function getUltimoEventoCierre() {
+        $evento = array();
+        $log = Doctrine::getTable("UsuarioLog")
+            ->createQuery("l")
+            ->select("l.*")                        
+            ->where("l.ca_url = ? ", $this->getCaIdmaster())
+            ->orderBy("ca_id DESC")
+            ->limit(1)
+            ->fetchOne();
+        if ($log) {
+            $evento = array(
+                "evento" => $log->getCaEvent(),
+                "usuario" => $log->getCaLogin(),
+                "fecha" => $log->getCaFchevento()
+            );
+        }
+        return $evento;
+    }
 
     static public function getUltEmailR($referencia) {
 
@@ -432,16 +451,16 @@ class InoMaster extends BaseInoMaster {
         // }
     }
 
-    public function getFchUltimoEvento(){        
+    public function getFchUltimoEvento($impoexpo){        
         
         $datosMaster = json_decode($this->getCaDatos());            
-        $eventos = $this->getInfoEventos();
+        $eventos = $this->getInfoEventos($impoexpo);
 
         $ult_mem = $eventos["ult_mem"];
         $sae_mem = $eventos["sae_mem"];
         $rad_mem = $eventos["rad_mem"];
 
-        $nomsia = $datosMaster->agencia == "83003960"?$datosMaster->agencia:null;
+        $nomsia = $datosMaster->agencia == "830003960"?$datosMaster->agencia:null;
         if ($nomsia) {
             $matriz_eventos["intervalo_1"]['Rec.Último Documento'] = $ult_mem;
             $matriz_eventos["intervalo_1"]['SAE'] = $sae_mem;
@@ -452,15 +471,14 @@ class InoMaster extends BaseInoMaster {
                 $matriz_eventos["intervalo_1"]['Rec.Último Documento'] = $ult_mem;
 }
             $matriz_eventos["intervalo_1"]['Radicación Documento de Transporte'] = $rad_mem;
-        }                               
-//        print_r($eventos)."<br/>";
-//        print_r($matriz_eventos);
-//        exit();
-        return $matriz_eventos["intervalo_1"]['Rec.Último Documento']!=null?$matriz_eventos["intervalo_1"]['Rec.Último Documento']:null;                
+        }
         
+        return $matriz_eventos["intervalo_1"]['Rec.Último Documento']!=null?$matriz_eventos["intervalo_1"]['Rec.Último Documento']:null;
     }
     
-    public function getInfoEventos(){
+    public function getInfoEventos($impoexpo){
+        
+        $maestra = $impoexpo == Constantes::EXPO?"tb_brk_maestra":"ino.tb_master";
         
         $conn = Doctrine_Manager::getInstance()->getConnection('master');
         $sql = "
@@ -469,7 +487,7 @@ class InoMaster extends BaseInoMaster {
                 LEFT OUTER JOIN (
                     SELECT DISTINCT ca_referencia as ca_referencia_aed, ca_idevento, min(ca_fechadoc) as ca_fechadoc 
                     FROM tb_expo_aedex group by ca_referencia, ca_idevento) aed ON (aed.ca_referencia_aed = ext.ca_referencia and aed.ca_idevento = ext.ca_idevento)
-                INNER JOIN (select ca_referencia, (ca_datos->>'modalidad')::int as ca_tipoexpo from ino.tb_master) reg ON reg.ca_referencia = ext.ca_referencia
+                INNER JOIN (select ca_referencia, (ca_datos->>'modalidad')::int as ca_tipoexpo from $maestra) reg ON reg.ca_referencia = ext.ca_referencia
                 INNER JOIN tb_parametros prm ON (prm.ca_casouso = 'CU011' and reg.ca_tipoexpo = prm.ca_identificacion)  
                 INNER JOIN tb_parametros pre ON (pre.ca_casouso = prm.ca_valor2 and pre.ca_identificacion = ext.ca_idevento)
             WHERE ca_realizado = 1 and ext.ca_referencia = '".$this->getCaReferencia()."'";
@@ -539,5 +557,19 @@ class InoMaster extends BaseInoMaster {
         } else{
             return true;
         }
+    }
+    
+    public function getFacturasIngreso(){
+        
+        return Doctrine::getTable("InoComprobante")                    
+                    ->createQuery("c")
+                    ->select("*")
+                    ->innerJoin("c.InoHouse h")
+                    ->innerJoin("c.InoTipoComprobante t")                    
+                    ->addWhere("h.ca_idmaster = ? ", $this->getCaIdmaster())
+                    ->addWhere("t.ca_tipo =?", "F")
+                    ->addWhere("c.ca_fchanulado is null")
+                    ->addWhere("c.ca_estado in (5)")
+                    ->execute();
     }
 }
