@@ -49,6 +49,8 @@ InoMaestraAdu:
     ca_nitems : integer
     ca_fchmensajeria: date
     ca_transporte: string
+    ca_reconocimiento: string
+    ca_datos: string
   relations:
     Origen:
       local: ca_origen
@@ -610,4 +612,49 @@ AduFechaCierre:
       local: ca_idcliente
       foreign: ca_idcliente
       type: one  
-  
+
+InoViIndicadoresExpAdu:
+    generatePath: ino
+    tableName: aduana.vi_indicadores_exp_adu
+    columns:
+      ca_ano: integer
+      ca_mes: string
+      ca_idreporte: integer
+      ca_consecutivo: string
+      ca_version: integer
+      ca_sucursal: string
+      ca_traorigen: string
+      ca_ciudestino: string      
+      ca_impoexpo: string
+      ca_transporte: string
+      ca_referencia:
+        type: string
+        primary: true
+      ca_fchllegada: date
+      ca_aplicaidg: string            
+      ca_idcliente: integer
+      ca_compania: string      
+      ca_fchfactura: date      
+      ca_factura: string
+      ca_id: integer
+      ca_idindicador: integer
+      ca_idgval: string
+      ca_idgest: boolean
+      ca_idgexc: integer
+      ca_exclusion: string
+      ca_observaciones: string
+      ca_eventos: string
+      ca_fchrecibo: date
+      ca_fchenvio: date
+      ca_usuenvio: string
+      ca_idetapa: string
+      ca_etapa: string   
+    relations:
+      Reporte:
+        local: ca_idreporte
+        foreign: ca_idreporte
+        type: one
+      Usuario:
+        local: ca_usuario
+        foreign: ca_login
+        type: one
