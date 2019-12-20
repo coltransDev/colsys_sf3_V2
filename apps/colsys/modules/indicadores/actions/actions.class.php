@@ -66,7 +66,7 @@ class indicadoresActions extends sfActions{
        $indicadores = Doctrine::getTable("Idg")
                 ->createQuery("i")
                 ->innerJoin("i.IdgProcesos p")
-//                ->where("i.ca_activo = true")
+                ->where("i.ca_activo = true")
                 ->orderBy("p.ca_nombre ASC, i.ca_nombre ASC")
                 ->execute();
         
@@ -151,6 +151,39 @@ class indicadoresActions extends sfActions{
                     ->orderBy("ca_mes ASC")
                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
                 break;
+            case 12://Oportunidad en la Facturación Marítima
+            case 13://Oportunidad en la Facturación Aérea
+                $q = Doctrine::getTable("InoViIndicadoresFact")                
+                    ->createQuery("v")
+                    ->select("*")                
+                    ->andWhereIn("ca_ano", $arrayAno)
+                    ->andWhereIn("ca_mes", $arrayMes)
+                    ->orderBy("ca_mes")
+                    ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+                
+                if($indicador->getCaTransporte() == Constantes::MARITIMO){
+                    $q->andWhere("ca_exclusion IS DISTINCT FROM 'Contenedores'");
+                    $q->andWhere("ca_exclusion IS DISTINCT FROM 'OTM/DTA'");
+                }
+                
+                $exclusiones = array(
+                    "Facturación al Agente", 
+                    "Facturacion al Agente", 
+                    "Reemplazo Factura", 
+                    "Cierre contable clientes", 
+                    "Referencia Particulares", 
+                    "Acuerdos Comerciales", 
+                    "Costos de origen no informados a tiempo",
+                    "Contenedores",
+                    "OTM/DTA",
+                    "Cierre contable de Clientes",
+                    "Transición SAP",
+                    "Falla en sistema de facturación",
+                    "Requisitos Cliente",
+                    "Cliente no creado en sistema contable"
+                );
+                $filtroUsuario = "ca_usuenvio";
+                break;
             case 35: //Oportunidad en el envío de las comunicaciones marítimas
                 $q = Doctrine::getTable("InoViIndicadoresSea")                
                     ->createQuery("v")
@@ -184,14 +217,13 @@ class indicadoresActions extends sfActions{
                 );
                 $filtroUsuario = "ca_usuenvio";
                 break;
-            case 12://Oportunidad en la Facturación Marítima
-            case 13://Oportunidad en la Facturación Aérea
-                $q = Doctrine::getTable("InoViIndicadoresFact")                
+            case 40: // Oportunidad en las exportaciones aéreas y marítimas Colmas
+                $q = Doctrine::getTable("InoViIndicadoresExpAdu")                
                     ->createQuery("v")
                     ->select("*")                
                     ->andWhereIn("ca_ano", $arrayAno)
                     ->andWhereIn("ca_mes", $arrayMes)
-                    ->orderBy("ca_mes")
+                    ->orderBy("ca_mes ASC")
                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
                 
                 if($indicador->getCaTransporte() == Constantes::MARITIMO){
@@ -274,40 +306,37 @@ class indicadoresActions extends sfActions{
                 $compania = utf8_encode($d["v_ca_compania"]);
                 $observaciones = $d["v_ca_observaciones"];
                 
-//                echo $d["v_ca_fchenvio"]."<br/>";
-                                
-                
                 switch($idg){
                     case 7://Oportunidad en confirmación de llegada de la carga al cliente (Marítimo)
-//                        $options["fchini"] = $d["v_ca_fchconfirmacion"];
-//                        $options["fchend"] = $d["v_ca"];                         
                         $options["fecha"] = Utils::parseDate($d["v_ca_fchconfirmacion"], 'Y-m-d');
-//                        $diff = $indicador->getDifference($options);
-//                        $idgval = $diff["val"];
-//                        $idgest = $diff["estado"];
-//                        $dataGrafica[] = array($d["v_ca_usuenvio_lleg"] => array($mes => $idgval));
-//                        break;
                         $compania = utf8_encode($d["v_ca_compania"]);                                               
                         $idgval = $d["v_ca_idgval"];  
                         $idgest = $d["v_ca_idgest"];                        
 
                         $dataGrafica[] = array($d["v_ca_usuenvio"] => array($mes => $idgval));
                         break;
+                    case 12://Oportunidad en la Facturación Marítima
+                    case 13://Oportunidad en la Facturación Aérea
+                        $compania = utf8_encode($d["v_ca_compania_fact"]);                       
+                        $options["fecha"] = Utils::parseDate($d["v_ca_fchfactura"], 'Y-m-d');
+                        $idgval = $d["v_ca_idgval"];  
+                        $idgest = $d["v_ca_idgest"];                        
+
+                        if ($d["v_ca_transporte"] == 'Marítimo') {
+                            $dataGrafica[] = array($d["v_ca_usuenvio"] => array($mes => $idgval));
+                        } elseif ($d["v_ca_transporte"] == 'Aéreo') {
+                            $dataGrafica[] = array($d["v_ca_usuenvio"] => array($mes => $idgval));
+                        }
+                        break;
                     case 35://Oportunidad en el envío de las comunicaciones marítimas
-                        //$ano = $d["v_ca_ano_seg"];
-                        //$mes = $d["v_ca_mes_seg"];
-                        //$options["fchini"] = $d["v_ca_fchrecibo_seg"];
-                        //$options["fchend"] = $d["v_ca_fchenvio_seg"];   
                         $options["fecha"] = Utils::parseDate($d["v_ca_fchenvio"], 'Y-m-d');
-                        //$diff = $indicador->getDifference($options);
                         $idgval = $d["v_ca_idgval"];  
                         $idgest = $d["v_ca_idgest"];    
                         $dataGrafica[] = array($d["v_ca_usuenvio_seg"] => array($mes => TimeUtils::hourTosec($idgval)));
                         break;
                     case 37:
                     case 38:                    
-                    case 39:
-                        
+                    case 39:                        
                         $master = Doctrine::getTable("InoMaster")->find($d["v_ca_idmaster"]);
                         if(count($master->getFacturasIngreso())== 0){
                             $excluir = true;
@@ -320,28 +349,26 @@ class indicadoresActions extends sfActions{
                         if($d["v_ca_aplicaidg"] == "NO"){
                             $excluir = true;
                         }
-                        //$diff = $indicador->getDifference($options);
                         $idgval = $d["v_ca_idgval"];  
                         $idgest = $d["v_ca_idgest"];    
-                        $dataGrafica[] = array($d["v_ca_usuenvio_seg"] => array($mes => TimeUtils::hourTosec($idgval)));
+                        $dataGrafica[] = array($d["v_ca_usuenvio_seg"] => array($mes => $idgval));
                         break;
-//                    case 39:
-//                        if($d["v_ca_fchrecibo"])
-//                            $options["fecha"] = Utils::parseDate($d["v_ca_fchrecibo"], 'Y-m-d');
-//                        break;
-                    case 12://Oportunidad en la Facturación Marítima
-                    case 13://Oportunidad en la Facturación Aérea
-                        $compania = utf8_encode($d["v_ca_compania_fact"]);                       
-                        $options["fecha"] = Utils::parseDate($d["v_ca_fchfactura"], 'Y-m-d');
-                        $idgval = $d["v_ca_idgval"];  
-                        $idgest = $d["v_ca_idgest"];                        
-
-                        if ($d["v_ca_transporte"] == 'Marítimo') {
-//                            $dataGrafica[] = array($d["v_ca_usuenvio"] => array(substr($d["v_ca_fchllegada"], 5, 2) => $idgval));
-                            $dataGrafica[] = array($d["v_ca_usuenvio"] => array($mes => $idgval));
-                        } elseif ($d["v_ca_transporte"] == 'Aéreo') {
-                            $dataGrafica[] = array($d["v_ca_usuenvio"] => array($mes => $idgval));
+                    case 40:
+                        $inoAdu = Doctrine::getTable("InoMaestraAdu")->find($d["v_ca_referencia"]);
+                        if(count($inoAdu->getInoIngresosAdu())== 0){
+                            $excluir = true;
+                            $d["v_ca_observaciones"] ="Esta referencia aún no tiene facturas de ingreso";
                         }
+                        
+                        if($d["v_ca_fchenvio"])
+                            $options["fecha"] = Utils::parseDate($d["v_ca_fchenvio"], 'Y-m-d');
+                        
+                        if($d["v_ca_aplicaidg"] == "NO"){
+                            $excluir = true;
+                        }
+                        $idgval = $d["v_ca_idgval"];  
+                        $idgest = $d["v_ca_idgest"];    
+                        $dataGrafica[] = array($d["v_ca_usuenvio"] => array($mes => $idgval));
                         break;
                 }
                 
@@ -368,9 +395,6 @@ class indicadoresActions extends sfActions{
                     $avg[$mes][] = $idgval;
                 }
                 
-                //echo $d["v_ca_eventos"]."<br/>";
-                
-
                 $row = array();
                 $row["ca_id"] = $d["v_ca_id"];
                 $row["ca_consecutivo"] = $d["v_ca_consecutivo"];
@@ -398,14 +422,6 @@ class indicadoresActions extends sfActions{
                 $row["ca_fchrecibo"] = $datos["tipodiff"]=="h"?$d["v_ca_fchrecibo"]: Utils::parseDate($d["v_ca_fchrecibo"], "Y-m-d");
                 $row["ca_fchenvio"] = $datos["tipodiff"]=="h"?$d["v_ca_fchenvio"]: Utils::parseDate($d["v_ca_fchenvio"], "Y-m-d");
                 $row["ca_usuenvio"] = $d["v_ca_usuenvio"];
-//                $row["ca_fchconf_lleg"] = $d["v_ca_fchconf_lleg"];
-//                $row["ca_usuenvio_lleg"] = $d["v_ca_usuenvio_lleg"];
-//                $row["ca_obs_lleg"] = $d["v_ca_obs_lleg"];
-                
-//                $row["ca_fchrecibo_seg"] = $d["v_ca_fchrecibo_seg"];
-//                $row["ca_fchenvio_seg"] = $d["v_ca_fchenvio_seg"];
-//                $row["ca_usuenvio_seg"] = $d["v_ca_usuenvio_seg"];
-//                $row["ca_observaciones_seg"] = utf8_encode($d["v_ca_observaciones_seg"]);
                 $row["ca_exclusion"] = utf8_encode($d["v_ca_exclusion"])?utf8_encode($d["v_ca_exclusion"]):null;
                 $row["ca_observaciones"] = $d["v_ca_observaciones"]?utf8_encode($d["v_ca_observaciones"]):null;                
                 $row["ca_idetapa"] = utf8_encode($d["v_ca_idetapa"]);
@@ -415,16 +431,10 @@ class indicadoresActions extends sfActions{
                 $data[] = $row; 
                 $contador++;
             }
-//            echo "<pre>";print_r($options);echo "</pre>";
-//            exit();
             if(!$options["fecha"]){
                 $options["fecha"] = Utils::parseDate(date($ano."-".$mes."-01"), 'Y-m-d');
             }
-//            print_r($options);
-//            exit();
             $infoIdg = IdgTable::getNuevoIndicador($options);            
-            //$idgObj = Doctrine::getTable("idg")->find($idg);
-            
             
             /*Resumen de datos*/
             if ($datos["tipodiff"] == "d") {
@@ -474,8 +484,8 @@ class indicadoresActions extends sfActions{
                         }
                     }
                 }
-
-                sort($serieX);
+                
+                    sort($serieX);
 
                 $fieldsGr[] = array("name"=>"mes");
 
@@ -620,10 +630,7 @@ class indicadoresActions extends sfActions{
         // ------------------TITULO---------------------------------------
         // set font
         $pdf->SetFont('helvetica', 'B', 20);
-//        $width = $pdf->pixelsToUnits(1000); 
-//        $height = $pdf->pixelsToUnits(300);
-//
-//        $resolution= array($width, $height);
+        
         // add a page
         $pdf->AddPage();
         $pdf->Write(0, $titulo, '', 0, 'C', true, 0, false, false, 0);
@@ -653,9 +660,6 @@ class indicadoresActions extends sfActions{
         }
         $pdf->Ln();        
         $pdf->SetFont('');
-         
-//        echo "<pre>";print_r($regHtml);echo "</pre>";
-//        exit();
          
         foreach($registros as $key => $val){
             $i=0;            
