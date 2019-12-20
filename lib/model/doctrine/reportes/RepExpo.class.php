@@ -38,5 +38,32 @@ class RepExpo extends BaseRepExpo
         return "";
 
     }
+    
+    public function getEsAduana( ){
+        
+        if($this->getCaIdsia()==17) { // COLMAS
+            return true;
+        }
+        return false;
+
+    }
+    
+    public function getReferenciaAduana( ){
+        
+        $reporte = $this->getReporte();
+        
+        $rep = Doctrine::getTable("RepExpo")
+                ->createQuery("re")
+                ->select("re.ca_refaduana")
+                ->innerJoin("re.Reporte r")
+                ->where("r.ca_consecutivo = ? AND re.ca_refaduana IS NOT NULL",array($this->getReporte()->getCaConsecutivo()))
+                ->fetchOne();
+        
+        if($rep)
+            return $rep->getCaRefaduana();
+        else
+            return null;
+
+    }
 
 }
