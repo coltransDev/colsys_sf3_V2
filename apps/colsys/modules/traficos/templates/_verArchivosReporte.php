@@ -97,6 +97,43 @@ use_helper("MimeType");
                 echo "</li>";
             }
         }
+        
+        foreach ($archivos3 as $file) {
+            if (!Utils::isImage($file->getCaNombre())) {
+                //$fileIdx = $user->addFile( $file );
+                if (substr($file, -3, 3) == ".gz") {
+                    $nombreArchivo = substr($file->getCaNombre(), 0, strlen($file->getCaNombre()) - 3);
+                } else {
+                    $nombreArchivo = $file->getCaNombre();
+                }
+                $tagIdg = '<p></p>';
+
+                $tipodoc = $file->getTipoDocumental();                                
+
+                if(strpos($tipodoc->getCaDocumento(), "Factura") !== false && $file->getCaObservaciones()=="Enviado"){                    
+                    $refAduana = Doctrine::getTable("InoMaestraAdu")->find($file->getCaRef1());
+
+                    if($refAduana){
+                        $datosAduana = json_decode(utf8_encode($refAduana->getCaDatos()));
+                        
+                        $indicadores = new InoIndicadores();                        
+                        $idg = $indicadores->getResultadoIndicador($datosAduana->consecutivo);
+                        
+                        if($idg["sucess"] == true){
+                            $tagIdg = utf8_decode($idg["tag"]); 
+                        }
+                    }
+                }
+                ?>
+                <li>
+                    <?= mime_type_icon(basename($nombreArchivo)) ?>                     
+                    <a href="/gestDocumental/verArchivo?id_archivo=<?=$file->getCaIdarchivo()?>"  target="_blank"><?= basename($nombreArchivo) ?></a>&nbsp;<?=$tagIdg?>
+                    
+                </li>
+                <?
+                echo "</li>";
+            }
+        }
     ?>
 </ul>
 <?

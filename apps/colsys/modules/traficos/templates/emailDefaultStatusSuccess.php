@@ -252,6 +252,18 @@ $modo = $sf_data->getRaw("modo");
                     </tr>
                 <?
                 }
+            }else{
+                if($reporte->getCaImpoexpo() == Constantes::EXPO){
+                    $repexpo = $reporte->getRepExpo();
+                    if ($repexpo->getEsAduana()) { // AGENCIA DE ADUANA COLMAS
+                        ?>
+                        <tr>
+                            <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Referencia</b></td>
+                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $repexpo->getReferenciaAduana() ?></td>
+                        </tr>
+                        <?
+                    }
+                }
             }
             if ($muelle != "") {
                 ?>

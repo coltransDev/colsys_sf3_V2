@@ -606,18 +606,40 @@ class traficosActions extends sfActions {
                         $idcomprobante = $datosFile->idcomprobante;
 
                         $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
-                        
+
                         if($comprobante->getRequiereIdg()){
                             $options["fecha"] = date("Y-m-d");                            
                             $options["idexclusion"] = $request->getParameter("exclusiones_idg");                            
                             $options["observaciones"] = $request->getParameter("observaciones_idg");
                             $idg = $comprobante->generarIdg($options, $conn);
-                            
+
                             $bindValues["idgfactura"] = $idg;
                             if($bindValues["idgfactura"]["cumplio"]!="No"){                            
                                 $conn->commit();
                             }
                         }else{
+                            $conn->rollback();
+                        }
+                    } else if ($file->getCaRef2() == "Colmas") { //Colmas
+                            
+                        $refAduana = Doctrine::getTable("InoMaestraAdu")->find($file->getCaRef1());
+
+                        if ($refAduana->getRequiereIdgAduana()) {
+                            $conn = Doctrine::getConnectionByTableName("InoIndicadores");
+                            $conn->beginTransaction();
+
+                            $options["fecha"] = date("Y-m-d");
+                            $options["idexclusion"] = $request->getParameter("exclusiones_idg");
+                            $options["observaciones"] = $request->getParameter("observaciones_idg");
+                            $idg = $refAduana->generarIdg($options, $conn);
+
+                            $bindValues["idgfactura"] = $idg;
+                            if ($bindValues["idgfactura"]["cumplio"] != "No") {                                
+                                $file->setCaObservaciones("Enviado");                                
+                                $file->save($conn);        
+                                $conn->commit();
+                            }
+                        } else {
                             $conn->rollback();
                         }
                     }
@@ -717,6 +739,7 @@ class traficosActions extends sfActions {
       $this->files = $this->reporte->getFiles();      
       $this->archivos = $this->reporte->getFilesGestDoc();
       $this->archivos2 = $this->reporte->getFilesGestDoc(2);
+      $this->archivos3 = $this->reporte->getFilesGestDoc(3);
 
       $this->usuario = Doctrine::getTable("Usuario")->find($this->getuser()->getUserId());
 

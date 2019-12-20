@@ -1185,8 +1185,7 @@ $folder = $reporte->getDirectorioBase();
                             }                            
                         }
                         
-                        if (count($archivos) > 0) {
-                            //$imagenes="";
+                        if (count($archivos) > 0) {                            
                             foreach ($archivos as $file) {
                                 $filename = $file->getCaNombre();
                                 if (array_search(base64_encode(basename($filename)), $att) !== false) {
@@ -1215,18 +1214,14 @@ $folder = $reporte->getDirectorioBase();
                                                <input type="checkbox" value="'.base64_encode(basename($filename)) .'" name="attachments1[]" '.$option.' class="imgS"/>
                                             </div>
                                     </div>                        
-                                  </div>';
-                                    //echo '<img style=" vertical-align: middle;" src="/gestDocumental/verArchivo?idarchivo=' . base64_encode($folder) . '" width="' . $dimVisual . '" height="' . $dimVisual . '" /><br>';
-                                }else
-                                {
+                                  </div>';                                  
+                                }else{
                                     ?><input type="checkbox" name="attachments1[]" value="<?= base64_encode(basename($filename)) ?>"  <?= $option ?> class="imgS" iddoc="<?=$iddoc?>" /><?
                                     echo mime_type_icon(basename($filename)) . " " . link_to(basename($filename), url_for("traficos/fileViewer?idreporte=" . $reporte->getCaIdreporte() . "&gestDoc=true&file=" . base64_encode(basename($filename))), array("target" => "blank")) ."<br />";
-                                }
-                                //include_component("gestDocumental", "returnFiles",array("idsserie"=>"2","view"=>"email1","ref1"=>$reporte->getInoClientesSea()->getCaReferencia(),"ref2"=>$reporte->getInoClientesSea()->getCaHbls(),"ref3"=>"","format"=>"coloader")); 
+                                }                                
                             }
                         }
-                        if (count($archivos2) > 0) {
-                            //$imagenes="";
+                        if (count($archivos2) > 0) {                            
                             foreach ($archivos2 as $file) {
                                 $filename = $file->getCaNombre();
                                 if (array_search(base64_encode(basename($filename)), $att) !== false) {
@@ -1255,27 +1250,60 @@ $folder = $reporte->getDirectorioBase();
                                                <input type="checkbox" value="'.base64_encode(basename($filename)) .'" name="attachments1[]" '.$option.' class="imgS"/>
                                             </div>
                                     </div>                        
-                                  </div>';
-                                    //echo '<img style=" vertical-align: middle;" src="/gestDocumental/verArchivo?idarchivo=' . base64_encode($folder) . '" width="' . $dimVisual . '" height="' . $dimVisual . '" /><br>';
+                                  </div>';                                  
                                 }else
                                 {
                                     ?><input type="checkbox" name="attachments1[]" value="<?= base64_encode(basename($filename)) ?>"  <?= $option ?> class="imgS" iddoc="<?=$iddoc?>" /><?
                                     echo mime_type_icon(basename($filename)) . " " . 
                                             link_to(basename($filename), url_for("gestDocumental/verArchivo?id_archivo=" . $file->getCaIdarchivo() ), array("target" => "blank")) ."<br />";
+                                }                                
+                            }
+                        }
+                        if (count($archivos3) > 0) {                            
+                            foreach ($archivos3 as $file) {
+                                $filename = $file->getCaNombre();
+                                if (array_search(base64_encode(basename($filename)), $att) !== false) {
+                                    $option = 'checked="checked"';
+                                } else {
+                                    $option = '';
                                 }
-                                //include_component("gestDocumental", "returnFiles",array("idsserie"=>"2","view"=>"email1","ref1"=>$reporte->getInoClientesSea()->getCaReferencia(),"ref2"=>$reporte->getInoClientesSea()->getCaHbls(),"ref3"=>"","format"=>"coloader")); 
+                                ?>
+                                
+                                
+                                <?
+                                if(Utils::isImage($file->getCaNombre())){
+                                    $dimension = 640;
+                                    $dimVisual = 50;
+                                    $i = 0;
+                                    $j = 0;
+                                    
+                                    $filename = $file->getCaNombre();
+                                    $folder = $reporte->getDirectorioBaseDocs($filename);                            
+                                    $imagenes.= '<div style="width:' . $dimVisual . 'px;height:' . $dimVisual . 'px;float: left;margin: 5px;" id="file_' . $j . '">
+                                        <div style="position:relative ">
+                                            <div style="position:absolute;" >
+                                                <img style=" vertical-align: middle;" src="/gestDocumental/verArchivo?idarchivo=' . base64_encode($folder) . '" width="' . $dimVisual . '" height="' . $dimVisual . '" alt="'.$filename.'"  title="'.$filename.'"   />
+                                            </div>                                    
+                                            <div style="position:absolute;top:0px;right:0px;display:block" >
+                                               <input type="checkbox" value="'.base64_encode(basename($filename)) .'" name="attachments1[]" '.$option.' class="imgS"/>
+                                            </div>
+                                        </div>                        
+                                    </div>';
+                                    
+                                }else{
+                                    ?>
+                                    <input type="checkbox" name="attachments1[]" value="<?= base64_encode(basename($filename)) ?>"  <?= $option ?> class="imgS" iddoc="<?=$iddoc?>" />
+                                    <?
+                                    echo mime_type_icon(basename($filename)) . " " . 
+                                    link_to(basename($filename), url_for("gestDocumental/verArchivo?id_archivo=" . $file->getCaIdarchivo() ), array("target" => "blank")) ."<br />";
+                                }                                
                             }
                         }
                         echo $imagenes;
-                        ?>
-                        
+                        ?>                        
                     </div>
                 </td>
-            </tr>
-            <!--<tr>
-                <td colspan="2" id="button11"></td>
-            </tr>-->
-
+            </tr>            
             <tr id="indicador">
                 <td><div align="left"><b>Fecha Recibido Status:</b><br />
                     <?

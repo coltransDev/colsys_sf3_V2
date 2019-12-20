@@ -42,31 +42,6 @@ $modo = $sf_data->getRaw("modo");
                     <br /><br />
                     <?= $status->getCaIntroduccion() ?>
                 </td>
-                <?
-//                if ($user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S.") {
-//                ?>
-<!--                    <td width="300">
-                        <div style="float:right"><a href="https://www.coltrans.com.co/logosoficiales/coltrans/fitac2_2018.jpg" target="_blank"><img src="https://www.coltrans.com.co/logosoficiales/coltrans/fitac2_2018.jpg" width="300" /></a></div>
-                    </td>-->
-                <?
-//                }
-                ?>
-                <?
-//                $etapas = array("IAPIN","IAAGR","IACCR","IAETA","IMAGR","IMCAG","IMETA","IMCPD","EERDC","EERCN","EEETD","EEFFL","TTRPL","TTDES","TTCOL");
-//                if (in_array($status->getCaIdetapa(), $etapas)) {
-                ?>
-<!--                    <td width="170">
-                        <div style="float:right"><a href="https://www.micentroempresarial.com/clientescoltrans" target="_blank"><img src="https://www.colsys.com.co/images/publicidad/Inv_Decreto_Aduanero.jpg" width="500"/></a></div>
-                    </td>-->
-                <?
-//                }/* else if ( $user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S." && $reporte->getCaTransporte() == Constantes::AEREO && ($status->getCaIdetapa() == "IACCR" || $status->getCaIdetapa() == "IACAD")) {
-                ?>
-<!--                    <td width="170">
-                        <div style="float:right"><img src="https://www.colsys.com.co/images/publicidad/amb-bog20140814.jpg"/></div>
-                    </td>-->
-                <?
-//                }
-                ?>
         </table><br /><br />
         
         <table style="border:aliceblue; border-collapse: collapse;" width="100%" cellspacing="0" border="1" class="tableList">
@@ -75,11 +50,7 @@ $modo = $sf_data->getRaw("modo");
                 <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $reporte->getCaOrdenClie() ?></td>
                 <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>T&eacute;rmino de Negociaci&oacute;n:</b></td>
                 <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">
-                    <?
-                    /*$array = explode("|", $reporte->getCaIncoterms());
-                    $array = array_unique($array);
-                    $incoterms = implode(" ", $array);
-                    echo $incoterms;*/
+                    <?                    
                     echo $reporte->getIncotermsStr();
                     ?>
                 </td>
@@ -208,6 +179,18 @@ $modo = $sf_data->getRaw("modo");
                         <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $fchfinvaciado ?></td>        
                     </tr>
                     <?
+                }
+            }else{
+                if($reporte->getCaImpoexpo() == Constantes::EXPO){
+                    $repexpo = $reporte->getRepExpo();
+                    if ($repexpo->getEsAduana()) { // AGENCIA DE ADUANA COLMAS
+                        ?>
+                        <tr>
+                            <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Referencia</b></td>
+                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $repexpo->getReferenciaAduana() ?></td>
+                        </tr>
+                        <?
+                    }
                 }
             }
             if ($muelle != "") {
@@ -429,9 +412,6 @@ $modo = $sf_data->getRaw("modo");
         ?>
         <br />
         <?
-        /*if ($reporte->getCaTransporte() == Constantes::AEREO && ($status->getCaIdetapa() == "IACAD" || $status->getCaIdetapa() == "IACCR" || $status->getCaIdetapa() == "IACEM" || $status->getCaIdetapa() == "IACDE" || $status->getCaIdetapa() == "IACIM" || $status->getCaIdetapa() == "IACMV" || $status->getCaIdetapa() == "IACTD" ))
-            echo $textos['mensajeAereo'] . "<br />";*/
-
         if ($status->getCaIdetapa() == "IMCCR")
             echo $textos['mensajeReservaMaritimo'] . "<br />";
 
@@ -441,10 +421,10 @@ $modo = $sf_data->getRaw("modo");
         if ($reporte->getCaContinuacion() == "OTM")
             echo $textos['mensajeEmbarqueOTM'] . "<br />";
 
-//Ticket # 1853
+        //Ticket # 1853
         if ($reporte->getCaTransporte() == Constantes::AEREO && ($status->getCaIdetapa() == "IACCR" || $status->getCaIdetapa() == "IACAD" || $status->getCaIdetapa() == "IACDE"))
             echo "La fecha de llegada de la mercancía es un estimado ya que puede variar por decisión de la aerolínea.<br/>"; 
-//Ticket # 14000
+        //Ticket # 14000
         if($status->getProperty("muelle") && ($status->getCaIdetapa() == "IMETA" || $status->getCaIdetapa() == "IMETT")){
             echo "<br />Por favor tener en cuenta que el muelle informado en esta notificación es el informado por la naviera en su programación de itinerarios, sin embargo este muelle podría ser cambiado por la naviera en cualquier momento sin previa notificación por la naviera debido a cambios en su operación y / o negociaciones con los puertos.<br />";
         }
