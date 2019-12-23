@@ -10,7 +10,7 @@
  */
 class aduanaActions extends sfActions {
     
-    const RUTINA_EXPOADUANA = 225;
+    const RUTINA_EXPOADUANA = 226;
 
     public function executeInoAduanaExpoExt5(sfWebRequest $request){
         $this->permisos = array();
