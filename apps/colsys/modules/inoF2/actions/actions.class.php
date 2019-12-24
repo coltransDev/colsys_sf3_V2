@@ -1949,13 +1949,13 @@ class inoF2Actions extends sfActions {
                     $plazo=$idsc->getCaDias();
             }
             $comprobante->setCaPlazo($plazo);
-            $comprobante->save();
+            //$comprobante->save();
         }
         
-        if($comprobante->getCaEstado()==0){
+        //if($comprobante->getCaEstado()==0){
             $comprobante->setCaEstado(6);
             $comprobante->save();
-        }
+        //}
 
         $idtransaccion = $comprobante->getIdtransaccion();
         
@@ -3071,11 +3071,9 @@ class inoF2Actions extends sfActions {
 
                         $equipo->delete($conn);
                     }
-
-                    $conn->commit();
-                    $this->responseArray = array("success" => true, "msg" => utf8_encode("Favor tener en cuenta que se ha eliminado el contenedor para todos los efectos en House"));                
-
                 }
+                $conn->commit();
+                $this->responseArray = array("success" => true, "msg" => utf8_encode("Favor tener en cuenta que se ha eliminado el contenedor para todos los efectos en House"));                
             }else{
                 $conn->rollBack();
                 $this->responseArray = array("success" => false, "errorInfo" => utf8_encode("No se puede eliminar el contenedor dado que ésta referencia ya ha sido radicada.!"));
