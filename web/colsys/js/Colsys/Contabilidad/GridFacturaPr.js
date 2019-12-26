@@ -455,4 +455,4 @@ Ext.define('Colsys.Contabilidad.GridFacturaPr', {
             }
         }
     }
-});||||||| .r0
+});
