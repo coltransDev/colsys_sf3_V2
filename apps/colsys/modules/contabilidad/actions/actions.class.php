@@ -848,6 +848,7 @@ class contabilidadActions extends sfActions {
         $conn->beginTransaction();   
         try{
             if(count($datos)>0){
+                $costos = array();
 
                 foreach ($datos as $dt) {
                     if ($dt->idconcepto === "" || $dt->idconcepto === 0 || $dt->neto === "" || $dt->neto === 0)
@@ -871,28 +872,52 @@ class contabilidadActions extends sfActions {
 
                     $ids_reg[] = $inodetalleF->getCaIddetalle();
                     $ids[] = $dt->id;
-                }
-                $conn->commit();
-                if($comprobante){
-                    $q = Doctrine::getTable("InoDetalle")
-                            ->createQuery("det")
-                            ->select("det.*,s.*,ids.ca_nombre , ids.ca_idalterno ,  ids.ca_dv")
-                            ->innerJoin("det.InoComprobante comp")                                                
-                            ->addWhere("det.ca_idcomprobante = ? ", $comprobante->getCaIdcomprobante())                    
-                            ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-                    $movs = $q->execute();
-
-                    $creditos = 0;
-                    foreach ($movs as $mov) {
-                        $creditos += $mov["det_ca_cr"]!=0?$mov["det_ca_cr"]:$mov["det_ca_db"];
+                    
+                    if($idempresa != 11 && $idempresa != 12){
+                        $existeCosto = Doctrine::getTable("InoCosto")->findByDql('ca_idmaster = ? and ca_idcosto = ? and ca_factura = ? and ca_idhouse = ?', array($dt->idmaster, $dt->idconcepto, $comprobante->getCaConsecutivo(), $dt->idhouse===0?null:$dt->idhouse))->getFirst();
+                        
+                        if($existeCosto){
+                            $referencia = Doctrine::getTable("InoMaster")->find($dt->idmaster);
+                            if($dt->idhouse)
+                                $house = Doctrine::getTable("InoHouse")->find($dt->idhouse);
+                            $costos[$referencia->getCaReferencia()]["doctransporte"] = $dt->idhouse?$house->getCaDoctransporte():null;
+                            $costos[$referencia->getCaReferencia()]["consecutivo"] = $comprobante->getCaConsecutivo();
+                            $costos[$referencia->getCaReferencia()]["concepto"] = $dt->idconcepto;
+                            $costos[$referencia->getCaReferencia()]["idcomprobante"] = $existeCosto->getCaIdcomprobante();
+                        }
                     }
-
-                    $comprobante->setCaValor($creditos);
-                    $comprobante->save($conn);
-                    $this->responseArray = array("success" => true, "id"=>implode(",", $ids), "idreg" => implode(",", $ids_reg), "idcomprobante" => $comprobante->getCaIdcomprobante());
-                }else{
-                    $this->responseArray = array("success" => false, "errorInfo" => utf8_encode("No se encontraron datos para guardar!"));
                 }
+                if(count($costos)>0){
+                    $info = "";
+                    foreach($costos as $referencia =>$valor){
+                        $info.= "Comprobante #: ".$valor["idcomprobante"]."Referencia: ".$referencia." # ".$valor["consecutivo"]." Doc Transporte: ".$valor["doctransporte"]." Id concepto: ".$valor["concepto"]."\n";
+                    }
+                    
+                    $this->responseArray = array("success" => false, "errorInfo" => utf8_encode("Ya existe un comprobante de costo con los mismos datos! Revise la información y vuelva a intentarlo. $info"));
+                }else{
+                    $conn->commit();
+
+                    if($comprobante){
+                        $q = Doctrine::getTable("InoDetalle")
+                                ->createQuery("det")
+                                ->select("det.*,s.*,ids.ca_nombre , ids.ca_idalterno ,  ids.ca_dv")
+                                ->innerJoin("det.InoComprobante comp")                                                
+                                ->addWhere("det.ca_idcomprobante = ? ", $comprobante->getCaIdcomprobante())                    
+                                ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+                        $movs = $q->execute();
+
+                        $creditos = 0;
+                        foreach ($movs as $mov) {
+                            $creditos += $mov["det_ca_cr"]!=0?$mov["det_ca_cr"]:$mov["det_ca_db"];
+                        }
+
+                        $comprobante->setCaValor($creditos);
+                        $comprobante->save($conn);
+                        $this->responseArray = array("success" => true, "id"=>implode(",", $ids), "idreg" => implode(",", $ids_reg), "idcomprobante" => $comprobante->getCaIdcomprobante());
+                    }else{
+                        $this->responseArray = array("success" => false, "errorInfo" => utf8_encode("No se encontraron datos para guardar!"));
+                    }
+                }                
             }else{
                 $this->responseArray = array("success" => false, "errorInfo" => utf8_encode("No se encontraron datos para guardar!"));
             }
@@ -920,8 +945,7 @@ class contabilidadActions extends sfActions {
                         (SELECT SUM(det.ca_cr) FROM InoDetalle det WHERE det.ca_idcomprobante = comp.ca_idcomprobante) as ca_valor3,
                         (SELECT SUM(det1.ca_db) FROM InoDetalle det1 WHERE det1.ca_idcomprobante = comp.ca_idcomprobante) as ca_valor4,
                         ccosto.ca_nombre, ccosto.ca_impoexpo, ccosto.ca_transporte")
-                ->innerJoin("comp.Ids ids")
-                //->innerJoin("ids.IdsCliente cl")                
+                ->innerJoin("comp.Ids ids")                
                 ->innerJoin("comp.InoTipoComprobante tcomp")
                 ->innerJoin("tcomp.Empresa emp")
                 ->innerJoin("comp.InoCentroCosto ccosto")                
