@@ -3,18 +3,16 @@
 include_component("widgets5", "wgCliente");
 ?>
 <script>
- Ext.Ajax.setTimeout(120000);
+ 
 Ext.define('FormWsFactColdepositos', {
     extend: 'Ext.form.Panel',
     title: 'Filtros de búsqueda',
-    bodyPadding: 5,
-    //standardSubmit: true,
+    bodyPadding: 5,    
     width: 1000,
     url: '<?= url_for("contabilidad/busquedaComprobantes") ?>',
 
     layout:'column',
-    defaults: {
-        //anchor: '100%'
+    defaults: {        
         columnWidth: 1/3,
         labelAlign:'right'
     },
@@ -48,8 +46,7 @@ Ext.define('FormWsFactColdepositos', {
         name:'idcliente',
         fieldLabel: 'Cliente',
         allowBlank:false,
-        readonly:true,
-        valueField: 'nit',
+        readonly:true
     },
     {
         fieldLabel: 'Doc.Transporte',
@@ -65,22 +62,8 @@ Ext.define('FormWsFactColdepositos', {
             this.up('form').getForm().reset();
         }
     }, {
-        text: 'Buscar',
-        //formBind: true, //only enabled once the form is valid
-        //disabled: true,
+        text: 'Buscar',        
         handler: function() {
-            /*var form = this.up('form').getForm();
-            if (form.isValid()) {
-                form.submit({
-                    success: function(form, action) {
-                       Ext.Msg.alert('Success', action.result.html);
-                    },
-                    failure: function(form, action) {
-                        Ext.Msg.alert('Failed', action.result.msg);
-                    }
-                });
-            }*/
-        
             var fecha_inicial=Ext.getCmp("fecha_inicial").getRawValue();
             var fecha_final=Ext.getCmp("fecha_final").getRawValue();
             var doctransporte=Ext.getCmp("doctransporte").getValue();
@@ -99,8 +82,7 @@ Ext.define('FormWsFactColdepositos', {
             });
         
         }
-    }]//,
-    //renderTo: Ext.getBody()
+    }]
 });
  
 </script>

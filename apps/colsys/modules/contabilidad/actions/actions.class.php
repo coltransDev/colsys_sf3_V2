@@ -15,11 +15,8 @@ class contabilidadActions extends sfActions {
     public function preExecute() {
 
         if (count($this->permisos) < 1) {
-            $this->nivel = $this->getUser()->getNivelAcceso(contabilidadActions::RUTINA_TERRESTRE);
-            //echo $this->nivel;
-            //$this->nivel=6;
-            $this->permisos = array("imprimir" => false, "anular" => false, "busquedatotal" => false, "maestras" => false, "enviarsiigo" => false);
-            //echo "nivel".$this->nivel;            
+            $this->nivel = $this->getUser()->getNivelAcceso(contabilidadActions::RUTINA_TERRESTRE);            
+            $this->permisos = array("imprimir" => false, "anular" => false, "busquedatotal" => false, "maestras" => false, "enviarsiigo" => false);            
 
             switch ($this->nivel) {
                 case "1"://operativo
@@ -44,10 +41,7 @@ class contabilidadActions extends sfActions {
                     $this->permisos["enviarsiigo"] = true;
                     break;
             }
-        }
-        //$this->permisos=array("imprimir"=>true,"anular"=>true,"busquedatotal"=>true,"maestras"=>true);
-        //print_r($this->permisos);
-
+        }        
         parent::preExecute();
     }
 
@@ -56,9 +50,7 @@ class contabilidadActions extends sfActions {
      *
      */
     public function executeIndex() {
-
-        //$response = sfContext::getInstance()->getResponse();
-        //$response->addJavaScript("extExtras/FileUploadField",'last');
+        
     }
 
     public function executeIndexExt5() {
@@ -70,41 +62,7 @@ class contabilidadActions extends sfActions {
         $datosusuario = json_decode($usuario->getCaDatos());
         
         $this->tipofacturacion = $datosusuario->factura_ino;
-        
-        //$response = sfContext::getInstance()->getResponse();
-        //$response->addJavaScript("extExtras/FileUploadField",'last');
     }
-
-    /* function executeDatosIndex($request) {
-      $idproceso = ($request->getParameter("node") != "" && $request->getParameter("node") != "root") ? $request->getParameter("node") : "0";
-      $tree = array("text" => "Proceso/Riesgo", "leaf" => true, "id" => "1");
-
-      if ($idproceso == 0) {
-
-      $childrens1 = array();
-
-      if ($this->permisos["maestras"]) {
-      $childrens1[] = array("text" => "Cuentas Contables", "leaf" => true, "id" => "1");
-      $childrens1[] = array("text" => "Conceptos", "leaf" => true, "id" => "2");
-      $childrens[] = array("text" => utf8_encode("Administración"), "leaf" => false, "children" => $childrens1);
-      }
-      $childrens1 = array();
-      $childrens1[] = array("text" => "Consulta", "leaf" => true, "id" => "3");
-      $childrens1[] = array("text" => "Creacion", "leaf" => true, "id" => "5");
-      //$childrens1[] = array("text" => "Conceptos","leaf" => true,"id" => "2");
-
-      $childrens[] = array("text" => "Comprobantes", "leaf" => false, "children" => $childrens1);
-
-      $childrens1 = array();
-      $childrens1[] = array("text" => utf8_encode("Facturación"), "leaf" => true, "id" => "4");
-      $childrens[] = array("text" => "Coldepositos", "leaf" => false, "children" => $childrens1);
-      }
-
-      $tree["children"] = $childrens;
-
-      $this->responseArray = $tree;
-      $this->setTemplate("responseTemplate");
-      } */
 
     function executeDatosIndex($request) {
         $idproceso = ($request->getParameter("node") != "" && $request->getParameter("node") != "root") ? $request->getParameter("node") : "0";
@@ -125,9 +83,7 @@ class contabilidadActions extends sfActions {
             $childrens1 = array();
             $childrens1[] = array("text" => "Consulta", "leaf" => true, "id" => "3");
             $childrens1[] = array("text" => "Creacion", "leaf" => true, "id" => "5");
-            $childrens1[] = array("text" => "Facturas Proveedores", "leaf" => true, "id" => "13");
-            //$childrens1[] = array("text" => "Facturas Proveedores New", "leaf" => true, "id" => "13");
-            //$childrens1[] = array("text" => "Maestra Conceptos", "leaf" => true, "id" => "11");
+            $childrens1[] = array("text" => "Facturas Proveedores", "leaf" => true, "id" => "13");            
 
             $childrens[] = array("text" => "Comprobantes", "leaf" => false, "children" => $childrens1);
 
@@ -348,8 +304,7 @@ class contabilidadActions extends sfActions {
 
         $q = Doctrine::getTable("InoViConsComprobante")
                 ->createQuery("s")
-                ->select("s.*")
-                //->where("SUBSTR(ca_cod::TEXT,1,2)=? and ca_idempresa=?  ",array($ccosto->getCaCentro().$ccosto->getCaSubcentro() , $ccosto->getCaIdempresa()) )
+                ->select("s.*")                
                 ->addOrderBy( "ca_idcomprobante DESC" )
                 ->setHydrationMode(Doctrine::HYDRATE_ARRAY);
 
@@ -378,12 +333,10 @@ class contabilidadActions extends sfActions {
             $q->addWhere("ca_estado = ?", $ca_estado);
         }
 
-        //echo $q->getSqlQuery();
         $comprobantes = $q->execute();
 
         foreach ($comprobantes as $k => $c) {
             
-            //$comprobantes[$k]["ca_aplicacion"] = $comprobantes[$k]["ca_aplicacion"];
             $comprobantes[$k]["ca_transporte"] = utf8_encode($comprobantes[$k]["ca_transporte"]);
             $comprobantes[$k]["ca_impoexpo"] = utf8_encode($comprobantes[$k]["ca_impoexpo"]);
             $comprobantes[$k]["ca_ciuorigen"] = utf8_encode($comprobantes[$k]["ca_ciuorigen"]);
@@ -393,8 +346,8 @@ class contabilidadActions extends sfActions {
             $comprobantes[$k]["ca_consecutivo"] = $comprobantes[$k]["ca_tipo"] . $comprobantes[$k]["ca_comprobante"] . "-" . $comprobantes[$k]["ca_consecutivo"];
             $comprobantes[$k]["ca_valor"] = round($comprobantes[$k]["ca_valor"]);
             $comprobantes[$k]["ca_valor2"] = round($comprobantes[$k]["ca_valor2"]);
+            $comprobantes[$k]["ca_datos"] = utf8_encode($comprobantes[$k]["ca_datos"]);
             
-            //$file = ($d["ca_tipo"] == "F" ) ? "/inocomprobantes/generarComprobantePDF/id/" . $d["comp_ca_idcomprobante"]."/sap/1" : "";
             $file = "/inocomprobantes/generarComprobantePDF/id/" . $comprobantes[$k]["ca_idcomprobante"]."/sap/1";
             
             $comprobantes[$k]["file"] = $file;
@@ -439,8 +392,6 @@ class contabilidadActions extends sfActions {
                     ->andWhereIn("ca_idcomprobante", $ids)
                     ->execute();
 
-            //$comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);            
-            
             $consecutivos = "";            
             foreach ($this->comprobantes as $comprobante) {
                 
@@ -454,8 +405,7 @@ class contabilidadActions extends sfActions {
                         $datosArray=json_decode(utf8_encode($comprobante->getCaDatos()) , true);
                         $idanticipo=$datosArray["idanticipo"];
                         unset($datosArray["idanticipo"]);                        
-                        //$idanticipo=$datos->idanticipo;
-                        //$datos->idanticipo="0";
+                        
                         $comprobante->setCaDatos(json_encode($datosArray));                        
                         
                         $an=$comprobante->anular($this->getUser()->getUserId(), utf8_encode($observaciones));
@@ -477,8 +427,6 @@ class contabilidadActions extends sfActions {
                         $success = false;
                         $resultado.="479";
                     }
-                        
-                    //$comprobante->anular($this->getUser()->getUserId());
                 } 
                 catch (Exception $e) {         
                     $resul = $e->getTraceAsString();                    
@@ -489,7 +437,6 @@ class contabilidadActions extends sfActions {
                 
                 if( $success == true)
                 {
-                    //$tipo =  new InoTipoComprobante();
                     $tipo = $comprobante->getInoTipoComprobante();                   
                     $idtransaccion = IntTransaccionesOut::procesarTransacciones("10", $comprobante->getCaIdcomprobante());                    
                     if ($idtransaccion!="" && $idtransaccion > 0) {
@@ -505,7 +452,7 @@ class contabilidadActions extends sfActions {
                                 $resul->Status="0";
                             }                            
                             $mensaje_cancelado = strpos(trim($resul->Message),"Document is already cancelled - Object reference not set to an instance of an object");                            
-                            //$resultado.=$mensaje_cancelado."--";
+                            
                             if( ($resul->Status=="1" &&  $mensaje_cancelado===false) || $resul==null || !$resul  )
                             {                                
                                 $comprobante->setCaFchanulado(null);
@@ -570,71 +517,10 @@ class contabilidadActions extends sfActions {
                     )
                 );
             }
-        /*} catch (Exception $e) {
-            $errorInfo.=$e->getMessage() . "<br>";
-        }*/
-            //exit;
+        
         $this->responseArray = array("errorInfo" => $errorInfo, "success" => $success,"resul"=>$resultado);
         $this->setTemplate("responseTemplate");
-          
-         
         
-       /* try {
-            $idcomprobante = $request->getParameter("idcomprobante");
-            $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
-
-            try{
-                $datos=json_decode($comprobante->getCaDatos());
-                $idanticipo=$datos->idanticipo;
-                $datos->idanticipo="";
-                $comprobante->setCaDatos(json_encode($datos));
-                $comprobante->anular($this->getUser()->getUserId());
-            } 
-            catch (Exception $e) {         
-                $resul = $e->getTraceAsString();
-                $success = false;
-            }   
-
-            $idtransaccion = IntTransaccionesOut::procesarTransacciones("10", $idcomprobante);
-            
-            if ($idtransaccion!="" && $idtransaccion > 0) {            
-                try {                
-                    $resul = IntTransaccionesOut::enviarWs($idtransaccion);
-                    $resul=$resul[0];
-                    if($resul->Status!="0")
-                    {                        
-                        $comprobante->setCaFchanulado(null);
-                        $comprobante->setCaUsuanulado(null);
-                        $comprobante->setCaEstado("5");
-                        $comprobante->setProperty("msgAnulado",$resul->Message);
-                        $datos->idanticipo=$idanticipo;                        
-                        $comprobante->setCaDatos(json_encode($datos));                
-                        $comprobante->save();
-                    }
-                    //else
-                        //$conn->commit();
-
-                    $success = true;
-                } catch (Exception $e) {         
-                    $resul = $e->getTraceAsString();
-                    $success = false;
-                    //$conn->rollBack();
-                }            
-            }
-            else
-            {
-                $success = false;
-                $resul= $idtransaccion;
-            }
-
-
-            //InoComprobante::TRANSFERIDO;
-            $this->responseArray = array("success" => "true","resul"=>$resul);
-        } catch (Exception $e) {
-            //$conn->rollback();
-            $this->responseArray = array("success" => "false", "errorInfo" => $e->getMessage());
-        }
-        $this->setTemplate("responseTemplate");*/
     }
 
     public function executeEnviarSiigoConect(sfWebRequest $request) {
@@ -903,99 +789,6 @@ class contabilidadActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
-    /*public function executeGuardarFacturaProveedores($request) {
-
-        $conn = Doctrine::getTable("InoComprobante")->getConnection();
-        $conn->beginTransaction();
-
-        $datos = json_decode($request->getParameter("datosGrid"));
-        
-        try {            
-            $tipoComprobante = Doctrine::getTable("InoTipoComprobante")->find($request->getParameter("tipocomprobante"));            
-            $ccosto = Doctrine::getTable("InoCentroCosto")
-                    ->createQuery("cc")
-                    ->addWhere("ca_idempresa = ? AND ca_impoexpo = ? AND ca_transporte = ? AND ca_idsucursal IS NULL", array($tipoComprobante->getCaIdempresa(), utf8_decode($request->getParameter("fmImpoexpo")), utf8_decode($request->getParameter("transporte"))))
-                    ->fetchOne();
-            
-            $idsucursal = $request->getParameter("idsucursal");
-            $sucursal = Doctrine::getTable("IdsSucursal")->find($idsucursal);
-
-            $existe = Doctrine::getTable("InoComprobante")->findByDql('ca_consecutivo = ? and ca_id = ? and ca_fchanulado = ? ', array($request->getParameter("nfactura"), $sucursal->getIds()->getCaId(), null));
-            
-            if (!$existe->count() > 0) {
-                $comprobante = new InoComprobante();
-                $comprobante->setCaIdtipo($request->getParameter("tipocomprobante"));
-                $comprobante->setCaConsecutivo($request->getParameter("nfactura"));
-                $comprobante->setCaFchcomprobante($request->getParameter("fchfactura"));
-                $comprobante->setCaId($sucursal->getIds()->getCaId());
-                $comprobante->setCaObservaciones($request->getParameter("observaciones"));
-                $comprobante->setCaTcambio($request->getParameter("trm"));
-                $comprobante->setCaEstado(0);
-                $comprobante->setCaIdmoneda($request->getParameter("idmoneda"));
-                $comprobante->setCaIdsucursal($idsucursal);
-                $comprobante->setCaIdccosto($ccosto->getCaIdccosto());
-                $comprobante->save($conn);                
-
-                foreach ($datos as $dt) {
-                    $inodetalleF = new InoDetalle();
-                    $inodetalleF->setCaIdcomprobante($comprobante->getCaIdcomprobante());
-                    $inodetalleF->setCaIdconcepto($dt->concepto);
-                    $inodetalleF->setCaIdmaster($dt->referencia);
-                    $inodetalleF->setCaId($comprobante->getCaId());
-                    $inodetalleF->setCaDb(0);
-                    $inodetalleF->setCaCr($dt->neto);                    
-                    $inodetalleF->save($conn);
-                    
-                    $idhouse = $dt->idhouse;
-
-                    $costo = new InoCosto();
-                    $costo->setCaIdmaster($dt->referencia);
-                    $costo->setCaIdcosto($dt->concepto);
-                    $costo->setCaFactura($comprobante->getCaConsecutivo());
-                    $costo->setCaFchfactura($comprobante->getCaFchcomprobante());
-                    $costo->setCaIdproveedor($comprobante->getCaId());
-                    $costo->setCaIdmoneda($comprobante->getCaIdmoneda());
-                    $costo->setCaTcambio($comprobante->getCaTcambio());
-                    $costo->setCaTcambioUsd(1);
-                    $costo->setCaNeto($dt->neto);
-                    $costo->setCaVenta((round($dt->neto*$comprobante->getCaTcambio(), 2, PHP_ROUND_HALF_UP)));
-                    $costo->setCaIdcomprobante($comprobante->getCaIdcomprobante());
-                    $costo->setCaIdhouse($idhouse > 0 ? $idhouse : null);
-                    $costo->save($conn);                    
-
-                    $ids[] = $dt->id;
-                }
-                
-                $q = Doctrine::getTable("InoDetalle")
-                        ->createQuery("det")
-                        ->select("det.*,s.*,ids.ca_nombre , ids.ca_idalterno ,  ids.ca_dv")
-                        ->innerJoin("det.InoComprobante comp")                                                
-                        ->addWhere("det.ca_idcomprobante = ? ", $comprobante->getCaIdcomprobante())                    
-                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-                $movs = $q->execute();
-
-                $creditos = 0;
-                foreach ($movs as $mov) {
-                    $creditos += $mov["det_ca_cr"];
-                }
-
-                $comprobante->setCaValor($creditos);
-                $comprobante->save($conn);                
-                
-                $conn->commit();                                 
-                
-                $this->responseArray = array("success" => true, "ids" => $ids, "idcomprobante" => $comprobante->getCaIdcomprobante());
-            } else {
-                $this->responseArray = array("success" => false, "errorInfo" => "Comprobante ya existe");
-            }            
-        } catch (Exception $e) {
-            $conn->rollback();
-            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
-        }
-
-        $this->setTemplate("responseTemplate");
-    }*/
-    
     public function executeGuardarFormFacturaPr($request) {
 
         $conn = Doctrine::getTable("InoComprobante")->getConnection();
@@ -1077,27 +870,6 @@ class contabilidadActions extends sfActions {
                     $inodetalleF->save($conn);
 
                     $ids_reg[] = $inodetalleF->getCaIddetalle();
-
-                    /*$idhouse = $dt->idhouse;
-
-                    if($dt->idempresa !== 11){ // Coldepositos no almacena costos
-                        $costo = new InoCosto();
-                        $costo->setCaIdmaster($dt->referencia);
-                        $costo->setCaIdcosto($dt->idconcepto);
-                        $costo->setCaFactura($comprobante->getCaConsecutivo());
-                        $costo->setCaFchfactura($comprobante->getCaFchcomprobante());
-                        $costo->setCaIdproveedor($comprobante->getCaId());
-                        $costo->setCaIdmoneda($comprobante->getCaIdmoneda());
-                        $costo->setCaTcambio($comprobante->getCaTcambio());
-                        $costo->setCaTcambioUsd(1);
-                        $costo->setCaNeto($dt->neto);
-                        $costo->setCaVenta((round($dt->neto*$comprobante->getCaTcambio(), 2, PHP_ROUND_HALF_UP)));
-                        $costo->setCaIdcomprobante($comprobante->getCaIdcomprobante());
-                        $costo->setCaIdhouse($dt->idhouse===0?null:$dt->idhouse);
-                        $costo->save($conn);                    
-                    }*/
-
-
                     $ids[] = $dt->id;
                 }
                 $conn->commit();
@@ -1141,7 +913,7 @@ class contabilidadActions extends sfActions {
                 ->createQuery("comp")
                 ->select("comp.ca_idhouse,  comp.ca_id ,  
                         ids.ca_nombre , ids.ca_idalterno ,  ids.ca_dv, 
-                        comp.ca_idcomprobante, comp.ca_idcomprobante_cruce,comp.ca_consecutivo,comp.ca_fchcomprobante,
+                        comp.ca_idcomprobante, comp.ca_idcomprobante_cruce,comp.ca_consecutivo,comp.ca_fchcomprobante,comp.ca_estado,
                         comp.ca_idmoneda,comp.ca_usugenero,comp.ca_fchgenero,
                         m.ca_nombre,c.ca_estado,tcomp.ca_tipo,tcomp.ca_comprobante,tcomp.ca_idempresa,emp.ca_nombre,
                         comp.ca_valor,comp.ca_valor2,comp.ca_tcambio,comp.ca_datos,comp.ca_docentry,
@@ -1153,21 +925,16 @@ class contabilidadActions extends sfActions {
                 ->innerJoin("comp.InoTipoComprobante tcomp")
                 ->innerJoin("tcomp.Empresa emp")
                 ->innerJoin("comp.InoCentroCosto ccosto")                
-                ->where("comp.ca_usucreado = ? AND comp.ca_estado = ? AND comp.ca_docentry IS NULL AND tcomp.ca_prefijo_sap IN ('C','RC')",array($this->getUser()->getUserId(),"0"))
+                ->where("comp.ca_usucreado = ? AND comp.ca_estado in (?,?) AND comp.ca_docentry IS NULL AND tcomp.ca_prefijo_sap IN ('C','RC')",array($this->getUser()->getUserId(),0,6))
                 ->addOrderBy("tcomp.ca_tipo,tcomp.ca_comprobante")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
         
         $debug=$q->getSqlQuery();
         $datos = $q->execute();
         $this->data = array();
-        //echo "<pre>";print_r($datos);echo "</pre>";
+        
         foreach ($datos as $d) {
-            //print_r($d);
-            //exit;
-            
             $consecutivo="";
-            //if($ino=="false")
-            //    $consecutivo = utf8_encode($d["emp_ca_nombre"])."<br>";
             $consecutivo .= ($d["tcomp_ca_tipo"] == "P") ? "FACTURA PROV. # " : (($d["tcomp_ca_tipo"] == "D") ? "<span class=row_yellow>NOTA CREDITO PROV. # </span>" : "");
             $consecutivo .= ($d["comp_ca_docentry"] == "") ? $d["comp_ca_consecutivo"]." Id: " . $d["comp_ca_idcomprobante"] : $d["tcomp_ca_tipo"] . "" . $d["tcomp_ca_comprobante"] . "-" . $d["comp_ca_consecutivo"];
             $file = ($d["tcomp_ca_tipo"] == "F" && $d["comp_ca_docentry"] != "") ? "/inocomprobantes/generarComprobantePDF/id/" . $d["comp_ca_idcomprobante"]."/sap/1" : "";
@@ -1181,7 +948,7 @@ class contabilidadActions extends sfActions {
             if ($d["comp_ca_estado"] == "5")
                 $class = "row_green";
             else if ($d["comp_ca_estado"] == "6")
-                $class = "row_pink";
+                $class = "row_yellow";
             else if ($d["comp_ca_estado"] == "8")
                 $class = "row_purple";
 
@@ -1197,32 +964,7 @@ class contabilidadActions extends sfActions {
             }
             $rc = "";
             $datosjson=json_decode(utf8_encode($d["comp_ca_datos"]));
-//            foreach($datos->idanticipo as $a)
-//            {
-//                if ($a>0) {
-//                    $anticipo = Doctrine::getTable("InoComprobante")->find($a);
-//                    if($anticipo)
-//                    {
-//                        $txt="Anticipo ".$anticipo->getInoTipoComprobante()->getCaPrefijoSap()."-".$anticipo->getInoTipoComprobante()->getCaComprobante()." ". $anticipo->getCaConsecutivo()." :: ".number_format($anticipo->getCaValor(), 2, ",", ".")." (TRM : ".$anticipo->getCaTcambio().")";
-//                    //if ($tipocruce == "R" || $tipocruce == "A")
-//                        $rc .= "<table class='recibocaja' id='intermitente'  ><td>   <div id='foot' style='width:320px; font-weight: bold; text-align: center;'   >" . $txt . "</div> </td></table>";
-//                    }
-//                }
-//            }
-//            
-//            if ($d["comp_ca_idcomprobante_cruce"] != "" && $d["comp_ca_idcomprobante_cruce"] != null) {
-//                $idcomp = $d["comp_ca_idcomprobante_cruce"];
-//                $compro = Doctrine::getTable("InoComprobante")->find($idcomp);
-//                $fecha = $rest = substr($compro->getCaFchcreado(), 0, -9);
-//                $tipocruce = $compro->getInoTipoComprobante()->getCaTipo();
-//                if ($tipocruce == "R" || $tipocruce == "A")
-//                    $rc .= "<table class='recibocaja' id='intermitente'  ><td>   <div id='foot' style='width:320px; font-weight: bold; text-align: center;'   >RC: #" . $compro->getCaConsecutivo() . "  " . $fecha . "  $" . number_format($compro->getCaValor(), 2, ",", ".") . "</div> </td></table>";
-//            }
-//            
-            /*if($idmaster!="")
-                $valor = ($d["comp_ca_valor"] != "") ? $d["comp_ca_valor"] : (($d["c_ca_valor3"] >= $d["c_ca_valor4"]) ? $d["c_ca_valor3"] : $d["c_ca_valor4"]);
-            else*/
-                $valor = ($d["comp_ca_valor"] != "") ? $d["comp_ca_valor"] : (($d["comp_ca_valor3"] >= $d["comp_ca_valor4"]) ? $d["comp_ca_valor3"] : $d["comp_ca_valor4"]);
+            $valor = ($d["comp_ca_valor"] != "") ? $d["comp_ca_valor"] : (($d["comp_ca_valor3"] >= $d["comp_ca_valor4"]) ? $d["comp_ca_valor3"] : $d["comp_ca_valor4"]);
             $this->data[] = array(
                 "tipocomprobante" => $d["tcomp_ca_tipo"],
                 "titulohouse" => "House", 
@@ -1245,8 +987,7 @@ class contabilidadActions extends sfActions {
                 "house" => $house, 
                 "valor2" => $d["comp_ca_valor2"],
                 "valortcambio" => round(( (float) $valor * (float) $d["comp_ca_tcambio"]), 2), 
-                "tcambio" => $d["comp_ca_tcambio"],
-                /* "valor"=>$d["det_ca_cr"] , */
+                "tcambio" => $d["comp_ca_tcambio"],                
                 "idconcepto" => $d["det_ca_idconcepto"],
                 "concepto" => utf8_encode($d["det_ca_idconcepto"] . "-" . $d["s_ca_descripcion"]),
                 "iddetalle" => $d["det_ca_iddetalle"], 
@@ -1311,9 +1052,7 @@ class contabilidadActions extends sfActions {
                             comp.ca_idcomprobante, comp.ca_consecutivo,comp.ca_fchcomprobante,comp.ca_idmoneda,comp.ca_usugenero,comp.ca_fchgenero,
                             m.ca_nombre,s.ca_concepto_esp,det.ca_iddetalle,comp.ca_estado,tcomp.ca_tipo,tcomp.ca_comprobante,tcomp.ca_idempresa,
                             det.*")                    
-                    ->innerJoin("comp.Ids ids")
-                    //->innerJoin("ids.IdsCliente cl")
-                    //->leftJoin("c.Cliente clH")
+                    ->innerJoin("comp.Ids ids")                    
                     ->innerJoin("comp.InoTipoComprobante tcomp")
                     ->innerJoin("comp.InoDetalle det WITH det.ca_idconcepto is not null AND (ca_cr != 0 OR ca_DB != 0) AND tcomp.ca_tipo in ('P','D')")
                     ->leftJoin("det.InoMaster im")
@@ -1328,8 +1067,6 @@ class contabilidadActions extends sfActions {
             $sql = $q->getSqlQuery();
             $datos = $q->execute();
             
-            //echo $sql;
-
             foreach ($datos as $d) {
                 $consecutivo = ($d["tcomp_ca_tipo"] == "F") ? "FACTURA " : (($d["tcomp_ca_tipo"] == "C") ? "<span class='row_yellow'>NOTA CREDITO</span>" : "");
                 $consecutivo .= ($d["comp_ca_consecutivo"] == "") ? " Factura # ".$d["comp.ca_consecutivo"]."- Sin Gen. Id.: " . $d["comp_ca_idcomprobante"] : $d["tcomp_ca_tipo"] . "" . $d["tcomp_ca_comprobante"] . "-" . $d["comp_ca_consecutivo"];
@@ -1361,16 +1098,7 @@ class contabilidadActions extends sfActions {
                         $cuenta_forma_pago = '';
                 }
 
-                $this->data[] = array(
-                    /*"idhouse" => $d["c_ca_idhouse"], "idcomprobante" => $d["comp_ca_idcomprobante"],
-                    "comprobante" => $consecutivo, "fchcomprobante" => $d["comp_ca_fchcomprobante"],
-                    "cliente" => $d["cl_ca_nombre"], "doctransporte" => $d["c_ca_doctransporte"],
-                    "idmoneda" => $d["comp_ca_idmoneda"], "moneda" => $d["m_ca_nombre"],
-                    "valor" => ($d["det_ca_cr"] > 0 ? $d["det_ca_cr"] : $d["det_ca_db"]),
-                    "idconcepto" => $d["det_ca_idconcepto"],
-                    "concepto" => utf8_encode($d["det_ca_idconcepto"] . "-" . $d["s_ca_concepto_esp"]),
-                    "iddetalle" => $d["det_ca_iddetalle"], "estado" => $d["comp_ca_estado"],
-                    "cuentapago" => $cuenta_forma_pago, "idccosto" => $d["tcomp_ca_idccosto"],*/
+                $this->data[] = array(                    
                     "class" => $class,                        
                     "ca_iddetalle" => $d["det_ca_iddetalle"],
                     "ca_idconcepto" => $d["det_ca_idconcepto"],
@@ -1389,9 +1117,7 @@ class contabilidadActions extends sfActions {
             }
             
         }
-        //print_r($this->data);
-        //echo $sql;
-       
+        
         if(count($this->data)==0)
         {
             $this->data[] = array(                
@@ -1412,8 +1138,6 @@ class contabilidadActions extends sfActions {
             
         }
         
-        //print_r($data);
-
         $this->responseArray = array("success" => true, "root" => $this->data, "total" => count($this->data), "debug" => $sql);
         $this->setTemplate("responseTemplate");
     }
@@ -1485,13 +1209,7 @@ class contabilidadActions extends sfActions {
             }
         }
         
-        
-        
-        //print_r($transacciones);
-        
-        $this->responseArray = array("success" => true, "root" => $transacciones, "total" => count($transacciones), "debug" => $debug);
-        
-        $this->setTemplate("responseTemplate");
-        
+        $this->responseArray = array("success" => true, "root" => $transacciones, "total" => count($transacciones), "debug" => $debug);        
+        $this->setTemplate("responseTemplate");        
     }
 }
