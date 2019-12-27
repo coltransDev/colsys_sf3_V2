@@ -242,6 +242,8 @@
             autoLoad: true,
             url: '<?= url_for("pm/datosPanelTickets") ?>',
             baseParams: {
+                start: 0,
+                limit: 50,
                 idproject: this.idproject,
                 idgroup: this.idgroup,
                 actionTicket: this.actionTicket,
@@ -260,10 +262,24 @@
             groupField: 'assignedto'
 
         });
+        
+        this.store.load({params:{start:0, limit:50}});
+        
+        this.bbar = [            
+            new Ext.PagingToolbar({
+                id:'paging',
+                pageSize: 50,
+                store: this.store,
+                displayInfo: true,
+                displayMsg: 'Mostrando datos {0} - {1} of {2}',
+                emptyMsg: "No hay tickets para mostrar"
+            })
+        ];
 
 
         PanelTickets.superclass.constructor.call(this, {
             loadMask: {msg: 'Cargando...'},
+            bbar: this.bbar,
             plugins: [
                 this.expander,
                 this.checkColumn,
