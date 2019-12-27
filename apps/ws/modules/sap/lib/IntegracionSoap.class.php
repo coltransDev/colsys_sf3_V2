@@ -168,11 +168,6 @@ class IntegracionSoap {
         $vlrfactura = $data->VlrNeto;
         $vlrimpuestos = $data->VlrImpuestos;
 
-        /*Se solicita a Nicolás ajustar el código para enviar el NIT sin prefijo. Si es extranjero se enviará el adicionalId o Id2*/
-        //$prefijo = substr($data->NIT, 0, 1);
-        /*if($prefijo == "P")
-            $nit = substr($data->NIT, 1);
-        else*/
         $nit = $data->NIT;
 
         $detalles = $data->Lineas;
@@ -203,9 +198,7 @@ class IntegracionSoap {
                             $comprobante->setCaEstado(5);
                             $comprobante->setCaIdmoneda($idmoneda);
                             $comprobante->setCaValor($vlrfactura);
-                            $comprobante->setCaValor2($vlrfactura + $vlrimpuestos);
-                            //$comprobante->setCaIdsucursal($idsucursal);
-                            //$comprobante->setCaIdccosto($ccosto->getCaIdccosto());
+                            $comprobante->setCaValor2($vlrfactura + $vlrimpuestos);                            
                             $comprobante->setCaUsucreado("sap");
                             $comprobante->setCaFchcreado(date("Y-m-d H:i:s"));
                             $comprobante->setCaDocentry($docentry);
@@ -219,8 +212,7 @@ class IntegracionSoap {
                                     $estado = 0;
                                     $mensajeError.= utf8_encode("No se encuentra la referencia: ".$dt->PrjCode."| ");
                                     $reenvio = "n";
-                                    $success = "false";
-                                    //break;
+                                    $success = "false";                                    
                                 } else {
                                     if($inoMaster->getCaFchliquidado() == "" || $inoMaster->getCaFchliquidado() == null){
 
@@ -260,6 +252,47 @@ class IntegracionSoap {
                                     }
                                 }
                             }
+                            /*Ticket 69466: Comprobante de ingreso ficticio para NC proveedores nacionales*/
+                            if(strtolower($observaciones) == strtolower("ingreso") && $codigo == "RC"){
+                                
+                                if($comprobante->getInoTipoComprobante()->getCaIdempresa()=="2" || $comprobante->getInoTipoComprobante()->getCaIdempresa()=="8" ){
+                                    
+                                    $detalles= $comprobante->getInoDetalle();
+                                    
+                                    $data= array();                                        
+                                    foreach($detalles as $d){
+                                        $valor="0";
+                                        $data[$d["ca_idmaster"]]["valor"]+=$valor;
+                                        $data[$d["ca_idmaster"]]["concepto"]+=$d["ca_idconcepto"];
+                                    }
+
+                                    foreach($data as $ref=>$d){
+                                        $house = Doctrine::getTable("InoHouse")->findBy("ca_idmaster",$ref)->getFirst();
+                                        $comprobanteIngreso = new InoComprobante();
+                                        $comprobanteIngreso->setCaIdtipo(98);
+                                        $comprobanteIngreso->setCaConsecutivo("C-".$nrodocumento);
+                                        $comprobanteIngreso->setCaFchcomprobante($fchcomprobante);
+                                        $comprobanteIngreso->setCaId($ids->getCaId());
+                                        $comprobanteIngreso->setCaObservaciones("Generado Automaticamente desde la NC ".$comprobante->getCaConsecutivo()."-".$comprobante->getCaIdmaster()." : ".$d["concepto"]);
+                                        $comprobanteIngreso->setCaTcambio($tcambio);
+                                        $comprobanteIngreso->setCaEstado(5);
+                                        $comprobanteIngreso->setCaIdmoneda($idmoneda);
+                                        $comprobanteIngreso->setCaValor(0);
+                                        $comprobanteIngreso->setCaValor2(0);
+                                        $comprobanteIngreso->setCaIdsucursal($comprobante->getCaIdsucursal());                                    
+                                        $comprobanteIngreso->setCaFchgenero(date("Y-m-d H:i:s"));
+                                        $comprobanteIngreso->setCaIdcomprobanteCruce($comprobante->getCaIdcomprobante());
+                                        $comprobanteIngreso->setCaIdmaster($ref);
+                                        $comprobanteIngreso->setCaIdhouse($house->getCaIdhouse());
+                                        $comprobanteIngreso->setCaUsucreado("sap");
+                                        $comprobanteIngreso->setCaFchcreado(date("Y-m-d H:i:s"));
+                                        $comprobanteIngreso->setCaDocentry(null);
+                                        $comprobanteIngreso->stopBlaming();
+                                        $comprobanteIngreso->save($conn);
+                                    }
+                                }
+                            }
+                            
                             if($contador > 0){
                                 $estado = 1;
                                 $mensaje = 'El comprobante se ha creado satisfactoriamente! '.$mensajeError;
@@ -273,7 +306,7 @@ class IntegracionSoap {
                             }
                         } else {
                             $estado = 0;
-                            $mensaje = '?El comprobante ya existe! Id comprobante: '. $comprobante->getCaIdcomprobante().'Id Tipo C:'. $tipoComprobante->getCaIdtipo().' Nro Doc:'. $nrodocumento.'-Id cliente:'. $ids->getCaId();
+                            $mensaje = 'El comprobante ya existe! Id comprobante: '. $comprobante->getCaIdcomprobante().'Id Tipo C:'. $tipoComprobante->getCaIdtipo().' Nro Doc:'. $nrodocumento.'-Id cliente:'. $ids->getCaId();
                             $reenvio = "n";
                             $success = "false";
                         }
@@ -332,9 +365,6 @@ class IntegracionSoap {
         $nrodocumento = $data->DocNum;
         $docentry = $data->DocEntry;
         $docentrycruce = $data->DocEntryCruce;
-//        $codigo_fc = $data->codigo_fac;
-//        $serie_fc = $data->serie_fac;
-//        $nrodocumento_fc = $data->numero_fac;
         $valor = $data->VlrNeto;
         $fchcomprobante = $data->TaxDate;
         $tcambio = $data->DocRate;
@@ -351,118 +381,102 @@ class IntegracionSoap {
                 if($serie){
                     $tipoComprobante = Doctrine::getTable("InoTipoComprobante")->findByDql('ca_idempresa = ? AND ca_prefijo_sap = ? AND ca_comprobante = ? AND ca_activo = ? AND ca_aplicacion = ?', array($company, $codigo, $serie, TRUE, 1))->getFirst();
                     if ($tipoComprobante) {
+                        if ($docentrycruce) {
+                            $docCruce = Doctrine::getTable("InoComprobante")
+                                    ->createQuery("c")
+                                    ->innerJoin("c.InoTipoComprobante tc")
+                                    ->where("c.ca_docentry = ?", $docentrycruce)
+                                    ->addWhere("tc.ca_tipo = 'F'")                                    
+                                    ->fetchOne();
 
-                        //if (!$comprobante) {
-                            if ($docentrycruce) {
-                                //$docCruce = Doctrine::getTable("InoComprobante")->findOneBy("ca_docentry", $docentrycruce);
-
-                                $docCruce = Doctrine::getTable("InoComprobante")
-                                        ->createQuery("c")
-                                        ->innerJoin("c.InoTipoComprobante tc")
-                                        ->where("c.ca_docentry = ?", $docentrycruce)
-                                        ->addWhere("tc.ca_tipo = 'F'")                                    
-                                        ->fetchOne();
-
-                                if ($docCruce) {
-                                    $validarReferencia = Doctrine::getTable("InoViComprobante")->findByDql("ca_referencia = ? AND ca_idcomprobante = ?", array($referencia, $docCruce->getCaIdcomprobante()))->getFirst();
-                                    if ($validarReferencia) {
-
-                                        $comprobante = Doctrine::getTable("InoComprobante")->findByDql('ca_idtipo = ? AND ca_consecutivo = ? and ca_id = ?', array($tipoComprobante->getCaIdtipo(), $nrodocumento, $ids->getCaId()))->getFirst();                                    
-                                        if (!$comprobante) {
-                                            $comprobante = new InoComprobante();
-                                            $comprobante->setCaIdtipo($tipoComprobante->getCaIdtipo());
-                                            $comprobante->setCaConsecutivo($nrodocumento);
-                                            $comprobante->setCaFchcomprobante($fchcomprobante);
-                                            $comprobante->setCaId($ids->getCaId());
-                                            $comprobante->setCaObservaciones($observaciones . "| Idtransaccion=" . $transaccion->getCaIdtransaccion());
-                                            $comprobante->setCaTcambio($tcambio);
-                                            $comprobante->setCaEstado("5");
-                                            $comprobante->setCaIdmoneda($idmoneda);
-                                            $comprobante->setCaValor($valor);
-                                            $comprobante->setCaValor2($valor);                                    
-                                            $comprobante->setCaUsucreado("sap");
-                                            $comprobante->setCaFchcreado(date("Y-m-d H:i:s"));
-                                            $comprobante->setCaDocentry($docentry);
-                                            $comprobante->stopBlaming();
-                                            $comprobante->save($conn);
-                                        }
-
-                                        $docCruce->setCaObservaciones($docCruce->getCaObservaciones()."|".$observaciones . "| IdtransaccionPR=" . $transaccion->getCaIdtransaccion());
-                                        $docCruce->setCaIdcomprobanteCruce($comprobante->getCaIdcomprobante());
-                                        $docCruce->setCaUsuactualizado("sap");
-                                        $docCruce->setCaFchactualizado(date("Y-m-d H:i:s"));
-                                        $docCruce->stopBlaming();
-                                        $docCruce->save($conn);
-
-                                        $estado = 1;
-                                        $mensaje = 'El PAGO RECIBIDO se ha creado satisfactoriamente. Idcomprobante:'.$comprobante->getCaIdcomprobante().' IdcompCruce:'.$docCruce->getCaIdcomprobante();
-                                        $reenvio = "n";
-                                        $success = true;
-
-                                    } else {
-                                        $estado = 0;
-                                        $mensaje = 'El documento cruce no corresponde a la referencia asociada. DocEntryCruce:'.$docentrycruce.' Ref.:'.$referencia;
-                                        $reenvio = "s";
-                                        $success = false;
+                            if ($docCruce) {
+                                $validarReferencia = Doctrine::getTable("InoViComprobante")->findByDql("ca_referencia = ? AND ca_idcomprobante = ?", array($referencia, $docCruce->getCaIdcomprobante()))->getFirst();
+                                if ($validarReferencia) {
+                                    $comprobante = Doctrine::getTable("InoComprobante")->findByDql('ca_idtipo = ? AND ca_consecutivo = ? and ca_id = ?', array($tipoComprobante->getCaIdtipo(), $nrodocumento, $ids->getCaId()))->getFirst();                                    
+                                    if (!$comprobante) {
+                                        $comprobante = new InoComprobante();
+                                        $comprobante->setCaIdtipo($tipoComprobante->getCaIdtipo());
+                                        $comprobante->setCaConsecutivo($nrodocumento);
+                                        $comprobante->setCaFchcomprobante($fchcomprobante);
+                                        $comprobante->setCaId($ids->getCaId());
+                                        $comprobante->setCaObservaciones($observaciones . "| Idtransaccion=" . $transaccion->getCaIdtransaccion());
+                                        $comprobante->setCaTcambio($tcambio);
+                                        $comprobante->setCaEstado("5");
+                                        $comprobante->setCaIdmoneda($idmoneda);
+                                        $comprobante->setCaValor($valor);
+                                        $comprobante->setCaValor2($valor);                                    
+                                        $comprobante->setCaUsucreado("sap");
+                                        $comprobante->setCaFchcreado(date("Y-m-d H:i:s"));
+                                        $comprobante->setCaDocentry($docentry);
+                                        $comprobante->stopBlaming();
+                                        $comprobante->save($conn);
                                     }
+
+                                    $docCruce->setCaObservaciones($docCruce->getCaObservaciones()."|".$observaciones . "| IdtransaccionPR=" . $transaccion->getCaIdtransaccion());
+                                    $docCruce->setCaIdcomprobanteCruce($comprobante->getCaIdcomprobante());
+                                    $docCruce->setCaUsuactualizado("sap");
+                                    $docCruce->setCaFchactualizado(date("Y-m-d H:i:s"));
+                                    $docCruce->stopBlaming();
+                                    $docCruce->save($conn);
+
+                                    $estado = 1;
+                                    $mensaje = 'El PAGO RECIBIDO se ha creado satisfactoriamente. Idcomprobante:'.$comprobante->getCaIdcomprobante().' IdcompCruce:'.$docCruce->getCaIdcomprobante();
+                                    $reenvio = "n";
+                                    $success = true;
+
                                 } else {
                                     $estado = 0;
-                                    $mensaje = 'El docentrycruce enviado no se encuentra en nuestra base de datos:'.$docentrycruce;
+                                    $mensaje = 'El documento cruce no corresponde a la referencia asociada. DocEntryCruce:'.$docentrycruce.' Ref.:'.$referencia;
                                     $reenvio = "s";
                                     $success = false;
                                 }
-                            } elseif ($tipoComprobante->getCaPrefijoSap() == "RA") { // Es Anticipo
-                                if ($referencia != "") {
-                                    $master = Doctrine::getTable("InoMaster")->findBy("ca_referencia", $referencia)->getFirst();
+                            } else {
+                                $estado = 0;
+                                $mensaje = 'El docentrycruce enviado no se encuentra en nuestra base de datos:'.$docentrycruce;
+                                $reenvio = "s";
+                                $success = false;
+                            }
+                        } elseif ($tipoComprobante->getCaPrefijoSap() == "RA") { // Es Anticipo
+                            if ($referencia != "") {
+                                $master = Doctrine::getTable("InoMaster")->findBy("ca_referencia", $referencia)->getFirst();
 
-                                    if ($master) {
+                                if ($master) {
 
-                                        $pago = new InoComprobante();
-                                        $pago->setCaIdtipo($tipoComprobante->getCaIdtipo());
-                                        $pago->setCaConsecutivo($nrodocumento);
-                                        $pago->setCaFchcomprobante($fchcomprobante);
-                                        $pago->setCaId($ids->getCaId());
-                                        $pago->setCaObservaciones($observaciones . "| IdtransaccionRA=" . $transaccion->getCaIdtransaccion());
-                                        $pago->setCaTcambio($tcambio);
-                                        $pago->setCaEstado("5");
-                                        $pago->setCaIdmoneda($idmoneda);
-                                        $pago->setCaValor($valor);
-                                        $pago->setCaValor2($valor);                                    
-                                        $pago->setCaUsucreado("sap");
-                                        $pago->setCaFchcreado(date("Y-m-d H:i:s"));
-                                        $pago->setCaIdmaster($master->getCaIdmaster());
-                                        $pago->setCaDocentry($docentry);
-                                        $pago->stopBlaming();
-                                        $pago->save($conn);
+                                    $pago = new InoComprobante();
+                                    $pago->setCaIdtipo($tipoComprobante->getCaIdtipo());
+                                    $pago->setCaConsecutivo($nrodocumento);
+                                    $pago->setCaFchcomprobante($fchcomprobante);
+                                    $pago->setCaId($ids->getCaId());
+                                    $pago->setCaObservaciones($observaciones . "| IdtransaccionRA=" . $transaccion->getCaIdtransaccion());
+                                    $pago->setCaTcambio($tcambio);
+                                    $pago->setCaEstado("5");
+                                    $pago->setCaIdmoneda($idmoneda);
+                                    $pago->setCaValor($valor);
+                                    $pago->setCaValor2($valor);                                    
+                                    $pago->setCaUsucreado("sap");
+                                    $pago->setCaFchcreado(date("Y-m-d H:i:s"));
+                                    $pago->setCaIdmaster($master->getCaIdmaster());
+                                    $pago->setCaDocentry($docentry);
+                                    $pago->stopBlaming();
+                                    $pago->save($conn);
 
-                                        $estado = 1;
-                                        $mensaje = 'El comprobante de anticipo se ha creado satisfactoriamente. Idcomprobante:'.$pago->getCaIdcomprobante();
-                                        $reenvio = "n";
-                                        $success = true;
-                                    } else {
-                                        $estado = 0;
-                                        $mensaje = 'La referencia no existe . Ref.:'.$referencia;
-                                        $reenvio = "s";
-                                        $success = false;
-                                    }
+                                    $estado = 1;
+                                    $mensaje = 'El comprobante de anticipo se ha creado satisfactoriamente. Idcomprobante:'.$pago->getCaIdcomprobante();
+                                    $reenvio = "n";
+                                    $success = true;
                                 } else {
                                     $estado = 0;
-                                    $mensaje = 'Se debe enviar un numero de referencia valido. Ref.:'.$referencia;
-                                    $reenvio = "n";
+                                    $mensaje = 'La referencia no existe . Ref.:'.$referencia;
+                                    $reenvio = "s";
                                     $success = false;
                                 }
-                            }
-                        /*} else {
-                            if($docentrycruce){
-
-
-                            }else{
+                            } else {
                                 $estado = 0;
-                                $mensaje = 'Pagos Recibidos. El comprobante ya existe! Idcomprobante: '.$comprobante->getCaIdcomprobante();
+                                $mensaje = 'Se debe enviar un numero de referencia valido. Ref.:'.$referencia;
                                 $reenvio = "n";
                                 $success = false;
                             }
-                        }*/
+                        }                       
                     } else {
                         $estado = 0;
                         $mensaje = 'El tipo de comprobante no existe!..'.$nit;
@@ -527,19 +541,7 @@ class IntegracionSoap {
                 ->where("tc.ca_prefijo_sap = ? AND c.ca_docentry = ? AND tc.ca_idempresa = ?", array($idtipo, $docentry, $company))
                 ->fetchOne();
             
-            if($comprobante){
-                
-//                $datos=json_decode($comprobante->getCaDatos());
-//                $datos->idanticipo="";
-//
-//                $comprobante->setCaFchanulado(date("Y-m-d H:i:s"));
-//                $comprobante->setCaUsuanulado("sap");
-//                $comprobante->setCaEstado(8);
-//                $comprobante->setProperty("msgAnulado",$observaciones);
-//                $comprobante->setCaDatos(json_encode($datos));
-//                $comprobante->stopBlaming();                
-//                $comprobante->save($conn);
-                
+            if($comprobante){                
                 $anular = $comprobante->anular("sap",$observaciones,null, "sap");                
                 $observaciones = $comprobante->eliminarVinculados($usuanulado,$observaciones,null, "sap");                
                 
@@ -695,17 +697,8 @@ class IntegracionSoap {
             $inoConcepto = Doctrine::getTable("InoMaestraConceptos")->findByDql('ca_idconcepto = ? ', array($iditem))->getFirst();
 
             if ($inoConcepto) {
-//                $inoConcepto->setCaActivo(true);
-//                //$inoConcepto->setCaUsusap($usuarioActivacion);
-//                //$inoConcepto->setCafchsap($fechaActivacion);
-//                $inoConcepto->stopBlaming();
-//                $inoConcepto->save($conn);
-                
                 
                 $estadoConceptos = Doctrine::getTable("InoEstadosConceptosSap")->findByDql('ca_idconcepto = ? AND ca_idempresa = ?', array($iditem, $company))->getFirst();
-                
-                //return array(count($estadoConceptos));
-                
                 
                 if(count($estadoConceptos)>1){
                     $estadoConceptos->setCaActivo(true);
