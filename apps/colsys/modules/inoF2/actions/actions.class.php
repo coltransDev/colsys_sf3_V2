@@ -2097,14 +2097,9 @@ class inoF2Actions extends sfActions {
             $data["cerrado"] = "Cerrado Por: ".trim(utf8_encode($ino->getCaUsucerrado() . " " . $ino->getCaFchcerrado()));
         else
             $data["cerrado"]="";
-            
-        /*if(trim(utf8_encode($ino->getCaUsuliquidado().$ino->getCaFchliquidado()))!="")
-            $data["liquidado"] = "Liquidado Por: ".trim(utf8_encode($ino->getCaUsuliquidado() . " " . $ino->getCaFchliquidado()));
-        else
-            $data["liquidado"] ="";
-         * 
-         */
-
+        
+        $data["ningresos"]=count($ino->getFacturasIngreso());
+                
         $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");
     }
@@ -2439,14 +2434,33 @@ class inoF2Actions extends sfActions {
                         //$this->responseArray = array("success" => true, "usuarioCerrado" => ($ino->getCaUsucerrado() . " " . $ino->getCaFchcerrado()));
                     }
                     $ino->generarComisiones();  /* Método para Causar Comisiones */
-                }
-                else{
-                    $success=false;
-                    $errorInfo="No es posible Liquidar porque no posee ingresos.";
-                    $responseArray= array("success" => $success, "errorInfo" => $errorInfo);
-                }
+                }else{
+                    if($ino->getDatosJson('cierre')){
+                        $ino->setCaUsucerrado($this->getUser()->getUserId());
+                        $ino->setCaFchcerrado(date("Y-m-d H:i:s"));
+                        $ino->setCaUsuliquidado($this->getUser()->getUserId());
+                        $ino->setCaFchliquidado(date("Y-m-d H:i:s"));
+                        $this->getUser()->log("Cerrar INO F2", false, array("url" => $idmaster));
 
-                
+                        $ino->save();
+                        $conn->commit();
+                        $datos["impoexpo"]=utf8_encode($ino->getCaImpoexpo());
+                        $datos["transporte"]=utf8_encode($ino->getCaTransporte());
+                        $datos["fchcerrado"]=$ino->getCaFchcerrado();
+                        $datos["fchanulado"]=$ino->getCaFchanulado();
+                        $datos["fchliquidado"]=$ino->getCaFchliquidado();
+                        $datos["modalidad"]=$ino->getCaModalidad();
+                        $datos["referencia"]=$ino->getCaReferencia();
+                        $datos["tipofac"]="0";
+                        $datos["idticket"]="0";
+
+                        $responseArray = array("success" => true, "datos"=>$datos, "usuarioLiquidado" => ($ino->getCaUsuliquidado() . " " . $ino->getCaFchliquidado()));
+                    }else{
+                        $success=false;
+                        $errorInfo="No es posible Liquidar porque no posee ingresos.";
+                        $responseArray= array("success" => $success, "errorInfo" => $errorInfo);
+                    }
+                }                
             } else {
                 $ino->setCaUsucerrado(null);
                 $ino->setCaFchcerrado(null);
