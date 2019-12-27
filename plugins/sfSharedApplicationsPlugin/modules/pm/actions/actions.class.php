@@ -32,8 +32,7 @@ class pmActions extends sfActions {
             }
         }
 
-        $this->forward404Unless($this->nivel != -1);
-        //return 0;
+        $this->forward404Unless($this->nivel != -1);        
         return $this->nivel;
     }
 
@@ -190,22 +189,22 @@ class pmActions extends sfActions {
                 
         }
 
-
         $q->distinct();
         $debug = $q->getSqlQuery();
-        //exit($q->getSqlQuery());
         $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
-        //$q->limit(400);
-        $tickets = $q->execute();
         
-        
+        $resultsPerPage = $request->getParameter("limit");
+        $currentPage = ($request->getParameter("start") / $resultsPerPage) + 1;
+        $this->pager = new Doctrine_Pager(
+            $q, $currentPage, $resultsPerPage
+        );
+        $tickets = $this->pager->execute();
         
         $parametros = ParametroTable::retrieveByCaso("CU110");
         $status = array();
         foreach ($parametros as $p) {
             $status[$p->getCaIdentificacion()] = array("nombre" => utf8_encode($p->getCaValor()), "color" => $p->getCaValor2());
         }
-
 
         foreach ($tickets as $key => $val) {
             $tickets[$key]["h_ca_action"] = $tickets[$key]["h_ca_closedat"] ? "Cerrado" : "Abierto";
@@ -226,11 +225,8 @@ class pmActions extends sfActions {
             $tickets[$key]["h_ca_datos"] = utf8_encode($tickets[$key]["h_ca_datos"]);
         }
         
-        //echo "<pre>";print_r($tickets);echo "</pre>";
-        //exit();
+        $this->responseArray = array("success" => true, "total" => $this->pager->getNumResults(), "total2" => $this->pager->getNumResults(), "root" => $tickets, "debug"=>$debug);
         
-        $this->responseArray = array("success" => true, "total" => count($tickets), "root" => $tickets, "debug"=>$debug);
-
         $this->setTemplate("responseTemplate");
     }
 
@@ -451,8 +447,7 @@ class pmActions extends sfActions {
                 $tarea = $estimation->getTareaIdg();
                 if ($tarea) {
                     if (!$tarea->getCaFchterminada()) {
-                        $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
-                        //$tarea->setCaObservaciones(utf8_decode($request->getParameter("motivo")));
+                        $tarea->setCaFchterminada(date("Y-m-d H:i:s"));                        
                         $tarea->setCaUsuterminada($user->getCaLogin());
                         $tarea->save($conn);
                     }
@@ -468,7 +463,6 @@ class pmActions extends sfActions {
                     ->innerJoin("h.Usuario u")
                     ->innerJoin("u.Departamento d")
                     ->addWhere("d.ca_iddepartamento = ? ", $user->getDepartamento()->getCaIddepartamento())
-                    //->addWhere("h.ca_idgroup = ? ", $ticket->getCaIdgroup())  
                     ->addWhere("u.ca_activo = ? ", true)
                     ->addOrderBy("h.ca_login")
                     ->distinct()
@@ -483,8 +477,7 @@ class pmActions extends sfActions {
                 $usuarios = Doctrine::getTable("HdeskUserGroup")
                         ->createQuery("h")
                         ->innerJoin("h.Usuario u")
-                        ->innerJoin("u.Departamento d")
-                        //->addWhere("d.ca_iddepartamento = ? ", $this->getUser()->getIddepartamento())  
+                        ->innerJoin("u.Departamento d")                        
                         ->addWhere("h.ca_idgroup = ? ", $ticket->getCaIdgroup())
                         ->addWhere("u.ca_activo = ? ", true)
                         ->addOrderBy("h.ca_login")
@@ -557,7 +550,7 @@ class pmActions extends sfActions {
 
             $email = new Email();
             $email->setCaUsuenvio($user->getCaLogin());
-            $email->setCaTipo("Notificación");
+            $email->setCaTipo("Notificación Rta");
             $email->setCaIdcaso($ticket->getCaIdticket());
             $email->setCaFrom("no-reply@coltrans.com.co");
             $email->setCaFromname("Colsys Notificaciones");
@@ -572,8 +565,7 @@ class pmActions extends sfActions {
                 $texto = $txt;
                 $texto .=sfContext::getInstance()->getController()->getPresentationFor('kbase', 'viewIssue');
 
-                $texto = str_replace('src="/', 'src="https://www.colsys.com.co/', $texto);
-                //$texto = str_replace('src="/', 'src="https://localhost/',  $texto);
+                $texto = str_replace('src="/', 'src="https://www.colsys.com.co/', $texto);                
             } else {
                 $texto = sfContext::getInstance()->getController()->getPresentationFor('pm', 'verTicket');
             }
@@ -597,10 +589,7 @@ class pmActions extends sfActions {
             }
 
             $email->save($conn);
-            //$email->send();
-            //$this->ticket = $ticket;
-
-
+            
             /*
              * Cambia el status
              */
@@ -648,6 +637,7 @@ class pmActions extends sfActions {
     public function executeFormTicketGuardar(sfWebRequest $request) {         
         $txt = "";
         $update = false;
+        $notificar = true;
         $user = $this->getUser();
 
         $conn = Doctrine::getTable("HdeskTicket")->getConnection();
@@ -659,9 +649,6 @@ class pmActions extends sfActions {
                 $update = true;                      
                 if ($request->getParameter("area") != $ticket->getCaIdgroup()) { //Cuando cambia el area notifica.
                     $tarea = $ticket->getNotTarea();
-                    /* if ($tarea) {
-                      $tarea->delete(); //Antes se eliminaba, ahora no para que conserve los datos del IDG.
-                      } */
 
                     //Crea un nuevo status para saber que se cambio de área
                     $area1 = Doctrine::getTable("HdeskGroup")->find($ticket->getCaIdgroup());
@@ -674,7 +661,6 @@ class pmActions extends sfActions {
                     $respuesta->setCaCreatedat(date("Y-m-d H:i:s"));
                     $respuesta->save($conn);
                     $changeDepto = true;
-                    //$update = false;
                 }
             } else {                
                 $ticket = new HdeskTicket();
@@ -706,7 +692,7 @@ class pmActions extends sfActions {
             }            
 
             if ($request->getParameter("type")) {
-                $ticket->setCaType($request->getParameter("type"));
+                $ticket->setCaType($request->getParameter("type"));                
             }
 
             if ($request->getParameter("priority")) {
@@ -780,8 +766,6 @@ class pmActions extends sfActions {
 
                     $j=0;
                     while($request->getParameter("iddestino".$j)!=""){
-                        //$tarifa["trayecto"]["destino"][] = utf8_encode($request->getParameter("destino".$j));                    
-                        //$tarifa["trayecto"][$j] = array("destino"=>utf8_encode($request->getParameter("destino".$j)));
                         $tarifa["trayecto"]["destino"]["ciudad"][] = utf8_encode($request->getParameter("destino".$j));
                         $tarifa["trayecto"]["destino"]["transporte"][] = $request->getParameter("transdest".$j);
                         $j++;
@@ -878,7 +862,6 @@ class pmActions extends sfActions {
 
                     ksort($tarifa);                
                     $tarifa = array("solicitud"=>$tarifa);
-                    //print_r($tarifa);
                     $tarifasJson = json_encode($tarifa);                
                     $ticket->setCaDatos($tarifasJson);
                     $ticket->save($conn);  
@@ -888,7 +871,6 @@ class pmActions extends sfActions {
                     /*
                      * Crea un PDF con las tarifas y se guarda en la carpeta del ticket
                      */  
-                    //$request->setParameter("tarifas", $tarifas);
                     $request->setParameter("idticket", $ticket->getCaIdticket());
                     $request->setParameter("tipo", "interno");                 
                     $detalleTarifa = sfContext::getInstance()->getController()->getPresentationFor('pm','crearTarifasHtml');                
@@ -951,8 +933,25 @@ class pmActions extends sfActions {
                     $tarea->setAsignaciones($loginsAsignaciones, $conn);
                 }
             }
-
-            if (!$update && $request->getParameter("actionTicket") != "Cerrado") {
+            
+            if($request->getParameter("type")){
+                $type = Doctrine::getTable("HdeskDepartamentClasification")->findBy("ca_clasification",$request->getParameter("type"))->getFirst();
+                /*Cierre automático del ticket en caso que así este marcado el tipo*/
+                if($type->getCaCierre()){
+                    $request->setParameter("ticket",$ticket);                    
+                    $request->setParameter("respuesta",utf8_encode("Ésta es una notificación automática, por favor no responder este ticket."));                    
+                    
+                    $suc = $this->executeCierreAutomatico($request);                    
+                    $notificar = false;
+                }
+                /*Se ejecuta la acción que este asociada al tipo de ticket*/
+                if($type->getCaDatos()){                    
+                    eval("\$obj = Doctrine::getTable(".$type->getDatosJson('ca_modelo').")->find(\$request->getParameter(\$type->getDatosJson('ca_parametro')));");
+                    eval("\$respuesta = \$obj->".$type->getDatosJson('ca_metodo')."();");
+                }
+            }
+            
+            if (!$update && $request->getParameter("actionTicket") != "Cerrado" && $notificar) {
                 $tarea->notificar($conn);
             }
             if ($changeDepto == true) {
@@ -1198,11 +1197,6 @@ class pmActions extends sfActions {
                 ->addOrderBy("h.ca_due ASC")
                 ->addOrderBy("h.ca_title ASC");
 
-
-
-
-        //$q->distinct();
-        //exit($q->getSql());
         $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
         $q->limit(120);
         $milestones = $q->execute();
@@ -1531,7 +1525,7 @@ class pmActions extends sfActions {
 
 
         $q->distinct();
-        //exit($q->getSql());
+        
         $q->setHydrationMode(Doctrine::HYDRATE_SCALAR);
         $q->limit(120);
         $milestones = $q->execute();
@@ -1629,8 +1623,7 @@ class pmActions extends sfActions {
                 ->createQuery("d")
                 ->innerJoin("d.Usuario u")
                 ->where("d.ca_inhelpdesk = ?", true)
-                ->addWhere("u.ca_login = ?", $this->user)
-                //->orWhere("d.ca_nombre = ?", $depAdic)
+                ->addWhere("u.ca_login = ?", $this->user)                
                 ->addOrderBy("d.ca_nombre ASC");
         
         if($depAdic){
@@ -1734,8 +1727,7 @@ class pmActions extends sfActions {
             $data["status"] = $ticket->getCaStatus();
             $data["idactivo"] = $ticket->getCaIdactivo();
             $data["idempresa"] = $ticket->getCaIdempresa();
-            $data["activo"] = $ticket->getInvActivo()->getCaIdentificador();
-            //$data["estimated"] = $ticket->getCaEstimated();
+            $data["activo"] = $ticket->getInvActivo()->getCaIdentificador();            
             $data["parent"] = $ticket->getCaParent();
             $data["idempresa"] = $ticket->getCaIdempresa();
             if($ticket->getCaIdempresa()){
@@ -2004,7 +1996,6 @@ class pmActions extends sfActions {
                     ->leftJoin("g.Departamento d")
                     ->leftJoin("g.HdeskTicket t")
                     ->leftJoin("t.HdeskResponse r")                    
-                    //->limit(100)
                     ->distinct()
                     ->orderBy("r.ca_createdat DESC")
                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
@@ -2039,8 +2030,6 @@ class pmActions extends sfActions {
                     $pksResponses = Doctrine::getTable("HdeskResponse")->getPksForLuceneQuery($newQuery);
 
                     if (!empty($pks) && !empty($pksResponses)) {
-                        //$q->addWhere('(t.ca_idticket IN ? OR r.ca_idresponse IN ?)', array($pks, $pksResponses));
-
                         $q->orWhereIn('r.ca_idresponse', $pksResponses);
                         $q->orwhereIn('t.ca_idticket', $pks);
                     } elseif (!empty($pks)) {
@@ -2057,8 +2046,7 @@ class pmActions extends sfActions {
                     $q->innerJoin("t.Usuario u");
                     $q->addWhere("(LOWER(u.ca_nombre) LIKE ? OR LOWER(u.ca_login) LIKE ?)", array("%" . strtolower($query) . "%", "%" . strtolower($query) . "%"));
                     break;
-                default:
-                    //$q->addWhere("g.ca_iddepartament = 13"); //Eventos de sistemas
+                default:                    
                     $q->limit(200);
                     break;
             }
@@ -2184,13 +2172,12 @@ class pmActions extends sfActions {
     
     
     public function executeResponseTickets(sfWebRequest $request) {
-        //$folder1=$request->getParameter("folder");
+        
         $folder1="COLSYS";
-        //$folder1="MAURICIO";
+        
         $debug=$request->getParameter("debug");
         $msgerror="";
-        //exit;
-        //try
+        
         {
             ProjectConfiguration::registerZend();
             Zend_Loader::loadClass('Zend_Gdata_ClientLogin');
@@ -2198,110 +2185,63 @@ class pmActions extends sfActions {
             $pass = 'cglti$col91';
             $mail = new Zend_Mail_Storage_Imap(array('host' => 'imap.gmail.com', 'user' => "colsys@coltrans.com.co", 'password' => $pass, 'ssl' => 'SSL'));
             $mail->selectFolder($folder1);
-            //$logFile = sfConfig::get('sf_root_dir') . DIRECTORY_SEPARATOR . "log" . DIRECTORY_SEPARATOR . "tickets_error.log";
-            $logFile = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR."colsyslog".DIRECTORY_SEPARATOR. "tickets_error.log";
-            echo "Numero de Emails:".count($mail);            
-            
+
+            $logFile = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . "colsyslog" . DIRECTORY_SEPARATOR . "tickets_error.log";
+            echo "Numero de Emails:" . count($mail);
+
             foreach ($mail as $messageNum => $message) {
-                //if ($message->hasFlag(Zend_Mail_Storage::FLAG_SEEN)) {
-                    //continue;
-                //}
-                
-                //getEncoding
-              
                 try {
-                    
-                
                     $from = $message->from;
                     $part = $message;
-
-
                     $sender = trim(utf8_encode($message->from));
-                    preg_match('/<(.*?)>/s', $sender, $matches);
-                    $from =$matches[1];
-    //                echo $sender_mail;
 
+                    preg_match('/<(.*?)>/s', $sender, $matches);
+                    $from = $matches[1];
                     $ticket_regex = "/#[0-9]+/";
 
                     preg_match_all($ticket_regex, $message->subject, $matches_ticket);
-                    $idticket=  str_replace("#","",$matches_ticket[0][0]);                
+                    $idticket = str_replace("#", "", $matches_ticket[0][0]);
 
                     $part = $message->getPart(1);
-                    //echo $part->contentType;
-                    if (strtok($part->contentType, ';') == 'text/plain')
-                    {
-                        
-                        $mess=$part->getContent();
+                    if (strtok($part->contentType, ';') == 'text/plain') {
 
-
-                        /*if (base64_decode($mess, true)) {
-                            //echo "451";
-                            $mess=  base64_decode($mess);
-                        }  */                      
-                        $p=strpos($mess, "Colsys Notificaciones");
-                        $q=0;                        
-                        if($p=="")
-                        {                            
+                        $mess = $part->getContent();
+                        $p = strpos($mess, "Colsys Notificaciones");
+                        $q = 0;
+                        if ($p == "") {
                             continue;
-                        }
-                        else
-                            $q=130;
+                        } else
+                            $q = 130;
 
-                        $mess= utf8_decode(quoted_printable_decode($mess));
+                        $mess = utf8_decode(quoted_printable_decode($mess));
 
-
-
-                        if($p>=0)
-                        {
+                        if($p>=0){
                           $p=$p-$q;
                         }
-                        $mess = substr($mess, 0, $p);//message.substring(p + 1, message); //now get the address  
+                        $mess = substr($mess, 0, $p);
                         $mess.="<br><span style='font-size:9px'><b>response from google app-script</b></span>"; 
-
-
-                        echo $mess;
                         
-                        //$request->setParameter("idticket",$idticket);
-                        //$request->setParameter("comentario",$mess);
-
-                        /*$user = Doctrine::getTable("Usuario")
-                        ->createQuery("u")
-                        ->select("u.ca_login")
-                        ->where("u.ca_email = ? ", $from)
-                        ->addWhere("u.ca_activo = true ")
-                        ->limit(1)
-                        ->fetchOne();*/
+                        echo $mess;                        
                         echo $idticket;
                         echo $from;
                         
                         $q = Doctrine::getTable("Usuario")->createQuery("u")
                             ->select("DISTINCT(u.ca_login) AS ca_login")        
-                            ->where(" u.ca_activo = true AND u.ca_email = '{$from}'");
-                            //->addOrderBy("u.ca_nombre");
-                            //echo $q->getSqlQuery();
-                            
+                            ->where(" u.ca_activo = true AND u.ca_email = '{$from}'");                            
                         $user=$q->fetchOne();
 
                         if(!$user){   
                             Utils::writeLog($logFile, date()." - No se encontró el usuario  para el email ".$from. " del ticket ".$idticket);
                             continue;
-                            //exit;
                         }
-                        //echo $idticket."---".$mess."---".$user->getCaLogin()."<br>";
+                        
                         $request->setParameter("idticket",$idticket);
                         $request->setParameter("respuesta",$mess);
                         $request->setParameter("iduser",$user->getCaLogin());
                         $this->executeGuardarRespuestaTicket($request);
-                        
                     }
                 } catch (Exception $e) {
-                    
-                    
-                    /*$uniq_id = $mail->getUniqueId($messageNum);
-                    $messageId = $mail->getNumberByUniqueId($uniq_id);
-                    $mail->moveMessage($messageId, $folder1."P");       */
-                    $msgerror.=$message->subject."/:".$e->getTraceAsString()."<br><br>";
-                    
+                    $msgerror.=$message->subject."/:".$e->getTraceAsString()."<br><br>";                    
                 }
                 
                 
@@ -2309,14 +2249,8 @@ class pmActions extends sfActions {
                 $messageId = $mail->getNumberByUniqueId($uniq_id);
                 $mail->moveMessage($messageId, $folder1."P");
             }
-            /*foreach ($mail as $messageNum => $message) {
-                $uniq_id = $mail->getUniqueId($messageNum);
-                $messageId = $mail->getNumberByUniqueId($uniq_id);
-                $mail->moveMessage($messageId, $folder1."P");   
-            }*/
             
-            if($msgerror!="")
-            {
+            if($msgerror!=""){
                 Utils::sendEmail(
                     array(
                         "from"=>"colsys@coltrans.com.co",
@@ -2328,19 +2262,9 @@ class pmActions extends sfActions {
                 );
                 Utils::writeLog($logFile, date()." - ". $msgerror);
             }
-        }
-        /*catch(Exception $e)
-        {
-            echo $e->getMessage();
-           
-        }*/
+        }        
         exit;
     }
-    
-    
-    
-    
-    
 
     public function executeNoAccess(sfWebRequest $request) {
          
@@ -2538,8 +2462,6 @@ class pmActions extends sfActions {
             }
         }
         
-        //echo "<pre>".print_r($data)."</pre>";
-
         $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
         $this->setTemplate("responseTemplate");
     }
@@ -2636,12 +2558,10 @@ class pmActions extends sfActions {
         
         $caso_uso = $request->getParameter("casouso");
         
-        //foreach ($casos as $caso) {
-            $datos = ParametroTable::retrieveByCaso($caso_uso);
-            foreach ($datos as $dato) {
-                $data[] = array("id" => utf8_encode($dato->getCaIdentificacion()), "name" => utf8_encode($dato->getCaValor()), "name2" => utf8_encode($dato->getCaValor2()), "caso_uso" => $dato->getCaCasouso());                                
-}
-        //}
+        $datos = ParametroTable::retrieveByCaso($caso_uso);
+        foreach ($datos as $dato) {
+            $data[] = array("id" => utf8_encode($dato->getCaIdentificacion()), "name" => utf8_encode($dato->getCaValor()), "name2" => utf8_encode($dato->getCaValor2()), "caso_uso" => $dato->getCaCasouso());                                
+        }
             
         $this->responseArray = array("success" => true, "root"=>$data);
         $this->setTemplate("responseTemplate");
@@ -2652,9 +2572,7 @@ class pmActions extends sfActions {
         $idticket = $request->getParameter("idticket");
         $this->ticket = Doctrine::getTable("HdeskTicket")->find($idticket); 
         $this->tarifas = json_decode(utf8_encode($this->ticket->getCaDatos()),1);
-        //echo utf8_encode($this->ticket->getCaDatos());
-        //echo "<pre>";print_r($this->tarifas);echo "<pre>";
-        //exit;
+        
         $this->tipo = $request->getParameter("tipo");
         
         if($this->tipo == "interno")
@@ -2680,7 +2598,7 @@ class pmActions extends sfActions {
         $pdf->SetCreator(PDF_CREATOR);
         $pdf->SetAuthor('Coltrans');
         $pdf->SetMargins(5, 10, 5,false);
-        //$pdf->SetCellPadding(5);
+        
         $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
         $pdf->SetFont('helvetica', '', 9);
         $pdf->AddPage('', '',true);
@@ -2787,22 +2705,6 @@ class pmActions extends sfActions {
            }
         }
 
-        
-        
-        /*$directorio = $ticket->getDirectorio();
-        if (!is_dir($directorio)) {
-            mkdir($directorio, 0777, true);
-        }
-        
-        $filename = "Solicitud Cotizacion Proveedor Ticket # ".$ticket->getCaIdticket().".pdf";
-        $name = $directorio . DIRECTORY_SEPARATOR . $filename;
-
-        $files = glob($directorio.DIRECTORY_SEPARATOR."{*.pdf}",GLOB_BRACE);
-
-        if(in_array($name, $files)){
-            $email->addAttachment($ticket->getDirectorioBase().DIRECTORY_SEPARATOR.$filename);
-        }*/
-        
         $email->save(); //guarda el cuerpo del mensaje    
         $this->idemail = $email->getCaIdemail();
         $respuesta = "Se ha generado solicitud de cotización al proveedor para la tarifa requerida. <a href='/email/verEmail?id=".$email->getCaIdemail()."' target='_blank'>Ver Email</a>";
@@ -2821,11 +2723,9 @@ class pmActions extends sfActions {
         $borrar = $request->getParameter("borrar");
         $ticket = Doctrine::getTable("HdeskTicket")->find($idticket);
         $id = $request->getParameter($id);
-        //echo utf8_encode($ticket->getCaDatos());
+        
         $datos = json_decode(utf8_encode($ticket->getCaDatos()),1);        
         $datosTarifa = $datos["solicitud"];
-        //print_r($datosTarifa);
-        //exit;
         $trayectos = $datosTarifa["trayecto"];
         $ntrayectos = $datosTarifa["norigen"];
         
@@ -2836,17 +2736,12 @@ class pmActions extends sfActions {
         }
         
         $array = ["id","tipo", "concepto", "trayecto", "moneda", "observaciones", "aplicacion"];
-        //print_r($trayectoStr);
-        //exit;
         
         if($datos["datos"] && (!isset($borrar)|| $borrar==="false")){
             $gArray = $datos["datos"];
-            //print_r($gArray);
             foreach($gArray as $key => $gridData){
                 $row = array();
                 foreach($gridData as $item => $value){
-                    //echo $item."-value".utf8_encode($value)."<br/>";
-
                     if(!in_array($item, $array)){
                         $row[$item] = intval($value);
                     }else
@@ -2854,8 +2749,7 @@ class pmActions extends sfActions {
                 }
                 $data[] = $row;
             }
-        }else{
-            //echo $borrar;
+        }else{            
             for($i=0;$i<count($trayectoStr);$i++){
                 $row = array();
                 $row["idticket"] = $idticket;
@@ -2867,9 +2761,6 @@ class pmActions extends sfActions {
                 $data[] = $row;
             }
         }
-        
-        //echo "<pre>";print_r($data);echo "</pre>";
-        //exit;
         
         $this->responseArray = array("success" => true, "total" => count($data), "idticket" => $idticket, "root"=>$data);
         $this->setTemplate("responseTemplate");
@@ -2883,80 +2774,59 @@ class pmActions extends sfActions {
         $ticket = Doctrine::getTable("HdeskTicket")->find($idticket);
         
         $datos = json_decode($ticket->getCaDatos(),1);
-        //echo $idtrayecto;
         
         if($idtrayecto!=null){
-            //echo "si";
-        $sql = "SELECT elem->>'idtrayecto' as idtrayecto, tori.ca_idtrafico as idtraorigen, tori.ca_nombre as traorigen, origen.ca_idciudad as ca_idorigen, origen.ca_ciudad as ca_ciuorigen, tdest.ca_idtrafico as idtradestino, tdest.ca_nombre as tradestino, destino.ca_idciudad as ca_iddestino, destino.ca_ciudad as ca_ciudestino,
-                    elem->>'modalidad' as modalidad, elem->>'idlinea' as idlinea, elem->>'linea' as linea, elem->>'observaciones' as observaciones,elem->>'frecuencia' as frecuencia,
-                    elem->>'ttransito' as ttransito,elem->>'ncontrato' as ncontrato, elem->>'cerradapor' as cerradapor,elem->>'vigenciaIni' as vigenciaini, elem->>'vigenciaEnd' as vigenciaend
-                    /*, (json_array_elements(ca_datos::json->'trayecto')::json->'idorigen'):: text as ca_idorigen, json_array_elements(ca_datos::json->'trayecto')::json->'iddestino' as ca_iddestino */       
-            FROM helpdesk.tb_tickets tk, jsonb_array_elements(tk.ca_datos->'solicitud'->'trayecto'->'ruta') AS elem
-                    LEFT JOIN tb_ciudades origen ON origen.ca_idciudad = elem->>'idorigen'
-                    LEFT JOIN tb_ciudades destino ON destino.ca_idciudad = elem->>'iddestino'
-                    LEFT JOIN tb_traficos tori ON tori.ca_idtrafico = origen.ca_idtrafico
-                    LEFT JOIN tb_traficos tdest ON tdest.ca_idtrafico = destino.ca_idtrafico
-            WHERE ca_idticket =".$idticket."ORDER BY elem->>'idtrayecto'";
-        $con = Doctrine_Manager::getInstance()->connection();
-        $st = $con->execute($sql);
-        $trayectos = $st->fetchAll();
-        
-        foreach($trayectos as $trayecto){
-            if($trayecto["idtrayecto"]==$idtrayecto){
-                $data = array();
-                $data["idtrayecto"] = $idtrayecto;
-                $data["impoexpo"] = utf8_encode(Constantes::IMPO);
-                $data["transporte"] = utf8_encode(Constantes::MARITIMO);
-                $data["transporte"] = utf8_encode(Constantes::MARITIMO);
-                $data["tra_origen"] = $trayectos[$idtrayecto]["idtraorigen"];
-                $data["pais_origen"] = utf8_encode($trayectos[$idtrayecto]["traorigen"]);
-                $data["ciu_origen"] = $trayectos[$idtrayecto]["ca_idorigen"];
-                $data["ciudad_origen"] = utf8_encode($trayectos[$idtrayecto]["ca_ciuorigen"]);
-                $data["tra_destino"] = $trayectos[$idtrayecto]["idtradestino"];
-                $data["pais_destino"] = utf8_encode($trayectos[$idtrayecto]["tradestino"]);
-                $data["ciu_destino"] = $trayectos[$idtrayecto]["ca_iddestino"];
-                $data["ciudad_destino"] = utf8_encode($trayectos[$idtrayecto]["ca_ciudestino"]);
-                $data["modalidad"] = $trayectos[$idtrayecto]["modalidad"]?$trayectos[$idtrayecto]["modalidad"]:NULL;
-                $data["idlinea"] = $trayectos[$idtrayecto]["idlinea"]?$trayectos[$idtrayecto]["idlinea"]:NULL;
-                $data["linea"] = $trayectos[$idtrayecto]["linea"]?$trayectos[$idtrayecto]["linea"]:NULL;
-                $data["observaciones"] = $trayectos[$idtrayecto]["observaciones"]?$trayectos[$idtrayecto]["observaciones"]:NULL;
-                $data["frecuencia"] = $trayectos[$idtrayecto]["frecuencia"]?$trayectos[$idtrayecto]["frecuencia"]:NULL;
-                $data["ttransito"] = $trayectos[$idtrayecto]["ttransito"]?$trayectos[$idtrayecto]["ttransito"]:NULL;
-                $data["ncontrato"] = $trayectos[$idtrayecto]["ncontrato"]?$trayectos[$idtrayecto]["ncontrato"]:NULL;
-                $data["cerradapor"] = $trayectos[$idtrayecto]["cerradapor"]?$trayectos[$idtrayecto]["cerradapor"]:NULL;
-                $data["vigenciaIni"] = $trayectos[$idtrayecto]["vigenciaini"]?$trayectos[$idtrayecto]["vigenciaini"]:NULL;
-                $data["vigenciaEnd"] = $trayectos[$idtrayecto]["vigenciaend"]?$trayectos[$idtrayecto]["vigenciaend"]:NULL;
-            }  else {
-                continue;
+            $sql = "SELECT elem->>'idtrayecto' as idtrayecto, tori.ca_idtrafico as idtraorigen, tori.ca_nombre as traorigen, origen.ca_idciudad as ca_idorigen, origen.ca_ciudad as ca_ciuorigen, tdest.ca_idtrafico as idtradestino, tdest.ca_nombre as tradestino, destino.ca_idciudad as ca_iddestino, destino.ca_ciudad as ca_ciudestino,
+                        elem->>'modalidad' as modalidad, elem->>'idlinea' as idlinea, elem->>'linea' as linea, elem->>'observaciones' as observaciones,elem->>'frecuencia' as frecuencia,
+                        elem->>'ttransito' as ttransito,elem->>'ncontrato' as ncontrato, elem->>'cerradapor' as cerradapor,elem->>'vigenciaIni' as vigenciaini, elem->>'vigenciaEnd' as vigenciaend
+                        /*, (json_array_elements(ca_datos::json->'trayecto')::json->'idorigen'):: text as ca_idorigen, json_array_elements(ca_datos::json->'trayecto')::json->'iddestino' as ca_iddestino */       
+                FROM helpdesk.tb_tickets tk, jsonb_array_elements(tk.ca_datos->'solicitud'->'trayecto'->'ruta') AS elem
+                        LEFT JOIN tb_ciudades origen ON origen.ca_idciudad = elem->>'idorigen'
+                        LEFT JOIN tb_ciudades destino ON destino.ca_idciudad = elem->>'iddestino'
+                        LEFT JOIN tb_traficos tori ON tori.ca_idtrafico = origen.ca_idtrafico
+                        LEFT JOIN tb_traficos tdest ON tdest.ca_idtrafico = destino.ca_idtrafico
+                WHERE ca_idticket =".$idticket."ORDER BY elem->>'idtrayecto'";
+            $con = Doctrine_Manager::getInstance()->connection();
+            $st = $con->execute($sql);
+            $trayectos = $st->fetchAll();
+
+            foreach($trayectos as $trayecto){
+                if($trayecto["idtrayecto"]==$idtrayecto){
+                    $data = array();
+                    $data["idtrayecto"] = $idtrayecto;
+                    $data["impoexpo"] = utf8_encode(Constantes::IMPO);
+                    $data["transporte"] = utf8_encode(Constantes::MARITIMO);
+                    $data["transporte"] = utf8_encode(Constantes::MARITIMO);
+                    $data["tra_origen"] = $trayectos[$idtrayecto]["idtraorigen"];
+                    $data["pais_origen"] = utf8_encode($trayectos[$idtrayecto]["traorigen"]);
+                    $data["ciu_origen"] = $trayectos[$idtrayecto]["ca_idorigen"];
+                    $data["ciudad_origen"] = utf8_encode($trayectos[$idtrayecto]["ca_ciuorigen"]);
+                    $data["tra_destino"] = $trayectos[$idtrayecto]["idtradestino"];
+                    $data["pais_destino"] = utf8_encode($trayectos[$idtrayecto]["tradestino"]);
+                    $data["ciu_destino"] = $trayectos[$idtrayecto]["ca_iddestino"];
+                    $data["ciudad_destino"] = utf8_encode($trayectos[$idtrayecto]["ca_ciudestino"]);
+                    $data["modalidad"] = $trayectos[$idtrayecto]["modalidad"]?$trayectos[$idtrayecto]["modalidad"]:NULL;
+                    $data["idlinea"] = $trayectos[$idtrayecto]["idlinea"]?$trayectos[$idtrayecto]["idlinea"]:NULL;
+                    $data["linea"] = $trayectos[$idtrayecto]["linea"]?$trayectos[$idtrayecto]["linea"]:NULL;
+                    $data["observaciones"] = $trayectos[$idtrayecto]["observaciones"]?$trayectos[$idtrayecto]["observaciones"]:NULL;
+                    $data["frecuencia"] = $trayectos[$idtrayecto]["frecuencia"]?$trayectos[$idtrayecto]["frecuencia"]:NULL;
+                    $data["ttransito"] = $trayectos[$idtrayecto]["ttransito"]?$trayectos[$idtrayecto]["ttransito"]:NULL;
+                    $data["ncontrato"] = $trayectos[$idtrayecto]["ncontrato"]?$trayectos[$idtrayecto]["ncontrato"]:NULL;
+                    $data["cerradapor"] = $trayectos[$idtrayecto]["cerradapor"]?$trayectos[$idtrayecto]["cerradapor"]:NULL;
+                    $data["vigenciaIni"] = $trayectos[$idtrayecto]["vigenciaini"]?$trayectos[$idtrayecto]["vigenciaini"]:NULL;
+                    $data["vigenciaEnd"] = $trayectos[$idtrayecto]["vigenciaend"]?$trayectos[$idtrayecto]["vigenciaend"]:NULL;
+                }  else {
+                    continue;
+                }
             }
-        }
-        }else{
-            //echo "no";
+        }else{            
             $data = array();
-                $data["idtrayecto"] = $datos["solicitud"]["norigen"];
-                $data["impoexpo"] = utf8_encode(Constantes::IMPO);
-                $data["transporte"] = utf8_encode(Constantes::MARITIMO);
-                $data["transporte"] = utf8_encode(Constantes::MARITIMO);
-                /*$data["tra_origen"] = $trayectos[$idtrayecto]["idtraorigen"];
-                $data["pais_origen"] = utf8_encode($trayectos[$idtrayecto]["traorigen"]);
-                $data["ciu_origen"] = $trayectos[$idtrayecto]["ca_idorigen"];
-                $data["ciudad_origen"] = utf8_encode($trayectos[$idtrayecto]["ca_ciuorigen"]);
-                $data["tra_destino"] = $trayectos[$idtrayecto]["idtradestino"];
-                $data["pais_destino"] = utf8_encode($trayectos[$idtrayecto]["tradestino"]);
-                $data["ciu_destino"] = $trayectos[$idtrayecto]["ca_iddestino"];
-                $data["ciudad_destino"] = utf8_encode($trayectos[$idtrayecto]["ca_ciudestino"]);*/
-                $data["modalidad"] = $datos["solicitud"]["fcl"]?"FCL":"LCL";
-                /*$data["idlinea"] = $trayectos[$idtrayecto]["idlinea"]?$trayectos[$idtrayecto]["idlinea"]:NULL;
-                $data["linea"] = $trayectos[$idtrayecto]["linea"]?utf8_encode($trayectos[$idtrayecto]["linea"]):NULL;
-                $data["observaciones"] = $trayectos[$idtrayecto]["observaciones"]?utf8_encode($trayectos[$idtrayecto]["observaciones"]):NULL;
-                $data["frecuencia"] = $trayectos[$idtrayecto]["frecuencia"]?utf8_encode($trayectos[$idtrayecto]["frecuencia"]):NULL;
-                $data["ttransito"] = $trayectos[$idtrayecto]["ttransito"]?utf8_encode($trayectos[$idtrayecto]["ttransito"]):NULL;
-                $data["ncontrato"] = $trayectos[$idtrayecto]["ncontrato"]?utf8_encode($trayectos[$idtrayecto]["ncontrato"]):NULL;
-                $data["cerradapor"] = $trayectos[$idtrayecto]["cerradapor"]?utf8_encode($trayectos[$idtrayecto]["cerradapor"]):NULL;*/
-            
+            $data["idtrayecto"] = $datos["solicitud"]["norigen"];
+            $data["impoexpo"] = utf8_encode(Constantes::IMPO);
+            $data["transporte"] = utf8_encode(Constantes::MARITIMO);
+            $data["transporte"] = utf8_encode(Constantes::MARITIMO);            
+            $data["modalidad"] = $datos["solicitud"]["fcl"]?"FCL":"LCL";
         }
-        
-        //echo "<pre>";print_r($data); echo "</pre>";
         
         if($data){
             $this->responseArray = array("data" => $data, "success" => true, "idtrayecto"=>$idtrayecto);
@@ -2991,8 +2861,6 @@ class pmActions extends sfActions {
         $this->conceptos[] = array("idconcepto"=>"tm3", "concepto"=>"T/M3");
         $this->conceptos[] = array("idconcepto"=>"minima", "concepto"=>"MINIMA");
         
-        //print_r($this->conceptos);
-        
         if($datosTarifa){
             $this->responseArray = array("data" => $datosTarifa, "idticket"=>$idticket, "success" => true, "errorInfo"=>null, "conceptos"=>$this->conceptos);
         }else{
@@ -3019,11 +2887,7 @@ class pmActions extends sfActions {
             $ruta["idtrayecto"] = $idtrayecto;
         }else{
             $ruta = $trayecto["ruta"][$idtrayecto];
-        }        
-        
-        
-        //$origen = $trayecto["origen"]["ciudad"][$idtrayecto] = $request->getParameter("origen");
-        //$destino = $trayecto["destino"]["ciudad"][$idtrayecto] = $request->getParameter("destino");
+        }
         
         $ruta["idorigen"] = $request->getParameter("idorigen");
         $ruta["iddestino"] = $request->getParameter("iddestino");
@@ -3065,21 +2929,17 @@ class pmActions extends sfActions {
         
         $datosCot = json_decode(utf8_encode($datos), 1);
         $ids = array();
-        //echo $datos;
-        //print_r($datosCot);
-        //exit;
+        
         foreach($datosCot as $orden => $cot){
             $idtrayecto = $cot["idtrayecto"];
             $conceptoName = $cot["concepto"];
-            $aplicacion = $cot["aplicacion"];
-            //echo $conceptoName;
+            $aplicacion = $cot["aplicacion"];            
             $ids[] = $cot["id"];
-            //$equipos = array();
+            
             
             foreach($cot as $key=>$value){                
                 if("equipo_" == substr($key,0,7)){  
                     if(!in_array($key, $chidden)){
-                    //if(!($value == "0" || $value <= 0)){
                         $idcontenedor = substr($key,7,strlen($key));                    
                         if($idcontenedor=="tm3" || $idcontenedor=="minima"){                        
                             $equipos[$idcontenedor] = $idcontenedor=="tm3"?"T/M3":"MINIMA";
@@ -3101,36 +2961,14 @@ class pmActions extends sfActions {
         /*Datos que se cotizaron*/
         $cotizacion["equipos"] = $equipos;
         ksort($cotizacion);        
-        //print_r($cotizacion);
-        //exit;
-        //$cotizacion = array("cotizacion"=>$cotizacion);
-        
         $cotJson = json_decode(utf8_encode($datos), 1);        
-        /*array_walk_recursive($cotJson, function (&$item, $key){ //Convierte todos los elementos del array a utf8_encode
-            $item = utf8_encode($item);
-        });*/
-        
-        //echo "<pre>";print_r($cotizacion);echo "</pre>";
-        //exit;
         
         /*Datos que se solicitaron*/
         $datosTarifas = json_decode(utf8_encode($ticket->getCaDatos()),1);           
         $solicitud = $datosTarifas["solicitud"];
-        //echo $ticket->getCaDatos();
-        //print_r($datosTarifas);
-        //exit;
         
-        /*array_walk_recursive($solicitud, function (&$item, $key){ //Convierte todos los elementos del array a utf8_encode
-            $item = utf8_encode($item);
-        });*/
-        
-        $datosArray = array("solicitud"=>$solicitud, "cotizacion"=> $cotizacion, "datos"=>$cotJson);   
-        //echo "<pre>";print_r($datosArray);echo "</pre>";
-        //exit;
+        $datosArray = array("solicitud"=>$solicitud, "cotizacion"=> $cotizacion, "datos"=>$cotJson);           
         $datosJson = json_encode($datosArray);
-        
-        //echo $datosJson;
-        //exit;
         
         $ticket->setCaDatos($datosJson);
         $ticket->save();
@@ -3140,7 +2978,7 @@ class pmActions extends sfActions {
         }else{
             $this->responseArray = array("errorInfo" => "La cotización no es válida", "success" => false);
         }
-        $this->setTemplate("responseTemplate");        
+        $this->setTemplate("responseTemplate");       
         
     }
     
@@ -3283,7 +3121,6 @@ class pmActions extends sfActions {
                 $success = $this->executeCerrarTicket($request);
 
                 echo $success."<br/>";
-    //            $i++;
             }
             $con->commit();
         }catch(Exception $e){
@@ -3292,7 +3129,21 @@ class pmActions extends sfActions {
             exit();
         }
         
-        $this->setTemplate("responseTemplate");        
+        $this->setTemplate("responseTemplate");    
+    }
     
+    
+    public function executeCierreAutomatico($request) {
+        
+        $ticket = $request->getParameter("ticket");
+        $ticket->save();
+        $respuesta = $request->getParameter("respuesta");        
+        
+        $request->setParameter("idticket", $ticket->getCaIdticket());
+        $request->setParameter("respuesta", $respuesta);                    
+        $suc = $this->executeGuardarRespuestaTicket($request);
+
+        $request->setParameter("idticket", $ticket->getCaIdticket());        
+        $success = $this->executeCerrarTicket($request);        
     }
 }
