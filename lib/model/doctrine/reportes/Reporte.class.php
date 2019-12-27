@@ -1055,9 +1055,8 @@ class Reporte extends BaseReporte {
                     return $this->getRepExpo()->getReferenciaAduana();
                 }
             }
+            return "No disponible";
         }
-        
-        return "Información no disponible";
     }
 
     /*
