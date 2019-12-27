@@ -13,6 +13,8 @@
 class myDoctrineRecord extends sfDoctrineRecord{
     private $stopBlaming = false;
 
+    private $datos = null;
+
     public function stopBlaming(){
         $this->stopBlaming = true;
     }
@@ -44,6 +46,11 @@ class myDoctrineRecord extends sfDoctrineRecord{
                     }
                 }
             }
+        }
+
+        if($this->datos!=null)
+        {
+            $this->setCaDatos( json_encode($this->datos) );
         }
 
         $this->stopBlaming = false;
@@ -87,8 +94,34 @@ class myDoctrineRecord extends sfDoctrineRecord{
 
 
 
+        private function getDatos( ){
+            if($this->datos=="")
+                $this->datos= json_decode(utf8_encode($this->getCaDatos()),true);            
+        }
+        /*$this->getDatos();
+	* Agrega una nueva propiedad en la columna ca_propiedades, según CU059
+	* @author: Mauricio Quinche
+	*/
+	public function setDatosJson( $param, $value ){
+            if( $this->contains('ca_datos') ){
+                $this->getDatos();
+                /*if (mb_detect_encoding($value, 'utf-8', true) === false) {
+                    $value = mb_convert_encoding($value, 'utf-8', 'iso-8859-1');
+                }*/
+                $this->datos[$param]=$value;
+            }
+	}
     
+	/*
+	* Retorna una propiedad json
+	* @author: Mauricio Quinche
+	*/
+	public function getDatosJson( $param ){
+            if( $this->contains('ca_datos') ){
+                $this->getDatos();
 
-
+                return isset($this->datos[$param])?$this->datos[$param]:null;
+            }
+	}
 }
 ?>
