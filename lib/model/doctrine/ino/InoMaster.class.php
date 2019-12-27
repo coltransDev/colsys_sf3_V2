@@ -469,11 +469,11 @@ class InoMaster extends BaseInoMaster {
                 $matriz_eventos["intervalo_1"]['SAE'] = $sae_mem;
             } else {
                 $matriz_eventos["intervalo_1"]['Rec.Último Documento'] = $ult_mem;
-}
+            }
             $matriz_eventos["intervalo_1"]['Radicación Documento de Transporte'] = $rad_mem;
         }
-        
-        return $matriz_eventos["intervalo_1"]['Rec.Último Documento']!=null?$matriz_eventos["intervalo_1"]['Rec.Último Documento']:null;
+
+        return $matriz_eventos["intervalo_1"]['Rec.Último Documento']!=null?$matriz_eventos["intervalo_1"]['Rec.Último Documento']:null;                
     }
     
     public function getInfoEventos($impoexpo){
@@ -571,5 +571,12 @@ class InoMaster extends BaseInoMaster {
                     ->addWhere("c.ca_fchanulado is null")
                     ->addWhere("c.ca_estado in (5)")
                     ->execute();
+    }
+    
+    public function autorizarCierreReferencia(){
+        
+        $this->setDatosJson("cierre",true);
+        $this->setCaObservaciones($this->getCaObservaciones()."\n. Auditoría autoriza cierre de referencia. Más información en la opción de Auditoría.");
+        $this->save();        
     }
 }
