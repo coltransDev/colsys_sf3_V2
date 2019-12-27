@@ -190,7 +190,7 @@ Ext.define('Colsys.Ino.FormCierre', {
                 },
                 success: function (a, b) {
                     var res = Ext.util.JSON.decode(b.response.responseText);
-
+                    
                     if (res.data.creado) {
                         Ext.getCmp("creado" + idmaster).setText(res.data.creado);
                     }
@@ -210,35 +210,25 @@ Ext.define('Colsys.Ino.FormCierre', {
 
                     if(me.permisos.Cerrar==true)
                     {
-                        if (res.data.cerrado=="") {
-                            
+                        if (res.data.cerrado=="") {                            
                             Ext.getCmp("btnCerrar" + idmaster).setText("Cerrar");
                             Ext.getCmp("btnCerrar" + idmaster).show();
-//                            Ext.getCmp("btnCerrar" + idmaster).show(false);
-//                            Ext.getCmp("btnLiquidar" + idmaster).hide();
-//                            Ext.getCmp("btnCerrar" + idmaster).hide();
-                            //Ext.getCmp("btnCerrar" + idmaster).setText("Abrir");
                         }
                     }
-                    if(me.permisos.Abrir==true)
-                    {
+                    if(me.permisos.Abrir==true){
                         Ext.getCmp("btnCerrar" + idmaster).show();
                         if (res.data.liquidado!="" && res.data.cerrado==""  ) {
-                            
                             Ext.getCmp("btnCerrar" + idmaster).setText("Cerrar");
-                        }
-                        else if (res.data.liquidado=="" && res.data.cerrado==""  ) {                        
-                            
+                        } else if (res.data.liquidado=="" && res.data.cerrado==""  ) {
                             Ext.getCmp("btnCerrar" + idmaster).hide();
-                        }
-                        else{
-                            
+                        } else {
                             Ext.getCmp("btnCerrar" + idmaster).setText("Abrir");
                         }
                     }
+                    
+                    var formCierre = Ext.getCmp("formCierre"+idmaster).down("fieldcontainer"); 
+                    var referencia = Ext.getCmp('tab' + idmaster).title;
                     if(res.data.cerrado!=""){
-                        var referencia = Ext.getCmp('tab' + idmaster).title;
-                        var formCierre = Ext.getCmp("formCierre"+idmaster).down("fieldcontainer");                        
                         formCierre.add({
                             xtype: 'button',
                             text: '',
@@ -274,6 +264,44 @@ Ext.define('Colsys.Ino.FormCierre', {
                                 }).show();
                             }
                         })
+                    }else{
+                        if(me.permisos.Auditoria && res.data.ningresos == 0){
+                            formCierre.add({
+                                xtype: 'button',
+                                text: '',
+                                tooltip:'Autorizaci\u00f3n cierre de referencia',
+                                iconCls: 'audit',                            
+                                id: 'btnAutorizacion' + this.idmaster,
+                                width: 30,
+                                handler: function () {
+                                    idmaster = formCierre.up('form').idmaster;
+                                    Ext.create('Ext.window.Window', {
+                                            title: 'Autorizaci\u00f3n cierre de referencia',
+                                            id: 'window-autorizacion-'+idmaster,
+                                            width: 500,
+                                            items: [  // Let's put an empty grid in just to illustrate fit layout
+                                                Ext.create('Colsys.Ino.FormAuditoria', {
+                                                    id:'form-autorizacion-'+idmaster,
+                                                    idmaster: idmaster,
+                                                    idreferencia: referencia,
+                                                    tipo: 'autorizacion',
+                                                    listeners:{
+                                                        beforerender: function(ct, position){
+                                                            this.getForm().findField("type").setValue("Autorizaci\u00f3n cierre de referencia");
+                                                            this.getForm().findField("type").hidden = true;
+                                                            this.getForm().findField("status").setValue(4);//Finalizado
+                                                            this.getForm().findField("status").hidden = true;
+                                                            this.getForm().findField("comboHouse").hidden = true;
+                                                            this.getForm().findField("reportedby").fieldLabel = 'Autorizar a';
+                                                            this.getForm().findField("assignedto").fieldLabel = 'Autorizado por';
+                                                        }
+                                                    }
+                                                })
+                                            ]
+                                    }).show();
+                                }
+                            })
+                        }
                     }
                 }
             });
