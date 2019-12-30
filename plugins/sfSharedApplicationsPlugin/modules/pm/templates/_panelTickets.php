@@ -267,7 +267,7 @@
         
         this.bbar = [            
             new Ext.PagingToolbar({
-                id:'paging',
+                //id:'paging-'+this.id,
                 pageSize: 50,
                 store: this.store,
                 displayInfo: true,

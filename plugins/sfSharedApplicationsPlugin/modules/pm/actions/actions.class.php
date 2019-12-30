@@ -141,7 +141,7 @@ class pmActions extends sfActions {
         }
 
         $q->addOrderBy("h.ca_idgroup ASC");
-        $q->addOrderBy("h.ca_idproject ASC");
+        $q->addOrderBy("h.ca_assignedto DESC");
         $q->addOrderBy("h.ca_idticket DESC");
         $q->addOrderBy("h.ca_closedat");
         $q->addOrderBy("h.ca_opened ASC");
