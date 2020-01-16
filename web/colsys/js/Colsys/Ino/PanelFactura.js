@@ -172,13 +172,25 @@ Ext.define('Colsys.Ino.PanelFactura', {
                                                     },
                                                     success: function (response, opts) {
                                                         var obj = Ext.decode(response.responseText);
-
-                                                        if (obj.errorInfo != "")
-                                                            Ext.MessageBox.alert("Colsys", "Se presento un error: " + obj.errorInfo);
-                                                        else
-                                                            Ext.getCmp('panel-factura-' + me.idmaster).getStore().reload();
                                                         
-                                                        box.hide();                                                        
+                                                        if (obj.errorInfo != "" && obj.errorInfo != null)
+                                                            Ext.MessageBox.alert("Colsys", "Se presento un error: " + obj.errorInfo);
+                                                        else {
+                                                            file = obj.file;
+                                                            idmoneda = obj.idmoneda;
+                                                            errorInfo = "El (los) comprobante (s) no han sido procesados correctamente. Por favor verificar!";
+                                                            obj = obj.resul;
+
+                                                            box.hide();
+
+                                                            if (obj == null) {
+                                                                Ext.MessageBox.alert("Colsys", "Se presento un problema al crearlo: " + errorInfo);
+                                                            } else {
+                                                                Ext.MessageBox.alert("Colsys", "No fue posible eliminarlo. El comprobante ya existe en SAP con No. " + obj.CodigoDoc);
+                                                                verComprobante(idmoneda, file, me.idmaster);
+                                                            }                                                    
+                                                        }
+                                                        Ext.getCmp('panel-factura-' + me.idmaster).getStore().reload();
                                                     },
                                                     failure: function (response, opts) {
                                                         Ext.MessageBox.alert("Colsys", "Se presento el siguiente error " + response.status);
