@@ -4365,6 +4365,7 @@ class inoF2Actions extends sfActions {
         $this->consignatario = Doctrine::getTable("Tercero")->find($this->reporte->getCaIdconsignatario());
         $this->notify = Doctrine::getTable("Tercero")->find($this->reporte->getCaIdnotify());
         $this->usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
+        $this->bond = ($this->getRequestParameter("bond")=='true')?true:false;
         $this->borrador = ($this->getRequestParameter("borrador")=='true')?true:false;
         $this->plantilla = ($this->getRequestParameter("plantilla")=='true')?true:false;
         $this->copia = ($this->getRequestParameter("copia")=='true')?true:false;
