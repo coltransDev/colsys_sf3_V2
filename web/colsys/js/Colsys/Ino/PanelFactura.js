@@ -5,16 +5,13 @@ winIdg = null;
 winColmas = null;
 myWindowConceptos = null;
 Ext.define('Colsys.Ino.PanelFactura', {
-    extend: 'Ext.view.View',
-    //extend: 'Ext.panel.Table',
-    alias: 'widget.Colsys.Ino.PanelFactura',
-    //store: Ext.data.StoreManager.lookup('imagesStore'),    
+    extend: 'Ext.view.View',    
+    alias: 'widget.Colsys.Ino.PanelFactura',    
     itemSelector: 'div.thumb-wrap',
     tpl: '',
     onRender: function (ct, position) {
         me = this;
-        //console.log(me.ino);
-
+        
         this.tpl = new Ext.XTemplate(
                 '<html>',
                 '<tpl  class="tpls" for=".">',
@@ -61,7 +58,6 @@ Ext.define('Colsys.Ino.PanelFactura', {
                     id: 'tpls',
                     existFile: function (file)
                     {
-                        //return (file!="");
                         return file;
                     },
                     cumpleIdg: function (val) {
@@ -86,61 +82,55 @@ Ext.define('Colsys.Ino.PanelFactura', {
                     }
                 }
         );
-        //console.log(this.ino);
-
+        
         if (me.ino || me.ino == "undefined")
             url = '/inoF2/datosFacturas2';
         else
             url = '/inoF2/datosFacturas2/ino/false';
         this.setStore(
-                Ext.create('Ext.data.Store', {
-                    fields: [
-                        {name: 'iddetalle', mapping: 'iddetalle', type: 'int'},
-                        {name: 'idhouse', mapping: 'idhouse', type: 'int'},
-                        {name: 'idempresa', mapping: 'idempresa'},
-                        {name: 'empresa', mapping: 'empresa', type: 'string'},
-                        {name: 'idcomprobante', mapping: 'idcomprobante', type: 'int'},
-                        {name: 'comprobante', mapping: 'comprobante', type: 'string'},
-                        {name: 'house', mapping: 'house', type: 'string'},
-                        {name: 'cliente', mapping: 'cliente', type: 'string'},
-                        {name: 'fchcomprobante', mapping: 'fchcomprobante', type: 'date', dateFormat: 'Y-m-d'},
-                        {name: 'cliente', mapping: 'cliente', type: 'string'},
-                        {name: 'doctransporte', mapping: 'doctransporte', type: 'string'},
-                        {name: 'idmoneda', mapping: 'idmoneda', type: 'string'},
-                        {name: 'tcambio', mapping: 'tcambio', type: 'string'},
-                        /*{name: 'moneda'           ,mapping: 'moneda'           , type: 'string'},*/
-                        {name: 'valor', mapping: 'valor', type: 'string'},
-                        {name: 'idconcepto', mapping: 'idconcepto', type: 'int'},
-                        {name: 'concepto', mapping: 'concepto', type: 'string'},
-                        {name: 'cuentapago', mapping: 'cuentapago', type: 'string'},
-                        {name: 'estado', mapping: 'estado', type: 'int'},
-                        {name: 'idccosto', mapping: 'idccosto', type: 'int'},
-                        {name: 'valortcambio', mapping: 'valortcambio', type: 'string'},
-                        {name: 'valordeducciones', mapping: 'valordeducciones', type: 'string'},
-                        {name: 'docentry'}
-                    ],
-                    proxy: {
-                        type: 'ajax',
-                        url: url,
-                        extraParams: {
-                            idmaster: this.idmaster
-                        },
-                        reader: {
-                            type: 'json',
-                            rootProperty: 'root'
-                        }
+            Ext.create('Ext.data.Store', {
+                fields: [
+                    {name: 'iddetalle', mapping: 'iddetalle', type: 'int'},
+                    {name: 'idhouse', mapping: 'idhouse', type: 'int'},
+                    {name: 'idempresa', mapping: 'idempresa'},
+                    {name: 'empresa', mapping: 'empresa', type: 'string'},
+                    {name: 'idcomprobante', mapping: 'idcomprobante', type: 'int'},
+                    {name: 'comprobante', mapping: 'comprobante', type: 'string'},
+                    {name: 'house', mapping: 'house', type: 'string'},
+                    {name: 'cliente', mapping: 'cliente', type: 'string'},
+                    {name: 'fchcomprobante', mapping: 'fchcomprobante', type: 'date', dateFormat: 'Y-m-d'},
+                    {name: 'cliente', mapping: 'cliente', type: 'string'},
+                    {name: 'doctransporte', mapping: 'doctransporte', type: 'string'},
+                    {name: 'idmoneda', mapping: 'idmoneda', type: 'string'},
+                    {name: 'tcambio', mapping: 'tcambio', type: 'string'},                        
+                    {name: 'valor', mapping: 'valor', type: 'string'},
+                    {name: 'idconcepto', mapping: 'idconcepto', type: 'int'},
+                    {name: 'concepto', mapping: 'concepto', type: 'string'},
+                    {name: 'cuentapago', mapping: 'cuentapago', type: 'string'},
+                    {name: 'estado', mapping: 'estado', type: 'int'},
+                    {name: 'idccosto', mapping: 'idccosto', type: 'int'},
+                    {name: 'valortcambio', mapping: 'valortcambio', type: 'string'},
+                    {name: 'valordeducciones', mapping: 'valordeducciones', type: 'string'},
+                    {name: 'docentry'}
+                ],
+                proxy: {
+                    type: 'ajax',
+                    url: url,
+                    extraParams: {
+                        idmaster: this.idmaster
                     },
-                    //groupField: 'comprobante'+this.idmaster,
-                    sorters: [{
-                            property: 'comprobante',
-                            direction: 'ASC'
-                        }],
-                    autoLoad: true
-                })
-                );
-
-
-
+                    reader: {
+                        type: 'json',
+                        rootProperty: 'root'
+                    }
+                },                    
+                sorters: [{
+                        property: 'comprobante',
+                        direction: 'ASC'
+                    }],
+                autoLoad: true
+            })
+        );
 
         this.superclass.onRender.call(this, ct, position);
     },
@@ -157,63 +147,54 @@ Ext.define('Colsys.Ino.PanelFactura', {
                 if (record.data.estado <= 1)
                 {
                     itemCm.push(
-                            {
-                                text: 'Editar',
-                                handler: function () {
-                                    var inotmp = me.ino;
-                                    me.ventanaFac(record, me);
-                                    me.ino = inotmp;
+                        {
+                            text: 'Editar',
+                            handler: function () {
+                                var inotmp = me.ino;
+                                me.ventanaFac(record, me);
+                                me.ino = inotmp;
 
 
-                                }
-                            },
-                            {
-                                text: 'Eliminar Comprobante',
-                                iconCls: 'delete',
-                                handler: function () {
-                                    Ext.MessageBox.confirm('Confirmacion', 'esta seguro de eliminar el Comprobante',
-                                            function (e) {
-                                                if (e == 'yes') {
-                                                    var box = Ext.MessageBox.wait('Procesando', 'Eliminando Comprobante');
-                                                    Ext.Ajax.request({
-                                                        url: '/inoF2/EliminarGridFacturacionPanel',
-                                                        params: {
-                                                            idcomprobante: record.get('idcomprobante')
-                                                        },
-                                                        success: function (response, opts) {
-                                                            var obj = Ext.decode(response.responseText);
+                            }
+                        },
+                        {
+                            text: 'Eliminar Comprobante',
+                            iconCls: 'delete',
+                            handler: function () {
+                                Ext.MessageBox.confirm('Confirmacion', 'esta seguro de eliminar el Comprobante',
+                                        function (e) {
+                                            if (e == 'yes') {
+                                                var box = Ext.MessageBox.wait('Procesando', 'Eliminando Comprobante');
+                                                Ext.Ajax.request({
+                                                    url: '/inoF2/EliminarGridFacturacionPanel',
+                                                    params: {
+                                                        idcomprobante: record.get('idcomprobante')
+                                                    },
+                                                    success: function (response, opts) {
+                                                        var obj = Ext.decode(response.responseText);
 
-                                                            if (obj.errorInfo != "")
-                                                                Ext.MessageBox.alert("Colsys", "Se presento un error: " + obj.errorInfo);
-                                                            else
-                                                                Ext.getCmp('panel-factura-' + me.idmaster).getStore().reload();
-                                                            //this.up().getStore().reload();
-
-                                                            box.hide();
-
-                                                        },
-                                                        failure: function (response, opts) {
-                                                            Ext.MessageBox.alert("Colsys", "Se presento el siguiente error " + response.status);
-                                                            box.hide();
-                                                        }
-                                                    });
-                                                }
-                                            });
-                                }
-                            },
-                            {
+                                                        if (obj.errorInfo != "")
+                                                            Ext.MessageBox.alert("Colsys", "Se presento un error: " + obj.errorInfo);
+                                                        else
+                                                            Ext.getCmp('panel-factura-' + me.idmaster).getStore().reload();
+                                                        
+                                                        box.hide();                                                        
+                                                    },
+                                                    failure: function (response, opts) {
+                                                        Ext.MessageBox.alert("Colsys", "Se presento el siguiente error " + response.status);
+                                                        box.hide();
+                                                    }
+                                                });
+                                            }
+                                        });
+                            }
+                        },
+                        {
                                 text: 'Generar Comprobante',
-                                iconCls: 'import',
-                                //disabled: (record.data.cuentapago != "" ? false : true),
-                                //tooltip: (record.data.cuentapago != "" ? '' : 'Debe asignar la forma de pago del cliente'),
+                                iconCls: 'import',                                
                                 handler: function () {
                                     ncompro = "";
-                                    //alert(record.data.toSource());
-                                    /*if(record.get('tipocomprobante')=="C")
-                                     {
-                                     ncompro=prompt("Ingrese el numero de comprobante");
-                                     }
-                                     else*/ if (record.get('valortcambio') < 1)
+                                    if (record.get('valortcambio') < 1)
                                     {
                                         Ext.MessageBox.alert("Colsys", "El valor de la factura no puede ser menor o igual a 0");
                                         return;
@@ -232,20 +213,24 @@ Ext.define('Colsys.Ino.PanelFactura', {
                                                     },
                                                     success: function (response, opts) {
                                                         var obj = Ext.decode(response.responseText);
-                                                        //console.log(obj);
+                                                        
                                                         file = obj.file;
                                                         idmoneda = obj.idmoneda;
+                                                        errorInfo = "El (los) comprobante (s) no han sido procesados correctamente. Por favor verificar!";
                                                         obj = obj.resul;
-                                                        //console.log(obj);
+                                                        
                                                         box.hide();
-                                                        //if (obj.info != "")
-                                                        //    alert(obj.info);
-                                                        if (obj.Status != "0")
-                                                            Ext.MessageBox.alert("Colsys", "Se presento un problema al crearlo: " + obj.Message);
-                                                        else
-                                                        {
-                                                            Ext.MessageBox.alert("Colsys", "Se genero el Comprobante No. " + obj.Consecutivo);
-                                                            verComprobante(idmoneda, file, me.idmaster);
+                                                        
+                                                        if (obj == null){
+                                                            Ext.MessageBox.alert("Colsys", "Se presento un problema al crearlo: " + errorInfo);
+                                                        }else{                                                            
+                                                            if (obj.Status != "0")
+                                                                Ext.MessageBox.alert("Colsys", "Se presento un problema al crearlo: " + obj.Message);
+                                                            else
+                                                            {
+                                                                Ext.MessageBox.alert("Colsys", "Se genero el Comprobante No. " + obj.Consecutivo);
+                                                                verComprobante(idmoneda, file, me.idmaster);
+                                                            }
                                                         }
 
                                                         Ext.getCmp('panel-factura-' + me.idmaster).getStore().reload();
@@ -292,6 +277,51 @@ Ext.define('Colsys.Ino.PanelFactura', {
                             }
                         });
                     }
+                }else if (record.data.estado == 6) // El comprobante fue enviado a Sap pero no hubo respuesta del servidor
+                {  
+                    
+                    itemCm.push(
+                        {
+                            text: 'Verificar Comprobante',
+                            iconCls: 'import',
+                            handler: function () {                                
+                                var box = Ext.MessageBox.wait('Procesando', 'Verificando Comprobante');
+                                Ext.Ajax.request({
+                                    url: '/inoF2/verificarComprobante',
+                                    params: {
+                                        idcomprobante: record.get('idcomprobante')
+                                    },
+                                    success: function (response, opts) {
+                                        var obj = Ext.decode(response.responseText);
+                                        console.log(obj);
+                                        
+                                        file = obj.file;
+                                        idmoneda = obj.idmoneda;
+                                        errorInfo = obj.errorInfo;
+                                        obj = obj.resul;
+
+                                        box.hide();
+
+                                        if (obj == null){
+                                            Ext.MessageBox.alert("Colsys", "Se presento un problema al crearlo: " + errorInfo);
+                                        }else{                                                            
+                                            Ext.MessageBox.alert("Colsys", "Se genero el Comprobante No. " + obj.CodigoDoc);
+                                            verComprobante(idmoneda, file, me.idmaster);
+                                        }
+
+                                        Ext.getCmp('panel-factura-' + me.idmaster).getStore().reload();
+                                    },
+                                    failure: function (response, opts) {
+                                        console.log("failure");
+                                        console.log(response);
+                                        Ext.MessageBox.alert("Colsys", "Se presento el siguiente error " + response.status);
+                                        Ext.getCmp('panel-factura-' + me.idmaster).getStore().reload();
+                                        box.hide();
+                                    }
+                                });
+                            }
+                        }
+                    );
                 }
 
                 if (record.data.cliente == 'AGENCIA DE ADUANAS COLMAS SAS NIVEL 1')
@@ -300,96 +330,50 @@ Ext.define('Colsys.Ino.PanelFactura', {
                     if (record.data.tipocomprobante == "F" && me.ino)
                     {
                         itemCm.push(
-                                {
-                                    text: 'Agregar D.O.',
-                                    handler: function () {
-                                        winDO(record.data.idcomprobante, record.data.do);
-                                    }
-                                });
+                            {
+                                text: 'Agregar D.O.',
+                                handler: function () {
+                                    winDO(record.data.idcomprobante, record.data.do);
+                                }
+                            });
                     }
 
+                }                
+
+                if (record.data.estado != 6)
+                {
+                    itemCm.push({
+                        text: 'Duplicar Comprobante',
+                        iconCls: 'page_copy',
+                        handler: function () {
+                            Ext.MessageBox.confirm('Confirmacion', 'esta seguro de duplicar el Comprobante',
+                                function (e) {
+                                    if (e == 'yes') {
+                                        var box = Ext.MessageBox.wait('Procesando', 'Duplicando Comprobante');
+                                        Ext.Ajax.request({
+                                            url: '/inoF2/duplicarComprobante',
+                                            params: {
+                                                idcomprobante: record.get('idcomprobante')
+                                            },
+                                            success: function (response, opts) {
+                                                var obj = Ext.decode(response.responseText);
+
+                                                Ext.getCmp('panel-factura-' + me.idmaster).getStore().reload();
+                                                box.hide();
+
+                                            },
+                                            failure: function (response, opts) {
+                                                Ext.MessageBox.alert("Colsys", "Se presento el siguiente error " + response.status);
+                                                box.hide();
+                                            }
+                                        });
+                                    }
+                                });
+                        }
+                    });
                 }
-                //console.log(record.data);
-                //console.log(me);
 
-
-                itemCm.push(
-                        {
-                            text: 'Duplicar Comprobante',
-                            iconCls: 'page_copy',
-                            handler: function () {
-                                Ext.MessageBox.confirm('Confirmacion', 'esta seguro de duplicar el Comprobante',
-                                    function (e) {
-                                        if (e == 'yes') {
-                                            var box = Ext.MessageBox.wait('Procesando', 'Duplicando Comprobante');
-                                            Ext.Ajax.request({
-                                                url: '/inoF2/duplicarComprobante',
-                                                params: {
-                                                    idcomprobante: record.get('idcomprobante')
-                                                },
-                                                success: function (response, opts) {
-                                                    var obj = Ext.decode(response.responseText);
-
-                                                    /*if (obj.errorInfo != "")
-                                                     Ext.MessageBox.alert("Colsys", "Se presento un error: " + obj.errorInfo);
-                                                     else
-                                                     Ext.getCmp('panel-factura-' + me.idmaster).getStore().reload();*/
-                                                    //this.up().getStore().reload();
-
-                                                    Ext.getCmp('panel-factura-' + me.idmaster).getStore().reload();
-                                                    box.hide();
-
-                                                },
-                                                failure: function (response, opts) {
-                                                    Ext.MessageBox.alert("Colsys", "Se presento el siguiente error " + response.status);
-                                                    box.hide();
-                                                }
-                                            });
-                                        }
-                                    });
-                            }
-                        });
-
-            } /*else if (record.data.tipocomprobante == "R") {
-             
-             itemCm.push(
-             {
-             text: 'Asignar a Facturas',
-             iconCls: 'import',
-             handler: function () {
-             
-             if (winasignacion == null)
-             {
-             winasignacion = Ext.create('Ext.window.Window', {
-             title: 'Asignaci&oacute;n de Facturas',
-             height: 500,
-             width: 500,
-             closeAction: 'destroy',
-             items: [
-             {
-             xtype: "Colsys.Ino.GridAsignacionFacturas",
-             idmaster: idmaster,
-             idcliente: idcliente,
-             cliente: cliente,
-             idcomprobante: idcomp
-             }
-             ],
-             listeners: {
-             destroy: function(){
-             winasignacion = null;
-             }
-             }
-             });
-             }
-             winasignacion.show();
-             }
-             });
-             
-             }*/
-
-            /*console.log(itemCm.length);
-             console.log(me.permisos);
-             console.log(me.ino);*/
+            }
             if (itemCm.length > 0 && (me.permisos.Editar == true || !me.ino))
             {
                 var menu = new Ext.menu.Menu({
@@ -428,8 +412,6 @@ function viewGridFac(idcomprobante, comprobante, idmaster, transporte, impoexpo,
                     id: 'conceptosfac' + idmaster,
                     name: 'conceptosfac' + idmaster,
                     permisos: Ext.getCmp("panel-facturacion-" + idmaster).permisos
-                            //id:'id-grid-comprobante',
-                            //name:'id-grid-comprobante'
                 }
             ],
             listeners: {
@@ -445,22 +427,14 @@ function viewGridFac(idcomprobante, comprobante, idmaster, transporte, impoexpo,
     }
 }
 
-function verComprobante(idmoneda, file, idmaster) {
-    //if (idtransporte == "A\u00E9reo") 
+function verComprobante(idmoneda, file, idmaster) {    
     {
-
-        /*if (idmoneda == "COP") {
-         var windowpdf = Ext.create('Colsys.Widgets.WgVerPdf', {
-         sorc: file + '/tipo/P/idmoneda/COP/idioma/esp/orden/1/'
-         });
-         windowpdf.show();
-         } else */{
+        {
             if (winComprobante == null) {
                 winComprobante = Ext.create('Ext.Window', {
                     title: 'Comprobante',
                     width: 400,
-                    id: 'compr' + idmaster,
-                    //closeAction: 'destroy',
+                    id: 'compr' + idmaster,                    
                     height: 180,
                     items: {
                         xtype: 'Colsys.Ino.FormComprobanteAereo',
@@ -477,17 +451,9 @@ function verComprobante(idmoneda, file, idmaster) {
             }
             winComprobante.show();
         }
-    } /*else {
-     openFile(file);
-     }*/
+    }
 }
 
-/*function obteneridcliente(idcli,idmas,cli,idcomr){
- idcliente = idcli;
- idmaster = idmas;
- cliente = cli;
- idcomp = idcomr;
- }*/
 function viewGridDed(idcomprobante, impoexpo, transporte, idmaster, estado) {
     if (winDeducciones == null) {
         winDeducciones = new Ext.Window({
@@ -602,18 +568,10 @@ function winIdgFact(idcomprobante, impoexpo, transporte, idmaster) {
 
 function winDO(idcomprobante, ca_do) {
     if (winColmas == null) {
-        winColmas = new Ext.Window({
-            //title: 'Idg Facturaci\u00F3n',
+        winColmas = new Ext.Window({            
             width: 400,
             id: 'windo' + idcomprobante,
-            height: 70,
-            /*dockedItems: [{
-             xtype: 'toolbar',
-             dock: 'top',
-             items: [
-             
-             ]
-             }],*/
+            height: 70,           
             items: [{
                     xtype: 'fieldset',
                     layout: 'hbox',
@@ -643,7 +601,6 @@ function winDO(idcomprobante, ca_do) {
                                         if (obj.errorInfo != "")
                                             Ext.MessageBox.alert("Colsys", "Se presento un error: " + obj.errorInfo);
                                         else {
-//                                        Ext.getCmp('panel-factura-' + idmaster).getStore().reload();
                                             Ext.MessageBox.alert("Colsys", "Factura #" + obj.consecutivo + " ha registrado correctamente el D.O.");
                                             Ext.getCmp("windo" + idcomprobante).close();
                                         }
