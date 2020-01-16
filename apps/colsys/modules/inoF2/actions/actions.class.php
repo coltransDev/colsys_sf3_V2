@@ -1975,6 +1975,7 @@ class inoF2Actions extends sfActions {
      public function executeVerificarComprobante(sfWebRequest $request) {
     
         $idcomprobante = $request->getParameter("idcomprobante");        
+        $tipo = $request->getParameter("tipo");        
 
         try{
             $comprobante = Doctrine::getTable("InoComprobante")
@@ -1989,6 +1990,9 @@ class inoF2Actions extends sfActions {
             if($verificacion["success"])
                 $file = "/inocomprobantes/generarComprobantePDF/id/" . $comprobante->getCaIdcomprobante()."/sap/1";
             
+            if($tipo=="eliminar"){
+                return array("success" => $verificacion["success"], "resul"=>$verificacion["resul"], "file"=>$file, "idmoneda"=>$comprobante->getCaIdmoneda(), "errorInfo"=>$verificacion["errorInfo"]);
+            }
         
             $this->responseArray = array("success" => $verificacion["success"], "resul"=>$verificacion["resul"], "file"=>$file, "idmoneda"=>$comprobante->getCaIdmoneda(), "errorInfo"=>$verificacion["errorInfo"]);
         }catch(Exception $e){
@@ -2766,21 +2770,37 @@ class inoF2Actions extends sfActions {
             $idcomprobante = $request->getParameter("idcomprobante");
             $iddetalle = $request->getParameter("iddetalle");
 
-            $obj = null;
-            if ($idcomprobante != "" && $idcomprobante > 0) {
-                $obj = Doctrine::getTable("InoComprobante")->find($idcomprobante);
-                $c = $obj->getCaIdcomprobante();
-            } else if ($iddetalle > 0) {
-                $obj = Doctrine::getTable("InoDetalle")->find($iddetalle);
-                $c = $obj->getCaIddetalle();
+            $request->setParameter("idcomprobante", $idcomprobante);
+            $request->setParameter("tipo", "eliminar");
+            $verificacion = $this->executeVerificarComprobante($request);
+
+            if ($verificacion["success"]) {
+                $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
+                $file = "/inocomprobantes/generarComprobantePDF/id/" . $comprobante->getCaIdcomprobante() . "/sap/1";
+                $this->responseArray = array("success" => $verificacion["success"], "resul" => $verificacion["resul"], "file" => $file, "idmoneda" => $comprobante->getCaIdmoneda(), "errorInfo" => $verificacion["errorInfo"]);
+            } else {
+                if ($verificacion["errorInfo"] != "" && $verificacion["errorInfo"] != null) {
+                    $errorInfo = $verificacion["errorInfo"];
+                    $this->responseArray = array("success" => false, "errorInfo" => $errorInfo);
+                } else {
+                    $obj = null;
+                    if ($idcomprobante != "" && $idcomprobante > 0) {
+                        $obj = Doctrine::getTable("InoComprobante")->find($idcomprobante);
+                        $c = $obj->getCaIdcomprobante();
+                    } else if ($iddetalle > 0) {
+                        $obj = Doctrine::getTable("InoDetalle")->find($iddetalle);
+                        $c = $obj->getCaIddetalle();
+                    }
+
+                    if ($obj && $obj->getCaEstado() != 5) {
+                        $obj->delete();
+                        $this->responseArray = array("success" => true, "c" => $c);
+                    } else {
+                        $errorInfo = "No fue posible encontrar ningun registro y/o el comprobante ya está registrado en SAP";
+                        $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($errorInfo));
+                    }
+                }
             }
-
-            if ($obj) {
-                $obj->delete();
-            } else
-                $errorInfo = "No fue posible encontrar ningun registro";
-
-            $this->responseArray = array("success" => true, "c" => $c, "errorInfo" => $errorInfo);
         } catch (Exception $e) {
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
