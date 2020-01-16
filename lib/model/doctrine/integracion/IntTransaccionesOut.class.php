@@ -1521,16 +1521,13 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
     
     public static function verificarWs($comprobante, $idtransaccion='',$user='',$reenvio='no') {
         
-        $resComp=self::getDocuments($idtransaccion);
-
+        $conn = Doctrine::getTable("InoComprobante")->getConnection();
+        $conn->beginTransaction();
         $transaccion = Doctrine::getTable("IntTransaccionesOut")->createQuery("tr")->select("ca_idtransaccion")->addWhere("tr.ca_idtransaccion =? ", $idtransaccion )->fetchOne();        
-            
         try{
-            $conn = Doctrine::getTable("InoComprobante")->getConnection();
-            $conn->beginTransaction();
+            $resComp=self::getDocuments($idtransaccion);
+            if(is_array($resComp) && count($resComp)==0){                
             
-            if(empty($resComp)){            
-
                 $con1 = Doctrine_Manager::getInstance()->getConnection('master');
                 $sql="UPDATE ino.tb_comprobantes SET ca_estado=0, ca_fchgenero='".date("Y-m-d H:i:s")."' , ca_usugenero='{$user}'
                     where ca_idcomprobante='".$comprobante->getCaIdcomprobante()."'";
@@ -1544,7 +1541,7 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
                 $conn->commit();
                 return array("success" => false, "errorInfo"=> utf8_encode($errorInfo));
 
-            }else{
+            }else if(count($resComp)>0){
                 $resComp=$resComp[0];
                 $resultado = self::llenarComprobante($resComp, $resComp->DocEntry, $comprobante, $user, $transaccion);
 
@@ -1553,16 +1550,31 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
                 }else{
                     return array("success" => false, "errorInfo"=> $resultado["errorInfo"]);
                 }
+            }else{
+                
+                $con1 = Doctrine_Manager::getInstance()->getConnection('master');
+                $sql="UPDATE ino.tb_comprobantes SET ca_estado=6, ca_fchgenero='".date("Y-m-d H:i:s")."' , ca_usugenero='{$user}'
+                    where ca_idcomprobante='".$comprobante->getCaIdcomprobante()."'";
+                $st = $con1->execute($sql);
+                
+                $errorInfo = "El servidor no responde.";                  
+                $transaccion->setCaFchenvio(date("Y-m-d H:i:s"));
+                $transaccion->setCaRespuesta('{"Status":1, "Message":"'.$errorInfo.'"}');
+                $transaccion->save();
+            
+                return array("success" => false, "errorInfo"=> utf8_encode($errorInfo));
+                
             }
         }catch(Exception $e){
             $conn->rollback();
+            
             $con1 = Doctrine_Manager::getInstance()->getConnection('master');
-            $sql="UPDATE ino.tb_comprobantes SET ca_estado=0, ca_fchgenero='".date("Y-m-d H:i:s")."' , ca_usugenero='{$user}'
+            $sql="UPDATE ino.tb_comprobantes SET ca_estado=6, ca_fchgenero='".date("Y-m-d H:i:s")."' , ca_usugenero='{$user}'
                 where ca_idcomprobante='".$comprobante->getCaIdcomprobante()."'";
             $st = $con1->execute($sql);
 
-            $errorInfo = "Este comprobante aún NO ha sido registrado en SAP. Se habilita para que se intente generar nuevamente! ";  
-            $errorInfo.= utf8_encode($e->getMessage())|
+            $errorInfo = "No se pudo conectar con el servidor.";  
+            $errorInfo.= utf8_encode($e->getMessage());
             $transaccion->setCaFchenvio(date("Y-m-d H:i:s"));
             $transaccion->setCaRespuesta('{"Status":1, "Message":"'.$errorInfo.'"}');
             $transaccion->save();
