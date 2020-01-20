@@ -1013,8 +1013,9 @@ class traficosActions extends sfActions {
 
          /*
           * Actualuzación de la ETA en Referencia Ma?itima
+          * 2020-01-20 Se actualiza fecha de llegada para Aéreo, exportaciones y Terrestre en etapas IACAD, EEETD, TTCOL
           */
-        $etps = array("88888","IMCEM","IMCMT","IMETT"); //Ticket 60391
+        $etps = array("88888","IMCEM","IMCMT","IMETT", "IACAD","EEETD", "TTCOL"); //Ticket 60391
         if (in_array($status->getCaIdetapa(), $etps))  { // Si la etapa es Status está en etps, entonces revisa si hay cambio de ETA y la actualiza en la referencia
              $numref = $reporte->getNumReferencia();
              if ($numref) {
