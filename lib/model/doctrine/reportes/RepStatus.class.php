@@ -395,7 +395,7 @@ class RepStatus extends BaseRepStatus {
         if ($reporte->getCaIdbodega() == '1179' || $reporte->getCaIdbodega() == '1288') {
                 $perfiles = $etapa->getPerfilxTipo('COLDEPOSITOS');                
                 if (count($perfiles) > 0) {
-                    $email->addCc("coordinacion@coldepositos.com.co");
+                    $email->addCc("direccionlogistica@coldepositos.com.co");
                     $email->addCc("operaciones@coldepositos.com.co");
                     $email->addCc("operaciones1@coldepositos.com.co");
                     $email->addCc("operaciones2@coldepositos.com.co");
