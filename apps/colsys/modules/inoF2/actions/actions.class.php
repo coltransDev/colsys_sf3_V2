@@ -2764,6 +2764,8 @@ class inoF2Actions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeEliminarGridFacturacionPanel(sfWebRequest $request) {
+        $conn = Doctrine::getTable(HdeskResponse)->getConnection();
+        $conn->beginTransaction();
         try {
             $errorInfo = "";
 
@@ -2793,7 +2795,19 @@ class inoF2Actions extends sfActions {
                     }
 
                     if ($obj && $obj->getCaEstado() != 5) {
-                        $obj->delete();
+                        $obj->delete($conn);
+                        
+                        $transaccion = Doctrine::getTable("IntTransaccionesOut")
+                                ->createQuery("tr")
+                                ->where("ca_indice1 = '".$obj->getCaIdcomprobante()."'")
+                                ->addWhere("ca_idtipo in (7,8,13,20,10)")
+                                ->fetchOne();
+                        
+                        if($transaccion){
+                            $transaccion->setCaEstado("N");
+                            $transaccion->save($conn);
+                        }
+                        $conn->commit();
                         $this->responseArray = array("success" => true, "c" => $c, "mensaje"=>"Comprobante eliminado!");
                     } else {
                         $errorInfo = "No fue posible encontrar ningun registro y/o el comprobante ya está registrado en SAP";
@@ -2802,6 +2816,7 @@ class inoF2Actions extends sfActions {
                 }
             }
         } catch (Exception $e) {
+            $conn->rollback();
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
         $this->setTemplate("responseTemplate");
