@@ -178,13 +178,13 @@ Ext.define('Colsys.Ino.PanelFactura', {
                                                         else {
                                                             file = obj.file;
                                                             idmoneda = obj.idmoneda;
-                                                            errorInfo = "El (los) comprobante (s) no han sido procesados correctamente. Por favor verificar!";
+                                                            mensaje = obj.mensaje;
                                                             obj = obj.resul;
 
                                                             box.hide();
 
                                                             if (obj == null) {
-                                                                Ext.MessageBox.alert("Colsys", "Se presento un problema al crearlo: " + errorInfo);
+                                                                Ext.MessageBox.alert("Colsys", "Novedad en comprobante: "+mensaje);
                                                             } else {
                                                                 Ext.MessageBox.alert("Colsys", "No fue posible eliminarlo. El comprobante ya existe en SAP con No. " + obj.CodigoDoc);
                                                                 verComprobante(idmoneda, file, me.idmaster);
