@@ -2779,7 +2779,7 @@ class inoF2Actions extends sfActions {
                 $file = "/inocomprobantes/generarComprobantePDF/id/" . $comprobante->getCaIdcomprobante() . "/sap/1";
                 $this->responseArray = array("success" => $verificacion["success"], "resul" => $verificacion["resul"], "file" => $file, "idmoneda" => $comprobante->getCaIdmoneda(), "errorInfo" => $verificacion["errorInfo"]);
             } else {
-                if ($verificacion["errorInfo"] != "" && $verificacion["errorInfo"] != null) {
+                if ($verificacion["errorInfo"] != "" && $verificacion["errorInfo"] != null && $verificacion["errorInfo"]!="Este comprobante NO ha sido registrado en SAP. Se habilita para que se intente generar nuevamente!") {
                     $errorInfo = $verificacion["errorInfo"];
                     $this->responseArray = array("success" => false, "errorInfo" => $errorInfo);
                 } else {
@@ -2794,7 +2794,7 @@ class inoF2Actions extends sfActions {
 
                     if ($obj && $obj->getCaEstado() != 5) {
                         $obj->delete();
-                        $this->responseArray = array("success" => true, "c" => $c);
+                        $this->responseArray = array("success" => true, "c" => $c, "mensaje"=>"Comprobante eliminado!");
                     } else {
                         $errorInfo = "No fue posible encontrar ningun registro y/o el comprobante ya está registrado en SAP";
                         $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($errorInfo));
