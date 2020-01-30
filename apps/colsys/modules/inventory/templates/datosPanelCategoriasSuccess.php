@@ -11,26 +11,27 @@
             $subcategorias = $categoria->getSubCategory();
             $text.=" (".count($subcategorias).")";
         }
+        $activosxCategoria = $categoria->getActiveItemsByCategory();
         
-        $prefijo = $categoria->getPrefijo( $idsucursal );
-    ?>
-    {
-        text:'<?=$text?> ',
-        leaf: <?=$categoria->getCaMain()?"false":"true"?>,
-        name:'<?=$categoria->getCaName()?> ',
-        id: '<?=$categoria->getCaIdcategory()?>',  
-        data: '<?=($parent?$parent->getCaName()." - ":"").$categoria->getCaName()?> ',
-        idcategoria: '<?=$categoria->getCaIdcategory()?>',
-        idsucursal: '<?=$idsucursal?>',
-        parentNode: '<?=$categoria->getCaParent()?>',
-        main: <?=$categoria->getCaMain()?"true":"false"?>,
-        parameter: '<?=$categoria->getCaParameter()?>',
-        autonumeric: <?=$prefijo&&$prefijo->getCaAutonumeric()?"true":"false"?>,
-        prefix: '<?=$prefijo?$prefijo->getCaPrefix():""?>'
-    }
+        if(count($activosxCategoria)==0 && $categoria->getCaMain()!= 1){
+            $text = '<span style="color:red">'.$text.'</span>';
+        }
+        ?>
+        {
+            text:'<?=$text?> ',
+            leaf: <?=$categoria->getCaMain()?"false":"true"?>,
+            name:'<?=$categoria->getCaName()?> ',
+            id: '<?=$categoria->getCaIdcategory()?>',  
+            data: '<?=($parent?$parent->getCaName()." - ":"").$categoria->getCaName()?> ',
+            idcategoria: '<?=$categoria->getCaIdcategory()?>',
+            idsucursal: '<?=$idsucursal?>',
+            parentNode: '<?=$categoria->getCaParent()?>',
+            main: <?=$categoria->getCaMain()?"true":"false"?>,
+            parameter: '<?=$categoria->getCaParameter()?>',
+            autonumeric: <?=$prefijo&&$prefijo->getCaAutonumeric()?"true":"false"?>,
+            prefix: '<?=$prefijo?$prefijo->getCaPrefix():""?>'
+        }
     <?
     }
     ?>
-]
-
-            				
+]         				
