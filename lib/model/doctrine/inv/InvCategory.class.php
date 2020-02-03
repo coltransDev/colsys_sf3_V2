@@ -36,13 +36,17 @@ class InvCategory extends BaseInvCategory
         
     }
     
-    public function getActiveItemsByCategory(){
+    public function getActiveItemsByCategory($idsucursal){
         
-        $activos = Doctrine::getTable("InvActivo")
+        $q = Doctrine::getTable("InvActivo")
                 ->createQuery("a")
                 ->where("a.ca_fchbaja IS NULL")
-                ->andWhere("a.ca_idcategory = ?", $this->getCaIdcategory())
-                ->execute();
+                ->andWhere("a.ca_idcategory = ?", $this->getCaIdcategory());
+        
+        if($idsucursal){
+            $q->addWhere("a.ca_idsucursal = ?", $idsucursal);
+        }
+        $activos = $q->execute();
         
         return $activos;
     }    
