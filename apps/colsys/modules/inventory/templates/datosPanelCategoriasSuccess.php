@@ -11,7 +11,7 @@
             $subcategorias = $categoria->getSubCategory();
             $text.=" (".count($subcategorias).")";
         }
-        $activosxCategoria = $categoria->getActiveItemsByCategory();
+        $activosxCategoria = $categoria->getActiveItemsByCategory($idsucursal);
         
         if(count($activosxCategoria)==0 && $categoria->getCaMain()!= 1){
             $text = '<span style="color:red">'.$text.'</span>';
@@ -21,7 +21,8 @@
             text:'<?=$text?> ',
             leaf: <?=$categoria->getCaMain()?"false":"true"?>,
             name:'<?=$categoria->getCaName()?> ',
-            id: '<?=$categoria->getCaIdcategory()?>',  
+            id: '<?=$categoria->getCaIdcategory()?>',
+            cant: '<?=count($activosxCategoria)?>',
             data: '<?=($parent?$parent->getCaName()." - ":"").$categoria->getCaName()?> ',
             idcategoria: '<?=$categoria->getCaIdcategory()?>',
             idsucursal: '<?=$idsucursal?>',
