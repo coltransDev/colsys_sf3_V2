@@ -786,7 +786,7 @@ class pmActions extends sfActions {
                     if($request->getParameter("panel-carga-checkbox")=="on"){
                         $k=0;
                         while($request->getParameter("nclaseimo".$k)!=""){                    
-                            $imos = ParametroTable::retrieveByCaso("CU270", null, $request->getParameter("nclaseimo".$k));
+                            $imos = ParametroTable::retrieveByCaso("CU270", null, null, $request->getParameter("nclaseimo".$k));
                             foreach($imos as $imo){
                                 $tarifa["producto"]["nimo"][] = $imo->getCaValor2();
                                 $tarifa["producto"]["imo"][] = utf8_encode($imo->getCaValor());

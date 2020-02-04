@@ -897,10 +897,13 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                                 expand: function( p ){                                    
                                     Ext.getCmp("claseimo0").allowBlank = false;
                                     Ext.getCmp("idunnumber0").allowBlank = false;
+                                    Ext.getCmp("archivo_tarifas").allowBlank = false;
+                                    Ext.MessageBox.alert('Recordatorio', "No olvide adjuntar la MSDS (Hoja de datos de seguridad de los materiales). Sin ese documento el ticket no podrá generarse y/0 será invalidado.");
                                 },
                                 collapse: function(p){                                      
                                     Ext.getCmp("claseimo0").allowBlank = true;
                                     Ext.getCmp("idunnumber0").allowBlank = true;
+                                    Ext.getCmp("archivo_tarifas").allowBlank = true;
                                 }
                             }
                         }]

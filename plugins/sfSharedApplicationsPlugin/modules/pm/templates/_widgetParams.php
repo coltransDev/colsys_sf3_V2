@@ -39,7 +39,7 @@
             //width: 500, 
             selectOnFocus: true,
             displayField: 'name',
-            valueField: 'name2',                        
+            valueField: 'id',                        
             lazyRender:true,
             allowBlank: true,                                
             typeAhead: true,            
