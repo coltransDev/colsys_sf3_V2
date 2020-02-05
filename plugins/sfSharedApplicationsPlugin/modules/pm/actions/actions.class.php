@@ -2234,7 +2234,7 @@ class pmActions extends sfActions {
                             Utils::writeLog($logFile, date()." - No se encontró el usuario  para el email ".$from. " del ticket ".$idticket);
                             continue;
                         }
-                        
+                        echo "|".$user->getCaLogin();
                         $request->setParameter("idticket",$idticket);
                         $request->setParameter("respuesta",$mess);
                         $request->setParameter("iduser",$user->getCaLogin());
