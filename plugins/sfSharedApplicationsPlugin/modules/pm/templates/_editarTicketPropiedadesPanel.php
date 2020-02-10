@@ -1184,55 +1184,11 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                             items:[{                                        
                                 xtype: 'radiogroup',
                                 itemCls: 'x-check-group-alt',
-                                id: 'rlcl',                                        
-                                //columns: 1,
+                                id: 'rlcl',                                                                        
                                 fieldLabel: 'Tipo de Tarifa',
-                                items: [
-                                    {boxLabel: 'Tarifa TM3', name: 'tarifalcl', 'inputValue': 'tm3', checked: true},
-                                    {boxLabel: 'Tarifa Puntual', name: 'tarifalcl', 'inputValue':'puntual'}
-                                ],
-                                listeners: {
-                                    change: function(radiogroup, radio) {                                                                                            
-                                        if(radio.inputValue==='tm3'){
-                                            /*Ext.getCmp("pesoLcl0").hide();
-                                            Ext.getCmp("dimensionesLcl0").hide();
-                                            Ext.getCmp("piezasLcl0").hide();*/
-                                            Ext.getCmp("buttonLcl").hide();
-                                            Ext.getCmp("panel-lcl0").hide();
-                                            Ext.getCmp('piezasLcl0').allowBlank = true;
-                                            Ext.getCmp('pesoLcl0').allowBlank = true;                                                    
-                                            Ext.getCmp('dimensionesLcl0').allowBlank = true;
-                                            Ext.getCmp('unidimensionLcl0').allowBlank = true;
-                                            Ext.getCmp('embalaje0').allowBlank = true;
-                                        }else{
-                                            /*Ext.getCmp("pesoLcl0").show();
-                                            Ext.getCmp("dimensionesLcl0").show();
-                                            Ext.getCmp("piezasLcl0").show();*/
-                                            Ext.getCmp("buttonLcl").show();
-                                            Ext.getCmp("panel-lcl0").show();
-                                            Ext.getCmp('piezasLcl0').allowBlank = false;
-                                            Ext.getCmp('pesoLcl0').allowBlank = false;                                                    
-                                            Ext.getCmp('dimensionesLcl0').allowBlank = false;
-                                            Ext.getCmp('unidimensionLcl0').allowBlank = false;
-                                            Ext.getCmp('embalaje0').allowBlank = false;
-                                        }
-                                    },
-                                    show: function(t) {  
-                                        if(t.getValue().inputValue=="tm3"){
-                                            /*Ext.getCmp("pesoLc0l").hide();
-                                            Ext.getCmp("dimensionesLcl0").hide();
-                                            Ext.getCmp("piezasLcl0").hide();*/
-                                            Ext.getCmp("buttonLcl").hide();
-                                            Ext.getCmp("panel-lcl0").hide();
-                                            Ext.getCmp('piezasLcl0').allowBlank = true;
-                                            Ext.getCmp('pesoLcl0').allowBlank = true;                                                    
-                                            Ext.getCmp('dimensionesLcl0').allowBlank = true;
-                                            Ext.getCmp('unidimensionLcl0').allowBlank = true;
-                                            Ext.getCmp('embalaje0').allowBlank = true;
-                                        }
-
-                                    }
-                                }
+                                items: [                                    
+                                    {boxLabel: 'Tarifa Puntual', name: 'tarifalcl', 'inputValue':'puntual', checked: true}
+                                ]
                             },{
                                 xtype:'button',
                                 text:"Agregar Piezas",
@@ -1324,10 +1280,26 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                                 expand: function( p ){                                    
                                     Ext.getCmp("patio").hide();
                                     Ext.getCmp("patio").allowBlank = true;
+                
+                                    Ext.getCmp("buttonLcl").show();
+                                    Ext.getCmp("panel-lcl0").show();
+                                    Ext.getCmp('piezasLcl0').allowBlank = false;
+                                    Ext.getCmp('pesoLcl0').allowBlank = false;                                                    
+                                    Ext.getCmp('dimensionesLcl0').allowBlank = false;
+                                    Ext.getCmp('unidimensionLcl0').allowBlank = false;
+                                    Ext.getCmp('embalaje0').allowBlank = false;
                                 },
                                 collapse: function(p){                                      
                                     Ext.getCmp("patio").show();
                                     Ext.getCmp("patio").allowBlank = false;
+                                    
+                                    Ext.getCmp("buttonLcl").hide();
+                                    Ext.getCmp("panel-lcl0").hide();
+                                    Ext.getCmp('piezasLcl0').allowBlank = true;
+                                    Ext.getCmp('pesoLcl0').allowBlank = true;                                                    
+                                    Ext.getCmp('dimensionesLcl0').allowBlank = true;
+                                    Ext.getCmp('unidimensionLcl0').allowBlank = true;
+                                    Ext.getCmp('embalaje0').allowBlank = true;
                                 }
                             }
                         }]
