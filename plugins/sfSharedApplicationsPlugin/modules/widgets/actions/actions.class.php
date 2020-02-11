@@ -489,6 +489,7 @@ class widgetsActions extends sfActions {
                 $result["ca_fijo"] = $row["c_ca_fijo"];
                 $result["ca_email"] = utf8_encode($row["c_ca_email"]);
                 $result["ca_compania"] = utf8_encode($row["cl_ca_compania"]);
+                $result["ca_idcliente"] = utf8_encode($row["cl_ca_idcliente"]);
                 $result["ca_nombres"] = utf8_encode($row["c_ca_nombres"]);
                 $result["ca_papellido"] = utf8_encode($row["c_ca_papellido"]);
                 $result["ca_sapellido"] = utf8_encode($row["c_ca_sapellido"]);
@@ -700,26 +701,29 @@ class widgetsActions extends sfActions {
      * @author: Andres Botero y Mauricio Quinche
      */
 
-    public function executeGuardarTercero() {
-        $this->tipo = $this->getRequestParameter("tipo");
+    public function executeGuardarTercero(sfWebRequest $request ) {
+        $this->tipo = ($request->getParameter("tipo")!="")?$request->getParameter("tipo"):"Consignatario";
         $this->forward404unless($this->tipo);
 
-        $idcomponent = $this->getRequestParameter("idcomponent");
+        $idcomponent = $request->getParameter("idcomponent");
 
-        if ($this->getRequestParameter("nombre")) {
+        $nombre= ($request->getParameter("nombre") && $request->getParameter("nombre")!=""  )?$request->getParameter("nombre"):$request->getParameter("nombreT");
+        $idciudad= ($request->getParameter("idciudad") && $request->getParameter("idciudad")!=""  )?$request->getParameter("idciudad"):$request->getParameter("ciudadT");
+        //$nombre= substr($nombre, 0,19);
+        if ($nombre !="" ) {
             $idtercero = $this->getRequestParameter("idtercero");
             if (!$idtercero) {
                 $tercero = new Tercero();
             } else {
                 $tercero = Doctrine::getTable("Tercero")->find($idtercero);
             }
-            $tercero->setCaNombre(utf8_decode(strtoupper($this->getRequestParameter("nombre"))));
+            $tercero->setCaNombre(utf8_decode(strtoupper($nombre)));
             $tercero->setCaDireccion(utf8_decode(strtoupper($this->getRequestParameter("direccion"))));
             $tercero->setCaTelefonos($this->getRequestParameter("telefono"));
             $tercero->setCaFax($this->getRequestParameter("fax"));
             $tercero->setCaEmail($this->getRequestParameter("email"));
             $tercero->setCaContacto(utf8_decode(strtoupper($this->getRequestParameter("contacto"))));
-            $tercero->setCaIdciudad(($this->getRequestParameter("idciudad") != "") ? $this->getRequestParameter("idciudad") : "999-9999" );
+            $tercero->setCaIdciudad( (($idciudad!="")?$idciudad:"999-9999") );
             $tercero->setCaIdentificacion(strtoupper($this->getRequestParameter("identificacion")));
             $tercero->setCaVendedor(strtoupper($this->getRequestParameter("vendedor")));
             $tercero->setCaTipo($this->tipo);
@@ -964,7 +968,7 @@ class widgetsActions extends sfActions {
             $q = Doctrine::getTable("Reporte")
                     ->createQuery("r")
                     ->select("r.ca_idreporte, r.ca_consecutivo,r.ca_version ,o.ca_ciudad, d.ca_ciudad, o.ca_idciudad, d.ca_idciudad,o.ca_idtrafico, d.ca_idtrafico, r.ca_mercancia_desc,
-                                    r.ca_idlinea, r.ca_impoexpo, r.ca_transporte, r.ca_modalidad, r.ca_incoterms, con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, con.ca_cargo
+                                    r.ca_idlinea, r.ca_impoexpo, r.ca_transporte, r.ca_modalidad, con.ca_idcontacto, con.ca_nombres, con.ca_papellido, con.ca_sapellido, con.ca_cargo
                                     ,cl.ca_idcliente, cl.ca_compania, cl.ca_preferencias, cl.ca_confirmar, cl.ca_coordinador, usu.ca_login, usu.ca_nombre, r.ca_orden_clie")
                     ->leftJoin("r.Origen o")
                     ->leftJoin("r.Destino d")
@@ -973,7 +977,7 @@ class widgetsActions extends sfActions {
                     ->leftJoin("cl.LibCliente libcli")
                     ->leftJoin("r.Usuario usu")
                     ->addWhere("r.ca_consecutivo LIKE ?", $criterio . "%")
-                    ->addWhere("r.ca_usuanulado IS NULL");
+                    ->addWhere("r.ca_usuanulado IS NULL AND ca_fchcreado>'".Utils::addDate( date("Y-m-d") ,0,0, -2)."'");
             if ($transporte != "") {
                 $q->addWhere("r.ca_transporte = ?", $transporte);
             }
@@ -1246,8 +1250,8 @@ class widgetsActions extends sfActions {
                 $idmaster = $this->getRequestParameter("idmaster");
                 $master = Doctrine::getTable("InoMaster")->find($idmaster);
 
-                $q->leftJoin("h.HdeskAuditDocuments a");
-                $q->addWhere("a.ca_numero_doc = ?", $master->getCaReferencia());
+                $q->leftJoin("h.HdeskAuditDocuments a");                
+                $q->addWhere("a.ca_numero_doc = ? and ca_tipo_doc = ?", array($master->getCaReferencia(), "INO"));
             }
 
             if ($iddepartament) {
