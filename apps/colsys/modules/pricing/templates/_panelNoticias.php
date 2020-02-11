@@ -104,6 +104,15 @@ PanelNoticias = function( config ){
                 iconCls:'application_form',  // reference to our css
                 scope: this,
                 handler: this.crearTicket
+            },
+            {// Ticket 82037
+                text: 'Big Shedules',
+                tooltip: 'Itinerarios',
+                iconCls:'application_link',  // reference to our css
+                scope: this,
+                handler: function(){
+                    window.open("https://www.bigschedules.com/indexSlide/home-bigschedules", "_blank")
+                }
             }
         ],
         
