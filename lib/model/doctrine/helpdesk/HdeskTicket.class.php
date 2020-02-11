@@ -299,12 +299,25 @@ class HdeskTicket extends BaseHdeskTicket {
                 ->execute();
         
         if(count($q)< 1){
-            $url = '<a href="/colsys_php/reporteneg.php?id='.$documento.'" target="_blank">Ver Reporte</a>';
+            switch($tipo){
+                case "Reporte de Negocios":
+                    $observaciones = '<a href="/colsys_php/reporteneg.php?id='.$documento.'" target="_blank">Ver Reporte</a>';
+                    break;
+                case "INO":
+                case "Contenedores":
+                    $observaciones = '<a href="/inoF2/indexExt5/idmaster/'.$documento.'" target="_blank">Ver Referencia</a>';
+                    $master = Doctrine::getTable("InoMaster")->find($documento);
+                    $documento = $master->getCaReferencia();
+                    break;
+                default:
+                    $observaciones = "";
+                    break;
+            }
             $doc =  new HdeskAuditDocuments();
             $doc->setCaIdticket($this->getCaIdticket());
             $doc->setCaTipoDoc($tipo);
             $doc->setCaNumeroDoc($documento);
-            $doc->setCaObservaciones($url);
+            $doc->setCaObservaciones($observaciones);
             $doc->save();
         }
     }
