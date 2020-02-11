@@ -1,7 +1,7 @@
 <?
 class NuevoStatusForm extends BaseForm {
     const NUM_CC = 7;
-    const NUM_EQUIPOS = 7;
+    const NUM_EQUIPOS = 3;
 
     private $queryIdEtapa = null;
     private $queryUsuario = null;
@@ -19,6 +19,7 @@ class NuevoStatusForm extends BaseForm {
     private $widgetsClientes = array();
     private $widgetsProveedores = array();
     private $idsucursal = null;
+    private $num_equipos = 0;
     
     public function configure() {
 
@@ -160,7 +161,14 @@ class NuevoStatusForm extends BaseForm {
             $choices[$v->getCaIdentificacion()] = $v->getCaValor();
         }
         
-        for ($i = 0; $i < self::NUM_EQUIPOS; $i++) {
+        $nequipos = self::NUM_EQUIPOS;
+        if( $this->num_equipos > $nequipos )
+        {
+            $nequipos=$this->num_equipos;
+        }
+        //echo "<br>169::".$nequipos;
+        //exit;
+        for ($i = 0; $i < $nequipos+2; $i++) {
             $widgets["equipos_tipo_" . $i] = new sfWidgetFormDoctrineChoice(array(
                         'model' => 'Concepto',
                         'add_empty' => false,
@@ -338,7 +346,7 @@ class NuevoStatusForm extends BaseForm {
 
         $validator['horasalida'] = new sfValidatorTime(array('required' => false));
 
-        for ($i = 0; $i < self::NUM_EQUIPOS; $i++) {
+        for ($i = 0; $i < $nequipos; $i++) {
             $validator["equipos_tipo_" . $i] = new sfValidatorString(array('required' => false));
             $validator["equipos_idvehiculo_" . $i] = new sfValidatorString(array('required' => false));
             $validator["equipos_placa_" . $i] = new sfValidatorString(array('required' => false));
@@ -493,7 +501,7 @@ class NuevoStatusForm extends BaseForm {
         $taintedValues["fchactual"] = date("Y-m-d H:i:s");
         $destinatariosFijos = $this->getDestinatariosFijos();
 
-        parent::bind($taintedValues, $taintedFiles);
+        parent::bind($taintedValues, $taintedFiles); 
     }
 
     public function setQueryIdEtapa($c) {
@@ -598,7 +606,37 @@ class NuevoStatusForm extends BaseForm {
             $tercero = Doctrine::getTable("Tercero")->find($proveedor->getCaIdproveedor());
             if($tercero)
                 $this->widgetsProveedores[$proveedor->getCaIdrepproveedor()] = array("type" => "date", "label"=>$tercero->getCaNombre(), "valor"=>$proveedor->getCaCargaDisponible());
-}
+        }
+    }
+    
+    public function setWidgetEquipos($equipos)
+    {
+        for ($i = 0; $i < $this->num_equipos; $i++) {
+            $widgets["equipos_tipo_" . $i] = new sfWidgetFormDoctrineChoice(array(
+                        'model' => 'Concepto',
+                        'add_empty' => false,
+                        'method' => "getCaConcepto",
+                        'key_method' => "getCaIdconcepto",
+                        'query' => $this->queryConcepto,
+                        "add_empty" => true
+                    ));
+
+            $widgets["equipos_idvehiculo_" . $i] = new sfWidgetFormChoice(array( 'choices' => $choices ));
+            $widgets["equipos_placa_" . $i] = new sfWidgetFormInputText(array(), array("size" => 10, "style" => "margin-bottom:3px"));
+            
+            
+            $widgets["equipos_serial_" . $i] = new sfWidgetFormInputText(array(), array("size" => 14, "style" => "margin-bottom:3px"));
+            $widgets["equipos_cant_" . $i] = new sfWidgetFormInputText(array(), array("size" => 5, "style" => "margin-bottom:3px"));
+        }
+    }
+    
+    
+    public function setNumEquipos($nequipos) {
+        $this->num_equipos=$nequipos;
+    }
+    
+    public function getNumEquipos() {
+        return $this->num_equipos;
     }
 }
 ?>

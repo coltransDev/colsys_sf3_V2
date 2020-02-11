@@ -964,8 +964,14 @@ $folder = $reporte->getDirectorioBase();
                                             </tr>
                                     <?
                                     $repequipos = $reporte->getRepEquipos();
-
-                                    for ($i = 0; $i < NuevoStatusForm::NUM_EQUIPOS; $i++) {
+                                    $nequipos = NuevoStatusForm::NUM_EQUIPOS;
+                                    if( count($repequipos)> $nequipos )
+                                    {
+                                        $nequipos=count($repequipos);
+                                    }
+                                    //echo "<br>972::".$nequipos;
+                                    //exit;
+                                    for ($i = 0; $i < $nequipos+2; $i++) {
                                         if (count($repequipos) > 0 && isset($repequipos[$i])) {
                                             $repequipo = $repequipos[$i];
                                         } else {

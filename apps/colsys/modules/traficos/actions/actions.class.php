@@ -322,98 +322,99 @@ class traficosActions extends sfActions {
 
    public function executeNuevoStatus($request) {
       //exit("EN Mantenimiento");      
-      $this->modo = $request->getParameter("modo");
-      $this->forward404unless($this->modo);      
-      if ($this->modo == "maritimo") {
-         $this->nivel = $this->getUser()->getNivelAcceso(traficosActions::RUTINA_MARITIMO);
-      }
-      if ($this->modo == "aereo") {
-         $this->nivel = $this->getUser()->getNivelAcceso(traficosActions::RUTINA_AEREO);
-      }
-      if ($this->modo == "expo") {
-         $this->nivel = $this->getUser()->getNivelAcceso(traficosActions::RUTINA_EXPO);
-      }
-      if ($this->modo == "otm") {
-         $this->nivel = $this->getUser()->getNivelAcceso(traficosActions::RUTINA_OTM);
-      }
+    $this->modo = $request->getParameter("modo");
+    $this->forward404unless($this->modo);      
+    if ($this->modo == "maritimo") {
+       $this->nivel = $this->getUser()->getNivelAcceso(traficosActions::RUTINA_MARITIMO);
+    }
+    if ($this->modo == "aereo") {
+       $this->nivel = $this->getUser()->getNivelAcceso(traficosActions::RUTINA_AEREO);
+    }
+    if ($this->modo == "expo") {
+       $this->nivel = $this->getUser()->getNivelAcceso(traficosActions::RUTINA_EXPO);
+    }
+    if ($this->modo == "otm") {
+       $this->nivel = $this->getUser()->getNivelAcceso(traficosActions::RUTINA_OTM);
+    }
       
     if ($this->modo == "terrestre") {
         $this->nivel = $this->getUser()->getNivelAcceso(traficosActions::RUTINA_TERRESTRE);
         $this->nivel=1;//TODO verificar permisos
     }
-      if ($this->nivel < 1) {
-         $this->forward404();
-      }
+    if ($this->nivel < 1) {
+       $this->forward404();
+    }
 
-      $idreporte = $this->getRequestParameter("idreporte");
-      $this->forward404Unless($idreporte);
-      $reporte = Doctrine::getTable("Reporte")->find($idreporte);
-      $this->forward404Unless($reporte);
+    $idreporte = $this->getRequestParameter("idreporte");
+    $this->forward404Unless($idreporte);
+    $reporte = Doctrine::getTable("Reporte")->find($idreporte);
+    $this->forward404Unless($reporte);
 
-      $this->modo = $this->getRequestParameter("modo");
-      $this->forward404unless($this->modo);
+    $this->modo = $this->getRequestParameter("modo");
+    $this->forward404unless($this->modo);
 
-      $this->tipo = $this->getRequestParameter("tipo");
+    $this->tipo = $this->getRequestParameter("tipo");
 
-      $this->user = $this->getUser();
+    $this->user = $this->getUser();
 
-      $this->getRequest()->setParameter("reporte", $reporte->getCaConsecutivo());
+    $this->getRequest()->setParameter("reporte", $reporte->getCaConsecutivo());
 
-      if ($this->getRequestParameter("destinatarios")) {
-         $this->destinatarios = $this->getRequestParameter("destinatarios");
-      }
+    if ($this->getRequestParameter("destinatarios")) {
+       $this->destinatarios = $this->getRequestParameter("destinatarios");
+    }
 
       /*
        * Configuracion de la forma
-       */
-      $this->form = new NuevoStatusForm();
-      if ($reporte->getCaConfirmarClie()) {
-         $this->form->setDestinatarios(explode(",", $reporte->getCaConfirmarClie()));
-      }
-      $cliente = $reporte->getCliente();
-      $fijos = $reporte->getContacto('1');
-      
-      $contactos_reporte = $reporte->getContacto('3');
-      $operativos_reporte = $reporte->getContacto('5');
-      $this->form->setIdsucursal($this->getUser()->getIdsucursal());
-      $this->form->setContactos($contactos_reporte);
-      $this->form->setOperativos($operativos_reporte);
-      $this->form->setDestinatariosFijos($fijos);
-      //Etapas
+    */
+   $this->form = new NuevoStatusForm();
+   
+   if ($reporte->getCaConfirmarClie()) {
+      $this->form->setDestinatarios(explode(",", $reporte->getCaConfirmarClie()));
+   }
+   $cliente = $reporte->getCliente();
+   $fijos = $reporte->getContacto('1');
 
-      $q = Doctrine::getTable("TrackingEtapa")->createQuery("t");
-      if ($this->modo == "otm") {
+   $contactos_reporte = $reporte->getContacto('3');
+   $operativos_reporte = $reporte->getContacto('5');
+   $this->form->setIdsucursal($this->getUser()->getIdsucursal());
+   $this->form->setContactos($contactos_reporte);
+   $this->form->setOperativos($operativos_reporte);
+   $this->form->setDestinatariosFijos($fijos);
+   //Etapas
+
+   $q = Doctrine::getTable("TrackingEtapa")->createQuery("t");
+   if ($this->modo == "otm") {
 //            $q->addWhere("t.ca_impoexpo = ? OR t.ca_impoexpo IS NULL", Constantes::OTMDTA);
-         $q->addWhere("t.ca_departamento = ? OR t.ca_impoexpo IS NULL", Constantes::OTMDTA1);
-      } else if ($reporte->getCaImpoexpo() == Constantes::TRIANGULACION) {
-         $q->addWhere("t.ca_impoexpo = ? OR t.ca_impoexpo IS NULL", Constantes::IMPO);
-      }
-      else if ($this->modo == "terrestre") {
+      $q->addWhere("t.ca_departamento = ? OR t.ca_impoexpo IS NULL", Constantes::OTMDTA1);
+   } else if ($reporte->getCaImpoexpo() == Constantes::TRIANGULACION) {
+      $q->addWhere("t.ca_impoexpo = ? OR t.ca_impoexpo IS NULL", Constantes::IMPO);
+   }
+   else if ($this->modo == "terrestre") {
 //            $q->addWhere("t.ca_impoexpo = ? OR t.ca_impoexpo IS NULL", Constantes::OTMDTA);
-         $q->addWhere("t.ca_impoexpo = ? AND t.ca_transporte = ?", array(Constantes::INTERNO,Constantes::TERRESTRE));
-      }
-      else {
-         $q->addWhere("t.ca_impoexpo = ? OR t.ca_impoexpo IS NULL", $reporte->getCaImpoexpo());
-      }
+      $q->addWhere("t.ca_impoexpo = ? AND t.ca_transporte = ?", array(Constantes::INTERNO,Constantes::TERRESTRE));
+   }
+   else {
+      $q->addWhere("t.ca_impoexpo = ? OR t.ca_impoexpo IS NULL", $reporte->getCaImpoexpo());
+   }
 
-      if (($reporte->getCaImpoexpo() == Constantes::IMPO || $reporte->getCaImpoexpo() == Constantes::TRIANGULACION) && $this->modo != "otm") {
-         if ($reporte->getCaTransporte() == Constantes::TERRESTRE) {
-            $reporte->setCaTransporte(Constantes::MARITIMO);
-         }
-         $q->addWhere("t.ca_transporte = ? OR t.ca_transporte IS NULL", $reporte->getCaTransporte());
-      } else if ($reporte->getCaImpoexpo() == Constantes::EXPO) {
-         $q->addWhere("t.ca_transporte = ? OR t.ca_transporte IS NULL", $reporte->getCaTransporte());
+   if (($reporte->getCaImpoexpo() == Constantes::IMPO || $reporte->getCaImpoexpo() == Constantes::TRIANGULACION) && $this->modo != "otm") {
+      if ($reporte->getCaTransporte() == Constantes::TERRESTRE) {
+         $reporte->setCaTransporte(Constantes::MARITIMO);
       }
+      $q->addWhere("t.ca_transporte = ? OR t.ca_transporte IS NULL", $reporte->getCaTransporte());
+   } else if ($reporte->getCaImpoexpo() == Constantes::EXPO) {
+      $q->addWhere("t.ca_transporte = ? OR t.ca_transporte IS NULL", $reporte->getCaTransporte());
+   }
 
 
-      if ($this->modo != "otm" && $this->modo != "terrestre")
-         $q->addWhere("t.ca_departamento = ? OR t.ca_departamento IS NULL", "Tráficos");
-      else if($this->modo == "terrestre")
-          $q->orWhere("t.ca_idetapa = ? OR t.ca_idetapa = ?",array('88888','99999'));
-      $q->addWhere("t.ca_usueliminado is NULL");
-      $q->addOrderBy("t.ca_orden");
-      $this->form->setQueryIdEtapa($q);
-      $this->etapas = $q->execute();
+   if ($this->modo != "otm" && $this->modo != "terrestre")
+      $q->addWhere("t.ca_departamento = ? OR t.ca_departamento IS NULL", "Tráficos");
+   else if($this->modo == "terrestre")
+       $q->orWhere("t.ca_idetapa = ? OR t.ca_idetapa = ?",array('88888','99999'));
+   $q->addWhere("t.ca_usueliminado is NULL");
+   $q->addOrderBy("t.ca_orden");
+   $this->form->setQueryIdEtapa($q);
+   $this->etapas = $q->execute();
     
     if($reporte->getCaContinuacion()=="OTM")
     {
@@ -466,12 +467,23 @@ class traficosActions extends sfActions {
       
       $exclusiones = $reporte->getExclusiones();
       $this->form->setQueryExclusiones($exclusiones);
+      
+      
+      $repequipos = $reporte->getRepEquipos();
+      $this->form->setNumEquipos(count($repequipos));
+      //echo "<br>478::".count($repequipos)."--".$this->form->getNumEquipos();
+      //exit;
+      //echo "<br>ssrrr::".$this->form->getNumEquipos();
       $this->form->configure();
       /*
        * Fin de la configuración
        */
 
       $bindValues = array();
+      
+      
+      
+      
 
       if ($request->isMethod('post')) {
          $destinatarios = $this->form->getDestinatarios();
@@ -551,7 +563,7 @@ class traficosActions extends sfActions {
          $bindValues["observaciones_idg"] = $request->getParameter("observaciones_idg");
          $bindValues["exclusiones_idg"] = $request->getParameter("exclusiones_idg");
 
-         for ($i = 0; $i < NuevoStatusForm::NUM_EQUIPOS; $i++) {
+         for ($i = 0; $i < $this->form->getNumEquipos(); $i++) {
             $bindValues["equipos_tipo_" . $i] = $request->getParameter("equipos_tipo_" . $i);
             $bindValues["equipos_serial_" . $i] = $request->getParameter("equipos_serial_" . $i);
             $bindValues["equipos_cant_" . $i] = $request->getParameter("equipos_cant_" . $i);
@@ -689,10 +701,12 @@ class traficosActions extends sfActions {
             }
         }    
         
-         $this->form->bind($bindValues);
-         if ($this->form->isValid()) {
-            $this->executeGuardarStatus($request);
-         }
+        //echo "<br>ssss::".$this->form->getNumEquipos();
+        
+        $this->form->bind($bindValues);
+        if ($this->form->isValid()) {
+           $this->executeGuardarStatus($request);
+        }
 
          $contactos = $this->form->getContactos();
          /* for( $i=0; $i< count($contactos) ; $i++ ){
@@ -913,12 +927,19 @@ class traficosActions extends sfActions {
         }
 
          //borra los equipos viejos
-         $repequipos = $reporte->getRepEquipos();
-         foreach ($repequipos as $equipo) {
-            $equipo->delete($conn);
-         }
-
-        for ($i = 0; $i < NuevoStatusForm::NUM_EQUIPOS; $i++) {
+         $repequipos = $reporte->getRepEquipos();         
+         
+         $nequipos = NuevoStatusForm::NUM_EQUIPOS;
+        if( count($repequipos)> $nequipos )
+        {
+            $nequipos=count($repequipos);
+        } 
+         
+        foreach ($repequipos as $equipo) {
+           $equipo->delete($conn);
+        }
+        
+        for ($i = 0; $i < $nequipos+2; $i++) {
 
             if ($request->getParameter("equipos_tipo_" . $i) && $request->getParameter("equipos_cant_" . $i)) {
                 $repequipo = new RepEquipo();
