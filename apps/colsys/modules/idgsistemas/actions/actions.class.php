@@ -216,7 +216,7 @@ class idgsistemasActions extends sfActions {
         $checkboxOpenTicket = $request->getParameter("checkboxOpenTicket");
         $this->checkboxStatus = $request->getParameter("checkboxStatus");
         $this->idetapa1 = $request->getParameter("status1");
-        $this->idetapa2 = $request->getParameter("status2");
+        $this->idetapa2 = $request->getParameter("status2");        
 
         $this->idgsistemas = "";
         $type_est = $this->type_est;
@@ -262,11 +262,11 @@ class idgsistemasActions extends sfActions {
                     if($checkboxStatus == "on"){
                         $q1 = ParametroTable::retrieveByCaso("CU110", null, null, $this->idetapa1);
                         $q2 = ParametroTable::retrieveByCaso("CU110", null, null, $this->idetapa2);
-                        
+
                         $this->etapa1 = $q1[0]->getCaValor();
                         $this->etapa2 = $q2[0]->getCaValor();                        
-                        
-                        $select = " ,idgsta1.ca_createdat as ca_status1, idgsta2.ca_createdat as ca_status2";
+
+                        $select.= " ,idgsta1.ca_createdat as ca_status1, idgsta2.ca_createdat as ca_status2";
                         $leftJoin = "
                             LEFT JOIN ( SELECT res.ca_idticket, res.ca_createdat
                                 FROM helpdesk.tb_responses res
@@ -283,6 +283,7 @@ class idgsistemasActions extends sfActions {
                                      WHERE rp.ca_idstatus = $this->idetapa2
                                      GROUP BY rp.ca_idticket) sta ON res.ca_idresponse = sta.ca_idresponse) idgsta2 ON idgsta2.ca_idticket = tk.ca_idticket";
                     }
+                    
                     $sql = "SELECT date_part('month',tk.ca_opened) as mes, tk.ca_idticket, tk.ca_title, tk.ca_type, tk.ca_assignedto,
                             to_char( nt.ca_fchcreado, 'YYYY-MM-DD') as fechacreado,to_char( nt.ca_fchcreado, 'HH24:MI:SS') as horacreado,
                             to_char( nt.ca_fchterminada, 'YYYY-MM-DD') as fechaterminada, to_char( nt.ca_fchterminada, 'HH24:MI:SS') as horaterminada,
@@ -331,7 +332,7 @@ class idgsistemasActions extends sfActions {
                         WHERE ult_fch <= '" . $this->fechaUltSeg . "' AND consulta.ca_iddepartament = $iddepartamento AND ca_percentage<='" . $porcentaje . "'";
                     break;
             }
-            //print($sql);
+//            print($sql);
             $st = $con->execute($sql);
             $this->idgsistemas = $st->fetchAll();            
         }
