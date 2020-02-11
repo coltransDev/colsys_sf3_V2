@@ -410,8 +410,8 @@ Ext.define('Colsys.Ino.FormAuditoria', {
                         Ext.Msg.alert('Success', 'El requerimiento de auditor\u00EDa ha sido guardado con \u00E9xito');                          
                         me.up("window").destroy();                        
                     },
-                    failure: function(form, action) {
-                        Ext.Msg.alert('Failed', action.result ? action.result.message : 'No response');
+                    failure: function(form, action) {                        
+                        Ext.Msg.alert('Error', action.response ? action.response.responseText : 'No response');
                     }
                 });
             }
@@ -471,12 +471,15 @@ Ext.define('Colsys.Ino.FormAuditoria', {
                 empresa.getStore().add({id:res.data.idempresa,name: res.data.empresa});
                 empresa.setValue(res.data.idempresa);
                 
+                comboStatus = Ext.getCmp('combo-status-'+me.idmaster);                        
+                comboStatus.getStore().load({
+                    params: {
+                        idgrupo: res.data.idgroup
+                    }                  
+                });
                 
-                status = Ext.getCmp("combo-status-"+idmaster);
-                
-                Ext.getCmp("combo-status-"+idmaster).getStore().reload();
-                Ext.getCmp("combo-status-"+idmaster).getStore().add({status:res.data.status,status: res.data.status_name});
-                Ext.getCmp("combo-status-"+idmaster).setValue(res.data.status);
+                comboStatus.getStore().add({status:res.data.status,valor: res.data.status_name});
+                comboStatus.setValue(res.data.status);
             },
             failure: function(){
                 alert("Los datos no han cargado correctamente!");
