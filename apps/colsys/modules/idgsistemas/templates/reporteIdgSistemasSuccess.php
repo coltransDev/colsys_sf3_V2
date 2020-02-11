@@ -35,6 +35,7 @@ if (!$idgsistemas) {
     </div><br />
     <?
 } else {
+    $es_auditoria = ($departamento->getCaIddepartamento() === 4) ? TRUE : FALSE;
     ?>
     <table width="80%" border="1" class="tableList" align="center">
         <tr>
@@ -49,19 +50,19 @@ if (!$idgsistemas) {
                 <th scope="col" style=" text-align: center"><b>Estado</b></th>
             <?}?>
             <th scope="col" style=" text-align: center"><b>Usuario Asignado</b></th>
+            <th scope="col" style=" text-align: center;width: 110px"><b>Grupo</b></th>
+            <th scope="col" style=" text-align: center"><b><?= ($es_auditoria) ? "Reportado a:" : "Reportado por:"; ?></b></th>
+            <th scope="col" style=" text-align: center"><b>Sucursal</b></th>
+            <th scope="col" style=" text-align: center"><b>Empresa</b></th>
             <th scope="col" style=" text-align: center"><b>Fecha Creado</b></th>
             <th scope="col" style=" text-align: center"><b>Hora Creado</b></th>
             <th scope="col" style=" text-align: center"><b><? echo $type_est == 1 ? "Fecha Respuesta" : ($type_est == 2 ? "Fecha Cierre" : "Fecha Ult. Seg."); ?></b></th>
-            <th scope="col" style=" text-align: center"><b><? echo $type_est == 1 ? "Hora Respuesta" : ($type_est == 2 ? "Hora Cierre" : "Hora Ult. Seg."); ?></b></th>
-            <th scope="col" style=" text-align: center;width: 110px"><b>Grupo</b></th>
-            <th scope="col" style=" text-align: center"><b>Reportado por</b></th>
-            <th scope="col" style=" text-align: center"><b>Sucursal</b></th>
-            <th scope="col" style=" text-align: center"><b>Empresa</b></th>
-            <th scope="col" style=" text-align: center"><b><? echo $type_est == 1 ? "Cálculo IDG" : ($type_est == 2 ? "Cerrado" : "Abierto"); ?></b></th>
+            <th scope="col" style=" text-align: center"><b><? echo $type_est == 1 ? "Hora Respuesta" : ($type_est == 2 ? "Hora Cierre" : "Hora Ult. Seg."); ?></b></th>            
+            <th scope="col" style=" text-align: center"><b><? echo $type_est == 1 ? "Cálculo IDG 1a Rta" : ($type_est == 2 ? "Cerrado" : "Abierto"); ?></b></th>
             <?if($checkboxStatus== "on"){?>
                 <th scope="col" style=" text-align: center"><b>Etapa Inicial<br/>(<?=$etapa1?>)</b></th>
                 <th scope="col" style=" text-align: center"><b>Etapa Final<br/>(<?=$etapa2?>)</b></th>
-                <th scope="col" style=" text-align: center"><b>Idg x Etapas</b></th>
+                <th scope="col" style=" text-align: center"><b>Cálculo IDG x Status</b></th>
             <?}?>
             <? if ($type_est == 3) { ?>
                 <th scope="col" style=" text-align: center"><b>Sin seguimiento hace:</b></th>
@@ -156,6 +157,21 @@ if (!$idgsistemas) {
                 $array_lci[] = $calculo_seg;
                 $cuantos_lci = count($array_lci);
             }
+            
+            if($checkboxStatus== "on"){
+                // Establece los límites de Control
+                if ($calculo_etapa_hms > $lcs) {
+                    $array_etapa_lcs[] = $calculo_etapa_hms;
+                    $cuantos_etapa_lcs = count($array_etapa_lcs);
+                } elseif ($calculo_etapa_hms < $lci) {
+                    $array_etapa_lci[] = $calculo_etapa_hms;
+                    $cuantos_etapa_lci = count($array_etapa_lci);
+                }
+                
+                //Cálculo de Tiempo por Servicio
+                $array_etapa[] = $calculo_etapa_hms;
+                $cuantos_etapa = count($array_etapa);
+            }
 
             //Cálculo de Tiempo por Servicio
             $array[] = $calculo_seg;
@@ -186,19 +202,19 @@ if (!$idgsistemas) {
                     <td scope="col" style=" text-align: center"><?= $idgsistema["ca_estado"] ?></td>
                 <?}?>
                 <td><?= $idgsistema["ca_assignedto"] ?></td>
-                <td><?= $idgsistema["fechacreado"] ?></td>
-                <td><?= $idgsistema["horacreado"] ?></td>
-                <td><? echo $type_est == 1 ? $idgsistema["fechaterminada"] : ($type_est == 2 ? $idgsistema["close_fch"] : $idgsistema["ult_fch"]); ?></td>
-                <td><? echo $type_est == 1 ? $idgsistema["horaterminada"] : ($type_est == 2 ? $idgsistema["close_hou"] : $idgsistema["ult_hou"]); ?></td>
                 <td><?= $idgsistema["ca_name"] ?></td>
                 <td><?= $idgsistema["ca_login"] ?></td>
                 <td><?= $idgsistema["ca_nombre"] ?></td>
                 <td><?= $idgsistema["empresa"] ?></td>
-                <td style=" text-align: right"><font color="<? echo $calculo_hms > $lcs ? "red" : ($calculo_hms < $lci ? "orange" : "black") ?>"><?= $calculo_hms ?></font></td>
+                <td style=" background-color: #EEEEEE;"><?= $idgsistema["fechacreado"] ?></td>
+                <td style=" background-color: #EEEEEE;"><?= $idgsistema["horacreado"] ?></td>
+                <td style=" background-color: #EEEEEE;"><? echo $type_est == 1 ? $idgsistema["fechaterminada"] : ($type_est == 2 ? $idgsistema["close_fch"] : $idgsistema["ult_fch"]); ?></td>
+                <td style=" background-color: #EEEEEE;"><? echo $type_est == 1 ? $idgsistema["horaterminada"] : ($type_est == 2 ? $idgsistema["close_hou"] : $idgsistema["ult_hou"]); ?></td>                
+                <td style=" background-color: #EEEEEE; text-align: right"><font color="<? echo $calculo_hms > $lcs ? "red" : ($calculo_hms < $lci ? "orange" : "black") ?>"><?= $calculo_hms ?></font></td>
                 <?if($checkboxStatus== "on"){?>
-                    <td><?=$idgsistema["ca_status1"]?></td>
-                    <td><?=$idgsistema["ca_status2"]?></td>                    
-                    <td style=" text-align: right"><font color="<? echo $calculo_etapa_hms > $lcs ? "red" : ($calculo_etapa_hms < $lci ? "orange" : "black") ?>"><?= $calculo_etapa_hms ?></font></td>
+                    <td style="background-color:  #e7f0fc;"><?=$idgsistema["ca_status1"]?></td>
+                    <td style="background-color:  #e7f0fc;"><?=$idgsistema["ca_status2"]?></td>                    
+                    <td style="background-color:  #e7f0fc; text-align: right"><font color="<? echo $calculo_etapa_hms > $lcs ? "red" : ($calculo_etapa_hms < $lci ? "orange" : "black") ?>"><?= $calculo_etapa_hms ?></font></td>
                 <?}?>
                 <? if ($type_est == 3) { ?>
                     <td style=" text-align: right; width: 60px "><?= $calculoultsg_hms ?></td>
@@ -226,6 +242,13 @@ if (!$idgsistemas) {
         $promedio_hms = TimeUtils::tiempoSegundos($promedio_seg);
         $porcentaje_lcs = @round($cuantos_lcs * 100 / $cuantos, 2);
         $porcentaje_lci = round($cuantos_lci * 100 / $cuantos, 2);
+//        echo "<pre>";echo TimeUtils::array_avg($array_etapa);echo "</pre>";
+        if($checkboxStatus== "on"){
+            $promedio_etapa_seg = TimeUtils::array_avg($array_etapa);
+            $promedio_etapa_hms = TimeUtils::tiempoSegundos($promedio_etapa_seg);
+            $porcentaje_etapa_lcs = @round($cuantos_etapa_lcs * 100 / $cuantos_etapa, 2);
+            $porcentaje_etapa_lci = round($cuantos_etapa_lci * 100 / $cuantos_etapa, 2);
+        }
         ?>
 
     </table>
@@ -267,6 +290,45 @@ if (!$idgsistemas) {
     </table>
     <br />
     <br />
+    <? if ($checkboxStatus == "on") { ?>                   
+        <table class="tableList" align="center" width="30%">
+        <tr>
+            <th colspan="4" style="text-align: center"><b>INDICADOR DE GESTION DPTO. <?= strtoupper($departamento->getCaNombre()) ?></b></th>
+        </tr>
+        <tr>
+            <th colspan="1"><b>Indicador:</b></th>
+            <td colspan="3"><? echo $type_est == 1 ? $etapa1." vs ".$etapa2 : ($type_est == 2 ? "Tickets Cerrados" : "Tickets Abiertos"); ?></td>
+        </tr>
+        <tr>
+            <th colspan="1"><b>Periodo:</b></th>
+            <td colspan="3"><b><?= $fechaInicial ?></b> al <b><?= $fechaFinal ?></b></td>
+        </tr>
+        <tr>
+            <th colspan="1"><b>Grupo:</b></th>
+            <td colspan="3"><?= $group ?></td>
+        </tr>
+        <tr>
+            <th><b>Producto NO Conforme:</b></th>
+            <th>No. Casos:&nbsp;<b><?= $cuantos_etapa_lcs ?></b></th>
+            <th>LCs:&nbsp;<?= $lcs ?></th>
+            <td><font color="red"><b><?= $porcentaje_etapa_lcs ?>%</b></font></td>
+        </tr>
+        <tr>
+            <th><b>Promedio Ponderado:</b></th>
+            <th>No. Casos:&nbsp;<b><?= $cuantos_etapa ?></b></th>
+            <th>LC:&nbsp;&nbsp;<?= $lc ?></th>
+            <td><b><?= $promedio_etapa_hms ?></b></td>
+        </tr>
+        <tr>
+            <th><b>Registros inferiores a lci:</b></th>
+            <th>No. Casos:&nbsp;<b><?= $cuantos_etapa_lci ?></b></th>
+            <th>LCi:&nbsp;<?= $lci ?></th>
+            <td><font color="orange"><b><?= $porcentaje_etapa_lci ?>%</b></font></td>
+        </tr>
+    </table>
+    <br />
+    <br />
+    <?}?>
 
     <table class="tableList" align="center" width="20%" border="1">
         <tr>
@@ -294,7 +356,7 @@ if (!$idgsistemas) {
         ?>
     </table>
     <br />
-    <br />
+    <br />    
     <table class="tableList" align="center" width="20%" border="1">
         <tr>
             <th colspan="4" style="text-align: center"><b>ESTADISTICA POR ESTADO</b></th>
