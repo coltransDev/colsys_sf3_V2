@@ -5,6 +5,7 @@
  */
 winEscala = null;
 winHallazgo = null;
+winEvento = null;
 var html = 
         '<table class="tabla_escala">'+
         '<tr><th colspan="1">STATUS</th></tr>'+        
@@ -240,9 +241,16 @@ Ext.define('Colsys.Ino.PanelAuditoria', {
                                         text: 'Nuevo Hallazgo',
                                         tooltip: 'Crear nuevo hallazgo',
                                         iconCls: 'add', // reference to our css
-                                        disabled: disabled,
                                         handler: function(){
                                             Ext.getCmp("panel-hallazgos-"+me.idmaster).ventanaHallazgo(null);
+                                        }
+                                    },
+                                    {
+                                        text: 'Nuevo Evento',
+                                        tooltip: 'Crear nuevo evento',
+                                        iconCls: 'add', // reference to our css                                        
+                                        handler: function(){
+                                            Ext.getCmp("panel-hallazgos-"+me.idmaster).ventanaEvento(null);
                                         }
                                     },
                                     {
@@ -306,6 +314,51 @@ Ext.define('Colsys.Ino.PanelAuditoria', {
                                     }
                                 }
                                 winHallazgo.show();
+                            },
+                            ventanaEvento(record){
+                                var idticket = record?record.data.h_ca_idticket:'';
+                                var title = record?"Editar Evento":"Nuevo Evento";
+                                var idmaster = this.idmaster;
+                                
+                                if (winEvento == null) {
+                                    winEvento = new Ext.Window({
+                                        title: title,
+                                        width: 500,
+                                        id: 'winEvento' + idmaster,                                        
+                                        autoHeight: true,
+                                        closeAction: 'hide',
+                                        items: [
+                                            Ext.create('Colsys.Ino.FormAuditoria', {
+                                                id:'form-evento-auditoria-'+idmaster,
+                                                idmaster: idmaster,
+                                                idreferencia: me.idreferencia,
+                                                tipo: 'apertura',
+                                                listeners:{
+                                                    beforerender: function(ct, position){
+                                                        this.getForm().findField("type").setValue("Evento");
+                                                        this.getForm().findField("type").hidden = true;
+                                                        this.getForm().findField("status").setValue(4);//Finalizado
+                                                        this.getForm().findField("status").hidden = true;                                                        
+                                                        this.getForm().findField("assignedto").hidden = true;                                                        
+                                                        this.getForm().findField("reportedby").hidden = true;                                                        
+                                                    }
+                                                }
+                                            })
+                                        ],
+                                        listeners: {
+                                            close: function (win, eOpts) {
+                                                winEvento = null;
+                                                this.destroy();                                                
+                                            }
+                                        }
+                                    });
+                                    if (record != null) {
+                                        winEvento.down("form").cargarEvento(this.idmaster, idticket);
+                                    } else {
+                                        winEvento.down("form").getForm().reset();
+                                    }
+                                }
+                                winEvento.show();
                             }
                         }), 
                         Ext.create('Ext.tab.Panel', {
