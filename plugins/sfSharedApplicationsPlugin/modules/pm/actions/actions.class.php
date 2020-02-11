@@ -1865,6 +1865,14 @@ class pmActions extends sfActions {
         if ($this->getRequestParameter('observaciones') !== null) {
             $auditDocuments->setCaObservaciones(utf8_decode($this->getRequestParameter('observaciones')));
         }
+        
+        if($this->getRequestParameter('tipo_documento') == 'INO' or $this->getRequestParameter('tipo_documento') == 'Contenedores'){
+            $master = Doctrine::getTable("InoMaster")->findBy("ca_referencia", $this->getRequestParameter('documento'))->getFirst();
+
+            if(is_object($master)){
+                $auditDocuments->setCaObservaciones(utf8_decode($this->getRequestParameter('observaciones')).' <a href="/inoF2/indexExt5/idmaster/'.$master->getCaIdmaster().'" target="_blank">Ver Referencia</a>');
+            }
+        }
 
         $auditDocuments->save();
 
