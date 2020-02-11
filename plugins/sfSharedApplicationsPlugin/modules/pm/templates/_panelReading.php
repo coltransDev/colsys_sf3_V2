@@ -28,7 +28,7 @@ PanelReading = function( config ){
     var idGrid = this.grid.getId();
     
     this.grid.on('beforerender', function(grid, rowIndex, columnIndex, e) {        
-        if(this.department=="Sistemas"){
+        if(this.department=="Sistemas" || this.department=="Auditoría"){
             grid.getColumnModel().setHidden(1, false);//Checkcolumn
             grid.getColumnModel().setHidden(12, false);//Fecha de Entrega            
         }
