@@ -76,7 +76,7 @@ function importar(id,idnew)
                         echo link_to((($consecutivo==$reporte["ca_consecutivo"])?"":$reporte["ca_consecutivo"])." V".$reporte["ca_version"], $url );
 
                     }
-                    if($reporte["ca_usuanulado"]!="")
+                    if($reporte["ca_usuanulado"]!="" || $reporte["ca_fchanulado"]!="")
                         echo "<br>Anulado";
                     else if($reporte["ca_usucerrado"]!="")
                         echo "<br>Cerrado";

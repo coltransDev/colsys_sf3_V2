@@ -3,7 +3,7 @@
 $cachedir = $config = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR."cache".DIRECTORY_SEPARATOR;
 $cachetime = 86400;
 $cacheext = 'colsys';
-
+$cache="false";
 
 //$nprov=count(explode("|", $reporte->getCaIdproveedor() ));
 $nprov = count($reporte->getProveedores());
@@ -117,7 +117,7 @@ include_component("widgets", "widgetContactoCliente");
                             tabIndex:1
                         }
                         <?
-                        if($dep==14 || $dep==13 || $dep==16)
+                        if($dep==14 || $dep==13 || $dep==16 || $dep==85)
                         {
                         ?>
                         ,                        
@@ -295,12 +295,12 @@ include_component("widgets", "widgetContactoCliente");
                                     title: "Incoterms ",
                                     items: [
                                        new WidgetIncoterms(
-                                               {
-                                                  id: 'terminos0',
-                                                  hiddenName:"incoterms0",
-												  width:200,
-                                                  tabIndex:12
-                                                })
+                                        {
+                                           id: 'terminos0',
+                                           hiddenName:"incoterms0",
+                                           width:200,
+                                           tabIndex:12
+                                         })
                                     ]
                                 },
                                 {

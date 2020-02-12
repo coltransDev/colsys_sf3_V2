@@ -229,7 +229,7 @@ switch ($action) {
         $button[$i]["onClick"] = "copiaRep()";
         $i++;
 
-        if($reporte->getCaTiporep()=="2" && ( $user->getIddepartamento()==14 || $user->getIddepartamento()==13 || $user->getIdsucursal()=="PER" ) )
+        if($reporte->getCaTiporep()=="2" && ( $user->getIddepartamento()==14 || $user->getIddepartamento()==13 || $user->getIddepartamento()==85 || $user->getIdsucursal()=="PER" ) )
         {
             $button[$i]["name"] = "Copiar Ag";
             $button[$i]["tooltip"] = "Copiar este Reporte Ag  ";
@@ -418,7 +418,7 @@ switch ($action) {
             $button[$i]["onClick"] = "copiaRep()";
             $i++;
 
-            if($reporte->getCaTiporep()=="2" && ($user->getIddepartamento()==14 || $user->getIddepartamento()==13)  )
+            if($reporte->getCaTiporep()=="2" && ($user->getIddepartamento()==14 || $user->getIddepartamento()==13 || $user->getIddepartamento()==85  )  )
             {
                 $button[$i]["name"] = "Copiar Ag";
                 $button[$i]["tooltip"] = "Copiar este Reporte Ag  ";

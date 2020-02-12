@@ -43,6 +43,8 @@ foreach( $grupos as $grupo=>$logins ){
             <?
             if( $grupo=="operativo" ){
                 echo " Crear reporte al exterior";
+            }else if( $grupo=="terrestre" || $grupo=="aduana" ){
+                echo " Notificaci&oacute;n";
             }else{
                 echo "Ver reporte";
             }

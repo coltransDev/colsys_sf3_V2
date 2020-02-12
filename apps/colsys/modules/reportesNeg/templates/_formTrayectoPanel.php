@@ -109,7 +109,7 @@ include_component("widgets", "widgetTicket");
                             ,
                             this.widgetCotizacion,
                             <?
-                            if($modo== Constantes::MARITIMO){
+                            if($modo== Constantes::MARITIMO || $modo == Constantes::AEREO){
                                 ?>
                                 this.widgetTicket,
                                 <?

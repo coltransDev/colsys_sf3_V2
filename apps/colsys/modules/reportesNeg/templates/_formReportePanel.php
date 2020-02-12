@@ -95,6 +95,8 @@ if($impoexpo!="Triangulación")
 include_component("reportesNeg", "formAduanasPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
 }
 include_component("reportesNeg", "formSegurosPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo));
+
+include_component("reportesNeg", "formTerrestrePanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"idreporteP"=>$reporte->getCaIdreporte()));
 /*if($idreporte!="")
 {
     include_component("widgets", "widgetReporte");
@@ -172,6 +174,7 @@ include_component("reportesNeg", "formSegurosPanel",array("modo"=>$modo,"impoexp
                         <?
                         }
                         ?>
+                        new FormTerrestrePanel({bodyStyle:bodyStyle,"idreporteP":'<?=$reporte->getCaIdreporte()?>'}),
                         new FormSegurosPanel({bodyStyle:bodyStyle})
                         <?
                         if($panelConceptos)
@@ -341,6 +344,22 @@ var idreporte='<?=$idreporte?>';
                         else
                             Ext.getCmp('seguros').collapse();
                         
+                        if(Ext.getCmp('terrestre'))
+                        {
+                            if(Ext.getCmp('terrestre').getValue()=="Si")
+                            {
+                                Ext.getCmp('tterrestre').expand();
+                                Ext.getCmp("reporteT").setValue(res.data.reporteT);
+                                $("#idreporteT").attr("value",res.data.idreporteT); 
+                            }
+                            else
+                            {
+                                Ext.getCmp('tterrestre').collapse();
+                            }
+
+                            
+                        }
+                        
 
                         Ext.getCmp("cotizacion").setValue(res.data.cotizacion);
                         if(Ext.getCmp("cotizacionotm"))
@@ -444,15 +463,15 @@ var idreporte='<?=$idreporte?>';
 
                         if(res.data.idmodalidad=="CONSOLIDADO")
                         {
-                            /*if(Ext.getCmp("PCorteMaster"))
+                            if(Ext.getCmp("PCorteMaster"))
                             {
                                 Ext.getCmp("PCorteMaster").hide();
                             }
                             if(Ext.getCmp("PCorteHija"))
                             {
                                 Ext.getCmp("PCorteHija").show();
-                            }*/
-                        }
+                            }
+                        }                        
                         else if(res.data.idmodalidad=="DIRECTO")
                         {
                              if(Ext.getCmp("PCorteMaster"))
@@ -460,6 +479,23 @@ var idreporte='<?=$idreporte?>';
                             if(Ext.getCmp("PCorteHija"))
                                 Ext.getCmp("PCorteHija").show();
                         };
+                        /*Ticket 72271*/
+                        <?
+                        if($impoexpo== Constantes::EXPO)
+                        {
+                            ?>
+                                                    console.log("468");
+                                                    console.log(res.data.idmodalidad);
+                            if(res.data.idmodalidad=="CONSOLIDADO")
+                            {
+                                if(Ext.getCmp("PCorteMaster"))
+                                {
+                                    Ext.getCmp("PCorteMaster").show();
+                                }
+                            }
+                            <?
+                        }                        
+                        ?>
 
                         if(Ext.getCmp("tipoexpo"))
                         {

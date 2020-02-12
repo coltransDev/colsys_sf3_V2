@@ -381,13 +381,13 @@ class reportesNegComponents extends sfComponents {
         $this->email = "";
         //echo $this->dep;
         //13 es sistemas
-        if ($this->dep == 13 || $this->dep == 14 || $this->dep == 16) {
+        if ($this->dep == 13 || $this->dep == 14 || $this->dep == 16 ) {
             $this->modo = constantes::MARITIMO;
             $this->impoexpo = constantes::IMPO;
             $this->pais2 = "Colombia";
             $this->idpais2 = "CO-057";
             $this->email = $this->getUser()->getEmail();
-        } else if ($this->dep == 18 || $this->dep == 3) {
+        } else if ($this->dep == 18 || $this->dep == 3 || $this->dep == 85) {
             $this->impoexpo = constantes::IMPO;
             $this->pais2 = "Colombia";
             $this->idpais2 = "CO-057";
@@ -425,8 +425,8 @@ class reportesNegComponents extends sfComponents {
             $this->pais2 = "Colombia";
             $this->idpais2 = "CO-057";
             //$this->email=$this->getUser()->getEmail();
-        } else if ($this->dep == 18 || $this->dep == 3 || $this->dep == 14) {
-            if ($this->dep == 14) {
+        } else if ($this->dep == 18 || $this->dep == 3 || $this->dep == 14 || $this->dep == 85 ) {
+            if ($this->dep == 14 || $this->dep == 85) {
                 $this->modo = constantes::MARITIMO;
                 $this->email = $this->getUser()->getEmail();
             }
@@ -506,11 +506,14 @@ class reportesNegComponents extends sfComponents {
         //echo count($usuarios);
         $this->usuarios = array();
         foreach ($usuarios as $usuario) {
-            if (!isset($this->usuarios[$usuario->getCaIdsucursal()]))
-                $this->usuarios[$usuario->getCaIdsucursal()] = "";
-            else
-                $this->usuarios[$usuario->getCaIdsucursal()].="<br>";
-            $this->usuarios[$usuario->getCaIdsucursal()].=$usuario->getCaEmail();
+            if($usuario->getCaEmail()!="")
+            {
+                if (!isset($this->usuarios[$usuario->getCaIdsucursal()]))
+                    $this->usuarios[$usuario->getCaIdsucursal()] = "";
+                else
+                    $this->usuarios[$usuario->getCaIdsucursal()].="<br>";
+                $this->usuarios[$usuario->getCaIdsucursal()].=$usuario->getCaEmail();
+            }
         }
         $this->usuarios["ninguno"] = "No lo maneja Coltrans";
     }
@@ -913,5 +916,12 @@ class reportesNegComponents extends sfComponents {
             $this->contactos .="," . $this->reporte->getConsignatario()->getCaEmail();
         }
     }
+    
+    public function executeFormTerrestrePanel() {
+        
+        
+    
+    }
+    
 }
 ?>

@@ -49,11 +49,25 @@ if($reporte->getCaVersion()=="1")
 {
 include_component("reportesNeg", "checkListOtm");
 }
+
+include_component("widgets", "widgetComerciales");
+include_component("widgets", "widgetContactoCliente");
 ?>
 <script type="text/javascript">
     FormReportePanelOtmmin = function( config ){
         
         Ext.apply(this, config);
+
+	this.wgContactoCliente = new WidgetContactoCliente({fieldLabel:'Cliente ColOtm',
+                                                   width:500,
+                                                   id:"idconcliente",
+                                                   hiddenName:"idconcliente",
+                                                   allowBlank:false,
+                                                   displayField:"compania",
+                                                   autoSelect:false
+                                                  });
+
+        this.wgContactoCliente.addListener("select", this.onSelectContactoCliente, this);
         var bodyStyle = 'padding:5px 5px 5px 5px;';
         this.res="";
         this.buttons = [];
@@ -292,40 +306,7 @@ include_component("reportesNeg", "checkListOtm");
                                                      width:300
                                                     })
                             ]
-                        }/*,                                                
-                        {
-                            columnWidth:1,
-                            layout: 'form',
-                            border:false,
-                            defaultType: 'textfield',
-                            items: [
-                                new WidgetAgente({fieldLabel: 'Agente',
-                                                          linkImpoExpo: "impoexpo",
-                                                          linkOrigen: "origen",
-                                                          linkDestino: "destino",
-                                                          linkListarTodos: "listar_todos",
-                                                          id:"agente",
-                                                          hiddenName:"idagente",
-                                                          width:350,
-                                                          tabIndex:8
-                                                        }),
-                                new WidgetSucursalAgente({fieldLabel: 'Sucursal',
-                                                      linkAgente: "agente",
-                                                      id:"sucursalagente",
-                                                      hiddenName:"idsucursalagente",
-                                                      width:250,
-                                                      tabIndex:8
-                                                    }),
-                                {
-                                    xtype: "checkbox",
-                                    fieldLabel: "Listar todos",
-                                    id: "listar_todos",
-                                    name:"listar_todos",
-                                    tabIndex:9
-                                }
-                            ]
-                        }*/
-                        
+                        }                        
                     ]
                 },
                 {
@@ -398,12 +379,74 @@ include_component("reportesNeg", "checkListOtm");
                         }
                     ]
                 },                
-                new FormMercanciaPanel({tabIndex:14})
-                ,
+                new FormMercanciaPanel({tabIndex:14}),
+                this.wgContactoCliente,
                 {
-
                     xtype:'fieldset',
-                    title: 'Información del Cliente',
+                    title: 'Información Cliente COLOTM',
+                    autoHeight:true,
+                    layout:'column',
+                    columns: 2,
+                    defaults:{
+                        columnWidth:0.5,
+                        layout:'form',
+                        border:false,
+                        bodyStyle:'padding:4px'
+                    },
+                    items :
+                    [
+                        {
+                            columnWidth:.5,
+                            layout: 'form',
+                            border:false,
+                            defaultType: 'textfield',
+                            items: [
+                                this.wgContactoCliente,
+                                 {
+                                    xtype:"textfield",
+                                    fieldLabel:"Lib. Automatica",
+                                    name:"ca_liberacion",
+                                    id:"ca_liberacion",
+                                    readOnly:true,
+                                    width:100
+                                },
+                                new WidgetComerciales({fieldLabel: 'Vendedor',                
+                                    id: 'vendedor',
+                                    name: 'vendedor',
+                                    hiddenName: "idvendedor",
+                                    readOnly: <?=($permiso<2)?"true":"false"?>
+                                }),
+                            ]
+                        },
+                        {
+                            columnWidth:.5,
+                            layout: 'form',
+                            border:false,
+                            defaultType: 'textfield',
+                            items: [
+                                {
+                                    xtype:"textfield",
+                                    fieldLabel:"Contacto",
+                                    name:"contacto",
+                                    id:"contacto",
+                                    readOnly:true,
+                                    width:500
+                                },
+                                {
+                                    xtype:"textfield",
+                                    fieldLabel:"Tiempo de Crédito",
+                                    name:"ca_tiempocredito",
+                                    id:"ca_tiempocredito",
+                                    readOnly:true,
+                                    width:100
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    xtype:'fieldset',
+                    title: 'Información del Cliente y/o Importador',
                     autoHeight:true,
                     items: [
                         new WidgetTercero({fieldLabel:"Cliente",
@@ -469,8 +512,8 @@ include_component("reportesNeg", "checkListOtm");
                                                     tabIndex:21
                                                    })
                     ]
-                },                
-                {
+                },
+		{
                     xtype:'fieldset',
                     title:'Informaciones a:',
                     autoHeight:true,
@@ -498,7 +541,6 @@ include_component("reportesNeg", "checkListOtm");
                                     layout:'column',
                                     columns:2,
                                     defaults:{
-
                                         layout:'form',
                                         border:false,
                                         hideLabels:true,
@@ -530,7 +572,6 @@ include_component("reportesNeg", "checkListOtm");
                                                     width:20,
                                                     height:20
                                                 }
-
                                             ]
                                         }
                                     ]
@@ -539,9 +580,70 @@ include_component("reportesNeg", "checkListOtm");
                                 }
                                 ?>
                             ]
-                        }                        
+                        },
+                        {
+                            border:false,
+                            title:'Contactos fijos',
+                            autoHeight:true,
+                            columnWidth:0.5,
+                            items:[
+                                <?
+                                for( $i=0; $i<10; $i++ )
+                                {
+                                    if( $i!=0){
+                                        echo ",";
+                                    }
+                                ?>
+                                {
+                                   border:false,
+                                    title:'',
+                                    autoHeight:true,
+                                    layout:'column',
+                                    columns:2,
+                                    defaults:{
+                                        layout:'form',
+                                        border:false,
+                                        hideLabels:true,
+                                        border:true
+                                    },
+                                    items:[
+                                        {
+                                            defaultType:'textfield',
+                                            items:[
+                                                {
+                                                    xtype:"textfield",
+                                                    fieldLabel:"",
+                                                    name:"contacto_fijos<?=$i?>",
+                                                    id:"contacto_fijos<?=$i?>",
+                                                    readOnly:true,
+                                                    width:250,
+                                                    height:20
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            defaults:{width:20},
+                                            items:[
+                                                {
+                                                    xtype:"checkbox",
+                                                    fieldLabel:"",
+                                                    name:"chkcontacto_fijos<?=$i?>",
+                                                    id:"chkcontacto_fijos<?=$i?>",
+                                                    width:20,
+                                                    height:20
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                                <?
+                                }
+                                ?>
+                            ]
+                        }
                     ]
                  }
+                
             ],
             buttons: this.buttons,
              listeners:{
@@ -568,7 +670,82 @@ include_component("reportesNeg", "checkListOtm");
     var idreporte='<?=$idreporte?>';
     
     Ext.extend(FormReportePanelOtmmin, Ext.form.FormPanel, {
-        
+        onSelectContactoCliente: function( combo, record, index){ 
+            store=combo.store;
+            j=0;
+            confirmacionesF=new Array();
+            
+        /*{
+                store.each( function( r ){
+                    if(r.data.compania==record.get("compania") && r.data.fijo && r.data.email!="")
+                    {
+                        if( Ext.getCmp("contacto_fijos"+j) ){
+                            Ext.getCmp("contacto_fijos"+j).setValue(r.data.email);
+                            Ext.getCmp("contacto_fijos"+j).setReadOnly( false );
+                            Ext.getCmp("chkcontacto_fijos"+j).setValue( true );
+                            confirmacionesF.push(r.data.email);
+                            j++;
+                        }
+                    }
+                });
+            }*/
+
+            if(record.get("cg"))
+                $("#img_cli").html('<img src="/images/CG30.png" />');
+            else
+                $("#img_cli").html('');
+            Ext.getCmp("idconcliente").setValue(record.get("idcontacto"));
+            Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido"));
+            
+            if(Ext.getCmp("contacto_0").getValue()=="")
+            {            
+                var confirmar=record.get("confirmar") ;
+                var brokenconfirmar="";
+                if(confirmar)
+                {
+                    brokenconfirmar=confirmar.split(",");
+                    var i=0;
+                    var j=0;
+                    for(i=0; i<brokenconfirmar.length; i++){
+                        if(brokenconfirmar[i] && jQuery.inArray(brokenconfirmar[i],confirmacionesF)<0 )
+                        {
+                            Ext.getCmp("contacto_"+j).setValue(brokenconfirmar[i]);
+                            Ext.getCmp("contacto_"+j).setReadOnly( true );
+                            Ext.getCmp("chkcontacto_"+j).setValue( true );
+                            j++;
+                        }
+                    }
+                }
+                for(i=j;i<20;i++){
+                    if( Ext.getCmp("contacto_"+i) ){
+                        Ext.getCmp("contacto_"+i).setValue("");
+                        Ext.getCmp("contacto_"+i).setReadOnly( false );
+                        Ext.getCmp("chkcontacto_"+i).setValue( false );
+                    }
+                }
+            }
+            diascredito=0;
+            if(record.data.diascredito && record.data.diascredito!="null")
+            {
+                diascredito=(record.get("diascredito")!="")?record.get("diascredito")+" dias":"0";
+            }
+
+            Ext.getCmp("ca_tiempocredito").setValue(diascredito);
+
+            if(record.data.cupo && record.data.cupo!="null")
+            {
+                cupo=(record.get("cupo")=="" || record.get("cupo")=="0")?"No":"Sí";
+            }
+            else
+            {
+                cupo="No";
+            }
+
+            Ext.getCmp("ca_liberacion").setValue(cupo);
+            Ext.getCmp("vendedor").setValue(record.data.vendedor);
+            $("#vendedor").val(record.data.nombre_ven);
+            combo.alertaCliente(record);
+        },
         onFinalizar:function(){
             this.onSave("3");
         },
@@ -690,8 +867,15 @@ include_component("reportesNeg", "checkListOtm");
                     params:{idreporte:this.idreporte},
                     success:function(response,options){
                         res = Ext.util.JSON.decode( options.response.responseText );
+                        
                         Ext.getCmp("cliente").setValue(res.data.idcliente);
                         $("#cliente").attr("value",res.data.cliente);
+                        
+                        Ext.getCmp("vendedor").setValue(res.data.idvendedor);
+                        $("#vendedor").attr("value",res.data.vendedor);
+                        
+                        //Ext.getCmp("idconcliente").setValue(res.data.vendedor);
+                        $("#idconcliente").attr("value",res.data.cliente2);
 
                         for(i=0;i<<?=($nprov>0)?$nprov:0?>;i++)
                         {
