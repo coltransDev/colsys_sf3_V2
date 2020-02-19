@@ -131,6 +131,7 @@ $office_types = $sf_data->getRaw("office_types");*/
                                         hiddenName:'ntipo',
                                         fieldLabel: "Tipo",
                                         caso_uso:"CU279",
+                                        disabled: true,
                                         width:200,
                                         idvalor:"id"
                                     }),
@@ -381,7 +382,7 @@ $office_types = $sf_data->getRaw("office_types");*/
 
             // set wait message target
             this.getForm().waitMsgTarget = this.getEl();
-            var form = this.getForm();
+            var form = this.getForm();            
             if(this.idactivo!="undefined" && this.idactivo )
             {
                 this.load({
@@ -397,9 +398,12 @@ $office_types = $sf_data->getRaw("office_types");*/
                         var fld = Ext.getCmp("asignadoa_id");
                         fld.setRawValue(this.res.data.asignadoaNombre);
                         fld.hiddenField.value = this.res.data.asignadoa;
-                        
-                        Ext.getCmp("tipo").setValue(res.data.ntipo);
-                        $("#tipo").attr("value",res.data.tipo);
+                        console.log(res.data.parent);
+                        if(res.data.parent == 2){ // Solo muestra el tipo para Estaciones de Trabajo
+                            Ext.getCmp("tipo").setDisabled(false);
+                            Ext.getCmp("tipo").setValue(res.data.ntipo);
+                            $("#tipo").attr("value",res.data.tipo);
+                        }
                     }
 
                 });                
