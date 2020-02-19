@@ -104,17 +104,6 @@
             <th width="15%">
                 Cantidad
             </th>
-            
-            <?
-            /*if( $idsucursal ){
-            ?>
-            <th width="15%">
-                Asignadas Nivel Nacional
-            </th>
-            <?
-            }*/
-            ?>
-            
             <th width="15%">
                 Asignadas
             </th>
@@ -125,26 +114,19 @@
             <?}?>
         </tr>
         <?
-        $total = 0;
-        $totalAs = 0;
-        $totalGlob = 0;
         
-        $lastCat = null;
-        
-        $lastLic = null;
-        $countLic = 0;
-        $totalLic = 0;
-        $totalLicAsig = 0;
-        
-        //echo "<pre>";print_r($software);echo "</pre>";
+        $lastCat = null;        
+        $lastLic = null;                        
         
         $cant=array();
         $id="";
         foreach( $software as $s ){
             $ids[$s["a_ca_modelo"]][] = $s["as_ca_idequipo"];
+            
             if($s["a_ca_idactivo"]!=$id)             
                 $cant[$s["a_ca_modelo"]]+= $s["a_q"];
-                $totalIds[$s["a_ca_modelo"]][] = $s["a_ca_idactivo"];
+                        
+            $totalIds[$s["a_ca_modelo"]][] = $s["a_ca_idactivo"];
             $id = $s["a_ca_idactivo"];
             
             if(!$s["as_ca_idequipo"]){
@@ -153,163 +135,49 @@
             }
         }
         
-        foreach( $software as $s ){            
-            if( $lastLic!=$s["a_ca_modelo"] ){
-                if( $lastLic ){
+        $totalLicAsig = array();
+        foreach( $software as $s ){
+            $totalLicAsig[$s["a_ca_modelo"]]+=$s["as_assigned"];            
+        }
+
+        foreach( $software as $s ){
+            if( $lastLic!=$s["a_ca_modelo"] ){                
                 ?>
                 <tr>
                     <td>
-                        <b><?=$lastLic?></b>
+                        <b><?=$s["a_ca_modelo"]?></b>
                     </td>
                     <td>
                         <?
-                        $url3 = "inventory/informeListadoActivosResult?param=Software&idactivo=".Utils::serializeArray($totalIds[$lastLic]);
-                        echo link_to($cant[$lastLic], $url3, array("target"=>"_blank"));
+                        $url3 = "inventory/informeListadoActivosResult?param=Software&idactivo=".json_encode($totalIds[$s["a_ca_modelo"]]);
+                        echo link_to($cant[$s["a_ca_modelo"]], $url3, array("target"=>"_blank"));
                         ?>
-                    </td>
-                    <?
-                    /*if( $idsucursal ){
-                    ?>
-                    <td>
-                        <?=$totalGlobLic?>
-                    </td>
-                    <?
-                    }*/
-                    ?>
+                    </td>                    
                     <td>
                         <?
-                        $url1 = "inventory/informeListadoActivosResult?idactivo=".Utils::serializeArray($ids[$lastLic]);
-                        $a = $totalLicAsig<=$totalLic?$totalLicAsig:"<span class='rojo'>".$totalLicAsig."</span>";                
+                        $url1 = "inventory/informeListadoActivosResult?idactivo=".json_encode($ids[$s["a_ca_modelo"]]);
+                        $a = $totalLicAsig[$s["a_ca_modelo"]]<=$cant[$s["a_ca_modelo"]]?$totalLicAsig[$s["a_ca_modelo"]]:"<span class='rojo'>".$totalLicAsig[$s["a_ca_modelo"]]."</span>";                
                         echo link_to($a, $url1, array("target"=>"_blank"));
                         ?>
                     </td>
-                    <?if( !$idsucursal ){?>
-                    <td><?
-                        if(count($cantIdSA[$lastLic])>0){
-                            $url2 = "inventory/informeListadoActivosResult?param=Software&idactivo=".Utils::serializeArray($idsSinAsignar[$lastLic]);
-                            echo link_to($cantIdSA[$lastLic], $url2, array("target"=>"_blank"));
-                        }
+                    <?if( !$idsucursal ){
                         ?>
-                    </td>
-                    <?}?>
+                        <td><?
+                            if(count($cantIdSA[$s["a_ca_modelo"]])>0){
+                                $url2 = "inventory/informeListadoActivosResult?param=Software&idactivo=".json_encode($idsSinAsignar[$s["a_ca_modelo"]]);
+                                echo link_to($cantIdSA[$s["a_ca_modelo"]], $url2, array("target"=>"_blank"));
+                            }
+                            ?>
+                        </td>
+                        <?
+                    }
+                    ?>
                 </tr>
-                <? 
-                }
-                $countLic = 0;
-                $totalLic = 0;
-                $totalLicAsig = 0;
-                $totalGlobLic = 0;
+                <?              
                 $lastLic=$s["a_ca_modelo"];
             }
-            
-            
-            $total+=$s["a_q"];
-            $totalAs+=$s["as_assigned"];
-            $totalGlob+=$s["a_q2"];
-            /*if( $lastCat!= $s["c_ca_name"]){
-                $lastCat = $s["c_ca_name"];
-                ?>
-                <tr class="row0">
-                    <td colspan="4">
-                        <b> <?=$lastCat?></b>
-                    </td>                    
-                </tr>
-                <?
-            }*/
-            
-            $url = "inventory/informeListadoActivosResult?idasignacion=".$s["a_ca_idactivo"];
-            
-            
-            
-            
-            
-            $countLic++;
-            $totalLic+=$s["a_q"];
-            $totalGlobLic+=$s["a_q2"];
-            $totalLicAsig+=$s["as_assigned"];
-            
-        ?>
-        <!--<tr>
-            <td>
-                <?=$s["a_ca_modelo"]?>
-            </td>
-            <td>
-                <?=$s["a_q"]?>                
-            </td>
-            <?
-            if( $idsucursal ){
-            ?>
-            <td>                
-                <?                
-                $a = $s["a_q2"]<=$s["a_q"]?$s["a_q2"]:"<span class='rojo'>".$s["a_q2"]."</span>";                
-                echo link_to($a, $url, array("target"=>"_blank"));
-                ?>
-            </td>
-            <?
-            }
-            
-            if( $idsucursal ){
-                $url .= "&idsucursal=".$idsucursal;
-            }
-            ?>
-            <td>
-                <?                
-                $a = $s["as_assigned"]<=$s["a_q"]?$s["as_assigned"]:"<span class='rojo'>".$s["as_assigned"]."</span>";                
-                echo link_to($a, $url, array("target"=>"_blank"));
-                ?>
-            </td>
-        </tr>-->
-        <?
+            $url = "inventory/informeListadoActivosResult?idasignacion=".$s["a_ca_idactivo"];        
         }
-        /*
-        if( $countLic>1 ){
-        ?>
-        <tr class="row0">
-            <td>
-                Subtotal <b><?=$lastLic?></b>
-            </td>
-            <?
-            /*if( $idsucursal ){
-            ?>
-            <td>
-                <?=$totalLic?>
-            </td>
-            <?
-            }
-            ?>
-            <td>
-                <?=$totalGlobLic?>
-            </td>            
-            <td>
-                <?                
-                $a = $totalLicAsig<=$totalLic?$totalLicAsig:"<span class='rojo'>".$totalLicAsig."</span>";                
-                echo $a;
-                ?>
-            </td>
-        </tr>
-        <? 
-        }*/
-        
-        ?>
-        <!--<tr class="row0">
-            <td>
-                Gran Total
-            </td>
-            <td>
-                <?=$total?>
-            </td>
-            <?
-            /*if( $idsucursal ){
-            ?>
-            <td>
-                <?=$totalGlob?>
-            </td>
-            <?
-            }*/
-            ?>
-            <td>
-                <?=$totalAs<=$total?$totalAs:"<span class='rojo'>".$totalAs."</span>"?>
-            </td>
-        </tr>-->
+        ?>        
     </table>
 </div>
