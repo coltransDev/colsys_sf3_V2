@@ -1118,7 +1118,7 @@ class inventoryActions extends sfActions {
                 ->addWhere("a.ca_fchbaja IS NULL")
                 ->addWhere("ac.ca_fchbaja IS NULL")
                 ->addGroupBy("a.ca_idactivo, c.ca_name, a.ca_modelo, a.ca_cantidad, as.ca_idequipo")
-                ->addOrderBy("c.ca_name, a.ca_modelo");
+                ->addOrderBy("c.ca_name, a.ca_modelo, a.ca_idactivo");
                 
         if ($idsucursal) {
             //$q->addWhere("ac.ca_idsucursal = ?", array( $idsucursal ));
@@ -1135,7 +1135,7 @@ class inventoryActions extends sfActions {
             //$q->andWhereIn("s.ca_idempresa", $grupoEmp);            
             $q->addWhere("s.ca_nombre = ? ", $sucUsuario->getCaNombre());
         }
-        //echo $q->getSqlQuery();
+//        echo $q->getSqlQuery();
         
         $this->software = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                 ->execute();
@@ -1181,7 +1181,7 @@ class inventoryActions extends sfActions {
         $fchbajainicio = $request->getParameter("fchbajainicio");
         $fchbajafinal = $request->getParameter("fchbajafinal");
 
-        $idactivos = Utils::unSerializeArray($request->getParameter("idactivo"));
+        $idactivos = json_decode($request->getParameter("idactivo"), true);
         
         $user = $this->getUser();
         $sucUsuario = Doctrine::getTable("Sucursal")->find($user->getIdsucursal());
