@@ -7,7 +7,7 @@
 //echo "<pre>";print_r($activos);echo "</pre>";
 
 if( $param=="Software" ){
-    $cols = 10;
+    $cols = 12;
 }elseif( $param=="Hardware" ){
     $cols = 22;
 }else{
@@ -46,6 +46,15 @@ $granTotal = 0;
             <th>
                 Serial
             </th>
+            <?
+            if( $param=="Software" ){
+            ?>
+            <th>
+                Contrato
+            </th>            
+            <?
+            }
+            ?>
             <th>
                 Proveedor
             </th>
@@ -172,6 +181,15 @@ $granTotal = 0;
             <td>
                 <?=$activo->getCaSerial()?>
             </td>
+            <?
+            if( $param=="Software" ){
+            ?>
+            <td>
+                <?= html_entity_decode($activo->getCaContrato())?>
+            </td>            
+            <?
+            }
+            ?>
             <td>
                 <?=$activo->getCaProveedor()?>
             </td>
