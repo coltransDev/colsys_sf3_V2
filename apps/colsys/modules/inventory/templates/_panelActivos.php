@@ -37,7 +37,7 @@
             {
                 header: "Tipo",
                 dataIndex: 'tipo',
-                //hideable: false,
+                hidden: true,
                 sortable: true,
                 width: 100
             },
