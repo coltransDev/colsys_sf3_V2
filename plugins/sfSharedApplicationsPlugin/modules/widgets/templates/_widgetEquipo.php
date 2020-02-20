@@ -16,16 +16,18 @@
         );*/
 
         this.resultTpl = new Ext.XTemplate(
-            '<tpl for=".">',
-            /*'<tpl if="!this.idempresa(idempresa)">',
-                '<div class="search-item">',
-                '<span style="color:#F89253;"><b>{identificador}</b></span><br /><span style="font-size:9px;">{asignadoa} - {ubicacion}</span>',                
-            '</tpl>',*/
-            '<tpl if="this.idempresa(idempresa)">',
-                '<div class="search-item">',
-                '<span style="color:#33518C;"><b>{identificador}</b></span><br /><span style="font-size:9px;">{asignadoa} - {ubicacion}</span>',                
+            '<tpl for=".">\n\
+                <tpl if="this.idempresa(idempresa)">',
+                    '<div class="search-item">',
+                        '<span>',
+                            '<span style="color:#33518C;"><b>{identificador}</b></span><br /><span style="font-size:9px;">{asignadoa} - {ubicacion}</span>',
+                            '<tpl if="this.inactivo(fchbaja)">',
+                                '<p><span class="rojo">Inactivo</span></p>',
+                            '</tpl>',
+                        '</span>',
+                    '</div>',
+                '</tpl>',            
             '</tpl>',
-            '</span></div></tpl>',
             {
                 idempresa: function(val){                    
                     var grupo = "<?=json_encode($sf_data->getRaw("grupoEmp"))?>";
@@ -35,6 +37,14 @@
                         return true;
                     else
                         return false;                    
+                },
+                inactivo: function(val){
+                    var fchbaja = val;
+                    
+                    if(fchbaja)
+                        return true;
+                    else
+                        return false;
                 }
             }
         );
@@ -50,7 +60,8 @@
                 {name: 'identificador', mapping: 'a_ca_identificador'},
                 {name: 'ubicacion', mapping: 's_ca_nombre'},
                 {name: 'asignadoa', mapping: 'u_ca_nombre'},
-                {name: 'idempresa', mapping: 'e_ca_idempresa', type: 'int'}
+                {name: 'idempresa', mapping: 'e_ca_idempresa', type: 'int'},
+                {name: 'fchbaja', mapping: 'a_ca_fchbaja', type: 'date', dateFormat: 'Y-m-d'},
             ]), 
             proxy: new Ext.data.HttpProxy({
                 url: '<?= url_for('inventory/datosWidgetEquipo') ?>'
