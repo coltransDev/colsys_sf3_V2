@@ -903,37 +903,44 @@ class inventoryActions extends sfActions {
             $idequipo = $request->getParameter("idequipo");
             $this->forward404Unless($idequipo);
 
+            $equipo = Doctrine::getTable("InvActivo")->find($idequipo);
             $activo = Doctrine::getTable("InvActivo")->find($idactivo);
-            //Verifica que no hayan mas licencias asignadas que las registradas                          
-            $q = Doctrine::getTable("InvAsignacionSoftware")
-                    ->createQuery("a")
-                    
-                    ->select("count(*) as assigned")
-                    ->addWhere("a.ca_idactivo=?", $idactivo)                    
-                    ->leftJoin("a.Equipo ac")
-                    ->addWhere("ac.ca_fchbaja IS NULL");
+            
+            //Verifica que el equipo se encuentre activo
+            if($equipo->getCaFchbaja() == null){
+                //Verifica que no hayan mas licencias asignadas que las registradas                          
+                $q = Doctrine::getTable("InvAsignacionSoftware")
+                        ->createQuery("a")
+
+                        ->select("count(*) as assigned")
+                        ->addWhere("a.ca_idactivo=?", $idactivo)                    
+                        ->leftJoin("a.Equipo ac")
+                        ->addWhere("ac.ca_fchbaja IS NULL");
 
 
-            $asig = $q->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
-                    ->execute();
+                $asig = $q->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                        ->execute();
 
 
-            if ($activo->getCaCantidad() <= $asig) {
-                $flash = "Alerta: No hay mas licencias disponibles. Cantidad: " . $activo->getCaCantidad() . " Asignadas: " . $asig;
+                if ($activo->getCaCantidad() <= $asig) {
+                    $flash = "Alerta: No hay mas licencias disponibles. Cantidad: " . $activo->getCaCantidad() . " Asignadas: " . $asig;
+                }
+
+
+                if ($request->getParameter("idasignacion_software")) {
+                    $asignacion = Doctrine::getTable("InvAsignacionSoftware")->find($request->getParameter("idasignacion_software"));
+                    $this->forward404Unless($asignacion);
+                } else {
+                    $asignacion = new InvAsignacionSoftware();
+                    $asignacion->setCaIdactivo($idactivo);
+                }
+                $asignacion->setCaIdequipo($idequipo);
+                $asignacion->save();
+
+                $this->responseArray = array("success" => true, "flash"=>$flash, "id" => $request->getParameter("id"), "idasignacion_software" => $asignacion->getCaIdasignacionSoftware());
+            }else{
+                $this->responseArray = array("success" => false, "errorInfo"=> utf8_encode(": El equipo ".$equipo->getCaIdentificador()." al que está tratando de asignar la licencia se encuentra dado de baja."));
             }
-
-
-            if ($request->getParameter("idasignacion_software")) {
-                $asignacion = Doctrine::getTable("InvAsignacionSoftware")->find($request->getParameter("idasignacion_software"));
-                $this->forward404Unless($asignacion);
-            } else {
-                $asignacion = new InvAsignacionSoftware();
-                $asignacion->setCaIdactivo($idactivo);
-            }
-            $asignacion->setCaIdequipo($idequipo);
-            $asignacion->save();
-
-            $this->responseArray = array("success" => true, "flash"=>$flash, "id" => $request->getParameter("id"), "idasignacion_software" => $asignacion->getCaIdasignacionSoftware());
         } catch (Exception $e) {
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
@@ -973,7 +980,7 @@ class inventoryActions extends sfActions {
         $query = "%" . strtoupper($request->getParameter("query")) . "%";
 
         $q = Doctrine_Query::create()
-                ->select("a.ca_identificador, a.ca_idactivo, u.ca_nombre,s.ca_nombre, e.ca_idempresa")
+                ->select("a.ca_identificador, a.ca_idactivo, u.ca_nombre,s.ca_nombre, e.ca_idempresa, a.ca_fchbaja")
                 ->from("InvActivo a")
                 ->innerJoin("a.InvCategory c")
                 ->leftJoin("a.Usuario u")
