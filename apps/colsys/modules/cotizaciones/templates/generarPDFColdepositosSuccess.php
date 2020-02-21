@@ -50,13 +50,13 @@ $pdf->SetSucursal($sucursal->getCaIdsucursal());
 
 $txtSucursal=array();
 $txtSucursal["datos"][]= $sucursal->getCaNombre();
+$txtSucursal["datos"][]= $sucursal->getEmpresa()->getCaNombre();
 $dir= explode("  ", $sucursal->getCaDireccion());
 
 foreach($dir as $d)
     $txtSucursal["datos"][]=$d;
 
 $txtSucursal["datos"][]="Pbx: ".$sucursal->getCaTelefono();//"Pxb : (57 - 1) 4239300";
-$txtSucursal["datos"][]="Fax: ".$sucursal->getCaFax();//"Pxb : (57 - 1) 4239300";
 $txtSucursal["datos"][] = "Cod. Postal: ". $sucursal->getCaCodpostal();
 if($sucursal->getCaEmail()!="")
     $txtSucursal["datos"][]= $sucursal->getCaEmail();//"Email: bogota@colmas.com.co";
@@ -239,8 +239,7 @@ $pdf->SetFont($font, '', 10);
 $pdf->MultiCell(0, 4, strtoupper($usuario->getCaCargo()), 0, 1);
 $pdf->MultiCell(0, 4, strtoupper($empresa->getCaNombre()), 0, 1);
 $pdf->MultiCell(0, 4, $sucursal->getCaDireccion(), 0, 1);
-$pdf->MultiCell(0, 4, "Tel.:" . $sucursal->getCaTelefono() . " " . $usuario->getCaExtension(), 0, 1);
-$pdf->MultiCell(0, 4, "Fax :" . $sucursal->getCaFax(), 0, 1);
+$pdf->MultiCell(0, 4, "Tel.:" . $sucursal->getCaTelefono() . " Ext.:" . $usuario->getCaExtension(), 0, 1);
 $pdf->MultiCell(0, 4, "Cod. Postal :" . $sucursal->getCaCodpostal(), 0, 1);
 
 $pdf->MultiCell(0, 4, $sucursal->getCaNombre() . " - " . $empresa->getTrafico()->getCaNombre(), 0, 1);
