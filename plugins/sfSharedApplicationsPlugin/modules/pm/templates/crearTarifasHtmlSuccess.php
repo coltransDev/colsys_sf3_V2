@@ -15,7 +15,7 @@ if($tipo=="interno"){
     $image = "https://www.colsys.com.co/images/logo_colsys.gif";
     $titulo = "Solicitud Tarifas Transporte Internacional: Ticket # ".$ticket->getCaIdticket();
 }else{
-    $image = "http://www.coltrans.com.co/logosoficiales/coltrans/ColtransSmall.png";
+    $image = "https://www.coltrans.com.co/logosoficiales/coltrans/ColtransSmall.png";
     $titulo = "Solicitud Tarifas Transporte Internacional: Ticket # ".$ticket->getCaIdticket()."<br/>".substr($trayectos,0,-3);
 }
 
@@ -224,8 +224,7 @@ $background = $tipo==="interno"?null:'style="background-color:#E3E3E3;"';
                 <b>COLTRANS S.A.S</b><br/>
                 Cra 98 No. 25G-10 Int 18<br/>
                 Código postal: 110911<br/>
-                TEL:  57 1 4239300 Ext 148<br/>
-                FAX:  57 1 4239323 Ext. 148<br/>
+                TEL:  57 1 742 5880 Ext 1148<br/>                
                 Bogota, - Colombia.<br/>
                 E-mail : pricing@coltrans.com.co<br/>
                 www.coltrans.com.co<br/>
