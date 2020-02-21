@@ -116,7 +116,7 @@ function num2letras($num, $fem = false, $dec = true) {
       $ent = substr($ent, 0, -3); 
       if (++$sub < 3 and $fem) { 
          $matuni[1] = 'una'; 
-         $subcent = 'as'; 
+         $subcent = 'as';
       }else{ 
          $matuni[1] = $neutro ? 'un' : 'uno'; 
          $subcent = 'os'; 
@@ -248,7 +248,7 @@ foreach($comprobantes as $comprobante)
 
     $y+=$space;
     $pdf->SetXY($x+$marginHeader,$y);
-    $pdf->Cell(0, 4, "PBX: ".$sucursal->getCaTelefono()." ".$sucursal->getCaFax(),0,1, "L");
+    $pdf->Cell(0, 4, "PBX: ".$sucursal->getCaTelefono(),0,1, "L");
 
     $datostmp= json_decode($sucursal->getCaDatos());
     $y+=$space;
@@ -261,14 +261,14 @@ foreach($comprobantes as $comprobante)
 
     $y+=$space;
     $pdf->SetXY($x+$marginHeader,$y);
-    $pdf->Cell(0, 4, "Regimen común ",0,1, "L");
+    $pdf->Cell(0, 4, "Responsable del IVA  ",0,1, "L");
     
     $y+=$space;
     $pdf->SetXY($x+$marginHeader,$y);
     $pdf->Cell(0, 4, "No somos grandes contribuyentes ",0,1, "L");
     
     $datostmp = ParametroTable::retrieveByCaso("CU234",$sucursal->getCaIdempresa());
-    foreach ($datostmp as $d) {
+    foreach ($datostmp as $d) {        
         $datosMensajes[$d->getCaIdentificacion()]=$d->getCaValor2();
     }
 
@@ -279,7 +279,7 @@ foreach($comprobantes as $comprobante)
         $pdf->Cell(0, 4, $datosMensajes[$sucursal->getCaIdempresa()."5"],0,1, "L");
     }
 
-    if($sucursal->getCaIdempresa()=="2" || $sucursal->getCaIdempresa()=="8")
+    /*if($sucursal->getCaIdempresa()=="2" || $sucursal->getCaIdempresa()=="8")
     {
         $y+=$space;
         $pdf->SetXY($x+$marginHeader,$y);
@@ -300,7 +300,7 @@ foreach($comprobantes as $comprobante)
         $y+=$space;
         $pdf->SetXY($x+$marginHeader,$y);        
         $pdf->Cell(0, 4, "Articulo 437-2 Num. 9 Regimen-Simple",0,1, "L");        
-    }
+    }*/
 
     $y+=$space;
     $pdf->SetXY($x+$marginHeader,$y);
@@ -832,6 +832,30 @@ foreach($comprobantes as $comprobante)
     $pdf->SetXY($x+12,$y);
     $datostmp= json_decode($tipo->getCaDatos());
     $pdf->Cell(0, 3, "Numeración según Resolución DIAN ".$tipo->getCaNoautorizacion()."  ".Utils::parseDate($tipo->getCaFchautorizacion(),"Y/m/d")." ".$datostmp->prefijo." ".$tipo->getCaInicialAut()." AL ".$tipo->getCaFinalAut()." FACTURA POR COMPUTADOR. ".$datostmp->vigencia  ,0,1, "L"); 
+    if($sucursal->getCaIdempresa()=="2" || $sucursal->getCaIdempresa()=="8")
+    {
+        //$pdf->SetXY($x+12,$y);
+        $y+=$space;
+        $pdf->SetXY($x+40,$y);
+        $pdf->Cell(0, 4, "Agentes de retención de IVA según Articulo 437-2 Num. 7 y Num. 9",0,1, "L");        
+        /*$y+=$space;
+        $pdf->SetXY($x+$marginHeader,$y);        
+        $pdf->Cell(0, 4, "Articulo 437-2 Num. 7 Prov.C.I.",0,1, "L");   
+        $y+=$space;
+        $pdf->SetXY($x+$marginHeader,$y);
+        $pdf->Cell(0, 4, "Num. 9 Regimen-Simple ",0,1, "L");        */
+    }
+    else
+    {
+        $y+=$space;
+        //$pdf->SetXY($x+$marginHeader,$y);
+        $pdf->SetXY($x+40,$y);
+        $pdf->Cell(0, 4, "Agentes de retención de IVA según Articulo 437-2 Num. 9 ",0,1, "L");
+        /*$pdf->Cell(0, 4, "",0,140, "L");
+        $y+=$space;
+        $pdf->SetXY($x+$marginHeader,$y);        
+        $pdf->Cell(0, 4, "Articulo 437-2 Num. 9 Regimen-Simple",0,1, "L");        */
+    }
 
     $datostmp = ParametroTable::retrieveByCaso("CU234",$sucursal->getCaIdempresa());
     foreach ($datostmp as $d) {
@@ -848,7 +872,7 @@ foreach($comprobantes as $comprobante)
         $pdf->SetRightMargin(55);
         $pdf->Rect($x,$y,140+$aumentox,(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."1"])/100))*3);
         $pdf->SetXY($x+2,$y);
-        $pdf->MultiCell(0, 3, $datosMensajes[$sucursal->getCaIdempresa()."1"] );
+        $pdf->MultiCell(0, 3, $datosMensajes[$sucursal->getCaIdempresa()."1"]." ".(($sucursal->getCaIdsucursal()=="PEI")?"  De ICA Acuerdo 29-2015":"") );
         $y+=(ceil(strlen($datosMensajes[$sucursal->getCaIdempresa()."1"])/100))*3;
     }
 

@@ -260,11 +260,6 @@ $pdf->Cell(0, 4, "PBX: ".$sucursal->getCaTelefono(),0,1, "L");
 
 $y+=$space;
 $pdf->SetXY($x+$marginHeader,$y);
-$pdf->Cell(0, 4, "FAX: ".$sucursal->getCaFax(),0,1, "L");
-
-
-$y+=$space;
-$pdf->SetXY($x+$marginHeader,$y);
 $pdf->Cell(0, 4, "E-mail: ".$sucursal->getCaEmail(),0,1, "L"); //.$idsSucursal->getCaEmail()*/
 
 /*$y+=$space;

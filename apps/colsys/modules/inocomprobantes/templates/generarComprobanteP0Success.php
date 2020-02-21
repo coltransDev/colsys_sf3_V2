@@ -64,9 +64,6 @@ $pdf->Cell(0, 4, $idsSucursal->getCaDireccion(),0,1, "L");
 $y+=$space;
 $pdf->SetXY($x+$marginHeader,$y);
 $pdf->Cell(0, 4, "PBX: ".$idsSucursal->getCaTelefonos(),0,1, "L");
-$y+=$space;
-$pdf->SetXY($x+$marginHeader,$y);
-$pdf->Cell(0, 4, "FAX: ".$idsSucursal->getCaFax(),0,1, "L");
 
 $y+=$space;
 $pdf->SetXY($x+$marginHeader,$y);
