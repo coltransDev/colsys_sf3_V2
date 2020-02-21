@@ -107,8 +107,7 @@ if (true){
         $pdf->MultiCell(0, 4, strtoupper($us->Value('ca_cargo')),0,1);
         $pdf->MultiCell(0, 4, COLTRANS,0,1);
         $pdf->MultiCell(0, 4, $us->Value('ca_direccion'),0,1);
-		$pdf->MultiCell(0, 4, "Tel.:".$us->Value('ca_telefono')." ".$us->Value('ca_extension'),0,1);
-		$pdf->MultiCell(0, 4, "Fax :".$us->Value('ca_fax'),0,1);
+		$pdf->MultiCell(0, 4, "Tel.:".$us->Value('ca_telefono')." Ext.: ".$us->Value('ca_extension'),0,1);		
 		$pdf->MultiCell(0, 4, $us->Value('ca_sucursal')." - Colombia",0,1);
 		$pdf->MultiCell(0, 4, $us->Value('ca_email'),0,1);
 		$pdf->MultiCell(0, 4, "www.coltrans.com.co",0,1);
