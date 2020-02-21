@@ -50,8 +50,7 @@ $email_body = $sf_data->getRaw("email_body");
 
                         if ($sucursal) {
                             $resultado .= $sucursal->getCaDireccion() . "<br />";
-                            $resultado .= "Tel.: " . $sucursal->getCaTelefono() . " " . $usuario->getCaExtension() . "<br />";
-                            $resultado .= "Fax.: " . $sucursal->getCaFax() . "<br />";
+                            $resultado .= "Tel.: " . $sucursal->getCaTelefono() . " " . $usuario->getCaExtension() . "<br />";                            
                         }
                         $resultado .= Utils::replace($sucursal->getCaNombre()) . "-" . $empresa->getTrafico()->getCaNombre() . "<br />";
                         $resultado .= "<a href=\"http://" . $empresa->getCaUrl() . "\">" . $empresa->getCaUrl() . "</a>";
