@@ -5,10 +5,14 @@ $cliente = $encuestaVisita->getContacto()->getCliente();
 $contacto = $encuestaVisita->getContacto();
 $usuario = $encuestaVisita->getUsuCreado();
 $identificacion = $cliente->getCaIdalterno()?number_format($cliente->getCaIdalterno()) . "-" . $cliente->getCaDigito():"";
+
 $instalaciones_otro = str_replace(",",", ",$encuestaVisita->getCaInstalacionesTipo());
+$instalaciones_otro = html_entity_decode(htmlspecialchars_decode($instalaciones_otro), ENT_QUOTES, "ISO8859-1");
 $instalaciones_otro.= $encuestaVisita->getCaInstalacionesOtro()?", ".$encuestaVisita->getCaInstalacionesOtro():"";
-$sistema_seguridad = str_replace(",",", ",$encuestaVisita->getCaSistemaSeguridad());
+$sistema_seguridad = html_entity_decode(str_replace(",",", ",$encuestaVisita->getCaSistemaSeguridad()));
+$sistema_seguridad = html_entity_decode(htmlspecialchars_decode($sistema_seguridad), ENT_QUOTES, "ISO8859-1");
 $sistema_seguridad.= $encuestaVisita->getCaSistemaSeguridadOtro()?", ".$encuestaVisita->getCaSistemaSeguridadOtro():"";
+
 $certificaciones = str_replace(",",", ",$encuestaVisita->getCaCertificacion());
 $certificaciones.= $encuestaVisita->getCaCertificacionOtro()?", ".$encuestaVisita->getCaCertificacionOtro():"";
 if ($encuestaVisita->getCaIdsucursal()){
@@ -151,6 +155,8 @@ $pdf->SetFills (array (0, 0));
 $pdf->Row(array($encuestaVisita->getCaConceptoSeguridad(), $encuestaVisita->getCaObservaciones()));
 
 $pdf->Ln(2);
+$pdf->MultiCell(0, 4, "**Se concluye la visita y se establece que la compañía existe y está ubicada en el domicilio indicado en el RUT. **", 0, 1);
+$pdf->Ln(2);
 $pdf->MultiCell(0, 4, "Impreso : ".date("Y-m-d h:i:s"), 0, 1);
 $pdf->Ln(10);
 $pdf->SetFont($font, 'B', 10);
@@ -159,8 +165,7 @@ $pdf->SetFont($font, '', 10);
 $pdf->MultiCell(0, 4, strtoupper($usuario->getCaCargo()), 0, 1);
 $pdf->MultiCell(0, 4, strtoupper($empresa->getCaNombre()), 0, 1);
 $pdf->MultiCell(0, 4, $sucursal->getCaDireccion(), 0, 1);
-$pdf->MultiCell(0, 4, "Tel.:" . $sucursal->getCaTelefono() . " " . $usuario->getCaExtension(), 0, 1);
-$pdf->MultiCell(0, 4, "Fax :" . $sucursal->getCaFax(), 0, 1);
+$pdf->MultiCell(0, 4, "Tel.:" . $sucursal->getCaTelefono() . " Ext.:" . $usuario->getCaExtension(), 0, 1);
 
 $pdf->MultiCell(0, 4, $sucursal->getCaNombre() . " - " . $empresa->getTrafico()->getCaNombre(), 0, 1);
 $pdf->MultiCell(0, 4, $usuario->getCaEmail(), 0, 1);
