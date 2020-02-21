@@ -53,7 +53,6 @@ $dir= explode("  ", $sucursal->getCaDireccion());
 foreach($dir as $d)
     $txtSucursal["datos"][]=$d;
 $txtSucursal["datos"][]="Pbx: ".$sucursal->getCaTelefono();//"Pxb : (57 - 1) 4239300";
-$txtSucursal["datos"][]="Fax: ".$sucursal->getCaFax();//"Pxb : (57 - 1) 4239300";
 $txtSucursal["datos"][] = "Cod. Postal: ". $sucursal->getCaCodpostal();
 if($sucursal->getCaEmail()!="")
     $txtSucursal["datos"][]= $sucursal->getCaEmail();//"Email: bogota@coltrans.com.co";
