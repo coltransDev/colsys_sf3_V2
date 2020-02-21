@@ -211,8 +211,7 @@ if($tipo=="interno"){
                 <b>COLTRANS S.A.S</b><br/>
                 Cra 98 No. 25G-10 Int 18<br/>
                 Código postal: 110911<br/>
-                TEL:  57 1 4239300 Ext 148<br/>
-                FAX:  57 1 4239323 Ext. 148<br/>
+                TEL:  57 1 742 5880 Ext 1148<br/>                
                 Bogota, - Colombia.<br/>
                 E-mail : pricing@coltrans.com.co<br/>
                 www.coltrans.com.co<br/>
