@@ -6,7 +6,6 @@ $dir= explode("  ", $sucursal->getCaDireccion());
 foreach($dir as $d)
     $txtSucursal["datos"][]=$d;
 $txtSucursal["datos"][]=$sucursal->getCaTelefono()?"Pbx: ".$sucursal->getCaTelefono():"";//"Pxb : (57 - 1) 4239300";
-$txtSucursal["datos"][]=$sucursal->getCaFax()?"Fax: ".$sucursal->getCaFax():"";//"Pxb : (57 - 1) 4239300";
 $txtSucursal["datos"][] = $sucursal->getCaCodpostal()?"Cod. Postal: ". $sucursal->getCaCodpostal():"";
 if($sucursal->getCaEmail()!="")
     $txtSucursal["datos"][]= $sucursal->getCaEmail();//"Email: bogota@coltrans.com.co";
@@ -123,6 +122,7 @@ $phpWord->addParagraphStyle('pStyle', array('align'=>'right', 'spaceAfter' => 10
 $phpWord->addParagraphStyle('pStyle1', array('align'=>'right', 'spaceBefore' => 0,'spaceAfter' => 0,'spacing' => 0));
 
 $footer->addText($sucursal->getCaNombre(),  'rStyle', 'pStyle');
+$footer->addText($sucursal->getEmpresa()->getCaNombre(),  'rStyle', 'pStyle');
 $table = $footer->addTable();
 $table->addRow();
 
