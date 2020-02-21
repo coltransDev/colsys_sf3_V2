@@ -34,7 +34,6 @@ $dir= explode("  ", $sucursal->getCaDireccion());
 foreach($dir as $d)
     $txtSucursal["datos"][]=$d;
 $txtSucursal["datos"][]="Pbx: ".$sucursal->getCaTelefono();//"Pxb : (57 - 1) 4239300";
-$txtSucursal["datos"][]="Fax: ".$sucursal->getCaFax();//"Pxb : (57 - 1) 4239300";
 $txtSucursal["datos"][] = "Cod. Postal: ". $sucursal->getCaCodpostal();
 if($sucursal->getCaEmail()!="")
     $txtSucursal["datos"][]= $sucursal->getCaEmail();//"Email: bogota@coltrans.com.co";
@@ -129,7 +128,7 @@ foreach($evaluaciones as $evaluacion){
         $pdf->Row ( array ($criterio->getIdsCriterio()->getCaCriterio(),$criterio->getCaPonderacion()."%",$criterio->getCaValor(),$criterio->getCaObservaciones()));
         
         $sumaP+=$criterio->getCaPonderacion();
-        $sumaV+=$criterio->getCaValor();
+        $sumaV+=($criterio->getCaValor()*$criterio->getCaPonderacion())/100;
         $i+=1;
     }
     $pdf->SetX("70");
@@ -143,7 +142,7 @@ foreach($evaluaciones as $evaluacion){
     $pdf->SetFont($font, 'B', 10);
     $pdf->Cell(0, 6,$sumaP."%", 0, 1);
     
-    $resultado = round(($sumaV/$i),2);
+    $resultado = round(($sumaV),2);
     $pdf->SetXY("140",$y);
     $pdf->SetTextColor(255, 0, 0);
     $pdf->SetFont($font, 'B', 10);
