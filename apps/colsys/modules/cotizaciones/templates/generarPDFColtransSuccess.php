@@ -1,4 +1,10 @@
 <?
+
+header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+header("Last-Modified: " . gmdate("D, d M Y H:i:s") . "GMT");
+header("Cache-Control: no-cache, must-revalidate");
+header("Pragma: no-cache");
+
 $cotizacion = $sf_data->getRaw("cotizacion");
 $notas = $sf_data->getRaw("notas");
 $usuario = $cotizacion->getUsuario();
@@ -51,12 +57,12 @@ $pdf->SetSucursal($sucursal->getCaIdsucursal());
 
 $txtSucursal=array();
 $txtSucursal["datos"][]= $sucursal->getCaNombre();
+$txtSucursal["datos"][]= $sucursal->getEmpresa()->getCaNombre();
 $dir= explode("  ", $sucursal->getCaDireccion());
 
 foreach($dir as $d)
     $txtSucursal["datos"][]=$d;
 $txtSucursal["datos"][]="Pbx: ".$sucursal->getCaTelefono();//"Pxb : (57 - 1) 4239300";
-$txtSucursal["datos"][]="Fax: ".$sucursal->getCaFax();//"Pxb : (57 - 1) 4239300";
 $txtSucursal["datos"][] = "Cod. Postal: ". $sucursal->getCaCodpostal();
 if($sucursal->getCaEmail()!="")
     $txtSucursal["datos"][]= $sucursal->getCaEmail();//"Email: bogota@coltrans.com.co";
@@ -314,6 +320,12 @@ for ($k = 0; $k < count($transportes); $k++):
                         $imprimirObservaciones = true;
                     }
                 }
+                if ($producto->getCaTransporte() == "OTM-DTA" && $producto->getCaModalidad() == "LCL" ) {
+                    $pdf->beginGroup();
+                    $pdf->Ln(2);
+                    $pdf->MultiCell(0, 4, "Para las cargas que superen las 4 Toneladas se aplica tarifa relación 1 a 2. Por cada tonelada 2 metros cúbicos y se liquidara de acuerdo a lo que más predomine.", 0, 'J', 0);
+                    $pdf->flushGroup();
+                }
 
                 if ($producto->getCaTransporte() == "OTM-DTA") {
                     $titulo = "COSTOS QUE SE PUEDEN GENERAR EN PUERTO POR LA OPERACION DE OTM";
@@ -350,7 +362,7 @@ for ($k = 0; $k < count($transportes); $k++):
                 
                 foreach ($recargosGen as $recargo) {
                     $equipo = ($recargo->getEquipo()) ? $recargo->getEquipo()->getCaConcepto() : "";
-                    $row = array($recargo->getTipoRecargo()->getCaRecargo(), $recargo->getTextoTarifa() . " " . $equipo);
+                    $row = array($recargo->getNombreRecargo(), $recargo->getTextoTarifa() . " " . $equipo);
                     if ($imprimirObservaciones) {
                         array_push($row, $recargo->getCaObservaciones());
                     }
@@ -642,7 +654,7 @@ for ($k = 0; $k < count($transportes); $k++):
             $pdf->SetFills(array_fill(0, count($width_mem), 0));
 
             foreach ($recargosGenPuerto as $recargo) {
-                $row = array($recargo->getTipoRecargo()->getCaRecargo(), $recargo->getTextoTarifa());
+                $row = array($recargo->getNombreRecargo(), $recargo->getTextoTarifa());
                 if ($imprimirObservaciones) {
                     array_push($row, $recargo->getCaObservaciones());
                 }
@@ -674,7 +686,18 @@ for ($k = 0; $k < count($transportes); $k++):
         }
         if ($producto->getCaImprimir() == 'Concepto' or $producto->getCaImprimir() == 'Trayecto'):
             $opciones = $producto->getCotOpciones();
-            $trayecto = $producto->getOrigen()->getCaCiudad() . "\n" . $producto->getDestino()->getCaCiudad();
+            $trayecto = $producto->getOrigen()->getCaCiudad();
+            $trayecto.= "\n";
+            if ($producto->getOrigen()->getCaIdtrafico() != 'CO-057') {
+                $trayecto.= "(".$producto->getOrigen()->getCaTrafico().")";
+                $trayecto.= "\n";
+            }
+            $trayecto.= $producto->getDestino()->getCaCiudad();
+            if ($producto->getDestino()->getCaIdtrafico() != 'CO-057') {
+                $trayecto.= "\n";
+                $trayecto.= "(".$producto->getDestino()->getCaTrafico().")";
+            }
+            
             if (($producto->getCaImprimir() == 'Concepto' and $producto->getCaObservaciones()) or ($producto->getCaImprimir() == 'Trayecto' and ($producto->getCaObservaciones() or $producto->getCaIncoterms() or $producto->getCaFrecuencia() or $producto->getCaTiempotransito() or $producto->getCaVigencia()))) {
                 $i = isset($observaciones[$producto->getCaImprimir()]) ? count($observaciones[$producto->getCaImprimir()]) + 1 : 1;
                 $observaciones[$producto->getCaImprimir()][$i] = $producto->getCaObservaciones();
@@ -874,7 +897,7 @@ for ($k = 0; $k < count($transportes); $k++):
             $pdf->SetFills(array_fill(0, count($width_mem), 0));
 
             foreach ($recargosGenConcepto as $recargo) {
-                $row = array($recargo->getTipoRecargo()->getCaRecargo(), $recargo->getTextoTarifa());
+                $row = array($recargo->getNombreRecargo(), $recargo->getTextoTarifa());
                 if ($imprimirObservaciones) {
                     array_push($row, $recargo->getCaObservaciones());
                 }
@@ -987,7 +1010,7 @@ for ($k = 0; $k < count($transportes); $k++):
             $pdf->SetFills(array_fill(0, count($width_mem), 0));
 
             foreach ($recargosGenTrayecto as $recargo) {
-                $row = array($recargo->getTipoRecargo()->getCaRecargo(), $recargo->getTextoTarifa());
+                $row = array($recargo->getNombreRecargo(), $recargo->getTextoTarifa());
                 if ($imprimirObservaciones) {
                     array_push($row, $recargo->getCaObservaciones());
                 }
@@ -1089,7 +1112,7 @@ for ($k = 0; $k < count($transportes); $k++):
                         $pdf->SetStyles(array_fill(0, count($width_mem), ""));
                         $pdf->SetFills(array_fill(0, count($width_mem), 0));
                         
-                        $txt = $recargo->getTipoRecargo()->getCaRecargo();
+                        $txt = $recargo->getNombreRecargo();
                         if ($recargo->getCaIdconcepto() && $recargo->getCaIdconcepto() != 9999) {
                             $txt.=" " . $recargo->getConcepto()->getCaConcepto();
                         }
@@ -1377,7 +1400,6 @@ $pdf->MultiCell(0, 4, strtoupper($usuario->getCaCargo()), 0, 1);
 $pdf->MultiCell(0, 4, strtoupper($empresa->getCaNombre()), 0, 1);
 $pdf->MultiCell(0, 4, $sucursal->getCaDireccion(), 0, 1);
 $pdf->MultiCell(0, 4, "Tel.:" . $sucursal->getCaTelefono() . " " . $usuario->getCaExtension(), 0, 1);
-$pdf->MultiCell(0, 4, "Fax :" . $sucursal->getCaFax(), 0, 1);
 
 $pdf->MultiCell(0, 4, $sucursal->getCaNombre() . " - " . $empresa->getTrafico()->getCaNombre(), 0, 1);
 $pdf->MultiCell(0, 4, $usuario->getCaEmail(), 0, 1);
