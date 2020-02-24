@@ -1038,14 +1038,18 @@ class Reporte extends BaseReporte {
 
     public function getNumReferencia() {
 
-        $inoCliente = Doctrine::getTable("InoHouse")                
+        $q = Doctrine::getTable("InoHouse")                
                 ->createQuery("h")
                 ->select("h.ca_idreporte")
                 ->leftJoin("h.Reporte r")                
                 ->where("r.ca_consecutivo = ?", $this->getCaConsecutivo())
-                ->addWhere("r.ca_transporte = ?", $this->getCaTransporte()) // Para diferencias las referencias cuando hay OTM
-                //->orderBy("r.ca_idreporte DESC, h.ca_idhouse DESC")
-                ->fetchOne();
+                ->addWhere("r.ca_transporte = ?", $this->getCaTransporte()); // Para diferencias las referencias cuando hay OTM
+                
+        
+//        echo $q->getSqlQuery();
+//        print_r($q->getParams());
+        
+        $inoCliente = $q->fetchOne();
 
         if ($inoCliente) {
             return $inoCliente->getInoMaster()->getCaReferencia();
@@ -1449,12 +1453,8 @@ class Reporte extends BaseReporte {
     }
 
     public function getDirectorioBaseDocs($filename) {
-        $t = 1;
         
-        if($this->getRepExpo()->getEsAduana() && $this->getRepExpo()->getReferenciaAduana()){
-            $t=3;
-        }
-        $archivos = $this->getFilesGestDoc($t);
+        $archivos = $this->getFilesGestDoc();
             
         if($archivos){
             foreach($archivos as $file){
@@ -1475,14 +1475,8 @@ class Reporte extends BaseReporte {
      */
     public function getArchivo($filename) {
         
-        $t = 1;
+        $archivos = $this->getFilesGestDoc();
             
-        if($this->getRepExpo()->getEsAduana() && $this->getRepExpo()->getReferenciaAduana()){
-            $t = 3;
-        }
-        
-        $archivos = $this->getFilesGestDoc($t);
-        
         if($archivos){
             foreach($archivos as $file){
                 
