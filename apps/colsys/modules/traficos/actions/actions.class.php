@@ -607,32 +607,40 @@ class traficosActions extends sfActions {
         $bindValues["bodega_air"] = $request->getParameter("bodega_air");
         
         if ($request->getParameter("attachments1")) {
-            foreach ($request->getParameter("attachments1") as $attachment) {
-               $att[] = $reporte->getDirectorioBaseDocs(base64_decode($attachment));               
+            foreach ($request->getParameter("attachments1") as $attachment) {               
                if($request->getParameter("idetapa") == "IAFFL" || $request->getParameter("idetapa") == "EEFFL"){                   
                     $file = $reporte->getArchivo(base64_decode($attachment));                    
-                    $datosFile = json_decode($file->getCaDatos());
-                    if($datosFile->idcomprobante){
-                        $conn = Doctrine::getConnectionByTableName("InoIndicadores");
-                        $conn->beginTransaction();
-                        $idcomprobante = $datosFile->idcomprobante;
+                    if(is_object($file)){ // Existe archivo                   
+                        $datosFile = json_decode($file->getCaDatos());
+                        if($datosFile->idcomprobante){
+                            $conn = Doctrine::getConnectionByTableName("InoIndicadores");
+                            $conn->beginTransaction();
+                            $idcomprobante = $datosFile->idcomprobante;
 
-                        $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
+                            $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
 
-                        if($comprobante->getRequiereIdg()){
-                            $options["fecha"] = date("Y-m-d");                            
-                            $options["idexclusion"] = $request->getParameter("exclusiones_idg");                            
-                            $options["observaciones"] = $request->getParameter("observaciones_idg");
-                            $idg = $comprobante->generarIdg($options, $conn);
+                            if($comprobante->getRequiereIdg()){
+                                $options["fecha"] = date("Y-m-d");                            
+                                $options["idexclusion"] = $request->getParameter("exclusiones_idg");                            
+                                $options["observaciones"] = $request->getParameter("observaciones_idg");
+                                $idg = $comprobante->generarIdg($options, $conn);
 
-                            $bindValues["idgfactura"] = $idg;
-                            if($bindValues["idgfactura"]["cumplio"]!="No"){                            
-                                $conn->commit();
+                                $bindValues["idgfactura"] = $idg;
+                                if($bindValues["idgfactura"]["cumplio"]!="No"){                            
+                                    $conn->commit();
+                                }
+                            }else{
+                                $conn->rollback();
                             }
-                        }else{
-                            $conn->rollback();
-                        }
-                    } else if ($file->getCaRef2() == "Colmas") { //Colmas
+                        } 
+                    }else{
+                        $bindValues["idgfactura"]["cumplio"] = "No";
+                        $bindValues["idgfactura"]["mensaje"] = "No se encuentra el archivo. Revise que el documento de transporte sea el mismo en el último status y en la referencia.";
+                    }
+               }
+               if($request->getParameter("idetapa") == "EFADU"){                   
+                   $file = $reporte->getArchivo(base64_decode($attachment), 3);  
+                    if ($file->getCaRef2() == "Colmas") { //Colmas
                             
                         $refAduana = Doctrine::getTable("InoMaestraAdu")->find($file->getCaRef1());
 
@@ -654,6 +662,9 @@ class traficosActions extends sfActions {
                         } else {
                             $conn->rollback();
                         }
+                    }else{
+                        $bindValues["idgfactura"]["cumplio"] = "No";
+                        $bindValues["idgfactura"]["mensaje"] = "No se encuentra el archivo. Revise que el archivo seleccionado sea una factura de Aduana y que tenga en Ref2 la palabra Colmas";
                     }
                 }
             }
