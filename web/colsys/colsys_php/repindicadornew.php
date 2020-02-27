@@ -1550,7 +1550,7 @@ where i.oid in (
                     echo "</TR>";
                 }
                 echo "  </TABLE></TD>";
-                $dif_mem = ($observaciones == 'Cierre Contable' or $observaciones == 'Anulación de Facturas' or $observaciones == 'Cliente Especial' or $observaciones == 'Ajuste de Anticipo') ? null : $dif_mem;
+                $dif_mem = ($observaciones == 'Cierre Contable' or $observaciones == 'Anulación de Facturas' or $observaciones == 'Ajuste de Anticipo') ? null : $dif_mem;
                 $lcs_var = ($lcs_array[$rs->Value('ca_sucursal')]) ? $lcs_array[$rs->Value('ca_sucursal')] : $lcs_array['Todas'];
                 $color = analizar_dif($tipo, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
                 echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>" . $dif_mem . "</TD>";
