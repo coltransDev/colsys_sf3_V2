@@ -11,7 +11,7 @@
  * @version    SVN: $Id: Builder.php 5845 2009-06-09 07:36:57Z jwage $
  */
 class Usuario extends BaseUsuario {
-    const FOLDER = "Usuarios";
+    const FOLDER = "Usuarios";    
 
     public function __toString() {
         $result = $this->getCaNombre();
@@ -256,8 +256,8 @@ class Usuario extends BaseUsuario {
                 break;
         }
 
-        if( !file_exists($imagen)){
-            $imagen =  sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR. Usuario::FOLDER. DIRECTORY_SEPARATOR . "nologin60x80.jpg";
+        if( !file_exists($imagen)){            
+            $imagen = null;
         }
         return $imagen;
 
@@ -415,19 +415,19 @@ class Usuario extends BaseUsuario {
         
         switch($idempresa){
             case 1:
-                $link = 'http://www.coltrans.com.co/logosoficiales/colmas/ColmasSmall.png';
+                $link = 'https://www.coltrans.com.co/logosoficiales/colmas/ColmasSmall.png';
                 break;
             case 2:
-                $link = 'http://www.coltrans.com.co/logosoficiales/coltrans/ColtransSmall.png';
+                $link = 'https://www.coltrans.com.co/logosoficiales/coltrans/ColtransSmall.png';
                 break;
             case 4:
-                $link = 'http://www.coltrans.com.co/logosoficiales/consolcargo/ConsolcargoSmall.png';
+                $link = 'https://www.coltrans.com.co/logosoficiales/consolcargo/ConsolcargoSmall.png';
                 break;
             case 8:
-                $link = 'http://www.coltrans.com.co/logosoficiales/colotm/logo_colotm.png';
+                $link = 'https://www.coltrans.com.co/logosoficiales/colotm/logo_colotm.png';
                 break;
             case 11:
-                $link = 'http://www.coltrans.com.co/logosoficiales/coldepositos/ColdepositosSmall.jpg';
+                $link = 'https://www.coltrans.com.co/logosoficiales/coldepositos/ColdepositosSmall.jpg';
                 break;
             default:
                 $link = "";
@@ -445,10 +445,8 @@ class Usuario extends BaseUsuario {
             ->where("s.ca_idsucursal = ?", $this->getCaIdsucursal())
             ->fetchOne();
         
-        $grupoColtrans = array(1,2,3,5,6,8,11,12);
-        
-        if(in_array($sucursal->getCaIdempresa(), $grupoColtrans))
-            $idempresa = $grupoColtrans;
+        if(in_array($sucursal->getCaIdempresa(), Constantes::getGrupoColtrans()))
+            $idempresa = Constantes::getGrupoColtrans ();
         else
             $idempresa = array($sucursal->getCaIdempresa());
         
@@ -524,25 +522,10 @@ class Usuario extends BaseUsuario {
                 $tipo = "Desvinculacion";
                 
                 /*Ticket # 74696 Solicitud que solo se envie a los jefes la notificación*/
-                $recips = Doctrine::getTable("Usuario")
-                        ->createQuery('u')
-                        ->select('u.ca_login, u.ca_email')                        
-                        ->innerJoin('u.Sucursal s')
-                        ->innerJoin('u.Cargo cg')
-                        ->andWhere('cg.ca_manager = ?', true)                        
-                        ->andWhere('u.ca_activo = ?',true)
-                        ->andWhereIn('s.ca_idempresa',$grupoEmp)                        
-                        ->andWhereNotIn('s.ca_idempresa', array(3,6)) // No incluir HB Ingenieria y Coltrans Miami
-                        ->orderBy("s.ca_idempresa, s.ca_idsucursal")
-                        ->execute();
-                if(isset($recips) && count($recips)>0){
-                    foreach ($recips as $recip) {
-                        if ($recip->getCaEmail()) {
-                            $email->addTo($recip->getCaEmail());
-                        }
-                    }
-                }else
-                    $email->addTo($remitente[$idempresa]);
+                if(in_array($usuario->getSucursal()->getCaIdempresa(), Constantes::getGrupoColtrans()))
+                    $email->addTo('jefesnal@coltrans.com.co');
+                else
+                    $email->addTo('jefesnal@consolcargo.com');
                 
                 break;
             case "reconocimiento":
@@ -618,5 +601,5 @@ class Usuario extends BaseUsuario {
         }else{
             return null;
         }        
-    }
+    }    
 }
