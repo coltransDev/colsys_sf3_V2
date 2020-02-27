@@ -350,7 +350,7 @@ if (!isset($boton) and ! isset($buscar)) {
         $ca_tiempoindi = $tm->Value('ca_tiempo');
         $tm->MoveNext();
     }
-
+    //print_r($lcs_array);
     $format_avg = "d";
     if ($indicador == "Confirmación Salida de la Carga") {
         $source = "vi_repindicadores";
@@ -585,18 +585,18 @@ if (!isset($boton) and ! isset($buscar)) {
         $tipo = "D";
         $impoexpo = "ca_impoexpo = 'Exportación'";
         if (substr($indicador, 0, 6) == 'Aduana') {
-            $impoexpo.= " and ca_nomsia = 'COLMAS S.A.S.'";
+            $impoexpo.= " and ca_nomsia IN ('COLMAS S.A.S.','AGENCIA DE ADUANAS COLMAS SAS NIVEL 1')";
         }
         $no_docs = array("SAE", "DEX", "Cancelación Póliza Seguro", "Radicación Documento de Transporte", "Recibo de Soportes desde Puerto");
-        $source = "vi_repindicador_exp";
+        $source = "vi_repindicador_expall";
         
-        $subque = "LEFT OUTER JOIN (select exm.ca_referencia_exm, ext.ca_idevento, ext.ca_fchevento, ext.ca_usuario, pre.ca_valor, aed.ca_fechadoc from (select ca_referencia as ca_referencia_exm, ca_tipoexpo, ca_consecutivo from tb_expo_maestra) exm ";
+        $subque = "LEFT OUTER JOIN (select exm.ca_referencia_exm, ext.ca_idevento, ext.ca_fchevento, ext.ca_usuario, pre.ca_valor, aed.ca_fechadoc from ((select ca_referencia as ca_referencia_exm, ca_tipoexpo from tb_expo_maestra) UNION (select ca_referencia as ca_referencia_exm, (ca_datos->'modalidad'->>0)::int as ca_tipoexpo FROM ino.tb_master WHERE ca_impoexpo = 'Exportación')) as exm ";
         $subque.= "LEFT OUTER JOIN (select ca_referencia as ca_referencia_ext, ca_idevento, ca_fchevento, ca_usuario from tb_expo_tracking where ca_realizado = 1) ext ON (ext.ca_referencia_ext = exm.ca_referencia_exm) ";
         $subque.= "LEFT OUTER JOIN (select DISTINCT ca_referencia as ca_referencia_aed, ca_idevento, min(ca_fechadoc) as ca_fechadoc from tb_expo_aedex group by ca_referencia, ca_idevento) aed ON (aed.ca_referencia_aed = ext.ca_referencia_ext and aed.ca_idevento = ext.ca_idevento) ";
         
         $subque.= "INNER JOIN tb_parametros prm ON (prm.ca_casouso = 'CU011' and exm.ca_tipoexpo = prm.ca_identificacion) ";
         $subque.= "INNER JOIN tb_parametros pre ON (pre.ca_casouso = prm.ca_valor2 and pre.ca_identificacion = ext.ca_idevento) ";
-        $subque.= "order by ca_referencia_exm) exe ON (vi_repindicador_exp.ca_referencia = exe.ca_referencia_exm) ";
+        $subque.= "order by ca_referencia_exm) exe ON (vi_repindicador_expall.ca_referencia = exe.ca_referencia_exm) ";
 
         $sql = "select ca_fchfestivo from tb_festivos";
         if (!$tm->Open($sql)) {
@@ -618,19 +618,20 @@ if (!isset($boton) and ! isset($buscar)) {
         $tipo = "D";
         $impoexpo = "ca_impoexpo = 'Exportación'";
         if (substr($indicador, 0, 6) == 'Aduana') {
-            $impoexpo.= " and ca_nomsia = 'COLMAS S.A.S.'";
+            $impoexpo.= " and ca_nomsia IN ('COLMAS S.A.S.','AGENCIA DE ADUANAS COLMAS SAS NIVEL 1')";
         }
-        $source = "vi_repindicador_exp";
-        $subque = "LEFT OUTER JOIN (select ca_consecutivo as ca_consecutivo_sub, ca_fchsalida, ca_horasalida from tb_repstatus rps LEFT OUTER JOIN ( select max(srps.ca_idstatus) as ca_idstatus, srpt.ca_consecutivo from tb_repstatus srps LEFT OUTER JOIN tb_reportes srpt ON (srps.ca_idreporte = srpt.ca_idreporte) where srpt.ca_impoexpo = 'Exportación'  group by ca_consecutivo) rpf ON (rps.ca_idstatus = rpf.ca_idstatus)) rs ON (rs.ca_consecutivo_sub = vi_repindicador_exp.ca_consecutivo) ";
+        $source = "vi_repindicador_expall";
+        $subque = "LEFT OUTER JOIN (select ca_consecutivo as ca_consecutivo_sub, ca_fchsalida, ca_horasalida from tb_repstatus rps LEFT OUTER JOIN ( select max(srps.ca_idstatus) as ca_idstatus, srpt.ca_consecutivo from tb_repstatus srps LEFT OUTER JOIN tb_reportes srpt ON (srps.ca_idreporte = srpt.ca_idreporte) where srpt.ca_impoexpo = 'Exportación'  group by ca_consecutivo) rpf ON (rps.ca_idstatus = rpf.ca_idstatus)) rs ON (rs.ca_consecutivo_sub = vi_repindicador_expall.ca_consecutivo) ";
 
         $evento = ($tra_mem == 'Marítimo') ? "Recibo de Soportes desde Puerto" : "DEX";
-        $subque.= "LEFT OUTER JOIN (select exm.ca_referencia_exm, ext.ca_idevento, ext.ca_fchevento, ext.ca_fechadoc, pre.ca_valor from (select ca_referencia as ca_referencia_exm, ca_tipoexpo, ca_consecutivo from tb_expo_maestra) exm ";
+        $subque.= "LEFT OUTER JOIN (select exm.ca_referencia_exm, ext.ca_idevento, ext.ca_fchevento, ext.ca_fechadoc, pre.ca_valor from ((select ca_referencia as ca_referencia_exm, ca_tipoexpo from tb_expo_maestra) UNION (select ca_referencia as ca_referencia_exm, (ca_datos->'modalidad'->>0)::int as ca_tipoexpo FROM ino.tb_master WHERE ca_impoexpo = 'Exportación')) as exm ";
         $subque.= "LEFT OUTER JOIN (select et.ca_referencia as ca_referencia_ext, et.ca_idevento, min(et.ca_fchevento) as ca_fchevento, min(ea.ca_fechadoc) as ca_fechadoc from tb_expo_tracking et LEFT JOIN tb_expo_aedex ea ON et.ca_referencia = ea.ca_referencia and et.ca_idevento = ea.ca_idevento where ca_realizado = 1 group by et.ca_referencia, et.ca_idevento) ext ON (ext.ca_referencia_ext = exm.ca_referencia_exm) ";
         $subque.= "INNER JOIN tb_parametros prm ON (prm.ca_casouso = 'CU011' and exm.ca_tipoexpo = prm.ca_identificacion) ";
         $subque.= "INNER JOIN tb_parametros pre ON (pre.ca_casouso = prm.ca_valor2 and pre.ca_identificacion = ext.ca_idevento and pre.ca_valor = '$evento') ";
-        $subque.= "order by ca_referencia_exm) exe ON (vi_repindicador_exp.ca_referencia = exe.ca_referencia_exm) ";
+        $subque.= "order by ca_referencia_exm) exe ON (vi_repindicador_expall.ca_referencia = exe.ca_referencia_exm) ";
 
-        $subque.= "LEFT OUTER JOIN (select DISTINCT subf.ca_referencia_sub, subf.ca_fchfactura, subf.ca_usuario, fact.ca_observaciones from tb_expo_ingresos fact INNER JOIN (select ca_referencia as ca_referencia_sub, min(ca_fchfactura) as ca_fchfactura, min(ca_usucreado) as ca_usuario from tb_expo_ingresos group by ca_referencia) subf ON fact.ca_referencia = subf.ca_referencia_sub and fact.ca_fchfactura = subf.ca_fchfactura) rf ON (rf.ca_referencia_sub = vi_repindicador_exp.ca_referencia) ";
+        //$subque.= "LEFT OUTER JOIN (select DISTINCT subf.ca_referencia_sub, subf.ca_fchfactura, subf.ca_usuario, fact.ca_observaciones from tb_expo_ingresos fact INNER JOIN (select ca_referencia as ca_referencia_sub, min(ca_fchfactura) as ca_fchfactura, min(ca_usucreado) as ca_usuario from tb_expo_ingresos group by ca_referencia) subf ON fact.ca_referencia = subf.ca_referencia_sub and fact.ca_fchfactura = subf.ca_fchfactura) rf ON (rf.ca_referencia_sub = vi_repindicador_expall.ca_referencia) ";
+        $subque.= "LEFT OUTER JOIN ((SELECT DISTINCT subf.ca_referencia_sub, subf.ca_fchfactura, subf.ca_usuario, fact.ca_observaciones FROM tb_expo_ingresos fact INNER JOIN (SELECT ca_referencia as ca_referencia_sub, min(ca_fchfactura) as ca_fchfactura, min(ca_usucreado) as ca_usuario FROM tb_expo_ingresos GROUP BY ca_referencia) subf ON fact.ca_referencia = subf.ca_referencia_sub and fact.ca_fchfactura = subf.ca_fchfactura) UNION (SELECT mast.ca_referencia as ca_referencia_sub, fact.ca_fchcomprobante as ca_fchfactura, ca_usuario, prm.ca_valor as ca_observaciones FROM ino.tb_comprobantes fact INNER JOIN ino.tb_house h ON h.ca_idhouse = fact.ca_idhouse INNER JOIN ino.tb_master mast ON mast.ca_idmaster = h.ca_idmaster INNER JOIN (SELECT c.ca_idhouse, min(ca_fchgenero) as ca_fchgenero, min(ca_usugenero) as ca_usuario FROM ino.tb_comprobantes c GROUP BY c.ca_idhouse ORDER BY ca_idhouse ASC) as fc ON fc.ca_idhouse  = fact.ca_idhouse and fc.ca_fchgenero = fact.ca_fchgenero LEFT JOIN tb_parametros prm ON (prm.ca_casouso = 'CU275' and (((fact.ca_datos -> 'idg'::text) -> 'OFC'::text) -> 'idexclusion')::text::numeric = prm.ca_identificacion) WHERE fact.ca_estado = 5 and fact.ca_fchanulado IS NULL and mast.ca_impoexpo = 'Exportación' ORDER BY mast.ca_referencia ASC, ca_fchfactura ASC )) rf ON (rf.ca_referencia_sub = vi_repindicador_expall.ca_referencia) ";
 
         $sql = "select ca_fchfestivo from tb_festivos";
         if (!$tm->Open($sql)) {
@@ -1097,7 +1098,7 @@ where i.oid in (
                 //$fch_factura = ($departamento == "Marítimo") ? $rs->Value('ca_fchenvio') :$rs->Value('ca_fchfactura');
                 echo "  <TD Class=mostrar style='font-size: 9px;'>" . $rs->Value('ca_referencia') . "</TD>";
                 echo "  <TD Class=mostrar style='font-size: 9px;'>" . $rs->Value('ca_continuacion') . "</TD>";
-                if (in_array(trim($rs->Value("ca_observaciones")), array("Facturación al Agente", "Reemplazo Factura", "Cierre contable de Clientes", "Referencia Particulares", "Acuerdos Comerciales","Costos de Origen no informados a tiempo"))) {
+                if (in_array(trim($rs->Value("ca_observaciones")), array("Facturación al Agente", "Facturacion al Agente","Reemplazo Factura", "Cierre contable de Clientes", "Referencia Particulares", "Acuerdos Comerciales","Costos de Origen no informados a tiempo"))) {
                     $dif_mem = null;
                 } else {
                     if ($rs->Value('ca_continuacion') == "CABOTAJE") {
@@ -1673,7 +1674,7 @@ where i.oid in (
                     }
                 } else if (substr($indicador, 0, 5) == 'Carga') {
                     if ($tra_mem == 'Aéreo') {
-                        if ($nom_sia == 'COLMAS S.A.S.') {
+                        if ($nom_sia == 'COLMAS S.A.S.' || $nom_sia == 'AGENCIA DE ADUANAS COLMAS SAS NIVEL 1') {
                             $matriz_eventos["intervalo_1"]['DEX'] = $rs->Value('ca_fechadoc');
                         } else {
                             $matriz_eventos["intervalo_1"]['Fch.Carga Embarcada'] = $rs->Value('ca_fchsalida');
@@ -1707,7 +1708,7 @@ where i.oid in (
                     echo "</TR>";
                 }
                 echo "  </TABLE></TD>";
-                $dif_mem = ($rs->Value("ca_observaciones") == 'Cierre contable' or $rs->Value("ca_observaciones") == 'Error de Factura' or $rs->Value("ca_observaciones") == 'Faltantes Soportes Agente' or $rs->Value("ca_observaciones") == 'Faltante Facturas Proveedores') ? null : $dif_mem;
+                $dif_mem = ($rs->Value("ca_observaciones") == 'Cierre contable' or $rs->Value("ca_observaciones") == 'Facturación al Agente' or $rs->Value("ca_observaciones") == 'Cierre contable de Clientes' or $rs->Value("ca_observaciones") == 'Error de Factura' or $rs->Value("ca_observaciones") == 'Faltantes Soportes Agente' or $rs->Value("ca_observaciones") == 'Faltante Facturas Proveedores' or $rs->Value("ca_observaciones") == 'Faltante facturas proveedores' or $rs->Value("ca_observaciones") == 'Transición SAP') ? null : $dif_mem;
                 $dif_mem = ($apl_idg == 'f') ? null : $dif_mem;
                 $lcs_var = ($lcs_array[$rs->Value('ca_sucursal')]) ? $lcs_array[$rs->Value('ca_sucursal')] : $lcs_array['Todas'];
                 $color = analizar_dif($tipo, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
