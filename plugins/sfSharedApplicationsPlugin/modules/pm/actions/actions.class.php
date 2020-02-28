@@ -756,7 +756,10 @@ class pmActions extends sfActions {
                     $tarifa["idticket"] = $ticket->getCaIdticket();
                     $i=0;
                     while($request->getParameter("idorigen".$i) && $request->getParameter("idorigen".$i)!="" ){
+                        $ciudad = Doctrine::getTable("Ciudad")->find($request->getParameter("idorigen".$i));
+                        $trafico = $ciudad->getTrafico()->getCaNombre();
                         $tarifa["trayecto"]["ruta"][$i] = array("idorigen"=>$request->getParameter("idorigen".$i), "iddestino"=>$request->getParameter("iddestino".$i), "idtrayecto"=>$i);
+                        $tarifa["trayecto"]["origen"]["trafico"][] = utf8_encode($trafico);
                         $tarifa["trayecto"]["origen"]["ciudad"][] = utf8_encode($request->getParameter("origen".$i));
                         $tarifa["trayecto"]["origen"]["transporte"][] = $request->getParameter("transori".$i);
                         $tarifa["trayecto"]["origen"]["exw"][] = $request->getParameter("exw".$i);
@@ -878,7 +881,9 @@ class pmActions extends sfActions {
                     /*Ticket 61064. Cambio asunto Transporte Internacional*/
                     $cliente = utf8_encode($request->getParameter("compania2"))?utf8_encode($request->getParameter("compania2")):utf8_encode($request->getParameter("compania"));
                     $login = Doctrine::getTable("Usuario")->find($user->getUserId());
-                    $title = $login->getSucursal()->getCaNombre()." - ".$cliente;
+                    /*Ticket 82733 Agregar al titulo de los Tickets Pricing el Pais Origen*/
+                    $traorigen = utf8_decode($tarifa["solicitud"]["trayecto"]["origen"]["trafico"][0]);
+                    $title = $login->getSucursal()->getCaNombre()." - ".$cliente. " - ".$traorigen;
                     
                     $ticket->setCaTitle($title);
                     $ticket->setCaText($detalleTarifa);
