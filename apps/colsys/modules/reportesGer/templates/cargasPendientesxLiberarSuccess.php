@@ -11,7 +11,7 @@
             <th>MBL</th>
             <th>HBL</th>
             <th>MODALIDAD</th>
-            <th>ID CONTENEDOR</th>
+            <th width="100">ID CONTENEDOR</th>
             <th>SUCURSAL</th>
             <th>OTM</th>
             <th>OPERADOR</th>
@@ -41,13 +41,13 @@
         }
         ?>
         <tr class="<?=$color?>">
-            <td><a href="/colsys_php/inosea.php?boton=Consultar&id=<?=$carga["ca_referencia"]?>" target="_blank"><?=$carga["ca_referencia"]?></a></td>
+            <td><a href="/inoF2/indexExt5/idmaster/<?=$carga["ca_idmaster"]?>" target="_blank"><?=$carga["ca_referencia"]?></a></td>
             <td><?=$carga["origen"]?></td>
             <td><?=$carga["ca_compania"]?></td>
             <td><?=$carga["ca_mbls"]?></td>
             <td><?=$carga["ca_hbls"]?></td>
             <td><?=$carga["ca_modalidad"]?></td>
-            <td><?=$carga["ca_contenedores"]?></td>
+            <td><?= $carga["ca_contenedores"] ?></td>
             <td><?=$carga["ca_sucursal"]?></td>
             <td><?=$carga["ca_continuacion"]?></td>
             <td><?=$carga["ca_bodega"]?></td>
