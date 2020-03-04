@@ -3129,7 +3129,8 @@ class reportesGerActions extends sfActions {
                     i.ca_nombre as ca_compania, t.ca_idetapa,m.ca_modalidad, s.ca_nombre as ca_sucursal, m.ca_fchllegada as ca_fcharribo, hs.ca_fchliberacion, 
                     m.ca_fchcerrado, m.ca_usucerrado, hs.ca_continuacion, b.ca_nombre as ca_bodega, r.ca_consecutivo, 
                     array_to_string(ARRAY( SELECT ((tt.ca_serial::text)) FROM ino.tb_equipos tt WHERE tt.ca_idmaster = m.ca_idmaster), ' '::text) AS ca_contenedores, 
-                    hs.ca_fchlibero
+                    hs.ca_fchlibero,
+                    extract(days from (now()-m.ca_fchllegada::date)) as ca_dias
                FROM ino.tb_master m 
                JOIN ino.tb_master_sea ms ON m.ca_idmaster = ms.ca_idmaster 
                LEFT JOIN ino.tb_house h ON m.ca_idmaster = h.ca_idmaster 
