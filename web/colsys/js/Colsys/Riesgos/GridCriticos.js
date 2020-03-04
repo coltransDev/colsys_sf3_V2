@@ -106,6 +106,17 @@ Ext.define('Colsys.Riesgos.GridCriticos', {
                         header: "Total",
                         dataIndex: "total",
                         align: 'right'
+                    },
+                    {
+                        text: 'Empresa',
+                        dataIndex: 'empresa'                        
+                    },
+                    {
+                        text: 'Compartido',
+                        dataIndex: 'compartido',
+                        renderer: function(value){
+                            return value?'<img src="/images/16x16/button_ok.gif"/>':"NO";
+                        }
                     }
                 ]
             );
