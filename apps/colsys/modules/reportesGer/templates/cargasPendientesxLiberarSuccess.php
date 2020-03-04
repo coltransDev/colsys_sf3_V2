@@ -5,11 +5,8 @@
     <h2>CARGAS PENDIENTES POR LIBERAR</h2><br/>
     <table class="tableList"  border="1" id="mainTable">
         <tr>
-            <th>REFERENCIA</th>
-            <th>ORIGEN</th>
-            <th>CLIENTE</th>
-            <th>MBL</th>
-            <th>HBL</th>
+            <th>REFERENCIA</th>            
+            <th>CLIENTE</th>            
             <th>MODALIDAD</th>
             <th width="100">ID CONTENEDOR</th>
             <th>SUCURSAL</th>
@@ -18,7 +15,7 @@
             <th>FCH. ARRIBO</th>
             <th>FCH. LIBERACION<br/>CARTERA</th>
             <th>FCH. CIERRE<br/>REFERENCIA</th>
-            <th>STATUS</th>
+            <th>DIAS</th>
         </tr>
     <?
     foreach($cargas as $carga){        
@@ -41,11 +38,8 @@
         }
         ?>
         <tr class="<?=$color?>">
-            <td><a href="/inoF2/indexExt5/idmaster/<?=$carga["ca_idmaster"]?>" target="_blank"><?=$carga["ca_referencia"]?></a></td>
-            <td><?=$carga["origen"]?></td>
+            <td><a href="/status/indexExt5/idmaster/<?=$carga["ca_idmaster"]?>" target="_blank"><?=$carga["ca_referencia"]?></a></td>            
             <td><?=$carga["ca_compania"]?></td>
-            <td><?=$carga["ca_mbls"]?></td>
-            <td><?=$carga["ca_hbls"]?></td>
             <td><?=$carga["ca_modalidad"]?></td>
             <td><?= $carga["ca_contenedores"] ?></td>
             <td><?=$carga["ca_sucursal"]?></td>
@@ -54,7 +48,7 @@
             <td><?=$carga["ca_fcharribo"]?></td>
             <td><?=$carga["ca_fchliberacion"]?></td>
             <td><?=$carga["ca_fchcerrado"]?></td>
-            <td><a href="/traficos/listaStatus/modo/maritimo?reporte=<?=$carga["ca_consecutivo"]?>" target="_blank">Ver Status</a></td>
+            <td><?=$carga["ca_dias"]?></td>
         </tr>
         <?        
     }
