@@ -31,6 +31,8 @@ class riesgosActions extends sfActions {
         $criterios[] = array ("name"=> 'pondfinal', "type"=> "float");
         $criterios[] = array ("name"=> 'total', "type"=> "float");
         $criterios[] = array ("name"=> 'color', "type"=> "string");
+        $criterios[] = array ("name"=> 'empresa', "type"=> "string");
+        $criterios[] = array ("name"=> 'compartido', "type"=> "string");
                        
         foreach($ponderacion as $p){            
             $criterios[] = array("name"=> utf8_encode($p->getCaValor()), "type"=>"string");            
@@ -1467,6 +1469,8 @@ class riesgosActions extends sfActions {
                 $criterioxCargo[utf8_encode($c->getCaCargoiso())][$criterio] = $valor;
                 $ids[utf8_encode($c->getCaCargoiso())] = $c->getCaIdcargo();
                 $listacargos[] = utf8_encode($c->getCaCargoiso());
+                $empresa[$c->getCaCargoiso()] = utf8_encode($c->getEmpresa()->getCaNombre());
+                $compartido[$c->getCaCargoiso()] = $c->getDatosJson("compartido");
             }
         }
 
@@ -1479,6 +1483,8 @@ class riesgosActions extends sfActions {
                 $columnas = array(
                     "idcargo"=>$ids[$r["ca_factor"]],
                     "cargoiso"=> $factor, 
+                    "empresa"=> $empresa[$factor], 
+                    "compartido"=> $compartido[$factor], 
                     "impacto"=>$r["impacto"], 
                     "todos"=>$r["todos"], 
                     "pondfinal"=>$r["todos"]+$r["impacto"], 
