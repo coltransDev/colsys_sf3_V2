@@ -15,7 +15,6 @@ Ext.define('Colsys.Riesgos.GridEventos', {
     autoHeight: true,
     autoScroll: true,
     frame: true,
-    title: 'Eventos Riesgo',
     requires: [
         'Ext.grid.plugin.Exporter',
         'Ext.view.grid.ExporterController'
@@ -24,6 +23,12 @@ Ext.define('Colsys.Riesgos.GridEventos', {
         gridexporter: true
     },
     features: [{
+        id: 'feature-proceso',
+        ftype: 'groupingsummary',
+        groupHeaderTpl: ['{name} ({[values.children.length]})'],
+        hideGroupedHeader: true,
+        startCollapsed: true
+    },{
         ftype: 'summary',
         dock: 'bottom'
     }],
@@ -40,19 +45,29 @@ Ext.define('Colsys.Riesgos.GridEventos', {
             this.columns = this.getColumns();
             var idriesgo = this.idriesgo;
             var permisos = this.permisos;            
+            var items = [];
             
-            tbar = [{
-                xtype: 'toolbar',
-                dock: 'top',
-                id: 'bar-eve-'+idriesgo,                
-                items: [{
+            if(idriesgo > 0){
+                items.push({
                     text: 'Nuevo Evento',
                     iconCls: 'add',
                     disabled: !permisos,
                     handler : function(){                
                         this.up('grid').ventanaEvento(null);            
                     }
-                },
+                })
+            }else{                
+                items.push({
+                    text: 'Expandir',                    
+                    iconCls: 'fa fa-arrows-alt-v green',
+                    disabled: !permisos,                    
+                    handler : function(t){
+                        var me = this;
+                        this.up('grid').onToggle(me);
+                    }
+                });
+            }
+            items.push(
                 {
                     text: 'Recargar',
                     iconCls: 'refresh',
@@ -75,7 +90,14 @@ Ext.define('Colsys.Riesgos.GridEventos', {
                         
                         this.up("grid").saveDocumentAs(cfg);
                     }
-                }]
+                }
+            );
+    
+            tbar = [{
+                xtype: 'toolbar',
+                dock: 'top',
+                id: 'bar-eve-'+idriesgo,                
+                items:items
             }];
 
             this.addDocked(tbar);
@@ -142,6 +164,8 @@ Ext.define('Colsys.Riesgos.GridEventos', {
                     extend: 'Ext.data.Model',
                     id: 'modelStatus',
                     fields: [
+                       {name: 'proceso'+this.idriesgo,    type: 'string',    mapping: 'proceso'},
+                       {name: 'riesgo'+this.idriesgo,    type: 'string',    mapping: 'riesgo'},
                        {name: 'idevento'+this.idriesgo,     type: 'integer',    mapping: 'idevento'},
                        {name: 'idcausa'+this.idriesgo,      type: 'integer',    mapping: 'idcausa'},
                        {name: 'fchevento'+this.idriesgo,    type: 'date',       mapping: 'fchevento',    dateFormat: 'Y-m-d'},
@@ -154,13 +178,12 @@ Ext.define('Colsys.Riesgos.GridEventos', {
                        {name: 'cliente'+this.idriesgo,      type: 'string',     mapping: 'cliente'},
                        {name: 'idsucursal'+this.idriesgo,   type: 'string',     mapping: 'idsucursal'},
                        {name: 'sucursal'+this.idriesgo,     type: 'string',     mapping: 'sucursal'},
-                       {name: 'perdida_tot'+this.idriesgo,  type: 'float',      mapping: 'perdida_tot'},
                        {name: 'perdida_ope'+this.idriesgo,  mapping: 'perdida_ope'},
                        {name: 'perdida_leg'+this.idriesgo,  type: 'float',      mapping: 'perdida_leg'},
                        {name: 'perdida_eco'+this.idriesgo,  type: 'float',      mapping: 'perdida_eco'},
                        {name: 'perdida_com'+this.idriesgo,  type: 'float',      mapping: 'perdida_com'},
                        {name: 'fchcreado'+this.idriesgo,    type: 'date',      mapping: 'fchcreado',  dateFormat: 'Y-m-d H:i:s'},
-                       {name: 'usucreado'+this.idriesgo,    type: 'float',      mapping: 'usucreado'}
+                       {name: 'usucreado'+this.idriesgo,    type: 'string',      mapping: 'usucreado'}
                     ]
             });
             this.reconfigure(
@@ -187,6 +210,16 @@ Ext.define('Colsys.Riesgos.GridEventos', {
                     autoLoad: true
                 }),
                 [
+                    {
+                        header: "Proceso",
+                        dataIndex: 'proceso'+this.idriesgo,
+                        hidden: true
+                    }, 
+                    {
+                        header: "Riesgo",
+                        dataIndex: 'riesgo'+this.idriesgo,
+                        hidden: true
+                    }, 
                     {
                         xtype: 'hidden',
                         dataIndex: 'idevento'+this.idriesgo
@@ -234,6 +267,15 @@ Ext.define('Colsys.Riesgos.GridEventos', {
                         sortable: true,                        
                         flex: 1,
                         cellWrap: true
+                    },
+                    {
+                        header: "Tipo Documento",
+                        dataIndex: 'tipodoc'+this.idriesgo,                    
+                        hideable: true,
+                        sortable: true,                        
+                        flex: 1,
+                        cellWrap: true,
+                        hidden: true
                     },
                     {
                         header: "PA",
@@ -328,19 +370,44 @@ Ext.define('Colsys.Riesgos.GridEventos', {
                         }
                     },
                     {
-                        header: 'P\u00E9rdida Total',
-                        dataIndex: 'perdida_tot'+this.idriesgo,                        
+                        header: "Usu. Creado",
+                        dataIndex: 'usucreado'+this.idriesgo,                    
+                        hideable: true,
+                        sortable: true,                        
                         flex: 1,
-                        align: 'right',
-                        renderer:Ext.util.Format.usMoney,
-                        summaryType: 'sum',
-                        summaryRenderer: function(value, summaryData, dataIndex) {
-                            return '<span style="font-size: 11px; font-weight:bold">'+Ext.util.Format.usMoney(value)+'</span>';
+                        cellWrap: true,
+                        hidden: true
+                    },
+                    {
+                        header: "Fch. Creado",
+                        dataIndex: 'fchcreado'+this.idriesgo,                    
+                        sortable: true,                         
+                        flex: 1,
+                        hidden: true,
+                        renderer: function (a, b, c, d){
+                            if (a) {
+                                var formattedDate = new Date(a);
+                                var formattedDate = new Date(formattedDate.valueOf() + formattedDate.getTimezoneOffset() * 60000);
+                                var d = formattedDate.getDate();                                
+                                if (d < 10) {
+                                    d = "0" + d;
                         }
-                        
+                                var m = formattedDate.getMonth();
+                                m += 1;  
+                                if (m < 10) {
+                                    m = "0" + m;
+                                }
+                                var y = formattedDate.getFullYear();
+                                return y + "-" + m + "-" + d +' '+ formattedDate.getHours() +':' +formattedDate.getMinutes() +':' +formattedDate.getSeconds();
+                            }
+                        }
                     }
                 ]
-            )
+            );
+                        
+            if(this.idriesgo == 0){                
+                this.store.setGroupField('proceso');
+            }
         },
         onRender: function(ct, position){
             Colsys.Riesgos.GridEventos.superclass.onRender.call(this, ct, position);
@@ -392,5 +459,19 @@ Ext.define('Colsys.Riesgos.GridEventos', {
             Ext.getCmp("form-evento" + this.idriesgo).getForm().reset();
         }
         winEvento.show();
+    },
+    onToggle: function(t,eOpts){
+        
+        var tipo = t.text;        
+        switch(tipo){
+            case "Expandir":                
+                t.setText("Contraer");                
+                t.up('grid').getView().getFeature('feature-proceso').expandAll();
+                break;
+            case "Contraer":                
+                t.setText("Expandir");                
+                t.up('grid').getView().getFeature('feature-proceso').collapseAll();
+                break;
+        }
     }
 });
