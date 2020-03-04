@@ -65,12 +65,6 @@ $headers = json_encode($headers);
         }
     });
 
-    Ext.require([    
-        //'Ext.ux.exporter.Exporter',
-        //'Ext.ux.Explorer',        
-        //'Ext.ux.exporter.Exporter'
-    ]);
-    
     Ext.onReady(function() {
         Ext.tip.QuickTipManager.init();
 
@@ -187,6 +181,36 @@ $headers = json_encode($headers);
                                         handler: function() {
                                             Ext.getCmp("tree-id").mapaRiesgos();
                                         }
+                                    },{
+                                        text: 'Informe de Eventos General',
+                                        iconCls: 'fa fa-window-maximize green',
+                                        id: 'button-eventosgeneral',
+                                        handler: function() {
+                                            Ext.create('Ext.window.Window', {
+                                                title: 'Informe de Eventos General',
+                                                width: 1300,
+                                                height: 500,
+                                                id: 'winEventos',
+                                                name: 'winEventos',
+                                                maximizable: true,
+                                                layout: {
+                                                    type: 'vbox', // Arrange child items vertically
+                                                    align: 'stretch',    // Each takes up full width ,
+                                                    pack: 'start'
+                                                },
+                                                scrollable: true,                                                
+                                                closeAction: 'destroy',
+                                                items: [// Let's put an empty grid in just to illustrate fit layout                        
+                                                    Ext.create('Colsys.Riesgos.GridEventos', {
+                                                        id: 'grid-eve' + 0,
+                                                        name: 'grid-eve' + 0,
+                                                        border: true,                                                        
+                                                        idriesgo: 0,
+                                                        permisos: true
+                                                    })
+                                                ]
+                                            }).show();
+                                        }
                                     }]
                                 }
                             }
@@ -223,10 +247,10 @@ $headers = json_encode($headers);
                                     }
                                     break;
                                 case 3: // Versiones
-                                    console.log(utf8Decode(record.data.text));
+                                    //console.log(utf8Decode(record.data.text));
                                     var idarchivo = utf8Decode(record.data.text)+".pdf";
                                     var archivo = Base64.encode("Procesos/"+record.data.idproceso+"/versiones/"+idarchivo);
-                                    console.log(archivo);
+                                    //console.log(archivo);
                                     window.open("/gestDocumental/verArchivo?idarchivo="+archivo);
                                     break;
                             }
@@ -328,18 +352,6 @@ $headers = json_encode($headers);
                                                 windowpdf.show();
                                             }
                                         },
-                                        /*{
-                                            text: 'Informe de Riesgos General',
-                                            iconCls: 'pdf',
-                                            id: 'button4-'+idproceso,
-                                            handler: function () {                                                
-                                                var windowpdf = Ext.create('Colsys.Widgets.WgVerPdf', {
-                                                    title: 'Informe de Riesgos General',
-                                                    sorc: "/riesgos/pdfProceso/"
-                                                });
-                                                windowpdf.show();
-                                            }
-                                        },*/                                        
                                         {
                                             text: 'Mapa de Riesgos '+ proceso,
                                             iconCls: 'map',
@@ -347,86 +359,12 @@ $headers = json_encode($headers);
                                             handler: function() {                                                
                                                 Ext.getCmp("tree-id").mapaRiesgos(idproceso,proceso);
                                             }
-                                        }/*,
-                                        {
-                                            text: 'Mapa de Riesgos General',
-                                            iconCls: 'map',
-                                            id: 'button6-'+idproceso,
-                                            handler: function() {
-                                                Ext.getCmp("tree-id").mapaRiesgos();
-                                            }
-                                        }*/
+                                        }
                                     ]
                                 }).showAt(e.getXY());
                             }
                         }
                     },
-                    /*ventanaRiesgo: function (form, record) {
-
-                        var idriesgo = form ? form.idriesgo : null;
-                        var text = form ? 'Editar Riesgo -' + form.text : 'Nuevo Riesgo: '+ record.text;
-                        var idproceso = record ? record.idproceso : form.idproceso;
-                        
-                        if (winRiesgo == null) {
-                            var array = [];
-                            array.push({title: "Controles", name: "ca_controles", pref: "trl"});
-                            array.push({title: "Acciones", name: "ca_ap", pref: "acc"});
-                            array.push({title: "Contingencia", name: "ca_contingencia", pref: "gen"});
-
-                            winRiesgo = Ext.create('Ext.window.Window', {
-                                title: text,
-                                width: 700,
-                                height: 550,
-                                id: 'winRiesgo',
-                                name: 'winRiesgo',
-                                maximizable: true,
-                                layout: 'anchor',
-                                closeAction: 'destroy',
-                                items: [// Let's put an empty grid in just to illustrate fit layout                        
-                                    Ext.create('Colsys.Riesgos.FormGeneral', {
-                                        id: 'form-general',
-                                        name: 'form-general',
-                                        border: false,
-                                        layout: 'anchor',
-                                        anchor: '100% 100%',
-                                        idriesgo: idriesgo,
-                                        idproceso: idproceso
-                                    })
-                                ],
-                                listeners: {
-                                    close: function (win, eOpts) {
-                                        winRiesgo = null;
-                                    },
-                                    show: function () {
-                                        winRiesgo.superclass.show.apply(this, arguments);
-                                    }
-                                }
-                            });
-
-                            winRiesgo.show();
-
-                            //Carga cada pestaña en el tab correspondiente
-                            $.each(array, function (index, value) {
-                                var obj = null;
-                                obj = Ext.create('Ext.form.HtmlEditor', {
-                                    id: value.name,
-                                    name: value.name,
-                                    anchor: '100% 100%',
-                                    enableFontSize: false,
-                                    enableAlignments: false,
-                                    enableFont: false,
-                                    enableLinks: false,
-                                    enableLists: false,
-                                    enableSourceEdit: false 
-                                });
-
-                                Ext.getCmp('form-general').setCkeditor(value.pref, obj);
-                            });
-
-                        } else {
-                            alert("Ya existe una ventana de edici\u00F3n abierta")
-                        }
-                    },*/
                     ventanaRiesgo2: function (form, record) {
                         console.log(form);
                         var idriesgo = form ? form.idriesgo : null;
