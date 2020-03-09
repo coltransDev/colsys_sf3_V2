@@ -259,29 +259,45 @@ class idgsistemasActions extends sfActions {
                         $innerJoin = "
                             INNER JOIN helpdesk.vi_tkpricing as pricing on pricing.ca_idticket = tk.ca_idticket";
                     }
-                    if($checkboxStatus == "on"){
+                    if($checkboxStatus == "on"){                        
                         $q1 = ParametroTable::retrieveByCaso("CU110", null, null, $this->idetapa1);
                         $q2 = ParametroTable::retrieveByCaso("CU110", null, null, $this->idetapa2);
+                        
+                        if($this->idetapa1 == 999){
+                            $this->etapa1 = "Creación del ticket";
+                            $this->etapa2 = $q2[0]->getCaValor();
+                            
+                            $select.= " ,ca_opened as ca_status1, idgsta2.ca_createdat as ca_status2";
+                            $leftJoin = "                                
+                                LEFT JOIN ( SELECT res.ca_idticket, res.ca_createdat
+                                    FROM helpdesk.tb_responses res
+                                      INNER JOIN ( 
+                                         SELECT rp.ca_idticket, min(rp.ca_idresponse) AS ca_idresponse
+                                         FROM helpdesk.tb_responses rp                     
+                                         WHERE rp.ca_idstatus = $this->idetapa2
+                                         GROUP BY rp.ca_idticket) sta ON res.ca_idresponse = sta.ca_idresponse) idgsta2 ON idgsta2.ca_idticket = tk.ca_idticket";
+                        }else{
+                            $this->etapa1 = $q1[0]->getCaValor();
+                            $this->etapa2 = $q2[0]->getCaValor();
+                            
+                            $select.= " ,idgsta1.ca_createdat as ca_status1, idgsta2.ca_createdat as ca_status2";                        
 
-                        $this->etapa1 = $q1[0]->getCaValor();
-                        $this->etapa2 = $q2[0]->getCaValor();                        
-
-                        $select.= " ,idgsta1.ca_createdat as ca_status1, idgsta2.ca_createdat as ca_status2";
-                        $leftJoin = "
-                            LEFT JOIN ( SELECT res.ca_idticket, res.ca_createdat
-                                FROM helpdesk.tb_responses res
-                                  INNER JOIN ( 
-                                     SELECT rp.ca_idticket, min(rp.ca_idresponse) AS ca_idresponse
-                                     FROM helpdesk.tb_responses rp                     
-                                             WHERE rp.ca_idstatus = $this->idetapa1 
-                                     GROUP BY rp.ca_idticket) sta ON res.ca_idresponse = sta.ca_idresponse) idgsta1 ON idgsta1.ca_idticket = tk.ca_idticket
-                            LEFT JOIN ( SELECT res.ca_idticket, res.ca_createdat
-                                FROM helpdesk.tb_responses res
-                                  INNER JOIN ( 
-                                     SELECT rp.ca_idticket, min(rp.ca_idresponse) AS ca_idresponse
-                                     FROM helpdesk.tb_responses rp                     
-                                     WHERE rp.ca_idstatus = $this->idetapa2
-                                     GROUP BY rp.ca_idticket) sta ON res.ca_idresponse = sta.ca_idresponse) idgsta2 ON idgsta2.ca_idticket = tk.ca_idticket";
+                            $leftJoin = "
+                                LEFT JOIN ( SELECT res.ca_idticket, res.ca_createdat
+                                    FROM helpdesk.tb_responses res
+                                      INNER JOIN ( 
+                                         SELECT rp.ca_idticket, min(rp.ca_idresponse) AS ca_idresponse
+                                         FROM helpdesk.tb_responses rp                     
+                                                 WHERE rp.ca_idstatus = $this->idetapa1 
+                                         GROUP BY rp.ca_idticket) sta ON res.ca_idresponse = sta.ca_idresponse) idgsta1 ON idgsta1.ca_idticket = tk.ca_idticket
+                                LEFT JOIN ( SELECT res.ca_idticket, res.ca_createdat
+                                    FROM helpdesk.tb_responses res
+                                      INNER JOIN ( 
+                                         SELECT rp.ca_idticket, min(rp.ca_idresponse) AS ca_idresponse
+                                         FROM helpdesk.tb_responses rp                     
+                                         WHERE rp.ca_idstatus = $this->idetapa2
+                                         GROUP BY rp.ca_idticket) sta ON res.ca_idresponse = sta.ca_idresponse) idgsta2 ON idgsta2.ca_idticket = tk.ca_idticket";
+                        }
                     }
                     
                     $sql = "SELECT date_part('month',tk.ca_opened) as mes, tk.ca_idticket, tk.ca_title, tk.ca_type, tk.ca_assignedto,

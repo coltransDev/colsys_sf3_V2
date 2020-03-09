@@ -472,11 +472,18 @@ if(is_array($narea)){
                             Ext.getCmp('milestone_id2').allowBlank = false;
                             
                             milestone = Ext.getCmp('milestone_id1');
-                            milestone.store.baseParams = {
-                                idgrupo: this.idgrupo
-                            };
-                            milestone.store.load();
-
+                            milestone.store.load({
+                                params: {
+                                    idgrupo: this.idgrupo
+                                },
+                                callback: function(records, operation, success) {
+                                    Ext.getCmp('milestone_id1').getStore().insert(0,new Ext.data.Record({
+                                        status : 999,
+                                        valor : "Creación del ticket"
+                                    }));
+                                }
+                            });
+                            
                             milestone = Ext.getCmp('milestone_id2');
                             milestone.store.baseParams = {
                                 idgrupo: this.idgrupo
