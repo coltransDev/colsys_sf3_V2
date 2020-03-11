@@ -164,38 +164,40 @@ Ext.define('Colsys.Ino.GridEvento', {
                                         }
                                     },
                                     handler: function (grid, rowIndex, colIndex) {
-                                        var rec = grid.getStore().getAt(rowIndex);
-                                        rec.set('seleccionado', true);
-                                        var ref = this.up('grid').idreferencia;
+                                        var rec = grid.getStore().getAt(rowIndex);                                        
+                                        if(rec.get('evento')=="SAE" || rec.get('evento')=="DEX"){ // Ticket 61050                                            
+                                            rec.set('seleccionado', true);
+                                            var ref = this.up('grid').idreferencia;
 
-                                        win_dex = new Ext.Window({
-                                            title: 'Documentos',
-                                            width: 535,
-                                            height: 450,
-                                            tipoespecial: rec.get('tipoespecial'),
-                                            idevento: rec.get('idevento'),
-                                            closeAction: 'destroy',
-                                            items: {
-                                                autoScroll: true,
-                                                items: [
-                                                    {
-                                                        xtype: 'Colsys.Ino.GridDocEventos',
-                                                        id: 'grid-doc-eventos' + ref,
-                                                        name: 'grid-doc-eventos',
-                                                        idreferencia: ref
-                                                    }
-                                                ]
-                                            },
-                                            listeners: {
-                                                beforeshow: function (eOpts) {
-                                                    Ext.getCmp('grid-doc-eventos' + ref).cargar(rec.get('idevento'), this.tipoespecial);
+                                            win_dex = new Ext.Window({
+                                                title: 'Documentos',
+                                                width: 535,
+                                                height: 450,
+                                                tipoespecial: rec.get('tipoespecial'),
+                                                idevento: rec.get('idevento'),
+                                                closeAction: 'destroy',
+                                                items: {
+                                                    autoScroll: true,
+                                                    items: [
+                                                        {
+                                                            xtype: 'Colsys.Ino.GridDocEventos',
+                                                            id: 'grid-doc-eventos' + ref,
+                                                            name: 'grid-doc-eventos',
+                                                            idreferencia: ref
+                                                        }
+                                                    ]
                                                 },
-                                                close: function (win, eOpts) {
-                                                    win_dex = null;
+                                                listeners: {
+                                                    beforeshow: function (eOpts) {
+                                                        Ext.getCmp('grid-doc-eventos' + ref).cargar(rec.get('idevento'), this.tipoespecial);
+                                                    },
+                                                    close: function (win, eOpts) {
+                                                        win_dex = null;
+                                                    }
                                                 }
-                                            }
-                                        })
-                                        win_dex.show();
+                                            })
+                                            win_dex.show();
+                                        }
                                     }
                                 }]
                         }, {
