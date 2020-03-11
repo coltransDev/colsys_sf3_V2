@@ -1105,6 +1105,7 @@ class widgets5Actions extends sfActions {
                     ->createQuery("t")
                     ->select("*")
                     ->where("ca_idsserie = ? AND ca_fcheliminado is null ", $this->idsserie)
+                    ->orderBy("ca_documento")
                     ->setHydrationMode(Doctrine::HYDRATE_ARRAY);
 
             $tipoDocs = $q->execute();
@@ -2777,8 +2778,10 @@ class widgets5Actions extends sfActions {
 
         $data = array();
         foreach ($contactos as $contacto) {
-            $data[] = array("id" => $contacto->getCaIdcontacto(),
-                "name" => utf8_encode(strtoupper($contacto->getNombre())));
+            if (!$contacto->getIdsContacto()->getCaFcheliminado()) {
+                $data[] = array("id" => $contacto->getCaIdcontacto(),
+                          "name" => utf8_encode(strtoupper($contacto->getNombre())));
+            }
         }
 
         $this->responseArray = array("success" => true, "root" => $data);
@@ -3478,7 +3481,7 @@ class widgets5Actions extends sfActions {
     public function executeDatosAgentesAduana($request) {
         Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $con = Doctrine_Manager::getInstance()->connection();
-        $sql = "select * from ids.tb_proveedores p inner join ids.tb_ids i on (i.ca_id = p.ca_idproveedor) where p.ca_tipo = 'ADU' and  lower(i.ca_nombre) like '%" . strtolower($request->getParameter("q")) . "%'";
+        $sql = "select * from ids.tb_proveedores p inner join ids.tb_ids i on (i.ca_id = p.ca_idproveedor) where lower(i.ca_nombre) like '%" . strtolower($request->getParameter("q")) . "%'";
 
         $rs = $con->execute($sql);
         $data = array();
