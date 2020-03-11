@@ -2981,12 +2981,28 @@ class reportesNegActions extends sfActions {
                     $data["idcliente"] = "";
                 }
             }
-            if ($reporte->getCaTiporep() == "2")
-                $data["asunto"] = "Nuevo Reporte AG " . $data["proveedor0"] . " / " . $data["cliente"];
+            if ($reporte->getCaTiporep() == "2"){
+                /*Ticket 75297*/
+                $cliente = $reporte->getContacto()->getCliente();
+                $mensajeCircular = "";
+                $fchcircular = $cliente->getCaFchcircular(); 
+                
+                if(!$fchcircular){
+                    $mensajeCircular = "(El cliente no tiene circular 170) ";
+                }else{
+                    if(date("Y-m-d",strtotime($fchcircular."+ 365 days"))<=date('Y-m-d')){ 
+                        $mensajeCircular = " (La circular 170 se encuentra vencida) ";
+                    }else{
+                        if( date("Y-m-d",strtotime($fchcircular."+ 335 days"))<=date("Y-m-d") ){
+                            $mensajeCircular = " (La circular 170 se vencera en menos de 30 dias) ";
+                        }
+                    }
+                }
+                $data["asunto"] = "Nuevo Reporte AG " .$mensajeCircular. $data["proveedor0"] . " / " . $data["cliente"];
+            }
             if($reporte->getProperty("idticket")){
                 $data["idticket"] = $reporte->getProperty("idticket");
-            }
-            //echo "<pre>";print_r($data);echo "</pre>";
+            }            
         }
         $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");
