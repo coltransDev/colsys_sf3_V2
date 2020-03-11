@@ -664,159 +664,171 @@ class clientesActions extends sfActions {
                 $caso_omiso = (date("d"))==1?"":"<strong>Si a la fecha usted ya envió la anterior documentación, favor hacer caso omiso al presente mensaje.<strong>";
 
                 $bodyHtml = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
-                     <table style=\"width: 100%\">
-                     <tr>
-                        <td style=\"text-align:center; font-weight: bold\">
-                           DOCUMENTOS IDENTIFICACIÓN CLIENTES
-                        </td>
-                     </tr>
-                     <tr>
-                        <td style=\"text-align: left\">
-                           Apreciado Cliente:<br />
-                        </td>
-                     </tr>
-                     <tr>
-                        <td style=\"text-align: justify\">
-                           Es necesario para <strong>COLTRANS S.A.S.</strong> y/o <strong>AGENCIA DE ADUANAS COLMAS S.A.S. NIVEL 1</strong> dar cumplimiento a la Circular 0170 de 2002, resolución 8571 de 2010 expedidas por la DIAN y a la circular externa 100-000005 de junio 17 de 2014, expedida por la Superintendencia de Sociedades, siendo nuestra obligación como Agentes de Carga Internacional / Agentes de Aduana, crear un banco de datos de nuestros clientes que nos permita establecer un adecuado auto control y gestión del riesgo para la 'prevención del lavado de activos, financiación del terrorismo, y financiación de la proliferación de armas de destrucción masiva' en nuestras operaciones.<br /><br />
-                           Por lo anterior, el Representante Comercial que atiende su cuenta, estará retirando de sus instalaciones los siguientes documentos:<br /><br />
-                        </td>
-                     </tr>
-                     <tr>
-                        <td style=\"text-align: justify\"><center>
-                          <table style=\"width: 800px;\" border=1px>
-                            <tr>
-                              <td style=\"background-color:#002060; color:#FFFFFF; text-align: center; font-weight: bold\">DOCUMENTOS PARA ACTUALIZACIÓN Y NUEVOS CLIENTES</td>
-                              <td style=\"background-color:#002060; color:#FFFFFF; text-align: center; font-weight: bold\">Persona Jurídica</td>
-                              <td style=\"background-color:#002060; color:#FFFFFF; text-align: center; font-weight: bold\">Persona Natural comerciante</td>
-                              <td style=\"background-color:#002060; color:#FFFFFF; text-align: center; font-weight: bold\">Persona Natural</td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Formato de identificación y conocimiento de cliente, debidamente diligenciado y firmado en original por el Representante Legal o la persona facultada según certificado de existencia y representación legal.</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\">X</td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Certificado de existencia y representación legal en original con vigencia no superior a 30 días.</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\"></td>
-                              <td style=\"text-align: center\"></td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Certificado de Matricula mercantil con vigencia no superior a 30 días.</td>
-                              <td style=\"text-align: center\"></td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\">X</td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Fotocopia del <strong>RUT COMPLETO</strong> Habilitado como Exportador y/o Importador, y obligado aduanero. Con <strong>fecha de generación</strong> del año en que se diligencia el Formato de conocimiento de cliente -Circular 170.</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\">X</td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Fotocopia C.C. Representante Legal ampliada al 150%</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\">X</td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Declaración de renta</td>
-                              <td style=\"text-align: center\"></td>
-                              <td style=\"text-align: center\"></td>
-                              <td style=\"text-align: center\">X</td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">ESTADOS FINANCIEROS: Estado de Situación Financiera  o Balance General o <strong>Inicial</strong> <strong style=\"color:#b92201;\">Nota 1</strong>, y Estado de resultados debidamente firmados por representante legal, contador y revisor fiscal* (si aplica*) <strong style=\"color:#b92201;\">Nota 2</strong>, con sus respectivas Notas a los estados financieros, con fecha de corte a Dic. 31 del año inmediatamente anterior.</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\"></td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Fotocopia de la T.P. o C.C. del Contador y Revisor Fiscal* ampliada al 150% (si aplica*) <strong style=\"color:#b92201;\">Nota 2</strong>.</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\"></td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Certificación bancaria del año en que se diligencia el formato de circular 0170, la cual debe responder a los datos diligenciados en formato.</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\">X</td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Referencia comercial del año en que se diligencia el Formato de conocimiento del cliente - Circular 0170, no superior a 10 meses</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\">X</td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Resolución como operador económico autorizado (OEA) (si se tiene)</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\"></td>
-                              <td style=\"text-align: center\"></td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Acuerdos de seguridad debidamente diligenciado y firmado en original por el Representante Legal, <strong style=\"color:#b92201;\">Nota 7</strong></td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\">X</td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Fotocopia del certificado ISO y BASC (Si se tiene)</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\"></td>
-                            </tr>
-                            <tr>
-                                <td style=\"background-color:#002060; color:#FFFFFF; text-align:justify;\" colspan=\"4\">Si es cliente de COLMAS S.A.S debe anexar los siguientes documentos adicionales</td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Certificado de EE.FF emitido por Contador público</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\"></td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Dictamen de EE.FF emitido por Revisor fiscal (si aplica*) <strong style=\"color:#b92201;\">Nota 2</strong></td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\"></td>
-                              <td style=\"text-align: center\"></td>
-                            </tr>
-                            <tr>
-                              <td style=\"text-align: justify\">Manifestación suscrita de requisitos mínimos de seguridad OEA </td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\">X</td>
-                              <td style=\"text-align: center\">X</td>
-                            </tr>
-                            <tr>
-                              <td style=\"background-color:#002060; color:#FFFFFF; text-align:justify;\" colspan=\"4\">
-                                <strong style=\"color:#b92201;\">Nota 1:</strong> Balance Inicial, aplica cuando se trate de compañías constituidas en el mismo año en que se realiza el proceso de vinculación.<br />
-                                <strong style=\"color:#b92201;\">Nota 2:</strong> Empresas que cuenten con más de 5.000 SMMLV de activos y/o cuyos ingresos brutos durante el año inmediatamente anterior sean o excedan al equivalente a tres mil 3.000 SMMLV, están obligados a tener revisor fiscal.<br />
-                                <strong style=\"color:#b92201;\">Nota 3:</strong> Si es cliente Gran contribuyente, UAP, ALTEX, o entidad vigilada por la Superfinanciera y <strong>TIENE CRÉDITO CON COLTRANS o COLMAS, DEBE ENTREGAR ESTADOS FINANCIEROS</strong>.<br />
-                                <strong style=\"color:#b92201;\">Nota 4:</strong> Los Estados Financieros deben estar certificados y dictaminados por Representante Legal y Revisor Fiscal y/o Contador Público con <strong>fecha de corte a Dic. 31 del año inmediatamente anterior</strong>.<br />
-                                <strong style=\"color:#b92201;\">Nota 5:</strong> Si usted es Gran contribuyente, UAP, ALTEX, Agente Diplomático, Entidad del estado, Entidades territoriales, entidad descentralizada, entidad vigilada por la Superfinanciera, y <strong><u>NO</u> TIENE CREDITO CON COLTRANS o COLMAS</strong> esta exceptuado de presentar el balance general, estado de resultados, notas a los estados financieros, certificación de los estados financieros del contador y/o revisor, fotocopia de la cédula o T.P del contador y/o revisor.<br />
-                                <strong style=\"color:#b92201;\">Nota 6:</strong> Está documentación debe ser actualizada mínimo <strong>ANUALMENTE</strong> y reposará en nuestros archivos con un trato de <strong>ABSOLUTA RESERVA Y CONFIDENCIALIDAD</strong>. El incumplimiento de alguno de los puntos anteriores acarreará una sanción por parte de la DIAN.<br />
-                                <strong style=\"color:#b92201;\">Nota 7:</strong> Si requiere los servicios de Agencia de carga anexar acuerdo de seguridad COLTRANS y si requiere desaduanamiento anexar acuerdo de seguridad COLMAS<br /><br />
-                              </td>
-                            </tr>
+                <table style=\"width: 100%\">
+                    <tr>
+                       <td style=\"text-align:center; font-weight: bold\">
+                          DOCUMENTOS IDENTIFICACIÓN CLIENTES
+                       </td>
+                    </tr>
+                    <tr>
+                       <td style=\"text-align: left\">
+                          Apreciado Cliente:<br />
+                       </td>
+                    </tr>
+                    <tr>
+                       <td style=\"text-align: justify\">
+                          Es necesario para <strong>COLTRANS S.A.S.</strong> y/o <strong>AGENCIA DE ADUANAS COLMAS S.A.S. NIVEL 1</strong> dar cumplimiento a la Circular 0170 de 2002, Decreto 1165 de 2019 articulo 50, la resolución 000046 de 2019 articulo 75 expedidas por la DIAN y a la circular externa 100-000005 de junio 17 de 2014, expedida por la Superintendencia de Sociedades, siendo nuestra obligación como Agentes de Carga Internacional / Agentes de Aduana, crear un banco de datos de nuestros clientes que nos permita establecer un adecuado auto control y gestión del riesgo para la 'prevención del lavado de activos, financiación del terrorismo, y financiación de la proliferación de armas de destrucción masiva' en nuestras operaciones.<br /><br />
+                          Por lo anterior, el Representante Comercial que atiende su cuenta, estará retirando de sus instalaciones los siguientes documentos:<br /><br />
+                       </td>
+                    </tr>
+                    <tr>
+                       <td style=\"text-align: justify\"><center>
+                         <table style=\"width: 800px;\" border=1px>
+                           <tr>
+                             <td style=\"background-color:#002060; color:#FFFFFF; text-align: center; font-weight: bold\">DOCUMENTOS PARA ACTUALIZACIÓN Y NUEVOS CLIENTES</td>
+                             <td style=\"background-color:#002060; color:#FFFFFF; text-align: center; font-weight: bold\">Persona Jurídica</td>
+                             <td style=\"background-color:#002060; color:#FFFFFF; text-align: center; font-weight: bold\">Persona Natural comerciante</td>
+                             <td style=\"background-color:#002060; color:#FFFFFF; text-align: center; font-weight: bold\">Persona Natural</td>
+                           </tr>
+                           <tr>
+                             <td style=\"text-align: justify\">Formato de identificación y conocimiento de cliente, debidamente diligenciado y firmado en original por el Representante Legal o la persona facultada según certificado de existencia y representación legal.</td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\">X</td>
+                           </tr>
+                           <tr>
+                             <td style=\"text-align: justify\">Certificado de existencia y representación legal en original con vigencia no superior a 30 días.</td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\"></td>
+                             <td style=\"text-align: center\"></td>
+                           </tr>
+                           <tr>
+                             <td style=\"text-align: justify\">Certificado de Matricula mercantil con vigencia no superior a 30 días.</td>
+                             <td style=\"text-align: center\"></td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\"></td>
+                           </tr>
+                           <tr>
+                             <td style=\"text-align: justify\">Fotocopia del <strong>RUT COMPLETO</strong> Habilitado como Exportador y/o Importador, y obligado aduanero. Con <strong>fecha de generación</strong> del año en que se diligencia el Formato de conocimiento de cliente -Circular 170.</td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\">X</td>
+                           </tr>
+                           <tr>
+                             <td style=\"text-align: justify\">Fotocopia C.C. Representante Legal ampliada al 150%</td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\">X</td>
+                           </tr>
+                           <tr>
+                             <td style=\"text-align: justify\">Declaración de renta</td>
+                             <td style=\"text-align: center\"></td>
+                             <td style=\"text-align: center\"></td>
+                             <td style=\"text-align: center\">X</td>
+                           </tr>
+                           <tr>
+                             <td style=\"text-align: justify\">ESTADOS FINANCIEROS: Estado de Situación Financiera  o Balance General o <strong>Inicial</strong> <strong style=\"color:#b92201;\">Nota 1</strong>, y Estado de resultados debidamente firmados por representante legal, contador y revisor fiscal* (si aplica*) <strong style=\"color:#b92201;\">Nota 2</strong>, con sus respectivas Notas a los estados financieros, con fecha de corte a Dic. 31 del año inmediatamente anterior.</td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\"></td>
+                           </tr>
+                           <tr>
+                             <td style=\"text-align: justify\">Fotocopia de la T.P. o C.C. del Contador y Revisor Fiscal* ampliada al 150% (si aplica*) <strong style=\"color:#b92201;\">Nota 2</strong>.</td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\"></td>
+                           </tr>
+                           <tr>
+                             <td style=\"text-align: justify\">Certificación bancaria del año en que se diligencia el formato de conocimiento de cliente, la cual debe responder a los datos diligenciados en este formato.</td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\">X</td>
+                           </tr>
+                           <tr>
+                             <td style=\"text-align: justify\">Referencia comercial del año en que se diligencia el formato de conocimiento de cliente.</td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\">X</td>
+                           </tr>
+                           <tr>
+                             <td style=\"text-align: justify\">Resolución o autorización como operador económico autorizado (OEA) (si se tiene) <strong>APLICA SI EN LA HOJA 2 DEL RUT, CASILLA 89 TIENE EL CÓDIGO 61 o 62.</strong></td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\"></td>
+                             <td style=\"text-align: center\"></td>
+                           </tr>
+                           <tr>
+                             <td style=\"text-align: justify\">Acuerdos de seguridad debidamente diligenciado y firmado en original por el Representante Legal, <strong style=\"color:#b92201;\">Nota 7</strong></td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\">X</td>
+                           </tr>
+                           <tr>
+                             <td style=\"text-align: justify\">Fotocopia del certificado ISO y BASC (Si se tiene)</td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\"></td>
+                           </tr>
+                           <tr>
+                            <td style=\"text-align: justify\">Si es cliente de primera exportación con el Grupo Empresarial debe anexar el formato de: <strong>VERIFICACIÓN CONSIGNATARIO EN DESTINO F-237.</strong></td>
+                            <td style=\"text-align: center\">X</td>
+                            <td style=\"text-align: center\">X</td>
+                            <td style=\"text-align: center\">X</td>
+                          </tr>
+                          <tr>
+                               <td style=\"background-color:#002060; color:#FFFFFF; text-align:justify;\" colspan=\"4\">Si es cliente de COLMAS S.A.S debe anexar los siguientes documentos adicionales</td>
+                           </tr>
+                           <tr>
+                             <td style=\"text-align: justify\">Certificado de EE.FF emitido por Contador público</td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\"></td>
+                           </tr>
+                           <tr>
+                             <td style=\"text-align: justify\">Dictamen de EE.FF emitido por Revisor fiscal (si aplica*) <strong style=\"color:#b92201;\">Nota 2</strong></td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\"></td>
+                             <td style=\"text-align: center\"></td>
+                           </tr>
+                           <tr>
+                             <td style=\"text-align: justify\">Manifestación suscrita de requisitos mínimos de seguridad OEA </td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\">X</td>
+                             <td style=\"text-align: center\">X</td>
+                           </tr>
+                           <tr>
+                            <td style=\"text-align: justify\">Fotocopia de la Resolución vigente emitida por la autoridad competente, mediante la cual se autoriza o inscribe a Comercializadora Internacional. <strong>APLICA SI EN LA CASILLA 54 DEL RUT TIENE EL CÓDIGO 04.</strong> </td>
+                            <td style=\"text-align: center\">X</td>
+                            <td style=\"text-align: center\"></td>
+                            <td style=\"text-align: center\"></td>
+                          </tr>
+                          <tr>
+                             <td style=\"background-color:#002060; color:#FFFFFF; text-align:justify;\" colspan=\"4\">
+                               <strong style=\"color:#b92201;\">Nota 1:</strong> Balance Inicial, aplica cuando se trate de compañías constituidas en el mismo año en que se realiza el proceso de vinculación.<br />
+                               <strong style=\"color:#b92201;\">Nota 2:</strong> Empresas que cuenten con más de 5.000 SMMLV de activos y/o cuyos ingresos brutos durante el año inmediatamente anterior sean o excedan al equivalente a tres mil 3.000 SMMLV, están obligados a tener revisor fiscal.<br />
+                               <strong style=\"color:#b92201;\">Nota 3:</strong> Si es cliente, Operadores Económicos Autorizados, Gran contribuyente, UAP, ALTEX, o entidad vigilada por la Superfinanciera y TIENE CRÉDITO con alguna empresa del Grupo Empresarial Coltrans, <strong>DEBE ENTREGAR ESTADOS FINANCIEROS</strong>.<br />
+                               <strong style=\"color:#b92201;\">Nota 4:</strong> Los Estados Financieros deben estar certificados y dictaminados por Representante Legal y Revisor Fiscal y/o Contador Público con <strong>fecha de corte a Dic. 31 del año inmediatamente anterior</strong>.<br />
+                               <strong style=\"color:#b92201;\">Nota 5:</strong> Si usted NO tienen crédito con alguna empresa del Grupo Empresarial Coltrans y cumple con algunas de las siguientes condiciones; Operadores Económicos Autorizados, Usuarios Aduaneros Permanentes, Usuarios Altamente Exportadores, Grandes Contribuyentes, Agentes Diplomáticos, entidades territoriales y las entidades descentralizadas, las entidades vigiladas por la Superintendencia Financiera, a los titulares de menajes domésticos, viajeros, consignatarios de los envíos que lleguen al territorio nacional por la red oficial de correos y envíos urgentes cuando exista cambio de modalidad; igualmente a los turistas y viajeros para el trámite de importación temporal de vehículos de turista, esta exceptuado de presentar el balance general, estado de resultados, notas a los estados financieros, certificación de los estados financieros del contador y/o revisor, fotocopia de la cédula o T.P del contador y/o revisor.<br />
+                               <strong style=\"color:#b92201;\">Nota 6:</strong> Está documentación debe ser actualizada mínimo <strong>ANUALMENTE</strong> y reposará en nuestros archivos con un trato de <strong>ABSOLUTA RESERVA Y CONFIDENCIALIDAD</strong>. El incumplimiento de alguno de los puntos anteriores acarreará una sanción por parte de la DIAN.<br />
+                               <strong style=\"color:#b92201;\">Nota 7:</strong> Si requiere los servicios de Agencia de carga anexar acuerdo de seguridad COLTRANS y si requiere desaduanamiento anexar acuerdo de seguridad COLMAS<br /><br />
+                             </td>
+                           </tr>
 
-                          </table></center>
-                        </td>
-                     </tr>
-                     <tr>
-                        <td style=\"text-align: justify\"><br />
-                           <strong>IMPORTANTE:</strong><br />
-                           En caso de no tener un Representante Comercial asignado, agradecemos enviar los mismos en original a la atención de <strong>Área de Cumplimiento</strong> en la dirección: Cra. 98 No 25G-10 INT 18, Bogotá D.C. $caso_omiso<br /><br />
-                           Cordialmente,<br /><br /><br />
-                           <strong>
-                              DEPARTAMENTO COMERCIAL<br />
-                              COLTRANS S.A.S./<br />
-                              AGENCIA DE ADUANAS COLMAS S.A.S. NIVEL 1
-                           </strong>
-                        </td>
-                     </tr>
-                  </table>";
+                         </table></center>
+                       </td>
+                    </tr>
+                    <tr>
+                       <td style=\"text-align: justify\"><br />
+                          <strong>IMPORTANTE:</strong><br />
+                          En caso de no tener un Representante Comercial asignado, agradecemos enviar los mismos en original a la atención de <strong>Área de Cumplimiento</strong> en la dirección: Cra. 98 No 25G-10 INT 18, Bogotá D.C. $caso_omiso<br /><br />
+                          Cordialmente,<br /><br /><br />
+                          <strong>
+                             DEPARTAMENTO COMERCIAL<br />
+                             COLTRANS S.A.S./<br />
+                             AGENCIA DE ADUANAS COLMAS S.A.S. NIVEL 1
+                          </strong>
+                       </td>
+                    </tr>
+                </table>";
 
                 $email->setCaBodyhtml($bodyHtml);
                 // if ($con_credito) {
@@ -825,6 +837,7 @@ class clientesActions extends sfActions {
                 // $email->addAttachment("ids/formatos/Check_List_Circular_0170.pdf");
                 $email->addAttachment("ids/formatos/Manifestacion_suscrita_de_requisitos_minimos_de_seguridad.doc");
                 $email->addAttachment("ids/formatos/Formato_conocimiento_de_cliente.xls");
+                $email->addAttachment("ids/formatos/Solicitud_Estados_Finacieros.pdf");
                 $email->addAttachment("ids/formatos/Acuerdo_de_Seguridad_Coltrans.pdf");
                 $email->addAttachment("ids/formatos/Acuerdo_de_Seguridad_Colmas.pdf");
 
@@ -1017,6 +1030,7 @@ class clientesActions extends sfActions {
                     ->createQuery("u")
                     ->innerJoin("u.UsuarioPerfil p")
                     ->where("p.ca_perfil = ? ", "sistemas")
+                    ->addWhere("u.ca_activo = ?", TRUE)
                     ->execute();
             /* $parametro = Doctrine::getTable("Parametro")->find(array("CU065",3,"ccEmails"));
               if (stripos($parametro->getCaValor2(), ',') !== false) {
@@ -1054,6 +1068,7 @@ class clientesActions extends sfActions {
             $usuarios = Doctrine::getTable("Usuario")
                     ->createQuery("u")
                     ->where("u.ca_cargo = ? ", "Jefe Nacional de Operaciones")
+                    ->addWhere("u.ca_activo = ?", TRUE)
                     ->execute();
             foreach ($usuarios as $usuario) {
                 $defaultEmail[] = $usuario->getCaEmail();
@@ -1080,6 +1095,7 @@ class clientesActions extends sfActions {
                         ->innerJoin("u.Sucursal s")
                         ->where("s.ca_nombre = ? ", $comercial->getSucursal()->getCaNombre())
                         ->addWhere("p.ca_perfil = ? ", "control-alertas-aduana-colsys")
+                        ->addWhere("u.ca_activo = ?", TRUE)
                         ->execute();
                 foreach ($usuarios as $usuario) {
                     $ccEmails[] = $usuario->getCaEmail();
@@ -1121,6 +1137,7 @@ class clientesActions extends sfActions {
                     ->createQuery("u")
                     ->innerJoin("u.UsuarioPerfil p")
                     ->where("p.ca_perfil = ? ", "sistemas")
+                    ->addWhere("u.ca_activo = ?", TRUE)
                     ->execute();
 
             //Crea el correo electronico
@@ -1228,6 +1245,7 @@ class clientesActions extends sfActions {
                     ->createQuery("u")
                     ->innerJoin("u.UsuarioPerfil p")
                     ->where("p.ca_perfil = ? ", "sistemas")
+                    ->addWhere("u.ca_activo = ?", TRUE)
                     ->execute();
             /* $parametro = Doctrine::getTable("Parametro")->find(array("CU065",3,"ccEmails"));
               if (stripos($parametro->getCaValor2(), ',') !== false) {
@@ -1266,7 +1284,7 @@ class clientesActions extends sfActions {
     }
 
     public function executeReporteCircularEmail() {
-        try {               //  Controla cualquier error el la ejecución de la rutina
+        try {               //  Controla cualquier error el la ejecución de la executeReporteCircularEmailrutina
             $parametro = Doctrine::getTable("Parametro")->find(array("CU067", 1, "defaultEmails"));
             if ($parametro) {
                 if (stripos($parametro->getCaValor2(), ',') !== false) {
@@ -1286,6 +1304,10 @@ class clientesActions extends sfActions {
 
             $comerciales = UsuarioTable::getComerciales();
             foreach ($comerciales as $comercial) {
+                # Condicion para excluir de las comunicaciones a clientes de Coldepositos
+                if (in_array($comercial->getCaLogin(), array("clmedina","mquiroga"))) {
+                    continue;
+                }
 
                 $email = new Email();
                 $email->setCaUsuenvio("Administrador");
@@ -1342,6 +1364,7 @@ class clientesActions extends sfActions {
                     ->createQuery("u")
                     ->innerJoin("u.UsuarioPerfil p")
                     ->where("p.ca_perfil = ? ", "sistemas")
+                    ->addWhere("u.ca_activo = ?", TRUE)
                     ->execute();
             /* $parametro = Doctrine::getTable("Parametro")->find(array("CU065",3,"ccEmails"));
               if (stripos($parametro->getCaValor2(), ',') !== false) {
@@ -2663,7 +2686,9 @@ class clientesActions extends sfActions {
                     $documento->setCaGranContribuyente($registro->ca_gran_contribuyente);
                     $documento->setCaPersonaNatural($registro->ca_persona_natural);
                     $documento->setCaPersonaNaturalComerciante($registro->ca_persona_natural_comerciante);
+                    $documento->setCaNaturalComercianteReciente($registro->ca_natural_comerciante_reciente);
                     $documento->setCaPerjuridicaCincomil($registro->ca_perjuridica_5000);
+                    $documento->setCaPerjuridicaTresmil($registro->ca_perjuridica_3000);
                     $documento->save();
                     $ids[] = $registro->id;
                 }
@@ -2701,7 +2726,9 @@ class clientesActions extends sfActions {
                 'ca_gran_contribuyente' => $documento['ca_gran_contribuyente'],
                 'ca_persona_natural' => $documento['ca_persona_natural'],
                 'ca_persona_natural_comerciante' => $documento['ca_persona_natural_comerciante'],
+                'ca_natural_comerciante_reciente' => $documento['ca_natural_comerciante_reciente'],
                 'ca_perjuridica_5000' => $documento['ca_perjuridica_cincomil'],
+                'ca_perjuridica_3000' => $documento['ca_perjuridica_tresmil'],
                 'ca_documento' => utf8_encode($documento['ca_documento'])
             );
         }
@@ -3194,160 +3221,6 @@ class clientesActions extends sfActions {
                 ->fetchOne();
 
         $this->setTemplate("fichaTecnicaPdf");
-    }
-
-    public function executeGuardarDatosFinancieros(sfWebRequest $request) {
-        $idcliente = $request->getParameter("idcliente");
-        $anno = $request->getParameter("anno");
-        $activostotales = $request->getParameter("activostotales");
-        $activoscorrientes = $request->getParameter("activoscorrientes");
-        $pasivostotales = $request->getParameter("pasivostotales");
-        $pasivoscorrientes = $request->getParameter("pasivoscorrientes");
-        $inventarios = $request->getParameter("inventarios");
-        $patrimonios = $request->getParameter("patrimonios");
-        $utilidades = $request->getParameter("utilidades");
-        $ventas = $request->getParameter("ventas");
-
-        $conn = Doctrine::getTable("BlcCliente")->getConnection();
-        $conn->beginTransaction();
-
-        try {
-            $blccliente = Doctrine::getTable("BlcCliente")
-                    ->createQuery("d")
-                    ->where("d.ca_idcliente = ?", $idcliente)
-                    ->addWhere("d.ca_anno = ?", $anno)
-                    ->fetchOne();
-
-            if (!$blccliente) {
-                $blccliente = new BlcCliente();
-                $blccliente->setCaIdcliente($idcliente);
-                $blccliente->setCaAnno($anno);
-            }
-            $blccliente->setCaActivostotales($activostotales);
-            $blccliente->setCaActivoscorrientes($activoscorrientes);
-            $blccliente->setCaPasivostotales($pasivostotales);
-            $blccliente->setCaPasivoscorrientes($pasivoscorrientes);
-            $blccliente->setCaInventarios($inventarios);
-            $blccliente->setCaPatrimonios($patrimonios);
-            $blccliente->setCaUtilidades($utilidades);
-            $blccliente->setCaVentas($ventas);
-            $blccliente->save();
-
-            $conn->commit();
-            $this->responseArray = array("success" => true);
-        } catch (Exception $e) {
-            $conn->rollback();
-            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
-        }
-
-        $this->setTemplate("responseTemplate");
-    }
-
-    public function executeAnularInfoFinanciera(sfWebRequest $request) {
-        $idcliente = $request->getParameter("idcliente");
-        $anno = $request->getParameter("anno");
-        $conn = Doctrine::getTable("BlcCliente")->getConnection();
-        $conn->beginTransaction();
-
-        try {
-            $blccliente = Doctrine::getTable("BlcCliente")
-                    ->createQuery("d")
-                    ->where("d.ca_idcliente = ?", $idcliente)
-                    ->addWhere("d.ca_anno = ?", $anno)
-                    ->fetchOne();
-
-            if ($blccliente) {
-                $blccliente->delete();
-            }
-            $conn->commit();
-            $this->responseArray = array("success" => true);
-        } catch (Exception $e) {
-            $conn->rollback();
-            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
-        }
-
-        $this->setTemplate("responseTemplate");
-    }
-
-    public function executeDatosInfoFinanciera(sfWebRequest $request) {
-        $idcliente = $request->getParameter("idcliente");
-
-        $blcclientes = Doctrine::getTable("BlcCliente")
-                ->createQuery("d")
-                ->where("d.ca_idcliente = ?", $idcliente)
-                ->execute();
-
-        $aniopasado = date("Y") - 1;
-        $anioantepasado = date("Y") - 2;
-
-        $con = Doctrine_Manager::getInstance()->connection();
-        $sql = "select  sum(ca_utilidad)+sum(ca_sobreventa) as ca_ino
-                from vi_repgerencia_sea
-                where ca_idcliente = " . $idcliente . "  and ca_ano in ('" . $aniopasado . "','" . $anioantepasado . "')";
-
-        $rs = $con->execute($sql);
-        $maritimo = $rs->fetch();
-
-        $sql = "select  sum(ca_utilidad) as ca_ino
-                from vi_repgerencia_air
-                where ca_idcliente = " . $idcliente . "  and ca_ano in ('" . $aniopasado . "','" . $anioantepasado . "')";
-
-        $rs = $con->execute($sql);
-        $aereo = $rs->fetch();
-
-        $anioactual = date("Y");
-
-        $minimol = Doctrine::getTable("Smlv")
-                ->createQuery("d")
-                ->where("d.ca_anno = ?", $anioactual)
-                ->fetchOne();
-
-        $minimo = ($minimol) ? $minimol->getCaSmlv() : 0;
-
-        $data = array();
-        foreach ($blcclientes as $blccliente) {
-            if ($minimo) {
-                $ca_actsmmlv = ($blccliente->getCaActivostotales() / $minimo );
-                $ca_actsmmlv = round($ca_actsmmlv, 2);
-            }
-            if ($blccliente->getCaPasivoscorrientes() != 0) {
-                $ca_indliquidez = ($blccliente->getCaActivoscorrientes() / $blccliente->getCaPasivoscorrientes());
-                $ca_indliquidez = round($ca_indliquidez, 2);
-            } else {
-                $ca_indliquidez = "Imposible Calcular";
-            }
-            if ($blccliente->getCaActivostotales() != 0) {
-                $ca_indendeudamiento = ($blccliente->getCaPasivostotales() / $blccliente->getCaActivostotales());
-                $ca_indendeudamiento = round($ca_indendeudamiento, 2);
-            } else {
-                $ca_indendeudamiento = "Imposible Calcular";
-            }
-            if ($blccliente->getCaPasivoscorrientes() != 0) {
-                $ca_pbaacida = ($blccliente->getCaActivoscorrientes() - $blccliente->getCaInventarios()) / $blccliente->getCaPasivoscorrientes();
-                $ca_pbaacida = round($ca_pbaacida, 2);
-            } else {
-                $ca_pbaacida = "Imposible Calcular";
-            }
-
-            $data[] = array(
-                "ca_activostotales" => /* number_format( */$blccliente->getCaActivostotales()/* , 0, '', '.') */,
-                "ca_activoscorrientes" => utf8_encode($blccliente->getCaActivoscorrientes()),
-                "ca_pasivostotales" => utf8_encode($blccliente->getCaPasivostotales()),
-                "ca_pasivoscorrientes" => utf8_encode($blccliente->getCaPasivoscorrientes()),
-                "ca_inventarios" => utf8_encode($blccliente->getCaInventarios()),
-                "ca_patrimonios" => utf8_encode($blccliente->getCaPatrimonios()),
-                "ca_utilidades" => utf8_encode($blccliente->getCaUtilidades()),
-                "ca_actsmmlv" => $ca_actsmmlv,
-                "ca_indliquidez" => $ca_indliquidez,
-                "ca_indendeudamiento" => $ca_indendeudamiento,
-                "ca_pbaacida" => $ca_pbaacida,
-                "ca_ino" => ($aereo["ca_ino"] + $maritimo["ca_ino"]),
-                "ca_anno" => utf8_encode($blccliente->getCaAnno()),
-                "ca_ventas" => utf8_encode($blccliente->getCaVentas()));
-        }
-        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
-
-        $this->setTemplate("responseTemplate");
     }
 
     public function executeVerificarFobAduana(sfWebRequest $request) {
