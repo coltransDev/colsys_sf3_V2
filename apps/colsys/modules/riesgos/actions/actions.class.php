@@ -1469,8 +1469,8 @@ class riesgosActions extends sfActions {
                 $criterioxCargo[utf8_encode($c->getCaCargoiso())][$criterio] = $valor;
                 $ids[utf8_encode($c->getCaCargoiso())] = $c->getCaIdcargo();
                 $listacargos[] = utf8_encode($c->getCaCargoiso());
-                $empresa[$c->getCaCargoiso()] = utf8_encode($c->getEmpresa()->getCaNombre());
-                $compartido[$c->getCaCargoiso()] = $c->getDatosJson("compartido");
+                $empresa[utf8_encode($c->getCaCargoiso())] = utf8_encode($c->getEmpresa()->getCaNombre());
+                $compartido[utf8_encode($c->getCaCargoiso())] = $c->getDatosJson("compartido");
             }
         }
 
