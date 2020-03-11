@@ -1452,9 +1452,9 @@ class Reporte extends BaseReporte {
         return "reportes" . DIRECTORY_SEPARATOR . substr($this->getCaConsecutivo(), -4).DIRECTORY_SEPARATOR . $this->getCaConsecutivo() . DIRECTORY_SEPARATOR;
     }
 
-    public function getDirectorioBaseDocs($filename) {
+    public function getDirectorioBaseDocs($filename, $t=1) {
         
-        $archivos = $this->getFilesGestDoc();
+        $archivos = $this->getFilesGestDoc($t);
             
         if($archivos){
             foreach($archivos as $file){
@@ -1473,9 +1473,9 @@ class Reporte extends BaseReporte {
      * @author: Andrea Ramírez
      * @param string    $filename Nombre del archivo buscado
      */
-    public function getArchivo($filename) {
+    public function getArchivo($filename, $t=1) {
         
-        $archivos = $this->getFilesGestDoc();
+        $archivos = $this->getFilesGestDoc($t);
             
         if($archivos){
             foreach($archivos as $file){
