@@ -472,7 +472,7 @@ class InoMaster extends BaseInoMaster {
             }
             $matriz_eventos["intervalo_1"]['Radicación Documento de Transporte'] = $rad_mem;
         }
-
+        
         return $matriz_eventos["intervalo_1"]['Rec.Último Documento']!=null?$matriz_eventos["intervalo_1"]['Rec.Último Documento']:null;                
     }
     
@@ -503,9 +503,7 @@ class InoMaster extends BaseInoMaster {
 
         $tbeventos = "<table>";
         foreach($eventos as $evento){
-            if(!in_array($evento['ca_valor'], $no_docs))
-                $ult_mem = $evento["ca_fchevento"];                        
-
+            
             $tbeventos.= "<tr>";
             $tbeventos.= "  <td style='font-size: 9px;'>" . utf8_encode($evento['ca_valor']) . "</td>";
             $tbeventos.= "  <td style='font-size: 9px;'>" . $evento['ca_usuario'] . "</td>";
