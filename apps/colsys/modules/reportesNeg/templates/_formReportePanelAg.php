@@ -763,9 +763,34 @@ include_component("widgets", "widgetContactoCliente");
 
             Ext.getCmp("ca_liberacion").setValue(cupo);
 
+            mensajeCircular = "";
+            var fchcircular = record.get("fchcircular");        
+            if( !fchcircular ){            
+                if( mensajeCircular!=""){
+                    mensajeCircular+="<br />";
+                }
+                mensajeCircular += "El cliente no tiene circular 170";
+
+            }else{
+                if( fchcircular+(86400*365)<=<?=time()?> ){
+                    if( mensajeCircular!=""){
+                        mensajeCircular+="<br />";
+                    }
+                    mensajeCircular += "La circular 170 se encuentra vencida";
+                }else{
+                    if( fchcircular+(86400*335)<=<?=time()?> ){
+
+                        if( mensajeCircular!=""){
+                            mensajeCircular+="<br />";
+                        }
+                        mensajeCircular += "La circular 170 se vencera en menos de 30 dias";
+                    }
+                }
+            }
+
             combo.alertaCliente(record);
 
-            $("#asunto").val("Nuevo Reporte AG "+$("#proveedor0").val()+" / "+$("#cliente").val()) ;
+            $("#asunto").val("Nuevo Reporte AG ("+mensajeCircular+") "+$("#proveedor0").val()+" / "+$("#cliente").val()) ;
 
         },
         onSelectImpoexpo: function( combo, record, index){
