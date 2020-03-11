@@ -1118,7 +1118,12 @@ class traficosActions extends sfActions {
          $attachments1 = $this->getRequestParameter("attachments1");         
          if ($attachments1) {
             foreach ($attachments1 as $attachment) {
-               $att[] = $reporte->getDirectorioBaseDocs(base64_decode($attachment));
+                if($reporte->getDirectorioBaseDocs(base64_decode($attachment)))
+                    $att[] = $reporte->getDirectorioBaseDocs(base64_decode($attachment));
+                if($reporte->getDirectorioBaseDocs(base64_decode($attachment),2))
+                    $att[] = $reporte->getDirectorioBaseDocs(base64_decode($attachment),2);
+                if($reporte->getDirectorioBaseDocs(base64_decode($attachment),3))
+                    $att[] = $reporte->getDirectorioBaseDocs(base64_decode($attachment),3);
             }
          }
 //---////
