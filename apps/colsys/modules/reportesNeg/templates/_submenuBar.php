@@ -480,8 +480,8 @@ switch ($action) {
                 },
                 failure:function(response,options){
                     var res = Ext.util.JSON.decode( response.responseText );
-                    if(res.err)
-                        Ext.MessageBox.alert("Mensaje",'Se presento un error guardando por favor informe al Depto. de Sistemas<br>'+res.err);
+                    if(res.errorInfo)
+                        Ext.MessageBox.alert("Mensaje",'Se presento un error guardando por favor informe al Depto. de Sistemas<br>'+res.errorInfo);
                     else
                         Ext.MessageBox.alert("Mensaje",'Se produjo un error, vuelva a intentar o informe al Depto. de Sistema<br>'+res.texto);
                 },
