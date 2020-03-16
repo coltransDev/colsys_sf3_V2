@@ -2552,15 +2552,22 @@ class pmActions extends sfActions {
         $idticket = $request->getParameter("idticket");
         $this->forward404Unless($idticket);
         
-        $email = Doctrine::getTable("HdeskTicket")
-                ->createQuery("h")
-                ->select("MAX(ca_idemail) as ca_idemail")
-                ->leftJoin("h.Email e")
-                ->where("h.ca_idticket = ?", $idticket)
-                ->addWhere("e.ca_tipo = 'Notificación'")
-                ->fetchOne();
-        
-        $this->responseArray = array("success" => false, "idemail"=>$email->ca_idemail);
+        try{
+            $q = Doctrine::getTable("HdeskTicket")
+                    ->createQuery("h")
+                    ->select("MAX(ca_idemail) as ca_idemail")
+                    ->leftJoin("h.Email e")
+                    ->where("h.ca_idticket = ?", $idticket)
+                    ->addWhere("e.ca_tipo like '%Notificación%'");
+
+            $debug = $q->getSqlQuery();
+            
+            $email = $q->fetchOne();
+            
+            $this->responseArray = array("success" => true, "idemail"=>$email->ca_idemail, "debug"=> utf8_encode($debug));
+        }catch(Exception $e){
+            $this->responseArray = array("success" => false, "errorInfo"=> utf8_encode($e->getMessage()));
+        }
                 
         $this->setTemplate("responseTemplate");
     }   
