@@ -12,4 +12,18 @@
  */
 class InoEquipo extends BaseInoEquipo
 {
+    
+    public function calcularLimDevolucion($fchllegada, $conn) {
+        
+        $dias_libres = $this->getDatosJson("dias_libres") - 1;
+        $fchllegada = date("Y-m-d", strtotime($fchllegada));    
+    
+        $fchlimite = strtotime ( '+'.$dias_libres.' day' , strtotime ($fchllegada) ) ;
+        $fchlimite = date('Y-m-d', $fchlimite);
+        
+        $this->setDatosJson("fecha_arribo", $fchllegada );
+        $this->setDatosJson("limite_devolucion", $fchlimite );
+        $this->save($conn);
+        
+    }
 }
