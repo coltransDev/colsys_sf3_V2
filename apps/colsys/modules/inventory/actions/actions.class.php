@@ -990,6 +990,8 @@ class inventoryActions extends sfActions {
                 ->addWhere("c.ca_parameter = ?", "Hardware")                
                 ->addOrderBy("a.ca_identificador")
                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR);                
+        
+        $debug = $q->getSqlQuery();
 
         $equipos = $q->execute();
 
@@ -997,7 +999,7 @@ class inventoryActions extends sfActions {
             $equipos[$key]["s_ca_nombre"] = utf8_encode($equipos[$key]["s_ca_nombre"]);
             $equipos[$key]["u_ca_nombre"] = utf8_encode($equipos[$key]["u_ca_nombre"]);
         }
-        $this->responseArray = array("root" => $equipos, "total" => count($equipos), "success" => true);
+        $this->responseArray = array("root" => $equipos, "total" => count($equipos), "success" => true, "debug"=>$debug);
         $this->setTemplate("responseTemplate");
     }
 
@@ -1188,7 +1190,14 @@ class inventoryActions extends sfActions {
         $fchbajainicio = $request->getParameter("fchbajainicio");
         $fchbajafinal = $request->getParameter("fchbajafinal");
 
+        //$idactivos = Utils::unSerializeArray($request->getParameter("idactivo"));
+        
         $idactivos = json_decode($request->getParameter("idactivo"), true);
+        
+//        echo "<pre>";print_r($idactivos);echo "</pre>";
+        
+//        $idactivos = json_decode($jsonData, TRUE);
+//        echo var_dump($jsonData);
         
         $user = $this->getUser();
         $sucUsuario = Doctrine::getTable("Sucursal")->find($user->getIdsucursal());
@@ -1578,6 +1587,34 @@ class inventoryActions extends sfActions {
             
             $q->orderBy("m.ca_fchmantenimiento ASC");
             $this->mantenimientos = $q->execute();
+            $result = array();
+        }
+    }
+    
+    public function executeInformeSeguimientosRealizados(sfWebRequest $request) {
+        
+        $response = sfContext::getInstance()->getResponse();
+        $response->addJavaScript("extExtras/SuperBoxSelect", 'last');
+        
+        $this->opcion = $request->getParameter("opcion");
+        $this->idsucursal = $request->getParameter("idsucursal");
+        $this->nmes = $request->getParameter("nmes");
+        
+        if($this->opcion){
+        
+            $q= Doctrine::getTable("InvSeguimiento")
+                        ->createQuery("s")
+                        ->innerJoin("s.InvActivo a")
+                        ->addWhere("a.ca_idsucursal = ?", $this->idsucursal)
+                        ->andWhereIn("EXTRACT(MONTH FROM s.ca_fchcreado)", $this->nmes);
+            
+            if($request->getParameter("aa")){
+                if($request->getParameter("aa") != "todos")
+                $q->andWhereIn("EXTRACT(YEAR FROM s.ca_fchcreado)", $request->getParameter("aa"));
+            }
+            
+            $q->orderBy("s.ca_fchcreado ASC");
+            $this->seguimientos = $q->execute();
             $result = array();
         }
     }

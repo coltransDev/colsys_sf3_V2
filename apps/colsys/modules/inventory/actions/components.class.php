@@ -190,7 +190,7 @@ class inventoryComponents extends sfComponents
         $this->idsucursal = $this->getRequestParameter("idsucursal");
         $this->sucursal = $this->getRequestParameter("sucursal");
         $this->opcion = $this->getRequestParameter("opcion");
-        $this->nmes = $this->getRequestParameter("nmes");
+        $this->nmes = $this->getRequestParameter("nmes");        
         
         $this->meses = array();
         $this->meses[]=array("valor"=>"Enero"       ,"id"=>1);
@@ -205,7 +205,7 @@ class inventoryComponents extends sfComponents
         $this->meses[]=array("valor"=>"Octubre"     ,"id"=>10);
         $this->meses[]=array("valor"=>"Noviembre"   ,"id"=>11);
         $this->meses[]=array("valor"=>"Diciembre"   ,"id"=>12);
-
+                
     }
 
 

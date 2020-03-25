@@ -2,7 +2,7 @@
 <div align="center" id="container" ></div>
 
 <?
-include_component("inventory","filtrosMantenimientosRealizados");
+include_component("inventory","filtrosMantenimientosRealizados", array("tipo"=>"Mantenimientos"));
 
 $nmes = $sf_data->getRaw("nmes");
 $meses = $sf_data->getRaw("meses");

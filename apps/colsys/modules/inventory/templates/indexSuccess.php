@@ -170,16 +170,21 @@ function mostrarAnotacion(idman,idact,autoriza,activ)
         </div>
         <div style="float:left;">
             <div class="icon">
-                <a href="<?=url_for("inventory/informeMantenimientosRealizados")?>" >
+                <a href="<?=url_for("inventory/informeMantenimientosRealizados")?>" target="_blank" >
                     <?=image_tag("48x48/signature.gif")?>
                     <span>Registros Mantenimiento</span>
                 </a>
             </div>
         </div>
-        
+        <div style="float:left;">
+            <div class="icon">
+                <a href="<?=url_for("inventory/informeSeguimientosRealizados")?>" target="_blank">
+                    <?=image_tag("48x48/signature.gif")?>
+                    <span>Registros Seguimientos</span>
+                </a>
+            </div>
+        </div>        
    </div>
-
-
 </div>
 <div id="props-panel" class="x-hide-display" style="width:200px;height:200px;overflow:hidden;">
 

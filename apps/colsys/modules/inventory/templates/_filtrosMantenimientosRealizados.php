@@ -6,6 +6,12 @@
  */
 $nmes = $sf_data->getRaw("nmes");
 $meses = $sf_data->getRaw("meses");
+$tipo = $sf_data->getRaw("tipo");
+
+if($tipo=="Mantenimientos")
+    $url = url_for("inventory/informeMantenimientosRealizados");
+else
+    $url = url_for("inventory/informeSeguimientosRealizados");
 
 include_component("widgets","widgetSucursales");
 include_component("widgets","widgetMultiDatos");
@@ -27,7 +33,7 @@ var tabs = new Ext.FormPanel({
 		defaults:{autoHeight:true, bodyStyle:'padding:10px'},
 		id: 'tab-panel',
 		items:[{
-			title:'Mantenimientos Realizados',
+			title:'<?=$tipo?> Realizados',
 			layout:'form',
 			defaultType: 'textfield',
 			id: 'mtorealizado',
@@ -106,7 +112,7 @@ var tabs = new Ext.FormPanel({
                     var tp = Ext.getCmp("tab-panel");                    
                     var owner=Ext.getCmp("formPanel");
                     if( tp.getActiveTab().getId()=="mtorealizado"){
-                        owner.getForm().getEl().dom.action='<?=url_for("inventory/informeMantenimientosRealizados")?>';
+                        owner.getForm().getEl().dom.action='<?=$url?>';
                     }
                     owner.getForm().submit();
             }
