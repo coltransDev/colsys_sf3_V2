@@ -7,7 +7,7 @@
 //    "idmaster":12176,
         autoHeight: true,
         onRender: function (ct, position) {
-            tabs = new Array();
+            tabs = new Array();            
             //alert(this.permisos.toSource());
             /*tabs.push({
              xtype: 'Colsys.Pruebas.WgRowWidget',
@@ -46,6 +46,7 @@
                         name: "contenderores-" + this.idmaster,
                         idmaster: this.idmaster,
                         idtransporte: this.idtransporte,
+                        idmodalidad: this.modalidad,                        
                         idimpoexpo: this.idimpoexpo,
                         permisos: this.permisos,
                         iconCls: 'camion'
@@ -66,44 +67,7 @@
                                 iconCls: 'table'
                             });
                 }
-                /*if(this.permisos.Facturacion == true){
-                 tabs.push({
-                 xtype:'Colsys.Ino.GridFacturacion',
-                 title: "Facturacion",
-                 id:"grid-facturacion-"+this.idmaster,
-                 name:"grid-facturacion-"+this.idmaster,
-                 idmaster: this.idmaster,
-                 idtransporte: this.idtransporte,
-                 idimpoexpo: this.idimpoexpo,
-                 permisos: this.permisos
-                 });
-                 }*/
-                /*if(this.permisos.Facturacion == true){
-                 tabs.push({
-                 xtype:'Colsys.Ino.PanelFacturacion',
-                 title: "Facturacion",
-                 id:"panel-facturacion-"+this.idmaster,
-                 name:"panel-facturacion-"+this.idmaster,
-                 idmaster: this.idmaster,
-                 idtransporte: this.idtransporte,
-                 idimpoexpo: this.idimpoexpo,
-                 permisos: this.permisos
-                 });
-                 }*/
-                /* if (this.tipofacturacion == "facturacion1" ) {
-                 if (this.permisos.Facturacion == true) {
-                 tabs.push({
-                 xtype: 'Colsys.Ino.GridFacturacion',
-                 title: "Facturacion" ,
-                 id: "grid-facturacion-" + this.idmaster,
-                 name: "grid-facturacion-" + this.idmaster,
-                 idmaster: this.idmaster,
-                 idtransporte: this.idtransporte,
-                 idimpoexpo: this.idimpoexpo,
-                 permisos: this.permisos
-                 });
-                 }
-                 }*/
+                
 
                 if (this.idtransporte == "<?= Constantes::MARITIMO ?>" && this.permisos.Muisca == true) {    /* FIX-ME Permisos para Radicación*/
                     tabs.push({
@@ -119,9 +83,27 @@
                         iconCls: 'dian'
                     });
                 }
-                // if (this.tipofacturacion == "facturacion2" || this.tipofacturacion == null) 
-                {
-                    if (this.permisos.Facturacion == true) {
+                 
+                
+                if (this.permisos.Facturacion == true) {
+
+                    if (this.tipofacturacion == "Grid") 
+                    {
+                        tabs.push({
+                            xtype: 'Colsys.Ino.GridFacturacion',
+                            title: "Ingresos" ,
+                            id: "grid-facturacion-" + this.idmaster,
+                            name: "grid-facturacion-" + this.idmaster,
+                            idmaster: this.idmaster,
+                            idtransporte: this.idtransporte,
+                            idimpoexpo: this.idimpoexpo,
+                            permisos: this.permisos,
+                            iconCls: 'money_dollar',
+                            autoScroll: true,
+                            autoHeight: true
+                            });
+                        
+                    }else{
                         tabs.push({
                             xtype: 'Colsys.Ino.PanelFacturacion',
                             title: "Ingresos",
@@ -135,9 +117,10 @@
                             autoHeight: true,
                             iconCls: 'money_dollar',
                             ino: true
-                        });
+                        });                         
                     }
                 }
+                
                 if (this.permisos.Costos == true) {
 
                     tabs.push({
@@ -152,7 +135,7 @@
                         /*plugins: [
                          new Ext.grid.plugin.CellEditing({clicksToEdit: 1})
                          ],*/
-                        iconCls: 'icon-grid'
+                        iconCls: 'icon-grid1'
                     });
                 }
 
@@ -181,7 +164,10 @@
                     } else if (this.idtransporte == "<?= Constantes::MARITIMO ?>") {
                         tipoDoc = 'Hbls';
                         // tipoGrid = 'Colsys.Ino.GridDocsTransporte';
-                        tipoGrid = 'panel' /*FIX-ME Módulo de Impresion Hbls de Exportaciones*/
+                        tipoGrid = 'panel'; /*FIX-ME Módulo de Impresion Hbls de Exportaciones*/
+                    } else {
+                        tipoDoc = 'Docs';
+                        tipoGrid = 'panel';
                     }
                     tabs.push({
                         xtype: tipoGrid,
