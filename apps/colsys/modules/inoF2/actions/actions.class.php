@@ -21,6 +21,7 @@ class inoF2Actions extends sfActions {
     const RUTINA_OTM = 204;
     const RUTINA_COMISIONES = 214;
     const RUTINA_COLOTM = 216;
+    const RUTINA_CRM = 211;
 
     public function executeIndexExt5(sfWebRequest $request) {
 
@@ -64,6 +65,15 @@ class inoF2Actions extends sfActions {
                 //->addWhere("m.ca_idmaster = ?", array($request->getParameter("idmaster")))
                 ->execute();
         }        
+        
+        $this->permisosCrm = array();
+
+        $permisosCrm = $user->getControlAcceso(self::RUTINA_CRM);
+
+        $tipopermisosCrm = $user->getAccesoTotalRutina(self::RUTINA_CRM);
+        foreach ($tipopermisosCrm as $index => $tp) {
+            $this->permisosCrm[$index] = in_array($tp, $permisosCrm) ? true : false;
+        }
     }
 
     function executeDatosBusqueda($request) {
@@ -843,6 +853,7 @@ class inoF2Actions extends sfActions {
                     $ino->setCaOrigen($idorigen);
                     $ino->setCaDestino($iddestino);
                 }
+                $ino->setCaModalidad($modalidad);
 
                 if ($impoexpo == Constantes::EXPO) {
                     $datos = array("modalidad" => $request->getParameter("ca_modalidad"),
@@ -1035,9 +1046,14 @@ class inoF2Actions extends sfActions {
                 $data["transporte"] = utf8_encode($ino->getCaTransporte());
                 $data["modalidad"] = utf8_encode($ino->getCaModalidad());
 
-                if ($data['modalidad'] != null && $data['modalidad'] != "") {
+                if ($data['modalidad'] != null && $data['modalidad'] != "" ) {
                     $data['modalidadnoeditable'] = true;
                 } else {
+                    $data['modalidadnoeditable'] = false;
+                }
+
+                if($ino->getCaImpoexpo()==Constantes::INTERNO)
+                {
                     $data['modalidadnoeditable'] = false;
                 }
 
@@ -1400,6 +1416,7 @@ class inoF2Actions extends sfActions {
 
         $datos = array();
         $referencia = $request->getParameter("referencia");
+        $master = Doctrine::getTable("InoMaster")->findBy("ca_referencia",$referencia)->getFirst();
         $con = Doctrine_Manager::getInstance()->connection();
 
         $q1 = ParametroTable::retrieveByCaso("CU011", null, null, $caso_uso);
@@ -1455,7 +1472,8 @@ class inoF2Actions extends sfActions {
                 "fchevento" => $evento["ca_fchevento"],
                 "opcion" => $evento["ca_realizado"],
                 "tipoespecial" => $tipoespecial,
-                "documentos" => utf8_encode($stringdocs));
+                "documentos" => utf8_encode($stringdocs)
+            );
         }
 
         $this->responseArray = array("eve" => $eve, "success" => true, "root" => $datos);
@@ -2126,6 +2144,8 @@ class inoF2Actions extends sfActions {
     public function executeVerCompSAP(sfWebRequest $request) {
         Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $idmaster = $request->getParameter("idmaster");
+        $this->cierre = $request->getParameter("cierre");
+        $this->idmaster=$idmaster;
 
         $master = Doctrine::getTable("InoMaster")->find($idmaster);
         
@@ -2144,10 +2164,20 @@ class inoF2Actions extends sfActions {
         $datos["NumeroReferencia"]=$master->getCaReferencia();//"500.05.06.0108.18";
         //$datos["TipoDoc"]="V";
         $datos["Company"]=$path;
-        echo "<pre>";
+        $datos["impoexpo"]=utf8_encode($master->getCaImpoexpo());
+        $datos["transporte"]=utf8_encode($master->getCaTransporte());
+        $datos["fchcerrado"]=$master->getCaFchcerrado();
+        $datos["fchanulado"]=$master->getCaFchanulado();
+        $datos["fchliquidado"]=$master->getCaFchliquidado();
+        $datos["modalidad"]=$master->getCaModalidad();
+        $datos["referencia"]=$master->getCaReferencia();
+        $datos["tipofac"]="0";
+        $datos["idticket"]="0";
+        
+        //echo "<pre>";
         $this->logs =IntTransaccionesOut::getDocumentsxParam($datos);
         //print_r($this->logs);
-        echo "</pre>";
+        //echo "</pre>";
         //exit;
 
         $this->setLayout("email");
@@ -2396,7 +2426,10 @@ class inoF2Actions extends sfActions {
                             $ino->setCaUsuliquidado($this->getUser()->getUserId());
                             $ino->setCaFchliquidado(date("Y-m-d H:i:s"));
 
-                            $this->getUser()->log("Cerrar INO F2", false, array("url" => $idmaster));
+                            $this->getRequest()->setParameter('idmaster', $idmaster);
+                            $html = sfContext::getInstance()->getController()->getPresentationFor('inoF2', 'verCompSAP');                        
+                            $this->getUser()->log("Cerrar INO F2", false, array("url" => $idmaster,"agent"=>$html));
+                            
 
                             $ino->save();
                             $conn->commit();
@@ -2420,7 +2453,10 @@ class inoF2Actions extends sfActions {
                         $ino->setCaFchcerrado(date("Y-m-d H:i:s"));
                         $ino->setCaUsuliquidado($this->getUser()->getUserId());
                         $ino->setCaFchliquidado(date("Y-m-d H:i:s"));
-                        $this->getUser()->log("Cerrar INO F2", false, array("url" => $idmaster));
+                        
+                        $this->getRequest()->setParameter('idmaster', $idmaster);
+                        $html = sfContext::getInstance()->getController()->getPresentationFor('inoF2', 'verCompSAP');                        
+                        $this->getUser()->log("Cerrar INO F2", false, array("url" => $idmaster,"agent"=>$html));
 
                         $ino->save();
                         $conn->commit();
@@ -2443,20 +2479,15 @@ class inoF2Actions extends sfActions {
                         $ino->setCaUsucerrado($this->getUser()->getUserId());
                         $ino->setCaFchcerrado(date("Y-m-d H:i:s"));
                         $ino->setCaUsuliquidado($this->getUser()->getUserId());
-                        $ino->setCaFchliquidado(date("Y-m-d H:i:s"));
-                        $this->getUser()->log("Cerrar INO F2", false, array("url" => $idmaster));
+                        $ino->setCaFchliquidado(date("Y-m-d H:i:s"));                        
+                        
+                        $this->getRequest()->setParameter('idmaster', $idmaster);
+                        $html = sfContext::getInstance()->getController()->getPresentationFor('inoF2', 'verCompSAP');
+                        
+                        $this->getUser()->log("Cerrar INO F2", false, array("url" => $idmaster,"agent"=>$html));
 
                         $ino->save();
-                        $conn->commit();
-                        $datos["impoexpo"]=utf8_encode($ino->getCaImpoexpo());
-                        $datos["transporte"]=utf8_encode($ino->getCaTransporte());
-                        $datos["fchcerrado"]=$ino->getCaFchcerrado();
-                        $datos["fchanulado"]=$ino->getCaFchanulado();
-                        $datos["fchliquidado"]=$ino->getCaFchliquidado();
-                        $datos["modalidad"]=$ino->getCaModalidad();
-                        $datos["referencia"]=$ino->getCaReferencia();
-                        $datos["tipofac"]="0";
-                        $datos["idticket"]="0";
+                        $conn->commit();                        
 
                         $responseArray = array("success" => true, "datos"=>$datos, "usuarioLiquidado" => ($ino->getCaUsuliquidado() . " " . $ino->getCaFchliquidado()));
                     }else{
@@ -3303,7 +3334,16 @@ class inoF2Actions extends sfActions {
         $master = Doctrine::getTable("InoMaster")->find($idmaster);
         $con = Doctrine_Manager::getInstance()->connection();
 
-        $sql = "select distinct ca_idtransportista, ca_nombre, ca_idtransportista from vi_transportistas where ca_idtransportista in (select ca_valor::text from tb_parametros where ca_casouso = 'CU073' and ca_identificacion = 10 and ca_valor2 like '%" . $master->getCaDestino() . "%') and lower(ca_nombre) like '%" . strtolower($request->getParameter("q")) . "%' order by ca_nombre";
+        // $sql = "select distinct ca_idtransportista, ca_nombre, ca_idtransportista from vi_transportistas where ca_idtransportista in (select ca_valor::text from tb_parametros where ca_casouso = 'CU073' and ca_identificacion = 10 and ca_valor2 like '%" . $master->getCaDestino() . "%') and lower(ca_nombre) like '%" . strtolower($request->getParameter("q")) . "%' order by ca_nombre";
+        /*  Enero 24/2020 Se validan dos Aspectos: 1.) A partir de la Linea Naviera se filtran los Agentes Navieros que la representan en Colombia
+         *  y 2.) Se evalua que ese agente naviero este habilitado para operaciones por el puerto de llegada.
+         */
+        $sql = "select distinct ca_idtransportista, ca_nombre "
+                . "from vi_transportistas where "
+                . "     ca_idtransportista in (select ca_valor2::text from tb_parametros where ca_casouso = 'CU280' and ca_identificacion = " . $master->getCaIdlinea() . " and (ca_valor = '999-9999' or ca_valor = '" . $master->getCaDestino() . "') order by ca_valor desc limit 1) and "
+                . "     ca_idtransportista in (select ca_valor::text from tb_parametros where ca_casouso = 'CU073' and ca_identificacion = 10 and ca_valor2 like '%" . $master->getCaDestino() . "%') and lower(ca_nombre) like '%" . strtolower($request->getParameter("q")) . "%' "
+                . "order by ca_nombre";
+        
         $rs = $con->execute($sql);
         $transportistas = $rs->fetchAll();
 
@@ -3315,7 +3355,7 @@ class inoF2Actions extends sfActions {
             );
         }
 
-        $this->responseArray = array("root" => $data, "total" => count($data), "success" => true);
+        $this->responseArray = array("root" => $data, "total" => count($data), "query" => $sql, "success" => true);
         $this->setTemplate("responseTemplate");
     }
 
