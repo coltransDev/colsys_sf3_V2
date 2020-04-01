@@ -1625,6 +1625,100 @@ class inventoryActions extends sfActions {
         $this->mes_man = $request->getParameter("mes_man");     
         
     }
-}
+    
+    public function executeActualizacionMasiva(sfWebRequest $request){
+        
+        $ids = array(
+            'CCB-732',
+            'CCB-635',
+            'CCB-631',
+            'CCB-641',
+            'CCB-620',
+            'CCB-577',
+            'CCB-618',
+            'CCB-620',
+            'CCB-575',
+            'CCB-573',
+            'CCB-710',
+            'CCB-681',
+            'CCB-696',
+            'CCB-683',
+            'CCB-644',
+            'CCB-644',
+            'CCB-626',
+            'CCB-628',
+            'CCB-616',
+            'CCB-490',
+            'CCB-682',
+            'CCB-526',
+            'CCB-661',
+            'CCB-627',
+            'CCB-520',
+            'CCB-624',
+            'CCB-548',
+            'CCB-730',
+            'CCB-734',
+            'CCB-703',
+            'CCB-733',
+            'CCB-580',
+            'CCB-584',
+            'CCB-585',
+            'CCB-583',
+            'CCB-632',
+            'CCB-581',
+            'CCB-572',
+            'CCB-639',
+            'CCB-571',
+            'CCB-637',
+            'CCB-695',
+            'CCB-731',
+            'CCB-539',
+            'CCB-556'
+        );
+        
+        $chkseguimiento = "on";
+        $textSeguimiento = "Se realiza préstamo de equipo por contingencia COVID 19. Se adjunta formato para verificación";
+        
+        try{
+            for($i=0;$i<count($ids);$i++){
+                $j = $i+1;
 
+                $activo = Doctrine::getTable("InvActivo")->findBy("ca_identificador", $ids[$i])->getFirst();
+                
+                /*Crear un seguimiento*/
+                $idactivo = $inv->getCaIdactivo();
+                echo $j.".".$inv->getCaIdactivo()." ".$inv->getCaIdentificador()."<br/>";
+
+                $request->setParameter("idactivo",$idactivo);
+                $request->setParameter("chkseguimiento-checkbox",$chkseguimiento);
+                $request->setParameter("text_seguimiento",$textSeguimiento);
+
+                $this->executeGuardarSeguimiento($request);
+                
+                /*Copiar un mismo archivo  a todos los equipos*/
+                $folder =$activo->getDirectorioBase();
+                
+                $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
+
+                if (!is_dir($directory)) {
+                    @mkdir($directory, 0777, true);
+                }
+                chmod($directory, 0777);
+                
+                echo " Directorio.".$directory."<br/>";
+                
+                $nombre_archivo = "/srv/www/colsys_sf3/Actas_entrega_equipos_BOG.pdf";
+                
+                if (!copy($nombre_archivo, $directory . 'Actas_entrega_equipos_BOG.pdf')) {
+                    $errors= error_get_last();
+                    echo "COPY ERROR: ".$errors['type'];
+                    echo "<br />\n".$errors['message']."<br/>";
+                }                
+            }
+        }catch(Exception $e){
+            echo $e->getMessage();
+        }
+        $this->setTemplate("responseTemplate");
+    }
+}
 ?>
