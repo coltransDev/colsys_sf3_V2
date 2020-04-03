@@ -837,7 +837,7 @@ class clientesActions extends sfActions {
                 // $email->addAttachment("ids/formatos/Check_List_Circular_0170.pdf");
                 $email->addAttachment("ids/formatos/Manifestacion_suscrita_de_requisitos_minimos_de_seguridad.doc");
                 $email->addAttachment("ids/formatos/Formato_conocimiento_de_cliente.xls");
-                $email->addAttachment("ids/formatos/Solicitud_Estados_Finacieros.pdf");
+                // $email->addAttachment("ids/formatos/Solicitud_Estados_Finacieros.pdf");
                 $email->addAttachment("ids/formatos/Acuerdo_de_Seguridad_Coltrans.pdf");
                 $email->addAttachment("ids/formatos/Acuerdo_de_Seguridad_Colmas.pdf");
 
@@ -1089,7 +1089,7 @@ class clientesActions extends sfActions {
 
                 $email->addTo($comercial->getCaEmail());
                 $ccEmails = array();
-                $usuarios = Doctrine::getTable("Usuario")       // Compia el mensaje a las personas de la sucursal con el perfil control alertas
+                $usuarios = Doctrine::getTable("Usuario")       // Copia el mensaje a las personas de la sucursal con el perfil control alertas
                         ->createQuery("u")
                         ->innerJoin("u.UsuarioPerfil p")
                         ->innerJoin("u.Sucursal s")
@@ -2386,7 +2386,19 @@ class clientesActions extends sfActions {
                 ->execute();
         $data = array();
 
+        $hoy = date("Y-m-d");
+        $dias = 45;
+        
+        $fchlimite = strtotime ( '-'.$dias.' day' , strtotime ($hoy) ) ;
+        $fchlimite = date('Y-m-d', $fchlimite);
+        
         foreach ($mandatos as $mandato) {
+            $color = "row_green";
+            $fchvencimiento = date("Y-m-d", strtotime($mandato->getCaFchvencimiento()));
+            
+            if($fchvencimiento < $fchlimite)
+                 $color = "row_pink";
+            
             $data[] = array("idcliente" => $mandato->getCaIdcliente(),
                 "idciudad" => $mandato->getCaIdciudad(),
                 "ciudad" => utf8_encode($mandato->getCiudad()->getCaCiudad()),
@@ -2397,12 +2409,14 @@ class clientesActions extends sfActions {
                 "fchvencimiento" => $mandato->getCaFchvencimiento(),
                 "idarchivo" => $mandato->getCaIdarchivo(),
                 "nombre" => $mandato->getArchivos()->getCaNombre(),
-                "observaciones" => $mandato->getCaObservaciones()
+                "observaciones" => $mandato->getCaObservaciones(),
+                "color"=>$color
             );
         }
         $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
 
         $this->setTemplate("responseTemplate");
+        $this->setLayout("none");
     }
 
     public function executeGuardarMandatosyPoderes(sfWebRequest $request) {
@@ -2659,7 +2673,7 @@ class clientesActions extends sfActions {
         
     }
 
-    public function executeParamDocsExt4(sfWebRequest $request) {
+    public function executeParamDocsExt5(sfWebRequest $request) {
         
     }
 
@@ -2733,6 +2747,74 @@ class clientesActions extends sfActions {
             );
         }
         $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeMantenimientoDocumentos(sfWebRequest $request) {
+        $idtipo = $request->getParameter("idtipo");
+        $tipo = $request->getParameter("tipo");
+        $accion = $request->getParameter("accion");
+        
+        $con = Doctrine_Manager::getInstance()->connection();
+        try {
+            $con->beginTransaction();
+            if ($accion and $accion == "Eliminar") {
+                $tipoDocumento = Doctrine::getTable('IdsTipoDocumento')->find($idtipo);
+                if ($tipoDocumento) {
+                    $sql = "delete from ids.tb_documentosxconc where ca_idtipo = $idtipo";
+                    $rs = $con->execute($sql);
+                    $documentos = Doctrine::getTable("Documentosxconc")
+                            ->createQuery("d")
+                            ->addWhere("d.ca_idtipo = ? ", $idtipo)
+                            ->execute();
+                    foreach ($documentos as $documento) {
+                        $documento->delete();
+                    }
+                    $tipoDocumento->delete();
+                }
+            } else {
+                $tipoDocumento = null;
+                if ($idtipo) {
+                    $tipoDocumento = Doctrine::getTable('IdsTipoDocumento')->find($idtipo);
+                }
+                if (!$tipoDocumento) {
+                    $accion = "Nuevo";
+                    $tipoDocumento = new IdsTipoDocumento();
+                    $tipoDocumento->setCaEquivalentea(25);
+                }
+                $tipoDocumento->setCaTipo(utf8_decode($tipo));
+                $tipoDocumento->save();
+                
+                if ($accion == "Nuevo") {
+                    $sql = "select distinct ca_idempresa from ids.tb_documentosxconc";
+                    $rs = $con->execute($sql);
+                    $empresas = $rs->fetchAll(PDO::FETCH_COLUMN);
+                    
+                    foreach ($empresas as $empresa) {
+                        $documentosxconc = new Documentosxconc();
+                        $documentosxconc->setCaIdtipo($tipoDocumento->getCaIdtipo());
+                        $documentosxconc->setCaTipo("CNC");
+                        $documentosxconc->setCaIdempresa($empresa);
+                        $documentosxconc->setCaPerjuridica(false);
+                        $documentosxconc->setCaPerjuridicaReciente(false);
+                        $documentosxconc->setCaPerjuridicaActivos(false);
+                        $documentosxconc->setCaGranContribuyente(false);
+                        $documentosxconc->setCaPersonaNatural(false);
+                        $documentosxconc->setCaPersonaNaturalComerciante(false);
+                        $documentosxconc->setCaNaturalComercianteReciente(false);
+                        $documentosxconc->setCaPerjuridicaCincomil(false);
+                        $documentosxconc->setCaPerjuridicaTresmil(false);
+                        $documentosxconc->save();
+                    }
+                }
+            }
+            $con->commit();
+            $this->responseArray = array("success" => true);
+        } catch (Exception $e) {
+            $con->rollBack();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_decode($e->getMessage()));
+        }
+
         $this->setTemplate("responseTemplate");
     }
 
