@@ -1113,6 +1113,11 @@ $folder = $reporte->getDirectorioBase();
                                     ?>
                         </div></td>
                 </tr>
+                    <tr>
+                        <td colspan="2"><div align="left"><b>Mandatos:</b><br />
+                            <?=include_component("clientes", "verMandatosyPoderes", array("idcliente"=>$reporte->getCliente()->getCaIdcliente()))?>
+                        </div></td>
+                    </tr>
                     <?
                 }
             }
