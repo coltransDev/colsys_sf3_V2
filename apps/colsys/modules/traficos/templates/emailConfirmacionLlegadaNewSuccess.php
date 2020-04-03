@@ -5,10 +5,6 @@ $reporte = $sf_data->getRaw("reporte");
 $etapa = $sf_data->getRaw("etapa");
 $firmaotm = $sf_data->getRaw("firmaotm");
 
-//$inoCliente = $reporte->getInoClientesSea();
-//$inoMaestra = $inoCliente->getInoMaestraSea();
-//$cliente = $inoCliente->getCliente();
-
 $house = $reporte->getInoHouse()->getFirst();
 $master = $house->getInoMaster();
 $cliente = $house->getCliente();
@@ -23,24 +19,7 @@ $muelle = ParametroTable::retrieveByCaso("CU268", null, null,$master->getInoMast
                 <b><?= strtoupper($cliente->getCaCompania()) ?></b>
                 <br /><br />
                 <?= Utils::replace($status->getCaIntroduccion()); ?>
-            </td>            
-            <?
-//            if ($user->getSucursal()->getEmpresa()->getCaNombre() == "Coltrans S.A.S.") {
-                ?>
-<!--                <td width="300">
-                    <div style="float:right"><a href="https://www.coltrans.com.co/logosoficiales/coltrans/fitac2_2018.jpg" target="_blank"><img src="https://www.coltrans.com.co/logosoficiales/coltrans/fitac2_2018.jpg" width="300" /></a></div>
-                </td>-->
-                <?
-//            }
-//            $etapas = array("IAPIN","IAAGR","IACCR","IAETA","IMAGR","IMCAG","IMETA","IMCPD","EERDC","EERCN","EEETD","EEFFL","TTRPL","TTDES","TTCOL");
-//            if (in_array($status->getCaIdetapa(), $etapas)) {
-                ?>
-<!--                <td width="170">
-                    <div style="float:right"><a href="https://www.micentroempresarial.com/clientescoltrans" target="_blank"><img src="https://www.colsys.com.co/images/publicidad/Inv_Decreto_Aduanero.jpg" width="500"/></a></div>
-                </td>-->
-                <?
-//            }
-//            ?>
+            </td>
         </tr>
     </table><br /><br />
 
@@ -125,9 +104,8 @@ $muelle = ParametroTable::retrieveByCaso("CU268", null, null,$master->getInoMast
 
             if ($master->getCaModalidad() == "FCL") {
                 if ($house) {
-                    $houseSea = $house->getInoHouseSea();
-                    $datosHouSea = json_decode($houseSea->getCaDatos(),1);
-                    $equipos = $datosHouSea["equipos"];
+                    $houseSea = $house->getInoHouseSea();                    
+                    $equipos = $houseSea->getDatosJson("equipos");
                     
                     if (count($equipos)>0){
                         ?>
@@ -183,32 +161,6 @@ $muelle = ParametroTable::retrieveByCaso("CU268", null, null,$master->getInoMast
                     $equipos = $reporte->getRepEquipos();
                     if (count($equipos) > 0) {
                         ?>
-    <!--                    <tr>
-                            <td colspan="6">
-                                <table width="100%" cellspacing="1" border="1" class="tableList">
-                                    <tr>
-                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="4">Relación de Contenedores</th>
-                                    </tr>
-                                    <tr>
-                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Concepto</th>
-                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Num. Contenedor</th>
-                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Sello</th>
-                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Observaciones</th>
-                                    </tr>
-                                    <?
-                                    foreach ($equipos as $equipo) {
-                                        ?>
-                                        <tr>
-                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?//= $equipo->getConcepto()->getCaConcepto() ?></td>
-                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?//= $equipo->getCaSerial() ?></td>
-                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?//= $equipo->getCaNumprecinto() ?></td>
-                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?//= $equipo->getCaObservaciones() ? $equipo->getCaObservaciones() : "&nbsp;" ?></td>
-                                        </tr>
-                                        <?
-                                    }
-                                    ?>
-                                </table></td>
-                        </tr>-->
                         <tr>
                             <td colspan="6">
                                 <table width="100%" cellspacing="0" border="1" class="tableList">
@@ -319,8 +271,7 @@ $muelle = ParametroTable::retrieveByCaso("CU268", null, null,$master->getInoMast
         ?>
     </table><br />
     
-    <div style="padding:10px 40px; background:#F8F8F8;width:920px;border-radius:8px;">
-        <!--<?//= $inoCliente->getCaMensaje() ?><br />-->
+    <div style="padding:10px 40px; background:#F8F8F8;width:920px;border-radius:8px;">        
         <!--<?= $datosMaster["mensaje"] ?>-->
         <? 
         $cartaStd = $reporte->getCliente()->cartaGarantiaStd(null);
