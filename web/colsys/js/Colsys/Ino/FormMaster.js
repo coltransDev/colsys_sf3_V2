@@ -818,6 +818,7 @@ Ext.define('Colsys.Ino.FormMaster', {
                 store.reload();
                 this.form.load({
                     url: '/inoF2/datosMaster',
+                    waitMsg: 'Cargando informaci\u00f3n de la referencia. Por favor espere un momento...',
                     params: {"idmaster": this.idmaster},
                     success: function (response, options) {
                         
