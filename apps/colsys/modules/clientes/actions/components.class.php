@@ -219,5 +219,14 @@ class clientesComponents extends sfComponents {
         }
     }
 
+    public function executeVerMandatosyPoderes() {
+
+        $this->getRequest()->setParameter('id',$this->idcliente);
+        $datos = sfContext::getInstance()->getController()->getPresentationFor( 'clientes', 'datosMandatosyPoderes');        
+        $datos = json_decode($datos, true);
+        
+        $this->mandatos = $datos["root"];        
+        $this->archivos = Doctrine::getTable("Archivos")->findByDql("(ca_iddocumental = ? OR ca_iddocumental = ? OR ca_iddocumental = ?) AND ca_ref1 = ?", array(35,36,37, $this->idcliente));
+    }
 }
 ?>
