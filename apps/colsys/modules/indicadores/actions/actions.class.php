@@ -66,7 +66,7 @@ class indicadoresActions extends sfActions{
        $indicadores = Doctrine::getTable("Idg")
                 ->createQuery("i")
                 ->innerJoin("i.IdgProcesos p")
-                ->where("i.ca_activo = true")
+//                ->where("i.ca_activo = true")
                 ->orderBy("p.ca_nombre ASC, i.ca_nombre ASC")
                 ->execute();
         
@@ -180,7 +180,8 @@ class indicadoresActions extends sfActions{
                     "Transición SAP",
                     "Falla en sistema de facturación",
                     "Requisitos Cliente",
-                    "Cliente no creado en sistema contable"
+                    "Cliente no creado en sistema contable",
+                    "Fuerza Mayor Salubridad"
                 );
                 $filtroUsuario = "ca_usuenvio";
                 break;
@@ -218,6 +219,7 @@ class indicadoresActions extends sfActions{
                 $filtroUsuario = "ca_usuenvio";
                 break;
             case 40: // Oportunidad en las exportaciones aéreas y marítimas Colmas
+            case 41: // Oportunidad en las exportaciones aéreas y marítimas Colmas
                 $q = Doctrine::getTable("InoViIndicadoresExpAdu")                
                     ->createQuery("v")
                     ->select("*")                
@@ -354,6 +356,7 @@ class indicadoresActions extends sfActions{
                         $dataGrafica[] = array($d["v_ca_usuenvio_seg"] => array($mes => $idgval));
                         break;
                     case 40:
+                    case 41:
                         $inoAdu = Doctrine::getTable("InoMaestraAdu")->find($d["v_ca_referencia"]);
                         if(count($inoAdu->getInoIngresosAdu())== 0){
                             $excluir = true;
@@ -601,7 +604,8 @@ class indicadoresActions extends sfActions{
         if($indicador->getCaIdg()==37){
             $format = 'TABLOID';
         }
-        
+//        print_r($datosIdg);
+//        exit;
         $pdf = new TCPDF("L", PDF_UNIT, $datosIdg["formatpdf"], true, 'UTF-8', false);
 
         // set document information
@@ -1044,5 +1048,57 @@ class indicadoresActions extends sfActions{
             $this->responseArray = array("success" => false, "errorInfo"=> utf8_encode($e->getMessage()));
         }
         $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeRecalcularIndicador(sfWebRequest $request){
+        
+        $id = 40;
+        
+        $idgs = Doctrine::getTable("InoIndicadores")
+                ->createQuery("i")
+                ->where("ca_idindicador = ?", $id)
+                ->execute();
+        
+        echo count($idgs);
+        $i = 0;
+        
+        $conn = Doctrine::getTable("InoIndicadores")->getConnection();
+        $conn->beginTransaction();
+        
+        try{
+            foreach($idgs as $idg){
+                $i++;
+                $reporte = Doctrine::getTable("Reporte")->findOneBy("ca_consecutivo", $idg->getCaIdcaso());
+                //echo $i. ".  ". $idg->getCaIdcaso()."<br>";
+                echo $i. ".  ". $reporte->getCaTransporte()."<br/>";
+
+                if($reporte->getCaTransporte() == Constantes::MARITIMO){
+                    $idg->setCaIdindicador(41);                
+
+                    if($idg->getCaIdg() > 12){
+                        $idg->setCaEstado(FALSE);
+                    }else{
+                        $idg->setCaEstado(TRUE);
+                    }
+
+                }else if($reporte->getCaTransporte() == Constantes::AEREO){
+                    if($idg->getCaIdg() > 4){
+                        $idg->setCaEstado(FALSE);
+                    }else{
+                        $idg->setCaEstado(TRUE);
+                    }                
+                }
+
+                $idg->save($conn);
+                
+            }
+            $conn->commit();
+        }catch(Exception $e){
+            $conn->rollback();
+            echo utf8_encode($e->getMessage());
+        }
+        
+        $this->setTemplate("responseTemplate");
+        
     }
 }
