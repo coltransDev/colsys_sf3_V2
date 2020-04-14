@@ -1,27 +1,52 @@
+<style>
+    #customers {
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;        
+        width: 100%;
+    }
+
+    #customers td, #customers th {
+        border: 1px solid #ddd;
+        padding: 2px;        
+    }
+      
+    #customers th {
+        text-align: center;
+        background-color: #3892D4;
+        color: white;
+    }
+</style>
+
 <?
     $permisos=$sf_data->getRaw("permisos");
+    $permisosCrm=$sf_data->getRaw("permisosCrm");
 ?>
 <link rel="stylesheet" type="text/css"  href="/js/ext6/build/packages/charts/classic/classic/resources/charts-all.css"/>
 <table  align="center">
     <tr><td><div id="idPrincipal"></div></td></tr>    
 </table>
 <script>
-    
+    winModo = null;
     Ext.Loader.setConfig({
         enabled: true,
         paths: {            
-            'Colsys':'/js/Colsys'            
+            'Colsys':'/js/Colsys',
+            'Ext.ux':'/js/ext5/examples/ux'
         }
     });
 
     Ext.onReady(function(){
         
-        var permisos = Ext.decode('<?=json_encode($permisos)?>');
+        var permisosG = Ext.decode('<?=json_encode($permisos)?>');        
+        var permisoscrm= Ext.decode('<?=json_encode($permisosCrm)?>');
+        
+        var permisos = permisosG.expoaduana;        
+        
+        console.log(permisos);
         
         Ext.define('ComboIdg', {
             extend: 'Ext.form.field.ComboBox',
             alias: 'widget.combo-idg',
-            store: ['SI', 'NO', 'COLLECT','FACTURA AL AGENTE']
+            store: ['SI', 'NO']
         });
 
         Ext.create('Ext.panel.Panel', {
@@ -83,9 +108,9 @@
                                     }
 
                                     if (record.data.aplicaidg) {                                            
-                                        Ext.getCmp("aplicaidg").setValue(record.data.aplicaidg);
+                                        Ext.getCmp("aplicaidg").setValue("SI");
                                     }else{
-                                        Ext.getCmp("aplicaidg").setValue(null);
+                                        Ext.getCmp("aplicaidg").setValue("NO");
                                     }                                        
 
                                     if(record.data.m_ca_transporte){
@@ -101,7 +126,7 @@
                                             {"idreporte": record.data.idreporte, "consecutivo": record.data.consecutivo}
                                         );
                                         Ext.getCmp("comboReporte").setValue(record.data.idreporte);                                        
-                                        this.up('panel').up("panel").cargarReferencia(combo.getValue(), fchCerrado);                                        
+                                        this.up('panel').up("panel").cargarReferencia(record.data.m_ca_referencia, fchCerrado);                                        
                                     }else{
                                         Ext.getCmp("comboReporte").setValue(null);                                                
                                     }
@@ -140,7 +165,7 @@
                             name: 'agenciaad',                            
                             idtransporte: 'transporte',
                             allowBlank: false
-                        }),                    
+                        }),                        
                         Ext.create('ComboIdg',{
                             fieldLabel: 'Aplica IDG',
                             forceSelection: true,
@@ -205,10 +230,99 @@
                             }
                         }
                     }]
-                })
-                
+                })                
             ],
+            listeners:{
+                beforerender: function (){                
+//                    this.addTool({
+//                        type: 'plus',                    
+//                        tooltip: 'Referencia Aduana',
+//                        handler: function (event, toolEl, panelHeader){
+//                            if (winModo == null){
+//                                winModo = Ext.create('Ext.window.Window', {
+//                                    title: 'Seleccion de Tipo de Referencia',
+//                                    height: 700,
+//                                    width: 1000,
+//                                    layout: 'fit',
+//                                    closeAction: 'hide',                                
+//                                    items:[
+//                                        Ext.create('Ext.ux.IFrame',{
+//                                            id: 'refaduana',
+//                                            height: '100%',
+//                                            width: '100%',
+//                                            src: '/Coltrans/Aduanas/AgregarReferenciaAction.do'
+//                                        })
+//                                    ],
+//                                    listeners:{
+//                                        afterrender: function(t, eOpts){
+//                                            tb = new Ext.toolbar.Toolbar({dock: 'top'});
+//
+//                                            tb.add({
+//                                                dock: 'top',
+//                                                xtype: 'button',
+//                                                text: 'Completar Referencia Exportaciones',                                                
+//                                                id: 'btn-save-1',
+//                                                handler: function() {
+//                                                    var uxiframe = this.up("window").down("uxiframe");
+//                                                    var referencia = uxiframe.getEl().dom.ownerDocument.all[481].contentDocument.documentElement.children[1].children[14].children[0][0].value;
+//                                                    console.log(referencia);
+//                                                    
+//                                                    ref=referencia;
+//                                                    tabpanel = Ext.getCmp('tabpanel1');
+//
+//                                                    if(!tabpanel.getChildByElement('tab'+ref) && ref!="")
+//                                                    {
+//                                            //            console.log(permisosG);
+//
+//                                                        if(Ext.getCmp('fmImpoexpo').getValue()=="INTERNO")
+//                                                            tmppermisos=permisosG.terrestre;
+//                                                        else if(Ext.getCmp('fmImpoexpo').getValue()=="Exportaci\u00F3n")
+//                                                            tmppermisos=permisosG.exportacion;
+//                                                        else if(Ext.getCmp('fmImpoexpo').getValue()=="Importaci\u00F3n" || Ext.getCmp('fmImpoexpo').getValue()=="Triangulaci\u00F3n")
+//                                                        {
+//                                                            if(Ext.getCmp('fmTransporte').getValue()=="Mar\u00EDtimo")
+//                                                                tmppermisos=permisosG.maritimo;
+//                                                            if(Ext.getCmp('fmTransporte').getValue()=="A\u00E9reo")
+//                                                                tmppermisos=permisosG.aereo;
+//                                                        }
+//                                                        else if(Ext.getCmp('fmImpoexpo').getValue()=="OTM-DTA")
+//                                                            tmppermisos=permisosG.otm;
+//                                                        //console.log(Ext.getcmp("fmEmpresa").getValue());
+//                                                        //console.log(Ext.getCmp('fmEmpresa').items.get(0).getGroupValue());
+//
+//                                                        tabpanel.add(
+//                                                        {
+//                                                            title: ref,
+//                                                            id:'tab'+ref,
+//                                                            itemId:'tab'+ref,
+//                                                            closable :true,
+//                                                            autoScroll: true,
+//                                                            items: [new Colsys.Ino.Mainpanel({"idmaster":ref,
+//                                                                    idtransporte: Ext.getCmp('fmTransporte').getValue(),
+//                                                                    idimpoexpo: Ext.getCmp('fmImpoexpo').getValue(),
+//                                                                    idempresa: Ext.getCmp('fmEmpresa').items.get(0).getGroupValue(),
+//                                                                    permisos:tmppermisos
+//                                                                })]
+//                                                        }).show();
+//                                                    }
+//        
+//        tabpanel.setActiveTab('tab'+ref);
+//        this.up('window').close();
+//                                                }
+//                                            });
+//                                            t.addDocked(tb, 'top');
+//                                        }
+//                                    }
+//                                });
+//                            }
+//                            winModo.show();
+//                        }
+//                    });                
+                }
+            },
             cargarReferencia: function(idreferencia, fchCerrado){        
+                
+                console.log(idreferencia+"-"+ fchCerrado);
                 var me=this;
                 
                 if(fchCerrado != null){
@@ -245,19 +359,44 @@
                                         //flex: 1,
                                         html: '<iframe id="reportframe" width="100%" height="100%" src="/Coltrans/Aduanas/ConsultaReferenciaAction.do?referencia='+idreferencia+'&consulta="></iframe>'
                                     }),
-                                    {
-                                        xtype: 'Colsys.Ino.GridEvento',
+//                                    {
+//                                        xtype: 'Colsys.Ino.GridEvento',
+//                                        title: "Eventos",
+//                                        id: "Eventos-",
+//                                        name: "Eventos-",
+//                                        idmaster: this.idmaster,
+//                                        idreferencia: idreferencia,
+//                                        permisos: permisos,
+//                                        plugins: [
+//                                            new Ext.grid.plugin.CellEditing({clicksToEdit: 1})
+//                                        ],
+//                                        iconCls: 'event-add'
+//                                    },
+                                    Ext.create('Ext.Panel', {
                                         title: "Eventos",
-                                        id: "Eventos-",
-                                        name: "Eventos-",
-                                        idmaster: this.idmaster,
-                                        idreferencia: idreferencia,
-                                        permisos: permisos,
-                                        plugins: [
-                                            new Ext.grid.plugin.CellEditing({clicksToEdit: 1})
-                                        ],
-                                        iconCls: 'event-add'
-                                    },
+                                        layout: {
+                                            type: 'vbox',
+                                            pack: 'start',
+                                            align: 'stretch'
+                                        },    
+                                        iconCls: 'event-add',
+                                        id: "Panel-Eventos-",
+                                        name: "Panel-Eventos-",
+                                        items: [{
+                                            xtype: 'Colsys.Ino.GridEvento',
+                                            id: "Eventos-",
+                                            name: "Eventos-",
+                                            idmaster: me.idmaster,                                            
+                                            idreferencia: idreferencia,
+                                            tipo: 'Aduana',
+                                            permisos: permisos,
+                                            permisoscrm: permisoscrm,
+                                            plugins: [
+                                                new Ext.grid.plugin.CellEditing({clicksToEdit: 1})
+                                            ],
+                                            flex: 2
+                                        }]
+                                    }),
                                     {
                                         xtype: 'Colsys.GestDocumental.treeGridFiles',
                                         title: "Documentos",

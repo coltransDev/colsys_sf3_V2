@@ -10,4 +10,7 @@
  */
 class aduanaComponents extends sfComponents {
     
+    public function executeMainPanel() {
+        
+    }
 }
