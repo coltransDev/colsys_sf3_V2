@@ -6,7 +6,7 @@
 
 include_component("idgsistemas", "formIndicadoresGestionPanel",array("idetapa1"=>$idetapa1, "idetapa2"=>$idetapa2, "etapa1"=>$etapa1, "etapa2"=>$etapa2, "lcs"=>$lcs));
 
-$array = array();
+$array = $tiposa = array();
 $cuantos_lcs = 0;
 $cuantos_lci = 0;
 $totales = array();
@@ -84,6 +84,9 @@ if (!$idgsistemas) {
         $estados = $tipos = array();
         foreach ($idgsistemas as $idgsistema) {
             //Cálculo de horas laborales
+            
+            if($idgsistema["ca_type"]== "Invalido")
+                continue;
 
             $hoy = date("Y-m-d H:i:s");
 
@@ -169,7 +172,7 @@ if (!$idgsistemas) {
                 }
                 
                 //Cálculo de Tiempo por Servicio
-                $array_etapa[] = $calculo_etapa_hms;
+                $array_etapa[] = $calculo_etapas;
                 $cuantos_etapa = count($array_etapa);
             }
 
@@ -183,6 +186,7 @@ if (!$idgsistemas) {
                 $totales[$idgsistema["ca_assignedto"]]["total_tickets"] = 0;
                 $totales[$idgsistema["ca_assignedto"]]["prom_tiempo"] = 0;
             }
+            $totales[$idgsistema["ca_assignedto"]]["estado"][$idgsistema["ca_estado"]]++;
             $totales[$idgsistema["ca_assignedto"]]["total_tickets"] ++;
             $totales[$idgsistema["ca_assignedto"]]["prom_tiempo"]+=$calculo_seg;
             
@@ -191,6 +195,11 @@ if (!$idgsistemas) {
             
             //Calculo de Tipos
             $tipos[$idgsistema["ca_type"]]+=1;
+            
+            if($es_auditoria){
+                $tiposa[$idgsistema["ca_type"]][$idgsistema["ca_estado"]][$idgsistema["ca_name"]][$idgsistema["ca_nombre"]][$idgsistema["empresa"]]++;                
+                
+            }
             
             ?>
             <tr>
@@ -241,7 +250,7 @@ if (!$idgsistemas) {
         $promedio_seg = TimeUtils::array_avg($array);
         $promedio_hms = TimeUtils::tiempoSegundos($promedio_seg);
         $porcentaje_lcs = @round($cuantos_lcs * 100 / $cuantos, 2);
-        $porcentaje_lci = round($cuantos_lci * 100 / $cuantos, 2);
+        $porcentaje_lci = round($cuantos_lci * 100 / $cuantos, 2);                
 //        echo "<pre>";echo TimeUtils::array_avg($array_etapa);echo "</pre>";
         if($checkboxStatus== "on"){
             $promedio_etapa_seg = TimeUtils::array_avg($array_etapa);
@@ -252,6 +261,7 @@ if (!$idgsistemas) {
         ?>
 
     </table>
+    <?echo "<pre>";print_r($tiposa);echo "</pre>";?>
     <br />
     <table class="tableList" align="center" width="30%">
         <tr>
@@ -332,11 +342,13 @@ if (!$idgsistemas) {
 
     <table class="tableList" align="center" width="20%" border="1">
         <tr>
-            <th colspan="4" style="text-align: center"><b>ESTADISTICA POR USUARIO ASIGNADO</b></th>
+            <th colspan="5" style="text-align: center"><b>ESTADISTICA POR USUARIO ASIGNADO</b></th>
         </tr>
         <tr>
             <th style="text-align: center"><b>Usuario</b></th>
             <th style="text-align: center"><b>No. Casos</b></th>
+            <th style="text-align: center"><b>Abiertos</b></th>
+            <th style="text-align: center"><b>Cerrados</b></th>
             <th style="text-align: center"><b>Promedio</b></th>
         </tr>
         <?
@@ -345,8 +357,10 @@ if (!$idgsistemas) {
             $promedio_ing = TimeUtils::tiempoSegundos($promedio);
             ?>
             <tr>
-                <th><b><?= $key ?></b></th>
+                <th><b><?= $key?$key:"Sin asignar" ?></b></th>
                 <td align="center"><?= $val["total_tickets"] ?></td>
+                <td align="center"><?= $val["estado"]["Abierto"]?$val["estado"]["Abierto"]:0 ?></td>
+                <td align="center"><?= $val["estado"]["Cerrado"]?$val["estado"]["Cerrado"]:0 ?></td>
                 <td align="center" style=" text-align: right"><? if ($promedio_ing > $lcs) { ?> <font color="red"><?= $promedio_ing ?></font><? } elseif ($promedio_ing < $lci) { ?><font color="orange"><?= $promedio_ing ?></font><? } else {
             echo $promedio_ing;
         } ?></td>
@@ -386,7 +400,7 @@ if (!$idgsistemas) {
             <th colspan="4" style="text-align: center"><b>ESTADISTICA POR TIPO</b></th>
         </tr>
         <tr>
-            <th style="text-align: center"><b>Estado del Ticket</b></th>
+            <th style="text-align: center"><b>Tipo</b></th>
             <th style="text-align: center"><b>No. Casos</b></th>
             <th style="text-align: center"><b>Porcentaje</b></th>
         </tr>
@@ -404,6 +418,33 @@ if (!$idgsistemas) {
         ?>
     </table>
     <?
+    if($es_auditoria){
+        ?>
+        <table class="tableList" align="center" width="20%" border="1">
+            <tr>
+                <th colspan="4" style="text-align: center"><b>ESTADISTICA POR TIPO</b></th>
+            </tr>
+            <tr>
+                <th style="text-align: center"><b>Tipo</b></th>
+                <th style="text-align: center"><b>No. Casos</b></th>
+                <th style="text-align: center"><b>Porcentaje</b></th>
+            </tr>
+            <?
+            ksort($tipos);        
+            foreach ($tipos as $key => $val) {
+                ?>            
+                <tr>
+                    <th><b><?= $key ?></b></th>
+                    <td align="center"><?=$val?></td>
+                    <td align="center"><?=round((($val*100)/array_sum($estados)),1)?>%</td>                
+                </tr>
+                <?
+            }   
+            ?>
+        </table>
+        <?
+        
+    }
 }
 ?>
 <script language="javascript">
