@@ -1148,13 +1148,16 @@ class Reporte extends BaseReporte {
             if ($inoCliente) {            
                 $hbl = $inoCliente->getCaDoctransporte();
             }
+            if($this->getRepExpo()->getEsAduana()){
+                $hbl = "Colmas";
+            }
         }
         
         $archivos=$archivos1 = array();
         
         if($referencia){
             
-            if($t==1)
+            if($t==1 && $hbl != "Colmas")
             {
                 $data = array();
                 $data["ref1"] = $referencia;
@@ -1171,9 +1174,10 @@ class Reporte extends BaseReporte {
         }
         if($t==3)
         {
+            //echo  "ref:".$this->getRepExpo()->getReferenciaAduana()."<br>";
             $data = array();            
             $data["ref1"] = $this->getRepExpo()->getReferenciaAduana();        
-            $data["ref2"] = "Colmas";        
+            $data["ref2"] = "Colmas";
             $archivos = ArchivosTable::getArchivosActivos($data);
             
         }
@@ -2152,5 +2156,20 @@ class Reporte extends BaseReporte {
                 }
             }
         }
+    }
+    
+    /*
+     * Devuelve el numero de la referencia de exportaciones aduana asociada al reporte
+     * @author Andrea Ramírez
+     */
+
+    public function getReferenciaExpoAdu() {
+
+        return Doctrine::getTable("InoExpoAdu")
+                        ->createQuery("ea")
+                        ->select("ea.ca_idreporte")
+                        ->leftJoin("ea.Reporte r")                        
+                        ->where("r.ca_consecutivo = ?", $this->getCaConsecutivo())
+                        ->fetchOne();
     }
 }
