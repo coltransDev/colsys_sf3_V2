@@ -182,7 +182,13 @@ PanelDocumentos = function( config ){
                iconCls: 'disk',
                scope:this,
                handler: this.guardarCambios
-           }
+           },
+           {
+                text: 'Recargar',
+                iconCls: 'refresh',
+                scope: this,
+                handler: this.recargar
+            }
        ],
        listeners:{            
            rowcontextmenu: this.onRowcontextMenu,
@@ -208,6 +214,9 @@ Ext.extend(PanelDocumentos, Ext.grid.EditorGridPanel, {
         records = [];
         records.push( record );
         store.insert( store.getCount(), records );
+    },
+    recargar: function(){
+        this.store.reload();
     },
     guardarCambios: function(){
         var store = this.store;
@@ -240,6 +249,8 @@ Ext.extend(PanelDocumentos, Ext.grid.EditorGridPanel, {
 
                             rec.set("sel", false); //Quita la seleccion de todas las columnas
                             rec.commit();
+                            
+                            store.reload()
                         }
                     }
                  }
