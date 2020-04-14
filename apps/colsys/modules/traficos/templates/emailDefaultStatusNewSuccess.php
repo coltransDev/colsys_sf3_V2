@@ -420,10 +420,10 @@ $modo = $sf_data->getRaw("modo");
         if ($reporte->getCaContinuacion() == "OTM")
             echo $textos['mensajeEmbarqueOTM'] . "<br />";
 
-//Ticket # 1853
+        //Ticket # 1853
         if ($reporte->getCaTransporte() == Constantes::AEREO && ($status->getCaIdetapa() == "IACCR" || $status->getCaIdetapa() == "IACAD" || $status->getCaIdetapa() == "IACDE"))
             echo "La fecha de llegada de la mercancía es un estimado ya que puede variar por decisión de la aerolínea.<br/>"; 
-//Ticket # 14000
+        //Ticket # 14000
         if($status->getProperty("muelle") && ($status->getCaIdetapa() == "IMETA" || $status->getCaIdetapa() == "IMETT")){
             echo "<br />Por favor tener en cuenta que el muelle informado en esta notificación es el informado por la naviera en su programación de itinerarios, sin embargo este muelle podría ser cambiado por la naviera en cualquier momento sin previa notificación por la naviera debido a cambios en su operación y / o negociaciones con los puertos.<br />";
         }
@@ -434,6 +434,9 @@ $modo = $sf_data->getRaw("modo");
 
         if ($status->getCaIdetapa() == "IMCPD")
             echo "IMPORTANTE: Favor tener en cuenta la entrada en vigencia de la Resolución No. 7408,  Declaracion  Anticipada. En caso de requerir certificación de fletes en forma anticipada informarnos por escrito y con el mayor gusto la suministraremos.<br />";
+        
+        if ($etapa->getCaImpoexpo() == "INTERNO")
+            echo "<br />IMPORTANTE: Siguiendo los lineamientos tomados a nivel mundial frente a las contingencias del Covid-19,  nos permitimos notificar que estamos haciendo los esfuerzos pertinentes para el despacho de sus cargas de manera oportuna, sin embargo, los costos, moras y demás incrementos que se presenten durante el desarrollo de su operación no podrán ser asumidos por Coltrans SAS, ya que estos son ajenos a nuestra logística. Así mismo los tiempos ofertados en nuestras cotizaciones dependerán de las condiciones actuales de mercado derivados de la misma situación. Agradecemos su comprensión y esperamos gestionar con diligencia sus despachos.<br />";
         ?>
         <br />
         Cualquier información adicional que ustedes requieran, con gusto le será suministrada.<br /><br />
@@ -446,3 +449,4 @@ $modo = $sf_data->getRaw("modo");
         ?>
     </div>
 </div>
+++

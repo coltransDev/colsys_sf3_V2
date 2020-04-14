@@ -252,18 +252,6 @@ $modo = $sf_data->getRaw("modo");
                     </tr>
                 <?
                 }
-            }else{
-                if($reporte->getCaImpoexpo() == Constantes::EXPO){
-                    $repexpo = $reporte->getRepExpo();
-                    if ($repexpo->getEsAduana()) { // AGENCIA DE ADUANA COLMAS
-                        ?>
-                        <tr>
-                            <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Referencia</b></td>
-                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $repexpo->getReferenciaAduana() ?></td>
-                        </tr>
-                        <?
-                    }
-                }
             }
             if ($muelle != "") {
                 ?>
@@ -324,7 +312,7 @@ $modo = $sf_data->getRaw("modo");
             if ($reporte->getCaColmas() == "Sí" && $reporte->getCaImpoexpo() != Constantes::EXPO) {
                 ?>
                 <tr>
-                    <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><strong>Nacionalización Colmas Ltda:</strong></td>
+                    <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><strong>Nacionalización Colmas S.A.S:</strong></td>
                     <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="5"><?= Utils::replace($reporte->getCaColmas()) ?></td>
                 </tr> 
                 <?
@@ -563,6 +551,8 @@ $modo = $sf_data->getRaw("modo");
 
         if ($status->getCaIdetapa() == "IMCPD")
             echo "IMPORTANTE: Favor tener en cuenta la entrada en vigencia de la Resolución No. 7408,  Declaracion  Anticipada. En caso de requerir certificación de fletes en forma anticipada informarnos por escrito y con el mayor gusto la suministraremos.<br />";
+        if ($etapa->getCaImpoexpo() == "INTERNO")
+            echo "<br />IMPORTANTE: Siguiendo los lineamientos tomados a nivel mundial frente a las contingencias del Covid-19,  nos permitimos notificar que estamos haciendo los esfuerzos pertinentes para el despacho de sus cargas de manera oportuna, sin embargo, los costos, moras y demás incrementos que se presenten durante el desarrollo de su operación no podrán ser asumidos por Coltrans SAS, ya que estos son ajenos a nuestra logística. Así mismo los tiempos ofertados en nuestras cotizaciones dependerán de las condiciones actuales de mercado derivados de la misma situación. Agradecemos su comprensión y esperamos gestionar con diligencia sus despachos.<br />";
         ?>
         <br />
         Cualquier información adicional que ustedes requieran, con gusto le será suministrada.<br /><br />
