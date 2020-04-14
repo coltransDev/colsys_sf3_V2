@@ -1413,15 +1413,28 @@ class inoF2Actions extends sfActions {
     public function executeDatosEventos(sfWebRequest $request) {
         Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $caso_uso = $request->getParameter("caso_uso");
+        $referencia = $request->getParameter("referencia");
+        $tipo = $request->getParameter("tipo");
 
         $datos = array();
-        $referencia = $request->getParameter("referencia");
+        
+        $impoexpo = "";       
+        
+        if($tipo=="Aduana"){            
+            $masterAduana = $master = Doctrine::getTable("InoMaestraAdu")->findBy("ca_referencia",$referencia)->getFirst();
+            $idmodalidad = $masterAduana->getInoExpoAdu()->getCaIdregimen();
+            $impoexpo = $masterAduana->getCaImpoexpo();
+            
+            $master = new InoMaster();
+            $master->setCaReferencia($referencia);            
+        }else{
         $master = Doctrine::getTable("InoMaster")->findBy("ca_referencia",$referencia)->getFirst();
+            $idmodalidad = $master->getDatosJson("modalidad");
+        }
+        
         $con = Doctrine_Manager::getInstance()->connection();
 
         $q1 = ParametroTable::retrieveByCaso("CU011", null, null, $caso_uso);
-
-
 
         $sql = "select ca_idconfig from control.tb_config where ca_param = '" . $q1[0]->getCaValor2() . "'";
         $rs = $con->execute($sql);
@@ -1435,45 +1448,59 @@ class inoF2Actions extends sfActions {
         $rs = $con->execute($sql);
         $eventos = $rs->fetchAll();
         $eve = "";
+        
+        $ultimoevento = $master->getFchUltimoEvento($impoexpo);
+        $infoeventos  = $master->getInfoEventos($impoexpo);
+        $idcliente = $master->getIdsExpo($tipo)->getCaIdcliente();
+        $cliente = $master->getIdsExpo($tipo)->getCliente()->getCaCompania();
+        
         foreach ($eventos as $evento) {
 
-            $evento["ca_idevento"] = $evento["ca_ident"];
-            if ($evento["ca_realizado"] == "1") {
-                $evento["ca_realizado"] = "SI";
-            } else if ($evento["ca_realizado"] == "0") {
-                $evento["ca_realizado"] = "NO";
-            }
-            $tipoespecial = "";
-            if (utf8_encode($evento["ca_value"]) == "SAE") {
-                $tipoespecial = "SAE";
-            } else if (utf8_encode($evento["ca_value"]) == "DEX") {
-                $tipoespecial = "DEX";
-            }
+            if($evento["ca_value"] != "Mandato"){
 
-            $stringdocs = "";
-            $eve .= $evento["ca_idevento"];
-
-            //if ($evento["ca_idevento"] == 9 || $evento["ca_idevento"] == 10 || $evento["ca_idevento"] == 6 || $evento["ca_idevento"] == 7) {
-
-                $documentos = Doctrine::getTable("ExpoAedex")
-                        ->createQuery("m")
-                        ->select("ca_iddocumento,ca_fechadoc")
-                        ->addWhere("m.ca_referencia = ? and ca_idevento = ?", array($referencia, $evento["ca_idevento"]))
-                        ->execute();
-
-                if ($documentos) {
-                    foreach ($documentos as $document) {
-                        $stringdocs .= "Doc: " . $document->getCaIddocumento() . " Fecha: " . $document->getCaFechadoc() . " | ";
-                    }
+                $evento["ca_idevento"] = $evento["ca_ident"];
+                if ($evento["ca_realizado"] == "1") {
+                    $evento["ca_realizado"] = "SI";
+                } else if ($evento["ca_realizado"] == "0") {
+                    $evento["ca_realizado"] = "NO";
                 }
-            //}
-            $datos[] = array("idevento" => $evento["ca_ident"],
-                "evento" => utf8_encode($evento["ca_value"]),
-                "fchevento" => $evento["ca_fchevento"],
-                "opcion" => $evento["ca_realizado"],
-                "tipoespecial" => $tipoespecial,
-                "documentos" => utf8_encode($stringdocs)
-            );
+                $tipoespecial = "";
+                if (utf8_encode($evento["ca_value"]) == "SAE") {
+                    $tipoespecial = "SAE";
+                } else if (utf8_encode($evento["ca_value"]) == "DEX") {
+                    $tipoespecial = "DEX";
+                }
+
+                $stringdocs = "";
+                $eve .= $evento["ca_idevento"];
+
+                //if ($evento["ca_idevento"] == 9 || $evento["ca_idevento"] == 10 || $evento["ca_idevento"] == 6 || $evento["ca_idevento"] == 7) {
+
+                    $documentos = Doctrine::getTable("ExpoAedex")
+                            ->createQuery("m")
+                            ->select("ca_iddocumento,ca_fechadoc")
+                            ->addWhere("m.ca_referencia = ? and ca_idevento = ?", array($referencia, $evento["ca_idevento"]))
+                            ->execute();
+
+                    if ($documentos) {
+                        foreach ($documentos as $document) {
+                            $stringdocs .= "Doc: " . $document->getCaIddocumento() . " Fecha: " . $document->getCaFechadoc() . " | ";
+                        }
+                    }
+                //}
+                $datos[] = array("idevento" => $evento["ca_ident"],
+                    "evento" => utf8_encode($evento["ca_value"]),
+                    "fchevento" => $evento["ca_fchevento"],
+                    "opcion" => $evento["ca_realizado"],
+                    "tipoespecial" => $tipoespecial,
+                            "documentos" => utf8_encode($stringdocs),
+                            "ultimoevento" => $ultimoevento,
+                            "infoeventos" => $infoeventos["tb_eventos"],
+                            "idclientehouse" => $idcliente,
+                            "cliente"=> utf8_encode($cliente),
+                            "idmodalidad"=>$idmodalidad
+                );
+            }
         }
 
         $this->responseArray = array("eve" => $eve, "success" => true, "root" => $datos);
