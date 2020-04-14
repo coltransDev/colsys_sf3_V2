@@ -49,20 +49,22 @@ class InoMaestraAdu extends BaseInoMaestraAdu
     
     public function generarIdg($options, $conn){        
         
-        $datos = json_decode($this->getCaDatos());
-        $options["fecha"] = $options["fchend"] = Utils::parseDate($options["fecha"], 'Y-m-d');                
-        $options["idcaso"] = $datos->consecutivo;
+        $options["fecha"] = $options["fchend"] = Utils::parseDate($options["fecha"], 'Y-m-d');        
+        $options["idcaso"] = $this->getInoExpoAdu()->getReporte()->getCaConsecutivo();
+        $impoexpo = $this->getCaImpoexpo();
+        $transporte = $this->getCaTransporte();
         
-        if($datos->impoexpo == Constantes::EXPO){
+        if($impoexpo == Constantes::EXPO){
         
             $master = new InoMaster();
             $master->setCaReferencia($this->getCaReferencia());
             
-            $infoeventos = $master->getInfoEventos($datos->impoexpo);
+            $infoeventos = $master->getInfoEventos($impoexpo);
             
-            $options["impoexpo"] = $datos->impoexpo;
+            $options["impoexpo"] = $impoexpo;
+            $options["transporte"] = $transporte;
             $options["eventos"] = $infoeventos["tb_eventos"];
-            $options["fchini"] = $master->getFchUltimoEvento($datos->impoexpo);
+            $options["fchini"] = $master->getFchUltimoEvento($impoexpo);
             
             if($options["fchini"] == null)
                 return array("cumplio"=>"No", "mensaje"=>"La referencia no tiene eventos creados. No es posible calcular el indicador");                                
@@ -78,9 +80,19 @@ class InoMaestraAdu extends BaseInoMaestraAdu
     function getIdgAduana($options){
         
         $options["fecha"] = Utils::parseDate($options["fecha"], 'Y-m-d');                
-        $options["idsucursal"] = $this->getUsuario()->getSucursal()->getCaIdsucursal();
+        $options["idsucursal"] = $this->getUsucreado()->getSucursal()->getCaIdsucursal();
         $options["idempresa"] = Constantes::IDCOLMAS;
         
         return IdgTable::getNuevoIndicador($options);        
+    }
+    
+    public function getIdsExpo(){
+        
+        return Doctrine::getTable("InoMaestraAdu")
+            ->createQuery("ad")
+            ->innerJoin("ad.Cliente c")
+            ->where("ca_referencia = ?", $this->getCaReferencia())
+            ->fetchOne();
+        
     }
 }
