@@ -71,6 +71,22 @@
         line-height: 12px;
         min-height: 40px;
     }
+    
+    #customers {
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;        
+        width: 100%;
+    }
+
+    #customers td, #customers th {
+        border: 1px solid #ddd;
+        padding: 2px;        
+    }
+      
+    #customers th {
+        text-align: center;
+        background-color: #3892D4;
+        color: white;
+    }
 </style>
 <?
 $permisos=$sf_data->getRaw("permisos");
@@ -156,7 +172,7 @@ Ext.onReady(function() {
                     }
                     else if(res.datos.impoexpo=="Exportaci\u00F3n")
                     {                                
-                        this.tmppermisos=permisosG2;                                    
+                        this.tmppermisos=permisosG2.exportacion;                                    
                         this.permisoscrm= permisosCrm;
                     }
                     else if(res.datos.impoexpo=="Importaci\u00F3n" || res.datos.impoexpo=="Triangulaci\u00F3n")
@@ -251,12 +267,12 @@ Ext.onReady(function() {
                 fchcerrado = '<?=$m->getCaFchcerrado()?>';
                 fchanulado = '<?=$m->getCaFchanulado()?>';
                 fchliquidado = '<?=$m->getCaFchliquidado()?>';
-
+                permisoscrm= permisosCrm;
+                
                 if(impoexpo=="INTERNO")
                     tmppermisos=permisosG.terrestre;
                 else if(impoexpo=="Exportaci\u00F3n"){
-                    tmppermisos=permisosG.exportacion;
-                    permisoscrm=permisosCrm;
+                    tmppermisos=permisosG.exportacion;                    
                 }else if(impoexpo=="Importaci\u00F3n"){
                     if(transporte=="Mar\u00EDtimo")
                         tmppermisos=permisosG.maritimo;

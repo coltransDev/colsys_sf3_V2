@@ -3,23 +3,12 @@
     Ext.define('Colsys.Ino.Mainpanel', {
         extend: 'Ext.panel.Panel',
         alias: 'widget.wCIMainpanel',
-        //bodyPadding: 10,
-//    "idmaster":12176,
         autoHeight: true,
         onRender: function (ct, position) {
+            var me = this;
+            
             tabs = new Array();            
-            //alert(this.permisos.toSource());
-            /*tabs.push({
-             xtype: 'Colsys.Pruebas.WgRowWidget',
-             title: "General ",
-             id: "form-prueba" + this.idmaster,
-             name: "form-prueba-" + this.idmaster,
-             idmaster: this.idmaster,
-             idtransporte: this.idtransporte,
-             idimpoexpo: this.idimpoexpo,
-             permisos: this.permisos
-             });*/
-
+            
             if (this.permisos.General == true) {
                 tabs.push({
                     xtype: 'Colsys.Ino.FormMaster',
@@ -132,38 +121,50 @@
                         idtransporte: this.idtransporte,
                         idimpoexpo: this.idimpoexpo,
                         permisos: this.permisos,
-                        /*plugins: [
-                         new Ext.grid.plugin.CellEditing({clicksToEdit: 1})
-                         ],*/
                         iconCls: 'icon-grid1'
                     });
                 }
 
                 if (this.idimpoexpo == "<?= Constantes::EXPO ?>") {
-                    tabs.push({
-                        xtype: 'Colsys.Ino.GridEvento',
-                        title: "Eventos",
-                        id: "Eventos-" + this.idmaster,
-                        name: "Eventos-" + this.idmaster,
-                        idmaster: this.idmaster,
-                        idtransporte: this.idtransporte,
-                        idimpoexpo: this.idimpoexpo,
-                        idreferencia: this.idreferencia,
-                        //caso_uso: '11',
-                        permisos: this.permisos,
-                        plugins: [
-                            new Ext.grid.plugin.CellEditing({clicksToEdit: 1})
-                        ],
-                        iconCls: 'event-add'
-                    });
+                    tabs.push(
+                        Ext.create('Ext.panel.Panel', {
+                            title: "Eventos",                            
+                            layout: {
+                                type: 'hbox',
+                                pack: 'start',
+                                align: 'stretch'
+                            },
+                            iconCls: 'event-add',
+                            id: "Panel-Eventos-" + this.idmaster,
+                            name: "Panel-Eventos-" + this.idmaster,
+                            items: [{                                    
+                                xtype: 'Colsys.Ino.GridEvento',                                
+                                title: 'Listado de Eventos',
+                                id: "Eventos-" + me.idmaster,
+                                name: "Eventos-" + me.idmaster,
+                                idmaster: me.idmaster,
+                                idtransporte: me.idtransporte,
+                                idimpoexpo: me.idimpoexpo,
+                                idreferencia: me.idreferencia,
+                                tipo: 'Carga',
+                                permisos: me.permisos,
+                                permisoscrm: me.permisoscrm,
+                                plugins: [
+                                    new Ext.grid.plugin.CellEditing({clicksToEdit: 1})
+                                ],
+                                collapsible: true,
+                                collapseDirection : 'left',
+                                flex: 1.5
+                            }]
+                        })
+                    );
 
                     var tipoDoc = '';
                     if (this.idtransporte == "<?= Constantes::AEREO ?>") {
                         tipoDoc = 'Gu\u00EDas';
                         tipoGrid = 'Colsys.Ino.GridAwbsTransporte';
                     } else if (this.idtransporte == "<?= Constantes::MARITIMO ?>") {
-                        tipoDoc = 'Hbls';
-                        // tipoGrid = 'Colsys.Ino.GridDocsTransporte';
+                        tipoDoc = 'Hbls';                        
                         tipoGrid = 'panel'; /*FIX-ME Módulo de Impresion Hbls de Exportaciones*/
                     } else {
                         tipoDoc = 'Docs';
