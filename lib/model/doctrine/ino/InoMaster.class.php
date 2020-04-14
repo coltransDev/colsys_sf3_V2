@@ -478,7 +478,13 @@ class InoMaster extends BaseInoMaster {
     
     public function getInfoEventos($impoexpo){
         
-        $maestra = $impoexpo == Constantes::EXPO?"tb_brk_maestra":"ino.tb_master";
+        if($impoexpo == Constantes::EXPO){            
+            $innerJoin = "INNER JOIN tb_brk_expo be ON be.ca_referencia = ext.ca_referencia "
+                       . "INNER JOIN tb_parametros prm ON (prm.ca_casouso = 'CU011' and be.ca_idregimen = prm.ca_identificacion)";
+        }else{            
+            $innerJoin = "INNER JOIN (select ca_referencia, (ca_datos->>'modalidad')::int as ca_tipoexpo from ino.tb_master) reg ON reg.ca_referencia = ext.ca_referencia "
+                       . "INNER JOIN tb_parametros prm ON (prm.ca_casouso = 'CU011' and reg.ca_tipoexpo = prm.ca_identificacion)";
+        }
         
         $conn = Doctrine_Manager::getInstance()->getConnection('master');
         $sql = "
@@ -487,8 +493,7 @@ class InoMaster extends BaseInoMaster {
                 LEFT OUTER JOIN (
                     SELECT DISTINCT ca_referencia as ca_referencia_aed, ca_idevento, min(ca_fechadoc) as ca_fechadoc 
                     FROM tb_expo_aedex group by ca_referencia, ca_idevento) aed ON (aed.ca_referencia_aed = ext.ca_referencia and aed.ca_idevento = ext.ca_idevento)
-                INNER JOIN (select ca_referencia, (ca_datos->>'modalidad')::int as ca_tipoexpo from $maestra) reg ON reg.ca_referencia = ext.ca_referencia
-                INNER JOIN tb_parametros prm ON (prm.ca_casouso = 'CU011' and reg.ca_tipoexpo = prm.ca_identificacion)  
+                $innerJoin                  
                 INNER JOIN tb_parametros pre ON (pre.ca_casouso = prm.ca_valor2 and pre.ca_identificacion = ext.ca_idevento)
             WHERE ca_realizado = 1 and ext.ca_referencia = '".$this->getCaReferencia()."'";
 
@@ -503,7 +508,7 @@ class InoMaster extends BaseInoMaster {
 
         $tbeventos = "<table>";
         foreach($eventos as $evento){
-            
+
             $tbeventos.= "<tr>";
             $tbeventos.= "  <td style='font-size: 9px;'>" . utf8_encode($evento['ca_valor']) . "</td>";
             $tbeventos.= "  <td style='font-size: 9px;'>" . $evento['ca_usuario'] . "</td>";
@@ -576,5 +581,22 @@ class InoMaster extends BaseInoMaster {
         $this->setDatosJson("cierre",true);
         $this->setCaObservaciones($this->getCaObservaciones()."\n. Auditoría autoriza cierre de referencia. Más información en la opción de Auditoría.");
         $this->save();        
+    }
+    
+    public function getIdsExpo($tipo){
+        
+        if ($tipo != "Aduana") {
+            return Doctrine::getTable("InoHouse")
+                            ->createQuery("h")
+                            ->innerJoin("h.Cliente c")
+                            ->where("ca_idmaster = ?", $this->getCaIdmaster())
+                            ->fetchOne();
+        } else {
+            return Doctrine::getTable("InoMaestraAdu")
+                            ->createQuery("ad")
+                            ->innerJoin("ad.Cliente c")
+                            ->where("ca_referencia = ?", $this->getCaReferencia())
+                            ->fetchOne();
+        }
     }
 }
