@@ -1620,7 +1620,7 @@ class inoF2Actions extends sfActions {
                     $ev->save();
                 }
                 $conn->commit();
-                $this->responseArray = array("success" => true);
+                $this->responseArray = array("success" => true, "msg"=>"Los eventos han sido cargados correctamente");
             } catch (Exception $e) {
                 $conn->rollback();
                 $this->responseArray = array("success" => false, "error" => $e->getMessage());
