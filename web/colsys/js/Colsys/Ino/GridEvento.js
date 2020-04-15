@@ -398,6 +398,7 @@ Ext.define('Colsys.Ino.GridEvento', {
                                                             }
                                                             rec.data.id = rec.id;
                                                             changes[x] = rec.data;
+                                                            x++;
                                                         }
                                                         var strGrid = JSON.stringify(changes);
 
@@ -420,8 +421,7 @@ Ext.define('Colsys.Ino.GridEvento', {
 
                                                 if (form.isValid()) {
                                                     form.submit({
-                                                        success: function(form, action) {
-                                                            panel.cargarReferencia(data.comboReferencia);
+                                                        success: function(form, action) {                                                            
                                                             Ext.Msg.alert('Success', action.result.msg);
                                                         },
                                                         failure: function(form, action) {
