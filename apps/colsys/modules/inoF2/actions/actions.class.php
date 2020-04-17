@@ -1623,12 +1623,12 @@ class inoF2Actions extends sfActions {
                 $this->responseArray = array("success" => true, "msg"=>"Los eventos han sido cargados correctamente");
             } catch (Exception $e) {
                 $conn->rollback();
-                $this->responseArray = array("success" => false, "error" => $e->getMessage());
+                $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
             }
         }
         else
         {
-            $this->responseArray = array("success" => false, "error" => "Numero de Referencia invalido ".$referencia);
+            $this->responseArray = array("success" => false, "errorInfo" => "Numero de Referencia invalido ".$referencia);
         }
         $this->setTemplate("responseTemplate");
     }
