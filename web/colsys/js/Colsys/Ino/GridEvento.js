@@ -382,7 +382,7 @@ Ext.define('Colsys.Ino.GridEvento', {
                                                     },
                                                     select: function ( combo, record, eOpts ){
 
-                                                        var modalidadAduana = record.data.ca_modalidad;
+                                                        var modalidadAduana = record.data.id_modalidad;
 
                                                         var storG = me.getStore();
                                                         x = 0;
@@ -391,14 +391,17 @@ Ext.define('Colsys.Ino.GridEvento', {
 
                                                         for (var i = 0; i < storG.getCount(); i++) {                                                                
                                                             var rec = storG.getAt(i);
-                                                            if(rec.data.modalidad != modalidadAduana){
+                                                            
+                                                            if(rec.data.idmodalidad != modalidadAduana){
                                                                 Ext.Msg.alert('Error', "El r\u00e9gimen de exportaci\u00f3n no coincide en las referencias solicitadas");
                                                                 win_exportar.close();
                                                                 win_exportar = null;                                                                    
                                                             }
-                                                            rec.data.id = rec.id;
-                                                            changes[x] = rec.data;
-                                                            x++;
+                                                            if(rec.data.fchevento != null){
+                                                                rec.data.id = rec.id;
+                                                                changes[x] = rec.data;
+                                                                x++;
+                                                            }
                                                         }
                                                         var strGrid = JSON.stringify(changes);
 
