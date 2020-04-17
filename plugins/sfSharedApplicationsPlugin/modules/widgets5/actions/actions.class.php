@@ -456,7 +456,7 @@ class widgets5Actions extends sfActions {
             );
         }
 
-        $this->responseArray = array("root" => $this->lineas, "total" => count($this->lineas), "success" => true);
+        $this->responseArray = array("root" => $this->lineas, "total" => count($this->lineas), "success" => true, "debug" => $q->getSqlQuery());
         $this->setTemplate("responseTemplate");
     }
 
@@ -3900,42 +3900,42 @@ class widgets5Actions extends sfActions {
             $debug = $q->getSqlQuery();
             $refs = $q->execute();
 
-            foreach ($refs as $k => $c) {
-                $datos = json_decode(utf8_encode($refs[$k]["m_ca_datos"]));
+            foreach ($refs as $k => $c) {                
                 $refs[$k]["m_ca_idmaster"] = utf8_encode($refs[$k]["m_ca_referencia"]);
                 $refs[$k]["m_ca_impoexpo"] = utf8_encode($refs[$k]["m_ca_impoexpo"]);
                 $refs[$k]["m_ca_mercancia"] = utf8_encode($refs[$k]["m_ca_mercancia"]);
+                $refs[$k]["m_ca_pedido"] = utf8_encode($refs[$k]["m_ca_pedido"]);
                 $refs[$k]["m_ca_proveedor"] = utf8_encode($refs[$k]["m_ca_proveedor"]);
                 $refs[$k]["m_ca_nombrecontacto"] = utf8_encode($refs[$k]["m_ca_nombrecontacto"]);
                 $refs[$k]["m_ca_transporte"] = utf8_encode($refs[$k]["m_ca_transporte"]);
+                $refs[$k]["m_ca_aplicaidg"] = $refs[$k]["m_ca_aplicaidg"]=="SI"?true:false;
                 $refs[$k]["o_ca_ciudad"] = utf8_encode($refs[$k]["o_ca_ciudad"]);
                 $refs[$k]["o_ca_puerto"] = utf8_encode($refs[$k]["o_ca_puerto"]);
                 $refs[$k]["d_ca_ciudad"] = utf8_encode($refs[$k]["d_ca_ciudad"]);
                 $refs[$k]["d_ca_puerto"] = utf8_encode($refs[$k]["d_ca_puerto"]);                
-                $refs[$k]["m_ca_observaciones"] = utf8_encode($refs[$k]["m_ca_observaciones"]);                
-                $refs[$k]["id_modalidad"] = $datos->modalidad;   
+                   
                 $refs[$k]["m_ca_datos"] = json_encode(utf8_encode($refs[$k]["m_ca_datos"]));
                 
-                $caso = "CU011";
-                $datomod = ParametroTable::retrieveByCaso($caso, null, null, $datos->modalidad);
+                if($refs[$k]["m_ca_impoexpo"] == utf8_encode(Constantes::EXPO)){
+                    $inoExpoAdu = Doctrine::getTable("InoExpoAdu")->find($refs[$k]["m_ca_referencia"]);
+                    
+                    if($inoExpoAdu){
+                        $caso = "CU011";
+                        $datomod = ParametroTable::retrieveByCaso($caso, null, null, $inoExpoAdu->getCaIdregimen());
+                        $refs[$k]["id_modalidad"] = $inoExpoAdu->getCaIdregimen();
+                        $refs[$k]["ca_modalidad"] = utf8_encode($datomod[0]->getCaValor());                        
 
-                $data["id_modalidad"] = $datos->modalidad;
-                if ($datos->modalidad) {
-                    $refs[$k]["ca_modalidad"] = utf8_encode($datomod[0]->getCaValor());
-                } 
-                $refs[$k]["idagencia"] = utf8_encode($datos->agencia);
-                if (is_numeric($datos->agencia)) {
-                    $agencia = Doctrine::getTable("Ids")->find($datos->agencia);
-                    if($agencia)
-                        $refs[$k]["agencia"] = utf8_encode($agencia->getCaNombre());
-                }
-                $refs[$k]["aplicaidg"] = utf8_encode($datos->idg);
-                $refs[$k]["idreporte"] = utf8_encode($datos->idreporte);
-                $refs[$k]["consecutivo"] = utf8_encode($datos->consecutivo);
+                        $refs[$k]["idagencia"] = $inoExpoAdu->getCaIdagencia();
+                        $agencia = Doctrine::getTable("Ids")->find($inoExpoAdu->getCaIdagencia());
+                        if($agencia)
+                            $refs[$k]["agencia"] = utf8_encode($agencia->getCaNombre());
                 
+                        $refs[$k]["idreporte"] = $inoExpoAdu->getCaIdreporte();
+                        $reporte = Doctrine::getTable("Reporte")->find($inoExpoAdu->getCaIdreporte());
+                        $refs[$k]["consecutivo"] = utf8_encode($reporte->getCaConsecutivo());
+                    }
+                }
             }
-
-//            echo "<pre>";print_r($refs);echo "</pre>";
             $this->responseArray = array("success" => true, "root" => $refs, "total" => count($refs), "debug" => $debug);
         } catch(Exception $e) {
             $this->responseArray = array("root" => array(), "total" => 0, "success" => false, "errorInfo"=>$e->getMessage());
