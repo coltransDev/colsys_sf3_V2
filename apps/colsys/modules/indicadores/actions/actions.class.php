@@ -459,7 +459,7 @@ class indicadoresActions extends sfActions{
 
             $summary = array();
             $summary["pnc_count"] = count($array_pnc);        
-            $summary["pnc_perc"] = count($array_avg)>0?Utils::formatNumber(round(count($array_pnc) / count($array_avg) * 100, 2), 2):0;
+            $summary["pnc_perc"] = count($array_avg)>0?Utils::formatNumber(round(count($array_pnc) / (count($array_avg)-count($array_null)) * 100, 2), 2):0;
             $summary["avg_count"] = count($array_avg)-count($array_null);
             $summary["avg_perc"] = $promedio_general;
             $summary["exc_count"] = count($array_null);
