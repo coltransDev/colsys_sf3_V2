@@ -9,7 +9,7 @@ include_component("idgsistemas", "formIndicadoresGestionPanel",array("idetapa1"=
 $array = $tiposa = array();
 $cuantos_lcs = 0;
 $cuantos_lci = 0;
-$totales = array();
+$totales = $informexTipos = $empresas = array();
 $total_ing = 0;
 $promedio_ing = 0;
 $festivos = TimeUtils::getFestivos();
@@ -196,9 +196,15 @@ if (!$idgsistemas) {
             //Calculo de Tipos
             $tipos[$idgsistema["ca_type"]]+=1;
             
+            $informexTipos[$idgsistema["ca_type"]][$idgsistema["ca_name"]][$idgsistema["ca_nombre"]][$idgsistema["empresa"]][$idgsistema["ca_estado"]]++;
+            $informexGrupo[$idgsistema["ca_name"]][$idgsistema["ca_type"]][$idgsistema["ca_nombre"]][$idgsistema["empresa"]][$idgsistema["ca_estado"]]++;
+            $informexUsuario[$idgsistema["ca_assignedto"]][$idgsistema["ca_type"]][$idgsistema["ca_name"]][$idgsistema["ca_estado"]][$idgsistema["ca_nombre"]][$idgsistema["empresa"]]++;
+            
+            if(!in_array($idgsistema["empresa"], $empresas))
+                $empresas[] = $idgsistema["empresa"];
+            
             if($es_auditoria){
-                $tiposa[$idgsistema["ca_type"]][$idgsistema["ca_estado"]][$idgsistema["ca_name"]][$idgsistema["ca_nombre"]][$idgsistema["empresa"]]++;                
-                
+                $tiposa[$idgsistema["ca_type"]][$idgsistema["ca_estado"]][$idgsistema["ca_name"]][$idgsistema["ca_nombre"]][$idgsistema["empresa"]]++;
             }
             
             ?>
@@ -261,7 +267,7 @@ if (!$idgsistemas) {
         ?>
 
     </table>
-    <?echo "<pre>";print_r($tiposa);echo "</pre>";?>
+    <??>
     <br />
     <table class="tableList" align="center" width="30%">
         <tr>
@@ -417,34 +423,231 @@ if (!$idgsistemas) {
         }   
         ?>
     </table>
-    <?
-    if($es_auditoria){
-        ?>
-        <table class="tableList" align="center" width="20%" border="1">
-            <tr>
-                <th colspan="4" style="text-align: center"><b>ESTADISTICA POR TIPO</b></th>
-            </tr>
-            <tr>
-                <th style="text-align: center"><b>Tipo</b></th>
-                <th style="text-align: center"><b>No. Casos</b></th>
-                <th style="text-align: center"><b>Porcentaje</b></th>
-            </tr>
-            <?
-            ksort($tipos);        
-            foreach ($tipos as $key => $val) {
-                ?>            
-                <tr>
-                    <th><b><?= $key ?></b></th>
-                    <td align="center"><?=$val?></td>
-                    <td align="center"><?=round((($val*100)/array_sum($estados)),1)?>%</td>                
-                </tr>
-                <?
-            }   
-            ?>
-        </table>
+    <br />
+    <br />
+    <table class="tableList" align="center" width="80%" border="1">
+        <tr>
+            <th colspan="7" style="text-align: center"><b>INFORME DETALLADO X TIPO</b></th>
+        </tr>
+        <tr>
+            <th rowspan="2" style="text-align: center"><b>Tipo</b></th>            
+            <th rowspan="2" style="text-align: center"><b>Grupo</b></th>
+            <th rowspan="2" style="text-align: center"><b>Sucursal</b></th>
+            <th rowspan="2" style="text-align: center"><b>Empresa</b></th>            
+            <th rowspan="1" colspan="2" style="text-align: center"><b>Estado</b></th>
+            <th rowspan="2" style="text-align: center"><b>Total</b></th>
+        </tr>
+        <tr>
+            <th rowspan="1" style="text-align: center"><b>Abierto</b></th>
+            <th rowspan="1" style="text-align: center"><b>Cerrado</b></th>
+        </tr>        
         <?
+        foreach ($informexTipos as $tipo => $gridGrupo) {
+            $nfilas1[$tipo]=count($gridGrupo);            
+            foreach ($gridGrupo as $grupo => $gridSucursal) {
+                $nfilas2[$tipo][$grupo] = count($gridSucursal);
+                foreach ($gridSucursal as $sucursal => $gridEmpresa) {
+                    $nfilas3[$tipo][$grupo][$sucursal] = count($gridEmpresa);
+                    $ntotal1[$tipo]+=$nfilas3[$tipo][$grupo][$sucursal];
+                    $ntotal2[$tipo][$grupo]+=$nfilas3[$tipo][$grupo][$sucursal];
+                }
+            }            
+        }        
+        $total= 0;
+        foreach ($informexTipos as $tipo => $gridGrupo) {            
+            ?>            
+            <tr>
+                <th rowspan="<?=$ntotal1[$tipo]?>"><b><?= $tipo ?></b></th>
+                <?
+                foreach ($gridGrupo as $grupo => $gridSucursal) {
+                    ?>
+                    <td rowspan="<?=$ntotal2[$tipo][$grupo]?>"><?=$grupo?></td>
+                    <?
+                    foreach ($gridSucursal as $sucursal => $gridEmpresa) {
+                        ?>
+                        <td ><?=$sucursal?></td>
+                        <?
+                        foreach ($gridEmpresa as $empresa => $gridEstado) {
+                            ?>
+                            <td><?=$empresa?></td>
+                            <td style="text-align: center"><?=$gridEstado["Abierto"]?></td>
+                            <td style="text-align: center"><?=$gridEstado["Cerrado"]?></td>
+                            <td style="text-align: center"><?=array_sum($gridEstado)?></td>
+                            <?
+                            $total+=array_sum($gridEstado);
+                            ?>
+                            </tr>
+                        <?
+                        }                        
+                    }
+                }
+                ?>            
+            <?
+        }   
+        ?>
+        <tr><th colspan="6" style="text-align: right"><b>TOTAL</b></th><th style="text-align: center"><b><?=$total?></b></th></tr>                                                                        
+    </table>
+    <br/>
+    <br/>
+    <table class="tableList" align="center" width="80%" border="1">
+        <tr>
+            <th colspan="7" style="text-align: center"><b>INFORME DETALLADO X GRUPO</b></th>
+        </tr>
+        <tr>
+            <th rowspan="2" style="text-align: center"><b>Grupo</b></th>            
+            <th rowspan="2" style="text-align: center"><b>Tipo</b></th>
+            <th rowspan="2" style="text-align: center"><b>Sucursal</b></th>
+            <th rowspan="2" style="text-align: center"><b>Empresa</b></th>            
+            <th rowspan="1" colspan="2" style="text-align: center"><b>Estado</b></th>
+            <th rowspan="2" style="text-align: center"><b>Total</b></th>
+        </tr>
+        <tr>
+            <th rowspan="1" style="text-align: center"><b>Abierto</b></th>
+            <th rowspan="1" style="text-align: center"><b>Cerrado</b></th>
+        </tr>
         
-    }
+        <?
+        $ntotal1 = $ntotal2 = $nfilas1 = $nfilas2 = $nfilas3 = array();
+        foreach ($informexGrupo as $grupo => $gridTipo) {
+            $nfilas1[$grupo]=count($gridTipo);            
+            foreach ($gridTipo as $tipo => $gridSucursal) {
+                $nfilas2[$grupo][$tipo] = count($gridSucursal);
+                foreach ($gridSucursal as $sucursal => $gridEmpresa) {
+                    $nfilas3[$grupo][$tipo][$sucursal] = count($gridEmpresa);
+                    $ntotal1[$grupo]+=$nfilas3[$grupo][$tipo][$sucursal];
+                    $ntotal2[$grupo][$tipo]+=$nfilas3[$grupo][$tipo][$sucursal];
+                }
+            }            
+        }
+        
+        $total= 0;
+        foreach ($informexGrupo as $grupo => $gridTipo) {            
+            ?>            
+            <tr>
+                <th rowspan="<?=$ntotal1[$grupo]?>"><b><?= $grupo ?></b></th>
+                <?
+                foreach ($gridTipo as $tipo => $gridSucursal) {
+                    ?>
+                    <td rowspan="<?=$ntotal2[$grupo][$tipo]?>"><?=$tipo?></td>
+                    <?
+                    foreach ($gridSucursal as $sucursal => $gridEmpresa) {
+                        ?>
+                        <td ><?=$sucursal?></td>
+                        <?
+                        foreach ($gridEmpresa as $empresa => $gridEstado) {
+                            ?>
+                            <td><?=$empresa?></td>
+                            <td style="text-align: center"><?=$gridEstado["Abierto"]?></td>
+                            <td style="text-align: center"><?=$gridEstado["Cerrado"]?></td>
+                            <td style="text-align: center"><?=array_sum($gridEstado)?></td>
+                            <?
+                            $total+=array_sum($gridEstado);
+                            ?>
+                            </tr>
+                        <?
+                        }                        
+                    }
+                }
+                ?>            
+            <?
+        }   
+        
+        ?>
+        <tr><th colspan="6" style="text-align: right"><b>TOTAL</b></th><th style="text-align: center"><b><?=$total?></b></th></tr>                                                                        
+    </table>
+    <br/>
+    <br/>
+    <?
+    $colTotal = 6 + count($empresas);
+    ?>
+    <table class="tableList" align="center" width="80%" border="1">
+        <tr>
+            <th colspan="<?=$colTotal?>" style="text-align: center"><b>INFORME DETALLADO X USUARIO</b></th>
+        </tr>
+        <tr>
+            <th rowspan="2" style="text-align: center"><b>Usuario</b></th>            
+            <th rowspan="2" style="text-align: center"><b>Tipo</b></th>
+            <th rowspan="2" style="text-align: center"><b>Grupo</b></th>
+            <th rowspan="2" style="text-align: center"><b>Estado</b></th>
+            <th rowspan="2" style="text-align: center"><b>Sucursal</b></th>            
+            <th rowspan="1" colspan="<?=count($empresas)?>" style="text-align: center"><b>Empresas</b></th>
+            <th rowspan="2" style="text-align: center"><b>Total</b></th>
+        </tr>
+        <tr>
+            <?
+            foreach($empresas as $key => $empresa){
+                ?>
+                <th rowspan="1" style="text-align: center"><b><?=$empresa?></b></th>
+                <?
+            }
+            ?>
+        </tr>
+        
+        <?
+        $ntotal1 = $ntotal2 = $ntotal3 = $ntotal4 = $nfilas1 = $nfilas2 = $nfilas3 = $nfilas4 = $nfilas5 = array();
+        foreach ($informexUsuario as $usuario => $gridTipo) {
+            $nfilas1[$usuario]=count($gridTipo);            
+            foreach ($gridTipo as $tipo => $gridGrupo) {
+                $nfilas2[$usuario][$tipo] = count($gridGrupo);
+                foreach ($gridGrupo as $grupo => $gridEstado) {
+                    $nfilas3[$usuario][$tipo][$grupo] = count($gridEstado);
+                    foreach ($gridEstado as $estado => $gridSucursal) {
+                        $nfilas4[$usuario][$tipo][$grupo][$estado] = count($gridSucursal);                        
+                        $ntotal1[$usuario]+=$nfilas4[$usuario][$tipo][$grupo][$estado];
+                        $ntotal2[$usuario][$tipo]+=$nfilas4[$usuario][$tipo][$grupo][$estado];
+                        $ntotal3[$usuario][$tipo][$grupo]+=$nfilas4[$usuario][$tipo][$grupo][$estado];
+                        $ntotal4[$usuario][$tipo][$grupo][$estado]+=$nfilas4[$usuario][$tipo][$grupo][$estado];                        
+                    }
+                }
+            }            
+        }        
+        $total= 0;
+        foreach ($informexUsuario as $usuario => $gridTipo) {            
+            ?>            
+            <tr>
+                <th rowspan="<?=$ntotal1[$usuario]?>"><b><?= $usuario ?></b></th>
+                <?
+                foreach ($gridTipo as $tipo => $gridGrupo) {
+                    ?>
+                    <td rowspan="<?=$ntotal2[$usuario][$tipo]?>"><?=$tipo?></td>
+                    <?
+                    foreach ($gridGrupo as $grupo => $gridEstado) {
+                        ?>
+                        <td rowspan="<?=$ntotal3[$usuario][$tipo][$grupo]?>"><?=$grupo?></td>
+                        <?
+                        foreach ($gridEstado as $estado => $gridSucursal) {
+                            ?>
+                            <td rowspan="<?=$ntotal4[$usuario][$tipo][$grupo][$estado]?>"><?=$estado?></td>
+                            <?
+                            foreach ($gridSucursal as $sucursal => $gridEmpresa) {
+                                ?>
+                                <td><?=$sucursal?></td>
+                                <?
+                                foreach($empresas as $key => $empresa){
+                                    ?>
+                                    <td style="text-align: center"><?=$gridEmpresa[$empresa]?></td>
+                                    <?
+                                }
+                                ?>
+                                <td style="text-align: center"><?=array_sum($gridEmpresa)?></td>
+                            <?
+                            $total+=array_sum($gridEmpresa);
+                            ?>
+                            </tr>
+                        <?
+                        }   
+                        }
+                                                
+                    }
+                }
+                ?>            
+            <?
+        }   
+        
+        ?>
+        <tr><th colspan="<?=$colTotal-1?>" style="text-align: right"><b>TOTAL</b></th><th style="text-align: center"><b><?=$total?></b></th></tr>                                                                        
+    </table>
+    <?    
 }
 ?>
 <script language="javascript">
