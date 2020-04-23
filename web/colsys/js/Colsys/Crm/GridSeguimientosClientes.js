@@ -104,7 +104,7 @@ Ext.define('Colsys.Crm.GridSeguimientosClientes', {
                         winTercero.show();
                     } else
                     {
-                        Ext.Msg.alert("Crm", "Existe una ventana abierta de Seguimientos<br>Por favor cierrela primero");
+                        Ext.Msg.alert("Clientes Ver.2", "Existe una ventana abierta de Seguimientos<br>Por favor cierrela primero");
                     }
                 }
             }, {
