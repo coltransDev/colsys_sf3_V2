@@ -70,9 +70,15 @@ Ext.define('Colsys.Riesgos.FormRiesgo', {
                         }, {
                             xtype:'checkboxfield',
                             fieldLabel: 'LA/FT-FPADM',                            
-                            width: 300,
+                            width: 150,
                             id:'ca_laft',
                             name:'ca_laft'
+                        },{
+                            xtype:'checkboxfield',
+                            fieldLabel: 'Activo',                            
+                            width: 150,
+                            id:'ca_activo',
+                            name:'ca_activo'
                         }]
                     }]
                 },
