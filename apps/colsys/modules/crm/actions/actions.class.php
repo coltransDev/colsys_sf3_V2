@@ -1015,9 +1015,20 @@ class crmActions extends sfActions {
         $data = array();
 
         foreach ($seguimientos as $seguimiento) {
+            $empresas = "";
+            $arrayEmp = $seguimiento->getDatosJson("idempresas");            
+            
+            if($arrayEmp){                
+                foreach($arrayEmp as $key => $val){
+                    $empresa = Doctrine::getTable("Empresa")->find($val);
+                    $empresas.= $empresa->getCaNombre()."<br>";
+                }
+            }
+            
             $data[] = array("fecha" => utf8_encode($seguimiento->getCaFchevento()),
                 "usuario" => utf8_encode($seguimiento->getCaUsuario()),
                 "tipo" => utf8_encode($seguimiento->getCaTipo()),
+                "empresas"=> utf8_encode($empresas),
                 "asunto" => utf8_encode($seguimiento->getCaAsunto()),
                 "detalle" => utf8_encode($seguimiento->getCaDetalle()),
                 "compromisos" => utf8_encode($seguimiento->getCaCompromisos()));
@@ -1029,6 +1040,8 @@ class crmActions extends sfActions {
 
     public function executeGuardarSeguimiento(sfWebRequest $request) {
         $idCliente = $request->getParameter("idcliente");
+        $idempresas = $request->getParameter("idempresas");
+        $ids = Doctrine::getTable("Ids")->find($idCliente);
 
         $con = Doctrine::getTable("IdsEventos")->getConnection();
         try {
@@ -1050,6 +1063,14 @@ class crmActions extends sfActions {
             $evento->setCaIdantecedente($request->getParameter("seguimiento_antecesor"));
             $evento->setCaUsuario($this->getUser()->getUserId());
 
+            if($idempresas){
+                $datos = array();
+                $arrayEmp = array_map('intval', explode(',', $idempresas ));        
+                $datos["idempresas"] = $arrayEmp;
+
+                $evento->setCaDatos(json_encode($datos));
+            }
+            
             $evento->save();
 
             list($ano, $mes, $dia) = sscanf($evento->getCaFchcompromiso(), "%d-%d-%d");
@@ -1061,7 +1082,7 @@ class crmActions extends sfActions {
             $tarea->setCaFchvisible($evento->getCaFchcompromiso());
             $tarea->setCaFchvencimiento($fchVencimiento);
             $tarea->setCaUsucreado($this->getUser()->getUserId());
-            $tarea->setCaTitulo($evento->getCaAsunto() . " - " . $evento->getCaFchevento());
+            $tarea->setCaTitulo($ids->getCaNombre(). " - ".utf8_decode($tipo). ' - '.$evento->getCaAsunto() . " - " . $evento->getCaFchevento());
             $tarea->setCaTexto($evento->getCaDetalle());
             $tarea->save();
 
