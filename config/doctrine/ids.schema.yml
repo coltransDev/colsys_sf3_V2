@@ -643,6 +643,7 @@ IdsEventos:
     ca_fchcompromiso: timestamp
     ca_idantecedente: integer
     ca_usuario: string
+    ca_datos: text
   relations:
     IdsCliente:
      local: ca_idcliente
