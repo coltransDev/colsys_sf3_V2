@@ -26,6 +26,7 @@ Ext.define('Colsys.Crm.GridSeguimientosClientes', {
                             {name: 'usuario', type: 'string', mapping: 'usuario'},
                             {name: 'fecha', type: 'string', mapping: 'fecha'},
                             {name: 'tipo', type: 'string', mapping: 'tipo'},
+                            {name: 'empresas', type: 'string', mapping: 'empresas'},
                             {name: 'asunto', type: 'string', mapping: 'asunto'},
                             {name: 'detalle', type: 'string', mapping: 'detalle'},
                             {name: 'compromisos', type: 'string', mapping: 'compromisos'}
@@ -55,6 +56,11 @@ Ext.define('Colsys.Crm.GridSeguimientosClientes', {
                             header: "Tipo",
                             dataIndex: 'tipo',
                             width: 120
+                        },
+                        {
+                            header: "Empresas",
+                            dataIndex: 'empresas',
+                            width: 240
                         },
                         {
                             header: "Asunto",
