@@ -195,6 +195,8 @@ IdsContacto:
     ca_fchactualizado: timestamp
     ca_usueliminado: string(20)
     ca_fcheliminado: timestamp
+    ca_usuhabeasdata: string(20)
+    ca_fchhabeasdata: timestamp
   relations:
     IdsSucursal:
       local: ca_idsucursal
@@ -212,6 +214,10 @@ IdsContacto:
       local: ca_idcontacto
       foreign: ca_idcontacto
       type: many
+    Contacto:
+      local: ca_idcontacto
+      foreign: ca_idscontacto
+      type: one
       
 IdsAgente:
   options:
@@ -270,7 +276,10 @@ IdsProveedor:
     ca_activo_impo: boolean
     ca_activo_expo: boolean
     ca_contrato_comodato: boolean
-    ca_vetado: boolean    
+    ca_vetado: boolean
+    ca_antlegales: string(200)
+    ca_antpenales: string(200)
+    ca_antfinancieros: string(200)
     ca_controladoporsig: integer
     ca_idclasificacion: integer
     ca_fchvencimiento: date
@@ -554,6 +563,43 @@ IdsEvento:
       foreign: ca_id
       type: one
 
+IdsBalance:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: public
+  tableName: ids.tb_balances
+  columns:
+    ca_id: 
+      type: integer 
+      notnull: true
+      primary: true
+    ca_anno:
+      type: integer
+      notnull: true
+      primary: true
+    ca_activostotales: integer
+    ca_activoscorrientes: integer
+    ca_pasivostotales: integer
+    ca_pasivoscorrientes: integer
+    ca_inventarios: integer
+    ca_patrimonios: integer
+    ca_utilidades: integer
+    ca_ventas: integer
+    ca_fchcreado:
+      type: date
+      notnull: true
+    ca_usucreado:
+      type: string(20) 
+      notnull: true
+    ca_fchanulado: date
+    ca_usuanulado: string(20)
+  relations:
+    Ids:
+      local: ca_id
+      foreign: ca_id
+      type: one
 
 IdsAuditoria:
   options:
@@ -669,6 +715,7 @@ Cliente:
     ca_usufinanciero: string
     ca_fchacuerdoconf: date
     ca_zipcode: string(20)
+    ca_stdcircular: string
   relations:
     Ids:
       local: ca_idcliente
@@ -702,7 +749,7 @@ Cliente:
       local: ca_idcliente
       foreign: ca_idcliente
       type: many
-    BlcCliente:
+    IdsBalance:
       local: ca_idcliente
       foreign: ca_idcliente
       type: many
@@ -828,7 +875,7 @@ IdsCliente:
       local: ca_idcliente
       foreign: ca_idcliente
       type: many
-    BlcCliente:
+    IdsBalance:
       local: ca_idcliente
       foreign: ca_idcliente
       type: many
@@ -997,6 +1044,7 @@ IdsCredito:
     ca_id: integer
     ca_cupo: integer
     ca_dias: integer
+    ca_tipo: string(1)
     ca_idempresa: integer
     ca_observaciones: string
     ca_usucreado: string
@@ -1034,7 +1082,7 @@ IdsEstadoSap:
     ca_idempresa:
       type: integer
       primary: true
-    ca_estado: boolean
+    ca_activo: boolean
     ca_ususap: string
     ca_fchsap: timestamp
     ca_usucreado: string
