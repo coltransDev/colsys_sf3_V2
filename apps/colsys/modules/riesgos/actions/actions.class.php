@@ -173,6 +173,7 @@ class riesgosActions extends sfActions {
             if ($riesgo) {
                 $data["ca_codigo"] = utf8_encode($riesgo->getCaCodigo());
                 $data["ca_laft"] = utf8_encode($riesgo->getCaLaft());
+                $data["ca_activo"] = utf8_encode($riesgo->getCaActivo());
                 $data["ca_riesgo"] = utf8_encode($riesgo->getCaRiesgo());
                 $data["ca_etapa"] = utf8_encode($riesgo->getCaEtapa());
                 $data["ca_potenciador"] = utf8_encode($riesgo->getCaPotenciador());
@@ -226,6 +227,11 @@ class riesgosActions extends sfActions {
                 $riesgo->setCaLaft(true);
             }else{
                 $riesgo->setCaLaft(false);
+            }
+            if($datos["ca_activo"]){
+                $riesgo->setCaActivo(true);
+            }else{
+                $riesgo->setCaActivo(false);
             }
             
             if($datos["ca_riesgo"]){
