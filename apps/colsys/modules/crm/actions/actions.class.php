@@ -141,7 +141,7 @@ class crmActions extends sfActions {
 
             if ($nivel >= 2) {
                 if ($request->getParameter("status")) {
-                    $cliente->setCaStatus($request->getParameter("status"));
+                    $cliente->setCaStatus(utf8_decode($request->getParameter("status")));
                 } else {
                     $cliente->setCaStatus(null);
                 }
@@ -207,7 +207,6 @@ class crmActions extends sfActions {
         $this->forward404Unless($request->getParameter("idcliente"));
         $ids = Doctrine::getTable("Ids")->find($request->getParameter("idcliente"));
         $this->forward404Unless($ids);
-
 
         $data = array();
         $data["idcliente"] = $ids->getCaId();
@@ -290,7 +289,7 @@ class crmActions extends sfActions {
         foreach ($tipopermisos as $index => $tp) {
             $this->permisos[$index] = in_array($tp, $permisosRutinas) ? true : false;
         }
-        
+
         if ($request->getParameter("idcliente")) {
             $cliente = Doctrine::getTable("IdsCliente")->find($request->getParameter("idcliente"));
             if ($cliente) {
@@ -313,14 +312,14 @@ class crmActions extends sfActions {
                 ->fetchOne();
 
         $con = Doctrine_Manager::getInstance()->connection();
-        
+
         $empresas = Doctrine::getTable("Empresa")
-            ->createQuery("e")
-            ->select("e.ca_url")
-            ->whereIn("e.ca_idempresa", array(1, 2, 8, 11))
-            ->addWhere("e.ca_idsap is not null")
-            ->orderBy("e.ca_coddian, e.ca_idsap")
-            ->execute();
+                ->createQuery("e")
+                ->select("e.ca_url")
+                ->whereIn("e.ca_idempresa", array(1, 2, 8, 11))
+                ->addWhere("e.ca_idsap is not null")
+                ->orderBy("e.ca_coddian, e.ca_idsap")
+                ->execute();
 
 //        $idsCredito = Doctrine::getTable("IdsCredito")
 //            ->createQuery("i")
@@ -333,7 +332,6 @@ class crmActions extends sfActions {
 //            $dominio = explode(".", $credito->getEmpresa()->getCaUrl())[1];
 //            $beneficios[$dominio] = array("cupo" => $credito->getCaCupo(), "dias" => $credito->getCaDias());
 //        }
-
 //        $idsEstadoSap = Doctrine::getTable("IdsEstadoSap")
 //            ->createQuery("i")
 //            ->addWhere('i.ca_id = ?', $idCliente)
@@ -367,6 +365,7 @@ class crmActions extends sfActions {
 
         $data = array();
         if ($cliente) {
+            $ids_datos = json_decode(utf8_encode($cliente->getCaDatos()));
             $data["nombre"] = utf8_encode($cliente->getCaNombre());
             $data["saludo_rl"] = utf8_encode($cliente->getIdsCliente()->getCaSaludo());
             $data["representa_legal"] = utf8_encode($cliente->getIdsCliente()->getRepresentanteLegal());
@@ -382,6 +381,7 @@ class crmActions extends sfActions {
             $data["sector"] = utf8_encode($cliente->getIdsCliente()->getCaSectoreco());
             $data["vendedor"] = utf8_encode($cliente->getIdsCliente()->getCaVendedor());
             $data["coordinador"] = utf8_encode($cliente->getIdsCliente()->getCaCoordinador());
+            $data["servCliente"] = utf8_encode(implode(",", $cliente->getIdsCliente()->getCoorServCliente()));
             $data["tipoNit"] = utf8_encode($cliente->getIdsCliente()->getCaTipo());
             $data["entidad"] = utf8_encode($cliente->getIdsCliente()->getCaEntidad());
             $data["lista_clinton"] = utf8_encode($cliente->getIdsCliente()->getCaListaclinton());
@@ -389,9 +389,11 @@ class crmActions extends sfActions {
             $data["ley_insolvencia"] = utf8_encode($cliente->getIdsCliente()->getCaLeyinsolvencia());
             $data["comentario"] = utf8_encode($cliente->getIdsCliente()->getCaComentario());
             $data["circular"] = utf8_encode($vista["ca_fchcircular"]);
+            $data["vencircular"] = utf8_encode($vista["ca_fchvencircular"]);
             $data["estado_circular"] = utf8_encode($vista["ca_stdcircular"]);
             $data["nivel_riesgo"] = utf8_encode($cliente->getIdsCliente()->getCaNvlriesgo());
             $data["auditorias"] = utf8_encode("<b>Creado:</b> " . $vista["ca_usucreado"] . " - " . $vista["ca_fchcreado"] . "&nbsp;&nbsp;&nbsp;" . "<b>Actualizado:</b> " . $vista["ca_usuactualizado"] . " - " . $vista["ca_fchactualizado"] . "&nbsp;&nbsp;&nbsp;" . "<b>Financiero:</b> " . $vista["ca_usufinanciero"] . " - " . $vista["ca_fchfinanciero"]);
+            $data["forma_pago"] = $ids_datos->forma_pago;
 
             $data["identificacion"] = utf8_encode($cliente->getIdsTipoIdentificacion()->getCaNombre() . ": " . $cliente->getCaIdalterno() . " - " . $cliente->getCaDv());
             if ($cliente->getCaDv() == null) {
@@ -408,13 +410,12 @@ class crmActions extends sfActions {
                 $data["estm_implementa"] = utf8_encode($encuestaVisita["ca_implementacion_sistema_detalles"]);
             }
             $data["fechaconstitucion"] = $cliente->getIdsCliente()->getCaFchconstitucion();
-            $data["tipo_persona"] = utf8_encode($cliente->getIdsCliente()->getTipoPersona());
-            $data["regimen"] = utf8_encode($cliente->getIdsCliente()->getRegimen());
+            $data["tipo_persona"] = utf8_encode($cliente->getIdsCliente()->getTipoPersona() . " / " . $cliente->getIdsCliente()->getRegimen());
             $data["uap"] = ($cliente->getIdsCliente()->getCaUap()) ? utf8_encode("Sí") : "No";
             $data["altex"] = ($cliente->getIdsCliente()->getCaAltex()) ? utf8_encode("Sí") : "No";
             $data["oea"] = ($cliente->getIdsCliente()->getCaOea()) ? utf8_encode("Sí") : "No";
             $data["comerciante"] = ($cliente->getIdsCliente()->getCaComerciante()) ? utf8_encode("Sí") : "No";
-            $data["cuenta_global"] = (strpos($cliente->getIdsCliente()->getCaPropiedades(), 'cuentaglobal=true') !== false) ? utf8_encode("Sí") : "No";
+            // $data["cuenta_global"] = (strpos($cliente->getIdsCliente()->getCaPropiedades(), 'cuentaglobal=true') !== false) ? utf8_encode("Sí") : "No";
             $data["consolidar"] = (strpos($cliente->getIdsCliente()->getCaPropiedades(), 'consolidar_comunicaciones=true') !== false) ? utf8_encode("Sí") : "No";
 
             $data["codigos_ciiu"] = implode(",", array($cliente->getIdsCliente()->getCaCiiuUno(), $cliente->getIdsCliente()->getCaCiiuDos(), $cliente->getIdsCliente()->getCaCiiuTrs(), $cliente->getIdsCliente()->getCaCiiuCtr()));
@@ -422,35 +423,41 @@ class crmActions extends sfActions {
             $data["cod_ciiu_dos"] = $cliente->getIdsCliente()->getCaCiiuDos();
             $data["cod_ciiu_trs"] = $cliente->getIdsCliente()->getCaCiiuTrs();
             $data["cod_ciiu_ctr"] = $cliente->getIdsCliente()->getCaCiiuCtr();
-            
+
             $situacion = array();
-            $situacion[] = array("type" => "displayfield", "value" => "Empresa");
-            $situacion[] = array("type" => "displayfield", "value" => "Estado");
-            $situacion[] = array("type" => "displayfield", "value" => "Fecha");
-            $situacion[] = array("type" => "displayfield", "value" => "Docs.0170");
-            $situacion[] = array("type" => "displayfield", "value" => "Cupo Cred.");
-            $situacion[] = array("type" => "displayfield", "value" => utf8_encode("Días Cred."));
-            $situacion[] = array("type" => "displayfield", "value" => "Estado SAP");
-            
+            $situacion[] = array("type" => "displayfield", "width" => 70, "value" => "Empresa");
+            $situacion[] = array("type" => "displayfield", "width" => 60, "value" => "Estado");
+            $situacion[] = array("type" => "displayfield", "width" => 90, "value" => "Fecha");
+            $situacion[] = array("type" => "displayfield", "width" => 70, "value" => "Docs.0170");
+            $situacion[] = array("type" => "displayfield", "width" => 100, "value" => utf8_encode("Cupo Cred. / # Días"));
+            $situacion[] = array("type" => "displayfield", "width" => 120, "value" => "Observaciones");
+            $situacion[] = array("type" => "displayfield", "width" => 60, "value" => "Estado SAP");
+
+            $estadoSap = false;
             foreach ($empresas as $empresa) {
                 $dominio = explode(".", $empresa->getCaUrl())[1];
-                $situacion[] = array("type" => "displayfield", "value" => ucfirst($dominio));
-                $situacion[] = array("type" => "displayfield", "value" => $vista["ca_" . $dominio . "_std"]);
-                $situacion[] = array("type" => "displayfield", "value" => substr($vista["ca_" . $dominio . "_fch"], 0, -3));
-                $situacion[] = array("type" => "displayfield", "value" => $vista["ca_" . $dominio . "_170"]);
-                $situacion[] = array("type" => "displayfield", "value" => number_format($vista["ca_" . $dominio . "_cupo"]), 0);
-                $situacion[] = array("type" => "displayfield", "value" => $vista["ca_" . $dominio . "_dias"]);
-                $situacion[] = array("type" => "displayfield", "value" => $vista["ca_" . $dominio . "_sap"]);
+                $observa = (trim($vista["ca_" . $dominio . "_obsv"])!='')?$vista["ca_" . $dominio . "_obsv"]:' ';
+                $warning = "";
+                if (strlen($observa) > 22) {
+                    $warning = "&raquo;";
+                }
+                $situacion[] = array("type" => "displayfield", "width" => 70, "value" => ucfirst($dominio));
+                $situacion[] = array("type" => "displayfield", "width" => 60, "value" => $vista["ca_" . $dominio . "_std"]);
+                $situacion[] = array("type" => "displayfield", "width" => 90, "value" => substr($vista["ca_" . $dominio . "_fch"], 0, 16));
+                $situacion[] = array("type" => "displayfield", "width" => 70, "value" => $vista["ca_" . $dominio . "_170"]);
+                $situacion[] = array("type" => "displayfield", "width" => 100, "value" => number_format($vista["ca_" . $dominio . "_cupo"]).' / '.$vista["ca_" . $dominio . "_dias"], 0);
+                $situacion[] = array("type" => "displayfield", "width" => 120, "value" => utf8_encode(substr($observa,0,22).$warning), "toolTip" => utf8_encode($observa));
+                $situacion[] = array("type" => "displayfield", "width" => 60, "value" => $vista["ca_" . $dominio . "_sap"]);
+                $estadoSap = $estadoSap || $vista["ca_" . $dominio . "_sap"];
             }
-            
+
             $data["situacion"] = $situacion;
             $data["situa_col"] = 7;
-            $data["estadoSap"] = (count($estadoSap) != 0) ? true : false;
-            
+            $data["estadoSap"] = $estadoSap;
+
             $data["actividad_economica"] = utf8_encode($vista["ca_actividad"]);
             $data["preferencias"] = utf8_encode($vista["ca_preferencias"]);
         }
-
         $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");
     }
@@ -482,123 +489,12 @@ class crmActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
-    public function executeDatosSucursales(sfWebRequest $request) {
-        $idcliente = $request->getParameter("idcliente");
-        if ($idcliente) {
-            $sucursales = Doctrine::getTable("IdsSucursal")
-                    ->createQuery("i")
-                    ->addWhere("i.ca_id = ? and i.ca_usueliminado is null", $idcliente)
-                    ->execute();
-
-            $tree = new JTree();
-            $root = $tree->createNode(".");
-            $tree->addFirst($root);
-            $ciudad = null;
-            $i = null;
-            foreach ($sucursales as $sucursal) {
-                $suc_ciudad = utf8_encode($sucursal->getCiudad()->getCaCiudad());
-                if ($ciudad != $suc_ciudad) {
-                    $i = 0;
-                    $uid = $root;
-                    $eje_raiz = array();
-                    $eje_raiz[] = $suc_ciudad;
-
-                    foreach ($eje_raiz as $eje) {
-                        $node_uid = $tree->findValue($uid, $eje);
-
-                        if (!$node_uid) {
-                            $nodo = $tree->createNode($eje);
-                            $tree->addChild($uid, $nodo);
-                            $uid = $nodo;
-                        } else {
-                            $uid = $node_uid;
-                        }
-                    }
-                    $nodo = $tree->getNode($uid);
-                    $nodo->setAttribute("expanded", true);
-
-                    $ciudad = $suc_ciudad;
-                }
-                $sede_nodo = $tree->createNode(utf8_encode($sucursal->getCaDireccion()));
-                $tree->getNode($sede_nodo)->setAttribute("idsucursal", $sucursal->getCaIdsucursal());
-                $tree->getNode($sede_nodo)->setAttribute("nombre", utf8_encode($sucursal->getCaNombre()));
-                $tree->getNode($sede_nodo)->setAttribute("ciudad", $sucursal->getCaIdciudad());
-                $tree->getNode($sede_nodo)->setAttribute("direccion", utf8_encode($sucursal->getCaDireccion()));
-                $tree->getNode($sede_nodo)->setAttribute("ciudad_destino", $sucursal->getCaIdciudaddes());
-                $tree->getNode($sede_nodo)->setAttribute("telefonos", $sucursal->getCaTelefonos());
-                $tree->getNode($sede_nodo)->setAttribute("fax", $sucursal->getCaFax());
-                $tree->getNode($sede_nodo)->setAttribute("expanded", true);
-
-                $tree->addChild($uid, $sede_nodo);
-                foreach ($sucursal->getIdsContacto() as $contacto) {
-                    if ($contacto->getCaUsueliminado()) {
-                        continue;
-                    }
-                    list($mes, $dia) = sscanf($contacto->getCaCumpleanos(), "%d-%d");
-                    $contacto_nodo = $tree->createNode(utf8_encode($contacto->getCaSaludo() . " " . $contacto->getNombre() . " (" . $contacto->getCargo() . ")"));
-                    $tree->getNode($contacto_nodo)->setAttribute("idcontacto", $contacto->getCaIdcontacto());
-                    $tree->getNode($contacto_nodo)->setAttribute("idsucursal", $contacto->getCaIdsucursal());
-                    $tree->getNode($contacto_nodo)->setAttribute("saludo", utf8_encode($contacto->getCaSaludo()));
-                    $tree->getNode($contacto_nodo)->setAttribute("nombres", utf8_encode($contacto->getCaNombres()));
-                    $tree->getNode($contacto_nodo)->setAttribute("primer_apellido", utf8_encode($contacto->getCaPapellido()));
-                    $tree->getNode($contacto_nodo)->setAttribute("segundo_apellido", utf8_encode($contacto->getCaSapellido()));
-                    $tree->getNode($contacto_nodo)->setAttribute("identificacion", utf8_encode($contacto->getCaIdentificacion()));
-                    $tree->getNode($contacto_nodo)->setAttribute("identificacion_tipo", utf8_encode($contacto->getCaIdentificacionTipo()));
-                    $tree->getNode($contacto_nodo)->setAttribute("cargo", utf8_encode($contacto->getCaCargo()));
-                    $tree->getNode($contacto_nodo)->setAttribute("cargo_general", utf8_encode($contacto->getCaCargoGeneral()));
-                    $tree->getNode($contacto_nodo)->setAttribute("departamento", utf8_encode($contacto->getDepartamento()));
-                    $tree->getNode($contacto_nodo)->setAttribute("mes", $mes);
-                    $tree->getNode($contacto_nodo)->setAttribute("dia", $dia);
-                    $tree->getNode($contacto_nodo)->setAttribute("tipo", utf8_encode($contacto->getCaTipo()));
-                    $tree->getNode($contacto_nodo)->setAttribute("telefono", utf8_encode($contacto->getCaTelefonos()));
-                    $tree->getNode($contacto_nodo)->setAttribute("celular", utf8_encode($contacto->getCaCelular()));
-                    $tree->getNode($contacto_nodo)->setAttribute("correo", utf8_encode($contacto->getCaEmail()));
-                    $tree->getNode($contacto_nodo)->setAttribute("celular", utf8_encode($contacto->getCaCelular()));
-                    $tree->getNode($contacto_nodo)->setAttribute("cumpleanos", utf8_encode($contacto->getCaCumpleanos()));
-                    $tree->getNode($contacto_nodo)->setAttribute("fijo", utf8_encode($contacto->getCaFijo()));
-                    $tree->getNode($contacto_nodo)->setAttribute("observaciones", utf8_encode($contacto->getCaObservaciones()));
-                    if ($contacto->getCaFchhabeasdata()) {
-                        $tree->getNode($contacto_nodo)->setAttribute("qtip", utf8_encode("Habeas Data: ".$contacto->getCaUsuhabeasdata()."<br />".$contacto->getCaFchhabeasdata()));
-                    }else if ($contacto->getCaFcheliminado()) {
-                        $tree->getNode($contacto_nodo)->setAttribute("qtip", utf8_encode("Eliminado: ".$contacto->getCaUsueliminado()."<br />".$contacto->getCaFcheliminado()));
-                    }
-                    $tree->getNode($contacto_nodo)->setAttribute("leaf", true);
-                    $tree->addChild($sede_nodo, $contacto_nodo);
-                }
-            }
-        }
-        $this->responseArray = $tree->getTreeNodes();
-        $this->setTemplate("responseTemplate");
-    }
-
-    public function generateTree($sucursales) {
-        $childrens = $this->getChildrensFiles($sucursales);
-        $tree = array("text" => "Sucursales",
-            "leaf" => false,
-            "id" => "0",
-            "children" => $childrens);
-        return $tree;
-    }
-
-    public function getChildrensFiles($sucursales) {
-        $data = array();
-        $i = 1;
-        foreach ($sucursales as $sucursal) {
-            $children = array();
-            // $children[] = array("text" => utf8_encode($sucursal->getCaTelefonos()), "leaf" => true);
-            // $children[] = array("text" => utf8_encode($sucursal->getCaDireccion()), "leaf" => true);
-            $children[] = array("text" => "Sede " . $i++, "leaf" => true);
-            $data[] = array("text" => utf8_encode($sucursal->getCiudad()->getCaCiudad()), "idsucursal" => $sucursal->getCaIdsucursal(), "sucursal" => true, "children" => $children, "leaf" => false);
-        }
-        return $data;
-    }
-
     function realizarBusqueda($request) {
         $con = Doctrine_Manager::getInstance()->connection();
         $sql = "select i.ca_id from ids.tb_ids i where ca_idalterno like '%" . $request->getParameter("q") . "%'";
         $rs = $con->execute($sql);
         $ids = $rs->fetchAll(PDO::FETCH_COLUMN);
-        
+
         if (!$ids) {
             $sql = "select i.ca_id from ids.tb_ids i where lower(ca_nombre) like '%" . strtolower($request->getParameter("q")) . "%'";
             $rs = $con->execute($sql);
@@ -636,11 +532,11 @@ class crmActions extends sfActions {
 //                $q->addWhere("ca_vendedor = ?", $this->user->getUserId());
 //                break;
 //        endswitch;
-        
+
         $q = Doctrine::getTable("Ids")
                 ->createQuery("i")
                 ->innerJoin("i.IdsCliente id");
-        
+
         if (count($ids) > 0) {
             $q->whereIn('i.ca_id', $ids);
         }
@@ -648,7 +544,7 @@ class crmActions extends sfActions {
         if ($request->getParameter("buscarEn") == "misCliente") {
             $q->addWhere("ca_vendedor = ?", $this->user->getUserId());
         }
-        
+
         if ($request->getParameter("estado")) {
             switch ($request->getParameter("idEmpresa")) {
                 case 1:
@@ -681,11 +577,20 @@ class crmActions extends sfActions {
                 $q->whereIn("ca_idcliente", $stmt->fetchAll(PDO::FETCH_COLUMN));
             }
         }
-        if ($request->getParameter("idSucursal")) {
-            $sql = "select ca_nombre from control.tb_sucursales where ca_idsucursal = '".$request->getParameter("idSucursal")."'";
+        if ($request->getParameter("tipo")) {
+            $sql = "select ca_idcliente as ca_column from tb_clientes where ca_tipo in ('" . implode("','", $request->getParameter("tipo")) . "')";
             $con = Doctrine_Manager::getInstance()->connection();
             $stmt = $con->execute($sql);
-            
+
+            if ($stmt) {
+                $q->whereIn("ca_idcliente", $stmt->fetchAll(PDO::FETCH_COLUMN));
+            }
+        }
+        if ($request->getParameter("idSucursal")) {
+            $sql = "select ca_nombre from control.tb_sucursales where ca_idsucursal = '" . $request->getParameter("idSucursal") . "'";
+            $con = Doctrine_Manager::getInstance()->connection();
+            $stmt = $con->execute($sql);
+
             $q->innerJoin("id.Usuario vn");
             $q->innerJoin("vn.Sucursal sc");
             if ($stmt) {
@@ -708,7 +613,7 @@ class crmActions extends sfActions {
         if ($request->getParameter("fchfinal")) {
             $q->addWhere("ca_fchcreado <= ?", $request->getParameter("fchfinal"));
         }
-        
+
         $clientes = array();
         if (count($q->getDqlPart("where")) > 0) {
             if ($request->getParameter('action') == "datosBusqueda") {
@@ -717,10 +622,10 @@ class crmActions extends sfActions {
                 $clientes = $q->execute();
             }
         }
-        
+
         return $clientes;
     }
-    
+
     function executeDatosBusqueda($request) {
         $data = array();
         $clientes = $this->realizarBusqueda($request);
@@ -733,19 +638,19 @@ class crmActions extends sfActions {
         $this->responseArray = array("success" => true, "root" => $data, "total" => count($data), "debug" => $debug, "query" => $query);
         $this->setTemplate("responseTemplate");
     }
-    
+
     function executeListarBusqueda($request) {
         $data = array();
         $clientes = $this->realizarBusqueda($request);
-        
+
         foreach ($clientes as $cliente) {
             $cartaGarantia = $cliente->getIdsCliente()->getEstadoCartaGarantia();
             $estadoCliente = $cliente->getIdsCliente()->getEstadoCliente();
-            
+
             $data[] = array("idcliente" => utf8_encode($cliente->getCaId()),
                 "idalterno" => utf8_encode($cliente->getCaIdalterno()),
-                "nombre" => utf8_encode($cliente->getCaNombre()),
-                "direccion" => utf8_encode($cliente->getIdsCliente()->getDireccion()),
+                "nombre" => htmlspecialchars(utf8_encode($cliente->getCaNombre())),
+                "direccion" => htmlspecialchars(utf8_encode($cliente->getIdsCliente()->getDireccion())),
                 "telefono" => utf8_encode($cliente->getIdsCliente()->getCaTelefonos()),
                 "correo" => utf8_encode($cliente->getIdsCliente()->getCaEmail()),
                 "fax" => utf8_encode($cliente->getIdsCliente()->getCaFax()),
@@ -769,14 +674,18 @@ class crmActions extends sfActions {
                 "altex" => utf8_encode($cliente->getIdsCliente()->getCaAltex() ? "Sí" : "No"),
                 "oea" => utf8_encode($cliente->getIdsCliente()->getCaOea() ? "Sí" : "No"),
                 "comerciante" => utf8_encode($cliente->getIdsCliente()->getCaComerciante() ? "Sí" : "No"),
-                "coltrans_std" => $estadoCliente[1],
-                "coltrans_fch" => $estadoCliente[2],
-                "colmas_std" => $estadoCliente[3],
-                "colmas_fch" => $estadoCliente[4],
-                "colotm_std" => $estadoCliente[5],
-                "colotm_fch" => $estadoCliente[6],
-                "coldepositos_std" => $estadoCliente[7],
-                "coldepositos_fch" => $estadoCliente[8]
+                "coltrans_0170" => $estadoCliente[1],
+                "colmas_0170" => $estadoCliente[2],
+                "colotm_0170" => $estadoCliente[3],
+                "coldepositos_0170" => $estadoCliente[4],
+                "coltrans_std" => $estadoCliente[5],
+                "coltrans_fch" => $estadoCliente[6],
+                "colmas_std" => $estadoCliente[7],
+                "colmas_fch" => $estadoCliente[8],
+                "colotm_std" => $estadoCliente[9],
+                "colotm_fch" => $estadoCliente[10],
+                "coldepositos_std" => $estadoCliente[11],
+                "coldepositos_fch" => $estadoCliente[12]
             );
         }
 
@@ -835,90 +744,6 @@ class crmActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
-    public function executeCargarDatosSucursal(sfWebRequest $request) {
-        $idSucursal = $request->getParameter("idsucursal");
-        //print_r($idSucursal);
-        //exit;
-        $sucursal = Doctrine::getTable("IdsSucursal")
-                ->createQuery("i")
-                ->addWhere('i.ca_idsucursal = ?', $idSucursal)
-                ->fetchOne();
-
-        $data = array();
-        if ($sucursal) {
-            $data["nombre"] = utf8_encode($sucursal->getCaNombre());
-            $data["ciudad"] = utf8_encode($sucursal->getCiudad()->getCaIdciudad());
-            $data["direccion"] = utf8_encode($sucursal->getCaDireccion());
-            $data["telefonos"] = utf8_encode($sucursal->getCaTelefonos());
-            $data["fax"] = utf8_encode($sucursal->getCaFax());
-            $data["ciudad_destino"] = utf8_encode($sucursal->getCaIdciudaddes());
-        }
-        $this->responseArray = array("success" => true, "data" => $data);
-        $this->setTemplate("responseTemplate");
-    }
-
-    public function executeGuardarSucursal(sfWebRequest $request) {
-        $idSucursal = $request->getParameter("idsucursal");
-        $idCliente = $request->getParameter("idcliente");
-
-        if ($idSucursal) {
-            $sucursal = Doctrine::getTable("IdsSucursal")
-                    ->createQuery("i")
-                    ->addWhere('i.ca_idsucursal = ?', $idSucursal)
-                    ->fetchOne();
-        } else {
-            $sucursal = new IdsSucursal();
-            $sucursal->setCaId($idCliente);
-        }
-
-        $conn = Doctrine::getTable("IdsSucursal")->getConnection();
-        try {
-            $conn->beginTransaction();
-            if ($request->getParameter("nombre")) {
-                $sucursal->setCaNombre(utf8_decode($request->getParameter("nombre")));
-            }
-            if ($request->getParameter("ciudad")) {
-                $sucursal->setCaIdciudad(utf8_decode($request->getParameter("ciudad")));
-            }
-            if ($request->getParameter("direccion")) {
-                $sucursal->setCaDireccion(utf8_decode($request->getParameter("direccion")));
-            }
-            if ($request->getParameter("telefonos")) {
-                $sucursal->setCaTelefonos(utf8_decode($request->getParameter("telefonos")));
-            }
-            if ($request->getParameter("fax")) {
-                $sucursal->setCaFax(utf8_decode($request->getParameter("fax")));
-            }
-            $sucursal->save();
-            $conn->commit();
-            $this->responseArray = array("success" => true);
-        } catch (Exception $e) {
-            $conn->rollBack();
-            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
-        }
-        $this->setTemplate("responseTemplate");
-    }
-
-    public function executeEliminarSucursal(sfWebRequest $request) {
-        $idSucursal = $request->getParameter("idsucursal");
-
-        $sucursal = Doctrine::getTable("IdsSucursal")->find($idSucursal);
-//        $this->forward404Unless($sucursal);
-
-        try {
-            $sucursal->setCaUsuactualizado($this->getUser()->getUserId());
-            $sucursal->setCaUsueliminado($this->getUser()->getUserId());
-            $sucursal->setCaFchactualizado(date("Y-m-d H:i:s"));
-            $sucursal->setCaFcheliminado(date("Y-m-d H:i:s"));
-            $sucursal->save();
-            $this->responseArray = array("success" => true);
-        } catch (Exception $e) {
-            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
-        }
-
-        $this->setTemplate("responseTemplate");
-    }
-
     public function executeCargarContacto(sfWebRequest $request) {
         $idContacto = $request->getParameter("idcontacto");
         if ($idContacto) {
@@ -949,18 +774,12 @@ class crmActions extends sfActions {
                 $data["mes"] = $cumpleanos[0];
                 $data["dia"] = $cumpleanos[1];
                 $data["correo"] = utf8_encode($contacto->getCaEmail());
-                if ($contacto->getCaFijo()) {
-                    $data["fijo"] = true;
-                } else {
-                    $data["fijo"] = false;
-                }
-                if (utf8_encode($contacto->getCaTipo()) == 1) {
-                    $data["tipo"] = utf8_encode($contacto->getCaTipo());
-                } else {
-                    $data["tipo"] = "";
-                }
+                $data["activo"] = ($contacto->getCaActivo()) ? true : false;
+                $data["fijo"] = ($contacto->getCaFijo()) ? true : false;
+                $data["factutronica"] = ($contacto->getCaFactElectronica()) ? true : false;
+                $data["tipo"] = ($contacto->getCaTipo() === 1) ? $contacto->getCaTipo() : 0;
                 $data["observaciones"] = utf8_encode($contacto->getCaObservaciones());
-                $data["tipo_cliente"] = $contacto->getIdsSucursal()->getIds()->getIdsCliente()->getCaTipo();
+                $data["tipo_cliente"] = utf8_encode($contacto->getIdsSucursal()->getIds()->getIdsCliente()->getCaTipo());
             }
 
             $caso = "CU265";
@@ -972,11 +791,11 @@ class crmActions extends sfActions {
         } else {
             $idCliente = $request->getParameter("idcliente");
             $ids = Doctrine::getTable("Ids")
-                ->createQuery("i")
-                ->addWhere('i.ca_id = ?', $idCliente)
-                ->fetchOne();
+                    ->createQuery("i")
+                    ->addWhere('i.ca_id = ?', $idCliente)
+                    ->fetchOne();
             $data["tipo_cliente"] = $ids->getIdsCliente()->getCaTipo();
-            
+
             $this->responseArray = array("success" => true, "data" => $data);
             $this->setTemplate("responseTemplate");
         }
@@ -984,7 +803,9 @@ class crmActions extends sfActions {
 
     public function executeGuardarContacto(sfWebRequest $request) {
         $idContacto = $request->getParameter("idcontacto");
+        $contacto_activo = $request->getParameter("activo");
         $contacto_fijo = $request->getParameter("fijo");
+        $fact_electronica = $request->getParameter("factutronica");
 
         if ($idContacto) {
             $contacto = Doctrine::getTable("IdsContacto")
@@ -1000,37 +821,20 @@ class crmActions extends sfActions {
                 ->addWhere('i.ca_idsucursal = ?', $request->getParameter("idsucursal"))
                 ->fetchOne();
 
-        $concliente = Doctrine::getTable("Contacto")
-                ->createQuery("c")
-                ->addWhere('c.ca_idcliente = ?', $sucursal->getCaId())
-                ->addWhere('trim(lower(c.ca_nombres)) = ?', trim(strtolower($request->getParameter("nombres"))))
-                ->addWhere('trim(lower(c.ca_papellido)) = ?', trim(strtolower($request->getParameter("primer_apellido"))))
-                ->fetchOne();
-        if (!$concliente) {
-            $concliente = new Contacto();
-            $concliente->setCaIdcliente($sucursal->getCaId());
-        }
-
-        $conn = Doctrine::getTable("Contacto")->getConnection();
+        $conn = Doctrine::getTable("IdsContacto")->getConnection();
         try {
             $conn->beginTransaction();
             if ($request->getParameter("saludo")) {
                 $contacto->setCaSaludo(utf8_decode($request->getParameter("saludo")));
-                $concliente->setCaSaludo(utf8_decode($request->getParameter("saludo")));
             }
             if ($request->getParameter("nombres")) {
                 $contacto->setCaNombres(utf8_decode($request->getParameter("nombres")));
-                $concliente->setCaNombres(utf8_decode($request->getParameter("nombres")));
             }
             if ($request->getParameter("primer_apellido")) {
                 $contacto->setCaPapellido(utf8_decode($request->getParameter("primer_apellido")));
-                $concliente->setCaPapellido(utf8_decode($request->getParameter("primer_apellido")));
             }
             if ($request->getParameter("segundo_apellido")) {
                 $contacto->setCaSapellido(utf8_decode($request->getParameter("segundo_apellido")));
-                $concliente->setCaSapellido(utf8_decode($request->getParameter("segundo_apellido")));
-            } else {
-                $concliente->setCaSapellido('');
             }
             if ($request->getParameter("identificacion_tipo")) {
                 $contacto->setCaIdentificacionTipo(utf8_decode($request->getParameter("identificacion_tipo")));
@@ -1040,110 +844,59 @@ class crmActions extends sfActions {
             }
             if ($request->getParameter("cargo")) {
                 $contacto->setCaCargo(utf8_decode($request->getParameter("cargo")));
-                $concliente->setCaCargo(utf8_decode($request->getParameter("cargo")));
             }
             if ($request->getParameter("cargo_general")) {
                 $contacto->setCaCargoGeneral(utf8_decode($request->getParameter("cargo_general")));
             }
             if ($request->getParameter("departamento")) {
                 $contacto->setCaDepartamento(utf8_decode($request->getParameter("departamento")));
-                $concliente->setCaDepartamento(utf8_decode($request->getParameter("departamento")));
             }
             if ($request->getParameter("mes") and $request->getParameter("dia")) {
                 $contacto->setCaCumpleanos($request->getParameter("mes") . "-" . $request->getParameter("dia"));
             }
             if ($request->getParameter("telefono")) {
                 $contacto->setCaTelefonos(utf8_decode($request->getParameter("telefono")));
-                $concliente->setCaTelefonos(utf8_decode($request->getParameter("telefono")));
-                $concliente->setCaFax('');
             }
             if ($request->getParameter("celular")) {
                 $contacto->setCaCelular(utf8_decode($request->getParameter("celular")));
             }
             if ($request->getParameter("correo")) {
                 $contacto->setCaEmail(utf8_decode($request->getParameter("correo")));
-                $concliente->setCaEmail(utf8_decode($request->getParameter("correo")));
             }
-            if ($request->getParameter("tipo") === 1) {
+            if ($request->getParameter("tipo") == 1) {
                 $contacto->setCaTipo($request->getParameter("tipo"));
             } else {
                 $contacto->setCaTipo(0);
             }
-            if ($request->getParameter("idsucursal")) {
-                $contacto->setCaIdsucursal($request->getParameter("idsucursal"));
+            if (isset($contacto_activo)) {
+                $contacto->setCaActivo($contacto_activo);
             }
             if (isset($contacto_fijo)) {
                 $contacto->setCaFijo($contacto_fijo);
-                $concliente->setCaFijo($contacto_fijo);
+            }
+            if (isset($fact_electronica)) {
+                $contacto->setCaFactElectronica($fact_electronica);
+            }
+            if ($request->getParameter("idsucursal")) {
+                $contacto->setCaIdsucursal($request->getParameter("idsucursal"));
             }
             if ($request->getParameter("observaciones")) {
                 $contacto->setCaObservaciones(utf8_decode($request->getParameter("observaciones")));
-                $concliente->setCaObservaciones(utf8_decode($request->getParameter("observaciones")));
             }
             $contacto->setCaUsuactualizado($this->getUser()->getUserId());
             $contacto->setCaFchactualizado(date("Y-m-d H:i:s"));
-            if ($request->getParameter("identificacion_tipo") and $request->getParameter("identificacion") and $this->getUser()->getIdtrafico() != "PE-051") {    // Realiza Consulta solo para Cargos Específicos marcados en Parámetros
-                $contacto->getConsultaListas("DOCUMENTO");
-            }
+            /* Lanza una consulta del Contacto en Infolaft - Listas Vinculantes */
+//            if ($request->getParameter("identificacion_tipo") and $request->getParameter("identificacion") and $this->getUser()->getIdtrafico() != "PE-051") {    // Realiza Consulta solo para Cargos Específicos marcados en Parámetros
+//                $contacto->getNuevaConsulta("Id");
+//            }
 
             $contacto->save();
-            $concliente->save();
             $conn->commit();
             $this->responseArray = array("success" => true);
         } catch (Exception $e) {
             $conn->rollBack();
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
-        $this->setTemplate("responseTemplate");
-    }
-
-    public function executeEliminarContacto(sfWebRequest $request) {
-        $idContacto = $request->getParameter("idcontacto");
-        $detalle = $request->getParameter("detalle");
-
-        $contacto = Doctrine::getTable("IdsContacto")->find($idContacto);
-        try {
-            $contacto->setCaCargo($detalle);
-            $contacto->setCaDepartamento($detalle);
-            $contacto->setCaTelefonos($detalle);
-            $contacto->setCaCelular($detalle);
-            $contacto->setCaEmail($detalle);
-            $contacto->setCaActivo(false);
-            $contacto->setCaFijo(false);
-            if ($detalle == "Extrabajador") {
-            $contacto->setCaUsueliminado($this->getUser());
-            $contacto->setCaFcheliminado(date("Y-m-d h:i:s"));
-            } else {
-                $contacto->setCaUsuhabeasdata($this->getUser());
-                $contacto->setCaFchhabeasdata(date("Y-m-d h:i:s"));
-            }
-            $contacto->save();
-
-            $concliente = Doctrine::getTable("Contacto")
-                    ->createQuery("c")
-                    ->addWhere('c.ca_idcliente = ?', $contacto->getIdsSucursal()->getCaId())
-                    ->addWhere('trim(lower(c.ca_nombres)) = ?', trim(strtolower($contacto->getCaNombres())))
-                    ->addWhere('trim(lower(c.ca_papellido)) = ?', trim(strtolower($contacto->getCaPapellido())))
-                    ->fetchOne();
-            if ($concliente) {
-                $concliente->setCaCargo($detalle);
-                $concliente->setCaDepartamento($detalle);
-                $concliente->setCaTelefonos($detalle);
-                $concliente->setCaFax($detalle);
-                $concliente->setCaEmail($detalle);
-                $concliente->setCaFijo(false);
-                if ($detalle != "Extrabajador") {
-                    $contacto->setCaUsuhabeasdata($this->getUser());
-                    $contacto->setCaFchhabeasdata(date("Y-m-d h:i:s"));
-                }
-                $concliente->save();
-            }
-
-            $this->responseArray = array("success" => true);
-        } catch (Exception $e) {
-            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
-        }
-
         $this->setTemplate("responseTemplate");
     }
 
@@ -1178,8 +931,6 @@ class crmActions extends sfActions {
 
     public function executeDatosHistoricoClientes(sfWebRequest $request) {
         $idCliente = $request->getParameter("idcliente");
-//        print_r($idCliente);
-//        exit;
 
         $auditorias = Doctrine::getTable("IdsAuditoria")
                 ->createQuery("i")
@@ -1194,12 +945,61 @@ class crmActions extends sfActions {
                 "fecha" => utf8_encode($auditoria->getCaStamp()),
                 "usuario" => utf8_encode($auditoria->getCaUserid()),
                 "tabla" => utf8_encode($auditoria->getCaTableName()),
-                "campo" => utf8_encode($auditoria->getCaFieldName()),
+                "campo" => utf8_encode(($auditoria->getCaFieldName() == "ca_listaclinton") ? "ca_listavinculante" : $auditoria->getCaFieldName()),
                 "dato_anterior" => utf8_encode($auditoria->getCaValueOld()),
                 "dato_nuevo" => utf8_encode($auditoria->getCaValueNew()));
         }
 
         $this->responseArray = array("success" => true, "root" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosCambiosEstadoClientes(sfWebRequest $request) {
+        $idCliente = $request->getParameter("idcliente");
+
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select s.ca_idcliente, s.ca_estado, s.ca_fchestado, e.ca_nombre, a.ca_origen from ids.tb_clientes_estados s "
+                . " inner join control.tb_empresas e on e.ca_idempresa = s.ca_idempresa"
+                . " left  join public.vi_actividad_clientes a on a.ca_idcliente = s.ca_idcliente and a.ca_idempresa = s.ca_idempresa and a.ca_fchcreado = s.ca_fchestado"
+                . " where s.ca_idcliente = $idCliente"
+                . " ORDER BY s.ca_idempresa, s.ca_fchestado desc";
+
+        $rs = $con->execute($sql);
+        $estados = $rs->fetchAll();
+
+        $tree = new JTree();
+        $root = $tree->createNode(".");
+
+        $tree->addFirst($root);
+        foreach ($estados as $estado) {
+            $uid = $root;
+            $eje_raiz = array();
+            $eje_raiz[] = utf8_encode($estado["ca_nombre"]);
+
+            foreach ($eje_raiz as $eje) {
+                $value = $eje;
+                $node_uid = $tree->findValue($uid, $value);
+
+                if (!$node_uid) {
+                    $nodo = $tree->createNode($value);
+                    $tree->addChild($uid, $nodo);
+                    $uid = $nodo;
+                } else {
+                    $uid = $node_uid;
+                }
+            }
+            $nodo = $tree->getNode($uid);
+
+            $record = array();
+            $record["text"] = utf8_encode($estado["ca_estado"]);
+            $record["fchestado"] = $estado["ca_fchestado"];
+            $record["origen"] = utf8_encode($estado["ca_origen"]);
+            $record["leaf"] = true;
+
+            $nodo->setAttribute("children", $record);
+        }
+
+        $this->responseArray = $tree->getTreeNodes();
         $this->setTemplate("responseTemplate");
     }
 
@@ -1251,7 +1051,7 @@ class crmActions extends sfActions {
             $evento->setCaUsuario($this->getUser()->getUserId());
 
             $evento->save();
-            
+
             list($ano, $mes, $dia) = sscanf($evento->getCaFchcompromiso(), "%d-%d-%d");
             $fchVencimiento = date('Y-m-d H:i:s', mktime(23, 59, 59, $mes, $dia, $ano));
             $tarea = new NotTarea();
@@ -1264,7 +1064,7 @@ class crmActions extends sfActions {
             $tarea->setCaTitulo($evento->getCaAsunto() . " - " . $evento->getCaFchevento());
             $tarea->setCaTexto($evento->getCaDetalle());
             $tarea->save();
-            
+
             $asignacion = new NotTareaAsignacion();
             $asignacion->setCaIdtarea($tarea->getCaIdtarea());
             $asignacion->setCaLogin($tarea->getCaUsucreado());
@@ -1289,12 +1089,13 @@ class crmActions extends sfActions {
 
             $data = array();
             if ($cliente) {
-                $data["tipo_identificacion"] = utf8_encode($cliente->getIds()->getIdsTipoIdentificacion()->getCaTipoidentificacion());
                 $data["idalterno_id"] = utf8_encode($cliente->getIds()->getCaIdalterno());
-                $data["dv_id"] = utf8_encode($cliente->getIds()->getCaDv());
+                $data["dv_id"] = $cliente->getIds()->getCaDv();
+                $data["dv_valido"] = $cliente->getIds()->getCaDv();
                 $data["cliente"] = utf8_encode($cliente->getIds()->getCaNombre());
                 $data["comercial"] = utf8_encode($cliente->getCaVendedor());
                 $data["coord_aduana"] = utf8_encode($cliente->getCaCoordinador());
+                $data["tipo_identificacion"] = utf8_encode($cliente->getIds()->getIdsTipoIdentificacion()->getCaTipoidentificacion());
                 if ($cliente->getIds()->getIdsTipoIdentificacion()->getCaIdtrafico() == 'CO-057') {
                     $direccion = explode("|", utf8_encode($cliente->getCaDireccion()));
                     $data["direccion1"] = $direccion[0];
@@ -1338,7 +1139,6 @@ class crmActions extends sfActions {
                 $data["leyinsolvencia"] = utf8_encode($cliente->getCaLeyinsolvencia());
                 $data["comentario"] = utf8_encode($cliente->getCaComentario());
                 $data["contrato_agendamiento"] = utf8_encode($cliente->getCaFchcotratoag());
-                $data["lista_Ofac"] = utf8_encode($cliente->getCaListaclinton());
                 $data["status"] = utf8_encode($cliente->getCaStatus());
                 $data["calificacion"] = utf8_encode($cliente->getCaCalificacion());
                 $data["entidad"] = utf8_encode($cliente->getCaEntidad());
@@ -1364,6 +1164,7 @@ class crmActions extends sfActions {
     public function executeGuardarDatosCliente(sfWebRequest $request) {
         $idCliente = $request->getParameter("idcliente");
         $idalterno_id = strtoupper($request->getParameter("idalterno_id"));
+        $cliente_nuevo = false;
         if ($idCliente) {
             $cliente = Doctrine::getTable("IdsCliente")
                     ->createQuery("i")
@@ -1382,19 +1183,28 @@ class crmActions extends sfActions {
             if (!$ids) {
                 $ids = new Ids();
             }
+            $cliente_nuevo = true;
             $cliente = new IdsCliente();
             $sucursal = new IdsSucursal();
             $cliente->setCaIdgrupo($idalterno_id);
         }
-
-        $conn = Doctrine::getTable("IdsCliente")->getConnection();
+        
+        $consulta_listas = false;
+        $conn = Doctrine_Manager::getInstance()->connection();
         try {
             $conn->beginTransaction();
-
+            
+            if ($ids->getCaIdalterno() != $idalterno_id or $ids->getCaDv() != $request->getParameter("dv_id")) {
+                $consulta_listas = true;
+            }
             $ids->setCaIdalterno($idalterno_id);
             $ids->setCaTipoidentificacion($request->getParameter("tipo_identificacion"));
             $ids->setCaDv($request->getParameter("dv_id"));
             $ids->setCaWebsite($request->getParameter("website"));
+            
+            if ($ids->getCaNombre() != utf8_decode(strtoupper($request->getParameter("cliente")))) {
+                $consulta_listas = true;
+            }
             $ids->setCaNombre(utf8_decode(strtoupper($request->getParameter("cliente"))));
 
             $cliente->setCaVendedor(utf8_decode($request->getParameter("comercial")));
@@ -1409,6 +1219,10 @@ class crmActions extends sfActions {
                     ($i > 1) ? $direccion .= "|" : "";
                     $direccion .= $request->getParameter("direccion" . $i);
                 }
+                
+                if ($cliente->getCaDireccion() != utf8_decode($direccion)) {
+                    $consulta_listas = true;
+                }
                 $cliente->setCaDireccion(utf8_decode($direccion));
 
                 $cliente->setCaOficina($request->getParameter("oficina"));
@@ -1419,6 +1233,9 @@ class crmActions extends sfActions {
                 $cliente->setCaLocalidad(utf8_decode($request->getParameter("localidad")));
                 $cliente->setCaIdciudad(utf8_decode($request->getParameter("ciudad")));
             } else {
+                if ($cliente->getCaDireccion() != $request->getParameter("direccion0")) {
+                    $consulta_listas = true;
+                }
                 $cliente->setCaDireccion(utf8_decode($request->getParameter("direccion0")));
                 $cliente->setCaLocalidad(utf8_decode($request->getParameter("localidad2")));
                 $cliente->setCaIdciudad(utf8_decode($request->getParameter("ciudad2")));
@@ -1449,8 +1266,11 @@ class crmActions extends sfActions {
                 $cliente->setCaFchcotratoag(null);
             }
 
-            $cliente->setCaListaclinton(utf8_decode($request->getParameter("lista_Ofac")));
-            $cliente->setCaStatus(utf8_decode($request->getParameter("status")));
+            if ($request->getParameter("status")) {
+                $cliente->setCaStatus(utf8_decode($request->getParameter("status")));
+            } else {
+                $cliente->setCaStatus(null);
+            }
             $cliente->setCaCalificacion(utf8_decode($request->getParameter("calificacion")));
             $cliente->setCaEntidad(utf8_decode($request->getParameter("entidad")));
             if ($request->getParameter("confidencialidad") != '') {
@@ -1490,10 +1310,11 @@ class crmActions extends sfActions {
             $cliente->setIds($ids);
             $cliente->save($conn);
 
-            if ($this->getUser()->getIdtrafico() != "PE-051") {
-                $ids->getConsultaListas("DOCUMENTO");
+            /* Lanza una consulta del Proveedor en Infolaft - Listas Vinculantes */
+            if ($this->getUser()->getIdtrafico() != "PE-051" and $consulta_listas) {
+                $ids->getNuevaConsulta("Id&Nombre");
             }
-            
+
             if ($sucursal) { /* Crea la Sucursal Principal Automáticamente */
                 $sucursal->setCaId($ids->getCaId());
                 $sucursal->setCaNombre("Domicilio Principal");
@@ -1505,36 +1326,68 @@ class crmActions extends sfActions {
                 $sucursal->save($conn);
             }
 
+            /* Lanza una Consulta sobre el Representante Legal */
+            if ($cliente_nuevo or $cliente->getCaNumidentificacionRl()!=$request->getParameter("idRepresentante") or $cliente->getCaNombres()!=utf8_decode($request->getParameter("nombre")) or $cliente->getCaPapellido()!=utf8_decode($request->getParameter("apellido1")) or $cliente->getCaSapellido()!=utf8_decode($request->getParameter("apellido2"))) {
+                IdsRestrictivasTable::lanzarConsultaInfolaft($ids->getCaId(), $cliente->getCaNumidentificacionRl(), $cliente->getRepresentanteLegal(), "Id&Nombre");
+            }
+
             $conn->commit();
             $this->responseArray = array("success" => true, "idcliente" => $ids->getCaId() . "", "nombreCliente" => utf8_encode($ids->getCaNombre()));
         } catch (Exception $e) {
             $conn->rollBack();
-            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
         }
 
         $this->setTemplate("responseTemplate");
     }
 
     public function executeValidarNITExistente(sfWebRequest $request) {
+        $idalterno = $request->getParameter("idalterno");
         $ids = Doctrine::getTable("Ids")
                 ->createQuery("i")
-                ->innerJoin("i.IdsCliente c")
-                ->addWhere('i.ca_idalterno = ?', $request->getParameter("idalterno"))
+                // ->innerJoin("i.IdsCliente c")
+                ->addWhere('i.ca_idalterno = ?', $idalterno)
                 ->fetchOne();
-        
-        $agente = null;
+
+        $error = null;
+        $data = null;
+        $agente = array();
         if ($ids) {
-            $this->responseArray = array("success" => true, "data" => utf8_encode("El número de NIT ya se encuentra registrado en la base de datos."), "agente" => $agente);
-        } else {
-            // $agente = ($ids->getIdsAgente())?true:false; /* Valida si se está creando un Agente como Cliente */
-            $agente = Doctrine::getTable("Ids")
-                ->createQuery("i")
-                ->innerJoin("i.IdsAgente a")
-                ->addWhere('i.ca_idalterno = ?', $request->getParameter("idalterno"))
-                ->fetchOne();
-            
-            $this->responseArray = array("success" => true, "data" => "", "agente" => ($agente) ? true : false);
+            if ($ids->getIdsCliente()->getCaUsucreado()) {
+                $error = utf8_encode("El número de NIT ya se encuentra registrado como Cliente en CRM");
+            } else {
+                // $agente = ($ids->getIdsAgente())?true:false; /* Valida si se está creando un Agente como Cliente */
+                $agente = Doctrine::getTable("Ids")
+                        ->createQuery("i")
+                        ->innerJoin("i.IdsAgente a")
+                        ->addWhere('i.ca_idalterno = ?', $idalterno)
+                        ->fetchOne();
+
+                $data["tipo_identificacion"] = utf8_encode($ids->getIdsTipoIdentificacion()->getCaTipoidentificacion());
+                $data["idalterno_id"] = utf8_encode($ids->getCaIdalterno());
+                $data["dv_id"] = utf8_encode($ids->getCaDv());
+                $data["cliente"] = utf8_encode($ids->getCaNombre());
+
+                $sucPrincipal = $ids->getSucursalPrincipal();
+                if ($sucPrincipal) {
+                    if ($ids->getIdsTipoIdentificacion()->getCaIdtrafico() == 'CO-057') {
+                        $data["complemento"] = utf8_encode($sucPrincipal->getCaDireccion());
+                        $data["localidad"] = utf8_encode($sucPrincipal->getCaLocalidad());
+                        $data["codigo_postal"] = utf8_encode($sucPrincipal->getCaZipcode());
+                        $data["ciudad"] = utf8_encode($sucPrincipal->getCaIdciudad());
+                        $data["telefono"] = utf8_encode($sucPrincipal->getCaTelefonos());
+                        $data["fax"] = utf8_encode($sucPrincipal->getCaFax());
+                    } else {
+                        $data["direccion0"] = utf8_encode($sucPrincipal->getCaDireccion());
+                        $data["localidad2"] = utf8_encode($sucPrincipal->getCaLocalidad());
+                        $data["ciudad2"] = utf8_encode($sucPrincipal->getCaIdciudad());
+                    }
+                }
+            }
         }
+        $data["dv_valido"] = Utils::calcularDV($idalterno);
+        $this->responseArray = array("success" => true, "data" => $data, "error" => $error, "agente" => ($agente) ? true : false);
+
         $this->setTemplate("responseTemplate");
     }
 
@@ -1580,7 +1433,7 @@ class crmActions extends sfActions {
         }
         $this->setTemplate("responseTemplate");
     }
-    
+
     public function executeGuardarPorcentajeComision(sfWebRequest $request) {
         $idCliente = $request->getParameter("idcliente");
 
@@ -1706,139 +1559,6 @@ class crmActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
-    public function executeBeneficiosEmpresas(sfWebRequest $request) {
-        $idCliente = $request->getParameter("idcliente");
-        $estados = Doctrine::getTable("IdsEstadoSap")
-                ->createQuery("i")
-                ->addWhere('i.ca_tipo = ?', 'C')
-                ->addWhere('i.ca_id = ?', $idCliente)
-                ->addWhere('i.ca_activo = ?', true)
-                ->execute();
-
-        $data = array();
-        foreach ($estados as $estado) {
-            if ($estado->getEmpresa()->getCaIdsap()) {
-                $data[] = array("id" => $estado->getCaIdempresa(), "name" => utf8_encode($estado->getEmpresa()->getCaNombre()));
-            }
-        }
-        $this->responseArray = $data;
-        $this->setTemplate("responseTemplate");
-    }
-
-    public function executeDatosBeneficioCredito(sfWebRequest $request) {
-        $idCliente = $request->getParameter("idcliente");
-        try {
-            $beneficiosCredito = Doctrine::getTable("IdsCredito")
-                    ->createQuery("i")
-                    ->addWhere('i.ca_id = ?', $idCliente)
-                    ->addOrderBy("i.ca_idempresa")
-                    ->execute();
-
-            $data = array();
-
-            foreach ($beneficiosCredito as $beneficioCredito) {
-                $data[] = array(
-                    "idcliente" => utf8_encode($beneficioCredito->getCaId()),
-                    "idcredito" => utf8_encode($beneficioCredito->getCaIdcredito()),
-                    "idempresa" => utf8_encode($beneficioCredito->getCaIdempresa()),
-                    "empresa" => utf8_encode($beneficioCredito->getEmpresa()->getCaNombre()),
-                    "cupo" => utf8_encode($beneficioCredito->getCaCupo()),
-                    "dias" => utf8_encode($beneficioCredito->getCaDias()),
-                    "observaciones" => utf8_encode($beneficioCredito->getCaObservaciones()),
-                    "creacion" => utf8_encode($beneficioCredito->getCaUsucreado() . " - " . $beneficioCredito->getCaFchcreado()),
-                    "ult_modificacion" => utf8_encode($beneficioCredito->getCaUsuactualizado() . " - " . $beneficioCredito->getCaFchactualizado()));
-            }
-
-            $this->responseArray = array("success" => true, "data" => $data);
-        } catch (Exception $e) {
-            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
-        }
-        $this->setTemplate("responseTemplate");
-    }
-
-    public function executeDatosUnBeneficioCredito(sfWebRequest $request) {
-        $idCredito = $request->getParameter("idCredito");
-        
-        $beneficioCredito = Doctrine::getTable("IdsCredito")->find($idCredito);
-        $data = array();
-        
-        if ($beneficioCredito) {
-            $data["idcredito"] = $beneficioCredito->getCaIdcredito();
-            $data["idempresa"] = $beneficioCredito->getCaIdempresa();
-            $data["cupo"] = $beneficioCredito->getCaCupo();
-            $data["dias"] = $beneficioCredito->getCaDias();
-            $data["observaciones"] = utf8_encode($beneficioCredito->getCaObservaciones());
-        }
-        $this->responseArray = array("success" => true, "data" => $data);
-        $this->setTemplate("responseTemplate");
-    }
-
-    public function executeGuardarBeneficioCredito(sfWebRequest $request) {
-        $idCredito = $request->getParameter("idcredito");
-        
-        if ($idCredito) {
-            $beneficioCredito = Doctrine::getTable("IdsCredito")->find($idCredito);
-
-            if (!$beneficioCredito) {
-                $beneficioCredito = Doctrine::getTable("IdsCredito")
-                        ->createQuery("i")
-                        ->addWhere('i.ca_id = ?', $idCliente)
-                        ->addWhere('i.ca_idempresa = ?', $idEmpresa)
-                        ->fetchOne();
-            }
-        }
-        if (!$beneficioCredito) {
-            $idCliente = $request->getParameter("idcliente");
-            $idEmpresa = $request->getParameter("idempresa");
-            
-            $beneficioCredito = new IdsCredito();
-            $beneficioCredito->setCaId($idCliente);
-            $beneficioCredito->setCaIdempresa($idEmpresa);
-        }
-
-        $con = Doctrine::getTable("IdsCredito")->getConnection();
-        try {
-            $con->beginTransaction();
-            if ($request->getParameter("cupo") != null) {
-                $beneficioCredito->setCaCupo($request->getParameter("cupo"));
-            }
-            if ($request->getParameter("dias") != null) {
-                $beneficioCredito->setCaDias($request->getParameter("dias"));
-            }
-            if ($request->getParameter("observaciones")) {
-                $beneficioCredito->setCaObservaciones(utf8_decode($request->getParameter("observaciones")));
-            }
-            $beneficioCredito->setCaTipo("C");
-            $beneficioCredito->save();
-            $con->commit();
-            $this->responseArray = array("success" => true);
-        } catch (Exception $e) {
-            $con->rollBack();
-            $this->responseArray = array("success" => false, "errorInfo" => utf8_decode($e->getMessage()));
-        }
-
-        $this->setTemplate("responseTemplate");
-    }
-
-    public function executeEliminarBeneficioCredito(sfWebRequest $request) {
-        $idCredito = $request->getParameter("idcredito");
-        $beneficioCredito = Doctrine::getTable("IdsCredito")->find($idCredito);
-        $con = Doctrine::getTable("IdsCredito")->getConnection();
-        try {
-            $con->beginTransaction();
-            if ($beneficioCredito) {
-                $beneficioCredito->delete();
-            }
-            $con->commit();
-            $this->responseArray = array("success" => true);
-        } catch (Exception $e) {
-            $con->rollBack();
-            $this->responseArray = array("success" => false, "errorInfo" => utf8_decode($e->getMessage()));
-        }
-        
-        $this->setTemplate("responseTemplate");
-    }
-    
     public function executeCargarDatosFichaTecnica(sfWebRequest $request) {
         $idcliente = $request->getParameter("idcliente");
         $fichatecnica = Doctrine::getTable("FichaTecnica")
@@ -1846,10 +1566,20 @@ class crmActions extends sfActions {
                 ->where("d.ca_idcliente = ?", $idcliente)
                 ->fetchOne();
         if ($fichatecnica) {
-            $documentacion = json_decode(utf8_encode($fichatecnica->getCaDocumentacion()), true);
+            $nuevo = true;
+            $documentacion = utf8_encode($fichatecnica->getCaDocumentacion());
+            if (strpos($documentacion, "formGen", 0) === false) {
+                $documentacion = strip_tags($documentacion);
+                $documentacion = substr($documentacion, 2, strlen($documentacion));
+                $documentacion = substr($documentacion, 0, strlen($documentacion) - 1);
+                $documentacion = str_replace('":"', '¬', $documentacion);
+                $chunks = array_chunk(preg_split('/(¬|",")/', $documentacion), 2);
+                $documentacion = array_combine(array_column($chunks, 0), array_column($chunks, 1));
+                $nuevo = false;
+            }
             $transporte = utf8_encode($fichatecnica->getCaTransporteinternacional());
             $imprimir = true;
-            $this->responseArray = array("success" => true, "documentacion" => $documentacion, "transporte" => $transporte, "imprimir" => $imprimir);
+            $this->responseArray = array("success" => true, "documentacion" => $documentacion, "transporte" => $transporte, "imprimir" => $imprimir, "nuevo" => $nuevo);
         } else {
             $imprimir = false;
             $this->responseArray = array("success" => true, "imprimir" => $imprimir);
@@ -2102,8 +1832,11 @@ class crmActions extends sfActions {
 
         $data = array();
         if ($cliente) {
+            $ids = $cliente->getIds();
+            $ids_datos = json_decode(utf8_encode($ids->getCaDatos()));
             $data = array("idcliente" => $cliente->getCaIdcliente(),
                 "fchcircular" => $cliente->getCaFchcircular(),
+                "fchvencircular" => $cliente->getCaFchvencircular(),
                 "nvlriesgo" => utf8_encode($cliente->getCaNvlriesgo()),
                 "leyinsolvencia" => utf8_encode($cliente->getCaLeyinsolvencia()),
                 "comentario" => utf8_encode($cliente->getCaComentario()),
@@ -2122,6 +1855,7 @@ class crmActions extends sfActions {
                 "altex" => utf8_encode($cliente->getCaAltex()),
                 "oea" => utf8_encode($cliente->getCaOea()),
                 "comerciante" => utf8_encode($cliente->getCaComerciante()),
+                "forma_pago" => $ids_datos->forma_pago,
                 "cod_ciiu_uno" => $cliente->getCaCiiuUno(),
                 "cod_ciiu_dos" => $cliente->getCaCiiuDos(),
                 "cod_ciiu_trs" => $cliente->getCaCiiuTrs(),
@@ -2163,36 +1897,38 @@ class crmActions extends sfActions {
             }
         }
 
-        $data = array();
-        if ($tipopersona) {
-            $con = Doctrine_Manager::getInstance()->connection();
-            $sql = "select distinct tpd.ca_idtipo as a, tpd.ca_tipo as ca_tipo, tpd.ca_equivalentea, ";
-            $sql .= " dc.ca_fchdocumento as ca_fchdocumento, dc.ca_observaciones as ca_observaciones ";
-            $sql .= " from tb_doccliente dc ";
-            $sql .= " inner join ids.tb_documentosxconc dxc ON (dxc.ca_id = dc.ca_idtipo and dc.ca_idcliente = $idcliente) ";
-            $sql .= "right join ids.tb_tipodocumentos tpd ON (tpd.ca_idtipo = dxc.ca_idtipo) ";
-            $sql .= " where tpd.ca_equivalentea = 25 ";
-            $sql .= "order by tpd.ca_idtipo";
+        //echo "tipopersina".$tipopersona;
 
-            $rs = $con->execute($sql);
-            $control_rs = $rs->fetchAll();
-            foreach ($control_rs as $control) {
-                $seleccionado = false;
-                if ($control["ca_fchdocumento"]) {
-                    $seleccionado = true;
-                }
-                $data[] = array(
-                    "idtipo" => $control["a"],
-                    "iddocumento" => /* $control["ca_iddocumento"] */"",
-                    "empresa" => /* $control["ca_nombre"] */"",
-                    "documento" => utf8_encode($control["ca_tipo"]),
-                    "fch_vigencia" => /* $control["ca_fchvigencia"] */"",
-                    "fch_documento" => $control["ca_fchdocumento"],
-                    "seleccionado" => $seleccionado,
-                    "observaciones" => utf8_encode($control["ca_observaciones"])
-                );
+        $data = array();
+//        if ($tipopersona) {
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sql = "select distinct tpd.ca_idtipo as a, tpd.ca_tipo as ca_tipo, tpd.ca_equivalentea, ";
+        $sql .= " dc.ca_fchdocumento as ca_fchdocumento, dc.ca_observaciones as ca_observaciones ";
+        $sql .= " from tb_doccliente dc ";
+        $sql .= " inner join ids.tb_documentosxconc dxc ON (dxc.ca_id = dc.ca_idtipo and dc.ca_idcliente = $idcliente) ";
+        $sql .= "right join ids.tb_tipodocumentos tpd ON (tpd.ca_idtipo = dxc.ca_idtipo) ";
+        $sql .= " where tpd.ca_equivalentea = 25 ";
+        $sql .= "order by tpd.ca_idtipo";
+
+        $rs = $con->execute($sql);
+        $control_rs = $rs->fetchAll();
+        foreach ($control_rs as $control) {
+            $seleccionado = false;
+            if ($control["ca_fchdocumento"]) {
+                $seleccionado = true;
             }
+            $data[] = array(
+                "idtipo" => $control["a"],
+                "iddocumento" => /* $control["ca_iddocumento"] */"",
+                "empresa" => /* $control["ca_nombre"] */"",
+                "documento" => utf8_encode($control["ca_tipo"]),
+                "fch_vigencia" => /* $control["ca_fchvigencia"] */"",
+                "fch_documento" => $control["ca_fchdocumento"],
+                "seleccionado" => $seleccionado,
+                "observaciones" => utf8_encode($control["ca_observaciones"])
+            );
         }
+//        }
 
         $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
 
@@ -2254,6 +1990,11 @@ class crmActions extends sfActions {
                 if ($datos->fchcircular) {
                     $cliente->setCaFchcircular($datos->fchcircular);
                 }
+                if ($datos->fchvencircular) {
+                    $cliente->setCaFchvencircular($datos->fchvencircular);
+                } else {
+                    $cliente->setCaFchvencircular(null);
+                }
                 if ($datos->nvlriesgo) {
                     $cliente->setCaNvlriesgo(utf8_decode($datos->nvlriesgo));
                 }
@@ -2295,7 +2036,7 @@ class crmActions extends sfActions {
                 }
                 if (isset($datos->tipo)) {
                     if ($datos->tipo)
-                        $cliente->setCaTipo($datos->tipo);
+                        $cliente->setCaTipo(utf8_decode($datos->tipo));
                     else
                         $cliente->setCaTipo(null);
                 }
@@ -2304,7 +2045,7 @@ class crmActions extends sfActions {
                         $cliente->setCaUap($datos->uap);
                     else
                         $cliente->setCaUap(false);
-                }       
+                }
                 if (isset($datos->altex)) {
                     if ($datos->altex)
                         $cliente->setCaAltex($datos->altex);
@@ -2325,15 +2066,23 @@ class crmActions extends sfActions {
                 }
                 if ($datos->cod_ciiu_uno) {
                     $cliente->setCaCiiuUno($datos->cod_ciiu_uno);
+                } else {
+                    $cliente->setCaCiiuUno(null);
                 }
                 if ($datos->cod_ciiu_dos) {
                     $cliente->setCaCiiuDos($datos->cod_ciiu_dos);
+                } else {
+                    $cliente->setCaCiiuDos(null);
                 }
                 if ($datos->cod_ciiu_trs) {
                     $cliente->setCaCiiuTrs($datos->cod_ciiu_trs);
+                } else {
+                    $cliente->setCaCiiuTrs(null);
                 }
                 if ($datos->cod_ciiu_ctr) {
                     $cliente->setCaCiiuCtr($datos->cod_ciiu_ctr);
+                } else {
+                    $cliente->setCaCiiuCtr(null);
                 }
                 if ($datos->numempleados) {
                     $cliente->setCaMenosxempleados($datos->numempleados);
@@ -2342,44 +2091,53 @@ class crmActions extends sfActions {
                 $cliente->setCaUsufinanciero($this->getUser()->getUserId());
 
                 $cliente->save();
+                
+                if ($datos->forma_pago) {
+                    $ids = $cliente->getIds();
+                    $ids_datos = json_decode($ids->getCaDatos());
+                    $ids_datos->forma_pago = $datos->forma_pago;
+                    $ids_datos = json_encode($ids_datos);
+                    $ids->setCaDatos($ids_datos);
+                    $ids->save();
+                }
                 $conn->commit();
 
-                $conect = Doctrine::getTable("Blccliente")->getConnection();
+                $conect = Doctrine::getTable("IdsBalance")->getConnection();
                 $conect->beginTransaction();
 
                 foreach ($datosGridFinanciera as $datoGridFinanciera) {
-                    $blccliente = Doctrine::getTable("Blccliente")
+                    $idsbalance = Doctrine::getTable("IdsBalance")
                             ->createQuery("d")
                             ->where("d.ca_idcliente = ?", $idcliente)
                             ->addWhere("d.ca_anno = ?", $datoGridFinanciera->ca_anno)
                             ->fetchOne();
 
-                    if ($blccliente) {
+                    if ($idsbalance) {
                         if ($datoGridFinanciera->ca_activostotales) {
-                            $blccliente->setCaActivostotales($datoGridFinanciera->ca_activostotales);
+                            $idsbalance->setCaActivostotales($datoGridFinanciera->ca_activostotales);
                         }
                         if ($datoGridFinanciera->ca_activoscorrientes) {
-                            $blccliente->setCaActivoscorrientes($datoGridFinanciera->ca_activoscorrientes);
+                            $idsbalance->setCaActivoscorrientes($datoGridFinanciera->ca_activoscorrientes);
                         }
                         if ($datoGridFinanciera->ca_pasivostotales) {
-                            $blccliente->setCaPasivostotales($datoGridFinanciera->ca_pasivostotales);
+                            $idsbalance->setCaPasivostotales($datoGridFinanciera->ca_pasivostotales);
                         }
                         if ($datoGridFinanciera->ca_pasivoscorrientes) {
-                            $blccliente->setCaPasivoscorrientes($datoGridFinanciera->ca_pasivoscorrientes);
+                            $idsbalance->setCaPasivoscorrientes($datoGridFinanciera->ca_pasivoscorrientes);
                         }
                         if ($datoGridFinanciera->ca_inventarios) {
-                            $blccliente->setCaInventarios($datoGridFinanciera->ca_inventarios);
+                            $idsbalance->setCaInventarios($datoGridFinanciera->ca_inventarios);
                         }
                         if ($datoGridFinanciera->ca_patrimonios) {
-                            $blccliente->setCaPatrimonios($datoGridFinanciera->ca_patrimonios);
+                            $idsbalance->setCaPatrimonios($datoGridFinanciera->ca_patrimonios);
                         }
                         if ($datoGridFinanciera->ca_utilidades) {
-                            $blccliente->setCaUtilidades($datoGridFinanciera->ca_utilidades);
+                            $idsbalance->setCaUtilidades($datoGridFinanciera->ca_utilidades);
                         }
                         if ($datoGridFinanciera->ca_ventas) {
-                            $blccliente->setCaVentas($datoGridFinanciera->ca_ventas);
+                            $idsbalance->setCaVentas($datoGridFinanciera->ca_ventas);
                         }
-                        $blccliente->save();
+                        $idsbalance->save();
                     }
                 }
                 $conect->commit();
@@ -2415,6 +2173,785 @@ class crmActions extends sfActions {
 
         $this->responseArray = array("success" => true, "permisos" => $permisos);
         $this->setTemplate("responseTemplate");
+    }
+
+    public function executeIntegracionContactos(sfWebRequest $request) {
+        $idcliente = $request->getParameter("idcliente");
+        $con = Doctrine_Manager::getInstance()->connection();
+
+//        // Ejecutar una sola vez!
+//        $sql = "update ids.tb_contactos set ca_fax = ca_telefonos where ca_telefonos = 'Extrabajador' and ca_fax is null; "
+//                . "update ids.tb_contactos set ca_fax = ca_telefonos where ca_telefonos = 'Extrabajador' and ca_fax != 'Extrabajador';"
+//                . "update public.tb_concliente set ca_fax = ca_telefonos where ca_telefonos = 'Extrabajador' and ca_fax != 'Extrabajador';";
+//        $q = Doctrine_Manager::getInstance()->connection();
+//        $q->execute($sql);
+
+        date_default_timezone_set('America/Bogota');
+        set_time_limit(0);
+
+        if ($idcliente) {
+            $sql = "select ca_idcliente from public.tb_clientes where ca_idcliente = " . $idcliente;
+        } else {
+            $sql = "select ca_idcliente from public.vi_clientes where ca_coltrans_std = 'Activo' or ca_colmas_std = 'Activo' or ca_colotm_std = 'Activo' or ca_coldepositos_std = 'Activo' limit 500";
+        }
+        // die($sql);
+        $st = $con->execute($sql);
+        $ids = $st->fetchAll();
+        $ids = array_column($ids, 'ca_idcliente');
+
+        $q = Doctrine::getTable("IdsCliente")
+                ->createQuery("c")
+                ->whereIn("c.ca_idcliente", $ids);
+        $x = 1;
+        $comparativo = array();
+        $clientes = $q->execute();
+
+        foreach ($clientes as $cliente) {
+            $fch_update = array();
+            $fch_update[] = $cliente->getCaFchcreado();
+            $fch_update[] = $cliente->getCaFchactualizado();
+
+            $ids_contactos = Doctrine::getTable("IdsContacto")
+                    ->createQuery("c")
+                    ->select("c.ca_idcontacto, i.ca_id as ca_idcliente, c.ca_idsucursal, c.ca_papellido, c.ca_sapellido, c.ca_nombres, c.ca_saludo, c.ca_cargo, c.ca_departamento, c.ca_telefonos, c.ca_fax, c.ca_email, ca_fijo, c.ca_observaciones, c.ca_usucreado, c.ca_fchcreado, c.ca_usuactualizado, c.ca_fchactualizado, c.ca_usueliminado, c.ca_fcheliminado, c.ca_cumpleanos, c.ca_fijo, c.ca_tipo, c.ca_propiedades")
+                    ->innerJoin("c.IdsSucursal s")
+                    ->innerJoin("s.Ids i")
+                    ->addWhere("i.ca_id = ?", $cliente->getCaIdcliente())
+                    ->orderBy("c.ca_nombres, c.ca_papellido, c.ca_sapellido")
+                    ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                    ->execute();
+
+            $contactos = Doctrine::getTable("Contacto")
+                    ->createQuery("c")
+                    ->select("c.ca_idcontacto, c.ca_idcliente, c.ca_papellido, c.ca_sapellido, c.ca_nombres, c.ca_saludo, c.ca_cargo, c.ca_departamento, c.ca_telefonos, c.ca_fax, c.ca_email, ca_fijo, c.ca_observaciones, c.ca_usucreado, c.ca_fchcreado, c.ca_usuactualizado, c.ca_fchactualizado, c.ca_cumpleanos, c.ca_fijo, c.ca_tipo, c.ca_propiedades, c.ca_idscontacto")
+                    ->addWhere("c.ca_idcliente = ?", $cliente->getCaIdcliente())
+                    ->orderBy("c.ca_nombres, c.ca_papellido, c.ca_sapellido")
+                    ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                    ->execute();
+
+            $paralelo = $idcontacto_ok = array();
+            foreach ($ids_contactos as $idscontacto) {
+                $contacto_ids = array(
+                    "idcontacto" => $idscontacto["c_ca_idcontacto"],
+                    "idcliente" => $idscontacto["i_ca_idcliente"],
+                    "papellido" => $idscontacto["c_ca_papellido"],
+                    "sapellido" => $idscontacto["c_ca_sapellido"],
+                    "nombres" => $idscontacto["c_ca_nombres"],
+                    "saludo" => $idscontacto["c_ca_saludo"],
+                    "cargo" => $idscontacto["c_ca_cargo"],
+                    "departamento" => $idscontacto["c_ca_departamento"],
+                    "telefonos" => $idscontacto["c_ca_telefonos"],
+                    "fax" => $idscontacto["c_ca_fax"],
+                    "email" => $idscontacto["c_ca_email"],
+                    "fijo" => $idscontacto["c_ca_fijo"],
+                    "cumpleanos" => $idscontacto["c_ca_cumpleanos"],
+                    "observaciones" => $idscontacto["c_ca_observaciones"],
+                    "usucreado" => $idscontacto["c_ca_usucreado"],
+                    "fchcreado" => $idscontacto["c_ca_fchcreado"],
+                    "usuactualizado" => $idscontacto["c_ca_usuactualizado"],
+                    "fchactualizado" => $idscontacto["c_ca_fchactualizado"],
+                    "usueliminado" => $idscontacto["c_ca_usueliminado"],
+                    "fcheliminado" => $idscontacto["c_ca_fcheliminado"],
+                    "propiedades" => $idscontacto["c_ca_propiedades"],
+                    "tipo" => $idscontacto["c_ca_tipo"],
+                    "idscontacto" => $idscontacto["c_ca_idcontacto"]
+                );
+                $contacto_old = array();
+                foreach ($contactos as $contacto) {
+                    if (trim($idscontacto["c_ca_nombres"]) == trim($contacto["c_ca_nombres"]) && trim($idscontacto["c_ca_papellido"]) == trim($contacto["c_ca_papellido"]) && trim($idscontacto["c_ca_sapellido"]) == trim($contacto["c_ca_sapellido"])) {
+                        $idcontacto_ok[] = $contacto["c_ca_idcontacto"];
+                        $contacto_old = array(
+                            "idcontacto" => $contacto["c_ca_idcontacto"],
+                            "idcliente" => $contacto["c_ca_idcliente"],
+                            "papellido" => $contacto["c_ca_papellido"],
+                            "sapellido" => $contacto["c_ca_sapellido"],
+                            "nombres" => $contacto["c_ca_nombres"],
+                            "saludo" => $contacto["c_ca_saludo"],
+                            "cargo" => $contacto["c_ca_cargo"],
+                            "departamento" => $contacto["c_ca_departamento"],
+                            "telefonos" => $contacto["c_ca_telefonos"],
+                            "fax" => $contacto["c_ca_fax"],
+                            "email" => $contacto["c_ca_email"],
+                            "fijo" => $contacto["c_ca_fijo"],
+                            "cumpleanos" => $contacto["c_ca_cumpleanos"],
+                            "observaciones" => $contacto["c_ca_observaciones"],
+                            "usucreado" => $contacto["c_ca_usucreado"],
+                            "fchcreado" => $contacto["c_ca_fchcreado"],
+                            "usuactualizado" => $contacto["c_ca_usuactualizado"],
+                            "fchactualizado" => $contacto["c_ca_fchactualizado"],
+                            "usueliminado" => null,
+                            "fcheliminado" => null,
+                            "propiedades" => $contacto["c_ca_propiedades"],
+                            "tipo" => $contacto["c_ca_tipo"],
+                            "idscontacto" => $contacto["c_ca_idscontacto"]
+                        );
+                        break;
+                    }
+                }
+                $paralelo[] = array(
+                    "contacto_ids" => $contacto_ids,
+                    "contacto_old" => $contacto_old
+                );
+            }
+            foreach ($contactos as $contacto) {
+                if (!in_array($contacto["c_ca_idcontacto"], $idcontacto_ok)) {
+                    $contacto_old = array(
+                        "idcontacto" => $contacto["c_ca_idcontacto"],
+                        "idcliente" => $contacto["c_ca_idcliente"],
+                        "papellido" => $contacto["c_ca_papellido"],
+                        "sapellido" => $contacto["c_ca_sapellido"],
+                        "nombres" => $contacto["c_ca_nombres"],
+                        "saludo" => $contacto["c_ca_saludo"],
+                        "cargo" => $contacto["c_ca_cargo"],
+                        "departamento" => $contacto["c_ca_departamento"],
+                        "telefonos" => $contacto["c_ca_telefonos"],
+                        "fax" => $contacto["c_ca_fax"],
+                        "email" => $contacto["c_ca_email"],
+                        "fijo" => $contacto["c_ca_fijo"],
+                        "cumpleanos" => $contacto["c_ca_cumpleanos"],
+                        "observaciones" => $contacto["c_ca_observaciones"],
+                        "usucreado" => $contacto["c_ca_usucreado"],
+                        "fchcreado" => $contacto["c_ca_fchcreado"],
+                        "usuactualizado" => $contacto["c_ca_usuactualizado"],
+                        "fchactualizado" => $contacto["c_ca_fchactualizado"],
+                        "usueliminado" => null,
+                        "fcheliminado" => null,
+                        "propiedades" => $contacto["c_ca_propiedades"],
+                        "tipo" => $contacto["c_ca_tipo"],
+                        "idscontacto" => $contacto["c_ca_idscontacto"]
+                    );
+                    $paralelo[] = array(
+                        "contacto_ids" => array(),
+                        "contacto_old" => $contacto_old
+                    );
+                }
+            }
+            $comparativo[] = array(
+                "idcliente" => $cliente->getCaIdcliente(),
+                "idalterno" => $cliente->getIds()->getCaIdalterno(),
+                "nombre" => $cliente->getIds()->getCaNombre(),
+                "contactos" => $paralelo
+            );
+        }
+        $x = 0;
+        echo "<body style=\"font-family: Arial, Helvetica, sans-serif;\">";
+        echo "<table border=1>";
+        foreach ($comparativo as $cliente) {
+            echo "<tr>";
+            echo "  <td> " . $x++ . " </td>";
+            echo "  <td> " . $cliente["idcliente"] . " </td>";
+            echo "  <td> " . $cliente["idalterno"] . " </td>";
+            echo "  <td> " . $cliente["nombre"] . "</td>";
+            echo "  <td></td>";
+            echo "</tr>";
+            $y = 1;
+            $contactos = $cliente["contactos"];
+            foreach ($contactos as $contacto) {
+                $linea = "";
+                $linea .= "<tr>";
+                $linea .= "  <td style=\"vertical-align: text-top;\"> " . $y++ . " </td>";
+                $linea .= "  <td></td>";
+                $linea .= "  <td></td>";
+                $linea .= "  <td>"
+                        . "<table border=1 width=100%>";
+                $linea .= "  <td>"
+                        . "         <table border=1 width=750px>";
+                $diferencias = array();
+                $color = array("Ok", "#008000"); // Color Verde
+                foreach ($contacto["contacto_ids"] as $key => $value) {
+                    if (!in_array($key, array("idcontacto")) && $contacto["contacto_ids"][$key] != $contacto["contacto_old"][$key]) {
+                        $color = array("Diferencia", "#FFFF00"); // Color Amarillo
+                        $diferencias[] = $key;
+                    }
+                    $linea .= "<tr>";
+                    $linea .= "  <td> " . $key . " </td>";
+                    $linea .= "  <td> " . $value . " </td>";
+                    $linea .= "</tr>";
+                }
+                if (count($contacto["contacto_ids"]) == 0 || count($contacto["contacto_old"]) == 0) {
+                    $color = array("Error", "#FF0000"); // Color Rojo
+                }
+                $linea .= "      </table>";
+                $linea .= "  </td>";
+
+                $linea .= "  <td>"
+                        . "         <table border=1 width=750px>";
+                foreach ($contacto["contacto_old"] as $key => $value) {
+                    $style = "";
+                    if (!in_array($key, array("idcontacto")) && $contacto["contacto_ids"][$key] != $contacto["contacto_old"][$key]) {
+                        $style = "style=\"background-color:" . $color[1] . ";\"";
+                    }
+                    $linea .= "<tr>";
+                    $linea .= "  <td " . $style . "> " . $key . " </td>";
+                    $linea .= "  <td " . $style . "> " . $value . " </td>";
+                    $linea .= "</tr>";
+                }
+                $linea .= "      </table>";
+                $linea .= "  </td>"
+                        . "</table></td>";
+                $linea .= "  <td style=\"background-color:" . $color[1] . ";\">" . $color[0] . "<br /><br />"
+                        . "      <a href=\"/crm/pasarContactos/sentido/izquierda/idscontacto/" . $contacto["contacto_ids"]["idcontacto"] . "/cntcontacto/" . $contacto["contacto_old"]["idcontacto"] . "\">Izquierda =></a> <br /><br />"
+                        . "      <a href=\"/crm/pasarContactos/sentido/derecha/idscontacto/" . $contacto["contacto_ids"]["idcontacto"] . "/cntcontacto/" . $contacto["contacto_old"]["idcontacto"] . "\">Derecha <=</a> <br /><br />"
+                        . "      <a href=\"/crm/quitarContactos/idscontacto/" . ($contacto["contacto_ids"]["idcontacto"] ? $contacto["contacto_ids"]["idcontacto"] : 'null') . "/cntcontacto/" . ($contacto["contacto_old"]["idcontacto"] ? $contacto["contacto_old"]["idcontacto"] : 'null') . "\">Elimina [X]</a> <br /><br />"
+                        . " </td>";
+                $linea .= "</tr>";
+
+                if (count($diferencias) && !array_diff($diferencias, array("idscontacto"))) {
+                    $sql = "update public.tb_concliente set ca_idscontacto = " . $contacto["contacto_ids"]["idcontacto"] . " where ca_idcontacto = " . $contacto["contacto_old"]["idcontacto"];
+                    $q = Doctrine_Manager::getInstance()->connection();
+                    $q->execute($sql);
+                } if (count($diferencias) && !array_diff($diferencias, array("usuactualizado", "fchactualizado"))) {
+                    if (trim($contacto["contacto_ids"]["usuactualizado"]) == "" && trim($contacto["contacto_old"]["usuactualizado"]) != "") {
+                        $sql = "update ids.tb_contactos set ca_usuactualizado = '" . $contacto["contacto_old"]["usuactualizado"] . "', "
+                                . " ca_fchactualizado = '" . $contacto["contacto_old"]["fchactualizado"] . "'"
+                                . " where ca_idcontacto = " . $contacto["contacto_ids"]["idcontacto"];
+                        $q = Doctrine_Manager::getInstance()->connection();
+                        $q->execute($sql);
+                    } else if (trim($contacto["contacto_old"]["usuactualizado"]) == "" && trim($contacto["contacto_ids"]["usuactualizado"]) != "") {
+                        $sql = "update public.tb_concliente set ca_usuactualizado = '" . $contacto["contacto_ids"]["usuactualizado"] . "', "
+                                . " ca_fchactualizado = '" . $contacto["contacto_ids"]["fchactualizado"] . "'"
+                                . " where ca_idcontacto = " . $contacto["contacto_old"]["idcontacto"];
+                        $q = Doctrine_Manager::getInstance()->connection();
+                        $q->execute($sql);
+                    }
+                } if (count($diferencias) && !array_diff($diferencias, array("usuactualizado", "fchactualizado", "idscontacto"))) {
+                    if (trim($contacto["contacto_ids"]["usuactualizado"]) == "" && trim($contacto["contacto_old"]["usuactualizado"]) != "") {
+                        $sql = "update ids.tb_contactos set ca_usuactualizado = '" . $contacto["contacto_old"]["usuactualizado"] . "', "
+                                . " ca_fchactualizado = '" . $contacto["contacto_old"]["fchactualizado"] . "'"
+                                . " where ca_idcontacto = " . $contacto["contacto_ids"]["idcontacto"];
+                        $q = Doctrine_Manager::getInstance()->connection();
+                        $q->execute($sql);
+
+                        $sql = "update public.tb_concliente set ca_idscontacto = " . $contacto["contacto_ids"]["idcontacto"] . " where ca_idcontacto = " . $contacto["contacto_old"]["idcontacto"];
+                        $q = Doctrine_Manager::getInstance()->connection();
+                        $q->execute($sql);
+                    } else if (trim($contacto["contacto_old"]["usuactualizado"]) == "" && trim($contacto["contacto_ids"]["usuactualizado"]) != "") {
+                        $sql = "update public.tb_concliente set ca_usuactualizado = '" . $contacto["contacto_ids"]["usuactualizado"] . "', "
+                                . " ca_fchactualizado = '" . $contacto["contacto_ids"]["fchactualizado"] . "', "
+                                . " ca_idscontacto = " . $contacto["contacto_ids"]["idcontacto"]
+                                . " where ca_idcontacto = " . $contacto["contacto_old"]["idcontacto"];
+                        $q = Doctrine_Manager::getInstance()->connection();
+                        $q->execute($sql);
+                    }
+                } else {
+                    // if ($color[0] != "Ok") {
+                        echo $linea;
+                    // }
+                }
+            }
+        }
+        echo "</table>";
+        exit;
+    }
+
+    public function executePasarContactos(sfWebRequest $request) {
+        $con = Doctrine_Manager::getInstance()->connection();
+        $sentido = $request->getParameter("sentido");
+        if ($request->getParameter("idscontacto") and $request->getParameter("idscontacto") != 'null')
+            $idscontacto = Doctrine::getTable("IdsContacto")->find($request->getParameter("idscontacto"));
+        if ($request->getParameter("cntcontacto") and $request->getParameter("cntcontacto") != 'null')
+            $cntcontacto = Doctrine::getTable("Contacto")->find($request->getParameter("cntcontacto"));
+
+        if ($idscontacto || $cntcontacto) {
+            if ($sentido == "izquierda") {
+                if (!$cntcontacto) {
+                    $sql = "SELECT NEXTVAL('tb_concliente_id') as next";
+                    $stmt = $con->execute($sql);
+                    $row = $stmt->fetch();
+
+                    $cntcontacto = new Contacto();
+                    $cntcontacto->setCaIdcontacto($row['next']);
+                    $cntcontacto->setCaIdcliente($idscontacto->getIdsSucursal()->getCaId());
+                }
+                $cntcontacto->stopBlaming();
+                $cntcontacto->setCaPapellido($idscontacto->getCaPapellido());
+                if (!$idscontacto->getCaSapellido()) {
+                    $cntcontacto->setCaSapellido('');
+                } else {
+                    $cntcontacto->setCaSapellido($idscontacto->getCaSapellido());
+                }
+
+                $cntcontacto->setCaNombres($idscontacto->getCaNombres());
+                $cntcontacto->setCaSaludo($idscontacto->getCaSaludo());
+                $cntcontacto->setCaCargo($idscontacto->getCaCargo());
+                $cntcontacto->setCaDepartamento($idscontacto->getCaDepartamento());
+                $cntcontacto->setCaTelefonos($idscontacto->getCaTelefonos());
+                if (!$idscontacto->getCaFax()) {
+                    $cntcontacto->setCaFax('');
+                } else {
+                    $cntcontacto->setCaFax($idscontacto->getCaFax());
+                }
+                $cntcontacto->setCaEmail($idscontacto->getCaEmail());
+                if ($idscontacto->getCaCumpleanos()) {
+                    $cntcontacto->setCaCumpleanos($idscontacto->getCaCumpleanos());
+                }
+                $cntcontacto->setCaObservaciones($idscontacto->getCaObservaciones());
+                $cntcontacto->setCaFijo($idscontacto->getCaFijo());
+                $cntcontacto->setCaFchcreado($idscontacto->getCaFchcreado());
+                $cntcontacto->setCaUsucreado($idscontacto->getCaUsucreado());
+                $cntcontacto->setCaFchactualizado($idscontacto->getCaFchactualizado());
+                $cntcontacto->setCaUsuactualizado($idscontacto->getCaUsuactualizado());
+                $cntcontacto->setCaTipo($idscontacto->getCaTipo());
+                $cntcontacto->setCaPropiedades($idscontacto->getCaPropiedades());
+                $cntcontacto->setCaIdscontacto($idscontacto->getCaIdcontacto());
+                $cntcontacto->save();
+            } else if ($sentido == "derecha") {
+                if (!$idscontacto) {
+                    $sql = "SELECT NEXTVAL('ids.tb_contactos_id') as next";
+                    $stmt = $con->execute($sql);
+                    $row = $stmt->fetch();
+
+                    $idscontacto = new IdsContacto();
+                    $idscontacto->setCaIdcontacto($row['next']);
+                    $idscontacto->setCaIdsucursal($cntcontacto->getIdsCliente()->getIds()->getSucursalPrincipal()->getCaIdsucursal());
+                }
+                $idscontacto->stopBlaming();
+                $idscontacto->setCaPapellido($cntcontacto->getCaPapellido());
+                $idscontacto->setCaSapellido($cntcontacto->getCaSapellido());
+                $idscontacto->setCaNombres($cntcontacto->getCaNombres());
+                $idscontacto->setCaSaludo($cntcontacto->getCaSaludo());
+                $idscontacto->setCaCargo($cntcontacto->getCaCargo());
+                if (!$idscontacto->getCaCargoGeneral()) {
+                    $idscontacto->setCaCargoGeneral($cntcontacto->getCaCargo());
+                }
+                $idscontacto->setCaDepartamento($cntcontacto->getCaDepartamento());
+                $idscontacto->setCaTelefonos($cntcontacto->getCaTelefonos());
+                $idscontacto->setCaFax($cntcontacto->getCaFax());
+                $idscontacto->setCaEmail($cntcontacto->getCaEmail());
+                if ($cntcontacto->getCaCumpleanos()) {
+                    $idscontacto->setCaCumpleanos($cntcontacto->getCaCumpleanos());
+                }
+                $idscontacto->setCaObservaciones($cntcontacto->getCaObservaciones());
+                $idscontacto->setCaFijo($cntcontacto->getCaFijo());
+                $idscontacto->setCaFchcreado($cntcontacto->getCaFchcreado());
+                $idscontacto->setCaUsucreado($cntcontacto->getCaUsucreado());
+                $idscontacto->setCaFchactualizado($cntcontacto->getCaFchactualizado());
+                $idscontacto->setCaUsuactualizado($cntcontacto->getCaUsuactualizado());
+                $idscontacto->setCaTipo($cntcontacto->getCaTipo());
+                $idscontacto->setCaPropiedades($cntcontacto->getCaPropiedades());
+                $idscontacto->save();
+                if (!$cntcontacto->getCaIdscontacto()) {
+                    $cntcontacto->stopBlaming();
+                    $cntcontacto->setCaIdscontacto($idscontacto->getCaIdcontacto());
+                    $cntcontacto->save();
+                }
+            }
+        }
+
+        exit;
+    }
+
+    public function executeQuitarContactos(sfWebRequest $request) {
+        $con = Doctrine_Manager::getInstance()->connection();
+
+        if ($request->getParameter("idscontacto") != 'null')
+            $idscontacto = Doctrine::getTable("IdsContacto")->find($request->getParameter("idscontacto"));
+        if ($request->getParameter("cntcontacto") != 'null')
+            $cntcontacto = Doctrine::getTable("Contacto")->find($request->getParameter("cntcontacto"));
+
+        if ($idscontacto || !$cntcontacto) {
+            $idscontacto->delete();
+        } else if (!$idscontacto || $cntcontacto) {
+            $cntcontacto->delete();
+        }
+        exit;
+    }
+
+    public function executeValidacionContactos(sfWebRequest $request) {
+        $idcliente = $request->getParameter("idcliente");
+        $con = Doctrine_Manager::getInstance()->connection();
+        date_default_timezone_set('America/Bogota');
+
+
+        if ($idcliente) {
+            $sql = "select ca_idcliente from public.tb_clientes where ca_idcliente = " . $idcliente;
+        } else {
+            $sql = "select ca_idcliente from public.vi_clientes_std where ca_coltrans_std = 'Activo' or ca_colmas_std = 'Activo' or ca_colotm_std = 'Activo' or ca_coldepositos_std = 'Activo'";
+        }
+        // die($sql);
+        $st = $con->execute($sql);
+        $ids = $st->fetchAll();
+        $ids = array_column($ids, 'ca_idcliente');
+
+        $q = Doctrine::getTable("IdsCliente")
+                ->createQuery("c")
+                ->whereIn("c.ca_idcliente", $ids);
+        $x = 1;
+        $resumen = array();
+        $clientes = $q->execute();
+        echo "<table border=1>";
+        foreach ($clientes as $cliente) {
+            $fch_update = array();
+            $fch_update[] = $cliente->getCaFchcreado();
+            $fch_update[] = $cliente->getCaFchactualizado();
+
+            $contactos = Doctrine::getTable("Contacto")
+                    ->createQuery("c")
+                    ->select("c.ca_idcontacto, c.ca_idcliente, c.ca_papellido, c.ca_sapellido, c.ca_nombres, c.ca_saludo, c.ca_cargo, c.ca_departamento, c.ca_telefonos, c.ca_fax, c.ca_email, c.ca_observaciones, c.ca_usucreado, c.ca_fchcreado, c.ca_usuactualizado, c.ca_fchactualizado, c.ca_cumpleanos, c.ca_fijo, c.ca_propiedades, c.ca_idscontacto")
+                    ->addWhere("c.ca_idcliente = ?", $cliente->getCaIdcliente())
+                    ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                    ->execute();
+
+            $suc = array();
+            $sucursales = $cliente->getIds()->getIdsSucursal();
+            foreach ($sucursales as $sucursal) {
+                $suc[] = $sucursal->getCaIdsucursal();
+                $fch_update[] = $sucursal->getCaFchcreado();
+                $fch_update[] = $sucursal->getCaFchactualizado();
+            }
+
+            /*
+              $sql = "select ca_idsucursal from ids.tb_sucursales where ca_id = " . $cliente->getCaIdcliente();
+              $st = $con->execute($sql);
+              $suc = $st->fetchAll();
+              $suc = array_column($suc, 'ca_idsucursal');
+             */
+            $ids_contactos = Doctrine::getTable("IdsContacto")
+                    ->createQuery("c")
+                    ->select("c.ca_idcontacto, c.ca_idsucursal, c.ca_papellido, c.ca_sapellido, c.ca_nombres, c.ca_saludo, c.ca_cargo, c.ca_departamento, c.ca_telefonos, c.ca_fax, c.ca_email, c.ca_observaciones, c.ca_usucreado, c.ca_fchcreado, c.ca_usuactualizado, c.ca_fchactualizado, c.ca_usueliminado, c.ca_fcheliminado, c.ca_cumpleanos, c.ca_fijo, c.ca_propiedades")
+                    ->whereIn("c.ca_idsucursal", $suc)
+                    ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                    ->execute();
+            /* INICIA LA COMPRACIÓN */
+            $columnas = array("c_ca_nombres", "c_ca_papellido", "c_ca_sapellido", "c_ca_saludo", "c_ca_telefonos", "c_ca_fax", "c_ca_email", "c_ca_cargo", "c_ca_departamento", "c_ca_cumpleanos", "c_ca_observaciones", "c_ca_fijo");
+            $auditors = array("c_ca_usucreado", "c_ca_fchcreado", "c_ca_usuactualizado", "c_ca_fchactualizado");
+            if (!count($contactos) and count($ids_contactos)) {
+                // $columnas[] = "c_ca_idscontacto";
+                foreach ($ids_contactos as $j => $ids_cnt) {
+                    $sql = "insert into public.tb_concliente(ca_idcliente, ";
+                    foreach (array_merge($columnas, $auditors) as $columna) {
+                        $sql .= substr($columna, 2) . ", ";
+                    }
+                    $sql .= "ca_idscontacto, ";
+                    $sql = substr($sql, 0, strlen($sql) - 2) . ") values (" . $cliente->getCaIdcliente() . ", ";
+
+                    foreach (array_merge($columnas, $auditors) as $columna) {
+                        if ($columna == "c_ca_saludo" && !$ids_cnt[$columna]) {
+                            $ids_cnt[$columna] = "Señor";
+                        }
+                        if ($columna == "c_ca_sapellido" && !$ids_cnt[$columna]) {
+                            $ids_cnt[$columna] = ".";
+                        }
+                        if ($columna == "c_ca_fax" && !$ids_cnt[$columna]) {
+                            $ids_cnt[$columna] = "No";
+                        }
+                        if ($columna == "c_ca_fijo") {
+                            if ($ids_cnt[$columna] == "0") {
+                                $ids_cnt[$columna] = "false";
+                            } else {
+                                $ids_cnt[$columna] = "true";
+                            }
+                        }
+                        if ($ids_cnt[$columna]) {
+                            $sql .= "'" . $ids_cnt[$columna] . "', ";
+                        } else {
+                            $sql .= "null, ";
+                        }
+                    }
+                    $sql .= $ids_cnt["c_ca_idcontacto"] . ", ";
+                    $sql = substr($sql, 0, strlen($sql) - 2) . ")";
+                    // die($sql);
+                    $q = Doctrine_Manager::getInstance()->connection();
+                    $q->execute($sql);
+                }
+                continue;
+            }
+            foreach ($contactos as $i => $contacto) {
+                $contactos[$i]["c_ca_color"] = "FFBF00";
+                $fch_update[] = $contacto["c_ca_fchcreado"];
+                $fch_update[] = $contacto["c_ca_fchactualizado"];
+                foreach ($ids_contactos as $j => $ids_cnt) {
+                    $diff = false;
+                    $fch_update[] = $ids_cnt["c_ca_fchcreado"];
+                    $fch_update[] = $ids_cnt["c_ca_fchactualizado"];
+                    foreach ($columnas as $columna) {
+                        if ($contacto[$columna] != $ids_cnt[$columna]) {
+                            $diff = true;
+                            break;
+                        }
+                    }
+                    $add_uno = DateTime::createFromFormat('Y-m-d H:i:s', $contacto["c_ca_fchcreado"]);
+                    $upd_uno = DateTime::createFromFormat('Y-m-d H:i:s', $contacto["c_ca_fchactualizado"]);
+                    $add_dos = DateTime::createFromFormat('Y-m-d H:i:s', $ids_cnt["c_ca_fchcreado"]);
+                    $upd_dos = DateTime::createFromFormat('Y-m-d H:i:s', $ids_cnt["c_ca_fchactualizado"]);
+
+                    $rand = dechex(rand(0x666666, 0xFFFFFF));
+                    if ($contacto["c_ca_idscontacto"] == $ids_cnt["c_ca_idcontacto"] && (in_array('Extrabajador', $contacto, true) or in_array('Extrabajador', $ids_cnt, true))) {
+                        $rand = "33FFF6";
+                        $contactos[$i]["c_ca_color"] = $ids_contactos[$j]["c_ca_color"] = $rand;
+
+                        $usu = $fch = null;
+                        if ($upd_uno && $upd_uno > $upd_dos) {
+                            $usu = $contacto["c_ca_usuactualizado"];
+                            $fch = $contacto["c_ca_fchactualizado"];
+                        } else if ($upd_dos && $upd_dos > $upd_uno) {
+                            $usu = $ids_cnt["c_ca_usuactualizado"];
+                            $fch = $ids_cnt["c_ca_fchactualizado"];
+                        }
+
+                        if ($usu && $fch) {
+                            $ids_contactos[$j]["c_ca_usueliminado"] = $usu;
+                            $ids_contactos[$j]["c_ca_fcheliminado"] = $fch;
+                            $q = Doctrine_Manager::getInstance()->connection();
+                            $sql = "update public.tb_concliente set "
+                                    . "ca_cargo = 'Extrabajador',"
+                                    . "ca_departamento = 'Extrabajador',"
+                                    . "ca_telefonos = 'Extrabajador',"
+                                    . "ca_fax = 'Extrabajador',"
+                                    . "ca_email = 'Extrabajador', "
+                                    . "ca_fijo = false "
+                                    . "where ca_idcontacto = " . $contacto["c_ca_idcontacto"];
+                            $q->execute($sql);
+
+                            $sql = "update ids.tb_contactos set "
+                                    . "ca_telefonos = 'Extrabajador', "
+                                    . "ca_fax = 'Extrabajador', "
+                                    . "ca_email = 'Extrabajador', "
+                                    . "ca_cargo = 'Extrabajador', "
+                                    . "ca_departamento = 'Extrabajador',"
+                                    . "ca_fijo = false, "
+                                    . "ca_usueliminado = '" . $usu . "', "
+                                    . "ca_fcheliminado = '" . $fch . "' "
+                                    . "where ca_idcontacto = " . $ids_cnt["c_ca_idcontacto"];
+                            $q->execute($sql);
+                        }
+                    }
+                    if (!$diff) { /* Si el contacto corresponde exactamente tanto en maestra vieja como en el IDS */
+                        $contactos[$i]["c_ca_idscontacto"] = $ids_cnt["c_ca_idcontacto"];
+                        $contactos[$i]["c_ca_color"] = $ids_contactos[$j]["c_ca_color"] = $rand;
+                        $sql = "update public.tb_concliente set ca_idscontacto = " . $ids_cnt["c_ca_idcontacto"] . " where ca_idcontacto = " . $contacto["c_ca_idcontacto"];
+                        $q = Doctrine_Manager::getInstance()->connection();
+                        $q->execute($sql);
+//                        unset($contactos[$i]);
+//                        unset($ids_contactos[$j]);
+                        break;
+                    } else if ($contactos[$i]["c_ca_email"] == $ids_contactos[$j]["c_ca_email"] && $contactos[$i]["c_ca_nombres"] == $ids_contactos[$j]["c_ca_nombres"] && $contactos[$i]["c_ca_papellido"] == $ids_contactos[$j]["c_ca_papellido"]) {
+                        if (max(array($add_uno, $upd_uno)) > max(array($add_dos, $upd_dos))) {
+                            $sql = "update ids.tb_contactos set ";
+                            $contactos[$i]["c_ca_accion"] = "Baja";
+                            foreach (array_merge($columnas, $auditors) as $col) {
+                                $sql .= substr($col, 2) . " = '" . $contactos[$i][$col] . "', ";
+                            }
+                            $sql = substr($sql, 0, -2) . " where ca_idcontacto = " . $ids_cnt["c_ca_idcontacto"];
+                        } else {
+                            $sql = "update public.tb_concliente set ca_idscontacto = " . $ids_cnt["c_ca_idcontacto"] . " where ca_idcontacto = " . $contacto["c_ca_idcontacto"];
+//                            $q = Doctrine_Manager::getInstance()->connection();
+//                            $q->execute($sql);
+
+                            $sql = "update public.tb_concliente set ";
+                            $ids_contactos[$j]["c_ca_accion"] = "Sube";
+                            foreach (array_merge($columnas, $auditors) as $col) {
+                                $sql .= substr($col, 2) . " = '" . $ids_contactos[$j][$col] . "', ";
+                            }
+                            $sql .= "ca_idscontacto = " . $ids_cnt["c_ca_idcontacto"];
+                            $sql .= " where ca_idcontacto = " . $contacto["c_ca_idcontacto"];
+                        }
+                        $sql = str_replace(", ca_fijo = ''", ", ca_fijo = FALSE", $sql);
+                        $sql = str_replace(", ca_usucreado = ''", "", $sql);
+                        $sql = str_replace(", ca_usuactualizado = ''", "", $sql);
+                        $sql = str_replace(", ca_fchactualizado = ''", "", $sql);
+//                        $q = Doctrine_Manager::getInstance()->connection();
+//                        $q->execute($sql);
+
+                        $contactos[$i]["c_ca_idscontacto"] = $ids_cnt["c_ca_idcontacto"];
+                        $contactos[$i]["c_ca_color"] = $ids_contactos[$j]["c_ca_color"] = $rand;
+                    } else if ($contactos[$i]["c_ca_nombres"] == $ids_contactos[$j]["c_ca_nombres"] && $contactos[$i]["c_ca_papellido"] == $ids_contactos[$j]["c_ca_papellido"] && $contactos[$i]["c_ca_saludo"] == $ids_contactos[$j]["c_ca_saludo"]) {
+                        $add_uno = DateTime::createFromFormat('Y-m-d H:i:s', $contacto["c_ca_fchcreado"]);
+                        $upd_uno = DateTime::createFromFormat('Y-m-d H:i:s', $contacto["c_ca_fchactualizado"]);
+                        $add_dos = DateTime::createFromFormat('Y-m-d H:i:s', $ids_cnt["c_ca_fchcreado"]);
+                        $upd_dos = DateTime::createFromFormat('Y-m-d H:i:s', $ids_cnt["c_ca_fchactualizado"]);
+
+                        if (max(array($add_uno, $upd_uno)) > max(array($add_dos, $upd_dos))) {
+                            $sql = "update ids.tb_contactos set ";
+                            $contactos[$i]["c_ca_accion"] = "Baja";
+                            foreach (array_merge($columnas, $auditors) as $col) {
+                                $sql .= substr($col, 2) . " = '" . $contactos[$i][$col] . "', ";
+                            }
+                            $sql = substr($sql, 0, -2) . " where ca_idcontacto = " . $ids_cnt["c_ca_idcontacto"];
+                        } else {
+                            $sql = "update public.tb_concliente set ca_idscontacto = " . $ids_cnt["c_ca_idcontacto"] . " where ca_idcontacto = " . $contacto["c_ca_idcontacto"];
+//                            $q = Doctrine_Manager::getInstance()->connection();
+//                            $q->execute($sql);
+
+                            $sql = "update public.tb_concliente set ";
+                            $ids_contactos[$j]["c_ca_accion"] = "Sube";
+                            foreach (array_merge($columnas, $auditors) as $col) {
+                                $sql .= substr($col, 2) . " = '" . $ids_contactos[$j][$col] . "', ";
+                            }
+                            $sql .= "ca_idscontacto = " . $ids_cnt["c_ca_idcontacto"];
+                            $sql .= " where ca_idcontacto = " . $contacto["c_ca_idcontacto"];
+                        }
+                        // echo $sql." <br /> <br />";
+                        $sql = str_replace(", ca_fijo = ''", ", ca_fijo = FALSE", $sql);
+                        $sql = str_replace(", ca_usucreado = ''", "", $sql);
+                        $sql = str_replace(", ca_usuactualizado = ''", "", $sql);
+                        $sql = str_replace(", ca_fchactualizado = ''", "", $sql);
+//                        $q = Doctrine_Manager::getInstance()->connection();
+//                        $q->execute($sql);
+
+                        $contactos[$i]["c_ca_idscontacto"] = $ids_cnt["c_ca_idcontacto"];
+                        $contactos[$i]["c_ca_color"] = $ids_contactos[$j]["c_ca_color"] = $rand;
+                    } else if ($contactos[$i]["c_ca_telefonos"] == $ids_contactos[$j]["c_ca_telefonos"] && $contactos[$i]["c_ca_email"] == $ids_contactos[$j]["c_ca_email"] && strpos($contactos[$i]["c_ca_email"], '@') !== false) {
+                        $add_uno = DateTime::createFromFormat('Y-m-d H:i:s', $contacto["c_ca_fchcreado"]);
+                        $upd_uno = DateTime::createFromFormat('Y-m-d H:i:s', $contacto["c_ca_fchactualizado"]);
+                        $add_dos = DateTime::createFromFormat('Y-m-d H:i:s', $ids_cnt["c_ca_fchcreado"]);
+                        $upd_dos = DateTime::createFromFormat('Y-m-d H:i:s', $ids_cnt["c_ca_fchactualizado"]);
+
+                        if (max(array($add_uno, $upd_uno)) > max(array($add_dos, $upd_dos))) {
+                            $sql = "update ids.tb_contactos set ";
+                            $contactos[$i]["c_ca_accion"] = "Baja";
+                            foreach (array_merge($columnas, $auditors) as $col) {
+                                $sql .= substr($col, 2) . " = '" . $contactos[$i][$col] . "', ";
+                            }
+                            $sql = substr($sql, 0, -2) . " where ca_idcontacto = " . $ids_cnt["c_ca_idcontacto"];
+                        } else {
+                            $sql = "update public.tb_concliente set ca_idscontacto = " . $ids_cnt["c_ca_idcontacto"] . " where ca_idcontacto = " . $contacto["c_ca_idcontacto"];
+//                            $q = Doctrine_Manager::getInstance()->connection();
+//                            $q->execute($sql);
+
+                            $sql = "update public.tb_concliente set ";
+                            $ids_contactos[$j]["c_ca_accion"] = "Sube";
+                            foreach (array_merge($columnas, $auditors) as $col) {
+                                $sql .= substr($col, 2) . " = '" . $ids_contactos[$j][$col] . "', ";
+                            }
+                            $sql .= "ca_idscontacto = " . $ids_cnt["c_ca_idcontacto"];
+                            $sql .= " where ca_idcontacto = " . $contacto["c_ca_idcontacto"];
+                        }
+                        // echo $sql." <br /> <br />";
+                        // $sql = "update public.tb_concliente set ca_idscontacto = " . $ids_cnt["c_ca_idcontacto"] . " where ca_idcontacto = " . $contacto["c_ca_idcontacto"] ;
+                        $sql = str_replace(", ca_fijo = ''", ", ca_fijo = FALSE", $sql);
+                        $sql = str_replace(", ca_usucreado = ''", "", $sql);
+                        $sql = str_replace(", ca_usuactualizado = ''", "", $sql);
+                        $sql = str_replace(", ca_fchactualizado = ''", "", $sql);
+//                        $q = Doctrine_Manager::getInstance()->connection();
+//                        $q->execute($sql);
+
+                        $contactos[$i]["c_ca_idscontacto"] = $ids_cnt["c_ca_idcontacto"];
+                        $contactos[$i]["c_ca_color"] = $ids_contactos[$j]["c_ca_color"] = $rand;
+                    }
+                    if (!$ids_contactos[$j]["c_ca_color"]) {
+                        $ids_contactos[$j]["c_ca_color"] = "A5DF00";
+                    }
+                }
+            }
+            if (count($contactos) != 0 && count($suc) != 0 && count($ids_contactos) == 0) { /* Si el cliente no tiene contactos en el IDS */
+                foreach ($contactos as $i => $contacto) {
+                    if (!$contactos[$i]["c_ca_idscontacto"]) {
+                        $sql = "select nextval('ids.tb_contactos_id') as ca_idcontacto";
+                        $q = Doctrine_Manager::getInstance()->connection();
+                        $st = $q->execute($sql);
+                        $seq = $st->fetchAll();
+                        $seq = array_column($seq, 'ca_idcontacto');
+
+                        $sql = "insert into ids.tb_contactos (ca_idcontacto, ca_idsucursal, ";
+                        foreach (array_merge($columnas, $auditors) as $col) {
+                            $sql .= substr($col, 2) . ", ";
+                        }
+                        $sql = substr($sql, 0, -2) . ") values (" . $seq[0] . ", " . $suc[0] . ", ";
+
+                        foreach (array_merge($columnas, $auditors) as $col) {
+                            if ($col == "c_ca_fijo") {
+                                if ($contactos[$i][$col]) {
+                                    $sql .= "true, ";
+                                } else {
+                                    $sql .= "false, ";
+                                }
+                            } else {
+                                $sql .= "'" . $contactos[$i][$col] . "', ";
+                            }
+                        }
+                        $sql = substr($sql, 0, -2) . ")";
+                        $sql = str_replace("''", "null", $sql);
+
+                        // die($sql);
+                        $q = Doctrine_Manager::getInstance()->connection();
+                        $q->execute($sql);
+
+                        $sql = "update public.tb_concliente set ca_idscontacto = " . $seq[0] . " where ca_idcontacto = " . $contacto["c_ca_idcontacto"];
+                        $q = Doctrine_Manager::getInstance()->connection();
+                        $q->execute($sql);
+                    }
+                }
+                continue;
+            }
+
+            $today = $date = new DateTime(date('Y-m-d H:i:s'));
+            $lastDate = DateTime::createFromFormat('Y-m-d H:i:s', max($fch_update));
+            $intervalo = $today->diff($lastDate);
+            $resumen[(($intervalo->y * 12) + $intervalo->m)] += 1;
+            if (!$contactos && !$ids_contactos) {
+                continue;
+            }
+
+//            if ($cliente->getCaIdcliente() == 1394) {
+//                print_r($contactos);
+//                print_r($ids_contactos);
+//                die();
+//            }
+
+            echo "<tr>";
+            echo "  <td> " . $x++ . " </td>";
+            echo "  <td> " . $cliente->getCaIdcliente() . " </td>";
+            echo "  <td> " . $cliente->getIds()->getCaIdalterno() . " </td>";
+            echo "  <td> " . $cliente->getIds()->getCaNombre() . "</td>";
+            echo "  <td> " . $lastDate->format("Y-m-d H:i:s") . "  </td>";
+            echo "</tr>";
+            echo "<tr>";
+            echo "  <td> &nbsp; </td>";
+            echo "  <td colspan=4 width=600> ";
+            echo "   <table border=1 width='100%'>";
+            $i = 1;
+            if ($contactos) {
+                foreach ($contactos as $contacto) {
+                    echo "<tr>";
+                    echo "  <td bgcolor='#" . $contacto["c_ca_color"] . "'> " . $i++ . " </td>";
+                    echo "  <td bgcolor='#" . $contacto["c_ca_color"] . "'> " . $contacto["c_ca_idcontacto"] . " </td>";
+                    foreach ($columnas as $columna) {
+                        echo "  <td bgcolor='#" . $contacto["c_ca_color"] . "'> " . $contacto[$columna] . " </td>";
+                    }
+                    echo "  <td bgcolor='#" . $contacto["c_ca_color"] . "'> " . $contacto["c_ca_usucreado"] . " </td>";
+                    echo "  <td bgcolor='#" . $contacto["c_ca_color"] . "'> " . $contacto["c_ca_fchcreado"] . " </td>";
+                    echo "  <td bgcolor='#" . $contacto["c_ca_color"] . "'> " . $contacto["c_ca_usuactualizado"] . " </td>";
+                    echo "  <td bgcolor='#" . $contacto["c_ca_color"] . "'> " . $contacto["c_ca_fchactualizado"] . " </td>";
+                    echo "  <td bgcolor='#" . $contacto["c_ca_color"] . "'> &nbsp; </td>";
+                    echo "  <td bgcolor='#" . $contacto["c_ca_color"] . "'> &nbsp; </td>";
+                    echo "  <td bgcolor='#" . $contacto["c_ca_color"] . "'> " . $contacto["c_ca_idscontacto"] . " </td>";
+                    echo "  <td bgcolor='#" . $contacto["c_ca_color"] . "'> " . $contacto["c_ca_accion"] . " </td>";
+                    echo "</tr>";
+                }
+            }
+            echo "<tr>";
+            echo "  <td bgcolor='#FF0000' colspan=23></td>";
+            echo "</tr>";
+            $j = 1;
+            if ($ids_contactos) {
+                foreach ($ids_contactos as $contacto) {
+                    echo "<tr>";
+                    echo "  <td bgcolor='#" . $contacto["c_ca_color"] . "'> " . $j++ . " </td>";
+                    echo "  <td bgcolor='#" . $contacto["c_ca_color"] . "'> " . $contacto["c_ca_idcontacto"] . " </td>";
+                    foreach ($columnas as $columna) {
+                        echo "  <td bgcolor='#" . $contacto["c_ca_color"] . "'> " . $contacto[$columna] . " </td>";
+                    }
+                    echo "  <td bgcolor='#" . $contacto["c_ca_color"] . "'> " . $contacto["c_ca_usucreado"] . " </td>";
+                    echo "  <td bgcolor='#" . $contacto["c_ca_color"] . "'> " . $contacto["c_ca_fchcreado"] . " </td>";
+                    echo "  <td bgcolor='#" . $contacto["c_ca_color"] . "'> " . $contacto["c_ca_usuactualizado"] . " </td>";
+                    echo "  <td bgcolor='#" . $contacto["c_ca_color"] . "'> " . $contacto["c_ca_fchactualizado"] . " </td>";
+                    echo "  <td bgcolor='#" . $contacto["c_ca_color"] . "'> " . $contacto["c_ca_usueliminado"] . " </td>";
+                    echo "  <td bgcolor='#" . $contacto["c_ca_color"] . "'> " . $contacto["c_ca_fcheliminado"] . " </td>";
+                    echo "  <td bgcolor='#" . $contacto["c_ca_color"] . "'> &nbsp; </td>";
+                    echo "  <td bgcolor='#" . $contacto["c_ca_color"] . "'> " . $contacto["c_ca_accion"] . " </td>";
+                    echo "</tr>";
+                }
+            }
+            echo "  </table>";
+            echo " </td>";
+
+            echo "</tr>";
+        }
+        echo "</table>";
+        print_r($resumen);
+
+        exit;
     }
 
 }
