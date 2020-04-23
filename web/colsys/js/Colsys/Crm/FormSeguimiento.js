@@ -17,8 +17,7 @@ Ext.define('Colsys.Crm.FormSeguimiento', {
     autoHeight: true,
     autoScroll: false,
     defaults: {
-        columnWidth: 1,
-        //bodyStyle:'padding:30',
+        columnWidth: 1,        
         style: "text-align: left",
         labelAlign: 'right'
     },
@@ -30,13 +29,15 @@ Ext.define('Colsys.Crm.FormSeguimiento', {
                 var form = this.up('form').getForm();
 
                 if (form.isValid()) {
-
-
+                    idempresas = form.findField("empresa").getValue();                    
+                    empresas = idempresas.join();
+                
                     form.submit({
                         url: '/crm/guardarSeguimiento',
                         waitMsg: 'Guardando',
                         params: {
-                            idcliente: idcliente
+                            idcliente: idcliente,
+                            idempresas: empresas
                         },
                         success: function (response, options) {
                             Ext.getCmp("winFormEdit").destroy();
@@ -59,7 +60,6 @@ Ext.define('Colsys.Crm.FormSeguimiento', {
                 title: 'General',
                 columnWidth: 1,
                 layout: 'column',
-//            columns: 2,
                 defaults: {
                     columnWidth: 0.5,
                     bodyStyle: 'padding:4px',
@@ -73,6 +73,33 @@ Ext.define('Colsys.Crm.FormSeguimiento', {
                         name: 'tipo',
                         columnWidth: 0.5,
                         renderer: comboBoxRenderer(this)
+                    },
+                    {
+                        xtype: 'Colsys.Templates.ComboCheckbox',                        
+                        id: 'idempresa',
+                        name: 'empresa',                        
+                        fieldLabel: 'Empresa',
+                        listeners:{
+                            render: function(t, eOpts){                                
+                                this.setStore(
+                                    Ext.create('Ext.data.Store', {
+                                        fields: [{type: 'integer',name: 'id'},{type: 'string', name: 'name'}],                        
+                                         proxy: {
+                                            type: 'ajax',
+                                            url: '/widgets5/datosEmpresas',
+                                            autoLoad: true,
+                                            reader: {
+                                                type: 'json',
+                                                rootProperty: 'root',
+                                                totalProperty: 'total'
+                                            }
+                                        }                                        
+                                    })
+                                )                        
+                                this.getStore().reload();
+                            }
+                        },                        
+                        columnWidth: 0.8
                     },
                     {
                         xtype: 'tbspacer',
@@ -140,5 +167,4 @@ Ext.define('Colsys.Crm.FormSeguimiento', {
                 ]});
         }
     }
-
 });
