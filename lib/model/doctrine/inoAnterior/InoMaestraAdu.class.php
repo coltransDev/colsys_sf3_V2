@@ -15,36 +15,13 @@ class InoMaestraAdu extends BaseInoMaestraAdu
     
     public function getRequiereIdgAduana($idetapa){
         
-        $datos = json_decode(utf8_encode($this->getCaDatos()));
-        
-        if($datos->impoexpo == Constantes::EXPO){
-            switch($datos->idg){
-                case "SI":
-                case "Si":                    
-                case "FACTURA AL AGENTE":
-                    if($idetapa=="EEETD")
-                        return false;
-                    else
-                        return true;
-                    break;
-                case "COLLECT":
-                    if($idetapa=="EEETD")
-                        return true;
-                    else
-                        return false;
-                    break;
-                case "NO":
-                    return false;
-                    break;
-                case "":
-                    return true;
-                    break;
-            }
-        } else if($datos->impoexpo == Constantes::TRIANGULACION) {
+        if($this->getCaImpoexpo() == Constantes::EXPO){
+            if($this->getCaAplicaidg())
+                return true;
+            else
+                return false;
+        }else
             return false;
-        } else{
-            return true;
-        }
     }
     
     public function generarIdg($options, $conn){        
