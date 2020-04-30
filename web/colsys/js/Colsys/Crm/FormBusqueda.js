@@ -1,9 +1,16 @@
 winModo = null;
 winTercero = null;
+
+Ext.define('ComboNit', {
+    extend: 'Ext.form.field.ComboBox',
+    alias: 'widget.combo-nit',
+    store: ['Agente', 'Proveedor', 'Usuario', 'Excepci\u00F3n Temporal', 'Excepci\u00F3n Permanente']
+});
+
 Ext.define('Colsys.Crm.FormBusqueda', {
     extend: 'Ext.form.Panel',
     alias: 'widget.Colsys.Crm.FormBusqueda',
-    title: 'CRM',
+    title: 'Clientes Ver.2',
     width: 250,
     //collapsed:true,
     collapsible: true,
@@ -55,7 +62,7 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                             }
                         },
                         print: {
-                            cls: 'x-form-date-trigger',
+                            cls: Ext.baseCSSPrefix + 'form-date-trigger',
                             handler: function () {
 
                                 this.up('form').listar(this.getValue());
@@ -229,6 +236,14 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                             ]
                         }, {
                             xtype: 'label',
+                            text: 'Excepci\u00F3n'
+                        }, {
+                            xtype: 'combo-nit',
+                            hideLabel: true,
+                            name: 'tipo',
+                            forceSelection: true
+                        }, {
+                            xtype: 'label',
                             text: 'Fecha Creacion'
                         }, {
                             xtype: 'fieldcontainer',
@@ -283,7 +298,7 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                                     widthcolumnWidth: 0.33
                                 }
                             ]
-                        }, {
+                                }, {
                             xtype: 'fieldcontainer',
                             defaultType: 'radiofield',
                             defaults: {
@@ -305,7 +320,7 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                                     widthcolumnWidth: 0.33
                                 }
                             ]
-                                }, {
+                        }, {
                             xtype: 'fieldcontainer',
                             defaultType: 'radiofield',
                             defaults: {
@@ -389,7 +404,7 @@ Ext.define('Colsys.Crm.FormBusqueda', {
 //                                                    this.getStore().loadData(res);
 //                                                }
 //                                            }
-                                        }
+            }
                                     ]
                                 }).show();
                             }
@@ -405,7 +420,20 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                     }
                 });
             }
-        }), {
+        }),{
+            title: "Enlaces",
+            region: 'south',
+            height:'10%',
+            autoScroll: true,
+            listeners:{
+                beforerender: function () {
+                    this.html='<div style:"padding:0px"><a href="javascript:clientesopen()" >Clientes en Opencomex</a></div>';
+                    //console.log(this.html)
+                }
+            }            
+            //html:htmlLink
+            //floating: true,
+        }, {
             title: "Resultados de la busqueda",
             flex: 1,
             region: 'south',
@@ -447,7 +475,7 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                                     closable: true,
                                     autoScroll: true,
                                     items: [{
-                                            xtype: 'wCRMMainpanel',
+                                            xtype: 'Colsys.Crm.FormPrincipal',
                                             id: ref,
                                             idcliente: ref,
                                             permisos: this.up('form').permisosG
@@ -555,7 +583,7 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                     });
                     winTercero.show();
                 } else {
-                    Ext.Msg.alert("Crm", "Existe una ventana abierta de Clientes<br>Por favor cierrela primero");
+                    Ext.Msg.alert("Clientes Ver.2", "Existe una ventana abierta de Clientes<br>Por favor cierrela primero");
                 }
             },
             listeners: {
@@ -565,3 +593,32 @@ Ext.define('Colsys.Crm.FormBusqueda', {
             }
         }]
 });
+
+
+function clientesopen()
+{   
+    tabpanel = Ext.getCmp('tabpanel1');
+    //console.log(tabpanel);
+
+    if (!tabpanel.getChildByElement('tab_cliopen') )
+    {        
+        
+        var myPanel = Ext.create('Ext.Panel', {
+            html: 'This will be added to a Container'
+        });
+
+        tabpanel.add([{
+                xtype: 'Colsys.ReportesGer.PanelClientesOpen',
+                title: "Clientes OpenComex",
+                id: "cliopen"  ,
+                name: "cliopen",                
+                iconCls: 'calculator'
+            }            
+        ]); // Array returned
+        tabpanel.show();//4174894 scotiankbank
+        
+        
+    }
+    tabpanel.setActiveTab('tab_cliopen');
+
+}
