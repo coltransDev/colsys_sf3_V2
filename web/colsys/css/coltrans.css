@@ -1,6 +1,8 @@
 /*
 
 */
+
+
 body{
     background:#FFFFFF;
     font-family: verdana,arial,helvetica,serif;
@@ -216,7 +218,8 @@ table.tableList th {
     color: #FFFFFF;
     background: #2E4B66;
     */
-    background: transparent url( ../images/layout/panel/white-top-bottom.gif) repeat-x scroll 0 -1px;
+    background: transparent url( ../images/layout/panel/white-top-bottom.gif) scroll 0 -1px;
+    background-repeat: space repeat;
     border:1px solid #D0D0D0;
     color:#333333;
 
@@ -561,6 +564,16 @@ a.toolbar:active {
     display:block;
     clear:none;
 }
+
+.search-item-failed {
+    font:normal 11px tahoma, arial, helvetica, sans-serif;
+    padding:3px 3px 3px 3px;
+    border:1px solid #fff;
+    border-bottom:1px solid #eeeeee;
+    white-space:normal;
+    color:#f20e0e;
+    background:#FFFFFF;
+}
 /*
 * Colores diferentes para las flias de una grilla
 */
@@ -598,6 +611,27 @@ a.toolbar:active {
 .row_gray{
     background-color:#E6E6E6 !important;	
 }
+
+.row_white_hide-row-expander .x-grid-row-expander {
+    visibility: hidden;
+    background-color: #FFFFFF !important;
+}
+
+.row_pink_hide-row-expander .x-grid-row-expander {
+    visibility: hidden;
+    background-color: #FFCCCC !important;
+}
+
+.grouped-list .x-boundlist-item {
+    padding: 1px 3px 0 10px
+}
+
+.grouped-list .group-header {
+    padding: 4px;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+}
+
 /*
 * Thumbnails
 */
@@ -744,6 +778,10 @@ div.storybox .body {
     background: url('../images/fam/arrow_refresh.png') no-repeat 0 0 !important;
 }
 
+.switch {
+    background: url('../images/fam/arrow_switch.png') no-repeat 0 0 !important;
+}
+
 .falabella {
     background: url('../images/fam/falabella.png') no-repeat 0 0 !important;
 }
@@ -758,6 +796,14 @@ div.storybox .body {
 
 .pdf {
     background: url('../images/fam/pdf-small.png') no-repeat 0 0 !important;
+}
+
+.open {
+    background: url('../images/fam/lock_open.png') no-repeat 0 0 !important;
+}
+
+.audit {
+    background: url('../images/fam/audit.png') no-repeat 0 0 !important;
 }
 
 .email {
@@ -788,6 +834,10 @@ div.storybox .body {
     background: url('../images/fam/page_white_edit.png') no-repeat 0 0 !important;
 }
 
+.server {
+    background: url('../images/fam/server_go.png') no-repeat 0 0 !important;
+}
+
 .application_form_add {
     background: url('../images/fam/application_form_add.png') no-repeat 0 0 !important;
 }
@@ -807,6 +857,10 @@ div.storybox .body {
 
 .report_edit {
     background: url('../images/fam/report_edit.png') no-repeat 0 0 !important;
+}
+
+.register {
+    background: url('../images/fam/register.png') no-repeat 0 0 !important;
 }
 
 .table {
@@ -1018,6 +1072,15 @@ div.storybox .body {
     background:transparent url('../images/16x16/elbow-end.gif') no-repeat 0 2px !important;
 }
 
+.sap{
+    width:45px;        
+    background: url('../images/icons/sap.jpg') no-repeat 0 0 !important;
+}
+
+/*.sap a{
+    width:45px;        
+    
+}*/
 
 
 .btnComentarios{
@@ -1162,6 +1225,9 @@ div.post-info{
 
 .azul{
     color: #0000FF !important;
+}
+.gris{
+    color: #878ea2 !important;
 }
 
 /*
@@ -1469,7 +1535,6 @@ table#tarifa td {
 th.subtitulo{
     font-size: 10px;
     font-family: verdana,arial,helvetica,serif;
-    text-align: center;    
 }
 
 .tabla2 tr td {
@@ -1522,6 +1587,37 @@ th.subtitulo{
     margin: auto;
 }
 
-.icon-grid {
+.icon-grid1 {
     background-image: url(../images/icons/fam/grid.png);
+}
+
+
+.add1{
+    background-image: url(../images/fam/add1.png) !important;
+}
+
+
+.cancel1{
+    background-image:url('../images/fam/cancel1.png') !important;
+}
+
+
+
+.font8{
+    font-size: 8px;
+}
+
+
+/* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/font-awesome/sass/src/all.scss:20 */
+.x-fa:before {
+    font-family: FontAwesome !important;
+}
+
+/* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/font-awesome/sass/etc/_icons.scss:19 */
+.fa-star:before {
+    content: "\f005" !important;
+}
+/* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/font-awesome/sass/etc/_icons.scss:20 */
+.fa-star-o:before {
+    content: "\f006" !important;
 }
