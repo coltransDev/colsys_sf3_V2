@@ -118,6 +118,7 @@ $nombre=$sf_data->getRaw("nombre");
 ?>
 <script  src="/js/ckeditor/ckeditor.js" ></script>
 <script>
+    Ext.Ajax.setTimeout(250000);
     var permisosG = Ext.decode('<?= json_encode($permisos) ?>');
     Ext.Loader.setConfig({
         enabled: true,
@@ -135,9 +136,6 @@ $nombre=$sf_data->getRaw("nombre");
     ]);
 
 </script>
-<?php
-include_component("crm", "mainPanel");
-?>
 <table align="center" width="98%" cellspacing="0" border="0" cellpading="0">
     <tr>
         <td>
@@ -193,7 +191,7 @@ include_component("crm", "mainPanel");
                                 closable: true,
                                 autoScroll: true,
                                 items: [{
-                                        xtype: 'wCRMMainpanel',
+                                        xtype: 'Colsys.Crm.FormPrincipal',
                                         id: ref,
                                         idcliente: ref,
                                         permisos: permisosG
