@@ -430,23 +430,19 @@ class crmActions extends sfActions {
             $situacion[] = array("type" => "displayfield", "width" => 90, "value" => "Fecha");
             $situacion[] = array("type" => "displayfield", "width" => 70, "value" => "Docs.0170");
             $situacion[] = array("type" => "displayfield", "width" => 100, "value" => utf8_encode("Cupo Cred. / # Días"));
-            $situacion[] = array("type" => "displayfield", "width" => 120, "value" => "Observaciones");
+            $situacion[] = array("type" => "displayfield", "width" => 50, "value" => "Terceros");
             $situacion[] = array("type" => "displayfield", "width" => 60, "value" => "Estado SAP");
 
             $estadoSap = false;
             foreach ($empresas as $empresa) {
                 $dominio = explode(".", $empresa->getCaUrl())[1];
-                $observa = (trim($vista["ca_" . $dominio . "_obsv"])!='')?$vista["ca_" . $dominio . "_obsv"]:' ';
-                $warning = "";
-                if (strlen($observa) > 22) {
-                    $warning = "&raquo;";
-                }
+                $terceros= ($vista["ca_" . $dominio . "_terc"])?"Sí":"No";
                 $situacion[] = array("type" => "displayfield", "width" => 70, "value" => ucfirst($dominio));
                 $situacion[] = array("type" => "displayfield", "width" => 60, "value" => $vista["ca_" . $dominio . "_std"]);
                 $situacion[] = array("type" => "displayfield", "width" => 90, "value" => substr($vista["ca_" . $dominio . "_fch"], 0, 16));
                 $situacion[] = array("type" => "displayfield", "width" => 70, "value" => $vista["ca_" . $dominio . "_170"]);
                 $situacion[] = array("type" => "displayfield", "width" => 100, "value" => number_format($vista["ca_" . $dominio . "_cupo"]).' / '.$vista["ca_" . $dominio . "_dias"], 0);
-                $situacion[] = array("type" => "displayfield", "width" => 120, "value" => utf8_encode(substr($observa,0,22).$warning), "toolTip" => utf8_encode($observa));
+                $situacion[] = array("type" => "displayfield", "width" => 50, "value" => utf8_encode($terceros));
                 $situacion[] = array("type" => "displayfield", "width" => 60, "value" => $vista["ca_" . $dominio . "_sap"]);
                 $estadoSap = $estadoSap || $vista["ca_" . $dominio . "_sap"];
             }
