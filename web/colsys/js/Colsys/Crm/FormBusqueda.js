@@ -12,10 +12,7 @@ Ext.define('Colsys.Crm.FormBusqueda', {
     alias: 'widget.Colsys.Crm.FormBusqueda',
     title: 'Clientes Ver.2',
     width: 250,
-    //collapsed:true,
     collapsible: true,
-    //headerPosition:'bottom',
-    //collapseMode:'mini',
     layout: 'border',
     id: 'layout-browser',
     border: false,
@@ -353,9 +350,7 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                 }
             ],
             buscar: function (valor) {
-                //var myMask = new Ext.LoadMask(Ext.getCmp("gind1").el, {useMsg: false});
-                //myMask.show();
-                //console.log(this.getForm());
+                
                 Ext.getCmp("gind1").setLoading(true);
                 var form = this.getForm(); // get the form panel
                 form.submit({
@@ -367,7 +362,6 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                         } else {
                             var res = action.result.root;
                             Ext.getCmp("gind1").getStore().loadData(res);
-                            // myMask.hide();
                         }
                         Ext.getCmp("gind1").setLoading(false);
                     },
@@ -397,15 +391,9 @@ Ext.define('Colsys.Crm.FormBusqueda', {
                                     closable: true,
                                     autoScroll: true,
                                     items: [{
-                                            id: 'grid_reporte',
-                                            xtype: 'Colsys.Crm.GridListarClientes',
-//                                            listeners: {
-//                                                afterrender: function (ct, position) {
-//                                                    this.getStore().loadData(res);
-//                                                }
-//                                            }
-            }
-                                    ]
+                                        id: 'grid_reporte',
+                                        xtype: 'Colsys.Crm.GridListarClientes'
+                                    }]
                                 }).show();
                             }
                             tabpanel.setActiveTab('tab_reporte');
@@ -424,20 +412,24 @@ Ext.define('Colsys.Crm.FormBusqueda', {
             title: "Enlaces",
             region: 'south',
             height:'10%',
+            id: 'enlaces-crm',
             autoScroll: true,
             listeners:{
                 beforerender: function () {
+                    this.permisos = this.up('form').permisosG;                    
+                    
+                    var login = this.up().login;      
+                    var idsucursal = this.up().idsucursal;      
                     this.html='<div style:"padding:0px"><a href="javascript:clientesopen()" >Clientes en Opencomex</a></div>';
-                    //console.log(this.html)
+                    this.html+='<div style:"padding:0px"><a href="javascript:misseguimientos(\''+login+'\')" >Mis seguimientos</a></div>';                    
+                    if(this.permisos[34]) // Seguimientos por sucursal
+                        this.html+='<div style:"padding:0px"><a href="javascript:seguimientosXSucursal(\''+idsucursal+'\')" >Informe Seguimientos x Sucursal</a></div>';
                 }
-            }            
-            //html:htmlLink
-            //floating: true,
+            }
         }, {
             title: "Resultados de la busqueda",
             flex: 1,
-            region: 'south',
-            //floating: true,
+            region: 'south',            
             items: [
                 Ext.create('Ext.grid.Panel', {
                     id: 'gind1',
@@ -595,17 +587,10 @@ Ext.define('Colsys.Crm.FormBusqueda', {
 });
 
 
-function clientesopen()
-{   
-    tabpanel = Ext.getCmp('tabpanel1');
-    //console.log(tabpanel);
+function clientesopen(){   
+    tabpanel = Ext.getCmp('tabpanel1');    
 
-    if (!tabpanel.getChildByElement('tab_cliopen') )
-    {        
-        
-        var myPanel = Ext.create('Ext.Panel', {
-            html: 'This will be added to a Container'
-        });
+    if (!tabpanel.getChildByElement('tab_cliopen') ){        
 
         tabpanel.add([{
                 xtype: 'Colsys.ReportesGer.PanelClientesOpen',
@@ -616,9 +601,70 @@ function clientesopen()
             }            
         ]); // Array returned
         tabpanel.show();//4174894 scotiankbank
-        
-        
     }
     tabpanel.setActiveTab('tab_cliopen');
+}
+        
+function misseguimientos(login){   
+    tabpanel = Ext.getCmp('tabpanel1');    
+        
+    var permisos = Ext.getCmp('enlaces-crm').permisos;
 
+    if (!tabpanel.getChildByElement('tab_misseg') ){
+        
+        tabpanel.add({
+                xtype: 'Colsys.Crm.GridSeguimientosClientes',
+                title: "Mis Seguimientos",
+                id: "tab_misseg",
+                closable: true,
+                name: "tab_misseg",                
+                iconCls: 'calculator',
+                permisos: permisos,
+                login: login,
+                listeners: {
+                    afterrender: function (ct, position) {
+                        this.getStore().load({
+                            params: {
+                                login: login
+                            }
+                        });                        
+                    }
+                }
+            }            
+        ); // Array returned
+        tabpanel.show();//4174894 scotiankbank
+    }
+    tabpanel.setActiveTab('tab_misseg');
+}
+
+function seguimientosXSucursal(idsucursal){   
+    tabpanel = Ext.getCmp('tabpanel1');    
+    
+    var permisos = Ext.getCmp('enlaces-crm').permisos;
+
+    if (!tabpanel.getChildByElement('tab_segsuc') ){
+        
+        tabpanel.add({
+                xtype: 'Colsys.Crm.GridSeguimientosClientes',
+                title: "Seguimientos x Sucursal",
+                id: "tab_segsuc",
+                closable: true,
+                name: "tab_segsuc",     
+                iconCls: 'calculator',
+                permisos: permisos,
+                idsucursal: idsucursal,
+                listeners: {
+                    afterrender: function (ct, position) {
+                        this.getStore().load({
+                            params: {
+                                idsucursal: idsucursal
+}
+                        });                        
+                    }
+                }
+            }            
+        ); // Array returned
+        tabpanel.show();//4174894 scotiankbank
+    }
+    tabpanel.setActiveTab('tab_segsuc');
 }
