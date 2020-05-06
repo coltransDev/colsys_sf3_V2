@@ -283,6 +283,8 @@ class crmActions extends sfActions {
         $this->permisos = array();
 
         $user = $this->getUser();
+        $this->login = $user->getUserId();
+        $this->idsucursal = $user->getIdSucursal();
         $permisosRutinas = $user->getControlAcceso(self::RUTINA_CRM);
 
         $tipopermisos = $user->getAccesoTotalRutina(self::RUTINA_CRM);
@@ -1001,36 +1003,88 @@ class crmActions extends sfActions {
 
     public function executeDatosSeguimientoClientes(sfWebRequest $request) {
         $idCliente = $request->getParameter("idcliente");
+        $login = $request->getParameter("login");
+        $idsucursal = $request->getParameter("idsucursal");
+        $fchini = $request->getParameter("fchini");
+        $fchend = $request->getParameter("fchend");
 
-        $seguimientos = Doctrine::getTable("IdsEventos")
-                ->createQuery("i")
-                ->addWhere('i.ca_idcliente = ?', $idCliente)
-                ->addOrderBy("i.ca_fchevento DESC")
-                ->execute();
+        try{
 
-        $data = array();
+            $q = Doctrine::getTable("IdsEventos")
+                    ->createQuery("e")
+                    ->select("e.*")
+                    ->addOrderBy("e.ca_fchevento DESC");    
 
-        foreach ($seguimientos as $seguimiento) {
-            $empresas = "";
-            $arrayEmp = $seguimiento->getDatosJson("idempresas");            
+            if($idCliente)
+                $q->addWhere('e.ca_idcliente = ?', $idCliente);
             
-            if($arrayEmp){                
-                foreach($arrayEmp as $key => $val){
-                    $empresa = Doctrine::getTable("Empresa")->find($val);
-                    $empresas.= $empresa->getCaNombre()."<br>";
+            if($fchini != null && $fchend != null)
+                $q->addWhere ("e.ca_fchevento BETWEEN ? AND ?", array($fchini, $fchend));
+            else if($idsucursal){
+                
+                $hoy = date("Y-m-d");
+                $dias = 30;
+
+                $fchlimite = strtotime ( '-'.$dias.' day' , strtotime ($hoy) ) ;
+                $fchlimite = date('Y-m-d', $fchlimite);
+                $q->addWhere ("e.ca_fchevento BETWEEN ? AND ?", array($fchlimite, $hoy));                    
+            }else{
+                $q->limit(5000);
+            }
+                
+            if($login){
+                $q->innerJoin("e.IdsCliente cl");
+                $q->addWhere("cl.ca_vendedor = ?", $login);
+            }
+            
+            if($idsucursal){
+                $sucursal = Doctrine::getTable("Sucursal")->find($idsucursal);
+                
+                $q->innerJoin("e.IdsCliente cl");
+                $q->innerJoin("cl.Usuario u");
+                $q->innerJoin("u.Sucursal s");
+                $q->addWhere("s.ca_nombre = ?", $sucursal->getCaNombre());                
+            }
+
+            $seguimientos = $q->execute();
+            $debug = $q->getSqlQuery();
+            
+            if(count($seguimientos) > 5000){
+                $this->responseArray = array("success" => false, "root" => $data, "errorInfo"=> utf8_encode("La consulta solicitada devuelve más de 5000 registros. Por favor hacer filtros más específicos"));
+            }else{
+                $data = array();
+
+                foreach ($seguimientos as $seguimiento) {
+                    $empresas = "";
+                    $arrayEmp = $seguimiento->getDatosJson("idempresas");            
+
+                    if($arrayEmp){                
+                        foreach($arrayEmp as $key => $val){
+                            $empresa = Doctrine::getTable("Empresa")->find($val);
+                            $empresas.= $empresa->getCaNombre()."<br>";
+                        }
+                    }
+
+                    $data[] = array(
+                        "idcliente"=> utf8_encode($seguimiento->getCaIdcliente()),
+                        "compania"=> utf8_encode($seguimiento->getIdsCliente()->getIds()->getCaNombre()),
+                        "comercial"=> utf8_encode($seguimiento->getIdsCliente()->getUsuario()->getCaNombre()),
+                        "sucursal"=> utf8_encode($seguimiento->getIdsCliente()->getUsuario()->getSucursal()->getCaNombre()),
+                        "fecha" => utf8_encode($seguimiento->getCaFchevento()),
+                        "usuario" => utf8_encode($seguimiento->getCaUsuario()),
+                        "tipo" => utf8_encode($seguimiento->getCaTipo()),
+                        "empresas"=> utf8_encode($empresas),
+                        "asunto" => utf8_encode($seguimiento->getCaAsunto()),
+                        "detalle" => utf8_encode($seguimiento->getCaDetalle()),
+                        "compromisos" => utf8_encode($seguimiento->getCaCompromisos()));
                 }
             }
             
-            $data[] = array("fecha" => utf8_encode($seguimiento->getCaFchevento()),
-                "usuario" => utf8_encode($seguimiento->getCaUsuario()),
-                "tipo" => utf8_encode($seguimiento->getCaTipo()),
-                "empresas"=> utf8_encode($empresas),
-                "asunto" => utf8_encode($seguimiento->getCaAsunto()),
-                "detalle" => utf8_encode($seguimiento->getCaDetalle()),
-                "compromisos" => utf8_encode($seguimiento->getCaCompromisos()));
-        }
 
-        $this->responseArray = array("success" => true, "root" => $data);
+            $this->responseArray = array("success" => true, "root" => $data, "total" => count($data), "debug"=>utf8_encode($debug));
+        }catch(Exception $e){
+            $this->responseArray = array("success" => false, "debug" => utf8_encode($debug), "errorInfo"=> utf8_encode($e->getMessage()));
+        }
         $this->setTemplate("responseTemplate");
     }
 
