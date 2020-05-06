@@ -112,11 +112,14 @@
 </style>
 
 <?
+$login=$sf_data->getRaw("login");
+$idsucursal=$sf_data->getRaw("idsucursal");
 $permisos=$sf_data->getRaw("permisos");
 $idcliente=$sf_data->getRaw("idcliente");
 $nombre=$sf_data->getRaw("nombre");
 ?>
 <script  src="/js/ckeditor/ckeditor.js" ></script>
+<script type="text/javascript" src="/js/Colsys/Functions/ExportGridToExcel.js"></script>
 <script>
     Ext.Ajax.setTimeout(250000);
     var permisosG = Ext.decode('<?= json_encode($permisos) ?>');
@@ -126,7 +129,12 @@ $nombre=$sf_data->getRaw("nombre");
         paths: {
             'Colsys': '/js/Colsys',
             'Ext.ux': '/js/ext5/examples/ux',
-            'Ext.ux.exporter':'/js/ext5/examples/ux/exporter/'
+            'Ext.ux.exporter':'/js/ext5/examples/ux/exporter/',
+            'Ext.grid.plugin.Exporter':'../js/ext6/classic/classic/src/grid/plugin/Exporter.js',
+            'Ext.grid.plugin':'../js/ext6/classic/classic/src/grid/plugin/',            
+            'Ext.exporter':'../js/ext6/classic/classic/src/exporter/',
+            'Ext.view.grid':'../js/ext6/classic/classic/src/view/grid/',
+            'Ext.overrides':'../js/ext6/classic/classic/src/overrides/'
         }
     });
     
@@ -160,7 +168,9 @@ $nombre=$sf_data->getRaw("nombre");
             items: [{
                     region: 'west',
                     xtype: 'Colsys.Crm.FormBusqueda',
-                    'permisosG': permisosG
+                    'permisosG': permisosG,
+                    login: '<?=$login?>',
+                    idsucursal: '<?=$idsucursal?>'
                 }, {
                     region: 'center',
                     xtype: 'tabpanel',
@@ -213,4 +223,3 @@ $nombre=$sf_data->getRaw("nombre");
         windowpdf.show();
     }
 </script>
-<!--<div style="float:left;border:">-->
