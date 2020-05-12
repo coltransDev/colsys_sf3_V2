@@ -1018,9 +1018,15 @@ class crmActions extends sfActions {
             if($idCliente)
                 $q->addWhere('e.ca_idcliente = ?', $idCliente);
             
-            if($fchini != null && $fchend != null)
+            if($fchini != null && $fchend != null){
+                list($year, $month, $day) = sscanf($fchini, "%d-%d-%d");                
+                $fchini = date('Y-m-d H:i:s', mktime(0, 0, 0, $month, $day, $year));
+                
+                list($year, $month, $day) = sscanf($fchend, "%d-%d-%d");
+                $fchend = date('Y-m-d H:i:s', mktime(23, 59, 59, $month, $day, $year));
+                
                 $q->addWhere ("e.ca_fchevento BETWEEN ? AND ?", array($fchini, $fchend));
-            else if($idsucursal){
+            }else if($idsucursal){
                 
                 $hoy = date("Y-m-d");
                 $dias = 30;
