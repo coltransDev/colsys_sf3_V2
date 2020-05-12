@@ -659,8 +659,6 @@ class traficosActions extends sfActions {
                                 $file->save($conn);        
                                 $conn->commit();
                             }
-                        } else {
-                            $conn->rollback();
                         }
                     }else{
                         $bindValues["idgfactura"]["cumplio"] = "No";
