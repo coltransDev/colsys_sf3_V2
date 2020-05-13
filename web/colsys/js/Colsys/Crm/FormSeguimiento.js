@@ -72,7 +72,25 @@ Ext.define('Colsys.Crm.FormSeguimiento', {
                         id: 'tipo',
                         name: 'tipo',
                         columnWidth: 0.5,
-                        renderer: comboBoxRenderer(this)
+                        renderer: comboBoxRenderer(this),
+                        listeners:{
+                            select: function(combo, record, eOpts){
+                                var hoy = new Date();
+                                
+                                hoy = Ext.util.Format.date(hoy, 'Y-m-d')
+                                console.log(combo.getValue());
+                                if(combo.getValue()==7){//Reasignado
+                                    Ext.getCmp("compromisos").setValue("N/A");
+                                    Ext.getCmp("compromisos").setHidden(true);
+                                    
+                                    Ext.getCmp("fecha").setValue(hoy);
+                                    Ext.getCmp("fecha").setHidden(true);
+                                    
+                                    Ext.getCmp("seguimiento_antecesor").setValue(0);
+                                    Ext.getCmp("seguimiento_antecesor").setHidden(true);
+                                }
+                            }
+                        }                        
                     },
                     {
                         xtype: 'Colsys.Templates.ComboCheckbox',                        
