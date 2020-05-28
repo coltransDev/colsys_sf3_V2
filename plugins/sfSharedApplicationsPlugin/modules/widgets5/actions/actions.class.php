@@ -210,7 +210,7 @@ class widgets5Actions extends sfActions {
                 "mercancia_desc" => utf8_encode(substr($mercancia_desc,0,65)),
                 "ca_orden_prov"=>utf8_encode($d["r_ca_orden_prov"]),"ca_orden_clie"=>utf8_encode($d["r_ca_orden_prov"]),
                 "idsucursal"=>$idsucursal,"ciudad"=>utf8_encode($ciudad),
-                "txttrm"=>utf8_encode("Para embarques marítimos, la factura debe ser liquidada y pagada tomando la tasa de cambio más alta entre la tasa de cambio del día de pago más $30 pesos "
+                "txttrm"=>utf8_encode("Para embarques marítimos, la factura se debe pagar tomando la tasa de cambio más alta entre la tasa de cambio del día de pago más $30 pesos "
                         . "y la tasa de cambio mencionada en la factura; en caso de pagar la factura con la menor de las tasas, se generará una factura adicional por diferencia en "
                         . "tipo de cambio.  Para conocer la TRM del día de pago puede comunicarse con nuestro PBX seleccionando la opción 1"),
                 "plazo"=>$plazo,
