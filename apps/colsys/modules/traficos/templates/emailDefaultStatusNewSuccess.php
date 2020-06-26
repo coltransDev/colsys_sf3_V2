@@ -259,11 +259,15 @@ $modo = $sf_data->getRaw("modo");
             }
 
             if ($reporte->getCaModalidad() == "FCL") {
-                if ($house) {                    
-                    $houseSea = $house->getInoHouseSea();
+                $existeHouse = false;
+                $existeEquipos = false;
+                if ($house) {
+                    $existeHouse = true;
+                    $houseSea = $house->getInoHouseSea();                    
                     $equipos = $houseSea->getDatosJson("equipos");
                     
                     if (count($equipos)>0){
+                        $existeEquipos = true;
                         ?>
                         <tr>
                             <td colspan="6">
@@ -293,18 +297,18 @@ $modo = $sf_data->getRaw("modo");
                                                 <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["numprecinto"]?></td>
                                                 <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["kilos"]?></td>
                                                 <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo["piezas"]?></td>
-                                                    <?  if ($datosEquipo) { ?>
-                                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Entrega Comodato:</b><?= $datosEquipo["fecha_entrega"] ?><br/><b>Días Libres:</b><?= $datosEquipo["dias_libres"] ?><br/><b>L&iacute;m. Devoluci&oacute;n:</b><?= $datosEquipo["limite_devolucion"] ?><br/></td>
-                                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $datosEquipo["patio"] ?></td>
-                                                        <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $datosEquipo["observaciones"] ?></td>
-                                                    <?  } else {
-                                                        ?>
-                                                        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
-                                                        <?                                                 
-                                                        }
+                                                <?  if ($datosEquipo) { ?>
+                                                    <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Entrega Comodato:</b><?= $datosEquipo["fecha_entrega"] ?><br/><b>Días Libres:</b><?= $datosEquipo["dias_libres"] ?><br/><b>L&iacute;m. Devoluci&oacute;n:</b><?= $datosEquipo["limite_devolucion"] ?><br/></td>
+                                                    <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $datosEquipo["patio"] ?></td>
+                                                    <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $datosEquipo["observaciones"] ?></td>
+                                                <?  } else {
                                                     ?>
+                                                    <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                                                    <?                                                 
+                                                    }
+                                                ?>
                                             </tr>
-                                            <?
+                                        <?
                                         }
                                     }
                                     ?>
@@ -312,61 +316,74 @@ $modo = $sf_data->getRaw("modo");
                             </td>
                         </tr>
                         <?
-                    }
-                } else {
+                    }                    
+                }
+                
+                if(!$existeHouse || !$existeEquipos){
                     $equipos = $reporte->getRepEquipos();
                     if (count($equipos) > 0) {
                         ?>
                         <tr>
                             <td colspan="6">
                                 <table width="100%" cellspacing="0" border="1" class="tableList">
+                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="4">
+                                        Relación de <?=($reporte->getCaTiporep() == "5")?"Equipos":"Contenedores" ?>
+                                    </th>
                                     <tr>
-                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="4">Relación de Contenedores</th>
-                                    </tr>
-                                    <tr>
+                                        <?
+                                        if ($reporte->getCaTiporep() == "5") {                                                                                    
+                                            ?>    
+                                                <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Vehiculo</th>
+                                                <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Placa</th>
+                                            <?
+                                        }
+                                        ?>
                                         <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Concepto</th>
                                         <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Cantidad</th>
                                         <?
                                         if ($reporte->getCaImpoexpo() == Constantes::EXPO) {
                                             ?>
-                                            <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Serial</th>
-                                            <?
-                                        } else if ($reporte->getCaImpoexpo() == Constantes::IMPO) {
+                                                <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Serial</th>
+                                                <?
+                                            } else if ($reporte->getCaImpoexpo() == Constantes::IMPO || $reporte->getCaTiporep()=="5") {
+                                                ?>
+                                                <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">No.Contenedor</th>
+                                                <?
+                                            }
                                             ?>
-                                            <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">No.Contenedor</th>
-                                            <?
-                                        }
-                                        ?>
                                         <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Observaciones</th>
+                                        
                                     </tr>
                                     <?
                                     foreach ($equipos as $equipo) {
                                         ?>
                                         <tr>
-                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getConcepto()->getCaConcepto() ?></td>
-                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getCaCantidad() ?></td>
                                             <?
-                                            if ($reporte->getCaImpoexpo() == Constantes::EXPO or $reporte->getCaImpoexpo() == Constantes::IMPO) {
-                                                ?>
-                                                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getCaIdequipo() ?></td>
-                                                <?
+                                            if ($reporte->getCaTiporep() == "5") {
+                                                $veh = ParametroTable::retrieveByCaso("CU020",null,null,$equipo->getCaIdvehiculo());
+                                                if(count($veh)>0){     
+                                                    $v=$veh[0]->getCaValor();
+                                                }
+                                                ?>    
+                                                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?=$v?></td>
+                                                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?=$equipo->getDatosJson("placa")?></td>
+                                            <?
                                             }
                                             ?>
+                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getConcepto()->getCaConcepto() ?></td>
+                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getCaCantidad() ?></td>
+                                            <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getCaIdequipo() ?></td>                                            
                                             <td><?= $equipo->getCaObservaciones() ? $equipo->getCaObservaciones() : "&nbsp;" ?></td>
                                         </tr>
                                         <?
                                     }   
                                     ?>
-                                </table></td>
+                                </table>
+                            </td>
                         </tr>
                         <?
                     }
                 }
-//                if($status->getCaIdetapa() == "IMCNT" && $master->getCaIdlinea() == 4){ // Si la naviera es CMA CGM COLOMBIA S.A.S Ticket # 72411
-                    ?>
-                    <!--<tr><td colspan="6"><a href="https://www.colsys.com.co/images/uploads/Circular_cierre_patio_sprc.pdf" target="_blank"><b>Mensaje importante: CIERRE PATIO EN EL TERMINAL SPRC</b></a></td></tr>-->
-                    <?
-//                }
             }
             if(in_array($status->getCaIdetapa(), $status->getEtapasEvaluacion())){
                 ?>
@@ -449,4 +466,3 @@ $modo = $sf_data->getRaw("modo");
         ?>
     </div>
 </div>
-++

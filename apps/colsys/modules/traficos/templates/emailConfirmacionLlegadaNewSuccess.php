@@ -102,12 +102,16 @@ $muelle = ParametroTable::retrieveByCaso("CU268", null, null,$master->getInoMast
                 <?
             }
 
-            if ($master->getCaModalidad() == "FCL") {
+            if ($reporte->getCaModalidad() == "FCL") {
+                $existeHouse = false;
+                $existeEquipos = false;
                 if ($house) {
+                    $existeHouse = true;
                     $houseSea = $house->getInoHouseSea();                    
                     $equipos = $houseSea->getDatosJson("equipos");
                     
                     if (count($equipos)>0){
+                        $existeEquipos = true;
                         ?>
                         <tr>
                             <td colspan="6">
@@ -157,26 +161,59 @@ $muelle = ParametroTable::retrieveByCaso("CU268", null, null,$master->getInoMast
                         </tr>
                         <?
                     }                    
-                } else {
+                }
+                
+                if(!$existeHouse || !$existeEquipos){
                     $equipos = $reporte->getRepEquipos();
                     if (count($equipos) > 0) {
                         ?>
                         <tr>
                             <td colspan="6">
                                 <table width="100%" cellspacing="0" border="1" class="tableList">
+                                    <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="4">
+                                        Relación de <?=($reporte->getCaTiporep() == "5")?"Equipos":"Contenedores" ?>
+                                    </th>
                                     <tr>
-                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" colspan="4">Relación de Contenedores</th>
-                                    </tr>
-                                    <tr>
+                                        <?
+                                        if ($reporte->getCaTiporep() == "5") {                                                                                    
+                                            ?>    
+                                                <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Vehiculo</th>
+                                                <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Placa</th>
+                                            <?
+                                        }
+                                        ?>
                                         <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Concepto</th>
                                         <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Cantidad</th>
-                                        <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">No.Contenedor</th>
+                                        <?
+                                        if ($reporte->getCaImpoexpo() == Constantes::EXPO) {
+                                            ?>
+                                                <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Serial</th>
+                                                <?
+                                            } else if ($reporte->getCaImpoexpo() == Constantes::IMPO || $reporte->getCaTiporep()=="5") {
+                                                ?>
+                                                <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">No.Contenedor</th>
+                                                <?
+                                            }
+                                            ?>
                                         <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Observaciones</th>
+                                        
                                     </tr>
                                     <?
                                     foreach ($equipos as $equipo) {
                                         ?>
                                         <tr>
+                                            <?
+                                            if ($reporte->getCaTiporep() == "5") {
+                                                $veh = ParametroTable::retrieveByCaso("CU020",null,null,$equipo->getCaIdvehiculo());
+                                                if(count($veh)>0){     
+                                                    $v=$veh[0]->getCaValor();
+                                                }
+                                                ?>    
+                                                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?=$v?></td>
+                                                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?=$equipo->getDatosJson("placa")?></td>
+                                            <?
+                                            }
+                                            ?>
                                             <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getConcepto()->getCaConcepto() ?></td>
                                             <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getCaCantidad() ?></td>
                                             <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $equipo->getCaIdequipo() ?></td>                                            
