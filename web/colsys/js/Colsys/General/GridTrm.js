@@ -13,7 +13,8 @@ Ext.define('Colsys.General.GridTrm', {
         fields: [
             {name: 'fecha', mapping: 'ca_fecha'},
             {name: 'pesos', mapping: 'ca_pesos'},
-            {name: 'euro', mapping: 'ca_euro'}
+            {name: 'euro', mapping: 'ca_euro'},
+            {name: 'pesoseuro', mapping: 'ca_pesoseuro'}
         ],
         proxy: {
             type: 'ajax',
@@ -28,7 +29,7 @@ Ext.define('Colsys.General.GridTrm', {
         {
             header: 'Fecha',
             dataIndex: 'fecha',
-            width: 130,
+            width: 95,
             renderer: function (a, b, c, d) {
                 if (a) {
                     var formattedDate = new Date(a);
@@ -47,28 +48,15 @@ Ext.define('Colsys.General.GridTrm', {
                 }
             },
             editor: new Ext.form.DateField({
-                width: 130,
+                width: 90,
                 format: 'Y-m-d',
                 useStrict: undefined
             })
         },
         {
-            header: 'Trm',
+            header: 'Trm Dolar',
             dataIndex: 'pesos',
-            width: 120,
-            align: 'right',
-            //renderer: 'usMoney',
-            editor: {
-                xtype: 'numberfield',
-                allowBlank: false,
-                minValue: 0,
-                maxValue: 5000
-            }
-        },
-        {
-            header: 'Euro',
-            dataIndex: 'euro',
-            width: 135,
+            width: 95,
             align: 'right',
             //renderer: 'usMoney',
             editor: {
@@ -78,6 +66,28 @@ Ext.define('Colsys.General.GridTrm', {
                 decimalPrecision: 4,
                 maxValue: 5000
             }
+        },
+        {
+            header: 'Factor Euro',
+            dataIndex: 'euro',
+            width: 95,
+            align: 'right',
+            //renderer: 'usMoney',
+            editor: {
+                xtype: 'numberfield',
+                allowBlank: false,
+                minValue: 0,
+                decimalPrecision: 4,
+                maxValue: 5000
+            }
+        },
+        {
+            header: 'Trm euro',
+            dataIndex: 'pesoseuro',
+            width: 95,
+            align: 'right',
+            //renderer: 'usMoney',
+           
         }
     ],
     selModel: {
