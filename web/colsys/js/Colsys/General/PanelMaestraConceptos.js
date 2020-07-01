@@ -20,10 +20,6 @@ Ext.define('Colsys.General.PanelMaestraConceptos', {
             }
         }
     },
-    requires:[
-       'Ext.grid.plugin.Exporter',
-       'Ext.view.grid.ExporterController'
-    ],
     listeners: {        
         render: function (me, eOpts) {            
             //var h = (this.getHeight()/2)-5;

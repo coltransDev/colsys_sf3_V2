@@ -134,7 +134,6 @@ Ext.define('Colsys.General.GridMaestraConceptos', {
                 id: 'bar-grid-'+this.idgrid
             });
     
-            console.log("crear"+permisosC.Crear);
             if(permisosC.Crear){
                 tb.add({
                     text: 'Agregar',
@@ -231,8 +230,16 @@ Ext.define('Colsys.General.GridMaestraConceptos', {
                 xtype: 'button',
                 text: 'Exportar XLXS',
                 iconCls: 'csv',
+                cfg: {
+                    type: 'excel07',
+                    ext: 'xlsx'
+                },
                 handler: function(){
-                    this.addExporter(this.up("grid"), "Maestra de Conceptos", 15000);
+                    var cfg = Ext.merge({
+                        title: 'Maestra de conceptos',
+                        fileName: 'Maestra de conceptos' + '.' + (this.cfg.ext || this.cfg.type)
+                    }, this.cfg);
+                    this.addExporter(this.up("grid"), cfg, 10000);
                 }
             },{
                 xtype: "textfield",

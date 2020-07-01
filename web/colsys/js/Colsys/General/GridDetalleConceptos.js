@@ -3,13 +3,8 @@ Ext.define('Colsys.General.GridDetalleConceptos', {
     alias: 'widget.Colsys.General.GridDetalleConceptos',    
     autoHeight: true,
     autoScroll: true,    
-    //height:400,    
-//    plugins: [
-//        new Ext.grid.plugin.CellEditing({clicksToEdit: 2})
-//    ],
     plugins:{
-        cellediting: true,
-        gridexporter: true
+        cellediting: true
     },
     listeners: {        
         beforerender: function(ct, position){            
@@ -177,12 +172,16 @@ Ext.define('Colsys.General.GridDetalleConceptos', {
                     xtype: 'button',
                     text: 'Exportar XLXS',
                     iconCls: 'csv',
+                    cfg: {
+                        type: 'excel07',
+                        ext: 'xlsx'
+                    },
                     handler: function(){
-                        this.up("grid").saveDocumentAs({
-                            type: 'csv',
+                        var cfg = Ext.merge({
                             title: 'Detalle de Conceptos',
-                            fileName: 'Detalle_de_Conceptos.csv'
-                        })
+                            fileName: 'Detalle de Conceptos' + '.' + (this.cfg.ext || this.cfg.type)
+                        }, this.cfg);
+                        this.addExporter(this.up("grid"), cfg, 10000);
                     }
                 },{
                     xtype: "textfield",
