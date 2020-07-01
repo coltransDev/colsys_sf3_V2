@@ -1,5 +1,5 @@
 Ext.override(Ext.Component, {
-    addExporter: function(t, cfg, title, timeout){
+    addExporter: function(t, cfg, timeout){
         
         Ext.require([
             'Ext.grid.plugin.Exporter',
@@ -10,18 +10,13 @@ Ext.override(Ext.Component, {
         var librerias = false;
         var plugins = me.getPlugins();
         
-        console.log(plugins);
-
         Ext.each(plugins, function(val, index){            
             if(val.ptype == "gridexporter"){                
                 librerias = true;
             }
         });
         
-        console.log(librerias);
-        
         if(!librerias){
-
             this.showProgressDialog('Generando archivo', 'Por favor espere...');            
             setTimeout (function() {
                 Ext.MessageBox.hide();
@@ -30,18 +25,10 @@ Ext.override(Ext.Component, {
                     ptype: 'gridexporter'
                 });
                 
-                this.cfg = Ext.merge({
-                    title: title,
-                    fileName: title + '.' + (cfg.ext || cfg.type)
-                }, cfg);    
-                me.saveDocumentAs(this.cfg);
+                me.saveDocumentAs(cfg);
             },timeout);
         }else{
-            me.saveDocumentAs({
-                type: 'csv',
-                title: title,
-                fileName: title + '.csv'
-            });
+            me.saveDocumentAs(cfg);
         }
     },
     addPlugin: function(p) {
@@ -52,7 +39,7 @@ Ext.override(Ext.Component, {
         this.plugins = Ext.Array.from(this.plugins);
 
         this.plugins.push(plugin);
-
+        
         //pluginInit could get called here but
         //the less use of private methods the better
         plugin.init(this);
